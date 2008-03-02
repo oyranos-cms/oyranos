@@ -1842,11 +1842,14 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
         if (value && attributs[i] &&
             (strstr(value, attributs[i]) != 0))
         { DBG_PROG_S(( "attribute count n = %d", n ))
-          n++;
+          if      (i == 0) n += 2;
+          else if (i == 1) n += 2;
+          else if (i == 2) n += 5;
+          else             ++n;
         }
       }
 
-      if (n)
+      if (n >= 5)
       { /* 3. search the profile in an match list */
         int found = 0; DBG_PROG
         if (matchList)
