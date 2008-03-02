@@ -10,7 +10,11 @@ VERSION=$VERSION_A.$VERSION_B$VERSION_C
 VERSION_L=$VERSION_A.$VERSION_B.$VERSION_C
 TIME="November 2004 - April 2005"
 
-prefix=/opt/local
+if [ $# -gt 1 ] && [ $1 == "--prefix" ]; then
+  prefix=$2
+else
+  prefix=/opt/local
+fi
 
 
 test -f error.txt && rm error.txt

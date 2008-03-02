@@ -131,6 +131,13 @@ ifdef FLU
 FLU_GUI = $(TARGET)_config_flu
 endif
 
+ALL_FILES =	$(DOKU) \
+	configure.sh \
+	makefile \
+	oyranos-config \
+	$(SOURCES) \
+	$(FLUID)
+
 all:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma $(FLU_GUI) test2
 
 $(TARGET):	$(OBJECTS)
@@ -257,15 +264,28 @@ EXEEXT		=
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
 tgz:
-	tar cf - -C $(topdir) \
-	$(addprefix $(dir)/,$(DOKU)) \
-	$(dir)/configure.sh \
-	$(dir)/makefile \
-	$(dir)/oyranos-config \
-	$(addprefix $(dir)/,$(SOURCES)) \
-	$(addprefix $(dir)/,$(FLUID)) \
+	mkdir Entwickeln
+	$(COPY) \
+	$(ALL_FILES) \
+	Entwickeln
+	tar cf - Entwickeln/ \
 	| gzip > $(TARGET)_$(mtime).tgz
-	mv -v $(TARGET)_*.tgz ../Archiv
+	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
+	test -d Entwickeln && \
+	test `pwd` != `(cd Entwickeln; pwd)` && \
+	rm -R Entwickeln
+
+targz:
+	mkdir icc_examin_$(VERSION)
+	$(COPY) \
+	$(ALL_FILES) \
+	icc_examin_$(VERSION)
+	tar cf - icc_examin_$(VERSION)/ \
+	| gzip > $(TARGET)_$(mtime).tgz
+	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
+	test -d icc_examin_$(VERSION) && \
+	test `pwd` != `(cd icc_examin_$(VERSION); pwd)` && \
+	rm -R icc_examin_$(VERSION) 
 
 
 # mkdepend
