@@ -33,7 +33,7 @@ used components and libraries:
 
 %build
 %configure
-configure --prefix %{_prefix}
+configure --prefix=%{_prefix}
 
 %install
 rm -rf %{buildroot}
