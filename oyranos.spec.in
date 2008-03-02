@@ -19,8 +19,8 @@ Requires:  oyranos = %{name}_%{version}
 Oyranos is a colour management configuration system.
 It is primarily developed on free operating systems.
 Developers from other OSes can jump in the current
-disscussion to make Oyranos aware of cross platform
-standards. You are cordially invited to make constructive
+discussion to make Oyranos aware of cross platform
+standards. Feel cordially invited to make constructive
 suggestions.
 
 Authors:
@@ -34,10 +34,11 @@ used components and libraries:
 
 
 %description devel
-Oyranos is useable to store default profiles and paths,
-query for profiles in that paths. An internal device profile
-API allowes configuring of the profile X.
-
+Oyranos is useable to store default profiles and paths and
+query for profiles in that paths.
+An internal device profile API allowes configuring of a 
+profile X.
+The documentation in html format is included.
 
 
 %prep
