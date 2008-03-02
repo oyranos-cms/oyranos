@@ -51,10 +51,14 @@ extern const char *domain_path;
 #define OY_TEXTDOMAIN "oyranos"
 
 /* library sentinels */
-void   oyI18NInit_               (void);
+void   oyI18NInit_                   ( void);
 void   oyI18Nrefresh_();
 void   oyI18NSet_                    ( int active,
                                        int reserved );
+
+const char *   oyLang_               ( void );
+const char *   oyLanguage_           ( void );
+const char *   oyCountry_            ( void );
 
 
 #ifdef __cplusplus

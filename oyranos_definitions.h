@@ -31,12 +31,37 @@
 #ifndef OYRANOS_DEFINITIONS_H
 #define OYRANOS_DEFINITIONS_H
 
-#define OYRANOS_API 14
+#define OYRANOS_API 15
 
-/** default local search path */
+/** @deprecated default local search path */
 #define OY_PROFILE_PATH_USER_DEFAULT    "~/.color/icc"
+/** @brief from OpenICC directory proposal
+ *  needs additional 'color' and the usage 'icc/cmms/...'
+ *
+ *  @since 0.1.8
+ */
+#define OY_USER_PATH                    "~/.local"
 /** default global search path @todo add installation dir */
 #define OY_PROFILE_PATH_SYSTEM_DEFAULT  "/usr/share/color/icc"
+/** OpenICC directory proposal
+ *  needs additional 'share,lib' and 'color' and purpose 'icc,cmms,...'
+ *
+ *  @since 0.1.8
+ */
+#define OY_SYS_PATH1                    "/usr"
+#define OY_SYS_PATH2                    "/usr/local"
+/** @brief Oyranos modules/CMM's environment variable
+ *
+ *  @since 0.1.8
+ */
+#define OY_MODULE_PATHS                 "OY_MODULE_PATHS"
+/** @brief Oyranos modules/CMM's suffix after the four byte CMM ID
+ *
+ *  for instance LittleCMS has ID lcms, thus we get lcms_cmm_module
+ *
+ *  @since 0.1.8
+ */
+#define OY_MODULE_NAME                 "_cmm_module"
 
 #define OY_POLICY_HEADER "<!--?xml version=\"1.0\" encoding=\"UTF-8\"? -->\n\
 <!-- Oyranos policy format 1.0 -->"

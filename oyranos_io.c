@@ -462,7 +462,7 @@ oyCheckDefaultDirectories_ ()
   /* test dirName : existing in path, default dirs are existing */
   if (!oyIsDir_ (OY_PROFILE_PATH_SYSTEM_DEFAULT))
   { DBG_PROG
-    WARNc_S( ("no default system directory %s\n",OY_PROFILE_PATH_SYSTEM_DEFAULT) );
+    DBG_PROG_S( ("no default system directory %s\n",OY_PROFILE_PATH_SYSTEM_DEFAULT) );
   }
 
   if (!oyIsDir_ (OY_PROFILE_PATH_USER_DEFAULT))
@@ -498,8 +498,12 @@ oyFindProfile_ (const char* fileName)
 
     DBG_PROG
     fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
-    sprintf(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
-    oyFree_m_(path_name)
+    if(path_name)
+    {
+      sprintf(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
+      oyFree_m_(path_name)
+    } else
+      sprintf(fullFileName, "%s", fileName);
     DBG_PROG_S(( fullFileName ))
   } else
   {
@@ -522,7 +526,8 @@ oyFindProfile_ (const char* fileName)
 /* profile and other file lists API */
 
 #define MAX_DEPTH 64
-struct OyFileList_s_ {
+struct oyFileList_s_ {
+  oyOBJECT_TYPE_e type;
   int hopp;
   const char* coloursig;
   int mem_count;
@@ -532,7 +537,10 @@ struct OyFileList_s_ {
 
 int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
 {
-  struct OyFileList_s_ *l = (struct OyFileList_s_*)data;
+  struct oyFileList_s_ *l = (struct oyFileList_s_*)data;
+
+  if(l->type != oyOBJECT_TYPE_FILE_LIST_S_)
+    WARNc_S(("Could not find a oyFileList_s_ objetc."))
 
       if (!oyCheckProfile_(full_name, l->coloursig))
       {
@@ -555,9 +563,12 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
 
 int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
 {
-  struct OyFileList_s_ *l = (struct OyFileList_s_*)data;
+  struct oyFileList_s_ *l = (struct oyFileList_s_*)data;
   /* last 4 chars */
   const char * end = NULL;
+
+  if(l->type != oyOBJECT_TYPE_FILE_LIST_S_)
+    WARNc_S(("Could not find a oyFileList_s_ objetc."))
 
   if(strlen(full_name) > 4)
     end = full_name + strlen(full_name) - 4;
@@ -578,8 +589,42 @@ int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
 
         oyAllocString_m_( l->names[l->count_files], oyStrblen_(full_name),
                           oyAllocateFunc_, return 1 );
-        l->names[l->count_files] = (char*) calloc (sizeof(char)*2,
-                                                   strlen(full_name));
+        
+        oyStrcpy_(l->names[l->count_files], full_name);
+        ++l->count_files;
+      } /*else */
+        /*WARNc_S(("%s in %s is not a valid profile", file_name, path)); */
+  return 0;
+}
+
+int oyFileListCb_ (void* data, const char* full_name, const char* filename)
+{
+  struct oyFileList_s_ *l = (struct oyFileList_s_*)data;
+  /* last 4 chars */
+  const char * end = NULL;
+
+  if(l->type != oyOBJECT_TYPE_FILE_LIST_S_)
+    WARNc_S(("Could not find a oyFileList_s_ objetc."))
+
+  if(strlen(full_name) > 4)
+    end = full_name + strlen(full_name) - 4;
+
+      /*if( (end[0] == '.') &&
+          (end[1] == 'x' || end[1] == 'X') &&
+          (end[2] == 'm' || end[2] == 'M') &&
+          (end[3] == 'l' || end[3] == 'L') &&
+          !oyCheckPolicy_(full_name) )*/
+      {
+        if(l->count_files >= l->mem_count)
+        {
+          char** temp = l->names;
+          l->names = (char**) calloc (sizeof(char*), l->mem_count+l->hopp);
+          memcpy(l->names, temp, sizeof(char*) * l->mem_count);
+          l->mem_count += l->hopp;
+        }
+
+        oyAllocString_m_( l->names[l->count_files], oyStrblen_(full_name),
+                          oyAllocateFunc_, return 1 );
         
         oyStrcpy_(l->names[l->count_files], full_name);
         ++l->count_files;
@@ -591,7 +636,7 @@ int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
 char**
 oyProfileListGet_                  (const char* coloursig, int * size)
 {
-  struct OyFileList_s_ l = {128, NULL, 128, 0, 0};
+  struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = oyPathsCount_();
   char ** path_names = NULL;
 
@@ -627,13 +672,14 @@ oyProfileListGet_                  (const char* coloursig, int * size)
 char**
 oyPolicyListGet_                  (int * size)
 {
-  struct OyFileList_s_ l = {128, NULL, 128, 0, 0};
+  struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = 0;
-  const char ** path_names = NULL;
+  char ** path_names = NULL;
  
   DBG_PROG_START
  
-  path_names = oyConfigPathsGet_( &count, "settings" );
+  path_names = oyConfigPathsGet_( &count, "settings", oyALL, oyUSER_SYS,
+                                  oyAllocateFunc_ );
 
   oy_warn_ = 0;
 
@@ -643,13 +689,99 @@ oyPolicyListGet_                  (int * size)
 
   oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 
-  oyRecursivePaths_(oyPolicyListCb_, (void*) &l, path_names, count);
+  oyRecursivePaths_(oyPolicyListCb_, (void*)&l,(const char**)path_names, count);
+
+  oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
 
   *size = l.count_files;
   oy_warn_ = 1;
   DBG_PROG_ENDE
   return l.names;
 }
+
+/** @internal
+ *  @brief get files out of the Oyranos default paths
+ *
+ *  Since: 0.1.8
+ */
+char**
+oyFileListGet_                  (const char * subpath,
+                                 int        * size,
+                                 int          data,
+                                 int          owner)
+{
+  struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  int count = 0;
+  char ** path_names = NULL;
+ 
+  DBG_PROG_START
+ 
+  path_names = oyConfigPathsGet_( &count, subpath, oyALL, oyUSER_SYS,
+                                  oyAllocateFunc_ );
+
+  oy_warn_ = 0;
+
+  l.names = 0;
+  l.mem_count = l.hopp;
+  l.count_files = 0;
+
+  oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
+
+  oyRecursivePaths_(oyFileListCb_, (void*) &l, (const char**)path_names, count);
+
+  oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
+
+  *size = l.count_files;
+
+  if(!l.count_files && l.names)
+  {
+    oyDeAllocateFunc_(l.names);
+    l.names = 0;
+  }
+
+  oy_warn_ = 1;
+  DBG_PROG_ENDE
+  return l.names;
+}
+
+/** @internal
+ *  @brief get files out of the Oyranos default paths
+ *
+ *  Since: 0.1.8
+ */
+char**
+oyLibListGet_                   (const char * subpath,
+                                 int        * size,
+                                 int          owner)
+{
+  struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  int count = 0;
+  char ** path_names = NULL;
+ 
+  DBG_PROG_START
+ 
+  path_names = oyLibPathsGet_( &count, subpath, oyUSER_SYS,
+                                  oyAllocateFunc_ );
+
+  oy_warn_ = 0;
+
+  l.names = 0;
+  l.mem_count = l.hopp;
+  l.count_files = 0;
+
+  oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
+
+  oyRecursivePaths_(oyFileListCb_, (void*) &l, (const char**)path_names, count);
+
+  oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
+
+  *size = l.count_files;
+  oy_warn_ = 1;
+  DBG_PROG_ENDE
+  return l.names;
+}
+
+typedef int (*pathSelectFunc_t_)(void*,const char*,const char*);
 
 /** @internal
  *  doInPath and data must fit, doInPath can operate on data and after finishing
@@ -659,7 +791,7 @@ oyPolicyListGet_                  (int * size)
 
  */
 int
-oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*),
+oyRecursivePaths_  ( pathSelectFunc_t_ doInPath,
                      void* data,
                      const char ** path_names,
                      int count )
@@ -837,10 +969,18 @@ void*
 oyGetProfileBlock_                 (const char* profilename, size_t *size,
                                     oyAllocFunc_t allocate_func)
 {
-  char* fullFileName = oyFindProfile_ (profilename);
-  char* block = oyReadFileToMem_ (fullFileName, size, allocate_func);
+  char* fullFileName = 0;
+  char* block = 0;
 
   DBG_PROG_START
+
+  fullFileName = oyFindProfile_ (profilename);
+
+  if(fullFileName)
+  {
+    block = oyReadFileToMem_ (fullFileName, size, allocate_func);
+    oyFree_m_( fullFileName );
+  }
 
   DBG_PROG_ENDE
   return block;

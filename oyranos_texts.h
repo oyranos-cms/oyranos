@@ -1,7 +1,7 @@
 /**
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -116,15 +116,71 @@ int         oySetDefaultProfileBlock_  (oyPROFILE_e       type,
 char*       oyGetDefaultProfileName_   (oyPROFILE_e       type,
                                         oyAllocFunc_t     alloc_func);
 
-char*       oyPolicyNameGet_           ();
-int         oyPolicySet_               (const char      * policy_file,
-                                        const char      * full_name );
-oyWIDGET_e*   oyPolicyWidgetListGet_     (oyGROUP_e           group,
-                                        int             * count );
-const char**oyConfigPathsGet_          (int             * count,
-                                        const char      * subdir );
-char **     oyProfilePathsGet_         (int             * count,
-                                        oyAllocFunc_t     allocate_func);
+char*       oyPolicyNameGet_         ( );
+int         oyPolicySet_             ( const char      * policy_file,
+                                       const char      * full_name );
+oyWIDGET_e* oyPolicyWidgetListGet_   ( oyGROUP_e           group,
+                                       int             * count );
+char **     oyConfigPathsGet_        ( int             * count,
+                                       const char      * subdir,
+                                       int               data,
+                                       int               owner,
+                                       oyAllocFunc_t     allocateFunc );
+char **     oyConfigFilesGet_        ( int             * count,
+                                       const char      * subdir,
+                                       int               data,
+                                       int               owner,
+                                       const char      * dir_string,
+                                       const char      * string,
+                                       const char      * suffix,
+                                       oyAllocFunc_t     allocateFunc );
+char **     oyProfilePathsGet_       ( int             * count,
+                                       oyAllocFunc_t     allocate_func);
+char **     oyLibPathsGet_           ( int             * count,
+                                       const char      * subdir,
+                                       int               owner,
+                                       oyAllocFunc_t     allocateFunc );
+char **     oyLibFilesGet_           ( int             * count,
+                                       const char      * subdir,
+                                       int               owner,
+                                       const char      * dir_string,
+                                       const char      * string,
+                                       const char      * suffix,
+                                       oyAllocFunc_t     allocateFunc );
+
+
+char*              oyStringCopy_     ( const char        * text,
+                                       oyAllocFunc_t       allocateFunc );
+char*              oyStringAppend_   ( const char        * text,
+                                       const char        * append,
+                                       oyAllocFunc_t       allocateFunc );
+char*              oyStringAdd_      ( char              * text,
+                                       const char        * append,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocFunc );
+
+char**             oyStringSplit_    ( const char        * text,
+                                       const char          delimiter,
+                                       int               * count,
+                                       oyAllocFunc_t       allocateFunc );
+char**             oyStringListAppend_(const char       ** list,
+                                       int                 n_alt,
+                                       const char       ** append,
+                                       int                 n_app,
+                                       int               * count,
+                                       oyAllocFunc_t       allocateFunc );
+void               oyStringListRelease_(char           *** l,
+                                       int                 size,
+                                       oyDeAllocFunc_t     deallocFunc );
+char**             oyStringListFilter_(const char       ** list,
+                                       int                 n_alt,
+                                       const char        * dir_string,
+                                       const char        * string,
+                                       const char        * suffix,
+                                       int               * count,
+                                       oyAllocFunc_t       allocateFunc );
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 } /* namespace oyranos */

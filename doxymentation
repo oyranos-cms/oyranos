@@ -4,13 +4,13 @@
 
     @section text_contents Descriptive Contents
     @ref intro |
-    @ref concept |
-    @ref proposal |
+    @ref concepts |
+    @ref install |
+    @ref links\n
     @ref tools |
     @ref user |
-    @ref install |
-    @ref links |
-    @ref code_usage
+    @ref coding |
+    @ref api_tutorial
 
     @author Kai-Uwe Behrmann
     @date Project start: March 2004
@@ -28,7 +28,7 @@
     same monitor profile with the same options for rendering intent, simulation
     and so on.
 
-    @section tools Tools Documentation
+    @section tools User Tools Documentation
     - oyranos-monitor - a commandline tool for calling from a setup script like
       .xinitrc. It selects a profile for the current monitor and sets up the
       X server at startup time. Usage:
@@ -44,10 +44,9 @@
     Affected are default profiles and some behaviour settings.
     - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
       show details of profiles. 
-    - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \b oyranos-config \b --help to see the appropriate options.
-    
+    - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \i oyranos-config \i --help to see the appropriate options.
 
-    @section user User Documentation
+    @section user User API Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
     wants to use these functions, needs to link against Oyranos and Elektra.
     - @ref policy - load / save of user policies
@@ -64,14 +63,18 @@
 
     The key names, which Oyranos uses to store its configuration in an Elektra
     file tree, are defined in oyranos_definitions.h.
-    <br>
+    \n
 
-    @section code_usage Using Oyranos
+    More toppics about programming with Oyranos can be found on the @ref coding
+    page. 
+
+    @subsection api_tutorial Programming Tutorial
     Frist you have to put a
     @verbatim
     #include <oyranos/oyranos.h>
+    int oyranos_version = oyVersion();
     @endverbatim
-    in your source text, in order to use Oyranos. \b oyranos-config \b --cflags  delivers the compiler flags and \b oyranos-config \b --ldflags the linker flags.
+    in your source text, in order to use Oyranos. \b oyranos-config \b --cflags delivers the compiler flags and \b oyranos-config \b --ldflags the linker flags.
 
     Then you can put Oyranos functions in your code and compile with:
     @verbatim
@@ -84,75 +87,159 @@
  */
 /*    - @ref device_profiles - profiles which characterise devices */
 
-/** @page concept_1.0 Concept for 1.0
+/** @page concepts Concepts
 
-    @section concept Concept
     The here described concepts are targeted until version 1.0 of Oyranos.
     They are intended to make the API consistent and its usage predictable.
     A additional page shall describe the behaviour of Oyranos, default settings
     and recommendations to developers who like to interact with the system.
 
     @subsection os_concept Interoperatibility on Operating Systems
-    - Oyranos is intended to work on at least Linux, osX and (hopefully) Windows
+    - Oyranos is intended to work on Posix systems and at least Windows.
     - On Linux the <a href="http://elektra.sf.net">Elektra</a> configuration
       library is used for managing and storing the configuration.
-    - If publically available Oyranos will sit on top of native Colour
+    - If publically available, Oyranos will sit on top of native Colour
       Management Systems like ColorSync&copy; or ICM&copy;.
 
     @subsection path_concept Paths Configuration
-    - Paths are scanned secursively avoiding links for security reasons.
-    - Paths count allways, to aim consistency. There are no exceptions.
+    - see <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
 
-    @subsection general_concept Personality
+    @subsection rights_concept Personality
     - Users configure their own settings, while administrators 
       configure system wide settings.
     - User settings have priority over system settings
     - All settings, called policy as a whole, shall be saveable and recoverable.
 
-    @subsection memory_concept Memory Handling
-    - For strings, constant pointers to chars are the prefered form (utf8?)
-    - For the need of allocating unknown sizes of memory, a function is passed
-      by the user allocating the memory. The returned block goes into the
-      responsibility of the user.
-    - More complex library allocated memory blocks, like profile name lists,
-      can be freed with a Oyranos provided function.
-    - Last but not least user allocated Oyranos objects, those allocated by 
-      Oyranos with a user provided function, are free'd by oyDeAllocFunc_t.
-
-    @subsection  naming_convention Naming Convention
-    - As long as possible types are signaled by theyre kind of writing.
-    - all functions, types and enums start with a oy due to no namespace in C
-    - namespace in C++ is oyranos::
-    - functions:  words starting upper case
-    - enums:      all letters upper case, words are separated by underscore
-    - variables:  are lower case and words are separated by underscore
-    - macros:     are all upper case even the starting OY_ 
-    - typs:       end with _t
-    - structs:    end with a _s
-    - internals:  end with _
-
-    @subsection information_concept Information Exchange
-    - Functions are needed which show useful informations for GUIs, about the
+    @subsection modul_concept Extensibility
+    - Register new capabilities and modules will help to build a flexible base
+      for further extensions.
+    - Therefore the internal data must be kept almost dynamic.
+    - Functions are needed, which show useful informations for GUIs, about the
       content in the Profiles and about possible errors.
     - Some descriptors are provided as strings, and may help keeping 
       the user interface consistent throughout toolkits. (translation?)
-    - A callback mechanism informs about changes regarding the configuration.
-    - Special informations like for instance about the display geometry are not
-      planed so far. You query monitor profiles by screen name not by geometry.
 
-    @subsection special_concept Special Considerations
-    - It should be easy to query Oyranos for certain informations contained in a
-      profile like primaries, gamma or profile type.
-    - To some degree useablity checks for profiles should be included.
+ */
 
-    @subsection modul_concept Extensibility
-    - The concept of parsing text files to register new capabilities and modules
-      will help to build a flexible base for further extensions.
-    - Therefore the internal data must be kept dynamic.
+/** @page coding Coding Conventions
 
-    @subsection device_configuration Devices Configuration
-    - A text parser should allow to distinguish the same profile for multiple
-      devices and vice versa.
+    @section general_c_conventions General
+    Oyranos is written in C for portability. All types belonging to its API's
+    are prefixed with a <b>oy</b>.\n
+    Oyranos objects naming is build after C++ conventions,
+    where access to a class member is prefixed with the scope operator. \n
+    <i>oyranos::oyClass::oyClassFunction</i>\n
+    looks in Oyranos\n
+    <i>oyClass_Function</i>. Of course a function specific to a data object 
+    needs the object itself as argument, as the this pointer is not available.\n
+    Oyranos features a flexible memory management and allows easy integration
+    with different memory management strategies.
+
+    @section data_handling Data Handling
+    <p>Oyranos uses a mix of different structures. Among them are the basic C
+    types, simple C structs and Oyranos managed structs.
+    The structs are transparent for compile time typechecking and easy
+    debugging at runtime.</p>
+
+    <p>Objects are transparent to allow easier debugging. But be aware to not
+    change the private members of Oyranos objects directly. 
+    They are marked at end with a underscore <b>_</b>. Use the appropriate 
+    functions for each object instead. Otherwise the objects are in danger to
+    be handled inadequately.
+    </p>
+
+    @section memory_handling Memory Handling
+    - For strings, constant pointers to chars are provided whenever possible.
+    - For the need of allocating unknown sizes of memory, a function is passed
+      by the user doing the memory allocation. The returned memory is then to
+      be managed by the user.
+    - More complex library allocated memory blocks, like profile name lists,
+      can be freed with a Oyranos provided function. They should be encapsulated
+      into a Oyranos object.
+    - Oyranos objects transport always a allocator. The allocator is possible 
+      to set by the user at Object creation time.
+    - Objects can contain a user specified deallocator.
+
+    @section  naming_convention Naming Conventions
+    Declaration types are distinguishable through the below described naming
+    conventions.\n
+    A <b>oy</b> prefix is common for all functions, types and enums to
+    display a namespace in C.\n
+    <b>Functions</b> words are starting upper case, (after the oy prefix)
+    <i> oyVersion() </i>\n
+    <b>Enums</b> have all letters  written upper case. Words are separated by
+                      underscore
+      <i>oyOBJECT_TYPE_e</i>\n
+    <b>Variables</b> are written lower case and words are separated by underscore.
+      <i>file_name</i>\n
+    <b>Macros</b> are upper case and start with <b>OY_</b>:
+      <i>OY_HAVE_PNG</i>\n
+    As one exception some macros are normal named to allow later typing:
+      <i>oyChar</i>\n
+      Function alike macros are named like normal functions followed by
+      a <b>_m</b>:
+      <i>oyColourOffset_m()</i>\n
+      For enum alike macros it is more appropriate to omit the _M suffix:
+      <i>oyTYPE_123A_8</i>\n
+    <b>Stucts</b> words start upper case followed by a <b>_s</b>:
+      <i>oyProfile_s</i>\n
+    <b>Struct/object handling functions</b> start upper case with the struct
+    name, followed with the verb:
+      <i>oyProfile_GetChannelName</i>\n
+
+    @subsection  suffixes  Declaration Overview
+    - <b>_t</b> types
+    - <b>_s</b> structs
+    - <b>_e</b> enums
+    - <b>_M</b> or <b>_m</b> or none for macro functions
+    - ending underscore <b>_</b> for non editable internals
+    - The namespace in C++ is <b>oyranos::</b>\n
+      <i>oyranos::oyVersion()</i>
+
+
+    @section development Development Conventions
+
+    @subsection api_design API Design
+    Oyranos API's handle various tasks. A important idea is to make colour 
+    management easy. Thus some API's are high level and only a few calls
+    are needed to do the, hopefully, right thing. For finer control
+    many low level API's are exposed.\n
+    It is as well possible to reimplement the Oyranos functionality. Some
+    recommendations or standards are therefore provided at OpenICC. Feel free
+    to contact the Oyranos project to discuss further details.\n
+    Internal API's handle low level file access, internal static lists and
+    adapt to backends.
+
+    @subsection object_design Object Design
+    All Oyranos structs have a first member called <i>type_</i> to better 
+    distinguish them. The according value is available as a enum from
+    oyOBJECT_TYPE_e.\n
+    The second member of a Object style struct is <i>oy_</i> and features common
+    properties, like memory management, naming and more.\n
+    A new simple Oyranos data data structure should contain the type_ specifier.
+    Complex data structures should contain the type_ and oy_ structure to allow
+    the advanced features.\n
+    Providing of similiar functions for different Oyranos Objects, allows
+    theire use in a abstract way. A soft typecheck is possible over the type_ 
+    member. For a example see the internal oyPointerList_ struct with the 
+    according C API. As casting in C is always blind, it is better to avoid, 
+    except you know what you do. Exposing seems not appropriate.
+    For instance, each object should implement a appropriate Release and Copy 
+    function with the same shape, arguments and return value, to easily cast
+    to functions of other objects providing similiar functionality.
+    Thus each object can implement list functionality with a common base in the
+    above mentioned oyPointerList_. The resoning behind the above outlined use
+    of common API's is, even with C casting, they help in reducing code size, 
+    for easier maintaining and while fixing bugs.
+
+    @subsection api_naming API Naming
+    Keeping API members in a lexical relation allowes
+    for later easy searching with tools of choice. So you find rather a 
+    getOyNamedColourName but oyNamedColour_GetName and can easily find the  
+    related functions in the appropriate NamedColour API. The sheme follows
+    C++ syntax: (namespace)oy(ranos)::(class)NamedColour::(function)getName.
+    This should as well help in designing OO wrappers to allow consistency among
+    C Oyranos and its wrappers for various languages.
 
  */
 
@@ -188,67 +275,46 @@
     Oyranos section.
  */
 
-/** @page requirements_1.0 Release 1.0 Requirements
-
-    Oyranos version 1.0 is about a configuration library only. The conceptual 
-    explanations in @ref concept are about all to solve for
-    Oyranos 1.0 .
-
-    Date: unknown
-
-    OS: Linux , osX , Windows (maybe)
-
-    the Concept page is about to solve for 1.0
-
-    More:
-    <ul>
-    <li>add OY_DEFAULT_WORKSPACE_RGB_PROFILE</li>
-    <li>more preferences like described in OpenICC email of Jan-Peter Homann
-        Subject : Re: [OpenICC] Oyranos APIs update  15.09.05 </li>
-    <li></li>
-    </ul>
-
- */
-
 /** @page install_current Installation
 
     @section install Installation
-    Oyranos depends on following libraries:<br>
+    Oyranos depends on following libraries:\n
 
     <ul>
-    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux , <a href="http://sourceforge.net/project/showfiles.php?group_id=117521">version 0.6</a> s needed due to API changes . </li>
-    <li><a href="http://www.fltk.org">fltk</a> version >= 1.1.4 needed for a user interface<br>
-    you may configure fltk with several options enabled<br>
-    --enable-threads is needed for threads support (in ICC Examin)<br>
-    --enable-xft is ok for antialiased fonts<br>
-    --enable-debug is generally a good choice<br>
+    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux , <a href="http://sourceforge.net/project/showfiles.php?group_id=117521">version 0.6.4</a> is needed due to API changes . </li>
+    <li><a href="http://www.fltk.org">fltk</a> version >= 1.1.4 needed for a user interface\n
+    you may configure fltk with several options enabled\n
+    --enable-threads is needed for threads support (in ICC Examin)\n
+    --enable-xft is ok for antialiased fonts\n
+    --enable-debug is generally a good choice\n
     --enable-shared is sometimes a good choice for smaller executables</li>
     <li><a href="http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/">Xcalib</a> for loading a given  VideoCardGammaTag from profile to a running XFree86/Xorg session (optionally)</li>
-    </ul><br>
-    For building unpack the tgz file and type #make; make install.<br><br>
-    Optionally you can specifiy an other than the default prefix /opt/local by typing:<br>
-    #configure.sh --prefix=/what/you/like<br>
-    #make<br>
-    #make install   (optionally)<br>
+    </ul>\n
+    For building unpack the tgz file and type #make; make install.\n\n
+    Optionally you can specifiy an other than the default prefix /opt/local by typing:\n
+    #configure.sh --prefix=/what/you/like\n
+    #make\n
+    #make install   (optionally)\n
  */
 
 /** @page links References
     @section links Links
     - cross platform colour information exchange standard, called ICC - http://www.color.org
+    - OpenICC: http://www.freedesktop.org/wiki/OpenIcc
+    - Email list: http://lists.freedesktop.org/mailman/listinfo/openicc
+    - Oyranos project page: http://www.oyranos.org/wiki
+    - Oyranos wiki: http://www.oyranos.org/wiki/index.php?title=Oyranos
     - Elektra, configuration engine used on Linux - http://elektra.sf.net
-    - Xcalib is vcgt to window server uploader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
-    - Oyranos related applications, proposals and links -
-      http://www.behrmann.name
-    - _ICC_PROFILE spec at http://www.burtonini.com/computing/x-icc-profiles-spec-0.1.html, for an Xatom to communicate profiles over X
-      extended by me (Kai-Uwe Behrmann) http://www.oyranos.com/wiki/index.php?title=ICC_Profiles_in_X_0.2 for multiple monitors on one screen
-    - Discussions about an Linux CMS happen at http://lists.freedesktop.org/mailman/listinfo/openicc
+    - Xcalib, a vcgt to window server uploader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
+    - Directory paths for colour profiles and other configuration data <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
+    - X11 Requirements http://www.oyranos.org/wiki/index.php?title=Oyranos_X11_Requirements
  */
 
 /** @file oyranos.h
     @brief The API header for general users to include in your application.
     
-    This file contains all functions and structs available in the Oyranos API.<br>
-    For further macros see @file oyranos_definitions.h<br>
+    This file contains all functions and structs available in the Oyranos API.\n
+    For further macros see @file oyranos_definitions.h\n
     For the Oyranos Monitor API see @file oyranos_monitor.h
 */
 
@@ -256,16 +322,16 @@
     @brief The macro header to include in your application without using any Oyranos function.
     
     This file contains all macros which are relevant to the Oyranos API using
-    the Elektra library as configuration engine.<br>
-    For the Oyranos API see @file oyranos.h<br>
+    the Elektra library as configuration engine.\n
+    For the Oyranos API see @file oyranos.h\n
     @see Elektra at sourceforge <a href="http://elektra.sf.net">Elektra</a>
 */
 
 /** @file oyranos_monitor.h
     @brief The Monitor API header to include in your application.
     
-    This file contains all functions and structs available in the Oyranos Monitor API.<br>
-    @see oyranos_definitions.h for Elektra macros<br>
+    This file contains all functions and structs available in the Oyranos Monitor API.\n
+    @see oyranos_definitions.h for Elektra macros\n
     @see oyranos.h for the Oyranos API
 */
 
@@ -279,15 +345,15 @@
 /** @file oyranos.c
     @brief The API implementation
     
-    This file contains functions implementing the Oyranos API.<br>
+    This file contains functions implementing the Oyranos API.\n
     For the Oyranos API see @file oyranos.h
 */
 
 /** @file oyranos_monitor.c
     @brief The Monitor API implementation
     
-    This file contains functions implementing the Oyranos Monitor API.<br>
-    For the Oyranos Monitor API see @file oyranos_monitor.h<br>
+    This file contains functions implementing the Oyranos Monitor API.\n
+    For the Oyranos Monitor API see @file oyranos_monitor.h\n
     For the Oyranos API see @file oyranos.h
 */
 

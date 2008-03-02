@@ -44,6 +44,9 @@ namespace oyranos
 {
 #endif /* __cplusplus */
 
+typedef char oyChar;
+typedef void* oyPointer;
+
 /**
  * @param[in] size the size to allocate
  *
@@ -65,6 +68,12 @@ typedef void* (*oyAllocFunc_t)         (size_t size);
  * \endcode<br>
  */
 typedef void (*oyDeAllocFunc_t)       (void *data);
+
+typedef enum {
+  oyMSG_WARN = 300,
+  oyMSG_ERROR
+} oyMSG_e;
+typedef int  (*oyMessageFunc_t)( int/*oyMSG_e*/ code, const char* format, ... );
 
 
 /** @brief Widget Groups 
@@ -113,6 +122,8 @@ enum  {
   oyYES,                               /**< automaticaly perform action */
   oyASK                                /**< popup dialog */
 }; /**< for oyBEHAVIOUR_ACTION */
+
+#define oyALL oyASK
 
 int         oyGetBehaviour             (oyBEHAVIOUR_e     type);
 int         oySetBehaviour             (oyBEHAVIOUR_e     type,
@@ -163,7 +174,7 @@ typedef enum  {
 /** @deprecated 
     provide oyDEFAULT_PROFILE for compatibility
  */
-#if !defined(oyIGNORE_DEPRECATED) || (oyIGNORE_DEPRECATED < OYRANOS_VERSION)
+#if !defined(OY_IGNORE_DEPRECATED) || (OY_IGNORE_DEPRECATED < OYRANOS_VERSION)
   /*#warning oyDEFAULT_PROFILE is deprecated*/
 # define oyDEFAULT_PROFILE oyPROFILE_e
 #endif
@@ -259,23 +270,23 @@ typedef enum  {
 
 /** @brief type of widget */
 typedef enum {
-    oyTYPE_START,
-    oyTYPE_GROUP_TREE,/**!< group creating a new visibility (tab, leave) */
-    oyTYPE_BEHAVIOUR,
-    oyTYPE_DEFAULT_PROFILE,
-    oyTYPE_PROFILE,   /**!< select a profile through a list widget */
-    oyTYPE_INT,       /**!< TODO @todo value range */
-    oyTYPE_FLOAT,     /**!< IEEE floating point number */
-    oyTYPE_CHOICE,    /**!< option from a array of choices */
-    oyTYPE_LIST,      /**!< list widget, like for paths */
-    oyTYPE_VOID,      /**!< data block, should not be selectable */
-    oyTYPE_END
+    oyWIDGETTYPE_START,
+    oyWIDGETTYPE_GROUP_TREE,/**!< group creating a new visibility (tab, leave) */
+    oyWIDGETTYPE_BEHAVIOUR,
+    oyWIDGETTYPE_DEFAULT_PROFILE,
+    oyWIDGETTYPE_PROFILE,   /**!< select a profile through a list widget */
+    oyWIDGETTYPE_INT,       /**!< TODO @todo value range */
+    oyWIDGETTYPE_FLOAT,     /**!< IEEE floating point number */
+    oyWIDGETTYPE_CHOICE,    /**!< option from a array of choices */
+    oyWIDGETTYPE_LIST,      /**!< list widget, like for paths */
+    oyWIDGETTYPE_VOID,      /**!< data block, should not be selectable */
+    oyWIDGETTYPE_END
 } oyWIDGET_TYPE_e;
 
 /** @brief layout flags for widgets */
-#define oyLAYOUT_NO_CHOICES    0x01  /**!< show informational */
-#define oyLAYOUT_MIDDLE        0x02  /**!< Arrange in the middle. */
-#define oyLAYOUT_PATH_SELECTOR 0x04  /**!< add a path selector tp each entry */ 
+#define OY_LAYOUT_NO_CHOICES    0x01  /**!< show informational */
+#define OY_LAYOUT_MIDDLE        0x02  /**!< Arrange in the middle. */
+#define OY_LAYOUT_PATH_SELECTOR 0x04  /**!< add a path selector tp each entry */ 
 
 oyWIDGET_e  * oyWidgetListGet          (oyGROUP_e         group,
                                         int             * count,
@@ -304,15 +315,18 @@ int           oyOptionFloatIntRangeGet (oyWIDGET_e        option,
 # endif
 
 
-int    oyVersion( int type );
+int            oyVersion             ( int                 type );
+oyChar *     oyVersionConfigureString( int                 type );
 
 int    oyProfileGetMD5               ( void       *buffer,
                                        size_t      size,
-                                       char       *md5_return );
+                                       unsigned char *md5_return );
 
 void   oyI18NSet                     ( int active,
                                        int reserved );
-#define oyChar char
+const char *   oyLanguage            ( void );
+const char *   oyCountry             ( void );
+const char *   oyLang                ( void );
 
 #ifdef __cplusplus
 } /* extern "C" */

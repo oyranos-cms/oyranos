@@ -16,10 +16,20 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  lcms.oy_cmm_register.pot (PACKAGE VERSION)  #-#-#-#-#\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2006-07-26 09:09+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  oyranos.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2007-07-24 09:35+0200\n"
+"POT-Creation-Date: 2007-11-30 10:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +37,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyranos_texts.c:441 oyranos_texts.c:459
+#: oyranos_texts.c:442 oyranos_texts.c:460
 msgid "Absolute Colorimetric"
 msgstr ""
 
@@ -37,11 +47,11 @@ msgstr ""
 msgid "ArgyllCMS colour management module"
 msgstr ""
 
-#: oyranos_texts.c:457
+#: oyranos_texts.c:458
 msgid "Behaviour of colour space transformation for proofing"
 msgstr ""
 
-#: oyranos_texts.c:448
+#: oyranos_texts.c:449
 msgid "BPC affects only the Relative Colorimetric Rendering Intent."
 msgstr ""
 
@@ -51,7 +61,7 @@ msgstr ""
 msgid "Colour Transform Create"
 msgstr ""
 
-#: oyranos_texts.c:438
+#: oyranos_texts.c:439
 msgid "Default Rendering Intent"
 msgstr ""
 
@@ -67,7 +77,7 @@ msgstr ""
 msgid "Mark out of gamut colours for the proofing profile."
 msgstr ""
 
-#: oyranos_texts.c:450 oyranos_texts.c:468 oyranos_texts.c:477
+#: oyranos_texts.c:451 oyranos_texts.c:469 oyranos_texts.c:478
 msgid "No"
 msgstr ""
 
@@ -77,30 +87,39 @@ msgstr ""
 msgid "Photometric"
 msgstr ""
 
-#: oyranos_texts.c:456
+#: oyranos_texts.c:457
 msgid "Proofing Rendering Intent"
 msgstr ""
 
-#: oyranos_texts.c:441 oyranos_texts.c:459
+#: oyranos_texts.c:442 oyranos_texts.c:460
 msgid "Relative Colorimetric"
 msgstr ""
 
 msgid "Rendering Intent for Colour Space Transformations."
 msgstr ""
 
-#: oyranos_texts.c:441
+#: oyranos_texts.c:442 oyranos_alpha.c:256 oyranos_alpha.c:262
 msgid "Saturation"
 msgstr ""
 
 msgid "the Data Object"
 msgstr ""
 
-#: oyranos_texts.c:447
+#: oyranos_texts.c:448
 msgid "Use Black Point Compensation"
 msgstr ""
 
-#: oyranos_texts.c:450 oyranos_texts.c:468 oyranos_texts.c:477
+#: oyranos_texts.c:451 oyranos_texts.c:469 oyranos_texts.c:478
 msgid "Yes"
+msgstr ""
+
+msgid "littleCMS"
+msgstr ""
+
+msgid "littleCMS colour management module"
+msgstr ""
+
+msgid "littleCMS Function for Colour Space Transformations"
 msgstr ""
 
 #: oyranos.c:100
@@ -127,7 +146,7 @@ msgstr ""
 msgid "wrong profile for static web colour space selected, need sRGB"
 msgstr ""
 
-#: oyranos.c:631
+#: oyranos.c:632
 #, c-format
 msgid "file %s exist , please remove befor installing new profile\n"
 msgstr ""
@@ -142,327 +161,327 @@ msgstr ""
 msgid "file name is too long %d\n"
 msgstr ""
 
-#: oyranos_io.c:614 oyranos_texts.c:673 oyranos_config_fltk.cxx:18
+#: oyranos_io.c:659 oyranos_texts.c:1054 oyranos_config_fltk.cxx:18
 msgid "[none]"
 msgstr ""
 
-#: oyranos_io.c:723
+#: oyranos_io.c:811
 #, c-format
 msgid "%d. path %s is not a directory"
 msgstr ""
 
-#: oyranos_io.c:727
+#: oyranos_io.c:815
 #, c-format
 msgid "%d. path %s is a link: ignored"
 msgstr ""
 
-#: oyranos_io.c:732
+#: oyranos_io.c:820
 #, c-format
 msgid "%d. path %s is not readable"
 msgstr ""
 
-#: oyranos_texts.c:156
+#: oyranos_texts.c:157
 msgid "Start"
 msgstr ""
 
-#: oyranos_texts.c:157
+#: oyranos_texts.c:158
 msgid "Oyranos Settings Group"
 msgstr ""
 
-#: oyranos_texts.c:164
+#: oyranos_texts.c:165
 msgid "Default Profiles"
 msgstr ""
 
-#: oyranos_texts.c:165
+#: oyranos_texts.c:166
 msgid "Source and Target Profiles for various situations"
 msgstr ""
 
-#: oyranos_texts.c:172
+#: oyranos_texts.c:173
 msgid "Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:173
+#: oyranos_texts.c:174
 msgid "Well behaving Colour Space for Editing"
 msgstr ""
 
-#: oyranos_texts.c:180
+#: oyranos_texts.c:181
 msgid "Assumed Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:181
+#: oyranos_texts.c:182
 msgid "Assumed Colour Space for untagged colours"
 msgstr ""
 
-#: oyranos_texts.c:188
+#: oyranos_texts.c:189
 msgid "Proofing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:189
+#: oyranos_texts.c:190
 msgid "Colour Space for Simulating real devices"
 msgstr ""
 
-#: oyranos_texts.c:196 oyranos_texts.c:273
+#: oyranos_texts.c:197 oyranos_texts.c:274
 msgid "Paths"
 msgstr ""
 
-#: oyranos_texts.c:197 oyranos_texts.c:274
+#: oyranos_texts.c:198 oyranos_texts.c:275
 msgid "Paths where ICC Profiles can be found"
 msgstr ""
 
-#: oyranos_texts.c:204 oyranos_texts.c:262 oyranos_config_fltk.cxx:1562
+#: oyranos_texts.c:205 oyranos_texts.c:263 oyranos_config_fltk.cxx:1562
 msgid "Policy"
 msgstr ""
 
-#: oyranos_texts.c:205 oyranos_texts.c:263
+#: oyranos_texts.c:206 oyranos_texts.c:264
 msgid "Collections of settings in Oyranos"
 msgstr ""
 
-#: oyranos_texts.c:212
+#: oyranos_texts.c:213
 msgid "Behaviour"
 msgstr ""
 
-#: oyranos_texts.c:213
+#: oyranos_texts.c:214
 msgid "Settings affecting the Behaviour in various situations"
 msgstr ""
 
-#: oyranos_texts.c:220
+#: oyranos_texts.c:221
 msgid "Rendering"
 msgstr ""
 
-#: oyranos_texts.c:221
+#: oyranos_texts.c:222
 msgid ""
 "The kind of ICC standard gamut mapping for transforming colours between "
 "differently sized colour spaces"
 msgstr ""
 
-#: oyranos_texts.c:228
+#: oyranos_texts.c:229
 msgid "Save Mixed colour space Documents"
 msgstr ""
 
-#: oyranos_texts.c:229
+#: oyranos_texts.c:230
 msgid "Default Handling of Mixed Colour Spaces inside one single Document"
 msgstr ""
 
-#: oyranos_texts.c:236
+#: oyranos_texts.c:237
 msgid "Mismatching"
 msgstr ""
 
-#: oyranos_texts.c:237
+#: oyranos_texts.c:238
 msgid ""
 "Decide what to do when the default colour spaces dont match the current ones."
 msgstr ""
 
-#: oyranos_texts.c:244 oyranos_texts.c:383
+#: oyranos_texts.c:245 oyranos_texts.c:384
 msgid "Proofing"
 msgstr ""
 
-#: oyranos_texts.c:245
+#: oyranos_texts.c:246
 msgid "Default Proofing Settings"
 msgstr ""
 
-#: oyranos_texts.c:252
+#: oyranos_texts.c:253
 msgid "All"
 msgstr ""
 
-#: oyranos_texts.c:253
+#: oyranos_texts.c:254
 msgid "Oyranos Settings"
 msgstr ""
 
-#: oyranos_texts.c:283
+#: oyranos_texts.c:284
 msgid "Editing Rgb"
 msgstr ""
 
-#: oyranos_texts.c:284
+#: oyranos_texts.c:285
 msgid "Prefered Rgb Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:292
+#: oyranos_texts.c:293
 msgid "Editing Cmyk"
 msgstr ""
 
-#: oyranos_texts.c:293
+#: oyranos_texts.c:294
 msgid "Prefered Cmyk Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:301
+#: oyranos_texts.c:302
 msgid "Editing XYZ"
 msgstr ""
 
-#: oyranos_texts.c:302
+#: oyranos_texts.c:303
 msgid "Prefered XYZ Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:310
+#: oyranos_texts.c:311
 msgid "Editing Lab"
 msgstr ""
 
-#: oyranos_texts.c:311
+#: oyranos_texts.c:312
 msgid "Prefered CIE*Lab Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:319
+#: oyranos_texts.c:320
 msgid "Editing Gray"
 msgstr ""
 
-#: oyranos_texts.c:320
+#: oyranos_texts.c:321
 msgid "Prefered Gray Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:328
+#: oyranos_texts.c:329
 msgid "Assumed XYZ source"
 msgstr ""
 
-#: oyranos_texts.c:329
+#: oyranos_texts.c:330
 msgid "Assigning an untagged XYZ Image an colour space"
 msgstr ""
 
-#: oyranos_texts.c:337
+#: oyranos_texts.c:338
 msgid "Assumed Lab source"
 msgstr ""
 
-#: oyranos_texts.c:338
+#: oyranos_texts.c:339
 msgid "Assigning an untagged CIE*Lab Image an colour space"
 msgstr ""
 
-#: oyranos_texts.c:346
+#: oyranos_texts.c:347
 msgid "Assumed Rgb source"
 msgstr ""
 
-#: oyranos_texts.c:347
+#: oyranos_texts.c:348
 msgid "Assigning an untagged Rgb Image an colour space"
 msgstr ""
 
-#: oyranos_texts.c:355
+#: oyranos_texts.c:356
 msgid "Assumed Web source"
 msgstr ""
 
-#: oyranos_texts.c:356
+#: oyranos_texts.c:357
 msgid ""
 "Assigning an untagged Rgb Image with source from the WWW an colour space"
 msgstr ""
 
-#: oyranos_texts.c:365
+#: oyranos_texts.c:366
 msgid "Assumed Cmyk source"
 msgstr ""
 
-#: oyranos_texts.c:366
+#: oyranos_texts.c:367
 msgid "Assigning an untagged Cmyk Image this colour space"
 msgstr ""
 
-#: oyranos_texts.c:374
+#: oyranos_texts.c:375
 msgid "Assumed Gray source"
 msgstr ""
 
-#: oyranos_texts.c:375
+#: oyranos_texts.c:376
 msgid "Assigning an untagged Gray Image this colour space"
 msgstr ""
 
-#: oyranos_texts.c:384
+#: oyranos_texts.c:385
 msgid "Colour space for Simulating an Output Device"
 msgstr ""
 
-#: oyranos_texts.c:393
+#: oyranos_texts.c:394
 msgid "No Image profile"
 msgstr ""
 
-#: oyranos_texts.c:394
+#: oyranos_texts.c:395
 msgid ""
 "Image has no colour space embedded. What default action shall be performed?"
 msgstr ""
 
-#: oyranos_texts.c:396
+#: oyranos_texts.c:397
 msgid "Assign No Profile"
 msgstr ""
 
-#: oyranos_texts.c:396
+#: oyranos_texts.c:397
 msgid "Assign Assumed Profile"
 msgstr ""
 
-#: oyranos_texts.c:396 oyranos_texts.c:405 oyranos_texts.c:414
-#: oyranos_texts.c:423 oyranos_texts.c:432
+#: oyranos_texts.c:397 oyranos_texts.c:406 oyranos_texts.c:415
+#: oyranos_texts.c:424 oyranos_texts.c:433
 msgid "Promt"
 msgstr ""
 
-#: oyranos_texts.c:402
+#: oyranos_texts.c:403
 msgid "On Rgb Mismatch"
 msgstr ""
 
-#: oyranos_texts.c:403 oyranos_texts.c:412
+#: oyranos_texts.c:404 oyranos_texts.c:413
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr ""
 
-#: oyranos_texts.c:405 oyranos_texts.c:414 oyranos_texts.c:423
-#: oyranos_texts.c:432
+#: oyranos_texts.c:406 oyranos_texts.c:415 oyranos_texts.c:424
+#: oyranos_texts.c:433
 msgid "Preserve Numbers"
 msgstr ""
 
-#: oyranos_texts.c:405 oyranos_texts.c:414
+#: oyranos_texts.c:406 oyranos_texts.c:415
 msgid "Convert automatically"
 msgstr ""
 
-#: oyranos_texts.c:411
+#: oyranos_texts.c:412
 msgid "On Cmyk Mismatch"
 msgstr ""
 
-#: oyranos_texts.c:420
+#: oyranos_texts.c:421
 msgid "For Print"
 msgstr ""
 
-#: oyranos_texts.c:421
+#: oyranos_texts.c:422
 msgid "Handle Mixed colour spaces in Preparing a document for Print output."
 msgstr ""
 
-#: oyranos_texts.c:423
+#: oyranos_texts.c:424
 msgid "Convert to Default Cmyk Editing Space"
 msgstr ""
 
-#: oyranos_texts.c:423
+#: oyranos_texts.c:424
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr ""
 
-#: oyranos_texts.c:429
+#: oyranos_texts.c:430
 msgid "For Screen"
 msgstr ""
 
-#: oyranos_texts.c:430
+#: oyranos_texts.c:431
 msgid "Handle Mixed colour spaces in Preparing a document for Screen output."
 msgstr ""
 
-#: oyranos_texts.c:432
+#: oyranos_texts.c:433
 msgid "Convert to Default Rgb Editing Space"
 msgstr ""
 
-#: oyranos_texts.c:432
+#: oyranos_texts.c:433
 msgid "Convert to WWW (sRGB)"
 msgstr ""
 
-#: oyranos_texts.c:439
+#: oyranos_texts.c:440
 msgid "Rendering Intent for colour space Transformations."
 msgstr ""
 
-#: oyranos_texts.c:441
+#: oyranos_texts.c:442
 msgid "Perceptual"
 msgstr ""
 
-#: oyranos_texts.c:465
+#: oyranos_texts.c:466
 msgid "SoftProof by Default"
 msgstr ""
 
-#: oyranos_texts.c:466
+#: oyranos_texts.c:467
 msgid "Behaviour for Softproofing view at application startup"
 msgstr ""
 
-#: oyranos_texts.c:474
+#: oyranos_texts.c:475
 msgid "Hardproof by Default"
 msgstr ""
 
-#: oyranos_texts.c:475
+#: oyranos_texts.c:476
 msgid ""
 "Behaviour for preselecting Hardproofing with Standard Proofing Profile at "
 "print time"
 msgstr ""
 
-#: oyranos_texts.c:912
+#: oyranos_texts.c:1293
 #, c-format
 msgid ""
 "multiple occurencies of default %s profile: %d times\n"
@@ -470,8 +489,7 @@ msgid ""
 msgstr ""
 
 #: oyranos_monitor.c:341
-#, c-format
-msgid "unexpected EDID lenght %d"
+msgid "unexpected EDID lenght"
 msgstr ""
 
 #: oyranos_monitor.c:342
@@ -484,7 +502,7 @@ msgstr ""
 
 #: oyranos_monitor.c:447
 #, c-format
-msgid "Could not get Xatom \"%s\""
+msgid "Could not get Xatom \"%s\", probably your monitor profile is not set."
 msgstr ""
 
 #: oyranos_monitor.c:955
@@ -564,6 +582,262 @@ msgstr ""
 
 #: oyranos_policy.c:87
 msgid "policy filename"
+msgstr ""
+
+#: oyranos_alpha.c:151
+msgid "XYZ"
+msgstr ""
+
+#: oyranos_alpha.c:152
+msgid "Lab"
+msgstr ""
+
+#: oyranos_alpha.c:153
+msgid "Luv"
+msgstr ""
+
+#: oyranos_alpha.c:154
+msgid "YCbCr"
+msgstr ""
+
+#: oyranos_alpha.c:155
+msgid "Yxy"
+msgstr ""
+
+#: oyranos_alpha.c:156
+msgid "Rgb"
+msgstr ""
+
+#: oyranos_alpha.c:157
+msgid "Gray"
+msgstr ""
+
+#: oyranos_alpha.c:158
+msgid "Hsv"
+msgstr ""
+
+#: oyranos_alpha.c:159
+msgid "Hls"
+msgstr ""
+
+#: oyranos_alpha.c:160
+msgid "Cmyk"
+msgstr ""
+
+#: oyranos_alpha.c:161
+msgid "Cmy"
+msgstr ""
+
+#: oyranos_alpha.c:162
+msgid "2color"
+msgstr ""
+
+#: oyranos_alpha.c:163
+msgid "3color"
+msgstr ""
+
+#: oyranos_alpha.c:164
+msgid "4color"
+msgstr ""
+
+#: oyranos_alpha.c:166
+msgid "5color"
+msgstr ""
+
+#: oyranos_alpha.c:168
+msgid "6color"
+msgstr ""
+
+#: oyranos_alpha.c:170
+msgid "7color"
+msgstr ""
+
+#: oyranos_alpha.c:172
+msgid "8color"
+msgstr ""
+
+#: oyranos_alpha.c:174
+msgid "9color"
+msgstr ""
+
+#: oyranos_alpha.c:176
+msgid "10color"
+msgstr ""
+
+#: oyranos_alpha.c:178
+msgid "11color"
+msgstr ""
+
+#: oyranos_alpha.c:180
+msgid "12color"
+msgstr ""
+
+#: oyranos_alpha.c:182
+msgid "13color"
+msgstr ""
+
+#: oyranos_alpha.c:184
+msgid "14color"
+msgstr ""
+
+#: oyranos_alpha.c:186
+msgid "15color"
+msgstr ""
+
+#: oyranos_alpha.c:222
+msgid "CIE X"
+msgstr ""
+
+#: oyranos_alpha.c:223 oyranos_alpha.c:242
+msgid "CIE Y (Luminance)"
+msgstr ""
+
+#: oyranos_alpha.c:224
+msgid "CIE Z"
+msgstr ""
+
+#: oyranos_alpha.c:227 oyranos_alpha.c:232
+msgid "CIE *L"
+msgstr ""
+
+#: oyranos_alpha.c:228
+msgid "CIE *a"
+msgstr ""
+
+#: oyranos_alpha.c:229
+msgid "CIE *b"
+msgstr ""
+
+#: oyranos_alpha.c:233
+msgid "CIE *u"
+msgstr ""
+
+#: oyranos_alpha.c:234
+msgid "CIE *v"
+msgstr ""
+
+#: oyranos_alpha.c:237
+msgid "Luminance Y"
+msgstr ""
+
+#: oyranos_alpha.c:238
+msgid "Colour b"
+msgstr ""
+
+#: oyranos_alpha.c:239
+msgid "Colour r"
+msgstr ""
+
+#: oyranos_alpha.c:243
+msgid "CIE x"
+msgstr ""
+
+#: oyranos_alpha.c:244
+msgid "CIE y"
+msgstr ""
+
+#: oyranos_alpha.c:247
+msgid "Red"
+msgstr ""
+
+#: oyranos_alpha.c:248
+msgid "Green"
+msgstr ""
+
+#: oyranos_alpha.c:249
+msgid "Blue"
+msgstr ""
+
+#: oyranos_alpha.c:252 oyranos_alpha.c:268
+msgid "Black"
+msgstr ""
+
+#: oyranos_alpha.c:255 oyranos_alpha.c:260
+msgid "Hue"
+msgstr ""
+
+#: oyranos_alpha.c:257
+msgid "Value"
+msgstr ""
+
+#: oyranos_alpha.c:261
+msgid "Lightness"
+msgstr ""
+
+#: oyranos_alpha.c:265 oyranos_alpha.c:271
+msgid "Cyan"
+msgstr ""
+
+#: oyranos_alpha.c:266 oyranos_alpha.c:272
+msgid "Magenta"
+msgstr ""
+
+#: oyranos_alpha.c:267 oyranos_alpha.c:273
+msgid "Yellow"
+msgstr ""
+
+#: oyranos_alpha.c:301
+msgid "1. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:302
+msgid "2. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:303
+msgid "3. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:304
+msgid "4. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:305
+msgid "5. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:306
+msgid "6. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:307
+msgid "7. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:308
+msgid "8. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:309
+msgid "9. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:310
+msgid "10. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:311
+msgid "11. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:312
+msgid "12. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:313
+msgid "13. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:314
+msgid "14. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:315
+msgid "15. Channel"
+msgstr ""
+
+#: oyranos_alpha.c:316
+msgid "16. Channel"
 msgstr ""
 
 #: oyranos_config_fltk.cxx:23 oyranos_config_fltk.cxx:109
@@ -667,4 +941,35 @@ msgstr ""
 
 #: oyranos_config_fltk.cxx:1590
 msgid "Active Policy:"
+msgstr ""
+
+#: oyranos_debug.h:98
+msgid "Warning"
+msgstr ""
+
+#: oyranos_debug.h:100 oyranos_debug.h:102
+msgid "Warning : "
+msgstr ""
+
+#: oyranos_helper.h:74
+#, c-format
+msgid "%s:%d %s() nothing to delete %s\n"
+msgstr ""
+
+#: oyranos_helper.h:84
+#, c-format
+msgid "%s:%d %s() nothing to allocate - size: %d\n"
+msgstr ""
+
+#: oyranos_helper.h:93
+msgid "Can not allocate"
+msgstr ""
+
+#: oyranos_helper.h:94
+msgid "bytes of  memory for"
+msgstr ""
+
+#: oyranos_helper.h:103
+#, c-format
+msgid "%s:%d %s() nothing allocated %s\n"
 msgstr ""

@@ -49,6 +49,7 @@ namespace oyranos
 /** @internal
     @brief used by sort engine */
 struct oyComp_s_ {
+  oyOBJECT_TYPE_e      type_;         /*!< internal struct type oyOBJECT_TYPE_COMP_S_ */
   struct oyComp_s_ *next;   /* chain connection */
   struct oyComp_s_ *begin;  /* chain connection */
   char            *name;   /* key name */
@@ -86,8 +87,8 @@ char* oyPathName_               (int           number,
                                  oyAllocFunc_t allocate_func);
 int   oyPathAdd_                (const char* pathname);
 void  oyPathRemove_             (const char* pathname);
-void  oyPathSleep_              (const char* pathname);
-void  oyPathActivate_           (const char* pathname);
+/*void  oyPathSleep_              (const char* pathname);
+void  oyPathActivate_           (const char* pathname);*/
 char* oyGetPathFromProfileName_ (const char*   profilename,
                                  oyAllocFunc_t allocate_func);
 

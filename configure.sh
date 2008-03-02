@@ -465,7 +465,7 @@ if [ -z "$fltkconfig" ]; then
   echo_="add fltk-config"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
 fi
 if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
-  FLTK_="`$fltkconfig --cxxflags 2>>$CONF_LOG | sed \"$STRIPOPT\"`"
+  FLTK_="`$fltkconfig --api-version 2>>$CONF_LOG | sed \"$STRIPOPT\"`"
   if [ $? = 0 ] && [ -n "$FLTK_" ]; then
     # check for utf-8 capability
     if [ $fltkconfig != `echo $fltkconfig | sed "s%fltk2-config%% ; s%utf8%%"` ]; then
@@ -482,7 +482,7 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
       $fltkconfig --compile tests/fltk_test.cxx 1>> $CONF_LOG 2>> $CONF_LOG
       ERROR=1
     else
-      rm fltk_test$EXEC_END
+      test -f fltk_test$EXEC_END && rm fltk_test$EXEC_END || rm fltk-test$EXEC_END
     fi
     if [ -z "$fltkldflags" ]; then
       fltkldflags="--ldflags"
@@ -631,7 +631,8 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
         fi
         test -f "$i/makefile".in && echo "DEBUG = $DEBUG_"  >> "$i/makefile"
         test -f "$i/makefile".in && echo "DEBUG_SWITCH = -v"  >> "$i/makefile"
-      else
+      fi
+      if [ "$verbose" -eq "0" ]; then
         test -f "$i/makefile".in && echo ".SILENT:"  >> "$i/makefile"
       fi
     done

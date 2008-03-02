@@ -290,12 +290,20 @@ oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
   for( i = 0; i < n; ++i )
   {
     oyOption_t_ * opt = opts[i];
-    oyWIDGET_e oywid = opt->id;
     oyWIDGET_TYPE_e opt_type = opt->type;
 
     switch(opt_type)
     {
-      case oyTYPE_GROUP_TREE:
+      case oyWIDGETTYPE_START:
+      case oyWIDGETTYPE_PROFILE:
+      case oyWIDGETTYPE_INT:
+      case oyWIDGETTYPE_FLOAT:
+      case oyWIDGETTYPE_CHOICE:
+      case oyWIDGETTYPE_LIST:
+      case oyWIDGETTYPE_VOID:
+      case oyWIDGETTYPE_END:
+           break;
+      case oyWIDGETTYPE_GROUP_TREE:
            group_opt = opt;
 
            /* allocate new mem if needed */
@@ -312,9 +320,9 @@ oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
                        opt->description );
 
            break;
-      case oyTYPE_DEFAULT_PROFILE:
+      case oyWIDGETTYPE_DEFAULT_PROFILE:
            break;
-      case oyTYPE_BEHAVIOUR:
+      case oyWIDGETTYPE_BEHAVIOUR:
            break;
     }
   }
@@ -342,7 +350,6 @@ oyWriteOptionToXML_(oyGROUP_e           group,
   const oyOption_t_ * opt = 0;
   int n = 0;
   oyWIDGET_e *tmp = NULL;
-  oyOptionWriteFunc_t * func = oyWriteOptionsToXML_;
   DBG_PROG_START
 
          /* allocate new mem if needed */
@@ -373,8 +380,8 @@ oyWriteOptionToXML_(oyGROUP_e           group,
            for( j = 0; j < group_level; ++j )
              sprintf( &intent[strlen(intent)], "  " );
  
-           if( (opt_type == oyTYPE_BEHAVIOUR) ||
-               (opt_type == oyTYPE_DEFAULT_PROFILE))
+           if( (opt_type == oyWIDGETTYPE_BEHAVIOUR) ||
+               (opt_type == oyWIDGETTYPE_DEFAULT_PROFILE))
            {
              key = t->config_string_xml;
              /* allocate new mem if needed */
@@ -385,7 +392,7 @@ oyWriteOptionToXML_(oyGROUP_e           group,
              sprintf( &mem[strlen(mem)], "%s     %s\n", intent,
                        t->description);
              /* write the profile name */
-             if(opt_type == oyTYPE_DEFAULT_PROFILE)
+             if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
              {
                value = oyGetDefaultProfileName_( wt, oyAllocateFunc_ );
                if( value && strlen( value ) )
@@ -406,7 +413,7 @@ oyWriteOptionToXML_(oyGROUP_e           group,
                  sprintf( &mem[strlen(mem)-1], " -->\n" );
                if(value) oyFree_m_(value);
              }
-             else if( opt_type == oyTYPE_BEHAVIOUR ) 
+             else if( opt_type == oyWIDGETTYPE_BEHAVIOUR ) 
              {
                int val = oyGetBehaviour_( wt );
                /* write a per choice description */
@@ -558,7 +565,7 @@ oyReadXMLPolicy_(oyGROUP_e           group,
     oyWIDGET_e oywid = list[i];
     oyWIDGET_TYPE_e opt_type = oyWidgetTypeGet_( oywid );
 
-    if(opt_type == oyTYPE_DEFAULT_PROFILE)
+    if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
     {
       const oyOption_t_ *t = oyOptionGet_( oywid );
       key = t->config_string_xml;
@@ -577,7 +584,7 @@ oyReadXMLPolicy_(oyGROUP_e           group,
         }
         oyFree_m_(value);
       }
-    } else if(opt_type == oyTYPE_BEHAVIOUR)
+    } else if(opt_type == oyWIDGETTYPE_BEHAVIOUR)
     {
       const oyOption_t_ *t = oyOptionGet_( oywid );
       int val = -1;

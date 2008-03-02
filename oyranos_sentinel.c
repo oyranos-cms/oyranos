@@ -34,7 +34,9 @@
 
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_cmms.h"
 #include "oyranos_debug.h"
+#include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_internal.h"
@@ -46,6 +48,8 @@ int oyExportStart_(int export_check)
   static int export_setting = 1;
   static int export_path = 1;
   static int export_monitor = 1;
+  static int export_cmm = 1;
+  /*static int export_cmms = 1;*/
   int start = 0;
 
 # define EXPORT_( flag, var, func ) \
@@ -57,12 +61,13 @@ int oyExportStart_(int export_check)
   }
 
   EXPORT_( EXPORT_SETTING, export_setting, oyOpen_() )
-  EXPORT_( EXPORT_PATH, export_path, oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT) )
+  /*EXPORT_( EXPORT_PATH, export_path, oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT) )*/
   /* Currently the monitor API is a link time module and outside the basic API.
      So we cant rely on it on runtime here. 
      This will change when Monitor support will be a runtime link in module.
    */
   EXPORT_( EXPORT_MONITOR, export_monitor, start = 1 )
+  EXPORT_( EXPORT_CMMS, export_cmm, oyModulesScan_(0) )
 
   oyInit_();
   return start;

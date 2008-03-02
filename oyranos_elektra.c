@@ -394,7 +394,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
     if ( type < 0 )
       WARNc_S( (_("default profile type %d; type does not exist"), type ) );
 
-    if(oyWidgetTitleGet_( type, 0,0,0,0 ) == oyTYPE_DEFAULT_PROFILE)
+    if(oyWidgetTitleGet_( type, 0,0,0,0 ) == oyWIDGETTYPE_DEFAULT_PROFILE)
     {
       config_name = oyOptionGet_(type)-> config_string;
 #ifdef __APPLE__
@@ -664,13 +664,16 @@ oyPathAdd_ (const char* pfad)
 
   /* write key */
   rc = oyAddKey_valueComment_ (keyName, pfad, "");
+  if(keyName)
+    oyDeAllocateFunc_(keyName);
+  keyName = 0;
 
   /* take all keys in the paths directory */
   myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
   checkKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
 
   n = ksGetSize(myKeySet);
-  remove_keys = (int*) calloc(sizeof(int), n);
+  oyAllocHelper_m_(remove_keys, int , n, 0, );
 
   if(!myKeySet)
     goto finish;
@@ -678,9 +681,9 @@ oyPathAdd_ (const char* pfad)
   if(pfad)
     DBG_PROG_S(( pfad ));
 
-  keyName = (char*) calloc (sizeof(char), MAX_PATH);
-  value = (char*) calloc (sizeof(char), MAX_PATH);
-  check = (char*) calloc (sizeof(char), MAX_PATH);
+  oyAllocHelper_m_(keyName, char , MAX_PATH, 0, );
+  oyAllocHelper_m_(value, char , MAX_PATH, 0, );
+  oyAllocHelper_m_(check, char , MAX_PATH, 0, );
 
   /* search for allready included path */
   DBG_PROG_S(( "path items: %d", (int)ksGetSize(myKeySet) ))
@@ -1238,6 +1241,8 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
     WARNc_S (("No profiles yet registred to devices"))
 
   oyFree_m_ (attributs)
+  oyFree_m_ (name)
+  oyFree_m_ (value)
 
   DBG_PROG_ENDE
   return matchList;

@@ -418,10 +418,11 @@ oyGetProfileNameOSX (CMProfileRef prof, oyAllocFunc_t allocate_func)
 }
 #endif
 
-int*
+/*int*
 oyGroupSetGet            (oyGROUP_e group, int * count )
 {
-}
+  return 0;
+}*/
 
 char*
 oyGetDefaultProfileName_   (oyPROFILE_e       type,
@@ -655,6 +656,7 @@ oyInitComp_ (oyComp_t_ *list, oyComp_t_ *top)
 
   list->next = 0;
 
+  list->type_ = oyOBJECT_TYPE_COMP_S_;
   if (top)
     list->begin = top;
   else
@@ -718,6 +720,11 @@ oyDestroyCompList_ (oyComp_t_ *list)
     list = list->next;
     oyFree_m_(before)
   }
+
+  if(list->name)
+    oyDeAllocateFunc_(list->name);
+  if(list->val)
+    oyDeAllocateFunc_(list->val);
   oyFree_m_(list);
 
   DBG_PROG_ENDE
@@ -875,7 +882,7 @@ oyWIDGET_TYPE_e oyWidgetTitleGet         (oyWIDGET_e          option,
                                         const char     ** tooltip,
                                         int             * flags )
 {
-  oyWIDGET_TYPE_e type = oyTYPE_START;
+  oyWIDGET_TYPE_e type = oyWIDGETTYPE_START;
 
   DBG_PROG_START
   oyExportStart_(EXPORT_CHECK_NO);
@@ -1593,30 +1600,6 @@ oyEraseDeviceProfile              (oyDEVICETYP_e typ,
  *  @{
  */
 
-/** @brief  read in the declarations of available options and functions 
- *
- *  @param  group        the policy group
- *  @param  xml          xml configuration string
- *  @param  domain       i18n gettext domain
- *  @param  domain_path  i18n gettext domain path 
- *  @return              errors
- */
-int
-oyModulRegisterXML       (oyGROUP_e           group,
-                          const char       *xml)
-{
-  int n = 0;
-
-  DBG_PROG_START
-  oyExportStart_(EXPORT_CHECK_NO);
-
-  n = oyModulRegisterXML_(group, xml);
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-  return n;
-}
-
 /** @brief  get the user allocated CMM 4 char ID's
  *
  *  @param  count          the number of CMM's available
@@ -1642,7 +1625,7 @@ oyModulsGetNames       ( int        *count,
   char** ids = 0;
 
   DBG_PROG_START
-  oyExportStart_(EXPORT_CHECK_NO);
+  oyExportStart_(EXPORT_CMMS);
 
   ids = oyModulsGetNames_(count, allocate_func);
 
@@ -1676,6 +1659,66 @@ oyI18NSet              ( int active,
   DBG_PROG_ENDE
 }
 
+/** @brief  get language code
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+const char *   oyLanguage            ( void )
+{
+  const char * text = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  text = oyLanguage_();
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+
+  return text;
+}
+
+/** @brief  get country code
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+const char *   oyCountry             ( void )
+{
+  const char * text = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  text = oyCountry_();
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+
+  return text;
+}
+
+/** @brief  get LANG code/variable
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+const char *   oyLang                ( void )
+{
+  const char * text = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  text = oyLang_();
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+
+  return text;
+}
+
 
 /** @brief  give the compiled in library version
  *
@@ -1683,10 +1726,24 @@ oyI18NSet              ( int active,
  *
  *  @return                    OYRANOS_VERSION at library compile time
  */
-int
-oyVersion( int type )
+int            oyVersion             ( int                 type )
 {
   return OYRANOS_VERSION;
+}
+
+#include "config.log.h"
+/** @brief  give the configure options for Oyranos
+ *
+ *  @param[in] type            not used
+ *
+ *  @return                    OYRANOS_VERSION at library compile time
+ *
+ *  @since     Oyranos: version 0.1.8
+ *  @date      18 december 2007 (API 0.1.8)
+ */
+oyChar *     oyVersionConfigureString( int                 type )
+{
+  return oy_config_log_;
 }
 
 
@@ -1703,7 +1760,7 @@ oyVersion( int type )
 int
 oyProfileGetMD5        ( void       *buffer,
                          size_t      size,
-                         char       *md5_return )
+                         unsigned char *md5_return )
 {
   int error = 0;
   DBG_PROG_START

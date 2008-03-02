@@ -1,7 +1,7 @@
 /**
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -33,6 +33,8 @@
 #define OYRANOS_CMMS_H
 
 #include "oyranos_internal.h"
+#include "oyranos_alpha.h"
+#include "oyranos_cmm.h"
 #include "oyranos.h"
 
 #ifdef __cplusplus
@@ -46,10 +48,14 @@ namespace oyranos
 int          oyModulRemove_          (const char *id);
 char**       oyModulsGetNames_       (int           *count,
                                       oyAllocFunc_t alloc_func );
-oyGROUP_e      oyRegisterGroups_       (char *cmm, char *id,
+oyGROUP_e    oyRegisterGroups_       (char *cmm, char *id,
                                       char *name, char *tooltip);
 int          oyModulRegisterXML_     (oyGROUP_e           group,
                                       const char       *xml);
+int          oyModulesScan_          ( int                 flags );
+
+
+int              oyCMMapi1_Check_    ( oyCMMapi1_s       * api1 );
 
 
 /** \internal
@@ -59,42 +65,21 @@ oyOption_t_* oyModulsUIOptionSearch_ (oyWIDGET_e    id);
 const char*  oyModulGetName_         (const char *cmm);
 const char*  oyModulGetDescription_  (const char *cmm);
 const char*  oyModulGetXml_          (const char *cmm);
-const char*  oyModulGetDomain_       (const char *cmm);
-const char*  oyModulGetDomainPath_   (const char *cmm);
+const char*  oyModulGetFunc_         ( const char        * cmm,
+                                       const char        * id,
+                                       const char       ** lib_name );
+void         oyModulReference_       ( const char        * cmm );
+void         oyModulRelease_         ( const char        * cmm );
+/*const char*  oyModulGetDomain_       (const char *cmm);
+const char*  oyModulGetDomainPath_   (const char *cmm);*/
 void         oyModulGetGroups_       (const char *cmm, int *start, int *count);
-const char*  oyModulGetGroupUITitle_ (oyGROUP_e   group, const char **tooltip,
-                                      const char**xml);
+/*const char*  oyModulGetGroupUITitle_ (oyGROUP_e   group, const char **tooltip,
+                                      const char**xml);*/
 
 char*        oyModulPrint_           (const char *cmm);
 void         oyModulRefreshI18N_     (const char *cmm);
 void         oyModulsRefreshI18N_    (void);
 
-
-/*
- *  Sollen die oyCMSTransform_t struct opak werden?
- *  -> Typpruefung moeglich?
- *
- *  Objektartig mit begleitender Referenz auf CMM Status?
- *
- *  Wie koennen Geraete- und Bildinformationen gleich mit einfliesen?
- *
- *  Sonderfall Bildschirm - Geometrie der Daten beachten
- */
-#ifdef noch_NICHT
-oyCMSTransform_t oyCMSGetTransform();
-int oyCMSTransform( void *out, void *in, oyCMSTransform_t t );
-int oyCMSSetCMM( int oyWIDGET );
-
-/*/ Wieviel Geraete vertraegt Oyranos?  X ist eigentlich schon ein Sonderfall
-// Vielleicht ist eine abstrakte Geraetebeschreibung sinnvoll -> ICCDeviceTag*/
-oyDevice_t
-
-
-/*/ oder erhaelt oyImage_t die oyDevice_t Infos mit? */
-int oyCMSTransformScreenImage( oyDevice_t disp,
-                               oyCMSTransform_t t,
-                               oyImage_t data );
-#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -152,7 +152,7 @@ oyOptionStringsTranslate_ ()
 
     /* The following defaults corespond to the office.policy.xml */
 
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_START, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_START, 0, 
       0, 0, 0,
       _("Start"),
       _("Oyranos Settings Group"),
@@ -160,7 +160,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_START", 0,NULL)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES, 0, 
       0, 0, 0,
       _("Default Profiles"),
       _("Source and Target Profiles for various situations"),
@@ -168,7 +168,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES", 0, NULL)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_EDIT, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_EDIT, 0, 
       0, 0, 0,
       _("Editing Colour Space"),
       _("Well behaving Colour Space for Editing"),
@@ -176,7 +176,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_EDIT", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0, 
       0, 0, 0,
       _("Assumed Colour Space"),
       _("Assumed Colour Space for untagged colours"),
@@ -184,7 +184,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_ASSUMED", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_PROOF, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_PROOF, 0, 
       0, 0, 0,
       _("Proofing Colour Space"),
       _("Colour Space for Simulating real devices"),
@@ -192,7 +192,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_PROOF", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_PATHS, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_PATHS, 0, 
       0, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
@@ -200,7 +200,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_PATHS", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_POLICY, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_POLICY, 0, 
       0, 0, 0,
       _("Policy"),
       _("Collections of settings in Oyranos"),
@@ -208,7 +208,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_POLICY", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR, 0, 
       0, 0, 0,
       _("Behaviour"),
       _("Settings affecting the Behaviour in various situations"),
@@ -216,7 +216,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_RENDERING, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_RENDERING, 0, 
       0, 0, 0,
       _("Rendering"),
       _("The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"),
@@ -224,7 +224,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_RENDERING", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0, 
       0, 0, 0,
       _("Save Mixed colour space Documents"),
       _("Default Handling of Mixed Colour Spaces inside one single Document"),
@@ -232,7 +232,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_MISSMATCH, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_MISSMATCH, 0, 
       0, 0, 0,
       _("Mismatching"),
       _("Decide what to do when the default colour spaces dont match the current ones."),
@@ -240,7 +240,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_MISSMATCH", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_PROOF, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_PROOF, 0, 
       0, 0, 0,
       _("Proofing"),
       _("Default Proofing Settings"),
@@ -248,7 +248,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_PROOF", 0,0)
-    oySET_OPTIONS_M_( oyTYPE_GROUP_TREE, oyGROUP_ALL, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_ALL, 0, 
       0, 0, 0,
       _("All"),
       _("Oyranos Settings"),
@@ -258,7 +258,7 @@ oyOptionStringsTranslate_ ()
       "oyGROUP_ALL", 0,0)
 
 
-    oySET_OPTIONS_M_( oyTYPE_CHOICE, oyWIDGET_POLICY, 1, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_POLICY, 1, 
       oyGROUP_POLICY, 0, 0,
       _("Policy"),
       _("Collections of settings in Oyranos"),
@@ -266,10 +266,10 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyWIDGET_POLICY", 0,0)
-    oy_option_[oyWIDGET_POLICY].flags = oyLAYOUT_MIDDLE;
+    oy_option_[oyWIDGET_POLICY].flags = OY_LAYOUT_MIDDLE;
 
 
-    oySET_OPTIONS_M_( oyTYPE_LIST, oyWIDGET_PATHS, 1, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_LIST, oyWIDGET_PATHS, 1, 
       oyGROUP_PATHS, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
@@ -277,9 +277,9 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyWIDGET_PATHS", 0,0)
-    oy_option_[oyWIDGET_PATHS].flags = oyLAYOUT_PATH_SELECTOR;
+    oy_option_[oyWIDGET_PATHS].flags = OY_LAYOUT_PATH_SELECTOR;
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_RGB, 1, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_RGB, 1, 
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Editing Rgb"),
       _("Prefered Rgb Editing Colour Space"),
@@ -288,7 +288,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_RGB_PROFILE,
       "oyEDITING_RGB", 0,"sRGB.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_CMYK, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_CMYK, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Editing Cmyk"),
       _("Prefered Cmyk Editing Colour Space"),
@@ -297,7 +297,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_CMYK_PROFILE,
       "oyEDITING_CMYK", 0,"ISOcoated.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_XYZ, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_XYZ, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Editing XYZ"),
       _("Prefered XYZ Editing Colour Space"),
@@ -306,7 +306,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_XYZ_PROFILE,
       "oyEDITING_XYZ", 0,"XYZ.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_LAB, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_LAB, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Editing Lab"),
       _("Prefered CIE*Lab Editing Colour Space"),
@@ -315,7 +315,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_LAB_PROFILE,
       "oyEDITING_LAB", 0,"Lab.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_GRAY, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_GRAY, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Editing Gray"),
       _("Prefered Gray Editing Colour Space"),
@@ -324,7 +324,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_GRAY_PROFILE,
       "oyEDITING_GRAY", 0,"Gray.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed XYZ source"),
       _("Assigning an untagged XYZ Image an colour space"),
@@ -333,7 +333,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_XYZ_PROFILE,
       "oyASSUMED_XYZ", 0,"XYZ.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_LAB, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_LAB, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Lab source"),
       _("Assigning an untagged CIE*Lab Image an colour space"),
@@ -342,7 +342,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_LAB_PROFILE,
       "oyASSUMED_LAB", 0,"Lab.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_RGB, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_RGB, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Rgb source"),
       _("Assigning an untagged Rgb Image an colour space"),
@@ -351,7 +351,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_RGB_PROFILE,
       "oyASSUMED_RGB", 0,"sRGB.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_WEB, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_WEB, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Web source"),
       _("Assigning an untagged Rgb Image with source from the WWW an colour space"),
@@ -359,9 +359,9 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_WEB_PROFILE,
       "oyASSUMED_WEB", 0,"sRGB.icc")
-    oy_option_[oyWIDGET_ASSUMED_WEB].flags = oyLAYOUT_NO_CHOICES;
+    oy_option_[oyWIDGET_ASSUMED_WEB].flags = OY_LAYOUT_NO_CHOICES;
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_CMYK, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_CMYK, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Cmyk source"),
       _("Assigning an untagged Cmyk Image this colour space"),
@@ -370,7 +370,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_CMYK_PROFILE,
       "oyASSUMED_CMYK" , 0,"ISOcoated.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_GRAY, 1,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_GRAY, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Gray source"),
       _("Assigning an untagged Gray Image this colour space"),
@@ -379,7 +379,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_GRAY_PROFILE,
       "oyASSUMED_GRAY" , 0,"Gray.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_PROOF, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing"),
       _("Colour space for Simulating an Output Device"),
@@ -389,7 +389,7 @@ oyOptionStringsTranslate_ ()
       "oyPROFILE_PROOF" , 0,"ISOcoated.icc")
 
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_ACTION_UNTAGGED_ASSIGN, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_ACTION_UNTAGGED_ASSIGN, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("No Image profile"),
       _("Image has no colour space embedded. What default action shall be performed?"),
@@ -398,7 +398,7 @@ oyOptionStringsTranslate_ ()
       OY_ACTION_UNTAGGED_ASSIGN,
       "oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN" , 1,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_ACTION_OPEN_MISMATCH_RGB, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_ACTION_OPEN_MISMATCH_RGB, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Rgb Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
@@ -407,7 +407,7 @@ oyOptionStringsTranslate_ ()
       OY_ACTION_MISMATCH_RGB,
       "oyBEHAVIOUR_ACTION_MISMATCH_RGB" , 1,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_ACTION_OPEN_MISMATCH_CMYK, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_ACTION_OPEN_MISMATCH_CMYK, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Cmyk Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
@@ -416,7 +416,7 @@ oyOptionStringsTranslate_ ()
       OY_ACTION_MISMATCH_CMYK,
       "oyBEHAVIOUR_ACTION_MISMATCH_CMYK", 1,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
       _("For Print"),
       _("Handle Mixed colour spaces in Preparing a document for Print output."),
@@ -425,7 +425,7 @@ oyOptionStringsTranslate_ ()
       OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT,
       "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT", 1,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
       _("For Screen"),
       _("Handle Mixed colour spaces in Preparing a document for Screen output."),
@@ -434,7 +434,7 @@ oyOptionStringsTranslate_ ()
       OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT,
       "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN", 2,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Default Rendering Intent"),
       _("Rendering Intent for colour space Transformations."),
@@ -443,7 +443,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_RENDERING_INTENT,
       "oyBEHAVIOUR_RENDERING_INTENT", 1,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_RENDERING_BPC, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_BPC, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Use Black Point Compensation"),
       _("BPC affects only the Relative Colorimetric Rendering Intent."),
@@ -452,7 +452,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_RENDERING_BPC,
       "oyBEHAVIOUR_RENDERING_BPC", 1,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT_PROOF, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing Rendering Intent"),
       _("Behaviour of colour space transformation for proofing"),
@@ -461,7 +461,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_RENDERING_INTENT_PROOF,
       "oyBEHAVIOUR_RENDERING_INTENT_PROOF", 0,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_PROOF_SOFT, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_PROOF_SOFT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("SoftProof by Default"),
       _("Behaviour for Softproofing view at application startup"),
@@ -470,7 +470,7 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_PROOF_SOFT,
       "oyBEHAVIOUR_PROOF_SOFT", 0,0)
 
-    oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_PROOF_HARD, 2,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_PROOF_HARD, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Hardproof by Default"),
       _("Behaviour for preselecting Hardproofing with Standard Proofing Profile at print time"),
@@ -533,14 +533,14 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_      (oyWIDGET_e        type,
 
 char **
 oyProfilePathsGet_    (int             * count,
-                       oyAllocFunc_t     allocate_func)
+                       oyAllocFunc_t     allocateFunc)
 {
   char ** path_names = NULL;
   int i,
       n = 0;
   int c = oyPathsCount_();
 
-  oyAllocHelper_m_ (path_names, char*, c, allocate_func, return NULL);
+  oyAllocHelper_m_ (path_names, char*, c, allocateFunc, return NULL);
 
   for( i = 0; i < c; ++i)
   {
@@ -549,7 +549,7 @@ oyProfilePathsGet_    (int             * count,
 
     if( checked )
     {
-      path_names[n] = allocate_func( oyStrblen_(checked) + 1 );
+      path_names[n] = allocateFunc( oyStrblen_(checked) + 1 );
       oySprintf_( path_names[n], "%s", checked );
       oyFree_m_( checked );
       ++n;
@@ -561,41 +561,589 @@ oyProfilePathsGet_    (int             * count,
   return path_names;
 }
 
-const char**
-oyConfigPathsGet_     (int             * count,
-                       const char      * subdir )
-{
-  static char ** static_paths = NULL;
-  static int ndp = 0;
-  static int init = 0;
 
-#define TestAndSetDefaultPATH( path_, subdir ) \
-    oyAllocHelper_m_( static_paths[ndp], char, MAX_PATH, \
-                      oyAllocateFunc_, return 0); \
-    if(subdir) \
-      snprintf( static_paths[ndp++], MAX_PATH, \
-                "%s%s%s", path_, OY_SLASH, subdir ); \
-    else \
-      snprintf( static_paths[ndp++], MAX_PATH, \
-                "%s", path_ ); \
-    if(!oyIsDir_( static_paths[ndp-1] )) { \
-      --ndp; \
+/* string manipulation */
+
+char*
+oyStringCopy_      ( const char    * text,
+                     oyAllocFunc_t   allocateFunc )
+{
+  char * text_copy = NULL;
+    
+  if(text)
+    if( oyStrlen_(text) )
+    {
+      text_copy = allocateFunc(strlen(text) + 1);
+      oyAllocHelper_m_( text_copy, oyChar, oyStrlen_(text) + 1,
+                        allocateFunc, return 0 );
+      strcpy( text_copy, text );
+    }
+  return text_copy;
+}
+
+/** @internal 
+ *  @brief append a string and care about allocation
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+char*              oyStringAppend_   ( const char        * text,
+                                       const char        * append,
+                                       oyAllocFunc_t       allocateFunc )
+{
+  char * text_copy = NULL;
+  int text_len = 0, append_len = 0;
+
+  if(text)
+    text_len = oyStrlen_(text);
+
+  if(append)
+    append_len = oyStrlen_(append);
+
+  if(text_len || append_len)
+  {
+    oyAllocHelper_m_( text_copy, oyChar,
+                      text_len + append_len + 1,
+                      allocateFunc, return 0 );
+
+    if(text_len)
+      oySprintf_( text_copy, "%s", text );
+      
+    if(append_len)
+      oySprintf_( &text_copy[text_len], "%s", append );
+  }
+
+  return text_copy;
+}
+
+/** @internal 
+ *  @brief add a string and care about de-/allocation
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+char*              oyStringAdd_      ( char              * text,
+                                       const char        * append,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocFunc )
+{
+  char * text_copy = NULL;
+
+  text_copy = oyStringAppend_(text, append, allocateFunc);
+
+  if(text && deallocFunc)
+    deallocFunc(text);
+
+  return text_copy;
+}
+
+
+char**             oyStringSplit_    ( const char    * text,
+                                       const char      delimiter,
+                                       int           * count,
+                                       oyAllocFunc_t   allocateFunc )
+{
+  char ** list = 0;
+  if(text && oyStrlen_(text) && delimiter)
+  {
+    int n = 0, i;
+    char * tmp = (char*)text;
+
+    do { ++n;
+    } while( (tmp = oyStrchr_(tmp + 1, delimiter)) );
+
+    tmp = 0;
+
+    oyAllocHelper_m_ (list, char*, n+1, allocateFunc, return NULL);
+
+    if(list)
+      tmp = oyStringCopy_( text, oyAllocateFunc_ );
+
+    if(tmp)
+    {
+      char * start = tmp;
+      for(i = 0; i < n; ++i)
+      {
+        intptr_t len = 0;
+        char * end = oyStrchr_(start, delimiter);
+
+        if(end > start)
+          len = end - start;
+        else
+          len = oyStrlen_(start);
+
+        oyAllocHelper_m_ (list[i], char, len+1, allocateFunc, return NULL);
+
+        memcpy( list[i], start, len );
+        list[i][len] = 0;
+        start += len + 1;
+      }
     }
 
-  /* the OpenICC agreed upon *nix default paths */
-  if(!init)
-  {
-    init = 1;
-    oyAllocHelper_m_( static_paths, char*, 3, oyAllocateFunc_, return 0);
+    if(count)
+      *count = n;
 
-    TestAndSetDefaultPATH( "/usr/share/color", subdir );
-    TestAndSetDefaultPATH( OY_USERCOLORDIR, subdir );
-    TestAndSetDefaultPATH( OY_SYSCOLORDIR, subdir );
+    if(tmp)
+      oyDeAllocateFunc_(tmp);
   }
+
+  return list;
+}
+
+void               oyStringListMerge_ ( char        *** list,
+                                        int           * n,
+                                        const char   ** append,
+                                        int             n_app,
+                                        oyAllocFunc_t   allocateFunc,
+                                        oyDeAllocFunc_t deallocateFunc )
+{
+  int alt_n = *n;
+  char ** tmp = oyStringListAppend_((const char**)*list, alt_n, append, n_app,
+                                     n, allocateFunc);
+
+  oyStringListRelease_(list, alt_n, deallocateFunc);
+
+  *list = tmp;
+}
+
+char**             oyStringListAppend_( const char   ** list,
+                                        int             n_alt,
+                                        const char   ** append,
+                                        int             n_app,
+                                        int           * count,
+                                        oyAllocFunc_t   allocateFunc )
+{
+  char ** nlist = 0;
+
+  {
+    int i = 0;
+    int n = 0;
+
+    if(n_alt || n_app)
+      oyAllocHelper_m_(nlist, char*, n_alt + n_app +1, allocateFunc, return NULL);
+
+    for(i = 0; i < n_alt; ++i)
+      if(list[i] && oyStrlen_(list[i]))
+        nlist[n++] = oyStringCopy_( list[i], allocateFunc );
+
+    for(i = 0; i < n_app; ++i)
+      if(oyStrlen_( append[i] ))
+        nlist[n++] = oyStringCopy_( append[i], allocateFunc );
+
+    if(count)
+      *count = n;
+  }
+
+  return nlist;
+}
+
+
+/** @internal
+ *  @brief reducing filter
+ *
+ *  In order to collect all possible matches chain this filter.
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  december 2007 (API 0.1.8)
+ */
+char**             oyStringListFilter_(const char   ** list,
+                                       int             list_n,
+                                       const char    * dir_string,
+                                       const char    * string,
+                                       const char    * suffix,
+                                       int           * count,
+                                       oyAllocFunc_t   allocateFunc )
+{
+  char ** nl = 0;
+  int nl_n = 0;
+  int i;
+
+  for(i = 0; i < list_n; ++i)
+  {
+    int b = 1;
+
+    if(list[i] && oyStrlen_(list[i]))
+    {
+      if(dir_string && oyStrlen_(dir_string))
+      {
+        char * t = oyStrstr_(list[i], dir_string);
+        if(t)
+          b = (oyStrstr_(t+oyStrlen_(dir_string), OY_SLASH)) ? 1:0;
+        else
+          b = 0;
+        if(!b) continue;
+      }
+
+      if(b && string && oyStrlen_(string))
+      {
+        b = (oyStrstr_(list[i], string))?1:0;
+        if(!b) continue;
+      }
+
+      if(b && suffix && oyStrlen_(suffix))
+      {
+        b = (oyStrstr_(list[i], suffix) == list[i] + oyStrlen_(list[i])
+                                                   - oyStrlen_(suffix));
+        if(!b) continue;
+      }
+    }
+
+    if(b)
+    {
+      if(!nl)
+        oyAllocHelper_m_( nl, char*, list_n + 1, allocateFunc, return 0);
+
+      nl[nl_n] = oyStringCopy_( list[i], allocateFunc );
+      if(nl[nl_n])
+        ++nl_n;
+    }
+  }
+
+  if(count)
+    *count = nl_n;
+
+  return nl;
+}
+
+void          oyStringListRelease_    ( char          *** l,
+                                        int               size,
+                                        oyDeAllocFunc_t   deallocFunc )
+{
+  char *** list = l;
+
+  DBG_PROG_START
+
+  if( l )
+  {
+    size_t i;
+
+    for(i = 0; i < size; ++i)
+      if((*list)[i])
+        deallocFunc( (*list)[i] );
+    if(*list)
+      deallocFunc( *list );
+    *list = NULL;
+  }
+
+  DBG_PROG_ENDE
+}
+
+
+/* Oyranos text handling */
+
+/** @internal
+ *  @brief query library paths
+ *
+ *  @param[out]    count       number of paths found
+ *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *  @return                    a array to write the found paths into
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+char**  oyLibPathsGet_( int             * count,
+                        const char      * subdir,
+                        int               owner,
+                        oyAllocFunc_t     allocateFunc )
+{
+  char ** paths = 0, ** tmp;
+  int     n = 0, tmp_n = 0;
+  char  * fix_paths[3] = {0,0,0};
+  int     fix_paths_n = 2;
+  char *  vars[] = {"OY_MODULE_PATHS"};
+  int     vars_n = 1;
+  int     i;
+
+  fix_paths[0] = OY_LIBDIR OY_SLASH "color" OY_SLASH "cmms";
+  fix_paths[1] = OY_USER_PATH OY_SLASH "lib" OY_SLASH "color" OY_SLASH "cmms";
+
+  oyStringListMerge_( &paths, &n, (const char**)fix_paths, fix_paths_n,
+                      oyAllocateFunc_, oyDeAllocateFunc_ );
+
+  for(i = 0; i < vars_n; ++i)
+  {
+    if( (i >= 2 && (owner != oyUSER)) ||
+        (i < 2 && (owner != oySYS)))
+    {
+      if(getenv(vars[i]))
+      {
+        const char * var = getenv(vars[i]);
+
+        if(strlen(var))
+        {
+          char **tmp_neu;
+          int  tmp_neu_n;
+
+          tmp = oyStringSplit_( var, ':', &tmp_n, oyAllocateFunc_ );
+
+          tmp_neu = oyStringListAppend_( (const char**)paths, n, 
+                                         (const char**)tmp, tmp_n,
+                                         &tmp_neu_n, oyAllocateFunc_ );
+          oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+          paths = tmp_neu;
+          n = tmp_neu_n;
+        }
+      }
+    }
+  }
+
+  tmp = oyStringListAppend_( 0, 0, (const char**)paths, n,
+                             &tmp_n, allocateFunc );
+  oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+  paths = tmp;
+  n = tmp_n;
+
+  if(count)
+    *count = n;
+
+  if(!n)
+  {
+    if(paths)
+      oyDeAllocateFunc_(paths);
+    paths = 0;
+  }
+
+  return paths;
+}
+
+/** @internal
+ *  @brief query valid XDG paths
+ *
+ *  @param[out]    count       number of paths found
+ *  @param[in]     data        oyYES/oyNO/oyALL data or config text
+ *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *  @return                    a array to write the found paths into
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+char**  oyXDGPathsGet_( int             * count,
+                        int               data,
+                        int               owner,
+                        oyAllocFunc_t     allocateFunc )
+{
+  char ** paths = 0, ** tmp;
+  int     n = 0, tmp_n = 0;
+  char *  vars[] = {"XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_DATA_DIRS", 
+                    "XDG_CONFIG_DIRS"};
+  int     vars_n = 4;
+  int     i;
+
+  for(i = 0; i < vars_n; ++i)
+  {
+    if( (i >= 2 && (owner != oyUSER)) ||
+        (i < 2 && (owner != oySYS)))
+      if( ((i == 0 || i == 2) && data != oyNO) ||
+          ((i == 1 || i == 3) && data != oyYES) )
+    {
+      if(getenv(vars[i]))
+      {
+        const char * var = getenv(vars[i]);
+
+        if(strlen(var))
+        {
+          char **tmp_neu;
+          int  tmp_neu_n, i;
+
+
+          tmp = oyStringSplit_( var, ':', &tmp_n, oyAllocateFunc_ );
+
+          /* remove slash */
+          for(i = 0; i < tmp_n; ++i)
+          {
+            char slash = 0;
+            int len = 0;
+            if(tmp[i])
+              len = oyStrlen_(tmp[i]);
+            if(len > 1)
+              slash = tmp[i][len-1];
+            if(slash == OY_SLASH_C)
+              tmp[i][oyStrlen_(tmp[i])-1] = 0;
+          }
+
+          tmp_neu = oyStringListAppend_( (const char**)paths, n, 
+                                         (const char**)tmp, tmp_n,
+                                         &tmp_neu_n, oyAllocateFunc_ );
+          oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+          paths = tmp_neu;
+          n = tmp_neu_n;
+        }
+      }
+    }
+  }
+
+  tmp = oyStringListAppend_( 0, 0, (const char**)paths, n,
+                             &tmp_n, allocateFunc );
+  oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+  paths = tmp;
+  n = tmp_n;
+
+  if(count)
+    *count = n;
+
+  if(!n)
+  {
+    if(paths)
+      oyDeAllocateFunc_(paths);
+    paths = 0;
+  }
+
+  return paths;
+}
+
+char * oyPathContructAndTest_(char * path_, const char * subdir)
+{
+  char * text = 0;
+  int subdir_len = 0;
+
+  if(subdir)
+    subdir_len = oyStrlen_(subdir);
+
+  oyAllocHelper_m_( text, char, MAX_PATH,
+                    oyAllocateFunc_, return 0);
+  if(subdir && (oyStrlen_(path_) + subdir_len + 10) < MAX_PATH)
+     oySprintf_( text,
+              "%s%s%s", path_, OY_SLASH, subdir );
+  else if((oyStrlen_(path_) + subdir_len + 10) < MAX_PATH)
+    oySprintf_( text,
+                "%s", path_ );
+  if(!oyIsDir_( text ))
+  {
+    oyDeAllocateFunc_(text);
+    text = 0;
+  }
+
+  return text; 
+}
+
+/** @internal
+ *  @brief query valid Oyranos paths
+ *
+ *  @param[out]    count       number of paths found
+ *  @param[in]     subdir      the Oyranos sub path
+ *  @param[in]     data        oyYES/oyNO/oyALL data or config text
+ *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *
+ *  @since Oyranos: version 0.1.x
+ *  @date  november 2007 (API 0.1.x)
+ */
+char**
+oyConfigPathsGet_     (int             * count,
+                       const char      * subdir,
+                       int               data,
+                       int               owner,
+                       oyAllocFunc_t     allocateFunc )
+{
+  char ** paths = NULL;
+  int ndp = 0;        /* number of default paths */
+  static int init = 0;
+
+  /* the OpenICC agreed upon *nix default paths */
+  {
+    int xdg_n = 0, oy_n = 0, tmp_n = 0, i;
+    char ** oy_paths = 0;
+    char ** xdg_paths = 0;
+    char ** tmp_paths = 0;
+    char * text = 0;
+    char * xdg_sub = 0;
+
+    init = 1;
+
+    oyAllocHelper_m_( xdg_sub, char, MAX_PATH, oyAllocateFunc_, return 0);
+    oySprintf_( xdg_sub, "color/%s", subdir );
+
+    oyAllocHelper_m_( oy_paths, char*, 4, oyAllocateFunc_, return 0);
+
+    xdg_paths = oyXDGPathsGet_(&xdg_n, data, owner, oyAllocateFunc_);
+
+    if(xdg_n)
+      oyAllocHelper_m_( tmp_paths, char*, xdg_n, oyAllocateFunc_, return 0);
+
+    for(i = 0; i < xdg_n; ++i)
+    {
+      text = oyPathContructAndTest_(xdg_paths[i], xdg_sub);
+      if(text)
+        tmp_paths[tmp_n++] = text;
+    }
+
+    oyStringListRelease_(&xdg_paths, xdg_n, oyDeAllocateFunc_);
+    xdg_paths = tmp_paths; tmp_paths = 0;
+    xdg_n = tmp_n; tmp_n = 0;
+    oyFree_m_(xdg_sub);
+
+    ndp += xdg_n;
+
+    text = oyPathContructAndTest_( "/usr/share/color", subdir );
+    if(text) oy_paths[oy_n++] = text;
+    text = oyPathContructAndTest_( "/usr/local/share/color", subdir );
+    if(text) oy_paths[oy_n++] = text;
+    text = oyPathContructAndTest_( OY_USERCOLORDIR, subdir );
+    if(text) oy_paths[oy_n++] = text;
+    text = oyPathContructAndTest_( OY_SYSCOLORDIR, subdir );
+    if(text) oy_paths[oy_n++] = text;
+
+    paths = oyStringListAppend_((const char**)oy_paths, oy_n,
+                                (const char**)xdg_paths, xdg_n,
+                                &ndp, allocateFunc);
+
+    oyStringListRelease_(&oy_paths, oy_n, oyDeAllocateFunc_);
+
+    oyStringListRelease_(&xdg_paths, xdg_n, oyDeAllocateFunc_);
+
+  }
+
+#undef TestAndSetDefaultPATH
 
   *count = ndp;
 
-  return (const char**) static_paths;
+  return paths;
+}
+
+char **     oyConfigFilesGet_        ( int             * count,
+                                       const char      * subdir,
+                                       int               data,
+                                       int               owner,
+                                       const char      * dir_string,
+                                       const char      * string,
+                                       const char      * suffix,
+                                       oyAllocFunc_t     allocateFunc )
+{
+  int l_n = 0;
+  char** l = oyFileListGet_(subdir, &l_n, data, owner);
+  int filt_n = 0;
+  char ** filt = oyStringListFilter_( (const char**)l, l_n, 
+                                      dir_string, string, suffix, &filt_n,
+                                      allocateFunc );
+
+  if(l && *l)
+    oyStringListRelease_(&l, l_n, oyDeAllocateFunc_);
+
+  if(count)
+    *count = filt_n;
+  return filt;
+}
+
+char **     oyLibFilesGet_           ( int             * count,
+                                       const char      * subdir,
+                                       int               owner,
+                                       const char      * dir_string,
+                                       const char      * string,
+                                       const char      * suffix,
+                                       oyAllocFunc_t     allocateFunc )
+{
+  int l_n = 0;
+  char** l = oyLibListGet_(subdir, &l_n, owner);
+  int filt_n = 0;
+  char ** filt = oyStringListFilter_( (const char**)l, l_n, 
+                                      dir_string, string, suffix, &filt_n,
+                                      allocateFunc );
+
+  if(l && *l)
+    oyStringListRelease_(&l, l_n, oyDeAllocateFunc_);
+
+  if(count)
+    *count = filt_n;
+  return filt;
 }
 
 oyWIDGET_e*
@@ -705,7 +1253,7 @@ oyPolicyNameGet_()
         oyWIDGET_e oywid = list[i];
         oyWIDGET_TYPE_e opt_type = oyWidgetTypeGet_( oywid );
 
-        if(opt_type == oyTYPE_DEFAULT_PROFILE)
+        if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
         {
           const oyOption_t_ *t = oyOptionGet_( oywid );
           key = t->config_string_xml;
@@ -724,7 +1272,7 @@ oyPolicyNameGet_()
             }
             oyFree_m_(value);
           }
-        } else if(opt_type == oyTYPE_BEHAVIOUR)
+        } else if(opt_type == oyWIDGETTYPE_BEHAVIOUR)
         {
           const oyOption_t_ *t = oyOptionGet_( oywid );
           int val = -1;
@@ -1298,8 +1846,8 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice)
 
   DBG_PROG_S( ("type = %d behaviour %d", type, choice) )
 
-  if ( oyWidgetTypeGet_( type ) == oyTYPE_BEHAVIOUR ||
-       oyWidgetTypeGet_( type ) == oyTYPE_CHOICE )
+  if ( oyWidgetTypeGet_( type ) == oyWIDGETTYPE_BEHAVIOUR ||
+       oyWidgetTypeGet_( type ) == oyWIDGETTYPE_CHOICE )
   {
     if ( choice >= 0 &&
          choice < t->choices )

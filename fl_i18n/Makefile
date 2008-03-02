@@ -19,10 +19,12 @@ FLTK_H = -I/data3/CD/programme/fltk118-utf8-2007-07-14_SuSE9.2 -I/usr/include/fr
 FLTK_LIBS = -L/data3/CD/programme/fltk118-utf8-2007-07-14_SuSE9.2/lib -L/usr/X11R6/lib -Wall -g -L/usr/X11R6/lib -lfltk-utf8_images -lpng -lz -ljpeg -lfltk-utf8_gl -lGLU -lGL -lfltk-utf8 -lfltk_xutf8 -lXft -lXinerama -lpthread -ldl -lm -lXext -lX11
 fltkconfig = /opt/kai-uwe/bin/fltk-config
 GETTEXT = -DUSE_GETTEXT
+DEBUG = -Wall -g -DDEBUG --pedantic
+DEBUG_SWITCH = -v
 .SILENT:
 CFLAGS =  $(DEBUG) $(INCL) -fPIC -DPIC
 CXXFLAGS =  $(DEBUG) $(INCL) $(FLTK_H) -fPIC -DPIC
-LDFLAGS = -L/usr/local/lib -L. $(dl)
+LDFLAGS = -L/opt/kai-uwe/lib -L. $(dl)
 TARGET=fl_i18n
 VERSION=0.0.2
 COMPILE_OPTIONS=-DUSE_THREADS $(GETTEXT)

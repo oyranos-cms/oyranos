@@ -313,8 +313,8 @@ Option::Option( int x, int y, int w, int h, const char *name,
   switch(type)
   {
   // == Profiles ==
-  case oyTYPE_DEFAULT_PROFILE:
-  case oyTYPE_PROFILE:
+  case oyWIDGETTYPE_DEFAULT_PROFILE:
+  case oyWIDGETTYPE_PROFILE:
   {
     // Profile name box
     box = new OyFl_Box( x, y,
@@ -323,7 +323,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
     box->tooltip( tooltip );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
-    if( flags & oyLAYOUT_NO_CHOICES )
+    if( flags & OY_LAYOUT_NO_CHOICES )
     {
       const char* default_p = NULL;
       if(current >= 0)
@@ -404,8 +404,8 @@ Option::Option( int x, int y, int w, int h, const char *name,
   break;
 
   // == Behaviour ==
-  case oyTYPE_BEHAVIOUR:
-  case oyTYPE_CHOICE:
+  case oyWIDGETTYPE_BEHAVIOUR:
+  case oyWIDGETTYPE_CHOICE:
   {
     Fl_Pack *pa = NULL;
 
@@ -416,7 +416,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
     box->tooltip( tooltip );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
-    if( flags & oyLAYOUT_NO_CHOICES )
+    if( flags & OY_LAYOUT_NO_CHOICES )
     {
       const char* default_p = NULL;
       if(current >= 0)
@@ -458,7 +458,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
   break;
 
   // == List ==
-  case oyTYPE_LIST:
+  case oyWIDGETTYPE_LIST:
   {
     int count = choices_n;
 
@@ -491,7 +491,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
       pp->end();
     }
 
-    if(flags & oyLAYOUT_PATH_SELECTOR)
+    if(flags & OY_LAYOUT_PATH_SELECTOR)
     {
       Fl_Pack *pack = new Fl_Pack(0,0,
                                   width, BUTTON_HEIGHT);
@@ -521,7 +521,7 @@ ListEntry::ListEntry( int x, int y, int w, int h, const char * name, int flags )
     box = new Fl_Box( 0, 0, w-BUTTON_HEIGHT-spacing(), BUTTON_HEIGHT, name );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
-    if( flags & oyLAYOUT_PATH_SELECTOR )
+    if( flags & OY_LAYOUT_PATH_SELECTOR )
     if( strcmp( "/usr/share/color/icc", name ) != 0 &&
         strcmp( "~/.color/icc", name ) != 0 &&
         strcmp( OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME , name ) != 0 &&
@@ -721,11 +721,11 @@ static void refreshOptions() {
         oyWIDGET_TYPE_e   type = oyWidgetTitleGet(  oywid,
                                                   &groups, &name, &tooltip,
                                                   &flags );
-        if(type == oyTYPE_CHOICE ||
-           type == oyTYPE_BEHAVIOUR ||
-           type == oyTYPE_DEFAULT_PROFILE ||
-           type == oyTYPE_PROFILE ||
-           type == oyTYPE_LIST)
+        if(type == oyWIDGETTYPE_CHOICE ||
+           type == oyWIDGETTYPE_BEHAVIOUR ||
+           type == oyWIDGETTYPE_DEFAULT_PROFILE ||
+           type == oyWIDGETTYPE_PROFILE ||
+           type == oyWIDGETTYPE_LIST)
         {
           Fl_Group *w = addTab( top_tabs, groups );
 
@@ -785,12 +785,12 @@ static void refreshOptions() {
               }
 
               w->begin();
-                if( flags & oyLAYOUT_MIDDLE )
+                if( flags & OY_LAYOUT_MIDDLE )
                 {
                   const char *nn[2] = { "","" };
                   op = new Option( w->x(), by, w->w() - Fl::box_dw(w->box()),
                          2*bh, "",
-                         oywid, type, 1,nn,1,"", oyLAYOUT_NO_CHOICES | flags );
+                         oywid, type, 1,nn,1,"", OY_LAYOUT_NO_CHOICES | flags );
                 }
 
                 op = new Option( w->x(), by, Fl_Group::current()->w()

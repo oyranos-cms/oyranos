@@ -43,32 +43,32 @@ namespace oyranos
 
 #ifdef HAVE_X
 
-struct oyMonitor_s_ {
-  oyOBJECT_TYPE_e type;        /**< object type */
+/** \internal  platformdependent */
+typedef struct {
+  oyOBJECT_TYPE_e type_;       /**< object type */
   char         *name;        /**< traditional display name - host:0 / :0 */
   char         *host;        /**< host name only - host */
   char         *identifier;  /**<  - 0.1_x_y_wxh */
   int           geo[6];      /**< display screen x y width height */
   Display      *display;     /**< logical display */
   int           screen;      /**< external screen number to call for X */
-};
-/** \internal  platformdependent */
-typedef struct oyMonitor_s_ oyMonitor_s;
+} oyMonitor_s;
 
-int         oyGetDisplay_                 ( const char *display_name,
-                                            oyMonitor_s *disp );
-const char* oyDisplayName_                ( oyMonitor_s *disp );
-const char* oyDisplayHostName_            ( oyMonitor_s *disp );
-const char* oyDisplayIdentifier_          ( oyMonitor_s *disp );
-char*       oyDisplayScreenNumber_        ( oyMonitor_s *disp );
-Display*    oyDisplayDevice_              ( oyMonitor_s *disp );
-int         oyDisplayDeviceScreenNumber_  ( oyMonitor_s *disp );
-int         oyDisplayNumber_              ( oyMonitor_s *disp );
-int         oyDisplayScreen_              ( oyMonitor_s *disp );
-int         oyDisplayX_                   ( oyMonitor_s *disp );
-int         oyDisplayY_                   ( oyMonitor_s *disp );
-int         oyDisplayWidth_               ( oyMonitor_s *disp );
-int         oyDisplayHeight_              ( oyMonitor_s *disp );
+oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name );
+int          oyMonitor_release_      ( oyMonitor_s      ** disp );
+
+const char*  oyMonitor_name_         ( oyMonitor_s       * disp );
+const char*  oyMonitor_hostName_     ( oyMonitor_s       * disp );
+const char*  oyMonitor_identifier_   ( oyMonitor_s       * disp );
+char*        oyMonitor_screenNumber_ ( oyMonitor_s       * disp );
+Display*     oyMonitor_device_       ( oyMonitor_s       * disp );
+int          oyMonitor_deviceScreenNumber_( oyMonitor_s  * disp );
+int          oyMonitor_number_       ( oyMonitor_s       * disp );
+int          oyMonitor_screen_       ( oyMonitor_s       * disp );
+int          oyMonitor_x_            ( oyMonitor_s       * disp );
+int          oyMonitor_y_            ( oyMonitor_s       * disp );
+int          oyMonitor_width_        ( oyMonitor_s       * disp );
+int          oyMonitor_height_       ( oyMonitor_s       * disp );
 
 #endif
 

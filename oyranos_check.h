@@ -56,7 +56,7 @@ int	oyCheckProfile_Mem                (const void* mem, size_t size,
 
 int     oyProfileGetMD5_             ( void       * buffer,
                                        size_t       size,
-                                       char       * md5_return );
+                                       unsigned char     * md5_return );
 
 int	oyCheckPolicy_               ( const char * name );
 

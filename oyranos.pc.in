@@ -1,6 +1,6 @@
 
 Name: oyranos
 Description: Oyranos Colour Management System
-Libs: -L${libdir} -loyranos
+Libs: -L${libdir} -lm -loyranos
 Cflags: -I${includedir}
 

@@ -146,45 +146,39 @@ oyCheckProfile_Mem                 (const void* mem, size_t size,
   }
 }
 
-#include "md5.h"
 
+/** @internal
+ *  @brief md5 calculation
+ *
+ *  @since Oyranos: version 0.1.x
+ *  @date  24 november 2007 (API 0.1.x)
+ */
 int
 oyProfileGetMD5_       ( void       *buffer,
                          size_t      size,
-                         char       *md5_return )
+                         unsigned char *md5_return )
 {
   char* block = NULL;
+  int error = 0;
 
   DBG_PROG_START
 
   if (size >= 128) 
   {
-    oy_md5_state_t state;
-    md5_byte_t digest[16];
-
     oyAllocHelper_m_( block, char, size, oyAllocateFunc_, return 1);
     memcpy( block, buffer, size);
 
     memset( &block[44], 0, 4 );  /* flags */
     memset( &block[64], 0, 4 );  /* intent */
     memset( &block[84], 0, 16 ); /* ID */
-
-    oy_md5_init(   &state );
-    oy_md5_append( &state, (const md5_byte_t *)block, size );
-    oy_md5_finish( &state, digest );
-
-    memcpy( md5_return, digest, 16 );
-
-    if(block) oyFree_m_ (block);
-
-    DBG_PROG_ENDE
-    return 0;
-  } else {
-    WARNc_S (("False profile - size = %d pos = %lu ", (int)size, (long int)block))
-
-    DBG_PROG_ENDE
-    return 1;
   }
+
+  error = oyMiscBlobGetMD5_(block, size, md5_return);
+
+  if(block) oyFree_m_ (block);
+
+  DBG_PROG_ENDE
+  return error;
 }
 
 int

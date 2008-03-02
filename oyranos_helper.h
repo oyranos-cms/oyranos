@@ -26,7 +26,7 @@
  * 
  */
 
-/** @date      25. 11. 2004 */
+/** @date      24. 11. 2007 */
 
 /* Dont use in non Oyranos projects. */
 
@@ -43,6 +43,7 @@
 
 #include <unistd.h> /* intptr_t */
 #include <ctype.h>  /* toupper */
+#include <stdint.h> /* uint32_t */
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,34 +51,12 @@ namespace oyranos
 {
 #endif /* __cplusplus */
 
-/* memory handling */
+/* --- memory handling --- */
 
 void* oyAllocateFunc_           (size_t        size);
 void* oyAllocateWrapFunc_       (size_t        size,
                                  oyAllocFunc_t allocate_func);
 void  oyDeAllocateFunc_         (void *        data);
-
-
-/* complete an name from file including oyResolveDirFileName */
-char*   oyMakeFullFileDirName_     (const char* name);
-/* find an file/dir and do corrections on  ~ ; ../  */
-char*   oyResolveDirFileName_      (const char* name);
-char*   oyExtractPathFromFileName_ (const char* name);
-char*   oyGetHomeDir_              ();
-char*   oyGetParent_               (const char* name);
-int     oyRecursivePaths_      (int (*doInPath) (void*,const char*,const char*),
-                                void        * data,
-                                const char ** path_names,
-                                int           path_count);
-
-int oyIsDir_      (const char* path);
-int oyIsFile_     (const char* fileName);
-int oyIsFileFull_ (const char* fullFileName);
-int oyMakeDir_    (const char* path);
-
-int   oyWriteMemToFile_ (const char* name, void* mem, size_t size);
-char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
-                         oyAllocFunc_t allocate_func);
 
 
 /* oyNoEmptyName_( name ) */
@@ -128,6 +107,9 @@ extern intptr_t oy_observe_pointer_;
   }                                                         \
 }
 
+
+/* --- string helpers --- */
+
 /* string helpers to switch to unicode or utf8 */
 #define oyAllocString_m_( sptr_, ssize_,  salloc_func, saction ) \
   oyAllocHelper_m_( sptr_, oyChar, ssize_+1, salloc_func, saction );
@@ -139,6 +121,8 @@ extern intptr_t oy_observe_pointer_;
            snprintf( str_, len_, patrn_, args_ )
 #define oyStrcpy_( targ_, src_ ) \
            strcpy( targ_, src_ )
+#define oyStrchr_( str_, c_ ) \
+           strchr( str_, c_ )
 #define oyStrrchr_( str_, c_ ) \
            strrchr( str_, c_ )
 #define oyStrstr_( str1_, str2_ ) \
@@ -150,15 +134,54 @@ extern intptr_t oy_observe_pointer_;
 size_t oyStrblen_(const char *s);
 
 
-/* mathematical helpers */
 
-#define MIN(a,b)    (((a) <= (b)) ? (a) : (b))
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#define HYP(a,b)    pow((a)*(a) + (b)*(b),1.0/2.0)
-#define HYP3(a,b,c) pow( (a)*(a) + (b)*(b) + (c)*(c) , 1.0/2.0)
-#define RUND(a)     ((a) + 0.5)
+/* --- file i/o helpers --- */
+
+/* complete an name from file including oyResolveDirFileName_ */
+char*   oyMakeFullFileDirName_     (const char* name);
+/* find an file/dir and do corrections on  ~ ; ../  */
+char*   oyResolveDirFileName_      (const char* name);
+char*   oyExtractPathFromFileName_ (const char* name);
+char*   oyGetHomeDir_              ();
+char*   oyGetParent_               (const char* name);
+int     oyRecursivePaths_      (int (*doInPath) (void*,const char*,const char*),
+                                void        * data,
+                                const char ** path_names,
+                                int           path_count);
+
+int oyIsDir_      (const char* path);
+int oyIsFile_     (const char* fileName);
+int oyIsFileFull_ (const char* fullFileName);
+int oyMakeDir_    (const char* path);
+
+int   oyWriteMemToFile_ (const char* name, void* mem, size_t size);
+char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
+                         oyAllocFunc_t allocate_func);
 
 
+
+/* --- mathematical helpers --- */
+
+#define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))
+#define OY_MAX(a,b)    (((a) > (b)) ? (a) : (b))
+#define OY_HYP(a,b)    pow((a)*(a) + (b)*(b),1.0/2.0)
+#define OY_HYP3(a,b,c) pow( (a)*(a) + (b)*(b) + (c)*(c) , 1.0/2.0)
+#define OY_ROUND(a)    ((a) + 0.5)
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 1
+#endif
+
+/* --- miscellaneous helpers --- */
+
+int                oyMiscBlobGetMD5_ ( void              * buffer,
+                                       size_t              size,
+                                       unsigned char     * md5_return );
+uint32_t           oyMiscBlobGetL3_  ( void              * buffer,
+                                       size_t              size );
 
 #ifdef __cplusplus
 } /* extern "C" */

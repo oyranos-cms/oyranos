@@ -39,7 +39,7 @@ VERSION_C=8
 VERSION_ABI_A=1
 VERSION_ABI_B=0
 RELEASE=0
-TIME="November 2004 - June 2007"
+TIME="November 2004 - December 2007"
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
 if [ $VERSION_A -gt 9 ]; then
   VERSION_L="$VERSION_A"
@@ -64,6 +64,7 @@ INFOECHO="echo"
 debug=0
 nodeps=0
 rpm=0
+verbose=0
 X11=0
 
 # find a suitable fltk-config script
@@ -175,6 +176,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       debug="1"
     fi
+    switch=enable-verbose
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      verbose="1"
+    fi
     switch=disable-dependency-tracking
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       nodeps="1"
@@ -203,6 +208,7 @@ test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X1
 test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rpath for ELF linking"
 test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
 test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug version [default disable]"
+test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default disable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-dependency-tracking        no dependencies [default check]"
 
 test -n "$INFOECHO" && $INFOECHO "   --quick                              generate config files only"
@@ -436,6 +442,9 @@ fi
 if [ -z "$libdir" ]; then
   libdir="$exec_prefix/$LIBDIR"
 fi
+if [ -z "$cmmdir" ]; then
+  cmmdir="$libdir/color/cmms"
+fi
 if [ -z "$includedir" ]; then
   includedir="$prefix/include"
 fi
@@ -466,7 +475,7 @@ if [ -z "$desktopdir" ]; then
 fi
 export prefix exec_prefix bindir sbindir libdir includedir datadir mandir
 export syscolordir usercolordir pixmapdir desktopdir
-export debug fltkconfig
+export debug verbose fltkconfig
 
 PATH=$bindir:$PATH
 export PATH
@@ -714,6 +723,7 @@ test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $CONF_SH
 test -n "$ECHO" && $ECHO "bindir=$bindir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "libdir=$libdir" >> $CONF_SH
+test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "includedir=$includedir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $CONF_SH
@@ -767,6 +777,7 @@ test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $MPKG
 test -n "$ECHO" && $ECHO "bindir=$bindir" >> $MPKG
 test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $MPKG
 test -n "$ECHO" && $ECHO "libdir=$libdir" >> $MPKG
+test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $MPKG
 test -n "$ECHO" && $ECHO "includedir=$includedir" >> $MPKG
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $MPKG
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $MPKG
@@ -788,6 +799,7 @@ test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $PKGC
 test -n "$ECHO" && $ECHO "bindir=$bindir" >> $PKGC
 test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $PKGC
 test -n "$ECHO" && $ECHO "libdir=$libdir" >> $PKGC
+test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $PKGC
 test -n "$ECHO" && $ECHO "includedir=$includedir" >> $PKGC
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $PKGC
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $PKGC
@@ -818,6 +830,8 @@ if [ -n "$ECHO" ]; then
   echo_="sbindir         =       $sbindir"
   test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="libdir          =       $libdir"
+  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  echo_="cmmdir          =       $cmmdir"
   test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="includedir      =       $includedir"
   test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
@@ -850,6 +864,7 @@ test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $CONF
 test -n "$ECHO" && $ECHO "bindir=$bindir" >> $CONF
 test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $CONF
 test -n "$ECHO" && $ECHO "libdir=$libdir" >> $CONF
+test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $CONF
 test -n "$ECHO" && $ECHO "includedir=$includedir" >> $CONF
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $CONF
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $CONF
@@ -869,6 +884,8 @@ test -n "$ECHO" && $ECHO "iccdirname = $iccdirname" >> $BASE_CONF
 test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $VERS_H
@@ -941,6 +958,12 @@ if [ $ERROR != 0 ]; then
   rm Makefile $CONF_H $CONF_SH $SPEC $PKGC $MPKG
   exit
 fi
+
+echo_="char * oy_config_log_=\" \\"
+test -n $ECHO && $ECHO -e "$echo_" >  $CONF_LOG.h
+cat $CONF_LOG | sed 's/\"/\\\"/g ; s/$/\ \\n\\/g'  >> $CONF_LOG.h
+echo_="\";"
+test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG.h
 
 test -n "$ECHO" && $ECHO "" > mkdepend
 

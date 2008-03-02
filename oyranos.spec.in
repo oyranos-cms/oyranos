@@ -33,7 +33,8 @@ used components and libraries with divergine FOSS licenses:
     Elektra     Avi Alkalay and others
     md5         L. Peter Deutsch
     libXNVCtrl  Nvidia
-
+    FLMM        Matthias Melcher
+    lookup3     Bob Jenkins
 
 %description devel
 Oyranos is useable to store default profiles and paths and

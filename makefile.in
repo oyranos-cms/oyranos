@@ -9,11 +9,13 @@ MSGFMT = msgfmt -c --statistics
 
 srcdir		= .
 docdir          = $(datadir)/doc/$(TARGET)
+cmmdir          = $(libdir)/color/cmms
 
+OY_MODULE_NAME  =_cmm_module
 LIBRARIES = $(TARGET) \
 	$(TARGET)_moni \
-	$(TARGET)_alpha \
-	$(TARGET)_cmm_lcms
+	$(TARGET)_alpha
+CMMS = $(TARGET)_lcms$(OY_MODULE_NAME) $(TARGET)_oyX1$(OY_MODULE_NAME)
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
@@ -22,8 +24,10 @@ LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)$(LIBEXT)
 LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)$(LIBEXT)
 LIB_MONI_SO = lib$(TARGET)_moni$(SO)$(LIBEXT)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
+LIB_ALPHA_SONAMEFULL = lib$(TARGET)_alpha$(SO).$(VERSION)$(LIBEXT)
 LIB_ALPHA_NAME = lib$(TARGET)_alpha.a
-LIB_CMM_LCMS = lib$(TARGET)_cmm_lcms$(SO).$(VERSION)$(LIBEXT)
+LIB_CMM_LCMS = lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
+LIB_CMM_oyX1 = lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
 #ifdef $(X11)
 LIB_XNVCTRL = libXNVCtrl
@@ -60,7 +64,8 @@ CHEADERS = \
 	$(TARGET)_texts.h \
 	$(TARGET)_xml.h \
 	icc34.h \
-	md5.h
+	md5.h \
+	lookup3.h
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
@@ -74,13 +79,16 @@ CFILES = \
 	$(TARGET)_sentinel.c \
 	$(TARGET)_texts.c \
 	$(TARGET)_xml.c \
-	md5.c
+	md5.c \
+	lookup3.c
 CFILESC = \
 	$(TARGET)_debug.c
 CFILES_ALPHA = \
 	$(TARGET)_alpha.c
 CFILES_CMM_LCMS = \
 	$(TARGET)_cmm_lcms.c
+CFILES_CMM_oyX1 = \
+	$(TARGET)_cmm_oyX1.c
 CFILES_MONI = \
 	$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
@@ -140,11 +148,13 @@ Flmm_FILES = \
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
-		$(CFILES_POLICY) $(CFILES_ALPHA) $(CFILES_CMM_LCMS) \
+		$(CFILES_POLICY) $(CFILES_ALPHA) \
+		$(CFILES_CMM_LCMS) $(CFILES_CMM_oyX1) \
 		$(CXXFILES_FLTK) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 ALPHA_OBJECTS = $(CPPFILES_ALPHA:.cpp=.o) $(CXXFILES_ALPHA:.cxx=.o) $(CFILES_ALPHA:.c=.o)
 CMM_LCMS_OBJECTS = $(CFILES_CMM_LCMS:.c=.o)
+CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
@@ -178,7 +188,8 @@ ALL_FILES = \
 
 # build all what is needed to run the libraries, helpers and the examples
 all:	mkdepend $(ELEKTRA_VERSION) \
-	$(LIBSONAMEFULL) $(LIB_ALPHA_NAME) $(LIB_CMM_LCMS) \
+	$(LIBSONAMEFULL) \
+	$(LIB_ALPHA_SONAMEFULL) $(LIB_CMM_LCMS) $(LIB_CMM_oyX1) \
 	$(TARGET)-monitor $(X11) \
 	$(FLTK_GUI) $(TARGET)-policy \
 	$(TEST2) $(LINGUAS_SRC)
@@ -220,15 +231,31 @@ $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 	$(RM)  $(LIB_MONI_SO)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SO)
 
+$(LIB_ALPHA_SONAMEFULL):	$(OBJECTS) $(LIB_ALPHA_NAME)
+	echo Linking $@ ...
+	$(CC) $(LINK_FLAGS_DYNAMIC) $(CFLAGS) -o $(LIB_ALPHA_SONAMEFULL) \
+	$(ALPHA_OBJECTS) \
+	-L$(libdir) $(LDLIBS)
+
 $(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_CMM_LCMS) \
 	-o $@ \
 	$(CMM_LCMS_OBJECTS) $(LCMS_LIBS) $(LDLIBS)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_cmm_lcms$(SO).$(VERSION_A)$(LIBEXT)
-	$(LNK) $@ lib$(TARGET)_cmm_lcms$(SO).$(VERSION_A)$(LIBEXT)
-	$(RM)  lib$(TARGET)_cmm_lcms$(SO)$(LIBEXT)
-	$(LNK) $@ lib$(TARGET)_cmm_lcms$(SO)$(LIBEXT)
+	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
+$(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS)
+	echo Linking $@ ...
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_CMM_oyX1) \
+	-o $@ \
+	$(CMM_oyX1_OBJECTS) $(LIB_MONI_SONAMEFULL) $(LDLIBS)
+	$(RM)  $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...
@@ -349,7 +376,7 @@ $(POT_FILE):
 	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
 	-d $(TARGET) \
 	-o $(POT_FILE) \
-	$(SOURCES) || echo -e "\c"
+	$(SOURCES) $(CHEADERS) || echo -e "\c"
 	$(MSGCAT) po/*.pot -o po/oyranos.pot
 	for ling in po/*.po; do \
 	  lingua=`echo $${ling} | sed 's%po\/%%g ; s%.po%%'`; \
@@ -378,16 +405,45 @@ install_bin:	all doc
 	-$(INSTALL) -m 755 $(ELEKTRA_VERSION)/src/kdb/kdb_static $(DESTDIR)$(bindir)/$(TARGET)-kdb_static
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
+	mkdir -p $(DESTDIR)$(cmmdir)
 	$(INSTALL) -m 644 $(TARGET).pc         $(DESTDIR)$(libdir)/pkgconfig/
 	for lib in $(LIBRARIES); do \
-	   $(INSTALL) -m 644 $(BUILDDIR)$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(libdir); \
-	   $(LNK)  $${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(libdir)/$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
-	   $(LNK)  $${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(libdir)/$${lib}$(SO).$(LIBEXT); \
-	   $(INSTALL) -m 644 $(BUILDDIR)$${lib}.a $(DESTDIR)$(libdir); \
-	   $(RANLIB) $(DESTDIR)$(libdir)/$${lib}.a; \
+	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		($(INSTALL) -m 755 $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(libdir) \
+		); \
+	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		(test -L $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		test -L $(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT) && ( \
+		$(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT)) ; \
+		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT); \
+		); \
+	   test -f $(BUILDDIR)lib$${lib}.a && \
+		($(INSTALL) -m 644 $(BUILDDIR)lib$${lib}.a $(DESTDIR)$(libdir);\
+		$(RANLIB) $(DESTDIR)$(libdir)/lib$${lib}.a \
+		) || echo ""; \
+	done
+	for lib in $(CMMS); do \
+	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		($(INSTALL) -m 755 $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(cmmdir) \
+		); \
+	   test -f NOT_$(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		(test -L $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		test -L $(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT) && ( \
+		$(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT)) ; \
+		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT); \
+		); \
+	   test -f $(BUILDDIR)lib$${lib}.a && \
+		($(INSTALL) -m 644 $(BUILDDIR)lib$${lib}.a $(DESTDIR)$(cmmdir);\
+		$(RANLIB) $(DESTDIR)$(cmmdir)/lib$${lib}.a \
+		) || echo ""; \
 	done
 	#$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
 	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIBNAME)
@@ -535,10 +591,10 @@ uninstall:
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET)_monitor.pc
 	for lib in $(LIBRARIES); do \
-	    $(RM) $(DESTDIR)$(libdir)/$${lib}$(SO).$(VERSION)$(LIBEXT) \
-	          $(DESTDIR)$(libdir)/$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-	          $(DESTDIR)$(libdir)/$${lib}$(SO).$(LIBEXT) \
-	          $(DESTDIR)$(libdir)/$${lib}.a; \
+	    $(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	          $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	          $(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT) \
+	          $(DESTDIR)$(libdir)/lib$${lib}.a; \
 	done
 	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
 	test -d standard_profiles && \
@@ -601,10 +657,10 @@ clean:
         && $(RM) po/$${ling}.gmo; \
 	done;
 	for lib in $(LIBRARIES); do \
-	   -$(RM) $(BUILDDIR)$${lib}$(SO).$(VERSION)$(LIBEXT) \
-	          $(BUILDDIR)$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-	          $(BUILDDIR)$${lib}$(SO).$(LIBEXT) \
-	          $(BUILDDIR)$${lib}.a; \
+	   $(RM) $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	         $(BUILDDIR)lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	         $(BUILDDIR)lib$${lib}$(SO)$(LIBEXT) \
+	         $(BUILDDIR)lib$${lib}.a; \
 	done
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean

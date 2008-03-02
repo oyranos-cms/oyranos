@@ -74,6 +74,13 @@ void*	oyGetProfileBlock_                (const char*   profilename,
                                            oyAllocFunc_t allocate_func);
 
 char**  oyPolicyListGet_                  (int         * size);
+char**  oyFileListGet_                    (const char * subpath,
+                                           int        * size,
+                                           int          data,
+                                           int          owner);
+char**  oyLibListGet_                     (const char * subpath,
+                                           int        * size,
+                                           int          owner);
 
 
 /* oyranos part */
