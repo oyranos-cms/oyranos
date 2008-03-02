@@ -1,3 +1,13 @@
+2005-11-22
+	* neu: Optionen für GrundVerhalten
+	* und: oyranos-config-flu wird nicht mehr statisch gelinkt
+
+2005-11-21
+	* und: Wiki aktualisieren
+	* neu: statisches OY_DEFAULT_ASSUMED_WEB_PROFILE
+	* neu: Integration der standard_profiles in das Übersetzungssystem
+	* neu: oyranos.pc und oyranos_monitor.pc
+
 2005-10-20
 	* neu: elektra-0.5.1
 	* neu: rpm + devel rpm

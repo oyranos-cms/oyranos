@@ -22,6 +22,9 @@ using namespace oyranos;
 
 Flu_Tree_Browser *tree;
 
+#define BOX_WIDTH 250
+#define SELECT_WIDTH 176
+
 void buildOptions();
 void selectDefaultProfile_callback( Fl_Widget* w, void* );
 void path_callback( Fl_Widget* w, void* );
@@ -64,11 +67,11 @@ struct DefaultProfile: public Fl_Pack {
   Fl_Input *input;
   Fl_Button*button;
   #endif
-  oyranos::oyDEFAULT_PROFILE type;
+  oyDEFAULT_PROFILE type;
   int       i;
 
   DefaultProfile( int x, int y, int w, int h,
-                  oyranos::oyDEFAULT_PROFILE default_profile_type,
+                  oyDEFAULT_PROFILE default_profile_type,
                   char** names, int count )
     : Fl_Pack(x, y, w, h)
   {
@@ -77,10 +80,10 @@ struct DefaultProfile: public Fl_Pack {
 	type = default_profile_type;
     char *title_text = (char*) new char [256];
     sprintf(title_text, _("%s Profile"), oyGetDefaultProfileUITitle(type));
-    box = new Fl_Box( 0, 0, 210, 20, title_text );
+    box = new Fl_Box( 0, 0, BOX_WIDTH, 20, title_text );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    if(type == oyranos::oyASSUMED_WEB) {
+    if(type == oyASSUMED_WEB) {
       char* default_p = oyGetDefaultProfileName(type, myAllocFunc);
       if(default_p) {
         Fl_Box *box = new Fl_Box( 0, 0, 200, 20, default_p );
@@ -90,7 +93,7 @@ struct DefaultProfile: public Fl_Pack {
       }
     }
 
-    choice = new Fl_Choice( 0, 0, 200, 20 );
+    choice = new Fl_Choice( 0, 0, SELECT_WIDTH, 20 );
     choice->callback( selectDefaultProfile_callback );
     DBG_PROG_V((choice->size()))
     choice->add( _("[none]") );
@@ -116,7 +119,7 @@ struct DefaultProfile: public Fl_Pack {
       }
     }
     if(occurence > 1)
-      WARN_S(("multiple ocurence of default %s profile: %d times",
+      WARN_S(("multiple occurencies of default %s profile: %d times",
                oyGetDefaultProfileUITitle(type), occurence))
 
     DBG_PROG_V((choice->size()))
@@ -190,13 +193,20 @@ struct ProfilePath: public Fl_Pack {
     box = new Fl_Box( 0, 0, 350, 20, name );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    button_remove = new Fl_Button( 0, 0, 30, 20, "-" );
-    button_remove->callback( path_callback );
-    button_add = new Fl_Button( 0, 0, 30, 20, "+" );
-    button_add->callback( path_callback );
+    //button_remove = new Fl_Button( 0, 0, 30, 20, "-" );
+    //button_remove->callback( path_callback );
+    //button_add = new Fl_Button( 0, 0, 30, 20, "+" );
+    //button_add->callback( path_callback );
   }
 };
 
+struct BoxChoiceCombo: public Fl_Pack {
+  Fl_Box   *box;
+  Fl_Choice*choice;
+  BoxChoiceCombo ( int x, int y, int w, int h )
+    : Fl_Pack(x, y, w, h) { ; }
+
+};
 
 Fl_Pixmap blue_dot( (char*const*)bluedot_xpm ), green_dot( (char*const*)greendot_xpm ), red_dot( (char*const*)reddot_xpm ), teal_dot( (char*const*)tealdot_xpm ), 
   text_doc( (char*const*)textdoc_xpm ), computer( (char*const*)computer_xpm ), book( (char*const*)book_xpm ), cd_drive( (char*const*)cd_drive_xpm ),
@@ -254,6 +264,25 @@ path_callback( Fl_Widget* w, void* )
   } else fl_alert( "Path" );
 }
 
+void
+selectBehaviour_callback( Fl_Widget* w, void* x )
+{
+  if(w) {
+    Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
+    if(c) {
+      std::cout << (int)x << c->user_data() << c->value() << c->text() << std::endl;
+      char text[64];
+      int error = 0;
+      error = oySetBehaviour((oyBEHAVIOUR)(int)c->user_data(), c->value());
+      if(error) {
+        sprintf(text, "%s %s %s", _("setting"), _("failed!"),
+                c->text());
+        fl_alert( text );
+      }
+    } else fl_alert( "no Fl_Choice" );
+  } else fl_alert( _("Select Behaviour") );
+}
+
 void buildBaseTree()
 {
   Flu_Tree_Browser::Node* n;
@@ -268,8 +297,8 @@ void buildBaseTree()
   tree->always_open( true );
 
   n = tree->get_root();
-  if( n ) n->branch_icons( &computer, &computer );
-
+  //if( n ) n->branch_icons( &computer, &computer );
+  if( n ) n->branch_icons( 0, 0 );
 
   tree->open( true );
 }
@@ -278,7 +307,7 @@ void buildDefaultProfilesLeaves()
 {
   char* default_profiles_dirname = _("Default Profiles");
   int count = 0;
-  oyranos::oyDEFAULT_PROFILE i;
+  oyDEFAULT_PROFILE i;
   /* pick up all profiles */
   char** names = oyProfileList ( 0, &count );
 
@@ -327,6 +356,7 @@ void buildPathLeaves()
   }
   n = tree->find( _("Profile Paths") );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+  if( n ) n->branch_icons( 0, 0 );
 }
 
 void removePathLeaves()
@@ -353,20 +383,52 @@ void buildOptionsLeaves()
 {
   Flu_Tree_Browser::Node* n;
 
-  Fl_Choice *c = new Fl_Choice( 0, 0, 100, 20 );
+  for (int i = 0; i < oyBEHAVIOUR_TYPES ; ++i) {
+    int choices = 1; // minimum
+    const char* category = 0;
+    const char* label = 0;
+    const char* options = 0;
+    const char* tooltip = 0;
+    BoxChoiceCombo *bc = new BoxChoiceCombo(0, 0, 300, 20);
+    bc->type( FL_HORIZONTAL );
+    bc->spacing(0);
+    bc->resizable(0);
 
-# if 0 // This is utopia
-  c->add( _("Perceptual") );
-  c->add( _("Relative Colorimetric") );
-  c->add( _("Saturation") );
-  c->add( _("Absolute Colorimetric") );
-  c->value( 1 );
-  n = tree->add( _("Options (dont do anything)/Default Rendering Intent"), c );
-  if( n ) n->expand_to_width( true );
-  if( n ) n->leaf_icon( NULL );
-  n = tree->find( _("Options") );
-  if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
-# endif
+    label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, &choices, 0, &category, &options, &tooltip );
+    bc->box = new Fl_Box( 0, 0, BOX_WIDTH, 20, _(label) );
+    bc->box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+    
+    bc->choice = new Fl_Choice( 0, 0, SELECT_WIDTH, 20 );
+    Fl_Choice *choice = bc->choice;
+    choice->callback( selectBehaviour_callback );
+    choice->user_data( (void*)i );
+    DBG_PROG_V((choice->size()))
+    for (int j = 0; j < choices; ++j) {
+      label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, &choices, j, &category, &options, &tooltip );
+      if (label) choice->add( _(options) );
+    }
+    if (label) {
+      char leave_name[128];
+      snprintf (leave_name, 128, "/%s/ ", _(category) );
+      n = tree->add( leave_name, bc);
+      choice->value( oyGetBehaviour( (oyBEHAVIOUR)i ) );
+      if(tooltip) {
+        //std::cout << tooltip << std::endl;
+        choice->tooltip(tooltip);
+        bc->box->tooltip(tooltip);
+      }
+      n = tree->find( _(category) );
+      if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+      if( n ) n->branch_icons( 0, 0 );
+      //if( n ) n->expand_to_width( true );
+    }
+    bc->end();
+    tooltip = 0;
+    options = 0;
+    label = 0;
+    category = 0;
+  }
+ 
 
   tree->collapse_time( 0.2 );
   tree->frame_rate( 60.0 );
@@ -377,12 +439,14 @@ void buildOptionsLeaves()
 void buildTree()
 {
   buildBaseTree();
+  tree->selection_mode( FLU_NO_SELECT );
 
   Flu_Tree_Browser::Node* n;
   char* default_profiles_dirname = _("/Default Profiles/");
   tree->add( default_profiles_dirname );
   n = tree->find( default_profiles_dirname );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+  if( n ) n->branch_icons( 0, 0 );
 
   buildPathLeaves();
   buildDefaultProfilesLeaves();
@@ -395,9 +459,9 @@ int main( int argc, char **argv )
     oy_debug = 1;
 
   FL_NORMAL_SIZE = 12;
-  Fl_Double_Window *win = new Fl_Double_Window( 500, 400, _("Oyranos Colour Management") );
+  Fl_Double_Window *win = new Fl_Double_Window( 500, 430, _("Oyranos Colour Management") );
 
-  tree = new Flu_Tree_Browser( 0, 0, 500, 400 );
+  tree = new Flu_Tree_Browser( 0, 0, 500, 430 );
   tree->allow_dnd( true );
   //tree->when( FL_WHEN_RELEASE );
   //tree->color( FL_GRAY );

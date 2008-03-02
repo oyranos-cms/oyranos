@@ -275,8 +275,8 @@ install:	install-main
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
-install_gui:	$(TARGET)-config-flu-static
-	echo Installing $(TARGET)-config-flu static ...
+install_gui:	$(TARGET)-config-flu
+	echo Installing $(TARGET)-config-flu ...
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
 

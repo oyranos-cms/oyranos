@@ -176,6 +176,9 @@ enum {
   oySYS,
 };
 
+int     oySetBehaviour_        (oyBEHAVIOUR type,
+                                int         behaviour);
+
 /* complete an name from file including oyResolveDirFileName */
 char*   oyMakeFullFileDirName_     (const char* name);
 /* find an file/dir and do corrections on  ~ ; ../  */
@@ -366,6 +369,155 @@ oySelectUserSys_()
   else
     return OY_USER;
 }
+
+
+
+typedef struct {
+  int n_options;                       /**< number of options */
+  const char *category;                /**< name under which the setting shall appear */
+  const char *label;                   /**< label for setting */
+  const char *description;             /**< description for setting */
+  const char *labels[10];  /**< label for each choice */
+  const char *config_string;           /**< key name to store configuration */
+} oyBEHAVIOUR_OPTION;
+
+oyBEHAVIOUR_OPTION oy_behaviour_option_description_[oyBEHAVIOUR_TYPES] = {
+{ 3, "Behaviour", "No Image profile", "Image has no profile embedded action.",
+ {"Assign No Profile","Assign Assumed Profile","Promt"},
+ {OY_ACTION_UNTAGGED_ASSIGN} }, /* oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN */
+{ 3, "Behaviour", "On Open Rgb Mismatch", "Image profile and Editing profile mismatches.",
+ {"Keep Data","Convert automatically","Promt"},
+ {OY_ACTION_OPEN_MISMATCH_RGB} }, /* oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB */
+{ 3, "Behaviour", "On Open Cmyk Mismatch", "Image profile and Editing profile mismatches.",
+ {"Keep Data","Convert automatically","Promt"},
+ {OY_ACTION_OPEN_MISMATCH_CMYK} }, /* oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB */
+{ 2, "Behaviour/Documents", "Mixed colour space", "Allow mixed colour space documents or not.",
+ {"Allow Mixing","Flatten Colour"},
+ {OY_ALLOW_MIXED_COLOUR_SPACE_DOCUMENT} }, /* oyBEHAVIOUR_MIXED_MOD_DOCUMENTS */
+{ 2, "Behaviour/Documents", "Mixed colour space internet", "Give a warning during saveing a mixed mode document for Internet publishing.",
+ {"Silent","Warn"},
+ {OY_WARNING_MIXED_COLOUR_SPACE_INTERNET_DOCUMENT} }, /* oyBEHAVIOUR_MIXED_MOD_DOCUMENTS */
+{ 4, "Behaviour", "Default Rendering Intent", "Usual colour space transform behaviour",
+ {"Preceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
+ {OY_DEFAULT_RENDERING_INTENT} }, /* oyBEHAVIOUR_RENDERING_INTENT */
+{ 4, "Behaviour", "Proofing Rendering Intent", "Behaviour of colour space transformation for proofing",
+ {"Preceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
+ {OY_DEFAULT_RENDERING_INTENT_PROOF} }, /* oyBEHAVIOUR_RENDERING_INTENT_PROOF */
+};
+
+const char oy_behaviour_config_string_[oyBEHAVIOUR_TYPES][64] = {
+};
+
+int
+oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
+{ DBG_PROG_START
+  int r = 0;
+
+  DBG_PROG_S( ("type = %d behaviour %d", type, choice) )
+
+  if ( type >= 0 && type < oyBEHAVIOUR_TYPES )
+  {
+    if ( choice >= 0 &&
+         choice < oy_behaviour_option_description_[type].n_options )
+      r = 1;
+    else
+      WARN_S( ("%s:%d !!! ERROR type %d option %d does not exist for behaviour",__FILE__,__LINE__, type, choice));
+  }
+  else
+    WARN_S( ("%s:%d !!! ERROR type %d type does not exist for behaviour",__FILE__,__LINE__, type));
+
+  DBG_PROG_ENDE
+  return r;
+}
+
+int
+oySetBehaviour_      (oyBEHAVIOUR type, int choice)
+{ DBG_PROG_START
+  int r = 1;
+
+  DBG_PROG_S( ("type = %d behaviour %d", type, choice) )
+
+  if ( (r=oyTestInsideBehaviourOptions_(type, choice)) == 1 )
+  {
+    const char *keyName = 0, *com = 0;
+
+    keyName = oy_behaviour_option_description_[type].config_string;
+
+      if(keyName)
+      {
+        char val[12];
+        snprintf(val, 12, "%d", choice);
+        r = oyAddKey_valueComment_ (keyName, val, com); DBG_PROG
+        DBG_PROG_S(( "%s %d %s", keyName, type, val ))
+      }
+      else
+        WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
+  }
+
+  DBG_PROG_ENDE
+  return r;
+}
+
+const char*
+oyGetBehaviourUITitle_     (oyBEHAVIOUR       type,
+                            int              *choices,
+                            int               choice,
+                            const char      **category,
+                            const char      **option_string,
+                            const char      **tooltip)
+{ DBG_PROG_START
+  if (choices) *choices = oy_behaviour_option_description_[ type ].n_options;
+
+  if ( oyTestInsideBehaviourOptions_(type, choice) )
+  { *option_string = oy_behaviour_option_description_[ type ]. labels[ choice ];
+    *category = oy_behaviour_option_description_[ type ]. category;
+    *tooltip = oy_behaviour_option_description_[ type ]. description;
+    DBG_PROG_ENDE
+    return oy_behaviour_option_description_[type]. label;
+  }
+  DBG_PROG_ENDE
+  return NULL;
+}
+
+int
+oyGetBehaviour_      (oyBEHAVIOUR type)
+{ DBG_PROG_START
+  char* name = (char*) malloc (MAX_PATH);
+  const char* keyName = 0;
+  int rc = 0;
+  int c = -1;
+
+  DBG_PROG_S( ("type = %d behaviour", type) )
+
+  if ( (rc=oyTestInsideBehaviourOptions_(type, 0)) == 1 )
+  {
+    keyName = oy_behaviour_option_description_[type].config_string;
+
+      if(keyName)
+      {
+        char *kname = (char*)alloca(MAX_PATH);
+        snprintf(kname, MAX_PATH, "%s%s", oySelectUserSys_(), keyName);
+        DBG_PROG_S(( "%s %s %d", keyName, kname, type ))
+
+        rc = kdbGetValue (kname, name, MAX_PATH);
+      }
+      else
+        WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
+  }
+  else
+    WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
+
+  DBG_PROG_S((name))
+  DBG_PROG_V((rc))
+  if(rc == KDB_RET_OK)
+    c = atoi(name);
+  OY_FREE( name )
+
+  DBG_PROG_ENDE
+  return c;
+}
+
+
 
 size_t
 oyReadFileSize_(const char* name)
@@ -2201,8 +2353,75 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
 #include "oyranos.h"
 
+/** \addtogroup behaviour Behaviour / Policy API
+ *  Functions to set and query for behaviour on various actions in Oyranos.
+
+ *  @{
+ */
+
+/** Set a special behaviour. Usual in control panel in Oyranos.\n 
+ *
+ *  @param  type      the type of behaviour
+ *  @param  choice    the selected option
+ *  @return true/false
+ */
+int
+oySetBehaviour         (oyBEHAVIOUR       type,
+                        int               choice)
+{ DBG_PROG_START
+  int s = 0;
+  s = oySetBehaviour_(type, choice);
+  DBG_PROG_ENDE
+  return s;
+}
+
+/** Get a special behaviours UI strings.\n 
+ *
+ *  @param  type      the type of behaviour
+ *  @param  choices   how many options has this behaviour
+ *  @param  choice    the selected option
+ *  @param  option_string the options label
+ *  @param  tooltip   a tooltip for this behaviour
+ *  @return           the behaviour label
+ */
+const char*
+oyGetBehaviourUITitle      (oyBEHAVIOUR       type,
+                            int              *choices,
+                            int               choice,
+                            const char      **category,
+                            const char      **option_string,
+                            const char      **tooltip)
+{ DBG_PROG_START
+  const char *uititle = oyGetBehaviourUITitle_(type, choices, choice, category, option_string, tooltip);
+  DBG_PROG_ENDE
+  return uititle;
+}
+
+/** Get a special behaviour.\n 
+ *
+ *  @param  type      the type of behaviour
+ *  @return           the behaviour option (-1 if not available or not set)
+ */
+int
+oyGetBehaviour         (oyBEHAVIOUR       type)
+{ DBG_PROG_START
+  int n = 0;
+  n = oyGetBehaviour_(type);
+  DBG_PROG_ENDE
+  return n;
+}
+
+/*  @} */
+
 /** \addtogroup path_names Path Names API
  *  Functions to handle path configuration for Oyranos.
+ *
+ *  Paths include operating system standard paths. For linux these are:
+ *  <ul><li>  /usr/share/color/icc - for global system profiles</li>
+ *  <li>    ~/.color/icc - for user profiles</li>
+ *  <li>    /usr/local/share/color/icc - for local system profiles</li>
+ *  </ul>
+ *  Paths are scanned recursively excluding symbolic links.
 
  *  @see @ref profile_lists
 
@@ -2482,7 +2701,7 @@ oyGetProfileSize                  (const char* profilename)
 /** @brief obtain an memory block in the responsibility of the user
  *
  *  @param  profilename  specifies the profile
- *  @param[in] size      desired size, or zero for a complete copy
+ *  @param[in]  size     desired size, or zero for a complete copy
     @param[out] size     the size of the returned block
  *  @param      allocate_func the users memory allocation function
  *  @return             the profile block in memory allocated by oyAllocFunc_t
@@ -2534,6 +2753,9 @@ oyGetProfileBlock                 (const char* profilename, size_t *size,
  *  @param host           useful for monitor identification (grafic:0.0)
  *  @param port           kind of connection (Matrox G650)
  *  @param attrib1        additional attribute
+ *  @param attrib2        additional attribute
+ *  @param attrib3        additional attribute
+ *  @param allocate_func  the users memory allocation function
  * 
  *  simply pass 0 for not specified properties<br>
 

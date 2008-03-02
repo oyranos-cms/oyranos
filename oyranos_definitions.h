@@ -92,10 +92,20 @@
 
 /* --- settings --- */
 
-/** key name for the non profile tagged content action */
+/** key name for the non profile tagged content action [ dont assign | assign assumed Profile | promt ] */
 #define OY_ACTION_UNTAGGED_ASSIGN            OY_KEY OY_SLASH "behaviour" OY_SLASH "action_untagged_assign"
-/** key name for the rgb profile mismatch action */
-#define OY_ACTION_OPEN_MISMATCH_RGB          OY_KEY OY_SLASH "behaviour" OY_SLASH "action_open_missmatch"
+/** key name for the rgb profile mismatch action |*/
+#define OY_ACTION_OPEN_MISMATCH_RGB          OY_KEY OY_SLASH "behaviour" OY_SLASH "action_open_missmatch_rgb"
+/** key name for the cmyk profile mismatch action */
+#define OY_ACTION_OPEN_MISMATCH_CMYK         OY_KEY OY_SLASH "behaviour" OY_SLASH "action_open_missmatch_cmyk"
+/** key name for the allow mixed colour space switch */
+#define OY_ALLOW_MIXED_COLOUR_SPACE_DOCUMENT OY_KEY OY_SLASH "behaviour" OY_SLASH "allow_mixed_colour_spaces_doc"
+/** key name for generating a mixed colour space for internet warning */
+#define OY_WARNING_MIXED_COLOUR_SPACE_INTERNET_DOCUMENT OY_KEY OY_SLASH "behaviour" OY_SLASH "warn_mixed_colour_spaces_internet_doc"
+/** key name for the default rendering intent */
+#define OY_DEFAULT_RENDERING_INTENT          OY_KEY OY_SLASH "behaviour" OY_SLASH "default_rendering_intent"
+/** key name for the default prooing rendering intent */
+#define OY_DEFAULT_RENDERING_INTENT_PROOF    OY_KEY OY_SLASH "behaviour" OY_SLASH "default_rendering_intent_proof"
 
 
 #endif /* OYRANOS_DEFINITIONS_H */

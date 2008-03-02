@@ -43,6 +43,38 @@ namespace oyranos
 {
 #endif /* __cplusplus */
 
+/* --- behaviour / policies --- */
+
+/** enum Default Profiles
+ */
+typedef enum  {
+  oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? */
+  oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB,/**< What to do if profiles mismatch ? */
+  oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK,/**< What to do if profiles mismatch ?*/
+  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS,     /**< Allow mixed color space documents?*/
+  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_WWW, /**< Warn mixed color space internet documents?*/
+  oyBEHAVIOUR_RENDERING_INTENT,        /**< Standard colour transformations */
+  oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
+  oyBEHAVIOUR_TYPES                    /**< just for easen Gui design */
+} oyBEHAVIOUR;
+
+enum  {
+  oyNO,                                /**< dont do it */
+  oyYES,                               /**< automaticaly perform action */
+  oyASK,                               /**< popup dialog */
+}; /**< for oyBEHAVIOUR_ACTION */
+
+int         oySetBehaviour             (oyBEHAVIOUR       type,
+                                        int               choice);
+const char* oyGetBehaviourUITitle      (oyBEHAVIOUR       type,
+                                        int              *choices,
+                                        int               choice,
+                                        const char      **category,
+                                        const char      **option_string,
+                                        const char      **tooltip);
+int         oyGetBehaviour             (oyBEHAVIOUR       type);
+
+
 /**
  * @param[in] size the size to allocate
  *
@@ -82,7 +114,7 @@ typedef enum  {
   oyASSUMED_XYZ,            /**< standard XYZ assumed source profile */
   oyASSUMED_LAB,            /**< standard Lab assumed source profile */
   oyASSUMED_RGB,            /**< standard RGB assumed source profile */
-  oyASSUMED_WEB,            /**< standard internet assumed source profile static_profile*/
+  oyASSUMED_WEB,            /**< std internet assumed source static_profile*/
   oyASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
   oyDEFAULT_PROFILE_TYPES   /**< just for easen Gui design */
 } oyDEFAULT_PROFILE;
