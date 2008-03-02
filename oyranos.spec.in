@@ -27,6 +27,14 @@ used components and libraries:
     FLU         Jason Bryan
     Elektra     Avi Alkalay and others
 
+
+%description devel
+Oyranos is useable to store default profiles and paths,
+query for profiles in that paths. An internal device profile
+API allowes configuring of the profile X.
+
+
+
 %package   devel
 Summary:   Headers, configuration and static libs + documentation
 Group:     Development/System
@@ -45,6 +53,7 @@ rm -rf %{buildroot}
 make
 make oyranos_config_flu_static
 make DESTDIR=%{buildroot} install_gui
+make DESTDIR=%{buildroot} install
 
 %clean
 rm -rf %{buildroot}
@@ -56,10 +65,13 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
+%{_bindir}/oyranos-gamma
 %{_bindir}/oyranos_config_flu
+%{_libdir}/*
 
 %files devel
-%{_libdir}/
+%{_bindir}/oyranos-config
+%doc doc/*
 
 %changelog
 * Tue Apr 21 2005 Kai-Uwe Behrmann
