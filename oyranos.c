@@ -1877,24 +1877,27 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
   // TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
-  Key *current;
-  char* value = (char*) calloc (sizeof(char), MAX_PATH);
-  for (current=profilesList->start; current; current=current->next)
+  if(profilesList)
   {
-    keyGetName(current, value, MAX_PATH);
-    DBG_NUM_S(( value ))
-    if(strstr(value, profile_name) != 0) {
-      DBG_PROG_S((value))
-      kdbRemove (value); 
-      break;
+    Key *current;
+    char* value = (char*) calloc (sizeof(char), MAX_PATH);
+    for (current=profilesList->start; current; current=current->next)
+    {
+      keyGetName(current, value, MAX_PATH);
+      DBG_NUM_S(( value ))
+      if(strstr(value, profile_name) != 0) {
+        DBG_PROG_S((value))
+        kdbRemove (value); 
+        break;
+      }
     }
+
+    DBG_NUM_S(( value ))
+
+    if(profilesList) ksClose(profilesList); DBG_PROG
+    OY_FREE (value) DBG_PROG
   }
-
-  DBG_NUM_S(( value ))
-
-  if(profilesList) ksClose(profilesList); DBG_PROG
   OY_FREE (profile_name) DBG_PROG
-  OY_FREE (value) DBG_PROG
   kdbClose(); DBG_PROG
 
   DBG_PROG_ENDE
