@@ -29,6 +29,7 @@
 
 #include <kdb.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -721,6 +722,36 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
   int r = 1;
   const char *fileName = 0, *com = comment;
 
+// TODO
+#if 0
+  if(!name)
+  {
+           if (strstr (typ , "Image"))
+        r = oyAddKey_valueComment_ (OY_DEFAULT_IMAGE_PROFILE, fileName, com);
+      else if (strstr (typ , "Workspace"))
+        r = oyAddKey_valueComment_ (OY_DEFAULT_WORKSPACE_PROFILE, fileName, com);
+      else if (strstr (typ , "XYZ"))
+        r = oyAddKey_valueComment_ (OY_DEFAULT_XYZ_PROFILE, fileName, com);
+      else if (strstr (typ , "Lab"))
+        r = oyAddKey_valueComment_ (OY_DEFAULT_LAB_PROFILE, fileName, com);
+      else if (strstr (typ , "RGB"))
+        r = oyAddKey_valueComment_ (OY_DEFAULT_RGB_PROFILE, fileName, com);
+      else if (strstr (typ , "Cmyk"))
+        r = oyAddKey_valueComment_ (OY_DEFAULT_CMYK_PROFILE, fileName, com);
+      else if (strstr (typ , "Device"))
+      {
+        int len = strlen(OY_USER OY_SLASH OY_REGISTRED_PROFILES)
+                  + strlen(fileName);
+        char* keyName = (char*) calloc (len +10, sizeof(char)); DBG_PROG
+        sprintf (keyName, "%s%s%s%s", OY_USER, OY_SLASH, OY_REGISTRED_PROFILES OY_SLASH, fileName); DBG_PROG
+        r = oyAddKey_valueComment_ (keyName, com, 0); DBG_PROG
+        //DBG_PROG_V(("%s %d", keyName, len))
+        OY_FREE (keyName)
+    
+    DBG_PROG_ENDE
+    return r;
+  }
+#endif
   if (strrchr(name , OY_SLASH_C))
   {
     fileName = strrchr(name , OY_SLASH_C);
@@ -778,6 +809,8 @@ oyPathsCount_ ()
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
   n = myKeySet->size;
+  if(!n)
+    oyPathAdd_(OY_DEFAULT_USER_PROFILE_PATH);
 
   ksClose (myKeySet);
   kdbClose();
@@ -905,12 +938,14 @@ oyPathRemove_ (const char* pfad)
   }
 
   ksClose (myKeySet);
+
+  oyPathAdd_ (OY_DEFAULT_USER_PROFILE_PATH);
+
   kdbClose();
   OY_FREE(myKeySet)
   OY_FREE(keyName)
   OY_FREE(value)
 
-  oyPathAdd_ (OY_DEFAULT_USER_PROFILE_PATH);
 
   DBG_PROG_ENDE
 }
@@ -1155,11 +1190,62 @@ oyProfileList_                     (const char* colourspace, int * size)
   DBG_PROG_START
   char** names = 0;
   int count = oyPathsCount_();
-  int i;
+  int i, mem_count = 128;
+  int count_files = 0;
+
+  names = (char**) calloc (sizeof(char*), mem_count);
+
   for(i = 0; i < count ; ++i)
   {
-    oyPathName_(i) ;
+    struct stat statbuf;
+    DIR *dir;
+    struct dirent *entry;
+    char *p = oyPathName_(i);
+    char *path = oyMakeFullFileDirName_(p);
+
+    if ((stat (path, &statbuf)) != 0) {
+      WARN_S(("%d. path %s does not exist", i, path))
+      continue;
+    }
+    if (!S_ISDIR (statbuf.st_mode)) {
+      WARN_S(("%d. path %s is not a directory", i, path));
+      continue;
+    }
+    dir = opendir (path);
+    if (!dir) {
+      WARN_S(("%d. path %s is not readable", i, path));
+      continue;
+    }
+
+    while ((entry = readdir (dir)))
+    {
+      char *file_name = entry->d_name;
+      if ((strcmp (file_name, "..") == 0) || (strcmp (file_name, ".") == 0))
+        continue;
+
+      if (!oyCheckProfile_(file_name))
+      {
+        if(count_files > mem_count)
+        {
+          char** temp = names;
+          names = (char**) calloc (sizeof(char*), mem_count+128);
+          memcpy(names, temp, sizeof(char*) * mem_count);
+          mem_count += 128;
+        }
+
+        if(!colourspace) {
+          names[count_files] = (char*) calloc (sizeof(char), strlen(file_name)+1);
+          sprintf(names[count_files], file_name);
+          ++count_files;
+        }
+      } else
+        WARN_S(("%s in %s is not a valid profile", file_name, path));
+    }
+    closedir(dir);
+
   }
+
+  *size = count_files;
   DBG_PROG_ENDE
   return names;
 }

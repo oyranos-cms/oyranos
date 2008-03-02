@@ -22,6 +22,12 @@ void buildOptions();
 void selectDefaultProfile_callback( Fl_Widget* w, void* );
 void path_callback( Fl_Widget* w, void* );
 
+void buildBaseTree();
+void buildDefaultProfilesLeaves();
+void buildPathLeaves();
+void buildOptionsLeaves();
+void buildTree();
+
 #define OY_DEFAULTPROFILES_COUNT 6
 char *default_profiles[] = {
                                 "Image Profile",
@@ -60,7 +66,7 @@ struct DefaultProfile: public Fl_Pack {
   Fl_Input *input;
   Fl_Button*button;
   #endif
-  int       type;
+  int       type, i;
 
   DefaultProfile( int x, int y, int w, int h, int default_profile_type )
     : Fl_Pack(x, y, w, h)
@@ -72,12 +78,24 @@ struct DefaultProfile: public Fl_Pack {
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
     choice = new Fl_Choice( 0, 0, 200, 20 );
     choice->callback( selectDefaultProfile_callback );
+    choice->add( "[none]" );
     oyOpen();
-    choice->add( functions_getDefaultProfile[type]() );
+    char* default_p = functions_getDefaultProfile[type]();
+    int count, val = 0;
+    char** names = oyProfileList ( 0, &count );
+    for (i = 0; i < count; ++i)
+    {
+      choice->add( names[i] );
+      if(strcmp(names[i], default_p) == 0) {
+        val = i+1;
+      }
+      if(names[i]) free(names[i]);
+    }
     oyClose();
-    choice->add( "Profile1" );
-    choice->add( "Profile2" );
-    choice->value( 0 );
+    free(names);
+
+    choice->value( val );
+    
     #if 0
     input = new Fl_Input( 0, 0, 120, 20 );
     input->callback( selectDefaultProfile_callback );
@@ -99,19 +117,15 @@ struct ProfilePath: public Fl_Pack {
     Fl_Pack::spacing(0);
     Fl_Group::resizable(0);
     n = num;
-    oyOpen();
     char *name = oyPathName(n) ;
     std::cout << name << std::endl;
-    oyClose();
     box = new Fl_Box( 0, 0, 350, 20, name );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-    //if(name) free (name);
 
     button_remove = new Fl_Button( 0, 0, 30, 20, "-" );
     button_remove->callback( path_callback );
     button_add = new Fl_Button( 0, 0, 30, 20, "+" );
     button_add->callback( path_callback );
-
   }
 };
 
@@ -131,7 +145,11 @@ selectDefaultProfile_callback( Fl_Widget* w, void* )
       std::cout << c->value() << c->text() << std::endl;
       char text[64];
       oyOpen();
-      int error = functions_setDefaultProfile[dp->type] (c->text());
+      int error = 0;
+      if(strcmp(c->text(),"[none]") == 0)
+        error = functions_setDefaultProfile[dp->type] (0);
+      else
+        error = functions_setDefaultProfile[dp->type] (c->text());
       oyClose();
       if(error) {
         sprintf(text, "setting %s failed!", default_profiles[dp->type]);
@@ -144,24 +162,34 @@ selectDefaultProfile_callback( Fl_Widget* w, void* )
 void
 path_callback( Fl_Widget* w, void* )
 {
-  ProfilePath *dp = dynamic_cast<ProfilePath*> (w->parent());
-  if(dp) {
+  ProfilePath *pp = dynamic_cast<ProfilePath*> (w->parent());
+  if(pp) {
     Fl_Button *b = dynamic_cast<Fl_Button*> (w);
-    if(b && b == dp->button_add) {
+    if(b && b == pp->button_add) {
       std::cout << b->value() << std::endl;
       char text[512];
-      oyOpen();
-      int error = oyPathAdd (dp->box->label());
-      oyClose();
+      int error = oyPathAdd (pp->box->label());
       if(error) {
-        sprintf(text, "setting %s path!", dp->box->label());
+        sprintf(text, "error setting %s path!", pp->box->label());
         fl_alert( text );
       }
+    } else 
+    if(b && b == pp->button_remove) {
+      std::cout << b->value() << std::endl;
+      oyPathRemove ( pp->box->label() );
+      
+      int i, count = oyPathsCount();
+      bool in = false;
+      for(i = 0; i < count; ++i)
+        if(strstr(oyPathName(i),pp->box->label()))
+          in = true;
+      if(!in)
+        tree->remove(pp);
     } else fl_alert( "no Fl_Button" );
   } else fl_alert( "Path" );
 }
 
-void buildOptions()
+void buildBaseTree()
 {
   Flu_Tree_Browser::Node* n;
 
@@ -179,7 +207,11 @@ void buildOptions()
 
 
   tree->open( true );
+}
 
+void buildDefaultProfilesLeaves()
+{
+  Flu_Tree_Browser::Node* n;
 
   //std::cout << sizeof(default_profiles) << std::endl;
   char* default_profiles_dirname = "Default Profiles";
@@ -194,12 +226,17 @@ void buildOptions()
 
   n = tree->find( default_profiles_dirname );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+}
+
+void buildPathLeaves()
+{
+  Flu_Tree_Browser::Node* n;
 
   char  pn[64];
   sprintf( pn, "/%s/ ", "Profile Paths" );
-  oyOpen();
   int count = oyPathsCount();
-  oyClose();
+  if(!count)
+    count = oyPathsCount();
   for (int i = 0 ; i < count ; ++i) {
     ProfilePath *pp = new ProfilePath( 0, 0, 300, 20, i );
     tree->add( pn, pp );
@@ -207,6 +244,12 @@ void buildOptions()
   }
   n = tree->find( "Profile Paths" );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+}
+
+
+void buildOptionsLeaves()
+{
+  Flu_Tree_Browser::Node* n;
 
   Fl_Choice *c = new Fl_Choice( 0, 0, 100, 20 );
   c->add( "Perceptual" );
@@ -226,6 +269,14 @@ void buildOptions()
   tree->redraw();
 }
 
+void buildTree()
+{
+  buildBaseTree();
+  buildDefaultProfilesLeaves();
+  buildPathLeaves();
+  buildOptionsLeaves();
+}
+
 int main( int argc, char **argv )
 {
   FL_NORMAL_SIZE = 12;
@@ -240,7 +291,7 @@ int main( int argc, char **argv )
   win->resizable( tree );
   win->show( argc, argv );
 
-  buildOptions();
+  buildTree();
 
   //Fl::dnd_text_ops( 1 );
 
