@@ -135,7 +135,7 @@ endif
 ALL_FILES =	$(DOKU) \
 	configure \
 	makefile \
-	oyranos.spec \
+	oyranos.spec.in \
 	oyranos-config.in \
 	$(SOURCES) \
 	$(FLUID)

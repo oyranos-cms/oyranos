@@ -5,12 +5,13 @@ TARGET=oyranos
 CONF_H=config.h
 CONF=config
 CONF_SH=$TARGET-config
+SPEC=$TARGET.spec
 
 VERSION_A=0
 VERSION_B=1
-VERSION_C=0
+VERSION_C=1
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
-TIME="November 2004 - June 2005"
+TIME="November 2004 - August 2005"
 
 if [ $# -gt 1 ] && [ $1 == "--prefix" ]; then
   prefix=$2
@@ -131,9 +132,13 @@ echo "#define OYRANOS_DATE _(\"$TIME\")" >> oyranos_version.h
 echo "" >> oyranos_version.h
 echo "#endif /*OYRANOS_VERSION_H*/" >> oyranos_version.h
 
-echo ""
-echo ""
+echo "Version: $VERSION" > $SPEC
+echo "Source:  $TARGET"_"$VERSION".tar.gz >> $SPEC
+cat  $SPEC.in >> $SPEC
+echo $SPEC generated
 
+echo ""
+echo ""
 
 if [ `cat error.txt | wc -l` -lt 1 ]; then
   rm error.txt
