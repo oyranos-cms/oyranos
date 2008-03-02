@@ -62,7 +62,7 @@ extern "C" {
 #define OY_USER_PATHS            OY_USER OY_KEY OY_SLASH "paths"
 #define OY_USER_PATH             "path"
 
-int	oyPathsRead          (void);
+int	oyPathsCount         (void);
 char*	oyPathName           (int number);
 int	oyPathAdd            (char* pathname);
 void	oyPathRemove         (char* pathname);
@@ -76,12 +76,12 @@ void	oyPathActivate       (char* pathname);
 #define OY_DEFAULT_WORKSPACE_PROFILE OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_workspace"
 #define OY_DEFAULT_CMYK_PROFILE      OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_cmyk"
 
-void	oySetDefaultImageProfile          (char* name);
-void	oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size);
-void	oySetDefaultWorkspaceProfile      (char* name);
-void	oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size);
-void	oySetDefaultCmykProfile           (char* name);
-void	oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size);
+int	oySetDefaultImageProfile          (char* name);
+int	oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size);
+int	oySetDefaultWorkspaceProfile      (char* name);
+int	oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size);
+int	oySetDefaultCmykProfile           (char* name);
+int	oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size);
 
 char*	oyGetDefaultImageProfileName      ();
 char*	oyGetDefaultWorkspaceProfileName  ();

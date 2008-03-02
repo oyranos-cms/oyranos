@@ -23,7 +23,7 @@ Voraussetzungen:
 
 Konfiguration:
 
-    für osX in "makefile": #APPLE = 1  auskommentieren
+    für osX in der Datei "makefile": #APPLE = 1  auskommentieren
 
 Zusätze:
 

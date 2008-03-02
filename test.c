@@ -47,23 +47,23 @@ main()
     oyPathAdd (a);
   }
 
-  printf ("count of paths = %d\n", oyPathsRead());
+  printf ("count of paths = %d\n", oyPathsCount());
 
-  for (i = 0; i < oyPathsRead(); i++)
+  for (i = 0; i < oyPathsCount(); i++)
   { char* name = oyPathName(i);
     printf ("the %dth path has value = %s\n", i, name);
     free (name);
   }
 
   oyPathSleep (a);
-  for (i = 0; i < oyPathsRead(); i++)
+  for (i = 0; i < oyPathsCount(); i++)
   { char* name = oyPathName(i);
     printf ("the %dth path has value = %s\n", i, name);
     free (name);
   }
 
   oyPathActivate (a);
-  for (i = 0; i < oyPathsRead(); i++)
+  for (i = 0; i < oyPathsCount(); i++)
   { char* name = oyPathName(i);
     printf ("the %dth path has value = %s\n", i, name);
     free (name);
@@ -72,15 +72,37 @@ main()
 
   oyPathRemove(a);
 
-  printf ("count of paths after removing one = %d\n", oyPathsRead());
+  printf ("count of paths after removing one = %d\n", oyPathsCount());
 
   oySetDefaultCmykProfile ("CMYK.icc");
 
   {
     char *profil = (char*) calloc (sizeof(char), 3000);
-    printf ("profil = %lu written  %s\n", profil, "example_workspace.icm");
-    oySetDefaultWorkspaceProfileBlock ("example_workspace.icm", profil, 3000);
+    int r = 0;
+
+    r=oySetDefaultWorkspaceProfileBlock ("example_workspace.icm", profil, 3000);
+    if (r)
+      printf ("profil = %lu written  %s\n", profil, "example_workspace.icm");
+    else
+      printf ("profil = %lu invalid  %s\n", profil, "example_workspace.icm");
+      
     free (profil);
+
+    // take an real file as input
+    size_t size;
+    char* pn = "~/.color/S20040909.icm";
+    profil = oyReadFileToMem (pn, &size);
+
+    printf ("size = %d pos = %lu\n",size, (int) profil);
+    r=oySetDefaultWorkspaceProfileBlock ("ex_workspace.icm", profil, size);
+    if (r)
+      printf ("profil = %lu written  %s\n", profil, "ex_workspace.icm");
+    else
+      printf ("profil = %lu invalid  %s\n", profil, "ex_workspace.icm");
+      
+    free (profil);
+
+    printf ("%s exist %d\n", pn, oyIsFile(pn));
   }
 
   return 0;

@@ -39,7 +39,8 @@ LDLIBS = -L$(libdir) -L./ $(FLTK_LIBS) \
 
 
 CPP_HEADERS = \
-	oyranos.h
+	oyranos.h \
+	oyranos_helper.h
 #	fl_oyranos.h
 CFILES = \
 	oyranos.c

@@ -32,18 +32,11 @@
 #include <sys/stat.h>
 
 #include "oyranos.h"
-
+#include "oyranos_helper.h"
 
 /* ---  Helpers  --- */
 #define DEBUG
-
-#ifdef DEBUG
-#define DBG printf("%s:%d %s()\n", __FILE__,__LINE__,__func__);
-#define DBG_S( text ) printf("%s:%d %s = %s\n", __FILE__,__LINE__, #text, text);
-#else
-#define DBG
-#define DBG_S( text )
-#endif
+int level_PROG;
 
 #define ERR if (rc) { printf("%s:%d\n", __FILE__,__LINE__); perror("Error"); }
 
@@ -57,15 +50,19 @@ int oyAddKey_value (char* keyName, char* value);
 char* oySearchEmptyKeyname (char* keyParentName, char* keyBaseName);
 KeySet* oyReturnChildrenList (char* keyParentName, int* rc);
 
+char* oyCheckFullFileName (char* name);
 char* oyGetHomeDir ();
 int oyIsDir (char* path);
+int oyIsFile (char* fileName);
 int oyMakeDir (char* path);
 char* oyResolveFileDirName (char* name);
 
-void oyWriteMemToFile(char* name, void* mem, size_t size);
+int   oyWriteMemToFile(char* name, void* mem, size_t size);
+char* oyReadFileToMem(char* fileName, size_t *size);
 
 /* oyranos part */
-char* oyCheckProfileFilename (char* name);
+void oyCheckDefaultDirectories ();
+char* oyFindProfile (char* name);
 
 // should mayby all public
 
@@ -139,34 +136,91 @@ oyAddKey_value (char* keyName, char* value)
   return rc;
 }
 
-void
+char*
+oyReadFileToMem(char* name, size_t *size)
+{
+  FILE *fp = 0;
+  int   pt = 0;
+  char* mem = 0;
+  char* filename = 0;
+  DBG
+
+  // check profile name
+  filename = oyCheckFullFileName(name);
+
+  if (oyIsFile(filename))
+  {
+    fp = fopen(filename, "r");
+    #ifdef DEBUG
+    printf ("fp = %d filename = %s\n", (int)fp, filename);
+    #endif
+
+    // get size
+    fseek(fp,0L,SEEK_END); 
+    *size = ftell (fp);
+    rewind(fp);
+
+    // allocate memory
+    mem = (char*) calloc (*size, sizeof(char));
+
+    // check and read
+    if ((fp != 0)
+     && mem
+     && *size)
+    { DBG
+      int s = fread(mem, sizeof(char), *size, fp);
+      // check again
+      if (s != *size)
+      { *size = 0;
+        free (mem);
+        mem = 0;
+      }
+    }
+  }
+ 
+  // clean up
+  if (fp) fclose (fp);
+  if (filename) free (filename);
+
+  return mem;
+}
+
+int
 oyWriteMemToFile(char* name, void* mem, size_t size)
 {
   FILE *fp = 0;
   int   pt = 0;
   char* block = mem;
   char* filename;
+  int r = 0;
   DBG
 #ifdef DEBUG
   printf ("name = %s mem = %d size = %d\n", name, (int)mem, size);
 #endif
 
-  filename = oyCheckProfileFilename(name);
-  fp = fopen(filename, "w");
-#ifdef DEBUG
-  printf ("fp = %d filename = %s\n", (int)fp, filename);
-#endif
-  if ((fp != 0)
-   && mem
-   && size)
-  { DBG
-    do {
-      fputc ( block[pt++] , fp);
-    } while (--size);
-    fclose (fp);
+  filename = oyCheckFullFileName(name);
+
+  if (oyIsFile (filename))
+  {
+    fp = fopen(filename, "w");
+    #ifdef DEBUG
+    printf ("fp = %d filename = %s\n", (int)fp, filename);
+    #endif
+    if ((fp != 0)
+     && mem
+     && size)
+    { DBG
+      do {
+        r = fputc ( block[pt++] , fp);
+      } while (--size);
+    }
+
+    if (fp) fclose (fp);
   }
 
   if (filename) free (filename);
+
+  return r;
 }
 
 char*
@@ -185,9 +239,46 @@ int
 oyIsDir (char* path)
 {
   struct stat status;
-  DBG
-  stat (path, &status);
-  return (((status.st_mode & S_IFMT) & ~S_IFDIR));
+  int r = 0;
+  char* name = oyResolveFileDirName (path);
+  status.st_mode = 0;
+  r = stat (name, &status);
+  #ifdef DEBUG
+  printf("status.st_mode = %d status.st_mode = %d name = %s ", (status.st_mode&S_IFMT)&S_IFDIR, status.st_mode, name); DBG
+  #endif
+  if (name) free (name);
+  r = !r &&
+       ((status.st_mode & S_IFMT) & S_IFDIR);
+  return r;
+}
+
+int
+oyIsFile (char* fileName)
+{
+  struct stat status;
+  int r = 0;
+  char* name = oyResolveFileDirName (fileName);
+  status.st_mode = 0;
+  r = stat (name, &status);
+  #ifdef DEBUG
+  printf("status.st_mode = %d status.st_mode = %d name = %s ", (status.st_mode&S_IFMT)&S_IFDIR, status.st_mode, name); DBG
+  #endif
+  r = !r &&
+       (   ((status.st_mode & S_IFMT) & S_IFREG)
+        || ((status.st_mode & S_IFMT) & S_IFLNK));
+
+  if (r)
+  {
+    FILE* fp = fopen (name, "r"); DBG
+    if (!fp)
+      r = 0;
+    else
+      fclose (fp);
+  } DBG
+
+  if (name) free (name); DBG
+
+  return r;
 }
 
 int
@@ -195,7 +286,7 @@ oyMakeDir (char* path)
 {
   char *name = oyResolveFileDirName (path);
   int rc = 0;
-  mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH; /* 0644 */
+  mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH; /* 0755 */
   DBG
   rc = mkdir (name, mode);
   free (name);
@@ -205,60 +296,60 @@ oyMakeDir (char* path)
 char*
 oyResolveFileDirName (char* name)
 {
-  char* ptr = strchr(name, '~');
-  char* newName = 0, *home = 0;
+  char* newName = (char*) calloc (MAX_PATH, sizeof(char)),
+       *home = 0;
   int len = 0;
 
-  if (ptr = &name[0])
+  // user directory
+  if (name[0] == '~')
   { DBG
     home = oyGetHomeDir();
-    #ifdef DEBUG
-    printf ("name = %s home = %s\n", name, home);
-    #endif
     len = strlen(name) + strlen(home) + 1;
     if (len >  FILENAME_MAX)
       printf("Warning at %s:%d : file name is too long %d\n", __FILE__,__LINE__,
               len);
 
-    newName = (char*) calloc (len, sizeof(char));
-    sprintf (newName, "%s%s", home, ptr+1);
-    #ifdef DEBUG
-    printf ("newName = %s \n", newName);
-    #endif
-    DBG
-  } else
-  {
-    newName = name;
-    #ifdef DEBUG
-    printf ("name = %s home = %s\n", name, home); DBG
-    #endif
+    sprintf (newName, "%s%s", home, &name[0]+1);
+
+  } else { DBG
+    sprintf (newName, name);
+
+    // relative names - where the first sign is no directory separator
+    if (newName[0] != OY_SLASH_C)
+    { char* cn = (char*) calloc(MAX_PATH, sizeof(char)); DBG
+      sprintf (cn, "%s%s%s", getenv("PWD"), OY_SLASH, name);
+      #ifdef DEBUG
+      printf ("canonoical %s ", cn); DBG
+      #endif
+      sprintf (newName, cn);
+    }
   }
 
-  // TODO relative names - where the first sign is no directory separator
-  ptr = strchr(name, OY_SLASH_C);
-  if (!ptr)
-  {
-    sprintf (newName, canonicalize_file_name(name));
-  }
+  #ifdef DEBUG
+  printf ("newName = %s name %s home %s ", newName, name, home); DBG
+  #endif
+  
 
   return newName;
 }
 
 char*
-oyCheckProfileFilename (char* name)
+oyCheckFullFileName (char* name)
 {
-  char* ptr = strchr(name, '~');
+  char* ptr = 0;
   char* newName = 0, *home = 0, *dirName = 0;
   int len = 0;
 
   DBG
   // substitute ~ with HOME variable from environment
-  newName = oyResolveFileDirName (name);
+  if (name)
+    newName = oyResolveFileDirName (name);
 
   // create directory name
-  if(strrchr( newName, OY_SLASH_C ))
+  if(name &&
+     strrchr( newName, OY_SLASH_C ))
   { DBG
-    dirName = (char*) calloc (strlen(newName) + 1, sizeof(char)); DBG
+    dirName = (char*) calloc (MAX_PATH, sizeof(char)); DBG
     sprintf (dirName , newName); DBG
     ptr = strrchr( dirName, OY_SLASH_C ); DBG
     ptr++;
@@ -269,28 +360,96 @@ oyCheckProfileFilename (char* name)
     ptr = 0;
   }
 
-  // test dirName : existing in path, default dirs are existing
-  if (!oyIsDir (dirName))
-    newName = 0;
-  DBG
-  if (!oyIsDir (OY_DEFAULT_SYSTEM_PROFILE__PATH))
-    printf ("no default system directory %s\n",OY_DEFAULT_SYSTEM_PROFILE__PATH);
-
-  printf ("oyIsDir %d\n", oyIsDir (OY_DEFAULT_USER_PROFILE_PATH));
-  if (!oyIsDir (OY_DEFAULT_USER_PROFILE_PATH))
-  { 
-    printf ("Try to create users default directory %s %d\n",
-               OY_DEFAULT_USER_PROFILE_PATH,
-    oyMakeDir( OY_DEFAULT_USER_PROFILE_PATH ));
-  }
-
   #ifdef DEBUG
-  printf ("newName = %s dirName = %s\n", newName, dirName); DBG
+  printf ("newName = %s dirName = %s ", newName, dirName); DBG
   #endif
-
 
   if (dirName) free (dirName); DBG
   return newName;
+}
+
+void
+oyCheckDefaultDirectories ()
+{
+  // test dirName : existing in path, default dirs are existing
+  if (!oyIsDir (OY_DEFAULT_SYSTEM_PROFILE__PATH))
+  { DBG
+    printf ("no default system directory %s\n",OY_DEFAULT_SYSTEM_PROFILE__PATH);
+  }
+
+  if (!oyIsDir (OY_DEFAULT_USER_PROFILE_PATH))
+  { DBG 
+    printf ("Try to create users default directory %s %d ",
+               OY_DEFAULT_USER_PROFILE_PATH,
+    oyMakeDir( OY_DEFAULT_USER_PROFILE_PATH )); DBG
+    oyPathAdd (OY_DEFAULT_USER_PROFILE_PATH);
+  }
+}
+
+char*
+oyFindProfile (char* fileName)
+{
+  char  *fullFileName = 0;
+  int    success = 0;
+  char  *header = 0;
+  size_t size;
+
+  DBG
+  // test for pure file without dir; search in configured paths only
+  if (strchr(fileName, OY_SLASH_C))
+  {
+    char* pathName;
+    int   n_paths = oyPathsCount (),
+          i;
+
+    fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
+
+    for (i = 0; i < n_paths; i++)
+    { // test profile
+      pathName = oyPathName (i);
+      sprintf (fullFileName, "%s%s%s", pathName, OY_SLASH, fileName);
+
+      if (oyIsFile(fileName))
+      {
+        header = oyReadFileToMem (fullFileName, &size);
+        if (size >= 128)
+          success = oyCheckProfileMem (header, 128);
+      }
+
+      if (pathName) free (pathName);
+      if (header) free (header);
+
+      if (success) // found
+        break;
+    }
+
+    if (!success)
+      printf ("Warning : profile %s not found in colour path\n", fileName);
+
+  } else
+  { // else use fileName as an full qualified name, check name and test profile
+    fullFileName = oyCheckFullFileName (fileName);
+
+    if (oyIsFile(fileName))
+    {
+      header = oyReadFileToMem (fullFileName, &size);
+
+      if (size >= 128)
+        success = oyCheckProfileMem (header, 128);
+    }
+
+    if (!success)
+      printf ("Warning : profile %s not found\n", fileName);
+
+    if (header) free (header);
+  }
+
+  if (!success)
+  { free (fullFileName);
+    fullFileName = 0;
+  }
+
+  return fullFileName;
 }
 
 
@@ -299,7 +458,7 @@ oyCheckProfileFilename (char* name)
 /* path names API */
 
 int
-oyPathsRead ()
+oyPathsCount ()
 {
   int rc, n = 0;
   kdbOpen();
@@ -310,6 +469,8 @@ oyPathsRead ()
 
   ksClose (myKeySet);
   kdbClose();
+
+  oyCheckDefaultDirectories();
   return n;
 }
 
@@ -332,7 +493,6 @@ oyPathName (int number)
         keyGetComment (current, value, MAX_PATH);
         if (strstr(value, OY_SLEEP) == 0)
           keyGetString(current, value, MAX_PATH);
-        DBG_S( value )
       }
       n++;
     }
@@ -360,7 +520,6 @@ oyPathAdd (char* pfad)
   for (current=myKeySet->start; current; current=current->next)
   {
     keyGetString(current, value, MAX_PATH);
-    DBG_S( value )
     if (strcmp (value, pfad) == 0)
       n++;		
   }
@@ -413,10 +572,10 @@ oyPathRemove (char* pfad)
   // take all keys in the paths directory
   KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
 
+  // compare and erase if matches
   for (current=myKeySet->start; current; current=current->next)
   {
     keyGetString(current, value, MAX_PATH);
-    DBG_S( value )
     if (strcmp (value, pfad) == 0)
     {
       keyGetFullName(current,keyName, MAX_PATH); ERR
@@ -443,10 +602,10 @@ oyPathSleep (char* pfad)
   // take all keys in the paths directory
   KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
 
+  // set "SLEEP" in comment
   for (current=myKeySet->start; current; current=current->next)
   {
     keyGetString(current, value, MAX_PATH);
-    DBG_S( value )
     if (strcmp (value, pfad) == 0)
     {
       keySetComment (current, OY_SLEEP);
@@ -472,10 +631,10 @@ oyPathActivate (char* pfad)
   // take all keys in the paths directory
   KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
 
+  // erase "SLEEP" from comment
   for (current=myKeySet->start; current; current=current->next)
   {
     keyGetString(current, value, MAX_PATH);
-    DBG_S( value )
     if (strcmp (value, pfad) == 0)
     {
       keySetComment (current, "");
@@ -491,66 +650,132 @@ oyPathActivate (char* pfad)
 
 /* default profiles API */
 
-void
+int
 oySetDefaultImageProfile          (char* name)
 { DBG
-  oyAddKey_valueComment (OY_DEFAULT_IMAGE_PROFILE, name, "");
+  return oyAddKey_valueComment (OY_DEFAULT_IMAGE_PROFILE, name, "");
 }
 
-void
+int
 oySetDefaultWorkspaceProfile      (char* name)
 { DBG
-  // TODO oyCheckProfile (name);
+  if ( oyCheckProfile (name) )
   // TODO accept all sort of directory name combinations
-  oyAddKey_valueComment (OY_DEFAULT_WORKSPACE_PROFILE, name, "");
+  return oyAddKey_valueComment (OY_DEFAULT_WORKSPACE_PROFILE, name, "");
 }
 
-void
+int
 oySetDefaultCmykProfile           (char* name)
 { DBG
-  oyAddKey_valueComment (OY_DEFAULT_CMYK_PROFILE, name, "");
+  return oyAddKey_valueComment (OY_DEFAULT_CMYK_PROFILE, name, "");
 }
 
-void
+int
 oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size)
 { DBG
+  int r;
   char* fileName = (char*) calloc (sizeof(char),
                       strlen(OY_DEFAULT_USER_PROFILE_PATH) + strlen (name) + 4);
 
   sprintf (fileName, "%s%s%s", OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, name);
 
-  oyWriteMemToFile (fileName, mem, size);
-  oySetDefaultImageProfile (name);
+  if (oyCheckProfileMem( mem, size))
+  { r = oyWriteMemToFile (fileName, mem, size);
+    oySetDefaultImageProfile (name);
+  }
 
   free (fileName);
+  return r;
 }
 
-void
+int
 oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size)
 { DBG
-  char* fileName = (char*) calloc (sizeof(char),
+  int r = 0;
+  char* fileName;
+
+  strrchr (name, OY_SLASH_C);
+  fileName = (char*) calloc (sizeof(char),
                       strlen(OY_DEFAULT_USER_PROFILE_PATH) + strlen (name) + 4);
 
   sprintf (fileName, "%s%s%s", OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, name);
-  // TODO oyCheckProfileMem (mem, size);
-  oyWriteMemToFile (fileName, mem, size);
+
+  if (oyCheckProfileMem( mem, size))
+  { r = oyWriteMemToFile (fileName, mem, size);
+    oySetDefaultWorkspaceProfile (name);
+  }
+
   #ifdef DEBUG
-  DBG
-  printf ("%s %s %d %d\n", fileName, name, &((char*)mem)[0] , size);
+  printf ("%s %s %d %d ", fileName, name, &((char*)mem)[0] , size); DBG
   #endif
-  oySetDefaultWorkspaceProfile (name);
   free (fileName);
+  return r;
 }
 
-void
+char*
+oyGetDefaultWorkspaceProfileName  ()
+{
+  // 
+}
+
+int
 oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size)
 { DBG
+  int r = -1;
   char* fileName = (char*) calloc (sizeof(char),
                       strlen(OY_DEFAULT_USER_PROFILE_PATH) + strlen (name) + 4);
   sprintf (fileName, "%s%s%s", OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, name);
-  oyWriteMemToFile (fileName, mem, size);
-  oySetDefaultCmykProfile (name);
+
+  if (oyCheckProfileMem( mem, size))
+  { r = oyWriteMemToFile (fileName, mem, size);
+    oySetDefaultCmykProfile (name);
+  }
+
   free (fileName);
+  return r;
+}
+
+int
+oyCheckProfile (char* name)
+{
+  char *fullName = 0;
+  char* header; 
+  size_t size = 0;
+  int r = 0;
+
+  fullName = oyFindProfile(name);
+
+  // do check
+  if (oyIsFile(name))
+    header = oyReadFileToMem (fullName, &size); DBG
+
+  if (size >= 128)
+    r = oyCheckProfileMem (header, 128);
+
+  DBG
+  return r;
+}
+
+int
+oyCheckProfileMem (void* mem, size_t size)
+{
+  char* block = (char*) mem;
+  int offset = 36;
+  if (size >= 128 &&
+      block[offset+0] == 'a' &&
+      block[offset+1] == 'c' &&
+      block[offset+2] == 's' &&
+      block[offset+3] == 'p' )
+  { DBG
+    return 1;
+  } else
+  {
+    printf ("Warning : False profile - size = %d pos = %lu ", size, block);
+    if (size >= 128)
+      printf(" sign: %c%c%c%c ", (char)block[offset+0], (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] );
+    DBG
+    return 0;
+  }
 }
 
 
