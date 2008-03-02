@@ -1,0 +1,93 @@
+
+VERSION="$VERSION_A"
+if [ $VERSION_B -lt 10 ]; then
+  N=0
+  VERSION="$VERSION$N$VERSION_B"
+else
+  VERSION="$VERSION$VERSION_B"
+fi
+if [ $VERSION_C -lt 10 ]; then
+  N=0
+  VERSION="$VERSION$N$VERSION_C"
+else
+  VERSION="$VERSION$VERSION_C"
+fi
+
+
+if [ $# -eq 0 ]; then
+  echo "$TARGET"
+fi
+
+
+while test $# -gt 0 
+do
+    case "$1" in
+	-*=*) 
+	    optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+	    ;;
+	*)
+	    optarg=
+	    ;;
+    esac
+
+    case $1 in
+	--version)
+	    echo $VERSION
+	    ;;
+	--api-version)
+	    echo $VERSION_A
+	    ;;
+	--cflags)
+	    echo_cflags=yes
+	    ;;
+	--ldflags)
+	    echo_ldflags=yes
+	    ;;
+	--ldstaticflags)
+	    echo_ldstaticflags=yes
+	    ;;
+	--ld_x_flags)
+	    echo_ld_x_flags=yes
+	    ;;
+	--ld_x_staticflags)
+	    echo_ld_x_staticflags=yes
+	    ;;
+	*)
+	    echo_help=yes
+	    ;;
+    esac
+    shift
+done
+
+if [ "$echo_help" == "yes" ]; then
+  echo "usage:"
+  echo "  $0 --version"
+  echo "  $0 --api-version"
+  echo "  $0 --cflags"
+  echo "  $0 --ldflags"
+  echo "  $0 --ldstaticflags"
+  echo "  $0 --ld_x_flags"
+  echo "  $0 --ld_x_staticflags"
+fi
+
+if [ "$echo_cflags" == "yes" ]; then
+  echo "-I$prefix/include"
+fi
+
+if [ "$echo_ldflags" == "yes" ]; then
+  echo "-L$prefix/lib -loyranos -lelektra"
+fi
+
+if [ "$echo_ldstaticflags" == "yes" ]; then
+  echo "$prefix/lib/liboyranos.a -lelektra -ldl"
+fi
+
+if [ "$echo_ld_x_flags" == "yes" ]; then
+  echo "-L$prefix/lib -loyranos -loyranos_moni -lelektra"
+fi
+
+if [ "$echo_ld_x_staticflags" == "yes" ]; then
+  echo "$prefix/lib/liboyranos.a $prefix/lib/liboyranos_moni.a -lelektra -lX11 -ldl"
+fi
+
+
