@@ -28,7 +28,8 @@ decl {\#include <FL/fl_draw.H>} {public
 
 decl {\#include "oyranos.h"
 \#include "oyranos_debug.h"
-\#include "oyranos_config.h"} {public
+\#include "oyranos_config.h"
+\#include "config.h"} {public
 } 
 
 decl {\#include <iostream>} {public
@@ -129,7 +130,11 @@ Function {getPolicyName()} {return_type {const char*}
     }
     xml[strlen(xml)-2] = 0;
 
-    if( strstr( data, xml ) )
+    if( !data )
+      std::cout << "no policy files available" << std::endl;
+    else if( !xml )
+      std::cout << "no policy data available??" << std::endl;
+    else if( strstr( data, xml ) )
       name = policy_list[i*2+0];
 
     if(data) delete [] data;
@@ -139,16 +144,41 @@ Function {getPolicyName()} {return_type {const char*}
   return name;} {}
 } 
 
-Function {getPolicies( int *count )} {return_type {const char**}
+Function {getPolicies( int *count )} {open return_type {const char**}
 } {
   code {static const char *policy_list[8] = {
 
-  "Office + Home", "/usr/share/color/settings/office.policy.xml",
-  "Graphic Designers",      "/usr/share/color/settings/designer.policy.xml",
-  "PrePress",      "/usr/share/color/settings/prepress.policy.xml",
-  "Photographers",  "/usr/share/color/settings/photographer.policy.xml"
+  "Office + Home", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH "office.policy.xml",
+  "Graphic Designers", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH     "designer.policy.xml",
+  "PrePress", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH    "prepress.policy.xml",
+  "Photographers", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH "photographer.policy.xml"
   };
 
+/*  FILE *pp = popen( "oyranos-config --syscolordir", "r" );
+  if (!pp) {
+    perror ("oyranos-config not found");
+    return -1;
+  }
+  char sname[1024];
+  if (fscanf (pp, "%s", &sname) != 1) {
+    pclose (pp);
+    printf ("oyranos-config did not correctly respond");
+    return 0;
+  }
+  pclose( pp );
+
+  pp = popen( "oyranos-config --syscolordir", "r" );
+  char settingsname[128];
+  if (fscanf (pp, "%s", &settingsname) != 1) {
+    pclose (pp);
+    printf ("oyranos-config did not correctly respond");
+    return 0;
+  }
+  pclose( pp );
+
+  char path[1024];
+  snprintf( filename, 1023, "%s/%s/%s", sname, settingsname, "office.policy.xml" );
+ */
   *count = 4;
   return policy_list;} {}
 } 
@@ -233,12 +263,13 @@ Function {rmPathCallback( Fl_Widget* w, void* )} {} {
   } else fl_alert( "Path" );} {}
 } 
 
-Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {} {
+Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {open
+} {
   code {Option *op = dynamic_cast<Option*> (w->parent());
   if(op) {
     Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
     if(c) {
-      std::cout << (int)x << c->user_data() << c->value() << c->text() << std::endl;
+      std::cout << (intptr_t)x << c->user_data() << c->value() << c->text() << std::endl;
       char text[64];
       int error = 0;
       error = oySetBehaviour( (oyBEHAVIOUR)op->type, c->value());
@@ -249,7 +280,8 @@ Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {} {
       } else
         updateUI();
     } else fl_alert( "no Fl_Choice" );
-  } else fl_alert( _("Select Behaviour") );} {}
+  } else fl_alert( _("Select Behaviour") );} {selected
+  }
 } 
 
 class OyFlPack {: {public Fl_Pack}
@@ -543,7 +575,9 @@ class ProfilePath {: {public Fl_Pack} private
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
     if( strcmp( "/usr/share/color/icc", name ) != 0 &&
-        strcmp( "~/.color/icc", name ) != 0 )
+        strcmp( "~/.color/icc", name ) != 0 &&
+        strcmp( SYSCOLORDIR OY_SLASH ICCDIRNAME , name ) != 0 &&
+        strcmp( USERCOLORDIR OY_SLASH ICCDIRNAME, name ) != 0 )
     {
       button_remove = new Fl_Button( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT, "@-31+" );
       button_remove->callback( rmPathCallback );
@@ -610,7 +644,7 @@ Function {refreshPathLeaves()} {private
   std::cout << nbutton->x() << ","<< nbutton->w() <<std::endl;} {}
 } 
 
-Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {open private return_type {Fl_Group*}
+Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {private return_type {Fl_Group*}
 } {
   code {Fl_Group *parent = /*dynamic_cast <Fl_Group>*/ tabs; // parent tab
   Fl_Group *tab = NULL; // actual tab
@@ -683,8 +717,7 @@ Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {open private return_t
   if( tab )
     return (Fl_Group*)tab->user_data();
   else
-    return NULL;} {selected
-  }
+    return NULL;} {}
 } 
 
 Function {getTab( Fl_Tabs* tabs, oyGROUP group, Fl_Group **container )} {private return_type {Fl_Group*}
@@ -818,8 +851,7 @@ Function {refreshOptions()} {private
       }} {}
 } 
 
-Function {createUI()} {open
-} {
+Function {createUI()} {} {
   code {oyPathsCount();
   int count;
   const char **policies_list = getPolicies( &count );
@@ -896,12 +928,12 @@ Function {updateUI()} {} {
   policy_box->label( getPolicyName() );} {}
 } 
 
-Function {} {open private
+Function {} {private
 } {
   code {Fl::scheme("plastic");} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {725 297 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {16 573 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL

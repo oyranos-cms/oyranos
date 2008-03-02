@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "config.h"
 #include "oyranos.h"
 #include "oyranos_internal.h"
 #include "oyranos_helper.h"
@@ -173,6 +174,8 @@ char*   oyGetKeyValue_         (const char       *key_name,
                                 oyAllocFunc_t     allocFunc );
 int     oyAddKey_valueComment_ (const char* keyName,
                                 const char* value, const char* comment);
+int     oyKeySetHasValue_      (const char* keyParentName,
+                                const char* ask_value);
 
 /* elektra key list handling */
 char*   oySearchEmptyKeyname_  (const char* keyParentName,
@@ -345,6 +348,38 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
   DBG_PROG_ENDE
   return keyName;
 } 
+
+int
+oyKeySetHasValue_     (const char* keyParentName, const char* ask_value)
+{ DBG_PROG_START
+  int result = 0;
+  int rc=0;
+  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+  KeySet *myKeySet = oyReturnChildrenList_( keyParentName, &rc ); ERR
+  Key *current;
+
+        if(!myKeySet)
+        {
+          FOR_EACH_IN_KDBKEYSET( current, myKeySet )
+          {
+            keyGetName(current, value, MAX_PATH);
+            DBG_NUM_S(( value ))
+            if(strstr(value, ask_value) != 0 &&
+               strlen(value) == strlen(ask_value))
+            {
+              DBG_PROG_S((value))
+              result = 1;
+              break;
+            }
+          }
+        }
+  ksClose (myKeySet);
+  oyClose_();
+  OY_FREE(myKeySet)
+
+  DBG_PROG_ENDE
+  return result;
+}
 
 int
 oyAddKey_valueComment_ (const char* keyName,
@@ -981,7 +1016,7 @@ oyWriteOptionToXML_(oyGROUP           group,
                  oytmplen = oyCheckStringLen_(&mem, oytmplen,
                                               strlen(value) + 2*strlen(key) + 8 );
                  DBG_PROG_S(("pos: %d + %d oytmplen: %d\n",
-                             strlen(mem),(int)strlen(value),oytmplen));
+                             (int)strlen(mem),(int)strlen(value),oytmplen));
                  sprintf( &mem[strlen(mem)-1], " -->\n");
  
                  /* append xml keys and value */
@@ -1899,7 +1934,8 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
 int
 oyPathsCount_ ()
 { DBG_PROG_START
-  int rc=0, n = 0;
+  int rc=0;
+  ssize_t n = 0;
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
@@ -1919,7 +1955,7 @@ oyPathsCount_ ()
   OY_FREE(myKeySet)
 
   DBG_PROG_ENDE
-  return n;
+  return (int)n;
 }
 
 char*
@@ -1940,7 +1976,7 @@ oyPathName_ (int number, oyAllocFunc_t allocate_func)
 
   value = (char*) allocate_func( MAX_PATH );
 
-  if (number <= ksGetSize(myKeySet))
+  if (number <= (int)ksGetSize(myKeySet))
     FOR_EACH_IN_KDBKEYSET( current, myKeySet )
     {
       if (number == n) {
@@ -1967,7 +2003,8 @@ oyPathAdd_ (const char* pfad)
   Key *current;
   char* keyName = 0;
   char* value = 0;
-  int has_local_path = 0, has_global_path = 0;
+  int has_local_path = 0, has_global_path = 0,
+      has_config_local_path = 0, has_config_global_path = 0;
 
   /* are we setting a default path? */
   if (strcmp (pfad, OY_PROFILE_PATH_USER_DEFAULT) == 0)
@@ -2004,6 +2041,10 @@ oyPathAdd_ (const char* pfad)
     /* Are the default paths allready there? */
     if (strcmp(value, OY_PROFILE_PATH_USER_DEFAULT) == 0) has_local_path = 1;
     if (strcmp(value, OY_PROFILE_PATH_SYSTEM_DEFAULT) == 0) has_global_path = 1;
+    if (strcmp(value, USERCOLORDIR OY_SLASH ICCDIRNAME) == 0)
+      has_config_local_path = 1;
+    if (strcmp(value, SYSCOLORDIR OY_SLASH ICCDIRNAME) == 0)
+      has_config_global_path = 1;
   }
 
   if (n) DBG_PROG_S(("Key %s was allready %d times there\n", pfad, n));
@@ -2036,6 +2077,8 @@ oyPathAdd_ (const char* pfad)
   }
 
   finish:
+  if (myKeySet) ksClose (myKeySet);
+  if (myKeySet) ksDel (myKeySet);
 
   if (!has_global_path)
   {
@@ -2047,9 +2090,20 @@ oyPathAdd_ (const char* pfad)
     keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
     rc = oyAddKey_valueComment_ (keyName, OY_PROFILE_PATH_USER_DEFAULT, "");
   }
+  if (!has_config_local_path &&
+      !oyKeySetHasValue_( OY_PATHS, USERCOLORDIR OY_SLASH ICCDIRNAME) )
+  {
+    keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
+    rc = oyAddKey_valueComment_ (keyName, USERCOLORDIR OY_SLASH ICCDIRNAME, "");
+  }
+  if (!has_config_global_path &&
+      !oyKeySetHasValue_( OY_PATHS, SYSCOLORDIR OY_SLASH ICCDIRNAME) )
+  {
+    keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
+    rc = oyAddKey_valueComment_ (keyName, SYSCOLORDIR OY_SLASH ICCDIRNAME, "");
+  }
 
-  if (myKeySet) ksClose (myKeySet);
-  if (myKeySet) ksDel (myKeySet);
+
   oyClose_();
   OY_FREE (keyName)
   OY_FREE (value)

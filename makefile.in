@@ -1,21 +1,11 @@
 
-CC=cc
-CXX=c++
 COLLECT = ar cru
 RANLIB = ranlib
 LNK = ln -s
-RM = rm -vf
 INSTALL = install -v
 RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
 
-exec_prefix	= ${prefix}
-bindir		= ${exec_prefix}/bin
-datadir		= ${prefix}/share
-includedir	= ${prefix}/include
-libdir		= ${prefix}$(LIB)
-mandir		= ${prefix}/man
 srcdir		= .
-colordir        = /usr/share/color
 
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)
@@ -36,7 +26,7 @@ INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
-ELEKTRA_LIBS = `test -f /usr$(LIB)/libelektra.a && echo /usr$(LIB)/libelektra.a /usr$(LIB)/libelektra_default.a || echo -lelektra`
+ELEKTRA_LIBS = `test -f $(libdir)/libelektra.a && echo $(libdir)/libelektra.a $(libdir)/libelektra-filesys.a || echo -lelektra`
 
 
 LDLIBS = -L$(libdir) -L. \
@@ -84,7 +74,9 @@ DOKU = \
 		doxymentation
 
 FLUID = \
-	oyranos_config_fltk.fl
+	oyranos_config_fltk.fl \
+	oyranos_config_fltk.h \
+	oyranos_config_fltk.cxx
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
@@ -97,7 +89,7 @@ FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 
 INCL_DEP = $(INCL) $(SOURCES)
 
-#.SILENT:
+.SILENT:
 
 TEST2 = test2
 
@@ -127,6 +119,9 @@ all:	mkdepend $(LIB_MONI_SONAMEFULL) \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
+# get time stamp
+C := $(shell date +%C)
+MTIME   := $(shell date +%Y%m%e.%H%M%S | sed s/$C//)
 # MTIME   := $(shell find $(TIMEDIR) -prune -printf %Ty%Tm%Td.%TT | sed s/\://g)
 
 # this is a test
@@ -138,7 +133,7 @@ $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
-	-L$(LIB) $(LDLIBS)
+	-L$(libdir) $(LDLIBS)
 	$(RM)  $(LIBSONAME)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
 	$(RM)  $(LIBSO)
@@ -163,7 +158,7 @@ $(LIB_XNVCTRL).a:
 # the twinview library
 $(TARGET)-monitor-nvidia:	$(LIB_XNVCTRL).a
 	echo Linking $@ ...
-	$(CC) $(OPTS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
+	-$(CC) $(OPTS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL)
 
@@ -195,8 +190,8 @@ $(TARGET)-config-flu-static:	$(LIBSONAMEFULL) $(FLU_OBJECTS)
 	$(LIBNAME) $(LIB_MONI_NAME) $(LINK_LIB_PATH) \
 	`flu-config --ldstaticflags` \
 	`fltk-config --use-images --ldstaticflags` \
-	-L/usr/X11R6$(LIB) \
-	`test -f /usr$(LIB)/libelektra.a && echo /usr$(LIB)/libelektra.a || echo -lelektra` -lsupc++ $(PNG_LIBS)
+	-L/usr/X11R6$(libdir) \
+	`test -f $(libdir)/libelektra.a && echo $(libdir)/libelektra.a || echo -lelektra` -lsupc++ $(PNG_LIBS)
 	#strip $(TARGET)-config-flu
 	$(REZ)
 
@@ -262,8 +257,8 @@ install-main:	all doc
 	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
 	test "$(FLTK_GUI)" && $(MAKE) install_gui || echo -e "GUI not installed"
 	echo Installing policy settings files ...
-	-mkdir -p $(DESTDIR)$(colordir)/settings
-	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(colordir)/settings
+	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
+	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	echo ... Installation finished
 
 # install recursive
@@ -271,7 +266,7 @@ install:	install-main
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
-	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) install) || \
+	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
@@ -288,6 +283,7 @@ dist: targz
 
 # build a binary rpm package
 rpm:	dist
+	./configure --prefix=/usr # for RedHat alike distributions
 	mkdir -p rpmdir/BUILD \
 	rpmdir/SPECS \
 	rpmdir/SOURCES \
@@ -327,11 +323,11 @@ uninstall:
 	(  cd standard_profiles; \
 	   for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
-	         (cd $${prof}; $(MAKE) uninstall) || \
+	         (cd $${prof}; $(MAKE)  DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) uninstall) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	   done; \
         ) || echo "no profile directory found"
-	-$(RM)   $(DESTDIR)$(colordir)/settings/*.policy.xml
+	-$(RM)   $(DESTDIR)$(syscolordir)/$(settingsdirname)/*.policy.xml
 
 # remove in this directory
 clean:
@@ -422,7 +418,7 @@ copy_files:
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 
 # mkdepend
-#include mkdepend
+include mkdepend
 
 #ifndef MAKEDEPEND_ISUP
 mkdepend: depend

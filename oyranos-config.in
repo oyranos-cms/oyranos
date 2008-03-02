@@ -1,17 +1,9 @@
-
-VERSION="$VERSION_A"
-if [ $VERSION_B -lt 10 ]; then
-  N=0
-  VERSION="$VERSION$N$VERSION_B"
+if [ -n "$PKG_CONFIG_PATH" ]; then
+  PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$libdir/pkgconfig
 else
-  VERSION="$VERSION$VERSION_B"
+  PKG_CONFIG_PATH=$libdir/pkgconfig
 fi
-if [ $VERSION_C -lt 10 ]; then
-  N=0
-  VERSION="$VERSION$N$VERSION_C"
-else
-  VERSION="$VERSION$VERSION_C"
-fi
+export PKG_CONFIG_PATH
 
 
 if [ $# -eq 0 ]; then
@@ -34,6 +26,9 @@ do
 	--version)
 	    echo $VERSION
 	    ;;
+	--num-version)
+	    echo $VERSION_L
+	    ;;
 	--api-version)
 	    echo $VERSION_A
 	    ;;
@@ -52,6 +47,18 @@ do
 	--ld_x_staticflags)
 	    echo_ld_x_staticflags=yes
 	    ;;
+	--syscolordir)
+	    echo_syscolordir=yes
+	    ;;
+	--usercolordir)
+	    echo_usercolordir=yes
+	    ;;
+	--iccdirname)
+	    echo_iccdirname=yes
+	    ;;
+	--settingsdirname)
+	    echo_settingsdirname=yes
+	    ;;
 	*)
 	    echo_help=yes
 	    ;;
@@ -63,11 +70,16 @@ if [ "$echo_help" = "yes" ]; then
   echo "usage:"
   echo "  $0 --version"
   echo "  $0 --api-version"
+  echo "  $0 --num-version"
   echo "  $0 --cflags"
   echo "  $0 --ldflags"
   echo "  $0 --ldstaticflags"
   echo "  $0 --ld_x_flags"
   echo "  $0 --ld_x_staticflags"
+  echo "  $0 --syscolordir"
+  echo "  $0 --usercolordir"
+  echo "  $0 --iccdirname"
+  echo "  $0 --settingsdirname"
 fi
 
 elektra_dyn="`pkg-config --libs elektra` -lelektra-filesys"
@@ -97,4 +109,16 @@ if [ "$echo_ld_x_staticflags" = "yes" ]; then
   echo "$libdir/liboyranos.a $libdir/liboyranos_moni.a $elektra -lX11 -lXinerama -ldl"
 fi
 
+if [ "$echo_syscolordir" = "yes" ]; then
+  echo "$syscolordir"
+fi
+if [ "$echo_usercolordir" = "yes" ]; then
+  echo "$usercolordir"
+fi
+if [ "$echo_iccdirname" = "yes" ]; then
+  echo "$iccdirname"
+fi
+if [ "$echo_settingsdirname" = "yes" ]; then
+  echo "$settingsdirname"
+fi
 

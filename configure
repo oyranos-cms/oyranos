@@ -10,6 +10,8 @@ SPEC=$TARGET.spec
 PKGC=$TARGET.pc
 MPKG="$TARGET"_monitor.pc
 VERS="$TARGET"_version.h
+ECI_CONF=standard_profiles/eci/makefile
+BASE_CONF=standard_profiles/base/makefile
 
 export CONF_H CONF
 
@@ -33,7 +35,7 @@ if [ $VERSION_C -gt 9 ]; then
 else
   VERSION_L="${VERSION_L}0$VERSION_C"
 fi
-VERSION_L=`echo $VERSION_L | sed s/^0*//g`
+VERSION_L=`echo $VERSION_L | sed 's/^0*//g'`
 TIME="November 2004 - May 2006"
 
 src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
@@ -59,22 +61,26 @@ if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
   echo "Darwin PPC              detected"
   echo "APPLE = 1" >> $CONF
   echo "OSX_H = -DHAVE_OSX" >> $CONF
+  echo "#define APPLE 1" >> $CONF_H
   OSUNAME=Darwin
 else
   if [ $UNAME_ = "Linux" ]; then
     echo "LINUX = 1" >> $CONF
+    echo "#define LINUX 1" >> $CONF_H
     echo "Linux system            detected"
     OSUNAME=Linux
   else
     if [ $UNAME_ = "SunOS" ]; then
       echo "SOLARIS = 1" >> $CONF
+      echo "#define SOLARIS 1" >> $CONF_H
       echo "SunOS                   detected"
+      OSUNAME=SunOS
     else
       if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
-        OSUNAME=BSD
         echo "BSD = 1" >> $CONF
         echo "#define BSD 1" >> $CONF_H
         echo "BSD $UNAME_             detected"
+        OSUNAME=BSD
       else
         echo "Oyranos may or may not compile on your $UNAME_ system"
       fi
@@ -84,15 +90,15 @@ fi
 MACH_=`uname -m`
 MACH=BUILD_32
 if [ $? = 0 ]; then
-  if [ $MACH_ = "i686" ]; then
+  if [ "$MACH_" = "i686" ]; then
     echo "32-bit system           detected"
   else
-    if [ $MACH_ = "x86_64" ]; then
+    if [ "$MACH_" = "x86_64" ]; then
       MACH=BUILD_64
       echo "BUILD_64 = 1" >> $CONF
       echo "X86_64                  will build in 64 bit mode"
     else
-      if [ $MACH_ = "sun4u" ]; then
+      if [ "$MACH_" = "sun4u" ]; then
         MACH=BUILD_64
         echo "BUILD_64 = 1" >> $CONF
         echo "spark ultra 4           will build in 64 bit mode"
@@ -100,7 +106,6 @@ if [ $? = 0 ]; then
     fi
   fi
 fi
-
 if [ $MACH = "BUILD_64" ]; then
   BARCH="64"
   LINE_ARCH="-64"
@@ -109,34 +114,139 @@ else
   LINE_ARCH=""
 fi
 LIBDIR="lib"$BARCH
-export LIBDIR BARCH
+export MACH OSUNAME LIBDIR BARCH LINE_ARCH
+
 
 if [ $# -gt 0 ]; then
   prefix=""
   while [ $# -gt 0 ]; do
-    if [ "${1%--prefix=*}" != "$1" ]; then
-      teste="${1#--prefix=*}"
-      #echo "test: $teste $1"
+    arg=$1
+    # prefix exec_prefix bindir sbindir libdir includedir datadir mandir
+    switch=prefix
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      prefix="`echo \"$1\" | sed s/\"--$switch=\"//`"
     fi
-    if [ "$teste" != "" ]; then
-      prefix="$teste"
+    switch="exec-prefix"
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      exec_prefix="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=bindir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      bindir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=sbindir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      sbindir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=libdir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      libdir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=includedir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      includedir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=datadir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      datadir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=mandir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      mandir="`echo $1 | sed s/--$switch=//`"
+    fi
+    # syscolordir usercolordir iccdirname settingsdirname pixmapdir desktopdir
+    switch=syscolordir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      syscolordir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=usercolordir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      usercolordir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=iccdirname
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      iccdirname="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=settingsdirname
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      settingsdirname="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=pixmapdir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      pixmapdir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=desktopdir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      desktopdir="`echo $1 | sed s/--$switch=//`"
     fi
     shift
   done
-else
+fi
+# prefix exec_prefix bindir sbindir libdir includedir datadir
+if [ -z "$prefix" ]; then
   if [ $UNAME_ = "Darwin" ]; then
     prefix=/opt/local
   else
     prefix=/usr/local
   fi
 fi
+if [ -z "$exec_prefix" ]; then
+  exec_prefix="$prefix"
+fi
+if [ "`echo $exec_prefix | grep 64 | wc -l`" -eq "1" ]; then
+  BARCH=""
+  LIBDIR="lib"
+  echo unset BARCH LIBDIR
+  export BARCH LIBDIR
+fi
+if [ -z "$bindir" ]; then
+  bindir="$exec_prefix/bin$BARCH"
+fi
+if [ -z "$sbindir" ]; then
+  sbindir="$exec_prefix/sbin$BARCH"
+fi
+if [ -z "$libdir" ]; then
+  libdir="$exec_prefix/$LIBDIR"
+fi
+if [ -z "$includedir" ]; then
+  includedir="$prefix/include"
+fi
+if [ -z "$datadir" ]; then
+  datadir="$prefix/share"
+fi
+if [ -z "$mandir" ]; then
+  mandir="$datadir/man"
+fi
+# syscolordir usercolordir iccdirname settingsdirname pixmapdir desktopdir
+if [ -z "$syscolordir" ]; then
+  syscolordir="$datadir/color"
+fi
+if [ -z "$usercolordir" ]; then
+  usercolordir="~/.color"
+fi
+if [ -z "$iccdirname" ]; then
+  iccdirname="icc"
+fi
+if [ -z "$settingsdirname" ]; then
+  settingsdirname="settings"
+fi
+if [ -z "$pixmapdir" ]; then
+  pixmapdir="$datadir/pixmaps"
+fi
+if [ -z "$desktopdir" ]; then
+  desktopdir="$datadir/applications"
+fi
+export prefix exec_prefix bindir sbindir libdir includedir datadir mandir
+export syscolordir usercolordir pixmapdir desktopdir
+
+PATH=$bindir:$PATH
+export PATH
 
 
 
 # detect Libraries
 
 echo "LIB=/"$LIBDIR >> $CONF
-
 
 FLTK_=`fltk-config --cxxflags 2>>error.txt`
 if [ $? = 0 ] && [ -n "$FLTK_" ]; then
@@ -170,17 +280,17 @@ if [ "$FLU" = 1 ]; then
 fi
 
 
-export ELEKTRA=1
-#export OYRANOS=1
-export LCMS=1
-export LIBPNG=2
-#export FTGL=1
-#export FLTK=1
-#export FLU=2
-export X11=1
-export XINERAMA=1
-export XF86VMODE=1
-export DOXYGEN=2
+ELEKTRA=1; export ELEKTRA
+#OYRANOS=1; export OYRANOS
+LCMS=1; export LCMS
+LIBPNG=2; export LIBPNG
+#FTGL=1; export FTGL
+#FLTK=1; export FLTK
+#FLU=2; export FLU
+X11=1; export X11
+XINERAMA=1; export XINERAMA
+XF86VMODE=1; export XF86VMODE
+DOXYGEN=2; export DOXYGEN
 ./configure.sh
 if [ $? -gt 0 ]; then
   ERROR=1
@@ -198,20 +308,32 @@ echo "VERSION_C = $VERSION_C" >> $CONF
 echo "VERSION   = $VERSION" >> $CONF
 echo "VERSION_L = $VERSION_L" >> $CONF
 echo "" >> $CONF
-echo "src_dir = $src_dir" >> $CONF
-echo "srcdir = $srcdir" >> $CONF
-srcdir="`pwd`"
 
 echo "#!/bin/sh" > $CONF_SH
 echo "" >> $CONF_SH
 echo "TARGET=$TARGET" >> $CONF_SH
 echo "" >> $CONF_SH
+echo "VERSION=$VERSION" >> $CONF_SH
+echo "VERSION_L=$VERSION_L" >> $CONF_SH
 echo "VERSION_A=$VERSION_A" >> $CONF_SH
 echo "VERSION_B=$VERSION_B" >> $CONF_SH
 echo "VERSION_C=$VERSION_C" >> $CONF_SH
 echo "" >> $CONF_SH
 echo "prefix=$prefix" >> $CONF_SH
-echo "libdir=$prefix/$LIBDIR" >> $CONF_SH
+echo "exec_prefix=$exec_prefix" >> $CONF_SH
+echo "bindir=$bindir" >> $CONF_SH
+echo "sbindir=$sbindir" >> $CONF_SH
+echo "libdir=$libdir" >> $CONF_SH
+echo "includedir=$includedir" >> $CONF_SH
+echo "datadir=$datadir" >> $CONF_SH
+echo "mandir=$mandir" >> $CONF_SH
+echo "syscolordir=$syscolordir" >> $CONF_SH
+echo "usercolordir=$usercolordir" >> $CONF_SH
+echo "iccdirname=$iccdirname" >> $CONF_SH
+echo "settingsdirname=$settingsdirname" >> $CONF_SH
+echo "pixmapdir=$pixmapdir" >> $CONF_SH
+echo "desktopdir=$desktopdir" >> $CONF_SH
+echo ""
 cat  "$CONF_SH.in" >> $CONF_SH
 chmod 0755 "$CONF_SH"
 echo "$CONF_SH created"
@@ -229,51 +351,120 @@ echo "#define OYRANOS_DATE _(\"$TIME\")" >> $VERS
 echo "" >> $VERS
 echo "#endif /*OYRANOS_VERSION_H*/" >> $VERS
 
-echo "Version: $VERSION" > $SPEC
-echo "Source:  $TARGET"-"$VERSION".tar.gz >> $SPEC
-echo "Release: $RELEASE" >> $SPEC
+echo "Version:         $VERSION" > $SPEC
+echo "Source:          $TARGET"-"$VERSION".tar.gz >> $SPEC
+echo "Release:         $RELEASE" >> $SPEC
+echo "%define syscolordir     $syscolordir" >> $SPEC
+echo "%define usercolordir    $usercolordir" >> $SPEC
+echo "%define iccdirname      $iccdirname" >> $SPEC
+echo "%define settingsdirname $settingsdirname" >> $SPEC
+echo "%define pixmapdir       $pixmapdir" >> $SPEC
+echo "%define desktopdir      $desktopdir" >> $SPEC
 cat  $SPEC.in >> $SPEC
 echo $SPEC generated
 
 echo "Version: $VERSION" > $MPKG
 echo "prefix=$prefix" >> $MPKG
-echo "exec_prefix=\${prefix}" >> $MPKG
-echo "libdir=\${exec_prefix}/$LIBDIR" >> $MPKG
+echo "exec_prefix=$exec_prefix" >> $MPKG
+echo "bindir=$bindir" >> $MPKG
+echo "sbindir=$sbindir" >> $MPKG
+echo "libdir=$libdir" >> $MPKG
+echo "includedir=$includedir" >> $MPKG
+echo "datadir=$datadir" >> $MPKG
+echo "mandir=$mandir" >> $MPKG
+echo "syscolordir=$syscolordir" >> $MPKG
+echo "usercolordir=$usercolordir" >> $MPKG
+echo "iccdirname=$iccdirname" >> $MPKG
+echo "settingsdirname=$settingsdirname" >> $MPKG
+echo "pixmapdir=$pixmapdir" >> $MPKG
+echo "desktopdir=$desktopdir" >> $MPKG
 cat  $MPKG.in >> $MPKG
 echo $MPKG generated
 
 echo "Version: $VERSION" > $PKGC
 echo "prefix=$prefix" >> $PKGC
-echo "exec_prefix=\${prefix}" >> $PKGC
-echo "libdir=\${exec_prefix}/$LIBDIR" >> $PKGC
+echo "exec_prefix=$exec_prefix" >> $PKGC
+echo "bindir=$bindir" >> $PKGC
+echo "sbindir=$sbindir" >> $PKGC
+echo "libdir=$libdir" >> $PKGC
+echo "includedir=$includedir" >> $PKGC
+echo "datadir=$datadir" >> $PKGC
+echo "mandir=$mandir" >> $PKGC
+echo "syscolordir=$syscolordir" >> $PKGC
+echo "usercolordir=$usercolordir" >> $PKGC
+echo "iccdirname=$iccdirname" >> $PKGC
+echo "settingsdirname=$settingsdirname" >> $PKGC
+echo "pixmapdir=$pixmapdir" >> $PKGC
+echo "desktopdir=$desktopdir" >> $PKGC
 cat  $PKGC.in >> $PKGC
 echo $PKGC generated
 
 
-echo "prefix =                $prefix"
+echo ""
+echo "################################################################"
+echo "#                       Configuration                          #"
+echo "prefix          =       $prefix"
+echo "exec_prefix     =       $exec_prefix"
+echo "bindir          =       $bindir"
+echo "sbindir         =       $sbindir"
+echo "libdir          =       $libdir"
+echo "includedir      =       $includedir"
+echo "datadir         =       $datadir"
+echo "mandir          =       $mandir"
+echo "syscolordir     =       $syscolordir"
+echo "usercolordir    =       $usercolordir"
+echo "iccdirname      =       $iccdirname"
+echo "settingsdirname =       $settingsdirname"
+echo "pixmapdir       =       $pixmapdir"
+echo "desktopdir      =       $desktopdir"
+echo "################################################################"
+echo ""
 
-echo "prefix = $prefix" >> $CONF
-echo "libdir = \${prefix}/lib$BARCH" >> $CONF
 echo "src_dir = $src_dir" >> $CONF
 echo "srcdir = $srcdir" >> $CONF
+echo "prefix=$prefix" >> $CONF
+echo "exec_prefix=$exec_prefix" >> $CONF
+echo "bindir=$bindir" >> $CONF
+echo "sbindir=$sbindir" >> $CONF
+echo "libdir=$libdir" >> $CONF
+echo "includedir=$includedir" >> $CONF
+echo "datadir=$datadir" >> $CONF
+echo "mandir=$mandir" >> $CONF
+echo "syscolordir=$syscolordir" >> $CONF
+echo "usercolordir=$usercolordir" >> $CONF
+echo "iccdirname=$iccdirname" >> $CONF
+echo "settingsdirname=$settingsdirname" >> $CONF
+echo "pixmapdir=$pixmapdir" >> $CONF
+echo "desktopdir=$desktopdir" >> $CONF
 echo "" >> $CONF
+
+echo "syscolordir = $syscolordir" > $ECI_CONF
+echo "iccdirname = $iccdirname" >> $ECI_CONF
+cat $ECI_CONF.in >> $ECI_CONF
+echo "syscolordir = $syscolordir" > $BASE_CONF
+echo "iccdirname = $iccdirname" >> $BASE_CONF
+cat $BASE_CONF.in >> $BASE_CONF
+
 echo "#define PREFIX         \"$prefix\"" >> $CONF_H
-echo "#define DATADIR        \"$prefix/share/\"" >> $CONF_H
-echo "#define LOCALEDIR      \"$prefix/share/locale\"" >> $CONF_H
+echo "#define DATADIR        \"$datadir\"" >> $CONF_H
+echo "#define SYSCOLORDIR    \"$syscolordir\"" >> $CONF_H
+echo "#define USERCOLORDIR   \"$usercolordir\"" >> $CONF_H
+echo "#define ICCDIRNAME     \"$iccdirname\"" >> $CONF_H
+echo "#define SETTINGSDIRNAME \"$settingsdirname\"" >> $CONF_H
+echo "#define LOCALEDIR      \"$datadir/locale\"" >> $CONF_H
 echo "#define SRCDIR         \"$srcdir\"" >> $CONF_H
 echo "#define SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
-
-echo "" >> $CONF
+echo "" >> $CONF_H
 
 echo "CXX = c++$LINE_ARCH" >> $CONF
-echo "CC = cc$LINE_ARCH" >> $CONF
+echo "CC = gcc$LINE_ARCH" >> $CONF
 echo "RM = rm -vf" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
   echo "COPY = cp -pv" >> $CONF
-  echo "LINK_FLAGS = -dynamiclib" >> $CONF
+  echo "LINK_FLAGS = -dynamiclib  -L." >> $CONF
   echo "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
-  echo "OPTS=-Wall -O2 -g -fPIC -L." >> $CONF
-  echo "/Developer/Tools/Rez -t APPL mac.r -o \$@" >> $CONF
+  echo "OPTS = -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF
+  echo "REZ = fltk-config --post \$@" >> $CONF
 else
   echo "SO = .so" >> $CONF
   if [ $OSUNAME = "Linux" ]; then
@@ -294,24 +485,17 @@ else
       echo "LINK_FLAGS = -shared -ldl \$(ICONV)" >> $CONF
     fi
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
-    echo "OPTS=-Wall -O2 -g -fpic -L." >> $CONF
+    echo "OPTS=-Wall -g -fpic -L." >> $CONF
     echo "RM = rm -f" >> $CONF
   fi
 fi
 
-echo "LIB=/"$LIBDIR >> $CONF
-
-# get time stamp
-C=`date +%C`
-TIME=`date +%Y%m%e.%H%M%S | sed s/$C//`
-echo "MTIME   =$TIME" >> $CONF
 
 echo "" >> $CONF
 echo "" >> $CONF
-
 
 if [ $OSUNAME = "BSD" ]; then
-  cat  makefile.in | sed 's/^\#if/.if/g ; s/^\#end/.end/g ; s/^\#include\ mkdepend/.include "mkdepend"/g'  >> $CONF
+  cat  makefile.in | sed 's/^\#if/.if/g ; s/^\#end/.end/g '  >> makefile
 else
   cat  makefile.in | sed 's/^\#if/if/g ; s/^\#end/end/g ; s/^\#include/include/g'  >> $CONF
 fi

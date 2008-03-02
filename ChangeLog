@@ -1,3 +1,12 @@
+2006-05-28
+	* und: release of 0.1.5
+	* neu: start bsd support
+	* und: change build system
+	* neu: fltk ui
+	* neu: allow system specific colour directories at configure time
+	* und: USERCOLORDIR SYSCOLORDIR ICCDIRNAME SETTINSDIRNAME in config.h
+	* und: the above macros are additional to /usr/share/color ~/.color
+
 2006-04-03
 	* und: release of 0.1.4
 

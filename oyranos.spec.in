@@ -63,7 +63,7 @@ rm -rf %{buildroot}
 %{_bindir}/oyranos-moni*
 %{_bindir}/oyranos-config-fl*
 %{_libdir}/*.so*
-%{_datadir}/color/settings/*.policy.xml
+%{syscolordir}/%{settingsdirname}/*.policy.xml
 
 %files devel
 %doc AUTHORS COPYING README
