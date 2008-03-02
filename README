@@ -4,10 +4,9 @@ Deutsch
 Oyranos (gr. Himmel):
 
     Das Farbmanagement System Oyranos ermöglicht die einfache Verwaltung von
-    gerätespezifischen Informationen (ICC Profile).
+    gerätespezifischen Informationen (ICC Profile) und systemweiten
+    Einstellungen.
 
-    Es handelt sich im Moment um eine Test.
-    
 
 --------------------------------------------------------------------------------
 
@@ -52,9 +51,8 @@ English
 Oyranos (gr. sky):
 
     The Colour Management System (CMS) Oyranos allows the coordination of
-    device specific Informations (ICC profiles).
+    device specific Informations (ICC profiles) und system wide settings.
 
-    It is at the moment an test.
     
 
 --------------------------------------------------------------------------------

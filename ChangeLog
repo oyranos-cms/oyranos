@@ -1,6 +1,10 @@
+2005-10-20
+	* neu: elektra-0.5.1
+	* neu: rpm + devel rpm
+
 2005-10-18
 	* neu: elektra-0.5.0.5
-	* und: release
+	* und: release prepare
 
 2005-09-13
 	* fix: 0 EDID atom crash (no monitor attached)
