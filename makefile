@@ -245,7 +245,7 @@ install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma doc
 	$(INSTALL) -m 644 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
-	test -d $(includedir)/oyranos || mkdir -p $(DESTDIR)$(includedir)/oyranos
+	test -d $(DESTDIR)$(includedir)/oyranos || mkdir -p $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos.h $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos_definitions.h $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos_monitor.h $(DESTDIR)$(includedir)/oyranos
