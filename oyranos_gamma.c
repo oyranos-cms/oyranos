@@ -43,7 +43,6 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
 
 int main( int argc , char** argv )
 {
-  oy_debug = 1;
   char *display_name = getenv("DISPLAY");
   char *monitor_profile = 0;
   int error = 0;
