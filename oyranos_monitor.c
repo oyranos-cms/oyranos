@@ -209,6 +209,8 @@ oyActivateMonitorProfile_         (const char* display_name,
       profil_basename = strrchr(profil_name,OY_SLASH_C)+1;
     else
       profil_basename = profil_name;
+
+    /* set vcgt tag with xcalib */
     sprintf(text,"xcalib -d %s %s%s%s", display_name,
                                profil_pathname, OY_SLASH, profil_basename);
     error = system(text);
@@ -217,6 +219,16 @@ oyActivateMonitorProfile_         (const char* display_name,
     }
 
     DBG_PROG_S(( "system: %s", text ))
+
+    /* set _ICC_PROFILE atom in X with xicc */
+    sprintf(text,"xicc %s %s%s%s", display_name,
+                               profil_pathname, OY_SLASH, profil_basename);
+    error = system(text);
+    if(error) {
+      WARN_S((_("Error while setting X monitor property")))
+    }
+
+    printf/*DBG_PROG_S*/( "system: %s", text );
     if(text) free(text);
   }
 

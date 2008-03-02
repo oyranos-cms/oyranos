@@ -65,7 +65,7 @@ else
   endif
 endif
 
-INCL=-I$(includedir) -I/usr/X11R6/include -I$(srcdir)
+INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir)
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
