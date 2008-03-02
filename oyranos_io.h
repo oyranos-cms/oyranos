@@ -68,10 +68,6 @@ char* oyGetPathFromProfileName_           (const char*   profilename,
 
 char**  oyProfileListGet_                 (const char* coloursig, int * size);
 
-int	oyCheckProfile_                   (const char* name,const char* coloursig);
-int	oyCheckProfile_Mem                (const void* mem, size_t size,
-                                           const char* coloursig);
-
 size_t	oyGetProfileSize_                 (const char*   profilename);
 void*	oyGetProfileBlock_                (const char*   profilename,
                                            size_t       *size,

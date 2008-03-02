@@ -37,6 +37,7 @@
 
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_check.h"
 #include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
@@ -602,7 +603,16 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
       continue;
 
     if ((stat (path, &statbuf)) != 0) {
-      WARN_S((_("%d. path %s does not exist"), i, path))
+      switch (errno)
+      {
+        case EACCES:       WARN_S(("Permission denied: %s %d", path, i)); break;
+        case EIO:          WARN_S(("EIO : %s %d", path, i)); break;
+        case ELOOP:        WARN_S(("Too many symbolic links encountered while traversing the path: %s %d", path, i)); break;
+        case ENAMETOOLONG: WARN_S(("ENAMETOOLONG : %s %d", path, i)); break;
+        case ENOENT:       WARN_S(("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i)); break;
+        case ENOTDIR:      WARN_S(("ENOTDIR : %s %d", path, i)); break;
+        case EOVERFLOW:    WARN_S(("EOVERFLOW : %s %d", path, i)); break;
+      }
       continue;
     }
     if (!S_ISDIR (statbuf.st_mode)) {
@@ -701,74 +711,6 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
 
   DBG_PROG_ENDE
   return r;
-}
-
-/* profile check API */
-
-int
-oyCheckProfile_                    (const char* name,
-                                    const char* coloursig)
-{ DBG_PROG_START
-  char *fullName = 0;
-  char* header = 0; 
-  size_t size = 0;
-  int r = 1;
-
-  //if(name) DBG_NUM_S((name));
-  fullName = oyFindProfile_(name);
-  if (!fullName)
-    WARN_S(("%s not found",name))
-  else
-    ;//DBG_NUM_S((fullName));
-
-  /* do check */
-  if (oyIsFileFull_(fullName))
-  {
-    size = 128;
-    header = oyReadFileToMem_ (fullName, &size, oyAllocateFunc_); DBG_PROG
-    if (size >= 128)
-      r = oyCheckProfile_Mem (header, 128, coloursig);
-  }
-
-  /* release memory */
-  if(header && size)
-    free(header);
-  if(fullName) free(fullName);
-
-  DBG_NUM_S(("oyCheckProfileMem = %d",r))
-
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oyCheckProfile_Mem                 (const void* mem, size_t size,
-                                    const char* coloursig)
-{ DBG_PROG_START
-  char* block = (char*) mem;
-  int offset = 36;
-  if (size >= 128) 
-  {
-    if (block[offset+0] == 'a' &&
-        block[offset+1] == 'c' &&
-        block[offset+2] == 's' &&
-        block[offset+3] == 'p' )
-    {
-      DBG_PROG_ENDE
-      return 0;
-    } else {
-      if(oy_warn_)
-        WARN_S((" sign: %c%c%c%c ", (char)block[offset+0],
-        (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] ));
-      DBG_PROG_ENDE
-      return 1;
-    }
-  } else {
-    WARN_S (("False profile - size = %d pos = %lu ", (int)size, (long int)block))
-
-    DBG_PROG_ENDE
-    return 1;
-  }
 }
 
 /* profile handling API */

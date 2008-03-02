@@ -957,15 +957,14 @@ oyChangeScreenName_                (const char* display_name,
 { DBG_PROG_START
   char* host_name = 0;
 
-  oyAllocHelper_m_( host_name, char, strlen( display_name ) + 48,0,return NULL);
-
   /* Is this X server identifyable? */
   if(!display_name)
-  {
-    sprintf( host_name, ":0.0" );
-  } else {
-    sprintf( host_name, display_name );
-  }
+    display_name = ":0.0";
+
+
+  oyAllocHelper_m_( host_name, char, strlen( display_name ) + 48,0,return NULL);
+
+  sprintf( host_name, display_name );
 
   /* add screen */
   {
@@ -1081,9 +1080,11 @@ oyGetDisplay_                      (const char *display_name,
   disp->screen = 0;
 
   disp->type = oyDISPLAY_T;
-  if( display_name && strlen( display_name ) )
-    disp->name = strdup( display_name );
-  else
+  if( display_name )
+  {
+    if( strlen( display_name ) )
+      disp->name = strdup( display_name );
+  }  else
     disp->name = strdup( ":0" );
 
   if( !error &&

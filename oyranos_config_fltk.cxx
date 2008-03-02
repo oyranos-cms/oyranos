@@ -1454,7 +1454,7 @@ int main(int argc, char **argv) {
     locale_paths[0] = bdr.c_str(); ++num_paths;
   }
   if(!locale_paths[0]) {
-    bdr = icc_examin_ns::holeBundleResource("locale","");
+    //bdr = icc_examin_ns::holeBundleResource("locale","");
     if(bdr.size())
     {
       locale_paths[0] = bdr.c_str();

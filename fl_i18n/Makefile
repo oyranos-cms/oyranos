@@ -1,6 +1,9 @@
 
 CXX = c++
 CC = cc
+CFLAGS = -Wall -g $(INCL)
+CXXFLAGS = -Wall -g $(INCL) $(FLU_H) $(FLTK_H)
+LDFLAGS = -Wall -g -L/usr/X11R6/lib -L.
 TARGET=fl_i18n
 VERSION=0.0.2
 COMPILE_OPTIONS=-DUSE_THREADS -DUSE_GETTEXT
@@ -152,7 +155,7 @@ POT_FILE = po/$(TARGET).pot
 
 
 ALL_FILES =	$(SOURCES) \
-	makefile \
+	Makefile \
 	makefile.bsd \
 	makefile.in \
 	$(DOKU)
@@ -171,7 +174,7 @@ dynamic:	$(BINTARGET)
 
 $(BINTARGET):	$(BASE) $(OBJECTS) $(LINGUAS_SRC) $(I18N_OBJECTS) $(LIBNAME)
 	echo Verknuepfen $@ ... $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(BINTARGET) \
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(BINTARGET) \
 	$(OBJECTS) \
 	$(LDLIBS) $(LINK_LIB_PATH) $(LINK_SRC_PATH)
 	$(REZ)

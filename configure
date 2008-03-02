@@ -12,22 +12,27 @@ CONF_I18N=fl_i18n/makefile
 SPEC=$TARGET.spec
 PKGC=$TARGET.pc
 MPKG="$TARGET"_monitor.pc
-VERS="$TARGET"_version.h
-if [ -f standard_profiles/eci/makefile ]; then
+VERS_H="$TARGET"_version.h
+zeile="$0 $@"
+if [ -f standard_profiles/eci/makefile.in ]; then
   ECI_CONF=standard_profiles/eci/makefile
   BASE_CONF=standard_profiles/base/makefile
+  PROFILE_DIR="standard_profiles/eci standard_profiles/base"
 else
   ECI_CONF=error.txt
   BASE_CONF=error.txt
 fi
+MAKEFILE_DIR=". fl_i18n libXNVCtrl $PROFILE_DIR"; export MAKEFILE_DIR
 
 export CONF_H CONF CONF_I18N CONF_NV
 
 VERSION_A=0
 VERSION_B=1
 VERSION_C=7
+VERSION_ABI_A=1
+VERSION_ABI_B=0
 RELEASE=0
-TIME="November 2004 - September 2006"
+TIME="November 2004 - November 2006"
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
 if [ $VERSION_A -gt 9 ]; then
   VERSION_L="$VERSION_A"
@@ -55,6 +60,8 @@ echo "" > $BASE_CONF
 echo "" > $PKGC
 echo "" > $MPKG
 echo "" > $SPEC
+
+debug=0
 
 echo ""
 echo "################################################################"
@@ -129,6 +136,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       internalelektra="`echo $1 | sed s/--$switch=//`"
     fi
+    switch=enable-debug
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      debug="1"
+    fi
     switch=help
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       echo "Usage:"
@@ -147,6 +158,9 @@ if [ $# -gt 0 ]; then
       echo "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
       echo "   --desktopdir=[\$datadir/applications] xdg installation path"
       echo "   --internal-elektra=[yes/no]          use internal Elektra"
+      echo ""
+      echo "   --with-fltk-config=[fltk-config]     alternative fltk version"
+      echo "   --enable-debug                       debug version"
       echo "   --help"
       echo ""
       echo " Optionally set the CC, CXX, CFLAGS, CXXFLAGS and LDFLAGS environment variables."
@@ -157,6 +171,8 @@ if [ $# -gt 0 ]; then
   done
 fi
 
+echo "$zeile" > config.log
+chmod 0755 config.log
 
 src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
 srcdir="`pwd`"
@@ -178,6 +194,7 @@ test -f mkdepend && rm mkdepend config.h
 
 echo "# automatically generated file - do not edit" >> $CONF
 echo "/* automatically generated file - do not edit */" >> $CONF_H
+echo "/* automatically generated file - do not edit */" > $VERS_H
 echo "" >> $CONF
 echo "TARGET = $TARGET" >> $CONF
 
@@ -209,7 +226,7 @@ else
     else
       if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
         echo "BSD = 1" >> $CONF
-        ARCH=.bsd
+        OS_EXT=.bsd
         echo "#define BSD 1" >> $CONF_H
         echo "BSD $UNAME_             detected"
         OSUNAME=BSD
@@ -219,7 +236,7 @@ else
     fi
   fi
 fi
-echo "MAKEFILE_ARCH = makefile$ARCH"  >> $CONF
+echo "MAKEFILE_ARCH = Makefile$OS_EXT"  >> $CONF
 MACH_=`uname -m`
 MACH=BUILD_32
 BARCH=""
@@ -248,7 +265,7 @@ LIBDIR="lib"$BARCH
 export MACH OSUNAME LIBDIR BARCH LINE_ARCH
 
 
-# prefix exec_prefix bindir sbindir libdir includedir datadir
+# exec_prefix bindir sbindir libdir includedir datadir
 if [ -z "$exec_prefix" ]; then
   exec_prefix="$prefix"
 fi
@@ -299,6 +316,7 @@ if [ -z "$desktopdir" ]; then
 fi
 export prefix exec_prefix bindir sbindir libdir includedir datadir mandir
 export syscolordir usercolordir pixmapdir desktopdir
+export debug
 
 PATH=$bindir:$PATH
 export PATH
@@ -331,7 +349,10 @@ if [ "$FLTK" = 1 ]; then
   fi
 fi
 
-ELEKTRA_VERSION="elektra-0.6.4"; export ELEKTRA_VERSION
+if [ "$internalelektra" != "no" ]; then
+  ELEKTRA_VERSION="elektra-0.6.4"
+  export ELEKTRA_VERSION
+fi
 export internalelektra
 
 
@@ -347,6 +368,7 @@ X11=1; export X11
 XINERAMA=1; export XINERAMA
 XF86VMODE=1; export XF86VMODE
 DOXYGEN=2; export DOXYGEN
+DEBUG=1; export DEBUG
 PO=1; export PO
 ./configure.sh
 ELEKTRA=0; export ELEKTRA
@@ -360,6 +382,7 @@ X11=1; export X11
 XINERAMA=1; export XINERAMA
 XF86VMODE=1; export XF86VMODE
 DOXYGEN=0; export DOXYGEN
+DEBUG=0; export DEBUG
 PO=0; export PO
 if [ $? -gt 0 ]; then
   ERROR=1
@@ -371,6 +394,9 @@ CONF=$CONF_NV; export CONF
 ./configure.sh
 CONF=$conf_temp; export CONF
 ECHO="echo"; export ECHO
+X11=0; export X11
+XINERAMA=0; export XINERAMA
+XF86VMODE=0; export XF86VMODE
 
 
 # Alle ifdefs landen hier
@@ -414,17 +440,17 @@ chmod 0755 "$CONF_SH"
 echo "$CONF_SH created"
 
 
-echo "#ifndef OYRANOS_VERSION_H" >> $VERS
-echo "#define OYRANOS_VERSION_H" >> $VERS
-echo "" >> $VERS
-echo "#define OYRANOS_VERSION_A $VERSION_A" >> $VERS
-echo "#define OYRANOS_VERSION_B $VERSION_B" >> $VERS
-echo "#define OYRANOS_VERSION_C $VERSION_C" >> $VERS
-echo "#define OYRANOS_VERSION_NAME $VERSION" >> $VERS
-echo "#define OYRANOS_VERSION $VERSION_L" >> $VERS
-echo "#define OYRANOS_DATE _(\"$TIME\")" >> $VERS
-echo "" >> $VERS
-echo "#endif /*OYRANOS_VERSION_H*/" >> $VERS
+echo "#ifndef OYRANOS_VERSION_H" >> $VERS_H
+echo "#define OYRANOS_VERSION_H" >> $VERS_H
+echo "" >> $VERS_H
+echo "#define OYRANOS_VERSION_A $VERSION_A" >> $VERS_H
+echo "#define OYRANOS_VERSION_B $VERSION_B" >> $VERS_H
+echo "#define OYRANOS_VERSION_C $VERSION_C" >> $VERS_H
+echo "#define OYRANOS_VERSION_NAME $VERSION" >> $VERS_H
+echo "#define OYRANOS_VERSION $VERSION_L" >> $VERS_H
+echo "#define OYRANOS_DATE _(\"$TIME\")" >> $VERS_H
+echo "" >> $VERS_H
+echo "#endif /*OYRANOS_VERSION_H*/" >> $VERS_H
 
 echo "Version:         $VERSION" >> $SPEC
 echo "Source:          $TARGET"-"$VERSION".tar.gz >> $SPEC
@@ -435,8 +461,8 @@ echo "%define iccdirname      $iccdirname" >> $SPEC
 echo "%define settingsdirname $settingsdirname" >> $SPEC
 echo "%define pixmapdir       $pixmapdir" >> $SPEC
 echo "%define desktopdir      $desktopdir" >> $SPEC
-cat  $SPEC.in >> $SPEC
-echo $SPEC generated
+cat  "$SPEC.in" >> $SPEC
+echo generated $SPEC from $SPEC.in
 
 echo "Version: $VERSION" >> $MPKG
 echo "prefix=$prefix" >> $MPKG
@@ -453,8 +479,8 @@ echo "iccdirname=$iccdirname" >> $MPKG
 echo "settingsdirname=$settingsdirname" >> $MPKG
 echo "pixmapdir=$pixmapdir" >> $MPKG
 echo "desktopdir=$desktopdir" >> $MPKG
-cat  $MPKG.in >> $MPKG
-echo $MPKG generated
+cat  "$MPKG.in" >> $MPKG
+echo generated $MPKG from "$MPKG.in"
 
 echo "Version: $VERSION" >> $PKGC
 echo "prefix=$prefix" >> $PKGC
@@ -471,8 +497,8 @@ echo "iccdirname=$iccdirname" >> $PKGC
 echo "settingsdirname=$settingsdirname" >> $PKGC
 echo "pixmapdir=$pixmapdir" >> $PKGC
 echo "desktopdir=$desktopdir" >> $PKGC
-cat  $PKGC.in >> $PKGC
-echo $PKGC generated
+cat  "$PKGC.in" >> $PKGC
+echo generated $PKGC from "$PKGC.in"
 
 
 echo ""
@@ -543,27 +569,31 @@ echo "CXX = $CXX" >> $CONF_I18N
 echo "CC = $CC" >> $CONF_I18N
 echo "CXX = $CXX" >> $CONF_NV
 echo "CC = $CC" >> $CONF_NV
-cat $CONF_I18N.in >> $CONF_I18N
-echo $CONF_I18N prepared
 
 CFLAGS_COMMON="$CFLAGS \$(INCL)"
 CXXFLAGS_COMMON="$CXXFLAGS \$(INCL) \$(FLU_H) \$(FLTK_H)"
 echo "RM = rm -vf" >> $CONF
 echo "RM = rm -vf" >> $CONF_NV
 if [ $OSUNAME = "Darwin" ]; then
+  echo "LIBEXT = .dylib" >> $CONF
+  GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
+  echo "LINK_FLAGS_DYNAMIC = $LDFLAGS -dynamiclib  -L. \$(ICONV) $GCC_VERSION_INFO" >> $CONF
+  echo "LINK_NAME =  -install_name  \$(libdir)/\$(LIBSONAMEFULL)" >> $CONF
+  echo "LINK_NAME_M = -install_name \$(libdir)/\$(LIB_MONI_SONAMEFULL)" >> $CONF
   echo "COPY = cp -pv" >> $CONF
-  echo "LINK_FLAGS = $LDFLAGS -dynamiclib  -L." >> $CONF
+  LDFLAGS="$LDFLAGS -L. \$(ICONV)"
   echo "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
   echo "MSGMERGE = msgmerge" >> $CONF
-  echo "CFLAGS = $CFLAGS_COMMON -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF
-  echo "CFLAGS = $CFLAGS_COMMON -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF_NV
-  echo "CXXFLAGS = $CXXFLAGS_COMMON -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF
+  CFLAGS="$CFLAGS_COMMON -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions"
+  CXXFLAGS="$CXXFLAGS_COMMON -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions"
   echo "REZ = fltk-config --post \$@" >> $CONF
-  echo "INSTALL = install -v" >> $CONF
-  echo "INSTALL = install -v" >> $ECI_CONF
-  echo "INSTALL = install -v" >> $BASE_CONF
+  echo "ICONV = -liconv" >> $CONF
+  echo "I18N_LIB = \$(ICONV) -lintl \$(LIBNAMEV)" >> $CONF
+  echo "I18N_LIBSTAT = \$(ICONV) -lintl \$(LIBNAMEV)" >> $CONF
+  INSTALL="install -v"
 else
   echo "SO = .so" >> $CONF
+  echo "LINK_FLAGS_DYNAMIC = $LDFLAGS -shared $GCC_VERSION_INFO" >> $CONF
   echo "MSGMERGE = msgmerge" >> $CONF
   echo "MSGMERG_OPTS = --update" >> $CONF
   echo "XGETTEXT_OPTIONS = --keyword=gettext --flag=gettext:1:pass-c-format \
@@ -574,68 +604,62 @@ else
         --from-code=utf-8" >> $CONF
   if [ $OSUNAME = "Linux" ]; then
     echo "COPY = cp -vdpa" >> $CONF
-    echo "LINK_FLAGS = $LDFLAGS -shared -L." >> $CONF
-    echo "LINK_FLAGS_STATIC = $LDFLAGS q" >> $CONF
+    LDFLAGS="$LDFLAGS -L."
+    echo "LINK_FLAGS_STATIC =" >> $CONF
     echo "LINK_NAME = -Wl,-soname -Wl,\$(LIBSONAMEFULL)" >> $CONF
     echo "LINK_NAME_M = -Wl,-soname -Wl,\$(LIB_MONI_SONAMEFULL)" >> $CONF
     echo "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
     echo "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
-    echo "CFLAGS=$CFLAGS_COMMON" >> $CONF
-    echo "CFLAGS=$CFLAGS_COMMON" >> $CONF_NV
-    echo "CXXFLAGS=$CXXFLAGS_COMMON" >> $CONF
-    echo "INSTALL = install -v" >> $CONF
-    echo "INSTALL = install -v" >> $ECI_CONF
-    echo "INSTALL = install -v" >> $BASE_CONF
+    CFLAGS="$CFLAGS_COMMON"
+    CXXFLAGS="$CXXFLAGS_COMMON"
+    INSTALL="install -v"
   else
     echo "COPY = cp -p" >> $CONF
     if [ $OSUNAME = "BSD" ]; then
-      echo "LINK_FLAGS = $LDFLAGS -shared \$(ICONV)" >> $CONF
-      echo "INSTALL = install -v" >> $CONF
-      echo "INSTALL = install -v" >> $ECI_CONF
-      echo "INSTALL = install -v" >> $BASE_CONF
+      LDFLAGS="$LDFLAGS \$(ICONV)"
+      INSTALL="install -v"
     fi
     if [ $OSUNAME = "SunOS" ]; then
-      echo "LINK_FLAGS = $LDFLAGS -shared -mimpure-text -ldl \$(ICONV)" >> $CONF
-      echo "INSTALL = install -v" >> $CONF
-      echo "INSTALL = install -v" >> $ECI_CONF
-      echo "INSTALL = install -v" >> $BASE_CONF
+      echo "ICONV = -liconv" >> $CONF
+      LDFLAGS="$LDFLAGS -mimpure-text -ldl \$(ICONV)"
+      INSTALL="install -v"
     else
-      echo "LINK_FLAGS = $LDFLAGS -shared -mimpure-text -ldl \$(ICONV)" >> $CONF
-      echo "INSTALL = install" >> $CONF
-      echo "INSTALL = install" >> $ECI_CONF
-      echo "INSTALL = install" >> $BASE_CONF
+      echo "ICONV = -liconv" >> $CONF
+      LDFLAGS="$LDFLAGS -mimpure-text -ldl \$(ICONV)"
+      INSTALL="install"
     fi
     echo "I18N_LIB = \$(ICONV) -lintl \$(LIBNAMEV)" >> $CONF
     echo "I18N_LIBSTAT = \$(ICONV) -lintl \$(LIBNAMEV)" >> $CONF
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
-    echo "CFLAGS=$CFLAGS_COMMON -Wall -g -L. -fPIC" >> $CONF
-    echo "CFLAGS=$CFLAGS_COMMON -Wall -g -L. -fPIC" >> $CONF_NV
-    echo "CXXFLAGS=$CXXFLAGS_COMMON -Wall -g -L. -fPIC" >> $CONF
+    CFLAGS="$CFLAGS_COMMON -Wall -g -L. -fPIC"
+    CXXFLAGS="$CXXFLAGS_COMMON -Wall -g -L. -fPIC"
     echo "RM = rm -f" >> $CONF
     echo "RM = rm -f" >> $CONF_NV
   fi
 fi
+echo "CFLAGS=$CFLAGS"     >> $CONF_NV
+echo "CFLAGS = $CFLAGS"   >> $CONF_I18N
+echo "CXXFLAGS = $CXXFLAGS">>$CONF_I18N
+echo "LDFLAGS = $LDFLAGS" >> $CONF_I18N
+echo "CFLAGS = $CFLAGS"   >> $CONF
+echo "CXXFLAGS = $CXXFLAGS">>$CONF
+echo "LDFLAGS = $LDFLAGS" >> $CONF
+echo "INSTALL = $INSTALL" >> $CONF
+echo "INSTALL = $INSTALL" >> $ECI_CONF
+echo "INSTALL = $INSTALL" >> $BASE_CONF
 
 
 echo "" >> $CONF
 echo "" >> $CONF
 
-cat $CONF_NV.in >> $CONF_NV
-echo $CONF_NV generated
+echo ""
+echo ""
 
-if [ $OSUNAME = "BSD" ]; then
-  cat  makefile.in | sed 's/^\#if/.if/g ; s/^\#end/.end/g '  >> makefile
-else
-  cat  makefile.in | sed 's/^\#if/if/g ; s/^\#end/end/g ; s/^\#include/include/g'  >> $CONF
-fi
-cat $ECI_CONF.in >> $ECI_CONF
-cat $BASE_CONF.in >> $BASE_CONF
-echo $CONF generated
-echo $ECI_CONF generated
-echo $BASE_CONF generated
-echo ""
-echo ""
+# prepare makefile from MAKEFILE_DIR
+PREPARE_MAKEFILES=1; export PREPARE_MAKEFILES
+./configure.sh
+PREPARE_MAKEFILES=0; export PREPARE_MAKEFILES
 
 if [ $ERROR != 0 ]; then
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"

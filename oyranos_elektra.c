@@ -31,14 +31,13 @@
 #include <kdb.h>
 #include <alloca.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_check.h"
 #include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"

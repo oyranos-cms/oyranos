@@ -149,7 +149,7 @@ POT_FILE = po/$(TARGET).pot
 
 
 ALL_FILES =	$(SOURCES) \
-	makefile \
+	Makefile \
 	makefile.bsd \
 	makefile.in \
 	$(DOKU)
@@ -168,7 +168,7 @@ dynamic:	$(BINTARGET)
 
 $(BINTARGET):	$(BASE) $(OBJECTS) $(LINGUAS_SRC) $(I18N_OBJECTS) $(LIBNAME)
 	echo Verknuepfen $@ ... $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(BINTARGET) \
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(BINTARGET) \
 	$(OBJECTS) \
 	$(LDLIBS) $(LINK_LIB_PATH) $(LINK_SRC_PATH)
 	$(REZ)

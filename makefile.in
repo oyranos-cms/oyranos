@@ -9,13 +9,13 @@ MSGFMT = msgfmt -c --statistics
 srcdir		= .
 docdir          = $(datadir)/doc/$(TARGET)
 
-LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)
-LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)
-LIBSO = lib$(TARGET)$(SO)
+LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
+LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
+LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
 LIBNAME = lib$(TARGET).a
-LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)
-LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)
-LIB_MONI_SO = lib$(TARGET)_moni$(SO)
+LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)$(LIBEXT)
+LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)$(LIBEXT)
+LIB_MONI_SO = lib$(TARGET)_moni$(SO)$(LIBEXT)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
 LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
@@ -29,12 +29,13 @@ INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 
 ELEKTRA_STATICTEST_LIBS = `test -f $(ELEKTRA_VERSION)/src/libelektra/libelektra.a && echo $(ELEKTRA_VERSION)/src/libelektra/libelektra.a || (test -f $(libdir)/libelektra.a && (echo $(libdir)/libelektra.a ; test -f $(libdir)/libelektra-filesys.a && echo $(libdir)/libelektra-filesys.a || (test -f $(libdir)/elektra/libelektra-filesys.a && echo $(libdir)/elektra/libelektra-filesys.a)) || echo $(ELEKTRA_LIBS))`
 
-LDLIBS = -L$(libdir) -L. \
+LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
 	$(ELEKTRA_STATICTEST_LIBS) -lc $(I18N_LIB)
 
 
 CPP_HEADERS = \
 	$(TARGET).h \
+	$(TARGET)_check.h \
 	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
@@ -48,10 +49,12 @@ CPP_HEADERS = \
 	$(TARGET)_monitor_internal.h \
 	$(TARGET)_sentinel.h \
 	$(TARGET)_texts.h \
-	$(TARGET)_xml.h
+	$(TARGET)_xml.h \
+	md5.h
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
+	$(TARGET)_check.c \
 	$(TARGET)_cmms.c \
 	$(TARGET)_elektra.c \
 	$(TARGET)_helper.c \
@@ -60,7 +63,8 @@ CFILES = \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel.c \
 	$(TARGET)_texts.c \
-	$(TARGET)_xml.c
+	$(TARGET)_xml.c \
+	md5.c
 CFILESC = \
 	$(TARGET)_debug.c
 CFILES_MONI = \
@@ -77,7 +81,10 @@ CXXFILES_FLTK = \
 CPPFILES_FLU = \
 	$(TARGET)_config_flu.cpp
 TEST_CPP = \
-	tests/fltk_test.cxx
+	tests/fltk_test.cxx \
+	tests/dE2000_test.cpp
+TEST_H = \
+	tests/ciede2000testdata.h
 CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
@@ -158,7 +165,7 @@ time:
 # build all objects and libraries, link the headers to $(TARGET)
 $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 	echo Linking $@ ...
-	$(CC) $(LINK_FLAGS) $(CFLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
+	$(CC) $(LINK_FLAGS_DYNAMIC) $(CFLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(libdir) $(LDLIBS)
 	$(RM)  $(LIBSONAME)
@@ -169,7 +176,7 @@ $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 # the monitor library
 $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS) $(LINK_NAME_M) $(LIBSONAMEFULL) \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_M) $(LIBSONAMEFULL) \
 	-o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) $(X11_LIBS) $(LDLIBS)
 	$(RM)  $(LIB_MONI_SONAME)
@@ -179,7 +186,7 @@ $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...
-	-(cd $(LIB_XNVCTRL) && $(MAKE) -f makefile)
+	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile)
 	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
 # the twinview library
@@ -224,12 +231,12 @@ $(TARGET)-config-flu-static:	$(LIBSONAMEFULL) $(FLU_OBJECTS)
 
 $(LIBNAME):	$(OBJECTS)
 	echo Linking $@ ...
-	$(COLLECT) $(LIBNAME) $(OBJECTS)
+	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) $(OBJECTS)
 	$(RANLIB) $(LIBNAME)
 
 $(LIB_MONI_NAME):	$(MONI_OBJECTS)
 	echo Linking $@ ...
-	$(COLLECT) $(LIB_MONI_NAME) $(MONI_OBJECTS)
+	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIB_MONI_NAME) $(MONI_OBJECTS)
 	$(RANLIB) $(LIB_MONI_NAME)
 
 # the monitor profile tool
@@ -237,33 +244,35 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
-	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
-	$(LDLIBS)
+	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
 elektra-0.6.4:
-	cd $(ELEKTRA_VERSION); test -f Makefile && make || (./configure --enable-static --prefix=$(prefix); make)
+	cd $(ELEKTRA_VERSION); test -f Makefile && $(MAKE) || (./configure --enable-static --prefix=$(prefix); $(MAKE))
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) -o $(TARGET)-policy \
 	$(TARGET)_policy.o \
-	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
-	$(LDLIBS)
+	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+
 
 test2:	$(LIB_MONI_SONAMEFULL) test2.o
 	echo Linking $@ ...
-	$(CXX) $(CXXFLAGS) -o test2 \
+	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
 	test2.o \
 	$(LIB_MONI_SONAMEFULL) $(LINK_SRC_PATH) \
 	$(LIBSONAMEFULL) $(LDLIBS) -l$(TARGET)
+
+check:	test2
+	test2
+
 test:	test.o
 	$(CC) $(CFLAGS) -o test \
 	test.o \
-	$(LIBSONAMEFULL) $(LINK_SRC_PATH) \
-	$(LDLIBS) 
+	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
 $(LIBFL_I18N):
-	(cd fl_i18n/; make -f $(MAKEFILE_ARCH))
+	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
 
 $(LINGUAS_SRC):	$(POT_FILE)
 	echo Linguas ... $(@:.gmo=)
@@ -315,7 +324,7 @@ doc:
 
 # the copy part for this directory level
 install-main:	all doc
-	echo Installing ...
+	echo Installing main ...
 	-$(MAKE) uninstall
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
@@ -334,11 +343,13 @@ install-main:	all doc
 	$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
+	-$(INSTALL) -m 644 $(ELEKTRA_VERSION)/src/libelektra/libelektra.a $(DESTDIR)$(libdir)/lib$(TARGET)_elektra.a
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
 	test "$(FLTK_GUI)" && $(MAKE) install_gui || echo -e "GUI not installed"
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
@@ -351,16 +362,31 @@ install-main:	all doc
 	mkdir -p $(DESTDIR)$(docdir)/html
 	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
 	$(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
-	echo ... Installation finished
+	echo ... main Installation finished
 
 # install recursive
 install:	install-main
+	$(MAKE) install_profiles
+	$(MAKE) install_linguas
+	$(MAKE) install_usersettings
+
+
+install_gui:	$(TARGET)-config-fltk
+	echo Installing UI ...
+	-$(MAKE)  $(TARGET)-config-flu 
+	mkdir -p $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-config-fltk $(DESTDIR)$(bindir)
+
+install_profiles:
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
 	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
+
+install_linguas:
 	echo  Linguas ...
 	for ling in $(LINGUAS); do \
 	  echo "installiere po/$${ling}.gmo ..."; \
@@ -370,6 +396,8 @@ install:	install-main
             $(INSTALL) -m 644 po/$${ling}.gmo $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo ) \
 		|| (echo $${ling}.gmo is not yet ready ... skipping); \
 	done;
+
+install_usersettings:
 	if [ -z $(DESTDIR) ]; then \
 	  kdb=kdb; \
 	  kdb_found=`which $${kdb} | wc -l`; \
@@ -403,14 +431,7 @@ install:	install-main
 	      fi; \
 	    fi; \
 	  fi; \
-	fi; \
-
-install_gui:	$(TARGET)-config-fltk
-	echo Installing UI ...
-	-$(MAKE)  $(TARGET)-config-flu 
-	mkdir -p $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-config-fltk $(DESTDIR)$(bindir)
+	fi;
 
 # build a source distribution package
 dist: targz
@@ -498,9 +519,9 @@ clean:
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo; \
 	done;
-	-(cd $(LIB_XNVCTRL) && $(MAKE) -f makefile clean)
-	(cd fl_i18n/; make -f $(MAKEFILE_ARCH) clean)
-	test -n $(ELEKTRA_VERSION) && cd $(ELEKTRA_VERSION); make clean
+	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
+	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
+	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION) && $(MAKE) clean)
 	echo ... $@ done
 
 # configure if the file config is not available
@@ -543,11 +564,12 @@ depend:
 
 # smallest package covering the current directory
 tgz:
+	-test -d Entwickeln && $(RM) -r Entwickeln
 	$(MAKE) DESTDIR=Entwickeln copy_files
 	tar cf - Entwickeln/ \
 	| gzip > $(TARGET)_$(MTIME).tgz
-	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
-	test -d Entwickeln && \
+	-test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
+	-test -d Entwickeln && \
 	test `pwd` != `(cd Entwickeln; pwd)` && \
 	rm -R Entwickeln
 
@@ -559,7 +581,7 @@ targz:
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
 	         mkdir -p ../$(TARGET)-$(VERSION)/standard_profiles/$${prof}; \
-	         (cd $${prof}; echo bin in `pwd`; make DESTDIR=../../$(TARGET)-$(VERSION)/standard_profiles/$${prof} copy_files) || \
+	         (cd $${prof}; echo bin in `pwd`; $(MAKE) DESTDIR=../../$(TARGET)-$(VERSION)/standard_profiles/$${prof} copy_files) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 	tar cf - $(TARGET)-$(VERSION)/ \
@@ -572,15 +594,14 @@ targz:
 # basic file set
 copy_files:
 	mkdir $(DESTDIR)
-	(cd fl_i18n; \
-	 make DESTDIR=../$(DESTDIR)/fl_i18n -f $(MAKEFILE_ARCH) copy_files; \
-	 cd ..)
+	cd fl_i18n && \
+	 $(MAKE) DESTDIR=../$(DESTDIR)/fl_i18n -f $(MAKEFILE_ARCH) copy_files
 	$(COPY) -R \
 	$(ALL_FILES) \
 	$(DESTDIR)
 	$(COPY) -r settings $(DESTDIR)
 	$(COPY) -r cmms $(DESTDIR)
-	-(cd $(LIB_XNVCTRL) && $(MAKE) -f makefile clean)
+	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 	mkdir $(DESTDIR)/tests
 	$(COPY) $(TEST_FILES) $(DESTDIR)/tests
@@ -590,9 +611,10 @@ copy_files:
 	  test -f po/$${ling}.po \
 	  && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
 	done;
-	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION); make dist-gzip; \
+	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION) && \
+	     $(MAKE) dist-gzip; \
 	     cd ../$(DESTDIR); \
-	     tar xzf ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
+	     test -f ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz && tar xzf ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
 	     rm ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz)
 	echo copy done
 

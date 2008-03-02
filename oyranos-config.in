@@ -95,6 +95,8 @@ if [ -z $ELEKTRA_VERSION ]; then
   else
     elektra="$elektra_dyn"
   fi
+else
+  elektra="$libdir/lib${TARGET}_elektra.a"
 fi
 
 if [ "$echo_cflags" = "yes" ]; then

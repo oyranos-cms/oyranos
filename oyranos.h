@@ -33,6 +33,7 @@
 
 #include <stdlib.h> /* for linux size_t */
 #include "oyranos_definitions.h"
+#include "oyranos_version.h"
 
 /** \namespace oyranos
     @brief The Oyranos namespace.
@@ -277,6 +278,7 @@ int           oyOptionFloatIntRangeGet (oyWIDGET          option,
                                         float           * current);
 # endif
 
+#ifdef oyInPlaning_
 /* --- colour conversions --- */
 
 /** @brief Option for rendering
@@ -398,6 +400,11 @@ int    oyModulGetOptionRanges        ( const char *cmm,
                                        oyWIDGET   *oy_option_start,
                                        oyWIDGET   *oy_option_end );
 
+#endif /* oyInPlaning_ */
+
+int    oyProfileGetMD5               ( void       *buffer,
+                                       size_t      size,
+                                       char       *md5_return );
 
 void   oyI18NSet                     ( int active,
                                        int reserved );

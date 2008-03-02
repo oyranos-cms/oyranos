@@ -159,11 +159,14 @@ if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
   fi
 fi
 
+if [ -z "$fltkconfig" ]; then
+  fltkconfig="fltk-config"
+fi
 if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
-  FLTK_=`fltk-config --cxxflags 2>>error.txt`
+  FLTK_=`$fltkconfig --cxxflags 2>>error.txt`
   if [ $? = 0 ] && [ -n "$FLTK_" ]; then
-    test -n "$ECHO" && $ECHO "FLTK `fltk-config --version`              detected"
-    if [ "0" -ne "`fltk-config --compile tests/fltk_test.cxx 2>&1 | grep lock | wc -l`" ]; then
+    test -n "$ECHO" && $ECHO "FLTK `$fltkconfig --version`              detected"
+    if [ "0" -ne "`$fltkconfig --compile tests/fltk_test.cxx 2>&1 | grep lock | wc -l`" ]; then
       test -n "$ECHO" && $ECHO "ERROR:   FLTK has no threads support !!!"
       test -n "$ECHO" && $ECHO "         Configure FLTK with the --enable-threads option and recompile."
       ERROR=1
@@ -172,8 +175,8 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
     fi
     echo "#define HAVE_FLTK 1" >> $CONF_H
     echo "FLTK = 1" >> $CONF
-    echo "FLTK_H = `fltk-config --cxxflags | sed 's/-O[0-9]//'`" >> $CONF
-    echo "FLTK_LIBS = `fltk-config --use-images --use-gl --ldflags`" >> $CONF
+    echo "FLTK_H = `$fltkconfig --cxxflags | sed 's/-O[0-9]//'`" >> $CONF
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags`" >> $CONF
   else
     test -n "$ECHO" && $ECHO "ERROR:"
     test -n "$ECHO" && $ECHO "           FLTK is not found; download: www.fltk.org"
@@ -183,7 +186,7 @@ fi
 
 if [ -n "$FLU" ] && [ $FLU -gt 0 ]; then
   FLU_=`flu-config --cxxflags 2>>error.txt`
-  if [ `fltk-config --version` = "1.1.7" ]; then
+  if [ `$fltkconfig --version` = "1.1.7" ]; then
     echo -e "\c"
     test -n "$ECHO" && $ECHO "FLTK version 1.1.7 is not supported by FLU"
     if [ "$FLU" = 1 ]; then
@@ -235,6 +238,20 @@ if [ -n "$LIBPNG" ] && [ $LIBPNG -gt 0 ]; then
   fi
 fi
 
+if [ -n "$LIBTIFF" ] && [ $LIBTIFF -gt 0 ]; then
+  rm -f tests/libtest
+  $CXX $CFLAGS -I$includedir tests/tiff_test.cxx $LDFLAGS -L$libdir -ltiff -o tests/libtest
+    if [ -f tests/libtest ]; then
+      test -n "$ECHO" && $ECHO "`tests/libtest`
+                        detected"
+      echo "#define HAVE_TIFF 1" >> $CONF_H
+      echo "TIFF = 1" >> $CONF
+      rm tests/libtest
+    else
+      test -n "$ECHO" && $ECHO "no or too old libtiff found,"
+    fi
+fi
+
 if [ -n "$PO" ] && [ $PO -gt 0 ]; then
   pos_dir="`ls po/*.po 2> /dev/null`"
   LING="`echo $pos_dir`"
@@ -246,15 +263,26 @@ if [ -n "$PO" ] && [ $PO -gt 0 ]; then
 fi
 
 if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then
-  if [ -n "$MAKEFILES" ]; then
-    for i in $MAKEFILES; do
-      echo preparing "$i"
+  if [ -n "$MAKEFILE_DIR" ]; then
+    for i in $MAKEFILE_DIR; do
+      echo preparing Makefile in "$i/"
       if [ $OSUNAME = "BSD" ]; then
-        cat  "$i".in | sed 's/^\#if/.if/g ; s/^\#end/.end/g '  >> "$i"
+        test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/^\#if/.if/g ; s/^\#end/.end/g '  >> "$i/makefile"
       else
-        cat  "$i".in | sed 's/^\#if/if/g ; s/^\#elif/elif/g ; s/^\#else/else/g ; s/^\ \ \#if/\ \ if/g ; s/^\#end/end/g '  >> "$i"
+        test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/^\#if/if/g ; s/^\#elif/elif/g ; s/^\#else/else/g ; s/^\ \ \#if/\ \ if/g ; s/^\#end/end/g '  >> "$i/makefile"
       fi
+      mv "$i/makefile" "$i/Makefile"
     done
+  fi
+fi
+
+
+if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
+  if [ "$debug" -eq "1" ]; then
+    DEBUG_="-Wall -g -DDEBUG --pedantic"
+    echo "DEBUG = $DEBUG_" >> $CONF
+    echo "DEBUG_SWITCH = -v" >> $CONF
+    echo "DEBUG_SWITCH = -v" >> $CONF_I18N
   fi
 fi
 

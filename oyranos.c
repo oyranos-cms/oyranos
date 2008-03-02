@@ -29,13 +29,13 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
-#include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_check.h"
 #include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
@@ -1336,6 +1336,32 @@ oyI18NSet              ( int active,
 
   oyExportEnd_();
   DBG_PROG_ENDE
+}
+
+/** @brief  calculate a md5 digest beginning after the header offset
+ *
+ *  The md5 implementation is written by L. Peter Deutsch
+ *
+ *  @param[in]  buffer         complete profiles buffer
+ *  @param[in]  size           over all profile size
+ *  @param[out] md5_return     buffer to write in the md5 digest (128 bytes)
+ *
+ *  @return                    error
+ */
+int
+oyProfileGetMD5        ( void       *buffer,
+                         size_t      size,
+                         char       *md5_return )
+{
+  int error = 0;
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  error = oyProfileGetMD5_(buffer, size, md5_return);
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return error;
 }
 /** @} */
 

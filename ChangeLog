@@ -1,6 +1,19 @@
+2006-11-17
+	* new: md5 support by L. Peter Deutsch's md5 (sf.net: 2002-04-13 09:00)
+
+2006-11-03
+	* fix: add static liboyranos_elektra.a to oyranos-config
+
+2006-11-02
+	* new: config.site support for CC CXX CFLAGS CXXFLAGS LDFLAGS variables
+	* fix: Solaris build - shell syntax
+
+2006-10-26
+	* neu: include Elektra 0.6.4 for QA (--internal-elektra=no to disable)
+
 2006-09-27
 	* fix: build issues on OpenBSD
-	* fix: missed code after label
+	* fix: for missed code after label
 
 2006-09-22
 	* and: more precise warning texts
@@ -34,7 +47,7 @@
 	* and: update tools documentation
 
 2006-09-16
-	* fix: set default policy if no config keys are found
+	* fix: set default policy on install time if no config keys are found
 
 2006-09-15
 	* fix: wrong setlocale settings from library code
