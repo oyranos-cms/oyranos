@@ -48,20 +48,20 @@ ifdef APPLE
   OPTS=-Wall -O2 -g -fPIC -L.
   LINK_FLAGS = -dynamiclib
   MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y
-endif
-ifdef LINUX
-  OPTS=-Wall -O2 -g -fpic
-  LINK_FLAGS = -shared -fpic -ldl -L.
-  LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
-  LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
-  LINK_LIB_PATH = -Wl,--rpath -Wl,$(libdir)
-  LINK_SRC_PATH = -Wl,--rpath -Wl,$(srcdir)
-  SO = .so
 else
-  OPTS=-Wall -O2 -g -fpic -L.
-  LINK_FLAGS = -shared -ldl $(ICONV)
-  RM = rm -f
   SO = .so
+  ifdef LINUX
+    OPTS=-Wall -O2 -g -fpic
+    LINK_FLAGS = -shared -fpic -ldl -L.
+    LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
+    LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
+    LINK_LIB_PATH = -Wl,--rpath -Wl,$(libdir)
+    LINK_SRC_PATH = -Wl,--rpath -Wl,$(srcdir)
+  else
+    OPTS=-Wall -O2 -g -fpic -L.
+    LINK_FLAGS = -shared -ldl $(ICONV)
+    RM = rm -f
+  endif
 endif
 
 INCL=-I$(includedir) -I/usr/X11R6/include -I$(srcdir)

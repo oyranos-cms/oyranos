@@ -33,7 +33,7 @@
 
 
 #define OY_DEFAULT_USER_PROFILE_PATH    "~/.color/icc"
-#define OY_DEFAULT_SYSTEM_PROFILE__PATH "/usr/share/color/icc"
+#define OY_DEFAULT_SYSTEM_PROFILE_PATH "/usr/share/color/icc"
 
 
 /*
@@ -57,6 +57,8 @@
 
 /* path names */
 
+#define OY_SYSTEM_PATHS              OY_SYS OY_KEY OY_SLASH "paths"
+#define OY_SYSTEM_PATH               "path"
 #define OY_USER_PATHS                OY_USER OY_KEY OY_SLASH "paths"
 #define OY_USER_PATH                 "path"
 

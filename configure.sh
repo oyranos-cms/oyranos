@@ -98,7 +98,7 @@ echo "#define OYRANOS_VERSION_C $VERSION_C" >> oyranos_version.h
 echo "#define OYRANOS_VERSION $VERSION" >> oyranos_version.h
 echo "#define OYRANOS_DATE _(\"$TIME\")" >> oyranos_version.h
 echo "" >> oyranos_version.h
-echo "#endif //OYRANOS_VERSION_H" >> oyranos_version.h
+echo "#endif /*OYRANOS_VERSION_H*/" >> oyranos_version.h
 
 echo ""
 echo ""

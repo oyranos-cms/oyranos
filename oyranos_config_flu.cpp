@@ -26,6 +26,7 @@ void path_callback( Fl_Widget* w, void* );
 void buildBaseTree();
 void buildDefaultProfilesLeaves();
 void buildPathLeaves();
+void removePathLeaves();
 void buildOptionsLeaves();
 void buildTree();
 
@@ -69,7 +70,8 @@ struct DefaultProfile: public Fl_Pack {
   #endif
   int       type, i;
 
-  DefaultProfile( int x, int y, int w, int h, int default_profile_type )
+  DefaultProfile( int x, int y, int w, int h, int default_profile_type ,
+                  char** names, int count )
     : Fl_Pack(x, y, w, h)
   {
     Fl_Pack::type( FL_HORIZONTAL );
@@ -79,23 +81,36 @@ struct DefaultProfile: public Fl_Pack {
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
     choice = new Fl_Choice( 0, 0, 200, 20 );
     choice->callback( selectDefaultProfile_callback );
+    DBG_PROG_V((choice->size()))
     choice->add( "[none]" );
+    DBG_PROG_V((choice->size()))
     oyOpen();
     char* default_p = functions_getDefaultProfile[type]();
-    int count, val = 0;
-    char** names = oyProfileList ( 0, &count );
+    int val = 0, occurence = 0;
     for (i = 0; i < count; ++i)
     {
       choice->add( names[i] );
-      if(strcmp(names[i], default_p) == 0) {
-        val = i+1;
+      if(strstr(names[i], default_p) && strlen(names[i]) == strlen(default_p))
+      {
+        if(val) {
+          ++occurence;
+        } else {
+          val = i+1;
+          ++occurence;
+        }
       }
-      if(names[i]) free(names[i]);
     }
+    if(occurence > 1)
+      WARN_S(("multiple ocurence of default %s profile: %d times",
+               default_profiles[type], occurence))
     oyClose();
-    free(names);
 
-    choice->value( val );
+    DBG_PROG_V((choice->size()))
+    const Fl_Menu_Item* new_val = choice->find_item(default_p);
+    int erfolg = choice->value( new_val );
+    DBG_PROG_V((erfolg))
+    DBG_PROG_V((val))
+    DBG_PROG_V((count))
     
     #if 0
     input = new Fl_Input( 0, 0, 120, 20 );
@@ -177,15 +192,21 @@ path_callback( Fl_Widget* w, void* )
     } else 
     if(b && b == pp->button_remove) {
       std::cout << b->value() << std::endl;
+      // Alle Blätter Löschen
+      removePathLeaves();
+      // Nun ist der Speicherblock für diese Funktion bereits freigegeben
+      // und wird aber weiter benutzt
       oyPathRemove ( pp->box->label() );
       
       int i, count = oyPathsCount();
       bool in = false;
-      for(i = 0; i < count; ++i)
+      for(i = 0; i < count; ++i) {
+        WARN_S(("%s <-> %s",oyPathName(i),pp->box->label()))
         if(strstr(oyPathName(i),pp->box->label()))
           in = true;
-      if(!in)
-        tree->remove(pp);
+      }
+      buildPathLeaves();
+
     } else fl_alert( "no Fl_Button" );
   } else fl_alert( "Path" );
 }
@@ -216,14 +237,21 @@ void buildDefaultProfilesLeaves()
 
   //std::cout << sizeof(default_profiles) << std::endl;
   char* default_profiles_dirname = "Default Profiles";
+  int count = 0, i;
+  char** names = oyProfileList ( 0, &count );
 
-  for (int i = 0 ; i < OY_DEFAULTPROFILES_COUNT ; ++i) {
+  for (i = 0 ; i < OY_DEFAULTPROFILES_COUNT ; ++i) {
     char  t[128];
-    DefaultProfile *dp = new DefaultProfile( 0, 0, 300, 20, i );
+    DefaultProfile *dp = new DefaultProfile( 0, 0, 300, 20, i, names, count );
     sprintf( t, "/%s/ ", default_profiles_dirname/*, default_profiles[i]*/ );
     tree->add( t, dp );
     dp->end();
   }
+
+  for (i = 0; i < count; ++i)
+    if(names[i]) free(names[i]);
+  free(names);
+
 
   n = tree->find( default_profiles_dirname );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
@@ -245,6 +273,25 @@ void buildPathLeaves()
   }
   n = tree->find( "Profile Paths" );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+}
+
+void removePathLeaves()
+{
+  char  pn[64];
+  sprintf( pn, "/%s/ ", "Profile Paths" );
+  #if 0
+  int count = oyPathsCount();
+  for (int i = 0 ; i < count ; ++i) {
+    tree->remove( pn );
+  }
+  #else
+  Flu_Tree_Browser::Node* n;
+  n = tree->find(pn);
+  while(n) {
+    tree->remove(n);
+    n = tree->find(pn);
+  }
+  #endif
 }
 
 

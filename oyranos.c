@@ -37,13 +37,6 @@
 #include "oyranos_helper.h"
 #include "oyranos_definitions.h"
 
-#ifdef __cplusplus
-namespace oyranos
-{
-extern "C" {
-#endif /* __cplusplus */
-
-
 #include "oyranos_debug.h"
 
 /* ---  Helpers  --- */
@@ -315,6 +308,9 @@ oyReadFileToMem_(const char* name, int *size)
       *size = ftell (fp);
       rewind(fp);
 
+      if(oy_debug)
+        printf("%u\n",((size_t)size));
+
       /* allocate memory */
       mem = (char*) calloc (*size, sizeof(char));
 
@@ -378,14 +374,14 @@ oyWriteMemToFile_(const char* name, void* mem, int size)
 char*
 oyGetHomeDir_ ()
 { DBG_PROG_START
-  #if (__unix__ || __APPLE__)
+  #if (__WINDOWS__)
+  DBG_PROG_ENDE
+  return "OS not supported yet";
+  #else
   char* name = (char*) getenv("HOME");
   DBG_PROG_S((name))
   DBG_PROG_ENDE
   return name;
-  #else
-  DBG_PROG_ENDE
-  return "OS not supported yet";
   #endif
 }
 
@@ -602,9 +598,9 @@ oyCheckDefaultDirectories_ ()
   char* parentDefaultUserDir;
 
   /* test dirName : existing in path, default dirs are existing */
-  if (!oyIsDir_ (OY_DEFAULT_SYSTEM_PROFILE__PATH))
+  if (!oyIsDir_ (OY_DEFAULT_SYSTEM_PROFILE_PATH))
   { DBG_PROG
-    printf ("no default system directory %s\n",OY_DEFAULT_SYSTEM_PROFILE__PATH);
+    printf ("no default system directory %s\n",OY_DEFAULT_SYSTEM_PROFILE_PATH);
   }
 
   if (!oyIsDir_ (OY_DEFAULT_USER_PROFILE_PATH))
@@ -631,7 +627,7 @@ oyFindProfile_ (const char* fileName)
 { DBG_PROG_START
   char  *fullFileName = 0;
 
-  DBG_NUM_S((fileName))
+  //DBG_NUM_S((fileName))
   if (fileName && !strchr(fileName, OY_SLASH_C))
   { DBG_PROG
     char* path_name = oyGetPathFromProfileName_(fileName);
@@ -660,7 +656,7 @@ oyGetPathFromProfileName_ (const char* fileName)
   char  *header = 0;
   int    size;
 
-  DBG_NUM_S((fileName))
+  //DBG_NUM_S((fileName))
   /* test for pure file without dir; search in configured paths only */
   if (fileName && !strchr(fileName, OY_SLASH_C))
   { DBG_PROG
@@ -677,12 +673,12 @@ oyGetPathFromProfileName_ (const char* fileName)
       sprintf (fullFileName, "%s%s%s", pathName, OY_SLASH, fileName);
 
       DBG_PROG_S((pathName))
-      DBG_PROG_S((fullFileName))
+      //DBG_PROG_S((fullFileName))
 
       if (oyIsFileFull_(fullFileName))
       { DBG_PROG
         header = oyReadFileToMem_ (fullFileName, &size);
-        success = !oyCheckProfile_Mem (header, 128);
+        success = !oyCheckProfile_Mem (header, size);
       }
 
       OY_FREE (ptr)
@@ -690,13 +686,15 @@ oyGetPathFromProfileName_ (const char* fileName)
 
       if (success) { /* found */
         OY_FREE (fullFileName)
-        return pathName;
+       DBG_PROG_ENDE
+       return pathName;
       } else
         OY_FREE (pathName)
     }
 
     if (!success) {
       WARN_S( ("profile %s not found in colour path\n", fileName))
+      DBG_PROG_ENDE
       return 0;
     }
 
@@ -715,6 +713,7 @@ oyGetPathFromProfileName_ (const char* fileName)
 
     if (!success) {
       WARN_S (("profile %s not found\n", fileName))
+      DBG_PROG_ENDE
       return 0;
     }
 
@@ -740,60 +739,32 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
   int r = 1;
   const char *fileName = 0, *com = comment;
 
-// TODO
-#if 0
-  if(!name)
-  {
-           if (strstr (typ , "Image"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_IMAGE_PROFILE, fileName, com);
-      else if (strstr (typ , "Workspace"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_WORKSPACE_PROFILE, fileName, com);
-      else if (strstr (typ , "XYZ"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_XYZ_PROFILE, fileName, com);
-      else if (strstr (typ , "Lab"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_LAB_PROFILE, fileName, com);
-      else if (strstr (typ , "RGB"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_RGB_PROFILE, fileName, com);
-      else if (strstr (typ , "Cmyk"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_CMYK_PROFILE, fileName, com);
-      else if (strstr (typ , "Device"))
-      {
-        int len = strlen(OY_USER OY_SLASH OY_REGISTRED_PROFILES)
-                  + strlen(fileName);
-        char* keyName = (char*) calloc (len +10, sizeof(char)); DBG_PROG
-        sprintf (keyName, "%s%s%s%s", OY_USER, OY_SLASH, OY_REGISTRED_PROFILES OY_SLASH, fileName); DBG_PROG
-        r = oyAddKey_valueComment_ (keyName, com, 0); DBG_PROG
-        //DBG_PROG_V(("%s %d", keyName, len))
-        OY_FREE (keyName)
-    
-    DBG_PROG_ENDE
-    return r;
-  }
-#endif
-  if (strrchr(name , OY_SLASH_C))
+  /* extract filename */
+  if (name && strrchr(name , OY_SLASH_C))
   {
     fileName = strrchr(name , OY_SLASH_C);
     fileName++;
-  }
-  else
+  } else
     fileName = name;
 
   DBG_PROG_S(("name = %s typ %s", name, typ))
 
-  if ( !oyCheckProfile_ (fileName) )
-  { DBG_PROG_S(("set fileName = %s as %s profile\n",fileName, typ))
+  if ( name == 0 || !oyCheckProfile_ (fileName) )
+  {
+    const char* typ_name = 0;
+    DBG_PROG_S(("set fileName = %s as %s profile\n",fileName, typ))
            if (strstr (typ , "Image"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_IMAGE_PROFILE, fileName, com);
+        typ_name = OY_DEFAULT_IMAGE_PROFILE;
       else if (strstr (typ , "Workspace"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_WORKSPACE_PROFILE, fileName, com);
+        typ_name = OY_DEFAULT_WORKSPACE_PROFILE;
       else if (strstr (typ , "XYZ"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_XYZ_PROFILE, fileName, com);
+        typ_name = OY_DEFAULT_XYZ_PROFILE;
       else if (strstr (typ , "Lab"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_LAB_PROFILE, fileName, com);
+        typ_name = OY_DEFAULT_LAB_PROFILE;
       else if (strstr (typ , "RGB"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_RGB_PROFILE, fileName, com);
+        typ_name = OY_DEFAULT_RGB_PROFILE;
       else if (strstr (typ , "Cmyk"))
-        r = oyAddKey_valueComment_ (OY_DEFAULT_CMYK_PROFILE, fileName, com);
+        typ_name = OY_DEFAULT_CMYK_PROFILE;
       else if (strstr (typ , "Device"))
       {
         int len = strlen(OY_USER OY_SLASH OY_REGISTRED_PROFILES)
@@ -806,6 +777,45 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
       }
       else
         printf ("%s:%d !!! ERROR typ %s type does not exist for default profiles",__FILE__,__LINE__, typ);
+
+    if(typ_name)
+    {
+      if(name)
+        r = oyAddKey_valueComment_ (typ_name, fileName, com);
+      else
+      {
+        KeySet* list;
+        Key *current;
+        char* value = (char*) calloc (sizeof(char), MAX_PATH);
+        int rc = 0;
+
+        DBG_PROG
+
+        kdbOpen();
+
+
+        // TODO merge User and System KeySets in oyReturnChildrenList_
+        list = oyReturnChildrenList_(OY_USER OY_KEY OY_SLASH "default", &rc ); ERR
+        for (current=list->start; current; current=current->next)
+        {
+          keyGetName(current, value, MAX_PATH);
+          DBG_NUM_S(( value ))
+          if(strstr(value, typ_name) != 0 && strlen(value) == strlen(typ_name))
+          {
+            DBG_PROG_S((value))
+            kdbRemove (value); 
+            break;
+          }
+        }
+
+        DBG_NUM_S(( value ))
+
+        OY_FREE (list) DBG_PROG
+        OY_FREE (value) DBG_PROG
+        kdbClose(); DBG_PROG
+        r = rc;
+      }
+    }
   }
 
   DBG_PROG_ENDE
@@ -877,6 +887,7 @@ oyPathAdd_ (const char* pfad)
   Key *current;
   char* keyName = (char*) calloc (sizeof(char), MAX_PATH);
   char* value = (char*) calloc (sizeof(char), MAX_PATH);
+  int has_local_path = 0, has_global_path = 0;
 
   if(pfad)
     DBG_PROG_S(( pfad ));
@@ -909,17 +920,38 @@ oyPathAdd_ (const char* pfad)
         rc=kdbRemove(keyName); ERR
         n--;
       }
+
+      if (strcmp (value, OY_DEFAULT_USER_PROFILE_PATH) == 0
+       && n)
+      {
+        has_local_path = 1;
+      }
+      if (strcmp (value, OY_DEFAULT_SYSTEM_PROFILE_PATH) == 0
+       && n)
+      {
+        has_global_path = 1;
+      }
     }
   }
 
   /* create new key */
-  if (!n)
+  if (!has_global_path)
   {
     /* search for empty keyname */
     keyName = oySearchEmptyKeyname_ (OY_USER_PATHS, OY_USER_PATH);
 
     /* write key */
-    rc = oyAddKey_valueComment_ (keyName, pfad, "");
+    rc = oyAddKey_valueComment_ (keyName, OY_DEFAULT_SYSTEM_PROFILE_PATH, "");
+  }
+
+  /* create new key */
+  if (!has_local_path)
+  {
+    /* search for empty keyname */
+    keyName = oySearchEmptyKeyname_ (OY_USER_PATHS, OY_USER_PATH);
+
+    /* write key */
+    rc = oyAddKey_valueComment_ (keyName, OY_DEFAULT_USER_PROFILE_PATH, "");
   }
 
   ksClose (myKeySet);
@@ -1212,7 +1244,8 @@ oyProfileList_                     (const char* colourspace, int * size)
   DBG_PROG_START
   char** names = 0;
   int count = oyPathsCount_();
-  int i, mem_count = 128;
+  static const int hopp = 128;
+  int i, mem_count = hopp;
   int count_files = 0;
 
   names = (char**) calloc (sizeof(char*), mem_count);
@@ -1247,17 +1280,17 @@ oyProfileList_                     (const char* colourspace, int * size)
 
       if (!oyCheckProfile_(file_name))
       {
-        if(count_files > mem_count)
+        if(count_files >= mem_count)
         {
           char** temp = names;
-          names = (char**) calloc (sizeof(char*), mem_count+128);
+          names = (char**) calloc (sizeof(char*), mem_count+hopp);
           memcpy(names, temp, sizeof(char*) * mem_count);
-          mem_count += 128;
+          mem_count += hopp;
         }
 
         if(!colourspace) {
-          names[count_files] = (char*) calloc (sizeof(char), strlen(file_name)+1);
-          sprintf(names[count_files], file_name);
+          names[count_files] = (char*) calloc (sizeof(char)*2, strlen(file_name));
+          strcpy(names[count_files], file_name);
           ++count_files;
         }
       } else
@@ -1278,15 +1311,16 @@ int
 oyCheckProfile_                    (const char* name)
 { DBG_PROG_START
   char *fullName = 0;
-  char* header; 
+  char* header = 0; 
   int size = 0;
   int r = 1;
 
-  DBG_NUM_S((name))
+  //if(name) DBG_NUM_S((name));
   fullName = oyFindProfile_(name);
   if (!fullName)
     WARN_S(("%s not found",name))
-  DBG_NUM_S((fullName))
+  else
+    ;//DBG_NUM_S((fullName));
 
   /* do check */
   if (oyIsFileFull_(fullName))
@@ -1295,6 +1329,10 @@ oyCheckProfile_                    (const char* name)
     if (size >= 128)
       r = oyCheckProfile_Mem (header, 128);
   }
+
+  /* release memory */
+  if(header && size)
+    free(header);
 
   DBG_NUM_S(("oyCheckProfileMem = %d",r))
 
@@ -1307,20 +1345,22 @@ oyCheckProfile_Mem                 (const void* mem, int size)
 { DBG_PROG_START
   char* block = (char*) mem;
   int offset = 36;
-  if (size >= 128 &&
-      block[offset+0] == 'a' &&
-      block[offset+1] == 'c' &&
-      block[offset+2] == 's' &&
-      block[offset+3] == 'p' )
+  if (size >= 128) 
   {
-    DBG_PROG_ENDE
-    return 0;
-  } else
-  {
-    if (size >= 128)
-      printf(" sign: %c%c%c%c ", (char)block[offset+0], (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] );
-    else
-      WARN_S (("False profile - size = %d pos = %lu ", size, (long int)block))
+    if (block[offset+0] == 'a' &&
+        block[offset+1] == 'c' &&
+        block[offset+2] == 's' &&
+        block[offset+3] == 'p' )
+    {
+      DBG_PROG_ENDE
+      return 0;
+    } else {
+      WARN_S((" sign: %c%c%c%c ", (char)block[offset+0], (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] ))
+      DBG_PROG_ENDE
+      return 1;
+    }
+  } else {
+    WARN_S (("False profile - size = %d pos = %lu ", size, (long int)block))
 
     DBG_PROG_ENDE
     return 1;
@@ -1414,7 +1454,6 @@ oyInitComp_ (oyComp *compare, oyComp *top)
   compare->val = 0;
   compare->hits = 0;
   DBG_PROG_ENDE
-
   return compare;
 }
 
@@ -1468,6 +1507,7 @@ printComp (oyComp* entry)
   DBG_PROG_ENDE
   return text;
   #else
+  DBG_PROG_ENDE
   return 0;
   #endif
 }
@@ -2171,11 +2211,5 @@ oyEraseDeviceProfile              (oyDEVICETYP typ,
   return rc;
 }
 
-
-
-#ifdef __cplusplus
-} // namespace oyranos
-} // extern "C"
-#endif /* __cplusplus */
 
 
