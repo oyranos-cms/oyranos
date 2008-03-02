@@ -28,6 +28,8 @@
 
 /* Date:      31. 01. 2005 */
 
+/* Dont use in non Oyranos projects. */
+
 
 #ifndef OYRANOS_DEBUG_H
 #define OYRANOS_DEBUG_H
@@ -35,17 +37,21 @@
 
 #include <time.h>
 
+#include "config.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-/* Debug system */
-#define DEBUG 1
 
 /* debugging variable - set 0 to off (default), set 1 to switch debugging on */
 extern int oy_debug;
 extern clock_t oyranos_clock_;
 extern int level_PROG;
+
+#if defined(OY_CONFIG_H)
+
+/* Debug system */
+#define DEBUG 1
 
 #define DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
 
@@ -85,13 +91,15 @@ extern int level_PROG;
 #define DBG_PROG_S(txt)
 #define DBG_PROG_V(txt)
 #endif
-#define WARN {int dbg = oy_debug; oy_debug = 1; \
-                    DBG_S((_("Warning"))) oy_debug = dbg;}
-#define WARN_S(txt) {int dbg=oy_debug; oy_debug = 1; \
-                    DBG_S((_("Warning : ")); printf txt) oy_debug = dbg;}
-#define WARN_V(txt) {int dbg=oy_debug; oy_debug = 1; \
-                    DBG_V((_("Warning : ")); printf txt) oy_debug = dbg;}
 
+#endif /* defined OY_CONFIG_H */
+
+#define WARNc {int dbg = oy_debug; oy_debug = 1; \
+                    DBG_S((_("Warning"))) oy_debug = dbg;}
+#define WARNc_S(txt) {int dbg=oy_debug; oy_debug = 1; \
+                    DBG_S((_("Warning : ")); printf txt) oy_debug = dbg;}
+#define WARNc_V(txt) {int dbg=oy_debug; oy_debug = 1; \
+                    DBG_V((_("Warning : ")); printf txt) oy_debug = dbg;}
 
 #ifdef __cplusplus
 }

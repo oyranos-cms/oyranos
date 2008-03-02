@@ -35,6 +35,7 @@
 #include "config.h"
 #include "oyranos.h"
 #include "oyranos_version.h"
+#include "oyranos_alpha.h"
 #include "oyranos_i18n.h"
 #include "oyranos_texts.h"
 
@@ -72,11 +73,11 @@ void    oyDestroyCompList_ (oyComp_t_* list);
 char*   printComp          (oyComp_t_* entry);
 
 
-int     oySetProfile_Block                (const char* name, 
-                                           void* mem,
-                                           size_t size,
-                                           oyDEFAULT_PROFILE type,
-                                           const char* comnt);
+int     oySetProfile_Block                (const char      * name, 
+                                           void            * mem,
+                                           size_t            size,
+                                           oyPROFILE_e       type,
+                                           const char      * comnt);
 
 
 /* separate from the external functions */
@@ -91,160 +92,6 @@ char* oyGetPathFromProfileName_ (const char*   profilename,
                                  oyAllocFunc_t allocate_func);
 
 
-#define oyInPlaning_
-#ifdef oyInPlaning_
-/* --- colour conversions --- */
-
-/** @brief Option for rendering
-
-    should be used in a list oyColourTransformOptions_s to form a options set
- */
-typedef struct {
-    oyWIDGET opt;                     /*!< CMM registred option */
-    int    supported_by_chain;        /*!< 1 for supporting; 0 if one fails */
-    double value_d;                   /*!< value of option; unset with nan; */ 
-} oyOption_s;
-
-/** @brief Options for rendering
-
-    Options can be any flag or rendering intent and other informations needed to
-    configure a process. It contains variables for colour transforms.
- */
-typedef struct {
-    int n;                            /*!< number of options */
-    oyOption_s* opts;
-} oyOptions_s;
-
-/** @brief a profile and its attributes
- */
-typedef struct {
-    size_t size;                      /*!< ICC profile size */
-    void *block;                      /*!< ICC profile data */
-    oyDEFAULT_PROFILE use_default;    /*!< if > 0 : take from settings */
-} oyProfile_s;
-
-/** @brief tell about the conversion profiles
- */
-typedef struct {
-    int            n;                 /*!< number of profiles */
-    oyProfile_s   *profiles;
-} oyProfileList_s;
-
-typedef struct {
-    int x;
-    int y;
-    int width;
-    int height;
-} oyRegion_s;
-
-typedef enum {
-    oyUINT8,     /*!<  8-bit integer */
-    oyUINT16,    /*!< 16-bit integer */
-    oyUINT32,    /*!< 32-bit integer */
-    oyHALF,      /*!< 16-bit floating point number */
-    oyFLOAT,     /*!< IEEE floating point number */
-    oyDOUBLE     /*!< IEEE double precission floating point number */
-} oyDATATYPE;
-
-/** @brief a reference struct to gather information for image transformation
-
-    as we dont target a complete imaging solution, only raster is supported
-
-    oyImage_s should hold image dimensions,
-    oyDisplayRegion_s information and
-    a reference to the data for conversion
-
-    As well referencing of itself would be nice.
-
-    Should oyImage_s become internal and we provide a user interface?
- */
-typedef struct {
-    int          width;       /*!< data width */
-    int          height;      /*!< data height */
-    void        *data;        /*!< image data */
-    oyDATATYPE   type;        /*!< data type */
-    int          planar;      /*!< RRRGGGBBB vs RGBRGBRGB */
-    oyProfile_s *profile;     /*!< image profile */
-    oyRegion_s  *region;      /*!< region to render, if zero render all */
-    int          screen_pos_x;/*!< upper position on screen of image */
-    int          screen_pos_y;/*!< left position on screen of image */
-} oyImage_s;
-
-/** @brief clean all memory including depending structs */
-int            oyImageCleanAll       ( oyImage_s *img, oyDeAllocFunc_t free );
-
-typedef struct {
-    /*int          whatch;*/      /*!< tell Oyranos to observe files */
-    void*        internal;    /*!< Oyranos internal structs */
-} oyColourConversion_s;
-
-/** allocate n oyOption_s */
-oyOptions_s*   oyOptionsCreate       ( int n );
-/** allocate oyOption_s for a 4 char CMM identifier obtained by oyCmmGetCmms */
-oyOptions_s*   oyOptionsCreateFor    ( const char *cmm );
-
-/** free oyOption_s from the list */
-void           oyOptionsFree         ( oyOptions_s *opts, oyDeAllocFunc_t free);
-
-/** confirm if all is ok */
-int            oyOptionsVerifyForCMM ( oyOptions_s *opts, char* cmm );
-
-/** create and possibly precalculate a transform */
-oyColourConversion_s* oyColourConversionCreate ( char* cmm, /*!< zero or a cmm*/
-                                  oyProfileList_s *list,/*!< multi profiles */
-                                  oyOptions_s *opts,   /*!< conversion opts */
-                                  oyImage_s *in,       /*!< input */
-                                  oyImage_s *out       /*!< zero or output */
-                                  );                   /*!< return: conversion*/
-int            oyColourConversionRun ( oyColourConversion_s *colour /*!< object*/
-                                     );                  /*!< return: error */
-
-
-/* --- CMM API --- */
-
-int    oyModulRegisterXML            ( oyGROUP group,
-                                       const char *xml );
-
-/** obtain 4 char CMM identifiers and count of CMM's */
-char** oyModulsGetNames              ( int        *count,
-                                       oyAllocFunc_t alloc_func );
-int    oyModulGetOptionRanges        ( const char *cmm,
-                                       oyGROUP    *oy_group_start,
-                                       oyGROUP    *oy_group_end,
-                                       oyWIDGET   *oy_option_start,
-                                       oyWIDGET   *oy_option_end );
-
-
-/* --- Image Colour Profile API --- */
-/* needs extra libraries liboyranos_png liboyranos_tiff ... */
-#ifdef OY_HAVE_PNG
-#include <png.h>
-#define OY_PNG_s    png_infop
-char* oyImagePNGgetICC ( OY_PNG_s p, size_t * size, oyAllocFunc_t func );
-#endif
-#ifdef OY_HAVE_TIFF
-#include <tiffio.h>
-#define OY_TIFF_s   TIFF*
-char* oyImageTIFFgetICC ( OY_TIFF_s p, size_t * size, oyAllocFunc_t func );
-int   oyImageTIFFsetICC ( OY_TIFF_s p, char * profile, size_t size, int flags );
-#endif
-#ifdef OY_HAVE_EXR
-#include <OpenEXR/OpenEXR.h>
-#define OY_EXR_s    ImfHeader
-char* oyImageEXRgetICC ( OY_EXR_s p, size_t * size, oyAllocFunc_t func );
-#ifdef __cplusplus
-#define OY_EXRpp_s  Imf::Header*
-char* oyImageEXRgetICC ( OY_EXRpp_s p, size_t * size, oyAllocFunc_t func );
-#endif
-#endif
-/*
-with flags something like:
-oyIMAGE_EMBED_ICC_MINIMAL  ...
-oyIMAGE_EMBED_ICC_FULL (while for OpenEXR this would not make sense) */
-
-#endif /* oyInPlaning_ */
-
-
 
 /* device profiles */
 /** \internal enum identifying device types for distinguishing in searches */
@@ -254,11 +101,11 @@ typedef enum  {
   oyPRINTER,          /**< static media (dye, ink, offset, imagesetters) */
   oySCANNER,          /**< contact digitiser */
   oyCAMERA            /**< virtual or contactless image capturing */
-} oyDEVICETYP;
+} oyDEVICETYP_e;
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
 
-char* oyGetDeviceProfile                  (oyDEVICETYP typ,
+char* oyGetDeviceProfile                  (oyDEVICETYP_e typ,
                                            const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
@@ -269,7 +116,7 @@ char* oyGetDeviceProfile                  (oyDEVICETYP typ,
                                            const char* attrib3,
                                            oyAllocFunc_t);
 
-int	oySetDeviceProfile                    (oyDEVICETYP typ,
+int	oySetDeviceProfile                (oyDEVICETYP_e typ,
                                            const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
@@ -281,7 +128,7 @@ int	oySetDeviceProfile                    (oyDEVICETYP typ,
                                            const char* profilename,
                                            const void* mem,
                                            size_t size);
-int oyEraseDeviceProfile                  (oyDEVICETYP typ,
+int oyEraseDeviceProfile                  (oyDEVICETYP_e typ,
                                            const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
@@ -290,10 +137,13 @@ int oyEraseDeviceProfile                  (oyDEVICETYP typ,
                                            const char* attrib1,
                                            const char* attrib2,
                                            const char* attrib3);
-
+#if 0
 typedef enum {
-  oyDISPLAY_T
+  oyOBJECT_TYPE_NONE,
+  oyOBJECT_TYPE_DISPLAY_S,
+  oyOBJECT_TYPE_NAMED_COLOUR
 } oyOBJECT_TYPE;
+#endif
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>

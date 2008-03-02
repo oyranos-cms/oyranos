@@ -16,9 +16,9 @@ void selectDefaultProfile_callback( Fl_Widget* w, void* ) {
       char text[64];
       int error = 0;
       if(strcmp(c->text(),_("[none]")) == 0)
-        error = oySetDefaultProfile( (oyDEFAULT_PROFILE)op->option,0);
+        error = oySetDefaultProfile( (oyPROFILE_e)op->option,0);
       else
-        error = oySetDefaultProfile( (oyDEFAULT_PROFILE)op->option, c->text());
+        error = oySetDefaultProfile( (oyPROFILE_e)op->option, c->text());
       if(error) {
         sprintf( text, "%s %s", _("setting"), _("failed!"));
         fl_alert( text );
@@ -34,7 +34,7 @@ void showDefaultProfile_callback( Fl_Widget* w, void* ) {
   if(op) {
     {
       char text[64];
-      char *pn = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)op->option, myAllocFunc);
+      char *pn = oyGetDefaultProfileName( (oyPROFILE_e)op->option, myAllocFunc);
       if(!pn) {
         sprintf(text, "%s %s", _("showing"), _("failed!") );
         fl_alert( text );
@@ -103,7 +103,7 @@ void selectBehaviourCallback( Fl_Widget* w, void* x ) {
       {
         error = oyPolicySet( c->text(), NULL );
       } else
-        error = oySetBehaviour( (oyBEHAVIOUR)op->option, c->value());
+        error = oySetBehaviour( (oyBEHAVIOUR_e)op->option, c->value());
 
       if(error) {
         sprintf(text, "%s %s %s", _("setting"), _("failed!"),
@@ -290,8 +290,8 @@ void OyFl_Box::copy_label(const char* l) {
 }
 
 Option::Option( int x, int y, int w, int h, const char *name,
-  oyWIDGET option_,
-  oyWIDGET_TYPE type_,
+  oyWIDGET_e option_,
+  oyWIDGET_TYPE_e type_,
   int choices_n,
   const char **choices,
   int current,
@@ -390,7 +390,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
       }
     }
     if(occurence > 1)
-      WARN_S((_("multiple occurencies of default %s profile: %d times"),
+      WARNc_S((_("multiple occurencies of default %s profile: %d times"),
                name, occurence))
     choice->value( val );
 
@@ -549,12 +549,12 @@ ListEntry::ListEntry( int x, int y, int w, int h, const char * name, int flags )
     //if(name) delete [] name; // dont delete as it belongs now to the widget
 }
 
-static Fl_Group* addTab( Flmm_Tabs* tabs, const oyGROUP *groups ) {
+static Fl_Group* addTab( Flmm_Tabs* tabs, const oyGROUP_e *groups ) {
   Fl_Group *parent = /*dynamic_cast <Fl_Group>*/ tabs; // parent tab
   Fl_Group *tab = NULL; // actual tab
 
   if( !parent )
-    WARN_S( ("wrong widget") );
+    WARNc_S( ("wrong widget") );
 
   for( int k = 1; k <= groups[0]; ++k )
   {
@@ -562,7 +562,7 @@ static Fl_Group* addTab( Flmm_Tabs* tabs, const oyGROUP *groups ) {
     int wcount = parent->children();
     tab = NULL;
     const char *g_name = NULL;
-    oyWidgetTitleGet( (oyWIDGET)groups[k], NULL, &g_name, NULL, NULL );
+    oyWidgetTitleGet( (oyWIDGET_e)groups[k], NULL, &g_name, NULL, NULL );
 
     for( i = 0; i < wcount; ++i )
     {
@@ -582,7 +582,7 @@ static Fl_Group* addTab( Flmm_Tabs* tabs, const oyGROUP *groups ) {
     {
       const char *tooltip = NULL;
       const char *title = NULL;
-      oyWidgetTitleGet( (oyWIDGET)groups[k], NULL, &title, &tooltip, NULL );
+      oyWidgetTitleGet( (oyWIDGET_e)groups[k], NULL, &title, &tooltip, NULL );
 
       parent->begin();
         Fl_Widget *wid = (Fl_Widget*)parent->user_data();
@@ -628,11 +628,11 @@ static Fl_Group* addTab( Flmm_Tabs* tabs, const oyGROUP *groups ) {
     return NULL;
 }
 
-static Fl_Widget* getWidget( Fl_Group* group, oyWIDGET oywid ) {
+static Fl_Widget* getWidget( Fl_Group* group, oyWIDGET_e oywid ) {
   Fl_Widget *wid = NULL;
 
   if( !group )
-    WARN_S( ("wrong widget") );
+    WARNc_S( ("wrong widget") );
 
     int wcount = group->children();
 
@@ -640,7 +640,7 @@ static Fl_Widget* getWidget( Fl_Group* group, oyWIDGET oywid ) {
     {
       if( dynamic_cast <Fl_Widget*>( group->child( i ) ) )
       {
-        oyWIDGET w_id = (oyWIDGET)(intptr_t)group->child( i )->user_data(); // widget id
+        oyWIDGET_e w_id = (oyWIDGET_e)(intptr_t)group->child( i )->user_data(); // widget id
         if( w_id && oywid )
           if( w_id == oywid )
             return dynamic_cast <Fl_Widget*>( group->child( i ) );
@@ -658,7 +658,7 @@ static Fl_Widget* getWidget( Fl_Group* group, oyWIDGET oywid ) {
   return wid;
 }
 
-static Fl_Group* getTab( Flmm_Tabs* tabs, oyGROUP group, Fl_Group **container ) {
+static Fl_Group* getTab( Flmm_Tabs* tabs, oyGROUP_e group, Fl_Group **container ) {
   Fl_Group *parent = /*dynamic_cast <Fl_Group>*/ tabs; // parent tab
   Fl_Group *tab = NULL; // actual tab
 
@@ -666,12 +666,12 @@ static Fl_Group* getTab( Flmm_Tabs* tabs, oyGROUP group, Fl_Group **container ) 
     *container = NULL;
 
   if( !parent )
-    WARN_S( ("wrong widget") );
+    WARNc_S( ("wrong widget") );
 
     int wcount = parent->children();
     tab = NULL;
     const char *g_name = NULL;
-    oyWidgetTitleGet( (oyWIDGET)group, NULL, &g_name, NULL, NULL );
+    oyWidgetTitleGet( (oyWIDGET_e)group, NULL, &g_name, NULL, NULL );
 
     for( int i = 0; i < wcount; ++i )
     {
@@ -705,20 +705,20 @@ static void refreshOptions() {
   Option *op = 0;
 
   int n = 0;
-  oyWIDGET *wl = oyWidgetListGet( oyGROUP_ALL, &n, myAllocFunc );
+  oyWIDGET_e *wl = oyWidgetListGet( oyGROUP_ALL, &n, myAllocFunc );
 
   // fill in all the options
   for( int i = 0 ; i < n ; ++i )
       {
-        const oyGROUP * groups;
+        const oyGROUP_e * groups;
         int             count = 0,
                         current = 0,
                         flags = 0;
         const char    * tooltip = NULL;
         const char   ** names = NULL;
         const char    * name = NULL;
-        oyWIDGET        oywid = wl[i];
-        oyWIDGET_TYPE   type = oyWidgetTitleGet(  oywid,
+        oyWIDGET_e        oywid = wl[i];
+        oyWIDGET_TYPE_e   type = oyWidgetTitleGet(  oywid,
                                                   &groups, &name, &tooltip,
                                                   &flags );
         if(type == oyTYPE_CHOICE ||
@@ -1489,10 +1489,10 @@ int main(int argc, char **argv) {
         if (fscanf (pp, "%s", text) != 1)
         {
           pclose (pp);
-          WARN_S(( "no executeable path found" ));
+          WARNc_S(( "no executeable path found" ));
         }
       } else {
-        WARN_S(( "could not ask for executeable path" ));
+        WARNc_S(( "could not ask for executeable path" ));
       }
     }
     snprintf (path, len-1, "%s%s%s",text,DIR_SEPARATOR,reloc_path);
@@ -1515,7 +1515,7 @@ int main(int argc, char **argv) {
     int err = fl_initialise_locale ( "oyranos", locale_paths[is_path],
                                      set_charset );
     if(err) {
-      WARN_S(("i18n initialisation failed"));
+      WARNc_S(("i18n initialisation failed"));
     }
   }
   { top_group = new Fl_Double_Window(505, 410, _("Oyranos Configuration"));

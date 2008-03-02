@@ -45,7 +45,7 @@ void* oyAllocateFunc_           (size_t        size)
   void *ptr = calloc (sizeof (char), size);
 
   if( !ptr )
-    WARN_S(( "can not allocate %d byte", (int)size ));
+    WARNc_S(( "can not allocate %d byte", (int)size ));
 
   return ptr;
 }
@@ -53,9 +53,17 @@ void* oyAllocateFunc_           (size_t        size)
 void  oyDeAllocateFunc_           (void*       block)
 {
   if( !block ) {
-    WARN_S(( "emory block is empty" ))
+    WARNc_S(( "emory block is empty" ))
   } else
     free( block );
 }
 
+void* oyAllocateWrapFunc_       (size_t        size,
+                                 oyAllocFunc_t allocate_func)
+{
+  if(allocate_func)
+    return allocate_func (size);
+  else
+    return oyAllocateFunc_ (size);
+}
 

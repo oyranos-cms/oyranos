@@ -58,12 +58,12 @@ public:
   OyFl_Box   *box;
   Fl_Choice*choice;
 
-  oyWIDGET option;
-  oyWIDGET_TYPE type;
+  oyWIDGET_e option;
+  oyWIDGET_TYPE_e type;
   int       i; 
   Option( int x, int y, int w, int h, const char *name,
-  oyWIDGET option_,
-  oyWIDGET_TYPE type_,
+  oyWIDGET_e option_,
+  oyWIDGET_TYPE_e type_,
   int choices_n,
   const char **choices,
   int current,

@@ -48,9 +48,9 @@ namespace oyranos
     @brief structure for UI text strings
  */
 typedef struct {
-  oyWIDGET_TYPE type;           /**< type */
-  oyWIDGET    id;               /**< option */
-  oyGROUP     category[10];     /**< layout for categories */
+  oyWIDGET_TYPE_e type;           /**< type */
+  oyWIDGET_e    id;               /**< option */
+  oyGROUP_e     category[10];     /**< layout for categories */
   int         flags;            /**< flags to control widget bebahiour */
   const char *name;             /**< label for setting */
   const char *description;      /**< description for setting */
@@ -71,7 +71,7 @@ typedef struct {
 
 
 /* global variables */
-/*/extern oyGROUP oy_groups_descriptions_;
+/*/extern oyGROUP_e oy_groups_descriptions_;
 //extern const char ***oy_groups_description_;
 //extern oyOption_t_ *oy_option_;*/
 
@@ -79,47 +79,47 @@ typedef struct {
 void          oyTextsCheck_            (void);
 void          oyTextsTranslate_        (void);
 
-int           oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice);
-const oyOption_t_* oyOptionGet_        (oyWIDGET          type);
+int           oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice);
+const oyOption_t_* oyOptionGet_        (oyWIDGET_e          type);
 
-oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
+oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
                                         int             * count,
                                         oyAllocFunc_t     allocate_func );
-oyWIDGET_TYPE oyWidgetTypeGet_         (oyWIDGET          type);
-oyWIDGET_TYPE oyWidgetTitleGet_        (oyWIDGET          option,
-                                        const oyGROUP  ** categories,
+oyWIDGET_TYPE_e oyWidgetTypeGet_         (oyWIDGET_e          type);
+oyWIDGET_TYPE_e oyWidgetTitleGet_        (oyWIDGET_e          option,
+                                        const oyGROUP_e  ** categories,
                                         const char     ** name,
                                         const char     ** tooltip,
                                         int             * flags );
-int           oyOptionChoicesGet_      (oyWIDGET          option,
+int           oyOptionChoicesGet_      (oyWIDGET_e          option,
                                         int             * choices,
                                         const char    *** choices_string_list,
                                         int             * current);
-void          oyOptionChoicesFree_     (oyWIDGET_TYPE     option,
+void          oyOptionChoicesFree_     (oyWIDGET_TYPE_e     option,
                                         char          *** list,
                                         int               size);
 
-/*/int           oyGroupGet_              (oyGROUP          type,
+/*/int           oyGroupGet_              (oyGROUP_e          type,
 //                                        const char   *** strings);*/
-oyGROUP       oyGroupAdd_              (const char *id, const char *cmm,
+oyGROUP_e       oyGroupAdd_              (const char *id, const char *cmm,
                                         const char *name, const char *tooltips);
-int           oyGroupRemove_           (oyGROUP     id);
+int           oyGroupRemove_           (oyGROUP_e     id);
 
 
 
-int         oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
+int         oySetDefaultProfile_       (oyPROFILE_e       type,
                                         const char*       file_name);
-int         oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
+int         oySetDefaultProfileBlock_  (oyPROFILE_e       type,
                                         const char*       file_name,
                                         void*             mem,
                                         size_t            size);
-char*       oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
+char*       oyGetDefaultProfileName_   (oyPROFILE_e       type,
                                         oyAllocFunc_t     alloc_func);
 
 char*       oyPolicyNameGet_           ();
 int         oyPolicySet_               (const char      * policy_file,
                                         const char      * full_name );
-oyWIDGET*   oyPolicyWidgetListGet_     (oyGROUP           group,
+oyWIDGET_e*   oyPolicyWidgetListGet_     (oyGROUP_e           group,
                                         int             * count );
 const char**oyConfigPathsGet_          (int             * count,
                                         const char      * subdir );

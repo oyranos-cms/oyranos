@@ -10,6 +10,10 @@ MSGFMT = msgfmt -c --statistics
 srcdir		= .
 docdir          = $(datadir)/doc/$(TARGET)
 
+LIBRARIES = $(TARGET) \
+	$(TARGET)_moni \
+	$(TARGET)_alpha \
+	$(TARGET)_cmm_lcms
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
@@ -18,6 +22,9 @@ LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)$(LIBEXT)
 LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)$(LIBEXT)
 LIB_MONI_SO = lib$(TARGET)_moni$(SO)$(LIBEXT)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
+LIB_ALPHA_NAME = lib$(TARGET)_alpha.a
+LIB_CMM_LCMS = lib$(TARGET)_cmm_lcms$(SO).$(VERSION)$(LIBEXT)
+
 #ifdef $(X11)
 LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
@@ -36,6 +43,7 @@ CHEADERS = \
 	$(TARGET).h \
 	$(TARGET)_alpha.h \
 	$(TARGET)_check.h \
+	$(TARGET)_cmm.h \
 	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
@@ -69,6 +77,10 @@ CFILES = \
 	md5.c
 CFILESC = \
 	$(TARGET)_debug.c
+CFILES_ALPHA = \
+	$(TARGET)_alpha.c
+CFILES_CMM_LCMS = \
+	$(TARGET)_cmm_lcms.c
 CFILES_MONI = \
 	$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
@@ -128,9 +140,11 @@ Flmm_FILES = \
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
-		$(CFILES_POLICY) \
+		$(CFILES_POLICY) $(CFILES_ALPHA) $(CFILES_CMM_LCMS) \
 		$(CXXFILES_FLTK) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
+ALPHA_OBJECTS = $(CPPFILES_ALPHA:.cpp=.o) $(CXXFILES_ALPHA:.cxx=.o) $(CFILES_ALPHA:.c=.o)
+CMM_LCMS_OBJECTS = $(CFILES_CMM_LCMS:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
@@ -163,7 +177,9 @@ ALL_FILES = \
 	$(FLTK_FILES)
 
 # build all what is needed to run the libraries, helpers and the examples
-all:	mkdepend $(ELEKTRA_VERSION) $(LIBSONAMEFULL) $(TARGET)-monitor $(X11) \
+all:	mkdepend $(ELEKTRA_VERSION) \
+	$(LIBSONAMEFULL) $(LIB_ALPHA_NAME) $(LIB_CMM_LCMS) \
+	$(TARGET)-monitor $(X11) \
 	$(FLTK_GUI) $(TARGET)-policy \
 	$(TEST2) $(LINGUAS_SRC)
 	cd standard_profiles; \
@@ -204,6 +220,16 @@ $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 	$(RM)  $(LIB_MONI_SO)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SO)
 
+$(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
+	echo Linking $@ ...
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_CMM_LCMS) \
+	-o $@ \
+	$(CMM_LCMS_OBJECTS) $(LCMS_LIBS) $(LDLIBS)
+	$(RM)  $(BUILDDIR)lib$(TARGET)_cmm_lcms$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_cmm_lcms$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_cmm_lcms$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_cmm_lcms$(SO)$(LIBEXT)
+
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile)
@@ -220,7 +246,8 @@ $(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a
 $(target)_config_fltk.o:	$(TARGET)_config_fltk.cxx
 	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c $<
 FL/Flmm_Tabs.o:	FL/Flmm_Tabs.cxx
-	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c -o $@ $<
+	echo Compiling FL/Flmm_Tabs.cxx
+	$(CXX) -I./FL -I./ -I../ $(CXXFLAGS) $(FLTK_H) -o $@ -c $<
 
 # general configuration tool example
 $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
@@ -238,6 +265,11 @@ $(LIBNAME):	$(OBJECTS)
 		$(OBJECTS) \
 		`test -f $(ELEKTRA_VERSION)/src/libelektra/libelektra.a && echo $(ELEKTRA_VERSION)/src/libloader/libloader_static_a-kdbLibLoader.o $(ELEKTRA_VERSION)/src/backends/filesys/libelektra_filesys_a-filesys.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-kdb.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-error.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-key.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-keyset.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-kdbhighlevel.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-backendhelpers.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-exported_symbols.o`
 	$(RANLIB) $(LIBNAME)
+
+$(LIB_ALPHA_NAME):	$(ALPHA_OBJECTS)
+	echo Linking $@ ...
+	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIB_ALPHA_NAME) $(ALPHA_OBJECTS)
+	$(RANLIB) $(LIB_ALPHA_NAME)
 
 $(LIB_MONI_NAME):	$(MONI_OBJECTS)
 	echo Linking $@ ...
@@ -337,7 +369,7 @@ doc:
 # the copy part for this directory level
 install_bin:	all doc
 	echo Installing main ...
-	-$(MAKE) uninstall
+	-$(MAKE) DESTDIR=$(DESTDIR) uninstall
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
@@ -347,27 +379,41 @@ install_bin:	all doc
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	$(INSTALL) -m 644 $(TARGET).pc         $(DESTDIR)$(libdir)/pkgconfig/
-	$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/$(LIBNAME)
-	$(INSTALL) -m 755 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
-	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
-	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
+	for lib in $(LIBRARIES); do \
+	   $(INSTALL) -m 644 $(BUILDDIR)$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(libdir); \
+	   $(LNK)  $${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(libdir)/$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+	   $(LNK)  $${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(libdir)/$${lib}$(SO).$(LIBEXT); \
+	   $(INSTALL) -m 644 $(BUILDDIR)$${lib}.a $(DESTDIR)$(libdir); \
+	   $(RANLIB) $(DESTDIR)$(libdir)/$${lib}.a; \
+	done
+	#$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
+	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIBNAME)
+	#$(INSTALL) -m 755 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
+	#$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
+	#$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
 	$(INSTALL) -m 644 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
-	$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
-	$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
-	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
-	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
+	#$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
+	#$(INSTALL) -m 644 $(LIB_ALPHA_NAME) $(DESTDIR)$(libdir)
+	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
+	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIB_ALPHA_NAME)
+	#$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
+	#$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
+	#$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
 	-$(INSTALL) -m 644 $(ELEKTRA_VERSION)/src/libelektra/libelektra.a $(DESTDIR)$(libdir)/lib$(TARGET)_elektra.a
 	-$(RANLIB) $(DESTDIR)$(libdir)/lib$(TARGET)_elektra.a
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
+	-$(INSTALL) -m 644 $(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 icc34.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
-	test "$(FLTK_GUI)" && $(MAKE) install_gui || echo -e "GUI not installed"
+	test "$(FLTK_GUI)" && $(MAKE) DESTDIR=$(DESTDIR) install_gui || echo -e "GUI not installed"
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
@@ -387,16 +433,16 @@ install_bin:	all doc
 
 # install recursive
 install:	install_bin
-	$(MAKE) install_profiles
-	$(MAKE) install_linguas
+	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
+	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
 #	$(MAKE) install_usersettings
 
 install-main:	install_bin
-	$(MAKE) install_linguas
-#	$(MAKE) install_usersettings
+	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
+#	$(MAKE) DESTDIR=$(DESTDIR) install_usersettings
 
 install-icc:
-	$(MAKE) install_profiles
+	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
 
 install_gui:	$(TARGET)-config-fltk
 	echo Installing UI ...
@@ -488,14 +534,12 @@ uninstall:
 	-$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET)_monitor.pc
-	$(RM)   $(DESTDIR)$(libdir)/$(LIBSONAMEFULL) \
-	        $(DESTDIR)$(libdir)/$(LIBSONAME) \
-	        $(DESTDIR)$(libdir)/$(LIBSO) \
-			$(DESTDIR)$(libdir)/$(LIBNAME)
-	$(RM)   $(DESTDIR)$(libdir)/$(LIB_MONI_SONAMEFULL) \
-	        $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME) \
-			$(DESTDIR)$(libdir)/$(LIB_MONI_SO) \
-	        $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
+	for lib in $(LIBRARIES); do \
+	    $(RM) $(DESTDIR)$(libdir)/$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	          $(DESTDIR)$(libdir)/$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	          $(DESTDIR)$(libdir)/$${lib}$(SO).$(LIBEXT) \
+	          $(DESTDIR)$(libdir)/$${lib}.a; \
+	done
 	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
 	test -d standard_profiles && \
 	(  cd standard_profiles; \
@@ -547,9 +591,7 @@ distclean: clean
 
 clean:
 	-$(RM) \
-	$(OBJECTS) $(MONI_OBJECTS) \
-	$(LIBNAME) $(LIBSONAMEFULL) $(LIBSONAME) $(LIBSO) \
-	$(LIB_MONI_NAME) $(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
+	$(OBJECTS) $(MONI_OBJECTS) $(FLTK_OBJECTS) \
 	$(TARGET)_gamma.o $(TARGET)-policy $(TARGET)_policy.o \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2.o test.o test2 test \
@@ -558,6 +600,12 @@ clean:
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo; \
 	done;
+	for lib in $(LIBRARIES); do \
+	   -$(RM) $(BUILDDIR)$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	          $(BUILDDIR)$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	          $(BUILDDIR)$${lib}$(SO).$(LIBEXT) \
+	          $(BUILDDIR)$${lib}.a; \
+	done
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
 	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION) && $(MAKE) clean)

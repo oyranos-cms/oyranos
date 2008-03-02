@@ -46,23 +46,23 @@ namespace oyranos
 int          oyModulRemove_          (const char *id);
 char**       oyModulsGetNames_       (int           *count,
                                       oyAllocFunc_t alloc_func );
-oyGROUP      oyRegisterGroups_       (char *cmm, char *id,
+oyGROUP_e      oyRegisterGroups_       (char *cmm, char *id,
                                       char *name, char *tooltip);
-int          oyModulRegisterXML_     (oyGROUP           group,
+int          oyModulRegisterXML_     (oyGROUP_e           group,
                                       const char       *xml);
 
 
 /** \internal
  *  build a oyCMM_t__ API
  */
-oyOption_t_* oyModulsUIOptionSearch_ (oyWIDGET    id);
+oyOption_t_* oyModulsUIOptionSearch_ (oyWIDGET_e    id);
 const char*  oyModulGetName_         (const char *cmm);
 const char*  oyModulGetDescription_  (const char *cmm);
 const char*  oyModulGetXml_          (const char *cmm);
 const char*  oyModulGetDomain_       (const char *cmm);
 const char*  oyModulGetDomainPath_   (const char *cmm);
 void         oyModulGetGroups_       (const char *cmm, int *start, int *count);
-const char*  oyModulGetGroupUITitle_ (oyGROUP     group, const char **tooltip,
+const char*  oyModulGetGroupUITitle_ (oyGROUP_e   group, const char **tooltip,
                                       const char**xml);
 
 char*        oyModulPrint_           (const char *cmm);

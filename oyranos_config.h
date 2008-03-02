@@ -45,7 +45,7 @@ namespace oyranos
 
 /* --- behaviour / policies --- */
 
-int         oySetBehaviour             (oyBEHAVIOUR       type,
+int         oySetBehaviour             (oyBEHAVIOUR_e       type,
                                         int               choice);
 
 
@@ -56,9 +56,9 @@ void  oyPathRemove                     (const char* pathname);
 
 /* --- default profiles --- */
 
-int         oySetDefaultProfile        (oyDEFAULT_PROFILE type,
+int         oySetDefaultProfile        (oyPROFILE_e       type,
                                         const char*       file_name);
-int         oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
+int         oySetDefaultProfileBlock   (oyPROFILE_e       type,
                                         const char*       file_name,
                                         void*             mem,
                                         size_t            size);

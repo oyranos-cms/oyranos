@@ -69,17 +69,17 @@ char**      oyXMLgetArray_     (const char       *xml,
                                 int              *count);
 
 /* write option range to mem, allocating memory on demand */
-char*       oyWriteOptionToXML_(oyGROUP           group,
-                                oyWIDGET          start,
-                                oyWIDGET          end, 
+char*       oyWriteOptionToXML_(oyGROUP_e           group,
+                                oyWIDGET_e          start,
+                                oyWIDGET_e          end, 
                                 char             *mem,
                                 int               oytmplen);
 
-char*       oyPolicyToXML_     (oyGROUP           group,
+char*       oyPolicyToXML_     (oyGROUP_e           group,
                                 int               add_header,
                                 oyAllocFunc_t     allocate_func);
 
-int         oyReadXMLPolicy_   (oyGROUP           group, 
+int         oyReadXMLPolicy_   (oyGROUP_e           group, 
                                 const char       *xml);
 
 #ifdef __cplusplus

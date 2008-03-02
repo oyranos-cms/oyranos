@@ -84,7 +84,7 @@ typedef enum  {
   oyGROUP_BEHAVIOUR_PROOF,                /**< Profile Missmatch Behaviour */
   oyGROUP_ALL,                     /**< just for easen Gui design */
   oyGROUP_EXTERN = 200             /**< start of groups in a extern module */
-} oyGROUP;
+} oyGROUP_e;
 
 
 /* --- behaviour --- */
@@ -106,7 +106,7 @@ typedef enum  {
   oyBEHAVIOUR_PROOF_SOFT,              /**< Proofing by default for screen */
   oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing */
   oyBEHAVIOUR_END                      /**< just for easen Gui design */
-} oyBEHAVIOUR;
+} oyBEHAVIOUR_e;
 
 enum  {
   oyNO,                                /**< dont do it */
@@ -114,16 +114,16 @@ enum  {
   oyASK                                /**< popup dialog */
 }; /**< for oyBEHAVIOUR_ACTION */
 
-int         oyGetBehaviour             (oyBEHAVIOUR       type);
-int         oySetBehaviour             (oyBEHAVIOUR       type,
+int         oyGetBehaviour             (oyBEHAVIOUR_e     type);
+int         oySetBehaviour             (oyBEHAVIOUR_e     type,
                                         int               choice);
 
 /* --- policies --- */
 
-char*       oyPolicyToXML              (oyGROUP           group,
+char*       oyPolicyToXML              (oyGROUP_e         group,
                                         int               add_header,
                                         oyAllocFunc_t     alloc_func);
-int         oyReadXMLPolicy            (oyGROUP           group,
+int         oyReadXMLPolicy            (oyGROUP_e         group,
                                         const char       *xml);
 int         oyPolicySet                (const char      * policy,
                                         const char      * full_name );
@@ -158,15 +158,23 @@ typedef enum  {
 
   oyPROFILE_PROOF = 120,    /**< standard proofing profile */
   oyDEFAULT_PROFILE_END     /**< just for easen Gui design */
-} oyDEFAULT_PROFILE;
+} oyPROFILE_e;
 
-int         oySetDefaultProfile        (oyDEFAULT_PROFILE type,
+/** @deprecated 
+    provide oyDEFAULT_PROFILE for compatibility
+ */
+#if !defined(oyIGNORE_DEPRECATED) || (oyIGNORE_DEPRECATED < OYRANOS_VERSION)
+  /*#warning oyDEFAULT_PROFILE is deprecated*/
+# define oyDEFAULT_PROFILE oyPROFILE_e
+#endif
+
+int         oySetDefaultProfile        (oyPROFILE_e       type,
                                         const char*       file_name);
-int         oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
+int         oySetDefaultProfileBlock   (oyPROFILE_e       type,
                                         const char*       file_name,
                                         void*             mem,
                                         size_t            size);
-char*       oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
+char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
                                         oyAllocFunc_t     alloc_func);
 
 
@@ -246,7 +254,7 @@ typedef enum  {
   oyWIDGET_CMM_INTENT,             /**< CMM rendering intent */
   oyWIDGET_CMM_BPC,                /**< black point compensation switch */
   oyWIDGET_CMM_INTENT_PROOF        /**< Proofing colour transformations */
-} oyWIDGET;
+} oyWIDGET_e;
 
 
 /** @brief type of widget */
@@ -262,32 +270,32 @@ typedef enum {
     oyTYPE_LIST,      /**!< list widget, like for paths */
     oyTYPE_VOID,      /**!< data block, should not be selectable */
     oyTYPE_END
-} oyWIDGET_TYPE;
+} oyWIDGET_TYPE_e;
 
 /** @brief layout flags for widgets */
 #define oyLAYOUT_NO_CHOICES    0x01  /**!< show informational */
 #define oyLAYOUT_MIDDLE        0x02  /**!< Arrange in the middle. */
 #define oyLAYOUT_PATH_SELECTOR 0x04  /**!< add a path selector tp each entry */ 
 
-oyWIDGET    * oyWidgetListGet          (oyGROUP           group,
+oyWIDGET_e  * oyWidgetListGet          (oyGROUP_e         group,
                                         int             * count,
                                         oyAllocFunc_t     allocate_func );
 
-oyWIDGET_TYPE oyWidgetTitleGet         (oyWIDGET          option,
-                                        const oyGROUP  ** categories,
+oyWIDGET_TYPE_e oyWidgetTitleGet       (oyWIDGET_e        option,
+                                        const oyGROUP_e** categories,
                                         const char     ** name,
                                         const char     ** tooltip,
                                         int             * flags );
 
-int           oyOptionChoicesGet       (oyWIDGET          option,
+int           oyOptionChoicesGet       (oyWIDGET_e        option,
                                         int             * choices,
                                         const char    *** choices_string_list,
                                         int             * current);
-void          oyOptionChoicesFree      (oyWIDGET_TYPE     option,
+void          oyOptionChoicesFree      (oyWIDGET_TYPE_e   option,
                                         char          *** list,
                                         int               size);
 # ifdef oyInPlaning_
-int           oyOptionFloatIntRangeGet (oyWIDGET          option,
+int           oyOptionFloatIntRangeGet (oyWIDGET_e        option,
                                         float           * start,
                                         float           * end,
                                         float           * step_major,
@@ -296,7 +304,7 @@ int           oyOptionFloatIntRangeGet (oyWIDGET          option,
 # endif
 
 
-int oyVersion( int type ); /**!< itype is for further extension */ 
+int    oyVersion( int type );
 
 int    oyProfileGetMD5               ( void       *buffer,
                                        size_t      size,
@@ -304,6 +312,7 @@ int    oyProfileGetMD5               ( void       *buffer,
 
 void   oyI18NSet                     ( int active,
                                        int reserved );
+#define oyChar char
 
 #ifdef __cplusplus
 } /* extern "C" */

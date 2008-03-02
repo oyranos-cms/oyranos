@@ -53,11 +53,11 @@
 extern int oy_warn_;
 
 
-int     oySetProfile_Block                (const char* name,
-                                           void* mem,
-                                           size_t size,
-                                           oyDEFAULT_PROFILE type,
-                                           const char* comnt);
+int     oySetProfile_Block                (const char      * name,
+                                           void            * mem,
+                                           size_t            size,
+                                           oyPROFILE_e       type,
+                                           const char      * comnt);
 
 /* --- internal API definition --- */
 

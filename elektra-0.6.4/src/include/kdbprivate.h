@@ -24,7 +24,7 @@ $Id: kdbprivate.h.in 898 2006-08-14 14:32:51Z pertusus $
 #define KDBPRIVATE_H
 
 /* Elektra data directories */
-#define KDB_DB_SYSTEM            "/opt/local/etc/kdb"
+#define KDB_DB_SYSTEM            "/opt/kai-uwe/etc/kdb"
 #define KDB_DB_USER              ".kdb"   /* $HOME/.kdb */
 
 

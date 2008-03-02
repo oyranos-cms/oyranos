@@ -66,9 +66,9 @@ void  oyPathSleep_              (const char* pathname);
 void  oyPathActivate_           (const char* pathname);
 char* oyGetPathFromProfileName_ (const char*   profilename,
                                  oyAllocFunc_t allocate_func);
-int   oySetProfile_             (const char* name,
-                                 oyDEFAULT_PROFILE type,
-                                 const char* comment);
+int   oySetProfile_             (const char      * name,
+                                 oyPROFILE_e       type,
+                                 const char      * comment);
 
 
 char*   oyGetDeviceProfile_               (const char* manufacturer,
@@ -122,8 +122,8 @@ enum {
   oySYS
 };
 
-int     oyGetBehaviour_        (oyBEHAVIOUR type);
-int     oySetBehaviour_        (oyBEHAVIOUR type,
+int     oyGetBehaviour_        (oyBEHAVIOUR_e type);
+int     oySetBehaviour_        (oyBEHAVIOUR_e type,
                                 int         behaviour);
 
 /* elektra key wrappers */

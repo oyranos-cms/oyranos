@@ -56,17 +56,17 @@ char** oyXMLgetArray_  (const char       *xml,
                  const char       *key,
                  int              *count);
 /* write option range to mem, allocating memory on demand */
-char*       oyWriteOptionToXML_(oyGROUP           group,
-                    oyWIDGET          start,
-                    oyWIDGET          end, 
+char*       oyWriteOptionToXML_(oyGROUP_e           group,
+                    oyWIDGET_e          start,
+                    oyWIDGET_e          end, 
                     char             *mem,
                     int               oytmplen);
 
 /* form for write backends */
-typedef oyString* (*oyOptionWriteFunc_t)     ( oyOption_t_ ** opts,
-                          oyString    ** values,
+typedef oyChar* (*oyOptionWriteFunc_t)     ( oyOption_t_ ** opts,
+                          oyChar    ** values,
                           int            n,
-                          oyString     * mem,
+                          oyChar     * mem,
                           int            oytmplen );
 
 /* miscellaneous */
@@ -100,15 +100,15 @@ oyMemBlockExtent_(char **mem, int old_len, int add)
 
 /* sscanf is not  useable as it ignores after an empty space sign
    We get a allocated pure value string. */
-oyString*
-oyXMLgetValue_  (const oyString  * xml,
-                 const oyString  * key)
+oyChar*
+oyXMLgetValue_  (const oyChar  * xml,
+                 const oyChar  * key)
 {
-  const oyString * val_pos = 0;
-  oyString *value1 = 0, *value2 = 0, *value = 0;
+  const oyChar * val_pos = 0;
+  oyChar *value1 = 0, *value2 = 0, *value = 0;
   int   len1 = oyStrlen_( key ) + 2,
         len2 = oyStrlen_( key ) + 3;
-  oyString * key1 = NULL,
+  oyChar * key1 = NULL,
            * key2 = NULL;
   int   open = 0;
 
@@ -158,7 +158,7 @@ oyXMLgetValue_  (const oyString  * xml,
         --open;
       else
       {
-        WARN_S(("key: %s is not complete.", key))
+        WARNc_S(("key: %s is not complete.", key))
         len = 0;
         return 0;
       }
@@ -220,7 +220,7 @@ oyXMLgetField_  (const char       *xml,
         --open;
       else
       {
-        WARN_S(("key: %s is not complete.", key))
+        WARNc_S(("key: %s is not complete.", key))
         l = 0;
         return 0;
       }
@@ -275,11 +275,11 @@ oyXMLgetArray_  (const char       *xml,
 
 /* The function expects one single group to be present, usually the first opt.
    The caller must do sorting for this internal function itself. */
-oyString*
+oyChar*
 oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
-                          oyString    ** values,
+                          oyChar    ** values,
                           int            n,
-                          oyString     * mem,
+                          oyChar     * mem,
                           int            oytmplen )
 {
   int i;
@@ -290,8 +290,8 @@ oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
   for( i = 0; i < n; ++i )
   {
     oyOption_t_ * opt = opts[i];
-    oyWIDGET oywid = opt->id;
-    oyWIDGET_TYPE opt_type = opt->type;
+    oyWIDGET_e oywid = opt->id;
+    oyWIDGET_TYPE_e opt_type = opt->type;
 
     switch(opt_type)
     {
@@ -330,10 +330,10 @@ oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
 }
                           
 
-oyString*
-oyWriteOptionToXML_(oyGROUP           group,
-                    oyWIDGET          start,
-                    oyWIDGET          end, 
+oyChar*
+oyWriteOptionToXML_(oyGROUP_e           group,
+                    oyWIDGET_e          start,
+                    oyWIDGET_e          end, 
                     char             *mem,
                     int               oytmplen)
 {
@@ -341,7 +341,7 @@ oyWriteOptionToXML_(oyGROUP           group,
   const char  * key = 0;
   const oyOption_t_ * opt = 0;
   int n = 0;
-  oyWIDGET *tmp = NULL;
+  oyWIDGET_e *tmp = NULL;
   oyOptionWriteFunc_t * func = oyWriteOptionsToXML_;
   DBG_PROG_START
 
@@ -430,7 +430,7 @@ oyWriteOptionToXML_(oyGROUP           group,
 }
 
 char*
-oyPolicyToXML_  (oyGROUP           group,
+oyPolicyToXML_  (oyGROUP_e           group,
                  int               add_header,
                  oyAllocFunc_t     allocate_func)
 {
@@ -539,7 +539,7 @@ oyPolicyToXML_  (oyGROUP           group,
 
 
 int
-oyReadXMLPolicy_(oyGROUP           group,
+oyReadXMLPolicy_(oyGROUP_e           group,
                  const char      * xml)
 {
   /* allocate memory */
@@ -548,15 +548,15 @@ oyReadXMLPolicy_(oyGROUP           group,
   int   i = 0;
   int   err = 0;
   int n = 0;
-  oyWIDGET * list = NULL;
+  oyWIDGET_e * list = NULL;
 
   DBG_PROG_START
 
   list = oyPolicyWidgetListGet_( oyGROUP_ALL, &n );
   for(i = 0; i < n; ++i)
   {
-    oyWIDGET oywid = list[i];
-    oyWIDGET_TYPE opt_type = oyWidgetTypeGet_( oywid );
+    oyWIDGET_e oywid = list[i];
+    oyWIDGET_TYPE_e opt_type = oyWidgetTypeGet_( oywid );
 
     if(opt_type == oyTYPE_DEFAULT_PROFILE)
     {
@@ -572,7 +572,7 @@ oyReadXMLPolicy_(oyGROUP           group,
         err = oySetDefaultProfile_( oywid, value);
         if(err)
         {
-          WARN_S(( "Could not set default profile %s:%s", t->name ,
+          WARNc_S(( "Could not set default profile %s:%s", t->name ,
                     value?value:"--" ));
         }
         oyFree_m_(value);
@@ -596,7 +596,7 @@ oyReadXMLPolicy_(oyGROUP           group,
 
       if(err)
         {
-          WARN_S(( "Could not set behaviour %s:%s .", t->name ,
+          WARNc_S(( "Could not set behaviour %s:%s .", t->name ,
                     value?value:"--" ));
           return err;
         }

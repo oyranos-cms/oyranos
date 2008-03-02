@@ -96,7 +96,7 @@ oyReadFileSize_(const char* name)
       fclose (fp);
 
     } else
-      WARN_S( ("could not read %s\n", filename) );
+      WARNc_S( ("could not read %s\n", filename) );
   }
 
   DBG_PROG_ENDE
@@ -150,7 +150,7 @@ oyReadFileToMem_(const char* name, size_t *size,
         } else {
           /* copy to external allocator */
           char* temp = mem;
-          mem = allocate_func(*size+1);
+          mem = oyAllocateWrapFunc_( *size+1, allocate_func );
           if(mem) {
             memcpy( mem, temp, *size );
             oyFree_m_ (temp)
@@ -161,7 +161,7 @@ oyReadFileToMem_(const char* name, size_t *size,
         }
       }
     } else {
-      WARN_S( ("could not read %s\n", filename) );
+      WARNc_S( ("could not read %s\n", filename) );
     }
   }
  
@@ -297,13 +297,13 @@ oyIsFileFull_ (const char* fullFileName)
   DBG_NUM_V( r )
   switch (r)
   {
-    case EACCES:       WARN_S(("EACCES = %d\n",r)); break;
-    case EIO:          WARN_S(("EIO = %d\n",r)); break;
-    case ELOOP:        WARN_S(("ELOOP = %d\n",r)); break;
-    case ENAMETOOLONG: WARN_S(("ENAMETOOLONG = %d\n",r)); break;
-    case ENOENT:       WARN_S(("ENOENT = %d\n",r)); break;
-    case ENOTDIR:      WARN_S(("ENOTDIR = %d\n",r)); break;
-    case EOVERFLOW:    WARN_S(("EOVERFLOW = %d\n",r)); break;
+    case EACCES:       WARNc_S(("EACCES = %d\n",r)); break;
+    case EIO:          WARNc_S(("EIO = %d\n",r)); break;
+    case ELOOP:        WARNc_S(("ELOOP = %d\n",r)); break;
+    case ENAMETOOLONG: WARNc_S(("ENAMETOOLONG = %d\n",r)); break;
+    case ENOENT:       WARNc_S(("ENOENT = %d\n",r)); break;
+    case ENOTDIR:      WARNc_S(("ENOTDIR = %d\n",r)); break;
+    case EOVERFLOW:    WARNc_S(("EOVERFLOW = %d\n",r)); break;
   }
 
   r = !r &&
@@ -376,7 +376,7 @@ oyResolveDirFileName_ (const char* name)
     home = oyGetHomeDir_();
     len = strlen(name) + strlen(home) + 1;
     if (len >  FILENAME_MAX)
-      WARN_S((_("file name is too long %d\n"), len))
+      WARNc_S((_("file name is too long %d\n"), len))
 
     sprintf (newName, "%s%s", home, &name[0]+1);
 
@@ -462,7 +462,7 @@ oyCheckDefaultDirectories_ ()
   /* test dirName : existing in path, default dirs are existing */
   if (!oyIsDir_ (OY_PROFILE_PATH_SYSTEM_DEFAULT))
   { DBG_PROG
-    WARN_S( ("no default system directory %s\n",OY_PROFILE_PATH_SYSTEM_DEFAULT) );
+    WARNc_S( ("no default system directory %s\n",OY_PROFILE_PATH_SYSTEM_DEFAULT) );
   }
 
   if (!oyIsDir_ (OY_PROFILE_PATH_USER_DEFAULT))
@@ -549,7 +549,7 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
         strcpy(l->names[l->count_files], filename);
         ++l->count_files;
       } /*else */
-        /*WARN_S(("%s in %s is not a valid profile", file_name, path)); */
+        /*WARNc_S(("%s in %s is not a valid profile", file_name, path)); */
   return 0;
 }
 
@@ -584,7 +584,7 @@ int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
         oyStrcpy_(l->names[l->count_files], full_name);
         ++l->count_files;
       } /*else */
-        /*WARN_S(("%s in %s is not a valid profile", file_name, path)); */
+        /*WARNc_S(("%s in %s is not a valid profile", file_name, path)); */
   return 0;
 }
 
@@ -674,7 +674,7 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*),
 
   ++war;
   if(war >= 413)
-    ;/* WARN_S(("schon %d mal\n", war)); */
+    ;/* WARNc_S(("schon %d mal\n", war)); */
 
   for(i = 0; i < count ; ++i)
   {
@@ -709,27 +709,27 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*),
     if ((stat (path, &statbuf)) != 0) {
       switch (errno)
       {
-        case EACCES:       WARN_S(("Permission denied: %s %d", path, i)); break;
-        case EIO:          WARN_S(("EIO : %s %d", path, i)); break;
-        case ELOOP:        WARN_S(("Too many symbolic links encountered while traversing the path: %s %d", path, i)); break;
-        case ENAMETOOLONG: WARN_S(("ENAMETOOLONG : %s %d", path, i)); break;
+        case EACCES:       WARNc_S(("Permission denied: %s %d", path, i)); break;
+        case EIO:          WARNc_S(("EIO : %s %d", path, i)); break;
+        case ELOOP:        WARNc_S(("Too many symbolic links encountered while traversing the path: %s %d", path, i)); break;
+        case ENAMETOOLONG: WARNc_S(("ENAMETOOLONG : %s %d", path, i)); break;
         case ENOENT:       DBG_PROG_S(("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i)); break;
-        case ENOTDIR:      WARN_S(("ENOTDIR : %s %d", path, i)); break;
-        case EOVERFLOW:    WARN_S(("EOVERFLOW : %s %d", path, i)); break;
+        case ENOTDIR:      WARNc_S(("ENOTDIR : %s %d", path, i)); break;
+        case EOVERFLOW:    WARNc_S(("EOVERFLOW : %s %d", path, i)); break;
       }
       continue;
     }
     if (!S_ISDIR (statbuf.st_mode)) {
-      WARN_S((_("%d. path %s is not a directory"), i, path));
+      WARNc_S((_("%d. path %s is not a directory"), i, path));
       continue;
     }
     if (S_ISLNK (statbuf.st_mode)) {
-      WARN_S((_("%d. path %s is a link: ignored"), i, path));
+      WARNc_S((_("%d. path %s is a link: ignored"), i, path));
       continue;
     }
     dir[l] = opendir (path);
     if (!dir[l]) {
-      WARN_S((_("%d. path %s is not readable"), i, path));
+      WARNc_S((_("%d. path %s is not readable"), i, path));
       continue;
     }
 
@@ -738,10 +738,10 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*),
       char name[256];
       int k;
 
-      if(l>=64) WARN_S(("max path depth reached: 64"));
+      if(l>=64) WARNc_S(("max path depth reached: 64"));
       if(dir[l] == NULL)
       {
-        WARN_S(("NULL\n"));
+        WARNc_S(("NULL\n"));
         --l;
         if(l<0) run = 0;
         goto cont;

@@ -265,7 +265,7 @@ oyAddKey_valueComment_ (const char* keyName,
   if (comment)
     DBG_PROG_S(( comment ));
   if (!keyName || !strlen(keyName))
-    WARN_S( ("%s:%d !!! ERROR no keyName given",__FILE__,__LINE__));
+    WARNc_S( ("%s:%d !!! ERROR no keyName given",__FILE__,__LINE__));
 
   key = keyNew( KEY_SWITCH_END );
   keySetName( key, name );
@@ -298,7 +298,7 @@ oySelectUserSys_()
 
 
 int
-oySetBehaviour_      (oyBEHAVIOUR type, int choice)
+oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
 {
   int r = 1;
 
@@ -322,7 +322,7 @@ oySetBehaviour_      (oyBEHAVIOUR type, int choice)
         DBG_PROG_S(( "%s %d %s %s", keyName, type, val, com?com:"" ))
       }
       else
-        WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
+        WARNc_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
   }
 
   DBG_PROG_ENDE
@@ -330,7 +330,7 @@ oySetBehaviour_      (oyBEHAVIOUR type, int choice)
 }
 
 int
-oyGetBehaviour_      (oyBEHAVIOUR type)
+oyGetBehaviour_      (oyBEHAVIOUR_e type)
 {
   char* name = 0;
   const char* key_name = 0;
@@ -349,10 +349,10 @@ oyGetBehaviour_      (oyBEHAVIOUR type)
       name = oyGetKeyValue_( key_name, oyAllocateFunc_ );
     }
     else
-      WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
+      WARNc_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
   }
   else
-    WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
+    WARNc_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
 
   if(name)
   {
@@ -370,7 +370,7 @@ oyGetBehaviour_      (oyBEHAVIOUR type)
 
 
 int
-oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* comment)
+oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
 {
   int r = 1;
   const char *fileName = 0, *com = comment;
@@ -392,7 +392,7 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
     const char* config_name = 0;
     DBG_PROG_S(("set fileName = %s as %d profile\n",fileName, type))
     if ( type < 0 )
-      WARN_S( (_("default profile type %d; type does not exist"), type ) );
+      WARNc_S( (_("default profile type %d; type does not exist"), type ) );
 
     if(oyWidgetTitleGet_( type, 0,0,0,0 ) == oyTYPE_DEFAULT_PROFILE)
     {
@@ -481,7 +481,7 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
         oyFree_m_ (keyName)
       }
       else
-        WARN_S( (_("default profile type %d; type does not exist"), type ) );
+        WARNc_S( (_("default profile type %d; type does not exist"), type ) );
       
     
     if(config_name)
@@ -584,7 +584,7 @@ oyPathName_ (int number, oyAllocFunc_t allocate_func)
     return 0;
   }
 
-  value = (char*) allocate_func( MAX_PATH );
+  value = (char*) oyAllocateWrapFunc_( MAX_PATH, allocate_func );
 
   if (number <= (int)ksGetSize(myKeySet))
     FOR_EACH_IN_KDBKEYSET( current, myKeySet )
@@ -889,18 +889,18 @@ oyPathActivate_ (const char* pfad)
  */
 char*
 oyGetKeyValue_ ( const char       *key_name,
-                 oyAllocFunc_t     allocFunc )
+                 oyAllocFunc_t     allocate_func )
 {
   char* name = 0;
   char* full_key_name = 0;
   int rc = 0;
 
   if( !key_name || strlen( key_name ) > MAX_PATH-1 )
-  { WARN_S(("wrong string format given"));
+  { WARNc_S(("wrong string format given"));
     return 0;
   }
 
-  name = (char*) allocFunc (MAX_PATH);
+  name = (char*) oyAllocateWrapFunc_( MAX_PATH, allocate_func );
   full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
 
   if( !name || !full_key_name )
@@ -1001,7 +1001,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
         fileName = foundEntry->name;
 
       len = strlen (fileName)+1;
-      profileName = (char*) allocate_func (len);
+      profileName = (char*) oyAllocateWrapFunc_( len, allocate_func );
       sprintf (profileName, fileName);
 
       DBG_PROG_S((foundEntry->name))
@@ -1215,7 +1215,7 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
                 strstr(testEntry->name, name) != 0)
             { DBG_PROG_S(( "%s", strstr(testEntry->name, name) ))
               found = 1;
-              WARN_S(("double occurency of profile %s", testEntry->name))
+              WARNc_S(("double occurency of profile %s", testEntry->name))
               /* anyway increase the hits counter if attributes fits better */
               if (testEntry->hits < n)
                 testEntry->hits = n;
@@ -1235,7 +1235,7 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
       }
     }
   } else
-    WARN_S (("No profiles yet registred to devices"))
+    WARNc_S (("No profiles yet registred to devices"))
 
   oyFree_m_ (attributs)
 

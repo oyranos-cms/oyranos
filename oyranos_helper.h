@@ -1,7 +1,7 @@
 /**
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -28,13 +28,18 @@
 
 /** @date      25. 11. 2004 */
 
+/* Dont use in non Oyranos projects. */
 
 #ifndef OYRANOS_HELPER_H
 #define OYRANOS_HELPER_H
 
-#include "oyranos.h"
-#include "oyranos_debug.h"
 #include "config.h"
+#include "oyranos_debug.h"
+#if defined(OY_CONFIG_H)
+#include "oyranos.h"
+#else
+#include "oyranos/oyranos.h"
+#endif
 
 #include <unistd.h> /* intptr_t */
 #include <ctype.h>  /* toupper */
@@ -48,6 +53,8 @@ namespace oyranos
 /* memory handling */
 
 void* oyAllocateFunc_           (size_t        size);
+void* oyAllocateWrapFunc_       (size_t        size,
+                                 oyAllocFunc_t allocate_func);
 void  oyDeAllocateFunc_         (void *        data);
 
 
@@ -80,14 +87,14 @@ extern intptr_t oy_observe_pointer_;
 /* oyFree_ (void*) */
 #define oyFree_m_(x) {                                      \
   if(oy_observe_pointer_ == (intptr_t)x)                    \
-    WARN_S(( "%s:%d %s() pointer %s freed",                 \
+    WARNc_S(( "%s:%d %s() pointer %s freed",                 \
             __FILE__,__LINE__,__func__,#x ));               \
   if (x != NULL) {    /* defined in oyranos_helper.h */     \
     oyDeAllocateFunc_ (x);                                  \
     x = NULL;                                               \
   } else {                                                  \
     char *t = _("%s:%d %s() nothing to delete %s\n");       \
-    WARN_S (( t, __FILE__,__LINE__,__func__, #x ));         \
+    WARNc_S (( t, __FILE__,__LINE__,__func__, #x ));         \
   }                                                         \
 }
 
@@ -96,17 +103,15 @@ extern intptr_t oy_observe_pointer_;
   if (ptr_ != NULL)    /* defined in oyranos_helper.h */    \
     oyFree_m_( ptr_ )                                       \
   if ((size_) <= 0) {                                       \
-    WARN_S ((_("%s:%d %s() nothing to allocate - size: %d\n"), \
+    WARNc_S ((_("%s:%d %s() nothing to allocate - size: %d\n"), \
     __FILE__,__LINE__,__func__, (int)(size_)));             \
   } else {                                                  \
-    oyAllocFunc_t temp = alloc_func;                        \
-    if( temp )                                              \
-      ptr_ = (type*) temp( (size_t)(size_) * sizeof(type) ); \
-    else                                                    \
-      ptr_ = (type*) calloc (sizeof (type), (size_t)size_); \
+      ptr_ = (type*) oyAllocateWrapFunc_(sizeof (type) * (size_t)(size_), \
+                                         alloc_func ); \
+      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
   }                                                         \
   if (ptr_ == NULL) {                                       \
-    WARN_S( ("%s:%d %s() %s %d %s %s .",__FILE__,__LINE__,  \
+    WARNc_S( ("%s:%d %s() %s %d %s %s .",__FILE__,__LINE__, \
          __func__, _("Can not allocate"),(int)(size_),      \
          _("bytes of  memory for"), #ptr_));                \
     action;                                                 \
@@ -117,19 +122,15 @@ extern intptr_t oy_observe_pointer_;
 #define oyPostAllocHelper_m_(ptr_, size_, action) {         \
   if ((size_) <= 0 ||                                       \
       ptr_ == NULL ) { /* defined in oyranos_helper.h */    \
-    WARN_S ((_("%s:%d %s() nothing allocated %s\n"),        \
+    WARNc_S ((_("%s:%d %s() nothing allocated %s\n"),        \
     __FILE__,__LINE__,__func__, #ptr_));                    \
     action;                                                 \
   }                                                         \
 }
 
 /* string helpers to switch to unicode or utf8 */
-
-size_t oyStrblen_(const char *s);
-
-#define oyString char
 #define oyAllocString_m_( sptr_, ssize_,  salloc_func, saction ) \
-  oyAllocHelper_m_( sptr_, oyString, ssize_+1, salloc_func, saction );
+  oyAllocHelper_m_( sptr_, oyChar, ssize_+1, salloc_func, saction );
 #define oyStrlen_( str_ ) \
            strlen( str_ )
 #define oySprintf_ \
@@ -146,6 +147,7 @@ size_t oyStrblen_(const char *s);
            strcmp( str1_, str2_ )
 #define oyToupper_( c_ ) \
            toupper( c_ )
+size_t oyStrblen_(const char *s);
 
 
 /* mathematical helpers */

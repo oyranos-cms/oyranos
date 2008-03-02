@@ -49,14 +49,14 @@
     @brief the internal only used structure for external registred CMM functions
  */
 typedef struct {
-  char       *id;               /**< usually a 4 letter short name */
-  char       *name;             /**< short name */
-  char       *description;      /**< long description */ /* TODO help license .. */
-  char       *libname;          /**< library to search for function */
-  char       *funcname;         /**< function for dlsym */
-  oyWIDGET    opts_start;       /**< options numbers for oyGetOptionUITitle */
-  oyWIDGET    opts_end;
-  oyOption_t_ *option;         /**< the CMM options */
+  char        * id;               /**< usually a 4 letter short name */
+  char        * name;             /**< short name */
+  char        * description;      /**< long description */ /* TODO help license .. */
+  char        * libname;          /**< library to search for function */
+  char        * funcname;         /**< function for dlsym */
+  oyWIDGET_e    opts_start;       /**< options numbers for oyGetOptionUITitle */
+  oyWIDGET_e    opts_end;
+  oyOption_t_ * option;         /**< the CMM options */
 } oyExternFunc_t_;
 
 
@@ -120,10 +120,10 @@ oyDataInit_ (oyData_t_ *data)
 /** @internal CMM API */
 oyModule_t_* oyModulGet_              (const char *id);
 int          oyModulAdd_              (oyModule_t_ *cmm);
-int          oyModulGetFromXML_       (oyGROUP           group,
+int          oyModulGetFromXML_       (oyGROUP_e           group,
                                        char             *xml,
                                        oyModule_t_      *cmm);
-oyWIDGET  oyModulsGetNewOptionRange_  (int count);
+oyWIDGET_e  oyModulsGetNewOptionRange_  (int count);
 
 
 
@@ -209,7 +209,7 @@ oyModulsGetNames_( int        *count,
 
   *count = 0;
   oyAllocHelper_m_( ids, char*, oyModules_.n, alloc_func, return NULL)
-  WARN_S(("oyModules_.n %d",oyModules_.n))
+  WARNc_S(("oyModules_.n %d",oyModules_.n))
   for( i = 0; i < oyModules_.n; ++i)
   {
     oyAllocHelper_m_( ids[i], char, 5, alloc_func, return NULL);
@@ -220,7 +220,7 @@ oyModulsGetNames_( int        *count,
   return ids;
 }
 
-oyGROUP
+oyGROUP_e
 oyRegisterGroups_(char *cmm, char *id, char *name, char *tooltip)
 {
   return oyGroupAdd_(cmm, id, name, tooltip);
@@ -228,7 +228,7 @@ oyRegisterGroups_(char *cmm, char *id, char *name, char *tooltip)
 
 
 int
-oyModulGetFromXML_( oyGROUP           group,
+oyModulGetFromXML_( oyGROUP_e           group,
                     char             *xml,
                     oyModule_t_      *cmm)
 {
@@ -299,7 +299,7 @@ oyModulGetFromXML_( oyGROUP           group,
                     oyAllocateFunc_, return -1; );
   for(i = 0; i < group_modules; ++i)
   {
-    oyGROUP oy_group;
+    oyGROUP_e oy_group;
     char *txt0, *txt1, *txt2;
     oyOption_t_ *opt = cmm->group;
     int pos = 0;
@@ -385,7 +385,7 @@ oyModulGetFromXML_( oyGROUP           group,
       int group_n = 0;
       char **grs = NULL;
       char *type = NULL;
-      /*DBG_S(("oyWIDGET[%d]: %s", i, option[i])); */
+      /*DBG_S(("oyWIDGET_e[%d]: %s", i, option[i])); */
       DBG_S(("       : %s", oyXMLgetValue_(option[j], "oyID")));
 
       grs = oyXMLgetArray_(option[j], "oyGROUP", &group_n);
@@ -425,7 +425,7 @@ oyModulGetFromXML_( oyGROUP           group,
         else if (strcmp(type,"oyTYPE_VOID") == 0)
           cmm->func[i].option[j].type = oyTYPE_VOID;
         else
-          WARN_S(("Did not find a type for option: %s",
+          WARNc_S(("Did not find a type for option: %s",
                   cmm->func[i].option[j].name));
       }
 
@@ -472,7 +472,7 @@ oyModulGetFromXML_( oyGROUP           group,
 }
 
 int
-oyModulRegisterXML_(oyGROUP           group,
+oyModulRegisterXML_(oyGROUP_e           group,
                     const char       *xml)
 {
 
@@ -530,7 +530,9 @@ oyModulPrint_   ( const char       *modul )
 
   for(i = 0; i < mod->funcs; ++i)
   {
-    int options_n = mod->func[i].opts_end - mod->func[i].opts_start + 1;
+    int options_n = 0;
+    if(mod->func[i].opts_end != oyWIDGET_GROUP_START)
+      options_n = mod->func[i].opts_end - mod->func[i].opts_start + 1;
 
     snprintf( tmp, 1024, "    F %d[%d] %s (%s)\n", i, mod->funcs,
               mod->func[i].name, mod->func[i].description ); add_s()
@@ -544,7 +546,7 @@ oyModulPrint_   ( const char       *modul )
      
       snprintf( tmp, 1024, "             G" ); add_s()
       for( k = 0; k < 10; ++k )
-      { oyGROUP g = mod->func[i].option[j].category[k];
+      { oyGROUP_e g = mod->func[i].option[j].category[k];
         if(g)
         {
           int module_group = g - oyGROUP_EXTERN;
@@ -592,7 +594,7 @@ oyModulPrint_   ( const char       *modul )
 /** @internal
  *  ask for free oyWIDGET ID's to register the new ones.
  */
-oyWIDGET
+oyWIDGET_e
 oyModulsGetNewOptionRange_(int count)
 {
   int i, j;
@@ -624,7 +626,7 @@ oyModulsGetNewOptionRange_(int count)
  *  map a oyWIDGET to a oyOption_t_ in dynamic oyModules_
  */
 oyOption_t_*
-oyModulsUIOptionSearch_ (oyWIDGET       id)
+oyModulsUIOptionSearch_ (oyWIDGET_e       id)
 {
   int i, j;
 
@@ -767,7 +769,7 @@ oyModulGetGroups_  (const char *cmm, int *start, int *count)
 
 #if 0
 const char*
-oyModulGetGroupUITitle_ (oyGROUP     group, const char **tooltip,
+oyModulGetGroupUITitle_ (oyGROUP_e     group, const char **tooltip,
                          const char**config_string_xml)
 {
   DBG_PROG_START
