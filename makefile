@@ -294,7 +294,7 @@ clean:
 	$(TARGET)-config config mkdepend
 
 config:
-	configure
+	./configure
 
 depend:
 	echo "setting up dependencies ..."
