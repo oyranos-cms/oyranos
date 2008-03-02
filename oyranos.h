@@ -66,6 +66,8 @@ int	oySetDefaultCmykProfileBlock      (char* name, void* mem, int size);
 char*	oyGetDefaultImageProfileName      ();
 char*	oyGetDefaultWorkspaceProfileName  ();
 char*	oyGetDefaultCmykProfileName       ();
+char*	oyGetDefaultLabProfileName        ();
+char*	oyGetDefaultXYZProfileName        ();
 
 /* --- profile checking --- */
 

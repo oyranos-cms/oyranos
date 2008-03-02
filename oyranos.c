@@ -57,21 +57,22 @@ void	oyPathSleep_          (char* pathname);
 void	oyPathActivate_       (char* pathname);
 
 int	oySetDefaultImageProfile_          (char* name);
-int	oySetDefaultImageProfile_Block     (char* name, void* mem, size_t size);
+int	oySetDefaultImageProfile_Block     (char* name, void* mem, int size);
 int	oySetDefaultWorkspaceProfile_      (char* name);
-int	oySetDefaultWorkspaceProfile_Block (char* name, void* mem, size_t size);
+int	oySetDefaultWorkspaceProfile_Block (char* name, void* mem, int size);
 int	oySetDefaultCmykProfile_           (char* name);
-int	oySetDefaultCmykProfile_Block      (char* name, void* mem, size_t size);
+int	oySetDefaultCmykProfile_Block      (char* name, void* mem, int size);
 
 char*	oyGetDefaultImageProfileName_      ();
 char*	oyGetDefaultWorkspaceProfileName_  ();
 char*	oyGetDefaultCmykProfileName_       ();
+char*	oyGetDefaultLabProfileName_        ();
 
 int	oyCheckProfile_                    (char* name);
-int	oyCheckProfile_Mem                 (void* mem, size_t size);
+int	oyCheckProfile_Mem                 (void* mem, int size);
 
-size_t	oyGetProfileSize_                  (char* profilename);
-void*	oyGetProfileBlock_                 (char* profilename, size_t* size);
+int	oyGetProfileSize_                  (char* profilename);
+void*	oyGetProfileBlock_                 (char* profilename, int* size);
 
 char*   oyGetDeviceProfile_               (char* manufacturer,
                                            char* model,
@@ -100,7 +101,7 @@ int     oySetDeviceProfile_               (char* manufacturer,
                                            char* attrib3,
                                            char* profileName,
                                            void* mem,
-                                           size_t size);
+                                           int size);
 
 
 
@@ -124,8 +125,8 @@ int oyIsFile_ (char* fileName);
 int oyIsFileFull_ (char* fullFileName);
 int oyMakeDir_ (char* path);
 
-int   oyWriteMemToFile_(char* name, void* mem, size_t size);
-char* oyReadFileToMem_(char* fullFileName, size_t *size);
+int   oyWriteMemToFile_(char* name, void* mem, int size);
+char* oyReadFileToMem_(char* fullFileName, int *size);
 
 /* oyranos part */
 /* check for the global and the users directory */
@@ -135,7 +136,7 @@ char* oyFindProfile_ (char* name);
 
 /* Profile registring */
 int oySetProfile_      (char* name, char* typ, char* comment);
-int oySetProfile_Block (char* name, void* mem, size_t size, char* typ, char* comnt);
+int oySetProfile_Block (char* name, void* mem, int size, char* typ, char* comnt);
 
 /* small search engine
  *
@@ -242,7 +243,7 @@ oyAddKey_value_ (char* keyName, char* value)
 }
 
 char*
-oyReadFileToMem_(char* name, size_t *size)
+oyReadFileToMem_(char* name, int *size)
 { DBG_PROG_START
   FILE *fp = 0;
   char* mem = 0;
@@ -290,7 +291,7 @@ oyReadFileToMem_(char* name, size_t *size)
 }
 
 int
-oyWriteMemToFile_(char* name, void* mem, size_t size)
+oyWriteMemToFile_(char* name, void* mem, int size)
 { DBG_PROG_START
   FILE *fp = 0;
   int   pt = 0;
@@ -542,7 +543,7 @@ oyFindProfile_ (char* fileName)
   char  *fullFileName = 0;
   int    success = 0;
   char  *header = 0;
-  size_t size;
+  int size;
 
   DBG_NUM_S((fileName))
   /* test for pure file without dir; search in configured paths only */
@@ -888,7 +889,7 @@ oySetDefaultCmykProfile_           (char* name)
 }
 
 int
-oySetDefaultImageProfile_Block     (char* name, void* mem, size_t size)
+oySetDefaultImageProfile_Block     (char* name, void* mem, int size)
 { DBG_PROG_START
   int r = oySetProfile_Block (name, mem, size, "Image", 0);
   DBG_PROG_ENDE
@@ -896,7 +897,7 @@ oySetDefaultImageProfile_Block     (char* name, void* mem, size_t size)
 }
 
 int
-oySetDefaultWorkspaceProfile_Block (char* name, void* mem, size_t size)
+oySetDefaultWorkspaceProfile_Block (char* name, void* mem, int size)
 { DBG_PROG_START
   int r = oySetProfile_Block (name, mem, size, "Workspace", 0);
   DBG_PROG_ENDE
@@ -904,7 +905,7 @@ oySetDefaultWorkspaceProfile_Block (char* name, void* mem, size_t size)
 }
 
 int
-oySetDefaultCmykProfile_Block      (char* name, void* mem, size_t size)
+oySetDefaultCmykProfile_Block      (char* name, void* mem, int size)
 { DBG_PROG_START
   int r = oySetProfile_Block (name, mem, size, "Cmyk", 0);
   DBG_PROG_ENDE
@@ -942,6 +943,18 @@ oyGetDefaultCmykProfileName_       ()
 
   kdbGetValue (OY_DEFAULT_CMYK_PROFILE, name, MAX_PATH);
 
+  DBG_PROG_S(("%s %s %d",OY_DEFAULT_CMYK_PROFILE,name,MAX_PATH))
+  DBG_PROG_ENDE
+  return name;
+}
+
+char*
+oyGetDefaultLabProfileName_       ()
+{ DBG_PROG_START
+  char* name = (char*) calloc (MAX_PATH, sizeof(char));
+
+  kdbGetValue (OY_DEFAULT_LAB_PROFILE, name, MAX_PATH);
+
   DBG_PROG_S((name))
   DBG_PROG_ENDE
   return name;
@@ -955,7 +968,7 @@ oyCheckProfile_                    (char* name)
 { DBG_PROG_START
   char *fullName = 0;
   char* header; 
-  size_t size = 0;
+  int size = 0;
   int r = 1;
 
   DBG_NUM_S((name))
@@ -979,7 +992,7 @@ oyCheckProfile_                    (char* name)
 }
 
 int
-oyCheckProfile_Mem                 (void* mem, size_t size)
+oyCheckProfile_Mem                 (void* mem, int size)
 { DBG_PROG_START
   char* block = (char*) mem;
   int offset = 36;
@@ -1004,10 +1017,10 @@ oyCheckProfile_Mem                 (void* mem, size_t size)
 
 /* profile handling API */
 
-size_t
+int
 oyGetProfileSize_                  (char* profilename)
 { DBG_PROG_START
-  size_t size = 0;
+  int size = 0;
   char* fullFileName = oyFindProfile_ (profilename);
   char* dummy;
 
@@ -1019,7 +1032,7 @@ oyGetProfileSize_                  (char* profilename)
 }
 
 void*
-oyGetProfileBlock_                 (char* profilename, size_t* size)
+oyGetProfileBlock_                 (char* profilename, int* size)
 { DBG_PROG_START
   char* fullFileName = oyFindProfile_ (profilename);
   char* block = oyReadFileToMem_ (fullFileName, size);
@@ -1029,7 +1042,7 @@ oyGetProfileBlock_                 (char* profilename, size_t* size)
 }
 
 int
-oySetProfile_Block (char* name, void* mem, size_t size, char* typ, char* comnt)
+oySetProfile_Block (char* name, void* mem, int size, char* typ, char* comnt)
 { DBG_PROG_START
   int r = 0;
   char *fullFileName, *fileName, *resolvedFN;
@@ -1425,7 +1438,7 @@ oySetDeviceProfile_                (char* manufacturer,
                                     char* attrib3,
                                     char* profileName,
                                     void* mem,
-                                    size_t size)
+                                    int size)
 { DBG_PROG_START
   int rc = 0;
   char* comment = 0;
@@ -1528,7 +1541,7 @@ oySetDefaultImageProfile          (char* name)
 }
 
 int
-oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size)
+oySetDefaultImageProfileBlock     (char* name, void* mem, int size)
 { DBG_PROG_START
   int n = oySetDefaultImageProfile_Block (name, mem, size);
   DBG_PROG_ENDE
@@ -1544,7 +1557,7 @@ oySetDefaultWorkspaceProfile      (char* name)
 }
 
 int
-oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size)
+oySetDefaultWorkspaceProfileBlock (char* name, void* mem, int size)
 { DBG_PROG_START
   int n = oySetDefaultWorkspaceProfile_Block (name, mem, size);
   DBG_PROG_ENDE
@@ -1560,7 +1573,7 @@ oySetDefaultCmykProfile           (char* name)
 }
 
 int
-oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size)
+oySetDefaultCmykProfileBlock      (char* name, void* mem, int size)
 { DBG_PROG_START
   int n = oySetDefaultCmykProfile_Block (name, mem, size);
   DBG_PROG_ENDE
@@ -1591,6 +1604,14 @@ oyGetDefaultCmykProfileName       ()
   return name;
 }
 
+char*
+oyGetDefaultLabProfileName       ()
+{ DBG_PROG_START
+  char* name = oyGetDefaultLabProfileName_ ();
+  DBG_PROG_ENDE
+  return name;
+}
+
 
 int
 oyCheckProfile (char* name, int flag)
@@ -1602,7 +1623,7 @@ oyCheckProfile (char* name, int flag)
 }
 
 int
-oyCheckProfileMem (void* mem, size_t size,int flag)
+oyCheckProfileMem (void* mem, int size,int flag)
 { DBG_PROG_START
   /* flag is currently ignored */
   int n = oyCheckProfile_Mem (mem, size);
@@ -1610,16 +1631,16 @@ oyCheckProfileMem (void* mem, size_t size,int flag)
   return n;
 }
 
-size_t
+int
 oyGetProfileSize                  (char* profilename)
 { DBG_PROG_START
-  size_t size = oyGetProfileSize_ (profilename);
+  int size = oyGetProfileSize_ (profilename);
   DBG_PROG_ENDE
   return size;
 }
 
 void*
-oyGetProfileBlock                 (char* profilename, size_t *size)
+oyGetProfileBlock                 (char* profilename, int *size)
 { DBG_PROG_START
   char* block = oyGetProfileBlock_ (profilename, size);
   DBG_PROG_S( ("%s %d %d", profilename, (int)block, *size) )
@@ -1660,7 +1681,7 @@ oySetDeviceProfile                (DEVICETYP typ,
                                    char* attrib3,
                                    char* profileName,
                                    void* mem,
-                                   size_t size)
+                                   int size)
 { DBG_PROG_START
   int rc =     oySetDeviceProfile_ (manufacturer, model, product_id,
                                     host, port, attrib1, attrib2, attrib3,

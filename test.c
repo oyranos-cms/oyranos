@@ -34,7 +34,7 @@
 
 #include <oyranos.h>
 
-char* oyReadFileToMem_(char* fullFileName, size_t *size);
+#include "test.h"
 
 int
 main(int argc, char** argv)
@@ -98,8 +98,8 @@ main(int argc, char** argv)
     // take an real file as input
     if (argc > 0)
     { printf (":%d %d %s %s\n",__LINE__, argc, argv[0], argv[1]);
-      size_t size = 0;
-      profil = oyGetProfileBlock (argv[1], &size);
+      int size = 0;
+      profil = (char*) oyGetProfileBlock (argv[1], &size);
 
       printf ("size = %u pos = %d\n\n",size, (int) profil);
       if (profil)
@@ -130,14 +130,16 @@ main(int argc, char** argv)
   {
     char  *tempName = (char*) calloc (1024,sizeof(char));
     char  *model = 0, *product_ID = 0;
-    size_t size;
+    int size;
     char* profil = 0;
 
     sprintf (tempName, "sh -c \"getMoniDDC1 -m >& $TMPDIR/MoniDDC.txt\"");
     if (!system(tempName))
     {
       sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
+      #ifndef __cplusplus
       model = oyReadFileToMem_ (tempName, &size);
+      #endif
       memcpy (tempName, model, size); tempName[size] = 0;
       if (model) free (model);
       model = (char*) calloc (strlen(tempName)+1,sizeof(char));
@@ -150,7 +152,9 @@ main(int argc, char** argv)
     if (!system(tempName))
     {
       sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
+      #ifndef __cplusplus
       product_ID = oyReadFileToMem_ (tempName, &size);
+      #endif
       memcpy (tempName, product_ID, size); tempName[size] = 0;
       if (product_ID) free (product_ID);
       product_ID = (char*) calloc (strlen(tempName)+1,sizeof(char));
