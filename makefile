@@ -230,7 +230,7 @@ test:	$(LIBSONAMEFULL) test.o
 doc:
 	test -n 'which doxygen' && doxygen Doxyfile
 
-install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma
+install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma doc
 	echo Installing ...
 	make uninstall
 	mkdir -p $(DESTDIR)$(bindir)
