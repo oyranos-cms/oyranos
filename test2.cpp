@@ -11,7 +11,7 @@ int main(void)
              *serial=0;
   const char *display_name=0;
 
-  oy_debug = 0;
+  oy_debug = 1;
 
   int erg =
     oyranos::oyGetMonitorInfo ( display_name, &manufacturer, &model, &serial );

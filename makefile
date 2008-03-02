@@ -126,7 +126,7 @@ dir     = Entwickeln
 timedir = $(topdir)/$(dir)
 mtime   = `find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g`
 
-#.SILENT:
+.SILENT:
 
 ifdef FLU
 FLU_GUI = $(TARGET)_config_flu

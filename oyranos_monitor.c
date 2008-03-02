@@ -228,7 +228,7 @@ oyActivateMonitorProfile_         (const char* display_name,
       WARN_S((_("Error while setting X monitor property")))
     }
 
-    printf/*DBG_PROG_S*/( "system: %s", text );
+    DBG_PROG_S(( "system: %s", text ))
     if(text) free(text);
   }
 
