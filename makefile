@@ -1,4 +1,4 @@
-CC=c++
+CC=cc
 MAKEDEPEND	= /usr/X11R6//bin/makedepend -Y
 OPTS=-Wall -g -O2
 
@@ -22,27 +22,28 @@ endif
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 INCL=-I$(includedir) -I/usr/X11R6/include -I./
 
-X11_LIBS=-L/usr/X11R6/lib -lXinerama -lXft
+X11_LIBS=#-L/usr/X11R6/lib -lXinerama -lXft
 
-FLTK_LIBS=`fltk-config --use-images $(DL)`
+FLTK_LIBS=#`fltk-config --use-images $(DL)`
 
 KDB_LIBS=-lkdb
 
 ifdef FLU
-FLU_LIBS=`flu-config $(DL)`
+FLU_LIBS=#`flu-config $(DL)`
 endif
 
 
 LDLIBS = -L$(libdir) -L./ $(FLTK_LIBS) \
-	$(X11_LIBS) -llcms $(KDB_LIBS) $(FLU_LIBS)
+	$(X11_LIBS) $(KDB_LIBS) #-llcms $(FLU_LIBS)
 
 #	$(VRML_LIBS)
 
 CPP_HEADERS = \
 	oyranos.h
-#	fl_oyranos.h \
-CPPFILES = \
-	oyranos.cpp
+#	fl_oyranos.h
+CFILES = \
+	oyranos.c
+CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
 DOKU = \
@@ -53,8 +54,8 @@ DOKU = \
 FLUID = #\
 	fl_oyranos.fl
 
-SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS)
-OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o)
+SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) test.c
+OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o)
 TARGET  = oyranos
 
 REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) /opt/local/include/FL/mac.r
@@ -75,7 +76,14 @@ $(TARGET):	$(OBJECTS)
 	echo Linking $@...
 	$(CC) $(OPTS) -o $(TARGET) \
 	$(OBJECTS) \
-	$(LDLIBS)
+	$(LDLIBS) \
+	$(APPLE)
+
+test:	$(OBJECTS) test.o
+	$(CC) $(OPTS) -o test \
+	$(OBJECTS) \
+	test.o \
+	$(LDLIBS) 
 	$(APPLE)
 
 static:		$(OBJECTS)
