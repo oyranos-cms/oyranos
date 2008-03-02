@@ -189,8 +189,8 @@ ALL_FILES = \
 # build all what is needed to run the libraries, helpers and the examples
 all:	mkdepend $(ELEKTRA_VERSION) \
 	$(LIBSONAMEFULL) \
-	$(LIB_ALPHA_SONAMEFULL) $(LIB_CMM_LCMS) $(LIB_CMM_oyX1) \
-	$(TARGET)-monitor $(X11) \
+	$(LIB_ALPHA_SONAMEFULL) \
+	$(TARGET)-monitor $(X11) $(LIB_CMM_LCMS) $(LIB_CMM_oyX1) \
 	$(FLTK_GUI) $(TARGET)-policy \
 	$(TEST2) $(LINGUAS_SRC)
 	cd standard_profiles; \
