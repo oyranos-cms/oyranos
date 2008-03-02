@@ -47,6 +47,31 @@ else
     fi
   fi
 fi
+MACH_=`uname -m`
+MACH=BUILD_32
+if [ $? = 0 ]; then
+  if [ $MACH_ = "i686" ]; then
+    echo "32-bit system           detected"
+  else
+    if [ $MACH_ = "x86_64" ]; then
+      MACH=BUILD_64
+      echo "BUILD_64 = 1" >> $CONF
+      echo "64-bit system           detected"
+    else
+      if [ $MACH_ = "sun4u" ]; then
+        MACH=BUILD_64
+        echo "BUILD_64 = 1" >> $CONF
+        echo "64-bit system           detected"
+      fi
+    fi
+  fi
+fi
+if [ $MACH = "BUILD_64" ]; then
+  LIBDIR="lib64"
+else
+  LIBDIR="lib"
+fi
+
 
 if [ $# -gt 0 ]; then
   prefix=""
@@ -166,6 +191,7 @@ echo "VERSION_B=$VERSION_B" >> $CONF_SH
 echo "VERSION_C=$VERSION_C" >> $CONF_SH
 echo "" >> $CONF_SH
 echo "prefix=$prefix" >> $CONF_SH
+echo "libdir=$prefix/$LIBDIR" >> $CONF_SH
 cat  "$CONF_SH.in" >> $CONF_SH
 chmod 0755 "$CONF_SH"
 echo "$CONF_SH created"
@@ -189,11 +215,15 @@ echo $SPEC generated
 
 echo "Version: $VERSION" > $MPKG
 echo "prefix=$prefix" >> $MPKG
+echo "exec_prefix=\${prefix}" >> $MPKG
+echo "libdir=\${exec_prefix}/$LIBDIR" >> $MPKG
 cat  $MPKG.in >> $MPKG
 echo $MPKG generated
 
 echo "Version: $VERSION" > $PKGC
 echo "prefix=$prefix" >> $PKGC
+echo "exec_prefix=\${prefix}" >> $PKGC
+echo "libdir=\${exec_prefix}/$LIBDIR" >> $PKGC
 cat  $PKGC.in >> $PKGC
 echo $PKGC generated
 

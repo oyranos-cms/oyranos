@@ -31,7 +31,7 @@
 #ifndef OYRANOS_MONITOR_H
 #define OYRANOS_MONITOR_H
 
-#include <oyranos/oyranos.h>
+#include "oyranos.h"
 
 #ifdef __cplusplus
 extern "C" {

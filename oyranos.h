@@ -32,7 +32,7 @@
 #define OYRANOS_H
 
 #include <stdlib.h> /* for linux size_t */
-#include <oyranos/oyranos_definitions.h>
+#include "oyranos_definitions.h"
 
 /** \namespace oyranos
     @brief The Oyranos namespace.

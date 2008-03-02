@@ -23,7 +23,11 @@ exec_prefix	= ${prefix}
 bindir		= ${exec_prefix}/bin
 datadir		= ${prefix}/share
 includedir	= ${prefix}/include
-libdir		= ${prefix}/lib
+ifdef BUILD_64
+  libdir		= ${prefix}/lib64
+else
+  libdir		= ${prefix}/lib
+endif
 mandir		= ${prefix}/man
 srcdir		= .
 
@@ -52,8 +56,8 @@ ifdef APPLE
 else
   SO = .so
   ifdef LINUX
-    OPTS=-Wall -g #-O2
-    LINK_FLAGS = -shared -ldl -L.
+    OPTS=-Wall -g -fPIC #-O2
+    LINK_FLAGS = -shared -ldl -fPIC -L.
     LINK_FLAGS_STATIC = q
     LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
     LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
@@ -71,7 +75,11 @@ INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
-X11_LIBS=-L/usr/X11R6/lib -lX11
+ifdef BUILD_64
+  X11_LIBS=-L/usr/X11R6/lib64 -lX11
+else
+  X11_LIBS=-L/usr/X11R6/lib -lX11
+endif
 
 #ELEKTRA_LIBS=-lelektra -lelektra_default
 
@@ -132,7 +140,7 @@ endif
 timedir = .
 mtime   := $(shell find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g)
 
-.SILENT:
+#.SILENT:
 
 ifdef FLU
 FLU_GUI = $(TARGET)-config-flu
@@ -174,7 +182,7 @@ $(TARGET):	$(TARGET)/$(TARGET).h $(OBJECTS) static
 # the monitor library
 $(TARGET)_moni:	$(MONI_OBJECTS) static_moni
 	echo Linking $@ ...
-	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(X11_LIBS) \
+	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(LIBSONAMEFULL) $(X11_LIBS) \
 	-o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) $(LDLIBS) 
 	$(REZ)
@@ -235,7 +243,7 @@ test2:	$(LIB_MONI_SONAMEFULL) test2.o
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o test2 \
 	test2.o \
-	$(LIB_MONI_SONAME) $(LINK_SRC_PATH) \
+	$(LIB_MONI_SONAMEFULL) $(LINK_SRC_PATH) \
 	$(X11_LIBS) $(LDLIBS) -l$(TARGET)
 	$(REZ)
 test:	$(LIBSONAMEFULL) test.o

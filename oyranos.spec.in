@@ -61,8 +61,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%{_bindir}/oyranos-config-flu
-%{_bindir}/oyranos-gamma
+%{_bindir}/*
 %{_libdir}/*.so*
 
 %files devel

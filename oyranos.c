@@ -293,9 +293,9 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
   if(list_sys)
     ksAppendKeys(list, list_sys);
 
-  DBG_PROG_V(( (int)keyParentName ))
+  DBG_PROG_V(( (intptr_t)keyParentName ))
   DBG_PROG_S(( keyParentName ))
-  DBG_PROG_V(( ksGetSize(list) ))
+  DBG_PROG_V(( (intptr_t)ksGetSize(list) ))
 
   DBG_PROG_ENDE
   return list;
@@ -550,7 +550,7 @@ int
 oyCheckStringLen_(char **mem, int old_len, int add)
 {
   int new_len = old_len;
-  DBG_PROG_S(("len1: %d %d\n",add, (old_len - strlen(*mem))));
+  DBG_PROG_S(("len1: %d %d\n",add, (int)(old_len - strlen(*mem))));
   if( add > (old_len - strlen(*mem)) )
   {
     int len = add + strlen(*mem) + 120;
@@ -595,7 +595,7 @@ oyPolicyToXML_  (oyGROUP           group,
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 
                                           strlen(value) + 2*strlen(key) + 8 );
-             DBG_PROG_S(("pos: %d + %d oytmplen: %d\n",pos,strlen(value),oytmplen));
+             DBG_PROG_S(("pos: %d + %d oytmplen: %d\n",pos,(int)strlen(value),oytmplen));
 
              /* append xml keys and value */
              sprintf(&mem[pos], "<%s>%s</%s>\n", key, value, key);
@@ -817,7 +817,7 @@ oyReadFileSize_(const char* name)
 
   {
     fp = fopen(filename, "r");
-    DBG_PROG_S (("fp = %d filename = %s\n", (int)fp, filename))
+    DBG_PROG_S (("fp = %d filename = %s\n", (int)(intptr_t)fp, filename))
 
     if (fp)
     {
@@ -846,7 +846,7 @@ oyReadFileToMem_(const char* name, size_t *size,
 
   {
     fp = fopen(filename, "r");
-    DBG_PROG_S (("fp = %d filename = %s\n", (int)fp, filename))
+    DBG_PROG_S (("fp = %d filename = %s\n", (int)(intptr_t)fp, filename))
 
     if (fp)
     {
@@ -857,7 +857,7 @@ oyReadFileToMem_(const char* name, size_t *size,
         *size = ftell (fp);
       rewind(fp);
 
-      DBG_PROG_S(("%u\n",((size_t)size)));
+      DBG_PROG_S(("%u\n",((unsigned int)(size_t)size)));
 
       /* allocate memory */
       mem = (char*) calloc (*size, sizeof(char));
@@ -907,13 +907,13 @@ oyWriteMemToFile_(const char* name, void* mem, size_t size)
   const char* filename;
   int r = 0;
 
-  DBG_PROG_S(("name = %s mem = %d size = %d\n", name, (int)mem, size))
+  DBG_PROG_S(("name = %s mem = %d size = %d\n", name, (int)(intptr_t)mem, (int)(intptr_t)size))
 
   filename = name;
 
   {
     fp = fopen(filename, "w");
-    DBG_PROG_S(("fp = %d filename = %s", (int)fp, filename))
+    DBG_PROG_S(("fp = %d filename = %s", (int)(intptr_t)fp, filename))
     if ((fp != 0)
      && mem
      && size)
@@ -1531,7 +1531,7 @@ oyPathAdd_ (const char* pfad)
   value = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* search for allready included path */
-  DBG_PROG_S(( "path items: %d", ksGetSize(myKeySet) ))
+  DBG_PROG_S(( "path items: %d", (int)ksGetSize(myKeySet) ))
   FOR_EACH_IN_KDBKEYSET( current, myKeySet )
   {
     keyGetString(current, value, MAX_PATH);
@@ -2046,7 +2046,7 @@ oyCheckProfile_Mem                 (const void* mem, size_t size,
       return 1;
     }
   } else {
-    WARN_S (("False profile - size = %d pos = %lu ", size, (long int)block))
+    WARN_S (("False profile - size = %d pos = %lu ", (int)size, (long int)block))
 
     DBG_PROG_ENDE
     return 1;
@@ -2114,7 +2114,7 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
 
   DBG_PROG_S(("%s", name))
   DBG_PROG_S(("%s", fileName))
-  DBG_PROG_S(("%ld %d", (long int)&((char*)mem)[0] , size))
+  DBG_PROG_S(("%ld %d", (long int)&((char*)mem)[0] , (int)size))
   OY_FREE(fullFileName)
 
   DBG_PROG_ENDE
@@ -2202,15 +2202,17 @@ printComp (oyComp_t* entry)
 { DBG_PROG_START
   #ifdef DEBUG
   static char text[MAX_PATH] = {0};
-  DBG_PROG_S(("%d", (int)entry))
+  DBG_PROG_S(("%d", (int)(intptr_t)entry))
   sprintf( text, "%s:%d %s() begin %d next %d\n",
            __FILE__,__LINE__,__func__,
-           (int)entry->begin, (int)entry->next );
+           (int)(intptr_t)entry->begin, (int)(intptr_t)entry->next );
 
   if(entry->name)
-    sprintf( &text[strlen(text)], " name %s %d", entry->name, (int)entry->name);
+    sprintf( &text[strlen(text)], " name %s %d", entry->name,
+                                  (int)(intptr_t)entry->name);
   if(entry->val)
-    sprintf( &text[strlen(text)], " val %s %d", entry->val, (int)entry->val);
+    sprintf( &text[strlen(text)], " val %s %d", entry->val,
+                                  (int)(intptr_t)entry->val);
   sprintf( &text[strlen(text)], " hits %d\n", entry->hits);
 
   DBG_PROG_ENDE
@@ -2264,10 +2266,10 @@ oyGetDeviceProfile_                (const char* manufacturer,
     int max_hits = 0;
     int count = 0;
     foundEntry = 0;
-    DBG_PROG_S(( "matchList->begin->next: %d\n", (int)matchList->begin->next ))
+    DBG_PROG_S(( "matchList->begin->next: %d\n", (int)(intptr_t)matchList->begin->next ))
     for (testEntry=matchList->begin; testEntry; testEntry=testEntry->next)
     {
-      DBG_PROG_S(( "testEntry %d count: %d\n", (int)testEntry, count++ ))
+      DBG_PROG_S(( "testEntry %d count: %d\n", (int)(intptr_t)testEntry, count++ ))
       if (testEntry->hits > max_hits)
       {
         foundEntry = testEntry;
@@ -3053,7 +3055,7 @@ oyGetProfileBlock                 (const char* profilename, size_t *size,
   oyOpen_();
   char* block = oyGetProfileBlock_ (profilename, size, allocate_func);
   oyClose_();
-  DBG_PROG_S( ("%s %hd %d", profilename, (int)block, *size) )
+  DBG_PROG_S( ("%s %hd %d", profilename, (int)(intptr_t)block, (int)(intptr_t)*size) )
   DBG_PROG
 
   DBG_PROG_ENDE

@@ -70,24 +70,31 @@ if [ "$echo_help" == "yes" ]; then
   echo "  $0 --ld_x_staticflags"
 fi
 
+elektra_dyn="`pkg-config --libs elektra` -lelektra-filesys"
+if [ -f $libdir/libelektra.a ]; then
+  elektra="$libdir/libelektra.a $libdir/libelektra-filesys.a"
+else
+  elektra="$elektra_dyn"
+fi
+
 if [ "$echo_cflags" == "yes" ]; then
   echo "-I$prefix/include"
 fi
 
 if [ "$echo_ldflags" == "yes" ]; then
-  echo "-L$prefix/lib -loyranos -lelektra"
+  echo "-L$libdir -loyranos $elektra_dyn"
 fi
 
 if [ "$echo_ldstaticflags" == "yes" ]; then
-  echo "$prefix/lib/liboyranos.a -lelektra -ldl"
+  echo "$libdir/liboyranos.a $elektra -ldl"
 fi
 
 if [ "$echo_ld_x_flags" == "yes" ]; then
-  echo "-L$prefix/lib -loyranos -loyranos_moni -lelektra"
+  echo "-L$libdir -loyranos -loyranos_moni $elektra_dyn"
 fi
 
 if [ "$echo_ld_x_staticflags" == "yes" ]; then
-  echo "$prefix/lib/liboyranos.a $prefix/lib/liboyranos_moni.a -lelektra -lX11 -ldl"
+  echo "$libdir/liboyranos.a $libdir/liboyranos_moni.a $elektra -lX11 -ldl"
 fi
 
 

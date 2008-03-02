@@ -52,7 +52,7 @@ extern int level_PROG;
 #define LEVEL { int i; for (i = 0; i < level_PROG; i++) printf (" "); }
 #define DBG if(oy_debug) { LEVEL printf("        "); DBG_T_ printf ("\n");}
 #define DBG_S(txt) if(oy_debug) { LEVEL printf("        "); DBG_T_ printf txt ; printf("\n"); }
-#define DBG_V(txt) if(oy_debug) { LEVEL printf("        "); DBG_T_ printf(#txt " %d\n", txt);}
+#define DBG_V(txt) if(oy_debug) { int val = (int) txt; LEVEL printf("        "); DBG_T_ printf(#txt " %d\n", val);}
 #if DEBUG == 1
 #define DBG_MEM DBG
 #define DBG_MEM_S(txt) DBG_S(txt)
