@@ -8,7 +8,11 @@ COLLECT = ar cru
 RANLIB = ranlib
 LNK = ln -s
 RM = rm -vf
+ifdef GNU
+COPY = cp -vdpa
+else
 COPY = cp -v
+endif
 
 prefix		= /opt/local
 exec_prefix	= ${prefix}
@@ -19,7 +23,7 @@ libdir		= ${exec_prefix}/lib
 mandir		= ${prefix}/man
 srcdir		= .
 
-#TARGET  = oyranos
+TARGET  = oyranos
 
 #VERSION_A = 0
 #VERSION_B = 0
@@ -42,9 +46,18 @@ ifdef FLU
 FLU_H = -DHAVE_FLU `flu-config --cxxflags`
 endif
 
+ifdef GNU
 LINK_FLAGS = -shared -fpic -ldl
 LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
 LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
+else
+  ifdef APPLE
+    LINK_FLAGS = -shared -fpic -ldl
+    LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
+    LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
+  endif
+LINK_FLAGS = -ldl
+endif
 
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 INCL=-I$(includedir) -I/usr/X11R6/include -I$(srcdir)
@@ -102,9 +115,8 @@ MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c
 FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 				$(CFILES_FLU:.c=.o)
 
-REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) mac.r
 ifdef APPLE
-APPLE   = $(REZ)
+REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) mac.r
 endif
 
 topdir  = ..
@@ -132,7 +144,7 @@ $(TARGET)_moni:	$(MONI_OBJECTS)
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(X11_LIBS) \
 	-o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) \
-	$(APPLE)
+	$(REZ)
 	$(RM)  $(LIB_MONI_SONAME)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
 	$(RM)  $(LIB_MONI_SO)
