@@ -1,0 +1,13 @@
+Building from Sources:
+
+fl_i18n depends on following libraries:
+
+  # FLTK version >= 1.1.4
+  # for osX only (since version 0.30) install GNU gettext (and libiconv?)
+
+For building unpack the tgz file in you project directory.
+Do a make:
+    #make
+
+Link against the build static library in the fl_i18n_xxx directory.
+

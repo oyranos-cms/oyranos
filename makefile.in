@@ -2,10 +2,12 @@
 COLLECT = ar cru
 RANLIB = ranlib
 LNK = ln -s
-INSTALL = install -v
 RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
+MSGCAT = msgcat
+MSGFMT = msgfmt -c --statistics
 
 srcdir		= .
+docdir          = $(datadir)/doc/$(TARGET)
 
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)
@@ -17,12 +19,13 @@ LIB_MONI_SO = lib$(TARGET)_moni$(SO)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
 LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
+LIBFL_I18N = fl_i18n/libfl_i18n.a
 
 DL = --ldflags # --ldstaticflags
 
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
-	$(PNG_H) $(ELEKTRA_H) $(X_H)
+	$(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL)
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
@@ -45,7 +48,8 @@ CPP_HEADERS = \
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
-	$(TARGET)_helper.c
+	$(TARGET)_helper.c \
+	$(TARGET)_sentinel.c
 CFILESC = \
 	$(TARGET)_debug.c
 CFILES_MONI = \
@@ -65,13 +69,18 @@ CXXFILES =
 #	fl_oyranos.cxx
 DATA = \
 	$(TARGET)_logo.png
-DOKU = \
-        AUTHORS \
+DOKU =  AUTHORS \
         ChangeLog \
         COPYING \
         README \
-		Doxyfile \
-		doxymentation
+        Doxyfile \
+        doxymentation
+
+LINGUAS_SRC = $(LING:.po=.gmo)
+POT_FILE = po/$(TARGET).pot
+POT_SCRIPT = oyranos_xml_to_po.sh
+
+SCRIPTS = $(POT_SCRIPT)
 
 FLUID = \
 	oyranos_config_fltk.fl \
@@ -80,7 +89,7 @@ FLUID = \
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
-		$(CPPFILES_FLU) test.c test2.cpp
+		$(CXXFILES_FLTK) $(CPPFILES_FLU) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o)
@@ -106,12 +115,13 @@ ALL_FILES = \
 	$(TARGET).spec.in \
 	$(TARGET)-config.in \
 	$(SOURCES) \
+	$(SCRIPTS) \
 	$(FLUID)
 
 # build all what is needed to run the libraries, helpers and the examples
 all:	mkdepend $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	$(FLTK_GUI) $(FLU_GUI) $(TEST2)
+	$(FLTK_GUI) $(FLU_GUI) $(TEST2) $(LINGUAS_SRC)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
@@ -120,9 +130,7 @@ all:	mkdepend $(LIB_MONI_SONAMEFULL) \
 	done;
 
 # get time stamp
-C := $(shell date +%C)
-MTIME   := $(shell date +%Y%m%e.%H%M%S | sed s/$C//)
-# MTIME   := $(shell find $(TIMEDIR) -prune -printf %Ty%Tm%Td.%TT | sed s/\://g)
+MTIME   := $(shell date +%y%m%d.%H%M%S)
 
 # this is a test
 time:
@@ -156,7 +164,7 @@ $(LIB_XNVCTRL).a:
 	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
 # the twinview library
-$(TARGET)-monitor-nvidia:	$(LIB_XNVCTRL).a
+$(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a
 	echo Linking $@ ...
 	-$(CC) $(OPTS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
@@ -166,12 +174,12 @@ $(target)_config_fltk.o:	$(TARGET)_config_fltk.cxx
 	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c $<
 
 # general configuration tool example
-$(TARGET)-config-fltk:	$(FLTK_OBJECTS)
+$(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o $(TARGET)-config-fltk \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
-	$(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS)
+	$(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS)  $(I18N_LIB) $(LIBFL_I18N)
 	$(REZ)
 
 
@@ -225,6 +233,52 @@ test:	test.o
 	$(LIBSONAMEFULL) $(LINK_SRC_PATH) \
 	$(LDLIBS) 
 
+$(LIBFL_I18N):
+	(cd fl_i18n/; make -f $(MAKEFILE_ARCH))
+
+$(LINGUAS_SRC):	$(POT_FILE)
+	echo Linguas ... $(@:.gmo=)
+	for ling in $(@:.gmo=); do \
+	  lingua=`echo $${ling} | sed s%po\/%%g`; \
+	  echo "update $${ling}.gmo ..."; \
+	  test -f $${ling}.po \
+        && ($(MSGFMT) -o $${ling}.gmo $${ling}.po; \
+            if [ ! -d $${ling} ]; then \
+              mkdir $${ling}; \
+            fi; \
+            if [ ! -d ./$${ling}/LC_MESSAGES ]; then \
+              mkdir $${ling}/LC_MESSAGES; \
+            fi; \
+            test -L $${ling}/LC_MESSAGES/$(TARGET).mo \
+              && $(RM) $${ling}/LC_MESSAGES/$(TARGET).mo \
+              || echo $${ling}/LC_MESSAGES/$(TARGET).mo nicht gefunden; \
+            ln -s ../../$${lingua}.gmo $$ling/LC_MESSAGES/$(TARGET).mo;) \
+        || (echo $${ling}.po is not yet ready ... skipping) \
+	done;
+
+$(POT_FILE):
+	mkdir -p ./po
+	for i in cmms/*.oy_cmm_register.xml; do \
+	  ii=`echo $${i} | sed s%cmms\/%%g`; \
+	  iii=`echo $${ii} | sed s%.xml%.pot%g`; \
+	  ./$(POT_SCRIPT) cmms/$${ii}; \
+	  mv cmms/$${iii} po/; \
+	done;
+	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
+	-d $(TARGET) \
+	-o $(POT_FILE) \
+	$(SOURCES) || echo -e "\c"
+	$(MSGCAT) po/*.pot -o po/oyranos.pot
+	for ling in po/*.po; do \
+	  lingua=`echo $${ling} | sed 's%po\/%%g ; s%.po%%'`; \
+	  test `which $(MSGMERGE)` && \
+	         $(MSGMERGE) $(MSGMERG_OPTS) po/$${lingua}.po \
+	         $(POT_FILE) || \
+	      echo -e "\c"; \
+	done;
+	echo $(POT_FILE) fertig
+
+
 doc:
 	echo Documentation ...
 	test -n 'which doxygen' && doxygen Doxyfile || echo "Will not create Documentation because doxygen is missing"
@@ -259,6 +313,14 @@ install-main:	all doc
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
+	echo Installing CMM description files ...
+	-mkdir -p $(DESTDIR)$(syscolordir)/cmms
+	-$(INSTALL) -m 644 cmms/*.oy_cmm_register.xml $(DESTDIR)$(syscolordir)/cmms
+	mkdir -p $(DESTDIR)$(docdir)
+	$(INSTALL) -m 644 $(DOKU) $(DESTDIR)$(docdir)
+	mkdir -p $(DESTDIR)$(docdir)/html
+	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
+	$(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
 	echo ... Installation finished
 
 # install recursive
@@ -268,6 +330,15 @@ install:	install-main
 	     test $${prof} && \
 	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	done;
+	echo  Linguas ...
+	for ling in $(LINGUAS); do \
+	  echo "installiere po/$${ling}.gmo ..."; \
+	  mkdir -p $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES; \
+	  test -f po/$${ling}.gmo \
+		&& (mkdir -p $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES; \
+            $(INSTALL) -m 644 po/$${ling}.gmo $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo ) \
+		|| (echo $${ling}.gmo is not yet ready ... skipping); \
 	done;
 
 install_gui:	$(TARGET)-config-fltk
@@ -327,7 +398,25 @@ uninstall:
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	   done; \
         ) || echo "no profile directory found"
-	-$(RM)   $(DESTDIR)$(syscolordir)/$(settingsdirname)/*.policy.xml
+	for i in settings/*.policy.xml; do \
+	  ii=`echo $${i} | sed s%settings\/%%g`; \
+	  $(RM)   $(DESTDIR)$(syscolordir)/$(settingsdirname)/$${ii}; \
+	done;
+	for i in cmms/*.oy_cmm_register.xml; do \
+	  ii=`echo $${i} | sed s%cmms\/%%g`; \
+	  $(RM)   $(DESTDIR)$(syscolordir)/cmms/$${ii}; \
+	done;
+	for file in $(DOKU); do \
+	  $(RM) $(DESTDIR)$(docdir)/$$file; \
+	done
+	for file in $(SCRIPTS); do \
+	  $(RM) $(DESTDIR)$(docdir)/$$file; \
+	done
+	-$(RM) -R $(DESTDIR)$(docdir)/html
+	for ling in $(LINGUAS); do \
+	  $(RM) $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo; \
+	done;
+	echo ... $@ done
 
 # remove in this directory
 clean:
@@ -339,7 +428,13 @@ clean:
 	test2.o test.o test2 test \
 	$(TARGET)-config-fltk $(FLTK_OBJECTS) \
 	$(TARGET)-config-flu $(FLU_OBJECTS)
+	-for ling in $(LINGUAS); do \
+	  test -f po/$${ling}.gmo \
+        && $(RM) po/$${ling}.gmo; \
+	done;
 	-(cd $(LIB_XNVCTRL) && $(MAKE) clean)
+	(cd fl_i18n/; make -f $(MAKEFILE_ARCH) clean)
+	echo ... $@ done
 
 # configure if the file config is not available
 config:
@@ -410,12 +505,22 @@ targz:
 # basic file set
 copy_files:
 	mkdir $(DESTDIR)
+	(cd fl_i18n; \
+	 make DESTDIR=../$(DESTDIR)/fl_i18n -f $(MAKEFILE_ARCH) copy_files; \
+	 cd ..)
 	$(COPY) -R \
 	$(ALL_FILES) \
 	$(DESTDIR)
 	$(COPY) -r settings $(DESTDIR)
+	$(COPY) -r cmms $(DESTDIR)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) clean)
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
+	mkdir $(DESTDIR)/po
+	$(COPY) $(POT_FILE) $(DESTDIR)/po
+	for ling in $(LINGUAS); do \
+	  test -f po/$${ling}.po \
+	  && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
+	done;
 
 # mkdepend
 include mkdepend

@@ -17,11 +17,11 @@
 
   <!-- Editing XYZ
        Prefered XYZ Editing Colour Space -->
-  <oyEDITING_XYZ>LCMSXYZI.ICM</oyEDITING_XYZ>
+  <oyEDITING_XYZ>XYZ.icc</oyEDITING_XYZ>
 
   <!-- Editing Lab
        Prefered CIE*Lab Editing Colour Space -->
-  <oyEDITING_LAB>LCMSLABI.ICM</oyEDITING_LAB>
+  <oyEDITING_LAB>Lab.icc</oyEDITING_LAB>
 
   <!-- Assumed XYZ source
        Assigning an untagged XYZ Image an colour space -->

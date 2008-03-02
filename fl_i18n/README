@@ -1,0 +1,26 @@
+The fl_i18n is a library to include in your project. It is not for endusers.
+
+fl_i18n helpes with setting up locale information on Linux and osX. It needs the GNU i18n tools, which's main part is linkable under the LGPL license.
+
+Translations and functions for the filechooser in one language are included. Please post enhancements so other can benefit too.
+
+Code is available under the FLTK license, but needs further linking against LGPL code.
+
+One option exists to make the translation thread safe.
+You have to define HAVE_PTHREAD_H in the fl_i18n.cxx file.
+
+
+
+USAGE:
+
+  Include the fl_i18n.H header file in you source files and use the functions
+  there.
+
+  Let you build system dig into the fl_i18n.xxx directory and do a make there.
+
+  Link you executeable / library against the statical build libfl_i18n.xx
+  library.
+
+  Example is included.
+
+

@@ -1,0 +1,101 @@
+# Translation of hello-sh-0.14.1.po to Russian
+# Copyright (C) 2004 Free Software Foundation, Inc.
+# This file is distributed under the same license as the hello-sh package.
+# Copyright (C) 2004 Yoyodyne, Inc.
+# Pavel Maryanov <acid_jack@ukr.net>, 2004.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hello-sh 0.14.1\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2006-07-27 22:06+0200\n"
+"PO-Revision-Date: 2004-11-17 10:08+0200\n"
+"Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=KOI8-R\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.3\n"
+
+#: fl_i18n.cxx:172
+msgid "osX locale obtained: "
+msgstr ""
+
+#: fl_i18n.cxx:175
+msgid "osX locale not obtained"
+msgstr ""
+
+#: fl_i18n.cxx:282
+msgid "try to set LANG"
+msgstr ""
+
+#: fl_i18n.cxx:302
+msgid "try locale in "
+msgstr ""
+
+#: fl_i18n.cxx:311
+msgid "set codeset for"
+msgstr ""
+
+#: fl_i18n.cxx:344
+msgid "Add to Favorites"
+msgstr ""
+
+#: fl_i18n.cxx:345
+msgid "All Files (*)"
+msgstr ""
+
+#: fl_i18n.cxx:346
+msgid "Custom Filter"
+msgstr ""
+
+#: fl_i18n.cxx:347
+msgid "Please choose an existing file!"
+msgstr ""
+
+#: fl_i18n.cxx:348
+msgid "Favorites"
+msgstr ""
+
+#: fl_i18n.cxx:349
+msgid "Filename"
+msgstr ""
+
+#: fl_i18n.cxx:350
+msgid "Manage Favorites"
+msgstr ""
+
+#: fl_i18n.cxx:352
+msgid "My Computer"
+msgstr ""
+
+#: fl_i18n.cxx:354
+msgid "Filesystems"
+msgstr ""
+
+#: fl_i18n.cxx:356
+msgid "New Directory?"
+msgstr ""
+
+#: fl_i18n.cxx:357
+msgid "Preview"
+msgstr ""
+
+#: fl_i18n.cxx:359
+msgid "Save"
+msgstr ""
+
+#: fl_i18n.cxx:361
+msgid "Show:"
+msgstr ""
+
+#: fl_i18n_example.cxx:25 fl_i18n_example.cxx:28
+msgid "Hello, world!"
+msgstr "Здравствуй, мир!"
+
+#: fl_i18n_example.cxx:26
+msgid "fl_i18n_example"
+msgstr ""
+
+#~ msgid "This program is running as process number $pid."
+#~ msgstr "Эта программа выполняется как процесс под номером $pid."

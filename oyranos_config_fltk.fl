@@ -1,5 +1,8 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0107 
+i18n_type 1 
+i18n_include <libintl.h> 
+i18n_function _ 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_Choice.H>} {public
@@ -32,6 +35,9 @@ decl {\#include "oyranos.h"
 \#include "config.h"} {public
 } 
 
+decl {\#include "fl_i18n/fl_i18n.H"} {public
+} 
+
 decl {\#include <iostream>} {public
 } 
 
@@ -42,9 +48,6 @@ decl {\#include <cstdio>} {public
 } 
 
 decl {using namespace oyranos;} {public
-} 
-
-decl {\#define _(text) text} {public
 } 
 
 decl {\#define H_SPACING 10} {public
@@ -144,7 +147,7 @@ Function {getPolicyName()} {return_type {const char*}
   return name;} {}
 } 
 
-Function {getPolicies( int *count )} {open return_type {const char**}
+Function {getPolicies( int *count )} {return_type {const char**}
 } {
   code {static const char *policy_list[8] = {
 
@@ -153,6 +156,9 @@ Function {getPolicies( int *count )} {open return_type {const char**}
   "PrePress", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH    "prepress.policy.xml",
   "Photographers", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH "photographer.policy.xml"
   };
+
+  for(int i = 0; i < 8; ++i)
+    policy_list[i*2] = _(policy_list[i*2]);
 
 /*  FILE *pp = popen( "oyranos-config --syscolordir", "r" );
   if (!pp) {
@@ -244,7 +250,7 @@ Function {rmPathCallback( Fl_Widget* w, void* )} {} {
       char text[512];
       int error = oyPathAdd (pp->box->label());
       if(error) {
-        sprintf(text, "error setting path: %s", pp->box->label());
+        sprintf(text, _("error setting path: %s"), pp->box->label());
         fl_alert( text );
       }
     } else
@@ -260,11 +266,10 @@ Function {rmPathCallback( Fl_Widget* w, void* )} {} {
       // Nun ist der Speicherblock fuer diese Funktion bereits freigegeben
       // und wird aber weiter benutzt
     } else fl_alert( "no Fl_Button" );
-  } else fl_alert( "Path" );} {}
+  } else fl_alert( _("Path") );} {}
 } 
 
-Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {open
-} {
+Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {} {
   code {Option *op = dynamic_cast<Option*> (w->parent());
   if(op) {
     Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
@@ -280,8 +285,7 @@ Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {open
       } else
         updateUI();
     } else fl_alert( "no Fl_Choice" );
-  } else fl_alert( _("Select Behaviour") );} {selected
-  }
+  } else fl_alert( _("Select Behaviour") );} {}
 } 
 
 class OyFlPack {: {public Fl_Pack}
@@ -462,7 +466,7 @@ class Option {: {public OyFlPack} private
       }
     }
     if(occurence > 1)
-      WARN_S(("multiple occurencies of default %s profile: %d times",
+      WARN_S((_("multiple occurencies of default %s profile: %d times"),
                name, occurence))
 
     DBG_PROG_V((choice->size()))
@@ -554,7 +558,7 @@ class Option {: {public OyFlPack} private
   }
 } 
 
-class ProfilePath {: {public Fl_Pack} private
+class ProfilePath {open : {public Fl_Pack} private
 } {
   decl {Fl_Box   *box;
   int       n;
@@ -583,7 +587,9 @@ class ProfilePath {: {public Fl_Pack} private
       button_remove->callback( rmPathCallback );
       button_remove->tooltip(_("Exclude this path"));
       new Fl_Box( 0, 0, H_SPACING, 20 );
+      printf( "%s : %s\\n", name, SYSCOLORDIR OY_SLASH ICCDIRNAME );
     }
+    printf( "%s ? %s %s %s\\n", name, SYSCOLORDIR, OY_SLASH, ICCDIRNAME );
 
     int width=0, height=0;
     int scroll_w = 50; //default_profiles_pack->w() - 3*H_SPACING - BUTTON_HEIGHT;
@@ -928,12 +934,91 @@ Function {updateUI()} {} {
   policy_box->label( getPolicyName() );} {}
 } 
 
-Function {} {private
+Function {} {open C
 } {
-  code {Fl::scheme("plastic");} {}
+  code {Fl::scheme("plastic");
+
+  const char *locale_paths[3] = {0,0,0};
+  signed int is_path = -1;
+  int num_paths = 0;
+\# if __APPLE__
+  std::string bdr;
+  // RESOURCESPATH is set in the bundle by "Contents/MacOS/ICC Examin.sh"
+  if(getenv("RESOURCESPATH")) {
+    bdr = getenv("RESOURCESPATH");
+    bdr += "/locale";
+    locale_paths[0] = bdr.c_str(); ++num_paths;
+  }
+  if(!locale_paths[0]) {
+    bdr = icc_examin_ns::holeBundleResource("locale","");
+    if(bdr.size())
+    {
+      locale_paths[0] = bdr.c_str();
+      ++num_paths;
+    }
+  }
+  locale_paths[1] = LOCALEDIR; ++num_paths;
+  locale_paths[2] = SRC_LOCALEDIR; ++num_paths;
+\# else
+  locale_paths[0] = LOCALEDIR; ++num_paths;
+\#ifdef WIN32
+\#define DIR_SEPARATOR_C '\\\\'
+\#define DIR_SEPARATOR "\\\\"
+\#else
+\#define DIR_SEPARATOR_C '/'
+\#define DIR_SEPARATOR "/"
+\#endif
+  //DBG_NUM_V(( argc <<" "<< argv[0] )
+  if (argc)
+  { const char *reloc_path = {"../share/locale"};
+    int len = (strlen(argv[0]) + strlen(reloc_path)) * 2 + 128;
+    char *path = (char*) malloc( len ); // small one time leak
+    char *text = (char*) malloc( len );
+    text[0] = 0;
+    // whats the path for the executeable ?
+    snprintf (text, len-1, argv[0]);
+    if (strrchr(text, DIR_SEPARATOR_C)) {
+      char *tmp = strrchr(text, DIR_SEPARATOR_C);
+      *tmp = 0;
+    } else {
+      FILE *pp = NULL;
+
+      if (text) free (text);
+      text = (char*) malloc( 1024 );
+
+      // Suche das ausfuehrbare Programm
+      // TODO symbolische Verknuepfungen
+      snprintf( text, 1024, "which %s", argv[0]);
+      pp = popen( text, "r" );
+      if (pp) {
+        if (fscanf (pp, "%s", text) != 1)
+        {
+          pclose (pp);
+          WARN_S(( "no executeable path found" ));
+        }
+      } else {
+        WARN_S(( "could not ask for executeable path" ));
+      }
+    }
+    snprintf (path, len-1, "%s%s%s",text,DIR_SEPARATOR,reloc_path);
+    locale_paths[1] = path; ++num_paths;
+    locale_paths[2] = SRC_LOCALEDIR; ++num_paths;
+    //DBG_NUM_V( path );
+    if (text) free (text);
+  } else {
+    locale_paths[1] = SRC_LOCALEDIR; ++num_paths;
+  }
+\# endif
+  is_path = fl_search_locale_path (num_paths, locale_paths, "de", "oyranos");
+
+  if(is_path >= 0) {
+    fl_initialise_locale ( "oyranos", locale_paths[is_path] );
+    WARN_S(( _("locale found in: %s"), locale_paths[is_path] ))
+    WARN_S((_("Saturation")))
+  }} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {16 573 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {35 601 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
@@ -1008,8 +1093,8 @@ Function {} {private
       xywh {160 371 255 35} type HORIZONTAL
     } {
       Fl_Box {} {
-        label {Active Policy:}
-        xywh {160 371 120 35} align 20
+        label {Active Policy:} selected
+        xywh {160 371 120 35} align 24
       }
       Fl_Box policy_box {
         label {----}

@@ -65,13 +65,19 @@ main(int argc, char **argv)
 {
   Display *display = XOpenDisplay(NULL);
   size_t *size = (size_t*) calloc(sizeof(size_t), 24);
-  unsigned char** data = oyGetNvidiaEdid( display, 0, &size );
-  int i;
-  struct DDC_EDID1 *edi=0;
+  unsigned char** data = NULL;
+  int i, j;
+  struct oyDDC_EDID1_s_ *edi=0;
   int screen_number = 32;
-  int number_of_screens = 0;
+  int number_of_screens = 1;
+  int monitors = 0;
   int print_help = 0;
   int put_edid = 0;
+  char *app_name = argv[0];
+  int traditional_screens_b = 1;
+# ifdef HAVE_XIN
+  XineramaScreenInfo* fenster = 0;
+# endif
 
   if(!display) return 1;
 
@@ -87,9 +93,14 @@ main(int argc, char **argv)
     if((strcmp(argv[i], "--screen") == 0) ||
        (strcmp(argv[i], "-s") == 0) )
     {
-      if((i+1) <= argc)
+      if((i+1) < argc)
       {
         screen_number = atoi(argv[i+1]); ++i;
+        fprintf(stderr, "using only screen: %d\n", screen_number );
+      } else {
+        fprintf(stderr, "%s: missing integer argument for --screen option\n",
+                app_name);
+        print_help = 1;
       }
     } else
 
@@ -123,56 +134,135 @@ main(int argc, char **argv)
       printf(" %s -p/--put       -- put the edid info into the root window\n",argv[0]);
       printf(" %s -s/--screen x  -- the requested screen\n", argv[0]);
       printf("\n");
-      return 0;
+      return 1;
   }
 
-  for(i = 0; i < 24; ++i)
-    if(data[i] && size[i])
+  if( ScreenCount( display ) > 1 )
+  {
+    number_of_screens = ScreenCount( display );
+    traditional_screens_b = 1;
+  }
+# ifdef HAVE_XIN
+  else
+  {
+    if( XineramaIsActive( display ) )
     {
-      //printf( "%d: Edid of size %d found.\n", i, (int)size[i]);
-      edi = (struct DDC_EDID1*)data[i];
-      if(size[i] == 128)
+      fenster = XineramaQueryScreens( display, &number_of_screens );
+      traditional_screens_b = 0;
+    }
+  }
+# endif
+
+  //printf("ScreenCount: %d number_of_screens: %d\n", ScreenCount( display ), number_of_screens);
+
+  for( i = 0; i < number_of_screens; ++i)
+  {
+    int monitors_in_traditional_screen = 0;
+    int traditional_screen = traditional_screens_b ? i : 0;
+
+    if( !traditional_screens_b )
+      monitors_in_traditional_screen = monitors;
+
+    data = oyGetNvidiaEdid(display, i, &size);
+
+    if(data)
+    for(j = 0; j < 24; ++j)
+    if(data[j] && size[j])
+    {
+      //printf( "%d: Edid of size %d found.\n", j, (int)size[j]);
+      edi = (struct oyDDC_EDID1_s_*)data[j];
+
+      if(size[j] == 128)
       {
         char *manufacturer=0,
              *model=0,             
              *serial=0;
-        char *display_name = XDisplayString( display );
+        char  display_name[256] = {""};
+        char *ptr = NULL;
 
+        snprintf(display_name, 256, "%s", XDisplayString( display ));
+        if( (ptr = strchr(display_name, ':')) != 0 )
+          if( (ptr = strchr(ptr, '.')) != 0 )
+            ptr[0] = '\000';
 
-        fprintf( stderr, "EDID version: %d.%d\n", edi->major_version, edi->minor_version);
+        if(strlen(display_name))
+          snprintf( &display_name[strlen(display_name)], 256, "_%d", i );
+
+        fprintf( stderr, "EDID version: %d.%d in .%d[%d]\n",
+                 edi->major_version, edi->minor_version, i, j);
         oyUnrollEdid1_( edi, &manufacturer, &model, &serial, oyAllocateFunc_ );
 
 
-        if(screen_number == 32 || screen_number == number_of_screens)
+        if(screen_number == 32 || screen_number == i)
         {
           printf("%s %s %s %s\n", manufacturer, model, serial,
                                   display_name);
+
+          // we must rely on eighter screens or Xinerama
+          // otherwise we split the behaviour without compensating missing
+          // capabilities
+
+          if( traditional_screens_b &&
+              monitors_in_traditional_screen > 1 )
+          {
+            fprintf(stderr, "%s:\n", app_name);
+		    fprintf(stderr, "Will not set up EDID atom in X!\n"
+                            "(The above monitor will not be detectable.)\n\n");
+          } else
           if(put_edid)
           {
-            Window w = RootWindow(display, 0);
+            Window w = RootWindow(display, traditional_screen);
             char atom_name[48] = {"XFree86_DDC_EDID1_RAWDATA"};
             Atom atom;
 
-            if( number_of_screens > 0 )
+            if( !w )
+            {
+              fprintf(stderr, "%s:\n", app_name);
+              fprintf(stderr, "\n could not find root window for display %s screen %d.\n\n", display_name, traditional_screen);
+            }
+
+            if( monitors_in_traditional_screen >= 1 )
               sprintf( &atom_name[strlen( atom_name )], "_%d",
-                       number_of_screens);
+                       monitors_in_traditional_screen);
 
             atom = XInternAtom( display, atom_name, False );
 
-            XChangeProperty( display, w, atom, XA_CARDINAL,
-                             8, PropModeReplace, data[i], (int)size[i] );
+            if( atom == None )
+            {
+              fprintf(stderr, "%s:\n", app_name);
+              fprintf(stderr,"\n could not find atom \"%s\" in display %s.\n\n",
+                      atom_name, display_name);
+            } else
+              XChangeProperty( display, w, atom, XA_CARDINAL,
+                               8, PropModeReplace, data[j], (int)size[j] );
           }
         }
 
         if (manufacturer) free (manufacturer);
         if (model) free (model);
         if (serial) free (serial);
-        ++number_of_screens;
+        ++monitors;
+        ++monitors_in_traditional_screen;
       }
     }
 
+    free (data);
+  }
+
+  if( monitors < number_of_screens )
+  {
+    fprintf(stderr, "\n%s:", app_name);
+    fprintf(stderr, "\nmissing monitors: %d\n\n", number_of_screens - monitors);
+  } else
+  if( monitors > number_of_screens )
+  {
+    fprintf(stderr, "\n%s:", app_name);
+    fprintf(stderr, "\ntoo less screens: %d\n", monitors - number_of_screens);
+    fprintf(stderr, "\n -> Xinerama is NOT enabled.\n\n");
+  }
+
   if(screen_number == -1)
-    printf( "%d\n", number_of_screens );
+    printf( "%d\n", monitors );
 
   XCloseDisplay( display );
 

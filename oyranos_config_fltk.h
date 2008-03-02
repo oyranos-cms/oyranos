@@ -15,11 +15,11 @@
 #include "oyranos_debug.h"
 #include "oyranos_config.h"
 #include "config.h"
+#include "fl_i18n/fl_i18n.H"
 #include <iostream>
 #include <fstream>
 #include <cstdio>
 using namespace oyranos;
-#define _(text) text
 #define H_SPACING 10
 #define V_SPACING 3
 #define BUTTON_HEIGHT 25

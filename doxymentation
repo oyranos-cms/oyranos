@@ -91,11 +91,25 @@
       responsibility of the user.
     - More complex library allocated memory blocks, like profile name lists,
       can be freed with a Oyranos provided function.
+    - Last but not least user allocated Oyranos objects, those allocated by 
+      Oyranos with a user provided function, are free'd by oyDeAllocFunc_t.
+
+    @subsection  naming_convention Naming Convention
+    - As long as possible types are signaled by theyre kind of writing.
+    - all functions, types and enums start with a oy due to no namespace in C
+    - namespace in C++ is oyranos::
+    - functions:  words starting upper case
+    - enums:      all letters upper case, words are separated by underscore
+    - variables:  are lower case and words are separated by underscore
+    - macros:     are all upper case even the starting OY_ 
+    - typs:       end with _t
+    - structs:    end with a _s
+    - internals:  end with _
 
     @subsection information_concept Information Exchange
     - Functions are needed which show useful informations for GUIs, about the
       content in the Profiles and about possible errors.
-    - Some descriptors are provided as static strings, and may help keeping 
+    - Some descriptors are provided as strings, and may help keeping 
       the user interface consistent throughout toolkits. (translation?)
     - A callback mechanism informs about changes regarding the configuration.
     - Special informations like for instance about the display geometry are not
@@ -105,6 +119,11 @@
     - It should be easy to query Oyranos for certain informations contained in a
       profile like primaries, gamma or profile type.
     - To some degree useablity checks for profiles should be included.
+
+    @subsection modul_concept Extensibility
+    - The concept of parsing text files to register new capabilities and modules
+      will help to build a flexible base for further extensions.
+    - Therefore the internal data must be kept dynamic.
 
     @subsection device_configuration Devices Configuration
     - A text parser should allow to distinguish the same profile for multiple
@@ -162,8 +181,6 @@
     <li>more preferences like described in OpenICC email of Jan-Peter Homann
         Subject : Re: [OpenICC] Oyranos APIs update  15.09.05 </li>
     <li></li>
-    <li></li>
-    <li></li>
     </ul>
 
  */
@@ -174,10 +191,8 @@
     Oyranos depends on following libraries:<br>
 
     <ul>
-    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux , <a href="http://sourceforge.net/project/showfiles.php?group_id=117521">version 0.5.0.4</a> s needed due to a rename into libelektra . </li>
-    <li><a href="http://www.osc.edu/~jbryan/FLU">FLU</a> version >= 2.14 
-   for a convenient file browser (optionally, should be installed to play with Oyranos)</li>
-    <li><a href="http://www.fltk.org">fltk</a> version >= 1.1.4 needed by FLU<br>
+    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux , <a href="http://sourceforge.net/project/showfiles.php?group_id=117521">version 0.6</a> s needed due to API changes . </li>
+    <li><a href="http://www.fltk.org">fltk</a> version >= 1.1.4 needed for a user interface<br>
     you may configure fltk with several options enabled<br>
     --enable-threads is needed for threads support (in ICC Examin)<br>
     --enable-xft is ok for antialiased fonts<br>
@@ -187,7 +202,7 @@
     </ul><br>
     For building unpack the tgz file and type #make; make install.<br><br>
     Optionally you can specifiy an other than the default prefix /opt/local by typing:<br>
-    #configure.sh --prefix /what/you/like<br>
+    #configure.sh --prefix=/what/you/like<br>
     #make<br>
     #make install   (optionally)<br>
  */
@@ -200,6 +215,7 @@
     - Oyranos related applications, proposals and links -
       http://www.behrmann.name
     - _ICC_PROFILE spec at http://www.burtonini.com/computing/x-icc-profiles-spec-0.1.html, for an Xatom to communicate profiles over X
+      extended by me (Kai-Uwe Behrmann) http://www.oyranos.com/wiki/index.php?title=ICC_Profiles_in_X_0.2 for multiple monitors on one screen
     - Discussions about an Linux CMS happen at http://lists.freedesktop.org/mailman/listinfo/openicc
  */
 

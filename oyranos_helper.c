@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2005  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2006  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -46,4 +46,13 @@ void* oyAllocateFunc_           (size_t        size)
   return ptr;
 }
 
+void  oyDeAllocateFunc_           (void*       block)
+{
+  if( !block ) {
+    WARN_S(( "emory block is empty" ))
+  } else
+    free( block );
+}
 
+
+const char *domain = "oyranos";

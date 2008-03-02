@@ -42,7 +42,7 @@ namespace oyranos
 #endif /* __cplusplus */
 
 
-struct oy_display_s_ {
+struct oyMonitor_s_ {
   oyOBJECT_TYPE type;        /**< object type */
   char         *name;        /**< traditional display name - host:0 / :0 */
   char         *host;        /**< host name only - host */
@@ -51,42 +51,67 @@ struct oy_display_s_ {
   Display      *display;     /**< logical display */
   int           screen;      /**< external screen number to call for X */
 };
-/** internal only , platformdependent */
-typedef struct oy_display_s_ oy_display_s;
+/** \internal  platformdependent */
+typedef struct oyMonitor_s_ oyMonitor_s;
 
 int         oyGetDisplay_                 ( const char *display_name,
-                                            oy_display_s *disp );
-const char* oyDisplayName_                ( oy_display_s *disp );
-const char* oyDisplayHostName_            ( oy_display_s *disp );
-const char* oyDisplayIdentifier_          ( oy_display_s *disp );
-char*       oyDisplayScreenNumber_        ( oy_display_s *disp );
-Display*    oyDisplayDevice_              ( oy_display_s *disp );
-int         oyDisplayDeviceScreenNumber_  ( oy_display_s *disp );
-int         oyDisplayNumber_              ( oy_display_s *disp );
-int         oyDisplayScreen_              ( oy_display_s *disp );
-int         oyDisplayX_                   ( oy_display_s *disp );
-int         oyDisplayY_                   ( oy_display_s *disp );
-int         oyDisplayWidth_               ( oy_display_s *disp );
-int         oyDisplayHeight_              ( oy_display_s *disp );
+                                            oyMonitor_s *disp );
+const char* oyDisplayName_                ( oyMonitor_s *disp );
+const char* oyDisplayHostName_            ( oyMonitor_s *disp );
+const char* oyDisplayIdentifier_          ( oyMonitor_s *disp );
+char*       oyDisplayScreenNumber_        ( oyMonitor_s *disp );
+Display*    oyDisplayDevice_              ( oyMonitor_s *disp );
+int         oyDisplayDeviceScreenNumber_  ( oyMonitor_s *disp );
+int         oyDisplayNumber_              ( oyMonitor_s *disp );
+int         oyDisplayScreen_              ( oyMonitor_s *disp );
+int         oyDisplayX_                   ( oyMonitor_s *disp );
+int         oyDisplayY_                   ( oyMonitor_s *disp );
+int         oyDisplayWidth_               ( oyMonitor_s *disp );
+int         oyDisplayHeight_              ( oyMonitor_s *disp );
 
 
 int oyFree_       (void *oy_structure);
 
 
-/** an incomplete DDC struct */
-struct DDC_EDID1 {
- char dummy[18];
- char major_version;
- char minor_version;
- char dummy1[58];
- char HW_ID[10];                  /**< 113 + 10 */
- char dummy2[7];
- char Mnf_Model[16];
- char dummy3[2];
- char Serial[10];                 /**< standard? */
+/** @brief \internal DDC struct */
+struct oyDDC_EDID1_s_ {
+ unsigned char sig[8];
+ unsigned char MNF_ID[2];              /* [8] manufaturer ID */
+ unsigned char MON_ID[2];              /* [10] model ID */
+ unsigned char SER_ID[2];              /* [12] serial ID */
+ unsigned char dummy_li[2];
+ unsigned char WEEK;                   /* [16] Week */
+ unsigned char YEAR;                   /* [17] + 1990 => Year */
+ unsigned char major_version;          /* [18] */
+ unsigned char minor_version;          /* [19] */
+ unsigned char video_input_type;       /* [20] */
+ unsigned char width;                  /* [21] */
+ unsigned char height;                 /* [22] */
+ unsigned char gamma_factor;           /* [23] */
+ unsigned char DPMS;                   /* [24] */
+ unsigned char rg;                     /* [25] colour information */
+ unsigned char wb;                     /* [26] */
+ unsigned char rY;                     /* [27] */
+ unsigned char rX;                     /* [28] */
+ unsigned char gY;                     /* [29] */
+ unsigned char gX;                     /* [30] */
+ unsigned char bY;                     /* [31] */
+ unsigned char bX;                     /* [32] */
+ unsigned char wY;                     /* [33] */
+ unsigned char wX;                     /* [34] */
+ unsigned char etiming1;               /* [35] */
+ unsigned char etiming2;               /* [36] */
+ unsigned char mtiming;                /* [37] */
+ unsigned char stdtiming[16];          /* [38] */
+ unsigned char text1[18];              /* [54] Product string */
+ unsigned char text2[18];              /* [72] text 2 */
+ unsigned char text3[18];              /* [90] text 3 */
+ unsigned char text4[18];             /* [108] text 4 */
+ unsigned char dummy_lii;
+ unsigned char checksum;              /* [127] */
 };
 
-void oyUnrollEdid1_               (struct DDC_EDID1 *edi,
+void oyUnrollEdid1_               (struct oyDDC_EDID1_s_ *edi,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,

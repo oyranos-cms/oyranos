@@ -7,16 +7,16 @@ else
 fi
 export PKG_CONFIG_PATH
 
-if [ -n "$ELEKTRA" ] && [ $ELEKTRA -gt 0 ]; then
+if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_min" ]; then
     elektra_min="0.6"
   fi
   if [ -z "$elektra_max" ]; then
     elektra_max="0.6.100"
   fi
-  `pkg-config  --atleast-version=$elektra_min elektra 2>>error.txt`
+  pkg-config  --atleast-version=$elektra_min elektra 2>>error.txt
   if [ $? = 0 ]; then
-   `pkg-config --max-version=$elektra_max elektra 2>>error.txt`
+    pkg-config --max-version=$elektra_max elektra 2>>error.txt
     if [ $? = 0 ]; then
       echo "elektra `pkg-config --modversion elektra`           detected"
       echo "#define HAVE_ELEKTRA 1" >> $CONF_H
@@ -38,9 +38,9 @@ if [ -n "$ELEKTRA" ] && [ $ELEKTRA -gt 0 ]; then
   fi
 fi
 
-if [ -n "$OYRANOS" ] && [ $OYRANOS -gt 0 ]; then
+if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
   OY_=`oyranos-config 2>>error.txt`
-  if [ $? = 0 ] && [ -n $OY_ ]; then
+  if [ $? = 0 ]; then
     echo "Oyranos `oyranos-config --version`           detected"
     echo "#define HAVE_OY 1" >> $CONF_H
     echo "OY = 1" >> $CONF
@@ -56,7 +56,7 @@ if [ -n "$OYRANOS" ] && [ $OYRANOS -gt 0 ]; then
 fi
 
 if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
-  `pkg-config  --atleast-version=1.14 lcms`
+  pkg-config  --atleast-version=1.14 lcms
   if [ $? = 0 ]; then
     echo "littleCMS `pkg-config --modversion lcms`          detected"
     echo "#define HAVE_LCMS 1" >> $CONF_H
@@ -119,7 +119,7 @@ if [ "$X11" = 1 ] && [ $X11 -gt 0 ]; then
 fi
 
 if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
-  `pkg-config  --atleast-version=1.0 ftgl`
+  pkg-config  --atleast-version=1.0 ftgl
   if [ $? = 0 ]; then
     echo "FTGL      `pkg-config --modversion ftgl`         detected"
     echo "#define HAVE_FTGL 1" >> $CONF_H
@@ -182,10 +182,10 @@ fi
 
 if [ -n "$LIBPNG" ] && [ $LIBPNG -gt 0 ]; then
   LIBPNG=libpng
-  `pkg-config  --atleast-version=1.0 $LIBPNG 2>>error.txt`
+  pkg-config  --atleast-version=1.0 $LIBPNG 2>>error.txt
   if [ $? != 0 ]; then
     LIBPNG=libpng12
-    `pkg-config  --atleast-version=1.0 $LIBPNG 2>>error.txt`
+    pkg-config  --atleast-version=1.0 $LIBPNG 2>>error.txt
   fi
   if [ $? = 0 ]; then
     echo "PNG `pkg-config --modversion $LIBPNG`               detected"
@@ -205,6 +205,7 @@ if [ -n "$PO" ] && [ $PO -gt 0 ]; then
   echo "LINGUAS = $LINGUAS" >> $CONF
   echo "Languages detected:     $LINGUAS"
   echo "LING = $LING" >> $CONF
+  echo "#define USE_GETTEXT 1" >> $CONF_H
 fi
 
 if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then

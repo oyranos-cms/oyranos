@@ -85,11 +85,11 @@ extern int level_PROG;
 #define DBG_PROG_V(txt)
 #endif
 #define WARN {int dbg = oy_debug; oy_debug = 1; \
-                    DBG_S(("Warning")) oy_debug = dbg;}
+                    DBG_S((_("Warning"))) oy_debug = dbg;}
 #define WARN_S(txt) {int dbg=oy_debug; oy_debug = 1; \
-                    DBG_S(("Warning : "); printf txt) oy_debug = dbg;}
+                    DBG_S((_("Warning : ")); printf txt) oy_debug = dbg;}
 #define WARN_V(txt) {int dbg=oy_debug; oy_debug = 1; \
-                    DBG_V(("Warning : "); printf txt) oy_debug = dbg;}
+                    DBG_V((_("Warning : ")); printf txt) oy_debug = dbg;}
 
 
 #ifdef __cplusplus

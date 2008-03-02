@@ -54,6 +54,17 @@ namespace oyranos
  */
 typedef void* (*oyAllocFunc_t)         (size_t size);
 
+/**
+ * @param[in] data the pointer to free
+ *
+ * Place here your allocator, like: \code
+   void* myDeAllocFunc (void *data)
+   { return free (data);
+   }
+ * \endcode<br>
+ */
+typedef void (*oyDeAllocFunc_t)       (void *data);
+
 
 /* --- behaviour --- */
 
@@ -79,7 +90,7 @@ typedef enum  {
 enum  {
   oyNO,                                /**< dont do it */
   oyYES,                               /**< automaticaly perform action */
-  oyASK,                               /**< popup dialog */
+  oyASK                                /**< popup dialog */
 }; /**< for oyBEHAVIOUR_ACTION */
 
 int         oyGetBehaviour             (oyBEHAVIOUR       type);
@@ -112,13 +123,6 @@ char*       oyPolicyToXML              (oyGROUP           group,
 
 int         oyReadXMLPolicy            (oyGROUP           group,
                                         const char       *xml);
-
-/*
- * @param[in] data the pointer to deallocate
- *
- * Place here your deallocator, like: \code delete [] data; \endcode
- */
-//typedef void (*oyDeAllocFunc_t)        (void *data);
 
 
 /* path names */
@@ -175,7 +179,7 @@ int   oyCheckProfileMem                (const void* mem, size_t size,
 
 size_t oyGetProfileSize                (const char* profilename);
 void*  oyGetProfileBlock               (const char* profilename, size_t* size,
-                                        oyAllocFunc_t);
+                                        oyAllocFunc_t alloc_func);
 
 
 /* --- options / GUI layout --- */
@@ -207,7 +211,13 @@ typedef enum  {
   oyOPTION_PROFILE_PROOF,          /**< standard proofing profile */
   oyOPTION_DEFAULT_PROFILE_END,    /**< just for easen Gui design */
 
-  oyOPTION_ACTUAL_POLICY = 200     /**< policy selection */
+  oyOPTION_ACTUAL_POLICY = 200,    /**< policy selection */
+
+  oyOPTION_CMM_START = 300,       /**< CMM options */
+  oyOPTION_CMM_SELECT,             /**< CMM selection */
+  oyOPTION_CMM_INTENT,             /**< CMM rendering intent */
+  oyOPTION_CMM_BPC,                /**< black point compensation switch */
+  oyOPTION_CMM_INTENT_PROOF,       /**< Proofing colour transformations */
 } oyOPTION;
 
 const char* oyGetOptionUITitle         (oyOPTION          type,
@@ -219,9 +229,133 @@ const char* oyGetGroupUITitle          (oyGROUP           type,
                                         const char      **tooltips);
 
 
+
+/* --- colour conversions --- */
+
+/** @brief Option for rendering
+
+    should be used in a list oyColourTransformOptions_s to form a options set
+ */
+typedef struct {
+    oyOPTION opt;                     /*!< CMM registred option */
+    int    supported_by_chain;        /*!< 1 for supporting; 0 if one fails */
+    double value_d;                   /*!< value of option; unset with nan; */ 
+} oyOption_s;
+
+/** @brief Options for rendering
+
+    Options can be any flag or rendering intent and other informations needed to
+    configure a process. It contains variables for colour transforms.
+ */
+typedef struct {
+    int n;                            /*!< number of options */
+    oyOption_s* opts;
+} oyOptions_s;
+
+/** @brief a profile and its attributes
+ */
+typedef struct {
+    size_t size;                      /*!< ICC profile size */
+    void *block;                      /*!< ICC profile data */
+    oyDEFAULT_PROFILE use_default;    /*!< if > 0 : take from settings */
+} oyProfile_s;
+
+/** @brief tell about the conversion profiles
+ */
+typedef struct {
+    int            n;                 /*!< number of profiles */
+    oyProfile_s   *profiles;
+} oyProfileList_s;
+
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+} oyRegion_s;
+
+typedef enum {
+    oyUINT8,     /*!<  8-bit integer */
+    oyUINT16,    /*!< 16-bit integer */
+    oyUINT32,    /*!< 32-bit integer */
+    oyHALF,      /*!< 16-bit floating point number */
+    oyFLOAT,     /*!< IEEE floating point number */
+    oyDOUBLE     /*!< IEEE double precission floating point number */
+} oyDATATYPE;
+
+/** @brief a reference struct to gather information for image transformation
+
+    as we dont target a complete imaging solution, only raster is supported
+
+    oyImage_s should hold image dimensions,
+    oyDisplayRegion_s information and
+    a reference to the data for conversion
+
+    As well referencing of itself would be nice.
+
+    Should oyImage_s become internal and we provide a user interface?
+ */
+typedef struct {
+    int          width;       /*!< data width */
+    int          height;      /*!< data height */
+    void        *data;        /*!< image data */
+    oyDATATYPE   type;        /*!< data type */
+    int          planar;      /*!< RRRGGGBBB vs RGBRGBRGB */
+    oyProfile_s *profile;     /*!< image profile */
+    oyRegion_s  *region;      /*!< region to render, if zero render all */
+    int          screen_pos_x;/*!< upper position on screen of image */
+    int          screen_pos_y;/*!< left position on screen of image */
+} oyImage_s;
+
+/** @brief clean all memory including depending structs */
+int            oyImageCleanAll       ( oyImage_s *img, oyDeAllocFunc_t free );
+
+typedef struct {
+    //int          whatch;      /*!< tell Oyranos to observe files */
+    void*        internal;    /*!< Oyranos internal structs */
+} oyColourConversion_s;
+
+/** allocate n oyOption_s */
+oyOptions_s*   oyOptionsCreate       ( int n );
+/** allocate oyOption_s for a 4 char CMM identifier obtained by oyCmmGetCmms */
+oyOptions_s*   oyOptionsCreateFor    ( const char *cmm );
+
+/** free oyOption_s from the list */
+void           oyOptionsFree         ( oyOptions_s *opts, oyDeAllocFunc_t free);
+
+/** confirm if all is ok */
+int            oyOptionsVerifyForCMM ( oyOptions_s *opts, char* cmm );
+
+/** create and possibly precalculate a transform */
+oyColourConversion_s* oyColourConversionCreate ( char* cmm, /*!< zero or a cmm*/
+                                  oyProfileList_s *list,/*!< multi profiles */
+                                  oyOptions_s *opts,   /*!< conversion opts */
+                                  oyImage_s *in,       /*!< input */
+                                  oyImage_s *out       /*!< zero or output */
+                                  );                   /*!< return: conversion*/
+int            oyColourConversionRun ( oyColourConversion_s *colour /*!< object*/
+                                     );                  /*!< return: error */
+
+
+/* --- CMM API --- */
+
+int    oyCmmRegisterXML              ( oyGROUP group,
+                                       const char *xml,
+                                       const char *domain,
+                                       const char *domain_path );
+
+/** obtain 4 char CMM identifiers and number of CMM's */
+char** oyCmmGetCmmNames              ( int        *count,
+                                       oyAllocFunc_t alloc_func );
+int    oyCmmGetOptionRanges          ( const char *cmm,
+                                       oyGROUP    *oy_group_start,
+                                       oyGROUP    *oy_group_end,
+                                       oyOPTION   *oy_option_start,
+                                       oyOPTION   *oy_option_end );
+
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_H */

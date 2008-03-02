@@ -31,8 +31,9 @@
 #ifndef OYRANOS_HELPER_H
 #define OYRANOS_HELPER_H
 
-//#include "oyranos.h"
+#include "oyranos.h"
 #include "oyranos_debug.h"
+#include "config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,7 +44,28 @@ namespace oyranos
 /* memory handling */
 
 void* oyAllocateFunc_           (size_t        size);
-/*void  oyDeAllocateFunc_         (void*  data);*/
+void  oyDeAllocateFunc_         (void*         data);
+
+
+/* complete an name from file including oyResolveDirFileName */
+char*   oyMakeFullFileDirName_     (const char* name);
+/* find an file/dir and do corrections on  ~ ; ../  */
+char*   oyResolveDirFileName_      (const char* name);
+char*   oyExtractPathFromFileName_ (const char* name);
+char*   oyGetHomeDir_              ();
+char*   oyGetParent_               (const char* name);
+int     oyRecursivePaths_      (int (*doInPath) (void*,const char*,const char*),
+                                void* data);
+
+int oyIsDir_      (const char* path);
+int oyIsFile_     (const char* fileName);
+int oyIsFileFull_ (const char* fullFileName);
+int oyMakeDir_    (const char* path);
+
+int   oyWriteMemToFile_ (const char* name, void* mem, size_t size);
+char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
+                         oyAllocFunc_t allocate_func);
+
 
 /* oyFree_ (void*) */
 #define oyFree_m_(x) {                                      \
@@ -56,39 +78,45 @@ void* oyAllocateFunc_           (size_t        size);
 }
 
 /* oyAllocHelper_ (void*, type, size_t, action) */ 
-#define oyAllocHelper_m_(ptr, type, size_, alloc_func, action) { \
-  if (ptr != NULL)    /* defined in oyranos_helper.h */     \
-    oyFree_m_( ptr )                                        \
+#define oyAllocHelper_m_(ptr_, type, size_, alloc_func, action) { \
+  if (ptr_ != NULL)    /* defined in oyranos_helper.h */     \
+    oyFree_m_( ptr_ )                                        \
   if ((size_) <= 0) {                                       \
     WARN_S (("%s:%d %s() nothing to allocate - size: %d\n", \
     __FILE__,__LINE__,__func__, (int)size_));               \
   } else {                                                  \
     oyAllocFunc_t temp = alloc_func;                        \
     if( temp )                                              \
-      ptr = (type*) temp( (size_t)size_ );                  \
+      ptr_ = (type*) temp( (size_t)(size_) * sizeof(type) ); \
     else                                                    \
-      ptr = (type*) calloc (sizeof (type), (size_t)size_);  \
+      ptr_ = (type*) calloc (sizeof (type), (size_t)size_);  \
   }                                                         \
-  if (ptr == NULL) {                                        \
+  if (ptr_ == NULL) {                                        \
     WARN_S( ("%s:%d %s() %s %d %s %s .",__FILE__,__LINE__,  \
          __func__, _("Can not allocate"),(int)size_,        \
-         _("bytes of  memory for"), #ptr));                 \
+         _("bytes of  memory for"), #ptr_));                 \
     action;                                                 \
   }                                                         \
 }
 
 /* oyPostAllocHelper_ (void*, size, action) */
-#define oyPostAllocHelper_m_(ptr, size_, action) {          \
+#define oyPostAllocHelper_m_(ptr_, size_, action) {          \
   if ((size_) <= 0 ||                                       \
-      ptr == NULL ) { /* defined in oyranos_helper.h */     \
+      ptr_ == NULL ) { /* defined in oyranos_helper.h */     \
     WARN_S (("%s:%d %s() nothing allocated %s\n",           \
-    __FILE__,__LINE__,__func__, #ptr));                     \
+    __FILE__,__LINE__,__func__, #ptr_));                     \
     action;                                                 \
   }                                                         \
 }
 
-#define _(text) text
-
+#ifdef USE_GETTEXT
+# include <libintl.h>
+# include <locale.h>
+extern const char *domain;
+# define _(text) gettext( text )
+#else
+# define _(text) text
+#endif
 
 /* mathematical helpers */
 

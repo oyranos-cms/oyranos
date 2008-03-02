@@ -1,0 +1,8 @@
+2006-05-28
+	* neu: fix failed pointer
+	* neu: add makefile.bsd
+
+2006-03-05
+	* new: make library building and documentation independed from ICC Examin
+
+

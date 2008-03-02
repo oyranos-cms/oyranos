@@ -51,6 +51,13 @@ int main( int argc , char** argv )
   char *monitor_profile = 0;
   int error = 0;
   int erase = 0;
+  char *ptr = NULL;
+
+  // cut off the screen information
+  if(display_name &&
+     (ptr = strchr(display_name,':')) != 0)
+    if( (ptr = strchr(ptr, '.')) != 0 )
+      ptr[0] = '\000';
 
   if(argc != 1)
   {
@@ -101,7 +108,7 @@ int main( int argc , char** argv )
         default:
             monitor_profile = argv[pos];
             /* activate all profiles at once */
-            error = oyActivateMonitorProfile (display_name);
+            error = oyActivateMonitorProfiles (display_name);
 
             if(oy_debug) {
               size_t size = 0;
@@ -120,15 +127,12 @@ int main( int argc , char** argv )
     if(oy_debug) printf( "%s\n", argv[1] );
     /* make shure the display name is correct including the screen */
     oySetMonitorProfile (display_name, monitor_profile);
-  } else { // TODO@todo ??
-    monitor_profile = oyGetMonitorProfileName (display_name, oyAllocateFunc_);
   }
 
   /* check the default paths */
   oyPathAdd( OY_PROFILE_PATH_USER_DEFAULT );
 
-  if( monitor_profile )
-    error = oyActivateMonitorProfile (display_name);
+  error = oyActivateMonitorProfiles (display_name);
 
   if(oy_debug) {
     size_t size = 0;

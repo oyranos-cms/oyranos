@@ -49,6 +49,7 @@ The documentation in html format is included.
 rm -rf %{buildroot}
 make
 make DESTDIR=%{buildroot} install-main
+rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 
 %clean
 rm -rf %{buildroot}
@@ -60,18 +61,21 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%{_bindir}/oyranos-moni*
-%{_bindir}/oyranos-config-fl*
+%{_bindir}/%{name}-moni*
+%{_bindir}/%{name}-config-fl*
 %{_libdir}/*.so*
 %{syscolordir}/%{settingsdirname}/*.policy.xml
+%{syscolordir}/cmms/*.oy_cmm_register.xml
 
 %files devel
-%doc AUTHORS COPYING README
-%{_bindir}/oyranos-config
-%{_includedir}/oyranos/*.h
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-config
+%{_includedir}/%{name}/*.h
 %{_libdir}/pkgconfig/*
 %{_libdir}/*.a
-%doc doc/html/*
+%doc %{name}*.sh
+%doc doc/html
 
 %changelog
 * Tue Apr 21 2005 Kai-Uwe Behrmann

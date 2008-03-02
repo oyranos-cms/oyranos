@@ -6,6 +6,7 @@ ERROR=0
 CONF_H=config.h
 CONF=makefile
 CONF_SH=$TARGET-config
+CONF_I18N=fl_i18n/makefile
 SPEC=$TARGET.spec
 PKGC=$TARGET.pc
 MPKG="$TARGET"_monitor.pc
@@ -13,11 +14,11 @@ VERS="$TARGET"_version.h
 ECI_CONF=standard_profiles/eci/makefile
 BASE_CONF=standard_profiles/base/makefile
 
-export CONF_H CONF
+export CONF_H CONF CONF_I18N
 
 VERSION_A=0
 VERSION_B=1
-VERSION_C=5
+VERSION_C=6
 RELEASE=0
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
 if [ $VERSION_A -gt 9 ]; then
@@ -37,85 +38,6 @@ else
 fi
 VERSION_L=`echo $VERSION_L | sed 's/^0*//g'`
 TIME="November 2004 - May 2006"
-
-src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
-srcdir="`pwd`"
-
-test -f error.txt && rm error.txt
-test -f mkdepend && make clean
-
-
-echo "# automatically generated file - do not edit" > $CONF
-echo "/* automatically generated file - do not edit */" > $CONF_H
-echo "" >> $CONF
-echo "TARGET = $TARGET" >> $CONF
-
-echo ""
-
-
-# detect System
-
-UNAME_=`uname`
-OSUNAME=BSD
-if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
-  echo "Darwin PPC              detected"
-  echo "APPLE = 1" >> $CONF
-  echo "OSX_H = -DHAVE_OSX" >> $CONF
-  echo "#define APPLE 1" >> $CONF_H
-  OSUNAME=Darwin
-else
-  if [ $UNAME_ = "Linux" ]; then
-    echo "LINUX = 1" >> $CONF
-    echo "#define LINUX 1" >> $CONF_H
-    echo "Linux system            detected"
-    OSUNAME=Linux
-  else
-    if [ $UNAME_ = "SunOS" ]; then
-      echo "SOLARIS = 1" >> $CONF
-      echo "#define SOLARIS 1" >> $CONF_H
-      echo "SunOS                   detected"
-      OSUNAME=SunOS
-    else
-      if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
-        echo "BSD = 1" >> $CONF
-        echo "#define BSD 1" >> $CONF_H
-        echo "BSD $UNAME_             detected"
-        OSUNAME=BSD
-      else
-        echo "Oyranos may or may not compile on your $UNAME_ system"
-      fi
-    fi
-  fi
-fi
-MACH_=`uname -m`
-MACH=BUILD_32
-if [ $? = 0 ]; then
-  if [ "$MACH_" = "i686" ]; then
-    echo "32-bit system           detected"
-  else
-    if [ "$MACH_" = "x86_64" ]; then
-      MACH=BUILD_64
-      echo "BUILD_64 = 1" >> $CONF
-      echo "X86_64                  will build in 64 bit mode"
-    else
-      if [ "$MACH_" = "sun4u" ]; then
-        MACH=BUILD_64
-        echo "BUILD_64 = 1" >> $CONF
-        echo "spark ultra 4           will build in 64 bit mode"
-      fi
-    fi
-  fi
-fi
-if [ $MACH = "BUILD_64" ]; then
-  BARCH="64"
-  LINE_ARCH="-64"
-else
-  BARCH=""
-  LINE_ARCH=""
-fi
-LIBDIR="lib"$BARCH
-export MACH OSUNAME LIBDIR BARCH LINE_ARCH
-
 
 if [ $# -gt 0 ]; then
   prefix=""
@@ -179,16 +101,118 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       desktopdir="`echo $1 | sed s/--$switch=//`"
     fi
+    switch=help
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      echo "Usage:"
+      echo "   --prefix=[/usr/local]                package prefix"
+      echo "   --exec-prefix=[\$prefix]              package exec-prefix"
+      echo "   --bindir=[\$exec-prefix/bin]          binary installation path"
+      echo "   --sbindir=[\$exec-prefix/sbin]        super user binary installation path"
+      echo "   --libdir=[\$exec-prefix/lib]          library installation path"
+      echo "   --includedir=[\$prefix/include]       include file installation"
+      echo "   --datadir=[\$prefix/data]             application data base path"
+      echo "   --mandir=[\$datadir/man]              manual installation path"
+      echo "   --syscolordir=[\$datadir/color]       Oyranos system color path"
+      echo "   --usercolordir=[~/.color]            Oyranos user color path"
+      echo "   --iccdirname=[icc]                   Oyranos ICC profile directory"
+      echo "   --settingsdirname=[settings]         Oyranos settings directory"
+      echo "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
+      echo "   --desktopdir=[\$datadir/applications] xdg installation path"
+      echo "   --help"
+      echo ""
+      echo " Optionally set the CC and CXX environment variables."
+      echo ""
+      exit
+    fi
     shift
   done
 fi
+
+
+src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
+srcdir="`pwd`"
+
+test -f error.txt && rm error.txt
+test -f mkdepend && make clean
+
+
+echo "# automatically generated file - do not edit" > $CONF
+echo "/* automatically generated file - do not edit */" > $CONF_H
+echo "" >> $CONF
+echo "TARGET = $TARGET" >> $CONF
+
+echo ""
+
+
+# detect System
+
+UNAME_=`uname`
+OSUNAME=BSD
+if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
+  echo "Darwin PPC              detected"
+  echo "APPLE = 1" >> $CONF
+  echo "OSX_H = -DHAVE_OSX" >> $CONF
+  echo "#define APPLE 1" >> $CONF_H
+  OSUNAME=Darwin
+else
+  if [ $UNAME_ = "Linux" ]; then
+    echo "LINUX = 1" >> $CONF
+    echo "#define LINUX 1" >> $CONF_H
+    echo "Linux system            detected"
+    OSUNAME=Linux
+  else
+    if [ $UNAME_ = "SunOS" ]; then
+      echo "SOLARIS = 1" >> $CONF
+      echo "#define SOLARIS 1" >> $CONF_H
+      echo "SunOS                   detected"
+      OSUNAME=SunOS
+    else
+      if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
+        echo "BSD = 1" >> $CONF
+        ARCH=.bsd
+        echo "#define BSD 1" >> $CONF_H
+        echo "BSD $UNAME_             detected"
+        OSUNAME=BSD
+      else
+        echo "Oyranos may or may not compile on your $UNAME_ system"
+      fi
+    fi
+  fi
+fi
+echo "MAKEFILE_ARCH = makefile$ARCH"  >> $CONF
+MACH_=`uname -m`
+MACH=BUILD_32
+if [ $? = 0 ]; then
+  if [ "$MACH_" = "i686" ]; then
+    echo "32-bit system           detected"
+  else
+    if [ "$MACH_" = "x86_64" ]; then
+      MACH=BUILD_64
+      echo "BUILD_64 = 1" >> $CONF
+      echo "X86_64                  will build in 64 bit mode"
+    else
+      if [ "$MACH_" = "sun4u" ]; then
+        MACH=BUILD_64
+        echo "BUILD_64 = 1" >> $CONF
+        echo "spark ultra 4           will build in 64 bit mode"
+      fi
+    fi
+  fi
+fi
+if [ $MACH = "BUILD_64" ]; then
+  BARCH="64"
+  LINE_ARCH="-64"
+else
+  BARCH=""
+  LINE_ARCH=""
+fi
+LIBDIR="lib"$BARCH
+export MACH OSUNAME LIBDIR BARCH LINE_ARCH
+
+
 # prefix exec_prefix bindir sbindir libdir includedir datadir
 if [ -z "$prefix" ]; then
-  if [ $UNAME_ = "Darwin" ]; then
-    prefix=/opt/local
-  else
-    prefix=/usr/local
-  fi
+  prefix=/usr/local
 fi
 if [ -z "$exec_prefix" ]; then
   exec_prefix="$prefix"
@@ -200,10 +224,10 @@ if [ "`echo $exec_prefix | grep 64 | wc -l`" -eq "1" ]; then
   export BARCH LIBDIR
 fi
 if [ -z "$bindir" ]; then
-  bindir="$exec_prefix/bin$BARCH"
+  bindir="$exec_prefix/bin"
 fi
 if [ -z "$sbindir" ]; then
-  sbindir="$exec_prefix/sbin$BARCH"
+  sbindir="$exec_prefix/sbin"
 fi
 if [ -z "$libdir" ]; then
   libdir="$exec_prefix/$LIBDIR"
@@ -291,6 +315,7 @@ X11=1; export X11
 XINERAMA=1; export XINERAMA
 XF86VMODE=1; export XF86VMODE
 DOXYGEN=2; export DOXYGEN
+PO=1; export PO
 ./configure.sh
 if [ $? -gt 0 ]; then
   ERROR=1
@@ -440,10 +465,8 @@ echo "" >> $CONF
 
 echo "syscolordir = $syscolordir" > $ECI_CONF
 echo "iccdirname = $iccdirname" >> $ECI_CONF
-cat $ECI_CONF.in >> $ECI_CONF
 echo "syscolordir = $syscolordir" > $BASE_CONF
 echo "iccdirname = $iccdirname" >> $BASE_CONF
-cat $BASE_CONF.in >> $BASE_CONF
 
 echo "#define PREFIX         \"$prefix\"" >> $CONF_H
 echo "#define DATADIR        \"$datadir\"" >> $CONF_H
@@ -456,17 +479,41 @@ echo "#define SRCDIR         \"$srcdir\"" >> $CONF_H
 echo "#define SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
 echo "" >> $CONF_H
 
-echo "CXX = c++$LINE_ARCH" >> $CONF
-echo "CC = gcc$LINE_ARCH" >> $CONF
+if [ -z "$CC" ]; then
+  CC=cc$LINE_ARCH
+fi
+if [ -z "$CXX" ]; then
+  CXX=c++$LINE_ARCH
+fi
+
+echo "CXX = $CXX" >> $CONF
+echo "CC = $CC" >> $CONF
+echo "CXX = $CXX" > $CONF_I18N
+echo "CC = $CC" >> $CONF_I18N
+cat $CONF_I18N.in >> $CONF_I18N
+echo $CONF_I18N prepared
+
 echo "RM = rm -vf" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
   echo "COPY = cp -pv" >> $CONF
   echo "LINK_FLAGS = -dynamiclib  -L." >> $CONF
   echo "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
+  echo "MSGMERGE = msgmerge" >> $CONF
   echo "OPTS = -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF
   echo "REZ = fltk-config --post \$@" >> $CONF
+  echo "INSTALL = install -v" >> $CONF
+  echo "INSTALL = install -v" >> $ECI_CONF
+  echo "INSTALL = install -v" >> $BASE_CONF
 else
   echo "SO = .so" >> $CONF
+  echo "MSGMERGE = msgmerge" >> $CONF
+  echo "MSGMERG_OPTS = --update" >> $CONF
+  echo "XGETTEXT_OPTIONS = --keyword=gettext --flag=gettext:1:pass-c-format \
+        --keyword=_ --flag=_:1:pass-c-format \
+        --keyword=N_ --flag=N_:1:pass-c-format \
+        --copyright-holder='Kai-Uwe Behrmann' \
+        --msgid-bugs-address='ku.b@gmx.de' \
+        --from-code=utf-8" >> $CONF
   if [ $OSUNAME = "Linux" ]; then
     echo "COPY = cp -vdpa" >> $CONF
     echo "LINK_FLAGS = -shared -ldl -fPIC -L." >> $CONF
@@ -477,15 +524,24 @@ else
     echo "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
     echo "OPTS=-Wall -g -fPIC #-O2" >> $CONF
+    echo "INSTALL = install -v" >> $CONF
+    echo "INSTALL = install -v" >> $ECI_CONF
+    echo "INSTALL = install -v" >> $BASE_CONF
   else
     echo "COPY = cp -p" >> $CONF
     if [ $OSUNAME = "BSD" ]; then
       echo "LINK_FLAGS = -shared \$(ICONV)" >> $CONF
+      echo "INSTALL = install -v" >> $CONF
+      echo "INSTALL = install -v" >> $ECI_CONF
+      echo "INSTALL = install -v" >> $BASE_CONF
     else
       echo "LINK_FLAGS = -shared -ldl \$(ICONV)" >> $CONF
+      echo "INSTALL = install" >> $CONF
+      echo "INSTALL = install" >> $ECI_CONF
+      echo "INSTALL = install" >> $BASE_CONF
     fi
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
-    echo "OPTS=-Wall -g -fpic -L." >> $CONF
+    echo "OPTS=-Wall -g -L. -fPIC" >> $CONF
     echo "RM = rm -f" >> $CONF
   fi
 fi
@@ -499,7 +555,11 @@ if [ $OSUNAME = "BSD" ]; then
 else
   cat  makefile.in | sed 's/^\#if/if/g ; s/^\#end/end/g ; s/^\#include/include/g'  >> $CONF
 fi
+cat $ECI_CONF.in >> $ECI_CONF
+cat $BASE_CONF.in >> $BASE_CONF
 echo $CONF generated
+echo $ECI_CONF generated
+echo $BASE_CONF generated
 echo ""
 echo ""
 
