@@ -27,6 +27,8 @@ test -f config && make clean
 echo "# automatically generated file - do not edit" > $CONF
 echo "/* automatically generated file - do not edit */" > $CONF_H
 echo "prefix = $prefix" >> $CONF
+echo "TARGET = $TARGET" >> $CONF
+echo "" >> $CONF
 
 echo ""
 

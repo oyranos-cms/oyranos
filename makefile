@@ -24,8 +24,6 @@ libdir		= ${exec_prefix}/lib
 mandir		= ${prefix}/man
 srcdir		= .
 
-TARGET  = oyranos
-
 ifdef LINUX
 SO = .so
 endif
