@@ -20,9 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * internal CMM API
- * 
+ */
+
+/** @file @internal
+ *  @brief internal CMM API
  */
 
 /** @date      29. 07. 2006 */
@@ -42,28 +43,31 @@ namespace oyranos
 
 
 
-int   oyCmmRemove_              (const char *id);
-char** oyCmmGetCmmNames_        (int           *count,
-                                 oyAllocFunc_t alloc_func );
-oyGROUP oyRegisterGroups_       (char *cmm, char *id, char *name, char *ttip);
-int   oyCmmRegisterXML_         (oyGROUP           group,
-                                 const char       *xml,
-                                 const char       *domain,
-                                 const char       *domain_path);
+int          oyModulRemove_          (const char *id);
+char**       oyModulsGetNames_       (int           *count,
+                                      oyAllocFunc_t alloc_func );
+oyGROUP      oyRegisterGroups_       (char *cmm, char *id,
+                                      char *name, char *tooltip);
+int          oyModulRegisterXML_     (oyGROUP           group,
+                                      const char       *xml);
 
 
 /** \internal
  *  build a oyCMM_t__ API
  */
-oyOption_t_* oyCmmsUIOptionSearch_ (oyOPTION      id);
-const char*  oyCmmGetName_         (const char *cmm);
-const char*  oyCmmGetDescription_  (const char *cmm);
-const char*  oyCmmGetXml_          (const char *cmm);
-const char*  oyCmmGetDomain_       (const char *cmm);
-const char*  oyCmmGetDomainPath_   (const char *cmm);
-void         oyCmmGetGroups_       (const char *cmm, int *start, int *count);
-void         oyCmmRefreshI18N_     (const char *cmm);
-void         oyCmmsRefreshI18N_    (void);
+oyOption_t_* oyModulsUIOptionSearch_ (oyWIDGET    id);
+const char*  oyModulGetName_         (const char *cmm);
+const char*  oyModulGetDescription_  (const char *cmm);
+const char*  oyModulGetXml_          (const char *cmm);
+const char*  oyModulGetDomain_       (const char *cmm);
+const char*  oyModulGetDomainPath_   (const char *cmm);
+void         oyModulGetGroups_       (const char *cmm, int *start, int *count);
+const char*  oyModulGetGroupUITitle_ (oyGROUP     group, const char **tooltip,
+                                      const char**xml);
+
+char*        oyModulPrint_           (const char *cmm);
+void         oyModulRefreshI18N_     (const char *cmm);
+void         oyModulsRefreshI18N_    (void);
 
 
 /*
@@ -79,7 +83,7 @@ void         oyCmmsRefreshI18N_    (void);
 #ifdef noch_NICHT
 oyCMSTransform_t oyCMSGetTransform();
 int oyCMSTransform( void *out, void *in, oyCMSTransform_t t );
-int oyCMSSetCMM( int oyOPTION );
+int oyCMSSetCMM( int oyWIDGET );
 
 // Wieviel Geraete vertraegt Oyranos?  X ist eigentlich schon ein Sonderfall
 // Vielleicht ist eine abstrakte Geraetebeschreibung sinnvoll -> ICCDeviceTag

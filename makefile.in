@@ -26,14 +26,14 @@ DL = --ldflags # --ldstaticflags
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 	$(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL)
-CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
+CXXFLAGS=$(OPTS) $(INCL) $(FLU_H) $(FLTK_H)
 CFLAGS = $(OPTS) $(INCL)
 
-ELEKTRA_LIBS = `test -f $(libdir)/libelektra.a && echo $(libdir)/libelektra.a $(libdir)/libelektra-filesys.a || echo -lelektra`
+ELEKTRA_STATICTEST_LIBS = `test -f $(libdir)/libelektra.a && (echo $(libdir)/libelektra.a ; test -f $(libdir)/libelektra-filesys.a && echo $(libdir)/libelektra-filesys.a || (test -f $(libdir)/elektra/libelektra-filesys.a && echo $(libdir)/elektra/libelektra-filesys.a)) || echo $(ELEKTRA_LIBS)`
 
 
 LDLIBS = -L$(libdir) -L. \
-	$(ELEKTRA_LIBS) -lc
+	$(ELEKTRA_STATICTEST_LIBS) -lc
 
 
 CPP_HEADERS = \
@@ -44,6 +44,7 @@ CPP_HEADERS = \
 	$(TARGET)_definitions.h \
 	$(TARGET)_elektra.h \
 	$(TARGET)_helper.h \
+	$(TARGET)_i18n.h \
 	$(TARGET)_io.h \
 	$(TARGET)_internal.h \
 	$(TARGET)_monitor.h \
@@ -57,6 +58,7 @@ CFILES = \
 	$(TARGET)_cmms.c \
 	$(TARGET)_elektra.c \
 	$(TARGET)_helper.c \
+	$(TARGET)_i18n.c \
 	$(TARGET)_io.c \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel.c \
@@ -70,15 +72,20 @@ CFILES_MONI_NVIDIA = \
 	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
 	$(TARGET)_gamma.c
+CFILES_POLICY = \
+	$(TARGET)_policy.c \
 
 CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
 CPPFILES_FLU = \
 	$(TARGET)_config_flu.cpp
-
+TEST_CPP = \
+	tests/fltk_test.cxx
 CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
+TEST_FILES = $(TEST_CPP) $(TEST_H)
+
 DATA = \
 	$(TARGET)_logo.png
 DOKU =  AUTHORS \
@@ -101,6 +108,7 @@ FLUID = \
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
+		$(CFILES_POLICY) \
 		$(CXXFILES_FLTK) $(CPPFILES_FLU) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
@@ -134,7 +142,8 @@ ALL_FILES = \
 # build all what is needed to run the libraries, helpers and the examples
 all:	mkdepend $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	$(FLTK_GUI) $(FLU_GUI) $(TEST2) $(LINGUAS_SRC)
+	$(FLTK_GUI) $(FLU_GUI) $(TARGET)-policy \
+	$(TEST2) $(LINGUAS_SRC)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
@@ -173,7 +182,7 @@ $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...
-	-(cd $(LIB_XNVCTRL) && $(MAKE))
+	-(cd $(LIB_XNVCTRL) && $(MAKE) -f makefile)
 	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
 # the twinview library
@@ -232,6 +241,13 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	$(CC) $(OPTS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
+	$(LDLIBS)
+
+$(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
+	echo Linking $@ ...
+	$(CC) $(OPTS) -o $(TARGET)-policy \
+	$(TARGET)_policy.o \
+	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS)
 
 test2:	$(LIB_MONI_SONAMEFULL) test2.o
@@ -304,17 +320,18 @@ install-main:	all doc
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
-	$(INSTALL) -m 755 $(TARGET).pc         $(DESTDIR)$(libdir)/pkgconfig/
-	$(INSTALL) -m 755 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
+	$(INSTALL) -m 644 $(TARGET).pc         $(DESTDIR)$(libdir)/pkgconfig/
+	$(INSTALL) -m 644 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
 	$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
-	$(INSTALL) -m 644 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
+	$(INSTALL) -m 755 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
 	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
 	$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
-	$(INSTALL) -m 644 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
+	$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
@@ -353,6 +370,9 @@ install:	install-main
             $(INSTALL) -m 644 po/$${ling}.gmo $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo ) \
 		|| (echo $${ling}.gmo is not yet ready ... skipping); \
 	done;
+	if [ -z $(DESTDIR) ]; then \
+	  if [ `kdb ls system/sw/oyranos 2>/dev/zero | wc -l` -eq 0 ]; then if [ `kdb ls user/sw/oyranos 2>/dev/zero | wc -l` -eq 0 ]; then echo "no oyranos keys found: set default policy home+office"; ./oyranos-policy $(syscolordir)/$(settingsdirname)/office.policy.xml; fi; fi; \
+	fi
 
 install_gui:	$(TARGET)-config-fltk
 	echo Installing UI ...
@@ -391,6 +411,7 @@ uninstall:
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-flu
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-fltk
+	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-policy
 	-$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET)_monitor.pc
@@ -437,7 +458,8 @@ clean:
 	$(OBJECTS) $(MONI_OBJECTS) \
 	$(LIBNAME) $(LIBSONAMEFULL) $(LIBSONAME) $(LIBSO) \
 	$(LIB_MONI_NAME) $(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
-	$(TARGET)_gamma.o $(TARGET)-monitor $(TARGET)-monitor-nvidia \
+	$(TARGET)_gamma.o $(TARGET)-policy $(TARGET)_policy.o \
+	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2.o test.o test2 test \
 	$(TARGET)-config-fltk $(FLTK_OBJECTS) \
 	$(TARGET)-config-flu $(FLU_OBJECTS)
@@ -445,7 +467,7 @@ clean:
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo; \
 	done;
-	-(cd $(LIB_XNVCTRL) && $(MAKE) clean)
+	-(cd $(LIB_XNVCTRL) && $(MAKE) -f makefile clean)
 	(cd fl_i18n/; make -f $(MAKEFILE_ARCH) clean)
 	echo ... $@ done
 
@@ -526,8 +548,10 @@ copy_files:
 	$(DESTDIR)
 	$(COPY) -r settings $(DESTDIR)
 	$(COPY) -r cmms $(DESTDIR)
-	-(cd $(LIB_XNVCTRL) && $(MAKE) clean)
+	-(cd $(LIB_XNVCTRL) && $(MAKE) -f makefile clean)
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
+	mkdir $(DESTDIR)/tests
+	$(COPY) $(TEST_FILES) $(DESTDIR)/tests
 	mkdir $(DESTDIR)/po
 	$(COPY) $(POT_FILE) $(DESTDIR)/po
 	for ling in $(LINGUAS); do \

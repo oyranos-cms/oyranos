@@ -20,9 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * misc internal API
- * 
+ */
+
+/** @file @internal
+ *  @brief misc internal API
  */
 
 /** @date      25. 11. 2004 */
@@ -31,7 +32,9 @@
 #ifndef OYRANOS_INTERNAL_H
 #define OYRANOS_INTERNAL_H
 
+#include "config.h"
 #include "oyranos.h"
+#include "oyranos_i18n.h"
 #include "oyranos_texts.h"
 #include "oyranos_elektra.h"
 

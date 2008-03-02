@@ -20,9 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * elektra dependent functions
- * 
+ */
+
+/** @file @internal
+ *  @brief elektra dependent functions
  */
 
 /* Date:      25. 11. 2004 */
@@ -111,9 +112,9 @@ oyComp_t_* oyGetDeviceProfile_sList          (const char* manufacturer,
 #define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
 
   /* ksNext uses the same entry twice in a 1 component KeySet, we avoid this */
-#define FOR_EACH_IN_KDBKEYSET( current, list ) \
+#define FOR_EACH_IN_KDBKEYSET( current_, list ) \
    ksRewind( list );  \
-   for( current = ksNext( list ); current; current = ksNext( list )  )
+   for( current_ = ksNext( list ); current_; current_ = ksNext( list )  )
 
 
 
@@ -283,13 +284,13 @@ oySetBehaviour_      (oyBEHAVIOUR type, int choice)
   {
     const char *keyName = 0;
 
-    keyName = oyGetOption_(type)-> config_string;
+    keyName = oyOptionGet_(type)-> config_string;
 
       if(keyName)
       {
         char val[12];
         const char *com =
-            oyGetOption_(type)-> choice_list[ choice ];
+            oyOptionGet_(type)-> choice_list[ choice ];
         snprintf(val, 12, "%d", choice);
         r = oyAddKey_valueComment_ (keyName, val, com);
         DBG_PROG_S(( "%s %d %s %s", keyName, type, val, com?com:"" ))
@@ -313,7 +314,7 @@ oyGetBehaviour_      (oyBEHAVIOUR type)
 
   if( oyTestInsideBehaviourOptions_(type, 0) )
   {
-    key_name = oyGetOption_(type)-> config_string;
+    key_name = oyOptionGet_(type)-> config_string;
 
     if(key_name)
     {
@@ -358,8 +359,8 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
     if ( type < 0 )
       WARN_S( (_("default profile type %d; type does not exist"), type ) );
 
-    if(oyGetOptionType_( type ) == oyTYPE_DEFAULT_PROFILE)
-      config_name = oyGetOption_(type)-> config_string;
+    if(oyWidgetTitleGet_( type, 0,0,0,0 ) == oyTYPE_DEFAULT_PROFILE)
+      config_name = oyOptionGet_(type)-> config_string;
     else if(type == oyDEVICE_PROFILE)
       {
         int len = strlen(OY_REGISTRED_PROFILES)
@@ -494,31 +495,44 @@ oyPathAdd_ (const char* pfad)
 {
   DBG_PROG_START
   int rc=0, n = 0;
-  Key *current;
-  char* keyName = 0;
-  char* value = 0;
+  Key *current, *checker;
+  int current_pos = 0, checker_pos = 0;
+  char* keyName = NULL;
+  char* value = NULL, *check = NULL;
   int has_local_path = 0, has_global_path = 0,
       has_config_local_path = 0, has_config_global_path = 0;
+  KeySet* myKeySet = NULL;
+  KeySet* checkKeySet = NULL;
+  int *remove_keys = NULL;
 
-  /* are we setting a default path? */
-  if (strcmp (pfad, OY_PROFILE_PATH_USER_DEFAULT) == 0)
-    has_local_path = 1;
-  if (strcmp (pfad, OY_PROFILE_PATH_SYSTEM_DEFAULT) == 0)
-    has_global_path = 1;
+  const char *config_user_path = OY_PROFILE_PATH_USER_DEFAULT;
+  const char *config_system_path = OY_PROFILE_PATH_SYSTEM_DEFAULT;
+  const char *config_local_path = USERCOLORDIR OY_SLASH ICCDIRNAME;
+  const char *config_global_path = SYSCOLORDIR OY_SLASH ICCDIRNAME;
+
+  /* add path */
+  /* search for empty keyname */
+  keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
+
+  /* write key */
+  rc = oyAddKey_valueComment_ (keyName, pfad, "");
+
+  /* take all keys in the paths directory */
+  myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
+  checkKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
+
+  n = ksGetSize(myKeySet);
+  remove_keys = (int*) calloc(sizeof(int), n);
+
+  if(!myKeySet)
+    goto finish;
 
   if(pfad)
     DBG_PROG_S(( pfad ));
 
-  /* take all keys in the paths directory */
-  KeySet* myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
-  if(!myKeySet) {
-    has_local_path = 0;
-    has_global_path = 0;
-    goto finish;
-  }
-
   keyName = (char*) calloc (sizeof(char), MAX_PATH);
   value = (char*) calloc (sizeof(char), MAX_PATH);
+  check = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* search for allready included path */
   DBG_PROG_S(( "path items: %d", (int)ksGetSize(myKeySet) ))
@@ -527,80 +541,76 @@ oyPathAdd_ (const char* pfad)
     keyGetString(current, value, MAX_PATH);
     keyGetFullName(current, keyName, MAX_PATH);
     if (value) DBG_PROG_S(( value ));
-    if (strstr (value, pfad) != 0) {
-      ++n;
-      DBG_PROG_S(( "occurency: %d %s %s", n, pfad, keyName ));
-    }
 
     /* Are the default paths allready there? */
-    if (strcmp(value, OY_PROFILE_PATH_USER_DEFAULT) == 0) has_local_path = 1;
-    if (strcmp(value, OY_PROFILE_PATH_SYSTEM_DEFAULT) == 0) has_global_path = 1;
-    if (strcmp(value, USERCOLORDIR OY_SLASH ICCDIRNAME) == 0)
-      has_config_local_path = 1;
-    if (strcmp(value, SYSCOLORDIR OY_SLASH ICCDIRNAME) == 0)
-      has_config_global_path = 1;
+    if (strcmp(value, config_user_path) == 0) has_local_path = 1;
+    if (strcmp(value, config_system_path) == 0) has_global_path = 1;
+    if (strcmp(value, config_local_path) == 0) has_config_local_path = 1;
+    if (strcmp(value, config_global_path) == 0) has_config_global_path = 1;
+
+    checker_pos = 0;
+    /* erase double occurencies of this path */
+    FOR_EACH_IN_KDBKEYSET( checker, checkKeySet )
+    {
+      rc=keyGetString(checker,check, MAX_PATH); ERR
+
+      if (current_pos < checker_pos &&
+          strcmp (value, check) == 0 )
+        remove_keys[checker_pos] = 1;
+
+      ++checker_pos;
+    }
+    ++current_pos;
   }
 
-  if (n) DBG_PROG_S(("Key %s was allready %d times there\n", pfad, n));
-
-  /* erase double occurencies of this path */
-  if (n > 1)
+  /* remove double keys */
+  current_pos = 0;
+  FOR_EACH_IN_KDBKEYSET( current, myKeySet )
   {
-    FOR_EACH_IN_KDBKEYSET( current, myKeySet )
+    if(remove_keys[current_pos])
     {
-      rc=keyGetString(current,value, MAX_PATH); ERR
-
-      if (strcmp (value, pfad) == 0 &&
-          n)
-      {
-        rc=keyGetFullName(current,keyName, MAX_PATH); ERR
-        rc=kdbRemove( oy_handle_, keyName ); ERR
-        DBG_PROG_S(( "erase path key : %s %s", pfad, keyName ));
-        n--;
-      }
+      rc=keyGetFullName(current,keyName, MAX_PATH); ERR
+      rc=kdbRemove( oy_handle_, keyName ); ERR
+      DBG_PROG_S(( "erase path key : %s %s", value, keyName ));
     }
-  } else if (!n) {
-  /* add path */
-    DBG_PROG_S(( "path will be added: %s", pfad ));
-
-    /* search for empty keyname */
-    keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-
-    /* write key */
-    rc = oyAddKey_valueComment_ (keyName, pfad, "");
+    ++current_pos;
   }
 
   finish:
   if (myKeySet) ksClose (myKeySet);
   if (myKeySet) ksDel (myKeySet);
+  if (checkKeySet) ksClose (checkKeySet);
+  if (checkKeySet) ksDel (checkKeySet);
 
   if (!has_global_path)
   {
     keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-    rc = oyAddKey_valueComment_ (keyName, OY_PROFILE_PATH_SYSTEM_DEFAULT, "");
+    rc = oyAddKey_valueComment_ (keyName, config_system_path, "");
   }
   if (!has_local_path)
   {
     keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-    rc = oyAddKey_valueComment_ (keyName, OY_PROFILE_PATH_USER_DEFAULT, "");
+    rc = oyAddKey_valueComment_ (keyName, config_user_path, "");
   }
   if (!has_config_local_path &&
-      !oyKeySetHasValue_( OY_PATHS, USERCOLORDIR OY_SLASH ICCDIRNAME) )
+      !oyKeySetHasValue_( OY_PATHS, config_local_path) )
   {
     keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-    rc = oyAddKey_valueComment_ (keyName, USERCOLORDIR OY_SLASH ICCDIRNAME, "");
+    rc = oyAddKey_valueComment_ (keyName, config_local_path, "");
   }
   if (!has_config_global_path &&
-      !oyKeySetHasValue_( OY_PATHS, SYSCOLORDIR OY_SLASH ICCDIRNAME) )
+      !oyKeySetHasValue_( OY_PATHS, config_global_path) )
   {
     keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-    rc = oyAddKey_valueComment_ (keyName, SYSCOLORDIR OY_SLASH ICCDIRNAME, "");
+    rc = oyAddKey_valueComment_ (keyName, config_global_path, "");
   }
 
 
   oyClose_();
   OY_FREE (keyName)
   OY_FREE (value)
+  OY_FREE (check)
+  OY_FREE (remove_keys)
 
   oyCheckDefaultDirectories_();
 

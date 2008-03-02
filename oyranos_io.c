@@ -20,9 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- *  input / output  methods
- * 
+ */
+
+/** @file @internal
+ *  @brief input / output  methods
  */
 
 /* Date:      25. 11. 2004 */
@@ -359,7 +360,7 @@ oyResolveDirFileName_ (const char* name)
     home = oyGetHomeDir_();
     len = strlen(name) + strlen(home) + 1;
     if (len >  FILENAME_MAX)
-      WARN_S(("file name is too long %d\n", len))
+      WARN_S((_("file name is too long %d\n"), len))
 
     sprintf (newName, "%s%s", home, &name[0]+1);
 
@@ -525,7 +526,7 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
 }
 
 char**
-oyProfileList_                     (const char* coloursig, int * size)
+oyProfileListGet_                  (const char* coloursig, int * size)
 {
   DBG_PROG_START
   oy_warn_ = 0;
@@ -556,17 +557,29 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
   int count = oyPathsCount_();
   int i;
 
+  static int war = 0;
+
+  ++war;
+  if(war >= 413)
+    ;/* WARN_S(("schon %d mal\n", war)); */
+
   for(i = 0; i < count ; ++i)
   {
     struct stat statbuf;
     struct dirent *entry[MAX_DEPTH];
     DIR *dir[MAX_DEPTH];
-    char *p = oyPathName_(i, oyAllocateFunc_);
-    char *path = oyMakeFullFileDirName_(p);
+    char *p = NULL;
+    char *path = NULL;
     int l = 0; /* level */
     int run = !r;
     int path_is_double = 0;
     int j;
+
+    p = oyPathName_(i, oyAllocateFunc_);
+    path = oyMakeFullFileDirName_(p);
+    if(!p || !strlen(p))
+      WARN_S(("no path given on pos %d\n", i))
+    OY_FREE( p );
 
     /* check for doubling of paths, without checking recursively */
     {
@@ -589,32 +602,39 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
       continue;
 
     if ((stat (path, &statbuf)) != 0) {
-      WARN_S(("%d. path %s does not exist", i, path))
+      WARN_S((_("%d. path %s does not exist"), i, path))
       continue;
     }
     if (!S_ISDIR (statbuf.st_mode)) {
-      WARN_S(("%d. path %s is not a directory", i, path));
+      WARN_S((_("%d. path %s is not a directory"), i, path));
       continue;
     }
     if (S_ISLNK (statbuf.st_mode)) {
-      WARN_S(("%d. path %s is a link: ignored", i, path));
+      WARN_S((_("%d. path %s is a link: ignored"), i, path));
       continue;
     }
     dir[l] = opendir (path);
     if (!dir[l]) {
-      WARN_S(("%d. path %s is not readable", i, path));
+      WARN_S((_("%d. path %s is not readable"), i, path));
       continue;
     }
 
     while(run)
     {
+      if(l>=64) WARN_S(("max path depth reached: 64"));
+      if(dir[l] == NULL)
+      {
+        WARN_S(("NULL\n"));
+        --l;
+        if(l<0) run = 0;
+        goto cont;
+      }
       if(!(entry[l] = readdir (dir[l]))) {
         closedir(dir[l]);
         dir[l] = NULL;
         --l;
-        if(l<0) {
+        if(l<0)
           run = 0;
-        }
         goto cont;
       }
 
@@ -668,24 +688,18 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
       }
 
       cont:
-      /*for( j = 0; j < MAX_DEPTH; ++j )
-        if(dir[j]) closedir(dir[j]);*/;
     }
+
+    for( j = 0; j < MAX_DEPTH; ++j )
+      {
+        if(dir[j]) closedir(dir[j]);;
+        dir[j] = NULL;
+      }
+    OY_FREE(path)
   }
 
   DBG_PROG_ENDE
   return r;
-}
-
-void
-oyProfileListFree_                 (char** list, int size)
-{ DBG_PROG_START
-  size_t i;
-  for(i = 0; i < size; ++i)
-    if (list[i] )
-      free( list[i] );
-  free( list );
-  DBG_PROG_ENDE
 }
 
 /* profile check API */

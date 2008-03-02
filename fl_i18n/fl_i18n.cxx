@@ -27,8 +27,10 @@
 
 #include "fl_i18n.H"
 
+#ifdef USE_GETTEXT
 #include <locale.h>
 #include <libintl.h>
+#endif
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -72,7 +74,7 @@
 void
 fl_set_codeset_    ( const char* lang, const char* codeset_,
                      char* locale, char* codeset,
-                     int set_zero_locale )
+                     int set_locale )
 {
     if( strlen(locale) )
     {
@@ -96,12 +98,12 @@ fl_set_codeset_    ( const char* lang, const char* codeset_,
         {
           char settxt[64];
           snprintf( settxt, 63, "LANG=%s", locale );
-          //TODO ? putenv( settxt );
+          //putenv( settxt );
         }
         /* setenv("LANG", locale, 1); *//* setenv is not standard C */
 
         /* 1c. set the locale info after LANG */
-        if(set_zero_locale)
+        if(set_locale)
         {
           char *ptr = setlocale (LC_MESSAGES, "");
           if(ptr) snprintf( locale, TEXTLEN, ptr); DBG_PROG_V( locale )
@@ -146,13 +148,13 @@ fl_search_locale_path (int n_places, const char **locale_paths,
 }
 
 void
-fl_initialise_locale( const char *domain, const char *locale_path )
+fl_initialise_locale( const char *domain, const char *locale_path,
+                      int set_locale )
 {
 
 #ifdef USE_GETTEXT
   DBG_PROG_START
   char locale[TEXTLEN];
-  int set_zero_locale = 1;
 
 # ifdef __APPLE__
   // 1. get the locale info
@@ -177,20 +179,23 @@ fl_initialise_locale( const char *domain, const char *locale_path )
 
   // set the locale info
   const char* tmp = 0;
-  if(strlen(locale))
+  if(strlen(locale) && set_locale)
+  {
      setlocale (LC_MESSAGES, locale);
+  }
   if (tmp)
     snprintf(locale,TEXTLEN, tmp);
-  set_zero_locale = 0;
+  set_locale = 0;
 # else
   DBG_PROG
 
   // 1. get default locale info ..
-  const char *tmp = setlocale (LC_MESSAGES, "");
+  // this is dangerous
+  /*const char *tmp = setlocale (LC_MESSAGES, NULL);
   if(tmp) {
     snprintf(locale,TEXTLEN, tmp);
     DBG_PROG_V( locale )
-  }
+  }*/
 
     // .. or take locale info from environment
   if(getenv("LANG"))
@@ -202,67 +207,69 @@ fl_initialise_locale( const char *domain, const char *locale_path )
 
       // add more LINGUAS here
       // borrowed from http://czyborra.com/charsets/iso8859.html
-    fl_set_codeset_( "af", "ISO-8859-1", locale, codeset, set_zero_locale ); // Afrikaans
-    fl_set_codeset_( "ca", "ISO-8859-1", locale, codeset, set_zero_locale ); // Catalan
-    fl_set_codeset_( "da", "ISO-8859-1", locale, codeset, set_zero_locale ); // Danish
-    fl_set_codeset_( "de", "ISO-8859-1", locale, codeset, set_zero_locale ); // German
-    fl_set_codeset_( "en", "ISO-8859-1", locale, codeset, set_zero_locale ); // English
-    fl_set_codeset_( "es", "ISO-8859-1", locale, codeset, set_zero_locale ); // Spanish
-    fl_set_codeset_( "eu", "ISO-8859-1", locale, codeset, set_zero_locale ); // Basque
-    fl_set_codeset_( "fi", "ISO-8859-1", locale, codeset, set_zero_locale ); // Finnish
-    fl_set_codeset_( "fo", "ISO-8859-1", locale, codeset, set_zero_locale ); // Faroese
-    fl_set_codeset_( "fr", "ISO-8859-1", locale, codeset, set_zero_locale ); // French
-    fl_set_codeset_( "ga", "ISO-8859-1", locale, codeset, set_zero_locale ); // Irish
-    fl_set_codeset_( "gd", "ISO-8859-1", locale, codeset, set_zero_locale ); // Scottish
-    fl_set_codeset_( "is", "ISO-8859-1", locale, codeset, set_zero_locale ); // Icelandic
-    fl_set_codeset_( "it", "ISO-8859-1", locale, codeset, set_zero_locale ); // Italian
-    fl_set_codeset_( "nl", "ISO-8859-1", locale, codeset, set_zero_locale ); // Dutch
-    fl_set_codeset_( "no", "ISO-8859-1", locale, codeset, set_zero_locale ); // Norwegian
-    fl_set_codeset_( "pt", "ISO-8859-1", locale, codeset, set_zero_locale ); // Portuguese
-    fl_set_codeset_( "rm", "ISO-8859-1", locale, codeset, set_zero_locale ); // Rhaeto-Romanic
-    fl_set_codeset_( "sq", "ISO-8859-1", locale, codeset, set_zero_locale ); // Albanian
-    fl_set_codeset_( "sv", "ISO-8859-1", locale, codeset, set_zero_locale ); // Swedish
-    fl_set_codeset_( "sw", "ISO-8859-1", locale, codeset, set_zero_locale ); // Swahili
+    fl_set_codeset_( "af", "ISO-8859-1", locale, codeset, set_locale ); // Afrikaans
+    fl_set_codeset_( "ca", "ISO-8859-1", locale, codeset, set_locale ); // Catalan
+    fl_set_codeset_( "da", "ISO-8859-1", locale, codeset, set_locale ); // Danish
+    fl_set_codeset_( "de", "ISO-8859-1", locale, codeset, set_locale ); // German
+    fl_set_codeset_( "en", "ISO-8859-1", locale, codeset, set_locale ); // English
+    fl_set_codeset_( "es", "ISO-8859-1", locale, codeset, set_locale ); // Spanish
+    fl_set_codeset_( "eu", "ISO-8859-1", locale, codeset, set_locale ); // Basque
+    fl_set_codeset_( "fi", "ISO-8859-1", locale, codeset, set_locale ); // Finnish
+    fl_set_codeset_( "fo", "ISO-8859-1", locale, codeset, set_locale ); // Faroese
+    fl_set_codeset_( "fr", "ISO-8859-1", locale, codeset, set_locale ); // French
+    fl_set_codeset_( "ga", "ISO-8859-1", locale, codeset, set_locale ); // Irish
+    fl_set_codeset_( "gd", "ISO-8859-1", locale, codeset, set_locale ); // Scottish
+    fl_set_codeset_( "is", "ISO-8859-1", locale, codeset, set_locale ); // Icelandic
+    fl_set_codeset_( "it", "ISO-8859-1", locale, codeset, set_locale ); // Italian
+    fl_set_codeset_( "nl", "ISO-8859-1", locale, codeset, set_locale ); // Dutch
+    fl_set_codeset_( "no", "ISO-8859-1", locale, codeset, set_locale ); // Norwegian
+    fl_set_codeset_( "pt", "ISO-8859-1", locale, codeset, set_locale ); // Portuguese
+    fl_set_codeset_( "rm", "ISO-8859-1", locale, codeset, set_locale ); // Rhaeto-Romanic
+    fl_set_codeset_( "sq", "ISO-8859-1", locale, codeset, set_locale ); // Albanian
+    fl_set_codeset_( "sv", "ISO-8859-1", locale, codeset, set_locale ); // Swedish
+    fl_set_codeset_( "sw", "ISO-8859-1", locale, codeset, set_locale ); // Swahili
 
-    fl_set_codeset_( "cs", "ISO-8859-2", locale, codeset, set_zero_locale ); // Czech
-    fl_set_codeset_( "hr", "ISO-8859-2", locale, codeset, set_zero_locale ); // Croatian
-    fl_set_codeset_( "hu", "ISO-8859-2", locale, codeset, set_zero_locale ); // Hungarian
-    fl_set_codeset_( "pl", "ISO-8859-2", locale, codeset, set_zero_locale ); // Polish
-    fl_set_codeset_( "ro", "ISO-8859-2", locale, codeset, set_zero_locale ); // Romanian
-    fl_set_codeset_( "sk", "ISO-8859-2", locale, codeset, set_zero_locale ); // Slovak
-    fl_set_codeset_( "sl", "ISO-8859-2", locale, codeset, set_zero_locale ); // Slovenian
+    fl_set_codeset_( "cs", "ISO-8859-2", locale, codeset, set_locale ); // Czech
+    fl_set_codeset_( "hr", "ISO-8859-2", locale, codeset, set_locale ); // Croatian
+    fl_set_codeset_( "hu", "ISO-8859-2", locale, codeset, set_locale ); // Hungarian
+    fl_set_codeset_( "pl", "ISO-8859-2", locale, codeset, set_locale ); // Polish
+    fl_set_codeset_( "ro", "ISO-8859-2", locale, codeset, set_locale ); // Romanian
+    fl_set_codeset_( "sk", "ISO-8859-2", locale, codeset, set_locale ); // Slovak
+    fl_set_codeset_( "sl", "ISO-8859-2", locale, codeset, set_locale ); // Slovenian
 
-    fl_set_codeset_( "eo", "ISO-8859-3", locale, codeset, set_zero_locale ); // Esperanto
-    fl_set_codeset_( "mt", "ISO-8859-3", locale, codeset, set_zero_locale ); // Maltese
+    fl_set_codeset_( "eo", "ISO-8859-3", locale, codeset, set_locale ); // Esperanto
+    fl_set_codeset_( "mt", "ISO-8859-3", locale, codeset, set_locale ); // Maltese
 
-    fl_set_codeset_( "et", "ISO-8859-4", locale, codeset, set_zero_locale ); // Estonian
-    fl_set_codeset_( "lv", "ISO-8859-4", locale, codeset, set_zero_locale ); // Latvian
-    fl_set_codeset_( "lt", "ISO-8859-4", locale, codeset, set_zero_locale ); // Lithuanian
-    fl_set_codeset_( "kl", "ISO-8859-4", locale, codeset, set_zero_locale ); // Greenlandic
+    fl_set_codeset_( "et", "ISO-8859-4", locale, codeset, set_locale ); // Estonian
+    fl_set_codeset_( "lv", "ISO-8859-4", locale, codeset, set_locale ); // Latvian
+    fl_set_codeset_( "lt", "ISO-8859-4", locale, codeset, set_locale ); // Lithuanian
+    fl_set_codeset_( "kl", "ISO-8859-4", locale, codeset, set_locale ); // Greenlandic
 
-    fl_set_codeset_( "be", "ISO-8859-5", locale, codeset, set_zero_locale ); // Byelorussian
-    fl_set_codeset_( "bg", "ISO-8859-5", locale, codeset, set_zero_locale ); // Bulgarian
-    fl_set_codeset_( "mk", "ISO-8859-5", locale, codeset, set_zero_locale ); // Macedonian
-    fl_set_codeset_( "ru", "ISO-8859-5", locale, codeset, set_zero_locale ); // Russian
-    fl_set_codeset_( "sr", "ISO-8859-5", locale, codeset, set_zero_locale ); // Serbian
-    fl_set_codeset_( "uk", "ISO-8859-5", locale, codeset, set_zero_locale ); // Ukrainian
+    fl_set_codeset_( "be", "ISO-8859-5", locale, codeset, set_locale ); // Byelorussian
+    fl_set_codeset_( "bg", "ISO-8859-5", locale, codeset, set_locale ); // Bulgarian
+    fl_set_codeset_( "mk", "ISO-8859-5", locale, codeset, set_locale ); // Macedonian
+    fl_set_codeset_( "ru", "ISO-8859-5", locale, codeset, set_locale ); // Russian
+    fl_set_codeset_( "sr", "ISO-8859-5", locale, codeset, set_locale ); // Serbian
+    fl_set_codeset_( "uk", "ISO-8859-5", locale, codeset, set_locale ); // Ukrainian
 
-    fl_set_codeset_( "ar", "ISO-8859-6", locale, codeset, set_zero_locale ); // Arabic
-    fl_set_codeset_( "fa", "ISO-8859-6", locale, codeset, set_zero_locale ); // Persian
-    fl_set_codeset_( "ur", "ISO-8859-6", locale, codeset, set_zero_locale ); // Pakistani Urdu
+    fl_set_codeset_( "ar", "ISO-8859-6", locale, codeset, set_locale ); // Arabic
+    fl_set_codeset_( "fa", "ISO-8859-6", locale, codeset, set_locale ); // Persian
+    fl_set_codeset_( "ur", "ISO-8859-6", locale, codeset, set_locale ); // Pakistani Urdu
 
-    fl_set_codeset_( "el", "ISO-8859-7", locale, codeset, set_zero_locale ); // Greek
+    fl_set_codeset_( "el", "ISO-8859-7", locale, codeset, set_locale ); // Greek
 
-    fl_set_codeset_( "iw", "ISO-8859-8", locale, codeset, set_zero_locale ); // Hebrew
-    fl_set_codeset_( "ji", "ISO-8859-8", locale, codeset, set_zero_locale ); // Yiddish
+    fl_set_codeset_( "iw", "ISO-8859-8", locale, codeset, set_locale ); // Hebrew
+    fl_set_codeset_( "ji", "ISO-8859-8", locale, codeset, set_locale ); // Yiddish
 
-    fl_set_codeset_( "tr", "ISO-8859-9", locale, codeset, set_zero_locale ); // Turkish
+    fl_set_codeset_( "tr", "ISO-8859-9", locale, codeset, set_locale ); // Turkish
 
-    fl_set_codeset_( "th", "ISO-8859-11", locale, codeset, set_zero_locale ); // Thai
+    fl_set_codeset_( "th", "ISO-8859-11", locale, codeset, set_locale ); // Thai
 
-    fl_set_codeset_( "zh", "ISO-8859-15", locale, codeset, set_zero_locale ); // Chinese
+    fl_set_codeset_( "zh", "ISO-8859-15", locale, codeset, set_locale ); // Chinese
 
-    fl_set_codeset_( "ja", "EUC", locale, codeset, set_zero_locale ); // Japan ; eucJP, ujis, EUC, PCK, jis7, SJIS
+    fl_set_codeset_( "ja", "EUC", locale, codeset, set_locale ); // Japan ; eucJP, ujis, EUC, PCK, jis7, SJIS
+
+    fl_set_codeset_( "hy", /*"UTF-8"*/"ARMSCII-8", locale, codeset, set_locale ); // Armenisch
 
   if(strlen(locale))
     DBG_PROG_S( locale );

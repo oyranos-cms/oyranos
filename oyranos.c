@@ -111,7 +111,7 @@ oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
       } else
         search[0] = 0;
     } else
-      WARN_S(( "not a profile %s", full_name ))
+      WARN_S(( _("not a profile %s"), full_name ))
   }
   /* break on success */
   DBG_V((success))
@@ -137,7 +137,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
     if(strlen(fileName) < MAX_PATH)
       sprintf(search, fileName);
     else {
-      WARN_S(("name longer than %d", MAX_PATH));
+      WARN_S((_("name longer than %d"), MAX_PATH));
       DBG_PROG_ENDE
       return 0;
     }
@@ -189,7 +189,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
     if (!success) {
       if(oy_warn_)
-        WARN_S( ("profile %s not found in colour path\n", fileName));
+        WARN_S( (_("profile %s not found in colour path\n"), fileName));
       DBG_PROG_ENDE
       return 0;
     }
@@ -244,7 +244,7 @@ oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
   if( type == oyASSUMED_WEB &&
       !strstr( file_name,"sRGB" ) )
   {
-    WARN_S(("wrong profile for static web colour space selected, need sRGB"))
+    WARN_S((_("wrong profile for static web colour space selected, need sRGB")))
     return 1;
   }
   r = oySetProfile_ (file_name, type, 0);
@@ -279,7 +279,7 @@ oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
     return name;
   }
 
-  name = oyGetKeyValue_( oyGetOption_(type)-> config_string, alloc_func );
+  name = oyGetKeyValue_( oyOptionGet_(type)-> config_string, alloc_func );
 
   if(name) DBG_PROG_S((name));
 
@@ -331,7 +331,8 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
   {
     DBG_PROG_S((fullFileName))
     if ( oyIsFile_(fullFileName) ) {
-      WARN_S (("file %s exist , please remove befor installing new profile\n", fullFileName))
+      WARN_S((_("file %s exist , please remove befor installing new profile\n"),
+              fullFileName))
     } else
     { r = oyWriteMemToFile_ (fullFileName, mem, size);
       oySetProfile_ ( name, type, comnt);
@@ -521,69 +522,121 @@ oySetDeviceProfile_                (const char* manufacturer,
  */
 
 
-/** Get a special Options UI strings.\n
+/** @brief all widgets of a group
  *
- *  param       type            merge oyBEHAVIOUR and oyDEFAULT_PROFILE
- *  param[out]  categories      integer (visible enums?) list
+ *  param       group           specify which group dialog to build
+ *  param[out]  count           number of widgets contained in list
+ *
+ *  return                      list of widgets to create in correct order
+ */
+oyWIDGET    * oyWidgetListGet          (oyGROUP           group,
+                                        int             * count)
+{
+  oyWIDGET *list = NULL;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  list = oyWidgetListGet_                  ( group, count);
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return list;
+}
+
+/** @brief Get a special Options UI strings.
+ *
+ *  param       option          merges oyBEHAVIOUR and oyDEFAULT_PROFILE
+ *  param[out]  categories      enums list, to place into the right group widget
  *                              { n, first category, second c., ... , n'th c. } 
+ *                              for widget of type oyGROUP this is empty
+ *  param[out]  name            transated widget title
+ *  param[out]  tooltip         transated tooltip
+ *
+ *  return                      widget type, gives a hint to further properties,
+ *                              { like choices or int/float value ranges ... }
+ */
+oyWIDGET_TYPE oyWidgetTitleGet         (oyWIDGET          option,
+                                        const oyGROUP  ** categories,
+                                        const char     ** name,
+                                        const char     ** tooltip,
+                                        int             * flags )
+{
+  oyWIDGET_TYPE type = oyTYPE_START;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  type = oyWidgetTitleGet_                 ( option,
+                                             categories,
+                                             name, tooltip,
+                                             flags );
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return type;
+}
+
+/** @brief Get a Options choices UI strings.
+ *
+ *  This function is checked for double occuring profiles. Such are sorted out.
+ *  @todo In the future a second choices_string_list may appear for displaying.
+ *
+ *  param       option          merge oyBEHAVIOUR and oyDEFAULT_PROFILE
  *  param[out]  choices         n choices; if choices is zero then you need to
  *                              optain the choices otherwise, like for profiles
  *  param[out]  choices_strings translated list of n choices
- *  param[out]  tooltip         transated tooltip
+ *  param[out]  current         the actual setting
  *
- *  return                      translated option title
+ *  return                      success
  */
-const char* oyGetOptionUITitle         (oyOPTION          type,
-                                        const oyGROUP   **categories,
-                                        int              *choices,
-                                        const char     ***choices_string_list,
-                                        const char      **tooltip )
+int         oyOptionChoicesGet         (oyWIDGET          option,
+                                        int             * choices,
+                                        const char    *** choices_string_list,
+                                        int             * current )
 {
-  const char *uititle = NULL;
+  int error = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  uititle = oyGetOptionUITitle_            ( type,
-                                             categories,
+  error =   oyOptionChoicesGet_            ( option,
                                              choices, choices_string_list,
-                                             tooltip );
+                                             current );
   oyExportEnd_();
   DBG_PROG_ENDE
-  return uititle;
+  return error;
 }
 
-/** Get a special Groups UI strings
- *
- *  param       type            settings group
- *  param[out]  tooltips        translated tooltip
- *
- *  return                      translated title
+/** @brief delete list of choices from a option
+ *  @param list     string list
+ *  @param size     number of strings in the list to free
  */
-const char* oyGetGroupUITitle          (oyGROUP           type,
-                                        const char      **tooltips)
-{
-  const char *uititle = NULL; 
+void
+oyOptionChoicesFree                  (oyWIDGET_TYPE     option,
+                                      const char    *** list,
+                                      int               size)
+{ DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
 
-  DBG_PROG_START
-  oyExportStart_();
+  oyOptionChoicesFree_ (option, list, size);
 
-  uititle = oyGetGroupUITitle_             ( type,
-                                             tooltips );
   oyExportEnd_();
   DBG_PROG_ENDE
-  return uititle;
 }
-
 
 /*  @} */
+
 
 /** \addtogroup behaviour Behaviour API
  *  Functions to set and query for behaviour on various actions in Oyranos.
 
  *  @todo is the missing description of available choices<br>
+
+ *  Take a look at the Oyranos settings xml file. Options are described <a href="../../../color/settings/office.policy.xml">there</a>.
  
- *  Meanwhile look at the \b oyranos-config-fltk application or the description on
+ *  Otherwise look at the \b oyranos-config-fltk application
+    or the description on
+
  *  <a href="http://www.oyranos.com/wiki/index.php?title=Oyranos_Use_Cases">ColourWiki</a>.
 
  *  @{
@@ -602,7 +655,7 @@ oySetBehaviour         (oyBEHAVIOUR       type,
   int error = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_SETTING);
 
   error = oySetBehaviour_(type, choice);
 
@@ -622,7 +675,7 @@ oyGetBehaviour         (oyBEHAVIOUR       type)
   int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_SETTING);
 
   n = oyGetBehaviour_(type);
 
@@ -658,7 +711,7 @@ oyPolicyToXML          (oyGROUP           group,
   char* text = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_SETTING);
 
   text = oyPolicyToXML_(group, add_header, allocate_func);
 
@@ -681,7 +734,7 @@ oyReadXMLPolicy        (oyGROUP           group,
   int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_SETTING);
 
   n = oyReadXMLPolicy_(group, xml);
 
@@ -714,14 +767,12 @@ oyPathsCount         (void)
   int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   n = oyPathsCount_();
   if(!n)
     oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT);
   n = oyPathsCount_();
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -741,11 +792,9 @@ oyPathName           (int           number,
   char* name = NULL;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   name = oyPathName_ (number, allocate_func);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -762,11 +811,9 @@ oyPathAdd            (const char* pathname)
 { int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   n = oyPathAdd_ (pathname);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -780,11 +827,9 @@ oyPathAdd            (const char* pathname)
 void
 oyPathRemove         (const char* pathname)
 { DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   oyPathRemove_ (pathname);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -793,11 +838,9 @@ oyPathRemove         (const char* pathname)
 void
 oyPathSleep          (const char* pathname)
 { DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   oyPathSleep_ (pathname);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -806,11 +849,9 @@ oyPathSleep          (const char* pathname)
 void
 oyPathActivate       (const char* pathname)
 { DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   oyPathActivate_ (pathname);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -829,11 +870,9 @@ oyGetPathFromProfileName (const char* profile_name, oyAllocFunc_t allocate_func)
   char* path_name = NULL;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   path_name = oyGetPathFromProfileName_ (profile_name, allocate_func);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -864,11 +903,9 @@ oySetDefaultProfile        (oyDEFAULT_PROFILE type,
   int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   n = oySetDefaultProfile_ (type, file_name);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -893,11 +930,9 @@ oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
   int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   n = oySetDefaultProfileBlock_ (type, file_name, mem, size);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -918,11 +953,9 @@ oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
   char* name = NULL;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   name = oyGetDefaultProfileName_ (type, allocate_func);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -950,35 +983,18 @@ oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
  *  @todo use coloursig variable; extract such information from profiles
  */
 char**
-oyProfileList                      (const char* coloursig, int *size)
+oyProfileListGet                   (const char* coloursig, int *size)
 {
   char **names = NULL;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
-  names = oyProfileList_(coloursig, size);
-  oyClose_();
+  names = oyProfileListGet_(coloursig, size);
 
   oyExportEnd_();
   DBG_PROG_ENDE
   return names;
-}
-
-/** @brief delete a profile names list
- *  @param list a list of profile filenames
- *  @param size number of profile filenames in the list to free
- */
-void
-oyProfileListFree                  (char** list, int size)
-{ DBG_PROG_START
-  oyExportStart_();
-
-  oyProfileListFree_ (list, size);
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
 }
 
 /** @} */
@@ -1003,7 +1019,7 @@ oyCheckProfile (const char* filename, const char* coloursig)
   int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
   /* coloursig is currently ignored */
   n = oyCheckProfile_ (filename, coloursig);
@@ -1026,7 +1042,7 @@ oyCheckProfileMem (const void* mem, size_t size, const char* coloursig)
   int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_CHECK_NO);
 
   /* coloursig is currently ignored */
   n = oyCheckProfile_Mem (mem, size, coloursig);
@@ -1036,17 +1052,20 @@ oyCheckProfileMem (const void* mem, size_t size, const char* coloursig)
   return n;
 }
 
+/** @brief get the profiles size
+ *
+ *  @param  profilename  specifies the profile
+ *  @return size
+ */
 size_t
 oyGetProfileSize                  (const char* profilename)
 {
   size_t size = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   size = oyGetProfileSize_ (profilename);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -1054,6 +1073,11 @@ oyGetProfileSize                  (const char* profilename)
 }
 
 /** @brief obtain an memory block in the responsibility of the user
+ *
+ *  Please note the size parameter is sensible. Eighter set it to zero or to  
+ *  the size obtained with oyGetProfileSize to get the full data or
+ *  specify the size you want to get a partitial profile. \n
+ *  This feature is useful for instance to get only the headers of many profiles.
  *
  *  @param  profilename  specifies the profile
  *  @param[in]  size     desired size, or zero for a complete copy
@@ -1068,11 +1092,9 @@ oyGetProfileBlock                 (const char* profilename, size_t *size,
   char* block = NULL;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   block = oyGetProfileBlock_ (profilename, size, allocate_func);
-  oyClose_();
   DBG_PROG_S( ("%s %hd %d", profilename, (int)(intptr_t)block, (int)(intptr_t)*size) )
   DBG_PROG
 
@@ -1128,7 +1150,7 @@ oyGetProfileBlock                 (const char* profilename, size_t *size,
                                              "100lux", 0,
                                             "", allocate_func);
    if (profile_name)
-   { char* ptr = (char*)malloc (oyGetProfileSize (profile_name),sizeof(int);
+   { char* ptr = NULL;
      ptr = oyGetProfileBlock (profile_name, allocate_func);
        // do something
      free (ptr);
@@ -1152,13 +1174,11 @@ oyGetDeviceProfile                (oyDEVICETYP typ,
   char* profile_name = NULL;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   profile_name = oyGetDeviceProfile_ (manufacturer, model, product_id,
                                     host, port, attrib1, attrib2, attrib3,
                                     allocate_func);
-  oyClose_();
   if(profile_name)
     DBG_PROG_S( (profile_name) );
 
@@ -1187,13 +1207,11 @@ oySetDeviceProfile                (oyDEVICETYP typ,
   int rc = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   rc =         oySetDeviceProfile_ (manufacturer, model, product_id,
                                     host, port, attrib1, attrib2, attrib3,
                                     profileName, mem, size);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -1215,12 +1233,10 @@ oyEraseDeviceProfile              (oyDEVICETYP typ,
   int rc = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  oyOpen_();
   rc =       oyEraseDeviceProfile_ (manufacturer, model, product_id,
                                     host, port, attrib1, attrib2, attrib3);
-  oyClose_();
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -1247,17 +1263,15 @@ oyEraseDeviceProfile              (oyDEVICETYP typ,
  *  @return              errors
  */
 int
-oyCmmRegisterXML       (oyGROUP           group,
-                        const char       *xml,
-                        const char       *domain,
-                        const char       *domain_path)
+oyModulRegisterXML       (oyGROUP           group,
+                        const char       *xml)
 {
   int n = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_CHECK_NO);
 
-  n = oyCmmRegisterXML_(group, xml, domain, domain_path);
+  n = oyModulRegisterXML_(group, xml);
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -1272,7 +1286,7 @@ oyCmmRegisterXML       (oyGROUP           group,
  * 
    \code
    int    count, i;
-   char** ids = oyCmmGetCmmNames ( &count, allocate_func);
+   char** ids = oyModulsGetNames ( &count, allocate_func);
    for (i = 0; i < count; ++i)
    { printf( "CMM short name: %s\n", ids[i]);
      free (ids[i]);
@@ -1283,15 +1297,15 @@ oyCmmRegisterXML       (oyGROUP           group,
 
  */
 char**
-oyCmmGetCmmNames       ( int        *count,
+oyModulsGetNames       ( int        *count,
                          oyAllocFunc_t allocate_func )
 {
   char** ids = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_CHECK_NO);
 
-  ids = oyCmmGetCmmNames_(count, allocate_func);
+  ids = oyModulsGetNames_(count, allocate_func);
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -1315,7 +1329,7 @@ oyI18NSet              ( int active,
                          int reserved )
 {
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_CHECK_NO);
 
   oyI18NSet_(active, reserved);
 

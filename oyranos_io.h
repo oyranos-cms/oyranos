@@ -20,9 +20,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
+ */
+
+/** @file @internal
+ *  @brief input / output methods
  *
- *  input / output methods
- * 
+ *  This file contains functions for handling and writing files and directories.
  */
 
 /* Date:      25. 11. 2004 */
@@ -59,16 +62,15 @@ int     oySetProfile_Block                (const char* name,
 /* --- internal API definition --- */
 
 /* separate from the external functions */
-char* oyGetPathFromProfileName_ (const char*   profilename,
-                                 oyAllocFunc_t allocate_func);
+char* oyGetPathFromProfileName_           (const char*   profilename,
+                                           oyAllocFunc_t allocate_func);
 
 
-char**  oyProfileList_                 (const char* coloursig, int * size);
-void    oyProfileListFree_             (char** list, int size);
+char**  oyProfileListGet_                 (const char* coloursig, int * size);
 
-int	oyCheckProfile_                    (const char* name,const char* coloursig);
-int	oyCheckProfile_Mem                 (const void* mem, size_t size,
-                                        const char* coloursig);
+int	oyCheckProfile_                   (const char* name,const char* coloursig);
+int	oyCheckProfile_Mem                (const void* mem, size_t size,
+                                           const char* coloursig);
 
 size_t	oyGetProfileSize_                 (const char*   profilename);
 void*	oyGetProfileBlock_                (const char*   profilename,
@@ -77,12 +79,12 @@ void*	oyGetProfileBlock_                (const char*   profilename,
 
 
 /* complete an name from file including oyResolveDirFileName */
-char*   oyMakeFullFileDirName_     (const char* name);
+char*   oyMakeFullFileDirName_            (const char* name);
 /* find an file/dir and do corrections on  ~ ; ../  */
-char*   oyResolveDirFileName_      (const char* name);
-char*   oyExtractPathFromFileName_ (const char* name);
-char*   oyGetHomeDir_              ();
-char*   oyGetParent_               (const char* name);
+char*   oyResolveDirFileName_             (const char* name);
+char*   oyExtractPathFromFileName_        (const char* name);
+char*   oyGetHomeDir_                     ();
+char*   oyGetParent_                      (const char* name);
 int     oyRecursivePaths_      (int (*doInPath) (void*,const char*,const char*),
                                 void* data);
 

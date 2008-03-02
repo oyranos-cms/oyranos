@@ -1,10 +1,14 @@
 <!--?xml version="1.0" encoding="UTF-8"? -->
-<!-- Oyranos CMM format 1.0 -->
+<!-- Oyranos CMM format 0.1 -->
 <!-- Sample CMM: ArgyllWrapper -->
 
 
 <!-- use oyNAME as UI string and oyDESCRIPTION as tooltip -->
 <!-- oyARRAY's are counted from zero -->
+
+<oyDOMAIN>oyranos</oyDOMAIN>
+
+<!-- oyDOMAIN_PATH></oyDOMAIN_PATH -->
 
 <oyCMM_REGISTER>
   <!-- The dlopened function  static char* version()  from the CMM.so must
@@ -29,6 +33,7 @@
     <oyGROUPS>
       <oyARRAY>
         <oyGROUP>
+          <oyID>100</oyID>
           <oyCONFIG_STRING_XML>oyGROUP_ARGL_COLOR_CONVERSION</oyCONFIG_STRING_XML>
           <oyNAME>ArgyllCMS</oyNAME>
           <oyDESCRIPTION>ArgyllCMS colour management module</oyDESCRIPTION>
@@ -55,17 +60,25 @@
         <oyDYNLOAD_FUNC>cmmColourTransform</oyDYNLOAD_FUNC>
         <!-- optionally describe the arguments 
              they should remain static to allow type checking -->
-        <oyARGUMENTS>
+        <oyOPTIONS>
           <oyARRAY>
-            <oyARGUMENT>
+            <oyOPTION>
+              <oyOPTION_TYPE>oyTYPE_VOID</oyOPTION_TYPE>
               <oyNAME>the Data Object</oyNAME>
-            </oyARGUMENT>
+              <oyDESCRIPTION>no choices</oyDESCRIPTION>
+              <oyCONFIG_STRING>data</oyCONFIG_STRING>
+            </oyOPTION>
           </oyARRAY>
-        </oyARGUMENTS>
+        </oyOPTIONS>
       </oyFUNCTION>
 
       <oyFUNCTION>
         <oyID>2</oyID>
+        <oyCONFIG_STRING_XML>oyCOLOUR_TRANSFORMATION_CREATE</oyCONFIG_STRING_XML>
+
+        <oyNAME>Colour Transform Create</oyNAME>
+        <oyDESCRIPTION>Function for Creating a Colour Space Transformation.</oyDESCRIPTION>
+
         <oyDYNLOAD_PATH></oyDYNLOAD_PATH>
         <!-- void* (*) ( oyProfileList_s *list,
                          oyOptions_s     *opts );
@@ -86,16 +99,17 @@
                     followed by other CMM provided options 
           -->
         <oyDYNLOAD_LIB>libargyllcmm.so.0</oyDYNLOAD_LIB>
-        <oyDYNLOAD_FUNC>cmsCreateTransform</oyDYNLOAD_FUNC>
+        <oyDYNLOAD_FUNC>cmmCreateTransform</oyDYNLOAD_FUNC>
 
         <!-- Tell about available Options -->
         <oyOPTIONS>
           <oyARRAY>
             <oyOPTION>
               <oyARRAY>
-                <oyGROUP>0</oyGROUP>
+                <oyGROUP>100</oyGROUP>
               </oyARRAY>
               <!-- oyID is derived from enum oyOPTION position and not changeable -->
+              <oyOPTION_TYPE>oyTYPE_CHOICE</oyOPTION_TYPE>
               <oyID>3</oyID>
               <oyNAME>Default Rendering Intent</oyNAME>
               <oyDESCRIPTION>Rendering Intent for Colour Space Transformations.</oyDESCRIPTION>
@@ -108,7 +122,7 @@
                 </oyARRAY>
               </oyCHOICES>
               <!-- The complete string will be formed from
-                   rights/sw/oyranos/cmms/cmm_id/keyname_below.
+                   rights/sw/oyranos/cmms/cmm_id/function_name/keyname_below.
                    Note: For the predefined oyOPTION's the standard settings will
                          be used instead -->
               <oyCONFIG_STRING>intent</oyCONFIG_STRING>
@@ -118,9 +132,9 @@
       
             <oyOPTION>
               <oyARRAY>
-                <oyGROUP>0</oyGROUP>
+                <oyGROUP>100</oyGROUP>
               </oyARRAY>
-              <!-- oyID is derived from enum oyOPTION position and not changeable -->
+              <oyOPTION_TYPE>oyTYPE_CHOICE</oyOPTION_TYPE>
               <oyID>4</oyID>
               <oyNAME>Use Black Point Compensation</oyNAME>
               <oyDESCRIPTION>BPC affects only the Relative Colorimetric Rendering Intent.</oyDESCRIPTION>
@@ -131,7 +145,7 @@
                 </oyARRAY>
               </oyCHOICES>
               <!-- The complete string will be formed from
-                   rights/sw/oyranos/cmms/cmm_id/keyname_below.
+                   rights/sw/oyranos/cmms/cmm_id/function_name/keyname_below.
                    Note: For the predefined oyOPTION's the standard settings will
                          be used instead -->
               <oyCONFIG_STRING>bpc</oyCONFIG_STRING>
@@ -141,9 +155,9 @@
       
             <oyOPTION>
               <oyARRAY>
-                <oyGROUP>0</oyGROUP>
+                <oyGROUP>100</oyGROUP>
               </oyARRAY>
-              <!-- oyID is derived from enum oyOPTION position and not changeable -->
+              <oyOPTION_TYPE>oyTYPE_CHOICE</oyOPTION_TYPE>
               <oyID>5</oyID>
               <oyNAME>Proofing Rendering Intent</oyNAME>
               <oyDESCRIPTION>Behaviour of colour space transformation for proofing</oyDESCRIPTION>
@@ -154,7 +168,7 @@
                 </oyARRAY>
               </oyCHOICES>
               <!-- The complete string will be formed from
-                   rights/sw/oyranos/cmms/cmm_id/keyname_below.
+                   rights/sw/oyranos/cmms/cmm_id/function_name/keyname_below.
                    Note: For the predefined oyOPTION's the standard settings will
                          be used instead -->
               <oyCONFIG_STRING>intent_proof</oyCONFIG_STRING>
@@ -164,9 +178,10 @@
       
             <oyOPTION>
               <oyARRAY>
-                <oyGROUP>0</oyGROUP>
+                <oyGROUP>100</oyGROUP>
               </oyARRAY>
-              <oyID>5</oyID>
+              <oyOPTION_TYPE>oyTYPE_CHOICE</oyOPTION_TYPE>
+              <oyID>6</oyID>
               <oyNAME>Gamut Warning</oyNAME>
               <oyDESCRIPTION>Mark out of gamut colours for the proofing profile.</oyDESCRIPTION>
               <oyCHOICES>
@@ -176,7 +191,7 @@
                 </oyARRAY>
               </oyCHOICES>
               <!-- The complete string will be formed from
-                   rights/sw/oyranos/cmms/cmm_id/keyname_below.
+                   rights/sw/oyranos/cmms/cmm_id/function_name/keyname_below.
                    Note: For the predefined oyOPTION's the standard settings will
                          be used instead -->
               <oyCONFIG_STRING>gamut_warn</oyCONFIG_STRING>

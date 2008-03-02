@@ -20,8 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * hardware API
+ */
+
+/** @internal hardware API
  * 
  */
 
@@ -67,15 +68,15 @@ char* oyGetMonitorProfile         (const char *display,
 char* oyGetMonitorProfileName     (const char *display,
                                    oyAllocFunc_t allocate_func);
 
-// TODO set a memory based profile
+/* TODO set a memory based profile */
 int   oySetMonitorProfile         (const char* display_name,
                                    const char* profil_name );
 int   oyActivateMonitorProfiles   (const char* display_name);
 /* @} */
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_MONITOR_H */

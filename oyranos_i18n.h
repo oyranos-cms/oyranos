@@ -1,9 +1,9 @@
-/*
+/**
  * Oyranos is an open source Colour Management System 
  * 
  * Copyright (C) 2006  Kai-Uwe Behrmann
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,17 +22,44 @@
  * -----------------------------------------------------------------------------
  */
 
-/** @internal sorting
- * 
+/** @file @internal
+ *  @brief i18n API
  */
 
-/* Date:      29. 07. 2006 */
-
-#include "oyranos_helper.h"
-#include "oyranos.h"
-#include "oyranos_cmms.h"
+/** @date      29. 07. 2006 */
 
 
-/* --- internal API definition --- */
+#ifndef OYRANOS_I18N_H
+#define OYRANOS_I18N_H
+
+#ifdef __cplusplus
+extern "C" {
+namespace oyranos
+{
+#endif /* __cplusplus */
+
+#ifdef USE_GETTEXT
+# include <libintl.h>
+# include <locale.h>
+# define _(text) dgettext( domain, text )
+#else
+# define _(text) text
+#endif
+extern const char *domain;
+extern const char *domain_path;
+
+#define OY_TEXTDOMAIN "oyranos"
+
+/* library sentinels */
+void   oyI18NInit_               (void);
+void   oyI18Nrefresh_();
+void   oyI18NSet_                    ( int active,
+                                       int reserved );
 
 
+#ifdef __cplusplus
+} // extern "C"
+} // namespace oyranos
+#endif /* __cplusplus */
+
+#endif /* OYRANOS_I18N_H */

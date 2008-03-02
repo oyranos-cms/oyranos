@@ -66,6 +66,26 @@ typedef void* (*oyAllocFunc_t)         (size_t size);
 typedef void (*oyDeAllocFunc_t)       (void *data);
 
 
+/** @brief Widget Groups 
+ */
+typedef enum  {
+  oyGROUP_START = 0,
+  oyGROUP_POLICY,                  /**< Policies */
+  oyGROUP_PATHS,                   /**< Paths */
+  oyGROUP_DEFAULT_PROFILES,        /**< Default Profiles */
+  oyGROUP_DEFAULT_PROFILES_EDIT,   /**< Default Editing Profiles */
+  oyGROUP_DEFAULT_PROFILES_ASSUMED,/**< Default Assumed Profiles */
+  oyGROUP_DEFAULT_PROFILES_PROOF,  /**< Default Proofing Profiles */
+  oyGROUP_BEHAVIOUR,               /**< Behaviour */
+  oyGROUP_BEHAVIOUR_RENDERING,            /**< Rendering Behaviour */
+  oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
+  oyGROUP_BEHAVIOUR_MISSMATCH,            /**< Profile Missmatch Behaviour */
+  oyGROUP_BEHAVIOUR_PROOF,                /**< Profile Missmatch Behaviour */
+  oyGROUP_ALL,                     /**< just for easen Gui design */
+  oyGROUP_EXTERN = 100             /**< start of groups in a extern module */
+} oyGROUP;
+
+
 /* --- behaviour --- */
 
 /** @brief Behaviour settings
@@ -98,24 +118,6 @@ int         oySetBehaviour             (oyBEHAVIOUR       type,
                                         int               choice);
 
 /* --- policies --- */
-
-/** @brief Policy Groups 
- */
-typedef enum  {
-  oyGROUP_START = 0,
-  oyGROUP_DEFAULT_PROFILES,        /**< Default Profiles */
-  oyGROUP_DEFAULT_PROFILES_EDIT,   /**< Default Editing Profiles */
-  oyGROUP_DEFAULT_PROFILES_ASSUMED,/**< Default Assumed Profiles */
-  oyGROUP_DEFAULT_PROFILES_PROOF,  /**< Default Proofing Profiles */
-  oyGROUP_PATHS,                   /**< Paths */
-  oyGROUP_POLICY,                  /**< Policies */
-  oyGROUP_BEHAVIOUR,               /**< Behaviour */
-  oyGROUP_BEHAVIOUR_RENDERING,            /**< Rendering Behaviour */
-  oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
-  oyGROUP_BEHAVIOUR_MISSMATCH,            /**< Profile Missmatch Behaviour */
-  oyGROUP_BEHAVIOUR_PROOF,                /**< Profile Missmatch Behaviour */
-  oyGROUP_ALL                      /**< just for easen Gui design */
-} oyGROUP;
 
 char*       oyPolicyToXML              (oyGROUP           group,
                                         int               add_header,
@@ -164,8 +166,8 @@ char*       oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
 
 /* --- profile lists --- */
 
-char**oyProfileList                    (const char* coloursig, int * size);
-void  oyProfileListFree                (char** list, int size);
+char**oyProfileListGet                 (const char* coloursig, int * size);
+
 
 /* --- profile checking --- */
 
@@ -177,58 +179,103 @@ int   oyCheckProfileMem                (const void* mem, size_t size,
 
 /* --- profile access through oyranos --- */
 
-size_t oyGetProfileSize                (const char* profilename);
-void*  oyGetProfileBlock               (const char* profilename, size_t* size,
+size_t oyGetProfileSize                (const char * profilename);
+void*  oyGetProfileBlock               (const char * profilename, size_t * size,
                                         oyAllocFunc_t alloc_func);
 
 
 /* --- options / GUI layout --- */
 /** @brief options for UI presentation, covering all kind of settings */
 typedef enum  {
-  oyOPTION_BEHAVIOUR_START = 30,
-  oyOPTION_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? */
-  oyOPTION_ACTION_OPEN_MISMATCH_RGB,/**< What to do if profiles mismatch ? */
-  oyOPTION_ACTION_OPEN_MISMATCH_CMYK,/**< What to do if profiles mismatch ?*/
-  oyOPTION_MIXED_MOD_DOCUMENTS_PRINT,/**< Convert befor save for Print? */
-  oyOPTION_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
-  oyOPTION_RENDERING_INTENT,        /**< Standard colour transformations */
-  oyOPTION_RENDERING_BPC,           /**< use BlackPointCompensation */
-  oyOPTION_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
-  oyOPTION_PROOF_SOFT,              /**< Proofing by default for screen */
-  oyOPTION_PROOF_HARD,              /**< Proofing by default for printing */
-  oyOPTION_BEHAVIOUR_END,           /**< just for easen Gui design */
+  oyWIDGET_GROUP_START = 0,
+  oyWIDGET_GROUP_POLICY,                  /**< Policies */
+  oyWIDGET_GROUP_PATHS,                   /**< Paths */
+  oyWIDGET_GROUP_DEFAULT_PROFILES,        /**< Default Profiles */
+  oyWIDGET_GROUP_DEFAULT_PROFILES_EDIT,   /**< Default Editing Profiles */
+  oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED,/**< Default Assumed Profiles */
+  oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF,  /**< Default Proofing Profiles */
+  oyWIDGET_GROUP_BEHAVIOUR,               /**< Behaviour */
+  oyWIDGET_GROUP_BEHAVIOUR_RENDERING,            /**< Rendering Behaviour */
+  oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options*/
+  oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH,     /**< Profile Missmatch Behaviour */
+  oyWIDGET_GROUP_BEHAVIOUR_PROOF,         /**< Profile Missmatch Behaviour */
+  oyWIDGET_GROUP_ALL,                     /**< just for easen Gui design */
+  oyWIDGET_GROUP_EXTERN = 100,      /**< start of groups in a extern module */
 
-  oyOPTION_DEFAULT_PROFILE_START = 100,
-  oyOPTION_EDITING_RGB,            /**< Rgb Editing (Workspace) Profile */
-  oyOPTION_EDITING_CMYK,           /**< Cmyk Editing (Workspace) Profile */
-  oyOPTION_EDITING_XYZ,            /**< XYZ Editing (Workspace) Profile */
-  oyOPTION_EDITING_LAB,            /**< Lab Editing (Workspace) Profile */
-  oyOPTION_ASSUMED_XYZ,            /**< standard XYZ assumed source profile */
-  oyOPTION_ASSUMED_LAB,            /**< standard Lab assumed source profile */
-  oyOPTION_ASSUMED_RGB,            /**< standard RGB assumed source profile */
-  oyOPTION_ASSUMED_WEB,            /**< std internet assumed source static_profile*/
-  oyOPTION_ASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
-  oyOPTION_PROFILE_PROOF,          /**< standard proofing profile */
-  oyOPTION_DEFAULT_PROFILE_END,    /**< just for easen Gui design */
+  oyWIDGET_POLICY = 20,        /**< policy selection */
 
-  oyOPTION_ACTUAL_POLICY = 200,    /**< policy selection */
+  oyWIDGET_BEHAVIOUR_START = 30,
+  oyWIDGET_ACTION_UNTAGGED_ASSIGN,    /**< What to do if image is untagged ? */
+  oyWIDGET_ACTION_OPEN_MISMATCH_RGB,  /**< What to do if profiles mismatch ? */
+  oyWIDGET_ACTION_OPEN_MISMATCH_CMYK, /**< What to do if profiles mismatch ?*/
+  oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT, /**< Convert befor save for Print? */
+  oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
+  oyWIDGET_RENDERING_INTENT,          /**< Standard colour transformations */
+  oyWIDGET_RENDERING_BPC,             /**< use BlackPointCompensation */
+  oyWIDGET_RENDERING_INTENT_PROOF,    /**< Proofing colour transformations */
+  oyWIDGET_PROOF_SOFT,                /**< Proofing by default for screen */
+  oyWIDGET_PROOF_HARD,                /**< Proofing by default for printing */
+  oyWIDGET_BEHAVIOUR_END,             /**< just for easen Gui design */
 
-  oyOPTION_CMM_START = 300,       /**< CMM options */
-  oyOPTION_CMM_SELECT,             /**< CMM selection */
-  oyOPTION_CMM_INTENT,             /**< CMM rendering intent */
-  oyOPTION_CMM_BPC,                /**< black point compensation switch */
-  oyOPTION_CMM_INTENT_PROOF,       /**< Proofing colour transformations */
-} oyOPTION;
+  oyWIDGET_DEFAULT_PROFILE_START = 100,
+  oyWIDGET_EDITING_RGB,        /**< Rgb Editing (Workspace) Profile */
+  oyWIDGET_EDITING_CMYK,       /**< Cmyk Editing (Workspace) Profile */
+  oyWIDGET_EDITING_XYZ,        /**< XYZ Editing (Workspace) Profile */
+  oyWIDGET_EDITING_LAB,        /**< Lab Editing (Workspace) Profile */
+  oyWIDGET_ASSUMED_XYZ,        /**< standard XYZ assumed source profile */
+  oyWIDGET_ASSUMED_LAB,        /**< standard Lab assumed source profile */
+  oyWIDGET_ASSUMED_RGB,        /**< standard RGB assumed source profile */
+  oyWIDGET_ASSUMED_WEB,        /**< std internet assumed source static_profile*/
+  oyWIDGET_ASSUMED_CMYK,       /**< standard Cmyk assumed source profile */
+  oyWIDGET_PROFILE_PROOF,      /**< standard proofing profile */
+  oyWIDGET_DEFAULT_PROFILE_END,/**< just for easen Gui design */
 
-const char* oyGetOptionUITitle         (oyOPTION          type,
-                                        const oyGROUP   **categories,
-                                        int              *choices,
-                                        const char     ***choices_string_list,
-                                        const char      **tooltip );
-const char* oyGetGroupUITitle          (oyGROUP           type,
-                                        const char      **tooltips);
+  oyWIDGET_CMM_START = 300,        /**< CMM options */
+  oyWIDGET_CMM_SELECT,             /**< CMM selection */
+  oyWIDGET_CMM_INTENT,             /**< CMM rendering intent */
+  oyWIDGET_CMM_BPC,                /**< black point compensation switch */
+  oyWIDGET_CMM_INTENT_PROOF        /**< Proofing colour transformations */
+} oyWIDGET;
 
 
+/** @brief type of widget */
+typedef enum {
+    oyTYPE_START,
+    oyTYPE_GROUP_TREE,/**!< group creating a new visibility (tab, leave) */
+    oyTYPE_BEHAVIOUR,
+    oyTYPE_DEFAULT_PROFILE,
+    oyTYPE_PROFILE,   /**!< select a profile through a list widget */
+    oyTYPE_INT,       /**!< TODO @todo value range */
+    oyTYPE_FLOAT,     /**!< IEEE floating point number */
+    oyTYPE_CHOICE,    /**!< option from a array of choices */
+    oyTYPE_VOID,      /**!< data block, should not be selectable */
+    oyTYPE_END
+} oyWIDGET_TYPE;
+
+oyWIDGET    * oyWidgetListGet          (oyGROUP           group,
+                                        int             * count);
+
+oyWIDGET_TYPE oyWidgetTitleGet         (oyWIDGET          option,
+                                        const oyGROUP  ** categories,
+                                        const char     ** name,
+                                        const char     ** tooltip,
+                                        int             * flags );
+
+int           oyOptionChoicesGet       (oyWIDGET          option,
+                                        int             * choices,
+                                        const char    *** choices_string_list,
+                                        int             * current);
+void          oyOptionChoicesFree      (oyWIDGET_TYPE     option,
+                                        const char    *** list,
+                                        int               size);
+# ifdef oyInPlaning_
+int           oyOptionFloatIntRangeGet (oyWIDGET          option,
+                                        float           * start,
+                                        float           * end,
+                                        float           * step_major,
+                                        float           * step_minor,
+                                        float           * current);
+# endif
 
 /* --- colour conversions --- */
 
@@ -237,7 +284,7 @@ const char* oyGetGroupUITitle          (oyGROUP           type,
     should be used in a list oyColourTransformOptions_s to form a options set
  */
 typedef struct {
-    oyOPTION opt;                     /*!< CMM registred option */
+    oyWIDGET opt;                     /*!< CMM registred option */
     int    supported_by_chain;        /*!< 1 for supporting; 0 if one fails */
     double value_d;                   /*!< value of option; unset with nan; */ 
 } oyOption_s;
@@ -311,7 +358,7 @@ typedef struct {
 int            oyImageCleanAll       ( oyImage_s *img, oyDeAllocFunc_t free );
 
 typedef struct {
-    //int          whatch;      /*!< tell Oyranos to observe files */
+    /*int          whatch;*/      /*!< tell Oyranos to observe files */
     void*        internal;    /*!< Oyranos internal structs */
 } oyColourConversion_s;
 
@@ -339,19 +386,17 @@ int            oyColourConversionRun ( oyColourConversion_s *colour /*!< object*
 
 /* --- CMM API --- */
 
-int    oyCmmRegisterXML              ( oyGROUP group,
-                                       const char *xml,
-                                       const char *domain,
-                                       const char *domain_path );
+int    oyModulRegisterXML            ( oyGROUP group,
+                                       const char *xml );
 
 /** obtain 4 char CMM identifiers and count of CMM's */
-char** oyCmmGetCmmNames              ( int        *count,
+char** oyModulsGetNames              ( int        *count,
                                        oyAllocFunc_t alloc_func );
-int    oyCmmGetOptionRanges          ( const char *cmm,
+int    oyModulGetOptionRanges        ( const char *cmm,
                                        oyGROUP    *oy_group_start,
                                        oyGROUP    *oy_group_end,
-                                       oyOPTION   *oy_option_start,
-                                       oyOPTION   *oy_option_end );
+                                       oyWIDGET   *oy_option_start,
+                                       oyWIDGET   *oy_option_end );
 
 
 void   oyI18NSet                     ( int active,

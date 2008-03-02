@@ -20,8 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
+ */
+
+/** @file @internal
+ * @brief gamma loader - put it somethere in your xinitrc
  *
- * gamma loader - put it somethere in your xinitrc
  * It reads the default profile(s) from the Oyranos CMS and recalls this
  * profile(s)
  * as new default profile for a screen, including a possible curves upload to
@@ -36,7 +39,7 @@
 #include "oyranos.h"
 #include "oyranos_monitor.h"
 #include "oyranos_debug.h"
-#include "oyranos_helper.h"
+#include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
 #include <stdlib.h>
@@ -52,6 +55,9 @@ int main( int argc , char** argv )
   int error = 0;
   int erase = 0;
   char *ptr = NULL;
+
+  setlocale(LC_ALL,"");
+  oyI18NInit_();
 
   // cut off the screen information
   if(display_name &&
@@ -85,9 +91,9 @@ int main( int argc , char** argv )
                         } else wrong_arg = "-y";
                         if(oy_debug) printf("y=%d\n",y); ++pos; break;*/
               case 'h': printf("\n");
-                        printf("oyranos-gamma v%d.%d.%d %s\n",
+                        printf("oyranos-monitor v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-                                _("is a colour profile administration tool"));
+                                _("is a colour profile administration tool for monitors"));
                         printf("%s\n",                 _("Usage"));
                         printf("  %s\n",               _("Set new profile:"));
                         printf("      %s\n",           argv[0]);
@@ -113,7 +119,7 @@ int main( int argc , char** argv )
             if(oy_debug) {
               size_t size = 0;
               oyGetMonitorProfile(display_name, &size, oyAllocFunc);
-              printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,size);
+              printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,(int)size);
             }
             erase = 0;
       }
@@ -137,7 +143,7 @@ int main( int argc , char** argv )
   if(oy_debug) {
     size_t size = 0;
     oyGetMonitorProfile(display_name, &size, oyAllocFunc);
-    printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,size);
+    printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,(int)size);
   }
 
   return error;

@@ -20,15 +20,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * sorting
- * 
+ */
+
+/** @file @internal
+ *  @brief helpers
  */
 
 /* Date:      02. 09. 2005 */
 
-#include "oyranos_helper.h"
 #include "oyranos.h"
+#include "oyranos_helper.h"
+#include "oyranos_internal.h"
 
 #include <stdio.h>
 

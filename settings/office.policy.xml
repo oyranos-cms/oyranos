@@ -1,6 +1,7 @@
 <!--?xml version="1.0" encoding="UTF-8"? -->
 <!-- Oyranos policy format 1.0 -->
 <!-- Standard policy: Office / Home Users -->
+<body>
 
 
 <oyGROUP_DEFAULT_PROFILES>
@@ -145,3 +146,8 @@
     <oyBEHAVIOUR_PROOF_HARD>0</oyBEHAVIOUR_PROOF_HARD>
 
 </oyGROUP_BEHAVIOUR_PROOF>
+
+
+
+</body>
+

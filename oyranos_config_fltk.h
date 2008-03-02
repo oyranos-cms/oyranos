@@ -33,6 +33,7 @@ void showDefaultProfile_callback( Fl_Widget* w, void* );
 void addPathCallback( Fl_Widget* w, void* );
 void rmPathCallback( Fl_Widget* w, void* );
 void selectBehaviourCallback( Fl_Widget* w, void* x );
+void debug_me( );
 
 class OyFlPack : public Fl_Pack {
 public:
@@ -53,12 +54,15 @@ public:
   Fl_Box   *box;
   Fl_Choice*choice;
 
-  oyOPTION type;
+  oyWIDGET option;
+  oyWIDGET_TYPE type;
   int       i;
   Option( int x, int y, int w, int h, const char *name,
-  oyOPTION option,
+  oyWIDGET option_,
+  oyWIDGET_TYPE type_,
   int choices_n,
   const char **choices,
+  int current,
   const char *tooltip) ;
 };
 

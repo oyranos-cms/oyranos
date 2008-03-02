@@ -1,11 +1,13 @@
 #!/bin/sh
 
 TARGET=oyranos
+TARGET_NAME=Oyranos
 ERROR=0
 
 CONF_H=config.h
 CONF=makefile
 CONF_SH=$TARGET-config
+CONF_NV=libXNVCtrl/makefile
 CONF_I18N=fl_i18n/makefile
 SPEC=$TARGET.spec
 PKGC=$TARGET.pc
@@ -14,12 +16,13 @@ VERS="$TARGET"_version.h
 ECI_CONF=standard_profiles/eci/makefile
 BASE_CONF=standard_profiles/base/makefile
 
-export CONF_H CONF CONF_I18N
+export CONF_H CONF CONF_I18N CONF_NV
 
 VERSION_A=0
 VERSION_B=1
-VERSION_C=6
+VERSION_C=7
 RELEASE=0
+TIME="November 2004 - September 2006"
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
 if [ $VERSION_A -gt 9 ]; then
   VERSION_L="$VERSION_A"
@@ -37,7 +40,10 @@ else
   VERSION_L="${VERSION_L}0$VERSION_C"
 fi
 VERSION_L=`echo $VERSION_L | sed 's/^0*//g'`
-TIME="November 2004 - May 2006"
+
+echo ""
+echo "Welcome to $TARGET_NAME Version $VERSION configurator"
+echo ""
 
 if [ $# -gt 0 ]; then
   prefix=""
@@ -133,7 +139,7 @@ src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
 srcdir="`pwd`"
 
 test -f error.txt && rm error.txt
-test -f mkdepend && make clean
+test -f mkdepend && rm mkdepend config.h
 
 
 echo "# automatically generated file - do not edit" > $CONF
@@ -182,6 +188,8 @@ fi
 echo "MAKEFILE_ARCH = makefile$ARCH"  >> $CONF
 MACH_=`uname -m`
 MACH=BUILD_32
+BARCH=""
+LINE_ARCH=""
 if [ $? = 0 ]; then
   if [ "$MACH_" = "i686" ]; then
     echo "32-bit system           detected"
@@ -190,21 +198,17 @@ if [ $? = 0 ]; then
       MACH=BUILD_64
       echo "BUILD_64 = 1" >> $CONF
       echo "X86_64                  will build in 64 bit mode"
+      BARCH="64"
     else
       if [ "$MACH_" = "sun4u" ]; then
         MACH=BUILD_64
         echo "BUILD_64 = 1" >> $CONF
         echo "spark ultra 4           will build in 64 bit mode"
+        BARCH="64"
+        LINE_ARCH="-64"
       fi
     fi
   fi
-fi
-if [ $MACH = "BUILD_64" ]; then
-  BARCH="64"
-  LINE_ARCH="-64"
-else
-  BARCH=""
-  LINE_ARCH=""
 fi
 LIBDIR="lib"$BARCH
 export MACH OSUNAME LIBDIR BARCH LINE_ARCH
@@ -223,6 +227,8 @@ if [ "`echo $exec_prefix | grep 64 | wc -l`" -eq "1" ]; then
   echo unset BARCH LIBDIR
   export BARCH LIBDIR
 fi
+echo "BARCH=$BARCH" >> $CONF
+
 if [ -z "$bindir" ]; then
   bindir="$exec_prefix/bin"
 fi
@@ -275,32 +281,23 @@ echo "LIB=/"$LIBDIR >> $CONF
 FLTK_=`fltk-config --cxxflags 2>>error.txt`
 if [ $? = 0 ] && [ -n "$FLTK_" ]; then
   FLTK=1
-  echo "FLTK `fltk-config --version`              detected"
-  echo "#define HAVE_FLTK 1" >> $CONF_H
-  echo "FLTK = 1" >> $CONF
-  echo "FLTK_H = -DHAVE_FLTK `fltk-config --cxxflags`" >> $CONF
-  echo "FLTK_LIBS = `fltk-config --use-images --ldflags`" >> $CONF
-else
-  echo "FLTK is not found; you optionally can download at: www.fltk.org"
 fi
 
 
 FLU_=`flu-config --cxxflags 2>>error.txt`
 if [ $? = 0 ] && [ -n "$FLU_" ] && [ -n "$FLTK_" ]; then
-  echo "FLU                     detected"
-  echo "#define HAVE_FLU 1" >> $CONF_H
-  echo "FLU = 1" >> $CONF
-  echo "FLU_H = -DHAVE_FLU `flu-config --cxxflags`" >> $CONF
-  echo "FLU_LIBS = `flu-config --ldflags`" >> $CONF
-else
-  echo "no FLU found, will not use it"
+  FLU=1
 fi
 
 if [ "$FLTK" = 1 ]; then
   echo "FLTK_GUI = $TARGET-config-fltk" >> $CONF
-fi
-if [ "$FLU" = 1 ]; then
-  echo "FLU_GUI = $TARGET-config-flu" >> $CONF
+  if [ `fltk-config --version` = "1.1.7" ]; then
+    echo -e "\c"
+  else
+    if [ -n "$FLU_" ] && [ -n "$FLTK_" ]; then
+      echo "FLU_GUI = $TARGET-config-flu" >> $CONF
+    fi
+  fi
 fi
 
 
@@ -309,8 +306,8 @@ ELEKTRA=1; export ELEKTRA
 LCMS=1; export LCMS
 LIBPNG=2; export LIBPNG
 #FTGL=1; export FTGL
-#FLTK=1; export FLTK
-#FLU=2; export FLU
+FLTK=1; export FLTK
+FLU=2; export FLU
 X11=1; export X11
 XINERAMA=1; export XINERAMA
 XF86VMODE=1; export XF86VMODE
@@ -490,16 +487,20 @@ echo "CXX = $CXX" >> $CONF
 echo "CC = $CC" >> $CONF
 echo "CXX = $CXX" > $CONF_I18N
 echo "CC = $CC" >> $CONF_I18N
+echo "CXX = $CXX" > $CONF_NV
+echo "CC = $CC" >> $CONF_NV
 cat $CONF_I18N.in >> $CONF_I18N
 echo $CONF_I18N prepared
 
 echo "RM = rm -vf" >> $CONF
+echo "RM = rm -vf" >> $CONF_NV
 if [ $OSUNAME = "Darwin" ]; then
   echo "COPY = cp -pv" >> $CONF
   echo "LINK_FLAGS = -dynamiclib  -L." >> $CONF
   echo "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
   echo "MSGMERGE = msgmerge" >> $CONF
   echo "OPTS = -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF
+  echo "OPTS = -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF_NV
   echo "REZ = fltk-config --post \$@" >> $CONF
   echo "INSTALL = install -v" >> $CONF
   echo "INSTALL = install -v" >> $ECI_CONF
@@ -516,7 +517,7 @@ else
         --from-code=utf-8" >> $CONF
   if [ $OSUNAME = "Linux" ]; then
     echo "COPY = cp -vdpa" >> $CONF
-    echo "LINK_FLAGS = -shared -ldl -fPIC -L." >> $CONF
+    echo "LINK_FLAGS = -shared -fPIC -L." >> $CONF
     echo "LINK_FLAGS_STATIC = q" >> $CONF
     echo "LINK_NAME = -Wl,-soname -Wl,\$(LIBSONAMEFULL)" >> $CONF
     echo "LINK_NAME_M = -Wl,-soname -Wl,\$(LIB_MONI_SONAMEFULL)" >> $CONF
@@ -524,6 +525,7 @@ else
     echo "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
     echo "OPTS=-Wall -g -fPIC #-O2" >> $CONF
+    echo "OPTS=-Wall -g -fPIC #-O2" >> $CONF_NV
     echo "INSTALL = install -v" >> $CONF
     echo "INSTALL = install -v" >> $ECI_CONF
     echo "INSTALL = install -v" >> $BASE_CONF
@@ -542,13 +544,18 @@ else
     fi
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
     echo "OPTS=-Wall -g -L. -fPIC" >> $CONF
+    echo "OPTS=-Wall -g -L. -fPIC" >> $CONF_NV
     echo "RM = rm -f" >> $CONF
+    echo "RM = rm -f" >> $CONF_NV
   fi
 fi
 
 
 echo "" >> $CONF
 echo "" >> $CONF
+
+cat $CONF_NV.in >> $CONF_NV
+echo $CONF_NV generated
 
 if [ $OSUNAME = "BSD" ]; then
   cat  makefile.in | sed 's/^\#if/.if/g ; s/^\#end/.end/g '  >> makefile

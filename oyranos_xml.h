@@ -20,9 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * xml handling
- * 
+ */
+
+/** @file @internal
+ *  @brief xml handling
  */
 
 /** @date      10. 02. 2006 */
@@ -50,30 +51,36 @@ namespace oyranos
 
 /* memory handling for text parsing and writing */
 /* mem with old_leng will be stretched if add dont fits inside */
+
 int         oyMemBlockExtent_  (char **mem, int old_len, int add);
+
 /* gives string bordered by a xml style keyword */
 char*       oyXMLgetValue_     (const char       *xml,
-                    const char       *key);
+                                const char       *key);
+
 /* gives the position and length of a string bordered by a xml style keyword */
-char* oyXMLgetField_  (const char       *xml,
-                 const char       *key,
-                 int              *len);
+char*       oyXMLgetField_     (const char       *xml,
+                                const char       *key,
+                                int              *len);
+
 /* gives all strings bordered by a xml style keyword from xml */
-char** oyXMLgetArray_  (const char       *xml,
-                 const char       *key,
-                 int              *count);
+char**      oyXMLgetArray_     (const char       *xml,
+                                const char       *key,
+                                int              *count);
+
 /* write option range to mem, allocating memory on demand */
 char*       oyWriteOptionToXML_(oyGROUP           group,
-                    oyOPTION          start,
-                    oyOPTION          end, 
-                    char             *mem,
-                    int               oytmplen);
+                                oyWIDGET          start,
+                                oyWIDGET          end, 
+                                char             *mem,
+                                int               oytmplen);
 
-char*   oyPolicyToXML_ (oyGROUP           group,
-                        int               add_header,
-                        oyAllocFunc_t     allocate_func);
-int     oyReadXMLPolicy_(oyGROUP           group, 
-                        const char       *xml);
+char*       oyPolicyToXML_     (oyGROUP           group,
+                                int               add_header,
+                                oyAllocFunc_t     allocate_func);
+
+int         oyReadXMLPolicy_   (oyGROUP           group, 
+                                const char       *xml);
 
 #ifdef __cplusplus
 } /* extern "C" */

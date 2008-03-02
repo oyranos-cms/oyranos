@@ -312,7 +312,7 @@ void buildDefaultProfilesLeaves()
   int count = 0;
   oyDEFAULT_PROFILE i;
   /* pick up all profiles */
-  char** names = oyProfileList ( 0, &count );
+  char** names = oyProfileListGet ( 0, &count );
 
   for (i = (oyranos::oyDEFAULT_PROFILE)(oyDEFAULT_PROFILE_START + 1) ;
          i < oyranos::oyDEFAULT_PROFILE_END ;

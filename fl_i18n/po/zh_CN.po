@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eog\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2006-07-29 22:27+0200\n"
+"POT-Creation-Date: 2006-09-15 19:01+0200\n"
 "PO-Revision-Date: 2004-08-02 15:02+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
@@ -19,82 +19,82 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: fl_i18n.cxx:171
+#: fl_i18n.cxx:173
 msgid "osX locale obtained: "
 msgstr ""
 
-#: fl_i18n.cxx:174
+#: fl_i18n.cxx:176
 msgid "osX locale not obtained"
 msgstr ""
 
-#: fl_i18n.cxx:281
+#: fl_i18n.cxx:288
 msgid "try to set LANG"
 msgstr ""
 
-#: fl_i18n.cxx:301
+#: fl_i18n.cxx:308
 msgid "try locale in "
 msgstr ""
 
-#: fl_i18n.cxx:310
+#: fl_i18n.cxx:317
 msgid "set codeset for"
 msgstr ""
 
-#: fl_i18n.cxx:343
+#: fl_i18n.cxx:350
 msgid "Add to Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:344
+#: fl_i18n.cxx:351
 msgid "All Files (*)"
 msgstr ""
 
-#: fl_i18n.cxx:345
+#: fl_i18n.cxx:352
 msgid "Custom Filter"
 msgstr ""
 
-#: fl_i18n.cxx:346
+#: fl_i18n.cxx:353
 msgid "Please choose an existing file!"
 msgstr ""
 
-#: fl_i18n.cxx:347
+#: fl_i18n.cxx:354
 msgid "Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:348
+#: fl_i18n.cxx:355
 msgid "Filename"
 msgstr ""
 
-#: fl_i18n.cxx:349
+#: fl_i18n.cxx:356
 msgid "Manage Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:351
+#: fl_i18n.cxx:358
 msgid "My Computer"
 msgstr ""
 
-#: fl_i18n.cxx:353
+#: fl_i18n.cxx:360
 msgid "Filesystems"
 msgstr ""
 
-#: fl_i18n.cxx:355
+#: fl_i18n.cxx:362
 msgid "New Directory?"
 msgstr ""
 
-#: fl_i18n.cxx:356
+#: fl_i18n.cxx:363
 msgid "Preview"
 msgstr ""
 
-#: fl_i18n.cxx:358
+#: fl_i18n.cxx:365
 msgid "Save"
 msgstr ""
 
-#: fl_i18n.cxx:360
+#: fl_i18n.cxx:367
 msgid "Show:"
 msgstr ""
 
-#: fl_i18n_example.cxx:25 fl_i18n_example.cxx:28
+#: fl_i18n_example.cxx:15 fl_i18n_example.cxx:44 fl_i18n_example.cxx:47
 msgid "Hello, world!"
 msgstr "世界你好！"
 
-#: fl_i18n_example.cxx:26
+#: fl_i18n_example.cxx:45
 msgid "fl_i18n_example"
 msgstr ""

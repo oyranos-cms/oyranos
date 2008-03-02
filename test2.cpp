@@ -26,6 +26,7 @@ int main(int argc, char** argv)
     //return 0;
   }
 
+  std::cout << "Get some monitor informations:" << std::endl;
   if(manufacturer)
     std::cout << manufacturer << "|" << strlen(manufacturer) << std::endl;
   if(model)
@@ -35,8 +36,9 @@ int main(int argc, char** argv)
   if(manufacturer) delete [] manufacturer;
   if(model) delete [] model;
   if(serial) delete [] serial;
+  std::cout << "... done\n" << std::endl;
 
-
+  std::cout << "Monitor profile name:" << std::endl;
   // now an more simple approach
   char* profil_name =
     oyranos::oyGetMonitorProfileName (display_name, myAllocFunc);
@@ -45,13 +47,14 @@ int main(int argc, char** argv)
   else
     std::cout << "no profile found for your monitor" << std::endl;
   if(profil_name) delete [] profil_name;
+  std::cout << "... done\n" << std::endl;
 
   // standard profiles
   std::cout << "Default Profiles:\n";
   for(int i = (int)oyranos::oyDEFAULT_PROFILE_START + 1;
         i < (int)oyranos::oyDEFAULT_PROFILE_END ; ++i)
   {
-    std::cout <<"  "<< oyGetOptionUITitle( (oyranos::oyOPTION)i,0,0,0,0 )
+    std::cout <<"  "<< oyWidgetTitleGet( (oyranos::oyWIDGET)i,0,0,0,0 )
               <<": ";
     char *default_name = oyranos::oyGetDefaultProfileName( 
                            (oyranos::oyDEFAULT_PROFILE)i, myAllocFunc );
@@ -59,11 +62,36 @@ int main(int argc, char** argv)
       std::cout << default_name;
     std::cout << "\n";
   }
+  std::cout << "... done\n" << std::endl;
+
+  std::cout << "Profile Lists Test [1000]:\n";
+  int ref_count = 0;
+  char ** reference = oyranos::oyProfileListGet(0, &ref_count);
+  for(int i = 0; i < 1000; ++i)
+  {
+    int count = 0;
+    char ** names = oyranos::oyProfileListGet(0, &count);
+    if(count != ref_count)
+      std::cout << "\n" << i << ": wrong profile count: " << count <<"/"<<
+                   ref_count << std::endl;
+    for(int j = 0; j < count; ++j)
+    {
+      if(!(names[j] && strlen(names[j])) ||
+         strcmp( names[j], reference[j] ) != 0 )
+        std::cout << "\n no profile name found: run " << i <<" profile #"<< j <<
+                     "\n";
+      if( names[j] ) free( names[j] );
+    }
+    if( names ) free( names );
+    std::cout << "." << std::flush;
+  }
+  std::cout << "\n... done\n" << std::endl;
 
   oy_debug = 0;
   char *data = 0;
 
 
+  std::cout << "Policies handling:\n";
   if(argc > 1)
   {
     printf("%s\n", argv[1]);
@@ -90,6 +118,7 @@ int main(int argc, char** argv)
     printf("xml text: \n%s", xml);
     delete [] xml;
   }
+  std::cout << "... done\n" << std::endl;
 
   return 0;
 }

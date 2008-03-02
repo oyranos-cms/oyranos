@@ -5,6 +5,9 @@ Group: Development/Libraries
 URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann
 Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
+#%ifos linux
+#Prereq: oyranos-LStarRGB oyranos-RGB oyranos-lcmsLAB oyranos-eci-offset2004
+#%endif 
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
@@ -55,6 +58,19 @@ rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 rm -rf %{buildroot}
 
 %post
+kdb_found=`which kdb | wc -l`
+if [ $kdb_found -eq 0 ]; then
+  echo "!!!WARNING!!! no kdb executable found,"
+  echo "              no check for Oyranos configuration possible"
+fi
+if [ $kdb_found -gt 0 ]; then
+  if [ `kdb ls system/sw/oyranos 2>/dev/zero | wc -l` -eq 0 ]; then
+    if [ `kdb ls user/sw/oyranos 2>/dev/zero | wc -l` -eq 0 ]; then
+      echo "no oyranos keys found: set default policy home+office"
+      oyranos-policy %{syscolordir}/%{settingsdirname}/office.policy.xml
+    fi
+  fi
+fi
 
 %postun
 
@@ -62,7 +78,9 @@ rm -rf %{buildroot}
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-moni*
+%{_bindir}/%{name}-config
 %{_bindir}/%{name}-config-fl*
+%{_bindir}/%{name}-policy
 %{_libdir}/*.so*
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 %{syscolordir}/cmms/*.oy_cmm_register.xml
@@ -70,7 +88,6 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%{_bindir}/%{name}-config
 %{_includedir}/%{name}/*.h
 %{_libdir}/pkgconfig/*
 %{_libdir}/*.a
@@ -78,6 +95,9 @@ rm -rf %{buildroot}
 %doc doc/html
 
 %changelog
+* Sat Sep 16 2006 Kai-Uwe Behrmann
+- set default policy if no settings are found
+
 * Tue Apr 21 2005 Kai-Uwe Behrmann
 - first release
 

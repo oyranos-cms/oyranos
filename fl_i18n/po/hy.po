@@ -1,28 +1,19 @@
-# translation of eog.HEAD.ar.po to
-# translation of eog.po to
-# translation of eog.po to Arabic
-# Copyright (C) 2002,2003, 2004 Free Software Foundation, Inc.
-# Sayed Jaffer Al-Mosawi <mosawi@arabeyes.org>, 2002.
-# Isam Bayazidi <bayazidi@arabeyes.org>, 2002.
-# Arafat Medini <lumina@silverpen.de>, 2003.
-#  <lumina@silverpen.de>, 2004.
-# Abdulaziz Al-Arfaj <alarfaj0@yahoo.com>, 2004.
-#
+# translation of fl_i18n.po to Armenish
+# Copyright (C) 2006 Kai-Uwe Behrmann.
+# Kai-Uwe Behrmann <ku.b@gmx.de>, 2006.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: eog\n"
+"Project-Id-Version: oy\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
 "POT-Creation-Date: 2006-09-15 19:01+0200\n"
 "PO-Revision-Date: 2004-08-05 00:03+0300\n"
-"Last-Translator: Abdulaziz Al-Arfaj <alarfaj0@yahoo.com>\n"
-"Language-Team: Arabic <support@arabeyes.org>\n"
+"Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
+"Language-Team: Armenian <>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.3\n"
-"Plural-Forms: nplurals=4; plural=n==1 ? 0 : n==2 ? 1 : n>=3 && n<=10 ? 2 : "
-"3\n"
+"X-Generator: Vim 6.2\n"
 
 #: fl_i18n.cxx:173
 msgid "osX locale obtained: "
@@ -49,7 +40,6 @@ msgid "Add to Favorites"
 msgstr ""
 
 #: fl_i18n.cxx:351
-#, fuzzy
 msgid "All Files (*)"
 msgstr "كل الملفّات"
 
@@ -99,7 +89,7 @@ msgstr ""
 
 #: fl_i18n_example.cxx:15 fl_i18n_example.cxx:44 fl_i18n_example.cxx:47
 msgid "Hello, world!"
-msgstr ""
+msgstr "Բարեվ"
 
 #: fl_i18n_example.cxx:45
 msgid "fl_i18n_example"

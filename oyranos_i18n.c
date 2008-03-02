@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2006  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -22,17 +22,74 @@
  * -----------------------------------------------------------------------------
  */
 
-/** @internal sorting
+/** @file @internal
+ *  @brief string translation
  * 
  */
 
-/* Date:      29. 07. 2006 */
+/* Date:      28. 06. 2006 */
 
-#include "oyranos_helper.h"
+#include "config.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#ifdef USE_GETTEXT
+#include <libintl.h>
+#include <locale.h>
+#endif
+
 #include "oyranos.h"
 #include "oyranos_cmms.h"
+#include "oyranos_debug.h"
+#include "oyranos_i18n.h"
+#include "oyranos_texts.h"
 
+
+/* --- static variables   --- */
+const char *domain = OY_TEXTDOMAIN;
+const char *domain_path = LOCALEDIR;
 
 /* --- internal API definition --- */
+
+
+void oyI18NInit_()
+{
+#ifdef USE_GETTEXT
+  {
+    putenv("NLSPATH=" LOCALEDIR); // Solaris
+    bindtextdomain( domain, domain_path );
+  }
+#endif
+  oyTextsCheck_ ();
+}
+
+
+void
+oyI18NSet_             ( int active,
+                         int reserved )
+{
+  DBG_PROG_START
+
+  if(active)
+    domain = OY_TEXTDOMAIN;
+  else
+    domain = "";
+
+
+  oyI18Nrefresh_();
+
+  DBG_PROG_ENDE
+}
+
+
+void
+oyI18Nrefresh_()
+{
+  oyTextsTranslate_ ();
+
+  /* refresh CMM's */
+  oyModulsRefreshI18N_();
+}
 
 

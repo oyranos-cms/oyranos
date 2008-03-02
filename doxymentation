@@ -36,7 +36,13 @@
     # VideoCardGammaTable, if appropriate
     oyranos-monitor
     @endverbatim
-    - oyranos-config-fltk - a configuration UI application, using some functions of the Oyranos APIs
+    - oyranos-policy - a tool to set a policy from a xml file. Use it like:
+    @verbatim
+    oyranos-policy `oyranos-config --syscolordir`/`oyranos-config --settingsdirname`/office.policy.xml
+    @endverbatim
+    Affected are default profiles and some behaviour settings.
+    - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
+      show details of profiles. 
     - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \b oyranos-config \b --help to see the appropriate options.
     
 

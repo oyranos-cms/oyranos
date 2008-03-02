@@ -1,7 +1,7 @@
 /**
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2005  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2006  Kai-Uwe Behrmann
  *
  * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -20,8 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * API
+ */
+
+/** API @internal
  * 
  */
 
@@ -70,53 +71,44 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
 /* oyFree_ (void*) */
 #define oyFree_m_(x) {                                      \
   if (x != NULL) {    /* defined in oyranos_helper.h */     \
-    oyDeAllocateFunc_ (x); x = NULL;                                     \
+    oyDeAllocateFunc_ (x); x = NULL;                        \
   } else {                                                  \
-    WARN_S (("%s:%d %s() nothing to delete " #x "\n",       \
-    __FILE__,__LINE__,__func__));                           \
+    char *t = "%s:%d %s() nothing to delete " #x "\n";      \
+    WARN_S (( _(t), __FILE__,__LINE__,__func__));           \
   }                                                         \
 }
 
 /* oyAllocHelper_ (void*, type, size_t, action) */ 
 #define oyAllocHelper_m_(ptr_, type, size_, alloc_func, action) { \
-  if (ptr_ != NULL)    /* defined in oyranos_helper.h */     \
-    oyFree_m_( ptr_ )                                        \
+  if (ptr_ != NULL)    /* defined in oyranos_helper.h */    \
+    oyFree_m_( ptr_ )                                       \
   if ((size_) <= 0) {                                       \
-    WARN_S (("%s:%d %s() nothing to allocate - size: %d\n", \
+    WARN_S ((_("%s:%d %s() nothing to allocate - size: %d\n"), \
     __FILE__,__LINE__,__func__, (int)size_));               \
   } else {                                                  \
     oyAllocFunc_t temp = alloc_func;                        \
     if( temp )                                              \
       ptr_ = (type*) temp( (size_t)(size_) * sizeof(type) ); \
     else                                                    \
-      ptr_ = (type*) calloc (sizeof (type), (size_t)size_);  \
+      ptr_ = (type*) calloc (sizeof (type), (size_t)size_); \
   }                                                         \
-  if (ptr_ == NULL) {                                        \
+  if (ptr_ == NULL) {                                       \
     WARN_S( ("%s:%d %s() %s %d %s %s .",__FILE__,__LINE__,  \
          __func__, _("Can not allocate"),(int)size_,        \
-         _("bytes of  memory for"), #ptr_));                 \
+         _("bytes of  memory for"), #ptr_));                \
     action;                                                 \
   }                                                         \
 }
 
 /* oyPostAllocHelper_ (void*, size, action) */
-#define oyPostAllocHelper_m_(ptr_, size_, action) {          \
+#define oyPostAllocHelper_m_(ptr_, size_, action) {         \
   if ((size_) <= 0 ||                                       \
-      ptr_ == NULL ) { /* defined in oyranos_helper.h */     \
-    WARN_S (("%s:%d %s() nothing allocated %s\n",           \
-    __FILE__,__LINE__,__func__, #ptr_));                     \
+      ptr_ == NULL ) { /* defined in oyranos_helper.h */    \
+    WARN_S ((_("%s:%d %s() nothing allocated %s\n"),        \
+    __FILE__,__LINE__,__func__, #ptr_));                    \
     action;                                                 \
   }                                                         \
 }
-
-#ifdef USE_GETTEXT
-# include <libintl.h>
-# include <locale.h>
-extern const char *domain;
-# define _(text) dgettext( domain, text )
-#else
-# define _(text) text
-#endif
 
 /* mathematical helpers */
 

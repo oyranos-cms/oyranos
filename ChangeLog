@@ -1,3 +1,45 @@
+2006-09-20
+	* new: first external functions call for init (oyExportStart_(EXPORT_*))
+	* fix: double and default paths setting in oyPathAdd_
+	* and: oyranos-config : devel.rpm -> standard.rpm
+
+2006-09-19
+	* and: include body tag for xml settings export
+	* and: link to setting from behaviour documentation
+	* and: put many warnings into recursive profile search code
+	* add: a extensive profile path recursion test to test2.cpp
+
+2006-09-18
+	* and: include nv files into build system
+	* and: handle Elektra more carefully during configuration
+	* and: document oyranos-policy commandline tool
+
+2006-09-17
+	* and: changed title for available languages
+	* and: activate commandline tools i18n
+	* and: update tools documentation
+
+2006-09-16
+	* fix: set default policy if no config keys are found
+
+2006-09-15
+	* fix: wrong setlocale settings from library code
+	* and: add a argument to fl_initialise_locale wether to use setlocale
+
+2006-09-14
+	* new: oyranos-policy commandline tool to set and read a policy
+
+2006-08-11
+	* and: update oyranos_config_fltk.fl
+
+2006-08-10
+	* new: oyWidgetListGet
+
+2006-08-06
+	* and: renaming most of the GUI API's
+	* and: oyOptionUITitleGet => oyWidgetTitleGet
+	* and: oyOPTION... => oyWIDGET...
+
 2006-08-02
 	* and: modified a string in groups and updated the settings xml's
 
@@ -11,7 +53,7 @@
 	* new: parse xml for pot file generation
 	* new: install doxygen files
 	* and: adapt oyranos.spec for doc directories
-	* new: install cmm xml files in /usr/share/color/cmms
+	* new: install cmm description xml files in /usr/share/color/cmms
 
 2006-07-19
 	* and: update documentation

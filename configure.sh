@@ -14,26 +14,37 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_max" ]; then
     elektra_max="0.6.100"
   fi
-  pkg-config  --atleast-version=$elektra_min elektra 2>>error.txt
+  elektra_mod=`pkg-config --modversion elektra`
   if [ $? = 0 ]; then
-    pkg-config --max-version=$elektra_max elektra 2>>error.txt
+   pkg-config  --atleast-version=$elektra_min elektra 2>>error.txt
     if [ $? = 0 ]; then
-      echo "elektra `pkg-config --modversion elektra`           detected"
-      echo "#define HAVE_ELEKTRA 1" >> $CONF_H
-      echo "ELEKTRA = 1" >> $CONF
-      echo "ELEKTRA_H = `pkg-config --cflags elektra`" >> $CONF
-      echo "ELEKTRA_LIBS = `pkg-config --libs elektra`" >> $CONF
-      ELEKTRA_FOUND=1
+      pkg-config --max-version=$elektra_max elektra 2>>error.txt
+      if [ $? = 0 ]; then
+        echo "elektra `pkg-config --modversion elektra`           detected"
+        echo "#define HAVE_ELEKTRA 1" >> $CONF_H
+        echo "ELEKTRA = 1" >> $CONF
+        echo "ELEKTRA_H = `pkg-config --cflags elektra`" >> $CONF
+        if [ $elektra_mod = "0.6.4" ]; then
+          echo "ELEKTRA_LIBS = `pkg-config --libs elektra` -lxml2 -ldb" >> $CONF
+        else
+          echo "ELEKTRA_LIBS = `pkg-config --libs elektra`" >> $CONF
+        fi
+        echo "ELEKTRA_SW = `pkg-config --cflags-only-I  elektra | sed 's/\-I// ; s%/include%/etc/kdb/%'`" >> $CONF
+        ELEKTRA_FOUND=1
+      else
+        echo "Elektra:"
+        echo "  too new Elektra found,"
+        echo "  need a version not greater than $elektra_max, download: elektra.sf.net"
+        ERROR=1
+      fi
     else
-      echo "Elektra:"
-      echo "  too new Elektra found,"
-      echo "  need a version not greater than $elektra_max, download: elektra.sf.net"
+      echo "ERROR Elektra:"
+      echo "  no or too old elektra found,"
+      echo "  need at least version $elektra_min, download: elektra.sf.net"
       ERROR=1
     fi
   else
-    echo "Elektra:"
-    echo "  no or too old elektra found,"
-    echo "  need at least version $elektra_min, download: elektra.sf.net"
+    echo $elektra_mod
     ERROR=1
   fi
 fi
@@ -64,7 +75,8 @@ if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
     echo "LCMS_H = `pkg-config --cflags lcms`" >> $CONF
     echo "LCMS_LIBS = `pkg-config --libs lcms`" >> $CONF
   else
-    echo "no or too old LCMS found,\n  need at least version 1.14, download: www.littlecms.com"
+    echo "ERROR: no or too old LCMS found,"
+    echo "  need at least version 1.14, download: www.littlecms.com"
     ERROR=1
   fi
 fi
@@ -114,7 +126,7 @@ if [ "$X11" = 1 ] && [ $X11 -gt 0 ]; then
     fi
   fi
   echo "X_CPP = \$(X_CPPFILES)" >> $CONF
-  echo "X11_LIB_PATH = -L/usr/X11R6/lib\$(BARCH) -L/usr/lib\$(BARCH) -L\$libdir" >> $CONF
+  echo "X11_LIB_PATH = -L/usr/X11R6/lib\$(BARCH) -L/usr/lib\$(BARCH) -L\$(libdir)" >> $CONF
   echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 \$(XF86VMODE_LIB) -lXpm -lXext \$(XINERAMA_LIB)" >> $CONF
 fi
 
@@ -135,19 +147,27 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
   FLTK_=`fltk-config --cxxflags 2>>error.txt`
   if [ $? = 0 ] && [ -n "$FLTK_" ]; then
     echo "FLTK `fltk-config --version`              detected"
+    if [ "0" -ne "`fltk-config --compile tests/fltk_test.cxx 2>&1 | grep lock | wc -l`" ]; then
+      echo "ERROR:   FLTK has no threads support !!!"
+      echo "         Configure FLTK with the --enable-threads option and recompile."
+      ERROR=1
+    else
+      rm fltk_test
+    fi
     echo "#define HAVE_FLTK 1" >> $CONF_H
     echo "FLTK = 1" >> $CONF
     echo "FLTK_H = `fltk-config --cxxflags | sed 's/-O[0-9]//'`" >> $CONF
     echo "FLTK_LIBS = `fltk-config --use-images --use-gl --ldflags`" >> $CONF
   else
-    echo "   FLTK is not found; download: www.fltk.org"
+    echo "ERROR:"
+    echo "           FLTK is not found; download: www.fltk.org"
     ERROR=1
   fi
 fi
 
 if [ -n "$FLU" ] && [ $FLU -gt 0 ]; then
   FLU_=`flu-config --cxxflags 2>>error.txt`
-  if [ `fltk-config --version` == "1.1.7" ]; then
+  if [ `fltk-config --version` = "1.1.7" ]; then
     echo -e "\c"
     echo "FLTK version 1.1.7 is not supported by FLU"
     if [ "$FLU" = 1 ]; then
@@ -164,8 +184,8 @@ if [ -n "$FLU" ] && [ $FLU -gt 0 ]; then
       if [ "$FLU" -gt 1 ]; then
         echo "   no FLU found, will not use it"
       else
-        echo "   FLU is not found; download:"
-        echo "   http://www.osc.edu/~jbryan/FLU/http://www.osc.edu/~jbryan/FLU/"
+        echo "ERROR:   FLU is not found; download:"
+        echo "         http://www.osc.edu/~jbryan/FLU/http://www.osc.edu/~jbryan/FLU/"
         ERROR=1
       fi
     fi
@@ -194,7 +214,8 @@ if [ -n "$LIBPNG" ] && [ $LIBPNG -gt 0 ]; then
     echo "PNG_H = `pkg-config --cflags $LIBPNG`" >> $CONF
     echo "PNG_LIBS = `pkg-config --libs $LIBPNG`" >> $CONF
   else
-    echo "no or too old libpng found,\n  need at least version 1.0, download: www.libpng.org"
+    echo "no or too old libpng found,"
+    echo "  need at least version 1.0, download: www.libpng.org"
   fi
 fi
 
@@ -203,7 +224,7 @@ if [ -n "$PO" ] && [ $PO -gt 0 ]; then
   LING="`echo $pos_dir`"
   LINGUAS="`echo $pos_dir | sed 's/\.po//g ; s/po\///g'`"
   echo "LINGUAS = $LINGUAS" >> $CONF
-  echo "Languages detected:     $LINGUAS"
+  echo "translations available: $LINGUAS"
   echo "LING = $LING" >> $CONF
   echo "#define USE_GETTEXT 1" >> $CONF_H
 fi
@@ -222,5 +243,8 @@ if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then
 fi
 
 # we cannot reimport, just return
+if [ "$ERROR" -ne "0" ]; then 
+  echo "error" > error.tmp
+fi
 exit $ERROR
 

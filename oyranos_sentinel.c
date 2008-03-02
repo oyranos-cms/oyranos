@@ -20,9 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * library sentinels
- * 
+ */
+
+/** @file @internal
+ *  @brief library sentinels
  */
 
 /* Date:      28. 06. 2006 */
@@ -33,74 +34,44 @@
 
 #include "config.h"
 #include "oyranos.h"
-#include "oyranos_internal.h"
-#include "oyranos_helper.h"
 #include "oyranos_debug.h"
+#include "oyranos_helper.h"
+#include "oyranos_i18n.h"
+#include "oyranos_internal.h"
 #include "oyranos_sentinel.h"
 
-/* --- Helpers  --- */
 
-/* --- static variables   --- */
-char *old_td = NULL, *old_bdtd = NULL;
-char *domain_path = LOCALEDIR;
-
-/* --- structs, typedefs, enums --- */
-
-/* --- internal API definition --- */
-
-/* separate from the external functions */
-
-
-
-void oyExportStart_()
+int oyExportStart_(int export_check)
 {
-  oyInit_();
-#ifdef USE_GETTEXT_
-  WARN_S((_("Yes")))
-  {
+  static int export_path = 1;
+  static int export_setting = 1;
+  int start = 0;
 
-    {
-    char *t2=0;
-      //old_td = textdomain( 0 );
-      //old_bdtd = bindtextdomain( old_td, 0);
-
-      if((old_td && (strcmp(old_td, domain) != 0)) ||
-         !old_td)
-      {
-        setlocale(LC_MESSAGES, "");
-        domain_path = bindtextdomain (domain, LOCALEDIR);
-        if(!domain_path)
-          domain_path = bindtextdomain (domain, SRC_LOCALEDIR);
-        t2 = textdomain( domain );
-        WARN_S(("Setting textdomain from %s in %s\n to %s in %s", old_td, old_bdtd, t2, domain_path ))
-      } else
-      {
-        WARN_S(("no textdomain changed %s %s", old_td, domain))
-        WARN_S((" from %s in %s\n to %s in %s", textdomain(old_td), bindtextdomain(old_td,old_bdtd), t2, domain_path ))
-      }
-    }
+# define EXPORT_( flag, var, func ) \
+  if(export_check & flag && var) \
+  { \
+    var = 0; \
+    func; \
+    start = 1; \
   }
-#endif
+
+  EXPORT_( EXPORT_SETTING, export_setting, oyOpen_() )
+  EXPORT_( EXPORT_PATH, export_path, oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT) )
+  EXPORT_( EXPORT_MONITOR, export_setting, start = 1 )
+
+  oyInit_();
+  return start;
 }
 
-void oyExportEnd_()
+int oyExportEnd_()
 {
-#ifdef USE_GETTEXT_
+  static int start = 1;
+  if(start == 1)
   {
-    char *t1=0, *t2=0;
-    if(old_td && (strcmp(old_td, domain) != 0))
-    {
-      setlocale(LC_MESSAGES, "");
-      if(old_bdtd) {
-        t1 = bindtextdomain( old_td, old_bdtd );
-        WARN_S(("bindtextdomain done"))
-      }
-      t2 = textdomain( old_td );
-      WARN_S(("Setting back to old textdomain: %s in %s\n%s in %s", old_td, old_bdtd, t2, t1 ))
-    } else
-      WARN_S(("no textdomain changed %s %s", old_td, domain))
+    start = 0;
+    return 1;
   }
-#endif
+  return start;
 }
 
 void oyInit_()
@@ -114,15 +85,7 @@ void oyInit_()
   if(getenv("OYRANOS_DEBUG"))
     oy_debug = atoi(getenv("OYRANOS_DEBUG"));
 
-#ifdef USE_GETTEXT
-  {
-    setlocale(LC_MESSAGES, "");
-    putenv("NLSPATH=" LOCALEDIR); // Solaris
-    bindtextdomain( "oyranos", LOCALEDIR );
-  }
-#endif
-  oyTexteCheck_ ();
-
+  oyI18NInit_ ();
 }
 
 

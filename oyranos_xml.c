@@ -20,9 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * xml handling
- * 
+ */
+
+/** @file @internal
+ *  @brief xml handling
  */
 
 /* Date:      10. 02. 2006 */
@@ -55,8 +56,8 @@ char** oyXMLgetArray_  (const char       *xml,
                  int              *count);
 /* write option range to mem, allocating memory on demand */
 char*       oyWriteOptionToXML_(oyGROUP           group,
-                    oyOPTION          start,
-                    oyOPTION          end, 
+                    oyWIDGET          start,
+                    oyWIDGET          end, 
                     char             *mem,
                     int               oytmplen);
 
@@ -258,32 +259,32 @@ oyXMLgetArray_  (const char       *xml,
 
 char*
 oyWriteOptionToXML_(oyGROUP           group,
-                    oyOPTION          start,
-                    oyOPTION          end, 
+                    oyWIDGET          start,
+                    oyWIDGET          end, 
                     char             *mem,
                     int               oytmplen)
 { DBG_PROG_START
 
   int   i = 0;
-  const char *key = 0;
-  const char **strings;
+  const char  * key = 0;
+  const oyOption_t_ * opt = 0;
 
          /* allocate new mem if needed */
          oytmplen = oyMemBlockExtent_(&mem, oytmplen, 360);
-         oyGroupGet_( group, &strings );
+         opt = oyOptionGet_( group );
          sprintf( &mem[strlen(mem)], "<%s>\n",
-                  strings[0] );
+                  opt->config_string_xml );
          sprintf( &mem[strlen(mem)], "<!-- %s \n"
                                      "     %s -->\n\n",
-                  strings[1],
-                  strings[2] );
+                  opt->name,
+                  opt->description );
          for(i = start; i <= end; ++i)
          {
            char *value = 0;
-           int opt_type = oyGetOptionType_( i );
+           int opt_type = oyWidgetTypeGet_( i );
            int j;
-           int n = oyGetOption_(i)-> choices;
-           int group_level = oyGetOption_(i)-> categories[0];
+           int n = oyOptionGet_(i)-> choices;
+           int group_level = oyOptionGet_(i)-> category[0];
            char intent[24] = {""};
  
            for( j = 0; j < group_level; ++j )
@@ -292,21 +293,21 @@ oyWriteOptionToXML_(oyGROUP           group,
            if( (opt_type == oyTYPE_BEHAVIOUR) ||
                (opt_type == oyTYPE_DEFAULT_PROFILE))
            {
-             key = oyGetOption_(i)-> config_string_xml;
+             key = oyOptionGet_(i)-> config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyMemBlockExtent_(&mem, oytmplen, 256 + 12+2*strlen(key)+8);
              /* write a short description */
              sprintf( &mem[strlen(mem)], "%s<!-- %s\n", intent,
-                       oyGetOption_(i)-> label );
+                       oyOptionGet_(i)-> name );
              sprintf( &mem[strlen(mem)], "%s     %s\n", intent,
-                       oyGetOption_(i)-> description);
+                       oyOptionGet_(i)-> description);
              /* write the profile name */
              if(opt_type == oyTYPE_DEFAULT_PROFILE)
              {
                value = oyGetDefaultProfileName_(i, oyAllocateFunc_);
                if( value && strlen( value ) )
                {
-                 key = oyGetOption_(i)->
+                 key = oyOptionGet_(i)->
                        config_string_xml;
                  /* allocate new mem if needed */
                  oytmplen = oyMemBlockExtent_(&mem, oytmplen,
@@ -329,7 +330,7 @@ oyWriteOptionToXML_(oyGROUP           group,
                /* write a per choice description */
                for( j = 0; j < n; ++j )
                  sprintf( &mem[strlen(mem)], "%s %d %s\n", intent, j,
-                          oyGetOption_(i)-> choice_list[j] );
+                          oyOptionGet_(i)-> choice_list[j] );
                sprintf( &mem[strlen(mem)-1], " -->\n");
                /* write the key value */
                sprintf( &mem[strlen(mem)], "%s<%s>%d</%s>\n\n", intent,
@@ -338,7 +339,7 @@ oyWriteOptionToXML_(oyGROUP           group,
            }
          }
          oytmplen = oyMemBlockExtent_(&mem, oytmplen, 160);
-         sprintf( &mem[strlen(mem)], "</%s>\n\n\n", strings[0] );
+         sprintf( &mem[strlen(mem)], "</%s>\n\n\n", opt->config_string_xml );
 
 
   DBG_PROG_ENDE
@@ -358,7 +359,7 @@ oyPolicyToXML_  (oyGROUP           group,
   int   i = 0;
 
   /* initialise */
-  oyGetOption_( oyOPTION_BEHAVIOUR_START );
+  oyOptionGet_( oyWIDGET_BEHAVIOUR_START );
   mem[0] = 0;
 
   /* create a XML structure and store there the keys for exporting */
@@ -366,7 +367,7 @@ oyPolicyToXML_  (oyGROUP           group,
   {
           char head[] = { 
           "<!--?xml version=\"1.0\" encoding=\"UTF-8\"? -->\n\
-<!-- Oyranos policy format 1.0 -->\n\n\n\n" };
+<!-- Oyranos policy format 1.0 -->\n<body>\n\n\n" };
          oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen(head) );
 
          sprintf( mem, "%s", head );
@@ -377,32 +378,32 @@ oyPolicyToXML_  (oyGROUP           group,
   switch (group)
   { case oyGROUP_DEFAULT_PROFILES:
          mem = oyWriteOptionToXML_( group,
-                                    oyOPTION_DEFAULT_PROFILE_START + 1,
-                                    oyOPTION_DEFAULT_PROFILE_END - 1,
+                                    oyWIDGET_DEFAULT_PROFILE_START + 1,
+                                    oyWIDGET_DEFAULT_PROFILE_END - 1,
                                     mem, oytmplen );
          break;
     case oyGROUP_BEHAVIOUR_RENDERING:
          mem = oyWriteOptionToXML_( group,
-                                    oyOPTION_RENDERING_INTENT,
-                                    oyOPTION_RENDERING_BPC,
+                                    oyWIDGET_RENDERING_INTENT,
+                                    oyWIDGET_RENDERING_BPC,
                                     mem, oytmplen );
          break;
     case oyGROUP_BEHAVIOUR_PROOF:
          mem = oyWriteOptionToXML_( group,
-                                    oyOPTION_RENDERING_INTENT_PROOF,
-                                    oyOPTION_BEHAVIOUR_END - 1,
+                                    oyWIDGET_RENDERING_INTENT_PROOF,
+                                    oyWIDGET_BEHAVIOUR_END - 1,
                                     mem, oytmplen );
          break;
     case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
          mem = oyWriteOptionToXML_( group,
-                                    oyOPTION_MIXED_MOD_DOCUMENTS_PRINT,
-                                    oyOPTION_MIXED_MOD_DOCUMENTS_SCREEN,
+                                    oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT,
+                                    oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN,
                                     mem, oytmplen );
          break;
     case oyGROUP_BEHAVIOUR_MISSMATCH:
          mem = oyWriteOptionToXML_( group,
-                                    oyOPTION_ACTION_UNTAGGED_ASSIGN,
-                                    oyOPTION_ACTION_OPEN_MISMATCH_CMYK,
+                                    oyWIDGET_ACTION_UNTAGGED_ASSIGN,
+                                    oyWIDGET_ACTION_OPEN_MISMATCH_CMYK,
                                     mem, oytmplen );
          break;
     case oyGROUP_ALL:
@@ -427,6 +428,16 @@ oyPolicyToXML_  (oyGROUP           group,
          sprintf( mem, "<!-- Group: %d does not exist -->", group );*/
          break;
   }
+
+  if( add_header )
+  {
+         const char *end = "\n</body>\n";
+         int   pos = strlen(mem);
+
+         oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen( end ) );
+         sprintf( &mem[pos], "%s", end );
+  }
+
   { int len = strlen( mem );
     char *tmp = allocate_func( len + 1 );
     memcpy( tmp, mem, len + 1 );
@@ -453,7 +464,7 @@ oyReadXMLPolicy_(oyGROUP           group,
   { case oyGROUP_DEFAULT_PROFILES:
          for(i = oyDEFAULT_PROFILE_START + 1; i < oyDEFAULT_PROFILE_END; ++i)
          {
-           key = oyGetOption_(i)-> config_string_xml;
+           key = oyOptionGet_(i)-> config_string_xml;
 
            /* read the value for the key */
            value = oyXMLgetValue_(xml, key);
@@ -467,10 +478,10 @@ oyReadXMLPolicy_(oyGROUP           group,
          }
          break;
     case oyGROUP_BEHAVIOUR_RENDERING:
-         for(i = oyBEHAVIOUR_RENDERING_INTENT; i <= oyOPTION_RENDERING_BPC; ++i)
+         for(i = oyBEHAVIOUR_RENDERING_INTENT; i <= oyWIDGET_RENDERING_BPC; ++i)
          {
            int val = -1;
-           key = oyGetOption_(i)-> config_string_xml;
+           key = oyOptionGet_(i)-> config_string_xml;
 
            /* read the value for the key */
            value = oyXMLgetValue_(xml, key);
@@ -488,7 +499,7 @@ oyReadXMLPolicy_(oyGROUP           group,
          for(i = oyBEHAVIOUR_RENDERING_INTENT_PROOF; i < oyBEHAVIOUR_END; ++i)
          {
            int val = -1;
-           key = oyGetOption_(i)-> config_string_xml;
+           key = oyOptionGet_(i)-> config_string_xml;
 
            /* read the value for the key */
            value = oyXMLgetValue_(xml, key);
@@ -507,7 +518,7 @@ oyReadXMLPolicy_(oyGROUP           group,
                i <= oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN; ++i)
          {
            int val = -1;
-           key = oyGetOption_(i)-> config_string_xml;
+           key = oyOptionGet_(i)-> config_string_xml;
            value = oyXMLgetValue_(xml, key);
            val = atoi(value);
            if( val != -1 && value )
@@ -520,7 +531,7 @@ oyReadXMLPolicy_(oyGROUP           group,
                i <= oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK; ++i)
          {
            int val = -1;
-           key = oyGetOption_(i)-> config_string_xml;
+           key = oyOptionGet_(i)-> config_string_xml;
            value = oyXMLgetValue_(xml, key);
            val = atoi(value);
            if( val != -1 && value )

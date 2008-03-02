@@ -40,7 +40,8 @@ const char* threadGettext( const char* text);
 
 /** tell about the locale path and select locale from environment */
 void        fl_initialise_locale   ( const char   *domain,
-                                     const char   *locale_paths);
+                                     const char   *locale_paths,
+                                     int           set_locale );
 /** help with searching for the right locale path */
 int         fl_search_locale_path  ( int           n_locale_paths,
                                      const char  **locale_paths,

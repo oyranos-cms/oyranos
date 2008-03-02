@@ -20,8 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * monitor device detection
+ */
+
+/** monitor device detection
  * 
  */
 
@@ -92,11 +93,11 @@ char* oyChangeXProperty           (oyMonitor_s  *disp,
                                    char       *block,
                                    size_t     *size );
 
-/** Display functions */
+/** @internal Display functions */
 const char* oyDisplayName_( oyMonitor_s *disp ) { return disp->name; }
 const char* oyDisplayHostName_( oyMonitor_s *disp ) { return disp->host; }
 const char* oyDisplayIdentifier_( oyMonitor_s *disp ) { return disp->identifier; }
-/** the screen appendment for the root window properties */
+/** @internal the screen appendment for the root window properties */
 char*       oyDisplayScreenIdentifier_( oyMonitor_s *disp )
 { char *number = 0;
 
@@ -141,7 +142,7 @@ oyFree_( void *oy_structure )
   return error;
 }
 
-/** oyUnrollEdid1_ isnt yet ready to export , TODO it is more a hack */
+/** @internal oyUnrollEdid1_ */
 void
 oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
                                    char**      manufacturer,
@@ -383,7 +384,7 @@ oyGetMonitorProfile_          (const char* display_name,
     {
       atom = XInternAtom (display, atom_name, True);
       if (atom == None) {
-        WARN_S((_("Error setting up atom \"%s\""), atom_name));
+        WARN_S((_("Error getting atom \"%s\""), atom_name));
       }
     }
     oyFree_m_( atom_name )
@@ -494,7 +495,7 @@ oyGetAllScreenNames_            (const char *display_name,
 }
 
 
-/** This function will only with Xineram hit exact results
+/** @internal This function will only with Xineram hit exact results
  *  Anyway, we handle multiple screens too.
  */
 int
@@ -573,7 +574,7 @@ oyGetScreenFromPosition_        (const char *display_name,
 }
 
 
-/**
+/** @internal
     takes a chaked display name and point as argument and
     gives a string back for search in the db
  */
@@ -610,7 +611,7 @@ oyGetAtomName_                  (oyMonitor_s *disp,
 }
 
 
-/**
+/** @internal
     1. get all monitors / screens / Xinerama screens
     2. get the profile names for
     3. set the profile data to a Xatom
@@ -796,9 +797,9 @@ oySetMonitorProfile_              (const char* display_name,
       DBG_PROG
 
       atom_name = oyGetAtomName_( &disp, "_ICC_PROFILE" );
-      atom = XInternAtom (display, atom_name, False);
+      atom = XInternAtom (display, atom_name, True);
       if (atom == None) {
-        WARN_S((_("Error setting up atom \"%s\""), atom_name));
+        WARN_S((_("Error getting atom \"%s\""), atom_name));
       }
 
       XDeleteProperty( display, w, atom );
@@ -908,7 +909,7 @@ oyGetScreenFromDisplayName_        (oyMonitor_s *disp)
 }
 
 
-/** 
+/**  @internal
  *  extract the host name or get from environment
  */
 char*
@@ -947,7 +948,7 @@ oyExtractHostName_           (const char* display_name)
   return host_name;
 }
 
-/** Do a full check and change the screen name,
+/** @internal Do a full check and change the screen name,
  *  if the screen arg is appropriate. Dont care about the host part
  */
 char*
@@ -994,7 +995,7 @@ oyChangeScreenName_                (const char* display_name,
   return host_name;
 }
 
-/** get the geometry of a screen 
+/** @internal get the geometry of a screen 
  *
  *  @param          disp      display info structure
  *  @return         error
@@ -1128,7 +1129,8 @@ oyGetMonitorInfo                  (const char* display,
   int err = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  if( oyExportStart_(EXPORT_MONITOR))
+    oyActivateMonitorProfiles_(display);
 
   err = oyGetMonitorInfo_( display, manufacturer, model, serial, 0,
                            allocate_func);
@@ -1160,7 +1162,8 @@ oyGetMonitorProfile           (const char* display,
   char* moni_profile = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  if( oyExportStart_(EXPORT_PATH | EXPORT_SETTING | EXPORT_MONITOR) )
+    oyActivateMonitorProfiles_(display);
 
   moni_profile = oyGetMonitorProfile_( display, size, allocate_func );
 
@@ -1182,7 +1185,8 @@ oyGetMonitorProfileName           (const char* display,
   char* moni_profile = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  if( oyExportStart_(EXPORT_PATH | EXPORT_SETTING | EXPORT_MONITOR) )
+    oyActivateMonitorProfiles_(display);
 
   moni_profile = oyGetMonitorProfileName_( display, allocate_func );
 
@@ -1204,7 +1208,8 @@ oySetMonitorProfile               (const char* display_name,
   int error = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  if( oyExportStart_(EXPORT_PATH | EXPORT_SETTING | EXPORT_MONITOR) )
+    oyActivateMonitorProfiles_(display_name);
 
   error = oySetMonitorProfile_( display_name, profil_name );
 
@@ -1225,7 +1230,7 @@ oyActivateMonitorProfiles         (const char* display_name)
   int error = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
   error = oyActivateMonitorProfiles_( display_name );
 
@@ -1251,7 +1256,8 @@ oyGetScreenFromPosition         (const char *display_name,
   int screen = 0;
 
   DBG_PROG_START
-  oyExportStart_();
+  if( oyExportStart_(EXPORT_MONITOR) )
+    oyActivateMonitorProfiles_(display_name);
 
   screen = oyGetScreenFromPosition_( display_name, x,y );
   DBG_PROG_S(( "x %d y %d screen %d\n", x,y,screen ));

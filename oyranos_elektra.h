@@ -20,9 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- *
- * elektra dependent functions
- * 
+ */
+
+/** @file @internal
+ *  @brief elektra dependent functions
  */
 
 /* Date:      25. 11. 2004 */

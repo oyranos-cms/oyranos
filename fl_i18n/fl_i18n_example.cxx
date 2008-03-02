@@ -5,19 +5,38 @@
 #include <FL/fl_draw.H>//#include "fl_i18n.H"
 #include <cstdio>
 
+void MyBox::draw() {
+  fl_font( FL_HELVETICA, 24);
+  Fl::set_font( FL_HELVETICA," Tahoma" );
+  
+  int tw,th;
+  fl_measure("Hallo", tw, th);
+
+  fl_draw( _("Hello, world!"), x() + 10, y() + 5 + th );
+}
+
+MyBox::MyBox( int x, int y, int w, int h, const char *label): Fl_Box(x,y,w,h,label) {
+}
+
+MyBox::MyBox( int x, int y, int w, int h ): Fl_Box(x,y,w,h) {
+}
+
+MyBox *b=(MyBox *)0;
+
 int main(int argc, char **argv) {
   Fl_Double_Window* w;
   const char *locale_paths[1] = {"./po"};
   const char *domain = {"fl_i18n"};
 
-  fl_font( FL_COURIER, 14);
+  fl_font( FL_COURIER, 24);
+  Fl::set_font( FL_HELVETICA," Tahoma" );
 
   if ( fl_search_locale_path  ( 1,
                                 locale_paths,
                                 "de",
                                 domain) >= 0 )
   {
-    fl_initialise_locale( domain, locale_paths[0] );
+    fl_initialise_locale( domain, locale_paths[0], 1 );
     printf("Locale found in %s\n", locale_paths[0]);
   } else
     printf("Locale not found in %s\n", locale_paths[0]);
@@ -25,9 +44,27 @@ int main(int argc, char **argv) {
   printf("%s\n",_("Hello, world!"));
   { Fl_Double_Window* o = new Fl_Double_Window(238, 133, _("fl_i18n_example"));
     w = o;
-    new Fl_Button(25, 25, 190, 80, _("Hello, world!"));
+    new Fl_Button(25, 61, 190, 69, _("Hello, world!"));
+    { MyBox* o = b = new MyBox(25, 2, 190, 58);
+      o->box(FL_FLAT_BOX);
+      o->color(FL_BACKGROUND_COLOR);
+      o->selection_color(FL_BACKGROUND_COLOR);
+      o->labeltype(FL_NORMAL_LABEL);
+      o->labelfont(0);
+      o->labelsize(14);
+      o->labelcolor(FL_FOREGROUND_COLOR);
+      o->align(FL_ALIGN_CENTER);
+      o->when(FL_WHEN_RELEASE);
+    }
     o->end();
   }
+  /*fl_font( FL_COURIER, 24);
+  Fl::set_font( FL_HELVETICA," Tahoma" );
+  
+  int tw,th;
+  fl_meashure("Hallo", &tw, &th);
+
+  fl_draw( "Hello, world!", b->x()+10, b->y()+20 + th );*/
   w->show(argc, argv);
   return Fl::run();
 }

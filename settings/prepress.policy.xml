@@ -1,6 +1,7 @@
 <!--?xml version="1.0" encoding="UTF-8"? -->
 <!-- Oyranos policy format 1.0 -->
 <!-- Standard policy: PrePress -->
+<body>
 
 
 <oyGROUP_DEFAULT_PROFILES>
@@ -146,4 +147,7 @@
 
 </oyGROUP_BEHAVIOUR_PROOF>
 
+
+
+</body>
 

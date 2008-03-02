@@ -55,7 +55,7 @@ const char* getPolicyName() {
   char *xml = oyPolicyToXML (oyGROUP_ALL, 0, myAllocFunc);
   oyI18NSet(1,0);
   xml[strlen(xml)-2] = 0;
-  //std::cout << xml <<std::endl;
+  std::cout << xml <<std::endl;
 
   for( int i = 0; i < count; ++i )
   {
@@ -140,12 +140,11 @@ void selectDefaultProfile_callback( Fl_Widget* w, void* ) {
       char text[64];
       int error = 0;
       if(strcmp(c->text(),_("[none]")) == 0)
-        error = oySetDefaultProfile( (oyDEFAULT_PROFILE)op->type,0);
+        error = oySetDefaultProfile( (oyDEFAULT_PROFILE)op->option,0);
       else
-        error = oySetDefaultProfile( (oyDEFAULT_PROFILE)op->type, c->text());
+        error = oySetDefaultProfile( (oyDEFAULT_PROFILE)op->option, c->text());
       if(error) {
-        sprintf( text, "%s %s %s", _("setting"), _("failed!"),
-                 oyGetOptionUITitle( op->type, NULL, NULL, NULL, NULL) );
+        sprintf( text, "%s %s", _("setting"), _("failed!"));
         fl_alert( text );
       } else
         updateUI();
@@ -159,11 +158,9 @@ void showDefaultProfile_callback( Fl_Widget* w, void* ) {
   if(op) {
     {
       char text[64];
-      char *pn = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)op->type, myAllocFunc);
+      char *pn = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)op->option, myAllocFunc);
       if(!pn) {
-        sprintf(text, "%s %s %s", _("showing"), _("failed!"),
-                 oyGetOptionUITitle( op->type,
-                                       NULL, NULL, NULL, NULL) );
+        sprintf(text, "%s %s", _("showing"), _("failed!") );
         fl_alert( text );
       } else {
         char command[1024];
@@ -219,7 +216,7 @@ void selectBehaviourCallback( Fl_Widget* w, void* x ) {
       std::cout << (intptr_t)x << c->user_data() << c->value() << c->text() << std::endl;
       char text[64];
       int error = 0;
-      error = oySetBehaviour( (oyBEHAVIOUR)op->type, c->value());
+      error = oySetBehaviour( (oyBEHAVIOUR)op->option, c->value());
       if(error) {
         sprintf(text, "%s %s %s", _("setting"), _("failed!"),
                 c->text());
@@ -228,6 +225,11 @@ void selectBehaviourCallback( Fl_Widget* w, void* x ) {
         updateUI();
     } else fl_alert( "no Fl_Choice" );
   } else fl_alert( _("Select Behaviour") );
+}
+
+void debug_me( ) {
+  int nonsense = 0;
+  ++nonsense;
 }
 
 OyFlPack::OyFlPack(int x, int y, int w, int h , const char *t ) : Fl_Pack(x,y,w,h,t) {
@@ -311,17 +313,22 @@ BoxChoiceCombo::BoxChoiceCombo( int x, int y, int w, int h ) : Fl_Pack(x, y, w, 
 }
 
 Option::Option( int x, int y, int w, int h, const char *name,
-  oyOPTION option,
+  oyWIDGET option_,
+  oyWIDGET_TYPE type_,
   int choices_n,
   const char **choices,
+  int current,
   const char *tooltip) : OyFlPack(x, y, w, h) {
   Fl_Pack::type( FL_HORIZONTAL );
   Fl_Pack::spacing(H_SPACING);
-  type = option;
 
+  option = option_;
+  type = type_;
+
+  debug_me();
 
   // == Profiles ==
-  if( oyOPTION_DEFAULT_PROFILE_START < option && option < oyOPTION_DEFAULT_PROFILE_END )
+  if( type == oyTYPE_DEFAULT_PROFILE || type == oyTYPE_PROFILE )
   {
     int weigth = BOX_WIDTH + SELECT_WIDTH + 4 * H_SPACING + BUTTON_HEIGHT;
     if(w < weigth)
@@ -339,8 +346,14 @@ Option::Option( int x, int y, int w, int h, const char *name,
     box->tooltip( tooltip );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    if(type == oyOPTION_ASSUMED_WEB) {
-      char* default_p = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)type, myAllocFunc);
+    if(option == oyWIDGET_ASSUMED_WEB) {
+      const char* default_p = NULL;
+      if(current >= 0)
+        default_p = choices[current];
+      if(default_p) {
+        DBG_PROG_S( (default_p) )
+      } else
+        default_p = "";
       if(default_p) {
         box = new Fl_Box( w - BOX_WIDTH - SELECT_WIDTH - BUTTON_HEIGHT - 3*H_SPACING, y,
                           190, BUTTON_HEIGHT, default_p );
@@ -367,7 +380,9 @@ Option::Option( int x, int y, int w, int h, const char *name,
     button->tooltip(_("Show in external Viewer"));
 
     // Set choice
-    char* default_p = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)type, myAllocFunc ), *alloc_ptr = default_p;
+    const char* default_p = NULL;
+      if(current >= 0)
+        default_p = choices[current];
     if(default_p) {
       DBG_PROG_S( (default_p) )
     } else
@@ -376,6 +391,13 @@ Option::Option( int x, int y, int w, int h, const char *name,
     for (i = 0; i < choices_n; ++i)
     {
       choice->add( choices[i] );
+      for(int k = 0; k < choices_n; ++k)
+        if(strcmp( choices[i], choices[k]) == 0 && 
+           strlen( choices[i] ) &&
+           i < k )
+          printf("Double occurency of profile: %s\n", choices[i]);
+
+
       if(strstr( choices[i], default_p) && 
          strlen( choices[i] ) == strlen(default_p))
       {
@@ -390,56 +412,16 @@ Option::Option( int x, int y, int w, int h, const char *name,
     if(occurence > 1)
       WARN_S((_("multiple occurencies of default %s profile: %d times"),
                name, occurence))
+    choice->value( val );
 
     DBG_PROG_V((choice->size()))
-#   if ( FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 1 && FL_PATCH_VERSION >= 6 )
-    const Fl_Menu_Item* new_val = choice->find_item(default_p);
-    int erfolg = choice->value( new_val );
-#   else
-    int size = choice->size(),
-        erfolg = 0;
-    char menupath[1024] = ""; // File/Export
 
-    char * name = default_p;
-    const Fl_Menu_Item *m = 0;
-    for ( int t=0; t < choice->size(); t++ ) {
-      m = choice->menu() + t;
-
-      if (m->submenu()) {
-        // IT'S A SUBMENU
-        if (menupath[0]) strncat(menupath, "/", sizeof(menupath));
-        strncat(menupath, m->label(), sizeof(menupath));
-        if (!strcmp(menupath, name)) break;
-      } else {
-        if (!m->label()) {
-      // END OF SUBMENU? Pop back one level.
-      char *ss = strrchr(menupath, '/');
-      if ( ss ) *ss = 0;
-      else menupath[0] = '\0';
-      continue;
-        }
-
-        // IT'S A MENU ITEM
-        char itempath[1024];  // eg. Edit/Copy
-        strcpy(itempath, menupath);
-        if (itempath[0]) strncat(itempath, "/", sizeof(itempath));
-        strncat(itempath, m->label(), sizeof(itempath));
-        if (!strcmp(itempath, name)) break;
-      }
-    }
-
-    DBG_PROG_V((size))
-    erfolg = choice->Fl_Menu_::value((const Fl_Menu_Item*)m);
-#   endif
-
-    DBG_PROG_V((erfolg))
     DBG_PROG_V((val))
-    if(alloc_ptr) delete [] alloc_ptr;
   }
 
 
   // == Behaviour ==
-  if( oyOPTION_BEHAVIOUR_START < option && option < oyOPTION_BEHAVIOUR_END )
+  if( type == oyTYPE_BEHAVIOUR || type == oyTYPE_CHOICE )
   {
     int weigth = BOX_WIDTH + SELECT_WIDTH + 4 * H_SPACING + BUTTON_HEIGHT;
     if(w < weigth)
@@ -464,13 +446,11 @@ Option::Option( int x, int y, int w, int h, const char *name,
     choice->tooltip( tooltip );
 
     // Set choice
-    int pos = oyGetBehaviour( (oyBEHAVIOUR)option );
-
     for (i = 0; i < choices_n; ++i)
     {
       choice->add( choices[i] );
     }
-    choice->value( pos );
+    choice->value( current );
 
   }
 
@@ -578,8 +558,10 @@ static Fl_Group* addTab( Fl_Tabs* tabs, const oyGROUP *groups ) {
 
     for( i = 0; i < wcount; ++i )
     {
-      const char *g_name = oyGetGroupUITitle( groups[k], NULL );
+      const char *g_name = NULL;
       const char *c_name = parent->child( i )->label(); // current name
+
+      oyWidgetTitleGet( (oyWIDGET)groups[k], NULL, &g_name, NULL, NULL );
       if( c_name && g_name )
       if( strcmp( c_name, g_name ) == 0 )
       {
@@ -593,7 +575,8 @@ static Fl_Group* addTab( Fl_Tabs* tabs, const oyGROUP *groups ) {
     if( !tab )
     {
       const char *tooltip = NULL;
-      const char *title = oyGetGroupUITitle( groups[k], &tooltip );
+      const char *title = NULL;
+      oyWidgetTitleGet( (oyWIDGET)groups[k], NULL, &title, &tooltip, NULL );
 
       parent->begin();
         Fl_Widget *wid = (Fl_Widget*)parent->user_data();
@@ -653,8 +636,10 @@ static Fl_Group* getTab( Fl_Tabs* tabs, oyGROUP group, Fl_Group **container ) {
 
     for( int i = 0; i < wcount; ++i )
     {
-      const char *g_name = oyGetGroupUITitle( group, NULL );
+      const char *g_name = NULL;
       const char *c_name = parent->child( i )->label(); // current name
+
+      oyWidgetTitleGet( (oyWIDGET)group, NULL, &g_name, NULL, NULL );
       if( c_name && g_name )
       if( strcmp( c_name, g_name ) == 0 )
       {
@@ -694,47 +679,48 @@ static void refreshOptions() {
     delete s;
   }
 
-  const oyGROUP *groups;
-  oyGetOptionUITitle( oyOPTION_EDITING_RGB,
-                      &groups, NULL, NULL, NULL );
-  addTab( top_tabs, groups );
-  oyGetOptionUITitle( oyOPTION_RENDERING_INTENT,
-                      &groups, NULL, NULL, NULL );
-  addTab( top_tabs, groups );
-  oyGetOptionUITitle( oyOPTION_RENDERING_INTENT_PROOF,
-                      &groups, NULL, NULL, NULL );
-  addTab( top_tabs, groups );
-  oyGetOptionUITitle( oyOPTION_ACTION_UNTAGGED_ASSIGN,
-                      &groups, NULL, NULL, NULL );
-  addTab( top_tabs, groups );
-
 
   top_tabs->damage( FL_DAMAGE_ALL );
   top_tabs->redraw();
 
 
-  int count = 0;
-
-  // pick up all profiles
-  char** names = oyProfileList ( 0, &count );
-
   Option *op = 0;
 
-  // fill in all the standard profiles
-  for (oyDEFAULT_PROFILE i = (oyDEFAULT_PROFILE)(oyDEFAULT_PROFILE_START + 1) ;
-         i < oyDEFAULT_PROFILE_END ;
-            i = (oyDEFAULT_PROFILE)((int)i+1))
-      {
-        const oyGROUP *groups;
-        const char *tooltip;
-        const char *name = oyGetOptionUITitle( (oyOPTION)i,
-                           &groups, NULL, NULL, &tooltip );
-        Fl_Group *w = addTab( top_tabs, groups );
+  int n = 0;
+  oyWIDGET *wl = oyWidgetListGet( oyGROUP_ALL, &n );
 
-        if(w) w->begin();
-          op = new Option( w->x(), w->y(), w->w(), BUTTON_HEIGHT, name,
-               (oyOPTION)i, count, const_cast<const char**>(names), tooltip );
-        if(w) w->end();
+  // fill in all the options
+  for( int i = 0 ; i < n ; ++i )
+      {
+        const oyGROUP * groups;
+        int             count = 0,
+                        current = 0,
+                        flags = 0;
+        const char    * tooltip = NULL;
+        const char   ** names = NULL;
+        const char    * name = NULL;
+        oyWIDGET_TYPE   type = oyWidgetTitleGet(  wl[i],
+                                                  &groups, &name, &tooltip,
+                                                  &flags );
+        if(type == oyTYPE_CHOICE ||
+           type == oyTYPE_BEHAVIOUR ||
+           type == oyTYPE_DEFAULT_PROFILE ||
+           type == oyTYPE_PROFILE)
+        {
+          Fl_Group *w = addTab( top_tabs, groups );
+
+          oyOptionChoicesGet( wl[i], &count, &names, &current );
+          /*for(int en = 0; en < count; ++en)
+            printf("%s\n", names[en]);*/
+
+          if(w)
+          { w->begin();
+              op = new Option( w->x(), w->y(), Fl_Group::current()->w(),
+                         BUTTON_HEIGHT, name,
+                         wl[i], type, count, names, current, tooltip );
+            w->end();
+          }
+        }
       }
 
   // resize the top group
@@ -745,27 +731,6 @@ static void refreshOptions() {
     if( tw < ow )
       top_group->size( ow, top_group->h() );
   }
-
-
-  // fill in all the options
-  for( oyBEHAVIOUR i = (oyBEHAVIOUR)(oyBEHAVIOUR_START + 1) ;
-             i < oyBEHAVIOUR_END ;
-                i = (oyBEHAVIOUR)((int)i+1))
-      {
-        const oyGROUP *groups;
-        int            choices = 0;
-        const char    *tooltip = NULL;
-        const char   **choices_list = NULL;
-        const char    *name = oyGetOptionUITitle( (oyOPTION)i,
-                              &groups, &choices, &choices_list, &tooltip );
-        Fl_Group *w = addTab( top_tabs, groups );
-        if(w) w->begin();
-          op = new Option( w->x(), w->y(), Fl_Group::current()->w(), BUTTON_HEIGHT, name,
-               (oyOPTION)i, choices, /*const_cast<const char**>(*/choices_list, tooltip );
-        if(w) w->end();
-      }
-
-  oyProfileListFree ( names, count );
 }
 
 void createUI() {
@@ -786,12 +751,14 @@ void createUI() {
   const char *actual_policy = getPolicyName();
   Fl_Group *g = NULL;
       { const char *tooltip = 0;
-        const char *label = oyGetGroupUITitle( oyGROUP_POLICY,
-                                               &tooltip );
-        Fl_Group* o = g = new Fl_Group(10, 101, 485, 260, label);
+        const char *name = NULL;
+        int flags = 0;
+        oyWidgetTitleGet( oyWIDGET_GROUP_POLICY, NULL, &name, &tooltip, &flags);
+        Fl_Group* o = g = new Fl_Group(10, 101, 485, 260, name);
         o->tooltip( tooltip );
         { Fl_Pack* o = new Fl_Pack(10, 101, 485, 256);
-          { Fl_Box* o = new Fl_Box(25, 150, 25, 25);
+          { //Fl_Box* o = 
+            new Fl_Box(25, 150, 25, 25);
           }
           { Fl_Choice* o = policy_choice = new Fl_Choice(14, 115, 196, 25);
             o->box(FL_NO_BOX);
@@ -809,9 +776,10 @@ void createUI() {
         Fl_Group::current()->resizable(o);
       }
       { const char *tooltip = 0;
-        const char *label = oyGetGroupUITitle( oyGROUP_PATHS,
-                                               &tooltip );
-        Fl_Group* o = g = new Fl_Group(10, 95, 485, 266, label);
+        const char *name = NULL;
+        int flags = 0;
+        oyWidgetTitleGet( oyWIDGET_GROUP_PATHS, NULL, &name, &tooltip, &flags );
+        Fl_Group* o = g = new Fl_Group(10, 95, 485, 266, name);
         o->tooltip( tooltip );
         o->box( FL_NO_BOX );
         o->hide();
@@ -1548,7 +1516,7 @@ int main(int argc, char **argv) {
   is_path = fl_search_locale_path (num_paths, locale_paths, "de", "oyranos");
 
   if(is_path >= 0) {
-    fl_initialise_locale ( "oyranos", locale_paths[is_path] );
+    fl_initialise_locale ( "oyranos", locale_paths[is_path], 1 );
   }
   { Fl_Double_Window* o = top_group = new Fl_Double_Window(505, 410, _("Oyranos Configuration"));
     w = o;

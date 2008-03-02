@@ -20,16 +20,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
+ */
+/** @file @internal
+ *  @brief sentinel API
  *
- * sentinial API
+ * Controls the API functions for triggering the internal state.
  * 
  */
 
 /** @date      29. 07. 2006 */
 
 
-#ifndef OYRANOS_SENTINIAL_H
-#define OYRANOS_SENTINIAL_H
+#ifndef OYRANOS_SENTINEL_H
+#define OYRANOS_SENTINEL_H
 
 //#include <oyranos/oyranos_internal.h>
 
@@ -42,12 +45,17 @@ namespace oyranos
 
 /* library sentinels */
 void  oyInit_               (void);
-void  oyExportStart_        (void);
-void  oyExportEnd_          (void);
+int   oyExportStart_        (int export_check);
+int   oyExportEnd_          (void);
+
+#define EXPORT_CHECK_NO 0x000000
+#define EXPORT_SETTING  0x000001
+#define EXPORT_PATH     0x000002
+#define EXPORT_MONITOR  0x000004
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace oyranos
 #endif /* __cplusplus */
 
-#endif /* OYRANOS_SENTINIAL_H */
+#endif /* OYRANOS_SENTINEL_H */
