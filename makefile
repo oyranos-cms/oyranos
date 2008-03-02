@@ -226,6 +226,8 @@ test:	$(LIBSONAMEFULL) test.o
 	$(LDLIBS) 
 	$(REZ)
 
+doc:
+	test -n 'which doxygen' && doxygen Doxyfile
 
 install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma
 	echo Installing ...
@@ -246,6 +248,7 @@ install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma
 	$(INSTALL) -m 644 oyranos.h $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos_definitions.h $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos_monitor.h $(DESTDIR)$(includedir)/oyranos
+	$(INSTALL) -m 644 doc/* $(DESTDIR)$(includedir)${datadir}/oyranos
 	echo ... Installation finished
 
 install_gui:	$(TARGET)_config_flu_static

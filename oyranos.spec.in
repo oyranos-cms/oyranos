@@ -27,6 +27,11 @@ used components and libraries:
     FLU         Jason Bryan
     Elektra     Avi Alkalay and others
 
+%package   devel
+Summary:   Headers, configuration and static libs + documentation
+Group:     Development/System
+Requires:  oyranos = %{name}_%{version}
+
 %prep
 %setup -q -n %{name}_%{version}
 #-%{release}
@@ -53,6 +58,8 @@ rm -rf %{buildroot}
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/oyranos_config_flu
 
+%files devel
+%{_libdir}/
 
 %changelog
 * Tue Apr 21 2005 Kai-Uwe Behrmann
