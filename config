@@ -1,0 +1,8 @@
+TARGET = oyranos
+
+VERSION_A = 0
+VERSION_B = 0
+VERSION_C = 1
+
+prefix = /opt/local
+
