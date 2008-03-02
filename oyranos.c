@@ -821,7 +821,7 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
 
         // TODO merge User and System KeySets in oyReturnChildrenList_
         list = oyReturnChildrenList_(OY_USER OY_KEY OY_SLASH "default", &rc ); ERR
-        if(list)
+        if(!list)
         {
           for (current=list->start; current; current=current->next)
           {
@@ -864,7 +864,7 @@ oyPathsCount_ ()
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
-  if(myKeySet)
+  if(!myKeySet)
   {
     kdbClose();
     DBG_PROG_ENDE
@@ -895,7 +895,7 @@ oyPathName_ (int number)
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
-  if(myKeySet)
+  if(!myKeySet)
   {
     kdbClose();
     DBG_PROG_ENDE
@@ -929,8 +929,8 @@ oyPathAdd_ (const char* pfad)
   DBG_PROG_START
   int rc, n = 0;
   Key *current;
-  char* keyName;
-  char* value;
+  char* keyName = 0;
+  char* value = 0;
   int has_local_path = 0, has_global_path = 0;
 
   /* are we setting a default path? */
@@ -946,12 +946,8 @@ oyPathAdd_ (const char* pfad)
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
-  if(myKeySet)
-  {
-    kdbClose();
-    DBG_PROG_ENDE
-    return 0;
-  }
+  if(!myKeySet)
+    goto finish;
 
   keyName = (char*) calloc (sizeof(char), MAX_PATH);
   value = (char*) calloc (sizeof(char), MAX_PATH);
@@ -997,6 +993,8 @@ oyPathAdd_ (const char* pfad)
     rc = oyAddKey_valueComment_ (keyName, pfad, "");
   }
 
+  finish:
+
   if (!has_global_path)
   {
     keyName = oySearchEmptyKeyname_ (OY_USER_PATHS, OY_USER_PATH);
@@ -1032,8 +1030,9 @@ oyPathRemove_ (const char* pfad)
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
-  if(myKeySet)
+  if(!myKeySet)
   {
+    oyPathAdd_ (OY_DEFAULT_USER_PROFILE_PATH);
     kdbClose();
     DBG_PROG_ENDE
     return;
@@ -1079,7 +1078,7 @@ oyPathSleep_ (const char* pfad)
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
-  if(myKeySet) {
+  if(!myKeySet) {
     kdbClose();
 
     DBG_PROG_ENDE
@@ -1118,7 +1117,7 @@ oyPathActivate_ (const char* pfad)
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
-  if(myKeySet) {
+  if(!myKeySet) {
     kdbClose();
 
     DBG_PROG_ENDE
@@ -1597,7 +1596,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
     DBG_PROG_S(( product_id ));
   // TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
-  if(profilesList) {
+  if(!profilesList) {
     kdbClose();
 
     DBG_PROG_ENDE
@@ -1676,7 +1675,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
 
   // TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
-  if(profilesList) {
+  if(!profilesList) {
     kdbClose();
 
     DBG_PROG_ENDE
@@ -1938,7 +1937,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
   // TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
-  if(profilesList)
+  if(!profilesList)
   {
     kdbClose();
 
