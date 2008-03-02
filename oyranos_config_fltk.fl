@@ -610,7 +610,7 @@ Function {refreshPathLeaves()} {private
   std::cout << nbutton->x() << ","<< nbutton->w() <<std::endl;} {}
 } 
 
-Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {private return_type {Fl_Group*}
+Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {open private return_type {Fl_Group*}
 } {
   code {Fl_Group *parent = /*dynamic_cast <Fl_Group>*/ tabs; // parent tab
   Fl_Group *tab = NULL; // actual tab
@@ -633,6 +633,7 @@ Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {private return_type {
       {
         // a widget with the searched label was found => tab exists allready
         tab = (Fl_Tabs*) parent->child( i );
+        tab->box( FL_THIN_UP_BOX );
         break;
       }
     }
@@ -647,7 +648,7 @@ Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {private return_type {
         if( !wid ) wid = parent;
 
         int x = parent->x() + Fl::box_dx( wid->box() ) + V_SPACING,
-            y = parent->y() + Fl::box_dy( wid->box() ) + BUTTON_HEIGHT + V_SPACING,
+            y = parent->y() + Fl::box_dy( wid->box() ) + BUTTON_HEIGHT,// + V_SPACING,
             w = parent->w() - Fl::box_dw( wid->box() ) - 2*V_SPACING,
             h = parent->h() - Fl::box_dh( wid->box() ) - BUTTON_HEIGHT - 2*V_SPACING;
         if( k < groups[0] )
@@ -655,16 +656,17 @@ Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {private return_type {
           tab = new Fl_Tabs(   x,y,w,h, title);
           tab->tooltip( tooltip );
           tab->user_data( tab );
+          tab->box( FL_THIN_UP_BOX );
           tab->end();
         } else {
           tab = new Fl_Scroll( x,y,w,h, title );
           tab->tooltip( tooltip );
-          //tab->box( FL_PLASTIC_UP_FRAME ); //FL_THIN_UP_BOX );
-          { OyFlPack* o = new OyFlPack( tab->x() + Fl::box_dx( tab->box() ),
-                                        tab->y() + Fl::box_dy( tab->box() ),// + BUTTON_HEIGHT,
+          tab->box( FL_NO_BOX ); //FL_THIN_UP_BOX );
+          { OyFlPack* o = new OyFlPack( tab->x() + Fl::box_dx( tab->box() ) + V_SPACING,
+                                        tab->y() + Fl::box_dy( tab->box() ) + V_SPACING,// + BUTTON_HEIGHT,
                                         150,
                                         parent->h() - Fl::box_dh( parent->box() ) - BUTTON_HEIGHT );
-            //o->box( FL_PLASTIC_UP_FRAME );
+            o->box( FL_NO_BOX );
             o->spacing( V_SPACING );
             o->end();
             tab->user_data( o );
@@ -681,7 +683,8 @@ Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {private return_type {
   if( tab )
     return (Fl_Group*)tab->user_data();
   else
-    return NULL;} {}
+    return NULL;} {selected
+  }
 } 
 
 Function {getTab( Fl_Tabs* tabs, oyGROUP group, Fl_Group **container )} {private return_type {Fl_Group*}
@@ -722,7 +725,7 @@ Function {getTab( Fl_Tabs* tabs, oyGROUP group, Fl_Group **container )} {private
   return tab;} {}
 } 
 
-Function {refreshOptions()} {open private
+Function {refreshOptions()} {private
 } {
   code {// remove tabs
   //const char *t = oyGetGroupUITitle( oyGROUP_BEHAVIOUR, NULL );
@@ -779,7 +782,7 @@ Function {refreshOptions()} {open private
                            &groups, NULL, NULL, &tooltip );
         Fl_Group *w = addTab( top_tabs, groups );
         if(w) w->begin();
-          op = new Option( w->x(), w->y(), Fl_Group::current()->w(), BUTTON_HEIGHT, name,
+          op = new Option( w->x(), w->y(), w->w(), BUTTON_HEIGHT, name,
                (oyOPTION)i, count, const_cast<const char**>(names), tooltip );
         if(w) w->end();
       }
@@ -812,11 +815,11 @@ Function {refreshOptions()} {open private
           op = new Option( w->x(), w->y(), Fl_Group::current()->w(), BUTTON_HEIGHT, name,
                (oyOPTION)i, choices, /*const_cast<const char**>(*/choices_list, tooltip );
         if(w) w->end();
-      }} {selected
-  }
+      }} {}
 } 
 
-Function {createUI()} {} {
+Function {createUI()} {open
+} {
   code {oyPathsCount();
   int count;
   const char **policies_list = getPolicies( &count );
@@ -836,19 +839,11 @@ Function {createUI()} {} {
       { const char *tooltip = 0;
         const char *label = oyGetGroupUITitle( oyGROUP_POLICY,
                                                &tooltip );
-        Fl_Group* o = g = new Fl_Group(10, 95, 495, 266, label);
+        Fl_Group* o = g = new Fl_Group(10, 101, 485, 260, label);
         o->tooltip( tooltip );
-        { Fl_Pack* o = new Fl_Pack(10, 105, 485, 256);
-          /*{ Fl_Pack* o = new Fl_Pack(25, 115, 255, 35);
-            o->type(1);
-            { Fl_Box* o = new Fl_Box(25, 115, 120, 35, _("Actual Policy:"));
-              o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-            }
-            { Fl_Box* o = policy_box = new Fl_Box(145, 115, 135, 35, actual_policy );
-              o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-            }
-            o->end();
-          }*/
+        { Fl_Pack* o = new Fl_Pack(10, 101, 485, 256);
+          { Fl_Box* o = new Fl_Box(25, 150, 25, 25);
+          }
           { Fl_Choice* o = policy_choice = new Fl_Choice(14, 115, 196, 25);
             o->box(FL_NO_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -857,49 +852,27 @@ Function {createUI()} {} {
           { Fl_Box* o = new Fl_Box(25, 150, 25, 25);
             Fl_Group::current()->resizable(o);
           }
+          o->box( FL_NO_BOX );
           o->end();
         }
+        o->box( FL_FLAT_BOX );
         o->end();
         Fl_Group::current()->resizable(o);
       }
       { const char *tooltip = 0;
         const char *label = oyGetGroupUITitle( oyGROUP_PATHS,
                                                &tooltip );
-        Fl_Group* o = g = new Fl_Group(10, 95, 495, 266, label);
+        Fl_Group* o = g = new Fl_Group(10, 95, 485, 266, label);
         o->tooltip( tooltip );
+        o->box( FL_NO_BOX );
         o->hide();
         { Fl_Scroll* o = paths_scroll = new Fl_Scroll(10, 100, 490, 261);
+          o->box( FL_NO_BOX );
           o->end();
         }
         o->end();
       }
 
-      /*{ const char *tooltip = 0;
-        const char *label = oyGetGroupUITitle( oyGROUP_DEFAULT_PROFILES,
-                                               &tooltip );
-        Fl_Group* o = g = new Fl_Group(10, 95, 495, 266, label);
-        o->tooltip( tooltip );
-        { Fl_Scroll* o = default_profiles_scroll = new Fl_Scroll(10, 100, 490, 261);
-          { Fl_Pack* o = default_profiles_pack = new Fl_Pack(10, 105, 490, 256);
-            o->type(1);
-            o->end();
-            g->user_data( o );
-          }
-          o->end();
-        }
-        o->hide();
-        o->end();
-      }*/
-      /*{ const char *tooltip = 0;
-        const char *label = oyGetGroupUITitle( oyGROUP_BEHAVIOUR,
-                                               &tooltip );
-        Fl_Tabs* o = new Fl_Tabs(10, 95, 495, 270, label);
-        o->user_data( o );
-        { Fl_Tabs* o = behaviour_tabs = new Fl_Tabs(10, 109, 485, 248);
-          o->end();
-        }
-        o->end();
-      }*/
   top_tabs->end();
 
 
@@ -928,7 +901,7 @@ Function {} {open private
   code {Fl::scheme("plastic");} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {682 409 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {725 297 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
@@ -947,11 +920,14 @@ Function {} {open private
     } {
       Fl_Group {} {
         label Policy open
-        tooltip {Reset to a standard Policy for Oyranos.} xywh {10 94 495 267} resizable
+        tooltip {Reset to a standard Policy for Oyranos.} xywh {10 95 485 266} resizable
       } {
         Fl_Pack {} {open
           xywh {10 105 485 256}
         } {
+          Fl_Box {} {
+            xywh {30 180 25 25}
+          }
           Fl_Choice policy_choice {open
             xywh {30 155 196 25} box NO_BOX down_box BORDER_BOX
           } {
@@ -977,16 +953,16 @@ Function {} {open private
             }
           }
           Fl_Box {} {
-            xywh {30 180 25 25} resizable
+            xywh {40 190 25 25} resizable
           }
         }
       }
       Fl_Group {} {
         label Paths open
-        tooltip {Configure Paths} xywh {10 95 495 266} hide
+        tooltip {Configure Paths} xywh {10 95 485 266} hide
       } {
         Fl_Scroll paths_scroll {open
-          xywh {10 100 490 261}
+          xywh {10 100 485 261}
         } {}
       }
     }

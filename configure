@@ -72,6 +72,9 @@ else
     else
       if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
         OSUNAME=BSD
+        echo "BSD = 1" >> $CONF
+        echo "#define BSD 1" >> $CONF_H
+        echo "BSD $UNAME_             detected"
       else
         echo "Oyranos may or may not compile on your $UNAME_ system"
       fi

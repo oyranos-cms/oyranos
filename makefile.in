@@ -337,7 +337,7 @@ uninstall:
 clean:
 	$(RM) \
 	$(OBJECTS) $(MONI_OBJECTS) \
-	$(LIBNAME) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_SO) \
+	$(LIBNAME) $(LIBSONAMEFULL) $(LIBSONAME) $(LIBSO) \
 	$(LIB_MONI_NAME) $(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)_gamma.o $(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2.o test.o test2 test \
