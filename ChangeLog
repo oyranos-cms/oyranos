@@ -1,3 +1,6 @@
+2005-05-26
+	* fix: free Keyset with kdb not free
+
 2005-05-09
 	* und: rename all colour space functions to include Input except workspace
 	* und: update README

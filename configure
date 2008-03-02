@@ -9,8 +9,7 @@ CONF_SH=$TARGET-config
 VERSION_A=0
 VERSION_B=0
 VERSION_C=2
-VERSION=$VERSION_A.$VERSION_B$VERSION_C
-VERSION_L=$VERSION_A.$VERSION_B.$VERSION_C
+VERSION=$VERSION_A.$VERSION_B.$VERSION_C
 TIME="November 2004 - April 2005"
 
 if [ $# -gt 1 ] && [ $1 == "--prefix" ]; then
@@ -19,6 +18,8 @@ else
   prefix=/opt/local
 fi
 
+src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
+srcdir="`pwd`"
 
 test -f error.txt && rm error.txt
 test -f config && make clean
@@ -28,6 +29,10 @@ echo "# automatically generated file - do not edit" > $CONF
 echo "/* automatically generated file - do not edit */" > $CONF_H
 echo "prefix = $prefix" >> $CONF
 echo "TARGET = $TARGET" >> $CONF
+echo "#define PREFIX         \"$prefix\"" >> $CONF_H
+echo "#define LOCALEDIR      \"$prefix/share/locale\"" >> $CONF_H
+echo "#define SRCDIR         \"$srcdir\"" >> $CONF_H
+echo "#define SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
 echo "" >> $CONF
 
 echo ""
@@ -96,7 +101,10 @@ echo "VERSION_B = $VERSION_B" >> $CONF
 echo "VERSION_C = $VERSION_C" >> $CONF
 echo "VERSION   = $VERSION" >> $CONF
 echo "VERSION_L = $VERSION_L" >> $CONF
-echo "src_dir = `pwd`/oyranos_$VERSION_L" >> $CONF
+echo "" >> $CONF
+echo "src_dir = $src_dir" >> $CONF
+echo "srcdir = $srcdir" >> $CONF
+srcdir="`pwd`"
 
 echo "#!/bin/bash" > $CONF_SH
 echo "" >> $CONF_SH

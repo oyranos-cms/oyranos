@@ -50,7 +50,7 @@ do
 	    echo_ld_x_flags=yes
 	    ;;
 	--ld_x_staticflags)
-	    echo_ld_x_flags=yes
+	    echo_ld_x_staticflags=yes
 	    ;;
 	*)
 	    echo_help=yes

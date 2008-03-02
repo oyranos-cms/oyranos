@@ -74,7 +74,7 @@ char*	oyGetDefaultLabInputProfileName_        ();
 char*	oyGetDefaultRGBInputProfileName_        ();
 char*	oyGetDefaultCmykInputProfileName_       ();
 
-char**  oyProfileList_                 (const char* colourspace, int * size);
+char**  oyProfileList_                 (const char* colourspace, size_t * size);
 
 int	oyCheckProfile_                    (const char* name);
 int	oyCheckProfile_Mem                 (const void* mem, size_t size);
@@ -203,7 +203,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
 { DBG_PROG_START
   KeySet *myKeySet = (KeySet*) malloc (sizeof(KeySet) * 1);
   ksInit(myKeySet);
-
+  DBG_PROG_V(( (int)keyParentName ))
   *rc = kdbGetChildKeys(keyParentName, myKeySet,KDB_O_RECURSIVE);
 
   DBG_PROG_ENDE
@@ -679,7 +679,7 @@ oyGetPathFromProfileName_ (const char* fileName)
   char  *pathName = 0;
   int    success = 0;
   char  *header = 0;
-  int    size;
+  size_t    size;
 
   //DBG_NUM_S((fileName))
   /* test for pure file without dir; search in configured paths only */
@@ -1239,7 +1239,7 @@ oyGetDefaultCmykInputProfileName_       ()
 /* profile lists API */
 
 char**
-oyProfileList_                     (const char* colourspace, int * size)
+oyProfileList_                     (const char* colourspace, size_t * size)
 {
   DBG_PROG_START
   char** names = 0;
@@ -1864,7 +1864,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
   DBG_PROG
   char* profile_name = 0;
   int rc;
-  KeySet* profilesList;
+  KeySet* profilesList = 0;
 
   DBG_PROG
 
@@ -1892,7 +1892,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
   DBG_NUM_S(( value ))
 
-  OY_FREE (profilesList) DBG_PROG
+  if(profilesList) ksClose(profilesList); DBG_PROG
   OY_FREE (profile_name) DBG_PROG
   OY_FREE (value) DBG_PROG
   kdbClose(); DBG_PROG

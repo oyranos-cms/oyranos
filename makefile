@@ -15,6 +15,8 @@ COPY = cp -v
 else
 COPY = cp
 endif
+INSTALL = install -v
+RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
 
 exec_prefix	= ${prefix}
 bindir		= ${exec_prefix}/bin
@@ -28,11 +30,11 @@ ifdef LINUX
 SO = .so
 endif
 
-LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION_L)
+LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)
 LIBSO = lib$(TARGET)$(SO)
 LIBNAME = lib$(TARGET).a
-LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION_L)
+LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)
 LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)
 LIB_MONI_SO = lib$(TARGET)_moni$(SO)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
@@ -124,14 +126,14 @@ dir     = Entwickeln
 timedir = $(topdir)/$(dir)
 mtime   = `find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g`
 
-.SILENT:
+#.SILENT:
 
 ifdef FLU
 FLU_GUI = $(TARGET)_config_flu
 endif
 
 ALL_FILES =	$(DOKU) \
-	configure.sh \
+	configure \
 	makefile \
 	oyranos-config.in \
 	$(SOURCES) \
@@ -169,6 +171,17 @@ $(TARGET)_config_flu:	$(TARGET)_moni $(FLU_OBJECTS)
 	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) \
 	$(REZ)
 
+$(TARGET)_config_flu_static:	$(TARGET)_moni $(FLU_OBJECTS)
+	echo Linking static $(TARGET)_config_flu ...
+	$(CXX) -Wall -O3 -o $(TARGET)_config_flu $(TARGET)_config_flu.o \
+	$(LIBNAME) $(LIB_MONI_NAME) $(LINK_LIB_PATH) \
+	`flu-config --ldstaticflags` \
+	`fltk-config --use-images --ldstaticflags` \
+	-L/usr/X11R6/lib \
+	/usr/lib/libkdb.a -lsupc++
+	strip $(TARGET)_config_flu
+	$(REZ)
+
 static:	$(OBJECTS)
 	echo Linking $@ ...
 	$(COLLECT) $(LIBNAME) $(OBJECTS)
@@ -203,30 +216,58 @@ test:	$(LIBSONAMEFULL) test.o
 
 
 install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma
+	echo Installing ...
 	make uninstall
-	$(COPY) $(TARGET)-config $(bindir)
-	$(COPY) $(TARGET)-gamma $(bindir)
-	$(COPY) $(LIBNAME) $(libdir)
-	$(COPY) $(LIBSONAMEFULL) $(libdir)
-	$(LNK)  $(LIBSONAMEFULL) $(libdir)/$(LIBSONAME)
-	$(LNK)  $(LIBSONAMEFULL) $(libdir)/$(LIBSO)
-	$(COPY) $(LIB_MONI_NAME) $(libdir)
-	$(COPY) $(LIB_MONI_SONAMEFULL) $(libdir)
-	$(LNK)  $(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SONAME)
-	$(LNK)  $(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SO)
-	test -d $(includedir)/oyranos || mkdir $(includedir)/oyranos
-	$(COPY) oyranos.h $(includedir)/oyranos
-	$(COPY) oyranos_definitions.h $(includedir)/oyranos
-	$(COPY) oyranos_monitor.h $(includedir)/oyranos
+	mkdir -p $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-config $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-gamma $(DESTDIR)$(bindir)
+	mkdir -p $(DESTDIR)$(libdir)
+	$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
+	$(INSTALL) -m 644 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
+	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
+	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
+	$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
+	$(INSTALL) -m 644 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
+	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
+	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
+	test -d $(includedir)/oyranos || mkdir -p $(DESTDIR)$(includedir)/oyranos
+	$(INSTALL) -m 644 oyranos.h $(DESTDIR)$(includedir)/oyranos
+	$(INSTALL) -m 644 oyranos_definitions.h $(DESTDIR)$(includedir)/oyranos
+	$(INSTALL) -m 644 oyranos_monitor.h $(DESTDIR)$(includedir)/oyranos
+	echo ... Installation finished
+
+install_gui:	$(TARGET)_config_flu_static
+	echo Installing $(TARGET)_config_flu_static ...
+	mkdir -p $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)_config_flu $(DESTDIR)$(bindir)
+
+dist: targz
+	$(COPY) ../Archiv/$(TARGET)_$(mtime).tgz $(TARGET)_$(VERSION).tar.gz
+
+rpm:	dist
+	mkdir -p rpmdir/BUILD \
+	rpmdir/SPECS \
+	rpmdir/SOURCES \
+	rpmdir/SRPMS \
+	rpmdir/RPMS/$(RPMARCH)
+	cp -f $(TARGET)_$(VERSION).tar.gz rpmdir/SOURCES
+	rpmbuild --clean -ba $(srcdir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
+	@echo "============================================================"
+	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 
 uninstall:
-	$(RM)   $(bindir)/$(TARGET)-gamma
-	$(RM)   $(bindir)/$(TARGET)-config
-	$(RM)   $(libdir)/$(LIBSONAMEFULL) $(libdir)/$(LIBSONAME) $(libdir)/$(LIBSO)
-	$(RM)   $(libdir)/$(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SONAME) \
-			$(libdir)/$(LIB_MONI_SO) \
-			$(libdir)/$(LIBNAME) $(libdir)/$(LIB_MONI_NAME)
-	$(RM)   -R $(includedir)/oyranos
+	echo Uninstalling ...
+	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-gamma
+	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
+	$(RM)   $(DESTDIR)$(libdir)/$(LIBSONAMEFULL) \
+	        $(DESTDIR)$(libdir)/$(LIBSONAME) \
+	        $(DESTDIR)$(libdir)/$(LIBSO) \
+			$(DESTDIR)$(libdir)/$(LIBNAME)
+	$(RM)   $(DESTDIR)$(libdir)/$(LIB_MONI_SONAMEFULL) \
+	        $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME) \
+			$(DESTDIR)$(libdir)/$(LIB_MONI_SO) \
+	        $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
+	$(RM)   -R $(DESTDIR)$(includedir)/oyranos
 
 clean:
 	$(RM) \
@@ -238,7 +279,7 @@ clean:
 	$(TARGET)-config config mkdepend
 
 config:
-	configure.sh
+	configure
 
 depend:
 	echo "setting up dependencies ..."
@@ -284,16 +325,16 @@ tgz:
 	rm -R Entwickeln
 
 targz:
-	mkdir $(TARGET)_$(VERSION_L)
+	mkdir $(TARGET)_$(VERSION)
 	$(COPY) \
 	$(ALL_FILES) \
-	$(TARGET)_$(VERSION_L)
-	tar cf - $(TARGET)_$(VERSION_L)/ \
+	$(TARGET)_$(VERSION)
+	tar cf - $(TARGET)_$(VERSION)/ \
 	| gzip > $(TARGET)_$(mtime).tgz
 	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
-	test -d $(TARGET)_$(VERSION_L) && \
-	test `pwd` != `(cd $(TARGET)_$(VERSION_L); pwd)` && \
-	rm -R $(TARGET)_$(VERSION_L) 
+	test -d $(TARGET)_$(VERSION) && \
+	test `pwd` != `(cd $(TARGET)_$(VERSION); pwd)` && \
+	rm -R $(TARGET)_$(VERSION) 
 
 
 # mkdepend
