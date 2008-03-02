@@ -119,7 +119,7 @@ const char* oySelectUserSys_   ();
 enum {
   oyUSER_SYS = 0,
   oyUSER,
-  oySYS,
+  oySYS
 };
 
 int     oyGetBehaviour_        (oyBEHAVIOUR type);

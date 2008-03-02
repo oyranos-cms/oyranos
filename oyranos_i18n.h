@@ -58,8 +58,8 @@ void   oyI18NSet_                    ( int active,
 
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_I18N_H */

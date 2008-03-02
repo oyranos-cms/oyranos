@@ -26,7 +26,7 @@
 
   <!-- Assumed XYZ source
        Assigning an untagged XYZ Image an colour space -->
-  <oyASSUMED_CMYK>ISOcoated.icc</oyASSUMED_CMYK>
+  <oyASSUMED_XYZ>XYZ.icc</oyASSUMED_XYZ>
 
   <!-- Assumed Lab source
        Assigning an untagged CIE*Lab Image an colour space -->

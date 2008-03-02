@@ -1,6 +1,6 @@
 /**
     @mainpage
-    <h3 align="center">Copyright 2004-2006 &copy; Kai-Uwe Behrmann</h3>
+    <h3 align="center">Copyright 2004-2007 &copy; Kai-Uwe Behrmann</h3>
 
     @section text_contents Descriptive Contents
     @ref intro |
@@ -24,8 +24,9 @@
     In its current stage it configures profile paths, sets default profiles, 
     maps devices to profiles, sets a monitor profile in X and uploads a vcgt
     tag. This means for instance all applications using Oyranos will use for
-    incoming digital camera picture the same profile and watch it through the
-    same monitor profile.
+    a incoming digital camera picture the same profile and watch it through the
+    same monitor profile with the same options for rendering intent, simulation
+    and so on.
 
     @section tools Tools Documentation
     - oyranos-monitor - a commandline tool for calling from a setup script like

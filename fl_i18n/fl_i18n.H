@@ -33,13 +33,18 @@
 
 #define FL_I18N_VERSION 101
 
+#ifdef USE_GETTEXT
 # include <libintl.h>
 # define _(text) threadGettext(text)
+#else
+# define _(text) text
+#endif
+
 const char* threadGettext( const char* text);
 
 
 /** tell about the locale path and select locale from environment */
-void        fl_initialise_locale   ( const char   *domain,
+int         fl_initialise_locale   ( const char   *domain,
                                      const char   *locale_paths,
                                      int           set_locale );
 /** help with searching for the right locale path */

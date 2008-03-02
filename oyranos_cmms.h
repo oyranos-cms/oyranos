@@ -85,20 +85,20 @@ oyCMSTransform_t oyCMSGetTransform();
 int oyCMSTransform( void *out, void *in, oyCMSTransform_t t );
 int oyCMSSetCMM( int oyWIDGET );
 
-// Wieviel Geraete vertraegt Oyranos?  X ist eigentlich schon ein Sonderfall
-// Vielleicht ist eine abstrakte Geraetebeschreibung sinnvoll -> ICCDeviceTag
+/*/ Wieviel Geraete vertraegt Oyranos?  X ist eigentlich schon ein Sonderfall
+// Vielleicht ist eine abstrakte Geraetebeschreibung sinnvoll -> ICCDeviceTag*/
 oyDevice_t
 
 
-// oder erhaelt oyImage_t die oyDevice_t Infos mit? 
+/*/ oder erhaelt oyImage_t die oyDevice_t Infos mit? */
 int oyCMSTransformScreenImage( oyDevice_t disp,
                                oyCMSTransform_t t,
                                oyImage_t data );
 #endif
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_CMMS_H */

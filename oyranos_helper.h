@@ -124,8 +124,8 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
 
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_HELPER_H */

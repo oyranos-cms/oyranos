@@ -119,8 +119,8 @@ void oyUnrollEdid1_               (struct oyDDC_EDID1_s_ *edi,
 
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_MONITOR__INTERNAL_H */

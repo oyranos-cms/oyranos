@@ -22,11 +22,11 @@ COPY = cp -vdp
 INSTALL = install -v
 
 #DEBUG = -DDEBUG
-DL = --ldflags # --ldstaticflags
+#DL = --ldflags # --ldstaticflags
 
 I18N_CXXFILES = $(TARGET).cxx
 I18N_HEADERS = $(TARGET).H
-I18N_LIB = $(ICONV) -lintl $(LIBNAME)
+I18N_LIB = $(ICONV) $(INTL) $(LIBNAME)
 MSGFMT = msgfmt -c --statistics
 
 #shell=/bin/sh
@@ -39,8 +39,8 @@ LIB_LIBS = -L$(libdir) -L./ $(FLTK_LIBS) -L/lib $(DBG_LIBS)
 INCL = -I/usr/local/include -I.  -I/usr/include/g++ -I/usr/include
 
 OPTS=-Wall -g $(DEBUG) -L. -Wunused -fno-exceptions $(COMPILE_OPTIONS)
-LIBLINK_FLAGS = -shared -ldl -L. -lc -lm
-18N_LIB = $(ICONV) -lintl $(LIBNAME)
+LIBLINK_FLAGS = -shared $(DL) -L. -lc -lm
+18N_LIB = $(ICONV) $(INTL) $(LIBNAME)
 MSGMERGE = msgmerge
 XGETTEXT_OPTIONS = \
 	--keyword=gettext \
@@ -112,7 +112,7 @@ POT_FILE = po/$(TARGET).pot
 
 ALL_FILES =	$(SOURCES) \
 	makefile \
-	makefile.bsd \
+	Makefile.bsd \
 	$(DOKU)
 
 # get time stamp
@@ -147,7 +147,7 @@ strip: $(BINTARGET)
 static_static:	$(OBJECTS)
 	$(CXX) $(OPTS) -o $(BINTARGET) \
 	$(OBJECTS) \
-	$(LDLIBS) -static -ljpeg -lpng -lX11 -lpthread -lz -ldl \
+	$(LDLIBS) -static -ljpeg -lpng -lX11 -lpthread -lz $(DL) \
 	-lfreetype -lfontconfig -lXrender -lGLU -lXext -lexpat \
 	-L/opt/local/lib
 	$(REZ)

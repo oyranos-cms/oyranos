@@ -62,6 +62,10 @@ int   oyGetMonitorInfo            (const char* display,
 int   oyGetScreenFromPosition     (const char *display_name,
                                    int x,
                                    int y);
+char* oyGetDisplayNameFromPosition(const char *display_name,
+                                   int x,
+                                   int y,
+                                   oyAllocFunc_t allocate_func);
 char* oyGetMonitorProfile         (const char *display,
                                    size_t     *size,
                                    oyAllocFunc_t allocate_func);

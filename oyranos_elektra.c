@@ -29,7 +29,6 @@
 /* Date:      25. 11. 2004 */
 
 #include <kdb.h>
-#include <alloca.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -109,7 +108,6 @@ oyComp_t_* oyGetDeviceProfile_sList          (const char* manufacturer,
 
 
 /* small helpers */
-#define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
 
   /* ksNext uses the same entry twice in a 1 component KeySet, we avoid this */
 #define FOR_EACH_IN_KDBKEYSET( current_, list ) \
@@ -122,13 +120,18 @@ oyComp_t_* oyGetDeviceProfile_sList          (const char* manufacturer,
 
 KeySet*
 oyReturnChildrenList_ (const char* keyParentName, int* rc)
-{ DBG_PROG_START
+{
   int user_sys = oyUSER_SYS;
   KeySet*list_user = 0;
   KeySet*list_sys = 0;
   KeySet*list = ksNew();
-  char  *list_name_user = (char*)alloca(MAX_PATH);
-  char  *list_name_sys = (char*)alloca(MAX_PATH);
+  char  *list_name_user = NULL;
+  char  *list_name_sys = NULL;
+
+  DBG_PROG_START
+
+  oyAllocHelper_m_(list_name_user, char, MAX_PATH, 0, )
+  oyAllocHelper_m_(list_name_sys, char, MAX_PATH, 0, )
 
   if( user_sys == oyUSER_SYS || user_sys == oyUSER ) {
     list_user = ksNew();
@@ -152,20 +155,29 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
   DBG_PROG_S(( keyParentName ))
   DBG_PROG_V(( (intptr_t)ksGetSize(list) ))
 
+  oyFree_m_( list_name_user )
+  oyFree_m_( list_name_sys )
+
   DBG_PROG_ENDE
   return list;
 }
 
 char*
 oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
-{ DBG_PROG_START
+{
   char* keyName = (char*)     calloc (strlen(keyParentName)
                                     + strlen(keyBaseName) + 24, sizeof(char));
-  char* pathkeyName = (char*) alloca (strlen(keyBaseName) + 24);
+  char* pathkeyName = NULL;
   int nth = 0, i = 1, rc=0;
   Key *key;
-  char *name = (char*)alloca(MAX_PATH);
+  char *name = NULL;
+
+  DBG_PROG_START
+
+  oyAllocHelper_m_(name, char, MAX_PATH, 0, )
   sprintf(name, "%s%s", oySelectUserSys_(), keyParentName);
+
+  oyAllocHelper_m_(pathkeyName, char, strlen(keyBaseName) + 24, 0, )
 
   key = keyNew( KEY_SWITCH_END );
   keySetName( key, keyBaseName );
@@ -190,19 +202,25 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
   if(keyName)
     DBG_PROG_S((keyName));
 
+  oyFree_m_( pathkeyName )
+  oyFree_m_( name )
+
   DBG_PROG_ENDE
   return keyName;
 } 
 
 int
 oyKeySetHasValue_     (const char* keyParentName, const char* ask_value)
-{ DBG_PROG_START
+{
   int result = 0;
   int rc=0;
   char* value = (char*) calloc (sizeof(char), MAX_PATH);
-  KeySet *myKeySet = oyReturnChildrenList_( keyParentName, &rc ); ERR
+  KeySet *myKeySet;
   Key *current;
 
+  DBG_PROG_START
+
+  myKeySet = oyReturnChildrenList_( keyParentName, &rc ); ERR
         if(!myKeySet)
         {
           FOR_EACH_IN_KDBKEYSET( current, myKeySet )
@@ -220,7 +238,7 @@ oyKeySetHasValue_     (const char* keyParentName, const char* ask_value)
         }
   ksClose (myKeySet);
   oyClose_();
-  OY_FREE(myKeySet)
+  oyFree_m_(myKeySet)
 
   DBG_PROG_ENDE
   return result;
@@ -230,10 +248,14 @@ int
 oyAddKey_valueComment_ (const char* keyName,
                         const char* value,
                         const char* comment)
-{ DBG_PROG_START
+{
   int rc=0;
   Key *key;
-  char *name = (char*)alloca(MAX_PATH);
+  char *name = NULL;
+
+  DBG_PROG_START
+
+  oyAllocHelper_m_(name, char, MAX_PATH, 0, )
   sprintf(name, "%s%s", oySelectUserSys_(), keyName);
 
   if (keyName)
@@ -248,15 +270,17 @@ oyAddKey_valueComment_ (const char* keyName,
   key = keyNew( KEY_SWITCH_END );
   keySetName( key, name );
 
-  //rc=keyInit(key); ERR
-  //rc=keySetName (key, keyName);
+  /*rc=keyInit(key); ERR */
+  /*rc=keySetName (key, keyName); */
   rc=kdbGetKey( oy_handle_, key );
   rc=keySetString (key, value);
   rc=keySetComment (key, comment);
-  //TODO debug
+  /*TODO debug */
   oyOpen_();
   rc=kdbSetKey( oy_handle_, key );
   oyClose_();
+
+  oyFree_m_( name )
 
   DBG_PROG_ENDE
   return rc;
@@ -275,8 +299,10 @@ oySelectUserSys_()
 
 int
 oySetBehaviour_      (oyBEHAVIOUR type, int choice)
-{ DBG_PROG_START
+{
   int r = 1;
+
+  DBG_PROG_START
 
   DBG_PROG_S( ("type = %d behaviour %d", type, choice) )
 
@@ -305,10 +331,12 @@ oySetBehaviour_      (oyBEHAVIOUR type, int choice)
 
 int
 oyGetBehaviour_      (oyBEHAVIOUR type)
-{ DBG_PROG_START
+{
   char* name = 0;
   const char* key_name = 0;
   int c = -1;
+
+  DBG_PROG_START
 
   DBG_PROG_S( ("type = %d behaviour", type) )
 
@@ -327,8 +355,13 @@ oyGetBehaviour_      (oyBEHAVIOUR type)
     WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
 
   if(name)
+  {
     c = atoi(name);
-  OY_FREE( name )
+    oyFree_m_( name )
+  }
+
+  if(c < 0)
+    c = oyOptionGet_(type)-> default_value;
 
   DBG_PROG_ENDE
   return c;
@@ -338,9 +371,11 @@ oyGetBehaviour_      (oyBEHAVIOUR type)
 
 int
 oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* comment)
-{ DBG_PROG_START
+{
   int r = 1;
   const char *fileName = 0, *com = comment;
+
+  DBG_PROG_START
 
   /* extract filename */
   if (name && strrchr(name , OY_SLASH_C))
@@ -369,7 +404,7 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
         sprintf (keyName, "%s%s", OY_REGISTRED_PROFILES OY_SLASH, fileName); DBG_PROG
         r = oyAddKey_valueComment_ (keyName, com, 0); DBG_PROG
         DBG_PROG_S(( "%s %d", keyName, len ))
-        OY_FREE (keyName)
+        oyFree_m_ (keyName)
       }
       else
         WARN_S( (_("default profile type %d; type does not exist"), type ) );
@@ -407,8 +442,8 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
 
         DBG_NUM_S(( value ))
 
-        OY_FREE (list) DBG_PROG
-        OY_FREE (value) DBG_PROG
+        oyFree_m_ (list) DBG_PROG
+        oyFree_m_ (value) DBG_PROG
         oyClose_(); DBG_PROG
         r = rc;
       }
@@ -428,12 +463,15 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
 
 int
 oyPathsCount_ ()
-{ DBG_PROG_START
+{
   int rc=0;
   ssize_t n = 0;
+  KeySet* myKeySet;
+
+  DBG_PROG_START
 
   /* take all keys in the paths directory */
-  KeySet* myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
+  myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
   if(!myKeySet)
   {
     oyClose_();
@@ -442,12 +480,12 @@ oyPathsCount_ ()
     return n;
   }
 
-  //if(!rc)
+  /*if(!rc) */
     n = ksGetSize(myKeySet);
 
   ksClose (myKeySet);
   oyClose_();
-  OY_FREE(myKeySet)
+  oyFree_m_(myKeySet)
 
   DBG_PROG_ENDE
   return (int)n;
@@ -455,13 +493,16 @@ oyPathsCount_ ()
 
 char*
 oyPathName_ (int number, oyAllocFunc_t allocate_func)
-{ DBG_PROG_START
+{
   int rc=0, n = 0;
   Key *current;
   char* value;
+  KeySet* myKeySet;
+
+  DBG_PROG_START
 
   /* take all keys in the paths directory */
-  KeySet* myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
+  myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
   if(!myKeySet)
   {
     oyClose_();
@@ -484,7 +525,7 @@ oyPathName_ (int number, oyAllocFunc_t allocate_func)
 
   ksClose (myKeySet);
   oyClose_();
-  OY_FREE(myKeySet)
+  oyFree_m_(myKeySet)
 
   DBG_PROG_ENDE
   return value;
@@ -493,7 +534,7 @@ oyPathName_ (int number, oyAllocFunc_t allocate_func)
 int
 oyPathAdd_ (const char* pfad)
 {
-  DBG_PROG_START
+ 
   int rc=0, n = 0;
   Key *current, *checker;
   int current_pos = 0, checker_pos = 0;
@@ -507,8 +548,10 @@ oyPathAdd_ (const char* pfad)
 
   const char *config_user_path = OY_PROFILE_PATH_USER_DEFAULT;
   const char *config_system_path = OY_PROFILE_PATH_SYSTEM_DEFAULT;
-  const char *config_local_path = USERCOLORDIR OY_SLASH ICCDIRNAME;
-  const char *config_global_path = SYSCOLORDIR OY_SLASH ICCDIRNAME;
+  const char *config_local_path = OY_USERCOLORDIR OY_SLASH OY_ICCDIRNAME;
+  const char *config_global_path = OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME;
+
+  DBG_PROG_START
 
   /* add path */
   /* search for empty keyname */
@@ -607,10 +650,10 @@ oyPathAdd_ (const char* pfad)
 
 
   oyClose_();
-  OY_FREE (keyName)
-  OY_FREE (value)
-  OY_FREE (check)
-  OY_FREE (remove_keys)
+  oyFree_m_ (keyName)
+  oyFree_m_ (value)
+  oyFree_m_ (check)
+  oyFree_m_ (remove_keys)
 
   oyCheckDefaultDirectories_();
 
@@ -620,14 +663,17 @@ oyPathAdd_ (const char* pfad)
 
 void
 oyPathRemove_ (const char* pfad)
-{ DBG_PROG_START
+{
   int rc=0;
   Key *current;
   char* value;
   char* keyName;
+  KeySet* myKeySet;
+
+  DBG_PROG_START
 
   /* take all keys in the paths directory */
-  KeySet* myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
+  myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
   if(!myKeySet)
   {
     oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT);
@@ -657,9 +703,9 @@ oyPathRemove_ (const char* pfad)
   oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT);
 
   oyClose_();
-  OY_FREE(myKeySet)
-  OY_FREE(keyName)
-  OY_FREE(value)
+  oyFree_m_(myKeySet)
+  oyFree_m_(keyName)
+  oyFree_m_(value)
 
 
   DBG_PROG_ENDE
@@ -667,13 +713,16 @@ oyPathRemove_ (const char* pfad)
 
 void
 oyPathSleep_ (const char* pfad)
-{ DBG_PROG_START
+{
   int rc=0;
   Key *current;
   char* value;
+  KeySet* myKeySet;
+
+  DBG_PROG_START
 
   /* take all keys in the paths directory */
-  KeySet* myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
+  myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
   if(!myKeySet) {
     oyClose_();
 
@@ -697,20 +746,23 @@ oyPathSleep_ (const char* pfad)
 
   ksClose (myKeySet);
   oyClose_();
-  OY_FREE(myKeySet)
-  OY_FREE (value);
+  oyFree_m_(myKeySet)
+  oyFree_m_ (value);
   DBG_PROG_ENDE
 }
 
 void
 oyPathActivate_ (const char* pfad)
-{ DBG_PROG_START
+{
   int rc=0;
   Key *current;
   char* value;
+  KeySet* myKeySet;
+
+  DBG_PROG_START
 
   /* take all keys in the paths directory */
-  KeySet* myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
+  myKeySet = oyReturnChildrenList_(OY_PATHS, &rc ); ERR
   if(!myKeySet) {
     oyClose_();
 
@@ -734,8 +786,8 @@ oyPathActivate_ (const char* pfad)
 
   ksClose (myKeySet);
   oyClose_();
-  OY_FREE(myKeySet)
-  OY_FREE (value);
+  oyFree_m_(myKeySet)
+  oyFree_m_ (value);
   DBG_PROG_ENDE
 }
 
@@ -797,8 +849,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
                                     const char* attrib2,
                                     const char* attrib3,
                                     oyAllocFunc_t allocate_func)
-{ DBG_PROG_START
-  DBG_PROG
+{
   char* profileName = 0;
   int rc=0;
 
@@ -806,6 +857,8 @@ oyGetDeviceProfile_                (const char* manufacturer,
          *testEntry = 0,
          *foundEntry = 0;
   KeySet *profilesList;
+
+  DBG_PROG_START
 
   profilesList = 
    oyReturnChildrenList_(OY_REGISTRED_PROFILES, &rc ); ERR
@@ -843,6 +896,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
     if(foundEntry)
     {
       char *fileName = 0;
+      int len;
       if (foundEntry->name)
         DBG_PROG_S(("%s\n",foundEntry->name) );
       if (foundEntry->name &&
@@ -855,7 +909,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
       else
         fileName = foundEntry->name;
 
-      int len = strlen (fileName)+1;
+      len = strlen (fileName)+1;
       profileName = (char*) allocate_func (len);
       sprintf (profileName, fileName);
 
@@ -867,7 +921,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
 
   ksClose (profilesList);
   oyClose_();
-  OY_FREE(profilesList)
+  oyFree_m_(profilesList)
 
   DBG_PROG_ENDE
   return profileName;
@@ -884,7 +938,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
                                     const char* attrib2,
                                     const char* attrib3,
                                     int** number)
-{ DBG_PROG_START
+{
   char** profileNames = 0;
   char*  profileName = 0;
   int    rc;
@@ -894,9 +948,11 @@ oyGetDeviceProfile_s               (const char* manufacturer,
          *foundEntry = 0;
   KeySet* profilesList;
 
+  DBG_PROG_START
+
   kdbOpen();
 
-  // TODO merge User and System KeySets in oyReturnChildrenList_
+  /* TODO merge User and System KeySets in oyReturnChildrenList_ */
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
   if(!profilesList) {
     oyClose_();
@@ -938,7 +994,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
 
       profileName = (char*) calloc (strlen (fileName)+1, sizeof(char));
       sprintf (profileName, fileName);
-      // @TODO add profileName to profileNames
+      /* @TODO add profileName to profileNames */
 
       DBG_PROG_S((foundEntry->name))
       DBG_PROG_S((profileName))
@@ -948,7 +1004,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
 
   ksClose (profilesList);
   kdbClose();
-  OY_FREE(profilesList)
+  oyFree_m_(profilesList)
 
   DBG_PROG_ENDE
   return profileNames;
@@ -1000,15 +1056,19 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
                                     const char* attrib3,
                                     KeySet *profilesList,
                                     int   rc)
-{ DBG_PROG_START
+{
   /* 1. take all arguments and walk through the named devices list */
   int i = 0, n = 0;
   char* name  = (char*) calloc (MAX_PATH, sizeof(char));
   char* value = (char*) calloc (MAX_PATH, sizeof(char));
-  const char **attributs = (const char**) alloca (8 * sizeof (const char*));
+  const char **attributs = NULL;
   Key *current;
   oyComp_t_ *matchList = 0,
-         *testEntry = 0;
+            *testEntry = 0;
+
+  DBG_PROG_START
+
+  oyAllocHelper_m_(attributs, const char*, 8 * sizeof (const char*), 0, )
 
   attributs[0] = manufacturer;
   attributs[1] = model;
@@ -1082,6 +1142,8 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
   } else
     WARN_S (("No profiles yet registred to devices"))
 
+  oyFree_m_ (attributs)
+
   DBG_PROG_ENDE
   return matchList;
 }
@@ -1096,13 +1158,14 @@ oyEraseDeviceProfile_              (const char* manufacturer,
                                     const char* attrib1,
                                     const char* attrib2,
                                     const char* attrib3)
-{ DBG_PROG_START
-  DBG_PROG
+{
   char* profile_name = 0;
   int rc=0;
   KeySet* profilesList = 0;
   Key *current;
   char* value;
+
+  DBG_PROG_START
 
   DBG_PROG
 
@@ -1138,8 +1201,8 @@ oyEraseDeviceProfile_              (const char* manufacturer,
   DBG_NUM_S(( value ))
 
   if(profilesList) ksClose(profilesList); DBG_PROG
-  OY_FREE (value) DBG_PROG
-  OY_FREE (profile_name) DBG_PROG
+  oyFree_m_ (value) DBG_PROG
+  oyFree_m_ (profile_name) DBG_PROG
   oyClose_(); DBG_PROG
 
   DBG_PROG_ENDE

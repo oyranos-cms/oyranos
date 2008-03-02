@@ -93,10 +93,10 @@ const char* getPolicyName() {
 const char** getPolicies( int *count ) {
   static const char *policy_list[8] = {
 
-  "Office + Home", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH "office.policy.xml",
-  "Graphic Designers", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH     "designer.policy.xml",
-  "PrePress", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH    "prepress.policy.xml",
-  "Photographers", SYSCOLORDIR OY_SLASH SETTINGSDIRNAME OY_SLASH "photographer.policy.xml"
+  "Office + Home", OY_SYSCOLORDIR OY_SLASH OY_SETTINGSDIRNAME OY_SLASH "office.policy.xml",
+  "Graphic Designers", OY_SYSCOLORDIR OY_SLASH OY_SETTINGSDIRNAME OY_SLASH     "designer.policy.xml",
+  "PrePress", OY_SYSCOLORDIR OY_SLASH OY_SETTINGSDIRNAME OY_SLASH    "prepress.policy.xml",
+  "Photographers", OY_SYSCOLORDIR OY_SLASH OY_SETTINGSDIRNAME OY_SLASH "photographer.policy.xml"
   };
 
   for(int i = 0; i < 8; ++i)
@@ -164,9 +164,17 @@ void showDefaultProfile_callback( Fl_Widget* w, void* ) {
         fl_alert( text );
       } else {
         char command[1024];
-        snprintf( command, 1024, "iccexamin \"%s%s%s\"&",
+        snprintf( command, 1024, "export PATH=$PATH:" OY_BINDIR "; iccexamin \"%s%s%s\"&",
                   oyGetPathFromProfileName( pn, myAllocFunc ), OY_SLASH, pn );
-        system( command );
+#      ifdef DEBUG_
+          fprintf(stderr, "%s\n", command);
+#      endif
+        int r = system( command );
+        if(r >= 0x200) {
+          fl_alert( _("Show Profile failed. iccexamin not found") );
+          fprintf(stderr, "%s:%d command \"%s\" failed with error: %d.\n",
+                  __FILE__,__LINE__, command, r);
+        }
       }
     }
   } else fl_alert( _("Show Profile failed") );
@@ -474,16 +482,16 @@ ProfilePath::ProfilePath( int x, int y, int w, int h, int num )
 
     if( strcmp( "/usr/share/color/icc", name ) != 0 &&
         strcmp( "~/.color/icc", name ) != 0 &&
-        strcmp( SYSCOLORDIR OY_SLASH ICCDIRNAME , name ) != 0 &&
-        strcmp( USERCOLORDIR OY_SLASH ICCDIRNAME, name ) != 0 )
+        strcmp( OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME , name ) != 0 &&
+        strcmp( OY_USERCOLORDIR OY_SLASH OY_ICCDIRNAME, name ) != 0 )
     {
       button_remove = new Fl_Button( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT, "@-31+" );
       button_remove->callback( rmPathCallback );
       button_remove->tooltip(_("Exclude this path"));
       new Fl_Box( 0, 0, H_SPACING, 20 );
-      printf( "%s : %s\n", name, SYSCOLORDIR OY_SLASH ICCDIRNAME );
+      printf( "%s : %s\n", name, OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME );
     }
-    //printf( "%s ? %s %s %s\n", name, SYSCOLORDIR, OY_SLASH, ICCDIRNAME );
+    //printf( "%s ? %s %s %s\n", name, OY_SYSCOLORDIR, OY_SLASH, OY_ICCDIRNAME );
 
     int width=0, height=0;
     int scroll_w = 50; //default_profiles_pack->w() - 3*H_SPACING - BUTTON_HEIGHT;
@@ -1451,20 +1459,20 @@ int main(int argc, char **argv) {
   if(getenv("RESOURCESPATH")) {
     bdr = getenv("RESOURCESPATH");
     bdr += "/locale";
-    locale_paths[0] = bdr.c_str(); ++num_paths;
+    locale_paths[num_paths] = bdr.c_str(); ++num_paths;
   }
   if(!locale_paths[0]) {
     //bdr = icc_examin_ns::holeBundleResource("locale","");
     if(bdr.size())
     {
-      locale_paths[0] = bdr.c_str();
+      locale_paths[num_paths] = bdr.c_str();
       ++num_paths;
     }
   }
-  locale_paths[1] = LOCALEDIR; ++num_paths;
-  locale_paths[2] = SRC_LOCALEDIR; ++num_paths;
+  locale_paths[num_paths] = OY_LOCALEDIR; ++num_paths;
+  locale_paths[num_paths] = OY_SRC_LOCALEDIR; ++num_paths;
 # else
-  locale_paths[0] = LOCALEDIR; ++num_paths;
+  locale_paths[0] = OY_LOCALEDIR; ++num_paths;
 #ifdef WIN32
 #define DIR_SEPARATOR_C '\\'
 #define DIR_SEPARATOR "\\"
@@ -1506,11 +1514,11 @@ int main(int argc, char **argv) {
     }
     snprintf (path, len-1, "%s%s%s",text,DIR_SEPARATOR,reloc_path);
     locale_paths[1] = path; ++num_paths;
-    locale_paths[2] = SRC_LOCALEDIR; ++num_paths;
+    locale_paths[2] = OY_SRC_LOCALEDIR; ++num_paths;
     //DBG_NUM_V( path );
     if (text) free (text);
   } else {
-    locale_paths[1] = SRC_LOCALEDIR; ++num_paths;
+    locale_paths[1] = OY_SRC_LOCALEDIR; ++num_paths;
   }
 # endif
   is_path = fl_search_locale_path (num_paths, locale_paths, "de", "oyranos");

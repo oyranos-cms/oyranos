@@ -146,12 +146,16 @@ typedef enum  {
   oyEDITING_CMYK,           /**< Cmyk Editing (Workspace) Profile */
   oyEDITING_XYZ,            /**< XYZ Editing (Workspace) Profile */
   oyEDITING_LAB,            /**< Lab Editing (Workspace) Profile */
-  oyASSUMED_XYZ,            /**< standard XYZ assumed source profile */
-  oyASSUMED_LAB,            /**< standard Lab assumed source profile */
-  oyASSUMED_RGB,            /**< standard RGB assumed source profile */
+  oyEDITING_GRAY,           /**< Gray Editing (Workspace) Profile */
+
+  oyASSUMED_RGB = 120,      /**< standard RGB assumed source profile */
   oyASSUMED_WEB,            /**< std internet assumed source static_profile*/
   oyASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
-  oyPROFILE_PROOF,          /**< standard proofing profile */
+  oyASSUMED_XYZ,            /**< standard XYZ assumed source profile */
+  oyASSUMED_LAB,            /**< standard Lab assumed source profile */
+  oyASSUMED_GRAY,           /**< standard Gray assumed source Profile */
+
+  oyPROFILE_PROOF = 140,    /**< standard proofing profile */
   oyDEFAULT_PROFILE_END     /**< just for easen Gui design */
 } oyDEFAULT_PROFILE;
 
@@ -223,13 +227,17 @@ typedef enum  {
   oyWIDGET_EDITING_CMYK,       /**< Cmyk Editing (Workspace) Profile */
   oyWIDGET_EDITING_XYZ,        /**< XYZ Editing (Workspace) Profile */
   oyWIDGET_EDITING_LAB,        /**< Lab Editing (Workspace) Profile */
-  oyWIDGET_ASSUMED_XYZ,        /**< standard XYZ assumed source profile */
-  oyWIDGET_ASSUMED_LAB,        /**< standard Lab assumed source profile */
-  oyWIDGET_ASSUMED_RGB,        /**< standard RGB assumed source profile */
+  oyWIDGET_EDITING_GRAY,       /**< Gray Editing (Workspace) Profile */
+
+  oyWIDGET_ASSUMED_RGB = 120,  /**< standard RGB assumed source profile */
   oyWIDGET_ASSUMED_WEB,        /**< std internet assumed source static_profile*/
   oyWIDGET_ASSUMED_CMYK,       /**< standard Cmyk assumed source profile */
-  oyWIDGET_PROFILE_PROOF,      /**< standard proofing profile */
-  oyWIDGET_DEFAULT_PROFILE_END,/**< just for easen Gui design */
+  oyWIDGET_ASSUMED_XYZ,        /**< standard XYZ assumed source profile */
+  oyWIDGET_ASSUMED_LAB,        /**< standard Lab assumed source profile */
+  oyWIDGET_ASSUMED_GRAY,       /**< standard Gray assumed source profile */
+
+  oyWIDGET_PROFILE_PROOF = 140,/**< standard proofing profile */
+  oyWIDGET_DEFAULT_PROFILE_END,/**< */
 
   oyWIDGET_CMM_START = 300,        /**< CMM options */
   oyWIDGET_CMM_SELECT,             /**< CMM selection */

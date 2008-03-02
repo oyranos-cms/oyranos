@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ERROR=0
+STRIPOPT="sed s/-O.//"
 
 if [ -n "$PKG_CONFIG_PATH" ]; then
   PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$libdir/pkgconfig
@@ -27,10 +28,10 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
         ELEKTRA_FOUND=1
    fi
   fi
-  if [ -z $ELEKTRA_FOUND ]; then
+  if [ -z "$ELEKTRA_FOUND" ]; then
     elektra_mod=`pkg-config --modversion elektra`
   fi
-  if [ $? = 0 ] && [ -z $ELEKTRA_FOUND ]; then
+  if [ $? = 0 ] && [ -z "$ELEKTRA_FOUND" ]; then
     pkg-config  --atleast-version=$elektra_min elektra 2>>error.txt
     if [ $? = 0 ]; then
       pkg-config --max-version=$elektra_max elektra 2>>error.txt
@@ -47,21 +48,31 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
         echo "ELEKTRA_SW = `pkg-config --cflags-only-I  elektra | sed 's/\-I// ; s%/include%/etc/kdb/%'`" >> $CONF
         ELEKTRA_FOUND=1
       else
-        test -n "$ECHO" && $ECHO "Elektra:"
+        if [ $ELEKTRA -eq 1 ]; then
+          ERROR=1
+          test -n "$ECHO" && $ECHO "!!! Elektra: !!!"
+        else
+          test -n "$ECHO" && $ECHO "    Elektra:"
+        fi
         test -n "$ECHO" && $ECHO "  too new Elektra found,"
         test -n "$ECHO" && $ECHO "  need a version not greater than $elektra_max, download: elektra.sf.net"
-        ERROR=1
       fi
     else
-      test -n "$ECHO" && $ECHO "ERROR Elektra:"
+      if [ $ELEKTRA -eq 1 ]; then
+        test -n "$ECHO" && $ECHO "!!! ERROR Elektra: !!!"
+        ERROR=1
+      else
+        test -n "$ECHO" && $ECHO "    Warning Elektra:"
+      fi
       test -n "$ECHO" && $ECHO "  no or too old elektra found,"
       test -n "$ECHO" && $ECHO "  need at least version $elektra_min, download: elektra.sf.net"
-      ERROR=1
     fi
   fi
-  if [ -z $ELEKTRA_FOUND ]; then
+  if [ -z "$ELEKTRA_FOUND" ]; then
       test -n "$ECHO" && $ECHO $elektra_mod
-      ERROR=1
+      if [ $ELEKTRA -eq 1 ]; then
+        ERROR=1
+      fi
   fi
 fi
 
@@ -88,12 +99,16 @@ if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
     test -n "$ECHO" && $ECHO "littleCMS `pkg-config --modversion lcms`          detected"
     echo "#define HAVE_LCMS 1" >> $CONF_H
     echo "LCMS = 1" >> $CONF
-    echo "LCMS_H = `pkg-config --cflags lcms`" >> $CONF
-    echo "LCMS_LIBS = `pkg-config --libs lcms`" >> $CONF
+    echo "LCMS_H = `pkg-config --cflags lcms | $STRIPOPT`" >> $CONF
+    echo "LCMS_LIBS = `pkg-config --libs lcms | $STRIPOPT`" >> $CONF
   else
-    test -n "$ECHO" && $ECHO "ERROR: no or too old LCMS found,"
+    if [ $LCMS -eq 1 ]; then
+      test -n "$ECHO" && $ECHO "!!! ERROR: no or too old LCMS found, !!!"
+      ERROR=1
+    else
+      test -n "$ECHO" && $ECHO "    Warning: no or too old LCMS found,"
+    fi
     test -n "$ECHO" && $ECHO "  need at least version 1.14, download: www.littlecms.com"
-    ERROR=1
   fi
 fi
 
@@ -103,23 +118,31 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
      [ -f $includedir/X11/Xlib.h ]; then
     test -n "$ECHO" && $ECHO "X11                     detected"
     echo "#define HAVE_X 1" >> $CONF_H
-    echo "X11 = 1" >> $CONF
-    echo "X_H = -I/usr/X11R6/include -I/usr/include" >> $CONF
+    if [ -n "$MAKEFILE_DIR" ]; then
+      for i in $MAKEFILE_DIR; do
+        test -f "$i/makefile".in && echo "X11 = X11" >> "$i/makefile"
+        test -f "$i/makefile".in && echo "X_H = -I/usr/X11R6/include -I/usr/include" >> "$i/makefile"
+      done
+    fi
   elif [ $OSUNAME = "Linux" ]; then
     test -n "$ECHO" && $ECHO "X11 header not found in /usr/X11R6/include/X11/Xlib.h or"
     test -n "$ECHO" && $ECHO "/usr/include/X11/Xlib.h"
     X11=0
   fi
 fi
-if [ "$X11" = 1 ] && [ $X11 -gt 0 ]; then
+if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   if [ -n "$XF86VMODE" ] && [ $XF86VMODE -gt 0 ]; then
     if [ -f /usr/X11R6/include/X11/extensions/xf86vmode.h ] ||
        [ -f /usr/include/X11/extensions/xf86vmode.h ] ||
        [ -f $includedir/X11/extensions/xf86vmode.h ]; then
       test -n "$ECHO" && $ECHO "X VidMode extension     detected"
       echo "#define HAVE_XF86VMODE 1" >> $CONF_H
-      echo "XF86VMODE = 1" >> $CONF
-      echo "XF86VMODE_LIB = -lXxf86vm" >> $CONF
+      if [ -n "$MAKEFILE_DIR" ]; then
+        for i in $MAKEFILE_DIR; do
+          test -f "$i/makefile".in && echo "XF86VMODE = 1" >> "$i/makefile"
+          test -f "$i/makefile".in && echo "XF86VMODE_LIB = -lXxf86vm" >> "$i/makefile"
+        done
+      fi
     elif [ $OSUNAME = "Linux" ]; then
       test -n "$ECHO" && $ECHO "X VidMode extension not found in /usr/X11R6/include/X11/extensions/xf86vmode.h or"
       test -n "$ECHO" && $ECHO "/usr/include/X11/extensions/xf86vmode.h"
@@ -132,8 +155,12 @@ if [ "$X11" = 1 ] && [ $X11 -gt 0 ]; then
        [ -f $includedir/X11/extensions/Xinerama.h ]; then
       test -n "$ECHO" && $ECHO "X Xinerama              detected"
       echo "#define HAVE_XIN 1" >> $CONF_H
-      echo "XIN = 1" >> $CONF
-      echo "XINERAMA_LIB = -lXinerama" >> $CONF
+      if [ -n "$MAKEFILE_DIR" ]; then
+        for i in $MAKEFILE_DIR; do
+          test -f "$i/makefile".in && echo "XIN = 1" >> "$i/makefile"
+          test -f "$i/makefile".in && echo "XINERAMA_LIB = -lXinerama" >> "$i/makefile"
+        done
+      fi
     else
       if [ $OSUNAME = "Linux" ]; then
         test -n "$ECHO" && $ECHO "X Xinerma not found in /usr/X11R6/include/X11/extensions/Xinerama.h or"
@@ -142,8 +169,69 @@ if [ "$X11" = 1 ] && [ $X11 -gt 0 ]; then
     fi
   fi
   echo "X_CPP = \$(X_CPPFILES)" >> $CONF
-  echo "X11_LIB_PATH = -L/usr/X11R6/lib\$(BARCH) -L/usr/lib\$(BARCH) -L\$(libdir)" >> $CONF
-  echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 \$(XF86VMODE_LIB) -lXpm -lXext \$(XINERAMA_LIB)" >> $CONF
+  if [ -n "$MAKEFILE_DIR" ]; then
+    for i in $MAKEFILE_DIR; do
+      test -f "$i/makefile".in && echo "X11_LIB_PATH = -L/usr/X11R6/lib\$(BARCH) -L/usr/lib\$(BARCH) -L\$(libdir)" >> "$i/makefile"
+    done
+  fi
+
+  if [ -n "$X_ADD" ]; then
+    for l in $X_ADD; do
+      rm -f tests/libtest
+      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+      if [ -f tests/libtest ]; then
+          test -n "$ECHO" && $ECHO "lib$l is available"
+          if [ -z "$X_ADD_LIBS" ]; then
+            X_ADD_LIBS="-l$l"
+          else
+            X_ADD_LIBS="$X_ADD_LIBS -l$l"
+          fi
+          echo "#define HAVE_$l 1"  >> $CONF_H
+          # Test if we need to link explicitely, possibly symbols are included
+          if [ $OSUNAME = "Darwin" ]; then
+            if [ -n "`otool -L tests/libtest | grep $l`" ]; then
+              echo "$l=-l$l" >> "config.sh"
+            fi
+          else
+            if [ -n "`ldd tests/libtest | grep $l`" ]; then
+              echo "$l=-l$l" >> "config.sh"
+            fi
+          fi
+          rm tests/libtest
+      else
+        if [ $X11 -eq 1 ]; then
+          test -n "$ECHO" && $ECHO "!!! ERROR lib$l is missed"
+          ERROR=1
+        else
+          test -n "$ECHO" && $ECHO "  Warning lib$l is missed"
+        fi
+      fi
+    done
+  fi
+  if [ -n "$X_ADD_2" ]; then
+    for l in $X_ADD_2; do
+      rm -f tests/libtest
+      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+      if [ -f tests/libtest ]; then
+          test -n "$ECHO" && $ECHO "lib$l is available"
+          if [ -z "$X_ADD_LIBS" ]; then
+            X_ADD_LIBS="-l$l"
+          else
+            X_ADD_LIBS="$X_ADD_LIBS -l$l"
+          fi
+          echo "#define HAVE_$l 1"  >> $CONF_H
+          echo "$l=-l$l" >> "config.sh"
+          rm tests/libtest
+      else
+        test -n "$ECHO" && $ECHO "lib$l not found"
+      fi
+    done
+  fi
+  if [ -n "$MAKEFILE_DIR" ]; then
+    for i in $MAKEFILE_DIR; do
+      test -f "$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 \$(XF86VMODE_LIB) $X_ADD_LIBS \$(XINERAMA_LIB)" >> "$i/makefile"
+    done
+  fi
 fi
 
 if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
@@ -152,23 +240,25 @@ if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
     test -n "$ECHO" && $ECHO "FTGL      `pkg-config --modversion ftgl`         detected"
     echo "#define HAVE_FTGL 1" >> $CONF_H
     echo "FTGL = 1" >> $CONF
-    echo "FTGL_H = `pkg-config --cflags ftgl`" >> $CONF
-    echo "FTGL_LIBS = `pkg-config --libs ftgl`" >> $CONF
+    echo "FTGL_H = `pkg-config --cflags ftgl | $STRIPOPT`" >> $CONF
+    echo "FTGL_LIBS = `pkg-config --libs ftgl | $STRIPOPT`" >> $CONF
   else
     test -n "$ECHO" && $ECHO "  no or too old FTGL found, need FTGL to render text in OpenGL"
   fi
 fi
 
 if [ -z "$fltkconfig" ]; then
-  fltkconfig="fltk-config"
+  # add /usr/X11R6/bin to path for Fedora
+  fltkconfig=fltk-config
+  PATH=$PATH:/usr/X11R6/bin; export PATH
 fi
 if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
-  FLTK_=`$fltkconfig --cxxflags 2>>error.txt`
+  FLTK_=`$fltkconfig --cxxflags 2>>error.txt | $STRIPOPT`
   if [ $? = 0 ] && [ -n "$FLTK_" ]; then
     test -n "$ECHO" && $ECHO "FLTK `$fltkconfig --version`              detected"
     if [ "0" -ne "`$fltkconfig --compile tests/fltk_test.cxx 2>&1 | grep lock | wc -l`" ]; then
-      test -n "$ECHO" && $ECHO "ERROR:   FLTK has no threads support !!!"
-      test -n "$ECHO" && $ECHO "         Configure FLTK with the --enable-threads option and recompile."
+      test -n "$ECHO" && $ECHO "!!! ERROR: FLTK has no threads support !!!"
+      test -n "$ECHO" && $ECHO "           Configure FLTK with the --enable-threads option and recompile."
       ERROR=1
     else
       rm fltk_test
@@ -176,18 +266,26 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
     echo "#define HAVE_FLTK 1" >> $CONF_H
     echo "FLTK = 1" >> $CONF
     echo "FLTK_H = `$fltkconfig --cxxflags | sed 's/-O[0-9]//'`" >> $CONF
-    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags`" >> $CONF
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags | $STRIPOPT`" >> $CONF
+    echo "FLTK = 1" >> $CONF_I18N
+    echo "FLTK_H = `$fltkconfig --cxxflags | sed 's/-O[0-9]//'`" >> $CONF_I18N
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags | $STRIPOPT`" >> $CONF_I18N
   else
-    test -n "$ECHO" && $ECHO "ERROR:"
+    if [ $FLTK -eq 1 ]; then
+      ERROR=1
+      test -n "$ECHO" && $ECHO "!!! ERROR !!!"
+    else
+      test -n "$ECHO" && $ECHO "    Warning"
+    fi
     test -n "$ECHO" && $ECHO "           FLTK is not found; download: www.fltk.org"
-    ERROR=1
   fi
 fi
 
 if [ -n "$FLU" ] && [ $FLU -gt 0 ]; then
   FLU_=`flu-config --cxxflags 2>>error.txt`
-  if [ `$fltkconfig --version` = "1.1.7" ]; then
+  if [ "`$fltkconfig --version`" = "1.1.7" ]; then
     echo -e "\c"
+    #"
     test -n "$ECHO" && $ECHO "FLTK version 1.1.7 is not supported by FLU"
     if [ "$FLU" = 1 ]; then
       ERROR=1
@@ -197,8 +295,8 @@ if [ -n "$FLU" ] && [ $FLU -gt 0 ]; then
       test -n "$ECHO" && $ECHO "FLU                     detected"
       echo "#define HAVE_FLU 1" >> $CONF_H
       echo "FLU = 1" >> $CONF
-      echo "FLU_H = `flu-config --cxxflags`" >> $CONF
-      echo "FLU_LIBS = `flu-config --ldflags --use-gl`" >> $CONF
+      echo "FLU_H = `flu-config --cxxflags | $STRIPOPT`" >> $CONF
+      echo "FLU_LIBS = `flu-config --ldflags --use-gl | $STRIPOPT`" >> $CONF
     else
       if [ "$FLU" -gt 1 ]; then
         test -n "$ECHO" && $ECHO "   no FLU found, will not use it"
@@ -212,7 +310,7 @@ if [ -n "$FLU" ] && [ $FLU -gt 0 ]; then
 fi
 
 if [ -n "$DOXYGEN" ] && [ $DOXYGEN -gt 0 ]; then
-  if [ "`which doxygen`" != "" ]; then
+  if [ "`doxygen --help`" != "" ]; then
     test -n "$ECHO" && $ECHO "Doxygen `doxygen --version`           detected"
   else
     test -n "$ECHO" && $ECHO "Doxygen                 not detected"
@@ -230,17 +328,36 @@ if [ -n "$LIBPNG" ] && [ $LIBPNG -gt 0 ]; then
     test -n "$ECHO" && $ECHO "PNG `pkg-config --modversion $LIBPNG`               detected"
     echo "#define HAVE_PNG 1" >> $CONF_H
     echo "PNG = 1" >> $CONF
-    echo "PNG_H = `pkg-config --cflags $LIBPNG`" >> $CONF
-    echo "PNG_LIBS = `pkg-config --libs $LIBPNG`" >> $CONF
+    echo "PNG_H = `pkg-config --cflags $LIBPNG | $STRIPOPT`" >> $CONF
+    echo "PNG_LIBS = `pkg-config --libs $LIBPNG | $STRIPOPT`" >> $CONF
   else
     test -n "$ECHO" && $ECHO "no or too old libpng found,"
     test -n "$ECHO" && $ECHO "  need at least version 1.0, download: www.libpng.org"
   fi
 fi
 
+if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
+  if [ -n "$LIBS_TEST" ]; then
+    for l in $LIBS_TEST; do
+      rm -f tests/libtest
+      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L$libdir -l$l -o tests/libtest 2>/dev/null
+      if [ -f tests/libtest ]; then
+          echo "$l=-l$l" >> "config.sh"
+          test -n "$ECHO" && $ECHO "lib$l is available"
+          if [ -n "$MAKEFILE_DIR" ]; then
+            for i in $MAKEFILE_DIR; do
+              test -f "$i/makefile".in && echo "$l = -l$l" >> "$i/makefile"
+            done
+          fi
+          rm tests/libtest
+      fi
+    done
+  fi
+fi
+
 if [ -n "$LIBTIFF" ] && [ $LIBTIFF -gt 0 ]; then
   rm -f tests/libtest
-  $CXX $CFLAGS -I$includedir tests/tiff_test.cxx $LDFLAGS -L$libdir -ltiff -o tests/libtest
+  $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L$libdir -ltiff -o tests/libtest 2>/dev/null
     if [ -f tests/libtest ]; then
       test -n "$ECHO" && $ECHO "`tests/libtest`
                         detected"
@@ -252,6 +369,23 @@ if [ -n "$LIBTIFF" ] && [ $LIBTIFF -gt 0 ]; then
     fi
 fi
 
+if [ -n "$GETTEXT" ] && [ $GETTEXT -gt 0 ]; then
+  rm -f tests/libtest
+    $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
+    if [ ! -f tests/libtest ]; then
+      $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -lintl -o tests/libtest 2>/dev/null
+    fi
+    if [ -f tests/libtest ]; then
+      test -n "$ECHO" && $ECHO "Gettext                 detected"
+      echo "#define USE_GETTEXT 1" >> $CONF_H
+      echo "GETTEXT = -DUSE_GETTEXT" >> $CONF
+      echo "GETTEXT = -DUSE_GETTEXT" >> $CONF_I18N
+      rm tests/libtest
+    else
+      test -n "$ECHO" && $ECHO "no or too old Gettext found,"
+    fi
+fi
+
 if [ -n "$PO" ] && [ $PO -gt 0 ]; then
   pos_dir="`ls po/*.po 2> /dev/null`"
   LING="`echo $pos_dir`"
@@ -259,7 +393,7 @@ if [ -n "$PO" ] && [ $PO -gt 0 ]; then
   echo "LINGUAS = $LINGUAS" >> $CONF
   echo "translations available: $LINGUAS"
   echo "LING = $LING" >> $CONF
-  echo "#define USE_GETTEXT 1" >> $CONF_H
+  #echo "#define USE_GETTEXT 1" >> $CONF_H
 fi
 
 if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then
@@ -267,9 +401,9 @@ if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then
     for i in $MAKEFILE_DIR; do
       echo preparing Makefile in "$i/"
       if [ $OSUNAME = "BSD" ]; then
-        test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/^\#if/.if/g ; s/^\#end/.end/g '  >> "$i/makefile"
+        test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/#if/.if/g ; s/#end/.end/g ; s/#else/.else/g '  >> "$i/makefile"
       else
-        test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/^\#if/if/g ; s/^\#elif/elif/g ; s/^\#else/else/g ; s/^\ \ \#if/\ \ if/g ; s/^\#end/end/g '  >> "$i/makefile"
+        test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/#if/if/g ; s/#elif/elif/g ; s/#else/else/g ; s/#end/end/g '  >> "$i/makefile"
       fi
       mv "$i/makefile" "$i/Makefile"
     done
@@ -278,11 +412,16 @@ fi
 
 
 if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
-  if [ "$debug" -eq "1" ]; then
-    DEBUG_="-Wall -g -DDEBUG --pedantic"
-    echo "DEBUG = $DEBUG_" >> $CONF
-    echo "DEBUG_SWITCH = -v" >> $CONF
-    echo "DEBUG_SWITCH = -v" >> $CONF_I18N
+  if [ -n "$MAKEFILE_DIR" ]; then
+    for i in $MAKEFILE_DIR; do
+      if [ "$debug" -eq "1" ]; then
+        DEBUG_="-Wall -g -DDEBUG --pedantic"
+        test -f "$i/makefile".in && echo "DEBUG = $DEBUG_"  >> "$i/makefile"
+        test -f "$i/makefile".in && echo "DEBUG_SWITCH = -v"  >> "$i/makefile"
+      else
+        test -f "$i/makefile".in && echo ".SILENT:"  >> "$i/makefile"
+      fi
+    done
   fi
 fi
 

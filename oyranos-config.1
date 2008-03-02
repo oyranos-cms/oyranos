@@ -1,0 +1,67 @@
+.TH "oyranos-config" 1 "February 20, 2007" "User Commands"
+.SH NAME
+oyranos-config \- Oyranos CMS configuration query for builds and locations
+.SH SYNOPSIS
+.B oyranos-config
+[--version --api-version --num-version
+ --cflags --ldflags --ldstaticflags
+ --ld_x_flags --ld_x_staticflags
+ --syscolordir --usercolordir
+ --iccdirname --settingsdirname]
+.SH DESCRIPTION
+This script helps to obtain some basic static informations about the Oyranos colour management system (CMS), like version numbers, compile flags and directories. Note: the Oyranos CMS provides even more dynamic informations. 
+.SH OPTIONS
+.TP
+.B \--version
+get the release version of Oyranos CMS
+.TP
+.B \--api-version
+get the actual API version
+.TP
+.B \--num-version
+get the release version of Oyranos CMS in numerical form for convenience
+.TP
+.B \--cflags
+compile flags for a C programm
+.TP
+.B \--ldflags
+linker flags for a C programm to link against the Oyranos library
+.TP
+.B \--ldstaticflags
+linker flags for a C programm to link statically against the Oyranos library
+.TP
+.B \--ld_x_flags
+linker flags for a C programm to link against the Oyranos and the Oyranos monitor libraries
+.TP
+.B \--ld_x_staticflags
+linker flags for a C programm to link statically against the Oyranos and the Oyranos monitor libraries
+.TP
+.B \--syscolordir
+get the systems CMS base directory name
+.TP
+.B \--usercolordir
+get the users CMS base directory name
+.TP
+.B \--iccdirname
+get the ICC profile subdirectory name
+.TP
+.B \--settingsdirname
+get the settings subdirectory name
+.TP
+.B \--help
+a options summary
+.SH EXAMPLES
+.TP
+Compile a simple programm:
+.B cc `oyranos-config --cflags` myFile.c `oyranos-config --ldflags` -o myProg
+.PP
+.TP
+Show system wide visible profiles from the Oyranos installation path:
+.B ls `oyranos-config --syscolordir`/`oyranos-config --iccdirname`
+.PP
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH "SEE ALSO"
+oyranos-config-fltk(1) oyranos-policy(1) oyranos-monitor(1) oyranos(3)
+.SH BUGS
+at: http://sourceforge.net/tracker/?group_id=177017&atid=879553

@@ -26,11 +26,11 @@
 
   <!-- Assumed XYZ source
        Assigning an untagged XYZ Image an colour space -->
-  <oyASSUMED_CMYK>ISOcoated.icc</oyASSUMED_CMYK>
+  <oyASSUMED_XYZ>XYZ.icc</oyASSUMED_XYZ>
 
   <!-- Assumed Lab source
        Assigning an untagged CIE*Lab Image an colour space -->
-  <oyASSUMED_LAB>LCMSLABI.ICM</oyASSUMED_LAB>
+  <oyASSUMED_LAB>Lab.icc</oyASSUMED_LAB>
 
   <!-- Assumed Rgb source
        Assigning an untagged Rgb Image an colour space -->

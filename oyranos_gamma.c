@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2005  Kai-Uwe Behrmann
+ * Copyright (C) 2005-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -55,8 +55,12 @@ int main( int argc , char** argv )
   int error = 0;
   int erase = 0;
   char *ptr = NULL;
+  int x = 0, y = 0;
+  char *oy_display_name = NULL;
 
+#ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
+#endif
   oyI18NInit_();
 
   if(!display_name)
@@ -66,7 +70,7 @@ int main( int argc , char** argv )
     return error;
   }
 
-  // cut off the screen information
+  /* cut off the screen information */
   if(display_name &&
      (ptr = strchr(display_name,':')) != 0)
     if( (ptr = strchr(ptr, '.')) != 0 )
@@ -79,13 +83,13 @@ int main( int argc , char** argv )
     printf("argc: %d\n", argc);
     while(pos < argc)
     {
-      switch(argv[1][0])
+      switch(argv[pos][0])
       {
         case '-':
             switch (argv[pos][1])
             {
               case 'e': erase = 1; monitor_profile = 0; break;
-              /*case 'x': if( pos + 1 < argc )
+              case 'x': if( pos + 1 < argc )
                         { x = atoi( argv[pos+1] );
                           if( x == 0 && strcmp(argv[pos+1],"0") )
                             wrong_arg = "-x";
@@ -96,7 +100,7 @@ int main( int argc , char** argv )
                           if( y == 0 && strcmp(argv[pos+1],"0") )
                             wrong_arg = "-y";
                         } else wrong_arg = "-y";
-                        if(oy_debug) printf("y=%d\n",y); ++pos; break;*/
+                        if(oy_debug) printf("y=%d\n",y); ++pos; break;
               case 'h': printf("\n");
                         printf("oyranos-monitor v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
@@ -121,13 +125,8 @@ int main( int argc , char** argv )
         default:
             monitor_profile = argv[pos];
             /* activate all profiles at once */
-            error = oyActivateMonitorProfiles (display_name);
+            /*error = oyActivateMonitorProfiles (display_name); */
 
-            if(oy_debug) {
-              size_t size = 0;
-              oyGetMonitorProfile(display_name, &size, oyAllocFunc);
-              printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,(int)size);
-            }
             erase = 0;
       }
       if( wrong_arg )
@@ -138,8 +137,18 @@ int main( int argc , char** argv )
       ++pos;
     }
     if(oy_debug) printf( "%s\n", argv[1] );
+
+    oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
+                                                    oyAllocFunc);
+
+    if(oy_debug) {
+      size_t size = 0;
+      oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
+      printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,(int)size);
+    }
+
     /* make shure the display name is correct including the screen */
-    oySetMonitorProfile (display_name, monitor_profile);
+    oySetMonitorProfile (oy_display_name, monitor_profile);
   }
 
   /* check the default paths */
@@ -149,7 +158,7 @@ int main( int argc , char** argv )
 
   if(oy_debug) {
     size_t size = 0;
-    oyGetMonitorProfile(display_name, &size, oyAllocFunc);
+    oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
     printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,(int)size);
   }
 

@@ -34,7 +34,7 @@
 #ifndef OYRANOS_SENTINEL_H
 #define OYRANOS_SENTINEL_H
 
-//#include <oyranos/oyranos_internal.h>
+/*/#include <oyranos/oyranos_internal.h>*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,8 +54,8 @@ int   oyExportEnd_          (void);
 #define EXPORT_MONITOR  0x000004
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_SENTINEL_H */

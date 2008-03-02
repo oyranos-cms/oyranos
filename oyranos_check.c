@@ -36,7 +36,7 @@
 
 #include "config.h"
 #include "oyranos.h"
-//#include "oyranos_cmms.h"
+/*#include "oyranos_cmms.h" */
 #include "oyranos_check.h"
 #include "oyranos_debug.h"
 #include "oyranos_io.h"
@@ -44,7 +44,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_check.h"
 #include "oyranos_sentinel.h"
-//#include "oyranos_xml.h"
+/*#include "oyranos_xml.h" */
 
 /* --- Helpers  --- */
 
@@ -79,18 +79,20 @@
 int
 oyCheckProfile_                    (const char* name,
                                     const char* coloursig)
-{ DBG_PROG_START
+{
   char *fullName = 0;
   char* header = 0; 
   size_t size = 0;
   int r = 1;
 
-  //if(name) DBG_NUM_S((name));
+  DBG_PROG_START
+
+  /*if(name) DBG_NUM_S((name)); */
   fullName = oyFindProfile_(name);
   if (!fullName)
     WARN_S(("%s not found",name))
   else
-    ;//DBG_NUM_S((fullName));
+    ;/*DBG_NUM_S((fullName)); */
 
   /* do check */
   if (oyIsFileFull_(fullName))
@@ -115,9 +117,12 @@ oyCheckProfile_                    (const char* name,
 int
 oyCheckProfile_Mem                 (const void* mem, size_t size,
                                     const char* coloursig)
-{ DBG_PROG_START
+{
   char* block = (char*) mem;
   int offset = 36;
+
+  DBG_PROG_START
+
   if (size >= 128) 
   {
     if (block[offset+0] == 'a' &&
@@ -148,8 +153,11 @@ int
 oyProfileGetMD5_       ( void       *buffer,
                          size_t      size,
                          char       *md5_return )
-{ DBG_PROG_START
+{
   char* block = NULL;
+
+  DBG_PROG_START
+
   if (size >= 128) 
   {
     oy_md5_state_t state;

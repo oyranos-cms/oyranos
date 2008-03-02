@@ -1,3 +1,47 @@
+
+2007-04-02
+	* new: distclean make target
+
+2007-03-28
+	* new: inbuild default options as fall back to Home+Office policy
+	* and: change usual macro names to specific OY_ ones to avoid conflicts
+	* and: avoid some warnings during the monitor detection
+	* fix: bugfix for wrong named XYZ key, oyASSUMED_CMYK -> oyASSUMED_XYZ
+
+2007-03-25
+	* new: install oyranos-kdb_static as debug tool for Oyranos keys
+
+2007-03-15
+	* and: create and manage profiles RPM's from the top directory
+	* and: more fine grained configuration
+	* and: better debug builds and warnings
+	* fix: fix many compiler warnings
+	* and: continue a compilation to the extent what is possible
+
+2007-02-20
+	* new: man pages
+	* new: oyGetDisplayNameFromPosition, convenient oyGetScreenFromPosition
+	* fix: position handling in oyranos-monitor
+
+2007-02-06
+	* new: config check for existence of more libraries (needed for NetBSD)
+	* new: gettext is not assumed but checked in configure
+	* new: add fltk-config --post for osX
+	* fix: locale handling in oyranos-config-fltk for osX
+
+2007-02-01
+	* fix: remove all alloca calls for NetBSD (alloca is not in Posix)
+
+2007-02-02
+	* add: Nvidia in authors list for the included libXNVCtrl
+
+2007-01-08
+	* new: add version info to library
+	* and: change md5 symbol names to avoid possible name collisions
+
+2006-12-22
+	* and: add --with-fltk-config= and --enable-debug configure switch
+
 2006-11-17
 	* new: md5 support by L. Peter Deutsch's md5 (sf.net: 2002-04-13 09:00)
 
@@ -7,6 +51,7 @@
 2006-11-02
 	* new: config.site support for CC CXX CFLAGS CXXFLAGS LDFLAGS variables
 	* fix: Solaris build - shell syntax
+	* new: include libXNVCtrl in configuration
 
 2006-10-26
 	* neu: include Elektra 0.6.4 for QA (--internal-elektra=no to disable)

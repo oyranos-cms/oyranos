@@ -63,16 +63,17 @@ typedef struct {
   double      range_end;        /**< end of range for a value selection */
   double      range_step_major; /**< step size for a value selection */
   double      range_step_minor; /**< step size for a value selection */
-  double      default_value;    /**< default selection */
+  double      default_value;    /**< default option */
+  const char *default_string;   /**< default string */
   const char *config_string;    /**< full key name to store configuration */
   const char *config_string_xml;/**< key name to store configuration */
 } oyOption_t_;
 
 
 /* global variables */
-//extern oyGROUP oy_groups_descriptions_;
+/*/extern oyGROUP oy_groups_descriptions_;
 //extern const char ***oy_groups_description_;
-//extern oyOption_t_ *oy_option_;
+//extern oyOption_t_ *oy_option_;*/
 
 
 void          oyTextsCheck_            (void);
@@ -97,8 +98,8 @@ void          oyOptionChoicesFree_     (oyWIDGET_TYPE     option,
                                         char          *** list,
                                         int               size);
 
-//int           oyGroupGet_              (oyGROUP          type,
-//                                        const char   *** strings);
+/*/int           oyGroupGet_              (oyGROUP          type,
+//                                        const char   *** strings);*/
 oyGROUP       oyGroupAdd_              (const char *id, const char *cmm,
                                         const char *name, const char *tooltips);
 int           oyGroupRemove_           (oyGROUP     id);
@@ -117,8 +118,8 @@ char*       oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
 
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_TEXTS_H */

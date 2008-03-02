@@ -51,7 +51,9 @@ int main( int argc , char** argv )
   size_t size = 0;
   char *xml = NULL;
 
+#ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
+#endif
   oyI18NInit_();
 
   if(argc >= 1)

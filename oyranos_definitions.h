@@ -83,6 +83,8 @@
 #define OY_DEFAULT_EDITING_XYZ_PROFILE       OY_KEY OY_SLASH "default" OY_SLASH "profile_editing_xyz"
 /** key name for the default Editing profile */
 #define OY_DEFAULT_EDITING_LAB_PROFILE       OY_KEY OY_SLASH "default" OY_SLASH "profile_editing_lab"
+/** key name for the default Editing profile */
+#define OY_DEFAULT_EDITING_GRAY_PROFILE       OY_KEY OY_SLASH "default" OY_SLASH "profile_editing_gray"
 /** key name for the untagged data assumed source XYZ profile */
 #define OY_DEFAULT_ASSUMED_XYZ_PROFILE       OY_KEY OY_SLASH "default" OY_SLASH "profile_assumed_xyz"
 /** key name for the untagged data assumed source Lab profile */
@@ -93,6 +95,8 @@
 #define OY_DEFAULT_ASSUMED_WEB_PROFILE       OY_KEY OY_SLASH "default" OY_SLASH "profile_assumed_web_rgb" /* static_profile */
 /** key name for the untagged data assumed source Cmyk profile */
 #define OY_DEFAULT_ASSUMED_CMYK_PROFILE      OY_KEY OY_SLASH "default" OY_SLASH "profile_assumed_cmyk"
+/** key name for the untagged data assumed source Gray profile */
+#define OY_DEFAULT_ASSUMED_GRAY_PROFILE       OY_KEY OY_SLASH "default" OY_SLASH "profile_assumed_gray"
 /** key name for a standard proofing profile */
 #define OY_DEFAULT_PROOF_PROFILE      OY_KEY OY_SLASH "default" OY_SLASH "profile_proof"
 

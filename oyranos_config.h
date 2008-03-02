@@ -75,8 +75,8 @@ int         oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
 
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_CONFIG_H */

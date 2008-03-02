@@ -48,7 +48,7 @@
 
 /* --- static variables   --- */
 const char *domain = OY_TEXTDOMAIN;
-const char *domain_path = LOCALEDIR;
+const char *domain_path = OY_LOCALEDIR;
 
 /* --- internal API definition --- */
 
@@ -57,7 +57,7 @@ void oyI18NInit_()
 {
 #ifdef USE_GETTEXT
   {
-    putenv("NLSPATH=" LOCALEDIR); // Solaris
+    putenv("NLSPATH=" OY_LOCALEDIR); /* Solaris */
     bindtextdomain( domain, domain_path );
   }
 #endif

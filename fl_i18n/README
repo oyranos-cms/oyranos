@@ -1,4 +1,4 @@
-The fl_i18n is a library to include in your project. It is not for endusers.
+The fl_i18n is a library to include in your project.
 
 fl_i18n helpes with setting up locale information on Linux and osX. It needs the GNU i18n tools, which's main part is linkable under the LGPL license.
 

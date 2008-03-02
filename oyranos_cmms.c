@@ -51,7 +51,7 @@
 typedef struct {
   char       *id;               /**< usually a 4 letter short name */
   char       *name;             /**< short name */
-  char       *description;      /**< long description */ // TODO help license ..
+  char       *description;      /**< long description */ /* TODO help license .. */
   char       *libname;          /**< library to search for function */
   char       *funcname;         /**< function for dlsym */
   oyWIDGET    opts_start;       /**< options numbers for oyGetOptionUITitle */
@@ -66,7 +66,7 @@ typedef struct {
 typedef struct {
   char        id[5];            /**< 4 letter identifier */
   char       *name;             /**< short name */
-  char       *description;      /**< long description */ // TODO help license ..
+  char       *description;      /**< long description */ /* TODO help license .. */
   int         groups_start;
   int         groups_end;       /**< the registred layouts frames */
   oyOption_t_*group;            /**< the oy_groups_description_ synonym */
@@ -92,9 +92,9 @@ typedef struct {
     size_t*     groesse_;
     int*        ref_n_;
     int         id_;
-    char        *name_;                   // z.B. Profilname
-    double      *letze_aen_zeit_;         // letztes mal geaendert
-    double      *letze_ben_zeit_;         // letztes mal benutzt
+    char        *name_;                   /* z.B. Profilname */
+    double      *letze_aen_zeit_;         /* letztes mal geaendert */
+    double      *letze_ben_zeit_;         /* letztes mal benutzt */
 } oyData_t_;
 
 void
@@ -266,7 +266,7 @@ oyModulGetFromXML_( oyGROUP           group,
   if(value && strlen(value))
     cmm->domain_path = value;
   else
-    cmm->domain_path = LOCALEDIR;
+    cmm->domain_path = OY_LOCALEDIR;
   domain_path = cmm->domain_path;
 
   oyI18NInit_();
@@ -348,7 +348,7 @@ oyModulGetFromXML_( oyGROUP           group,
     if(i == 0)
       first_group_n = oy_group;
     
-    //DBG_S(("oyGROUP[%d]: %s", i, groupa[i]));
+    /*DBG_S(("oyGROUP[%d]: %s", i, groupa[i])); */
     DBG_S(("   [%d]: %s", i, oyXMLgetValue_(groupa[i], "oyCONFIG_STRING_XML")));
     DBG_S(("   [%d]: %s", i, _( oyXMLgetValue_(groupa[i], "oyNAME")) ));
     DBG_S(("   [%d]: %s", i, _( oyXMLgetValue_(groupa[i], "oyDESCRIPTION")) ));
@@ -385,7 +385,7 @@ oyModulGetFromXML_( oyGROUP           group,
       int group_n = 0;
       char **grs = NULL;
       char *type = NULL;
-      //DBG_S(("oyWIDGET[%d]: %s", i, option[i]));
+      /*DBG_S(("oyWIDGET[%d]: %s", i, option[i])); */
       DBG_S(("       : %s", oyXMLgetValue_(option[j], "oyID")));
 
       grs = oyXMLgetArray_(option[j], "oyGROUP", &group_n);
@@ -464,7 +464,7 @@ oyModulGetFromXML_( oyGROUP           group,
   /*oy_debug = 0;*/
 
   domain = OY_TEXTDOMAIN;
-  domain_path = LOCALEDIR;
+  domain_path = OY_LOCALEDIR;
   oyI18NInit_();
 
   DBG_PROG_ENDE
@@ -652,15 +652,15 @@ oyModulsUIOptionSearch_ (oyWIDGET       id)
 
   DBG_PROG_ENDE
   return NULL;
-};
+}
 
 const char*
 oyModulGetName_  (const char *cmm)
 {
-  DBG_PROG_START
-
   int i;
   char *result = NULL;
+
+  DBG_PROG_START
 
   for(i = 0; i < oyModules_.n; ++i)
   {
@@ -670,15 +670,15 @@ oyModulGetName_  (const char *cmm)
 
   DBG_PROG_ENDE
   return result;
-};
+}
 
 const char*
 oyModulGetDescription_  (const char *cmm)
 {
-  DBG_PROG_START
-
   int i;
   char *result = NULL;
+
+  DBG_PROG_START
 
   for(i = 0; i < oyModules_.n; ++i)
   {
@@ -688,15 +688,15 @@ oyModulGetDescription_  (const char *cmm)
 
   DBG_PROG_ENDE
   return result;
-};
+}
 
 const char*
 oyModulGetXml_  (const char *cmm)
 {
-  DBG_PROG_START
-
   int i;
   char *result = NULL;
+
+  DBG_PROG_START
 
   for(i = 0; i < oyModules_.n; ++i)
   {
@@ -706,15 +706,15 @@ oyModulGetXml_  (const char *cmm)
 
   DBG_PROG_ENDE
   return result;
-};
+}
 
 const char*
 oyModulGetDomain_  (const char *cmm)
 {
-  DBG_PROG_START
-
   int i;
   const char *result = NULL;
+
+  DBG_PROG_START
 
   for(i = 0; i < oyModules_.n; ++i)
   {
@@ -724,15 +724,15 @@ oyModulGetDomain_  (const char *cmm)
 
   DBG_PROG_ENDE
   return result;
-};
+}
 
 const char*
 oyModulGetDomainPath_  (const char *cmm)
 {
-  DBG_PROG_START
-
   int i;
   const char *result = NULL;
+
+  DBG_PROG_START
 
   for(i = 0; i < oyModules_.n; ++i)
   {
@@ -742,14 +742,14 @@ oyModulGetDomainPath_  (const char *cmm)
 
   DBG_PROG_ENDE
   return result;
-};
+}
 
 void
 oyModulGetGroups_  (const char *cmm, int *start, int *count)
 {
-  DBG_PROG_START
-
   int i;
+
+  DBG_PROG_START
 
   for(i = 0; i < oyModules_.n; ++i)
   {
@@ -763,7 +763,7 @@ oyModulGetGroups_  (const char *cmm, int *start, int *count)
   }
 
   DBG_PROG_ENDE
-};
+}
 
 #if 0
 const char*
@@ -795,7 +795,7 @@ oyModulGetGroupUITitle_ (oyGROUP     group, const char **tooltip,
 
   DBG_PROG_ENDE
   return NULL;
-};
+}
 #endif
 
 
@@ -803,9 +803,9 @@ oyModulGetGroupUITitle_ (oyGROUP     group, const char **tooltip,
 void
 oyModulsRefreshI18N_  (void)
 {
-  DBG_PROG_START
-
   int i;
+
+  DBG_PROG_START
 
   /* refresh CMM's */
   for( i = 0; i < oyModules_.n; ++i)
@@ -815,14 +815,14 @@ oyModulsRefreshI18N_  (void)
   }
 
   DBG_PROG_ENDE
-};
+}
 
 void
 oyModulRefreshI18N_  (const char *cmm)
 {
-  DBG_PROG_START
-
   int i;
+
+  DBG_PROG_START
 
   /* refresh CMM */
   for( i = 0; i < oyModules_.n; ++i)
@@ -835,5 +835,5 @@ oyModulRefreshI18N_  (const char *cmm)
   }
 
   DBG_PROG_ENDE
-};
+}
 

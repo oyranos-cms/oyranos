@@ -122,18 +122,22 @@ char*
 oyGetPathFromProfileName_       (const char*   fileName,
                                  oyAllocFunc_t allocate_func)
 {
-  DBG_PROG_START
   char  *fullFileName = 0;
   char  *pathName = 0;
   int    success = 0;
   char  *header = 0;
   size_t    size;
 
-  //DBG_NUM_S((fileName))
+  DBG_PROG_START
+
+  /*DBG_NUM_S((fileName)) */
   /* test for pure file without dir; search in configured paths */
   if (fileName && !strchr(fileName, OY_SLASH_C))
-  { DBG_PROG
+  {
     char search[MAX_PATH];
+
+    DBG_PROG
+
     if(strlen(fileName) < MAX_PATH)
       sprintf(search, fileName);
     else {
@@ -185,7 +189,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
         DBG_PROG_ENDE
         return pathName;
       }
-    //}
+    /*} */
 
     if (!success) {
       if(oy_warn_)
@@ -240,8 +244,11 @@ oyGetPathFromProfileName_       (const char*   fileName,
 int
 oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
                             const char*       file_name)
-{ DBG_PROG_START
+{
   int r = 0;
+
+  DBG_PROG_START
+
   if( type == oyASSUMED_WEB &&
       !strstr( file_name,"sRGB" ) )
   {
@@ -256,8 +263,12 @@ oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
 int
 oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
                             const char* file_name, void* mem, size_t size)
-{ DBG_PROG_START
-  int r = oySetProfile_Block (file_name, mem, size, type, 0);
+{
+  int r;
+
+  DBG_PROG_START
+
+  r = oySetProfile_Block (file_name, mem, size, type, 0);
   DBG_PROG_ENDE
   return r;
 }
@@ -266,9 +277,11 @@ oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
 char*
 oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
                             oyAllocFunc_t     alloc_func)
-{ DBG_PROG_START
+{
   char* name = 0;
   
+  DBG_PROG_START
+
   DBG_PROG_S(( "%d",type ))
 
   /* a static_profile */
@@ -282,7 +295,11 @@ oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
 
   name = oyGetKeyValue_( oyOptionGet_(type)-> config_string, alloc_func );
 
-  if(name) DBG_PROG_S((name));
+  if(name) {
+    DBG_PROG_S((name));
+  } else {
+    name = strdup( oyOptionGet_(type)-> default_string );
+  }
 
   DBG_PROG_ENDE
   return name;
@@ -308,10 +325,12 @@ struct OyProfileList_s_ {
 int
 oySetProfile_Block (const char* name, void* mem, size_t size,
                     oyDEFAULT_PROFILE type, const char* comnt)
-{ DBG_PROG_START
+{
   int r = 0;
   char *fullFileName, *resolvedFN;
   const char *fileName;
+
+  DBG_PROG_START
 
   if (strrchr (name, OY_SLASH_C))
     fileName = strrchr (name, OY_SLASH_C);
@@ -410,8 +429,10 @@ oySetComp_         (oyComp_t_ *compare, const char* keyName,
 
 void
 oyDestroyCompList_ (oyComp_t_ *list)
-{ DBG_PROG_START
+{
   oyComp_t_ *before;
+
+  DBG_PROG_START
 
   list = list->begin;
   while (list->next)
@@ -427,9 +448,13 @@ oyDestroyCompList_ (oyComp_t_ *list)
 
 char*
 printComp (oyComp_t_* entry)
-{ DBG_PROG_START
-# ifdef DEBUG
+{
   static char text[MAX_PATH] = {0};
+
+  DBG_PROG_START
+
+
+# ifdef DEBUG
   DBG_PROG_S(("%d", (int)(intptr_t)entry))
   sprintf( text, "%s:%d %s() begin %d next %d\n",
            __FILE__,__LINE__,__func__,
@@ -465,9 +490,11 @@ oySetDeviceProfile_                (const char* manufacturer,
                                     const char* profileName,
                                     const void* mem,
                                     size_t size)
-{ DBG_PROG_START
+{
   int rc = 0;
   char* comment = 0;
+
+  DBG_PROG_START
 
   if (mem && size && profileName)
   {
@@ -517,7 +544,14 @@ oySetDeviceProfile_                (const char* manufacturer,
 #include "oyranos.h"
 
 /** \addtogroup options Options API
- *  Functions to set and query for Options layout and UI strings in Oyranos.
+ *  The idea behind this API is to provide one layout for
+ *  presenting a configuration dialog to users. The advantage is, every 
+ *  application, like KDE and Gnome Kontrolpanels, will inherit the same logic.
+ *  A user can easily use the one and the other panel
+ *  without too much relearning.
+
+ *  Functions are provided to set and query for Options layout and
+ *  UI strings in Oyranos.
 
  *  @{
  */
@@ -638,7 +672,7 @@ oyOptionChoicesFree                  (oyWIDGET_TYPE     option,
  *  Otherwise look at the \b oyranos-config-fltk application
     or the description on
 
- *  <a href="http://www.oyranos.com/wiki/index.php?title=Oyranos_Use_Cases">ColourWiki</a>.
+ *  <a href="http://www.oyranos.com/wiki/index.php?title=Oyranos_Use_Cases">ColourWiki</a>. 
 
  *  @{
  */
@@ -666,6 +700,9 @@ oySetBehaviour         (oyBEHAVIOUR       type,
 }
 
 /** Get a special behaviour.\n 
+
+ *  @todo The options should silently fallback to defaults.
+
  *
  *  @param  type      the type of behaviour
  *  @return           the behaviour option (-1 if not available or not set)

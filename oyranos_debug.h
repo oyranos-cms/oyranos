@@ -74,7 +74,7 @@ extern int level_PROG;
 #endif
 #if DEBUG == 1
 #define DBG_PROG DBG
-#define DBG_PROG_START if(oy_debug) { level_PROG++; int i; for (i = 0; i < level_PROG; i++) printf("+"); printf (" Start: "); DBG_T_ printf("\n"); }
+#define DBG_PROG_START if(oy_debug) { int i; level_PROG++; for (i = 0; i < level_PROG; i++) printf("+"); printf (" Start: "); DBG_T_ printf("\n"); }
 #define DBG_PROG_ENDE if(oy_debug) { int i; for (i = 0; i < level_PROG; i++) printf ("-"); printf(" Ende:  "); DBG_T_ level_PROG--; printf("\n"); }
 #define DBG_PROG_S(txt) DBG_S(txt)
 #define DBG_PROG_V(txt) DBG_V(txt)

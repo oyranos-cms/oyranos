@@ -5,6 +5,7 @@ Group: Development/Libraries
 URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann
 Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
+#BuildArch: %{_arch}
 #%ifos linux
 #Prereq: oyranos-LStarRGB oyranos-RGB oyranos-lcmsLAB oyranos-eci-offset2004
 #%endif 
@@ -14,7 +15,7 @@ Prefix:    %{_prefix}
 %package   devel
 Summary:   Headers, configuration and static libs + documentation
 Group:     Development/System
-Requires:  %{name}-%{version}
+Requires:  %{name}-%{version}-%{release}
 
 %description
 Oyranos is a colour management configuration system.
@@ -28,10 +29,10 @@ Authors:
 --------
     Oyranos     Kai-Uwe Behrmann <www.behrmann.name>
 
-used components and libraries with divergine licenses:
-    FLTK        Bill Spizak and others
-    FLU         Jason Bryan
+used components and libraries with divergine FOSS licenses:
     Elektra     Avi Alkalay and others
+    md5         L. Peter Deutsch
+    libXNVCtrl  Nvidia
 
 
 %description devel
@@ -46,7 +47,7 @@ The documentation in html format is included.
 %setup -q -n %{name}-%{version}
 
 %build
-%configure
+%configure --enable-debug
 
 %install
 rm -rf %{buildroot}
@@ -58,34 +59,39 @@ rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 rm -rf %{buildroot}
 
 %post
-kdb_found=`which kdb | wc -l`
-if [ $${kdb_found} -gt 0 ]; then
-  echo "`which kdb` found"
+kdb=%{_bindir}/%{name}-kdb_static
+kdb_found=`ls  | wc -l`
+if [ "${kdb_found}" -gt 0 ]; then
+  echo "`which ${kdb}` found"
 fi
-kdb set -c "test" user/sw/oy_install_test "1"
-kdb_r=`kdb get user/sw/oy_install_test`;
-if [ -n "$${kdb_r}" ]; then
-  if [ `kdb get user/sw/oy_install_test` -ne 1 ]; then
+${kdb} set -c "test" user/sw/oy_install_test "1"
+kdb_r=`${kdb} get user/sw/oy_install_test`;
+if [ -n "${kdb_r}" ]; then
+  if [ "`${kdb} get user/sw/oy_install_test`" -ne 1 ]; then
     kdb_found=0
+    echo "keys not testable"
   fi
 else
   kdb_found=0
 fi
-kdb rm user/sw/oy_install_test
-if [ $kdb_found -eq 0 ]; then
+${kdb} rm user/sw/oy_install_test
+if [ "${kdb_found}" -eq 0 ]; then
   echo "!!!WARNING!!! no useable kdb,"
   echo "              no check for Oyranos configuration possible"
 fi
-if [ $kdb_found -gt 0 ]; then
-  if [ `kdb ls system/sw/oyranos 2>/dev/zero | wc -l` -eq 0 ]; then
-    if [ `kdb ls user/sw/oyranos 2>/dev/zero | wc -l` -eq 0 ]; then
+if [ "${kdb_found}" -gt 0 ]; then
+  if [ "`${kdb} ls system/sw/oyranos 2>/dev/zero | wc -l`" -eq 0 ]; then
+    #if [ "`${kdb} ls user/sw/oyranos 2>/dev/zero | wc -l`" -eq 0 ]; then
       echo "no oyranos keys found: set default policy home+office"
       oyranos-policy %{syscolordir}/%{settingsdirname}/office.policy.xml
-    fi
+    #fi
+  else
+    echo "Oyranos configuration is allready present. It is not touched here."
   fi
 fi
 
 %postun
+
 
 %files
 %defattr(-, root, root)
@@ -94,7 +100,11 @@ fi
 %{_bindir}/%{name}-config
 %{_bindir}/%{name}-config-fl*
 %{_bindir}/%{name}-policy
-%{_libdir}/*.so*
+%{_bindir}/%{name}-kdb_static
+%{_libdir}/lib%{name}*.so*
+%{_mandir}/man1/%{name}*
+%{_mandir}/man3/%{name}.*
+%{_datadir}/locale/*/LC_MESSAGES/%{name}.*
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 %{syscolordir}/cmms/*.oy_cmm_register.xml
 
@@ -107,9 +117,14 @@ fi
 %doc %{name}*.sh
 %doc doc/html
 
+
+
 %changelog
 * Sat Sep 16 2006 Kai-Uwe Behrmann
 - set default policy if no settings are found
+
+* Sat May 28 2005 - Kai-Uwe Behrmann
+- packaging
 
 * Tue Apr 21 2005 Kai-Uwe Behrmann
 - first release

@@ -2,6 +2,7 @@
 COLLECT = ar cru
 RANLIB = ranlib
 LNK = ln -s
+POST = fltk-config --post
 RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
 MSGCAT = msgcat
 MSGFMT = msgfmt -c --statistics
@@ -13,15 +14,15 @@ LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
 LIBNAME = lib$(TARGET).a
+#ifdef $(X11)
 LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)$(LIBEXT)
 LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)$(LIBEXT)
 LIB_MONI_SO = lib$(TARGET)_moni$(SO)$(LIBEXT)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
 LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
+#endif
 LIBFL_I18N = fl_i18n/libfl_i18n.a
-
-DL = --ldflags # --ldstaticflags
 
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
@@ -78,11 +79,12 @@ CFILES_POLICY = \
 
 CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
-CPPFILES_FLU = \
-	$(TARGET)_config_flu.cpp
 TEST_CPP = \
+	tests/dl_test.cxx \
 	tests/fltk_test.cxx \
-	tests/dE2000_test.cpp
+	tests/dE2000_test.cpp \
+	tests/gettext_test.cxx \
+	tests/lib_test.cxx
 TEST_H = \
 	tests/ciede2000testdata.h
 CPPFILES =
@@ -90,13 +92,15 @@ CXXFILES =
 #	fl_oyranos.cxx
 TEST_FILES = $(TEST_CPP) $(TEST_H)
 
+MAN1 = oyranos-config.1 oyranos-config-fltk.1 oyranos-policy.1
+MAN3 = oyranos.3
 DATA = \
 	$(TARGET)_logo.png
 DOKU =  AUTHORS \
         ChangeLog \
         COPYING \
-        README \
-        Doxyfile \
+        README
+DOC_TEMPLATES =  Doxyfile \
         doxymentation
 
 LINGUAS_SRC = $(LING:.po=.gmo)
@@ -113,19 +117,16 @@ FLUID = \
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) \
-		$(CXXFILES_FLTK) $(CPPFILES_FLU) test.c test2.cpp
+		$(CXXFILES_FLTK) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o)
-FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
-				$(CFILES_FLU:.c=.o)
 
 INCL_DEP = $(INCL) $(SOURCES)
 
-.SILENT:
-.PHONY:	doc $(ELEKTRA_VERSION)
+.PHONY:	doc $(ELEKTRA_VERSION) test2
 
-TEST2 = test2
+#TEST2 = test2
 
 STD_PROFILES = base eci
 
@@ -138,22 +139,26 @@ ALL_FILES = \
 	$(TARGET).pc.in \
 	$(TARGET)_monitor.pc.in \
 	$(TARGET).spec.in \
+	$(TARGET)-icc.spec.in \
 	$(TARGET)-config.in \
 	$(SOURCES) \
 	$(SCRIPTS) \
+	$(MAN1) $(MAN3) \
+	$(DOC_TEMPLATES) \
 	$(FLUID)
 
 # build all what is needed to run the libraries, helpers and the examples
-all:	mkdepend $(ELEKTRA_VERSION) $(LIB_MONI_SONAMEFULL) \
-	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
+all:	mkdepend $(ELEKTRA_VERSION) $(LIBSONAMEFULL) $(X11)  \
 	$(FLTK_GUI) $(TARGET)-policy \
-	$(TEST2) $(LINGUAS_SRC) #$(FLU_GUI)
+	$(TEST2) $(LINGUAS_SRC)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
 	         echo -e "$${prof} profiles will be included" || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
+
+$(X11):	$(LIB_MONI_SONAMEFULL) $(TARGET)-monitor $(TARGET)-monitor-nvidia
 
 # get time stamp
 MTIME   := $(shell date +%y%m%d.%H%M%S)
@@ -194,7 +199,8 @@ $(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a
 	echo Linking $@ ...
 	-$(CC) $(CFLAGS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
-	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL)
+	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) \
+	$(LINK_LIB_PATH)
 
 $(target)_config_fltk.o:	$(TARGET)_config_fltk.cxx
 	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c $<
@@ -205,33 +211,15 @@ $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 	$(CXX) $(CXXFLAGS) -o $(TARGET)-config-fltk \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
-	$(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS)  $(I18N_LIB) $(LIBFL_I18N)
+	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N)
 	$(REZ)
 
-
-$(TARGET)-config-flu:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(FLU_OBJECTS)
-	echo Linking $@ ...
-	-$(CXX) $(CXXFLAGS) -o $(TARGET)-config-flu \
-	$(TARGET)_config_flu.o \
-	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
-	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS)
-	$(REZ)
-
-
-$(TARGET)-config-flu-static:	$(LIBSONAMEFULL) $(FLU_OBJECTS)
-	echo Linking static $(TARGET)-config-flu ...
-	$(CXX) -Wall -O3 -o $(TARGET)-config-flu $(TARGET)_config_flu.o \
-	$(LIBNAME) $(LIB_MONI_NAME) $(LINK_LIB_PATH) \
-	`flu-config --ldstaticflags` \
-	`fltk-config --use-images --ldstaticflags` \
-	-L/usr/X11R6$(libdir) \
-	`test -f $(libdir)/libelektra.a && echo $(libdir)/libelektra.a || echo -lelektra` -lsupc++ $(PNG_LIBS)
-	#strip $(TARGET)-config-flu
-	$(REZ)
 
 $(LIBNAME):	$(OBJECTS)
 	echo Linking $@ ...
-	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) $(OBJECTS)
+	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) \
+		$(OBJECTS) \
+		`test -f $(ELEKTRA_VERSION)/src/libelektra/libelektra.a && echo $(ELEKTRA_VERSION)/src/libloader/libloader_static_a-kdbLibLoader.o $(ELEKTRA_VERSION)/src/backends/filesys/libelektra_filesys_a-filesys.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-kdb.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-error.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-key.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-keyset.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-kdbhighlevel.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-backendhelpers.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-exported_symbols.o`
 	$(RANLIB) $(LIBNAME)
 
 $(LIB_MONI_NAME):	$(MONI_OBJECTS)
@@ -256,12 +244,17 @@ $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
 
-test2:	$(LIB_MONI_SONAMEFULL) test2.o
-	echo Linking $@ ...
+test2:	$(LIB_MONI_SONAMEFULL)
+	echo Compile $@ ...
+	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -c test2.cpp \
+	-o test2.o `oyranos-config --cflags`
+	echo Linking dynamic $@ ...
+	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
+	test2.o `oyranos-config --ld_x_flags`
+	echo Linking static $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
-	test2.o \
-	$(LIB_MONI_SONAMEFULL) $(LINK_SRC_PATH) \
-	$(LIBSONAMEFULL) $(LDLIBS) -l$(TARGET)
+	test2.o `oyranos-config --ld_x_staticflags`
+	
 
 check:	test2
 	test2
@@ -323,26 +316,29 @@ doc:
 	echo ... Documentation done
 
 # the copy part for this directory level
-install-main:	all doc
+install_bin:	all doc
 	echo Installing main ...
 	-$(MAKE) uninstall
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(ELEKTRA_VERSION)/src/kdb/kdb_static $(DESTDIR)$(bindir)/$(TARGET)-kdb_static
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	$(INSTALL) -m 644 $(TARGET).pc         $(DESTDIR)$(libdir)/pkgconfig/
-	$(INSTALL) -m 644 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
 	$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
 	$(INSTALL) -m 755 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
 	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
+#ifdef $(X11)
+	$(INSTALL) -m 644 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
 	$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
 	$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
+#endif
 	-$(INSTALL) -m 644 $(ELEKTRA_VERSION)/src/libelektra/libelektra.a $(DESTDIR)$(libdir)/lib$(TARGET)_elektra.a
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
@@ -359,24 +355,33 @@ install-main:	all doc
 	-$(INSTALL) -m 644 cmms/*.oy_cmm_register.xml $(DESTDIR)$(syscolordir)/cmms
 	mkdir -p $(DESTDIR)$(docdir)
 	$(INSTALL) -m 644 $(DOKU) $(DESTDIR)$(docdir)
+	mkdir -p $(DESTDIR)$(mandir)/man1
+	$(INSTALL) -m 644 $(MAN1) $(DESTDIR)$(mandir)/man1
+	mkdir -p $(DESTDIR)$(mandir)/man3
+	$(INSTALL) -m 644 $(MAN3) $(DESTDIR)$(mandir)/man3
 	mkdir -p $(DESTDIR)$(docdir)/html
 	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
 	$(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
 	echo ... main Installation finished
 
 # install recursive
-install:	install-main
+install:	install_bin
 	$(MAKE) install_profiles
 	$(MAKE) install_linguas
 	$(MAKE) install_usersettings
 
+install-main:	install_bin
+	$(MAKE) install_linguas
+	$(MAKE) install_usersettings
+
+install-icc:
+	$(MAKE) install_profiles
 
 install_gui:	$(TARGET)-config-fltk
 	echo Installing UI ...
-	-$(MAKE)  $(TARGET)-config-flu 
 	mkdir -p $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config-fltk $(DESTDIR)$(bindir)
+	$(POST) $(DESTDIR)$(bindir)/$(TARGET)-config-fltk
 
 install_profiles:
 	cd standard_profiles; \
@@ -398,14 +403,14 @@ install_linguas:
 	done;
 
 install_usersettings:
-	if [ -z $(DESTDIR) ]; then \
+	if [ -z "$(DESTDIR)" ]; then \
 	  kdb=kdb; \
-	  kdb_found=`which $${kdb} | wc -l`; \
+	  test `$${kdb}` && kdb_found=1 || kdb_found=0; \
 	  if [ $${kdb_found} -gt 0 ]; then \
 	    echo "`which kdb` found"; \
 	  else \
 	    kdb=$(ELEKTRA_VERSION)/src/kdb/kdb_static; \
-	    kdb_found=`which $${kdb} | wc -l`; \
+	    test -f $${kdb} && kdb_found=1 || kdb_found=0; \
 	    if [ $${kdb_found} -gt 0 ]; then \
 	      echo "using local kdb_static"; \
 	    fi; \
@@ -439,20 +444,15 @@ dist: targz
 
 # build a binary rpm package
 rpm:	dist
-	./configure --prefix=/usr # for RedHat alike distributions
+	./configure --prefix=/usr --rpm-only # generate the spec file
 	mkdir -p rpmdir/BUILD \
 	rpmdir/SPECS \
 	rpmdir/SOURCES \
 	rpmdir/SRPMS \
 	rpmdir/RPMS/$(RPMARCH)
-	cd standard_profiles; \
-	for prof in $(STD_PROFILES); do \
-	     test $${prof} && \
-	         (cd $${prof}; echo bin in `pwd`; $(MAKE) rpm) || \
-	         echo -e "$${prof} profile directory is not found - ignoring"; \
-	done;
 	cp -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
 	rpmbuild --clean -ba $(srcdir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
+	rpmbuild --clean -ba $(srcdir)/$(TARGET)-icc.spec --define "_topdir $$PWD/rpmdir"
 	@echo "============================================================"
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 
@@ -461,7 +461,6 @@ uninstall:
 	echo Uninstalling ...
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
-	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-flu
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-fltk
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-policy
 	-$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia
@@ -499,23 +498,41 @@ uninstall:
 	  $(RM) $(DESTDIR)$(docdir)/$$file; \
 	done
 	-$(RM) -R $(DESTDIR)$(docdir)/html
+	for file in $(MAN1); do \
+	  $(RM) $(DESTDIR)$(mandir)/man1/$$file; \
+	done
+	for file in $(MAN3); do \
+	  $(RM) $(DESTDIR)$(mandir)/man3/$$file; \
+	done
 	for ling in $(LINGUAS); do \
 	  $(RM) $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo; \
 	done;
 	echo ... $@ done
 
 # remove in this directory
+distclean: clean
+	-$(RM) Makefile
+	-$(RM) fl_i18n/Makefile
+	-$(RM) libXNVCtrl/Makefile
+	-$(RM) standard_profiles/base/Makefile
+	-$(RM) standard_profiles/eci/Makefile
+	-$(RM) mkdepend config.h oyranos.pc oyranos_monitor.pc oyranos.spec
+	-$(RM) oyranos-icc.spec config.log oyranos_version.h oyranos-config
+	-$(RM) config.sh
+	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
+	-$(RM) -R doc/html
+	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION) && $(MAKE) distclean)
+
 clean:
-	$(RM) \
+	-$(RM) \
 	$(OBJECTS) $(MONI_OBJECTS) \
 	$(LIBNAME) $(LIBSONAMEFULL) $(LIBSONAME) $(LIBSO) \
 	$(LIB_MONI_NAME) $(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)_gamma.o $(TARGET)-policy $(TARGET)_policy.o \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2.o test.o test2 test \
-	$(TARGET)-config-fltk $(FLTK_OBJECTS) \
-	$(TARGET)-config-flu $(FLU_OBJECTS)
-	-for ling in $(LINGUAS); do \
+	$(TARGET)-config-fltk $(FLTK_OBJECTS); \
+	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo; \
 	done;
@@ -530,11 +547,13 @@ config:
 
 # try to resolve dependencies with the X11 tool
 depend:
+#ifdef $(X11)
 	echo "setting up dependencies ..."
 	echo "MAKEDEPEND_ISUP = 1" > mkdepend
 	$(MAKEDEPEND) -f mkdepend \
 	-s "# dont edit - automatically generated" \
 	-I. $(INCL_DEP)
+#endif
 
 
 # Build commands and filename extensions...
@@ -543,15 +562,15 @@ depend:
 
 .c.o:
 	echo Compiling $< ...
-	$(CC) -I.. $(CFLAGS) -c $<
+	$(CC) -I. $(CFLAGS) -c $<
 
 .cxx.o:
 	echo Compiling $< ...
-	$(CXX) -I.. $(CXXFLAGS) -c $<
+	$(CXX) -I. $(CXXFLAGS) -c $<
 
 .cpp.o:	mkdepend
 	echo Compiling $< ...
-	$(CXX) -I.. $(CXXFLAGS) -c $<
+	$(CXX) -I. $(CXXFLAGS) -c $<
 
 .fl.cxx:
 	echo Expanding $< ...
@@ -619,9 +638,13 @@ copy_files:
 	echo copy done
 
 # mkdepend
+#ifdef $(X11)
 include mkdepend
+#endif
 
 #ifndef MAKEDEPEND_ISUP
+#ifdef $(X11)
 mkdepend: depend
+#endif
 #endif
 

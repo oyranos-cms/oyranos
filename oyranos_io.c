@@ -90,10 +90,12 @@ char* oyFindProfile_ (const char* name);
 
 size_t
 oyReadFileSize_(const char* name)
-{ DBG_PROG_START
+{
   FILE *fp = 0;
   const char* filename = name;
   size_t size = 0;
+
+  DBG_PROG_START
 
   {
     fp = fopen(filename, "r");
@@ -117,10 +119,12 @@ oyReadFileSize_(const char* name)
 char*
 oyReadFileToMem_(const char* name, size_t *size,
                  oyAllocFunc_t allocate_func)
-{ DBG_PROG_START
+{
   FILE *fp = 0;
   char* mem = 0;
   const char* filename = name;
+
+  DBG_PROG_START
 
   DBG_PROG
 
@@ -146,8 +150,11 @@ oyReadFileToMem_(const char* name, size_t *size,
       if ((fp != 0)
        && mem
        && *size)
-      { DBG_PROG
+      {
         int s = fread(mem, sizeof(char), *size, fp);
+
+        DBG_PROG
+
         /* check again */
         if (s != *size)
         { *size = 0;
@@ -180,12 +187,14 @@ oyReadFileToMem_(const char* name, size_t *size,
 
 int
 oyWriteMemToFile_(const char* name, void* mem, size_t size)
-{ DBG_PROG_START
+{
   FILE *fp = 0;
   int   pt = 0;
   char* block = mem;
   const char* filename;
   int r = 0;
+
+  DBG_PROG_START
 
   DBG_PROG_S(("name = %s mem = %d size = %d\n", name, (int)(intptr_t)mem, (int)(intptr_t)size))
 
@@ -212,12 +221,16 @@ oyWriteMemToFile_(const char* name, void* mem, size_t size)
 
 char*
 oyGetHomeDir_ ()
-{ DBG_PROG_START
+{
 # if (__WINDOWS__)
+  DBG_PROG_START
   DBG_PROG_ENDE
   return "OS not supported yet";
 # else
   char* name = (char*) getenv("HOME");
+
+  DBG_PROG_START
+
   DBG_PROG_S((name))
   DBG_PROG_ENDE
   return name;
@@ -226,8 +239,10 @@ oyGetHomeDir_ ()
 
 char*
 oyGetParent_ (const char* name)
-{ DBG_PROG_START
+{
   char *parentDir = (char*) calloc ( MAX_PATH, sizeof(char)), *ptr;
+
+  DBG_PROG_START
 
   sprintf (parentDir, name);
   ptr = strrchr( parentDir, OY_SLASH_C);
@@ -254,10 +269,13 @@ oyGetParent_ (const char* name)
 
 int
 oyIsDir_ (const char* path)
-{ DBG_PROG_START
+{
   struct stat status;
   int r = 0;
   char* name = oyResolveDirFileName_ (path);
+
+  DBG_PROG_START
+
   status.st_mode = 0;
   r = stat (name, &status);
   DBG_PROG_S(("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR))
@@ -275,10 +293,12 @@ oyIsDir_ (const char* path)
 
 int
 oyIsFileFull_ (const char* fullFileName)
-{ DBG_PROG_START
+{
   struct stat status;
   int r = 0;
   const char* name = fullFileName;
+
+  DBG_PROG_START
 
   DBG_NUM_S(("fullFileName = \"%s\"", fullFileName))
   status.st_mode = 0;
@@ -320,9 +340,11 @@ oyIsFileFull_ (const char* fullFileName)
 
 int
 oyIsFile_ (const char* fileName)
-{ DBG_PROG_START
+{
   int r = 0;
   char* name = oyResolveDirFileName_ (fileName);
+
+  DBG_PROG_START
 
   r = oyIsFileFull_(name);
 
@@ -334,10 +356,14 @@ oyIsFile_ (const char* fileName)
 
 int
 oyMakeDir_ (const char* path)
-{ DBG_PROG_START
+{
   char *name = oyResolveDirFileName_ (path);
   int rc = 0;
+
   mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH; /* 0755 */
+
+  DBG_PROG_START
+
   DBG_PROG
   rc = mkdir (name, mode);
   OY_FREE (name)
@@ -348,10 +374,12 @@ oyMakeDir_ (const char* path)
 
 char*
 oyResolveDirFileName_ (const char* name)
-{ DBG_PROG_START
+{
   char* newName = (char*) calloc (MAX_PATH, sizeof(char)),
        *home = 0;
   int len = 0;
+
+  DBG_PROG_START
 
   DBG_PROG_S((name))
 
@@ -390,11 +418,15 @@ oyResolveDirFileName_ (const char* name)
 
 char*
 oyExtractPathFromFileName_ (const char* file_name)
-{ DBG_PROG_START
+{
   char *path_name = (char*) calloc (strlen(file_name)+1, sizeof(char));
+  char *ptr;
+
+  DBG_PROG_START
+
   sprintf( path_name, file_name );
   DBG_PROG_S (("path_name = %s", path_name))
-  char *ptr = strrchr (path_name, '/');
+  ptr = strrchr (path_name, '/');
   ptr[0] = 0;
   DBG_PROG_S (("path_name = %s", path_name))
   DBG_PROG_S (("ptr = %s", ptr))
@@ -404,9 +436,11 @@ oyExtractPathFromFileName_ (const char* file_name)
 
 char*
 oyMakeFullFileDirName_ (const char* name)
-{ DBG_PROG_START
+{
   char *newName;
   char *dirName = 0;
+
+  DBG_PROG_START
 
   DBG_PROG
   if(name &&
@@ -433,8 +467,10 @@ oyMakeFullFileDirName_ (const char* name)
 
 void
 oyCheckDefaultDirectories_ ()
-{ DBG_PROG_START
+{
   char* parentDefaultUserDir;
+
+  DBG_PROG_START
 
   /* test dirName : existing in path, default dirs are existing */
   if (!oyIsDir_ (OY_PROFILE_PATH_SYSTEM_DEFAULT))
@@ -463,13 +499,17 @@ oyCheckDefaultDirectories_ ()
 
 char*
 oyFindProfile_ (const char* fileName)
-{ DBG_PROG_START
+{
   char  *fullFileName = 0;
 
-  //DBG_NUM_S((fileName))
+  DBG_PROG_START
+
+  /*DBG_NUM_S((fileName)) */
   if (fileName && !strchr(fileName, OY_SLASH_C))
-  { DBG_PROG
+  {
     char* path_name = oyGetPathFromProfileName_(fileName, oyAllocateFunc_);
+
+    DBG_PROG
     fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
     sprintf(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
     OY_FREE(path_name)
@@ -521,17 +561,22 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
                                                    strlen(filename));
         strcpy(l->names[l->count_files], filename);
         ++l->count_files;
-      } //else
-        //WARN_S(("%s in %s is not a valid profile", file_name, path));
+      } /*else */
+        /*WARN_S(("%s in %s is not a valid profile", file_name, path)); */
   return 0;
 }
 
 char**
 oyProfileListGet_                  (const char* coloursig, int * size)
 {
+  struct OyProfileList_s_ l = {128, NULL, 128, 0, 0};
+
+  l.coloursig = coloursig;
+
   DBG_PROG_START
+ 
   oy_warn_ = 0;
-  struct OyProfileList_s_ l = {128, coloursig, 128, 0, 0};
+
   l.names = 0;
   l.mem_count = l.hopp;
   l.count_files = 0;
@@ -553,12 +598,14 @@ oyProfileListGet_                  (const char* coloursig, int * size)
 int
 oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
 {
-  DBG_PROG_START
+ 
   int r = 0;
   int count = oyPathsCount_();
   int i;
 
   static int war = 0;
+
+  DBG_PROG_START
 
   ++war;
   if(war >= 413)
@@ -631,6 +678,9 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
 
     while(run)
     {
+      char name[256];
+      int k;
+
       if(l>=64) WARN_S(("max path depth reached: 64"));
       if(dir[l] == NULL)
       {
@@ -648,8 +698,6 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
         goto cont;
       }
 
-      char name[256];
-      int k;
       sprintf(name,path);
       for (k=0; k <= l; ++k) {
         int len = strlen(name);
@@ -670,9 +718,9 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
         DBG_PROG_S(("%d. %s does not exist", l, name))
         goto cont;
       }
-      if (!S_ISLNK(statbuf.st_mode)){//((statbuf.st_mode & S_IFMT) & S_IFLNK)) 
+      if (!S_ISLNK(statbuf.st_mode)){/*((statbuf.st_mode & S_IFMT) & S_IFLNK))  */
         DBG_PROG_S(("%d. %s is a link: ignored %d %d %d", l, name, (int)statbuf.st_mode , S_IFLNK, 0120000));
-        //goto cont;
+        /*goto cont; */
       }
       if (S_ISDIR (statbuf.st_mode) &&
           l < MAX_DEPTH ) {
@@ -717,9 +765,11 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
 
 size_t
 oyGetProfileSize_                  (const char* profilename)
-{ DBG_PROG_START
+{
   size_t size = 0;
   char* fullFileName = oyFindProfile_ (profilename);
+
+  DBG_PROG_START
 
   size = oyReadFileSize_ (fullFileName);
 
@@ -730,9 +780,11 @@ oyGetProfileSize_                  (const char* profilename)
 void*
 oyGetProfileBlock_                 (const char* profilename, size_t *size,
                                     oyAllocFunc_t allocate_func)
-{ DBG_PROG_START
+{
   char* fullFileName = oyFindProfile_ (profilename);
   char* block = oyReadFileToMem_ (fullFileName, size, allocate_func);
+
+  DBG_PROG_START
 
   DBG_PROG_ENDE
   return block;

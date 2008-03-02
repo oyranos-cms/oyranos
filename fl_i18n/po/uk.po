@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eog 0.3\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2006-10-10 08:42+0200\n"
+"POT-Creation-Date: 2007-03-22 10:23+0100\n"
 "PO-Revision-Date: 2004-08-18 10:17+0300\n"
 "Last-Translator: Maxim Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
@@ -17,75 +17,75 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: fl_i18n.cxx:178
+#: fl_i18n.cxx:201
 msgid "osX locale obtained: "
 msgstr ""
 
-#: fl_i18n.cxx:181
+#: fl_i18n.cxx:204
 msgid "osX locale not obtained"
 msgstr ""
 
-#: fl_i18n.cxx:291
+#: fl_i18n.cxx:323
 msgid "try to set LANG"
 msgstr ""
 
-#: fl_i18n.cxx:310
+#: fl_i18n.cxx:342
 msgid "try locale in "
 msgstr ""
 
-#: fl_i18n.cxx:319
+#: fl_i18n.cxx:351
 msgid "set codeset for"
 msgstr ""
 
-#: fl_i18n.cxx:352
+#: fl_i18n.cxx:387
 msgid "Add to Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:353
+#: fl_i18n.cxx:388
 msgid "All Files (*)"
 msgstr ""
 
-#: fl_i18n.cxx:354
+#: fl_i18n.cxx:389
 msgid "Custom Filter"
 msgstr ""
 
-#: fl_i18n.cxx:355
+#: fl_i18n.cxx:390
 msgid "Please choose an existing file!"
 msgstr ""
 
-#: fl_i18n.cxx:356
+#: fl_i18n.cxx:391
 msgid "Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:357
+#: fl_i18n.cxx:392
 msgid "Filename"
 msgstr ""
 
-#: fl_i18n.cxx:358
+#: fl_i18n.cxx:393
 msgid "Manage Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:360
+#: fl_i18n.cxx:395
 msgid "My Computer"
 msgstr ""
 
-#: fl_i18n.cxx:362
+#: fl_i18n.cxx:397
 msgid "Filesystems"
 msgstr ""
 
-#: fl_i18n.cxx:364
+#: fl_i18n.cxx:399
 msgid "New Directory?"
 msgstr ""
 
-#: fl_i18n.cxx:365
+#: fl_i18n.cxx:400
 msgid "Preview"
 msgstr ""
 
-#: fl_i18n.cxx:367
+#: fl_i18n.cxx:402
 msgid "Save"
 msgstr ""
 
-#: fl_i18n.cxx:369
+#: fl_i18n.cxx:404
 msgid "Show:"
 msgstr ""
 

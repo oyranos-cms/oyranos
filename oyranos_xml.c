@@ -118,8 +118,8 @@ oyXMLgetValue_  (const char       *xml,
     {
       val_pos = value1 + strlen(key) + 1;
       len = (int)(value2 - val_pos - 1);
-      //TODO char txt[128];
-      //snprintf(txt,len,val_pos);
+      /*/TODO char txt[128];
+      //snprintf(txt,len,val_pos);*/
     }
   }
 # else
@@ -153,7 +153,7 @@ oyXMLgetValue_  (const char       *xml,
   len = value2 - len2 - value1;
   free(key1); free(key2);
 # endif
-  if(len > 0 && value1-len1 > 0)
+  if(len > 0 && (intptr_t)value1 - len1 > 0)
   {
     value = calloc(sizeof(char), len+1);
     snprintf(value, len+1, value1);
@@ -263,11 +263,12 @@ oyWriteOptionToXML_(oyGROUP           group,
                     oyWIDGET          end, 
                     char             *mem,
                     int               oytmplen)
-{ DBG_PROG_START
-
+{
   int   i = 0;
   const char  * key = 0;
   const oyOption_t_ * opt = 0;
+
+  DBG_PROG_START
 
          /* allocate new mem if needed */
          oytmplen = oyMemBlockExtent_(&mem, oytmplen, 360);
@@ -350,13 +351,14 @@ char*
 oyPolicyToXML_  (oyGROUP           group,
                  int               add_header,
                  oyAllocFunc_t     allocate_func)
-{ DBG_PROG_START
-
-# define OYTMPLEN_ 80 // TODO handle memory in more a secure way
+{
+# define OYTMPLEN_ 80 /*/ TODO handle memory in more a secure way */
   /* allocate memory */
   int   oytmplen = OYTMPLEN_;
   char *mem = oyAllocateFunc_(oytmplen);
   int   i = 0;
+
+  DBG_PROG_START
 
   /* initialise */
   oyOptionGet_( oyWIDGET_BEHAVIOUR_START );
@@ -368,7 +370,7 @@ oyPolicyToXML_  (oyGROUP           group,
           char head[] = { 
           "<!--?xml version=\"1.0\" encoding=\"UTF-8\"? -->\n\
 <!-- Oyranos policy format 1.0 -->\n<body>\n\n\n" };
-         oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen(head) );
+         oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen(head)+1 );
 
          sprintf( mem, "%s", head );
   }
@@ -415,7 +417,7 @@ oyPolicyToXML_  (oyGROUP           group,
            if(value)
            {
              /* allocate new mem if needed */
-             oytmplen = oyMemBlockExtent_(&mem, oytmplen, strlen(value));
+             oytmplen = oyMemBlockExtent_(&mem, oytmplen, strlen(value)+1);
 
              sprintf(&mem[pos], "%s", value);
              free(value);
@@ -434,7 +436,7 @@ oyPolicyToXML_  (oyGROUP           group,
          const char *end = "\n</body>\n";
          int   pos = strlen(mem);
 
-         oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen( end ) );
+         oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen( end )+1 );
          sprintf( &mem[pos], "%s", end );
   }
 
@@ -451,29 +453,35 @@ oyPolicyToXML_  (oyGROUP           group,
 int
 oyReadXMLPolicy_(oyGROUP           group,
                  const char       *xml)
-{ DBG_PROG_START
-
+{
   /* allocate memory */
   const char *key = 0;
   char *value = 0;
   int   i = 0;
   int   err = 0;
 
+  DBG_PROG_START
+
   /* which group is to save ? */
   switch (group)
   { case oyGROUP_DEFAULT_PROFILES:
-         for(i = oyDEFAULT_PROFILE_START + 1; i < oyDEFAULT_PROFILE_END; ++i)
          {
-           key = oyOptionGet_(i)-> config_string_xml;
+           int d = 0;
 
-           /* read the value for the key */
-           value = oyXMLgetValue_(xml, key);
-
-           /* set the key */
-           if(value && strlen(value))
+           oyWIDGET * wl = oyWidgetListGet_(oyGROUP_DEFAULT_PROFILES, &d );
+           for(i = 0; i < d; ++i)
            {
-             oySetDefaultProfile_(i, value);
-             free(value);
+             key = oyOptionGet_(wl[i])-> config_string_xml;
+
+             /* read the value for the key */
+             value = oyXMLgetValue_(xml, key);
+
+             /* set the key */
+             if(value && strlen(value))
+             {
+               oySetDefaultProfile_(wl[i], value);
+               free(value);
+             }
            }
          }
          break;

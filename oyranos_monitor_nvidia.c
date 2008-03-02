@@ -54,7 +54,7 @@
 #include "oyranos_debug.h"
 
 #include <NVCtrlLib.h>
-//#include <NvCtrlAttributes.h>
+/*#include <NvCtrlAttributes.h>*/
 
 /* ---  Helpers  --- */
 
@@ -157,7 +157,7 @@ main(int argc, char **argv)
   }
 # endif
 
-  //printf("ScreenCount: %d number_of_screens: %d\n", ScreenCount( display ), number_of_screens);
+  /*printf("ScreenCount: %d number_of_screens: %d\n", ScreenCount( display ), number_of_screens);*/
 
   for( i = 0; i < number_of_screens; ++i)
   {
@@ -173,10 +173,10 @@ main(int argc, char **argv)
     for(j = 0; j < 24; ++j)
     if(data[j] && size[j])
     {
-      //printf( "%d: Edid of size %d found.\n", j, (int)size[j]);
+      /*/printf( "%d: Edid of size %d found.\n", j, (int)size[j]);*/
       edi = (struct oyDDC_EDID1_s_*)data[j];
 
-      if(size[j] == 128)
+      if(size[j] == 128 || size[j] == 256)
       {
         char *manufacturer=0,
              *model=0,             
@@ -202,9 +202,10 @@ main(int argc, char **argv)
           printf("%s %s %s %s\n", manufacturer, model, serial,
                                   display_name);
 
-          // we must rely on eighter screens or Xinerama
-          // otherwise we split the behaviour without compensating missing
-          // capabilities
+          /* we must rely on eighter screens or Xinerama 
+           * otherwise we split the behaviour without compensating missing
+           * capabilities
+           */
 
           if( traditional_screens_b &&
               monitors_in_traditional_screen > 1 )
@@ -277,9 +278,9 @@ unsigned char**
 oyGetNvidiaEdid( Display* display, int screen, size_t **size)
 {
   int val;
-//  ReturnStatus ret;
+/*/  ReturnStatus ret;*/
   int ret;
-//  NvCtrlAttributeHandle *nvidia_handle = 0;
+/*/  NvCtrlAttributeHandle *nvidia_handle = 0;*/
   int mask;
   int d;
   int bit,
@@ -287,7 +288,7 @@ oyGetNvidiaEdid( Display* display, int screen, size_t **size)
   int major, minor;
   unsigned char **data = (unsigned char**) calloc(sizeof(unsigned char*), 24);
 
-  //for(i = 0; i < 24; ++i) data[i] = NULL;
+  /*/for(i = 0; i < 24; ++i) data[i] = NULL;*/
 
   {
 
@@ -354,15 +355,15 @@ oyGetNvidiaEdid( Display* display, int screen, size_t **size)
         unsigned int red_n, green_n, blue_n, red_bits, green_bits, blue_bits;
         ret = XNVCTRLQueryDDCCILutSize( display, screen, mask,
                  &red_n, &green_n, &blue_n, &red_bits, &green_bits, &blue_bits);
-        //unsigned short *lut;
-        //NvCtrlGetColorRamp( nvidia_handle, channel, &lut, &n );
+        /*/unsigned short *lut;
+        //NvCtrlGetColorRamp( nvidia_handle, channel, &lut, &n );*/
         if( ret)
           printf(" r: %d/%d g: %d/%d b: %d/%d\n", red_n, red_bits,
                   green_n, green_bits, blue_n, blue_bits);
       }
     }
 
-    //NvCtrlAttributeClose( nvidia_handle );
+    /*/NvCtrlAttributeClose( nvidia_handle );*/
   }
 
 

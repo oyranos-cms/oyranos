@@ -37,6 +37,7 @@
 #include "oyranos_i18n.h"
 #include "oyranos_texts.h"
 #include "oyranos_elektra.h"
+#include "oyranos_version.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -87,7 +88,7 @@ typedef enum  {
   oyDISPLAY,          /**< dynamic viewing */
   oyPRINTER,          /**< static media (dye, ink, offset, imagesetters) */
   oySCANNER,          /**< contact digitiser */
-  oyCAMERA,           /**< virtual or contactless image capturing */
+  oyCAMERA            /**< virtual or contactless image capturing */
 } oyDEVICETYP;
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
@@ -126,12 +127,12 @@ int oyEraseDeviceProfile                  (oyDEVICETYP typ,
                                            const char* attrib3);
 
 typedef enum {
-  oyDISPLAY_T,
+  oyDISPLAY_T
 } oyOBJECT_TYPE;
 
 #ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
+} /* extern "C" */
+} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_INTERNAL_H */

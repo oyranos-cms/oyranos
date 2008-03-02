@@ -1,0 +1,176 @@
+Summary: Colour Management System
+Name: oyranos
+License: GPL
+Group: Development/Libraries
+URL: http://www.oyranos.org
+Vendor: Kai-Uwe Behrmann
+Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
+BuildArch: noarch
+BuildRoot: %{_tmppath}/%{name}-root
+Prefix:    %{_prefix}
+
+%description
+Oyranos is a colour management configuration system.
+It is primarily developed on free operating systems.
+Developers from other OSes can jump in the current
+discussion to make Oyranos aware of cross platform
+standards. Feel cordially invited to make constructive
+suggestions.
+
+Authors:
+--------
+    Oyranos     Kai-Uwe Behrmann <www.behrmann.name>
+
+used components and libraries with divergine FOSS licenses:
+    Elektra     Avi Alkalay and others
+    md5         L. Peter Deutsch
+    libXNVCtrl  Nvidia
+
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+%configure --quick
+
+%install
+rm -rf %{buildroot}
+make DESTDIR=%{buildroot} install-icc
+rm -fr %{buildroot}/%{_datadir}/doc/%{name}
+
+%clean
+rm -rf %{buildroot}
+
+%post
+%postun
+
+
+%package      RGB
+Summary:    Oyranos standard sRGB ICC profile +
+Group:      Applications/Graphics
+Vendor:     http://www.littlecms.com
+URL:        http://www.littlecms.com
+License:    public domain
+Version:    0.4
+%description  RGB
+The "WWW standard" sRGB profile and others
+
+%package      lcmsLAB
+Summary:    Oyranos standard PCS profiles
+Group:      Applications/Graphics
+Vendor:     http://www.littlecms.com
+URL:        http://www.littlecms.com
+License:    public domain
+Version:    0.5
+%description  lcmsLAB
+Special LCMS profiles.
+
+%package      LStarRGB
+Summary:    Oyranos standard Editing RGB profile
+Group:      Applications/Graphics
+Vendor:     http://www.lstar-rgb.com
+URL:        http://www.lstar-rgb.com
+License:    LStar-RGB
+Version:    0.4
+%description  LStarRGB
+The RGB profile maintaining perceptual equal lightness.
+
+%package      Cineon
+Summary:    Oyranos additional Cineon ICC Profiles
+Group:      Applications/Graphics
+URL:        http://www.behrmann.name
+License:    GPL
+Version:    0.4
+%description  Cineon
+Cineon ICC Profiles
+
+%package      PhotoGamutRGB
+Summary:    Oyranos additional ICC Profile for Photoediting
+Group:      Applications/Graphics
+Vendor:     http://www.photogamut.org
+URL:        http://www.photogamut.org
+License:    PhotoGamut
+Version:    0.4
+%description  PhotoGamutRGB
+A ICC Profile optimized for digital photos.
+
+%package      eci-offset2004
+Summary:    ECI Offset-Profiles 2004
+Group:      Applications/Graphics
+URL:        http://www.eci.org
+Vendor:     http://www.eci.org
+License:    Commercial Heidelberg
+Version:    1.1
+%description  eci-offset2004
+ECI Offset-Profiles according to ISO 12647-2. These are CMYK
+ICC profiles for ISO printing conditions. See http://eci.org for
+detailed specifications.
+
+
+%files lcmsLAB
+%defattr(-, root, root)
+%{_datadir}/color/icc/LCMS*.ICM
+%{_datadir}/color/icc/Lab.icc
+%{_datadir}/color/icc/XYZ.icc
+%{_datadir}/color/icc/Gray.icc
+%doc standard_profiles/base/LICENSE
+
+%files Cineon
+%defattr(-, root, root)
+%{_datadir}/color/icc/Cine*.icc
+%doc standard_profiles/base/COPYING
+
+%files LStarRGB
+%defattr(-, root, root)
+%{_datadir}/color/icc/LStar-RGB.icc
+# This should go in the package docs, not with the profiles.
+%doc standard_profiles/base/LStar-License.rtf
+
+%files PhotoGamutRGB
+%defattr(-, root, root)
+%{_datadir}/color/icc/PhotoGamutRGB_avg6c.icc
+%doc standard_profiles/base/LICENSE
+
+%files RGB
+%defattr(-, root, root)
+%{_datadir}/color/icc/sRGB.icc
+%{_datadir}/color/icc/compatibleWithAdobeRGB1998.icc
+%doc standard_profiles/base/LICENSE
+
+%files eci-offset2004
+%defattr(-, root, root)
+%{_datadir}/color/icc/ISOwebcoated.icc
+%{_datadir}/color/icc/ISOuncoated.icc
+%{_datadir}/color/icc/ISOuncoatedyellowish.icc
+%{_datadir}/color/icc/ISOcoated.icc
+%doc standard_profiles/eci/HeidelbergLicense_offset2004.pdf
+%doc standard_profiles/eci/ECI_Offset_2004_DEU.pdf
+%doc standard_profiles/eci/ECI_Offset_2004_ENG.pdf
+%doc standard_profiles/eci/ISOcoated_info.pdf
+%doc standard_profiles/eci/ISOuncoated_info.pdf
+%doc standard_profiles/eci/ISOuncoatedyellow_info.pdf
+%doc standard_profiles/eci/ISOwebcoated_info.pdf
+
+
+%changelog
+* Sun Jul 9 2006 - Kai-Uwe Behrmann <ku.b at gmx.de>
+- add compatibleWithAdobeRGB1998.icc from Graeme Gill
+- move oyranos-sRGB to oyranos-RGB for inclusion of above profile
+
+* Wed Jul 5 2006 - Kai-Uwe Behrmann <ku.b at gmx.de>
+- add Lab.icc and XYZ.icc symlinks => v0.4
+
+* Sat Jun 4 2005 - Kai-Uwe Behrmann <ku.b at gmx.de>
+- sorting URLs and Licenses
+
+* Fri Jun 3 2005  - P. Linnell <mrodcs at scribus.info>
+- spec files tweaks
+- split the package into sub-packages to avoid future name space clashes
+
+* Sat May 28 2005 - Kai-Uwe Behrmann
+- packaging
+
+* Tue Apr 21 2005 Kai-Uwe Behrmann
+- first release
+
+

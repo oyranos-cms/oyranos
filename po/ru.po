@@ -3,20 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  argyll.oy_cmm_register.pot (PACKAGE VERSION)  #-#-#-#-#\n"
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Oyranos 0.1.7\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
 "POT-Creation-Date: 2006-07-26 09:09+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2007-04-14 13:44+0300\n"
+"Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
+"Language-Team: GNOME Cyrillic <gnome-cyr@lists.gnome.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"#-#-#-#-#  oyranos.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
 "POT-Creation-Date: 2007-02-08 12:36+0100\n"
@@ -26,16 +23,19 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Russian\n"
+"X-Poedit-Country: RUSSIAN FEDERATION\n"
 
-#: oyranos_texts.c:405 oyranos_texts.c:423
+#: oyranos_texts.c:405
+#: oyranos_texts.c:423
 msgid "Absolute Colorimetric"
-msgstr ""
+msgstr "Абсолютная колориметрическая"
 
 msgid "ArgyllCMS"
-msgstr ""
+msgstr "ArgyllCMS"
 
 msgid "ArgyllCMS colour management module"
-msgstr ""
+msgstr "Модуль управления цветом ArgyllCMS"
 
 #: oyranos_texts.c:421
 msgid "Behaviour of colour space transformation for proofing"
@@ -53,7 +53,7 @@ msgstr ""
 
 #: oyranos_texts.c:402
 msgid "Default Rendering Intent"
-msgstr ""
+msgstr "Цель цветопередачи по умолчанию"
 
 msgid "Function for Colour Space Transformations."
 msgstr ""
@@ -67,7 +67,9 @@ msgstr ""
 msgid "Mark out of gamut colours for the proofing profile."
 msgstr ""
 
-#: oyranos_texts.c:414 oyranos_texts.c:432 oyranos_texts.c:441
+#: oyranos_texts.c:414
+#: oyranos_texts.c:432
+#: oyranos_texts.c:441
 msgid "No"
 msgstr ""
 
@@ -79,37 +81,41 @@ msgstr ""
 
 #: oyranos_texts.c:420
 msgid "Proofing Rendering Intent"
-msgstr ""
+msgstr "Цель цветопередачи для цветопробы"
 
-#: oyranos_texts.c:405 oyranos_texts.c:423
+#: oyranos_texts.c:405
+#: oyranos_texts.c:423
 msgid "Relative Colorimetric"
-msgstr ""
+msgstr "Относительная колориметрическая"
 
 msgid "Rendering Intent for Colour Space Transformations."
 msgstr ""
 
 #: oyranos_texts.c:405
 msgid "Saturation"
-msgstr ""
+msgstr "Насыщенная"
 
 msgid "the Data Object"
 msgstr ""
 
 #: oyranos_texts.c:411
 msgid "Use Black Point Compensation"
-msgstr ""
+msgstr "Использовать компенсацию чёрной точки"
 
-#: oyranos_texts.c:414 oyranos_texts.c:432 oyranos_texts.c:441
+#: oyranos_texts.c:414
+#: oyranos_texts.c:432
+#: oyranos_texts.c:441
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 #: oyranos_debug.h:89
 msgid "Warning"
-msgstr ""
+msgstr "Предупреждение"
 
-#: oyranos_debug.h:91 oyranos_debug.h:93
+#: oyranos_debug.h:91
+#: oyranos_debug.h:93
 msgid "Warning : "
-msgstr ""
+msgstr "Предупреждение:"
 
 #: oyranos_helper.h:79
 #, c-format
@@ -137,12 +143,12 @@ msgstr ""
 #: oyranos.c:114
 #, c-format
 msgid "not a profile %s"
-msgstr ""
+msgstr "не профиль %s"
 
 #: oyranos.c:140
 #, c-format
 msgid "name longer than %d"
-msgstr ""
+msgstr "имя длиннее %d"
 
 #: oyranos.c:192
 #, c-format
@@ -163,7 +169,8 @@ msgstr ""
 msgid "file %s exist , please remove befor installing new profile\n"
 msgstr ""
 
-#: oyranos_elektra.c:374 oyranos_elektra.c:389
+#: oyranos_elektra.c:374
+#: oyranos_elektra.c:389
 #, c-format
 msgid "default profile type %d; type does not exist"
 msgstr ""
@@ -194,9 +201,11 @@ msgstr ""
 
 #: oyranos_texts.c:159
 msgid "Oyranos Settings Group"
-msgstr ""
+msgstr "Группа параметров Oyranos"
 
-#: oyranos_texts.c:166 oyranos_config_flu.cpp:311 oyranos_config_flu.cpp:337
+#: oyranos_texts.c:166
+#: oyranos_config_flu.cpp:311
+#: oyranos_config_flu.cpp:337
 msgid "Default Profiles"
 msgstr ""
 
@@ -214,7 +223,7 @@ msgstr ""
 
 #: oyranos_texts.c:182
 msgid "Assumed Colour Space"
-msgstr ""
+msgstr "Предполагаемое цветовое пространство"
 
 #: oyranos_texts.c:183
 msgid "Assumed Colour Space for untagged colours"
@@ -222,23 +231,25 @@ msgstr ""
 
 #: oyranos_texts.c:190
 msgid "Proofing Colour Space"
-msgstr ""
+msgstr "Пространство для цветопробы"
 
 #: oyranos_texts.c:191
 msgid "Colour Space for Simulating real devices"
 msgstr ""
 
-#: oyranos_texts.c:198 oyranos_config_fltk.cxx:1555
+#: oyranos_texts.c:198
+#: oyranos_config_fltk.cxx:1555
 msgid "Paths"
-msgstr ""
+msgstr "Пути"
 
 #: oyranos_texts.c:199
 msgid "Paths where ICC Profiles can be found"
 msgstr ""
 
-#: oyranos_texts.c:206 oyranos_config_fltk.cxx:1537
+#: oyranos_texts.c:206
+#: oyranos_config_fltk.cxx:1537
 msgid "Policy"
-msgstr ""
+msgstr "Политика"
 
 #: oyranos_texts.c:207
 msgid "Collections of settings in Oyranos"
@@ -246,7 +257,7 @@ msgstr ""
 
 #: oyranos_texts.c:214
 msgid "Behaviour"
-msgstr ""
+msgstr "Поведение"
 
 #: oyranos_texts.c:215
 msgid "Settings affecting the Behaviour in various situations"
@@ -254,17 +265,15 @@ msgstr ""
 
 #: oyranos_texts.c:222
 msgid "Rendering"
-msgstr ""
+msgstr "Цветопередача"
 
 #: oyranos_texts.c:223
-msgid ""
-"The kind of ICC standard gamut mapping for transforming colours between "
-"differently sized colour spaces"
+msgid "The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"
 msgstr ""
 
 #: oyranos_texts.c:230
 msgid "Save Mixed colour space Documents"
-msgstr ""
+msgstr "Сохранение документов со смешанными пространствами"
 
 #: oyranos_texts.c:231
 msgid "Default Handling of Mixed Colour Spaces inside one single Document"
@@ -272,16 +281,16 @@ msgstr ""
 
 #: oyranos_texts.c:238
 msgid "Mismatching"
-msgstr ""
+msgstr "Несоответствие"
 
 #: oyranos_texts.c:239
-msgid ""
-"Decide what to do when the default colour spaces dont match the current ones."
+msgid "Decide what to do when the default colour spaces dont match the current ones."
 msgstr ""
 
-#: oyranos_texts.c:246 oyranos_texts.c:347
+#: oyranos_texts.c:246
+#: oyranos_texts.c:347
 msgid "Proofing"
-msgstr ""
+msgstr "Цветопроба"
 
 #: oyranos_texts.c:247
 msgid "Default Proofing Settings"
@@ -289,11 +298,11 @@ msgstr ""
 
 #: oyranos_texts.c:254
 msgid "All"
-msgstr ""
+msgstr "Все"
 
 #: oyranos_texts.c:255
 msgid "Oyranos Settings"
-msgstr ""
+msgstr "Параметры Oyranos"
 
 #: oyranos_texts.c:266
 msgid "Editing Rgb"
@@ -356,8 +365,7 @@ msgid "Assumed Web source"
 msgstr ""
 
 #: oyranos_texts.c:330
-msgid ""
-"Assigning an untagged Rgb Image with source from the WWW an colour space"
+msgid "Assigning an untagged Rgb Image with source from the WWW an colour space"
 msgstr ""
 
 #: oyranos_texts.c:338
@@ -377,8 +385,7 @@ msgid "No Image profile"
 msgstr ""
 
 #: oyranos_texts.c:358
-msgid ""
-"Image has no colour space embedded. What default action shall be performed?"
+msgid "Image has no colour space embedded. What default action shall be performed?"
 msgstr ""
 
 #: oyranos_texts.c:360
@@ -389,8 +396,11 @@ msgstr ""
 msgid "Assign Assumed Profile"
 msgstr ""
 
-#: oyranos_texts.c:360 oyranos_texts.c:369 oyranos_texts.c:378
-#: oyranos_texts.c:387 oyranos_texts.c:396
+#: oyranos_texts.c:360
+#: oyranos_texts.c:369
+#: oyranos_texts.c:378
+#: oyranos_texts.c:387
+#: oyranos_texts.c:396
 msgid "Promt"
 msgstr ""
 
@@ -398,16 +408,20 @@ msgstr ""
 msgid "On Rgb Mismatch"
 msgstr ""
 
-#: oyranos_texts.c:367 oyranos_texts.c:376
+#: oyranos_texts.c:367
+#: oyranos_texts.c:376
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr ""
 
-#: oyranos_texts.c:369 oyranos_texts.c:378 oyranos_texts.c:387
+#: oyranos_texts.c:369
+#: oyranos_texts.c:378
+#: oyranos_texts.c:387
 #: oyranos_texts.c:396
 msgid "Preserve Numbers"
 msgstr ""
 
-#: oyranos_texts.c:369 oyranos_texts.c:378
+#: oyranos_texts.c:369
+#: oyranos_texts.c:378
 msgid "Convert automatically"
 msgstr ""
 
@@ -468,12 +482,11 @@ msgid "Hardproof by Default"
 msgstr ""
 
 #: oyranos_texts.c:439
-msgid ""
-"Behaviour for preselecting Hardproofing with Standard Proofing Profile at "
-"print time"
+msgid "Behaviour for preselecting Hardproofing with Standard Proofing Profile at print time"
 msgstr ""
 
-#: oyranos_texts.c:555 oyranos_config_fltk.cxx:413
+#: oyranos_texts.c:555
+#: oyranos_config_fltk.cxx:413
 #, c-format
 msgid "multiple occurencies of default %s profile: %d times"
 msgstr ""
@@ -483,7 +496,8 @@ msgstr ""
 msgid "unexpected EDID lenght %d"
 msgstr ""
 
-#: oyranos_monitor.c:371 oyranos_monitor.c:1020
+#: oyranos_monitor.c:371
+#: oyranos_monitor.c:1020
 msgid "open X Display failed"
 msgstr ""
 
@@ -527,7 +541,8 @@ msgstr ""
 msgid "is a colour profile administration tool for monitors"
 msgstr ""
 
-#: oyranos_gamma.c:106 oyranos_policy.c:77
+#: oyranos_gamma.c:106
+#: oyranos_policy.c:77
 msgid "Usage"
 msgstr ""
 
@@ -547,7 +562,8 @@ msgstr ""
 msgid "Activate profiles:"
 msgstr ""
 
-#: oyranos_gamma.c:137 oyranos_policy.c:92
+#: oyranos_gamma.c:137
+#: oyranos_policy.c:92
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -563,24 +579,31 @@ msgstr ""
 msgid "policy filename"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:52 oyranos_config_fltk.cxx:142
-#: oyranos_config_fltk.cxx:373 oyranos_config_flu.cpp:101
+#: oyranos_config_fltk.cxx:52
+#: oyranos_config_fltk.cxx:142
+#: oyranos_config_fltk.cxx:373
+#: oyranos_config_flu.cpp:101
 #: oyranos_config_flu.cpp:229
 msgid "[none]"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:147 oyranos_config_fltk.cxx:221
-#: oyranos_config_flu.cpp:234 oyranos_config_flu.cpp:281
+#: oyranos_config_fltk.cxx:147
+#: oyranos_config_fltk.cxx:221
+#: oyranos_config_flu.cpp:234
+#: oyranos_config_flu.cpp:281
 msgid "setting"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:147 oyranos_config_fltk.cxx:163
-#: oyranos_config_fltk.cxx:221 oyranos_config_flu.cpp:234
+#: oyranos_config_fltk.cxx:147
+#: oyranos_config_fltk.cxx:163
+#: oyranos_config_fltk.cxx:221
+#: oyranos_config_flu.cpp:234
 #: oyranos_config_flu.cpp:281
 msgid "failed!"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:153 oyranos_config_flu.cpp:239
+#: oyranos_config_fltk.cxx:153
+#: oyranos_config_flu.cpp:239
 msgid "Select Profile"
 msgstr ""
 
@@ -605,11 +628,13 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:227 oyranos_config_flu.cpp:286
+#: oyranos_config_fltk.cxx:227
+#: oyranos_config_flu.cpp:286
 msgid "Select Behaviour"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:340 oyranos_config_fltk.cxx:433
+#: oyranos_config_fltk.cxx:340
+#: oyranos_config_fltk.cxx:433
 #: oyranos_config_flu.cpp:83
 #, c-format
 msgid "%s Profile"
@@ -633,27 +658,27 @@ msgstr ""
 
 #: oyranos_config_fltk.cxx:1425
 msgid "Office + Home"
-msgstr ""
+msgstr "Офис + дом"
 
 #: oyranos_config_fltk.cxx:1426
 msgid "Graphic Designers"
-msgstr ""
+msgstr "Дизайнеры"
 
 #: oyranos_config_fltk.cxx:1427
 msgid "PrePress"
-msgstr ""
+msgstr "Предпечатная подготовка"
 
 #: oyranos_config_fltk.cxx:1428
 msgid "Photographers"
-msgstr ""
+msgstr "Фотографы"
 
 #: oyranos_config_fltk.cxx:1520
 msgid "Oyranos Configuration"
-msgstr ""
+msgstr "Настройка Oyranos"
 
 #: oyranos_config_fltk.cxx:1527
 msgid "Oyranos Configuration "
-msgstr ""
+msgstr "Настройка Oyranos"
 
 #: oyranos_config_fltk.cxx:1538
 msgid "Reset to a standard Policy for Oyranos."
@@ -669,7 +694,7 @@ msgstr ""
 
 #: oyranos_config_fltk.cxx:1567
 msgid "Refresh"
-msgstr ""
+msgstr "Обновить"
 
 #: oyranos_config_fltk.cxx:1573
 msgid "Active Policy:"
@@ -677,20 +702,21 @@ msgstr ""
 
 #: oyranos_config_fltk.cxx:1576
 msgid "----"
-msgstr ""
+msgstr "----"
 
 #: oyranos_config_flu.cpp:298
 msgid "Colour Management Settings"
-msgstr ""
+msgstr "Параметры управления цветом"
 
 #: oyranos_config_flu.cpp:369
 msgid "Profile Paths"
-msgstr ""
+msgstr "Пути к профилям"
 
 #: oyranos_config_flu.cpp:459
 msgid "/Default Profiles/"
-msgstr ""
+msgstr "/Профили по умолчанию/"
 
 #: oyranos_config_flu.cpp:476
 msgid "Oyranos Colour Management"
-msgstr ""
+msgstr "Управление цветом при помощи Oyranos"
+
