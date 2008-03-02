@@ -1,11 +1,14 @@
+include config
+
 CC=cc
 CXX=c++
 MAKEDEPEND	= /usr/X11R6//bin/makedepend -Y
-OPTS=-Wall -O2
+OPTS=-Wall -O2 -g
 COLLECT = ar cru
 RANLIB = ranlib
 LNK = ln -s
-RM = rm -f
+RM = rm -vf
+COPY = cp -v
 
 prefix		= /opt/local
 exec_prefix	= ${prefix}
@@ -16,21 +19,23 @@ libdir		= ${exec_prefix}/lib
 mandir		= ${prefix}/man
 srcdir		= .
 
-TARGET  = oyranos
+#TARGET  = oyranos
 
-VERSION_A = 0
-VERSION_B = 0
-VERSION_C = 1
+#VERSION_A = 0
+#VERSION_B = 0
+#VERSION_C = 1
 VERSION = $(VERSION_A).$(VERSION_B).$(VERSION_C)
 LIBSONAMEFULL = lib$(TARGET).so.$(VERSION)
 LIBSONAME = lib$(TARGET).so.$(VERSION_A)
+LIBSO = lib$(TARGET).so
 LIBNAME = lib$(TARGET).a
 LIB_MONI_SONAMEFULL = lib$(TARGET)_moni.so.$(VERSION)
 LIB_MONI_SONAME = lib$(TARGET)_moni.so.$(VERSION_A)
+LIB_MONI_SO = lib$(TARGET)_moni.so
 LIB_MONI_NAME = lib$(TARGET)_moni.a
 
 #APPLE = 1
-FLU = 1
+#FLU = 1
 DL = --ldflags # --ldstaticflags
 
 ifdef FLU
@@ -101,7 +106,7 @@ dir     = Entwickeln
 timedir = $(topdir)/$(dir)
 mtime   = `find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g`
 
-.SILENT:
+#.SILENT:
 
 all:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma test2
 
@@ -151,16 +156,38 @@ test:	$(LIBSONAMEFULL) test.o
 	$(APPLE)
 
 
-install:	$(TARGET)
-	cp -v $(TARGET) $(bindir)
+install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma
+	make uninstall
+	$(COPY) $(TARGET)-config $(bindir)
+	$(COPY) $(TARGET)-gamma $(bindir)
+	$(COPY) $(LIBSONAMEFULL) $(libdir)
+	$(LNK)  $(LIBSONAMEFULL) $(libdir)/$(LIBSONAME)
+	$(LNK)  $(LIBSONAMEFULL) $(libdir)/$(LIBSO)
+	$(COPY) $(LIB_MONI_SONAMEFULL) $(libdir)
+	$(LNK)  $(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SONAME)
+	$(LNK)  $(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SO)
+	test -d $(includedir)/oyranos || mkdir $(includedir)/oyranos
+	$(COPY) oyranos.h $(includedir)/oyranos
+	$(COPY) oyranos_definitions.h $(includedir)/oyranos
+	$(COPY) oyranos_monitor.h $(includedir)/oyranos
+
+uninstall:
+	$(RM)   $(bindir)/$(TARGET)-gamma
+	$(RM)   $(bindir)/$(TARGET)-config
+	$(RM)   $(libdir)/$(LIBSONAMEFULL) $(libdir)/$(LIBSONAME) $(libdir)/$(LIBSO)
+	$(RM)   $(libdir)/$(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SONAME) \
+			$(libdir)/$(LIB_MONI_SO)
+	$(RM)   -R $(includedir)/oyranos
+
 clean:
-	rm -v \
+	RM \
 	$(OBJECTS) $(MONI_OBJECTS) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_MONI_SONAME)\
 	$(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o $(TARGET)-gamma test2.o test.o \
 	test2 test 
 
-depend:
-	$(MAKEDEPEND) -f.mkdep -I. $(CFLAGS) $(SOURCES)
+mkdepend:
+	echo "" > mkdepend
+	$(MAKEDEPEND) -f mkdepend -I. $(CFLAGS) $(SOURCES)
 
 
 # The extension to use for executables...
@@ -182,7 +209,7 @@ EXEEXT		=
 	echo Compiling $< ...
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
-.cpp.o:
+.cpp.o:	mkdepend
 	echo Compiling $< ...
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
@@ -190,10 +217,12 @@ tgz:
 	tar cf - -C $(topdir) \
 	$(addprefix $(dir)/,$(DOKU)) \
 	$(dir)/makefile \
+	$(dir)/oyranos-config \
 	$(addprefix $(dir)/,$(SOURCES)) \
 	$(addprefix $(dir)/,$(FLUID)) \
 	| gzip > $(TARGET)_$(mtime).tgz
 	mv -v $(TARGET)_*.tgz ../Archiv
 
+
 # makedepend
-include .mkdep
+include mkdepend

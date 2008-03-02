@@ -26,9 +26,9 @@ Zusätze:
     und an vielen anderen Plätzen im Internet
 
 
-Fehler (bugs):
+Vorschläge / Fehler:
 
-    Bitte an mich schicken.
+    Bitte an mich schicken <ku.b at gmx.de>
 
 
 Pläne:
@@ -39,12 +39,65 @@ Pläne:
 --------------------------------------------------------------------------------
 
 
+  Oyranos:
            Kai-Uwe Behrmann <www.behrmann.name>
 
-  Elektra: Avi Alkalay <elektra.sf.net>
+
+  Elektra:
+           Avi Alkalay <elektra.sf.net>
 
 
 ================================================================================
 
 English
+
+
+Oyranos (gr. sky):
+
+    The Colour Management System (CMS) Oyranos allows the coordination of
+    device specific Informations (ICC profiles).
+
+    It is at the moment an test.
+    
+
+--------------------------------------------------------------------------------
+
+prerequisits:
+
+    Elektra: <elektra.sf.net>
+
+configuration:
+
+    for osX in the file "makefile": #APPLE = 1  comment out
+
+add ons:
+
+    Profiles are available for instance from the Adobe web site:
+    http://www.adobe.com/support/downloads/main.html
+    and many other places in the internet
+
+
+bugs/suggestions:
+
+    please report to me <ku.b at gmx.de>
+
+
+plans:
+
+    - documentation
+    - profile comparision
+
+--------------------------------------------------------------------------------
+
+
+  Oyranos:
+           Kai-Uwe Behrmann <www.behrmann.name>
+
+
+  Elektra:
+           Avi Alkalay <elektra.sf.net>
+
+
+================================================================================
+
 

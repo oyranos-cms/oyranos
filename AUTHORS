@@ -1,9 +1,11 @@
 
-Oyranos: Kai-Uwe Behrmann <www.behrmann.name>
+Oyranos:   Kai-Uwe Behrmann <www.behrmann.name>
 
 ----------------------------------------------------------------------------
 
 
-benutzt werden folgende Bibliotheken:
+libraries:
   Elektra: Avi Alkalay <elektra.sf.net>
 
+external:
+  xcalib:  Stefan Döhla

@@ -1,0 +1,89 @@
+#!/bin/bash
+
+TARGET=oyranos
+
+VERSION_A=0
+VERSION_B=0
+VERSION_C=1
+
+VERSION="$VERSION_A"
+if [ $VERSION_B -lt 10 ]; then
+  N=0
+  VERSION="$VERSION$N$VERSION_B"
+else
+  VERSION="$VERSION$VERSION_B"
+fi
+if [ $VERSION_C -lt 10 ]; then
+  N=0
+  VERSION="$VERSION$N$VERSION_C"
+else
+  VERSION="$VERSION$VERSION_C"
+fi
+
+prefix="/opt/local"
+
+
+if [ $# -eq 0 ]; then
+  echo "oyranos"
+fi
+
+
+while test $# -gt 0 
+do
+    case "$1" in
+	-*=*) 
+	    optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+	    ;;
+	*)
+	    optarg=
+	    ;;
+    esac
+
+    case $1 in
+	--version)
+	    echo $VERSION
+	    ;;
+	--api-version)
+	    echo $VERSION_A
+	    ;;
+	--cflags)
+	    echo_cflags=yes
+	    ;;
+	--ldflags)
+	    echo_ldflags=yes
+	    ;;
+	--ld_x_flags)
+	    echo_ld_x_flags=yes
+	    ;;
+	*)
+	    echo_help=yes
+	    ;;
+    esac
+    shift
+done
+
+if [ "$echo_cflags" == "yes" ]; then
+  echo "-I$prefix/include"
+fi
+
+if [ "$echo_ldflags" == "yes" ]; then
+  echo "-L$prefix/lib -loyranos"
+fi
+
+if [ "$echo_ld_x_flags" == "yes" ]; then
+  echo "-L$prefix/lib -loyranos -loyranos_moni"
+fi
+
+
+if [ -f oyranos_helper.h ]; then
+  echo "TARGET = $TARGET" > config
+  echo "" >> config
+  echo "VERSION_A = $VERSION_A" >> config
+  echo "VERSION_B = $VERSION_B" >> config
+  echo "VERSION_C = $VERSION_C" >> config
+  echo "" >> config
+  echo "prefix = $prefix" >> config
+  echo "" >> config
+fi
+
+

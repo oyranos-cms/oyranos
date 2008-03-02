@@ -110,8 +110,11 @@ oyGetMonitorInfo_                 (const char* display_name,
 
   XCloseDisplay(display);
 
-  if( nitems_return != 128 )
+  if( nitems_return != 128 ) {
     WARN_S((_("unexpected EDID lenght")))
+    DBG_PROG_ENDE
+    return 1;
+  }
 
   // convert to an deployable struct
   edi = (struct DDC_EDID1*) prop_return;

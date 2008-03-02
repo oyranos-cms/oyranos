@@ -418,6 +418,8 @@ oyIsDir_ (const char* path)
   return r;
 }
 
+#include <errno.h>
+
 int
 oyIsFileFull_ (const char* fullFileName)
 { DBG_PROG_START
@@ -425,16 +427,30 @@ oyIsFileFull_ (const char* fullFileName)
   int r = 0;
   const char* name = fullFileName;
 
-  DBG_NUM_S(("fullFileName = %s", fullFileName))
+  DBG_NUM_S(("fullFileName = \"%s\"", fullFileName))
   status.st_mode = 0;
   r = stat (name, &status);
+
   DBG_NUM_S(("status.st_mode = %d", (status.st_mode&S_IFMT)&S_IFDIR))
   DBG_NUM_S(("status.st_mode = %d", status.st_mode))
   DBG_NUM_S(("name = %s", name))
+  DBG_NUM_V( r )
+  switch (r)
+  {
+    case EACCES:       WARN_S(("EACCES = %d\n",r)); break;
+    case EIO:          WARN_S(("EIO = %d\n",r)); break;
+    case ELOOP:        WARN_S(("ELOOP = %d\n",r)); break;
+    case ENAMETOOLONG: WARN_S(("ENAMETOOLONG = %d\n",r)); break;
+    case ENOENT:       WARN_S(("ENOENT = %d\n",r)); break;
+    case ENOTDIR:      WARN_S(("ENOTDIR = %d\n",r)); break;
+    case EOVERFLOW:    WARN_S(("EOVERFLOW = %d\n",r)); break;
+  }
+
   r = !r &&
        (   ((status.st_mode & S_IFMT) & S_IFREG)
         || ((status.st_mode & S_IFMT) & S_IFLNK));
 
+  DBG_NUM_V( r )
   if (r)
   {
     FILE* fp = fopen (name, "r"); DBG_PROG
@@ -658,8 +674,10 @@ oyGetPathFromProfileName_ (const char* fileName)
         OY_FREE (pathName)
     }
 
-    if (!success)
+    if (!success) {
       WARN_S( ("profile %s not found in colour path\n", fileName))
+      return 0;
+    }
 
   } else
   {/* else use fileName as an full qualified name, check name and test profile*/
