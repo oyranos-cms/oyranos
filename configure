@@ -9,9 +9,9 @@ SPEC=$TARGET.spec
 
 VERSION_A=0
 VERSION_B=1
-VERSION_C=2
+VERSION_C=3
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
-TIME="November 2004 - September 2005"
+TIME="November 2004 - November 2005"
 
 src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
 srcdir="`pwd`"
@@ -124,6 +124,13 @@ if [ $? = 0 ]; then
 else
   echo -e "\c"
 #  echo "no or too old LCMS found,\n  need at least version 1.14, download: www.littlecms.com"
+fi
+
+
+if [ "`which doxygen`" != "" ]; then
+  echo "Doxygen `doxygen --version`         detected"
+else
+  echo "Doxygen                 not detected"
 fi
 
 `pkg-config  --atleast-version=1.0 libpng 2>>error.txt`

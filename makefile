@@ -183,7 +183,7 @@ $(TARGET)_config_flu_static:	$(TARGET)_moni $(FLU_OBJECTS)
 	`flu-config --ldstaticflags` \
 	`fltk-config --use-images --ldstaticflags` \
 	-L/usr/X11R6/lib \
-	/usr/lib/libelektra.a -lsupc++ $(PNG_LIBS)
+	`test -f /usr/lib/libelektra.a && echo /usr/lib/libelektra.a || echo -lelektra` -lsupc++ $(PNG_LIBS)
 	#strip $(TARGET)_config_flu
 	$(REZ)
 
