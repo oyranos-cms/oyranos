@@ -1,23 +1,23 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2005  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
  *
@@ -34,7 +34,7 @@
 
 #include <oyranos.h>
 
-char* _oyReadFileToMem(char* fullFileName, size_t *size);
+char* oyReadFileToMem_(char* fullFileName, size_t *size);
 
 int
 main(int argc, char** argv)
@@ -137,12 +137,12 @@ main(int argc, char** argv)
     if (!system(tempName))
     {
       sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
-      model = _oyReadFileToMem (tempName, &size);
+      model = oyReadFileToMem_ (tempName, &size);
       memcpy (tempName, model, size); tempName[size] = 0;
       if (model) free (model);
       model = (char*) calloc (strlen(tempName)+1,sizeof(char));
       sprintf (model, tempName);
-      printf ("%s %d\n", model, strlen(model));
+      printf ("%s:%d %s %d\n", __FILE__,__LINE__, model, strlen(model));
     } else
       model = 0;
 
@@ -150,19 +150,19 @@ main(int argc, char** argv)
     if (!system(tempName))
     {
       sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
-      product_ID = _oyReadFileToMem (tempName, &size);
+      product_ID = oyReadFileToMem_ (tempName, &size);
       memcpy (tempName, product_ID, size); tempName[size] = 0;
       if (product_ID) free (product_ID);
       product_ID = (char*) calloc (strlen(tempName)+1,sizeof(char));
       sprintf (product_ID, tempName);
-      printf ("%s %d\n", product_ID, strlen(product_ID));
+      printf ("%s:%d %s %d\n", __FILE__,__LINE__,product_ID, strlen(product_ID));
     } else
       product_ID = 0;
 
     //oy_debug = 1;
     if (model && product_ID)
     {
-      printf ("%s %s\n",model, product_ID);
+      printf ("%s:%d %s %s\n", __FILE__,__LINE__,model, product_ID);
       //oySetDeviceProfile(DISPLAY,0,model,product_ID,0,0,0,0,0,"M20040609_NatWP_50H_50K.icm",0,0);
       profil = oyGetDeviceProfile (DISPLAY, 0, model, product_ID, "monitor",0,0,0,0);
     }

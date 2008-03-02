@@ -37,7 +37,7 @@
 
 /* Debug system */
 extern int level_PROG;
-extern clock_t _oyranos_clock;
+extern clock_t oyranos_clock_;
 
 #define DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
 

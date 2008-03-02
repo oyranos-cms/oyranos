@@ -34,7 +34,7 @@ ifdef FLU
 FLU_H = -DHAVE_FLU
 endif
 
-LINK_FLAGS = -shared -Wl,-soname -Wl,$(LIBSONAME)
+LINK_FLAGS = -shared -fpic -ldl -Wl,-soname -Wl,$(LIBSONAME)
 
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 INCL=-I$(includedir) -I/usr/X11R6/include -I$(srcdir)

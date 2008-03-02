@@ -5,19 +5,19 @@
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
  *
@@ -46,22 +46,22 @@ extern "C" {
 
 /* path names */
 
-int	oyPathsCount         (void);
-char*	oyPathName           (int number);
-int	oyPathAdd            (char* pathname);
-void	oyPathRemove         (char* pathname);
-void	oyPathSleep          (char* pathname);
-void	oyPathActivate       (char* pathname);
+int   oyPathsCount         (void);
+char* oyPathName           (int number);
+int   oyPathAdd            (char* pathname);
+void  oyPathRemove         (char* pathname);
+void  oyPathSleep          (char* pathname);
+void  oyPathActivate       (char* pathname);
 
 
 /* --- default profiles --- */
 
 int	oySetDefaultImageProfile          (char* name);
-int	oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size);
+int	oySetDefaultImageProfileBlock     (char* name, void* mem, int size);
 int	oySetDefaultWorkspaceProfile      (char* name);
-int	oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size);
+int	oySetDefaultWorkspaceProfileBlock (char* name, void* mem, int size);
 int	oySetDefaultCmykProfile           (char* name);
-int	oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size);
+int	oySetDefaultCmykProfileBlock      (char* name, void* mem, int size);
 
 char*	oyGetDefaultImageProfileName      ();
 char*	oyGetDefaultWorkspaceProfileName  ();
@@ -70,14 +70,14 @@ char*	oyGetDefaultCmykProfileName       ();
 /* --- profile checking --- */
 
 int	oyCheckProfile (char* name, int flag);
-int	oyCheckProfileMem (void* mem, size_t size, int flags);
+int	oyCheckProfileMem (void* mem, int size, int flags);
 
 
 /* --- profile access through oyranos --- */
 
 /* check for sizes before using any profiles */
-size_t	oyGetProfileSize                  (char* profilename);
-void*	oyGetProfileBlock                 (char* profilename, size_t* size);
+int	oyGetProfileSize                  (char* profilename);
+void*	oyGetProfileBlock                 (char* profilename, int* size);
 
 /* device profiles */
 
@@ -107,7 +107,7 @@ typedef enum  {
  *                                          "calc.pool", 0, "100lux", 0,
  *                                          "mga1450");
  * if (profile_name)
- * { char* ptr = (char*) malloc (oyGetProfileSize (profile_name),sizeof(size_t);
+ * { char* ptr = (char*) malloc (oyGetProfileSize (profile_name),sizeof(int);
  *   ptr = oyGetProfileBlock (profile_name);
  *     // do something
  *   free (ptr);
@@ -135,7 +135,7 @@ int	oySetDeviceProfile                    (DEVICETYP typ,
                                            char* attrib3,
                                            char* profilename,
                                            void* mem,
-                                           size_t size);
+                                           int   size);
 #if 0
 int	oySetProfileProperty                  (char* profilename,
                                            char* property,
