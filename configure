@@ -182,17 +182,17 @@ else
   fi
 fi
 
-`pkg-config  --atleast-version=1.14 lcms 2>>error.txt`
-if [ $? = 0 ]; then
-  echo "littleCMS `pkg-config --modversion lcms`          detected"
-  echo "#define HAVE_LCMS 1" >> $CONF_H
-  echo "LCMS = 1" >> $CONF
-  echo "LCMS_H = `pkg-config --cflags lcms`" >> $CONF
-  echo "LCMS_LIBS = `pkg-config --libs lcms`" >> $CONF
-else
-  echo -e "\c"
+#`pkg-config  --atleast-version=1.14 lcms 2>>error.txt`
+#if [ $? = 0 ]; then
+#  echo "littleCMS `pkg-config --modversion lcms`          detected"
+#  echo "#define HAVE_LCMS 1" >> $CONF_H
+##  echo "LCMS = 1" >> $CONF
+#  echo "LCMS_H = `pkg-config --cflags lcms`" >> $CONF
+#  echo "LCMS_LIBS = `pkg-config --libs lcms`" >> $CONF
+#else
+#  echo -e "\c"
 #  echo "no or too old LCMS found,\n  need at least version 1.14, download: www.littlecms.com"
-fi
+#fi
 
 
 if [ "`which doxygen`" != "" ]; then
@@ -281,7 +281,7 @@ echo ""
 # Alle ifdefs landen hier
 echo "RM = rm -vf" >> $CONF
 if [ $OSUNAME = "APPLE" ]; then
-  echo "COPY = cp -v" >> $CONF
+  echo "COPY = cp -pv" >> $CONF
   echo "LINK_FLAGS = -dynamiclib" >> $CONF
   echo "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
   echo "OPTS=-Wall -O2 -g -fPIC -L." >> $CONF
@@ -299,7 +299,7 @@ else
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
     echo "OPTS=-Wall -g -fPIC #-O2" >> $CONF
   else
-    echo "COPY = cp" >> $CONF
+    echo "COPY = cp -p" >> $CONF
     echo "LINK_FLAGS = -shared -ldl \$(ICONV)" >> $CONF
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
     echo "OPTS=-Wall -O2 -g -fpic -L." >> $CONF
