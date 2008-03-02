@@ -146,7 +146,7 @@ ALL_FILES =	$(DOKU) \
 
 all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)_gamma $(FLU_GUI) test2
 
-$(TARGET):	$(OBJECTS) static
+$(TARGET):	$(TARGET)/$(TARGET).h $(OBJECTS) static
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
