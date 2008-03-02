@@ -28,6 +28,7 @@
 // Date:      25. 11. 2004
 
 #include <kdb.h>
+#include <time.h>
 
 #include "oyranos.h"
 
@@ -73,6 +74,7 @@ main()
   oyPathRemove(a);
 
   printf ("count of paths after removing one = %d\n", oyPathsCount());
+  oy_debug = 1;
 
   oySetDefaultCmykProfile ("CMYK.icc");
 
@@ -95,6 +97,9 @@ main()
 
     printf ("size = %d pos = %lu\n",size, (int) profil);
     r=oySetDefaultWorkspaceProfileBlock ("ex_workspace.icm", profil, size);
+    oy_debug = 1;
+    r=oySetDefaultWorkspaceProfile("~/.color/../.color/icc/ex_workspace.icm");
+    oy_debug = 0;
     if (r)
       printf ("profil = %lu written  %s\n", profil, "ex_workspace.icm");
     else
@@ -102,8 +107,21 @@ main()
       
     free (profil);
 
-    printf ("%s exist %d\n", pn, oyIsFile(pn));
+    printf ("%s exist %d\n", pn, oyCheckProfile(pn));
   }
+
+  printf ("%lu CLOCKS_PER_SEC %d\n", clock(), CLOCKS_PER_SEC);
+  printf ("%d\n", clock());
+
+  { char* name = oyGetDefaultImageProfileName();
+    printf ("default %s profile = %s\n", OY_DEFAULT_IMAGE_PROFILE, name);
+    name = oyGetDefaultWorkspaceProfileName();
+    printf ("default %s profile = %s\n", OY_DEFAULT_WORKSPACE_PROFILE, name);
+    name = oyGetDefaultCmykProfileName();
+    printf ("default %s profile = %s\n", OY_DEFAULT_CMYK_PROFILE, name);
+    free (name);
+  }
+
 
   return 0;
 }

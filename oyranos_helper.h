@@ -37,13 +37,13 @@
 extern int level_PROG;
 extern clock_t _oyranos_clock;
 
-#define DBG_UHR_ (double)clock()/CLOCKS_PER_SEC
+#define DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
 
-#define DBG_T_ printf ("%s:%d %s() %d ", __FILE__,__LINE__,__func__, DBG_UHR_);
+#define DBG_T_ printf ("%s:%d %s() %lf ", __FILE__,__LINE__,__func__, DBG_UHR_);
 #define LEVEL { int i; for (i = 0; i < level_PROG; i++) printf (" "); }
-#define DBG { LEVEL printf("  "); DBG_T_ printf ("\n");}
-#define DBG_S(txt) { LEVEL printf("  "); DBG_T_ printf( txt ); }
-#define DBG_V(txt) { LEVEL printf("  "); DBG_T_ printf(#txt " %d\n", txt);}
+#define DBG if(oy_debug) { LEVEL printf("        "); DBG_T_ printf ("\n");}
+#define DBG_S(txt) if(oy_debug) { LEVEL printf("        "); DBG_T_ printf txt ; printf("\n"); }
+#define DBG_V(txt) if(oy_debug) { LEVEL printf("        "); DBG_T_ printf(#txt " %d\n", txt);}
 #if DEBUG == 1
 #define DBG_MEM DBG
 #define DBG_MEM_S(txt) DBG_S(txt)
@@ -64,8 +64,8 @@ extern clock_t _oyranos_clock;
 #endif
 #if DEBUG == 1
 #define DBG_PROG DBG
-#define DBG_PROG_START level_PROG++; { int i; for (i = 0; i < level_PROG; i++) printf("+"); printf " Start: "; DBG_T_ cout << endl; }
-#define DBG_PROG_ENDE { int i; for (i = 0; i < level_PROG; i++) printf ("-"); printf(" Ende:  "); DBG_T_ level_PROG--; printf("\n"); }
+#define DBG_PROG_START if(oy_debug) { level_PROG++; int i; for (i = 0; i < level_PROG; i++) printf("+"); printf (" Start: "); DBG_T_ printf("\n"); }
+#define DBG_PROG_ENDE if(oy_debug) { int i; for (i = 0; i < level_PROG; i++) printf ("-"); printf(" Ende:  "); DBG_T_ level_PROG--; printf("\n"); }
 #define DBG_PROG_S(txt) DBG_S(txt)
 #define DBG_PROG_V(txt) DBG_V(txt)
 #else

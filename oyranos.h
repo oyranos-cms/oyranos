@@ -164,6 +164,10 @@ int	oySetProfileProperty              (char* profilename,
 
 /* measure the output and check the consistency for quality ashurance */
 
+
+// debugging variable - set 0 to off (default), set 1 to switch debugging on
+extern int oy_debug;
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
