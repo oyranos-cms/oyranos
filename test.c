@@ -77,8 +77,10 @@ main()
   oySetDefaultCmykProfile ("CMYK.icc");
 
   {
-    char profil[3000] = {0,0,0};
+    char *profil = (char*) calloc (sizeof(char), 3000);
+    printf ("profil = %lu written  %s\n", profil, "example_workspace.icm");
     oySetDefaultWorkspaceProfileBlock ("example_workspace.icm", profil, 3000);
+    free (profil);
   }
 
   return 0;

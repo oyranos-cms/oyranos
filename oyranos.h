@@ -44,8 +44,9 @@ extern "C" {
  * configure system wide settings
  */
 
-/* definitions */
+/* --- definitions --- */
 #define OY_SLASH                 "/"
+#define OY_SLASH_C               '/'
 #define OY_KEY                   "sw/oyranos"
 #define OY_SYS                   "system/"
 #define OY_USER                  "user/"
@@ -69,7 +70,7 @@ void	oyPathSleep          (char* pathname);
 void	oyPathActivate       (char* pathname);
 
 
-/* default profiles */
+/* --- default profiles --- */
 
 #define OY_DEFAULT_IMAGE_PROFILE     OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_image"
 #define OY_DEFAULT_WORKSPACE_PROFILE OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_workspace"
@@ -86,8 +87,13 @@ char*	oyGetDefaultImageProfileName      ();
 char*	oyGetDefaultWorkspaceProfileName  ();
 char*	oyGetDefaultCmykProfileName       ();
 
+/* --- profile checking --- */
 
-/* profile access through oyranos */
+int	oyCheckProfile (char* name);
+int	oyCheckProfileMem (void* mem, size_t size);
+
+
+/* --- profile access through oyranos --- */
 
 /* check for sizes before using any profiles */
 size_t	oyGetProfileSize                  (char* profilename);
@@ -137,9 +143,9 @@ int	oySetDeviceProfile                (char* manufacturer,
                                            size_t size);
 
 /*
- * OY_PropClass is used as shorthand for an property key
+ * OY_Prop is used as shorthand for an property key
  */
-typedef enum OY_PropClass
+typedef enum OY_Prop
 {
   MANUFACTURER,
   MODEL,
@@ -150,10 +156,10 @@ typedef enum OY_PropClass
   BITDEPTH,	/* cameras / scanners  1/4/8/12/14/16 bit per colour channel */
   EXTENDED	/* use this to describe an more complex scenario like printer
 		   settings, value should contain corresponding key set name */
-} OY_PropClass;
+} OY_Prop;
 
 int	oySetProfileProperty              (char* profilename,
-                                           OY_PropClass property_class,
+                                           OY_Prop property_class,
                                            char* value);
 
 /* measure the output and check the consistency for quality ashurance */
