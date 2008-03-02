@@ -97,13 +97,6 @@ FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 
 INCL_DEP = $(INCL) $(SOURCES)
 
-TIMEDIR = ./
-# MTIME   := $(shell find $(TIMEDIR) -prune -printf %Ty%Tm%Td.%TT | sed s/\://g)
-MTIME   := $(shell stat $(TIMEDIR) | sed 's/^[ \t]*//;s/[ \t]*$$//' | sed '/odify/!d' | sed 's/.odify:[ \t]//' | sed 's/[ \t]*[+-]....$$//' | sed 's/^..//' | sed 's/[-:]//g' | sed 's/[ \t]/./g' | sed 's/.[0-9]*$$//')
-
-time:
-	echo $(MTIME)
-
 .SILENT:
 
 TEST2 = test2
@@ -132,6 +125,12 @@ all:	mkdepend $(LIB_MONI_SONAMEFULL) \
 	         echo -e "$${prof} profiles will be included" || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
+
+# MTIME   := $(shell find $(TIMEDIR) -prune -printf %Ty%Tm%Td.%TT | sed s/\://g)
+
+# this is a test
+time:
+	echo $(MTIME)
 
 # build all objects and libraries, link the headers to $(TARGET)
 $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)

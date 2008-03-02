@@ -212,7 +212,7 @@ if [ $? = 0 ]; then
   echo "#define HAVE_PNG 1" >> $CONF_H
   echo "PNG = 1" >> $CONF
   echo "PNG_H = `pkg-config --cflags $LIBPNG`" >> $CONF
-  echo "PNG_LIBS = `pkg-config --libs $lIBPNG`" >> $CONF
+  echo "PNG_LIBS = `pkg-config --libs $LIBPNG`" >> $CONF
 else
   echo "no or too old libpng found,\n  need at least version 1.0, download: www.libpng.org"
 fi
@@ -273,9 +273,6 @@ echo "libdir=\${exec_prefix}/$LIBDIR" >> $PKGC
 cat  $PKGC.in >> $PKGC
 echo $PKGC generated
 
-echo ""
-echo ""
-
 
 
 # Alle ifdefs landen hier
@@ -328,15 +325,29 @@ if [ "$FLU" = 1 ]; then
   echo "FLU_GUI = $TARGET-config-flu" >> $CONF
 fi
 
-echo ""
-echo ""
+# get time stamp
+M=`which stat`
+if [ $? = 0 ] && [ `stat . | wc -l` = 7 ]; then
+  # expect GNU stat/sed and hopefully make
+  echo "TIMEDIR = ./" >> $CONF
+  echo "MTIME   := \$(shell stat \$(TIMEDIR) | sed 's/^[ \t]*//;s/[ \t]*\$\$//' | sed '/odify/!d' | sed 's/.odify:[ \t]//' | sed 's/[ \t]*[+-]....\$\$//' | sed 's/^..//' | sed 's/[-:]//g' | sed 's/[ \t]/./g' | sed 's/.[0-9]*\$\$//')" >> $CONF
+else
+  echo "MTIME = 0000" >> $CONF
+fi
+
+echo "" >> $CONF
+echo "" >> $CONF
 
 
 if [ $OSUNAME = "BSD" ]; then
-  cat  makefile.in | sed s/^\#if/.if/g | sed s/^\#end/.end/g | sed s/^\#include\ mkdepend/".include <mkdepend>"/g  >> makefile
+  cat  makefile.in | sed 's/^\#if/.if/g ; s/^\#end/.end/g ; s/^\#include\ mkdepend/.include "mkdepend"/g'  >> $CONF
 else
-  cat  makefile.in | sed s/^\#if/if/g | sed s/^\#end/end/g | sed s/^\#include/include/g  >> makefile
+  cat  makefile.in | sed 's/^\#if/if/g ; s/^\#end/end/g ; s/^\#include/include/g'  >> $CONF
 fi
+echo $CONF generated
+echo ""
+echo ""
+
 
 if [ `cat error.txt | wc -l` -lt 1 ]; then
   rm error.txt
