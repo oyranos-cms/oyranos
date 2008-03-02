@@ -51,20 +51,28 @@ namespace oyranos
 /* monitor names */
 
 int   oyGetMonitorInfo            (const char* display,
+                                   int         x,
+                                   int         y,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
                                    oyAllocFunc_t allocate_func);
 char* oyGetMonitorProfile         (const char *display,
+                                   int         x,
+                                   int         y,
                                    size_t     *size,
                                    oyAllocFunc_t allocate_func);
 char* oyGetMonitorProfileName     (const char *display,
+                                   int         x,
+                                   int         y,
                                    oyAllocFunc_t allocate_func);
 
 // TODO set a memory based profile
 int   oySetMonitorProfile         (const char* display_name,
+                                   int         x,
+                                   int         y,
                                    const char* profil_name );
-int   oyActivateMonitorProfile    (const char* display_name);
+int   oyActivateMonitorProfile    (const char* display_name );
 /* @} */
 
 #ifdef __cplusplus

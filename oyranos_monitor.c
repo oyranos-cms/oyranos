@@ -50,21 +50,39 @@
 /* --- internal API definition --- */
 
 int   oyGetMonitorInfo_           (const char* display,
+                                   int         x,
+                                   int         y,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
                                    oyAllocFunc_t allocate_func);
 char* oyGetMonitorProfileName_    (const char *display_name,
+                                   int         x,
+                                   int         y,
                                    oyAllocFunc_t allocate_func);
 char* oyGetMonitorProfile_        (const char *display_name,
+                                   int         x,
+                                   int         y,
                                    size_t     *size,
                                    oyAllocFunc_t allocate_func);
 
 int   oyActivateMonitorProfile_   (const char* display_name,
+                                   int         x,
+                                   int         y,
                                    const char* profile_name);
+int   oyActivateMonitorProfiles_  (const char* display_name);
 int   oySetMonitorProfile_        (const char* display_name,
+                                   int         x,
+                                   int         y,
                                    const char* profile_name);
-char* oyLongDisplayName_          (const char* display_name);
+char* oyCheckDisplayName_          (const char* display_name);
+int   oyGetScreenFromDisplayName_ (const char* display_name);
+int*  oyGetScreenGeometry_        (const char *display_name,
+                                   int         screen,
+                                   int         x,
+                                   int         y,
+                                   int        *len,
+                                   int         all_b);
 
 
   /* an incomplete DDC struct */
@@ -82,6 +100,8 @@ struct DDC_EDID1 {
 
 int
 oyGetMonitorInfo_                 (const char* display_name,
+                                   int     x,
+                                   int     y,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
@@ -108,7 +128,9 @@ oyGetMonitorInfo_                 (const char* display_name,
     return 1;
   }
 
-  screen = DefaultScreen(display); DBG_PROG_V((screen))
+  screen = XScreenOfDisplay( display,
+                             oyGetScreenFromDisplayName_( display_name ));
+  DBG_PROG_V((screen))
   w = RootWindow(display, screen); DBG_PROG_S(("w: %ld", w))
   DBG_PROG 
   atom = XInternAtom(display, "XFree86_DDC_EDID1_RAWDATA", 1);
@@ -172,7 +194,8 @@ oyGetMonitorInfo_                 (const char* display_name,
 }
 
 char*
-oyGetMonitorProfile_          (const char* display_name, size_t *size,
+oyGetMonitorProfile_          (const char* display_name, int x, int y,
+                               size_t *size,
                                oyAllocFunc_t allocate_func)
 { DBG_PROG_START
 
@@ -220,6 +243,8 @@ oyGetMonitorProfile_          (const char* display_name, size_t *size,
 
 char*
 oyGetMonitorProfileName_          (const char* display_name,
+                                   int     x,
+                                   int     y,
                                    oyAllocFunc_t allocate_func)
 { DBG_PROG_START
 
@@ -229,10 +254,10 @@ oyGetMonitorProfileName_          (const char* display_name,
   char       *moni_profile=0,
              *host_name = 0;
 
-  oyGetMonitorInfo_( display_name, &manufacturer, &model, &serial,
+  oyGetMonitorInfo_( display_name, x, y, &manufacturer, &model, &serial,
                      oyAllocateFunc_);
 
-  host_name = oyLongDisplayName_ (display_name);
+  host_name = oyCheckDisplayName_ (display_name);
 
 
   /* search the profile in the local database */
@@ -250,8 +275,159 @@ oyGetMonitorProfileName_          (const char* display_name,
   return moni_profile;
 }
 
+int*
+oyAddToIntList_                (int* list, int* list_len, int num)
+{
+  int *t_list;
+
+  t_list = (int*) calloc( sizeof(int), *list_len * num + num );
+  memcpy( t_list, list, *list_len );
+  free( list );
+  *list_len += 1;
+
+  return t_list;
+}
+
+int*
+oyGetScreenGeometry_            (const char *display_name,
+                                 int x, int y,
+                                 int *len,
+                                 int all_b)
+{
+  int* list = 0, list_len = 0, i, comp = 5;
+  Display *display = 0;
+  int screen = 0;
+  char* identifier = 0;
+
+  if(display_name)
+    DBG_PROG_S(("display_name %s",display_name));
+
+  if( !(display = XOpenDisplay (display_name))) {
+    WARN_S((_("open X Display failed")))
+    *len = 0;
+    return 0;
+  }
+
+  screen = oyGetScreenFromDisplayName_( display_name );
+
+
+  if( XineramaIsActive( display ) )
+  {
+    XineramaScreenInf *scr_info = XineramaQueryScreens( display, &n_scr_info );
+    for (i = 0; i < n_scr_info; ++i)
+    {
+      if(all_b ||
+         (x >= scr_info[i].x_org && x < scr_info[i].x_org + scr_info[i].width &&
+          y >= scr_info[i].y_org && y < scr_info[i].y_org + scr_info[i].height))
+      {
+        list = oyAddToIntList_( list, &list_len, comp );
+        list[ list_len*comp - 5 ] = i;
+        list[ list_len*comp - 4 ] = scr_info[i].x_org;
+        list[ list_len*comp - 3 ] = scr_info[i].y_org;
+        list[ list_len*comp - 2 ] = scr_info[i].width;
+        list[ list_len*comp - 1 ] = scr_info[i].height;
+      }
+    }
+  }
+  else
+  {
+    for (i = 0; i < ScreenCount( display ); ++i)
+    {
+      Screen *scr = XScreenOfDisplay( display, i );
+      if( all_b ||
+          ( scr &&
+            i == screen ) )
+      {
+        Screen *scr = XScreenOfDisplay( display, i );
+        list = oyAddToIntList_( list, &list_len, comp );
+        list[ list_len*comp - 5 ] = -1;
+        list[ list_len*comp - 4 ] = 0;
+        list[ list_len*comp - 3 ] = 0;
+        list[ list_len*comp - 2 ] = XWidthOfScreen( scr );
+        list[ list_len*comp - 1 ] = XHeightOfScreen( scr );
+      }
+    }
+  }
+
+  *len = list_len;
+
+  if( !*len )
+    WARN_S(("no matching screen found"))
+
+  return list;
+}
+
+/**
+    takes a chaked display name and point as argument and
+    gives a string back for search in the db
+ */
+char*
+oyIdentifierFromGeometry_         (const char* display_name
+                                   int         x,
+                                   int         y )
+{
+  int all_b;
+  int* scr_geo_list = 0;
+  int n_scr = 0;
+  char* identifier = 0;
+
+  if(display_name)
+    DBG_PROG_S(("display_name %s",display_name));
+
+  screen = oyGetScreenFromDisplayName_( display_name );
+
+  all_b = FALSE;
+  scr_geo_list = oyGetScreenGeometry_( display_name, x,y, &n_scr, all_b );
+  if( n_scr )
+  {
+    int len = strlen( display_name ) + 48;
+    
+    identifier = malloc( len );
+
+    snprintf( identifier, len, "%s_%d:%d+%d+%dx%d", 
+              display_name, scr_geo_list[0],
+         scr_geo_list[1], scr_geo_list[2], scr_geo_list[3], scr_geo_list[4] );
+  }
+
+  return identifier;
+}
+
+
+/**
+    1. get all monitors / screens / Xinerama screens
+    2. get the profile name for
+    3. set the profile data to a Xatom
+ */
+int
+oyActivateMonitorProfiles_        (const char* display_name)
+{ DBG_PROG_START
+  int error = 0;
+  int n_scr = 0;
+  int *scr_geo_list = 0;
+  int all_b = TRUE;  /* detect all screens */
+  int ll = 5;        /* list entry length */
+
+  if(display_name)
+    DBG_PROG_S(("display_name %s",display_name));
+
+  scr_geo_list = oyGetScreenGeometry_( display_name, 0,0, &n_scr, all_b );
+  for( i = 0; i < n_scr; ++i )
+  {
+    error = oyActivateMonitorProfile_( display_name,
+                           scr_geo_list[i*ll+1] + scr_geo_list[i*ll+3] / 2,
+                           scr_geo_list[i*ll+2] + scr_geo_list[i*ll+4] / 2,
+                                       0 );
+  }
+
+  DBG_PROG_ENDE
+  return error;
+}
+
+
 int
 oyActivateMonitorProfile_         (const char* display_name,
+                                   int         x,
+                                   int         y,
                                    const char* profil_name )
 { DBG_PROG_START
   int error = 0;
@@ -260,18 +436,22 @@ oyActivateMonitorProfile_         (const char* display_name,
   const char *profil_basename;
   char* profile_name_ = 0;
 
-  if(profil_name) {
+  if(profil_name && x >= 0 && y >= 0)
+  {
     DBG_PROG_S(( "profil_name = %s", profil_name ));
     profil_pathname = oyGetPathFromProfileName( profil_name, oyAllocateFunc_ );
-  } else {
-    char* profile_name_ =
-      oyGetMonitorProfileName_          ( display_name,
+  } else
+  {
+    char* profile_name_ = 0;
+    
+      oyGetMonitorProfileName_          ( display_name, x, y,
                                           oyAllocateFunc_);
     profil_pathname = oyGetPathFromProfileName( profile_name_, oyAllocateFunc_);
     profil_name = profile_name_;
   }
 
-  if( profil_pathname && strlen(profil_pathname) ) {
+  if( profil_pathname && strlen(profil_pathname) )
+  {
     char *text = (char*) calloc (MAX_PATH, sizeof(char));
     DBG_PROG_S(( "profil_pathname %s", profil_pathname ));
     if(profil_name && strrchr(profil_name,OY_SLASH_C))
@@ -279,7 +459,9 @@ oyActivateMonitorProfile_         (const char* display_name,
     else
       profil_basename = profil_name;
 
-    /* set vcgt tag with xcalib */
+    /* set vcgt tag with xcalib
+       not useable with Xinerama
+     */
     sprintf(text,"xcalib -d %s %s%s%s", display_name,
                                profil_pathname, OY_SLASH, profil_basename);
     error = system(text);
@@ -307,7 +489,9 @@ oyActivateMonitorProfile_         (const char* display_name,
       }
 
       /* TODO: multi screen */
-      screen = DefaultScreen(display); DBG_PROG_V((screen))
+      screen = XScreenOfDisplay( display,
+                                 oyGetScreenFromDisplayName_( display_name ));
+      DBG_PROG_V((screen))
       w = RootWindow(display, screen); DBG_PROG_S(("w: %ld", w))
 
       moni_profile = oyGetProfileBlock( profil_name, &size, oyAllocateFunc_ );
@@ -335,6 +519,7 @@ oyActivateMonitorProfile_         (const char* display_name,
     DBG_PROG_S(( "system: %s", text ))
     if(text) free(text);
   }
+
   if (profil_pathname) free (profil_pathname);
   if (profile_name_) free (profile_name_);
   DBG_PROG_ENDE
@@ -343,6 +528,8 @@ oyActivateMonitorProfile_         (const char* display_name,
 
 int
 oySetMonitorProfile_              (const char* display_name,
+                                   int     x,
+                                   int     y,
                                    const char* profil_name )
 { DBG_PROG_START
   int error = 0;
@@ -350,11 +537,11 @@ oySetMonitorProfile_              (const char* display_name,
   char       *manufacturer=0,
              *model=0,
              *serial=0;
-  char       *host_name = oyLongDisplayName_(display_name);
+  char       *host_name = oyCheckDisplayName_(display_name);
   char       *profil_pathname = 0;
 
   error  =
-    oyGetMonitorInfo_ (display_name, &manufacturer, &model, &serial,
+    oyGetMonitorInfo_ (display_name, x, y,, &manufacturer, &model, &serial,
                        oyAllocateFunc_);
 
   DBG_PROG
@@ -364,7 +551,8 @@ oySetMonitorProfile_              (const char* display_name,
     return error;
   }
 
-  if(!profil_name) {
+  if(!profil_name)
+  {
     /* unset the _ICC_PROFILE atom in X */
       Display *display;
       Atom atom;
@@ -379,7 +567,9 @@ oySetMonitorProfile_              (const char* display_name,
       }
 
       /* TODO: multi screen */
-      screen = DefaultScreen(display); DBG_PROG_V((screen))
+      screen = XScreenOfDisplay( display,
+                                 oyGetScreenFromDisplayName_( host_name ));
+      DBG_PROG_V((screen))
       w = RootWindow(display, screen); DBG_PROG_S(("w: %ld", w))
 
       DBG_PROG
@@ -405,7 +595,7 @@ oySetMonitorProfile_              (const char* display_name,
   DBG_PROG_S(( "profil_pathname %s", profil_pathname ))
 
   if( profil_pathname ) {
-    error = oyActivateMonitorProfile_(display_name, profil_name);
+    error = oyActivateMonitorProfile_(display_name, x, y, profil_name);
   }
 
   finish:
@@ -420,14 +610,42 @@ oySetMonitorProfile_              (const char* display_name,
   return error;
 }
 
-char*
-oyLongDisplayName_                (const char* display_name)
+int
+oyGetScreenFromDisplayName_        (const char* display_name)
+{ DBG_PROG_START
+  int scr_nummer = 0;
+
+  if( display_name )
+  {
+    char ds[8];             // display.screen
+    const char *txt = strchr( display_name, ':' );
+    
+    if( !txt )
+    { WARN_S(( "invalid display name" ))
+      return -1;
+    }
+
+    snprintf( ds, 8, txt );
+    if( strrchr( display_name, '.' ) )
+    {
+      char *nummer_text = strchr( ds, '.' );
+      if( nummer_text )
+        scr_nummer = atoi( &nummer_text[1] );
+    }
+  }
+
+  DBG_PROG_ENDE
+  return scr_nummer;
+}
+
+oyCheckDisplayName_                (const char* display_name)
 { DBG_PROG_START
   char* host_name = 0;
   host_name = (char*) calloc (128, sizeof(char));
 
   /* Is this X server identifyable? */
-  if(!display_name) {
+  if(!display_name)
+  {
     char *host = getenv ("HOSTNAME");
     if (host) {
         sprintf( host_name, host );
@@ -443,6 +661,28 @@ oyLongDisplayName_                (const char* display_name)
   } else {
     sprintf( host_name, display_name );
   }
+
+  /* add missing screen */
+  {
+    char ds[8];
+    const char *txt = strchr( host_name, ':' );
+
+    ++txt;
+
+    /* fail if no display was given */
+    if( !txt )
+    { WARN_S(( "invalid display name" ))
+      host_name[0] = 0;
+      return host_name;
+    }
+
+    snprintf( ds, 8, txt );
+    if( !strchr( display_name, '.' ) )
+    {
+      sprintf( &host_name[ strlen(host_name) ], ".0" );
+    }
+  }
+
   DBG_PROG_S(( "host_name = %s", host_name ))
 
   DBG_PROG_ENDE
@@ -453,10 +693,12 @@ oyLongDisplayName_                (const char* display_name)
 /* separate from the internal functions */
 
 /** @brief pick up monitor information with Xlib
- *  @deprecated because no ddc information is available
+ *  @deprecated because sometimes is no ddc information available
  *  @todo include connection information - grafic cart
  *
  *  @param      display       the display string
+ *  @param      x             position
+ *  @param      y             position
  *  @param[out] manufacturer  the manufacturer of the monitor device
  *  @param[out] model         the model of the monitor device
  *  @param[out] serial        the serial number of the monitor device
@@ -466,6 +708,8 @@ oyLongDisplayName_                (const char* display_name)
  */
 int
 oyGetMonitorInfo                  (const char* display,
+                                   int     x,
+                                   int     y,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
@@ -473,7 +717,8 @@ oyGetMonitorInfo                  (const char* display,
 { DBG_PROG_START
   int err = 0;
 
-  err = oyGetMonitorInfo_( display, manufacturer, model, serial, allocate_func);
+  err = oyGetMonitorInfo_( display, x, y, manufacturer, model, serial,
+                           allocate_func);
   DBG_PROG_V(( strlen(*manufacturer) ))
   if(*manufacturer)
     DBG_PROG_S(( *manufacturer ));
@@ -489,17 +734,22 @@ oyGetMonitorInfo                  (const char* display,
 /** @brief get the monitor profile
 
  *  @param      display       the display string
+ *  @param      x             position
+ *  @param      y             position
  *  @param[out] size          the size of profile
  *  @param      allocate_func function used to allocate memory for the profile
  *  @return                   the memory block containing the profile
  */
 char*
-oyGetMonitorProfile           (const char* display, size_t *size,
+oyGetMonitorProfile           (const char* display,
+                               int     x,
+                               int     y,
+                               size_t *size,
                                oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   char* moni_profile = 0;
 
-  moni_profile = oyGetMonitorProfile_( display , size, allocate_func );
+  moni_profile = oyGetMonitorProfile_( display, x, y, size, allocate_func );
 
   DBG_PROG_ENDE
   return moni_profile;
@@ -508,19 +758,45 @@ oyGetMonitorProfile           (const char* display, size_t *size,
 /** @brief get the monitor profile filename
 
  *  @param      display       the display string
+ *  @param      x             position
+ *  @param      y             position
  *  @param      allocate_func function used to allocate memory for the string
  *  @return                   the profiles filename (if localy available)
  */
 char*
 oyGetMonitorProfileName           (const char* display,
+                                   int     x,
+                                   int     y,
                                    oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   char* moni_profile = 0;
 
-  moni_profile = oyGetMonitorProfileName_( display, allocate_func );
+  moni_profile = oyGetMonitorProfileName_( display, x, y, allocate_func );
 
   DBG_PROG_ENDE
   return moni_profile;
+}
+
+/** @brief set the monitor profile filename
+
+ *  @param      display_name  the display string
+ *  @param      x             position
+ *  @param      y             position
+ *  @param      profil_name   the file to use as monitor profile
+ *  @return                   success
+ */
+int
+oySetMonitorProfile               (const char* display_name,
+                                   int     x,
+                                   int     y,
+                                   const char* profil_name )
+{ DBG_PROG_START
+  int error = 0;
+
+  error = oySetMonitorProfile_( display_name, x, y, profil_name );
+
+  DBG_PROG_ENDE
+  return error;
 }
 
 /** @brief activate the monitor using the stored configuration
@@ -534,25 +810,7 @@ oyActivateMonitorProfile          (const char* display_name)
 { DBG_PROG_START
   int error = 0;
 
-  error = oyActivateMonitorProfile_( display_name, 0 );
-
-  DBG_PROG_ENDE
-  return error;
-}
-
-/** @brief set the monitor profile filename
-
- *  @param      display_name  the display string
- *  @param      profil_name   the file to use as monitor profile
- *  @return                   success
- */
-int
-oySetMonitorProfile               (const char* display_name,
-                                   const char* profil_name )
-{ DBG_PROG_START
-  int error = 0;
-
-  error = oySetMonitorProfile_( display_name, profil_name );
+  error = oyActivateMonitorProfiles_( display_name );
 
   DBG_PROG_ENDE
   return error;

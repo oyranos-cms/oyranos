@@ -261,7 +261,7 @@ doc:
 # the copy part for this directory level
 install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-gamma doc
 	echo Installing ...
-	make uninstall
+	-make uninstall
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-gamma      $(DESTDIR)$(bindir)
@@ -326,6 +326,7 @@ uninstall:
 	echo Uninstalling ...
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-gamma
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
+	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-flu
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET)_monitor.pc
 	$(RM)   $(DESTDIR)$(libdir)/$(LIBSONAMEFULL) \
