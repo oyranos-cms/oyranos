@@ -38,6 +38,7 @@
 #include "oyranos.h"
 #include "oyranos_cmms.h"
 #include "oyranos_debug.h"
+#include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
@@ -689,8 +690,8 @@ oyPolicyNameGet_()
     const oyString* fname = policy_list[i];
     data = oyReadFileToMem_( fname, &size, oyAllocateFunc_ );
 
-    // TODO: und als nächstes werden alle relevanten xml Schlüssel ausgelesen,
-    // in der selben Form wie für oyPolicyToXML_
+    // TODO: und als naechstes werden alle relevanten xml Schluessel ausgelesen,
+    // in der selben Form wie fuer oyPolicyToXML_
     {
       int   err = 0;
       int n = 0;

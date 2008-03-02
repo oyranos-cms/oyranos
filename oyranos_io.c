@@ -713,7 +713,7 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*),
         case EIO:          WARN_S(("EIO : %s %d", path, i)); break;
         case ELOOP:        WARN_S(("Too many symbolic links encountered while traversing the path: %s %d", path, i)); break;
         case ENAMETOOLONG: WARN_S(("ENAMETOOLONG : %s %d", path, i)); break;
-        case ENOENT:       WARN_S(("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i)); break;
+        case ENOENT:       DBG_PROG_S(("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i)); break;
         case ENOTDIR:      WARN_S(("ENOTDIR : %s %d", path, i)); break;
         case EOVERFLOW:    WARN_S(("EOVERFLOW : %s %d", path, i)); break;
       }

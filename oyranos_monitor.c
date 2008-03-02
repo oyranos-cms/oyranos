@@ -339,6 +339,7 @@ oyGetMonitorInfo_                 (const char* display_name,
 
   if( nitems_return != 128 ) {
     WARN_S((_("unexpected EDID lenght %d"), (int)nitems_return))
+    WARN_S((_("Cant read hardware information from device.")))
     DBG_PROG_ENDE
     return 1;
   }

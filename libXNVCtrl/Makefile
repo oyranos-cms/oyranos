@@ -2,6 +2,7 @@
 CXX = c++
 CC = cc
 RM = rm -vf
+dl = -ldl
 X11 = X11
 X_H = -I/usr/X11R6/include -I/usr/include
 XF86VMODE = 1
@@ -10,10 +11,9 @@ XIN = 1
 XINERAMA_LIB = -lXinerama
 X11_LIB_PATH = -L/usr/X11R6/lib$(BARCH) -L/usr/lib$(BARCH) -L$(libdir)
 X11_LIBS=$(X11_LIB_PATH) -lX11 $(XF86VMODE_LIB) -lX11 -lXext -lXinerama -lXxf86vm $(XINERAMA_LIB)
-dl = -ldl
 DEBUG = -Wall -g -DDEBUG --pedantic
 DEBUG_SWITCH = -v
-CFLAGS= $(DEBUG) $(INCL) -Wall -g -fPIC -DPIC
+CFLAGS= $(DEBUG) $(INCL) -Wall -g -I/opt/local/include -fPIC -DPIC
 
 COLLECT = ar cru
 RANLIB = ranlib

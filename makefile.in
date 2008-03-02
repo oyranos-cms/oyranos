@@ -32,8 +32,9 @@ LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
 	$(ELEKTRA_LIBS) -lc $(I18N_LIB)
 
 
-CPP_HEADERS = \
+CHEADERS = \
 	$(TARGET).h \
+	$(TARGET)_alpha.h \
 	$(TARGET)_check.h \
 	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
@@ -86,7 +87,8 @@ TEST_CPP = \
 	tests/fltk_test.cxx \
 	tests/dE2000_test.cpp \
 	tests/gettext_test.cxx \
-	tests/lib_test.cxx
+	tests/lib_test.cxx \
+	tests/tiff_test.cxx
 TEST_H = \
 	tests/ciede2000testdata.h
 CPPFILES =
@@ -154,7 +156,7 @@ ALL_FILES = \
 	$(TARGET)-icc.spec.in \
 	$(TARGET)-config.in \
 	$(SOURCES) \
-	$(CPP_HEADERS) \
+	$(CHEADERS) \
 	$(SCRIPTS) \
 	$(MAN1) $(MAN3) \
 	$(DOC_TEMPLATES) \

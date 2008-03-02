@@ -1,3 +1,19 @@
+2007-07-18
+	* and: sensible for non EDID monitors, new wighting by display geometry
+	* cli: add -v for oyranos-monitor, oyranos_monitor_nvidia.c, oyranos_policy.c
+
+2007-07-17
+	* and: include MM's Flmm_Tabs for the config panel
+	* i18n: FLTK utf-8 aware config panel, set locale accordingly
+
+2007-07-03
+	* API: move oyInPlaning section from oyranos.h to oyranos_internal.h
+	* API: start oyranos_icc.h API thinking, like oyValueUInt16
+	* API: ship icc34.h for oyranos_icc.h
+
+2007-07-01
+	* conf: custom fltk-config; FLTK utf-8 detection
+
 2007-06-14
 	* fix: CFLAGS and the like variables are not multiplied anymore
 	* conf: support configure option: --disable-dependency-tracking

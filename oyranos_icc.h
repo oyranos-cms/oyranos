@@ -48,7 +48,7 @@ namespace oyranos
 icUInt16Number          oyValueUInt16   (icUInt16Number val);
 icUInt32Number          oyValueUInt32   (icUInt32Number val);
 unsigned long           oyValueUInt64   (icUInt64Number val);
-icColorSpaceSignature   oyValueColSpSig (icColorSpaceSignature val);
+icColorSpaceSignature   oyValueCSpaceSig(icColorSpaceSignature val);
 icPlatformSignature     oyValuePlatSig  (icPlatformSignature val);
 icProfileClassSignature oyValueProfCSig (icProfileClassSignature val);
 icTagSignature          oyValueTagSig   (icTagSignature val);

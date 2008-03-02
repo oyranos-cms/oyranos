@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ERROR=0
-STRIPOPT="sed s/-O.//"
+STRIPOPT='s/-O.// ; s/-isysroot [[:graph:]]*//'
 
 if [ -n "$PKG_CONFIG_PATH" ]; then
   PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$libdir/pkgconfig
@@ -9,6 +9,27 @@ else
   PKG_CONFIG_PATH=$libdir/pkgconfig
 fi
 export PKG_CONFIG_PATH
+
+# let it affect all other tests
+if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
+  if [ -n "$LIBS_TEST" ]; then
+    for l in $LIBS_TEST; do
+      rm -f tests/libtest$EXEC_END
+      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L$libdir -l$l -o tests/libtest 2>/dev/null
+      if [ -f tests/libtest ]; then
+          echo "$l=-l$l" >> "config.sh"
+          LDFLAGS="$LDFLAGS -l$l"
+          test -n "$ECHO" && $ECHO "lib$l is available"
+          if [ -n "$MAKEFILE_DIR" ]; then
+            for i in $MAKEFILE_DIR; do
+              test -f "$i/makefile".in && echo "$l = -l$l" >> "$i/makefile"
+            done
+          fi
+          rm tests/libtest$EXEC_END
+      fi
+    done
+  fi
+fi
 
 if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_min" ]; then
@@ -76,6 +97,71 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   fi
 fi
 
+if [ -n "$ARGYLL" ] && [ "$ARGYLL" -gt "0" ]; then
+  if [ -z "$argyll_min" ]; then
+    argyll_min="0.60"
+  fi
+  if [ -z "$argyll_max" ]; then
+    argyll_max="0.61"
+  fi
+  if [ "$internalargyll" != "no" ]; then
+   if [ `ls $ARGYLL_VERSION | grep argyll | wc -l` -gt 0 ]; then
+    echo "local copy of argyll    detected"
+        echo "#define HAVE_ARGYLL 1" >> $CONF_H
+        echo "ARGYLL = 1" >> $CONF
+        echo "ARGYLL_VERSION = $ARGYLL_VERSION" >> $CONF
+        echo "ARGYLL_H = -DUSE_ARGYLL -I\$(ARGYLL_VERSION) -I\$(ARGYLL_VERSION)/icc -I\$(ARGYLL_VERSION)/gamut -I\$(ARGYLL_VERSION)/numlib -I\$(ARGYLL_VERSION)/xicc -I\$(ARGYLL_VERSION)/cgats -I\$(ARGYLL_VERSION)/rspl -I\$(ARGYLL_VERSION)/spectro" >> $CONF
+        echo "ARGYLL_LIBS = \$(ARGYLL_VERSION)/icc/.libs/libargyllgamut.a \$(ARGYLL_VERSION)/icc/.libs/libargyllxicc.a \$(ARGYLL_VERSION)/icc/.libs/libcgats.a \$(ARGYLL_VERSION)/icc/.libs/libicc.a \$(ARGYLL_VERSION)/icc/.libs/libargyllrsp.al \$(ARGYLL_VERSION)/icc/.libs/libargyllnum.a" >> $CONF
+        ARGYLL_FOUND=1
+   fi
+  fi
+  if [ -z "$ARGYLL_FOUND" ]; then
+    argyll_mod=`pkg-config --modversion argyll`
+  fi
+  if [ $? = 0 ] && [ -z "$ARGYLL_FOUND" ]; then
+    pkg-config  --atleast-version=$argyll_min argyll 2>>error.txt
+    if [ $? = 0 ]; then
+      pkg-config --max-version=$argyll_max argyll 2>>error.txt
+      if [ $? = 0 ]; then
+        test -n "$ECHO" && $ECHO "argyll `pkg-config --modversion argyll`           detected"
+        echo "#define HAVE_ARGYLL 1" >> $CONF_H
+        echo "ARGYLL = 1" >> $CONF
+        echo "ARGYLL_H = `pkg-config --cflags argyll`" >> $CONF
+        if [ $argyll_mod = "0.6.4" ]; then
+          echo "ARGYLL_LIBS = `pkg-config --libs argyll` -lxml2 -ldb" >> $CONF
+        else
+          echo "ARGYLL_LIBS = `pkg-config --libs argyll`" >> $CONF
+        fi
+        ARGYLL_FOUND=1
+      else
+        if [ $ARGYLL -eq 1 ]; then
+#          ERROR=1
+#          test -n "$ECHO" && $ECHO "!!! Argyll: !!!"
+#        else
+          test -n "$ECHO" && $ECHO "    Argyll:"
+        fi
+        test -n "$ECHO" && $ECHO "  too new Argyll found,"
+        test -n "$ECHO" && $ECHO "  need a version not greater than $argyll_max, download: www.argyllcms.com"
+      fi
+    else
+      if [ $ARGYLL -eq 1 ]; then
+#        test -n "$ECHO" && $ECHO "!!! ERROR Argyll: !!!"
+#        ERROR=1
+#      else
+        test -n "$ECHO" && $ECHO "    Warning Argyll:"
+      fi
+      test -n "$ECHO" && $ECHO "  no or too old argyll found,"
+      test -n "$ECHO" && $ECHO "  need at least version $argyll_min, download: www.argyllcms.com"
+    fi
+  fi
+  if [ -z "$ARGYLL_FOUND" ]; then
+      test -n "$ECHO" && $ECHO $argyll_mod
+#      if [ $ARGYLL -eq 1 ]; then
+#        ERROR=1
+#      fi
+  fi
+fi
+
 if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
   OY_=`oyranos-config 2>>error.txt`
   if [ $? = 0 ]; then
@@ -96,11 +182,26 @@ fi
 if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
   pkg-config  --atleast-version=1.14 lcms
   if [ $? = 0 ]; then
-    test -n "$ECHO" && $ECHO "littleCMS `pkg-config --modversion lcms`          detected"
+    HAVE_LCMS=1
     echo "#define HAVE_LCMS 1" >> $CONF_H
     echo "LCMS = 1" >> $CONF
-    echo "LCMS_H = `pkg-config --cflags lcms | $STRIPOPT`" >> $CONF
-    echo "LCMS_LIBS = `pkg-config --libs lcms | $STRIPOPT`" >> $CONF
+    echo "LCMS_H = `pkg-config --cflags lcms | sed \"$STRIPOPT\"`" >> $CONF
+    echo "LCMS_LIBS = `pkg-config --libs lcms | sed \"$STRIPOPT\"`" >> $CONF
+  else
+    l=lcms 
+    rm -f tests/libtest$EXEC_END
+    $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    if [ -f tests/libtest ]; then
+      HAVE_LCMS=1
+      echo "#define HAVE_LCMS 1" >> $CONF_H
+      echo "LCMS = 1" >> $CONF
+      echo "LCMS_H =" >> $CONF
+      echo "LCMS_LIBS = -llcms" >> $CONF
+      rm tests/libtest$EXEC_END
+    fi
+  fi
+  if [ -n $HAVE_LCMS ]; then
+    test -n "$ECHO" && $ECHO "littleCMS               detected"
   else
     if [ $LCMS -eq 1 ]; then
       test -n "$ECHO" && $ECHO "!!! ERROR: no or too old LCMS found, !!!"
@@ -177,7 +278,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
 
   if [ -n "$X_ADD" ]; then
     for l in $X_ADD; do
-      rm -f tests/libtest
+      rm -f tests/libtest$EXEC_END
       $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
       if [ -f tests/libtest ]; then
           test -n "$ECHO" && $ECHO "lib$l is available"
@@ -197,7 +298,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
               echo "$l=-l$l" >> "config.sh"
             fi
           fi
-          rm tests/libtest
+          rm tests/libtest$EXEC_END
       else
         if [ $X11 -eq 1 ]; then
           test -n "$ECHO" && $ECHO "!!! ERROR lib$l is missed"
@@ -210,7 +311,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   fi
   if [ -n "$X_ADD_2" ]; then
     for l in $X_ADD_2; do
-      rm -f tests/libtest
+      rm -f tests/libtest$EXEC_END
       $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
       if [ -f tests/libtest ]; then
           test -n "$ECHO" && $ECHO "lib$l is available"
@@ -221,7 +322,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
           fi
           echo "#define HAVE_$l 1"  >> $CONF_H
           echo "$l=-l$l" >> "config.sh"
-          rm tests/libtest
+          rm tests/libtest$EXEC_END
       else
         test -n "$ECHO" && $ECHO "lib$l not found"
       fi
@@ -240,10 +341,22 @@ if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
     test -n "$ECHO" && $ECHO "FTGL      `pkg-config --modversion ftgl`         detected"
     echo "#define HAVE_FTGL 1" >> $CONF_H
     echo "FTGL = 1" >> $CONF
-    echo "FTGL_H = `pkg-config --cflags ftgl | $STRIPOPT`" >> $CONF
-    echo "FTGL_LIBS = `pkg-config --libs ftgl | $STRIPOPT`" >> $CONF
+    echo "FTGL_H = `pkg-config --cflags ftgl | sed \"$STRIPOPT\"`" >> $CONF
+    echo "FTGL_LIBS = `pkg-config --libs ftgl | sed \"$STRIPOPT\"`" >> $CONF
   else
-    test -n "$ECHO" && $ECHO "  no or too old FTGL found, need FTGL to render text in OpenGL"
+    l=ftgl 
+    rm -f tests/libtest$EXEC_END
+    $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    if [ -f tests/libtest ]; then
+      test -n "$ECHO" && $ECHO "FTGL                    detected"
+      echo "#define HAVE_FTGL 1" >> $CONF_H
+      echo "FTGL = 1" >> $CONF
+      echo "FTGL_H =" >> $CONF
+      echo "FTGL_LIBS = -lftgl -lfreetype" >> $CONF
+      rm tests/libtest$EXEC_END
+    else
+      test -n "$ECHO" && $ECHO "  no or too old FTGL found, need FTGL to render text in OpenGL"
+    fi
   fi
 fi
 
@@ -251,27 +364,37 @@ if [ -z "$fltkconfig" ]; then
   # add /usr/X11R6/bin to path for Fedora
   fltkconfig=fltk-config
   PATH=$PATH:/usr/X11R6/bin; export PATH
+  echo add fltk-config
 fi
 if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
-  FLTK_=`$fltkconfig --cxxflags 2>>error.txt | $STRIPOPT`
+  FLTK_="`$fltkconfig --cxxflags 2>>error.txt | sed \"$STRIPOPT\"`"
   if [ $? = 0 ] && [ -n "$FLTK_" ]; then
-    test -n "$ECHO" && $ECHO "FLTK `$fltkconfig --version`              detected"
+    # check for utf-8 capability
+    if [ $fltkconfig != `echo $fltkconfig | sed "s%fltk2-config%% ; s%utf8%%"` ]; then
+      echo "#define HAVE_FLTK_UTF8 1" >> $CONF_H
+      echo "HAVE_FLTK_UTF8 = -DHAVE_FLTK_UTF8" >> $CONF_I18N
+      fltk_utf8="utf-8 `$fltkconfig --version`"
+    else
+      fltk_utf8="`$fltkconfig --version`      "
+    fi
+    test -n "$ECHO" && $ECHO "FLTK $fltk_utf8        detected"
     if [ "0" -ne "`$fltkconfig --compile tests/fltk_test.cxx 2>&1 | grep lock | wc -l`" ]; then
       test -n "$ECHO" && $ECHO "!!! ERROR: FLTK has no threads support !!!"
       test -n "$ECHO" && $ECHO "           Configure FLTK with the --enable-threads option and recompile."
       ERROR=1
     else
-      rm fltk_test
+      rm fltk_test$EXEC_END
     fi
     echo "#define HAVE_FLTK 1" >> $CONF_H
     echo "FLTK = 1" >> $CONF
-    echo "FLTK_H = `$fltkconfig --cxxflags | sed 's/-O[0-9]//'`" >> $CONF
-    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags | $STRIPOPT`" >> $CONF
+    echo "FLTK_H = `$fltkconfig --cxxflags | sed \"$STRIPOPT\"`" >> $CONF
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags | sed \"$STRIPOPT\"`" >> $CONF
     echo "fltkconfig = $fltkconfig" >> $CONF
     echo "FLTK = 1" >> $CONF_I18N
-    echo "FLTK_H = `$fltkconfig --cxxflags | sed 's/-O[0-9]//'`" >> $CONF_I18N
-    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags | $STRIPOPT`" >> $CONF_I18N
+    echo "FLTK_H = `$fltkconfig --cxxflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
     echo "fltkconfig = $fltkconfig" >> $CONF_I18N
+
   else
     if [ $FLTK -eq 1 ]; then
       ERROR=1
@@ -279,7 +402,7 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
     else
       test -n "$ECHO" && $ECHO "    Warning"
     fi
-    test -n "$ECHO" && $ECHO "           FLTK is not found; download: www.fltk.org"
+    test -n "$ECHO" && $ECHO "           FLTK ($fltkconfig) is not found; download: www.fltk.org"
   fi
 fi
 
@@ -297,8 +420,8 @@ if [ -n "$FLU" ] && [ $FLU -gt 0 ]; then
       test -n "$ECHO" && $ECHO "FLU                     detected"
       echo "#define HAVE_FLU 1" >> $CONF_H
       echo "FLU = 1" >> $CONF
-      echo "FLU_H = `flu-config --cxxflags | $STRIPOPT`" >> $CONF
-      echo "FLU_LIBS = `flu-config --ldflags --use-gl | $STRIPOPT`" >> $CONF
+      echo "FLU_H = `flu-config --cxxflags | sed \"$STRIPOPT\"`" >> $CONF
+      echo "FLU_LIBS = `flu-config --ldflags --use-gl | sed \"$STRIPOPT\"`" >> $CONF
     else
       if [ "$FLU" -gt 1 ]; then
         test -n "$ECHO" && $ECHO "   no FLU found, will not use it"
@@ -330,49 +453,30 @@ if [ -n "$LIBPNG" ] && [ $LIBPNG -gt 0 ]; then
     test -n "$ECHO" && $ECHO "PNG `pkg-config --modversion $LIBPNG`               detected"
     echo "#define HAVE_PNG 1" >> $CONF_H
     echo "PNG = 1" >> $CONF
-    echo "PNG_H = `pkg-config --cflags $LIBPNG | $STRIPOPT`" >> $CONF
-    echo "PNG_LIBS = `pkg-config --libs $LIBPNG | $STRIPOPT`" >> $CONF
+    echo "PNG_H = `pkg-config --cflags $LIBPNG | sed \"$STRIPOPT\"`" >> $CONF
+    echo "PNG_LIBS = `pkg-config --libs $LIBPNG | sed \"$STRIPOPT\"`" >> $CONF
   else
     test -n "$ECHO" && $ECHO "no or too old libpng found,"
     test -n "$ECHO" && $ECHO "  need at least version 1.0, download: www.libpng.org"
   fi
 fi
 
-if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
-  if [ -n "$LIBS_TEST" ]; then
-    for l in $LIBS_TEST; do
-      rm -f tests/libtest
-      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L$libdir -l$l -o tests/libtest 2>/dev/null
-      if [ -f tests/libtest ]; then
-          echo "$l=-l$l" >> "config.sh"
-          test -n "$ECHO" && $ECHO "lib$l is available"
-          if [ -n "$MAKEFILE_DIR" ]; then
-            for i in $MAKEFILE_DIR; do
-              test -f "$i/makefile".in && echo "$l = -l$l" >> "$i/makefile"
-            done
-          fi
-          rm tests/libtest
-      fi
-    done
-  fi
-fi
-
 if [ -n "$LIBTIFF" ] && [ $LIBTIFF -gt 0 ]; then
-  rm -f tests/libtest
-  $CXX $CFLAGS -I$includedir tests/tiff_test.cxx $LDFLAGS -L$libdir -ltiff -o tests/libtest 2>error.txt
+  rm -f tests/libtest$EXEC_END
+  $CXX $CFLAGS -I$includedir tests/tiff_test.cxx $LDFLAGS -L$libdir -ltiff -ljpeg -o tests/libtest 2>error.txt
     if [ -f tests/libtest ]; then
       test -n "$ECHO" && $ECHO "`tests/libtest`
                         detected"
       echo "#define HAVE_TIFF 1" >> $CONF_H
       echo "TIFF = 1" >> $CONF
-      rm tests/libtest
+      rm tests/libtest$EXEC_END
     else
       test -n "$ECHO" && $ECHO "no or too old libtiff found,"
     fi
 fi
 
 if [ -n "$GETTEXT" ] && [ $GETTEXT -gt 0 ]; then
-  rm -f tests/libtest
+  rm -f tests/libtest$EXEC_END
     $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
     if [ ! -f tests/libtest ]; then
       $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -lintl -o tests/libtest 2>error.txt
@@ -382,7 +486,7 @@ if [ -n "$GETTEXT" ] && [ $GETTEXT -gt 0 ]; then
       echo "#define USE_GETTEXT 1" >> $CONF_H
       echo "GETTEXT = -DUSE_GETTEXT" >> $CONF
       echo "GETTEXT = -DUSE_GETTEXT" >> $CONF_I18N
-      rm tests/libtest
+      rm tests/libtest$EXEC_END
     else
       test -n "$ECHO" && $ECHO "no or too old Gettext found,"
     fi
@@ -417,7 +521,7 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
       if [ "$debug" -eq "1" ]; then
-        if [ `uname -s` == "Darwin" ]; then
+        if [ $OSUNAME == "Darwin" ] || [ $OSUNAME == "Windows" ]; then
           DEBUG_="-Wall -g -DDEBUG"
         else
           DEBUG_="-Wall -g -DDEBUG --pedantic"

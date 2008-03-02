@@ -1,4 +1,4 @@
-prefix=/opt/kai-uwe
+prefix=/opt/local
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

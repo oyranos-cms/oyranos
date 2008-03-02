@@ -606,7 +606,9 @@ if [ -n "$ECHO" ]; then
   ELEKTRA=1; export ELEKTRA
   #OYRANOS=1; export OYRANOS
   #LCMS=2; export LCMS
-  #LIBPNG=2; export LIBPNG
+  LIBPNG=2; export LIBPNG
+  LIBTIFF=2; export LIBTIFF
+  LIBOPENEXR=2; export LIBOPENEXR
   #FTGL=1; export FTGL
   FLTK=2; export FLTK
 if [ $OSUNAME != "Darwin" ] ; then
@@ -624,7 +626,9 @@ fi
   ELEKTRA=0; export ELEKTRA
   #OYRANOS=0; export OYRANOS
   #LCMS=0; export LCMS
-  #LIBPNG=0; export LIBPNG
+  LIBPNG=0; export LIBPNG
+  LIBTIFF=0; export LIBTIFF
+  LIBOPENEXR=0; export LIBOPENEXR
   #FTGL=0; export FTGL
   FLTK=0; export FLTK
   X11=0; export X11
@@ -807,6 +811,17 @@ test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $V
 test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$srcdir\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$srcdir/po\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "" >> $VERS_H
+# Images formats availablility markers
+if [ `cat $CONF_H | grep "HAVE_PNG 1" | wc -l` -gt 0 ]; then
+test -n "$ECHO" && $ECHO "#define OY_HAVE_PNG 1" >> $VERS_H
+fi
+if [ `cat $CONF_H | grep "HAVE_TIFF 1" | wc -l` -gt 0 ]; then
+test -n "$ECHO" && $ECHO "#define OY_HAVE_TIFF 1" >> $VERS_H
+fi
+if [ `cat $CONF_H | grep "HAVE_OPENEXR 1" | wc -l` -gt 0 ]; then
+test -n "$ECHO" && $ECHO "#define OY_HAVE_OPENEXR 1" >> $VERS_H
+fi
 test -n "$ECHO" && $ECHO "" >> $VERS_H
 test -n "$ECHO" && $ECHO "#endif /*OYRANOS_VERSION_H*/" >> $VERS_H
 
