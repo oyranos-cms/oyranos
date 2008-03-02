@@ -11,7 +11,8 @@
 #include <FLU/Flu_Tree_Browser.h>
 #include <FLU/flu_pixmaps.h>
 
-#include <oyranos/oyranos.h>
+#include "oyranos.h"
+#include "oyranos_debug.h"
 using namespace oyranos;
 
 #include <iostream>
@@ -265,7 +266,7 @@ void buildOptionsLeaves()
 
   tree->collapse_time( 0.2 );
   tree->frame_rate( 60.0 );
-  tree->animate(true);
+  //tree->animate(true);
   tree->redraw();
 }
 
@@ -279,6 +280,9 @@ void buildTree()
 
 int main( int argc, char **argv )
 {
+  if(getenv("OYRANOS_DEBUG") > 0)
+    oy_debug = 1;
+
   FL_NORMAL_SIZE = 12;
   Fl_Double_Window *win = new Fl_Double_Window( 500, 400, "Oyranos Colour Management" );
 

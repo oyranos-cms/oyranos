@@ -135,7 +135,7 @@ void oyOpen_ (void) { kdbOpen(); }
 void oyClose_(void) { kdbClose(); }
 
 
-/* elektra key wrapper */
+/* elektra key wrappers */
 int     oyAddKey_valueComment_ (const char* keyName,
                                 const char* value, const char* comment);
 int     oyAddKey_value_        (const char* keyName, const char* value);
@@ -229,6 +229,11 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
   int nth = 0, i = 1, rc;
   Key key;
 
+  if(keyParentName)
+    DBG_PROG_S((keyParentName))
+  if(keyBaseName)
+    DBG_PROG_S((keyBaseName))
+
   rc=keyInit(&key); ERR
 
     /* search for empty keyname */
@@ -241,6 +246,9 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
     }
     sprintf (keyName, ("%s/%s"), OY_USER_PATHS, pathkeyName);
 
+  if(keyName)
+    DBG_PROG_S((keyName))
+
   DBG_PROG_ENDE
   return keyName;
 } 
@@ -252,6 +260,13 @@ oyAddKey_valueComment_ (const char* keyName,
 { DBG_PROG_START
   int rc;
   Key key;
+
+  if (keyName)
+    DBG_PROG_S(( keyName ));
+  if (value)
+    DBG_PROG_S(( value ));
+  if (comment)
+    DBG_PROG_S(( comment ));
 
     rc=keyInit(&key); ERR
     rc=keySetName (&key, keyName);
@@ -410,8 +425,8 @@ oyIsDir_ (const char* path)
   char* name = oyResolveDirFileName_ (path);
   status.st_mode = 0;
   r = stat (name, &status);
-  DBG_PROG_S(("status.st_mode = %d", (status.st_mode&S_IFMT)&S_IFDIR))
-  DBG_PROG_S(("status.st_mode = %d", status.st_mode))
+  DBG_PROG_S(("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR))
+  DBG_PROG_S(("status.st_mode = %d", (int)status.st_mode))
   DBG_PROG_S(("name = %s ", name))
   OY_FREE (name)
   r = !r &&
@@ -434,8 +449,8 @@ oyIsFileFull_ (const char* fullFileName)
   status.st_mode = 0;
   r = stat (name, &status);
 
-  DBG_NUM_S(("status.st_mode = %d", (status.st_mode&S_IFMT)&S_IFDIR))
-  DBG_NUM_S(("status.st_mode = %d", status.st_mode))
+  DBG_NUM_S(("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR))
+  DBG_NUM_S(("status.st_mode = %d", (int)status.st_mode))
   DBG_NUM_S(("name = %s", name))
   DBG_NUM_V( r )
   switch (r)
@@ -527,9 +542,12 @@ oyResolveDirFileName_ (const char* name)
     }
   }
 
-  DBG_PROG_S (("name %s", name))
-  DBG_PROG_S (("home %s", home))
-  DBG_PROG_S (("newName = %s", newName))
+  if(name)
+    DBG_PROG_S (("name %s", name));
+  if(home)
+    DBG_PROG_S (("home %s", home));
+  if(newName)
+    DBG_PROG_S (("newName = %s", newName));
 
   DBG_PROG_ENDE
   return newName;
@@ -808,7 +826,8 @@ oyPathsCount_ ()
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
-  n = myKeySet->size;
+  if(!rc)
+    n = myKeySet->size;
   if(!n)
     oyPathAdd_(OY_DEFAULT_USER_PROFILE_PATH);
 
@@ -858,6 +877,9 @@ oyPathAdd_ (const char* pfad)
   Key *current;
   char* keyName = (char*) calloc (sizeof(char), MAX_PATH);
   char* value = (char*) calloc (sizeof(char), MAX_PATH);
+
+  if(pfad)
+    DBG_PROG_S(( pfad ));
 
   kdbOpen();
 
@@ -1476,9 +1498,12 @@ oyGetDeviceProfile_                (const char* manufacturer,
   kdbOpen();
 
   DBG_PROG
-  DBG_PROG_S(( manufacturer ))
-  DBG_PROG_S(( model ))
-  DBG_PROG_S(( product_id ))
+  if(manufacturer)
+    DBG_PROG_S(( manufacturer ));
+  if(model)
+    DBG_PROG_S(( model ));
+  if(product_id)
+    DBG_PROG_S(( product_id ));
   // TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
 
@@ -2100,7 +2125,8 @@ oyGetDeviceProfile                (oyDEVICETYP typ,
 { DBG_PROG_START
   char* profile_name = oyGetDeviceProfile_ (manufacturer, model, product_id,
                                     host, port, attrib1, attrib2, attrib3);
-  DBG_PROG_S( (profile_name) )
+  if(profile_name)
+    DBG_PROG_S( (profile_name) );
 
   DBG_PROG_ENDE
   return profile_name;

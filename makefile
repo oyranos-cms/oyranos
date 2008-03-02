@@ -2,19 +2,20 @@ include config
 
 CC=cc
 CXX=c++
-MAKEDEPEND	= /usr/X11R6//bin/makedepend -Y
-OPTS=-Wall -O2 -g
 COLLECT = ar cru
 RANLIB = ranlib
+MAKEDEPEND	= makedepend -Y
 LNK = ln -s
 RM = rm -vf
-ifdef GNU
+ifdef LINUX
 COPY = cp -vdpa
-else
+endif
+ifdef APPLE
 COPY = cp -v
+else
+COPY = cp
 endif
 
-prefix		= /opt/local
 exec_prefix	= ${prefix}
 bindir		= ${exec_prefix}/bin
 datadir		= ${prefix}/share
@@ -25,57 +26,55 @@ srcdir		= .
 
 TARGET  = oyranos
 
-#VERSION_A = 0
-#VERSION_B = 0
-#VERSION_C = 1
-VERSION = $(VERSION_A).$(VERSION_B).$(VERSION_C)
-LIBSONAMEFULL = lib$(TARGET).so.$(VERSION)
-LIBSONAME = lib$(TARGET).so.$(VERSION_A)
-LIBSO = lib$(TARGET).so
+ifdef LINUX
+SO = .so
+endif
+
+LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION_L)
+LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)
+LIBSO = lib$(TARGET)$(SO)
 LIBNAME = lib$(TARGET).a
-LIB_MONI_SONAMEFULL = lib$(TARGET)_moni.so.$(VERSION)
-LIB_MONI_SONAME = lib$(TARGET)_moni.so.$(VERSION_A)
-LIB_MONI_SO = lib$(TARGET)_moni.so
+LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION_L)
+LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)
+LIB_MONI_SO = lib$(TARGET)_moni$(SO)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
 
-#APPLE = 1
-FLU = 1
 DL = --ldflags # --ldstaticflags
+ICONV = -liconv
 
-ifdef FLU
-FLU_H = -DHAVE_FLU `flu-config --cxxflags`
+
+
+ifdef APPLE
+  OPTS=-Wall -O2 -g -fPIC -L.
+  LINK_FLAGS = -dynamiclib
+  MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y
 endif
-
-ifdef GNU
-LINK_FLAGS = -shared -fpic -ldl
-LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
-LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
+ifdef LINUX
+  OPTS=-Wall -O2 -g -fpic
+  LINK_FLAGS = -shared -fpic -ldl -L.
+  LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
+  LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
+  LINK_LIB_PATH = -Wl,--rpath -Wl,$(libdir)
+  LINK_SRC_PATH = -Wl,--rpath -Wl,$(srcdir)
+  SO = .so
 else
-  ifdef APPLE
-    LINK_FLAGS = -shared -fpic -ldl
-    LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
-    LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
-  endif
-LINK_FLAGS = -ldl
+  OPTS=-Wall -O2 -g -fpic -L.
+  LINK_FLAGS = -shared -ldl $(ICONV)
+  RM = rm -f
+  SO = .so
 endif
 
-CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 INCL=-I$(includedir) -I/usr/X11R6/include -I$(srcdir)
+CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
 X11_LIBS=-L/usr/X11R6/lib -lX11
 
-FLTK_LIBS=#`fltk-config --use-images $(DL)`
-
 KDB_LIBS=-lkdb
 
-ifdef FLU
-FLU_LIBS=`flu-config $(DL)`
-endif
 
-
-LDLIBS = -L$(libdir) -L./ $(FLTK_LIBS) \
-	$(KDB_LIBS) #-llcms $(FLU_LIBS)
+LDLIBS = -L$(libdir) -L. \
+	$(KDB_LIBS) #-llcms $(FLTK_LIBS) $(FLU_LIBS)
 
 
 CPP_HEADERS = \
@@ -115,6 +114,8 @@ MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c
 FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 				$(CFILES_FLU:.c=.o)
 
+INCL_DEP = $(INCL) $(SOURCES)
+
 ifdef APPLE
 REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) mac.r
 endif
@@ -126,14 +127,18 @@ mtime   = `find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g`
 
 .SILENT:
 
-all:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma $(TARGET)_config_flu test2
+ifdef FLU
+FLU_GUI = $(TARGET)_config_flu
+endif
+
+all:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma $(FLU_GUI) test2
 
 $(TARGET):	$(OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
-	$(LDLIBS) \
-	$(APPLE)
+	$(LDLIBS)
+	$(REZ)
 	$(RM)  $(LIBSONAME)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
 	$(RM)  $(LIBSO)
@@ -143,7 +148,7 @@ $(TARGET)_moni:	$(MONI_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(X11_LIBS) \
 	-o $(LIB_MONI_SONAMEFULL) \
-	$(MONI_OBJECTS) \
+	$(MONI_OBJECTS) $(LDLIBS) 
 	$(REZ)
 	$(RM)  $(LIB_MONI_SONAME)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
@@ -154,9 +159,9 @@ $(TARGET)_config_flu:	$(TARGET)_moni $(FLU_OBJECTS)
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o $(TARGET)_config_flu \
 	$(TARGET)_config_flu.o \
-	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) -Wl,--rpath -Wl,$(libdir) \
-	$(FLU_LIBS) $(LDLIBS) \
-	$(APPLE)
+	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
+	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) \
+	$(REZ)
 
 static:	$(TARGET)
 	echo Linking $@ ...
@@ -167,23 +172,23 @@ $(TARGET)_gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) $(OPTS) -o $(TARGET)-gamma \
 	$(TARGET)_gamma.o \
-	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) -Wl,--rpath -Wl,$(libdir) \
+	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS) 
-	$(APPLE)
+	$(REZ)
 
 test2:	$(LIB_MONI_SONAMEFULL) test2.o
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o test2 \
 	test2.o \
-	$(LIB_MONI_SONAME) -Wl,--rpath -Wl,$(srcdir) \
-	$(X11_LIBS) -l$(TARGET)
-	$(APPLE)
+	$(LIB_MONI_SONAME) $(LINK_SRC_PATH) \
+	$(X11_LIBS) $(LDLIBS) -l$(TARGET)
+	$(REZ)
 test:	$(LIBSONAMEFULL) test.o
 	$(CC) $(OPTS) -o test \
 	test.o \
-	$(LIBSONAMEFULL) -Wl,--rpath -Wl,$(srcdir) \
+	$(LIBSONAMEFULL) $(LINK_SRC_PATH) \
 	$(LDLIBS) 
-	$(APPLE)
+	$(REZ)
 
 
 install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma
@@ -210,14 +215,22 @@ uninstall:
 	$(RM)   -R $(includedir)/oyranos
 
 clean:
-	RM \
-	$(OBJECTS) $(MONI_OBJECTS) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_MONI_SONAME)\
-	$(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o $(TARGET)-gamma test2.o test.o \
-	test2 test 
+	$(RM) \
+	$(OBJECTS) $(MONI_OBJECTS) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_SO) \
+	$(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
+	$(TARGET)_gamma.o $(TARGET)-gamma test2.o test.o test2 test \
+	$(TARGET)_config_flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
+	config mkdepend
 
-mkdepend:
-	echo "" > mkdepend
-	$(MAKEDEPEND) -f mkdepend -I. $(CFLAGS) $(SOURCES)
+config:
+	configure.sh
+
+depend:
+	echo "setting up dependencies ..."
+	echo "MAKEDEPEND_ISUP = 1" > mkdepend
+	$(MAKEDEPEND) -f mkdepend \
+	-s "#dont edit - automatically generated" \
+	-I. $(INCL_DEP)
 
 
 # The extension to use for executables...
@@ -254,5 +267,10 @@ tgz:
 	mv -v $(TARGET)_*.tgz ../Archiv
 
 
-# makedepend
+# mkdepend
 include mkdepend
+
+ifndef MAKEDEPEND_ISUP
+mkdepend: depend
+endif
+

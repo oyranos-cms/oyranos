@@ -40,6 +40,7 @@
 #include "oyranos_definitions.h"
 #include "oyranos_debug.h"
 
+#include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
 /* ---  Helpers  --- */
@@ -88,7 +89,8 @@ oyGetMonitorInfo_                 (const char* display_name,
   struct DDC_EDID1 *edi=0;
   char *t;
 
-  DBG_PROG_S(("display_name %s",display_name))
+  if(display_name)
+    DBG_PROG_S(("display_name %s",display_name));
 
   if( !(display = XOpenDisplay (display_name))) {
     WARN_S((_("open X Display failed")))
@@ -126,9 +128,12 @@ oyGetMonitorInfo_                 (const char* display_name,
   *serial = edi->HW_ID;
   if((t = strchr(*serial,'\n')) != 0)
     *t = 32;
-  DBG_PROG_S(( *manufacturer ))
-  DBG_PROG_S(( *model ))
-  DBG_PROG_S(( *serial ))
+  if(*manufacturer)
+    DBG_PROG_S(( *manufacturer ));
+  if(*model)
+    DBG_PROG_S(( *model ));
+  if(*serial)
+    DBG_PROG_S(( *serial ));
   // allocate new memory to release the supplied ID block
   len = strlen(edi->Mnf_Model); DBG_PROG_V((len))
   if(len) { DBG_PROG
@@ -301,9 +306,12 @@ oyGetMonitorInfo                  (const char* display,
 
   err = oyGetMonitorInfo_( display, manufacturer, model, serial );
   DBG_PROG_V(( strlen(*manufacturer) ))
-  DBG_PROG_S(( *manufacturer ))
-  DBG_PROG_S(( *model ))
-  DBG_PROG_S(( *serial ))
+  if(*manufacturer)
+    DBG_PROG_S(( *manufacturer ));
+  if(*model)
+    DBG_PROG_S(( *model ));
+  if(*serial)
+    DBG_PROG_S(( *serial ));
 
   DBG_PROG_ENDE
   return err;
