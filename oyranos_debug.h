@@ -32,13 +32,15 @@
 #define OYRANOS_DEBUG_H
 
 
+#include <time.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#include <time.h>
-
 /* Debug system */
+#define DEBUG 1
+
 /* debugging variable - set 0 to off (default), set 1 to switch debugging on */
 extern int oy_debug;
 extern clock_t oyranos_clock_;

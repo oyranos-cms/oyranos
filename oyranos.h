@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2005  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -36,8 +36,13 @@
 
 #ifdef __cplusplus
 extern "C" {
+namespace oyranos
+{
 #endif /* __cplusplus */
 
+/* kdb stuff */
+void  oyOpen                (void);
+void  oyClose               (void);
 
 /*
  * users will usually configure their own settings, while administrators can
@@ -47,47 +52,47 @@ extern "C" {
 
 /* path names */
 
-int   oyPathsCount         (void);
-char* oyPathName           (int number);
-int   oyPathAdd            (const char* pathname);
-void  oyPathRemove         (const char* pathname);
-void  oyPathSleep          (const char* pathname);
-void  oyPathActivate       (const char* pathname);
-
+int   oyPathsCount                     (void);
+char* oyPathName                       (int number);
+int   oyPathAdd                        (const char* pathname);
+void  oyPathRemove                     (const char* pathname);
+void  oyPathSleep                      (const char* pathname);
+void  oyPathActivate                   (const char* pathname);
+char* oyGetPathFromProfileName         (const char* profile_name);
 
 /* --- default profiles --- */
 
-int	oySetDefaultImageProfile          (const char* name);
-int	oySetDefaultImageProfileBlock     (const char* name, void* mem, int size);
-int	oySetDefaultWorkspaceProfile      (const char* name);
-int	oySetDefaultWorkspaceProfileBlock (const char* name, void* mem, int size);
-int	oySetDefaultXYZProfile            (const char* name);
-int	oySetDefaultXYZProfileBlock       (const char* name, void* mem, int size);
-int	oySetDefaultLabProfile            (const char* name);
-int	oySetDefaultLabProfileBlock       (const char* name, void* mem, int size);
-int	oySetDefaultRGBProfile            (const char* name);
-int	oySetDefaultRGBProfileBlock       (const char* name, void* mem, int size);
-int	oySetDefaultCmykProfile           (const char* name);
-int	oySetDefaultCmykProfileBlock      (const char* name, void* mem, int size);
+int   oySetDefaultImageProfile         (const char* name);
+int   oySetDefaultImageProfileBlock    (const char* name, void* mem, int size);
+int   oySetDefaultWorkspaceProfile     (const char* name);
+int   oySetDefaultWorkspaceProfileBlock(const char* name, void* mem, int size);
+int   oySetDefaultXYZProfile           (const char* name);
+int   oySetDefaultXYZProfileBlock      (const char* name, void* mem, int size);
+int   oySetDefaultLabProfile           (const char* name);
+int   oySetDefaultLabProfileBlock      (const char* name, void* mem, int size);
+int   oySetDefaultRGBProfile           (const char* name);
+int   oySetDefaultRGBProfileBlock      (const char* name, void* mem, int size);
+int   oySetDefaultCmykProfile          (const char* name);
+int   oySetDefaultCmykProfileBlock     (const char* name, void* mem, int size);
 
-char*	oyGetDefaultImageProfileName      ();
-char*	oyGetDefaultWorkspaceProfileName  ();
-char*	oyGetDefaultXYZProfileName        ();
-char*	oyGetDefaultLabProfileName        ();
-char*	oyGetDefaultRGBProfileName        ();
-char*	oyGetDefaultCmykProfileName       ();
+char* oyGetDefaultImageProfileName     ();
+char* oyGetDefaultWorkspaceProfileName ();
+char* oyGetDefaultXYZProfileName       ();
+char* oyGetDefaultLabProfileName       ();
+char* oyGetDefaultRGBProfileName       ();
+char* oyGetDefaultCmykProfileName      ();
 
 /* --- profile checking --- */
 
-int	oyCheckProfile (const char* name, int flag);
-int	oyCheckProfileMem (const void* mem, int size, int flags);
+int   oyCheckProfile                   (const char* name, int flag);
+int   oyCheckProfileMem                (const void* mem, int size, int flags);
 
 
 /* --- profile access through oyranos --- */
 
 /* check for sizes before using any profiles */
-int	oyGetProfileSize                  (const char* profilename);
-void*	oyGetProfileBlock                 (const char* profilename, int* size);
+int	  oyGetProfileSize                 (const char* profilename);
+void* oyGetProfileBlock                (const char* profilename, int* size);
 
 /* device profiles */
 
@@ -105,11 +110,11 @@ void*	oyGetProfileBlock                 (const char* profilename, int* size);
  */
 
 typedef enum  {
-  DISPLAY,                 /* dynamic viewing */
-  PRINTER,                 /* static media (dye, ink, offset, imagesetters) */
-  SCANNER,                 /* contact digitiser */
-  CAMERA,                  /* virtual or contactless image capturing */
-} DEVICETYP;
+  oyDISPLAY,                 /* dynamic viewing */
+  oyPRINTER,                 /* static media (dye, ink, offset, imagesetters) */
+  oySCANNER,                 /* contact digitiser */
+  oyCAMERA,                  /* virtual or contactless image capturing */
+} oyDEVICETYP;
 
 /* simply pass 0 for not specified properties
  *
@@ -124,7 +129,7 @@ typedef enum  {
  * }
  *
  */
-char* oyGetDeviceProfile                  (DEVICETYP typ,
+char* oyGetDeviceProfile                  (oyDEVICETYP typ,
                                            const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
@@ -134,7 +139,7 @@ char* oyGetDeviceProfile                  (DEVICETYP typ,
                                            const char* attrib2,
                                            const char* attrib3);
 
-int	oySetDeviceProfile                    (DEVICETYP typ,
+int	oySetDeviceProfile                    (oyDEVICETYP typ,
                                            const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
@@ -146,6 +151,15 @@ int	oySetDeviceProfile                    (DEVICETYP typ,
                                            const char* profilename,
                                            void* mem,
                                            int   size);
+int oyEraseDeviceProfile                  (oyDEVICETYP typ,
+                                           const char* manufacturer,
+                                           const char* model,
+                                           const char* product_id,
+                                           const char* host,
+                                           const char* port,
+                                           const char* attrib1,
+                                           const char* attrib2,
+                                           const char* attrib3);
 #if 0
 int	oySetProfileProperty                  (char* profilename,
                                            char* property,
@@ -154,7 +168,8 @@ int	oySetProfileProperty                  (char* profilename,
 
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace oyranos
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_H */

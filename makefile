@@ -37,13 +37,15 @@ ifdef FLU
 FLU_H = -DHAVE_FLU
 endif
 
-LINK_FLAGS = -shared -fpic -ldl -Wl,-soname -Wl,$(LIBSONAME)
+LINK_FLAGS = -shared -fpic -ldl
+LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
+LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
 
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 INCL=-I$(includedir) -I/usr/X11R6/include -I$(srcdir)
 CFLAGS = $(OPTS) $(INCL)
 
-X11_LIBS=#-L/usr/X11R6/lib -lXinerama -lXft
+X11_LIBS=-L/usr/X11R6/lib -lX11
 
 FLTK_LIBS=#`fltk-config --use-images $(DL)`
 
@@ -55,7 +57,7 @@ endif
 
 
 LDLIBS = -L$(libdir) -L./ $(FLTK_LIBS) \
-	$(X11_LIBS) $(KDB_LIBS) #-llcms $(FLU_LIBS)
+	$(KDB_LIBS) #-llcms $(FLU_LIBS)
 
 
 CPP_HEADERS = \
@@ -75,17 +77,17 @@ CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
 DOKU = \
-        README \
+        AUTHORS \
         ChangeLog \
         COPYING \
-        AUTHORS
+        README
 FLUID = #\
 	fl_oyranos.fl
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
 		  $(CFILES_MONI) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
-MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o) $(CFILESC:.c=.o)
+MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 
 REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) /opt/local/include/FL/mac.r
 ifdef APPLE
@@ -103,7 +105,7 @@ all:	$(TARGET) $(TARGET)_moni test2
 
 $(TARGET):	$(OBJECTS)
 	echo Linking $@...
-	$(CC) $(OPTS) $(LINK_FLAGS) -o $(LIBSONAMEFULL) \
+	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	$(LDLIBS) \
 	$(APPLE)
@@ -111,10 +113,9 @@ $(TARGET):	$(OBJECTS)
 
 $(TARGET)_moni:	$(MONI_OBJECTS)
 	echo Linking $@...
-	$(CC) $(OPTS) $(LINK_FLAGS) -L/usr/X11R6/lib -lX11 \
+	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(X11_LIBS) \
 	-o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) \
-	$(LDLIBS) \
 	$(APPLE)
 	$(RM) $(LIB_MONI_SONAME) && $(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
 
@@ -125,11 +126,12 @@ static:	$(TARGET)
 	$(COLLECT) $(LIBNAME) $(OBJECTS)
 	$(RANLIB) $(LIBNAME)
 
-test2:	$(LIBSONAMEFULL) test2.o
-	$(CC) $(OPTS) -o test2 \
+test2:	$(LIB_MONI_SONAMEFULL) test2.o
+	echo Linking $@...
+	$(CXX) $(OPTS) -o test2 \
 	test2.o \
-	$(LIB_MONI_SONAMEFULL) -Wl,--rpath -Wl,$(srcdir) \
-	$(LDLIBS) 
+	$(LIB_MONI_SONAME) -Wl,--rpath -Wl,$(srcdir) \
+	$(X11_LIBS) -l$(TARGET)
 	$(APPLE)
 test:	$(LIBSONAMEFULL) test.o
 	$(CC) $(OPTS) -o test \
@@ -142,7 +144,7 @@ test:	$(LIBSONAMEFULL) test.o
 install:	$(TARGET)
 	cp -v $(TARGET) $(bindir)
 clean:
-	rm -v $(OBJECTS) $(TARGET)
+	rm -v $(OBJECTS) $(MONI_OBJECTS) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_MONI_SONAME) $(LIB_MONI_SONAMEFULL)
 
 depend:
 	$(MAKEDEPEND) -fmakedepend -I.. $(SOURCES) $(CFILES) $(CPP_HEADERS)
@@ -173,9 +175,9 @@ EXEEXT		=
 
 tgz:
 	tar cf - -C $(topdir) \
-	$(addprefix $(dir)/,$(SOURCES)) \
-	$(dir)/makefile \
 	$(addprefix $(dir)/,$(DOKU)) \
+	$(dir)/makefile \
+	$(addprefix $(dir)/,$(SOURCES)) \
 	$(addprefix $(dir)/,$(FLUID)) \
 	| gzip > $(TARGET)_$(mtime).tgz
 	mv -v $(TARGET)_*.tgz ../Archiv

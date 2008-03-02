@@ -35,6 +35,14 @@
 
 #include "oyranos_helper.h"
 #include "oyranos_definitions.h"
+
+#ifdef __cplusplus
+namespace oyranos
+{
+extern "C" {
+#endif /* __cplusplus */
+
+
 #include "oyranos_debug.h"
 
 /* ---  Helpers  --- */
@@ -45,12 +53,15 @@
 /* --- internal API definition --- */
 
 /* separate from the external functions */
-int	oyPathsCount_         (void);
-char*	oyPathName_           (int number);
-int	oyPathAdd_            (const char* pathname);
-void	oyPathRemove_         (const char* pathname);
-void	oyPathSleep_          (const char* pathname);
-void	oyPathActivate_       (const char* pathname);
+void  oyOpen_                   (void);
+void  oyClose_                  (void);
+int   oyPathsCount_             (void);
+char* oyPathName_               (int number);
+int   oyPathAdd_                (const char* pathname);
+void  oyPathRemove_             (const char* pathname);
+void  oyPathSleep_              (const char* pathname);
+void  oyPathActivate_           (const char* pathname);
+char* oyGetPathFromProfileName_ (const char* profilename);
 
 int	oySetDefaultImageProfile_          (const char* name);
 int	oySetDefaultImageProfile_Block     (const char* name, void* mem, int size);
@@ -106,33 +117,46 @@ int     oySetDeviceProfile_               (const char* manufacturer,
                                            const char* profileName,
                                            void* mem,
                                            int size);
+int     oyEraseDeviceProfile_             (const char* manufacturer,
+                                           const char* model,
+                                           const char* product_id,
+                                           const char* host,
+                                           const char* port,
+                                           const char* attrib1,
+                                           const char* attrib2,
+                                           const char* attrib3);
 
+void oyOpen  (void) { oyOpen_(); }
+void oyClose (void) { oyClose_(); }
+void oyOpen_ (void) { kdbOpen(); }
+void oyClose_(void) { kdbClose(); }
 
 
 /* elektra key wrapper */
-int oyAddKey_valueComment_ (const char* keyName,
-                            const char* value, const char* comment);
-int oyAddKey_value_ (const char* keyName, const char* value);
+int     oyAddKey_valueComment_ (const char* keyName,
+                                const char* value, const char* comment);
+int     oyAddKey_value_        (const char* keyName, const char* value);
 
 /* elektra key list handling */
-char* oySearchEmptyKeyname_ (const char* keyParentName,
-                             const char* keyBaseName);
-KeySet* oyReturnChildrenList_ (const char* keyParentName, int* rc);
+char*   oySearchEmptyKeyname_  (const char* keyParentName,
+                                const char* keyBaseName);
+KeySet* oyReturnChildrenList_  (const char* keyParentName, int* rc);
 
 /* complete an name from file including oyResolveDirFileName */
-char* oyMakeFullFileDirName_ (const char* name);
+char*   oyMakeFullFileDirName_     (const char* name);
 /* find an file/dir and do corrections on  ~ ; ../  */
-char* oyResolveDirFileName_ (const char* name);
-char* oyGetHomeDir_ ();
-char* oyGetParent_ (const char* name);
+char*   oyResolveDirFileName_      (const char* name);
+char*   oyExtractPathFromFileName_ (const char* name);
+char*   oyGetHomeDir_              ();
+char*   oyGetParent_               (const char* name);
 
-int oyIsDir_ (const char* path);
-int oyIsFile_ (const char* fileName);
+int oyIsDir_      (const char* path);
+int oyIsFile_     (const char* fileName);
 int oyIsFileFull_ (const char* fullFileName);
-int oyMakeDir_ (const char* path);
+int oyMakeDir_    (const char* path);
 
-int   oyWriteMemToFile_(const char* name, void* mem, int size);
-char* oyReadFileToMem_(const char* fullFileName, int *size);
+int   oyWriteMemToFile_ (const char* name, void* mem, int size);
+char* oyReadFileToMem_  (const char* fullFileName, int *size);
 
 /* oyranos part */
 /* check for the global and the users directory */
@@ -142,7 +166,8 @@ char* oyFindProfile_ (const char* name);
 
 /* Profile registring */
 int oySetProfile_      (const char* name, const char* typ, const char* comment);
-int oySetProfile_Block (const char* name, void* mem, int size, const char* typ, const char* comnt);
+int oySetProfile_Block (const char* name, void* mem, int size,
+                        const char* typ, const char* comnt);
 
 /* small search engine
  *
@@ -150,21 +175,21 @@ int oySetProfile_Block (const char* name, void* mem, int size, const char* typ, 
  * name and val are not alloced or freed 
  */
 
-struct Comp {
-  struct Comp *next;
-  struct Comp *begin;
-  char* name;
-  char* val;
-  int   hits;
+struct OyComp {
+  struct OyComp *next;
+  struct OyComp *begin;
+  char          *name;
+  char          *val;
+  int            hits;
 };
 
-typedef struct Comp comp;
+typedef struct OyComp oyComp;
 
-comp* initComp (comp *compare, comp *top);
-comp* appendComp (comp *list, comp *new);
-void destroyCompList (comp* list);
+oyComp* oyInitComp_        (oyComp *compare, oyComp *top);
+oyComp* oyAppendComp_      (oyComp *list, oyComp *new);
+void    oyDestroyCompList_ (oyComp* list);
 
-comp*   oyGetDeviceProfile_sList          (const char* manufacturer,
+oyComp* oyGetDeviceProfile_sList          (const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
                                            const char* host,
@@ -175,6 +200,8 @@ comp*   oyGetDeviceProfile_sList          (const char* manufacturer,
                                            KeySet* profilesList,
                                            int   rc);
 
+/* small helpers */
+#define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
 
 /* --- function definitions --- */
 
@@ -282,7 +309,7 @@ oyReadFileToMem_(const char* name, int *size)
         /* check again */
         if (s != *size)
         { *size = 0;
-          free (mem);
+          OY_FREE (mem)
           mem = 0;
         }
       }
@@ -383,7 +410,7 @@ oyIsDir_ (const char* path)
   DBG_PROG_S(("status.st_mode = %d", (status.st_mode&S_IFMT)&S_IFDIR))
   DBG_PROG_S(("status.st_mode = %d", status.st_mode))
   DBG_PROG_S(("name = %s ", name))
-  if (name) free (name);
+  OY_FREE (name)
   r = !r &&
        ((status.st_mode & S_IFMT) & S_IFDIR);
 
@@ -430,7 +457,7 @@ oyIsFile_ (const char* fileName)
 
   r = oyIsFileFull_(name);
 
-  if (name) free (name); DBG_PROG
+  OY_FREE (name) DBG_PROG
 
   DBG_PROG_ENDE
   return r;
@@ -444,7 +471,7 @@ oyMakeDir_ (const char* path)
   mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH; /* 0755 */
   DBG_PROG
   rc = mkdir (name, mode);
-  free (name);
+  OY_FREE (name)
 
   DBG_PROG_ENDE
   return rc;
@@ -487,6 +514,20 @@ oyResolveDirFileName_ (const char* name)
 
   DBG_PROG_ENDE
   return newName;
+}
+
+char*
+oyExtractPathFromFileName_ (const char* file_name)
+{ DBG_PROG_START
+  char *path_name = (char*) calloc (strlen(file_name)+1, sizeof(char));
+  sprintf( path_name, file_name );
+  DBG_PROG_S (("path_name = %s", path_name))
+  char *ptr = strrchr (path_name, '/');
+  ptr[0] = 0;
+  DBG_PROG_S (("path_name = %s", path_name))
+  DBG_PROG_S (("ptr = %s", ptr))
+  DBG_PROG_ENDE
+  return path_name;
 }
 
 char*
@@ -539,7 +580,7 @@ oyCheckDefaultDirectories_ ()
                  parentDefaultUserDir,
       oyMakeDir_( parentDefaultUserDir)); DBG_PROG
     }
-    free (parentDefaultUserDir);
+    OY_FREE (parentDefaultUserDir)
 
     printf ("Try to create users default directory %s %d \n",
                OY_DEFAULT_USER_PROFILE_PATH,
@@ -552,15 +593,40 @@ char*
 oyFindProfile_ (const char* fileName)
 { DBG_PROG_START
   char  *fullFileName = 0;
+
+  DBG_NUM_S((fileName))
+  if (fileName && !strchr(fileName, OY_SLASH_C))
+  { DBG_PROG
+    char* path_name = oyGetPathFromProfileName_(fileName);
+    fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
+    sprintf(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
+    OY_FREE(path_name)
+  } else
+  {
+    if (oyIsFileFull_(fileName)) {
+      fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
+      sprintf(fullFileName, fileName);
+    } else
+      fullFileName = oyMakeFullFileDirName_ (fileName);
+  }
+
+  DBG_PROG_ENDE
+  return fullFileName;
+}
+
+char*
+oyGetPathFromProfileName_ (const char* fileName)
+{ DBG_PROG_START
+  char  *fullFileName = 0;
+  char  *pathName = 0;
   int    success = 0;
   char  *header = 0;
-  int size;
+  int    size;
 
   DBG_NUM_S((fileName))
   /* test for pure file without dir; search in configured paths only */
   if (fileName && !strchr(fileName, OY_SLASH_C))
   { DBG_PROG
-    char* pathName = (char*) calloc (MAX_PATH, sizeof(char)); DBG_PROG
     int   n_paths = oyPathsCount_ (),
           i;
 
@@ -582,17 +648,18 @@ oyFindProfile_ (const char* fileName)
         success = !oyCheckProfile_Mem (header, 128);
       }
 
-      if (ptr) free (ptr);
-      if (header) free (header);
+      OY_FREE (ptr)
+      OY_FREE (header)
 
-      if (success) /* found */
-        break;
+      if (success) { /* found */
+        OY_FREE (fullFileName)
+        return pathName;
+      } else
+        OY_FREE (pathName)
     }
 
     if (!success)
       WARN_S( ("profile %s not found in colour path\n", fileName))
-
-    if (pathName) free (pathName);
 
   } else
   {/* else use fileName as an full qualified name, check name and test profile*/
@@ -607,19 +674,25 @@ oyFindProfile_ (const char* fileName)
         success = !oyCheckProfile_Mem (header, 128);
     }
 
-    if (!success)
+    if (!success) {
       WARN_S (("profile %s not found\n", fileName))
+      return 0;
+    }
 
-    if (header) free (header);
+    pathName = oyExtractPathFromFileName_(fullFileName);
+
+    OY_FREE (header)
   }
 
   if (!success)
-  { free (fullFileName);
-    fullFileName = 0;
+  { OY_FREE (pathName)
+    pathName = 0;
   }
 
+  OY_FREE (fullFileName)
+
   DBG_PROG_ENDE
-  return fullFileName;
+  return pathName;
 }
 
 int
@@ -660,7 +733,7 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
         sprintf (keyName, "%s%s%s%s", OY_USER, OY_SLASH, OY_REGISTRED_PROFILES OY_SLASH, fileName); DBG_PROG
         r = oyAddKey_valueComment_ (keyName, com, 0); DBG_PROG
         //DBG_PROG_V(("%s %d", keyName, len))
-        if (keyName) free(keyName);
+        OY_FREE (keyName)
       }
       else
         printf ("%s:%d !!! ERROR typ %s type does not exist for default profiles",__FILE__,__LINE__, typ);
@@ -688,6 +761,7 @@ oyPathsCount_ ()
 
   ksClose (myKeySet);
   kdbClose();
+  OY_FREE(myKeySet)
 
   DBG_PROG_ENDE
   return n;
@@ -718,6 +792,7 @@ oyPathName_ (int number)
 
   ksClose (myKeySet);
   kdbClose();
+  OY_FREE(myKeySet)
 
   DBG_PROG_ENDE
   return value;
@@ -774,8 +849,9 @@ oyPathAdd_ (const char* pfad)
 
   ksClose (myKeySet);
   kdbClose();
-  free (keyName);
-  free (value);
+  OY_FREE (myKeySet)
+  OY_FREE (keyName)
+  OY_FREE (value)
 
   oyCheckDefaultDirectories_();
 
@@ -810,8 +886,9 @@ oyPathRemove_ (const char* pfad)
 
   ksClose (myKeySet);
   kdbClose();
-  free (keyName);
-  free (value);
+  OY_FREE(myKeySet)
+  OY_FREE(keyName)
+  OY_FREE(value)
 
   oyPathAdd_ (OY_DEFAULT_USER_PROFILE_PATH);
 
@@ -844,7 +921,8 @@ oyPathSleep_ (const char* pfad)
 
   ksClose (myKeySet);
   kdbClose();
-  free (value);
+  OY_FREE(myKeySet)
+  OY_FREE (value);
   DBG_PROG_ENDE
 }
 
@@ -874,7 +952,8 @@ oyPathActivate_ (const char* pfad)
 
   ksClose (myKeySet);
   kdbClose();
-  free (value);
+  OY_FREE(myKeySet)
+  OY_FREE (value);
   DBG_PROG_ENDE
 }
 
@@ -1114,7 +1193,7 @@ oyGetProfileSize_                  (const char* profilename)
   char* dummy;
 
   dummy = oyReadFileToMem_ (fullFileName, &size);
-  if (dummy) free (dummy);
+  OY_FREE (dummy)
 
   DBG_PROG_ENDE
   return size;
@@ -1150,7 +1229,7 @@ oySetProfile_Block (const char* name, void* mem, int size, const char* typ,
            OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, fileName);
 
   resolvedFN = oyResolveDirFileName_ (fullFileName);
-  free (fullFileName);
+  OY_FREE(fullFileName)
   fullFileName = resolvedFN;
 
   if (!oyCheckProfile_Mem( mem, size))
@@ -1167,7 +1246,7 @@ oySetProfile_Block (const char* name, void* mem, int size, const char* typ,
   DBG_PROG_S(("%s", name))
   DBG_PROG_S(("%s", fileName))
   DBG_PROG_S(("%ld %d", (long int)&((char*)mem)[0] , size))
-  free (fullFileName);
+  OY_FREE(fullFileName)
 
   DBG_PROG_ENDE
   return r;
@@ -1175,11 +1254,11 @@ oySetProfile_Block (const char* name, void* mem, int size, const char* typ,
 
 /* small search engine */
 
-comp*
-initComp (comp *compare, comp *top)
+oyComp*
+oyInitComp_ (oyComp *compare, oyComp *top)
 { DBG_PROG_START
   if (!compare)
-    compare = (comp*) calloc (1, sizeof(comp));
+    compare = (oyComp*) calloc (1, sizeof(oyComp));
 
   compare->next = 0;
 
@@ -1195,19 +1274,19 @@ initComp (comp *compare, comp *top)
   return compare;
 }
 
-comp*
-appendComp (comp *list, comp *new)
+oyComp*
+oyAppendComp_ (oyComp *list, oyComp *new)
 { DBG_PROG_START
 
   if (!list)
-    list = initComp(list,0);
+    list = oyInitComp_(list,0);
 
   list = list->begin;
   while (list->next)
     list = list->next;
 
   if (!new)
-    new = initComp(new, list->begin);
+    new = oyInitComp_(new, list->begin);
 
   new->begin = list->begin;
   list->next = new;
@@ -1217,24 +1296,24 @@ appendComp (comp *list, comp *new)
 }
 
 void
-destroyCompList (comp *list)
+oyDestroyCompList_ (oyComp *list)
 { DBG_PROG_START
-  comp *before;
+  oyComp *before;
 
   list = list->begin;
   while (list->next)
   {
     before = list;
     list = list->next;
-    free (before);
+    OY_FREE(before)
   }
-  free (list);
+  OY_FREE(list)
 
   DBG_PROG_ENDE
 }
 
 char*
-printComp (comp* entry)
+printComp (oyComp* entry)
 { DBG_PROG_START
   #ifdef DEBUG
   static char text[MAX_PATH] = {0};
@@ -1262,16 +1341,22 @@ oyGetDeviceProfile_                (const char* manufacturer,
                                     const char* attrib2,
                                     const char* attrib3)
 { DBG_PROG_START
+  DBG_PROG
   char* profileName = 0;
   int rc;
 
-  comp *matchList = 0,
-       *testEntry = 0,
-       *foundEntry = 0;
+  oyComp *matchList = 0,
+         *testEntry = 0,
+         *foundEntry = 0;
   KeySet* profilesList;
+  DBG_PROG
 
   kdbOpen();
 
+  DBG_PROG
+  DBG_PROG_S(( manufacturer ))
+  DBG_PROG_S(( model ))
+  DBG_PROG_S(( product_id ))
   // TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
 
@@ -1311,12 +1396,13 @@ oyGetDeviceProfile_                (const char* manufacturer,
 
       DBG_PROG_S((foundEntry->name))
       DBG_PROG_S((profileName))
-      destroyCompList (matchList);
+      oyDestroyCompList_ (matchList);
     }
   }
 
   ksClose (profilesList);
   kdbClose();
+  OY_FREE(profilesList)
 
   DBG_PROG_ENDE
   return profileName;
@@ -1337,9 +1423,9 @@ oyGetDeviceProfile_s               (const char* manufacturer,
   char*  profileName = 0;
   int    rc;
 
-  comp *matchList = 0,
-       *testEntry = 0,
-       *foundEntry = 0;
+  oyComp *matchList = 0,
+         *testEntry = 0,
+         *foundEntry = 0;
   KeySet* profilesList;
 
   kdbOpen();
@@ -1383,18 +1469,19 @@ oyGetDeviceProfile_s               (const char* manufacturer,
 
       DBG_PROG_S((foundEntry->name))
       DBG_PROG_S((profileName))
-      destroyCompList (matchList);
+      oyDestroyCompList_ (matchList);
     }
   }
 
   ksClose (profilesList);
   kdbClose();
+  OY_FREE(profilesList)
 
   DBG_PROG_ENDE
   return profileNames;
 }
 
-comp*
+oyComp*
 oyGetDeviceProfile_sList           (const char* manufacturer,
                                     const char* model,
                                     const char* product_id,
@@ -1440,9 +1527,9 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
   char* value = (char*) calloc (MAX_PATH, sizeof(char));
   const char **attributs = (const char**) calloc (8, sizeof (const char*));
   Key *current;
-  comp *matchList = 0,
-       *testEntry = 0,
-       *foundEntry = 0;
+  oyComp *matchList = 0,
+         *testEntry = 0,
+         *foundEntry = 0;
 
   attributs[0] = manufacturer;
   attributs[1] = model;
@@ -1483,10 +1570,11 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
         if (matchList)
         {
           for (testEntry=matchList->begin; testEntry; testEntry=testEntry->next)
-          {
-            DBG_PROG_S(( "%s", strstr(testEntry->name, current->key) ))
-            if (strstr(testEntry->name, current->key) != 0)
-            { DBG_PROG
+          { DBG_PROG
+            DBG_PROG_S(( "%s %s", testEntry->name, current->key ))
+            if (testEntry->name && current->key &&
+                strstr(testEntry->name, current->key) != 0)
+            { DBG_PROG_S(( "%s", strstr(testEntry->name, current->key) ))
               found = 1;
               WARN_S(("double occurency of profile %s", testEntry->name))
               /* anyway increase the hits counter if attributes fits better */
@@ -1500,8 +1588,8 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
         {
           DBG_PROG_S(( "new matching profile found %s",current->key ))
           if (!matchList)
-            matchList = initComp(0,0);
-          foundEntry = appendComp (matchList, 0);
+            matchList = oyInitComp_(0,0);
+          foundEntry = oyAppendComp_ (matchList, 0);
           DBG_PROG_S ((printComp (foundEntry)))
           foundEntry->name = current->key; 
           foundEntry->val = current->data;
@@ -1514,6 +1602,8 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
   } else
     WARN_S (("No profiles yet registred to devices"))
 
+  OY_FREE(attributs)
+  OY_FREE(value)
   DBG_PROG_ENDE
   return matchList;
 }
@@ -1541,6 +1631,10 @@ oySetDeviceProfile_                (const char* manufacturer,
 
   if (!rc)
   { DBG_PROG
+    oyEraseDeviceProfile_          ( manufacturer, model, product_id,
+                                     host, port,
+                                     attrib1, attrib2, attrib3);
+
     if (manufacturer || model || product_id || host || port || attrib1
         || attrib2 || attrib3)
     { int len = 0;
@@ -1571,9 +1665,59 @@ oySetDeviceProfile_                (const char* manufacturer,
   return rc;
 }
 
+int
+oyEraseDeviceProfile_              (const char* manufacturer,
+                                    const char* model,
+                                    const char* product_id,
+                                    const char* host,
+                                    const char* port,
+                                    const char* attrib1,
+                                    const char* attrib2,
+                                    const char* attrib3)
+{ DBG_PROG_START
+  DBG_PROG
+  char* profile_name = 0;
+  int rc;
+  KeySet* profilesList;
+
+  DBG_PROG
+
+  kdbOpen();
+
+  profile_name = oyGetDeviceProfile_ (manufacturer, model, product_id,
+                                      host, port, attrib1, attrib2, attrib3);
+
+  DBG_PROG_S(("profile_name %s", profile_name ))
+
+  // TODO merge User and System KeySets in oyReturnChildrenList_
+  profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
+  Key *current;
+  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+  for (current=profilesList->start; current; current=current->next)
+  {
+    keyGetName(current, value, MAX_PATH);
+    DBG_NUM_S(( value ))
+    if(strstr(value, profile_name) != 0) {
+      DBG_PROG_S((value))
+      kdbRemove (value); 
+      break;
+    }
+  }
+
+  DBG_NUM_S(( value ))
+
+  OY_FREE (profilesList) DBG_PROG
+  OY_FREE (profile_name) DBG_PROG
+  OY_FREE (value) DBG_PROG
+  kdbClose(); DBG_PROG
+
+  DBG_PROG_ENDE
+  return rc;
+}
 
 
-/* --- internal API hidding --- */
+
+/* --- internal API decoupling --- */
 
 #include "oyranos.h"
 
@@ -1622,6 +1766,13 @@ oyPathActivate       (const char* pathname)
   DBG_PROG_ENDE
 }
 
+char*
+oyGetPathFromProfileName (const char* profile_name)
+{ DBG_PROG_START
+  char* path_name = oyGetPathFromProfileName_ (profile_name);
+  DBG_PROG_ENDE
+  return path_name;
+}
 
 int
 oySetDefaultImageProfile          (const char* name)
@@ -1806,7 +1957,7 @@ oyGetProfileBlock                 (const char* profilename, int *size)
 }
 
 char*
-oyGetDeviceProfile                (DEVICETYP typ,
+oyGetDeviceProfile                (oyDEVICETYP typ,
                                    const char* manufacturer,
                                    const char* model,
                                    const char* product_id,
@@ -1825,7 +1976,7 @@ oyGetDeviceProfile                (DEVICETYP typ,
 }
 
 int
-oySetDeviceProfile                (DEVICETYP typ,
+oySetDeviceProfile                (oyDEVICETYP typ,
                                    const char* manufacturer,
                                    const char* model,
                                    const char* product_id,
@@ -1845,5 +1996,29 @@ oySetDeviceProfile                (DEVICETYP typ,
   return rc;
 }
 
+int
+oyEraseDeviceProfile              (oyDEVICETYP typ,
+                                   const char* manufacturer,
+                                   const char* model,
+                                   const char* product_id,
+                                   const char* host,
+                                   const char* port,
+                                   const char* attrib1,
+                                   const char* attrib2,
+                                   const char* attrib3)
+{ DBG_PROG_START
+  int rc = oyEraseDeviceProfile_ (manufacturer, model, product_id,
+                                    host, port, attrib1, attrib2, attrib3);
+
+  DBG_PROG_ENDE
+  return rc;
+}
+
+
+
+#ifdef __cplusplus
+} // namespace oyranos
+} // extern "C"
+#endif /* __cplusplus */
 
 

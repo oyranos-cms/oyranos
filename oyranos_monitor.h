@@ -33,6 +33,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+namespace oyranos
+{
 #endif /* __cplusplus */
 
 
@@ -44,15 +46,21 @@ extern "C" {
 
 /* monitor names */
 
+int
+oyGetMonitorInfo                  (const char* display,
+                                   char**      manufacturer,
+                                   char**      model,
+                                   char**      serial);
 char*
-oyGetMonitorProfile               (const char* display,
-                                   char*       manufacturer,
-                                   char*       model,
-                                   char*       serial);
+oyGetMonitorProfileName           (const char* display);
 
+int
+oySetMonitorProfile               (const char* display_name,
+                                   const char* profil_name );
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace oyranos
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_MONITOR_H */
