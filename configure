@@ -1,6 +1,7 @@
 #!/bin/sh
 
 TARGET=oyranos
+ERROR=0
 
 CONF_H=config.h
 CONF=makefile
@@ -8,12 +9,32 @@ CONF_SH=$TARGET-config
 SPEC=$TARGET.spec
 PKGC=$TARGET.pc
 MPKG="$TARGET"_monitor.pc
+VERS="$TARGET"_version.h
+
+export CONF_H CONF
 
 VERSION_A=0
 VERSION_B=1
 VERSION_C=5
+RELEASE=0
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
-TIME="November 2004 - April 2006"
+if [ $VERSION_A -gt 9 ]; then
+  VERSION_L="$VERSION_A"
+else
+  VERSION_L="0$VERSION_A"
+fi
+if [ $VERSION_B -gt 9 ]; then
+  VERSION_L="$VERSION_L$VERSION_B"
+else
+  VERSION_L="${VERSION_L}0$VERSION_B"
+fi
+if [ $VERSION_C -gt 9 ]; then
+  VERSION_L="$VERSION_L$VERSION_C"
+else
+  VERSION_L="${VERSION_L}0$VERSION_C"
+fi
+VERSION_L=`echo $VERSION_L | sed s/^0*//g`
+TIME="November 2004 - May 2006"
 
 src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
 srcdir="`pwd`"
@@ -28,6 +49,9 @@ echo "" >> $CONF
 echo "TARGET = $TARGET" >> $CONF
 
 echo ""
+
+
+# detect System
 
 UNAME_=`uname`
 OSUNAME=BSD
@@ -45,7 +69,6 @@ else
     if [ $UNAME_ = "SunOS" ]; then
       echo "SOLARIS = 1" >> $CONF
       echo "SunOS                   detected"
-      OSUNAME=SunOS
     else
       if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
         OSUNAME=BSD
@@ -64,16 +87,26 @@ if [ $? = 0 ]; then
     if [ $MACH_ = "x86_64" ]; then
       MACH=BUILD_64
       echo "BUILD_64 = 1" >> $CONF
-      echo "64-bit system           detected"
+      echo "X86_64                  will build in 64 bit mode"
     else
       if [ $MACH_ = "sun4u" ]; then
         MACH=BUILD_64
         echo "BUILD_64 = 1" >> $CONF
-        echo "64-bit system           detected"
+        echo "spark ultra 4           will build in 64 bit mode"
       fi
     fi
   fi
 fi
+
+if [ $MACH = "BUILD_64" ]; then
+  BARCH="64"
+  LINE_ARCH="-64"
+else
+  BARCH=""
+  LINE_ARCH=""
+fi
+LIBDIR="lib"$BARCH
+export LIBDIR BARCH
 
 if [ $# -gt 0 ]; then
   prefix=""
@@ -94,27 +127,12 @@ else
     prefix=/usr/local
   fi
 fi
-echo "prefix =                $prefix"
 
 
-echo "prefix = $prefix" >> $CONF
-echo "" >> $CONF
-echo "#define PREFIX         \"$prefix\"" >> $CONF_H
-echo "#define LOCALEDIR      \"$prefix/share/locale\"" >> $CONF_H
-echo "#define SRCDIR         \"$srcdir\"" >> $CONF_H
-echo "#define SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
 
+# detect Libraries
 
-`pkg-config  --atleast-version=0.5.0.5 elektra 2>>error.txt`
-if [ $? = 0 ]; then
-  echo "elektra `pkg-config --modversion elektra`           detected"
-  echo "#define HAVE_ELEKTRA 1" >> $CONF_H
-  echo "ELEKTRA = 1" >> $CONF
-  echo "ELEKTRA_H = `pkg-config --cflags elektra`" >> $CONF
-  echo "ELEKTRA_LIBS = `pkg-config --libs elektra`" >> $CONF
-else
-  echo "no or too old elektra found,\n  need at least version 0.5.0.5, download: elektra.sf.net"
-fi
+echo "LIB=/"$LIBDIR >> $CONF
 
 
 FLTK_=`fltk-config --cxxflags 2>>error.txt`
@@ -127,7 +145,6 @@ if [ $? = 0 ] && [ -n "$FLTK_" ]; then
   echo "FLTK_LIBS = `fltk-config --use-images --ldflags`" >> $CONF
 else
   echo "FLTK is not found; you optionally can download at: www.fltk.org"
-  echo "to use the gui you need as well the FLU extensions to fltk"
 fi
 
 
@@ -142,80 +159,34 @@ else
   echo "no FLU found, will not use it"
 fi
 
-if [ -f /usr/X11R6/include/X11/Xlib.h ] ||
-   [ -f /usr/include/X11/Xlib.h ]; then
-  echo "X11                     detected"
-  X11=1
-  echo "#define HAVE_X 1" >> $CONF_H
-  echo "X11 = 1" >> $CONF
-  echo "X_H = -I/usr/X11R6/include/X11 -I/usr/include/X11" >> $CONF
-else
-  if [ $UNAME_ = "Linux" ]; then
-    echo "X11 header not found in /usr/X11R6/include/X11/Xlib.h or"
-    echo "/usr/include/X11/Xlib.h"
-  fi
+if [ "$FLTK" = 1 ]; then
+  echo "FLTK_GUI = $TARGET-config-fltk" >> $CONF
+fi
+if [ "$FLU" = 1 ]; then
+  echo "FLU_GUI = $TARGET-config-flu" >> $CONF
 fi
 
-if [ -f /usr/X11R6/include/X11/extensions/xf86vmode.h ] ||
-   [ -f /usr/include/X11/extensions/xf86vmode.h ]; then
-  echo "X VidMode extension     detected"
-  echo "#define HAVE_XF86VMODE 1" >> $CONF_H
-  echo "XF86VMODE = 1" >> $CONF
-  echo "XF86VMODE_LIB = -lXxf86vm" >> $CONF
-else
-  if [ $UNAME_ = "Linux" ]; then
-    echo "X VidMode extension not found in /usr/X11R6/include/X11/extensions/xf86vmode.h or"
-    echo "/usr/include/X11/extensions/xf86vmode.h"
-  fi
+
+export ELEKTRA=1
+#export OYRANOS=1
+export LCMS=1
+export LIBPNG=2
+#export FTGL=1
+#export FLTK=1
+#export FLU=2
+export X11=1
+export XINERAMA=1
+export XF86VMODE=1
+export DOXYGEN=2
+./configure.sh
+if [ $? -gt 0 ]; then
+  ERROR=1
 fi
 
-if [ -f /usr/X11R6/include/X11/extensions/Xinerama.h ] ||
-   [ -f /usr/include/X11/extensions/Xinerama.h ]; then
-  echo "X Xinerama              detected"
-  echo "#define HAVE_XIN 1" >> $CONF_H
-  echo "XIN = 1" >> $CONF 
-  echo "XINERAMA_LIB = -lXinerama" >> $CONF
-else
-  if [ $UNAME_ = "Linux" ]; then
-    echo "X Xinerma not found in /usr/X11R6/include/X11/extensions/Xinerama.h or"
-    echo "/usr/include/X11/extensions/Xinerama.h"
-  fi
-fi
-
-#`pkg-config  --atleast-version=1.14 lcms 2>>error.txt`
-#if [ $? = 0 ]; then
-#  echo "littleCMS `pkg-config --modversion lcms`          detected"
-#  echo "#define HAVE_LCMS 1" >> $CONF_H
-##  echo "LCMS = 1" >> $CONF
-#  echo "LCMS_H = `pkg-config --cflags lcms`" >> $CONF
-#  echo "LCMS_LIBS = `pkg-config --libs lcms`" >> $CONF
-#else
-#  echo -e "\c"
-#  echo "no or too old LCMS found,\n  need at least version 1.14, download: www.littlecms.com"
-#fi
 
 
-if [ "`which doxygen`" != "" ]; then
-  echo "Doxygen `doxygen --version`           detected"
-else
-  echo "Doxygen                 not detected"
-fi
 
-LIBPNG=libpng
-`pkg-config  --atleast-version=1.0 $LIBPNG 2>>error.txt`
-if [ $? != 0 ]; then
-  LIBPNG=libpng12
-  `pkg-config  --atleast-version=1.0 $LIBPNG 2>>error.txt`
-fi
-if [ $? = 0 ]; then
-  echo "PNG `pkg-config --modversion $LIBPNG`               detected"
-  echo "#define HAVE_PNG 1" >> $CONF_H
-  echo "PNG = 1" >> $CONF
-  echo "PNG_H = `pkg-config --cflags $LIBPNG`" >> $CONF
-  echo "PNG_LIBS = `pkg-config --libs $LIBPNG`" >> $CONF
-else
-  echo "no or too old libpng found,\n  need at least version 1.0, download: www.libpng.org"
-fi
+# Alle ifdefs landen hier
 
 echo "" >> $CONF
 echo "VERSION_A = $VERSION_A" >> $CONF
@@ -228,7 +199,7 @@ echo "src_dir = $src_dir" >> $CONF
 echo "srcdir = $srcdir" >> $CONF
 srcdir="`pwd`"
 
-echo "#!/bin/bash" > $CONF_SH
+echo "#!/bin/sh" > $CONF_SH
 echo "" >> $CONF_SH
 echo "TARGET=$TARGET" >> $CONF_SH
 echo "" >> $CONF_SH
@@ -243,19 +214,21 @@ chmod 0755 "$CONF_SH"
 echo "$CONF_SH created"
 
 
-echo "#ifndef OYRANOS_VERSION_H" > oyranos_version.h
-echo "#define OYRANOS_VERSION_H" >> oyranos_version.h
-echo "" >> oyranos_version.h
-echo "#define OYRANOS_VERSION_A $VERSION_A" >> oyranos_version.h
-echo "#define OYRANOS_VERSION_B $VERSION_B" >> oyranos_version.h
-echo "#define OYRANOS_VERSION_C $VERSION_C" >> oyranos_version.h
-echo "#define OYRANOS_VERSION $VERSION" >> oyranos_version.h
-echo "#define OYRANOS_DATE _(\"$TIME\")" >> oyranos_version.h
-echo "" >> oyranos_version.h
-echo "#endif /*OYRANOS_VERSION_H*/" >> oyranos_version.h
+echo "#ifndef OYRANOS_VERSION_H" > $VERS
+echo "#define OYRANOS_VERSION_H" >> $VERS
+echo "" >> $VERS
+echo "#define OYRANOS_VERSION_A $VERSION_A" >> $VERS
+echo "#define OYRANOS_VERSION_B $VERSION_B" >> $VERS
+echo "#define OYRANOS_VERSION_C $VERSION_C" >> $VERS
+echo "#define OYRANOS_VERSION_NAME $VERSION" >> $VERS
+echo "#define OYRANOS_VERSION $VERSION_L" >> $VERS
+echo "#define OYRANOS_DATE _(\"$TIME\")" >> $VERS
+echo "" >> $VERS
+echo "#endif /*OYRANOS_VERSION_H*/" >> $VERS
 
 echo "Version: $VERSION" > $SPEC
 echo "Source:  $TARGET"-"$VERSION".tar.gz >> $SPEC
+echo "Release: $RELEASE" >> $SPEC
 cat  $SPEC.in >> $SPEC
 echo $SPEC generated
 
@@ -274,10 +247,25 @@ cat  $PKGC.in >> $PKGC
 echo $PKGC generated
 
 
+echo "prefix =                $prefix"
 
-# Alle ifdefs landen hier
+echo "prefix = $prefix" >> $CONF
+echo "libdir = \${prefix}/lib$BARCH" >> $CONF
+echo "src_dir = $src_dir" >> $CONF
+echo "srcdir = $srcdir" >> $CONF
+echo "" >> $CONF
+echo "#define PREFIX         \"$prefix\"" >> $CONF_H
+echo "#define DATADIR        \"$prefix/share/\"" >> $CONF_H
+echo "#define LOCALEDIR      \"$prefix/share/locale\"" >> $CONF_H
+echo "#define SRCDIR         \"$srcdir\"" >> $CONF_H
+echo "#define SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
+
+echo "" >> $CONF
+
+echo "CXX = c++$LINE_ARCH" >> $CONF
+echo "CC = cc$LINE_ARCH" >> $CONF
 echo "RM = rm -vf" >> $CONF
-if [ $OSUNAME = "APPLE" ]; then
+if [ $OSUNAME = "Darwin" ]; then
   echo "COPY = cp -pv" >> $CONF
   echo "LINK_FLAGS = -dynamiclib" >> $CONF
   echo "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
@@ -285,7 +273,7 @@ if [ $OSUNAME = "APPLE" ]; then
   echo "/Developer/Tools/Rez -t APPL mac.r -o \$@" >> $CONF
 else
   echo "SO = .so" >> $CONF
-  if [ $OSUNAME = "LINUX" ]; then
+  if [ $OSUNAME = "Linux" ]; then
     echo "COPY = cp -vdpa" >> $CONF
     echo "LINK_FLAGS = -shared -ldl -fPIC -L." >> $CONF
     echo "LINK_FLAGS_STATIC = q" >> $CONF
@@ -297,43 +285,23 @@ else
     echo "OPTS=-Wall -g -fPIC #-O2" >> $CONF
   else
     echo "COPY = cp -p" >> $CONF
-    echo "LINK_FLAGS = -shared -ldl \$(ICONV)" >> $CONF
+    if [ $OSUNAME = "BSD" ]; then
+      echo "LINK_FLAGS = -shared \$(ICONV)" >> $CONF
+    else
+      echo "LINK_FLAGS = -shared -ldl \$(ICONV)" >> $CONF
+    fi
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
     echo "OPTS=-Wall -O2 -g -fpic -L." >> $CONF
     echo "RM = rm -f" >> $CONF
   fi
 fi
 
-if [ $MACH = "BUILD_64" ]; then
-  LIBDIR="lib64"
-  echo "LIB=/lib64" >> $CONF
-else
-  LIBDIR="lib"
-  echo "LIB=/lib" >> $CONF
-fi
-
-if [ "$X11" = 1 ]; then
-  echo "X_CPP = \$(X_CPPFILES)" >> $CONF
-  echo "X11_LIB_PATH = -L/usr/X11R6\$(LIB) -L/usr\$(LIB)" >> $CONF
-  echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 \$(XF86VMODE_LIB) -lXext \$(XINERAMA_LIB)" >> $CONF
-fi
-
-if [ "$FLTK" = 1 ]; then
-  echo "FLTK_GUI = $TARGET-config-fltk" >> $CONF
-fi
-if [ "$FLU" = 1 ]; then
-  echo "FLU_GUI = $TARGET-config-flu" >> $CONF
-fi
+echo "LIB=/"$LIBDIR >> $CONF
 
 # get time stamp
-M=`which stat`
-if [ $? = 0 ] && [ `stat . | wc -l` = 7 ]; then
-  # expect GNU stat/sed and hopefully make
-  echo "TIMEDIR = ./" >> $CONF
-  echo "MTIME   := \$(shell stat \$(TIMEDIR) | sed 's/^[ \t]*//;s/[ \t]*\$\$//' | sed '/odify/!d' | sed 's/.odify:[ \t]//' | sed 's/[ \t]*[+-]....\$\$//' | sed 's/^..//' | sed 's/[-:]//g' | sed 's/[ \t]/./g' | sed 's/.[0-9]*\$\$//')" >> $CONF
-else
-  echo "MTIME = 0000" >> $CONF
-fi
+C=`date +%C`
+TIME=`date +%Y%m%e.%H%M%S | sed s/$C//`
+echo "MTIME   =$TIME" >> $CONF
 
 echo "" >> $CONF
 echo "" >> $CONF
@@ -348,6 +316,18 @@ echo $CONF generated
 echo ""
 echo ""
 
+if [ $ERROR != 0 ]; then
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!!!                     An ERROR occured                     !!!"
+  echo "!!!                     See Log above                        !!!"
+  echo "!!!                     remove  $CONF                     !!!"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo ""
+  rm $CONF $CONF_H $CONF_SH $SPEC $PKGC $MPKG
+  exit
+fi
+
+echo "" > mkdepend
 
 if [ `cat error.txt | wc -l` -lt 1 ]; then
   rm error.txt

@@ -30,6 +30,7 @@
 #include "oyranos_helper.h"
 #include "oyranos.h"
 
+#include <stdio.h>
 
 /* --- internal API definition --- */
 
@@ -37,7 +38,12 @@
 void* oyAllocateFunc_           (size_t        size)
 {
   /* we have most often to work with text arrays, so initialise with 0 */
-  return calloc (sizeof (char), size);
+  void *ptr = calloc (sizeof (char), size);
+
+  if( !ptr )
+    WARN_S(( "can not allocate %d byte", (int)size ));
+
+  return ptr;
 }
 
 

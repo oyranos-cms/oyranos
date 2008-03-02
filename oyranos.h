@@ -97,6 +97,7 @@ typedef enum  {
   oyGROUP_DEFAULT_PROFILES_ASSUMED,/**< Default Assumed Profiles */
   oyGROUP_DEFAULT_PROFILES_PROOF,  /**< Default Proofing Profiles */
   oyGROUP_PATHS,                   /**< Paths */
+  oyGROUP_POLICY,                  /**< Policies */
   oyGROUP_BEHAVIOUR,               /**< Behaviour */
   oyGROUP_BEHAVIOUR_RENDERING,            /**< Rendering Behaviour */
   oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
@@ -204,7 +205,9 @@ typedef enum  {
   oyOPTION_ASSUMED_WEB,            /**< std internet assumed source static_profile*/
   oyOPTION_ASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
   oyOPTION_PROFILE_PROOF,          /**< standard proofing profile */
-  oyOPTION_DEFAULT_PROFILE_END     /**< just for easen Gui design */
+  oyOPTION_DEFAULT_PROFILE_END,    /**< just for easen Gui design */
+
+  oyOPTION_ACTUAL_POLICY = 200     /**< policy selection */
 } oyOPTION;
 
 const char* oyGetOptionUITitle         (oyOPTION          type,

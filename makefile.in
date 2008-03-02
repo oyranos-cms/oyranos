@@ -40,7 +40,7 @@ ELEKTRA_LIBS = `test -f /usr$(LIB)/libelektra.a && echo /usr$(LIB)/libelektra.a 
 
 
 LDLIBS = -L$(libdir) -L. \
-	$(ELEKTRA_LIBS) -ldl -lc
+	$(ELEKTRA_LIBS) -lc
 
 
 CPP_HEADERS = \
@@ -97,7 +97,7 @@ FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 
 INCL_DEP = $(INCL) $(SOURCES)
 
-.SILENT:
+#.SILENT:
 
 TEST2 = test2
 
@@ -162,7 +162,7 @@ $(LIB_XNVCTRL).a:
 # the twinview library
 $(TARGET)-monitor-nvidia:	$(LIB_XNVCTRL).a
 	echo Linking $@ ...
-	$(CC) $(OPTS) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
+	$(CC) $(OPTS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL)
 
@@ -400,7 +400,7 @@ targz:
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
 	         mkdir -p ../$(TARGET)-$(VERSION)/standard_profiles/$${prof}; \
-	         (cd $${prof}; echo bin in `pwd`;  DESTDIR=../../$(TARGET)-$(VERSION)/standard_profiles/$${prof} copy) || \
+	         (cd $${prof}; echo bin in `pwd`; make DESTDIR=../../$(TARGET)-$(VERSION)/standard_profiles/$${prof} copy_files) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 	tar cf - $(TARGET)-$(VERSION)/ \

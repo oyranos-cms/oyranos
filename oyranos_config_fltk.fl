@@ -70,13 +70,9 @@ Function {setPolicy( int i )} {} {
   char* data = 0;
   const char *filename = 0;
 
-  switch( i )
-  {
-    case 0: filename = "/usr/share/color/settings/office.policy.xml"; break;
-    case 1: filename = "/usr/share/color/settings/designer.policy.xml"; break;
-    case 2: filename = "/usr/share/color/settings/prepress.policy.xml"; break;
-    case 3: filename = "/usr/share/color/settings/photographer.policy.xml"; break;
-  }
+  int count;
+  const char **policies_list = getPolicies( &count );
+  filename = policies_list[2*i+1];
 
   {
     printf("%s\\n", filename);
@@ -107,6 +103,56 @@ Function {setPolicy( int i )} {} {
   updateUI();} {}
 } 
 
+Function {getPolicyName()} {return_type {const char*}
+} {
+  code {int count = 0;
+  const char** policy_list = getPolicies( &count );
+  const char *name = _("[none]");
+
+  for( int i = 0; i < count; ++i )
+  {
+    char *xml = oyPolicyToXML (oyGROUP_ALL, 0, myAllocFunc);
+    char *data = 0;
+
+    const char* fname = policy_list[2*i+1];
+    std::ifstream f( fname, std::ios::binary | std::ios::ate);
+    if(f.good())
+    {
+      size_t size = f.tellg();
+      f.seekg(0);
+      if(size) {
+        data  = (char*) new char [size+100];
+        f.read ((char*)data, size);
+        data[size]=0;
+        f.close();
+      }
+    }
+    xml[strlen(xml)-2] = 0;
+
+    if( strstr( data, xml ) )
+      name = policy_list[i*2+0];
+
+    if(data) delete [] data;
+    if(xml)  delete [] xml;
+  }
+
+  return name;} {}
+} 
+
+Function {getPolicies( int *count )} {return_type {const char**}
+} {
+  code {static const char *policy_list[8] = {
+
+  "Office + Home", "/usr/share/color/settings/office.policy.xml",
+  "Graphic Designers",      "/usr/share/color/settings/designer.policy.xml",
+  "PrePress",      "/usr/share/color/settings/prepress.policy.xml",
+  "Photographers",  "/usr/share/color/settings/photographer.policy.xml"
+  };
+
+  *count = 4;
+  return policy_list;} {}
+} 
+
 Function {selectDefaultProfile_callback( Fl_Widget* w, void* )} {} {
   code {Option *op = dynamic_cast<Option*> (w->parent());
   if(op) {
@@ -123,13 +169,14 @@ Function {selectDefaultProfile_callback( Fl_Widget* w, void* )} {} {
         sprintf( text, "%s %s %s", _("setting"), _("failed!"),
                  oyGetOptionUITitle( op->type, NULL, NULL, NULL, NULL) );
         fl_alert( text );
-      }
+      } else
+        updateUI();
+
     } else fl_alert( "no Fl_Choice" );
   } else fl_alert( _("Select Profile") );} {}
 } 
 
-Function {showDefaultProfile_callback( Fl_Widget* w, void* )} {open
-} {
+Function {showDefaultProfile_callback( Fl_Widget* w, void* )} {} {
   code {Option *op = dynamic_cast<Option*> (w->parent());
   if(op) {
     {
@@ -186,8 +233,7 @@ Function {rmPathCallback( Fl_Widget* w, void* )} {} {
   } else fl_alert( "Path" );} {}
 } 
 
-Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {open
-} {
+Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {} {
   code {Option *op = dynamic_cast<Option*> (w->parent());
   if(op) {
     Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
@@ -200,10 +246,10 @@ Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {open
         sprintf(text, "%s %s %s", _("setting"), _("failed!"),
                 c->text());
         fl_alert( text );
-      }
+      } else
+        updateUI();
     } else fl_alert( "no Fl_Choice" );
-  } else fl_alert( _("Select Behaviour") );} {selected
-  }
+  } else fl_alert( _("Select Behaviour") );} {}
 } 
 
 class OyFlPack {: {public Fl_Pack}
@@ -297,7 +343,7 @@ class BoxChoiceCombo {: {public Fl_Pack}
   } {}
 } 
 
-class Option {open : {public OyFlPack} private
+class Option {: {public OyFlPack} private
 } {
   decl {Fl_Box   *box;
   Fl_Choice*choice;
@@ -351,6 +397,7 @@ class Option {open : {public OyFlPack} private
     choice = new Fl_Choice( w - SELECT_WIDTH - BUTTON_HEIGHT - 2*H_SPACING, y,
                             SELECT_WIDTH, h );
     choice->callback( selectDefaultProfile_callback );
+    choice->tooltip( tooltip );
     DBG_PROG_V((choice->size()))
     choice->add( _("[none]") );
     DBG_PROG_V((choice->size()))
@@ -456,6 +503,7 @@ class Option {open : {public OyFlPack} private
     choice = new Fl_Choice( w - SELECT_WIDTH - H_SPACING, y,
                             SELECT_WIDTH + BUTTON_HEIGHT + H_SPACING, h );
     choice->callback( selectBehaviourCallback );
+    choice->tooltip( tooltip );
 
     // Set choice
     int pos = oyGetBehaviour( (oyBEHAVIOUR)option );
@@ -674,7 +722,7 @@ Function {getTab( Fl_Tabs* tabs, oyGROUP group, Fl_Group **container )} {private
   return tab;} {}
 } 
 
-Function {refreshOptions()} {private
+Function {refreshOptions()} {open private
 } {
   code {// remove tabs
   //const char *t = oyGetGroupUITitle( oyGROUP_BEHAVIOUR, NULL );
@@ -711,7 +759,7 @@ Function {refreshOptions()} {private
 
   top_tabs->damage( FL_DAMAGE_ALL );
   top_tabs->redraw();
-  Fl::wait();
+
 
   int count = 0;
 
@@ -764,30 +812,47 @@ Function {refreshOptions()} {private
           op = new Option( w->x(), w->y(), Fl_Group::current()->w(), BUTTON_HEIGHT, name,
                (oyOPTION)i, choices, /*const_cast<const char**>(*/choices_list, tooltip );
         if(w) w->end();
-      }} {}
+      }} {selected
+  }
 } 
 
 Function {createUI()} {} {
-  code {//Fl::flush();
- 
-  menu_[0].label (_("Office + Home"));
-  menu_[1].label (_("Graphic Designers"));
-  menu_[2].label (_("PrePress"));
-  menu_[3].label (_("Photographers"));
+  code {oyPathsCount();
+  int count;
+  const char **policies_list = getPolicies( &count );
+
+  menu_policy_choice[0].label (policies_list[2*0+0]);
+  menu_policy_choice[1].label (policies_list[2*1+0]);
+  menu_policy_choice[2].label (policies_list[2*2+0]);
+  menu_policy_choice[3].label (policies_list[2*3+0]);
 
   top_tabs->clear();
   
   top_tabs->begin();
 
   // Create first tab for policies
+  const char *actual_policy = getPolicyName();
   Fl_Group *g = NULL;
-      { Fl_Group* o = g = new Fl_Group(10, 94, 495, 267, _("Policy"));
-        o->tooltip(_("Reset to a standard Policy for Oyranos."));
+      { const char *tooltip = 0;
+        const char *label = oyGetGroupUITitle( oyGROUP_POLICY,
+                                               &tooltip );
+        Fl_Group* o = g = new Fl_Group(10, 95, 495, 266, label);
+        o->tooltip( tooltip );
         { Fl_Pack* o = new Fl_Pack(10, 105, 485, 256);
-          { Fl_Choice* o = new Fl_Choice(14, 115, 196, 25);
+          /*{ Fl_Pack* o = new Fl_Pack(25, 115, 255, 35);
+            o->type(1);
+            { Fl_Box* o = new Fl_Box(25, 115, 120, 35, _("Actual Policy:"));
+              o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+            }
+            { Fl_Box* o = policy_box = new Fl_Box(145, 115, 135, 35, actual_policy );
+              o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+            }
+            o->end();
+          }*/
+          { Fl_Choice* o = policy_choice = new Fl_Choice(14, 115, 196, 25);
             o->box(FL_NO_BOX);
             o->down_box(FL_BORDER_BOX);
-            o->menu(menu_);
+            o->menu(menu_policy_choice);
           }
           { Fl_Box* o = new Fl_Box(25, 150, 25, 25);
             Fl_Group::current()->resizable(o);
@@ -808,6 +873,7 @@ Function {createUI()} {} {
         }
         o->end();
       }
+
       /*{ const char *tooltip = 0;
         const char *label = oyGetGroupUITitle( oyGROUP_DEFAULT_PROFILES,
                                                &tooltip );
@@ -835,7 +901,15 @@ Function {createUI()} {} {
         o->end();
       }*/
   top_tabs->end();
-  
+
+
+  for( int i = 0; i < count; ++i )
+  {
+    if( strstr( policies_list[2*i+0], actual_policy ) )
+      policy_choice->value( i );
+      policy_box->label( actual_policy );
+  }
+
   refreshOptions();
   //listWindow(top_tabs);
   refreshPathLeaves();
@@ -844,7 +918,9 @@ Function {createUI()} {} {
 
 Function {updateUI()} {} {
   code {refreshOptions();
-  refreshPathLeaves();} {}
+  refreshPathLeaves();
+
+  policy_box->label( getPolicyName() );} {}
 } 
 
 Function {} {open private
@@ -852,7 +928,7 @@ Function {} {open private
   code {Fl::scheme("plastic");} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {764 443 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {682 409 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
@@ -870,14 +946,14 @@ Function {} {open private
       xywh {0 70 505 301} resizable
     } {
       Fl_Group {} {
-        label Policy
+        label Policy open
         tooltip {Reset to a standard Policy for Oyranos.} xywh {10 94 495 267} resizable
       } {
-        Fl_Pack {} {
+        Fl_Pack {} {open
           xywh {10 105 485 256}
         } {
-          Fl_Choice {} {
-            xywh {14 115 196 25} box NO_BOX down_box BORDER_BOX
+          Fl_Choice policy_choice {open
+            xywh {30 155 196 25} box NO_BOX down_box BORDER_BOX
           } {
             MenuItem {} {
               label {Office + Home}
@@ -901,7 +977,7 @@ Function {} {open private
             }
           }
           Fl_Box {} {
-            xywh {25 150 25 25} resizable
+            xywh {30 180 25 25} resizable
           }
         }
       }
@@ -918,7 +994,19 @@ Function {} {open private
       label {@-3reload}
       callback {//Fl::pushed(&bPL);
   updateUI();}
-      xywh {10 375 50 25} when 6
+      tooltip Refresh xywh {10 375 50 25} when 6
+    }
+    Fl_Pack {} {open
+      xywh {160 371 255 35} type HORIZONTAL
+    } {
+      Fl_Box {} {
+        label {Active Policy:}
+        xywh {160 371 120 35} align 20
+      }
+      Fl_Box policy_box {
+        label {----}
+        xywh {280 371 135 35} align 20
+      }
     }
   }
   code {createUI();

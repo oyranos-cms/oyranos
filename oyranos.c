@@ -51,7 +51,7 @@
 
 static int oyranos_init = 0;
 int oy_warn_ = 1;
-
+#define OY_WEB_RGB "sRGB.icc"
 
 /* --- structs, typedefs, enums --- */
 
@@ -68,6 +68,7 @@ typedef enum {
 /* separate from the external functions */
 void  oyOpen_                   (void);
 void  oyClose_                  (void);
+
 int   oyPathsCount_             (void);
 char* oyPathName_               (int           number,
                                  oyAllocFunc_t allocate_func);
@@ -151,22 +152,25 @@ const char* oyGetGroupUITitle_         (oyGROUP          type,
 
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
+static KDBHandle oy_handle_;
 
 void oyOpen_ (void)
 {
   if(!oyranos_init) {
-    kdbOpenDefault();
+    kdbOpen( &oy_handle_ );
     oyranos_init = 1;
   }
-  kdbOpen();
+  kdbOpen( &oy_handle_ );
 }
-void oyClose_(void) { /* kdbClose(); */ }
+void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 /* @todo make oyOpen unnecessary */
 void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
 
 
 /* elektra key wrappers */
+char*   oyGetKeyValue_         (const char       *key_name,
+                                oyAllocFunc_t     allocFunc );
 int     oyAddKey_valueComment_ (const char* keyName,
                                 const char* value, const char* comment);
 
@@ -282,13 +286,13 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
     list_user = ksNew();
     sprintf(           list_name_user, "%s%s", OY_USER, keyParentName);
     *rc =
-      kdbGetChildKeys( list_name_user, list_user, KDB_O_RECURSIVE | KDB_O_SORT);
+      kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_RECURSIVE | KDB_O_SORT);
   }
   if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
     list_sys = ksNew();
     sprintf(           list_name_sys, "%s%s", OY_SYS, keyParentName);
     *rc =
-      kdbGetChildKeys( list_name_sys, list_sys, KDB_O_RECURSIVE | KDB_O_SORT);
+      kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_RECURSIVE | KDB_O_SORT);
   }
 
   if(list_user)
@@ -315,7 +319,8 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
   char *name = (char*)alloca(MAX_PATH);
   sprintf(name, "%s%s", oySelectUserSys_(), keyParentName);
 
-  key = keyNew(keyBaseName);
+  key = keyNew( KEY_SWITCH_END );
+  keySetName( key, keyBaseName );
 
   if(keyParentName)
     DBG_PROG_S((keyParentName));
@@ -327,7 +332,7 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
     /* search for empty keyname */
     while (!nth)
     { sprintf (pathkeyName , "%s%d", keyBaseName, i);
-      rc=kdbGetKeyByParent (name, pathkeyName, key);
+      rc=kdbGetKeyByParent (oy_handle_, name, pathkeyName, key);
       if (rc != KDB_RET_OK)
         nth = i;
       i++;
@@ -360,16 +365,17 @@ oyAddKey_valueComment_ (const char* keyName,
   if (!keyName || !strlen(keyName))
     WARN_S( ("%s:%d !!! ERROR no keyName given",__FILE__,__LINE__));
 
-  key=keyNew(name);
+  key = keyNew( KEY_SWITCH_END );
+  keySetName( key, name );
 
   //rc=keyInit(key); ERR
   //rc=keySetName (key, keyName);
-  rc=kdbGetKey(key);
+  rc=kdbGetKey( oy_handle_, key );
   rc=keySetString (key, value);
   rc=keySetComment (key, comment);
   //TODO debug
   oyOpen_();
-  rc=kdbSetKey(key);
+  rc=kdbSetKey( oy_handle_, key );
   oyClose_();
 
   DBG_PROG_ENDE
@@ -407,15 +413,15 @@ oyGetOptionType_(oyOPTION         type)
 /** @brief the internal only used structure for UI text strings
  */
 typedef struct {
-  oyOPTION    type;            /**< option type */
-  oyGROUP     categories[10];  /**< layout for categories */
-  const char *label;           /**< label for setting */
-  const char *description;     /**< description for setting */
-  int         choices;         /**< number of options */
-  const char *choice_list[10]; /**< label for each choice */
-  const char *choice_desc[10]; /**< description for each choices */
-  const char *config_string;   /**< full key name to store configuration */
-  const char *config_string_xml;/**<key name to store configuration */
+  oyOPTION    type;             /**< option type */
+  oyGROUP     categories[10];   /**< layout for categories */
+  const char *label;            /**< label for setting */
+  const char *description;      /**< description for setting */
+  int         choices;          /**< number of options */
+  const char *choice_list[10];  /**< label for each choice */
+  const char *choice_desc[10];  /**< description for each choices */
+  const char *config_string;    /**< full key name to store configuration */
+  const char *config_string_xml;/**< key name to store configuration */
 } oyOPTION_t;
 
 
@@ -470,6 +476,10 @@ oyCheckOptionStrings_ (oyOPTION_t *opt)
   oy_groups_description_[group][0] = "oyGROUP_PATHS";
   oy_groups_description_[group][1] = _("Paths");
   oy_groups_description_[group][2] = _("Paths where ICC Profiles can be found"); break;
+  case oyGROUP_POLICY:
+  oy_groups_description_[group][0] = "oyGROUP_POLICY";
+  oy_groups_description_[group][1] = _("Policy");
+  oy_groups_description_[group][2] = _("Collections of settings in Oyranos"); break;
   case oyGROUP_BEHAVIOUR:
   oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR";
   oy_groups_description_[group][1] = _("Behaviour");
@@ -868,36 +878,28 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR       type,
 int
 oyGetBehaviour_      (oyBEHAVIOUR type)
 { DBG_PROG_START
-  int mp = MAX_PATH;
-  char* name = (char*) malloc (mp);
-  const char* keyName = 0;
-  int rc = 0;
+  char* name = 0;
+  const char* key_name = 0;
   int c = -1;
 
   DBG_PROG_S( ("type = %d behaviour", type) )
 
-  if ( (rc=oyTestInsideBehaviourOptions_(type, 0)) == 1 )
+  if( oyTestInsideBehaviourOptions_(type, 0) )
   {
-    keyName = oy_option_[oyGetOptionPos_(type)] .
+    key_name = oy_option_[oyGetOptionPos_(type)] .
               config_string;
 
-      if(keyName)
-      {
-        char *kname = (char*)alloca(MAX_PATH);
-        snprintf(kname, MAX_PATH, "%s%s", oySelectUserSys_(), keyName);
-        DBG_PROG_S(( "%s %s %d", keyName, kname, type ))
-
-        rc = kdbGetValue (kname, name, MAX_PATH);
-      }
-      else
-        WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
+    if(key_name)
+    {
+      name = oyGetKeyValue_( key_name, oyAllocateFunc_ );
+    }
+    else
+      WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
   }
   else
     WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
 
-  DBG_PROG_S((name))
-  DBG_PROG_V((rc))
-  if(rc == KDB_RET_OK)
+  if(name)
     c = atoi(name);
   OY_FREE( name )
 
@@ -986,7 +988,8 @@ oyWriteOptionToXML_(oyGROUP           group,
                  sprintf( &mem[strlen(mem)], "%s<%s>%s</%s>\n\n", intent,
                           key, value, key);
                  DBG_PROG_S((mem));
-               }
+               } else
+                 sprintf( &mem[strlen(mem)-1], " -->\n" );
                if(value) free(value);
              }
              else if( opt_type == oyTYPE_BEHAVIOUR ) 
@@ -1866,7 +1869,7 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
                strlen(value) == strlen(config_name))
             {
               DBG_PROG_S((value))
-              kdbRemove (value); 
+              kdbRemove ( oy_handle_, value );
               break;
             }
           }
@@ -2016,7 +2019,7 @@ oyPathAdd_ (const char* pfad)
           n)
       {
         rc=keyGetFullName(current,keyName, MAX_PATH); ERR
-        rc=kdbRemove(keyName); ERR
+        rc=kdbRemove( oy_handle_, keyName ); ERR
         DBG_PROG_S(( "erase path key : %s %s", pfad, keyName ));
         n--;
       }
@@ -2085,7 +2088,7 @@ oyPathRemove_ (const char* pfad)
     if (strcmp (value, pfad) == 0)
     {
       keyGetFullName(current,keyName, MAX_PATH); ERR
-      kdbRemove (keyName);
+      kdbRemove ( oy_handle_, keyName );
       DBG_NUM_S(( "remove" ))
     }
   }
@@ -2129,7 +2132,7 @@ oyPathSleep_ (const char* pfad)
     if (strcmp (value, pfad) == 0)
     {
       keySetComment (current, OY_SLEEP);
-      kdbSetKey (current);
+      kdbSetKey ( oy_handle_, current );
       DBG_NUM_S(( "sleep" ))
     }
   }
@@ -2166,7 +2169,7 @@ oyPathActivate_ (const char* pfad)
     if (strcmp (value, pfad) == 0)
     {
       keySetComment (current, "");
-      kdbSetKey (current);
+      kdbSetKey ( oy_handle_, current );
       DBG_NUM_S(( "wake up" ))
     }
   }
@@ -2183,7 +2186,14 @@ int
 oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
                             const char*       file_name)
 { DBG_PROG_START
-  int r = oySetProfile_ (file_name, type, 0);
+  int r = 0;
+  if( type == oyASSUMED_WEB &&
+      !strstr( file_name,"sRGB" ) )
+  {
+    WARN_S(("wrong profile for static web colour space selected, need sRGB"))
+    return 1;
+  }
+  r = oySetProfile_ (file_name, type, 0);
   DBG_PROG_ENDE
   return r;
 }
@@ -2197,29 +2207,42 @@ oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
   return r;
 }
 
+/**@brief read Key value
+ *
+ *  1. ask user
+ *  2. if user has no setting ask system
+ */
 char*
-oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
-                            oyAllocFunc_t     alloc_func)
-{ DBG_PROG_START
-  char* name = (char*) alloc_func (MAX_PATH);
-  char* keyName = (char*) alloca (MAX_PATH);
+oyGetKeyValue_ ( const char       *key_name,
+                 oyAllocFunc_t     allocFunc )
+{
+  char* name = 0;
+  char* full_key_name = 0;
   int rc = 0;
 
-  
-  DBG_PROG_S(( "%d",type ))
-
-  /* a static_profile */
-  if(type == oyASSUMED_WEB) {
-    sprintf(name, OY_DEFAULT_ASSUMED_WEB_PROFILE);
-    DBG_PROG_S(( name ))
-    return name;
+  if( !key_name || strlen( key_name ) > MAX_PATH-1 )
+  { WARN_S(("wrong string format given"));
+    return 0;
   }
 
-  sprintf(keyName, "%s%s", oySelectUserSys_(),
-                           oy_option_[oyGetOptionPos_(type)] .
-                           config_string);
+  name = (char*) allocFunc (MAX_PATH);
+  full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
 
-  rc = kdbGetValue (keyName, name, MAX_PATH);
+  if( !name || !full_key_name )
+    return 0;
+
+  sprintf( full_key_name, "%s%s", OY_USER, key_name );
+
+  name[0] = 0;
+  rc = kdbGetValue ( oy_handle_, full_key_name, name, MAX_PATH );
+
+  if( rc != KDB_RET_OK || !strlen( name ))
+  {
+    sprintf( full_key_name, "%s%s", OY_SYS, key_name );
+    rc = kdbGetValue ( oy_handle_, full_key_name, name, MAX_PATH );
+  }
+
+  free( full_key_name );
 
   DBG_PROG_S((name))
   DBG_PROG_ENDE
@@ -2227,6 +2250,32 @@ oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
     return name;
   else
     return 0;
+}
+
+char*
+oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
+                            oyAllocFunc_t     alloc_func)
+{ DBG_PROG_START
+  char* name = 0;
+  
+  DBG_PROG_S(( "%d",type ))
+
+  /* a static_profile */
+  if(type == oyASSUMED_WEB) {
+    name = (char*) alloc_func (MAX_PATH);
+    if( !name ) return 0;
+    sprintf(name, OY_WEB_RGB);
+    DBG_PROG_S(( name ))
+    return name;
+  }
+
+  name = oyGetKeyValue_( oy_option_[oyGetOptionPos_(type)].
+                         config_string, alloc_func );
+
+  if(name) DBG_PROG_S((name));
+
+  DBG_PROG_ENDE
+  return name;
 }
 
 
@@ -2307,6 +2356,22 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
     char *path = oyMakeFullFileDirName_(p);
     int l = 0; /* level */
     int run = !r;
+    int path_is_double = 0;
+
+    /* check for doubling of paths, without checking recursively */
+    { int j;
+      for( j = 0; j < i; ++j )
+      { char *p  = oyPathName_( j, oyAllocateFunc_);
+        char *pp = oyMakeFullFileDirName_( p );
+        if( p && pp &&
+            (strstr( path, pp ) != 0) )
+          path_is_double = 1;
+        OY_FREE( p );
+        OY_FREE( pp );
+      }
+    }
+    if( path_is_double )
+      continue;
 
     if ((stat (path, &statbuf)) != 0) {
       WARN_S(("%d. path %s does not exist", i, path))
@@ -3044,7 +3109,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
     if(profile_name &&
        strstr(value, profile_name) != 0) {
       DBG_PROG_S((value))
-      kdbRemove (value); 
+      kdbRemove ( oy_handle_, value ); 
       break;
     }
   }
