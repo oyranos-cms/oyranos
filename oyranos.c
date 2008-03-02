@@ -70,7 +70,6 @@ char* oyGetPathFromProfileName_ (const char*   profilename,
                                  oyAllocFunc_t allocate_func);
 
 
-const char* oyMapDEFAULT_PROFILEtoConfigString_ (oyDEFAULT_PROFILE type);
 int         oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
                                         const char*       file_name);
 int         oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
@@ -131,10 +130,9 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
                                            const char* attrib3);
 
 int         oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice);
-const char* oyGetDefaultProfileUITitle_(oyDEFAULT_PROFILE type);
-int         oyOptionGetPos_            (oyOPTION          type);
+int         oyGetOptionPos_            (oyOPTION          type);
 const char* oyGetOptionUITitle_        (oyOPTION          type,
-                                        oyGROUP         **categories,
+                                        const oyGROUP   **categories,
                                         int              *choices,
                                         const char     ***choices_string_list,
                                         const char      **tooltips);
@@ -143,21 +141,6 @@ const char* oyGetGroupUITitle_         (oyGROUP          type,
 
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
-const char* oy_default_profile_types_names_[][2] = {
-/* key name | UI name */
- {"oyEDITING_RGB","Editing Rgb"},         /**< oyEDITING_RGB */
- {"oyEDITING_CMYK","Editing Cmyk"},       /**< oyEDITING_CMYK */
- {"oyEDITING_XYZ","Editing XYZ"},         /**< oyEDITING_XYZ */
- {"oyEDITING_LAB","Editing Lab"},         /**< oyEDITING_Lab */
- {"oyASSUMED_XYZ","Assumed XYZ source"},  /**< oyASSUMED_XYZ */
- {"oyASSUMED_LAB","Assumed Lab source"},  /**< oyASSUMED_LAB */
- {"oyASSUMED_RGB","Assumed Rgb source"},  /**< oyASSUMED_RGB */
- {"oyASSUMED_WEB","Assumed Web source"},  /**< oyASSUMED_WEB */
- {"oyASSUMED_CMYK","Assumed Cmyk source"},/**< oyASSUMED_CMYK*/
- {"oyPROFILE_PROOF","Proofing"},          /**< oyPROFILE_PROOF*/
- {"oyDEVICE_PROFILE","Device"}       /**< oyDEVICE_PROFILE : a device profile */
-};
-
 
 void oyOpen_ (void)
 {
@@ -420,9 +403,9 @@ typedef struct {
  */
 oyOPTION_t oy_option_description_
   [oyBEHAVIOUR_END - oyBEHAVIOUR_START +
-   oyOPTION_DEFAULT_PROFILE_END - oyOPTION_DEFAULT_PROFILE_START] = {{-1}};
+   oyOPTION_DEFAULT_PROFILE_END - oyOPTION_DEFAULT_PROFILE_START] = {{0}};
 
-const char* oy_groups_description_[oyGROUP_ALL][3] = {{(const char*)-1}};
+const char* oy_groups_description_[oyGROUP_ALL][3] = {{(const char*)NULL}};
 
 /** @} */
 
@@ -432,9 +415,7 @@ oyCheckOptionStrings_ (oyOPTION_t *opt)
   int pos;
   oyGROUP group;
 
-  if(opt[0].type < 0)
-    opt[0].type = 0;
-  else
+  if( oy_groups_description_[0][0] )
     return;
 
   for( group = oyGROUP_START; group < oyGROUP_ALL + 1; ++group)
@@ -500,7 +481,7 @@ oyCheckOptionStrings_ (oyOPTION_t *opt)
                              ch_n, ch0, ch1, ch2, ch3, \
                              conf, xml) { \
     type = t; \
-      pos = oyOptionGetPos_( type ); \
+      pos = oyGetOptionPos_( type ); \
       opt[pos]. type = t; \
       opt[pos]. categories[0] = ca_n; \
       opt[pos]. categories[1] = ca1; \
@@ -703,9 +684,9 @@ oyCheckOptionStrings_ (oyOPTION_t *opt)
 }
 
 int
-oyOptionGetPos_                        (oyOPTION          type)
+oyGetOptionPos_                        (oyOPTION          type)
 {
-  int pos = -1;
+  int pos = type;
 
   DBG_PROG_START
 
@@ -716,32 +697,35 @@ oyOptionGetPos_                        (oyOPTION          type)
     pos = type - oyOPTION_DEFAULT_PROFILE_START - 1 +
           oyOPTION_BEHAVIOUR_END - oyOPTION_BEHAVIOUR_START - 1;
 
-  if( oy_option_description_[0].type < 0 )
-    oyCheckOptionStrings_( oy_option_description_ );
+  oyCheckOptionStrings_( oy_option_description_ );
 
   return pos;
 }
 
 const char*
 oyGetOptionUITitle_                    (oyOPTION          type,
-                                        oyGROUP         **categories,
+                                        const oyGROUP   **categories,
                                         int              *choices,
                                         const char     ***choices_string_list,
                                         const char      **tooltip)
 {
-  int pos = oyOptionGetPos_( type );
+  int pos = oyGetOptionPos_( type );
 
   DBG_PROG_START
 
 
   if( pos >= 0 )
   {
+    if( choices )
     *choices              = oy_option_description_ [pos].
                             choices;
+    if( choices_string_list )
     *choices_string_list  = oy_option_description_ [pos].
                             choice_list;
+    if( categories )
     *categories           = oy_option_description_ [pos].
                             categories;
+    if( tooltip )
     *tooltip =  oy_option_description_ [pos].
                 description;
     DBG_PROG_ENDE
@@ -757,14 +741,15 @@ const char*
 oyGetGroupUITitle_                     (oyGROUP          type,
                                         const char      **tooltip)
 {
-  int pos = oyOptionGetPos_( type );
+  int pos = oyGetOptionPos_( type );
 
   DBG_PROG_START
 
 
   if( pos >= 0 )
   {
-    *tooltip =  oy_groups_description_ [pos][2];
+    if( tooltip )
+      *tooltip =  oy_groups_description_ [pos][2];
     DBG_PROG_ENDE
     return oy_groups_description_[pos][1];
   }
@@ -784,7 +769,7 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
   if ( oyBEHAVIOUR_START < type && type < oyBEHAVIOUR_END )
   {
     if ( choice >= 0 &&
-         choice < oy_option_description_ [oyOptionGetPos_(type)]. choices )
+         choice < oy_option_description_ [oyGetOptionPos_(type)]. choices )
       r = 1;
     else
       WARN_S( ("%s:%d !!! ERROR type %d option %d does not exist for behaviour",__FILE__,__LINE__, type, choice));
@@ -808,7 +793,7 @@ oySetBehaviour_      (oyBEHAVIOUR type, int choice)
   {
     const char *keyName = 0;
 
-    keyName = oy_option_description_[oyOptionGetPos_(type)].
+    keyName = oy_option_description_[oyGetOptionPos_(type)].
               config_string;
 
       if(keyName)
@@ -866,7 +851,7 @@ oyGetBehaviour_      (oyBEHAVIOUR type)
 
   if ( (rc=oyTestInsideBehaviourOptions_(type, 0)) == 1 )
   {
-    keyName = oy_option_description_[oyOptionGetPos_(type)] .
+    keyName = oy_option_description_[oyGetOptionPos_(type)] .
               config_string;
 
       if(keyName)
@@ -938,7 +923,7 @@ oyPolicyToXML_  (oyGROUP           group,
            value = oyGetDefaultProfileName_(i, oyAllocateFunc_);
            if( value && strlen( value ) )
            {
-             key = oy_option_description_[oyOptionGetPos_(i)].
+             key = oy_option_description_[oyGetOptionPos_(i)].
                    config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 
@@ -959,7 +944,7 @@ oyPolicyToXML_  (oyGROUP           group,
            int val = oyGetBehaviour_(i);
            if(val >= 0)
            {
-             key = oy_option_description_[oyOptionGetPos_(i)] .
+             key = oy_option_description_[oyGetOptionPos_(i)] .
                    config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
@@ -976,7 +961,7 @@ oyPolicyToXML_  (oyGROUP           group,
            int val = oyGetBehaviour_(i);
            if(val >= 0)
            {
-             key = oy_option_description_[oyOptionGetPos_(i)] .
+             key = oy_option_description_[oyGetOptionPos_(i)] .
                    config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
@@ -993,7 +978,7 @@ oyPolicyToXML_  (oyGROUP           group,
            int val = oyGetBehaviour_(i);
            if(val >= 0)
            {
-             key = oy_option_description_[oyOptionGetPos_(i)] .
+             key = oy_option_description_[oyGetOptionPos_(i)] .
                    config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
@@ -1083,7 +1068,7 @@ oyReadXMLPolicy_(oyGROUP           group,
          for(i = oyDEFAULT_PROFILE_START + 1; i < oyDEFAULT_PROFILE_END; ++i)
          { int len = 0;
            const char* ptr=0;
-           key = oy_option_description_[oyOptionGetPos_(i)].
+           key = oy_option_description_[oyGetOptionPos_(i)].
                  config_string_xml;
 
            /* read the value for the key */
@@ -1104,7 +1089,7 @@ oyReadXMLPolicy_(oyGROUP           group,
          { int len = 0;
            const char* ptr=0;
            int val = -1;
-           key = oy_option_description_[oyOptionGetPos_(i)] .
+           key = oy_option_description_[oyGetOptionPos_(i)] .
                  config_string_xml;
 
            /* read the value for the key */
@@ -1127,7 +1112,7 @@ oyReadXMLPolicy_(oyGROUP           group,
          { int len = 0;
            const char* ptr=0;
            int val = -1;
-           key = oy_option_description_[oyOptionGetPos_(i)] .
+           key = oy_option_description_[oyGetOptionPos_(i)] .
                  config_string_xml;
            ptr = oyXMLgetValue_(xml, key, &len);
            value = calloc(sizeof(char), len+1);
@@ -1144,7 +1129,7 @@ oyReadXMLPolicy_(oyGROUP           group,
          { int len = 0;
            const char* ptr=0;
            int val = -1;
-           key = oy_option_description_[oyOptionGetPos_(i)] .
+           key = oy_option_description_[oyGetOptionPos_(i)] .
                  config_string_xml;
            ptr = oyXMLgetValue_(xml, key, &len);
            value = calloc(sizeof(char), len+1);
@@ -1736,7 +1721,7 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
       WARN_S( ("%s:%d %s() !!! ERROR type %d; type does not exist",__FILE__,__LINE__, __func__, type ) );
 
     if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-      config_name = oy_option_description_[oyOptionGetPos_(type)].
+      config_name = oy_option_description_[oyGetOptionPos_(type)].
                     config_string;
     else if(type == oyDEVICE_PROFILE)
       {
@@ -2089,27 +2074,6 @@ oyPathActivate_ (const char* pfad)
 }
 
 /* default profiles API */
-const char*
-oyMapDEFAULT_PROFILEtoConfigString_ (oyDEFAULT_PROFILE type)
-{ DBG_PROG_START
-  const char *config_string = 0;
-  switch (type) {
-    case oyEDITING_RGB: config_string = OY_DEFAULT_EDITING_RGB_PROFILE; break;
-    case oyEDITING_CMYK: config_string = OY_DEFAULT_EDITING_CMYK_PROFILE; break;
-    case oyEDITING_XYZ: config_string = OY_DEFAULT_EDITING_XYZ_PROFILE; break;
-    case oyEDITING_LAB: config_string = OY_DEFAULT_EDITING_LAB_PROFILE; break;
-    case oyASSUMED_XYZ: config_string = OY_DEFAULT_ASSUMED_XYZ_PROFILE; break;
-    case oyASSUMED_LAB: config_string = OY_DEFAULT_ASSUMED_LAB_PROFILE; break;
-    case oyASSUMED_RGB: config_string = OY_DEFAULT_ASSUMED_RGB_PROFILE; break;
-    case oyASSUMED_WEB: config_string = OY_DEFAULT_ASSUMED_WEB_PROFILE; break;
-    case oyASSUMED_CMYK: config_string = OY_DEFAULT_ASSUMED_CMYK_PROFILE; break;
-    case oyPROFILE_PROOF: config_string = OY_DEFAULT_PROOF_PROFILE; break;
-    default: WARN_S( ("Default Profile type %d does not exist", type) )
-  }
-  DBG_PROG_ENDE
-  return config_string;
-}
-
 int
 oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
                             const char*       file_name)
@@ -2126,14 +2090,6 @@ oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
   int r = oySetProfile_Block (file_name, mem, size, type, 0);
   DBG_PROG_ENDE
   return r;
-}
-
-const char*
-oyGetDefaultProfileUITitle_(oyDEFAULT_PROFILE type)
-{ DBG_PROG_START
-  const char* name = oy_option_description_[oyOptionGetPos_( type )] .label;
-  DBG_PROG_ENDE
-  return name;
 }
 
 char*
@@ -2155,7 +2111,8 @@ oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
   }
 
   sprintf(keyName, "%s%s", oySelectUserSys_(),
-                           oyMapDEFAULT_PROFILEtoConfigString_(type));
+                           oy_option_description_[oyGetOptionPos_(type)] .
+                           config_string);
 
   rc = kdbGetValue (keyName, name, MAX_PATH);
 
@@ -3024,7 +2981,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
  *  return                      translated option title
  */
 const char* oyGetOptionUITitle         (oyOPTION          type,
-                                        oyGROUP         **categories,
+                                        const oyGROUP   **categories,
                                         int              *choices,
                                         const char     ***choices_string_list,
                                         const char      **tooltip )
@@ -3321,25 +3278,6 @@ oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
   oyClose_();
   DBG_PROG_ENDE
   return n;
-}
-
-/** Gets a default profile type name for presenting in a GUI.
- *
- *  @deprecated Merge with behaviour settings into a new Options API\n
- *              The options list could be zero or just one hint:\n
- *              "Get/Set options dynamically by the Path API".
- *
- *  @param  type the kind of default profile
- *  @return type name
- */
-const char*
-oyGetDefaultProfileUITitle (oyDEFAULT_PROFILE type)
-{ DBG_PROG_START
-  oyOpen_();
-  const char* name= oyGetDefaultProfileUITitle_ (type);
-  oyClose_();
-  DBG_PROG_ENDE
-  return name;
 }
 
 /** Gets a default profile filename.

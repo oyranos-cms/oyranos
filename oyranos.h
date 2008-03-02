@@ -207,13 +207,13 @@ typedef enum  {
   oyOPTION_DEFAULT_PROFILE_END     /**< just for easen Gui design */
 } oyOPTION;
 
-const char* oyGetOptionUITitles        (oyOPTION          type,
-                                        oyGROUP         **categories,
-                                        const char     ***category_string_list,
+const char* oyGetOptionUITitle         (oyOPTION          type,
+                                        const oyGROUP   **categories,
                                         int              *choices,
                                         const char     ***choices_string_list,
                                         const char      **tooltip );
-const char* oyGetDefaultProfileUITitle (oyDEFAULT_PROFILE type);
+const char* oyGetGroupUITitle          (oyGROUP           type,
+                                        const char      **tooltips);
 
 
 #ifdef __cplusplus

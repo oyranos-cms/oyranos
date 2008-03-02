@@ -376,12 +376,14 @@ uninstall:
 			$(DESTDIR)$(libdir)/$(LIB_MONI_SO) \
 	        $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
 	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
-	cd standard_profiles; \
-	for prof in $(STD_PROFILES); do \
+	test -d standard_profiles && \
+	(  cd standard_profiles; \
+	   for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
 	         (cd $${prof}; make uninstall) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
-	done;
+	   done; \
+        ) || echo "no profile directory found"
 	-$(RM)   $(DESTDIR)$(colordir)/settings/*.policy.xml
 
 # remove in this directory
