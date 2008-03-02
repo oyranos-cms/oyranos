@@ -10,6 +10,11 @@ Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
+%package   devel
+Summary:   Headers, configuration and static libs + documentation
+Group:     Development/System
+Requires:  oyranos = %{name}_%{version}
+
 %description
 Oyranos is a colour management configuration system.
 It is primarily developed on free operating systems.
@@ -34,11 +39,6 @@ query for profiles in that paths. An internal device profile
 API allowes configuring of the profile X.
 
 
-
-%package   devel
-Summary:   Headers, configuration and static libs + documentation
-Group:     Development/System
-Requires:  oyranos = %{name}_%{version}
 
 %prep
 %setup -q -n %{name}_%{version}
