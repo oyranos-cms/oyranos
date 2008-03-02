@@ -204,7 +204,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
   KeySet *myKeySet = (KeySet*) malloc (sizeof(KeySet) * 1);
   ksInit(myKeySet);
   DBG_PROG_V(( (int)keyParentName ))
-  *rc = kdbGetChildKeys(keyParentName, myKeySet,KDB_O_RECURSIVE);
+  *rc = kdbGetChildKeys( keyParentName, myKeySet, KDB_O_RECURSIVE| KDB_O_SORT );
 
   DBG_PROG_ENDE
   return myKeySet;
