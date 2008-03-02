@@ -1,57 +1,5 @@
-2005-08-31
-	* und: elektra-0.5.0.4
-	* fix: linking libelektra_default.a 
-
-2005-06-30
-	* neu: _ICC_PROFILE von Ross Burton <http://www.burtonini.com/computing/x-icc-profiles-spec-0.1.html>
-
-2005-06-29
-	* fix: oyComp Funktionen
-
-2005-06-28
-	* und: elektra-0.5
-
-2005-05-26
-	* fix: free Keyset with kdb not free
-
-2005-05-09
-	* und: rename all colour space functions to include Input except workspace
-	* und: update README
-
-2005-02-03
-	* neu: Monitorprofil setzen und lesen
-	* neu: oyranos-gamma lädt ICC vcgt tag in Grafikkarte
-
-2005-02-01
-	* neu: Monitor Erkennen
-
-2004-12-7
-	* neu: Speicherblöcke mit Profildaten abfragen
-	* allgm: gcc 3.4
-
-2004-11-30
-	* neu: interne und externe API scheiden
-	* allgm: einige Funktionen kompakter
-	* neu: liboyranos Erstellen und Einbinden
-
-2004-11-29
-	* neu: DEBUG makros
-	* neu: Datei Suche in Pfadliste
-	* neu: Profilprüfung - Signatur
-	* allg: Bereinigen doppelter Texte
-	* neu: Datei und Verzeichnis Tests
-
-2004-11-27
-	* info: Anfrage Oyranos auf freedesktop.org zu hosten
-	* info: Artikel auf behrmann.info
-	* info: diskussion mit elektra liste
-
-2004-11-26
-	* neu: Pfade scheinen stabil konfigurierbar
-	* info: oyranos.org und oyranos.com angemeldet
 
 2004-11-25
 	* Start des Projektes
 	* neu: Konzeption
 	* neu: Spielen mit Elektra
-	* neu: test

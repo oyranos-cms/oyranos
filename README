@@ -3,8 +3,8 @@ Deutsch
 
 Oyranos (gr. Himmel):
 
-    Das Farbmanagement System Oyranos erm√∂glicht die einfache Verwaltung von
-    ger√§tespezifischen Informationen (ICC Profile).
+    Das Farbmanagement System Oyranos ermˆglicht die einfache Verwaltung von
+    ger‰tespezifischen Informationen (ICC Profile).
 
     Es handelt sich im Moment um eine Test.
     
@@ -13,25 +13,31 @@ Oyranos (gr. Himmel):
 
 Voraussetzungen:
 
-    Elektra: <elektra.sf.net>
+    lcms version 1.14
+    http://www.littlecms.com
+
+    fltk 
+    http://www.fltk.org
+
+    FLU f¸r komfortablen Browser
 
 Konfiguration:
 
-    make config
+    f¸r osX in "makefile": #APPLE = 1  auskommentieren
 
-Zus√§tze:
+Zus‰tze:
 
     Profile gibt es zum Beispiel auf der Adobe Webseite:
     http://www.adobe.com/support/downloads/main.html
-    und an vielen anderen Pl√§tzen im Internet
+    und an vielen anderen Pl‰tzen im Internet
 
 
-Vorschl√§ge / Fehler:
+Fehler (bugs):
 
-    Bitte an mich schicken <ku.b at gmx.de>
+    Bitte an mich schicken.
 
 
-Pl√§ne:
+Pl‰ne:
 
     - Dokumentation
     - Profilvergleich
@@ -39,59 +45,20 @@ Pl√§ne:
 --------------------------------------------------------------------------------
 
 
-  Oyranos:
-           Kai-Uwe Behrmann <www.behrmann.name>
+            Kai-Uwe Behrmann <www.behrmann.name>
 
+
+lcms Farbumwandlungsbibliothek: 
+            entwickelt von Marti Maria
+
+fltk:
+            programmiert von einem Team um Bill Spitzak, und vielen anderen
+
+flu:
+            programmiert Jason Bryan <www.osc.edu/~jbryan/FLU/>
 
 
 ================================================================================
 
 English
-
-
-Oyranos (gr. sky):
-
-    The Colour Management System (CMS) Oyranos allows the coordination of
-    device specific Informations (ICC profiles).
-
-    It is at the moment an test.
-    
-
---------------------------------------------------------------------------------
-
-prerequisits:
-
-    Elektra: <elektra.sf.net>
-
-configuration:
-
-    make config
-
-add ons:
-
-    Profiles are available for instance from the Adobe web site:
-    http://www.adobe.com/support/downloads/main.html
-    and many other places in the internet
-
-
-bugs/suggestions:
-
-    please report to me <ku.b at gmx.de>
-
-
-plans:
-
-    - documentation
-    - profile comparision
-
---------------------------------------------------------------------------------
-
-
-  Oyranos:
-           Kai-Uwe Behrmann <www.behrmann.name>
-
-
-
-================================================================================
-
 
