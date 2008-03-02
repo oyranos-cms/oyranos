@@ -821,15 +821,18 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
 
         // TODO merge User and System KeySets in oyReturnChildrenList_
         list = oyReturnChildrenList_(OY_USER OY_KEY OY_SLASH "default", &rc ); ERR
-        for (current=list->start; current; current=current->next)
+        if(list)
         {
-          keyGetName(current, value, MAX_PATH);
-          DBG_NUM_S(( value ))
-          if(strstr(value, typ_name) != 0 && strlen(value) == strlen(typ_name))
+          for (current=list->start; current; current=current->next)
           {
-            DBG_PROG_S((value))
-            kdbRemove (value); 
-            break;
+            keyGetName(current, value, MAX_PATH);
+            DBG_NUM_S(( value ))
+            if(strstr(value, typ_name) != 0 && strlen(value) == strlen(typ_name))
+            {
+              DBG_PROG_S((value))
+              kdbRemove (value); 
+              break;
+            }
           }
         }
 
@@ -861,6 +864,13 @@ oyPathsCount_ ()
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
+  if(myKeySet)
+  {
+    kdbClose();
+    DBG_PROG_ENDE
+    return n;
+  }
+
   if(!rc)
     n = myKeySet->size;
   if(n < 2)
@@ -879,12 +889,20 @@ oyPathName_ (int number)
 { DBG_PROG_START
   int rc, n = 0;
   Key *current;
-  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+  char* value;
 
   kdbOpen();
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
+  if(myKeySet)
+  {
+    kdbClose();
+    DBG_PROG_ENDE
+    return 0;
+  }
+
+  value = (char*) calloc (sizeof(char), MAX_PATH);
 
   if (number <= myKeySet->size)
     for (current=myKeySet->start; current; current=current->next)
@@ -911,8 +929,8 @@ oyPathAdd_ (const char* pfad)
   DBG_PROG_START
   int rc, n = 0;
   Key *current;
-  char* keyName = (char*) calloc (sizeof(char), MAX_PATH);
-  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+  char* keyName;
+  char* value;
   int has_local_path = 0, has_global_path = 0;
 
   /* are we setting a default path? */
@@ -928,6 +946,15 @@ oyPathAdd_ (const char* pfad)
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
+  if(myKeySet)
+  {
+    kdbClose();
+    DBG_PROG_ENDE
+    return 0;
+  }
+
+  keyName = (char*) calloc (sizeof(char), MAX_PATH);
+  value = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* search for allready included path */
   for (current=myKeySet->start; current; current=current->next)
@@ -998,13 +1025,22 @@ oyPathRemove_ (const char* pfad)
 { DBG_PROG_START
   int rc;
   Key *current;
-  char* value = (char*) calloc (sizeof(char), MAX_PATH);
-  char* keyName = (char*) calloc (sizeof(char), MAX_PATH);
+  char* value;
+  char* keyName;
 
   kdbOpen();
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
+  if(myKeySet)
+  {
+    kdbClose();
+    DBG_PROG_ENDE
+    return;
+  }
+
+  value = (char*) calloc (sizeof(char), MAX_PATH);
+  keyName = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* compare and erase if matches */
   for (current=myKeySet->start; current; current=current->next)
@@ -1037,12 +1073,20 @@ oyPathSleep_ (const char* pfad)
 { DBG_PROG_START
   int rc;
   Key *current;
-  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+  char* value;
 
   kdbOpen();
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
+  if(myKeySet) {
+    kdbClose();
+
+    DBG_PROG_ENDE
+    return;
+  }
+
+  value = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* set "SLEEP" in comment */
   for (current=myKeySet->start; current; current=current->next)
@@ -1068,12 +1112,20 @@ oyPathActivate_ (const char* pfad)
 { DBG_PROG_START
   int rc;
   Key *current;
-  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+  char* value;
 
   kdbOpen();
 
   /* take all keys in the paths directory */
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
+  if(myKeySet) {
+    kdbClose();
+
+    DBG_PROG_ENDE
+    return;
+  }
+
+  value = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* erase "SLEEP" from comment */
   for (current=myKeySet->start; current; current=current->next)
@@ -1545,6 +1597,12 @@ oyGetDeviceProfile_                (const char* manufacturer,
     DBG_PROG_S(( product_id ));
   // TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
+  if(profilesList) {
+    kdbClose();
+
+    DBG_PROG_ENDE
+    return profileName;
+  }
 
   matchList = oyGetDeviceProfile_sList (manufacturer, model, product_id,
                                         host, port, attrib1, attrib2, attrib3,
@@ -1618,6 +1676,12 @@ oyGetDeviceProfile_s               (const char* manufacturer,
 
   // TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
+  if(profilesList) {
+    kdbClose();
+
+    DBG_PROG_ENDE
+    return profileNames;
+  }
 
   matchList = oyGetDeviceProfile_sList (manufacturer, model, product_id,
                                         host, port, attrib1, attrib2, attrib3,
@@ -1865,38 +1929,44 @@ oyEraseDeviceProfile_              (const char* manufacturer,
   char* profile_name = 0;
   int rc;
   KeySet* profilesList = 0;
+  Key *current;
+  char* value;
 
   DBG_PROG
 
   kdbOpen();
 
+  // TODO merge User and System KeySets in oyReturnChildrenList_
+  profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
+  if(profilesList)
+  {
+    kdbClose();
+
+    DBG_PROG_ENDE
+    return rc;
+  }
+
+  value = (char*) calloc (sizeof(char), MAX_PATH);
   profile_name = oyGetDeviceProfile_ (manufacturer, model, product_id,
                                       host, port, attrib1, attrib2, attrib3);
 
   DBG_PROG_S(("profile_name %s", profile_name ))
 
-  // TODO merge User and System KeySets in oyReturnChildrenList_
-  profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
-  if(profilesList)
+  for (current=profilesList->start; current; current=current->next)
   {
-    Key *current;
-    char* value = (char*) calloc (sizeof(char), MAX_PATH);
-    for (current=profilesList->start; current; current=current->next)
-    {
-      keyGetName(current, value, MAX_PATH);
-      DBG_NUM_S(( value ))
-      if(strstr(value, profile_name) != 0) {
-        DBG_PROG_S((value))
-        kdbRemove (value); 
-        break;
-      }
-    }
-
+    keyGetName(current, value, MAX_PATH);
     DBG_NUM_S(( value ))
-
-    if(profilesList) ksClose(profilesList); DBG_PROG
-    OY_FREE (value) DBG_PROG
+    if(strstr(value, profile_name) != 0) {
+      DBG_PROG_S((value))
+      kdbRemove (value); 
+      break;
+    }
   }
+
+  DBG_NUM_S(( value ))
+
+  if(profilesList) ksClose(profilesList); DBG_PROG
+  OY_FREE (value) DBG_PROG
   OY_FREE (profile_name) DBG_PROG
   kdbClose(); DBG_PROG
 
