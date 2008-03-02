@@ -259,6 +259,7 @@ EXEEXT		=
 tgz:
 	tar cf - -C $(topdir) \
 	$(addprefix $(dir)/,$(DOKU)) \
+	$(dir)/configure.sh \
 	$(dir)/makefile \
 	$(dir)/oyranos-config \
 	$(addprefix $(dir)/,$(SOURCES)) \
