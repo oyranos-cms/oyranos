@@ -94,8 +94,8 @@ int   oyCheckProfileMem                (const void* mem, int size, int flags);
 /* --- profile access through oyranos --- */
 
 /* obtain an memory block in the responsibility of the user */
-int	  oyGetProfileSize                 (const char* profilename);
-void* oyGetProfileBlock                (const char* profilename, int* size);
+size_t oyGetProfileSize                (const char* profilename);
+void*  oyGetProfileBlock               (const char* profilename, int* size);
 
 /* device profiles */
 

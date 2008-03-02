@@ -25,6 +25,7 @@ void path_callback( Fl_Widget* w, void* );
 
 void buildBaseTree();
 void buildDefaultProfilesLeaves();
+void removeDefaultProfilesLeaves();
 void buildPathLeaves();
 void removePathLeaves();
 void buildOptionsLeaves();
@@ -64,7 +65,15 @@ funcSetDefaultProfile *functions_setDefaultProfile[] = {
 struct BuildPathLeavesC: public Fl_Button 
 {
   BuildPathLeavesC() : Fl_Button(0,0,0,0) {;}
-  int handle(int event) { buildPathLeaves(); Fl::pushed(0); return 1; }
+  int handle(int event)
+{
+  buildPathLeaves();
+  Fl::pushed(0);
+  removeDefaultProfilesLeaves();
+  buildDefaultProfilesLeaves();
+
+  return 1;
+}
 };
 
 static BuildPathLeavesC bPL;
@@ -235,9 +244,6 @@ void buildBaseTree()
 
 void buildDefaultProfilesLeaves()
 {
-  Flu_Tree_Browser::Node* n;
-
-  //std::cout << sizeof(default_profiles) << std::endl;
   char* default_profiles_dirname = "Default Profiles";
   int count = 0, i;
   char** names = oyProfileList ( 0, &count );
@@ -245,7 +251,7 @@ void buildDefaultProfilesLeaves()
   for (i = 0 ; i < OY_DEFAULTPROFILES_COUNT ; ++i) {
     char  t[128];
     DefaultProfile *dp = new DefaultProfile( 0, 0, 300, 20, i, names, count );
-    sprintf( t, "/%s/ ", default_profiles_dirname/*, default_profiles[i]*/ );
+    sprintf( t, "/%s/ ", default_profiles_dirname );
     tree->add( t, dp );
     dp->end();
   }
@@ -253,10 +259,20 @@ void buildDefaultProfilesLeaves()
   for (i = 0; i < count; ++i)
     if(names[i]) free(names[i]);
   free(names);
+}
 
+void removeDefaultProfilesLeaves()
+{
+  char  pn[64];
+  Flu_Tree_Browser::Node* n;
 
-  n = tree->find( default_profiles_dirname );
-  if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+  sprintf( pn, "/%s/ ", "Default Profiles" );
+
+  n = tree->find(pn);
+  while (n) {
+    tree->remove(n);
+    n = tree->find(pn);
+  }
 }
 
 void buildPathLeaves()
@@ -266,7 +282,7 @@ void buildPathLeaves()
   char  pn[64];
   sprintf( pn, "/%s/ ", "Profile Paths" );
   int count = oyPathsCount();
-  if(!count)
+  if(count < 2)
     count = oyPathsCount();
   for (int i = 0 ; i < count ; ++i) {
     ProfilePath *pp = new ProfilePath( 0, 0, 300, 20, i );
@@ -322,8 +338,15 @@ void buildOptionsLeaves()
 void buildTree()
 {
   buildBaseTree();
-  buildDefaultProfilesLeaves();
+
+  Flu_Tree_Browser::Node* n;
+  char* default_profiles_dirname = "/Default Profiles/";
+  tree->add( default_profiles_dirname );
+  n = tree->find( default_profiles_dirname );
+  if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+
   buildPathLeaves();
+  buildDefaultProfilesLeaves();
   buildOptionsLeaves();
 }
 

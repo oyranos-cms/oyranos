@@ -77,7 +77,7 @@ oyGetMonitorInfo_                 (const char* display_name,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial)
-{ oy_debug = 1;
+{ //oy_debug = 1;
   DBG_PROG_START
 
   Display *display; DBG_PROG

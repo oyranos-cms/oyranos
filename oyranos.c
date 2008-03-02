@@ -82,7 +82,7 @@ char**  oyProfileList_                 (const char* colourspace, int * size);
 int	oyCheckProfile_                    (const char* name);
 int	oyCheckProfile_Mem                 (const void* mem, int size);
 
-int	oyGetProfileSize_                  (const char* profilename);
+size_t	oyGetProfileSize_                  (const char* profilename);
 void*	oyGetProfileBlock_                 (const char* profilename, int* size);
 
 char*   oyGetDeviceProfile_               (const char* manufacturer,
@@ -288,6 +288,32 @@ oyAddKey_value_ (const char* keyName, const char* value)
   return rc;
 }
 
+size_t
+oyReadFileSize_(const char* name)
+{ DBG_PROG_START
+  FILE *fp = 0;
+  const char* filename = name;
+  size_t size = 0;
+
+  {
+    fp = fopen(filename, "r");
+    DBG_PROG_S (("fp = %d filename = %s\n", (int)fp, filename))
+
+    if (fp)
+    {
+      /* get size */
+      fseek(fp,0L,SEEK_END); 
+      size = ftell (fp);
+      fclose (fp);
+
+    } else
+      printf ("could not read %s\n", filename);
+  }
+
+  DBG_PROG_ENDE
+  return size;
+}
+
 char*
 oyReadFileToMem_(const char* name, int *size)
 { DBG_PROG_START
@@ -305,7 +331,9 @@ oyReadFileToMem_(const char* name, int *size)
     {
       /* get size */
       fseek(fp,0L,SEEK_END); 
-      *size = ftell (fp);
+      /* read file possibly partitial */
+      if(!*size || *size > ftell(fp))
+        *size = ftell (fp);
       rewind(fp);
 
       if(oy_debug)
@@ -677,6 +705,7 @@ oyGetPathFromProfileName_ (const char* fileName)
 
       if (oyIsFileFull_(fullFileName))
       { DBG_PROG
+        size = 128;
         header = oyReadFileToMem_ (fullFileName, &size);
         success = !oyCheckProfile_Mem (header, size);
       }
@@ -705,6 +734,7 @@ oyGetPathFromProfileName_ (const char* fileName)
 
     if (oyIsFileFull_(fullFileName))
     {
+      size = 128;
       header = oyReadFileToMem_ (fullFileName, &size);
 
       if (size >= 128)
@@ -838,7 +868,7 @@ oyPathsCount_ ()
   KeySet* myKeySet = oyReturnChildrenList_(OY_USER_PATHS, &rc ); ERR
   if(!rc)
     n = myKeySet->size;
-  if(!n)
+  if(n < 2)
     oyPathAdd_(OY_DEFAULT_USER_PROFILE_PATH);
 
   ksClose (myKeySet);
@@ -882,7 +912,8 @@ oyPathName_ (int number)
 
 int
 oyPathAdd_ (const char* pfad)
-{ DBG_PROG_START
+{
+  DBG_PROG_START
   int rc, n = 0;
   Key *current;
   char* keyName = (char*) calloc (sizeof(char), MAX_PATH);
@@ -910,7 +941,7 @@ oyPathAdd_ (const char* pfad)
     if(value)
       DBG_PROG_S(( value ));
     if (strcmp (value, pfad) == 0)
-      n++;		
+      ++n;		
 
     /* Are the default paths allready there? */
     if (strcmp (value, OY_DEFAULT_USER_PROFILE_PATH) == 0)
@@ -922,7 +953,7 @@ oyPathAdd_ (const char* pfad)
   if (n) printf ("Key was allready %d times there\n",n);
 
   /* erase double occurencies of this path */
-  if (n)
+  if (n > 1)
   { for (current=myKeySet->start; current; current=current->next)
     {
       rc=keyGetString(current,value, MAX_PATH); ERR
@@ -935,7 +966,7 @@ oyPathAdd_ (const char* pfad)
         n--;
       }
     }
-  } else {
+  } else if (!n) {
   /* add path */
     /* search for empty keyname */
     keyName = oySearchEmptyKeyname_ (OY_USER_PATHS, OY_USER_PATH);
@@ -1327,6 +1358,7 @@ oyCheckProfile_                    (const char* name)
   /* do check */
   if (oyIsFileFull_(fullName))
   {
+    size = 128;
     header = oyReadFileToMem_ (fullName, &size); DBG_PROG
     if (size >= 128)
       r = oyCheckProfile_Mem (header, 128);
@@ -1371,15 +1403,13 @@ oyCheckProfile_Mem                 (const void* mem, int size)
 
 /* profile handling API */
 
-int
+size_t
 oyGetProfileSize_                  (const char* profilename)
 { DBG_PROG_START
-  int size = 0;
+  size_t size = 0;
   char* fullFileName = oyFindProfile_ (profilename);
-  char* dummy;
 
-  dummy = oyReadFileToMem_ (fullFileName, &size);
-  OY_FREE (dummy)
+  size = oyReadFileSize_ (fullFileName);
 
   DBG_PROG_ENDE
   return size;
@@ -2135,7 +2165,7 @@ oyCheckProfileMem (const void* mem, int size,int flag)
   return n;
 }
 
-int
+size_t
 oyGetProfileSize                  (const char* profilename)
 { DBG_PROG_START
   int size = oyGetProfileSize_ (profilename);
