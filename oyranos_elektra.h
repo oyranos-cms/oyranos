@@ -44,6 +44,12 @@
 #include "oyranos_xml.h"
 
 
+#ifdef __cplusplus
+extern "C" {
+namespace oyranos
+{
+#endif /* __cplusplus */
+
 /* --- internal API definition --- */
 
 /* separate from the external functions */
@@ -115,6 +121,7 @@ enum {
   oySYS,
 };
 
+int     oyGetBehaviour_        (oyBEHAVIOUR type);
 int     oySetBehaviour_        (oyBEHAVIOUR type,
                                 int         behaviour);
 
@@ -126,5 +133,10 @@ int     oyAddKey_valueComment_ (const char* keyName,
 int     oyKeySetHasValue_      (const char* keyParentName,
                                 const char* ask_value);
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+} /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OYRANOS_ELEKTRA_H */

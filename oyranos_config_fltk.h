@@ -72,6 +72,7 @@ public:
 };
 void createUI();
 void updateUI();
+void updateUIIdle(void*);
 #include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *top_group;
 #include <FL/Fl_Pack.H>

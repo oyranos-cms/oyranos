@@ -41,59 +41,29 @@ namespace oyranos
 #endif /* __cplusplus */
 
 
-/** @brief the internal only used structure for external registred CMM functions
- */
-typedef struct {
-  char       *id;               /**< usually a 4 letter short name */
-  char       *libname;          /**< library to search for function */
-  char       *funcname;         /**< function for dlsym */
-  oyOPTION    opts_start;       /**< options numbers for oyGetOptionUITitle */
-  oyOPTION    opts_end;
-  oyOption_t *options;          /**< the CMM options */
-} oyExternFunc_t;
 
-
-/** @brief the internal only used structure for external registred CMM's
- */
-typedef struct {
-  char  id[5];                  /**< 4 letter identifier */
-  char *name;                   /**< short name */
-  char *description;            /**< long description */ // TODO help license ..
-  int   groups_start;
-  int   groups_end;             /**< the registred layouts frames */
-  oyExternFunc_t *func;         /**< the registred functions of the CMM */
-  int   funcs_n;                /**< number of provided functions */
-  char ***oy_groups;            /**< the oy_groups_description_ synonym */
-  char *xml;                    /**< original xml text */
-  const char *domain;           /**< textdomain */
-  const char *domain_path;      /**< textdomain path */
-} oyCMM_t;
-
-/* singleton */
-typedef struct {
-  int      looked;
-  oyCMM_t *cmms;
-  int      n;
-} oyCMM_t__;
-
-extern oyCMM_t__ oyCMM_;
-
-/* internal CMM API */
-oyCMM_t* oyCmmGet_              (const char *id);
 int   oyCmmRemove_              (const char *id);
-int   oyCmmAdd_                 (oyCMM_t *cmm);
 char** oyCmmGetCmmNames_        (int           *count,
                                  oyAllocFunc_t alloc_func );
-oyGROUP oyRegisterGroups_       (char *cmm, char **desc);
-int   oyCmmGetFromXML_          (oyGROUP           group,
-                                 const char       *xml,
-                                 const char       *domain,
-                                 const char       *domain_path,
-                                 oyCMM_t          *cmm);
+oyGROUP oyRegisterGroups_       (char *cmm, char *id, char *name, char *ttip);
 int   oyCmmRegisterXML_         (oyGROUP           group,
                                  const char       *xml,
                                  const char       *domain,
                                  const char       *domain_path);
+
+
+/** \internal
+ *  build a oyCMM_t__ API
+ */
+oyOption_t_* oyCmmsUIOptionSearch_ (oyOPTION      id);
+const char*  oyCmmGetName_         (const char *cmm);
+const char*  oyCmmGetDescription_  (const char *cmm);
+const char*  oyCmmGetXml_          (const char *cmm);
+const char*  oyCmmGetDomain_       (const char *cmm);
+const char*  oyCmmGetDomainPath_   (const char *cmm);
+void         oyCmmGetGroups_       (const char *cmm, int *start, int *count);
+void         oyCmmRefreshI18N_     (const char *cmm);
+void         oyCmmsRefreshI18N_    (void);
 
 
 /*

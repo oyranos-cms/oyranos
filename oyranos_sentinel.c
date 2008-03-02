@@ -121,8 +121,7 @@ void oyInit_()
     bindtextdomain( "oyranos", LOCALEDIR );
   }
 #endif
-  oy_option_= calloc(sizeof(oyOption_t), OY_STATIC_OPTS_);
-  oyCheckOptionStrings_ (oy_option_);
+  oyTexteCheck_ ();
 
 }
 

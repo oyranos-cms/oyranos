@@ -41,15 +41,57 @@
 
 /* --- Helpers  --- */
 
-/* --- static variables   --- */
-
-oyCMM_t__ oyCMM_ = {0,NULL,0};
-
 /* --- structs, typedefs, enums --- */
+
+/** @internal
+    @brief the internal only used structure for external registred CMM functions
+ */
+typedef struct {
+  char       *id;               /**< usually a 4 letter short name */
+  char       *libname;          /**< library to search for function */
+  char       *funcname;         /**< function for dlsym */
+  oyOPTION    opts_start;       /**< options numbers for oyGetOptionUITitle */
+  oyOPTION    opts_end;
+  oyOption_t_ *options;          /**< the CMM options */
+} oyExternFunc_t_;
+
+
+/** @internal
+    @brief the internal only used structure for external registred CMM's
+ */
+typedef struct {
+  char  id[5];                  /**< 4 letter identifier */
+  char *name;                   /**< short name */
+  char *description;            /**< long description */ // TODO help license ..
+  int   groups_start;
+  int   groups_end;             /**< the registred layouts frames */
+  oyExternFunc_t_ *func;        /**< the registred functions of the CMM */
+  int   funcs_n;                /**< number of provided functions */
+  char ***oy_groups;            /**< the oy_groups_description_ synonym */
+  char *xml;                    /**< original xml text */
+  const char *domain;           /**< textdomain */
+  const char *domain_path;      /**< textdomain path */
+} oyCMM_t_;
+
+/** @internal singleton */
+struct {
+  int       looked;
+  oyCMM_t_ *cmms;
+  int       n;
+} oyCMM_ = {0,NULL,0};
+
+/* --- static variables   --- */
 
 /* --- internal API definition --- */
 
-/* separate from the external functions */
+/** @internal CMM API */
+oyCMM_t_* oyCmmGet_              (const char *id);
+int   oyCmmAdd_                 (oyCMM_t_ *cmm);
+int   oyCmmGetFromXML_          (oyGROUP           group,
+                                 const char       *xml,
+                                 const char       *domain,
+                                 const char       *domain_path,
+                                 oyCMM_t_          *cmm);
 
 /* small helpers */
 #define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
@@ -60,7 +102,7 @@ oyCMM_t__ oyCMM_ = {0,NULL,0};
 /* CMM support */
 
 
-oyCMM_t*
+oyCMM_t_*
 oyCmmGet_        (const char *id)
 {
   int i;
@@ -81,11 +123,11 @@ oyCmmRemove_     (const char *id)
   int i,
       error = 0,
       pos = 0;
-  oyCMM_t *ptr = NULL;
+  oyCMM_t_ *ptr = NULL;
 
   oyCMM_.looked = 1;
 
-  oyAllocHelper_m_(ptr, oyCMM_t, oyCMM_.n-1, oyAllocateFunc_, return 1)
+  oyAllocHelper_m_(ptr, oyCMM_t_, oyCMM_.n-1, oyAllocateFunc_, return 1)
   for(i = 0; i < oyCMM_.n; ++i)
   {
     if(strcmp(oyCMM_.cmms[i].id, id) == 0)
@@ -104,15 +146,15 @@ oyCmmRemove_     (const char *id)
 }
 
 int
-oyCmmAdd_        (oyCMM_t *cmm)
+oyCmmAdd_        (oyCMM_t_ *cmm)
 {
   int i,
       error = 0;
-  oyCMM_t *ptr = NULL;
+  oyCMM_t_ *ptr = NULL;
 
   oyCMM_.looked = 1;
 
-  oyAllocHelper_m_(ptr, oyCMM_t, oyCMM_.n+1, oyAllocateFunc_, return 1)
+  oyAllocHelper_m_(ptr, oyCMM_t_, oyCMM_.n+1, oyAllocateFunc_, return 1)
   for(i = 0; i < oyCMM_.n; ++i)
     ptr[i] = oyCMM_.cmms[i];
   ptr[oyCMM_.n] = *cmm;
@@ -145,22 +187,9 @@ oyCmmGetCmmNames_( int        *count,
 }
 
 oyGROUP
-oyRegisterGroups_(char *cmm, char **desc)
+oyRegisterGroups_(char *cmm, char *id, char *name, char *tooltip)
 {
-  const char ***ptr = calloc(sizeof(char***), ++oy_groups_descriptions_);
-  int i;
-
-  oyGetOption_(0);
-
-  for(i = 0; i < oy_groups_descriptions_ - 1; ++i)
-      ptr[i] = oy_groups_description_[i];
-  if(oy_groups_description_)
-    free(oy_groups_description_);
-  i = oy_groups_descriptions_ - 1;
-  ptr[i] = (const char**)desc;
-  oy_groups_description_ = ptr;
-
-  return oy_groups_descriptions_-1;
+  return oyGroupAdd_(cmm, id, name, tooltip);
 }
 
 
@@ -169,7 +198,7 @@ oyCmmGetFromXML_( oyGROUP           group,
                   const char       *xml,
                   const char       *domain,
                   const char       *domain_path,
-                  oyCMM_t          *cmm)
+                  oyCMM_t_          *cmm)
 {
 
   /* allocate memory */
@@ -240,14 +269,12 @@ oyCmmGetFromXML_( oyGROUP           group,
   oy_debug=1;
   for(i = 0; i < count; ++i)
   {
-    char **props = calloc(sizeof(char*), 3);
     oyGROUP oy_group;
 
-    props[0] = oyXMLgetValue_(groupa[i], "oyCONFIG_STRING_XML");
-    props[1] = _( oyXMLgetValue_(groupa[i], "oyNAME") );
-    props[2] = _( oyXMLgetValue_(groupa[i], "oyDESCRIPTION") );
-
-    oy_group = oyRegisterGroups_(cmm->id, props);
+    oy_group = oyRegisterGroups_( cmm->id,
+                       oyXMLgetValue_(groupa[i], "oyCONFIG_STRING_XML"),
+                    _( oyXMLgetValue_(groupa[i], "oyNAME") ),
+                    _( oyXMLgetValue_(groupa[i], "oyDESCRIPTION") ) );
 
     if(i == 0)
       first_group_n = oy_group;
@@ -310,7 +337,9 @@ oyCmmRegisterXML_(oyGROUP           group,
 {
 
   int   err = 0;
-  oyCMM_t cmm;
+  oyCMM_t_ cmm;
+
+  DBG_PROG_START
 
   oyCmmGetFromXML_(group, xml, domain, domain_path, &cmm);
   oyCmmAdd_(&cmm);
@@ -320,4 +349,187 @@ oyCmmRegisterXML_(oyGROUP           group,
 }
 
 
+/** \internal
+ *  map a oyOPTION to a oyOption_t_ in dynamic oyCMM_
+ */
+oyOption_t_*
+oyCmmsUIOptionSearch_ (oyOPTION       id)
+{
+  DBG_PROG_START
+
+  int i, j;
+
+  for(i = 0; i < oyCMM_.n; ++i)
+  {
+    for ( j = 0; j < oyCMM_.cmms[i].funcs_n; ++j)
+    {
+      if( oyCMM_.cmms[i].func[j].opts_start <= id &&
+          id <= oyCMM_.cmms[i].func[j].opts_end )
+      {
+        DBG_PROG_ENDE
+        /* just the first occurence */
+        return &oyCMM_.cmms[i].func[j].options[
+                  id - oyCMM_.cmms[i].func[j].opts_start ];
+      }
+#     if 0
+      for( k = 0; k < options_n; ++k )
+      {
+      }
+#     endif
+    }
+  }
+
+  DBG_PROG_ENDE
+  return NULL;
+};
+
+const char*
+oyCmmGetName_  (const char *cmm)
+{
+  DBG_PROG_START
+
+  int i;
+  char *result = NULL;
+
+  for(i = 0; i < oyCMM_.n; ++i)
+  {
+    if(strcmp(oyCMM_.cmms[i].id, cmm) == 0)
+      result = oyCMM_.cmms[i].name ;
+  }
+
+  DBG_PROG_ENDE
+  return result;
+};
+
+const char*
+oyCmmGetDescription_  (const char *cmm)
+{
+  DBG_PROG_START
+
+  int i;
+  char *result = NULL;
+
+  for(i = 0; i < oyCMM_.n; ++i)
+  {
+    if(strcmp(oyCMM_.cmms[i].id, cmm) == 0)
+      result = oyCMM_.cmms[i].description ;
+  }
+
+  DBG_PROG_ENDE
+  return result;
+};
+
+const char*
+oyCmmGetXml_  (const char *cmm)
+{
+  DBG_PROG_START
+
+  int i;
+  char *result = NULL;
+
+  for(i = 0; i < oyCMM_.n; ++i)
+  {
+    if(strcmp(oyCMM_.cmms[i].id, cmm) == 0)
+      result = oyCMM_.cmms[i].xml ;
+  }
+
+  DBG_PROG_ENDE
+  return result;
+};
+
+const char*
+oyCmmGetDomain_  (const char *cmm)
+{
+  DBG_PROG_START
+
+  int i;
+  const char *result = NULL;
+
+  for(i = 0; i < oyCMM_.n; ++i)
+  {
+    if(strcmp(oyCMM_.cmms[i].id, cmm) == 0)
+      result = oyCMM_.cmms[i].domain ;
+  }
+
+  DBG_PROG_ENDE
+  return result;
+};
+
+const char*
+oyCmmGetDomainPath_  (const char *cmm)
+{
+  DBG_PROG_START
+
+  int i;
+  const char *result = NULL;
+
+  for(i = 0; i < oyCMM_.n; ++i)
+  {
+    if(strcmp(oyCMM_.cmms[i].id, cmm) == 0)
+      result = oyCMM_.cmms[i].domain_path ;
+  }
+
+  DBG_PROG_ENDE
+  return result;
+};
+
+void
+oyCmmGetGroups_  (const char *cmm, int *start, int *count)
+{
+  DBG_PROG_START
+
+  int i;
+
+  for(i = 0; i < oyCMM_.n; ++i)
+  {
+    if(strcmp(oyCMM_.cmms[i].id, cmm) == 0)
+    {
+      if(start)
+        *start = oyCMM_.cmms[i].groups_start;
+      if(count)
+        *count = oyCMM_.cmms[i].groups_end - oyCMM_.cmms[i].groups_start + 1;
+    }
+  }
+
+  DBG_PROG_ENDE
+};
+
+void
+oyCmmsRefreshI18N_  (void)
+{
+  DBG_PROG_START
+
+  int i;
+
+  /* refresh CMM's */
+  for( i = 0; i < oyCMM_.n; ++i)
+  { 
+    oyCmmGetFromXML_ ( oyGROUP_START, oyCMM_.cmms[i].xml,
+                       oyCMM_.cmms[i].domain, oyCMM_.cmms[i].domain_path,
+                       &oyCMM_.cmms[i] );
+  }
+
+  DBG_PROG_ENDE
+};
+
+void
+oyCmmRefreshI18N_  (const char *cmm)
+{
+  DBG_PROG_START
+
+  int i;
+
+  /* refresh CMM's */
+  for( i = 0; i < oyCMM_.n; ++i)
+  { 
+    if(strcmp(oyCMM_.cmms[i].id, cmm) == 0)
+    {
+      oyCmmGetFromXML_ ( oyGROUP_START, oyCMM_.cmms[i].xml,
+                         oyCMM_.cmms[i].domain, oyCMM_.cmms[i].domain_path,
+                         &oyCMM_.cmms[i] );
+    }
+  }
+
+  DBG_PROG_ENDE
+};
 

@@ -33,6 +33,7 @@
 
 #include "oyranos.h"
 #include "oyranos_texts.h"
+#include "oyranos_elektra.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,15 +42,17 @@ namespace oyranos
 #endif /* __cplusplus */
 
 
-struct OyComp_s {
-  struct OyComp_s *next;   /* chain connection */
-  struct OyComp_s *begin;  /* chain connection */
+/** @internal
+    @brief used by sort engine */
+struct oyComp_s_ {
+  struct oyComp_s_ *next;   /* chain connection */
+  struct oyComp_s_ *begin;  /* chain connection */
   char            *name;   /* key name */
   char            *val;    /* its value */
   int              hits;   /* weighting */
 };
 
-typedef struct OyComp_s oyComp_t;
+typedef struct oyComp_s_ oyComp_t_;
 
 /**@internal A small search engine
  *
@@ -58,12 +61,12 @@ typedef struct OyComp_s oyComp_t;
  */
 
 
-oyComp_t* oyInitComp_      (oyComp_t *compare, oyComp_t *top);
-oyComp_t* oyAppendComp_    (oyComp_t *list,    oyComp_t *new);
-void    oySetComp_         (oyComp_t *compare, const char* keyName,
+oyComp_t_* oyInitComp_      (oyComp_t_ *compare, oyComp_t_ *top);
+oyComp_t_* oyAppendComp_    (oyComp_t_ *list,    oyComp_t_ *new_);
+void    oySetComp_         (oyComp_t_ *compare, const char* keyName,
                             const char* value, int hits );
-void    oyDestroyCompList_ (oyComp_t* list);
-char*   printComp          (oyComp_t* entry);
+void    oyDestroyCompList_ (oyComp_t_* list);
+char*   printComp          (oyComp_t_* entry);
 
 
 int     oySetProfile_Block                (const char* name, 
@@ -75,7 +78,7 @@ int     oySetProfile_Block                (const char* name,
 
 
 /* device profiles */
-/** enum identifying device types for distinguishing in searches */
+/** \internal enum identifying device types for distinguishing in searches */
 typedef enum  {
   /*oyNOTYPE,*/
   oyDISPLAY,          /**< dynamic viewing */

@@ -349,11 +349,11 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
 
 /* small search engine */
 
-oyComp_t*
-oyInitComp_ (oyComp_t *list, oyComp_t *top)
+oyComp_t_*
+oyInitComp_ (oyComp_t_ *list, oyComp_t_ *top)
 { DBG_PROG_START
   if (!list)
-    list = (oyComp_t*) calloc (1, sizeof(oyComp_t));
+    list = (oyComp_t_*) calloc (1, sizeof(oyComp_t_));
 
   list->next = 0;
 
@@ -368,8 +368,8 @@ oyInitComp_ (oyComp_t *list, oyComp_t *top)
   return list;
 }
 
-oyComp_t*
-oyAppendComp_ (oyComp_t *list, oyComp_t *new)
+oyComp_t_*
+oyAppendComp_ (oyComp_t_ *list, oyComp_t_ *new)
 { DBG_PROG_START
 
   /* no list yet => first and only entry */
@@ -394,7 +394,7 @@ oyAppendComp_ (oyComp_t *list, oyComp_t *new)
 }
 
 void
-oySetComp_         (oyComp_t *compare, const char* keyName,
+oySetComp_         (oyComp_t_ *compare, const char* keyName,
                     const char* value, int hits )
 {
   DBG_PROG_START
@@ -407,9 +407,9 @@ oySetComp_         (oyComp_t *compare, const char* keyName,
 }
 
 void
-oyDestroyCompList_ (oyComp_t *list)
+oyDestroyCompList_ (oyComp_t_ *list)
 { DBG_PROG_START
-  oyComp_t *before;
+  oyComp_t_ *before;
 
   list = list->begin;
   while (list->next)
@@ -424,7 +424,7 @@ oyDestroyCompList_ (oyComp_t *list)
 }
 
 char*
-printComp (oyComp_t* entry)
+printComp (oyComp_t_* entry)
 { DBG_PROG_START
 # ifdef DEBUG
   static char text[MAX_PATH] = {0};

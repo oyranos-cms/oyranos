@@ -94,7 +94,7 @@ void oyClose (void) { oyClose_(); }
 /* oyranos part */
 
 
-oyComp_t* oyGetDeviceProfile_sList          (const char* manufacturer,
+oyComp_t_* oyGetDeviceProfile_sList          (const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
                                            const char* host,
@@ -792,7 +792,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
   char* profileName = 0;
   int rc=0;
 
-  oyComp_t *matchList = 0,
+  oyComp_t_ *matchList = 0,
          *testEntry = 0,
          *foundEntry = 0;
   KeySet *profilesList;
@@ -879,7 +879,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
   char*  profileName = 0;
   int    rc;
 
-  oyComp_t *matchList = 0,
+  oyComp_t_ *matchList = 0,
          *testEntry = 0,
          *foundEntry = 0;
   KeySet* profilesList;
@@ -979,7 +979,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
    */
 
 
-oyComp_t*
+oyComp_t_*
 oyGetDeviceProfile_sList           (const char* manufacturer,
                                     const char* model,
                                     const char* product_id,
@@ -997,7 +997,7 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
   char* value = (char*) calloc (MAX_PATH, sizeof(char));
   const char **attributs = (const char**) alloca (8 * sizeof (const char*));
   Key *current;
-  oyComp_t *matchList = 0,
+  oyComp_t_ *matchList = 0,
          *testEntry = 0;
 
   attributs[0] = manufacturer;

@@ -47,7 +47,6 @@
 /* --- static variables   --- */
 
 #define OY_WEB_RGB "sRGB.icc"
-static int oyranos_init;
 extern int oy_warn_;
 
 

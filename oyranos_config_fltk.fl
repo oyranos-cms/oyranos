@@ -117,7 +117,7 @@ Function {getPolicyName()} {open return_type {const char*}
   char *xml = oyPolicyToXML (oyGROUP_ALL, 0, myAllocFunc);
   oyI18NSet(1,0);
   xml[strlen(xml)-2] = 0;
-  std::cout << xml <<std::endl;
+  //std::cout << xml <<std::endl;
 
   for( int i = 0; i < count; ++i )
   {
@@ -451,7 +451,7 @@ class Option {: {public OyFlPack} private
     button->tooltip(_("Show in external Viewer"));
 
     // Set choice
-    char* default_p = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)type, myAllocFunc );
+    char* default_p = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)type, myAllocFunc ), *alloc_ptr = default_p;
     if(default_p) {
       DBG_PROG_S( (default_p) )
     } else
@@ -518,7 +518,7 @@ class Option {: {public OyFlPack} private
 
     DBG_PROG_V((erfolg))
     DBG_PROG_V((val))
-
+    if(alloc_ptr) delete [] alloc_ptr;
   }
 
 
@@ -579,7 +579,7 @@ class ProfilePath {: {public Fl_Pack} private
 
     n = num;
     char *name = oyPathName(n, myAllocFunc) ;
-    std::cout << name << std::endl;
+    //std::cout << name << std::endl;
     //new Fl_Box( 0, 0, 10, 20 );
     box = new Fl_Box( 0, 0, 10, BUTTON_HEIGHT, name );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
@@ -595,7 +595,7 @@ class ProfilePath {: {public Fl_Pack} private
       new Fl_Box( 0, 0, H_SPACING, 20 );
       printf( "%s : %s\\n", name, SYSCOLORDIR OY_SLASH ICCDIRNAME );
     }
-    printf( "%s ? %s %s %s\\n", name, SYSCOLORDIR, OY_SLASH, ICCDIRNAME );
+    //printf( "%s ? %s %s %s\\n", name, SYSCOLORDIR, OY_SLASH, ICCDIRNAME );
 
     int width=0, height=0;
     int scroll_w = 50; //default_profiles_pack->w() - 3*H_SPACING - BUTTON_HEIGHT;
@@ -606,7 +606,9 @@ class ProfilePath {: {public Fl_Pack} private
       b_w = width;
 
     box->size( b_w, 20 );
-    Fl_Pack::size( b_w + 2*H_SPACING + BUTTON_HEIGHT, Fl_Pack::h() );} {}
+    Fl_Pack::size( b_w + 2*H_SPACING + BUTTON_HEIGHT, Fl_Pack::h() );
+    //if(name) delete [] name; // dont delete as it belongs now to the widget
+    } {}
   }
 } 
 
@@ -826,6 +828,7 @@ Function {refreshOptions()} {private
         const char *name = oyGetOptionUITitle( (oyOPTION)i,
                            &groups, NULL, NULL, &tooltip );
         Fl_Group *w = addTab( top_tabs, groups );
+
         if(w) w->begin();
           op = new Option( w->x(), w->y(), w->w(), BUTTON_HEIGHT, name,
                (oyOPTION)i, count, const_cast<const char**>(names), tooltip );
@@ -840,8 +843,6 @@ Function {refreshOptions()} {private
     if( tw < ow )
       top_group->size( ow, top_group->h() );
   }
-
-    //oyProfileListFree( names, count );
 
 
   // fill in all the options
@@ -860,7 +861,10 @@ Function {refreshOptions()} {private
           op = new Option( w->x(), w->y(), Fl_Group::current()->w(), BUTTON_HEIGHT, name,
                (oyOPTION)i, choices, /*const_cast<const char**>(*/choices_list, tooltip );
         if(w) w->end();
-      }} {}
+      }
+
+  oyProfileListFree ( names, count );
+  } {}
 } 
 
 Function {createUI()} {} {
@@ -934,10 +938,21 @@ Function {createUI()} {} {
 } 
 
 Function {updateUI()} {} {
-  code {refreshOptions();
+  code {
+  //! \internal@todo start refreshing when the UI has finished
+
+  Fl::add_idle(updateUIIdle);} {}
+} 
+
+Function {updateUIIdle(void*)} {} {
+  code {
+  Fl::remove_idle(updateUIIdle);
+  //! \internal refreshing when the UI has finished
+  refreshOptions();
   refreshPathLeaves();
 
-  policy_box->label( getPolicyName() );} {}
+  policy_box->label( getPolicyName() );
+  } {}
 } 
 
 Function {} {C

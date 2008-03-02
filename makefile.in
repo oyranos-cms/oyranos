@@ -111,6 +111,7 @@ FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 INCL_DEP = $(INCL) $(SOURCES)
 
 .SILENT:
+.PHONY:	doc
 
 TEST2 = test2
 

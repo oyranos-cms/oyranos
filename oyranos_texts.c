@@ -47,9 +47,14 @@
 
 /* --- static variables   --- */
 
+#define OY_STATIC_OPTS_  400
+
 /* --- structs, typedefs, enums --- */
 
 /* --- internal API definition --- */
+
+void        oyGroupStringsTranslate_      ();
+void        oyOptionStringsTranslate_     ();
 
 /* separate from the external functions */
 
@@ -63,7 +68,7 @@
  *  This Text array is an internal only variable.<br>
  *  The content is  available through the oyGetOptionUITitle funcion.
  */
-oyOption_t *oy_option_= NULL; 
+oyOption_t_ *oy_option_= NULL; 
 
 oyGROUP oy_groups_descriptions_ = oyGROUP_ALL + 1;
 const char ***oy_groups_description_ = NULL;
@@ -73,7 +78,7 @@ const char ***oy_groups_description_ = NULL;
 oyOPTION_TYPE
 oyGetOptionType_(oyOPTION         type)
 {
-  const oyOption_t *opt = oyGetOption_(type);
+  const oyOption_t_ *opt = oyGetOption_(type);
 
   if( oyOPTION_BEHAVIOUR_START < type && type < oyOPTION_BEHAVIOUR_END )
   {
@@ -85,77 +90,23 @@ oyGetOptionType_(oyOPTION         type)
 }
 
 void
-oyCheckOptionStrings_ (oyOption_t *opt)
+oyTexteCheck_              (void)
+{
+  oyGroupStringsTranslate_ ();
+  oyOptionStringsTranslate_ ();
+}
+
+void
+oyOptionStringsTranslate_ ()
 {
   int pos;
-  oyGROUP group;
+  oyOption_t_ *opt;
 
-  if( oy_groups_description_ )
+  if(oy_option_)
     return;
   else
-    oy_groups_description_ = calloc(sizeof(char***), oy_groups_descriptions_*3);
-
-
-  for( group = oyGROUP_START; group < oyGROUP_ALL + 1; ++group)
-  {
-  oy_groups_description_[group] = calloc(sizeof(char*), 3);
-  switch( group )
-  {
-  case oyGROUP_START:
-  oy_groups_description_[group][0] = "oyGROUP_START";
-  oy_groups_description_[group][1] = _("Start");
-  oy_groups_description_[group][2] = _("Oyranos Settings Group"); break;
-  case oyGROUP_DEFAULT_PROFILES:
-  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES";
-  oy_groups_description_[group][1] = _("Default Profiles");
-  oy_groups_description_[group][2] = _("Source and Target Profiles for various situations"); break;
-  case oyGROUP_DEFAULT_PROFILES_EDIT:
-  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_EDIT";
-  oy_groups_description_[group][1] = _("Editing Colour Space");
-  oy_groups_description_[group][2] = _("Well behaving Colour Space for Editing");
- break;
-  case oyGROUP_DEFAULT_PROFILES_ASSUMED:
-  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_ASSUMED";
-  oy_groups_description_[group][1] = _("Assumed Colour Space");
-  oy_groups_description_[group][2] = _("Assumed Colour Space for untagged colours"); break;
-  case oyGROUP_DEFAULT_PROFILES_PROOF:
-  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_PROOF";
-  oy_groups_description_[group][1] = _("Proofing");
-  oy_groups_description_[group][2] = _("Colour Space for Simulating real devices"); break;
-  case oyGROUP_PATHS:
-  oy_groups_description_[group][0] = "oyGROUP_PATHS";
-  oy_groups_description_[group][1] = _("Paths");
-  oy_groups_description_[group][2] = _("Paths where ICC Profiles can be found"); break;
-  case oyGROUP_POLICY:
-  oy_groups_description_[group][0] = "oyGROUP_POLICY";
-  oy_groups_description_[group][1] = _("Policy");
-  oy_groups_description_[group][2] = _("Collections of settings in Oyranos"); break;
-  case oyGROUP_BEHAVIOUR:
-  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR";
-  oy_groups_description_[group][1] = _("Behaviour");
-  oy_groups_description_[group][2] = _("Settings affecting the Behaviour in various situations"); break;
-  case oyGROUP_BEHAVIOUR_RENDERING:
-  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_RENDERING";
-  oy_groups_description_[group][1] = _("Rendering");
-  oy_groups_description_[group][2] = _("The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"); break;
-  case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
-  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS";
-  oy_groups_description_[group][1] = _("Save Mixed colour space Documents");
-  oy_groups_description_[group][2] = _("Default Handling of Mixed Colour Spaces inside one single Document"); break;
-  case oyGROUP_BEHAVIOUR_MISSMATCH:
-  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_MISSMATCH";
-  oy_groups_description_[group][1] = _("Mismatching");
-  oy_groups_description_[group][2] = _("Decide what to do when the default colour spaces dont match the current ones."); break;
-  case oyGROUP_BEHAVIOUR_PROOF:
-  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_PROOF";
-  oy_groups_description_[group][1] = _("Proofing");
-  oy_groups_description_[group][2] = _("Default Proofing Settings"); break;
-  case oyGROUP_ALL:
-  oy_groups_description_[group][0] = "oyGROUP_ALL";
-  oy_groups_description_[group][1] = _("All");
-  oy_groups_description_[group][2] = _("Oyranos Settings"); break;
-  }
-  }
+    oy_option_= calloc(sizeof(oyOption_t_), OY_STATIC_OPTS_);
+  opt = oy_option_;
 
   {
 #   define oySET_OPTIONS_M_( t_, id_, ca_n, ca1, ca2, ca3, labl, desc, \
@@ -368,11 +319,86 @@ oyCheckOptionStrings_ (oyOption_t *opt)
   }
 }
 
-const oyOption_t*
+void
+oyGroupStringsTranslate_ ()
+{
+  oyGROUP group;
+
+  if( oy_groups_description_ )
+    return;
+  else
+    oy_groups_description_ = calloc(sizeof(char***), oy_groups_descriptions_*3);
+
+
+  for( group = oyGROUP_START; group < oyGROUP_ALL + 1; ++group)
+  {
+  oy_groups_description_[group] = calloc(sizeof(char*), 3);
+  switch( group )
+  {
+  case oyGROUP_START:
+  oy_groups_description_[group][0] = "oyGROUP_START";
+  oy_groups_description_[group][1] = _("Start");
+  oy_groups_description_[group][2] = _("Oyranos Settings Group"); break;
+  case oyGROUP_DEFAULT_PROFILES:
+  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES";
+  oy_groups_description_[group][1] = _("Default Profiles");
+  oy_groups_description_[group][2] = _("Source and Target Profiles for various situations"); break;
+  case oyGROUP_DEFAULT_PROFILES_EDIT:
+  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_EDIT";
+  oy_groups_description_[group][1] = _("Editing Colour Space");
+  oy_groups_description_[group][2] = _("Well behaving Colour Space for Editing");
+ break;
+  case oyGROUP_DEFAULT_PROFILES_ASSUMED:
+  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_ASSUMED";
+  oy_groups_description_[group][1] = _("Assumed Colour Space");
+  oy_groups_description_[group][2] = _("Assumed Colour Space for untagged colours"); break;
+  case oyGROUP_DEFAULT_PROFILES_PROOF:
+  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_PROOF";
+  oy_groups_description_[group][1] = _("Proofing");
+  oy_groups_description_[group][2] = _("Colour Space for Simulating real devices"); break;
+  case oyGROUP_PATHS:
+  oy_groups_description_[group][0] = "oyGROUP_PATHS";
+  oy_groups_description_[group][1] = _("Paths");
+  oy_groups_description_[group][2] = _("Paths where ICC Profiles can be found"); break;
+  case oyGROUP_POLICY:
+  oy_groups_description_[group][0] = "oyGROUP_POLICY";
+  oy_groups_description_[group][1] = _("Policy");
+  oy_groups_description_[group][2] = _("Collections of settings in Oyranos"); break;
+  case oyGROUP_BEHAVIOUR:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR";
+  oy_groups_description_[group][1] = _("Behaviour");
+  oy_groups_description_[group][2] = _("Settings affecting the Behaviour in various situations"); break;
+  case oyGROUP_BEHAVIOUR_RENDERING:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_RENDERING";
+  oy_groups_description_[group][1] = _("Rendering");
+  oy_groups_description_[group][2] = _("The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"); break;
+  case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS";
+  oy_groups_description_[group][1] = _("Save Mixed colour space Documents");
+  oy_groups_description_[group][2] = _("Default Handling of Mixed Colour Spaces inside one single Document"); break;
+  case oyGROUP_BEHAVIOUR_MISSMATCH:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_MISSMATCH";
+  oy_groups_description_[group][1] = _("Mismatching");
+  oy_groups_description_[group][2] = _("Decide what to do when the default colour spaces dont match the current ones."); break;
+  case oyGROUP_BEHAVIOUR_PROOF:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_PROOF";
+  oy_groups_description_[group][1] = _("Proofing");
+  oy_groups_description_[group][2] = _("Default Proofing Settings"); break;
+  case oyGROUP_ALL:
+  oy_groups_description_[group][0] = "oyGROUP_ALL";
+  oy_groups_description_[group][1] = _("All");
+  oy_groups_description_[group][2] = _("Oyranos Settings"); break;
+  }
+  }
+
+}
+
+const oyOption_t_*
 oyGetOption_                        (oyOPTION          type)
 {
   /* we provide allways a options at return to avoid further checks */
-  static const oyOption_t default_opt;
+  static const oyOption_t_ default_opt;
+  const oyOption_t_ *result = &default_opt;
 
   DBG_PROG_START
 # if 0
@@ -383,13 +409,16 @@ oyGetOption_                        (oyOPTION          type)
     pos = type - oyOPTION_DEFAULT_PROFILE_START - 1 +
           oyOPTION_BEHAVIOUR_END - oyOPTION_BEHAVIOUR_START - 1;
 # endif
-  oyCheckOptionStrings_( oy_option_ );
+
+  oyOptionStringsTranslate_ ();
 
   if(type < OY_STATIC_OPTS_)
     return &oy_option_[type];
 
+  result = oyCmmsUIOptionSearch_( type );
+
   DBG_PROG_ENDE
-  return &default_opt;
+  return result;
 }
 
 const char*
@@ -426,6 +455,7 @@ oyGetGroupUITitle_                     (oyGROUP          type,
 
   DBG_PROG_START
 
+  oyGroupStringsTranslate_( );
 
   if( pos >= 0 )
   {
@@ -440,11 +470,55 @@ oyGetGroupUITitle_                     (oyGROUP          type,
   return NULL;
 }
 
+oyGROUP
+oyGroupAdd_                (const char *cmm,
+                            const char *id,
+                            const char *name,
+                            const char *tooltips)
+{
+  const char ***ptr = calloc(sizeof(char***), ++oy_groups_descriptions_);
+  const char **desc = calloc(sizeof(char**), 3);
+  int i;
+
+  DBG_PROG_START
+
+  oyGroupStringsTranslate_ ();
+
+  desc[0] = id;
+  desc[1] = name;
+  desc[2] = tooltips;
+
+  for(i = 0; i < oy_groups_descriptions_ - 1; ++i)
+      ptr[i] = oy_groups_description_[i]; 
+  if(oy_groups_description_)
+    free(oy_groups_description_);
+  i = oy_groups_descriptions_ - 1; 
+  ptr[i] = (const char**)desc;
+  oy_groups_description_ = ptr;
+
+  DBG_PROG_ENDE
+  return oy_groups_descriptions_-1;
+}
+
+int
+oyGroupGet_                (oyGROUP          type,
+                            const char    ***strings)
+{
+  DBG_PROG_START
+
+  *strings = oy_groups_description_[type];
+
+  DBG_PROG_ENDE
+  return 3;
+}
+
 
 int
 oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
-{ DBG_PROG_START
+{
   int r = 0;
+
+  DBG_PROG_START
 
   DBG_PROG_S( ("type = %d behaviour %d", type, choice) )
 
@@ -485,4 +559,46 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR       type,
   return NULL;
 }
 
+
+const char *domain = "oyranos";
+
+
+void
+oyI18NSet_             ( int active,
+                         int reserved )
+{
+  DBG_PROG_START
+
+  if(active)
+    domain = "oyranos";
+  else
+    domain = "";
+
+  oyI18Nrefresh_();
+
+  DBG_PROG_ENDE
+}
+
+
+void
+oyI18Nrefresh_()
+{
+  int    i;
+
+
+  if(oy_groups_description_ && oy_groups_descriptions_)
+    for( i = 0; i < oy_groups_descriptions_ - 1; ++i)
+      oyFree_m_( oy_groups_description_[i] );
+
+  oyFree_m_( oy_groups_description_ );
+  oyGroupStringsTranslate_ ();
+
+  oyFree_m_( oy_option_ );
+  oyOptionStringsTranslate_ ();
+
+
+  /* refresh CMM's */
+  oyCmmsRefreshI18N_();
+}
+  
 

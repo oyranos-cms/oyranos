@@ -50,9 +50,9 @@ typedef enum {
   oyOPTION_TYPE_END
 } oyOPTION_TYPE;
 
-/** @brief the internal only used structure for UI text strings
+/** @internal
+    @brief structure for UI text strings
  */
-
 typedef struct {
   oyOPTION    id;               /**< option */
   oyOPTION_TYPE type;           /**< type */
@@ -66,21 +66,21 @@ typedef struct {
 # endif
   const char *config_string;    /**< full key name to store configuration */
   const char *config_string_xml;/**< key name to store configuration */
-} oyOption_t;
+} oyOption_t_;
 
 
 /* global variables */
-extern oyGROUP oy_groups_descriptions_;
-extern const char ***oy_groups_description_;
-extern oyOption_t *oy_option_;
+//extern oyGROUP oy_groups_descriptions_;
+//extern const char ***oy_groups_description_;
+//extern oyOption_t_ *oy_option_;
 
 
-#define OY_STATIC_OPTS_  400
-
+void          oyTexteCheck_            (void);
 
 oyOPTION_TYPE oyGetOptionType_         (oyOPTION          type);
-int         oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice);
-const oyOption_t* oyGetOption_         (oyOPTION          type);
+int           oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice);
+const oyOption_t_* oyGetOption_        (oyOPTION          type);
+
 const char* oyGetOptionUITitle_        (oyOPTION          type,
                                         const oyGROUP   **categories,
                                         int              *choices,
@@ -88,10 +88,12 @@ const char* oyGetOptionUITitle_        (oyOPTION          type,
                                         const char      **tooltips);
 const char* oyGetGroupUITitle_         (oyGROUP          type,
                                         const char      **tooltips);
-int         oyGetBehaviour_            (oyBEHAVIOUR type);
-int         oySetBehaviour_            (oyBEHAVIOUR type, int choice);
+int         oyGroupGet_                (oyGROUP          type,
+                                        const char    ***strings);
+oyGROUP     oyGroupAdd_                (const char *id, const char *cmm,
+                                        const char *name, const char *tooltips);
+int         oyGroupRemove_             (oyGROUP     id);
 
-void        oyCheckOptionStrings_      (oyOption_t *opt);
 
 
 int         oySetDefaultProfile_       (oyDEFAULT_PROFILE type,

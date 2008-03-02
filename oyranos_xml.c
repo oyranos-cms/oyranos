@@ -266,15 +266,17 @@ oyWriteOptionToXML_(oyGROUP           group,
 
   int   i = 0;
   const char *key = 0;
+  const char **strings;
 
          /* allocate new mem if needed */
          oytmplen = oyMemBlockExtent_(&mem, oytmplen, 360);
+         oyGroupGet_( group, &strings );
          sprintf( &mem[strlen(mem)], "<%s>\n",
-                  oy_groups_description_[group][0] );
+                  strings[0] );
          sprintf( &mem[strlen(mem)], "<!-- %s \n"
                                      "     %s -->\n\n",
-                  oy_groups_description_[group][1],
-                  oy_groups_description_[group][2] );
+                  strings[1],
+                  strings[2] );
          for(i = start; i <= end; ++i)
          {
            char *value = 0;
@@ -336,8 +338,7 @@ oyWriteOptionToXML_(oyGROUP           group,
            }
          }
          oytmplen = oyMemBlockExtent_(&mem, oytmplen, 160);
-         sprintf( &mem[strlen(mem)], "</%s>\n\n\n",
-                  oy_groups_description_[group][0] );
+         sprintf( &mem[strlen(mem)], "</%s>\n\n\n", strings[0] );
 
 
   DBG_PROG_ENDE

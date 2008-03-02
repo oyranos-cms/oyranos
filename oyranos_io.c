@@ -566,9 +566,10 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
     int l = 0; /* level */
     int run = !r;
     int path_is_double = 0;
+    int j;
 
     /* check for doubling of paths, without checking recursively */
-    { int j;
+    {
       for( j = 0; j < i; ++j )
       { char *p  = oyPathName_( j, oyAllocateFunc_);
         char *pp = oyMakeFullFileDirName_( p );
@@ -577,6 +578,11 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
           path_is_double = 1;
         OY_FREE( p );
         OY_FREE( pp );
+      }
+      for( j = 0; j < MAX_DEPTH; ++j )
+      {
+        dir[j] = NULL;
+        entry[j] = NULL;
       }
     }
     if( path_is_double )
@@ -604,6 +610,7 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
     {
       if(!(entry[l] = readdir (dir[l]))) {
         closedir(dir[l]);
+        dir[l] = NULL;
         --l;
         if(l<0) {
           run = 0;
@@ -659,7 +666,10 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
         if(r)
           DBG_S(("%d. %d %d found", i, r, run));
       }
-      cont: ;
+
+      cont:
+      /*for( j = 0; j < MAX_DEPTH; ++j )
+        if(dir[j]) closedir(dir[j]);*/;
     }
   }
 

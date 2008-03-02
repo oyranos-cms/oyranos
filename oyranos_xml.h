@@ -41,6 +41,12 @@
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 
+#ifdef __cplusplus
+extern "C" {
+namespace oyranos
+{
+#endif /* __cplusplus */
+
 
 /* memory handling for text parsing and writing */
 /* mem with old_leng will be stretched if add dont fits inside */
@@ -68,5 +74,11 @@ char*   oyPolicyToXML_ (oyGROUP           group,
                         oyAllocFunc_t     allocate_func);
 int     oyReadXMLPolicy_(oyGROUP           group, 
                         const char       *xml);
+
+#ifdef __cplusplus
+} /* extern "C" */
+} /* namespace oyranos */
+#endif /* __cplusplus */
+
 #endif /* OYRANOS_XML_H */
 

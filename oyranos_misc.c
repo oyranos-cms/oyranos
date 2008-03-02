@@ -31,51 +31,7 @@
 #include "oyranos.h"
 #include "oyranos_cmms.h"
 
-#include <stdio.h>
 
 /* --- internal API definition --- */
 
-
-const char *domain = "oyranos";
-
-
-void
-oyI18NSet_             ( int active,
-                         int reserved )
-{
-  DBG_PROG_START
-
-  if(active)
-    domain = "oyranos";
-  else
-    domain = "";
-
-  oyI18Nrefresh_();
-
-  DBG_PROG_ENDE
-}
-
-
-void
-oyI18Nrefresh_()
-{
-  int    i;
-
-  if(oy_groups_description_ && oy_groups_descriptions_)
-    for( i = 0; i < oy_groups_descriptions_ - 1; ++i)
-      oyFree_m_( oy_groups_description_[i] );
-  oyFree_m_( oy_groups_description_ );
-  oy_groups_descriptions_ = oyGROUP_ALL + 1;
-  oyCheckOptionStrings_ (oy_option_);
-
-
-  /* refresh CMM's */
-  for( i = 0; i < oyCMM_.n; ++i)
-  {
-    oyCmmGetFromXML_ ( oyGROUP_START, oyCMM_.cmms[i].xml,
-                       oyCMM_.cmms[i].domain, oyCMM_.cmms[i].domain_path,
-                       &oyCMM_.cmms[i] );
-  }
-}
-  
 

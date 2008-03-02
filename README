@@ -16,7 +16,7 @@ Voraussetzungen:
 
 Konfiguration:
 
-    make config
+    ./configure
 
 Zusätze:
 
@@ -63,7 +63,7 @@ prerequisits:
 
 configuration:
 
-    make config
+    ./configure
 
 add ons:
 
