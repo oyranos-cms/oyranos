@@ -35,11 +35,11 @@ LIB_MONI_SO = lib$(TARGET)_moni.so
 LIB_MONI_NAME = lib$(TARGET)_moni.a
 
 #APPLE = 1
-#FLU = 1
+FLU = 1
 DL = --ldflags # --ldstaticflags
 
 ifdef FLU
-FLU_H = -DHAVE_FLU
+FLU_H = -DHAVE_FLU `flu-config --cxxflags`
 endif
 
 LINK_FLAGS = -shared -fpic -ldl
@@ -57,7 +57,7 @@ FLTK_LIBS=#`fltk-config --use-images $(DL)`
 KDB_LIBS=-lkdb
 
 ifdef FLU
-FLU_LIBS=#`flu-config $(DL)`
+FLU_LIBS=`flu-config $(DL)`
 endif
 
 
@@ -80,6 +80,10 @@ CFILES_MONI = \
     oyranos_monitor.c
 CFILES_GAMMA = \
     oyranos_gamma.c
+
+CPPFILES_FLU = \
+	oyranos_config_flu.cpp
+
 CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
@@ -92,11 +96,13 @@ FLUID = #\
 	fl_oyranos.fl
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
-		  $(CFILES_MONI) $(CFILES_GAMMA) test.c test2.cpp
+		  $(CFILES_MONI) $(CFILES_GAMMA) $(CPPFILES_FLU) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
+FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
+				$(CFILES_FLU:.c=.o)
 
-REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) /opt/local/include/FL/mac.r
+REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) mac.r
 ifdef APPLE
 APPLE   = $(REZ)
 endif
@@ -106,9 +112,9 @@ dir     = Entwickeln
 timedir = $(topdir)/$(dir)
 mtime   = `find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g`
 
-#.SILENT:
+.SILENT:
 
-all:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma test2
+all:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma $(TARGET)_config_flu test2
 
 $(TARGET):	$(OBJECTS)
 	echo Linking $@ ...
@@ -116,7 +122,10 @@ $(TARGET):	$(OBJECTS)
 	$(OBJECTS) \
 	$(LDLIBS) \
 	$(APPLE)
-	$(RM) $(LIBSONAME) && $(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
+	$(RM)  $(LIBSONAME)
+	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
+	$(RM)  $(LIBSO)
+	$(LNK) $(LIBSONAMEFULL) $(LIBSO)
 
 $(TARGET)_moni:	$(MONI_OBJECTS)
 	echo Linking $@ ...
@@ -124,9 +133,18 @@ $(TARGET)_moni:	$(MONI_OBJECTS)
 	-o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) \
 	$(APPLE)
-	$(RM) $(LIB_MONI_SONAME) && $(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
+	$(RM)  $(LIB_MONI_SONAME)
+	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
+	$(RM)  $(LIB_MONI_SO)
+	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SO)
 
-$(LIBSONAMEFULL):	$(TARGET)
+$(TARGET)_config_flu:	$(TARGET)_moni $(FLU_OBJECTS)
+	echo Linking $@ ...
+	$(CXX) $(OPTS) -o $(TARGET)_config_flu \
+	$(TARGET)_config_flu.o \
+	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) -Wl,--rpath -Wl,$(libdir) \
+	$(FLU_LIBS) $(LDLIBS) \
+	$(APPLE)
 
 static:	$(TARGET)
 	echo Linking $@ ...
