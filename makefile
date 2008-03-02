@@ -228,7 +228,7 @@ test:	$(LIBSONAMEFULL) test.o
 	$(REZ)
 
 doc:
-	test -n 'which doxygen' && doxygen -w html Doxyfile
+	test -n 'which doxygen' && doxygen Doxyfile
 
 install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma doc
 	echo Installing ...
