@@ -67,10 +67,11 @@ rm -rf %{buildroot}
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/oyranos-gamma
 %{_bindir}/oyranos_config_flu
-%{_libdir}/*
+%{_libdir}/*.so*
 
 %files devel
 %{_bindir}/oyranos-config
+%{_libdir}/*.a
 %doc doc/*
 
 %changelog
