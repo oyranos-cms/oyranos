@@ -661,7 +661,7 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
         goto cont;
       }
       if (!S_ISLNK(statbuf.st_mode)){//((statbuf.st_mode & S_IFMT) & S_IFLNK)) 
-        DBG_PROG_S(("%d. %s is a link: ignored %d %d %d", l, name, statbuf.st_mode , S_IFLNK, 0120000));
+        DBG_PROG_S(("%d. %s is a link: ignored %d %d %d", l, name, (int)statbuf.st_mode , S_IFLNK, 0120000));
         //goto cont;
       }
       if (S_ISDIR (statbuf.st_mode) &&

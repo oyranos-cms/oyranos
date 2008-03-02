@@ -26,11 +26,8 @@ DL = --ldflags # --ldstaticflags
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 	$(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL)
-CXXFLAGS=$(OPTS) $(INCL) $(FLU_H) $(FLTK_H)
-CFLAGS = $(OPTS) $(INCL)
 
-ELEKTRA_STATICTEST_LIBS = `test -f $(libdir)/libelektra.a && (echo $(libdir)/libelektra.a ; test -f $(libdir)/libelektra-filesys.a && echo $(libdir)/libelektra-filesys.a || (test -f $(libdir)/elektra/libelektra-filesys.a && echo $(libdir)/elektra/libelektra-filesys.a)) || echo $(ELEKTRA_LIBS)`
-
+ELEKTRA_STATICTEST_LIBS = `test -f $(ELEKTRA_VERSION)/src/libelektra/libelektra.a && echo $(ELEKTRA_VERSION)/src/libelektra/libelektra.a || (test -f $(libdir)/libelektra.a && (echo $(libdir)/libelektra.a ; test -f $(libdir)/libelektra-filesys.a && echo $(libdir)/libelektra-filesys.a || (test -f $(libdir)/elektra/libelektra-filesys.a && echo $(libdir)/elektra/libelektra-filesys.a)) || echo $(ELEKTRA_LIBS))`
 
 LDLIBS = -L$(libdir) -L. \
 	$(ELEKTRA_STATICTEST_LIBS) -lc $(I18N_LIB)
@@ -119,7 +116,7 @@ FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 INCL_DEP = $(INCL) $(SOURCES)
 
 .SILENT:
-.PHONY:	doc
+.PHONY:	doc $(ELEKTRA_VERSION)
 
 TEST2 = test2
 
@@ -140,10 +137,10 @@ ALL_FILES = \
 	$(FLUID)
 
 # build all what is needed to run the libraries, helpers and the examples
-all:	mkdepend $(LIB_MONI_SONAMEFULL) \
+all:	mkdepend $(ELEKTRA_VERSION) $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	$(FLTK_GUI) $(FLU_GUI) $(TARGET)-policy \
-	$(TEST2) $(LINGUAS_SRC)
+	$(FLTK_GUI) $(TARGET)-policy \
+	$(TEST2) $(LINGUAS_SRC) #$(FLU_GUI)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
@@ -161,7 +158,7 @@ time:
 # build all objects and libraries, link the headers to $(TARGET)
 $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 	echo Linking $@ ...
-	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
+	$(CC) $(LINK_FLAGS) $(CFLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(libdir) $(LDLIBS)
 	$(RM)  $(LIBSONAME)
@@ -172,7 +169,7 @@ $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 # the monitor library
 $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 	echo Linking $@ ...
-	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(LIBSONAMEFULL) \
+	$(CC) $(CFLAGS) $(LINK_FLAGS) $(LINK_NAME_M) $(LIBSONAMEFULL) \
 	-o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) $(X11_LIBS) $(LDLIBS)
 	$(RM)  $(LIB_MONI_SONAME)
@@ -188,7 +185,7 @@ $(LIB_XNVCTRL).a:
 # the twinview library
 $(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a
 	echo Linking $@ ...
-	-$(CC) $(OPTS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
+	-$(CC) $(CFLAGS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL)
 
@@ -198,7 +195,7 @@ $(target)_config_fltk.o:	$(TARGET)_config_fltk.cxx
 # general configuration tool example
 $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 	echo Linking $@ ...
-	$(CXX) $(OPTS) -o $(TARGET)-config-fltk \
+	$(CXX) $(CXXFLAGS) -o $(TARGET)-config-fltk \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
 	$(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS)  $(I18N_LIB) $(LIBFL_I18N)
@@ -207,7 +204,7 @@ $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 
 $(TARGET)-config-flu:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(FLU_OBJECTS)
 	echo Linking $@ ...
-	-$(CXX) $(OPTS) -o $(TARGET)-config-flu \
+	-$(CXX) $(CXXFLAGS) -o $(TARGET)-config-flu \
 	$(TARGET)_config_flu.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
 	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS)
@@ -238,26 +235,29 @@ $(LIB_MONI_NAME):	$(MONI_OBJECTS)
 # the monitor profile tool
 $(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
-	$(CC) $(OPTS) -o $(TARGET)-monitor \
+	$(CC) $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS)
 
+elektra-0.6.4:
+	cd $(ELEKTRA_VERSION); test -f Makefile && make || (./configure --enable-static --prefix=$(prefix); make)
+
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
-	$(CC) $(OPTS) -o $(TARGET)-policy \
+	$(CC) $(CFLAGS) -o $(TARGET)-policy \
 	$(TARGET)_policy.o \
 	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS)
 
 test2:	$(LIB_MONI_SONAMEFULL) test2.o
 	echo Linking $@ ...
-	$(CXX) $(OPTS) -o test2 \
+	$(CXX) $(CXXFLAGS) -o test2 \
 	test2.o \
 	$(LIB_MONI_SONAMEFULL) $(LINK_SRC_PATH) \
 	$(LIBSONAMEFULL) $(LDLIBS) -l$(TARGET)
 test:	test.o
-	$(CC) $(OPTS) -o test \
+	$(CC) $(CFLAGS) -o test \
 	test.o \
 	$(LIBSONAMEFULL) $(LINK_SRC_PATH) \
 	$(LDLIBS) 
@@ -371,26 +371,33 @@ install:	install-main
 		|| (echo $${ling}.gmo is not yet ready ... skipping); \
 	done;
 	if [ -z $(DESTDIR) ]; then \
-	  kdb_found=`which kdb | wc -l`; \
+	  kdb=kdb; \
+	  kdb_found=`which $${kdb} | wc -l`; \
 	  if [ $${kdb_found} -gt 0 ]; then \
 	    echo "`which kdb` found"; \
+	  else \
+	    kdb=$(ELEKTRA_VERSION)/src/kdb/kdb_static; \
+	    kdb_found=`which $${kdb} | wc -l`; \
+	    if [ $${kdb_found} -gt 0 ]; then \
+	      echo "using local kdb_static"; \
+	    fi; \
 	  fi; \
-	  kdb set user/sw/oy_install_test "10"; \
-	  kdb_r=`kdb get user/sw/oy_install_test`; \
+	  $${kdb} set user/sw/oy_install_test "10"; \
+	  kdb_r=`$${kdb} get user/sw/oy_install_test`; \
 	  if [ -n "$${kdb_r}" ]; then \
 	    if [ "$${kdb_r}" != "10" ]; then \
 	      kdb_found=0; \
 	    fi; \
 	  else \
 	    kdb_found=0; \
-	  fi; kdb rm user/sw/oy_install_test; \
+	  fi; $${kdb} rm user/sw/oy_install_test; \
 	  if [ $${kdb_found} -eq 0 ]; then \
 	    echo "!!!WARNING!!! kdb not useable,"; \
 	    echo "              no check for Oyranos configuration possible"; \
 	  fi; \
 	  if [ $${kdb_found} -gt 0 ]; then \
-	    if [ `kdb ls system/sw/oyranos 2>/dev/zero | grep oyranos | wc -l` -eq 0 ]; then \
-	      if [ `kdb ls user/sw/oyranos 2>/dev/zero | grep oyranos | wc -l` -eq 0 ]; then \
+	    if [ `$${kdb} ls system/sw/oyranos 2>/dev/zero | grep oyranos | wc -l` -eq 0 ]; then \
+	      if [ `$${kdb} ls user/sw/oyranos 2>/dev/zero | grep oyranos | wc -l` -eq 0 ]; then \
 	        echo "no oyranos keys found: set default policy home+office"; \
 	        ./oyranos-policy $(syscolordir)/$(settingsdirname)/office.policy.xml; \
 	      fi; \
@@ -493,6 +500,7 @@ clean:
 	done;
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f makefile clean)
 	(cd fl_i18n/; make -f $(MAKEFILE_ARCH) clean)
+	test -n $(ELEKTRA_VERSION) && cd $(ELEKTRA_VERSION); make clean
 	echo ... $@ done
 
 # configure if the file config is not available
@@ -582,6 +590,11 @@ copy_files:
 	  test -f po/$${ling}.po \
 	  && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
 	done;
+	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION); make dist-gzip; \
+	     cd ../$(DESTDIR); \
+	     tar xzf ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
+	     rm ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz)
+	echo copy done
 
 # mkdepend
 include mkdepend

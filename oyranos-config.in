@@ -82,17 +82,19 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --settingsdirname"
 fi
 
-elektra_dyn="`pkg-config --libs elektra`"
-if [ -f $libdir/libelektra.a ]; then
-  elektra="$libdir/libelektra.a"
-  if [ -f $libdir/libelektra-filesys.a ]; then
-    elektra="$elektra $libdir/libelektra-filesys.a"
+if [ -z $ELEKTRA_VERSION ]; then
+  elektra_dyn="`pkg-config --libs elektra`"
+  if [ -f $libdir/libelektra.a ]; then
+    elektra="$libdir/libelektra.a"
+    if [ -f $libdir/libelektra-filesys.a ]; then
+      elektra="$elektra $libdir/libelektra-filesys.a"
+    fi
+    if [ -f $libdir/elektra/libelektra-filesys.a ]; then
+      elektra="$elektra $libdir/elektra/libelektra-filesys.a"
+    fi
+  else
+    elektra="$elektra_dyn"
   fi
-  if [ -f $libdir/elektra/libelektra-filesys.a ]; then
-    elektra="$elektra $libdir/elektra/libelektra-filesys.a"
-  fi
-else
-  elektra="$elektra_dyn"
 fi
 
 if [ "$echo_cflags" = "yes" ]; then

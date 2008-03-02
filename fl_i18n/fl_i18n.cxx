@@ -155,6 +155,11 @@ fl_initialise_locale( const char *domain, const char *locale_path,
 #ifdef USE_GETTEXT
   DBG_PROG_START
   char locale[TEXTLEN];
+  const char* tmp = 0;
+  char codeset[24] = "ISO-8859-1";
+  const char *loc = NULL;
+  char* bdtd = 0;
+  char* cs = NULL;
 
 # ifdef __APPLE__
   // 1. get the locale info
@@ -178,7 +183,6 @@ fl_initialise_locale( const char *domain, const char *locale_path,
   DBG_PROG_V( locale )
 
   // set the locale info
-  const char* tmp = 0;
   if(strlen(locale) && set_locale)
   {
      setlocale (LC_MESSAGES, locale);
@@ -202,7 +206,6 @@ fl_initialise_locale( const char *domain, const char *locale_path,
     snprintf(locale,TEXTLEN, getenv("LANG"));
 # endif
 
-  char codeset[24] = "ISO-8859-1";
 
 
       // add more LINGUAS here
@@ -276,7 +279,7 @@ fl_initialise_locale( const char *domain, const char *locale_path,
 
 
   // 2. for GNU gettext, the locale info is usually stored in the LANG variable
-  const char *loc = getenv("LANG");
+  loc = getenv("LANG");
 
   if(loc) {
 
@@ -303,12 +306,11 @@ fl_initialise_locale( const char *domain, const char *locale_path,
     DBG_PROG_S( locale );
 
   // 3. where to find the MO file? select an appropriate directory
-  char* bdtd = 0;
   bdtd = bindtextdomain (domain, locale_path);
   DBG_PROG_S( _("try locale in ") << bdtd );
 
   // 4. set our charset
-  char* cs = bind_textdomain_codeset(domain, codeset);
+  cs = bind_textdomain_codeset(domain, codeset);
 
   // 5. our translations
   textdomain (domain);

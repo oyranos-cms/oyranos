@@ -266,7 +266,7 @@ int           oyOptionChoicesGet       (oyWIDGET          option,
                                         const char    *** choices_string_list,
                                         int             * current);
 void          oyOptionChoicesFree      (oyWIDGET_TYPE     option,
-                                        const char    *** list,
+                                        char          *** list,
                                         int               size);
 # ifdef oyInPlaning_
 int           oyOptionFloatIntRangeGet (oyWIDGET          option,

@@ -153,7 +153,7 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
   DBG_PROG_START
   char *t = 0;
   int len, i;
-  unsigned char mnf[4];
+  char mnf[4];
 
   /* check */
   if(edi &&
@@ -174,9 +174,9 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
   }
 
   sprintf( mnf, "%c%c%c",
-          ((edi->MNF_ID[0] & 124) >> 2) + 'A' - 1,
-          ((edi->MNF_ID[0] & 3) << 3) + ((edi->MNF_ID[1] & 227) >> 5) + 'A' - 1,
-          (edi->MNF_ID[1] & 31) + 'A' - 1 );
+          (char)((edi->MNF_ID[0] & 124) >> 2) + 'A' - 1,
+          (char)((edi->MNF_ID[0] & 3) << 3) + ((edi->MNF_ID[1] & 227) >> 5) + 'A' - 1,
+          (char)(edi->MNF_ID[1] & 31) + 'A' - 1 );
 
   /*printf( "MNF_ID: %d %d SER_ID: %d %d D:%d/%d bxh:%dx%dcm %s\n",
            edi->MNF_ID[0], edi->MNF_ID[1], edi->SER_ID[0], edi->SER_ID[1],
@@ -201,11 +201,11 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
       }
       if(target)
       {
-        len = strlen(&block[5]); DBG_PROG_V((len))
+        len = strlen((char*)&block[5]); DBG_PROG_V((len))
         if(len) { DBG_PROG
           ++len;
           t = (char*)allocate_func( 16 );
-          snprintf(t, 15, &block[5]);
+          snprintf(t, 15, (char*)&block[5]);
           t[15] = '\000';
           *target = t; DBG_PROG_S(( *target ))
         }

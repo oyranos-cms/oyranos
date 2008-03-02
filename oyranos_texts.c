@@ -516,7 +516,7 @@ int           oyOptionChoicesGet_      (oyWIDGET          option,
     char * default_p =
            oyGetDefaultProfileName( (oyDEFAULT_PROFILE)option, oyAllocateFunc_);
     int i, val = -1, occurence = 0, count = 0;
-    const char** names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+    char** names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
     char** dup = (char**) oyAllocateFunc_( count*sizeof(char*) );
     int dup_count = 0;
 
@@ -562,7 +562,7 @@ int           oyOptionChoicesGet_      (oyWIDGET          option,
     if( choices_string_list )
       *choices_string_list = (const char **)dup; 
     else
-      oyOptionChoicesFree( oyOptionGet_(option)-> type, (const char ***)&dup,
+      oyOptionChoicesFree( oyOptionGet_(option)-> type, &dup,
                            dup_count );
     oyOptionChoicesFree( oyOptionGet_(option)-> type, &names, count );
 
@@ -581,7 +581,7 @@ int           oyOptionChoicesGet_      (oyWIDGET          option,
 
 
 void          oyOptionChoicesFree_     (oyWIDGET_TYPE     option,
-                                        const char    *** l,
+                                        char          *** l,
                                         int               size)
 {
   char *** list = (char***)l;

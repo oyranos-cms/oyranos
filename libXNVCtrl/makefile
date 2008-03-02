@@ -11,7 +11,7 @@ X11_LIBS=$(X11_LIB_PATH) -lX11 $(XF86VMODE_LIB) -lXpm -lXext $(XINERAMA_LIB)
 CXX = c++
 CC = cc
 RM = rm -vf
-OPTS=-Wall -g -fPIC #-O2
+CFLAGS= $(INCL)
 
 COLLECT = ar cru
 RANLIB = ranlib
@@ -22,7 +22,7 @@ OBJECTS = NVCtrl.o
 
 all:
 	echo Compiling NVCtrl.c ...
-	$(CC) $(OPTS) -I. NVCtrl.c -c -o NVCtrl.o $(X_H)
+	$(CC) $(CFLAGS) -I. NVCtrl.c -c -o NVCtrl.o $(X_H)
 	echo Linking $(LIBNAME) ...
 	$(COLLECT) $(LIBNAME) $(OBJECTS)
 	$(RANLIB) $(LIBNAME)

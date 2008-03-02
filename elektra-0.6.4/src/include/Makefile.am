@@ -1,0 +1,11 @@
+
+# $Id: Makefile.am 899 2006-08-14 15:46:36Z pertusus $
+
+nobase_include_HEADERS = kdb.h kdbbackend.h kdbtools.h kdbprivate.h
+
+EXTRA_DIST = kdbprivate.h.in
+
+kdbprivate.h: kdbprivate.h.in ../../config.status
+	sed -e "s:[@]KDB_DB_SYSTEM[@]:$(sysconfdir)/kdb:" $(srcdir)/kdbprivate.h.in > kdbprivate.h
+
+DISTCLEANFILES = kdbprivate.h

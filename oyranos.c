@@ -614,7 +614,7 @@ int         oyOptionChoicesGet         (oyWIDGET          option,
  */
 void
 oyOptionChoicesFree                  (oyWIDGET_TYPE     option,
-                                      const char    *** list,
+                                      char          *** list,
                                       int               size)
 { DBG_PROG_START
   oyExportStart_(EXPORT_CHECK_NO);

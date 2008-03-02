@@ -16,9 +16,22 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_max" ]; then
     elektra_max="0.6.100"
   fi
-  elektra_mod=`pkg-config --modversion elektra`
-  if [ $? = 0 ]; then
-   pkg-config  --atleast-version=$elektra_min elektra 2>>error.txt
+  if [ "$internalelektra" != "no" ]; then
+   if [ `ls $ELEKTRA_VERSION | grep elektra | wc -l` -gt 0 ]; then
+    echo "local copy of elektra   detected"
+        echo "#define HAVE_ELEKTRA 1" >> $CONF_H
+        echo "ELEKTRA = 1" >> $CONF
+        echo "ELEKTRA_VERSION = $ELEKTRA_VERSION" >> $CONF
+        echo "ELEKTRA_H = -I\$(ELEKTRA_VERSION)/src/include" >> $CONF
+        echo "ELEKTRA_LIBS = \$(ELEKTRA_VERSION)/src/libelektra/libelektra.a" >> $CONF
+        ELEKTRA_FOUND=1
+   fi
+  fi
+  if [ -z $ELEKTRA_FOUND ]; then
+    elektra_mod=`pkg-config --modversion elektra`
+  fi
+  if [ $? = 0 ] && [ -z $ELEKTRA_FOUND ]; then
+    pkg-config  --atleast-version=$elektra_min elektra 2>>error.txt
     if [ $? = 0 ]; then
       pkg-config --max-version=$elektra_max elektra 2>>error.txt
       if [ $? = 0 ]; then
@@ -45,9 +58,10 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
       test -n "$ECHO" && $ECHO "  need at least version $elektra_min, download: elektra.sf.net"
       ERROR=1
     fi
-  else
-    test -n "$ECHO" && $ECHO $elektra_mod
-    ERROR=1
+  fi
+  if [ -z $ELEKTRA_FOUND ]; then
+      test -n "$ECHO" && $ECHO $elektra_mod
+      ERROR=1
   fi
 fi
 

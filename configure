@@ -13,8 +13,13 @@ SPEC=$TARGET.spec
 PKGC=$TARGET.pc
 MPKG="$TARGET"_monitor.pc
 VERS="$TARGET"_version.h
-ECI_CONF=standard_profiles/eci/makefile
-BASE_CONF=standard_profiles/base/makefile
+if [ -f standard_profiles/eci/makefile ]; then
+  ECI_CONF=standard_profiles/eci/makefile
+  BASE_CONF=standard_profiles/base/makefile
+else
+  ECI_CONF=error.txt
+  BASE_CONF=error.txt
+fi
 
 export CONF_H CONF CONF_I18N CONF_NV
 
@@ -120,6 +125,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       desktopdir="`echo $1 | sed s/--$switch=//`"
     fi
+    switch=elektra-internal
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      internalelektra="`echo $1 | sed s/--$switch=//`"
+    fi
     switch=help
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       echo "Usage:"
@@ -137,9 +146,10 @@ if [ $# -gt 0 ]; then
       echo "   --settingsdirname=[settings]         Oyranos settings directory"
       echo "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
       echo "   --desktopdir=[\$datadir/applications] xdg installation path"
+      echo "   --internal-elektra=[yes/no]          use internal Elektra"
       echo "   --help"
       echo ""
-      echo " Optionally set the CC and CXX environment variables."
+      echo " Optionally set the CC, CXX, CFLAGS, CXXFLAGS and LDFLAGS environment variables."
       echo ""
       exit
     fi
@@ -150,6 +160,17 @@ fi
 
 src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
 srcdir="`pwd`"
+
+#prefix
+if [ -z "$prefix" ]; then
+  prefix=/usr/local
+fi
+
+if [ -z "$datadir" ]; then
+  test -f $prefix/share/config.site && . $prefix/share/config.site
+else
+  test -f $datadir/config.site && . $datadir/config.site
+fi
 
 test -f error.txt && rm error.txt
 test -f mkdepend && rm mkdepend config.h
@@ -228,9 +249,6 @@ export MACH OSUNAME LIBDIR BARCH LINE_ARCH
 
 
 # prefix exec_prefix bindir sbindir libdir includedir datadir
-if [ -z "$prefix" ]; then
-  prefix=/usr/local
-fi
 if [ -z "$exec_prefix" ]; then
   exec_prefix="$prefix"
 fi
@@ -313,7 +331,11 @@ if [ "$FLTK" = 1 ]; then
   fi
 fi
 
-export ECHO="echo"
+ELEKTRA_VERSION="elektra-0.6.4"; export ELEKTRA_VERSION
+export internalelektra
+
+
+ECHO="echo"; export ECHO
 ELEKTRA=1; export ELEKTRA
 #OYRANOS=1; export OYRANOS
 LCMS=1; export LCMS
@@ -343,12 +365,12 @@ if [ $? -gt 0 ]; then
   ERROR=1
 fi
 
-export ECHO=""
+ECHO=""; export ECHO
 conf_temp=$CONF
-export CONF=$CONF_NV
+CONF=$CONF_NV; export CONF
 ./configure.sh
-export CONF=$conf_temp
-export ECHO="echo"
+CONF=$conf_temp; export CONF
+ECHO="echo"; export ECHO
 
 
 # Alle ifdefs landen hier
@@ -385,6 +407,7 @@ echo "iccdirname=$iccdirname" >> $CONF_SH
 echo "settingsdirname=$settingsdirname" >> $CONF_SH
 echo "pixmapdir=$pixmapdir" >> $CONF_SH
 echo "desktopdir=$desktopdir" >> $CONF_SH
+echo "ELEKTRA_VERSION=$ELEKTRA_VERSION" >> $CONF_SH
 echo ""
 cat  "$CONF_SH.in" >> $CONF_SH
 chmod 0755 "$CONF_SH"
@@ -523,15 +546,18 @@ echo "CC = $CC" >> $CONF_NV
 cat $CONF_I18N.in >> $CONF_I18N
 echo $CONF_I18N prepared
 
+CFLAGS_COMMON="$CFLAGS \$(INCL)"
+CXXFLAGS_COMMON="$CXXFLAGS \$(INCL) \$(FLU_H) \$(FLTK_H)"
 echo "RM = rm -vf" >> $CONF
 echo "RM = rm -vf" >> $CONF_NV
 if [ $OSUNAME = "Darwin" ]; then
   echo "COPY = cp -pv" >> $CONF
-  echo "LINK_FLAGS = -dynamiclib  -L." >> $CONF
+  echo "LINK_FLAGS = $LDFLAGS -dynamiclib  -L." >> $CONF
   echo "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
   echo "MSGMERGE = msgmerge" >> $CONF
-  echo "OPTS = -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF
-  echo "OPTS = -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF_NV
+  echo "CFLAGS = $CFLAGS_COMMON -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF
+  echo "CFLAGS = $CFLAGS_COMMON -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF_NV
+  echo "CXXFLAGS = $CXXFLAGS_COMMON -Wall -g \$(DEBUG) -DPIC -Wunused -fno-exceptions" >> $CONF
   echo "REZ = fltk-config --post \$@" >> $CONF
   echo "INSTALL = install -v" >> $CONF
   echo "INSTALL = install -v" >> $ECI_CONF
@@ -548,27 +574,34 @@ else
         --from-code=utf-8" >> $CONF
   if [ $OSUNAME = "Linux" ]; then
     echo "COPY = cp -vdpa" >> $CONF
-    echo "LINK_FLAGS = -shared -fPIC -L." >> $CONF
-    echo "LINK_FLAGS_STATIC = q" >> $CONF
+    echo "LINK_FLAGS = $LDFLAGS -shared -L." >> $CONF
+    echo "LINK_FLAGS_STATIC = $LDFLAGS q" >> $CONF
     echo "LINK_NAME = -Wl,-soname -Wl,\$(LIBSONAMEFULL)" >> $CONF
     echo "LINK_NAME_M = -Wl,-soname -Wl,\$(LIB_MONI_SONAMEFULL)" >> $CONF
     echo "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
     echo "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
-    echo "OPTS=-Wall -g -fPIC #-O2" >> $CONF
-    echo "OPTS=-Wall -g -fPIC #-O2" >> $CONF_NV
+    echo "CFLAGS=$CFLAGS_COMMON" >> $CONF
+    echo "CFLAGS=$CFLAGS_COMMON" >> $CONF_NV
+    echo "CXXFLAGS=$CXXFLAGS_COMMON" >> $CONF
     echo "INSTALL = install -v" >> $CONF
     echo "INSTALL = install -v" >> $ECI_CONF
     echo "INSTALL = install -v" >> $BASE_CONF
   else
     echo "COPY = cp -p" >> $CONF
     if [ $OSUNAME = "BSD" ]; then
-      echo "LINK_FLAGS = -shared \$(ICONV)" >> $CONF
+      echo "LINK_FLAGS = $LDFLAGS -shared \$(ICONV)" >> $CONF
+      echo "INSTALL = install -v" >> $CONF
+      echo "INSTALL = install -v" >> $ECI_CONF
+      echo "INSTALL = install -v" >> $BASE_CONF
+    fi
+    if [ $OSUNAME = "SunOS" ]; then
+      echo "LINK_FLAGS = $LDFLAGS -shared -mimpure-text -ldl \$(ICONV)" >> $CONF
       echo "INSTALL = install -v" >> $CONF
       echo "INSTALL = install -v" >> $ECI_CONF
       echo "INSTALL = install -v" >> $BASE_CONF
     else
-      echo "LINK_FLAGS = -shared -ldl \$(ICONV)" >> $CONF
+      echo "LINK_FLAGS = $LDFLAGS -shared -mimpure-text -ldl \$(ICONV)" >> $CONF
       echo "INSTALL = install" >> $CONF
       echo "INSTALL = install" >> $ECI_CONF
       echo "INSTALL = install" >> $BASE_CONF
@@ -576,8 +609,9 @@ else
     echo "I18N_LIB = \$(ICONV) -lintl \$(LIBNAMEV)" >> $CONF
     echo "I18N_LIBSTAT = \$(ICONV) -lintl \$(LIBNAMEV)" >> $CONF
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
-    echo "OPTS=-Wall -g -L. -fPIC" >> $CONF
-    echo "OPTS=-Wall -g -L. -fPIC" >> $CONF_NV
+    echo "CFLAGS=$CFLAGS_COMMON -Wall -g -L. -fPIC" >> $CONF
+    echo "CFLAGS=$CFLAGS_COMMON -Wall -g -L. -fPIC" >> $CONF_NV
+    echo "CXXFLAGS=$CXXFLAGS_COMMON -Wall -g -L. -fPIC" >> $CONF
     echo "RM = rm -f" >> $CONF
     echo "RM = rm -f" >> $CONF_NV
   fi

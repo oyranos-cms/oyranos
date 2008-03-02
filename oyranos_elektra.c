@@ -29,6 +29,7 @@
 /* Date:      25. 11. 2004 */
 
 #include <kdb.h>
+#include <alloca.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>

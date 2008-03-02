@@ -59,6 +59,13 @@ int main( int argc , char** argv )
   setlocale(LC_ALL,"");
   oyI18NInit_();
 
+  if(!display_name)
+  {
+    printf("DISPLAY variable not set: giving up\n");
+    error = 1;
+    return error;
+  }
+
   // cut off the screen information
   if(display_name &&
      (ptr = strchr(display_name,':')) != 0)
