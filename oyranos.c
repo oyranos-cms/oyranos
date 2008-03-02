@@ -70,7 +70,6 @@ char* oyGetPathFromProfileName_ (const char*   profilename,
                                  oyAllocFunc_t allocate_func);
 
 
-const char* oyMapDEFAULT_PROFILEtoString_       (oyDEFAULT_PROFILE type);
 const char* oyMapDEFAULT_PROFILEtoConfigString_ (oyDEFAULT_PROFILE type);
 int         oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
                                         const char*       file_name);
@@ -78,10 +77,8 @@ int         oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
                                         const char*       file_name,
                                         void*             mem,
                                         size_t            size);
-const char* oyGetDefaultProfileUITitle_(oyDEFAULT_PROFILE type);
 char*       oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
                                         oyAllocFunc_t     alloc_func);
-
 
 char**  oyProfileList_                 (const char* coloursig, int * size);
 void    oyProfileListFree_             (char** list, int size);
@@ -133,6 +130,17 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
                                            const char* attrib2,
                                            const char* attrib3);
 
+int         oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice);
+const char* oyGetDefaultProfileUITitle_(oyDEFAULT_PROFILE type);
+int         oyOptionGetPos_            (oyOPTION          type);
+const char* oyGetOptionUITitle_        (oyOPTION          type,
+                                        oyGROUP         **categories,
+                                        int              *choices,
+                                        const char     ***choices_string_list,
+                                        const char      **tooltips);
+const char* oyGetGroupUITitle_         (oyGROUP          type,
+                                        const char      **tooltips);
+
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
 const char* oy_default_profile_types_names_[][2] = {
@@ -146,8 +154,8 @@ const char* oy_default_profile_types_names_[][2] = {
  {"oyASSUMED_RGB","Assumed Rgb source"},  /**< oyASSUMED_RGB */
  {"oyASSUMED_WEB","Assumed Web source"},  /**< oyASSUMED_WEB */
  {"oyASSUMED_CMYK","Assumed Cmyk source"},/**< oyASSUMED_CMYK*/
- {"oyPROFILE_PROOF","Proofing"},/**< oyPROFILE_PROOF*/
- {"oyDEVICE_PROFILE","Device"}        /**< oyDEVICE_PROFILE : a device profile*/
+ {"oyPROFILE_PROOF","Proofing"},          /**< oyPROFILE_PROOF*/
+ {"oyDEVICE_PROFILE","Device"}       /**< oyDEVICE_PROFILE : a device profile */
 };
 
 
@@ -394,64 +402,377 @@ oySelectUserSys_()
 /** @brief the internal only used structure for UI text strings
  */
 typedef struct {
-  int n_options;               /**< number of options */
-  const char *category;        /**< name under which the setting shall appear */
+  oyOPTION    type;            /**< option type */
+  oyGROUP     categories[10];  /**< layout for categories */
   const char *label;           /**< label for setting */
   const char *description;     /**< description for setting */
-  const char *options[10];     /**< label for each choice */
+  int         choices;         /**< number of options */
+  const char *choice_list[10]; /**< label for each choice */
   const char *config_string;   /**< full key name to store configuration */
   const char *config_string_xml;/**<key name to store configuration */
-} oyBEHAVIOUR_OPTION_t;
+} oyOPTION_t;
 
 
 /** @brief UI strings for various behaviour options 
  *
  *  This Text array is an internal only variable.<br>
- *  The content is  available through the oyGetBehaviourUITitle funcion.
+ *  The content is  available through the oyGetOptionUITitle funcion.
  */
-oyBEHAVIOUR_OPTION_t oy_behaviour_option_description_
-  [oyBEHAVIOUR_END - oyBEHAVIOUR_START] = {
-{ 3, "Behaviour", "No Image profile", "Image has no profile embedded action.",
- {"Assign No Profile","Assign Assumed Profile","Promt"},
- OY_ACTION_UNTAGGED_ASSIGN, "oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN" },
+oyOPTION_t oy_option_description_
+  [oyBEHAVIOUR_END - oyBEHAVIOUR_START +
+   oyOPTION_DEFAULT_PROFILE_END - oyOPTION_DEFAULT_PROFILE_START] = {{-1}};
 
-{ 3, "Behaviour", "On Rgb Mismatch", "Image profile and Editing profile mismatches.",
- {"Preserve Numbers","Convert automatically","Promt"},
- OY_ACTION_MISMATCH_RGB, "oyBEHAVIOUR_ACTION_MISMATCH_RGB" },
+const char* oy_groups_description_[oyGROUP_ALL][3] = {{(const char*)-1}};
 
-{ 3, "Behaviour", "On Cmyk Mismatch", "Image profile and Editing profile mismatches.",
- {"Preserve Numbers","Convert automatically","Promt"},
- OY_ACTION_MISMATCH_CMYK, "oyBEHAVIOUR_ACTION_MISMATCH_CMYK" },
-
-{ 4, "Behaviour/Save Mixed colour space Documents", "For Print", "Prepare a document for Print.",
- {"Preserve Numbers","Convert to Default Cmyk Editing Space","Convert to untagged Cmyk, preserving Cmyk numbers","Promt"},
- OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT, "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT" },
-
-{ 4, "Behaviour/Save Mixed colour space Documents", "For Screen", "Prepare a document for Screen.",
- {"Preserve Numbers","Convert to Default Rgb Editing Space","Convert to WWW (sRGB)","Promt"},
- OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT, "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN" },
-
-{ 4, "Behaviour", "Default Rendering Intent", "Usual colour space transform behaviour",
- {"Perceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
- OY_DEFAULT_RENDERING_INTENT, "oyBEHAVIOUR_RENDERING_INTENT" },
-
-{ 2, "Behaviour", "Use Black Point Compensation", "Usual PBC together with relative colorimetric",
- {"No","Yes"},
- OY_DEFAULT_RENDERING_BPC, "oyBEHAVIOUR_RENDERING_BPC" },
-
-{ 2, "Behaviour/Proofing", "Proofing Rendering Intent", "Behaviour of colour space transformation for proofing",
- {"Relative Colorimetric","Absolute Colorimetric"},
- OY_DEFAULT_RENDERING_INTENT_PROOF, "oyBEHAVIOUR_RENDERING_INTENT_PROOF" },
-
-{ 2, "Behaviour/Proofing", "SoftProof by Default", "Behaviour for softproofing view at application startup",
- {"Yes","No"},
- OY_DEFAULT_PROOF_SOFT, "oyBEHAVIOUR_PROOF_SOFT" },
-
-{ 2, "Behaviour/Proofing", "Hardproof by Default", "Behaviour for preselecting hardproofing with Standard Editing Cmyk profile at print time",
- {"Yes","No"},
- OY_DEFAULT_PROOF_HARD, "oyBEHAVIOUR_PROOF_HARD" }
-};
 /** @} */
+
+void
+oyCheckOptionStrings_ (oyOPTION_t *opt)
+{
+  int pos;
+  oyGROUP group;
+
+  if(opt[0].type < 0)
+    opt[0].type = 0;
+  else
+    return;
+
+  for( group = oyGROUP_START; group < oyGROUP_ALL + 1; ++group)
+  {
+  switch( group )
+  {
+  case oyGROUP_START:
+  oy_groups_description_[group][0] = "oyGROUP_START";
+  oy_groups_description_[group][1] = _("Start");
+  oy_groups_description_[group][2] = _("Oyranos Settings Group"); break;
+  case oyGROUP_DEFAULT_PROFILES:
+  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES";
+  oy_groups_description_[group][1] = _("Default Profiles");
+  oy_groups_description_[group][2] = _("Source and Target Profiles for various situations"); break;
+  case oyGROUP_DEFAULT_PROFILES_EDIT:
+  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_EDIT";
+  oy_groups_description_[group][1] = _("Editing Colour Space");
+  oy_groups_description_[group][2] = _("Well behaving Colour Space for Editing");
+ break;
+  case oyGROUP_DEFAULT_PROFILES_ASSUMED:
+  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_ASSUMED";
+  oy_groups_description_[group][1] = _("Assumed Colour Space");
+  oy_groups_description_[group][2] = _("Assumed Colour Space for untagged colours"); break;
+  case oyGROUP_DEFAULT_PROFILES_PROOF:
+  oy_groups_description_[group][0] = "oyGROUP_DEFAULT_PROFILES_PROOF";
+  oy_groups_description_[group][1] = _("Proofing");
+  oy_groups_description_[group][2] = _("Colour Space for Simulating real devices"); break;
+  case oyGROUP_PATHS:
+  oy_groups_description_[group][0] = "oyGROUP_PATHS";
+  oy_groups_description_[group][1] = _("Paths");
+  oy_groups_description_[group][2] = _("Paths where ICC Profiles can be found"); break;
+  case oyGROUP_BEHAVIOUR:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR";
+  oy_groups_description_[group][1] = _("Behaviour");
+  oy_groups_description_[group][2] = _("Settings affecting the Behaviour in various situations"); break;
+  case oyGROUP_BEHAVIOUR_RENDERING:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_RENDERING";
+  oy_groups_description_[group][1] = _("Rendering");
+  oy_groups_description_[group][2] = _("The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"); break;
+  case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS";
+  oy_groups_description_[group][1] = _("Save Mixed colour space Documents");
+  oy_groups_description_[group][2] = _("Default Handling of Mixed Colour Spaces inside one single Document"); break;
+  case oyGROUP_BEHAVIOUR_MISSMATCH:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_MISSMATCH";
+  oy_groups_description_[group][1] = _("Missmatching");
+  oy_groups_description_[group][2] = _("Decide what to do when the default colour spaces dont match the current ones."); break;
+  case oyGROUP_BEHAVIOUR_PROOF:
+  oy_groups_description_[group][0] = "oyGROUP_BEHAVIOUR_PROOF";
+  oy_groups_description_[group][1] = _("Proofing");
+  oy_groups_description_[group][2] = _("Default Proofing Settings"); break;
+  case oyGROUP_ALL:
+  oy_groups_description_[group][0] = "oyGROUP_ALL";
+  oy_groups_description_[group][1] = _("All");
+  oy_groups_description_[group][2] = _("Oyranos Settings"); break;
+  }
+  }
+
+  {
+    int type = oyOPTION_DEFAULT_PROFILE_START + 1;
+
+#   define oySET_OPTIONS_M_( t, ca_n, ca1, ca2, ca3, labl, desc, \
+                             ch_n, ch0, ch1, ch2, ch3, \
+                             conf, xml) { \
+    type = t; \
+      pos = oyOptionGetPos_( type ); \
+      opt[pos]. type = t; \
+      opt[pos]. categories[0] = ca_n; \
+      opt[pos]. categories[1] = ca1; \
+      opt[pos]. categories[2] = ca2; \
+      opt[pos]. categories[3] = ca3; \
+      opt[pos]. label = labl; \
+      opt[pos]. description = desc; \
+      opt[pos]. choices = ch_n; \
+      opt[pos]. choice_list[0] = ch0; \
+      opt[pos]. choice_list[1] = ch1; \
+      opt[pos]. choice_list[2] = ch2; \
+      opt[pos]. choice_list[3] = ch3; \
+      opt[pos]. config_string = conf; \
+      opt[pos]. config_string_xml = xml; \
+    }
+
+    oySET_OPTIONS_M_( oyOPTION_EDITING_RGB, 1, 
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Editing Rgb"),
+      _("Prefered Rgb Editing Colour Space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_EDITING_RGB_PROFILE,
+      "oyEDITING_RGB")
+
+    oySET_OPTIONS_M_( oyOPTION_EDITING_CMYK, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Editing Cmyk"),
+      _("Prefered Cmyk Editing Colour Space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_EDITING_CMYK_PROFILE,
+      "oyEDITING_CMYK")
+
+    oySET_OPTIONS_M_( oyOPTION_EDITING_XYZ, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Editing XYZ"),
+      _("Prefered XYZ Editing Colour Space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_EDITING_XYZ_PROFILE,
+      "oyEDITING_XYZ")
+
+    oySET_OPTIONS_M_( oyOPTION_EDITING_LAB, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Editing Lab"),
+      _("Prefered CIE*Lab Editing Colour Space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_EDITING_LAB_PROFILE,
+      "oyEDITING_LAB")
+
+    oySET_OPTIONS_M_( oyOPTION_ASSUMED_XYZ, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Assumed XYZ source"),
+      _("Assigning an untagged XYZ Image an colour space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_ASSUMED_XYZ_PROFILE,
+      "oyASSUMED_CMYK")
+
+    oySET_OPTIONS_M_( oyOPTION_ASSUMED_LAB, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Assumed Lab source"),
+      _("Assigning an untagged CIE*Lab Image an colour space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_ASSUMED_LAB_PROFILE,
+      "Assumed Rgb source")
+
+    oySET_OPTIONS_M_( oyOPTION_ASSUMED_RGB, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Assumed Rgb source"),
+      _("Assigning an untagged Rgb Image an colour space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_ASSUMED_RGB_PROFILE,
+      "oyASSUMED_RGB")
+
+    oySET_OPTIONS_M_( oyOPTION_ASSUMED_WEB, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Assumed Web source"),
+      _("Assigning an untagged Rgb Image with source from the WWW an colour space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_ASSUMED_WEB_PROFILE,
+      "oyASSUMED_WEB")
+
+    oySET_OPTIONS_M_( oyOPTION_ASSUMED_CMYK, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Assumed Cmyk source"),
+      _("Assigning an untagged Cmyk Image this colour space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_ASSUMED_CMYK_PROFILE,
+      "oyASSUMED_CMYK" )
+
+    oySET_OPTIONS_M_( oyOPTION_PROFILE_PROOF, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
+      _("Proofing"),
+      _("Colour space for Simulating an Output Device"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_PROOF_PROFILE,
+      "oyPROFILE_PROOF" )
+
+
+    oySET_OPTIONS_M_( oyOPTION_ACTION_UNTAGGED_ASSIGN, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
+      _("No Image profile"),
+      _("Image has no colour space embedded. What default action shall be performed?"),
+      3, /* choices */
+      _("Assign No Profile"),_("Assign Assumed Profile"),_("Promt"), NULL,
+      OY_ACTION_UNTAGGED_ASSIGN,
+      "oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN" )
+
+    oySET_OPTIONS_M_( oyOPTION_ACTION_OPEN_MISMATCH_RGB, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
+      _("On Rgb Mismatch"),
+      _("Action for Image profile and Editing profile mismatches."),
+      3, /* choices */
+      _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
+      OY_ACTION_MISMATCH_RGB,
+      "oyBEHAVIOUR_ACTION_MISMATCH_RGB" )
+
+    oySET_OPTIONS_M_( oyOPTION_ACTION_OPEN_MISMATCH_CMYK, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
+      _("On Cmyk Mismatch"),
+      _("Action for Image profile and Editing profile mismatches."),
+      3, /* choices */
+      _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
+      OY_ACTION_MISMATCH_CMYK,
+      "oyBEHAVIOUR_ACTION_MISMATCH_CMYK")
+
+    oySET_OPTIONS_M_( oyOPTION_MIXED_MOD_DOCUMENTS_PRINT, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
+      _("For Print"),
+      _("Handle Mixed colour spaces in Preparing a document for Print output."),
+      4, /* choices */
+      _("Preserve Numbers"),_("Convert to Default Cmyk Editing Space"),_("Convert to untagged Cmyk, preserving Cmyk numbers"),_("Promt"),
+      OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT,
+      "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT")
+
+    oySET_OPTIONS_M_( oyOPTION_MIXED_MOD_DOCUMENTS_SCREEN, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
+      _("For Screen"),
+      _("Handle Mixed colour spaces in Preparing a document for Screen output."),
+      4, /* choices */
+      _("Preserve Numbers"),_("Convert to Default Rgb Editing Space"),_("Convert to WWW (sRGB)"),_("Promt"),
+      OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT,
+      "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN")
+
+    oySET_OPTIONS_M_( oyOPTION_RENDERING_INTENT, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
+      _("Default Rendering Intent"),
+      _("Rendering Intent for colour space Transformations."),
+      4, /* choices */
+      _("Perceptual"),_("Relative Colorimetric"),_("Saturation"),_("Absolute Colorimetric"),
+      OY_DEFAULT_RENDERING_INTENT,
+      "oyBEHAVIOUR_RENDERING_INTENT")
+
+    oySET_OPTIONS_M_( oyOPTION_RENDERING_BPC, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
+      _("Use Black Point Compensation"),
+      _("Use PBC together with Relative Colorimetric Rendering Intent."),
+      2, /* choices */
+      _("No"),_("Yes"), NULL, NULL,
+      OY_DEFAULT_RENDERING_BPC,
+      "oyBEHAVIOUR_RENDERING_BPC")
+
+    oySET_OPTIONS_M_( oyOPTION_RENDERING_BPC, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
+      _("Proofing Rendering Intent"),
+      _("Behaviour of colour space transformation for proofing"),
+      2, /* choices */
+      _("Relative Colorimetric"),_("Absolute Colorimetric"),NULL,NULL,
+      OY_DEFAULT_PROOF_SOFT,
+      "oyBEHAVIOUR_PROOF_SOFT")
+
+    oySET_OPTIONS_M_( oyOPTION_RENDERING_BPC, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
+      _("SoftProof by Default"),
+      _("Behaviour for Softproofing view at application startup"),
+      2, /* choices */
+      _("No"),_("Yes"),NULL,NULL,
+      OY_DEFAULT_PROOF_SOFT,
+      "oyBEHAVIOUR_PROOF_SOFT")
+
+    oySET_OPTIONS_M_( oyOPTION_RENDERING_BPC, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
+      _("Hardproof by Default"),
+      _("Behaviour for preselecting Hardproofing with Standard Proofing Profile at print time"),
+      2, /* choices */
+      _("No"),_("Yes"),NULL,NULL,
+      OY_DEFAULT_PROOF_HARD,
+      "oyBEHAVIOUR_PROOF_HARD")
+
+#   undef oySET_OPTIONS_M_
+  }
+}
+
+int
+oyOptionGetPos_                        (oyOPTION          type)
+{
+  int pos = -1;
+
+  DBG_PROG_START
+
+  if( oyOPTION_BEHAVIOUR_START < type && type < oyOPTION_BEHAVIOUR_END )
+    pos = type - oyOPTION_BEHAVIOUR_START - 1;
+
+  if( oyOPTION_DEFAULT_PROFILE_START < type && type < oyOPTION_DEFAULT_PROFILE_END )
+    pos = type - oyOPTION_DEFAULT_PROFILE_START - 1 +
+          oyOPTION_BEHAVIOUR_END - oyOPTION_BEHAVIOUR_START - 1;
+
+  if( oy_option_description_[0].type < 0 )
+    oyCheckOptionStrings_( oy_option_description_ );
+
+  return pos;
+}
+
+const char*
+oyGetOptionUITitle_                    (oyOPTION          type,
+                                        oyGROUP         **categories,
+                                        int              *choices,
+                                        const char     ***choices_string_list,
+                                        const char      **tooltip)
+{
+  int pos = oyOptionGetPos_( type );
+
+  DBG_PROG_START
+
+
+  if( pos >= 0 )
+  {
+    *choices              = oy_option_description_ [pos].
+                            choices;
+    *choices_string_list  = oy_option_description_ [pos].
+                            choice_list;
+    *categories           = oy_option_description_ [pos].
+                            categories;
+    *tooltip =  oy_option_description_ [pos].
+                description;
+    DBG_PROG_ENDE
+    return oy_option_description_[pos].
+           label;
+  }
+
+  DBG_PROG_ENDE
+  return NULL;
+}
+
+const char*
+oyGetGroupUITitle_                     (oyGROUP          type,
+                                        const char      **tooltip)
+{
+  int pos = oyOptionGetPos_( type );
+
+  DBG_PROG_START
+
+
+  if( pos >= 0 )
+  {
+    *tooltip =  oy_groups_description_ [pos][2];
+    DBG_PROG_ENDE
+    return oy_groups_description_[pos][1];
+  }
+
+  DBG_PROG_ENDE
+  return NULL;
+}
+
 
 int
 oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
@@ -463,8 +784,7 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
   if ( oyBEHAVIOUR_START < type && type < oyBEHAVIOUR_END )
   {
     if ( choice >= 0 &&
-         choice < oy_behaviour_option_description_
-                    [type - oyBEHAVIOUR_START - 1].n_options )
+         choice < oy_option_description_ [oyOptionGetPos_(type)]. choices )
       r = 1;
     else
       WARN_S( ("%s:%d !!! ERROR type %d option %d does not exist for behaviour",__FILE__,__LINE__, type, choice));
@@ -475,6 +795,7 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
   DBG_PROG_ENDE
   return r;
 }
+
 
 int
 oySetBehaviour_      (oyBEHAVIOUR type, int choice)
@@ -487,15 +808,15 @@ oySetBehaviour_      (oyBEHAVIOUR type, int choice)
   {
     const char *keyName = 0;
 
-    keyName = oy_behaviour_option_description_[ type - oyBEHAVIOUR_START - 1].
+    keyName = oy_option_description_[oyOptionGetPos_(type)].
               config_string;
 
       if(keyName)
       {
         char val[12];
         const char *com =
-            _(oy_behaviour_option_description_[ type - oyBEHAVIOUR_START - 1 ].
-              options[ choice ]);
+            _(oy_option_description_[ type - oyBEHAVIOUR_START - 1 ].
+              choice_list[ choice ]);
         snprintf(val, 12, "%d", choice);
         r = oyAddKey_valueComment_ (keyName, val, com);
         DBG_PROG_S(( "%s %d %s %s", keyName, type, val, com ))
@@ -516,17 +837,16 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR       type,
                             const char      **option_string,
                             const char      **tooltip)
 { DBG_PROG_START
-  if (choices) *choices = oy_behaviour_option_description_[type - oyBEHAVIOUR_START - 1] . n_options;
+  if (choices) *choices = oy_option_description_[type - oyBEHAVIOUR_START - 1] . choices;
 
   if ( oyTestInsideBehaviourOptions_(type, choice) )
-  { *option_string = oy_behaviour_option_description_
-                     [type - oyBEHAVIOUR_START - 1]. options[ choice ];
-    *category = oy_behaviour_option_description_ [type - oyBEHAVIOUR_START - 1].
-                category;
-    *tooltip =  oy_behaviour_option_description_ [type - oyBEHAVIOUR_START - 1].
+  { *option_string = oy_option_description_
+                     [type - oyBEHAVIOUR_START - 1]. choice_list[ choice ];
+    *category = "API is broken";
+    *tooltip =  oy_option_description_ [type - oyBEHAVIOUR_START - 1].
                 description;
     DBG_PROG_ENDE
-    return oy_behaviour_option_description_[type - oyBEHAVIOUR_START - 1] .
+    return oy_option_description_[type - oyBEHAVIOUR_START - 1] .
            label;
   }
   DBG_PROG_ENDE
@@ -546,7 +866,7 @@ oyGetBehaviour_      (oyBEHAVIOUR type)
 
   if ( (rc=oyTestInsideBehaviourOptions_(type, 0)) == 1 )
   {
-    keyName = oy_behaviour_option_description_[type - oyBEHAVIOUR_START - 1] .
+    keyName = oy_option_description_[oyOptionGetPos_(type)] .
               config_string;
 
       if(keyName)
@@ -618,7 +938,8 @@ oyPolicyToXML_  (oyGROUP           group,
            value = oyGetDefaultProfileName_(i, oyAllocateFunc_);
            if( value && strlen( value ) )
            {
-             key = oy_default_profile_types_names_[i - oyDEFAULT_PROFILE_START - 1][0];
+             key = oy_option_description_[oyOptionGetPos_(i)].
+                   config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 
                                           strlen(value) + 2*strlen(key) + 8 );
@@ -631,14 +952,14 @@ oyPolicyToXML_  (oyGROUP           group,
            if(value) free(value);
          }
          break;
-    case oyGROUP_RENDERING:
+    case oyGROUP_BEHAVIOUR_RENDERING:
          mem[0] = 0;
          for(i = oyBEHAVIOUR_RENDERING_INTENT; i < oyBEHAVIOUR_END; ++i)
          { int pos = strlen(mem);
            int val = oyGetBehaviour_(i);
            if(val >= 0)
            {
-             key = oy_behaviour_option_description_[i - oyBEHAVIOUR_START - 1] .
+             key = oy_option_description_[oyOptionGetPos_(i)] .
                    config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
@@ -647,7 +968,7 @@ oyPolicyToXML_  (oyGROUP           group,
            }
          }
          break;
-    case oyGROUP_MIXED_MODE_DOCUMENTS:
+    case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
          mem[0] = 0;
          for(i = oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT;
                i <= oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN; ++i)
@@ -655,7 +976,7 @@ oyPolicyToXML_  (oyGROUP           group,
            int val = oyGetBehaviour_(i);
            if(val >= 0)
            {
-             key = oy_behaviour_option_description_[i - oyBEHAVIOUR_START - 1] .
+             key = oy_option_description_[oyOptionGetPos_(i)] .
                    config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
@@ -664,7 +985,7 @@ oyPolicyToXML_  (oyGROUP           group,
            }
          }
          break;
-    case oyGROUP_MISSMATCH:
+    case oyGROUP_BEHAVIOUR_MISSMATCH:
          mem[0] = 0;
          for(i = oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN;
                i <= oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK; ++i)
@@ -672,7 +993,7 @@ oyPolicyToXML_  (oyGROUP           group,
            int val = oyGetBehaviour_(i);
            if(val >= 0)
            {
-             key = oy_behaviour_option_description_[i - oyBEHAVIOUR_START - 1] .
+             key = oy_option_description_[oyOptionGetPos_(i)] .
                    config_string_xml;
              /* allocate new mem if needed */
              oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
@@ -762,7 +1083,8 @@ oyReadXMLPolicy_(oyGROUP           group,
          for(i = oyDEFAULT_PROFILE_START + 1; i < oyDEFAULT_PROFILE_END; ++i)
          { int len = 0;
            const char* ptr=0;
-           key = oy_default_profile_types_names_[i - oyDEFAULT_PROFILE_START - 1][0];
+           key = oy_option_description_[oyOptionGetPos_(i)].
+                 config_string_xml;
 
            /* read the value for the key */
            ptr = oyXMLgetValue_(xml, key, &len);
@@ -777,12 +1099,12 @@ oyReadXMLPolicy_(oyGROUP           group,
            }
          }
          break;
-    case oyGROUP_RENDERING:
+    case oyGROUP_BEHAVIOUR_RENDERING:
          for(i = oyBEHAVIOUR_RENDERING_INTENT; i < oyBEHAVIOUR_END; ++i)
          { int len = 0;
            const char* ptr=0;
            int val = -1;
-           key = oy_behaviour_option_description_[i - oyBEHAVIOUR_START - 1] .
+           key = oy_option_description_[oyOptionGetPos_(i)] .
                  config_string_xml;
 
            /* read the value for the key */
@@ -799,13 +1121,13 @@ oyReadXMLPolicy_(oyGROUP           group,
            if(value) free(value);
          }
          break;
-    case oyGROUP_MIXED_MODE_DOCUMENTS:
+    case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
          for(i = oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT;
                i <= oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN; ++i)
          { int len = 0;
            const char* ptr=0;
            int val = -1;
-           key = oy_behaviour_option_description_[i - oyBEHAVIOUR_START - 1] .
+           key = oy_option_description_[oyOptionGetPos_(i)] .
                  config_string_xml;
            ptr = oyXMLgetValue_(xml, key, &len);
            value = calloc(sizeof(char), len+1);
@@ -816,13 +1138,13 @@ oyReadXMLPolicy_(oyGROUP           group,
            if(value) free(value);
          }
          break;
-    case oyGROUP_MISSMATCH:
+    case oyGROUP_BEHAVIOUR_MISSMATCH:
          for(i = oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN;
                i <= oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK; ++i)
          { int len = 0;
            const char* ptr=0;
            int val = -1;
-           key = oy_behaviour_option_description_[i - oyBEHAVIOUR_START - 1] .
+           key = oy_option_description_[oyOptionGetPos_(i)] .
                  config_string_xml;
            ptr = oyXMLgetValue_(xml, key, &len);
            value = calloc(sizeof(char), len+1);
@@ -1414,7 +1736,8 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
       WARN_S( ("%s:%d %s() !!! ERROR type %d; type does not exist",__FILE__,__LINE__, __func__, type ) );
 
     if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-      config_name = oyMapDEFAULT_PROFILEtoConfigString_(type);
+      config_name = oy_option_description_[oyOptionGetPos_(type)].
+                    config_string;
     else if(type == oyDEVICE_PROFILE)
       {
         int len = strlen(OY_REGISTRED_PROFILES)
@@ -1767,16 +2090,6 @@ oyPathActivate_ (const char* pfad)
 
 /* default profiles API */
 const char*
-oyMapDEFAULT_PROFILEtoString_ (oyDEFAULT_PROFILE type)
-{ DBG_PROG_START
-  const char *type_string = 0;
-  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-    type_string = oy_default_profile_types_names_[type - oyDEFAULT_PROFILE_START - 1][1];
-  DBG_PROG_ENDE
-  return type_string;
-}
-
-const char*
 oyMapDEFAULT_PROFILEtoConfigString_ (oyDEFAULT_PROFILE type)
 { DBG_PROG_START
   const char *config_string = 0;
@@ -1818,7 +2131,7 @@ oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
 const char*
 oyGetDefaultProfileUITitle_(oyDEFAULT_PROFILE type)
 { DBG_PROG_START
-  const char* name = oyMapDEFAULT_PROFILEtoString_(type);
+  const char* name = oy_option_description_[oyOptionGetPos_( type )] .label;
   DBG_PROG_ENDE
   return name;
 }
@@ -2691,6 +3004,58 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
 #include "oyranos.h"
 
+/** \addtogroup options Options API
+ *  Functions to set and query for Options layout and UI strings in Oyranos.
+
+ *  @{
+ */
+
+
+/** Get a special Options UI strings.\n
+ *
+ *  param       type            merge oyBEHAVIOUR and oyDEFAULT_PROFILE
+ *  param[out]  categories      integer (visible enums?) list
+ *                              { n, first category, second c., ... , n'th c. } 
+ *  param[out]  choices         n choices; if choices is zero then you need to
+ *                              optain the choices otherwise, like for profiles
+ *  param[out]  choices_strings translated list of n choices
+ *  param[out]  tooltip         transated tooltip
+ *
+ *  return                      translated option title
+ */
+const char* oyGetOptionUITitle         (oyOPTION          type,
+                                        oyGROUP         **categories,
+                                        int              *choices,
+                                        const char     ***choices_string_list,
+                                        const char      **tooltip )
+{ DBG_PROG_START
+  const char *uititle = oyGetOptionUITitle_( type,
+                                             categories,
+                                             choices, choices_string_list,
+                                             tooltip );
+  DBG_PROG_ENDE
+  return uititle;
+}
+
+/** Get a special Groups UI strings
+ *
+ *  param       type            settings group
+ *  param[out]  tooltips        translated tooltip
+ *
+ *  return                      translated title
+ */
+const char* oyGetGroupUITitle          (oyGROUP           type,
+                                        const char      **tooltips)
+{ DBG_PROG_START
+  const char *uititle = oyGetGroupUITitle_ ( type,
+                                             tooltips );
+  DBG_PROG_ENDE
+  return uititle;
+}
+
+
+/*  @} */
+
 /** \addtogroup behaviour Behaviour API
  *  Functions to set and query for behaviour on various actions in Oyranos.
 
@@ -2959,6 +3324,10 @@ oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
 }
 
 /** Gets a default profile type name for presenting in a GUI.
+ *
+ *  @deprecated Merge with behaviour settings into a new Options API\n
+ *              The options list could be zero or just one hint:\n
+ *              "Get/Set options dynamically by the Path API".
  *
  *  @param  type the kind of default profile
  *  @return type name

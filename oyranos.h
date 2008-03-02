@@ -55,9 +55,9 @@ namespace oyranos
 typedef void* (*oyAllocFunc_t)         (size_t size);
 
 
-/* --- behaviour / policies --- */
+/* --- behaviour --- */
 
-/** enum Default Profiles
+/** enum Behaviour Options
  *
  *  possibly include the default profiles here
  */
@@ -82,25 +82,27 @@ enum  {
   oyASK,                               /**< popup dialog */
 }; /**< for oyBEHAVIOUR_ACTION */
 
-const char* oyGetBehaviourUITitle      (oyBEHAVIOUR       type,
-                                        int               choice,
-                                        int              *choices,
-                                        const char      **category,
-                                        const char      **option_string,
-                                        const char      **tooltip);
-int         oyGetBehaviour             (oyBEHAVIOUR       type);
-int         oySetBehaviour             (oyBEHAVIOUR       type,
+int         oyGetOption                (oyBEHAVIOUR       type);
+int         oySetOption                (oyBEHAVIOUR       type,
                                         int               choice);
+
+/* --- policies --- */
 
 /** enum Policy Groups 
  */
 typedef enum  {
   oyGROUP_START = 0,
-  oyGROUP_DEFAULT_PROFILES,     /**< Default Profiles */
-  oyGROUP_RENDERING,            /**< Rendering Behaviour */
-  oyGROUP_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
-  oyGROUP_MISSMATCH,            /**< Profile Missmatch Behaviour */
-  oyGROUP_ALL                   /**< just for easen Gui design */
+  oyGROUP_DEFAULT_PROFILES,        /**< Default Profiles */
+  oyGROUP_DEFAULT_PROFILES_EDIT,   /**< Default Editing Profiles */
+  oyGROUP_DEFAULT_PROFILES_ASSUMED,/**< Default Assumed Profiles */
+  oyGROUP_DEFAULT_PROFILES_PROOF,  /**< Default Proofing Profiles */
+  oyGROUP_PATHS,                   /**< Paths */
+  oyGROUP_BEHAVIOUR,               /**< Behaviour */
+  oyGROUP_BEHAVIOUR_RENDERING,            /**< Rendering Behaviour */
+  oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
+  oyGROUP_BEHAVIOUR_MISSMATCH,            /**< Profile Missmatch Behaviour */
+  oyGROUP_BEHAVIOUR_PROOF,                /**< Profile Missmatch Behaviour */
+  oyGROUP_ALL                      /**< just for easen Gui design */
 } oyGROUP;
 
 char*       oyPolicyToXML              (oyGROUP           group,
@@ -151,7 +153,6 @@ int         oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
                                         const char*       file_name,
                                         void*             mem,
                                         size_t            size);
-const char* oyGetDefaultProfileUITitle (oyDEFAULT_PROFILE type);
 char*       oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
                                         oyAllocFunc_t     alloc_func);
 
@@ -174,6 +175,45 @@ int   oyCheckProfileMem                (const void* mem, size_t size,
 size_t oyGetProfileSize                (const char* profilename);
 void*  oyGetProfileBlock               (const char* profilename, size_t* size,
                                         oyAllocFunc_t);
+
+
+/* --- options / GUI layout --- */
+
+typedef enum  {
+  oyOPTION_BEHAVIOUR_START = 30,
+  oyOPTION_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? */
+  oyOPTION_ACTION_OPEN_MISMATCH_RGB,/**< What to do if profiles mismatch ? */
+  oyOPTION_ACTION_OPEN_MISMATCH_CMYK,/**< What to do if profiles mismatch ?*/
+  oyOPTION_MIXED_MOD_DOCUMENTS_PRINT,/**< Convert befor save for Print? */
+  oyOPTION_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
+  oyOPTION_RENDERING_INTENT,        /**< Standard colour transformations */
+  oyOPTION_RENDERING_BPC,           /**< use BlackPointCompensation */
+  oyOPTION_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
+  oyOPTION_PROOF_SOFT,              /**< Proofing by default for screen */
+  oyOPTION_PROOF_HARD,              /**< Proofing by default for printing */
+  oyOPTION_BEHAVIOUR_END,           /**< just for easen Gui design */
+
+  oyOPTION_DEFAULT_PROFILE_START = 100,
+  oyOPTION_EDITING_RGB,            /**< Rgb Editing (Workspace) Profile */
+  oyOPTION_EDITING_CMYK,           /**< Cmyk Editing (Workspace) Profile */
+  oyOPTION_EDITING_XYZ,            /**< XYZ Editing (Workspace) Profile */
+  oyOPTION_EDITING_LAB,            /**< Lab Editing (Workspace) Profile */
+  oyOPTION_ASSUMED_XYZ,            /**< standard XYZ assumed source profile */
+  oyOPTION_ASSUMED_LAB,            /**< standard Lab assumed source profile */
+  oyOPTION_ASSUMED_RGB,            /**< standard RGB assumed source profile */
+  oyOPTION_ASSUMED_WEB,            /**< std internet assumed source static_profile*/
+  oyOPTION_ASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
+  oyOPTION_PROFILE_PROOF,          /**< standard proofing profile */
+  oyOPTION_DEFAULT_PROFILE_END     /**< just for easen Gui design */
+} oyOPTION;
+
+const char* oyGetOptionUITitles        (oyOPTION          type,
+                                        oyGROUP         **categories,
+                                        const char     ***category_string_list,
+                                        int              *choices,
+                                        const char     ***choices_string_list,
+                                        const char      **tooltip );
+const char* oyGetDefaultProfileUITitle (oyDEFAULT_PROFILE type);
 
 
 #ifdef __cplusplus

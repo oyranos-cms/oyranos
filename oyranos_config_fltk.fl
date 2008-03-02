@@ -317,15 +317,15 @@ Function {buildPathLeaves()} {open
     pp->end();
   }
 
-  Fl_Pack *pack = new Fl_Pack(0,0,//paths_scroll->x(), paths_scroll->y(),
-                              50, BUTTON_HEIGHT);
+  Fl_Pack *pack = new Fl_Pack(0,0,
+                              width, BUTTON_HEIGHT);
     pack->type( FL_HORIZONTAL );
     pack->spacing( H_SPACING );
-    Fl_Button *nbutton = new Fl_Button(0,0,BUTTON_HEIGHT, BUTTON_HEIGHT, _("@-3+"));
+    Fl_Button *nbutton = new Fl_Button(0,0, width-BUTTON_HEIGHT-2*H_SPACING, BUTTON_HEIGHT, _("@-3+"));
     nbutton->callback( addPathCallback );
     nbutton->tooltip(_("Add Path containing ICC profiles"));
     pack->resizable( nbutton );
-    new Fl_Box( 0, 0, H_SPACING, 20 );
+    new Fl_Box( 0, 0, 1, 20 );
   pack->end();
   
   new Fl_Box(0,0,10, H_SPACING);
@@ -334,8 +334,8 @@ Function {buildPathLeaves()} {open
   paths_pack->size( width + 10, paths_pack->h() );
   paths_pack->end();
   paths_scroll->end();
-  paths_scroll->redraw();} {selected
-  }
+  paths_scroll->redraw();
+  std::cout << nbutton->x() << ","<< nbutton->w() <<std::endl;} {}
 } 
 
 Function {removePathLeaves()} {} {
@@ -569,7 +569,7 @@ Function {} {private
 } {
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {713 270 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {695 140 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Tabs {} {open
       xywh {0 70 505 301} resizable
@@ -642,7 +642,7 @@ Function {} {private
     Fl_Button {} {
       label {@-3reload}
       callback {//Fl::pushed(&bPL);
-  updateUi();}
+  updateUi();} selected
       xywh {10 375 50 25} when 6
     }
     Fl_Pack {} {open

@@ -41,6 +41,7 @@
     The basic Oyranos API gets included with oyranos.h. An application, which
     wants to use these functions, needs to link against Oyranos and Elektra.
     - @ref policy - load / save of user policies
+    - @ref options - layout and describe options to the user; part of user policies
     - @ref behaviour - get and set common behaviour; part of user policies
     - @ref default_profiles - get and set commonly used profiles; part of user policies
     - @ref path_names  - get information about configured and used profile search paths 

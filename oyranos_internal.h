@@ -39,14 +39,6 @@ namespace oyranos
 {
 #endif /* __cplusplus */
 
-/* --- behaviour / policies --- */
-/* option lists start with 0 for the whole list and the list itself with 1 */
-/*const char* oyGetOptionUITitles        (oyOPTION          type,
-                                        int              *categories,
-                                        const char      **category,
-                                        int              *choices,
-                                        const char      **option_strings,
-                                        const char      **tooltips);*/
 
 /* kdb stuff */
 void  oyOpen                (void);

@@ -97,7 +97,7 @@ CPP_HEADERS = \
 	$(TARGET)_helper.h \
 	$(TARGET)_internal.h \
 	$(TARGET)_monitor.h \
-	$(TARGET)_monitor_internal.h \
+	$(TARGET)_monitor_internal.h
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
