@@ -205,6 +205,12 @@ $(TARGET)_gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	$(LDLIBS) 
 	$(REZ)
 
+$(TARGET)/$(TARGET).h:
+	mkdir $(TARGET)
+	$(LNK) ../$(TARGET).h $(TARGET)/$(TARGET).h
+	$(LNK) ../$(TARGET)_definitions.h $(TARGET)/$(TARGET)_definitions.h
+	$(LNK) ../$(TARGET)_monitor.h $(TARGET)/$(TARGET)_monitor.h
+
 test2:	$(LIB_MONI_SONAMEFULL) test2.o
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o test2 \
