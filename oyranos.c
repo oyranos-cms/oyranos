@@ -35,7 +35,6 @@
 #include <string.h>
 
 #include "oyranos_helper.h"
-#include "oyranos_definitions.h"
 
 #include "oyranos_debug.h"
 
@@ -848,7 +847,7 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
         kdbOpen();
 
 
-        // TODO merge User and System KeySets in oyReturnChildrenList_
+        // @TODO merge User and System KeySets in oyReturnChildrenList_
         list = oyReturnChildrenList_(OY_USER OY_KEY OY_SLASH "default", &rc ); ERR
         if(!list)
         {
@@ -1647,7 +1646,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
 
   kdbOpen();
 
-  // TODO merge User and System KeySets in oyReturnChildrenList_
+  // @TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
   profilesList_sys = oyReturnChildrenList_(OY_SYS OY_REGISTRED_PROFILES, &rc ); ERR
   if(!profilesList && profilesList_sys)
@@ -1780,7 +1779,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
 
       profileName = (char*) calloc (strlen (fileName)+1, sizeof(char));
       sprintf (profileName, fileName);
-      // TODO add profileName to profileNames
+      // @TODO add profileName to profileNames
 
       DBG_PROG_S((foundEntry->name))
       DBG_PROG_S((profileName))
@@ -1797,6 +1796,39 @@ oyGetDeviceProfile_s               (const char* manufacturer,
 }
 #endif
 
+  /**
+   * Search description
+   *
+   * This routine describes the A approach
+   *   - registred profiles with assigned devices
+   *
+   * -# take all arguments and walk through the named devices list \n
+   *    //  named devices consist of an key with the profile name + attributes\n
+   *    //  it is not allowed to have two profiles with the same name\n
+   *    //  it is allowed to have different profiles for the same attribute :(\n
+   *    //  specify more attributes to make an decission presumable\n
+   *    //   or maintain profiles, erasing older and invalid ones
+   * -# test if attributes matches the value of the key, count the hits
+   * -# search the profile in an match list
+   * -# add the profile to the match list if not found
+   * -# increase the hits counter in the macht list for that profile
+   * -# select the profile from the match list with the most hits
+   * -# tell about the profile and its hits
+   *
+   * @todo approach B:\n
+   * no attributes are assigned beside certain keyword ("monitor", "scanner")\n
+   * scan profile tags for manufacturer, device descriptions ... \n<ul>
+   * <li> When to start an automatic registration run?</li>\n
+   * <li> include profile tag editing?</li>
+   * </ul>
+   * @todo other things:\n
+   * <ul>
+   * <li> spread weighting? 3 degrees are sufficient How to merge in the on
+   *       string approach?</li></ul>
+   *
+   */
+
+
 oyComp*
 oyGetDeviceProfile_sList           (const char* manufacturer,
                                     const char* model,
@@ -1809,35 +1841,6 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
                                     KeySet *profilesList,
                                     int   rc)
 { DBG_PROG_START
-  /* Search description
-   *
-   * This routine describes the A approach
-   *   - registred profiles with assigned devices
-   *
-   * 1. take all arguments and walk through the named devices list
-   *    //  named devices consist of an key with the profile name + attributes
-   *    //  it is not allowed to have two profiles with the same name
-   *    //  it is allowed to have different profiles for the same attributes :(
-   *    //  specify more attributes to make an decission presumable
-   *    //   or maintain profiles, erasing older and invalid ones
-   * 2. test if attributes matches the value of the key, count the hits
-   * 3. search the profile in an match list
-   * 4. add the profile to the match list if not found
-   * 5. increase the hits counter in the macht list for that profile
-   * 6. select the profile from the match list with the most hits
-   * 7. tell about the profile and its hits
-   *
-   * approach B: TODO
-   * no attributes are assigned beside certain keyword ("monitor", "scanner")
-   * scan profile tags for manufacturer, device descriptions ...
-   * - When to start an automatic registration run?
-   * - include profile tag editing?
-   * 
-   * other things: TODO
-   * - spread weighting? 3 degrees are sufficient How to merge in the on string 
-   *   approach?
-   */
-
   /* 1. take all arguments and walk through the named devices list */
   int i = 0, n = 0;
   char* name  = (char*) calloc (MAX_PATH, sizeof(char));
@@ -2001,7 +2004,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
   kdbOpen();
 
-  // TODO merge User and System KeySets in oyReturnChildrenList_
+  // @TODO merge User and System KeySets in oyReturnChildrenList_
   profilesList = oyReturnChildrenList_(OY_USER OY_REGISTRED_PROFILES, &rc ); ERR
   if(!profilesList)
   {

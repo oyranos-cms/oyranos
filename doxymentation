@@ -1,0 +1,145 @@
+/**
+    @mainpage
+    @author Kai-Uwe Behrmann
+    @date March 2004
+
+    @section intro Indroduction
+    Oyranos is intended as a entry point for colour savy applications.
+    In its current stage it configures profile paths, sets default profiles, 
+    mapps devices to profiles, sets a monitor profile in X and uploads a vcgt
+    tag. This means for instance all applications using Oyranos will use for
+    incoming digital camera picture the same profile and watch it through the
+    same monitor profile.
+
+
+    @section concept Concept
+    The here described concepts are targeted until version 1.0 of Oyranos.
+    They are intended to make the API consistent and its usage predictable.
+
+    @subsection general_concept General
+    - Users can configure their own settings, while administrators can
+      configure system wide settings.
+
+    @subsection path_concept Paths Configuration
+    - Paths are scanned secursively avoiding links for security reasons.
+    - Paths counts allways, to aim consistency. There are no exceptions.
+
+    @subsection memory_concept Memory Handling
+    - For strings constant pointers to chars are the prefered way (utf8?)
+    - For the need of allocating unknown sizes of memory a function is passed
+      by the user allocation the memory. The returned block goes into the
+      responsibility of the user.
+    - Library allocated memory blocks like profile lists can be freed with
+      a Oyranos provided function.
+
+    @subsection os_concept Interoperatibility on Operating Systems
+    - Oyranos is intended to work on at least Linux, osX and (hopefully) Windows
+    - On Linux the <a href="http://elektra.sf.net">Elektra</a> configuration
+      library is used for the managing and storing configurations.
+    - If publically available Oyranos will sit on top of native Colour
+      Management Systems like ColorSync&copy; or ICM&copy;.
+
+    @section proposal Open Things
+    @subsection identity_proposal Profile Identity Proposal
+    One major benefit if a configuration system is the ashurance to use the
+    correct profiles.\n
+    A recently closed flaw in the ICC spec was a missing
+    identification tag inside the profile. While profiles may have varaying
+    names and descriptions, the now in the ICC standard included md5 checksum
+    approach fits well in the demand of easily and relyable distinguish between
+    various profiles.\n
+    The plan is to check or possibly recalculate the md5 sum and modify the
+    profile in the header accordingly. This makes sense especially for older
+    profiles. This feature makes of course only sense of the file access is
+    resonably quick. A hash table may help here.\n
+    Some tests are needed befor implementing the described method in Oyranos.\n
+    @subsection correlation_proposal Correlation Proposal
+    An other toppic is the correlation of device and program settings during
+    image production and the selection of the correct profile for the needed
+    conversions. The profile should allways fit to the tool chain used. 
+    My suggestion is here to embedd these settings in a easy recoverable
+    way into the profile. A special ascii tag could be used therefor.\n
+    External libraries like sane or cups should tell Oyranos theyre
+    settings and query for a suitable profile. In the case of a not finding a
+    fitting profile the external library may ask for an alternative list of
+    settings. With selecting the desired settings the profile can be selected.
+    The goal herein is to give the user the freedom of choice and the security
+    regarding quality.
+
+ 
+    @section install Installation
+    Oyranos depends on following libraries:<br>
+
+    <ul>
+    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux , <a href="http://sourceforge.net/project/showfiles.php?group_id=117521">version 0.4.8</a> should suffice . This version has the least amount of dependencies.</li>
+    <li><a href="http://www.osc.edu/~jbryan/FLU">FLU</a> version >= 2.14 
+   for a convenient file browser (optionally, should be installed to play with Oyranos)</li>
+    <li><a href="http://www.fltk.org">fltk</a> version >= 1.1.4 needed by FLU<br>
+    you may configure fltk with several options enabled<br>
+    --enable-threads is needed for threads support (in ICC Examin)<br>
+    --enable-xft is ok for antialiased fonts<br>
+    --enable-debug is generally a good choice<br>
+    --enable-shared is sometimes a good choice for smaller executables</li>
+    <li><a href="http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/">Xcalib</a> for loading a given  VideoCardGammaTag from profile to a running XFree86/Xorg session (optionally)</li>
+    </ul><br>
+    For building unpack the tgz file and type #make; make install.<br><br>
+    Optionally you can specifiy an other than the default prefix /opt/local by typing:<br>
+    #configure.sh --prefix /what/you/like<br>
+    #make<br>
+    #make install   (optionally)<br>
+ 
+    <br>
+
+
+ */
+
+
+/** @file oyranos.h
+    @brief The API header to include in your application.
+    
+    This file contains all functions and structs available in the Oyranos API.
+    For further macros see @file oyranos_definitions.h
+    For the Oyranos Monitor API see @file oyranos_monitor.h
+*/
+
+/** @file oyranos_definitions.h
+    @brief The macro header to include in your application without function usage.
+    
+    This file contains all macros which are relevant to the Oyranos API.
+    For the Oyranos API see @file oyranos.h
+*/
+
+/** @file oyranos_monitor.h
+    @brief The Monitor API header to include in your application.
+    
+    This file contains all functions and structs available in the Oyranos Monitor API.
+    For further macros see @file oyranos_definitions.h
+    For the Oyranos API see @file oyranos.h
+*/
+
+/** @file oyranos.c
+    @brief The API implementation
+    
+    This file contains functions implementing the Oyranos API.
+    For the Oyranos API see @file oyranos.h
+*/
+
+/** @file oyranos_monitor.c
+    @brief The Monitor API implementation
+    
+    This file contains functions implementing the Oyranos Monitor API.
+    For the Oyranos Monitor API see @file oyranos_monitor.h
+    For the Oyranos API see @file oyranos.h
+*/
+
+/** @file oyranos_gamma.c
+    @brief A small helper for setting up Oyranos at the window server
+           start time.
+    
+    This helper searches for the appropriate monitor profile in the Oyranos 
+    Deviceprofiles database. If found it tells the window server about it and
+    loads a possibly available VideoCardGammaTable tag into the running session.
+    It uses the Oyranos Monitor API from @file oyranos_monitor.h
+*/
+
+

@@ -54,6 +54,8 @@ int   oyGetMonitorInfo            (const char* display,
 int   oyGetMonitorProfile         (const char *display,
                                    char        buf,      /* if buf==0 getSize */
                                    size_t     *size);
+int   oyGetMonitorProfileDescription (char     buf,      /* if buf==0 getSize */
+                                   size_t     *size);
 #else
 char* oyGetMonitorProfile         (const char *display,  /* deprecated */
                                    size_t     *size);

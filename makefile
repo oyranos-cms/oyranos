@@ -104,7 +104,9 @@ DOKU = \
         AUTHORS \
         ChangeLog \
         COPYING \
-        README
+        README \
+		Doxyfile \
+		doxymentation
 FLUID = #\
 	fl_oyranos.fl
 
