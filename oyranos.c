@@ -83,6 +83,8 @@ char*	oyGetDefaultLabProfileName_        ();
 char*	oyGetDefaultRGBProfileName_        ();
 char*	oyGetDefaultCmykProfileName_       ();
 
+char**  oyProfileList_                 (const char* colourspace, int * size);
+
 int	oyCheckProfile_                    (const char* name);
 int	oyCheckProfile_Mem                 (const void* mem, int size);
 
@@ -1145,6 +1147,22 @@ oyGetDefaultCmykProfileName_       ()
   return name;
 }
 
+/* profile lists API */
+
+char**
+oyProfileList_                     (const char* colourspace, int * size)
+{
+  DBG_PROG_START
+  char** names = 0;
+  int count = oyPathsCount_();
+  int i;
+  for(i = 0; i < count ; ++i)
+  {
+    oyPathName_(i) ;
+  }
+  DBG_PROG_ENDE
+  return names;
+}
 
 /* profile check API */
 
@@ -1934,6 +1952,15 @@ oyGetDefaultCmykProfileName       ()
   char* name = oyGetDefaultCmykProfileName_ ();
   DBG_PROG_ENDE
   return name;
+}
+
+char**
+oyProfileList                      (const char* colourspace, int * size)
+{
+  DBG_PROG_START
+  char** names = oyProfileList_(colourspace, size);
+  DBG_PROG_ENDE
+  return names;
 }
 
 

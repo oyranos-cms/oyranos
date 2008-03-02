@@ -81,6 +81,10 @@ char* oyGetDefaultLabProfileName       ();
 char* oyGetDefaultRGBProfileName       ();
 char* oyGetDefaultCmykProfileName      ();
 
+/* --- profile lists --- */
+
+char**oyProfileList                    (const char* colourspace, int * size);
+
 /* --- profile checking --- */
 
 int   oyCheckProfile                   (const char* name, int flag);
@@ -109,6 +113,7 @@ void* oyGetProfileBlock                (const char* profilename, int* size);
  */
 
 typedef enum  {
+  /*oyNOTYPE,*/
   oyDISPLAY,                 /* dynamic viewing */
   oyPRINTER,                 /* static media (dye, ink, offset, imagesetters) */
   oySCANNER,                 /* contact digitiser */
