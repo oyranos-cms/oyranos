@@ -83,6 +83,7 @@ CPP_HEADERS = \
 	oyranos_debug.h \
 	oyranos_definitions.h \
 	oyranos_helper.h \
+	oyranos_internal.h \
 	oyranos_monitor.h
 #	fl_oyranos.h
 CFILES = \
