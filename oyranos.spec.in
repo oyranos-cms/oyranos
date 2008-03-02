@@ -42,7 +42,7 @@ The documentation in html format is included.
 
 
 %prep
-%setup -q -n %{name}_%{version}
+%setup -q -n %{name}-%{version}
 #-%{release}
 
 %build
