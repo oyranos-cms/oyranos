@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Oyranos
 PROJECT_NUMBER         = 0.1.2
-OUTPUT_DIRECTORY       = /home/kuwe/programme/CMS/Oyranos/Entwickeln/doc/
+OUTPUT_DIRECTORY       = doc/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
