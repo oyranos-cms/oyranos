@@ -2,7 +2,7 @@
 COLLECT = ar cru
 RANLIB = ranlib
 LNK = ln -s
-POST = fltk-config --post
+POST = $(fltkconfig) --post
 RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
 MSGCAT = msgcat
 MSGFMT = msgfmt -c --statistics
@@ -14,11 +14,11 @@ LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
 LIBNAME = lib$(TARGET).a
-#ifdef $(X11)
 LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)$(LIBEXT)
 LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)$(LIBEXT)
 LIB_MONI_SO = lib$(TARGET)_moni$(SO)$(LIBEXT)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
+#ifdef $(X11)
 LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
 #endif
@@ -28,10 +28,8 @@ LIBFL_I18N = fl_i18n/libfl_i18n.a
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 	$(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL)
 
-ELEKTRA_STATICTEST_LIBS = `test -f $(ELEKTRA_VERSION)/src/libelektra/libelektra.a && echo $(ELEKTRA_VERSION)/src/libelektra/libelektra.a || (test -f $(libdir)/libelektra.a && (echo $(libdir)/libelektra.a ; test -f $(libdir)/libelektra-filesys.a && echo $(libdir)/libelektra-filesys.a || (test -f $(libdir)/elektra/libelektra-filesys.a && echo $(libdir)/elektra/libelektra-filesys.a)) || echo $(ELEKTRA_LIBS))`
-
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
-	$(ELEKTRA_STATICTEST_LIBS) -lc $(I18N_LIB)
+	$(ELEKTRA_LIBS) -lc $(I18N_LIB)
 
 
 CPP_HEADERS = \
@@ -44,6 +42,7 @@ CPP_HEADERS = \
 	$(TARGET)_elektra.h \
 	$(TARGET)_helper.h \
 	$(TARGET)_i18n.h \
+	$(TARGET)_icc.h \
 	$(TARGET)_io.h \
 	$(TARGET)_internal.h \
 	$(TARGET)_monitor.h \
@@ -51,6 +50,7 @@ CPP_HEADERS = \
 	$(TARGET)_sentinel.h \
 	$(TARGET)_texts.h \
 	$(TARGET)_xml.h \
+	icc34.h \
 	md5.h
 #	fl_$(TARGET).h
 CFILES = \
@@ -79,6 +79,8 @@ CFILES_POLICY = \
 
 CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
+CXXFILES_Flmm = \
+	FL/Flmm_Tabs.cxx
 TEST_CPP = \
 	tests/dl_test.cxx \
 	tests/fltk_test.cxx \
@@ -92,7 +94,7 @@ CXXFILES =
 #	fl_oyranos.cxx
 TEST_FILES = $(TEST_CPP) $(TEST_H)
 
-MAN1 = oyranos-config.1 oyranos-config-fltk.1 oyranos-policy.1
+MAN1 = oyranos-config.1 oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
 MAN3 = oyranos.3
 DATA = \
 	$(TARGET)_logo.png
@@ -109,18 +111,28 @@ POT_SCRIPT = oyranos_xml_to_po.sh
 
 SCRIPTS = $(POT_SCRIPT)
 
-FLUID = \
+FLTK_FILES = \
 	oyranos_config_fltk.fl \
 	oyranos_config_fltk.h \
-	oyranos_config_fltk.cxx
 
-SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
+Flmm_FILES = \
+	FL/Flmm_Tabs.H \
+	$(CXXFILES_Flmm) \
+	FL/ANNOUNCEMENT \
+	FL/CHANGES \
+	FL/COPYING \
+	FL/CREDITS \
+	FL/README
+
+SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) \
 		$(CXXFILES_FLTK) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
-FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o)
+Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
+FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
+
 
 INCL_DEP = $(INCL) $(SOURCES)
 
@@ -142,13 +154,14 @@ ALL_FILES = \
 	$(TARGET)-icc.spec.in \
 	$(TARGET)-config.in \
 	$(SOURCES) \
+	$(CPP_HEADERS) \
 	$(SCRIPTS) \
 	$(MAN1) $(MAN3) \
 	$(DOC_TEMPLATES) \
-	$(FLUID)
+	$(FLTK_FILES)
 
 # build all what is needed to run the libraries, helpers and the examples
-all:	mkdepend $(ELEKTRA_VERSION) $(LIBSONAMEFULL) $(X11)  \
+all:	mkdepend $(ELEKTRA_VERSION) $(LIBSONAMEFULL) $(TARGET)-monitor $(X11) \
 	$(FLTK_GUI) $(TARGET)-policy \
 	$(TEST2) $(LINGUAS_SRC)
 	cd standard_profiles; \
@@ -158,7 +171,7 @@ all:	mkdepend $(ELEKTRA_VERSION) $(LIBSONAMEFULL) $(X11)  \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
-$(X11):	$(LIB_MONI_SONAMEFULL) $(TARGET)-monitor $(TARGET)-monitor-nvidia
+$(X11): $(TARGET)-monitor-nvidia
 
 # get time stamp
 MTIME   := $(shell date +%y%m%d.%H%M%S)
@@ -204,6 +217,8 @@ $(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a
 
 $(target)_config_fltk.o:	$(TARGET)_config_fltk.cxx
 	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c $<
+FL/Flmm_Tabs.o:	FL/Flmm_Tabs.cxx
+	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c -o $@ $<
 
 # general configuration tool example
 $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
@@ -234,8 +249,10 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	$(TARGET)_gamma.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
-elektra-0.6.4:
-	cd $(ELEKTRA_VERSION); test -f Makefile && $(MAKE) || (./configure --enable-static --prefix=$(prefix); $(MAKE))
+$(ELEKTRA_VERSION):
+	-cd $(ELEKTRA_VERSION) && (test -f Makefile && ( \
+	  test -f src/libelektra/libelektra.a || \
+	    ($(MAKE); ranlib src/libelektra/libelektra.a; $(MAKE))))
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
@@ -329,21 +346,23 @@ install_bin:	all doc
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	$(INSTALL) -m 644 $(TARGET).pc         $(DESTDIR)$(libdir)/pkgconfig/
 	$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
+	$(RANLIB) $(DESTDIR)$(libdir)/$(LIBNAME)
 	$(INSTALL) -m 755 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
 	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
-#ifdef $(X11)
 	$(INSTALL) -m 644 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
 	$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
+	$(RANLIB) $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
 	$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
-#endif
 	-$(INSTALL) -m 644 $(ELEKTRA_VERSION)/src/libelektra/libelektra.a $(DESTDIR)$(libdir)/lib$(TARGET)_elektra.a
+	-$(RANLIB) $(DESTDIR)$(libdir)/lib$(TARGET)_elektra.a
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
 	test "$(FLTK_GUI)" && $(MAKE) install_gui || echo -e "GUI not installed"
@@ -368,11 +387,11 @@ install_bin:	all doc
 install:	install_bin
 	$(MAKE) install_profiles
 	$(MAKE) install_linguas
-	$(MAKE) install_usersettings
+#	$(MAKE) install_usersettings
 
 install-main:	install_bin
 	$(MAKE) install_linguas
-	$(MAKE) install_usersettings
+#	$(MAKE) install_usersettings
 
 install-icc:
 	$(MAKE) install_profiles
@@ -402,6 +421,7 @@ install_linguas:
 		|| (echo $${ling}.gmo is not yet ready ... skipping); \
 	done;
 
+# it is not used, as the defaults reside inside the library
 install_usersettings:
 	if [ -z "$(DESTDIR)" ]; then \
 	  kdb=kdb; \
@@ -545,15 +565,12 @@ clean:
 config:
 	./configure
 
-# try to resolve dependencies with the X11 tool
+# try to resolve dependencies
 depend:
-#ifdef $(X11)
 	echo "setting up dependencies ..."
 	echo "MAKEDEPEND_ISUP = 1" > mkdepend
-	$(MAKEDEPEND) -f mkdepend \
-	-s "# dont edit - automatically generated" \
-	-I. $(INCL_DEP)
-#endif
+	echo "#nicht editieren/dont edit - automatisch generiert" >> mkdepend
+	-$(MAKEDEPEND) -I./ $(INCL_DEP) >> mkdepend
 
 
 # Build commands and filename extensions...
@@ -566,7 +583,7 @@ depend:
 
 .cxx.o:
 	echo Compiling $< ...
-	$(CXX) -I. $(CXXFLAGS) -c $<
+	$(CXX) -I. $(CXXFLAGS) -c -o $@ $<
 
 .cpp.o:	mkdepend
 	echo Compiling $< ...
@@ -624,6 +641,8 @@ copy_files:
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 	mkdir $(DESTDIR)/tests
 	$(COPY) $(TEST_FILES) $(DESTDIR)/tests
+	mkdir $(DESTDIR)/FL
+	$(COPY) $(Flmm_FILES) $(DESTDIR)/FL
 	mkdir $(DESTDIR)/po
 	$(COPY) $(POT_FILE) $(DESTDIR)/po
 	for ling in $(LINGUAS); do \
@@ -638,13 +657,9 @@ copy_files:
 	echo copy done
 
 # mkdepend
-#ifdef $(X11)
 include mkdepend
-#endif
 
 #ifndef MAKEDEPEND_ISUP
-#ifdef $(X11)
 mkdepend: depend
-#endif
 #endif
 

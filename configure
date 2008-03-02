@@ -34,7 +34,7 @@ VERSION_C=8
 VERSION_ABI_A=1
 VERSION_ABI_B=0
 RELEASE=0
-TIME="November 2004 - April 2007"
+TIME="November 2004 - June 2007"
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
 if [ $VERSION_A -gt 9 ]; then
   VERSION_L="$VERSION_A"
@@ -54,7 +54,26 @@ fi
 VERSION_L=`echo $VERSION_L | sed 's/^0*//g'`
 
 debug=0
+nodeps=0
 rpm=0
+X11=0
+
+# find a suitable fltk-config script
+fltkconfig="fltk-config"
+old_IFS=$IFS;
+IFS=:
+for i in $PATH; do
+  test -x "$i/$fltkconfig" && fltkconfig_="$i/$fltkconfig"
+done
+if [ -z "$fltkconfig_" ]; then
+  for i in $PATH; do
+    test -x "$i/fltk-utf8-config" && fltkconfig_="$i/fltk-utf8-config"
+  done
+fi
+if [ -n "$fltkconfig_" ]; then
+  fltkconfig="$fltkconfig_"
+fi
+IFS=$old_IFS
 
 INFOECHO="echo"
 STRIPOPT="sed s/-O.//"
@@ -125,6 +144,14 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       internalelektra="`echo $1 | sed s/--$switch=//`"
     fi
+    switch=with-fltk-config
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      fltkconfig="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=with-x
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      X11=2
+    fi
     switch=rpm-only
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       rpm="1"
@@ -136,6 +163,10 @@ if [ $# -gt 0 ]; then
     switch=enable-debug
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       debug="1"
+    fi
+    switch=disable-dependency-tracking
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      nodeps="1"
     fi
     switch=help
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
@@ -157,8 +188,11 @@ test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg i
 test -n "$INFOECHO" && $INFOECHO "   --internal-elektra=[yes/no]          use internal Elektra [default=no]"
 test -n "$INFOECHO" && $INFOECHO ""
 test -n "$INFOECHO" && $INFOECHO "   --with-fltk-config=[fltk-config]     alternative fltk version"
+test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
 test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
 test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug version [default disable]"
+test -n "$INFOECHO" && $INFOECHO "   --disable-dependency-tracking        no dependencies [default check]"
+
 test -n "$INFOECHO" && $INFOECHO "   --quick                              generate config files only"
 test -n "$INFOECHO" && $INFOECHO "   --help"
 test -n "$INFOECHO" && $INFOECHO ""
@@ -200,7 +234,7 @@ test -n "$ECHO" && $ECHO "" > $MPKG
 test -n "$RPMECHO" && $RPMECHO "" > $SPEC
 test -n "$RPMECHO" && $RPMECHO "" > $SPECICC
 
-test -n "$ECHO" && $ECHO "$zeile" > config.log
+test -n "$ECHO" && $ECHO "$zeile \$@" > config.log
 chmod 0755 config.log
 
 src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
@@ -211,10 +245,48 @@ if [ -z "$prefix" ]; then
   prefix=/usr/local
 fi
 
+# define some common variables in front of config.site
+if [ -n "$CXX" ]; then
+  CXX_saved=$CXX
+fi
+if [ -n "$CC" ]; then
+  CC_saved=$CC
+fi
+if [ -n "$CFLAGS" ]; then
+  CFLAGS_saved=$CFLAGS
+  CFLAGS=""
+fi
+if [ -n "$CXXFLAGS" ]; then
+  CXXFLAGS_saved=$CXXFLAGS
+  CXXFLAGS=""
+fi
+if [ -n "$LDFLAGS" ]; then
+  LDFLAGS_saved=$LDFLAGS
+  LDFLAGS=""
+fi
+
+# import config.site
 if [ -z "$datadir" ]; then
   test -f $prefix/share/config.site && . $prefix/share/config.site
 else
   test -f $datadir/config.site && . $datadir/config.site
+fi
+
+# recover variables after config.site
+if [ -n "$CXX_saved" ]; then
+  CXX="$CXX_saved"
+fi
+if [ -n "$CC_saved" ]; then
+  CC="$CC_saved"
+fi
+if [ -n "$CFLAGS_saved" ]; then
+  CFLAGS="$CFLAGS_saved $CFLAGS"
+fi
+if [ -n "$CXXFLAGS_saved" ]; then
+  CXXFLAGS="$CXXFLAGS_saved $CXXFLAGS"
+fi
+if [ -n "$LDFLAGS_saved" ]; then
+  LDFLAGS="$LDFLAGS_saved $LDFLAGS"
 fi
 
 if [ -n "$ECHO" ]; then
@@ -360,11 +432,10 @@ if [ -z "$desktopdir" ]; then
 fi
 export prefix exec_prefix bindir sbindir libdir includedir datadir mandir
 export syscolordir usercolordir pixmapdir desktopdir
-export debug
+export debug fltkconfig
 
 PATH=$bindir:$PATH
 export PATH
-
 
 if [ -z "$CC" ]; then
   CC=cc$LINE_ARCH
@@ -381,8 +452,10 @@ test -n "$ECHO" && $ECHO "CXX = $CXX" >> $CONF_NV
 test -n "$ECHO" && $ECHO "CC = $CC" >> $CONF_NV
 export CC CXX
 
-CFLAGS_COMMON="`echo $CFLAGS | $STRIPOPT` \$(DEBUG) \$(INCL)"
-CXXFLAGS_COMMON="`echo $CXXFLAGS | $STRIPOPT` \$(DEBUG) \$(INCL) \$(FLTK_H)"
+CFLAGS_COMMON="`echo $CFLAGS_COMMON | $STRIPOPT` \$(DEBUG) \$(INCL)"
+CXXFLAGS_COMMON="`echo $CXXFLAGS_COMMON | $STRIPOPT` \$(DEBUG) \$(INCL) \$(FLTK_H)"
+CFLAGS="`echo $CFLAGS | $STRIPOPT`"
+CXXFLAGS="`echo $CXXFLAGS | $STRIPOPT`"
 
 if [ -z "$LDFLAGS" ]; then
   LDFLAGS="-L$libdir"
@@ -396,7 +469,7 @@ fi
 test -n "$ECHO" && $ECHO "LIB=/"$LIBDIR >> $CONF
 
 PATH=$PATH:/usr/X11R6/bin; export PATH
-FLTK_=`fltk-config --cxxflags 2>>error.txt`
+FLTK_=`$fltkconfig --cxxflags 2>>error.txt`
 if [ $? = 0 ] && [ -n "$FLTK_" ]; then
   FLTK=1
 fi
@@ -404,7 +477,7 @@ fi
 
 if [ "$FLTK" = 1 ]; then
   test -n "$ECHO" && $ECHO "FLTK_GUI = $TARGET-config-fltk" >> $CONF
-  if [ `fltk-config --version` = "1.1.7" ]; then
+  if [ `$fltkconfig --version` = "1.1.7" ]; then
     echo -e "\c"
   fi
 fi
@@ -415,24 +488,31 @@ if [ "$internalelektra" != "no" ]; then
 fi
 export internalelektra
 
+if [ $nodeps -eq 1 ]; then
+  GCC_MM="echo \"\#disable dependency tracking\""
+  nodeps_config_opt=--disable-dependency-tracking
+else
+  GCC_MM="cc -MM"
+fi
+
 
 # set some compiler and linker options
 
 test -n "$ECHO" && $ECHO "RM = rm -vf" >> $CONF
 test -n "$ECHO" && $ECHO "RM = rm -vf" >> $CONF_NV
+test -n "$ECHO" && $ECHO "MAKEDEPEND	= $GCC_MM" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "LIBEXT = .dylib" >> $CONF
   GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
-  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -dynamiclib  -L.  $GCC_VERSION_INFO" >> $CONF
+  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib  -L.  $GCC_VERSION_INFO" >> $CONF
   test -n "$ECHO" && $ECHO "LINK_NAME =  -install_name  \$(libdir)/\$(LIBSONAMEFULL)" >> $CONF
   test -n "$ECHO" && $ECHO "LINK_NAME_M = -install_name \$(libdir)/\$(LIB_MONI_SONAMEFULL)" >> $CONF
   test -n "$ECHO" && $ECHO "COPY = cp -pv" >> $CONF
   LDFLAGS="$LDFLAGS -L."
-  test -n "$ECHO" && $ECHO "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
-  CFLAGS="$CFLAGS -DPIC -Wunused -fno-exceptions"
-  CXXFLAGS="$CXXFLAGS -DPIC -Wunused -fno-exceptions"
-  test -n "$ECHO" && $ECHO "REZ = fltk-config --post \$@" >> $CONF
+  CFLAGS="$CFLAGS -DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
+  CXXFLAGS="$CXXFLAGS -DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
+  test -n "$ECHO" && $ECHO "REZ = $fltkconfig --post \$@" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   INSTALL="install $DEBUG_SWITCH"
@@ -459,7 +539,6 @@ else
     test -n "$ECHO" && $ECHO "LINK_NAME_M = -Wl,-soname -Wl,\$(LIB_MONI_SONAMEFULL)" >> $CONF
     test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
     test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
-    test -n "$ECHO" && $ECHO "MAKEDEPEND	= makedepend -Y" >> $CONF
     CFLAGS="$CFLAGS -fPIC -DPIC"
     CXXFLAGS="$CXXFLAGS -fPIC -DPIC"
     INSTALL="install $DEBUG_SWITCH"
@@ -482,7 +561,6 @@ else
     fi
     test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
     test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-    test -n "$ECHO" && $ECHO "MAKEDEPEND	= makedepend -Y" >> $CONF
     CFLAGS="$CFLAGS -L. -fPIC"
     CXXFLAGS="$CXXFLAGS -L. -fPIC"
     test -n "$ECHO" && $ECHO "RM = rm -f" >> $CONF
@@ -507,7 +585,10 @@ fi
 if [ -n "$ECHO" ]; then
   if [ "$internalelektra" != "no" ] && [ -z "$quick" ]; then
     cd $ELEKTRA_VERSION
-    ./configure --enable-static --prefix=$prefix
+    if [ -n "$ECHO" ]; then
+      test -n "$INFOECHO" && $INFOECHO ./configure --enable-static $nodeps_config_opt --prefix=$prefix
+    fi
+    ./configure --enable-static $nodeps_config_opt --prefix=$prefix
     cd $srcdir
   fi
 fi
@@ -528,7 +609,10 @@ if [ -n "$ECHO" ]; then
   #LIBPNG=2; export LIBPNG
   #FTGL=1; export FTGL
   FLTK=2; export FLTK
-  X11=2; export X11
+if [ $OSUNAME != "Darwin" ] ; then
+  X11=2; 
+fi
+  export X11
   XINERAMA=2; export XINERAMA
   XF86VMODE=2; export XF86VMODE
   DOXYGEN=2; export DOXYGEN

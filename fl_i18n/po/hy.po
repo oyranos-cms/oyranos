@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oy\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2007-03-22 10:23+0100\n"
+"POT-Creation-Date: 2007-07-03 13:31+0200\n"
 "PO-Revision-Date: 2004-08-05 00:03+0300\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: Armenian <>\n"
@@ -15,82 +15,82 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Vim 6.2\n"
 
-#: fl_i18n.cxx:201
+#: fl_i18n.cxx:209
 msgid "osX locale obtained: "
 msgstr ""
 
-#: fl_i18n.cxx:204
+#: fl_i18n.cxx:212
 msgid "osX locale not obtained"
 msgstr ""
 
-#: fl_i18n.cxx:323
+#: fl_i18n.cxx:333
 msgid "try to set LANG"
 msgstr ""
 
-#: fl_i18n.cxx:342
+#: fl_i18n.cxx:352
 msgid "try locale in "
 msgstr ""
 
-#: fl_i18n.cxx:351
+#: fl_i18n.cxx:362
 msgid "set codeset for"
 msgstr ""
 
-#: fl_i18n.cxx:387
+#: fl_i18n.cxx:398
 msgid "Add to Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:388
+#: fl_i18n.cxx:399
 msgid "All Files (*)"
 msgstr "كل الملفّات"
 
-#: fl_i18n.cxx:389
+#: fl_i18n.cxx:400
 msgid "Custom Filter"
 msgstr ""
 
-#: fl_i18n.cxx:390
+#: fl_i18n.cxx:401
 msgid "Please choose an existing file!"
 msgstr ""
 
-#: fl_i18n.cxx:391
+#: fl_i18n.cxx:402
 msgid "Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:392
+#: fl_i18n.cxx:403
 msgid "Filename"
 msgstr ""
 
-#: fl_i18n.cxx:393
+#: fl_i18n.cxx:404
 msgid "Manage Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:395
+#: fl_i18n.cxx:406
 msgid "My Computer"
 msgstr ""
 
-#: fl_i18n.cxx:397
+#: fl_i18n.cxx:408
 msgid "Filesystems"
 msgstr ""
 
-#: fl_i18n.cxx:399
+#: fl_i18n.cxx:410
 msgid "New Directory?"
 msgstr ""
 
-#: fl_i18n.cxx:400
+#: fl_i18n.cxx:411
 msgid "Preview"
 msgstr ""
 
-#: fl_i18n.cxx:402
+#: fl_i18n.cxx:413
 msgid "Save"
 msgstr ""
 
-#: fl_i18n.cxx:404
+#: fl_i18n.cxx:415
 msgid "Show:"
 msgstr ""
 
-#: fl_i18n_example.cxx:15 fl_i18n_example.cxx:44 fl_i18n_example.cxx:47
+#: fl_i18n_example.cxx:14 fl_i18n_example.cxx:53 fl_i18n_example.cxx:56
 msgid "Hello, world!"
 msgstr "Բարեվ"
 
-#: fl_i18n_example.cxx:45
+#: fl_i18n_example.cxx:54
 msgid "fl_i18n_example"
 msgstr ""

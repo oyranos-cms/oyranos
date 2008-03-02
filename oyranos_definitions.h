@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2005  Kai-Uwe Behrmann 
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann 
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -38,6 +38,8 @@
 /** default global search path @todo add installation dir */
 #define OY_PROFILE_PATH_SYSTEM_DEFAULT  "/usr/share/color/icc"
 
+#define OY_POLICY_HEADER "<!--?xml version=\"1.0\" encoding=\"UTF-8\"? -->\n\
+<!-- Oyranos policy format 1.0 -->"
 
 /*
  * users will usually configure their own settings, while administrators can

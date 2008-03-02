@@ -1,0 +1,80 @@
+README - FLMM extension for FLTK Version 1.1.6
+-------------------------------------------------
+
+WHAT IS FLMM?
+
+    FLMM is an set of additional widgets for the FLTK User Interface
+    Library. See fltk.matthiasm.com and www.fltk.org for 
+    more information.
+    
+
+LICENSING
+
+    FLMM comes with complete free source code. FLMM is available
+    under the terms of the GNU Library General Public License.
+    Contrary to popular belief, it can be used in commercial
+    software! (Even Bill Gates could use it.) 
+
+
+
+BUILDING AND INSTALLING FLTK UNDER UNIX AND MacOS X
+
+    Make sure that the FLTK library is installed on your system
+    (run 'make install' in your FLTK folder). Now unpack the FLMM
+    archive and run:
+      autoconf
+      ./configure
+      make
+      test/demo
+    To use FLMM in yur own projects, simply link your application with 
+    libfltk and libflmm.
+
+
+BUILDING FLTK UNDER MICROSOFT WINDOWS
+
+    Open the VisualC6 project file in the visualc folder
+	and compile and run the project 'demo'.
+    
+
+INTERNET RESOURCES
+
+    www.matthiasm.com/fltk.pl, www.fltk.org
+
+
+REPORTING BUGS
+
+    To report a bug in FLMM, send an email to
+    "flmm@matthiasm.com". Please include the FLMM version,
+    operating system & version, and compiler that you are using
+    when describing the bug or problem. 
+
+
+TRADEMARKS
+
+    Microsoft and Windows are registered trademarks of Microsoft
+    Corporation. UNIX is a registered trademark of the X/Open
+    Group, Inc.  OpenGL is a registered trademark of Silicon
+    Graphics, Inc.  MacOS is a registered trademark of Apple
+    Computers, Inc.
+
+
+COPYRIGHT
+
+    FLMM is copyright 2002-2006 by Matthias Melcher (mm@matthiasm.com)
+
+    This library is free software; you can redistribute it
+    and/or modify it under the terms of the GNU Library General
+    Public License as published by the Free Software Foundation;
+    either version 2 of the License, or (at your option) any
+    later version.
+
+    This library is distributed in the hope that it will be
+    useful, but WITHOUT ANY WARRANTY; without even the implied
+    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+    PURPOSE.  See the GNU Library General Public License for
+    more details.
+
+    You should have received a copy of the GNU Library General
+    Public License along with this library; if not, write to the
+    Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+    Boston, MA 02111-1307 USA.

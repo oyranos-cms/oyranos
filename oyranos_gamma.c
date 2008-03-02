@@ -70,6 +70,13 @@ int main( int argc , char** argv )
     return error;
   }
 
+  if(getenv("OYRANOS_DEBUG"))
+  {
+    int value = atoi(getenv("OYRANOS_DEBUG"));
+    if(value > 0)
+      oy_debug = value;
+  }
+
   /* cut off the screen information */
   if(display_name &&
      (ptr = strchr(display_name,':')) != 0)
@@ -101,7 +108,10 @@ int main( int argc , char** argv )
                             wrong_arg = "-y";
                         } else wrong_arg = "-y";
                         if(oy_debug) printf("y=%d\n",y); ++pos; break;
-              case 'h': printf("\n");
+              case 'v': oy_debug += 1; break;
+              case 'h':
+              default:
+                        printf("\n");
                         printf("oyranos-monitor v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a colour profile administration tool for monitors"));
@@ -117,6 +127,9 @@ int main( int argc , char** argv )
                         printf("\n");
                         printf("  %s\n",               _("Activate profiles:"));
                         printf("      %s\n",           argv[0]);
+                        printf("\n");
+                        printf("  %s\n",               _("General options:"));
+                        printf("      %s\n",           _("-v verbose"));
                         printf("\n");
                         exit (0);
                         break;
@@ -150,9 +163,6 @@ int main( int argc , char** argv )
     /* make shure the display name is correct including the screen */
     oySetMonitorProfile (oy_display_name, monitor_profile);
   }
-
-  /* check the default paths */
-  oyPathAdd( OY_PROFILE_PATH_USER_DEFAULT );
 
   error = oyActivateMonitorProfiles (display_name);
 

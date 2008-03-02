@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -54,8 +54,10 @@ int	oyCheckProfile_                   (const char* name,const char* coloursig);
 int	oyCheckProfile_Mem                (const void* mem, size_t size,
                                            const char* coloursig);
 
-int    oyProfileGetMD5_              ( void       *buffer,
-                                       size_t      size,
-                                       char       *md5_return );
+int     oyProfileGetMD5_             ( void       * buffer,
+                                       size_t       size,
+                                       char       * md5_return );
+
+int	oyCheckPolicy_               ( const char * name );
 
 #endif /* OYRANOS_CHECK_H */

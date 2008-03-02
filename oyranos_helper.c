@@ -34,6 +34,8 @@
 
 #include <stdio.h>
 
+intptr_t oy_observe_pointer_ = 0;
+
 /* --- internal API definition --- */
 
 /* internal memory handling */

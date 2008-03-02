@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -63,7 +63,6 @@
 
 /* --- Helpers  --- */
 /* small helpers */
-#define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
 #if 1
 #define ERR if (rc<=0 && oy_debug) { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
 #else
@@ -105,8 +104,8 @@ oyCheckProfile_                    (const char* name,
 
   /* release memory */
   if(header && size)
-    free(header);
-  if(fullName) free(fullName);
+    oyFree_m_(header);
+  if(fullName) oyFree_m_(fullName);
 
   DBG_NUM_S(("oyCheckProfileMem = %d",r))
 
@@ -163,7 +162,7 @@ oyProfileGetMD5_       ( void       *buffer,
     oy_md5_state_t state;
     md5_byte_t digest[16];
 
-    block = malloc(size);
+    oyAllocHelper_m_( block, char, size, oyAllocateFunc_, return 1);
     memcpy( block, buffer, size);
 
     memset( &block[44], 0, 4 );  /* flags */
@@ -176,7 +175,7 @@ oyProfileGetMD5_       ( void       *buffer,
 
     memcpy( md5_return, digest, 16 );
 
-    if(block) free (block);
+    if(block) oyFree_m_ (block);
 
     DBG_PROG_ENDE
     return 0;
@@ -186,6 +185,33 @@ oyProfileGetMD5_       ( void       *buffer,
     DBG_PROG_ENDE
     return 1;
   }
+}
+
+int
+oyCheckPolicy_               ( const char * name )
+{
+  char* header = 0; 
+  size_t size = 0;
+  int r = 1;
+
+  DBG_PROG_START
+
+  /* do check */
+  if (oyIsFileFull_(name))
+  {
+    size = 128;
+    header = oyReadFileToMem_ (name, &size, oyAllocateFunc_); DBG_PROG
+    if (size >= 128)
+      if(memcmp(  header, OY_POLICY_HEADER, strlen(OY_POLICY_HEADER)) == 0)
+        r = 0;
+  }
+
+  /* release memory */
+  if(header && size)
+    oyFree_m_(header);
+
+  DBG_PROG_ENDE
+  return r;
 }
 
 

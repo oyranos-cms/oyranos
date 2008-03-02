@@ -1,0 +1,9 @@
+
+
+July 5th, 2006
+ - Flmm_Message::choice would not hide unused buttons
+ - Fixed Makefiles for OS X/Unix
+
+Further information about Flmm can be found at http://fltk.matthiasm.com/
+
+-- MatthiasM, Nov 25 2004

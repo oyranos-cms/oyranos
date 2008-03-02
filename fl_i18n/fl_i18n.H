@@ -1,7 +1,7 @@
 /*
  * fl_i18n is a internationalisation helper library for FLTK.
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann 
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann 
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -35,6 +35,7 @@
 
 #ifdef USE_GETTEXT
 # include <libintl.h>
+#include <FL/x.H>
 # define _(text) threadGettext(text)
 #else
 # define _(text) text
@@ -46,7 +47,7 @@ const char* threadGettext( const char* text);
 /** tell about the locale path and select locale from environment */
 int         fl_initialise_locale   ( const char   *domain,
                                      const char   *locale_paths,
-                                     int           set_locale );
+                                     int           set_codeset );
 /** help with searching for the right locale path */
 int         fl_search_locale_path  ( int           n_locale_paths,
                                      const char  **locale_paths,

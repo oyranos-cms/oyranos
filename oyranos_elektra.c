@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -395,8 +395,82 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
       WARN_S( (_("default profile type %d; type does not exist"), type ) );
 
     if(oyWidgetTitleGet_( type, 0,0,0,0 ) == oyTYPE_DEFAULT_PROFILE)
+    {
       config_name = oyOptionGet_(type)-> config_string;
-    else if(type == oyDEVICE_PROFILE)
+#ifdef __APPLE__
+      /* these settings are not persistent (osX 10.4) */
+      /*if (0)*/
+      {
+        OSType dataColorSpace = 0;
+        CMError err;
+
+        switch(type)
+        {
+      case oyEDITING_RGB:            /**< Rgb Editing (Workspace) Profile */
+                dataColorSpace = cmRGBData; break;
+      case oyEDITING_CMYK:           /**< Cmyk Editing (Workspace) Profile */
+                dataColorSpace = cmCMYKData; break;
+      case oyEDITING_XYZ:            /**< XYZ Editing (Workspace) Profile */
+                dataColorSpace = cmXYZData; break;
+      case oyEDITING_LAB:            /**< Lab Editing (Workspace) Profile */
+                dataColorSpace = cmLabData; break;
+      case oyEDITING_GRAY:           /**< Gray Editing (Workspace) Profile */
+                dataColorSpace = cmGrayData; break;
+
+      case oyASSUMED_RGB:            /**< standard RGB assumed source profile */
+      case oyASSUMED_WEB:            /**< std internet assumed source static_profile*/
+      case oyASSUMED_CMYK:           /**< standard Cmyk assumed source profile*/
+      case oyASSUMED_XYZ:            /**< standard XYZ assumed source profile */
+      case oyASSUMED_LAB:            /**< standard Lab assumed source profile */
+      case oyASSUMED_GRAY:           /**< standard Gray assumed source profile*/
+      case oyPROFILE_PROOF:          /**< standard proofing profile */
+      case oyDEFAULT_PROFILE_START:
+      case oyDEFAULT_PROFILE_END:
+                break;
+        }
+
+
+        if(dataColorSpace != 0)
+        {
+          CMProfileLocation loc;
+          CMProfileRef prof=NULL;
+          const char *profil_basename;
+          char * profil_pathname = oyGetPathFromProfileName( name, oyAllocateFunc_);
+          char* file_name = oyAllocateFunc_(MAX_PATH);
+          FSRef   ref;
+          Boolean isDirectory;
+
+          if(name && strrchr(name,OY_SLASH_C))
+            profil_basename = strrchr(name,OY_SLASH_C)+1;
+          else
+            profil_basename = name;
+
+
+          /*loc.locType = cmPathBasedProfile;*/
+          snprintf( file_name/*loc.u.pathLoc.path*/, 255, "%s%s%s",
+                    profil_pathname, OY_SLASH, profil_basename);
+
+          loc.locType = cmFileBasedProfile;
+
+          /*err = FSMakeFSSpec ( 0, 0, file_name, &loc.u.fileLoc.spec);*/
+          err = FSPathMakeRef ( (unsigned char*) file_name, &ref, &isDirectory);
+          err = FSGetCatalogInfo ( &ref, 0, NULL, NULL,
+                                   &loc.u.fileLoc.spec, NULL );
+
+          err = CMOpenProfile ( &prof, &loc );
+          if(err) return err;
+
+          err = CMSetDefaultProfileBySpace ( dataColorSpace, prof);
+          if(err) return err;
+          err = CMCloseProfile( prof );
+
+          oyFree_m_(file_name);
+          oyFree_m_( profil_pathname );
+          return err;
+        }
+      }
+#endif
+    } else if(type == oyDEVICE_PROFILE)
       {
         int len = strlen(OY_REGISTRED_PROFILES)
                   + strlen(fileName);
@@ -535,23 +609,54 @@ int
 oyPathAdd_ (const char* pfad)
 {
  
-  int rc=0, n = 0;
+  int rc=0, n = 0, ndp = 0;
   Key *current, *checker;
-  int current_pos = 0, checker_pos = 0;
+  int current_pos = 0, checker_pos = 0, i;
   char* keyName = NULL;
   char* value = NULL, *check = NULL;
-  int has_local_path = 0, has_global_path = 0,
-      has_config_local_path = 0, has_config_global_path = 0;
   KeySet* myKeySet = NULL;
   KeySet* checkKeySet = NULL;
   int *remove_keys = NULL;
 
-  const char *config_user_path = OY_PROFILE_PATH_USER_DEFAULT;
-  const char *config_system_path = OY_PROFILE_PATH_SYSTEM_DEFAULT;
-  const char *config_local_path = OY_USERCOLORDIR OY_SLASH OY_ICCDIRNAME;
-  const char *config_global_path = OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME;
+#ifdef __APPLE__
+#define paths_n 8
+#else
+#define paths_n 4
+#endif
+  const char *static_paths[paths_n];
+  int         has_path[paths_n];
+
+  ndp = 0;   /* n default paths */
+
+#define TestAndSetDefaultPATH( path ) \
+  if(oyIsDir_( path )) \
+    static_paths[ndp++] = path;
+  
+
+  /* the OpenICC agreed upon *nix default paths */
+  TestAndSetDefaultPATH( OY_PROFILE_PATH_USER_DEFAULT );
+  TestAndSetDefaultPATH( OY_PROFILE_PATH_SYSTEM_DEFAULT );
+  TestAndSetDefaultPATH( OY_USERCOLORDIR OY_SLASH OY_ICCDIRNAME );
+  TestAndSetDefaultPATH( OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME );
+
+#ifdef __APPLE__
+  /* Apples ColorSync default paths */
+
+# define CSSystemPATH        "/System/Library/ColorSync/Profiles"
+# define CSGlobalInstallPATH "/Library/ColorSync/Profiles"
+# define CSUserPATH          "~/Library/ColorSync/Profiles"
+# define CSNetworkPath       "/Network/Library/ColorSync/Profiles"
+  TestAndSetDefaultPATH( CSSystemPATH );
+  TestAndSetDefaultPATH( CSGlobalInstallPATH );
+  TestAndSetDefaultPATH( CSUserPATH );
+  TestAndSetDefaultPATH( CSNetworkPath );
+
+#endif
 
   DBG_PROG_START
+
+  for( i = 0; i < ndp; ++i )
+    has_path[i] = 0;
 
   /* add path */
   /* search for empty keyname */
@@ -586,10 +691,9 @@ oyPathAdd_ (const char* pfad)
     if (value) DBG_PROG_S(( value ));
 
     /* Are the default paths allready there? */
-    if (strcmp(value, config_user_path) == 0) has_local_path = 1;
-    if (strcmp(value, config_system_path) == 0) has_global_path = 1;
-    if (strcmp(value, config_local_path) == 0) has_config_local_path = 1;
-    if (strcmp(value, config_global_path) == 0) has_config_global_path = 1;
+    for( i = 0; i < ndp; ++i )
+      if (strcmp(value, static_paths[i]) == 0)
+        has_path[i] = 1;
 
     checker_pos = 0;
     /* erase double occurencies of this path */
@@ -625,29 +729,16 @@ oyPathAdd_ (const char* pfad)
   if (checkKeySet) ksClose (checkKeySet);
   if (checkKeySet) ksDel (checkKeySet);
 
-  if (!has_global_path)
+  /* add missing default paths */
+  for( i = 0; i < ndp; ++i )
   {
-    keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-    rc = oyAddKey_valueComment_ (keyName, config_system_path, "");
+    if( !has_path[i] &&
+        !oyKeySetHasValue_( OY_PATHS, static_paths[i] ) )
+    {
+      keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
+      rc = oyAddKey_valueComment_ (keyName, static_paths[i], "");
+    }
   }
-  if (!has_local_path)
-  {
-    keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-    rc = oyAddKey_valueComment_ (keyName, config_user_path, "");
-  }
-  if (!has_config_local_path &&
-      !oyKeySetHasValue_( OY_PATHS, config_local_path) )
-  {
-    keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-    rc = oyAddKey_valueComment_ (keyName, config_local_path, "");
-  }
-  if (!has_config_global_path &&
-      !oyKeySetHasValue_( OY_PATHS, config_global_path) )
-  {
-    keyName = oySearchEmptyKeyname_ (OY_PATHS, OY_PATH);
-    rc = oyAddKey_valueComment_ (keyName, config_global_path, "");
-  }
-
 
   oyClose_();
   oyFree_m_ (keyName)
@@ -1100,9 +1191,13 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
         if (value && attributs[i] &&
             (strstr(value, attributs[i]) != 0))
         {
+          /*  Here comes a ranking for attributes, which should be better placed
+           *  in the profile or keys value itself for flexibility.
+           */
           if      (i == 0) n += 2;
           else if (i == 1) n += 2;
           else if (i == 2) n += 5;
+          else if (i == 4) n += 4;
           else             ++n;
           DBG_PROG_S(( "attribute count n = %d", n ));
         }

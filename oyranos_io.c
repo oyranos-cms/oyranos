@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -55,18 +55,6 @@
 
 /* --- internal API definition --- */
 
-/* separate from the external functions */
-int   oyPathsCount_             (void);
-char* oyPathName_               (int           number,
-                                 oyAllocFunc_t allocate_func);
-int   oyPathAdd_                (const char* pathname);
-void  oyPathRemove_             (const char* pathname);
-void  oyPathSleep_              (const char* pathname);
-void  oyPathActivate_           (const char* pathname);
-char* oyGetPathFromProfileName_ (const char*   profilename,
-                                 oyAllocFunc_t allocate_func);
-
-
 /* oyranos part */
 /* check for the global and the users directory */
 void oyCheckDefaultDirectories_ ();
@@ -77,7 +65,6 @@ char* oyFindProfile_ (const char* name);
 
 /* --- Helpers  --- */
 /* small helpers */
-#define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
 #if 1
 #define ERR if (rc<=0 && oy_debug) { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
 #else
@@ -144,7 +131,7 @@ oyReadFileToMem_(const char* name, size_t *size,
       DBG_PROG_S(("%u\n",((unsigned int)((size_t)size))));
 
       /* allocate memory */
-      mem = (char*) calloc (*size+1, sizeof(char));
+      oyAllocHelper_m_( mem, char, *size+1, oyAllocateFunc_, return 0);
 
       /* check and read */
       if ((fp != 0)
@@ -158,7 +145,7 @@ oyReadFileToMem_(const char* name, size_t *size,
         /* check again */
         if (s != *size)
         { *size = 0;
-          OY_FREE (mem)
+          oyFree_m_ (mem)
           mem = 0;
         } else {
           /* copy to external allocator */
@@ -166,9 +153,9 @@ oyReadFileToMem_(const char* name, size_t *size,
           mem = allocate_func(*size+1);
           if(mem) {
             memcpy( mem, temp, *size );
-            OY_FREE (temp)
+            oyFree_m_ (temp)
           } else {
-            OY_FREE (mem)
+            oyFree_m_ (mem)
             *size = 0;
           }
         }
@@ -281,7 +268,7 @@ oyIsDir_ (const char* path)
   DBG_PROG_S(("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR))
   DBG_PROG_S(("status.st_mode = %d", (int)status.st_mode))
   DBG_PROG_S(("name = %s ", name))
-  OY_FREE (name)
+  oyFree_m_ (name)
   r = !r &&
        ((status.st_mode & S_IFMT) & S_IFDIR);
 
@@ -348,7 +335,7 @@ oyIsFile_ (const char* fileName)
 
   r = oyIsFileFull_(name);
 
-  OY_FREE (name) DBG_PROG
+  oyFree_m_ (name) DBG_PROG
 
   DBG_PROG_ENDE
   return r;
@@ -366,7 +353,7 @@ oyMakeDir_ (const char* path)
 
   DBG_PROG
   rc = mkdir (name, mode);
-  OY_FREE (name)
+  oyFree_m_ (name)
 
   DBG_PROG_ENDE
   return rc;
@@ -488,7 +475,7 @@ oyCheckDefaultDirectories_ ()
                  parentDefaultUserDir ));
       oyMakeDir_( parentDefaultUserDir);
     }
-    OY_FREE (parentDefaultUserDir)
+    oyFree_m_ (parentDefaultUserDir)
 
     DBG_PROG_S( ("Try to create users default directory %s\n",
                OY_PROFILE_PATH_USER_DEFAULT ) )
@@ -512,7 +499,7 @@ oyFindProfile_ (const char* fileName)
     DBG_PROG
     fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
     sprintf(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
-    OY_FREE(path_name)
+    oyFree_m_(path_name)
     DBG_PROG_S(( fullFileName ))
   } else
   {
@@ -532,10 +519,10 @@ oyFindProfile_ (const char* fileName)
 
 /* public API implementation */
 
-/* profile lists API */
+/* profile and other file lists API */
 
 #define MAX_DEPTH 64
-struct OyProfileList_s_ {
+struct OyFileList_s_ {
   int hopp;
   const char* coloursig;
   int mem_count;
@@ -545,7 +532,7 @@ struct OyProfileList_s_ {
 
 int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
 {
-  struct OyProfileList_s_ *l = (struct OyProfileList_s_*)data;
+  struct OyFileList_s_ *l = (struct OyFileList_s_*)data;
 
       if (!oyCheckProfile_(full_name, l->coloursig))
       {
@@ -566,10 +553,49 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
   return 0;
 }
 
+int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
+{
+  struct OyFileList_s_ *l = (struct OyFileList_s_*)data;
+  /* last 4 chars */
+  const char * end = NULL;
+
+  if(strlen(full_name) > 4)
+    end = full_name + strlen(full_name) - 4;
+
+      if( (end[0] == '.') &&
+          (end[1] == 'x' || end[1] == 'X') &&
+          (end[2] == 'm' || end[2] == 'M') &&
+          (end[3] == 'l' || end[3] == 'L') &&
+          !oyCheckPolicy_(full_name) )
+      {
+        if(l->count_files >= l->mem_count)
+        {
+          char** temp = l->names;
+          l->names = (char**) calloc (sizeof(char*), l->mem_count+l->hopp);
+          memcpy(l->names, temp, sizeof(char*) * l->mem_count);
+          l->mem_count += l->hopp;
+        }
+
+        oyAllocString_m_( l->names[l->count_files], oyStrblen_(full_name),
+                          oyAllocateFunc_, return 1 );
+        l->names[l->count_files] = (char*) calloc (sizeof(char)*2,
+                                                   strlen(full_name));
+        
+        oyStrcpy_(l->names[l->count_files], full_name);
+        ++l->count_files;
+      } /*else */
+        /*WARN_S(("%s in %s is not a valid profile", file_name, path)); */
+  return 0;
+}
+
 char**
 oyProfileListGet_                  (const char* coloursig, int * size)
 {
-  struct OyProfileList_s_ l = {128, NULL, 128, 0, 0};
+  struct OyFileList_s_ l = {128, NULL, 128, 0, 0};
+  int count = oyPathsCount_();
+  char ** path_names = NULL;
+
+  path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
 
   l.coloursig = coloursig;
 
@@ -581,9 +607,43 @@ oyProfileListGet_                  (const char* coloursig, int * size)
   l.mem_count = l.hopp;
   l.count_files = 0;
 
-  l.names = (char**) calloc (sizeof(char*), l.mem_count);
+  oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 
-  oyRecursivePaths_(oyProfileListCb_, (void*) &l);
+  /* add a none existant profile */
+  oyAllocString_m_(l.names[l.count_files], 48, oyAllocateFunc_, return 0);
+  oySnprintf_( l.names[l.count_files++] , 48, "%s", _("[none]") );
+
+  oyRecursivePaths_( oyProfileListCb_, (void*) &l,
+                     (const char**)path_names, count );
+
+  oyOptionChoicesFree( oyWIDGET_POLICY, &path_names, count );
+
+  *size = l.count_files;
+  oy_warn_ = 1;
+  DBG_PROG_ENDE
+  return l.names;
+}
+
+char**
+oyPolicyListGet_                  (int * size)
+{
+  struct OyFileList_s_ l = {128, NULL, 128, 0, 0};
+  int count = 0;
+  const char ** path_names = NULL;
+ 
+  DBG_PROG_START
+ 
+  path_names = oyConfigPathsGet_( &count, "settings" );
+
+  oy_warn_ = 0;
+
+  l.names = 0;
+  l.mem_count = l.hopp;
+  l.count_files = 0;
+
+  oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
+
+  oyRecursivePaths_(oyPolicyListCb_, (void*) &l, path_names, count);
 
   *size = l.count_files;
   oy_warn_ = 1;
@@ -594,13 +654,18 @@ oyProfileListGet_                  (const char* coloursig, int * size)
 /** @internal
  *  doInPath and data must fit, doInPath can operate on data and after finishing
  *  oyRecursivePaths_ data can be processed further
+
+ * TODO: move specifying paths out as arguments
+
  */
 int
-oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
+oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*),
+                     void* data,
+                     const char ** path_names,
+                     int count )
 {
  
   int r = 0;
-  int count = oyPathsCount_();
   int i;
 
   static int war = 0;
@@ -616,29 +681,21 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
     struct stat statbuf;
     struct dirent *entry[MAX_DEPTH];
     DIR *dir[MAX_DEPTH];
-    char *p = NULL;
-    char *path = NULL;
+    const char *path = path_names[i];
     int l = 0; /* level */
     int run = !r;
     int path_is_double = 0;
     int j;
 
-    p = oyPathName_(i, oyAllocateFunc_);
-    path = oyMakeFullFileDirName_(p);
-    if(!p || !strlen(p))
-      WARN_S(("no path given on pos %d\n", i))
-    OY_FREE( p );
-
     /* check for doubling of paths, without checking recursively */
     {
       for( j = 0; j < i; ++j )
-      { char *p  = oyPathName_( j, oyAllocateFunc_);
+      { const char *p  = path_names[j];
         char *pp = oyMakeFullFileDirName_( p );
         if( p && pp &&
-            (strstr( path, pp ) != 0) )
+            (strcmp( path, pp ) == 0) )
           path_is_double = 1;
-        OY_FREE( p );
-        OY_FREE( pp );
+        oyFree_m_( pp );
       }
       for( j = 0; j < MAX_DEPTH; ++j )
       {
@@ -754,7 +811,6 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
         if(dir[j]) closedir(dir[j]);;
         dir[j] = NULL;
       }
-    OY_FREE(path)
   }
 
   DBG_PROG_ENDE

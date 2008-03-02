@@ -11,15 +11,16 @@ XINERAMA_LIB = -lXinerama
 X11_LIB_PATH = -L/usr/X11R6/lib$(BARCH) -L/usr/lib$(BARCH) -L$(libdir)
 X11_LIBS=$(X11_LIB_PATH) -lX11 $(XF86VMODE_LIB) -lX11 -lXext -lXinerama -lXxf86vm $(XINERAMA_LIB)
 FLTK = 1
-FLTK_H = -I/usr/include/freetype2 -march=i586 -mtune=i686 -fmessage-length=0 -D_FORTIFY_SOURCE=2  -fno-strict-aliasing
-FLTK_LIBS = -lfltk_images -lpng -lz -ljpeg -lfltk_gl -lGLU -lGL -lfltk -lXft -lXinerama -lpthread -lm -lXext -lX11
+FLTK_H = -I/data3/CD/programme/fltk118-utf8-2007-07-14 -I/usr/include/freetype2 -Wall -g -I/usr/X11R6/include -D_THREAD_SAFE -D_REENTRANT
+FLTK_LIBS = -L/data3/CD/programme/fltk118-utf8-2007-07-14/lib -L/usr/X11R6/lib -Wall -g -L/usr/X11R6/lib -lfltk-utf8_images -lpng -lz -ljpeg -lfltk-utf8_gl -lGLU -lGL -lfltk-utf8 -lfltk_xutf8 -lXft -lXinerama -lpthread -ldl -lm -lXext -lX11 
+fltkconfig = /data3/CD/programme/fltk118-utf8-2007-07-14/fltk-utf8-config
 dl = -ldl
 GETTEXT = -DUSE_GETTEXT
 DEBUG = -Wall -g -DDEBUG --pedantic
 DEBUG_SWITCH = -v
-CFLAGS =  $(DEBUG) $(INCL) -fPIC -DPIC
-CXXFLAGS =  $(DEBUG) $(INCL) $(FLTK_H) -fPIC -DPIC
-LDFLAGS = -L/usr/local/lib -L. $(dl)
+CFLAGS =  $(DEBUG) $(INCL) -Wall -g -fPIC -DPIC
+CXXFLAGS =  $(DEBUG) $(INCL) $(FLTK_H) -Wall -g -fPIC -DPIC
+LDFLAGS = -Wall -g -L/usr/X11R6/lib -L/opt/kai-uwe/lib -L. $(dl)
 TARGET=fl_i18n
 VERSION=0.0.2
 COMPILE_OPTIONS=-DUSE_THREADS $(GETTEXT)
@@ -51,7 +52,7 @@ ifdef APPLE
   I18N_LIB = $(intl) $(LIBNAME) #-liconv
   I18N_LIBSTAT = /opt/local/lib/libintl.a $(LIBNAME) #-liconv
   INCL=-I$(includedir) -I/usr/X11R6/include -I./ -I/usr/include/gcc/darwin/default/c++
-  REZ = fltk-config --post $@;
+  REZ = $(fltkconfig) --post $@;
   DBG_LIBS = #-lMallocDebug
   MSGMERGE := msgmerge
   XGETTEXT_OPTIONS = --keyword=gettext \
@@ -92,10 +93,11 @@ endif
 INCL_DEP = $(INCL) $(FLTK_H) $(ALL_SOURCEFILES)
 ALL_INCL = $(INCL) $(FLTK_H) 
 
-CXXFLAGS=$(OPTS) $(ALL_INCL)
-CFLAGS = $(OPTS) $(ALL_INCL)
+CXXFLAGS_=$(OPTS) $(ALL_INCL) $(CXXFLAGS)
+CFLAG_   = $(OPTS) $(ALL_INCL) $(CFLAGS)
 
-LDLIBS = -L/lib -L./ $(I18N_LIB) $(FLTK_LIBS) \
+LDLIBS_ = -L./ $(I18N_LIB) $(FLTK_LIBS) $(LDFLAGS) \
+	-L/lib \
 	$(DBG_LIBS)
 
 CPP_HEADERS = \
@@ -171,9 +173,9 @@ dynamic:	$(BINTARGET)
 
 $(BINTARGET):	$(BASE) $(OBJECTS) $(LINGUAS_SRC) $(I18N_OBJECTS) $(LIBNAME)
 	echo Verknuepfen $@ ... $(OBJECTS)
-	-$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(BINTARGET) \
+	-$(CXX) $(CXXFLAGS_) $(LDFLAGS) -o $(BINTARGET) \
 	$(OBJECTS) \
-	$(LDLIBS) $(LINK_LIB_PATH) $(LINK_SRC_PATH)
+	$(LDLIBS_) $(LINK_LIB_PATH) $(LINK_SRC_PATH)
 	$(REZ)
 
 
@@ -189,7 +191,7 @@ strip: $(BINTARGET)
 static_static:	$(OBJECTS)
 	$(CXX) $(OPTS) -o $(BINTARGET) \
 	$(OBJECTS) \
-	$(LDLIBS) -static -ljpeg -lpng -lX11 -lpthread -lz $(dl) \
+	$(LDLIBS_) -static -ljpeg -lpng -lX11 -lpthread -lz $(dl) \
 	-lfreetype -lfontconfig -lXrender -lGLU -lXext -lexpat \
 	-L/opt/local/lib
 	$(REZ)
@@ -247,15 +249,19 @@ EXEEXT		=
 
 .c.o:
 	echo Compiling $< ...
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS_) -c $<
 
 .cxx.o:
 	echo Compiling $< ...
-	$(CXX) $(CXXFLAGS) -c $<
+	$(CXX) $(CXXFLAGS_) -c $<
 
 .cpp.o:
 	echo Compiling $< ...
-	$(CXX) $(CXXFLAGS) -c $<
+	$(CXX) $(CXXFLAGS_) -c $<
+
+.fl.cxx:
+	echo Expanding $< ...
+	fluid -c $<
 
 .po:
 	echo Generating $@ ...
@@ -301,5 +307,6 @@ $(TARGET).spec:
 
 
 .PHONY: install uninstall
+#.SILENT:
 
 

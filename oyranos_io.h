@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -73,25 +73,8 @@ void*	oyGetProfileBlock_                (const char*   profilename,
                                            size_t       *size,
                                            oyAllocFunc_t allocate_func);
 
+char**  oyPolicyListGet_                  (int         * size);
 
-/* complete an name from file including oyResolveDirFileName */
-char*   oyMakeFullFileDirName_            (const char* name);
-/* find an file/dir and do corrections on  ~ ; ../  */
-char*   oyResolveDirFileName_             (const char* name);
-char*   oyExtractPathFromFileName_        (const char* name);
-char*   oyGetHomeDir_                     ();
-char*   oyGetParent_                      (const char* name);
-int     oyRecursivePaths_      (int (*doInPath) (void*,const char*,const char*),
-                                void* data);
-
-int oyIsDir_      (const char* path);
-int oyIsFile_     (const char* fileName);
-int oyIsFileFull_ (const char* fullFileName);
-int oyMakeDir_    (const char* path);
-
-int   oyWriteMemToFile_ (const char* name, void* mem, size_t size);
-char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
-                         oyAllocFunc_t allocate_func);
 
 /* oyranos part */
 /* check for the global and the users directory */

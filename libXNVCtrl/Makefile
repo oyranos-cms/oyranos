@@ -13,7 +13,7 @@ X11_LIBS=$(X11_LIB_PATH) -lX11 $(XF86VMODE_LIB) -lX11 -lXext -lXinerama -lXxf86v
 dl = -ldl
 DEBUG = -Wall -g -DDEBUG --pedantic
 DEBUG_SWITCH = -v
-CFLAGS= $(DEBUG) $(INCL) -fPIC -DPIC
+CFLAGS= $(DEBUG) $(INCL) -Wall -g -fPIC -DPIC
 
 COLLECT = ar cru
 RANLIB = ranlib

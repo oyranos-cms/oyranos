@@ -1,0 +1,31 @@
+#!/bin/sh -x
+
+# exportobjects.sh
+# ----------------
+#
+# Export the list of all backend's objects files
+# to be included in the static version libelektra
+#
+# (c) 2006 Yannick Lecaillez
+
+echo -n '' > objects
+
+for lib in "$@"
+do
+	if [ -r $lib ]; then
+		echo "Get objects files for $lib ..."
+		if [ "$OSTYPE" == "darwin8.0" ]; then
+			echo "osX Tiger : $lib -> $lib.ppc.a"
+			lipo -thin ppc $lib -output $lib.ppc.a
+			file $lib.ppc.a
+			@AR@ t $lib.ppc.a | @AWK@ -v "dir=`dirname $lib.ppc.a`" '{printf "%s/%s ", dir,$0}' | sed "s%`dirname $lib`/__.SYMDEF SORTED%%" >> objects
+		else
+			@AR@ t $lib | @AWK@ -v "dir=`dirname $lib`" '{printf "%s/%s ", dir,$0}' >> objects
+		fi
+	else
+		echo "SKIPED: $lib doesn't exist."
+	fi
+done
+
+echo "" >> objects
+	

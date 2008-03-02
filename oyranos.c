@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -59,17 +59,6 @@
 
 /* --- internal API definition --- */
 
-/* separate from the external functions */
-int   oyPathsCount_             (void);
-char* oyPathName_               (int           number,
-                                 oyAllocFunc_t allocate_func);
-int   oyPathAdd_                (const char* pathname);
-void  oyPathRemove_             (const char* pathname);
-void  oyPathSleep_              (const char* pathname);
-void  oyPathActivate_           (const char* pathname);
-char* oyGetPathFromProfileName_ (const char*   profilename,
-                                 oyAllocFunc_t allocate_func);
-
 
 /* oyranos part */
 /* check for the global and the users directory */
@@ -78,9 +67,6 @@ void oyCheckDefaultDirectories_ ();
 char* oyFindProfile_ (const char* name);
 
 
-
-/* small helpers */
-#define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
 
 
 /* --- function definitions --- */
@@ -101,7 +87,7 @@ oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
     size_t size = 128;
     char* header = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
     success = !oyCheckProfile_Mem (header, size, 0);
-    OY_FREE (header)
+    oyFree_m_ (header);
     if (success) {
       DBG_S((full_name))
       DBG_V((strlen(full_name)))
@@ -135,6 +121,8 @@ oyGetPathFromProfileName_       (const char*   fileName,
   if (fileName && !strchr(fileName, OY_SLASH_C))
   {
     char search[MAX_PATH];
+    int count = 0;
+    char ** path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
 
     DBG_PROG
 
@@ -145,41 +133,18 @@ oyGetPathFromProfileName_       (const char*   fileName,
       DBG_PROG_ENDE
       return 0;
     }
-    success = oyRecursivePaths_(oyGetPathFromProfileNameCb_,(void*)search);
-#   if 0
-    int   n_paths = oyPathsCount_ (),
-          i;
+    success = oyRecursivePaths_( oyGetPathFromProfileNameCb_, (void*)search,
+                                 (const char**)path_names, count );
 
-    DBG_PROG_S(("pure filename found"))
-    DBG_PROG_S(("n_paths = %d", n_paths ))
-    fullFileName = (char*) allocate_func( MAX_PATH );
+    oyOptionChoicesFree( oyWIDGET_POLICY, &path_names, count );
 
-    for (i = 0; i < n_paths; i++)
-    { /* test profile */
-      char* ptr = oyPathName_ (i, oyAllocateFunc_);
-      pathName = oyMakeFullFileDirName_ (ptr);
-      sprintf (fullFileName, "%s%s%s", pathName, OY_SLASH, fileName);
-
-      DBG_PROG_S((pathName))
-      DBG_PROG_S((fullFileName))
-
-      if (oyIsFileFull_(fullFileName))
-      { DBG_PROG
-        size = 128;
-        header = oyReadFileToMem_ (fullFileName, &size, allocate_func);
-        success = !oyCheckProfile_Mem (header, size);
-      }
-
-      OY_FREE (ptr)
-      OY_FREE (header)
-#     endif
       if (success) { /* found */
         int len = 0;
         DBG_S((search))
         if(search[0] != 0) len = strlen(search);
         if(len) {
           char *ptr = 0;
-          pathName = (char*) allocate_func( len+1 );
+          oyAllocHelper_m_( pathName, char, len+1, allocate_func, return 0 );
           sprintf(pathName, search);
           ptr = strrchr(pathName , OY_SLASH_C);
           if(ptr)
@@ -188,8 +153,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
         DBG_PROG_S(( pathName ))
         DBG_PROG_ENDE
         return pathName;
-      }
-    /*} */
+      } else
 
     if (!success) {
       if(oy_warn_)
@@ -221,15 +185,15 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
     pathName = oyExtractPathFromFileName_(fullFileName);
 
-    OY_FREE (header)
+    oyFree_m_ (header);
   }
 
   if (!success)
-  { OY_FREE (pathName)
+  { oyFree_m_ (pathName);
     pathName = 0;
   }
 
-  OY_FREE (fullFileName)
+  oyFree_m_ (fullFileName);
 
   DBG_PROG_ENDE
   return pathName;
@@ -273,6 +237,191 @@ oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
   return r;
 }
 
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+
+typedef struct {
+  char   *data;
+  SInt32  size;
+} refcon;
+
+OSErr
+oyFlattenProfileProc (
+   SInt32 command, 
+   SInt32 *size, 
+   void *data, 
+   void *refCon)
+{
+  /* Alle Bestandteile einsammeln */
+  if(*size)
+  {
+    refcon *ref = (refcon*) refCon;
+
+    char* block = NULL;
+
+    oyAllocHelper_m_( block,char, ref->size + *size, oyAllocateFunc_, return 1);
+    /* old data */
+    if(ref->data && ref->size) {
+      memcpy(block, ref->data, ref->size);
+      free(ref->data);
+    }
+    /* new data */
+    memcpy( &block[ref->size], data, *size );
+
+    ref->data = block;
+    ref->size += *size;
+  }
+  DBG_PROG_S(("command:%d size:%d", (int)command, (int)*size))
+
+  return 0;
+}
+
+OSErr
+oyFlattenProfileProcSize (
+   SInt32 command, 
+   SInt32 *size, 
+   void *data, 
+   void *refCon)
+{
+  /* Alle Bestandteile einsammeln */
+  if(*size)
+  {
+    refcon *ref = (refcon*) refCon;
+    ref->size += *size;
+  }
+  DBG_PROG_S(("command:%d size:%d", (int)command, (int)*size))
+
+  return 0;
+}
+
+
+int
+oyGetProfileBlockOSX (CMProfileRef prof, char **block, size_t *size, oyAllocFunc_t allocate_func)
+{
+    CMProfileLocation loc;
+    Boolean bol;
+    refcon ref = {0,0};
+    Str255 str;
+    ScriptCode code;
+    CMError err = 0;
+    const unsigned char *profil_name;
+
+  DBG_PROG_START
+
+    CMGetProfileLocation(prof, &loc);
+    switch(loc.locType)
+    {
+      case cmNoProfileBase:
+             DBG_PROG_S(("The profile is a temporary profile."))
+             break;
+      case cmFileBasedProfile:
+             DBG_PROG_S(("The profile is a file based profile."))
+             break;
+      case cmHandleBasedProfile:
+             DBG_PROG_S(("The profile is a profile handle."))
+             break;
+      case cmPtrBasedProfile:
+             DBG_PROG_S(("The profile is a pinter based profile."))
+             break;
+      case cmProcedureBasedProfile:
+             DBG_PROG_S(("The profile is a prozedural profile."))
+             break;
+      case cmPathBasedProfile:
+             DBG_PROG_S(("The profile is a path profile."))
+             break;
+      case cmBufferBasedProfile:
+             DBG_PROG_S(("The profile is a memory block Profile."))
+             break;
+      default:
+             DBG_PROG_S(("no profile found?"))
+             break;
+    }
+
+#if 0
+    /* only the size */
+    if(*size == 0) {
+      err = CMFlattenProfile ( prof, 0, oyFlattenProfileProcSize, &ref, &bol);
+      *size = ref.size;
+      return err;
+    }
+#endif
+    err = CMFlattenProfile ( prof, 0, oyFlattenProfileProc, &ref, &bol);
+
+    err = 0;
+    CMGetScriptProfileDescription(prof, str, &code);
+      DBG_PROG_V(( (int)str[0] ))
+
+    profil_name = str; ++profil_name;
+    if(ref.size && ref.data)
+    {
+        *size = ref.size;
+        oyAllocHelper_m_( *block, char, ref.size, allocate_func, return 1);
+        memcpy(*block, ref.data, ref.size);
+          DBG_MEM_V( size )
+    }
+  DBG_PROG_ENDE
+  return 0;
+}
+
+char*
+oyGetProfileNameOSX (CMProfileRef prof, oyAllocFunc_t allocate_func)
+{
+  char * name = NULL;
+  CMProfileLocation loc;
+
+  CMGetProfileLocation(prof, &loc);
+
+      switch(loc.locType)
+      {
+        case cmNoProfileBase:
+               DBG_PROG_S(("The profile is a temporary profile."))
+               break;
+        case cmFileBasedProfile:
+               DBG_PROG_S(("The profile is a file based profile."))
+               {
+                 CMFileLocation file_loc = loc.u.fileLoc;
+                 FSSpec spec = file_loc.spec;
+                 unsigned char *name_ = NULL;
+                 FSRef ref;
+                 CMError err = 0;
+
+                 oyAllocHelper_m_( name_, unsigned char, 1024, 
+                                   allocate_func, return 0 );
+                 err = FSpMakeFSRef( &spec, &ref );
+                 err = FSRefMakePath( &ref, name_, 1024 );
+                 fprintf(stderr, "file is at: %s\n", name_ );
+                 if(err == noErr)
+                   name = (char*) name_;
+               }
+               break;
+        case cmHandleBasedProfile:
+               DBG_PROG_S(("The profile is a profile handle."))
+               break;
+        case cmPtrBasedProfile:
+               DBG_PROG_S(("The profile is a pinter based profile."))
+               break;
+        case cmProcedureBasedProfile:
+               DBG_PROG_S(("The profile is a prozedural profile."))
+               break;
+        case cmPathBasedProfile:
+               DBG_PROG_S(("The profile is a path profile."))
+               break;
+        case cmBufferBasedProfile:
+               DBG_PROG_S(("The profile is a memory block Profile."))
+               break;
+        default:
+               DBG_PROG_S(("no profile found?"))
+               break;
+      }
+
+  return name;
+}
+#endif
+
+int*
+oyGroupSetGet            (oyGROUP group, int * count )
+{
+}
 
 char*
 oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
@@ -286,19 +435,146 @@ oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
 
   /* a static_profile */
   if(type == oyASSUMED_WEB) {
-    name = (char*) alloc_func (MAX_PATH);
-    if( !name ) return 0;
+    oyAllocHelper_m_( name, char, MAX_PATH, alloc_func, return NULL );
     sprintf(name, OY_WEB_RGB);
     DBG_PROG_S(( name ))
     return name;
   }
 
-  name = oyGetKeyValue_( oyOptionGet_(type)-> config_string, alloc_func );
+#ifdef __APPLE__
+  {
+    OSType dataColorSpace = 0;
+    CMError err;
+    CMProfileRef prof=NULL;
+    UInt32 version = 0;
+    const oyOption_t_ * t = 0;
 
-  if(name) {
+    err = CMGetColorSyncVersion(&version);
+    if(err == noErr)
+      DBG_PROG_S(( "ColorSync version: %d\n", (int)version ));
+
+    switch(type)
+    {
+      case oyEDITING_RGB:            /**< Rgb Editing (Workspace) Profile */
+                dataColorSpace = cmRGBData; break;
+      case oyEDITING_CMYK:           /**< Cmyk Editing (Workspace) Profile */
+                dataColorSpace = cmCMYKData; break;
+      case oyEDITING_XYZ:            /**< XYZ Editing (Workspace) Profile */
+                dataColorSpace = cmXYZData; break;
+      case oyEDITING_LAB:            /**< Lab Editing (Workspace) Profile */
+                dataColorSpace = cmLabData; break;
+      case oyEDITING_GRAY:           /**< Gray Editing (Workspace) Profile */
+                dataColorSpace = cmGrayData; break;
+
+      case oyASSUMED_RGB:            /**< standard RGB assumed source profile */
+      case oyASSUMED_WEB:            /**< std internet assumed source static_profile*/
+      case oyASSUMED_CMYK:           /**< standard Cmyk assumed source profile*/
+      case oyASSUMED_XYZ:            /**< standard XYZ assumed source profile */
+      case oyASSUMED_LAB:            /**< standard Lab assumed source profile */
+      case oyASSUMED_GRAY:           /**< standard Gray assumed source profile*/
+      case oyPROFILE_PROOF:          /**< standard proofing profile */
+                t = oyOptionGet_(type);
+                name = oyGetKeyValue_( t->config_string, alloc_func );
+                break;
+      case oyDEFAULT_PROFILE_START:
+      case oyDEFAULT_PROFILE_END:
+                break;
+    }
+
+    if(dataColorSpace)
+      err = CMGetDefaultProfileBySpace ( dataColorSpace, &prof);
+    if(!name && !err && prof)
+    {
+      CMProfileLocation loc;
+      err = CMGetProfileLocation( prof, &loc );
+      
+      switch(loc.locType)
+      {
+        case cmNoProfileBase:
+               DBG_PROG_S(("The profile is a temporary profile."))
+               break;
+        case cmFileBasedProfile:
+               DBG_PROG_S(("The profile is a file based profile."))
+               {
+                 CMFileLocation file_loc = loc.u.fileLoc;
+                 FSSpec spec = file_loc.spec;
+                 unsigned char *name_ = NULL;
+                 FSRef ref;
+
+                 oyAllocHelper_m_( name_, unsigned char, MAX_PATH, alloc_func,
+                                   return NULL );
+                 err = FSpMakeFSRef( &spec, &ref );
+                 err = FSRefMakePath( &ref, name_, 1024 );
+                 DBG_PROG_S(( "file is at: %s\n", name_ ));
+                 if(err == noErr)
+                   name = (char*) name_;
+               }
+               break;
+        case cmHandleBasedProfile:
+               DBG_PROG_S(("The profile is a profile handle."))
+               break;
+        case cmPtrBasedProfile:
+               DBG_PROG_S(("The profile is a pinter based profile."))
+               break;
+        case cmProcedureBasedProfile:
+               DBG_PROG_S(("The profile is a prozedural profile."))
+               break;
+        case cmPathBasedProfile:
+               DBG_PROG_S(("The profile is a path profile."))
+               {
+                 CMPathLocation path_loc = loc.u.pathLoc;
+                 char* path = path_loc.path;
+                 char *name_ = NULL;
+
+                 oyAllocHelper_m_( name_, char, MAX_PATH, alloc_func,
+                                   return NULL );
+                 snprintf( name_, 256, "%s", path );
+                 DBG_PROG_S(( "file is to: %s\n", name_ ));
+                 name = name_;
+               }
+               break;
+        case cmBufferBasedProfile:
+               DBG_PROG_S(("The profile is a memory block Profile."))
+               break;
+        default:
+               DBG_PROG_S(("no profile found?"))
+               break;
+      }
+    } else if(!name)
+      DBG_PROG_S(( "could not find:%d Profile:%s\n", (int)err, prof ? "no" : "yes" ));
+
+    err = CMCloseProfile( prof );
+  }
+#else
+  {
+    const oyOption_t_ * t = oyOptionGet_(type);
+    if( !t->config_string )
+    {
+      WARN_S(("Option not supported type: %d", type))
+      return NULL;
+    }
+    name = oyGetKeyValue_( t->config_string, alloc_func );
+  }
+#endif
+
+  if(name)
+  {
     DBG_PROG_S((name));
+    /* cut off the path part of a file name */
+    if (strrchr (name, OY_SLASH_C))
+    {
+      char * f = NULL;
+
+      oyAllocHelper_m_( f, char, strlen(name) + 1, oyAllocateFunc_, return 0);
+      sprintf( f, "%s", name );
+      sprintf( name, strrchr (f, OY_SLASH_C) + 1 );
+      oyFree_m_(f);
+    }
   } else {
-    name = strdup( oyOptionGet_(type)-> default_string );
+    const oyOption_t_ * t = oyOptionGet_(type);
+    oyAllocHelper_m_( name, char, strlen( t->default_string ) + 1,
+                      alloc_func, return NULL );
+    sprintf( name, "%s", t->default_string );
   }
 
   DBG_PROG_ENDE
@@ -327,8 +603,8 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
                     oyDEFAULT_PROFILE type, const char* comnt)
 {
   int r = 0;
-  char *fullFileName, *resolvedFN;
-  const char *fileName;
+  char *fullFileName = NULL, *resolvedFN = NULL;
+  const char *fileName = NULL;
 
   DBG_PROG_START
 
@@ -337,14 +613,15 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
   else
     fileName = name;
 
-  fullFileName = (char*) calloc (sizeof(char),
-                  strlen(OY_PROFILE_PATH_USER_DEFAULT) + strlen (fileName) + 4);
+  oyAllocHelper_m_( fullFileName, char,
+                   strlen(OY_PROFILE_PATH_USER_DEFAULT) + strlen (fileName) + 4,
+                    oyAllocateFunc_, return 1);
 
   sprintf (fullFileName, "%s%s%s",
            OY_PROFILE_PATH_USER_DEFAULT, OY_SLASH, fileName);
 
   resolvedFN = oyResolveDirFileName_ (fullFileName);
-  OY_FREE(fullFileName)
+  oyFree_m_(fullFileName);
   fullFileName = resolvedFN;
 
   if (!oyCheckProfile_Mem( mem, size, 0))
@@ -362,7 +639,7 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
   DBG_PROG_S(("%s", name))
   DBG_PROG_S(("%s", fileName))
   DBG_PROG_S(("%ld %d", (long int)&((char*)mem)[0] , (int)size))
-  OY_FREE(fullFileName)
+  oyFree_m_(fullFileName);
 
   DBG_PROG_ENDE
   return r;
@@ -374,7 +651,7 @@ oyComp_t_*
 oyInitComp_ (oyComp_t_ *list, oyComp_t_ *top)
 { DBG_PROG_START
   if (!list)
-    list = (oyComp_t_*) calloc (1, sizeof(oyComp_t_));
+    oyAllocHelper_m_( list, oyComp_t_, 1, oyAllocateFunc_, );
 
   list->next = 0;
 
@@ -419,9 +696,9 @@ oySetComp_         (oyComp_t_ *compare, const char* keyName,
                     const char* value, int hits )
 {
   DBG_PROG_START
-  compare->name = (char*) calloc( strlen(keyName)+1, sizeof(char) );
+  oyAllocHelper_m_( compare->name, char, strlen(keyName)+1, oyAllocateFunc_, );
   memcpy (compare->name, keyName, strlen(keyName)+1); 
-  compare->val = (char*) calloc( strlen(value)+1, sizeof(char) );;
+  oyAllocHelper_m_( compare->val, char, strlen(value)+1, oyAllocateFunc_, );
   memcpy (compare->val, value, strlen(value)+1); 
   compare->hits = hits;
   DBG_PROG_ENDE
@@ -439,9 +716,9 @@ oyDestroyCompList_ (oyComp_t_ *list)
   {
     before = list;
     list = list->next;
-    OY_FREE(before)
+    oyFree_m_(before)
   }
-  OY_FREE(list)
+  oyFree_m_(list);
 
   DBG_PROG_ENDE
 }
@@ -519,7 +796,7 @@ oySetDeviceProfile_                (const char* manufacturer,
       if (attrib1) len += strlen(attrib1);
       if (attrib2) len += strlen(attrib2);
       if (attrib3) len += strlen(attrib3);
-      comment = (char*) calloc (len+10, sizeof(char)); DBG_PROG
+      oyAllocHelper_m_( comment, char, len+10, oyAllocateFunc_, );
       if (manufacturer) sprintf (comment, "%s", manufacturer); DBG_PROG
       if (model) sprintf (&comment[strlen(comment)], "%s", model); DBG_PROG
       if (product_id) sprintf (&comment[strlen(comment)], "%s", product_id);
@@ -565,14 +842,15 @@ oySetDeviceProfile_                (const char* manufacturer,
  *  return                      list of widgets to create in correct order
  */
 oyWIDGET    * oyWidgetListGet          (oyGROUP           group,
-                                        int             * count)
+                                        int             * count,
+                                        oyAllocFunc_t     allocate_func )
 {
   oyWIDGET *list = NULL;
 
   DBG_PROG_START
   oyExportStart_(EXPORT_CHECK_NO);
 
-  list = oyWidgetListGet_                  ( group, count);
+  list = oyWidgetListGet_                  ( group, count, allocate_func);
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -775,6 +1053,29 @@ oyReadXMLPolicy        (oyGROUP           group,
   oyExportStart_(EXPORT_SETTING);
 
   n = oyReadXMLPolicy_(group, xml);
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return n;
+}
+
+/** Load a group of policy settings.\n
+ *  use xml-ish file input produced by oyPolicyToXML()
+ *
+ *  @param  policy_file  the policy file, will be locked up in standard paths
+ *  @param  full_name    file name including path
+ *  @return              errors
+ */
+int
+oyPolicySet                (const char      * policy_file,
+                            const char      * full_name )
+{
+  int n = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_SETTING);
+
+  n = oyPolicySet_(policy_file, full_name);
 
   oyExportEnd_();
   DBG_PROG_ENDE

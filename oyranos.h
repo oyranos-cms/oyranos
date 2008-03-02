@@ -1,7 +1,7 @@
 /**
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann
  *
  * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -83,7 +83,7 @@ typedef enum  {
   oyGROUP_BEHAVIOUR_MISSMATCH,            /**< Profile Missmatch Behaviour */
   oyGROUP_BEHAVIOUR_PROOF,                /**< Profile Missmatch Behaviour */
   oyGROUP_ALL,                     /**< just for easen Gui design */
-  oyGROUP_EXTERN = 100             /**< start of groups in a extern module */
+  oyGROUP_EXTERN = 200             /**< start of groups in a extern module */
 } oyGROUP;
 
 
@@ -123,9 +123,10 @@ int         oySetBehaviour             (oyBEHAVIOUR       type,
 char*       oyPolicyToXML              (oyGROUP           group,
                                         int               add_header,
                                         oyAllocFunc_t     alloc_func);
-
 int         oyReadXMLPolicy            (oyGROUP           group,
                                         const char       *xml);
+int         oyPolicySet                (const char      * policy,
+                                        const char      * full_name );
 
 
 /* path names */
@@ -142,20 +143,20 @@ char* oyGetPathFromProfileName         (const char* profile_name,
  */
 typedef enum  {
   oyDEFAULT_PROFILE_START = 100,
-  oyEDITING_RGB,            /**< Rgb Editing (Workspace) Profile */
-  oyEDITING_CMYK,           /**< Cmyk Editing (Workspace) Profile */
   oyEDITING_XYZ,            /**< XYZ Editing (Workspace) Profile */
   oyEDITING_LAB,            /**< Lab Editing (Workspace) Profile */
+  oyEDITING_RGB,            /**< Rgb Editing (Workspace) Profile */
+  oyEDITING_CMYK,           /**< Cmyk Editing (Workspace) Profile */
   oyEDITING_GRAY,           /**< Gray Editing (Workspace) Profile */
 
-  oyASSUMED_RGB = 120,      /**< standard RGB assumed source profile */
+  oyASSUMED_XYZ = 110,      /**< standard XYZ assumed source profile */
+  oyASSUMED_LAB,            /**< standard Lab assumed source profile */
+  oyASSUMED_RGB,            /**< standard RGB assumed source profile */
   oyASSUMED_WEB,            /**< std internet assumed source static_profile*/
   oyASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
-  oyASSUMED_XYZ,            /**< standard XYZ assumed source profile */
-  oyASSUMED_LAB,            /**< standard Lab assumed source profile */
   oyASSUMED_GRAY,           /**< standard Gray assumed source Profile */
 
-  oyPROFILE_PROOF = 140,    /**< standard proofing profile */
+  oyPROFILE_PROOF = 120,    /**< standard proofing profile */
   oyDEFAULT_PROFILE_END     /**< just for easen Gui design */
 } oyDEFAULT_PROFILE;
 
@@ -200,14 +201,15 @@ typedef enum  {
   oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED,/**< Default Assumed Profiles */
   oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF,  /**< Default Proofing Profiles */
   oyWIDGET_GROUP_BEHAVIOUR,               /**< Behaviour */
-  oyWIDGET_GROUP_BEHAVIOUR_RENDERING,            /**< Rendering Behaviour */
+  oyWIDGET_GROUP_BEHAVIOUR_RENDERING,      /**< Rendering Behaviour */
   oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options*/
   oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH,     /**< Profile Missmatch Behaviour */
   oyWIDGET_GROUP_BEHAVIOUR_PROOF,         /**< Profile Missmatch Behaviour */
   oyWIDGET_GROUP_ALL,                     /**< just for easen Gui design */
-  oyWIDGET_GROUP_EXTERN = 100,      /**< start of groups in a extern module */
+  oyWIDGET_GROUP_EXTERN = 200,      /**< start of groups in a extern module */
 
-  oyWIDGET_POLICY = 20,        /**< policy selection */
+  oyWIDGET_POLICY = 20,                   /**< policy selection */
+  oyWIDGET_PATHS,                         /**< path selection */
 
   oyWIDGET_BEHAVIOUR_START = 30,
   oyWIDGET_ACTION_UNTAGGED_ASSIGN,    /**< What to do if image is untagged ? */
@@ -223,21 +225,21 @@ typedef enum  {
   oyWIDGET_BEHAVIOUR_END,             /**< just for easen Gui design */
 
   oyWIDGET_DEFAULT_PROFILE_START = 100,
-  oyWIDGET_EDITING_RGB,        /**< Rgb Editing (Workspace) Profile */
-  oyWIDGET_EDITING_CMYK,       /**< Cmyk Editing (Workspace) Profile */
   oyWIDGET_EDITING_XYZ,        /**< XYZ Editing (Workspace) Profile */
   oyWIDGET_EDITING_LAB,        /**< Lab Editing (Workspace) Profile */
+  oyWIDGET_EDITING_RGB,        /**< Rgb Editing (Workspace) Profile */
+  oyWIDGET_EDITING_CMYK,       /**< Cmyk Editing (Workspace) Profile */
   oyWIDGET_EDITING_GRAY,       /**< Gray Editing (Workspace) Profile */
 
-  oyWIDGET_ASSUMED_RGB = 120,  /**< standard RGB assumed source profile */
+  oyWIDGET_ASSUMED_XYZ=110,    /**< standard XYZ assumed source profile */
+  oyWIDGET_ASSUMED_LAB,        /**< standard Lab assumed source profile */
+  oyWIDGET_ASSUMED_RGB,        /**< standard RGB assumed source profile */
   oyWIDGET_ASSUMED_WEB,        /**< std internet assumed source static_profile*/
   oyWIDGET_ASSUMED_CMYK,       /**< standard Cmyk assumed source profile */
-  oyWIDGET_ASSUMED_XYZ,        /**< standard XYZ assumed source profile */
-  oyWIDGET_ASSUMED_LAB,        /**< standard Lab assumed source profile */
   oyWIDGET_ASSUMED_GRAY,       /**< standard Gray assumed source profile */
 
-  oyWIDGET_PROFILE_PROOF = 140,/**< standard proofing profile */
-  oyWIDGET_DEFAULT_PROFILE_END,/**< */
+  oyWIDGET_PROFILE_PROOF = 120,/**< standard proofing profile */
+  oyWIDGET_DEFAULT_PROFILE_END,/**< just for easen Gui design */
 
   oyWIDGET_CMM_START = 300,        /**< CMM options */
   oyWIDGET_CMM_SELECT,             /**< CMM selection */
@@ -257,12 +259,19 @@ typedef enum {
     oyTYPE_INT,       /**!< TODO @todo value range */
     oyTYPE_FLOAT,     /**!< IEEE floating point number */
     oyTYPE_CHOICE,    /**!< option from a array of choices */
+    oyTYPE_LIST,      /**!< list widget, like for paths */
     oyTYPE_VOID,      /**!< data block, should not be selectable */
     oyTYPE_END
 } oyWIDGET_TYPE;
 
+/** @brief layout flags for widgets */
+#define oyLAYOUT_NO_CHOICES    0x01  /**!< show informational */
+#define oyLAYOUT_MIDDLE        0x02  /**!< Arrange in the middle. */
+#define oyLAYOUT_PATH_SELECTOR 0x04  /**!< add a path selector tp each entry */ 
+
 oyWIDGET    * oyWidgetListGet          (oyGROUP           group,
-                                        int             * count);
+                                        int             * count,
+                                        oyAllocFunc_t     allocate_func );
 
 oyWIDGET_TYPE oyWidgetTitleGet         (oyWIDGET          option,
                                         const oyGROUP  ** categories,
@@ -286,129 +295,8 @@ int           oyOptionFloatIntRangeGet (oyWIDGET          option,
                                         float           * current);
 # endif
 
-#ifdef oyInPlaning_
-/* --- colour conversions --- */
 
-/** @brief Option for rendering
-
-    should be used in a list oyColourTransformOptions_s to form a options set
- */
-typedef struct {
-    oyWIDGET opt;                     /*!< CMM registred option */
-    int    supported_by_chain;        /*!< 1 for supporting; 0 if one fails */
-    double value_d;                   /*!< value of option; unset with nan; */ 
-} oyOption_s;
-
-/** @brief Options for rendering
-
-    Options can be any flag or rendering intent and other informations needed to
-    configure a process. It contains variables for colour transforms.
- */
-typedef struct {
-    int n;                            /*!< number of options */
-    oyOption_s* opts;
-} oyOptions_s;
-
-/** @brief a profile and its attributes
- */
-typedef struct {
-    size_t size;                      /*!< ICC profile size */
-    void *block;                      /*!< ICC profile data */
-    oyDEFAULT_PROFILE use_default;    /*!< if > 0 : take from settings */
-} oyProfile_s;
-
-/** @brief tell about the conversion profiles
- */
-typedef struct {
-    int            n;                 /*!< number of profiles */
-    oyProfile_s   *profiles;
-} oyProfileList_s;
-
-typedef struct {
-    int x;
-    int y;
-    int width;
-    int height;
-} oyRegion_s;
-
-typedef enum {
-    oyUINT8,     /*!<  8-bit integer */
-    oyUINT16,    /*!< 16-bit integer */
-    oyUINT32,    /*!< 32-bit integer */
-    oyHALF,      /*!< 16-bit floating point number */
-    oyFLOAT,     /*!< IEEE floating point number */
-    oyDOUBLE     /*!< IEEE double precission floating point number */
-} oyDATATYPE;
-
-/** @brief a reference struct to gather information for image transformation
-
-    as we dont target a complete imaging solution, only raster is supported
-
-    oyImage_s should hold image dimensions,
-    oyDisplayRegion_s information and
-    a reference to the data for conversion
-
-    As well referencing of itself would be nice.
-
-    Should oyImage_s become internal and we provide a user interface?
- */
-typedef struct {
-    int          width;       /*!< data width */
-    int          height;      /*!< data height */
-    void        *data;        /*!< image data */
-    oyDATATYPE   type;        /*!< data type */
-    int          planar;      /*!< RRRGGGBBB vs RGBRGBRGB */
-    oyProfile_s *profile;     /*!< image profile */
-    oyRegion_s  *region;      /*!< region to render, if zero render all */
-    int          screen_pos_x;/*!< upper position on screen of image */
-    int          screen_pos_y;/*!< left position on screen of image */
-} oyImage_s;
-
-/** @brief clean all memory including depending structs */
-int            oyImageCleanAll       ( oyImage_s *img, oyDeAllocFunc_t free );
-
-typedef struct {
-    /*int          whatch;*/      /*!< tell Oyranos to observe files */
-    void*        internal;    /*!< Oyranos internal structs */
-} oyColourConversion_s;
-
-/** allocate n oyOption_s */
-oyOptions_s*   oyOptionsCreate       ( int n );
-/** allocate oyOption_s for a 4 char CMM identifier obtained by oyCmmGetCmms */
-oyOptions_s*   oyOptionsCreateFor    ( const char *cmm );
-
-/** free oyOption_s from the list */
-void           oyOptionsFree         ( oyOptions_s *opts, oyDeAllocFunc_t free);
-
-/** confirm if all is ok */
-int            oyOptionsVerifyForCMM ( oyOptions_s *opts, char* cmm );
-
-/** create and possibly precalculate a transform */
-oyColourConversion_s* oyColourConversionCreate ( char* cmm, /*!< zero or a cmm*/
-                                  oyProfileList_s *list,/*!< multi profiles */
-                                  oyOptions_s *opts,   /*!< conversion opts */
-                                  oyImage_s *in,       /*!< input */
-                                  oyImage_s *out       /*!< zero or output */
-                                  );                   /*!< return: conversion*/
-int            oyColourConversionRun ( oyColourConversion_s *colour /*!< object*/
-                                     );                  /*!< return: error */
-
-
-/* --- CMM API --- */
-
-int    oyModulRegisterXML            ( oyGROUP group,
-                                       const char *xml );
-
-/** obtain 4 char CMM identifiers and count of CMM's */
-char** oyModulsGetNames              ( int        *count,
-                                       oyAllocFunc_t alloc_func );
-int    oyModulGetOptionRanges        ( const char *cmm,
-                                       oyGROUP    *oy_group_start,
-                                       oyGROUP    *oy_group_end,
-                                       oyWIDGET   *oy_option_start,
-                                       oyWIDGET   *oy_option_end );
-
-#endif /* oyInPlaning_ */
+int oyVersion( int type ); /**!< itype is for further extension */ 
 
 int    oyProfileGetMD5               ( void       *buffer,
                                        size_t      size,

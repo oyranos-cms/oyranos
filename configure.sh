@@ -267,9 +267,11 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
     echo "FLTK = 1" >> $CONF
     echo "FLTK_H = `$fltkconfig --cxxflags | sed 's/-O[0-9]//'`" >> $CONF
     echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags | $STRIPOPT`" >> $CONF
+    echo "fltkconfig = $fltkconfig" >> $CONF
     echo "FLTK = 1" >> $CONF_I18N
     echo "FLTK_H = `$fltkconfig --cxxflags | sed 's/-O[0-9]//'`" >> $CONF_I18N
     echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl --ldflags | $STRIPOPT`" >> $CONF_I18N
+    echo "fltkconfig = $fltkconfig" >> $CONF_I18N
   else
     if [ $FLTK -eq 1 ]; then
       ERROR=1
@@ -357,7 +359,7 @@ fi
 
 if [ -n "$LIBTIFF" ] && [ $LIBTIFF -gt 0 ]; then
   rm -f tests/libtest
-  $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L$libdir -ltiff -o tests/libtest 2>/dev/null
+  $CXX $CFLAGS -I$includedir tests/tiff_test.cxx $LDFLAGS -L$libdir -ltiff -o tests/libtest 2>error.txt
     if [ -f tests/libtest ]; then
       test -n "$ECHO" && $ECHO "`tests/libtest`
                         detected"
@@ -373,7 +375,7 @@ if [ -n "$GETTEXT" ] && [ $GETTEXT -gt 0 ]; then
   rm -f tests/libtest
     $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
     if [ ! -f tests/libtest ]; then
-      $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -lintl -o tests/libtest 2>/dev/null
+      $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -lintl -o tests/libtest 2>error.txt
     fi
     if [ -f tests/libtest ]; then
       test -n "$ECHO" && $ECHO "Gettext                 detected"
@@ -415,7 +417,11 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
       if [ "$debug" -eq "1" ]; then
-        DEBUG_="-Wall -g -DDEBUG --pedantic"
+        if [ `uname -s` == "Darwin" ]; then
+          DEBUG_="-Wall -g -DDEBUG"
+        else
+          DEBUG_="-Wall -g -DDEBUG --pedantic"
+        fi
         test -f "$i/makefile".in && echo "DEBUG = $DEBUG_"  >> "$i/makefile"
         test -f "$i/makefile".in && echo "DEBUG_SWITCH = -v"  >> "$i/makefile"
       else

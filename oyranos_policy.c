@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2005-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2005-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -50,6 +50,13 @@ int main( int argc , char** argv )
   const char* fileName = NULL;
   size_t size = 0;
   char *xml = NULL;
+
+  if(getenv("OYRANOS_DEBUG"))
+  {
+    int value = atoi(getenv("OYRANOS_DEBUG"));
+    if(value > 0)
+      oy_debug = value;
+  }
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");

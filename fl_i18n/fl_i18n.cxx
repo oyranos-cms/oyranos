@@ -1,23 +1,24 @@
 /*
- * ICC Examin ist eine ICC Profil Betrachter
+ * fl_i18n is a internationalisation helper library for FLTK.
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann 
+ * Copyright (C) 2004-2007  Kai-Uwe Behrmann 
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
  *
  * -----------------------------------------------------------------------------
  *
@@ -47,7 +48,7 @@
 
 /* The following macros belong to Kai-Uwe's debug environment. */
 #ifdef DEBUG_
-#include "icc_utils.h"
+#include "../icc_utils.h"
 #else
 /*extern int icc_debug;*/
 #endif
@@ -74,7 +75,7 @@
 int
 fl_set_codeset_    ( const char* lang, const char* codeset_,
                      char* locale, char* codeset,
-                     int set_locale )
+                     int set_codeset )
 {
     if( strlen(locale) )
     {
@@ -85,13 +86,15 @@ fl_set_codeset_    ( const char* lang, const char* codeset_,
         sprintf (codeset, codeset_); DBG_PROG_V( locale <<" "<< strrchr(locale,'.'))
  
           /* merge charset with locale string */
-        if((pos = strrchr(locale,'.')) != 0)
+        if(set_codeset)
         {
-          *pos = 0; DBG_PROG_V( locale )
-        } else
-          pos = & locale[strlen(locale)];
-        snprintf(pos, TEXTLEN-strlen(locale), ".%s",codeset);
-
+          if((pos = strrchr(locale,'.')) != 0)
+          {
+            *pos = 0; DBG_PROG_V( locale )
+          } else
+            pos = & locale[strlen(locale)];
+          snprintf(pos, TEXTLEN-strlen(locale), ".%s",codeset);
+        }
         DBG_PROG_V( locale )
 
         /* 1b. set correct environment variable LANG */
@@ -105,10 +108,14 @@ fl_set_codeset_    ( const char* lang, const char* codeset_,
           //putenv( settxt );
           free(settxt);
         }
-        setenv("LANG", locale, 1); /* setenv is Posix */
+#ifdef _POSIX_C_SOURCE
+#if 0
+        setenv("LANG", locale, 1); /* setenv is Posix, but might be ignored */
+#endif
+#endif
 
         /* 1c. set the locale info after LANG */
-        if(set_locale)
+        if(set_codeset)
         {
           char *ptr = setlocale (LC_MESSAGES, "");
           if(ptr) snprintf( locale, TEXTLEN, ptr); DBG_PROG_V( locale )
@@ -161,7 +168,7 @@ fl_search_locale_path (int n_places, const char **locale_paths,
 
 int
 fl_initialise_locale( const char *domain, const char *locale_path,
-                      int set_locale )
+                      int set_codeset )
 {
 
 #ifdef USE_GETTEXT
@@ -173,6 +180,7 @@ fl_initialise_locale( const char *domain, const char *locale_path,
   char *codeset = (char*) calloc(sizeof(char), TEXTLEN);
   const char *loc = NULL;
   char* bdtd = 0;
+  char *txd = 0;
   char* cs = NULL;
   int ret = 0;
 
@@ -206,27 +214,29 @@ fl_initialise_locale( const char *domain, const char *locale_path,
   DBG_PROG_V( locale )
 
   // set the locale info
-  if(strlen(locale) && set_locale)
+  if(strlen(locale) && set_codeset)
   {
      setlocale (LC_MESSAGES, locale);
   }
   if (tmp)
     snprintf(locale,TEXTLEN, tmp);
-  set_locale = 0;
+  //set_codeset = 0;
 # else
   DBG_PROG
 
   // 1. get default locale info ..
     // use the standard way
     // this is dangerous
-  char *previous_locale = strdup(setlocale (LC_MESSAGES, NULL));
-  char *tmp = strdup(setlocale (LC_MESSAGES, ""));
+  char *temp = setlocale (LC_MESSAGES, NULL);
+  char *previous_locale = temp ? strdup(temp) : NULL;
+  temp = setlocale (LC_MESSAGES, "");
+  char *tmp = temp ? strdup(temp) : NULL;
   if(tmp) {
     snprintf(locale,TEXTLEN, tmp);
     DBG_PROG_V( locale )
   }
-  if(!set_locale)
-    setlocale (LC_MESSAGES, previous_locale);
+  /*if(!set_codeset)
+    setlocale (LC_MESSAGES, previous_locale);*/
   if(previous_locale) free(previous_locale); previous_locale = NULL;
   if(tmp) free(tmp); tmp = NULL;
 
@@ -239,69 +249,69 @@ fl_initialise_locale( const char *domain, const char *locale_path,
 
       // add more LINGUAS here
       // borrowed from http://czyborra.com/charsets/iso8859.html
-    ret = fl_set_codeset_( "af", "ISO-8859-1", locale, codeset, set_locale ); // Afrikaans
-    ret = fl_set_codeset_( "ca", "ISO-8859-1", locale, codeset, set_locale ); // Catalan
-    ret = fl_set_codeset_( "da", "ISO-8859-1", locale, codeset, set_locale ); // Danish
-    ret = fl_set_codeset_( "de", "ISO-8859-1", locale, codeset, set_locale ); // German
-    ret = fl_set_codeset_( "en", "ISO-8859-1", locale, codeset, set_locale ); // English
-    ret = fl_set_codeset_( "es", "ISO-8859-1", locale, codeset, set_locale ); // Spanish
-    ret = fl_set_codeset_( "eu", "ISO-8859-1", locale, codeset, set_locale ); // Basque
-    ret = fl_set_codeset_( "fi", "ISO-8859-1", locale, codeset, set_locale ); // Finnish
-    ret = fl_set_codeset_( "fo", "ISO-8859-1", locale, codeset, set_locale ); // Faroese
-    ret = fl_set_codeset_( "fr", "ISO-8859-1", locale, codeset, set_locale ); // French
-    ret = fl_set_codeset_( "ga", "ISO-8859-1", locale, codeset, set_locale ); // Irish
-    ret = fl_set_codeset_( "gd", "ISO-8859-1", locale, codeset, set_locale ); // Scottish
-    ret = fl_set_codeset_( "is", "ISO-8859-1", locale, codeset, set_locale ); // Icelandic
-    ret = fl_set_codeset_( "it", "ISO-8859-1", locale, codeset, set_locale ); // Italian
-    ret = fl_set_codeset_( "nl", "ISO-8859-1", locale, codeset, set_locale ); // Dutch
-    ret = fl_set_codeset_( "no", "ISO-8859-1", locale, codeset, set_locale ); // Norwegian
-    ret = fl_set_codeset_( "pt", "ISO-8859-1", locale, codeset, set_locale ); // Portuguese
-    ret = fl_set_codeset_( "rm", "ISO-8859-1", locale, codeset, set_locale ); // Rhaeto-Romanic
-    ret = fl_set_codeset_( "sq", "ISO-8859-1", locale, codeset, set_locale ); // Albanian
-    ret = fl_set_codeset_( "sv", "ISO-8859-1", locale, codeset, set_locale ); // Swedish
-    ret = fl_set_codeset_( "sw", "ISO-8859-1", locale, codeset, set_locale ); // Swahili
+    ret = fl_set_codeset_( "af", "ISO-8859-1", locale, codeset, set_codeset ); // Afrikaans
+    ret = fl_set_codeset_( "ca", "ISO-8859-1", locale, codeset, set_codeset ); // Catalan
+    ret = fl_set_codeset_( "da", "ISO-8859-1", locale, codeset, set_codeset ); // Danish
+    ret = fl_set_codeset_( "de", "ISO-8859-1", locale, codeset, set_codeset ); // German
+    ret = fl_set_codeset_( "en", "ISO-8859-1", locale, codeset, set_codeset ); // English
+    ret = fl_set_codeset_( "es", "ISO-8859-1", locale, codeset, set_codeset ); // Spanish
+    ret = fl_set_codeset_( "eu", "ISO-8859-1", locale, codeset, set_codeset ); // Basque
+    ret = fl_set_codeset_( "fi", "ISO-8859-1", locale, codeset, set_codeset ); // Finnish
+    ret = fl_set_codeset_( "fo", "ISO-8859-1", locale, codeset, set_codeset ); // Faroese
+    ret = fl_set_codeset_( "fr", "ISO-8859-1", locale, codeset, set_codeset ); // French
+    ret = fl_set_codeset_( "ga", "ISO-8859-1", locale, codeset, set_codeset ); // Irish
+    ret = fl_set_codeset_( "gd", "ISO-8859-1", locale, codeset, set_codeset ); // Scottish
+    ret = fl_set_codeset_( "is", "ISO-8859-1", locale, codeset, set_codeset ); // Icelandic
+    ret = fl_set_codeset_( "it", "ISO-8859-1", locale, codeset, set_codeset ); // Italian
+    ret = fl_set_codeset_( "nl", "ISO-8859-1", locale, codeset, set_codeset ); // Dutch
+    ret = fl_set_codeset_( "no", "ISO-8859-1", locale, codeset, set_codeset ); // Norwegian
+    ret = fl_set_codeset_( "pt", "ISO-8859-1", locale, codeset, set_codeset ); // Portuguese
+    ret = fl_set_codeset_( "rm", "ISO-8859-1", locale, codeset, set_codeset ); // Rhaeto-Romanic
+    ret = fl_set_codeset_( "sq", "ISO-8859-1", locale, codeset, set_codeset ); // Albanian
+    ret = fl_set_codeset_( "sv", "ISO-8859-1", locale, codeset, set_codeset ); // Swedish
+    ret = fl_set_codeset_( "sw", "ISO-8859-1", locale, codeset, set_codeset ); // Swahili
 
-    ret = fl_set_codeset_( "cs", "ISO-8859-2", locale, codeset, set_locale ); // Czech
-    ret = fl_set_codeset_( "hr", "ISO-8859-2", locale, codeset, set_locale ); // Croatian
-    ret = fl_set_codeset_( "hu", "ISO-8859-2", locale, codeset, set_locale ); // Hungarian
-    ret = fl_set_codeset_( "pl", "ISO-8859-2", locale, codeset, set_locale ); // Polish
-    ret = fl_set_codeset_( "ro", "ISO-8859-2", locale, codeset, set_locale ); // Romanian
-    ret = fl_set_codeset_( "sk", "ISO-8859-2", locale, codeset, set_locale ); // Slovak
-    ret = fl_set_codeset_( "sl", "ISO-8859-2", locale, codeset, set_locale ); // Slovenian
+    ret = fl_set_codeset_( "cs", "ISO-8859-2", locale, codeset, set_codeset ); // Czech
+    ret = fl_set_codeset_( "hr", "ISO-8859-2", locale, codeset, set_codeset ); // Croatian
+    ret = fl_set_codeset_( "hu", "ISO-8859-2", locale, codeset, set_codeset ); // Hungarian
+    ret = fl_set_codeset_( "pl", "ISO-8859-2", locale, codeset, set_codeset ); // Polish
+    ret = fl_set_codeset_( "ro", "ISO-8859-2", locale, codeset, set_codeset ); // Romanian
+    ret = fl_set_codeset_( "sk", "ISO-8859-2", locale, codeset, set_codeset ); // Slovak
+    ret = fl_set_codeset_( "sl", "ISO-8859-2", locale, codeset, set_codeset ); // Slovenian
 
-    ret = fl_set_codeset_( "eo", "ISO-8859-3", locale, codeset, set_locale ); // Esperanto
-    ret = fl_set_codeset_( "mt", "ISO-8859-3", locale, codeset, set_locale ); // Maltese
+    ret = fl_set_codeset_( "eo", "ISO-8859-3", locale, codeset, set_codeset ); // Esperanto
+    ret = fl_set_codeset_( "mt", "ISO-8859-3", locale, codeset, set_codeset ); // Maltese
 
-    ret = fl_set_codeset_( "et", "ISO-8859-4", locale, codeset, set_locale ); // Estonian
-    ret = fl_set_codeset_( "lv", "ISO-8859-4", locale, codeset, set_locale ); // Latvian
-    ret = fl_set_codeset_( "lt", "ISO-8859-4", locale, codeset, set_locale ); // Lithuanian
-    ret = fl_set_codeset_( "kl", "ISO-8859-4", locale, codeset, set_locale ); // Greenlandic
+    ret = fl_set_codeset_( "et", "ISO-8859-4", locale, codeset, set_codeset ); // Estonian
+    ret = fl_set_codeset_( "lv", "ISO-8859-4", locale, codeset, set_codeset ); // Latvian
+    ret = fl_set_codeset_( "lt", "ISO-8859-4", locale, codeset, set_codeset ); // Lithuanian
+    ret = fl_set_codeset_( "kl", "ISO-8859-4", locale, codeset, set_codeset ); // Greenlandic
 
-    ret = fl_set_codeset_( "be", "ISO-8859-5", locale, codeset, set_locale ); // Byelorussian
-    ret = fl_set_codeset_( "bg", "ISO-8859-5", locale, codeset, set_locale ); // Bulgarian
-    ret = fl_set_codeset_( "mk", "ISO-8859-5", locale, codeset, set_locale ); // Macedonian
-    ret = fl_set_codeset_( "ru", "ISO-8859-5", locale, codeset, set_locale ); // Russian
-    ret = fl_set_codeset_( "sr", "ISO-8859-5", locale, codeset, set_locale ); // Serbian
-    ret = fl_set_codeset_( "uk", "ISO-8859-5", locale, codeset, set_locale ); // Ukrainian
+    ret = fl_set_codeset_( "be", "ISO-8859-5", locale, codeset, set_codeset ); // Byelorussian
+    ret = fl_set_codeset_( "bg", "ISO-8859-5", locale, codeset, set_codeset ); // Bulgarian
+    ret = fl_set_codeset_( "mk", "ISO-8859-5", locale, codeset, set_codeset ); // Macedonian
+    ret = fl_set_codeset_( "ru", "ISO-8859-5", locale, codeset, set_codeset ); // Russian
+    ret = fl_set_codeset_( "sr", "ISO-8859-5", locale, codeset, set_codeset ); // Serbian
+    ret = fl_set_codeset_( "uk", "ISO-8859-5", locale, codeset, set_codeset ); // Ukrainian
 
-    ret = fl_set_codeset_( "ar", "ISO-8859-6", locale, codeset, set_locale ); // Arabic
-    ret = fl_set_codeset_( "fa", "ISO-8859-6", locale, codeset, set_locale ); // Persian
-    ret = fl_set_codeset_( "ur", "ISO-8859-6", locale, codeset, set_locale ); // Pakistani Urdu
+    ret = fl_set_codeset_( "ar", "ISO-8859-6", locale, codeset, set_codeset ); // Arabic
+    ret = fl_set_codeset_( "fa", "ISO-8859-6", locale, codeset, set_codeset ); // Persian
+    ret = fl_set_codeset_( "ur", "ISO-8859-6", locale, codeset, set_codeset ); // Pakistani Urdu
 
-    ret = fl_set_codeset_( "el", "ISO-8859-7", locale, codeset, set_locale ); // Greek
+    ret = fl_set_codeset_( "el", "ISO-8859-7", locale, codeset, set_codeset ); // Greek
 
-    ret = fl_set_codeset_( "iw", "ISO-8859-8", locale, codeset, set_locale ); // Hebrew
-    ret = fl_set_codeset_( "ji", "ISO-8859-8", locale, codeset, set_locale ); // Yiddish
+    ret = fl_set_codeset_( "iw", "ISO-8859-8", locale, codeset, set_codeset ); // Hebrew
+    ret = fl_set_codeset_( "ji", "ISO-8859-8", locale, codeset, set_codeset ); // Yiddish
 
-    ret = fl_set_codeset_( "tr", "ISO-8859-9", locale, codeset, set_locale ); // Turkish
+    ret = fl_set_codeset_( "tr", "ISO-8859-9", locale, codeset, set_codeset ); // Turkish
 
-    ret = fl_set_codeset_( "th", "ISO-8859-11", locale, codeset, set_locale ); // Thai
+    ret = fl_set_codeset_( "th", "ISO-8859-11", locale, codeset, set_codeset ); // Thai
 
-    ret = fl_set_codeset_( "zh", "ISO-8859-15", locale, codeset, set_locale ); // Chinese
+    ret = fl_set_codeset_( "zh", "ISO-8859-15", locale, codeset, set_codeset ); // Chinese
 
-    ret = fl_set_codeset_( "ja", "EUC", locale, codeset, set_locale ); // Japan ; eucJP, ujis, EUC, PCK, jis7, SJIS
+    ret = fl_set_codeset_( "ja", "EUC", locale, codeset, set_codeset ); // Japan ; eucJP, ujis, EUC, PCK, jis7, SJIS
 
-    ret = fl_set_codeset_( "hy", /*"UTF-8"*/"ARMSCII-8", locale, codeset, set_locale ); // Armenisch
+    ret = fl_set_codeset_( "hy", /*"UTF-8"*/"ARMSCII-8", locale, codeset, set_codeset ); // Armenisch
 
   if(ret)
     return 1;
@@ -342,10 +352,11 @@ fl_initialise_locale( const char *domain, const char *locale_path,
   DBG_PROG_S( _("try locale in ") << bdtd );
 
   // 4. set our charset
-  cs = bind_textdomain_codeset(domain, codeset);
+  if(set_codeset)
+    cs = bind_textdomain_codeset(domain, codeset);
 
   // 5. our translations
-  textdomain (domain);
+  txd = textdomain (domain);
 
   if(cs)
     DBG_PROG_S( _("set codeset for") << domain << " to " << cs );
@@ -378,7 +389,7 @@ fl_translate_menue( Fl_Menu_Item* menueleiste )
 #endif
 }
 
-#include <Fl/Fl_File_Chooser.H>
+#include <FL/Fl_File_Chooser.H>
 void
 fl_translate_file_chooser( )
 {

@@ -1,3 +1,30 @@
+2007-06-14
+	* fix: CFLAGS and the like variables are not multiplied anymore
+	* conf: support configure option: --disable-dependency-tracking
+
+2007-05-20.
+	* and: default settings are not set at installation, they are now inside
+	* new: Apple specific code to get profile paths and default profiles
+	* API: new oyPolicySet function : Load a group of policy settings from file.
+	* and: new oyCheckPolicy_ internal function : test for OY_POLICY_HEADER
+	* and: adapt oyranos-config-fltk to the new policy API - oyWIDGET_POLICY
+	* arg: oyWidgetTitleGet_ argument flags contains oyLAYOUT_NO_CHOICES
+	* and: oyranos-config-fltk now updates settings instead of recontructing
+	* macro: OY_DEFAULT_EDITING_GRAY_PROFILE OY_DEFAULT_ASSUMED_GRAY_PROFILE
+	* enum: oyGROUP_EXTERN moved from 100 -> 200
+	* enum: new assignments to oyWIDGET_TYPE and oyDEFAULT_PROFILE
+	* i18n: map C string functions with oy internal macros
+	* prof: add Gray.icc
+	* and: move declarations out of individual headers to oyranos_internal.h
+	* and: gerneralise oyRecursivePaths_ search API (profiles + settings)
+
+2007-05-17.
+	* enum: new options: oyWIDGET_POLICY oyWIDGET_PATHS
+	* enum: new suboptions: oyWIDGET_EDITING_GRAY oyWIDGET_ASSUMED_GRAY
+
+2007-05-14.
+	* conf: support configure option: --with-x (for osX)
+	* new: support osX first display profile
 
 2007-04-02
 	* new: distclean make target
@@ -40,7 +67,7 @@
 	* and: change md5 symbol names to avoid possible name collisions
 
 2006-12-22
-	* and: add --with-fltk-config= and --enable-debug configure switch
+	* conf: add --with-fltk-config= and --enable-debug configure switch
 
 2006-11-17
 	* new: md5 support by L. Peter Deutsch's md5 (sf.net: 2002-04-13 09:00)
@@ -165,7 +192,7 @@
 	* neu: start bsd support
 	* und: change build system
 	* neu: FLTK UI
-	* neu: allow system specific colour directories at configure time
+	* conf: allow system specific colour directories at configure time
 	* und: USERCOLORDIR SYSCOLORDIR ICCDIRNAME SETTINSDIRNAME in config.h
 	* und: the above macros are additional to /usr/share/color ~/.color
 	* neu: in SETTINSDIRNAME Oyranos' policies are installed

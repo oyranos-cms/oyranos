@@ -36,6 +36,9 @@
 #include "oyranos_debug.h"
 #include "config.h"
 
+#include <unistd.h> /* intptr_t */
+#include <ctype.h>  /* toupper */
+
 #ifdef __cplusplus
 extern "C" {
 namespace oyranos
@@ -45,7 +48,7 @@ namespace oyranos
 /* memory handling */
 
 void* oyAllocateFunc_           (size_t        size);
-void  oyDeAllocateFunc_         (void*         data);
+void  oyDeAllocateFunc_         (void *        data);
 
 
 /* complete an name from file including oyResolveDirFileName */
@@ -56,7 +59,9 @@ char*   oyExtractPathFromFileName_ (const char* name);
 char*   oyGetHomeDir_              ();
 char*   oyGetParent_               (const char* name);
 int     oyRecursivePaths_      (int (*doInPath) (void*,const char*,const char*),
-                                void* data);
+                                void        * data,
+                                const char ** path_names,
+                                int           path_count);
 
 int oyIsDir_      (const char* path);
 int oyIsFile_     (const char* fileName);
@@ -70,11 +75,16 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
 
 /* oyNoEmptyName_( name ) */
 #define oyNoEmptyName_m_( text ) text?text:"\"---\""
+extern intptr_t oy_observe_pointer_;
 
 /* oyFree_ (void*) */
 #define oyFree_m_(x) {                                      \
+  if(oy_observe_pointer_ == (intptr_t)x)                    \
+    WARN_S(( "%s:%d %s() pointer %s freed",                 \
+            __FILE__,__LINE__,__func__,#x ));               \
   if (x != NULL) {    /* defined in oyranos_helper.h */     \
-    oyDeAllocateFunc_ (x); x = NULL;                        \
+    oyDeAllocateFunc_ (x);                                  \
+    x = NULL;                                               \
   } else {                                                  \
     char *t = _("%s:%d %s() nothing to delete %s\n");       \
     WARN_S (( t, __FILE__,__LINE__,__func__, #x ));         \
@@ -87,7 +97,7 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
     oyFree_m_( ptr_ )                                       \
   if ((size_) <= 0) {                                       \
     WARN_S ((_("%s:%d %s() nothing to allocate - size: %d\n"), \
-    __FILE__,__LINE__,__func__, (int)size_));               \
+    __FILE__,__LINE__,__func__, (int)(size_)));             \
   } else {                                                  \
     oyAllocFunc_t temp = alloc_func;                        \
     if( temp )                                              \
@@ -97,7 +107,7 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
   }                                                         \
   if (ptr_ == NULL) {                                       \
     WARN_S( ("%s:%d %s() %s %d %s %s .",__FILE__,__LINE__,  \
-         __func__, _("Can not allocate"),(int)size_,        \
+         __func__, _("Can not allocate"),(int)(size_),      \
          _("bytes of  memory for"), #ptr_));                \
     action;                                                 \
   }                                                         \
@@ -112,6 +122,31 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
     action;                                                 \
   }                                                         \
 }
+
+/* string helpers to switch to unicode or utf8 */
+
+size_t oyStrblen_(const char *s);
+
+#define oyString char
+#define oyAllocString_m_( sptr_, ssize_,  salloc_func, saction ) \
+  oyAllocHelper_m_( sptr_, oyString, ssize_+1, salloc_func, saction );
+#define oyStrlen_( str_ ) \
+           strlen( str_ )
+#define oySprintf_ \
+           sprintf
+#define oySnprintf_( str_, len_, patrn_, args_ ) \
+           snprintf( str_, len_, patrn_, args_ )
+#define oyStrcpy_( targ_, src_ ) \
+           strcpy( targ_, src_ )
+#define oyStrrchr_( str_, c_ ) \
+           strrchr( str_, c_ )
+#define oyStrstr_( str1_, str2_ ) \
+           strstr( str1_, str2_ )
+#define oyStrcmp_( str1_, str2_ ) \
+           strcmp( str1_, str2_ )
+#define oyToupper_( c_ ) \
+           toupper( c_ )
+
 
 /* mathematical helpers */
 

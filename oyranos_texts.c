@@ -83,13 +83,6 @@ oyWIDGET_TYPE
 oyWidgetTypeGet_(oyWIDGET         type)
 {
   const oyOption_t_ *opt = oyOptionGet_(type);
-
-  if( oyWIDGET_BEHAVIOUR_START < type && type < oyWIDGET_BEHAVIOUR_END )
-  {
-    if( opt->type != oyTYPE_BEHAVIOUR )
-       WARN_S(("internal type: %d does not fit to option %d\n", oyOptionGet_(type)->type , type));
-  }
-
   return opt->type;
 }
 
@@ -118,12 +111,12 @@ void
 oyOptionStringsTranslate_ ()
 {
   int pos;
-  oyOption_t_ *opt;
+  oyOption_t_ *opt = NULL;
 
   if(oy_option_)
-    free(oy_option_);
+    oyFree_m_(oy_option_);
 
-  oy_option_= calloc(sizeof(oyOption_t_), OY_STATIC_OPTS_);
+  oyAllocHelper_m_( oy_option_, oyOption_t_, OY_STATIC_OPTS_, oyAllocateFunc_,);
   opt = oy_option_;
 
   {
@@ -264,7 +257,26 @@ oyOptionStringsTranslate_ ()
       "oyGROUP_ALL", 0,0)
 
 
+    oySET_OPTIONS_M_( oyTYPE_CHOICE, oyWIDGET_POLICY, 1, 
+      oyGROUP_POLICY, 0, 0,
+      _("Policy"),
+      _("Collections of settings in Oyranos"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyWIDGET_POLICY", 0,0)
+    oy_option_[oyWIDGET_POLICY].flags = oyLAYOUT_MIDDLE;
 
+
+    oySET_OPTIONS_M_( oyTYPE_LIST, oyWIDGET_PATHS, 1, 
+      oyGROUP_PATHS, 0, 0,
+      _("Paths"),
+      _("Paths where ICC Profiles can be found"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyWIDGET_PATHS", 0,0)
+    oy_option_[oyWIDGET_PATHS].flags = oyLAYOUT_PATH_SELECTOR;
 
     oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_RGB, 1, 
       oyGROUP_DEFAULT_PROFILES, 0, 0,
@@ -302,6 +314,15 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_LAB_PROFILE,
       "oyEDITING_LAB", 0,"Lab.icc")
 
+    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_GRAY, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
+      _("Editing Gray"),
+      _("Prefered Gray Editing Colour Space"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_EDITING_GRAY_PROFILE,
+      "oyEDITING_GRAY", 0,"Gray.icc")
+
     oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed XYZ source"),
@@ -337,6 +358,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_WEB_PROFILE,
       "oyASSUMED_WEB", 0,"sRGB.icc")
+    oy_option_[oyWIDGET_ASSUMED_WEB].flags = oyLAYOUT_NO_CHOICES;
 
     oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_CMYK, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
@@ -347,24 +369,6 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_CMYK_PROFILE,
       "oyASSUMED_CMYK" , 0,"ISOcoated.icc")
 
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_PROOF, 2,
-      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
-      _("Proofing"),
-      _("Colour space for Simulating an Output Device"),
-      0, /* choices */
-      NULL, NULL, NULL, NULL,
-      OY_DEFAULT_PROOF_PROFILE,
-      "oyPROFILE_PROOF" , 0,"ISOcoated.icc")
-
-    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_GRAY, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
-      _("Editing Gray"),
-      _("Prefered Gray Editing Colour Space"),
-      0, /* choices */
-      NULL, NULL, NULL, NULL,
-      OY_DEFAULT_EDITING_GRAY_PROFILE,
-      "oyEDITING_GRAY", 0,"Gray.icc")
-
     oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_GRAY, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Gray source"),
@@ -373,6 +377,15 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_GRAY_PROFILE,
       "oyASSUMED_GRAY" , 0,"Gray.icc")
+
+    oySET_OPTIONS_M_( oyTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_PROOF, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
+      _("Proofing"),
+      _("Colour space for Simulating an Output Device"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_PROOF_PROFILE,
+      "oyPROFILE_PROOF" , 0,"ISOcoated.icc")
 
 
     oySET_OPTIONS_M_( oyTYPE_BEHAVIOUR, oyWIDGET_ACTION_UNTAGGED_ASSIGN, 2,
@@ -473,7 +486,7 @@ oyOptionStringsTranslate_ ()
 const oyOption_t_*
 oyOptionGet_                        (oyWIDGET          type)
 {
-  /* we provide allways a options at return to avoid further checks */
+  /* we provide allways a oyOption_t_ block at return to avoid further checks */
   static const oyOption_t_ default_opt;
   const oyOption_t_ *result = &default_opt;
 
@@ -493,67 +506,382 @@ oyOptionGet_                        (oyWIDGET          type)
   return result;
 }
 
-oyWIDGET_TYPE oyWidgetTitleGet_        (oyWIDGET          option,
+oyWIDGET_TYPE oyWidgetTitleGet_        (oyWIDGET          type,
                                         const oyGROUP  ** categories,
                                         const char     ** name,
                                         const char     ** tooltip,
                                         int             * flags )
 {
+  const oyOption_t_ *t = oyOptionGet_(type);
   DBG_PROG_START
 
   {
     if( categories )
-    *categories           = oyOptionGet_(option)-> category;
+    *categories           = t->category;
     if( name )
-    *name                 = oyOptionGet_(option)-> name;
+    *name                 = t->name;
     if( tooltip )
-    *tooltip              = oyOptionGet_(option)-> description;
+    *tooltip              = t->description;
     if( flags )
-    *flags                = oyOptionGet_(option)-> flags;
+    *flags                = t->flags;
   }
 
   DBG_PROG_ENDE
-  return oyOptionGet_(option)-> type;
+  return t->type;
 }
 
-int           oyOptionChoicesGet_      (oyWIDGET          option,
-                                        int             * choices,
-                                        const char    *** choices_string_list,
-                                        int             * current)
+char **
+oyProfilePathsGet_    (int             * count,
+                       oyAllocFunc_t     allocate_func)
 {
-  int error = 0;
+  char ** path_names = NULL;
+  int i,
+      n = 0;
+  int c = oyPathsCount_();
+
+  oyAllocHelper_m_ (path_names, char*, c, allocate_func, return NULL);
+
+  for( i = 0; i < c; ++i)
+  {
+    char * test = oyPathName_( i, oyAllocateFunc_ );
+    char * checked = oyMakeFullFileDirName_( test );
+
+    if( checked )
+    {
+      path_names[n] = allocate_func( oyStrblen_(checked) + 1 );
+      oySprintf_( path_names[n], "%s", checked );
+      oyFree_m_( checked );
+      ++n;
+    }
+    oyFree_m_( test );
+  }
+
+  *count = n;
+  return path_names;
+}
+
+const char**
+oyConfigPathsGet_     (int             * count,
+                       const char      * subdir )
+{
+  static char ** static_paths = NULL;
+  static int ndp = 0;
+  static int init = 0;
+
+#define TestAndSetDefaultPATH( path_, subdir ) \
+    oyAllocHelper_m_( static_paths[ndp], char, MAX_PATH, \
+                      oyAllocateFunc_, return 0); \
+    if(subdir) \
+      snprintf( static_paths[ndp++], MAX_PATH, \
+                "%s%s%s", path_, OY_SLASH, subdir ); \
+    else \
+      snprintf( static_paths[ndp++], MAX_PATH, \
+                "%s", path_ ); \
+    if(!oyIsDir_( static_paths[ndp-1] )) { \
+      --ndp; \
+    }
+
+  /* the OpenICC agreed upon *nix default paths */
+  if(!init)
+  {
+    init = 1;
+    oyAllocHelper_m_( static_paths, char*, 3, oyAllocateFunc_, return 0);
+
+    TestAndSetDefaultPATH( "/usr/share/color", subdir );
+    TestAndSetDefaultPATH( OY_USERCOLORDIR, subdir );
+    TestAndSetDefaultPATH( OY_SYSCOLORDIR, subdir );
+  }
+
+  *count = ndp;
+
+  return (const char**) static_paths;
+}
+
+oyWIDGET*
+oyPolicyWidgetListGet_( oyGROUP       group,
+                     int         * count )
+{
+  oyWIDGET * list = NULL;
+  int behaviour_count = 0,
+      default_profiles_count = 0,
+      n = 0;
 
   DBG_PROG_START
 
-  if( oyWIDGET_BEHAVIOUR_START < option && option < oyWIDGET_BEHAVIOUR_END )
+  /* which group is to save ? */
+  switch (group)
+  {
+    case oyGROUP_DEFAULT_PROFILES:
+           list = oyWidgetListGet_( oyGROUP_DEFAULT_PROFILES, &n,
+                                             oyAllocateFunc_ );
+         break;
+    case oyGROUP_BEHAVIOUR_RENDERING:
+           list = oyWidgetListGet_( oyGROUP_BEHAVIOUR_RENDERING,&n,
+                                             oyAllocateFunc_ );
+         break;
+    case oyGROUP_BEHAVIOUR_PROOF:
+           list = oyWidgetListGet_( oyGROUP_BEHAVIOUR_PROOF, &n,
+                                             oyAllocateFunc_ );
+         break;
+    case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
+           list = oyWidgetListGet_( oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, &n,
+                                             oyAllocateFunc_ );
+         break;
+    case oyGROUP_BEHAVIOUR_MISSMATCH:
+           list = oyWidgetListGet_( oyGROUP_BEHAVIOUR_MISSMATCH, &n,
+                                             oyAllocateFunc_ );
+         break;
+    case oyGROUP_ALL:
+         /* travel through the group of settings and call the func itself */
+         {
+           int pos = 0, i;
+           oyWIDGET *lw = NULL;
+           oyWIDGET *tmp = NULL;
+
+           oyAllocHelper_m_( lw, oyWIDGET, oyWIDGET_CMM_START,
+                             oyAllocateFunc_, return 0);
+
+           for(i = oyGROUP_START + 1; i < oyGROUP_ALL; ++i)
+           {
+             int j;
+             tmp = oyPolicyWidgetListGet_( i, &n );
+             for(j = 0; j < n; ++j)
+               lw[pos++] = tmp[j];
+             if(tmp)
+               oyFree_m_( tmp );
+           }
+
+           n = pos;
+           list = lw;
+         }
+         break;
+    default:
+         break;
+  }
+
+  *count = n;
+
+  DBG_PROG_ENDE
+  return list;
+}
+
+char*
+oyPolicyNameGet_()
+{
+  int count = 0, i;
+  oyString** policy_list = oyPolicyListGet_( &count );
+  oyString *name = _("[none]");
+  oyString *xml = NULL;
+
+  DBG_PROG_START
+
+  oyI18NSet(0,0);
+  xml = oyPolicyToXML_ (oyGROUP_ALL, 0, oyAllocateFunc_);
+  oyI18NSet(1,0);
+  xml[oyStrlen_(xml)-2] = 0;
+
+  for( i = 0; i < count; ++i )
+  {
+    oyString * data = NULL,
+             * xml_g = NULL;   /* settings, generated from data file */
+    size_t size = 0;
+
+    const oyString* fname = policy_list[i];
+    data = oyReadFileToMem_( fname, &size, oyAllocateFunc_ );
+
+    // TODO: und als nächstes werden alle relevanten xml Schlüssel ausgelesen,
+    // in der selben Form wie für oyPolicyToXML_
+    {
+      int   err = 0;
+      int n = 0;
+      oyWIDGET * list = NULL;
+      const oyString * key = NULL;
+      oyString       * value = NULL;
+
+      list = oyPolicyWidgetListGet_( oyGROUP_ALL, &n );
+      for(i = 0; i < n; ++i)
+      {
+        oyWIDGET oywid = list[i];
+        oyWIDGET_TYPE opt_type = oyWidgetTypeGet_( oywid );
+
+        if(opt_type == oyTYPE_DEFAULT_PROFILE)
+        {
+          const oyOption_t_ *t = oyOptionGet_( oywid );
+          key = t->config_string_xml;
+
+          /* read the value for the key */
+          value = oyXMLgetValue_(xml, key);
+
+          /* set the key */
+          if(value && strlen(value))
+          {
+            err = oySetDefaultProfile_( oywid, value);
+            if(err)
+            {
+               WARN_S(( "Could not set default profile %s:%s", t->name ,
+                        value?value:"--" ));
+            }
+            oyFree_m_(value);
+          }
+        } else if(opt_type == oyTYPE_BEHAVIOUR)
+        {
+          const oyOption_t_ *t = oyOptionGet_( oywid );
+          int val = -1;
+
+          key = t->config_string_xml;
+
+          /* read the value for the key */
+          value = oyXMLgetValue_(xml, key);
+
+          /* convert value from string to int */
+          val = atoi(value);
+
+          /* set the key */
+          if( val != -1 && value )
+            err = oySetBehaviour_(oywid, val);
+
+          if(err)
+          {
+            WARN_S(( "Could not set behaviour %s:%s .", t->name ,
+                      value?value:"--" ));
+            return NULL;
+          }
+
+          if(value) oyFree_m_(value);
+        }
+      }
+
+      if( list ) oyFree_m_( list );
+    }
+
+    if( !xml )
+    {
+      WARN_S(( "no policy data available??" ));
+    }
+    else if( !data )
+    {
+      WARN_S(( "no policy file available??" ));
+    } else if( oyStrstr_( data, xml ) )
+      name = policy_list[i];
+
+    oyFree_m_( data );
+  }
+  oyFree_m_( xml );
+  oyOptionChoicesFree_( oyWIDGET_POLICY, &policy_list, count );
+
+  DBG_PROG_ENDE
+  return name;
+}
+
+int         oyPolicySet_               (const oyString  * policy_file,
+                                        const oyString  * full_name )
+{
+  int err = 0;
+  oyString  * file_name = NULL;
+  oyString  * xml = NULL;
+
+  DBG_PROG_START
+
+  oyAllocString_m_( file_name, MAX_PATH, oyAllocateFunc_, return 1 );
+  if(full_name)
+  {
+    if(oyStrlen_( full_name ))
+      oySnprintf_( file_name, MAX_PATH, "%s", full_name );
+  }
+
+  if( !oyStrlen_( file_name ) )
+  {
+    int count = 0, i;
+    oyString ** policy_list = NULL;
+
+    policy_list = oyPolicyListGet_( &count );
+
+    for( i = 0; i < count; ++i )
+    {
+      if( oyStrstr_( policy_list[i], policy_file ) != 0 ||
+          ( oyStrlen_( policy_file ) >= 3 &&
+            oyStrstr_( policy_list[i], &policy_file[1] ) != 0 ) )
+      {
+        if( oyStrlen_( file_name ) )
+        {
+          WARN_S(( "ambiguous policy %s selection from policy identifier %s",
+                   policy_list[i], policy_file ));
+        }
+
+        oySnprintf_( file_name, MAX_PATH, "%s", policy_list[i] );
+      }
+    }
+
+    oyOptionChoicesFree_( oyWIDGET_POLICY, &policy_list, count );
+  }
+
+  {
+    size_t size = 0;
+    char * data = oyReadFileToMem_( file_name, &size, oyAllocateFunc_ );
+
+    if(data && size)
+    {
+      xml = data;
+      printf( "Opened file: %s", file_name );
+    }
+  }
+
+  if(xml) {
+    err = oyReadXMLPolicy_( oyGROUP_ALL, xml );
+    oyFree_m_( xml );
+  } else
+    WARN_S(( "No policy file found: \"%s\"", file_name ));
+
+
+  DBG_PROG_ENDE
+  return err;
+}
+
+int           oyOptionChoicesGet_      (oyWIDGET          type,
+                                        int             * choices,
+                                        const oyString*** choices_string_list,
+                                        int             * current)
+{
+  int error = 0;
+  const oyOption_t_ *t = oyOptionGet_(type);
+
+  DBG_PROG_START
+
+  if( oyWIDGET_BEHAVIOUR_START < type && type < oyWIDGET_BEHAVIOUR_END )
   {
     if( choices )
-      *choices              = oyOptionGet_(option)-> choices;
+      *choices              = t->choices;
     if( choices_string_list )
-      *choices_string_list  = (const char**) oyOptionGet_(option)-> choice_list;
+      *choices_string_list  = (const oyString**) t->choice_list;
     if( current )
-      *current              = oyGetBehaviour_( (oyBEHAVIOUR) option );
+      *current              = oyGetBehaviour_( (oyBEHAVIOUR) type );
   }
   else
-  if( oyWIDGET_DEFAULT_PROFILE_START < option &&
-      option < oyWIDGET_DEFAULT_PROFILE_END )
+  if( oyWIDGET_DEFAULT_PROFILE_START < type &&
+      type < oyWIDGET_DEFAULT_PROFILE_END )
   {
-    char * default_p =
-           oyGetDefaultProfileName( (oyDEFAULT_PROFILE)option, oyAllocateFunc_);
+    oyString * default_p =
+           oyGetDefaultProfileName( (oyDEFAULT_PROFILE)type, oyAllocateFunc_);
     int i, val = -1, occurence = 0, count = 0;
-    char** names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
-    char** dup = (char**) oyAllocateFunc_( count*sizeof(char*) );
+    oyString** names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+    oyString** dup = NULL;
     int dup_count = 0;
+
+    oyAllocHelper_m_( dup, char*, count, oyAllocateFunc_, return 1 );
 
     {
       int dup_pos = 0;
+      oyString * name = NULL;
+
       for (i = 0; i < count; ++i)
       {
         int k;
         int double_name = 0;
+
+        name = names[i];
         for(k = 0; k < i; ++k)
-          if(strcmp( names[i], names[k]) == 0 && 
-             strlen( names[i] ) )
+          if(oyStrcmp_( name, names[k]) == 0 && 
+             oyStrlen_( name ) )
           {
             double_name = 1;
             break;
@@ -561,14 +889,15 @@ int           oyOptionChoicesGet_      (oyWIDGET          option,
 
         if(!double_name)
         {
-          dup[dup_pos] = oyAllocateFunc_(strlen(names[i])+1);
-          sprintf( dup[dup_pos], "%s", names[i]);
+          oyAllocString_m_( dup[dup_pos], oyStrblen_(name), 
+                            oyAllocateFunc_, return 1 );
+          oySprintf_( dup[dup_pos], "%s", name);
           ++dup_pos;
         }
 
         if(default_p)
-        if(strstr( names[i], default_p) &&
-           strlen( names[i] ) == strlen(default_p))
+        if(oyStrstr_( name, default_p) &&
+           oyStrlen_( name ) == oyStrlen_(default_p))
         {
           if(val >= 0) {
             ++occurence;
@@ -589,17 +918,86 @@ int           oyOptionChoicesGet_      (oyWIDGET          option,
     if( choices_string_list )
       *choices_string_list = (const char **)dup; 
     else
-      oyOptionChoicesFree( oyOptionGet_(option)-> type, &dup,
-                           dup_count );
-    oyOptionChoicesFree( oyOptionGet_(option)-> type, &names, count );
+      oyOptionChoicesFree_( t->type, &dup,
+                            dup_count );
+    oyOptionChoicesFree_( t->type, &names, count );
 
     if(current)
       *current          = val;
-    oyDeAllocateFunc_( default_p );
+    oyFree_m_( default_p );
   }
   else
-  if( option == oyWIDGET_POLICY )
-  { /*/@todo TODO*/
+  if( type == oyWIDGET_POLICY )
+  {
+    int count = 0;
+    oyString * currentP = oyPolicyNameGet_ ();
+    oyString ** list = oyPolicyListGet_( &count );
+    int c = -1, i;
+
+    if( !list )
+      return 1;
+
+    if( currentP )
+      for( i = 0; i < count; ++i )
+      {
+        if( oyStrcmp_( currentP, list[i] ) == 0 )
+          c = i;
+      }
+
+    if( choices )
+      *choices              = count;
+    if( choices_string_list )
+    {
+      char ** zl = NULL;
+      char * pn = NULL, * t; 
+
+      oyAllocHelper_m_( zl, oyString*, count,
+                        oyAllocateFunc_, return 0 );
+      oyAllocString_m_( pn, MAX_PATH,
+                        oyAllocateFunc_, return 0 );
+      for( i = 0; i < count; ++i )
+      {
+        oyString * filename = list[i];
+
+        sprintf( pn, filename );
+
+        if(oyStrstr_(pn,"policy.xml"))
+        {
+          t = oyStrstr_(pn,".policy.xml");
+          *t = 0;
+        } else {
+          t = oyStrrchr_(pn,'.');
+          *t = 0;
+        }
+
+        oyAllocString_m_( zl[i], oyStrblen_(pn), oyAllocateFunc_, return 0 );
+
+        oyStrcpy_(zl[i], oyStrrchr_(pn,OY_SLASH_C) + 1);
+        zl[i][0] = oyToupper_(zl[i][0]);
+      }
+      oyFree_m_( pn );
+
+      *choices_string_list  = (const char**) zl;
+    }
+    if( current )
+      *current              = c;
+  }
+  else
+  if( type == oyWIDGET_PATHS )
+  {
+    int count = 0;
+    oyString ** list = oyProfilePathsGet_( &count, oyAllocateFunc_ );
+    int c = -1;
+
+    if( !list )
+      return 1;
+
+    if( choices )
+      *choices              = count;
+    if( choices_string_list )
+      *choices_string_list  = (const oyString**) list;
+    if( current )
+      *current              = c;
   }
 
   DBG_PROG_ENDE
@@ -622,9 +1020,8 @@ void          oyOptionChoicesFree_     (oyWIDGET_TYPE     option,
     size_t i;
 
     for(i = 0; i < size; ++i)
-      if ( (*list)[i] )
-        free( (*list)[i] );
-    free( *list );
+      oyFree_m_( (*list)[i] );
+    oyFree_m_( *list );
     *list = NULL;
   }
 
@@ -632,7 +1029,8 @@ void          oyOptionChoicesFree_     (oyWIDGET_TYPE     option,
 }
 
 oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
-                                        int             * count)
+                                        int             * count,
+                                        oyAllocFunc_t     allocate_func)
 {
 #define oyGROUP_DEFAULT_PROFILES_LEN oyWIDGET_DEFAULT_PROFILE_END - oyWIDGET_DEFAULT_PROFILE_START
 #define oyGROUP_BEHAVIOUR_RENDERING_LEN 2
@@ -645,7 +1043,13 @@ oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
 #define oyGROUP_ALL_LEN oyGROUP_DEFAULT_PROFILES_LEN + oyGROUP_BEHAVIOUR_LEN
 
   oyWIDGET *w = NULL;
-  oyWIDGET i;
+  oyWIDGET *lw = NULL;
+  oyWIDGET *tmp = NULL;
+
+  oyWIDGET oywid;
+  int i,
+      pos = 0,
+      n = 0;
 
   DBG_PROG_START
 
@@ -656,25 +1060,80 @@ oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
 
 
   switch(group)
-  { case oyGROUP_DEFAULT_PROFILES:
-         { int pos = 0;
-           static oyWIDGET lw[oyGROUP_DEFAULT_PROFILES_LEN];
+  {
+     case oyGROUP_POLICY:
+          {
+            oyAllocHelper_m_( w, oyWIDGET , 1,
+                              allocate_func, return NULL);
+            for ( oywid = oyWIDGET_POLICY; oywid <= oyWIDGET_POLICY; ++oywid )
+              w[pos++] = oywid;
 
-           for( i = oyWIDGET_DEFAULT_PROFILE_START + 1;
-                  i <= oyWIDGET_EDITING_GRAY; ++i)
-             lw[pos++] = i;
+           *count = pos;
+          }
+          break;
+     case oyGROUP_PATHS:
+          {
+            oyAllocHelper_m_( w, oyWIDGET , 1,
+                              allocate_func, return NULL);
+            for ( oywid = oyWIDGET_PATHS; oywid <= oyWIDGET_PATHS; ++oywid )
+              w[pos++] = oywid;
 
-           for( i = oyWIDGET_ASSUMED_RGB;
-                  i <= oyWIDGET_ASSUMED_GRAY; ++i)
-             lw[pos++] = i;
+           *count = pos;
+          }
+          break;
+     case oyGROUP_DEFAULT_PROFILES_EDIT:
+          {
+            oyAllocHelper_m_( w, oyWIDGET , oyEDITING_GRAY - oyEDITING_XYZ + 1,
+                              allocate_func, return NULL);
+            for ( oywid = oyEDITING_XYZ; oywid <= oyEDITING_GRAY; ++oywid )
+              w[pos++] = oywid;
+
+           *count = pos;
+          }
+          break;
+     case oyGROUP_DEFAULT_PROFILES_ASSUMED:
+          {
+            oyAllocHelper_m_( w, oyWIDGET , oyASSUMED_GRAY - oyASSUMED_XYZ + 1,
+                              allocate_func, return NULL);
+            for ( oywid = oyASSUMED_XYZ; oywid <= oyASSUMED_GRAY; ++oywid )
+              w[pos++] = oywid;
+
+           *count = pos;
+          }
+          break;
+     case oyGROUP_DEFAULT_PROFILES_PROOF:
+          {
+            oyAllocHelper_m_( w, oyWIDGET , 1,
+                              allocate_func, return NULL);
+            for ( oywid = oyPROFILE_PROOF; oywid <= oyPROFILE_PROOF; ++oywid )
+              w[pos++] = oywid;
+
+           *count = pos;
+          }
+          break;
+     case oyGROUP_DEFAULT_PROFILES:
+         {
+           oyAllocHelper_m_( lw, oyWIDGET , oyGROUP_DEFAULT_PROFILES_LEN,
+                             allocate_func, return NULL);
+           tmp = oyWidgetListGet_( oyGROUP_DEFAULT_PROFILES_EDIT, &n,
+                                   oyAllocateFunc_);
+           for(i = 0; i < n; ++i)
+             lw[pos++] = tmp[i];
+           oyFree_m_( tmp );
+           tmp = oyWidgetListGet_( oyGROUP_DEFAULT_PROFILES_ASSUMED, &n,
+                                   oyAllocateFunc_);
+           for(i = 0; i < n; ++i)
+             lw[pos++] = tmp[i];
+           oyFree_m_( tmp );
 
            *count = pos;
            w = lw;
          }
          break;
     case oyGROUP_BEHAVIOUR_RENDERING:
-         { int pos = 0;
-           static oyWIDGET lw[oyGROUP_BEHAVIOUR_RENDERING_LEN];
+         {
+           oyAllocHelper_m_( lw, oyWIDGET , oyGROUP_BEHAVIOUR_RENDERING_LEN,
+                             allocate_func, return NULL);
 
            lw[pos++] = oyWIDGET_RENDERING_INTENT;
            lw[pos++] = oyWIDGET_RENDERING_BPC;
@@ -684,8 +1143,9 @@ oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
          }
          break;
     case oyGROUP_BEHAVIOUR_PROOF:
-         { int pos = 0;
-           static oyWIDGET lw[oyGROUP_BEHAVIOUR_PROOF_LEN];
+         {
+           oyAllocHelper_m_( lw, oyWIDGET , oyGROUP_BEHAVIOUR_PROOF_LEN,
+                             allocate_func, return NULL);
 
            lw[pos++] = oyWIDGET_PROFILE_PROOF;
            lw[pos++] = oyWIDGET_RENDERING_INTENT_PROOF;
@@ -697,8 +1157,9 @@ oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
          }
          break;
     case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
-         { int pos = 0;
-           static oyWIDGET lw[oyGROUP_BEHAVIOUR_PROOF_LEN];
+         {
+           oyAllocHelper_m_( lw, oyWIDGET ,oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN ,
+                             allocate_func, return NULL);
 
            lw[pos++] = oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN;
            lw[pos++] = oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT;
@@ -708,8 +1169,9 @@ oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
          }
          break;
     case oyGROUP_BEHAVIOUR_MISSMATCH:
-         { int pos = 0;
-           static oyWIDGET lw[oyGROUP_BEHAVIOUR_PROOF_LEN];
+         {
+           oyAllocHelper_m_( lw, oyWIDGET, oyGROUP_BEHAVIOUR_MISSMATCH_LEN,
+                             allocate_func, return NULL);
 
            lw[pos++] = oyWIDGET_ACTION_UNTAGGED_ASSIGN;
            lw[pos++] = oyWIDGET_ACTION_OPEN_MISMATCH_RGB;
@@ -720,40 +1182,62 @@ oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
          }
          break;
     case oyGROUP_BEHAVIOUR:
-         { int pos = 0;
-           static oyWIDGET lw[oyGROUP_BEHAVIOUR_LEN];
-           int n;
-           oyWIDGET *tmp;
-
-           tmp = oyWidgetListGet_(oyGROUP_BEHAVIOUR_RENDERING, &n);
+         {
+           oyAllocHelper_m_( lw, oyWIDGET, oyGROUP_BEHAVIOUR_LEN,
+                             allocate_func, return NULL);
+           tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR_RENDERING, &n,
+                                   oyAllocateFunc_);
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
-           tmp = oyWidgetListGet_(oyGROUP_BEHAVIOUR_MISSMATCH, &n);
+           oyFree_m_( tmp );
+           tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR_MISSMATCH, &n,
+                                   oyAllocateFunc_);
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
-           tmp = oyWidgetListGet_(oyGROUP_BEHAVIOUR_PROOF, &n);
+           oyFree_m_( tmp );
+           tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR_PROOF, &n,
+                                   oyAllocateFunc_);
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
-           tmp = oyWidgetListGet_(oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, &n);
+           oyFree_m_( tmp );
+           tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, &n,
+                                   oyAllocateFunc_);
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
+           oyFree_m_( tmp );
 
            *count = pos;
            w = lw;
          }
          break;
     case oyGROUP_ALL:
-         { int pos = 0;
-           static oyWIDGET lw[oyGROUP_ALL_LEN];
-           int n;
-           oyWIDGET *tmp;
+         {
+           oyAllocHelper_m_( lw, oyWIDGET, oyGROUP_ALL_LEN,
+                             allocate_func, return NULL);
 
-           tmp = oyWidgetListGet_(oyGROUP_DEFAULT_PROFILES, &n);
+           tmp = oyWidgetListGet_( oyGROUP_POLICY, &n,
+                                   oyAllocateFunc_);
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
-           tmp = oyWidgetListGet_(oyGROUP_BEHAVIOUR, &n);
+           oyFree_m_( tmp );
+
+           tmp = oyWidgetListGet_( oyGROUP_PATHS, &n,
+                                   oyAllocateFunc_);
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
+           oyFree_m_( tmp );
+
+           tmp = oyWidgetListGet_( oyGROUP_DEFAULT_PROFILES, &n,
+                                   oyAllocateFunc_);
+           for(i = 0; i < n; ++i)
+             lw[pos++] = tmp[i];
+           oyFree_m_( tmp );
+
+           tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR, &n,
+                                   oyAllocateFunc_);
+           for(i = 0; i < n; ++i)
+             lw[pos++] = tmp[i];
+           oyFree_m_( tmp );
 
            *count = pos;
            w = lw;
@@ -775,11 +1259,13 @@ oyGroupAdd_                (const char *cmm,
                             const char *name,
                             const char *tooltips)
 {
-  const char ***ptr = calloc(sizeof(char***), ++oy_groups_descriptions_);
-  const char **desc = calloc(sizeof(char**), 3);
+  const char ***ptr = NULL;
+  const char **desc = NULL;
   int i;
 
   DBG_PROG_START
+  ptr = calloc ( sizeof(char***), ++oy_groups_descriptions_ );
+  desc = calloc( sizeof(char**), 3 );
 
   oyTextsCheck_ ();
 
@@ -789,8 +1275,7 @@ oyGroupAdd_                (const char *cmm,
 
   for(i = 0; i < oy_groups_descriptions_ - 1; ++i)
       ptr[i] = oy_groups_description_[i]; 
-  if(oy_groups_description_)
-    free(oy_groups_description_);
+  oyFree_m_(oy_groups_description_);
   i = oy_groups_descriptions_ - 1; 
   ptr[i] = (const char**)desc;
   oy_groups_description_ = ptr;
@@ -803,15 +1288,17 @@ int
 oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
 {
   int r = 0;
-
+  const oyOption_t_ *t = oyOptionGet_(type);
+ 
   DBG_PROG_START
 
   DBG_PROG_S( ("type = %d behaviour %d", type, choice) )
 
-  if ( oyWidgetTypeGet_( type ) == oyTYPE_BEHAVIOUR )
+  if ( oyWidgetTypeGet_( type ) == oyTYPE_BEHAVIOUR ||
+       oyWidgetTypeGet_( type ) == oyTYPE_CHOICE )
   {
     if ( choice >= 0 &&
-         choice < oyOptionGet_(type)-> choices )
+         choice < t->choices )
       r = 1;
     else
       WARN_S( ("%s:%d !!! ERROR type %d option %d does not exist for behaviour",__FILE__,__LINE__, type, choice));
@@ -831,18 +1318,38 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR       type,
                             const char      **category,
                             const char      **option_string,
                             const char      **tooltip)
-{ DBG_PROG_START
-  if (choices) *choices = oyOptionGet_(type)-> choices;
+{
+  const oyOption_t_ *t = oyOptionGet_(type);
+
+  DBG_PROG_START
+
+  if (choices) *choices = t->choices;
 
   if ( oyTestInsideBehaviourOptions_(type, choice) )
-  { *option_string = oyOptionGet_(type)-> choice_list[ choice ];
+  {
+    *option_string = t->choice_list[ choice ];
     *category = "API is broken";
-    *tooltip =  oyOptionGet_(type)-> description;
+    *tooltip =  t->description;
     DBG_PROG_ENDE
-    return oyOptionGet_(type)-> name;
+    return t->name;
   }
   DBG_PROG_ENDE
   return NULL;
 }
 
+/** @internal returns the binary lenth of a string */
+size_t oyStrblen_            (const char * start)
+{
+  char *end = NULL;
+
+  if( start )
+  {
+    end = strchr( start, 0 );
+
+    if( end )
+      return end - start + 1;
+  }
+
+  return 0;
+}
 

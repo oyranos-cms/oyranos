@@ -1,0 +1,45 @@
+.TH oyranos-monitor 1 "February 20, 2007" "User Commands"
+.SH NAME
+oyranos-monitor \- Oyranos CMS monitor configuration
+.SH SYNOPSIS
+.B oyranos-monitor
+[-x num -y num  profilename]
+[-e -x num -y num]
+[]
+.SH DESCRIPTION
+This little programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS).
+.SH OPTIONS
+.TP
+.B \-x
+get/set the x display position
+.TP
+.B \-y
+get/set the y display position
+.TP
+.B \-e
+reset the hardware gamma table to the defaults
+.TP
+.B Set up the X11 server with the Oyranos stored monitor profile
+.SH EXAMPLES 
+.TP
+Put the following in a setup script like .xinitrc:
+.nf
+# select a monitor profile, load the binary blob into X and
+# fill the VideoCardGammaTable, if appropriate
+.fi
+.B oyranos-monitor
+.PP 
+.TP
+Assign a ICC profile to a screen:
+.B oyranos-monitor -x pos -y pos  Profilname
+.PP 
+.TP
+Reset a screens hardware LUT in order to do a calibration:
+.B oyranos-monitor -e -x pos -y pos  Profilname
+.PP 
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH "SEE ALSO"
+oyranos-config-fltk(1) oyranos-policy(1) oyranos(3)
+.SH BUGS
+at: http://sourceforge.net/tracker/?group_id=177017&atid=879553

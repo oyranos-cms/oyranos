@@ -83,6 +83,13 @@ main(int argc, char **argv)
   XineramaScreenInfo* fenster = 0;
 # endif
 
+  if(getenv("OYRANOS_DEBUG"))
+  {
+    int value = atoi(getenv("OYRANOS_DEBUG"));
+    if(value > 0)
+      oy_debug = value;
+  }
+
   if(!display) return 1;
 
   for( i = 1; i < argc; ++i)
@@ -114,6 +121,13 @@ main(int argc, char **argv)
       put_edid = 1;
     } else
 
+    if((strcmp(argv[i], "-v") == 0) ||
+       (strcmp(argv[i], "--verbose") == 0) )
+    {
+      oy_debug += 1;
+      break;
+    } else
+
     if((strcmp(argv[i], "--help") == 0) ||
        (strcmp(argv[i], "-h") == 0) ||
        (strcmp(argv[i], "-?") == 0) )
@@ -137,6 +151,7 @@ main(int argc, char **argv)
       printf(" %s -n/--number    -- the number of available screens\n",argv[0]);
       printf(" %s -p/--put       -- put the edid info into the root window\n",argv[0]);
       printf(" %s -s/--screen x  -- the requested screen\n", argv[0]);
+      printf("              -v/--verbose   -- print some messages\n");
       printf("\n");
       return 1;
   }
@@ -199,8 +214,8 @@ main(int argc, char **argv)
 
         if(screen_number == 32 || screen_number == i)
         {
-          printf("%s %s %s %s\n", manufacturer, model, serial,
-                                  display_name);
+          DBG_PROG_S(("%s %s %s %s\n", manufacturer, model, serial,
+                                  display_name));
 
           /* we must rely on eighter screens or Xinerama 
            * otherwise we split the behaviour without compensating missing
@@ -267,7 +282,7 @@ main(int argc, char **argv)
   }
 
   if(screen_number == -1)
-    printf( "%d\n", monitors );
+    DBG_PROG_S(( "%d\n", monitors ));
 
   XCloseDisplay( display );
 

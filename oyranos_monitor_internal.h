@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2005  Kai-Uwe Behrmann
+ * Copyright (C) 2005-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -41,6 +41,7 @@ namespace oyranos
 {
 #endif /* __cplusplus */
 
+#ifdef HAVE_X
 
 struct oyMonitor_s_ {
   oyOBJECT_TYPE type;        /**< object type */
@@ -69,6 +70,7 @@ int         oyDisplayY_                   ( oyMonitor_s *disp );
 int         oyDisplayWidth_               ( oyMonitor_s *disp );
 int         oyDisplayHeight_              ( oyMonitor_s *disp );
 
+#endif
 
 int oyFree_       (void *oy_structure);
 

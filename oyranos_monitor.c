@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2005  Kai-Uwe Behrmann
+ * Copyright (C) 2005-2007  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -61,12 +61,14 @@
 /* --- internal API definition --- */
 
 
+#if (defined(HAVE_X) && !defined(__APPLE__))
 int   oyGetMonitorInfo_           (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
                                    char**      display_geometry,
                                    oyAllocFunc_t allocate_func);
+#endif
 char* oyGetMonitorProfileName_    (const char *display_name,
                                    oyAllocFunc_t allocate_func);
 char* oyGetMonitorProfile_        (const char *display_name,
@@ -78,14 +80,17 @@ int   oyActivateMonitorProfile_   (const char* display_name,
 int   oyActivateMonitorProfiles_  (const char* display_name);
 int   oySetMonitorProfile_        (const char* display_name,
                                    const char* profile_name);
+#if (defined(HAVE_X) && !defined(__APPLE__))
 int   oyGetScreenFromDisplayName_ (oyMonitor_s  *disp );
 int   oyGetScreenFromPosition_    (const char *display_name,
                                    int         x,
                                    int         y);
+#endif
 char* oyGetDisplayNameFromPosition_(const char *raw_display_name,
                                    int x,
                                    int y,
                                    oyAllocFunc_t allocate_func);
+#if (defined(HAVE_X) && !defined(__APPLE__))
 int   oyGetScreenGeometry_        (oyMonitor_s  *disp );
 char* oyChangeScreenName_         (const char *display_name, int screen );
 char**oyGetAllScreenNames_        (const char *display_name, int *n_scr );
@@ -145,6 +150,7 @@ oyFree_( void *oy_structure )
 
   return error;
 }
+#endif
 
 /** @internal oyUnrollEdid1_ */
 void
@@ -245,7 +251,7 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
 }
 
 
-
+#if defined( HAVE_X ) && !defined(__APPLE__)
 int
 oyGetMonitorInfo_                 (const char* display_name,
                                    char**      manufacturer,
@@ -280,6 +286,18 @@ oyGetMonitorInfo_                 (const char* display_name,
   w = RootWindow( display, screen); DBG_PROG_S(("w: %ld", w))
   DBG_PROG 
 
+  if( display_geometry )
+  {
+    const char *identifier = oyDisplayIdentifier_( &disp );
+
+    len = strlen( identifier );
+    ++len;
+    t = (char*)allocate_func( len );
+    sprintf(t, identifier);
+
+    *display_geometry = t; DBG_PROG_S(( *display_geometry ))
+  }
+
   atom_name = oyGetAtomName_( &disp, "XFree86_DDC_EDID1_RAWDATA" );
   atom = XInternAtom(display, atom_name, 1);
 
@@ -295,14 +313,20 @@ oyGetMonitorInfo_                 (const char* display_name,
 
   if( nitems_return != 128 )
   {
+    int error = 0;
+    char * txt = malloc(1024); txt[0] = 0;
+
     /* test twinview edid */
-    int error = system("PATH=" OY_BINDIR ":$PATH; oyranos-monitor-nvidia -p");
-    error = error;
+    if(oy_debug)
+      snprintf( txt, 1024, "OYRANOS_DEBUG=%d ", oy_debug);
+    snprintf( &txt[strlen(txt)], 1024, "%s",
+              "PATH=" OY_BINDIR ":$PATH; oyranos-monitor-nvidia -p" );
+
+    error = system( txt );
+    if(txt) { free(txt); txt = 0; }
 
     /*if(!error)*/
     {
-      int oy_debug_ = oy_debug; oy_debug = 1;
-
       atom = XInternAtom(display, atom_name, 1);
       DBG_PROG_S(("atom: %ld", atom))
 
@@ -310,7 +334,6 @@ oyGetMonitorInfo_                 (const char* display_name,
         XGetWindowProperty(display, w, atom, 0, 32, 0, AnyPropertyType, &a,
                      &actual_format_return, &nitems_return, &bytes_after_return,
                      &prop_return );
-      oy_debug = oy_debug_;
     }
   }
 
@@ -325,18 +348,6 @@ oyGetMonitorInfo_                 (const char* display_name,
 
   oyUnrollEdid1_( edi, manufacturer, model, serial, allocate_func );
 
-  if( display_geometry )
-  {
-    const char *identifier = oyDisplayIdentifier_( &disp );
-
-    len = strlen( identifier );
-    ++len;
-    t = (char*)allocate_func( len );
-    sprintf(t, identifier);
-
-    *display_geometry = t; DBG_PROG_S(( *display_geometry ))
-  }
-
   oyFree_( &disp );
   oyFree_m_( atom_name )
 
@@ -349,12 +360,55 @@ oyGetMonitorInfo_                 (const char* display_name,
     return 1;
   }
 }
+#endif
+
+#ifdef __APPLE__
+DisplayIDType
+oyDisplayNameToOsxID( const char* display_name )
+{
+  DisplayIDType screenID=0;
+  GDHandle device = 0;
+
+  if(!display_name || 
+     atoi(display_name) <= 0)
+  {
+    device = DMGetFirstScreenDevice(true); /*GetDeviceList();*/
+    DMGetDisplayIDByGDevice(device, &screenID, false);
+  } else
+    screenID = atoi(display_name);
+
+  return screenID;
+}
+#endif
 
 char*
 oyGetMonitorProfile_          (const char* display_name,
                                size_t *size,
                                oyAllocFunc_t allocate_func)
 {
+  char       *moni_profile=0;
+
+#ifdef __APPLE__
+
+  CMProfileRef prof=NULL;
+  DisplayIDType screenID=0;
+  CMProfileLocation loc;
+  int err = 0;
+  char * block = NULL;
+
+  DBG_PROG_START
+
+  screenID = oyDisplayNameToOsxID( display_name );
+
+  CMGetProfileByAVID(screenID, &prof);
+  CMGetProfileLocation(prof, &loc);
+
+  err = oyGetProfileBlockOSX (prof, &block, size, allocate_func);
+  moni_profile = block;
+  if (prof) CMCloseProfile(prof);
+
+#else /* HAVE_X */
+
   Display *display;
   int screen = 0;
   Window w;
@@ -363,7 +417,6 @@ oyGetMonitorProfile_          (const char* display_name,
   unsigned long nitems_return=0, bytes_after_return=0;
   unsigned char* prop_return=0;
   oyMonitor_s disp;
-  char       *moni_profile=0;
 
   DBG_PROG_START
 
@@ -408,6 +461,7 @@ oyGetMonitorProfile_          (const char* display_name,
   memcpy( moni_profile, prop_return, *size );
   XFree( prop_return );
   oyFree_( &disp );
+#endif
 
   DBG_PROG_ENDE
   return moni_profile;
@@ -417,11 +471,30 @@ char*
 oyGetMonitorProfileName_          (const char* display_name,
                                    oyAllocFunc_t allocate_func)
 {
+  char       *moni_profile=0;
+
+#ifdef __APPLE__
+
+  CMProfileRef prof=NULL;
+  DisplayIDType screenID=0;
+  CMProfileLocation loc;
+
+  DBG_PROG_START
+
+  screenID = oyDisplayNameToOsxID( display_name );
+
+  CMGetProfileByAVID(screenID, &prof);
+  CMGetProfileLocation(prof, &loc);
+
+  moni_profile = oyGetProfileNameOSX (prof, allocate_func);
+  if (prof) CMCloseProfile(prof);
+
+#else /* HAVE_X */
+
   char       *manufacturer=0,
              *model=0,
              *serial=0,
              *display_geometry=0;
-  char       *moni_profile=0;
   const char *host_name = 0;
   oyMonitor_s disp;
 
@@ -448,19 +521,46 @@ oyGetMonitorProfileName_          (const char* display_name,
   if(display_geometry) free (display_geometry);
   oyFree_( &disp );
 
+#endif
+
   DBG_PROG_ENDE
   return moni_profile;
 }
-
 
 char**
 oyGetAllScreenNames_            (const char *display_name,
                                  int *n_scr)
 {
-  int i;
+  int i = 0;
+  char** list = 0;
+
+#ifdef __APPLE__
+
+  int ids[256];
+  GDHandle                                device;
+  DisplayIDType                           screenID;
+
+  device = GetDeviceList();
+  while (device)
+  {
+    DMGetDisplayIDByGDevice(device, &screenID, false);
+    ids[i++] = screenID;
+
+    device = GetNextDevice( device );
+  }
+
+  *n_scr = i;
+  oyAllocHelper_m_( list, char*, *n_scr, 0, return NULL )
+
+  for ( i = 0; i < *n_scr ; ++i )
+  {
+    oyAllocHelper_m_( list[i], char, 24, 0, return NULL )
+    snprintf( list[i], 24, "%d", ids[i] );
+  }
+
+#else /* HAVE_X */
   Display *display = 0;
   int len = 0;
-  char** list = 0;
   oyMonitor_s disp;
 
   *n_scr = 0;
@@ -498,11 +598,13 @@ oyGetAllScreenNames_            (const char *display_name,
   *n_scr = len;
   oyFree_( &disp );
 
+#endif
+
   return list;
 }
 
-
-/** @internal This function will only with Xineram hit exact results
+#if defined( HAVE_X ) && !defined(__APPLE)
+/** @internal This function will only with Xinerama hit exact results
  *  Anyway, we handle multiple screens too.
  */
 int
@@ -579,8 +681,9 @@ oyGetScreenFromPosition_        (const char *display_name,
   oyFree_m_( screens )
   return screen;
 }
+#endif
 
-/** @internal This function will only with Xineram hit exact results
+/** @internal This function will only with Xinerama hit exact results
  *  Anyway, we handle multiple screens too.
  */
 char*
@@ -589,12 +692,35 @@ oyGetDisplayNameFromPosition_     (const char *display_name,
                                    int y,
                                    oyAllocFunc_t allocate_func)
 {
+  char *new_display_name = NULL;
+
+#ifdef __APPLE__
+
+  GDHandle      device;
+  DisplayIDType screenID;
+  Rect          r = {0,0,640,480};
+
+  device = GetDeviceList();
+  while (device)
+  {
+    r = (**device).gdRect;
+    if( r.left <= x && x < r.right &&
+        r.top <= y && y < r.bottom )
+    {
+      DMGetDisplayIDByGDevice(device, &screenID, false);
+      new_display_name = allocate_func( 24 );
+      snprintf( new_display_name, 24, "%d", (int)screenID );
+
+      return new_display_name;
+    }
+  }
+
+#else
   int len = 0, i;
   char** screens = 0;
   int screen = -1;
   Display *display = 0;
   oyMonitor_s disp;
-  char *new_display_name = NULL;
 
   if( oyGetDisplay_( display_name, &disp ) )
     return 0;
@@ -667,9 +793,12 @@ oyGetDisplayNameFromPosition_     (const char *display_name,
       oyFree_m_( screens[i] )
     }
   oyFree_m_( screens )
+#endif
+
   return new_display_name;
 }
 
+#if defined( HAVE_X ) && !defined(__APPLE)
 /** @internal
     takes a chaked display name and point as argument and
     gives a string back for search in the db
@@ -705,7 +834,7 @@ oyGetAtomName_                  (oyMonitor_s *disp,
 
   return atom_name;
 }
-
+#endif
 
 /** @internal
     1. get all monitors / screens / Xinerama screens
@@ -745,15 +874,18 @@ oyActivateMonitorProfile_         (const char* display_name,
                                    const char* profil_name )
 {
   int error = 0;
-
   char       *profil_pathname;
   const char *profil_basename;
   char* profile_name_ = 0;
+#if defined( HAVE_X ) && !defined(__APPLE__)
   oyMonitor_s disp;
   char       *dpy_name = NULL;
+  char *text = 0;
+#endif
 
   DBG_PROG_START
 
+#if defined( HAVE_X ) && !defined(__APPLE__)
   if( oyGetDisplay_( display_name, &disp ) ) return 1;
 
   dpy_name = calloc( sizeof(char), 1024 );
@@ -761,6 +893,7 @@ oyActivateMonitorProfile_         (const char* display_name,
     snprintf( dpy_name, 1024, ":%d", disp.geo[0] );
   else
     snprintf( dpy_name, 1024, "%s:%d", disp.host, disp.geo[0] );
+#endif
 
   if(profil_name)
   {
@@ -775,26 +908,52 @@ oyActivateMonitorProfile_         (const char* display_name,
 
   if( profil_pathname && strlen(profil_pathname) )
   {
-    char *text = 0;
-
-    oyAllocHelper_m_( text, char, MAX_PATH, 0, error = 1; goto Clean )
-    DBG_PROG_S(( "profil_pathname %s", profil_pathname ));
 
     if(profil_name && strrchr(profil_name,OY_SLASH_C))
       profil_basename = strrchr(profil_name,OY_SLASH_C)+1;
     else
       profil_basename = profil_name;
 
+#ifdef __APPLE__
+    {
+      CMProfileLocation loc;
+      CMError err = 0;
+      CMProfileRef prof=NULL;
+      DisplayIDType screenID = 0;
+
+      loc.locType = cmPathBasedProfile;
+      snprintf( loc.u.pathLoc.path, 255, "%s%s%s",
+                profil_pathname, OY_SLASH, profil_basename);
+
+      err = CMOpenProfile ( &prof, &loc );
+      screenID = oyDisplayNameToOsxID( display_name );
+
+      if( screenID && !err )
+        err = CMSetProfileByAVID ( screenID, prof );
+
+      CMCloseProfile( prof );
+    }
+#else /* HAVE_X */
+
+    oyAllocHelper_m_( text, char, MAX_PATH, 0, error = 1; goto Clean )
+    DBG_PROG_S(( "profil_pathname %s", profil_pathname ));
+
     /* set vcgt tag with xcalib
        not useable with multihead Xinerama at one screen
+
+       @todo TODO xcalib should be configurable as a module
      */
     sprintf(text,"xcalib -d %s -s %d %s%s%s", dpy_name, disp.geo[1],
                                profil_pathname, OY_SLASH, profil_basename);
-    error = system(text);
-    if(error &&
-       error != 65280) { /*/ hack*/
-      WARN_S((_("No monitor gamma curves by profile: %s"),
-              oyNoEmptyName_m_(profil_basename) ))
+    {
+      Display * display = oyDisplayDevice_( &disp );
+      if(ScreenCount( display ) > 1 || oyDisplayScreen_( &disp ) == 0)
+        error = system(text);
+      if(error &&
+         error != 65280) { /*/ hack*/
+        WARN_S((_("No monitor gamma curves by profile: %s"),
+                oyNoEmptyName_m_(profil_basename) ))
+      }
     }
 
     DBG_PROG_S(( "system: %s", text ))
@@ -843,12 +1002,15 @@ oyActivateMonitorProfile_         (const char* display_name,
 
     DBG_PROG_S(( "system: %s", text ))
     oyFree_m_( text );
+#endif
   }
 
+#if defined( HAVE_X ) && !defined(__APPLE__)
   Clean:
+  oyFree_( &disp );
+#endif
   if(profil_pathname) oyFree_m_( profil_pathname );
   if(profile_name_) oyFree_m_( profile_name_ );
-  oyFree_( &disp );
 
   DBG_PROG_ENDE
   return error;
@@ -859,6 +1021,12 @@ oySetMonitorProfile_              (const char* display_name,
                                    const char* profil_name )
 {
   int error = 0;
+
+#ifdef __APPLE__
+
+  error = oyActivateMonitorProfile_( display_name, profil_name );
+
+#else /* HAVE_X */
 
   char       *manufacturer=0,
              *model=0,
@@ -948,11 +1116,13 @@ oySetMonitorProfile_              (const char* display_name,
   if (serial) free (serial);
   if (display_geometry) free (display_geometry);
   if (profil_pathname) free (profil_pathname);
+#endif
 
   DBG_PROG_ENDE
   return error;
 }
 
+#if defined( HAVE_X ) && !defined(__APPLE)
 int
 oyGetDisplayNumber_        (oyMonitor_s *disp)
 {
@@ -1219,6 +1389,7 @@ oyGetDisplay_                      (const char *display_name,
   DBG_PROG_ENDE
   return error;
 }
+#endif
 
 
 /* separate from the internal functions */
@@ -1248,8 +1419,13 @@ oyGetMonitorInfo                  (const char* display,
   if( oyExportStart_(EXPORT_MONITOR))
     oyActivateMonitorProfiles_(display);
 
+#if (defined(HAVE_X) && !defined(__APPLE__))
   err = oyGetMonitorInfo_( display, manufacturer, model, serial, 0,
                            allocate_func);
+#else
+  err = 1;
+#endif
+
   DBG_PROG_V(( strlen(*manufacturer) ))
   if(*manufacturer)
     DBG_PROG_S(( *manufacturer ));
@@ -1357,7 +1533,8 @@ oyActivateMonitorProfiles         (const char* display_name)
 
 /** @brief screen number from position
  *
- *  This function will hit exact results only with Xinerama.
+ *  This function will hit exact results only with Xinerama. \n
+ *  a platform specific function
  *
  *  @param      display_name  the display string
  *  @param      x             x position on screen
@@ -1375,7 +1552,10 @@ oyGetScreenFromPosition         (const char *display_name,
   if( oyExportStart_(EXPORT_MONITOR) )
     oyActivateMonitorProfiles_(display_name);
 
+#if (defined(HAVE_X) && !defined(__APPLE__))
   screen = oyGetScreenFromPosition_( display_name, x,y );
+#endif
+
   DBG_PROG_S(( "x %d y %d screen %d\n", x,y,screen ));
 
   oyExportEnd_();

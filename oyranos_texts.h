@@ -83,7 +83,8 @@ int           oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice);
 const oyOption_t_* oyOptionGet_        (oyWIDGET          type);
 
 oyWIDGET    * oyWidgetListGet_         (oyGROUP           group,
-                                        int             * count);
+                                        int             * count,
+                                        oyAllocFunc_t     allocate_func );
 oyWIDGET_TYPE oyWidgetTypeGet_         (oyWIDGET          type);
 oyWIDGET_TYPE oyWidgetTitleGet_        (oyWIDGET          option,
                                         const oyGROUP  ** categories,
@@ -115,8 +116,15 @@ int         oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
 char*       oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
                                         oyAllocFunc_t     alloc_func);
 
-
-
+char*       oyPolicyNameGet_           ();
+int         oyPolicySet_               (const char      * policy_file,
+                                        const char      * full_name );
+oyWIDGET*   oyPolicyWidgetListGet_     (oyGROUP           group,
+                                        int             * count );
+const char**oyConfigPathsGet_          (int             * count,
+                                        const char      * subdir );
+char **     oyProfilePathsGet_         (int             * count,
+                                        oyAllocFunc_t     allocate_func);
 #ifdef __cplusplus
 } /* extern "C" */
 } /* namespace oyranos */
