@@ -66,6 +66,10 @@ const char * oyColourSpaceGetNameFromSig( icColorSpaceSignature sig );
 #define icSigProfileSequenceIdentifierTag 0x70736964 /* psid */
 #endif
 
+#ifndef icSigMultiLocalizedUnicodeType
+#define icSigMultiLocalizedUnicodeType 0x6D6C7563  /* 'mluc' */
+#endif
+
 #ifndef HAVE_LCMS
 
 #ifndef icSigChromaticityType

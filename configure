@@ -234,6 +234,8 @@ else
 fi
 export ECHO
 
+time="`date +%y%m%d.%H%M%S`"
+
 if [ -n "$ECHO" ]; then
   echo_="";
   $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
@@ -243,7 +245,7 @@ if [ -n "$ECHO" ]; then
   $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="        Welcome to $TARGET_NAME Version $VERSION configurator"
   $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="#                                                              #"
+  echo_="#                       $time                          #"
   $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="#                       Configuration                          #"
   $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"

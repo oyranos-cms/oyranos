@@ -15,7 +15,9 @@ OY_MODULE_NAME  =_cmm_module
 LIBRARIES = $(TARGET) \
 	$(TARGET)_moni \
 	$(TARGET)_alpha
-CMMS = $(TARGET)_lcms$(OY_MODULE_NAME) $(TARGET)_oyX1$(OY_MODULE_NAME)
+CMMS = 	$(TARGET)_lcms$(OY_MODULE_NAME) \
+	$(TARGET)_oyX1$(OY_MODULE_NAME) \
+	$(TARGET)_oyra$(OY_MODULE_NAME)
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
@@ -28,6 +30,7 @@ LIB_ALPHA_SONAMEFULL = lib$(TARGET)_alpha$(SO).$(VERSION)$(LIBEXT)
 LIB_ALPHA_NAME = lib$(TARGET)_alpha.a
 LIB_CMM_LCMS = lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 LIB_CMM_oyX1 = lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
+LIB_CMM_oyra = lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
 #ifdef $(X11)
 LIB_XNVCTRL = libXNVCtrl
@@ -89,6 +92,8 @@ CFILES_CMM_LCMS = \
 	$(TARGET)_cmm_lcms.c
 CFILES_CMM_oyX1 = \
 	$(TARGET)_cmm_oyX1.c
+CFILES_CMM_oyra = \
+	$(TARGET)_cmm_oyra.c
 CFILES_MONI = \
 	$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
@@ -149,15 +154,28 @@ Flmm_FILES = \
 SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
-		$(CFILES_CMM_LCMS) $(CFILES_CMM_oyX1) \
+		$(CFILES_CMM_LCMS) $(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
 		$(CXXFILES_FLTK) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 ALPHA_OBJECTS = $(CPPFILES_ALPHA:.cpp=.o) $(CXXFILES_ALPHA:.cxx=.o) $(CFILES_ALPHA:.c=.o)
 CMM_LCMS_OBJECTS = $(CFILES_CMM_LCMS:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
+CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
+
+CLEAN_OBJECTS = $(OBJECTS) \
+	$(MONI_OBJECTS) \
+	$(ALPHA_OBJECTS) \
+	$(CMM_LCMS_OBJECTS) \
+	$(CMM_oyX1_OBJECTS) \
+	$(CMM_oyra_OBJECTS) \
+	$(FLTK_OBJECTS) \
+	$(Flmm_OBJECTS) \
+	$(TARGET)_gamma.o \
+	$(TARGET)_policy.o \
+	test2.o test.o
 
 
 INCL_DEP = $(INCL) $(SOURCES)
@@ -190,7 +208,8 @@ ALL_FILES = \
 all:	mkdepend $(ELEKTRA_VERSION) \
 	$(LIBSONAMEFULL) \
 	$(LIB_ALPHA_SONAMEFULL) \
-	$(TARGET)-monitor $(X11) $(LIB_CMM_LCMS) $(LIB_CMM_oyX1) \
+	$(TARGET)-monitor $(X11) $(LIB_CMM_LCMS) \
+	$(LIB_CMM_oyX1) $(LIB_CMM_oyra) \
 	$(FLTK_GUI) $(TARGET)-policy \
 	$(TEST2) $(LINGUAS_SRC)
 	cd standard_profiles; \
@@ -256,6 +275,16 @@ $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS)
 	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
+$(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
+	echo Linking $@ ...
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_CMM_oyra) \
+	-o $@ \
+	$(CMM_oyra_OBJECTS) $(LDLIBS)
+	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...
@@ -647,16 +676,22 @@ distclean: clean
 
 clean:
 	-$(RM) \
-	$(OBJECTS) $(MONI_OBJECTS) $(FLTK_OBJECTS) \
-	$(TARGET)_gamma.o $(TARGET)-policy $(TARGET)_policy.o \
+	$(CLEAN_OBJECTS) \
+	$(TARGET)-policy \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	test2.o test.o test2 test \
-	$(TARGET)-config-fltk $(FLTK_OBJECTS); \
+	test2 test \
+	$(TARGET)-config-fltk; \
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo; \
 	done;
 	for lib in $(LIBRARIES); do \
+	   $(RM) $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	         $(BUILDDIR)lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	         $(BUILDDIR)lib$${lib}$(SO)$(LIBEXT) \
+	         $(BUILDDIR)lib$${lib}.a; \
+	done
+	for lib in $(CMMS); do \
 	   $(RM) $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 	         $(BUILDDIR)lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
 	         $(BUILDDIR)lib$${lib}$(SO)$(LIBEXT) \

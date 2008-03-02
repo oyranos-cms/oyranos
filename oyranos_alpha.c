@@ -74,6 +74,40 @@ int          oyCMMdsoSearch_         ( const char        * cmm );
 oyPointer    oyCMMdsoGet_            ( const char        * cmm,
                                        const char        * lib_name );
 
+typedef enum {
+  oyREQUEST_NONE,                      /**< deactives the request */
+  oyREQUEST_SLIGTH,
+  oyREQUEST_MID,
+  oyREQUEST_MUCH,
+  oyREQUEST_HARD                       /**< requirement, fail if not present */
+} oyREQUEST_e;
+
+/** @struct oyCMMapiQuery_s
+ *  @internal
+ *  @brief  check/prepare a module
+ *
+ *  @since  Oyranos: version 0.1.8
+ *  @date   2008/01/03 (API 0.1.8)
+ */
+typedef struct {
+  oyCMMQUERY_e   query;
+  uint32_t       value;
+  oyREQUEST_e    request;
+} oyCMMapiQuery_s;
+
+/** @struct oyCMMapiQuerie_s
+ *  @internal
+ *  @brief  check/prepare a module
+ *
+ *  @since  Oyranos: version 0.1.8
+ *  @date   2008/01/03 (API 0.1.8)
+ */
+typedef struct {
+  int              n;
+  oyCMMapiQuery_s* queries;
+} oyCMMapiQueries_s;
+
+#if 0
 /** @internal
  *  @since Oyranos: version 0.1.8
  *  @date  12 december 2007 (API 0.1.8)
@@ -83,7 +117,10 @@ struct {
   oyCMMapi1_s    * api1;
   char             cmm2[5];
   oyCMMapi2_s    * api2;
-} oy_cmm_apis_ = {{0},0,{0},0};
+  char             cmm3[5];
+  oyCMMapi3_s    * api3;
+} oy_cmm_apis_ = {{0},0,{0},0,{0},0};
+#endif
 
 char **          oyCMMsGetNames_     ( int               * n,
                                        oyOBJECT_TYPE_e   * api_types,
@@ -94,14 +131,14 @@ char *           oyCMMnameFromLibName_(const char        * lib_name);
 oyCMMInfo_s *    oyCMMInfoAtListFromLibName_(const char        * lib_name );
 oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name );
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
-                                       const char        * prefered_cmm,
-                                       unsigned int      * cmmId );
+                                       uint32_t            cmm,
+                                       oyCMMapiQueries_s * capabilities,
+                                       uint32_t          * cmmId );
 
 oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api );
 oyCMMhandle_s *  oyCMMFromCache_     ( const char        * cmm );
 oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
 int              oyCMMRelease_       ( const char        * cmm );
-unsigned int     oyCMMapiLoad_       ( oyOBJECT_TYPE_e     type );
 unsigned int     oyCMMapiIsReady_    ( oyOBJECT_TYPE_e     type );
 
 
@@ -252,7 +289,8 @@ oyColourSpaceGetNameFromSig( icColorSpaceSignature sig )
   return text;
 }
 
-/** @brief channel names of a colour space
+/** @func oyColourSpaceGetChannelNameFromSig
+ *  @brief channel names of a colour space
  *
  *  @since Oyranos: version 0.1.8
  *  @date  september 2007 (API 0.1.8)
@@ -376,6 +414,388 @@ oyColourSpaceGetChannelNameFromSig (icColorSpaceSignature sig,
   return "-";
 }
 
+/** @func  oyICCTagDescription
+ *  @brief get tag description
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCTagDescription ( icTagSignature      sig )
+{
+
+  switch (sig) {
+    case icSigAToB0Tag: return _("Lockup table, device to PCS, intent photometric"); break;
+    case icSigAToB1Tag: return _("Lockup table, device to PCS, intent relative colorimetric"); break;
+    case icSigAToB2Tag: return _("Lockup table, device to PCS, intent saturation"); break;
+    case icSigBlueColorantTag: return _("Blue Colorant"); break;
+    case icSigBlueTRCTag: return _("Blue tone reproduction curve"); break;
+    case icSigBToA0Tag: return _("Lockup table, PCS to device, intent photometric"); break;
+    case icSigBToA1Tag: return _("Lockup table, PCS to device, intent relative colorimetric"); break;
+    case icSigBToA2Tag: return _("Lockup table, PCS to device, intent saturation"); break;
+    case icSigCalibrationDateTimeTag: return _("Calibration date"); break;
+    case icSigCharTargetTag: return _("Colour measurement data"); break;
+    case icSigCopyrightTag: return _("Copyright"); break;
+    case icSigCrdInfoTag: return _("crdi"); break;
+    case icSigDeviceMfgDescTag: return _("Device manufacturerer description"); break;
+    case icSigDeviceModelDescTag: return _("Device model description"); break;
+    case icSigGamutTag: return _("gamut"); break;
+    case icSigGrayTRCTag: return _("Gray tone reproduction curve"); break;
+    case icSigGreenColorantTag: return _("Green Colorant"); break;
+    case icSigGreenTRCTag: return _("Green tone reproduction curve"); break;
+    case icSigLuminanceTag: return _("Luminance"); break;
+    case icSigMeasurementTag: return _("Measurement"); break;
+    case icSigMediaBlackPointTag: return _("Media black point"); break;
+    case icSigMediaWhitePointTag: return _("Media white point"); break;
+    case icSigNamedColorTag: return _("Named Colour"); break;
+    case icSigNamedColor2Tag: return _("Named Colour 2"); break;
+    case icSigPreview0Tag: return _("Preview, photografic"); break;
+    case icSigPreview1Tag: return _("Preview, relative colorimetric"); break;
+    case icSigPreview2Tag: return _("Preview, saturated"); break;
+    case icSigProfileDescriptionTag: return _("Profile description"); break;
+    case 1685283693: return _("Profile description, multilingual"); break;/*dscm*/
+    case icSigProfileSequenceDescTag: return _("Profile sequence description"); break;
+    case icSigPs2CRD0Tag: return _("psd0"); break;
+    case icSigPs2CRD1Tag: return _("psd1"); break;
+    case icSigPs2CRD2Tag: return _("psd2"); break;
+    case icSigPs2CRD3Tag: return _("psd3"); break;
+    case icSigPs2CSATag: return _("ps2s"); break;
+    case icSigPs2RenderingIntentTag: return _("ps2i"); break;
+    case icSigRedColorantTag: return _("Red Colorant"); break;
+    case icSigRedTRCTag: return _("Red tone reproduction curve"); break;
+    case icSigScreeningDescTag: return _("scrd"); break;
+    case icSigScreeningTag: return _("scrn"); break;
+    case icSigTechnologyTag: return _("Technologie"); break;
+    case icSigUcrBgTag: return _("bfd"); break;
+    case icSigViewingCondDescTag: return _("Viewing conditions description"); break;
+    case icSigViewingConditionsTag: return _("Viewing Conditions"); break;
+    case 1147500100: return _("Device colours"); break;/*DevD*/
+    case 1128875332: return _("Measured colours"); break;/*CIED*/
+    case 1349350514: return _("Profiling parameters"); break;/*Pmtr*/
+    case 1986226036: return _("VideoCardGammaTable"); break;/*vcgt*/
+    case 1667785060: return _("Colour adaption matrix"); break; /*chad*/
+    case icSigChromaticityType: return _("Chromaticity"); break; /*chrm*/
+    case 1668051567: return _("Named colour order"); break;/*clro*/
+    case 1668051572: return _("Named colour names"); break;/*clrt*/
+    case 0: return _("----"); break;
+    default: { icUInt32Number i = oyValueUInt32(sig);
+               static oyChar t[5];
+               memcpy (t,(char*)&i, 4);
+               t[4] = 0;
+               return t;
+               break;
+             }
+  }
+  return "-";
+}
+
+
+/** @func  oyICCTagName
+ *  @brief get tag ~4 char name
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCTagName        ( icTagSignature      sig )
+{
+  switch (sig) {
+    case icSigAToB0Tag: return "A2B0"; break;
+    case icSigAToB1Tag: return "A2B1"; break;
+    case icSigAToB2Tag: return "A2B2"; break;
+    case icSigBlueColorantTag: return "bXYZ"; break;
+    case icSigBlueTRCTag: return "bTRC"; break;
+    case icSigBToA0Tag: return "B2A0"; break;
+    case icSigBToA1Tag: return "B2A1"; break;
+    case icSigBToA2Tag: return "B2A2"; break;
+    case icSigCalibrationDateTimeTag: return "calt"; break;
+    case icSigCharTargetTag: return "targ"; break;
+    case icSigCopyrightTag: return "cprt"; break;
+    case icSigCrdInfoTag: return "crdi"; break;
+    case icSigDeviceMfgDescTag: return "dmnd"; break;
+    case icSigDeviceModelDescTag: return "dmdd"; break;
+    case icSigGamutTag: return "gamt"; break;
+    case icSigGrayTRCTag: return "kTRC"; break;
+    case icSigGreenColorantTag: return "gXYZ"; break;
+    case icSigGreenTRCTag: return "gTRC"; break;
+    case icSigLuminanceTag: return "lumi"; break;
+    case icSigMeasurementTag: return "meas"; break;
+    case icSigMediaBlackPointTag: return "bkpt"; break;
+    case icSigMediaWhitePointTag: return "wtpt"; break;
+    case icSigNamedColorTag: return "'ncol"; break;
+    case icSigNamedColor2Tag: return "ncl2"; break;
+    case icSigPreview0Tag: return "pre0"; break;
+    case icSigPreview1Tag: return "pre1"; break;
+    case icSigPreview2Tag: return "pre2"; break;
+    case icSigProfileDescriptionTag: return "desc"; break;
+    case 1685283693: return "dscm"; break;
+    case icSigProfileSequenceDescTag: return "pseq"; break;
+    case icSigPs2CRD0Tag: return "psd0"; break;
+    case icSigPs2CRD1Tag: return "psd1"; break;
+    case icSigPs2CRD2Tag: return "psd2"; break;
+    case icSigPs2CRD3Tag: return "psd3"; break;
+    case icSigPs2CSATag: return "ps2s"; break;
+    case icSigPs2RenderingIntentTag: return "ps2i"; break;
+    case icSigRedColorantTag: return "rXYZ"; break;
+    case icSigRedTRCTag: return "rTRC"; break;
+    case icSigScreeningDescTag: return "scrd"; break;
+    case icSigScreeningTag: return "scrn"; break;
+    case icSigTechnologyTag: return "tech"; break;
+    case icSigUcrBgTag: return "bfd"; break;
+    case icSigViewingCondDescTag: return "vued"; break;
+    case icSigViewingConditionsTag: return "view"; break;
+    case 1147500100: return "DevD"; break;
+    case 1128875332: return "CIED"; break;
+    case 1349350514: return "Pmtr"; break;
+    case 1986226036: return "vcgt"; break;
+    case 1667785060: return "chad"; break;
+    case icSigChromaticityType: return "chrm"; break;
+    case 1668051567: return "clro"; break;
+    case 1668051572: return "clrt"; break;
+    case 0x62303135: return "b015"; break; /* binuscan targ data */
+    case 0: return "----"; break;
+    default: { icUInt32Number i = oyValueUInt32( sig );
+               static oyChar t[5];
+               memcpy (t,(char*)&i, 4);
+               t[4] = 0;
+               return t;
+               break;
+             }
+  }
+  return "-";
+}
+
+
+
+/** @func  oyICCDeviceClassDescription
+ *  @brief get the ICC profile icProfileClassSignature description
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCDeviceClassDescription ( icProfileClassSignature sig )
+{
+  switch (sig)
+  {
+    case icSigInputClass: return _("Input"); break;
+    case icSigDisplayClass: return _("Display"); break;
+    case icSigOutputClass: return _("Output"); break;
+    case icSigLinkClass: return _("Link"); break;
+    case icSigAbstractClass: return _("Abstract"); break;
+    case icSigColorSpaceClass: return _("Colour Space"); break;
+    case icSigNamedColorClass: return _("Named Colour"); break;
+    default: { icUInt32Number i = oyValueUInt32( sig );
+               static oyChar t[5];
+               memcpy (t,(char*)&i, 4);
+               t[4] = 0;
+               return t;
+               break;
+             }
+  }
+  return "-";
+}
+
+/** @func  oyICCPlatformDescription
+ *  @brief get the ICC profile platform description
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCPlatformDescription ( icPlatformSignature platform )
+{
+  switch (platform)
+  {
+    case icSigMacintosh: return _("Macintosh"); break;
+    case icSigMicrosoft: return _("Microsoft"); break;
+    case icSigSolaris: return _("Solaris"); break;
+    case icSigSGI: return _("SGI"); break;
+    case icSigTaligent: return _("Taligent"); break;
+    default: { icUInt32Number i = oyValueUInt32(platform);
+               static oyChar t[5];
+               memcpy (t,(char*)&i, 4);
+               t[4] = 0;
+               return t;
+               break;
+             }
+  }
+  return "-";
+}
+
+
+/** @func  oyICCTagTypeName
+ *  @brief get tag type ~4 char name
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCTagTypeName    ( icTagTypeSignature  sig )
+{
+
+  switch (sig) {
+    case icSigCurveType: return "curv"; break;
+    case icSigDataType: return "data"; break;
+    case icSigDateTimeType: return "dtim"; break;
+    case icSigLut16Type: return "mft2"; break;
+    case icSigLut8Type: return "mft1"; break;
+    case icSigMeasurementType: return "meas"; break;
+    case icSigNamedColorType: return "ncol"; break;
+    case icSigProfileSequenceDescType: return "pseq"; break;
+    case icSigS15Fixed16ArrayType: return "sf32"; break;
+    case icSigScreeningType: return "scrn"; break;
+    case icSigSignatureType: return "sig"; break;
+    case icSigTextType: return "text"; break;
+    case icSigTextDescriptionType: return "desc"; break;
+    case icSigU16Fixed16ArrayType: return "uf32"; break;
+    case icSigUcrBgType: return "bfd"; break;
+    case icSigUInt16ArrayType: return "ui16"; break;
+    case icSigUInt32ArrayType: return "ui32"; break;
+    case icSigUInt64ArrayType: return "ui64"; break;
+    case icSigUInt8ArrayType: return "ui08"; break;
+    case icSigViewingConditionsType: return "view"; break;
+    case icSigXYZType: return "XYZ"; break;
+    /*case icSigXYZArrayType: return "XYZ"; break;*/
+    case icSigNamedColor2Type: return "ncl2"; break;
+    case icSigCrdInfoType: return "crdi"; break;
+    case icSigChromaticityType: return "chrm"; break;
+    case 1986226036: return "vcgt"; break;
+    case icSigCopyrightTag: return "cprt?"; break; /*??? (Imacon)*/
+    case 1835824483: return "mluc"; break;
+    default: { icUInt32Number i = oyValueUInt32( sig );
+               static oyChar t[8];
+               memcpy (t,(char*)&i, 4);
+               t[4] = 0;
+               return t;
+               break;
+             }
+  }
+
+  return "-";
+}
+
+/** @func  oyICCTechnologyDescription
+ *  @brief get ICC profile icTechnologySignature description
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCTechnologyDescription ( icTechnologySignature sig )
+{
+  switch (sig) {
+    case icSigDigitalCamera: return _("Digital camera"); break; /*dcam*/
+    case icSigFilmScanner: return _("Film scanner"); break; /*fscn*/
+    case icSigReflectiveScanner: return _("Reflective scanner"); break; /*rscn*/
+    case icSigInkJetPrinter: return _("InkJet printer"); break; /*ijet*/
+    case icSigThermalWaxPrinter: return _("Thermal wax printer"); break; /*twax*/
+    case icSigElectrophotographicPrinter: return _("Electrophotographic printer"); break; /*epho*/
+    case icSigElectrostaticPrinter: return _("Electrostatic printer"); break; /*esta*/
+    case icSigDyeSublimationPrinter: return _("Dye sublimation printer"); break; /*dsub*/
+    case icSigPhotographicPaperPrinter: return _("Photographic paper printer"); break; /*rpho*/
+    case icSigFilmWriter: return _("Film writer"); break; /*fprn*/
+    case icSigVideoMonitor: return _("Video Monitor"); break; /*vidm*/
+    case icSigVideoCamera: return _("Video camera"); break; /*vidc*/
+    case icSigProjectionTelevision: return _("Projection Television"); break; /*pjtv*/
+    case icSigCRTDisplay: return _("Cathode ray tube display"); break; /*CRT*/
+    case icSigPMDisplay: return _("Passive matrix monitor"); break; /*PMD*/
+    case icSigAMDisplay: return _("Active matrix monitor"); break; /*AMD*/
+    case icSigPhotoCD: return _("Photo CD"); break; /*KPCD*/
+    case icSigPhotoImageSetter: return _("PhotoImageSetter"); break; /*imgs*/
+    case icSigGravure: return _("Gravure"); break; /*grav*/
+    case icSigOffsetLithography: return _("Offset Lithography"); break; /*offs*/
+    case icSigSilkscreen: return _("Silkscreen"); break; /*silk*/
+    case icSigFlexography: return _("Flexography"); break; /*flex*/
+    /*case icMaxEnumTechnology: return _("----"); break;*/
+    default: { icUInt32Number i = oyValueUInt32( sig );
+               static oyChar t[8];
+               memcpy (t,(char*)&i, 4);
+               t[4] = 0;
+               return t;
+               break;
+             }
+  }
+  return "-";
+}
+
+/** @func  oyICCChromaticityColorantDescription
+ *  @brief get ICC profile Chromaticity Colorant description
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCChromaticityColorantDescription ( icSignature sig )
+{
+  switch (sig) {
+    case 0: return ""; break;
+    case 1: return _("ITU-R BT.709"); break;
+    case 2: return _("SMPTE RP145-1994"); break;
+    case 3: return _("EBU Tech.3213-E"); break;
+    case 4: return _("P22"); break;
+
+    default: return _("???"); break;
+  }
+  return "-";
+}
+
+/** @func  oyICCStandardObserverDescription
+ *  @brief get ICC profile Standard Observer description
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCStandardObserverDescription ( icStandardObserver sig )
+{
+  switch (sig) {
+    case icStdObsUnknown: return _("unknown"); break;
+    case icStdObs1931TwoDegrees: return _("2 degree (1931)");
+         break;
+    case icStdObs1964TenDegrees: return _("10 degree (1964)");
+         break;
+    /*case icMaxStdObs: return _("---"); break;*/
+
+    default: return _("???"); break;
+  }
+  return "-";
+}
+
+
+/** @func  oyICCMeasurementGeometryDescription
+ *  @brief get ICC profile Measurement Geometry description
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCMeasurementGeometryDescription ( icMeasurementGeometry sig )
+{
+  switch (sig) {
+    case icGeometryUnknown: return _("unknown"); break;
+    case icGeometry045or450: return _("0/45, 45/0"); break;
+    case icGeometry0dord0: return _("0/d or d/0"); break;
+    /*case icMaxGeometry: return _("---"); break;*/
+
+    default: return _("???"); break;
+  }
+  return "-";
+}
+
+/** @func  oyICCMeasurementFlareDescription
+ *  @brief get ICC profile Measurement Flare description
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+const oyChar *   oyICCMeasurementFlareDescription ( icMeasurementFlare sig )
+{
+  switch (sig) {
+    case icFlare0: return _("0"); break;
+    case icFlare100: return _("100"); break;
+    /*case icMaxFlare: return _("---"); break;*/
+
+    default: return _("???"); break;
+  }
+  return "-";
+}
+
+
+
+
+
 
 void
 oyLab2XYZ (const double *CIELab, double * XYZ)
@@ -461,7 +881,7 @@ void
 oyCopyColour ( const double * from,
                double       * to,
                int            n,
-               oyProfile_s * ref,
+               oyProfile_s  * ref,
                int            channels_n )
 {
   int i, j;
@@ -675,11 +1095,11 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-oyHandleList_s * oyHandleList_New_   ( oyObject_s          object )
+oyStructList_s * oyStructList_New_   ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_HANDLE_LIST_S;
-# define STRUCT_TYPE oyHandleList_s
+  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_STRUCT_LIST_S;
+# define STRUCT_TYPE oyStructList_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
@@ -694,6 +1114,9 @@ oyHandleList_s * oyHandleList_New_   ( oyObject_s          object )
 
   s->type_ = type;
 
+  s->copy = (oyStruct_CopyF_t) oyStructList_Copy_;
+  s->release = (oyStruct_ReleaseF_t) oyStructList_Release_;
+
   s->oy_ = s_obj;
 
   error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
@@ -704,15 +1127,15 @@ oyHandleList_s * oyHandleList_New_   ( oyObject_s          object )
 }
 
 /** @internal
- *  @brief oyHandleList_s copy
+ *  @brief oyStructList_s copy
  *
  *  @since Oyranos: version 0.1.8
  *  @date  14 december 2007 (API 0.1.8)
  */
-oyHandleList_s * oyHandleList_Copy_  ( oyHandleList_s    * list,
+oyStructList_s * oyStructList_Copy_  ( oyStructList_s    * list,
                                        oyObject_s          obj )
 {
-  oyHandleList_s * s = 0;
+  oyStructList_s * s = 0;
   int error = !list;
 
   if(!list)
@@ -725,7 +1148,7 @@ oyHandleList_s * oyHandleList_Copy_  ( oyHandleList_s    * list,
     return s;
   }
 
-  s = oyHandleList_New_(obj);
+  s = oyStructList_New_(obj);
 
   error = !s;
 
@@ -742,8 +1165,8 @@ oyHandleList_s * oyHandleList_Copy_  ( oyHandleList_s    * list,
 
     for(i = 0; i < list->n_; ++i)
     {
-      if(list->ptr_[i]->ptrCopy)
-        s->ptr_[i] = list->ptr_[i]->ptrCopy( list->ptr_[i], 0 );
+      if(list->ptr_[i]->copy)
+        s->ptr_[i] = list->ptr_[i]->copy( list->ptr_[i], 0 );
 
       ++s->ref_[i];
     }
@@ -756,7 +1179,7 @@ oyHandleList_s * oyHandleList_Copy_  ( oyHandleList_s    * list,
 }
 
 /** @internal
- *  @brief oyHandleList_s pointer add
+ *  @brief oyStructList_s pointer add
  *
  *  @param[in]     list                the list
  *  @param[in]     ptr                 the handle this function takes ownership
@@ -767,11 +1190,11 @@ oyHandleList_s * oyHandleList_Copy_  ( oyHandleList_s    * list,
  *  @since Oyranos: version 0.1.8
  *  @date  30 november 2007 (API 0.1.8)
  */
-int              oyHandleList_MoveIn_( oyHandleList_s    * list,
-                                       oyHandle_s       ** ptr,
+int              oyStructList_MoveIn_( oyStructList_s    * list,
+                                       oyStruct_s       ** ptr,
                                        int                 pos)
 {
-  oyHandleList_s * s = list;
+  oyStructList_s * s = list;
   int error = 0;
   int i;
   int set = 0;
@@ -780,14 +1203,14 @@ int              oyHandleList_MoveIn_( oyHandleList_s    * list,
   error = !s;
 
   if(!error)
-    if(s->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+    if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
       error = 1;
 
   if(!error)
     s->locked_ = 1;
 
   if(!error)
-    error = !(ptr && *ptr && (*ptr)->type_ == oyOBJECT_TYPE_HANDLE_S);
+    error = !(ptr && *ptr && (*ptr)->type_);
 
   if(!error)
     /* search for a empty pointer and set */
@@ -806,7 +1229,7 @@ int              oyHandleList_MoveIn_( oyHandleList_s    * list,
   {
     int mult = (s->n_<7) ? 10 : (int)(s->n_ * 1.5);
     int len = 0;
-    oyHandle_s ** tmp = 0;
+    oyStruct_s ** tmp = 0;
     int * ref = 0;
     int real_copy = 0;
 
@@ -894,26 +1317,26 @@ int              oyHandleList_MoveIn_( oyHandleList_s    * list,
 }
 
 /** @internal
- *  @brief oyHandleList_s release
+ *  @brief oyStructList_s release
  *
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-int              oyHandleList_Release_(oyHandleList_s   ** obj )
+int              oyStructList_Release_(oyStructList_s   ** obj )
 {
   int i,
       error = 0;
   /* ---- start of common object destructor ----- */
-  oyHandleList_s * s = 0;
+  oyStructList_s * s = 0;
 
   if(!obj || !*obj)
     return 1;
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
   {
-    WARNc_S(("Attempt to release a non oyHandleList_s object."))
+    WARNc_S(("Attempt to release a non oyStructList_s object."))
     return 1;
   }
 
@@ -926,7 +1349,7 @@ int              oyHandleList_Release_(oyHandleList_s   ** obj )
   s->locked_ = 1;
 
   for(i = 0; i < s->n_; ++i)
-    oyHandleList_ReleaseAt_( s, i );
+    oyStructList_ReleaseAt_( s, i );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -952,20 +1375,20 @@ int              oyHandleList_Release_(oyHandleList_s   ** obj )
 }
 
 /** @internal
- *  @brief oyHandleList_s pointer release
+ *  @brief oyStructList_s pointer release
  *
  *  @since Oyranos: version 0.1.8
  *  @date  21 november 2007 (API 0.1.8)
  */
-int            oyHandleList_ReleaseAt_(oyHandleList_s    * list,
+int            oyStructList_ReleaseAt_(oyStructList_s    * list,
                                        int                 pos )
 {
-  oyHandleList_s * s = list;
+  oyStructList_s * s = list;
   int error = 0;
 
   error = !s;
 
-  if(s->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -979,7 +1402,7 @@ int            oyHandleList_ReleaseAt_(oyHandleList_s    * list,
       if(pos == i && s->ref_[i])
         if(! --s->ref_[i])
           if(s->ptr_[i])
-            oyHandle_release_( &s->ptr_[i] );
+            s->ptr_[i]->release( (oyStruct_s**)&s->ptr_[i] );
   }
 
   if(!error)
@@ -989,21 +1412,21 @@ int            oyHandleList_ReleaseAt_(oyHandleList_s    * list,
 }
 
 /** @internal
- *  @brief oyHandleList_s pointer access
+ *  @brief oyStructList_s pointer access
  *
  *  @since Oyranos: version 0.1.8
  *  @date  21 november 2007 (API 0.1.8)
  */
-oyHandle_s *     oyHandleList_Get_   ( oyHandleList_s    * list,
+oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
                                        int                 pos )
 {
   int n = 0;
-  oyHandleList_s * s = list;
+  oyStructList_s * s = list;
   int error = !s;
-  oyHandle_s * h = 0;
+  oyStruct_s * obj = 0;
 
   if(!error)
-  if(s->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -1011,46 +1434,80 @@ oyHandle_s *     oyHandleList_Get_   ( oyHandleList_s    * list,
 
   if(!error)
   if(pos >= 0 && n > pos && s->ptr_[pos])
-    h = s->ptr_[pos];
+    obj = s->ptr_[pos];
 
-  return h;
+  return obj;
+}
+
+/** @func oyStructList_GetType_
+ *  @brief oyStructList_s pointer access
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+oyStruct_s *     oyStructList_GetType_(oyStructList_s    * list,
+                                       int                 pos,
+                                       oyOBJECT_TYPE_e     type )
+{
+  oyStruct_s * obj = oyStructList_Get_( list, pos );
+
+  if(obj && obj->type_ != type)
+    obj = 0;
+  return obj;
 }
 
 /** @internal
- *  @brief oyHandleList_s referenced pointer access
+ *  @brief oyStructList_s referenced pointer access
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyHandle_s *     oyHandleList_GetRef_( oyHandleList_s    * list,
+oyStruct_s *     oyStructList_GetRef_( oyStructList_s    * list,
                                        int                 pos )
 {
-  oyHandleList_s * s = list;
+  oyStructList_s * s = list;
   int error = !s;
-  oyHandle_s * h = 0;
+  oyStruct_s * obj = 0;
 
-  h = oyHandleList_Get_(list, pos);
-  error = !h;
+  obj = oyStructList_Get_(list, pos);
+  error = !obj;
 
   if(!error)
-    error = oyHandleList_ReferenceAt_(list, pos);
+    error = oyStructList_ReferenceAt_(list, pos);
 
-  return h;
+  return obj;
+}
+
+/** @func oyStructList_GetRefType_
+ *  @brief oyStructList_s pointer access
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+oyStruct_s *     oyStructList_GetRefType_(oyStructList_s    * list,
+                                       int                 pos,
+                                       oyOBJECT_TYPE_e     type )
+{
+  oyStruct_s * obj = oyStructList_GetRef_( list, pos );
+
+  if(obj && obj->type_ != type)
+    obj = 0;
+  return obj;
 }
 
 /** @internal
- *  @brief oyHandleList_s pointer referencing
+ *  @brief oyStructList_s pointer referencing
  *
  *  @since Oyranos: version 0.1.8
  *  @date  23 november 2007 (API 0.1.8)
  */
-int              oyHandleList_ReferenceAt_( oyHandleList_s * list,
+int              oyStructList_ReferenceAt_( oyStructList_s * list,
                                        int                 pos )
 {
   int n = 0;
   int error = 0;
-  oyHandleList_s * s = list;
-  oyPointer p = 0;
+  oyStructList_s * s = list;
+  oyStruct_s * p = 0;
 
   if(s)
     n = s->n_;
@@ -1058,13 +1515,14 @@ int              oyHandleList_ReferenceAt_( oyHandleList_s * list,
     error = 1;
 
   if(!error)
-  if(s->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
   if(pos >= 0 && n > pos && s->ptr_[pos])
   {
     p = s->ptr_[pos];
+    p = p->copy( p, 0 );
     ++s->ref_[pos];
   }
 
@@ -1072,19 +1530,19 @@ int              oyHandleList_ReferenceAt_( oyHandleList_s * list,
 }
 
 /** @internal
- *  @brief oyHandleList_s pointer access
+ *  @brief oyStructList_s pointer access
  *
  *  @since Oyranos: version 0.1.8
  *  @date  23 november 2007 (API 0.1.8)
  */
-/*oyHandle_s **    oyHandleList_GetRaw_( oyHandleList_s    * list )
+/*oyHandle_s **    oyStructList_GetRaw_( oyStructList_s    * list )
 {
   int error = 0;
-  oyHandleList_s * s = list;
+  oyStructList_s * s = list;
   oyHandle_s ** p = 0;
 
   if(!error)
-  if(s->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -1094,18 +1552,18 @@ int              oyHandleList_ReferenceAt_( oyHandleList_s * list,
 }*/
 
 /** @internal
- *  @brief oyHandleList_s count
+ *  @brief oyStructList_s count
  *
  *  @since Oyranos: version 0.1.8
  *  @date  21 november 2007 (API 0.1.8)
  */
-int              oyHandleList_Count_( oyHandleList_s   * list )
+int              oyStructList_Count_( oyStructList_s   * list )
 {
   int n = 0;
-  oyHandleList_s * s = list;
+  oyStructList_s * s = list;
   int error = 0;
 
-  if(!(s && s->type_ == oyOBJECT_TYPE_HANDLE_LIST_S))
+  if(!(s && s->type_ == oyOBJECT_TYPE_STRUCT_LIST_S))
     error = 1;
 
   if(!error)
@@ -1141,7 +1599,11 @@ oyCMMptr_New_ ( oyAllocFunc_t     allocateFunc )
   error = !memset(s, 0, sizeof(oyCMMptr_s));
 
   if(!error)
+  {
     s->type = oyOBJECT_TYPE_CMM_POINTER_S;
+    s->copy = (oyStruct_CopyF_t) oyCMMptr_Copy_;
+    s->release = (oyStruct_ReleaseF_t) oyCMMptr_Release_;
+  }
 
   ++s->ref;
 
@@ -1236,7 +1698,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        const char        * func_name,
                                        const char        * resource,
                                        oyPointer           ptr,
-                                       oyStructReleaseF_t  ptrRelease )
+                                       oyStruct_releaseF_t ptrRelease )
 {
   oyCMMptr_s * s = cmm_ptr;
   int error = !s;
@@ -1273,7 +1735,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
 
 
 
-oyHandleList_s * oy_cmm_handles_ = 0;
+oyStructList_s * oy_cmm_handles_ = 0;
 /** @internal
  *  @brief Oyranos wrapper for dlopen
  *
@@ -1308,28 +1770,28 @@ int          oyCMMdsoReference_    ( const char        * cmm,
 
   if(!oy_cmm_handles_)
   {
-    oy_cmm_handles_ = oyHandleList_New_( 0 );
+    oy_cmm_handles_ = oyStructList_New_( 0 );
     error = !oy_cmm_handles_;
   }
 
-  if(!error && oy_cmm_handles_->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(!error && oy_cmm_handles_->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
-  n = oyHandleList_Count_(oy_cmm_handles_);
+  n = oyStructList_Count_(oy_cmm_handles_);
   if(!error)
   for(i = 0; i < n; ++i)
   {
-    oyHandle_s * h = oyHandleList_Get_(oy_cmm_handles_, i);
+    oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
     oyCMMptr_s * s = 0;
 
-    if(h && h->type_ == oyOBJECT_TYPE_HANDLE_S)
-      s = (oyCMMptr_s*) h->ptr;
+    if(obj && obj->type_ == oyOBJECT_TYPE_CMM_POINTER_S)
+      s = (oyCMMptr_s*) obj;
 
-    if( s && s->type == oyOBJECT_TYPE_CMM_POINTER_S && s->cmm && cmm &&
+    if( s && s->cmm && cmm &&
         !oyStrcmp_( s->cmm, cmm ) )
     {
       found = 1;
-      oyHandleList_ReferenceAt_(oy_cmm_handles_, i);
+      oyStructList_ReferenceAt_(oy_cmm_handles_, i);
       if(ptr)
       {
         if(!s->ptr)
@@ -1342,29 +1804,19 @@ int          oyCMMdsoReference_    ( const char        * cmm,
 
   if(!found)
   {
-    oyStructCopyF_t ptrCopy = (oyStructCopyF_t) oyCMMptr_Copy_;
-    oyStructReleaseF_t ptrRelease = (oyStructReleaseF_t) oyCMMptr_Release_;
     oyCMMptr_s * s = oyCMMptr_New_(oyAllocateFunc_);
-    oyHandle_s * h = oyHandle_new_(oyAllocateFunc_),
-               * oy_cmm_handle = 0;
+    oyStruct_s * oy_cmm_struct = 0;
 
     error = !s;
-
-    if(!error)
-      error = !h;
 
     if(!error)
       error = oyCMMptr_Set_( s, cmm, "oyDlclose", 0, ptr, oyDlclose );
 
     if(!error)
-      error = oyHandle_set_( h, s, oyOBJECT_TYPE_CMM_POINTER_S,
-                             ptrRelease, ptrCopy );
+      oy_cmm_struct = (oyStruct_s*) s;
 
     if(!error)
-      oy_cmm_handle = h;
-
-    if(!error)
-      oyHandleList_MoveIn_(oy_cmm_handles_, &oy_cmm_handle, -1);
+      oyStructList_MoveIn_(oy_cmm_handles_, &oy_cmm_struct, -1);
   }
 
   return error;
@@ -1385,23 +1837,23 @@ int          oyCMMdsoSearch_         ( const char        * cmm )
   if(!oy_cmm_handles_)
     return 1;
 
-  if(oy_cmm_handles_->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(oy_cmm_handles_->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
-  n = oyHandleList_Count_(oy_cmm_handles_);
+  n = oyStructList_Count_(oy_cmm_handles_);
   if(!error)
   for(i = 0; i < n; ++i)
   {
-    oyHandle_s * h = oyHandleList_Get_(oy_cmm_handles_, i);
+    oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
     oyCMMptr_s * s = 0;
 
-    if(h && h->type_ == oyOBJECT_TYPE_HANDLE_S)
-      s = (oyCMMptr_s*) h->ptr;
+    if(obj && obj->type_ == oyOBJECT_TYPE_CMM_POINTER_S)
+      s = (oyCMMptr_s*) obj;
 
     error = !s;
 
     if(!error)
-    if( s->type == oyOBJECT_TYPE_CMM_POINTER_S && s->cmm && cmm &&
+    if( s->cmm && cmm &&
         !oyStrcmp_( s->cmm, cmm ) )
       pos = i;;
   }
@@ -1428,14 +1880,14 @@ int          oyCMMdsoRelease_      ( const char        * cmm )
   if(!oy_cmm_handles_)
     return 1;
 
-  if(oy_cmm_handles_->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(oy_cmm_handles_->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
     found = oyCMMdsoSearch_(cmm);
 
   if(found >= 0)
-    oyHandleList_ReleaseAt_(oy_cmm_handles_, found);
+    oyStructList_ReleaseAt_(oy_cmm_handles_, found);
 #endif
   return error;
 }
@@ -1459,13 +1911,10 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
 
   if(found >= 0)
   {
-    oyHandle_s * h = oyHandleList_Get_(oy_cmm_handles_, found);
-    oyCMMptr_s * s = 0;
+    oyCMMptr_s * s = (oyCMMptr_s*)oyStructList_GetType_( oy_cmm_handles_, found,
+                                                  oyOBJECT_TYPE_CMM_POINTER_S );
 
-    if(h && h->type_ == oyOBJECT_TYPE_HANDLE_S)
-      s = (oyCMMptr_s*) h->ptr;
-
-    if(s && s->type == oyOBJECT_TYPE_CMM_POINTER_S)
+    if(s)
       dso_handle = s->ptr;
   }
 
@@ -1509,6 +1958,8 @@ oyCMMhandle_s *    oyCMMhandle_New_    ( oyObject_s        object )
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyCMMhandle_Copy_;
+  s->release = (oyStruct_ReleaseF_t) oyCMMhandle_Release_;
 
   s->oy_ = s_obj;
 
@@ -1631,7 +2082,7 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
  *  @since Oyranos: version 0.1.8
  *  @date  6 december 2007 (API 0.1.8)
  */
-oyHandleList_s * oy_cmm_infos_ = 0;
+oyStructList_s * oy_cmm_infos_ = 0;
 
 /** @internal
  *  @brief search a Oyranos module handle in a internal list
@@ -1649,26 +2100,23 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * cmm )
 
   if(!error && !oy_cmm_infos_)
   {
-    oy_cmm_infos_ = oyHandleList_New_( 0 );
+    oy_cmm_infos_ = oyStructList_New_( 0 );
     error = !oy_cmm_infos_;
   }
 
-  if(!error && oy_cmm_infos_->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(!error && oy_cmm_infos_->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
-  n = oyHandleList_Count_(oy_cmm_infos_);
+  n = oyStructList_Count_(oy_cmm_infos_);
   if(!error)
   for(i = 0; i < n; ++i)
   {
-    oyHandle_s * h = oyHandleList_Get_(oy_cmm_infos_, i);
+    oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_(oy_cmm_infos_,
+                                                i, oyOBJECT_TYPE_CMM_HANDLE_S );
     oyCMMInfo_s * s = 0;
-    oyCMMhandle_s * cmmh = 0;
     int id = 0;
 
-    if(h && h->type_ == oyOBJECT_TYPE_HANDLE_S)
-      cmmh = (oyCMMhandle_s*) h->ptr;
-
-    if(cmmh && cmmh->type_ == oyOBJECT_TYPE_CMM_HANDLE_S)
+    if(cmmh)
     {
       s = (oyCMMInfo_s*) cmmh->info;
       id = oyValueUInt32(s->cmmId);
@@ -1678,7 +2126,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * cmm )
         !memcmp( &id, cmm, 4 ) )
     {
       cmm_handle = oyCMMhandle_Copy_( cmmh, 0 );
-      error = oyHandleList_ReferenceAt_( oy_cmm_infos_, i );
+      error = oyStructList_ReferenceAt_( oy_cmm_infos_, i );
     }
   }
 
@@ -1805,21 +2253,7 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
 
       /* store */
       if(!error && api_found)
-      {
-        oyStructCopyF_t ptrCopy = (oyStructCopyF_t) oyCMMhandle_Copy_;
-        oyStructReleaseF_t ptrRelease = (oyStructReleaseF_t) oyCMMhandle_Release_;
-        oyHandle_s * h = oyHandle_new_(oyAllocateFunc_);
-
-        if(!error)
-          error = !h;
-
-        if(!error)
-          error = oyHandle_set_( h, cmm_handle, oyOBJECT_TYPE_CMM_HANDLE_S,
-                                 ptrRelease, ptrCopy );
-
-        if(!error)
-          oyHandleList_MoveIn_(oy_cmm_infos_, &h, -1);
-      }
+        oyStructList_MoveIn_(oy_cmm_infos_, (oyStruct_s**)&cmm_handle, -1);
     }
 
     oyCMMdsoRelease_( cmm );
@@ -1868,57 +2302,51 @@ oyCMMInfo_s *    oyCMMInfoAtListFromLibName_(const char        * lib_name )
   return cmm_info;
 }
 
-/** @internal
- *  @brief check/prepare a module
- *
- *  @since Oyranos: version 0.1.8
- *  @date  12 december 2007 (API 0.1.8)
- */
-unsigned int     oyCMMapiLoad_       ( oyOBJECT_TYPE_e     type )
-{
-  unsigned int cmmId = 0;
-
-  if(oyOBJECT_TYPE_CMM_API1_S <= type && type < oyOBJECT_TYPE_CMM_API_MAX)
-    if((cmmId = oyCMMapiIsReady_(type)) == 0)
-    {
-      oyCMMapi_s * api = oyCMMsGetApi_( type, 0, &cmmId );
-
-      if(api && api->type == type)
-      switch(type) {
-      case oyOBJECT_TYPE_CMM_API1_S:
-           oy_cmm_apis_.api1 = (oyCMMapi1_s*)api;
-           memcpy(oy_cmm_apis_.cmm1, &cmmId, 4); oy_cmm_apis_.cmm1[4] = 0;
-           break;
-      case oyOBJECT_TYPE_CMM_API2_S:
-           oy_cmm_apis_.api2 = (oyCMMapi2_s*)api;
-           memcpy(oy_cmm_apis_.cmm2, &cmmId, 4); oy_cmm_apis_.cmm2[4] = 0;
-           break;
-      default: break;
-      }
-    }
-
-  return cmmId;
-}
-
-/** @internal
+/** @internal @func oyCMMsGetApi_
  *  @brief get a module
  *
- *  This function allowes to obtain a API for a certain modul/CMM
+ *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
+ *  The module system shall support:
+ *    - use of the desired CMM for the task at hand
+ *    - provide fallbacks for incapabilities
+ *    - process in different ways and by different modules through the same API
+ *
+ *  We have modules with well defined capabilities and some with fuzzy ones.\n
+ *  For instance the X11 API's is well defined and we can use it, once it is
+ *  loaded.\n
+ *  A CMM for colour conversion has often limitations or certain features,
+ *  which make it desireable. So we have to search for match to our automatic
+ *  criteria.\n
+ *
+ *
+ *  This function allowes to obtain a API for a certain modul/CMM.
+ *
+ *  @param[in]   type                  the API to return
+ *  @param[in]   cmm                   if present take this or fail
+ *  @param[in]   queries               search for a match to capabilities
+ *  @param[out]  cmmId                 inform about the selected CMM
  *
  *  @since Oyranos: version 0.1.8
- *  @date  12 december 2007 (API 0.1.8)
+ *  @date   2007/12/12 (API 0.1.8)
  */
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
-                                       const char        * prefered_cmm,
-                                       unsigned int      * cmmId )
+                                       uint32_t            cmmId_required,
+                                       oyCMMapiQueries_s * queries,
+                                       uint32_t          * cmmId )
 {
   int error = !type;
   oyCMMapi_s * api = 0,
              * api_fallback = 0;
-  unsigned int cmmId_fallback = 0;
+  uint32_t cmmId_fallback = 0,
+           prefered_cmmId = 0;
+  
 
-  if(!prefered_cmm)
-    prefered_cmm = oyModuleGetActual( type );
+  if(!cmmId_required)
+    prefered_cmmId = *(uint32_t*)oyModuleGetActual( type );
+
+  if(!error &&
+     !(oyOBJECT_TYPE_CMM_API1_S <= type && type < oyOBJECT_TYPE_CMM_API_MAX))
+    error = 1;
 
   if(!error)
   {
@@ -1927,7 +2355,13 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
     int i;
     char cmm[5];
 
-    files = oyCMMsGetLibNames_(&files_n, 0);
+    if(cmmId_required)
+    {
+      memcpy(cmm, &cmmId_required, 4); cmm[4] = 0;
+    } else
+      memset(cmm, 0, 5);
+
+    files = oyCMMsGetLibNames_(&files_n, cmm);
 
     /* open the modules */
     for( i = 0; i < files_n; ++i)
@@ -1946,7 +2380,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
           if(oyCMMapi_Check_(tmp) == type)
           {
 
-            if(memcmp( cmm , prefered_cmm, 4 ) == 0)
+            if(memcmp( cmm , &prefered_cmmId, 4 ) == 0)
             {
               api = tmp;
               if(cmmId)
@@ -2110,22 +2544,19 @@ oyCMMInfo_s* oyCMMGet_               ( const char        * cmm )
 int              oyCMMRelease_       ( const char        * cmm )
 {
   int error = !cmm;
-  int n = oyHandleList_Count_( oy_cmm_infos_ );
+  int n = oyStructList_Count_( oy_cmm_infos_ );
   int i;
 
-  n = oyHandleList_Count_(oy_cmm_infos_);
+  n = oyStructList_Count_(oy_cmm_infos_);
   if(!error)
   for(i = 0; i < n; ++i)
   {
-    oyHandle_s * h = oyHandleList_Get_(oy_cmm_infos_, i);
     oyCMMInfo_s * s = 0;
-    oyCMMhandle_s * cmmh = 0;
     int id = 0;
+    oyCMMhandle_s * cmmh = (oyCMMhandle_s *) oyStructList_GetType_(
+                                oy_cmm_infos_, i, oyOBJECT_TYPE_CMM_HANDLE_S );
 
-    if(h && h->type_ == oyOBJECT_TYPE_HANDLE_S)
-      cmmh = (oyCMMhandle_s*) h->ptr;
-
-    if(cmmh && cmmh->type_ == oyOBJECT_TYPE_CMM_HANDLE_S)
+    if(cmmh)
     {
       s = (oyCMMInfo_s*) cmmh->info;
       id = oyValueUInt32(s->cmmId);
@@ -2135,7 +2566,7 @@ int              oyCMMRelease_       ( const char        * cmm )
         !memcmp( &id, cmm, 4 ) )
     {
       oyCMMhandle_Release_( &cmmh );
-      oyHandleList_ReleaseAt_( oy_cmm_infos_, 0 );
+      oyStructList_ReleaseAt_( oy_cmm_infos_, 0 );
     }
   }
 
@@ -2143,43 +2574,6 @@ int              oyCMMRelease_       ( const char        * cmm )
 }
 
 
-
-/** @internal
- *  @brief check for a working api
- *
- *  @since Oyranos: version 0.1.8
- *  @date  12 december 2007 (API 0.1.8)
- */
-unsigned int     oyCMMapiIsReady_    ( oyOBJECT_TYPE_e     type )
-{
-  int error = !type;
-  unsigned int cmmId = 0;
-
-  switch(type)
-  {
-    case oyOBJECT_TYPE_CMM_API1_S:
-       {
-         oyCMMapi1_s * s = oy_cmm_apis_.api1;
-         if(s && s->oyCMMInit)
-           cmmId = *((unsigned int*)&oy_cmm_apis_.cmm1);
-         else
-           error = 1;
-       } break;
-    case oyOBJECT_TYPE_CMM_API2_S:
-       {
-         oyCMMapi2_s * s = oy_cmm_apis_.api2;
-         if(s && s->oyCMMInit)
-           cmmId = *((unsigned int*)&oy_cmm_apis_.cmm2);
-         else
-           error = 1;
-       } break;
-    default:
-         error = 1;
-         break;
-  }
-
-  return cmmId;
-}
 
 
 /** @internal
@@ -2226,6 +2620,17 @@ oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api )
            s->oyGetMonitorProfileName &&
            s->oySetMonitorProfile &&
            s->oyActivateMonitorProfiles ) )
+        error = 1;
+    } break;
+    case oyOBJECT_TYPE_CMM_API3_S:
+    {
+      oyCMMapi3_s * s = (oyCMMapi3_s*)api;
+      if(!(s->oyCMMInit &&
+           s->oyCMMMessageFuncSet &&
+           s->oyCMMCanHandle &&
+           s->oyProfileTag_GetText &&
+           /*s-> &&*/
+           s->oyProfileTag_GetValues ) )
         error = 1;
     } break;
     default: break;
@@ -2364,6 +2769,8 @@ oyObject_New  ( void )
   o = oyObject_SetAllocators_( o, oyAllocateFunc_, oyDeAllocateFunc_ );
 
   o->type_ = oyOBJECT_TYPE_OBJECT_S;
+  o->copy = (oyStruct_CopyF_t) oyObject_Copy;
+  o->release = (oyStruct_ReleaseF_t) oyObject_Release;
   o->version_ = oyVersion(0);
   ++o->ref_;
 
@@ -2392,6 +2799,8 @@ oyObject_NewWithAllocators  ( oyAllocFunc_t     allocateFunc,
   o = oyObject_SetAllocators_( o, allocateFunc, deallocateFunc );
 
   o->type_ = oyOBJECT_TYPE_OBJECT_S;
+  o->copy = (oyStruct_CopyF_t) oyObject_Copy;
+  o->release = (oyStruct_ReleaseF_t) oyObject_Release;
   o->version_ = oyVersion(0);
   ++o->ref_;
 
@@ -2534,7 +2943,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
     if(s->backdoor_)
       deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
 
-    error = oyHandleList_Release_(&s->handles_);
+    error = oyStructList_Release_(&s->handles_);
 
     deallocateFunc( s );
   }
@@ -2676,12 +3085,12 @@ const oyChar * oyObject_GetName       ( const oyObject_s        obj,
 
   if(!error && s->handles_)
   {
-    int n = oyHandleList_Count_(s->handles_);
+    int n = oyStructList_Count_(s->handles_);
     int i;
 
     for(i = 0; i < n ; ++i)
     {
-      oyHandle_s * h = oyHandleList_Get_(s->handles_, i);
+      oyHandle_s * h = oyStructList_Get_(s->handles_, i);
 
       if(h->ptr)
       {
@@ -2748,12 +3157,12 @@ const oyChar * oyObject_GetName       ( const oyObject_s        obj,
 
   if(!error && s->handles_)
   {
-    int n = oyHandleList_Count_(s->handles_);
+    int n = oyStructList_Count_(s->handles_);
     int i;
 
     for(i = 0; i < n ; ++i)
     {
-      oyHandle_s * h = oyHandleList_Get_(s->handles_, i);
+      oyHandle_s * h = oyStructList_Get_(s->handles_, i);
 
       if(h->ptr)
       {
@@ -2879,8 +3288,8 @@ int                oyHandle_release_ ( oyHandle_s       ** handle )
 int                oyHandle_set_     ( oyHandle_s        * handle,
                                        oyPointer           ptr,
                                        oyOBJECT_TYPE_e     ptr_type,
-                                       oyStructReleaseF_t  ptrRelease,
-                                       oyStructCopyF_t     ptrCopy )
+                                       oyStruct_releaseF_t  ptrRelease,
+                                       oyStruct_copyF_t     ptrCopy )
 {
   oyHandle_s * s = handle;
   int error = !s;
@@ -2930,14 +3339,14 @@ oyHash_s *   oyHash_New_             ( oyObject_s          object )
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyHash_Copy_;
+  s->release = (oyStruct_ReleaseF_t) oyHash_Release_;
 
   s->oy_ = s_obj;
 
   error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
-
-  s->entry.type_ = oyOBJECT_TYPE_HANDLE_S;
 
   return s;
 }
@@ -2993,8 +3402,8 @@ int                oyHash_Release_   ( oyHash_s         ** obj )
   /* ---- end of common object destructor ------- */
 
   /* should not happen */
-  if(s->entry.ptr && s->entry.ptrRelease)
-    s->entry.ptrRelease( &s->entry.ptr );
+  if(s->entry && s->entry->release)
+    s->entry->release( &s->entry );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -3104,7 +3513,7 @@ oyHash_s *         oyHash_Copy_      ( oyHash_s          * orig,
 int                oyHash_IsOf_      ( oyHash_s          * hash,
                                        oyOBJECT_TYPE_e     type )
 {
-  return (hash && hash->entry.type_ == type);
+  return (hash && hash->entry && hash->entry->type_ == type);
 }
 
 /** @internal
@@ -3112,11 +3521,11 @@ int                oyHash_IsOf_      ( oyHash_s          * hash,
  *  @since Oyranos: version 0.1.8
  *  @date  3 december 2007 (API 0.1.8)
  */
-oyPointer          oyHash_GetPointer_( oyHash_s          * hash,
+oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
                                        oyOBJECT_TYPE_e     type )
 {
-  if(hash && hash->entry.ptr_type == type)
-    return hash->entry.ptr;
+  if(oyHash_IsOf_( hash, type))
+    return hash->entry;
   else
     return 0;
 }
@@ -3127,17 +3536,11 @@ oyPointer          oyHash_GetPointer_( oyHash_s          * hash,
  *  @date  3 december 2007 (API 0.1.8)
  */
 int                oyHash_SetPointer_( oyHash_s          * hash,
-                                       oyOBJECT_TYPE_e     type,
-                                       oyPointer           ptr,
-                                       oyStructReleaseF_t  ptr_release,
-                                       oyStructCopyF_t     ptr_copy )
+                                       oyStruct_s        * obj )
 {
   if(hash)
   {
-    hash->entry.ptr_type = type;
-    hash->entry.ptr = ptr;
-    hash->entry.ptrCopy = ptr_copy;
-    hash->entry.ptrRelease = ptr_release;
+    hash->entry = obj;
     return 0;
   } else
     return 1;
@@ -3156,7 +3559,7 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
  *  @since Oyranos: version 0.1.8
  *  @date  24 november 2007 (API 0.1.8)
  */
-oyHash_s *   oyCacheListGetEntry_    ( oyHandleList_s    * cache_list,
+oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
                                        const char        * hash_text )
 {
   oyHash_s * entry = 0;
@@ -3164,7 +3567,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyHandleList_s    * cache_list,
   int error = !(cache_list && hash_text);
   int n = 0, i;
 
-  if(!error && cache_list->type_ != oyOBJECT_TYPE_HANDLE_LIST_S)
+  if(!error && cache_list->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -3174,18 +3577,12 @@ oyHash_s *   oyCacheListGetEntry_    ( oyHandleList_s    * cache_list,
   }
 
   if(!error)
-    n = oyHandleList_Count_(cache_list);
+    n = oyStructList_Count_(cache_list);
 
   for(i = 0; i < n; ++i)
   {
-    oyHash_s * compare = 0;
-    oyHandle_s * h = oyHandleList_Get_(cache_list, i);
-
-    if(h && h->type_ == oyOBJECT_TYPE_HANDLE_S)
-      compare = h->ptr;
-
-    if(compare && compare->type_ != oyOBJECT_TYPE_HASH_S)
-      compare = 0;
+    oyHash_s * compare = (oyHash_s*) oyStructList_GetType_( cache_list, i,
+                                                         oyOBJECT_TYPE_HASH_S );
 
     if(compare)
     if(memcmp(search_key->oy_->hash_, compare->oy_->hash_, OY_HASH_SIZE) == 0)
@@ -3194,23 +3591,17 @@ oyHash_s *   oyCacheListGetEntry_    ( oyHandleList_s    * cache_list,
 
   if(!error && !entry)
   {
-    oyHandle_s * h = oyHandle_new_( 0 );
-    oyStructReleaseF_t release = (oyStructReleaseF_t) oyHash_Release_;
-    oyStructCopyF_t    copy = (oyStructCopyF_t) oyHash_Copy_;
-
-    error = oyHandle_set_( h, search_key, oyOBJECT_TYPE_HASH_S,
-                           release, copy );
-
-    if(!error)
-      error = oyHandleList_MoveIn_(cache_list, &h, -1);
-
     if(!error)
       entry = search_key;
 
-    search_key = 0;
+    if(!error)
+      error = oyStructList_MoveIn_(cache_list, (oyStruct_s**)&search_key, -1);
+
+    if(error)
+      oyHash_Release_( &entry );
   }
 
-  oyHash_Release_(&search_key);
+  oyHash_Release_( &search_key );
 
   return entry;
 }
@@ -3257,7 +3648,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyHandleList_s    * cache_list,
  *  @since Oyranos: version 0.1.8
  *  @date  23 november 2007 (API 0.1.8)
  */
-oyHandleList_s * oy_cmm_cache_ = 0;
+oyStructList_s * oy_cmm_cache_ = 0;
 
 /** @internal
  *  @brief get always a Oyranos cache entry from the CMM's cache
@@ -3269,7 +3660,7 @@ oyHandleList_s * oy_cmm_cache_ = 0;
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text)
 {
   if(!oy_cmm_cache_)
-    oy_cmm_cache_ = oyHandleList_New_( 0 );
+    oy_cmm_cache_ = oyStructList_New_( 0 );
 
   return oyCacheListGetEntry_(oy_cmm_cache_, hash_text);
 }
@@ -3281,7 +3672,7 @@ oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text)
  *  @since Oyranos: version 0.1.8
  *  @date  17 december 2007 (API 0.1.8)
  */
-oyHandleList_s** oyCMMCacheList_()
+oyStructList_s** oyCMMCacheList_()
 {
   return &oy_cmm_cache_;
 }
@@ -3295,8 +3686,8 @@ oyHandleList_s** oyCMMCacheList_()
  */
 oyChar* oyCMMCacheListPrint_()
 {
-  oyHandleList_s ** cache_list = oyCMMCacheList_();
-  int n = oyHandleList_Count_( *cache_list ), i;
+  oyStructList_s ** cache_list = oyCMMCacheList_();
+  int n = oyStructList_Count_( *cache_list ), i;
   oyChar * text = 0;
   oyChar refs[80];
 
@@ -3306,14 +3697,8 @@ oyChar* oyCMMCacheListPrint_()
 
   for(i = 0; i < n ; ++i)
   {
-    oyHash_s * compare = 0;
-    oyHandle_s * h = oyHandleList_Get_(*cache_list, i);
-
-    if(h && h->type_ == oyOBJECT_TYPE_HANDLE_S)
-      compare = (oyHash_s*) h->ptr;
-
-    if(compare && compare->type_ != oyOBJECT_TYPE_HASH_S)
-      compare = 0;
+    oyHash_s * compare = (oyHash_s*) oyStructList_GetType_(*cache_list, i,
+                                                         oyOBJECT_TYPE_HASH_S );
 
     if(compare)
     {
@@ -3366,12 +3751,17 @@ oyProfile_New_ ( oyObject_s        object)
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyProfile_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyProfile_Release;
 
   s->oy_ = s_obj;
 
   error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
+
+  s->tags_ = oyStructList_New_( 0 );
+
   return s;
 }
 
@@ -3445,7 +3835,7 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
 }
 
 
-oyHandleList_s * oy_profile_s_file_cache_ = 0;
+oyStructList_s * oy_profile_s_file_cache_ = 0;
 
 
 /** @brief create from file
@@ -3473,12 +3863,12 @@ oyProfile_FromFile            ( const char      * name,
     allocateFunc = object->allocateFunc_;
 
   if(!oy_profile_s_file_cache_)
-    oy_profile_s_file_cache_ = oyHandleList_New_( 0 );
+    oy_profile_s_file_cache_ = oyStructList_New_( 0 );
 
   if(!object)
   {
     entry = oyCacheListGetEntry_ ( oy_profile_s_file_cache_, name );
-    s = oyHash_GetPointer_(entry, oyOBJECT_TYPE_PROFILE_S);
+    s = (oyProfile_s*) oyHash_GetPointer_( entry, oyOBJECT_TYPE_PROFILE_S);
     s = oyProfile_Copy( s, 0 );
     if(s)
       return s;
@@ -3504,14 +3894,8 @@ oyProfile_FromFile            ( const char      * name,
   }
 
   if(!error && s && entry)
-  {
-    oyStructCopyF_t ptrCopy = (oyStructCopyF_t) oyProfile_Copy;
-    oyStructReleaseF_t ptrRelease = (oyStructReleaseF_t)oyProfile_Release;
-
     /* 3b.1. update cache entry */
-    error = oyHash_SetPointer_( entry, oyOBJECT_TYPE_PROFILE_S,
-                                ptrCopy( s, 0 ), ptrRelease, ptrCopy );
-  }
+    error = oyHash_SetPointer_( entry, (oyStruct_s*) oyProfile_Copy( s, 0 ) );
 
   return s;
 }
@@ -3550,10 +3934,13 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
   {
     if(!error)
     {
-      if((cmmId = oyCMMapiLoad_( oyOBJECT_TYPE_CMM_API2_S )) != 0)
+      oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API2_S,
+                                        oyX1Signature, 0, &cmmId );
+      if(api && cmmId)
       {
-        funcP = oy_cmm_apis_.api2->oyGetMonitorProfile;
-        funcP2 = oy_cmm_apis_.api2->oyGetMonitorProfileName;
+        oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
+        funcP = api2->oyGetMonitorProfile;
+        funcP2= api2->oyGetMonitorProfileName;
       }
       /*error = !funcP || !funcP2;*/
     }
@@ -3807,6 +4194,8 @@ oyProfile_Release( oyProfile_s ** obj )
 
   s->sig_ = (icColorSpaceSignature)0;
 
+  oyStructList_Release_(&s->tags_);
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAllocFunc_t deallocateFunc = s->oy_->deallocateFunc_;
@@ -3869,8 +4258,15 @@ oyProfile_GetSignature ( oyProfile_s * s,
   if(!s)
     return 0;
 
-  if(s->sig_ || !s->block_)
+  if(s->sig_ && type == oySIGNATURE_COLOUR_SPACE)
     return s->sig_;
+
+  if(!s->block_)
+  {
+    if(type == oySIGNATURE_COLOUR_SPACE)
+      sig = s->sig_ = icSigXYZData;
+    return sig;
+  }
 
   h = (icHeader*) s->block_;
 
@@ -4272,16 +4668,22 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
     if(!error)
     {
       /* 3. check and 3.a take*/
-      cmm_ptr = oyHash_GetPointer_(entry, oyOBJECT_TYPE_CMM_POINTER_S);
+      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+                                                  oyOBJECT_TYPE_CMM_POINTER_S);
 
       if(!cmm_ptr)
       {
         /* 3b. ask CMM */
-        int cmmId = 0;
+        uint32_t cmmId = 0;
         oyCMMProfile_Open_t funcP = 0;
 
-        if((cmmId = oyCMMapiLoad_( oyOBJECT_TYPE_CMM_API1_S )) != 0)
-          funcP = oy_cmm_apis_.api1->oyCMMProfile_Open;
+        oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+                                          *(uint32_t*)cmm, 0, &cmmId );
+        if(api && cmmId)
+        {
+          oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
+          funcP = api1->oyCMMProfile_Open;
+        }
 
         if(funcP)
         {
@@ -4307,14 +4709,8 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
         error = !cmm_ptr;
 
         if(!error && cmm_ptr && cmm_ptr->ptr)
-        {
-          oyStructCopyF_t ptrCopy = (oyStructCopyF_t) oyCMMptr_Copy_;
-          oyStructReleaseF_t ptrRelease = (oyStructReleaseF_t)oyCMMptr_Release_;
-
           /* 3b.1. update cache entry */
-          error = oyHash_SetPointer_( entry, oyOBJECT_TYPE_CMM_POINTER_S,
-                                      cmm_ptr, ptrRelease, ptrCopy );
-        }
+          error = oyHash_SetPointer_( entry, (oyStruct_s*) cmm_ptr );
       }
     }
 
@@ -4343,10 +4739,15 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
     oyCMMProfile_GetText_t funcP = 0;
     oyCMMptr_s  * cmm_ptr = 0;
 
-    unsigned int cmmId = 0;
+    uint32_t cmmId = 0;
 
-    if((cmmId = oyCMMapiLoad_( oyOBJECT_TYPE_CMM_API1_S )) != 0)
-      funcP = oy_cmm_apis_.api1->oyCMMProfile_GetText;
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+                                      *(uint32_t*)cmm, 0, &cmmId );
+    if(api && cmmId)
+    {
+      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
+      funcP = api1->oyCMMProfile_GetText;
+    }
 
     if(cmmId)
     {
@@ -4391,6 +4792,376 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
   return error;
 }
 
+/** @func  oyProfile_GetTagById
+ *  @internal
+ *  @brief get a profile tag by its tag signature
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in]     id                  icTagSignature
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2 january 2008 (API 0.1.8)
+ */
+oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
+
+                                       icTagSignature      id )
+{
+  oyProfile_s * s = profile;
+  int error = !s;
+  oyProfileTag_s * tag = 0,
+                 * tmp = 0;
+  int i = 0, n = 0;
+  icTagSignature tag_id_ = 0;
+
+  if(!error && profile->type_ != oyOBJECT_TYPE_PROFILE_S)
+    error = 1;
+
+  if(!error)
+  {
+    s = profile;
+    n = oyStructList_Count_( profile->tags_ );
+  }
+
+  if(!error && n)
+  {
+    for(i = 0; i < n; ++i)
+    {
+      tmp = oyProfile_GetTagByPos( s, i );
+      tag_id_ = 0;
+
+      if(tmp)
+        tag_id_ = tmp->use_;
+
+      if(tag_id_ == id)
+        tag = tmp;
+      else
+        oyProfileTag_Release( &tmp );
+    }
+  }
+
+  return tag;
+}
+
+/** @func  oyProfile_GetTag
+ *  @internal
+ *  @brief get a profile tag
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in]     pos                 header + tag position
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
+                                       int                 pos )
+{
+  oyProfileTag_s * tag = 0;
+  oyProfile_s * s = 0;
+  int error = !profile;
+  int n = 0;
+
+  if(!error && profile->type_ != oyOBJECT_TYPE_PROFILE_S)
+    error = 1;
+
+  if(!error)
+  {
+    s = profile;
+    n = oyStructList_Count_( profile->tags_ );
+  }
+
+  if(!error && n)
+  {
+    tag = (oyProfileTag_s*) oyStructList_GetRef_( profile->tags_, pos );
+    return tag;
+  }
+
+  /* parse the ICC profile struct */
+  if(!error && s->block_)
+  {
+    icSignature magic = oyProfile_GetSignature( s, oySIGNATURE_MAGIC );
+    icProfile * ic_profile = s->block_;
+    int min_icc_size = 132 + sizeof(icTag);
+
+    error = (magic != icMagicNumber);
+
+
+    if(!error && s->size_ > min_icc_size)
+    {
+      uint32_t size = 0;
+      uint32_t tag_count = 0;
+      icTag *tag_list = 0;
+      int i = 0;
+      oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
+      char h[5] = {"head"};
+      uint32_t * hi = (uint32_t*)&h;
+
+      error = oyProfileTag_Set( tag_, *hi, *hi,
+                                oyOK, 0, 132, s->block_ );
+
+      size = oyProfile_GetSignature( s, oySIGNATURE_SIZE );
+      tag_count = oyValueUInt32( ic_profile->count );
+
+      tag_list = (icTag*)&((char*)s->block_)[132];
+
+      for(i = 0; i < tag_count; ++i)
+      {
+        icTag *ic_tag = &tag_list[i];
+        size_t offset = oyValueUInt32( ic_tag->offset );
+        size_t tag_size = oyValueUInt32( ic_tag->size );
+        char *tag_block = 0;
+        char *tmp = 0;
+        oySTATUS_e status = oyOK;
+        icTagSignature sig = oyValueUInt32( ic_tag->sig );
+        icTagTypeSignature tag_type = 0;
+
+        oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
+
+        if((offset+tag_size) > s->size_)
+          status = oyCORRUPTED;
+        else
+        {
+          icTagBase * tag_base = 0;
+
+          tag_block = oyAllocateFunc_( tag_size );
+          tmp = &((char*)s->block_)[offset];
+          error = !memcpy( tag_block, tmp, tag_size );
+
+          tag_base = (icTagBase*) tag_block; 
+          tag_type = oyValueUInt32( tag_base->sig );
+        }
+
+        error = oyProfileTag_Set( tag_, sig, tag_type,
+                                  status, offset, tag_size, tag_block );
+
+        WARNc_S(("%d[%d @ %d]: %s %s", i, tag_->size_, tag_->offset_orig,
+          oyICCTagTypeName( tag_->tag_type_ ),
+          oyICCTagDescription( tag_->use_ ) ));
+
+        if(i == pos)
+          tag = oyProfileTag_Copy( tag_, 0 );
+
+        oyStructList_MoveIn_( s->tags_, (oyStruct_s**)&tag_, -1 );
+      }
+    }
+  }
+
+  return tag;
+}
+
+/** @func oyProfile_GetTagCount
+ *  @internal
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+int                oyProfile_GetTagCount( oyProfile_s    * profile )
+{
+  int n = 0;
+  oyProfile_s *s = profile;
+  int error = !s;
+
+  if(!error && !(s && s->type_ == oyOBJECT_TYPE_PROFILE_S && s->tags_))
+    error = 1;
+
+  if(!error)
+    n = oyStructList_Count_( profile->tags_ );
+
+  if(!error && !n)
+  {
+    oyProfileTag_s * tag = oyProfile_GetTagByPos ( s, 0 );
+
+    if(tag)
+    {
+      n = oyStructList_Count_( profile->tags_ );
+      oyProfileTag_Release( &tag );
+    }
+  }
+
+  return n;
+}
+
+
+
+
+
+/** @func oyProfileTag_New
+ *  @internal
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+                   oyProfileTag_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_PROFILE_TAG_S;
+# define STRUCT_TYPE oyProfileTag_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyProfileTag_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyProfileTag_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  return s;
+}
+
+/** @func  oyProfileTag_Copy
+ *  @internal
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+                   oyProfileTag_Copy   ( oyProfileTag_s  * obj,
+                                         oyObject_s        object)
+{
+  oyProfileTag_s * s = 0;
+  int error = 0;
+
+  if(!obj)
+    return s;
+
+  if(!error && !object && obj->oy_)
+  {
+    ++obj->oy_->ref_;
+    return obj;
+  }
+
+  return s;
+}
+
+/** @func oyProfileTag_Release
+ *  @internal
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+OYAPI int  OYEXPORT
+                   oyProfileTag_Release(oyProfileTag_s  ** obj )
+{
+  int error = 0;
+  /* ---- start of common object destructor ----- */
+  oyProfileTag_s * s = 0;
+
+  if(!obj || !*obj)
+    return error;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_PROFILE_TAG_S)
+  {
+    WARNc_S(("Attempt to release a non oyProfileTag_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(--s->oy_->ref_ > 0)
+    return error;
+  /* ---- end of common object destructor ------- */
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAllocFunc_t deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->block_ && s->size_)
+      deallocateFunc( s->block_ );
+    s->block_ = 0; s->size_ = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return error;
+}
+
+/** @func oyProfileTag_Set
+ *  @internal
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+OYAPI int  OYEXPORT
+                   oyProfileTag_Set  ( oyProfileTag_s    * tag,
+                                       icTagSignature      sig,
+                                       icTagTypeSignature  type,
+                                       oySTATUS_e          status,
+                                       size_t              offset_orig,
+                                       size_t              tag_size,
+                                       oyPointer           tag_block )
+{
+  oyProfileTag_s * s = tag;
+  int error = !s;
+
+  if(!error && s->type_ != oyOBJECT_TYPE_PROFILE_TAG_S)
+    error = 1;
+
+  if(!error)
+  {
+    s->use_ = sig;
+    s->tag_type_ = type;
+    s->status_ = status;
+    s->offset_orig = offset_orig;
+    s->size_ = tag_size;
+    s->block_ = tag_block;
+  }
+
+  return error;
+}
+
+/** @func oyProfileTag_Set
+ *  @internal
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/03 (API 0.1.8)
+ */
+oyChar *       oyProfileTag_GetName  ( oyProfileTag_s    * tag,
+                                       oyNAME_e            type )
+{
+  oyProfileTag_s * s = tag;
+  int error = !s;
+  oyProfileTag_GetText_t funcP = 0;
+  uint32_t cmmId = 0;
+  oyChar * text = 0;
+
+  if(!error && s->type_ != oyOBJECT_TYPE_PROFILE_TAG_S)
+    error = 1;
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API3_S,
+                                      0, 0, &cmmId );
+    if(api && cmmId)
+    {
+      oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
+      funcP = api3->oyProfileTag_GetText;
+    }
+    error = !funcP;
+  }
+
+  if(!error)
+  {
+  }
+
+  return text;
+}
 
 
 
@@ -4419,6 +5190,8 @@ OYAPI oyProfileList_s * OYEXPORT
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyProfileList_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyProfileList_Release;
 
   s->oy_ = s_obj;
 
@@ -4426,7 +5199,7 @@ OYAPI oyProfileList_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->list_ = oyHandleList_New_( 0 );
+  s->list_ = oyStructList_New_( 0 );
 
   return s;
 }
@@ -4457,7 +5230,7 @@ OYAPI oyProfileList_s * OYEXPORT
   {
     if(obj->list_)
     {
-      s->list_ = oyHandleList_Copy_(obj->list_, object);
+      s->list_ = oyStructList_Copy_(obj->list_, object);
       error = !s->list_;
     }
   }
@@ -4501,7 +5274,7 @@ OYAPI int  OYEXPORT
   /* ---- end of common object destructor ------- */
 
   if(!error && s->list_)
-  error = oyHandleList_Release_(&s->list_);
+  error = oyStructList_Release_(&s->list_);
 
   if(s->oy_->deallocateFunc_)
   {
@@ -4525,8 +5298,6 @@ oyProfileList_s* oyProfileList_MoveIn( oyProfileList_s   * list,
                                        int                 pos )
 {
   int error = 0;
-  oyStructReleaseF_t release = (oyStructReleaseF_t)oyProfile_Release;
-  oyStructCopyF_t copy = (oyStructCopyF_t)oyProfile_Copy;
 
   if(obj && *obj && (*obj)->type_ == oyOBJECT_TYPE_PROFILE_S)
   {
@@ -4534,21 +5305,7 @@ oyProfileList_s* oyProfileList_MoveIn( oyProfileList_s   * list,
       list = oyProfileList_New(0);
 
     if(list && list->list_)
-    {
-      oyHandle_s * h = oyHandle_new_(0);
-
-      error = !h;
-
-      if(!error)
-      {
-        error = oyHandle_set_( h, *obj, (*obj)->type_,
-                               release, copy );
-        *obj = 0;
-      }
-
-      if(!error)
-        error = oyHandleList_MoveIn_( list->list_, &h, pos );
-    }
+        error = oyStructList_MoveIn_( list->list_, (oyStruct_s**) obj, pos );
   }
 
   return list;
@@ -4565,7 +5322,7 @@ int              oyProfileList_ReleaseAt( oyProfileList_s * list,
   int error = 0;
 
   if(list && list->list_)
-    error = oyHandleList_ReleaseAt_( list->list_, pos );
+    error = oyStructList_ReleaseAt_( list->list_, pos );
 
   return error;
 }
@@ -4583,19 +5340,14 @@ oyProfile_s *    oyProfileList_Get   ( oyProfileList_s   * list,
                                        int                 pos )
 {
   oyProfile_s * obj = 0;
-  int error = 0;
 
   if(list && list->list_)
   {
-    oyHandle_s * h = oyHandleList_Get_( list->list_, pos );
-    oyProfile_s * p = 0;
+    oyProfile_s * p = (oyProfile_s*) oyStructList_GetType_( list->list_,
+                                                 pos, oyOBJECT_TYPE_PROFILE_S );
 
-    if(!error && h && h->ptr && h->ptr_type == oyOBJECT_TYPE_PROFILE_S)
-      p = (oyProfile_s*) h->ptr;
-
-    if(p->type_ == oyOBJECT_TYPE_PROFILE_S)
+    if(p)
       obj = oyProfile_Copy(p, 0);
-
   }
 
   return obj;
@@ -4622,13 +5374,10 @@ oyCMMptr_s** oyProfileList_GetCMMptrs_(oyProfileList_s   * list,
 
     for(i = 0; i < n; ++i)
     {
-      oyHandle_s * h = oyHandleList_Get_( list->list_, i );
-      oyProfile_s * p = 0;
+      oyProfile_s * p = (oyProfile_s*) oyStructList_GetType_( list->list_,
+                                                 i, oyOBJECT_TYPE_PROFILE_S );
 
-      if(h && h->type_ == oyOBJECT_TYPE_HANDLE_S)
-        p = (oyProfile_s*) h->ptr;
-
-      if(p && p->type_ == oyOBJECT_TYPE_PROFILE_S)
+      if(p)
       {
         oyCMMptr_s * cmm_ptr = oyProfile_GetCMMPtr_(p, cmm);
 
@@ -4651,7 +5400,7 @@ int              oyProfileList_Count ( oyProfileList_s   * list )
   int n = 0;
 
   if(list && list->list_)
-    n = oyHandleList_Count_( list->list_ );
+    n = oyStructList_Count_( list->list_ );
 
   return n;
 }
@@ -4690,6 +5439,8 @@ oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyRegion_Copy_;
+  s->release = (oyStruct_ReleaseF_t) oyRegion_Release_;
 
   s->oy_ = s_obj;
 
@@ -5279,6 +6030,8 @@ oyImage_s *    oyImage_Create         ( int               width,
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyImage_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyImage_Release;
 
   s->oy_ = s_obj;
 
@@ -5543,8 +6296,13 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
 
   if(!error)
   {
-    if((cmmId = oyCMMapiLoad_( oyOBJECT_TYPE_CMM_API1_S )) != 0)
-      funcP = oy_cmm_apis_.api1->oyCMMColourConversion_Create;
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+                                      *(uint32_t*)cmm, 0, &cmmId );
+    if(api && cmmId)
+    {
+      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
+      funcP = api1->oyCMMColourConversion_Create;
+    }
     error = !funcP;
   }
 
@@ -5729,6 +6487,8 @@ oyColourConversion_s* oyColourConversion_Create_ (
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyColourConversion_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyColourConversion_Release;
 
   s->oy_ = s_obj;
 
@@ -5767,42 +6527,29 @@ oyColourConversion_s* oyColourConversion_Create_ (
       s->oy_->deallocateFunc_( hash_text );
 
     if(!error)
-      s->cmms_ = oyHandleList_New_( s->oy_ );
+      s->cmms_ = oyStructList_New_( s->oy_ );
 
     if(!error)
     {
       /* 3. check and 3.a take*/
-      cmm_ptr = oyHash_GetPointer_(entry, oyOBJECT_TYPE_CMM_POINTER_S);
+      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+                                                  oyOBJECT_TYPE_CMM_POINTER_S);
 
       if(!cmm_ptr)
       {
-        oyStructCopyF_t ptrCopy = (oyStructCopyF_t) oyCMMptr_Copy_;
-        oyStructReleaseF_t ptrRelease = (oyStructReleaseF_t)oyCMMptr_Release_;
-
         /* 3b. ask CMM */
         cmm_ptr = oyColourConversion_CallCMM_( cmm, s, list, opts, in, out,
                                              entry ? entry->oy_ : 0);
         error = !cmm_ptr;
 
         /* 3b.1. update cache entry */
-        error = oyHash_SetPointer_( entry, oyOBJECT_TYPE_CMM_POINTER_S,
-                                    cmm_ptr, ptrRelease, ptrCopy );
+        error = oyHash_SetPointer_( entry, (oyStruct_s*) cmm_ptr );
       }
 
       if(!error && cmm_ptr && cmm_ptr->ptr)
       {
-        oyHandle_s * h = oyHandle_new_(0);
-        oyStructReleaseF_t release = (oyStructReleaseF_t)oyHash_Release_;
-        oyStructCopyF_t copy = (oyStructCopyF_t)oyHash_Copy_;
-
-        error = !h;
-
-        if(!error)
-          error = oyHandle_set_( h, copy(entry,0), oyOBJECT_TYPE_HASH_S,
-                                 release, copy );
-
-        if(!error)
-          error = oyHandleList_MoveIn_( s->cmms_, &h, -1 );
+        oyHash_s * c = oyHash_Copy_(entry, 0);
+        error = oyStructList_MoveIn_( s->cmms_, (oyStruct_s**) &c, -1 );
       }
 #if 0
 //DEBUG
@@ -5834,7 +6581,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
         cmm_ptr = oyColourConversion_CallCMM_( cmm, s, list, opts, in, out,
                                              entry ? entry->oy_ : 0);
         error = !cmm_ptr;
-        h = oyHandleList_Get_( s->cmms_, 0 );
+        h = oyStructList_Get_( s->cmms_, 0 );
 
       cmm_ptr_orig = oyHash_GetPointer_(entry, oyOBJECT_TYPE_CMM_POINTER_S);
 
@@ -5848,6 +6595,31 @@ oyColourConversion_s* oyColourConversion_Create_ (
   {
     s->image_in_ = oyImage_Copy( in, 0 );
     s->image_out_ = oyImage_Copy( out, 0 );
+  }
+
+  return s;
+}
+
+/** @func oyColourConversion_Copy
+ *  @brief copy the struct
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+oyColourConversion_s* oyColourConversion_Copy (
+                                       oyColourConversion_s * obj,
+                                       oyObject_s          object )
+{
+  oyColourConversion_s * s = 0;
+  int error = !obj;
+
+  if(!error && obj->type_ != oyOBJECT_TYPE_COLOUR_CONVERSION_S)
+    error = 1;
+
+  if(!error && obj->oy_)
+  {
+    ++obj->oy_->ref_;
+    s = obj;
   }
 
   return s;
@@ -5877,35 +6649,43 @@ void             oyCMMProgress_      ( int                 ID,
 int        oyColourConversion_Run    ( oyColourConversion_s * s )
 {
   int error = !s;
-  oyHandle_s * h = 0;
   oyHash_s   * hash = 0;
   oyCMMptr_s * cmm_ptr = 0;
   int pos = 0;
   oyCMMColourConversion_Run_t funcP = 0;
-  uint32_t cmmId = 0;
+  uint32_t cmmId = 0,
+           cc_cmmId = 0;
 
   if(!error)
   {
-    if((cmmId = oyCMMapiLoad_( oyOBJECT_TYPE_CMM_API1_S )) != 0)
-      funcP = oy_cmm_apis_.api1->oyCMMColourConversion_Run;
+    hash = (oyHash_s*) oyStructList_GetRefType_( s->cmms_, pos,
+                                                 oyOBJECT_TYPE_HASH_S);
+    error = !hash;
+
+    if(!error)
+      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( hash,
+                                                  oyOBJECT_TYPE_CMM_POINTER_S);
+
+    error = !cmm_ptr;
+  }
+
+  if(!error)
+    cc_cmmId = *(uint32_t*)&cmm_ptr->cmm;
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+                                      cc_cmmId, 0, &cmmId );
+    if(api && cmmId)
+    {
+      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
+      funcP = api1->oyCMMColourConversion_Run;
+    }
     error = !funcP;
   }
 
   if(!error)
   {
-    h = oyHandleList_GetRef_(s->cmms_, pos);
-    error = !h;
-
-    if(!error && h->ptr_type == oyOBJECT_TYPE_HASH_S)
-      hash = h->ptr;
-
-    error = !hash;
-
-    if(!error && hash->entry.ptr_type == oyOBJECT_TYPE_CMM_POINTER_S)
-      cmm_ptr = hash->entry.ptr;
-
-    error = !cmm_ptr;
-
     if(!error)
     {
       oyPointer in = 0, out = 0;
@@ -5958,7 +6738,7 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
       }
     }
 
-    error = oyHandleList_ReleaseAt_(s->cmms_, pos);
+    error = oyStructList_ReleaseAt_(s->cmms_, pos);
   }
 
   return error;
@@ -5997,7 +6777,7 @@ int        oyColourConversion_Release( oyColourConversion_s ** obj )
       deallocateFunc( s->profiles_ ); s->profiles_ = 0;
 
     if(s->cmms_)
-      oyHandleList_Release_( &s->cmms_ );
+      oyStructList_Release_( &s->cmms_ );
 
     oyObject_Release( &s->oy_ );
 
@@ -6019,12 +6799,12 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
                                        oyAllocFunc_t       allocateFunc )
 {
   int error = !s;
-  oyHandle_s * h = 0;
   oyHash_s   * hash = 0;
   oyCMMptr_s * cmm_ptr = 0;
   int pos = 0;
   oyCMMColourConversion_ToMem_t funcP = 0;
-  uint32_t cmmId = 0;
+  uint32_t cmmId = 0,
+           cc_cmmId = 0;
   oyPointer mem = 0;
   size_t size_ = 0;
 
@@ -6033,27 +6813,34 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
 
   if(!error)
   {
-    if((cmmId = oyCMMapiLoad_( oyOBJECT_TYPE_CMM_API1_S )) != 0)
-      funcP = oy_cmm_apis_.api1->oyCMMColourConversion_ToMem;
+    hash = (oyHash_s*) oyStructList_GetRefType_( s->cmms_, pos,
+                                                 oyOBJECT_TYPE_HASH_S );
+    error = !hash;
+
+    if(!error)
+      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( hash,
+                                                  oyOBJECT_TYPE_CMM_POINTER_S);
+
+    error = !cmm_ptr;
+  }
+
+  if(!error)
+    cc_cmmId = *(uint32_t*)&cmm_ptr->cmm;
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+                                      cc_cmmId, 0, &cmmId );
+    if(api && cmmId)
+    {
+      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
+      funcP = api1->oyCMMColourConversion_ToMem;
+    }
     error = !funcP;
   }
 
   if(!error)
   {
-
-    h = oyHandleList_GetRef_(s->cmms_, pos);
-    error = !h;
-
-    if(!error && h->ptr_type == oyOBJECT_TYPE_HASH_S)
-      hash = h->ptr;
-
-    error = !hash;
-
-    if(!error && hash->entry.ptr_type == oyOBJECT_TYPE_CMM_POINTER_S)
-      cmm_ptr = hash->entry.ptr;
-
-    error = !cmm_ptr;
-
     if(!error)
     {
       if(!error)
@@ -6066,7 +6853,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
     if(!error && size)
       *size = size_;
 
-    error = oyHandleList_ReleaseAt_(s->cmms_, pos);
+    error = oyStructList_ReleaseAt_(s->cmms_, pos);
   }
 
   return mem;
@@ -6126,6 +6913,8 @@ oyNamedColour_Create( const double      * chan,
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyNamedColour_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyNamedColour_Release;
 
   s->oy_ = s_obj;
 
@@ -6676,6 +7465,8 @@ oyNamedColours_s* oyNamedColours_New ( oyObject_s       object )
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyNamedColours_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyNamedColours_Release;
 
   s->oy_ = s_obj;
 
@@ -6684,7 +7475,7 @@ oyNamedColours_s* oyNamedColours_New ( oyObject_s       object )
   /* ---- end of common object constructor ------- */
 
   if(!error)
-    s->list_ = oyHandleList_New_( object );
+    s->list_ = oyStructList_New_( object );
 
   return s;
 }
@@ -6713,7 +7504,7 @@ oyNamedColours_s* oyNamedColours_Copy( oyNamedColours_s  * colours,
 
   s = oyNamedColours_New( obj );
 
-  s->list_ = oyHandleList_Copy_( colours->list_, 0 );
+  s->list_ = oyStructList_Copy_( colours->list_, 0 );
 
   return s;
 }
@@ -6747,7 +7538,7 @@ int               oyNamedColours_Release ( oyNamedColours_s** obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  oyHandleList_Release_( &s->list_ );
+  oyStructList_Release_( &s->list_ );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -6772,7 +7563,7 @@ int               oyNamedColours_Release ( oyNamedColours_s** obj )
 int               oyNamedColours_Count( oyNamedColours_s * obj )
 {
   if(obj && obj->type_ == oyOBJECT_TYPE_NAMED_COLOURS_S)
-    return oyHandleList_Count_( obj->list_ );
+    return oyStructList_Count_( obj->list_ );
   else
     return -1;
 }
@@ -6793,12 +7584,9 @@ oyNamedColour_s*  oyNamedColours_GetRef ( oyNamedColours_s  * obj,
     error = 1;
 
   if(!error)
-  {
-    oyHandle_s * h = oyHandleList_GetRef_( obj->list_, position );
+    s = (oyNamedColour_s*) oyStructList_GetRefType_( obj->list_, position,
+                                                 oyOBJECT_TYPE_NAMED_COLOUR_S );
 
-    if(h && h->ptr_type == oyOBJECT_TYPE_NAMED_COLOUR_S)
-      s = oyNamedColour_Copy( (oyNamedColour_s*)h->ptr, 0 );
-  }
  
   return s;
 }
@@ -6809,14 +7597,12 @@ oyNamedColour_s*  oyNamedColours_GetRef ( oyNamedColours_s  * obj,
  *  @since Oyranos: version 0.1.8
  *  @date  22 december 2007 (API 0.1.8)
  */
-oyNamedColours_s* oyNamedColours_MoveIn ( oyNamedColours_s  * list,
+oyNamedColours_s * oyNamedColours_MoveIn ( oyNamedColours_s  * list,
                                        oyNamedColour_s  ** obj,
                                        int                 pos )
 {
   int error = 0;
   oyNamedColours_s * s = list;
-  oyStructReleaseF_t release = (oyStructReleaseF_t)oyNamedColour_Release;
-  oyStructCopyF_t copy = (oyStructCopyF_t)oyNamedColour_Copy;
 
   if(obj && *obj && (*obj)->type_ == oyOBJECT_TYPE_NAMED_COLOUR_S)
   {
@@ -6828,26 +7614,12 @@ oyNamedColours_s* oyNamedColours_MoveIn ( oyNamedColours_s  * list,
 
     if(!error && !s->list_)
     {
-      s->list_ = oyHandleList_New_( 0 );
+      s->list_ = oyStructList_New_( 0 );
       error = !s->list_;
     }
 
     if(!error)
-    {
-      oyHandle_s * h = oyHandle_new_(0);
-
-      error = !h;
-
-      if(!error)
-      {
-        error = oyHandle_set_( h, *obj, (*obj)->type_,
-                               release, copy );
-        *obj = 0;
-      }
-
-      if(!error)
-        error = oyHandleList_MoveIn_( s->list_, &h, pos );
-    }
+      error = oyStructList_MoveIn_( s->list_, (oyStruct_s**)obj, pos );
   }
 
   return s;
@@ -6868,7 +7640,7 @@ int               oyNamedColours_ReleaseAt ( oyNamedColours_s * obj,
     error = 1;
 
   if(!error)
-    oyHandleList_ReleaseAt_( obj->list_, position );
+    oyStructList_ReleaseAt_( obj->list_, position );
 
   return error; 
 }

@@ -29,7 +29,7 @@ namespace oyranos
 
 /** @brief CMM capabilities query enum
  *
- *  Since: 0.1.8
+ *  @since: 0.1.8
  */
 typedef enum {
   oyQUERY_OYRANOS_COMPATIBILITY,       /*!< provides the Oyranos version and expects the CMM compiled or compatibility Oyranos version back */
@@ -40,11 +40,12 @@ typedef enum {
   oyQUERY_PIXELLAYOUT_PLANAR,
   oyQUERY_PIXELLAYOUT_FLAVOUR,
   oyQUERY_HDR,                         /*!< value a oyDATATYPE_e (oyHALF...) */
-  oyQUERY_PROFILE_FORMAT = 20          /*!< value 1 == ICC */
+  oyQUERY_PROFILE_FORMAT = 20,         /*!< value 1 == ICC */
+  oyQUERY_PROFILE_TAG_TYPE             /**< value a icTagTypeSignature (ICC) */
 } oyCMMQUERY_e;
 
 typedef int      (*oyCMMCanHandle_t) ( oyCMMQUERY_e        type,
-                                       int                 value );
+                                       uint32_t            value );
 
 typedef int      (*oyCMMInit_t)      ( void );
 
@@ -115,10 +116,14 @@ typedef oyCMMInfo_s* (*oyCMMInfo_Get_t) (void);
  */
 struct oyCMMapi_s {
   oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API1_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
   oyCMMInit_t      oyCMMInit;
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
+  oyCMMCanHandle_t oyCMMCanHandle;
 };
 
 
@@ -129,11 +134,13 @@ struct oyCMMapi_s {
  */
 typedef struct {
   oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API1_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
   oyCMMInit_t      oyCMMInit;
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
-
   oyCMMCanHandle_t oyCMMCanHandle;
 
   oyCMMProfile_Open_t oyCMMProfile_Open;
@@ -172,17 +179,22 @@ typedef int   (*oyActivateMonitorProfiles_t) (
                                        const char        * display_name);
 
 
-/** @brief the API 2 to implement and set to provide windowing support
+/** @struct oyCMMapi2_s
+ *  @brief the API 2 to implement and set to provide windowing support
  *
  *  @since Oyranos: version 0.1.8
  *  @date  10 december 2007 (API 0.1.8)
  */
 typedef struct {
   oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API2_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
   oyCMMInit_t      oyCMMInit;
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
+  oyCMMCanHandle_t oyCMMCanHandle;
 
   oyGetMonitorInfo_t oyGetMonitorInfo;
   oyGetScreenFromPosition_t oyGetScreenFromPosition;
@@ -195,6 +207,43 @@ typedef struct {
   oyActivateMonitorProfiles_t oyActivateMonitorProfiles;
 
 } oyCMMapi2_s;
+
+
+typedef oyChar *            (*oyProfileTag_GetText_t) (
+                                       oyProfileTag_s    * tag,
+                                       const char          language[4],
+                                       const char          country[4],
+                                       oyAllocFunc_t       allocateFunc );
+typedef double *            (*oyProfileTag_GetValues_t) (
+                                       oyProfileTag_s    * tag,
+                                       oyAllocFunc_t       allocateFunc );
+
+/** @struct oyCMMapi3_s
+ *  @brief the API 3 to implement and set to provide low level ICC profile
+ *         support
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/02 (API 0.1.8)
+ */
+typedef struct {
+  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API3_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
+  oyCMMapi_s     * next;
+
+  oyCMMInit_t      oyCMMInit;
+  oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
+  oyCMMCanHandle_t oyCMMCanHandle;
+
+  oyProfileTag_GetText_t oyProfileTag_GetText;
+  oyProfileTag_GetValues_t oyProfileTag_GetValues;
+} oyCMMapi3_s;
+
+/* some known CMM's */
+#define oyX1Signature 0x6f795831 /* oyX1 */
+
+
 
 #ifdef __cplusplus
 } /* extern "C" */

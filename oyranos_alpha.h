@@ -39,8 +39,12 @@ void                    oyLab2XYZ       (const double * CIElab, double * XYZ);
 void                    oyXYZ2Lab       (const double * XYZ, double * CIElab);
 
 
-typedef oyPointer (*oyStructCopyF_t) ( oyPointer, oyPointer );
-typedef int       (*oyStructReleaseF_t) ( oyPointer* );
+typedef struct oyStruct_s oyStruct_s;
+
+typedef oyStruct_s * (*oyStruct_CopyF_t) ( oyStruct_s *, oyPointer );
+typedef int       (*oyStruct_ReleaseF_t) ( oyStruct_s ** );
+typedef oyPointer (*oyStruct_copyF_t) ( oyPointer, oyPointer );
+typedef int       (*oyStruct_releaseF_t) ( oyPointer * );
 
 typedef oyPointer (*oyImage_GetLine_t) ( int               line_y,
                                          int             * height );
@@ -62,6 +66,7 @@ typedef enum {
   oyOBJECT_TYPE_NAMED_COLOUR_S,       /*!< oyNamedColour_s */
   oyOBJECT_TYPE_NAMED_COLOURS_S,      /*!< oyNamedColours_s */
   oyOBJECT_TYPE_PROFILE_S,            /*!< oyProfile_s */
+  oyOBJECT_TYPE_PROFILE_TAG_S,        /*!< oyProfileTag_s */
   oyOBJECT_TYPE_PROFILE_LIST_S,       /*!< oyProfileList_s */
   oyOBJECT_TYPE_OPTION_S,             /*!< oyOption_s */
   oyOBJECT_TYPE_OPTIONS_S,            /*!< oyOptions_s */
@@ -74,6 +79,7 @@ typedef enum {
   oyOBJECT_TYPE_CMM_INFO_S,           /*!< oyCMMInfo_s */
   oyOBJECT_TYPE_CMM_API1_S,           /**< oyCMMapi1_s */
   oyOBJECT_TYPE_CMM_API2_S,           /**< oyCMMapi2_s */
+  oyOBJECT_TYPE_CMM_API3_S,           /**< oyCMMapi3_s */
   oyOBJECT_TYPE_CMM_API_MAX,          /**< not defined */
   oyOBJECT_TYPE_ICON_S = 80,          /*!< oyIcon_s */
   oyOBJECT_TYPE_MODULE_S,             /*!< oyModule_s */
@@ -83,14 +89,31 @@ typedef enum {
   oyOBJECT_TYPE_FILE_LIST_S_,         /*!< oyFileList_s_ */
   oyOBJECT_TYPE_HASH_S,               /**< oyHash_s */
   oyOBJECT_TYPE_HANDLE_S,             /**< oyHandle_s */
-  oyOBJECT_TYPE_HANDLE_LIST_S,        /**< oyHandleList_s */
+  oyOBJECT_TYPE_STRUCT_LIST_S,        /**< oyStructList_s */
   oyOBJECT_TYPE_MAX
 } oyOBJECT_TYPE_e;
+
+
+typedef struct oyObject_s_* oyObject_s;
+
+/** @brief Oyranos base structure
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+struct oyStruct_s {
+  oyOBJECT_TYPE_e      type_;          /**< struct type */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< features name and hash */
+};
+
 
 typedef enum {
   oyNAME_NAME,                        /**< compatible to oyName_s/oyObject_s */
   oyNAME_NICK,                        /**< compatible to oyName_s/oyObject_s */
   oyNAME_DESCRIPTION,                 /**< compatible to oyName_s/oyObject_s */
+
   oyNAME_PROD_NAME,                   /**< the following are from a given CMM */
   oyNAME_PROD_DESC,
   oyNAME_INFO,
@@ -108,6 +131,9 @@ typedef enum {
  */
 typedef struct {
   oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_NAME_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyPointer        dummy;              /**< keep to zero */
   char               * nick;    /*!< few letters for mass representation, eg. "A1" */
   char               * name;           /*!< normal visible name, eg. "A1-MySys"*/
   char               * description;    /*!< full user description, eg. "A1-MySys from Oyranos" */
@@ -134,11 +160,14 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
  */
 typedef struct {
   oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_CMM_POINTER_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyPointer        dummy;              /**< keep to zero */
   char                 cmm[5];         /*!< the CMM */
   char                 func_name[32];  /*!< optional the CMM's function name */
   oyPointer            ptr;            /*!< a CMM's data pointer */
   char                 resource[5];    /**< the resource type */
-  oyStructReleaseF_t   ptrRelease;     /*!< CMM's deallocation function */
+  oyStruct_releaseF_t  ptrRelease;     /*!< CMM's deallocation function */
   int                  ref;            /**< Oyranos reference counter */
 } oyCMMptr_s;
 
@@ -152,7 +181,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        const char        * func_name,
                                        const char        * resource,
                                        oyPointer           ptr,
-                                       oyStructReleaseF_t  ptrRelease );
+                                       oyStruct_releaseF_t ptrRelease );
 
 /** @internal
  *  @brief a handle
@@ -165,10 +194,13 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_HANDLE_S*/
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyPointer        dummy;              /**< keep to zero */
   oyPointer            ptr;            /**< can be any type */
   oyOBJECT_TYPE_e      ptr_type;       /**< the type of the entry */
-  oyStructReleaseF_t   ptrRelease;     /**< deallocation for ptr_ of list_type*/
-  oyStructCopyF_t      ptrCopy;        /**< copy for ptr_ of list_type */
+  oyStruct_releaseF_t  ptrRelease;     /**< deallocation for ptr_ of list_type*/
+  oyStruct_copyF_t     ptrCopy;        /**< copy for ptr_ of list_type */
 } oyHandle_s;
 
 oyHandle_s *       oyHandle_new_     ( oyAllocFunc_t       allocateFunc );
@@ -179,11 +211,11 @@ int                oyHandle_release_ ( oyHandle_s       ** handle );
 int                oyHandle_set_     ( oyHandle_s        * handle,
                                        oyPointer           ptr,
                                        oyOBJECT_TYPE_e     ptr_type,
-                                       oyStructReleaseF_t  ptrRelease,
-                                       oyStructCopyF_t     ptrCopy );
+                                       oyStruct_releaseF_t ptrRelease,
+                                       oyStruct_copyF_t    ptrCopy );
 
 
-typedef struct oyHandleList_s oyHandleList_s;
+typedef struct oyStructList_s oyStructList_s;
 
 /** @internal
  *  @brief Oyranos structure base
@@ -198,20 +230,20 @@ typedef struct oyHandleList_s oyHandleList_s;
  *  @date  october 2007 (API 0.1.8)
  */
 struct oyObject_s_ {
-  oyOBJECT_TYPE_e      type_;         /*!< struct type oyOBJECT_TYPE_OBJECT_S */
-  oyAllocFunc_t        allocateFunc_; /**< data  allocator */
-  oyDeAllocFunc_t      deallocateFunc_; /**< data release function */
-  oyPointer            parent_;       /*!< parent struct of parent_type */
-  oyOBJECT_TYPE_e      parent_type_;  /*!< parents struct type */
-  oyPointer            backdoor_;     /*!< allow non breaking extensions */
-  oyHandleList_s     * handles_;      /*!< useful as list of oyHandle_s */
-  oyName_s           * name_;         /*!< naming feature */
-  int                  ref_;          /*!< reference counter */
-  int                  version_;      /*!< OYRANOS_VERSION */
+  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OBJECT_S*/
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyAllocFunc_t        allocateFunc_;  /**< data  allocator */
+  oyDeAllocFunc_t      deallocateFunc_;/**< data release function */
+  oyPointer            parent_;        /*!< parent struct of parent_type */
+  oyOBJECT_TYPE_e      parent_type_;   /*!< parents struct type */
+  oyPointer            backdoor_;      /*!< allow non breaking extensions */
+  oyStructList_s     * handles_;       /*!< useful as list of oyStruct_s */
+  oyName_s           * name_;          /*!< naming feature */
+  int                  ref_;           /*!< reference counter */
+  int                  version_;       /*!< OYRANOS_VERSION */
   unsigned char        hash_[2*OY_HASH_SIZE];
 };
-
-typedef struct oyObject_s_* oyObject_s;
 
 oyObject_s   oyObject_New             ( void );
 oyObject_s   oyObject_NewWithAllocators(oyAllocFunc_t     allocateFunc,
@@ -247,7 +279,7 @@ oyObject_s   oyObject_SetCMMPtr       ( oyObject_s        object,
  *  @brief a cache entry
  *
  *  Combine hash, description and oyPointer to one searchable struct. The struct
- *  can be used in a oyHandleList_s for a hash map or searchable cache.
+ *  can be used in a oyStructList_s for a hash map or searchable cache.
  *  @see oyCacheListNew_ oyHashGet_
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
  *
@@ -256,8 +288,10 @@ oyObject_s   oyObject_SetCMMPtr       ( oyObject_s        object,
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_HASH_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< features name and hash */
-  oyHandle_s           entry;          /**< holds a pointer to something */
+  oyStruct_s         * entry;          /**< holds a pointer to something */
 } oyHash_s;
 
 oyHash_s *         oyHash_New_       ( oyObject_s          object );
@@ -269,13 +303,10 @@ int                oyHash_Release_   ( oyHash_s         ** entry );
 
 int                oyHash_IsOf_      ( oyHash_s          * hash,
                                        oyOBJECT_TYPE_e     type );
-oyPointer          oyHash_GetPointer_( oyHash_s          * hash,
+oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
                                        oyOBJECT_TYPE_e     type );
 int                oyHash_SetPointer_( oyHash_s          * hash,
-                                       oyOBJECT_TYPE_e     type,
-                                       oyPointer           ptr,
-                                       oyStructReleaseF_t  ptr_release,
-                                       oyStructCopyF_t     ptr_copy );
+                                       oyStruct_s        * obj );
 
 /** @internal
  *  @brief a pointer list
@@ -285,42 +316,47 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-struct oyHandleList_s {
-  oyOBJECT_TYPE_e      type_;          /*!< internal struct type oyOBJECT_TYPE_HANDLE_LIST_S */
+struct oyStructList_s {
+  oyOBJECT_TYPE_e      type_;          /*!< internal struct type oyOBJECT_TYPE_STRUCT_LIST_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< features name and hash */
   int                  locked_;        /**< locking */
-  oyHandle_s        ** ptr_;           /**< the list data */
-  int                * ref_;           /**< the reference counters, see oyHandleList_ReferenceAt_ */
+  oyStruct_s        ** ptr_;           /**< the list data */
+  int                * ref_;           /**< the reference counters, see oyStructList_ReferenceAt_ */
   int                  n_;             /**< the number of visible pointers */
   int                  n_reserved_;    /**< the number of allocated pointers */
   oyChar             * list_name;      /**< name of list */
 };
 
-oyHandleList_s * oyHandleList_New_   ( oyObject_s          object );
-oyHandleList_s * oyHandleList_Copy_  ( oyHandleList_s    * list,
+oyStructList_s * oyStructList_New_   ( oyObject_s          object );
+oyStructList_s * oyStructList_Copy_  ( oyStructList_s    * list,
                                        oyObject_s          obj );
-int              oyHandleList_Release_(oyHandleList_s   ** list );
+int              oyStructList_Release_(oyStructList_s   ** list );
 
-int              oyHandleList_MoveIn_( oyHandleList_s    * list,
-                                       oyHandle_s       ** ptr,
+int              oyStructList_MoveIn_( oyStructList_s    * list,
+                                       oyStruct_s       ** ptr,
                                        int                 pos );
-/*oyHandle_s **    oyHandleList_GetRaw_( oyHandleList_s    * list );*/
-oyHandle_s *     oyHandleList_Get_   ( oyHandleList_s    * list,
+/*oyStruct_s **    oyStructList_GetRaw_( oyStructList_s    * list );*/
+oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
                                        int                 pos );
-oyHandle_s *     oyHandleList_GetRef_( oyHandleList_s    * list,
+oyStruct_s *     oyStructList_GetType_(oyStructList_s    * list,
+                                       int                 pos,
+                                       oyOBJECT_TYPE_e     type );
+oyStruct_s *     oyStructList_GetRef_( oyStructList_s    * list,
                                        int                 pos );
-int              oyHandleList_ReferenceAt_( oyHandleList_s * list,
+int              oyStructList_ReferenceAt_( oyStructList_s * list,
                                        int                 pos );
-int              oyHandleList_ReleaseAt_( oyHandleList_s * list,
+int              oyStructList_ReleaseAt_( oyStructList_s * list,
                                        int                 pos );
-int              oyHandleList_Count_ ( oyHandleList_s    * list );
+int              oyStructList_Count_ ( oyStructList_s    * list );
 
 
 
-oyHash_s *   oyCacheListGetEntry_    ( oyHandleList_s    * cache_list,
+oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
                                        const char        * hash_text );
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
-oyHandleList_s** oyCMMCacheList_     ( void );
+oyStructList_s** oyCMMCacheList_     ( void );
 oyChar *     oyCMMCacheListPrint_    ( void );
 
 
@@ -334,6 +370,8 @@ oyChar *     oyCMMCacheListPrint_    ( void );
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OPTION_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   oyWIDGET_e           opt_;           /*!< registred option */
   int             supported_by_chain;  /*!< 1 for supporting; 0 if one fails */
@@ -346,6 +384,8 @@ typedef struct {
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OPTIONS_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   int                  n;              /*!< number of options */
   oyOption_s         * opts;
@@ -374,10 +414,14 @@ oyOptions_s*   oyOptions_VerifyForCMM ( oyOptions_s     * opts,
                                         oyObject_s        object);
 #endif
 
+typedef struct oyProfileTag_s oyProfileTag_s;
+
 /** @brief a profile and its attributes
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_PROFILE_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   oyChar             * file_name_;     /*!< file name for loading on request */
   size_t               size_;          /*!< ICC profile size */
@@ -386,6 +430,7 @@ typedef struct {
   oyPROFILE_e          use_default_;   /*!< if > 0 : take from settings */
   oyObject_s         * names_chan_;    /*!< user visible channel description */
   int                  channels_n_;    /*!< number of channels */
+  oyStructList_s     * tags_;          /**< list of header + tags */
 } oyProfile_s;
 
 OYAPI oyProfile_s * OYEXPORT
@@ -456,14 +501,21 @@ OYAPI oyPointer OYEXPORT
                                        size_t            * size,
                                        uint32_t            flag,
                                        oyAllocFunc_t       allocateFunc );
+oyProfileTag_s *   oyProfile_GetTagByPos ( oyProfile_s   * profile,
+                                       int                 pos );
+oyProfileTag_s *   oyProfile_GetTagById ( oyProfile_s    * profile,
+                                       icTagSignature      id );
+int                oyProfile_GetTagCount( oyProfile_s    * profile );
 
 
 /** @brief tell about the conversion profiles
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_PROFILE_LIST_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
-  oyHandleList_s     * list_;          /**< list of profiles */
+  oyStructList_s     * list_;          /**< list of profiles */
 } oyProfileList_s;
 
 OYAPI oyProfileList_s * OYEXPORT
@@ -484,9 +536,70 @@ oyProfile_s *    oyProfileList_Get   ( oyProfileList_s   * list,
 int              oyProfileList_Count ( oyProfileList_s   * list );
  
 
+typedef enum {
+  oyOK,
+  oyCORRUPTED
+} oySTATUS_e;
+
+/** @struct oyProfileTag_s
+ *  @brief  a profile constituting element
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+struct oyProfileTag_s {
+  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_PROFILE_TAG_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  icTagSignature       use_;
+  icTagTypeSignature   tag_type_;
+
+  oySTATUS_e           status_;
+
+  size_t               offset_orig;
+  size_t               size_;
+  oyPointer            block_;
+};
+
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_New      ( oyObject_s          object );
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_Copy     ( oyProfileTag_s    * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+               oyProfileTag_Release  ( oyProfileTag_s   ** obj );
+
+OYAPI int  OYEXPORT
+               oyProfileTag_Set      ( oyProfileTag_s    * tag,
+                                       icTagSignature      sig,
+                                       icTagTypeSignature  type,
+                                       oySTATUS_e          status,
+                                       size_t              offset_orig,
+                                       size_t              tag_size,
+                                       oyPointer           tag_block );
+oyChar *       oyProfileTag_GetName  ( oyProfileTag_s    * tag,
+                                       oyNAME_e            type );
+
+typedef enum {
+  oyDATA_LAYOUT_NONE,
+  oyDATA_LAYOUT_CURVE,                 /**< equally spaced curve, oyDATA_LAYOUT_e[0], size[1], min[2], max[3], elements[4]... */
+  oyDATA_LAYOUT_MATRIX,                /**< 3x3 matrix, oyDATA_LAYOUT_e[0], a1[1],a2[2],a3,b1,b2,b3,c1,c2,c3 */
+  oyDATA_LAYOUT_TABLE,                 /**< CLUT, oyDATA_LAYOUT_e[0], table dimensions in[1], array out[2], size of first dimension[3], size of second [4], ... size of last[n], elements[n+1]... */
+  oyDATA_LAYOUT_ARRAY,                 /**< value array, oyDATA_LAYOUT_e[0], size[1], elements[2]... */
+  /*oyDATA_LAYOUT_PICEWISE_CURVE,*/       /**< paired curve, layout as in oyDATA_LAYOUT_CURVE but with elements grouped to two */
+  /*oyDATA_LAYOUT_HULL,*/              /**< oyDATA_LAYOUT_e[0], triangle count[1], indixes[2], XYZ triples[3..5]..., followed by interwoven index + normale + midpoint triples[n]... */
+  /*oyDATA_LAYOUT_,*/                /**< */
+  oyDATA_LAYOUT_MAX                    /**< */
+} oyDATA_LAYOUT_e;
+
+
 /** @brief start with a simple rectangle */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< internal struct type oyOBJECT_TYPE_REGION_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;
   float x;
   float y;
@@ -650,7 +763,10 @@ typedef struct oyImage_s_ oyImage_s;
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_IMAGE_PROCESS_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
 
+  oyPointer        dummy;              /**< keep to zero */
   oyImage_GetLine_t    getLine;        /**< the line interface */
   oyImage_GetTile_t    getTile;        /**< the tile interface */
   int                  tile_width;     /**< needed by the tile interface */
@@ -673,6 +789,8 @@ oyImageHandler_s * oyImageHandler_Create ( oyImage_s     * image );
  */
 struct oyImage_s_ {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_IMAGE_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
@@ -719,12 +837,14 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_COLOUR_CONVERSION_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< bse object */
   oyProfileList_s    * profiles_;      /*!< effect / simulation profiles */ 
   oyOptions_s        * options_;       /*!< conversion opts */
   oyImage_s          * image_in_;      /*!< input */
   oyImage_s          * image_out_;     /*!< output */
-  oyHandleList_s     * cmms_;          /**< list of CMM entries to call */
+  oyStructList_s     * cmms_;          /**< list of CMM entries to call */
 } oyColourConversion_s;
 
 oyColourConversion_s* oyColourConversion_Create (
@@ -732,6 +852,9 @@ oyColourConversion_s* oyColourConversion_Create (
                                        oyOptions_s       * opts,
                                        oyImage_s         * in,
                                        oyImage_s         * out,
+                                       oyObject_s          object );
+oyColourConversion_s* oyColourConversion_Copy (
+                                       oyColourConversion_s * cc,
                                        oyObject_s          object );
 int         oyColourConversion_Release(oyColourConversion_s ** cc );
 
@@ -753,6 +876,8 @@ int            oyColourConversion_Run( oyColourConversion_s *colour /*!< object*
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_NAMED_COLOUR_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   double             * channels_;      /**< eigther parsed or calculated otherwise */
   double               XYZ_[3];        /**< CIE*XYZ representation */
@@ -820,8 +945,10 @@ const oyChar *    oyNamedColour_GetName( oyNamedColour_s * s,
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_NAMED_COLOURS_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /*!< base object */
-  oyHandleList_s     * list_;          /**< colour list */
+  oyStructList_s     * list_;          /**< colour list */
 } oyNamedColours_s;
 
 oyNamedColours_s* oyNamedColours_New ( oyObject_s       object );
@@ -858,6 +985,9 @@ void              oyCopyColour       ( const double      * from,
  */
 typedef struct {
   oyOBJECT_TYPE_e  type;               /*!< struct type oyOBJECT_TYPE_ICON_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyPointer        dummy;              /**< keep to zero */
   int              width;
   int              height;
   float          * data;               /*!< should be sRGB matched */
@@ -895,6 +1025,9 @@ typedef struct oyCMMapi_s oyCMMapi_s;
  */
 typedef struct {
   oyOBJECT_TYPE_e  type;               /*!< struct type oyOBJECT_TYPE_CMM_INFO_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyPointer        dummy;              /**< keep to zero */
   icSignature      cmmId;              /*!< ICC signature, eg 'lcms' */
   oyChar         * backend_version;    /*!< non translatable, eg "v1.17" */
   oyName_s         name;               /*!< translatable, eg "lcms" "little cms" "..." */
@@ -916,6 +1049,8 @@ typedef struct {
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_CMM_HANDLE_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   char                 cmm[5];         /**< the CMM */
   oyCMMInfo_s        * info;           /**< the modules info struct */

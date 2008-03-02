@@ -79,7 +79,7 @@ int                lcmsCMMInit       ( )
 }
 
 int                lcmsCMMCanHandle  ( oyCMMQUERY_e      type,
-                                       int               value )
+                                       uint32_t          value )
 {
   int ret = -1;
 
@@ -110,7 +110,12 @@ int                lcmsCMMCanHandle  ( oyCMMQUERY_e      type,
     case oyQUERY_HDR:
          ret = 0; break;
     case oyQUERY_PROFILE_FORMAT:
-         ret = 1; break;
+         if(value == 1)
+           ret = 1;
+         else
+           ret = 0; break;
+    case oyQUERY_PROFILE_TAG_TYPE:
+         ret = 0; break;
   }
 
   return ret;
@@ -647,11 +652,11 @@ int              lcmsCMMColourConversion_Run(
     oyDATATYPE_e dt = oyToDataType_m(s->oy_pixel_layout_in);
     if(dt == oyDOUBLE)
     {
-      size_t i = 0;
+      /*size_t i = 0;
       double * d = in_data;
       int chan = oyToChannels_m(s->oy_pixel_layout_in);
       size_t n = chan * count;
-      /*for(i = 0; i < n; ++i)
+      for(i = 0; i < n; ++i)
         d[i] = d[i] * 100.;*/
     }
 
@@ -661,11 +666,11 @@ int              lcmsCMMColourConversion_Run(
     dt = oyToDataType_m(s->oy_pixel_layout_out);
     if(dt == oyDOUBLE)
     {
-      int i = 0;
+      /*int i = 0;
       double * d = out_data;
       int chan = oyToChannels_m(s->oy_pixel_layout_out);
       int n = chan * count;
-      /*for(i = 0; i < n; ++i)
+      for(i = 0; i < n; ++i)
         d[i] = d[i] / 100.;*/
     }
   }
@@ -738,6 +743,7 @@ int            lcmsCMMMessageFuncSet ( oyMessageFunc_t     message_func )
 oyCMMapi1_s  lcms_api1 = {
 
   oyOBJECT_TYPE_CMM_API1_S,
+  0,0,0,
   0,
   
   lcmsCMMInit,
@@ -757,17 +763,18 @@ oyCMMapi1_s  lcms_api1 = {
 oyCMMInfo_s lcms_cmm_module = {
 
   oyOBJECT_TYPE_CMM_INFO_S,
+  0,0,0,
   lcmsSignature,
   "0.6",
-  {oyOBJECT_TYPE_NAME_S, "lcms", "Little CMS", "LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license."},
-  {oyOBJECT_TYPE_NAME_S, "Marti", "Marti Maria", "littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"},
-  {oyOBJECT_TYPE_NAME_S, "MIT", "Copyright (c) 1998-2007 Marti Maria Saguer", "MIT license: http://www.opensource.org/licenses/mit-license.php"},
+  {oyOBJECT_TYPE_NAME_S, 0,0,0,"lcms", "Little CMS", "LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license."},
+  {oyOBJECT_TYPE_NAME_S, 0,0,0,"Marti", "Marti Maria", "littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"},
+  {oyOBJECT_TYPE_NAME_S, 0,0,0,"MIT", "Copyright (c) 1998-2007 Marti Maria Saguer", "MIT license: http://www.opensource.org/licenses/mit-license.php"},
   108,
 
   (oyCMMapi_s*) & lcms_api1,
   0,
 
-  {oyOBJECT_TYPE_ICON_S, 0,0,0, "lcms_logo2.png"}
+  {oyOBJECT_TYPE_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"}
 
 };
 

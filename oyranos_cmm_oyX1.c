@@ -80,14 +80,18 @@ int            oyX1CMMMessageFuncSet ( oyMessageFunc_t     message_func )
   return 0;
 }
 
+int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
+                                       uint32_t            value ) {return 0;}
 
 oyCMMapi2_s oyX1_api2 = {
 
   oyOBJECT_TYPE_CMM_API2_S,
+  0,0,0,
   0,
 
   oyX1CMMInit,
   oyX1CMMMessageFuncSet,
+  oyX1CMMCanHandle,
 
   oyGetMonitorInfo,
   oyGetScreenFromPosition,
@@ -106,18 +110,19 @@ oyCMMapi2_s oyX1_api2 = {
 oyCMMInfo_s oyX1_cmm_module = {
 
   oyOBJECT_TYPE_CMM_INFO_S,
+  0,0,0,
 
   oyX1Signature,
   "0.2",
-  {oyOBJECT_TYPE_NAME_S, "oyX1", "Oyranos X11", "The window support backend of Oyranos."},
-  {oyOBJECT_TYPE_NAME_S, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/#download"},
-  {oyOBJECT_TYPE_NAME_S, "new BSD", "Copyright (c) 2005-2007 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, "oyX1", "Oyranos X11", "The window support backend of Oyranos."},
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/#download"},
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2007 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
   108,
 
   (oyCMMapi_s*) & oyX1_api2,
   1,
 
-  {oyOBJECT_TYPE_ICON_S, 0,0,0, "oyranos_logo.png"}
+  {oyOBJECT_TYPE_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
 
 };
 
