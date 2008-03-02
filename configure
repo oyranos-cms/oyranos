@@ -7,10 +7,10 @@ CONF=config
 CONF_SH=$TARGET-config
 
 VERSION_A=0
-VERSION_B=0
-VERSION_C=2
+VERSION_B=1
+VERSION_C=0
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
-TIME="November 2004 - April 2005"
+TIME="November 2004 - June 2005"
 
 if [ $# -gt 1 ] && [ $1 == "--prefix" ]; then
   prefix=$2
