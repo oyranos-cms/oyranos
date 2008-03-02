@@ -39,18 +39,18 @@ LDLIBS = -L$(libdir) -L./ $(FLTK_LIBS) \
 #	$(VRML_LIBS)
 
 CPP_HEADERS = \
-	fl_oyranos.h \
 	oyranos.h
+#	fl_oyranos.h \
 CPPFILES = \
 	oyranos.cpp
-CXXFILES = \
-	fl_oyranos.cxx
+CXXFILES =
+#	fl_oyranos.cxx
 DOKU = \
         README \
         ChangeLog \
         COPYING \
         AUTHORS
-FLUID = \
+FLUID = #\
 	fl_oyranos.fl
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS)
