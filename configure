@@ -65,6 +65,17 @@ echo "#define SRCDIR         \"$srcdir\"" >> $CONF_H
 echo "#define SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
 
 
+`pkg-config  --atleast-version=0.5.0.5 elektra 2>>error.txt`
+if [ $? = 0 ]; then
+  echo "elektra `pkg-config --modversion elektra`         detected"
+  echo "#define HAVE_ELEKTRA" >> $CONF_H
+  echo "ELEKTRA = 1" >> $CONF
+  echo "ELEKTRA_H = `pkg-config --cflags elektra`" >> $CONF
+  echo "ELEKTRA_LIBS = `pkg-config --libs elektra`" >> $CONF
+else
+  echo "no or too old elektra found,\n  need at least version 0.5.0.5, download: elektra.sf.net"
+fi
+
 
 FLTK_=`fltk-config --cxxflags 2>>error.txt`
 if [ $? = 0 ] && [ -n "$FLTK_" ]; then

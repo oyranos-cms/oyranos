@@ -65,13 +65,14 @@ else
   endif
 endif
 
-INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) -I$(PNG_H)
+INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
+	-I$(PNG_H) $(ELEKTRA_H)
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
 X11_LIBS=-L/usr/X11R6/lib -lX11
 
-ELEKTRA_LIBS=-lelektra -lelektra_default
+#ELEKTRA_LIBS=-lelektra -lelektra_default
 
 
 LDLIBS = -L$(libdir) -L. \

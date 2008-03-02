@@ -11,8 +11,8 @@ BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
 %description
-Oyranos will be first implemented and used to communicate
-colour relevant information on free operating systems.
+Oyranos is a colour management configuration system.
+It is primarily developed on free operating systems.
 Developers from other OSes can jump in the current
 disscussion to make Oyranos aware of cross platform
 standards. You are cordially invited to make constructive
