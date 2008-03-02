@@ -81,7 +81,7 @@ oyGetMonitorInfo_                 (const char* display_name,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial)
-{ //oy_debug = 1;
+{
   DBG_PROG_START
 
   Display *display; DBG_PROG
@@ -318,7 +318,6 @@ oyActivateMonitorProfile_         (const char* display_name,
     DBG_PROG_S(( "system: %s", text ))
     if(text) free(text);
   }
-
   if (profil_pathname) free (profil_pathname);
 
   DBG_PROG_ENDE
@@ -335,7 +334,8 @@ oySetMonitorProfile_              (const char* display_name,
              *model=0,
              *serial=0;
   char       *host_name = oyLongDisplayName_(display_name);
-  char *profil_pathname;
+  char       *profil_pathname = 0;
+
   error  =
     oyGetMonitorInfo_ (display_name, &manufacturer, &model, &serial);
 
@@ -344,6 +344,38 @@ oySetMonitorProfile_              (const char* display_name,
     WARN_S((_("Error while requesting monitor information")))
     DBG_PROG_ENDE
     return error;
+  }
+
+  if(!profil_name) {
+    /* unset the _ICC_PROFILE atom in X */
+      Display *display;
+      Atom atom;
+      int screen = 0;
+      Window w;
+
+      if(display_name)
+        DBG_PROG_S(("display_name %s",display_name));
+
+      if( !(display = XOpenDisplay (display_name))) {
+        WARN_S((_("open X Display failed")))
+      }
+
+      /* TODO: multi screen */
+      screen = DefaultScreen(display); DBG_PROG_V((screen))
+      w = RootWindow(display, screen); DBG_PROG_S(("w: %ld", w))
+
+      DBG_PROG
+
+      atom = XInternAtom (display, "_ICC_PROFILE", False);
+      if (atom == None) {
+        WARN_S((_("Error setting up atom \"_ICC_PROFILE\"")));
+      }
+
+      XDeleteProperty( display, w, atom );
+      XCloseDisplay(display);
+
+      DBG_PROG
+    goto finish;
   }
 
   DBG_PROG_S(( "profil_name = %s", profil_name ))
@@ -358,6 +390,11 @@ oySetMonitorProfile_              (const char* display_name,
     error = oyActivateMonitorProfile_(display_name, profil_name);
   }
 
+  finish:
+  DBG_PROG
+  if (manufacturer) free (manufacturer);
+  if (model) free (model);
+  if (serial) free (serial);
   if (profil_pathname) free (profil_pathname);
   if (host_name) free (host_name);
 

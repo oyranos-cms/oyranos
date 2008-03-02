@@ -37,12 +37,23 @@
 #include "oyranos_debug.h"
 #include <stdlib.h>
 
-int main(void)
+int main( int argc , char** argv )
 {
   oy_debug = 0;
   char *display_name = getenv("DISPLAY");
-  char *monitor_profile = oyGetMonitorProfileName (display_name);
+  char *monitor_profile = 0;
   int error = 0;
+
+  if(argc == 2) {
+    if (argv[1][0] != '0')
+      monitor_profile = argv[1];
+    if(oy_debug) printf( "%s\n", argv[1] );
+    oySetMonitorProfile (display_name, monitor_profile);
+  } else {
+    oy_debug = 1;
+    monitor_profile = oyGetMonitorProfileName (display_name);
+    oy_debug = 0;
+  }
 
   /* check the default paths */
   oyPathAdd( OY_DEFAULT_USER_PROFILE_PATH );

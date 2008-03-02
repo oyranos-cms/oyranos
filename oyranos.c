@@ -39,8 +39,13 @@
 
 #include "oyranos_debug.h"
 
-/* ---  Helpers  --- */
+/* --- Helpers  --- */
 #define ERR if (rc) { printf("%s:%d\n", __FILE__,__LINE__); perror("Error"); }
+
+
+/* --- static variables   --- */
+
+static int oyranos_init = 0;
 
 
 
@@ -119,7 +124,14 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
                                            const char* attrib2,
                                            const char* attrib3);
 
-void oyOpen_ (void) { kdbOpen(); }
+void oyOpen_ (void)
+{
+  if(!oyranos_init) {
+    kdbOpenDefault();
+    oyranos_init = 1;
+  }
+  kdbOpen();
+}
 void oyClose_(void) { kdbClose(); }
 void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
@@ -180,6 +192,8 @@ typedef struct OyComp oyComp;
 
 oyComp* oyInitComp_        (oyComp *compare, oyComp *top);
 oyComp* oyAppendComp_      (oyComp *list, oyComp *new);
+void    oySetComp_         (oyComp *compare, const char* keyName,
+                            const char* value, int hits );
 void    oyDestroyCompList_ (oyComp* list);
 
 oyComp* oyGetDeviceProfile_sList          (const char* manufacturer,
@@ -200,6 +214,8 @@ oyComp* oyGetDeviceProfile_sList          (const char* manufacturer,
 #define FOR_EACH_IN_KDBKEYSET( current, list ) \
    ksRewind( list );  \
    for( current = ksNext( list ); current; current = ksNext( list )  )
+
+
 
 /* --- function definitions --- */
 
@@ -1547,6 +1563,19 @@ oyAppendComp_ (oyComp *list, oyComp *new)
 }
 
 void
+oySetComp_         (oyComp *compare, const char* keyName,
+                    const char* value, int hits )
+{
+  DBG_PROG_START
+  compare->name = (char*) calloc( strlen(keyName)+1, sizeof(char) );
+  memcpy (compare->name, keyName, strlen(keyName)+1); 
+  compare->val = (char*) calloc( strlen(value)+1, sizeof(char) );;
+  memcpy (compare->val, value, strlen(value)+1); 
+  compare->hits = hits;
+  DBG_PROG_ENDE
+}
+
+void
 oyDestroyCompList_ (oyComp *list)
 { DBG_PROG_START
   oyComp *before;
@@ -1841,11 +1870,12 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
         DBG_PROG_S (("%d: %s", i, attributs[i]))
         if (value && attributs[i] &&
             (strstr(value, attributs[i]) != 0))
-        { DBG_PROG_S(( "attribute count n = %d", n ))
+        {
           if      (i == 0) n += 2;
           else if (i == 1) n += 2;
           else if (i == 2) n += 5;
           else             ++n;
+          DBG_PROG_S(( "attribute count n = %d", n ))
         }
       }
 
@@ -1874,10 +1904,8 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
           DBG_PROG_S(( "new matching profile found %s", name ))
           matchList = oyAppendComp_ (matchList, 0);
           DBG_PROG_S ((printComp (matchList)))
-          matchList->name = name;
-          matchList->val = value;
           /* 5. increase the hits counter in the match list for that profile */
-          matchList->hits = n; 
+          oySetComp_ ( matchList, name, value, n );
           DBG_PROG_S ((printComp (matchList)))
         }
       }
@@ -1987,7 +2015,8 @@ oyEraseDeviceProfile_              (const char* manufacturer,
   {
     keyGetName(current, value, MAX_PATH);
     DBG_NUM_S(( value ))
-    if(strstr(value, profile_name) != 0) {
+    if(profile_name &&
+       strstr(value, profile_name) != 0) {
       DBG_PROG_S((value))
       kdbRemove (value); 
       break;
