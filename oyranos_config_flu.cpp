@@ -258,7 +258,7 @@ void buildOptionsLeaves()
   c->add( "Saturation" );
   c->add( "Absolute Colorimetric" );
   c->value( 1 );
-  n = tree->add( "Options/Default Rendering Intent", c );
+  n = tree->add( "Options (dont do anything)/Default Rendering Intent", c );
   if( n ) n->expand_to_width( true );
   if( n ) n->leaf_icon( NULL );
   n = tree->find( "Options" );
