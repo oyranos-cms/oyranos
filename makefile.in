@@ -107,6 +107,7 @@ ALL_FILES = \
 	$(DATA) \
 	$(DOKU) \
 	configure \
+	configure.sh \
 	makefile.in \
 	$(TARGET).pc.in \
 	$(TARGET)_monitor.pc.in \
