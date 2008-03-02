@@ -94,6 +94,13 @@ void*	oyGetProfileBlock                 (char* profilename, size_t* size);
  *
  */
 
+typedef enum  {
+  DISPLAY,                 /* dynamic viewing */
+  PRINTER,                 /* static media (dye, ink, offset, imagesetters) */
+  SCANNER,                 /* contact digitiser */
+  CAMERA,                  /* virtual or contactless image capturing */
+} DEVICETYP;
+
 /* simply pass 0 for not specified properties
  *
  * char* profile_name = oyGetDeviceProfile ("EIZO", "LCD2100", "ID 87-135.19",
@@ -107,7 +114,8 @@ void*	oyGetProfileBlock                 (char* profilename, size_t* size);
  * }
  *
  */
-char*	oyGetDeviceProfile                (char* manufacturer,
+char* oyGetDeviceProfile                  (DEVICETYP typ,
+                                           char* manufacturer,
                                            char* model,
                                            char* product_id,
                                            char* host,
@@ -116,7 +124,8 @@ char*	oyGetDeviceProfile                (char* manufacturer,
                                            char* attrib2,
                                            char* attrib3);
 
-int	oySetDeviceProfile                (char* manufacturer,
+int	oySetDeviceProfile                    (DEVICETYP typ,
+                                           char* manufacturer,
                                            char* model,
                                            char* product_id,
                                            char* host,
@@ -128,7 +137,7 @@ int	oySetDeviceProfile                (char* manufacturer,
                                            void* mem,
                                            size_t size);
 #if 0
-int	oySetProfileProperty              (char* profilename,
+int	oySetProfileProperty                  (char* profilename,
                                            char* property,
                                            char* value);
 #endif
