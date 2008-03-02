@@ -82,6 +82,7 @@ typedef enum  {
   oyASSUMED_XYZ,            /**< standard XYZ assumed source profile */
   oyASSUMED_LAB,            /**< standard Lab assumed source profile */
   oyASSUMED_RGB,            /**< standard RGB assumed source profile */
+  oyASSUMED_WEB,            /**< standard internet assumed source profile static_profile*/
   oyASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
   oyDEFAULT_PROFILE_TYPES   /**< just for easen Gui design */
 } oyDEFAULT_PROFILE;

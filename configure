@@ -6,10 +6,12 @@ CONF_H=config.h
 CONF=config
 CONF_SH=$TARGET-config
 SPEC=$TARGET.spec
+PKGC=$TARGET.pc
+MPKG="$TARGET"_monitor.pc
 
 VERSION_A=0
 VERSION_B=1
-VERSION_C=3
+VERSION_C=4
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
 TIME="November 2004 - November 2005"
 
@@ -181,9 +183,19 @@ echo "" >> oyranos_version.h
 echo "#endif /*OYRANOS_VERSION_H*/" >> oyranos_version.h
 
 echo "Version: $VERSION" > $SPEC
-echo "Source:  $TARGET"_"$VERSION".tar.gz >> $SPEC
+echo "Source:  $TARGET"-"$VERSION".tar.gz >> $SPEC
 cat  $SPEC.in >> $SPEC
 echo $SPEC generated
+
+echo "Version: $VERSION" > $MPKG
+echo "prefix=$prefix" >> $MPKG
+cat  $MPKG.in >> $MPKG
+echo $MPKG generated
+
+echo "Version: $VERSION" > $PKGC
+echo "prefix=$prefix" >> $PKGC
+cat  $PKGC.in >> $PKGC
+echo $PKGC generated
 
 echo ""
 echo ""

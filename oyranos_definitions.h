@@ -84,8 +84,18 @@
 #define OY_DEFAULT_ASSUMED_LAB_PROFILE       OY_KEY OY_SLASH "default" OY_SLASH "profile_assumed_lab"
 /** key name for the untagged data assumed source RGB profile */
 #define OY_DEFAULT_ASSUMED_RGB_PROFILE       OY_KEY OY_SLASH "default" OY_SLASH "profile_assumed_rgb"
+/** name for the untagged data assumed source profile for www content */
+#define OY_DEFAULT_ASSUMED_WEB_PROFILE       "sRGB.icc" /* static_profile */
 /** key name for the untagged data assumed source Cmyk profile */
 #define OY_DEFAULT_ASSUMED_CMYK_PROFILE      OY_KEY OY_SLASH "default" OY_SLASH "profile_assumed_cmyk"
 
 
-#endif //OYRANOS_DEFINITIONS_H
+/* --- settings --- */
+
+/** key name for the non profile tagged content action */
+#define OY_ACTION_UNTAGGED_ASSIGN            OY_KEY OY_SLASH "behaviour" OY_SLASH "action_untagged_assign"
+/** key name for the rgb profile mismatch action */
+#define OY_ACTION_OPEN_MISMATCH_RGB          OY_KEY OY_SLASH "behaviour" OY_SLASH "action_open_missmatch"
+
+
+#endif /* OYRANOS_DEFINITIONS_H */

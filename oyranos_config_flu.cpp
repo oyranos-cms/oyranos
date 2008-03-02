@@ -80,6 +80,16 @@ struct DefaultProfile: public Fl_Pack {
     box = new Fl_Box( 0, 0, 210, 20, title_text );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
+    if(type == oyranos::oyASSUMED_WEB) {
+      char* default_p = oyGetDefaultProfileName(type, myAllocFunc);
+      if(default_p) {
+        Fl_Box *box = new Fl_Box( 0, 0, 200, 20, default_p );
+        box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        //delete [] default_p;
+        return;
+      }
+    }
+
     choice = new Fl_Choice( 0, 0, 200, 20 );
     choice->callback( selectDefaultProfile_callback );
     DBG_PROG_V((choice->size()))
@@ -344,6 +354,8 @@ void buildOptionsLeaves()
   Flu_Tree_Browser::Node* n;
 
   Fl_Choice *c = new Fl_Choice( 0, 0, 100, 20 );
+
+# if 0 // This is utopia
   c->add( _("Perceptual") );
   c->add( _("Relative Colorimetric") );
   c->add( _("Saturation") );
@@ -354,6 +366,7 @@ void buildOptionsLeaves()
   if( n ) n->leaf_icon( NULL );
   n = tree->find( _("Options") );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+# endif
 
   tree->collapse_time( 0.2 );
   tree->frame_rate( 60.0 );

@@ -9,11 +9,12 @@ LNK = ln -s
 RM = rm -vf
 ifdef LINUX
 COPY = cp -vdpa
-endif
-ifdef APPLE
-COPY = cp -v
 else
-COPY = cp
+ ifdef APPLE
+  COPY = cp -v
+ else
+  COPY = cp
+ endif
 endif
 INSTALL = install -v
 RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
@@ -133,18 +134,29 @@ mtime   := $(shell find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g)
 .SILENT:
 
 ifdef FLU
-FLU_GUI = $(TARGET)_config_flu
+FLU_GUI = $(TARGET)-config-flu
 endif
+
+STD_PROFILES = base eci
 
 ALL_FILES =	$(DOKU) \
 	configure \
 	makefile \
+	oyranos.pc.in \
+	oyranos_monitor.pc.in \
 	oyranos.spec.in \
 	oyranos-config.in \
 	$(SOURCES) \
 	$(FLUID)
 
-all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)_gamma $(FLU_GUI) test2
+all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-gamma $(FLU_GUI) test2
+	cd standard_profiles; \
+	for prof in $(STD_PROFILES); do \
+	     test $${prof} && \
+	         echo -e "$${prof} profiles will be included" || \
+	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	done;
+
 
 $(TARGET):	$(TARGET)/$(TARGET).h $(OBJECTS) static
 	echo Linking $@ ...
@@ -168,23 +180,23 @@ $(TARGET)_moni:	$(MONI_OBJECTS) static_moni
 	$(RM)  $(LIB_MONI_SO)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SO)
 
-$(TARGET)_config_flu:	$(TARGET)_moni $(FLU_OBJECTS)
+$(TARGET)-config-flu:	$(TARGET)_moni $(FLU_OBJECTS)
 	echo Linking $@ ...
-	$(CXX) $(OPTS) -o $(TARGET)_config_flu \
+	$(CXX) $(OPTS) -o $(TARGET)-config-flu \
 	$(TARGET)_config_flu.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
 	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS) \
 	$(REZ)
 
-$(TARGET)_config_flu_static:	$(TARGET)_moni $(FLU_OBJECTS)
-	echo Linking static $(TARGET)_config_flu ...
-	$(CXX) -Wall -O3 -o $(TARGET)_config_flu $(TARGET)_config_flu.o \
+$(TARGET)-config-flu-static:	$(TARGET)_moni $(FLU_OBJECTS)
+	echo Linking static $(TARGET)-config-flu ...
+	$(CXX) -Wall -O3 -o $(TARGET)-config-flu $(TARGET)_config_flu.o \
 	$(LIBNAME) $(LIB_MONI_NAME) $(LINK_LIB_PATH) \
 	`flu-config --ldstaticflags` \
 	`fltk-config --use-images --ldstaticflags` \
 	-L/usr/X11R6/lib \
 	`test -f /usr/lib/libelektra.a && echo /usr/lib/libelektra.a || echo -lelektra` -lsupc++ $(PNG_LIBS)
-	#strip $(TARGET)_config_flu
+	#strip $(TARGET)-config-flu
 	$(REZ)
 
 static:	$(OBJECTS)
@@ -197,7 +209,7 @@ static_moni:	$(MONI_OBJECTS)
 	$(COLLECT) $(LIB_MONI_NAME) $(MONI_OBJECTS)
 	$(RANLIB) $(LIB_MONI_NAME)
 
-$(TARGET)_gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
+$(TARGET)-gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) $(OPTS) -o $(TARGET)-gamma \
 	$(TARGET)_gamma.o \
@@ -230,13 +242,16 @@ doc:
 	test -n 'which doxygen' && doxygen Doxyfile
 	echo ... Documentation done
 
-install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma doc
+install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-gamma doc
 	echo Installing ...
 	make uninstall
 	mkdir -p $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-config $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-gamma $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-gamma      $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
+	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
+	$(INSTALL) -m 755 $(TARGET).pc         $(DESTDIR)$(libdir)/pkgconfig/
+	$(INSTALL) -m 755 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
 	$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
 	$(INSTALL) -m 644 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
@@ -252,13 +267,21 @@ install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma doc
 	test "$(FLU_GUI)" && make install_gui || echo -e "GUI not installed"
 	echo ... Installation finished
 
-install_gui:	$(TARGET)_config_flu_static
-	echo Installing $(TARGET)_config_flu_static ...
+install:	install-main
+	cd standard_profiles; \
+	for prof in $(STD_PROFILES); do \
+	     test $${prof} && \
+	         (cd $${prof}; make DESTDIR=$(DESTDIR) install) || \
+	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	done;
+
+install_gui:	$(TARGET)-config-flu-static
+	echo Installing $(TARGET)-config-flu static ...
 	mkdir -p $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)_config_flu $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
 
 dist: targz
-	test -d ../Archiv && $(COPY) ../Archiv/$(TARGET)_$(mtime).tgz $(TARGET)_$(VERSION).tar.gz || $(COPY) $(TARGET)_$(mtime).tgz $(TARGET)_$(VERSION).tar.gz
+	test -d ../Archiv && $(COPY) ../Archiv/$(TARGET)-$(mtime).tgz $(TARGET)-$(VERSION).tar.gz || $(COPY) $(TARGET)-$(mtime).tgz $(TARGET)-$(VERSION).tar.gz
 
 rpm:	dist
 	mkdir -p rpmdir/BUILD \
@@ -266,15 +289,23 @@ rpm:	dist
 	rpmdir/SOURCES \
 	rpmdir/SRPMS \
 	rpmdir/RPMS/$(RPMARCH)
-	cp -f $(TARGET)_$(VERSION).tar.gz rpmdir/SOURCES
+	cp -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
 	rpmbuild --clean -ba $(srcdir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
 	@echo "============================================================"
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
+	cd standard_profiles; \
+	for prof in $(STD_PROFILES); do \
+	     test $${prof} && \
+	         (cd $${prof}; echo bin in `pwd`; make rpm) || \
+	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	done;
 
 uninstall:
 	echo Uninstalling ...
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-gamma
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
+	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
+	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET)_monitor.pc
 	$(RM)   $(DESTDIR)$(libdir)/$(LIBSONAMEFULL) \
 	        $(DESTDIR)$(libdir)/$(LIBSONAME) \
 	        $(DESTDIR)$(libdir)/$(LIBSO) \
@@ -284,6 +315,12 @@ uninstall:
 			$(DESTDIR)$(libdir)/$(LIB_MONI_SO) \
 	        $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
 	$(RM)   -R $(DESTDIR)$(includedir)/oyranos
+	cd standard_profiles; \
+	for prof in $(STD_PROFILES); do \
+	     test $${prof} && \
+	         (cd $${prof}; make uninstall) || \
+	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	done;
 
 clean:
 	$(RM) \
@@ -291,7 +328,7 @@ clean:
 	$(LIBNAME) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_SO) \
 	$(LIB_MONI_NAME) $(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)_gamma.o $(TARGET)-gamma test2.o test.o test2 test \
-	$(TARGET)_config_flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
+	$(TARGET)-config-flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
 	$(TARGET)-config config mkdepend
 
 config:
@@ -341,17 +378,24 @@ tgz:
 	rm -R Entwickeln
 
 targz:
-	test -d $(TARGET)_$(VERSION) && $(RM) -R $(TARGET)_$(VERSION) || echo -e "\c"
-	mkdir $(TARGET)_$(VERSION)
+	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo -e "\c"
+	mkdir $(TARGET)-$(VERSION)
 	$(COPY) \
 	$(ALL_FILES) \
-	$(TARGET)_$(VERSION)
-	tar cf - $(TARGET)_$(VERSION)/ \
-	| gzip > $(TARGET)_$(mtime).tgz
-	test -d $(TARGET)_$(VERSION) && \
-	test `pwd` != `(cd $(TARGET)_$(VERSION); pwd)` && \
-	$(RM) -R $(TARGET)_$(VERSION)
-	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv || echo "no copy"
+	$(TARGET)-$(VERSION)
+	cd standard_profiles; \
+	for prof in $(STD_PROFILES); do \
+	     test $${prof} && \
+	         mkdir -p ../$(TARGET)-$(VERSION)/standard_profiles/$${prof}; \
+	         (cd $${prof}; echo bin in `pwd`; make DESTDIR=../../$(TARGET)-$(VERSION)/standard_profiles/$${prof} copy) || \
+	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	done;
+	tar cf - $(TARGET)-$(VERSION)/ \
+	| gzip > $(TARGET)-$(mtime).tgz
+	test -d $(TARGET)-$(VERSION) && \
+	test `pwd` != `(cd $(TARGET)-$(VERSION); pwd)` && \
+	$(RM) -R $(TARGET)-$(VERSION)
+	test -d ../Archiv && mv -v $(TARGET)-*.tgz ../Archiv || echo "no copy"
 
 
 # mkdepend

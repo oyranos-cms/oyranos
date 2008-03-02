@@ -141,6 +141,7 @@ const char* oy_default_profile_types_names_[] = {
  "Assumed XYZ source",  /**< oyASSUMED_XYZ */
  "Assumed Lab source",  /**< oyASSUMED_LAB */
  "Assumed Rgb source",  /**< oyASSUMED_RGB */
+ "Assumed Web source",  /**< oyASSUMED_WEB */
  "Assumed Cmyk source", /**< oyASSUMED_CMYK*/
  "Device"               /**< oyDEVICE_PROFILE : a device profile */
 };
@@ -1300,6 +1301,7 @@ oyMapDEFAULT_PROFILEtoConfigString_ (oyDEFAULT_PROFILE type)
     case oyASSUMED_XYZ: config_string = OY_DEFAULT_ASSUMED_XYZ_PROFILE; break;
     case oyASSUMED_LAB: config_string = OY_DEFAULT_ASSUMED_LAB_PROFILE; break;
     case oyASSUMED_RGB: config_string = OY_DEFAULT_ASSUMED_RGB_PROFILE; break;
+    case oyASSUMED_WEB: config_string = OY_DEFAULT_ASSUMED_WEB_PROFILE; break;
     case oyASSUMED_CMYK: config_string = OY_DEFAULT_ASSUMED_CMYK_PROFILE; break;
     default: WARN_S( ("Default Profile type %d does not exist", type) )
   }
@@ -1340,6 +1342,17 @@ oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
   char* name = (char*) alloc_func (MAX_PATH);
   char* keyName = (char*) alloca (MAX_PATH);
   int rc = 0;
+
+  
+  DBG_PROG_S(( "%d",type ))
+
+  /* a static_profile */
+  if(type == oyASSUMED_WEB) {
+    sprintf(name, OY_DEFAULT_ASSUMED_WEB_PROFILE);
+    DBG_PROG_S(( name ))
+    return name;
+  }
+
   sprintf(keyName, "%s%s", oySelectUserSys_(),
                            oyMapDEFAULT_PROFILEtoConfigString_(type));
 
