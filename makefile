@@ -276,16 +276,16 @@ tgz:
 	rm -R Entwickeln
 
 targz:
-	mkdir icc_examin_$(VERSION)
+	mkdir icc_examin_$(VERSION_A).$(VERSION_B).$(VERSION_C)
 	$(COPY) \
 	$(ALL_FILES) \
-	icc_examin_$(VERSION)
-	tar cf - icc_examin_$(VERSION)/ \
+	icc_examin_$(VERSION_A).$(VERSION_B).$(VERSION_C)
+	tar cf - icc_examin_$(VERSION_A).$(VERSION_B).$(VERSION_C)/ \
 	| gzip > $(TARGET)_$(mtime).tgz
 	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
-	test -d icc_examin_$(VERSION) && \
-	test `pwd` != `(cd icc_examin_$(VERSION); pwd)` && \
-	rm -R icc_examin_$(VERSION) 
+	test -d icc_examin_$(VERSION_A).$(VERSION_B).$(VERSION_C) && \
+	test `pwd` != `(cd icc_examin_$(VERSION_A).$(VERSION_B).$(VERSION_C); pwd)` && \
+	rm -R icc_examin_$(VERSION_A).$(VERSION_B).$(VERSION_C) 
 
 
 # mkdepend
