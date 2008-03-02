@@ -136,6 +136,7 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_NUMS
 const char* oy_default_profile_types_names_[][2] = {
+/* key name | UI name */
  {"oyEDITING_RGB","Rgb Editing"},         /**< oyEDITING_RGB */
  {"oyEDITING_CMYK","Cmyk Editing"},       /**< oyEDITING_CMYK */
  {"oyEDITING_XYZ","XYZ Editing"},         /**< oyEDITING_XYZ */
@@ -315,11 +316,11 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
   key = keyNew(keyBaseName);
 
   if(keyParentName)
-    DBG_PROG_S((keyParentName))
+    DBG_PROG_S((keyParentName));
   if(keyBaseName)
-    DBG_PROG_S((keyBaseName))
+    DBG_PROG_S((keyBaseName));
   if(name)
-    DBG_PROG_S((name))
+    DBG_PROG_S((name));
 
     /* search for empty keyname */
     while (!nth)
@@ -332,7 +333,7 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
     sprintf (keyName, ("%s/%s"), OY_PATHS, pathkeyName);
 
   if(keyName)
-    DBG_PROG_S((keyName))
+    DBG_PROG_S((keyName));
 
   DBG_PROG_ENDE
   return keyName;
@@ -411,27 +412,42 @@ oyBEHAVIOUR_OPTION_t oy_behaviour_option_description_[oyBEHAVIOUR_NUMS] = {
 { 3, "Behaviour", "No Image profile", "Image has no profile embedded action.",
  {"Assign No Profile","Assign Assumed Profile","Promt"},
  OY_ACTION_UNTAGGED_ASSIGN, "oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN" },
+
 { 3, "Behaviour", "On Rgb Mismatch", "Image profile and Editing profile mismatches.",
  {"Preserve Numbers","Convert automatically","Promt"},
  OY_ACTION_MISMATCH_RGB, "oyBEHAVIOUR_ACTION_MISMATCH_RGB" },
+
 { 3, "Behaviour", "On Cmyk Mismatch", "Image profile and Editing profile mismatches.",
  {"Preserve Numbers","Convert automatically","Promt"},
  OY_ACTION_MISMATCH_CMYK, "oyBEHAVIOUR_ACTION_MISMATCH_CMYK" },
+
 { 4, "Behaviour/Save Mixed colour space Documents", "For Print", "Prepare a document for Print.",
  {"Preserve Numbers","Convert to Default Cmyk Editing Space","Convert to untagged Cmyk, preserving Cmyk numbers","Promt"},
  OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT, "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT" },
+
 { 4, "Behaviour/Save Mixed colour space Documents", "For Screen", "Prepare a document for Screen.",
  {"Preserve Numbers","Convert to Default Rgb Editing Space","Convert to WWW (sRGB)","Promt"},
  OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT, "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN" },
+
 { 4, "Behaviour", "Default Rendering Intent", "Usual colour space transform behaviour",
  {"Perceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
  OY_DEFAULT_RENDERING_INTENT, "oyBEHAVIOUR_RENDERING_INTENT" },
+
 { 2, "Behaviour", "Use Black Point Compensation", "Usual PBC together with relative colorimetric",
  {"No","Yes"},
  OY_DEFAULT_RENDERING_BPC, "oyBEHAVIOUR_RENDERING_BPC" },
-{ 4, "Behaviour", "Proofing Rendering Intent", "Behaviour of colour space transformation for proofing",
- {"Perceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
- OY_DEFAULT_RENDERING_INTENT_PROOF, "oyBEHAVIOUR_RENDERING_INTENT_PROOF" }
+
+{ 2, "Behaviour/Proofing", "Proofing Rendering Intent", "Behaviour of colour space transformation for proofing",
+ {"Relative Colorimetric","Absolute Colorimetric"},
+ OY_DEFAULT_RENDERING_INTENT_PROOF, "oyBEHAVIOUR_RENDERING_INTENT_PROOF" },
+
+{ 2, "Behaviour/Proofing", "SoftProof by Default", "Behaviour for softproofing view at application startup",
+ {"Yes","No"},
+ OY_DEFAULT_PROOF_SOFT, "oyBEHAVIOUR_PROOF_SOFT" },
+
+{ 2, "Behaviour/Proofing", "Hardproof by Default", "Behaviour for preselecting hardproofing with Standard Editing Cmyk profile at print time",
+ {"Yes","No"},
+ OY_DEFAULT_PROOF_HARD, "oyBEHAVIOUR_PROOF_HARD" }
 };
 /** @} */
 
@@ -511,7 +527,8 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR       type,
 int
 oyGetBehaviour_      (oyBEHAVIOUR type)
 { DBG_PROG_START
-  char* name = (char*) malloc (MAX_PATH);
+  int mp = MAX_PATH;
+  char* name = (char*) malloc (mp);
   const char* keyName = 0;
   int rc = 0;
   int c = -1;
@@ -550,10 +567,10 @@ int
 oyCheckStringLen_(char **mem, int old_len, int add)
 {
   int new_len = old_len;
-  DBG_PROG_S(("len1: %d %d\n",add, (int)(old_len - strlen(*mem))));
+  DBG_PROG_S(("len1: %d %d %d\n",(int) strlen(*mem), (int)old_len, add));
   if( add > (old_len - strlen(*mem)) )
   {
-    int len = add + strlen(*mem) + 120;
+    int len = add + strlen(*mem) + ((add > 120) ? add + 50 : 120);
     char *tmp = oyAllocateFunc_( len );
     DBG_PROG_S(("len2: %d\n",len));
     memcpy( tmp, *mem, old_len  );
@@ -1306,7 +1323,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
     if (!success) {
       if(oy_warn_)
-        WARN_S( ("profile %s not found in colour path\n", fileName))
+        WARN_S( ("profile %s not found in colour path\n", fileName));
       DBG_PROG_ENDE
       return 0;
     }
@@ -2276,7 +2293,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
         max_hits = testEntry->hits;
       }
     }
-    if(foundEntry) DBG_PROG_S ((printComp (foundEntry)))
+    if(foundEntry) DBG_PROG_S ((printComp (foundEntry)));
 
     /* 7. tell about the profile and its hits */
     if(foundEntry)
@@ -2460,7 +2477,7 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
 
   #if 1
   for (i = 0; i <= 7; ++i)
-    DBG_PROG_S (("%ld %ld", (long int)attributs[i], (long int)model))
+    DBG_PROG_S (("%ld %ld", (long int)attributs[i], (long int)model));
   #endif
 
 
@@ -2483,7 +2500,7 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
           else if (i == 1) n += 2;
           else if (i == 2) n += 5;
           else             ++n;
-          DBG_PROG_S(( "attribute count n = %d", n ))
+          DBG_PROG_S(( "attribute count n = %d", n ));
         }
       }
 

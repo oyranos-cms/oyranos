@@ -89,6 +89,9 @@ int oyEraseDeviceProfile                  (oyDEVICETYP typ,
                                            const char* attrib2,
                                            const char* attrib3);
 
+typedef enum {
+  oyDISPLAY_T,
+} oyOBJECT_TYPE;
 
 #ifdef __cplusplus
 } // extern "C"

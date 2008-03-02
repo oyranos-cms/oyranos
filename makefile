@@ -32,6 +32,7 @@ includedir	= ${prefix}/include
 libdir		= ${prefix}$(LIB)
 mandir		= ${prefix}/man
 srcdir		= .
+colordir        = /usr/share/color
 
 ifdef LINUX
 SO = .so
@@ -45,6 +46,8 @@ LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)
 LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)
 LIB_MONI_SO = lib$(TARGET)_moni$(SO)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
+LIB_XNVCTRL = libXNVCtrl
+LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
 
 DL = --ldflags # --ldstaticflags
 ICONV = -liconv
@@ -93,7 +96,8 @@ CPP_HEADERS = \
 	$(TARGET)_definitions.h \
 	$(TARGET)_helper.h \
 	$(TARGET)_internal.h \
-	$(TARGET)_monitor.h
+	$(TARGET)_monitor.h \
+	$(TARGET)_monitor_internal.h
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
@@ -101,9 +105,11 @@ CFILES = \
 CFILESC = \
 	$(TARGET)_debug.c
 CFILES_MONI = \
-    $(TARGET)_monitor.c
+	$(TARGET)_monitor.c
+CFILES_MONI_NVIDIA = \
+	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
-    $(TARGET)_gamma.c
+	$(TARGET)_gamma.c
 
 CPPFILES_FLU = \
 	$(TARGET)_config_flu.cpp
@@ -123,7 +129,8 @@ FLUID = #\
 	fl_oyranos.fl
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
-		  $(CFILES_MONI) $(CFILES_GAMMA) $(CPPFILES_FLU) test.c test2.cpp
+		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
+		$(CPPFILES_FLU) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
@@ -138,7 +145,7 @@ endif
 timedir = .
 mtime   := $(shell find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g)
 
-#.SILENT:
+.SILENT:
 
 ifdef FLU
 FLU_GUI = $(TARGET)-config-flu
@@ -157,7 +164,7 @@ ALL_FILES =	$(DOKU) \
 	$(FLUID)
 
 # build all what is needed to run the libraries, helpers and the examples
-all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-gamma $(FLU_GUI) test2
+all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-monitor $(FLU_GUI) test2
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
@@ -188,6 +195,18 @@ $(TARGET)_moni:	$(MONI_OBJECTS) static_moni
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
 	$(RM)  $(LIB_MONI_SO)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SO)
+
+$(LIB_XNVCTRL).a:
+	-(cd $(LIB_XNVCTRL) && make)
+
+# the twinview library
+$(TARGET)-monitor-nvidia:
+	$(CC) $(OPTS) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
+	-o $(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
+	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIB_MONI_SONAMEFULL)
+
+$(LIB_XNVCTRL):	$(LIB_XNVCTRL).a
+	-make $(TARGET)-monitor-nvidia
 
 # general configuration tool example
 $(TARGET)-config-flu:	$(TARGET)_moni $(FLU_OBJECTS)
@@ -221,9 +240,9 @@ static_moni:	$(MONI_OBJECTS)
 	$(RANLIB) $(LIB_MONI_NAME)
 
 # the monitor profile tool
-$(TARGET)-gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
+$(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o $(LIB_XNVCTRL)
 	echo Linking $@ ...
-	$(CC) $(OPTS) -o $(TARGET)-gamma \
+	$(CC) $(OPTS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS)
@@ -249,12 +268,13 @@ doc:
 	echo ... Documentation done
 
 # the copy part for this directory level
-install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-gamma doc
+install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-monitor doc
 	echo Installing ...
 	-make uninstall
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-gamma      $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	$(INSTALL) -m 755 $(TARGET).pc         $(DESTDIR)$(libdir)/pkgconfig/
@@ -273,6 +293,9 @@ install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-gamma doc
 	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
 	test "$(FLU_GUI)" && make install_gui || echo -e "GUI not installed"
+	echo Installing policy settings files ...
+	-mkdir -p $(DESTDIR)$(colordir)/settings
+	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(colordir)/settings
 	echo ... Installation finished
 
 # install recursive
@@ -300,23 +323,24 @@ rpm:	dist
 	rpmdir/SOURCES \
 	rpmdir/SRPMS \
 	rpmdir/RPMS/$(RPMARCH)
-	cp -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
-	rpmbuild --clean -ba $(srcdir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
-	@echo "============================================================"
-	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
 	         (cd $${prof}; echo bin in `pwd`; make rpm) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
+	cp -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
+	rpmbuild --clean -ba $(srcdir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
+	@echo "============================================================"
+	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 
 # remove everything previously installed
 uninstall:
 	echo Uninstalling ...
-	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-gamma
+	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-flu
+	-$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET)_monitor.pc
 	$(RM)   $(DESTDIR)$(libdir)/$(LIBSONAMEFULL) \
@@ -334,6 +358,7 @@ uninstall:
 	         (cd $${prof}; make uninstall) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
+	-$(RM)   $(DESTDIR)$(colordir)/settings/*.policy.xml
 
 # remove in this directory
 clean:
@@ -341,9 +366,11 @@ clean:
 	$(OBJECTS) $(MONI_OBJECTS) \
 	$(LIBNAME) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_SO) \
 	$(LIB_MONI_NAME) $(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
-	$(TARGET)_gamma.o $(TARGET)-gamma test2.o test.o test2 test \
+	$(TARGET)_gamma.o $(TARGET)-monitor $(TARGET)-monitor-nvidia \
+	test2.o test.o test2 test \
 	$(TARGET)-config-flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
 	$(TARGET)-config config mkdepend
+	-(cd $(LIB_XNVCTRL) && make clean)
 
 # configure if the file config is not available
 config:
@@ -387,6 +414,7 @@ tgz:
 	$(COPY) \
 	$(ALL_FILES) \
 	Entwickeln
+	$(COPY) -r settings Entwickeln
 	tar cf - Entwickeln/ \
 	| gzip > $(TARGET)_$(mtime).tgz
 	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
@@ -401,6 +429,7 @@ targz:
 	$(COPY) \
 	$(ALL_FILES) \
 	$(TARGET)-$(VERSION)
+	$(COPY) -r settings $(TARGET)-$(VERSION)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \

@@ -21,9 +21,10 @@
  * 
  * -----------------------------------------------------------------------------
  *
- * gamma loader - put it somethere in Your xinitrc
- * It reads the default profile from the Oyranos CMS and recalls this profile
- * as new default profile for this screen, resulting in an curves upload to
+ * gamma loader - put it somethere in your xinitrc
+ * It reads the default profile(s) from the Oyranos CMS and recalls this
+ * profile(s)
+ * as new default profile for a screen, including a possible curves upload to
  * the video card.
  * Currently You need xcalib installed to do the curves upload.
  * 
@@ -39,6 +40,7 @@
 #include "oyranos_version.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 
@@ -47,7 +49,7 @@ int main( int argc , char** argv )
   char *display_name = getenv("DISPLAY");
   char *monitor_profile = 0;
   int error = 0;
-  int x = 0, y = 0, erase = 0;
+  int erase = 0;
 
   if(argc != 1)
   {
@@ -62,7 +64,7 @@ int main( int argc , char** argv )
             switch (argv[pos][1])
             {
               case 'e': erase = 1; monitor_profile = 0; break;
-              case 'x': if( pos + 1 < argc )
+              /*case 'x': if( pos + 1 < argc )
                         { x = atoi( argv[pos+1] );
                           if( x == 0 && strcmp(argv[pos+1],"0") )
                             wrong_arg = "-x";
@@ -73,7 +75,7 @@ int main( int argc , char** argv )
                           if( y == 0 && strcmp(argv[pos+1],"0") )
                             wrong_arg = "-y";
                         } else wrong_arg = "-y";
-                        if(oy_debug) printf("y=%d\n",y); ++pos; break;
+                        if(oy_debug) printf("y=%d\n",y); ++pos; break;*/
               case 'h': printf("\n");
                         printf("oyranos-gamma v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
@@ -97,14 +99,15 @@ int main( int argc , char** argv )
             break;
         default:
             monitor_profile = argv[pos];
+            /* activate all profiles at once */
             error = oyActivateMonitorProfile (display_name);
 
             if(oy_debug) {
               size_t size = 0;
-              oyGetMonitorProfile(display_name, x,y, &size, oyAllocFunc);
+              oyGetMonitorProfile(display_name, &size, oyAllocFunc);
               printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,size);
             }
-            x = 0; y = 0; erase = 0;
+            erase = 0;
       }
       if( wrong_arg )
       {
@@ -114,9 +117,10 @@ int main( int argc , char** argv )
       ++pos;
     }
     if(oy_debug) printf( "%s\n", argv[1] );
-    oySetMonitorProfile (display_name, x,y, monitor_profile);
-  } else {
-    monitor_profile = oyGetMonitorProfileName (display_name, x,y, oyAllocateFunc_);
+    /* make shure the display name is correct including the screen */
+    oySetMonitorProfile (display_name, monitor_profile);
+  } else { // TODO@todo ??
+    monitor_profile = oyGetMonitorProfileName (display_name, oyAllocateFunc_);
   }
 
   /* check the default paths */
@@ -127,7 +131,7 @@ int main( int argc , char** argv )
 
   if(oy_debug) {
     size_t size = 0;
-    oyGetMonitorProfile(display_name, x,y, &size, oyAllocFunc);
+    oyGetMonitorProfile(display_name, &size, oyAllocFunc);
     printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,size);
   }
 

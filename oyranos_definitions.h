@@ -111,8 +111,12 @@
 #define OY_DEFAULT_RENDERING_INTENT          OY_KEY OY_SLASH "behaviour" OY_SLASH "default_rendering_intent"
 /** key name for the default rendering with BPC */
 #define OY_DEFAULT_RENDERING_BPC             OY_KEY OY_SLASH "behaviour" OY_SLASH "default_rendering_bpc"
-/** key name for the default prooing rendering intent */
+/** key name for the default proofing rendering intent */
 #define OY_DEFAULT_RENDERING_INTENT_PROOF    OY_KEY OY_SLASH "behaviour" OY_SLASH "default_rendering_intent_proof"
+/** key name for soft proofing by default */
+#define OY_DEFAULT_PROOF_SOFT    OY_KEY OY_SLASH "behaviour" OY_SLASH "default_proof_soft"
+/** key name for hard proofing by default */
+#define OY_DEFAULT_PROOF_HARD    OY_KEY OY_SLASH "behaviour" OY_SLASH "default_proof_hard"
 
 
 #endif /* OYRANOS_DEFINITIONS_H */

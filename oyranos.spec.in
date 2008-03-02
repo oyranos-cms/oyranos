@@ -61,12 +61,13 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%{_bindir}/*
+%{_bindir}/oyranos-moni*
 %{_libdir}/*.so*
+%{_datadir}/color/settings/*.policy.xml
 
 %files devel
 %doc AUTHORS COPYING README
-%{_bindir}/oyranos-config
+%{_bindir}/oyranos-conf*
 %{_includedir}/oyranos/*.h
 %{_libdir}/pkgconfig/*
 %{_libdir}/*.a

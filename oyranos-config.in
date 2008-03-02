@@ -94,7 +94,7 @@ if [ "$echo_ld_x_flags" == "yes" ]; then
 fi
 
 if [ "$echo_ld_x_staticflags" == "yes" ]; then
-  echo "$libdir/liboyranos.a $libdir/liboyranos_moni.a $elektra -lX11 -Xinerama -ldl"
+  echo "$libdir/liboyranos.a $libdir/liboyranos_moni.a $elektra -lX11 -lXinerama -ldl"
 fi
 
 

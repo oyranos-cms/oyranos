@@ -1,0 +1,80 @@
+<!--?xml version="1.0" encoding="UTF-8"?   is this valid xml ? -->
+<!-- Oyranos policy format 1.0 -->
+<!-- Standard policy: Office / Home Users -->
+
+
+<!-- Standard profileStandard profiles -->
+<oyDEFAULT_PROFILE>
+  <oyEDITING_RGB>sRGB.icc</oyEDITING_RGB>
+  <oyEDITING_CMYK>ISOcoated.icc</oyEDITING_CMYK>
+  <oyEDITING_XYZ>LCMSXYZI.ICM</oyEDITING_XYZ>
+  <oyEDITING_LAB>LCMSLABI.ICM</oyEDITING_LAB>
+  <oyASSUMED_XYZ>LOGLuvXYZ.icc</oyASSUMED_XYZ>
+  <oyASSUMED_LAB>LCMSLABI.ICM</oyASSUMED_LAB>
+  <oyASSUMED_RGB>sRGB.icc</oyASSUMED_RGB>
+    <!-- the following profile is considered non changeable -->
+  <oyASSUMED_WEB>sRGB.icc</oyASSUMED_WEB>
+  <oyASSUMED_CMYK>ISOcoated.icc</oyASSUMED_CMYK>
+</oyDEFAULT_PROFILE>
+
+
+<!-- Behaviour options -->
+<oyBEHAVIOUR>
+
+<!-- Rendering behaviour -->
+
+    <!-- Rendering intent num
+     0 - photometric
+     1 - relative colorimetric
+     2 - saturation
+     3 - absolute colorimetric -->
+  <oyBEHAVIOUR_RENDERING_INTENT>1</oyBEHAVIOUR_RENDERING_INTENT>
+
+    <!-- Black Point Compensation bool - affects only  relative colorimetric intent -->
+  <oyBEHAVIOUR_RENDERING_BPC>1</oyBEHAVIOUR_RENDERING_BPC>
+
+    <!-- Rendering intent for proofing  num
+     1 - relative colorimetric
+     3 - absolute colorimetric -->
+  <OY_DEFAULT_RENDERING_INTENT_PROOF>1</OY_DEFAULT_RENDERING_INTENT_PROOF>
+
+
+<!-- Document simplicity behaviour -->
+
+    <!-- Save Mixed colour space Documents For Print
+       Prepare a document for Print.
+     0 Preserve Numbers
+     1 Convert to Default Cmyk Editing Space
+     2 Convert to untagged Cmyk, preserving Cmyk number
+     3 Promt -->
+  <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>1</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>
+
+    <!-- Behaviour/Save Mixed colour space Documents For Screen
+       Prepare a document for Screen.
+     0 Preserve Numbers
+     1 Convert to Default Rgb Editing Space
+     2 Convert to WWW (sRGB)
+     3 Promt -->
+  <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN>2</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN>
+
+
+<!-- Automatisation behaviour -->
+
+    <!-- Image has no profile embedded action
+     0 Assign No Profil
+     1 Assign Assumed Profil
+     2 Promt -->
+  <oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN>1</oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN>
+
+    <!-- Rgb Image profile and Editing profile mismatches.
+     0 Preserve Numbers
+     1 Convert automatically
+     2 Promt -->
+  <oyBEHAVIOUR_ACTION_MISMATCH_RGB>1</oyBEHAVIOUR_ACTION_MISMATCH_RGB>
+
+    <!-- Cmyk Image profile and Editing profile mismatches.
+     0 Preserve Numbers
+     1 Convert automatically
+     2 Promt -->
+  <oyBEHAVIOUR_ACTION_MISMATCH_CMYK>1</oyBEHAVIOUR_ACTION_MISMATCH_CMYK>
+</oyBEHAVIOUR>

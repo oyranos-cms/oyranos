@@ -31,7 +31,8 @@
 #ifndef OYRANOS_HELPER_H
 #define OYRANOS_HELPER_H
 
-#include "oyranos.h"
+//#include "oyranos.h"
+#include "oyranos_debug.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,8 +40,52 @@ namespace oyranos
 {
 #endif /* __cplusplus */
 
+/* memory handling */
+
 void* oyAllocateFunc_           (size_t        size);
 /*void  oyDeAllocateFunc_         (void*  data);*/
+
+/* oyFree_ (void*) */
+#define oyFree_m_(x) {                                      \
+  if (x != NULL) {    /* defined in oyranos_helper.h */     \
+    free (x); x = NULL;                                     \
+  } else {                                                  \
+    WARN_S (("%s:%d %s() nothing to delete " #x "\n",       \
+    __FILE__,__LINE__,__func__));                           \
+  }                                                         \
+}
+
+/* oyAllocHelper_ (void*, type, size_t, action) */ 
+#define oyAllocHelper_m_(ptr, type, size_, alloc_func, action) { \
+  if (ptr != NULL)    /* defined in oyranos_helper.h */     \
+    oyFree_m_( ptr )                                        \
+  if ((size_) <= 0) {                                       \
+    WARN_S (("%s:%d %s() nothing to allocate - size: %d\n", \
+    __FILE__,__LINE__,__func__, (int)size_));               \
+  } else {                                                  \
+    oyAllocFunc_t temp = alloc_func;                        \
+    if( temp )                                              \
+      ptr = (type*) temp( (size_t)size_ );                  \
+    else                                                    \
+      ptr = (type*) calloc (sizeof (type), (size_t)size_);  \
+  }                                                         \
+  if (ptr == NULL) {                                        \
+    WARN_S( ("%s:%d %s() %s %d %s %s .",__FILE__,__LINE__,  \
+         __func__, _("Can not allocate"),(int)size_,        \
+         _("bytes of  memory for"), #ptr));                 \
+    action;                                                 \
+  }                                                         \
+}
+
+/* oyPostAllocHelper_ (void*, size, action) */
+#define oyPostAllocHelper_m_(ptr, size_, action) {          \
+  if ((size_) <= 0 ||                                       \
+      ptr == NULL ) { /* defined in oyranos_helper.h */     \
+    WARN_S (("%s:%d %s() nothing allocated %s\n",           \
+    __FILE__,__LINE__,__func__, #ptr));                     \
+    action;                                                 \
+  }                                                         \
+}
 
 #define _(text) text
 

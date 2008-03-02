@@ -1,6 +1,6 @@
 /**
     @mainpage
-    <h3 align="center">Copyright 2004-2005 &copy; Kai-Uwe Behrmann</h3>
+    <h3 align="center">Copyright 2004-2006 &copy; Kai-Uwe Behrmann</h3>
 
     @section text_contents Descriptive Contents
     @ref intro |
@@ -27,19 +27,19 @@
     same monitor profile.
 
     @section tools Tools Documentation
-    - oyranos-gamma - a commandline tool for calling from a setup script like
+    - oyranos-monitor - a commandline tool for calling from a setup script like
       .xinitrc. It selects a profile for the current monitor and sets up the
       X server at startup time. Usage:
     @verbatim
     # select a monitor profile, load the binary blob into X and fill the
     # VideoCardGammaTable, if appropriate
-    oyranos-gamma
+    oyranos-monitor
     @endverbatim
     - oyranos-config-flu - a sample application using some functions of the Oyranos APIs
 
     @section user User Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
-    wants to use these functions, needs to link against oyranos and elektra.
+    wants to use these functions, needs to link against Oyranos and Elektra.
     - @ref policy - load / save of user policies
     - @ref behaviour - get and set common behaviour; part of user policies
     - @ref default_profiles - get and set commonly used profiles; part of user policies
@@ -51,7 +51,7 @@
     needs X11. Therefore this library part is separated from the main one. 
     - @ref monitor_api - monitor profile configuration
 
-    The key names, which Oyranos uses to store its configuration in an elektra
+    The key names, which Oyranos uses to store its configuration in an Elektra
     file tree, are defined in oyranos_definitions.h.
     <br>
 
@@ -216,14 +216,14 @@
     This file contains all macros which are relevant to the Oyranos API using
     the Elektra library as configuration engine.<br>
     For the Oyranos API see @file oyranos.h<br>
-    @see elektra at sourceforge <a href="http://elektra.sf.net">Elektra</a>
+    @see Elektra at sourceforge <a href="http://elektra.sf.net">Elektra</a>
 */
 
 /** @file oyranos_monitor.h
     @brief The Monitor API header to include in your application.
     
     This file contains all functions and structs available in the Oyranos Monitor API.<br>
-    @see oyranos_definitions.h for elektra macros<br>
+    @see oyranos_definitions.h for Elektra macros<br>
     @see oyranos.h for the Oyranos API
 */
 

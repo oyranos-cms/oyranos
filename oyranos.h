@@ -58,6 +58,8 @@ typedef void* (*oyAllocFunc_t)         (size_t size);
 /* --- behaviour / policies --- */
 
 /** enum Default Profiles
+ *
+ *  possibly include the default profiles here
  */
 typedef enum  {
   oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? */
@@ -68,6 +70,8 @@ typedef enum  {
   oyBEHAVIOUR_RENDERING_INTENT,        /**< Standard colour transformations */
   oyBEHAVIOUR_RENDERING_BPC,           /**< use BlackPointCompensation */
   oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
+  oyBEHAVIOUR_PROOF_SOFT,              /**< Proofing by default for screen */
+  oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing */
   oyBEHAVIOUR_NUMS                     /**< just for easen Gui design */
 } oyBEHAVIOUR;
 

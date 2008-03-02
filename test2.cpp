@@ -7,7 +7,7 @@
 
 void* myAllocFunc(size_t size) { return new char [size]; }
 
-int main(void)
+int main(int argc, char** argv)
 {
   char       *manufacturer=0,
              *model=0,
@@ -32,9 +32,9 @@ int main(void)
     std::cout << model << "|" << std::endl;
   if(serial)
     std::cout << serial << "|" << std::endl;
-  if(manufacturer) free(manufacturer);
-  if(model) free(model);
-  if(serial) free(serial);
+  if(manufacturer) delete [] manufacturer;
+  if(model) delete [] model;
+  if(serial) delete [] serial;
 
 
   // now an more simple approach
@@ -44,7 +44,7 @@ int main(void)
     std::cout << profil_name << std::endl;
   else
     std::cout << "no profile found for your monitor" << std::endl;
-  if(profil_name) free(profil_name);
+  if(profil_name) delete [] profil_name;
 
   // standard profiles
   std::cout << "Default Profiles:\n";
@@ -57,10 +57,34 @@ int main(void)
     std::cout << "\n";
   }
 
-  char *xml = oyranos::oyPolicyToXML( oyranos::oyGROUP_ALL, 0, myAllocFunc );
+  oy_debug = 0;
+  char *data = 0;
+
+
+  if(argc > 1)
+  {
+    printf("%s\n", argv[1]);
+    std::ifstream f( argv[1], std::ios::binary | std::ios::ate);
+    if(f.good())
+    {
+      size_t size = f.tellg();
+      f.seekg(0);
+      if(size) {
+        data = (char*) new char [size+1];
+        f.read ((char*)data, size);
+        f.close();
+        std::cout << "Opened file: " << argv[1] << std::endl;
+      }
+    }
+  }
+
+  char *xml = data;
+  if( !xml)
+    oyranos::oyPolicyToXML( oyranos::oyGROUP_ALL, 0, myAllocFunc );
+
   if(xml) {
     oyranos::oyReadXMLPolicy(oyranos::oyGROUP_ALL, xml);
-    printf(xml);
+    printf("xml text: \n%s", xml);
     delete [] xml;
   }
 
