@@ -1,8 +1,11 @@
 #/bin/sh
 
+TARGET=oyranos
 
 CONF_H=config.h
 CONF=config
+CONF_SH=$TARGET-config
+
 VERSION_A=0
 VERSION_B=0
 VERSION_C=1
@@ -92,6 +95,20 @@ echo "VERSION_C = $VERSION_C" >> $CONF
 echo "VERSION   = $VERSION" >> $CONF
 echo "VERSION_L = $VERSION_L" >> $CONF
 echo "src_dir = `pwd`/oyranos_$VERSION_L" >> $CONF
+
+echo "#!/bin/bash" > $CONF_SH
+echo "" >> $CONF_SH
+echo "TARGET=$TARGET" >> $CONF_SH
+echo "" >> $CONF_SH
+echo "VERSION_A=$VERSION_A" >> $CONF_SH
+echo "VERSION_B=$VERSION_B" >> $CONF_SH
+echo "VERSION_C=$VERSION_C" >> $CONF_SH
+echo "" >> $CONF_SH
+echo "prefix=$prefix" >> $CONF_SH
+cat  "$CONF_SH.in" >> $CONF_SH
+chmod 0755 "$CONF_SH"
+echo "$CONF_SH created"
+
 
 echo "#ifndef OYRANOS_VERSION_H" > oyranos_version.h
 echo "#define OYRANOS_VERSION_H" >> oyranos_version.h

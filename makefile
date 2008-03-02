@@ -134,7 +134,7 @@ endif
 ALL_FILES =	$(DOKU) \
 	configure.sh \
 	makefile \
-	oyranos-config \
+	oyranos-config.in \
 	$(SOURCES) \
 	$(FLUID)
 
@@ -227,7 +227,7 @@ clean:
 	$(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)_gamma.o $(TARGET)-gamma test2.o test.o test2 test \
 	$(TARGET)_config_flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
-	config mkdepend
+	$(TARGET)-config config mkdepend
 
 config:
 	configure.sh

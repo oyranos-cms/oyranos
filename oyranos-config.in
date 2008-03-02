@@ -1,10 +1,3 @@
-#!/bin/bash
-
-TARGET=oyranos
-
-VERSION_A=0
-VERSION_B=0
-VERSION_C=1
 
 VERSION="$VERSION_A"
 if [ $VERSION_B -lt 10 ]; then
@@ -20,11 +13,9 @@ else
   VERSION="$VERSION$VERSION_C"
 fi
 
-prefix="/opt/local"
-
 
 if [ $# -eq 0 ]; then
-  echo "oyranos"
+  echo "$TARGET"
 fi
 
 
@@ -62,6 +53,15 @@ do
     shift
 done
 
+if [ "$echo_help" == "yes" ]; then
+  echo "usage:"
+  echo "  $0 --version"
+  echo "  $0 --api-version"
+  echo "  $0 --cflags"
+  echo "  $0 --ldflags"
+  echo "  $0 --ld_x_flags"
+fi
+
 if [ "$echo_cflags" == "yes" ]; then
   echo "-I$prefix/include"
 fi
@@ -72,18 +72,6 @@ fi
 
 if [ "$echo_ld_x_flags" == "yes" ]; then
   echo "-L$prefix/lib -loyranos -loyranos_moni"
-fi
-
-
-if [ -f oyranos_helper.h ]; then
-  echo "TARGET = $TARGET" > config
-  echo "" >> config
-  echo "VERSION_A = $VERSION_A" >> config
-  echo "VERSION_B = $VERSION_B" >> config
-  echo "VERSION_C = $VERSION_C" >> config
-  echo "" >> config
-  echo "prefix = $prefix" >> config
-  echo "" >> config
 fi
 
 
