@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 
   // standard profiles
   std::cout << "Default Profiles:\n";
-  for(int i = 0; i < (int)oyranos::oyDEFAULT_PROFILE_NUMS ; ++i) {
+  for(int i = (int)oyranos::oyDEFAULT_PROFILE_START + 1; i < (int)oyranos::oyDEFAULT_PROFILE_END ; ++i) {
   std::cout <<"  "<< oyGetDefaultProfileUITitle( (oyranos::oyDEFAULT_PROFILE)i )
          << ": ";
     char *default_name = oyranos::oyGetDefaultProfileName( (oyranos::oyDEFAULT_PROFILE)i, myAllocFunc );

@@ -37,6 +37,7 @@
 #include "oyranos_monitor.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
+#include "oyranos_config.h"
 #include "oyranos_version.h"
 #include <stdlib.h>
 #include <stdio.h>

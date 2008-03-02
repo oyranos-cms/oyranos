@@ -93,6 +93,8 @@
 #define OY_DEFAULT_ASSUMED_WEB_PROFILE       "sRGB.icc" /* static_profile */
 /** key name for the untagged data assumed source Cmyk profile */
 #define OY_DEFAULT_ASSUMED_CMYK_PROFILE      OY_KEY OY_SLASH "default" OY_SLASH "profile_assumed_cmyk"
+/** key name for a standard proofing profile */
+#define OY_DEFAULT_PROOF_PROFILE      OY_KEY OY_SLASH "default" OY_SLASH "profile_proof"
 
 
 /* --- settings --- */

@@ -58,7 +58,7 @@ int   oyGetMonitorInfo            (const char* display,
                                    char**      model,
                                    char**      serial,
                                    oyAllocFunc_t allocate_func);
-int   oyGetScreenFromGeometry     (const char *display_name,
+int   oyGetScreenFromPosition     (const char *display_name,
                                    int x,
                                    int y);
 char* oyGetMonitorProfile         (const char *display,

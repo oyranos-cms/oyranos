@@ -76,7 +76,7 @@ else
 endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
-	-I$(PNG_H) $(ELEKTRA_H)
+	$(PNG_H) $(ELEKTRA_H)
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
@@ -97,7 +97,7 @@ CPP_HEADERS = \
 	$(TARGET)_helper.h \
 	$(TARGET)_internal.h \
 	$(TARGET)_monitor.h \
-	$(TARGET)_monitor_internal.h
+	$(TARGET)_monitor_internal.h \
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
@@ -111,12 +111,16 @@ CFILES_MONI_NVIDIA = \
 CFILES_GAMMA = \
 	$(TARGET)_gamma.c
 
+CXXFILES_FLTK = \
+	$(TARGET)_config_fltk.cxx
 CPPFILES_FLU = \
 	$(TARGET)_config_flu.cpp
 
 CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
+DATA = \
+	$(TARGET)_logo.png
 DOKU = \
         AUTHORS \
         ChangeLog \
@@ -125,14 +129,15 @@ DOKU = \
 		Doxyfile \
 		doxymentation
 
-FLUID = #\
-	fl_oyranos.fl
+FLUID = \
+	oyranos_config_fltk.fl
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CPPFILES_FLU) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
+FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o)
 FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 				$(CFILES_FLU:.c=.o)
 
@@ -147,13 +152,18 @@ mtime   := $(shell find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g)
 
 .SILENT:
 
+ifdef FLTK
+FLTK_GUI = $(TARGET)-config-fltk
+endif
 ifdef FLU
 FLU_GUI = $(TARGET)-config-flu
 endif
 
 STD_PROFILES = base eci
 
-ALL_FILES =	$(DOKU) \
+ALL_FILES = \
+	$(DATA) \
+	$(DOKU) \
 	configure \
 	makefile \
 	$(TARGET).pc.in \
@@ -164,7 +174,8 @@ ALL_FILES =	$(DOKU) \
 	$(FLUID)
 
 # build all what is needed to run the libraries, helpers and the examples
-all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-monitor $(FLU_GUI) test2
+all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-monitor $(FLU_GUI) \
+	$(FLTK_GUI) test2
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
@@ -209,6 +220,17 @@ $(LIB_XNVCTRL):	$(LIB_XNVCTRL).a
 	-make $(TARGET)-monitor-nvidia
 
 # general configuration tool example
+$(TARGET)-config-fltk:	$(TARGET)_moni $(FLTK_OBJECTS)
+	echo Linking $@ ...
+	$(CXX) $(OPTS) -o $(TARGET)-config-fltk \
+	$(FLTK_OBJECTS) \
+	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
+	$(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS) \
+	$(REZ)
+
+$(TARGET)_config_fltk.o:	$(TARGET)_config_fltk.cxx
+	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c $<
+
 $(TARGET)-config-flu:	$(TARGET)_moni $(FLU_OBJECTS)
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o $(TARGET)-config-flu \
@@ -292,7 +314,7 @@ install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-monitor doc
 	$(INSTALL) -m 644 $(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
-	test "$(FLU_GUI)" && make install_gui || echo -e "GUI not installed"
+	test "$(FLTK_GUI)" && make install_gui || echo -e "GUI not installed"
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(colordir)/settings
 	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(colordir)/settings
@@ -307,10 +329,11 @@ install:	install-main
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
-install_gui:	$(TARGET)-config-flu
-	echo Installing $(TARGET)-config-flu ...
+install_gui:	$(TARGET)-config-flu $(TARGET)-config-fltk
+	echo Installing UI ...
 	mkdir -p $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-config-fltk $(DESTDIR)$(bindir)
 
 # build a source distribution package
 dist: targz
@@ -340,6 +363,7 @@ uninstall:
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-flu
+	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-fltk
 	-$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET)_monitor.pc
@@ -368,6 +392,7 @@ clean:
 	$(LIB_MONI_NAME) $(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)_gamma.o $(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2.o test.o test2 test \
+	$(TARGET)-config-fltk $(FLTK_OBJECTS) \
 	$(TARGET)-config-flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
 	$(TARGET)-config config mkdepend
 	-(cd $(LIB_XNVCTRL) && make clean)
@@ -408,13 +433,13 @@ EXEEXT		=
 	echo Compiling $< ...
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
+.fl.cxx:
+	echo Expanding $< ...
+	fluid -c $<
+
 # smallest package covering the current directory
 tgz:
-	mkdir Entwickeln
-	$(COPY) \
-	$(ALL_FILES) \
-	Entwickeln
-	$(COPY) -r settings Entwickeln
+	make DESTDIR=Entwickeln copy_files
 	tar cf - Entwickeln/ \
 	| gzip > $(TARGET)_$(mtime).tgz
 	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
@@ -425,11 +450,7 @@ tgz:
 # build the source package including the subdirectories
 targz:
 	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo -e "\c"
-	mkdir $(TARGET)-$(VERSION)
-	$(COPY) \
-	$(ALL_FILES) \
-	$(TARGET)-$(VERSION)
-	$(COPY) -r settings $(TARGET)-$(VERSION)
+	make DESTDIR=$(TARGET)-$(VERSION) copy_files
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
@@ -444,6 +465,15 @@ targz:
 	$(RM) -R $(TARGET)-$(VERSION)
 	test -d ../Archiv && mv -v $(TARGET)-*.tgz ../Archiv || echo "no copy"
 
+# basic file set
+copy_files:
+	mkdir $(DESTDIR)
+	$(COPY) -R \
+	$(ALL_FILES) \
+	$(DESTDIR)
+	$(COPY) -r settings $(DESTDIR)
+	-(cd $(LIB_XNVCTRL) && make clean)
+	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 
 # mkdepend
 include mkdepend

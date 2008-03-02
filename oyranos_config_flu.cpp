@@ -312,8 +312,8 @@ void buildDefaultProfilesLeaves()
   /* pick up all profiles */
   char** names = oyProfileList ( 0, &count );
 
-  for (i = (oyranos::oyDEFAULT_PROFILE)0 ;
-         i < oyranos::oyDEFAULT_PROFILE_NUMS ;
+  for (i = (oyranos::oyDEFAULT_PROFILE)(oyDEFAULT_PROFILE_START + 1) ;
+         i < oyranos::oyDEFAULT_PROFILE_END ;
             i = (oyranos::oyDEFAULT_PROFILE)((int)i+1)) {
     char *t = new char [64];
     DefaultProfile *dp = new DefaultProfile( 0, 0, 300, 20, i, names, count );
@@ -384,7 +384,7 @@ void buildOptionsLeaves()
 {
   Flu_Tree_Browser::Node* n;
 
-  for (int i = 0; i < oyBEHAVIOUR_NUMS ; ++i) {
+  for (int i = oyBEHAVIOUR_START + 1; i < oyBEHAVIOUR_END ; ++i) {
     int choices = 1; // minimum
     const char* category = 0;
     const char* label = 0;
@@ -395,7 +395,7 @@ void buildOptionsLeaves()
     bc->spacing(0);
     bc->resizable(0);
 
-    label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, &choices, 0, &category, &options, &tooltip );
+    label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, 0, &choices, &category, &options, &tooltip );
     bc->box = new Fl_Box( 0, 0, BOX_WIDTH, 20, _(label) );
     bc->box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
     
@@ -405,7 +405,7 @@ void buildOptionsLeaves()
     choice->user_data( (void*)i );
     DBG_PROG_V((choice->size()))
     for (int j = 0; j < choices; ++j) {
-      label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, &choices, j, &category, &options, &tooltip );
+      label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, j, &choices, &category, &options, &tooltip );
       if (label) choice->add( _(options) );
     }
     if (label) {

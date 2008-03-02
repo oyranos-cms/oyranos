@@ -1,0 +1,691 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_Choice.H>} {public
+} 
+
+decl {\#include <FL/Fl_Box.H>} {public
+} 
+
+decl {\#include <FL/Fl_Button.H>} {public
+} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {public
+} 
+
+decl {\#include <FL/Fl_Output.H>} {public
+} 
+
+decl {\#include <FL/Fl_Pack.H>} {public
+} 
+
+decl {\#include <FL/fl_ask.H>} {public
+} 
+
+decl {\#include <FL/fl_draw.H>} {public
+} 
+
+decl {\#include "oyranos.h"
+\#include "oyranos_debug.h"
+\#include "oyranos_config.h"} {public
+} 
+
+decl {\#include <iostream>} {public
+} 
+
+decl {\#include <fstream>} {public
+} 
+
+decl {\#include <cstdio>} {public
+} 
+
+decl {using namespace oyranos;} {public
+} 
+
+decl {\#define _(text) text} {public
+} 
+
+decl {\#define H_SPACING 10} {public
+} 
+
+decl {\#define V_SPACING 3} {public
+} 
+
+decl {\#define BUTTON_HEIGHT 25} {public
+} 
+
+decl {\#define BOX_WIDTH 250
+\#define SELECT_WIDTH 176} {public
+} 
+
+Function {myAllocFunc(size_t size)} {private return_type {void*}
+} {
+  code {return new char [size];} {}
+} 
+
+Function {setPolicy( int i )} {} {
+  code {printf( "Option = %d\\n", i );
+
+  char* data = 0;
+  const char *filename = 0;
+
+  switch( i )
+  {
+    case 0: filename = "/usr/share/color/settings/office.policy.xml"; break;
+    case 1: filename = "/usr/share/color/settings/designer.policy.xml"; break;
+    case 2: filename = "/usr/share/color/settings/prepress.policy.xml"; break;
+    case 3: filename = "/usr/share/color/settings/photographer.policy.xml"; break;
+  }
+
+  {
+    printf("%s\\n", filename);
+    std::ifstream f( filename, std::ios::binary | std::ios::ate);
+    if(f.good())
+    {
+      size_t size = f.tellg();
+      f.seekg(0);
+      if(size) {
+        data = (char*) new char [size+1];
+        f.read ((char*)data, size);
+        f.close();
+        printf( "Opened file: %s\\n", filename );
+      }
+    }
+  }
+
+  char *xml = data;
+
+  if(xml) {
+    oyranos::oyPathsCount();
+    oyranos::oyReadXMLPolicy(oyranos::oyGROUP_ALL, xml);
+    printf("xml text: \\n%s", xml);
+    delete [] xml;
+  } else
+    printf("No policy file found: \\"%s\\"!!!\\n", filename);} {}
+} 
+
+Function {selectBehaviour_callback( Fl_Widget* w, void* x )} {} {
+  code {if(w) {
+    Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
+    if(c) {
+      std::cout << (int)x << c->user_data() << c->value() << c->text() << std::endl;
+      char text[64];
+      int error = 0;
+      error = oySetBehaviour((oyBEHAVIOUR)(int)c->user_data(), c->value());
+      if(error) {
+        sprintf(text, "%s %s %s", _("setting"), _("failed!"),
+                c->text());
+        fl_alert( text );
+      }
+    } else fl_alert( "no Fl_Choice" );
+  } else fl_alert( _("Select Behaviour") );} {}
+} 
+
+Function {selectDefaultProfile_callback( Fl_Widget* w, void* )} {} {
+  code {DefaultProfile *dp = dynamic_cast<DefaultProfile*> (w->parent());
+  if(dp) {
+    Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
+    if(c) {
+      std::cout << c->value() << c->text() << std::endl;
+      char text[64];
+      int error = 0;
+      if(strcmp(c->text(),_("[none]")) == 0)
+        error = oySetDefaultProfile(dp->type,0);
+      else
+        error = oySetDefaultProfile(dp->type, c->text());
+      if(error) {
+        sprintf(text, "%s %s %s", _("setting"), _("failed!"),
+                oyGetDefaultProfileUITitle(dp->type));
+        fl_alert( text );
+      }
+    } else fl_alert( "no Fl_Choice" );
+  } else fl_alert( _("Select Profile") );} {}
+} 
+
+Function {showDefaultProfile_callback( Fl_Widget* w, void* )} {} {
+  code {DefaultProfile *dp = dynamic_cast<DefaultProfile*> (w->parent());
+  if(dp) {
+    {
+      char text[64];
+      char *pn = oyGetDefaultProfileName(dp->type, myAllocFunc);
+      if(!pn) {
+        sprintf(text, "%s %s %s", _("showing"), _("failed!"),
+                oyGetDefaultProfileUITitle(dp->type));
+        fl_alert( text );
+      } else {
+        char command[1024];
+        snprintf( command, 1024, "iccexamin %s%s%s&",
+                  oyGetPathFromProfileName( pn, myAllocFunc ), OY_SLASH, pn );
+        system( command );
+      }
+    }
+  } else fl_alert( _("Show Profile failed") );} {}
+} 
+
+Function {addPathCallback( Fl_Widget* w, void* )} {} {
+  code {char* name = fl_dir_chooser(_("Select a directory with ICC profiles"), NULL);
+  if( name ) {
+    oyPathAdd ( name );
+    updateUi();
+  }} {}
+} 
+
+Function {rmPathCallback( Fl_Widget* w, void* )} {} {
+  code {ProfilePath *pp = dynamic_cast<ProfilePath*> (w->parent());
+  if(pp) {
+    Fl_Button *b = dynamic_cast<Fl_Button*> (w);
+    if(b && b == pp->button_add) {
+      std::cout << b->value() << std::endl;
+      char text[512];
+      int error = oyPathAdd (pp->box->label());
+      if(error) {
+        sprintf(text, "error setting path: %s", pp->box->label());
+        fl_alert( text );
+      }
+    } else
+    if(b && b == pp->button_remove) {
+      std::cout << b->value() << std::endl;
+      oyPathRemove ( pp->box->label() );
+      //Fl::pushed(&bPL);
+      updateUi();
+
+      // Alle Blaetter Loeschen
+      //removePathLeaves();
+      //buildPathLeaves();
+      // Nun ist der Speicherblock fuer diese Funktion bereits freigegeben
+      // und wird aber weiter benutzt
+    } else fl_alert( "no Fl_Button" );
+  } else fl_alert( "Path" );} {}
+} 
+
+Function {refreshBehaviour()} {} {
+  code {behaviour_tabs->clear();
+
+  for (int i = oyBEHAVIOUR_START + 1; i < oyBEHAVIOUR_END ; ++i) {
+    int choices = 1; // minimum
+    const char* category = 0;
+    const char* label = 0;
+    const char* options = 0;
+    const char* tooltip = 0;
+    BoxChoiceCombo *bc = new BoxChoiceCombo(0, 0, 300, 20);
+    bc->type( FL_HORIZONTAL );
+    bc->spacing(0);
+    bc->resizable(0);
+
+    label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, 0, &choices, &category, &options, &tooltip );
+    bc->box = new Fl_Box( 0, 0, BOX_WIDTH, 20, _(label) );
+    bc->box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+
+    bc->choice = new Fl_Choice( 0, 0, SELECT_WIDTH, 20 );
+    Fl_Choice *choice = bc->choice;
+    choice->callback( selectBehaviour_callback );
+    choice->user_data( (void*)i );
+    DBG_PROG_V((choice->size()))
+    for (int j = 0; j < choices; ++j) {
+      label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, j, &choices, &category, &options, &tooltip );
+      if (label) choice->add( _(options) );
+    }
+    if (label) {
+      char leave_name[128];
+      snprintf (leave_name, 128, "/%s/ ", _(category) );
+      //n = tree->add( leave_name, bc);
+      choice->value( oyGetBehaviour( (oyBEHAVIOUR)i ) );
+      if(tooltip) {
+        //std::cout << tooltip << std::endl;
+        choice->tooltip(tooltip);
+        bc->box->tooltip(tooltip);
+      }
+    }
+    bc->end();
+    tooltip = 0;
+    options = 0;
+    label = 0;
+    category = 0;
+  }} {}
+} 
+
+Function {buildDefaultProfiles()} {} {
+  code {//char* default_profiles_dirname = _("Default Profiles");
+  int count = 0;
+  oyDEFAULT_PROFILE i;
+  /* pick up all profiles */
+  char** names = oyProfileList ( 0, &count );
+
+  default_profiles_scroll->begin();
+  /*Fl_Pack */default_profiles_pack = new Fl_Pack(default_profiles_scroll->x(),
+                                               default_profiles_scroll->y(),
+                                            400, default_profiles_scroll->h());
+  default_profiles_pack->box( FL_PLASTIC_UP_FRAME );
+  default_profiles_pack->spacing( V_SPACING );
+  new Fl_Box(0,0,10, H_SPACING);
+
+  DefaultProfile *dp = 0;
+
+  for (i = (oyranos::oyDEFAULT_PROFILE)(oyDEFAULT_PROFILE_START + 1) ;
+         i < oyranos::oyDEFAULT_PROFILE_END ;
+            i = (oyranos::oyDEFAULT_PROFILE)((int)i+1)) {
+    dp = new DefaultProfile( 0, 0, 300, BUTTON_HEIGHT, i, names, count );
+    dp->end();
+  }
+
+  new Fl_Box(0,0,10, H_SPACING);
+  default_profiles_pack->size( dp->w(), default_profiles_pack->h() );
+  default_profiles_pack->end();
+  default_profiles_scroll->end();
+  default_profiles_scroll->redraw();
+  if( top_group->w() < (default_profiles_pack->w() + 4*H_SPACING) )
+    top_group->size( default_profiles_pack->w() + 4*H_SPACING, top_group->h() );
+  //oyProfileListFree( names, count );} {}
+} 
+
+Function {removeDefaultProfiles()} {} {
+  code {default_profiles_scroll->clear();
+  /*
+  char  pn[64];
+  Flu_Tree_Browser::Node* n;
+
+  sprintf( pn, "/%s/ ", _("Default Profiles") );
+
+  n = tree->find(pn);
+  while (n) {
+    tree->remove(n);
+    n = tree->find(pn);
+  }*/} {}
+} 
+
+Function {buildPathLeaves()} {open
+} {
+  code {int count = oyPathsCount();
+  if(count < 2)
+    count = oyPathsCount();
+
+  paths_scroll->begin();
+  
+  Fl_Pack *paths_pack = new Fl_Pack( paths_scroll->x(),paths_scroll->y(),10,10 );
+  paths_pack->box( FL_PLASTIC_UP_FRAME );
+  
+  ProfilePath *pp = 0;
+  int width = default_profiles_pack->w() - 10;
+  new Fl_Box(0,0,10, H_SPACING);
+
+  for (int i = 0 ; i < count ; ++i) {
+    pp = new ProfilePath( paths_scroll->x(), paths_scroll->y(),
+                          50, BUTTON_HEIGHT, i );
+    if( width < pp->w() )
+      width = pp->w();
+    pp->end();
+  }
+
+  Fl_Pack *pack = new Fl_Pack(0,0,//paths_scroll->x(), paths_scroll->y(),
+                              50, BUTTON_HEIGHT);
+    pack->type( FL_HORIZONTAL );
+    pack->spacing( H_SPACING );
+    Fl_Button *nbutton = new Fl_Button(0,0,BUTTON_HEIGHT, BUTTON_HEIGHT, _("@-3+"));
+    nbutton->callback( addPathCallback );
+    nbutton->tooltip(_("Add Path containing ICC profiles"));
+    pack->resizable( nbutton );
+    new Fl_Box( 0, 0, H_SPACING, 20 );
+  pack->end();
+  
+  new Fl_Box(0,0,10, H_SPACING);
+
+  paths_pack->spacing( V_SPACING );
+  paths_pack->size( width + 10, paths_pack->h() );
+  paths_pack->end();
+  paths_scroll->end();
+  paths_scroll->redraw();} {selected
+  }
+} 
+
+Function {removePathLeaves()} {} {
+  code {paths_scroll->clear();} {}
+} 
+
+class BuildPathLeavesC {: {public Fl_Button}
+} {
+  Function {BuildPathLeavesC() : Fl_Button(0,0,0,0)} {open
+  } {
+    code {{;}} {}
+  }
+  Function {handle(int event)} {open return_type int
+  } {
+    code {// Die Klasse sollte ein reagierendes FLTK-Object werden. Als pushed Widget Object greift es aber zu sehr in das events von FLTK ein. Es integriert sich nicht.
+  removePathLeaves();
+  buildPathLeaves();
+  Fl::pushed(0);
+  removeDefaultProfiles();
+  buildDefaultProfiles();
+  Fl::flush();
+
+  return 1;} {}
+  }
+} 
+
+decl {//BuildPathLeavesC bPL;} {public
+} 
+
+class BoxChoiceCombo {: {public Fl_Pack}
+} {
+  decl {Fl_Box   *box;} {public
+  }
+  decl {Fl_Choice*choice;} {public
+  }
+  Function {BoxChoiceCombo( int x, int y, int w, int h ) : Fl_Pack(x, y, w, h)} {open
+  } {}
+} 
+
+class Behaviour {: {public Fl_Pack} private
+} {
+  decl {Fl_Box   *box;
+  oyBEHAVIOUR type;
+  Fl_Choice *choice;} {public
+  }
+  Function {Behaviour( int x, int y, int w, int h, oyBEHAVIOUR type )
+    : Fl_Pack(x, y, w, h)} {open
+  } {
+    code {Fl_Pack::type( FL_HORIZONTAL );
+  Fl_Pack::spacing(H_SPACING);
+  Fl_Group::resizable(0);
+
+  int choices = 0;
+  const char *category      =0,
+             *option_string =0,
+             *tooltip       =0,
+             *option_name = oyGetBehaviourUITitle( type, 0, &choices,
+                                                   &category, &option_string, &tooltip );
+
+  int tabs_n = behaviour_tabs->children();
+  for( int i = 0; i < tabs_n; ++i) {
+    if( strstr( behaviour_tabs->label(), "/Behaviour" ) )
+      ;
+  }} {}
+  }
+} 
+
+class ProfilePath {open : {public Fl_Pack} private
+} {
+  decl {Fl_Box   *box;
+  int       n;
+  Fl_Button*button_add, *button_remove;} {public
+  }
+  Function {ProfilePath( int x, int y, int w, int h, int num )
+    : Fl_Pack(x, y, w, h)} {open
+  } {
+    code {Fl_Pack::type( FL_HORIZONTAL );
+    Fl_Pack::spacing(H_SPACING);
+    Fl_Group::resizable(0);
+
+    n = num;
+    char *name = oyPathName(n, myAllocFunc) ;
+    std::cout << name << std::endl;
+    //new Fl_Box( 0, 0, 10, 20 );
+    box = new Fl_Box( 0, 0, 10, BUTTON_HEIGHT, name );
+    box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+
+    if( strcmp( "/usr/share/color/icc", name ) != 0 &&
+        strcmp( "~/.color/icc", name ) != 0 )
+    {
+      button_remove = new Fl_Button( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT, "@-31+" );
+      button_remove->callback( rmPathCallback );
+      button_remove->tooltip(_("Exclude this path"));
+      new Fl_Box( 0, 0, H_SPACING, 20 );
+    }
+
+    int width=0, height=0;
+    int scroll_w = default_profiles_pack->w() - 3*H_SPACING - BUTTON_HEIGHT;
+    //std::cout << "scroll " << default_profiles_scroll->w() << "/" << scroll_w << std::endl;
+
+    box->measure_label(width, height);
+    int b_w = scroll_w;
+    if(width > scroll_w)
+      b_w = width;
+
+    box->size( b_w, 20 );
+    Fl_Pack::size( b_w + 2*H_SPACING + BUTTON_HEIGHT, Fl_Pack::h() );} {}
+  }
+} 
+
+class DefaultProfile {: {public Fl_Pack} private
+} {
+  decl {Fl_Box   *box;
+  Fl_Choice*choice;
+
+  oyDEFAULT_PROFILE type;
+  int       i;} {public
+  }
+  Function {DefaultProfile( int x, int y, int w, int h,
+                  oyDEFAULT_PROFILE default_profile_type,
+                  char** names, int count ) : Fl_Pack(x, y, w, h)} {open
+  } {
+    code {Fl_Pack::type( FL_HORIZONTAL );
+    Fl_Pack::spacing(H_SPACING);
+    type = default_profile_type;
+
+    char *title_text = (char*) new char [256];
+    sprintf(title_text, _("%s Profile"), oyGetDefaultProfileUITitle(type));
+
+    new Fl_Box( 0, 0, 1, 20 );
+    box = new Fl_Box( 0, 0, BOX_WIDTH, 20, title_text );
+    box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+
+    if(type == oyASSUMED_WEB) {
+      char* default_p = oyGetDefaultProfileName(type, myAllocFunc);
+      if(default_p) {
+        Fl_Box *box = new Fl_Box( 0, 0, 190, 20, default_p );
+        box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        //delete [] default_p;
+        return;
+      }
+    }
+
+    choice = new Fl_Choice( 0, 0, SELECT_WIDTH, h );
+    choice->callback( selectDefaultProfile_callback );
+    DBG_PROG_V((choice->size()))
+    choice->add( _("[none]") );
+    DBG_PROG_V((choice->size()))
+
+    Fl_Button *button = new Fl_Button( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT, "@-3DnArrow" );
+    button->callback( showDefaultProfile_callback );
+    button->tooltip(_("Show in external Viewer"));
+    new Fl_Box( 0, 0, (int)(1.5*H_SPACING), 20 );
+
+    char* default_p = oyGetDefaultProfileName( type, myAllocFunc );
+    if(default_p) {
+      DBG_PROG_S( (default_p) )
+    } else
+      default_p = "";
+    int val = 0, occurence = 0;
+    for (i = 0; i < count; ++i)
+    {
+      choice->add( names[i] );
+      if(strstr(names[i], default_p) && strlen(names[i]) == strlen(default_p))
+      {
+        if(val) {
+          ++occurence;
+        } else {
+          val = i+1;
+          ++occurence;
+        }
+      }
+    }
+    if(occurence > 1)
+      WARN_S(("multiple occurencies of default %s profile: %d times",
+               oyGetDefaultProfileUITitle(type), occurence))
+
+    DBG_PROG_V((choice->size()))
+    \#if ( FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 1 && FL_PATCH_VERSION >= 6 )
+    const Fl_Menu_Item* new_val = choice->find_item(default_p);
+    int erfolg = choice->value( new_val );
+    \#else
+    int size = choice->size(),
+        erfolg = 0;
+    char menupath[1024] = ""; // File/Export
+
+    char * name = default_p;
+    const Fl_Menu_Item *m = 0;
+    for ( int t=0; t < choice->size(); t++ ) {
+      m = choice->menu() + t;
+
+      if (m->submenu()) {
+        // IT'S A SUBMENU
+        if (menupath[0]) strncat(menupath, "/", sizeof(menupath));
+        strncat(menupath, m->label(), sizeof(menupath));
+        if (!strcmp(menupath, name)) break;
+      } else {
+        if (!m->label()) {
+      // END OF SUBMENU? Pop back one level.
+      char *ss = strrchr(menupath, '/');
+      if ( ss ) *ss = 0;
+      else menupath[0] = '\\0';
+      continue;
+        }
+
+        // IT'S A MENU ITEM
+        char itempath[1024];  // eg. Edit/Copy
+        strcpy(itempath, menupath);
+        if (itempath[0]) strncat(itempath, "/", sizeof(itempath));
+        strncat(itempath, m->label(), sizeof(itempath));
+        if (!strcmp(itempath, name)) break;
+      }
+    }
+
+
+    DBG_PROG_V((size))
+    erfolg = choice->Fl_Menu_::value((const Fl_Menu_Item*)m);
+    \#endif
+
+    int height = BOX_WIDTH + SELECT_WIDTH + (int)(3.5 * H_SPACING) + BUTTON_HEIGHT;
+    if(w <= height + 20)
+      Fl_Pack::size( height + 20 , Fl_Pack::h() );
+
+    DBG_PROG_V((erfolg))
+    DBG_PROG_V((val))
+    DBG_PROG_V((count))} {}
+  }
+} 
+
+Function {} {private
+} {
+  Fl_Window top_group {
+    label {Oyranos Configuration} open
+    xywh {713 270 505 410} type Double resizable size_range {305 255 0 0} visible
+  } {
+    Fl_Tabs {} {open
+      xywh {0 70 505 301} resizable
+    } {
+      Fl_Group {} {
+        label Policy open
+        tooltip {Reset to a standard Policy for Oyranos.} xywh {10 94 495 267} hide resizable
+      } {
+        Fl_Pack {} {open
+          xywh {10 105 485 256}
+        } {
+          Fl_Choice {} {open
+            xywh {14 115 196 25} box NO_BOX down_box BORDER_BOX
+          } {
+            MenuItem {} {
+              label {Office + Home}
+              callback {setPolicy( 0 );}
+              xywh {15 15 100 20}
+            }
+            MenuItem {} {
+              label {Graphic Designers}
+              callback {setPolicy( 1 );}
+              xywh {15 15 100 20}
+            }
+            MenuItem {} {
+              label PrePress
+              callback {setPolicy( 2 );}
+              xywh {15 15 100 20}
+            }
+            MenuItem {} {
+              label Photographers
+              callback {setPolicy( 3 );}
+              xywh {15 15 100 20}
+            }
+          }
+          Fl_Box {} {
+            xywh {25 150 25 25} resizable
+          }
+        }
+      }
+      Fl_Group {} {
+        label {Default Profiles} open
+        tooltip {Set default ICC profiles} xywh {10 95 495 266} hide
+      } {
+        Fl_Scroll default_profiles_scroll {open
+          xywh {10 100 490 261}
+        } {
+          Fl_Pack default_profiles_pack {open
+            xywh {10 105 490 256} type HORIZONTAL
+          } {}
+        }
+      }
+      Fl_Group {} {
+        label Paths open
+        tooltip {Configure Paths} xywh {10 95 495 266}
+      } {
+        Fl_Scroll paths_scroll {open
+          xywh {10 100 490 261}
+        } {}
+      }
+      Fl_Group {} {
+        label Bahaviour open
+        xywh {10 95 495 270} hide
+      } {
+        Fl_Tabs behaviour_tabs {open
+          xywh {10 109 485 248}
+        } {}
+      }
+    }
+    Fl_Button {} {
+      label {@-3reload}
+      callback {//Fl::pushed(&bPL);
+  updateUi();}
+      xywh {10 375 50 25} when 6
+    }
+    Fl_Pack {} {open
+      xywh {0 0 480 70} type HORIZONTAL
+    } {
+      Fl_Box {} {
+        image {oyranos_logo.png} xywh {0 0 85 70} align 16
+      }
+      Fl_Box {} {
+        label {Oyranos Configuration }
+        xywh {95 0 385 70} labeltype ENGRAVED_LABEL labelsize 18 align 24 resizable
+        code0 {o->redraw();}
+      }
+    }
+  }
+  code {buildTree();
+  //oy_debug=1;} {}
+} 
+
+Function {buildTree()} {open
+} {
+  code {/*buildBaseTree();
+  tree->selection_mode( FLU_NO_SELECT );
+
+  Flu_Tree_Browser::Node* n;
+  char* default_profiles_dirname = _("/Default Profiles/");
+  tree->add( default_profiles_dirname );
+  n = tree->find( default_profiles_dirname );
+  if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
+  if( n ) n->branch_icons( 0, 0 );
+  */
+  
+  buildDefaultProfiles();
+  buildPathLeaves();
+  //buildOptionsLeaves();} {}
+} 
+
+Function {updateUi()} {open
+} {
+  code {removePathLeaves();
+  buildPathLeaves();
+  //Fl::pushed(0);
+  removeDefaultProfiles();
+  buildDefaultProfiles();
+  //Fl::flush();} {}
+} 

@@ -71,7 +71,7 @@ int   oyActivateMonitorProfiles_  (const char* display_name);
 int   oySetMonitorProfile_        (const char* display_name,
                                    const char* profile_name);
 int   oyGetScreenFromDisplayName_ (oy_display_s  *disp );
-int   oyGetScreenFromGeometry_    (const char *display_name,
+int   oyGetScreenFromPosition_    (const char *display_name,
                                    int         x,
                                    int         y);
 int   oyGetScreenGeometry_        (oy_display_s  *disp );
@@ -478,7 +478,7 @@ oyGetAllScreenNames_            (const char *display_name,
 /** This function will only with Xineram hit exact results
  */
 int
-oyGetScreenFromGeometry_        (const char *display_name,
+oyGetScreenFromPosition_        (const char *display_name,
                                  int x,
                                  int y)
 {
@@ -1149,13 +1149,13 @@ oyActivateMonitorProfile          (const char* display_name)
  *  @return                   screen
  */
 int
-oyGetScreenFromGeometry         (const char *display_name,
+oyGetScreenFromPosition         (const char *display_name,
                                  int x,
                                  int y)
 { DBG_PROG_START
   int screen = 0;
 
-  screen = oyGetScreenFromGeometry_( display_name, x,y );
+  screen = oyGetScreenFromPosition_( display_name, x,y );
   DBG_PROG_S(( "x %d y %d screen %d\n", x,y,screen ));
 
   DBG_PROG_ENDE

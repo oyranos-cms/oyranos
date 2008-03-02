@@ -62,6 +62,7 @@ typedef void* (*oyAllocFunc_t)         (size_t size);
  *  possibly include the default profiles here
  */
 typedef enum  {
+  oyBEHAVIOUR_START = 30,
   oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? */
   oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB,/**< What to do if profiles mismatch ? */
   oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK,/**< What to do if profiles mismatch ?*/
@@ -72,7 +73,7 @@ typedef enum  {
   oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
   oyBEHAVIOUR_PROOF_SOFT,              /**< Proofing by default for screen */
   oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing */
-  oyBEHAVIOUR_NUMS                     /**< just for easen Gui design */
+  oyBEHAVIOUR_END                      /**< just for easen Gui design */
 } oyBEHAVIOUR;
 
 enum  {
@@ -82,8 +83,8 @@ enum  {
 }; /**< for oyBEHAVIOUR_ACTION */
 
 const char* oyGetBehaviourUITitle      (oyBEHAVIOUR       type,
-                                        int              *choices,
                                         int               choice,
+                                        int              *choices,
                                         const char      **category,
                                         const char      **option_string,
                                         const char      **tooltip);
@@ -94,11 +95,12 @@ int         oySetBehaviour             (oyBEHAVIOUR       type,
 /** enum Policy Groups 
  */
 typedef enum  {
-  oyGROUP_DEFAULT_PROFILES,   /**< Default Profiles */
-  oyGROUP_RENDERING,          /**< Rendering Behaviour */
+  oyGROUP_START = 0,
+  oyGROUP_DEFAULT_PROFILES,     /**< Default Profiles */
+  oyGROUP_RENDERING,            /**< Rendering Behaviour */
   oyGROUP_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
-  oyGROUP_MISSMATCH,          /**< Profile Missmatch Behaviour */
-  oyGROUP_ALL                 /**< just for easen Gui design */
+  oyGROUP_MISSMATCH,            /**< Profile Missmatch Behaviour */
+  oyGROUP_ALL                   /**< just for easen Gui design */
 } oyGROUP;
 
 char*       oyPolicyToXML              (oyGROUP           group,
@@ -129,6 +131,7 @@ char* oyGetPathFromProfileName         (const char* profile_name,
 /** enum Default Profiles
  */
 typedef enum  {
+  oyDEFAULT_PROFILE_START = 100,
   oyEDITING_RGB,            /**< Rgb Editing (Workspace) Profile */
   oyEDITING_CMYK,           /**< Cmyk Editing (Workspace) Profile */
   oyEDITING_XYZ,            /**< XYZ Editing (Workspace) Profile */
@@ -138,7 +141,8 @@ typedef enum  {
   oyASSUMED_RGB,            /**< standard RGB assumed source profile */
   oyASSUMED_WEB,            /**< std internet assumed source static_profile*/
   oyASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
-  oyDEFAULT_PROFILE_NUMS    /**< just for easen Gui design */
+  oyPROFILE_PROOF,          /**< standard proofing profile */
+  oyDEFAULT_PROFILE_END     /**< just for easen Gui design */
 } oyDEFAULT_PROFILE;
 
 int         oySetDefaultProfile        (oyDEFAULT_PROFILE type,
