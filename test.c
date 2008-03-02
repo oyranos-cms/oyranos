@@ -74,6 +74,12 @@ main()
 
   printf ("count of paths after removing one = %d\n", oyPathsRead());
 
+  oySetDefaultCmykProfile ("CMYK.icc");
+
+  {
+    char profil[3000] = {0,0,0};
+    oySetDefaultWorkspaceProfileBlock ("example_workspace.icm", profil, 3000);
+  }
 
   return 0;
 }

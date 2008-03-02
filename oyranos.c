@@ -56,6 +56,8 @@ int oyAddKey_value (char* keyName, char* value);
 char* oySearchEmptyKeyname (char* keyParentName, char* keyBaseName);
 KeySet* oyReturnChildrenList (char* keyParentName, int* rc);
 
+void oyWriteMemToFile(char* name, void* mem, size_t size);
+
 /* oyranos part */
 
 
@@ -127,9 +129,27 @@ oyAddKey_value (char* keyName, char* value)
   return rc;
 }
 
+void
+oyWriteMemToFile(char* name, void* mem, size_t size)
+{
+  FILE *fp=NULL;
+  int   pt = 0;
+  char* block = mem;
+
+  if ((fp=fopen(name, "w")) != NULL
+   && mem
+   && size)
+  {
+    do {
+      fputc ( block[pt++] , fp);
+    } while (--size);
+  }
+
+  fclose (fp);
+}
 
 
-/* outer API implementation */
+/* public API implementation */
 
 /* path names API */
 
@@ -329,7 +349,42 @@ oyPathActivate (char* pfad)
 void
 oySetDefaultImageProfile          (char* name)
 { 
+  oyAddKey_valueComment (OY_DEFAULT_IMAGE_PROFILE, name, "");
 }
 
+void
+oySetDefaultWorkspaceProfile      (char* name)
+{ 
+  oyAddKey_valueComment (OY_DEFAULT_WORKSPACE_PROFILE, name, "");
+}
+
+void
+oySetDefaultCmykProfile           (char* name)
+{ 
+  oyAddKey_valueComment (OY_DEFAULT_CMYK_PROFILE, name, "");
+}
+
+void
+oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size)
+{
+  oyWriteMemToFile (OY_DEFAULT_IMAGE_PROFILE, mem, size);
+  oySetDefaultImageProfile (name);
+}
+
+void
+oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size)
+{
+  printf ("%s %s %d %d\n", OY_DEFAULT_WORKSPACE_PROFILE, name, &((char*)mem)[0] , size);
+  oyWriteMemToFile (OY_DEFAULT_WORKSPACE_PROFILE, &((char*)mem)[0], size);
+  printf ("%s %s %d %d\n", OY_DEFAULT_WORKSPACE_PROFILE, name, &((char*)mem)[0] , size);
+  oySetDefaultWorkspaceProfile (name);
+}
+
+void
+oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size)
+{
+  oyWriteMemToFile (OY_DEFAULT_CMYK_PROFILE, mem, size);
+  oySetDefaultCmykProfile (name);
+}
 
 

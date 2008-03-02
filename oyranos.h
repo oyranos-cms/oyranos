@@ -47,8 +47,8 @@ extern "C" {
 /* definitions */
 #define OY_SLASH                 "/"
 #define OY_KEY                   "sw/oyranos"
-#define OY_SYS                   "system"
-#define OY_USER                  "user"
+#define OY_SYS                   "system/"
+#define OY_USER                  "user/"
 
 #ifndef MAX_PATH
 #define MAX_PATH 1024
@@ -58,7 +58,7 @@ extern "C" {
 
 /* path names */
 
-#define OY_USER_PATHS            OY_USER OY_SLASH OY_KEY OY_SLASH "paths"
+#define OY_USER_PATHS            OY_USER OY_KEY OY_SLASH "paths"
 #define OY_USER_PATH             "path"
 
 int	oyPathsRead          (void);
@@ -71,16 +71,16 @@ void	oyPathActivate       (char* pathname);
 
 /* default profiles */
 
-#define OY_DEFAULT_IMAGE_PROFILE     OY_KEY OY_SLASH "default" OY_SLASH "profile_image"
-#define OY_DEFAULT_WORKSPACE_PROFILE OY_KEY OY_SLASH "default" OY_SLASH "profile_workspace"
-#define OY_DEFAULT_CMYK_PROFILE      OY_KEY OY_SLASH "default" OY_SLASH "profile_cmyk"
+#define OY_DEFAULT_IMAGE_PROFILE     OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_image"
+#define OY_DEFAULT_WORKSPACE_PROFILE OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_workspace"
+#define OY_DEFAULT_CMYK_PROFILE      OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_cmyk"
 
 void	oySetDefaultImageProfile          (char* name);
-int	oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size);
+void	oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size);
 void	oySetDefaultWorkspaceProfile      (char* name);
-int	oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size);
+void	oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size);
 void	oySetDefaultCmykProfile           (char* name);
-int	oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size);
+void	oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size);
 
 char*	oyGetDefaultImageProfileName      ();
 char*	oyGetDefaultWorkspaceProfileName  ();
