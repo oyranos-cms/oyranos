@@ -29,15 +29,16 @@
 
 
 #include <kdb.h>
+#include <sys/stat.h>
 
 #include "oyranos.h"
 
 
 /* ---  Helpers  --- */
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
-#define DBG printf("%s:%d\n", __FILE__,__LINE__);
+#define DBG printf("%s:%d %s()\n", __FILE__,__LINE__,__func__);
 #define DBG_S( text ) printf("%s:%d %s = %s\n", __FILE__,__LINE__, #text, text);
 #else
 #define DBG
@@ -48,7 +49,7 @@
 
 
 
-/* --- internal API --- */
+/* --- internal API definition --- */
 /* not oyranos specific part */
 int oyAddKey_valueComment (char* keyName, char* value, char* comment);
 int oyAddKey_value (char* keyName, char* value);
@@ -56,12 +57,19 @@ int oyAddKey_value (char* keyName, char* value);
 char* oySearchEmptyKeyname (char* keyParentName, char* keyBaseName);
 KeySet* oyReturnChildrenList (char* keyParentName, int* rc);
 
-void oyWriteMemToFile(char* name, void* mem, size_t size);
 char* oyGetHomeDir ();
-char* oyCheckFilename (char* name);
+int oyIsDir (char* path);
+int oyMakeDir (char* path);
+char* oyResolveFileDirName (char* name);
+
+void oyWriteMemToFile(char* name, void* mem, size_t size);
 
 /* oyranos part */
+char* oyCheckProfileFilename (char* name);
+
 // should mayby all public
+
+
 
 /* --- function definitions --- */
 
@@ -143,7 +151,7 @@ oyWriteMemToFile(char* name, void* mem, size_t size)
   printf ("name = %s mem = %d size = %d\n", name, (int)mem, size);
 #endif
 
-  filename = oyCheckFilename(name);
+  filename = oyCheckProfileFilename(name);
   fp = fopen(filename, "w");
 #ifdef DEBUG
   printf ("fp = %d filename = %s\n", (int)fp, filename);
@@ -166,22 +174,42 @@ oyGetHomeDir ()
 {
   #if (__unix__ || __APPLE__)
   char* name = (char*) getenv("HOME");
+  DBG
   return name;
   #else
   return "OS not supported yet";
   #endif
 }
 
+int
+oyIsDir (char* path)
+{
+  struct stat status;
+  DBG
+  stat (path, &status);
+  return (((status.st_mode & S_IFMT) & ~S_IFDIR));
+}
+
+int
+oyMakeDir (char* path)
+{
+  char *name = oyResolveFileDirName (path);
+  int rc = 0;
+  mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH; /* 0644 */
+  DBG
+  rc = mkdir (name, mode);
+  free (name);
+  return rc;
+}
+
 char*
-oyCheckFilename (char* name)
+oyResolveFileDirName (char* name)
 {
   char* ptr = strchr(name, '~');
-  char* newName = 0, *home = 0, *dirName = 0;
+  char* newName = 0, *home = 0;
   int len = 0;
 
-  DBG
-  // substitute ~ with HOME variable from environment
-  if (ptr)
+  if (ptr = &name[0])
   { DBG
     home = oyGetHomeDir();
     #ifdef DEBUG
@@ -195,16 +223,37 @@ oyCheckFilename (char* name)
     newName = (char*) calloc (len, sizeof(char));
     sprintf (newName, "%s%s", home, ptr+1);
     #ifdef DEBUG
-    printf ("newName = %s dirName = %s\n", newName, dirName);
+    printf ("newName = %s \n", newName);
     #endif
     DBG
   } else
-  { DBG
+  {
     newName = name;
     #ifdef DEBUG
-    printf ("name = %s home = %s\n", name, home);
+    printf ("name = %s home = %s\n", name, home); DBG
     #endif
   }
+
+  // TODO relative names - where the first sign is no directory separator
+  ptr = strchr(name, OY_SLASH_C);
+  if (!ptr)
+  {
+    sprintf (newName, canonicalize_file_name(name));
+  }
+
+  return newName;
+}
+
+char*
+oyCheckProfileFilename (char* name)
+{
+  char* ptr = strchr(name, '~');
+  char* newName = 0, *home = 0, *dirName = 0;
+  int len = 0;
+
+  DBG
+  // substitute ~ with HOME variable from environment
+  newName = oyResolveFileDirName (name);
 
   // create directory name
   if(strrchr( newName, OY_SLASH_C ))
@@ -220,13 +269,25 @@ oyCheckFilename (char* name)
     ptr = 0;
   }
 
-
-  // TODO test dirName : existing, in path, default dir exists
-  
-  #ifdef DEBUG
-  printf ("newName = %s dirName = %s\n", newName, dirName);
-  #endif
+  // test dirName : existing in path, default dirs are existing
+  if (!oyIsDir (dirName))
+    newName = 0;
   DBG
+  if (!oyIsDir (OY_DEFAULT_SYSTEM_PROFILE__PATH))
+    printf ("no default system directory %s\n",OY_DEFAULT_SYSTEM_PROFILE__PATH);
+
+  printf ("oyIsDir %d\n", oyIsDir (OY_DEFAULT_USER_PROFILE_PATH));
+  if (!oyIsDir (OY_DEFAULT_USER_PROFILE_PATH))
+  { 
+    printf ("Try to create users default directory %s %d\n",
+               OY_DEFAULT_USER_PROFILE_PATH,
+    oyMakeDir( OY_DEFAULT_USER_PROFILE_PATH ));
+  }
+
+  #ifdef DEBUG
+  printf ("newName = %s dirName = %s\n", newName, dirName); DBG
+  #endif
+
 
   if (dirName) free (dirName); DBG
   return newName;
@@ -455,9 +516,12 @@ oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size)
 { DBG
   char* fileName = (char*) calloc (sizeof(char),
                       strlen(OY_DEFAULT_USER_PROFILE_PATH) + strlen (name) + 4);
+
   sprintf (fileName, "%s%s%s", OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, name);
+
   oyWriteMemToFile (fileName, mem, size);
   oySetDefaultImageProfile (name);
+
   free (fileName);
 }
 

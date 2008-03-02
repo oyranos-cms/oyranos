@@ -42,7 +42,7 @@ main()
   if (rc)
     printf ("rc = %d\n", rc); 
 
-  for (i = 0; i < 100; i++) {
+  for (i = 0; i < 1; i++) {
     oyPathRemove (a);
     oyPathAdd (a);
   }
