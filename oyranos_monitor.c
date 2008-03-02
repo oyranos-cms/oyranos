@@ -37,10 +37,16 @@
 #include "limits.h"
 #include <unistd.h>  /* intptr_t */
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
-#include <X11/extensions/Xinerama.h>
+#include "config.h"
+
+#if HAVE_X
+# include <X11/Xlib.h>
+# include <X11/Xutil.h>
+# include <X11/Xatom.h>
+# if HAVE_XIN
+#  include <X11/extensions/Xinerama.h>
+# endif
+#endif
 
 #include "oyranos.h"
 #include "oyranos_internal.h"
@@ -335,7 +341,7 @@ oyGetMonitorProfile_          (const char* display_name,
   Display *display;
   int screen = 0;
   Window w;
-  Atom atom, a;
+  Atom atom = 0, a;
   int actual_format_return;
   unsigned long nitems_return=0, bytes_after_return=0;
   unsigned char* prop_return=0;
@@ -370,7 +376,6 @@ oyGetMonitorProfile_          (const char* display_name,
     }
     oyFree_m_( atom_name )
   }
-  DBG_PROG_S(("atom: %ld", atom))
 
   DBG_PROG
 
@@ -448,6 +453,7 @@ oyGetAllScreenNames_            (const char *display_name,
   if( (len = ScreenCount( display )) == 0 )
     return 0;
 
+# if HAVE_XIN
   /* test for Xinerama screens */
   if( len == 1 )
   if( XineramaIsActive( display ) )
@@ -461,6 +467,7 @@ oyGetAllScreenNames_            (const char *display_name,
 
     XFree( scr_info );
   }
+# endif
 
   oyAllocHelper_m_( list, char*, len, 0, return NULL )
 
@@ -639,11 +646,11 @@ oyActivateMonitorProfile_         (const char* display_name,
     /* set _ICC_PROFILE atom in X like with xicc */
     {
       Display *display;
-      Atom atom;
+      Atom atom = 0;
       int screen = 0;
       Window w;
 
-      char       *moni_profile=0;
+      unsigned char *moni_profile=0;
       size_t      size=0;
       char       *atom_name=0;
       int         result = 0;
@@ -669,8 +676,9 @@ oyActivateMonitorProfile_         (const char* display_name,
         if (atom == None) {
           WARN_S((_("Error setting up atom \"%s\""), atom_name));
         }
-      }
+      } else WARN_S((_("Error setting up atom")));
 
+      if( atom )
       result = XChangeProperty( display, w, atom, XA_CARDINAL,
                        8, PropModeReplace, moni_profile, (int)size );
 
@@ -953,6 +961,7 @@ oyGetScreenGeometry_            (oy_display_s *disp)
   disp->geo[0] = oyGetDisplayNumber_( disp );
   disp->geo[1] = screen = oyGetScreenFromDisplayName_( disp );
 
+# if HAVE_XIN
   if( XineramaIsActive( disp->display ) )
   {
     int n_scr_info = 0;
@@ -976,6 +985,7 @@ oyGetScreenGeometry_            (oy_display_s *disp)
     XFree( scr_info );
   }
   else
+# endif
   {
     Screen *scr = XScreenOfDisplay( disp->display, screen );
     oyPostAllocHelper_m_(scr, 1, WARN_S((_("open X Screen failed"))); return 1;)

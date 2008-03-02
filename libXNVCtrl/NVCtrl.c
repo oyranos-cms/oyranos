@@ -860,7 +860,6 @@ Bool NVCTRLQueryDDCCICapabilities (
     int length, numbytes, slop;
     char *ptr, *p;
     int len1, len2, len3, len4, len5;
-    int step;
      
     *nvctrl_vcp_supported=*nvctrl_vcp_possible_values=*possible_values_offset=*possible_values_size=*nvctrl_string_vcp_supported=NULL;
    

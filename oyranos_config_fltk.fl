@@ -102,7 +102,9 @@ Function {setPolicy( int i )} {} {
     printf("xml text: \\n%s", xml);
     delete [] xml;
   } else
-    printf("No policy file found: \\"%s\\"!!!\\n", filename);} {}
+    printf("No policy file found: \\"%s\\"!!!\\n", filename);
+
+  updateUI();} {}
 } 
 
 Function {selectDefaultProfile_callback( Fl_Widget* w, void* )} {} {
@@ -126,7 +128,8 @@ Function {selectDefaultProfile_callback( Fl_Widget* w, void* )} {} {
   } else fl_alert( _("Select Profile") );} {}
 } 
 
-Function {showDefaultProfile_callback( Fl_Widget* w, void* )} {} {
+Function {showDefaultProfile_callback( Fl_Widget* w, void* )} {open
+} {
   code {Option *op = dynamic_cast<Option*> (w->parent());
   if(op) {
     {
@@ -183,33 +186,103 @@ Function {rmPathCallback( Fl_Widget* w, void* )} {} {
   } else fl_alert( "Path" );} {}
 } 
 
-Function {selectBehaviour_callback( Fl_Widget* w, void* x )} {} {
-  code {if(w) {
+Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {open
+} {
+  code {Option *op = dynamic_cast<Option*> (w->parent());
+  if(op) {
     Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
     if(c) {
       std::cout << (int)x << c->user_data() << c->value() << c->text() << std::endl;
       char text[64];
       int error = 0;
-      error = oySetBehaviour((oyBEHAVIOUR)(int)c->user_data(), c->value());
+      error = oySetBehaviour( (oyBEHAVIOUR)op->type, c->value());
       if(error) {
         sprintf(text, "%s %s %s", _("setting"), _("failed!"),
                 c->text());
         fl_alert( text );
       }
     } else fl_alert( "no Fl_Choice" );
-  } else fl_alert( _("Select Behaviour") );} {}
+  } else fl_alert( _("Select Behaviour") );} {selected
+  }
 } 
 
 class OyFlPack {: {public Fl_Pack}
 } {
-  Function {OyFlPack(int x, int y, int w, int h , const char *t = 0) : Fl_Pack(x,y,w,h,t)} {open
-  } {
+  Function {OyFlPack(int x, int y, int w, int h , const char *t = 0) : Fl_Pack(x,y,w,h,t)} {} {
     code {} {}
   }
-  Function {draw()} {open private return_type void
+  Function {draw()} {open private
   } {
-    code {Fl_Pack::size( parent()->w() - Fl::box_dw( parent()->box() ) - BUTTON_HEIGHT,
-               Fl_Pack::h() );
+    code {int nw = 0;
+  //int X=x(),Y=y(),W=w(),H=h();
+  if( dynamic_cast <Fl_Scroll*> (parent()) )
+  {
+    nw = parent()->w() - Fl::box_dw( parent()->box() ) - BUTTON_HEIGHT;
+    ///size( nw, Fl_Pack::h() );
+  } else {
+    nw = parent()->w() - Fl::box_dw( parent()->box() );
+  }
+  w( nw );
+
+
+  //nh = parent()->h() - Fl::box_dh( parent()->box() );
+  /*if( horizontal() )
+    Fl_Pack::size( nw, Fl_Pack::h() );
+  else
+    Fl_Pack::size( Fl_Pack::w(), nh );
+  */
+
+  // prearrange if one widget is resizeable
+  Fl_Widget *re = resizable();
+  if( re )
+  {
+    int n = children();
+    int pos_x = Fl::box_dx(box()) + spacing(),
+        pos_y = Fl::box_dy(box()) + spacing(),
+        pos_w = w() - Fl::box_dw(box()) - spacing(),
+        pos_h = h() - Fl::box_dh(box()) - spacing();
+    int re_n = 0;
+    
+    for( int i = 0; i < n; ++i )
+    {
+      Fl_Widget *o = child( i );
+      if( o == re )
+      {
+        re_n = i;
+        break;
+      }
+      
+      if( horizontal() )
+      {
+        o->position( pos_x, o->y() );
+        pos_x += o->w() + spacing();
+      } else {
+        o->position( o->x(), pos_y );
+        pos_y += o->h() + spacing();
+      }
+    }
+    
+    for( int i = n - 1; i > re_n; --i )
+    {
+      Fl_Widget *o = child( i );
+      //int X = o->x(), Y = o->y(), W = o->w(), H = o ->h();
+      if( horizontal() )
+      {
+        o->position( pos_w - o->w(), o->y() );
+        pos_w -= o->w() + spacing();
+      } else {
+        o->position( o->x(), pos_h - o->h());
+        pos_h -= o->h() + spacing();
+      }
+    }
+    
+    if(horizontal())
+      re->resize( pos_x, re->y(), pos_w-pos_x, re->h() );
+    else
+      re->resize( re->x(), pos_y, re->w(), pos_h-pos_y );
+  }
+
+
   Fl_Pack::draw();} {}
   }
 } 
@@ -224,7 +297,7 @@ class BoxChoiceCombo {: {public Fl_Pack}
   } {}
 } 
 
-class Option {open : {public Fl_Pack} private
+class Option {open : {public OyFlPack} private
 } {
   decl {Fl_Box   *box;
   Fl_Choice*choice;
@@ -236,13 +309,14 @@ class Option {open : {public Fl_Pack} private
   oyOPTION option,
   int choices_n,
   const char **choices,
-  const char *tooltip ) : Fl_Pack(x, y, w, h)} {open
+  const char *tooltip) : OyFlPack(x, y, w, h)} {open
   } {
     code {Fl_Pack::type( FL_HORIZONTAL );
   Fl_Pack::spacing(H_SPACING);
   type = option;
 
 
+  // == Profiles ==
   if( oyOPTION_DEFAULT_PROFILE_START < option && option < oyOPTION_DEFAULT_PROFILE_END )
   {
     int weigth = BOX_WIDTH + SELECT_WIDTH + 4 * H_SPACING + BUTTON_HEIGHT;
@@ -252,31 +326,29 @@ class Option {open : {public Fl_Pack} private
     w = Fl_Pack::w();
 
     char *title_text = (char*) new char [256];
-    //const char *tooltip = 0;
     sprintf(title_text, _("%s Profile"), name );
 
     // Profile name box
-    box = new Fl_Box( H_SPACING, 0,
-                      w - SELECT_WIDTH - BUTTON_HEIGHT - 3*H_SPACING, BUTTON_HEIGHT,
+    box = new Fl_Box( x, y,
+                      w - SELECT_WIDTH - BUTTON_HEIGHT - 4*H_SPACING, BUTTON_HEIGHT,
                       name );
     box->tooltip( tooltip );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-    // Format
-    this->resizable( box );
 
     if(type == oyOPTION_ASSUMED_WEB) {
       char* default_p = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)type, myAllocFunc);
       if(default_p) {
-        box = new Fl_Box( w - BOX_WIDTH - SELECT_WIDTH - BUTTON_HEIGHT - 3*H_SPACING, 0,
+        box = new Fl_Box( w - BOX_WIDTH - SELECT_WIDTH - BUTTON_HEIGHT - 3*H_SPACING, y,
                           190, BUTTON_HEIGHT, default_p );
         box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
-        //delete [] default_p;
+        Fl_Group::end();
+        Fl_Group::resizable( box );
         return;
       }
     }
 
     // Choice
-    choice = new Fl_Choice( w - SELECT_WIDTH - BUTTON_HEIGHT - 2*H_SPACING, 0,
+    choice = new Fl_Choice( w - SELECT_WIDTH - BUTTON_HEIGHT - 2*H_SPACING, y,
                             SELECT_WIDTH, h );
     choice->callback( selectDefaultProfile_callback );
     DBG_PROG_V((choice->size()))
@@ -284,12 +356,10 @@ class Option {open : {public Fl_Pack} private
     DBG_PROG_V((choice->size()))
 
     // Profile viewer
-    Fl_Button *button = new Fl_Button( w - BUTTON_HEIGHT - H_SPACING, 0,
+    Fl_Button *button = new Fl_Button( w - BUTTON_HEIGHT - H_SPACING, y,
                                        BUTTON_HEIGHT, BUTTON_HEIGHT, "@-3DnArrow" );
     button->callback( showDefaultProfile_callback );
     button->tooltip(_("Show in external Viewer"));
-
-    //new Fl_Box( w - H_SPACING, 0, , BUTTON_HEIGHT );
 
     // Set choice
     char* default_p = oyGetDefaultProfileName( (oyDEFAULT_PROFILE)type, myAllocFunc );
@@ -360,7 +430,47 @@ class Option {open : {public Fl_Pack} private
     DBG_PROG_V((erfolg))
     DBG_PROG_V((val))
 
-  }} {}
+  }
+
+
+  // == Behaviour ==
+  if( oyOPTION_BEHAVIOUR_START < option && option < oyOPTION_BEHAVIOUR_END )
+  {
+    int weigth = BOX_WIDTH + SELECT_WIDTH + 4 * H_SPACING + BUTTON_HEIGHT;
+    if(w < weigth)
+      Fl_Pack::size( weigth, Fl_Pack::h() );
+
+    w = Fl_Pack::w();
+
+    char *title_text = (char*) new char [256];
+    sprintf(title_text, _("%s Profile"), name );
+
+    // Profile name box
+    box = new Fl_Box( x, y,
+                      w - SELECT_WIDTH - BUTTON_HEIGHT - 4*H_SPACING, BUTTON_HEIGHT,
+                      name );
+    box->tooltip( tooltip );
+    box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+
+    // Choice
+    choice = new Fl_Choice( w - SELECT_WIDTH - H_SPACING, y,
+                            SELECT_WIDTH + BUTTON_HEIGHT + H_SPACING, h );
+    choice->callback( selectBehaviourCallback );
+
+    // Set choice
+    int pos = oyGetBehaviour( (oyBEHAVIOUR)option );
+
+    for (i = 0; i < choices_n; ++i)
+    {
+      choice->add( choices[i] );
+    }
+    choice->value( pos );
+
+  }
+
+  
+  end();
+  resizable( box );} {}
   }
 } 
 
@@ -406,7 +516,7 @@ class ProfilePath {: {public Fl_Pack} private
   }
 } 
 
-Function {refreshPathLeaves()} {open private
+Function {refreshPathLeaves()} {private
 } {
   code {paths_scroll->clear();
 
@@ -417,7 +527,7 @@ Function {refreshPathLeaves()} {open private
   paths_scroll->begin();
   
   Fl_Pack *paths_pack = new Fl_Pack( paths_scroll->x(),paths_scroll->y(),10,10 );
-  paths_pack->box( FL_PLASTIC_UP_FRAME );
+  //paths_pack->box( FL_PLASTIC_UP_FRAME );
   
   ProfilePath *pp = 0;
   int width = 0;
@@ -452,7 +562,7 @@ Function {refreshPathLeaves()} {open private
   std::cout << nbutton->x() << ","<< nbutton->w() <<std::endl;} {}
 } 
 
-Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {open private return_type {Fl_Group*}
+Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {private return_type {Fl_Group*}
 } {
   code {Fl_Group *parent = /*dynamic_cast <Fl_Group>*/ tabs; // parent tab
   Fl_Group *tab = NULL; // actual tab
@@ -501,12 +611,12 @@ Function {addTab( Fl_Tabs* tabs, const oyGROUP *groups )} {open private return_t
         } else {
           tab = new Fl_Scroll( x,y,w,h, title );
           tab->tooltip( tooltip );
-          tab->box( FL_PLASTIC_UP_FRAME ); //FL_THIN_UP_BOX );
+          //tab->box( FL_PLASTIC_UP_FRAME ); //FL_THIN_UP_BOX );
           { OyFlPack* o = new OyFlPack( tab->x() + Fl::box_dx( tab->box() ),
                                         tab->y() + Fl::box_dy( tab->box() ),// + BUTTON_HEIGHT,
                                         150,
                                         parent->h() - Fl::box_dh( parent->box() ) - BUTTON_HEIGHT );
-            o->box( FL_PLASTIC_UP_FRAME );
+            //o->box( FL_PLASTIC_UP_FRAME );
             o->spacing( V_SPACING );
             o->end();
             tab->user_data( o );
@@ -547,9 +657,6 @@ Function {getTab( Fl_Tabs* tabs, oyGROUP group, Fl_Group **container )} {private
       if( c_name && g_name )
       if( strcmp( c_name, g_name ) == 0 )
       {
-        // a widget with the searched label was found => tab exists allready
-        //if( k == groups[0] )
-          //return parent->child( i ) -> user_data();;
         tab = (Fl_Tabs*) parent->child( i );
         wcount = tab->children();
         for( i = 0; i < wcount; ++i )
@@ -560,7 +667,6 @@ Function {getTab( Fl_Tabs* tabs, oyGROUP group, Fl_Group **container )} {private
               *container = p;
             return tab;
           }
-        WARN_S(( "Fl_Pack not found" ))
         return tab;
       }
     }
@@ -568,7 +674,7 @@ Function {getTab( Fl_Tabs* tabs, oyGROUP group, Fl_Group **container )} {private
   return tab;} {}
 } 
 
-Function {refreshOptions()} {open private
+Function {refreshOptions()} {private
 } {
   code {// remove tabs
   //const char *t = oyGetGroupUITitle( oyGROUP_BEHAVIOUR, NULL );
@@ -576,17 +682,32 @@ Function {refreshOptions()} {open private
   
   Fl_Group *s = getTab( top_tabs, oyGROUP_BEHAVIOUR, &sg );
   if( s )
-  { s->clear();
+  {
     top_tabs->remove( s );
     delete s;
   }
   
   s = getTab( top_tabs, oyGROUP_DEFAULT_PROFILES, &sg );
   if( s )
-  { s->clear();
+  {
     top_tabs->remove( s );
     delete s;
   }
+
+  const oyGROUP *groups;
+  oyGetOptionUITitle( oyOPTION_EDITING_RGB,
+                      &groups, NULL, NULL, NULL );
+  addTab( top_tabs, groups );
+  oyGetOptionUITitle( oyOPTION_RENDERING_INTENT,
+                      &groups, NULL, NULL, NULL );
+  addTab( top_tabs, groups );
+  oyGetOptionUITitle( oyOPTION_RENDERING_INTENT_PROOF,
+                      &groups, NULL, NULL, NULL );
+  addTab( top_tabs, groups );
+  oyGetOptionUITitle( oyOPTION_ACTION_UNTAGGED_ASSIGN,
+                      &groups, NULL, NULL, NULL );
+  addTab( top_tabs, groups );
+
 
   top_tabs->damage( FL_DAMAGE_ALL );
   top_tabs->redraw();
@@ -612,7 +733,6 @@ Function {refreshOptions()} {open private
         if(w) w->begin();
           op = new Option( w->x(), w->y(), Fl_Group::current()->w(), BUTTON_HEIGHT, name,
                (oyOPTION)i, count, const_cast<const char**>(names), tooltip );
-          op->end();
         if(w) w->end();
       }
 
@@ -641,22 +761,19 @@ Function {refreshOptions()} {open private
                               &groups, &choices, &choices_list, &tooltip );
         Fl_Group *w = addTab( top_tabs, groups );
         if(w) w->begin();
-          op = new Option( 0, 0, Fl_Group::current()->w(), BUTTON_HEIGHT, name,
-               (oyOPTION)i, count, const_cast<const char**>(names), tooltip );
-          op->end();
+          op = new Option( w->x(), w->y(), Fl_Group::current()->w(), BUTTON_HEIGHT, name,
+               (oyOPTION)i, choices, /*const_cast<const char**>(*/choices_list, tooltip );
         if(w) w->end();
-      }} {selected
-  }
+      }} {}
 } 
 
-Function {createUI()} {open
-} {
+Function {createUI()} {} {
   code {//Fl::flush();
  
   menu_[0].label (_("Office + Home"));
   menu_[1].label (_("Graphic Designers"));
-  menu_[1].label (_("PrePress"));
-  menu_[1].label (_("Photographers"));
+  menu_[2].label (_("PrePress"));
+  menu_[3].label (_("Photographers"));
 
   top_tabs->clear();
   
@@ -725,8 +842,7 @@ Function {createUI()} {open
   //listWindow(top_tabs);} {}
 } 
 
-Function {updateUI()} {open
-} {
+Function {updateUI()} {} {
   code {refreshOptions();
   refreshPathLeaves();} {}
 } 
@@ -736,7 +852,7 @@ Function {} {open private
   code {Fl::scheme("plastic");} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {755 307 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {764 443 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL

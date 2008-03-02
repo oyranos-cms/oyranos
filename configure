@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 TARGET=oyranos
 
 CONF_H=config.h
-CONF=config
+CONF=makefile
 CONF_SH=$TARGET-config
 SPEC=$TARGET.spec
 PKGC=$TARGET.pc
@@ -19,7 +19,7 @@ src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
 srcdir="`pwd`"
 
 test -f error.txt && rm error.txt
-test -f config && make clean
+test -f mkdepend && make clean
 
 
 echo "# automatically generated file - do not edit" > $CONF
@@ -30,20 +30,28 @@ echo "TARGET = $TARGET" >> $CONF
 echo ""
 
 UNAME_=`uname`
+OSUNAME=BSD
 if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
   echo "Darwin PPC              detected"
   echo "APPLE = 1" >> $CONF
   echo "OSX_H = -DHAVE_OSX" >> $CONF
+  OSUNAME=Darwin
 else
   if [ $UNAME_ = "Linux" ]; then
     echo "LINUX = 1" >> $CONF
     echo "Linux system            detected"
+    OSUNAME=Linux
   else
     if [ $UNAME_ = "SunOS" ]; then
       echo "SOLARIS = 1" >> $CONF
       echo "SunOS                   detected"
+      OSUNAME=SunOS
     else
-      echo "Oyranos may or may not compile on your $UNAME_ system"
+      if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
+        OSUNAME=BSD
+      else
+        echo "Oyranos may or may not compile on your $UNAME_ system"
+      fi
     fi
   fi
 fi
@@ -66,12 +74,6 @@ if [ $? = 0 ]; then
     fi
   fi
 fi
-if [ $MACH = "BUILD_64" ]; then
-  LIBDIR="lib64"
-else
-  LIBDIR="lib"
-fi
-
 
 if [ $# -gt 0 ]; then
   prefix=""
@@ -106,7 +108,7 @@ echo "#define SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
 `pkg-config  --atleast-version=0.5.0.5 elektra 2>>error.txt`
 if [ $? = 0 ]; then
   echo "elektra `pkg-config --modversion elektra`           detected"
-  echo "#define HAVE_ELEKTRA" >> $CONF_H
+  echo "#define HAVE_ELEKTRA 1" >> $CONF_H
   echo "ELEKTRA = 1" >> $CONF
   echo "ELEKTRA_H = `pkg-config --cflags elektra`" >> $CONF
   echo "ELEKTRA_LIBS = `pkg-config --libs elektra`" >> $CONF
@@ -117,11 +119,12 @@ fi
 
 FLTK_=`fltk-config --cxxflags 2>>error.txt`
 if [ $? = 0 ] && [ -n "$FLTK_" ]; then
+  FLTK=1
   echo "FLTK `fltk-config --version`              detected"
-  echo "#define HAVE_FLTK" >> $CONF_H
+  echo "#define HAVE_FLTK 1" >> $CONF_H
   echo "FLTK = 1" >> $CONF
   echo "FLTK_H = -DHAVE_FLTK `fltk-config --cxxflags`" >> $CONF
-  echo "FLTK_LIBS = `fltk-config --use-images --use-gl --use-glut --ldflags`" >> $CONF
+  echo "FLTK_LIBS = `fltk-config --use-images --ldflags`" >> $CONF
 else
   echo "FLTK is not found; you optionally can download at: www.fltk.org"
   echo "to use the gui you need as well the FLU extensions to fltk"
@@ -131,7 +134,7 @@ fi
 FLU_=`flu-config --cxxflags 2>>error.txt`
 if [ $? = 0 ] && [ -n "$FLU_" ] && [ -n "$FLTK_" ]; then
   echo "FLU                     detected"
-  echo "#define HAVE_FLU" >> $CONF_H
+  echo "#define HAVE_FLU 1" >> $CONF_H
   echo "FLU = 1" >> $CONF
   echo "FLU_H = -DHAVE_FLU `flu-config --cxxflags`" >> $CONF
   echo "FLU_LIBS = `flu-config --ldflags`" >> $CONF
@@ -139,12 +142,50 @@ else
   echo "no FLU found, will not use it"
 fi
 
+if [ -f /usr/X11R6/include/X11/Xlib.h ] ||
+   [ -f /usr/include/X11/Xlib.h ]; then
+  echo "X11                     detected"
+  X11=1
+  echo "#define HAVE_X 1" >> $CONF_H
+  echo "X11 = 1" >> $CONF
+  echo "X_H = -I/usr/X11R6/include/X11 -I/usr/include/X11" >> $CONF
+else
+  if [ $UNAME_ = "Linux" ]; then
+    echo "X11 header not found in /usr/X11R6/include/X11/Xlib.h or"
+    echo "/usr/include/X11/Xlib.h"
+  fi
+fi
 
+if [ -f /usr/X11R6/include/X11/extensions/xf86vmode.h ] ||
+   [ -f /usr/include/X11/extensions/xf86vmode.h ]; then
+  echo "X VidMode extension     detected"
+  echo "#define HAVE_XF86VMODE 1" >> $CONF_H
+  echo "XF86VMODE = 1" >> $CONF
+  echo "XF86VMODE_LIB = -lXxf86vm" >> $CONF
+else
+  if [ $UNAME_ = "Linux" ]; then
+    echo "X VidMode extension not found in /usr/X11R6/include/X11/extensions/xf86vmode.h or"
+    echo "/usr/include/X11/extensions/xf86vmode.h"
+  fi
+fi
+
+if [ -f /usr/X11R6/include/X11/extensions/Xinerama.h ] ||
+   [ -f /usr/include/X11/extensions/Xinerama.h ]; then
+  echo "X Xinerama              detected"
+  echo "#define HAVE_XIN 1" >> $CONF_H
+  echo "XIN = 1" >> $CONF 
+  echo "XINERAMA_LIB = -lXinerama" >> $CONF
+else
+  if [ $UNAME_ = "Linux" ]; then
+    echo "X Xinerma not found in /usr/X11R6/include/X11/extensions/Xinerama.h or"
+    echo "/usr/include/X11/extensions/Xinerama.h"
+  fi
+fi
 
 `pkg-config  --atleast-version=1.14 lcms 2>>error.txt`
 if [ $? = 0 ]; then
   echo "littleCMS `pkg-config --modversion lcms`          detected"
-  echo "#define HAVE_LCMS" >> $CONF_H
+  echo "#define HAVE_LCMS 1" >> $CONF_H
   echo "LCMS = 1" >> $CONF
   echo "LCMS_H = `pkg-config --cflags lcms`" >> $CONF
   echo "LCMS_LIBS = `pkg-config --libs lcms`" >> $CONF
@@ -160,13 +201,18 @@ else
   echo "Doxygen                 not detected"
 fi
 
-`pkg-config  --atleast-version=1.0 libpng 2>>error.txt`
+LIBPNG=libpng
+`pkg-config  --atleast-version=1.0 $LIBPNG 2>>error.txt`
+if [ $? != 0 ]; then
+  LIBPNG=libpng12
+  `pkg-config  --atleast-version=1.0 $LIBPNG 2>>error.txt`
+fi
 if [ $? = 0 ]; then
-  echo "PNG `pkg-config --modversion libpng`               detected"
-  echo "#define HAVE_PNG" >> $CONF_H
+  echo "PNG `pkg-config --modversion $LIBPNG`               detected"
+  echo "#define HAVE_PNG 1" >> $CONF_H
   echo "PNG = 1" >> $CONF
-  echo "PNG_H = `pkg-config --cflags libpng`" >> $CONF
-  echo "PNG_LIBS = `pkg-config --libs libpng`" >> $CONF
+  echo "PNG_H = `pkg-config --cflags $LIBPNG`" >> $CONF
+  echo "PNG_LIBS = `pkg-config --libs $lIBPNG`" >> $CONF
 else
   echo "no or too old libpng found,\n  need at least version 1.0, download: www.libpng.org"
 fi
@@ -230,6 +276,70 @@ echo $PKGC generated
 echo ""
 echo ""
 
+
+
+# Alle ifdefs landen hier
+echo "RM = rm -vf" >> $CONF
+if [ $OSUNAME = "APPLE" ]; then
+  echo "COPY = cp -v" >> $CONF
+  echo "LINK_FLAGS = -dynamiclib" >> $CONF
+  echo "MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y" >> $CONF
+  echo "OPTS=-Wall -O2 -g -fPIC -L." >> $CONF
+  echo "/Developer/Tools/Rez -t APPL mac.r -o \$@" >> $CONF
+else
+  echo "SO = .so" >> $CONF
+  if [ $OSUNAME = "LINUX" ]; then
+    echo "COPY = cp -vdpa" >> $CONF
+    echo "LINK_FLAGS = -shared -ldl -fPIC -L." >> $CONF
+    echo "LINK_FLAGS_STATIC = q" >> $CONF
+    echo "LINK_NAME = -Wl,-soname -Wl,\$(LIBSONAMEFULL)" >> $CONF
+    echo "LINK_NAME_M = -Wl,-soname -Wl,\$(LIB_MONI_SONAMEFULL)" >> $CONF
+    echo "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
+    echo "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
+    echo "MAKEDEPEND	= makedepend -Y" >> $CONF
+    echo "OPTS=-Wall -g -fPIC #-O2" >> $CONF
+  else
+    echo "COPY = cp" >> $CONF
+    echo "LINK_FLAGS = -shared -ldl \$(ICONV)" >> $CONF
+    echo "MAKEDEPEND	= makedepend -Y" >> $CONF
+    echo "OPTS=-Wall -O2 -g -fpic -L." >> $CONF
+    echo "RM = rm -f" >> $CONF
+  fi
+fi
+
+if [ $MACH = "BUILD_64" ]; then
+  LIBDIR="lib64"
+  echo "LIB=/lib64" >> $CONF
+else
+  LIBDIR="lib"
+  echo "LIB=/lib" >> $CONF
+fi
+
+if [ "$X11" = 1 ]; then
+  echo "X_CPP = \$(X_CPPFILES)" >> $CONF
+  echo "X11_LIB_PATH = -L/usr/X11R6\$(LIB) -L/usr\$(LIB)" >> $CONF
+  echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 \$(XF86VMODE_LIB) -lXext \$(XINERAMA_LIB)" >> $CONF
+fi
+
+if [ "$FLTK" = 1 ]; then
+  echo "FLTK_GUI = $TARGET-config-fltk" >> $CONF
+fi
+if [ "$FLU" = 1 ]; then
+  echo "FLU_GUI = $TARGET-config-flu" >> $CONF
+fi
+
+echo ""
+echo ""
+
+
+if [ $OSUNAME = "BSD" ]; then
+  cat  makefile.in | sed s/^\#if/.if/g | sed s/^\#end/.end/g | sed s/^\#include\ mkdepend/".include <mkdepend>"/g  >> makefile
+else
+  cat  makefile.in | sed s/^\#if/if/g | sed s/^\#end/end/g | sed s/^\#include/include/g  >> makefile
+fi
+
 if [ `cat error.txt | wc -l` -lt 1 ]; then
   rm error.txt
 fi
+
+

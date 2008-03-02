@@ -48,10 +48,13 @@ int main(int argc, char** argv)
 
   // standard profiles
   std::cout << "Default Profiles:\n";
-  for(int i = (int)oyranos::oyDEFAULT_PROFILE_START + 1; i < (int)oyranos::oyDEFAULT_PROFILE_END ; ++i) {
-  std::cout <<"  "<< oyGetDefaultProfileUITitle( (oyranos::oyDEFAULT_PROFILE)i )
-         << ": ";
-    char *default_name = oyranos::oyGetDefaultProfileName( (oyranos::oyDEFAULT_PROFILE)i, myAllocFunc );
+  for(int i = (int)oyranos::oyDEFAULT_PROFILE_START + 1;
+        i < (int)oyranos::oyDEFAULT_PROFILE_END ; ++i)
+  {
+    std::cout <<"  "<< oyGetOptionUITitle( (oyranos::oyOPTION)i,0,0,0,0 )
+              <<": ";
+    char *default_name = oyranos::oyGetDefaultProfileName( 
+                           (oyranos::oyDEFAULT_PROFILE)i, myAllocFunc );
     if(default_name)
       std::cout << default_name;
     std::cout << "\n";
@@ -80,7 +83,7 @@ int main(int argc, char** argv)
 
   char *xml = data;
   if( !xml)
-    oyranos::oyPolicyToXML( oyranos::oyGROUP_ALL, 0, myAllocFunc );
+    xml = oyranos::oyPolicyToXML( oyranos::oyGROUP_ALL, 1, myAllocFunc );
 
   if(xml) {
     oyranos::oyReadXMLPolicy(oyranos::oyGROUP_ALL, xml);

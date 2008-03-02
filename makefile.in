@@ -1,29 +1,12 @@
-include config
 
 CC=cc
 CXX=c++
 COLLECT = ar cru
 RANLIB = ranlib
-MAKEDEPEND	= makedepend -Y
 LNK = ln -s
 RM = rm -vf
-ifdef LINUX
-COPY = cp -vdpa
-else
- ifdef APPLE
-  COPY = cp -v
- else
-  COPY = cp
- endif
-endif
 INSTALL = install -v
 RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
-
-ifdef BUILD_64
-  LIB=/lib64
-else
-  LIB=/lib
-endif
 
 exec_prefix	= ${prefix}
 bindir		= ${exec_prefix}/bin
@@ -33,10 +16,6 @@ libdir		= ${prefix}$(LIB)
 mandir		= ${prefix}/man
 srcdir		= .
 colordir        = /usr/share/color
-
-ifdef LINUX
-SO = .so
-endif
 
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)
@@ -50,39 +29,14 @@ LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
 
 DL = --ldflags # --ldstaticflags
-ICONV = -liconv
 
-
-
-ifdef APPLE
-  OPTS=-Wall -O2 -g -fPIC -L.
-  LINK_FLAGS = -dynamiclib
-  MAKEDEPEND	= /usr/X11R6/bin/makedepend -Y
-else
-  SO = .so
-  ifdef LINUX
-    OPTS=-Wall -g -fPIC #-O2
-    LINK_FLAGS = -shared -ldl -fPIC -L.
-    LINK_FLAGS_STATIC = q
-    LINK_NAME = -Wl,-soname -Wl,$(LIBSONAMEFULL)
-    LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAMEFULL)
-    LINK_LIB_PATH = -Wl,--rpath -Wl,$(libdir)
-    LINK_SRC_PATH = -Wl,--rpath -Wl,$(srcdir)
-  else
-    OPTS=-Wall -O2 -g -fpic -L.
-    LINK_FLAGS = -shared -ldl $(ICONV)
-    RM = rm -f
-  endif
-endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
-	$(PNG_H) $(ELEKTRA_H)
+	$(PNG_H) $(ELEKTRA_H) $(X_H)
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
-X11_LIBS=-L/usr/X11R6$(LIB) -lX11 -lXext -lXinerama
-
-#ELEKTRA_LIBS=-lelektra -lelektra_default
+ELEKTRA_LIBS = `test -f /usr$(LIB)/libelektra.a && echo /usr$(LIB)/libelektra.a /usr$(LIB)/libelektra_default.a || echo -lelektra`
 
 
 LDLIBS = -L$(libdir) -L. \
@@ -143,21 +97,13 @@ FLU_OBJECTS = $(CPPFILES_FLU:.cpp=.o) $(CXXFILES_FLU:.cxx=.o) \
 
 INCL_DEP = $(INCL) $(SOURCES)
 
-ifdef APPLE
-REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) mac.r
-endif
-
-timedir = .
-mtime   := $(shell find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g)
+TIMEDIR = ./
+MTIME   := $(shell find $(TIMEDIR) -prune -printf %Ty%Tm%Td.%TT | sed s/\://g)
+MTIME   != find $(TIMEDIR) -prune -printf %Ty%Tm%Td.%TT | sed s/\://g
 
 .SILENT:
 
-ifdef FLTK
-FLTK_GUI = $(TARGET)-config-fltk
-endif
-ifdef FLU
-FLU_GUI = $(TARGET)-config-flu
-endif
+TEST2 = test2
 
 STD_PROFILES = base eci
 
@@ -165,7 +111,7 @@ ALL_FILES = \
 	$(DATA) \
 	$(DOKU) \
 	configure \
-	makefile \
+	makefile.in \
 	$(TARGET).pc.in \
 	$(TARGET)_monitor.pc.in \
 	$(TARGET).spec.in \
@@ -174,8 +120,9 @@ ALL_FILES = \
 	$(FLUID)
 
 # build all what is needed to run the libraries, helpers and the examples
-all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-monitor $(FLU_GUI) \
-	$(FLTK_GUI) test2
+all:	mkdepend $(LIB_MONI_SONAMEFULL) \
+	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
+	$(FLTK_GUI) $(FLU_GUI) $(TEST2)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
@@ -184,63 +131,62 @@ all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-monitor $(FLU_GUI) \
 	done;
 
 # build all objects and libraries, link the headers to $(TARGET)
-$(TARGET):	$(OBJECTS) static
+$(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(LIB) $(LDLIBS)
-	$(REZ)
 	$(RM)  $(LIBSONAME)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
 	$(RM)  $(LIBSO)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSO)
 
 # the monitor library
-$(TARGET)_moni:	$(MONI_OBJECTS) static_moni
+$(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(LIBSONAMEFULL) \
 	-o $(LIB_MONI_SONAMEFULL) \
-	$(MONI_OBJECTS) $(LDLIBS) $(X11_LIBS)
-	$(REZ)
+	$(MONI_OBJECTS) $(X11_LIBS) $(LDLIBS)
 	$(RM)  $(LIB_MONI_SONAME)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
 	$(RM)  $(LIB_MONI_SO)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SO)
 
 $(LIB_XNVCTRL).a:
-	-(cd $(LIB_XNVCTRL) && make)
+	echo Building $@ ...
+	-(cd $(LIB_XNVCTRL) && $(MAKE))
+	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
 # the twinview library
-$(TARGET)-monitor-nvidia:
+$(TARGET)-monitor-nvidia:	$(LIB_XNVCTRL).a
+	echo Linking $@ ...
 	$(CC) $(OPTS) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
-	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIB_MONI_SONAMEFULL)
+	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL)
 
-$(LIB_XNVCTRL):	$(LIB_XNVCTRL).a
-	-make $(TARGET)-monitor-nvidia
+$(target)_config_fltk.o:	$(TARGET)_config_fltk.cxx
+	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c $<
 
 # general configuration tool example
-$(TARGET)-config-fltk:	$(TARGET)_moni $(FLTK_OBJECTS)
+$(TARGET)-config-fltk:	$(FLTK_OBJECTS)
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o $(TARGET)-config-fltk \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
-	$(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS) \
+	$(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS)
 	$(REZ)
 
-$(TARGET)_config_fltk.o:	$(TARGET)_config_fltk.cxx
-	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c $<
 
-$(TARGET)-config-flu:	$(TARGET)_moni $(FLU_OBJECTS)
+$(TARGET)-config-flu:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(FLU_OBJECTS)
 	echo Linking $@ ...
-	$(CXX) $(OPTS) -o $(TARGET)-config-flu \
+	-$(CXX) $(OPTS) -o $(TARGET)-config-flu \
 	$(TARGET)_config_flu.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
-	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS) \
+	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS)
 	$(REZ)
 
 
-$(TARGET)-config-flu-static:	$(TARGET)_moni $(FLU_OBJECTS)
+$(TARGET)-config-flu-static:	$(LIBSONAMEFULL) $(FLU_OBJECTS)
 	echo Linking static $(TARGET)-config-flu ...
 	$(CXX) -Wall -O3 -o $(TARGET)-config-flu $(TARGET)_config_flu.o \
 	$(LIBNAME) $(LIB_MONI_NAME) $(LINK_LIB_PATH) \
@@ -251,48 +197,45 @@ $(TARGET)-config-flu-static:	$(TARGET)_moni $(FLU_OBJECTS)
 	#strip $(TARGET)-config-flu
 	$(REZ)
 
-static:	$(OBJECTS)
+$(LIBNAME):	$(OBJECTS)
 	echo Linking $@ ...
 	$(COLLECT) $(LIBNAME) $(OBJECTS)
 	$(RANLIB) $(LIBNAME)
 
-static_moni:	$(MONI_OBJECTS)
+$(LIB_MONI_NAME):	$(MONI_OBJECTS)
 	echo Linking $@ ...
 	$(COLLECT) $(LIB_MONI_NAME) $(MONI_OBJECTS)
 	$(RANLIB) $(LIB_MONI_NAME)
 
 # the monitor profile tool
-$(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o $(LIB_XNVCTRL)
+$(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) $(OPTS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS)
-	$(REZ)
 
 test2:	$(LIB_MONI_SONAMEFULL) test2.o
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o test2 \
 	test2.o \
 	$(LIB_MONI_SONAMEFULL) $(LINK_SRC_PATH) \
-	$(X11_LIBS) $(LDLIBS) -l$(TARGET)
-	$(REZ)
-test:	$(LIBSONAMEFULL) test.o
+	$(LIBSONAMEFULL) $(LDLIBS) -l$(TARGET)
+test:	test.o
 	$(CC) $(OPTS) -o test \
 	test.o \
 	$(LIBSONAMEFULL) $(LINK_SRC_PATH) \
 	$(LDLIBS) 
-	$(REZ)
 
 doc:
 	echo Documentation ...
-	test -n 'which doxygen' && doxygen Doxyfile
+	test -n 'which doxygen' && doxygen Doxyfile || echo "Will not create Documentation because doxygen is missing"
 	echo ... Documentation done
 
 # the copy part for this directory level
-install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-monitor doc
+install-main:	all doc
 	echo Installing ...
-	-make uninstall
+	-$(MAKE) uninstall
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
@@ -314,7 +257,7 @@ install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-monitor doc
 	$(INSTALL) -m 644 $(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
-	test "$(FLTK_GUI)" && make install_gui || echo -e "GUI not installed"
+	test "$(FLTK_GUI)" && $(MAKE) install_gui || echo -e "GUI not installed"
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(colordir)/settings
 	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(colordir)/settings
@@ -325,19 +268,20 @@ install:	install-main
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
-	         (cd $${prof}; make DESTDIR=$(DESTDIR) install) || \
+	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) install) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
-install_gui:	$(TARGET)-config-flu $(TARGET)-config-fltk
+install_gui:	$(TARGET)-config-fltk
 	echo Installing UI ...
+	-$(MAKE)  $(TARGET)-config-flu 
 	mkdir -p $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config-fltk $(DESTDIR)$(bindir)
 
 # build a source distribution package
 dist: targz
-	test -d ../Archiv && $(COPY) ../Archiv/$(TARGET)-$(mtime).tgz $(TARGET)-$(VERSION).tar.gz || $(COPY) $(TARGET)-$(mtime).tgz $(TARGET)-$(VERSION).tar.gz
+	test -d ../Archiv && $(COPY) ../Archiv/$(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz || $(COPY) $(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz
 
 # build a binary rpm package
 rpm:	dist
@@ -349,7 +293,7 @@ rpm:	dist
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
-	         (cd $${prof}; echo bin in `pwd`; make rpm) || \
+	         (cd $${prof}; echo bin in `pwd`; $(MAKE) rpm) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 	cp -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
@@ -380,7 +324,7 @@ uninstall:
 	(  cd standard_profiles; \
 	   for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
-	         (cd $${prof}; make uninstall) || \
+	         (cd $${prof}; $(MAKE) uninstall) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	   done; \
         ) || echo "no profile directory found"
@@ -395,9 +339,8 @@ clean:
 	$(TARGET)_gamma.o $(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2.o test.o test2 test \
 	$(TARGET)-config-fltk $(FLTK_OBJECTS) \
-	$(TARGET)-config-flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
-	$(TARGET)-config config mkdepend
-	-(cd $(LIB_XNVCTRL) && make clean)
+	$(TARGET)-config-flu $(FLU_OBJECTS)
+	-(cd $(LIB_XNVCTRL) && $(MAKE) clean)
 
 # configure if the file config is not available
 config:
@@ -408,20 +351,13 @@ depend:
 	echo "setting up dependencies ..."
 	echo "MAKEDEPEND_ISUP = 1" > mkdepend
 	$(MAKEDEPEND) -f mkdepend \
-	-s "#dont edit - automatically generated" \
+	-s "# dont edit - automatically generated" \
 	-I. $(INCL_DEP)
 
 
-# The extension to use for executables...
-EXEEXT		= 
-
 # Build commands and filename extensions...
-.SUFFIXES:	.0 .1 .3 .c .cxx .h .fl .man .o .z $(EXEEXT)
+.SUFFIXES:	.0 .1 .3 .c .cxx .h .fl .man .o .z
 
-.o$(EXEEXT):
-	echo Linking $@ ...
-	$(Cc) -I.. $(CFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
-	$(POSTBUILD) $@ ../FL/mac.r
 
 .c.o:
 	echo Compiling $< ...
@@ -439,11 +375,16 @@ EXEEXT		=
 	echo Expanding $< ...
 	fluid -c $<
 
+.po:
+	echo Generating $@ ...
+	msgfmt $<
+
+
 # smallest package covering the current directory
 tgz:
-	make DESTDIR=Entwickeln copy_files
+	$(MAKE) DESTDIR=Entwickeln copy_files
 	tar cf - Entwickeln/ \
-	| gzip > $(TARGET)_$(mtime).tgz
+	| gzip > $(TARGET)_$(MTIME).tgz
 	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
 	test -d Entwickeln && \
 	test `pwd` != `(cd Entwickeln; pwd)` && \
@@ -452,16 +393,16 @@ tgz:
 # build the source package including the subdirectories
 targz:
 	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo -e "\c"
-	make DESTDIR=$(TARGET)-$(VERSION) copy_files
+	$(MAKE) DESTDIR=$(TARGET)-$(VERSION) copy_files
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
 	         mkdir -p ../$(TARGET)-$(VERSION)/standard_profiles/$${prof}; \
-	         (cd $${prof}; echo bin in `pwd`; make DESTDIR=../../$(TARGET)-$(VERSION)/standard_profiles/$${prof} copy) || \
+	         (cd $${prof}; echo bin in `pwd`;  DESTDIR=../../$(TARGET)-$(VERSION)/standard_profiles/$${prof} copy) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 	tar cf - $(TARGET)-$(VERSION)/ \
-	| gzip > $(TARGET)-$(mtime).tgz
+	| gzip > $(TARGET)-$(MTIME).tgz
 	test -d $(TARGET)-$(VERSION) && \
 	test `pwd` != `(cd $(TARGET)-$(VERSION); pwd)` && \
 	$(RM) -R $(TARGET)-$(VERSION)
@@ -474,13 +415,13 @@ copy_files:
 	$(ALL_FILES) \
 	$(DESTDIR)
 	$(COPY) -r settings $(DESTDIR)
-	-(cd $(LIB_XNVCTRL) && make clean)
+	-(cd $(LIB_XNVCTRL) && $(MAKE) clean)
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 
 # mkdepend
-include mkdepend
+#include mkdepend
 
-ifndef MAKEDEPEND_ISUP
+#ifndef MAKEDEPEND_ISUP
 mkdepend: depend
-endif
+#endif
 

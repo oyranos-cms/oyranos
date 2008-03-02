@@ -140,9 +140,9 @@ main(int argc, char** argv)
     if (!system(tempName))
     {
       sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
-      #ifndef __cplusplus
+#     ifndef __cplusplus
       model = oyReadFileToMem_ (tempName, &size);
-      #endif
+#     endif
       memcpy (tempName, model, size); tempName[size] = 0;
       if (model) free (model);
       model = (char*) calloc (strlen(tempName)+1,sizeof(char));
@@ -155,9 +155,9 @@ main(int argc, char** argv)
     if (!system(tempName))
     {
       sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
-      #ifndef __cplusplus
+#     ifndef __cplusplus
       product_ID = oyReadFileToMem_ (tempName, &size);
-      #endif
+#     endif
       memcpy (tempName, product_ID, size); tempName[size] = 0;
       if (product_ID) free (product_ID);
       product_ID = (char*) calloc (strlen(tempName)+1,sizeof(char));

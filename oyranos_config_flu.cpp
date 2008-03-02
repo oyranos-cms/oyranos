@@ -80,7 +80,8 @@ struct DefaultProfile: public Fl_Pack {
     Fl_Pack::spacing(0);
 	type = default_profile_type;
     char *title_text = (char*) new char [256];
-    sprintf(title_text, _("%s Profile"), oyGetDefaultProfileUITitle(type));
+    sprintf( title_text, _("%s Profile"),
+             oyGetOptionUITitle( (oyranos::oyOPTION) type,NULL,NULL,NULL,NULL ) );
     box = new Fl_Box( 0, 0, BOX_WIDTH, 20, title_text );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
@@ -121,7 +122,8 @@ struct DefaultProfile: public Fl_Pack {
     }
     if(occurence > 1)
       WARN_S(("multiple occurencies of default %s profile: %d times",
-               oyGetDefaultProfileUITitle(type), occurence))
+             oyGetOptionUITitle( (oyranos::oyOPTION) type,NULL,NULL,NULL,NULL ),
+             occurence))
 
     DBG_PROG_V((choice->size()))
     #if ( FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 1 && FL_PATCH_VERSION >= 6 )
@@ -230,7 +232,7 @@ selectDefaultProfile_callback( Fl_Widget* w, void* )
         error = oySetDefaultProfile(dp->type, c->text());
       if(error) {
         sprintf(text, "%s %s %s", _("setting"), _("failed!"),
-                oyGetDefaultProfileUITitle(dp->type));
+          oyGetOptionUITitle((oyranos::oyOPTION) dp->type,NULL,NULL,NULL,NULL));
         fl_alert( text );
       }
     } else fl_alert( "no Fl_Choice" );
@@ -346,7 +348,8 @@ void buildPathLeaves()
   Flu_Tree_Browser::Node* n;
 
   char  pn[64];
-  sprintf( pn, "/%s/ ", _("Profile Paths") );
+  const char* tooltip = 0;
+  sprintf( pn, "/%s/ ", oyGetGroupUITitle( oyGROUP_PATHS, &tooltip ) );
   int count = oyPathsCount();
   if(count < 2)
     count = oyPathsCount();
@@ -355,7 +358,7 @@ void buildPathLeaves()
     tree->add( pn, pp );
     pp->end();
   }
-  n = tree->find( _("Profile Paths") );
+  n = tree->find( oyGetGroupUITitle( oyGROUP_PATHS, NULL ) );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
   if( n ) n->branch_icons( 0, 0 );
 }
@@ -386,17 +389,17 @@ void buildOptionsLeaves()
 
   for (int i = oyBEHAVIOUR_START + 1; i < oyBEHAVIOUR_END ; ++i) {
     int choices = 1; // minimum
-    const char* category = 0;
+    const char**choices_string_list = 0;
     const char* label = 0;
-    const char* options = 0;
     const char* tooltip = 0;
     BoxChoiceCombo *bc = new BoxChoiceCombo(0, 0, 300, 20);
     bc->type( FL_HORIZONTAL );
     bc->spacing(0);
     bc->resizable(0);
+    const oyGROUP *categories;
 
-    label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, 0, &choices, &category, &options, &tooltip );
-    bc->box = new Fl_Box( 0, 0, BOX_WIDTH, 20, _(label) );
+    label = oyGetOptionUITitle( (oyOPTION)i, &categories, &choices, &choices_string_list, &tooltip );
+    bc->box = new Fl_Box( 0, 0, BOX_WIDTH, 20, label );
     bc->box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
     
     bc->choice = new Fl_Choice( 0, 0, SELECT_WIDTH, 20 );
@@ -405,32 +408,42 @@ void buildOptionsLeaves()
     choice->user_data( (void*)i );
     DBG_PROG_V((choice->size()))
     for (int j = 0; j < choices; ++j) {
-      label = oyGetBehaviourUITitle( (oyBEHAVIOUR)i, j, &choices, &category, &options, &tooltip );
-      if (label) choice->add( _(options) );
+      if (label) choice->add( choices_string_list[j] );
     }
     if (label) {
-      char leave_name[128];
-      snprintf (leave_name, 128, "/%s/ ", _(category) );
+      char leave_name[128] ={"/"};
+      for( int k = 1; k <= categories[0]; ++k )
+        snprintf( &leave_name[strlen(leave_name)], 128, "%s/", 
+                  oyGetGroupUITitle( categories[k], NULL ) );
+      
+      snprintf( &leave_name[strlen(leave_name)] ,128, " " );
       n = tree->add( leave_name, bc);
+
+      // modify all catogory titles
+      sprintf( leave_name, "/" );
+      for( int k = 1; k <= categories[0]; ++k )
+      {
+        snprintf( &leave_name[strlen(leave_name)], 128, "%s/", 
+                  oyGetGroupUITitle( categories[k], &tooltip ) );
+        if( (n=tree->find( leave_name ) ) != 0 )
+        {
+          n->collapse_icons( &arrow_closed, &arrow_open );
+          n->branch_icons( 0, 0 );
+        }
+      }
+      //if( n ) n->expand_to_width( true );
       choice->value( oyGetBehaviour( (oyBEHAVIOUR)i ) );
       if(tooltip) {
         //std::cout << tooltip << std::endl;
         choice->tooltip(tooltip);
         bc->box->tooltip(tooltip);
       }
-      n = tree->find( _(category) );
-      if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
-      if( n ) n->branch_icons( 0, 0 );
-      //if( n ) n->expand_to_width( true );
     }
     bc->end();
     tooltip = 0;
-    options = 0;
     label = 0;
-    category = 0;
   }
  
-
   tree->collapse_time( 0.2 );
   tree->frame_rate( 60.0 );
   //tree->animate(true);
@@ -460,9 +473,9 @@ int main( int argc, char **argv )
     oy_debug = 1;
 
   FL_NORMAL_SIZE = 12;
-  Fl_Double_Window *win = new Fl_Double_Window( 500, 430, _("Oyranos Colour Management") );
+  Fl_Double_Window *win = new Fl_Double_Window( 525, 430, _("Oyranos Colour Management") );
 
-  tree = new Flu_Tree_Browser( 0, 0, 500, 430 );
+  tree = new Flu_Tree_Browser( 0, 0, 525, 430 );
   tree->allow_dnd( true );
   //tree->when( FL_WHEN_RELEASE );
   //tree->color( FL_GRAY );

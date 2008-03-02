@@ -82,8 +82,8 @@ enum  {
   oyASK,                               /**< popup dialog */
 }; /**< for oyBEHAVIOUR_ACTION */
 
-int         oyGetOption                (oyBEHAVIOUR       type);
-int         oySetOption                (oyBEHAVIOUR       type,
+int         oyGetBehaviour             (oyBEHAVIOUR       type);
+int         oySetBehaviour             (oyBEHAVIOUR       type,
                                         int               choice);
 
 /* --- policies --- */

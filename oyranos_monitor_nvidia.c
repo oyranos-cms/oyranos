@@ -34,12 +34,15 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-#include "limits.h"
+#include <limits.h>
 
+#include "config.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
-#include <X11/extensions/Xinerama.h>
+#if HAVE_XIN
+# include <X11/extensions/Xinerama.h>
+#endif
 
 #include "oyranos.h"
 #include "oyranos_monitor_internal.h"

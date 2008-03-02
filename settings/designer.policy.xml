@@ -1,80 +1,149 @@
-<!--?xml version="1.0" encoding="UTF-8"?   is this valid xml ? -->
+<!--?xml version="1.0" encoding="UTF-8"? -->
 <!-- Oyranos policy format 1.0 -->
 <!-- Standard policy: Designer -->
 
 
-<!-- Standard profileStandard profiles -->
-<oyDEFAULT_PROFILE>
+<oyGROUP_DEFAULT_PROFILES>
+<!-- Default Profiles 
+     Source and Target Profiles for various situations -->
+
+  <!-- Editing Rgb
+       Prefered Rgb Editing Colour Space -->
   <oyEDITING_RGB>LStar-RGB.icc</oyEDITING_RGB>
+
+  <!-- Editing Cmyk
+       Prefered Cmyk Editing Colour Space -->
   <oyEDITING_CMYK>ISOcoated.icc</oyEDITING_CMYK>
+
+  <!-- Editing XYZ
+       Prefered XYZ Editing Colour Space -->
   <oyEDITING_XYZ>LCMSXYZI.ICM</oyEDITING_XYZ>
+
+  <!-- Editing Lab
+       Prefered CIE*Lab Editing Colour Space -->
   <oyEDITING_LAB>LCMSLABI.ICM</oyEDITING_LAB>
-  <oyASSUMED_XYZ>LOGLuvXYZ.icc</oyASSUMED_XYZ>
-  <oyASSUMED_LAB>LCMSLABI.ICM</oyASSUMED_LAB>
-  <oyASSUMED_RGB>sRGB.icc</oyASSUMED_RGB>
-    <!-- the following profile is considered non changeable -->
-  <oyASSUMED_WEB>sRGB.icc</oyASSUMED_WEB>
+
+  <!-- Assumed XYZ source
+       Assigning an untagged XYZ Image an colour space -->
   <oyASSUMED_CMYK>ISOcoated.icc</oyASSUMED_CMYK>
-</oyDEFAULT_PROFILE>
+
+  <!-- Assumed Lab source
+       Assigning an untagged CIE*Lab Image an colour space -->
+  <oyASSUMED_LAB>LCMSLABI.ICM</oyASSUMED_LAB>
+
+  <!-- Assumed Rgb source
+       Assigning an untagged Rgb Image an colour space -->
+  <oyASSUMED_RGB>sRGB.icc</oyASSUMED_RGB>
+
+  <!-- Assumed Web source
+       Assigning an untagged Rgb Image with source from the WWW an colour space -->
+  <oyASSUMED_WEB>sRGB.icc</oyASSUMED_WEB>
+
+  <!-- Assumed Cmyk source
+       Assigning an untagged Cmyk Image this colour space -->
+  <oyASSUMED_CMYK>ISOcoated.icc</oyASSUMED_CMYK>
+
+    <!-- Proofing
+         Colour space for Simulating an Output Device -->
+    <oyPROFILE_PROOF>ISOcoated.icc</oyPROFILE_PROOF>
+
+</oyGROUP_DEFAULT_PROFILES>
 
 
-<!-- Behaviour options -->
-<oyBEHAVIOUR>
+<oyGROUP_BEHAVIOUR_RENDERING>
+<!-- Rendering 
+     The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces -->
 
-<!-- Rendering behaviour -->
+    <!-- Default Rendering Intent
+         Rendering Intent for colour space Transformations.
+     0 Perceptual
+     1 Relative Colorimetric
+     2 Saturation
+     3 Absolute Colorimetric -->
+    <oyBEHAVIOUR_RENDERING_INTENT>1</oyBEHAVIOUR_RENDERING_INTENT>
 
-    <!-- Rendering intent num
-     0 - photometric
-     1 - relative colorimetric
-     2 - saturation
-     3 - absolute colorimetric -->
-  <oyBEHAVIOUR_RENDERING_INTENT>1</oyBEHAVIOUR_RENDERING_INTENT>
+    <!-- Use Black Point Compensation
+         BPC affects only the Relative Colorimetric Rendering Intent.
+     0 No
+     1 Yes -->
+    <oyBEHAVIOUR_RENDERING_BPC>1</oyBEHAVIOUR_RENDERING_BPC>
 
-    <!-- Black Point Compensation bool - affects only  relative colorimetric intent -->
-  <oyBEHAVIOUR_RENDERING_BPC>1</oyBEHAVIOUR_RENDERING_BPC>
-
-    <!-- Rendering intent for proofing  num
-     1 - relative colorimetric
-     3 - absolute colorimetric -->
-  <OY_DEFAULT_RENDERING_INTENT_PROOF>1</OY_DEFAULT_RENDERING_INTENT_PROOF>
+</oyGROUP_BEHAVIOUR_RENDERING>
 
 
-<!-- Document simplicity behaviour -->
+<oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS>
+<!-- Save Mixed colour space Documents 
+     Default Handling of Mixed Colour Spaces inside one single Document -->
 
-    <!-- Save Mixed colour space Documents For Print
-       Prepare a document for Print.
+    <!-- For Print
+         Handle Mixed colour spaces in Preparing a document for Print output.
      0 Preserve Numbers
      1 Convert to Default Cmyk Editing Space
-     2 Convert to untagged Cmyk, preserving Cmyk number
+     2 Convert to untagged Cmyk, preserving Cmyk numbers
      3 Promt -->
-  <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>2</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>
+    <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>2</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>
 
-    <!-- Behaviour/Save Mixed colour space Documents For Screen
-       Prepare a document for Screen.
+    <!-- For Screen
+         Handle Mixed colour spaces in Preparing a document for Screen output.
      0 Preserve Numbers
      1 Convert to Default Rgb Editing Space
      2 Convert to WWW (sRGB)
      3 Promt -->
-  <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN>1</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN>
+    <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN>1</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN>
+
+</oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS>
 
 
-<!-- Automatisation behaviour -->
+<oyGROUP_BEHAVIOUR_MISSMATCH>
+<!-- Missmatching 
+     Decide what to do when the default colour spaces dont match the current ones. -->
 
-    <!-- Image has no profile embedded action
-     0 Assign No Profil
-     1 Assign Assumed Profil
+    <!-- No Image profile
+         Image has no colour space embedded. What default action shall be performed?
+     0 Assign No Profile
+     1 Assign Assumed Profile
      2 Promt -->
-  <oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN>1</oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN>
+    <oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN>1</oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN>
 
-    <!-- Rgb Image profile and Editing profile mismatches.
+    <!-- On Rgb Mismatch
+         Action for Image profile and Editing profile mismatches.
      0 Preserve Numbers
      1 Convert automatically
      2 Promt -->
-  <oyBEHAVIOUR_ACTION_MISMATCH_RGB>1</oyBEHAVIOUR_ACTION_MISMATCH_RGB>
+    <oyBEHAVIOUR_ACTION_MISMATCH_RGB>1</oyBEHAVIOUR_ACTION_MISMATCH_RGB>
 
-    <!-- Cmyk Image profile and Editing profile mismatches.
+    <!-- On Cmyk Mismatch
+         Action for Image profile and Editing profile mismatches.
      0 Preserve Numbers
      1 Convert automatically
      2 Promt -->
-  <oyBEHAVIOUR_RENDERING_INTENT_PROOF>1</oyBEHAVIOUR_RENDERING_INTENT_PROOF>
-</oyBEHAVIOUR>
+    <oyBEHAVIOUR_ACTION_MISMATCH_CMYK>1</oyBEHAVIOUR_ACTION_MISMATCH_CMYK>
+
+</oyGROUP_BEHAVIOUR_MISSMATCH>
+
+
+<oyGROUP_BEHAVIOUR_PROOF>
+<!-- Proofing 
+     Default Proofing Settings -->
+
+    <!-- Proofing Rendering Intent
+         Behaviour of colour space transformation for proofing
+     0 Relative Colorimetric
+     1 Absolute Colorimetric -->
+    <oyBEHAVIOUR_RENDERING_INTENT_PROOF>0</oyBEHAVIOUR_RENDERING_INTENT_PROOF>
+
+    <!-- SoftProof by Default
+         Behaviour for Softproofing view at application startup
+     0 No
+     1 Yes -->
+    <oyBEHAVIOUR_PROOF_SOFT>1</oyBEHAVIOUR_PROOF_SOFT>
+
+    <!-- Hardproof by Default
+         Behaviour for preselecting Hardproofing with Standard Proofing Profile at print time
+     0 No
+     1 Yes -->
+    <oyBEHAVIOUR_PROOF_HARD>1</oyBEHAVIOUR_PROOF_HARD>
+
+</oyGROUP_BEHAVIOUR_PROOF>
+
+
