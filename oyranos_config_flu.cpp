@@ -61,6 +61,14 @@ funcSetDefaultProfile *functions_setDefaultProfile[] = {
 };
 
 
+struct BuildPathLeavesC: public Fl_Button 
+{
+  BuildPathLeavesC() : Fl_Button(0,0,0,0) {;}
+  int handle(int event) { buildPathLeaves(); Fl::pushed(0); return 1; }
+};
+
+static BuildPathLeavesC bPL;
+
 struct DefaultProfile: public Fl_Pack {
   Fl_Box   *box;
   Fl_Choice*choice;
@@ -192,21 +200,15 @@ path_callback( Fl_Widget* w, void* )
     } else 
     if(b && b == pp->button_remove) {
       std::cout << b->value() << std::endl;
+      oy_debug=1;
+      oyPathRemove ( pp->box->label() );
+      oy_debug=0;
+      Fl::pushed(&bPL);
+      
       // Alle Blätter Löschen
       removePathLeaves();
       // Nun ist der Speicherblock für diese Funktion bereits freigegeben
       // und wird aber weiter benutzt
-      oyPathRemove ( pp->box->label() );
-      
-      int i, count = oyPathsCount();
-      bool in = false;
-      for(i = 0; i < count; ++i) {
-        WARN_S(("%s <-> %s",oyPathName(i),pp->box->label()))
-        if(strstr(oyPathName(i),pp->box->label()))
-          in = true;
-      }
-      buildPathLeaves();
-
     } else fl_alert( "no Fl_Button" );
   } else fl_alert( "Path" );
 }

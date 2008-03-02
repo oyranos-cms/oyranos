@@ -889,6 +889,12 @@ oyPathAdd_ (const char* pfad)
   char* value = (char*) calloc (sizeof(char), MAX_PATH);
   int has_local_path = 0, has_global_path = 0;
 
+  /* are we setting a default path? */
+  if (strcmp (pfad, OY_DEFAULT_USER_PROFILE_PATH) == 0)
+    has_local_path = 1;
+  if (strcmp (pfad, OY_DEFAULT_SYSTEM_PROFILE_PATH) == 0)
+    has_global_path = 1;
+
   if(pfad)
     DBG_PROG_S(( pfad ));
 
@@ -901,14 +907,22 @@ oyPathAdd_ (const char* pfad)
   for (current=myKeySet->start; current; current=current->next)
   {
     keyGetString(current, value, MAX_PATH);
+    if(value)
+      DBG_PROG_S(( value ));
     if (strcmp (value, pfad) == 0)
       n++;		
+
+    /* Are the default paths allready there? */
+    if (strcmp (value, OY_DEFAULT_USER_PROFILE_PATH) == 0)
+      has_local_path = 1;
+    if (strcmp (value, OY_DEFAULT_SYSTEM_PROFILE_PATH) == 0)
+      has_global_path = 1;
   }
 
   if (n) printf ("Key was allready %d times there\n",n);
 
   /* erase double occurencies of this path */
-  if (n > 1)
+  if (n)
   { for (current=myKeySet->start; current; current=current->next)
     {
       rc=keyGetString(current,value, MAX_PATH); ERR
@@ -920,37 +934,24 @@ oyPathAdd_ (const char* pfad)
         rc=kdbRemove(keyName); ERR
         n--;
       }
-
-      if (strcmp (value, OY_DEFAULT_USER_PROFILE_PATH) == 0
-       && n)
-      {
-        has_local_path = 1;
-      }
-      if (strcmp (value, OY_DEFAULT_SYSTEM_PROFILE_PATH) == 0
-       && n)
-      {
-        has_global_path = 1;
-      }
     }
+  } else {
+  /* add path */
+    /* search for empty keyname */
+    keyName = oySearchEmptyKeyname_ (OY_USER_PATHS, OY_USER_PATH);
+
+    /* write key */
+    rc = oyAddKey_valueComment_ (keyName, pfad, "");
   }
 
-  /* create new key */
   if (!has_global_path)
   {
-    /* search for empty keyname */
     keyName = oySearchEmptyKeyname_ (OY_USER_PATHS, OY_USER_PATH);
-
-    /* write key */
     rc = oyAddKey_valueComment_ (keyName, OY_DEFAULT_SYSTEM_PROFILE_PATH, "");
   }
-
-  /* create new key */
   if (!has_local_path)
   {
-    /* search for empty keyname */
     keyName = oySearchEmptyKeyname_ (OY_USER_PATHS, OY_USER_PATH);
-
-    /* write key */
     rc = oyAddKey_valueComment_ (keyName, OY_DEFAULT_USER_PROFILE_PATH, "");
   }
 
@@ -993,6 +994,7 @@ oyPathRemove_ (const char* pfad)
 
   ksClose (myKeySet);
 
+  /* after remove blindly add seeing */
   oyPathAdd_ (OY_DEFAULT_USER_PROFILE_PATH);
 
   kdbClose();
