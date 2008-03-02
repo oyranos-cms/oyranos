@@ -77,7 +77,7 @@ struct DefaultProfile: public Fl_Pack {
 	type = default_profile_type;
     char *title_text = (char*) new char [256];
     sprintf(title_text, _("%s Profile"), oyGetDefaultProfileUITitle(type));
-    box = new Fl_Box( 0, 0, 150, 20, title_text );
+    box = new Fl_Box( 0, 0, 210, 20, title_text );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
     choice = new Fl_Choice( 0, 0, 200, 20 );
@@ -86,9 +86,11 @@ struct DefaultProfile: public Fl_Pack {
     choice->add( _("[none]") );
     DBG_PROG_V((choice->size()))
 
-    oyOpen();
     char* default_p = oyGetDefaultProfileName(type, myAllocFunc);
-    DBG_PROG_S( (default_p) )
+    if(default_p) {
+      DBG_PROG_S( (default_p) )
+    } else
+      default_p = "";
     int val = 0, occurence = 0;
     for (i = 0; i < count; ++i)
     {
@@ -106,7 +108,6 @@ struct DefaultProfile: public Fl_Pack {
     if(occurence > 1)
       WARN_S(("multiple ocurence of default %s profile: %d times",
                oyGetDefaultProfileUITitle(type), occurence))
-    oyClose();
 
     DBG_PROG_V((choice->size()))
     #if ( FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 1 && FL_PATCH_VERSION >= 6 )
@@ -201,13 +202,11 @@ selectDefaultProfile_callback( Fl_Widget* w, void* )
     if(c) {
       std::cout << c->value() << c->text() << std::endl;
       char text[64];
-      oyOpen();
       int error = 0;
       if(strcmp(c->text(),_("[none]")) == 0)
         error = oySetDefaultProfile(dp->type,0);
       else
         error = oySetDefaultProfile(dp->type, c->text());
-      oyClose();
       if(error) {
         sprintf(text, "%s %s %s", _("setting"), _("failed!"),
                 oyGetDefaultProfileUITitle(dp->type));
@@ -234,9 +233,7 @@ path_callback( Fl_Widget* w, void* )
     } else 
     if(b && b == pp->button_remove) {
       std::cout << b->value() << std::endl;
-      oy_debug=1;
       oyPathRemove ( pp->box->label() );
-      oy_debug=0;
       Fl::pushed(&bPL);
       
       // Alle Blätter Löschen
@@ -270,7 +267,7 @@ void buildBaseTree()
 void buildDefaultProfilesLeaves()
 {
   char* default_profiles_dirname = _("Default Profiles");
-  size_t count = 0;
+  int count = 0;
   oyranos::oyDEFAULT_PROFILE i;
   /* pick up all profiles */
   char** names = oyProfileList ( 0, &count );
@@ -285,7 +282,7 @@ void buildDefaultProfilesLeaves()
     dp->end();
   }
 
-  for (size_t k = 0; k < count; ++k)
+  for (int k = 0; k < count; ++k)
     if(names[k]) free(names[k]);
   free(names);
 }

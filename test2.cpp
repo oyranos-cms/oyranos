@@ -1,8 +1,11 @@
 #define DEBUG 1
 #include "oyranos_debug.h"
+#include "oyranos.h"
 #include "oyranos_monitor.h"
 #include <fstream>
 #include <iostream>
+
+void* myAllocFunc(size_t size) { return new char [size]; }
 
 int main(void)
 {
@@ -13,8 +16,10 @@ int main(void)
 
   oy_debug = 0;
 
+
   int erg =
-    oyranos::oyGetMonitorInfo ( display_name, &manufacturer, &model, &serial );
+    oyranos::oyGetMonitorInfo ( display_name, &manufacturer, &model, &serial,
+                                myAllocFunc );
 
   if(erg) {
     std::cout << "error while retrieving monitor profile!!\n";
@@ -34,12 +39,22 @@ int main(void)
 
   // now an more simple approach
   char* profil_name =
-    oyranos::oyGetMonitorProfileName (display_name);
+    oyranos::oyGetMonitorProfileName (display_name, myAllocFunc);
   if(profil_name)
     std::cout << profil_name << std::endl;
   else
     std::cout << "no profile found for your monitor" << std::endl;
   if(profil_name) free(profil_name);
 
+  // standard profiles
+  std::cout << "Default Profiles:\n";
+  for(int i = 0; i < (int)oyranos::oyDEFAULT_PROFILE_TYPES ; ++i) {
+  std::cout <<"  "<< oyGetDefaultProfileUITitle( (oyranos::oyDEFAULT_PROFILE)i )
+         << ": ";
+    char *default_name = oyranos::oyGetDefaultProfileName( (oyranos::oyDEFAULT_PROFILE)i, myAllocFunc );
+    if(default_name)
+      std::cout << default_name;
+    std::cout << "\n";
+  }
   return 0;
 }

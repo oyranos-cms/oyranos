@@ -40,11 +40,13 @@ namespace oyranos
 #endif /* __cplusplus */
 
 
-/*
- * hardware detection with X
- * this library part should be independent of the huge windowing system
- */
+/** \addtogroup monitor_api Monitor API
+ *  @brief Hardware detection and profile selection for monitors
 
+ *  @see @ref device_profiles
+
+ *  @{
+ */
 
 /* monitor names */
 
@@ -63,6 +65,7 @@ char* oyGetMonitorProfileName     (const char *display,
 int   oySetMonitorProfile         (const char* display_name,
                                    const char* profil_name );
 int   oyActivateMonitorProfile    (const char* display_name);
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

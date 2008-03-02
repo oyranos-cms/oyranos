@@ -115,7 +115,8 @@ oyGetMonitorInfo_                 (const char* display_name,
 
   DBG_PROG
 
-  XGetWindowProperty(display, w, atom, 0, 32, 0, AnyPropertyType, &a,
+  if(atom)
+    XGetWindowProperty(display, w, atom, 0, 32, 0, AnyPropertyType, &a,
                      &actual_format_return, &nitems_return, &bytes_after_return,
                      &prop_return );
 

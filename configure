@@ -83,17 +83,26 @@ fi
 
 
 
-`pkg-config  --atleast-version=1.14 lcms`
-if [ $? = 0 ] && [ 0 = 1 ]; then
+`pkg-config  --atleast-version=1.14 lcms 2>>error.txt`
+if [ $? = 0 ]; then
   echo "littleCMS `pkg-config --modversion lcms`          detected"
   echo "#define HAVE_LCMS" >> $CONF_H
   echo "LCMS = 1" >> $CONF
   echo "LCMS_H = `pkg-config --cflags lcms`" >> $CONF
   echo "LCMS_LIBS = `pkg-config --libs lcms`" >> $CONF
 else
-  if [ 0 = 1 ]; then
   echo "no or too old LCMS found,\n  need at least version 1.14, download: www.littlecms.com"
-  fi
+fi
+
+`pkg-config  --atleast-version=1.0 libpng 2>>error.txt`
+if [ $? = 0 ]; then
+  echo "PNG `pkg-config --modversion libpng`               detected"
+  echo "#define HAVE_PNG" >> $CONF_H
+  echo "PNG = 1" >> $CONF
+  echo "PNG_H = `pkg-config --cflags libpng`" >> $CONF
+  echo "PNG_LIBS = `pkg-config --libs libpng`" >> $CONF
+else
+  echo "no or too old libpng found,\n  need at least version 1.0, download: www.libpng.org"
 fi
 
 echo "" >> $CONF

@@ -1,20 +1,68 @@
 /**
     @mainpage
-    @author Kai-Uwe Behrmann
-    @date March 2004
+    <h3 align="center">Copyright 2004-2005 &copy; Kai-Uwe Behrmann</h3>
 
-    @section intro Indroduction
+    @section text_contents Descriptive Contents
+    @ref intro |
+    @ref concept |
+    @ref proposal |
+    @ref tools |
+    @ref user |
+    @ref install |
+    @ref links
+
+    @author Kai-Uwe Behrmann
+    @date Project start: March 2004
+
+    <dl compact><dt><b>Internet:</b></dt><dd>http://www.oyranos.org</dd></dl>
+
+    @n@n
+    @section intro Introduction
+  
     Oyranos is intended as a entry point for colour savy applications.
     In its current stage it configures profile paths, sets default profiles, 
-    mapps devices to profiles, sets a monitor profile in X and uploads a vcgt
+    maps devices to profiles, sets a monitor profile in X and uploads a vcgt
     tag. This means for instance all applications using Oyranos will use for
     incoming digital camera picture the same profile and watch it through the
     same monitor profile.
 
+    @section tools Tools Documentation
+    - oyranos-gamma - a commandline tool for calling from a setup script like
+      .xinitrc. It selects a profile for the current monitor and sets up the
+      X server at startup time. Usage:
+    @verbatim
+    # select a monitor profile, load the binary blob into X and fill the
+    # VideoCardGammaTable, if appropriate
+    oyranos-gamma
+    @endverbatim
+    - oyranos_config_flu - a sample application using some of the Oyranos APIs
+
+    @section user User Documentation
+    The basic Oyranos API gets included with oyranos.h. An application, which
+    wants to use these functions, needs to link against oyranos and elektra.
+    - @ref device_profiles - profiles which characterise devices
+    - @ref default_profiles - get and set commonly used profiles; part of user policies
+    - @ref path_names  - get information about configured and used profile search paths 
+    - @ref profile_lists - provides the search path content as profile lists for your GUI
+    - @ref profile_handling - file I/O and more
+
+    The monitor related API is contained in oyranos_monitor.h. Linkage on Linux
+    needs X11. Therefore this library part is separated from the main one. 
+    - @ref monitor_api - monitor profile configuration
+
+    The key names, which Oyranos uses to store its configuration in an elektra
+    file tree, are defined in oyranos_definitions.h.
+    <br>
+
+ */
+
+/** @page concept_1.0 Concept for 1.0
 
     @section concept Concept
     The here described concepts are targeted until version 1.0 of Oyranos.
     They are intended to make the API consistent and its usage predictable.
+    A additional page shall describe the behaviour of Oyranos, default settings
+    and recommendations to developers who like to interact with the system.
 
     @subsection os_concept Interoperatibility on Operating Systems
     - Oyranos is intended to work on at least Linux, osX and (hopefully) Windows
@@ -25,35 +73,43 @@
 
     @subsection path_concept Paths Configuration
     - Paths are scanned secursively avoiding links for security reasons.
-    - Paths counts allways, to aim consistency. There are no exceptions.
+    - Paths count allways, to aim consistency. There are no exceptions.
 
     @subsection general_concept Personality
-    - Users can configure their own settings, while administrators can
+    - Users configure their own settings, while administrators 
       configure system wide settings.
+    - User settings have priority over system settings
+    - All settings, called policy as a whole, shall be saveable and recoverable.
 
     @subsection memory_concept Memory Handling
-    - For strings constant pointers to chars are the prefered way (utf8?)
-    - For the need of allocating unknown sizes of memory a function is passed
-      by the user allocation the memory. The returned block goes into the
+    - For strings, constant pointers to chars are the prefered form (utf8?)
+    - For the need of allocating unknown sizes of memory, a function is passed
+      by the user allocating the memory. The returned block goes into the
       responsibility of the user.
-    - Library allocated memory blocks like profile lists can be freed with
-      a Oyranos provided function.
+    - More complex library allocated memory blocks, like profile name lists,
+      can be freed with a Oyranos provided function.
 
     @subsection information_concept Information Exchange
     - Functions are needed which show useful informations for GUIs, about the
       content in the Profiles and about possible errors.
+    - Some descriptors are provided as static strings, and may help keeping 
+      the user interface consistent throughout toolkits. (translation?)
     - A callback mechanism informs about changes regarding the configuration.
     - Special informations like for instance about the display geometry are not
-      planed so far.
-    - Some names are provided as static strings and may help to design a
-      consistent user interface throughout toolkits.
+      planed so far. You query monitor profiles by screen name not by geometry.
 
     @subsection special_concept Special Considerations
     - It should be easy to query Oyranos for certain informations contained in a
-      Profile like primaries or gamma.
+      profile like primaries, gamma or profile type.
     - To some degree useablity checks for profiles should be included.
 
+    @subsection device_configuration Devices Configuration
+    - A text parser should allow to distinguish the same profile for multiple
+      devices and vice versa.
 
+ */
+
+/** @page proposal Proposal
     @section proposal Proposals
     @subsection identity_proposal Profile Identity Proposal
     One major benefit if a configuration system is the ashurance to use the
@@ -81,7 +137,35 @@
     The goal herein is to give the user the freedom of choice and the security
     regarding quality.
 
- 
+    More proposals and ideas can be found on http://www.behrmann.name in the
+    Oyranos section.
+ */
+
+/** @page requirements_1.0 Release 1.0 Requirements
+
+    Oyranos version 1.0 is about a configuration library only. The conceptual 
+    explanations in @ref concept are about all to solve for
+    Oyranos 1.0 .
+
+    Date: unknown
+
+    OS: Linux , osX , Windows (obligate)
+
+    the Concept page is about to solve for 1.0
+
+    More:
+    <ul>
+    <li>add OY_DEFAULT_WORKSPACE_RGB_PROFILE</li>
+    <li>more preferences like described in OpenICC email of Jan-Peter Homann
+        Subject : Re: [OpenICC] Oyranos APIs update  15.09.05 </li>
+    <li></li>
+    <li></li>
+    <li></li>
+
+ */
+
+/** @page install_current Installation
+
     @section install Installation
     Oyranos depends on following libraries:<br>
 
@@ -102,12 +186,18 @@
     #configure.sh --prefix /what/you/like<br>
     #make<br>
     #make install   (optionally)<br>
- 
-    <br>
-
-
  */
 
+/** @page links References
+    @section links Links
+    - cross platform colour information exchange standard, called ICC - http://www.color.org
+    - Elektra, configuration engine used on Linux - http://elektra.sf.net
+    - Xcalib is vcgt to window server uploader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
+    - Oyranos related applications, proposals and links -
+      http://www.behrmann.name
+    - _ICC_PROFILE spec at http://www.burtonini.com/computing/x-icc-profiles-spec-0.1.html, for an Xatom to communicate profiles over X
+    - Discussions about an Linux CMS happen at http://lists.freedesktop.org/mailman/listinfo/openicc
+ */
 
 /** @file oyranos.h
     @brief The API header to include in your application.
@@ -130,7 +220,7 @@
     @brief The Monitor API header to include in your application.
     
     This file contains all functions and structs available in the Oyranos Monitor API.
-    @see oyranos_definitions.h for further macrosh
+    @see oyranos_definitions.h for elektra macros
     @see oyranos.h for the Oyranos API
 */
 

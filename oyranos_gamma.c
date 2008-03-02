@@ -39,9 +39,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+void* oyAllocFunc(size_t size) {return malloc (size);}
+
 int main( int argc , char** argv )
 {
-  oy_debug = 0;
+  oy_debug = 1;
   char *display_name = getenv("DISPLAY");
   char *monitor_profile = 0;
   int error = 0;
@@ -52,16 +54,20 @@ int main( int argc , char** argv )
     if(oy_debug) printf( "%s\n", argv[1] );
     oySetMonitorProfile (display_name, monitor_profile);
   } else {
-    oy_debug = 1;
     monitor_profile = oyGetMonitorProfileName (display_name, oyAllocateFunc_);
-    oy_debug = 0;
   }
 
   /* check the default paths */
-  oyPathAdd( OY_DEFAULT_USER_PROFILE_PATH );
+  oyPathAdd( OY_PROFILE_PATH_USER_DEFAULT );
 
   if( monitor_profile )
     error = oyActivateMonitorProfile (display_name);
+
+  if(oy_debug) {
+    size_t size = 0;
+    oyGetMonitorProfile(display_name, &size, oyAllocFunc);
+    printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,size);
+  }
 
   return error;
 }

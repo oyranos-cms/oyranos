@@ -65,7 +65,7 @@ else
   endif
 endif
 
-INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir)
+INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) -I$(PNG_H)
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
@@ -75,7 +75,7 @@ ELEKTRA_LIBS=-lelektra -lelektra_default
 
 
 LDLIBS = -L$(libdir) -L. \
-	$(ELEKTRA_LIBS) -ldl -lc #-llcms $(FLTK_LIBS) $(FLU_LIBS)
+	$(ELEKTRA_LIBS) -ldl -lc $(PNG_LIBS) #-llcms $(FLTK_LIBS) $(FLU_LIBS)
 
 
 CPP_HEADERS = \

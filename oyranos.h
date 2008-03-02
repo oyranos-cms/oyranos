@@ -46,7 +46,11 @@ namespace oyranos
 /**
  * @param[in] size the size to allocate
  *
- * Place here your allocator, like: \code new char [size]; \endcode<br>
+ * Place here your allocator, like: \code
+   void* myAllocFunc (size_t size)
+   { return new char [size];
+   }
+ * \endcode<br>
  */
 typedef void* (*oyAllocFunc_t)         (size_t size);
 
@@ -74,14 +78,16 @@ char* oyGetPathFromProfileName         (const char* profile_name,
 
 /* --- default profiles --- */
 
-/* enum Default Profiles */
+/** enum Default Profiles
+ */
 typedef enum  {
-  oyWORKSPACE,            /**< Workspace Profile or Editing Profile */
-  oyINPUT_XYZ,            /**< standard XYZ input profile */
-  oyINPUT_Lab,            /**< standard Lab input profile */
-  oyINPUT_RGB,            /**< standard RGB input profile */
-  oyINPUT_Cmyk,           /**< standard Cmyk input profile */
-  oyDEFAULT_PROFILE_TYPES /**< just for easen Gui design */
+  oyEDITING_RGB,            /**< Rgb Editing (Workspace) Profile */
+  oyEDITING_CMYK,           /**< Cmyk Editing (Workspace) Profile */
+  oyASSUMED_XYZ,            /**< standard XYZ assumed source profile */
+  oyASSUMED_LAB,            /**< standard Lab assumed source profile */
+  oyASSUMED_RGB,            /**< standard RGB assumed source profile */
+  oyASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
+  oyDEFAULT_PROFILE_TYPES   /**< just for easen Gui design */
 } oyDEFAULT_PROFILE;
 
 int         oySetDefaultProfile        (oyDEFAULT_PROFILE type,
@@ -97,13 +103,15 @@ char*       oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
 
 /* --- profile lists --- */
 
-char**oyProfileList                    (const char* colourspace, size_t * size);
-void  oyProfileListFree                (char** list, size_t size);
+char**oyProfileList                    (const char* coloursig, int * size);
+void  oyProfileListFree                (char** list, int size);
 
 /* --- profile checking --- */
 
-int   oyCheckProfile                   (const char* name, int flag);
-int   oyCheckProfileMem                (const void* mem, size_t size, int flags);
+int   oyCheckProfile                   (const char* name,
+                                        const char* coloursig);
+int   oyCheckProfileMem                (const void* mem, size_t size,
+                                        const char* coloursig);
 
 
 /* --- profile access through oyranos --- */
