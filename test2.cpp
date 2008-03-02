@@ -11,7 +11,7 @@ int main(void)
              *serial=0;
   const char *display_name=0;
 
-  oy_debug = 1;
+  oy_debug = 0;
 
   int erg =
     oyranos::oyGetMonitorInfo ( display_name, &manufacturer, &model, &serial );
@@ -38,7 +38,7 @@ int main(void)
   if(profil_name)
     std::cout << profil_name << std::endl;
   else
-    std::cout << "no profile found for Your monitor" << std::endl;
+    std::cout << "no profile found for your monitor" << std::endl;
   if(profil_name) free(profil_name);
 
   return 0;

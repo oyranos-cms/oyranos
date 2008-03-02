@@ -32,14 +32,20 @@
 /* Date:      03. 02. 2005 */
 
 
+#include "oyranos.h"
 #include "oyranos_monitor.h"
+#include "oyranos_debug.h"
 #include <stdlib.h>
 
 int main(void)
 {
+  oy_debug = 0;
   char *display_name = getenv("DISPLAY");
   char *monitor_profile = oyGetMonitorProfileName (display_name);
   int error = 0;
+
+  /* check the default paths */
+  oyPathAdd( OY_DEFAULT_USER_PROFILE_PATH );
 
   if( monitor_profile )
     error = oyActivateMonitorProfile (display_name, monitor_profile);

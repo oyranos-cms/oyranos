@@ -50,7 +50,9 @@ int   oyGetMonitorInfo            (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial);
-char* oyGetMonitorProfileName     (const char* display);
+char* oyGetMonitorProfile         (const char *display,
+                                   size_t     *size);
+char* oyGetMonitorProfileName     (const char *display);
 
 int   oySetMonitorProfile         (const char* display_name,
                                    const char* profil_name );

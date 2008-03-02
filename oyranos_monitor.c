@@ -34,6 +34,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include "limits.h"
 
 #include "oyranos.h"
 #include "oyranos_helper.h"
@@ -42,6 +43,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/Xatom.h>
 
 /* ---  Helpers  --- */
 
@@ -51,7 +53,9 @@ int   oyGetMonitorInfo_           (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial);
-char* oyGetMonitorProfileName_    (const char* display_name);
+char* oyGetMonitorProfileName_    (const char *display_name);
+char* oyGetMonitorProfile_        (const char *display_name,
+                                   size_t     *size);
 
 int   oyActivateMonitorProfile_   (const char* display_name,
                                    const char* profile_name);
@@ -119,7 +123,7 @@ oyGetMonitorInfo_                 (const char* display_name,
     return 1;
   }
 
-  // convert to an deployable struct
+  /* convert to an deployable struct */
   edi = (struct DDC_EDID1*) prop_return;
 
   *manufacturer = edi->Mnf_Model;
@@ -135,7 +139,7 @@ oyGetMonitorInfo_                 (const char* display_name,
     DBG_PROG_S(( *model ));
   if(*serial)
     DBG_PROG_S(( *serial ));
-  // allocate new memory to release the supplied ID block
+  /* allocate new memory to release the supplied ID block */
   len = strlen(edi->Mnf_Model); DBG_PROG_V((len))
   if(len) { DBG_PROG
     ++len;
@@ -162,6 +166,52 @@ oyGetMonitorInfo_                 (const char* display_name,
 }
 
 char*
+oyGetMonitorProfile_          (const char* display_name, size_t *size)
+{ DBG_PROG_START
+
+  Display *display;
+  int screen = 0;
+  Window w;
+  Atom atom, a;
+  int actual_format_return;
+  unsigned long nitems_return=0, bytes_after_return=0;
+  unsigned char* prop_return=0;
+
+  char       *moni_profile=0;
+
+  if(display_name)
+    DBG_PROG_S(("display_name %s",display_name));
+
+  if( !(display = XOpenDisplay (display_name))) {
+    WARN_S((_("open X Display failed")))
+    *size = 0;
+    DBG_PROG_ENDE
+    return 0;
+  }
+
+  screen = DefaultScreen(display); DBG_PROG_V((screen))
+  w = RootWindow(display, screen); DBG_PROG_S(("w: %ld", w))
+  DBG_PROG 
+  atom = XInternAtom(display, "_ICC_PROFILE", 1);
+  DBG_PROG_S(("atom: %ld", atom))
+
+  DBG_PROG
+
+  if(atom)
+    XGetWindowProperty(display, w, atom, 0, INT_MAX, 0, XA_CARDINAL, &a,
+                     &actual_format_return, &nitems_return, &bytes_after_return,
+                     &prop_return );
+
+  XCloseDisplay(display);
+
+  *size = nitems_return + bytes_after_return;
+  moni_profile = prop_return;
+
+  DBG_PROG_ENDE
+  return moni_profile;
+}
+
+char*
 oyGetMonitorProfileName_          (const char* display_name)
 { DBG_PROG_START
 
@@ -176,7 +226,9 @@ oyGetMonitorProfileName_          (const char* display_name)
   host_name = oyLongDisplayName_ (display_name);
 
 
-  /* search the profile in the database */
+  /* search the profile in the local database */
+  /* It's not network transparent. */
+  /* If working remotely, better fetch the whole profile instead. */
   moni_profile = oyGetDeviceProfile( oyDISPLAY, manufacturer, model, serial,
                                      host_name, 0,0,0,0);
 
@@ -203,7 +255,7 @@ oyActivateMonitorProfile_         (const char* display_name,
   profil_pathname = oyGetPathFromProfileName( profil_name );
   DBG_PROG_S(( "profil_pathname %s", profil_pathname ))
 
-  if( profil_pathname ) {
+  if( profil_pathname && strlen(profil_pathname) ) {
     char *text = (char*) calloc (MAX_PATH, sizeof(char));
     if(strrchr(profil_name,OY_SLASH_C))
       profil_basename = strrchr(profil_name,OY_SLASH_C)+1;
@@ -220,12 +272,47 @@ oyActivateMonitorProfile_         (const char* display_name,
 
     DBG_PROG_S(( "system: %s", text ))
 
-    /* set _ICC_PROFILE atom in X with xicc */
-    sprintf(text,"xicc %s %s%s%s", display_name,
-                               profil_pathname, OY_SLASH, profil_basename);
-    error = system(text);
-    if(error) {
-      WARN_S((_("Error while setting X monitor property")))
+    /* set _ICC_PROFILE atom in X like with xicc */
+    {
+      Display *display;
+      Atom atom;
+      int screen = 0;
+      Window w;
+
+      char       *moni_profile=0;
+      size_t      size=0;
+
+      if(display_name)
+        DBG_PROG_S(("display_name %s",display_name));
+
+      if( !(display = XOpenDisplay (display_name))) {
+        WARN_S((_("open X Display failed")))
+      }
+
+      /* TODO: multi screen */
+      screen = DefaultScreen(display); DBG_PROG_V((screen))
+      w = RootWindow(display, screen); DBG_PROG_S(("w: %ld", w))
+
+      moni_profile = oyGetProfileBlock( profil_name, &size );
+      if(!size || !moni_profile)
+        WARN_S((_("Error obtaining profile")));
+
+      atom = XInternAtom (display, "_ICC_PROFILE", False);
+      if (atom == None) {
+        WARN_S((_("Error setting up atom \"_ICC_PROFILE\"")));
+      }
+
+      XChangeProperty( display, w, atom, XA_CARDINAL,
+                       8, PropModeReplace, moni_profile, (int)size );
+
+      XCloseDisplay(display);
+
+      if(moni_profile) free(moni_profile);
+      moni_profile = 0;
+
+      if(error) {
+        WARN_S((_("Error while setting X monitor property")))
+      }
     }
 
     DBG_PROG_S(( "system: %s", text ))
@@ -260,7 +347,7 @@ oySetMonitorProfile_              (const char* display_name,
   }
 
   DBG_PROG_S(( "profil_name = %s", profil_name ))
-  
+
   error =  oySetDeviceProfile(oyDISPLAY, manufacturer, model, serial,
                               host_name,0,0,0,0,profil_name,0,0);
 
@@ -272,6 +359,7 @@ oySetMonitorProfile_              (const char* display_name,
   }
 
   if (profil_pathname) free (profil_pathname);
+  if (host_name) free (host_name);
 
   DBG_PROG_ENDE
   return error;
@@ -328,6 +416,17 @@ oyGetMonitorInfo                  (const char* display,
 
   DBG_PROG_ENDE
   return err;
+}
+
+char*
+oyGetMonitorProfile           (const char* display, size_t *size)
+{ DBG_PROG_START
+  char* moni_profile = 0;
+
+  moni_profile = oyGetMonitorProfile_( display , size );
+
+  DBG_PROG_ENDE
+  return moni_profile;
 }
 
 char*

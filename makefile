@@ -51,7 +51,7 @@ ifdef APPLE
 else
   SO = .so
   ifdef LINUX
-    OPTS=-Wall -O2 -g
+    OPTS=-Wall -g #-O2
     LINK_FLAGS = -shared -ldl -L.
     LINK_FLAGS_STATIC = q
     LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)

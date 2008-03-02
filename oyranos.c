@@ -119,10 +119,10 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
                                            const char* attrib2,
                                            const char* attrib3);
 
-void oyOpen  (void) { oyOpen_(); }
-void oyClose (void) { oyClose_(); }
 void oyOpen_ (void) { kdbOpen(); }
 void oyClose_(void) { kdbClose(); }
+void oyOpen  (void) { oyOpen_(); }
+void oyClose (void) { oyClose_(); }
 
 
 /* elektra key wrappers */
@@ -196,6 +196,11 @@ oyComp* oyGetDeviceProfile_sList          (const char* manufacturer,
 /* small helpers */
 #define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
 
+  /* ksNext uses the same entry twice in a 1 component KeySet, we avoid this */
+#define FOR_EACH_IN_KDBKEYSET( current, list ) \
+   ksRewind( list );  \
+   for( current = ksNext( list ); current; current = ksNext( list )  )
+
 /* --- function definitions --- */
 
 KeySet*
@@ -203,10 +208,10 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
 { DBG_PROG_START
   KeySet *myKeySet;
   myKeySet = ksNew();
-  ksInit(myKeySet);
+  //ksInit(myKeySet);
   DBG_PROG_V(( (int)keyParentName ))
   DBG_PROG_S(( keyParentName ))
-  *rc = kdbGetChildKeys( keyParentName, myKeySet, KDB_O_RECURSIVE| KDB_O_SORT );
+  *rc = kdbGetChildKeys( keyParentName, myKeySet, KDB_O_RECURSIVE | KDB_O_SORT);
   DBG_PROG_V(( ksGetSize(myKeySet) ))
 
   DBG_PROG_ENDE
@@ -219,10 +224,10 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
   char* keyName = (char*)     calloc (strlen(keyParentName)
                                     + strlen(keyBaseName) + 24, sizeof(char));
   char* pathkeyName = (char*) calloc (strlen(keyBaseName) + 24, sizeof(char));
-  int nth = 0, i = 1, rc;
+  int nth = 0, i = 1, rc=0;
   Key *key;
 
-  key = keyNew("");
+  key = keyNew(keyBaseName);
 
   if(keyParentName)
     DBG_PROG_S((keyParentName))
@@ -251,7 +256,7 @@ oyAddKey_valueComment_ (const char* keyName,
                         const char* value,
                         const char* comment)
 { DBG_PROG_START
-  int rc;
+  int rc=0;
   Key *key;
 
   if (keyName)
@@ -276,7 +281,7 @@ oyAddKey_valueComment_ (const char* keyName,
 int
 oyAddKey_value_ (const char* keyName, const char* value)
 { DBG_PROG_START
-  int rc;
+  int rc=0;
   Key *key;
 
     key=keyNew(keyName);
@@ -694,6 +699,7 @@ oyGetPathFromProfileName_ (const char* fileName)
           i;
 
     DBG_PROG_S(("pure filename found"))
+    DBG_PROG_S(("n_paths = %d", n_paths ))
     fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
 
     for (i = 0; i < n_paths; i++)
@@ -703,7 +709,7 @@ oyGetPathFromProfileName_ (const char* fileName)
       sprintf (fullFileName, "%s%s%s", pathName, OY_SLASH, fileName);
 
       DBG_PROG_S((pathName))
-      //DBG_PROG_S((fullFileName))
+      DBG_PROG_S((fullFileName))
 
       if (oyIsFileFull_(fullFileName))
       { DBG_PROG
@@ -828,7 +834,7 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
         list = oyReturnChildrenList_(OY_USER OY_KEY OY_SLASH "default", &rc ); ERR
         if(!list)
         {
-          for (current=ksHead(list); current; current=ksNext(list))
+          FOR_EACH_IN_KDBKEYSET( current, list )
           {
             keyGetName(current, value, MAX_PATH);
             DBG_NUM_S(( value ))
@@ -864,7 +870,7 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
 int
 oyPathsCount_ ()
 { DBG_PROG_START
-  int rc, n = 0;
+  int rc=0, n = 0;
   kdbOpen();
 
   /* take all keys in the paths directory */
@@ -876,10 +882,8 @@ oyPathsCount_ ()
     return n;
   }
 
-  if(!rc)
+  //if(!rc)
     n = ksGetSize(myKeySet);
-  /*if(n < 2)
-    oyPathAdd_(OY_DEFAULT_USER_PROFILE_PATH);*/
 
   ksClose (myKeySet);
   kdbClose();
@@ -892,7 +896,7 @@ oyPathsCount_ ()
 char*
 oyPathName_ (int number)
 { DBG_PROG_START
-  int rc, n = 0;
+  int rc=0, n = 0;
   Key *current;
   char* value;
 
@@ -910,7 +914,7 @@ oyPathName_ (int number)
   value = (char*) calloc (sizeof(char), MAX_PATH);
 
   if (number <= ksGetSize(myKeySet))
-    for (current=ksHead(myKeySet); current; current=ksNext(myKeySet))
+    FOR_EACH_IN_KDBKEYSET( current, myKeySet )
     {
       if (number == n) {
         keyGetComment (current, value, MAX_PATH);
@@ -932,7 +936,7 @@ int
 oyPathAdd_ (const char* pfad)
 {
   DBG_PROG_START
-  int rc, n = 0;
+  int rc=0, n = 0;
   Key *current;
   char* keyName = 0;
   char* value = 0;
@@ -958,40 +962,44 @@ oyPathAdd_ (const char* pfad)
   value = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* search for allready included path */
-  for (current=ksHead(myKeySet); current; current=ksNext(myKeySet))
+  DBG_PROG_S(( "path items: %d", ksGetSize(myKeySet) ))
+  FOR_EACH_IN_KDBKEYSET( current, myKeySet )
   {
     keyGetString(current, value, MAX_PATH);
-    if(value)
-      DBG_PROG_S(( value ));
-    if (strcmp (value, pfad) == 0)
-      ++n;		
+    keyGetFullName(current, keyName, MAX_PATH);
+    if (value) DBG_PROG_S(( value ));
+    if (strstr (value, pfad) != 0) {
+      ++n;
+      DBG_PROG_S(( "occurency: %d %s %s", n, pfad, keyName ));
+    }
 
     /* Are the default paths allready there? */
-    if (strcmp (value, OY_DEFAULT_USER_PROFILE_PATH) == 0)
-      has_local_path = 1;
-    if (strcmp (value, OY_DEFAULT_SYSTEM_PROFILE_PATH) == 0)
-      has_global_path = 1;
+    if (strcmp(value, OY_DEFAULT_USER_PROFILE_PATH) == 0) has_local_path = 1;
+    if (strcmp(value, OY_DEFAULT_SYSTEM_PROFILE_PATH) == 0) has_global_path = 1;
   }
 
-  if (n) printf ("Key was allready %d times there\n",n);
+  if (n) DBG_PROG_S(("Key %s was allready %d times there\n", pfad, n));
 
   /* erase double occurencies of this path */
   if (n > 1)
   {
-    for (current=ksHead(myKeySet); current; current=ksNext(myKeySet))
+    FOR_EACH_IN_KDBKEYSET( current, myKeySet )
     {
       rc=keyGetString(current,value, MAX_PATH); ERR
 
-      if (strcmp (value, pfad) == 0
-       && n)
+      if (strcmp (value, pfad) == 0 &&
+          n)
       {
         rc=keyGetFullName(current,keyName, MAX_PATH); ERR
         rc=kdbRemove(keyName); ERR
+        DBG_PROG_S(( "erase path key : %s %s", pfad, keyName ));
         n--;
       }
     }
   } else if (!n) {
   /* add path */
+    DBG_PROG_S(( "path will be added: %s", pfad ));
+
     /* search for empty keyname */
     keyName = oySearchEmptyKeyname_ (OY_USER_PATHS, OY_USER_PATH);
 
@@ -1027,7 +1035,7 @@ oyPathAdd_ (const char* pfad)
 void
 oyPathRemove_ (const char* pfad)
 { DBG_PROG_START
-  int rc;
+  int rc=0;
   Key *current;
   char* value;
   char* keyName;
@@ -1048,7 +1056,7 @@ oyPathRemove_ (const char* pfad)
   keyName = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* compare and erase if matches */
-  for (current=ksHead(myKeySet); current; current=ksNext(myKeySet))
+  FOR_EACH_IN_KDBKEYSET( current, myKeySet )
   {
     keyGetString(current, value, MAX_PATH);
     if (strcmp (value, pfad) == 0)
@@ -1076,7 +1084,7 @@ oyPathRemove_ (const char* pfad)
 void
 oyPathSleep_ (const char* pfad)
 { DBG_PROG_START
-  int rc;
+  int rc=0;
   Key *current;
   char* value;
 
@@ -1094,7 +1102,7 @@ oyPathSleep_ (const char* pfad)
   value = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* set "SLEEP" in comment */
-  for (current=ksHead(myKeySet); current; current=ksNext(myKeySet))
+  FOR_EACH_IN_KDBKEYSET( current, myKeySet )
   {
     keyGetString(current, value, MAX_PATH);
     if (strcmp (value, pfad) == 0)
@@ -1115,7 +1123,7 @@ oyPathSleep_ (const char* pfad)
 void
 oyPathActivate_ (const char* pfad)
 { DBG_PROG_START
-  int rc;
+  int rc=0;
   Key *current;
   char* value;
 
@@ -1133,7 +1141,7 @@ oyPathActivate_ (const char* pfad)
   value = (char*) calloc (sizeof(char), MAX_PATH);
 
   /* erase "SLEEP" from comment */
-  for (current=ksHead(myKeySet); current; current=ksNext(myKeySet))
+  FOR_EACH_IN_KDBKEYSET( current, myKeySet )
   {
     keyGetString(current, value, MAX_PATH);
     if (strcmp (value, pfad) == 0)
@@ -1495,39 +1503,43 @@ oySetProfile_Block (const char* name, void* mem, size_t size, const char* typ,
 /* small search engine */
 
 oyComp*
-oyInitComp_ (oyComp *compare, oyComp *top)
+oyInitComp_ (oyComp *list, oyComp *top)
 { DBG_PROG_START
-  if (!compare)
-    compare = (oyComp*) calloc (1, sizeof(oyComp));
+  if (!list)
+    list = (oyComp*) calloc (1, sizeof(oyComp));
 
-  compare->next = 0;
+  list->next = 0;
 
   if (top)
-    compare->begin = top;
+    list->begin = top;
   else
-    compare->begin = compare;
-  compare->name = 0;
-  compare->val = 0;
-  compare->hits = 0;
+    list->begin = list;
+  list->name = 0;
+  list->val = 0;
+  list->hits = 0;
   DBG_PROG_ENDE
-  return compare;
+  return list;
 }
 
 oyComp*
 oyAppendComp_ (oyComp *list, oyComp *new)
 { DBG_PROG_START
 
-  if (!list)
+  /* no list yet => first and only entry */
+  if (!list) {
     list = oyInitComp_(list,0);
+    DBG_PROG_ENDE
+    return list;
+  }
 
   list = list->begin;
   while (list->next)
     list = list->next;
 
+  /* no new => add */
   if (!new)
     new = oyInitComp_(new, list->begin);
 
-  new->begin = list->begin;
   list->next = new;
 
   DBG_PROG_ENDE
@@ -1590,7 +1602,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
 { DBG_PROG_START
   DBG_PROG
   char* profileName = 0;
-  int rc;
+  int rc=0;
 
   oyComp *matchList = 0,
          *testEntry = 0,
@@ -1621,9 +1633,12 @@ oyGetDeviceProfile_                (const char* manufacturer,
   if (matchList)
   {
     int max_hits = 0;
+    int count = 0;
     foundEntry = 0;
+    DBG_PROG_S(( "matchList->begin->next: %d\n", (int)matchList->begin->next ))
     for (testEntry=matchList->begin; testEntry; testEntry=testEntry->next)
     {
+      DBG_PROG_S(( "testEntry %d count: %d\n", (int)testEntry, count++ ))
       if (testEntry->hits > max_hits)
       {
         foundEntry = testEntry;
@@ -1633,10 +1648,14 @@ oyGetDeviceProfile_                (const char* manufacturer,
     if(foundEntry) DBG_PROG_S ((printComp (foundEntry)))
 
     /* 7. tell about the profile and its hits */
+    if(foundEntry)
     {
       char *fileName = 0;
-
-      if (strrchr(foundEntry->name , OY_SLASH_C))
+      if (foundEntry->name)
+        printf("%s\n",foundEntry->name);
+      if (foundEntry->name &&
+          strlen(foundEntry->name) &&
+          strrchr(foundEntry->name , OY_SLASH_C))
       {
         fileName = strrchr(foundEntry->name , OY_SLASH_C);
         fileName++;
@@ -1786,13 +1805,12 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
 
   /* 1. take all arguments and walk through the named devices list */
   int i = 0, n = 0;
-  char* name  = (char*) alloca (MAX_PATH * sizeof(char));
-  char* value = (char*) alloca (MAX_PATH * sizeof(char));
+  char* name  = (char*) calloc (MAX_PATH, sizeof(char));
+  char* value = (char*) calloc (MAX_PATH, sizeof(char));
   const char **attributs = (const char**) alloca (8 * sizeof (const char*));
   Key *current;
   oyComp *matchList = 0,
-         *testEntry = 0,
-         *foundEntry = 0;
+         *testEntry = 0;
 
   attributs[0] = manufacturer;
   attributs[1] = model;
@@ -1811,9 +1829,8 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
 
   if (profilesList)
   {
-    for (current=ksHead(profilesList); current; current=ksNext(profilesList))
+    FOR_EACH_IN_KDBKEYSET( current, profilesList )
     {
-      foundEntry=0;
       n = 0;
       keyGetString (current, value, MAX_PATH);
       keyGetName   (current, name,  MAX_PATH);
@@ -1852,15 +1869,13 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
         if (!found)
         {
           DBG_PROG_S(( "new matching profile found %s", name ))
-          if (!matchList)
-            matchList = oyInitComp_(0,0);
-          foundEntry = oyAppendComp_ (matchList, 0);
-          DBG_PROG_S ((printComp (foundEntry)))
-          foundEntry->name = name;
-          foundEntry->val = value;
+          matchList = oyAppendComp_ (matchList, 0);
+          DBG_PROG_S ((printComp (matchList)))
+          matchList->name = name;
+          matchList->val = value;
           /* 5. increase the hits counter in the match list for that profile */
-          foundEntry->hits = n; 
-          DBG_PROG_S ((printComp (foundEntry)))
+          matchList->hits = n; 
+          DBG_PROG_S ((printComp (matchList)))
         }
       }
     }
@@ -1940,7 +1955,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 { DBG_PROG_START
   DBG_PROG
   char* profile_name = 0;
-  int rc;
+  int rc=0;
   KeySet* profilesList = 0;
   Key *current;
   char* value;
@@ -1965,7 +1980,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
   DBG_PROG_S(("profile_name %s", profile_name ))
 
-  for (current=ksHead(profilesList); current; current=ksNext(profilesList))
+  FOR_EACH_IN_KDBKEYSET( current, profilesList )
   {
     keyGetName(current, value, MAX_PATH);
     DBG_NUM_S(( value ))
