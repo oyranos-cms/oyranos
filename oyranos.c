@@ -111,7 +111,7 @@ oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
       } else
         search[0] = 0;
     } else
-      WARN_S(( _("not a profile %s"), full_name ))
+      WARN_S(( _("not a profile %s"), oyNoEmptyName_m_(full_name) ))
   }
   /* break on success */
   DBG_V((success))
@@ -189,7 +189,8 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
     if (!success) {
       if(oy_warn_)
-        WARN_S( (_("profile %s not found in colour path\n"), fileName));
+        WARN_S( (_("profile %s not found in colour path\n"),
+                 oyNoEmptyName_m_(fileName)));
       DBG_PROG_ENDE
       return 0;
     }
@@ -209,7 +210,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
     }
 
     if (!success) {
-      WARN_S ((_("profile %s not found\n"), fileName))
+      WARN_S ((_("profile %s not found\n"), oyNoEmptyName_m_(fileName)))
       DBG_PROG_ENDE
       return 0;
     }

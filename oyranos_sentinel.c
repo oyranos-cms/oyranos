@@ -43,8 +43,9 @@
 
 int oyExportStart_(int export_check)
 {
-  static int export_path = 1;
   static int export_setting = 1;
+  static int export_path = 1;
+  static int export_monitor = 1;
   int start = 0;
 
 # define EXPORT_( flag, var, func ) \
@@ -57,7 +58,7 @@ int oyExportStart_(int export_check)
 
   EXPORT_( EXPORT_SETTING, export_setting, oyOpen_() )
   EXPORT_( EXPORT_PATH, export_path, oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT) )
-  EXPORT_( EXPORT_MONITOR, export_setting, start = 1 )
+  EXPORT_( EXPORT_MONITOR, export_monitor, start = 1 )
 
   oyInit_();
   return start;

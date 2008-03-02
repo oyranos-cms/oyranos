@@ -41,9 +41,22 @@ else
 fi
 VERSION_L=`echo $VERSION_L | sed 's/^0*//g'`
 
+echo "" > $CONF
+echo "" > $CONF_H
+echo "" > $CONF_I18N
+echo "" > $CONF_NV
+echo "" > $ECI_CONF
+echo "" > $BASE_CONF
+echo "" > $PKGC
+echo "" > $MPKG
+echo "" > $SPEC
+
 echo ""
-echo "Welcome to $TARGET_NAME Version $VERSION configurator"
-echo ""
+echo "################################################################"
+echo "#                                                              #"
+echo "        Welcome to $TARGET_NAME Version $VERSION configurator"
+echo "#                                                              #"
+echo "#                       Configuration                          #"
 
 if [ $# -gt 0 ]; then
   prefix=""
@@ -142,12 +155,12 @@ test -f error.txt && rm error.txt
 test -f mkdepend && rm mkdepend config.h
 
 
-echo "# automatically generated file - do not edit" > $CONF
-echo "/* automatically generated file - do not edit */" > $CONF_H
+echo "# automatically generated file - do not edit" >> $CONF
+echo "/* automatically generated file - do not edit */" >> $CONF_H
 echo "" >> $CONF
 echo "TARGET = $TARGET" >> $CONF
 
-echo ""
+echo "#                                                              #"
 
 
 # detect System
@@ -300,7 +313,7 @@ if [ "$FLTK" = 1 ]; then
   fi
 fi
 
-
+export ECHO="echo"
 ELEKTRA=1; export ELEKTRA
 #OYRANOS=1; export OYRANOS
 LCMS=1; export LCMS
@@ -314,11 +327,28 @@ XF86VMODE=1; export XF86VMODE
 DOXYGEN=2; export DOXYGEN
 PO=1; export PO
 ./configure.sh
+ELEKTRA=0; export ELEKTRA
+#OYRANOS=0; export OYRANOS
+LCMS=0; export LCMS
+LIBPNG=0; export LIBPNG
+#FTGL=0; export FTGL
+FLTK=0; export FLTK
+FLU=0; export FLU
+X11=1; export X11
+XINERAMA=1; export XINERAMA
+XF86VMODE=1; export XF86VMODE
+DOXYGEN=0; export DOXYGEN
+PO=0; export PO
 if [ $? -gt 0 ]; then
   ERROR=1
 fi
 
-
+export ECHO=""
+conf_temp=$CONF
+export CONF=$CONF_NV
+./configure.sh
+export CONF=$conf_temp
+export ECHO="echo"
 
 
 # Alle ifdefs landen hier
@@ -361,7 +391,7 @@ chmod 0755 "$CONF_SH"
 echo "$CONF_SH created"
 
 
-echo "#ifndef OYRANOS_VERSION_H" > $VERS
+echo "#ifndef OYRANOS_VERSION_H" >> $VERS
 echo "#define OYRANOS_VERSION_H" >> $VERS
 echo "" >> $VERS
 echo "#define OYRANOS_VERSION_A $VERSION_A" >> $VERS
@@ -373,7 +403,7 @@ echo "#define OYRANOS_DATE _(\"$TIME\")" >> $VERS
 echo "" >> $VERS
 echo "#endif /*OYRANOS_VERSION_H*/" >> $VERS
 
-echo "Version:         $VERSION" > $SPEC
+echo "Version:         $VERSION" >> $SPEC
 echo "Source:          $TARGET"-"$VERSION".tar.gz >> $SPEC
 echo "Release:         $RELEASE" >> $SPEC
 echo "%define syscolordir     $syscolordir" >> $SPEC
@@ -385,7 +415,7 @@ echo "%define desktopdir      $desktopdir" >> $SPEC
 cat  $SPEC.in >> $SPEC
 echo $SPEC generated
 
-echo "Version: $VERSION" > $MPKG
+echo "Version: $VERSION" >> $MPKG
 echo "prefix=$prefix" >> $MPKG
 echo "exec_prefix=$exec_prefix" >> $MPKG
 echo "bindir=$bindir" >> $MPKG
@@ -403,7 +433,7 @@ echo "desktopdir=$desktopdir" >> $MPKG
 cat  $MPKG.in >> $MPKG
 echo $MPKG generated
 
-echo "Version: $VERSION" > $PKGC
+echo "Version: $VERSION" >> $PKGC
 echo "prefix=$prefix" >> $PKGC
 echo "exec_prefix=$exec_prefix" >> $PKGC
 echo "bindir=$bindir" >> $PKGC
@@ -423,8 +453,8 @@ echo $PKGC generated
 
 
 echo ""
-echo "################################################################"
-echo "#                       Configuration                          #"
+echo "#                       Paths                                  #"
+echo "#                                                              #"
 echo "prefix          =       $prefix"
 echo "exec_prefix     =       $exec_prefix"
 echo "bindir          =       $bindir"
@@ -460,12 +490,13 @@ echo "pixmapdir=$pixmapdir" >> $CONF
 echo "desktopdir=$desktopdir" >> $CONF
 echo "" >> $CONF
 
-echo "syscolordir = $syscolordir" > $ECI_CONF
+echo "syscolordir = $syscolordir" >> $ECI_CONF
 echo "iccdirname = $iccdirname" >> $ECI_CONF
-echo "syscolordir = $syscolordir" > $BASE_CONF
+echo "syscolordir = $syscolordir" >> $BASE_CONF
 echo "iccdirname = $iccdirname" >> $BASE_CONF
 
 echo "#define PREFIX         \"$prefix\"" >> $CONF_H
+echo "#define BINDIR         \"$bindir\"" >> $CONF_H
 echo "#define DATADIR        \"$datadir\"" >> $CONF_H
 echo "#define SYSCOLORDIR    \"$syscolordir\"" >> $CONF_H
 echo "#define USERCOLORDIR   \"$usercolordir\"" >> $CONF_H
@@ -485,9 +516,9 @@ fi
 
 echo "CXX = $CXX" >> $CONF
 echo "CC = $CC" >> $CONF
-echo "CXX = $CXX" > $CONF_I18N
+echo "CXX = $CXX" >> $CONF_I18N
 echo "CC = $CC" >> $CONF_I18N
-echo "CXX = $CXX" > $CONF_NV
+echo "CXX = $CXX" >> $CONF_NV
 echo "CC = $CC" >> $CONF_NV
 cat $CONF_I18N.in >> $CONF_I18N
 echo $CONF_I18N prepared
@@ -542,6 +573,8 @@ else
       echo "INSTALL = install" >> $ECI_CONF
       echo "INSTALL = install" >> $BASE_CONF
     fi
+    echo "I18N_LIB = \$(ICONV) -lintl \$(LIBNAMEV)" >> $CONF
+    echo "I18N_LIBSTAT = \$(ICONV) -lintl \$(LIBNAMEV)" >> $CONF
     echo "MAKEDEPEND	= makedepend -Y" >> $CONF
     echo "OPTS=-Wall -g -L. -fPIC" >> $CONF
     echo "OPTS=-Wall -g -L. -fPIC" >> $CONF_NV

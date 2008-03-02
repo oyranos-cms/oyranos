@@ -291,12 +291,12 @@ oyGetMonitorInfo_                 (const char* display_name,
   if( nitems_return != 128 )
   {
     /* test twinview edid */
-    int error = system("oyranos-monitor-nvidia -p");
+    /*int error =*/ system("PATH=" BINDIR ":$PATH; oyranos-monitor-nvidia -p");
 
-    int oy_debug_ = oy_debug; oy_debug = 1;
-
-    if(error)
+    /*if(!error)*/
     {
+      int oy_debug_ = oy_debug; oy_debug = 1;
+
       atom = XInternAtom(display, atom_name, 1);
       DBG_PROG_S(("atom: %ld", atom))
 
@@ -304,13 +304,12 @@ oyGetMonitorInfo_                 (const char* display_name,
         XGetWindowProperty(display, w, atom, 0, 32, 0, AnyPropertyType, &a,
                      &actual_format_return, &nitems_return, &bytes_after_return,
                      &prop_return );
+      oy_debug = oy_debug_;
     }
-
-    oy_debug = oy_debug_;
   }
 
   if( nitems_return != 128 ) {
-    WARN_S((_("unexpected EDID lenght")))
+    WARN_S((_("unexpected EDID lenght %d"), (int)nitems_return))
     DBG_PROG_ENDE
     return 1;
   }
@@ -693,7 +692,8 @@ oyActivateMonitorProfile_         (const char* display_name,
     error = system(text);
     if(error &&
        error != 65280) { // hack
-      WARN_S((_("Error while setting monitor gamma curves")))
+      WARN_S((_("No monitor gamma curves by profile: %s"),
+              oyNoEmptyName_m_(profil_basename) ))
     }
 
     DBG_PROG_S(( "system: %s", text ))

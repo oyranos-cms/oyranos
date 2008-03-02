@@ -19,7 +19,7 @@ msgstr ""
 "#-#-#-#-#  oyranos.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2006-09-17 20:41+0200\n"
+"POT-Creation-Date: 2006-09-22 07:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -103,20 +103,35 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: oyranos_debug.h:88
+#: oyranos_debug.h:89
 msgid "Warning"
 msgstr ""
 
-#: oyranos_debug.h:90 oyranos_debug.h:92
+#: oyranos_debug.h:91 oyranos_debug.h:93
 msgid "Warning : "
 msgstr ""
 
-#: oyranos_helper.h:96
+#: oyranos_helper.h:79
+#, c-format
+msgid "%s:%d %s() nothing to delete %s\n"
+msgstr ""
+
+#: oyranos_helper.h:89
+#, c-format
+msgid "%s:%d %s() nothing to allocate - size: %d\n"
+msgstr ""
+
+#: oyranos_helper.h:100
 msgid "Can not allocate"
 msgstr ""
 
-#: oyranos_helper.h:97
+#: oyranos_helper.h:101
 msgid "bytes of  memory for"
+msgstr ""
+
+#: oyranos_helper.h:110
+#, c-format
+msgid "%s:%d %s() nothing allocated %s\n"
 msgstr ""
 
 #: oyranos.c:114
@@ -134,16 +149,16 @@ msgstr ""
 msgid "profile %s not found in colour path\n"
 msgstr ""
 
-#: oyranos.c:212
+#: oyranos.c:213
 #, c-format
 msgid "profile %s not found\n"
 msgstr ""
 
-#: oyranos.c:247
+#: oyranos.c:248
 msgid "wrong profile for static web colour space selected, need sRGB"
 msgstr ""
 
-#: oyranos.c:334
+#: oyranos.c:335
 #, c-format
 msgid "file %s exist , please remove befor installing new profile\n"
 msgstr ""
@@ -151,6 +166,31 @@ msgstr ""
 #: oyranos_elektra.c:360 oyranos_elektra.c:375
 #, c-format
 msgid "default profile type %d; type does not exist"
+msgstr ""
+
+#: oyranos_io.c:363
+#, c-format
+msgid "file name is too long %d\n"
+msgstr ""
+
+#: oyranos_io.c:605
+#, c-format
+msgid "%d. path %s does not exist"
+msgstr ""
+
+#: oyranos_io.c:609
+#, c-format
+msgid "%d. path %s is not a directory"
+msgstr ""
+
+#: oyranos_io.c:613
+#, c-format
+msgid "%d. path %s is a link: ignored"
+msgstr ""
+
+#: oyranos_io.c:618
+#, c-format
+msgid "%d. path %s is not readable"
 msgstr ""
 
 #: oyranos_texts.c:159
@@ -193,7 +233,7 @@ msgstr ""
 msgid "Colour Space for Simulating real devices"
 msgstr ""
 
-#: oyranos_texts.c:199 oyranos_config_fltk.cxx:1544
+#: oyranos_texts.c:199 oyranos_config_fltk.cxx:1556
 msgid "Paths"
 msgstr ""
 
@@ -201,7 +241,7 @@ msgstr ""
 msgid "Paths where ICC Profiles can be found"
 msgstr ""
 
-#: oyranos_texts.c:207 oyranos_config_fltk.cxx:1527
+#: oyranos_texts.c:207 oyranos_config_fltk.cxx:1539
 msgid "Policy"
 msgstr ""
 
@@ -438,41 +478,48 @@ msgid ""
 "print time"
 msgstr ""
 
-#: oyranos_texts.c:537 oyranos_config_fltk.cxx:398
+#: oyranos_texts.c:556 oyranos_config_fltk.cxx:413
 #, c-format
 msgid "multiple occurencies of default %s profile: %d times"
 msgstr ""
 
 #: oyranos_monitor.c:312
-msgid "unexpected EDID lenght"
+#, c-format
+msgid "unexpected EDID lenght %d"
 msgstr ""
 
-#: oyranos_monitor.c:371 oyranos_monitor.c:1020
+#: oyranos_monitor.c:371 oyranos_monitor.c:1021
 msgid "open X Display failed"
 msgstr ""
 
-#: oyranos_monitor.c:386 oyranos_monitor.c:730 oyranos_monitor.c:801
+#: oyranos_monitor.c:386 oyranos_monitor.c:802
+#, c-format
+msgid "Error getting atom \"%s\""
+msgstr ""
+
+#: oyranos_monitor.c:695
+#, c-format
+msgid "No monitor gamma curves by profile: %s"
+msgstr ""
+
+#: oyranos_monitor.c:724
+msgid "Error obtaining profile"
+msgstr ""
+
+#: oyranos_monitor.c:731
 #, c-format
 msgid "Error setting up atom \"%s\""
 msgstr ""
 
-#: oyranos_monitor.c:695
-msgid "Error while setting monitor gamma curves"
-msgstr ""
-
-#: oyranos_monitor.c:723
-msgid "Error obtaining profile"
-msgstr ""
-
-#: oyranos_monitor.c:732
+#: oyranos_monitor.c:733
 msgid "Error setting up atom"
 msgstr ""
 
-#: oyranos_monitor.c:1039
+#: oyranos_monitor.c:1040
 msgid "Xinerama request failed"
 msgstr ""
 
-#: oyranos_monitor.c:1055
+#: oyranos_monitor.c:1056
 msgid "open X Screen failed"
 msgstr ""
 
@@ -517,7 +564,7 @@ msgid "policy filename"
 msgstr ""
 
 #: oyranos_config_fltk.cxx:52 oyranos_config_fltk.cxx:142
-#: oyranos_config_fltk.cxx:367 oyranos_config_flu.cpp:101
+#: oyranos_config_fltk.cxx:373 oyranos_config_flu.cpp:101
 #: oyranos_config_flu.cpp:229
 msgid "[none]"
 msgstr ""
@@ -562,73 +609,73 @@ msgstr ""
 msgid "Select Behaviour"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:340 oyranos_config_fltk.cxx:418
+#: oyranos_config_fltk.cxx:340 oyranos_config_fltk.cxx:433
 #: oyranos_config_flu.cpp:83
 #, c-format
 msgid "%s Profile"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:374
+#: oyranos_config_fltk.cxx:380
 msgid "Show in external Viewer"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:467
+#: oyranos_config_fltk.cxx:482
 msgid "Exclude this path"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:514
+#: oyranos_config_fltk.cxx:529
 msgid "@-3+"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:516
+#: oyranos_config_fltk.cxx:531
 msgid "Add Path containing ICC profiles"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1413
+#: oyranos_config_fltk.cxx:1425
 msgid "Office + Home"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1414
+#: oyranos_config_fltk.cxx:1426
 msgid "Graphic Designers"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1415
+#: oyranos_config_fltk.cxx:1427
 msgid "PrePress"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1416
+#: oyranos_config_fltk.cxx:1428
 msgid "Photographers"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1509
+#: oyranos_config_fltk.cxx:1521
 msgid "Oyranos Configuration"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1517
+#: oyranos_config_fltk.cxx:1529
 msgid "Oyranos Configuration "
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1528
+#: oyranos_config_fltk.cxx:1540
 msgid "Reset to a standard Policy for Oyranos."
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1545
+#: oyranos_config_fltk.cxx:1557
 msgid "Configure Paths"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1555
+#: oyranos_config_fltk.cxx:1567
 msgid "@-3reload"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1556
+#: oyranos_config_fltk.cxx:1568
 msgid "Refresh"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1562
+#: oyranos_config_fltk.cxx:1574
 msgid "Active Policy:"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1565
+#: oyranos_config_fltk.cxx:1577
 msgid "----"
 msgstr ""
 

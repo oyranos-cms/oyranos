@@ -68,13 +68,16 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
                          oyAllocFunc_t allocate_func);
 
 
+/* oyNoEmptyName_( name ) */
+#define oyNoEmptyName_m_( text ) text?text:"\"---\""
+
 /* oyFree_ (void*) */
 #define oyFree_m_(x) {                                      \
   if (x != NULL) {    /* defined in oyranos_helper.h */     \
     oyDeAllocateFunc_ (x); x = NULL;                        \
   } else {                                                  \
-    char *t = "%s:%d %s() nothing to delete " #x "\n";      \
-    WARN_S (( _(t), __FILE__,__LINE__,__func__));           \
+    char *t = _("%s:%d %s() nothing to delete %s\n");       \
+    WARN_S (( t, __FILE__,__LINE__,__func__, #x ));         \
   }                                                         \
 }
 

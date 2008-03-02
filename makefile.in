@@ -33,7 +33,7 @@ ELEKTRA_STATICTEST_LIBS = `test -f $(libdir)/libelektra.a && (echo $(libdir)/lib
 
 
 LDLIBS = -L$(libdir) -L. \
-	$(ELEKTRA_STATICTEST_LIBS) -lc
+	$(ELEKTRA_STATICTEST_LIBS) -lc $(I18N_LIB)
 
 
 CPP_HEADERS = \
@@ -371,8 +371,32 @@ install:	install-main
 		|| (echo $${ling}.gmo is not yet ready ... skipping); \
 	done;
 	if [ -z $(DESTDIR) ]; then \
-	  if [ `kdb ls system/sw/oyranos 2>/dev/zero | wc -l` -eq 0 ]; then if [ `kdb ls user/sw/oyranos 2>/dev/zero | wc -l` -eq 0 ]; then echo "no oyranos keys found: set default policy home+office"; ./oyranos-policy $(syscolordir)/$(settingsdirname)/office.policy.xml; fi; fi; \
-	fi
+	  kdb_found=`which kdb | wc -l`; \
+	  if [ $${kdb_found} -gt 0 ]; then \
+	    echo "`which kdb` found"; \
+	  fi; \
+	  kdb set user/sw/oy_install_test "10"; \
+	  kdb_r=`kdb get user/sw/oy_install_test`; \
+	  if [ -n "$${kdb_r}" ]; then \
+	    if [ "$${kdb_r}" != "10" ]; then \
+	      kdb_found=0; \
+	    fi; \
+	  else \
+	    kdb_found=0; \
+	  fi; kdb rm user/sw/oy_install_test; \
+	  if [ $${kdb_found} -eq 0 ]; then \
+	    echo "!!!WARNING!!! kdb not useable,"; \
+	    echo "              no check for Oyranos configuration possible"; \
+	  fi; \
+	  if [ $${kdb_found} -gt 0 ]; then \
+	    if [ `kdb ls system/sw/oyranos 2>/dev/zero | grep oyranos | wc -l` -eq 0 ]; then \
+	      if [ `kdb ls user/sw/oyranos 2>/dev/zero | grep oyranos | wc -l` -eq 0 ]; then \
+	        echo "no oyranos keys found: set default policy home+office"; \
+	        ./oyranos-policy $(syscolordir)/$(settingsdirname)/office.policy.xml; \
+	      fi; \
+	    fi; \
+	  fi; \
+	fi; \
 
 install_gui:	$(TARGET)-config-fltk
 	echo Installing UI ...

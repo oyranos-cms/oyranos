@@ -93,21 +93,36 @@ msgstr "Benutze Schwarzpunktkompensation (BPC)"
 msgid "Yes"
 msgstr "Ja"
 
-#: oyranos_debug.h:88
+#: oyranos_debug.h:89
 msgid "Warning"
 msgstr "Warnung"
 
-#: oyranos_debug.h:90 oyranos_debug.h:92
+#: oyranos_debug.h:91 oyranos_debug.h:93
 msgid "Warning : "
 msgstr "Warnung : "
 
-#: oyranos_helper.h:96
+#: oyranos_helper.h:79
+#, c-format
+msgid "%s:%d %s() nothing to delete %s\n"
+msgstr "%s:%d %s() nichts zu löschen %s\n"
+
+#: oyranos_helper.h:89
+#, c-format
+msgid "%s:%d %s() nothing to allocate - size: %d\n"
+msgstr "%s:%d %s() kein Speicher reservierbar - Größe: %d\n"
+
+#: oyranos_helper.h:100
 msgid "Can not allocate"
 msgstr "Kann nicht reservieren"
 
-#: oyranos_helper.h:97
+#: oyranos_helper.h:101
 msgid "bytes of  memory for"
 msgstr "Bytes Speicher für"
+
+#: oyranos_helper.h:110
+#, c-format
+msgid "%s:%d %s() nothing allocated %s\n"
+msgstr "%s:%d %s() nichts zu reservieren %s\n"
 
 #: oyranos.c:114
 #, c-format
@@ -124,16 +139,16 @@ msgstr "Name ist länger als %d"
 msgid "profile %s not found in colour path\n"
 msgstr "Profil %s nicht im Profilepfad gefunden\n"
 
-#: oyranos.c:212
+#: oyranos.c:213
 #, c-format
 msgid "profile %s not found\n"
 msgstr "Profil %s nicht gefunden\n"
 
-#: oyranos.c:247
+#: oyranos.c:248
 msgid "wrong profile for static web colour space selected, need sRGB"
 msgstr "Falsches Profil für statischen WWW Farbraum, benötige sRGB"
 
-#: oyranos.c:334
+#: oyranos.c:335
 #, c-format
 msgid "file %s exist , please remove befor installing new profile\n"
 msgstr ""
@@ -144,6 +159,31 @@ msgstr ""
 #, c-format
 msgid "default profile type %d; type does not exist"
 msgstr "Standard Profiltyp %d; Typ existiert nicht"
+
+#: oyranos_io.c:363
+#, c-format
+msgid "file name is too long %d\n"
+msgstr "Dateiname ist zu lang %d\n"
+
+#: oyranos_io.c:605
+#, c-format
+msgid "%d. path %s does not exist"
+msgstr "%d. Pfad %s existiert nicht"
+
+#: oyranos_io.c:609
+#, c-format
+msgid "%d. path %s is not a directory"
+msgstr "%d. Pfad %s ist kein Verzeichnis"
+
+#: oyranos_io.c:613
+#, c-format
+msgid "%d. path %s is a link: ignored"
+msgstr "%d. Pfad %s ist eine Verknüpfung: ignoriert"
+
+#: oyranos_io.c:618
+#, c-format
+msgid "%d. path %s is not readable"
+msgstr "%d. Pfad %s ist nicht lesbar"
 
 #: oyranos_texts.c:159
 msgid "Start"
@@ -185,7 +225,7 @@ msgstr "Simulationsfarbraum"
 msgid "Colour Space for Simulating real devices"
 msgstr "Farbraum für die Nachbildung eines Gerätes (Simulation)"
 
-#: oyranos_texts.c:199 oyranos_config_fltk.cxx:1544
+#: oyranos_texts.c:199 oyranos_config_fltk.cxx:1556
 msgid "Paths"
 msgstr "Pfade"
 
@@ -193,7 +233,7 @@ msgstr "Pfade"
 msgid "Paths where ICC Profiles can be found"
 msgstr "Pfad zu ICC Farbprofilen"
 
-#: oyranos_texts.c:207 oyranos_config_fltk.cxx:1527
+#: oyranos_texts.c:207 oyranos_config_fltk.cxx:1539
 msgid "Policy"
 msgstr "Richtlinie"
 
@@ -445,41 +485,48 @@ msgstr ""
 "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf "
 "dem Drucker beim Programmstart"
 
-#: oyranos_texts.c:537 oyranos_config_fltk.cxx:398
+#: oyranos_texts.c:556 oyranos_config_fltk.cxx:413
 #, c-format
 msgid "multiple occurencies of default %s profile: %d times"
 msgstr "mehrmaliges Erscheinen des Standard %s Profiles: %d mal"
 
 #: oyranos_monitor.c:312
-msgid "unexpected EDID lenght"
-msgstr "unerwartetet EDID Größe"
+#, c-format
+msgid "unexpected EDID lenght %d"
+msgstr "unerwartetet EDID Größe: %d"
 
-#: oyranos_monitor.c:371 oyranos_monitor.c:1020
+#: oyranos_monitor.c:371 oyranos_monitor.c:1021
 msgid "open X Display failed"
 msgstr "Öffnen des X Displays daneben"
 
-#: oyranos_monitor.c:386 oyranos_monitor.c:730 oyranos_monitor.c:801
+#: oyranos_monitor.c:386 oyranos_monitor.c:802
+#, c-format
+msgid "Error getting atom \"%s\""
+msgstr "Fehler beim Suchen des Xatoms \"%s\""
+
+#: oyranos_monitor.c:695
+#, c-format
+msgid "No monitor gamma curves by profile: %s"
+msgstr "Keine Grafikkartengammakurven mit Profil: %s"
+
+#: oyranos_monitor.c:724
+msgid "Error obtaining profile"
+msgstr "Fehler während der Erfragung des Profils"
+
+#: oyranos_monitor.c:731
 #, c-format
 msgid "Error setting up atom \"%s\""
 msgstr "Fehler beim Setzen des Xatoms \"%s\""
 
-#: oyranos_monitor.c:695
-msgid "Error while setting monitor gamma curves"
-msgstr "Fehler während des Setzens der Grafikkartengammakurven"
-
-#: oyranos_monitor.c:723
-msgid "Error obtaining profile"
-msgstr "Fehler während der Erfragung des Profils"
-
-#: oyranos_monitor.c:732
+#: oyranos_monitor.c:733
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
-#: oyranos_monitor.c:1039
+#: oyranos_monitor.c:1040
 msgid "Xinerama request failed"
 msgstr "Xineramaanfrage daneben"
 
-#: oyranos_monitor.c:1055
+#: oyranos_monitor.c:1056
 msgid "open X Screen failed"
 msgstr "Öffnen des X Screens daneben"
 
@@ -524,7 +571,7 @@ msgid "policy filename"
 msgstr "Richtliniendateiname"
 
 #: oyranos_config_fltk.cxx:52 oyranos_config_fltk.cxx:142
-#: oyranos_config_fltk.cxx:367 oyranos_config_flu.cpp:101
+#: oyranos_config_fltk.cxx:373 oyranos_config_flu.cpp:101
 #: oyranos_config_flu.cpp:229
 msgid "[none]"
 msgstr "[kein]"
@@ -570,73 +617,73 @@ msgstr "Pfad"
 msgid "Select Behaviour"
 msgstr "Wählen Sie das Verhalten"
 
-#: oyranos_config_fltk.cxx:340 oyranos_config_fltk.cxx:418
+#: oyranos_config_fltk.cxx:340 oyranos_config_fltk.cxx:433
 #: oyranos_config_flu.cpp:83
 #, c-format
 msgid "%s Profile"
 msgstr "%s Profil"
 
-#: oyranos_config_fltk.cxx:374
+#: oyranos_config_fltk.cxx:380
 msgid "Show in external Viewer"
 msgstr "Anzeige in exteren Betrachter"
 
-#: oyranos_config_fltk.cxx:467
+#: oyranos_config_fltk.cxx:482
 msgid "Exclude this path"
 msgstr "Diesen Pfad ausschließen"
 
-#: oyranos_config_fltk.cxx:514
+#: oyranos_config_fltk.cxx:529
 msgid "@-3+"
 msgstr "@-3+"
 
-#: oyranos_config_fltk.cxx:516
+#: oyranos_config_fltk.cxx:531
 msgid "Add Path containing ICC profiles"
 msgstr "Pfad mit ICC Profilen hinzufügen"
 
-#: oyranos_config_fltk.cxx:1413
+#: oyranos_config_fltk.cxx:1425
 msgid "Office + Home"
 msgstr "Büro + Heim"
 
-#: oyranos_config_fltk.cxx:1414
+#: oyranos_config_fltk.cxx:1426
 msgid "Graphic Designers"
 msgstr "Grafische Gestalter"
 
-#: oyranos_config_fltk.cxx:1415
+#: oyranos_config_fltk.cxx:1427
 msgid "PrePress"
 msgstr "Druckvorstufe"
 
-#: oyranos_config_fltk.cxx:1416
+#: oyranos_config_fltk.cxx:1428
 msgid "Photographers"
 msgstr "Fotografen"
 
-#: oyranos_config_fltk.cxx:1509
+#: oyranos_config_fltk.cxx:1521
 msgid "Oyranos Configuration"
 msgstr "Oyranos Konfiguration"
 
-#: oyranos_config_fltk.cxx:1517
+#: oyranos_config_fltk.cxx:1529
 msgid "Oyranos Configuration "
 msgstr "Oyranos Konfiguration "
 
-#: oyranos_config_fltk.cxx:1528
+#: oyranos_config_fltk.cxx:1540
 msgid "Reset to a standard Policy for Oyranos."
 msgstr "Zurücksetzen auf Oyranos' Standardrichtlinie"
 
-#: oyranos_config_fltk.cxx:1545
+#: oyranos_config_fltk.cxx:1557
 msgid "Configure Paths"
 msgstr "Konfiguriere Pfade"
 
-#: oyranos_config_fltk.cxx:1555
+#: oyranos_config_fltk.cxx:1567
 msgid "@-3reload"
 msgstr "@-3reload"
 
-#: oyranos_config_fltk.cxx:1556
+#: oyranos_config_fltk.cxx:1568
 msgid "Refresh"
 msgstr "Auffrischen"
 
-#: oyranos_config_fltk.cxx:1562
+#: oyranos_config_fltk.cxx:1574
 msgid "Active Policy:"
 msgstr "Aktive Richtlinie:"
 
-#: oyranos_config_fltk.cxx:1565
+#: oyranos_config_fltk.cxx:1577
 msgid "----"
 msgstr "----"
 
@@ -655,3 +702,5 @@ msgstr "/Standard Profile/"
 #: oyranos_config_flu.cpp:476
 msgid "Oyranos Colour Management"
 msgstr "Oyranos Farbmanagement"
+
+

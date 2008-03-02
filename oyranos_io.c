@@ -688,6 +688,7 @@ oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
       }
 
       cont:
+        ;
     }
 
     for( j = 0; j < MAX_DEPTH; ++j )

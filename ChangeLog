@@ -1,3 +1,17 @@
+2006-09-27
+	* fix: build issues on OpenBSD
+	* fix: missed code after label
+
+2006-09-22
+	* and: more precise warning texts
+	* and: update de.po
+	* fix: call of oyranos-monitor-nvidia for non edid atom
+
+2006-09-21
+	* fix: bug in oyExportStart_
+	* and: add install path to oyranos-monitor-nvidia call in oy_moni.c
+	* new: filter double profile occurencies in oyOptionChoicesGet_()
+
 2006-09-20
 	* new: first external functions call for init (oyExportStart_(EXPORT_*))
 	* fix: double and default paths setting in oyPathAdd_
