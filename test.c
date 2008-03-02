@@ -42,8 +42,38 @@ main()
   if (rc)
     printf ("rc = %d\n", rc); 
 
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < 100; i++) {
+    oyPathRemove (a);
     oyPathAdd (a);
+  }
+
+  printf ("count of paths = %d\n", oyPathsRead());
+
+  for (i = 0; i < oyPathsRead(); i++)
+  { char* name = oyPathName(i);
+    printf ("the %dth path has value = %s\n", i, name);
+    free (name);
+  }
+
+  oyPathSleep (a);
+  for (i = 0; i < oyPathsRead(); i++)
+  { char* name = oyPathName(i);
+    printf ("the %dth path has value = %s\n", i, name);
+    free (name);
+  }
+
+  oyPathActivate (a);
+  for (i = 0; i < oyPathsRead(); i++)
+  { char* name = oyPathName(i);
+    printf ("the %dth path has value = %s\n", i, name);
+    free (name);
+  }
+
+
+  oyPathRemove(a);
+
+  printf ("count of paths after removing one = %d\n", oyPathsRead());
+
 
   return 0;
 }

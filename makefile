@@ -1,4 +1,5 @@
 CC=cc
+CXX=c++
 MAKEDEPEND	= /usr/X11R6//bin/makedepend -Y
 OPTS=-Wall -g -O2
 
@@ -36,7 +37,6 @@ endif
 LDLIBS = -L$(libdir) -L./ $(FLTK_LIBS) \
 	$(X11_LIBS) $(KDB_LIBS) #-llcms $(FLU_LIBS)
 
-#	$(VRML_LIBS)
 
 CPP_HEADERS = \
 	oyranos.h

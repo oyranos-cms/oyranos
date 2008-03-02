@@ -32,14 +32,6 @@
 
 #include "oyranos.h"
 
-// definitions
-#define OY_USER_PATHS "user/sw/oyranos/paths"
-#define OY_USER_PATH  "path"
-
-#ifndef MAX_PATH
-#define MAX_PATH 1024
-#endif
-
 
 /* ---  Helpers  --- */
 //#define DEBUG
@@ -135,9 +127,55 @@ oyAddKey_value (char* keyName, char* value)
   return rc;
 }
 
-void
-oyHandleError (int rc)
+
+
+/* outer API implementation */
+
+/* path names API */
+
+int
+oyPathsRead ()
 {
+  int rc, n = 0;
+  kdbOpen();
+
+  // take all keys in the paths directory
+  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+  n = myKeySet->size;
+
+  ksClose (myKeySet);
+  kdbClose();
+  return n;
+}
+
+char*
+oyPathName (int number)
+{
+  int rc, n = 0;
+  Key *current;
+  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+
+  kdbOpen();
+
+  // take all keys in the paths directory
+  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+
+  if (number <= myKeySet->size)
+    for (current=myKeySet->start; current; current=current->next)
+    {
+      if (number == n) {
+        keyGetComment (current, value, MAX_PATH);
+        if (strstr(value, OY_SLEEP) == 0)
+          keyGetString(current, value, MAX_PATH);
+        DBG_S( value )
+      }
+      n++;
+    }
+
+  ksClose (myKeySet);
+  kdbClose();
+
+  return value;
 }
 
 int
@@ -184,10 +222,10 @@ oyPathAdd (char* pfad)
   if (!n)
   {
     // search for empty keyname
-    keyName = oySearchEmptyKeyname (OY_USER_PATHS, "path");
+    keyName = oySearchEmptyKeyname (OY_USER_PATHS, OY_USER_PATH);
 
     // write key
-    rc = oyAddKey_value (keyName, pfad);
+    rc = oyAddKey_valueComment (keyName, pfad, "");
   }
 
   ksClose (myKeySet);
@@ -196,5 +234,102 @@ oyPathAdd (char* pfad)
   free (value);
   return rc;
 }
+
+void
+oyPathRemove (char* pfad)
+{
+  int rc;
+  Key *current;
+  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+  char* keyName = (char*) calloc (sizeof(char), MAX_PATH);
+
+  kdbOpen();
+
+  // take all keys in the paths directory
+  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+
+  for (current=myKeySet->start; current; current=current->next)
+  {
+    keyGetString(current, value, MAX_PATH);
+    DBG_S( value )
+    if (strcmp (value, pfad) == 0)
+    {
+      keyGetFullName(current,keyName, MAX_PATH); ERR
+      kdbRemove (keyName);
+      DBG_S( "remove" )
+    }
+  }
+
+  ksClose (myKeySet);
+  kdbClose();
+  free (keyName);
+  free (value);
+}
+
+void
+oyPathSleep (char* pfad)
+{
+  int rc;
+  Key *current;
+  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+
+  kdbOpen();
+
+  // take all keys in the paths directory
+  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+
+  for (current=myKeySet->start; current; current=current->next)
+  {
+    keyGetString(current, value, MAX_PATH);
+    DBG_S( value )
+    if (strcmp (value, pfad) == 0)
+    {
+      keySetComment (current, OY_SLEEP);
+      kdbSetKey (current);
+      DBG_S( "sleep" )
+    }
+  }
+
+  ksClose (myKeySet);
+  kdbClose();
+  free (value);
+}
+
+void
+oyPathActivate (char* pfad)
+{
+  int rc;
+  Key *current;
+  char* value = (char*) calloc (sizeof(char), MAX_PATH);
+
+  kdbOpen();
+
+  // take all keys in the paths directory
+  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+
+  for (current=myKeySet->start; current; current=current->next)
+  {
+    keyGetString(current, value, MAX_PATH);
+    DBG_S( value )
+    if (strcmp (value, pfad) == 0)
+    {
+      keySetComment (current, "");
+      kdbSetKey (current);
+      DBG_S( "wake up" )
+    }
+  }
+
+  ksClose (myKeySet);
+  kdbClose();
+  free (value);
+}
+
+/* default profiles API */
+
+void
+oySetDefaultImageProfile          (char* name)
+{ 
+}
+
 
 
