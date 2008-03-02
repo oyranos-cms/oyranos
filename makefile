@@ -127,10 +127,8 @@ ifdef APPLE
 REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) mac.r
 endif
 
-topdir  = ..
-dir     = Entwickeln
-timedir = $(topdir)/$(dir)
-mtime   = `find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g`
+timedir = .
+mtime   := $(shell find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g)
 
 .SILENT:
 
@@ -228,7 +226,9 @@ test:	$(LIBSONAMEFULL) test.o
 	$(REZ)
 
 doc:
+	echo Documentation ...
 	test -n 'which doxygen' && doxygen Doxyfile
+	echo ... Documentation done
 
 install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma doc
 	echo Installing ...
@@ -249,6 +249,7 @@ install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma doc
 	$(INSTALL) -m 644 oyranos.h $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos_definitions.h $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos_monitor.h $(DESTDIR)$(includedir)/oyranos
+	test "$(FLU_GUI)" && make install_gui || echo -e "GUI not installed"
 	echo ... Installation finished
 
 install_gui:	$(TARGET)_config_flu_static
@@ -257,7 +258,7 @@ install_gui:	$(TARGET)_config_flu_static
 	$(INSTALL) -m 755 $(TARGET)_config_flu $(DESTDIR)$(bindir)
 
 dist: targz
-	$(COPY) ../Archiv/$(TARGET)_$(mtime).tgz $(TARGET)_$(VERSION).tar.gz
+	test -d ../Archiv && $(COPY) ../Archiv/$(TARGET)_$(mtime).tgz $(TARGET)_$(VERSION).tar.gz || $(COPY) $(TARGET)_$(mtime).tgz $(TARGET)_$(VERSION).tar.gz
 
 rpm:	dist
 	mkdir -p rpmdir/BUILD \
@@ -340,16 +341,17 @@ tgz:
 	rm -R Entwickeln
 
 targz:
+	test -d $(TARGET)_$(VERSION) && $(RM) -R $(TARGET)_$(VERSION) || echo -e "\c"
 	mkdir $(TARGET)_$(VERSION)
 	$(COPY) \
 	$(ALL_FILES) \
 	$(TARGET)_$(VERSION)
 	tar cf - $(TARGET)_$(VERSION)/ \
 	| gzip > $(TARGET)_$(mtime).tgz
-	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
 	test -d $(TARGET)_$(VERSION) && \
 	test `pwd` != `(cd $(TARGET)_$(VERSION); pwd)` && \
-	rm -R $(TARGET)_$(VERSION) 
+	$(RM) -R $(TARGET)_$(VERSION)
+	test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv || echo "no copy"
 
 
 # mkdepend

@@ -48,13 +48,11 @@ The documentation in html format is included.
 
 %build
 %configure
-configure --prefix=%{_prefix}
+#configure --prefix=%{_prefix}
 
 %install
 rm -rf %{buildroot}
 make
-make oyranos_config_flu_static
-make DESTDIR=%{buildroot} install_gui
 make DESTDIR=%{buildroot} install
 
 %clean
@@ -67,8 +65,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%{_bindir}/oyranos-gamma
-%{_bindir}/oyranos_config_flu
+%{_bindir}/oyranos*
 %{_libdir}/*.so*
 
 %files devel

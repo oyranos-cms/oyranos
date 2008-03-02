@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/bash
 
 TARGET=oyranos
 
@@ -47,15 +47,26 @@ else
 fi
 
 if [ $# -gt 0 ]; then
-  prefix=${1#*=}
+  prefix=""
+  while [ $# -gt 0 ]; do
+    if [ "${1%--prefix=*}" != "$1" ]; then
+      teste="${1#--prefix=*}"
+      #echo "test: $teste $1"
+    fi
+    if [ "$teste" != "" ]; then
+      prefix="$teste"
+    fi
+    shift
+  done
 else
   if [ $UNAME_ = "Darwin" ]; then
     prefix=/opt/local
   else
-    prefix=/usr
+    prefix=/usr/local
   fi
 fi
 echo "prefix =                $prefix"
+
 
 echo "prefix = $prefix" >> $CONF
 echo "" >> $CONF
@@ -111,7 +122,8 @@ if [ $? = 0 ]; then
   echo "LCMS_H = `pkg-config --cflags lcms`" >> $CONF
   echo "LCMS_LIBS = `pkg-config --libs lcms`" >> $CONF
 else
-  echo "no or too old LCMS found,\n  need at least version 1.14, download: www.littlecms.com"
+  echo -e "\c"
+#  echo "no or too old LCMS found,\n  need at least version 1.14, download: www.littlecms.com"
 fi
 
 `pkg-config  --atleast-version=1.0 libpng 2>>error.txt`
