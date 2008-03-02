@@ -249,8 +249,8 @@ install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma doc
 	$(INSTALL) -m 644 oyranos.h $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos_definitions.h $(DESTDIR)$(includedir)/oyranos
 	$(INSTALL) -m 644 oyranos_monitor.h $(DESTDIR)$(includedir)/oyranos
-	test -d $(DESTDIR)$(datadir)/doc/oyranos/html || mkdir -p $(DESTDIR)$(datadir)/doc/oyranos/html
-	$(INSTALL) -m 644 doc/html/* $(DESTDIR)${datadir}/doc/oyranos/html
+	#test -d $(DESTDIR)$(datadir)/doc/oyranos/html || mkdir -p $(DESTDIR)$(datadir)/doc/oyranos/html
+	#$(INSTALL) -m 644 doc/html/* $(DESTDIR)${datadir}/doc/oyranos/html
 	echo ... Installation finished
 
 install_gui:	$(TARGET)_config_flu_static
