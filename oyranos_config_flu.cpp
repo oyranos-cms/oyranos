@@ -312,7 +312,7 @@ void buildDefaultProfilesLeaves()
   char** names = oyProfileList ( 0, &count );
 
   for (i = (oyranos::oyDEFAULT_PROFILE)0 ;
-         i < oyranos::oyDEFAULT_PROFILE_TYPES ;
+         i < oyranos::oyDEFAULT_PROFILE_NUMS ;
             i = (oyranos::oyDEFAULT_PROFILE)((int)i+1)) {
     char *t = new char [64];
     DefaultProfile *dp = new DefaultProfile( 0, 0, 300, 20, i, names, count );
@@ -383,7 +383,7 @@ void buildOptionsLeaves()
 {
   Flu_Tree_Browser::Node* n;
 
-  for (int i = 0; i < oyBEHAVIOUR_TYPES ; ++i) {
+  for (int i = 0; i < oyBEHAVIOUR_NUMS ; ++i) {
     int choices = 1; // minimum
     const char* category = 0;
     const char* label = 0;

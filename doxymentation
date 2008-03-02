@@ -35,12 +35,12 @@
     # VideoCardGammaTable, if appropriate
     oyranos-gamma
     @endverbatim
-    - oyranos_config_flu - a sample application using some of the Oyranos APIs
+    - oyranos-config-flu - a sample application using some functions of the Oyranos APIs
 
     @section user User Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
     wants to use these functions, needs to link against oyranos and elektra.
-    - @ref device_profiles - profiles which characterise devices
+    - @ref behaviour - get and set common behaviour; part of user policies
     - @ref default_profiles - get and set commonly used profiles; part of user policies
     - @ref path_names  - get information about configured and used profile search paths 
     - @ref profile_lists - provides the search path content as profile lists for your GUI
@@ -55,6 +55,7 @@
     <br>
 
  */
+/*    - @ref device_profiles - profiles which characterise devices */
 
 /** @page concept_1.0 Concept for 1.0
 
@@ -203,8 +204,8 @@
 /** @file oyranos.h
     @brief The API header to include in your application.
     
-    This file contains all functions and structs available in the Oyranos API.
-    For further macros see @file oyranos_definitions.h
+    This file contains all functions and structs available in the Oyranos API.<br>
+    For further macros see @file oyranos_definitions.h<br>
     For the Oyranos Monitor API see @file oyranos_monitor.h
 */
 
@@ -212,31 +213,31 @@
     @brief The macro header to include in your application without using any Oyranos function.
     
     This file contains all macros which are relevant to the Oyranos API using
-    the Elektra library as configuration engine.
-    For the Oyranos API see @file oyranos.h
+    the Elektra library as configuration engine.<br>
+    For the Oyranos API see @file oyranos.h<br>
     @see elektra at sourceforge <a href="http://elektra.sf.net">Elektra</a>
 */
 
 /** @file oyranos_monitor.h
     @brief The Monitor API header to include in your application.
     
-    This file contains all functions and structs available in the Oyranos Monitor API.
-    @see oyranos_definitions.h for elektra macros
+    This file contains all functions and structs available in the Oyranos Monitor API.<br>
+    @see oyranos_definitions.h for elektra macros<br>
     @see oyranos.h for the Oyranos API
 */
 
 /** @file oyranos.c
     @brief The API implementation
     
-    This file contains functions implementing the Oyranos API.
+    This file contains functions implementing the Oyranos API.<br>
     For the Oyranos API see @file oyranos.h
 */
 
 /** @file oyranos_monitor.c
     @brief The Monitor API implementation
     
-    This file contains functions implementing the Oyranos Monitor API.
-    For the Oyranos Monitor API see @file oyranos_monitor.h
+    This file contains functions implementing the Oyranos Monitor API.<br>
+    For the Oyranos Monitor API see @file oyranos_monitor.h<br>
     For the Oyranos API see @file oyranos.h
 */
 

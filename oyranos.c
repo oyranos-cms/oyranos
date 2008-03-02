@@ -134,10 +134,12 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
                                            const char* attrib3);
 
 
-#define oyDEVICE_PROFILE oyDEFAULT_PROFILE_TYPES
+#define oyDEVICE_PROFILE oyDEFAULT_PROFILE_NUMS
 const char* oy_default_profile_types_names_[] = {
  "Rgb Editing",         /**< oyEDITING_RGB */
  "Cmyk Editing",        /**< oyEDITING_CMYK */
+ "XYZ Editing",         /**< oyEDITING_XYZ */
+ "Lab Editing",         /**< oyEDITING_Lab */
  "Assumed XYZ source",  /**< oyASSUMED_XYZ */
  "Assumed Lab source",  /**< oyASSUMED_LAB */
  "Assumed Rgb source",  /**< oyASSUMED_RGB */
@@ -371,42 +373,52 @@ oySelectUserSys_()
 }
 
 
+/** \addtogroup behaviour
 
+ *  @{
+ */
+
+/** @brief the internal only used structure for UI text strings
+ */
 typedef struct {
-  int n_options;                       /**< number of options */
-  const char *category;                /**< name under which the setting shall appear */
-  const char *label;                   /**< label for setting */
-  const char *description;             /**< description for setting */
-  const char *labels[10];  /**< label for each choice */
-  const char *config_string;           /**< key name to store configuration */
-} oyBEHAVIOUR_OPTION;
+  int n_options;               /**< number of options */
+  const char *category;        /**< name under which the setting shall appear */
+  const char *label;           /**< label for setting */
+  const char *description;     /**< description for setting */
+  const char *options[10];     /**< label for each choice */
+  const char *config_string;   /**< key name to store configuration */
+} oyBEHAVIOUR_OPTION_t;
 
-oyBEHAVIOUR_OPTION oy_behaviour_option_description_[oyBEHAVIOUR_TYPES] = {
+
+/** @brief UI strings for various behaviour options 
+ *
+ *  This Text array is an internal only variable.<br>
+ *  The content is  available through the oyGetBehaviourUITitle funcion.
+ */
+oyBEHAVIOUR_OPTION_t oy_behaviour_option_description_[oyBEHAVIOUR_NUMS] = {
 { 3, "Behaviour", "No Image profile", "Image has no profile embedded action.",
  {"Assign No Profile","Assign Assumed Profile","Promt"},
- {OY_ACTION_UNTAGGED_ASSIGN} }, /* oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN */
-{ 3, "Behaviour", "On Open Rgb Mismatch", "Image profile and Editing profile mismatches.",
- {"Keep Data","Convert automatically","Promt"},
- {OY_ACTION_OPEN_MISMATCH_RGB} }, /* oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB */
-{ 3, "Behaviour", "On Open Cmyk Mismatch", "Image profile and Editing profile mismatches.",
- {"Keep Data","Convert automatically","Promt"},
- {OY_ACTION_OPEN_MISMATCH_CMYK} }, /* oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB */
-{ 2, "Behaviour/Documents", "Mixed colour space", "Allow mixed colour space documents or not.",
- {"Allow Mixing","Flatten Colour"},
- {OY_ALLOW_MIXED_COLOUR_SPACE_DOCUMENT} }, /* oyBEHAVIOUR_MIXED_MOD_DOCUMENTS */
-{ 2, "Behaviour/Documents", "Mixed colour space internet", "Give a warning during saveing a mixed mode document for Internet publishing.",
- {"Silent","Warn"},
- {OY_WARNING_MIXED_COLOUR_SPACE_INTERNET_DOCUMENT} }, /* oyBEHAVIOUR_MIXED_MOD_DOCUMENTS */
+ OY_ACTION_UNTAGGED_ASSIGN }, /* oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN */
+{ 3, "Behaviour", "On Rgb Mismatch", "Image profile and Editing profile mismatches.",
+ {"Preserve Numbers","Convert automatically","Promt"},
+ OY_ACTION_MISMATCH_RGB }, /* oyBEHAVIOUR_ACTION_MISMATCH_RGB */
+{ 3, "Behaviour", "On Cmyk Mismatch", "Image profile and Editing profile mismatches.",
+ {"Preserve Numbers","Convert automatically","Promt"},
+ OY_ACTION_MISMATCH_CMYK }, /* oyBEHAVIOUR_ACTION_MISMATCH_CMYK */
+{ 4, "Behaviour/Save Mixed colour space Documents", "For Print", "Prepare a document for Print.",
+ {"Preserve Numbers","Convert to Default Cmyk Editing Space","Convert to untagged Cmyk, preserving Cmyk numbers","Promt"},
+ OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT }, /* oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT */
+{ 4, "Behaviour/Save Mixed colour space Documents", "For Screen", "Prepare a document for Screen.",
+ {"Preserve Numbers","Convert to Default Rgb Editing Space","Convert to WWW (sRGB)","Promt"},
+ OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT }, /* oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN */
 { 4, "Behaviour", "Default Rendering Intent", "Usual colour space transform behaviour",
- {"Preceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
- {OY_DEFAULT_RENDERING_INTENT} }, /* oyBEHAVIOUR_RENDERING_INTENT */
+ {"Perceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
+ OY_DEFAULT_RENDERING_INTENT }, /* oyBEHAVIOUR_RENDERING_INTENT */
 { 4, "Behaviour", "Proofing Rendering Intent", "Behaviour of colour space transformation for proofing",
- {"Preceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
- {OY_DEFAULT_RENDERING_INTENT_PROOF} }, /* oyBEHAVIOUR_RENDERING_INTENT_PROOF */
+ {"Perceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
+ OY_DEFAULT_RENDERING_INTENT_PROOF }, /* oyBEHAVIOUR_RENDERING_INTENT_PROOF */
 };
-
-const char oy_behaviour_config_string_[oyBEHAVIOUR_TYPES][64] = {
-};
+/** @} */
 
 int
 oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
@@ -415,7 +427,7 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR type, int choice)
 
   DBG_PROG_S( ("type = %d behaviour %d", type, choice) )
 
-  if ( type >= 0 && type < oyBEHAVIOUR_TYPES )
+  if ( type >= 0 && type < oyBEHAVIOUR_NUMS )
   {
     if ( choice >= 0 &&
          choice < oy_behaviour_option_description_[type].n_options )
@@ -439,15 +451,17 @@ oySetBehaviour_      (oyBEHAVIOUR type, int choice)
 
   if ( (r=oyTestInsideBehaviourOptions_(type, choice)) == 1 )
   {
-    const char *keyName = 0, *com = 0;
+    const char *keyName = 0;
 
     keyName = oy_behaviour_option_description_[type].config_string;
 
       if(keyName)
       {
         char val[12];
+        const char *com =
+            _(oy_behaviour_option_description_[ type ]. options[ choice ]);
         snprintf(val, 12, "%d", choice);
-        r = oyAddKey_valueComment_ (keyName, val, com); DBG_PROG
+        r = oyAddKey_valueComment_ (keyName, val, com);
         DBG_PROG_S(( "%s %d %s", keyName, type, val ))
       }
       else
@@ -469,7 +483,7 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR       type,
   if (choices) *choices = oy_behaviour_option_description_[ type ].n_options;
 
   if ( oyTestInsideBehaviourOptions_(type, choice) )
-  { *option_string = oy_behaviour_option_description_[ type ]. labels[ choice ];
+  { *option_string = oy_behaviour_option_description_[ type ]. options[ choice];
     *category = oy_behaviour_option_description_[ type ]. category;
     *tooltip = oy_behaviour_option_description_[ type ]. description;
     DBG_PROG_ENDE
@@ -1081,7 +1095,7 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
     if ( type < 0 )
       WARN_S( ("%s:%d %s() !!! ERROR type %d; type does not exist",__FILE__,__LINE__, __func__, type ) );
 
-    if(type < oyDEFAULT_PROFILE_TYPES)
+    if(type < oyDEFAULT_PROFILE_NUMS)
       config_name = oyMapDEFAULT_PROFILEtoConfigString_(type);
     else if(type == oyDEVICE_PROFILE)
       {
@@ -1437,7 +1451,7 @@ const char*
 oyMapDEFAULT_PROFILEtoString_ (oyDEFAULT_PROFILE type)
 { DBG_PROG_START
   const char *type_string = 0;
-  if(0 <= type && type < oyDEFAULT_PROFILE_TYPES)
+  if(0 <= type && type < oyDEFAULT_PROFILE_NUMS)
     type_string = oy_default_profile_types_names_[type];
   DBG_PROG_ENDE
   return type_string;
@@ -1450,6 +1464,8 @@ oyMapDEFAULT_PROFILEtoConfigString_ (oyDEFAULT_PROFILE type)
   switch (type) {
     case oyEDITING_RGB: config_string = OY_DEFAULT_EDITING_RGB_PROFILE; break;
     case oyEDITING_CMYK: config_string = OY_DEFAULT_EDITING_CMYK_PROFILE; break;
+    case oyEDITING_XYZ: config_string = OY_DEFAULT_EDITING_XYZ_PROFILE; break;
+    case oyEDITING_LAB: config_string = OY_DEFAULT_EDITING_LAB_PROFILE; break;
     case oyASSUMED_XYZ: config_string = OY_DEFAULT_ASSUMED_XYZ_PROFILE; break;
     case oyASSUMED_LAB: config_string = OY_DEFAULT_ASSUMED_LAB_PROFILE; break;
     case oyASSUMED_RGB: config_string = OY_DEFAULT_ASSUMED_RGB_PROFILE; break;
@@ -2380,6 +2396,7 @@ oySetBehaviour         (oyBEHAVIOUR       type,
  *  @param  type      the type of behaviour
  *  @param  choices   how many options has this behaviour
  *  @param  choice    the selected option
+ *  @param  category  the category the behaviour shall appear in
  *  @param  option_string the options label
  *  @param  tooltip   a tooltip for this behaviour
  *  @return           the behaviour label

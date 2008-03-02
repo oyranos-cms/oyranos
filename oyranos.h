@@ -35,7 +35,7 @@
 #include <oyranos/oyranos_definitions.h>
 
 /** \namespace oyranos
-    The Oyranos namespace.
+    @brief The Oyranos namespace.
  */
 #ifdef __cplusplus
 extern "C" {
@@ -51,11 +51,11 @@ typedef enum  {
   oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? */
   oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB,/**< What to do if profiles mismatch ? */
   oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK,/**< What to do if profiles mismatch ?*/
-  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS,     /**< Allow mixed color space documents?*/
-  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_WWW, /**< Warn mixed color space internet documents?*/
+  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT,/**< Convert befor save for Print? */
+  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
   oyBEHAVIOUR_RENDERING_INTENT,        /**< Standard colour transformations */
   oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
-  oyBEHAVIOUR_TYPES                    /**< just for easen Gui design */
+  oyBEHAVIOUR_NUMS                     /**< just for easen Gui design */
 } oyBEHAVIOUR;
 
 enum  {
@@ -80,7 +80,7 @@ int         oyGetBehaviour             (oyBEHAVIOUR       type);
  *
  * Place here your allocator, like: \code
    void* myAllocFunc (size_t size)
-   { return new char [size];
+   { return malloc (size);
    }
  * \endcode<br>
  */
@@ -111,12 +111,14 @@ char* oyGetPathFromProfileName         (const char* profile_name,
 typedef enum  {
   oyEDITING_RGB,            /**< Rgb Editing (Workspace) Profile */
   oyEDITING_CMYK,           /**< Cmyk Editing (Workspace) Profile */
+  oyEDITING_XYZ,            /**< XYZ Editing (Workspace) Profile */
+  oyEDITING_LAB,            /**< Lab Editing (Workspace) Profile */
   oyASSUMED_XYZ,            /**< standard XYZ assumed source profile */
   oyASSUMED_LAB,            /**< standard Lab assumed source profile */
   oyASSUMED_RGB,            /**< standard RGB assumed source profile */
   oyASSUMED_WEB,            /**< std internet assumed source static_profile*/
   oyASSUMED_CMYK,           /**< standard Cmyk assumed source profile */
-  oyDEFAULT_PROFILE_TYPES   /**< just for easen Gui design */
+  oyDEFAULT_PROFILE_NUMS    /**< just for easen Gui design */
 } oyDEFAULT_PROFILE;
 
 int         oySetDefaultProfile        (oyDEFAULT_PROFILE type,
