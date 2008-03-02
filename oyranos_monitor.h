@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004  Kai-Uwe Behrmann 
+ * Copyright (C) 2005  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -21,25 +21,38 @@
  * 
  * -----------------------------------------------------------------------------
  *
- * helpers
+ * hardware API
  * 
  */
 
-/* Date:      August 2004 */
-
-#ifndef OYRANOS_HELFER_H
-#define OYRANOS_HELFER_H
-
-#define _(text) text
+/* Date:      01. 02. 2005 */
 
 
-/* mathematical helpers */
+#ifndef OYRANOS_MONITOR_H
+#define OYRANOS_MONITOR_H
 
-#define MIN(a,b)    (((a) <= (b)) ? (a) : (b))
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#define HYP(a,b)    pow((a)*(a) + (b)*(b),1.0/2.0)
-#define HYP3(a,b,c) pow( (a)*(a) + (b)*(b) + (c)*(c) , 1.0/2.0)
-#define RUND(a)     ((a) + 0.5)
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 
-#endif /* OYRANOS_HELFER_H */
+/*
+ * hardware detection with X
+ * should be independent of the huge windowing system
+ */
+
+
+/* monitor names */
+
+char*
+oyGetMonitorProfile               (const char* display,
+                                   char*       manufacturer,
+                                   char*       model,
+                                   char*       serial);
+
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* OYRANOS_MONITOR_H */

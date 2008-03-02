@@ -118,10 +118,13 @@ main(int argc, char** argv)
 
 
   // Show what we have
+  oySetDefaultRGBProfile("sRGB.icc");
   { char* name = oyGetDefaultImageProfileName();
     printf ("default %s profile = %s\n", OY_DEFAULT_IMAGE_PROFILE, name);
     name = oyGetDefaultWorkspaceProfileName();
     printf ("default %s profile = %s\n", OY_DEFAULT_WORKSPACE_PROFILE, name);
+    name = oyGetDefaultRGBProfileName();
+    printf ("default %s profile = %s\n", OY_DEFAULT_RGB_PROFILE, name);
     name = oyGetDefaultCmykProfileName();
     printf ("default %s profile = %s\n", OY_DEFAULT_CMYK_PROFILE, name);
     free (name);

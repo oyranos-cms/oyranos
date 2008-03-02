@@ -25,6 +25,9 @@ VERSION = $(VERSION_A).$(VERSION_B).$(VERSION_C)
 LIBSONAMEFULL = lib$(TARGET).so.$(VERSION)
 LIBSONAME = lib$(TARGET).so.$(VERSION_A)
 LIBNAME = lib$(TARGET).a
+LIB_MONI_SONAMEFULL = lib$(TARGET)_moni.so.$(VERSION)
+LIB_MONI_SONAME = lib$(TARGET)_moni.so.$(VERSION_A)
+LIB_MONI_NAME = lib$(TARGET)_moni.a
 
 #APPLE = 1
 FLU = 1
@@ -57,11 +60,17 @@ LDLIBS = -L$(libdir) -L./ $(FLTK_LIBS) \
 
 CPP_HEADERS = \
 	oyranos.h \
+	oyranos_debug.h \
 	oyranos_definitions.h \
-	oyranos_helper.h
+	oyranos_helper.h \
+	oyranos_monitor.h
 #	fl_oyranos.h
 CFILES = \
 	oyranos.c
+CFILESC = \
+	oyranos_debug.c
+CFILES_MONI = \
+    oyranos_monitor.c
 CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
@@ -73,8 +82,10 @@ DOKU = \
 FLUID = #\
 	fl_oyranos.fl
 
-SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) test.c
-OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o)
+SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
+		  $(CFILES_MONI) test.c test2.cpp
+OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
+MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o) $(CFILESC:.c=.o)
 
 REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) /opt/local/include/FL/mac.r
 ifdef APPLE
@@ -88,7 +99,7 @@ mtime   = `find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g`
 
 .SILENT:
 
-all:	$(TARGET)
+all:	$(TARGET) $(TARGET)_moni test2
 
 $(TARGET):	$(OBJECTS)
 	echo Linking $@...
@@ -98,6 +109,15 @@ $(TARGET):	$(OBJECTS)
 	$(APPLE)
 	$(RM) $(LIBSONAME) && $(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
 
+$(TARGET)_moni:	$(MONI_OBJECTS)
+	echo Linking $@...
+	$(CC) $(OPTS) $(LINK_FLAGS) -L/usr/X11R6/lib -lX11 \
+	-o $(LIB_MONI_SONAMEFULL) \
+	$(MONI_OBJECTS) \
+	$(LDLIBS) \
+	$(APPLE)
+	$(RM) $(LIB_MONI_SONAME) && $(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
+
 $(LIBSONAMEFULL):	$(TARGET)
 
 static:	$(TARGET)
@@ -105,6 +125,12 @@ static:	$(TARGET)
 	$(COLLECT) $(LIBNAME) $(OBJECTS)
 	$(RANLIB) $(LIBNAME)
 
+test2:	$(LIBSONAMEFULL) test2.o
+	$(CC) $(OPTS) -o test2 \
+	test2.o \
+	$(LIB_MONI_SONAMEFULL) -Wl,--rpath -Wl,$(srcdir) \
+	$(LDLIBS) 
+	$(APPLE)
 test:	$(LIBSONAMEFULL) test.o
 	$(CC) $(OPTS) -o test \
 	test.o \

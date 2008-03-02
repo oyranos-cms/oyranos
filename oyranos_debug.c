@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004  Kai-Uwe Behrmann 
+ * Copyright (C) 2005  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -21,25 +21,18 @@
  * 
  * -----------------------------------------------------------------------------
  *
- * helpers
+ * helper
  * 
  */
 
-/* Date:      August 2004 */
-
-#ifndef OYRANOS_HELFER_H
-#define OYRANOS_HELFER_H
-
-#define _(text) text
+/* Date:      01. 02. 2005 */
 
 
-/* mathematical helpers */
+#include "oyranos_debug.h"
 
-#define MIN(a,b)    (((a) <= (b)) ? (a) : (b))
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#define HYP(a,b)    pow((a)*(a) + (b)*(b),1.0/2.0)
-#define HYP3(a,b,c) pow( (a)*(a) + (b)*(b) + (c)*(c) , 1.0/2.0)
-#define RUND(a)     ((a) + 0.5)
+#define DEBUG 1
+int level_PROG = 0;
+clock_t oyranos_clock_ = 0;
+int oy_debug = 0;
 
 
-#endif /* OYRANOS_HELFER_H */
