@@ -16,13 +16,20 @@
     The here described concepts are targeted until version 1.0 of Oyranos.
     They are intended to make the API consistent and its usage predictable.
 
-    @subsection general_concept General
-    - Users can configure their own settings, while administrators can
-      configure system wide settings.
+    @subsection os_concept Interoperatibility on Operating Systems
+    - Oyranos is intended to work on at least Linux, osX and (hopefully) Windows
+    - On Linux the <a href="http://elektra.sf.net">Elektra</a> configuration
+      library is used for managing and storing the configuration.
+    - If publically available Oyranos will sit on top of native Colour
+      Management Systems like ColorSync&copy; or ICM&copy;.
 
     @subsection path_concept Paths Configuration
     - Paths are scanned secursively avoiding links for security reasons.
     - Paths counts allways, to aim consistency. There are no exceptions.
+
+    @subsection general_concept Personality
+    - Users can configure their own settings, while administrators can
+      configure system wide settings.
 
     @subsection memory_concept Memory Handling
     - For strings constant pointers to chars are the prefered way (utf8?)
@@ -32,12 +39,20 @@
     - Library allocated memory blocks like profile lists can be freed with
       a Oyranos provided function.
 
-    @subsection os_concept Interoperatibility on Operating Systems
-    - Oyranos is intended to work on at least Linux, osX and (hopefully) Windows
-    - On Linux the <a href="http://elektra.sf.net">Elektra</a> configuration
-      library is used for the managing and storing configurations.
-    - If publically available Oyranos will sit on top of native Colour
-      Management Systems like ColorSync&copy; or ICM&copy;.
+    @subsection information_concept Information Exchange
+    - Functions are needed which show useful informations for GUIs, about the
+      content in the Profiles and about possible errors.
+    - A callback mechanism informs about changes regarding the configuration.
+    - Special informations like for instance about the display geometry are not
+      planed so far.
+    - Some names are provided as static strings and may help to design a
+      consistent user interface throughout toolkits.
+
+    @subsection special_concept Special Considerations
+    - It should be easy to query Oyranos for certain informations contained in a
+      Profile like primaries or gamma.
+    - To some degree useablity checks for profiles should be included.
+
 
     @section proposal Open Things
     @subsection identity_proposal Profile Identity Proposal
@@ -52,7 +67,7 @@
     profile in the header accordingly. This makes sense especially for older
     profiles. This feature makes of course only sense of the file access is
     resonably quick. A hash table may help here.\n
-    Some tests are needed befor implementing the described method in Oyranos.\n
+
     @subsection correlation_proposal Correlation Proposal
     An other toppic is the correlation of device and program settings during
     image production and the selection of the correct profile for the needed

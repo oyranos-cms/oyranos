@@ -34,8 +34,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "oyranos.h"
 #include "oyranos_helper.h"
-
 #include "oyranos_debug.h"
 
 /* --- Helpers  --- */
@@ -53,16 +53,35 @@ static int oyranos_init = 0;
 
 /* --- internal API definition --- */
 
+void* oyAllocateFunc_           (size_t        size);
+/*void  oyDeAllocateFunc_         (void*  data);*/
+
 /* separate from the external functions */
 void  oyOpen_                   (void);
 void  oyClose_                  (void);
 int   oyPathsCount_             (void);
-char* oyPathName_               (int number);
+char* oyPathName_               (int           number,
+                                 oyAllocFunc_t allocate_func);
 int   oyPathAdd_                (const char* pathname);
 void  oyPathRemove_             (const char* pathname);
 void  oyPathSleep_              (const char* pathname);
 void  oyPathActivate_           (const char* pathname);
-char* oyGetPathFromProfileName_ (const char* profilename);
+char* oyGetPathFromProfileName_ (const char*   profilename,
+                                 oyAllocFunc_t allocate_func);
+
+
+const char* oyMapDEFAULT_PROFILEtoString_       (oyDEFAULT_PROFILE type);
+const char* oyMapDEFAULT_PROFILEtoConfigString_ (oyDEFAULT_PROFILE type);
+int         oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
+                                        const char*       file_name);
+int         oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
+                                        const char*       file_name,
+                                        void*             mem,
+                                        size_t            size);
+const char* oyGetDefaultProfileUITitle_(oyDEFAULT_PROFILE type);
+char*       oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
+                                        oyAllocFunc_t     alloc_func);
+
 
 int	oySetDefaultWorkspaceProfile_      (const char* name);
 int	oySetDefaultWorkspaceProfile_Block (const char* name, void* mem, size_t size);
@@ -86,8 +105,10 @@ char**  oyProfileList_                 (const char* colourspace, size_t * size);
 int	oyCheckProfile_                    (const char* name);
 int	oyCheckProfile_Mem                 (const void* mem, size_t size);
 
-size_t	oyGetProfileSize_                  (const char* profilename);
-void*	oyGetProfileBlock_                 (const char* profilename, size_t *size);
+size_t	oyGetProfileSize_                 (const char*   profilename);
+void*	oyGetProfileBlock_                (const char*   profilename,
+                                           size_  t     *size,
+                                           oyAllocFunc_t allocate_func);
 
 char*   oyGetDeviceProfile_               (const char* manufacturer,
                                            const char* model,
@@ -125,6 +146,24 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
                                            const char* attrib1,
                                            const char* attrib2,
                                            const char* attrib3);
+
+
+#define oyDEVICE_PROFILE oyDEFAULT_PROFILE_TYPES
+const char* oy_default_profile_types_names_[] = {
+ "Workspace",  /**< oyWORKSPACE */
+ "XYZ Input",  /**< oyINPUT_XYZ */
+ "Lab Input",  /**< oyINPUT_Lab */
+ "RGB Input",  /**< oyINPUT_RGB */
+ "Cmyk Input", /**< oyINPUT_Cmyk*/
+ "Device"      /**< oyDEVICE_PROFILE : a device profile */
+};
+
+/* internal memory handling */
+void* oyAllocateFunc_           (size_t        size)
+{
+  /* we have most often to work with text arrays, so initialise with 0 */
+  return calloc (sizeof (char), size);
+}
 
 void oyOpen_ (void)
 {
@@ -172,33 +211,33 @@ void oyCheckDefaultDirectories_ ();
 char* oyFindProfile_ (const char* name);
 
 /* Profile registring */
-int oySetProfile_      (const char* name, const char* typ, const char* comment);
+int oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* comment);
 int oySetProfile_Block (const char* name, void* mem, size_t size,
-                        const char* typ, const char* comnt);
+                        oyDEFAULT_PROFILE type, const char* comnt);
 
-/* small search engine
+/**@internal A small search engine
  *
  * for one simple, single list, dont mix lists!!
  * name and val are not alloced or freed 
  */
 
-struct OyComp {
-  struct OyComp *next;
-  struct OyComp *begin;
-  char          *name;
-  char          *val;
-  int            hits;
+struct OyComp_s {
+  struct OyComp_s *next;   /* chain connection */
+  struct OyComp_s *begin;  /* chain connection */
+  char            *name;   /* key name */
+  char            *val;    /* its value */
+  int              hits;   /* weighting */
 };
 
-typedef struct OyComp oyComp;
+typedef struct OyComp_s oyComp_t;
 
-oyComp* oyInitComp_        (oyComp *compare, oyComp *top);
-oyComp* oyAppendComp_      (oyComp *list, oyComp *new);
-void    oySetComp_         (oyComp *compare, const char* keyName,
+oyComp_t* oyInitComp_      (oyComp_t *compare, oyComp_t *top);
+oyComp_t* oyAppendComp_    (oyComp_t *list,    oyComp_t *new);
+void    oySetComp_         (oyComp_t *compare, const char* keyName,
                             const char* value, int hits );
-void    oyDestroyCompList_ (oyComp* list);
+void    oyDestroyCompList_ (oyComp_t* list);
 
-oyComp* oyGetDeviceProfile_sList          (const char* manufacturer,
+oyComp_t* oyGetDeviceProfile_sList          (const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
                                            const char* host,
@@ -340,7 +379,8 @@ oyReadFileSize_(const char* name)
 }
 
 char*
-oyReadFileToMem_(const char* name, size_t *size)
+oyReadFileToMem_(const char* name, size_t *size,
+                 oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   FILE *fp = 0;
   char* mem = 0;
@@ -682,7 +722,7 @@ oyFindProfile_ (const char* fileName)
   //DBG_NUM_S((fileName))
   if (fileName && !strchr(fileName, OY_SLASH_C))
   { DBG_PROG
-    char* path_name = oyGetPathFromProfileName_(fileName);
+    char* path_name = oyGetPathFromProfileName_(fileName, oyAllocateFunc_);
     fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
     sprintf(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
     OY_FREE(path_name)
@@ -700,7 +740,8 @@ oyFindProfile_ (const char* fileName)
 }
 
 char*
-oyGetPathFromProfileName_ (const char* fileName)
+oyGetPathFromProfileName_       (const char*   fileName,
+                                 oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   char  *fullFileName = 0;
   char  *pathName = 0;
@@ -717,11 +758,11 @@ oyGetPathFromProfileName_ (const char* fileName)
 
     DBG_PROG_S(("pure filename found"))
     DBG_PROG_S(("n_paths = %d", n_paths ))
-    fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
+    fullFileName = (char*) allocate_func( MAX_PATH );
 
     for (i = 0; i < n_paths; i++)
     { /* test profile */
-      char* ptr = oyPathName_ (i);
+      char* ptr = oyPathName_ (i, oyAllocateFunc_);
       pathName = oyMakeFullFileDirName_ (ptr);
       sprintf (fullFileName, "%s%s%s", pathName, OY_SLASH, fileName);
 
@@ -789,7 +830,7 @@ oyGetPathFromProfileName_ (const char* fileName)
 }
 
 int
-oySetProfile_      (const char* name, const char* typ, const char* comment)
+oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* comment)
 { DBG_PROG_START
   int r = 1;
   const char *fileName = 0, *com = comment;
@@ -802,23 +843,18 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
   } else
     fileName = name;
 
-  DBG_PROG_S(("name = %s typ %s", name, typ))
+  DBG_PROG_S( ("name = %s type %d", name, type) )
 
   if ( name == 0 || !oyCheckProfile_ (fileName) )
   {
-    const char* typ_name = 0;
-    DBG_PROG_S(("set fileName = %s as %s profile\n",fileName, typ))
-           if (strstr (typ , "Workspace"))
-        typ_name = OY_DEFAULT_WORKSPACE_PROFILE;
-      else if (strstr (typ , "XYZ"))
-        typ_name = OY_DEFAULT_XYZ_INPUT_PROFILE;
-      else if (strstr (typ , "Lab"))
-        typ_name = OY_DEFAULT_LAB_INPUT_PROFILE;
-      else if (strstr (typ , "RGB"))
-        typ_name = OY_DEFAULT_RGB_INPUT_PROFILE;
-      else if (strstr (typ , "Cmyk"))
-        typ_name = OY_DEFAULT_CMYK_INPUT_PROFILE;
-      else if (strstr (typ , "Device"))
+    const char* config_name = 0;
+    DBG_PROG_S(("set fileName = %s as %d profile\n",fileName, type))
+    if ( type < 0 )
+      WARN_S( ("%s:%d %s() !!! ERROR type %d; type does not exist",__FILE__,__LINE__, __func__, type ) );
+
+    if(type < oyDEFAULT_PROFILE_TYPES)
+      config_name = oyMapDEFAULT_PROFILEtoConfigString_(type);
+    else if(type == oyDEVICE_PROFILE)
       {
         int len = strlen(OY_USER OY_SLASH OY_REGISTRED_PROFILES)
                   + strlen(fileName);
@@ -829,12 +865,13 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
         OY_FREE (keyName)
       }
       else
-        WARN_S( ("%s:%d !!! ERROR typ %s type does not exist for default profiles",__FILE__,__LINE__, typ));
-
-    if(typ_name)
+        WARN_S( ("%s:%d !!! ERROR type %d type does not exist for default profiles",__FILE__,__LINE__, type));
+      
+    
+    if(config_name)
     {
       if(name)
-        r = oyAddKey_valueComment_ (typ_name, fileName, com);
+        r = oyAddKey_valueComment_ (config_name, fileName, com);
       else
       {
         KeySet* list;
@@ -847,7 +884,7 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
         kdbOpen();
 
 
-        // @TODO merge User and System KeySets in oyReturnChildrenList_
+        // @todo TODO merge User and System KeySets in oyReturnChildrenList_
         list = oyReturnChildrenList_(OY_USER OY_KEY OY_SLASH "default", &rc ); ERR
         if(!list)
         {
@@ -855,7 +892,7 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
           {
             keyGetName(current, value, MAX_PATH);
             DBG_NUM_S(( value ))
-            if(strstr(value, typ_name) != 0 && strlen(value) == strlen(typ_name))
+            if(strstr(value, config_name) != 0 && strlen(value) == strlen(config_name))
             {
               DBG_PROG_S((value))
               kdbRemove (value); 
@@ -911,7 +948,7 @@ oyPathsCount_ ()
 }
 
 char*
-oyPathName_ (int number)
+oyPathName_ (int number, oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   int rc=0, n = 0;
   Key *current;
@@ -928,7 +965,7 @@ oyPathName_ (int number)
     return 0;
   }
 
-  value = (char*) calloc (sizeof(char), MAX_PATH);
+  value = (char*) allocate_func( MAX_PATH );
 
   if (number <= ksGetSize(myKeySet))
     FOR_EACH_IN_KDBKEYSET( current, myKeySet )
@@ -1177,89 +1214,53 @@ oyPathActivate_ (const char* pfad)
 }
 
 /* default profiles API */
+const char*
+oyMapDEFAULT_PROFILEtoString_ (oyDEFAULT_PROFILE type)
+{ DBG_PROG_START
+  const char *type_string = 0;
+  if(0 <= type && type < oyDEFAULT_PROFILE_TYPES)
+    type_string = oy_default_profile_types_names_[type];
+  DBG_PROG_ENDE
+  return type_string;
+}
+
+const char*
+oyMapDEFAULT_PROFILEtoConfigString_ (oyDEFAULT_PROFILE type)
+{ DBG_PROG_START
+  const char *config_string = 0;
+  switch (type) {
+    case oyWORKSPACE: config_string = OY_DEFAULT_WORKSPACE_PROFILE; break;
+    case oyINPUT_XYZ: config_string = OY_DEFAULT_XYZ_INPUT_PROFILE; break;
+    case oyINPUT_Lab: config_string = OY_DEFAULT_LAB_INPUT_PROFILE; break;
+    case oyINPUT_RGB: config_string = OY_DEFAULT_RGB_INPUT_PROFILE; break;
+    case oyINPUT_Cmyk: config_string = OY_DEFAULT_CMYK_INPUT_PROFILE; break;
+    default: WARN_S( ("Default Profile type %d does not exist", type) )
+  }
+  DBG_PROG_ENDE
+  return config_string;
+}
 
 int
-oySetDefaultWorkspaceProfile_      (const char* name)
+oySetDefaultProfile_       (oyDEFAULT_PROFILE type,
+                            const char*       file_name)
 { DBG_PROG_START
-  int r = oySetProfile_ (name, "Workspace", 0);
+  int r = oySetProfile_ (file_name, type, 0);
   DBG_PROG_ENDE
   return r;
 }
 
 int
-oySetDefaultXYZInputProfile_           (const char* name)
+oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
+                            const char* file_name, void* mem, size_t size)
 { DBG_PROG_START
-  int r = oySetProfile_ (name, "XYZ", 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultLabInputProfile_           (const char* name)
-{ DBG_PROG_START
-  int r = oySetProfile_ (name, "Lab", 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultRGBInputProfile_           (const char* name)
-{ DBG_PROG_START
-  int r = oySetProfile_ (name, "RGB", 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultCmykInputProfile_           (const char* name)
-{ DBG_PROG_START
-  int r = oySetProfile_ (name, "Cmyk", 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultWorkspaceProfile_Block (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int r = oySetProfile_Block (name, mem, size, "Workspace", 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultXYZInputProfile_Block      (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int r = oySetProfile_Block (name, mem, size, "XYZ", 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultLabInputProfile_Block      (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int r = oySetProfile_Block (name, mem, size, "Lab", 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultRGBInputProfile_Block      (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int r = oySetProfile_Block (name, mem, size, "RGB", 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultCmykInputProfile_Block      (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int r = oySetProfile_Block (name, mem, size, "Cmyk", 0);
+  int r = oySetProfile_Block (file_name, mem, size, type, 0);
   DBG_PROG_ENDE
   return r;
 }
 
 char*
-oyGetDefaultWorkspaceProfileName_  ()
+oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
+                            oyAllocFunc_t     alloc_func)
 { DBG_PROG_START
   char* name = (char*) calloc (MAX_PATH, sizeof(char));
 
@@ -1270,53 +1271,8 @@ oyGetDefaultWorkspaceProfileName_  ()
   return name;
 }
 
-char*
-oyGetDefaultXYZInputProfileName_       ()
-{ DBG_PROG_START
-  char* name = (char*) calloc (MAX_PATH, sizeof(char));
 
-  kdbGetValue (OY_DEFAULT_XYZ_INPUT_PROFILE, name, MAX_PATH);
 
-  DBG_PROG_S((name))
-  DBG_PROG_ENDE
-  return name;
-}
-
-char*
-oyGetDefaultLabInputProfileName_       ()
-{ DBG_PROG_START
-  char* name = (char*) calloc (MAX_PATH, sizeof(char));
-
-  kdbGetValue (OY_DEFAULT_LAB_INPUT_PROFILE, name, MAX_PATH);
-
-  DBG_PROG_S((name))
-  DBG_PROG_ENDE
-  return name;
-}
-
-char*
-oyGetDefaultRGBInputProfileName_       ()
-{ DBG_PROG_START
-  char* name = (char*) calloc (MAX_PATH, sizeof(char));
-
-  kdbGetValue (OY_DEFAULT_RGB_INPUT_PROFILE, name, MAX_PATH);
-
-  DBG_PROG_S((name))
-  DBG_PROG_ENDE
-  return name;
-}
-
-char*
-oyGetDefaultCmykInputProfileName_       ()
-{ DBG_PROG_START
-  char* name = (char*) calloc (MAX_PATH, sizeof(char));
-
-  kdbGetValue (OY_DEFAULT_CMYK_INPUT_PROFILE, name, MAX_PATH);
-
-  DBG_PROG_S(("%s %s %d",OY_DEFAULT_CMYK_INPUT_PROFILE,name,MAX_PATH))
-  DBG_PROG_ENDE
-  return name;
-}
 
 /* profile lists API */
 
@@ -1337,7 +1293,7 @@ oyProfileList_                     (const char* colourspace, size_t * size)
     struct stat statbuf;
     DIR *dir;
     struct dirent *entry;
-    char *p = oyPathName_(i);
+    char *p = oyPathName_(i, oyAllocateFunc_);
     char *path = oyMakeFullFileDirName_(p);
 
     if ((stat (path, &statbuf)) != 0) {
@@ -1469,18 +1425,19 @@ oyGetProfileSize_                  (const char* profilename)
 }
 
 void*
-oyGetProfileBlock_                 (const char* profilename, size_t *size)
+oyGetProfileBlock_                 (const char* profilename, size_t *size,
+                                    oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   char* fullFileName = oyFindProfile_ (profilename);
-  char* block = oyReadFileToMem_ (fullFileName, size);
+  char* block = oyReadFileToMem_ (fullFileName, size, allocate_func);
 
   DBG_PROG_ENDE
   return block;
 }
 
 int
-oySetProfile_Block (const char* name, void* mem, size_t size, const char* typ,
-                    const char* comnt)
+oySetProfile_Block (const char* name, void* mem, size_t size,
+                    oyDEFAULT_PROFILE type, const char* comnt)
 { DBG_PROG_START
   int r = 0;
   char *fullFileName, *resolvedFN;
@@ -1504,11 +1461,11 @@ oySetProfile_Block (const char* name, void* mem, size_t size, const char* typ,
   if (!oyCheckProfile_Mem( mem, size))
   {
     DBG_PROG_S((fullFileName))
-    if ( oyIsFile_(fullFileName) )
+    if ( oyIsFile_(fullFileName) ) {
       WARN_S (("file %s exist , please remove befor installing new profile\n", fullFileName))
-    else
+    } else
     { r = oyWriteMemToFile_ (fullFileName, mem, size);
-      oySetProfile_ ( name, typ, comnt);
+      oySetProfile_ ( name, type, comnt);
     }
   }
 
@@ -1523,11 +1480,11 @@ oySetProfile_Block (const char* name, void* mem, size_t size, const char* typ,
 
 /* small search engine */
 
-oyComp*
-oyInitComp_ (oyComp *list, oyComp *top)
+oyComp_t*
+oyInitComp_ (oyComp_t *list, oyComp_t *top)
 { DBG_PROG_START
   if (!list)
-    list = (oyComp*) calloc (1, sizeof(oyComp));
+    list = (oyComp_t*) calloc (1, sizeof(oyComp_t));
 
   list->next = 0;
 
@@ -1542,8 +1499,8 @@ oyInitComp_ (oyComp *list, oyComp *top)
   return list;
 }
 
-oyComp*
-oyAppendComp_ (oyComp *list, oyComp *new)
+oyComp_t*
+oyAppendComp_ (oyComp_t *list, oyComp_t *new)
 { DBG_PROG_START
 
   /* no list yet => first and only entry */
@@ -1568,7 +1525,7 @@ oyAppendComp_ (oyComp *list, oyComp *new)
 }
 
 void
-oySetComp_         (oyComp *compare, const char* keyName,
+oySetComp_         (oyComp_t *compare, const char* keyName,
                     const char* value, int hits )
 {
   DBG_PROG_START
@@ -1581,9 +1538,9 @@ oySetComp_         (oyComp *compare, const char* keyName,
 }
 
 void
-oyDestroyCompList_ (oyComp *list)
+oyDestroyCompList_ (oyComp_t *list)
 { DBG_PROG_START
-  oyComp *before;
+  oyComp_t *before;
 
   list = list->begin;
   while (list->next)
@@ -1598,7 +1555,7 @@ oyDestroyCompList_ (oyComp *list)
 }
 
 char*
-printComp (oyComp* entry)
+printComp (oyComp_t* entry)
 { DBG_PROG_START
   #ifdef DEBUG
   static char text[MAX_PATH] = {0};
@@ -1638,7 +1595,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
   char* profileName = 0;
   int rc=0;
 
-  oyComp *matchList = 0,
+  oyComp_t *matchList = 0,
          *testEntry = 0,
          *foundEntry = 0;
   KeySet *profilesList,
@@ -1730,7 +1687,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
   char*  profileName = 0;
   int    rc;
 
-  oyComp *matchList = 0,
+  oyComp_t *matchList = 0,
          *testEntry = 0,
          *foundEntry = 0;
   KeySet* profilesList;
@@ -1829,7 +1786,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
    */
 
 
-oyComp*
+oyComp_t*
 oyGetDeviceProfile_sList           (const char* manufacturer,
                                     const char* model,
                                     const char* product_id,
@@ -1847,7 +1804,7 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
   char* value = (char*) calloc (MAX_PATH, sizeof(char));
   const char **attributs = (const char**) alloca (8 * sizeof (const char*));
   Key *current;
-  oyComp *matchList = 0,
+  oyComp_t *matchList = 0,
          *testEntry = 0;
 
   attributs[0] = manufacturer;
@@ -1976,7 +1933,7 @@ oySetDeviceProfile_                (const char* manufacturer,
       if (attrib3) sprintf (&comment[strlen(comment)], "%s", attrib3);
     } DBG_PROG
 
-    rc =  oySetProfile_ (profileName, "Device", comment); ERR
+    rc =  oySetProfile_ (profileName, oyDEVICE_PROFILE, comment); ERR
   }
 
   DBG_PROG_ENDE
@@ -2049,6 +2006,15 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
 #include "oyranos.h"
 
+/** \addtogroup path_names Path Names
+ *  Functions to handle default profiles.
+
+ *  @see profile_lists Profile Lists
+
+ *  @{
+ */
+
+/** determin count of configured paths */
 int
 oyPathsCount         (void)
 { DBG_PROG_START
@@ -2057,10 +2023,17 @@ oyPathsCount         (void)
   return n;
 }
 
+/** get the path name at a certain position
+ *
+ *  @return the pathname at position \e number
+ *  @param number Number of path - dont rely on through sessions
+ *  @param allocate_func user profided function for allocating the string memory
+ */
 char*
-oyPathName           (int number)
+oyPathName           (int           number,
+                      oyAllocFunc_t allocate_func)
 { DBG_PROG_START
-  char* name = oyPathName_ (number);
+  char* name = oyPathName_ (number, allocate_func);
   DBG_PROG_ENDE
   return name;
 }
@@ -2095,132 +2068,79 @@ oyPathActivate       (const char* pathname)
 }
 
 char*
-oyGetPathFromProfileName (const char* profile_name)
+oyGetPathFromProfileName (const char* profile_name, oyAllocFunc_t allocate_func)
 { DBG_PROG_START
-  char* path_name = oyGetPathFromProfileName_ (profile_name);
+  char* path_name = oyGetPathFromProfileName_ (profile_name, allocate_func);
   DBG_PROG_ENDE
   return path_name;
 }
 
+/*  @} */
+
+/** \addtogroup default_profiles Default Profiles
+ *  Functions to handle default profiles.
+
+ *  @see path_names Path Names
+
+ *  @{
+ */
+
+/** Sets a profile, which is available in the current configured path.
+ *
+ *  @param  type the kind of default profile
+ *  @param  file_name the profile which shall become the above specified default
+ *          profile
+ *  @return success
+ */
 int
-oySetDefaultWorkspaceProfile      (const char* name)
+oySetDefaultProfile        (oyDEFAULT_PROFILE type,
+                            const char*       file_name)
 { DBG_PROG_START
-  int n = oySetDefaultWorkspaceProfile_ (name);
+  int n = oySetDefaultProfile_ (type, file_name);
   DBG_PROG_ENDE
   return n;
 }
 
 int
-oySetDefaultWorkspaceProfileBlock (const char* name, void* mem, size_t size)
+oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
+                            const char*       file_name,
+                            void*             mem,
+                            size_t            size)
 { DBG_PROG_START
-  int n = oySetDefaultWorkspaceProfile_Block (name, mem, size);
+  int n = oySetDefaultProfileBlock_ (type, file_name, mem, size);
   DBG_PROG_ENDE
   return n;
 }
 
-int
-oySetDefaultXYZInputProfile           (const char* name)
+const char*
+oyGetDefaultProfileUITitle (oyDEFAULT_PROFILE type)
 { DBG_PROG_START
-  int n = oySetDefaultXYZInputProfile_ (name);
-  DBG_PROG_ENDE
-  return n;
-}
-
-int
-oySetDefaultXYZInputProfileBlock      (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int n = oySetDefaultXYZInputProfile_Block (name, mem, size);
-  DBG_PROG_ENDE
-  return n;
-}
-
-int
-oySetDefaultLabInputProfile           (const char* name)
-{ DBG_PROG_START
-  int n = oySetDefaultLabInputProfile_ (name);
-  DBG_PROG_ENDE
-  return n;
-}
-
-int
-oySetDefaultLabProfileInputBlock      (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int n = oySetDefaultLabInputProfile_Block (name, mem, size);
-  DBG_PROG_ENDE
-  return n;
-}
-
-int
-oySetDefaultRGBInputProfile           (const char* name)
-{ DBG_PROG_START
-  int n = oySetDefaultRGBInputProfile_ (name);
-  DBG_PROG_ENDE
-  return n;
-}
-
-int
-oySetDefaultRGBInputProfileBlock      (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int n = oySetDefaultRGBInputProfile_Block (name, mem, size);
-  DBG_PROG_ENDE
-  return n;
-}
-
-int
-oySetDefaultCmykInputProfile           (const char* name)
-{ DBG_PROG_START
-  int n = oySetDefaultCmykInputProfile_ (name);
-  DBG_PROG_ENDE
-  return n;
-}
-
-int
-oySetDefaultCmykInputProfileBlock      (const char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int n = oySetDefaultCmykInputProfile_Block (name, mem, size);
-  DBG_PROG_ENDE
-  return n;
-}
-
-char*
-oyGetDefaultWorkspaceProfileName  ()
-{ DBG_PROG_START
-  char* name = oyGetDefaultWorkspaceProfileName_ ();
+  const char* name= oyGetDefaultProfileUITitle_ (type);
   DBG_PROG_ENDE
   return name;
 }
 
 char*
-oyGetDefaultXYZInputProfileName       ()
+oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
+                            oyAllocFunc_t     allocate_func)
 { DBG_PROG_START
-  char* name = oyGetDefaultXYZInputProfileName_ ();
+  char* name = oyGetDefaultProfileName_ (type, allocate_func);
   DBG_PROG_ENDE
   return name;
 }
+/*  @} */
 
-char*
-oyGetDefaultLabInputProfileName       ()
-{ DBG_PROG_START
-  char* name = oyGetDefaultLabInputProfileName_ ();
-  DBG_PROG_ENDE
-  return name;
-}
 
-char*
-oyGetDefaultRGBInputProfileName       ()
-{ DBG_PROG_START
-  char* name = oyGetDefaultRGBInputProfileName_ ();
-  DBG_PROG_ENDE
-  return name;
-}
+/** \addtogroup profile_lists Profile Lists
+ *  Functions to handle profile name lists.
 
-char*
-oyGetDefaultCmykInputProfileName       (void* allocator_f(size_t size))
-{ DBG_PROG_START
-  char* name = oyGetDefaultCmykInputProfileName_ ();
-  DBG_PROG_ENDE
-  return name;
-}
+ *  @todo Profile name lists are created
+ *  recursively though all valid paths.
+
+ *  @see path_names Path Names
+
+ *  @{
+ */
 
 char**
 oyProfileList                      (const char* colourspace, size_t *size)
@@ -2230,6 +2150,8 @@ oyProfileList                      (const char* colourspace, size_t *size)
   DBG_PROG_ENDE
   return names;
 }
+
+/** @} */
 
 
 int
@@ -2250,6 +2172,7 @@ oyCheckProfileMem (const void* mem, size_t size,int flag)
   return n;
 }
 
+/** @brief obtain an memory block in the responsibility of the user */
 size_t
 oyGetProfileSize                  (const char* profilename)
 { DBG_PROG_START
@@ -2258,10 +2181,13 @@ oyGetProfileSize                  (const char* profilename)
   return size;
 }
 
+/** @brief obtain an memory block in the responsibility of the user
+    \return allocated by oyAllocFunc_t */
 void*
-oyGetProfileBlock                 (const char* profilename, size_t *size)
+oyGetProfileBlock                 (const char* profilename, size_t *size,
+                                   oyAllocFunc_t allocate_func)
 { DBG_PROG_START
-  char* block = oyGetProfileBlock_ (profilename, size);
+  char* block = oyGetProfileBlock_ (profilename, size, allocate_func);
   DBG_PROG_S( ("%s %hd %d", profilename, (int)block, *size) )
   DBG_PROG
 
@@ -2269,6 +2195,55 @@ oyGetProfileBlock                 (const char* profilename, size_t *size)
   return block;
 }
 
+
+/** \addtogroup device_profiles Device Profiles
+ * 
+ * 
+ * There different approaches to select an (mostly) fitting profile
+ *
+ * A: search and compare all available profiles by \n
+ *    - ICC profile class
+ *    - Manufacturer / Model (as written in profile tags)
+ *    - other hints\n
+ *    .
+ * B: install an profile and tell Oyranos about the belonging device and the
+ *    invalidating period\n
+ * C: look for similarities of devices of allready installed profiles\n
+ * D: use the md5 checksum stored in the profile
+
+ * @see path_names Path Names
+
+ * @{
+ */
+
+/** @brief ask for a profile name by specifying device attributes
+ *
+ *  @param typ            kind of device
+ *  @param manufacturer   the device manufacturer (EIZO)
+ *  @param model          the model (LCD2100)
+ *  @param product_id     the ID reported during connection (ID_701200xx)
+ *  @param host           useful for monitor identification (grafic:0.0)
+ *  @param port           kind of connection (Matrox G650)
+ *  @param attrib1        additional attribute
+ * 
+ *  simply pass 0 for not specified properties<br>
+
+   \code
+   char* profile_name = oyGetDeviceProfile ("EIZO", "LCD2100",
+                                            "ID 87-135.19",
+                                            "grafic:0.0", "Matrox G650",
+                                             "100lux", 0,
+                                            "");
+   if (profile_name)
+   { char* ptr = (char*)malloc (oyGetProfileSize (profile_name),sizeof(int);
+     ptr = oyGetProfileBlock (profile_name);
+       // do something
+     free (ptr);
+   }
+   \endcode
+
+   \return allocated by oyAllocFunc_t
+ */
 char*
 oyGetDeviceProfile                (oyDEVICETYP typ,
                                    const char* manufacturer,
@@ -2289,6 +2264,9 @@ oyGetDeviceProfile                (oyDEVICETYP typ,
   return profile_name;
 }
 
+/** @brief set a profile name with specifying device attributes
+ *  @param mem remains in the users domain
+ */
 int
 oySetDeviceProfile                (oyDEVICETYP typ,
                                    const char* manufacturer,
@@ -2300,7 +2278,7 @@ oySetDeviceProfile                (oyDEVICETYP typ,
                                    const char* attrib2,
                                    const char* attrib3,
                                    const char* profileName,
-                                   void* mem,
+                                   const void* mem,
                                    size_t size)
 { DBG_PROG_START
   int rc =     oySetDeviceProfile_ (manufacturer, model, product_id,
@@ -2310,6 +2288,7 @@ oySetDeviceProfile                (oyDEVICETYP typ,
   return rc;
 }
 
+/** remove or deinstall the profile from the current path */
 int
 oyEraseDeviceProfile              (oyDEVICETYP typ,
                                    const char* manufacturer,
@@ -2329,4 +2308,4 @@ oyEraseDeviceProfile              (oyDEVICETYP typ,
 }
 
 
-
+/** @} */

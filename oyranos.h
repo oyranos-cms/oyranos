@@ -52,7 +52,7 @@ void  oyClose               (void);
  *
  * Place here your allocator, like: \code new char [size]; \endcode<br>
  */
-typedef void (*oyAllocFunc_t)          (size_t size);
+typedef void* (*oyAllocFunc_t)         (size_t size);
 
 /**
  * @param[in] data the pointer to deallocate
@@ -71,11 +71,30 @@ int   oyPathAdd                        (const char* pathname);
 void  oyPathRemove                     (const char* pathname);
 void  oyPathSleep                      (const char* pathname);
 void  oyPathActivate                   (const char* pathname);
-/** \return allocated by oyAllocFunc_t */
 char* oyGetPathFromProfileName         (const char* profile_name,
                                         oyAllocFunc_t);
 
 /* --- default profiles --- */
+
+/** enum default profiles */
+typedef enum  {
+  oyWORKSPACE,            /**< Workspace Profile or Editing Profile */
+  oyINPUT_XYZ,            /**< standard XYZ input profile */
+  oyINPUT_Lab,            /**< standard Lab input profile */
+  oyINPUT_RGB,            /**< standard RGB input profile */
+  oyINPUT_Cmyk,           /**< standard Cmyk input profile */
+  oyDEFAULT_PROFILE_TYPES /**< just for easen Gui design */
+} oyDEFAULT_PROFILE;
+
+int         oySetDefaultProfile        (oyDEFAULT_PROFILE type,
+                                        const char*       file_name);
+int         oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
+                                        const char*       file_name,
+                                        void*             mem,
+                                        size_t            size);
+const char* oyGetDefaultProfileUITitle (oyDEFAULT_PROFILE type);
+char*       oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
+                                        oyAllocFunc_t     alloc_func);
 
 int   oySetDefaultWorkspaceProfile     (const char* name);
 int   oySetDefaultWorkspaceProfileBlock(const char* name, void* mem, size_t size);
@@ -88,26 +107,15 @@ int   oySetDefaultRGBInputProfileBlock (const char* name, void* mem, size_t size
 int   oySetDefaultCmykInputProfile     (const char* name);
 int   oySetDefaultCmykInputProfileBlock(const char* name, void* mem, size_t size);
 
-/** \return allocated by oyAllocFunc_t */
 char* oyGetDefaultWorkspaceProfileName (oyAllocFunc_t);
-/** \return allocated by oyAllocFunc_t */
 char* oyGetDefaultXYZInputProfileName  (oyAllocFunc_t);
-/** \return allocated by oyAllocFunc_t */
 char* oyGetDefaultLabInputProfileName  (oyAllocFunc_t);
-/** \return allocated by oyAllocFunc_t */
 char* oyGetDefaultRGBInputProfileName  (oyAllocFunc_t);
-/** \return allocated by oyAllocFunc_t */
 char* oyGetDefaultCmykInputProfileName (oyAllocFunc_t);
 
-/** \addtogroup ProfileLists
- *  Functions to handle profile name lists. Profile name lists are created
- *  recursively though all valid paths. @see PathNames
- *  @{
- */
+/** --- profile lists --- */
 
 char**oyProfileList                    (const char* colourspace, size_t * size);
-
-/** @} */
 
 /** --- profile checking --- */
 
@@ -117,29 +125,12 @@ int   oyCheckProfileMem                (const void* mem, size_t size, int flags)
 
 /** --- profile access through oyranos --- */
 
-/** @brief obtain an memory block in the responsibility of the user */
 size_t oyGetProfileSize                (const char* profilename);
-/** @brief obtain an memory block in the responsibility of the user
-    \return allocated by oyAllocFunc_t */
 void*  oyGetProfileBlock               (const char* profilename, size_t* size,
                                         oyAllocFunc_t);
 
 
 /* device profiles */
-
-/**
- * There different approaches to select an (mostly) fitting profile
- *
- * A: search and compare all available profiles by 
- *    - ICC profile class
- *    - Manufacturer / Model (as written in profile tags)
- *    - other hints
- * B: install an profile and tell oyranos about the belonging device and the
- *    invalidating period
- * C: look for similarities of devices of allready installed profiles
- *
- */
-
 /** enum identifying device types for distinguishing in searches */
 typedef enum  {
   /*oyNOTYPE,*/
@@ -150,34 +141,6 @@ typedef enum  {
 } oyDEVICETYP;
 
 
-/** @brief ask for a profile name by specifying device attributes
- *
- *  @param typ            kind of device
- *  @param manufacturer   the device manufacturer (EIZO)
- *  @param model          the model (LCD2100)
- *  @param product_id     the ID reported during connection (ID_701200xx)
- *  @param host           useful for monitor identification (grafic:0.0)
- *  @param port           kind of connection (Matrox G650)
- *  @param attrib1        additional attribute
- * 
- *  simply pass 0 for not specified properties<br>
-
-   \code
-   char* profile_name = oyGetDeviceProfile ("EIZO", "LCD2100",
-                                            "ID 87-135.19",
-                                            "grafic:0.0", "Matrox G650",
-                                             "100lux", 0,
-                                            "");
-   if (profile_name)
-   { char* ptr = (char*)malloc (oyGetProfileSize (profile_name),sizeof(int);
-     ptr = oyGetProfileBlock (profile_name);
-       // do something
-     free (ptr);
-   }
-   \endcode
-
-   \return allocated by oyAllocFunc_t
- */
 char* oyGetDeviceProfile                  (oyDEVICETYP typ,
                                            const char* manufacturer,
                                            const char* model,
