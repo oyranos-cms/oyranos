@@ -3,8 +3,8 @@ Deutsch
 
 Oyranos (gr. Himmel):
 
-    Das Farbmanagement System Oyranos ermˆglicht die einfache Verwaltung von
-    ger‰tespezifischen Informationen (ICC Profile).
+    Das Farbmanagement System Oyranos erm√∂glicht die einfache Verwaltung von
+    ger√§tespezifischen Informationen (ICC Profile).
 
     Es handelt sich im Moment um eine Test.
     
@@ -17,21 +17,21 @@ Voraussetzungen:
 
 Konfiguration:
 
-    f¸r osX in der Datei "makefile": #APPLE = 1  auskommentieren
+    make config
 
-Zus‰tze:
+Zus√§tze:
 
     Profile gibt es zum Beispiel auf der Adobe Webseite:
     http://www.adobe.com/support/downloads/main.html
-    und an vielen anderen Pl‰tzen im Internet
+    und an vielen anderen Pl√§tzen im Internet
 
 
-Vorschl‰ge / Fehler:
+Vorschl√§ge / Fehler:
 
     Bitte an mich schicken <ku.b at gmx.de>
 
 
-Pl‰ne:
+Pl√§ne:
 
     - Dokumentation
     - Profilvergleich
@@ -42,9 +42,6 @@ Pl‰ne:
   Oyranos:
            Kai-Uwe Behrmann <www.behrmann.name>
 
-
-  Elektra:
-           Avi Alkalay <elektra.sf.net>
 
 
 ================================================================================
@@ -68,7 +65,7 @@ prerequisits:
 
 configuration:
 
-    for osX in the file "makefile": #APPLE = 1  comment out
+    make config
 
 add ons:
 
@@ -93,9 +90,6 @@ plans:
   Oyranos:
            Kai-Uwe Behrmann <www.behrmann.name>
 
-
-  Elektra:
-           Avi Alkalay <elektra.sf.net>
 
 
 ================================================================================

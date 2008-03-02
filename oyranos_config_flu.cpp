@@ -13,6 +13,9 @@
 
 #include "oyranos.h"
 #include "oyranos_debug.h"
+
+#define _(text) text
+
 using namespace oyranos;
 
 #include <iostream>
@@ -31,34 +34,31 @@ void removePathLeaves();
 void buildOptionsLeaves();
 void buildTree();
 
-#define OY_DEFAULTPROFILES_COUNT 6
+#define OY_DEFAULTPROFILES_COUNT 5
 char *default_profiles[] = {
-                                "Image Profile",
-                                "Workspace Profile",
-                                "XYZ Profile",
-                                "Lab Profile",
-                                "RGB Profile",
-                                "CMYK Profile",
+                                _("Workspace Profile"),
+                                _("XYZ Input Profile"),
+                                _("Lab Input Profile"),
+                                _("RGB Input Profile"),
+                                _("CMYK Input Profile"),
                            };
 
 typedef char* funcGetDefaultProfile();
 funcGetDefaultProfile *functions_getDefaultProfile[] = {
-                           oyGetDefaultImageProfileName,
                            oyGetDefaultWorkspaceProfileName,
-                           oyGetDefaultXYZProfileName,
-                           oyGetDefaultLabProfileName,
-                           oyGetDefaultRGBProfileName,
-                           oyGetDefaultCmykProfileName
+                           oyGetDefaultXYZInputProfileName,
+                           oyGetDefaultLabInputProfileName,
+                           oyGetDefaultRGBInputProfileName,
+                           oyGetDefaultCmykInputProfileName
 };
 
 typedef int funcSetDefaultProfile(const char*);
 funcSetDefaultProfile *functions_setDefaultProfile[] = {
-                           oySetDefaultImageProfile,
                            oySetDefaultWorkspaceProfile,
-                           oySetDefaultXYZProfile,
-                           oySetDefaultLabProfile,
-                           oySetDefaultRGBProfile,
-                           oySetDefaultCmykProfile
+                           oySetDefaultXYZInputProfile,
+                           oySetDefaultLabInputProfile,
+                           oySetDefaultRGBInputProfile,
+                           oySetDefaultCmykInputProfile
 };
 
 
@@ -99,7 +99,7 @@ struct DefaultProfile: public Fl_Pack {
     choice = new Fl_Choice( 0, 0, 200, 20 );
     choice->callback( selectDefaultProfile_callback );
     DBG_PROG_V((choice->size()))
-    choice->add( "[none]" );
+    choice->add( _("[none]") );
     DBG_PROG_V((choice->size()))
     oyOpen();
     char* default_p = functions_getDefaultProfile[type]();
@@ -217,17 +217,17 @@ selectDefaultProfile_callback( Fl_Widget* w, void* )
       char text[64];
       oyOpen();
       int error = 0;
-      if(strcmp(c->text(),"[none]") == 0)
+      if(strcmp(c->text(),_("[none]")) == 0)
         error = functions_setDefaultProfile[dp->type] (0);
       else
         error = functions_setDefaultProfile[dp->type] (c->text());
       oyClose();
       if(error) {
-        sprintf(text, "setting %s failed!", default_profiles[dp->type]);
+        sprintf(text, "%s %s %s", _("setting"), _("failed!"), default_profiles[dp->type]);
         fl_alert( text );
       }
     } else fl_alert( "no Fl_Choice" );
-  } else fl_alert( "Select Profile" );
+  } else fl_alert( _("Select Profile") );
 }
 
 void
@@ -241,7 +241,7 @@ path_callback( Fl_Widget* w, void* )
       char text[512];
       int error = oyPathAdd (pp->box->label());
       if(error) {
-        sprintf(text, "error setting %s path!", pp->box->label());
+        sprintf(text, "error setting path: %s", pp->box->label());
         fl_alert( text );
       }
     } else 
@@ -269,7 +269,7 @@ void buildBaseTree()
   tree->insertion_mode( FLU_INSERT_BACK );
 
   tree->clear();
-  tree->label( "Colour Management Settings" );
+  tree->label( _("Colour Management Settings") );
   tree->select_under_mouse( true );
   tree->always_open( true );
 
@@ -282,8 +282,8 @@ void buildBaseTree()
 
 void buildDefaultProfilesLeaves()
 {
-  char* default_profiles_dirname = "Default Profiles";
-  int count = 0, i;
+  char* default_profiles_dirname = _("Default Profiles");
+  size_t count = 0, i;
   char** names = oyProfileList ( 0, &count );
 
   for (i = 0 ; i < OY_DEFAULTPROFILES_COUNT ; ++i) {
@@ -304,7 +304,7 @@ void removeDefaultProfilesLeaves()
   char  pn[64];
   Flu_Tree_Browser::Node* n;
 
-  sprintf( pn, "/%s/ ", "Default Profiles" );
+  sprintf( pn, "/%s/ ", _("Default Profiles") );
 
   n = tree->find(pn);
   while (n) {
@@ -318,7 +318,7 @@ void buildPathLeaves()
   Flu_Tree_Browser::Node* n;
 
   char  pn[64];
-  sprintf( pn, "/%s/ ", "Profile Paths" );
+  sprintf( pn, "/%s/ ", _("Profile Paths") );
   int count = oyPathsCount();
   if(count < 2)
     count = oyPathsCount();
@@ -327,14 +327,14 @@ void buildPathLeaves()
     tree->add( pn, pp );
     pp->end();
   }
-  n = tree->find( "Profile Paths" );
+  n = tree->find( _("Profile Paths") );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
 }
 
 void removePathLeaves()
 {
   char  pn[64];
-  sprintf( pn, "/%s/ ", "Profile Paths" );
+  sprintf( pn, "/%s/ ", _("Profile Paths") );
   #if 0
   int count = oyPathsCount();
   for (int i = 0 ; i < count ; ++i) {
@@ -356,15 +356,15 @@ void buildOptionsLeaves()
   Flu_Tree_Browser::Node* n;
 
   Fl_Choice *c = new Fl_Choice( 0, 0, 100, 20 );
-  c->add( "Perceptual" );
-  c->add( "Relative Colorimetric" );
-  c->add( "Saturation" );
-  c->add( "Absolute Colorimetric" );
+  c->add( _("Perceptual") );
+  c->add( _("Relative Colorimetric") );
+  c->add( _("Saturation") );
+  c->add( _("Absolute Colorimetric") );
   c->value( 1 );
-  n = tree->add( "Options (dont do anything)/Default Rendering Intent", c );
+  n = tree->add( _("Options (dont do anything)/Default Rendering Intent"), c );
   if( n ) n->expand_to_width( true );
   if( n ) n->leaf_icon( NULL );
-  n = tree->find( "Options" );
+  n = tree->find( _("Options") );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
 
   tree->collapse_time( 0.2 );
@@ -378,7 +378,7 @@ void buildTree()
   buildBaseTree();
 
   Flu_Tree_Browser::Node* n;
-  char* default_profiles_dirname = "/Default Profiles/";
+  char* default_profiles_dirname = _("/Default Profiles/");
   tree->add( default_profiles_dirname );
   n = tree->find( default_profiles_dirname );
   if( n ) n->collapse_icons( &arrow_closed, &arrow_open );
@@ -394,7 +394,7 @@ int main( int argc, char **argv )
     oy_debug = 1;
 
   FL_NORMAL_SIZE = 12;
-  Fl_Double_Window *win = new Fl_Double_Window( 500, 400, "Oyranos Colour Management" );
+  Fl_Double_Window *win = new Fl_Double_Window( 500, 400, _("Oyranos Colour Management") );
 
   tree = new Flu_Tree_Browser( 0, 0, 500, 400 );
   tree->allow_dnd( true );

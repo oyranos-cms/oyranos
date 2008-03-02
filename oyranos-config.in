@@ -43,7 +43,13 @@ do
 	--ldflags)
 	    echo_ldflags=yes
 	    ;;
+	--ldstaticflags)
+	    echo_ldstaticflags=yes
+	    ;;
 	--ld_x_flags)
+	    echo_ld_x_flags=yes
+	    ;;
+	--ld_x_staticflags)
 	    echo_ld_x_flags=yes
 	    ;;
 	*)
@@ -59,7 +65,9 @@ if [ "$echo_help" == "yes" ]; then
   echo "  $0 --api-version"
   echo "  $0 --cflags"
   echo "  $0 --ldflags"
+  echo "  $0 --ldstaticflags"
   echo "  $0 --ld_x_flags"
+  echo "  $0 --ld_x_staticflags"
 fi
 
 if [ "$echo_cflags" == "yes" ]; then
@@ -67,11 +75,19 @@ if [ "$echo_cflags" == "yes" ]; then
 fi
 
 if [ "$echo_ldflags" == "yes" ]; then
-  echo "-L$prefix/lib -loyranos"
+  echo "-L$prefix/lib -loyranos -lkdb"
+fi
+
+if [ "$echo_ldstaticflags" == "yes" ]; then
+  echo "$prefix/lib/liboyranos.a -lkdb -ldl"
 fi
 
 if [ "$echo_ld_x_flags" == "yes" ]; then
-  echo "-L$prefix/lib -loyranos -loyranos_moni"
+  echo "-L$prefix/lib -loyranos -loyranos_moni -lkdb"
+fi
+
+if [ "$echo_ld_x_staticflags" == "yes" ]; then
+  echo "$prefix/lib/liboyranos.a $prefix/lib/liboyranos_moni.a -lkdb -lX11 -ldl"
 fi
 
 

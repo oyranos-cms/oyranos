@@ -31,6 +31,7 @@
 #ifndef OYRANOS_H
 #define OYRANOS_H
 
+#include <stdlib.h> // for linux size_t
 #include "oyranos_definitions.h"
 
 #ifdef __cplusplus
@@ -61,41 +62,38 @@ char* oyGetPathFromProfileName         (const char* profile_name);
 
 /* --- default profiles --- */
 
-int   oySetDefaultImageProfile         (const char* name);
-int   oySetDefaultImageProfileBlock    (const char* name, void* mem, int size);
 int   oySetDefaultWorkspaceProfile     (const char* name);
-int   oySetDefaultWorkspaceProfileBlock(const char* name, void* mem, int size);
-int   oySetDefaultXYZProfile           (const char* name);
-int   oySetDefaultXYZProfileBlock      (const char* name, void* mem, int size);
-int   oySetDefaultLabProfile           (const char* name);
-int   oySetDefaultLabProfileBlock      (const char* name, void* mem, int size);
-int   oySetDefaultRGBProfile           (const char* name);
-int   oySetDefaultRGBProfileBlock      (const char* name, void* mem, int size);
-int   oySetDefaultCmykProfile          (const char* name);
-int   oySetDefaultCmykProfileBlock     (const char* name, void* mem, int size);
+int   oySetDefaultWorkspaceProfileBlock(const char* name, void* mem, size_t size);
+int   oySetDefaultXYZInputProfile      (const char* name);
+int   oySetDefaultXYZInputProfileBlock (const char* name, void* mem, size_t size);
+int   oySetDefaultLabInputProfile      (const char* name);
+int   oySetDefaultLabInputProfileBlock (const char* name, void* mem, size_t size);
+int   oySetDefaultRGBInputProfile      (const char* name);
+int   oySetDefaultRGBInputProfileBlock (const char* name, void* mem, size_t size);
+int   oySetDefaultCmykInputProfile     (const char* name);
+int   oySetDefaultCmykInputProfileBlock(const char* name, void* mem, size_t size);
 
-char* oyGetDefaultImageProfileName     ();
 char* oyGetDefaultWorkspaceProfileName ();
-char* oyGetDefaultXYZProfileName       ();
-char* oyGetDefaultLabProfileName       ();
-char* oyGetDefaultRGBProfileName       ();
-char* oyGetDefaultCmykProfileName      ();
+char* oyGetDefaultXYZInputProfileName  ();
+char* oyGetDefaultLabInputProfileName  ();
+char* oyGetDefaultRGBInputProfileName  ();
+char* oyGetDefaultCmykInputProfileName ();
 
 /* --- profile lists --- */
 
-char**oyProfileList                    (const char* colourspace, int * size);
+char**oyProfileList                    (const char* colourspace, size_t * size);
 
 /* --- profile checking --- */
 
 int   oyCheckProfile                   (const char* name, int flag);
-int   oyCheckProfileMem                (const void* mem, int size, int flags);
+int   oyCheckProfileMem                (const void* mem, size_t size, int flags);
 
 
 /* --- profile access through oyranos --- */
 
 /* obtain an memory block in the responsibility of the user */
 size_t oyGetProfileSize                (const char* profilename);
-void*  oyGetProfileBlock               (const char* profilename, int* size);
+void*  oyGetProfileBlock               (const char* profilename, size_t* size);
 
 /* device profiles */
 
@@ -154,7 +152,7 @@ int	oySetDeviceProfile                    (oyDEVICETYP typ,
                                            const char* attrib3,
                                            const char* profilename,
                                            void* mem,
-                                           int   size);
+                                           size_t size);
 int oyEraseDeviceProfile                  (oyDEVICETYP typ,
                                            const char* manufacturer,
                                            const char* model,

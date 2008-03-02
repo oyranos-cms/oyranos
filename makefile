@@ -20,7 +20,7 @@ exec_prefix	= ${prefix}
 bindir		= ${exec_prefix}/bin
 datadir		= ${prefix}/share
 includedir	= ${prefix}/include
-libdir		= ${exec_prefix}/lib
+libdir		= ${prefix}/lib
 mandir		= ${prefix}/man
 srcdir		= .
 
@@ -49,8 +49,9 @@ ifdef APPLE
 else
   SO = .so
   ifdef LINUX
-    OPTS=-Wall -O2 -g -fpic
-    LINK_FLAGS = -shared -fpic -ldl -L.
+    OPTS=-Wall -O2 -g
+    LINK_FLAGS = -shared -ldl -L.
+    LINK_FLAGS_STATIC = q
     LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
     LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
     LINK_LIB_PATH = -Wl,--rpath -Wl,$(libdir)
@@ -72,7 +73,7 @@ KDB_LIBS=-lkdb
 
 
 LDLIBS = -L$(libdir) -L. \
-	$(KDB_LIBS) #-llcms $(FLTK_LIBS) $(FLU_LIBS)
+	$(KDB_LIBS) -ldl -lc #-llcms $(FLTK_LIBS) $(FLU_LIBS)
 
 
 CPP_HEADERS = \
@@ -138,7 +139,7 @@ ALL_FILES =	$(DOKU) \
 
 all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)_gamma $(FLU_GUI) test2
 
-$(TARGET):	$(OBJECTS)
+$(TARGET):	$(OBJECTS) static
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
@@ -149,7 +150,7 @@ $(TARGET):	$(OBJECTS)
 	$(RM)  $(LIBSO)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSO)
 
-$(TARGET)_moni:	$(MONI_OBJECTS)
+$(TARGET)_moni:	$(MONI_OBJECTS) static_moni
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(X11_LIBS) \
 	-o $(LIB_MONI_SONAMEFULL) \
@@ -168,10 +169,15 @@ $(TARGET)_config_flu:	$(TARGET)_moni $(FLU_OBJECTS)
 	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) \
 	$(REZ)
 
-static:	$(TARGET)
+static:	$(OBJECTS)
 	echo Linking $@ ...
 	$(COLLECT) $(LIBNAME) $(OBJECTS)
 	$(RANLIB) $(LIBNAME)
+
+static_moni:	$(MONI_OBJECTS)
+	echo Linking $@ ...
+	$(COLLECT) $(LIB_MONI_NAME) $(MONI_OBJECTS)
+	$(RANLIB) $(LIB_MONI_NAME)
 
 $(TARGET)_gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
@@ -200,9 +206,11 @@ install:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma
 	make uninstall
 	$(COPY) $(TARGET)-config $(bindir)
 	$(COPY) $(TARGET)-gamma $(bindir)
+	$(COPY) $(LIBNAME) $(libdir)
 	$(COPY) $(LIBSONAMEFULL) $(libdir)
 	$(LNK)  $(LIBSONAMEFULL) $(libdir)/$(LIBSONAME)
 	$(LNK)  $(LIBSONAMEFULL) $(libdir)/$(LIBSO)
+	$(COPY) $(LIB_MONI_NAME) $(libdir)
 	$(COPY) $(LIB_MONI_SONAMEFULL) $(libdir)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SONAME)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SO)
@@ -216,13 +224,15 @@ uninstall:
 	$(RM)   $(bindir)/$(TARGET)-config
 	$(RM)   $(libdir)/$(LIBSONAMEFULL) $(libdir)/$(LIBSONAME) $(libdir)/$(LIBSO)
 	$(RM)   $(libdir)/$(LIB_MONI_SONAMEFULL) $(libdir)/$(LIB_MONI_SONAME) \
-			$(libdir)/$(LIB_MONI_SO)
+			$(libdir)/$(LIB_MONI_SO) \
+			$(libdir)/$(LIBNAME) $(libdir)/$(LIB_MONI_NAME)
 	$(RM)   -R $(includedir)/oyranos
 
 clean:
 	$(RM) \
-	$(OBJECTS) $(MONI_OBJECTS) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_SO) \
-	$(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
+	$(OBJECTS) $(MONI_OBJECTS) \
+	$(LIBNAME) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_SO) \
+	$(LIB_MONI_NAME) $(LIB_MONI_SONAME) $(LIB_MONI_SO) $(LIB_MONI_SONAMEFULL) \
 	$(TARGET)_gamma.o $(TARGET)-gamma test2.o test.o test2 test \
 	$(TARGET)_config_flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
 	$(TARGET)-config config mkdepend

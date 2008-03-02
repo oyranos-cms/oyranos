@@ -65,12 +65,11 @@
 
 /* --- default profiles --- */
 
-#define OY_DEFAULT_IMAGE_PROFILE     OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_image"
 #define OY_DEFAULT_WORKSPACE_PROFILE OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_workspace"
-#define OY_DEFAULT_XYZ_PROFILE       OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_xyz"
-#define OY_DEFAULT_LAB_PROFILE       OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_lab"
-#define OY_DEFAULT_RGB_PROFILE       OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_rgb"
-#define OY_DEFAULT_CMYK_PROFILE      OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_cmyk"
+#define OY_DEFAULT_XYZ_INPUT_PROFILE       OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_xyz"
+#define OY_DEFAULT_LAB_INPUT_PROFILE       OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_lab"
+#define OY_DEFAULT_RGB_INPUT_PROFILE       OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_rgb"
+#define OY_DEFAULT_CMYK_INPUT_PROFILE      OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_cmyk"
 
 
 #endif //OYRANOS_DEFINITIONS_H
