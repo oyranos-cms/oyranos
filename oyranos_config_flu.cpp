@@ -13,6 +13,7 @@
 
 #include "oyranos.h"
 #include "oyranos_debug.h"
+#include "oyranos_config.h"
 
 #define _(text) text
 

@@ -43,6 +43,18 @@ namespace oyranos
 {
 #endif /* __cplusplus */
 
+/**
+ * @param[in] size the size to allocate
+ *
+ * Place here your allocator, like: \code
+   void* myAllocFunc (size_t size)
+   { return malloc (size);
+   }
+ * \endcode<br>
+ */
+typedef void* (*oyAllocFunc_t)         (size_t size);
+
+
 /* --- behaviour / policies --- */
 
 /** enum Default Profiles
@@ -54,6 +66,7 @@ typedef enum  {
   oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT,/**< Convert befor save for Print? */
   oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
   oyBEHAVIOUR_RENDERING_INTENT,        /**< Standard colour transformations */
+  oyBEHAVIOUR_RENDERING_BPC,           /**< use BlackPointCompensation */
   oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
   oyBEHAVIOUR_NUMS                     /**< just for easen Gui design */
 } oyBEHAVIOUR;
@@ -64,8 +77,6 @@ enum  {
   oyASK,                               /**< popup dialog */
 }; /**< for oyBEHAVIOUR_ACTION */
 
-int         oySetBehaviour             (oyBEHAVIOUR       type,
-                                        int               choice);
 const char* oyGetBehaviourUITitle      (oyBEHAVIOUR       type,
                                         int              *choices,
                                         int               choice,
@@ -73,18 +84,25 @@ const char* oyGetBehaviourUITitle      (oyBEHAVIOUR       type,
                                         const char      **option_string,
                                         const char      **tooltip);
 int         oyGetBehaviour             (oyBEHAVIOUR       type);
+int         oySetBehaviour             (oyBEHAVIOUR       type,
+                                        int               choice);
 
-
-/**
- * @param[in] size the size to allocate
- *
- * Place here your allocator, like: \code
-   void* myAllocFunc (size_t size)
-   { return malloc (size);
-   }
- * \endcode<br>
+/** enum Policy Groups 
  */
-typedef void* (*oyAllocFunc_t)         (size_t size);
+typedef enum  {
+  oyGROUP_DEFAULT_PROFILES,   /**< Default Profiles */
+  oyGROUP_RENDERING,          /**< Rendering Behaviour */
+  oyGROUP_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
+  oyGROUP_MISSMATCH,          /**< Profile Missmatch Behaviour */
+  oyGROUP_ALL                 /**< just for easen Gui design */
+} oyGROUP;
+
+char*       oyPolicyToXML              (oyGROUP           group,
+                                        int               add_header,
+                                        oyAllocFunc_t     alloc_func);
+
+int         oyReadXMLPolicy            (oyGROUP           group,
+                                        const char       *xml);
 
 /*
  * @param[in] data the pointer to deallocate
@@ -99,8 +117,6 @@ typedef void* (*oyAllocFunc_t)         (size_t size);
 int   oyPathsCount                     (void);
 char* oyPathName                       (int         number,
                                         oyAllocFunc_t);
-int   oyPathAdd                        (const char* pathname);
-void  oyPathRemove                     (const char* pathname);
 char* oyGetPathFromProfileName         (const char* profile_name,
                                         oyAllocFunc_t);
 

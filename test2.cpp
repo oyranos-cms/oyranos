@@ -23,7 +23,7 @@ int main(void)
 
   if(erg) {
     std::cout << "error while retrieving monitor profile!!\n";
-    return 0;
+    //return 0;
   }
 
   if(manufacturer)
@@ -56,5 +56,13 @@ int main(void)
       std::cout << default_name;
     std::cout << "\n";
   }
+
+  char *xml = oyranos::oyPolicyToXML( oyranos::oyGROUP_ALL, 0, myAllocFunc );
+  if(xml) {
+    oyranos::oyReadXMLPolicy(oyranos::oyGROUP_ALL, xml);
+    printf(xml);
+    delete [] xml;
+  }
+
   return 0;
 }

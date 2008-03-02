@@ -15,7 +15,7 @@ fi
 
 
 if [ $# -eq 0 ]; then
-  echo "$TARGET"
+  echo "$TARGET" >&2
 fi
 
 

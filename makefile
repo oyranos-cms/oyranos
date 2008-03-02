@@ -81,25 +81,26 @@ LDLIBS = -L$(libdir) -L. \
 
 
 CPP_HEADERS = \
-	oyranos.h \
-	oyranos_debug.h \
-	oyranos_definitions.h \
-	oyranos_helper.h \
-	oyranos_internal.h \
-	oyranos_monitor.h
-#	fl_oyranos.h
+	$(TARGET).h \
+	$(TARGET)_config.h \
+	$(TARGET)_debug.h \
+	$(TARGET)_definitions.h \
+	$(TARGET)_helper.h \
+	$(TARGET)_internal.h \
+	$(TARGET)_monitor.h
+#	fl_$(TARGET).h
 CFILES = \
-	oyranos.c \
-	oyranos_helper.c
+	$(TARGET).c \
+	$(TARGET)_helper.c
 CFILESC = \
-	oyranos_debug.c
+	$(TARGET)_debug.c
 CFILES_MONI = \
-    oyranos_monitor.c
+    $(TARGET)_monitor.c
 CFILES_GAMMA = \
-    oyranos_gamma.c
+    $(TARGET)_gamma.c
 
 CPPFILES_FLU = \
-	oyranos_config_flu.cpp
+	$(TARGET)_config_flu.cpp
 
 CPPFILES =
 CXXFILES =
@@ -142,13 +143,14 @@ STD_PROFILES = base eci
 ALL_FILES =	$(DOKU) \
 	configure \
 	makefile \
-	oyranos.pc.in \
-	oyranos_monitor.pc.in \
-	oyranos.spec.in \
-	oyranos-config.in \
+	$(TARGET).pc.in \
+	$(TARGET)_monitor.pc.in \
+	$(TARGET).spec.in \
+	$(TARGET)-config.in \
 	$(SOURCES) \
 	$(FLUID)
 
+# build all what is needed to run the libraries, helpers and the examples
 all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-gamma $(FLU_GUI) test2
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
@@ -157,7 +159,7 @@ all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-gamma $(FLU_GUI) test2
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
-
+# build all objects and libraries, link the headers to $(TARGET)
 $(TARGET):	$(TARGET)/$(TARGET).h $(OBJECTS) static
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
@@ -169,6 +171,7 @@ $(TARGET):	$(TARGET)/$(TARGET).h $(OBJECTS) static
 	$(RM)  $(LIBSO)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSO)
 
+# the monitor library
 $(TARGET)_moni:	$(MONI_OBJECTS) static_moni
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(X11_LIBS) \
@@ -180,6 +183,7 @@ $(TARGET)_moni:	$(MONI_OBJECTS) static_moni
 	$(RM)  $(LIB_MONI_SO)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SO)
 
+# general configuration tool example
 $(TARGET)-config-flu:	$(TARGET)_moni $(FLU_OBJECTS)
 	echo Linking $@ ...
 	$(CXX) $(OPTS) -o $(TARGET)-config-flu \
@@ -188,6 +192,7 @@ $(TARGET)-config-flu:	$(TARGET)_moni $(FLU_OBJECTS)
 	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS) \
 	$(REZ)
 
+# dangerous because of elektra dont allows static linking
 $(TARGET)-config-flu-static:	$(TARGET)_moni $(FLU_OBJECTS)
 	echo Linking static $(TARGET)-config-flu ...
 	$(CXX) -Wall -O3 -o $(TARGET)-config-flu $(TARGET)_config_flu.o \
@@ -209,6 +214,7 @@ static_moni:	$(MONI_OBJECTS)
 	$(COLLECT) $(LIB_MONI_NAME) $(MONI_OBJECTS)
 	$(RANLIB) $(LIB_MONI_NAME)
 
+# the monitor profile tool
 $(TARGET)-gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) $(OPTS) -o $(TARGET)-gamma \
@@ -217,9 +223,11 @@ $(TARGET)-gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	$(LDLIBS) 
 	$(REZ)
 
+# bring the headers to one place
 $(TARGET)/$(TARGET).h:
 	mkdir $(TARGET)
 	$(LNK) ../$(TARGET).h $(TARGET)/$(TARGET).h
+	$(LNK) ../$(TARGET)_config.h $(TARGET)/$(TARGET)_config.h
 	$(LNK) ../$(TARGET)_definitions.h $(TARGET)/$(TARGET)_definitions.h
 	$(LNK) ../$(TARGET)_monitor.h $(TARGET)/$(TARGET)_monitor.h
 
@@ -242,6 +250,7 @@ doc:
 	test -n 'which doxygen' && doxygen Doxyfile
 	echo ... Documentation done
 
+# the copy part for this directory level
 install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-gamma doc
 	echo Installing ...
 	make uninstall
@@ -260,13 +269,15 @@ install-main:	$(TARGET) $(TARGET)_moni $(TARGET)-gamma doc
 	$(INSTALL) -m 644 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
 	$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
-	test -d $(DESTDIR)$(includedir)/oyranos || mkdir -p $(DESTDIR)$(includedir)/oyranos
-	$(INSTALL) -m 644 oyranos.h $(DESTDIR)$(includedir)/oyranos
-	$(INSTALL) -m 644 oyranos_definitions.h $(DESTDIR)$(includedir)/oyranos
-	$(INSTALL) -m 644 oyranos_monitor.h $(DESTDIR)$(includedir)/oyranos
+	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
 	test "$(FLU_GUI)" && make install_gui || echo -e "GUI not installed"
 	echo ... Installation finished
 
+# install recursive
 install:	install-main
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
@@ -280,9 +291,11 @@ install_gui:	$(TARGET)-config-flu
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config-flu $(DESTDIR)$(bindir)
 
+# build a source distribution package
 dist: targz
 	test -d ../Archiv && $(COPY) ../Archiv/$(TARGET)-$(mtime).tgz $(TARGET)-$(VERSION).tar.gz || $(COPY) $(TARGET)-$(mtime).tgz $(TARGET)-$(VERSION).tar.gz
 
+# build a binary rpm package
 rpm:	dist
 	mkdir -p rpmdir/BUILD \
 	rpmdir/SPECS \
@@ -300,6 +313,7 @@ rpm:	dist
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
+# remove everything previously installed
 uninstall:
 	echo Uninstalling ...
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-gamma
@@ -314,7 +328,7 @@ uninstall:
 	        $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME) \
 			$(DESTDIR)$(libdir)/$(LIB_MONI_SO) \
 	        $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
-	$(RM)   -R $(DESTDIR)$(includedir)/oyranos
+	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test $${prof} && \
@@ -322,6 +336,7 @@ uninstall:
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 
+# remove in this directory
 clean:
 	$(RM) \
 	$(OBJECTS) $(MONI_OBJECTS) \
@@ -331,9 +346,11 @@ clean:
 	$(TARGET)-config-flu $(FLU_OBJECTS) $(TARGET)_version.h config.h \
 	$(TARGET)-config config mkdepend
 
+# configure if the file config is not available
 config:
 	./configure
 
+# try to resolve dependencies with the X11 tool
 depend:
 	echo "setting up dependencies ..."
 	echo "MAKEDEPEND_ISUP = 1" > mkdepend
@@ -365,6 +382,7 @@ EXEEXT		=
 	echo Compiling $< ...
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
+# smallest package covering the current directory
 tgz:
 	mkdir Entwickeln
 	$(COPY) \
@@ -377,6 +395,7 @@ tgz:
 	test `pwd` != `(cd Entwickeln; pwd)` && \
 	rm -R Entwickeln
 
+# build the source package including the subdirectories
 targz:
 	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo -e "\c"
 	mkdir $(TARGET)-$(VERSION)

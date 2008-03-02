@@ -31,10 +31,11 @@
 #ifndef OYRANOS_DEFINITIONS_H
 #define OYRANOS_DEFINITIONS_H
 
+#define OYRANOS_API 14
 
 /** default local search path */
 #define OY_PROFILE_PATH_USER_DEFAULT    "~/.color/icc"
-/** default global search path */
+/** default global search path @todo add installation dir */
 #define OY_PROFILE_PATH_SYSTEM_DEFAULT  "/usr/share/color/icc"
 
 
@@ -108,6 +109,8 @@
 #define OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT OY_KEY OY_SLASH "behaviour" OY_SLASH "mixed_colour_spaces_screen_doc_convert"
 /** key name for the default rendering intent */
 #define OY_DEFAULT_RENDERING_INTENT          OY_KEY OY_SLASH "behaviour" OY_SLASH "default_rendering_intent"
+/** key name for the default rendering with BPC */
+#define OY_DEFAULT_RENDERING_BPC             OY_KEY OY_SLASH "behaviour" OY_SLASH "default_rendering_bpc"
 /** key name for the default prooing rendering intent */
 #define OY_DEFAULT_RENDERING_INTENT_PROOF    OY_KEY OY_SLASH "behaviour" OY_SLASH "default_rendering_intent_proof"
 

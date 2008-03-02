@@ -135,18 +135,19 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
 
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_NUMS
-const char* oy_default_profile_types_names_[] = {
- "Rgb Editing",         /**< oyEDITING_RGB */
- "Cmyk Editing",        /**< oyEDITING_CMYK */
- "XYZ Editing",         /**< oyEDITING_XYZ */
- "Lab Editing",         /**< oyEDITING_Lab */
- "Assumed XYZ source",  /**< oyASSUMED_XYZ */
- "Assumed Lab source",  /**< oyASSUMED_LAB */
- "Assumed Rgb source",  /**< oyASSUMED_RGB */
- "Assumed Web source",  /**< oyASSUMED_WEB */
- "Assumed Cmyk source", /**< oyASSUMED_CMYK*/
- "Device"               /**< oyDEVICE_PROFILE : a device profile */
+const char* oy_default_profile_types_names_[][2] = {
+ {"oyEDITING_RGB","Rgb Editing"},         /**< oyEDITING_RGB */
+ {"oyEDITING_CMYK","Cmyk Editing"},       /**< oyEDITING_CMYK */
+ {"oyEDITING_XYZ","XYZ Editing"},         /**< oyEDITING_XYZ */
+ {"oyEDITING_LAB","Lab Editing"},         /**< oyEDITING_Lab */
+ {"oyASSUMED_XYZ","Assumed XYZ source"},  /**< oyASSUMED_XYZ */
+ {"oyASSUMED_LAB","Assumed Lab source"},  /**< oyASSUMED_LAB */
+ {"oyASSUMED_RGB","Assumed Rgb source"},  /**< oyASSUMED_RGB */
+ {"oyASSUMED_WEB","Assumed Web source"},  /**< oyASSUMED_WEB */
+ {"oyASSUMED_CMYK","Assumed Cmyk source"},/**< oyASSUMED_CMYK*/
+ {"oyDEVICE_PROFILE","Device"}        /**< oyDEVICE_PROFILE : a device profile*/
 };
+
 
 void oyOpen_ (void)
 {
@@ -243,6 +244,14 @@ oyComp_t* oyGetDeviceProfile_sList          (const char* manufacturer,
                                            const char* attrib3,
                                            KeySet* profilesList,
                                            int   rc);
+
+/* memory handling for text parsing and writing */
+/* mem with old_leng will be stretched if add dont fits inside */
+int         oyCheckStringLen_  (char **mem, int old_len, int add);
+/* gives the position and length of a string bordered by xml style keywords */
+const char* oyXMLgetValue_     (const char       *xml,
+                 const char       *key,
+                 int              *len);
 
 /* small helpers */
 #define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
@@ -345,6 +354,8 @@ oyAddKey_valueComment_ (const char* keyName,
     DBG_PROG_S(( value ));
   if (comment)
     DBG_PROG_S(( comment ));
+  if (!keyName || !strlen(keyName))
+    WARN_S( ("%s:%d !!! ERROR no keyName given",__FILE__,__LINE__));
 
   key=keyNew(name);
 
@@ -386,7 +397,8 @@ typedef struct {
   const char *label;           /**< label for setting */
   const char *description;     /**< description for setting */
   const char *options[10];     /**< label for each choice */
-  const char *config_string;   /**< key name to store configuration */
+  const char *config_string;   /**< full key name to store configuration */
+  const char *config_string_xml;/**<key name to store configuration */
 } oyBEHAVIOUR_OPTION_t;
 
 
@@ -398,25 +410,28 @@ typedef struct {
 oyBEHAVIOUR_OPTION_t oy_behaviour_option_description_[oyBEHAVIOUR_NUMS] = {
 { 3, "Behaviour", "No Image profile", "Image has no profile embedded action.",
  {"Assign No Profile","Assign Assumed Profile","Promt"},
- OY_ACTION_UNTAGGED_ASSIGN }, /* oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN */
+ OY_ACTION_UNTAGGED_ASSIGN, "oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN" },
 { 3, "Behaviour", "On Rgb Mismatch", "Image profile and Editing profile mismatches.",
  {"Preserve Numbers","Convert automatically","Promt"},
- OY_ACTION_MISMATCH_RGB }, /* oyBEHAVIOUR_ACTION_MISMATCH_RGB */
+ OY_ACTION_MISMATCH_RGB, "oyBEHAVIOUR_ACTION_MISMATCH_RGB" },
 { 3, "Behaviour", "On Cmyk Mismatch", "Image profile and Editing profile mismatches.",
  {"Preserve Numbers","Convert automatically","Promt"},
- OY_ACTION_MISMATCH_CMYK }, /* oyBEHAVIOUR_ACTION_MISMATCH_CMYK */
+ OY_ACTION_MISMATCH_CMYK, "oyBEHAVIOUR_ACTION_MISMATCH_CMYK" },
 { 4, "Behaviour/Save Mixed colour space Documents", "For Print", "Prepare a document for Print.",
  {"Preserve Numbers","Convert to Default Cmyk Editing Space","Convert to untagged Cmyk, preserving Cmyk numbers","Promt"},
- OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT }, /* oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT */
+ OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT, "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT" },
 { 4, "Behaviour/Save Mixed colour space Documents", "For Screen", "Prepare a document for Screen.",
  {"Preserve Numbers","Convert to Default Rgb Editing Space","Convert to WWW (sRGB)","Promt"},
- OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT }, /* oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN */
+ OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT, "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN" },
 { 4, "Behaviour", "Default Rendering Intent", "Usual colour space transform behaviour",
  {"Perceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
- OY_DEFAULT_RENDERING_INTENT }, /* oyBEHAVIOUR_RENDERING_INTENT */
+ OY_DEFAULT_RENDERING_INTENT, "oyBEHAVIOUR_RENDERING_INTENT" },
+{ 2, "Behaviour", "Use Black Point Compensation", "Usual PBC together with relative colorimetric",
+ {"No","Yes"},
+ OY_DEFAULT_RENDERING_BPC, "oyBEHAVIOUR_RENDERING_BPC" },
 { 4, "Behaviour", "Proofing Rendering Intent", "Behaviour of colour space transformation for proofing",
  {"Perceptual","Relative Colorimetric","Saturation","Absolute Colorimetric"},
- OY_DEFAULT_RENDERING_INTENT_PROOF }, /* oyBEHAVIOUR_RENDERING_INTENT_PROOF */
+ OY_DEFAULT_RENDERING_INTENT_PROOF, "oyBEHAVIOUR_RENDERING_INTENT_PROOF" }
 };
 /** @} */
 
@@ -462,7 +477,7 @@ oySetBehaviour_      (oyBEHAVIOUR type, int choice)
             _(oy_behaviour_option_description_[ type ]. options[ choice ]);
         snprintf(val, 12, "%d", choice);
         r = oyAddKey_valueComment_ (keyName, val, com);
-        DBG_PROG_S(( "%s %d %s", keyName, type, val ))
+        DBG_PROG_S(( "%s %d %s %s", keyName, type, val, com ))
       }
       else
         WARN_S( ("%s:%d !!! ERROR type %d behaviour not possible",__FILE__,__LINE__, type));
@@ -529,6 +544,266 @@ oyGetBehaviour_      (oyBEHAVIOUR type)
 
   DBG_PROG_ENDE
   return c;
+}
+
+int
+oyCheckStringLen_(char **mem, int old_len, int add)
+{
+  int new_len = old_len;
+  DBG_PROG_S(("len1: %d %d\n",add, (old_len - strlen(*mem))));
+  if( add > (old_len - strlen(*mem)) )
+  {
+    int len = add + strlen(*mem) + 120;
+    char *tmp = oyAllocateFunc_( len );
+    DBG_PROG_S(("len2: %d\n",len));
+    memcpy( tmp, *mem, old_len  );
+    DBG_PROG_S(("%s // %s", *mem, tmp));
+    free (*mem);
+    *mem = tmp;
+    new_len = len;
+  }
+  return new_len;
+}
+
+char*
+oyPolicyToXML_  (oyGROUP           group,
+                 int               add_header,
+                 oyAllocFunc_t     allocate_func)
+{ DBG_PROG_START
+
+  /* allocate memory */
+# define OYTMPLEN_ 80 // TODO handle memory in more a secure way
+  // TODO add a header to make the xml document wellformed
+  int   oytmplen = OYTMPLEN_;
+  char *mem = oyAllocateFunc_(oytmplen);
+  const char *key = 0;
+  char *value = 0;
+  int   i = 0;
+
+  /* create a XML structure and store there the keys for exporting */
+
+  /* which group is to save ? */
+  switch (group)
+  { case oyGROUP_DEFAULT_PROFILES:
+         mem[0] = 0;
+         for(i = 0; i < oyDEFAULT_PROFILE_NUMS; ++i)
+         { int pos = strlen(mem);
+           value = oyGetDefaultProfileName_(i, oyAllocateFunc_);
+           if( value && strlen( value ) )
+           {
+             key = oy_default_profile_types_names_[i][0];
+             /* allocate new mem if needed */
+             oytmplen = oyCheckStringLen_(&mem, oytmplen, 
+                                          strlen(value) + 2*strlen(key) + 8 );
+             DBG_PROG_S(("pos: %d + %d oytmplen: %d\n",pos,strlen(value),oytmplen));
+
+             /* append xml keys and value */
+             sprintf(&mem[pos], "<%s>%s</%s>\n", key, value, key);
+             DBG_PROG_S((mem));
+           }
+           if(value) free(value);
+         }
+         break;
+    case oyGROUP_RENDERING:
+         mem[0] = 0;
+         for(i = oyBEHAVIOUR_RENDERING_INTENT; i < oyBEHAVIOUR_NUMS; ++i)
+         { int pos = strlen(mem);
+           int val = oyGetBehaviour_(i);
+           if(val >= 0)
+           {
+             key = oy_behaviour_option_description_[i].config_string_xml;
+             /* allocate new mem if needed */
+             oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
+
+             sprintf(&mem[pos], "<%s>%d</%s>\n", key, val, key);
+           }
+         }
+         break;
+    case oyGROUP_MIXED_MODE_DOCUMENTS:
+         mem[0] = 0;
+         for(i = oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT;
+               i <= oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN; ++i)
+         { int pos = strlen(mem);
+           int val = oyGetBehaviour_(i);
+           if(val >= 0)
+           {
+             key = oy_behaviour_option_description_[i].config_string_xml;
+             /* allocate new mem if needed */
+             oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
+
+             sprintf(&mem[pos], "<%s>%d</%s>\n", key, val, key);
+           }
+         }
+         break;
+    case oyGROUP_MISSMATCH:
+         mem[0] = 0;
+         for(i = oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN;
+               i <= oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK; ++i)
+         { int pos = strlen(mem);
+           int val = oyGetBehaviour_(i);
+           if(val >= 0)
+           {
+             key = oy_behaviour_option_description_[i].config_string_xml;
+             /* allocate new mem if needed */
+             oytmplen = oyCheckStringLen_(&mem, oytmplen, 12+2*strlen(key)+8);
+
+             sprintf(&mem[pos], "<%s>%d</%s>\n", key, val, key);
+           }
+         }
+         break;
+    case oyGROUP_ALL:
+         mem[0] = 0;
+
+         /* travel through the group of settings and call the func itself */
+         for(i = 0; i < oyGROUP_ALL; ++i)
+         { int pos = strlen(mem);
+           value = oyPolicyToXML_(i, 0, oyAllocateFunc_);
+           if(value)
+           {
+             /* allocate new mem if needed */
+             oytmplen = oyCheckStringLen_(&mem, oytmplen, strlen(value));
+
+             sprintf(&mem[pos], "%s", value);
+             free(value);
+           }
+         }
+         break;
+  }
+  { int len = strlen( mem );
+    char *tmp = allocate_func( len + 1 );
+    memcpy( tmp, mem, len + 1 );
+    free( mem );
+    mem = tmp;
+  }
+  DBG_PROG_ENDE
+  return mem;
+}
+
+/* sscanf is not  useable as it ignores after an empty space sign */
+const char*
+oyXMLgetValue_  (const char       *xml,
+                 const char       *key,
+                 int              *len)
+{
+  const char* val_pos = 0;
+  char *value1 = 0, *value2 = 0;
+  *len = 0;
+  if(xml && key)
+    value1 = strstr(xml, key);
+  if(value1)
+  if (value1 > xml &&
+      value1[-1] == '<' &&
+      value1[ strlen(key) ] == '>')
+  { value2 = strstr(value1+1, key);
+    if(value2)
+    if (value2[ -2 ] == '<' &&
+        value2[ -1 ] == '/' &&
+        value2[ strlen(key) ] == '>')
+    {
+      val_pos = value1 + strlen(key) + 1;
+      *len = (int)(value2 - val_pos - 1);
+      char txt[128];
+      snprintf(txt,*len,val_pos);
+    }
+  }
+  return val_pos;
+}
+
+int
+oyReadXMLPolicy_(oyGROUP           group,
+                 const char       *xml)
+{ DBG_PROG_START
+
+  /* allocate memory */
+  const char *key = 0;
+  char *value = 0;
+  int   i = 0;
+  int   err = 0;
+
+  /* which group is to save ? */
+  switch (group)
+  { case oyGROUP_DEFAULT_PROFILES:
+         for(i = 0; i < oyDEFAULT_PROFILE_NUMS; ++i)
+         { int len = 0;
+           const char* ptr=0;
+           key = oy_default_profile_types_names_[i][0];
+
+           /* read the value for the key */
+           ptr = oyXMLgetValue_(xml, key, &len);
+           value = calloc(sizeof(char), len+1);
+           snprintf(value, len, ptr);
+
+           /* set the key */
+           if(value && strlen(value))
+           {
+             oySetDefaultProfile_(i, value);
+             free(value);
+           }
+         }
+         break;
+    case oyGROUP_RENDERING:
+         for(i = oyBEHAVIOUR_RENDERING_INTENT; i < oyBEHAVIOUR_NUMS; ++i)
+         { int len = 0;
+           const char* ptr=0;
+           int val = -1;
+           key = oy_behaviour_option_description_[i].config_string_xml;
+
+           /* read the value for the key */
+           ptr = oyXMLgetValue_(xml, key, &len);
+           value = calloc(sizeof(char), len+1);
+           snprintf(value, len, ptr);
+
+           /* convert value from string to int */
+           val = atoi(value);
+
+           /* set the key */
+           if( val != -1 && len )
+             oySetBehaviour_(i, val);
+           if(value) free(value);
+         }
+         break;
+    case oyGROUP_MIXED_MODE_DOCUMENTS:
+         for(i = oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT;
+               i <= oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN; ++i)
+         { int len = 0;
+           const char* ptr=0;
+           int val = -1;
+           key = oy_behaviour_option_description_[i].config_string_xml;
+           ptr = oyXMLgetValue_(xml, key, &len);
+           value = calloc(sizeof(char), len+1);
+           snprintf(value, len, ptr);
+           val = atoi(value);
+           if( val != -1 && len )
+             oySetBehaviour_(i, val);
+           if(value) free(value);
+         }
+         break;
+    case oyGROUP_MISSMATCH:
+         for(i = oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN;
+               i <= oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK; ++i)
+         { int len = 0;
+           const char* ptr=0;
+           int val = -1;
+           key = oy_behaviour_option_description_[i].config_string_xml;
+           ptr = oyXMLgetValue_(xml, key, &len);
+           value = calloc(sizeof(char), len+1);
+           snprintf(value, len, ptr);
+           val = atoi(value);
+           if( val != -1 && len )
+             oySetBehaviour_(i, val);
+           if(value) free(value);
+         }
+         break;
+    case oyGROUP_ALL:
+         /* travel through the group of settings and call the func itself */
+         for(i = 0; i < oyGROUP_ALL; ++i)
+           err = oyReadXMLPolicy_(i, xml);
+         break;
+  }
+
+
+  DBG_PROG_ENDE
+  return err;
 }
 
 
@@ -1131,7 +1406,8 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
           {
             keyGetName(current, value, MAX_PATH);
             DBG_NUM_S(( value ))
-            if(strstr(value, config_name) != 0 && strlen(value) == strlen(config_name))
+            if(strstr(value, config_name) != 0 &&
+               strlen(value) == strlen(config_name))
             {
               DBG_PROG_S((value))
               kdbRemove (value); 
@@ -1452,7 +1728,7 @@ oyMapDEFAULT_PROFILEtoString_ (oyDEFAULT_PROFILE type)
 { DBG_PROG_START
   const char *type_string = 0;
   if(0 <= type && type < oyDEFAULT_PROFILE_NUMS)
-    type_string = oy_default_profile_types_names_[type];
+    type_string = oy_default_profile_types_names_[type][1];
   DBG_PROG_ENDE
   return type_string;
 }
@@ -2369,7 +2645,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
 #include "oyranos.h"
 
-/** \addtogroup behaviour Behaviour / Policy API
+/** \addtogroup behaviour Behaviour API
  *  Functions to set and query for behaviour on various actions in Oyranos.
 
  *  @{
@@ -2424,6 +2700,53 @@ oyGetBehaviour         (oyBEHAVIOUR       type)
 { DBG_PROG_START
   int n = 0;
   n = oyGetBehaviour_(type);
+  DBG_PROG_ENDE
+  return n;
+}
+
+/*  @} */
+
+/** \addtogroup policy Policy API
+ *  Functions to set and export policies in Oyranos.
+ *
+ *  @todo define some default policies internally
+ *
+ *  @{
+ */
+
+/** Save a group of policy settings.\n
+ *  Write only such variables, which are available and ignore unknown ones.
+ *  This currently produces pseudo xml configuration files.
+ *
+ *  @param  group     the policy group
+ *  @param  add_header     add description
+ *  @param allocate_func user provided function for allocating the strings memory
+ *  @return           the configuration as XML to save to file
+ */
+char*
+oyPolicyToXML          (oyGROUP           group,
+                        int               add_header,
+                        oyAllocFunc_t     allocate_func)
+{ DBG_PROG_START
+  char* text = 0;
+  text = oyPolicyToXML_(group, add_header, allocate_func);
+  DBG_PROG_ENDE
+  return text;
+}
+
+/** Load a group of policy settings.\n
+ *  use xml-ish input produced by oyPolicyToXML()
+ *
+ *  @param  group     the policy group
+ *  @param  xml       xml configuration string
+ *  @return           errors
+ */
+int
+oyReadXMLPolicy        (oyGROUP           group,
+                        const char       *xml)
+{ DBG_PROG_START
+  int n = 0;
+  n = oyReadXMLPolicy_(group, xml);
   DBG_PROG_ENDE
   return n;
 }

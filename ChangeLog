@@ -1,3 +1,9 @@
+2006-02-08
+	* neu: oyReadXMLPolicy_
+
+2006-02-07
+	* neu: oyPolicyToXML
+
 2005-11-22
 	* neu: Optionen für GrundVerhalten
 	* und: oyranos-config-flu wird nicht mehr statisch gelinkt

@@ -40,6 +40,7 @@
     @section user User Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
     wants to use these functions, needs to link against oyranos and elektra.
+    - @ref policy - load / save of user policies
     - @ref behaviour - get and set common behaviour; part of user policies
     - @ref default_profiles - get and set commonly used profiles; part of user policies
     - @ref path_names  - get information about configured and used profile search paths 
@@ -202,7 +203,7 @@
  */
 
 /** @file oyranos.h
-    @brief The API header to include in your application.
+    @brief The API header for general users to include in your application.
     
     This file contains all functions and structs available in the Oyranos API.<br>
     For further macros see @file oyranos_definitions.h<br>
@@ -224,6 +225,13 @@
     This file contains all functions and structs available in the Oyranos Monitor API.<br>
     @see oyranos_definitions.h for elektra macros<br>
     @see oyranos.h for the Oyranos API
+*/
+
+/** @file oyranos_config.h
+    @brief The API header for adminitrative users to include in configuration 
+           dialogs.
+    
+    @see oyranos.h for the non administrative Oyranos API
 */
 
 /** @file oyranos.c
