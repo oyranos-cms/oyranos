@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: oyranos.c:735 oyranos.c:753
+#: oyranos.c:657 oyranos.c:675
 msgid "Absolute Colorimetric"
 msgstr "Absolut Farbmetrisch"
 
@@ -27,18 +27,18 @@ msgstr "ArgyllCMS"
 msgid "ArgyllCMS colour management module"
 msgstr "ArgyllCMS Farbsteuerungsmodul"
 
-#: oyranos.c:751
+#: oyranos.c:673
 msgid "Behaviour of colour space transformation for proofing"
 msgstr "Verhalten von Farbtransformationen bei der Gerätesimulation"
 
-#: oyranos.c:742
+#: oyranos.c:664
 msgid "BPC affects only the Relative Colorimetric Rendering Intent."
 msgstr "BPC beeinflusst nur die Relativ Farbmetrische Übertragungsart."
 
 msgid "Colour Transform"
 msgstr "Farbumwandlung"
 
-#: oyranos.c:732
+#: oyranos.c:654
 msgid "Default Rendering Intent"
 msgstr "Standard Übertragungsart"
 
@@ -51,36 +51,36 @@ msgstr "Farb Warnung"
 msgid "Mark out of gamut colours for the proofing profile."
 msgstr "Kennzeichne Farben ausserhalb des nachgebildeten Gerätes"
 
-#: oyranos.c:744 oyranos.c:762 oyranos.c:771
+#: oyranos.c:666 oyranos.c:684 oyranos.c:693
 msgid "No"
 msgstr "Nein"
 
 msgid "Photometric"
 msgstr "Fotografisch"
 
-#: oyranos.c:750
+#: oyranos.c:672
 msgid "Proofing Rendering Intent"
 msgstr "Nachbildungsübertragung"
 
-#: oyranos.c:735 oyranos.c:753
+#: oyranos.c:657 oyranos.c:675
 msgid "Relative Colorimetric"
 msgstr "Relativ Farbmetrisch"
 
 msgid "Rendering Intent for Colour Space Transformations."
 msgstr "Übertragungsart für Farbtransformationen."
 
-#: oyranos.c:735 oyranos_config_fltk.cxx:1535
+#: oyranos.c:657
 msgid "Saturation"
 msgstr "Sättigung"
 
 msgid "the Data Object"
 msgstr "das Datenobjekt"
 
-#: oyranos.c:741
+#: oyranos.c:663
 msgid "Use Black Point Compensation"
 msgstr "Benutze Schwarzpunktkompensation (BPC)"
 
-#: oyranos.c:744 oyranos.c:762 oyranos.c:771
+#: oyranos.c:666 oyranos.c:684 oyranos.c:693 oyranos_sentinel.c:59
 msgid "Yes"
 msgstr "Ja"
 
@@ -100,339 +100,340 @@ msgstr "Kann nicht reservieren"
 msgid "bytes of  memory for"
 msgstr "Bytes Speicher für"
 
-#: oyranos.c:514
+#: oyranos.c:436
 msgid "Start"
 msgstr "Start"
 
-#: oyranos.c:515
+#: oyranos.c:437
 msgid "Oyranos Settings Group"
 msgstr "Oyranos Einstellungsgruppe"
 
-#: oyranos.c:518 oyranos_config_flu.cpp:311 oyranos_config_flu.cpp:337
+#: oyranos.c:440 oyranos_config_flu.cpp:311 oyranos_config_flu.cpp:337
 msgid "Default Profiles"
 msgstr "Standard Profile"
 
-#: oyranos.c:519
+#: oyranos.c:441
 msgid "Source and Target Profiles for various situations"
 msgstr "Quell- und Zielprofile für verschiedene Situationen"
 
-#: oyranos.c:522
+#: oyranos.c:444
 msgid "Editing Colour Space"
 msgstr "Editierfarbraum"
 
-#: oyranos.c:523
+#: oyranos.c:445
 msgid "Well behaving Colour Space for Editing"
 msgstr "Gleichmäßiger Farbraum für die Bearbeitung"
 
-#: oyranos.c:527
+#: oyranos.c:449
 msgid "Assumed Colour Space"
 msgstr "Erwarteter Farbraum"
 
-#: oyranos.c:528
+#: oyranos.c:450
 msgid "Assumed Colour Space for untagged colours"
 msgstr "Erwarteter Farbraum für Farben ohne Farbprofil"
 
-#: oyranos.c:531 oyranos.c:559 oyranos.c:677
+#: oyranos.c:453 oyranos.c:481 oyranos.c:599
 msgid "Proofing"
 msgstr "Nachbildung"
 
-#: oyranos.c:532
+#: oyranos.c:454
 msgid "Colour Space for Simulating real devices"
 msgstr "Farbraum für die Nachbildung eines Gerätes (Simulation)"
 
-#: oyranos.c:535 oyranos_config_fltk.cxx:1572
+#: oyranos.c:457 oyranos_config_fltk.cxx:1577
 msgid "Paths"
 msgstr "Pfade"
 
-#: oyranos.c:536
+#: oyranos.c:458
 msgid "Paths where ICC Profiles can be found"
 msgstr "Pfad zu ICC Farbprofilen"
 
-#: oyranos.c:539 oyranos_config_fltk.cxx:1555
+#: oyranos.c:461 oyranos_config_fltk.cxx:1560
 msgid "Policy"
 msgstr "Richtlinie"
 
-#: oyranos.c:540
+#: oyranos.c:462
 msgid "Collections of settings in Oyranos"
 msgstr "Voreinstellungen in Oyranos"
 
-#: oyranos.c:543
+#: oyranos.c:465
 msgid "Behaviour"
 msgstr "Verhalten"
 
-#: oyranos.c:544
+#: oyranos.c:466
 msgid "Settings affecting the Behaviour in various situations"
 msgstr "Einstellungen für das Verhalten unter verschiedenen Umständen"
 
-#: oyranos.c:547
+#: oyranos.c:469
 msgid "Rendering"
 msgstr "Übertragung"
 
-#: oyranos.c:548
+#: oyranos.c:470
 msgid ""
 "The kind of ICC standard gamut mapping for transforming colours between "
 "differently sized colour spaces"
 msgstr ""
 "Die Art der Farbübertragung für verschieden große Farbräume nach ICC Standard"
 
-#: oyranos.c:551
+#: oyranos.c:473
 msgid "Save Mixed colour space Documents"
-msgstr "Gemischte Farbräume"
+msgstr "Gemischtfarbige Dokumente"
 
-#: oyranos.c:552
+#: oyranos.c:474
 msgid "Default Handling of Mixed Colour Spaces inside one single Document"
 msgstr ""
 "Standard Behandlung von gemischten Farbräumen in einem einzelnen Dokument"
 
-#: oyranos.c:555
-msgid "Missmatching"
+#: oyranos.c:477
+msgid "Mismatching"
 msgstr "Abweichung"
 
-#: oyranos.c:556
+#: oyranos.c:478
 msgid ""
 "Decide what to do when the default colour spaces dont match the current ones."
 msgstr ""
 "Was ist zu tuen falls Standardfarbräume nicht mit den derzeitigen "
 "übereinstimmen."
 
-#: oyranos.c:560
+#: oyranos.c:482
 msgid "Default Proofing Settings"
-msgstr "Standard Einstellungen für Nachbildung"
+msgstr ""
+"Standard Einstellungen für Nachbildung (Simulation) von einem Ausgabegerät"
 
-#: oyranos.c:563
+#: oyranos.c:485
 msgid "All"
 msgstr "Alle"
 
-#: oyranos.c:564
+#: oyranos.c:486
 msgid "Oyranos Settings"
 msgstr "Oyranos Einstellungen"
 
-#: oyranos.c:596
+#: oyranos.c:518
 msgid "Editing Rgb"
 msgstr "Editier Rgb"
 
-#: oyranos.c:597
+#: oyranos.c:519
 msgid "Prefered Rgb Editing Colour Space"
 msgstr "Bevorzugter Rgb Editierfarbraum"
 
-#: oyranos.c:605
+#: oyranos.c:527
 msgid "Editing Cmyk"
 msgstr "Editier Cmyk"
 
-#: oyranos.c:606
+#: oyranos.c:528
 msgid "Prefered Cmyk Editing Colour Space"
 msgstr "Bevorzugter Cmyk Editierfarbraum"
 
-#: oyranos.c:614
+#: oyranos.c:536
 msgid "Editing XYZ"
 msgstr "Editier XYZ"
 
-#: oyranos.c:615
+#: oyranos.c:537
 msgid "Prefered XYZ Editing Colour Space"
 msgstr "Bevorzugter XYZ Editierfarbraum"
 
-#: oyranos.c:623
+#: oyranos.c:545
 msgid "Editing Lab"
 msgstr "Editier Lab"
 
-#: oyranos.c:624
+#: oyranos.c:546
 msgid "Prefered CIE*Lab Editing Colour Space"
 msgstr "Bevorzugter CIE*Lab Editierfarbraum"
 
-#: oyranos.c:632
+#: oyranos.c:554
 msgid "Assumed XYZ source"
 msgstr "Vermutete XYZ Quelle"
 
-#: oyranos.c:633
+#: oyranos.c:555
 msgid "Assigning an untagged XYZ Image an colour space"
 msgstr "Weise einem XYZ Bild ohne Profil ein Farbraum zu"
 
-#: oyranos.c:641
+#: oyranos.c:563
 msgid "Assumed Lab source"
 msgstr "Vermutete Lab Quelle"
 
-#: oyranos.c:642
+#: oyranos.c:564
 msgid "Assigning an untagged CIE*Lab Image an colour space"
 msgstr "Weise einem CIE*Lab Bild ohne Profil ein Farbraum zu"
 
-#: oyranos.c:650
+#: oyranos.c:572
 msgid "Assumed Rgb source"
 msgstr "Vermutete Rgb Quelle"
 
-#: oyranos.c:651
+#: oyranos.c:573
 msgid "Assigning an untagged Rgb Image an colour space"
 msgstr "Weise einem Rgb Bild ohne Profil ein Farbraum zu"
 
-#: oyranos.c:659
+#: oyranos.c:581
 msgid "Assumed Web source"
 msgstr "Vermutete Web Quelle"
 
-#: oyranos.c:660
+#: oyranos.c:582
 msgid ""
 "Assigning an untagged Rgb Image with source from the WWW an colour space"
 msgstr ""
 "Weise einem nicht festgeschriebenen Rgb Bild aus dem WWW diesen Farbraum zu"
 
-#: oyranos.c:668
+#: oyranos.c:590
 msgid "Assumed Cmyk source"
 msgstr "Vermutete Cmyk Quelle"
 
-#: oyranos.c:669
+#: oyranos.c:591
 msgid "Assigning an untagged Cmyk Image this colour space"
 msgstr "Weise einem nicht festgeschriebenen Cmyk Bild diesen Farbraum zu"
 
-#: oyranos.c:678
+#: oyranos.c:600
 msgid "Colour space for Simulating an Output Device"
 msgstr "Farbraum zur Nachbildung eines Ausgabegerätes"
 
-#: oyranos.c:687
+#: oyranos.c:609
 msgid "No Image profile"
 msgstr "Kein Bildprofil"
 
-#: oyranos.c:688
+#: oyranos.c:610
 msgid ""
 "Image has no colour space embedded. What default action shall be performed?"
 msgstr ""
 "Bild enthält kein Farbprofil. Welche Standardhandlung soll ausgeführt werden?"
 
-#: oyranos.c:690
+#: oyranos.c:612
 msgid "Assign No Profile"
 msgstr "Kein Profil Zuweisen"
 
-#: oyranos.c:690
+#: oyranos.c:612
 msgid "Assign Assumed Profile"
 msgstr "Vermuteted Profil Zuweisen"
 
-#: oyranos.c:690 oyranos.c:699 oyranos.c:708 oyranos.c:717 oyranos.c:726
+#: oyranos.c:612 oyranos.c:621 oyranos.c:630 oyranos.c:639 oyranos.c:648
 msgid "Promt"
 msgstr "Abfragedialog"
 
-#: oyranos.c:696
+#: oyranos.c:618
 msgid "On Rgb Mismatch"
 msgstr "Bei Rgb Ungleichheit"
 
-#: oyranos.c:697 oyranos.c:706
+#: oyranos.c:619 oyranos.c:628
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Verhalten bei Ungleichheit von Bild- und Editierfarbraum"
 
-#: oyranos.c:699 oyranos.c:708 oyranos.c:717 oyranos.c:726
+#: oyranos.c:621 oyranos.c:630 oyranos.c:639 oyranos.c:648
 msgid "Preserve Numbers"
 msgstr "Erhalte Zahlen"
 
-#: oyranos.c:699 oyranos.c:708
+#: oyranos.c:621 oyranos.c:630
 msgid "Convert automatically"
 msgstr "Wandle automatisch"
 
-#: oyranos.c:705
+#: oyranos.c:627
 msgid "On Cmyk Mismatch"
 msgstr "Bei Cmyk Ungleichheit"
 
-#: oyranos.c:714
+#: oyranos.c:636
 msgid "For Print"
 msgstr "Für den Druck"
 
-#: oyranos.c:715
+#: oyranos.c:637
 msgid "Handle Mixed colour spaces in Preparing a document for Print output."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Druckausgabe"
 
-#: oyranos.c:717
+#: oyranos.c:639
 msgid "Convert to Default Cmyk Editing Space"
 msgstr "Übertrage in Standard Cmyk Editierfarbraum"
 
-#: oyranos.c:717
+#: oyranos.c:639
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
-#: oyranos.c:723
+#: oyranos.c:645
 msgid "For Screen"
 msgstr "Für den Bildschirm"
 
-#: oyranos.c:724
+#: oyranos.c:646
 msgid "Handle Mixed colour spaces in Preparing a document for Screen output."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Bildschirmausgabe"
 
-#: oyranos.c:726
+#: oyranos.c:648
 msgid "Convert to Default Rgb Editing Space"
 msgstr "Umwandeln zum Standard Rgb Editierfarbraum"
 
-#: oyranos.c:726
+#: oyranos.c:648
 msgid "Convert to WWW (sRGB)"
 msgstr "Umwandeln für's WWW (sRGB)"
 
-#: oyranos.c:733
+#: oyranos.c:655
 msgid "Rendering Intent for colour space Transformations."
 msgstr "Übertragungsart für Farbtransformationen."
 
-#: oyranos.c:735
+#: oyranos.c:657
 msgid "Perceptual"
 msgstr "Fotografisch"
 
-#: oyranos.c:759
+#: oyranos.c:681
 msgid "SoftProof by Default"
 msgstr "Nachbildung am Bildschirm"
 
-#: oyranos.c:760
+#: oyranos.c:682
 msgid "Behaviour for Softproofing view at application startup"
 msgstr ""
 "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil am "
 "Bildschirm beim Programmstart"
 
-#: oyranos.c:768
+#: oyranos.c:690
 msgid "Hardproof by Default"
 msgstr "Nachbildung beim Ausdruck"
 
-#: oyranos.c:769
+#: oyranos.c:691
 msgid ""
 "Behaviour for preselecting Hardproofing with Standard Proofing Profile at "
 "print time"
 msgstr ""
-"Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf dem "
-"Drucker beim Programmstart"
+"Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf "
+"dem Drucker beim Programmstart"
 
-#: oyranos.c:2198
+#: oyranos.c:1398
 #, c-format
 msgid "profile %s not found\n"
 msgstr "Profil %s nicht gefunden\n"
 
-#: oyranos.c:2240 oyranos.c:2255
+#: oyranos.c:1440 oyranos.c:1455
 #, c-format
 msgid "default profile type %d; type does not exist"
 msgstr "Standard Profiltyp %d; Typ existiert nicht"
 
-#: oyranos_monitor.c:311
+#: oyranos_monitor.c:312
 msgid "unexpected EDID lenght"
 msgstr "unerwartetet EDID Größe"
 
-#: oyranos_monitor.c:370 oyranos_monitor.c:1019
+#: oyranos_monitor.c:371 oyranos_monitor.c:1020
 msgid "open X Display failed"
 msgstr "Öffnen des X Displays daneben"
 
-#: oyranos_monitor.c:385 oyranos_monitor.c:729 oyranos_monitor.c:800
+#: oyranos_monitor.c:386 oyranos_monitor.c:730 oyranos_monitor.c:801
 #, c-format
 msgid "Error setting up atom \"%s\""
 msgstr "Fehler beim Setzen des Xatoms \"%s\""
 
-#: oyranos_monitor.c:694
+#: oyranos_monitor.c:695
 msgid "Error while setting monitor gamma curves"
 msgstr "Fehler während des Setzens der Grafikkartengammakurven"
 
-#: oyranos_monitor.c:722
+#: oyranos_monitor.c:723
 msgid "Error obtaining profile"
 msgstr "Fehler während der Erfragung des Profils"
 
-#: oyranos_monitor.c:731
+#: oyranos_monitor.c:732
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
-#: oyranos_monitor.c:1038
+#: oyranos_monitor.c:1039
 msgid "Xinerama request failed"
 msgstr "Xineramaanfrage daneben"
 
-#: oyranos_monitor.c:1054
+#: oyranos_monitor.c:1055
 msgid "open X Screen failed"
 msgstr "Öffnen des X Screens daneben"
 
@@ -464,110 +465,124 @@ msgstr "Aktivieren eines Profiles:"
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 
-#: oyranos_config_fltk.cxx:52 oyranos_config_fltk.cxx:134
-#: oyranos_config_fltk.cxx:352 oyranos_config_flu.cpp:101
+#: oyranos_config_fltk.cxx:52 oyranos_config_fltk.cxx:141
+#: oyranos_config_fltk.cxx:359 oyranos_config_flu.cpp:101
 #: oyranos_config_flu.cpp:229
 msgid "[none]"
 msgstr "[kein]"
 
-#: oyranos_config_fltk.cxx:139 oyranos_config_fltk.cxx:216
+#: oyranos_config_fltk.cxx:146 oyranos_config_fltk.cxx:223
 #: oyranos_config_flu.cpp:234 oyranos_config_flu.cpp:281
 msgid "setting"
 msgstr "Einstellung"
 
-#: oyranos_config_fltk.cxx:139 oyranos_config_fltk.cxx:156
-#: oyranos_config_fltk.cxx:216 oyranos_config_flu.cpp:234
+#: oyranos_config_fltk.cxx:146 oyranos_config_fltk.cxx:163
+#: oyranos_config_fltk.cxx:223 oyranos_config_flu.cpp:234
 #: oyranos_config_flu.cpp:281
 msgid "failed!"
 msgstr "daneben!"
 
-#: oyranos_config_fltk.cxx:146 oyranos_config_flu.cpp:239
+#: oyranos_config_fltk.cxx:153 oyranos_config_flu.cpp:239
 msgid "Select Profile"
 msgstr "Wählen Sie ein Profil"
 
-#: oyranos_config_fltk.cxx:156
+#: oyranos_config_fltk.cxx:163
 msgid "showing"
 msgstr "zeigen"
 
-#: oyranos_config_fltk.cxx:167
+#: oyranos_config_fltk.cxx:174
 msgid "Show Profile failed"
 msgstr "Anzeige des Profiles mislungen"
 
-#: oyranos_config_fltk.cxx:171
+#: oyranos_config_fltk.cxx:178
 msgid "Select a directory with ICC profiles"
 msgstr "Wählen Sie ein Verzeichnis mit ICC Profilen"
 
-#: oyranos_config_fltk.cxx:222 oyranos_config_flu.cpp:286
+#: oyranos_config_fltk.cxx:194
+# c-format
+msgid "error setting path: %s"
+msgstr "Fehler beim Setzen des Pfades: \"%s\""
+
+#: oyranos_config_fltk.cxx:210
+msgid "Path"
+msgstr "Pfad"
+
+#: oyranos_config_fltk.cxx:229 oyranos_config_flu.cpp:286
 msgid "Select Behaviour"
 msgstr "Wählen Sie das Verhalten"
 
-#: oyranos_config_fltk.cxx:325 oyranos_config_fltk.cxx:443
+#: oyranos_config_fltk.cxx:332 oyranos_config_fltk.cxx:450
 #: oyranos_config_flu.cpp:83
 #, c-format
 msgid "%s Profile"
 msgstr "%s Profil"
 
-#: oyranos_config_fltk.cxx:359
+#: oyranos_config_fltk.cxx:366
 msgid "Show in external Viewer"
 msgstr "Anzeige in exteren Betrachter"
 
-#: oyranos_config_fltk.cxx:494
+#: oyranos_config_fltk.cxx:390
+#, c-format
+msgid "multiple occurencies of default %s profile: %d times"
+msgstr "mehrmaliges Erscheinen des Standard %s Profiles: %d mal"
+
+#: oyranos_config_fltk.cxx:501
 msgid "Exclude this path"
 msgstr "Diesen Pfad ausschließen"
 
-#: oyranos_config_fltk.cxx:540
+#: oyranos_config_fltk.cxx:547
 msgid "@-3+"
 msgstr "@-3+"
 
-#: oyranos_config_fltk.cxx:542
+#: oyranos_config_fltk.cxx:549
 msgid "Add Path containing ICC profiles"
 msgstr "Pfad mit ICC Profilen hinzufügen"
 
-#: oyranos_config_fltk.cxx:1439
+#: oyranos_config_fltk.cxx:1446
 msgid "Office + Home"
 msgstr "Büro + Heim"
 
-#: oyranos_config_fltk.cxx:1440
+#: oyranos_config_fltk.cxx:1447
 msgid "Graphic Designers"
 msgstr "Grafische Gestalter"
 
-#: oyranos_config_fltk.cxx:1441
+#: oyranos_config_fltk.cxx:1448
 msgid "PrePress"
 msgstr "Druckvorstufe"
 
-#: oyranos_config_fltk.cxx:1442
+#: oyranos_config_fltk.cxx:1449
 msgid "Photographers"
 msgstr "Fotografen"
 
-#: oyranos_config_fltk.cxx:1537
+#: oyranos_config_fltk.cxx:1542
 msgid "Oyranos Configuration"
 msgstr "Oyranos Konfiguration"
 
-#: oyranos_config_fltk.cxx:1545
+#: oyranos_config_fltk.cxx:1550
 msgid "Oyranos Configuration "
 msgstr "Oyranos Konfiguration "
 
-#: oyranos_config_fltk.cxx:1556
+#: oyranos_config_fltk.cxx:1561
 msgid "Reset to a standard Policy for Oyranos."
 msgstr "Zurücksetzen auf Oyranos' Standardrichtlinie"
 
-#: oyranos_config_fltk.cxx:1573
+#: oyranos_config_fltk.cxx:1578
 msgid "Configure Paths"
 msgstr "Konfiguriere Pfade"
 
-#: oyranos_config_fltk.cxx:1583
+#: oyranos_config_fltk.cxx:1588
 msgid "@-3reload"
 msgstr "@-3reload"
 
-#: oyranos_config_fltk.cxx:1584
+#: oyranos_config_fltk.cxx:1589
 msgid "Refresh"
 msgstr "Auffrischen"
 
-#: oyranos_config_fltk.cxx:1590
+#: oyranos_config_fltk.cxx:1595
 msgid "Active Policy:"
 msgstr "Aktive Richtlinie:"
 
-#: oyranos_config_fltk.cxx:1593
+#: oyranos_config_fltk.cxx:1598
 msgid "----"
 msgstr "----"
 

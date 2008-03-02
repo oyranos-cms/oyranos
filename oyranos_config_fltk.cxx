@@ -51,13 +51,15 @@ const char* getPolicyName() {
   const char** policy_list = getPolicies( &count );
   const char *name = _("[none]");
 
+  oyI18NSet(0,0);
+  char *xml = oyPolicyToXML (oyGROUP_ALL, 0, myAllocFunc);
+  oyI18NSet(1,0);
+  xml[strlen(xml)-2] = 0;
+  std::cout << xml <<std::endl;
+
   for( int i = 0; i < count; ++i )
   {
-    oyI18NSet(0,0);
-    char *xml = oyPolicyToXML (oyGROUP_ALL, 0, myAllocFunc);
-    oyI18NSet(1,0);
-    std::cout << xml <<std::endl;
-    
+
     char *data = 0;
 
     const char* fname = policy_list[2*i+1];
@@ -73,7 +75,6 @@ const char* getPolicyName() {
         f.close();
       }
     }
-    xml[strlen(xml)-2] = 0;
 
     if( !data )
       std::cout << "no policy files available" << std::endl;
@@ -83,8 +84,8 @@ const char* getPolicyName() {
       name = policy_list[i*2+0];
 
     if(data) delete [] data;
-    if(xml)  delete [] xml;
   }
+  if(xml)  delete [] xml;
 
   return name;
 }

@@ -1,7 +1,7 @@
 /**
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2005  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2006  Kai-Uwe Behrmann
  *
  * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -21,7 +21,7 @@
  * 
  * -----------------------------------------------------------------------------
  *
- * internal API
+ * misc internal API
  * 
  */
 
@@ -31,7 +31,8 @@
 #ifndef OYRANOS_INTERNAL_H
 #define OYRANOS_INTERNAL_H
 
-//#include <oyranos/oyranos_internal.h>
+#include "oyranos.h"
+#include "oyranos_texts.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,27 +41,37 @@ namespace oyranos
 #endif /* __cplusplus */
 
 
-typedef enum {
-  oyOPTION_TYPE_START,
-  oyTYPE_BEHAVIOUR,
-  oyTYPE_DEFAULT_PROFILE,
-  oyTYPE_PROFILE,
-  oyTYPE_INT,
-  /*oyTAPE_DOUBLE,*/
-  oyOPTION_TYPE_END
-} oyOPTION_TYPE;
+struct OyComp_s {
+  struct OyComp_s *next;   /* chain connection */
+  struct OyComp_s *begin;  /* chain connection */
+  char            *name;   /* key name */
+  char            *val;    /* its value */
+  int              hits;   /* weighting */
+};
+
+typedef struct OyComp_s oyComp_t;
+
+/**@internal A small search engine
+ *
+ * for one simple, single list, dont mix lists!!
+ * name and val are not alloced or freed 
+ */
 
 
-/* library sentinels */
-void  oyInit_               (void);
-void  oyExportStart_        (void);
-void  oyExportEnd_          (void);
+oyComp_t* oyInitComp_      (oyComp_t *compare, oyComp_t *top);
+oyComp_t* oyAppendComp_    (oyComp_t *list,    oyComp_t *new);
+void    oySetComp_         (oyComp_t *compare, const char* keyName,
+                            const char* value, int hits );
+void    oyDestroyCompList_ (oyComp_t* list);
+char*   printComp          (oyComp_t* entry);
 
-/* kdb stuff */
-void  oyOpen                (void);
-void  oyClose               (void);
 
-void oyI18Nrefresh_();
+int     oySetProfile_Block                (const char* name, 
+                                           void* mem,
+                                           size_t size,
+                                           oyDEFAULT_PROFILE type,
+                                           const char* comnt);
+
 
 
 /* device profiles */
@@ -73,6 +84,7 @@ typedef enum  {
   oyCAMERA,           /**< virtual or contactless image capturing */
 } oyDEVICETYP;
 
+#define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
 
 char* oyGetDeviceProfile                  (oyDEVICETYP typ,
                                            const char* manufacturer,

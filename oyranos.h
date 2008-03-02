@@ -68,7 +68,7 @@ typedef void (*oyDeAllocFunc_t)       (void *data);
 
 /* --- behaviour --- */
 
-/** enum Behaviour Options
+/** @brief Behaviour settings
  *
  *  possibly include the default profiles here
  */
@@ -99,7 +99,7 @@ int         oySetBehaviour             (oyBEHAVIOUR       type,
 
 /* --- policies --- */
 
-/** enum Policy Groups 
+/** @brief Policy Groups 
  */
 typedef enum  {
   oyGROUP_START = 0,
@@ -135,7 +135,7 @@ char* oyGetPathFromProfileName         (const char* profile_name,
 
 /* --- default profiles --- */
 
-/** enum Default Profiles
+/** @brief Default Profiles
  */
 typedef enum  {
   oyDEFAULT_PROFILE_START = 100,
@@ -183,7 +183,7 @@ void*  oyGetProfileBlock               (const char* profilename, size_t* size,
 
 
 /* --- options / GUI layout --- */
-
+/** @brief options for UI presentation, covering all kind of settings */
 typedef enum  {
   oyOPTION_BEHAVIOUR_START = 30,
   oyOPTION_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? */
@@ -344,7 +344,7 @@ int    oyCmmRegisterXML              ( oyGROUP group,
                                        const char *domain,
                                        const char *domain_path );
 
-/** obtain 4 char CMM identifiers and number of CMM's */
+/** obtain 4 char CMM identifiers and count of CMM's */
 char** oyCmmGetCmmNames              ( int        *count,
                                        oyAllocFunc_t alloc_func );
 int    oyCmmGetOptionRanges          ( const char *cmm,

@@ -42,16 +42,26 @@ CPP_HEADERS = \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
 	$(TARGET)_definitions.h \
+	$(TARGET)_elektra.h \
 	$(TARGET)_helper.h \
+	$(TARGET)_io.h \
 	$(TARGET)_internal.h \
 	$(TARGET)_monitor.h \
-	$(TARGET)_monitor_internal.h
+	$(TARGET)_monitor_internal.h \
+	$(TARGET)_sentinel.h \
+	$(TARGET)_texts.h \
+	$(TARGET)_xml.h
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
+	$(TARGET)_cmms.c \
+	$(TARGET)_elektra.c \
 	$(TARGET)_helper.c \
+	$(TARGET)_io.c \
 	$(TARGET)_misc.c \
-	$(TARGET)_sentinel.c
+	$(TARGET)_sentinel.c \
+	$(TARGET)_texts.c \
+	$(TARGET)_xml.c
 CFILESC = \
 	$(TARGET)_debug.c
 CFILES_MONI = \

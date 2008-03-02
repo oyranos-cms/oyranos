@@ -46,9 +46,9 @@ oyI18NSet_             ( int active,
   DBG_PROG_START
 
   if(active)
-    domain = "";
-  else
     domain = "oyranos";
+  else
+    domain = "";
 
   oyI18Nrefresh_();
 
@@ -60,6 +60,14 @@ void
 oyI18Nrefresh_()
 {
   int    i;
+
+  if(oy_groups_description_ && oy_groups_descriptions_)
+    for( i = 0; i < oy_groups_descriptions_ - 1; ++i)
+      oyFree_m_( oy_groups_description_[i] );
+  oyFree_m_( oy_groups_description_ );
+  oy_groups_descriptions_ = oyGROUP_ALL + 1;
+  oyCheckOptionStrings_ (oy_option_);
+
 
   /* refresh CMM's */
   for( i = 0; i < oyCMM_.n; ++i)

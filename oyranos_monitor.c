@@ -53,6 +53,7 @@
 #include "oyranos_monitor_internal.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
+#include "oyranos_sentinel.h"
 
 /* ---  Helpers  --- */
 
@@ -684,7 +685,7 @@ oyActivateMonitorProfile_         (const char* display_name,
       profil_basename = profil_name;
 
     /* set vcgt tag with xcalib
-       not useable with Xinerama
+       not useable with multihead Xinerama at one screen
      */
     sprintf(text,"xcalib -d %s -s %d %s%s%s", dpy_name, disp.geo[1],
                                profil_pathname, OY_SLASH, profil_basename);

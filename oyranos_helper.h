@@ -70,7 +70,7 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
 /* oyFree_ (void*) */
 #define oyFree_m_(x) {                                      \
   if (x != NULL) {    /* defined in oyranos_helper.h */     \
-    free (x); x = NULL;                                     \
+    oyDeAllocateFunc_ (x); x = NULL;                                     \
   } else {                                                  \
     WARN_S (("%s:%d %s() nothing to delete " #x "\n",       \
     __FILE__,__LINE__,__func__));                           \

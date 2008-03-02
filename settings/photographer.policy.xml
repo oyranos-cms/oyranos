@@ -95,7 +95,7 @@
 
 
 <oyGROUP_BEHAVIOUR_MISSMATCH>
-<!-- Missmatching 
+<!-- Mismatching 
      Decide what to do when the default colour spaces dont match the current ones. -->
 
     <!-- No Image profile

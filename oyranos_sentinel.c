@@ -36,6 +36,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
+#include "oyranos_sentinel.h"
 
 /* --- Helpers  --- */
 
@@ -110,6 +111,9 @@ void oyInit_()
     return;
   initialised = 1;
 
+  if(getenv("OYRANOS_DEBUG"))
+    oy_debug = atoi(getenv("OYRANOS_DEBUG"));
+
 #ifdef USE_GETTEXT
   {
     setlocale(LC_MESSAGES, "");
@@ -117,6 +121,9 @@ void oyInit_()
     bindtextdomain( "oyranos", LOCALEDIR );
   }
 #endif
+  oy_option_= calloc(sizeof(oyOption_t), OY_STATIC_OPTS_);
+  oyCheckOptionStrings_ (oy_option_);
+
 }
 
 
