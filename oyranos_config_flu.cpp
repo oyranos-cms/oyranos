@@ -123,8 +123,46 @@ struct DefaultProfile: public Fl_Pack {
     oyClose();
 
     DBG_PROG_V((choice->size()))
+    #if ( FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 1 && FL_PATCH_VERSION >= 6 )
     const Fl_Menu_Item* new_val = choice->find_item(default_p);
     int erfolg = choice->value( new_val );
+    #else
+    int size = choice->size(),
+        erfolg = 0;
+    char menupath[1024] = ""; // File/Export
+
+    char * name = default_p;
+    const Fl_Menu_Item *m = 0;
+    for ( int t=0; t < choice->size(); t++ ) {
+      m = choice->menu() + t;
+
+      if (m->submenu()) {
+        // IT'S A SUBMENU
+        if (menupath[0]) strncat(menupath, "/", sizeof(menupath));
+        strncat(menupath, m->label(), sizeof(menupath));
+        if (!strcmp(menupath, name)) break;
+      } else {
+        if (!m->label()) {
+      // END OF SUBMENU? Pop back one level.
+      char *ss = strrchr(menupath, '/');
+      if ( ss ) *ss = 0;
+      else menupath[0] = '\0';
+      continue;
+        }
+
+        // IT'S A MENU ITEM
+        char itempath[1024];  // eg. Edit/Copy
+        strcpy(itempath, menupath);
+        if (itempath[0]) strncat(itempath, "/", sizeof(itempath));
+        strncat(itempath, m->label(), sizeof(itempath));
+        if (!strcmp(itempath, name)) break;
+      }
+    }
+
+
+    DBG_PROG_V((size))
+    erfolg = choice->Fl_Menu_::value((const Fl_Menu_Item*)m);
+    #endif
     DBG_PROG_V((erfolg))
     DBG_PROG_V((val))
     DBG_PROG_V((count))

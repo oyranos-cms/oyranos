@@ -136,7 +136,7 @@ ALL_FILES =	$(DOKU) \
 	$(SOURCES) \
 	$(FLUID)
 
-all:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma $(FLU_GUI) test2
+all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)_gamma $(FLU_GUI) test2
 
 $(TARGET):	$(OBJECTS)
 	echo Linking $@ ...
