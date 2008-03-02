@@ -1,6 +1,7 @@
 
-Name: oyranos
+Name: oyranos_monitor
 Description: Oyranos Colour Management System
-Libs: -L${libdir} -loyranos -loyranos_moni -X11 -Xinerama
+Libs: -L${libdir} -loyranos -loyranos_moni
+Requires: x11 xinerama
 Cflags: -I${includedir}
 

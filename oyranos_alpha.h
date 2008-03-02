@@ -1,7 +1,23 @@
+/** @file oyranos_alpha.h
+ *
+ *  Oyranos is an open source Colour Management System 
+ *
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
+ *
+ */
+
+/**
+ *  @brief    misc alpha APIs
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2004/11/25
+ */
+
 /**
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2007  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2008  Kai-Uwe Behrmann
  *
  * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -37,14 +53,33 @@ extern "C" {
 
 void                    oyLab2XYZ       (const double * CIElab, double * XYZ);
 void                    oyXYZ2Lab       (const double * XYZ, double * CIElab);
-
+void         oyCIEabsXYZ2ICCrelXYZ   ( const double      * CIEXYZ,
+                                       double            * ICCXYZ,
+                                       const double      * XYZmin,
+                                       const double      * XYZmax,
+                                       const double      * XYZwhite );
+void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
+                                       double            * CIEXYZ,
+                                       const double      * XYZmin,
+                                       const double      * XYZmax,
+                                       const double      * XYZwhite );
 
 typedef struct oyStruct_s oyStruct_s;
 
 typedef oyStruct_s * (*oyStruct_CopyF_t) ( oyStruct_s *, oyPointer );
 typedef int       (*oyStruct_ReleaseF_t) ( oyStruct_s ** );
-typedef oyPointer (*oyStruct_copyF_t) ( oyPointer, oyPointer );
+typedef oyPointer (*oyStruct_copyF_t)  ( oyPointer, oyPointer );
 typedef int       (*oyStruct_releaseF_t) ( oyPointer * );
+typedef oyPointer (*oyStruct_LockCreateF_t) ( oyStruct_s * obj );
+typedef void      (*oyLockReleaseF_t)( oyPointer           lock,
+                                       const char        * marker,
+                                       int                 line );
+typedef void      (*oyLockF_t)       ( oyPointer           lock,
+                                       const char        * marker,
+                                       int                 line );
+typedef void      (*oyUnLockF_t)     ( oyPointer           look,
+                                       const char        * marker,
+                                       int                 line );
 
 typedef oyPointer (*oyImage_GetLine_t) ( int               line_y,
                                          int             * height );
@@ -52,6 +87,10 @@ typedef oyPointer (*oyImage_GetTile_t) ( int               tile_x,
                                          int               tile_y );
 
 
+void         oyThreadLockingSet      ( oyStruct_LockCreateF_t createLockFunc,
+                                       oyLockReleaseF_t    releaseLockFunc,
+                                       oyLockF_t           lockFunc,
+                                       oyUnLockF_t         unlockFunc );
 
 /** @internal
  *  @brief Oyranos name structure
@@ -70,6 +109,12 @@ typedef enum {
   oyOBJECT_TYPE_PROFILE_LIST_S,       /*!< oyProfileList_s */
   oyOBJECT_TYPE_OPTION_S,             /*!< oyOption_s */
   oyOBJECT_TYPE_OPTIONS_S,            /*!< oyOptions_s */
+  oyOBJECT_TYPE_WIDGET_S,             /**< oyWidget_s */
+  oyOBJECT_TYPE_PARAM_BUTTON_S,       /**< oyParametersButton_s */
+  oyOBJECT_TYPE_PARAM_CHOICE_S,       /**< oyParametersChoice_s */
+  oyOBJECT_TYPE_PARAM_GROUP_S,        /**< oyParametersGroup_s */
+  oyOBJECT_TYPE_PARAM_SLIDER_S,       /**< oyParametersSlider_s */
+  oyOBJECT_TYPE_PARAM_TEXT_S,         /**< oyParametersText_s */
   oyOBJECT_TYPE_REGION_S,             /*!< oyRegion_s */
   oyOBJECT_TYPE_IMAGE_S,              /*!< oyImage_s */
   oyOBJECT_TYPE_IMAGE_HANDLER_S,      /*!< oyImageHandler_s */
@@ -77,6 +122,7 @@ typedef enum {
   oyOBJECT_TYPE_CMM_HANDLE_S = 50,    /**< oyCMMhandle_s */
   oyOBJECT_TYPE_CMM_POINTER_S,        /*!< oyCMMptr_s */
   oyOBJECT_TYPE_CMM_INFO_S,           /*!< oyCMMInfo_s */
+  oyOBJECT_TYPE_CMM_API_S,            /**< oyCMMapi_s */
   oyOBJECT_TYPE_CMM_API1_S,           /**< oyCMMapi1_s */
   oyOBJECT_TYPE_CMM_API2_S,           /**< oyCMMapi2_s */
   oyOBJECT_TYPE_CMM_API3_S,           /**< oyCMMapi3_s */
@@ -108,19 +154,24 @@ struct oyStruct_s {
   oyObject_s           oy_;            /**< features name and hash */
 };
 
+oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
+                                       size_t              size );
 
 typedef enum {
-  oyNAME_NAME,                        /**< compatible to oyName_s/oyObject_s */
-  oyNAME_NICK,                        /**< compatible to oyName_s/oyObject_s */
-  oyNAME_DESCRIPTION,                 /**< compatible to oyName_s/oyObject_s */
-
-  oyNAME_PROD_NAME,                   /**< the following are from a given CMM */
-  oyNAME_PROD_DESC,
-  oyNAME_INFO,
-  oyNAME_COPYRIGHT,
-  oyNAME_MODELL,
-  oyNAME_MANUFACTURER
+  oyNAME_NAME,                         /**< compatible to oyName_s/oyObject_s */
+  oyNAME_NICK,                         /**< compatible to oyName_s/oyObject_s */
+  oyNAME_DESCRIPTION                   /**< compatible to oyName_s/oyObject_s */
 } oyNAME_e;
+
+typedef enum {
+  oySTRING,                            /**< not specified */
+  oySTRING_PROD_NAME,                  /**< ??? */
+  oySTRING_PROD_DESC,                  /**< icSigProfileDescriptionTag */
+  oySTRING_INFO,                       /**< */
+  oySTRING_COPYRIGHT,                  /**< icSigCopyrightTag */
+  oySTRING_MODELL,                     /**< icSigDeviceModelDescTag */
+  oySTRING_MANUFACTURER                /**< icSigDeviceMfgDescTag */
+} oySTRING_e;
 
 #define oyNAME_ID oyNAME_NICK
 
@@ -137,8 +188,15 @@ typedef struct {
   char               * nick;    /*!< few letters for mass representation, eg. "A1" */
   char               * name;           /*!< normal visible name, eg. "A1-MySys"*/
   char               * description;    /*!< full user description, eg. "A1-MySys from Oyranos" */
+  oySTRING_e           string_type;    /**< type of string */
+  char                 lang[8];        /**< i18n language, eg. "en_GB" */
 } oyName_s;
 
+oyName_s *   oyName_new              ( oyObject_s          object );
+
+oyName_s *   oyName_copy             ( oyName_s          * obj,
+                                       oyObject_s          object );
+int          oyName_release          ( oyName_s         ** obj );
 int          oyName_release_         ( oyName_s         ** name,
                                        oyDeAllocFunc_t     deallocateFunc );
 oyName_s *   oyName_set_             ( oyName_s          * obj,
@@ -243,6 +301,7 @@ struct oyObject_s_ {
   int                  ref_;           /*!< reference counter */
   int                  version_;       /*!< OYRANOS_VERSION */
   unsigned char        hash_[2*OY_HASH_SIZE];
+  oyPointer            lock_;          /**< the user provided lock */
 };
 
 oyObject_s   oyObject_New             ( void );
@@ -272,7 +331,15 @@ const oyChar*oyObject_GetName         ( const oyObject_s  object,
                                         const char      * cmm );
 oyObject_s   oyObject_SetCMMPtr       ( oyObject_s        object,
                                         oyCMMptr_s      * cmm_ptr );*/
-
+int          oyObject_Lock             ( oyObject_s        object,
+                                         const char      * marker,
+                                         int               line );
+int          oyObject_UnLock           ( oyObject_s        object,
+                                         const char      * marker,
+                                         int               line );
+int          oyObject_UnSetLocking     ( oyObject_s        object,
+                                         const char      * marker,
+                                         int               line );
 
 
 /** @internal
@@ -321,20 +388,18 @@ struct oyStructList_s {
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< features name and hash */
-  int                  locked_;        /**< locking */
   oyStruct_s        ** ptr_;           /**< the list data */
-  int                * ref_;           /**< the reference counters, see oyStructList_ReferenceAt_ */
   int                  n_;             /**< the number of visible pointers */
   int                  n_reserved_;    /**< the number of allocated pointers */
   oyChar             * list_name;      /**< name of list */
 };
 
-oyStructList_s * oyStructList_New_   ( oyObject_s          object );
-oyStructList_s * oyStructList_Copy_  ( oyStructList_s    * list,
+oyStructList_s * oyStructList_New    ( oyObject_s          object );
+oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
                                        oyObject_s          obj );
-int              oyStructList_Release_(oyStructList_s   ** list );
+int              oyStructList_Release( oyStructList_s   ** list );
 
-int              oyStructList_MoveIn_( oyStructList_s    * list,
+int              oyStructList_MoveIn ( oyStructList_s    * list,
                                        oyStruct_s       ** ptr,
                                        int                 pos );
 /*oyStruct_s **    oyStructList_GetRaw_( oyStructList_s    * list );*/
@@ -343,13 +408,16 @@ oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
 oyStruct_s *     oyStructList_GetType_(oyStructList_s    * list,
                                        int                 pos,
                                        oyOBJECT_TYPE_e     type );
-oyStruct_s *     oyStructList_GetRef_( oyStructList_s    * list,
+oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
                                        int                 pos );
+oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
+                                       int                 pos,
+                                       oyOBJECT_TYPE_e     type );
 int              oyStructList_ReferenceAt_( oyStructList_s * list,
                                        int                 pos );
-int              oyStructList_ReleaseAt_( oyStructList_s * list,
+int              oyStructList_ReleaseAt( oyStructList_s  * list,
                                        int                 pos );
-int              oyStructList_Count_ ( oyStructList_s    * list );
+int              oyStructList_Count  ( oyStructList_s    * list );
 
 
 
@@ -363,19 +431,64 @@ oyChar *     oyCMMCacheListPrint_    ( void );
 /* --- colour conversions --- */
 
 
+/** @enum    oyVALUETYPE_e
+ *  @brief   a value type
+ *
+    @see     oyValue_u
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/16 (Oyranos: 0.1.x)
+ *  @date    2008/02/16
+ */
+typedef enum {
+  oyVAL_INT,
+  oyVAL_INT_LIST,
+  oyVAL_DOUBLE,    /*!< IEEE double precission floating point number */
+  oyVAL_DOUBLE_LIST,
+  oyVAL_STRING,
+  oyVAL_STRING_LIST
+} oyVALUETYPE_e;
+
+/** @union   oyValue_u
+ *  @brief   a value
+ *
+    @see     oyVALUETYPE_e
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/16 (Oyranos: 0.1.x)
+ *  @date    2008/02/16
+ */
+typedef union {
+  int32_t          int32;
+  int32_t        * int32_list;
+  double           dbl;
+  double         * dbl_list;
+  char           * string;
+  char          ** string_list;
+} oyValue_u;
+
 /** @brief Option for rendering
 
     @todo include the oyOptions_t_ type for gui elements
     should be used in a list oyColourTransformOptions_s to form a options set
+
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/00/00 (Oyranos: 0.1.x)
+ *  @date    2008/02/16
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OPTION_S */
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
-  oyWIDGET_e           opt_;           /*!< registred option */
-  int             supported_by_chain;  /*!< 1 for supporting; 0 if one fails */
-  double               value_d;        /*!< value of option; unset with nan; */ 
+
+  uint32_t             id;             /**< id to map for instance to widgets */
+  oyName_s             name;           /**< nick, name, description/help */
+  const char         * config_path;    /**< full key name to store configuration, use three point separated string, eg "org.oyranos.lcms" */
+  const char         * config_key;     /**< key name to store configuration, eg "transform_precalculation" */
+  oyVALUETYPE_e        value_type;     /**< the type in value */
+  oyValue_u            value;          /**< the actual value */
+  uint32_t             flags;          /**<  */
 } oyOption_s;
 
 /** @brief Options for rendering
@@ -436,14 +549,30 @@ typedef struct {
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromStd ( oyPROFILE_e         colour_space,
                                        oyObject_s          object);
+/** @type oyIO_t 
+    parametric type as shorthand for IO flags \n
+
+    should fit into a 32bit type, usual unsigned int or uint32_t \n
+
+    ------ W R \n
+
+    R  no cache read \n
+    W  no cache write \n
+
+ */
+#define oyNO_CACHE_READ             0x01        /** read not from cache */
+#define oyNO_CACHE_WRITE            0x02        /** write not from cache */
+/* decode */
+#define oyToNoCacheRead_m(r)        ((r)&1)
+#define oyToNoCacheWrite_m(w)       (((w) >> 1)&1)
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromFile( const char*         file_name,
-                                       int                 flags,
+                                       uint32_t            flags,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromMem ( size_t              buf_size,
                                        const oyPointer     buf,
-                                       int                 flags,
+                                       uint32_t            flags,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_Copy    ( oyProfile_s       * profile,
@@ -456,6 +585,8 @@ OYAPI oyPointer OYEXPORT
                                        oyAllocFunc_t     allocateFunc );
 #endif
 OYAPI int OYEXPORT oyProfile_GetChannelsCount ( oyProfile_s * colour );
+int          oyProfile_ToFile_       ( oyProfile_s       * profile,
+                                       const char        * file_name );
 
 /** @brief general profile infos
  *
@@ -506,6 +637,11 @@ oyProfileTag_s *   oyProfile_GetTagByPos ( oyProfile_s   * profile,
 oyProfileTag_s *   oyProfile_GetTagById ( oyProfile_s    * profile,
                                        icTagSignature      id );
 int                oyProfile_GetTagCount( oyProfile_s    * profile );
+int                oyProfile_AddTag  ( oyProfile_s       * profile,
+                                       oyProfileTag_s   ** tag,
+                                       int                 pos );
+const oyChar *     oyProfile_GetFileName ( oyProfile_s   * profile,
+                                       int                 dl_pos );
 
 
 /** @brief tell about the conversion profiles
@@ -538,7 +674,8 @@ int              oyProfileList_Count ( oyProfileList_s   * list );
 
 typedef enum {
   oyOK,
-  oyCORRUPTED
+  oyCORRUPTED,
+  oyUNDEFINED
 } oySTATUS_e;
 
 /** @struct oyProfileTag_s
@@ -553,18 +690,28 @@ struct oyProfileTag_s {
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  icTagSignature       use_;
-  icTagTypeSignature   tag_type_;
+  icTagSignature       use;            /**< tag functionality inside profile */
+  icTagTypeSignature   tag_type_;      /**< tag type to decode the data block */
 
-  oySTATUS_e           status_;
+  oySTATUS_e           status_;        /**< status at load time */
 
-  size_t               offset_orig;
-  size_t               size_;
-  oyPointer            block_;
+  size_t               offset_orig;    /**< information from profile read */
+  size_t               size_;          /**< data block size */
+  oyPointer            block_;         /**< the data to interprete */
+
+  char                 profile_cmm_[5];/**< the profile prefered CMM */
+  char                 required_cmm[5];/**< selected a certain CMM */
+  char                 last_cmm_[5];   /**< info: last processing CMM */
 };
 
 OYAPI oyProfileTag_s * OYEXPORT
                oyProfileTag_New      ( oyObject_s          object );
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_Create   ( oyStructList_s    * list,
+                                       icTagTypeSignature  tag_type,
+                                       uint32_t            version,
+                                       const char        * required_cmm,
+                                       oyObject_s          object);
 OYAPI oyProfileTag_s * OYEXPORT
                oyProfileTag_Copy     ( oyProfileTag_s    * obj,
                                        oyObject_s          object);
@@ -576,23 +723,26 @@ OYAPI int  OYEXPORT
                                        icTagSignature      sig,
                                        icTagTypeSignature  type,
                                        oySTATUS_e          status,
-                                       size_t              offset_orig,
                                        size_t              tag_size,
                                        oyPointer           tag_block );
-oyChar *       oyProfileTag_GetName  ( oyProfileTag_s    * tag,
-                                       oyNAME_e            type );
+oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
+                                       int32_t           * n,
+                                       const char        * language,
+                                       const char        * country,
+                                       int32_t           * tag_size,
+                                       oyAllocFunc_t       allocateFunc );
 
 typedef enum {
-  oyDATA_LAYOUT_NONE,
-  oyDATA_LAYOUT_CURVE,                 /**< equally spaced curve, oyDATA_LAYOUT_e[0], size[1], min[2], max[3], elements[4]... */
-  oyDATA_LAYOUT_MATRIX,                /**< 3x3 matrix, oyDATA_LAYOUT_e[0], a1[1],a2[2],a3,b1,b2,b3,c1,c2,c3 */
-  oyDATA_LAYOUT_TABLE,                 /**< CLUT, oyDATA_LAYOUT_e[0], table dimensions in[1], array out[2], size of first dimension[3], size of second [4], ... size of last[n], elements[n+1]... */
-  oyDATA_LAYOUT_ARRAY,                 /**< value array, oyDATA_LAYOUT_e[0], size[1], elements[2]... */
-  /*oyDATA_LAYOUT_PICEWISE_CURVE,*/       /**< paired curve, layout as in oyDATA_LAYOUT_CURVE but with elements grouped to two */
-  /*oyDATA_LAYOUT_HULL,*/              /**< oyDATA_LAYOUT_e[0], triangle count[1], indixes[2], XYZ triples[3..5]..., followed by interwoven index + normale + midpoint triples[n]... */
-  /*oyDATA_LAYOUT_,*/                /**< */
-  oyDATA_LAYOUT_MAX                    /**< */
-} oyDATA_LAYOUT_e;
+  oyDATALAYOUT_NONE,
+  oyDATALAYOUT_CURVE,                 /**< equally spaced curve, oyDATALAYOUT_e[0], size[1], min[2], max[3], elements[4]... */
+  oyDATALAYOUT_MATRIX,                /**< 3x3 matrix, oyDATALAYOUT_e[0], a1[1],a2[2],a3,b1,b2,b3,c1,c2,c3 */
+  oyDATALAYOUT_TABLE,                 /**< CLUT, oyDATALAYOUT_e[0], table dimensions in[1], array out[2], size of first dimension[3], size of second [4], ... size of last[n], elements[n+1]... */
+  oyDATALAYOUT_ARRAY,                 /**< value array, oyDATALAYOUT_e[0], size[1], elements[2]... */
+  /*oyDATALAYOUT_PICEWISE_CURVE,*/       /**< paired curve, layout as in oyDATA_LAYOUT_CURVE but with elements grouped to two */
+  /*oyDATALAYOUT_HULL,*/              /**< oyDATALAYOUT_e[0], triangle count[1], indixes[2], XYZ triples[3..5]..., followed by interwoven index + normale + midpoint triples[n]... */
+  /*oyDATALAYOUT_,*/                /**< */
+  oyDATALAYOUT_MAX                    /**< */
+} oyDATALAYOUT_e;
 
 
 /** @brief start with a simple rectangle */
@@ -856,10 +1006,11 @@ oyColourConversion_s* oyColourConversion_Create (
 oyColourConversion_s* oyColourConversion_Copy (
                                        oyColourConversion_s * cc,
                                        oyObject_s          object );
-int         oyColourConversion_Release(oyColourConversion_s ** cc );
+int          oyColourConversion_Release ( oyColourConversion_s ** cc );
 
-int            oyColourConversion_Run( oyColourConversion_s *colour /*!< object*/
+int          oyColourConversion_Run  ( oyColourConversion_s * colour /*!< object*/
                                      );                  /*!< return: error */
+oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * s );
 
 /** @struct oyNamedColour_s
  *  @brief colour patch with meta informations
@@ -1028,7 +1179,7 @@ typedef struct {
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
-  icSignature      cmmId;              /*!< ICC signature, eg 'lcms' */
+  char             cmm[4];             /*!< ICC signature, eg 'lcms' */
   oyChar         * backend_version;    /*!< non translatable, eg "v1.17" */
   oyName_s         name;               /*!< translatable, eg "lcms" "little cms" "..." */
   oyName_s         manufacturer;       /*!< translatable, eg "Marti" "Marti Maria" "support email: @; internet: www.littlecms.com; sources: ..." */
@@ -1060,29 +1211,301 @@ typedef struct {
 oyCMMhandle_s *  oyCMMhandle_New_    ( oyObject_s          object );
 oyCMMhandle_s *  oyCMMhandle_Copy_   ( oyCMMhandle_s     * handle,
                                        oyObject_s          object );
-int              oyCMMhandle_Release_( oyCMMhandle_s  ** handle );
+int              oyCMMhandle_Release_( oyCMMhandle_s    ** handle );
 
 int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
                                        oyCMMInfo_s       * info,
                                        oyPointer           dso_handle );
 
+/*#if 10*/
+
+typedef struct oyWidget_s oyWidget_s;
+
+typedef enum {
+  oyWIDGET_HORIZONTAL,
+  oyWIDGET_VERTICAL
+} oyWIDGET_ORIENTATION_e;
+
+
+/** @enum   oyWIDGET_GROUP_INITIAL_VISIBILITY_e
+ *  @brief  group widget styles
+ *
+ *  Initially a group appears as a tab or similiarily as an unexpanded endity.
+ *  Tabs show normally alternatives as a row of buttons and aside the content.
+ *  You migth use a cloud of buttons or a choice instead.
+ *
+ *  Of course there can be lists of widget be separated on a page by frames.
+ *  The frame should show 
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/27 (API 0.1.8)
+ */
+typedef enum {
+  oyWIDGET_GROUP_INITIALLY_INVISIBLE,  /**< a unexpanded group */
+  oyWIDGET_GROUP_INITIALLY_VISIBLE     /**< a expanded group */
+} oyWIDGET_GROUP_INITIAL_VISIBILITY_e;
+
+/** @enum   oyWIDGET_GROUP_FRAME_e
+ *  @brief  group widget styles
+ *
+ *  A group can be placed side by side with other groups. This is very common
+ *  among horizontal and vertical placement, where all entries belong to one
+ *  logical endity. 
+ *  For instance if you like a slider with a number beside been gouped
+ *  in a colum without a frame around each slider then use 
+ *  oyWIDGET_GROUP_FRAME_NO.
+ *  In case the group will get a name and or shall be separated from other
+ *  entries use oyWIDGET_GROUP_FRAME_SHOW.
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/28 (API 0.1.8)
+ */
+typedef enum {
+  oyWIDGET_GROUP_FRAME_NO,             /**< only for layout purpose */
+  oyWIDGET_GROUP_FRAME_SHOW            /**< show the group */
+} oyWIDGET_GROUP_FRAME_e;
+
+#if 0
+typedef enum {
+  oyWIDGET_USERGROUP_BEGINNER,         /**< common options */
+  oyWIDGET_USERGROUP_ADVANCED,         /**< additional options for users with some knowledge about */
+  oyWIDGET_USERGROUP_EXPERTS,          /**< expert with some knowledge */
+  oyWIDGET_USERGROUP_TECHNIC,          /**< expert with some knowledge */
+} oyWIDGET_USERGROUP_e;
+#endif
+
+/** @struct oyParametersGroup_s
+ *  @brief  group widget parameters
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/27 (API 0.1.8)
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_PARAM_GROUP_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  /*oyWIDGET_USERGROUP_e user_target;*/    /**< user / advanced / expert / technic*/
+  oyWidget_s        ** widgets;        /**< list of all sub widgets, without widgets the group should be interpretet as a separating line only */
+  uint32_t             widgets_n;      /**< number of widgets in this group */
+  oyWIDGET_ORIENTATION_e layout;       /**< horizontal, vertical */
+  oyWIDGET_GROUP_INITIAL_VISIBILITY_e initial_visibility; /**< non (tab/choice) or visible (like in a frame or radio buttons ) */
+  oyWIDGET_GROUP_FRAME_e mark;         /**< mark visibly like with a frame */
+  int32_t              visible;        /**< status */
+} oyParametersGroup_s;
+
+/** @struct oyParametersSlider_s
+ *  @brief  slider widget parameters
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/27 (API 0.1.8)
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_PARAM_SLIDER_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  double      range_start;      /**< start of range for a value selection */
+  double      range_end;        /**< end of range for a value selection */
+  double      range_step_major; /**< step size for a value selection */
+  double      range_step_minor; /**< step size for a value selection */
+} oyParametersSlider_s;
+
+typedef struct oyParametersChoice_s oyParametersChoice_s;
+
+/** @struct oyParametersChoice_s
+ *  @brief  choice widget parameters
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/27 (API 0.1.8)
+ */
+struct oyParametersChoice_s {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_PARAM_CHOICE_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  int32_t              choices_n;      /**< number of options */
+  const char        ** choices;        /**< label for each choice */
+  uint32_t             flags;          /**< */
+};
+
+/** @enum   oyWIDGET_BUTTON_TYPE_e
+ *  @brief  button widget styles
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/28 (API 0.1.8)
+ */
+typedef enum {
+  oyWIDGET_BUTTON_NORMAL,
+  oyWIDGET_BUTTON_CHECK_BOX,
+  oyWIDGET_BUTTON_RADIO
+} oyWIDGET_BUTTON_TYPE_e;
+
+/** @struct oyParametersButton_s
+ *  @brief  button widget parameters
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/28 (API 0.1.8)
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_PARAM_BUTTON_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyWIDGET_BUTTON_TYPE_e button_type;  /**< button style */
+  oyIcon_s           * icon_active;    /**< button icon */
+  oyIcon_s           * icon_passive;   /**< button icon */
+  oyIcon_s           * icon_highligthed; /**< button icon */
+} oyParametersButton_s;
+
+/** @enum    oyORIENTATION_e
+ *  @brief   orientation type
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/16 (Oyranos: 0.1.8)
+ *  @date    2008/02/16
+ */
+typedef enum {
+  oyORIENTATION_TOP,
+  oyORIENTATION_TOP_RIGHT,
+  oyORIENTATION_RIGHT,
+  oyORIENTATION_BOTTOM_RIGHT,
+  oyORIENTATION_BUTTOM,
+  oyORIENTATION_BUTTOM_LEFT,
+  oyORIENTATION_LEFT,
+  oyORIENTATION_TOP_LEFT
+} oyORIENTATION_e;
+
+/** @enum    oyTEXT_EMPHASISE_e
+ *  @brief   text styles
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/16 (Oyranos: 0.1.8)
+ *  @date    2008/02/16
+ */
+typedef enum {
+  oyTEXT_EMPHASISE_NORMAL,
+  oyTEXT_EMPHASISE_H1,                 /**< title size relative to widgets hierarchy */
+  oyTEXT_EMPHASISE_H2,
+  oyTEXT_EMPHASISE_H3,
+  oyTEXT_EMPHASISE_ANNOTATION          /**< rather small */
+} oyTEXT_EMPHASISE_e;
+
+/** @enum   oyWIDGET_TEXT_TYPE_e
+ *  @brief  text widget styles
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/16 (Oyranos: 0.1.8)
+ *  @date    2008/02/16
+ */
+typedef enum {
+  oyWIDGET_TEXT_DISPLAY,               /**< normal, flat text */
+  oyWIDGET_TEXT_OUTPUT,                /**< emphasised text */
+  oyWIDGET_TEXT_INPUT                  /**< interactive text for input */
+} oyWIDGET_TEXT_TYPE_e;
+
+/** @struct oyParametersText_s
+ *  @brief  text widget parameters
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/16 (Oyranos: 0.1.8)
+ *  @date    2008/02/16
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_PARAM_TEXT_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyWIDGET_TEXT_TYPE_e text_type;      /**< text style */
+  uint32_t             min_lines;      /**< minimal text lines */
+  oyORIENTATION_e      align;          /**< direction the text should touch */
+} oyParametersText_s;
+
+
+/** @union  oyWidgetParameters_u
+ *  @brief  widget parameters
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/14 (API 0.1.8)
+ */
+typedef union {
+  oyParametersSlider_s     vslider;
+  oyParametersChoice_s     vchoice;
+  oyParametersGroup_s      vgroup;
+  oyParametersButton_s     vbutton;
+  oyParametersText_s       vtext;
+  oyStruct_s               vcommon;
+} oyWidgetParameters_u;
+
+/** @struct  oyWidgetLayout_s
+ *  @brief   widget layout
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/16 (Oyranos: 0.1.8)
+ *  @date    2008/02/16
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_PARAM_TEXT_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  uint32_t             min_width;      /**< opt out with 0 */
+  uint32_t             min_heigth;
+  uint32_t             max_width;
+  uint32_t             max_heigth;
+  uint32_t             percentage;     /**< the filling size to align widgets inside a group, e.g. 80% for a slider and 20% for other widgets in the group */
+  uint32_t             border;         /**< border in pixel */
+} oyWidgetLayout_s;
+
+#define oyWIDGET_HAS_FOCUS   0x01
+#define oyWIDGET_IS_VISIBLE  0x02
+
+/** @struct oyWidget_s
+ *  @brief  a user settings widget
+ *
+ *  The struct contains a common description for all toolkits.
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  14 january 2008 (API 0.1.8)
+ */
+struct oyWidget_s {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_WIDGET_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+  
+  oyOBJECT_TYPE_e      param_type;     /**< type, the same value as in parameter::type */
+  oyWidgetParameters_u * parameter;    /**< widget parameters */
+  uint32_t             id;             /**< identification to map a option */
+  uint32_t             flags;          /**< flags to control widget behaviour, like oyWIDGET_HAS_FOCUS, oyWIDGET_IS_VISIBLE */
+  oyRegion_s         * region;         /**< actual region on screen */
+  oyOption_s         * option;         /**< the actual value */
+  oyWidgetLayout_s   * layout;         /**< size hints for alignment */
+};
+/*#endif*/
 
 
 /** @deprecated */
-int    oyModulRegisterXML             ( oyGROUP_e         group,
-                                        const char      * xml );
+int            oyModulRegisterXML    ( oyGROUP_e           group,
+                                       const char        * xml );
 
 /** obtain 4 char CMM identifiers and count of CMM's */
-char** oyModulsGetNames               ( int             * count,
-                                        oyAllocFunc_t     allocateFunc );
+char **        oyModulsGetNames      ( int               * count,
+                                       oyAllocFunc_t       allocateFunc );
 /** Query for available options for a cmm
 
     @param[in] cmm      the 4 char CMM ID or zero for the current CMM
     @return             available options
  */
-oyOptions_s * oyModulGetOptions      ( const char        * cmm,
+oyOptions_s *  oyModulGetOptions     ( const char        * cmm,
                                        oyObject_s          object);
-const char *  oyModuleGetActual      ( unsigned int        flags );
+const char *   oyModuleGetActual     ( unsigned int        flags );
 
 
 /* --- Image Colour Profile API --- */
@@ -1090,25 +1513,27 @@ const char *  oyModuleGetActual      ( unsigned int        flags );
 #ifdef OY_HAVE_PNG_
 #include <png.h>
 #define OY_PNG_s    png_infop
-oyProfile_s* oyImagePNGgetICC   ( OY_PNG_s info, int flags );
+oyProfile_s *  oyImagePNGgetICC      ( OY_PNG_s            info,
+                                       int                 flags );
 #endif
 #ifdef OY_HAVE_TIFF_
 #include <tiffio.h>
 #define OY_TIFF_s   TIFF*
-oyProfile_s* oyImageTIFFgetICC  ( OY_TIFF_s dir, int flags );
-int                oyImageTIFFsetICC  ( OY_TIFF_s         dir,
-                                        oyProfile_s * profile,
-                                        int               flags);
+oyProfile_s *  oyImageTIFFgetICC     ( OY_TIFF_s           dir,
+                                       int                 flags );
+int            oyImageTIFFsetICC     ( OY_TIFF_s           dir,
+                                      oyProfile_s        * profile,
+                                      int                  flags);
 #endif
 #ifdef OY_HAVE_EXR_
 #include <OpenEXR/OpenEXR.h>
 #define OY_EXR_s    ImfHeader
-oyProfile_s*       oyImageEXRgetICC   ( OY_EXR_s          header,
-                                        int               flags );
+oyProfile_s *  oyImageEXRgetICC      ( OY_EXR_s            header,
+                                       int                 flags );
 #ifdef __cplusplus
 #define OY_EXRpp_s  Imf::Header*
-oyProfile_s*       oyImageEXRgetICC   ( OY_EXRpp_s        header,
-                                        int               flags );
+oyProfile_s *  oyImageEXRgetICC      ( OY_EXRpp_s          header,
+                                       int                 flags );
 #endif
 #endif
 /*
@@ -1116,19 +1541,31 @@ with flags something like:
 oyIMAGE_EMBED_ICC_MINIMAL  ...
 oyIMAGE_EMBED_ICC_FULL (while for OpenEXR this would not make sense) */
 
-#if 0
-typedef struct {
-  oyNamedColour_s        oyNamedColour;
-  oyNamedColours_s       oyNamedColours;
-  oyProfile_s            oyProfile;
-  oyOption_s             oyOption;
-  oyOptions_s            oyOptions;
-  oyRegion_s             oyRegion;
-  oyImage_s              oyImage;
-  oyColourConversion_s   oyColourConversion;
-  oyName_s              oyNames;
-} oyObject_u;
-#endif
+int            oyICCColourSpaceGetChannelCount ( icColorSpaceSignature color );
+const char *   oyICCColourSpaceGetName ( icColorSpaceSignature sig );
+const oyChar * oyICCColourSpaceGetChannelName ( icColorSpaceSignature sig,
+                                       int                 pos,
+                                       int                 type );
+const oyChar * oyICCTagDescription   ( icTagSignature      sig );
+const oyChar * oyICCTagName          ( icTagSignature      sig );
+const oyChar * oyICCDeviceClassDescription ( icProfileClassSignature sig );
+const oyChar * oyICCPlatformDescription ( icPlatformSignature platform );
+const oyChar * oyICCTagTypeName      ( icTagTypeSignature  sig );
+const oyChar * oyICCTechnologyDescription ( icTechnologySignature sig );
+const oyChar * oyICCChromaticityColorantDescription ( icSignature sig );
+const oyChar * oyICCIlluminantDescription ( icIlluminant sig );
+const oyChar * oyICCStandardObserverDescription ( icStandardObserver sig );
+const oyChar * oyICCMeasurementGeometryDescription ( icMeasurementGeometry sig );
+const oyChar * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
+
+
+oyChar *       oyDumpColourToCGATS   ( const double      * channels,
+                                       size_t              n,
+                                       oyProfile_s       * prof,
+                                       oyAllocFunc_t       allocateFunc,
+                                       const oyChar      * DESCRIPTOR );
+
+
 
 #endif /* OY_IN_PLANING */
 

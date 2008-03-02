@@ -1,32 +1,18 @@
-/*
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+/** @file oyranos_texts.c
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
+ *
  */
 
-/** @file @internal
- *  @brief pure text and string handling functions
+/**
+ *  @brief    pure text and string handling functions
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2004/11/25
  */
-
-/* Date:      25. 11. 2004 */
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -531,11 +517,73 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_      (oyWIDGET_e        type,
   return t->type;
 }
 
+#if 0
+int
+oyPathsCount_ ()
+{
+  int count = 0;
+  char ** path_names = oyConfigPathsGet_( &count, "icc", oyALL, oyUSER_SYS,
+                                          oyAllocateFunc_ );
+
+  oyStringListRelease_( &path_names, count,  oyDeAllocateFunc_ );
+
+  return count;
+}
+
+char*
+oyPathName_ (int number, oyAllocFunc_t allocate_func)
+{
+  int count = 0;
+  char * name = 0;
+  char ** path_names = oyConfigPathsGet_( &count, "icc", oyALL, oyUSER_SYS,
+                                          oyAllocateFunc_ );
+
+  if(number < count)
+    name = oyStringCopy_( path_names[number], allocate_func );
+
+  oyStringListRelease_( &path_names, count,  oyDeAllocateFunc_ );
+
+  return name;
+}
+#endif
+
 char **
 oyProfilePathsGet_    (int             * count,
                        oyAllocFunc_t     allocateFunc)
 {
   char ** path_names = NULL;
+#if 1
+  char ** tmp = NULL;
+  int tmp_n = -1;
+
+  path_names = oyConfigPathsGet_( count, "icc", oyALL, oyUSER_SYS,
+                                          oyAllocateFunc_ );
+# if defined(__APPLE__)
+# define TestAndSetDefaultPATH( path ) \
+  if(oyIsDir_( path )) \
+    oyStringListAddStaticString_ ( &path_names, count, path, oyAllocateFunc_, \
+                                   oyDeAllocateFunc_ );
+
+  /* Apples ColorSync default paths */
+
+# define CSSystemPATH        "/System/Library/ColorSync/Profiles"
+# define CSGlobalInstallPATH "/Library/ColorSync/Profiles"
+# define CSUserPATH          "~/Library/ColorSync/Profiles"
+# define CSNetworkPath       "/Network/Library/ColorSync/Profiles"
+  TestAndSetDefaultPATH( CSSystemPATH );
+  TestAndSetDefaultPATH( CSGlobalInstallPATH );
+  TestAndSetDefaultPATH( CSUserPATH );
+  TestAndSetDefaultPATH( CSNetworkPath );
+
+# undef TestAndSetDefaultPATH
+# endif
+  tmp = oyStringListAppend_( 0, 0, (const char**)path_names, *count,
+                             &tmp_n, allocateFunc );
+  oyStringListRelease_( &path_names, *count,  oyDeAllocateFunc_ );
+  path_names = tmp; tmp = 0;
+  *count = tmp_n;
+
+#else
   int i,
       n = 0;
   int c = oyPathsCount_();
@@ -558,6 +606,7 @@ oyProfilePathsGet_    (int             * count,
   }
 
   *count = n;
+#endif
   return path_names;
 }
 
@@ -576,7 +625,7 @@ oyStringCopy_      ( const char    * text,
       text_copy = allocateFunc(strlen(text) + 1);
       oyAllocHelper_m_( text_copy, oyChar, oyStrlen_(text) + 1,
                         allocateFunc, return 0 );
-      strcpy( text_copy, text );
+      oyStrcpy_( text_copy, text );
     }
   return text_copy;
 }
@@ -622,19 +671,21 @@ char*              oyStringAppend_   ( const char        * text,
  *  @since Oyranos: version 0.1.8
  *  @date  26 november 2007 (API 0.1.8)
  */
-char*              oyStringAdd_      ( char              * text,
+void               oyStringAdd_      ( char             ** text,
                                        const char        * append,
                                        oyAllocFunc_t       allocateFunc,
                                        oyDeAllocFunc_t     deallocFunc )
 {
   char * text_copy = NULL;
 
-  text_copy = oyStringAppend_(text, append, allocateFunc);
+  text_copy = oyStringAppend_(*text, append, allocateFunc);
 
-  if(text && deallocFunc)
-    deallocFunc(text);
+  if(text && *text && deallocFunc)
+    deallocFunc(*text);
 
-  return text_copy;
+  *text = text_copy;
+
+  return;
 }
 
 
@@ -690,17 +741,50 @@ char**             oyStringSplit_    ( const char    * text,
   return list;
 }
 
-void               oyStringListMerge_ ( char        *** list,
-                                        int           * n,
-                                        const char   ** append,
-                                        int             n_app,
-                                        oyAllocFunc_t   allocateFunc,
-                                        oyDeAllocFunc_t deallocateFunc )
+void               oyStringListAdd_  ( char            *** list,
+                                       int               * n,
+                                       const char       ** append,
+                                       int                 n_app,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocateFunc )
 {
   int alt_n = *n;
   char ** tmp = oyStringListAppend_((const char**)*list, alt_n, append, n_app,
                                      n, allocateFunc);
 
+  oyStringListRelease_(list, alt_n, deallocateFunc);
+
+  *list = tmp;
+}
+
+void               oyStringListAddStaticString_ ( char *** list,
+                                       int               * n,
+                                       const char        * string,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocateFunc )
+{
+  int alt_n = *n;
+  char ** tmp = oyStringListAppend_((const char**)*list, alt_n,
+                                    (const char**)&string, 1,
+                                     n, allocateFunc);
+
+  oyStringListRelease_(list, alt_n, deallocateFunc);
+
+  *list = tmp;
+}
+
+void               oyStringListAddString_ ( char       *** list,
+                                       int               * n,
+                                       char             ** string,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocateFunc )
+{
+  int alt_n = *n;
+  char ** tmp = oyStringListAppend_((const char**)*list, alt_n,
+                                    (const char**)string, 1,
+                                     n, allocateFunc);
+
+  deallocateFunc(*string); *string = 0;
   oyStringListRelease_(list, alt_n, deallocateFunc);
 
   *list = tmp;
@@ -723,12 +807,18 @@ char**             oyStringListAppend_( const char   ** list,
       oyAllocHelper_m_(nlist, char*, n_alt + n_app +1, allocateFunc, return NULL);
 
     for(i = 0; i < n_alt; ++i)
-      if(list[i] && oyStrlen_(list[i]))
-        nlist[n++] = oyStringCopy_( list[i], allocateFunc );
+    {
+      if(list[i] /*&& oyStrlen_(list[i])*/)
+        nlist[n] = oyStringCopy_( list[i], allocateFunc );
+      n++;
+    }
 
     for(i = 0; i < n_app; ++i)
-      if(oyStrlen_( append[i] ))
-        nlist[n++] = oyStringCopy_( append[i], allocateFunc );
+    {
+      if(1/*oyStrlen_( append[i] )*/)
+        nlist[n] = oyStringCopy_( append[i], allocateFunc );
+      n++;
+    }
 
     if(count)
       *count = n;
@@ -857,8 +947,8 @@ char**  oyLibPathsGet_( int             * count,
   fix_paths[0] = OY_LIBDIR OY_SLASH "color" OY_SLASH "cmms";
   fix_paths[1] = OY_USER_PATH OY_SLASH "lib" OY_SLASH "color" OY_SLASH "cmms";
 
-  oyStringListMerge_( &paths, &n, (const char**)fix_paths, fix_paths_n,
-                      oyAllocateFunc_, oyDeAllocateFunc_ );
+  oyStringListAdd_( &paths, &n, (const char**)fix_paths, fix_paths_n,
+                    oyAllocateFunc_, oyDeAllocateFunc_ );
 
   for(i = 0; i < vars_n; ++i)
   {
@@ -993,7 +1083,7 @@ char**  oyXDGPathsGet_( int             * count,
 
 char * oyPathContructAndTest_(char * path_, const char * subdir)
 {
-  char * text = 0;
+  char * text = 0, * tmp = 0;
   int subdir_len = 0;
 
   if(subdir)
@@ -1007,6 +1097,10 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
   else if((oyStrlen_(path_) + subdir_len + 10) < MAX_PATH)
     oySprintf_( text,
                 "%s", path_ );
+
+  tmp = oyResolveDirFileName_( text );
+  oyDeAllocateFunc_(text); text = tmp; tmp = 0;
+
   if(!oyIsDir_( text ))
   {
     oyDeAllocateFunc_(text);
@@ -1091,8 +1185,6 @@ oyConfigPathsGet_     (int             * count,
     oyStringListRelease_(&xdg_paths, xdg_n, oyDeAllocateFunc_);
 
   }
-
-#undef TestAndSetDefaultPATH
 
   *count = ndp;
 
@@ -1316,7 +1408,7 @@ oyPolicyNameGet_()
     oyFree_m_( data );
   }
   oyFree_m_( xml );
-  oyOptionChoicesFree_( oyWIDGET_POLICY, &policy_list, count );
+  oyStringListRelease_( &policy_list, count, oyDeAllocateFunc_ );
 
   DBG_PROG_ENDE
   return name;
@@ -1361,7 +1453,7 @@ int         oyPolicySet_               (const oyChar  * policy_file,
       }
     }
 
-    oyOptionChoicesFree_( oyWIDGET_POLICY, &policy_list, count );
+    oyStringListRelease_( &policy_list, count, oyDeAllocateFunc_ );
   }
 
   {
@@ -1411,8 +1503,9 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
   {
     oyChar * default_p =
            oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
-    int i, val = -1, occurence = 0, count = 0;
-    oyChar** names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+    int i, val = -1, occurence = 0;
+    uint32_t count = 0;
+    oyChar** names = oyProfileListGet_ ( NULL, &count );
     oyChar** dup = NULL;
     int dup_count = 0;
 
@@ -1467,9 +1560,8 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
     if( choices_string_list )
       *choices_string_list = (const char **)dup; 
     else
-      oyOptionChoicesFree_( t->type, &dup,
-                            dup_count );
-    oyOptionChoicesFree_( t->type, &names, count );
+      oyStringListRelease_( &dup, dup_count, oyDeAllocateFunc_ );
+    oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
 
     if(current)
       *current          = val;

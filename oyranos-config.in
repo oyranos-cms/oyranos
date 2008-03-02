@@ -132,8 +132,8 @@ if [ "$echo_ld_x_flags" = "yes" ]; then
 fi
 
 # only standard paths are here supported
-if [ -f /usr/lib/libX11.so ]; then
-  X11_PATH=-L/usr/lib
+if [ -f $libdir/libX11.so ]; then
+  X11_PATH=-L$libdir
 fi
 if [ -f /usr/local/lib/libX11.so ]; then
   X11_PATH=-L/usr/local/lib

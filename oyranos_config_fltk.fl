@@ -38,6 +38,7 @@ decl {\#include <FL/fl_draw.H>} {public
 decl {\#include "oyranos.h"
 \#include "oyranos_debug.h"
 \#include "oyranos_config.h"
+\#include "oyranos_alpha.h"
 \#include "config.h"} {public
 } 
 
@@ -107,8 +108,10 @@ Function {showDefaultProfile_callback( Fl_Widget* w, void* )} {} {
         fl_alert( text );
       } else {
         char command[1024];
-        snprintf( command, 1024, "export PATH=$PATH:" OY_BINDIR "; iccexamin \\"%s%s%s\\"&",
-                  oyGetPathFromProfileName( pn, myAllocFunc ), OY_SLASH, pn );
+        oyProfile_s * prof = oyProfile_FromFile( pn, 0,0 );
+        snprintf( command, 1024, "export PATH=$PATH:" OY_BINDIR "; iccexamin \\"%s\\"&",
+                  oyProfile_GetFileName( prof, -1 ) );
+        oyProfile_Release( &prof );
 \#      ifdef DEBUG_
           fprintf(stderr, "%s\\n", command);
 \#      endif
@@ -126,7 +129,7 @@ Function {showDefaultProfile_callback( Fl_Widget* w, void* )} {} {
 Function {addPathCallback( Fl_Widget* w, void* )} {} {
   code {char* name = fl_dir_chooser(_("Select a directory with ICC profiles"), NULL);
   if( name ) {
-    oyPathAdd ( name );
+    //oyPathAdd ( name );
     updateUI();
   }} {}
 } 
@@ -138,7 +141,7 @@ Function {rmPathCallback( Fl_Widget* w, void* )} {} {
     if(b && b == pp->button_add) {
       std::cout << b->value() << std::endl;
       char text[512];
-      int error = oyPathAdd (pp->box->label());
+      int error = 0;//oyPathAdd (pp->box->label());
       if(error) {
         sprintf(text, _("error setting path: %s"), pp->box->label());
         fl_alert( text );
@@ -146,7 +149,7 @@ Function {rmPathCallback( Fl_Widget* w, void* )} {} {
     } else
     if(b && b == pp->button_remove) {
       std::cout << b->value() << std::endl;
-      oyPathRemove ( pp->box->label() );
+      //oyPathRemove ( pp->box->label() );
       //Fl::pushed(&bPL);
       updateUI();
 
@@ -263,8 +266,7 @@ class OyFl_Pack {: {public Fl_Pack}
   }
 
 
-  Fl_Pack::draw();
-  } {}
+  Fl_Pack::draw();} {}
   }
 } 
 
@@ -272,14 +274,13 @@ class OyFl_Box {open : {public Fl_Box}
 } {
   Function {OyFl_Box(int x, int y, int w, int h , const char *t = 0) : Fl_Box(x,y,w,h,t)} {open
   } {
-    code {
-  if(t)
+    code {if(t)
   {
     label_orig = (char*)malloc (strlen(t)+1);
     printf("%s %d\\n",t, strlen(t));
     sprintf(label_orig, t);
   } else
-    label_orig = 0; } {}
+    label_orig = 0;} {}
   }
   Function {draw()} {open private
   } {
@@ -346,10 +347,7 @@ static const char trailingBytesForUTF8[256] = {
     if(strlen(label_orig))
       printf("%d %s %d %d/%d %d\\n",__LINE__,Fl_Box::label(), strlen(Fl_Box::label()), wl, ws, last_utf8_len);
 \#endif
-  Fl_Box::draw();
-
-  } {selected
-    }
+  Fl_Box::draw();} {}
   }
   decl {char *label_orig;} {}
   Function {label()} {return_type {const char *}
@@ -358,21 +356,19 @@ static const char trailingBytesForUTF8[256] = {
   }
   Function {label(const char * l)} {open
   } {
-    code {
-  label_orig = new char (strlen(l)+1);
+    code {label_orig = new char (strlen(l)+1);
   sprintf(label_orig, l);
   Fl_Box::label( l );} {}
   }
   Function {copy_label(const char* l)} {open
   } {
-    code {
-  label_orig = new char (strlen(l)+1);
+    code {label_orig = new char (strlen(l)+1);
   sprintf(label_orig, l);
   Fl_Box::copy_label(l);} {}
   }
 } 
 
-class Option {: {public OyFl_Pack} private
+class Option {open : {public OyFl_Pack} private
 } {
   decl {OyFl_Box   *box;
   Fl_Choice*choice;
@@ -584,7 +580,7 @@ class Option {: {public OyFl_Pack} private
       pp->end();
     }
 
-    if(flags & OY_LAYOUT_PATH_SELECTOR)
+    if(0 && flags & OY_LAYOUT_PATH_SELECTOR)
     {
       Fl_Pack *pack = new Fl_Pack(0,0,
                                   width, BUTTON_HEIGHT);
@@ -602,7 +598,8 @@ class Option {: {public OyFl_Pack} private
 
   
   end();
-  resizable( box );} {}
+  resizable( box );} {selected
+    }
   }
 } 
 
@@ -920,7 +917,8 @@ Function {refreshOptions()} {private
   }} {}
 } 
 
-Function {createUI()} {} {
+Function {createUI()} {open
+} {
   code {top_tabs->clear();
   refreshOptions();} {}
 } 
@@ -1028,11 +1026,10 @@ Function {} {open C
   }} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {564 430 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {564 439 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
-      code0 {}
       class OyFl_Pack
     } {
       Fl_Box {} {

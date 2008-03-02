@@ -115,7 +115,7 @@
       for further extensions.
     - Therefore the internal data must be kept almost dynamic.
     - Functions are needed, which show useful informations for GUIs, about the
-      content in the Profiles and about possible errors.
+      content in the profiles and about possible errors.
     - Some descriptors are provided as strings, and may help keeping 
       the user interface consistent throughout toolkits. (translation?)
 

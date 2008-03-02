@@ -1,31 +1,19 @@
-/*
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2004-2007  Kai-Uwe Behrmann
+/** @file oyranos.c
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
  *
- * sorting
- * 
  */
 
-/* Date:      25. 11. 2004 */
+/**
+ *  @brief    public Oyranos API's
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2004/11/25
+ */
+
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -136,7 +124,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
     success = oyRecursivePaths_( oyGetPathFromProfileNameCb_, (void*)search,
                                  (const char**)path_names, count );
 
-    oyOptionChoicesFree( oyWIDGET_POLICY, &path_names, count );
+    oyStringListRelease_( &path_names, count, oyDeAllocateFunc_ );
 
       if (success) { /* found */
         int len = 0;
@@ -389,7 +377,7 @@ oyGetProfileNameOSX (CMProfileRef prof, oyAllocFunc_t allocate_func)
                                    allocate_func, return 0 );
                  err = FSpMakeFSRef( &spec, &ref );
                  err = FSRefMakePath( &ref, name_, 1024 );
-                 fprintf(stderr, "file is at: %s\n", name_ );
+                 DBG_PROG_S(("file is at: %s\n", name_ ));
                  if(err == noErr)
                    name = (char*) name_;
                }
@@ -830,9 +818,17 @@ oySetDeviceProfile_                (const char* manufacturer,
 /** \addtogroup options Options API
  *  The idea behind this API is to provide one layout for
  *  presenting a configuration dialog to users. The advantage is, every 
- *  application, like KDE and Gnome Kontrolpanels, will inherit the same logic.
+ *  application, like KDE and Gnome control panels, will inherit the same logic.
  *  A user can easily use the one and the other panel
  *  without too much relearning.
+
+ *  To illustrate a bit:
+ *  In analogy to the WWW, I suggest to implement something like a minimalistic
+ *  HTML display.
+ *  Once the HTML alike content logic is done in Oyranos, the HTML page works
+ *  and appears everywhere compareable. Smaller changes to the Oyranos HTML 
+ *  alike pages will appear everywhere in all HTML page display programms.
+ *  To remain in the WWW analogy, CSS would be optional to adapt visually.
 
  *  Functions are provided to set and query for Options layout and
  *  UI strings in Oyranos.
@@ -1106,6 +1102,7 @@ oyPolicySet                (const char      * policy_file,
  *  @{
  */
 
+#if 0
 /** Determin the count of configured search paths.\n */
 int
 oyPathsCount         (void)
@@ -1116,9 +1113,9 @@ oyPathsCount         (void)
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
   n = oyPathsCount_();
-  if(!n)
+  /*if(!n)
     oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT);
-  n = oyPathsCount_();
+  n = oyPathsCount_();*/
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -1202,13 +1199,17 @@ oyPathActivate       (const char* pathname)
   oyExportEnd_();
   DBG_PROG_ENDE
 }
+#endif
 
+#if 1
 /** Find out where in the Oyranos search path the specified profile resides.
+ *
+ *  @deprecated This function will be substituded by oyProfile_GetFileName.
  *
  *  @param  profile_name  the filename find in the Oyranos search path
  *  @param  allocate_func user provided function for allocating the string
                           memory
- *  @return the path name where the profile was found in the oyranos search path
+ *  @return the path name where the profile was found in the Oyranos search path
  */
 char*
 oyGetPathFromProfileName (const char* profile_name, oyAllocFunc_t allocate_func)
@@ -1224,6 +1225,7 @@ oyGetPathFromProfileName (const char* profile_name, oyAllocFunc_t allocate_func)
   DBG_PROG_ENDE
   return path_name;
 }
+#endif
 
 /*  @} */
 
@@ -1323,13 +1325,13 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
  *  @param[out] size profile filenames count
  *  @return the profiles filename list allocated within Oyranos
  *
- *  @see oyProfileListFree to free lists memory after usage is completed.
  *  @see @ref path_names
  *
  *  @todo use coloursig variable; extract such information from profiles
  */
-char**
-oyProfileListGet                   (const char* coloursig, int *size)
+char **  oyProfileListGet            ( const char        * coloursig,
+                                       uint32_t          * size,
+                                       oyAllocFunc_t       allocateFunc )
 {
   char **names = NULL;
 

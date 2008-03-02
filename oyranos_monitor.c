@@ -1,32 +1,18 @@
-/*
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2005-2007  Kai-Uwe Behrmann
+/** @file oyranos_monitor.c
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  Copyright (C) 2005-2008  Kai-Uwe Behrmann
+ *
  */
 
-/** monitor device detection
- * 
+/**
+ *  @brief    monitor device detection
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2005/01/31
  */
-
-/* Date:      31. 01. 2005 */
 
 #define DEBUG 1
 
@@ -887,9 +873,10 @@ oyActivateMonitorProfile_         (const char* display_name,
                                    const char* profil_name )
 {
   int error = 0;
-  char       *profil_pathname;
-  const char *profil_basename;
+  const char * profile_fullname = 0;
+  const char * profil_basename = 0;
   char* profile_name_ = 0;
+  oyProfile_s * prof = 0;
 #if defined( HAVE_X ) && !defined(__APPLE__)
   oyMonitor_s * disp = 0;
   char       *dpy_name = NULL;
@@ -913,21 +900,28 @@ oyActivateMonitorProfile_         (const char* display_name,
   if(profil_name)
   {
     DBG_PROG_S(( "profil_name = %s", profil_name ));
-    profil_pathname = oyGetPathFromProfileName( profil_name, oyAllocateFunc_ );
+    prof = oyProfile_FromFile( profile_name_, 0, 0 );
+    profile_fullname = oyProfile_GetFileName( prof, -1 );
   } else
   {
     profile_name_ = oyGetMonitorProfileName_( display_name, oyAllocateFunc_);
-    profil_pathname = oyGetPathFromProfileName( profile_name_, oyAllocateFunc_);
+    prof = oyProfile_FromFile( profile_name_, 0, 0 );
+    profile_fullname = oyProfile_GetFileName( prof, -1 );
     profil_name = profile_name_;
   }
 
-  if( profil_pathname && strlen(profil_pathname) )
+  if( profile_fullname && strlen(profile_fullname) )
   {
 
     if(profil_name && strrchr(profil_name,OY_SLASH_C))
       profil_basename = strrchr(profil_name,OY_SLASH_C)+1;
     else
-      profil_basename = profil_name;
+    {
+      if(profil_name)
+        profil_basename = profil_name;
+      else if( profile_fullname && strrchr(profile_fullname,OY_SLASH_C))
+        profil_basename = strrchr( profile_fullname, OY_SLASH_C)+1;
+    }
 
 #ifdef __APPLE__
     {
@@ -937,8 +931,7 @@ oyActivateMonitorProfile_         (const char* display_name,
       DisplayIDType screenID = 0;
 
       loc.locType = cmPathBasedProfile;
-      snprintf( loc.u.pathLoc.path, 255, "%s%s%s",
-                profil_pathname, OY_SLASH, profil_basename);
+      snprintf( loc.u.pathLoc.path, 255, "%s", profile_fullname);
 
       err = CMOpenProfile ( &prof, &loc );
       screenID = oyMonitor_nameToOsxID( display_name );
@@ -951,15 +944,15 @@ oyActivateMonitorProfile_         (const char* display_name,
 #else /* HAVE_X */
 
     oyAllocHelper_m_( text, char, MAX_PATH, 0, error = 1; goto Clean )
-    DBG_PROG_S(( "profil_pathname %s", profil_pathname ));
+    DBG_PROG_S(( "profile_fullname %s", profile_fullname ));
 
     /* set vcgt tag with xcalib
        not useable with multihead Xinerama at one screen
 
        @todo TODO xcalib should be configurable as a module
      */
-    sprintf(text,"xcalib -d %s -s %d \'%s%s%s\'", dpy_name, disp->geo[1],
-                               profil_pathname, OY_SLASH, profil_basename);
+    sprintf(text,"xcalib -d %s -s %d \'%s\'", dpy_name, disp->geo[1],
+                               profile_fullname);
     {
       Display * display = oyMonitor_device_( disp );
       if(ScreenCount( display ) > 1 || oyMonitor_screen_( disp ) == 0)
@@ -994,7 +987,11 @@ oyActivateMonitorProfile_         (const char* display_name,
       DBG_PROG_V((screen))
       w = RootWindow(display, screen); DBG_PROG_S(("w: %ld", w))
 
-      moni_profile = oyGetProfileBlock( profil_name, &size, oyAllocateFunc_ );
+      if(profile_fullname)
+        moni_profile = oyGetProfileBlock( profile_fullname, &size, oyAllocateFunc_ );
+      else if(profil_name)
+        moni_profile = oyGetProfileBlock( profil_name, &size, oyAllocateFunc_ );
+
       if(!size || !moni_profile)
         WARNc_S((_("Error obtaining profile")));
 
@@ -1007,11 +1004,12 @@ oyActivateMonitorProfile_         (const char* display_name,
         }
       } else WARNc_S((_("Error setting up atom")));
 
-      if( atom )
+      if( atom && moni_profile)
       result = XChangeProperty( display, w, atom, XA_CARDINAL,
                        8, PropModeReplace, moni_profile, (int)size );
 
-      oyFree_m_( moni_profile )
+      if(moni_profile)
+        oyFree_m_( moni_profile )
       oyFree_m_( atom_name )
     }
 
@@ -1024,7 +1022,7 @@ oyActivateMonitorProfile_         (const char* display_name,
   Clean:
   oyMonitor_release_( &disp );
 #endif
-  if(profil_pathname) oyFree_m_( profil_pathname );
+  oyProfile_Release( &prof );
   if(profile_name_) oyFree_m_( profile_name_ );
 #if defined( HAVE_X ) && !defined(__APPLE__)
   if(dpy_name) oyFree_m_( dpy_name );
@@ -1050,8 +1048,9 @@ oySetMonitorProfile_              (const char* display_name,
              *model=0,
              *serial=0,
              *display_geometry=0;
-  char       *profil_pathname = 0;
+  const char *profile_fullname = 0;
   oyMonitor_s * disp = 0;
+  oyProfile_s * prof = 0;
 
   DBG_PROG_START
 
@@ -1124,12 +1123,12 @@ oySetMonitorProfile_              (const char* display_name,
 
   oyMonitor_release_( &disp );
 
-  profil_pathname = oyGetPathFromProfileName( profil_name, oyAllocateFunc_ );
-  DBG_PROG_S(( "profil_pathname %s", profil_pathname ))
+  prof = oyProfile_FromFile( profil_name, 0, 0 );
+  profile_fullname = oyProfile_GetFileName( prof, -1 );
+  DBG_PROG_S(( "profile_fullname %s", profile_fullname ))
 
-  if( profil_pathname ) {
+  if( profile_fullname )
     error = oyActivateMonitorProfile_(display_name, profil_name);
-  }
 
   finish:
   DBG_PROG
@@ -1137,7 +1136,7 @@ oySetMonitorProfile_              (const char* display_name,
   if (model) free (model);
   if (serial) free (serial);
   if (display_geometry) free (display_geometry);
-  if (profil_pathname) free (profil_pathname);
+  oyProfile_Release( &prof );
 #endif
 
   DBG_PROG_ENDE

@@ -1,6 +1,6 @@
 Summary: Colour Management System
 Name: oyranos
-License: GPL
+License: BSD
 Group: Development/Libraries
 URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann
@@ -12,18 +12,31 @@ Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
-%package   devel
+%package      devel
 Summary:   Headers, configuration and static libs + documentation
 Group:     Development/System
 Requires:  %{name}-%{version}-%{release}
 
+%package      display
+Summary:    Oyranos display dependent libraries
+Group:      Development/Libraries
+License: BSD/GPL
+
+%package      panel
+Summary:    Oyranos sample configuration panel
+Group:      Productivity/Graphics/Other
+License: BSD+LGPL
+
 %description
-Oyranos is a colour management configuration system.
-It is primarily developed on free operating systems.
-Developers from other OSes can jump in the current
-discussion to make Oyranos aware of cross platform
-standards. Feel cordially invited to make constructive
-suggestions.
+Oyranos is a colour management system.
+Features:
+o configuration for cross application colour agreement 
+o plugable and selectable modules (known as CMM's)
+o pixel conversions
+o profile handling
+o named colours
+o device profile assignment
+
 
 Authors:
 --------
@@ -43,12 +56,21 @@ An internal device profile API allowes configuring of a
 profile in X.
 The documentation in html format is included.
 
+%description  display
+The display support libraries of the
+Oyranos colour management system.
+The display profile configuration part.
+
+%description  panel
+Oyranos is a colour management system.
+The sample configuration GUI.
+
 
 %prep
 %setup -q -n %{name}-%{version}
 
 %build
-%configure --enable-debug
+%configure --enable-debug --enable-verbose
 
 %install
 rm -rf %{buildroot}
@@ -60,36 +82,6 @@ rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 rm -rf %{buildroot}
 
 %post
-#kdb=%{_bindir}/%{name}-kdb_static
-#kdb_found=`ls  | wc -l`
-#if [ "${kdb_found}" -gt 0 ]; then
-#  echo "`which ${kdb}` found"
-#fi
-#${kdb} set -c "test" user/sw/oy_install_test "1"
-#kdb_r=`${kdb} get user/sw/oy_install_test`;
-#if [ -n "${kdb_r}" ]; then
-#  if [ "`${kdb} get user/sw/oy_install_test`" -ne 1 ]; then
-#    kdb_found=0
-#    echo "keys not testable"
-#  fi
-#else
-#  kdb_found=0
-#fi
-#${kdb} rm user/sw/oy_install_test
-#if [ "${kdb_found}" -eq 0 ]; then
-#  echo "!!!WARNING!!! no useable kdb,"
-#  echo "              no check for Oyranos configuration possible"
-#fi
-#if [ "${kdb_found}" -gt 0 ]; then
-#  if [ "`${kdb} ls system/sw/oyranos 2>/dev/zero | wc -l`" -eq 0 ]; then
-#    #if [ "`${kdb} ls user/sw/oyranos 2>/dev/zero | wc -l`" -eq 0 ]; then
-#      echo "no oyranos keys found: set default policy home+office"
-#      oyranos-policy %{syscolordir}/%{settingsdirname}/office.policy.xml
-#    #fi
-#  else
-#    echo "Oyranos configuration is allready present. It is not touched here."
-#  fi
-#fi
 
 %postun
 
@@ -97,17 +89,16 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%{_bindir}/%{name}-moni*
 %{_bindir}/%{name}-config
-%{_bindir}/%{name}-config-fl*
 %{_bindir}/%{name}-policy
-%{_bindir}/%{name}-kdb_static
-%{_libdir}/lib%{name}*.so*
+%{_libdir}/lib%{name}.so*
+%{_libdir}/lib%{name}_alpha.so*
+%{_libdir}/color/cmms/lib%{name}_lcms_cmm_module.so*
+%{_libdir}/color/cmms/lib%{name}_oyra_cmm_module.so*
 %{_mandir}/man1/%{name}*
 %{_mandir}/man3/%{name}.*
 %{_datadir}/locale/*/LC_MESSAGES/%{name}.*
 %{syscolordir}/%{settingsdirname}/*.policy.xml
-%{syscolordir}/cmms/*.oy_cmm_register.xml
 
 %files devel
 %defattr(-, root, root)
@@ -118,9 +109,21 @@ rm -rf %{buildroot}
 %doc %{name}*.sh
 %doc doc/html
 
+%files display
+%doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-moni*
+%{_libdir}/lib%{name}_moni.so*
+%{_libdir}/color/cmms/lib%{name}_oyX1_cmm_module.so*
+
+%files panel
+%doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-config-fl*
 
 
 %changelog
+* Fri Jan 25 2008 Kai-Uwe Behrmann
+- remove old kdb and cmm registration stuff
+
 * Sat Sep 16 2006 Kai-Uwe Behrmann
 - set default policy if no settings are found
 

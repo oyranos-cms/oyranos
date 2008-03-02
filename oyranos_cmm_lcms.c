@@ -1,10 +1,20 @@
-
-/** @file @internal
- *  @brief littleCMS backend for Oyranos
+/** @file oyranos_cmm_lcms.c
+ *
+ *  Oyranos is an open source Colour Management System 
+ *
+ *  Copyright (C) 2007-2008  Kai-Uwe Behrmann
  *
  */
 
-/** @date      12. 11. 2007 */
+/**
+ *  @brief    littleCMS backend for Oyranos
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2007/11/12
+ */
+
+
 
 
 #include <lcms.h>
@@ -37,10 +47,12 @@ int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText);
 int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
                                        const char        * resource );
 
-/** @brief lcms wrapper for profile data struct
+/** @struct lcmsProfileWrap_s
+ *  @brief lcms wrapper for profile data struct
  *
- *  @since Oyranos: version 0.1.8
- *  @date  10 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/10
+ *  @since   2007/12/10 (Oyranos: 0.1.8)
  */
 typedef struct {
   int          type;                   /**< shall be lcPR */
@@ -50,10 +62,12 @@ typedef struct {
   icColorSpaceSignature sig;           /**< ICC profile signature */
 } lcmsProfileWrap_s;
 
-/** @brief lcms wrapper for transform data struct
+/** @struct  lcmsTransformWrap_s
+ *  @brief   lcms wrapper for transform data struct
  *
- *  @since Oyranos: version 0.1.8
- *  @date  20 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/20
+ *  @since   2007/12/20 (Oyranos: 0.1.8)
  */
 typedef struct {
   int          type;                   /**< shall be lcCC */
@@ -70,6 +84,13 @@ typedef struct {
 
 /* --- implementations --- */
 
+/** @func    lcmsCMMInit
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/11
+ *  @since   2007/12/11 (Oyranos: 0.1.8)
+ */
 int                lcmsCMMInit       ( )
 {
   int error = 0;
@@ -78,6 +99,13 @@ int                lcmsCMMInit       ( )
   return error;
 }
 
+/** @func    lcmsCMMCanHandle
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/11
+ *  @since   2007/12/11 (Oyranos: 0.1.8)
+ */
 int                lcmsCMMCanHandle  ( oyCMMQUERY_e      type,
                                        uint32_t          value )
 {
@@ -114,7 +142,9 @@ int                lcmsCMMCanHandle  ( oyCMMQUERY_e      type,
            ret = 1;
          else
            ret = 0; break;
-    case oyQUERY_PROFILE_TAG_TYPE:
+    case oyQUERY_PROFILE_TAG_TYPE_READ:
+    case oyQUERY_PROFILE_TAG_TYPE_WRITE:
+    case oyQUERY_MAX:
          ret = 0; break;
   }
 
@@ -123,10 +153,12 @@ int                lcmsCMMCanHandle  ( oyCMMQUERY_e      type,
 
 
 
-/** @brief convert to lcms profile wrapper struct
+/** @func    lcmsCMMProfile_GetWrap_
+ *  @brief   convert to lcms profile wrapper struct
  *
- *  @since Oyranos: version 0.1.8
- *  @date  10 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/10
+ *  @since   2007/12/10 (Oyranos: 0.1.8)
  */
 lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyCMMptr_s * cmm_ptr )
 {
@@ -145,10 +177,12 @@ lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyCMMptr_s * cmm_ptr )
   return s;
 }
 
-/** @brief convert to lcms transform wrapper struct
+/** @func    lcmsCMMTransform_GetWrap_
+ *  @brief   convert to lcms transform wrapper struct
  *
- *  @since Oyranos: version 0.1.8
- *  @date  20 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/20
+ *  @since   2007/12/20 (Oyranos: 0.1.8)
  */
 lcmsTransformWrap_s * lcmsCMMTransform_GetWrap_( oyCMMptr_s * cmm_ptr )
 {
@@ -167,6 +201,13 @@ lcmsTransformWrap_s * lcmsCMMTransform_GetWrap_( oyCMMptr_s * cmm_ptr )
   return s;
 }
 
+/** @func    lcmsCMMProfileReleaseWrap
+ *  @brief   release a lcms profile wrapper struct
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/20
+ *  @since   2007/12/20 (Oyranos: 0.1.8)
+ */
 int lcmsCMMProfileReleaseWrap(oyPointer *p)
 {
   int error = !p;
@@ -206,7 +247,13 @@ int lcmsCMMProfileReleaseWrap(oyPointer *p)
 }
 
 
-/* oyCMMProfileOpen_t */
+/** @func    lcmsCMMProfileReleaseWrap
+ *  @brief   oyCMMProfileOpen_t implementation
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/12
+ *  @since   2007/11/12 (Oyranos: 0.1.8)
+ */
 int                lcmsCMMProfile_Open ( oyPointer         block,
                                          size_t            size,
                                          oyCMMptr_s      * oy )
@@ -249,6 +296,13 @@ int                lcmsCMMProfile_Open ( oyPointer         block,
   return error;
 }
 
+/** @func    lcmsCMMCheckPointer
+ *  @brief   
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/12
+ *  @since   2007/11/12 (Oyranos: 0.1.8)
+ */
 int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
                                        const char        * resource )
 {
@@ -270,6 +324,7 @@ int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
 }
 
 /* oyCMMProfileOpen_t */
+#if 0
 oyChar     *       lcmsCMMProfile_GetText(oyCMMptr_s        * cmm_ptr,
                                        oyNAME_e            type,
                                        const char          language[4],
@@ -320,11 +375,14 @@ oyChar     *       lcmsCMMProfile_GetText(oyCMMptr_s        * cmm_ptr,
 
   return (char*)name;
 }
+#endif
 
-/** @brief the API 1 to implement and set by a CMM
+/** @func    lcmsCMMProfile_GetSignature
+ *  @brief   the API 1 to implement and set by a CMM
  *
- *  @since Oyranos: version 0.1.8
- *  @date  10 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/10
+ *  @since   2007/12/10 (Oyranos: 0.1.8)
  */
 icSignature      lcmsCMMProfile_GetSignature (oyCMMptr_s * cmm_ptr,
                                        int                 pcs )
@@ -370,6 +428,13 @@ icSignature      lcmsCMMProfile_GetSignature (oyCMMptr_s * cmm_ptr,
 }
 
 
+/** @func    oyPixelToCMMPixelLayout_
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/00
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ */
 int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
                                        icColorSpaceSignature colour_space )
 {
@@ -412,6 +477,13 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
   return cmm_pixel;
 }
 
+/** @func    lcmsCMMDeleteTransformWrap
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/00
+ *  @since   2007/12/00 (Oyranos: 0.1.8)
+ */
 int lcmsCMMDeleteTransformWrap(oyPointer * wrap)
 {
   
@@ -432,11 +504,12 @@ int lcmsCMMDeleteTransformWrap(oyPointer * wrap)
   return 1;
 }
 
-/** @func lcmsTransformWrap_Set_
- *  @brief fill a lcmsTransformWrap_s struct
+/** @func    lcmsTransformWrap_Set_
+ *  @brief   fill a lcmsTransformWrap_s struct
  *
- *  @since Oyranos: version 0.1.8
- *  @date  21 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/21
+ *  @since   2007/12/21 (Oyranos: 0.1.8)
  */
 lcmsTransformWrap_s* lcmsTransformWrap_Set_ (
                                        cmsHTRANSFORM       xform,
@@ -478,6 +551,13 @@ lcmsTransformWrap_s* lcmsTransformWrap_Set_ (
   return s;
 }
 
+/** @func    lcmsCMMColourConversion_Create
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/00
+ *  @since   2007/12/00 (Oyranos: 0.1.8)
+ */
 int          lcmsCMMColourConversion_Create (
                                        oyCMMptr_s       ** cmm_profile,
                                        int                 profiles_n,
@@ -488,7 +568,6 @@ int          lcmsCMMColourConversion_Create (
                                        uint32_t            flags,
                                        oyCMMptr_s        * oy )
 {
-  oyCMMptr_s * s = 0;
   oyPixel_t lcms_pixel_layout_in = 0;
   oyPixel_t lcms_pixel_layout_out = 0;
   cmsHPROFILE * lps = malloc(sizeof(cmsHPROFILE)*profiles_n+1);
@@ -561,18 +640,19 @@ int          lcmsCMMColourConversion_Create (
   free(lps);
 
   if(!error)
-    error = !s;
+    error = !ltw;
 
   return error;
 }
 
-/** @func lcmsCMMColourConversion_FromMem
- *  @brief oyCMMColourConversion_FromMem_t implementation
+/** @func    lcmsCMMColourConversion_FromMem
+ *  @brief   oyCMMColourConversion_FromMem_t implementation
  *
  *  Convert a lcms device link to a colour conversion context.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  21 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/21
+ *  @since   2007/12/21 (Oyranos: 0.1.8)
  */
 int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
                                        size_t              size,
@@ -601,13 +681,14 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
   return !xform;
 }
 
-/** @func lcmsCMMColourConversion_ToMem
- *  @brief oyCMMColourConversion_ToMem_t implementation
+/** @func    lcmsCMMColourConversion_ToMem
+ *  @brief   oyCMMColourConversion_ToMem_t implementation
  *
  *  convert a lcms colour conversion context to a device link
  *
- *  @since Oyranos: version 0.1.8
- *  @date  21 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/21
+ *  @since   2007/12/21 (Oyranos: 0.1.8)
  */
 oyPointer  lcmsCMMColourConversion_ToMem (
                                        oyCMMptr_s        * oy,
@@ -635,7 +716,14 @@ oyPointer  lcmsCMMColourConversion_ToMem (
 }
 
 
-int              lcmsCMMColourConversion_Run(
+/** @func    lcmsCMMColourConversion_Run
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/12/21
+ *  @since   2007/12/21 (Oyranos: 0.1.8)
+ */
+int              lcmsCMMColourConversion_Run (
                                        oyCMMptr_s        * oy,
                                        oyPointer           in_data,
                                        oyPointer           out_data,
@@ -695,6 +783,13 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
     free(mem);
 }*/
 
+/** @func    lcmsCMMWarnFunc
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/00
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ */
 int lcmsCMMWarnFunc( int code, const char * format, ... )
 {
   char* text = (char*)calloc(sizeof(char), 4096);
@@ -719,6 +814,13 @@ int lcmsCMMWarnFunc( int code, const char * format, ... )
   return 0;
 }
 
+/** @func    lcmsErrorHandlerFunction
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/00
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ */
 int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText)
 {
   int code = 0;
@@ -732,6 +834,13 @@ int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText)
   return 0;
 }
 
+/** @func    lcmsCMMMessageFuncSet
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/00
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ */
 int            lcmsCMMMessageFuncSet ( oyMessageFunc_t     message_func )
 {
   message = message_func;
@@ -739,7 +848,23 @@ int            lcmsCMMMessageFuncSet ( oyMessageFunc_t     message_func )
 }
 
 
+oyWidget_s * lcmsWidget_GetDummy     ( const char        * func_name,
+                                       uint32_t          * result )
+{return 0;}
+oyWIDGET_EVENT_e lcmsWidget_EventDummy
+                                     ( oyWidget_s        * wid,
+                                       oyWIDGET_EVENT_e    type )
+{return 0;}
 
+
+
+/** @instance lcms_api1
+ *  @brief    lcms oyCMMapi1_s implementations
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/00
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ */
 oyCMMapi1_s  lcms_api1 = {
 
   oyOBJECT_TYPE_CMM_API1_S,
@@ -748,10 +873,13 @@ oyCMMapi1_s  lcms_api1 = {
   
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,
-
   lcmsCMMCanHandle,
+
+  lcmsWidget_GetDummy,
+  lcmsWidget_EventDummy,
+
   lcmsCMMProfile_Open,
-  lcmsCMMProfile_GetText,
+  /*lcmsCMMProfile_GetText,*/
   lcmsCMMProfile_GetSignature,
   lcmsCMMColourConversion_Create,
   lcmsCMMColourConversion_FromMem,
@@ -760,11 +888,18 @@ oyCMMapi1_s  lcms_api1 = {
 };
 
 
+/** @instance lcms_cmm_module
+ *  @brief    lcms module infos
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/00
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ */
 oyCMMInfo_s lcms_cmm_module = {
 
   oyOBJECT_TYPE_CMM_INFO_S,
   0,0,0,
-  lcmsSignature,
+  CMM_NICK,
   "0.6",
   {oyOBJECT_TYPE_NAME_S, 0,0,0,"lcms", "Little CMS", "LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license."},
   {oyOBJECT_TYPE_NAME_S, 0,0,0,"Marti", "Marti Maria", "littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"},

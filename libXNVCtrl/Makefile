@@ -3,6 +3,7 @@ CXX = c++
 CC = cc
 RM = rm -vf
 dl = -ldl
+m = -lm
 XF86VMODE = 1
 XF86VMODE_INC = -I/usr/X11R6/include
 XF86VMODE_LIB = -lXxf86vm

@@ -31,7 +31,7 @@ used components and libraries with divergine FOSS licenses:
 %setup -q -n %{name}-%{version}
 
 %build
-%configure --quick
+%configure --quick --enable-verbose
 
 %install
 rm -rf %{buildroot}

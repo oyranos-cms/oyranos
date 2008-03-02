@@ -1,32 +1,18 @@
-/*
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2004-2007  Kai-Uwe Behrmann
+/** @file oyranos_io.c
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
+ *
  */
 
-/** @file @internal
- *  @brief input / output  methods
+/**
+ *  @brief    input / output  methods
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2004/11/25
  */
-
-/* Date:      25. 11. 2004 */
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -176,10 +162,11 @@ int
 oyWriteMemToFile_(const char* name, void* mem, size_t size)
 {
   FILE *fp = 0;
-  int   pt = 0;
-  char* block = mem;
+  /*int   pt = 0;
+  char* block = mem;*/
   const char* filename;
   int r = 0;
+  size_t written_n = 0;
 
   DBG_PROG_START
 
@@ -194,9 +181,13 @@ oyWriteMemToFile_(const char* name, void* mem, size_t size)
      && mem
      && size)
     { DBG_PROG
+#if 0
       do {
         r = fputc ( block[pt++] , fp);
       } while (--size);
+#else
+      written_n = fwrite( mem, size, 1, fp );
+#endif
     }
 
     if (fp) fclose (fp);
@@ -633,11 +624,11 @@ int oyFileListCb_ (void* data, const char* full_name, const char* filename)
   return 0;
 }
 
-char**
-oyProfileListGet_                  (const char* coloursig, int * size)
+char **  oyProfileListGet_           ( const char        * coloursig,
+                                       uint32_t          * size )
 {
   struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
-  int count = oyPathsCount_();
+  int32_t count = 0;/*oyPathsCount_();*/
   char ** path_names = NULL;
 
   path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
@@ -656,7 +647,7 @@ oyProfileListGet_                  (const char* coloursig, int * size)
 
   /* add a none existant profile */
   oyAllocString_m_(l.names[l.count_files], 48, oyAllocateFunc_, return 0);
-  oySnprintf_( l.names[l.count_files++] , 48, "%s", _("[none]") );
+  oySnprintf_( l.names[l.count_files++] , 48, "%s", OY_PROFILE_NONE );
 
   oyRecursivePaths_( oyProfileListCb_, (void*) &l,
                      (const char**)path_names, count );

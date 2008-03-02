@@ -1,30 +1,20 @@
-/*
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2005-2007  Kai-Uwe Behrmann
+/** @file oyranos_gamma.c
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  Copyright (C) 2005-2008  Kai-Uwe Behrmann
+ *
  */
 
-/** @file @internal
- * @brief gamma loader - put it somethere in your xinitrc
- *
+/**
+ *  @brief    gamma loader
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2005/02/03
+ */
+
+/**
  * It reads the default profile(s) from the Oyranos CMS and recalls this
  * profile(s)
  * as new default profile for a screen, including a possible curves upload to
@@ -33,7 +23,6 @@
  * 
  */
 
-/* Date:      03. 02. 2005 */
 
 
 #include "oyranos.h"

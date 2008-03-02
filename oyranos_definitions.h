@@ -1,31 +1,18 @@
-/*
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2004-2007  Kai-Uwe Behrmann 
+/** @file oyranos_definitions.h
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
- * -----------------------------------------------------------------------------
- *
- * macros and definitions
- * 
  */
 
-/* Date:      25. 11. 2004 */
+/**
+ *  @brief    macros and definitions
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: MIT <http://www.opensource.org/licenses/mit-license.php>
+ *  @since    2004/11/25
+ */
+
 
 
 #ifndef OYRANOS_DEFINITIONS_H
@@ -62,13 +49,32 @@
  *  @since 0.1.8
  */
 #define OY_MODULE_NAME                 "_cmm_module"
+/** @brief Oyranos CMM ID
+ *
+ *  It is the id of the internal module and the creator id of profiles
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/02/01
+ *  @since   2008/02/01 (Oyranos: 0.1.8)
+ */
+#define OY_MODULE_NICK                 "oyra"
 
 #define OY_POLICY_HEADER "<!--?xml version=\"1.0\" encoding=\"UTF-8\"? -->\n\
 <!-- Oyranos policy format 1.0 -->"
 
+/** @brief none profile
+ *
+ *  The name of a non existent profile.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/02/06
+ *  @since   2008/02/06 (Oyranos: 0.1.8)
+ */
+#define OY_PROFILE_NONE                _("[none]")
+
 /*
  * users will usually configure their own settings, while administrators can
- * configure system wide settings
+ * provide system wide default settings
  */
 
 /* --- definitions --- */

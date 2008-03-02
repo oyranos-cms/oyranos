@@ -1,18 +1,18 @@
-/**
- * Oyranos is an open source Colour Management System 
+/** @file oyranos_cmm.h
+ *
+ *  Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
  *
- * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
- *
- * -----------------------------------------------------------------------------
  */
 
-/** @file @internal
+/**
  *  @brief external CMM API
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2007/11/12
  */
-
-/** @date      12. 11. 2007 */
 
 
 #ifndef OYRANOS_CMM_H
@@ -41,7 +41,9 @@ typedef enum {
   oyQUERY_PIXELLAYOUT_FLAVOUR,
   oyQUERY_HDR,                         /*!< value a oyDATATYPE_e (oyHALF...) */
   oyQUERY_PROFILE_FORMAT = 20,         /*!< value 1 == ICC */
-  oyQUERY_PROFILE_TAG_TYPE             /**< value a icTagTypeSignature (ICC) */
+  oyQUERY_PROFILE_TAG_TYPE_READ,       /**< value a icTagTypeSignature (ICC) */
+  oyQUERY_PROFILE_TAG_TYPE_WRITE,      /**< value a icTagTypeSignature (ICC) */
+  oyQUERY_MAX
 } oyCMMQUERY_e;
 
 typedef int      (*oyCMMCanHandle_t) ( oyCMMQUERY_e        type,
@@ -49,12 +51,12 @@ typedef int      (*oyCMMCanHandle_t) ( oyCMMQUERY_e        type,
 
 typedef int      (*oyCMMInit_t)      ( void );
 
-typedef oyChar * (*oyCMMProfile_GetText_t)( oyCMMptr_s   * cmm_ptr,
+/*typedef oyChar * (*oyCMMProfile_GetText_t)( oyCMMptr_s   * cmm_ptr,
                                        oyNAME_e            type,
                                        const char          language[4],
                                        const char          country[4],
                                        oyAllocFunc_t       allocateFunc );
-
+*/
 typedef int      (*oyCMMProfile_Open_t)( oyPointer         block,
                                        size_t              size,
                                        oyCMMptr_s        * oy );
@@ -107,6 +109,23 @@ typedef int      (*oyCMMMessageFuncSet_t)( oyMessageFunc_t message_func );
 
 typedef oyCMMInfo_s* (*oyCMMInfo_Get_t) (void);
 
+typedef enum {
+  oyWIDGET_OK,
+  oyWIDGET_CORRUPTED,
+  oyWIDGET_REDRAW,
+  oyWIDGET_HIDE,
+  oyWIDGET_SHOW,
+  oyWIDGET_ACTIVATE,
+  oyWIDGET_DEACTIVATE,
+  oyWIDGET_UNDEFINED
+} oyWIDGET_EVENT_e;
+
+typedef oyWidget_s* (*oyWidget_Get_t)( const char        * func_name,
+                                       uint32_t          * result );
+typedef oyWIDGET_EVENT_e   (*oyWidget_Event_t)
+                                     ( oyWidget_s        * wid,
+                                       oyWIDGET_EVENT_e    type );
+
 
 
 /** @brief the generic part if a API to implement and set by a CMM
@@ -115,7 +134,7 @@ typedef oyCMMInfo_s* (*oyCMMInfo_Get_t) (void);
  *  @date  12 december 2007 (API 0.1.8)
  */
 struct oyCMMapi_s {
-  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API1_S */
+  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -124,6 +143,9 @@ struct oyCMMapi_s {
   oyCMMInit_t      oyCMMInit;
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
   oyCMMCanHandle_t oyCMMCanHandle;
+
+  oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
+  oyWidget_Event_t oyWidget_Event;   /**< handle widget events */
 };
 
 
@@ -143,8 +165,11 @@ typedef struct {
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
   oyCMMCanHandle_t oyCMMCanHandle;
 
+  oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
+  oyWidget_Event_t oyWidget_Update;   /**< handle widget events */
+
   oyCMMProfile_Open_t oyCMMProfile_Open;
-  oyCMMProfile_GetText_t oyCMMProfile_GetText;
+  /*oyCMMProfile_GetText_t oyCMMProfile_GetText;*/
   oyCMMProfile_GetSignature_t oyCMMProfile_GetSignature;
   oyCMMColourConversion_Create_t oyCMMColourConversion_Create;
   oyCMMColourConversion_FromMem_t oyCMMColourConversion_FromMem;
@@ -196,6 +221,9 @@ typedef struct {
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
   oyCMMCanHandle_t oyCMMCanHandle;
 
+  oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
+  oyWidget_Event_t oyWidget_Event;   /**< handle widget events */
+
   oyGetMonitorInfo_t oyGetMonitorInfo;
   oyGetScreenFromPosition_t oyGetScreenFromPosition;
 
@@ -209,14 +237,21 @@ typedef struct {
 } oyCMMapi2_s;
 
 
-typedef oyChar *            (*oyProfileTag_GetText_t) (
+typedef oyChar **           (*oyCMMProfileTag_GetText_t) (
                                        oyProfileTag_s    * tag,
+                                       int32_t           * n,
                                        const char          language[4],
                                        const char          country[4],
+                                       int32_t           * tag_size,
                                        oyAllocFunc_t       allocateFunc );
-typedef double *            (*oyProfileTag_GetValues_t) (
+typedef double *            (*oyCMMProfileTag_GetValues_t) (
                                        oyProfileTag_s    * tag,
                                        oyAllocFunc_t       allocateFunc );
+typedef int                 (*oyCMMProfileTag_Create_t) ( 
+                                       oyProfileTag_s    * tag,
+                                       oyStructList_s    * list,
+                                       icTagTypeSignature  tag_type,
+                                       uint32_t            version );
 
 /** @struct oyCMMapi3_s
  *  @brief the API 3 to implement and set to provide low level ICC profile
@@ -236,13 +271,13 @@ typedef struct {
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
   oyCMMCanHandle_t oyCMMCanHandle;
 
-  oyProfileTag_GetText_t oyProfileTag_GetText;
-  oyProfileTag_GetValues_t oyProfileTag_GetValues;
+  oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
+  oyWidget_Event_t oyWidget_Event;     /**< handle widget events */
+
+  oyCMMProfileTag_GetText_t oyProfileTag_GetText;
+  oyCMMProfileTag_GetValues_t oyProfileTag_GetValues;
+  oyCMMProfileTag_Create_t oyCMMProfileTag_Create;
 } oyCMMapi3_s;
-
-/* some known CMM's */
-#define oyX1Signature 0x6f795831 /* oyX1 */
-
 
 
 #ifdef __cplusplus

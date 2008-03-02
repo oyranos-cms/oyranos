@@ -81,6 +81,7 @@ CFILES = \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel.c \
 	$(TARGET)_texts.c \
+	$(TARGET)_widgets.c \
 	$(TARGET)_xml.c \
 	md5.c \
 	lookup3.c
@@ -231,7 +232,8 @@ time:
 # build all objects and libraries, link the headers to $(TARGET)
 $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 	echo Linking $@ ...
-	$(CC) $(LINK_FLAGS_DYNAMIC) $(CFLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	-o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(libdir) $(LDLIBS)
 	$(RM)  $(LIBSONAME)
@@ -242,8 +244,8 @@ $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 # the monitor library
 $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_M) $(LIBSONAMEFULL) \
-	-o $(LIB_MONI_SONAMEFULL) \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	$(LIBSONAMEFULL) $(LIB_ALPHA_SONAMEFULL) -o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) $(X11_LIBS) $(LDLIBS)
 	$(RM)  $(LIB_MONI_SONAME)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
@@ -252,13 +254,13 @@ $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 
 $(LIB_ALPHA_SONAMEFULL):	$(OBJECTS) $(LIB_ALPHA_NAME)
 	echo Linking $@ ...
-	$(CC) $(LINK_FLAGS_DYNAMIC) $(CFLAGS) -o $(LIB_ALPHA_SONAMEFULL) \
-	$(ALPHA_OBJECTS) \
-	-L$(libdir) $(LDLIBS)
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	$(LIBSONAMEFULL) -o $(LIB_ALPHA_SONAMEFULL) \
+	$(ALPHA_OBJECTS) -L$(libdir) $(LDLIBS) $(m)
 
 $(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_CMM_LCMS) \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $@ \
 	$(CMM_LCMS_OBJECTS) $(LCMS_LIBS) $(LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -268,7 +270,7 @@ $(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
 
 $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_CMM_oyX1) \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $@ \
 	$(CMM_oyX1_OBJECTS) $(LIB_MONI_SONAMEFULL) $(LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -278,9 +280,9 @@ $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS)
 
 $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC) $(LINK_NAME_CMM_oyra) \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $@ \
-	$(CMM_oyra_OBJECTS) $(LDLIBS)
+	$(CMM_oyra_OBJECTS) $(LIB_ALPHA_SONAMEFULL) $(LIBSONAMEFULL) $(LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -317,6 +319,7 @@ $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 
 $(LIBNAME):	$(OBJECTS)
 	echo Linking $@ ...
+	test -f $(LIBNAME) && $(RM) $(LIBNAME) || echo ""
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) \
 		$(OBJECTS) \
 		`test -f $(ELEKTRA_VERSION)/src/libelektra/libelektra.a && echo $(ELEKTRA_VERSION)/src/libloader/libloader_static_a-kdbLibLoader.o $(ELEKTRA_VERSION)/src/backends/filesys/libelektra_filesys_a-filesys.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-kdb.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-error.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-key.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-keyset.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-kdbhighlevel.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-backendhelpers.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-exported_symbols.o`
@@ -324,11 +327,13 @@ $(LIBNAME):	$(OBJECTS)
 
 $(LIB_ALPHA_NAME):	$(ALPHA_OBJECTS)
 	echo Linking $@ ...
+	test -f $(LIB_ALPHA_NAME) && $(RM) $(LIB_ALPHA_NAME) || echo ""
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIB_ALPHA_NAME) $(ALPHA_OBJECTS)
 	$(RANLIB) $(LIB_ALPHA_NAME)
 
 $(LIB_MONI_NAME):	$(MONI_OBJECTS)
 	echo Linking $@ ...
+	test -f $(LIB_MONI_NAME) && $(RM) $(LIB_MONI_NAME) || echo ""
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIB_MONI_NAME) $(MONI_OBJECTS)
 	$(RANLIB) $(LIB_MONI_NAME)
 
@@ -396,12 +401,12 @@ $(LINGUAS_SRC):	$(POT_FILE)
 
 $(POT_FILE):
 	mkdir -p ./po
-	for i in cmms/*.oy_cmm_register.xml; do \
+	#for i in cmms/*.oy_cmm_register.xml; do \
 	  ii=`echo $${i} | sed s%cmms\/%%g`; \
 	  iii=`echo $${ii} | sed s%.xml%.pot%g`; \
-	  ./$(POT_SCRIPT) cmms/$${ii}; \
-	  mv cmms/$${iii} po/; \
 	done;
+	#  ./$(POT_SCRIPT) cmms/$${ii}; \
+	  mv cmms/$${iii} po/; 
 	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
 	-d $(TARGET) \
 	-o $(POT_FILE) \
@@ -503,8 +508,8 @@ install_bin:	all doc
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	echo Installing CMM description files ...
-	-mkdir -p $(DESTDIR)$(syscolordir)/cmms
-	-$(INSTALL) -m 644 cmms/*.oy_cmm_register.xml $(DESTDIR)$(syscolordir)/cmms
+	#-mkdir -p $(DESTDIR)$(syscolordir)/cmms
+	#-$(INSTALL) -m 644 cmms/*.oy_cmm_register.xml $(DESTDIR)$(syscolordir)/cmms
 	mkdir -p $(DESTDIR)$(docdir)
 	$(INSTALL) -m 644 $(DOKU) $(DESTDIR)$(docdir)
 	mkdir -p $(DESTDIR)$(mandir)/man1
@@ -638,7 +643,7 @@ uninstall:
 	  ii=`echo $${i} | sed s%settings\/%%g`; \
 	  $(RM)   $(DESTDIR)$(syscolordir)/$(settingsdirname)/$${ii}; \
 	done;
-	for i in cmms/*.oy_cmm_register.xml; do \
+	#for i in cmms/*.oy_cmm_register.xml; do \
 	  ii=`echo $${i} | sed s%cmms\/%%g`; \
 	  $(RM)   $(DESTDIR)$(syscolordir)/cmms/$${ii}; \
 	done;
@@ -672,7 +677,7 @@ distclean: clean
 	-$(RM) config.sh
 	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
 	-$(RM) -R doc/html
-	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION) && $(MAKE) distclean)
+	test -f "$(ELEKTRA_VERSION)" && (cd $(ELEKTRA_VERSION) && $(MAKE) distclean) || echo ""
 
 clean:
 	-$(RM) \
@@ -699,7 +704,7 @@ clean:
 	done
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
-	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION) && $(MAKE) clean)
+	test -f "$(ELEKTRA_VERSION)" && (cd $(ELEKTRA_VERSION) && $(MAKE) clean) || echo ""
 	echo ... $@ done
 
 # configure if the file config is not available
@@ -777,7 +782,7 @@ copy_files:
 	$(ALL_FILES) \
 	$(DESTDIR)
 	$(COPY) -r settings $(DESTDIR)
-	$(COPY) -r cmms $(DESTDIR)
+	#$(COPY) -r cmms $(DESTDIR)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 	mkdir $(DESTDIR)/tests
@@ -790,11 +795,11 @@ copy_files:
 	  test -f po/$${ling}.po \
 	  && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
 	done;
-	test -n $(ELEKTRA_VERSION) && (cd $(ELEKTRA_VERSION) && \
+	test -f "$(ELEKTRA_VERSION)" && (cd $(ELEKTRA_VERSION) && \
 	     $(MAKE) dist-gzip; \
 	     cd ../$(DESTDIR); \
 	     test -f ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz && tar xzf ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
-	     rm ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz)
+	     rm ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz) || echo ""
 	echo copy done
 
 # mkdepend

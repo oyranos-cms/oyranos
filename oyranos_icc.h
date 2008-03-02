@@ -1,31 +1,18 @@
-/**
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2007  Kai-Uwe Behrmann
+/** @file oyranos_icc.h
  *
- * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  Copyright (C) 2007-2008  Kai-Uwe Behrmann
  *
- * ICC definitions
- * 
  */
 
-/** @date      03. 07. 2007 */
+/**
+ *  @brief    ICC definitions
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2007/07/03
+ */
 
 
 #ifndef OYRANOS_ICC_H
@@ -62,12 +49,28 @@ const char * oyColourSpaceGetNameFromSig( icColorSpaceSignature sig );
 /* additionals - not defined in icc34.h */
 /* partitially taken from littleCMS */
 
+#ifndef icSigUnix
+#define icSigUnix 0x2A6E6978  /* '*nix' */
+#endif
+
 #ifndef icSigProfileSequenceIdentifierTag
 #define icSigProfileSequenceIdentifierTag 0x70736964 /* psid */
 #endif
 
 #ifndef icSigMultiLocalizedUnicodeType
 #define icSigMultiLocalizedUnicodeType 0x6D6C7563  /* 'mluc' */
+#endif
+
+#ifndef icSigProfileSequenceIdentifierType
+#define icSigProfileSequenceIdentifierType 0x70736964  /* 'psid' */
+#endif
+
+#ifndef icSigMakeAndModelType
+#define icSigMakeAndModelType 0x6d6d6f64 /* 'mmod' */
+#endif
+
+#ifndef icSigNativeDisplayInfoType
+#define icSigNativeDisplayInfoType 0x6e64696e /* 'ndin' */
 #endif
 
 #ifndef HAVE_LCMS

@@ -201,7 +201,7 @@ test -n "$INFOECHO" && $INFOECHO "   --iccdirname=[icc]                   Oyrano
 test -n "$INFOECHO" && $INFOECHO "   --settingsdirname=[settings]         Oyranos settings directory"
 test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
 test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg installation path"
-test -n "$INFOECHO" && $INFOECHO "   --internal-elektra=[yes/no]          use internal Elektra [default=no]"
+test -n "$INFOECHO" && $INFOECHO "   --elektra-internal=[yes/no]          use internal Elektra [default=auto]"
 test -n "$INFOECHO" && $INFOECHO ""
 test -n "$INFOECHO" && $INFOECHO "   --with-fltk-config=[fltk-config]     alternative fltk version"
 test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
@@ -300,7 +300,7 @@ if [ -z "$datadir" ]; then
 else
   if [ -f $datadir/config.site ]; then
     . $datadir/config.site
-    (. $datadir/share/config.site >> $CONF_LOG )
+    (. $datadir/config.site >> $CONF_LOG )
   fi
 fi
 
@@ -527,9 +527,21 @@ if [ "$FLTK" = 1 ]; then
   fi
 fi
 
-if [ "$internalelektra" != "no" ]; then
+if [ "$internalelektra" = "yes" ]; then
   ELEKTRA_VERSION="elektra-0.6.4"
   export ELEKTRA_VERSION
+else
+  elektra_mod=`pkg-config --modversion elektra`
+  elektra_min="0.7"
+  elektra_max="0.7.100"
+
+    pkg-config  --atleast-version=$elektra_min elektra 2>>$CONF_LOG
+    if [ $? = 0 ]; then
+      pkg-config --max-version=$elektra_max elektra 2>>$CONF_LOG
+      if [ $? = 0 ]; then
+        internalelektra=no
+      fi
+    fi
 fi
 export internalelektra
 
@@ -551,9 +563,7 @@ test -n "$ECHO" && $ECHO "MAKEDEPEND	= $GCC_MM" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "LIBEXT = .dylib" >> $CONF
   GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
-  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib  -L.  $GCC_VERSION_INFO" >> $CONF
-  test -n "$ECHO" && $ECHO "LINK_NAME =  -install_name  \$(libdir)/\$(LIBSONAMEFULL)" >> $CONF
-  test -n "$ECHO" && $ECHO "LINK_NAME_M = -install_name \$(libdir)/\$(LIB_MONI_SONAMEFULL)" >> $CONF
+  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib  -L.  $GCC_VERSION_INFO -install_name " >> $CONF
   test -n "$ECHO" && $ECHO "COPY = cp -pv" >> $CONF
   LDFLAGS="$LDFLAGS -L."
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
@@ -567,7 +577,7 @@ if [ $OSUNAME = "Darwin" ]; then
   oyranos_x_add=""
 else
   test -n "$ECHO" && $ECHO "SO = .so" >> $CONF
-  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -shared $GCC_VERSION_INFO" >> $CONF
+  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -shared $GCC_VERSION_INFO -Wl,-soname -Wl," >> $CONF
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
   test -n "$ECHO" && $ECHO "MSGMERG_OPTS = --update" >> $CONF
   test -n "$ECHO" && $ECHO "XGETTEXT_OPTIONS = --keyword=gettext --flag=gettext:1:pass-c-format \
@@ -582,8 +592,6 @@ else
     test -n "$ECHO" && $ECHO "COPY = cp -vdpa" >> $CONF
     LDFLAGS="$LDFLAGS -L."
     test -n "$ECHO" && $ECHO "LINK_FLAGS_STATIC =" >> $CONF
-    test -n "$ECHO" && $ECHO "LINK_NAME = -Wl,-soname -Wl,\$(LIBSONAMEFULL)" >> $CONF
-    test -n "$ECHO" && $ECHO "LINK_NAME_M = -Wl,-soname -Wl,\$(LIB_MONI_SONAMEFULL)" >> $CONF
     if [ -n "$rpath" ]; then 
       test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
       test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
@@ -595,8 +603,6 @@ else
     test -n "$ECHO" && $ECHO "COPY = cp -p" >> $CONF
     if [ $OSUNAME = "BSD" ]; then
       LDFLAGS="$LDFLAGS"
-      test -n "$ECHO" && $ECHO "LINK_NAME = -Wl,-soname -Wl,\$(LIBSONAMEFULL)" >> $CONF
-      test -n "$ECHO" && $ECHO "LINK_NAME_M = -Wl,-soname -Wl,\$(LIB_MONI_SONAMEFULL)" >> $CONF
       if [ -n "$rpath" ]; then 
         test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
         test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
@@ -612,8 +618,8 @@ else
     fi
     test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
     test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-    CFLAGS="$CFLAGS -L. -fPIC"
-    CXXFLAGS="$CXXFLAGS -L. -fPIC"
+    CFLAGS="$CFLAGS -fPIC"
+    CXXFLAGS="$CXXFLAGS -fPIC"
     test -n "$ECHO" && $ECHO "RM = rm -f" >> $CONF
     test -n "$ECHO" && $ECHO "RM = rm -f" >> $CONF_NV
   fi
@@ -635,7 +641,7 @@ fi
 
 # walk into sub dirs and configure there
 if [ -n "$ECHO" ]; then
-  if [ "$internalelektra" != "no" ] && [ -z "$quick" ]; then
+  if [ "$internalelektra" = "yes" ] && [ -z "$quick" ]; then
     cd $ELEKTRA_VERSION
     if [ -n "$ECHO" ]; then
       echo_="./configure --enable-static $nodeps_config_opt --prefix=$prefix"
@@ -652,7 +658,7 @@ test -n "$ECHO" && $ECHO "" >> $CONF_SH
 test -n "$INFOECHO" && $INFOECHO ""
 
 # tell about required libs
-LIBS_TEST="dl iconv intl"; export LIBS_TEST
+LIBS_TEST="dl iconv intl m"; export LIBS_TEST
 X_ADD_2="X11 Xext Xinerama Xxf86vm"; export X_ADD_2
 
 # detect external libs and headers
@@ -755,7 +761,7 @@ test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_B $VERSION_B" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_C $VERSION_C" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_NAME $VERSION" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION $VERSION_L" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_DATE _(\"$TIME\")" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_DATE _(\"$TIME\")" >> $CONF_H
 test -n "$ECHO" && $ECHO "" >> $VERS_H
 
 test -n "$RPMECHO" && $RPMECHO "Version:         $VERSION" >> $SPEC
@@ -883,19 +889,20 @@ test -n "$ECHO" && $ECHO "iccdirname = $iccdirname" >> $ECI_CONF
 test -n "$ECHO" && $ECHO "syscolordir = $syscolordir" >> $BASE_CONF
 test -n "$ECHO" && $ECHO "iccdirname = $iccdirname" >> $BASE_CONF
 
-test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$srcdir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$srcdir/po\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "" >> $VERS_H
+test -n "$ECHO" && $ECHO "" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$srcdir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "" >> $CONF_H
 test -n "$ECHO" && $ECHO $OYAPI >> $VERS_H
 test -n "$ECHO" && $ECHO $OYEXPORT >> $VERS_H
 test -n "$ECHO" && $ECHO "" >> $VERS_H

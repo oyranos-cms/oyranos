@@ -1,16 +1,26 @@
-
-/** @file @internal
- *  @brief   backends for Oyranos
- *  @license new BSD
+/** @file oyranos_cmm_oyra.c
+ *
+ *  Oyranos is an open source Colour Management System 
+ *
+ *  Copyright (C) 2008  Kai-Uwe Behrmann
+ *
  */
 
-/** @date      02. 01. 2008 */
+/**
+ *  @brief    backends for Oyranos
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2008/01/02
+ */
 
-
+#include "config.h"
+#include "oyranos_alpha.h"
 #include "oyranos_cmm.h"
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
 #include "oyranos_i18n.h"
+#include "oyranos_io.h"
 #include "oyranos_definitions.h"
 #include "oyranos_texts.h"
 #include <math.h>
@@ -18,6 +28,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
 
 /* --- internal definitions --- */
 
@@ -33,8 +44,9 @@ oyMessageFunc_t message = oyraCMMWarnFunc;
 /** @func  oyraCMMInit
  *  @brief API requirement
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/02 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/02
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
  */
 int                oyraCMMInit       ( )
 {
@@ -66,8 +78,9 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
 /** @func  oyraCMMWarnFunc
  *  @brief message handling
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/02 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/02
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
  */
 int oyraCMMWarnFunc( int code, const char * format, ... )
 {
@@ -96,8 +109,9 @@ int oyraCMMWarnFunc( int code, const char * format, ... )
 /** @func  oyraCMMMessageFuncSet
  *  @brief API requirement
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/02 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/02
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
  */
 int            oyraCMMMessageFuncSet ( oyMessageFunc_t     message_func )
 {
@@ -105,12 +119,16 @@ int            oyraCMMMessageFuncSet ( oyMessageFunc_t     message_func )
   return 0;
 }
 
+int        oyraCMMCanHandle          ( oyCMMQUERY_e      type,
+                                       uint32_t          value )
+{ return 0; }
 
 /** @func  oyraProfileCanHandle
  *  @brief inform about icTagTypeSignature capabilities
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/03 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/03
+ *  @since   2008/01/03 (Oyranos: 0.1.8)
  */
 int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
                                        uint32_t          value )
@@ -127,11 +145,25 @@ int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
          else
            ret = 0;
          break;
-    case oyQUERY_PROFILE_TAG_TYPE:
+    case oyQUERY_PROFILE_TAG_TYPE_READ:
          switch(value) {
-         case icSigTextType:
+         case icSigCopyrightTag:
+         case icSigMakeAndModelType:
+         case icSigMultiLocalizedUnicodeType:
+         case icSigProfileSequenceDescType:
+         case icSigProfileSequenceIdentifierType:
+         case icSigSignatureType:
          case icSigTextDescriptionType:
-         case icSigMultiLocalizedUnicodeType: ret = 1; break;
+         case icSigTextType:
+              ret = 1; break;
+         default: ret = 0; break;
+         }
+         break;
+    case oyQUERY_PROFILE_TAG_TYPE_WRITE:
+         switch(value) {
+         case icSigMultiLocalizedUnicodeType:
+         case icSigProfileSequenceIdentifierType:
+              ret = 1; break;
          default: ret = 0; break;
          }
          break;
@@ -145,22 +177,88 @@ int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
 /** @func  oyraProfileTag_GetText
  *  @brief get textual informations from ICC profile tags
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/02 (API 0.1.8)
+ *  This is a module function. For usage in Oyranos @see oyProfileTag_GetText
+ *  It implements oyCMMProfileTag_GetText_t for 
+ *  oyCMMapi3_s::oyCMMProfileTag_GetText.
+ *
+ *  The output depends on the tags type signature in tag->tag_type_ as follows:
+ *
+ *  - icSigTextType and icSigCopyrightTag:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - returns one string
+ *
+ *  - icSigTextDescriptionType:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - returns one string
+ *
+ *  - icSigMultiLocalizedUnicodeType:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - honours language and country args for the *n argument with [0,1]
+ *    - honours a 0 and 1 in the integer pointed to in n (*n == [0,1],
+ *      to return just the selected string
+ *    - with all other values pointed to in n (*n == [-1,*,!0,!1], 
+ *      all localisation strings are returned, 
+ *      with the language code in the odd and the string in the even string
+ *
+ *  - icSigSignatureType:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - returns one string
+ *    - for the value see oyICCTechnologyDescription
+ *
+ *  - icSigMakeAndModelType:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - returns four strings each originating from a uint32_t
+ *      - manufacturer id
+ *      - model id
+ *      - serialNumber id
+ *      - manufacturer date id
+ * 
+ *  - icSigProfileSequenceDescType:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - returns
+ *      - first string as ascii the number (i) of the found elements
+ *      - a profile anounce string in 1 + i * 7
+ *      - the translated "Manufacturer:" string in 1 + i * 7 + 1
+ *      - the manufacturer string in 1 + i * 7 + 2, the full lenght or 4 byte
+ *      - the translated "Model:" string in 1 + i * 7 + 3
+ *      - the model string in 1 + i * 7 + 4, the full lenght or 4 byte one
+ *      - the translated "Technology:" string in 1 + i * 7 + 5
+ *      - the tech string in 1 + i * 7 + 6, see oyICCTechnologyDescription
+ *
+ *  - icSigProfileSequenceIdentifierType:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - returns
+ *      - first string as ascii the number (i) of the found elements
+ *      - a profile anounce string in 1 + i * 5
+ *      - the string "md5id:" in in 1 + i * 5 + 1
+ *      - the low letter hexadecimal hash value in 1 + i * 5 + 2
+ *      - mluc translated by oyICCTagDescription in 1 + i * 5 + 3
+ *      - the icSigProfileDescriptionTag according to language in 1 + i * 5 + 4
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
+ *  @date    2008/02/22
  */
-oyChar *     oyraProfileTag_GetText  ( oyProfileTag_s    * tag,
+oyChar **    oyraProfileTag_GetText  ( oyProfileTag_s    * tag,
+                                       int32_t           * n,
                                        const char          language[4],
                                        const char          country[4],
+                                       int32_t           * tag_size,
                                        oyAllocFunc_t       allocateFunc )
 {
   oyProfileTag_s * s = tag;
   icUInt32Number error = !s, len, count = 0;
-  oyChar * text = 0;
+  oyChar ** texts = 0, ** temp = 0;
+  int temp_n = 0;
   char * tmp = 0;
   char * mem = 0;
   char * pos = 0;
   icTagBase * tag_base = 0;
   icTagTypeSignature  sig = 0;
+  int32_t size_ = -1;
+  char num[32];
+
+  *n = 0;
 
   if(!error && tag->status_ == oyOK)
   {
@@ -168,13 +266,16 @@ oyChar *     oyraProfileTag_GetText  ( oyProfileTag_s    * tag,
     mem = tag->block_;
     sig = tag->tag_type_;
 
+    error = !mem;
+
+    if(!error)
     switch( (uint32_t)sig )
     {
       case icSigTextType:
       case icSigCopyrightTag:
 
            len = tag->size_ * sizeof(oyChar);
-           tmp = allocateFunc( len );
+           tmp = oyAllocateFunc_( len );
            error = !memcpy( tmp, &mem[8], len - 8 );
 
            while (strchr(tmp, 13) > (char*)0) { /* \r 013 0x0d */
@@ -188,7 +289,11 @@ oyChar *     oyraProfileTag_GetText  ( oyProfileTag_s    * tag,
              count++;
            };
            if(!error)
-             text = tmp;
+           {
+             oyStringListAddString_( &texts, n, &tmp, oyAllocateFunc_,
+                                                      oyDeAllocateFunc_ );
+             size_ = len;
+           }
            break;
       case icSigTextDescriptionType:
            count = *(icUInt32Number*)(mem+8);
@@ -201,48 +306,497 @@ oyChar *     oyraProfileTag_GetText  ( oyProfileTag_s    * tag,
              char * txt = oyAllocateFunc_( tag->size_ );
              snprintf( nt, 128, "%d", diff );
 
-             text = oyStringAdd_( text, _("Error in ICC profile tag found!"),
+             oyStringListAddStaticString_( &texts, n,
+                                 _("Error in ICC profile tag found!"),
+                                 oyAllocateFunc_, oyDeAllocateFunc_);
+             oyStringListAddStaticString_( &texts, n,
+                                 " Wrong \"desc\" tag count. Difference is :",
+                                 oyAllocateFunc_, oyDeAllocateFunc_);
+             oyStringAdd_( &tmp, "   ", oyAllocateFunc_, oyDeAllocateFunc_);
+             oyStringAdd_( &tmp, nt, oyAllocateFunc_, oyDeAllocateFunc_);
+             oyStringListAddString_( &texts,n, &tmp, oyAllocateFunc_,
+                                                     oyDeAllocateFunc_);
+             oyStringListAddStaticString_( &texts, n,
+                                 " Try ordinary tag length instead (?):",
+                                 oyAllocateFunc_, oyDeAllocateFunc_);
+             oyStringAdd_( &tmp, "  ",
                                   oyAllocateFunc_, oyDeAllocateFunc_);
-             text = oyStringAdd_( text, "\n Wrong \"desc\" tag count. Difference is :\n   ",
-                                  oyAllocateFunc_, oyDeAllocateFunc_);
-             text = oyStringAdd_( text, nt,
-                                  oyAllocateFunc_, oyDeAllocateFunc_);
-             text = oyStringAdd_( text, "\n Try ordinary tag length instead (?):\n   ",
-                                  oyAllocateFunc_, oyDeAllocateFunc_);
-             memcpy (txt, &mem[12], tag->size_ - 12);
+             error = !memcpy (txt, &mem[12], tag->size_ - 12);
              txt[ tag->size_ - 12 ] = 0;
-             text = oyStringAdd_( text, txt,
-                                  oyAllocateFunc_, oyDeAllocateFunc_);
-             oyDeAllocateFunc_(txt);
+             oyStringAdd_( &tmp, txt, oyAllocateFunc_, oyDeAllocateFunc_);
+             oyStringListAddString_( &texts,n, &tmp, oyAllocateFunc_,
+                                                     oyDeAllocateFunc_);
            }
            else
            {
-             text = oyAllocateFunc_(count + 1);
-             memset(text, 0, count + 1);
-             memcpy(text, mem+12, count);
-             text[count] = 0;
+             tmp = oyAllocateFunc_(count + 1);
+             memset(tmp, 0, count + 1);
+             error = !memcpy(tmp, mem+12, count);
+             tmp[count] = 0;
+             oyStringListAddString_( &texts,n, &tmp, oyAllocateFunc_,
+                                                     oyDeAllocateFunc_);
            }
-           /* reallocate */
-           tmp = text; text = 0;
-           text = oyStringAppend_( 0, tmp, allocateFunc );
-           oyDeAllocateFunc_( tmp );
 
+           {
+             uint32_t off = 0, n_ascii = 0, n_uni16 = 0;
+
+               /* 'desc' type */
+               off += 8;
+
+               /* ascii in 'desc' */
+               if(off < tag->size_)
+               {
+                 len = *(uint32_t*)&mem[off];
+                 n_ascii = oyValueUInt32( len );
+
+                 off += 4;
+                 off += n_ascii;
+                 /*off += (off%4 ? 4 - off%4 : 0);*/
+               }
+
+               /* unicode section in 'desc' */
+               if(off < tag->size_)
+               {
+                 off += 4;
+
+                 len = *(icUInt32Number*)&mem[off];
+                 n_uni16 = oyValueUInt32( len );
+                 off += 4 + n_uni16*2 - 1;
+               }
+               /* script in 'desc' */
+               if(off < tag->size_)
+               {
+                 len = *(icUInt32Number*)&mem[off];
+                 len = oyValueUInt32( len );
+                 off += 4 + 67;
+               }
+             size_ = off;
+           }
            break;
       case icSigMultiLocalizedUnicodeType:
+           {
+             int anzahl = oyValueUInt32( *(icUInt32Number*)&mem[8] );
+             int groesse = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
+             char a = 'e';
+             char b = 'n';
+             int i;
+             int all = !(*n == 0 || *n == 1);
+
+             if(language && (language[0] || language[1]) )
+             {
+               a = language[0];
+               b = language[1];
+             }
+
+             error = tag->size_ < 24 + anzahl * groesse;
+
+             if(!error)
+             for (i = 0; i < anzahl; i++)
+             {
+               char c = mem[16+ i*groesse],
+                    d = mem[17+ i*groesse];
+               int  g = 0,
+                    dversatz = 0;
+
+               error = tag->size_ < 20 + i * groesse;
+               if(!error)
+                 g = oyValueUInt32( *(icUInt32Number*)&mem[20+ i*groesse] );
+
+               if ((c == a && d == b) ||
+                   all)
+               {
+                 char * t = 0;
+                 int n_, j;
+                 size_t size = 0;
+                 icUInt16Number * uni16be = 0;
+                 wchar_t *wc = 0;
+
+                 error = tag->size_ < 20 + i * groesse + g*2 + 4;
+                 if(!error)
+                 {
+                   t = (char*) oyAllocateFunc_((g > 8) ? g : 8);
+                   wc = (wchar_t*) oyAllocateFunc_(sizeof(wchar_t) * g);
+                   error = !t || !wc;
+                 }
+
+                 if(!error && all)
+                 {
+                   oySprintf_( t, "%c%c", c, d );
+                   oyStringListAddStaticString_( &texts,n, t, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+                 }
+
+                 if(!error)
+                   t[0] = 0;
+
+                 if(!error)
+                   error = (24 + i*groesse + 4) > tag->size_;
+
+                 if(!error)
+                   dversatz = oyValueUInt32( *(icUInt32Number*)&mem
+                                                  [24+ i*groesse] );
+
+                 if(!error)
+                   error = dversatz + g > tag->size_;
+
+                 if(!error)
+                   uni16be = (icUInt16Number*) &mem[dversatz];
+
+                 if(!error)
+                 {
+                   for( j = 1; j < g/2; ++j)
+                     wc[j] = oyValueUInt16( uni16be[j] );
+                   wc[j] = 0;
+                   size = wcstombs( t, (const wchar_t*)uni16be, g );
+
+                   if(size == (size_t)-1)
+                     for (n_ = 0; n_ < g ; n_ = n_+2)
+                       t[n_/2] = (char)oyValueUInt16( *(icUInt16Number*)
+                                                      &mem[dversatz + n_] );
+                   t[n_/2] = 0;
+
+                   oyStringListAddString_( &texts,n, &t, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+                 }
+                 oyFree_m_( wc );
+               }
+
+               if(i == anzahl-1 && !error)
+               {
+                 if(!error)
+                   error = (24 + i*groesse + 4) > tag->size_;
+
+                 dversatz = oyValueUInt32( *(icUInt32Number*)&mem
+                                                  [24+ i*groesse] );
+                 size_ = dversatz + g;
+               }
+             }
+
+             if (!texts || !texts[0] || !oyStrlen_(texts[0])) /* first entry */
+             {
+               int g =        oyValueUInt32(*(icUInt32Number*)&mem[20]),
+                   dversatz = oyValueUInt32(*(icUInt32Number*)&mem[24]);
+               char * t = 0;
+               int n_;
+
+               error = tag->size_ < dversatz + g;
+
+               if(!error)
+                 t = (char*) oyAllocateFunc_( g + 1 );
+               error = !t;
+
+               if(!error)
+               {
+                 for (n_ = 1; n_ < g ; n_ = n_+2)
+                   t[n_/2] = mem[dversatz + n_];
+                 t[n_/2] = 0;
+                 oyStringAdd_( &tmp, t, oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringListAddString_( &texts,n, &tmp, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+                 oyFree_m_( t );
+               }
+             }
+           }
+
            break;
-      case icSigMeasurementType:
+      case icSigSignatureType:
+           if (tag->size_ < 12)
+           { return texts; }
+           else
+           {
+             icTechnologySignature tech;
+             const char * t =  0;
+
+             error = !memcpy (&tech, &mem[8] , 4);
+             tech = oyValueUInt32( tech );
+             t = oyICCTechnologyDescription( tech );
+
+             size_ = 8 + 4;
+
+             tmp = oyStringAppend_( 0, t, oyAllocateFunc_ );
+             oyStringListAddString_( &texts,n, &tmp, oyAllocateFunc_,
+                                                     oyDeAllocateFunc_);
+           }
+           break;
+      case icSigMakeAndModelType:
+           if(tag->size_ < 40)
+           { return texts; }
+           else
+           {
+             uint32_t val = 0, i;
+
+             for(i = 0; i < 4; ++i)
+             {
+               val = oyValueUInt32( (uint32_t)*((uint32_t*)&mem[8 + i*4]) );
+               oySprintf_(num, "%u              ", *((uint32_t*)&mem[8 + i*4]));
+               error = !memcpy (&num[16], &mem[8 + i*4], 4);
+               oyStringListAddStaticString_( &texts,n, num, oyAllocateFunc_,
+                                                       oyDeAllocateFunc_);
+             }
+             size_ = 8 + 32;
+           }
+           break;
+      case icSigProfileSequenceDescType:
+           if(tag->size_ > 12 + 20 + sizeof(icTextDescription)*2)
+           {
+             int off = 8;
+             uint32_t i=0;
+             icDescStruct * desc = 0;
+             const char * mfg = 0;
+             const char * model = 0;
+             const char * tech = 0;
+             char ** mfg_tmp = 0, ** model_tmp = 0;
+             int32_t mfg_tmp_n = 0, model_tmp_n = 0;
+             oyProfileTag_s * tmptag = 0;
+             int32_t size = -1;
+
+             count = *(icUInt32Number*)(mem+off);
+             count = oyValueUInt32( count );
+             off += 4;
+#if 0
+             len = *(icUInt32Number*)(mem+off);
+             len = oyValueUInt32( len );
+             off += 4;
+#endif
+
+             oySprintf_(num, "%d", count);
+             oyStringAdd_( &tmp, num, oyAllocateFunc_, oyDeAllocateFunc_);
+             oyStringListAddString_( &texts,n, &tmp, oyAllocateFunc_,
+                                                     oyDeAllocateFunc_);
+
+             if(count > 256) count = 256;
+             for(i = 0; i < count; ++i)
+             {
+               if(tag->size_ > off + sizeof(icDescStruct))
+                 desc = (icDescStruct*) &mem[off];
+
+               off += 4+4+2*4+4;
+               if(off < tag->size_)
+               {
+
+                 oySprintf_(num, "%d", i);
+                 oyStringAdd_( &tmp, "profile[",
+                                      oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringAdd_( &tmp, num, oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringAdd_( &tmp, "]:", oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringListAddString_( &texts,n, &tmp, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+
+                 mfg = oyICCTagName( oyValueUInt32(desc->deviceMfg) );
+                 model = oyICCTagName( oyValueUInt32(desc->deviceModel) );
+                 tech = oyICCTechnologyDescription( oyValueUInt32(desc->technology ));
+               }
+
+               /* first 'desc' type - mnf */
+               tmptag = oyProfileTag_New(0);
+               tmp = oyAllocateFunc_(tag->size_ - off);
+               error = !memcpy(tmp, &mem[off], tag->size_ - off);
+               oyProfileTag_Set( tmptag, icSigDeviceMfgDescTag,
+                                         icSigTextDescriptionType, oyOK,
+                                         tag->size_ - off, tmp );
+               mfg_tmp = oyraProfileTag_GetText( tmptag, &mfg_tmp_n,
+                                                 language, country,
+                                                 &size, oyAllocateFunc_ );
+               if(mfg_tmp)
+                 mfg = mfg_tmp[0];
+               oyProfileTag_Release( &tmptag );
+               tmp = 0;
+
+               if(size > 0)
+                 off += size;
+
+               /* next 'desc' type - model */
+               tmptag = oyProfileTag_New(0);
+               tmp = oyAllocateFunc_(tag->size_ - off);
+               error = !memcpy(tmp, &mem[off], tag->size_ - off);
+               oyProfileTag_Set( tmptag, icSigDeviceModelDescTag,
+                                         icSigTextDescriptionType, oyOK,
+                                         tag->size_ - off, tmp );
+               model_tmp = oyraProfileTag_GetText( tmptag, &model_tmp_n,
+                                                   language, country,
+                                                   &size, oyAllocateFunc_ );
+               if(model_tmp)
+                 model = model_tmp[0];
+               oyProfileTag_Release( &tmptag );
+               tmp = 0;
+
+               if(size > 0)
+                 off += size;
+
+               /* write to string */
+               if(mfg && oyStrlen_(mfg))
+               {
+                 oyStringListAddStaticString_( &texts,n, _("Manufacturer:"),
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringListAddStaticString_( &texts,n, mfg,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+               } else
+               {
+                 oyStringListAddStaticString_( &texts,n, 0, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+                 oyStringListAddStaticString_( &texts,n, 0, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+               }
+               if(model && oyStrlen_(model))
+               {
+                 oyStringListAddStaticString_( &texts,n, _("Modell:"),
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringListAddStaticString_( &texts,n, model,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+               } else
+               {
+                 oyStringListAddStaticString_( &texts,n, 0, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+                 oyStringListAddStaticString_( &texts,n, 0, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+               }
+               if(tech && oyStrlen_(tech))
+               {
+                 oyStringListAddStaticString_( &texts,n, _("Technology:"),
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringListAddStaticString_( &texts,n, tech,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+               } else
+               {
+                 oyStringListAddStaticString_( &texts,n, 0, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+                 oyStringListAddStaticString_( &texts,n, 0, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+               }
+
+               if(mfg_tmp)
+                 oyStringListRelease_(&mfg_tmp, mfg_tmp_n, oyDeAllocateFunc_);
+               if(model_tmp)
+                 oyStringListRelease_(&model_tmp,model_tmp_n,oyDeAllocateFunc_);
+             }
+             size_ = off;
+           }
+           break;
+      case icSigProfileSequenceIdentifierType:
+           /*
+                ICC Votable Proposal Submission
+                Profile Sequence Identifier Tag
+
+		Proposer: Manish Kulkarni, Adobe Systems Inc.
+		Date: November 27, 2006
+		Proposal Version: 1.0
+            */
+           if(tag->size_ > 12)
+           {
+             int32_t off = 0;
+             int i;
+             int offset = 0, old_offset = 0;
+             int size = 0;
+             int mluc_size = 0;
+             uint32_t * hash = 0;
+             char ** desc_tmp = 0;
+             int desc_tmp_n = 0;
+             oyProfileTag_s * tmptag = 0;
+
+             off += 8;
+
+             count = *(icUInt32Number*)(mem+off);
+             count = oyValueUInt32( count );
+             off += 4;
+
+             if(count > 256) count = 256;
+
+             oySprintf_(num, "%d", count);
+             oyStringListAddStaticString_( &texts,n, num,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+
+             for(i = 0; i < count; ++i)
+             {
+               oySprintf_(num, "%d", i);
+               oyStringAdd_( &tmp, "profile[",
+                                      oyAllocateFunc_, oyDeAllocateFunc_);
+               oyStringAdd_( &tmp, num, oyAllocateFunc_, oyDeAllocateFunc_);
+               oyStringAdd_( &tmp, "]:", oyAllocateFunc_, oyDeAllocateFunc_);
+               oyStringListAddString_( &texts,n, &tmp, oyAllocateFunc_,
+                                                         oyDeAllocateFunc_);
+
+               if(!error && 12 + i*8 + 8 < tag->size_)
+               {
+                 /* implicite offset and size */
+                 len = *(icUInt32Number*)&mem[12 + i*8 + 0];
+                 offset = oyValueUInt32( len );
+                 len = *(icUInt32Number*)&mem[12 + i*8 + 4];
+                 size = oyValueUInt32( len );
+               }
+
+               if(!error)
+                 error = offset + size < old_offset + 16 + mluc_size;
+
+               if(!error && offset + size <= tag->size_)
+               {
+                 hash = (uint32_t*)&mem[offset];
+                 tmp = oyAllocateFunc_(80);
+                 error = !tmp;
+                 oySprintf_(tmp, "%x%x%x%x",hash[0], hash[1], hash[2], hash[3]);
+                 oyStringListAddStaticString_( &texts,n, "md5id:",
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringListAddString_( &texts,n, &tmp,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+
+                 old_offset = offset;
+
+                 offset += 16;
+
+                 /* 'mluc' type - desc */
+                 tmptag = oyProfileTag_New(0);
+                 tmp = oyAllocateFunc_(tag->size_ - offset);
+                 error = !memcpy(tmp, &mem[offset], tag->size_ - offset);
+                 oyProfileTag_Set( tmptag, icSigProfileDescriptionTag,
+                                           icSigMultiLocalizedUnicodeType, oyOK,
+                                           tag->size_ - offset, tmp );
+                 tmp = 0;
+                 desc_tmp_n = 0;
+                 desc_tmp = oyraProfileTag_GetText( tmptag, &desc_tmp_n,
+                                                    language, country,
+                                                    &mluc_size,oyAllocateFunc_);
+                 oyProfileTag_Release( &tmptag );
+
+                 if(desc_tmp)
+                   tmp = desc_tmp[0];
+
+                 if(size_ < offset + mluc_size)
+                   size_ = offset + mluc_size;
+
+                 if(!error)
+                   error = size < mluc_size;
+
+                 oyStringListAddStaticString_( &texts,n,
+                            oyICCTagDescription(icSigMultiLocalizedUnicodeType),
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                 oyStringListAddString_( &texts,n, &tmp,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+               } else
+                 error = 1;
+             }
+           }
            break;
     }
   }
 
-  return text;
+  /* reallocate */
+  temp = oyStringListAppend_( 0,0, (const char**)texts, *n, &temp_n,
+                              allocateFunc);
+  oyStringListRelease_( &texts, *n, oyDeAllocateFunc_ );
+  texts = temp;
+  *n = temp_n;
+
+  if(tag_size)
+    *tag_size = size_;
+
+  return texts;
 }
 
 /** @func  oyraProfileTag_GetValues
  *  @brief get values from ICC profile tags
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/02 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
+ *  @date    2008/01/02
  */
 double *     oyraProfileTag_GetValues( oyProfileTag_s    * tag,
                                        oyAllocFunc_t       allocateFunc )
@@ -251,48 +805,601 @@ double *     oyraProfileTag_GetValues( oyProfileTag_s    * tag,
   return values;
 }
 
-
-/**   
- *  @brief oyra oyCMMapi3_s implementations
+/** @func  oyraProfileTag_Create
+ *  @brief create a ICC profile tag
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/02 (API 0.1.8)
+ *  This is a module function. For usage in Oyranos 
+ *  @see oyProfileTag_Create
+ *
+ *  The output depends on the tag type signature and arguments in list:
+ *
+ *  - icSigProfileSequenceIdentifierType:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - list: should contain only profiles
+ *    - version: is not honoured; note 'psid' is known after ICC v4.2
+ *  - icSigMultiLocalizedUnicodeType:
+ *    - since Oyranos 0.1.8 (API 0.1.8)
+ *    - list: should contain only names in oyName_s objects
+ *      - oyName_s::name is considered to hold the name
+ *      - oyName_s::lang is required to hold i18n specifier, e.g. "en_GB"
+ *      - the frist oyName_s::lang can have no i18n specifier as a default
+ *    - version: is not honoured; note 'mluc' is known since ICC v4
+ *
+ *  - non supported types
+ *    - the tag->status_ field will be set to oyUNDEFINED 
+ *
+ *  - function description
+ *    - set the tag argument to zero
+ *    - provide a empty list to fill in with oyName_s' each matching a tag_type
+ *      - oyNAME_NICK contains the module info, e.g. 'oyra'
+ *      - oyNAME_NAME contains the tag_type, e.g. 'icSigMultiLocalizedUnicodeType'
+ *      - oyNAME_DESCRIPTION contains text as in above documentation
+ *    - dont copy the list as content may be statically allocated
+ *
+ *  @param[in,out] tag                 the profile tag
+ *  @param[in,out] list                parameters
+ *  @param[in]     tag_type            the ICC tag type
+ *  @param[in]     version             version as supported
+ *  @return                            oySTATUS_e status
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/08 (Oyranos: 0.1.8)
+ *  @date    2008/01/08
  */
-oyCMMapi3_s  oyTP_api3 = {
+int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
+                                       oyStructList_s    * list,
+                                       icTagTypeSignature  tag_type,
+                                       uint32_t            version )
+{
+  oyProfileTag_s * s = tag,
+                 * tmptag = 0;
+  int error = !list;
+  int n = oyStructList_Count( list ),
+      i = 0, mem_len = 0, tmp_len = 0, mluc_len = 0,mluc_sum = 0, strings_n = 0,
+      len = 0, j = 0;
+  char * mem = 0,
+       * tmp = 0,
+      ** strings = 0;
+  oyProfile_s * prof = 0;
+  oyStructList_s * tmp_list = 0,
+                 * tag_list = 0;
+  oyName_s * string = 0;
 
-  oyOBJECT_TYPE_CMM_API3_S,
+  /* provide information about the function */
+  if(!error && !s && !n)
+  {
+    oyName_s description_mluc = {
+      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      CMM_NICK,
+      "mluc",
+      "\
+- icSigMultiLocalizedUnicodeType:\
+  - since Oyranos 0.1.8 (API 0.1.8)\
+  - list: should contain only names in oyName_s objects\
+    - oyName_s::name is considered to hold the name\
+    - oyName_s::lang is required to hold i18n specifier, e.g. \"en_GB\"\
+    - the frist oyName_s::lang can have no i18n specifier as a default\
+  - version: is not honoured; note 'mluc' is known since ICC v4"
+    };
+    oyName_s description_psid = {
+      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      CMM_NICK,
+      "psid",
+      "\
+- icSigProfileSequenceIdentifierType:\
+  - since Oyranos 0.1.8 (API 0.1.8)\
+  - list: should contain only profiles\
+  - version: is not honoured; note 'psid' is known after ICC v4.2"
+    };
+    oyStruct_s * description = 0;
+
+    description = (oyStruct_s*) &description_mluc;
+    error = oyStructList_MoveIn( list, &description, -1 );
+
+    description = (oyStruct_s*) &description_psid;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1 );
+
+    return error;
+  }
+
+  if(!error)
+  switch((uint32_t)tag_type)
+  {
+    case icSigMultiLocalizedUnicodeType:
+       {
+         size_t size = 0;
+         /*      base   #  size  lang len off */
+         mluc_len = 8 + 4 + 4 + (2+2 + 4 + 4) * n;
+         /*             8  12   16    20  24 */
+
+         for(i = 0; i < n; ++i)
+         {
+           if(!error)
+           {
+             string = (oyName_s*) oyStructList_GetRefType( list,
+                                                   i, oyOBJECT_TYPE_NAME_S );
+             error = !string;
+           }
+
+           if(!error)
+           {
+             if(string->string_type == oySTRING_PROD_DESC) i = i;
+
+             if(string->name)
+               tmp_len = strlen( string->name );
+             error = !tmp_len;
+             
+             if(i)
+               error = !string->lang;
+
+             len = tmp_len * 2 + 4;
+             mluc_len += len + (len%4 ? len%4 : 0);
+
+             oyStructList_ReleaseAt( list, i );
+           }
+         }
+         printf("%s:%d mluc_len: %d\n",__FILE__,__LINE__, mluc_len);
+
+         if(!error)
+           mem = oyStruct_Allocate( (oyStruct_s*)s, mluc_len );
+
+         error = !mem;
+
+         if(!error)
+         {
+           *((uint32_t*)&mem[8]) = oyValueUInt32( n );
+           *((uint32_t*)&mem[12]) = oyValueUInt32( 12 );
+           mem_len += 16 + n*12;
+         }
+
+         if(!error)
+         for(i = 0; i < n; ++i)
+         {
+           if(!error)
+           {
+             string = (oyName_s*) oyStructList_GetRefType( list,
+                                                   i, oyOBJECT_TYPE_NAME_S );
+             error = !string;
+           }
+
+           if(!error)
+           {
+             if(string->string_type == oySTRING_PROD_DESC) i = i;
+
+             if(string->name)
+               tmp_len = strlen( string->name );
+             error = !tmp_len;
+
+             if(i)
+               error = !string->lang;
+           }
+
+           if(!error)
+           {
+               if(string->lang && oyStrlen_(string->lang))
+               {
+                 if(strlen(string->lang) >= 2)
+                   memcpy( &mem[16+i*12 + 0], string->lang, 2 );
+                 if(strlen(string->lang) > 4)
+                   memcpy( &mem[16+i*12 + 2], &string->lang[3], 2 );
+               }
+
+               *((uint32_t*)&mem[16+i*12 + 4]) = oyValueUInt32( tmp_len * 2 );
+               *((uint32_t*)&mem[16+i*12 + 8]) = oyValueUInt32( mem_len );
+           }
+
+           if(!error)
+           {
+#if 0
+             /* broken with glibc-2.3.3 */
+             size = mbstowcs( (wchar_t*)&mem[mem_len], string->name,
+                              tmp_len );
+#else
+             size = tmp_len;
+             for(j = 0; j < tmp_len; ++j)
+               mem[mem_len+2*j+1] = string->name[j];
+#endif
+
+             error = (size != tmp_len);
+
+             if(!error)
+             {
+               len = tmp_len * 2 + 4;
+               mem_len += len + (len%4 ? len%4 : 0);
+             }
+
+             oyStructList_ReleaseAt( list, i );
+           }
+         }
+
+         if(error || !n)
+         {
+           s->status_ = oyUNDEFINED;
+
+         } else {
+           oyProfileTag_Set( s, s->use, tag_type, oyOK, mem_len, mem );
+         }
+       }
+
+       break;
+
+    case icSigProfileSequenceIdentifierType:
+       {
+         tag_list = oyStructList_New( 0 );
+
+         for(i = 0; i < n; ++i)
+         {
+           if(!error)
+           {
+             prof = (oyProfile_s*) oyStructList_GetRefType( list,
+                                                   i, oyOBJECT_TYPE_PROFILE_S );
+             error = !prof;
+           }
+
+           if(!error)
+           {
+             tmptag = oyProfile_GetTagById( prof, icSigProfileDescriptionTag );
+             error = !tmptag;
+
+             oyStructList_ReleaseAt( list, i );
+             oyProfile_Release( &prof );
+           }
+
+           if(!error && tmptag->tag_type_ != icSigMultiLocalizedUnicodeType)
+           {
+             mluc_len = 0;
+             strings_n = 0;
+             strings = oyraProfileTag_GetText( tmptag, &strings_n,
+                                               "en", "GB",
+                                               &mluc_len, oyAllocateFunc_);
+             oyProfileTag_Release( &tmptag );
+
+             if(!error)
+             {
+               tmptag = oyProfileTag_New(0);
+               string = oyName_new(0);
+               tmp_list = oyStructList_New( 0 );
+
+               error = !tmptag || !string || !tmp_list;
+
+
+               if(!error && strings && strings[0])
+               {
+                 tmp_len = oyStrlen_(strings[0]);
+
+                 string->name = oyStringAppend_(0, strings[0], oyAllocateFunc_);
+                 string->string_type = oySTRING_PROD_DESC;
+                 oyStrcpy_( string->lang, "en_GB" );
+               }
+
+               if(!error)
+                 error = oyStructList_MoveIn( tmp_list, (oyStruct_s**)&string,
+                                              -1 );
+
+               if(!error)
+                 error = oyraProfileTag_Create( tmptag, tmp_list,
+                                         icSigMultiLocalizedUnicodeType, 0 );
+               tmp = 0;
+
+               if(!error)
+                 error = tmptag->status_;
+             }
+           }
+
+           if(!error)
+           {
+             mluc_sum += tmptag->size_;
+             error = oyStructList_MoveIn( tag_list, (oyStruct_s**)&tmptag, -1 );
+           }
+         }
+
+         if(!error)
+         {
+           mem_len = 12 + 8*n + 16*n + mluc_sum + 3*n;
+           mem = oyStruct_Allocate( (oyStruct_s*)tag, mem_len );
+           error = !mem;
+
+           if(!error)
+           oyProfileTag_Set( s, icSigProfileSequenceIdentifierType,
+                                icSigProfileSequenceIdentifierType, oyOK,
+                                mem_len, mem );
+
+           tmp_len = 0;
+
+           for(i = 0; i < n; ++i)
+           {
+             if(!error)
+             {
+               tmptag = (oyProfileTag_s*) oyStructList_GetRefType( tag_list,
+                                               i, oyOBJECT_TYPE_PROFILE_TAG_S );
+               error = !tmptag;
+             }
+
+             if(!error)
+             {
+               int pos = 12 + 8*n + tmp_len;
+               error = !memcpy( &mem[pos + 16],
+                                tmptag->block_, tmptag->size_ );
+               *((uint32_t*)&mem[12 + 8*i + 0]) = oyValueUInt32( pos );
+
+               prof = (oyProfile_s*) oyStructList_GetRefType( list,
+                                                   i, oyOBJECT_TYPE_PROFILE_S );
+               error = !prof || !prof->block_ || !prof->size_;
+               error = oyProfileGetMD5( prof->block_, prof->size_,
+                                        (unsigned char*)&mem[pos] );
+               oyStructList_ReleaseAt( list, i );
+               oyProfile_Release( &prof );
+
+               len = 16 + tmptag->size_;
+               *((uint32_t*)&mem[12 + 8*i + 4]) = oyValueUInt32( len );
+               tmp_len += len + (len%4 ? len%4 : 0);
+             }
+             oyProfileTag_Release( &tmptag );
+           }
+
+           if(!error)
+             *((uint32_t*)&mem[8]) = oyValueUInt32( n );
+         }
+       }
+       break;
+
+    default:
+       s->status_ = oyUNDEFINED;
+       break;
+  }
+
+  if(s)
+  {
+    memcpy( s->last_cmm_, CMM_NICK, 4 );
+    if(s->status_ == oyOK && s->block_)
+      *((uint32_t*)&mem[0]) = oyValueUInt32( tag_type );
+  }
+
+  return error;
+}
+
+
+
+int      oyWidget_SetDefaultEditingRgbParameters (
+                                       oyWidget_s        * def_wid_edit_rgb )
+{
+  oyWidget_s * s = def_wid_edit_rgb;
+  int error = !s;
+
+  if(!(s->type_ == oyOBJECT_TYPE_WIDGET_S && s->parameter &&
+       s->parameter->vcommon.type_ == oyOBJECT_TYPE_PARAM_CHOICE_S))
+    error = 1;
+
+  return error;
+}
+
+/** @func    oyraWidget_Get
+ *  @brief   get default widgets
+ *
+ *  @date    2008/02/09
+ *  @since   2008/02/09 (Oyranos: 0.1.8)
+ */
+oyWidget_s * oyraWidget_Get          ( const char        * func_name,
+                                       uint32_t          * result )
+{
+  oyWidget_s * wid = 0;
+
+  if(!func_name || !oyStrlen_(func_name))
+    return wid;
+
+  if(oyStrcmp_(func_name, "defaults") == 0)
+  {
+#if 0
+    static oyParametersChoice_s oyra_default_widget_editing_rgb_param = {
+      /* type_; internal struct type oyOBJECT_TYPE_PARAM_CHOICE_S */
+      oyOBJECT_TYPE_PARAM_CHOICE_S,
+      /*    copy; copy function */
+      0,
+      /*    release; release function */
+      0,
+      /*    oy_; base object */
+      0,
+
+      /* choices_n; number of options; has to be determined from installation */
+      -1,
+      /* ** choices; label for each choice; see above */
+      0,
+      /*  * default_string; default string */
+      0,
+      /*    flags; tell whether it is a profile or .. */
+      0,
+      /*  * actual_string; */
+      0
+    };
+    static oyWidget_s   oyra_default_widget_editing_rgb = {
+      /* type_ */
+      oyOBJECT_TYPE_WIDGET_S, 0,0,0,
+
+      /* param_type */
+      oyOBJECT_TYPE_PARAM_CHOICE_S,
+      /* id_ and flags */
+      0, 0, 
+
+      /* name */
+      { oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, 0,0 },
+      /* parameter */
+      (oyWidgetParameters_u*)&oyra_default_widget_editing_rgb_param,
+      /* config_path */
+      "org.oyranos.oyra",
+      /* config_key */
+      "oyEDITING_RGB",
+      /* option */
+      0
+    };
+
+    wid = &oyra_default_widget_editing_rgb;
+
+    oyra_default_widget_editing_rgb.name.name = _("Editing Rgb");
+    oyra_default_widget_editing_rgb.name.description = _("Prefered Rgb Editing Colour Space");
+
+    if(oyra_default_widget_editing_rgb_param.choices)
+      oyStringListRelease_( 
+                   (char***)&oyra_default_widget_editing_rgb_param.choices,
+                            oyra_default_widget_editing_rgb_param.choices_n,
+                            oyDeAllocateFunc_ );
+    oyra_default_widget_editing_rgb_param.choices = oyProfileListGet_( NULL,
+         &oyra_default_widget_editing_rgb_param.choices_n );
+#endif
+  }
+#if 0
+/** @instance oyra_default_widget_policy_param
+ *  @brief   policy defaults widget
+ *
+ *  @date    2008/02/08
+ *  @since   2008/02/08 (Oyranos: 0.1.8)
+ */
+oyParametersChoice_s oyra_default_widget_policy_param = {
+  oyOBJECT_TYPE_PARAM_CHOICE_S, /* type_; internal struct type oyOBJECT_TYPE_PARAM_CHOICE_S */
+  0,  /*    copy; copy function */
+  0,  /*    release; release function */
+  0,  /*    oy_; base object */
+
+  -1, /* choices_n; number of options; has to be determined from installation */
+  0,  /* ** choices; label for each choice; see above */
+  0,  /*  * default_string; default string */
+  0,  /*    flags; tell whether it is a profile or .. */
+  0   /*  * actual_string; */
+};
+/** @instance oyra_default_widget_policy
+ *  @brief   policy defaults widget
+ *
+ *  @date    2008/02/08
+ *  @since   2008/02/08 (Oyranos: 0.1.8)
+ */
+oyWidget_s   oyra_default_widget_policy = {
+  oyOBJECT_TYPE_WIDGET_S, /* type_ */
+  0,0,0, /* object handlers, not needed for static structures */
+  oyOBJECT_TYPE_PARAM_CHOICE_S, /* param_type */
+  0,0,   /* id_ and flags */
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, _("Policy"), _("Collections of settings in Oyranos")}, /* name */
+  0, /*(oyWidgetParameters_u*)&oyra_default_widget_policy_param, parameter */
+  "org.oyranos.oyra", /* config_path */
+  0,     /* config_key */
+  0      /* option */
+};
+
+oyWidget_s *oyra_default_top_widgets_group[] = {
+  &oyra_default_widget_policy,
+  0
+};
+
+/** @instance oyra_default_top_widgets_param
+ *  @brief   default widgets for common options
+ *
+ *  @date    2008/02/07
+ *  @since   2008/02/07 (Oyranos: 0.1.8)
+ */
+oyParametersGroup_s  oyra_default_top_widgets_param = {
+  oyOBJECT_TYPE_PARAM_GROUP_S,  /* type_ */
+  0,0,0, /* object handlers, not needed for static structures */
+  oyra_default_top_widgets_group,     /* widgets */
+  1,     /* widgets_n */
+  oyWIDGET_HORIZONTAL,       /* layout */
+  oyWIDGET_GROUP_INITIALLY_INVISIBLE, /* initial_visibility */
+  oyWIDGET_GROUP_FRAME_SHOW, /* mark */
+  0      /* visible - status */
+};
+/** @instance oyra_default_top_widgets
+ *  @brief   default widgets for common options
+ *
+ *  @date    2008/02/07
+ *  @since   2008/02/07 (Oyranos: 0.1.8)
+ */
+oyWidget_s   oyra_default_top_widgets = {
+  oyOBJECT_TYPE_WIDGET_S, /* type_ */
+  0,0,0, /* object handlers, not needed for static structures */
+  oyOBJECT_TYPE_PARAM_GROUP_S, /* param_type */
+  0,0,   /* id_ and flags */
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, _("Oyranos Configuration"), _("Oyranos Control Panel")}, /* name */
+  (oyWidgetParameters_u*)&oyra_default_top_widgets_param,     /* parameter for widget */
+  "org.oyranos.oyra", /* config_path */
+  0,     /* config_key */
+  0      /* option */
+};
+#endif
+  return wid;
+}
+
+oyWidget_s * oyraWidget_GetDummy     ( const char        * func_name,
+                                       uint32_t          * result )
+{return 0;}
+oyWIDGET_EVENT_e oyraWidget_EventDummy
+                                     ( oyWidget_s        * wid,
+                                       oyWIDGET_EVENT_e    type )
+{return 0;}
+
+
+/** @instance oyra_api
+ *  @brief    oyra oyCMMapi_s implementations
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/02/08
+ *  @since   2008/02/08 (Oyranos: 0.1.8)
+ */
+oyCMMapi_s   oyra_api = {
+
+  oyOBJECT_TYPE_CMM_API_S,
   0,0,0,
   0,
   
   oyraCMMInit,
   oyraCMMMessageFuncSet,
+  oyraCMMCanHandle,
 
-  oyraProfileCanHandle,
-  oyraProfileTag_GetText,
-  oyraProfileTag_GetValues
+  oyraWidget_GetDummy,
+  oyraWidget_EventDummy
 };
 
-/* CMM_NICK */
-#define oyraSignature 0x6f797261
-
-/**
- *  @brief oyra module infos
+/** @instance oyra_api3
+ *  @brief    oyra oyCMMapi3_s implementations
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/02 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/02
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
+ */
+oyCMMapi3_s  oyra_api3 = {
+
+  oyOBJECT_TYPE_CMM_API3_S,
+  0,0,0,
+  &oyra_api,
+  
+  oyraCMMInit,
+  oyraCMMMessageFuncSet,
+  oyraProfileCanHandle,
+
+  oyraWidget_GetDummy,
+  oyraWidget_EventDummy,
+
+  oyraProfileTag_GetText,
+  oyraProfileTag_GetValues,
+  oyraProfileTag_Create
+};
+
+/** @instance oyra_cmm_module
+ *  @brief    oyra module infos
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/02
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
  */
 oyCMMInfo_s oyra_cmm_module = {
 
   oyOBJECT_TYPE_CMM_INFO_S,
   0,0,0,
-  oyraSignature,
-  "0.1",
+  CMM_NICK,
+  "0.1.8",
   {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, "Oyranos modules", "Oyranos supplied modules"},
   {oyOBJECT_TYPE_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/#download"},
   {oyOBJECT_TYPE_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2007 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
-  108,
+  OYRANOS_VERSION,
 
-  (oyCMMapi_s*) & oyTP_api3,
+  (oyCMMapi_s*) & oyra_api3,
   0,
 
   {oyOBJECT_TYPE_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}

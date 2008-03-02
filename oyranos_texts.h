@@ -1,33 +1,18 @@
+/** @file oyranos_texts.c
+ *
+ *  Oyranos is an open source Colour Management System 
+ *
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
+ *
+ */
+
 /**
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2004-2007  Kai-Uwe Behrmann
- *
- * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  @brief    pure text and string handling functions
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2004/11/25
  */
-
-/** @file @internal
- *  @brief pure text and string handling API
- */
-
-/** @date      25. 11. 2004 */
-
 
 #ifndef OYRANOS_TEXTS_H
 #define OYRANOS_TEXTS_H
@@ -154,7 +139,7 @@ char*              oyStringCopy_     ( const char        * text,
 char*              oyStringAppend_   ( const char        * text,
                                        const char        * append,
                                        oyAllocFunc_t       allocateFunc );
-char*              oyStringAdd_      ( char              * text,
+void               oyStringAdd_      ( char             ** text,
                                        const char        * append,
                                        oyAllocFunc_t       allocateFunc,
                                        oyDeAllocFunc_t     deallocFunc );
@@ -169,6 +154,22 @@ char**             oyStringListAppend_(const char       ** list,
                                        int                 n_app,
                                        int               * count,
                                        oyAllocFunc_t       allocateFunc );
+void               oyStringListAdd_  ( char            *** list,
+                                       int               * n,
+                                       const char       ** append,
+                                       int                 n_app,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocateFunc );
+void               oyStringListAddString_ ( char       *** list,
+                                       int               * n,
+                                       char             ** string,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocateFunc );
+void               oyStringListAddStaticString_ ( char *** list,
+                                       int               * n,
+                                       const char        * string,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocateFunc );
 void               oyStringListRelease_(char           *** l,
                                        int                 size,
                                        oyDeAllocFunc_t     deallocFunc );

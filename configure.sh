@@ -34,10 +34,10 @@ fi
 
 if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_min" ]; then
-    elektra_min="0.6"
+    elektra_min="0.7"
   fi
   if [ -z "$elektra_max" ]; then
-    elektra_max="0.6.100"
+    elektra_max="0.7.100"
   fi
   if [ "$internalelektra" != "no" ]; then
    if [ `ls $ELEKTRA_VERSION | grep elektra | wc -l` -gt 0 ]; then

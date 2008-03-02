@@ -1,37 +1,25 @@
-/**
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2004-2007  Kai-Uwe Behrmann
+/** @file oyranos.h
  *
- * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
  *
- * API
- * 
  */
 
-/** @date      25. 11. 2004 */
+/**
+ *  @brief    public Oyranos API's
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2004/11/25
+ */
 
 
 #ifndef OYRANOS_H
 #define OYRANOS_H
 
 #include <stdlib.h> /* for linux size_t */
+#include <inttypes.h> /* uint32_t */
 #include "oyranos_definitions.h"
 #include "oyranos_version.h"
 
@@ -142,9 +130,18 @@ int         oyPolicySet                (const char      * policy,
 
 /* path names */
 
+typedef enum {
+  oyPATH_NON_SPECIFIC = 0x00,
+  oyPATH_ICC       = 0x01,
+  oyPATH_POLICY    = 0x02,
+  oyPATH_MODULE    = 0x04
+} oyPATH_TYPE_e;
+
+#if 0
 int   oyPathsCount                     (void);
 char* oyPathName                       (int         number,
                                         oyAllocFunc_t);
+#endif
 char* oyGetPathFromProfileName         (const char* profile_name,
                                         oyAllocFunc_t);
 
@@ -191,7 +188,9 @@ char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
 
 /* --- profile lists --- */
 
-char**oyProfileListGet                 (const char* coloursig, int * size);
+char **  oyProfileListGet            ( const char        * coloursig,
+                                       uint32_t          * size,
+                                       oyAllocFunc_t       allocateFunc );
 
 
 /* --- profile checking --- */

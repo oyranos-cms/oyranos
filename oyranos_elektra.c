@@ -1,32 +1,19 @@
-/*
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2004-2007  Kai-Uwe Behrmann
+/** @file oyranos_elektra.c
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Oyranos is an open source Colour Management System 
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * -----------------------------------------------------------------------------
+ *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
+ *
  */
 
-/** @file @internal
- *  @brief elektra dependent functions
+/**
+ *  @brief    elektra dependent functions
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2004/11/25
  */
 
-/* Date:      25. 11. 2004 */
 
 #include <kdb.h>
 #include <sys/stat.h>
@@ -75,15 +62,17 @@ KeySet* oyReturnChildrenList_  (const char* keyParentName,int* rc);
 
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
-static KDBHandle oy_handle_;
+static KDBHandle * oy_handle_ = 0;
 
 void oyOpen_ (void)
 {
   if(!oyranos_init) {
-    kdbOpen( &oy_handle_ );
+    oy_handle_ = kdbOpen( /*&oy_handle_*/ );
+    if(!oy_handle_)
+      WARNc_S(("Could not initialise Elektra."));
     oyranos_init = 1;
   }
-  kdbOpen( &oy_handle_ );
+  kdbOpen( oy_handle_ );
 }
 void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 /* @todo make oyOpen unnecessary */
@@ -124,7 +113,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
   int user_sys = oyUSER_SYS;
   KeySet*list_user = 0;
   KeySet*list_sys = 0;
-  KeySet*list = ksNew();
+  KeySet*list = ksNew(0);
   char  *list_name_user = NULL;
   char  *list_name_sys = NULL;
 
@@ -134,16 +123,16 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
   oyAllocHelper_m_(list_name_sys, char, MAX_PATH, 0, )
 
   if( user_sys == oyUSER_SYS || user_sys == oyUSER ) {
-    list_user = ksNew();
+    list_user = ksNew(0);
     sprintf(           list_name_user, "%s%s", OY_USER, keyParentName);
     *rc =
-      kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_RECURSIVE | KDB_O_SORT);
+      kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_SORT);
   }
   if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
-    list_sys = ksNew();
+    list_sys = ksNew(0);
     sprintf(           list_name_sys, "%s%s", OY_SYS, keyParentName);
     *rc =
-      kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_RECURSIVE | KDB_O_SORT);
+      kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_SORT);
   }
 
   if(list_user)
@@ -179,7 +168,7 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
 
   oyAllocHelper_m_(pathkeyName, char, strlen(keyBaseName) + 24, 0, )
 
-  key = keyNew( KEY_SWITCH_END );
+  key = keyNew( KEY_END );
   keySetName( key, keyBaseName );
 
   if(keyParentName)
@@ -193,7 +182,7 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
     while (!nth)
     { sprintf (pathkeyName , "%s%d", keyBaseName, i);
       rc=kdbGetKeyByParent (oy_handle_, name, pathkeyName, key);
-      if (rc != KDB_RET_OK)
+      if (rc)
         nth = i;
       i++;
     }
@@ -236,9 +225,8 @@ oyKeySetHasValue_     (const char* keyParentName, const char* ask_value)
             }
           }
         }
-  ksClose (myKeySet);
+  ksDel (myKeySet);
   oyClose_();
-  oyFree_m_(myKeySet)
 
   DBG_PROG_ENDE
   return result;
@@ -267,7 +255,7 @@ oyAddKey_valueComment_ (const char* keyName,
   if (!keyName || !strlen(keyName))
     WARNc_S( ("%s:%d !!! ERROR no keyName given",__FILE__,__LINE__));
 
-  key = keyNew( KEY_SWITCH_END );
+  key = keyNew( KEY_END );
   keySetName( key, name );
 
   /*rc=keyInit(key); ERR */
@@ -534,7 +522,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
 
 /* path names API */
 
-
+#if 0
 int
 oyPathsCount_ ()
 {
@@ -557,9 +545,8 @@ oyPathsCount_ ()
   /*if(!rc) */
     n = ksGetSize(myKeySet);
 
-  ksClose (myKeySet);
+  ksDel (myKeySet);
   oyClose_();
-  oyFree_m_(myKeySet)
 
   DBG_PROG_ENDE
   return (int)n;
@@ -597,9 +584,8 @@ oyPathName_ (int number, oyAllocFunc_t allocate_func)
       n++;
     }
 
-  ksClose (myKeySet);
+  ksDel (myKeySet);
   oyClose_();
-  oyFree_m_(myKeySet)
 
   DBG_PROG_ENDE
   return value;
@@ -727,9 +713,9 @@ oyPathAdd_ (const char* pfad)
   }
 
   finish:
-  if (myKeySet) ksClose (myKeySet);
   if (myKeySet) ksDel (myKeySet);
-  if (checkKeySet) ksClose (checkKeySet);
+  if (myKeySet) ksDel (myKeySet);
+  if (checkKeySet) ksDel (checkKeySet);
   if (checkKeySet) ksDel (checkKeySet);
 
   /* add missing default paths */
@@ -791,13 +777,12 @@ oyPathRemove_ (const char* pfad)
     }
   }
 
-  ksClose (myKeySet);
+  ksDel (myKeySet);
 
   /* after remove blindly add seeing */
   oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT);
 
   oyClose_();
-  oyFree_m_(myKeySet)
   oyFree_m_(keyName)
   oyFree_m_(value)
 
@@ -838,9 +823,8 @@ oyPathSleep_ (const char* pfad)
     }
   }
 
-  ksClose (myKeySet);
+  ksDel (myKeySet);
   oyClose_();
-  oyFree_m_(myKeySet)
   oyFree_m_ (value);
   DBG_PROG_ENDE
 }
@@ -878,12 +862,13 @@ oyPathActivate_ (const char* pfad)
     }
   }
 
-  ksClose (myKeySet);
+  ksDel (myKeySet);
   oyClose_();
-  oyFree_m_(myKeySet)
   oyFree_m_ (value);
   DBG_PROG_ENDE
 }
+#endif
+
 
 /**@brief read Key value
  *
@@ -914,7 +899,7 @@ oyGetKeyValue_ ( const char       *key_name,
   name[0] = 0;
   rc = kdbGetValue ( oy_handle_, full_key_name, name, MAX_PATH );
 
-  if( rc != KDB_RET_OK || !strlen( name ))
+  if( rc || !strlen( name ))
   {
     sprintf( full_key_name, "%s%s", OY_SYS, key_name );
     rc = kdbGetValue ( oy_handle_, full_key_name, name, MAX_PATH );
@@ -924,7 +909,7 @@ oyGetKeyValue_ ( const char       *key_name,
 
   DBG_PROG_S((name))
   DBG_PROG_ENDE
-  if(rc == KDB_RET_OK)
+  if(rc)
     return name;
   else
     return 0;
@@ -1013,9 +998,8 @@ oyGetDeviceProfile_                (const char* manufacturer,
     }
   }
 
-  ksClose (profilesList);
+  ksDel (profilesList);
   oyClose_();
-  oyFree_m_(profilesList)
 
   DBG_PROG_ENDE
   return profileName;
@@ -1096,9 +1080,8 @@ oyGetDeviceProfile_s               (const char* manufacturer,
     }
   }
 
-  ksClose (profilesList);
+  ksDel (profilesList);
   kdbClose();
-  oyFree_m_(profilesList)
 
   DBG_PROG_ENDE
   return profileNames;
@@ -1300,7 +1283,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
   DBG_NUM_S(( value ))
 
-  if(profilesList) ksClose(profilesList); DBG_PROG
+  if(profilesList) ksDel(profilesList); DBG_PROG
   oyFree_m_ (value) DBG_PROG
   oyFree_m_ (profile_name) DBG_PROG
   oyClose_(); DBG_PROG
