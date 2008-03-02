@@ -45,6 +45,7 @@
 #define OY_SLASH                 "/"
 #define OY_SLASH_C               '/'
 #define OY_KEY                   "sw/oyranos"
+#define OY_REGISTRED_PROFILES    OY_KEY "/device_profiles"
 #define OY_SYS                   "system/"
 #define OY_USER                  "user/"
 

@@ -35,7 +35,7 @@
 
 
 int
-main()
+main(int argc, char** argv)
 {
   char a[] = {"/Hallo/share/color/icc/display"};
 
@@ -73,9 +73,13 @@ main()
 
   oyPathRemove(a);
 
-  printf ("count of paths after removing one = %d\n", oyPathsCount());
+  printf ("count of paths after removing one = %d\n\n", oyPathsCount());
 
-  oySetDefaultCmykProfile ("CMYK.icc");
+
+  // set an (hopefully existing) profile as default
+  rc = oySetDefaultCmykProfile ("CMYK.icc");
+  printf ("setting CMYK.icc %d\n\n", rc);
+
 
   {
     char *profil = (char*) calloc (sizeof(char), 3000);
@@ -83,36 +87,35 @@ main()
 
     r=oySetDefaultWorkspaceProfileBlock ("example_workspace.icm", profil, 3000);
     if (r)
-      printf ("profil = %d written  %s\n", (int)profil, "example_workspace.icm");
+      printf ("profil = %d written  %s\n\n", (int)profil, "example_workspace.icm");
     else
-      printf ("profil = %d invalid  %s\n", (int)profil, "example_workspace.icm");
+      printf ("profil = %d invalid  %s\n\n", (int)profil, "example_workspace.icm");
       
     free (profil);
 
     // take an real file as input
-    size_t size;
-    char* pn = "~/.color_no/S20040909.icm";
-    profil = oyReadFileToMem ("/home/kuwe/.color_no/S20040909.icm", &size);
+    if (argc > 0)
+    { printf (":%d %d %s %s\n",__LINE__, argc, argv[0], argv[1]);
+      size_t size = 0;
+      profil = oyGetProfileBlock (argv[1], &size);
 
-    printf ("size = %u pos = %d\n",size, (int) profil);
-    if (profil)
-      r=oySetDefaultWorkspaceProfileBlock ("ex_workspace.icm", profil, size);
-//    oy_debug = 1;
-    r=oySetDefaultWorkspaceProfile("~/.color/../.color/icc/ex_workspace.icm");
-//    oy_debug = 0;
-    if (r)
-      printf ("profil = %d written  %s\n", (int)profil, "ex_workspace.icm");
-    else
-      printf ("profil = %d invalid  %s\n", (int)profil, "ex_workspace.icm");
+      printf ("size = %u pos = %d\n\n",size, (int) profil);
+      if (profil)
+        r=oySetDefaultWorkspaceProfileBlock ("ex_workspace.icm", profil, size);
+      r=oySetDefaultWorkspaceProfile("~/.color/../.color/icc/ex_workspace.icm");
+      if (r)
+        printf ("profil = %d written  %s\n\n", (int)profil, "ex_workspace.icm");
+      else
+        printf ("profil = %d not written  %s\n\n", (int)profil, "ex_workspace.icm");
       
-    free (profil);
+      free (profil);
 
-    printf ("%s exist %d\n", pn, oyCheckProfile(pn));
+      printf ("%s exist %d\n\n", argv[1], !oyCheckProfile(argv[1], 0));
+    }
   }
 
-  printf ("%d CLOCKS_PER_SEC %ld\n", (int)clock(), CLOCKS_PER_SEC);
-  printf ("%d\n", (int)clock());
 
+  // Show what we have
   { char* name = oyGetDefaultImageProfileName();
     printf ("default %s profile = %s\n", OY_DEFAULT_IMAGE_PROFILE, name);
     name = oyGetDefaultWorkspaceProfileName();
@@ -120,6 +123,52 @@ main()
     name = oyGetDefaultCmykProfileName();
     printf ("default %s profile = %s\n", OY_DEFAULT_CMYK_PROFILE, name);
     free (name);
+  }
+
+  {
+    char  *tempName = (char*) calloc (1024,sizeof(char));
+    char  *model = 0, *product_ID = 0;
+    size_t size;
+    char* profil = 0;
+
+    sprintf (tempName, "sh -c \"getMoniDDC1 -m >& $TMPDIR/MoniDDC.txt\"");
+    if (!system(tempName))
+    {
+      sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
+      model = _oyReadFileToMem (tempName, &size);
+      memcpy (tempName, model, size); tempName[size] = 0;
+      if (model) free (model);
+      model = (char*) calloc (strlen(tempName)+1,sizeof(char));
+      sprintf (model, tempName);
+      printf ("%s %d\n", model, strlen(model));
+    } else
+      model = 0;
+
+    sprintf (tempName, "sh -c \"getMoniDDC1 -id >& $TMPDIR/MoniDDC.txt\"");
+    if (!system(tempName))
+    {
+      sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
+      product_ID = _oyReadFileToMem (tempName, &size);
+      memcpy (tempName, product_ID, size); tempName[size] = 0;
+      if (product_ID) free (product_ID);
+      product_ID = (char*) calloc (strlen(tempName)+1,sizeof(char));
+      sprintf (product_ID, tempName);
+      printf ("%s %d\n", product_ID, strlen(product_ID));
+    } else
+      product_ID = 0;
+
+    //oy_debug = 1;
+    if (model && product_ID)
+    {
+      printf ("%s %s\n",model, product_ID);
+      //oySetDeviceProfile(0,model,product_ID,0,0,0,0,0,"M20040609_NatWP_50H_50K.icm",0,0);
+      profil = oyGetDeviceProfile (0, model, product_ID, "monitor",0,0,0,0);
+    }
+    //oy_debug = 0;
+    printf ("selected profile = %s \n", profil);
+
+    if (product_ID) free(product_ID);
+    if (model) free (model);
   }
 
   return 0;

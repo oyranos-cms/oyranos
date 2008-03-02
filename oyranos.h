@@ -1,27 +1,27 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004  Kai-Uwe Behrmann 
+ * Copyright (C) 2004  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * 
  * -----------------------------------------------------------------------------
  *
- * sorting
+ * API
  * 
  */
 
@@ -69,20 +69,20 @@ char*	oyGetDefaultCmykProfileName       ();
 
 /* --- profile checking --- */
 
-int	oyCheckProfile (char* name);
-int	oyCheckProfileMem (void* mem, size_t size);
+int	oyCheckProfile (char* name, int flag);
+int	oyCheckProfileMem (void* mem, size_t size, int flags);
 
 
 /* --- profile access through oyranos --- */
 
 /* check for sizes before using any profiles */
 size_t	oyGetProfileSize                  (char* profilename);
-void*	oyGetProfileBlock                 (char* profilename);
+void*	oyGetProfileBlock                 (char* profilename, size_t* size);
 
 /* device profiles */
 
 /*
- * There may be 3 approaches to find an (mostly) fitting profile by no measuring
+ * There different approaches to select an (mostly) fitting profile
  *
  * A: search and compare all available profiles by 
  *    - ICC profile class
@@ -94,10 +94,11 @@ void*	oyGetProfileBlock                 (char* profilename);
  *
  */
 
-/* simply pass 0 for char* or -1 for ints for not specified properties
+/* simply pass 0 for not specified properties
  *
- * char* profile_name = oyGetDeviceProfile ("EIZO", "CG2100",
- *                                         "calc.pool", 0, "D50", "100lux", 0);
+ * char* profile_name = oyGetDeviceProfile ("EIZO", "LCD2100", "ID 87-135.19",
+ *                                          "calc.pool", 0, "100lux", 0,
+ *                                          "mga1450");
  * if (profile_name)
  * { char* ptr = (char*) malloc (oyGetProfileSize (profile_name),sizeof(size_t);
  *   ptr = oyGetProfileBlock (profile_name);
@@ -108,6 +109,7 @@ void*	oyGetProfileBlock                 (char* profilename);
  */
 char*	oyGetDeviceProfile                (char* manufacturer,
                                            char* model,
+                                           char* product_id,
                                            char* host,
                                            char* port,
                                            char* attrib1,
@@ -116,39 +118,26 @@ char*	oyGetDeviceProfile                (char* manufacturer,
 
 int	oySetDeviceProfile                (char* manufacturer,
                                            char* model,
+                                           char* product_id,
                                            char* host,
                                            char* port,
+                                           char* attrib1,
+                                           char* attrib2,
+                                           char* attrib3,
                                            char* profilename,
                                            void* mem,
                                            size_t size);
-
-/*
- * OY_Prop is used as shorthand for an property key
- */
-typedef enum OY_Prop
-{
-  MANUFACTURER,
-  MODEL,
-  HOST,		/* The computer the device is primarily connected to */
-  PORT,		/* The port (to describe the 1. Monitor on the thierd vga card:
-		*   "vga:2 connector:0" )     */
-  RESOLUTION,	/* mainly cameras and scanners ("high", "1200dpi") */
-  BITDEPTH,	/* cameras / scanners  1/4/8/12/14/16 bit per colour channel */
-  EXTENDED	/* use this to describe an more complex scenario like printer
-		   settings, value should contain corresponding key set name */
-} OY_Prop;
-
+#if 0
 int	oySetProfileProperty              (char* profilename,
-                                           OY_Prop property_class,
+                                           char* property,
                                            char* value);
+#endif
 
-/* measure the output and check the consistency for quality ashurance */
-
-// debugging variable - set 0 to off (default), set 1 to switch debugging on
+/* debugging variable - set 0 to off (default), set 1 to switch debugging on */
 extern int oy_debug;
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif //OYRANOS_H
+#endif /* OYRANOS_H */

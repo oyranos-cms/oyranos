@@ -34,12 +34,14 @@
 
 #include <time.h>
 
+
+/* Debug system */
 extern int level_PROG;
 extern clock_t _oyranos_clock;
 
 #define DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
 
-#define DBG_T_ printf ("%s:%d %s() %lf ", __FILE__,__LINE__,__func__, DBG_UHR_);
+#define DBG_T_ printf ("%s:%d %s() %02f ",__FILE__,__LINE__,__func__, DBG_UHR_);
 #define LEVEL { int i; for (i = 0; i < level_PROG; i++) printf (" "); }
 #define DBG if(oy_debug) { LEVEL printf("        "); DBG_T_ printf ("\n");}
 #define DBG_S(txt) if(oy_debug) { LEVEL printf("        "); DBG_T_ printf txt ; printf("\n"); }
@@ -75,12 +77,15 @@ extern clock_t _oyranos_clock;
 #define DBG_PROG_S(txt)
 #define DBG_PROG_V(txt)
 #endif
-#define WARN DBG
-#define WARN_S(txt) DBG_S(txt)
-#define WARN_V(txt) DBG_V(txt)
+#define WARN {int dbg = oy_debug; oy_debug = 1; \
+                    DBG_S(("Warning")) oy_debug = dbg;}
+#define WARN_S(txt) {int dbg=oy_debug; oy_debug = 1; \
+                    DBG_S(("Warning : "); printf txt) oy_debug = dbg;}
+#define WARN_V(txt) {int dbg=oy_debug; oy_debug = 1; \
+                    DBG_V(("Warning : "); printf txt) oy_debug = dbg;}
 
 
-// mathematical helpers
+/* mathematical helpers */
 
 #define MIN(a,b)    (((a) <= (b)) ? (a) : (b))
 #define MAX(a,b)    (((a) > (b)) ? (a) : (b))
@@ -89,4 +94,4 @@ extern clock_t _oyranos_clock;
 #define RUND(a)     ((a) + 0.5)
 
 
-#endif //OYRANOS_HELFER_H
+#endif /* OYRANOS_HELFER_H */
