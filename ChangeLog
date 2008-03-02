@@ -1,4 +1,16 @@
 
+2004-11-30
+	* neu: interne und externe API scheiden
+	* allgm: einige Funktionen kompakter
+	* neu: liboyranos Erstellen und Einbinden
+
+2004-11-29
+	* neu: DEBUG makros
+	* neu: Datei Suche in Pfadliste
+	* neu: Profilprüfung - Signatur
+	* allg: Bereinigen doppelter Texte
+	* neu: Datei und Verzeichnis Tests
+
 2004-11-27
 	* info: Anfrage Oyranos auf freedesktop.org zu hosten
 	* info: Artikel auf behrmann.info

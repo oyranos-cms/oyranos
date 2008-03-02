@@ -13,13 +13,7 @@ Oyranos (gr. Himmel):
 
 Voraussetzungen:
 
-    lcms version 1.14
-    http://www.littlecms.com
-
-    fltk 
-    http://www.fltk.org
-
-    FLU für komfortablen Browser
+  Elektra: Avi Alkalay <elektra.sf.net>
 
 Konfiguration:
 
@@ -47,15 +41,7 @@ Pläne:
 
             Kai-Uwe Behrmann <www.behrmann.name>
 
-
-lcms Farbumwandlungsbibliothek: 
-            entwickelt von Marti Maria
-
-fltk:
-            programmiert von einem Team um Bill Spitzak, und vielen anderen
-
-flu:
-            programmiert Jason Bryan <www.osc.edu/~jbryan/FLU/>
+  Elektra: Avi Alkalay <elektra.sf.net>
 
 
 ================================================================================

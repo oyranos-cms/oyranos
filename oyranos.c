@@ -33,8 +33,8 @@ int oy_debug = 0;
 #include <kdb.h>
 #include <sys/stat.h>
 
-#include "oyranos.h"
 #include "oyranos_helper.h"
+#include "oyranos_definitions.h"
 
 /* ---  Helpers  --- */
 int level_PROG = 0;
@@ -44,16 +44,44 @@ clock_t _oyranos_clock = 0;
 
 
 /* --- internal API definition --- */
-/* not oyranos specific part */
-int oyAddKey_valueComment (char* keyName, char* value, char* comment);
-int oyAddKey_value (char* keyName, char* value);
 
-char* oySearchEmptyKeyname (char* keyParentName, char* keyBaseName);
-KeySet* oyReturnChildrenList (char* keyParentName, int* rc);
+/* separate from the external functions */
+int	_oyPathsCount         (void);
+char*	_oyPathName           (int number);
+int	_oyPathAdd            (char* pathname);
+void	_oyPathRemove         (char* pathname);
+void	_oyPathSleep          (char* pathname);
+void	_oyPathActivate       (char* pathname);
 
+int	_oySetDefaultImageProfile          (char* name);
+int	_oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size);
+int	_oySetDefaultWorkspaceProfile      (char* name);
+int	_oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size);
+int	_oySetDefaultCmykProfile           (char* name);
+int	_oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size);
+
+char*	_oyGetDefaultImageProfileName      ();
+char*	_oyGetDefaultWorkspaceProfileName  ();
+char*	_oyGetDefaultCmykProfileName       ();
+
+int	_oyCheckProfile (char* name);
+int	_oyCheckProfileMem (void* mem, size_t size);
+
+/* elektra key wrapper */
+int _oyAddKey_valueComment (char* keyName, char* value, char* comment);
+int _oyAddKey_value (char* keyName, char* value);
+
+/* elektra key list handling */
+char* _oySearchEmptyKeyname (char* keyParentName, char* keyBaseName);
+KeySet* _oyReturnChildrenList (char* keyParentName, int* rc);
+
+/* complete an name from file including oyResolveDirFileName */
 char* oyMakeFullFileDirName (char* name);
+/* find an file/dir and do corrections on  ~ ; ../  */
 char* oyResolveDirFileName (char* name);
 char* oyGetHomeDir ();
+char* oyGetParent (char* name);
+
 int oyIsDir (char* path);
 int oyIsFile (char* fileName);
 int oyIsFileFull (char* fullFileName);
@@ -63,17 +91,18 @@ int   oyWriteMemToFile(char* name, void* mem, size_t size);
 char* oyReadFileToMem(char* fullFileName, size_t *size);
 
 /* oyranos part */
+/* check for the global and the users directory */
 void oyCheckDefaultDirectories ();
+/* search in profile path and in current path */
 char* oyFindProfile (char* name);
 
-// should mayby all public
 
 
 
 /* --- function definitions --- */
 
 KeySet*
-oyReturnChildrenList (char* keyParentName, int* rc)
+_oyReturnChildrenList (char* keyParentName, int* rc)
 { DBG_PROG_START
   KeySet *myKeySet = (KeySet*) malloc (sizeof(KeySet) * 1);
   ksInit(myKeySet);
@@ -85,7 +114,7 @@ oyReturnChildrenList (char* keyParentName, int* rc)
 }
 
 char*
-oySearchEmptyKeyname (char* keyParentName, char* keyBaseName)
+_oySearchEmptyKeyname (char* keyParentName, char* keyBaseName)
 { DBG_PROG_START
   char* keyName = (char*)     calloc (strlen(keyParentName)
                                     + strlen(keyBaseName) + 24, sizeof(char));
@@ -110,7 +139,7 @@ oySearchEmptyKeyname (char* keyParentName, char* keyBaseName)
 } 
 
 int
-oyAddKey_valueComment (char* keyName, char* value, char* comment)
+_oyAddKey_valueComment (char* keyName, char* value, char* comment)
 { DBG_PROG_START
   int rc;
   Key key;
@@ -127,7 +156,7 @@ oyAddKey_valueComment (char* keyName, char* value, char* comment)
 }
 
 int
-oyAddKey_value (char* keyName, char* value)
+_oyAddKey_value (char* keyName, char* value)
 { DBG_PROG_START
   int rc;
   Key key;
@@ -148,11 +177,10 @@ oyReadFileToMem(char* name, size_t *size)
   FILE *fp = 0;
   int   pt = 0;
   char* mem = 0;
-  char* filename = oyResolveDirFileName (name);
+  char* filename = name;
 
   DBG_PROG
 
-  if (oyIsFileFull(filename))
   {
     fp = fopen(filename, "r");
     DBG_PROG_S (("fp = %d filename = %s\n", (int)fp, filename))
@@ -187,7 +215,6 @@ oyReadFileToMem(char* name, size_t *size)
  
   // clean up
   if (fp) fclose (fp);
-  if (filename) free (filename); DBG_PROG
 
   DBG_PROG_ENDE
   return mem;
@@ -204,7 +231,7 @@ oyWriteMemToFile(char* name, void* mem, size_t size)
 
   DBG_PROG_S(("name = %s mem = %d size = %d\n", name, (int)mem, size))
 
-  filename = oyMakeFullFileDirName(name);
+  filename = name;
 
   {
     fp = fopen(filename, "w");
@@ -220,8 +247,6 @@ oyWriteMemToFile(char* name, void* mem, size_t size)
 
     if (fp) fclose (fp);
   }
-
-  if (filename) free (filename);
 
   DBG_PROG_ENDE
   return r;
@@ -239,6 +264,34 @@ oyGetHomeDir ()
   DBG_PROG_ENDE
   return "OS not supported yet";
   #endif
+}
+
+char*
+oyGetParent (char* name)
+{ DBG_PROG_START
+  char *parentDir = (char*) calloc ( MAX_PATH, sizeof(char)), *ptr;
+
+  sprintf (parentDir, name);
+  ptr = strrchr( parentDir, OY_SLASH_C);
+  if (ptr)
+  {
+    if (ptr[1] == 0) // ending dir separator
+    {
+      ptr[0] = 0;
+      if (strrchr( parentDir, OY_SLASH_C))
+      {
+        ptr = strrchr (parentDir, OY_SLASH_C);
+        ptr[0] = 0;
+      }
+    }
+    else
+      ptr[0] = 0;
+  }
+
+  DBG_PROG_S((parentDir))
+
+  DBG_PROG_ENDE
+  return parentDir;
 }
 
 int
@@ -388,6 +441,8 @@ oyMakeFullFileDirName (char* name)
 void
 oyCheckDefaultDirectories ()
 { DBG_PROG_START
+  char* parentDefaultUserDir;
+
   // test dirName : existing in path, default dirs are existing
   if (!oyIsDir (OY_DEFAULT_SYSTEM_PROFILE__PATH))
   { DBG_PROG
@@ -396,7 +451,17 @@ oyCheckDefaultDirectories ()
 
   if (!oyIsDir (OY_DEFAULT_USER_PROFILE_PATH))
   { DBG_PROG 
-    printf ("Try to create users default directory %s %d ",
+    parentDefaultUserDir = oyGetParent (OY_DEFAULT_USER_PROFILE_PATH);
+
+    if (!oyIsDir (parentDefaultUserDir))
+    { DBG_PROG 
+      printf ("Try to create part of users default directory %s %d \n",
+                 parentDefaultUserDir,
+      oyMakeDir( parentDefaultUserDir)); DBG_PROG
+    }
+    free (parentDefaultUserDir);
+
+    printf ("Try to create users default directory %s %d \n",
                OY_DEFAULT_USER_PROFILE_PATH,
     oyMakeDir( OY_DEFAULT_USER_PROFILE_PATH )); DBG_PROG
   }
@@ -415,8 +480,8 @@ oyFindProfile (char* fileName)
   // test for pure file without dir; search in configured paths only
   if (!strchr(fileName, OY_SLASH_C))
   {
-    char* pathName;
-    int   n_paths = oyPathsCount (),
+    char* pathName = (char*) calloc (MAX_PATH, sizeof(char));
+    int   n_paths = _oyPathsCount (),
           i;
 
     DBG_PROG_S(("pure filename found"))
@@ -424,7 +489,8 @@ oyFindProfile (char* fileName)
 
     for (i = 0; i < n_paths; i++)
     { // test profile
-      pathName = oyPathName (i);
+      char* ptr = _oyPathName (i);
+      pathName = oyMakeFullFileDirName (ptr);
       sprintf (fullFileName, "%s%s%s", pathName, OY_SLASH, fileName);
 
       DBG_PROG_S((pathName))
@@ -434,10 +500,10 @@ oyFindProfile (char* fileName)
       {
         header = oyReadFileToMem (fullFileName, &size);
         if (size >= 128)
-          success = oyCheckProfileMem (header, 128);
+          success = _oyCheckProfileMem (header, 128);
       }
 
-      if (pathName) free (pathName);
+      if (ptr) free (ptr);
       if (header) free (header);
 
       if (success) // found
@@ -446,6 +512,8 @@ oyFindProfile (char* fileName)
 
     if (!success)
       printf ("Warning : profile %s not found in colour path\n", fileName);
+
+    if (pathName) free (pathName);
 
   } else
   { // else use fileName as an full qualified name, check name and test profile
@@ -457,7 +525,7 @@ oyFindProfile (char* fileName)
       header = oyReadFileToMem (fullFileName, &size);
 
       if (size >= 128)
-        success = oyCheckProfileMem (header, 128);
+        success = _oyCheckProfileMem (header, 128);
     }
 
     if (!success)
@@ -480,14 +548,15 @@ oyFindProfile (char* fileName)
 
 /* path names API */
 
+
 int
-oyPathsCount ()
+_oyPathsCount ()
 { DBG_PROG_START
   int rc, n = 0;
   kdbOpen();
 
   // take all keys in the paths directory
-  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+  KeySet* myKeySet = _oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
   n = myKeySet->size;
 
   ksClose (myKeySet);
@@ -498,7 +567,7 @@ oyPathsCount ()
 }
 
 char*
-oyPathName (int number)
+_oyPathName (int number)
 { DBG_PROG_START
   int rc, n = 0;
   Key *current;
@@ -507,7 +576,7 @@ oyPathName (int number)
   kdbOpen();
 
   // take all keys in the paths directory
-  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+  KeySet* myKeySet = _oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
 
   if (number <= myKeySet->size)
     for (current=myKeySet->start; current; current=current->next)
@@ -528,7 +597,7 @@ oyPathName (int number)
 }
 
 int
-oyPathAdd (char* pfad)
+_oyPathAdd (char* pfad)
 { DBG_PROG_START
   int rc, n = 0;
   Key *current;
@@ -538,7 +607,7 @@ oyPathAdd (char* pfad)
   kdbOpen();
 
   // take all keys in the paths directory
-  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+  KeySet* myKeySet = _oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
 
   // search for allready included path
   for (current=myKeySet->start; current; current=current->next)
@@ -570,10 +639,10 @@ oyPathAdd (char* pfad)
   if (!n)
   {
     // search for empty keyname
-    keyName = oySearchEmptyKeyname (OY_USER_PATHS, OY_USER_PATH);
+    keyName = _oySearchEmptyKeyname (OY_USER_PATHS, OY_USER_PATH);
 
     // write key
-    rc = oyAddKey_valueComment (keyName, pfad, "");
+    rc = _oyAddKey_valueComment (keyName, pfad, "");
   }
 
   ksClose (myKeySet);
@@ -588,7 +657,7 @@ oyPathAdd (char* pfad)
 }
 
 void
-oyPathRemove (char* pfad)
+_oyPathRemove (char* pfad)
 { DBG_PROG_START
   int rc;
   Key *current;
@@ -598,7 +667,7 @@ oyPathRemove (char* pfad)
   kdbOpen();
 
   // take all keys in the paths directory
-  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+  KeySet* myKeySet = _oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
 
   // compare and erase if matches
   for (current=myKeySet->start; current; current=current->next)
@@ -617,13 +686,13 @@ oyPathRemove (char* pfad)
   free (keyName);
   free (value);
 
-  oyPathAdd (OY_DEFAULT_USER_PROFILE_PATH);
+  _oyPathAdd (OY_DEFAULT_USER_PROFILE_PATH);
 
   DBG_PROG_ENDE
 }
 
 void
-oyPathSleep (char* pfad)
+_oyPathSleep (char* pfad)
 { DBG_PROG_START
   int rc;
   Key *current;
@@ -632,7 +701,7 @@ oyPathSleep (char* pfad)
   kdbOpen();
 
   // take all keys in the paths directory
-  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+  KeySet* myKeySet = _oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
 
   // set "SLEEP" in comment
   for (current=myKeySet->start; current; current=current->next)
@@ -653,7 +722,7 @@ oyPathSleep (char* pfad)
 }
 
 void
-oyPathActivate (char* pfad)
+_oyPathActivate (char* pfad)
 { DBG_PROG_START
   int rc;
   Key *current;
@@ -662,7 +731,7 @@ oyPathActivate (char* pfad)
   kdbOpen();
 
   // take all keys in the paths directory
-  KeySet* myKeySet = oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
+  KeySet* myKeySet = _oyReturnChildrenList(OY_USER_PATHS, &rc ); ERR
 
   // erase "SLEEP" from comment
   for (current=myKeySet->start; current; current=current->next)
@@ -685,118 +754,142 @@ oyPathActivate (char* pfad)
 /* default profiles API */
 
 int
-oySetDefaultImageProfile          (char* name)
-{ DBG_PROG_START
-  int r =
-  oyAddKey_valueComment (OY_DEFAULT_IMAGE_PROFILE, name, "");
-
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultWorkspaceProfile      (char* name)
+_oySetDefaultProfile      (char* name, char* typ)
 { DBG_PROG_START
   int r;
-  char *ptr = strrchr(name , OY_SLASH_C);
+  char *fileName = 0;
 
-  if ( oyCheckProfile (name) )
-  { DBG
-  // TODO accept all sort of directory name combinations
-    if (ptr)
-    { r =
-      oyAddKey_valueComment (OY_DEFAULT_WORKSPACE_PROFILE, name, "");
-      DBG_PROG_S((name))
-    } else {
-      r =
-      oyAddKey_valueComment (OY_DEFAULT_WORKSPACE_PROFILE, ptr, "");
-      DBG_PROG_S((ptr))
+  if (strrchr(name , OY_SLASH_C))
+  {
+    fileName = strrchr(name , OY_SLASH_C);
+    fileName++;
+  }
+  else
+    fileName = name;
+
+  DBG_PROG_S(("name = %s", name))
+
+  if ( _oyCheckProfile (fileName) )
+  { DBG_PROG_S(("set fileName = %s as default %s profile\n",fileName, typ))
+      if (strstr (typ , "Image"))
+        r =
+        _oyAddKey_valueComment (OY_DEFAULT_IMAGE_PROFILE, fileName, "");
+      else
+      if (strstr (typ , "Workspace"))
+        r =
+        _oyAddKey_valueComment (OY_DEFAULT_WORKSPACE_PROFILE, fileName, "");
+      else
+      if (strstr (typ , "Cmyk"))
+        r =
+        _oyAddKey_valueComment (OY_DEFAULT_CMYK_PROFILE, fileName, "");
+      else
+        printf ("!!! ERROR typ %s type does not exist for default profiles",__FILE__,__LINE__, typ);
+  }
+
+  DBG_PROG_ENDE
+  return r;
+}
+
+int
+_oySetDefaultImageProfile          (char* name)
+{ DBG_PROG_START
+  int r = _oySetDefaultProfile (name, "Image");
+  DBG_PROG_ENDE
+  return r;
+}
+
+int
+_oySetDefaultWorkspaceProfile      (char* name)
+{ DBG_PROG_START
+  int r = _oySetDefaultProfile (name, "Workspace");
+  DBG_PROG_ENDE
+  return r;
+}
+
+int
+_oySetDefaultCmykProfile           (char* name)
+{ DBG_PROG_START
+  int r = _oySetDefaultProfile (name, "Cmyk");
+  DBG_PROG_ENDE
+  return r;
+}
+
+int
+_oySetDefaultProfileBlock (char* name, void* mem, size_t size, char* typ)
+{ DBG_PROG_START
+  int r = 0;
+  char *fullFileName, *fileName, *resolvedFN;
+
+  if (strrchr (name, OY_SLASH_C))
+    fileName = strrchr (name, OY_SLASH_C);
+  else
+    fileName = name;
+
+  fullFileName = (char*) calloc (sizeof(char),
+                  strlen(OY_DEFAULT_USER_PROFILE_PATH) + strlen (fileName) + 4);
+
+  sprintf (fullFileName, "%s%s%s",
+           OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, fileName);
+
+  resolvedFN = oyResolveDirFileName (fullFileName);
+  free (fullFileName);
+  fullFileName = resolvedFN;
+
+  if (_oyCheckProfileMem( mem, size))
+  {
+    DBG_PROG_S((fullFileName))
+    if ( oyIsFile(fullFileName) )
+      printf ("Warning : file %s exist , please remove befor installing new profile\n", fullFileName);
+    else
+    { r = oyWriteMemToFile (fullFileName, mem, size);
+      if (strstr (typ , "Image"))
+        _oySetDefaultImageProfile (fileName);
+      else
+      if (strstr (typ , "Workspace"))
+        _oySetDefaultWorkspaceProfile (fileName);
+      else
+      if (strstr (typ , "Cmyk"))
+        _oySetDefaultCmykProfile (fileName);
+      else
+        printf ("!!! ERROR typ %s type does not exist for default profiles",__FILE__,__LINE__, typ);
     }
-  }
-
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultCmykProfile           (char* name)
-{ DBG_PROG_START
-  int r =
-  oyAddKey_valueComment (OY_DEFAULT_CMYK_PROFILE, name, "");
-
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int r = 0;
-  char* fileName = (char*) calloc (sizeof(char),
-                      strlen(OY_DEFAULT_USER_PROFILE_PATH) + strlen (name) + 4);
-
-  sprintf (fileName, "%s%s%s", OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, name);
-
-  if (oyCheckProfileMem( mem, size))
-  { r = oyWriteMemToFile (fileName, mem, size);
-    oySetDefaultImageProfile (name);
-  }
-
-  free (fileName);
-
-  DBG_PROG_ENDE
-  return r;
-}
-
-int
-oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size)
-{ DBG_PROG_START
-  int r = 0;
-  char* fileName;
-
-  //TODO
-  strrchr (name, OY_SLASH_C);
-  fileName = (char*) calloc (sizeof(char),
-                      strlen(OY_DEFAULT_USER_PROFILE_PATH) + strlen (name) + 4);
-
-  sprintf (fileName, "%s%s%s", OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, name);
-
-  if (oyCheckProfileMem( mem, size))
-  { r = oyWriteMemToFile (fileName, mem, size);
-    oySetDefaultWorkspaceProfile (name);
   }
 
   DBG_PROG_S(("%s", name))
   DBG_PROG_S(("%s", fileName))
   DBG_PROG_S(("%d %d", &((char*)mem)[0] , size))
-  free (fileName);
+  free (fullFileName);
 
   DBG_PROG_ENDE
   return r;
 }
 
 int
-oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size)
+_oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size)
 { DBG_PROG_START
-  int r = 0;
-  char* fileName = (char*) calloc (sizeof(char),
-                      strlen(OY_DEFAULT_USER_PROFILE_PATH) + strlen (name) + 4);
+  int r = _oySetDefaultProfileBlock (name, mem, size, "Image");
+  DBG_PROG_ENDE
+  return r;
+}
 
-  sprintf (fileName, "%s%s%s", OY_DEFAULT_USER_PROFILE_PATH, OY_SLASH, name);
+int
+_oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size)
+{ DBG_PROG_START
+  int r = _oySetDefaultProfileBlock (name, mem, size, "Workspace");
+  DBG_PROG_ENDE
+  return r;
+}
 
-  if (oyCheckProfileMem( mem, size))
-  { r = oyWriteMemToFile (fileName, mem, size);
-    oySetDefaultCmykProfile (name);
-  }
-
-  free (fileName);
-
+int
+_oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size)
+{ DBG_PROG_START
+  int r = _oySetDefaultProfileBlock (name, mem, size, "Cmyk");
   DBG_PROG_ENDE
   return r;
 }
 
 char*
-oyGetDefaultImageProfileName      ()
+_oyGetDefaultImageProfileName      ()
 { DBG_PROG_START
   char* name = (char*) calloc (MAX_PATH, sizeof(char));
   
@@ -808,7 +901,7 @@ oyGetDefaultImageProfileName      ()
 }
 
 char*
-oyGetDefaultWorkspaceProfileName  ()
+_oyGetDefaultWorkspaceProfileName  ()
 { DBG_PROG_START
   char* name = (char*) calloc (MAX_PATH, sizeof(char));
 
@@ -820,7 +913,7 @@ oyGetDefaultWorkspaceProfileName  ()
 }
 
 char*
-oyGetDefaultCmykProfileName       ()
+_oyGetDefaultCmykProfileName       ()
 { DBG_PROG_START
   char* name = (char*) calloc (MAX_PATH, sizeof(char));
 
@@ -835,7 +928,7 @@ oyGetDefaultCmykProfileName       ()
 /* profile check API */
 
 int
-oyCheckProfile (char* name)
+_oyCheckProfile (char* name)
 { DBG_PROG_START
   char *fullName = 0;
   char* header; 
@@ -851,7 +944,7 @@ oyCheckProfile (char* name)
     header = oyReadFileToMem (fullName, &size); DBG_PROG
 
   if (size >= 128)
-    r = oyCheckProfileMem (header, 128);
+    r = _oyCheckProfileMem (header, 128);
   DBG_NUM_S(("oyCheckProfileMem = %d",r))
 
   DBG_PROG_ENDE
@@ -859,7 +952,7 @@ oyCheckProfile (char* name)
 }
 
 int
-oyCheckProfileMem (void* mem, size_t size)
+_oyCheckProfileMem (void* mem, size_t size)
 { DBG_PROG_START
   char* block = (char*) mem;
   int offset = 36;
@@ -881,5 +974,147 @@ oyCheckProfileMem (void* mem, size_t size)
     return 0;
   }
 }
+
+
+
+/* --- internal API hidding --- */
+
+#include "oyranos.h"
+
+int
+oyPathsCount         (void)
+{ DBG_PROG_START
+  int n = _oyPathsCount();
+  DBG_PROG_ENDE
+  return n;
+}
+
+char*
+oyPathName           (int number)
+{ DBG_PROG_START
+  char* name = _oyPathName (number);
+  DBG_PROG_ENDE
+  return name;
+}
+
+int
+oyPathAdd            (char* pathname)
+{ DBG_PROG_START
+  int n = _oyPathAdd (pathname);
+  DBG_PROG_ENDE
+  return n;
+}
+
+void
+oyPathRemove         (char* pathname)
+{ DBG_PROG_START
+  _oyPathRemove (pathname);
+  DBG_PROG_ENDE
+}
+
+void
+oyPathSleep          (char* pathname)
+{ DBG_PROG_START
+  _oyPathSleep (pathname);
+  DBG_PROG_ENDE
+}
+
+void
+oyPathActivate       (char* pathname)
+{ DBG_PROG_START
+  _oyPathActivate (pathname);
+  DBG_PROG_ENDE
+}
+
+
+int
+oySetDefaultImageProfile          (char* name)
+{ DBG_PROG_START
+  int n =  _oySetDefaultImageProfile (name);
+  DBG_PROG_ENDE
+  return n;
+}
+
+int
+oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size)
+{ DBG_PROG_START
+  int n = _oySetDefaultImageProfileBlock (name, mem, size);
+  DBG_PROG_ENDE
+  return n;
+}
+
+int
+oySetDefaultWorkspaceProfile      (char* name)
+{ DBG_PROG_START
+  int n = _oySetDefaultWorkspaceProfile (name);
+  DBG_PROG_ENDE
+  return n;
+}
+
+int
+oySetDefaultWorkspaceProfileBlock (char* name, void* mem, size_t size)
+{ DBG_PROG_START
+  int n = _oySetDefaultWorkspaceProfileBlock (name, mem, size);
+  DBG_PROG_ENDE
+  return n;
+}
+
+int
+oySetDefaultCmykProfile           (char* name)
+{ DBG_PROG_START
+  int n = _oySetDefaultCmykProfile (name);
+  DBG_PROG_ENDE
+  return n;
+}
+
+int
+oySetDefaultCmykProfileBlock      (char* name, void* mem, size_t size)
+{ DBG_PROG_START
+  int n = _oySetDefaultCmykProfileBlock (name, mem, size);
+  DBG_PROG_ENDE
+  return n;
+}
+
+char*
+oyGetDefaultImageProfileName      ()
+{ DBG_PROG_START
+  char* name = _oyGetDefaultImageProfileName ();
+  DBG_PROG_ENDE
+  return name;
+}
+
+char*
+oyGetDefaultWorkspaceProfileName  ()
+{ DBG_PROG_START
+  char* name = _oyGetDefaultWorkspaceProfileName ();
+  DBG_PROG_ENDE
+  return name;
+}
+
+char*
+oyGetDefaultCmykProfileName       ()
+{ DBG_PROG_START
+  char* name = _oyGetDefaultCmykProfileName ();
+  DBG_PROG_ENDE
+  return name;
+}
+
+
+int
+oyCheckProfile (char* name)
+{ DBG_PROG_START
+  int n = _oyCheckProfile (name);
+  DBG_PROG_ENDE
+  return n;
+}
+
+int
+oyCheckProfileMem (void* mem, size_t size)
+{ DBG_PROG_START
+  int n = _oyCheckProfileMem (mem, size);
+  DBG_PROG_ENDE
+  return n;
+}
+
 
 

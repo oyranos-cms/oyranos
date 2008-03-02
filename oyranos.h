@@ -31,12 +31,11 @@
 #ifndef OYRANOS_H
 #define OYRANOS_H
 
+#include "oyranos_definitions.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#define OY_DEFAULT_USER_PROFILE_PATH "~/.color/icc"
-#define OY_DEFAULT_SYSTEM_PROFILE__PATH "/usr/share/color/icc"
 
 
 /*
@@ -44,23 +43,8 @@ extern "C" {
  * configure system wide settings
  */
 
-/* --- definitions --- */
-#define OY_SLASH                 "/"
-#define OY_SLASH_C               '/'
-#define OY_KEY                   "sw/oyranos"
-#define OY_SYS                   "system/"
-#define OY_USER                  "user/"
-
-#ifndef MAX_PATH
-#define MAX_PATH 1024
-#endif
-
-#define OY_SLEEP "SLEEP"
 
 /* path names */
-
-#define OY_USER_PATHS            OY_USER OY_KEY OY_SLASH "paths"
-#define OY_USER_PATH             "path"
 
 int	oyPathsCount         (void);
 char*	oyPathName           (int number);
@@ -71,10 +55,6 @@ void	oyPathActivate       (char* pathname);
 
 
 /* --- default profiles --- */
-
-#define OY_DEFAULT_IMAGE_PROFILE     OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_image"
-#define OY_DEFAULT_WORKSPACE_PROFILE OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_workspace"
-#define OY_DEFAULT_CMYK_PROFILE      OY_USER OY_KEY OY_SLASH "default" OY_SLASH "profile_cmyk"
 
 int	oySetDefaultImageProfile          (char* name);
 int	oySetDefaultImageProfileBlock     (char* name, void* mem, size_t size);
@@ -163,7 +143,6 @@ int	oySetProfileProperty              (char* profilename,
                                            char* value);
 
 /* measure the output and check the consistency for quality ashurance */
-
 
 // debugging variable - set 0 to off (default), set 1 to switch debugging on
 extern int oy_debug;

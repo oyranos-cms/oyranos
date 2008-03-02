@@ -29,8 +29,9 @@
 
 #include <kdb.h>
 #include <time.h>
+#include <stdlib.h>
 
-#include "oyranos.h"
+#include <oyranos.h>
 
 
 int
@@ -70,11 +71,9 @@ main()
     free (name);
   }
 
-
   oyPathRemove(a);
 
   printf ("count of paths after removing one = %d\n", oyPathsCount());
-  oy_debug = 1;
 
   oySetDefaultCmykProfile ("CMYK.icc");
 
@@ -84,34 +83,35 @@ main()
 
     r=oySetDefaultWorkspaceProfileBlock ("example_workspace.icm", profil, 3000);
     if (r)
-      printf ("profil = %lu written  %s\n", profil, "example_workspace.icm");
+      printf ("profil = %d written  %s\n", (int)profil, "example_workspace.icm");
     else
-      printf ("profil = %lu invalid  %s\n", profil, "example_workspace.icm");
+      printf ("profil = %d invalid  %s\n", (int)profil, "example_workspace.icm");
       
     free (profil);
 
     // take an real file as input
     size_t size;
-    char* pn = "~/.color/S20040909.icm";
-    profil = oyReadFileToMem (pn, &size);
+    char* pn = "~/.color_no/S20040909.icm";
+    profil = oyReadFileToMem ("/home/kuwe/.color_no/S20040909.icm", &size);
 
-    printf ("size = %d pos = %lu\n",size, (int) profil);
-    r=oySetDefaultWorkspaceProfileBlock ("ex_workspace.icm", profil, size);
-    oy_debug = 1;
+    printf ("size = %u pos = %d\n",size, (int) profil);
+    if (profil)
+      r=oySetDefaultWorkspaceProfileBlock ("ex_workspace.icm", profil, size);
+//    oy_debug = 1;
     r=oySetDefaultWorkspaceProfile("~/.color/../.color/icc/ex_workspace.icm");
-    oy_debug = 0;
+//    oy_debug = 0;
     if (r)
-      printf ("profil = %lu written  %s\n", profil, "ex_workspace.icm");
+      printf ("profil = %d written  %s\n", (int)profil, "ex_workspace.icm");
     else
-      printf ("profil = %lu invalid  %s\n", profil, "ex_workspace.icm");
+      printf ("profil = %d invalid  %s\n", (int)profil, "ex_workspace.icm");
       
     free (profil);
 
     printf ("%s exist %d\n", pn, oyCheckProfile(pn));
   }
 
-  printf ("%lu CLOCKS_PER_SEC %d\n", clock(), CLOCKS_PER_SEC);
-  printf ("%d\n", clock());
+  printf ("%d CLOCKS_PER_SEC %ld\n", (int)clock(), CLOCKS_PER_SEC);
+  printf ("%d\n", (int)clock());
 
   { char* name = oyGetDefaultImageProfileName();
     printf ("default %s profile = %s\n", OY_DEFAULT_IMAGE_PROFILE, name);
@@ -121,7 +121,6 @@ main()
     printf ("default %s profile = %s\n", OY_DEFAULT_CMYK_PROFILE, name);
     free (name);
   }
-
 
   return 0;
 }

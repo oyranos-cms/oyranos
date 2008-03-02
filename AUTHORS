@@ -5,7 +5,5 @@ Oyranos: Kai-Uwe Behrmann <www.behrmann.name>
 
 
 Oyranos benutzt forgende Bibliotheken:
-  fltk (statisch eigebunden): Bill Spitzack und andere <www.fltk.org>
-  flu (statisch eigebunden): Jason Bryan <www.osc.edu/~jbryan/FLU/>
   Elektra: Avi Alkalay <elektra.sf.net>
 

@@ -2,6 +2,10 @@ CC=cc
 CXX=c++
 MAKEDEPEND	= /usr/X11R6//bin/makedepend -Y
 OPTS=-Wall -g -O2
+COLLECT = ar cru
+RANLIB = ranlib
+LNK = ln -s
+RM = rm -f
 
 prefix		= /opt/local
 exec_prefix	= ${prefix}
@@ -12,6 +16,16 @@ libdir		= ${exec_prefix}/lib
 mandir		= ${prefix}/man
 srcdir		= .
 
+TARGET  = oyranos
+
+VERSION_A = 0
+VERSION_B = 0
+VERSION_C = 1
+VERSION = $(VERSION_A).$(VERSION_B).$(VERSION_C)
+LIBSONAMEFULL = lib$(TARGET).so.$(VERSION)
+LIBSONAME = lib$(TARGET).so.$(VERSION_A)
+LIBNAME = lib$(TARGET).a
+
 #APPLE = 1
 FLU = 1
 DL = --ldflags # --ldstaticflags
@@ -20,8 +34,11 @@ ifdef FLU
 FLU_H = -DHAVE_FLU
 endif
 
+LINK_FLAGS = -shared -Wl,-soname -Wl,$(LIBSONAME)
+
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
-INCL=-I$(includedir) -I/usr/X11R6/include -I./
+INCL=-I$(includedir) -I/usr/X11R6/include -I$(srcdir)
+CFLAGS = $(OPTS) $(INCL)
 
 X11_LIBS=#-L/usr/X11R6/lib -lXinerama -lXft
 
@@ -40,6 +57,7 @@ LDLIBS = -L$(libdir) -L./ $(FLTK_LIBS) \
 
 CPP_HEADERS = \
 	oyranos.h \
+	oyranos_definitions.h \
 	oyranos_helper.h
 #	fl_oyranos.h
 CFILES = \
@@ -57,7 +75,6 @@ FLUID = #\
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) test.c
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o)
-TARGET  = oyranos
 
 REZ     = /Developer/Tools/Rez -t APPL -o $(TARGET) /opt/local/include/FL/mac.r
 ifdef APPLE
@@ -75,24 +92,24 @@ all:	$(TARGET)
 
 $(TARGET):	$(OBJECTS)
 	echo Linking $@...
-	$(CC) $(OPTS) -o $(TARGET) \
+	$(CC) $(OPTS) $(LINK_FLAGS) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	$(LDLIBS) \
 	$(APPLE)
+	$(RM) $(LIBSONAME) && $(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
 
-test:	$(OBJECTS) test.o
-	$(CC) $(OPTS) -o test \
-	$(OBJECTS) \
-	test.o \
-	$(LDLIBS) 
-	$(APPLE)
+$(LIBSONAMEFULL):	$(TARGET)
 
-static:		$(OBJECTS)
+static:	$(TARGET)
 	echo Linking $@...
-	$(CC) $(OPTS) -o $(TARGET) \
-	$(OBJECTS) \
-	$(LDLIBS) -static -ljpeg -lpng -lX11 -lpthread -lz -ldl \
-	-lfreetype -lfontconfig -lXrender -lXext -lexpat
+	$(COLLECT) $(LIBNAME) $(OBJECTS)
+	$(RANLIB) $(LIBNAME)
+
+test:	$(LIBSONAMEFULL) test.o
+	$(CC) $(OPTS) -o test \
+	test.o \
+	$(LIBSONAMEFULL) -Wl,--rpath -Wl,$(srcdir) \
+	$(LDLIBS) 
 	$(APPLE)
 
 
