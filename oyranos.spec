@@ -1,10 +1,10 @@
 Summary: Colour Management System
 Name: oyranos
-Version: 0.0.2
-Release: 2
+Version: 0.1.0
+Release: 1
 License: GPL,LGPL
 Group: Development/Libraries
-Source: oyranos_0.0.2.tar.gz
+Source: oyranos_0.1.0.tar.gz
 #Source: http://www.behrmann.name/index.php?option=com_content&task=view&id=34&Itemid=68
 URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann
