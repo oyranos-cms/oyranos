@@ -49,7 +49,7 @@ msgid "Gamut Warning"
 msgstr "Farb Warnung"
 
 msgid "Mark out of gamut colours for the proofing profile."
-msgstr "Kennzeichne Farben ausserhalb des nachgeahmten Gerätes"
+msgstr "Kennzeichne Farben ausserhalb des nachgebildeten Gerätes"
 
 #: oyranos.c:744 oyranos.c:762 oyranos.c:771
 msgid "No"
@@ -60,7 +60,7 @@ msgstr "Fotografisch"
 
 #: oyranos.c:750
 msgid "Proofing Rendering Intent"
-msgstr "Nachahmungssübertragungsart"
+msgstr "Nachbildungsübertragung"
 
 #: oyranos.c:735 oyranos.c:753
 msgid "Relative Colorimetric"
@@ -134,11 +134,11 @@ msgstr "Erwarteter Farbraum für Farben ohne Farbprofil"
 
 #: oyranos.c:531 oyranos.c:559 oyranos.c:677
 msgid "Proofing"
-msgstr "Nachahmung"
+msgstr "Nachbildung"
 
 #: oyranos.c:532
 msgid "Colour Space for Simulating real devices"
-msgstr "Farbraum für die Nachahmung eines Gerätes (Simulation)"
+msgstr "Farbraum für die Nachbildung eines Gerätes (Simulation)"
 
 #: oyranos.c:535 oyranos_config_fltk.cxx:1572
 msgid "Paths"
@@ -166,7 +166,7 @@ msgstr "Einstellungen für das Verhalten unter verschiedenen Umständen"
 
 #: oyranos.c:547
 msgid "Rendering"
-msgstr "Übertragungsfunktion"
+msgstr "Übertragung"
 
 #: oyranos.c:548
 msgid ""
@@ -177,7 +177,7 @@ msgstr ""
 
 #: oyranos.c:551
 msgid "Save Mixed colour space Documents"
-msgstr "Speichern von Dokumenten in gemischten Farbräumen"
+msgstr "Gemischte Farbräume"
 
 #: oyranos.c:552
 msgid "Default Handling of Mixed Colour Spaces inside one single Document"
@@ -186,7 +186,7 @@ msgstr ""
 
 #: oyranos.c:555
 msgid "Missmatching"
-msgstr "Nichtübereinstimmung"
+msgstr "Abweichung"
 
 #: oyranos.c:556
 msgid ""
@@ -197,7 +197,7 @@ msgstr ""
 
 #: oyranos.c:560
 msgid "Default Proofing Settings"
-msgstr "Standard Übertragungsart für Gerätenachahmung"
+msgstr "Standard Einstellungen für Nachbildung"
 
 #: oyranos.c:563
 msgid "All"
@@ -245,7 +245,7 @@ msgstr "Vermutete XYZ Quelle"
 
 #: oyranos.c:633
 msgid "Assigning an untagged XYZ Image an colour space"
-msgstr "Weise ein einem XYZ Bild ohne Profil ein Farbraum zu"
+msgstr "Weise einem XYZ Bild ohne Profil ein Farbraum zu"
 
 #: oyranos.c:641
 msgid "Assumed Lab source"
@@ -253,7 +253,7 @@ msgstr "Vermutete Lab Quelle"
 
 #: oyranos.c:642
 msgid "Assigning an untagged CIE*Lab Image an colour space"
-msgstr "Weise ein einem CIE*Lab Bild ohne Profil ein Farbraum zu"
+msgstr "Weise einem CIE*Lab Bild ohne Profil ein Farbraum zu"
 
 #: oyranos.c:650
 msgid "Assumed Rgb source"
@@ -261,7 +261,7 @@ msgstr "Vermutete Rgb Quelle"
 
 #: oyranos.c:651
 msgid "Assigning an untagged Rgb Image an colour space"
-msgstr "Weise ein einem Rgb Bild ohne Profil ein Farbraum zu"
+msgstr "Weise einem Rgb Bild ohne Profil ein Farbraum zu"
 
 #: oyranos.c:659
 msgid "Assumed Web source"
@@ -283,7 +283,7 @@ msgstr "Weise einem nicht festgeschriebenen Cmyk Bild diesen Farbraum zu"
 
 #: oyranos.c:678
 msgid "Colour space for Simulating an Output Device"
-msgstr "Farbraum zur Nachahmung eines Ausgabegerätes"
+msgstr "Farbraum zur Nachbildung eines Ausgabegerätes"
 
 #: oyranos.c:687
 msgid "No Image profile"
@@ -378,19 +378,19 @@ msgstr "Nachbildung am Bildschirm"
 #: oyranos.c:760
 msgid "Behaviour for Softproofing view at application startup"
 msgstr ""
-"Verhalten für die Gerätenachahmung mit dem Standardsimulationsprofil am "
+"Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil am "
 "Bildschirm beim Programmstart"
 
 #: oyranos.c:768
 msgid "Hardproof by Default"
-msgstr "Nachahmung beim Ausdruck"
+msgstr "Nachbildung beim Ausdruck"
 
 #: oyranos.c:769
 msgid ""
 "Behaviour for preselecting Hardproofing with Standard Proofing Profile at "
 "print time"
 msgstr ""
-"Verhalten für die Gerätenachahmung mit dem Standardsimulationsprofil auf dem "
+"Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf dem "
 "Drucker beim Programmstart"
 
 #: oyranos.c:2198

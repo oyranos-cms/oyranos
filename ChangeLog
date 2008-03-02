@@ -1,3 +1,9 @@
+2006-07-29
+	* and: fixed fl_i18n for destroying locale settings
+
+2006-07-28
+	* and: do a german translation
+
 2006-07-26
 	* new: parse xml for pot file generation
 	* new: install doxygen files

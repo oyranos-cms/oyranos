@@ -38,6 +38,7 @@ LDLIBS = -L$(libdir) -L. \
 
 CPP_HEADERS = \
 	$(TARGET).h \
+	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
 	$(TARGET)_definitions.h \
@@ -49,6 +50,7 @@ CPP_HEADERS = \
 CFILES = \
 	$(TARGET).c \
 	$(TARGET)_helper.c \
+	$(TARGET)_misc.c \
 	$(TARGET)_sentinel.c
 CFILESC = \
 	$(TARGET)_debug.c

@@ -1,7 +1,7 @@
 /**
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2005  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2006  Kai-Uwe Behrmann
  *
  * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -352,6 +352,10 @@ int    oyCmmGetOptionRanges          ( const char *cmm,
                                        oyGROUP    *oy_group_end,
                                        oyOPTION   *oy_option_start,
                                        oyOPTION   *oy_option_end );
+
+
+void   oyI18NSet                     ( int active,
+                                       int reserved );
 
 #ifdef __cplusplus
 } /* extern "C" */

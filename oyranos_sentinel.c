@@ -54,21 +54,28 @@ char *domain_path = LOCALEDIR;
 void oyExportStart_()
 {
   oyInit_();
-#ifdef USE_GETTEXT
+#ifdef USE_GETTEXT_
+  WARN_S((_("Yes")))
   {
-    setlocale(LC_MESSAGES, "");
 
     {
-      old_td = textdomain( NULL );
-      old_bdtd = bindtextdomain( old_td, NULL );
+    char *t2=0;
+      //old_td = textdomain( 0 );
+      //old_bdtd = bindtextdomain( old_td, 0);
 
-      //if((old_td && (strcmp(old_td, domain) != 0)) ||
-        // !old_td)
+      if((old_td && (strcmp(old_td, domain) != 0)) ||
+         !old_td)
       {
+        setlocale(LC_MESSAGES, "");
         domain_path = bindtextdomain (domain, LOCALEDIR);
         if(!domain_path)
           domain_path = bindtextdomain (domain, SRC_LOCALEDIR);
-        textdomain( domain );
+        t2 = textdomain( domain );
+        WARN_S(("Setting textdomain from %s in %s\n to %s in %s", old_td, old_bdtd, t2, domain_path ))
+      } else
+      {
+        WARN_S(("no textdomain changed %s %s", old_td, domain))
+        WARN_S((" from %s in %s\n to %s in %s", textdomain(old_td), bindtextdomain(old_td,old_bdtd), t2, domain_path ))
       }
     }
   }
@@ -77,15 +84,20 @@ void oyExportStart_()
 
 void oyExportEnd_()
 {
-#ifdef USE_GETTEXT
+#ifdef USE_GETTEXT_
   {
-    //if(old_td && (strcmp(old_td, domain) != 0))
+    char *t1=0, *t2=0;
+    if(old_td && (strcmp(old_td, domain) != 0))
     {
-      if(old_bdtd)
-        bindtextdomain( old_td, old_bdtd );
-      textdomain( old_td );
-      DBG_PROG_S(("Setting back to old textdomain: %s in %s", old_td, old_bdtd))
-    }
+      setlocale(LC_MESSAGES, "");
+      if(old_bdtd) {
+        t1 = bindtextdomain( old_td, old_bdtd );
+        WARN_S(("bindtextdomain done"))
+      }
+      t2 = textdomain( old_td );
+      WARN_S(("Setting back to old textdomain: %s in %s\n%s in %s", old_td, old_bdtd, t2, t1 ))
+    } else
+      WARN_S(("no textdomain changed %s %s", old_td, domain))
   }
 #endif
 }
@@ -98,6 +110,13 @@ void oyInit_()
     return;
   initialised = 1;
 
+#ifdef USE_GETTEXT
+  {
+    setlocale(LC_MESSAGES, "");
+    putenv("NLSPATH=" LOCALEDIR); // Solaris
+    bindtextdomain( "oyranos", LOCALEDIR );
+  }
+#endif
 }
 
 

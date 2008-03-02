@@ -107,7 +107,7 @@ Function {setPolicy( int i )} {} {
   updateUI();} {}
 } 
 
-Function {getPolicyName()} {return_type {const char*}
+Function {getPolicyName()} {open return_type {const char*}
 } {
   code {int count = 0;
   const char** policy_list = getPolicies( &count );
@@ -115,7 +115,11 @@ Function {getPolicyName()} {return_type {const char*}
 
   for( int i = 0; i < count; ++i )
   {
+    oyI18NSet(0,0);
     char *xml = oyPolicyToXML (oyGROUP_ALL, 0, myAllocFunc);
+    oyI18NSet(1,0);
+    std::cout << xml <<std::endl;
+    
     char *data = 0;
 
     const char* fname = policy_list[2*i+1];
@@ -144,7 +148,8 @@ Function {getPolicyName()} {return_type {const char*}
     if(xml)  delete [] xml;
   }
 
-  return name;} {}
+  return name;} {selected
+  }
 } 
 
 Function {getPolicies( int *count )} {return_type {const char**}
@@ -558,7 +563,7 @@ class Option {: {public OyFlPack} private
   }
 } 
 
-class ProfilePath {open : {public Fl_Pack} private
+class ProfilePath {: {public Fl_Pack} private
 } {
   decl {Fl_Box   *box;
   int       n;
@@ -934,7 +939,7 @@ Function {updateUI()} {} {
   policy_box->label( getPolicyName() );} {}
 } 
 
-Function {} {open C
+Function {} {C
 } {
   code {Fl::scheme("plastic");
 
@@ -1013,12 +1018,10 @@ Function {} {open C
 
   if(is_path >= 0) {
     fl_initialise_locale ( "oyranos", locale_paths[is_path] );
-    WARN_S(( _("locale found in: %s"), locale_paths[is_path] ))
-    WARN_S((_("Saturation")))
   }} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {35 601 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {36 620 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
@@ -1093,7 +1096,7 @@ Function {} {open C
       xywh {160 371 255 35} type HORIZONTAL
     } {
       Fl_Box {} {
-        label {Active Policy:} selected
+        label {Active Policy:}
         xywh {160 371 120 35} align 24
       }
       Fl_Box policy_box {
@@ -1102,8 +1105,7 @@ Function {} {open C
       }
     }
   }
-  code {createUI();
-  //oy_debug=1;} {}
+  code {createUI();} {}
 } 
 
 Function {listWindow( Fl_Widget *w )} {} {

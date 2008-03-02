@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2005  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2006  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -37,6 +37,7 @@
 
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_cmms.h"
 #include "oyranos_internal.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
@@ -55,23 +56,6 @@ int oy_warn_ = 1;
 #define OY_WEB_RGB "sRGB.icc"
 
 /* --- structs, typedefs, enums --- */
-
-/** @brief the internal only used structure for UI text strings
- */
-typedef struct {
-  oyOPTION    id;               /**< option */
-  oyOPTION_TYPE type;           /**< type */
-  oyGROUP     categories[10];   /**< layout for categories */
-  const char *label;            /**< label for setting */
-  const char *description;      /**< description for setting */
-  int         choices;          /**< number of options */
-  const char *choice_list[10];  /**< label for each choice */
-# if 0
-  const char *choice_desc[10];  /**< description for each choices */
-# endif
-  const char *config_string;    /**< full key name to store configuration */
-  const char *config_string_xml;/**< key name to store configuration */
-} oyOption_t;
 
 
 /* --- internal API definition --- */
@@ -268,6 +252,10 @@ char*       oyWriteOptionToXML_(oyGROUP           group,
                     char             *mem,
                     int               oytmplen);
 
+/* miscellaneous */
+void   oyI18NSet_                    ( int active,
+                                       int reserved );
+
 /* small helpers */
 #define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
 
@@ -452,30 +440,6 @@ oyOption_t oy_option_
 
 oyGROUP oy_groups_descriptions_ = oyGROUP_ALL + 1;
 const char ***oy_groups_description_ = NULL;
-
-/** @brief the internal only used structure for external registred CMM functions
- */
-typedef struct {
-  char       *id;               /**< usually a 4 letter short name */
-  char       *libname;          /**< library to search for function */
-  char       *funcname;         /**< function for dlsym */
-  oyOPTION    opts_start;       /**< options numbers for oyGetOptionUITitle */
-  oyOPTION    opts_end;
-  oyOption_t *options;          /**< the CMM options */
-} oyExternFunc_t;
-
-/** @brief the internal only used structure for external registred CMM's
- */
-typedef struct {
-  char  id[5];                  /**< 4 letter identifier */
-  char *name;                   /**< short name */
-  char *description;            /**< long description */ // TODO help license ..
-  int   groups_start;
-  int   groups_end;             /**< the registred layouts frames */
-  oyExternFunc_t *func;         /**< the registred functions of the CMM */
-  int   funcs_n;                /**< number of provided functions */
-  char ***oy_groups;            /**< the oy_groups_description_ synonym */
-} oyCMM_t;
 
 /** @} */
 
@@ -1429,12 +1393,6 @@ oyReadXMLPolicy_(oyGROUP           group,
 
 /* CMM support */
 
-struct {
-  int      looked;
-  oyCMM_t *cmms;
-  int      n;
-} oyCMM_ = {0,NULL,0};
-
 
 oyCMM_t*
 oyCmmGet_        (const char *id)
@@ -1539,11 +1497,13 @@ oyRegisterGroups_(char *cmm, char **desc)
   return oy_groups_descriptions_-1;
 }
 
+
 int
-oyCmmRegisterXML_(oyGROUP           group,
+oyCmmGetFromXML_( oyGROUP           group,
                   const char       *xml,
                   const char       *domain,
-                  const char       *domain_path)
+                  const char       *domain_path,
+                  oyCMM_t          *cmm)
 {
 
   /* allocate memory */
@@ -1559,7 +1519,6 @@ oyCmmRegisterXML_(oyGROUP           group,
   int   count = 0, count2;
   int   i, j, k;
   int   err = 0;
-  oyCMM_t cmm;
   int base_complete = 1;
   int first_group_n = 0;
 
@@ -1567,14 +1526,17 @@ oyCmmRegisterXML_(oyGROUP           group,
 
   DBG_PROG_START
 
+
+  cmm->domain = domain;
+  cmm->domain_path = domain_path;
 #ifdef USE_GETTEXT
   setlocale(LC_MESSAGES, "");
-
+  WARN_S(("setlocale"))
   {
     char *bdtd = NULL;
 
-    old_bdtd = bindtextdomain( old_td, NULL );
     old_td = textdomain( NULL );
+    old_bdtd = bindtextdomain( old_td, NULL );
 
     if(!domain)
       domain = "oyranos";
@@ -1594,17 +1556,17 @@ oyCmmRegisterXML_(oyGROUP           group,
   cmm_group= oyXMLgetValue_(cmm_reg, "oyCMM_GROUP");
   value = oyXMLgetValue_(cmm_group, "oyID");
   if(value && strlen(value) == 4)
-    snprintf( cmm.id, 5, value );
+    snprintf( cmm->id, 5, value );
   else
     base_complete = 0;
   value = oyXMLgetValue_(cmm_group, "oyNAME");
   if(value && strlen(value))
-    cmm.name = value;
+    cmm->name = value;
   else
     base_complete = 0;
   value = _( oyXMLgetValue_(cmm_group, "oyDESCRIPTION") );
   if(value && strlen(value))
-    cmm.description = value;
+    cmm->description = value;
   groups = oyXMLgetValue_(cmm_group, "oyGROUPS");
   groupa = oyXMLgetArray_(groups, "oyGROUP", &count);
 
@@ -1619,7 +1581,7 @@ oyCmmRegisterXML_(oyGROUP           group,
     props[1] = _( oyXMLgetValue_(groupa[i], "oyNAME") );
     props[2] = _( oyXMLgetValue_(groupa[i], "oyDESCRIPTION") );
 
-    oy_group = oyRegisterGroups_(cmm.id, props);
+    oy_group = oyRegisterGroups_(cmm->id, props);
 
     if(i == 0)
       first_group_n = oy_group;
@@ -1631,8 +1593,8 @@ oyCmmRegisterXML_(oyGROUP           group,
     DBG_S(("   [%d]: %s", i, oyXMLgetValue_(groupa[i], "oyNIX")));
     DBG_S(("   [%d]: %s", i, oyGetGroupUITitle( first_group_n + i, NULL )));
   }
-  cmm.groups_start = first_group_n;
-  cmm.groups_end   = cmm.groups_start + count - 1;
+  cmm->groups_start = first_group_n;
+  cmm->groups_end   = cmm->groups_start + count - 1;
 
   options = oyXMLgetValue_(cmm_reg, "oyOPTIONS");
   option = oyXMLgetArray_(options, "oyOPTION", &count);
@@ -1658,7 +1620,6 @@ oyCmmRegisterXML_(oyGROUP           group,
     }
   }
 
-  oyCmmAdd_(&cmm);
   oy_debug=0;
 
 #ifdef USE_GETTEXT
@@ -1670,6 +1631,23 @@ oyCmmRegisterXML_(oyGROUP           group,
     DBG_PROG_S(("Setting back to old textdomain: %s in %s", old_td, old_bdtd))
   }
 #endif
+
+  DBG_PROG_ENDE
+  return err;
+}
+
+int
+oyCmmRegisterXML_(oyGROUP           group,
+                  const char       *xml,
+                  const char       *domain,
+                  const char       *domain_path)
+{
+
+  int   err = 0;
+  oyCMM_t cmm;
+
+  oyCmmGetFromXML_(group, xml, domain, domain_path, &cmm);
+  oyCmmAdd_(&cmm);
 
   DBG_PROG_ENDE
   return err;
@@ -4336,6 +4314,31 @@ oyCmmGetCmmNames       ( int        *count,
   oyExportEnd_();
   DBG_PROG_ENDE
   return ids;
+}
+/** @} */
+
+/** \addtogroup misc Miscellaneous
+ *  Miscellaneous stuff.
+
+ *  @{
+ */
+
+/** @brief  switch internationalisation of strings on or off
+ *
+ *  @param  active         bool
+ *  @param  reserved       for future use
+ */
+void 
+oyI18NSet              ( int active,
+                         int reserved )
+{
+  DBG_PROG_START
+  oyExportStart_();
+
+  oyI18NSet_(active, reserved);
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
 }
 /** @} */
 

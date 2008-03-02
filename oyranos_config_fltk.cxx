@@ -53,7 +53,11 @@ const char* getPolicyName() {
 
   for( int i = 0; i < count; ++i )
   {
+    oyI18NSet(0,0);
     char *xml = oyPolicyToXML (oyGROUP_ALL, 0, myAllocFunc);
+    oyI18NSet(1,0);
+    std::cout << xml <<std::endl;
+    
     char *data = 0;
 
     const char* fname = policy_list[2*i+1];
@@ -1534,8 +1538,6 @@ int main(int argc, char **argv) {
 
   if(is_path >= 0) {
     fl_initialise_locale ( "oyranos", locale_paths[is_path] );
-    WARN_S(( _("locale found in: %s"), locale_paths[is_path] ))
-    WARN_S((_("Saturation")))
   }
   { Fl_Double_Window* o = top_group = new Fl_Double_Window(505, 410, _("Oyranos Configuration"));
     w = o;
@@ -1602,7 +1604,6 @@ int main(int argc, char **argv) {
     o->end();
   }
   createUI();
-  //oy_debug=1;
   w->show(argc, argv);
   return Fl::run();
 }

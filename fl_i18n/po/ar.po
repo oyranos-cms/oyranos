@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eog\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2006-07-27 22:06+0200\n"
+"POT-Creation-Date: 2006-07-29 22:27+0200\n"
 "PO-Revision-Date: 2004-08-05 00:03+0300\n"
 "Last-Translator: Abdulaziz Al-Arfaj <alarfaj0@yahoo.com>\n"
 "Language-Team: Arabic <support@arabeyes.org>\n"
@@ -24,76 +24,76 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=n==1 ? 0 : n==2 ? 1 : n>=3 && n<=10 ? 2 : "
 "3\n"
 
-#: fl_i18n.cxx:172
+#: fl_i18n.cxx:171
 msgid "osX locale obtained: "
 msgstr ""
 
-#: fl_i18n.cxx:175
+#: fl_i18n.cxx:174
 msgid "osX locale not obtained"
 msgstr ""
 
-#: fl_i18n.cxx:282
+#: fl_i18n.cxx:281
 msgid "try to set LANG"
 msgstr ""
 
-#: fl_i18n.cxx:302
+#: fl_i18n.cxx:301
 msgid "try locale in "
 msgstr ""
 
-#: fl_i18n.cxx:311
+#: fl_i18n.cxx:310
 msgid "set codeset for"
 msgstr ""
 
-#: fl_i18n.cxx:344
+#: fl_i18n.cxx:343
 msgid "Add to Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:345
+#: fl_i18n.cxx:344
 #, fuzzy
 msgid "All Files (*)"
 msgstr "كل الملفّات"
 
-#: fl_i18n.cxx:346
+#: fl_i18n.cxx:345
 msgid "Custom Filter"
 msgstr ""
 
-#: fl_i18n.cxx:347
+#: fl_i18n.cxx:346
 msgid "Please choose an existing file!"
 msgstr ""
 
-#: fl_i18n.cxx:348
+#: fl_i18n.cxx:347
 msgid "Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:349
+#: fl_i18n.cxx:348
 msgid "Filename"
 msgstr ""
 
-#: fl_i18n.cxx:350
+#: fl_i18n.cxx:349
 msgid "Manage Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:352
+#: fl_i18n.cxx:351
 msgid "My Computer"
 msgstr ""
 
-#: fl_i18n.cxx:354
+#: fl_i18n.cxx:353
 msgid "Filesystems"
 msgstr ""
 
-#: fl_i18n.cxx:356
+#: fl_i18n.cxx:355
 msgid "New Directory?"
 msgstr ""
 
-#: fl_i18n.cxx:357
+#: fl_i18n.cxx:356
 msgid "Preview"
 msgstr ""
 
-#: fl_i18n.cxx:359
+#: fl_i18n.cxx:358
 msgid "Save"
 msgstr ""
 
-#: fl_i18n.cxx:361
+#: fl_i18n.cxx:360
 msgid "Show:"
 msgstr ""
 

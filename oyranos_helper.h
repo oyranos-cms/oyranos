@@ -113,7 +113,7 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
 # include <libintl.h>
 # include <locale.h>
 extern const char *domain;
-# define _(text) gettext( text )
+# define _(text) dgettext( domain, text )
 #else
 # define _(text) text
 #endif

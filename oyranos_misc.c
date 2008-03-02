@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2006  Kai-Uwe Behrmann
+ * Copyright (C) 2006  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -25,33 +25,49 @@
  * 
  */
 
-/* Date:      02. 09. 2005 */
+/* Date:      29. 07. 2006 */
 
 #include "oyranos_helper.h"
 #include "oyranos.h"
+#include "oyranos_cmms.h"
 
 #include <stdio.h>
 
 /* --- internal API definition --- */
 
-/* internal memory handling */
-void* oyAllocateFunc_           (size_t        size)
+
+const char *domain = "oyranos";
+
+
+void
+oyI18NSet_             ( int active,
+                         int reserved )
 {
-  /* we have most often to work with text arrays, so initialise with 0 */
-  void *ptr = calloc (sizeof (char), size);
+  DBG_PROG_START
 
-  if( !ptr )
-    WARN_S(( "can not allocate %d byte", (int)size ));
+  if(active)
+    domain = "";
+  else
+    domain = "oyranos";
 
-  return ptr;
+  oyI18Nrefresh_();
+
+  DBG_PROG_ENDE
 }
 
-void  oyDeAllocateFunc_           (void*       block)
-{
-  if( !block ) {
-    WARN_S(( "emory block is empty" ))
-  } else
-    free( block );
-}
 
+void
+oyI18Nrefresh_()
+{
+  int    i;
+
+  /* refresh CMM's */
+  for( i = 0; i < oyCMM_.n; ++i)
+  {
+    oyCmmGetFromXML_ ( oyGROUP_START, oyCMM_.cmms[i].xml,
+                       oyCMM_.cmms[i].domain, oyCMM_.cmms[i].domain_path,
+                       &oyCMM_.cmms[i] );
+  }
+}
+  
 

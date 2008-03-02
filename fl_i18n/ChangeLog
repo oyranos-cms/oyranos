@@ -1,6 +1,10 @@
+2006-07-29
+	* fix: removed setlocale (LC_ALL,"")
+	* and: disabled putenv(LANG);
+
 2006-05-28
-	* neu: fix failed pointer
-	* neu: add makefile.bsd
+	* new: fix failed pointer
+	* new: add makefile.bsd
 
 2006-03-05
 	* new: make library building and documentation independed from ICC Examin

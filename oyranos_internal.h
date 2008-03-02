@@ -60,6 +60,8 @@ void  oyExportEnd_          (void);
 void  oyOpen                (void);
 void  oyClose               (void);
 
+void oyI18Nrefresh_();
+
 
 /* device profiles */
 /** enum identifying device types for distinguishing in searches */
@@ -108,32 +110,6 @@ int oyEraseDeviceProfile                  (oyDEVICETYP typ,
 typedef enum {
   oyDISPLAY_T,
 } oyOBJECT_TYPE;
-
-/*
- *  Sollen die oyCMSTransform_t struct opak werden?
- *  -> Typpruefung moeglich?
- *
- *  Objektartig mit begleitender Referenz auf CMM Status?
- *
- *  Wie koennen Geraete- und Bildinformationen gleich mit einfliesen?
- *
- *  Sonderfall Bildschirm - Geometrie der Daten beachten
- */
-#ifdef noch_NICHT
-oyCMSTransform_t oyCMSGetTransform();
-int oyCMSTransform( void *out, void *in, oyCMSTransform_t t );
-int oyCMSSetCMM( int oyOPTION );
-
-// Wieviel Geraete vertraegt Oyranos?  X ist eigentlich schon ein Sonderfall
-// Vielleicht ist eine abstrakte Geraetebeschreibung sinnvoll -> ICCDeviceTag
-oyDevice_t
-
-
-// oder erhaelt oyImage_t die oyDevice_t Infos mit? 
-int oyCMSTransformScreenImage( oyDevice_t disp,
-                               oyCMSTransform_t t,
-                               oyImage_t data );
-#endif
 
 #ifdef __cplusplus
 } // extern "C"
