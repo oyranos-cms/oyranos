@@ -31,7 +31,6 @@
 #ifndef OYRANOS_H
 #define OYRANOS_H
 
-#include "oyranos_debug.h"
 #include "oyranos_definitions.h"
 
 #ifdef __cplusplus

@@ -21,45 +21,28 @@
  * 
  * -----------------------------------------------------------------------------
  *
- * hardware API
+ * gamma loader - put it somethere in Your xinitrc
+ * It reads the default profile from the Oyranos CMS and recalls this profile
+ * as new default profile for this screen, resulting in an curves upload to
+ * the video card.
+ * Currently You need xcalib installed to do the curves upload.
  * 
  */
 
-/* Date:      01. 02. 2005 */
+/* Date:      03. 02. 2005 */
 
 
-#ifndef OYRANOS_MONITOR_H
-#define OYRANOS_MONITOR_H
+#include "oyranos_monitor.h"
+#include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-namespace oyranos
+int main(void)
 {
-#endif /* __cplusplus */
+  char *display_name = getenv("DISPLAY");
+  char *monitor_profile = oyGetMonitorProfileName (display_name);
+  int error = 0;
 
+  if( monitor_profile )
+    error = oyActivateMonitorProfile (display_name, monitor_profile);
 
-/*
- * hardware detection with X
- * should be independent of the huge windowing system
- */
-
-
-/* monitor names */
-
-int   oyGetMonitorInfo            (const char* display,
-                                   char**      manufacturer,
-                                   char**      model,
-                                   char**      serial);
-char* oyGetMonitorProfileName     (const char* display);
-
-int   oySetMonitorProfile         (const char* display_name,
-                                   const char* profil_name );
-int   oyActivateMonitorProfile    (const char* display_name,
-                                   const char* profil_name );
-
-#ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
-#endif /* __cplusplus */
-
-#endif /* OYRANOS_MONITOR_H */
+  return error;
+}

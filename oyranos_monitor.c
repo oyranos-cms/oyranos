@@ -46,19 +46,17 @@
 
 /* --- internal API definition --- */
 
-int
-oyGetMonitorInfo_                 (const char* display,
+int   oyGetMonitorInfo_           (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial);
-char*
-oyGetMonitorProfileName_          (const char* display_name);
+char* oyGetMonitorProfileName_    (const char* display_name);
 
-int
-oySetMonitorProfile_              (const char* display_name,
+int   oyActivateMonitorProfile_   (const char* display_name,
                                    const char* profile_name);
-char*
-oyLongDisplayName_                (const char* display_name);
+int   oySetMonitorProfile_        (const char* display_name,
+                                   const char* profile_name);
+char* oyLongDisplayName_          (const char* display_name);
 
   /* an incomplete DDC struct */
 struct DDC_EDID1 {
@@ -183,31 +181,16 @@ oyGetMonitorProfileName_          (const char* display_name)
 }
 
 int
-oySetMonitorProfile_              (const char* display_name,
+oyActivateMonitorProfile_         (const char* display_name,
                                    const char* profil_name )
 { DBG_PROG_START
   int error = 0;
 
-  char       *manufacturer=0,
-             *model=0,
-             *serial=0;
-  char       *host_name = oyLongDisplayName_(display_name);
-  char *profil_pathname;
+  char       *profil_pathname;
   const char *profil_basename;
-  error  =
-    oyGetMonitorInfo_ (display_name, &manufacturer, &model, &serial);
-
-  DBG_PROG
-  if(error) {
-    WARN_S((_("Error while requesting monitor information")))
-    return 0;
-  }
 
   DBG_PROG_S(( "profil_name = %s", profil_name ))
   
-  error =  oySetDeviceProfile(oyDISPLAY, manufacturer, model, serial,
-                              host_name,0,0,0,0,profil_name,0,0);
-
   profil_pathname = oyGetPathFromProfileName( profil_name );
   DBG_PROG_S(( "profil_pathname %s", profil_pathname ))
 
@@ -219,9 +202,52 @@ oySetMonitorProfile_              (const char* display_name,
       profil_basename = profil_name;
     sprintf(text,"xcalib -d %s %s%s%s", display_name,
                                profil_pathname, OY_SLASH, profil_basename);
-    system(text);
+    error = system(text);
+    if(error) {
+      WARN_S((_("Error while setting monitor gamma curves")))
+    }
+
     DBG_PROG_S(( "system: %s", text ))
     if(text) free(text);
+  }
+
+  if (profil_pathname) free (profil_pathname);
+
+  DBG_PROG_ENDE
+  return error;
+}
+
+int
+oySetMonitorProfile_              (const char* display_name,
+                                   const char* profil_name )
+{ DBG_PROG_START
+  int error = 0;
+
+  char       *manufacturer=0,
+             *model=0,
+             *serial=0;
+  char       *host_name = oyLongDisplayName_(display_name);
+  char *profil_pathname;
+  error  =
+    oyGetMonitorInfo_ (display_name, &manufacturer, &model, &serial);
+
+  DBG_PROG
+  if(error) {
+    WARN_S((_("Error while requesting monitor information")))
+    DBG_PROG_ENDE
+    return error;
+  }
+
+  DBG_PROG_S(( "profil_name = %s", profil_name ))
+  
+  error =  oySetDeviceProfile(oyDISPLAY, manufacturer, model, serial,
+                              host_name,0,0,0,0,profil_name,0,0);
+
+  profil_pathname = oyGetPathFromProfileName( profil_name );
+  DBG_PROG_S(( "profil_pathname %s", profil_pathname ))
+
+  if( profil_pathname ) {
+    error = oyActivateMonitorProfile_(display_name, profil_name);
   }
 
   if (profil_pathname) free (profil_pathname);
@@ -289,6 +315,18 @@ oyGetMonitorProfileName           (const char* display)
 
   DBG_PROG_ENDE
   return moni_profile;
+}
+
+int
+oyActivateMonitorProfile          (const char* display_name,
+                                   const char* profil_name )
+{ DBG_PROG_START
+  int error = 0;
+
+  error = oyActivateMonitorProfile_( display_name, profil_name );
+
+  DBG_PROG_ENDE
+  return error;
 }
 
 int

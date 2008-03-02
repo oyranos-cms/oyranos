@@ -1,7 +1,7 @@
 CC=cc
 CXX=c++
 MAKEDEPEND	= /usr/X11R6//bin/makedepend -Y
-OPTS=-Wall -g -O2
+OPTS=-Wall -O2
 COLLECT = ar cru
 RANLIB = ranlib
 LNK = ln -s
@@ -73,6 +73,8 @@ CFILESC = \
 	oyranos_debug.c
 CFILES_MONI = \
     oyranos_monitor.c
+CFILES_GAMMA = \
+    oyranos_gamma.c
 CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
@@ -85,7 +87,7 @@ FLUID = #\
 	fl_oyranos.fl
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CPP_HEADERS) $(CFILES) $(CFILESC) \
-		  $(CFILES_MONI) test.c test2.cpp
+		  $(CFILES_MONI) $(CFILES_GAMMA) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 
@@ -101,10 +103,10 @@ mtime   = `find $(timedir) -prune -printf %Ty%Tm%Td.%TT | sed s/://g`
 
 .SILENT:
 
-all:	$(TARGET) $(TARGET)_moni test2
+all:	$(TARGET) $(TARGET)_moni $(TARGET)_gamma test2
 
 $(TARGET):	$(OBJECTS)
-	echo Linking $@...
+	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	$(LDLIBS) \
@@ -112,7 +114,7 @@ $(TARGET):	$(OBJECTS)
 	$(RM) $(LIBSONAME) && $(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
 
 $(TARGET)_moni:	$(MONI_OBJECTS)
-	echo Linking $@...
+	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(X11_LIBS) \
 	-o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) \
@@ -122,12 +124,20 @@ $(TARGET)_moni:	$(MONI_OBJECTS)
 $(LIBSONAMEFULL):	$(TARGET)
 
 static:	$(TARGET)
-	echo Linking $@...
+	echo Linking $@ ...
 	$(COLLECT) $(LIBNAME) $(OBJECTS)
 	$(RANLIB) $(LIBNAME)
 
+$(TARGET)_gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
+	echo Linking $@ ...
+	$(CC) $(OPTS) -o $(TARGET)-gamma \
+	$(TARGET)_gamma.o \
+	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) -Wl,--rpath -Wl,$(libdir) \
+	$(LDLIBS) 
+	$(APPLE)
+
 test2:	$(LIB_MONI_SONAMEFULL) test2.o
-	echo Linking $@...
+	echo Linking $@ ...
 	$(CXX) $(OPTS) -o test2 \
 	test2.o \
 	$(LIB_MONI_SONAME) -Wl,--rpath -Wl,$(srcdir) \
@@ -144,10 +154,13 @@ test:	$(LIBSONAMEFULL) test.o
 install:	$(TARGET)
 	cp -v $(TARGET) $(bindir)
 clean:
-	rm -v $(OBJECTS) $(MONI_OBJECTS) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_MONI_SONAME) $(LIB_MONI_SONAMEFULL)
+	rm -v \
+	$(OBJECTS) $(MONI_OBJECTS) $(LIBSONAMEFULL) $(LIBSONAME) $(LIB_MONI_SONAME)\
+	$(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o $(TARGET)-gamma test2.o test.o \
+	test2 test 
 
 depend:
-	$(MAKEDEPEND) -fmakedepend -I.. $(SOURCES) $(CFILES) $(CPP_HEADERS)
+	$(MAKEDEPEND) -f.mkdep -I. $(CFLAGS) $(SOURCES)
 
 
 # The extension to use for executables...
@@ -157,20 +170,20 @@ EXEEXT		=
 .SUFFIXES:	.0 .1 .3 .c .cxx .h .fl .man .o .z $(EXEEXT)
 
 .o$(EXEEXT):
-	echo Linking $@...
+	echo Linking $@ ...
 	$(Cc) -I.. $(CFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
 
 .c.o:
-	echo Compiling $<...
+	echo Compiling $< ...
 	$(CC) -I.. $(CFLAGS) -c $<
 
 .cxx.o:
-	echo Compiling $<...
+	echo Compiling $< ...
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
 .cpp.o:
-	echo Compiling $<...
+	echo Compiling $< ...
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
 tgz:
@@ -182,3 +195,5 @@ tgz:
 	| gzip > $(TARGET)_$(mtime).tgz
 	mv -v $(TARGET)_*.tgz ../Archiv
 
+# makedepend
+include .mkdep
