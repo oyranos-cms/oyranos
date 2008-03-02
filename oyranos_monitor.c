@@ -37,6 +37,7 @@
 #include "limits.h"
 
 #include "oyranos.h"
+#include "oyranos_internal.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
 

@@ -36,6 +36,7 @@
 #include <string.h>
 
 #include "oyranos.h"
+#include "oyranos_internal.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
 
@@ -153,7 +154,7 @@ void oyOpen_ (void)
   kdbOpen();
 }
 void oyClose_(void) { /* kdbClose(); */ }
-/** @todo make oyOpen unnecessary */
+/* @todo make oyOpen unnecessary */
 void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
 

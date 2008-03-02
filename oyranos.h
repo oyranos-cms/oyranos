@@ -62,10 +62,6 @@ typedef void* (*oyAllocFunc_t)         (size_t size);
 //typedef void (*oyDeAllocFunc_t)        (void *data);
 
 
-/* kdb stuff */
-void  oyOpen                (void);
-void  oyClose               (void);
-
 /* path names */
 
 int   oyPathsCount                     (void);
@@ -119,51 +115,6 @@ int   oyCheckProfileMem                (const void* mem, size_t size,
 size_t oyGetProfileSize                (const char* profilename);
 void*  oyGetProfileBlock               (const char* profilename, size_t* size,
                                         oyAllocFunc_t);
-
-
-/* device profiles */
-/** enum identifying device types for distinguishing in searches */
-typedef enum  {
-  /*oyNOTYPE,*/
-  oyDISPLAY,          /**< dynamic viewing */
-  oyPRINTER,          /**< static media (dye, ink, offset, imagesetters) */
-  oySCANNER,          /**< contact digitiser */
-  oyCAMERA,           /**< virtual or contactless image capturing */
-} oyDEVICETYP;
-
-
-char* oyGetDeviceProfile                  (oyDEVICETYP typ,
-                                           const char* manufacturer,
-                                           const char* model,
-                                           const char* product_id,
-                                           const char* host,
-                                           const char* port,
-                                           const char* attrib1,
-                                           const char* attrib2,
-                                           const char* attrib3,
-                                           oyAllocFunc_t);
-
-int	oySetDeviceProfile                    (oyDEVICETYP typ,
-                                           const char* manufacturer,
-                                           const char* model,
-                                           const char* product_id,
-                                           const char* host,
-                                           const char* port,
-                                           const char* attrib1,
-                                           const char* attrib2,
-                                           const char* attrib3,
-                                           const char* profilename,
-                                           const void* mem,
-                                           size_t size);
-int oyEraseDeviceProfile                  (oyDEVICETYP typ,
-                                           const char* manufacturer,
-                                           const char* model,
-                                           const char* product_id,
-                                           const char* host,
-                                           const char* port,
-                                           const char* attrib1,
-                                           const char* attrib2,
-                                           const char* attrib3);
 
 
 #ifdef __cplusplus
