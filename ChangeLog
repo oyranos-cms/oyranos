@@ -1,4 +1,6 @@
-
+2005-08-31
+	* und: elektra-0.5.0.4
+	* fix: linking libelektra_default.a 
 
 2005-06-30
 	* neu: _ICC_PROFILE von Ross Burton <http://www.burtonini.com/computing/x-icc-profiles-spec-0.1.html>

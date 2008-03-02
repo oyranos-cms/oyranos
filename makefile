@@ -71,11 +71,11 @@ CFLAGS = $(OPTS) $(INCL)
 
 X11_LIBS=-L/usr/X11R6/lib -lX11
 
-KDB_LIBS=-lkdb
+ELEKTRA_LIBS=-lelektra -lelektra_default
 
 
 LDLIBS = -L$(libdir) -L. \
-	$(KDB_LIBS) -ldl -lc #-llcms $(FLTK_LIBS) $(FLU_LIBS)
+	$(ELEKTRA_LIBS) -ldl -lc #-llcms $(FLTK_LIBS) $(FLU_LIBS)
 
 
 CPP_HEADERS = \
@@ -179,7 +179,7 @@ $(TARGET)_config_flu_static:	$(TARGET)_moni $(FLU_OBJECTS)
 	`flu-config --ldstaticflags` \
 	`fltk-config --use-images --ldstaticflags` \
 	-L/usr/X11R6/lib \
-	/usr/lib/libkdb.a -lsupc++
+	/usr/lib/libelektra.a -lsupc++
 	strip $(TARGET)_config_flu
 	$(REZ)
 

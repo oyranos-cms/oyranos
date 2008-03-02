@@ -50,10 +50,17 @@ int   oyGetMonitorInfo            (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial);
-char* oyGetMonitorProfile         (const char *display,
+#if 0
+int   oyGetMonitorProfile         (const char *display,
+                                   char        buf,      /* if buf==0 getSize */
                                    size_t     *size);
-char* oyGetMonitorProfileName     (const char *display);
+#else
+char* oyGetMonitorProfile         (const char *display,  /* deprecated */
+                                   size_t     *size);
+char* oyGetMonitorProfileName     (const char *display); /* deprecated */
+#endif
 
+// TODO set a memory based profile
 int   oySetMonitorProfile         (const char* display_name,
                                    const char* profil_name );
 int   oyActivateMonitorProfile    (const char* display_name,

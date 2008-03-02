@@ -75,19 +75,19 @@ if [ "$echo_cflags" == "yes" ]; then
 fi
 
 if [ "$echo_ldflags" == "yes" ]; then
-  echo "-L$prefix/lib -loyranos -lkdb"
+  echo "-L$prefix/lib -loyranos -lelektra"
 fi
 
 if [ "$echo_ldstaticflags" == "yes" ]; then
-  echo "$prefix/lib/liboyranos.a -lkdb -ldl"
+  echo "$prefix/lib/liboyranos.a -lelektra -ldl"
 fi
 
 if [ "$echo_ld_x_flags" == "yes" ]; then
-  echo "-L$prefix/lib -loyranos -loyranos_moni -lkdb"
+  echo "-L$prefix/lib -loyranos -loyranos_moni -lelektra"
 fi
 
 if [ "$echo_ld_x_staticflags" == "yes" ]; then
-  echo "$prefix/lib/liboyranos.a $prefix/lib/liboyranos_moni.a -lkdb -lX11 -ldl"
+  echo "$prefix/lib/liboyranos.a $prefix/lib/liboyranos_moni.a -lelektra -lX11 -ldl"
 fi
 
 

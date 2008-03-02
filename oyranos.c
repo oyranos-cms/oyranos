@@ -40,8 +40,11 @@
 #include "oyranos_debug.h"
 
 /* --- Helpers  --- */
-#define ERR if (rc) { printf("%s:%d\n", __FILE__,__LINE__); perror("Error"); }
-
+#if 1
+#define ERR if (rc<=0) { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
+#else
+#define ERR
+#endif
 
 /* --- static variables   --- */
 
@@ -73,7 +76,7 @@ int	oySetDefaultRGBInputProfile_Block  (const char* name, void* mem, size_t size
 int	oySetDefaultCmykInputProfile_      (const char* name);
 int	oySetDefaultCmykInputProfile_Block (const char* name, void* mem, size_t size);
 
-char*	oyGetDefaultWorkspaceProfileName_  ();
+char*	oyGetDefaultWorkspaceProfileName_       ();
 char*	oyGetDefaultXYZInputProfileName_        ();
 char*	oyGetDefaultLabInputProfileName_        ();
 char*	oyGetDefaultRGBInputProfileName_        ();
@@ -127,7 +130,7 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
 void oyOpen_ (void)
 {
   if(!oyranos_init) {
-    kdbOpenDefault();
+    /*kdbOpenDefault();*/
     oyranos_init = 1;
   }
   kdbOpen();
@@ -330,7 +333,7 @@ oyReadFileSize_(const char* name)
       fclose (fp);
 
     } else
-      printf ("could not read %s\n", filename);
+      WARN_S( ("could not read %s\n", filename) );
   }
 
   DBG_PROG_ENDE
@@ -359,8 +362,7 @@ oyReadFileToMem_(const char* name, size_t *size)
         *size = ftell (fp);
       rewind(fp);
 
-      if(oy_debug)
-        printf("%u\n",((size_t)size));
+      DBG_PROG_S(("%u\n",((size_t)size)));
 
       /* allocate memory */
       mem = (char*) calloc (*size, sizeof(char));
@@ -379,7 +381,7 @@ oyReadFileToMem_(const char* name, size_t *size)
         }
       }
     } else {
-      printf ("could not read %s\n", filename);
+      WARN_S( ("could not read %s\n", filename) );
     }
   }
  
@@ -651,7 +653,7 @@ oyCheckDefaultDirectories_ ()
   /* test dirName : existing in path, default dirs are existing */
   if (!oyIsDir_ (OY_DEFAULT_SYSTEM_PROFILE_PATH))
   { DBG_PROG
-    printf ("no default system directory %s\n",OY_DEFAULT_SYSTEM_PROFILE_PATH);
+    WARN_S( ("no default system directory %s\n",OY_DEFAULT_SYSTEM_PROFILE_PATH) );
   }
 
   if (!oyIsDir_ (OY_DEFAULT_USER_PROFILE_PATH))
@@ -659,16 +661,16 @@ oyCheckDefaultDirectories_ ()
     parentDefaultUserDir = oyGetParent_ (OY_DEFAULT_USER_PROFILE_PATH);
 
     if (!oyIsDir_ (parentDefaultUserDir))
-    { DBG_PROG 
-      printf ("Try to create part of users default directory %s %d \n",
-                 parentDefaultUserDir,
-      oyMakeDir_( parentDefaultUserDir)); DBG_PROG
+    {
+      DBG_PROG_S( ("Try to create part of users default directory %s\n",
+                 parentDefaultUserDir ));
+      oyMakeDir_( parentDefaultUserDir);
     }
     OY_FREE (parentDefaultUserDir)
 
-    printf ("Try to create users default directory %s %d \n",
-               OY_DEFAULT_USER_PROFILE_PATH,
-    oyMakeDir_( OY_DEFAULT_USER_PROFILE_PATH )); DBG_PROG
+    DBG_PROG_S( ("Try to create users default directory %s\n",
+               OY_DEFAULT_USER_PROFILE_PATH ) )
+    oyMakeDir_( OY_DEFAULT_USER_PROFILE_PATH );
   }
   DBG_PROG_ENDE
 }
@@ -828,7 +830,7 @@ oySetProfile_      (const char* name, const char* typ, const char* comment)
         OY_FREE (keyName)
       }
       else
-        printf ("%s:%d !!! ERROR typ %s type does not exist for default profiles",__FILE__,__LINE__, typ);
+        WARN_S( ("%s:%d !!! ERROR typ %s type does not exist for default profiles",__FILE__,__LINE__, typ));
 
     if(typ_name)
     {
@@ -1356,8 +1358,12 @@ oyProfileList_                     (const char* colourspace, size_t * size)
     while ((entry = readdir (dir)))
     {
       char *file_name = entry->d_name;
+      /* exclude self and parent directories */
       if ((strcmp (file_name, "..") == 0) || (strcmp (file_name, ".") == 0))
         continue;
+
+      /* we check all file extensions */
+      /* we go recursively without following links, due to security */
 
       if (!oyCheckProfile_(file_name))
       {
@@ -1681,7 +1687,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
     {
       char *fileName = 0;
       if (foundEntry->name)
-        printf("%s\n",foundEntry->name);
+        DBG_PROG_S(("%s\n",foundEntry->name) );
       if (foundEntry->name &&
           strlen(foundEntry->name) &&
           strrchr(foundEntry->name , OY_SLASH_C))
@@ -2206,7 +2212,7 @@ oyGetDefaultRGBInputProfileName       ()
 }
 
 char*
-oyGetDefaultCmykInputProfileName       ()
+oyGetDefaultCmykInputProfileName       (void* allocator_f(size_t size))
 { DBG_PROG_START
   char* name = oyGetDefaultCmykInputProfileName_ ();
   DBG_PROG_ENDE
@@ -2253,7 +2259,7 @@ void*
 oyGetProfileBlock                 (const char* profilename, size_t *size)
 { DBG_PROG_START
   char* block = oyGetProfileBlock_ (profilename, size);
-  DBG_PROG_S( ("%s %d %d", profilename, (int)block, *size) )
+  DBG_PROG_S( ("%s %hd %d", profilename, (int)block, *size) )
   DBG_PROG
 
   DBG_PROG_ENDE
