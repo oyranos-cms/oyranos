@@ -2,6 +2,6 @@ includedir=${prefix}/include
 
 Name: oyranos
 Description: Oyranos Colour Management System
-Libs: -L${libdir} -loyranos -loyranos_moni
+Libs: -L${libdir} -loyranos -loyranos_moni -X11 -Xinerama
 Cflags: -I${includedir}
 

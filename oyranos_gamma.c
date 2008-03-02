@@ -36,6 +36,7 @@
 #include "oyranos_monitor.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
+#include "oyranos_version.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -46,14 +47,76 @@ int main( int argc , char** argv )
   char *display_name = getenv("DISPLAY");
   char *monitor_profile = 0;
   int error = 0;
+  int x = 0, y = 0, erase = 0;
 
-  if(argc == 2) {
-    if (argv[1][0] != '0')
-      monitor_profile = argv[1];
+  if(argc != 1)
+  {
+    int pos = 1;
+    char *wrong_arg = 0;
+    printf("argc: %d\n", argc);
+    while(pos < argc)
+    {
+      switch(argv[1][0])
+      {
+        case '-':
+            switch (argv[pos][1])
+            {
+              case 'e': erase = 1; monitor_profile = 0; break;
+              case 'x': if( pos + 1 < argc )
+                        { x = atoi( argv[pos+1] );
+                          if( x == 0 && strcmp(argv[pos+1],"0") )
+                            wrong_arg = "-x";
+                        } else wrong_arg = "-x";
+                        if(oy_debug) printf("x=%d\n",x); ++pos; break;
+              case 'y': if( pos + 1 < argc )
+                        { y = atoi( argv[pos+1] ); ++pos; break;
+                          if( y == 0 && strcmp(argv[pos+1],"0") )
+                            wrong_arg = "-y";
+                        } else wrong_arg = "-y";
+                        if(oy_debug) printf("y=%d\n",y); ++pos; break;
+              case 'h': printf("\n");
+                        printf("oyranos-gamma v%d.%d.%d %s\n",
+                        OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
+                                _("is a colour profile administration tool"));
+                        printf("%s\n",                 _("Usage"));
+                        printf("  %s\n",               _("Set new profile:"));
+                        printf("      %s\n",           argv[0]);
+                        printf("            -x pos -y pos  %s\n",
+                                                       _("profile name"));
+                        printf("\n");
+                        printf("  %s\n",               _("Unset profile:"));
+                        printf("      %s -e\n",        argv[0]);
+                        printf("            -x pos -y pos\n");
+                        printf("\n");
+                        printf("  %s\n",               _("Activate profiles:"));
+                        printf("      %s\n",           argv[0]);
+                        printf("\n");
+                        exit (0);
+                        break;
+            }
+            break;
+        default:
+            monitor_profile = argv[pos];
+            error = oyActivateMonitorProfile (display_name);
+
+            if(oy_debug) {
+              size_t size = 0;
+              oyGetMonitorProfile(display_name, x,y, &size, oyAllocFunc);
+              printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,size);
+            }
+            x = 0; y = 0; erase = 0;
+      }
+      if( wrong_arg )
+      {
+        printf("%s %s\n", _("wrong argument to option:"), wrong_arg);
+        exit(1);
+      }
+      ++pos;
+    }
     if(oy_debug) printf( "%s\n", argv[1] );
-    oySetMonitorProfile (display_name, monitor_profile);
+    oySetMonitorProfile (display_name, x,y, monitor_profile);
   } else {
-    monitor_profile = oyGetMonitorProfileName (display_name, oyAllocateFunc_);
+    monitor_profile = oyGetMonitorProfileName (display_name, x,y, oyAllocateFunc_);
   }
 
   /* check the default paths */
@@ -64,7 +127,7 @@ int main( int argc , char** argv )
 
   if(oy_debug) {
     size_t size = 0;
-    oyGetMonitorProfile(display_name, &size, oyAllocFunc);
+    oyGetMonitorProfile(display_name, x,y, &size, oyAllocFunc);
     printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,size);
   }
 

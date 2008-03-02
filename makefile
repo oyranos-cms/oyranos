@@ -19,15 +19,17 @@ endif
 INSTALL = install -v
 RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
 
+ifdef BUILD_64
+  LIB=/lib64
+else
+  LIB=/lib
+endif
+
 exec_prefix	= ${prefix}
 bindir		= ${exec_prefix}/bin
 datadir		= ${prefix}/share
 includedir	= ${prefix}/include
-ifdef BUILD_64
-  libdir		= ${prefix}/lib64
-else
-  libdir		= ${prefix}/lib
-endif
+libdir		= ${prefix}$(LIB)
 mandir		= ${prefix}/man
 srcdir		= .
 
@@ -59,8 +61,8 @@ else
     OPTS=-Wall -g -fPIC #-O2
     LINK_FLAGS = -shared -ldl -fPIC -L.
     LINK_FLAGS_STATIC = q
-    LINK_NAME = -Wl,-soname -Wl,$(LIBSONAME)
-    LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAME)
+    LINK_NAME = -Wl,-soname -Wl,$(LIBSONAMEFULL)
+    LINK_NAME_M = -Wl,-soname -Wl,$(LIB_MONI_SONAMEFULL)
     LINK_LIB_PATH = -Wl,--rpath -Wl,$(libdir)
     LINK_SRC_PATH = -Wl,--rpath -Wl,$(srcdir)
   else
@@ -75,17 +77,13 @@ INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 CXXFLAGS=$(OPTS) $(INCL) $(FLU_H)
 CFLAGS = $(OPTS) $(INCL)
 
-ifdef BUILD_64
-  X11_LIBS=-L/usr/X11R6/lib64 -lX11
-else
-  X11_LIBS=-L/usr/X11R6/lib -lX11
-endif
+X11_LIBS=-L/usr/X11R6$(LIB) -lX11 -lXext -lXinerama
 
 #ELEKTRA_LIBS=-lelektra -lelektra_default
 
 
 LDLIBS = -L$(libdir) -L. \
-	$(ELEKTRA_LIBS) -ldl -lc $(PNG_LIBS) #-llcms $(FLTK_LIBS) $(FLU_LIBS)
+	$(ELEKTRA_LIBS) -ldl -lc
 
 
 CPP_HEADERS = \
@@ -168,11 +166,11 @@ all:	config mkdepend $(TARGET) $(TARGET)_moni $(TARGET)-gamma $(FLU_GUI) test2
 	done;
 
 # build all objects and libraries, link the headers to $(TARGET)
-$(TARGET):	$(TARGET)/$(TARGET).h $(OBJECTS) static
+$(TARGET):	$(OBJECTS) static
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
-	-L/lib $(LDLIBS)
+	-L$(LIB) $(LDLIBS)
 	$(REZ)
 	$(RM)  $(LIBSONAME)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
@@ -182,9 +180,9 @@ $(TARGET):	$(TARGET)/$(TARGET).h $(OBJECTS) static
 # the monitor library
 $(TARGET)_moni:	$(MONI_OBJECTS) static_moni
 	echo Linking $@ ...
-	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(LIBSONAMEFULL) $(X11_LIBS) \
+	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME_M) $(LIBSONAMEFULL) \
 	-o $(LIB_MONI_SONAMEFULL) \
-	$(MONI_OBJECTS) $(LDLIBS) 
+	$(MONI_OBJECTS) $(LDLIBS) $(X11_LIBS)
 	$(REZ)
 	$(RM)  $(LIB_MONI_SONAME)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
@@ -200,15 +198,15 @@ $(TARGET)-config-flu:	$(TARGET)_moni $(FLU_OBJECTS)
 	$(FLU_LIBS) $(FLTK_LIBS) $(LDLIBS) $(PNG_LIBS) \
 	$(REZ)
 
-# dangerous because of elektra dont allows static linking
+
 $(TARGET)-config-flu-static:	$(TARGET)_moni $(FLU_OBJECTS)
 	echo Linking static $(TARGET)-config-flu ...
 	$(CXX) -Wall -O3 -o $(TARGET)-config-flu $(TARGET)_config_flu.o \
 	$(LIBNAME) $(LIB_MONI_NAME) $(LINK_LIB_PATH) \
 	`flu-config --ldstaticflags` \
 	`fltk-config --use-images --ldstaticflags` \
-	-L/usr/X11R6/lib \
-	`test -f /usr/lib/libelektra.a && echo /usr/lib/libelektra.a || echo -lelektra` -lsupc++ $(PNG_LIBS)
+	-L/usr/X11R6$(LIB) \
+	`test -f /usr$(LIB)/libelektra.a && echo /usr$(LIB)/libelektra.a || echo -lelektra` -lsupc++ $(PNG_LIBS)
 	#strip $(TARGET)-config-flu
 	$(REZ)
 
@@ -228,16 +226,8 @@ $(TARGET)-gamma:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	$(CC) $(OPTS) -o $(TARGET)-gamma \
 	$(TARGET)_gamma.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
-	$(LDLIBS) 
+	$(LDLIBS)
 	$(REZ)
-
-# bring the headers to one place
-$(TARGET)/$(TARGET).h:
-	mkdir $(TARGET)
-	$(LNK) ../$(TARGET).h $(TARGET)/$(TARGET).h
-	$(LNK) ../$(TARGET)_config.h $(TARGET)/$(TARGET)_config.h
-	$(LNK) ../$(TARGET)_definitions.h $(TARGET)/$(TARGET)_definitions.h
-	$(LNK) ../$(TARGET)_monitor.h $(TARGET)/$(TARGET)_monitor.h
 
 test2:	$(LIB_MONI_SONAMEFULL) test2.o
 	echo Linking $@ ...

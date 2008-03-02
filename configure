@@ -11,9 +11,9 @@ MPKG="$TARGET"_monitor.pc
 
 VERSION_A=0
 VERSION_B=1
-VERSION_C=4
+VERSION_C=5
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
-TIME="November 2004 - February 2006"
+TIME="November 2004 - April 2006"
 
 src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
 srcdir="`pwd`"
@@ -105,7 +105,7 @@ echo "#define SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
 
 `pkg-config  --atleast-version=0.5.0.5 elektra 2>>error.txt`
 if [ $? = 0 ]; then
-  echo "elektra `pkg-config --modversion elektra`         detected"
+  echo "elektra `pkg-config --modversion elektra`           detected"
   echo "#define HAVE_ELEKTRA" >> $CONF_H
   echo "ELEKTRA = 1" >> $CONF
   echo "ELEKTRA_H = `pkg-config --cflags elektra`" >> $CONF
@@ -155,7 +155,7 @@ fi
 
 
 if [ "`which doxygen`" != "" ]; then
-  echo "Doxygen `doxygen --version`         detected"
+  echo "Doxygen `doxygen --version`           detected"
 else
   echo "Doxygen                 not detected"
 fi
