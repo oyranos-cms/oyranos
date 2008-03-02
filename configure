@@ -9,9 +9,9 @@ SPEC=$TARGET.spec
 
 VERSION_A=0
 VERSION_B=1
-VERSION_C=1
+VERSION_C=2
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
-TIME="November 2004 - August 2005"
+TIME="November 2004 - September 2005"
 
 if [ $# -gt 1 ] && [ $1 == "--prefix" ]; then
   prefix=$2

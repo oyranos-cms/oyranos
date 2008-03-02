@@ -1,9 +1,9 @@
-/**
+/*
  * Oyranos is an open source Colour Management System 
  * 
  * Copyright (C) 2004-2005  Kai-Uwe Behrmann
  *
- * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,43 +21,23 @@
  * 
  * -----------------------------------------------------------------------------
  *
- * API
+ * sorting
  * 
  */
 
-/** @date      25. 11. 2004 */
+/* Date:      02. 09. 2005 */
 
-
-#ifndef OYRANOS_HELPER_H
-#define OYRANOS_HELPER_H
-
+#include "oyranos_helper.h"
 #include "oyranos.h"
 
-#ifdef __cplusplus
-extern "C" {
-namespace oyranos
+
+/* --- internal API definition --- */
+
+/* internal memory handling */
+void* oyAllocateFunc_           (size_t        size)
 {
-#endif /* __cplusplus */
-
-void* oyAllocateFunc_           (size_t        size);
-/*void  oyDeAllocateFunc_         (void*  data);*/
-
-#define _(text) text
+  /* we have most often to work with text arrays, so initialise with 0 */
+  return calloc (sizeof (char), size);
+}
 
 
-/* mathematical helpers */
-
-#define MIN(a,b)    (((a) <= (b)) ? (a) : (b))
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#define HYP(a,b)    pow((a)*(a) + (b)*(b),1.0/2.0)
-#define HYP3(a,b,c) pow( (a)*(a) + (b)*(b) + (c)*(c) , 1.0/2.0)
-#define RUND(a)     ((a) + 0.5)
-
-
-
-#ifdef __cplusplus
-} // extern "C"
-} // namespace oyranos
-#endif /* __cplusplus */
-
-#endif /* OYRANOS_HELPER_H */

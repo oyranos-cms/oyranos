@@ -48,13 +48,11 @@
 /* --- static variables   --- */
 
 static int oyranos_init = 0;
+int oy_warn_ = 1;
 
 
 
 /* --- internal API definition --- */
-
-void* oyAllocateFunc_           (size_t        size);
-/*void  oyDeAllocateFunc_         (void*  data);*/
 
 /* separate from the external functions */
 void  oyOpen_                   (void);
@@ -83,31 +81,15 @@ char*       oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
                                         oyAllocFunc_t     alloc_func);
 
 
-int	oySetDefaultWorkspaceProfile_      (const char* name);
-int	oySetDefaultWorkspaceProfile_Block (const char* name, void* mem, size_t size);
-int	oySetDefaultXYZInputProfile_       (const char* name);
-int	oySetDefaultXYZInputProfile_Block  (const char* name, void* mem, size_t size);
-int	oySetDefaultLabInputProfile_       (const char* name);
-int	oySetDefaultLabInputProfile_Block  (const char* name, void* mem, size_t size);
-int	oySetDefaultRGBInputProfile_       (const char* name);
-int	oySetDefaultRGBInputProfile_Block  (const char* name, void* mem, size_t size);
-int	oySetDefaultCmykInputProfile_      (const char* name);
-int	oySetDefaultCmykInputProfile_Block (const char* name, void* mem, size_t size);
-
-char*	oyGetDefaultWorkspaceProfileName_       ();
-char*	oyGetDefaultXYZInputProfileName_        ();
-char*	oyGetDefaultLabInputProfileName_        ();
-char*	oyGetDefaultRGBInputProfileName_        ();
-char*	oyGetDefaultCmykInputProfileName_       ();
-
 char**  oyProfileList_                 (const char* colourspace, size_t * size);
+void    oyProfileListFree_             (char** list, size_t size);
 
 int	oyCheckProfile_                    (const char* name);
 int	oyCheckProfile_Mem                 (const void* mem, size_t size);
 
 size_t	oyGetProfileSize_                 (const char*   profilename);
 void*	oyGetProfileBlock_                (const char*   profilename,
-                                           size_  t     *size,
+                                           size_t       *size,
                                            oyAllocFunc_t allocate_func);
 
 char*   oyGetDeviceProfile_               (const char* manufacturer,
@@ -117,7 +99,8 @@ char*   oyGetDeviceProfile_               (const char* manufacturer,
                                            const char* port,
                                            const char* attrib1,
                                            const char* attrib2,
-                                           const char* attrib3);
+                                           const char* attrib3,
+                                           oyAllocFunc_t);
 char**  oyGetDeviceProfile_s              (const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
@@ -136,7 +119,7 @@ int     oySetDeviceProfile_               (const char* manufacturer,
                                            const char* attrib2,
                                            const char* attrib3,
                                            const char* profileName,
-                                           void* mem,
+                                           const void* mem,
                                            size_t size);
 int     oyEraseDeviceProfile_             (const char* manufacturer,
                                            const char* model,
@@ -158,17 +141,10 @@ const char* oy_default_profile_types_names_[] = {
  "Device"      /**< oyDEVICE_PROFILE : a device profile */
 };
 
-/* internal memory handling */
-void* oyAllocateFunc_           (size_t        size)
-{
-  /* we have most often to work with text arrays, so initialise with 0 */
-  return calloc (sizeof (char), size);
-}
-
 void oyOpen_ (void)
 {
   if(!oyranos_init) {
-    /*kdbOpenDefault();*/
+    kdbOpenDefault();
     oyranos_init = 1;
   }
   kdbOpen();
@@ -195,6 +171,8 @@ char*   oyResolveDirFileName_      (const char* name);
 char*   oyExtractPathFromFileName_ (const char* name);
 char*   oyGetHomeDir_              ();
 char*   oyGetParent_               (const char* name);
+int     oyRecursivePaths_      (int (*doInPath) (void*,const char*,const char*),
+                                void* data);
 
 int oyIsDir_      (const char* path);
 int oyIsFile_     (const char* fileName);
@@ -202,7 +180,8 @@ int oyIsFileFull_ (const char* fullFileName);
 int oyMakeDir_    (const char* path);
 
 int   oyWriteMemToFile_ (const char* name, void* mem, size_t size);
-char* oyReadFileToMem_  (const char* fullFileName, size_t *size);
+char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
+                         oyAllocFunc_t allocate_func);
 
 /* oyranos part */
 /* check for the global and the users directory */
@@ -329,6 +308,8 @@ oyAddKey_valueComment_ (const char* keyName,
     rc=kdbGetKey(key);
     rc=keySetString (key, value);
     rc=keySetComment (key, comment);
+    //TODO debug
+    oyOpen_();
     rc=kdbSetKey(key);
 
   DBG_PROG_ENDE
@@ -417,6 +398,17 @@ oyReadFileToMem_(const char* name, size_t *size,
         { *size = 0;
           OY_FREE (mem)
           mem = 0;
+        } else {
+          /* copy to external allocator */
+          char* temp = mem;
+          mem = allocate_func(*size);
+          if(mem) {
+            memcpy( mem, temp, *size );
+            OY_FREE (temp)
+          } else {
+            OY_FREE (mem)
+            *size = 0;
+          }
         }
       }
     } else {
@@ -726,6 +718,7 @@ oyFindProfile_ (const char* fileName)
     fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
     sprintf(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
     OY_FREE(path_name)
+    DBG_PROG_S(( fullFileName ))
   } else
   {
     if (oyIsFileFull_(fileName)) {
@@ -739,6 +732,34 @@ oyFindProfile_ (const char* fileName)
   return fullFileName;
 }
 
+int
+oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
+                                         const char* filename)
+{
+  char* search = (char*) data;
+  int success = 0;
+  DBG_S(( search ))
+  if(strcmp(filename,search)==0) {
+    size_t size = 128;
+    char* header = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
+    success = !oyCheckProfile_Mem (header, size);
+    OY_FREE (header)
+    if (success) {
+      DBG_S((full_name))
+      DBG_V((strlen(full_name)))
+      if (strlen(full_name) < MAX_PATH) {
+        sprintf(search,full_name);
+        search[strlen(full_name)] = 0;
+      } else
+        search[0] = 0;
+    } else
+      WARN_S(( "not a profile %s", full_name ))
+  }
+  /* break on success */
+  DBG_V((success))
+  return success;
+}
+
 char*
 oyGetPathFromProfileName_       (const char*   fileName,
                                  oyAllocFunc_t allocate_func)
@@ -750,9 +771,19 @@ oyGetPathFromProfileName_       (const char*   fileName,
   size_t    size;
 
   //DBG_NUM_S((fileName))
-  /* test for pure file without dir; search in configured paths only */
+  /* test for pure file without dir; search in configured paths */
   if (fileName && !strchr(fileName, OY_SLASH_C))
   { DBG_PROG
+    char search[MAX_PATH];
+    if(strlen(fileName) < MAX_PATH)
+      sprintf(search, fileName);
+    else {
+      WARN_S(("name longer than %d", MAX_PATH));
+      DBG_PROG_ENDE
+      return 0;
+    }
+    success = oyRecursivePaths_(oyGetPathFromProfileNameCb_,(void*)search);
+#   if 0
     int   n_paths = oyPathsCount_ (),
           i;
 
@@ -772,23 +803,34 @@ oyGetPathFromProfileName_       (const char*   fileName,
       if (oyIsFileFull_(fullFileName))
       { DBG_PROG
         size = 128;
-        header = oyReadFileToMem_ (fullFileName, &size);
+        header = oyReadFileToMem_ (fullFileName, &size, allocate_func);
         success = !oyCheckProfile_Mem (header, size);
       }
 
       OY_FREE (ptr)
       OY_FREE (header)
-
+#     endif
       if (success) { /* found */
-        OY_FREE (fullFileName)
-       DBG_PROG_ENDE
-       return pathName;
-      } else
-        OY_FREE (pathName)
-    }
+        int len = 0;
+        DBG_S((search))
+        if(search[0] != 0) len = strlen(search);
+        if(len) {
+          char *ptr = 0;
+          pathName = (char*) allocate_func( len+1 );
+          sprintf(pathName, search);
+          ptr = strrchr(pathName , OY_SLASH_C);
+          if(ptr)
+            ptr[0] = 0;
+        }
+        DBG_PROG_S(( pathName ))
+        DBG_PROG_ENDE
+        return pathName;
+      }
+    //}
 
     if (!success) {
-      WARN_S( ("profile %s not found in colour path\n", fileName))
+      if(oy_warn_)
+        WARN_S( ("profile %s not found in colour path\n", fileName))
       DBG_PROG_ENDE
       return 0;
     }
@@ -801,7 +843,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
     if (oyIsFileFull_(fullFileName))
     {
       size = 128;
-      header = oyReadFileToMem_ (fullFileName, &size);
+      header = oyReadFileToMem_ (fullFileName, &size, allocate_func);
 
       if (size >= 128)
         success = !oyCheckProfile_Mem (header, 128);
@@ -861,7 +903,7 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
         char* keyName = (char*) calloc (len +10, sizeof(char)); DBG_PROG
         sprintf (keyName, "%s%s%s%s", OY_USER, OY_SLASH, OY_REGISTRED_PROFILES OY_SLASH, fileName); DBG_PROG
         r = oyAddKey_valueComment_ (keyName, com, 0); DBG_PROG
-        //DBG_PROG_V(("%s %d", keyName, len))
+        DBG_PROG_S(( "%s %d", keyName, len ))
         OY_FREE (keyName)
       }
       else
@@ -870,10 +912,10 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
     
     if(config_name)
     {
-      if(name)
+      if(name) {
         r = oyAddKey_valueComment_ (config_name, fileName, com);
-      else
-      {
+        DBG_PROG_S(( "%s %s %s",config_name,fileName,com ))
+      } else {
         KeySet* list;
         Key *current;
         char* value = (char*) calloc (sizeof(char), MAX_PATH);
@@ -908,6 +950,7 @@ oySetProfile_      (const char* name, oyDEFAULT_PROFILE type, const char* commen
         kdbClose(); DBG_PROG
         r = rc;
       }
+      DBG_PROG_V( r )
     }
   }
 
@@ -1258,13 +1301,21 @@ oySetDefaultProfileBlock_  (oyDEFAULT_PROFILE type,
   return r;
 }
 
+const char*
+oyGetDefaultProfileUITitle_(oyDEFAULT_PROFILE type)
+{ DBG_PROG_START
+  const char* name = oyMapDEFAULT_PROFILEtoString_(type);
+  DBG_PROG_ENDE
+  return name;
+}
+
 char*
 oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
                             oyAllocFunc_t     alloc_func)
 { DBG_PROG_START
-  char* name = (char*) calloc (MAX_PATH, sizeof(char));
+  char* name = (char*) alloc_func (MAX_PATH);
 
-  kdbGetValue (OY_DEFAULT_WORKSPACE_PROFILE, name, MAX_PATH);
+  kdbGetValue (oyMapDEFAULT_PROFILEtoConfigString_(type), name, MAX_PATH);
 
   DBG_PROG_S((name))
   DBG_PROG_ENDE
@@ -1276,25 +1327,81 @@ oyGetDefaultProfileName_   (oyDEFAULT_PROFILE type,
 
 /* profile lists API */
 
+#define MAX_DEPTH 64
+struct OyProfileList_s {
+  int hopp;
+  const char* colourspace;
+  int mem_count;
+  int count_files;
+  char** names;
+};
+
+int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
+{
+  struct OyProfileList_s *l = (struct OyProfileList_s*)data;
+
+      if (!oyCheckProfile_(full_name))
+      {
+        if(l->count_files >= l->mem_count)
+        {
+          char** temp = l->names;
+          l->names = (char**) calloc (sizeof(char*), l->mem_count+l->hopp);
+          memcpy(l->names, temp, sizeof(char*) * l->mem_count);
+          l->mem_count += l->hopp;
+        }
+
+        if(!l->colourspace) {
+          l->names[l->count_files] = (char*) calloc (sizeof(char)*2,
+                                               strlen(filename));
+          strcpy(l->names[l->count_files], filename);
+          ++l->count_files;
+        }
+      } //else
+        //WARN_S(("%s in %s is not a valid profile", file_name, path));
+  return 0;
+}
+
 char**
 oyProfileList_                     (const char* colourspace, size_t * size)
 {
   DBG_PROG_START
-  char** names = 0;
-  int count = oyPathsCount_();
-  static const int hopp = 128;
-  int i, mem_count = hopp;
-  int count_files = 0;
+  oy_warn_ = 0;
+  struct OyProfileList_s l = {128, colourspace, 128, 0, 0};
+  l.names = 0;
+  l.mem_count = l.hopp;
+  l.count_files = 0;
 
-  names = (char**) calloc (sizeof(char*), mem_count);
+  l.names = (char**) calloc (sizeof(char*), l.mem_count);
+
+  oyRecursivePaths_(oyProfileListCb_, (void*) &l);
+
+  *size = l.count_files;
+  oy_warn_ = 1;
+  DBG_PROG_ENDE
+  return l.names;
+}
+
+/** @internal
+ *  doInPath and data must fit, doInPath can operate on data and after finishing
+ *  oyRecursivePaths_ data can be processed further
+ */
+int
+oyRecursivePaths_  ( int (*doInPath)(void*,const char*,const char*), void* data)
+{
+  DBG_PROG_START
+  int r = 0;
+  int count = oyPathsCount_();
+  int i;
+  int run = 1;
 
   for(i = 0; i < count ; ++i)
   {
     struct stat statbuf;
-    DIR *dir;
-    struct dirent *entry;
+    struct dirent *entry[MAX_DEPTH];
+    DIR *dir[MAX_DEPTH];
     char *p = oyPathName_(i, oyAllocateFunc_);
     char *path = oyMakeFullFileDirName_(p);
+    int l = 0; /* level */
 
     if ((stat (path, &statbuf)) != 0) {
       WARN_S(("%d. path %s does not exist", i, path))
@@ -1304,47 +1411,91 @@ oyProfileList_                     (const char* colourspace, size_t * size)
       WARN_S(("%d. path %s is not a directory", i, path));
       continue;
     }
-    dir = opendir (path);
-    if (!dir) {
+    if (S_ISLNK (statbuf.st_mode)) {
+      WARN_S(("%d. path %s is a link: ignored", i, path));
+      continue;
+    }
+    dir[l] = opendir (path);
+    if (!dir[l]) {
       WARN_S(("%d. path %s is not readable", i, path));
       continue;
     }
 
-    while ((entry = readdir (dir)))
+    while(run)
     {
-      char *file_name = entry->d_name;
-      /* exclude self and parent directories */
-      if ((strcmp (file_name, "..") == 0) || (strcmp (file_name, ".") == 0))
-        continue;
-
-      /* we check all file extensions */
-      /* we go recursively without following links, due to security */
-
-      if (!oyCheckProfile_(file_name))
-      {
-        if(count_files >= mem_count)
-        {
-          char** temp = names;
-          names = (char**) calloc (sizeof(char*), mem_count+hopp);
-          memcpy(names, temp, sizeof(char*) * mem_count);
-          mem_count += hopp;
+      if(!(entry[l] = readdir (dir[l]))) {
+        closedir(dir[l]);
+        --l;
+        if(l<0) {
+          run = 0;
         }
+        goto cont;
+      }
 
-        if(!colourspace) {
-          names[count_files] = (char*) calloc (sizeof(char)*2, strlen(file_name));
-          strcpy(names[count_files], file_name);
-          ++count_files;
+      char name[256];
+      int k;
+      sprintf(name,path);
+      for (k=0; k <= l; ++k) {
+        int len = strlen(name);
+        if(len+strlen(entry[k]->d_name) < 256)
+          sprintf(&name[strlen(name)],"/%s", entry[k]->d_name);
+        else {
+          DBG_PROG_S(("%d. %s/%s ignored", l, name, entry[k]->d_name))
+          goto cont;
         }
-      } else
-        WARN_S(("%s in %s is not a valid profile", file_name, path));
+      }
+
+      if ((strcmp (entry[l]->d_name, "..") == 0) ||
+          (strcmp (entry[l]->d_name, ".") == 0)) {
+        DBG_PROG_S(("%d. %s ignored", l, name))
+        goto cont;
+      }
+      if ((stat (name, &statbuf)) != 0) {
+        DBG_PROG_S(("%d. %s does not exist", l, name))
+        goto cont;
+      }
+      if (!S_ISLNK(statbuf.st_mode)){//((statbuf.st_mode & S_IFMT) & S_IFLNK)) 
+        DBG_PROG_S(("%d. %s is a link: ignored %d %d %d", l, name, statbuf.st_mode , S_IFLNK, 0120000));
+        //goto cont;
+      }
+      if (S_ISDIR (statbuf.st_mode) &&
+          l < MAX_DEPTH ) {
+
+        dir[l+1] = opendir (name);
+        ++l;
+        DBG_PROG_S(("%d. %s directory", l, name));
+        goto cont;
+      }
+      if(!S_ISREG (statbuf.st_mode)) {
+        DBG_PROG_S(("%d. %s is a non regular file", l, name));
+        goto cont;
+      }
+      DBG_PROG_S( ("%d. a valid file %s", l, name) )
+
+      /* use all file extensions */
+      /* go recursively without following links, due to security */
+      r =
+       doInPath(data, name, entry[l]->d_name);
+      if(r != 0)
+        run = 0;
+      //DBG_S(("%d. %s found", i, name));
+      cont: ;
     }
-    closedir(dir);
-
   }
 
-  *size = count_files;
   DBG_PROG_ENDE
-  return names;
+  return r;
+}
+
+void
+oyProfileListFree_                 (char** list, size_t size)
+{ DBG_PROG_START
+  size_t i;
+  for(i = 0; i < size; ++i)
+    if (list[i] )
+      free( list[i] );
+  free( list );
+  DBG_PROG_ENDE
 }
 
 /* profile check API */
@@ -1368,7 +1519,7 @@ oyCheckProfile_                    (const char* name)
   if (oyIsFileFull_(fullName))
   {
     size = 128;
-    header = oyReadFileToMem_ (fullName, &size); DBG_PROG
+    header = oyReadFileToMem_ (fullName, &size, oyAllocateFunc_); DBG_PROG
     if (size >= 128)
       r = oyCheckProfile_Mem (header, 128);
   }
@@ -1376,6 +1527,7 @@ oyCheckProfile_                    (const char* name)
   /* release memory */
   if(header && size)
     free(header);
+  if(fullName) free(fullName);
 
   DBG_NUM_S(("oyCheckProfileMem = %d",r))
 
@@ -1398,7 +1550,9 @@ oyCheckProfile_Mem                 (const void* mem, size_t size)
       DBG_PROG_ENDE
       return 0;
     } else {
-      WARN_S((" sign: %c%c%c%c ", (char)block[offset+0], (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] ))
+      if(oy_warn_)
+        WARN_S((" sign: %c%c%c%c ", (char)block[offset+0],
+        (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] ));
       DBG_PROG_ENDE
       return 1;
     }
@@ -1589,7 +1743,8 @@ oyGetDeviceProfile_                (const char* manufacturer,
                                     const char* port,
                                     const char* attrib1,
                                     const char* attrib2,
-                                    const char* attrib3)
+                                    const char* attrib3,
+                                    oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   DBG_PROG
   char* profileName = 0;
@@ -1654,7 +1809,8 @@ oyGetDeviceProfile_                (const char* manufacturer,
       else
         fileName = foundEntry->name;
 
-      profileName = (char*) calloc (strlen (fileName)+1, sizeof(char));
+      int len = strlen (fileName)+1;
+      profileName = (char*) allocate_func (len);
       sprintf (profileName, fileName);
 
       DBG_PROG_S((foundEntry->name))
@@ -1754,6 +1910,7 @@ oyGetDeviceProfile_s               (const char* manufacturer,
 #endif
 
   /**
+   * @internal
    * Search description
    *
    * This routine describes the A approach
@@ -1893,7 +2050,7 @@ oySetDeviceProfile_                (const char* manufacturer,
                                     const char* attrib2,
                                     const char* attrib3,
                                     const char* profileName,
-                                    void* mem,
+                                    const void* mem,
                                     size_t size)
 { DBG_PROG_START
   int rc = 0;
@@ -1973,7 +2130,8 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 
   value = (char*) calloc (sizeof(char), MAX_PATH);
   profile_name = oyGetDeviceProfile_ (manufacturer, model, product_id,
-                                      host, port, attrib1, attrib2, attrib3);
+                                      host, port, attrib1, attrib2, attrib3,
+                                      oyAllocateFunc_);
 
   DBG_PROG_S(("profile_name %s", profile_name ))
 
@@ -2007,14 +2165,14 @@ oyEraseDeviceProfile_              (const char* manufacturer,
 #include "oyranos.h"
 
 /** \addtogroup path_names Path Names
- *  Functions to handle default profiles.
+ *  Functions to handle path configuration for Oyranos.
 
  *  @see profile_lists Profile Lists
 
  *  @{
  */
 
-/** determin count of configured paths */
+/** Determin the count of configured search paths.\n */
 int
 oyPathsCount         (void)
 { DBG_PROG_START
@@ -2023,11 +2181,11 @@ oyPathsCount         (void)
   return n;
 }
 
-/** get the path name at a certain position
+/** Get the path name at a certain position in the Oyranos search path list.
  *
- *  @return the pathname at position \e number
- *  @param number Number of path - dont rely on through sessions
- *  @param allocate_func user profided function for allocating the string memory
+ *  @param number        number in list - dont rely on through sessions
+ *  @param allocate_func user provided function for allocating the string memory
+ *  @return              the pathname at position \e number
  */
 char*
 oyPathName           (int           number,
@@ -2038,6 +2196,11 @@ oyPathName           (int           number,
   return name;
 }
 
+/** Add a path name statically to allready configured ones.
+ *
+ *  @param  pathname new pathname to use by Oyranos for profile search
+ *  @return success
+ */
 int
 oyPathAdd            (const char* pathname)
 { DBG_PROG_START
@@ -2046,6 +2209,10 @@ oyPathAdd            (const char* pathname)
   return n;
 }
 
+/** Remove a path name statically from the list of configured ones.
+ *
+ *  @param  pathname the pathname to remove from the Oyranos search path list
+ */
 void
 oyPathRemove         (const char* pathname)
 { DBG_PROG_START
@@ -2067,6 +2234,13 @@ oyPathActivate       (const char* pathname)
   DBG_PROG_ENDE
 }
 
+/** Find out where in the Oyranos search path the specified profile resides.
+ *
+ *  @param  profile_name  the filename find in the Oyranos search path
+ *  @param  allocate_func user provided function for allocating the string
+                          memory
+ *  @return the path name where the profile was found in the oyranos search path
+ */
 char*
 oyGetPathFromProfileName (const char* profile_name, oyAllocFunc_t allocate_func)
 { DBG_PROG_START
@@ -2078,7 +2252,7 @@ oyGetPathFromProfileName (const char* profile_name, oyAllocFunc_t allocate_func)
 /*  @} */
 
 /** \addtogroup default_profiles Default Profiles
- *  Functions to handle default profiles.
+ *  Functions to handle and configure default profiles.
 
  *  @see path_names Path Names
 
@@ -2087,9 +2261,9 @@ oyGetPathFromProfileName (const char* profile_name, oyAllocFunc_t allocate_func)
 
 /** Sets a profile, which is available in the current configured path.
  *
- *  @param  type the kind of default profile
- *  @param  file_name the profile which shall become the above specified default
- *          profile
+ *  @param  type      the kind of default profile
+ *  @param  file_name the profile which shall become the default for the above
+ *                    specified profile type
  *  @return success
  */
 int
@@ -2101,6 +2275,15 @@ oySetDefaultProfile        (oyDEFAULT_PROFILE type,
   return n;
 }
 
+/** Sets a profile, which is available in the current configured path.
+ *
+ *  @param  type      the kind of default profile
+ *  @param  file_name the profile which shall become the default for the above
+ *          specified profile type
+ *  @param  mem       the memory containing the profile
+ *  @param  size      the profile size in mem
+ *  @return success
+ */
 int
 oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
                             const char*       file_name,
@@ -2112,6 +2295,11 @@ oySetDefaultProfileBlock   (oyDEFAULT_PROFILE type,
   return n;
 }
 
+/** Gets a default profile type name for presenting in a GUI.
+ *
+ *  @param  type the kind of default profile
+ *  @return type name
+ */
 const char*
 oyGetDefaultProfileUITitle (oyDEFAULT_PROFILE type)
 { DBG_PROG_START
@@ -2120,6 +2308,13 @@ oyGetDefaultProfileUITitle (oyDEFAULT_PROFILE type)
   return name;
 }
 
+/** Gets a default profile filename.
+ *
+ *  @param  type          the kind of default profile
+ *  @param  allocate_func the allocation function needed to reserve memory for
+                          the filename string
+ *  @return filename
+ */
 char*
 oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
                             oyAllocFunc_t     allocate_func)
@@ -2142,6 +2337,16 @@ oyGetDefaultProfileName    (oyDEFAULT_PROFILE type,
  *  @{
  */
 
+/** @brief get a list of profile filenames
+ *  @param colourspace filter as ICC 4 byte string
+ *  @param[out] size profile filenames count
+ *  @return the profiles filename list allocated within Oyranos
+ *
+ *  @see oyProfileListFree to free lists memory after usage is completed.
+ *  @see path_names Path Names
+ *
+ *  @todo use colourspace variable; include icc34.h?
+ */
 char**
 oyProfileList                      (const char* colourspace, size_t *size)
 {
@@ -2151,18 +2356,42 @@ oyProfileList                      (const char* colourspace, size_t *size)
   return names;
 }
 
+/** @brief delete a profile names list
+ *  @param list a list of profile filenames
+ *  @param size number of profile filenames in the list to free
+ */
+void
+oyProfileListFree                  (char** list, size_t size)
+{ DBG_PROG_START
+  oyProfileListFree_ (list, size);
+  DBG_PROG_ENDE
+}
+
 /** @} */
 
 
+/** @brief check an file if it is a profile
+ *
+ *  @param  filename the filename to check
+ *  @param  flag currently ignored
+ *  @return true/false
+ */
 int
-oyCheckProfile (const char* name, int flag)
+oyCheckProfile (const char* filename, int flag)
 { DBG_PROG_START
   /* flag is currently ignored */
-  int n = oyCheckProfile_ (name);
+  int n = oyCheckProfile_ (filename);
   DBG_PROG_ENDE
   return n;
 }
 
+/** @brief check an memory block if it is a profile
+ *
+ *  @param  mem  the memory containing the profile
+ *  @param  size the size of the memory block
+ *  @param  flag currently ignored
+ *  @return true/false
+ */
 int
 oyCheckProfileMem (const void* mem, size_t size,int flag)
 { DBG_PROG_START
@@ -2172,7 +2401,6 @@ oyCheckProfileMem (const void* mem, size_t size,int flag)
   return n;
 }
 
-/** @brief obtain an memory block in the responsibility of the user */
 size_t
 oyGetProfileSize                  (const char* profilename)
 { DBG_PROG_START
@@ -2182,7 +2410,12 @@ oyGetProfileSize                  (const char* profilename)
 }
 
 /** @brief obtain an memory block in the responsibility of the user
-    \return allocated by oyAllocFunc_t */
+ *
+ *  @param  profilename specifies the profile
+ *  @param[out] size    the size the profile occupies
+ *  @param      allocate_func the users memory allocation function
+ *  @return             the profile block in memory allocated by oyAllocFunc_t
+ */
 void*
 oyGetProfileBlock                 (const char* profilename, size_t *size,
                                    oyAllocFunc_t allocate_func)
@@ -2233,10 +2466,10 @@ oyGetProfileBlock                 (const char* profilename, size_t *size,
                                             "ID 87-135.19",
                                             "grafic:0.0", "Matrox G650",
                                              "100lux", 0,
-                                            "");
+                                            "", allocate_func);
    if (profile_name)
    { char* ptr = (char*)malloc (oyGetProfileSize (profile_name),sizeof(int);
-     ptr = oyGetProfileBlock (profile_name);
+     ptr = oyGetProfileBlock (profile_name, allocate_func);
        // do something
      free (ptr);
    }
@@ -2253,10 +2486,12 @@ oyGetDeviceProfile                (oyDEVICETYP typ,
                                    const char* port,
                                    const char* attrib1,
                                    const char* attrib2,
-                                   const char* attrib3)
+                                   const char* attrib3,
+                                   oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   char* profile_name = oyGetDeviceProfile_ (manufacturer, model, product_id,
-                                    host, port, attrib1, attrib2, attrib3);
+                                    host, port, attrib1, attrib2, attrib3,
+                                    allocate_func);
   if(profile_name)
     DBG_PROG_S( (profile_name) );
 
@@ -2288,7 +2523,7 @@ oySetDeviceProfile                (oyDEVICETYP typ,
   return rc;
 }
 
-/** remove or deinstall the profile from the current path */
+/** @brief remove or deinstall the profile from the current path */
 int
 oyEraseDeviceProfile              (oyDEVICETYP typ,
                                    const char* manufacturer,

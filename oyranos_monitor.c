@@ -38,7 +38,6 @@
 
 #include "oyranos.h"
 #include "oyranos_helper.h"
-#include "oyranos_definitions.h"
 #include "oyranos_debug.h"
 
 #include <X11/Xlib.h>
@@ -52,16 +51,20 @@
 int   oyGetMonitorInfo_           (const char* display,
                                    char**      manufacturer,
                                    char**      model,
-                                   char**      serial);
-char* oyGetMonitorProfileName_    (const char *display_name);
+                                   char**      serial,
+                                   oyAllocFunc_t allocate_func);
+char* oyGetMonitorProfileName_    (const char *display_name,
+                                   oyAllocFunc_t allocate_func);
 char* oyGetMonitorProfile_        (const char *display_name,
-                                   size_t     *size);
+                                   size_t     *size,
+                                   oyAllocFunc_t allocate_func);
 
 int   oyActivateMonitorProfile_   (const char* display_name,
                                    const char* profile_name);
 int   oySetMonitorProfile_        (const char* display_name,
                                    const char* profile_name);
 char* oyLongDisplayName_          (const char* display_name);
+
 
   /* an incomplete DDC struct */
 struct DDC_EDID1 {
@@ -80,7 +83,8 @@ int
 oyGetMonitorInfo_                 (const char* display_name,
                                    char**      manufacturer,
                                    char**      model,
-                                   char**      serial)
+                                   char**      serial,
+                                   oyAllocFunc_t allocate_func)
 {
   DBG_PROG_START
 
@@ -143,14 +147,14 @@ oyGetMonitorInfo_                 (const char* display_name,
   len = strlen(edi->Mnf_Model); DBG_PROG_V((len))
   if(len) { DBG_PROG
     ++len;
-    t = (char*)calloc( len, sizeof(char) );
+    t = (char*)allocate_func( len );
     sprintf(t, edi->Mnf_Model);
     *manufacturer = t; DBG_PROG_S(( *manufacturer ))
   }
   len = strlen(edi->HW_ID); DBG_PROG_V((len))
   if(len) { DBG_PROG
     ++len;
-    t = (char*)calloc( len, sizeof(char) );
+    t = (char*)allocate_func( len );
     sprintf(t, edi->HW_ID);
     *serial = t; DBG_PROG_S(( *serial ))
   } DBG_PROG
@@ -166,7 +170,8 @@ oyGetMonitorInfo_                 (const char* display_name,
 }
 
 char*
-oyGetMonitorProfile_          (const char* display_name, size_t *size)
+oyGetMonitorProfile_          (const char* display_name, size_t *size,
+                               oyAllocFunc_t allocate_func)
 { DBG_PROG_START
 
   Display *display;
@@ -212,7 +217,8 @@ oyGetMonitorProfile_          (const char* display_name, size_t *size)
 }
 
 char*
-oyGetMonitorProfileName_          (const char* display_name)
+oyGetMonitorProfileName_          (const char* display_name,
+                                   oyAllocFunc_t allocate_func)
 { DBG_PROG_START
 
   char       *manufacturer=0,
@@ -221,7 +227,8 @@ oyGetMonitorProfileName_          (const char* display_name)
   char       *moni_profile=0,
              *host_name = 0;
 
-  oyGetMonitorInfo_( display_name, &manufacturer, &model, &serial );
+  oyGetMonitorInfo_( display_name, &manufacturer, &model, &serial,
+                     oyAllocateFunc_);
 
   host_name = oyLongDisplayName_ (display_name);
 
@@ -230,7 +237,7 @@ oyGetMonitorProfileName_          (const char* display_name)
   /* It's not network transparent. */
   /* If working remotely, better fetch the whole profile instead. */
   moni_profile = oyGetDeviceProfile( oyDISPLAY, manufacturer, model, serial,
-                                     host_name, 0,0,0,0);
+                                     host_name, 0,0,0,0, allocate_func);
 
   if(manufacturer) free(manufacturer);
   if(model) free(model);
@@ -249,15 +256,23 @@ oyActivateMonitorProfile_         (const char* display_name,
 
   char       *profil_pathname;
   const char *profil_basename;
+  char* profile_name_ = 0;
 
-  DBG_PROG_S(( "profil_name = %s", profil_name ))
-  
-  profil_pathname = oyGetPathFromProfileName( profil_name );
-  DBG_PROG_S(( "profil_pathname %s", profil_pathname ))
+  if(profil_name) {
+    DBG_PROG_S(( "profil_name = %s", profil_name ));
+    profil_pathname = oyGetPathFromProfileName( profil_name, oyAllocateFunc_ );
+  } else {
+    char* profile_name_ =
+      oyGetMonitorProfileName_          ( display_name,
+                                          oyAllocateFunc_);
+    profil_pathname = oyGetPathFromProfileName( profile_name_, oyAllocateFunc_);
+    profil_name = profile_name_;
+  }
 
   if( profil_pathname && strlen(profil_pathname) ) {
     char *text = (char*) calloc (MAX_PATH, sizeof(char));
-    if(strrchr(profil_name,OY_SLASH_C))
+    DBG_PROG_S(( "profil_pathname %s", profil_pathname ));
+    if(profil_name && strrchr(profil_name,OY_SLASH_C))
       profil_basename = strrchr(profil_name,OY_SLASH_C)+1;
     else
       profil_basename = profil_name;
@@ -293,7 +308,7 @@ oyActivateMonitorProfile_         (const char* display_name,
       screen = DefaultScreen(display); DBG_PROG_V((screen))
       w = RootWindow(display, screen); DBG_PROG_S(("w: %ld", w))
 
-      moni_profile = oyGetProfileBlock( profil_name, &size );
+      moni_profile = oyGetProfileBlock( profil_name, &size, oyAllocateFunc_ );
       if(!size || !moni_profile)
         WARN_S((_("Error obtaining profile")));
 
@@ -319,7 +334,7 @@ oyActivateMonitorProfile_         (const char* display_name,
     if(text) free(text);
   }
   if (profil_pathname) free (profil_pathname);
-
+  if (profile_name_) free (profile_name_);
   DBG_PROG_ENDE
   return error;
 }
@@ -337,7 +352,8 @@ oySetMonitorProfile_              (const char* display_name,
   char       *profil_pathname = 0;
 
   error  =
-    oyGetMonitorInfo_ (display_name, &manufacturer, &model, &serial);
+    oyGetMonitorInfo_ (display_name, &manufacturer, &model, &serial,
+                       oyAllocateFunc_);
 
   DBG_PROG
   if(error) {
@@ -383,7 +399,7 @@ oySetMonitorProfile_              (const char* display_name,
   error =  oySetDeviceProfile(oyDISPLAY, manufacturer, model, serial,
                               host_name,0,0,0,0,profil_name,0,0);
 
-  profil_pathname = oyGetPathFromProfileName( profil_name );
+  profil_pathname = oyGetPathFromProfileName( profil_name, oyAllocateFunc_ );
   DBG_PROG_S(( "profil_pathname %s", profil_pathname ))
 
   if( profil_pathname ) {
@@ -434,15 +450,28 @@ oyLongDisplayName_                (const char* display_name)
 
 /* separate from the internal functions */
 
+/** @brief pick up monitor information with Xlib
+ *  @deprecated because no ddc information is available
+ *  @todo include connection information - grafic cart
+ *
+ *  @param      display       the display string
+ *  @param[out] manufacturer  the manufacturer of the monitor device
+ *  @param[out] model         the model of the monitor device
+ *  @param[out] serial        the serial number of the monitor device
+ *  @param      allocate_func the allocator for the above strings
+ *  @return success
+ *
+ */
 int
 oyGetMonitorInfo                  (const char* display,
                                    char**      manufacturer,
                                    char**      model,
-                                   char**      serial)
+                                   char**      serial,
+                                   oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   int err = 0;
 
-  err = oyGetMonitorInfo_( display, manufacturer, model, serial );
+  err = oyGetMonitorInfo_( display, manufacturer, model, serial, allocate_func);
   DBG_PROG_V(( strlen(*manufacturer) ))
   if(*manufacturer)
     DBG_PROG_S(( *manufacturer ));
@@ -455,40 +484,66 @@ oyGetMonitorInfo                  (const char* display,
   return err;
 }
 
+/** @brief get the monitor profile
+
+ *  @param      display       the display string
+ *  @param[out] size          the size of profile
+ *  @param      allocate_func function used to allocate memory for the profile
+ *  @return                   the memory block containing the profile
+ */
 char*
-oyGetMonitorProfile           (const char* display, size_t *size)
+oyGetMonitorProfile           (const char* display, size_t *size,
+                               oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   char* moni_profile = 0;
 
-  moni_profile = oyGetMonitorProfile_( display , size );
+  moni_profile = oyGetMonitorProfile_( display , size, allocate_func );
 
   DBG_PROG_ENDE
   return moni_profile;
 }
 
+/** @brief get the monitor profile filename
+
+ *  @param      display       the display string
+ *  @param      allocate_func function used to allocate memory for the string
+ *  @return                   the profiles filename (if localy available)
+ */
 char*
-oyGetMonitorProfileName           (const char* display)
+oyGetMonitorProfileName           (const char* display,
+                                   oyAllocFunc_t allocate_func)
 { DBG_PROG_START
   char* moni_profile = 0;
 
-  moni_profile = oyGetMonitorProfileName_( display );
+  moni_profile = oyGetMonitorProfileName_( display, allocate_func );
 
   DBG_PROG_ENDE
   return moni_profile;
 }
 
+/** @brief activate the monitor using the stored configuration
+
+ *  @param      display_name  the display string
+ *  @return                   success
+ *  @see oySetMonitorProfile for permanently configuring a monitor
+ */
 int
-oyActivateMonitorProfile          (const char* display_name,
-                                   const char* profil_name )
+oyActivateMonitorProfile          (const char* display_name)
 { DBG_PROG_START
   int error = 0;
 
-  error = oyActivateMonitorProfile_( display_name, profil_name );
+  error = oyActivateMonitorProfile_( display_name, 0 );
 
   DBG_PROG_ENDE
   return error;
 }
 
+/** @brief set the monitor profile filename
+
+ *  @param      display_name  the display string
+ *  @param      profil_name   the file to use as monitor profile
+ *  @return                   success
+ */
 int
 oySetMonitorProfile               (const char* display_name,
                                    const char* profil_name )

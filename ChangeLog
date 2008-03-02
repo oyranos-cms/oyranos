@@ -1,3 +1,20 @@
+2005-09-06
+	* neu: rekursive Dateisuche; Link Erkennen weiter schwierig
+	* und: oyActivateMonitor vereinfacht
+	* und: statisches und dynamische Verknüpfen mit Elektra
+
+2005-09-05
+	* neu: DefaultProfile Funktionen umgeschrieben
+	* neu: oyDEFAULT_PROFILE zum Bezeichnen der Standardprofile
+	* und: Quelltextdokumentation
+
+2005-09-04
+	* neu: oyAllocFunc_t für benutzereigene Speicherreservierungen
+	* und: Quelltextdokumentation
+
+2005-09-03
+	* neu: Quelltextdokumentation
+
 2005-08-31
 	* und: elektra-0.5.0.4
 	* fix: linking libelektra_default.a 

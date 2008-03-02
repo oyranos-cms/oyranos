@@ -54,7 +54,7 @@
     - To some degree useablity checks for profiles should be included.
 
 
-    @section proposal Open Things
+    @section proposal Proposals
     @subsection identity_proposal Profile Identity Proposal
     One major benefit if a configuration system is the ashurance to use the
     correct profiles.\n
@@ -86,7 +86,7 @@
     Oyranos depends on following libraries:<br>
 
     <ul>
-    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux , <a href="http://sourceforge.net/project/showfiles.php?group_id=117521">version 0.4.8</a> should suffice . This version has the least amount of dependencies.</li>
+    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux , <a href="http://sourceforge.net/project/showfiles.php?group_id=117521">version 0.5.0.4</a> s needed due to a rename into libelektra . </li>
     <li><a href="http://www.osc.edu/~jbryan/FLU">FLU</a> version >= 2.14 
    for a convenient file browser (optionally, should be installed to play with Oyranos)</li>
     <li><a href="http://www.fltk.org">fltk</a> version >= 1.1.4 needed by FLU<br>
@@ -118,18 +118,20 @@
 */
 
 /** @file oyranos_definitions.h
-    @brief The macro header to include in your application without function usage.
+    @brief The macro header to include in your application without using any Oyranos function.
     
-    This file contains all macros which are relevant to the Oyranos API.
+    This file contains all macros which are relevant to the Oyranos API using
+    the Elektra library as configuration engine.
     For the Oyranos API see @file oyranos.h
+    @see elektra at sourceforge <a href="http://elektra.sf.net">Elektra</a>
 */
 
 /** @file oyranos_monitor.h
     @brief The Monitor API header to include in your application.
     
     This file contains all functions and structs available in the Oyranos Monitor API.
-    For further macros see @file oyranos_definitions.h
-    For the Oyranos API see @file oyranos.h
+    @see oyranos_definitions.h for further macrosh
+    @see oyranos.h for the Oyranos API
 */
 
 /** @file oyranos.c

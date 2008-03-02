@@ -34,33 +34,12 @@ void removePathLeaves();
 void buildOptionsLeaves();
 void buildTree();
 
-#define OY_DEFAULTPROFILES_COUNT 5
-char *default_profiles[] = {
-                                _("Workspace Profile"),
-                                _("XYZ Input Profile"),
-                                _("Lab Input Profile"),
-                                _("RGB Input Profile"),
-                                _("CMYK Input Profile"),
-                           };
+/* implementation */
 
-typedef char* funcGetDefaultProfile();
-funcGetDefaultProfile *functions_getDefaultProfile[] = {
-                           oyGetDefaultWorkspaceProfileName,
-                           oyGetDefaultXYZInputProfileName,
-                           oyGetDefaultLabInputProfileName,
-                           oyGetDefaultRGBInputProfileName,
-                           oyGetDefaultCmykInputProfileName
-};
-
-typedef int funcSetDefaultProfile(const char*);
-funcSetDefaultProfile *functions_setDefaultProfile[] = {
-                           oySetDefaultWorkspaceProfile,
-                           oySetDefaultXYZInputProfile,
-                           oySetDefaultLabInputProfile,
-                           oySetDefaultRGBInputProfile,
-                           oySetDefaultCmykInputProfile
-};
-
+void* myAllocFunc(size_t size)
+{
+  return new char [size];
+}
 
 struct BuildPathLeavesC: public Fl_Button 
 {
@@ -85,24 +64,31 @@ struct DefaultProfile: public Fl_Pack {
   Fl_Input *input;
   Fl_Button*button;
   #endif
-  int       type, i;
+  oyranos::oyDEFAULT_PROFILE type;
+  int       i;
 
-  DefaultProfile( int x, int y, int w, int h, int default_profile_type ,
+  DefaultProfile( int x, int y, int w, int h,
+                  oyranos::oyDEFAULT_PROFILE default_profile_type,
                   char** names, int count )
     : Fl_Pack(x, y, w, h)
   {
     Fl_Pack::type( FL_HORIZONTAL );
     Fl_Pack::spacing(0);
 	type = default_profile_type;
-    box = new Fl_Box( 0, 0, 150, 20, default_profiles[type] );
+    char *title_text = (char*) new char [256];
+    sprintf(title_text, _("%s Profile"), oyGetDefaultProfileUITitle(type));
+    box = new Fl_Box( 0, 0, 150, 20, title_text );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+
     choice = new Fl_Choice( 0, 0, 200, 20 );
     choice->callback( selectDefaultProfile_callback );
     DBG_PROG_V((choice->size()))
     choice->add( _("[none]") );
     DBG_PROG_V((choice->size()))
+
     oyOpen();
-    char* default_p = functions_getDefaultProfile[type]();
+    char* default_p = oyGetDefaultProfileName(type, myAllocFunc);
+    DBG_PROG_S( (default_p) )
     int val = 0, occurence = 0;
     for (i = 0; i < count; ++i)
     {
@@ -119,7 +105,7 @@ struct DefaultProfile: public Fl_Pack {
     }
     if(occurence > 1)
       WARN_S(("multiple ocurence of default %s profile: %d times",
-               default_profiles[type], occurence))
+               oyGetDefaultProfileUITitle(type), occurence))
     oyClose();
 
     DBG_PROG_V((choice->size()))
@@ -188,7 +174,7 @@ struct ProfilePath: public Fl_Pack {
     Fl_Pack::spacing(0);
     Fl_Group::resizable(0);
     n = num;
-    char *name = oyPathName(n) ;
+    char *name = oyPathName(n, myAllocFunc) ;
     std::cout << name << std::endl;
     box = new Fl_Box( 0, 0, 350, 20, name );
     box->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
@@ -218,12 +204,13 @@ selectDefaultProfile_callback( Fl_Widget* w, void* )
       oyOpen();
       int error = 0;
       if(strcmp(c->text(),_("[none]")) == 0)
-        error = functions_setDefaultProfile[dp->type] (0);
+        error = oySetDefaultProfile(dp->type,0);
       else
-        error = functions_setDefaultProfile[dp->type] (c->text());
+        error = oySetDefaultProfile(dp->type, c->text());
       oyClose();
       if(error) {
-        sprintf(text, "%s %s %s", _("setting"), _("failed!"), default_profiles[dp->type]);
+        sprintf(text, "%s %s %s", _("setting"), _("failed!"),
+                oyGetDefaultProfileUITitle(dp->type));
         fl_alert( text );
       }
     } else fl_alert( "no Fl_Choice" );
@@ -283,19 +270,23 @@ void buildBaseTree()
 void buildDefaultProfilesLeaves()
 {
   char* default_profiles_dirname = _("Default Profiles");
-  size_t count = 0, i;
+  size_t count = 0;
+  oyranos::oyDEFAULT_PROFILE i;
+  /* pick up all profiles */
   char** names = oyProfileList ( 0, &count );
 
-  for (i = 0 ; i < OY_DEFAULTPROFILES_COUNT ; ++i) {
-    char  t[128];
+  for (i = (oyranos::oyDEFAULT_PROFILE)0 ;
+         i < oyranos::oyDEFAULT_PROFILE_TYPES ;
+            i = (oyranos::oyDEFAULT_PROFILE)((int)i+1)) {
+    char *t = new char [64];
     DefaultProfile *dp = new DefaultProfile( 0, 0, 300, 20, i, names, count );
     sprintf( t, "/%s/ ", default_profiles_dirname );
     tree->add( t, dp );
     dp->end();
   }
 
-  for (i = 0; i < count; ++i)
-    if(names[i]) free(names[i]);
+  for (size_t k = 0; k < count; ++k)
+    if(names[k]) free(names[k]);
   free(names);
 }
 

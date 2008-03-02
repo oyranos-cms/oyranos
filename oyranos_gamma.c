@@ -35,7 +35,9 @@
 #include "oyranos.h"
 #include "oyranos_monitor.h"
 #include "oyranos_debug.h"
+#include "oyranos_helper.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 int main( int argc , char** argv )
 {
@@ -51,7 +53,7 @@ int main( int argc , char** argv )
     oySetMonitorProfile (display_name, monitor_profile);
   } else {
     oy_debug = 1;
-    monitor_profile = oyGetMonitorProfileName (display_name);
+    monitor_profile = oyGetMonitorProfileName (display_name, oyAllocateFunc_);
     oy_debug = 0;
   }
 
@@ -59,7 +61,7 @@ int main( int argc , char** argv )
   oyPathAdd( OY_DEFAULT_USER_PROFILE_PATH );
 
   if( monitor_profile )
-    error = oyActivateMonitorProfile (display_name, monitor_profile);
+    error = oyActivateMonitorProfile (display_name);
 
   return error;
 }

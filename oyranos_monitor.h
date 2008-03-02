@@ -31,6 +31,8 @@
 #ifndef OYRANOS_MONITOR_H
 #define OYRANOS_MONITOR_H
 
+#include <oyranos/oyranos.h>
+
 #ifdef __cplusplus
 extern "C" {
 namespace oyranos
@@ -40,7 +42,7 @@ namespace oyranos
 
 /*
  * hardware detection with X
- * should be independent of the huge windowing system
+ * this library part should be independent of the huge windowing system
  */
 
 
@@ -49,24 +51,18 @@ namespace oyranos
 int   oyGetMonitorInfo            (const char* display,
                                    char**      manufacturer,
                                    char**      model,
-                                   char**      serial);
-#if 0
-int   oyGetMonitorProfile         (const char *display,
-                                   char        buf,      /* if buf==0 getSize */
-                                   size_t     *size);
-int   oyGetMonitorProfileDescription (char     buf,      /* if buf==0 getSize */
-                                   size_t     *size);
-#else
-char* oyGetMonitorProfile         (const char *display,  /* deprecated */
-                                   size_t     *size);
-char* oyGetMonitorProfileName     (const char *display); /* deprecated */
-#endif
+                                   char**      serial,
+                                   oyAllocFunc_t allocate_func);
+char* oyGetMonitorProfile         (const char *display,
+                                   size_t     *size,
+                                   oyAllocFunc_t allocate_func);
+char* oyGetMonitorProfileName     (const char *display,
+                                   oyAllocFunc_t allocate_func);
 
 // TODO set a memory based profile
 int   oySetMonitorProfile         (const char* display_name,
                                    const char* profil_name );
-int   oyActivateMonitorProfile    (const char* display_name,
-                                   const char* profil_name );
+int   oyActivateMonitorProfile    (const char* display_name);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -86,7 +86,8 @@ CPP_HEADERS = \
 	oyranos_monitor.h
 #	fl_oyranos.h
 CFILES = \
-	oyranos.c
+	oyranos.c \
+	oyranos_helper.c
 CFILESC = \
 	oyranos_debug.c
 CFILES_MONI = \
@@ -148,7 +149,7 @@ $(TARGET):	$(OBJECTS) static
 	echo Linking $@ ...
 	$(CC) $(OPTS) $(LINK_FLAGS) $(LINK_NAME) -o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
-	$(LDLIBS)
+	-L/lib $(LDLIBS)
 	$(REZ)
 	$(RM)  $(LIBSONAME)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
