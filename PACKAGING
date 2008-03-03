@@ -1,0 +1,42 @@
+Components
+
+
+Standard profiles
+Make shure the base and ECI profiles are in place. The files in the settings directory rely on them. These settings files are essential to Oyranos.
+
+
+Libraries
+Do not omit the provided libraries for distribution. You can consider splitting it out into a separate package. The libraries contain essential functionality.
+
+The libXNVCtrl is not a must.
+
+Do not try to install the included Elektra. It is modified and not for 
+placing in public places except liboyranos_elektra.xxx.
+
+
+GUI
+oyranos-config-fltk is, as long as no other colour management panel is
+available, a essential part.
+
+
+Sources
+Place only the intended header files into the public include directory.
+Some files contain non stable API's. As an exception oyranos_alpha.h is marked
+as in alpha stage.
+
+
+Licenses
+Oyranos covers pices with different licenses.
+Read the first part of the COPYING file carefully. 
+
+
+Documentation
+The Doxyfile_intern is for Oyranos developers, not for public installation.
+
+
+Dependencies
+xcalib
+FLTK (--enable-threads)
+Elektra (included)
+
+
