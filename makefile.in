@@ -146,6 +146,7 @@ FLTK_FILES = \
 Flmm_FILES = \
 	FL/Flmm_Tabs.H \
 	$(CXXFILES_Flmm) \
+	FL/AUTHORS \
 	FL/ANNOUNCEMENT \
 	FL/CHANGES \
 	FL/COPYING \
