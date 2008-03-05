@@ -14,18 +14,6 @@
  *  @since    2004/11/25
  */
 
-/**
- * Oyranos is an open source Colour Management System 
- * 
- * Copyright (C) 2004-2008  Kai-Uwe Behrmann
- *
- * @autor: Kai-Uwe Behrmann <ku.b@gmx.de>
- *
- * License:   new BSD
- * 
- * -----------------------------------------------------------------------------
- */
-
 /** @file @internal
  *  @brief misc alpha API's
  */
