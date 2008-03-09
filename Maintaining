@@ -1,5 +1,6 @@
 o keep the API's consitent
 o remove old stuff
+o git push remote (git push ssh://root@www.oyranos.org/git/icc_examin/)
 
 release:
 o update translation

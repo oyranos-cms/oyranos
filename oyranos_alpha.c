@@ -8142,6 +8142,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
         if(psid)
           error = oyProfile_AddTag ( prof, &psid, -1 );
 
+        oyDeAllocateFunc_( block ); block = 0; size_ = 0;
         block = oyProfile_TagsToMem_( prof, &size_, allocateFunc );
 
       } else if(allocateFunc != oyAllocateFunc_)
