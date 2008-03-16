@@ -237,16 +237,8 @@ typedef struct {
 } oyCMMapi2_s;
 
 
-typedef oyChar **           (*oyCMMProfileTag_GetText_t) (
-                                       oyProfileTag_s    * tag,
-                                       int32_t           * n,
-                                       const char          language[4],
-                                       const char          country[4],
-                                       int32_t           * tag_size,
-                                       oyAllocFunc_t       allocateFunc );
-typedef double *            (*oyCMMProfileTag_GetValues_t) (
-                                       oyProfileTag_s    * tag,
-                                       oyAllocFunc_t       allocateFunc );
+typedef oyStructList_s *    (*oyCMMProfileTag_GetValues_t) (
+                                       oyProfileTag_s    * tag );
 typedef int                 (*oyCMMProfileTag_Create_t) ( 
                                        oyProfileTag_s    * tag,
                                        oyStructList_s    * list,
@@ -257,8 +249,9 @@ typedef int                 (*oyCMMProfileTag_Create_t) (
  *  @brief the API 3 to implement and set to provide low level ICC profile
  *         support
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/02 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
+ *  @date    2008/01/02
  */
 typedef struct {
   oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API3_S */
@@ -274,8 +267,7 @@ typedef struct {
   oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
   oyWidget_Event_t oyWidget_Event;     /**< handle widget events */
 
-  oyCMMProfileTag_GetText_t oyProfileTag_GetText;
-  oyCMMProfileTag_GetValues_t oyProfileTag_GetValues;
+  oyCMMProfileTag_GetValues_t oyCMMProfileTag_GetValues;
   oyCMMProfileTag_Create_t oyCMMProfileTag_Create;
 } oyCMMapi3_s;
 

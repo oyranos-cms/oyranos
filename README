@@ -1,95 +1,20 @@
-Deutsch
-
-
-Oyranos (gr. Himmel):
-
-    Das Farbmanagement System Oyranos ermöglicht die einfache Verwaltung von
-    gerätespezifischen Informationen (ICC Profile) und systemweiten
-    Einstellungen.
-
-
---------------------------------------------------------------------------------
-
-Voraussetzungen:
-
-    Elektra: <elektra.sf.net>
-
-Konfiguration:
-
-    ./configure
-
-Zusätze:
-
-    Profile gibt es zum Beispiel auf der Adobe Webseite:
-    http://www.adobe.com/support/downloads/main.html
-    und an vielen anderen Plätzen im Internet
-
-
-Vorschläge / Fehler:
-
-    Bitte an Kai-Uwe Behrmann schicken <ku.b at gmx.de>
-
-
-Pläne:
-
-    - Dokumentation
-    - Profilvergleich
-
---------------------------------------------------------------------------------
-
-
-  Oyranos:
-           Kai-Uwe Behrmann <www.behrmann.name>
-
-
-
-================================================================================
-
-English
-
-
 Oyranos (gr. sky):
 
     The Colour Management System (CMS) Oyranos allows the coordination of
     device specific Informations (ICC profiles) und system wide settings.
 
-    
 
---------------------------------------------------------------------------------
-
-prerequisits:
-
-    Elektra: <elektra.sf.net>
-
-configuration:
-
-    ./configure
-
-add ons:
-
-    Profiles are available for instance from the Adobe web site:
-    http://www.adobe.com/support/downloads/main.html
-    and many other places in the internet
+Internet:
+    site: http://www.oyranos.org
+    wiki: http://www.oyranos.org/wiki/index.php?title=Oyranos
 
 
-bugs/suggestions:
+Building:
+    A prerequisite is Elektra - http://www.libelektra.org
+    FLTK (--enable-threads) is needed for the example Gui.
+    Xcalib a vcgt loader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
 
-    please report to Kai-Uwe Behrmann <ku.b at gmx.de>
-
-
-plans:
-
-    - documentation
-    - profile comparision
-
---------------------------------------------------------------------------------
-
-
-  Oyranos:
-           Kai-Uwe Behrmann <www.behrmann.name>
-
-
-
-================================================================================
-
+    $ configure
+    $ make
+    $ make install
 

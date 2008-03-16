@@ -7,7 +7,7 @@
  */
 
 /**
- *  @brief    littleCMS backend for Oyranos
+ *  @brief    littleCMS CMM backend for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
@@ -19,12 +19,8 @@
 
 #include <lcms.h>
 
-#include "oyranos_cmm.h"
-#include "oyranos_icc.h"
-#include "oyranos_definitions.h"
-/*#include "oyranos_helper.h"
-#include "oyranos_i18n.h"
-#include "oyranos_monitor.h" */ /* TODO */
+#include "oyranos_cmm.h"         /* the API this CMM implements */
+
 #include <math.h>
 
 

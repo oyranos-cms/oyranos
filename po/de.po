@@ -1075,7 +1075,7 @@ msgstr "Thermischer Wachsdrucker"
 
 #: oyranos_alpha.c:711
 msgid "Electrophotographic printer"
-msgstr "Electrofotografischer Drucker"
+msgstr "Elektrofotografischer Drucker"
 
 #: oyranos_alpha.c:712
 msgid "Electrostatic printer"
@@ -1131,15 +1131,15 @@ msgstr ""
 
 #: oyranos_alpha.c:725
 msgid "Offset Lithography"
-msgstr ""
+msgstr "Offsetdruck"
 
 #: oyranos_alpha.c:726
 msgid "Silkscreen"
-msgstr ""
+msgstr "Siebdruck"
 
 #: oyranos_alpha.c:727
 msgid "Flexography"
-msgstr ""
+msgstr "Flexodruck"
 
 #: oyranos_alpha.c:750
 msgid "ITU-R BT.709"

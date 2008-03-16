@@ -44,7 +44,7 @@ int          oyObject_Ref            ( oyObject_s          obj );
                                        oyStructReleaseF_t  ptrRelease,
                                        oyChar            * func_name );*/
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
-                                       const oyPointer     block,
+                                       oyPointer         * block,
                                        int                 flags,
                                        oyObject_s          object);
 oyCMMptr_s * oyProfile_GetCMMPtr_    ( oyProfile_s       * profile,
@@ -301,7 +301,7 @@ oyICCColourSpaceGetName ( icColorSpaceSignature sig )
     case icSigMCHFData:
     case icSig15colorData: text =_("15color"); break;
     default: { icUInt32Number i = oyValueCSpaceSig(sig);
-               static char t[8];
+               char t[8];
                memcpy (t,(char*)&i, 4);
                t[4] = 0;
                text = &t[0];
@@ -1696,7 +1696,7 @@ int              oyStructList_Release (oyStructList_s   ** obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  for(i = 0; i < s->n_; ++i)
+  for(i = s->n_ - 1; i >= 0; --i)
     oyStructList_ReleaseAt( s, i );
 
   if(s->oy_->deallocateFunc_)
@@ -3026,9 +3026,9 @@ oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api )
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->oyCMMCanHandle &&
-           s->oyProfileTag_GetText &&
+           s->oyCMMProfileTag_GetValues &&
            /*s-> &&*/
-           s->oyProfileTag_GetValues ) )
+           s->oyCMMProfileTag_Create ) )
         error = 1;
     } break;
     default: break;
@@ -4297,7 +4297,7 @@ oyChar* oyCMMCacheListPrint_()
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-static oyProfile_s *
+oyProfile_s *
 oyProfile_New_ ( oyObject_s        object)
 {
   /* ---- start of common object constructor ----- */
@@ -4461,7 +4461,7 @@ oyProfile_FromFile            ( const char      * name,
 
   if(!error)
   {
-    s = oyProfile_FromMemMove_( size, block, 0, object );
+    s = oyProfile_FromMemMove_( size, &block, 0, object );
 
     if(!s)
       error = 1;
@@ -4523,7 +4523,7 @@ oyProfile_FromFile            ( const char      * name,
  *  @date  november 2007 (API 0.1.8)
  */
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
-                                       const oyPointer     block,
+                                       oyPointer         * block,
                                        int                 flags,
                                        oyObject_s          object)
 {
@@ -4533,9 +4533,10 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
   oyGetMonitorProfileName_t funcP2 = 0;
   char cmm[] = {0,0,0,0,0};
 
-  if(block && size)
+  if(block  && *block && size)
   {
-    s->block_ = block;
+    s->block_ = *block;
+    *block = 0;
     if(!s->block_)
       error = 1;
     else
@@ -4648,7 +4649,7 @@ oyProfile_FromMem             ( size_t            size,
     }
   }
 
-  s = oyProfile_FromMemMove_( size_, block_, flags, object );
+  s = oyProfile_FromMemMove_( size_, &block_, flags, object );
 
   return s;
 }
@@ -5276,8 +5277,8 @@ OYAPI oyPointer OYEXPORT
  *  @param         dl_pos              -1, or the position in a device links source chain
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/02/01
  *  @since   2008/02/01 (Oyranos: 0.1.8)
+ *  @date    2008/02/01
  */
 const oyChar *     oyProfile_GetFileName ( oyProfile_s   * profile,
                                        int                 dl_pos )
@@ -5355,6 +5356,95 @@ const oyChar *     oyProfile_GetFileName ( oyProfile_s   * profile,
 
   return name;
 }
+#if 0
+const oyChar *     oyProfile_GetFileName ( oyProfile_s   * profile,
+                                       int                 dl_pos )
+{
+  const oyChar * text = 0;
+  oyProfile_s * s = profile, * tmp = 0;
+  int error = !s;
+  oyChar ** names = 0;
+  uint32_t count = 0, i = 0;
+  oyProfileTag_s * psid = 0;
+  oyName_s * name = 0;
+  oyStructList_s * values = 0;
+  int32_t   texts_n = 0;
+  oyChar *  hash = 0;
+  oyChar    tmp_hash[34];
+  int       dl_n = 0;
+
+  if(!error && s->type_ == oyOBJECT_TYPE_PROFILE_S)
+  {
+    if(dl_pos >= 0)
+    {
+      psid = oyProfile_GetTagById( s, icSigProfileSequenceIdentifierTag );
+      values = oyProfileTag_GetValues( psid );
+
+      if(oyStructList_Count( values ) )
+      {
+        name = 0;
+        texts_n = oyStructList_Count( values );
+
+        if(texts_n > 1+dl_pos*5+2)
+        {
+          dl_n = 1 + dl_pos*5+2;
+          name = (oyName_s*) oyStructList_GetRefType( values, dl_n,
+                                                      oyOBJECT_TYPE_NAME_S );
+        
+          if(name)
+            hash = name->name;
+        }
+      }
+    }
+
+
+    if(s->file_name_ && !hash)
+    {
+      text = s->file_name_;
+    } else {
+
+      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+
+      for(i = 0; i < count; ++i)
+      {
+        if(names[i])
+        {
+          if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+            tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
+
+          if(hash && tmp)
+          {
+            uint32_t * h = (uint32_t*)&tmp->oy_->hash_[0];
+            oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+            if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
+            {
+              text = names[i];
+              break;
+            }
+          } else
+          if(oyProfile_Equal_( s, tmp ))
+          {
+            text = names[i];
+            break;
+          }
+
+          oyProfile_Release( &tmp );
+        }
+      }
+      s->file_name_ = oyFindProfile_( text );
+      text = oyStringCopy_( s->file_name_, s->oy_->allocateFunc_ );
+      oyDeAllocateFunc_( s->file_name_ );
+      s->file_name_ = (char*)text;
+
+      oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+    }
+
+    oyStructList_Release( &values );
+  }
+
+  return text;
+}
+#endif
 
 /** @brief get a CMM specific pointer
  *
@@ -5730,7 +5820,9 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
 
       header = (icHeader*) block;
       header->size = oyValueUInt32( (icUInt32Number) len);
+#if 0 /* we dont override the CMM's id */
       header->creator = *hi;
+#endif
 #if !defined(__APPLE__) && !defined(WIN32)
       oySprintf_( h, "*nix" );
       header->platform = *hi;
@@ -5840,6 +5932,7 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
       if(tag_id_ == id)
       {
         tag = tmp; tmp = 0;
+        break;
       } else
         oyProfileTag_Release( &tmp );
     }
@@ -5912,9 +6005,13 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
       oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
       char h[5] = {"head"};
       uint32_t * hi = (uint32_t*)&h;
+      char *tag_block = 0;
 
-      error = oyProfileTag_Set( tag_, *hi, *hi,
-                                oyOK, 132, s->block_ );
+      tag_block = oyAllocateFunc_( 132 );
+      error = !memcpy( tag_block, s->block_, 132 );
+      error = oyProfileTag_Set( tag_, (icTagSignature)*hi,
+                                (icTagTypeSignature)*hi,
+                                oyOK, 132, tag_block );
       if(!error)
         error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
 
@@ -5933,7 +6030,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         icTag *ic_tag = &tag_list[i];
         size_t offset = oyValueUInt32( ic_tag->offset );
         size_t tag_size = oyValueUInt32( ic_tag->size );
-        char *tag_block = 0;
         char *tmp = 0;
         oyChar **texts = 0;
         int32_t texts_n = 0;
@@ -5942,6 +6038,8 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         icTagTypeSignature tag_type = 0;
 
         oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
+
+        tag_block = 0;
 
         if((offset+tag_size) > s->size_)
           status = oyCORRUPTED;
@@ -6030,7 +6128,14 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
     error = 1;
 
   if(!error)
-    n = oyStructList_Count( profile->tags_ );
+    n = oyStructList_Count( s->tags_ );
+
+  if(!n)
+  {
+    oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( s, 0 );
+    oyProfileTag_Release( &tag );
+    n = oyStructList_Count( s->tags_ );
+  }
 
   return n;
 }
@@ -6058,6 +6163,35 @@ int                oyProfile_AddTag  ( oyProfile_s       * profile,
 
   if(!error)
     error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos );
+
+  if(s)
+    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+
+  return error;
+}
+
+/** @func    oyProfile_TagReleaseAt
+ *  @internal
+ *  @brief   remove a tag from a profile
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/03/11
+ *  @since   2008/03/11 (Oyranos: 0.1.8)
+ */
+int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
+                                       int                 pos )
+{
+  oyProfile_s * s = profile;
+  int error = 0;
+
+  if(!(s && s->type_ == oyOBJECT_TYPE_PROFILE_S))
+    error = 1;
+
+  if(s)
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+  if(!error)
+    error = oyStructList_ReleaseAt ( s->tags_, pos );
 
   if(s)
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
@@ -6324,9 +6458,13 @@ oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 {
   oyProfileTag_s * s = tag;
   int error = !s;
-  oyCMMProfileTag_GetText_t funcP = 0;
+  oyCMMProfileTag_GetValues_t funcP = 0;
   char cmm[] = {0,0,0,0,0};
-  oyChar ** texts = 0;
+  char ** texts = 0, * text = 0;
+  oyStructList_s * values = 0;
+  oyName_s * name = 0;
+  int values_n = 0, i = 0;
+  int32_t texts_n = 0;
   oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_READ, 0, oyREQUEST_HARD};
   oyCMMapiQuery_s *query_[2] = {0,0};
   oyCMMapiQueries_s queries = {1,0};
@@ -6352,7 +6490,7 @@ oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
-      funcP = api3->oyProfileTag_GetText;
+      funcP = api3->oyCMMProfileTag_GetValues;
     }
     error = !funcP;
   }
@@ -6366,7 +6504,29 @@ oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
     if(!allocateFunc)
       allocateFunc = oyAllocateFunc_;
 
-    texts = funcP( tag, n, language, country, tag_size, allocateFunc );
+    values = funcP( tag );
+
+      if(oyStructList_Count( values ) )
+      {
+        name = 0;
+        values_n = oyStructList_Count( values );
+
+        for(i = 0; i < values_n; ++i)
+        {
+          name = (oyName_s*) oyStructList_GetRefType( values, i,
+                                                      oyOBJECT_TYPE_NAME_S );
+        
+          if(name)
+            text = name->name;
+          if(text)
+            oyStringListAddStaticString_( &texts, &texts_n, text,
+                                          oyAllocateFunc_, oyDeAllocateFunc_);
+        }
+
+        *n = texts_n;
+      }
+    oyStructList_Release( &values );
+
     error = !memcpy( tag->last_cmm_, cmm, 4 );
   }
 
@@ -7156,32 +7316,32 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
   }
 
 
-  hashTextAdd_m( "{ " );
-  oySprintf_( text, "channels: all:%d colour:%d; ", n, cchan_n );
+  hashTextAdd_m( "{\n" );
+  oySprintf_( text, " channels:\n  all = %d\n  colour = %d\n", n, cchan_n );
   hashTextAdd_m( text );
   oySprintf_( text,
-              "offsets: first colour sample:%d next pixel:%d next line:%d; ",
-              coff_x, mask[oyPOFF_X], mask[oyPOFF_Y] );
+              " offsets:\n  first colour sample = %d\n  next pixel = %d\n"
+              /*"  next line = %d\n"*/,
+              coff_x, mask[oyPOFF_X]/*, mask[oyPOFF_Y]*/ );
   hashTextAdd_m( text );
 
   if(swap || oyToByteswap_m( pixel_layout ))
   {
-    hashTextAdd_m( "swap" );
+    hashTextAdd_m( " swap:\n" );
     if(swap)
-      hashTextAdd_m( " c:yes" );
+      hashTextAdd_m( "  colourswap = yes\n" );
     if( oyToByteswap_m( pixel_layout ) )
-      hashTextAdd_m( " b:yes" );
-    hashTextAdd_m( "; " );
+      hashTextAdd_m( "  byteswap = yes\n" );
   }
 
   if( oyToFlavor_m( pixel_layout ) )
   {
-    oySprintf_( text, "f:yes; " );
+    oySprintf_( text, " flawor = yes\n" );
     hashTextAdd_m( text );
   }
-  oySprintf_( text, "type:%s[%dB]; ", oyDatatypeToText(t), so );
+  oySprintf_( text, " sample type = %s[%dByte]\n", oyDatatypeToText(t), so );
   hashTextAdd_m( text );
-  hashTextAdd_m( "}" );
+  hashTextAdd_m( "}\n" );
 
   if(!error)
     error = oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
@@ -7659,10 +7819,11 @@ const oyChar *     oyColourConversion_GetID_ (
     oyChar text[16];
     int intent = oyGetBehaviour( oyBEHAVIOUR_RENDERING_INTENT );
 
-    hashTextAdd_m( "in:" );
+    hashTextAdd_m( "oyCC\n" );
+    hashTextAdd_m( "profile in = \"" );
     hashTextAdd_m( oyProfile_GetID( in->profile_ ) );
 
-    hashTextAdd_m( "; image in:" );
+    hashTextAdd_m( "\"\nimage in = " );
     hashTextAdd_m( oyObject_GetName( in->oy_, oyNAME_NICK ) );
 
     n = oyProfileList_Count( list );
@@ -7670,22 +7831,20 @@ const oyChar *     oyColourConversion_GetID_ (
     {
       oyProfile_s * p = oyProfileList_Get( list, i );
       if(i == 0)
-        hashTextAdd_m( "; effect:" );
+        hashTextAdd_m( "  effect = \"" );
       hashTextAdd_m( oyProfile_GetID( p ) );
       oyProfile_Release( &p );
-
-      if(i < n-1)
-        hashTextAdd_m( ":" );
+      hashTextAdd_m( "\"\n" );
     }
 
-    hashTextAdd_m( "; out:" );
+    hashTextAdd_m( "profile out = \"" );
     hashTextAdd_m( oyProfile_GetID( out->profile_ ) );
 
-    hashTextAdd_m( "; intent:" );
-    oySprintf_( text, "%d", intent );
+    hashTextAdd_m( "\"\nintent = " );
+    oySprintf_( text, "%d\n", intent );
     hashTextAdd_m( text );
 
-    hashTextAdd_m( "; image out:" );
+    hashTextAdd_m( "image out = " );
     hashTextAdd_m( oyObject_GetName( out->oy_, oyNAME_NICK ) );
 
     oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
@@ -7765,7 +7924,6 @@ oyColourConversion_s* oyColourConversion_Create_ (
 
     /* 1. create hash text */
     hashTextAdd_m( cmm );
-    hashTextAdd_m( " oyCC:" );
     tmp = oyColourConversion_GetID_( s, list, opts, in, out );
     hashTextAdd_m( tmp );
 
@@ -8050,12 +8208,13 @@ int        oyColourConversion_Release( oyColourConversion_s ** obj )
   return 0;
 }
 
-/** @func oyColourConversion_ToMem_ 
+/** @func    oyColourConversion_ToMem_ 
  *  @internal
- *  @brief save the CMM specific data to memory
+ *  @brief   save the profile linking data as a ICC device link to memory
  *
- *  @since Oyranos: version 0.1.8
- *  @date  21 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/12/21 (Oyranos: 0.1.8)
+ *  @date    2008/03/11
  */
 oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
                                        size_t            * size,
@@ -8108,7 +8267,9 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
   {
     oyProfile_s * prof = 0;
     /*int n = 0;*/
-    oyProfileTag_s * psid = 0;
+    oyProfileTag_s * psid = 0,
+                   * info = 0,
+                   * cprt = 0;
 
     if(!error)
     {
@@ -8124,9 +8285,9 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
       *size = size_;
 
       prof = oyProfile_FromMem( size_, block, 0, 0 );
-      /*n = oyProfile_GetTagCount ( prof );*/
       psid = oyProfile_GetTagById( prof, icSigProfileSequenceIdentifierTag );
 
+      /* icSigProfileSequenceIdentifierType */
       if(!psid)
       {
         oyProfileList_s * p_list = 0;
@@ -8141,17 +8302,73 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
 
         if(psid)
           error = oyProfile_AddTag ( prof, &psid, -1 );
-
-        oyDeAllocateFunc_( block ); block = 0; size_ = 0;
-        block = oyProfile_TagsToMem_( prof, &size_, allocateFunc );
-
-      } else if(allocateFunc != oyAllocateFunc_)
-      {
-        oyPointer temp = allocateFunc(size_);
-        error = !memcpy( temp, block, size_ );
-        oyDeAllocateFunc_( block );
-        block = temp; temp = 0;
       }
+
+      /* Info tag */
+      if(!error)
+      {
+        oyStructList_s * list = 0;
+        char h[5] = {"Info"};
+        uint32_t * hi = (uint32_t*)&h;
+        const char * cc_name = oyObject_GetName( s->oy_, oyNAME_NICK );
+        oyName_s * name = oyName_new(0);
+
+        name = oyName_set_ ( name, cc_name, oyNAME_NAME,
+                             oyAllocateFunc_, oyDeAllocateFunc_ );
+        name = oyName_set_ ( name, cc_cmm, oyNAME_NICK,
+                             oyAllocateFunc_, oyDeAllocateFunc_ );
+        list = oyStructList_New(0);
+        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, 0 );
+
+        if(!error)
+        {
+          info = oyProfileTag_Create( list, icSigTextType, 0,OY_MODULE_NICK, 0);
+          error = !info;
+        }
+
+        if(!error)
+          info->use = (icTagSignature)oyValueUInt32(*hi);
+
+        oyStructList_Release( &list );
+
+        if(info)
+          error = oyProfile_AddTag ( prof, &info, -1 );
+      }
+
+      if(!error)
+        cprt = oyProfile_GetTagById( prof, icSigCopyrightTag );
+
+      /* icSigCopyrightTag */
+      if(!error && !cprt)
+      {
+        oyStructList_s * list = 0;
+        const char * c_text = "no copyright; use freely";
+        oyName_s * name = oyName_new(0);
+
+        name = oyName_set_ ( name, c_text, oyNAME_NAME,
+                             oyAllocateFunc_, oyDeAllocateFunc_ );
+        list = oyStructList_New(0);
+        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, 0 );
+
+        if(!error)
+        {
+          cprt = oyProfileTag_Create( list, icSigTextType, 0,OY_MODULE_NICK, 0);
+          error = !cprt;
+        }
+
+        if(!error)
+          cprt->use = icSigCopyrightTag;
+
+        oyStructList_Release( &list );
+
+        if(cprt)
+          error = oyProfile_AddTag ( prof, &cprt, -1 );
+      }
+
+      if(block)
+        oyDeAllocateFunc_( block ); block = 0; size_ = 0;
+
+      block = oyProfile_TagsToMem_( prof, &size_, allocateFunc );
 
       *size = size_;
       oyProfile_Release( &prof );
@@ -9044,7 +9261,7 @@ oyValueUInt16 (icUInt16Number val)
 # define BYTES 2
 # define KORB  4
   unsigned char        *temp  = (unsigned char*) &val;
-  static unsigned char  korb[KORB];
+  unsigned char  korb[KORB];
   int i;
   for (i = 0; i < KORB ; i++ )
     korb[i] = (int) 0;  /* empty */
@@ -9088,7 +9305,7 @@ oyValueUInt32 (icUInt32Number val)
 #if BYTE_ORDER == LITTLE_ENDIAN
   unsigned char        *temp = (unsigned char*) &val;
 
-  static unsigned char  uint32[4];
+  unsigned char  uint32[4];
 
   uint32[0] = temp[3];
   uint32[1] = temp[2];
@@ -9120,7 +9337,7 @@ oyValueUInt64 (icUInt64Number val)
 #if BYTE_ORDER == LITTLE_ENDIAN
   unsigned char        *temp  = (unsigned char*) &val;
 
-  static unsigned char  uint64[8];
+  unsigned char  uint64[8];
   int little = 0,
       big    = 8;
 

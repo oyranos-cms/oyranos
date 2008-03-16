@@ -628,6 +628,8 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile );
 int                oyProfile_AddTag  ( oyProfile_s       * profile,
                                        oyProfileTag_s   ** tag,
                                        int                 pos );
+int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
+                                       int                 pos );
 const oyChar *     oyProfile_GetFileName ( oyProfile_s   * profile,
                                        int                 dl_pos );
 
