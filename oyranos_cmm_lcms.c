@@ -703,6 +703,24 @@ oyPointer  lcmsCMMColourConversion_ToMem (
 
     *size = 0;
 
+    {
+        int nargs = 1, i;
+        size_t size = sizeof(int) + nargs * sizeof(cmsPSEQDESC);
+        LPcmsSEQ pseq = (LPcmsSEQ) malloc(size);
+        
+        ZeroMemory(pseq, size);
+        pseq ->n = nargs;
+
+        for (i=0; i < nargs; i++) {
+
+            strcpy(pseq ->seq[i].Manufacturer, CMM_NICK);
+            strcpy(pseq ->seq[i].Model, "CMM ");
+        }
+
+        cmsAddTag(dl, icSigProfileSequenceDescTag, pseq);
+        free(pseq);
+    }
+
     _cmsSaveProfileToMem( dl, 0, size );
     data = allocateFunc( *size );
     _cmsSaveProfileToMem( dl, data, size );

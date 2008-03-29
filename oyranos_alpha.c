@@ -301,7 +301,7 @@ oyICCColourSpaceGetName ( icColorSpaceSignature sig )
     case icSigMCHFData:
     case icSig15colorData: text =_("15color"); break;
     default: { icUInt32Number i = oyValueCSpaceSig(sig);
-               char t[8];
+               static char t[8];
                memcpy (t,(char*)&i, 4);
                t[4] = 0;
                text = &t[0];
@@ -1322,6 +1322,9 @@ oyName_s *   oyName_copy               ( oyName_s        * obj,
     s = oyName_set_ ( s, obj->nick, oyNAME_NICK, allocateFunc, deallocateFunc );
   if(obj->description)
     s = oyName_set_ ( s, obj->description, oyNAME_DESCRIPTION, allocateFunc, deallocateFunc );
+
+  if(!s)
+    s = oyName_new(0);
 
   s->string_type = obj->string_type;
   error = !memcpy( s->lang, obj->lang, 8 );
@@ -5225,25 +5228,13 @@ OYAPI oyPointer OYEXPORT
   oyPointer block = 0;
   oyProfile_s * s = profile;
   int error = !s;
-  int n = oyProfile_GetTagCount( s );
-
-  if(!error && !n)
-  {
-    oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( s, 0 );
-
-    if(tag)
-    {
-      n = oyStructList_Count( profile->tags_ );
-      oyProfileTag_Release( &tag );
-    }
-  }
 
   if(s)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
   if(!error && s->type_ == oyOBJECT_TYPE_PROFILE_S)
   {
-    if(s->tags_)
+    if(oyStructList_Count( s->tags_ ))
     {
       block = oyProfile_TagsToMem_ ( profile, size, allocateFunc );
 
@@ -6433,7 +6424,7 @@ OYAPI int  OYEXPORT
 /** @func oyProfileTag_GetText
  *
  *  For the affect of the parameters look at the appropriate module.
- *  @see oyraProfileTag_GetText
+ *  @see oyraProfileTag_GetValues
  *
  *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
  *  element from the tag parameter.
@@ -6513,14 +6504,14 @@ oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
         for(i = 0; i < values_n; ++i)
         {
+          text = 0;
           name = (oyName_s*) oyStructList_GetRefType( values, i,
                                                       oyOBJECT_TYPE_NAME_S );
         
           if(name)
             text = name->name;
-          if(text)
-            oyStringListAddStaticString_( &texts, &texts_n, text,
-                                          oyAllocateFunc_, oyDeAllocateFunc_);
+          oyStringListAddStaticString_( &texts, &texts_n, text,
+                                        oyAllocateFunc_, oyDeAllocateFunc_);
         }
 
         *n = texts_n;

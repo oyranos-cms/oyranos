@@ -194,17 +194,21 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
 
 int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
 {
-  int error = !texts || !text || !strlen(text);
+  int error = !texts;
   oyName_s * name = 0;
   oyStruct_s * oy_struct = 0;
   char * tmp = 0;
   if(!error)
   {
      name = oyName_new(0);
-     tmp = oyAllocateFunc_( strlen(text) + 1 );
-     if(!tmp) return 1;
-     sprintf( tmp, "%s", text ); 
-     name->name = tmp;
+     if(!name) return 1;
+     if(text)
+     {
+       tmp = oyAllocateFunc_( strlen(text) + 1 );
+       if(!tmp) return 1;
+       sprintf( tmp, "%s", text ); 
+       name->name = tmp;
+     }
      oy_struct = (oyStruct_s*) name;
      oyStructList_MoveIn( texts, &oy_struct, pos );
   }
@@ -377,7 +381,7 @@ oyStructList_s * oyraProfileTag_GetValues(
     mem = tag->block_;
     sig = tag->tag_type_;
 
-    error = !mem;
+    error = !mem || !tag->size_ > 12;
 
     if(!error)
     switch( (uint32_t)sig )
@@ -504,6 +508,8 @@ oyStructList_s * oyraProfileTag_GetValues(
                  g = oyValueUInt32( *(icUInt32Number*)&mem[20+ i*groesse] );
 
                {
+                 oyName_s * name = 0;
+                 oyStruct_s * oy_struct = 0;
                  char * t = 0;
                  int n_ = 0, j;
                  size_t size = 0;
@@ -520,8 +526,9 @@ oyStructList_s * oyraProfileTag_GetValues(
 
                  if(!error && all)
                  {
-                   oySprintf_( t, "%c%c", c, d );
-                   oyStructList_AddName( texts, t, -1 );
+                   name = oyName_new(0);
+                   oySprintf_( name->lang, "%c%c_%c%c", c, d,
+                               mem[18+ i*groesse], mem[19+ i*groesse] );
                  }
 
                  if(!error)
@@ -542,10 +549,10 @@ oyStructList_s * oyraProfileTag_GetValues(
 
                  if(!error)
                  {
-                   for( j = 1; j < g/2; ++j)
+                   for( j = 0; j < g/2; ++j)
                      wc[j] = oyValueUInt16( uni16be[j] );
                    wc[j] = 0;
-                   size = wcstombs( t, (const wchar_t*)uni16be, g );
+                   size = wcstombs( t, wc, g );
 
                    if(size == (size_t)-1)
                    {
@@ -555,7 +562,9 @@ oyStructList_s * oyraProfileTag_GetValues(
                      t[n_/2] = 0;
                    }
 
-                   oyStructList_MoveInName( texts, &t, -1 );
+                   name->name = t;
+                   oy_struct = (oyStruct_s*) name;
+                   oyStructList_MoveIn( texts, &oy_struct, -1 );
                  }
                  oyFree_m_( wc );
                }
@@ -648,6 +657,7 @@ oyStructList_s * oyraProfileTag_GetValues(
              oyStructList_s * mfg_tmp = 0, * model_tmp = 0;
              oyProfileTag_s * tmptag = 0;
              int32_t size = -1;
+             icTagSignature tag_sig = (icTagSignature)0;
 
              count = *(icUInt32Number*)(mem+off);
              count = oyValueUInt32( count );
@@ -684,12 +694,14 @@ oyStructList_s * oyraProfileTag_GetValues(
                  tech = oyICCTechnologyDescription( oyValueUInt32(desc->technology ));
                }
 
-               /* first 'desc' type - mnf */
+               /* first mnf */
                tmptag = oyProfileTag_New(0);
                tmp = oyAllocateFunc_(tag->size_ - off);
                error = !memcpy(tmp, &mem[off], tag->size_ - off);
+               tag_sig = *(icUInt32Number*)(tmp);
+               tag_sig = oyValueUInt32( tag_sig );
                oyProfileTag_Set( tmptag, icSigDeviceMfgDescTag,
-                                         icSigTextDescriptionType, oyOK,
+                                         tag_sig, oyOK,
                                          tag->size_ - off, tmp );
                mfg_tmp = oyraProfileTag_GetValues( tmptag );
                if(oyStructList_Count( mfg_tmp ) )
@@ -706,12 +718,14 @@ oyStructList_s * oyraProfileTag_GetValues(
                if(size > 0)
                  off += size;
 
-               /* next 'desc' type - model */
+               /* next model */
                tmptag = oyProfileTag_New(0);
                tmp = oyAllocateFunc_(tag->size_ - off);
                error = !memcpy(tmp, &mem[off], tag->size_ - off);
+               tag_sig = *(icUInt32Number*)(tmp);
+               tag_sig = oyValueUInt32( tag_sig );
                oyProfileTag_Set( tmptag, icSigDeviceModelDescTag,
-                                         icSigTextDescriptionType, oyOK,
+                                         tag_sig, oyOK,
                                          tag->size_ - off, tmp );
                mfg_tmp = oyraProfileTag_GetValues( tmptag );
                if(oyStructList_Count( model_tmp ) )
@@ -926,7 +940,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
                  * tmptag = 0;
   int error = !list;
   int n = oyStructList_Count( list ),
-      i = 0, mem_len = 0, tmp_len = 0, mluc_len = 0,mluc_sum = 0, strings_n = 0,
+      i = 0, mem_len = 0, tmp_len = 0, mluc_len = 0, mluc_sum = 0,
       len = 0, j = 0;
   char * mem = 0,
        * tmp = 0;
@@ -936,7 +950,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
   oyName_s * string = 0;
 
   /* provide information about the function */
-  if(!error && !s && !n)
+  if(!error && !s)
   {
     oyName_s description_mluc = {
       oyOBJECT_TYPE_NAME_S, 0,0,0,
@@ -958,7 +972,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
       "\
 - icSigProfileSequenceIdentifierType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: should contain only profiles\
+  - list: should contain only oyProfile_s\
   - version: is not honoured; note 'psid' is known after ICC v4.2"
     };
     oyName_s description_text = {
@@ -1143,7 +1157,6 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            {
              mluc_len = 0;
              tmp_list = oyraProfileTag_GetValues( tmptag );
-             oyProfileTag_Release( &tmptag );
 
              if(!error)
              {
@@ -1161,104 +1174,6 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
              mluc_sum += tmptag->size_;
              error = oyStructList_MoveIn( tag_list, (oyStruct_s**)&tmptag, -1 );
            }
-         }
-
-         if(!error)
-         {
-           mem_len = 12 + 8*n + 16*n + mluc_sum + 3*n;
-           mem = oyStruct_Allocate( (oyStruct_s*)tag, mem_len );
-           error = !mem;
-
-           if(!error)
-           oyProfileTag_Set( s, icSigProfileSequenceIdentifierType,
-                                icSigProfileSequenceIdentifierType, oyOK,
-                                mem_len, mem );
-
-           tmp_len = 0;
-
-           for(i = 0; i < n; ++i)
-           {
-             if(!error)
-             {
-               tmptag = (oyProfileTag_s*) oyStructList_GetRefType( tag_list,
-                                               i, oyOBJECT_TYPE_PROFILE_TAG_S );
-               error = !tmptag;
-             }
-
-             if(!error)
-             {
-               int pos = 12 + 8*n + tmp_len;
-               error = !memcpy( &mem[pos + 16],
-                                tmptag->block_, tmptag->size_ );
-               *((uint32_t*)&mem[12 + 8*i + 0]) = oyValueUInt32( pos );
-
-               prof = (oyProfile_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_PROFILE_S );
-               error = !prof || !prof->block_ || !prof->size_;
-               error = oyProfileGetMD5( prof->block_, prof->size_,
-                                        (unsigned char*)&mem[pos] );
-               oyProfile_Release( &prof );
-
-               len = 16 + tmptag->size_;
-               *((uint32_t*)&mem[12 + 8*i + 4]) = oyValueUInt32( len );
-               tmp_len += len + (len%4 ? len%4 : 0);
-             }
-             oyProfileTag_Release( &tmptag );
-           }
-
-           if(!error)
-             *((uint32_t*)&mem[8]) = oyValueUInt32( n );
-         }
-       }
-       break;
-
-    case icSigProfileSequenceDescType:
-       {
-         tag_list = oyStructList_New( 0 );
-
-         for(i = 0; i < n; ++i)
-         {
-           if(!error)
-           {
-             prof = (oyProfile_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_PROFILE_S );
-             error = !prof;
-           }
-
-           if(!error)
-           {
-             tmptag = oyProfile_GetTagById( prof, icSigDeviceMfgDescTag );
-             tmptag = oyProfile_GetTagById( prof, icSigDeviceModelDescTag );
-             tmptag = oyProfile_GetTagById( prof, icSigTechnologyTag );
-
-           }
-
-           if(!error && tmptag->tag_type_ != icSigProfileDescriptionTag)
-           {
-             mluc_len = 0;
-             strings_n = 0;
-             tmp_list = oyraProfileTag_GetValues( tmptag );
-             oyProfileTag_Release( &tmptag );
-
-             if(!error)
-             {
-               if(!error)
-                 error = oyraProfileTag_Create( tmptag, tmp_list,
-                                         icSigMultiLocalizedUnicodeType, 0 );
-               tmp = 0;
-
-               if(!error)
-                 error = tmptag->status_;
-             }
-           }
-
-           if(!error)
-           {
-             mluc_sum += tmptag->size_;
-             error = oyStructList_MoveIn( tag_list, (oyStruct_s**)&tmptag, -1 );
-           }
-
-           oyProfile_Release( &prof );
          }
 
          if(!error)
