@@ -46,20 +46,21 @@ void  oyDeAllocateFunc_         (void *        data);
 
 
 /* oyNoEmptyName_( name ) */
-#define oyNoEmptyName_m_( text ) text?text:"\"---\""
+#define oyNoEmptyName_m_( text_nem ) text_nem?text_nem:"\"---\""
 extern intptr_t oy_observe_pointer_;
 
 /* oyFree_ (void*) */
 #define oyFree_m_(x) {                                      \
-  if(oy_observe_pointer_ == (intptr_t)x)                    \
-    WARNc_S(( "%s:%d %s() pointer %s freed",                 \
-            __FILE__,__LINE__,__func__,#x ));               \
+  char text_fm[80];                                         \
+  if(oy_observe_pointer_ == (intptr_t)x) {                  \
+    oySnprintf1_( text_fm, 80, "pointer %s freed", #x );    \
+    WARNc_S( text_fm ); }                                   \
   if (x != NULL) {    /* defined in oyranos_helper.h */     \
     oyDeAllocateFunc_ (x);                                  \
     x = NULL;                                               \
   } else {                                                  \
-    char *t = _("%s:%d %s() nothing to delete %s\n");       \
-    WARNc_S (( t, __FILE__,__LINE__,__func__, #x ));         \
+    oySnprintf1_(text_fm, 80, _("nothing to delete %s"), #x); \
+    WARNc_S ( text_fm );                                    \
   }                                                         \
 }
 
@@ -68,17 +69,16 @@ extern intptr_t oy_observe_pointer_;
   if (ptr_ != NULL)    /* defined in oyranos_helper.h */    \
     oyFree_m_( ptr_ )                                       \
   if ((size_) <= 0) {                                       \
-    WARNc_S ((_("%s:%d %s() nothing to allocate - size: %d\n"), \
-    __FILE__,__LINE__,__func__, (int)(size_)));             \
+    WARNc2_S ("%s %d", _("nothing to allocate - size:"),    \
+              (int)(size_) );                               \
   } else {                                                  \
       ptr_ = (type*) oyAllocateWrapFunc_(sizeof (type) * (size_t)(size_), \
-                                         alloc_func ); \
+                                         alloc_func );      \
       memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
   }                                                         \
   if (ptr_ == NULL) {                                       \
-    WARNc_S( ("%s:%d %s() %s %d %s %s .",__FILE__,__LINE__, \
-         __func__, _("Can not allocate"),(int)(size_),      \
-         _("bytes of  memory for"), #ptr_));                \
+    WARNc3_S( "%s %d %s", _("Can not allocate memory for:"),\
+              (int)(size_), #ptr_ );                        \
     action;                                                 \
   }                                                         \
 }
@@ -87,8 +87,7 @@ extern intptr_t oy_observe_pointer_;
 #define oyPostAllocHelper_m_(ptr_, size_, action) {         \
   if ((size_) <= 0 ||                                       \
       ptr_ == NULL ) { /* defined in oyranos_helper.h */    \
-    WARNc_S ((_("%s:%d %s() nothing allocated %s\n"),        \
-    __FILE__,__LINE__,__func__, #ptr_));                    \
+    WARNc2_S ("%s %s", _("nothing allocated"), #ptr_ );     \
     action;                                                 \
   }                                                         \
 }
@@ -103,8 +102,18 @@ extern intptr_t oy_observe_pointer_;
            strlen( str_ )
 #define oySprintf_ \
            sprintf
-#define oySnprintf_( str_, len_, patrn_, args_ ) \
-           snprintf( str_, len_, patrn_, args_ )
+#define oySnprintf_( str_, len_, patrn_ ) \
+           snprintf( str_, len_, patrn_ )
+#define oySnprintf1_( str_, len_, patrn_, arg ) \
+           snprintf( str_, len_, patrn_, arg )
+#define oySnprintf2_( str_, len_, patrn_, arg, arg2 ) \
+           snprintf( str_, len_, patrn_, arg, arg2 )
+#define oySnprintf3_( str_, len_, patrn_, arg, arg2, arg3 ) \
+           snprintf( str_, len_, patrn_, arg, arg2, arg3 )
+#define oySnprintf4_( str_, len_, patrn_, arg, arg2, arg3, arg4 ) \
+           snprintf( str_, len_, patrn_, arg, arg2, arg3, arg4 )
+#define oySnprintf5_( str_, len_, patrn_, arg, arg2, arg3, arg4, arg5 ) \
+           snprintf( str_, len_, patrn_, arg, arg2, arg3, arg4, arg5 )
 #define oyStrcpy_( targ_, src_ ) \
            strcpy( targ_, src_ )
 #define oyStrchr_( str_, c_ ) \

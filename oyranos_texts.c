@@ -1359,8 +1359,8 @@ oyPolicyNameGet_()
             err = oySetDefaultProfile_( oywid, value);
             if(err)
             {
-               WARNc_S(( "Could not set default profile %s:%s", t->name ,
-                        value?value:"--" ));
+               WARNc2_S( "Could not set default profile %s:%s", t->name ,
+                        value?value:"--" );
             }
             oyFree_m_(value);
           }
@@ -1383,8 +1383,8 @@ oyPolicyNameGet_()
 
           if(err)
           {
-            WARNc_S(( "Could not set behaviour %s:%s .", t->name ,
-                      value?value:"--" ));
+            WARNc2_S( "Could not set behaviour %s:%s .", t->name ,
+                      value?value:"--" );
             return NULL;
           }
 
@@ -1397,11 +1397,11 @@ oyPolicyNameGet_()
 
     if( !xml )
     {
-      WARNc_S(( "no policy data available??" ));
+      WARNc_S( "no policy data available??" );
     }
     else if( !data )
     {
-      WARNc_S(( "no policy file available??" ));
+      WARNc_S( "no policy file available??" );
     } else if( oyStrstr_( data, xml ) )
       name = policy_list[i];
 
@@ -1427,7 +1427,7 @@ int         oyPolicySet_               (const oyChar  * policy_file,
   if(full_name)
   {
     if(oyStrlen_( full_name ))
-      oySnprintf_( file_name, MAX_PATH, "%s", full_name );
+      oySnprintf1_( file_name, MAX_PATH, "%s", full_name );
   }
 
   if( !oyStrlen_( file_name ) )
@@ -1445,11 +1445,11 @@ int         oyPolicySet_               (const oyChar  * policy_file,
       {
         if( oyStrlen_( file_name ) )
         {
-          WARNc_S(( "ambiguous policy %s selection from policy identifier %s",
-                   policy_list[i], policy_file ));
+          WARNc2_S( "ambiguous policy %s selection from policy identifier %s",
+                   policy_list[i], policy_file );
         }
 
-        oySnprintf_( file_name, MAX_PATH, "%s", policy_list[i] );
+        oySnprintf1_( file_name, MAX_PATH, "%s", policy_list[i] );
       }
     }
 
@@ -1463,7 +1463,7 @@ int         oyPolicySet_               (const oyChar  * policy_file,
     if(data && size)
     {
       xml = data;
-      printf( "Opened file: %s", file_name );
+      DBG_PROG1_S( "Opened file: %s", file_name );
     }
   }
 
@@ -1471,7 +1471,7 @@ int         oyPolicySet_               (const oyChar  * policy_file,
     err = oyReadXMLPolicy_( oyGROUP_ALL, xml );
     oyFree_m_( xml );
   } else
-    WARNc_S(( "No policy file found: \"%s\"", file_name ));
+    WARNc1_S( "No policy file found: \"%s\"", file_name );
 
 
   DBG_PROG_ENDE
@@ -1551,8 +1551,9 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
         dup_count = dup_pos;
       }
       if(occurence > 1)
-        WARNc_S((_("multiple occurencies of default %s profile: %d times\n  Did you install multiple times?"),
-                  default_p, occurence))
+        WARNc3_S("%s %s %d",default_p,
+                 _("multiple occurencies of default profile\n  Did you install multiple times?"),
+                  occurence);
     }
     if( choices )
       *choices              = dup_count;
@@ -1600,7 +1601,7 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
       {
         oyChar * filename = list[i];
 
-        sprintf( pn, filename );
+        oySprintf_( pn, filename );
 
         if(oyStrstr_(pn,"policy.xml"))
         {
@@ -1936,7 +1937,7 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice)
  
   DBG_PROG_START
 
-  DBG_PROG_S( ("type = %d behaviour %d", type, choice) )
+  DBG_PROG2_S( "type = %d behaviour %d", type, choice )
 
   if ( oyWidgetTypeGet_( type ) == oyWIDGETTYPE_BEHAVIOUR ||
        oyWidgetTypeGet_( type ) == oyWIDGETTYPE_CHOICE )
@@ -1945,10 +1946,10 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice)
          choice < t->choices )
       r = 1;
     else
-      WARNc_S( ("%s:%d !!! ERROR type %d option %d does not exist for behaviour",__FILE__,__LINE__, type, choice));
+      WARNc2_S( "type %d option %d does not exist for behaviour", type, choice);
   }
   else
-    WARNc_S( ("%s:%d !!! ERROR type %d type does not exist for behaviour",__FILE__,__LINE__, type));
+    WARNc1_S( "type %d type does not exist for behaviour", type);
 
   DBG_PROG_ENDE
   return r;

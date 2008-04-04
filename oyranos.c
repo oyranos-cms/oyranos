@@ -17,6 +17,7 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -36,7 +37,7 @@
 
 /* --- Helpers  --- */
 #if 1
-#define ERR if (rc<=0 && oy_debug) { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
+#define ERR if (rc<=0 && oy_debug) { oyMessageFunc_p(oyMSG_WARN,"%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
 #else
 #define ERR
 #endif
@@ -60,6 +61,65 @@ char* oyFindProfile_ (const char* name);
 /* --- function definitions --- */
 
 
+/** @func    oyMessageFunc_
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/04/03
+ *  @since   2008/04/03 (Oyranos: 0.1.8)
+ */
+int oyMessageFunc_( int code, const char * format, ... )
+{
+  char* text = (char*)calloc(sizeof(char), 4096);
+  va_list list;
+  int i;
+
+  if(code == oyMSG_DBG && !oy_debug)
+    return 0;
+
+  if(level_PROG < 30)
+  {
+    for (i = 0; i < level_PROG; i++)
+      oySprintf_( &text[oyStrlen_(text)], " ");
+
+    fprintf(stderr,text);
+  }
+
+  va_start( list, format);
+  vsprintf( text, format, list);
+  va_end  ( list );
+
+  switch(code)
+  {
+    case oyMSG_WARN:
+         fprintf( stderr, _("WARNING")); fprintf( stderr, " %03f: ", DBG_UHR_);
+         break;
+    case oyMSG_ERROR:
+         fprintf( stderr, _("!!! ERROR"));fprintf( stderr, " %03f: ", DBG_UHR_);
+         break;
+  }
+  fprintf( stderr, text ); fprintf( stderr, "\n" );
+  free( text );
+
+  return 0;
+}
+
+
+oyMessageFunc_t oyMessageFunc_p = oyMessageFunc_;
+
+/** @func    oyMessageFuncSet
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/04/03
+ *  @since   2008/04/03 (Oyranos: 0.1.8)
+ */
+int            oyMessageFuncSet      ( oyMessageFunc_t     message_func )
+{
+  if(message_func)
+    oyMessageFunc_p = message_func;
+  return 0;
+}
 
 
 
@@ -70,25 +130,25 @@ oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
 {
   char* search = (char*) data;
   int success = 0;
-  DBG_S(( search ))
+  DBG_S( search )
   if(strcmp(filename,search)==0) {
     size_t size = 128;
     char* header = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
     success = !oyCheckProfile_Mem (header, size, 0);
     oyFree_m_ (header);
     if (success) {
-      DBG_S((full_name))
-      DBG_V((strlen(full_name)))
+      DBG_S(full_name)
+      DBG_V(strlen(full_name))
       if (strlen(full_name) < MAX_PATH) {
         sprintf(search,full_name);
         search[strlen(full_name)] = 0;
       } else
         search[0] = 0;
     } else
-      WARNc_S(( _("not a profile %s"), oyNoEmptyName_m_(full_name) ))
+      WARNc2_S( "%s %s", _("not a profile:"), oyNoEmptyName_m_(full_name) )
   }
   /* break on success */
-  DBG_V((success))
+  DBG_V(success)
   return success;
 }
 
@@ -117,7 +177,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
     if(strlen(fileName) < MAX_PATH)
       sprintf(search, fileName);
     else {
-      WARNc_S((_("name longer than %d"), MAX_PATH));
+      WARNc2_S( "%s %d", _("name longer than"), MAX_PATH)
       DBG_PROG_ENDE
       return 0;
     }
@@ -138,22 +198,22 @@ oyGetPathFromProfileName_       (const char*   fileName,
           if(ptr)
             ptr[0] = 0;
         }
-        DBG_PROG_S(( pathName ))
+        DBG_PROG_S( pathName )
         DBG_PROG_ENDE
         return pathName;
       } else
 
     if (!success) {
       if(oy_warn_)
-        WARNc_S( (_("profile %s not found in colour path\n"),
-                 oyNoEmptyName_m_(fileName)));
+        WARNc2_S( "%s %s", _("profile not found in colour path:"),
+                  oyNoEmptyName_m_(fileName))
       DBG_PROG_ENDE
       return 0;
     }
 
   } else
   {/* else use fileName as an full qualified name, check name and test profile*/
-    DBG_PROG_S(("dir/filename found"))
+    DBG_PROG_S("dir/filename found")
     fullFileName = oyMakeFullFileDirName_ (fileName);
 
     if (oyIsFileFull_(fullFileName))
@@ -166,7 +226,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
     }
 
     if (!success) {
-      WARNc_S ((_("profile %s not found\n"), oyNoEmptyName_m_(fileName)))
+      WARNc2_S( "%s %s", _("profile not found:"), oyNoEmptyName_m_(fileName))
       DBG_PROG_ENDE
       return 0;
     }
@@ -204,7 +264,7 @@ oySetDefaultProfile_       (oyPROFILE_e       type,
   if( type == oyASSUMED_WEB &&
       !strstr( file_name,"sRGB" ) )
   {
-    WARNc_S((_("wrong profile for static web colour space selected, need sRGB")))
+    WARNc_S(_("wrong profile for static web colour space selected, need sRGB"))
     return 1;
   }
   r = oySetProfile_ (file_name, type, 0);
@@ -420,13 +480,13 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
   
   DBG_PROG_START
 
-  DBG_PROG_S(( "%d",type ))
+  DBG_PROG_V( type )
 
   /* a static_profile */
   if(type == oyASSUMED_WEB) {
     oyAllocHelper_m_( name, char, MAX_PATH, allocate_func, return NULL );
     sprintf(name, OY_WEB_RGB);
-    DBG_PROG_S(( name ))
+    DBG_PROG_S( name )
     return name;
   }
 
@@ -440,7 +500,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
 
     err = CMGetColorSyncVersion(&version);
     if(err == noErr)
-      DBG_PROG_S(( "ColorSync version: %d\n", (int)version ));
+      DBG_PROG_S( "ColorSync version: %d\n", (int)version );
 
     switch(type)
     {
@@ -539,7 +599,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
     const oyOption_t_ * t = oyOptionGet_(type);
     if( !t->config_string )
     {
-      WARNc_S(("Option not supported type: %d", type))
+      WARNc2_S( "%s %d", _("Option not supported type:"), type)
       return NULL;
     }
     name = oyGetKeyValue_( t->config_string, allocate_func );
@@ -615,19 +675,19 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
 
   if (!oyCheckProfile_Mem( mem, size, 0))
   {
-    DBG_PROG_S((fullFileName))
+    DBG_PROG_S(fullFileName)
     if ( oyIsFile_(fullFileName) ) {
-      WARNc_S((_("file %s exist , please remove befor installing new profile\n"),
-              fullFileName))
+      WARNc2_S("%s: %s", fullFileName,
+                _("file exists, please remove befor installing new profile."))
     } else
     { r = oyWriteMemToFile_ (fullFileName, mem, size);
       oySetProfile_ ( name, type, comnt);
     }
   }
 
-  DBG_PROG_S(("%s", name))
-  DBG_PROG_S(("%s", fileName))
-  DBG_PROG_S(("%ld %d", (long int)&((char*)mem)[0] , (int)size))
+  DBG_PROG1_S("%s", name)
+  DBG_PROG1_S("%s", fileName)
+  DBG_PROG2_S("%ld %d", (long int)&((char*)mem)[0] , (int)size)
   oyFree_m_(fullFileName);
 
   DBG_PROG_ENDE
@@ -727,7 +787,7 @@ printComp (oyComp_t_* entry)
 
 
 # ifdef DEBUG
-  DBG_PROG_S(("%d", (int)(intptr_t)entry))
+  DBG_PROG1_S("%d", (int)(intptr_t)entry)
   sprintf( text, "%s:%d %s() begin %d next %d\n",
            __FILE__,__LINE__,__func__,
            (int)(intptr_t)entry->begin, (int)(intptr_t)entry->next );
@@ -1443,7 +1503,7 @@ oyGetProfileBlock                 (const char* profilename, size_t *size,
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
   block = oyGetProfileBlock_ (profilename, size, allocate_func);
-  DBG_PROG_S( ("%s %hd %d", profilename, (int)(intptr_t)block, (int)(intptr_t)*size) )
+  DBG_PROG3_S( "%s %hd %d", profilename, (int)(intptr_t)block, (int)(intptr_t)*size)
   DBG_PROG
 
   oyExportEnd_();

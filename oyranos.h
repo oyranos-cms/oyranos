@@ -59,9 +59,12 @@ typedef void (*oyDeAllocFunc_t)       (void *data);
 
 typedef enum {
   oyMSG_WARN = 300,
+  oyMSG_DBG,
   oyMSG_ERROR
 } oyMSG_e;
 typedef int  (*oyMessageFunc_t)( int/*oyMSG_e*/ code, const char* format, ... );
+int            oyMessageFuncSet      ( oyMessageFunc_t     message_func );
+extern         oyMessageFunc_t         oyMessageFunc_p;
 
 
 /** @brief Widget Groups 

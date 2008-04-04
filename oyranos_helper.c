@@ -36,7 +36,7 @@ void* oyAllocateFunc_           (size_t        size)
   void *ptr = calloc (sizeof (char), size);
 
   if( !ptr )
-    WARNc_S(( "Can not allocate %d byte.", (int)size ));
+    WARNc1_S( "Can not allocate %d byte.", (int)size );
 
   return ptr;
 }
@@ -44,7 +44,7 @@ void* oyAllocateFunc_           (size_t        size)
 void  oyDeAllocateFunc_           (void*       block)
 {
   if( !block ) {
-    WARNc_S(( "Memory block is empty." ))
+    WARNc_S( "Memory block is empty." )
   } else
     free( block );
 }
@@ -83,8 +83,8 @@ int                oyMiscBlobGetMD5_ ( void              * buffer,
     return 0;
 
   } else {
-    WARNc_S (("False memory - size = %d pos = %lu digest = %lu",
-              (int)size, (long int)buffer, (long int)digest));
+    WARNc3_S ("False memory - size = %d pos = %lu digest = %lu",
+              (int)size, (long int)buffer, (long int)digest);
 
     DBG_PROG_ENDE
     return 1;

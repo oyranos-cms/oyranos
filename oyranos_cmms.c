@@ -244,7 +244,7 @@ oyModulsGetNames_( int        *count,
   {
     oyAllocHelper_m_( ids[i], char, 5, alloc_func, return NULL);
 
-    snprintf( ids[i], 5, oyModules_.modul[i].cmm );
+    oySnprintf_( ids[i], 5, oyModules_.modul[i].cmm );
   }
   *count = oyModules_.n;
   return ids;
@@ -309,7 +309,7 @@ oyModulGetFromXML_( oyGROUP_e           group,
   cmm_group= oyXMLgetValue_(cmm_reg, "oyCMM_GROUP");
   value = oyXMLgetValue_(cmm_group, "oyID");
   if(value && strlen(value) == 4)
-    snprintf( cmm->cmm, 5, value );
+    oySnprintf_( cmm->cmm, 5, value );
   else
     base_complete = 0;
   value = oyXMLgetValue_(cmm_group, "oyNAME");
@@ -381,10 +381,10 @@ oyModulGetFromXML_( oyGROUP_e           group,
       first_group_n = oy_group;
     
     /*DBG_S(("oyGROUP[%d]: %s", i, groupa[i])); */
-    DBG_S(("   [%d]: %s", i, oyXMLgetValue_(groupa[i], "oyCONFIG_STRING_XML")));
-    DBG_S(("   [%d]: %s", i, _( oyXMLgetValue_(groupa[i], "oyNAME")) ));
-    DBG_S(("   [%d]: %s", i, _( oyXMLgetValue_(groupa[i], "oyDESCRIPTION")) ));
-    DBG_S(("   [%d]: %s", i, oyXMLgetValue_(groupa[i], "oyNIX")));
+    DBG2_S("   [%d]: %s", i, oyXMLgetValue_(groupa[i], "oyCONFIG_STRING_XML"))
+    DBG2_S("   [%d]: %s", i, _( oyXMLgetValue_(groupa[i], "oyNAME")) )
+    DBG2_S("   [%d]: %s", i, _( oyXMLgetValue_(groupa[i], "oyDESCRIPTION")) )
+    DBG2_S("   [%d]: %s", i, oyXMLgetValue_(groupa[i], "oyNIX"))
   }
   cmm->groups_start = first_group_n;
   cmm->groups_end   = cmm->groups_start + group_modules - 1;
@@ -405,10 +405,10 @@ oyModulGetFromXML_( oyGROUP_e           group,
     cmm->func[i].name        = _(oyXMLgetValue_(func[i], "oyNAME"));
     cmm->func[i].description = _(oyXMLgetValue_(func[i], "oyDESCRIPTION"));
     cmm->func[i].func_name   =   oyXMLgetValue_(func[i], "oyDYNLOAD_FUNC");
-    DBG_S(("     : %s", cmm->func[i].id))
-    DBG_S(("     : %s", cmm->func[i].name))
-    DBG_S(("     : %s", cmm->func[i].description))
-    DBG_S(("     : %s", cmm->func[i].func_name))
+    DBG1_S("     : %s", cmm->func[i].id)
+    DBG1_S("     : %s", cmm->func[i].name)
+    DBG1_S("     : %s", cmm->func[i].description)
+    DBG1_S("     : %s", cmm->func[i].func_name)
     options = oyXMLgetValue_(func[i], "oyWIDGETS");
     option =  oyXMLgetArray_(options, "oyWIDGET", &count2);
     cmm->func[i].option = NULL;
@@ -421,7 +421,7 @@ oyModulGetFromXML_( oyGROUP_e           group,
       char **grs = NULL;
       char *type = NULL;
       /*DBG_S(("oyWIDGET_e[%d]: %s", i, option[i])); */
-      DBG_S(("       : %s", oyXMLgetValue_(option[j], "oyID")));
+      DBG1_S("       : %s", oyXMLgetValue_(option[j], "oyID"))
 
       grs = oyXMLgetArray_(option[j], "oyGROUP", &group_n);
       if(group_n && grs)
@@ -431,16 +431,16 @@ oyModulGetFromXML_( oyGROUP_e           group,
 
         cmm->func[i].option[j].category[k] = atoi(grs[k]);
         if(cat_intern >= 0)
-          DBG_S(("       => %s",
-                 _( oyXMLgetValue_(groupa[ cat_intern ], "oyNAME") )));
+          DBG1_S("       => %s",
+                 _( oyXMLgetValue_(groupa[ cat_intern ], "oyNAME") ));
       }
       if(group_n < 10)
         cmm->func[i].option[j].category[ group_n ] = oyGROUP_START;
 
       cmm->func[i].option[j].name = _( oyXMLgetValue_(option[j], "oyNAME") );
       cmm->func[i].option[j].description = _( oyXMLgetValue_(option[j], "oyDESCRIPTION") );
-      DBG_S(("       : %s", _( oyXMLgetValue_(option[j], "oyNAME") )));
-      DBG_S(("       : %s", _( oyXMLgetValue_(option[j], "oyDESCRIPTION") )));
+      DBG1_S("       : %s", _( oyXMLgetValue_(option[j], "oyNAME") ))
+      DBG1_S("       : %s", _( oyXMLgetValue_(option[j], "oyDESCRIPTION") ))
 
       type = oyXMLgetValue_(option[j], "oyWIDGET_TYPE");
       if(type)
@@ -460,8 +460,8 @@ oyModulGetFromXML_( oyGROUP_e           group,
         else if (strcmp(type,"oyWIDGETTYPE_VOID") == 0)
           cmm->func[i].option[j].type = oyWIDGETTYPE_VOID;
         else
-          WARNc_S(("Did not find a type for option: %s",
-                  cmm->func[i].option[j].name));
+          WARNc2_S("%s %s", _("Did not find a type for option:"),
+                   cmm->func[i].option[j].name);
       }
 
       switch (cmm->func[i].option[j].type)
@@ -482,7 +482,7 @@ oyModulGetFromXML_( oyGROUP_e           group,
              for(k = 0; k < cmm->func[i].option[j].choices; ++k)
              {
                cmm->func[i].option[j].choice_list[k] = _( choice[k] );
-               DBG_S(("         : %s", _(choice[k])));
+               DBG1_S("         : %s", _(choice[k]))
              }
              break;
         case oyWIDGETTYPE_VOID:
@@ -491,8 +491,8 @@ oyModulGetFromXML_( oyGROUP_e           group,
       }
       cmm->func[i].option[j].config_string = oyXMLgetValue_(option[j], "oyCONFIG_STRING");
       cmm->func[i].option[j].config_string_xml = oyXMLgetValue_(option[j], "oyCONFIG_STRING_XML");
-      DBG_S(("       : %s", oyXMLgetValue_(option[j], "oyCONFIG_STRING")));
-      DBG_S(("       : %s", oyXMLgetValue_(option[j], "oyCONFIG_STRING_XML")));
+      DBG1_S("       : %s", oyXMLgetValue_(option[j], "oyCONFIG_STRING"))
+      DBG1_S("       : %s", oyXMLgetValue_(option[j], "oyCONFIG_STRING_XML"))
     }
     cmm->func[i].opts_start  =   oyModulsGetNewOptionRange_(count2);
     cmm->func[i].opts_end    =   cmm->func[i].opts_start + count2 - 1;
@@ -543,7 +543,7 @@ int          oyModulesScan_          ( int                 flags )
     char* xml = oyReadFileToMem_ ( list[i], &size,
                                    oyAllocateFunc_ );
 
-    DBG_S(("Pfad[%d]: %s", i, list[i]));
+    DBG2_S("Pfad[%d]: %s", i, list[i])
 
     if(xml)
     {
@@ -581,19 +581,19 @@ oyModulPrint_   ( const char       *modul )
 
   if(!mod)
   {
-    snprintf( tmp, 1024, "Could not find %s", set_m(modul) ); add_s()
+    oySnprintf1_( tmp, 1024, "Could not find %s", set_m(modul) ); add_s()
     return text;
   }
 
-  snprintf( tmp, 1024, "Modul: %s\n", set_m(modul) ); add_s()
-  snprintf( tmp, 1024, " Name: %s\n", set_m(mod->name) ); add_s()
-  snprintf( tmp, 1024, "       %d - %d\n", mod->groups_start, mod->groups_end ); add_s()
-  snprintf( tmp,   80, "  xml: %s", set_m(mod->xml) ); add_s()
-  snprintf( tmp, 1024, "\n" ); add_s()
-  /*snprintf( tmp, 1024, "  domain: %s path: %s\n", mod->domain, mod->domain_path ); add_s()*/
+  oySnprintf1_( tmp, 1024, "Modul: %s\n", set_m(modul) ); add_s()
+  oySnprintf1_( tmp, 1024, " Name: %s\n", set_m(mod->name) ); add_s()
+  oySnprintf2_( tmp, 1024, "       %d - %d\n", mod->groups_start, mod->groups_end ); add_s()
+  oySnprintf1_( tmp,   80, "  xml: %s", set_m(mod->xml) ); add_s()
+  oySnprintf_( tmp, 1024, "\n" ); add_s()
+  /*oySnprintf_( tmp, 1024, "  domain: %s path: %s\n", mod->domain, mod->domain_path ); add_s()*/
 
-  snprintf( tmp, 1024, "  \n" ); add_s()
-  snprintf( tmp, 1024, "  \n" ); add_s()
+  oySnprintf_( tmp, 1024, "  \n" ); add_s()
+  oySnprintf_( tmp, 1024, "  \n" ); add_s()
 
 
   for(i = 0; i < mod->funcs; ++i)
@@ -602,17 +602,17 @@ oyModulPrint_   ( const char       *modul )
     if(mod->func[i].opts_end != oyWIDGET_GROUP_START)
       options_n = mod->func[i].opts_end - mod->func[i].opts_start + 1;
 
-    snprintf( tmp, 1024, "    F %d[%d] %s (%s)\n", i, mod->funcs,
+    oySnprintf4_( tmp, 1024, "    F %d[%d] %s (%s)\n", i, mod->funcs,
             set_m(mod->func[i].name), set_m(mod->func[i].description) ); add_s()
-    snprintf( tmp, 1024, "             %s::%s %s\n", set_m(mod->lib_name),
+    oySnprintf3_( tmp, 1024, "             %s::%s %s\n", set_m(mod->lib_name),
               set_m(mod->func[i].func_name), set_m(mod->func[i].id) ); add_s()
     for(j = 0; j < options_n; ++j)
     {
-      snprintf( tmp, 1024, "             O %s (%s)\n",
+      oySnprintf2_( tmp, 1024, "             O %s (%s)\n",
                 set_m(mod->func[i].option[j].name),
                 set_m(mod->func[i].option[j].description) ); add_s()
      
-      snprintf( tmp, 1024, "             G" ); add_s()
+      oySnprintf_( tmp, 1024, "             G" ); add_s()
       for( k = 0; k < 10; ++k )
       { oyGROUP_e g = mod->func[i].option[j].category[k];
         if(g)
@@ -620,13 +620,13 @@ oyModulPrint_   ( const char       *modul )
           int module_group = g - oyGROUP_EXTERN;
           if(module_group >= 0)
           {
-            snprintf( tmp, 1024, " %d %s (%s)", g,
+            oySnprintf3_( tmp, 1024, " %d %s (%s)", g,
                       set_m(mod->group[module_group].name),
                       set_m(mod->group[module_group].description) ); add_s()
           }
         }
       }
-      snprintf( tmp, 1024, "\n" ); add_s()
+      oySnprintf_( tmp, 1024, "\n" ); add_s()
 
       switch (mod->func[i].option[j].type)
       {
@@ -642,7 +642,7 @@ oyModulPrint_   ( const char       *modul )
         case oyWIDGETTYPE_CHOICE:
              for(k = 0; k < mod->func[i].option[j].choices; ++k)
              {
-               snprintf( tmp, 1024, "               C %d[%d] %s\n", k,
+               oySnprintf3_( tmp, 1024, "               C %d[%d] %s\n", k,
                          mod->func[i].option[j].choices,
                          set_m(mod->func[i].option[j].choice_list[k]) ); add_s()
              }

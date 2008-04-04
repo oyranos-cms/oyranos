@@ -2363,11 +2363,11 @@ oyCMMhandle_s *  oyCMMhandle_Copy_     ( oyCMMhandle_s   * handle,
     if(!error)
     {
       if(handle)
-        WARNc_S(("Dont know how to copy CMM[%s] handle.", handle->cmm));
+        WARNc1_S("Dont know how to copy CMM[%s] handle.", handle->cmm);
 
       error = oyCMMhandle_Set_( s, 0, 0 );
     } else
-      WARNc_S(("Could not create a new object."));
+      WARNc_S("Could not create a new object.");
 
   } else {
 
@@ -2398,7 +2398,7 @@ int              oyCMMhandle_Release_( oyCMMhandle_s    ** obj )
 
   if( !s->oy_ || s->type_ != oyOBJECT_TYPE_CMM_HANDLE_S)
   {
-    WARNc_S(("Attempt to release a non oyCMMhandle_s object."))
+    WARNc_S("Attempt to release a non oyCMMhandle_s object.")
     return 1;
   }
 
@@ -2611,9 +2611,12 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
 
       if(!error && api)
       {
+        error = api->oyCMMMessageFuncSet( oyMessageFunc_p );
+
         cmm_handle = oyCMMhandle_New_(0);
 
         /* init */
+        if(!error)
         error = api->oyCMMInit();
         if(!error)
           error = oyCMMhandle_Set_( cmm_handle, cmm_info, dso_handle );
@@ -2924,9 +2927,9 @@ oyCMMInfo_s* oyCMMGet_               ( const char        * cmm )
     int n = 0, i;
     char ** libs = oyLibPathsGet_( &n, "cmms", oyUSER_SYS, oyAllocateFunc_ );
 
-    WARNc_S(("Found more than one matching modul: %d", files_n))
+    WARNc1_S("Found more than one matching modul: %d", files_n)
     for(i = 0; i < n; ++i)
-      WARNc_S(("   modul path %d.: %s.", i, libs[i]))
+      WARNc2_S("   modul path %d.: %s.", i, libs[i]);
 
     oyStringListRelease_(&libs, n, oyDeAllocateFunc_);
   }
@@ -6054,13 +6057,13 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         if(!error)
           error = !memcpy( tag_->required_cmm, OY_MODULE_NICK, 4 );
 
-        DBG_PROG_S(("%d[%d @ %d]: %s %s", 
+        DBG_PROG5_S("%d[%d @ %d]: %s %s", 
           i, (int)tag_->size_, (int)tag_->offset_orig,
           oyICCTagTypeName( tag_->tag_type_ ),
-          oyICCTagDescription( tag_->use ) ));
+          oyICCTagDescription( tag_->use ) );
         texts = oyProfileTag_GetText(tag_,&texts_n,0,0,0,0);
         for(j = 0; j < texts_n; ++j)
-          DBG_PROG_S(("%s: %s", tag_->last_cmm_, texts[j]?texts[j]:""));
+          DBG_PROG2_S("%s: %s", tag_->last_cmm_, texts[j]?texts[j]:"");
         if(texts_n && texts)
           oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
 
@@ -9262,25 +9265,12 @@ oyValueUInt16 (icUInt16Number val)
       gross = BYTES - 1;
   for (; klein < BYTES ; klein++ ) {
     korb[klein] = temp[gross--];
-#   ifdef DEBUG_ICCFUNKT
-    cout << klein << " "; DBG_PROG
-#   endif
   }
   }
 
   {
   unsigned int *erg = (unsigned int*) &korb[0];
 
-# ifdef DEBUG_ICCFUNKT
-# if 0
-  cout << *erg << " Groesse nach Wandlung " << (int)korb[0] << " "
-       << (int)korb[1] << " " << (int)korb[2] << " " <<(int)korb[3]
-       << " "; DBG_PROG
-# else
-  cout << *erg << " size after conversion " << (int)temp[0] << " " << (int)temp[1]
-       << " "; DBG_PROG
-# endif
-# endif
 # undef BYTES
 # undef KORB
   return (long)*erg;
@@ -9306,18 +9296,10 @@ oyValueUInt32 (icUInt32Number val)
   {
   unsigned int *erg = (unsigned int*) &uint32[0];
 
-# ifdef DEBUG_ICCFUNKT
-  cout << *erg << " size after conversion " << (int)temp[0] << " "
-       << (int)temp[1] << " " << (int)temp[2] << " " <<(int)temp[3]
-       << " "; DBG_PROG
-# endif
 
   return (icUInt32Number) *erg;
   }
 #else
-# ifdef DEBUG_ICCFUNKT
-  cout << "BIG_ENDIAN" << " "; DBG_PROG
-# endif
   return (icUInt32Number)val;
 #endif
 }
@@ -9339,11 +9321,6 @@ oyValueUInt64 (icUInt64Number val)
   {
   unsigned long *erg = (unsigned long*) &uint64[0];
 
-# ifdef DEBUG_ICCFUNKT
-  cout << *erg << " size after conversion " << (int)temp[0] << " "
-       << (int)temp[1] << " " << (int)temp[2] << " " <<(int)temp[3]
-       << " "; DBG_PROG
-# endif
   return (long)*erg;
   }
 #else

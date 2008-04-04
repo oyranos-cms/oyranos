@@ -68,16 +68,16 @@ int
 oyMemBlockExtent_(char **mem, int old_len, int add)
 {
   int new_len = old_len;
-  DBG_PROG_S(("len1: %d %d %d\n",(int) strlen(*mem), (int)old_len, add));
+  DBG_PROG3_S("len1: %d %d %d",(int) strlen(*mem), (int)old_len, add);
   if( add > (old_len - strlen(*mem)) )
   {
     int len = add + strlen(*mem) + ((add > 120) ? add + 50 : 120);
     char *tmp = NULL;
 
     oyAllocHelper_m_( tmp, char, len, oyAllocateFunc_, return 0 );
-    DBG_PROG_S(("len2: %d\n",len));
+    DBG_PROG1_S("len2: %d\n",len);
     memcpy( tmp, *mem, old_len  );
-    DBG_PROG_S(("%s // %s", *mem, tmp));
+    DBG_PROG2_S("%s // %s", *mem, tmp);
     oyFree_m_ (*mem);
     *mem = tmp;
     new_len = len;
@@ -146,7 +146,7 @@ oyXMLgetValue_  (const oyChar  * xml,
         --open;
       else
       {
-        WARNc_S(("key: %s is not complete.", key))
+        WARNc1_S("key: %s is not complete.", key)
         len = 0;
         return 0;
       }
@@ -158,7 +158,7 @@ oyXMLgetValue_  (const oyChar  * xml,
   if(len > 0 && (intptr_t)value1 - len1 > 0)
   {
     oyAllocHelper_m_( value, char, len+1, oyAllocateFunc_, return NULL );
-    oySnprintf_(value, len+1, "%s", value1);
+    oySnprintf1_(value, len+1, "%s", value1);
   }
 
   return value;
@@ -185,7 +185,7 @@ oyXMLgetField_  (const char       *xml,
   *len = 0;
 
   sprintf(key1, "<%s>", key);
-  sprintf(key2, "</%s>", key);
+  oySprintf_(key2, "</%s>", key);
 
   if(!xml) goto clean;
 
@@ -208,7 +208,7 @@ oyXMLgetField_  (const char       *xml,
         --open;
       else
       {
-        WARNc_S(("key: %s is not complete.", key))
+        WARNc1_S("key: %s is not complete.", key)
         l = 0;
         return 0;
       }
@@ -343,9 +343,9 @@ oyWriteOptionToXML_(oyGROUP_e           group,
          /* allocate new mem if needed */
          oytmplen = oyMemBlockExtent_(&mem, oytmplen, 360);
          opt = oyOptionGet_( group );
-         sprintf( &mem[strlen(mem)], "<%s>\n",
+         oySprintf_( &mem[strlen(mem)], "<%s>\n",
                   opt->config_string_xml );
-         sprintf( &mem[strlen(mem)], "<!-- %s \n"
+         oySprintf_( &mem[strlen(mem)], "<!-- %s \n"
                                      "     %s -->\n\n",
                   opt->name,
                   opt->description );
@@ -366,7 +366,7 @@ oyWriteOptionToXML_(oyGROUP_e           group,
            char intent[24] = {""};
  
            for( j = 0; j < group_level; ++j )
-             sprintf( &intent[strlen(intent)], "  " );
+             oySprintf_( &intent[strlen(intent)], "  " );
  
            if( (opt_type == oyWIDGETTYPE_BEHAVIOUR) ||
                (opt_type == oyWIDGETTYPE_DEFAULT_PROFILE))
@@ -375,9 +375,9 @@ oyWriteOptionToXML_(oyGROUP_e           group,
              /* allocate new mem if needed */
              oytmplen = oyMemBlockExtent_(&mem, oytmplen, 256 + 12+2*strlen(key)+8);
              /* write a short description */
-             sprintf( &mem[strlen(mem)], "%s<!-- %s\n", intent,
+             oySprintf_( &mem[strlen(mem)], "%s<!-- %s\n", intent,
                        t->name );
-             sprintf( &mem[strlen(mem)], "%s     %s\n", intent,
+             oySprintf_( &mem[strlen(mem)], "%s     %s\n", intent,
                        t->description);
              /* write the profile name */
              if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
@@ -389,16 +389,16 @@ oyWriteOptionToXML_(oyGROUP_e           group,
                  /* allocate new mem if needed */
                  oytmplen = oyMemBlockExtent_(&mem, oytmplen,
                                               strlen(value) + 2*strlen(key) + 8 );
-                 DBG_PROG_S(("pos: %d + %d oytmplen: %d\n",
-                             (int)strlen(mem),(int)strlen(value),oytmplen));
-                 sprintf( &mem[strlen(mem)-1], " -->\n");
+                 DBG_PROG3_S("pos: %d + %d oytmplen: %d\n",
+                             (int)strlen(mem),(int)strlen(value),oytmplen);
+                 oySprintf_( &mem[strlen(mem)-1], " -->\n");
  
                  /* append xml keys and value */
-                 sprintf( &mem[strlen(mem)], "%s<%s>%s</%s>\n\n", intent,
+                 oySprintf_( &mem[strlen(mem)], "%s<%s>%s</%s>\n\n", intent,
                           key, value, key);
-                 DBG_PROG_S((mem));
+                 DBG_PROG_S(mem);
                } else
-                 sprintf( &mem[strlen(mem)-1], " -->\n" );
+                 oySprintf_( &mem[strlen(mem)-1], " -->\n" );
                if(value) oyFree_m_(value);
              }
              else if( opt_type == oyWIDGETTYPE_BEHAVIOUR ) 
@@ -406,18 +406,18 @@ oyWriteOptionToXML_(oyGROUP_e           group,
                int val = oyGetBehaviour_( wt );
                /* write a per choice description */
                for( j = 0; j < n; ++j )
-                 sprintf( &mem[strlen(mem)], "%s %d %s\n", intent, j,
+                 oySprintf_( &mem[strlen(mem)], "%s %d %s\n", intent, j,
                           t->choice_list[j] );
-               sprintf( &mem[strlen(mem)-1], " -->\n");
+               oySprintf_( &mem[strlen(mem)-1], " -->\n");
                /* write the key value */
-               sprintf( &mem[strlen(mem)], "%s<%s>%d</%s>\n\n", intent,
+               oySprintf_( &mem[strlen(mem)], "%s<%s>%d</%s>\n\n", intent,
                         key, val, key );
              }
            }
          }
        }
        oytmplen = oyMemBlockExtent_(&mem, oytmplen, 160);
-       sprintf( &mem[strlen(mem)], "</%s>\n\n\n", opt->config_string_xml );
+       oySprintf_( &mem[strlen(mem)], "</%s>\n\n\n", opt->config_string_xml );
 
 
   DBG_PROG_ENDE
@@ -449,7 +449,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
          char head[] = { OY_POLICY_HEADER }; 
          oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen(head)+24 );
 
-         sprintf( mem, "%s\n<body>\n\n\n", head );
+         oySprintf_( mem, "%s\n<body>\n\n\n", head );
   }
 
 
@@ -496,7 +496,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
              /* allocate new mem if needed */
              oytmplen = oyMemBlockExtent_(&mem, oytmplen, strlen(value)+1);
 
-             sprintf(&mem[pos], "%s", value);
+             oySprintf_(&mem[pos], "%s", value);
              oyFree_m_(value);
            }
          }
@@ -504,7 +504,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
     default:
          /* error */
          /*oytmplen = oyMemBlockExtent_(&mem, oytmplen, 48);
-         sprintf( mem, "<!-- Group: %d does not exist -->", group );*/
+         oySprintf_( mem, "<!-- Group: %d does not exist -->", group );*/
          break;
   }
 
@@ -514,7 +514,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
          int   pos = strlen(mem);
 
          oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen( end )+1 );
-         sprintf( &mem[pos], "%s", end );
+         oySprintf_( &mem[pos], "%s", end );
   }
 
   { int len = strlen( mem );
@@ -567,8 +567,8 @@ oyReadXMLPolicy_(oyGROUP_e           group,
         err = oySetDefaultProfile_( oywid, value);
         if(err)
         {
-          WARNc_S(( "Could not set default profile %s:%s", t->name ,
-                    value?value:"--" ));
+          WARNc2_S( "Could not set default profile %s:%s", t->name ,
+                    value?value:"--" );
         }
         oyFree_m_(value);
       }
@@ -591,8 +591,8 @@ oyReadXMLPolicy_(oyGROUP_e           group,
 
       if(err)
         {
-          WARNc_S(( "Could not set behaviour %s:%s .", t->name ,
-                    value?value:"--" ));
+          WARNc2_S( "Could not set behaviour %s:%s .", t->name ,
+                    value?value:"--" );
           return err;
         }
 

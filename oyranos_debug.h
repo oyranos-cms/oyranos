@@ -30,7 +30,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/* debugging variable - set 0 to off (default), set 1 to switch debugging on */
+/** debugging variable - set 0 to off (default), set 1 to switch debugging on */
 extern int oy_debug;
 extern clock_t oyranos_clock_;
 extern int level_PROG;
@@ -42,51 +42,74 @@ extern int level_PROG;
 
 #define DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
 
-#define DBG_T_ printf ("%s:%d %s() %02f ",__FILE__,__LINE__,__func__, DBG_UHR_);
-#define LEVEL { int i; for (i = 0; i < level_PROG; i++) printf (" "); }
-#define DBG if(oy_debug) { LEVEL printf("        "); DBG_T_ printf ("\n");}
-#define DBG_S(txt) if(oy_debug) { LEVEL printf("        "); DBG_T_ printf txt ; printf("\n"); }
-#define DBG_V(txt) if(oy_debug) { int val = (int) txt; LEVEL printf("        "); DBG_T_ printf(#txt " %d\n", val);}
 #if DEBUG == 1
+#define DBG oyMessageFunc_p(oyMSG_DBG,"%s:%d",__FILE__,__LINE__);
+#define DBG_S(txt) oyMessageFunc_p(oyMSG_DBG,"%s:%d %s",__FILE__,__LINE__,txt);
+#define DBG1_S(format,arg) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg);
+#define DBG2_S(format,arg,arg2) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2);
+#define DBG3_S(format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3);
+#define DBG4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4);
+#define DBG5_S(format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4,arg5);
+#define DBG6_S(format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4,arg5,arg6);
+#define DBG_V(var) oyMessageFunc_p(oyMSG_DBG,"%s:%d " #var ": %d",__FILE__,__LINE__,(int)var);
 #define DBG_MEM DBG
-#define DBG_MEM_S(txt) DBG_S(txt)
-#define DBG_MEM_V(txt) DBG_V(txt)
 #else
+#define DBG
+#define DBG_S(txt)
+#define DBG_V(var)
 #define DBG_MEM
-#define DBG_MEM_S(txt)
-#define DBG_MEM_V(txt)
 #endif
 #if DEBUG == 1
 #define DBG_NUM DBG
-#define DBG_NUM_S(txt) DBG_S(txt)
-#define DBG_NUM_V(txt) DBG_V(txt)
+#define DBG_NUM_S DBG_S
+#define DBG_NUM1_S DBG1_S
+#define DBG_NUM2_S DBG2_S
+#define DBG_NUM3_S DBG3_S
+#define DBG_NUM4_S DBG4_S
+#define DBG_NUM_V DBG_V
 #else
 #define DBG_NUM
-#define DBG_NUM_S(txt)
-#define DBG_NUM_V(txt)
+#define DBG_NUM_S
+#define DBG_NUM1_S
+#define DBG_NUM2_S
+#define DBG_NUM3_S
+#define DBG_NUM4_S
+#define DBG_NUM_V
 #endif
 #if DEBUG == 1
 #define DBG_PROG DBG
-#define DBG_PROG_START if(oy_debug) { int i; level_PROG++; for (i = 0; i < level_PROG; i++) printf("+"); printf (" Start: "); DBG_T_ printf("\n"); }
-#define DBG_PROG_ENDE if(oy_debug) { int i; for (i = 0; i < level_PROG; i++) printf ("-"); printf(" Ende:  "); DBG_T_ level_PROG--; printf("\n"); }
-#define DBG_PROG_S(txt) DBG_S(txt)
-#define DBG_PROG_V(txt) DBG_V(txt)
+#define DBG_PROG_S DBG_S
+#define DBG_PROG1_S DBG1_S
+#define DBG_PROG2_S DBG2_S
+#define DBG_PROG3_S DBG3_S
+#define DBG_PROG4_S DBG4_S
+#define DBG_PROG5_S DBG5_S
+#define DBG_PROG6_S DBG6_S
+#define DBG_PROG_V DBG_V
+#define DBG_PROG_START oyMessageFunc_p( oyMSG_DBG,"Start: %s:%d",__FILE__,__LINE__ );
+#define DBG_PROG_ENDE  oyMessageFunc_p( oyMSG_DBG," Ende: %s:%d",__FILE__,__LINE__ );
 #else
 #define DBG_PROG
+#define DBG_PROG_S
+#define DBG_PROG1_S
+#define DBG_PROG2_S
+#define DBG_PROG3_S
+#define DBG_PROG4_S
+#define DBG_PROG5_S
+#define DBG_PROG6_S
+#define DBG_PROG_V
 #define DBG_PROG_START
 #define DBG_PROG_ENDE
-#define DBG_PROG_S(txt)
-#define DBG_PROG_V(txt)
 #endif
 
 #endif /* defined OY_CONFIG_H */
 
-#define WARNc {int dbg = oy_debug; oy_debug = 1; \
-                    DBG_S((_("Warning"))) oy_debug = dbg;}
-#define WARNc_S(txt) {int dbg=oy_debug; oy_debug = 1; \
-                    DBG_S((_("Warning : ")); printf txt) oy_debug = dbg;}
-#define WARNc_V(txt) {int dbg=oy_debug; oy_debug = 1; \
-                    DBG_V((_("Warning : ")); printf txt) oy_debug = dbg;}
+#define WARNc          oyMessageFunc_p( oyMSG_WARN,"%s:%d",__FILE__,__LINE__ ); 
+#define WARNc_S(txt)   oyMessageFunc_p( oyMSG_WARN,"%s:%d %s",__FILE__,__LINE__,txt);
+#define WARNc1_S(format,arg) oyMessageFunc_p( oyMSG_WARN,"%s:%d " format,__FILE__,__LINE__,arg);
+#define WARNc2_S(format,arg,arg2) oyMessageFunc_p( oyMSG_WARN,"%s:%d " format,__FILE__,__LINE__,arg,arg2);
+#define WARNc3_S(format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_WARN,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3);
+#define WARNc4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_WARN,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4);
 
 #ifdef __cplusplus
 }

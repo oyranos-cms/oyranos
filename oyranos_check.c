@@ -75,7 +75,7 @@ oyCheckProfile_                    (const char* name,
   /*if(name) DBG_NUM_S((name)); */
   fullName = oyFindProfile_(name);
   if (!fullName)
-    WARNc_S(("%s not found",name))
+    WARNc2_S("%s %s", _("not found:"),name)
   else
     ;/*DBG_NUM_S((fullName)); */
 
@@ -93,7 +93,7 @@ oyCheckProfile_                    (const char* name,
     oyFree_m_(header);
   if(fullName) oyFree_m_(fullName);
 
-  DBG_NUM_S(("oyCheckProfileMem = %d",r))
+  DBG_NUM1_S("oyCheckProfileMem = %d",r)
 
   DBG_PROG_ENDE
   return r;
@@ -119,13 +119,13 @@ oyCheckProfile_Mem                 (const void* mem, size_t size,
       return 0;
     } else {
       if(oy_warn_)
-        WARNc_S((" sign: %c%c%c%c ", (char)block[offset+0],
-        (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] ));
+        WARNc4_S(" sign: %c%c%c%c ", (char)block[offset+0],
+        (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] );
       DBG_PROG_ENDE
       return 1;
     }
   } else {
-    WARNc_S (("False profile - size = %d pos = %lu ", (int)size, (long int)block))
+    WARNc2_S("False profile - size = %d pos = %lu ", (int)size, (long int)block)
 
     DBG_PROG_ENDE
     return 1;
