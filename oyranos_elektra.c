@@ -334,7 +334,7 @@ oyGetBehaviour_      (oyBEHAVIOUR_e type)
 
     if(key_name)
     {
-      name = oyGetKeyValue_( key_name, oyAllocateFunc_ );
+      name = oyGetKeyString_( key_name, oyAllocateFunc_ );
     }
     else
       WARNc1_S( "type %d behaviour not possible", type);
@@ -876,7 +876,7 @@ oyPathActivate_ (const char* pfad)
  *  2. if user has no setting ask system
  */
 char*
-oyGetKeyValue_ ( const char       *key_name,
+oyGetKeyString_ ( const char       *key_name,
                  oyAllocFunc_t     allocate_func )
 {
   char* name = 0;
@@ -897,12 +897,12 @@ oyGetKeyValue_ ( const char       *key_name,
   sprintf( full_key_name, "%s%s", OY_USER, key_name );
 
   name[0] = 0;
-  rc = kdbGetValue ( oy_handle_, full_key_name, name, MAX_PATH );
+  rc = kdbGetString ( oy_handle_, full_key_name, name, MAX_PATH );
 
   if( rc || !strlen( name ))
   {
     sprintf( full_key_name, "%s%s", OY_SYS, key_name );
-    rc = kdbGetValue ( oy_handle_, full_key_name, name, MAX_PATH );
+    rc = kdbGetString ( oy_handle_, full_key_name, name, MAX_PATH );
   }
 
   free( full_key_name );

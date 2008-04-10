@@ -1500,7 +1500,6 @@ oyGetMonitorInfo                  (const char* display,
   err = 1;
 #endif
 
-  DBG_PROG_V( strlen(*manufacturer) )
   if(*manufacturer)
     DBG_PROG_S( *manufacturer );
   if(*model)

@@ -513,9 +513,9 @@ CFLAGS="`echo $CFLAGS | $STRIPOPT`"
 CXXFLAGS="`echo $CXXFLAGS | $STRIPOPT`"
 
 if [ -z "$LDFLAGS" ]; then
-  LDFLAGS="-L$libdir"
+  LDFLAGS="-L./ -L$libdir"
 else
-  LDFLAGS="`echo $LDFLAGS | $STRIPOPT` -L$libdir"
+  LDFLAGS="`echo $LDFLAGS | $STRIPOPT` -L./ -L$libdir"
 fi
 
 

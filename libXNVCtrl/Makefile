@@ -15,8 +15,10 @@ X11_INCL=$(XF86VMODE_INC) $(XINERAMA_INC)
 X11_LIBS=$(X11_LIB_PATH) -lX11 $(XF86VMODE_LIB) -lX11 -lXext -lXinerama -lXxf86vm $(XINERAMA_LIB)
 X11 = X11
 X_H = -I/usr/X11R6/include -I/usr/include -I/usr/X11R6/include $(X11_INCL)
+DEBUG = -Wall -g -DDEBUG --pedantic
+DEBUG_SWITCH = -v
 .SILENT:
-CFLAGS= $(DEBUG) $(INCL) -g --pedantic -Wall -fPIC -DPIC
+CFLAGS= $(DEBUG) $(INCL) -fPIC -DPIC
 
 COLLECT = ar cru
 RANLIB = ranlib

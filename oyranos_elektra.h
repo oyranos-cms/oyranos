@@ -113,7 +113,7 @@ int     oySetBehaviour_        (oyBEHAVIOUR_e type,
                                 int         behaviour);
 
 /* elektra key wrappers */
-char*   oyGetKeyValue_         (const char       *key_name,
+char*   oyGetKeyString_        (const char       *key_name,
                                 oyAllocFunc_t     allocFunc );
 int     oyAddKey_valueComment_ (const char* keyName,
                                 const char* value, const char* comment);
