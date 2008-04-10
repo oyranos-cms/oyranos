@@ -216,7 +216,7 @@ all:	mkdepend $(ELEKTRA_VERSION) \
 	$(TEST2) $(LINGUAS_SRC)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
-	     test $${prof} && \
+	     test -f $${prof} && \
 	         echo -e "$${prof} profiles will be included" || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
@@ -544,7 +544,7 @@ install_gui:	$(TARGET)-config-fltk
 install_profiles:
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
-	     test $${prof} && \
+	     test -f $${prof} && \
 	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
@@ -635,7 +635,7 @@ uninstall:
 	test -d standard_profiles && \
 	(  cd standard_profiles; \
 	   for prof in $(STD_PROFILES); do \
-	     test $${prof} && \
+	     test -f $${prof} && \
 	         (cd $${prof}; $(MAKE)  DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) uninstall) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	   done; \
@@ -762,7 +762,7 @@ targz:
 	$(MAKE) DESTDIR=$(TARGET)-$(VERSION) copy_files
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
-	     test $${prof} && \
+	     test -f $${prof} && \
 	         mkdir -p ../$(TARGET)-$(VERSION)/standard_profiles/$${prof}; \
 	         (cd $${prof}; echo bin in `pwd`; $(MAKE) DESTDIR=../../$(TARGET)-$(VERSION)/standard_profiles/$${prof} copy_files) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \

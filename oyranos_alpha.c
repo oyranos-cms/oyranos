@@ -1748,7 +1748,7 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
 
   if(!error && list)
   {
-      if(0 <= pos >= 0 && pos < s->n_)
+      if(0 <= pos && pos < s->n_)
       {
           if(s->ptr_[pos])
             s->ptr_[pos]->release( (oyStruct_s**)&s->ptr_[pos] );
