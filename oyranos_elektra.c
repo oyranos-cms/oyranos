@@ -33,6 +33,21 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_xml.h"
 
+#ifndef KDB_VERSION_MAJOR
+#define KDB_VERSION_MAJOR 0
+#endif
+#ifndef KDB_VERSION_MINOR
+#define KDB_VERSION_MINOR 0
+#endif
+#define KDB_VERSION_NUM (KDB_VERSION_MAJOR*10000 + KDB_VERSION_MINOR*100)
+
+#if KDB_VERSION_NUM < 700
+#define kdbGetString_m kdbGetString
+#else
+#define kdbGetString_m kdbGetValue
+#endif
+
+
 /* --- Helpers  --- */
 #if 1
 #define ERR if (rc<=0 && oy_debug) { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
@@ -897,12 +912,12 @@ oyGetKeyString_ ( const char       *key_name,
   sprintf( full_key_name, "%s%s", OY_USER, key_name );
 
   name[0] = 0;
-  rc = kdbGetString ( oy_handle_, full_key_name, name, MAX_PATH );
+  rc = kdbGetString_m ( oy_handle_, full_key_name, name, MAX_PATH );
 
   if( rc || !strlen( name ))
   {
     sprintf( full_key_name, "%s%s", OY_SYS, key_name );
-    rc = kdbGetString ( oy_handle_, full_key_name, name, MAX_PATH );
+    rc = kdbGetString_m ( oy_handle_, full_key_name, name, MAX_PATH );
   }
 
   free( full_key_name );

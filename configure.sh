@@ -39,17 +39,6 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_max" ]; then
     elektra_max="0.7.100"
   fi
-  if [ "$internalelektra" != "no" ]; then
-   if [ `ls $ELEKTRA_VERSION | grep elektra | wc -l` -gt 0 ]; then
-     echo_="local copy of elektra   detected"; echo "$echo_" >> $CONF_LOG; echo "$echo_"
-        echo "#define HAVE_ELEKTRA 1" >> $CONF_H
-        echo "ELEKTRA = 1" >> $CONF
-        echo "ELEKTRA_VERSION = $ELEKTRA_VERSION" >> $CONF
-        echo "ELEKTRA_H = -I\$(ELEKTRA_VERSION)/src/include" >> $CONF
-        echo "ELEKTRA_LIBS = \$(ELEKTRA_VERSION)/src/libelektra/libelektra.a" >> $CONF
-        ELEKTRA_FOUND=1
-   fi
-  fi
   if [ -z "$ELEKTRA_FOUND" ]; then
     elektra_mod=`pkg-config --modversion elektra`
   fi

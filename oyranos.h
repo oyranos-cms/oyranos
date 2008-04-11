@@ -58,9 +58,9 @@ typedef void* (*oyAllocFunc_t)         (size_t size);
 typedef void (*oyDeAllocFunc_t)       (void *data);
 
 typedef enum {
-  oyMSG_WARN = 300,
-  oyMSG_DBG,
-  oyMSG_ERROR
+  oyMSG_ERROR = 300,
+  oyMSG_WARN,
+  oyMSG_DBG
 } oyMSG_e;
 typedef int  (*oyMessageFunc_t)( int/*oyMSG_e*/ code, const char* format, ... );
 int            oyMessageFuncSet      ( oyMessageFunc_t     message_func );

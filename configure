@@ -148,10 +148,6 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       desktopdir="`echo $1 | sed s/--$switch=//`"
     fi
-    switch=elektra-internal
-    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
-      internalelektra="`echo $1 | sed s/--$switch=//`"
-    fi
     switch=with-fltk-config
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       fltkconfig="`echo $1 | sed s/--$switch=//`"
@@ -201,7 +197,7 @@ test -n "$INFOECHO" && $INFOECHO "   --iccdirname=[icc]                   Oyrano
 test -n "$INFOECHO" && $INFOECHO "   --settingsdirname=[settings]         Oyranos settings directory"
 test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
 test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg installation path"
-test -n "$INFOECHO" && $INFOECHO "   --elektra-internal=[yes/no]          use internal Elektra [default=auto]"
+#test -n "$INFOECHO" && $INFOECHO "   --elektra-internal=[yes/no]          use internal Elektra [default=auto]"
 test -n "$INFOECHO" && $INFOECHO ""
 test -n "$INFOECHO" && $INFOECHO "   --with-fltk-config=[fltk-config]     alternative fltk version"
 test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
@@ -537,10 +533,6 @@ if [ "$FLTK" = 1 ]; then
   fi
 fi
 
-if [ "$internalelektra" = "yes" ]; then
-  ELEKTRA_VERSION="elektra-0.6.4"
-  export ELEKTRA_VERSION
-else
   elektra_mod=`pkg-config --modversion elektra`
   elektra_min="0.7"
   elektra_max="0.7.100"
@@ -548,12 +540,7 @@ else
     pkg-config  --atleast-version=$elektra_min elektra 2>>$CONF_LOG
     if [ $? = 0 ]; then
       pkg-config --max-version=$elektra_max elektra 2>>$CONF_LOG
-      if [ $? = 0 ]; then
-        internalelektra=no
-      fi
     fi
-fi
-export internalelektra
 
 if [ $nodeps -eq 1 ]; then
   GCC_MM="echo \"\#disable dependency tracking\""
@@ -582,7 +569,7 @@ if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "REZ = $fltkconfig --post \$@" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-  INSTALL="install $DEBUG_SWITCH"
+  INSTALL="install -p $DEBUG_SWITCH"
   oyranos_add="-framework ApplicationServices \$dl"
   oyranos_x_add=""
 else
@@ -608,7 +595,7 @@ else
     fi
     CFLAGS="$CFLAGS -fPIC -DPIC"
     CXXFLAGS="$CXXFLAGS -fPIC -DPIC"
-    INSTALL="install $DEBUG_SWITCH"
+    INSTALL="install -p $DEBUG_SWITCH"
   else
     test -n "$ECHO" && $ECHO "COPY = cp -p" >> $CONF
     if [ $OSUNAME = "BSD" ]; then
@@ -617,14 +604,14 @@ else
         test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
         test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
       fi
-      INSTALL="install $DEBUG_SWITCH"
+      INSTALL="install -p $DEBUG_SWITCH"
     fi
     if [ $OSUNAME = "SunOS" ]; then
       LDFLAGS="$LDFLAGS -mimpure-text"
       INSTALL="install"
     else
       LDFLAGS="$LDFLAGS"
-      INSTALL="install"
+      INSTALL="install -p"
     fi
     test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
     test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
@@ -647,19 +634,6 @@ done
 if [ -n "$ECHO" ]; then
   echo_="\"$CFLAGS\" \"$CXXFLAGS\" \"$LDFLAGS\""
   test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-fi
-
-# walk into sub dirs and configure there
-if [ -n "$ECHO" ]; then
-  if [ "$internalelektra" = "yes" ] && [ -z "$quick" ]; then
-    cd $ELEKTRA_VERSION
-    if [ -n "$ECHO" ]; then
-      echo_="./configure --enable-static $nodeps_config_opt --prefix=$prefix"
-      test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-    fi
-    ./configure --enable-static $nodeps_config_opt --prefix=$prefix
-    cd $srcdir
-  fi
 fi
 
 test -n "$ECHO" && $ECHO "#!/bin/sh" > $CONF_SH
