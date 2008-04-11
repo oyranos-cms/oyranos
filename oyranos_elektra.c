@@ -41,7 +41,7 @@
 #endif
 #define KDB_VERSION_NUM (KDB_VERSION_MAJOR*10000 + KDB_VERSION_MINOR*100)
 
-#if KDB_VERSION_NUM < 700
+#if KDB_VERSION_NUM >= 700
 #define kdbGetString_m kdbGetString
 #else
 #define kdbGetString_m kdbGetValue
