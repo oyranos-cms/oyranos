@@ -33,8 +33,9 @@
 
 
 /* --- static variables   --- */
-const char *domain = OY_TEXTDOMAIN;
-const char *domain_path = OY_LOCALEDIR;
+const char *oy_domain = OY_TEXTDOMAIN;
+const char *oy_domain_path = OY_LOCALEDIR;
+const char *oy_domain_codeset = 0;
 const char *oy_lang_ = 0;
 const char *oy_language_ = 0;
 const char *oy_country_ = 0;
@@ -57,7 +58,9 @@ void oyI18NInit_()
   {
     char * temp = 0;
     putenv("NLSPATH=" OY_LOCALEDIR); /* Solaris */
-    bindtextdomain( domain, domain_path );
+    bindtextdomain( oy_domain, oy_domain_path );
+    if(oy_domain_codeset)
+      bind_textdomain_codeset(oy_domain, oy_domain_codeset);
 
     if(getenv("LANG"))
     {
@@ -72,6 +75,8 @@ void oyI18NInit_()
 
       oyAllocHelper_m_( tmp, char, len + 5, 0, return );
       oySprintf_( tmp, "%s", oyStrchr_(oy_lang_,'_')+1 );
+      if(oyStrlen_(tmp) > 2)
+        tmp[2] = 0;
       oy_country_ = tmp; tmp = 0;
 
       /*oy_country_ = oyStringCopy_(oyStrchr_(oy_lang_,'_')+1, oyAllocateFunc_);
@@ -97,7 +102,7 @@ void oyI18NInit_()
       if(tmp)
         tmp[0] = 0;
     }
-    if(temp) oyDeAllocateFunc_(temp);
+    /*if(temp) oyDeAllocateFunc_(temp);*/
   }
 #endif
   oyTextsCheck_ ();
@@ -111,9 +116,9 @@ oyI18NSet_             ( int active,
   DBG_PROG_START
 
   if(active)
-    domain = OY_TEXTDOMAIN;
+    oy_domain = OY_TEXTDOMAIN;
   else
-    domain = "";
+    oy_domain = "";
 
 
   oyI18Nrefresh_();

@@ -1511,9 +1511,9 @@ int main(int argc, char **argv) {
 
   if(is_path >= 0) {
 #if defined(_Xutf8_h) || HASE_UTF8
-    int set_charset = 0;
+    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
 #else
-    int set_charset = 1;
+    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;
 #endif
     int err = fl_initialise_locale ( "oyranos", locale_paths[is_path],
                                      set_charset );

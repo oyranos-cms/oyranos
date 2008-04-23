@@ -1408,7 +1408,7 @@ int      oyWidget_SetDefaultEditingRgbParameters (
   int error = !s;
 
   if(!(s->type_ == oyOBJECT_TYPE_WIDGET_S && s->parameter &&
-       s->parameter->vcommon.type_ == oyOBJECT_TYPE_PARAM_CHOICE_S))
+       s->parameter->vcommon.type_ == oyOBJECT_TYPE_WIDGET_CHOICE_S))
     error = 1;
 
   return error;
@@ -1432,8 +1432,8 @@ oyWidget_s * oyraWidget_Get          ( const char        * func_name,
   {
 #if 0
     static oyParametersChoice_s oyra_default_widget_editing_rgb_param = {
-      /* type_; internal struct type oyOBJECT_TYPE_PARAM_CHOICE_S */
-      oyOBJECT_TYPE_PARAM_CHOICE_S,
+      /* type_; internal struct type oyOBJECT_TYPE_WIDGET_CHOICE_S */
+      oyOBJECT_TYPE_WIDGET_CHOICE_S,
       /*    copy; copy function */
       0,
       /*    release; release function */
@@ -1457,7 +1457,7 @@ oyWidget_s * oyraWidget_Get          ( const char        * func_name,
       oyOBJECT_TYPE_WIDGET_S, 0,0,0,
 
       /* param_type */
-      oyOBJECT_TYPE_PARAM_CHOICE_S,
+      oyOBJECT_TYPE_WIDGET_CHOICE_S,
       /* id_ and flags */
       0, 0, 
 
@@ -1495,7 +1495,7 @@ oyWidget_s * oyraWidget_Get          ( const char        * func_name,
  *  @since   2008/02/08 (Oyranos: 0.1.8)
  */
 oyParametersChoice_s oyra_default_widget_policy_param = {
-  oyOBJECT_TYPE_PARAM_CHOICE_S, /* type_; internal struct type oyOBJECT_TYPE_PARAM_CHOICE_S */
+  oyOBJECT_TYPE_WIDGET_CHOICE_S, /* type_; internal struct type oyOBJECT_TYPE_WIDGET_CHOICE_S */
   0,  /*    copy; copy function */
   0,  /*    release; release function */
   0,  /*    oy_; base object */
@@ -1515,7 +1515,7 @@ oyParametersChoice_s oyra_default_widget_policy_param = {
 oyWidget_s   oyra_default_widget_policy = {
   oyOBJECT_TYPE_WIDGET_S, /* type_ */
   0,0,0, /* object handlers, not needed for static structures */
-  oyOBJECT_TYPE_PARAM_CHOICE_S, /* param_type */
+  oyOBJECT_TYPE_WIDGET_CHOICE_S, /* param_type */
   0,0,   /* id_ and flags */
   {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, _("Policy"), _("Collections of settings in Oyranos")}, /* name */
   0, /*(oyWidgetParameters_u*)&oyra_default_widget_policy_param, parameter */
@@ -1536,7 +1536,7 @@ oyWidget_s *oyra_default_top_widgets_group[] = {
  *  @since   2008/02/07 (Oyranos: 0.1.8)
  */
 oyParametersGroup_s  oyra_default_top_widgets_param = {
-  oyOBJECT_TYPE_PARAM_GROUP_S,  /* type_ */
+  oyOBJECT_TYPE_WIDGET_GROUP_S,  /* type_ */
   0,0,0, /* object handlers, not needed for static structures */
   oyra_default_top_widgets_group,     /* widgets */
   1,     /* widgets_n */
@@ -1554,7 +1554,7 @@ oyParametersGroup_s  oyra_default_top_widgets_param = {
 oyWidget_s   oyra_default_top_widgets = {
   oyOBJECT_TYPE_WIDGET_S, /* type_ */
   0,0,0, /* object handlers, not needed for static structures */
-  oyOBJECT_TYPE_PARAM_GROUP_S, /* param_type */
+  oyOBJECT_TYPE_WIDGET_GROUP_S, /* param_type */
   0,0,   /* id_ and flags */
   {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, _("Oyranos Configuration"), _("Oyranos Control Panel")}, /* name */
   (oyWidgetParameters_u*)&oyra_default_top_widgets_param,     /* parameter for widget */

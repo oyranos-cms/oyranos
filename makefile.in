@@ -385,7 +385,7 @@ $(LINGUAS_SRC):	$(POT_FILE)
 	for ling in $(@:.gmo=); do \
 	  lingua=`echo $${ling} | sed s%po\/%%g`; \
 	  echo "update $${ling}.gmo ..."; \
-	  test -d $${ling}.po \
+	  test -f $${ling}.po \
         && ($(MSGFMT) -o $${ling}.gmo $${ling}.po; \
             if [ ! -d $${ling} ]; then \
               mkdir $${ling}; \

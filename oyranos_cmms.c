@@ -499,8 +499,8 @@ oyModulGetFromXML_( oyGROUP_e           group,
   }
   /*oy_debug = 0;*/
 
-  domain = OY_TEXTDOMAIN;
-  domain_path = OY_LOCALEDIR;
+  oy_domain = OY_TEXTDOMAIN;
+  oy_domain_path = OY_LOCALEDIR;
   oyI18NInit_();
 
   DBG_PROG_ENDE

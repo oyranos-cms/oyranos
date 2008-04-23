@@ -250,7 +250,7 @@ oyGetMonitorInfo_                 (const char* display_name,
 {
   Display *display = 0;
   int screen = 0;
-  Window w;
+  Window w = 0;
   Atom atom, a;
   char *atom_name;
   int actual_format_return, len;
@@ -272,7 +272,12 @@ oyGetMonitorInfo_                 (const char* display_name,
   display = oyMonitor_device_( disp );
   screen = oyMonitor_deviceScreen_( disp );
   DBG_PROG_V((screen))
-  w = RootWindow( display, screen); DBG_PROG1_S("w: %ld", w)
+  if(display)
+  {
+    w = RootWindow( display, screen); DBG_PROG1_S("w: %ld", w)
+  } else {
+    return 1;
+  }
   DBG_PROG 
 
   if( display_geometry )
@@ -955,6 +960,12 @@ oyActivateMonitorProfile_         (const char* display_name,
                                profile_fullname);
     {
       Display * display = oyMonitor_device_( disp );
+      if(!display)
+      {
+        WARNc3_S("%s %s %s", _("open X Display failed"), dpy_name, display_name)
+        return 1;
+      }
+
       if(ScreenCount( display ) > 1 || oyMonitor_screen_( disp ) == 0)
         error = system(text);
       if(error &&

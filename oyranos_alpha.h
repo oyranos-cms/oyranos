@@ -80,6 +80,8 @@ void         oyThreadLockingSet      ( oyStruct_LockCreateF_t createLockFunc,
                                        oyLockF_t           lockFunc,
                                        oyUnLockF_t         unlockFunc );
 
+extern const char *oy_domain_codeset;
+
 /** @internal
  *  @brief Oyranos name structure
  *
@@ -98,11 +100,11 @@ typedef enum {
   oyOBJECT_TYPE_OPTION_S,             /*!< oyOption_s */
   oyOBJECT_TYPE_OPTIONS_S,            /*!< oyOptions_s */
   oyOBJECT_TYPE_WIDGET_S,             /**< oyWidget_s */
-  oyOBJECT_TYPE_PARAM_BUTTON_S,       /**< oyParametersButton_s */
-  oyOBJECT_TYPE_PARAM_CHOICE_S,       /**< oyParametersChoice_s */
-  oyOBJECT_TYPE_PARAM_GROUP_S,        /**< oyParametersGroup_s */
-  oyOBJECT_TYPE_PARAM_SLIDER_S,       /**< oyParametersSlider_s */
-  oyOBJECT_TYPE_PARAM_TEXT_S,         /**< oyParametersText_s */
+  oyOBJECT_TYPE_WIDGET_BUTTON_S,      /**< oyWidgetButton_s */
+  oyOBJECT_TYPE_WIDGET_CHOICE_S,      /**< oyWidgetChoice_s */
+  oyOBJECT_TYPE_WIDGET_GROUP_S,       /**< oyWidgetGroup_s */
+  oyOBJECT_TYPE_WIDGET_SLIDER_S,      /**< oyWidgetSlider_s */
+  oyOBJECT_TYPE_WIDGET_TEXT_S,        /**< oyWidgetText_s */
   oyOBJECT_TYPE_REGION_S,             /*!< oyRegion_s */
   oyOBJECT_TYPE_IMAGE_S,              /*!< oyImage_s */
   oyOBJECT_TYPE_IMAGE_HANDLER_S,      /*!< oyImageHandler_s */
@@ -448,11 +450,11 @@ typedef enum {
  */
 typedef union {
   int32_t          int32;
-  int32_t        * int32_list;
+  int32_t        * int32_list;         /**< first is number of int32 in list */
   double           dbl;
-  double         * dbl_list;
-  char           * string;
-  char          ** string_list;
+  double         * dbl_list;           /**< first is number of dbl in list */
+  char           * string;             /**< null terminated */
+  char          ** string_list;        /**< null terminated */
 } oyValue_u;
 
 /** @brief Option for rendering
@@ -460,9 +462,13 @@ typedef union {
     @todo include the oyOptions_t_ type for gui elements
     should be used in a list oyColourTransformOptions_s to form a options set
 
+ *  The id field maps to a oyWidget_s object.
+ *  Options and widgets are to be queried by the according function / CMM
+ *  combination.
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2007/00/00 (Oyranos: 0.1.x)
- *  @date    2008/02/16
+ *  @date    2008/04/14
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OPTION_S */
@@ -470,25 +476,29 @@ typedef struct {
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  uint32_t             id;             /**< id to map for instance to widgets */
+  uint32_t             id;             /**< id to map for instance to events and widgets */
   oyName_s             name;           /**< nick, name, description/help */
   const char         * config_path;    /**< full key name to store configuration, use three point separated string, eg "org.oyranos.lcms" */
   const char         * config_key;     /**< key name to store configuration, eg "transform_precalculation" */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u            value;          /**< the actual value */
+  oyValue_u            standard;       /**< the standard value */
+  oyValue_u            start;          /**< value range start */
+  oyValue_u            end;            /**< value range end */
   uint32_t             flags;          /**<  */
 } oyOption_s;
 
 /** @brief Options for rendering
     Options can be any flag or rendering intent and other informations needed to
-    configure a process. It contains variables for colour transforms.
+    configure a process. The object contains variables for colour transforms.
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OPTIONS_S */
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
-  int                  n;              /*!< number of options */
+
+  uint32_t             n;              /*!< number of options */
   oyOption_s         * opts;
 } oyOptions_s;
 #if 0
@@ -969,7 +979,8 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
                                         oyProfile_s     * profile,
                                         oyOptions_s     * options );
 
-/** In case where
+/** @struct oyColourConversion_s
+    In case where
       a option indicates monitor output, or
       the out image struct has no profile set, 
     the conversion will route to monitor colours, honouring the oyImage_s screen
@@ -1264,7 +1275,7 @@ typedef enum {
 } oyWIDGET_USERGROUP_e;
 #endif
 
-/** @struct oyParametersGroup_s
+/** @struct oyWidgetGroup_s
  *  @brief  group widget parameters
  *
  *  @since Oyranos: version 0.1.8
@@ -1283,9 +1294,9 @@ typedef struct {
   oyWIDGET_GROUP_INITIAL_VISIBILITY_e initial_visibility; /**< non (tab/choice) or visible (like in a frame or radio buttons ) */
   oyWIDGET_GROUP_FRAME_e mark;         /**< mark visibly like with a frame */
   int32_t              visible;        /**< status */
-} oyParametersGroup_s;
+} oyWidgetGroup_s;
 
-/** @struct oyParametersSlider_s
+/** @struct oyWidgetSlider_s
  *  @brief  slider widget parameters
  *
  *  @since Oyranos: version 0.1.8
@@ -1301,24 +1312,24 @@ typedef struct {
   double      range_end;        /**< end of range for a value selection */
   double      range_step_major; /**< step size for a value selection */
   double      range_step_minor; /**< step size for a value selection */
-} oyParametersSlider_s;
+} oyWidgetSlider_s;
 
-typedef struct oyParametersChoice_s oyParametersChoice_s;
+typedef struct oyWidgetChoice_s oyWidgetChoice_s;
 
-/** @struct oyParametersChoice_s
+/** @struct oyWidgetChoice_s
  *  @brief  choice widget parameters
  *
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/27 (API 0.1.8)
  */
-struct oyParametersChoice_s {
+struct oyWidgetChoice_s {
   oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_PARAM_CHOICE_S */
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
   int32_t              choices_n;      /**< number of options */
-  const char        ** choices;        /**< label for each choice */
+  char              ** choices;        /**< label for each choice */
   uint32_t             flags;          /**< */
 };
 
@@ -1334,7 +1345,7 @@ typedef enum {
   oyWIDGET_BUTTON_RADIO
 } oyWIDGET_BUTTON_TYPE_e;
 
-/** @struct oyParametersButton_s
+/** @struct oyWidgetButton_s
  *  @brief  button widget parameters
  *
  *  @since Oyranos: version 0.1.8
@@ -1350,7 +1361,7 @@ typedef struct {
   oyIcon_s           * icon_active;    /**< button icon */
   oyIcon_s           * icon_passive;   /**< button icon */
   oyIcon_s           * icon_highligthed; /**< button icon */
-} oyParametersButton_s;
+} oyWidgetButton_s;
 
 /** @enum    oyORIENTATION_e
  *  @brief   orientation type
@@ -1398,7 +1409,7 @@ typedef enum {
   oyWIDGET_TEXT_INPUT                  /**< interactive text for input */
 } oyWIDGET_TEXT_TYPE_e;
 
-/** @struct oyParametersText_s
+/** @struct oyWidgetText_s
  *  @brief  text widget parameters
  *
  *  @version Oyranos: 0.1.8
@@ -1414,21 +1425,21 @@ typedef struct {
   oyWIDGET_TEXT_TYPE_e text_type;      /**< text style */
   uint32_t             min_lines;      /**< minimal text lines */
   oyORIENTATION_e      align;          /**< direction the text should touch */
-} oyParametersText_s;
+} oyWidgetText_s;
 
 
-/** @union  oyWidgetParameters_u
+/** @union  oyWidgetWidget_u
  *  @brief  widget parameters
  *
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/14 (API 0.1.8)
  */
 typedef union {
-  oyParametersSlider_s     vslider;
-  oyParametersChoice_s     vchoice;
-  oyParametersGroup_s      vgroup;
-  oyParametersButton_s     vbutton;
-  oyParametersText_s       vtext;
+  oyWidgetSlider_s         vslider;
+  oyWidgetChoice_s         vchoice;
+  oyWidgetGroup_s          vgroup;
+  oyWidgetButton_s         vbutton;
+  oyWidgetText_s           vtext;
   oyStruct_s               vcommon;
 } oyWidgetParameters_u;
 
@@ -1460,6 +1471,7 @@ typedef struct {
  *  @brief  a user settings widget
  *
  *  The struct contains a common description for all toolkits.
+ *  One Widget coresponds to one oyOption_s object via the id field.
  *
  *  @since Oyranos: version 0.1.8
  *  @date  14 january 2008 (API 0.1.8)
@@ -1472,13 +1484,33 @@ struct oyWidget_s {
   
   oyOBJECT_TYPE_e      param_type;     /**< type, the same value as in parameter::type */
   oyWidgetParameters_u * parameter;    /**< widget parameters */
-  uint32_t             id;             /**< identification to map a option */
+  uint32_t             id;         /**< identification to map a option */
   uint32_t             flags;          /**< flags to control widget behaviour, like oyWIDGET_HAS_FOCUS, oyWIDGET_IS_VISIBLE */
   oyRegion_s         * region;         /**< actual region on screen */
   oyOption_s         * option;         /**< the actual value */
   oyWidgetLayout_s   * layout;         /**< size hints for alignment */
 };
 /*#endif*/
+
+/** @struct oyWidgets_s
+ *  @brief  user settings widgets
+ *
+ *  The struct contains a common description for all toolkits.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/04/14 (Oyranos: 0.1.8)
+ *  @date    2008/04/14
+ */
+struct oyWidgets_s {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_WIDGET_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyWidget_s         * widgets;        /**< the widgets */
+  uint32_t             widgets_n;      /**< the number of widgets */
+};
+
 
 
 /** @deprecated */

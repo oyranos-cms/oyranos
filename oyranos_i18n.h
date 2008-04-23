@@ -27,12 +27,13 @@ namespace oyranos
 #ifdef USE_GETTEXT
 # include <libintl.h>
 # include <locale.h>
-# define _(text) dgettext( domain, text )
+# define _(text) dgettext( oy_domain, text )
 #else
 # define _(text) text
 #endif
-extern const char *domain;
-extern const char *domain_path;
+extern const char *oy_domain;
+extern const char *oy_domain_path;
+extern const char *oy_domain_codeset;
 
 #define OY_TEXTDOMAIN "oyranos"
 
