@@ -332,7 +332,9 @@ oyGetMonitorInfo_                 (const char* display_name,
   }
 
   if( nitems_return != 128 ) {
-    WARNc3_S("\n\t  %s %d; %s",_("unexpected EDID lenght"), (int)nitems_return,
+    WARNc4_S("\n\t  %s %d; %s %s",_("unexpected EDID lenght"),
+               (int)nitems_return,
+               atom_name,
                _("Cant read hardware information from device."))
     
     goto CleanUp;

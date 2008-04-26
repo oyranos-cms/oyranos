@@ -80,6 +80,12 @@ void         oyThreadLockingSet      ( oyStruct_LockCreateF_t createLockFunc,
                                        oyLockF_t           lockFunc,
                                        oyUnLockF_t         unlockFunc );
 
+/** @brief codeset for Oyranos
+ *
+ *  set here the codeset part, e.g. "UTF-8", which shall be delivered from
+ *  Oyranos string translations.
+ *  Set this variable before any call to Oyranos.
+ */
 extern const char *oy_domain_codeset;
 
 /** @internal

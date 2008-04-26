@@ -64,7 +64,7 @@ INFOECHO="echo"
 debug=0
 nodeps=0
 rpm=0
-verbose=0
+verbose=1
 X11=0
 
 # find a suitable fltk-config script
@@ -176,6 +176,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       verbose="1"
     fi
+    switch=disable-verbose
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      verbose="0"
+    fi
     switch=disable-dependency-tracking
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       nodeps="1"
@@ -204,7 +208,8 @@ test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X1
 test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rpath for ELF linking"
 test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
 test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug version [default disable]"
-test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default disable]"
+test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default enable]"
+test -n "$INFOECHO" && $INFOECHO "   --disable-verbose                    verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-dependency-tracking        no dependencies [default check]"
 
 test -n "$INFOECHO" && $INFOECHO "   --quick                              generate config files only"
