@@ -201,7 +201,6 @@ test -n "$INFOECHO" && $INFOECHO "   --iccdirname=[icc]                   Oyrano
 test -n "$INFOECHO" && $INFOECHO "   --settingsdirname=[settings]         Oyranos settings directory"
 test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
 test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg installation path"
-#test -n "$INFOECHO" && $INFOECHO "   --elektra-internal=[yes/no]          use internal Elektra [default=auto]"
 test -n "$INFOECHO" && $INFOECHO ""
 test -n "$INFOECHO" && $INFOECHO "   --with-fltk-config=[fltk-config]     alternative fltk version"
 test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
@@ -744,7 +743,6 @@ test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $CONF_SH
 test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $CONF_SH
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "ELEKTRA_VERSION=$ELEKTRA_VERSION" >> $CONF_SH
 test -n "$ECHO" && $ECHO "oyranos_add=\"$oyranos_add\"" >> $CONF_SH
 test -n "$ECHO" && $ECHO "oyranos_x_add=\"$oyranos_x_add\"" >> $CONF_SH
 test -n "$INFOECHO" && $INFOECHO ""

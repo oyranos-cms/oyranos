@@ -82,7 +82,6 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --settingsdirname   Oyranos settings directory name"
 fi
 
-if [ -z $ELEKTRA_VERSION ]; then
   elektra_dyn="`pkg-config --libs elektra`"
   if [ -f $libdir/libelektra.a ]; then
     elektra="$libdir/libelektra.a"
@@ -95,13 +94,6 @@ if [ -z $ELEKTRA_VERSION ]; then
   else
     elektra="$elektra_dyn"
   fi
-else
-  if [ -f $ELEKTRA_VERSION/src/libelektra/libelektra.a ]; then
-    elektra="$ELEKTRA_VERSION/src/libelektra/libelektra.a $dl $iconv $intl"
-  else
-    elektra="$libdir/lib${TARGET}_elektra.a $dl $iconv $intl"
-  fi
-fi
 
 if [ "$echo_cflags" = "yes" ]; then
   echo "-I$prefix/include"

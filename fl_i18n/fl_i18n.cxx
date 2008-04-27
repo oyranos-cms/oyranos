@@ -58,7 +58,7 @@ const char *fl_i18n_codeset = 0;
 
 
 /* The following macros belong to Kai-Uwe's debug environment. */
-#ifdef DEBUG
+#ifdef DEBUG_
 #include "../icc_utils.h"
 #else
 #ifndef icc_strdup_m
