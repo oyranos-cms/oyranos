@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-04-23 12:31+0200\n"
+"POT-Creation-Date: 2008-04-27 18:51+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <de@li.org>\n"
@@ -17,76 +17,76 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.9\n"
 
-#: fl_i18n.cxx:250
+#: fl_i18n.cxx:255
 msgid "osX locale obtained: "
 msgstr "os X locale erhalten: "
 
-#: fl_i18n.cxx:253
+#: fl_i18n.cxx:258
 msgid "osX locale not obtained"
 msgstr "os X locale nicht erhalten"
 
-#: fl_i18n.cxx:376
+#: fl_i18n.cxx:381
 msgid "try to set LANG"
 msgstr "versuche LANG zu setzen"
 
-#: fl_i18n.cxx:395
+#: fl_i18n.cxx:400
 msgid "try locale in "
 msgstr "versuche locale in "
 
-#: fl_i18n.cxx:413
+#: fl_i18n.cxx:420
 msgid "set codeset for"
 msgstr "setze Zeichensatz für"
 
-#: fl_i18n.cxx:448
+#: fl_i18n.cxx:459
 msgid "Add to Favorites"
 msgstr "Füge den Lesezeichen hinzu"
 
-#: fl_i18n.cxx:449
+#: fl_i18n.cxx:460
 msgid "All Files (*)"
 msgstr "Alle Dateien (*)"
 
-#: fl_i18n.cxx:450
+#: fl_i18n.cxx:461
 msgid "Custom Filter"
 msgstr "Benutzefilter"
 
-#: fl_i18n.cxx:451
+#: fl_i18n.cxx:462
 msgid "Please choose an existing file!"
 msgstr "Bitte ein existierende Datei wählen!"
 
-#: fl_i18n.cxx:452
+#: fl_i18n.cxx:463
 msgid "Favorites"
 msgstr "Lesezeichen"
 
-#: fl_i18n.cxx:453
+#: fl_i18n.cxx:464
 msgid "Filename"
 msgstr "Dateiname"
 
-#: fl_i18n.cxx:454
+#: fl_i18n.cxx:465
 msgid "Manage Favorites"
 msgstr "Lesezeichen Ordnen"
 
-#: fl_i18n.cxx:456
+#: fl_i18n.cxx:467
 msgid "My Computer"
 msgstr "Mein Rechner"
 
-#: fl_i18n.cxx:458
+#: fl_i18n.cxx:469
 #, fuzzy
 msgid "Filesystems"
 msgstr "Dateisystem"
 
-#: fl_i18n.cxx:460
+#: fl_i18n.cxx:471
 msgid "New Directory?"
 msgstr "Neues Verzeichnis?"
 
-#: fl_i18n.cxx:461
+#: fl_i18n.cxx:472
 msgid "Preview"
 msgstr "Vorschau"
 
-#: fl_i18n.cxx:463 fl_i18n_example.cxx:32
+#: fl_i18n.cxx:474 fl_i18n_example.cxx:32
 msgid "Save"
 msgstr "Sichern"
 
-#: fl_i18n.cxx:465
+#: fl_i18n.cxx:476
 msgid "Show:"
 msgstr "Zeige:"
 

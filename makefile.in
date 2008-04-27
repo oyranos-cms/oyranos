@@ -13,8 +13,7 @@ cmmdir          = $(libdir)/color/cmms
 
 OY_MODULE_NAME  =_cmm_module
 LIBRARIES = $(TARGET) \
-	$(TARGET)_moni \
-	$(TARGET)_alpha
+	$(TARGET)_moni
 CMMS = 	$(TARGET)_lcms$(OY_MODULE_NAME) \
 	$(TARGET)_oyX1$(OY_MODULE_NAME) \
 	$(TARGET)_oyra$(OY_MODULE_NAME)
@@ -26,8 +25,6 @@ LIB_MONI_SONAMEFULL = lib$(TARGET)_moni$(SO).$(VERSION)$(LIBEXT)
 LIB_MONI_SONAME = lib$(TARGET)_moni$(SO).$(VERSION_A)$(LIBEXT)
 LIB_MONI_SO = lib$(TARGET)_moni$(SO)$(LIBEXT)
 LIB_MONI_NAME = lib$(TARGET)_moni.a
-LIB_ALPHA_SONAMEFULL = lib$(TARGET)_alpha$(SO).$(VERSION)$(LIBEXT)
-LIB_ALPHA_NAME = lib$(TARGET)_alpha.a
 LIB_CMM_LCMS = lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 LIB_CMM_oyX1 = lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 LIB_CMM_oyra = lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
@@ -158,8 +155,7 @@ SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
 		$(CFILES_CMM_LCMS) $(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
 		$(CXXFILES_FLTK) test.c test2.cpp
-OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o)
-ALPHA_OBJECTS = $(CPPFILES_ALPHA:.cpp=.o) $(CXXFILES_ALPHA:.cxx=.o) $(CFILES_ALPHA:.c=.o)
+OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
 CMM_LCMS_OBJECTS = $(CFILES_CMM_LCMS:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
 CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
@@ -169,7 +165,6 @@ FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 
 CLEAN_OBJECTS = $(OBJECTS) \
 	$(MONI_OBJECTS) \
-	$(ALPHA_OBJECTS) \
 	$(CMM_LCMS_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
@@ -182,7 +177,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 
 INCL_DEP = $(INCL) $(SOURCES)
 
-.PHONY:	doc $(ELEKTRA_VERSION) test2
+.PHONY:	doc test2
 
 #TEST2 = test2
 
@@ -207,9 +202,8 @@ ALL_FILES = \
 	$(FLTK_FILES)
 
 # build all what is needed to run the libraries, helpers and the examples
-all:	mkdepend $(ELEKTRA_VERSION) \
+all:	mkdepend \
 	$(LIBSONAMEFULL) \
-	$(LIB_ALPHA_SONAMEFULL) \
 	$(TARGET)-monitor $(X11) $(LIB_CMM_LCMS) \
 	$(LIB_CMM_oyX1) $(LIB_CMM_oyra) \
 	$(FLTK_GUI) $(TARGET)-policy \
@@ -236,7 +230,7 @@ $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
-	-L$(libdir) $(LDLIBS)
+	-L$(libdir) $(LDLIBS) $(m)
 	$(RM)  $(LIBSONAME)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
 	$(RM)  $(LIBSO)
@@ -246,18 +240,12 @@ $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME)
 $(LIB_MONI_SONAMEFULL):	$(MONI_OBJECTS) $(LIB_MONI_NAME) $(LIBSONAMEFULL)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
-	$(LIBSONAMEFULL) $(LIB_ALPHA_SONAMEFULL) -o $(LIB_MONI_SONAMEFULL) \
+	$(LIBSONAMEFULL) -o $(LIB_MONI_SONAMEFULL) \
 	$(MONI_OBJECTS) $(X11_LIBS) $(LDLIBS)
 	$(RM)  $(LIB_MONI_SONAME)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SONAME)
 	$(RM)  $(LIB_MONI_SO)
 	$(LNK) $(LIB_MONI_SONAMEFULL) $(LIB_MONI_SO)
-
-$(LIB_ALPHA_SONAMEFULL):	$(OBJECTS) $(LIB_ALPHA_NAME)
-	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
-	$(LIBSONAMEFULL) -o $(LIB_ALPHA_SONAMEFULL) \
-	$(ALPHA_OBJECTS) -L$(libdir) $(LDLIBS) $(m)
 
 $(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
 	echo Linking $@ ...
@@ -283,7 +271,7 @@ $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $@ \
-	$(CMM_oyra_OBJECTS) $(LIB_ALPHA_SONAMEFULL) $(LIBSONAMEFULL) $(LDLIBS)
+	$(CMM_oyra_OBJECTS) $(LIBSONAMEFULL) $(LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -322,15 +310,8 @@ $(LIBNAME):	$(OBJECTS)
 	echo Linking $@ ...
 	test -f $(LIBNAME) && $(RM) $(LIBNAME) || echo ""
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) \
-		$(OBJECTS) \
-		`test -f $(ELEKTRA_VERSION)/src/libelektra/libelektra.a && echo $(ELEKTRA_VERSION)/src/libloader/libloader_static_a-kdbLibLoader.o $(ELEKTRA_VERSION)/src/backends/filesys/libelektra_filesys_a-filesys.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-kdb.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-error.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-key.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-keyset.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-kdbhighlevel.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-backendhelpers.o $(ELEKTRA_VERSION)/src/libelektra/libelektra_a-exported_symbols.o`
+		$(OBJECTS)
 	$(RANLIB) $(LIBNAME)
-
-$(LIB_ALPHA_NAME):	$(ALPHA_OBJECTS)
-	echo Linking $@ ...
-	test -f $(LIB_ALPHA_NAME) && $(RM) $(LIB_ALPHA_NAME) || echo ""
-	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIB_ALPHA_NAME) $(ALPHA_OBJECTS)
-	$(RANLIB) $(LIB_ALPHA_NAME)
 
 $(LIB_MONI_NAME):	$(MONI_OBJECTS)
 	echo Linking $@ ...
@@ -344,11 +325,6 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
 	$(CC) $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
 	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
-
-$(ELEKTRA_VERSION):
-	-cd $(ELEKTRA_VERSION) && (test -f Makefile && ( \
-	  test -f src/libelektra/libelektra.a || \
-	    ($(MAKE); ranlib src/libelektra/libelektra.a; $(MAKE))))
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
@@ -437,7 +413,6 @@ install_bin:	all doc
 	-$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(ELEKTRA_VERSION)/src/kdb/kdb_static $(DESTDIR)$(bindir)/$(TARGET)-kdb_static
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	mkdir -p $(DESTDIR)$(cmmdir)
@@ -487,14 +462,10 @@ install_bin:	all doc
 	#$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
 	$(INSTALL) -m 644 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
 	#$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
-	#$(INSTALL) -m 644 $(LIB_ALPHA_NAME) $(DESTDIR)$(libdir)
 	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
-	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIB_ALPHA_NAME)
 	#$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
 	#$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
 	#$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
-	-$(INSTALL) -m 644 $(ELEKTRA_VERSION)/src/libelektra/libelektra.a $(DESTDIR)$(libdir)/lib$(TARGET)_elektra.a
-	-$(RANLIB) $(DESTDIR)$(libdir)/lib$(TARGET)_elektra.a
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
 	-$(INSTALL) -m 644 $(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)
@@ -526,11 +497,9 @@ install_bin:	all doc
 install:	install_bin
 	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
 	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
-#	$(MAKE) install_usersettings
 
 install-main:	install_bin
 	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
-#	$(MAKE) DESTDIR=$(DESTDIR) install_usersettings
 
 install-icc:
 	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
@@ -559,43 +528,6 @@ install_linguas:
             $(INSTALL) -m 644 po/$${ling}.gmo $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo ) \
 		|| (echo $${ling}.gmo is not yet ready ... skipping); \
 	done;
-
-# it is not used, as the defaults reside inside the library
-install_usersettings:
-	if [ -z "$(DESTDIR)" ]; then \
-	  kdb=kdb; \
-	  test `$${kdb}` && kdb_found=1 || kdb_found=0; \
-	  if [ $${kdb_found} -gt 0 ]; then \
-	    echo "`which kdb` found"; \
-	  else \
-	    kdb=$(ELEKTRA_VERSION)/src/kdb/kdb_static; \
-	    test -f $${kdb} && kdb_found=1 || kdb_found=0; \
-	    if [ $${kdb_found} -gt 0 ]; then \
-	      echo "using local kdb_static"; \
-	    fi; \
-	  fi; \
-	  $${kdb} set user/sw/oy_install_test "10"; \
-	  kdb_r=`$${kdb} get user/sw/oy_install_test`; \
-	  if [ -n "$${kdb_r}" ]; then \
-	    if [ "$${kdb_r}" != "10" ]; then \
-	      kdb_found=0; \
-	    fi; \
-	  else \
-	    kdb_found=0; \
-	  fi; $${kdb} rm user/sw/oy_install_test; \
-	  if [ $${kdb_found} -eq 0 ]; then \
-	    echo "!!!WARNING!!! kdb not useable,"; \
-	    echo "              no check for Oyranos configuration possible"; \
-	  fi; \
-	  if [ $${kdb_found} -gt 0 ]; then \
-	    if [ `$${kdb} ls system/sw/oyranos 2>/dev/zero | grep oyranos | wc -l` -eq 0 ]; then \
-	      if [ `$${kdb} ls user/sw/oyranos 2>/dev/zero | grep oyranos | wc -l` -eq 0 ]; then \
-	        echo "no oyranos keys found: set default policy home+office"; \
-	        ./oyranos-policy $(syscolordir)/$(settingsdirname)/office.policy.xml; \
-	      fi; \
-	    fi; \
-	  fi; \
-	fi;
 
 # build a source distribution package
 dist: targz
@@ -678,7 +610,6 @@ distclean: clean
 	-$(RM) config.sh
 	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
 	-$(RM) -R doc/html
-	test -f "$(ELEKTRA_VERSION)" && (cd $(ELEKTRA_VERSION) && $(MAKE) distclean) || echo ""
 
 clean:
 	-$(RM) \
@@ -705,7 +636,6 @@ clean:
 	done
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
-	test -f "$(ELEKTRA_VERSION)" && (cd $(ELEKTRA_VERSION) && $(MAKE) clean) || echo ""
 	echo ... $@ done
 
 # configure if the file config is not available
@@ -796,11 +726,6 @@ copy_files:
 	  test -f po/$${ling}.po \
 	  && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
 	done;
-	test -f "$(ELEKTRA_VERSION)" && (cd $(ELEKTRA_VERSION) && \
-	     $(MAKE) dist-gzip; \
-	     cd ../$(DESTDIR); \
-	     test -f ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz && tar xzf ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
-	     rm ../$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz) || echo ""
 	echo copy done
 
 # mkdepend

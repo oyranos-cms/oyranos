@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hello-sh 0.14.1\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-04-23 12:31+0200\n"
+"POT-Creation-Date: 2008-04-27 18:51+0200\n"
 "PO-Revision-Date: 2004-11-17 10:08+0200\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -17,75 +17,75 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.3\n"
 
-#: fl_i18n.cxx:250
+#: fl_i18n.cxx:255
 msgid "osX locale obtained: "
 msgstr ""
 
-#: fl_i18n.cxx:253
+#: fl_i18n.cxx:258
 msgid "osX locale not obtained"
 msgstr ""
 
-#: fl_i18n.cxx:376
+#: fl_i18n.cxx:381
 msgid "try to set LANG"
 msgstr ""
 
-#: fl_i18n.cxx:395
+#: fl_i18n.cxx:400
 msgid "try locale in "
 msgstr ""
 
-#: fl_i18n.cxx:413
+#: fl_i18n.cxx:420
 msgid "set codeset for"
 msgstr ""
 
-#: fl_i18n.cxx:448
+#: fl_i18n.cxx:459
 msgid "Add to Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:449
+#: fl_i18n.cxx:460
 msgid "All Files (*)"
 msgstr ""
 
-#: fl_i18n.cxx:450
+#: fl_i18n.cxx:461
 msgid "Custom Filter"
 msgstr ""
 
-#: fl_i18n.cxx:451
+#: fl_i18n.cxx:462
 msgid "Please choose an existing file!"
 msgstr ""
 
-#: fl_i18n.cxx:452
+#: fl_i18n.cxx:463
 msgid "Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:453
+#: fl_i18n.cxx:464
 msgid "Filename"
 msgstr ""
 
-#: fl_i18n.cxx:454
+#: fl_i18n.cxx:465
 msgid "Manage Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:456
+#: fl_i18n.cxx:467
 msgid "My Computer"
 msgstr ""
 
-#: fl_i18n.cxx:458
+#: fl_i18n.cxx:469
 msgid "Filesystems"
 msgstr ""
 
-#: fl_i18n.cxx:460
+#: fl_i18n.cxx:471
 msgid "New Directory?"
 msgstr ""
 
-#: fl_i18n.cxx:461
+#: fl_i18n.cxx:472
 msgid "Preview"
 msgstr ""
 
-#: fl_i18n.cxx:463 fl_i18n_example.cxx:32
+#: fl_i18n.cxx:474 fl_i18n_example.cxx:32
 msgid "Save"
 msgstr ""
 
-#: fl_i18n.cxx:465
+#: fl_i18n.cxx:476
 msgid "Show:"
 msgstr ""
 
