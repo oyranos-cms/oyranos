@@ -81,11 +81,6 @@ int   oyMonitor_getScreenGeometry_   ( oyMonitor_s       * disp );
 int   oyMonitor_getGeometryIdentifier_(oyMonitor_s       * disp );
 char* oyMonitor_getAtomName_         ( oyMonitor_s       * disp,
                                        const char        * base );
-char* oyMonitor_changeXProperty   (oyMonitor_s  *disp,
-                                   const char *atom_name,
-                                   int         delete_property,
-                                   char       *block,
-                                   size_t     *size );
 char* oyChangeScreenName_            ( const char        * display_name,
                                        int                 screen );
 char**oyGetAllScreenNames_        (const char *display_name, int *n_scr );
@@ -733,6 +728,9 @@ oyGetDisplayNameFromPosition_     (const char *display_name,
   disp = oyMonitor_newFrom_( display_name );
   if(!disp)
     return 0;
+
+  if(!display_name)
+    display_name = oyMonitor_name_( disp );
 
   display = oyMonitor_device_( disp );
 
