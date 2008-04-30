@@ -92,7 +92,6 @@ rm -rf %{buildroot}
 %{_bindir}/%{name}-config
 %{_bindir}/%{name}-policy
 %{_libdir}/lib%{name}.so*
-%{_libdir}/lib%{name}_alpha.so*
 %{_libdir}/color/cmms/lib%{name}_lcms_cmm_module.so*
 %{_libdir}/color/cmms/lib%{name}_oyra_cmm_module.so*
 %{_mandir}/man1/%{name}*

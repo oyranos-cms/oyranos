@@ -341,7 +341,7 @@ test -n "$ECHO" && $ECHO "TARGET = $TARGET" >> $CONF
 
 if [ -n "$ECHO" ]; then
   echo_="#                                                              #"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
 
@@ -351,7 +351,7 @@ UNAME_=`uname`
 OSUNAME=BSD
 if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
   echo_="Darwin PPC              detected"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   test -n "$ECHO" && $ECHO "APPLE = 1" >> $CONF
   test -n "$ECHO" && $ECHO "APPLE = 1" >> $CONF_I18N
   test -n "$ECHO" && $ECHO "OSX_H = -DHAVE_OSX" >> $CONF
@@ -363,30 +363,30 @@ else
     test -n "$ECHO" && $ECHO "LINUX = 1" >> $CONF_I18N
     test -n "$ECHO" && $ECHO "#define LINUX 1" >> $CONF_H
     echo_="Linux system            detected"
-    test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+    test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
     SYS=0
     if [ -f /etc/SuSE-release ]; then
       if [ `cat /etc/SuSE-release | grep Linux | wc -l` -ne 0 ]; then
         echo_="`cat /etc/SuSE-release | grep Linux`"
-        test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
         SYS=1; fi
       if [ $SYS -eq 0 ]; then
         echo_="`cat /etc/SuSE-release | grep SUSE`"
-        test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
         SYS=1; fi fi
     if [ -f /etc/redhat-release ]; then
       echo_="`cat /etc/redhat-release`"
-      test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+      test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
       SYS=1; fi
     if [ -f /etc/debian_version ]; then
       if [ -f /etc/issue.net ]; then
         echo_="`cat /etc/issue.net || cat /etc/debian_version`"
-        test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
         SYS=2; fi; fi
     if [ $SYS -eq 0 ]; then
       if [ -f /etc/issue.net ]; then
         echo_="`cat /etc/issue.net`"
-        test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
     fi; fi
     OSUNAME=Linux
   else
@@ -395,7 +395,7 @@ else
       test -n "$ECHO" && $ECHO "SOLARIS = 1" >> $CONF_I18N
       test -n "$ECHO" && $ECHO "#define SOLARIS 1" >> $CONF_H
       echo_="SunOS                   detected"
-      test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+      test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
       OSUNAME=SunOS
     else
       if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
@@ -404,11 +404,11 @@ else
         OS_EXT=.bsd
         test -n "$ECHO" && $ECHO "#define BSD 1" >> $CONF_H
         echo_="BSD $UNAME_             detected"
-        test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
         OSUNAME=BSD
       else
         echo_="Oyranos may or may not compile on your $UNAME_ system"
-        test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
       fi
     fi
   fi
@@ -422,20 +422,20 @@ LINE_ARCH=""
 if [ $? = 0 ]; then
   if [ "$MACH_" = "i686" ]; then
     echo_="32-bit system           detected"
-    test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+    test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   else
     if [ "$MACH_" = "x86_64" ]; then
       MACH=BUILD_64
       test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
       echo_="X86_64                  will build in 64 bit mode"
-      test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+      test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
       BARCH="64"
     else
       if [ "$MACH_" = "sun4u" ]; then
         MACH=BUILD_64
         test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
         echo_="spark ultra 4           will build in 64 bit mode"
-        test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
         BARCH="64"
         LINE_ARCH="-64"
       fi
@@ -454,7 +454,7 @@ if [ "`echo $exec_prefix | grep 64 | wc -l`" -eq "1" ]; then
   BARCH=""
   LIBDIR="lib"
   echo_="unset BARCH LIBDIR"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   export BARCH LIBDIR
 fi
 test -n "$ECHO" && $ECHO "BARCH=$BARCH" >> $CONF
@@ -651,7 +651,7 @@ for i in CFLAGS CXXFLAGS LDFLAGS; do
 done
 if [ -n "$ECHO" ]; then
   echo_="\"$CFLAGS\" \"$CXXFLAGS\" \"$LDFLAGS\""
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
 test -n "$ECHO" && $ECHO "#!/bin/sh" > $CONF_SH
@@ -750,7 +750,7 @@ test -n "$ECHO" && cat  "$CONF_SH.in" >> $CONF_SH
 chmod 0755 "$CONF_SH"
 if [ -n "$ECHO" ]; then
   echo_="$CONF_SH created"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
 
@@ -778,7 +778,7 @@ test -n "$RPMECHO" && cat  "$SPEC" >> $SPECICC
 test -n "$RPMECHO" && cat  "$SPECICC.in" >> $SPECICC
 test -n "$RPMECHO" && cat  "$SPEC.in" >> $SPEC
 echo_="generated $SPEC from $SPEC.in and $SPECICC from $SPECICC.in"
-test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 
 test -n "$ECHO" && $ECHO "Version: $VERSION" >> $MPKG
 test -n "$ECHO" && $ECHO "prefix=$prefix" >> $MPKG
@@ -799,7 +799,7 @@ test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $MPKG
 test -n "$ECHO" && cat  "$MPKG.in" >> $MPKG
 if [ -n "$ECHO" ]; then
   echo_="generated $MPKG from $MPKG.in"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
 test -n "$ECHO" && $ECHO "Version: $VERSION" >> $PKGC
@@ -825,45 +825,45 @@ fi
 
 if [ -n "$ECHO" ]; then
   echo_=""
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="#                       Paths                                  #"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="#                                                              #"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="prefix          =       $prefix"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="exec_prefix     =       $exec_prefix"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="bindir          =       $bindir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="sbindir         =       $sbindir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="libdir          =       $libdir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="cmmdir          =       $cmmdir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="includedir      =       $includedir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="datadir         =       $datadir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="mandir          =       $mandir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="syscolordir     =       $syscolordir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="usercolordir    =       $usercolordir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="iccdirname      =       $iccdirname"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="settingsdirname =       $settingsdirname"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="pixmapdir       =       $pixmapdir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="desktopdir      =       $desktopdir"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="################################################################"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_=""
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
 test -n "$ECHO" && $ECHO "src_dir = $src_dir" >> $CONF
@@ -955,25 +955,25 @@ test -f error.tmp && ERROR=1
 test -f error.tmp && rm error.tmp
 if [ $ERROR != 0 ]; then
   echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="!!!                     An ERROR occured                     !!!"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="!!!                     See Log above                        !!!"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="!!!                     remove  $CONF                     !!!"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   test -n "$INFOECHO" && $INFOECHO ""
   rm Makefile $CONF_H $CONF_SH $SPEC $PKGC $MPKG
   exit
 fi
 
 echo_="char * oy_config_log_=\" \\"
-test -n $ECHO && $ECHO -e "$echo_" >  $CONF_LOG.h
+test -n "$ECHO" && $ECHO -e "$echo_" >  $CONF_LOG.h
 cat $CONF_LOG | sed 's/\"/\\\"/g ; s/$/\ \\n\\/g'  >> $CONF_LOG.h
 echo_="\";"
-test -n $ECHO && $ECHO -e "$echo_" >> $CONF_LOG.h
+test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG.h
 
 test -n "$ECHO" && $ECHO "" > mkdepend
 

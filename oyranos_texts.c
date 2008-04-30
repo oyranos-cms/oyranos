@@ -1055,6 +1055,7 @@ char**  oyXDGPathsGet_( int             * count,
                                          (const char**)tmp, tmp_n,
                                          &tmp_neu_n, oyAllocateFunc_ );
           oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+          oyStringListRelease_( &tmp, tmp_n, oyDeAllocateFunc_ );
           paths = tmp_neu;
           n = tmp_neu_n;
         }
@@ -1181,7 +1182,6 @@ oyConfigPathsGet_     (int             * count,
                                 &ndp, allocateFunc);
 
     oyStringListRelease_(&oy_paths, oy_n, oyDeAllocateFunc_);
-
     oyStringListRelease_(&xdg_paths, xdg_n, oyDeAllocateFunc_);
 
   }

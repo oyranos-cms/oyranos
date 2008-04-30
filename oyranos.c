@@ -70,12 +70,14 @@ char* oyFindProfile_ (const char* name);
  */
 int oyMessageFunc_( int code, const char * format, ... )
 {
-  char* text = (char*)calloc(sizeof(char), 4096);
+  char* text = 0;
   va_list list;
   int i;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
+
+  oyAllocHelper_m_( text, char, 4096, oyAllocateFunc_, fprintf(stderr,"oyranos.c:80 oyMessageFunc_() Could not allocate 4096 byte of memory.\n"); return 1 );
 
   if(level_PROG < 30)
   {
@@ -1386,8 +1388,6 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
  *  @return the profiles filename list allocated within Oyranos
  *
  *  @see @ref path_names
- *
- *  @todo use coloursig variable; extract such information from profiles
  */
 char **  oyProfileListGet            ( const char        * coloursig,
                                        uint32_t          * size,

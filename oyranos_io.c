@@ -376,10 +376,14 @@ oyResolveDirFileName_ (const char* name)
 
     /* relative names - where the first sign is no directory separator */
     if (newName[0] != OY_SLASH_C)
-    { char* cn = (char*) calloc(MAX_PATH, sizeof(char)); DBG_PROG
+    {
+      char* cn = 0;
+
+      oyAllocHelper_m_( cn, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:382 oyResolveDirFileName_() Could not allocate 4096 byte of memory.\n"); return 0 );
       oySprintf_ (cn, "%s%s%s", getenv("PWD"), OY_SLASH, name);
       DBG_PROG1_S("canonoical %s ", cn)
       oySprintf_ (newName, cn);
+      if(cn) free(cn); cn = 0;
     }
   }
 

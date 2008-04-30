@@ -25,6 +25,7 @@
 /*#include "oyranos_cmms.h" */
 #include "oyranos_check.h"
 #include "oyranos_debug.h"
+#include "oyranos_icc.h"
 #include "oyranos_io.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
@@ -115,8 +116,16 @@ oyCheckProfile_Mem                 (const void* mem, size_t size,
         block[offset+2] == 's' &&
         block[offset+3] == 'p' )
     {
+      icHeader* h = (icHeader*)mem;
+      icProfileClassSignature prof_device_class = h->deviceClass;
+      icProfileClassSignature device_class = (icProfileClassSignature)0;
+      
+
       DBG_PROG_ENDE
-      return 0;
+      if(coloursig && memcmp(&prof_device_class,&device_class,4) == 0)
+        return 1;
+      else
+        return 0;
     } else {
       if(oy_warn_)
         WARNc4_S(" sign: %c%c%c%c ", (char)block[offset+0],

@@ -576,10 +576,6 @@ uninstall:
 	  ii=`echo $${i} | sed s%settings\/%%g`; \
 	  $(RM)   $(DESTDIR)$(syscolordir)/$(settingsdirname)/$${ii}; \
 	done;
-	#for i in cmms/*.oy_cmm_register.xml; do \
-	  ii=`echo $${i} | sed s%cmms\/%%g`; \
-	  $(RM)   $(DESTDIR)$(syscolordir)/cmms/$${ii}; \
-	done;
 	for file in $(DOKU); do \
 	  $(RM) $(DESTDIR)$(docdir)/$$file; \
 	done
