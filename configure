@@ -350,7 +350,9 @@ fi
 UNAME_=`uname`
 OSUNAME=BSD
 if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
-  echo_="Darwin PPC              detected"
+  arch=`uname -p`
+  version=`uname -r`
+  echo_="Darwin $arch $version   detected";
   test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   test -n "$ECHO" && $ECHO "APPLE = 1" >> $CONF
   test -n "$ECHO" && $ECHO "APPLE = 1" >> $CONF_I18N
