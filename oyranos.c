@@ -321,7 +321,7 @@ oyFlattenProfileProc (
     ref->data = block;
     ref->size += *size;
   }
-  DBG_PROG_S(("command:%d size:%d", (int)command, (int)*size))
+  DBG_PROG2_S("command:%d size:%d", (int)command, (int)*size)
 
   return 0;
 }
@@ -339,7 +339,7 @@ oyFlattenProfileProcSize (
     refcon *ref = (refcon*) refCon;
     ref->size += *size;
   }
-  DBG_PROG_S(("command:%d size:%d", (int)command, (int)*size))
+  DBG_PROG2_S("command:%d size:%d", (int)command, (int)*size)
 
   return 0;
 }
@@ -362,28 +362,28 @@ oyGetProfileBlockOSX (CMProfileRef prof, char **block, size_t *size, oyAllocFunc
     switch(loc.locType)
     {
       case cmNoProfileBase:
-             DBG_PROG_S(("The profile is a temporary profile."))
+             DBG_PROG_S("The profile is a temporary profile.")
              break;
       case cmFileBasedProfile:
-             DBG_PROG_S(("The profile is a file based profile."))
+             DBG_PROG_S("The profile is a file based profile.")
              break;
       case cmHandleBasedProfile:
-             DBG_PROG_S(("The profile is a profile handle."))
+             DBG_PROG_S("The profile is a profile handle.")
              break;
       case cmPtrBasedProfile:
-             DBG_PROG_S(("The profile is a pinter based profile."))
+             DBG_PROG_S("The profile is a pinter based profile.")
              break;
       case cmProcedureBasedProfile:
-             DBG_PROG_S(("The profile is a prozedural profile."))
+             DBG_PROG_S("The profile is a prozedural profile.")
              break;
       case cmPathBasedProfile:
-             DBG_PROG_S(("The profile is a path profile."))
+             DBG_PROG_S("The profile is a path profile.")
              break;
       case cmBufferBasedProfile:
-             DBG_PROG_S(("The profile is a memory block Profile."))
+             DBG_PROG_S("The profile is a memory block Profile.")
              break;
       default:
-             DBG_PROG_S(("no profile found?"))
+             DBG_PROG_S("no profile found?")
              break;
     }
 
@@ -407,7 +407,7 @@ oyGetProfileBlockOSX (CMProfileRef prof, char **block, size_t *size, oyAllocFunc
         *size = ref.size;
         oyAllocHelper_m_( *block, char, ref.size, allocate_func, return 1);
         memcpy(*block, ref.data, ref.size);
-          DBG_MEM_V( size )
+          DBG_PROG_V( size )
     }
   DBG_PROG_ENDE
   return 0;
@@ -424,10 +424,10 @@ oyGetProfileNameOSX (CMProfileRef prof, oyAllocFunc_t allocate_func)
       switch(loc.locType)
       {
         case cmNoProfileBase:
-               DBG_PROG_S(("The profile is a temporary profile."))
+               DBG_PROG_S("The profile is a temporary profile.")
                break;
         case cmFileBasedProfile:
-               DBG_PROG_S(("The profile is a file based profile."))
+               DBG_PROG_S("The profile is a file based profile.")
                {
                  CMFileLocation file_loc = loc.u.fileLoc;
                  FSSpec spec = file_loc.spec;
@@ -439,28 +439,28 @@ oyGetProfileNameOSX (CMProfileRef prof, oyAllocFunc_t allocate_func)
                                    allocate_func, return 0 );
                  err = FSpMakeFSRef( &spec, &ref );
                  err = FSRefMakePath( &ref, name_, 1024 );
-                 DBG_PROG_S(("file is at: %s\n", name_ ));
+                 DBG_PROG1_S("file is at: %s\n", name_ );
                  if(err == noErr)
                    name = (char*) name_;
                }
                break;
         case cmHandleBasedProfile:
-               DBG_PROG_S(("The profile is a profile handle."))
+               DBG_PROG_S("The profile is a profile handle.")
                break;
         case cmPtrBasedProfile:
-               DBG_PROG_S(("The profile is a pinter based profile."))
+               DBG_PROG_S("The profile is a pinter based profile.")
                break;
         case cmProcedureBasedProfile:
-               DBG_PROG_S(("The profile is a prozedural profile."))
+               DBG_PROG_S("The profile is a prozedural profile.")
                break;
         case cmPathBasedProfile:
-               DBG_PROG_S(("The profile is a path profile."))
+               DBG_PROG_S("The profile is a path profile.")
                break;
         case cmBufferBasedProfile:
-               DBG_PROG_S(("The profile is a memory block Profile."))
+               DBG_PROG_S("The profile is a memory block Profile.")
                break;
         default:
-               DBG_PROG_S(("no profile found?"))
+               DBG_PROG_S("no profile found?")
                break;
       }
 
@@ -502,7 +502,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
 
     err = CMGetColorSyncVersion(&version);
     if(err == noErr)
-      DBG_PROG_S( "ColorSync version: %d\n", (int)version );
+      DBG_PROG1_S( "ColorSync version: %d\n", (int)version );
 
     switch(type)
     {
@@ -542,10 +542,10 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
       switch(loc.locType)
       {
         case cmNoProfileBase:
-               DBG_PROG_S(("The profile is a temporary profile."))
+               DBG_PROG_S("The profile is a temporary profile.")
                break;
         case cmFileBasedProfile:
-               DBG_PROG_S(("The profile is a file based profile."))
+               DBG_PROG_S("The profile is a file based profile.")
                {
                  CMFileLocation file_loc = loc.u.fileLoc;
                  FSSpec spec = file_loc.spec;
@@ -556,7 +556,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
                                    return NULL );
                  err = FSpMakeFSRef( &spec, &ref );
                  err = FSRefMakePath( &ref, name_, 1024 );
-                 DBG_PROG_S(( "file is at: %s\n", name_ ));
+                 DBG_PROG1_S( "file is at: %s\n", name_ );
                  if(err == noErr)
                    name = (char*) name_;
                }
@@ -571,7 +571,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
                DBG_PROG_S(("The profile is a prozedural profile."))
                break;
         case cmPathBasedProfile:
-               DBG_PROG_S(("The profile is a path profile."))
+               DBG_PROG_S("The profile is a path profile.")
                {
                  CMPathLocation path_loc = loc.u.pathLoc;
                  char* path = path_loc.path;
@@ -580,19 +580,19 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
                  oyAllocHelper_m_( name_, char, MAX_PATH, allocate_func,
                                    return NULL );
                  snprintf( name_, 256, "%s", path );
-                 DBG_PROG_S(( "file is to: %s\n", name_ ));
+                 DBG_PROG1_S( "file is to: %s\n", name_ );
                  name = name_;
                }
                break;
         case cmBufferBasedProfile:
-               DBG_PROG_S(("The profile is a memory block Profile."))
+               DBG_PROG_S("The profile is a memory block Profile.")
                break;
         default:
-               DBG_PROG_S(("no profile found?"))
+               DBG_PROG_S("no profile found?")
                break;
       }
     } else if(!name)
-      DBG_PROG_S(( "could not find:%d Profile:%s\n", (int)err, prof ? "no" : "yes" ));
+      DBG_PROG2_S( "could not find:%d Profile:%s\n", (int)err, prof ? "no" : "yes" );
 
     err = CMCloseProfile( prof );
   }
@@ -610,7 +610,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
 
   if(name)
   {
-    DBG_PROG_S((name));
+    DBG_PROG_S(name);
     /* cut off the path part of a file name */
     if (strrchr (name, OY_SLASH_C))
     {
