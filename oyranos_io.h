@@ -75,6 +75,7 @@ char**  oyLibListGet_                     (const char * subpath,
 /* oyranos part */
 /* check for the global and the users directory */
 void oyCheckDefaultDirectories_ ();
+
 /* search in profile path and in current path */
 char* oyFindProfile_ (const char* name);
 

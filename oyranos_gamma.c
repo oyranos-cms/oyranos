@@ -146,7 +146,7 @@ int main( int argc , char** argv )
     if(oy_debug) {
       size_t size = 0;
       oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
-      printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,(int)size);
+      printf("%s:%d profile size: %d\n",__FILE__,__LINE__,(int)size);
     }
 
     /* make shure the display name is correct including the screen */
@@ -158,7 +158,7 @@ int main( int argc , char** argv )
   if(oy_debug) {
     size_t size = 0;
     oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
-    printf("%s:%d Profilgroesse: %d\n",__FILE__,__LINE__,(int)size);
+    printf("%s:%d profile size: %d\n",__FILE__,__LINE__,(int)size);
   }
 
   return error;

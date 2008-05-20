@@ -119,10 +119,12 @@ oyCheckProfile_Mem                 (const void* mem, size_t size,
       icHeader* h = (icHeader*)mem;
       icProfileClassSignature prof_device_class = h->deviceClass;
       icProfileClassSignature device_class = (icProfileClassSignature)0;
-      
+
+      if(coloursig)
+        device_class = *((icProfileClassSignature*)coloursig);
 
       DBG_PROG_ENDE
-      if(coloursig && memcmp(&prof_device_class,&device_class,4) == 0)
+      if(coloursig && memcmp(&prof_device_class,&device_class,4) != 0)
         return 1;
       else
         return 0;

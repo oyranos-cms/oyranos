@@ -1,7 +1,7 @@
 /*
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2004-2005  Kai-Uwe Behrmann
+ * Copyright (C) 2004-2008  Kai-Uwe Behrmann
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -34,151 +34,15 @@
 
 #include <oyranos.h>
 
-#include "test.h"
-
 int
 main(int argc, char** argv)
 {
-  char a[] = {"/Hallo/share/color/icc/display"};
+  int i;
+  uint32_t size = 0;
+  char ** profiles = oyProfileListGet ( "prtr", &size, malloc );
 
-  int rc = oyPathAdd (a), i;
-
-  if (rc)
-    printf ("rc = %d\n", rc); 
-
-  for (i = 0; i < 1; i++) {
-    oyPathRemove (a);
-    oyPathAdd (a);
-  }
-
-  printf ("count of paths = %d\n", oyPathsCount());
-
-  for (i = 0; i < oyPathsCount(); i++)
-  { char* name = oyPathName(i);
-    printf ("the %dth path has value = %s\n", i, name);
-    free (name);
-  }
-
-  oyPathSleep (a);
-  for (i = 0; i < oyPathsCount(); i++)
-  { char* name = oyPathName(i);
-    printf ("the %dth path has value = %s\n", i, name);
-    free (name);
-  }
-
-  oyPathActivate (a);
-  for (i = 0; i < oyPathsCount(); i++)
-  { char* name = oyPathName(i);
-    printf ("the %dth path has value = %s\n", i, name);
-    free (name);
-  }
-
-  oyPathRemove(a);
-
-  printf ("count of paths after removing one = %d\n\n", oyPathsCount());
-
-
-  // set an (hopefully existing) profile as default
-  rc = oySetDefaultCmykProfile ("CMYK.icc");
-  printf ("setting CMYK.icc %d\n\n", rc);
-
-
-  {
-    char *profil = (char*) calloc (sizeof(char), 3000);
-    int r = 0;
-
-    r=oySetDefaultWorkspaceProfileBlock ("example_workspace.icm", profil, 3000);
-    if (r)
-      printf ("profil = %d written  %s\n\n", (int)profil, "example_workspace.icm");
-    else
-      printf ("profil = %d invalid  %s\n\n", (int)profil, "example_workspace.icm");
-      
-    free (profil);
-
-    // take an real file as input
-    if (argc > 0)
-    { printf (":%d %d %s %s\n",__LINE__, argc, argv[0], argv[1]);
-      int size = 0;
-      profil = (char*) oyGetProfileBlock (argv[1], &size);
-
-      printf ("size = %u pos = %d\n\n",size, (int) profil);
-      if (profil)
-        r=oySetDefaultWorkspaceProfileBlock ("ex_workspace.icm", profil, size);
-      r=oySetDefaultWorkspaceProfile("~/.color/../.color/icc/ex_workspace.icm");
-      if (r)
-        printf ("profil = %d written  %s\n\n", (int)profil, "ex_workspace.icm");
-      else
-        printf ("profil = %d not written  %s\n\n", (int)profil, "ex_workspace.icm");
-      
-      free (profil);
-
-      printf ("%s exist %d\n\n", argv[1], !oyCheckProfile(argv[1], 0));
-    }
-  }
-
-
-  // Show what we have
-  oySetDefaultRGBProfile("sRGB.icc");
-  { char* name = oyGetDefaultImageProfileName();
-    printf ("default %s profile = %s\n", OY_DEFAULT_IMAGE_PROFILE, name);
-    name = oyGetDefaultWorkspaceProfileName();
-    printf ("default %s profile = %s\n", OY_DEFAULT_WORKSPACE_PROFILE, name);
-    name = oyGetDefaultRGBProfileName();
-    printf ("default %s profile = %s\n", OY_DEFAULT_RGB_PROFILE, name);
-    name = oyGetDefaultCmykProfileName();
-    printf ("default %s profile = %s\n", OY_DEFAULT_CMYK_PROFILE, name);
-    free (name);
-  }
-
-  {
-    char  *tempName = (char*) calloc (1024,sizeof(char));
-    char  *model = 0, *product_ID = 0;
-    int size;
-    char* profil = 0;
-
-    sprintf (tempName, "sh -c \"getMoniDDC1 -m >& $TMPDIR/MoniDDC.txt\"");
-    if (!system(tempName))
-    {
-      sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
-#     ifndef __cplusplus
-      model = oyReadFileToMem_ (tempName, &size);
-#     endif
-      memcpy (tempName, model, size); tempName[size] = 0;
-      if (model) free (model);
-      model = (char*) calloc (strlen(tempName)+1,sizeof(char));
-      sprintf (model, tempName);
-      printf ("%s:%d %s %d\n", __FILE__,__LINE__, model, strlen(model));
-    } else
-      model = 0;
-
-    sprintf (tempName, "sh -c \"getMoniDDC1 -id >& $TMPDIR/MoniDDC.txt\"");
-    if (!system(tempName))
-    {
-      sprintf (tempName, "%s/MoniDDC.txt", getenv("TMPDIR"));
-#     ifndef __cplusplus
-      product_ID = oyReadFileToMem_ (tempName, &size);
-#     endif
-      memcpy (tempName, product_ID, size); tempName[size] = 0;
-      if (product_ID) free (product_ID);
-      product_ID = (char*) calloc (strlen(tempName)+1,sizeof(char));
-      sprintf (product_ID, tempName);
-      printf ("%s:%d %s %d\n", __FILE__,__LINE__,product_ID, strlen(product_ID));
-    } else
-      product_ID = 0;
-
-    //oy_debug = 1;
-    if (model && product_ID)
-    {
-      printf ("%s:%d %s %s\n", __FILE__,__LINE__,model, product_ID);
-      //oySetDeviceProfile(DISPLAY,0,model,product_ID,0,0,0,0,0,"M20040609_NatWP_50H_50K.icm",0,0);
-      profil = oyGetDeviceProfile (DISPLAY, 0, model, product_ID, "monitor",0,0,0,0);
-    }
-    //oy_debug = 0;
-    printf ("selected profile = %s \n", profil);
-
-    if (product_ID) free(product_ID);
-    if (model) free (model);
-  }
+  for( i = 0; i < (int) size; ++i )
+    printf( "%d: %s\n", i, profiles[i]);
 
   return 0;
 }

@@ -41,9 +41,6 @@
 
 /* --- internal API definition --- */
 
-/* oyranos part */
-/* check for the global and the users directory */
-void oyCheckDefaultDirectories_ ();
 /* search in profile path and in current path */
 char* oyFindProfile_ (const char* name);
 
@@ -218,9 +215,12 @@ oyGetHomeDir_ ()
 char*
 oyGetParent_ (const char* name)
 {
-  char *parentDir = (char*) calloc ( MAX_PATH, sizeof(char)), *ptr;
+  char *parentDir = 0, *ptr = 0;
 
   DBG_PROG_START
+
+  oyAllocString_m_( parentDir, MAX_PATH,
+                    oyAllocateFunc_, return 0 );
 
   oySprintf_ (parentDir, name);
   ptr = strrchr( parentDir, OY_SLASH_C);
@@ -353,8 +353,8 @@ oyMakeDir_ (const char* path)
 char*
 oyResolveDirFileName_ (const char* name)
 {
-  char* newName = (char*) calloc (MAX_PATH, sizeof(char)),
-       *home = 0;
+  char * newName = NULL,
+       * home = NULL;
   int len = 0;
 
   DBG_PROG_START
@@ -363,15 +363,15 @@ oyResolveDirFileName_ (const char* name)
 
   /* user directory */
   if (name[0] == '~')
-  { DBG_PROG_S(("in home directory"))
+  {
     home = oyGetHomeDir_();
     len = strlen(name) + strlen(home) + 1;
-    if (len >  FILENAME_MAX)
-      WARNc2_S("%s %d", _("file name is too long"), len)
+    oyAllocHelper_m_( newName, char, len + 2, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:367 oyResolveDirFileName_() Could not allocate enough memory.\n"); return 0 );
 
     oySprintf_ (newName, "%s%s", home, &name[0]+1);
 
-  } else { DBG_PROG_S("resolve  directory")
+  } else {
+    oyAllocHelper_m_( newName, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:371 oyResolveDirFileName_() Could not allocate enough memory.\n"); return 0 );
     oySprintf_ (newName, name);
 
     /* relative names - where the first sign is no directory separator */
@@ -379,7 +379,7 @@ oyResolveDirFileName_ (const char* name)
     {
       char* cn = 0;
 
-      oyAllocHelper_m_( cn, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:382 oyResolveDirFileName_() Could not allocate 4096 byte of memory.\n"); return 0 );
+      oyAllocHelper_m_( cn, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:379 oyResolveDirFileName_() Could not allocate 4096 byte of memory.\n"); return 0 );
       oySprintf_ (cn, "%s%s%s", getenv("PWD"), OY_SLASH, name);
       DBG_PROG1_S("canonoical %s ", cn)
       oySprintf_ (newName, cn);
@@ -401,10 +401,13 @@ oyResolveDirFileName_ (const char* name)
 char*
 oyExtractPathFromFileName_ (const char* file_name)
 {
-  char *path_name = (char*) calloc (strlen(file_name)+1, sizeof(char));
+  char *path_name = 0;
   char *ptr;
 
   DBG_PROG_START
+
+  oyAllocString_m_( path_name, strlen(file_name)+1,
+                    oyAllocateFunc_, return 0 );
 
   oySprintf_( path_name, file_name );
   DBG_PROG1_S ("path_name = %s", path_name)
@@ -433,7 +436,8 @@ oyMakeFullFileDirName_ (const char* name)
   } else
   { DBG_PROG
     /* create directory name */
-    newName = (char*) calloc (MAX_PATH, sizeof(char)),
+    oyAllocString_m_( newName, MAX_PATH,
+                      oyAllocateFunc_, return 0 );
     dirName = (char*) getenv("PWD");
     oySprintf_ (newName, "%s%s", dirName, OY_SLASH);
     if (name)
@@ -447,37 +451,6 @@ oyMakeFullFileDirName_ (const char* name)
   return newName;
 }
 
-void
-oyCheckDefaultDirectories_ ()
-{
-  char* parentDefaultUserDir;
-
-  DBG_PROG_START
-
-  /* test dirName : existing in path, default dirs are existing */
-  if (!oyIsDir_ (OY_PROFILE_PATH_SYSTEM_DEFAULT))
-  { DBG_PROG
-    DBG_PROG1_S( "no default system directory %s",OY_PROFILE_PATH_SYSTEM_DEFAULT );
-  }
-
-  if (!oyIsDir_ (OY_PROFILE_PATH_USER_DEFAULT))
-  { DBG_PROG 
-    parentDefaultUserDir = oyGetParent_ (OY_PROFILE_PATH_USER_DEFAULT);
-
-    if (!oyIsDir_ (parentDefaultUserDir))
-    {
-      DBG_PROG1_S( "Try to create part of users default directory %s",
-                 parentDefaultUserDir );
-      oyMakeDir_( parentDefaultUserDir);
-    }
-    oyFree_m_ (parentDefaultUserDir)
-
-    DBG_PROG1_S( "Try to create users default directory %s",
-                 OY_PROFILE_PATH_USER_DEFAULT )
-    oyMakeDir_( OY_PROFILE_PATH_USER_DEFAULT );
-  }
-  DBG_PROG_ENDE
-}
 
 char*
 oyFindProfile_ (const char* fileName)
@@ -492,7 +465,8 @@ oyFindProfile_ (const char* fileName)
     char* path_name = oyGetPathFromProfileName_(fileName, oyAllocateFunc_);
 
     DBG_PROG
-    fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
+    oyAllocString_m_( fullFileName, MAX_PATH,
+                      oyAllocateFunc_, return 0 );
     if(path_name)
     {
       oySprintf_(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
@@ -503,7 +477,8 @@ oyFindProfile_ (const char* fileName)
   } else
   {
     if (oyIsFileFull_(fileName)) {
-      fullFileName = (char*) calloc (MAX_PATH, sizeof(char));
+      oyAllocString_m_( fullFileName, MAX_PATH,
+                        oyAllocateFunc_, return 0 );
       oySprintf_(fullFileName, fileName);
     } else
       fullFileName = oyMakeFullFileDirName_ (fileName);
@@ -542,17 +517,18 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
         if(l->count_files >= l->mem_count)
         {
           char** temp = l->names;
-          l->names = (char**) calloc (sizeof(char*), l->mem_count+l->hopp);
+          oyAllocHelper_m_( l->names, char*, l->mem_count+l->hopp,
+                            oyAllocateFunc_, return 1);
           memcpy(l->names, temp, sizeof(char*) * l->mem_count);
           l->mem_count += l->hopp;
         }
 
-        l->names[l->count_files] = (char*) calloc (sizeof(char)*2,
-                                                   strlen(filename));
+        oyAllocString_m_( l->names[l->count_files], oyStrblen_(filename) + 1,
+                          oyAllocateFunc_, return 1 );
         strcpy(l->names[l->count_files], filename);
         ++l->count_files;
-      } /*else */
-        /*WARNc_S(("%s in %s is not a valid profile", file_name, path)); */
+      }
+
   return 0;
 }
 
@@ -577,7 +553,8 @@ int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
         if(l->count_files >= l->mem_count)
         {
           char** temp = l->names;
-          l->names = (char**) calloc (sizeof(char*), l->mem_count+l->hopp);
+          oyAllocHelper_m_( l->names, char*, l->mem_count+l->hopp,
+                            oyAllocateFunc_, return 1);
           memcpy(l->names, temp, sizeof(char*) * l->mem_count);
           l->mem_count += l->hopp;
         }
@@ -604,16 +581,12 @@ int oyFileListCb_ (void* data, const char* full_name, const char* filename)
   if(strlen(full_name) > 4)
     end = full_name + strlen(full_name) - 4;
 
-      /*if( (end[0] == '.') &&
-          (end[1] == 'x' || end[1] == 'X') &&
-          (end[2] == 'm' || end[2] == 'M') &&
-          (end[3] == 'l' || end[3] == 'L') &&
-          !oyCheckPolicy_(full_name) )*/
-      {
+  {
         if(l->count_files >= l->mem_count)
         {
           char** temp = l->names;
-          l->names = (char**) calloc (sizeof(char*), l->mem_count+l->hopp);
+          oyAllocHelper_m_( l->names, char*, l->mem_count+l->hopp,
+                            oyAllocateFunc_, return 1);
           memcpy(l->names, temp, sizeof(char*) * l->mem_count);
           l->mem_count += l->hopp;
         }
@@ -623,8 +596,8 @@ int oyFileListCb_ (void* data, const char* full_name, const char* filename)
         
         oyStrcpy_(l->names[l->count_files], full_name);
         ++l->count_files;
-      } /*else */
-        /*WARNc_S(("%s in %s is not a valid profile", file_name, path)); */
+  }
+
   return 0;
 }
 
@@ -791,7 +764,6 @@ oyRecursivePaths_  ( pathSelectFunc_t_ doInPath,
                      const char ** path_names,
                      int count )
 {
- 
   int r = 0;
   int i;
 
