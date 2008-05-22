@@ -622,10 +622,6 @@ char **  oyProfileListGet_           ( const char        * coloursig,
 
   oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 
-  /* add a none existant profile */
-  oyAllocString_m_(l.names[l.count_files], 48, oyAllocateFunc_, return 0);
-  oySnprintf1_( l.names[l.count_files++] , 48, "%s", OY_PROFILE_NONE );
-
   oyRecursivePaths_( oyProfileListCb_, (void*) &l,
                      (const char**)path_names, count );
 

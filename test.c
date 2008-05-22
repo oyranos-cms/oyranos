@@ -25,7 +25,7 @@
  * 
  */
 
-// Date:      25. 11. 2004
+/*  Date:      25. 11. 2004 */
 
 #include <kdb.h>
 #include <time.h>
