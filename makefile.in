@@ -378,12 +378,6 @@ $(LINGUAS_SRC):	$(POT_FILE)
 
 $(POT_FILE):
 	mkdir -p ./po
-	#for i in cmms/*.oy_cmm_register.xml; do \
-	  ii=`echo $${i} | sed s%cmms\/%%g`; \
-	  iii=`echo $${ii} | sed s%.xml%.pot%g`; \
-	done;
-	#  ./$(POT_SCRIPT) cmms/$${ii}; \
-	  mv cmms/$${iii} po/; 
 	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
 	-d $(TARGET) \
 	-o $(POT_FILE) \

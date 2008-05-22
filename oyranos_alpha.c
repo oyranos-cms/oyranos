@@ -446,12 +446,12 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
 {
 
   switch (sig) {
-    case icSigAToB0Tag: return _("Lockup table, device to PCS, intent photometric"); break;
+    case icSigAToB0Tag: return _("Lockup table, device to PCS, intent perceptual"); break;
     case icSigAToB1Tag: return _("Lockup table, device to PCS, intent relative colorimetric"); break;
     case icSigAToB2Tag: return _("Lockup table, device to PCS, intent saturation"); break;
     case icSigBlueColorantTag: return _("Blue Colorant"); break;
     case icSigBlueTRCTag: return _("Blue tone reproduction curve"); break;
-    case icSigBToA0Tag: return _("Lockup table, PCS to device, intent photometric"); break;
+    case icSigBToA0Tag: return _("Lockup table, PCS to device, intent perceptual"); break;
     case icSigBToA1Tag: return _("Lockup table, PCS to device, intent relative colorimetric"); break;
     case icSigBToA2Tag: return _("Lockup table, PCS to device, intent saturation"); break;
     case icSigCalibrationDateTimeTag: return _("Calibration date"); break;
@@ -470,7 +470,7 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case icSigMediaWhitePointTag: return _("Media white point"); break;
     case icSigNamedColorTag: return _("Named Colour"); break;
     case icSigNamedColor2Tag: return _("Named Colour 2"); break;
-    case icSigPreview0Tag: return _("Preview, photografic"); break;
+    case icSigPreview0Tag: return _("Preview, perceptual"); break;
     case icSigPreview1Tag: return _("Preview, relative colorimetric"); break;
     case icSigPreview2Tag: return _("Preview, saturated"); break;
     case icSigProfileDescriptionTag: return _("Profile description"); break;
