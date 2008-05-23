@@ -53,6 +53,10 @@ const char * oyColourSpaceGetNameFromSig( icColorSpaceSignature sig );
 #define icSigUnix 0x2A6E6978  /* '*nix' */
 #endif
 
+#ifndef icSigWCSProfileTag
+#define icSigWCSProfileTag 0x4D533130 /* MS10 */
+#endif
+
 #ifndef icSigProfileSequenceIdentifierTag
 #define icSigProfileSequenceIdentifierTag 0x70736964 /* psid */
 #endif

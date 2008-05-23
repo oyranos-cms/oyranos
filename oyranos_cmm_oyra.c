@@ -127,8 +127,8 @@ int        oyraCMMCanHandle          ( oyCMMQUERY_e      type,
  *  @brief inform about icTagTypeSignature capabilities
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/01/03
  *  @since   2008/01/03 (Oyranos: 0.1.8)
+ *  @date    2008/05/23
  */
 int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
                                        uint32_t          value )
@@ -150,6 +150,7 @@ int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
          case icSigCopyrightTag:
          case icSigMakeAndModelType:
          case icSigMultiLocalizedUnicodeType:
+         case icSigWCSProfileTag:
          case icSigProfileSequenceDescType:
          case icSigProfileSequenceIdentifierType:
          case icSigSignatureType:
@@ -231,7 +232,7 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
  *
  *  The output depends on the tags type signature in tag->tag_type_ as follows:
  *
- *  - icSigTextType and icSigCopyrightTag:
+ *  - icSigTextType and icSigCopyrightTag and icSigWCSProfileTag:
  *    - since Oyranos 0.1.8 (API 0.1.8)
  *    - returns one string
  *
@@ -260,7 +261,7 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
  *      - model id
  *      - serialNumber id
  *      - manufacturer date id
- * 
+ *
  *  - icSigProfileSequenceDescType:
  *    - since Oyranos 0.1.8 (API 0.1.8)
  *    - returns
@@ -285,7 +286,7 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
- *  @date    2008/03/13
+ *  @date    2008/05/23
  */
 oyStructList_s * oyraProfileTag_GetValues(
                                        oyProfileTag_s    * tag )
@@ -332,6 +333,15 @@ oyStructList_s * oyraProfileTag_GetValues(
     - mluc translated by oyICCTagDescription in 1 + i * 5 + 3\
     - the icSigProfileDescriptionTag according to language in 1 + i * 5 + 4"
     };
+    oyName_s description_MS10 = {
+      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      CMM_NICK,
+      "MS10",
+      "\
+- icSigWCSProfileTag:\
+  - since Oyranos 0.1.8 (API 0.1.8)\
+  - list: should contain only oyName_s"
+    };
     oyName_s description_text = {
       oyOBJECT_TYPE_NAME_S, 0,0,0,
       CMM_NICK,
@@ -356,6 +366,10 @@ oyStructList_s * oyraProfileTag_GetValues(
     error = oyStructList_MoveIn( list, &description, -1 );
 
     description = (oyStruct_s*) &description_psid;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1 );
+
+    description = (oyStruct_s*) &description_MS10;
     if(!error)
       error = oyStructList_MoveIn( list, &description, -1 );
 
@@ -407,6 +421,60 @@ oyStructList_s * oyraProfileTag_GetValues(
            {
              oyStructList_MoveInName( texts, &tmp, -1 );
              size_ = len;
+           }
+           break;
+      case icSigWCSProfileTag:
+           len = tag->size_ * sizeof(oyChar);
+           tmp = oyAllocateFunc_( len );
+
+           {
+                 int  dversatz = 8 + 24;
+                 int n_ = 0;
+                 size_t size = 0;
+                 icUInt16Number * uni16be = 0;
+
+                 len -= dversatz;
+
+                 if(!error)
+                   uni16be = (icUInt16Number*) &mem[dversatz];
+
+                 if(!error)
+                 {
+                   /*for( j = 0; j < len/2; ++j)
+                     uni16be[j] = oyValueUInt16( uni16be[j] );*/
+                   uni16be[len/2] = 0;
+                   size = wcstombs( tmp, (wchar_t*)uni16be, len/2 );
+
+                   if(size == (size_t)-1)
+                   {
+                     for (n_ = 0; n_ < len/2; ++n_)
+                       tmp[n_] = (char)/*oyValueUInt16*/( uni16be[n_]);
+                     tmp[n_] = 0;
+                   }
+
+                   if(!oyStrlen_(tmp))
+                   {
+                     error = 1;
+                     oyDeAllocateFunc_(tmp); tmp = 0;
+                   }
+                 }
+           }
+
+           while (strchr(tmp, 13) > (char*)0) { /* \r 013 0x0d */
+             pos = strchr(tmp, 13);
+             if (pos > (char*)0) {
+               if (*(pos+1) == '\n')
+                 *pos = ' ';
+               else
+                 *pos = '\n';
+             }
+             count++;
+           };
+
+           if(!error)
+           {
+             size_ = oyStrlen_(tmp);
+             oyStructList_MoveInName( texts, &tmp, -1 );
            }
            break;
       case icSigTextDescriptionType:
