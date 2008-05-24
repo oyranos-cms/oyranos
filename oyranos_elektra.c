@@ -140,12 +140,22 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
   if( user_sys == oyUSER_SYS || user_sys == oyUSER ) {
     list_user = ksNew(0);
     sprintf(           list_name_user, "%s%s", OY_USER, keyParentName);
+    if(!oy_handle_)
+    {
+      *rc = 1;
+      return 0;
+    }
     *rc =
       kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_SORT);
   }
   if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
     list_sys = ksNew(0);
     sprintf(           list_name_sys, "%s%s", OY_SYS, keyParentName);
+    if(!oy_handle_)
+    {
+      *rc = 1;
+      return 0;
+    }
     *rc =
       kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_SORT);
   }
@@ -196,6 +206,9 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
     /* search for empty keyname */
     while (!nth)
     { sprintf (pathkeyName , "%s%d", keyBaseName, i);
+
+      if(!oy_handle_)
+        return 0;
       rc=kdbGetKeyByParent (oy_handle_, name, pathkeyName, key);
       if (rc)
         nth = i;
@@ -275,6 +288,8 @@ oyAddKey_valueComment_ (const char* keyName,
 
   /*rc=keyInit(key); ERR */
   /*rc=keySetName (key, keyName); */
+  if(!oy_handle_)
+    return 0;
   rc=kdbGetKey( oy_handle_, key );
   rc=keySetString (key, value);
   rc=keySetComment (key, comment);
@@ -511,6 +526,8 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
                strlen(value) == strlen(config_name))
             {
               DBG_PROG_S(value)
+              if(!oy_handle_)
+                return 1;
               kdbRemove ( oy_handle_, value );
               break;
             }
@@ -562,6 +579,8 @@ oyGetKeyString_ ( const char       *key_name,
   sprintf( full_key_name, "%s%s", OY_USER, key_name );
 
   name[0] = 0;
+  if(!oy_handle_)
+    return 0;
   rc = kdbGetString_m ( oy_handle_, full_key_name, name, MAX_PATH );
 
   if( rc || !strlen( name ))

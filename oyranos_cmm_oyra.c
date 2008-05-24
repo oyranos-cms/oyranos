@@ -433,22 +433,35 @@ oyStructList_s * oyraProfileTag_GetValues(
                  size_t size = 0;
                  icUInt16Number * uni16be = 0;
 
-                 len -= dversatz;
-
-                 if(!error)
-                   uni16be = (icUInt16Number*) &mem[dversatz];
+                 len = len - dversatz;
 
                  if(!error)
                  {
-                   /*for( j = 0; j < len/2; ++j)
-                     uni16be[j] = oyValueUInt16( uni16be[j] );*/
+                   /* with too small buffer glibc wcstombs jokes */
+                   uni16be = (icUInt16Number*) oyAllocateFunc_( len + 200 );
+                   memcpy(uni16be, &mem[dversatz], len);
+                 }
+
+                 if(!error)
+                 {
+#if BYTE_ORDER == BIG_ENDIAN
+                   int j;
+                   for( j = 0; j < len/2; ++j)
+                     uni16be[j] = oyValueUInt16( uni16be[j] );
+#endif
                    uni16be[len/2] = 0;
                    size = wcstombs( tmp, (wchar_t*)uni16be, len/2 );
+                   oyDeAllocateFunc_(uni16be); uni16be = 0;
 
                    if(size == (size_t)-1)
                    {
+                     uni16be = (icUInt16Number*) &mem[dversatz];
                      for (n_ = 0; n_ < len/2; ++n_)
-                       tmp[n_] = (char)/*oyValueUInt16*/( uni16be[n_]);
+                       tmp[n_] = (char)
+#if BYTE_ORDER == BIG_ENDIAN
+                                        oyValueUInt16
+#endif
+                                                      ( uni16be[n_]);
                      tmp[n_] = 0;
                    }
 
@@ -460,6 +473,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                  }
            }
 
+           if(!error)
            while (strchr(tmp, 13) > (char*)0) { /* \r 013 0x0d */
              pos = strchr(tmp, 13);
              if (pos > (char*)0) {

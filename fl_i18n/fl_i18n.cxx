@@ -37,12 +37,16 @@
 #include <cstdlib>
 #include <cstring>
 
-#if !defined(WIN32) || (defined(WIN32) && defined(__MINGW32__))
+#ifdef USE_GETTEXT
+# if !defined(WIN32) || (defined(WIN32) && defined(__MINGW32__))
 #define fl_i18n_printf(text) printf text
 static int lc = LC_MESSAGES;
-#else
+# else
 #define fl_i18n_printf(text)
 static int lc = LC_ALL;
+# endif
+#else
+#define fl_i18n_printf(text)
 #endif
 
 const char *fl_i18n_codeset = 0;
