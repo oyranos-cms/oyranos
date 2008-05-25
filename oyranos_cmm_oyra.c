@@ -425,7 +425,7 @@ oyStructList_s * oyraProfileTag_GetValues(
            break;
       case icSigWCSProfileTag:
            len = tag->size_ * sizeof(oyChar);
-           tmp = oyAllocateFunc_( len );
+           tmp = oyAllocateFunc_( len*2 );
 
            {
                  int  dversatz = 8 + 24;
@@ -437,33 +437,42 @@ oyStructList_s * oyraProfileTag_GetValues(
 
                  if(!error)
                  {
-                   /* with too small buffer glibc wcstombs jokes */
-                   uni16be = (icUInt16Number*) oyAllocateFunc_( len + 200 );
+                   uni16be = (icUInt16Number*) oyAllocateFunc_( len + 2 );
                    memcpy(uni16be, &mem[dversatz], len);
                  }
 
                  if(!error)
                  {
+                   int j = sizeof(wchar_t);
+                   char * t = tmp;
 #if BYTE_ORDER == BIG_ENDIAN
-                   int j;
-                   for( j = 0; j < len/2; ++j)
-                     uni16be[j] = oyValueUInt16( uni16be[j] );
+                   char * src = (char*) uni16be,
+                          tmp_char;
+
+                   /* astonishly WCS provides little endian data */
+                   for( j = 0; j < len; j += 2 )
+                   {
+                     tmp_char = src[j];
+                     src[j] = src[j+1];
+                     src[j+1] = tmp_char;
+                   }
 #endif
                    uni16be[len/2] = 0;
-                   size = wcstombs( tmp, (wchar_t*)uni16be, len/2 );
-                   oyDeAllocateFunc_(uni16be); uni16be = 0;
 
-                   if(size == (size_t)-1)
+                   for( n_ = 0, j = 0; j < len/2; ++j)
                    {
-                     uni16be = (icUInt16Number*) &mem[dversatz];
-                     for (n_ = 0; n_ < len/2; ++n_)
-                       tmp[n_] = (char)
-#if BYTE_ORDER == BIG_ENDIAN
-                                        oyValueUInt16
-#endif
-                                                      ( uni16be[n_]);
-                     tmp[n_] = 0;
+                     size = wctomb( &t[n_], (wchar_t)uni16be[j] );
+                     if(size <= MB_CUR_MAX)
+                       n_ += size;
+                     else
+                     {
+                       /* we ignore any errors and continue */
+                       t[n_] = (char) uni16be[j];
+                       ++n_;
+                     }
                    }
+                   t[n_] = 0;
+                   oyDeAllocateFunc_(uni16be); uni16be = 0;
 
                    if(!oyStrlen_(tmp))
                    {
@@ -634,15 +643,20 @@ oyStructList_s * oyraProfileTag_GetValues(
                    for( j = 0; j < g/2; ++j)
                      wc[j] = oyValueUInt16( uni16be[j] );
                    wc[j] = 0;
-                   size = wcstombs( t, wc, g );
 
-                   if(size == (size_t)-1)
+                   for( n_ = 0, j = 0; j < g/2; ++j)
                    {
-                     for (n_ = 0; n_ < g ; n_ = n_+2)
-                       t[n_/2] = (char)oyValueUInt16( *(icUInt16Number*)
-                                                      &mem[dversatz + n_] );
-                     t[n_/2] = 0;
+                     size = wctomb( &t[n_], wc[j] );
+                     if(size <= MB_CUR_MAX)
+                       n_ += size;
+                     else
+                     {
+                       /* we ignore any errors and continue */
+                       t[n_] = (char) oyValueUInt16( uni16be[j] );
+                       ++n_;
+                     }
                    }
+                   t[n_] = 0;
 
                    name->name = t;
                    oy_struct = (oyStruct_s*) name;
