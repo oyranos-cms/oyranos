@@ -23,6 +23,7 @@
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
 #include "oyranos_texts.h"
+#include <iconv.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -55,6 +56,53 @@ int                oyraCMMInit       ( )
 }
 
 
+
+/** @func  oyraIconv
+ *  @brief convert between codesets
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/05/27
+ *  @since   2008/05/27 (Oyranos: 0.1.8)
+ */
+int                oyraIconv         ( const char        * input,
+                                       size_t              len,
+                                       char              * output,
+                                       const char        * from_codeset )
+{
+  int error = 0;
+
+  char * out_txt = output;
+  char * in_txt = (char*)input;
+  const char * loc_env = setlocale( LC_MESSAGES, 0 ), *loc = 0;
+  iconv_t cd;
+  size_t size, in_left = len, out_left = len;
+
+  /* application codeset */
+  if(oy_domain_codeset)
+    loc = oy_domain_codeset;
+  /* environment codeset */
+  if(!loc && loc_env)
+  {
+    char * loc_tmp = strchr(loc_env, '.');
+    if(loc_tmp && strlen(loc_tmp) > 2)
+      loc = loc_tmp + 1;
+  }
+  /* fallback codeset */
+  if(!loc)
+    loc = "UTF-8";
+
+  cd = iconv_open(loc,"UTF-16LE");
+  size = iconv( cd, &in_txt, &in_left, &out_txt, &out_left);
+  iconv_close( cd );
+  *out_txt = 0;
+
+  if(size == (size_t)-1)
+    error = -1;
+  else
+    error = size;
+
+  return error;
+}
 
 
 
@@ -425,56 +473,19 @@ oyStructList_s * oyraProfileTag_GetValues(
            break;
       case icSigWCSProfileTag:
            len = tag->size_ * sizeof(oyChar);
-           tmp = oyAllocateFunc_( len*2 );
+           tmp = oyAllocateFunc_( len*2 + 1 );
 
            {
                  int  dversatz = 8 + 24;
-                 int n_ = 0;
-                 size_t size = 0;
-                 icUInt16Number * uni16be = 0;
 
                  len = len - dversatz;
 
                  if(!error)
                  {
-                   uni16be = (icUInt16Number*) oyAllocateFunc_( len + 2 );
-                   memcpy(uni16be, &mem[dversatz], len);
-                 }
+                   /* WCS provides UTF-16LE */
+                   error = oyraIconv( &mem[dversatz], len, tmp, "UTF-16LE" );
 
-                 if(!error)
-                 {
-                   int j = sizeof(wchar_t);
-                   char * t = tmp;
-#if BYTE_ORDER == BIG_ENDIAN
-                   char * src = (char*) uni16be,
-                          tmp_char;
-
-                   /* astonishly WCS provides little endian data */
-                   for( j = 0; j < len; j += 2 )
-                   {
-                     tmp_char = src[j];
-                     src[j] = src[j+1];
-                     src[j+1] = tmp_char;
-                   }
-#endif
-                   uni16be[len/2] = 0;
-
-                   for( n_ = 0, j = 0; j < len/2; ++j)
-                   {
-                     size = wctomb( &t[n_], (wchar_t)uni16be[j] );
-                     if(size <= MB_CUR_MAX)
-                       n_ += size;
-                     else
-                     {
-                       /* we ignore any errors and continue */
-                       t[n_] = (char) uni16be[j];
-                       ++n_;
-                     }
-                   }
-                   t[n_] = 0;
-                   oyDeAllocateFunc_(uni16be); uni16be = 0;
-
-                   if(!oyStrlen_(tmp))
+                   if(error != 0 || !oyStrlen_(tmp))
                    {
                      error = 1;
                      oyDeAllocateFunc_(tmp); tmp = 0;
@@ -602,17 +613,12 @@ oyStructList_s * oyraProfileTag_GetValues(
                  oyName_s * name = 0;
                  oyStruct_s * oy_struct = 0;
                  char * t = 0;
-                 int n_ = 0, j;
-                 size_t size = 0;
-                 icUInt16Number * uni16be = 0;
-                 wchar_t *wc = 0;
 
                  error = tag->size_ < 20 + i * groesse + g*2 + 4;
                  if(!error)
                  {
                    t = (char*) oyAllocateFunc_((g > 8) ? g : 8);
-                   wc = (wchar_t*) oyAllocateFunc_(sizeof(wchar_t) * g);
-                   error = !t || !wc;
+                   error = !t;
                  }
 
                  if(!error && all)
@@ -636,33 +642,14 @@ oyStructList_s * oyraProfileTag_GetValues(
                    error = dversatz + g > tag->size_;
 
                  if(!error)
-                   uni16be = (icUInt16Number*) &mem[dversatz];
-
-                 if(!error)
                  {
-                   for( j = 0; j < g/2; ++j)
-                     wc[j] = oyValueUInt16( uni16be[j] );
-                   wc[j] = 0;
-
-                   for( n_ = 0, j = 0; j < g/2; ++j)
-                   {
-                     size = wctomb( &t[n_], wc[j] );
-                     if(size <= MB_CUR_MAX)
-                       n_ += size;
-                     else
-                     {
-                       /* we ignore any errors and continue */
-                       t[n_] = (char) oyValueUInt16( uni16be[j] );
-                       ++n_;
-                     }
-                   }
-                   t[n_] = 0;
+                   /* ICC says UTF-16BE */
+                   error = oyraIconv( &mem[dversatz], len, t, "UTF-16BE" );
 
                    name->name = t;
                    oy_struct = (oyStruct_s*) name;
                    oyStructList_MoveIn( texts, &oy_struct, -1 );
                  }
-                 oyFree_m_( wc );
                }
 
                if(i == anzahl-1 && !error)
