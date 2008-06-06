@@ -69,10 +69,12 @@ typedef void      (*oyUnLockF_t)     ( oyPointer           look,
                                        const char        * marker,
                                        int                 line );
 
-typedef oyPointer (*oyImage_GetLine_t) ( int               line_y,
+typedef oyPointer (*oyImage_GetPoint_t)( int               point_x,
+                                         int               point_y );
+/*typedef oyPointer (*oyImage_GetLine_t) ( int               line_y,
                                          int             * height );
 typedef oyPointer (*oyImage_GetTile_t) ( int               tile_x,
-                                         int               tile_y );
+                                         int               tile_y );*/
 
 
 void         oyThreadLockingSet      ( oyStruct_LockCreateF_t createLockFunc,
@@ -918,15 +920,16 @@ typedef struct oyImage_s_ oyImage_s;
  *  @date  21 december 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_IMAGE_PROCESS_S */
+  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_IMAGE_HANDLER_S */
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
 
   oyPointer        dummy;              /**< keep to zero */
-  oyImage_GetLine_t    getLine;        /**< the line interface */
-  oyImage_GetTile_t    getTile;        /**< the tile interface */
-  int                  tile_width;     /**< needed by the tile interface */
-  int                  tile_height;    /**< needed by the tile interface */
+  oyImage_GetPoint_t   getPoint;       /**< the point interface */
+/*  oyImage_GetLine_t    getLine;*/        /**< the line interface */
+/*  oyImage_GetTile_t    getTile;*/        /**< the tile interface */
+/*  int                  tile_width;*/     /**< needed by the tile interface */
+/*  int                  tile_height;*/    /**< needed by the tile interface */
 } oyImageHandler_s;
 
 oyImageHandler_s * oyImageHandler_Create ( oyImage_s     * image );
