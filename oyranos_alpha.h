@@ -117,6 +117,8 @@ typedef enum {
   oyOBJECT_TYPE_IMAGE_S,              /*!< oyImage_s */
   oyOBJECT_TYPE_IMAGE_HANDLER_S,      /*!< oyImageHandler_s */
   oyOBJECT_TYPE_COLOUR_CONVERSION_S,  /*!< oyColourConversion_s */
+  oyOBJECT_TYPE_FILTER_S,             /**< oyFilter_s */
+  oyOBJECT_TYPE_CONVERSION_S,         /**< oyConversions_s */
   oyOBJECT_TYPE_CMM_HANDLE_S = 50,    /**< oyCMMhandle_s */
   oyOBJECT_TYPE_CMM_POINTER_S,        /*!< oyCMMptr_s */
   oyOBJECT_TYPE_CMM_INFO_S,           /*!< oyCMMInfo_s */
@@ -205,40 +207,7 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
 
 #define OY_HASH_SIZE 16
 
-
-/** @brief CMM pointer
- *
- *  The oyCMMptr_s is used internally and for CMM's.
- *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-typedef struct {
-  oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_CMM_POINTER_S */
-  oyStruct_CopyF_t     copy;           /**< copy function */
-  oyStruct_ReleaseF_t  release;        /**< release function */
-  oyPointer        dummy;              /**< keep to zero */
-  char                 cmm[5];         /*!< the CMM */
-  char                 func_name[32];  /*!< optional the CMM's function name */
-  oyPointer            ptr;            /*!< a CMM's data pointer */
-  char                 resource[5];    /**< the resource type */
-  oyStruct_releaseF_t  ptrRelease;     /*!< CMM's deallocation function */
-  int                  ref;            /**< Oyranos reference counter */
-} oyCMMptr_s;
-
-oyCMMptr_s *       oyCMMptr_New_     ( oyAllocFunc_t       allocateFunc );
-oyCMMptr_s *       oyCMMptr_Copy_    ( oyCMMptr_s        * cmm_ptr,
-                                       oyAllocFunc_t       allocateFunc );
-int                oyCMMptr_Release_ ( oyCMMptr_s       ** cmm_ptr );
-
-int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
-                                       const char        * cmm,
-                                       const char        * func_name,
-                                       const char        * resource,
-                                       oyPointer           ptr,
-                                       oyStruct_releaseF_t ptrRelease );
-
+#if 0
 /** @internal
  *  @brief a handle
  *
@@ -269,7 +238,7 @@ int                oyHandle_set_     ( oyHandle_s        * handle,
                                        oyOBJECT_TYPE_e     ptr_type,
                                        oyStruct_releaseF_t ptrRelease,
                                        oyStruct_copyF_t    ptrCopy );
-
+#endif
 
 typedef struct oyStructList_s oyStructList_s;
 
@@ -741,6 +710,41 @@ oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        oyAllocFunc_t       allocateFunc );
 
 typedef enum {
+  oyFILTER_TYPE_COLOUR,                /**< colour */
+  oyFILTER_TYPE_TONEMAP,               /**< contrast or tone mapping */
+  oyFILTER_TYPE_GENERIC                /**< generic */
+} oyFILTER_TYPE_e;
+
+/** @struct oyFilter_s
+ *  @brief  a filter to manipulate a image
+ *
+ *  @param   profile_in
+ *  @param   profile_out               should not be zero for a CMM.
+ *  For a non CMM filter the oyProfile_s' can be a icColorSpaceSignature only. 
+ *  @param   type                      is the functional type of filter 
+ *  @param   category                  is useful for building menues
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/08 (Oyranos: 0.1.8)
+ *  @date    2008/06/08
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_FILTER_S*/
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyProfile_s        * profile_in;     /**< colour space expected on input */
+  oyProfile_s        * profile_out;    /**< colour space provided on output */
+
+  oyFILTER_TYPE_e      type;           /**< filter type */
+  oyName_s           * category;       /**< the ui category for this filter */
+  oyName_s           * opts_data;      /**< xml data part of filter options */
+  oyName_s           * opts_ui;        /**< xml ui elements for filter options*/
+} oyFilter_s;
+
+
+typedef enum {
   oyDATALAYOUT_NONE,
   oyDATALAYOUT_CURVE,                 /**< equally spaced curve, oyDATALAYOUT_e[0], size[1], min[2], max[3], elements[4]... */
   oyDATALAYOUT_MATRIX,                /**< 3x3 matrix, oyDATALAYOUT_e[0], a1[1],a2[2],a3,b1,b2,b3,c1,c2,c3 */
@@ -905,9 +909,10 @@ typedef uint32_t oyPixel_t;
 #define oyToFlavor_m(f)             (((f) >> 22)&1)
 #define oyToByteswap_m(x)           (((x) >> 23)&1)
 
+#if 0
 oyChar *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAllocFunc_t       allocateFunc );
-
+#endif
 
 typedef struct oyImage_s_ oyImage_s;
 
@@ -988,18 +993,41 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
                                         oyProfile_s     * profile,
                                         oyOptions_s     * options );
 
+/** @struct oyConversions_s
+ *  @brief  a filter chain to manipulate a image
+ *
+ *  @param   image_in
+ *  @param   image_out                 
+ *  @param   type                      is the functional type of filter 
+ *  @param   category                  is useful for building menues
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/08 (Oyranos: 0.1.8)
+ *  @date    2008/06/08
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_CONVERSION_S*/
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyFilterList_s     * filters;        /**< a list of XML options to filters */
+} oyConversions_s;
+
 /** @struct oyColourConversion_s
     In case where
       a option indicates monitor output, or
       the out image struct has no profile set, 
     the conversion will route to monitor colours, honouring the oyImage_s screen
     position.
+
+    deprecate with the new filter architecture
  */
 typedef struct {
   oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_COLOUR_CONVERSION_S */
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
-  oyObject_s           oy_;            /**< bse object */
+  oyObject_s           oy_;            /**< base object */
   oyProfileList_s    * profiles_;      /*!< effect / simulation profiles */ 
   oyOptions_s        * options_;       /*!< conversion opts */
   oyImage_s          * image_in_;      /*!< input */
@@ -1201,31 +1229,6 @@ typedef struct {
 
   oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
 } oyCMMInfo_s;
-
-/** @internal
- *  @brief a CMM handle to collect resources
- *
- *  @since Oyranos: version 0.1.8
- *  @date  5 december 2007 (API 0.1.8)
- */
-typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_CMM_HANDLE_S */
-  oyStruct_CopyF_t     copy;           /**< copy function */
-  oyStruct_ReleaseF_t  release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-  char                 cmm[5];         /**< the CMM */
-  oyCMMInfo_s        * info;           /**< the modules info struct */
-  oyPointer            dso_handle;     /**< the ldopen library handle */
-} oyCMMhandle_s;
-
-oyCMMhandle_s *  oyCMMhandle_New_    ( oyObject_s          object );
-oyCMMhandle_s *  oyCMMhandle_Copy_   ( oyCMMhandle_s     * handle,
-                                       oyObject_s          object );
-int              oyCMMhandle_Release_( oyCMMhandle_s    ** handle );
-
-int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
-                                       oyCMMInfo_s       * info,
-                                       oyPointer           dso_handle );
 
 /*#if 10*/
 

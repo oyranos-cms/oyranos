@@ -42,6 +42,8 @@ INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
 	$(ELEKTRA_LIBS) -lc $(I18N_LIB)
 
+MODULE_LDLIBS =	$(lc)
+
 
 CHEADERS = \
 	$(TARGET).h \
@@ -251,7 +253,7 @@ $(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $@ \
-	$(CMM_LCMS_OBJECTS) $(LCMS_LIBS) $(LDLIBS)
+	$(CMM_LCMS_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -261,7 +263,7 @@ $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $@ \
-	$(CMM_oyX1_OBJECTS) $(LIB_MONI_SONAMEFULL) $(LDLIBS)
+	$(CMM_oyX1_OBJECTS) $(LIB_MONI_SONAMEFULL)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -271,7 +273,7 @@ $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $@ \
-	$(CMM_oyra_OBJECTS) $(LIBSONAMEFULL) $(LDLIBS)
+	$(CMM_oyra_OBJECTS) $(LIBSONAMEFULL)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)

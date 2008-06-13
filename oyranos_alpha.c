@@ -43,6 +43,45 @@ int          oyObject_Ref            ( oyObject_s          obj );
                                        const char        * resource,
                                        oyStructReleaseF_t  ptrRelease,
                                        oyChar            * func_name );*/
+
+
+/** @internal
+ *  @brief a CMM handle to collect resources
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  5 december 2007 (API 0.1.8)
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_CMM_HANDLE_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+  char                 cmm[5];         /**< the CMM */
+  oyCMMInfo_s        * info;           /**< the modules info struct */
+  oyPointer            dso_handle;     /**< the ldopen library handle */
+} oyCMMhandle_s;
+
+oyCMMhandle_s *  oyCMMhandle_New_    ( oyObject_s          object );
+oyCMMhandle_s *  oyCMMhandle_Copy_   ( oyCMMhandle_s     * handle,
+                                       oyObject_s          object );
+int              oyCMMhandle_Release_( oyCMMhandle_s    ** handle );
+
+int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
+                                       oyCMMInfo_s       * info,
+                                       oyPointer           dso_handle );
+
+oyCMMptr_s *       oyCMMptr_New_     ( oyAllocFunc_t       allocateFunc );
+oyCMMptr_s *       oyCMMptr_Copy_    ( oyCMMptr_s        * cmm_ptr,
+                                       oyAllocFunc_t       allocateFunc );
+int                oyCMMptr_Release_ ( oyCMMptr_s       ** cmm_ptr );
+
+int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
+                                       const char        * cmm,
+                                       const char        * func_name,
+                                       const char        * resource,
+                                       oyPointer           ptr,
+                                       oyStruct_releaseF_t ptrRelease );
+
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
@@ -3760,7 +3799,7 @@ int          oyObject_UnSetLocking     ( oyObject_s        object,
 }*/
 
 
-
+#if 0
 
 /** @internal
  *  @brief new Oyranos handle
@@ -3877,7 +3916,7 @@ int                oyHandle_set_     ( oyHandle_s        * handle,
   return error;
 }
 
-
+#endif
 
 
 

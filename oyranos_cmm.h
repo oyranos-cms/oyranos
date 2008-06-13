@@ -51,6 +51,27 @@ typedef int      (*oyCMMCanHandle_t) ( oyCMMQUERY_e        type,
 
 typedef int      (*oyCMMInit_t)      ( void );
 
+/** @brief CMM pointer
+ *
+ *  The oyCMMptr_s is used internally and for CMM's.
+ *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+typedef struct {
+  oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_CMM_POINTER_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyPointer        dummy;              /**< keep to zero */
+  char                 cmm[5];         /*!< the CMM */
+  char                 func_name[32];  /*!< optional the CMM's function name */
+  oyPointer            ptr;            /*!< a CMM's data pointer */
+  char                 resource[5];    /**< the resource type */
+  oyStruct_releaseF_t  ptrRelease;     /*!< CMM's deallocation function */
+  int                  ref;            /**< Oyranos reference counter */
+} oyCMMptr_s;
+
 /*typedef oyChar * (*oyCMMProfile_GetText_t)( oyCMMptr_s   * cmm_ptr,
                                        oyNAME_e            type,
                                        const char          language[4],
@@ -270,6 +291,27 @@ typedef struct {
   oyCMMProfileTag_GetValues_t oyCMMProfileTag_GetValues;
   oyCMMProfileTag_Create_t oyCMMProfileTag_Create;
 } oyCMMapi3_s;
+
+
+/** @type    oyCMMConversion_CreateBasic_t
+ *  @brief   create a basic filter context from two images
+ *
+ *           This function is intented for basic colour conversions like for
+ *           toolkits, which dont want fancy stuff involved.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/13
+ *  @since   2008/06/13 (Oyranos: 0.1.8)
+ */
+typedef int      (*oyCMMConversion_CreateBasic_t) (
+                                       oyCMMptr_s       ** cmm_profile_array,
+                                       int                 profiles_n,
+                                       uint32_t            pixel_layout_in,
+                                       uint32_t            pixel_layout_out,
+                                       int                 intent,
+                                       int                 proofing_intent,
+                                       uint32_t            flags,
+                                       oyCMMptr_s        * oy );
 
 
 #ifdef __cplusplus
