@@ -144,7 +144,7 @@ oyReadFileToMem_(const char* name, size_t *size,
         }
       }
     } else {
-      WARNc1_S( "could not read %s\n", filename );
+      WARNc1_S( "could not read: \"%s\"\n", filename );
     }
   }
  
@@ -519,6 +519,8 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
         if(l->count_files >= l->mem_count)
         {
           char** temp = l->names;
+
+          l->names = 0;
           oyAllocHelper_m_( l->names, char*, l->mem_count+l->hopp,
                             oyAllocateFunc_, return 1);
           memcpy(l->names, temp, sizeof(char*) * l->mem_count);
@@ -555,6 +557,8 @@ int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
         if(l->count_files >= l->mem_count)
         {
           char** temp = l->names;
+
+          l->names = 0;
           oyAllocHelper_m_( l->names, char*, l->mem_count+l->hopp,
                             oyAllocateFunc_, return 1);
           memcpy(l->names, temp, sizeof(char*) * l->mem_count);
@@ -587,6 +591,8 @@ int oyFileListCb_ (void* data, const char* full_name, const char* filename)
         if(l->count_files >= l->mem_count)
         {
           char** temp = l->names;
+
+          l->names = 0;
           oyAllocHelper_m_( l->names, char*, l->mem_count+l->hopp,
                             oyAllocateFunc_, return 1);
           memcpy(l->names, temp, sizeof(char*) * l->mem_count);
