@@ -126,7 +126,7 @@ oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
   if(strcmp(filename,search)==0) {
     size_t size = 128;
     char* header = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
-    success = !oyCheckProfile_Mem (header, size, 0);
+    success = !oyCheckProfileMem_ (header, size, 0);
     oyFree_m_ (header);
     if (success) {
       DBG_S(full_name)
@@ -214,7 +214,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
       header = oyReadFileToMem_ (fullFileName, &size, allocate_func);
 
       if (size >= 128)
-        success = !oyCheckProfile_Mem (header, 128, 0);
+        success = !oyCheckProfileMem_ (header, 128, 0);
     }
 
     if (!success) {
@@ -665,7 +665,7 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
   oyFree_m_(fullFileName);
   fullFileName = resolvedFN;
 
-  if (!oyCheckProfile_Mem( mem, size, 0))
+  if (!oyCheckProfileMem_( mem, size, 0))
   {
     DBG_PROG_S(fullFileName)
     if ( oyIsFile_(fullFileName) ) {
@@ -822,7 +822,7 @@ oySetDeviceProfile_                (const char* manufacturer,
 
   if (mem && size && profileName)
   {
-    rc = oyCheckProfile_Mem (mem, size, 0); ERR
+    rc = oyCheckProfileMem_ (mem, size, 0); ERR
   }
 
   if (!rc)
@@ -1443,7 +1443,7 @@ oyCheckProfileMem (const void* mem, size_t size, const char* coloursig)
   oyExportStart_(EXPORT_CHECK_NO);
 
   /* coloursig is currently ignored */
-  n = oyCheckProfile_Mem (mem, size, coloursig);
+  n = oyCheckProfileMem_ (mem, size, coloursig);
 
   oyExportEnd_();
   DBG_PROG_ENDE
