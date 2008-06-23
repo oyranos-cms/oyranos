@@ -862,11 +862,11 @@ int            lcmsCMMMessageFuncSet ( oyMessageFunc_t     message_func )
 }
 
 
-oyWidget_s * lcmsWidget_GetDummy     ( const char        * func_name,
+const char * lcmsWidget_GetDummy     ( const char        * func_name,
                                        uint32_t          * result )
 {return 0;}
 oyWIDGET_EVENT_e lcmsWidget_EventDummy
-                                     ( oyWidget_s        * wid,
+                                     ( const char        * wid,
                                        oyWIDGET_EVENT_e    type )
 {return 0;}
 

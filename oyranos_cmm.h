@@ -141,10 +141,10 @@ typedef enum {
   oyWIDGET_UNDEFINED
 } oyWIDGET_EVENT_e;
 
-typedef oyWidget_s* (*oyWidget_Get_t)( const char        * func_name,
+typedef const char* (*oyWidget_Get_t)( const char        * func_name,
                                        uint32_t          * result );
 typedef oyWIDGET_EVENT_e   (*oyWidget_Event_t)
-                                     ( oyWidget_s        * wid,
+                                     ( const char        * wid,
                                        oyWIDGET_EVENT_e    type );
 
 

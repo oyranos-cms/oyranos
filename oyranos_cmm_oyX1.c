@@ -110,11 +110,11 @@ int            oyX1CMMMessageFuncSet ( oyMessageFunc_t     message_func )
 int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
                                        uint32_t            value ) {return 0;}
 
-oyWidget_s * oyX1Widget_GetDummy     ( const char        * func_name,
+const char * oyX1Widget_GetDummy     ( const char        * func_name,
                                        uint32_t          * result )
 {return 0;}
 oyWIDGET_EVENT_e oyX1Widget_EventDummy
-                                     ( oyWidget_s        * wid,
+                                     ( const char        * wid,
                                        oyWIDGET_EVENT_e    type )
 {return 0;}
 
