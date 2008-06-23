@@ -42,6 +42,20 @@
 #define ERR
 #endif
 
+#define WARNc_PROFILE_S(text_,fileName_) \
+      { \
+        int l_1 = oyStrlen_(text_); \
+        int l_2 = oyStrlen_(oyNoEmptyName_m_(fileName_)); \
+        char * tmp = oyAllocateFunc_ (l_1 + l_2 + 12); \
+        memcpy(tmp, text_, l_1); \
+        memcpy(&tmp[l_1], " ", 1); \
+        memcpy(&tmp[l_1+1], oyNoEmptyName_m_(fileName_), l_2); \
+        tmp[l_1+1+l_2] = 0; \
+ \
+        WARNc_S( tmp ); \
+        oyDeAllocateFunc_(tmp); \
+      }
+
 /* --- static variables   --- */
 
 /* --- structs, typedefs, enums --- */
@@ -90,7 +104,11 @@ int oyMessageFunc_( int code, const char * format, ... )
          fprintf( stderr, _("!!! ERROR"));fprintf( stderr, " %03f: ", DBG_UHR_);
          break;
   }
-  fprintf( stderr, text ); fprintf( stderr, "\n" );
+
+  i = 0;
+  while(text[i])
+    fputc(text[i++], stderr);
+  fprintf( stderr, "\n" );
   free( text );
 
   return 0;
@@ -137,7 +155,7 @@ oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
       } else
         search[0] = 0;
     } else
-      WARNc2_S( "%s %s", _("not a profile:"), oyNoEmptyName_m_(full_name) )
+      WARNc_PROFILE_S( _("not a profile:"), oyNoEmptyName_m_(full_name) )
   }
   /* break on success */
   DBG_V(success)
@@ -161,14 +179,17 @@ oyGetPathFromProfileName_       (const char*   fileName,
   if (fileName && !strchr(fileName, OY_SLASH_C))
   {
     char search[MAX_PATH];
-    int count = 0;
+    int count = 0, 
+        len = (oyStrlen_(fileName) < MAX_PATH) ? 
+                          oyStrlen_(fileName) : MAX_PATH;
     char ** path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
 
     DBG_PROG
 
     if(strlen(fileName) < MAX_PATH)
-      sprintf(search, fileName);
-    else {
+    {
+      memcpy(search, fileName, len); search[len] = 0;
+    } else {
       WARNc2_S( "%s %d", _("name longer than"), MAX_PATH)
       DBG_PROG_ENDE
       return 0;
@@ -197,11 +218,11 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
     if (!success) {
       if(oy_warn_)
-        WARNc2_S( "%s %s", _("profile not found in colour path:"),
-                  oyNoEmptyName_m_(fileName))
+        WARNc_PROFILE_S(_("profile not found in colour path:"), fileName);
       DBG_PROG_ENDE
       return 0;
     }
+
 
   } else
   {/* else use fileName as an full qualified name, check name and test profile*/
@@ -218,7 +239,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
     }
 
     if (!success) {
-      WARNc2_S( "%s %s", _("profile not found:"), oyNoEmptyName_m_(fileName))
+      WARNc_PROFILE_S( _("profile not found:"), oyNoEmptyName_m_(fileName))
       DBG_PROG_ENDE
       return 0;
     }
@@ -643,7 +664,7 @@ int
 oySetProfile_Block (const char* name, void* mem, size_t size,
                     oyPROFILE_e type, const char* comnt)
 {
-  int r = 0;
+  int r = 0, len = 0;
   char *fullFileName = NULL, *resolvedFN = NULL;
   const char *fileName = NULL;
 
@@ -658,8 +679,10 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
                    strlen(OY_PROFILE_PATH_USER_DEFAULT) + strlen (fileName) + 4,
                     oyAllocateFunc_, return 1);
 
-  sprintf (fullFileName, "%s%s%s",
-           OY_PROFILE_PATH_USER_DEFAULT, OY_SLASH, fileName);
+  sprintf (fullFileName, "%s%s", OY_PROFILE_PATH_USER_DEFAULT, OY_SLASH);
+  len = oyStrlen_(fullFileName);
+  memcpy( &fullFileName[len], fileName, oyStrlen_(fileName) );
+  fullFileName[len + oyStrlen_(fileName)] = 0;
 
   resolvedFN = oyResolveDirFileName_ (fullFileName);
   oyFree_m_(fullFileName);
@@ -669,7 +692,7 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
   {
     DBG_PROG_S(fullFileName)
     if ( oyIsFile_(fullFileName) ) {
-      WARNc2_S("%s: %s", fullFileName,
+      WARNc_PROFILE_S( fullFileName,
                 _("file exists, please remove befor installing new profile."))
     } else
     { r = oyWriteMemToFile_ (fullFileName, mem, size);
