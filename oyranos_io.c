@@ -456,6 +456,7 @@ char*
 oyFindProfile_ (const char* fileName)
 {
   char  *fullFileName = 0;
+  int len = 0;
 
   DBG_PROG_START
 
@@ -479,7 +480,8 @@ oyFindProfile_ (const char* fileName)
     if (oyIsFileFull_(fileName)) {
       oyAllocString_m_( fullFileName, MAX_PATH,
                         oyAllocateFunc_, return 0 );
-      oySprintf_(fullFileName, fileName);
+      len = oyStrlen_(fileName);
+      memcpy(fullFileName, fileName, len), fullFileName[len] = 0;
     } else
       fullFileName = oyMakeFullFileDirName_ (fileName);
   }
