@@ -615,7 +615,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                  if(!error)
                  {
                    len = (g > 1) ? g : 8;
-                   t = (char*) oyAllocateFunc_(len);
+                   t = (char*) oyAllocateFunc_(len*4);
                    error = !t;
                  }
 
@@ -1122,8 +1122,6 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
 
            if(!error)
            {
-             if(string->string_type == oySTRING_PROD_DESC) i = i;
-
              if(string->name)
                tmp_len = strlen( string->name );
              error = !tmp_len;
@@ -1161,8 +1159,6 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
 
            if(!error)
            {
-             if(string->string_type == oySTRING_PROD_DESC) i = i;
-
              if(string->name)
                tmp_len = strlen( string->name );
              error = !tmp_len;
