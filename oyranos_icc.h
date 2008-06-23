@@ -41,8 +41,22 @@ icProfileClassSignature oyValueProfCSig (icProfileClassSignature val);
 icTagSignature          oyValueTagSig   (icTagSignature val);
 
 
-int oyColourSpaceGetChannelCountFromSig ( icColorSpaceSignature color );
-const char * oyColourSpaceGetNameFromSig( icColorSpaceSignature sig );
+int            oyICCColourSpaceGetChannelCount ( icColorSpaceSignature color );
+const char   * oyICCColourSpaceGetName ( icColorSpaceSignature sig );
+const char   * oyICCColourSpaceGetChannelName ( icColorSpaceSignature sig,
+                                       int                 pos,
+                                       int                 type );
+const char   * oyICCTagDescription   ( icTagSignature      sig );
+const char   * oyICCTagName          ( icTagSignature      sig );
+const char   * oyICCDeviceClassDescription ( icProfileClassSignature sig );
+const char   * oyICCPlatformDescription ( icPlatformSignature platform );
+const char   * oyICCTagTypeName      ( icTagTypeSignature  sig );
+const char   * oyICCTechnologyDescription ( icTechnologySignature sig );
+const char   * oyICCChromaticityColorantDescription ( icSignature sig );
+const char   * oyICCIlluminantDescription ( icIlluminant sig );
+const char   * oyICCStandardObserverDescription ( icStandardObserver sig );
+const char   * oyICCMeasurementGeometryDescription ( icMeasurementGeometry sig );
+const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 
 
 
