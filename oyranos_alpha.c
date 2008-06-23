@@ -101,6 +101,9 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
                                        const char        * file_name );
 int          oyProfile_Equal_        ( oyProfile_s       * profileA,
                                        oyProfile_s       * profileB );
+int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
+                                       oyProfile_s       * profile );
+int32_t      oyProfile_Hashed_       ( oyProfile_s       * s );
 oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
                                        int                 pos );
 oyColourConversion_s* oyColourConversion_Create_ (
@@ -3083,105 +3086,6 @@ oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api )
 }
 
 
-/** @internal
- *  @brief get Oyranos CMM dlopen function and handle
- *
- *  implemented as a dangerous macro
- *
- *  @since Oyranos: version 0.1.8
- *  @date  26 november 2007 (API 0.1.8)
- */
-#define oyCMM_FUNC_GET_m( type_, func_id_ ) \
-type_ oyCMMPrepare_##type_ ( \
-                                       const char        * cmm ) \
-{ \
-  type_ func = 0; \
-  int error = 0; \
-  const char * func_id = func_id_; \
- \
-  if(cmm && func_id) \
-  { \
-    const char *lib_name = 0; \
-    const char *func_name = oyModulGetFunc_( cmm, func_id, &lib_name ); \
-    oyPointer dso_handle = 0; \
- \
-    if(!error) \
-    { \
-      dso_handle = oyCMMdsoGet_(cmm, lib_name); \
-      error = !dso_handle; \
-    } \
- \
-    if(!error) \
-      error = !func_name; \
- \
-    if(!error) \
-    { \
-      func = (type_)dlsym( dso_handle, func_name ); \
-      error = !func; \
-      if(error) \
-        WARNc_S((dlerror())); \
-    } \
-  } \
- \
-  return func; \
-}
-
-#if 1
-#if 0
-oyCMMProfile_Open_t oyCMMPrepare_oyCMMProfileOpen_t (
-                                       const char        * cmm )
-{
-  oyCMMProfile_Open_t func = 0;
-  int error = 0;
-  const char * func_id = oyCMM_PROFILE_OPEN;
- 
-  if(cmm && *func_id)
-  {
-    const char *lib_name = 0;
-    const char *func_name = oyModulGetFunc_( cmm, func_id, &lib_name );
-    oyPointer dso_handle = 0;
-
-    if(!error)
-    {
-      dso_handle = oyCMMdsoGet_(cmm, lib_name);
-      error = !dso_handle;
-    }
-
-    if(!error)
-      error = !func_name;
-
-    if(!error)
-    {
-      func = (oyCMMProfile_Open_t)dlsym( dso_handle, func_name );
-      error = !func;
-      if(error)
-        WARNc_S((dlerror()));
-
-      {
-      oyCMMInfo_s * oy_cmm_info = (oyCMMInfo_s*)dlsym(dso_handle,"lcms_cmm_info");
-      oyCMMapi1_s *api1 = (oyCMMapi1_s*)oy_cmm_info->api;
-      api1->oyIN();
-      WARNc_S((oy_cmm_info->name.nick));
-      }
-    }
-  }
-
-  return func;
-}
-#endif
-#endif
-
-/* map CMM functions to Oyranos function pointers with the help of identifiers*/
-/*oyCMM_FUNC_GET_m( oyCMMColourConversion_Create_t, oyCMM_COLOUR_CONVERSION_CREATE )
-oyCMM_FUNC_GET_m( oyCMMColourConversion_Run_t, oyCMM_COLOUR_CONVERSION_RUN )
-oyCMM_FUNC_GET_m( oyCMMProfile_Open_t, oyCMM_PROFILE_OPEN )
-oyCMM_FUNC_GET_m( oyCMMProfile_GetText_t, oyCMM_PROFILE_TEXT )
-oyCMM_FUNC_GET_m( oyCMMInit_t, oyCMM_INIT )
-oyCMM_FUNC_GET_m( oyCMMCanHandle_t, oyCMM_CAN_HANDLE )
-oyCMM_FUNC_GET_m( oyCMMMessageFuncSet_t, oyCMM_MESSAGE_FUNC_SET )
-oyCMM_FUNC_GET_m( ,  )*/
-
-#undef oyCMM_FUNC_GET_m
 /** @} */
 
 
@@ -3377,12 +3281,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
     oyDeAllocFunc_t deallocateFunc = s->deallocateFunc_;
     oyPointer lock = s->lock_;
 
-#if 0
-    if(s->hash_)
-      deallocateFunc( s->hash_ ); s->hash_ = 0;
-#else
     s->hash_[0] = 0;
-#endif
 
     if(s->backdoor_)
       deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
@@ -4699,6 +4598,30 @@ oyProfile_FromMem             ( size_t            size,
   return s;
 }
 
+
+/** @brief create a fractional profile from signature
+ *
+ *  @param[in]    sig            signature
+ *  @param[in]    type           type of signature to set
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/20
+ *  @since   2007/06/20 (Oyranos: 0.1.8)
+ */
+OYAPI oyProfile_s * OYEXPORT
+             oyProfile_FromSignature(  icSignature         sig,
+                                       oySIGNATURE_TYPE_e  type,
+                                       oyObject_s          object )
+{
+  oyProfile_s * s = oyProfile_New_( object );
+  int error = !s;
+
+  if(!error)
+    error = oyProfile_SetSignature( s, sig, type );
+
+  return s;
+}
+
 /** @brief create new from existing profile struct
  *
  *  @param[in]    profile        other profile
@@ -4735,19 +4658,7 @@ oyProfile_Copy_            ( const oyProfile_s  * profile,
 
   if(!error)
   {
-#if 0
-    if(profile->hash_)
-    {
-      s->hash_ = allocateFunc(OY_HASH_SIZE);
-      if(!s->hash_)
-        error = 1;
-      else
-        error = !memcpy( s->hash_, profile->hash_, OY_HASH_SIZE );
-    }
-    else
-#else
-    if(!s->oy_->hash_[0])
-#endif
+    if(!oyProfile_Hashed_(s))
       error = oyProfile_GetHash_( s );
   }
 
@@ -4861,12 +4772,7 @@ oyProfile_Release( oyProfile_s ** obj )
     if(s->names_chan_)
       deallocateFunc( s->names_chan_ ); s->names_chan_ = 0;
 
-#if 0
-    if(s->hash_)
-      deallocateFunc( s->hash_ ); s->hash_ = 0;
-#else
     s->oy_->hash_[0] = 0;
-#endif
 
     if(s->block_)
       deallocateFunc( s->block_ ); s->block_ = 0; s->size_ = 0;
@@ -4956,11 +4862,97 @@ oyProfile_GetSignature ( oyProfile_s * s,
        sig = oyValueUInt32( h->renderingIntent ); break;
   case oySIGNATURE_CREATOR:            /**< profile creator ID */
        sig = oyValueUInt32( h->creator ); break;
+  case oySIGNATURE_MAX: break;
   }
 
   return sig;
 }
 
+/** @brief set signature
+ *
+ *  @param[in]    sig            signature
+ *  @param[in]    type           type of signature to set
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/20
+ *  @since   2007/06/20 (Oyranos: 0.1.8)
+ */
+OYAPI int OYEXPORT
+             oyProfile_SetSignature (  oyProfile_s       * profile,
+                                       icSignature         sig,
+                                       oySIGNATURE_TYPE_e  type )
+{
+  oyProfile_s * s = profile;
+  int error = 0;
+  oyPointer block_ = 0;
+  size_t size_ = 128;
+  icHeader *h = 0;
+
+  if(!error)
+    error = !s;
+
+  if(!error && type == oySIGNATURE_COLOUR_SPACE)
+  {
+    if(sig)
+      s->sig_ = sig;
+    else
+      s->sig_ = icSigXYZData;
+    return error;
+  }
+
+  if(!error && !s->block_)
+  {
+    block_ = oyAllocateWrapFunc_( size_, s->oy_ ? s->oy_->allocateFunc_:0 );
+    if(!block_)
+      error = 1;
+
+    if(!error)
+      error = !memset( block_, 0, size_ );
+
+    if(!error)
+    {
+      s->block_ = block_;
+      s->size_ = size_;
+    }
+  }
+
+  if(!error)
+    h = (icHeader*) s->block_;
+
+  if(!error)
+  switch(type)
+  {
+  case oySIGNATURE_COLOUR_SPACE:       /**< colour space */
+       h->colorSpace = oyValueCSpaceSig( s->sig_ ); break;
+  case oySIGNATURE_PCS:                /**< profile connection space */
+       h->pcs = oyValueCSpaceSig( sig ); break;
+  case oySIGNATURE_SIZE:               /**< internal stored size */
+       h->size = oyValueUInt32( sig ); break;
+  case oySIGNATURE_CMM:                /**< prefered CMM */
+       h->cmmId = oyValueUInt32( sig ); break;
+  case oySIGNATURE_VERSION:            /**< version */
+       h->version = oyValueUInt32( sig ); break;
+  case oySIGNATURE_CLASS:              /**< usage class 'mntr' ... */
+       h->deviceClass = oyValueUInt32( sig ); break;
+  case oySIGNATURE_MAGIC:              /**< magic; ICC: 'acsp' */
+       h->magic = oyValueUInt32( sig ); break;
+  case oySIGNATURE_PLATFORM:           /**< operating system */
+       h->platform = oyValueUInt32( sig ); break;
+  case oySIGNATURE_OPTIONS:            /**< various ICC header flags */
+       h->flags = oyValueUInt32( sig ); break;
+  case oySIGNATURE_MANUFACTURER:       /**< device manufacturer */
+       h->manufacturer = oyValueUInt32( sig ); break;
+  case oySIGNATURE_MODEL:              /**< device modell */
+       h->model = oyValueUInt32( sig ); break;
+  case oySIGNATURE_INTENT:             /**< seldom used profile claimed intent*/
+       h->renderingIntent = oyValueUInt32( sig ); break;
+  case oySIGNATURE_CREATOR:            /**< profile creator ID */
+       h->creator = oyValueUInt32( sig ); break;
+  case oySIGNATURE_MAX: break;
+  }
+
+  return error;
+}
 
 /** @brief set channel names
  *
@@ -5123,10 +5115,7 @@ OYAPI const oyChar* OYEXPORT
     /* Do we have a hash_? */
     if(!found && !error)
     {
-      if(!((uint32_t*)(&s->oy_->hash_[0])) &&
-         !((uint32_t*)(&s->oy_->hash_[4])) &&
-         !((uint32_t*)(&s->oy_->hash_[8])) &&
-         !((uint32_t*)(&s->oy_->hash_[12])) )
+      if(!oyProfile_Hashed_(s))
         error = oyProfile_GetHash_( s );
 
       if(!error)
@@ -5167,8 +5156,8 @@ OYAPI const oyChar* OYEXPORT
   int error = !s;
   const oyChar * text = 0;
 
-  if(!error)
-    oyProfile_GetCMMPtr_(s, 0);
+  /*if(!error)
+    oyProfile_GetCMMPtr_(s, 0);*/
 
   if(!error)
     if(type <= oyNAME_DESCRIPTION)
@@ -5225,7 +5214,7 @@ OYAPI const oyChar* OYEXPORT
     }
 
     /* last rescue */
-    if(!found && !oyStrlen_((char*)s->oy_->hash_))
+    if(!found && oyProfile_Hashed_(s))
       error = oyProfile_GetHash_( s );
 
     if(!found && !error)
@@ -5389,95 +5378,7 @@ const oyChar *     oyProfile_GetFileName ( oyProfile_s   * profile,
 
   return name;
 }
-#if 0
-const oyChar *     oyProfile_GetFileName ( oyProfile_s   * profile,
-                                       int                 dl_pos )
-{
-  const oyChar * text = 0;
-  oyProfile_s * s = profile, * tmp = 0;
-  int error = !s;
-  oyChar ** names = 0;
-  uint32_t count = 0, i = 0;
-  oyProfileTag_s * psid = 0;
-  oyName_s * name = 0;
-  oyStructList_s * values = 0;
-  int32_t   texts_n = 0;
-  oyChar *  hash = 0;
-  oyChar    tmp_hash[34];
-  int       dl_n = 0;
 
-  if(!error && s->type_ == oyOBJECT_TYPE_PROFILE_S)
-  {
-    if(dl_pos >= 0)
-    {
-      psid = oyProfile_GetTagById( s, icSigProfileSequenceIdentifierTag );
-      values = oyProfileTag_GetValues( psid );
-
-      if(oyStructList_Count( values ) )
-      {
-        name = 0;
-        texts_n = oyStructList_Count( values );
-
-        if(texts_n > 1+dl_pos*5+2)
-        {
-          dl_n = 1 + dl_pos*5+2;
-          name = (oyName_s*) oyStructList_GetRefType( values, dl_n,
-                                                      oyOBJECT_TYPE_NAME_S );
-        
-          if(name)
-            hash = name->name;
-        }
-      }
-    }
-
-
-    if(s->file_name_ && !hash)
-    {
-      text = s->file_name_;
-    } else {
-
-      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
-
-      for(i = 0; i < count; ++i)
-      {
-        if(names[i])
-        {
-          if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
-            tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
-
-          if(hash && tmp)
-          {
-            uint32_t * h = (uint32_t*)&tmp->oy_->hash_[0];
-            oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
-            if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
-            {
-              text = names[i];
-              break;
-            }
-          } else
-          if(oyProfile_Equal_( s, tmp ))
-          {
-            text = names[i];
-            break;
-          }
-
-          oyProfile_Release( &tmp );
-        }
-      }
-      s->file_name_ = oyFindProfile_( text );
-      text = oyStringCopy_( s->file_name_, s->oy_->allocateFunc_ );
-      oyDeAllocateFunc_( s->file_name_ );
-      s->file_name_ = (char*)text;
-
-      oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
-    }
-
-    oyStructList_Release( &values );
-  }
-
-  return text;
-}
-#endif
 
 /** @brief get a CMM specific pointer
  *
@@ -5582,7 +5483,7 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
   return cmm_ptr;
 }
 
-
+#if 0
 /** @brief get a CMM specific pointer
  *
  *  @since Oyranos: version 0.1.8
@@ -5627,8 +5528,10 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
   return name;
 }
 */
+#endif
 
-/** @func    oyProfile_Equal_
+/** @internal
+ *  @func    oyProfile_Equal_
  *  @brief   check if two profiles are qual by their hash sum
  *
  *  @version Oyranos: 0.1.8
@@ -5647,6 +5550,61 @@ int          oyProfile_Equal_        ( oyProfile_s       * profileA,
   }
 
   return equal;
+}
+
+/** @internal
+ *  @func    oyProfile_Match_
+ *  @brief   check if a profiles matches by some properties
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/20
+ *  @since   2008/06/20 (Oyranos: 0.1.8)
+ */
+int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
+                                       oyProfile_s       * profile )
+{
+  int32_t match = 0;
+  int i;
+  icSignature pattern_sig, profile_sig;
+
+  if(pattern && profile)
+  {
+    /*match = oyProfile_Equal_(pattern, profile);*/ /* too expensive */
+    if(!match)
+    {
+      match = 1;
+      for( i = 0; i < (int)oySIGNATURE_MAX; ++i)
+      {
+        pattern_sig = oyProfile_GetSignature( pattern, (oySIGNATURE_TYPE_e) i );
+        profile_sig = oyProfile_GetSignature( profile, (oySIGNATURE_TYPE_e) i );
+
+        if(pattern_sig && profile_sig && pattern_sig != profile_sig)
+          match = 0;
+      }
+    }
+  }
+
+  return match;
+}
+
+/** @internal
+ *  @func    oyProfile_Hashed_
+ *  @brief   check if a profile has a hash sum computed
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/20
+ *  @since   2008/06/20 (Oyranos: 0.1.8)
+ */
+int32_t      oyProfile_Hashed_       ( oyProfile_s       * s )
+{
+  int32_t hashed = 0;
+  if(s && s->type_ == oyOBJECT_TYPE_PROFILE_S)
+      if(((uint32_t*)(&s->oy_->hash_[0])) ||
+         ((uint32_t*)(&s->oy_->hash_[4])) ||
+         ((uint32_t*)(&s->oy_->hash_[8])) ||
+         ((uint32_t*)(&s->oy_->hash_[12])) )
+        hashed = 1;
+  return hashed;
 }
 
 /** @internal
@@ -6471,18 +6429,26 @@ OYAPI int  OYEXPORT
  *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
  *  element from the tag parameter.
  *
+ *  For localised strings, e.g. icSigMultiLocalizedUnicodeType:<br>
+ *    - zero language and country args: all localisation strings are returned 
+ *    - with language and/or country args: return appropriate matches
+ *    - for language != "", the string starts with language code, the text follows after a colon ":"
+ *    - a non zero but empty language argument == "", 
+ *      returns the pure string in the actual Oyranos locale, no language code
+ *
  *  @param[in]     tag                 the tag to read
- *  @param[in,out] n                   out: the number of returned strings
- *  @param[in]     language            2 byte language code
+ *  @param[out]    n                   the number of returned strings
+ *  @param[in]     language            2 byte language code, or "" for current
  *  @param[in]     country             2 byte country code
  *  @param[out]    tag_size            the processed tag size
  *  @param[in]     allocateFunc        the user allocator for the returned list
  *  @return                            a list of strings
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/03 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/03 (Oyranos: 0.1.8)
+ *  @date    2008/06/19
  */
-oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
+char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        int32_t           * n,
                                        const char        * language,
                                        const char        * country,
@@ -6492,11 +6458,13 @@ oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   oyProfileTag_s * s = tag;
   int error = !s;
   oyCMMProfileTag_GetValues_t funcP = 0;
-  char cmm[] = {0,0,0,0,0};
-  char ** texts = 0, * text = 0;
+  char cmm[] = {0,0,0,0,0}, 
+       t_l[8], t_c[8], *t_ptr;
+  int implicite_i18n = 0;
+  char ** texts = 0, * text = 0, *temp = 0;
   oyStructList_s * values = 0;
   oyName_s * name = 0;
-  int values_n = 0, i = 0;
+  int values_n = 0, i = 0, k;
   int32_t texts_n = 0;
   oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_READ, 0, oyREQUEST_HARD};
   oyCMMapiQuery_s *query_[2] = {0,0};
@@ -6530,10 +6498,14 @@ oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
   if(!error)
   {
-    if(!language)
-      language = oyLanguage();
-    if(!country)
-      country = oyCountry();
+    /* check for a "" in the lang variable -> want the best i18n match */
+    if(language && !oyStrlen_(language))
+    {
+      implicite_i18n = 1;
+      language = oyLanguage() ? oyLanguage() : "";
+      country  = oyCountry() ? oyCountry() : "";
+    }
+
     if(!allocateFunc)
       allocateFunc = oyAllocateFunc_;
 
@@ -6544,16 +6516,64 @@ oyChar **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
         name = 0;
         values_n = oyStructList_Count( values );
 
-        for(i = 0; i < values_n; ++i)
+        for(k = 0; k < 4; ++k)
         {
-          text = 0;
-          name = (oyName_s*) oyStructList_GetRefType( values, i,
-                                                      oyOBJECT_TYPE_NAME_S );
-        
-          if(name)
-            text = name->name;
-          oyStringListAddStaticString_( &texts, &texts_n, text,
-                                        oyAllocateFunc_, oyDeAllocateFunc_);
+          for(i = 0; i < values_n; ++i)
+          {
+            text = 0;
+            name = (oyName_s*) oyStructList_GetRefType( values, i,
+                                                        oyOBJECT_TYPE_NAME_S );
+            memcpy(t_l, name->lang, 8); t_c[0] = 0;
+            t_ptr = oyStrchr_(t_l, '_');
+            if(t_ptr)
+            {
+              memcpy(t_c, t_ptr+1, 3);
+              *t_ptr = 0;
+            }
+
+            if(name)
+              text = name->name;
+            if(name)
+            /* select by language and/or country or best i18n match or all */
+            if(
+               (k == 0 && language && oyStrcmp_( language, t_l ) == 0 &&
+                          country  && oyStrcmp_( country, t_c ) )       ||
+               (k == 1 && language && oyStrcmp_( language, t_l ) == 0 &&
+                          (!country || implicite_i18n ))                ||
+               (k == 2 && country  && oyStrcmp_( country, t_c ) == 0  &&
+                          (!language || implicite_i18n ))               ||
+               (k == 3 && ((!language && !country) || implicite_i18n))
+              )
+            {
+              if(oyStrlen_(name->lang) && !implicite_i18n)
+              {
+                /* string with i18n infos -> "de_DE:Licht" */
+                temp = oyStringAppend_(name->lang, ":", oyAllocateFunc_);
+                temp = oyStringAppend_(temp, text, oyAllocateFunc_);
+                oyStringListAddString_( &texts, &texts_n, &temp,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+
+              } else {
+                /* pure string -> "Licht" */
+                oyStringListAddStaticString_( &texts, &texts_n, text,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                /* no selection for best i18n match and no lang: take all */
+                if(k == 3 && implicite_i18n)
+                {
+                  implicite_i18n = 0;
+                  language = 0;
+                  country = 0;
+                }
+              }
+            }
+
+            /* best i18n match found -> end */
+            if(implicite_i18n && texts_n)
+            {
+              k = 4;
+              break;
+            }
+          }
         }
 
         *n = texts_n;
@@ -6642,6 +6662,90 @@ OYAPI oyProfileList_s * OYEXPORT
   {
     WARNc_S(("Could not create structure for profile."))
     return 0;
+  }
+
+  return s;
+}
+
+/** @func    oyProfileiList_Create
+ *  @brief   get a list of installed profiles
+ *
+ *  @param[in]     patterns            a list properties, e.g. classes
+ *  @param         object              the obligate object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/20 (Oyranos: 0.1.8)
+ *  @date    2008/06/20
+ */
+OYAPI oyProfileList_s * OYEXPORT
+                 oyProfileList_Create( oyProfileList_s   * patterns,
+                                       oyObject_s          object)
+{
+  oyProfileList_s * s = 0;
+  int error = 0;
+
+  oyProfile_s * tmp = 0, * pattern = 0;
+  char  ** names = 0, * full_name = 0;
+  oyPointer block = 0;
+  uint32_t names_n = 0, i = 0, j = 0,
+           patterns_n = oyProfileList_Count(patterns);
+  size_t   size = 128;
+
+  s = oyProfileList_New( object );
+  error = !s;
+
+  if(!error)
+  {
+    names = oyProfileListGet_ ( NULL, &names_n );
+
+    for(j = 0; j < patterns_n; ++j)
+    {
+      pattern = oyProfileList_Get(patterns, j);
+
+      if(pattern->size_ > 132)
+        size = 0;
+    }
+
+    for(i = 0; i < names_n; ++i)
+    {
+      if(names[i])
+      {
+        if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+        {
+          if(size && 0)
+          { // TODO
+            full_name = oyFindProfile_(names[i]);
+            block = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
+            tmp = oyProfile_FromMemMove_( size, &block, 0, 0 );
+          }
+          else
+            tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
+        }
+
+        if(patterns_n > 0)
+        {
+          for(j = 0; j < patterns_n; ++j)
+          {
+            if(tmp)
+              pattern = oyProfileList_Get(patterns, j);
+
+            if(oyProfile_Match_( pattern, tmp ))
+            {
+              s = oyProfileList_MoveIn( s, &tmp, -1);
+              error = !s;
+              break;
+            }
+          }
+
+        } else {
+
+          s = oyProfileList_MoveIn( s, &tmp, -1);
+          error = !s;
+        }
+      }
+    }
+
+    oyStringListRelease_( &names, names_n, oyDeAllocateFunc_ );
   }
 
   return s;
@@ -7603,7 +7707,7 @@ int            oyImage_Release        ( oyImage_s      ** obj )
 int            oyImage_SetCritical    ( oyImage_s       * image,
                                         oyPixel_t         pixel_layout,
                                         oyProfile_s     * profile,
-                                        oyOptions_s     * options )
+                                        char            * options )
 {
   oyImage_s * s = image;
   int error = !s;
