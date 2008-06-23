@@ -164,16 +164,6 @@ typedef enum {
   oyNAME_DESCRIPTION                   /**< compatible to oyName_s/oyObject_s */
 } oyNAME_e;
 
-typedef enum {
-  oySTRING,                            /**< not specified */
-  oySTRING_PROD_NAME,                  /**< ??? */
-  oySTRING_PROD_DESC,                  /**< icSigProfileDescriptionTag */
-  oySTRING_INFO,                       /**< */
-  oySTRING_COPYRIGHT,                  /**< icSigCopyrightTag */
-  oySTRING_MODELL,                     /**< icSigDeviceModelDescTag */
-  oySTRING_MANUFACTURER                /**< icSigDeviceMfgDescTag */
-} oySTRING_e;
-
 #define oyNAME_ID oyNAME_NICK
 
 /** @brief Oyranos name structure
@@ -189,7 +179,6 @@ typedef struct {
   char               * nick;    /*!< few letters for mass representation, eg. "A1" */
   char               * name;           /*!< normal visible name, eg. "A1-MySys"*/
   char               * description;    /*!< full user description, eg. "A1-MySys from Oyranos" */
-  oySTRING_e           string_type;    /**< type of string */
   char                 lang[8];        /**< i18n language, eg. "en_GB" */
 } oyName_s;
 
