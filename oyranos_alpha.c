@@ -1368,7 +1368,6 @@ oyName_s *   oyName_copy               ( oyName_s        * obj,
   if(!s)
     s = oyName_new(0);
 
-  s->string_type = obj->string_type;
   error = !memcpy( s->lang, obj->lang, 8 );
 
   return s;
@@ -5144,20 +5143,25 @@ OYAPI const oyChar* OYEXPORT
 
 /** @brief get a presentable name
  *
- *  The returned string may be overwritten as soon as a new string is queried. 
+ *  The type argument should select the folloing string in return:<br> 
+ *  - oy_NAME_NAME - a readable ID
+ *  - oy_NAME_NICK - the hash ID
+ *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
  *
- *  @since Oyranos: version 0.1.8
- *  @date  26 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/23
  */
 OYAPI const oyChar* OYEXPORT
                    oyProfile_GetText ( oyProfile_s       * s,
                                        oyNAME_e            type )
 {
   int error = !s;
-  const oyChar * text = 0;
+  const char * text = 0;
+  char ** texts = 0;
+  int32_t texts_n = 0;
+  oyProfileTag_s * tag = 0;
 
-  /*if(!error)
-    oyProfile_GetCMMPtr_(s, 0);*/
 
   if(!error)
     if(type <= oyNAME_DESCRIPTION)
@@ -5172,24 +5176,32 @@ OYAPI const oyChar* OYEXPORT
 
     /* Ask the CMM? */
     if(!found && !error &&
-       type > oyNAME_DESCRIPTION)
+       type == oyNAME_DESCRIPTION)
     {
-      const char * cmm = 0;
-
-      if(!error && !cmm)
-        cmm = oyModuleGetActual(0);
-
-      if(cmm)
       {
-        oyChar * tmp = 0;/*oyProfile_GetCMMText_(s, oyNAME_NAME,
-                                             oyLanguage(), oyCountry());*/
+        tag = oyProfile_GetTagById( s, icSigProfileDescriptionTag );
+        texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
 
-        if(tmp)
+        if(texts_n && texts[0] && oyStrlen_(texts[0]))
         {
-          oySprintf_(temp, "%s", tmp);
+          memcpy(temp, texts[0], oyStrlen_(texts[0]));
+          temp[oyStrlen_(texts[0])] = 0;
           found = 1;
 
-          s->oy_->deallocateFunc_(tmp);
+          oyStringListRelease_( &texts, texts_n, tag->oy_->deallocateFunc_ );
+        } else
+          /* we try to get something as oyNAME_NAME */
+        if(s->file_name_ && oyStrlen_(s->file_name_))
+        {
+          size_t len = oyStrlen_(s->file_name_);
+          if(strrchr(s->file_name_,'/'))
+          {
+            len = oyStrlen_(s->file_name_);
+            memcpy( temp, strrchr(s->file_name_,'/')+1, len );
+          } else
+            memcpy( temp, s->file_name_, len );
+          temp[len] = 0;
+          found = 1;
         }
       }
     }
@@ -5229,12 +5241,12 @@ OYAPI const oyChar* OYEXPORT
       error = 1;
 
     if(!error)
-      error = oyObject_SetName( s->oy_, temp, oyNAME_NAME );
+      error = oyObject_SetName( s->oy_, temp, type );
 
     oyFree_m_( temp );
 
     if(!error)
-      text = oyObject_GetName( s->oy_, oyNAME_NAME );
+      text = oyObject_GetName( s->oy_, type );
   }
 
   return text;
