@@ -91,7 +91,7 @@ int                oyraIconv         ( const char        * input,
   if(!loc)
     loc = "UTF-8";
 
-  cd = iconv_open(loc,"UTF-16LE");
+  cd = iconv_open(loc,from_codeset);
   size = iconv( cd, &in_txt, &in_left, &out_txt, &out_left);
   iconv_close( cd );
   *out_txt = 0;
@@ -290,12 +290,9 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
  *
  *  - icSigMultiLocalizedUnicodeType:
  *    - since Oyranos 0.1.8 (API 0.1.8)
- *    - honours language and country args for the *n argument with [0,1]
- *    - honours a 0 and 1 in the integer pointed to in n (*n == [0,1],
- *      to return just the selected string
- *    - with all other values pointed to in n (*n == [-1,*,!0,!1], 
- *      all localisation strings are returned, 
- *      with the language code in the odd and the string in the even string
+ *    - list: will contain oyName_s objects
+ *      - oyName_s::name will hold the name
+ *      - oyName_s::lang will hold i18n specifier, e.g. \"en_GB\"
  *
  *  - icSigSignatureType:
  *    - since Oyranos 0.1.8 (API 0.1.8)
@@ -340,7 +337,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                                        oyProfileTag_s    * tag )
 {
   oyStructList_s * values = 0;
-  icUInt32Number error = 0, len, count = 0;
+  icUInt32Number error = 0, len = 0, count = 0;
   oyStructList_s * texts = 0, * temp = 0;
   char * tmp = 0;
   char * mem = 0;
@@ -614,10 +611,11 @@ oyStructList_s * oyraProfileTag_GetValues(
                  oyStruct_s * oy_struct = 0;
                  char * t = 0;
 
-                 error = tag->size_ < 20 + i * groesse + g*2 + 4;
+                 error = tag->size_ < 20 + i * groesse + g + 4;
                  if(!error)
                  {
-                   t = (char*) oyAllocateFunc_((g > 8) ? g : 8);
+                   len = (g > 1) ? g : 8;
+                   t = (char*) oyAllocateFunc_(len);
                    error = !t;
                  }
 
@@ -639,16 +637,21 @@ oyStructList_s * oyraProfileTag_GetValues(
                                                   [24+ i*groesse] );
 
                  if(!error)
-                   error = dversatz + g > tag->size_;
+                   error = dversatz + len > tag->size_;
 
                  if(!error)
                  {
                    /* ICC says UTF-16BE */
                    error = oyraIconv( &mem[dversatz], len, t, "UTF-16BE" );
 
-                   name->name = t;
                    oy_struct = (oyStruct_s*) name;
-                   oyStructList_MoveIn( texts, &oy_struct, -1 );
+                   /* eigther text or we have a non translatable string */
+                   if(oyStrlen_(t) || oyStructList_Count(texts))
+                   {
+                     name->name = t;
+                     oyStructList_MoveIn( texts, &oy_struct, -1 );
+                   } else
+                     name->release(&oy_struct);
                  }
                }
 
@@ -1484,18 +1487,6 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
 
 
 
-int      oyWidget_SetDefaultEditingRgbParameters (
-                                       oyWidget_s        * def_wid_edit_rgb )
-{
-  oyWidget_s * s = def_wid_edit_rgb;
-  int error = !s;
-
-  if(!(s->type_ == oyOBJECT_TYPE_WIDGET_S && s->parameter &&
-       s->parameter->vcommon.type_ == oyOBJECT_TYPE_WIDGET_CHOICE_S))
-    error = 1;
-
-  return error;
-}
 
 /** @func    oyraWidget_Get
  *  @brief   get default widgets
@@ -1503,10 +1494,10 @@ int      oyWidget_SetDefaultEditingRgbParameters (
  *  @since   2008/02/09 (Oyranos: 0.1.8)
  *  @date    2008/02/09
  */
-oyWidget_s * oyraWidget_Get          ( const char        * func_name,
+char       * oyraWidget_Get          ( const char        * func_name,
                                        uint32_t          * result )
 {
-  oyWidget_s * wid = 0;
+  char       * wid = 0;
 
   if(!func_name || !oyStrlen_(func_name))
     return wid;
@@ -1649,11 +1640,11 @@ oyWidget_s   oyra_default_top_widgets = {
   return wid;
 }
 
-oyWidget_s * oyraWidget_GetDummy     ( const char        * func_name,
+const char * oyraWidget_GetDummy     ( const char        * func_name,
                                        uint32_t          * result )
 {return 0;}
 oyWIDGET_EVENT_e oyraWidget_EventDummy
-                                     ( oyWidget_s        * wid,
+                                     ( const char        * wid,
                                        oyWIDGET_EVENT_e    type )
 {return 0;}
 
