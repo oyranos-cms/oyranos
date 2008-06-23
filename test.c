@@ -40,7 +40,7 @@ main(int argc, char** argv)
 {
   int i;
   uint32_t size = 0;
-  char ** profiles = oyProfileListGet ( "prtr", &size, malloc );
+  char ** profiles = oyProfileListGet ( 0, &size, malloc );
   oyProfileList_s * iccs, * patterns;
   oyProfile_s * profile, * temp_prof;
 
@@ -66,7 +66,9 @@ main(int argc, char** argv)
   for( i = 0; i < size; ++i)
   {
     temp_prof = oyProfileList_Get( iccs, i );
-    printf("%d: %s %s\n", i, oyProfile_GetText( temp_prof, oyNAME_NAME ), oyProfile_GetFileName(temp_prof, 0));
+    printf("%d: \"%s\" %s\n", i,
+                             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
+                             oyProfile_GetFileName(temp_prof, 0));
     oyProfile_Release( &temp_prof );
   }
 
