@@ -86,7 +86,7 @@ oyCheckProfile_                    (const char* name,
     size = 128;
     header = oyReadFileToMem_ (fullName, &size, oyAllocateFunc_); DBG_PROG
     if (size >= 128)
-      r = oyCheckProfile_Mem (header, 128, coloursig);
+      r = oyCheckProfileMem_ (header, 128, coloursig);
   }
 
   /* release memory */
@@ -101,7 +101,7 @@ oyCheckProfile_                    (const char* name,
 }
 
 int
-oyCheckProfile_Mem                 (const void* mem, size_t size,
+oyCheckProfileMem_                 (const void* mem, size_t size,
                                     const char* coloursig)
 {
   char* block = (char*) mem;

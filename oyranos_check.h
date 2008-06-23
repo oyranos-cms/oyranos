@@ -39,7 +39,7 @@
 /* separate from the external functions */
 
 int	oyCheckProfile_                   (const char* name,const char* coloursig);
-int	oyCheckProfile_Mem                (const void* mem, size_t size,
+int	oyCheckProfileMem_                (const void* mem, size_t size,
                                            const char* coloursig);
 
 int     oyProfileGetMD5_             ( void       * buffer,
