@@ -141,11 +141,13 @@ typedef enum {
   oyWIDGET_UNDEFINED
 } oyWIDGET_EVENT_e;
 
-typedef const char* (*oyWidget_Get_t)( const char        * func_name,
+typedef oyOptions_s*(*oyOptions_Get_t)(oyOptions_s       * validate,
                                        uint32_t          * result );
-typedef oyWIDGET_EVENT_e   (*oyWidget_Event_t)
-                                     ( const char        * wid,
-                                       oyWIDGET_EVENT_e    type );
+typedef const char* (*oyWidgetGet_t) ( uint32_t          * result );
+typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_t)
+                                     ( oyOptions_s       * options,
+                                       oyWIDGET_EVENT_e    type,
+                                       oyStruct_s        * event );
 
 
 
@@ -164,9 +166,6 @@ struct oyCMMapi_s {
   oyCMMInit_t      oyCMMInit;
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
   oyCMMCanHandle_t oyCMMCanHandle;
-
-  oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
-  oyWidget_Event_t oyWidget_Event;   /**< handle widget events */
 };
 
 
@@ -185,9 +184,6 @@ typedef struct {
   oyCMMInit_t      oyCMMInit;
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
   oyCMMCanHandle_t oyCMMCanHandle;
-
-  oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
-  oyWidget_Event_t oyWidget_Update;   /**< handle widget events */
 
   oyCMMProfile_Open_t oyCMMProfile_Open;
   /*oyCMMProfile_GetText_t oyCMMProfile_GetText;*/
@@ -242,9 +238,6 @@ typedef struct {
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
   oyCMMCanHandle_t oyCMMCanHandle;
 
-  oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
-  oyWidget_Event_t oyWidget_Event;   /**< handle widget events */
-
   oyGetMonitorInfo_t oyGetMonitorInfo;
   oyGetScreenFromPosition_t oyGetScreenFromPosition;
 
@@ -285,9 +278,6 @@ typedef struct {
   oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
   oyCMMCanHandle_t oyCMMCanHandle;
 
-  oyWidget_Get_t   oyWidget_Get;       /**< provide a widget to embedd into UI*/
-  oyWidget_Event_t oyWidget_Event;     /**< handle widget events */
-
   oyCMMProfileTag_GetValues_t oyCMMProfileTag_GetValues;
   oyCMMProfileTag_Create_t oyCMMProfileTag_Create;
 } oyCMMapi3_s;
@@ -296,22 +286,48 @@ typedef struct {
 /** @type    oyCMMConversion_CreateBasic_t
  *  @brief   create a basic filter context from two images
  *
- *           This function is intented for basic colour conversions like for
- *           toolkits, which dont want fancy stuff involved.
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/24
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ */
+typedef int      (*oyCMMConversion_Create_t) (
+                                       oyFilter_s        * filter,
+                                       oyCMMptr_s        * oy );
+
+
+/** @struct oyCMMapi4_s
+ *  @brief the API 4 to implement and set to provide Filter support
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/06/13
- *  @since   2008/06/13 (Oyranos: 0.1.8)
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/06/24
  */
-typedef int      (*oyCMMConversion_CreateBasic_t) (
-                                       oyCMMptr_s       ** cmm_profile_array,
-                                       int                 profiles_n,
-                                       uint32_t            pixel_layout_in,
-                                       uint32_t            pixel_layout_out,
-                                       int                 intent,
-                                       int                 proofing_intent,
-                                       uint32_t            flags,
-                                       oyCMMptr_s        * oy );
+typedef struct {
+  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API3_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
+  oyCMMapi_s     * next;
+
+  oyCMMInit_t      oyCMMInit;
+  oyCMMMessageFuncSet_t oyCMMMessageFuncSet;
+  oyCMMCanHandle_t oyCMMCanHandle;
+
+
+  oyFILTER_TYPE_e  filter_type;        /**< filter type */
+  const char     * registration;       /**< a registration name, e.g. "org.oyranos.lcms" */
+
+  const char     * widgets;            /**< Oyranos XForms subset widgets */
+  oyOptions_Get_t  oyOptions_Get;      /**< provide options */
+  oyWidgetEvent_t  oyWidget_Event;     /**< handle widget events */
+
+  oyName_s         name;               /**< translatable, eg "lcms" "little cms" "..." */
+  const char       category[256];      /**< menu structure */
+  oyOptions_s    * options;            /**< options */
+  char *         * opts_ui_;           /**< xml ui elements for filter options*/
+
+
+} oyCMMapi4_s;
 
 
 #ifdef __cplusplus

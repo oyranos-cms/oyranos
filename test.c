@@ -34,18 +34,31 @@
 
 #include <oyranos.h>
 #include <oyranos_alpha.h>
+#include <oyranos_texts.h> // oyStringListRelease_
+
+/* forward declaration for oyranos_alpha.c */
+char ** oyCMMsGetNames_              ( int               * n,
+                                       oyOBJECT_TYPE_e   * types,
+                                       int                 types_n );
+oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
+char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
 
 int
 main(int argc, char** argv)
 {
-  int i;
+  int i, count = 0;
   uint32_t size = 0;
-  char ** profiles = oyProfileListGet ( 0, &size, malloc );
+  char ** profiles = oyProfileListGet ( 0, &size, malloc ),
+       ** texts = 0,
+        * text = 0;
   oyProfileList_s * iccs, * patterns;
   oyProfile_s * profile, * temp_prof;
+  oyCMMInfo_s * cmm_info = 0;;
 
   for( i = 0; i < (int) size; ++i )
     printf( "%d: %s\n", i, profiles[i]);
+
+  oyStringListRelease_( &profiles, size, free );
 
   profile = oyProfile_FromSignature( icSigInputClass,
                                         oySIGNATURE_CLASS, 0 );
@@ -71,6 +84,15 @@ main(int argc, char** argv)
                              oyProfile_GetFileName(temp_prof, 0));
     oyProfile_Release( &temp_prof );
   }
+
+  texts = oyCMMsGetNames_(&count, 0 ,0 );
+  for( i = 0; i < count; ++i)
+  {
+    cmm_info = oyCMMGet_( texts[i] );
+    text = oyCMMInfoPrint_( cmm_info );
+    printf("%d: \"%s\": %s\n", i, texts[i], text );
+  }
+  oyStringListRelease_( &texts, count, free );
 
   return 0;
 }

@@ -862,15 +862,6 @@ int            lcmsCMMMessageFuncSet ( oyMessageFunc_t     message_func )
 }
 
 
-const char * lcmsWidget_GetDummy     ( const char        * func_name,
-                                       uint32_t          * result )
-{return 0;}
-oyWIDGET_EVENT_e lcmsWidget_EventDummy
-                                     ( const char        * wid,
-                                       oyWIDGET_EVENT_e    type )
-{return 0;}
-
-
 
 /** @instance lcms_api1
  *  @brief    lcms oyCMMapi1_s implementations
@@ -888,9 +879,6 @@ oyCMMapi1_s  lcms_api1 = {
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,
   lcmsCMMCanHandle,
-
-  lcmsWidget_GetDummy,
-  lcmsWidget_EventDummy,
 
   lcmsCMMProfile_Open,
   /*lcmsCMMProfile_GetText,*/
@@ -917,7 +905,7 @@ oyCMMInfo_s lcms_cmm_module = {
   "0.6",
   {oyOBJECT_TYPE_NAME_S, 0,0,0,"lcms", "Little CMS", "LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license."},
   {oyOBJECT_TYPE_NAME_S, 0,0,0,"Marti", "Marti Maria", "littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"},
-  {oyOBJECT_TYPE_NAME_S, 0,0,0,"MIT", "Copyright (c) 1998-2007 Marti Maria Saguer", "MIT license: http://www.opensource.org/licenses/mit-license.php"},
+  {oyOBJECT_TYPE_NAME_S, 0,0,0,"MIT", "Copyright (c) 1998-2008 Marti Maria Saguer", "MIT license: http://www.opensource.org/licenses/mit-license.php"},
   108,
 
   (oyCMMapi_s*) & lcms_api1,

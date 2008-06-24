@@ -1661,9 +1661,6 @@ oyCMMapi_s   oyra_api = {
   oyraCMMInit,
   oyraCMMMessageFuncSet,
   oyraCMMCanHandle,
-
-  oyraWidget_GetDummy,
-  oyraWidget_EventDummy
 };
 
 /** @instance oyra_api3
@@ -1682,9 +1679,6 @@ oyCMMapi3_s  oyra_api3 = {
   oyraCMMInit,
   oyraCMMMessageFuncSet,
   oyraProfileCanHandle,
-
-  oyraWidget_GetDummy,
-  oyraWidget_EventDummy,
 
   oyraProfileTag_GetValues,
   oyraProfileTag_Create
@@ -1705,7 +1699,7 @@ oyCMMInfo_s oyra_cmm_module = {
   "0.1.8",
   {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, "Oyranos modules", "Oyranos supplied modules"},
   {oyOBJECT_TYPE_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/#download"},
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2007 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyra_api3,

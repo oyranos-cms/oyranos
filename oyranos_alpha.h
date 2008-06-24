@@ -98,8 +98,8 @@ extern const char *oy_domain_codeset;
  */
 typedef enum {
   oyOBJECT_TYPE_NONE,
-  oyOBJECT_TYPE_OBJECT_S,
-  oyOBJECT_TYPE_DISPLAY_S,
+  oyOBJECT_TYPE_OBJECT_S,             /**< oyObject_s */
+  oyOBJECT_TYPE_DISPLAY_S,            /**< oyDisplay_s */
   oyOBJECT_TYPE_NAMED_COLOUR_S,       /*!< oyNamedColour_s */
   oyOBJECT_TYPE_NAMED_COLOURS_S,      /*!< oyNamedColours_s */
   oyOBJECT_TYPE_PROFILE_S,            /*!< oyProfile_s */
@@ -127,6 +127,7 @@ typedef enum {
   oyOBJECT_TYPE_CMM_API1_S,           /**< oyCMMapi1_s */
   oyOBJECT_TYPE_CMM_API2_S,           /**< oyCMMapi2_s */
   oyOBJECT_TYPE_CMM_API3_S,           /**< oyCMMapi3_s */
+  oyOBJECT_TYPE_CMM_API4_S,           /**< oyCMMapi4_s */
   oyOBJECT_TYPE_CMM_API_MAX,          /**< not defined */
   oyOBJECT_TYPE_ICON_S = 80,          /*!< oyIcon_s */
   oyOBJECT_TYPE_MODULE_S,             /*!< oyModule_s */
@@ -464,33 +465,32 @@ typedef struct {
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  uint32_t             n;              /*!< number of options */
-  oyOption_s         * opts;
+  oyStructList_s     * opts;
 } oyOptions_s;
 
-#if 0
 /** allocate n oyOption_s */
-oyOptions_s*   oyOptions_Create       ( int n,
-                                        oyObject_s        object);
-/** allocate oyOption_s for a 4 char CMM identifier obtained by oyModulsGetNames
- */
-oyOptions_s*   oyOptions_CreateFor    ( const char      * cmm,
-                                        oyObject_s      * object);
-void           oyOptions_Release      ( oyOptions_s     * options );
-oyPointer      oyOptions_Align        ( oyOptions_s     * options,
-                                        size_t          * size,
-                                        oyAllocFunc_t     allocateFunc );
+oyOptions_s *  oyOptions_FromMem     ( oyOptions_s       * options,
+                                       size_t            * size,
+                                       const char        * opts_text,
+                                       oyObject_s          object );
+oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
+                                       oyObject_s          object );
+void           oyOptions_Release     ( oyOptions_s      ** options );
 
-/** confirm if all is ok
 
-  @param[in]   opts      the options to verify
-  @param[in]   cmm       the CMM to check for
-  @return                NULL for no error, or non conforming options
- */
-oyOptions_s*   oyOptions_VerifyForCMM ( oyOptions_s     * opts,
-                                        const char      * cmm,
-                                        oyObject_s        object);
-#endif
+int            oyOptions_ReleaseAt   ( oyOptions_s       * list,
+                                       int                 pos );
+oyOption_s *   oyOptions_Get         ( oyOptions_s       * list,
+                                       int                 pos );
+int            oyOptions_Count       ( oyOptions_s       * list );
+int            oyOptions_MoveIn      ( oyOptions_s       * options,
+                                       oyOption_s       ** option );
+int            oyOptions_Add         ( oyOptions_s       * options,
+                                       oyOption_s        * option );
+char           oyOptions_GetMem      ( oyOptions_s       * options,
+                                       size_t            * size,
+                                       oyAllocFunc_t       allocateFunc );
+
 
 /** @brief general profile infos
  *
@@ -632,15 +632,16 @@ typedef struct {
 } oyProfileList_s;
 
 OYAPI oyProfileList_s * OYEXPORT
-                   oyProfileList_New ( oyObject_s          object );
+                 oyProfileList_New   ( oyObject_s          object );
 OYAPI oyProfileList_s * OYEXPORT
-                   oyProfileList_Copy( oyProfileList_s   * profile_list,
+                 oyProfileList_Copy  ( oyProfileList_s   * profile_list,
                                        oyObject_s          object);
 OYAPI oyProfileList_s * OYEXPORT
                  oyProfileList_Create( oyProfileList_s   * patterns,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
                  oyProfileList_Release(oyProfileList_s  ** profile_list );
+
 
 oyProfileList_s* oyProfileList_MoveIn( oyProfileList_s   * list,
                                        oyProfile_s      ** ptr,
@@ -961,26 +962,26 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
 typedef enum {
   oyFILTER_TYPE_COLOUR,                /**< colour */
   oyFILTER_TYPE_TONEMAP,               /**< contrast or tone mapping */
+  oyFILTER_TYPE_IMAGE,                 /**< image */
   oyFILTER_TYPE_GENERIC                /**< generic */
 } oyFILTER_TYPE_e;
 
-typedef struct oyFilter_s_ oyFilter_s;
-typedef oyOptions_s * (*oyFilter_CheckDataF_t)
-                                     ( oyFilter_s        * filter,
-                                       oyOptions_s       * options,
-                                       oyStructList_s   ** images,
-                                       oyProfileList_s  ** profiles );
-typedef char *        (*oyFilter_GetUiF_t)
-                                     ( oyFilter_s        * filter );
-typedef oyOptions_s * (*oyFilter_GetOptionsF_t)
-                                     ( oyFilter_s        * filter );
 
+typedef struct oyFilter_s_ oyFilter_s;
+typedef struct oyFilters_s_ oyFilters_s;
 
 /** @struct oyFilter_s_
  *  @brief  a filter to manipulate a image
  *
- *  This is the filter object you get from Oyranos, set the options and
- *  chain into a conversion.
+ *  This is the Oyranos filter object. There are basic classes of filters.
+ *  Filters are a container concept. They can contain various data.
+ *  Filters are chained into a oyConversions_s in order to get applied to data.
+ *
+ *  The oyFILTER_TYPE_e describes different basic types of filters.
+ *  - oyFILTER_TYPE_COLOUR filters contain only profiles and options. They can grab their surounding and concatenate the neighbour profiles to one profile transform for speed.
+ *  - oyFILTER_TYPE_TONEMAP filters are similiar to oyFILTER_TYPE_COLOUR except they can work in a two dimensional domain to apply to HDR content. This distinction is driven by usage. A oyFILTER_TYPE_TONEMAP filter may contain profiles and options. But this is not required.
+ *  - oyFILTER_TYPE_IMAGE is a container for one oyImage_s.
+ *  - oyFILTER_TYPE_GENERIC can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
  *
  *  @param   profile_in
  *  @param   profile_out               should not be zero for a CMM.
@@ -998,30 +999,73 @@ struct oyFilter_s_ {
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  uint32_t             id;             /**< identification for Oyranos */
-  oyName_s             name;           /**< nick, name, description/help */
-
-  oyProfile_s        * profile_in;     /**< colour space expected on input */
-  oyProfile_s        * profile_out;    /**< colour space provided on output */
+  uint32_t             id_;            /**< identification for Oyranos */
+  const char         * registration_;  /**< a registration name, e.g. "org.oyranos.lcms" */
+  oyName_s           * name_;          /**< nick, name, description/help */
+  char                 cmm_[8];        /**< cmm name to look up for infos */
 
   oyFILTER_TYPE_e      filter_type_;   /**< filter type */
-  char               * category_;      /**< the ui category for this filter */
+  char               * category_;      /**< the ui menue category for this filter */
 
-  oyFilter_GetUiF_t    uiGet_;         /**< get the filter part */
-  oyFilter_CheckDataF_t optionsCheck_; /**< filter options validator */
-  oyFilter_GetOptionsF_t optionsGet_;  /**< standard filter options */
-
-  oyOptions_s        * options;        /**< options */
+  oyOptions_s        * options_;       /**< options */
   char *             * opts_ui_;       /**< xml ui elements for filter options*/
 
-  oyStructList_s     * images;         /**< images */
-  oyProfileList_s    * profiles;       /**< profiles */
+  oyImage_s          * image_;         /**< image, used for oyFILTER_TYPE_IMAGE */
+  oyProfileList_s    * profiles_;      /**< profiles */
 
-  oyStructList_s     * data;           /**< the filter private data */
+  oyFilters_s        * parents_;       /**< parent filters */
+  oyFilters_s        * children_;      /**< child filters */
+
+  oyFilter_s         * merged_to_;     /**< the filter, which does processing */
+
+  oyStructList_s     * data_;          /**< the filter private data */
 };
 
-int          oyFilter_OptionsCheck   ( oyFilter_s        * filter );
-                                       
+oyFilter_s * oyFilter_Create         ( oyFILTER_TYPE_e     type,
+                                       const char        * category,
+                                       const char        * cmm,
+                                       oyObject_s          object );
+int          oyFilter_Copy           ( oyFilter_s       ** filter,
+                                       oyObject_s          object );
+int          oyFilter_Release        ( oyFilter_s       ** filter );
+
+
+const char * oyFilter_NameGet        ( oyFilter_s        * filter,
+                                       oyNAME_e            name_type );
+const char * oyFilter_CategoryGet    ( oyFilter_s        * filter,
+                                       int                 nontranslated );
+#define oyFILTER_SET_TEST              0x01        /** only test */
+#define oyFILTER_GET_DEFAULT           0x01        /** defaults */
+/* decode */
+#define oyToFilterSetTest_m(r)         ((r)&1)
+#define oyToFilterGetDefaults_m(r)     ((r)&1)
+oyOptions_s* oyFilter_OptionsSet     ( oyFilter_s        * filter,
+                                       oyOptions_s       * options,
+                                       int                 flags );
+oyOptions_s* oyFilter_OptionsGet     ( oyFilter_s        * filter,
+                                       int                 flags );
+const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
+                                       const char        * widgets,
+                                       int                 flags );
+const char * oyFilter_WidgetsGet     ( oyFilter_s        * filter,
+                                       int                 flags );
+oyProfileList_s* oyFilter_ProfilesSet( oyFilter_s        * filter,
+                                       oyProfileList_s   * profiles,
+                                       int                 flags );
+oyProfileList_s* oyFilter_ProfilesGet( oyFilter_s        * filter,
+                                       int                 flags );
+int          oyFilter_FilterSet      ( oyFilter_s        * filter,
+                                       oyFilters_s       * parents,
+                                       oyFilters_s       * children,
+                                       int                 flags );
+int          oyFilter_FilterGet      ( oyFilter_s        * filter,
+                                       oyFilters_s      ** parents,
+                                       oyFilters_s      ** cildren );
+int          oyFilter_ImageSet       ( oyFilter_s        * filter,
+                                       oyImage_s         * image,
+                                       int                 flags );
+oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter );
+
 
 /** @struct oyFilters_s
  *  @brief  a filter list
@@ -1032,14 +1076,14 @@ int          oyFilter_OptionsCheck   ( oyFilter_s        * filter );
  *  @since   2008/06/18 (Oyranos: 0.1.8)
  *  @date    2008/06/18
  */
-typedef struct {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_FILTER_S*/
+struct oyFilters_s_ {
+  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_FILTERS_S*/
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
   oyStructList_s     * filters;        /**< the filters */
-} oyFilters_s;
+};
 
 
 
@@ -1047,11 +1091,6 @@ typedef struct {
  *  @brief  a filter chain to manipulate a image
  *
  *  Order of filters matters.
- *
- *  @param   image_in
- *  @param   image_out                 
- *  @param   type                      is the functional type of filter 
- *  @param   category                  is useful for building menues
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/08 (Oyranos: 0.1.8)
@@ -1063,10 +1102,7 @@ typedef struct {
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyImage_s          * image_in;       /**< input image */
-  oyImage_s          * image_out;      /**< typical one output image */
-
-  oyFilter_s         * filters;        /**< a set of filters */
+  oyFilter_s         * filter;         /**< the input image filter */
 } oyConversions_s;
 
 oyConversions_s  * oyConversions_CreateBasic (
@@ -1294,7 +1330,7 @@ typedef struct {
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
-  char             cmm[4];             /*!< ICC signature, eg 'lcms' */
+  char             cmm[8];             /*!< ICC signature, eg 'lcms' */
   char           * backend_version;    /*!< non translatable, eg "v1.17" */
   oyName_s         name;               /*!< translatable, eg "lcms" "little cms" "..." */
   oyName_s         manufacturer;       /*!< translatable, eg "Marti" "Marti Maria" "support email: @; internet: www.littlecms.com; sources: ..." */
