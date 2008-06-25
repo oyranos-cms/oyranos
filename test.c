@@ -95,7 +95,7 @@ main(int argc, char** argv)
   }
   oyStringListRelease_( &texts, count, free );
 
-  filter = oyFilter_Create( oyFILTER_TYPE_COLOUR, "image", 0, 0 );
+  filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "image", 0, 0 );
 
   return 0;
 }

@@ -432,6 +432,18 @@ typedef union {
   char          ** string_list;        /**< null terminated */
 } oyValue_u;
 
+void           oyValueCopy           ( oyValue_u         * from,
+                                       oyValue_u         * to,
+                                       oyVALUETYPE_e       type,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocateFunc );
+void           oyValueRelease        ( oyValue_u        ** value,
+                                       oyVALUETYPE_e       type,
+                                       oyDeAllocFunc_t     deallocateFunc );
+void           oyValueClear          ( oyValue_u         * v,
+                                       oyVALUETYPE_e       type,
+                                       oyDeAllocFunc_t     deallocateFunc );
+
 /** @brief Option for rendering
 
     @todo include the oyOptions_t_ type for gui elements
@@ -452,7 +464,7 @@ typedef struct {
   oyObject_s           oy_;            /**< base object */
 
   uint32_t             id;             /**< id to map for instance to events and widgets */
-  oyName_s             name;           /**< nick, name, description/help */
+  oyName_s           * name;           /**< nick, name, description/help */
   const char         * config_path;    /**< full key name to store configuration, use three point separated string, eg "org.oyranos.lcms" */
   const char         * config_key;     /**< key name to store configuration, eg "transform_precalculation" */
   oyVALUETYPE_e        value_type;     /**< the type in value */
@@ -462,6 +474,11 @@ typedef struct {
   oyValue_u            end;            /**< value range end */
   uint32_t             flags;          /**<  */
 } oyOption_s;
+
+oyOption_s *   oyOption_New          ( oyObject_s          object );
+oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
+                                       oyObject_s          object );
+int            oyOption_Release      ( oyOption_s       ** option );
 
 /** @brief Options for rendering
     Options can be any flag or rendering intent and other informations needed to
@@ -476,14 +493,12 @@ typedef struct {
   oyStructList_s     * opts;
 } oyOptions_s;
 
-/** allocate n oyOption_s */
-oyOptions_s *  oyOptions_FromMem     ( oyOptions_s       * options,
-                                       size_t            * size,
+oyOptions_s *  oyOptions_FromMem     ( size_t            * size,
                                        const char        * opts_text,
                                        oyObject_s          object );
 oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
                                        oyObject_s          object );
-void           oyOptions_Release     ( oyOptions_s      ** options );
+int            oyOptions_Release     ( oyOptions_s      ** options );
 
 
 int            oyOptions_ReleaseAt   ( oyOptions_s       * list,
@@ -1023,7 +1038,7 @@ struct oyFilter_s_ {
   oyImage_s          * stream_;         /**< access to pixel stream */
 };
 
-oyFilter_s * oyFilter_Create         ( oyFILTER_TYPE_e     type,
+oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,
                                        const char        * category,
                                        const char        * cmm,
                                        oyObject_s          object );

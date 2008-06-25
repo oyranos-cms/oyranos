@@ -4358,6 +4358,469 @@ oyChar* oyCMMCacheListPrint_()
 
 
 
+/** @func    oyValueCopy
+ *  @brief   copy a oyValue_u union
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+void           oyValueCopy           ( oyValue_u         * from,
+                                       oyValue_u         * to,
+                                       oyVALUETYPE_e       type,
+                                       oyAllocFunc_t       allocateFunc,
+                                       oyDeAllocFunc_t     deallocateFunc )
+{
+  int n = 0, i;
+
+  if(!from || !to)
+    return;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_; 
+
+  switch(type)
+  {
+  case oyVAL_INT: to->int32 = from->int32; break;
+  case oyVAL_INT_LIST:
+       if(!from->int32_list)
+         return;
+
+       n = from->int32_list[0];
+
+       if(to->int32_list && deallocateFunc)
+         deallocateFunc(to->int32_list);
+
+       to->int32_list = allocateFunc( (n+1) * sizeof(int32_t) );
+       to->int32_list[0] = n;
+       for(i = 1; i <= n; ++i)
+         to->int32_list[i] = from->int32_list[i];
+       break;
+  case oyVAL_DOUBLE: to->dbl = from->dbl; break;
+  case oyVAL_DOUBLE_LIST:
+       if(!from->dbl_list)
+         return;
+
+       n = from->dbl_list[0];
+
+       if(to->dbl_list && deallocateFunc)
+         deallocateFunc(to->dbl_list);
+
+       to->dbl_list = allocateFunc( (n+1) * sizeof(double));
+
+       to->dbl_list[0] = n;
+       for(i = 1; i <= n; ++i)
+         to->dbl_list[i] = from->dbl_list[i];
+
+       break;
+  case oyVAL_STRING:
+       to->string = oyStringCopy_(from->string, allocateFunc);
+       break;
+  case oyVAL_STRING_LIST:
+       if(!from->string_list)
+         return;
+
+       if(to->string_list && deallocateFunc)
+       {
+         i = 0;
+         while(to->string_list[i])
+           deallocateFunc(to->string_list[i++]);
+         deallocateFunc(to->string_list);
+       }
+
+       i = 0;
+       n = 0;
+       while((size_t)from->string_list[i])
+         ++n;
+
+       to->string_list = allocateFunc( n * sizeof(char*));
+       i = 0;
+       while(from->string_list[i])
+       {
+         to->string_list[i] = oyStringCopy_(from->string_list[i], allocateFunc);
+         ++i;
+       }
+       to->string_list[n] = 0;
+
+       break;
+  }
+}
+void           oyValueClear          ( oyValue_u         * v,
+                                       oyVALUETYPE_e       type,
+                                       oyDeAllocFunc_t     deallocateFunc )
+{
+  int i;
+
+  if(!v)
+    return;
+
+  if(!deallocateFunc)
+    return; 
+
+  switch(type)
+  {
+  case oyVAL_INT:
+  case oyVAL_DOUBLE:
+       break;
+  case oyVAL_INT_LIST:
+  case oyVAL_DOUBLE_LIST:
+       if(!v->int32_list)
+         break;
+
+       if(v->int32_list)
+         deallocateFunc(v->int32_list);
+
+       break;
+  case oyVAL_STRING:
+       deallocateFunc( v->string );
+       break;
+  case oyVAL_STRING_LIST:
+       if(!v->string_list)
+         break;
+
+       if(v->string_list)
+       {
+         i = 0;
+         while(v->string_list[i])
+           deallocateFunc(v->string_list[i++]);
+         deallocateFunc(v->string_list);
+       }
+
+       break;
+  }
+}
+void           oyValueRelease        ( oyValue_u        ** v,
+                                       oyVALUETYPE_e       type,
+                                       oyDeAllocFunc_t     deallocateFunc )
+{
+  if(!v)
+    return;
+
+  if(!deallocateFunc)
+    return; 
+
+  oyValueClear( *v, type, deallocateFunc );
+
+  deallocateFunc(*v);
+  *v = 0;
+}
+
+/** @func    oyOption_New
+ *  @brief   new option
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyOption_s *   oyOption_New          ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_OPTION_S;
+# define STRUCT_TYPE oyOption_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyOption_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyOption_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  return s;
+}
+
+/** @func    oyOption_Copy_
+ *  @brief   real copy a option object
+ *
+ *  @param[in]     option              option object
+ *  @param         object              the obligate object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
+                                       oyObject_s          object )
+{
+  oyOption_s * s = 0;
+  int error = 0;
+  oyAllocFunc_t allocateFunc_ = 0;
+
+  if(!option || !object)
+    return s;
+
+  s = oyOption_New( object );
+  error = !s;
+  allocateFunc_ = s->oy_->allocateFunc_;
+
+  if(!error)
+  {
+    s->id = option->id;
+    s->name = oyName_copy( option->name, s->oy_ );
+    s->config_path = option->config_path;
+    s->config_key = option->config_key;
+    s->value_type = option->value_type;
+    oyValueCopy( &s->value, &option->value, s->value_type,
+                 allocateFunc_, s->oy_->deallocateFunc_ );
+    oyValueCopy( &s->standard, &option->standard, s->value_type,
+                 allocateFunc_, s->oy_->deallocateFunc_ );
+    oyValueCopy( &s->start, &option->start, s->value_type,
+                 allocateFunc_, s->oy_->deallocateFunc_ );
+    oyValueCopy( &s->end, &option->end, s->value_type,
+                 allocateFunc_, s->oy_->deallocateFunc_ );
+    s->flags = option->flags;
+  }
+
+  return s;
+}
+/** @func    oyOption_Copy
+ *  @brief   copy or reference a option
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
+                                       oyObject_s          object )
+{
+  oyOption_s * s = 0;
+
+  if(!option)
+    return s;
+
+  if(option && !object)
+  {
+    s = option;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyOption_Copy_( option, object );
+
+  return s;
+}
+
+/** @func    oyOption_Release
+ *  @brief   release a option
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+int            oyOption_Release      ( oyOption_s       ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyOption_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_OPTION_S)
+  {
+    WARNc_S(("Attempt to release a non oyOption_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  s->id = 0;
+  s->config_path = 0;
+  s->config_key = 0;
+  s->flags = 0;
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAllocFunc_t deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyValueClear( &s->value, s->value_type, deallocateFunc );
+    oyValueClear( &s->standard, s->value_type, deallocateFunc );
+    oyValueClear( &s->start, s->value_type, deallocateFunc );
+    oyValueClear( &s->end, s->value_type, deallocateFunc );
+
+    s->value_type = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** @func    oyOptions_New
+ *  @brief   new options
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyOptions_s *  oyOptions_New         ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_OPTIONS_S;
+# define STRUCT_TYPE oyOptions_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyOptions_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyOptions_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  return s;
+}
+
+oyOptions_s *  oyOptions_FromMem     ( size_t            * size,
+                                       const char        * opts_text,
+                                       oyObject_s          object );
+/** @func    oyOptions_Copy_
+ *  @brief   real copy a options object
+ *
+ *  @param[in]     options             options object
+ *  @param         object              the obligate object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyOptions_s * oyOptions_Copy_        ( oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  oyOptions_s * s = 0;
+  int error = 0;
+  oyAllocFunc_t allocateFunc_ = 0;
+
+  if(!options || !object)
+    return s;
+
+  s = oyOptions_New( object );
+  error = !s;
+  allocateFunc_ = s->oy_->allocateFunc_;
+
+  if(!error)
+  {
+    s->opts = oyStructList_Copy( options->opts, s->oy_ );
+  }
+
+  return s;
+}
+/** @func    oyOptions_Copy
+ *  @brief   release options
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  oyOptions_s * s = 0;
+
+  if(!options)
+    return s;
+
+  if(options && !object)
+  {
+    s = options;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyOptions_Copy_( options, object );
+
+  return s;
+}
+
+/** @func    oyOptions_Release
+ *  @brief   release options
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+int            oyOptions_Release     ( oyOptions_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyOptions_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_OPTIONS_S)
+  {
+    WARNc_S(("Attempt to release a non oyOptions_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyStructList_Release( &s->opts );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAllocFunc_t deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
+int            oyOptions_ReleaseAt   ( oyOptions_s       * list,
+                                       int                 pos );
+oyOption_s *   oyOptions_Get         ( oyOptions_s       * list,
+                                       int                 pos );
+int            oyOptions_Count       ( oyOptions_s       * list );
+int            oyOptions_MoveIn      ( oyOptions_s       * options,
+                                       oyOption_s       ** option );
+int            oyOptions_Add         ( oyOptions_s       * options,
+                                       oyOption_s        * option );
+char           oyOptions_GetMem      ( oyOptions_s       * options,
+                                       size_t            * size,
+                                       oyAllocFunc_t       allocateFunc );
+
 /** @} */
 
 
@@ -8039,7 +8502,6 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->options_ = cmm_api4->oyOptions_Get( 0, &ret );
     error = ret;
     s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
-    s->stream_ = cmm_api4->stream;
   }
 
   if(error)
@@ -8177,9 +8639,21 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
 
 
 const char * oyFilter_NameGet        ( oyFilter_s        * filter,
-                                       oyNAME_e            name_type );
+                                       oyNAME_e            name_type )
+{
+  if(!filter)
+    return 0;
+
+  return oyObject_GetName(filter->oy_, name_type);
+}
 const char * oyFilter_CategoryGet    ( oyFilter_s        * filter,
-                                       int                 nontranslated );
+                                       int                 nontranslated )
+{
+  if(!filter)
+    return 0;
+
+  return filter->category_;
+}
 #define oyFILTER_SET_TEST              0x01        /** only test */
 #define oyFILTER_GET_DEFAULT           0x01        /** defaults */
 /* decode */
@@ -8189,7 +8663,19 @@ oyOptions_s* oyFilter_OptionsSet     ( oyFilter_s        * filter,
                                        oyOptions_s       * options,
                                        int                 flags );
 oyOptions_s* oyFilter_OptionsGet     ( oyFilter_s        * filter,
-                                       int                 flags );
+                                       int                 flags )
+{
+  if(!filter)
+    return 0;
+
+#if 0
+  if(oyToFilterGetDefaults_m(flags))
+    return oyOptions_Copy( filter->cmm_api4->options, filter->oy_ );
+  else
+    return oyOptions_Copy( filter->options_, 0 );
+#endif
+  return 0;
+}
 const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
                                        const char        * widgets,
                                        int                 flags );
@@ -9067,7 +9553,7 @@ oyConversions_s  * oyConversions_CreateBasic (
     s->input = oyFilter_New( oyFILTER_TYPE_COLOUR, "image", 0, 0 );
     
     error = oyFilter_ImageSet ( s->input, input );
-
+    //TODO
   }
 
   if(error)
