@@ -158,6 +158,7 @@ struct oyStruct_s {
 
 oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
                                        size_t              size );
+const char * oyStruct_TypeToText     ( oyStruct_s        * oy_struct );
 
 typedef enum {
   oyNAME_NAME,                         /**< compatible to oyName_s/oyObject_s */
@@ -966,6 +967,7 @@ typedef enum {
   oyFILTER_TYPE_GENERIC                /**< generic */
 } oyFILTER_TYPE_e;
 
+const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     type );
 
 typedef struct oyFilter_s_ oyFilter_s;
 typedef struct oyFilters_s_ oyFilters_s;
@@ -1008,7 +1010,7 @@ struct oyFilter_s_ {
   char               * category_;      /**< the ui menue category for this filter */
 
   oyOptions_s        * options_;       /**< options */
-  char *             * opts_ui_;       /**< xml ui elements for filter options*/
+  char               * opts_ui_;       /**< xml ui elements for filter options*/
 
   oyImage_s          * image_;         /**< image, used for oyFILTER_TYPE_IMAGE */
   oyProfileList_s    * profiles_;      /**< profiles */
@@ -1025,7 +1027,7 @@ oyFilter_s * oyFilter_Create         ( oyFILTER_TYPE_e     type,
                                        const char        * category,
                                        const char        * cmm,
                                        oyObject_s          object );
-int          oyFilter_Copy           ( oyFilter_s       ** filter,
+oyFilter_s * oyFilter_Copy           ( oyFilter_s        * filter,
                                        oyObject_s          object );
 int          oyFilter_Release        ( oyFilter_s       ** filter );
 

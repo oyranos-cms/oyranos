@@ -194,7 +194,6 @@ uint32_t     oyCMMtoId               ( const char        * cmm );
 int          oyIdToCMM               ( uint32_t            cmmId,
                                        char              * cmm );
 
-const char *     oyStruct_ToText_    ( oyStruct_s        * oy_struct );
 
 #define hashTextAdd_m( text_ ) \
   oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
@@ -1305,14 +1304,14 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
   return allocateFunc( size );
 }
 
-/** @func  oyStruct_ToText_
+/** @func  oyStruct_TypeToText
  *  @brief Objects type to small string
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/06/24
  *  @since   2008/06/24 (Oyranos: 0.1.8)
  */
-const char *     oyStruct_ToText_    ( oyStruct_s        * oy_struct )
+const char *     oyStruct_TypeToText ( oyStruct_s        * oy_struct )
 {
   const char * text = 0;
 
@@ -1346,9 +1345,9 @@ const char *     oyStruct_ToText_    ( oyStruct_s        * oy_struct )
     case oyOBJECT_TYPE_CMM_INFO_S: text = "oyCMMInfo_s"; break;
     case oyOBJECT_TYPE_CMM_API_S: text = "oyCMMapi_s generic"; break;
     case oyOBJECT_TYPE_CMM_API1_S: text = "oyCMMapi1_s old CMM"; break;
-    case oyOBJECT_TYPE_CMM_API2_S: text = "oyCMMapi2_s Monitor support"; break;
+    case oyOBJECT_TYPE_CMM_API2_S: text = "oyCMMapi2_s Monitors"; break;
     case oyOBJECT_TYPE_CMM_API3_S: text = "oyCMMapi3_s Profile tags"; break;
-    case oyOBJECT_TYPE_CMM_API4_S: text = "oyCMMapi4_s Filter support"; break;
+    case oyOBJECT_TYPE_CMM_API4_S: text = "oyCMMapi4_s Filter"; break;
     case oyOBJECT_TYPE_CMM_API_MAX: text = "not defined"; break;
     case oyOBJECT_TYPE_ICON_S: text = "oyIcon_s"; break;
     case oyOBJECT_TYPE_MODULE_S: text = "oyModule_s"; break;
@@ -2788,12 +2787,13 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
 {
   char * text = 0, num[48];
   oyCMMapi_s * tmp = 0;
+  oyCMMapi4_s * cmm_api4 = 0;
   oyOBJECT_TYPE_e type = 0;
 
   if(!cmm_info || cmm_info->type != oyOBJECT_TYPE_CMM_INFO_S)
     return oyStringCopy_("---", oyAllocateFunc_);
 
-  sprintf(num,"%d", cmm_info->oy_compatibility );
+  oySprintf_(num,"%d", cmm_info->oy_compatibility );
 
   oyStringAdd_( &text, cmm_info->cmm, oyAllocateFunc_, oyDeAllocateFunc_ );
   oyStringAdd_( &text, " ", oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -2804,16 +2804,16 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
 
 #define CMMINFO_ADD_NAME_TO_TEXT( name_, name_s ) \
   oyStringAdd_( &text, "\n  " name_ ":\n    ", oyAllocateFunc_, oyDeAllocateFunc_ );\
-  oyStringAdd_( &text, cmm_info->name_s.nick, oyAllocateFunc_, oyDeAllocateFunc_ ); \
+  oyStringAdd_( &text, name_s.nick, oyAllocateFunc_, oyDeAllocateFunc_ ); \
   oyStringAdd_( &text, "\n    ", oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, cmm_info->name_s.name, oyAllocateFunc_, oyDeAllocateFunc_ ); \
+  oyStringAdd_( &text, name_s.name, oyAllocateFunc_, oyDeAllocateFunc_ ); \
   oyStringAdd_( &text, "\n    ", oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, cmm_info->name_s.description, oyAllocateFunc_, oyDeAllocateFunc_ ); \
+  oyStringAdd_( &text, name_s.description, oyAllocateFunc_, oyDeAllocateFunc_ ); \
   oyStringAdd_( &text, "\n", oyAllocateFunc_, oyDeAllocateFunc_ );
 
-  CMMINFO_ADD_NAME_TO_TEXT( "Name", name )
-  CMMINFO_ADD_NAME_TO_TEXT( "Manufacturer", manufacturer )
-  CMMINFO_ADD_NAME_TO_TEXT( "Copyright", copyright )
+  CMMINFO_ADD_NAME_TO_TEXT( "Name", cmm_info->name )
+  CMMINFO_ADD_NAME_TO_TEXT( "Manufacturer", cmm_info->manufacturer )
+  CMMINFO_ADD_NAME_TO_TEXT( "Copyright", cmm_info->copyright )
 
       if(cmm_info)
       {
@@ -2824,9 +2824,24 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
         {
           type = oyCMMapi_Check_(tmp);
 
-          sprintf(num," %d:", type );
+          oySprintf_(num," %d:", type );
           oyStringAdd_( &text, num, oyAllocateFunc_, oyDeAllocateFunc_ );
-          oyStringAdd_( &text, oyStruct_ToText_((oyStruct_s*)tmp), oyAllocateFunc_, oyDeAllocateFunc_ );
+          oyStringAdd_( &text, oyStruct_TypeToText((oyStruct_s*)tmp),
+                        oyAllocateFunc_, oyDeAllocateFunc_ );
+
+          if(type == oyOBJECT_TYPE_CMM_API4_S)
+          {
+            cmm_api4 = (oyCMMapi4_s*) tmp;
+            oyStringAdd_( &text, "\n    Filter type: ",
+                          oyAllocateFunc_, oyDeAllocateFunc_ );
+            oyStringAdd_( &text, oyFilterTypeToText( cmm_api4->filter_type ),
+                          oyAllocateFunc_, oyDeAllocateFunc_ );
+            oyStringAdd_( &text, "\n    Registration: ",
+                          oyAllocateFunc_, oyDeAllocateFunc_ );
+            oyStringAdd_( &text, cmm_api4->registration,
+                          oyAllocateFunc_, oyDeAllocateFunc_ );
+            CMMINFO_ADD_NAME_TO_TEXT( "Name", cmm_api4->name )
+          }
 
           tmp = tmp->next;
         }
@@ -7737,6 +7752,8 @@ oyImage_s *    oyImage_CreateForDisplay( int               width,
 
 /** @brief copy a image
  *
+ *  @todo  implement
+ * 
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
  */
@@ -7747,6 +7764,8 @@ oyImage_s *    oyImage_Copy_          ( oyImage_s       * image,
 
   if(!image)
     return s;
+
+  /* TODO */
 
   s = image;
   s->oy_ = oyObject_Copy( s->oy_ );
@@ -7879,6 +7898,28 @@ oyImageHandler_s * oyImageHandler_New( oyImage_s         * image )
   return s;
 }
 
+/** @func    oyFilterTypeToText
+ *  @brief   oyFILTER_TYPE_e to small text
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/06/24
+ */
+const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     type )
+{
+  const char * text = 0;
+
+  if(type)
+    switch(type) {
+    case oyFILTER_TYPE_COLOUR: text = "colour"; break;
+    case oyFILTER_TYPE_TONEMAP: text = "contrast or tone mapping"; break;
+    case oyFILTER_TYPE_IMAGE: text = "image"; break;
+    case oyFILTER_TYPE_GENERIC: text = "generic"; break;
+    default: text = "unknown"; break;
+    }
+
+  return text;
+}
 
 /** @func    oyFilter_New_
  *  @brief   allocate and initialise a new filter object
@@ -7907,8 +7948,8 @@ oyFilter_s * oyFilter_New_           ( oyObject_s          object )
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
-  s->copy = (oyStruct_CopyF_t) oyImage_Copy;
-  s->release = (oyStruct_ReleaseF_t) oyImage_Release;
+  s->copy = (oyStruct_CopyF_t) oyFilter_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyFilter_Release;
 
   s->oy_ = s_obj;
 
@@ -7934,35 +7975,55 @@ oyFilter_s * oyFilter_New_           ( oyObject_s          object )
   return s;
 }
 
+static uint32_t filter_ids = 0;
+
 /** @func    oyFilter_Create
  *  @brief   lookup and initialise a new filter object
  *
- *  @param[in]     patterns            a list properties, e.g. classes
- *  @param         object              the obligate object
- *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2008/06/24
+ *  @date    2008/06/25
  */
 oyFilter_s * oyFilter_Create         ( oyFILTER_TYPE_e     filter_type,
                                        const char        * category,
-                                       const char        * cmm,
+                                       const char        * cmm_required,
                                        oyObject_s          object )
 {
   oyFilter_s * s = oyFilter_New_( object );
   int error = !s;
+  uint32_t ret = 0;
+  oyCMMapiQueries_s * capabilities = 0;
+  char cmm_used[] = {0,0,0,0,0};
+  oyCMMapi_s * cmm_api = oyCMMsGetApi_(oyOBJECT_TYPE_CMM_API4_S,
+                                       cmm_required,
+                                       capabilities,
+                                       cmm_used,
+                                       category,
+                                       filter_type );
+  oyCMMapi4_s * cmm_api4 = 0;
+  oyAllocFunc_t allocateFunc_ = 0;
+
+  if(!error)
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+  error = !(cmm_api && cmm_api->type == oyOBJECT_TYPE_CMM_API4_S);
 
   if(!error)
   {
+    cmm_api4 = (oyCMMapi4_s *) cmm_api;
 
-    s->id_ = 0;
-    s->registration_ = 0; //oyStringCopy_("", s->oy_->allocateFunc_);
-    if (cmm)
-    {
-      memcpy( s->cmm_, cmm, 4 ); s->cmm_[4] = 0;
-    }
+    s->id_ = filter_ids++;
+    s->registration_ = oyStringCopy_( cmm_api4->registration,
+                                      allocateFunc_);
+    s->name_ = oyName_copy( &cmm_api4->name, s->oy_ );
+    memcpy( s->cmm_, cmm_used, 4 ); s->cmm_[4] = 0;
+
     s->filter_type_ = filter_type;
-    s->category_ = oyStringCopy_(category, s->oy_->allocateFunc_);
+    s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
+
+    s->options_ = cmm_api4->oyOptions_Get( 0, &ret );
+    error = ret;
+    s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui_, allocateFunc_ );
   }
 
   if(error)
@@ -7970,9 +8031,133 @@ oyFilter_s * oyFilter_Create         ( oyFILTER_TYPE_e     filter_type,
 
   return s;
 }
-int          oyFilter_Copy           ( oyFilter_s       ** filter,
-                                       oyObject_s          object );
-int          oyFilter_Release        ( oyFilter_s       ** filter );
+
+/** @func    oyFilter_Copy_
+ *  @brief   real copy a filter object
+ *
+ *  @param[in]     filter              filter object
+ *  @param         object              the obligate object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/06/25
+ */
+oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
+                                       oyObject_s          object )
+{
+  oyFilter_s * s = 0;
+  int error = 0;
+  oyAllocFunc_t allocateFunc_ = 0;
+
+  if(!filter || !object)
+    return s;
+
+  s = oyFilter_New_( object );
+  error = !s;
+  allocateFunc_ = s->oy_->allocateFunc_;
+
+  if(!error)
+  {
+    s->registration_ = oyStringCopy_( filter->registration_, allocateFunc_ );
+    s->name_ = oyName_copy( filter->name_, s->oy_ );
+    error = !memcpy( s->cmm_, filter->cmm_, 8 );
+    s->filter_type_ = filter->filter_type_;
+    s->category_ = oyStringCopy_( filter->category_, allocateFunc_ );
+#if 0
+    s->options_ = oyOptions_Copy( filter->options_, s->oy_ );
+#endif
+    s->opts_ui_ = oyStringCopy_( filter->opts_ui_, allocateFunc_ );
+    s->image_ = oyImage_Copy_( filter->image_, s->oy_ );
+    s->profiles_ = oyProfileList_Copy( filter->profiles_, s->oy_ );
+    s->parents_ = s->children_ = 0;
+    s->merged_to_ = 0;
+    s->data_ = oyStructList_Copy( filter->data_, s->oy_ );
+  }
+
+  return s;
+}
+
+/** @func    oyFilter_Copy
+ *  @brief   copy or reference a filter object
+ *
+ *  @param[in]     filter              filter object
+ *  @param         object              the obligate object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/06/25
+ */
+oyFilter_s * oyFilter_Copy           ( oyFilter_s        * filter,
+                                       oyObject_s          object )
+{
+  oyFilter_s * s = 0;
+
+  if(!filter)
+    return s;
+
+  if(filter && !object)
+  {
+    s = filter;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilter_Copy_( filter, object );
+
+  return s;
+}
+/** @func    oyFilter_Release
+ *  @brief   release and zero a filter object
+ *
+ *  @todo    complete the implementation
+ *
+ *  @param[in,out] obj                 filter object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/06/25
+ */
+int          oyFilter_Release        ( oyFilter_s       ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilter_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_FILTER_S)
+  {
+    WARNc_S(("Attempt to release a non oyFilter_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  s->id_ = 0;
+  s->registration_ = 0;
+
+  oyProfileList_Release( &s->profiles_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAllocFunc_t deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->category_)
+      deallocateFunc( s->category_ ); s->category_ = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
 
 
 const char * oyFilter_NameGet        ( oyFilter_s        * filter,

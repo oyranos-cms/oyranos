@@ -53,7 +53,8 @@ main(int argc, char** argv)
         * text = 0;
   oyProfileList_s * iccs, * patterns;
   oyProfile_s * profile, * temp_prof;
-  oyCMMInfo_s * cmm_info = 0;;
+  oyCMMInfo_s * cmm_info = 0;
+  oyFilter_s * filter = 0;
 
   for( i = 0; i < (int) size; ++i )
     printf( "%d: %s\n", i, profiles[i]);
@@ -93,6 +94,8 @@ main(int argc, char** argv)
     printf("%d: \"%s\": %s\n", i, texts[i], text );
   }
   oyStringListRelease_( &texts, count, free );
+
+  filter = oyFilter_Create( oyFILTER_TYPE_COLOUR, "image", 0, 0 );
 
   return 0;
 }

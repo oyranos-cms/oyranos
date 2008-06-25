@@ -1654,11 +1654,11 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
 {return 0;}
 
 /** @instance oyra_api4
- *  @brief    oyra oyCMMapi_s implementations
+ *  @brief    oyra oyCMMapi4_s implementations
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/02/08 (Oyranos: 0.1.8)
- *  @date    2008/02/08
+ *  @date    2008/06/26
  */
 oyCMMapi4_s   oyra_api4 = {
 

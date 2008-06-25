@@ -283,7 +283,7 @@ typedef struct {
 } oyCMMapi3_s;
 
 
-/** @type    oyCMMConversion_CreateBasic_t
+/** @type    oyCMMConversion_Create_t
  *  @brief   create a basic filter context from two images
  *
  *  @version Oyranos: 0.1.8
@@ -303,7 +303,7 @@ typedef int      (*oyCMMConversion_Create_t) (
  *  @date    2008/06/24
  */
 typedef struct {
-  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API3_S */
+  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API4_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -317,14 +317,13 @@ typedef struct {
   oyFILTER_TYPE_e  filter_type;        /**< filter type */
   const char     * registration;       /**< a registration name, e.g. "org.oyranos.lcms" */
 
-  const char     * widgets;            /**< Oyranos XForms subset widgets */
   oyOptions_Get_t  oyOptions_Get;      /**< provide options */
   oyWidgetEvent_t  oyWidget_Event;     /**< handle widget events */
 
   oyName_s         name;               /**< translatable, eg "lcms" "little cms" "..." */
   const char       category[256];      /**< menu structure */
   oyOptions_s    * options;            /**< options */
-  char *         * opts_ui_;           /**< xml ui elements for filter options*/
+  const char     * opts_ui_;           /**< xml ui elements for filter options*/
 
 
 } oyCMMapi4_s;
