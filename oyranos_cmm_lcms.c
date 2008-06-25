@@ -645,10 +645,12 @@ int          lcmsCMMColourConversion_Create (
  *  @brief   oyCMMColourConversion_FromMem_t implementation
  *
  *  Convert a lcms device link to a colour conversion context.
+ *  Seems redundant here, as this case is covered by
+ *  lcmsCMMColourConversion_Create. => redirect
  *
  *  @version Oyranos: 0.1.8
  *  @date    2007/12/21
- *  @since   2007/12/21 (Oyranos: 0.1.8)
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
  */
 int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
                                        size_t              size,
@@ -659,22 +661,19 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
                                        int                 intent,
                                        oyCMMptr_s        * oy )
 {
-  oyPixel_t lcms_pixel_layout_in = 0;
-  oyPixel_t lcms_pixel_layout_out = 0;
-  cmsHTRANSFORM xform = 0;
+  int error = 0;
+  oyCMMptr_s intern = {oyOBJECT_TYPE_CMM_POINTER_S, 0,0,0,
+                       CMM_NICK, {0}, 0, {0}, 0, 0 };
+  oyCMMptr_s * dls[] = {0, 0};
 
-  cmsHPROFILE dl = cmsOpenProfileFromMem(mem, size);
+  dls[0] = &intern;
 
-  lcms_pixel_layout_in  = oyPixelToCMMPixelLayout_( oy_pixel_layout_in,
-                                                    colour_space_in );
-  lcms_pixel_layout_out = oyPixelToCMMPixelLayout_( oy_pixel_layout_out,
-                                                    colour_space_out );
-
-  xform = cmsCreateTransform( dl, lcms_pixel_layout_in,
-                              0,  lcms_pixel_layout_out,
-                              intent, 0 );
-
-  return !xform;
+  error = lcmsCMMProfile_Open ( mem, size, &intern );
+  error = lcmsCMMColourConversion_Create (
+                                       dls, 1,
+                                       oy_pixel_layout_in, oy_pixel_layout_out,
+                                       intent, 0, 0, oy );
+  return error;
 }
 
 /** @func    lcmsCMMColourConversion_ToMem
