@@ -53,6 +53,8 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
                                        const double      * XYZwhite );
 
 typedef struct oyStruct_s oyStruct_s;
+typedef struct oyImage_s_ oyImage_s;
+
 
 typedef oyStruct_s * (*oyStruct_CopyF_t) ( oyStruct_s *, oyPointer );
 typedef int       (*oyStruct_ReleaseF_t) ( oyStruct_s ** );
@@ -69,12 +71,18 @@ typedef void      (*oyUnLockF_t)     ( oyPointer           look,
                                        const char        * marker,
                                        int                 line );
 
-typedef oyPointer (*oyImage_GetPoint_t)( int               point_x,
-                                         int               point_y );
-/*typedef oyPointer (*oyImage_GetLine_t) ( int               line_y,
-                                         int             * height );
-typedef oyPointer (*oyImage_GetTile_t) ( int               tile_x,
-                                         int               tile_y );*/
+typedef oyPointer (*oyImage_GetPoint_t)( oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               channel );
+typedef oyPointer (*oyImage_GetLine_t) ( oyImage_s       * image,
+                                         int               line_y,
+                                         int             * height,
+                                         int               channel );
+typedef oyPointer (*oyImage_GetTile_t) ( oyImage_s       * image,
+                                         int               tile_x,
+                                         int               tile_y,
+                                         int               channel );
 
 
 void         oyThreadLockingSet      ( oyStruct_LockCreateF_t createLockFunc,
@@ -115,11 +123,10 @@ typedef enum {
   oyOBJECT_TYPE_WIDGET_TEXT_S,        /**< oyWidgetText_s */
   oyOBJECT_TYPE_REGION_S,             /*!< oyRegion_s */
   oyOBJECT_TYPE_IMAGE_S,              /*!< oyImage_s */
-  oyOBJECT_TYPE_IMAGE_HANDLER_S,      /*!< oyImageHandler_s */
   oyOBJECT_TYPE_COLOUR_CONVERSION_S,  /*!< oyColourConversion_s */
   oyOBJECT_TYPE_FILTER_S,             /**< oyFilter_s */
   oyOBJECT_TYPE_FILTERS_S,            /**< oyFilters_s */
-  oyOBJECT_TYPE_CONVERSION_S,         /**< oyConversions_s */
+  oyOBJECT_TYPE_CONVERSIONS_S,        /**< oyConversions_s */
   oyOBJECT_TYPE_CMM_HANDLE_S = 50,    /**< oyCMMhandle_s */
   oyOBJECT_TYPE_CMM_POINTER_S,        /*!< oyCMMptr_s */
   oyOBJECT_TYPE_CMM_INFO_S,           /*!< oyCMMInfo_s */
@@ -741,42 +748,42 @@ typedef struct {
 } oyRegion_s;
 
 oyRegion_s *   oyRegion_New_         ( oyObject_s          object );
-oyRegion_s *   oyRegion_NewWith_     ( oyObject_s          object,
+oyRegion_s *   oyRegion_NewWith      ( oyObject_s          object,
                                        float               x,
                                        float               y,
                                        float               width,
                                        float               height );
-oyRegion_s *   oyRegion_NewFrom_     ( oyObject_s          object,
+oyRegion_s *   oyRegion_NewFrom      ( oyObject_s          object,
                                        oyRegion_s        * ref );
-oyRegion_s *   oyRegion_Copy_        ( oyRegion_s        * region,
+oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * region,
                                        oyObject_s          object );
-int            oyRegion_Release_     ( oyRegion_s       ** region );
+int            oyRegion_Release      ( oyRegion_s       ** region );
 
-void           oyRegion_SetGeo_      ( oyRegion_s        * edit_region,
+void           oyRegion_SetGeo       ( oyRegion_s        * edit_region,
                                        float               x,
                                        float               y,
                                        float               width,
                                        float               height );
-void           oyRegion_SetByRegion_ ( oyRegion_s        * edit_region,
+void           oyRegion_SetByRegion  ( oyRegion_s        * edit_region,
                                        oyRegion_s        * ref );
-void           oyRegion_Trim_        ( oyRegion_s        * edit_region,
+void           oyRegion_Trim         ( oyRegion_s        * edit_region,
                                        oyRegion_s        * ref );
-void           oyRegion_MoveInside_  ( oyRegion_s        * edit_region,
+void           oyRegion_MoveInside   ( oyRegion_s        * edit_region,
                                        oyRegion_s        * ref );
-void           oyRegion_Scale_       ( oyRegion_s        * edit_region,
+void           oyRegion_Scale        ( oyRegion_s        * edit_region,
                                        float               factor );
-void           oyRegion_Normalise_   ( oyRegion_s        * edit_region );
-void           oyRegion_Round_       ( oyRegion_s        * edit_region );
-int            oyRegion_IsEqual_     ( oyRegion_s        * region1,
+void           oyRegion_Normalise    ( oyRegion_s        * edit_region );
+void           oyRegion_Round        ( oyRegion_s        * edit_region );
+int            oyRegion_IsEqual      ( oyRegion_s        * region1,
                                        oyRegion_s        * region2 );
-int            oyRegion_IsInside_    ( oyRegion_s        * region,
+int            oyRegion_IsInside     ( oyRegion_s        * region,
                                        float               x,
                                        float               y );
-int            oyRegion_CountPoints_ ( oyRegion_s        * region );
-int            oyRegion_Index_       ( oyRegion_s        * region,
+int            oyRegion_CountPoints ( oyRegion_s        * region );
+int            oyRegion_Index        ( oyRegion_s        * region,
                                        float               x,
                                        float               y );
-char  *        oyRegion_Show_        ( oyRegion_s        * region );
+char  *        oyRegion_Show         ( oyRegion_s        * region );
 
 
 typedef enum {
@@ -885,27 +892,6 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAllocFunc_t       allocateFunc );
 #endif
 
-typedef struct oyImage_s_ oyImage_s;
-
-/** @struct oyImageHandler_s
- *  @brief a advanced image processing struct
- *
- *  Eighter specify the line or tile interface.
- *
- *  @since Oyranos: version 0.1.8
- *  @date  21 december 2007 (API 0.1.8)
- */
-typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_IMAGE_HANDLER_S */
-  oyStruct_CopyF_t     copy;           /**< copy function */
-  oyStruct_ReleaseF_t  release;        /**< release function */
-
-  oyPointer        dummy;              /**< keep to zero */
-  oyImage_GetPoint_t   getPoint;       /**< the point interface */
-} oyImageHandler_s;
-
-oyImageHandler_s * oyImageHandler_Create ( oyImage_s     * image );
-
 /** @brief a reference struct to gather information for image transformation
 
     as we dont target a complete imaging solution, only raster is supported
@@ -923,16 +909,28 @@ struct oyImage_s_ {
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
+
+  oyRegion_s         * image_dimension;/**< image dimensions */
+  float                resolution_x;   /**< resolution in horizontal direction*/
+  float                resolution_y;   /**< resolution in vertical direction */
+
+  oyPixel_t          * layout_;        /*!< samples mask */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
   oyPointer            data;           /*!< image data */
-  char               * options_;       /*!< for instance channel layout */
+  oyOptions_s        * options_;       /*!< for instance channel layout */
   oyProfile_s        * profile_;       /*!< image profile */
-  oyRegion_s         * region;         /*!< region to render, if zero render all */
-  int                  display_pos_x;  /*!< upper position on display of image*/
+  oyRegion_s        ** regions;        /*!< region to render, if zero render all */
+  int                  display_pos_x;  /**< Possibly this can be part of the output profile; upper position on display of image*/
   int                  display_pos_y;  /*!< left position on display of image */
-  oyPixel_t          * layout_;        /*!< internal samples mask (3,384,2,1,0 BGR) */
-  oyImageHandler_s   * handler;        /**< handler; alternative to full data */
+
+
+  oyImage_GetPoint_t   getPoint;       /**< the point interface */
+  oyImage_GetLine_t    getLine;        /**< the line interface */
+  oyImage_GetTile_t    getTile;        /**< the tile interface */
+  int                  tile_width;     /**< needed by the tile interface */
+  int                  tile_height;    /**< needed by the tile interface */
+  oyStruct_s         * user_data;      /**< user provided pointer */
 };
 
 
@@ -1021,6 +1019,8 @@ struct oyFilter_s_ {
   oyFilter_s         * merged_to_;     /**< the filter, which does processing */
 
   oyStructList_s     * data_;          /**< the filter private data */
+
+  oyImage_s          * stream_;         /**< access to pixel stream */
 };
 
 oyFilter_s * oyFilter_Create         ( oyFILTER_TYPE_e     type,
@@ -1064,8 +1064,7 @@ int          oyFilter_FilterGet      ( oyFilter_s        * filter,
                                        oyFilters_s      ** parents,
                                        oyFilters_s      ** cildren );
 int          oyFilter_ImageSet       ( oyFilter_s        * filter,
-                                       oyImage_s         * image,
-                                       int                 flags );
+                                       oyImage_s         * image );
 oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter );
 
 
@@ -1092,39 +1091,46 @@ struct oyFilters_s_ {
 /** @struct oyConversions_s
  *  @brief  a filter chain to manipulate a image
  *
- *  Order of filters matters.
+ *  Order of filters matters. \n
+ *  The idea is like:
+ *  @verbatim
+    output_image -ask filter C-> C -ask filter B and process-> B ->ask filter A and process-> A ->ask source_image-> input_image
+    @endverbatim
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/08 (Oyranos: 0.1.8)
  *  @date    2008/06/08
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_CONVERSION_S*/
+  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_CONVERSIONS_S*/
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyFilter_s         * filter;         /**< the input image filter */
+  oyFilter_s         * input;          /**< the input image filter; Most users will start logically with this pice and chain their filters to get the final result. */
+  oyFilter_s         * out_;           /**< the Oyranos output image. Oyranos will stream the filters starting from the end. */
 } oyConversions_s;
 
 oyConversions_s  * oyConversions_CreateBasic (
                                        oyImage_s         * input,
                                        oyImage_s         * output,
-                                       char              * options,
+                                       oyOptions_s       * options,
                                        oyObject_s          object );
 oyConversions_s  * oyConversions_CreateInput (
                                        oyImage_s         * input,
                                        oyObject_s          object );
+oyConversions_s  * oyConversions_Copy( oyConversions_s   * conversion,
+                                       oyObject_s          object );
+int                oyConversions_Release (
+                                       oyConversions_s  ** conversion );
+
+
 oyConversions_s  * oyConversions_FilterAdd (
-                                       oyFilter_s        * filter,
-                                       oyObject_s          object );
+                                       oyFilter_s        * filter );
 oyConversions_s  * oyConversions_OutputAdd (
-                                       oyImage_s         * input,
-                                       oyObject_s          object );
+                                       oyImage_s         * input );
 int              * oyConversions_Run ( oyConversions_s   * conversion,
                                        uint32_t            feedback );
-int              * oyConversions_Release (
-                                       oyConversions_s  ** conversion );
 oyProfile_s      * oyConversions_ToProfile (
                                        oyConversions_s   * conversion );
 
@@ -1144,7 +1150,7 @@ typedef struct {
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   oyProfileList_s    * profiles_;      /*!< effect / simulation profiles */ 
-  char               * options_;       /*!< conversion opts */
+  oyOptions_s        * options_;       /*!< conversion opts */
   oyImage_s          * image_in_;      /*!< input */
   oyImage_s          * image_out_;     /*!< output */
   oyStructList_s     * cmms_;          /**< list of CMM entries to call */
