@@ -323,9 +323,9 @@ typedef struct {
   oyName_s         name;               /**< translatable, eg "lcms" "little cms" "..." */
   const char       category[256];      /**< menu structure */
   oyOptions_s    * options;            /**< options */
-  const char     * opts_ui_;           /**< xml ui elements for filter options*/
+  const char     * opts_ui;            /**< xml ui elements for filter options*/
 
-
+  oyImage_s      * stream;             /**< access to pixel stream */
 } oyCMMapi4_s;
 
 
