@@ -1644,23 +1644,42 @@ oyWIDGET_EVENT_e oyraWidget_EventDummy
                                        oyWIDGET_EVENT_e    type )
 {return 0;}
 
+oyOptions_s* oyraOptions_GetDummy    ( oyOptions_s       * validate,
+                                       uint32_t          * result )
+{return 0;}
 
-/** @instance oyra_api
+oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
+                                       oyWIDGET_EVENT_e    type,
+                                       oyStruct_s        * event )
+{return 0;}
+
+/** @instance oyra_api4
  *  @brief    oyra oyCMMapi_s implementations
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/02/08 (Oyranos: 0.1.8)
  *  @date    2008/02/08
  */
-oyCMMapi_s   oyra_api = {
+oyCMMapi4_s   oyra_api4 = {
 
-  oyOBJECT_TYPE_CMM_API_S,
+  oyOBJECT_TYPE_CMM_API4_S,
   0,0,0,
   0,
   
   oyraCMMInit,
   oyraCMMMessageFuncSet,
   oyraCMMCanHandle,
+
+  oyFILTER_TYPE_IMAGE,
+  "org.oyranos.image",
+
+  oyraOptions_GetDummy,
+  oyraWidgetEvent,
+
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
+  "Image", /* category */
+  0,   /* options */
+  0    /* opts_ui_ */
 };
 
 /** @instance oyra_api3
@@ -1674,7 +1693,7 @@ oyCMMapi3_s  oyra_api3 = {
 
   oyOBJECT_TYPE_CMM_API3_S,
   0,0,0,
-  &oyra_api,
+  (oyCMMapi_s*) & oyra_api4,
   
   oyraCMMInit,
   oyraCMMMessageFuncSet,
