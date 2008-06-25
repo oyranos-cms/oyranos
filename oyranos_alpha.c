@@ -210,6 +210,7 @@ int          oyIdToCMM               ( uint32_t            cmmId,
 enum {
   oyPOFF_X = 0, /* pixel count x offset */
   oyPOFF_Y,     /* pixel count y offset */
+  oyCOFF,       /* channel offset */
   oyDATA_SIZE,  /* sample size in byte */
   oyLAYOUT,     /* remembering the layout */
   oyCHANS,      /* number of channels */
@@ -1335,11 +1336,10 @@ const char *     oyStruct_TypeToText ( oyStruct_s        * oy_struct )
     case oyOBJECT_TYPE_WIDGET_TEXT_S: text = "oyWidgetText_s"; break;
     case oyOBJECT_TYPE_REGION_S: text = "oyRegion_s"; break;
     case oyOBJECT_TYPE_IMAGE_S: text = "oyImage_s"; break;
-    case oyOBJECT_TYPE_IMAGE_HANDLER_S: text = "oyImageHandler_s"; break;
     case oyOBJECT_TYPE_COLOUR_CONVERSION_S: text = "oyColourConversion_s";break;
     case oyOBJECT_TYPE_FILTER_S: text = "oyFilter_s"; break;
     case oyOBJECT_TYPE_FILTERS_S: text = "oyFilters_s"; break;
-    case oyOBJECT_TYPE_CONVERSION_S: text = "oyConversions_s"; break;
+    case oyOBJECT_TYPE_CONVERSIONS_S: text = "oyConversions_s"; break;
     case oyOBJECT_TYPE_CMM_HANDLE_S: text = "oyCMMhandle_s"; break;
     case oyOBJECT_TYPE_CMM_POINTER_S: text = "oyCMMptr_s"; break;
     case oyOBJECT_TYPE_CMM_INFO_S: text = "oyCMMInfo_s"; break;
@@ -7091,8 +7091,8 @@ oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
-  s->copy = (oyStruct_CopyF_t) oyRegion_Copy_;
-  s->release = (oyStruct_ReleaseF_t) oyRegion_Release_;
+  s->copy = (oyStruct_CopyF_t) oyRegion_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyRegion_Release;
 
   s->oy_ = s_obj;
 
@@ -7103,13 +7103,13 @@ oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
   return s;
 }
 
-/** @internal
+/** 
  *  @brief new with geometry
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyRegion_s *   oyRegion_NewWith_     ( oyObject_s          object,
+oyRegion_s *   oyRegion_NewWith      ( oyObject_s          object,
                                        float               x,
                                        float               y,
                                        float               width,
@@ -7117,32 +7117,32 @@ oyRegion_s *   oyRegion_NewWith_     ( oyObject_s          object,
 {
   oyRegion_s * s = oyRegion_New_( object );
   if(s)
-    oyRegion_SetGeo_( s, x, y, width, height );
+    oyRegion_SetGeo( s, x, y, width, height );
   return s;
 }
 
-/** @internal
+/**
  *  @brief new from other region
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyRegion_s *   oyRegion_NewFrom_     ( oyObject_s          object,
+oyRegion_s *   oyRegion_NewFrom      ( oyObject_s          object,
                                        oyRegion_s        * ref )
 {
   oyRegion_s * s = oyRegion_New_( object );
   if(s)
-    oyRegion_SetByRegion_(s, ref);
+    oyRegion_SetByRegion(s, ref);
   return s;
 }
 
-/** @internal
+/**
  *  @brief copy/reference from other region
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyRegion_s *   oyRegion_Copy_        ( oyRegion_s        * orig,
+oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * orig,
                                        oyObject_s          object )
 {
   oyRegion_s * s = 0;
@@ -7152,7 +7152,7 @@ oyRegion_s *   oyRegion_Copy_        ( oyRegion_s        * orig,
 
   if(object)
   {
-    s = oyRegion_NewFrom_( object, orig );
+    s = oyRegion_NewFrom( object, orig );
 
   } else {
 
@@ -7163,13 +7163,13 @@ oyRegion_s *   oyRegion_Copy_        ( oyRegion_s        * orig,
   return s;
 }
 
-/** @internal
+/**
  *  @brief release
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-int            oyRegion_Release_     ( oyRegion_s       ** obj )
+int            oyRegion_Release      ( oyRegion_s       ** obj )
 {
   int error = 0;
   /* ---- start of common object destructor ----- */
@@ -7204,13 +7204,13 @@ int            oyRegion_Release_     ( oyRegion_s       ** obj )
   return error;
 }
 
-/** @internal
+/**
  *  @brief set geometry
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_SetGeo_      ( oyRegion_s        * edit_region,
+void           oyRegion_SetGeo       ( oyRegion_s        * edit_region,
                                        float               x,
                                        float               y,
                                        float               width,
@@ -7225,29 +7225,29 @@ void           oyRegion_SetGeo_      ( oyRegion_s        * edit_region,
   s->height = height;
 }
 
-/** @internal
+/**
  *  @brief copy values
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_SetByRegion_ ( oyRegion_s        * edit_region,
+void           oyRegion_SetByRegion  ( oyRegion_s        * edit_region,
                                        oyRegion_s        * ref )
 {
   oyRegion_s * s = edit_region;
   if(!s)
     return;
 
-  oyRegion_SetGeo_( s, ref->x, ref->y, ref->width, ref->height );
+  oyRegion_SetGeo( s, ref->x, ref->y, ref->width, ref->height );
 }
 
-/** @internal
+/**
  *  @brief trim edit_region to ref extents
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_Trim_        ( oyRegion_s        * edit_region,
+void           oyRegion_Trim         ( oyRegion_s        * edit_region,
                                        oyRegion_s        * ref )
 {
   oyRegion_s * s = edit_region;
@@ -7275,16 +7275,16 @@ void           oyRegion_Trim_        ( oyRegion_s        * edit_region,
   if( r->height < 0 )
     r->height = 0;
 
-  oyRegion_Normalise_( r );
+  oyRegion_Normalise( r );
 }
 
-/** @internal
+/**
  *  @brief trim edit_region to ref extents
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_MoveInside_  ( oyRegion_s        * edit_region,
+void           oyRegion_MoveInside   ( oyRegion_s        * edit_region,
                                        oyRegion_s        * ref )
 {
   oyRegion_s * s = edit_region;
@@ -7293,7 +7293,7 @@ void           oyRegion_MoveInside_  ( oyRegion_s        * edit_region,
   if(!s)
     return;
 
-  oyRegion_Normalise_( s );
+  oyRegion_Normalise( s );
 
   if (s->x < a->x)
     s->x = a->x;
@@ -7313,13 +7313,13 @@ void           oyRegion_MoveInside_  ( oyRegion_s        * edit_region,
   }
 }
 
-/** @internal
+/**
  *  @brief scale with origin in the top left corner
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_Scale_       ( oyRegion_s        * edit_region,
+void           oyRegion_Scale        ( oyRegion_s        * edit_region,
                                        float               factor )
 {
   oyRegion_s * s = edit_region;
@@ -7334,13 +7334,13 @@ void           oyRegion_Scale_       ( oyRegion_s        * edit_region,
   r->height *= factor;
 }
 
-/** @internal
+/**
  *  @brief normalise swapped values for width and height
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_Normalise_   ( oyRegion_s        * edit_region )
+void           oyRegion_Normalise    ( oyRegion_s        * edit_region )
 {
   oyRegion_s * s = edit_region;
   oyRegion_s * r = s;
@@ -7358,13 +7358,13 @@ void           oyRegion_Normalise_   ( oyRegion_s        * edit_region )
   }
 }
 
-/** @internal
+/**
  *  @brief scale with origin in the top left corner
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_Round_       ( oyRegion_s        * edit_region )
+void           oyRegion_Round        ( oyRegion_s        * edit_region )
 {
   oyRegion_s * s = edit_region;
   oyRegion_s * r = s;
@@ -7378,13 +7378,13 @@ void           oyRegion_Round_       ( oyRegion_s        * edit_region )
   r->height = (int)OY_ROUND(r->height);
 }
 
-/** @internal
+/**
  *  @brief compare
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-int            oyRegion_IsEqual_     ( oyRegion_s        * region1,
+int            oyRegion_IsEqual      ( oyRegion_s        * region1,
                                        oyRegion_s        * region2 )
 {
   int gleich = TRUE;
@@ -7401,13 +7401,13 @@ int            oyRegion_IsEqual_     ( oyRegion_s        * region1,
   return gleich;
 }
 
-/** @internal
+/**
  *  @brief compare
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-int            oyRegion_IsInside_    ( oyRegion_s        * region,
+int            oyRegion_IsInside     ( oyRegion_s        * region,
                                        float               x,
                                        float               y )
 {
@@ -7425,13 +7425,13 @@ int            oyRegion_IsInside_    ( oyRegion_s        * region,
   return in;
 }
 
-/** @internal
+/**
  *  @brief count number of points covered by this region
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-int            oyRegion_CountPoints_ ( oyRegion_s        * region )
+int            oyRegion_CountPoints  ( oyRegion_s        * region )
 {
   oyRegion_s * s = region;
   oyRegion_s * r = s;
@@ -7445,13 +7445,12 @@ int            oyRegion_CountPoints_ ( oyRegion_s        * region )
   return (w) * (h);
 }
 
-/** @internal
- *  @brief return position inside region, assuming region size
+/** @brief return position inside region, assuming region size
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-int            oyRegion_Index_       ( oyRegion_s        * region,
+int            oyRegion_Index        ( oyRegion_s        * region,
                                        float               x,
                                        float               y )
 {
@@ -7471,7 +7470,7 @@ int            oyRegion_Index_       ( oyRegion_s        * region,
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyChar*        oyRegion_Show_        ( oyRegion_s        * r )
+oyChar*        oyRegion_Show         ( oyRegion_s        * r )
 {
   static oyChar *text = 0;
 
@@ -7566,6 +7565,7 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
   int error = !mask;
   int so = oySizeofDatatype( t );
   int w = image->width;
+  int h = image->height;
   int cchan_n = 0;
   int i;
   oyChar * text = oyAllocateFunc_(512);
@@ -7581,9 +7581,13 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
   {
     error = !memset( mask, 0, sizeof(mask) * sizeof(oyPixel_t*));
     if(oyToPlanar_m( pixel_layout ))
+    {
       mask[oyPOFF_X] = 1;
-    else
+      mask[oyCOFF] = w*h;
+    } else {
       mask[oyPOFF_X] = n;
+      mask[oyCOFF] = 1;
+    }
     mask[oyPOFF_Y] = mask[oyPOFF_X] * w;
     mask[oyDATA_SIZE] = so;
     mask[oyLAYOUT] = pixel_layout;
@@ -7645,6 +7649,44 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
  *  @{
  */
 
+/** @func    oyImage_GetPointContinous
+ *  @brief   standard continus layout pixel accessor
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyPointer oyImage_GetPointContinous    ( oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               channel )
+{
+  return &((char*)image->data)[ (point_y * image->layout_[oyPOFF_Y] +
+                                 point_x * image->layout_[oyCHANS] +
+                                 image->layout_[oyCHAN0+channel]) *
+                                image->layout_[oyDATA_SIZE]           ]; 
+
+}
+
+/** @func    oyImage_GetPointPlanar
+ *  @brief   standard planar layout pixel accessor
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyPointer oyImage_GetPointPlanar       ( oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               channel )
+{
+  return &((char*)image->data)[ (point_y * point_x +
+                                 image->layout_[oyCOFF] *  
+                                 image->layout_[oyCHAN0+channel]) *
+                                image->layout_[oyDATA_SIZE]           ]; 
+
+}
+
 
 /** @brief collect infos about a image 
 
@@ -7695,8 +7737,14 @@ oyImage_s *    oyImage_Create         ( int               width,
   s->height = height;
   s->data = channels;
   s->profile_ = oyProfile_Copy( profile, 0 );
+  s->image_dimension = oyRegion_NewWith( s->oy_, 0, 0, s->width, s->height);
 
   s->layout_ = oyCombinePixelLayout2Mask_ ( pixel_layout, s, profile );
+
+  if(s->data && s->layout_[oyCOFF] == 1)
+    s->getPoint = oyImage_GetPointContinous;
+  else if(s->data)
+    s->getPoint = oyImage_GetPointPlanar;
 
   return s;
 }
@@ -7880,24 +7928,6 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
 }
 
 
-/** @brief allocates a image handler struct
- *
- *  @since Oyranos: version 0.1.8
- *  @date  21 december 2007 (API 0.1.8)
- */
-oyImageHandler_s * oyImageHandler_New( oyImage_s         * image )
-{
-  oyAllocFunc_t allocateFunc = 0;
-  oyImageHandler_s * s = 0;
-
-  if(image)
-    allocateFunc = image->oy_->allocateFunc_;
-
-  s = oyAllocateWrapFunc_( sizeof(oyImageHandler_s), allocateFunc);
-
-  return s;
-}
-
 /** @func    oyFilterTypeToText
  *  @brief   oyFILTER_TYPE_e to small text
  *
@@ -7957,34 +7987,19 @@ oyFilter_s * oyFilter_New_           ( oyObject_s          object )
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->id_ = 0;
-  s->registration_ = 0;
-  memset( &s->name_, 0, sizeof(oyName_s) );
-  s->cmm_[0] = 0;
-  s->filter_type_ = 0;
-  s->category_ = 0;
-  s->options_ = 0;
-  s->opts_ui_ = 0;
-  s->image_ = 0;
-  s->profiles_ = 0;
-  s->parents_ = 0;
-  s->children_ = 0;
-  s->merged_to_ = 0;
-  s->data_ = 0;
-
   return s;
 }
 
 static uint32_t filter_ids = 0;
 
-/** @func    oyFilter_Create
+/** @func    oyFilter_New
  *  @brief   lookup and initialise a new filter object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
  *  @date    2008/06/25
  */
-oyFilter_s * oyFilter_Create         ( oyFILTER_TYPE_e     filter_type,
+oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
                                        const char        * category,
                                        const char        * cmm_required,
                                        oyObject_s          object )
@@ -8023,7 +8038,8 @@ oyFilter_s * oyFilter_Create         ( oyFILTER_TYPE_e     filter_type,
 
     s->options_ = cmm_api4->oyOptions_Get( 0, &ret );
     error = ret;
-    s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui_, allocateFunc_ );
+    s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
+    s->stream_ = cmm_api4->stream;
   }
 
   if(error)
@@ -8192,8 +8208,11 @@ int          oyFilter_FilterGet      ( oyFilter_s        * filter,
                                        oyFilters_s      ** parents,
                                        oyFilters_s      ** cildren );
 int          oyFilter_ImageSet       ( oyFilter_s        * filter,
-                                       oyImage_s         * image,
-                                       int                 flags );
+                                       oyImage_s         * image )
+{
+  filter->image_ = oyImage_Copy( image, 0 );
+  return !filter->image_;
+}
 oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter );
 
 
@@ -8229,17 +8248,14 @@ oyColourConversion_s* oyColourConversion_Create (
   return s;
 }
 
-/** @func    lcmsCMMColourConversion_ToMem
+/** @func    oyConcatenateImageProfiles_
  *  @brief   oyCMMColourConversion_ToMem_t implementation
  *
- *  convert a lcms colour conversion context to a device link
- *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/21
  *  @since   2007/12/21 (Oyranos: 0.1.8)
+ *  @date    2007/06/26
  */
-oyProfileList_s * oyColourConversion_GetProfiles_ (
-                                        oyColourConversion_s * s,
+oyProfileList_s * oyConcatenateImageProfiles_ (
                                         oyProfileList_s * list,
                                         oyImage_s       * in,
                                         oyImage_s       * out,
@@ -8261,7 +8277,7 @@ oyProfileList_s * oyColourConversion_GetProfiles_ (
       if(obj)
         p_list = oyProfileList_New( obj );
       else
-        p_list = oyProfileList_New( s->oy_ );
+        p_list = oyProfileList_New( 0 );
       error = !p_list;
 
       if(!error)
@@ -8347,7 +8363,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
     /* collect profiles */
     if(!error)
     {
-      p_list = oyColourConversion_GetProfiles_( s, list, in, out, obj );
+      p_list = oyConcatenateImageProfiles_( list, in, out, obj ? obj : s->oy_ );
 
       error = !p_list;
     }
@@ -8696,16 +8712,16 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
         in = s->image_in_->data;
 
 
-        if(s->image_in_->region)
+        if(s->image_in_->regions)
         {
-          WARNc_S(("TODO region handling"));
+          WARNc_S(("TODO regions handling"));
 
         } else {
 
           /*intptr_t off_x = s->image_in_->layout_[oyPOFF_X],
                    sample_size = s->image_in_->layout_[oyDATA_SIZE];
 
-          in += (intptr_t) oyRegion_Index_( s->image_in_->region, 0,0 ) *
+          in += (intptr_t) oyRegion_Index( s->image_in_->region, 0,0 ) *
                            off_x * sample_size;*/
 
           count = s->image_in_->width * s->image_in_->height;
@@ -8876,8 +8892,8 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
       {
         oyProfileList_s * p_list = 0;
 
-        p_list = oyColourConversion_GetProfiles_( s, s->profiles_,
-                            s->image_in_, s->image_out_, 0 );
+        p_list = oyConcatenateImageProfiles_( s->profiles_,
+                            s->image_in_, s->image_out_, s->oy_ );
 
         psid = oyProfileTag_Create( p_list->list_,
                      icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
@@ -8989,6 +9005,198 @@ oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * cc )
 
   return s;
 }
+
+
+/** @func    oyConversions_New_
+ *  @brief   allocate and initialise a new oyConversions_s object
+ *
+ *  @param         object              the obligate object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/06/24
+ */
+oyConversions_s *  oyConversions_New_( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_CONVERSIONS_S;
+# define STRUCT_TYPE oyConversions_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_CopyF_t) oyConversions_Copy;
+  s->release = (oyStruct_ReleaseF_t) oyConversions_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  return s;
+}
+
+/** @func    oyConversion_CreateBasic
+ *  @brief   allocate initialise a basic oyConversions_s object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/26
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ */
+oyConversions_s  * oyConversions_CreateBasic (
+                                       oyImage_s         * input,
+                                       oyImage_s         * output,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  oyConversions_s * s = oyConversions_New_( object );
+  int error = !s;
+
+  if(!error)
+  {
+    s->input = oyFilter_New( oyFILTER_TYPE_COLOUR, "image", 0, 0 );
+    
+    error = oyFilter_ImageSet ( s->input, input );
+
+  }
+
+  if(error)
+    s = 0;
+
+  return s;
+}
+oyConversions_s  * oyConversions_CreateInput (
+                                       oyImage_s         * input,
+                                       oyObject_s          object );
+/** @func    oyConversions_Copy_
+ *  @brief   real copy a oyConversions_s object
+ *
+ *  @param[in]     conversions         conversions object
+ *  @param         object              the obligate object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyConversions_s * oyConversions_Copy_( oyConversions_s   * conversions,
+                                       oyObject_s          object )
+{
+  oyConversions_s * s = 0;
+  int error = 0;
+  oyAllocFunc_t allocateFunc_ = 0;
+
+  if(!conversions || !object)
+    return s;
+
+  s = oyConversions_New_( object );
+  error = !s;
+  allocateFunc_ = s->oy_->allocateFunc_;
+
+  if(!error)
+  {
+    s->input = oyFilter_Copy( conversions->input, object );
+  }
+
+  return s;
+}
+
+/** @func    oyConversions_Copy
+ *  @brief   copy or reference a oyConversions_s object
+ *
+ *  @param[in]     conversions         conversions object
+ *  @param         object              the obligate object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyConversions_s * oyConversions_Copy ( oyConversions_s   * conversions,
+                                       oyObject_s          object )
+{
+  oyConversions_s * s = 0;
+
+  if(!conversions)
+    return s;
+
+  if(conversions && !object)
+  {
+    s = conversions;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyConversions_Copy_( conversions, object );
+
+  return s;
+}
+/** @func    oyConversions_Release
+ *  @brief   release and zero a conversions object
+ *
+ *  @todo    complete the implementation
+ *
+ *  @param[in,out] obj                 conversions object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/06/25
+ */
+int          oyConversions_Release   ( oyConversions_s  ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyConversions_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_CONVERSIONS_S)
+  {
+    WARNc_S(("Attempt to release a non oyConversions_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyFilter_Release( &s->input );
+  oyFilter_Release( &s->out_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAllocFunc_t deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+oyConversions_s  * oyConversions_FilterAdd (
+                                       oyFilter_s        * filter );
+oyConversions_s  * oyConversions_OutputAdd (
+                                       oyImage_s         * input );
+int              * oyConversions_Run ( oyConversions_s   * conversion,
+                                       uint32_t            feedback );
+oyProfile_s      * oyConversions_ToProfile (
+                                       oyConversions_s   * conversion );
+
+
 
 /** @} */
 
