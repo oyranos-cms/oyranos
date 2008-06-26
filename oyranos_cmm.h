@@ -298,6 +298,16 @@ typedef int      (*oyCMMConversion_Create_t) (
 /** @struct oyCMMapi4_s
  *  @brief the API 4 to implement and set to provide Filter support
  *
+ *  The registration member provides the means to later sucessfully select 
+ *  the according filter. The string is separated into sections by a point'.'.
+ *  The sections are separated by comma',' as needed. The sections are to be
+ *  filled as folows:
+ *  - top, e.g. "org"
+ *  - vendor, e.g. "oyranos"
+ *  - filter type, e.g. "colour" or "tonemap" or "image" or "generic" matching the filter_type member
+ *  - filter name, e.g. "scale"
+ *  - features, e.g. "no_interpolation,linear_interpolation,cubic_interpolation"
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
  *  @date    2008/06/24
@@ -314,8 +324,7 @@ typedef struct {
   oyCMMCanHandle_t oyCMMCanHandle;
 
 
-  oyFILTER_TYPE_e  filter_type;        /**< filter type */
-  const char     * registration;       /**< a registration name, e.g. "org.oyranos.lcms" */
+  const char     * registration;       /**< e.g. "org.oyranos.generic.scale.none,linear,cubic" */
 
   oyOptions_Get_t  oyOptions_Get;      /**< provide options */
   oyWidgetEvent_t  oyWidget_Event;     /**< handle widget events */
