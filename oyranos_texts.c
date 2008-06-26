@@ -620,13 +620,12 @@ oyStringCopy_      ( const char    * text,
   char * text_copy = NULL;
     
   if(text)
-    if( oyStrlen_(text) )
-    {
+  {
       text_copy = allocateFunc(strlen(text) + 1);
       oyAllocHelper_m_( text_copy, oyChar, oyStrlen_(text) + 1,
                         allocateFunc, return 0 );
       oyStrcpy_( text_copy, text );
-    }
+  }
   return text_copy;
 }
 
@@ -700,6 +699,7 @@ char**             oyStringSplit_    ( const char    * text,
     int n = 0, i;
     char * tmp = (char*)text;
 
+    if(tmp[0] == delimiter) ++n;
     do { ++n;
     } while( (tmp = oyStrchr_(tmp + 1, delimiter)) );
 
@@ -720,6 +720,8 @@ char**             oyStringSplit_    ( const char    * text,
 
         if(end > start)
           len = end - start;
+        else if (end == start)
+          len = 0;
         else
           len = oyStrlen_(start);
 
@@ -1017,7 +1019,7 @@ char**  oyXDGPathsGet_( int             * count,
   char *  vars[] = {"XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_DATA_DIRS", 
                     "XDG_CONFIG_DIRS"};
   int     vars_n = 4;
-  int     i;
+  int     i, j;
 
   for(i = 0; i < vars_n; ++i)
   {
@@ -1033,22 +1035,22 @@ char**  oyXDGPathsGet_( int             * count,
         if(strlen(var))
         {
           char **tmp_neu;
-          int  tmp_neu_n, i;
+          int  tmp_neu_n;
 
 
           tmp = oyStringSplit_( var, ':', &tmp_n, oyAllocateFunc_ );
 
           /* remove slash */
-          for(i = 0; i < tmp_n; ++i)
+          for(j = 0; j < tmp_n; ++j)
           {
             char slash = 0;
             int len = 0;
-            if(tmp[i])
-              len = oyStrlen_(tmp[i]);
+            if(tmp[j])
+              len = oyStrlen_(tmp[j]);
             if(len > 1)
-              slash = tmp[i][len-1];
+              slash = tmp[j][len-1];
             if(slash == OY_SLASH_C)
-              tmp[i][oyStrlen_(tmp[i])-1] = 0;
+              tmp[j][oyStrlen_(tmp[j])-1] = 0;
           }
 
           tmp_neu = oyStringListAppend_( (const char**)paths, n, 
@@ -1086,6 +1088,9 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
 {
   char * text = 0, * tmp = 0;
   int subdir_len = 0;
+
+  if(!path_)
+    return 0;
 
   if(subdir)
     subdir_len = oyStrlen_(subdir);
