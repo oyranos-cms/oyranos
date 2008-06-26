@@ -1670,14 +1670,13 @@ oyCMMapi4_s   oyra_api4 = {
   oyraCMMMessageFuncSet,
   oyraCMMCanHandle,
 
-  oyFILTER_TYPE_IMAGE,
-  "org.oyranos.image",
+  "org.oyranos.image.image.root",
 
   oyraOptions_GetDummy,
   oyraWidgetEvent,
 
   {oyOBJECT_TYPE_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
-  "Image", /* category */
+  "Image/Simple Image", /* category */
   0,   /* options */
   0    /* opts_ui_ */
 };

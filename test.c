@@ -42,13 +42,18 @@ char ** oyCMMsGetNames_              ( int               * n,
                                        int                 types_n );
 oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
+char**             oyStringSplit_    ( const char    * text,
+                                       const char      delimiter,
+                                       int           * count,
+                                       oyAllocFunc_t   allocateFunc );
+
 
 int
 main(int argc, char** argv)
 {
   int i, count = 0;
   uint32_t size = 0;
-  char ** profiles = oyProfileListGet ( 0, &size, malloc ),
+  char ** profiles = 0,
        ** texts = 0,
         * text = 0;
   oyProfileList_s * iccs, * patterns;
@@ -56,6 +61,9 @@ main(int argc, char** argv)
   oyCMMInfo_s * cmm_info = 0;
   oyFilter_s * filter = 0;
 
+  texts = oyStringSplit_("...image", '.', &count, malloc );
+
+  profiles = oyProfileListGet ( 0, &size, malloc );
   for( i = 0; i < (int) size; ++i )
     printf( "%d: %s\n", i, profiles[i]);
 
@@ -95,7 +103,7 @@ main(int argc, char** argv)
   }
   oyStringListRelease_( &texts, count, free );
 
-  filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "image", 0, 0 );
+  filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "...image", 0,0,0 );
 
   return 0;
 }
