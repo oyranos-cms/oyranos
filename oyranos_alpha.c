@@ -22,7 +22,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
-#include "oyranos_monitor.h" /* TODO */
+#include "oyranos_monitor.h" /* TODO remove? */
 #include "oyranos_sentinel.h"
 #include "oyranos_texts.h"
 #if !defined(WIN32)
@@ -176,7 +176,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
                                        const char        * cmm_required,
                                        oyCMMapiQueries_s * capabilities,
                                        char              * cmm_used,
-                                       const char        * category,
+                                       const char        * registration,
                                        oyFILTER_TYPE_e     filter_type );
 
 oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api );
@@ -2789,6 +2789,7 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
   oyCMMapi_s * tmp = 0;
   oyCMMapi4_s * cmm_api4 = 0;
   oyOBJECT_TYPE_e type = 0;
+  oyFILTER_TYPE_e filter_type = 0;
 
   if(!cmm_info || cmm_info->type != oyOBJECT_TYPE_CMM_INFO_S)
     return oyStringCopy_("---", oyAllocateFunc_);
@@ -2834,7 +2835,10 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
             cmm_api4 = (oyCMMapi4_s*) tmp;
             oyStringAdd_( &text, "\n    Filter type: ",
                           oyAllocateFunc_, oyDeAllocateFunc_ );
-            oyStringAdd_( &text, oyFilterTypeToText( cmm_api4->filter_type ),
+            oyFilterRegistrationToText ( cmm_api4->registration,
+                                       oyFILTER_REG_NONE, &filter_type, 0 );
+            oyStringAdd_( &text, oyFilterTypeToText( filter_type,
+                                                     oyNAME_DESCRIPTION ),
                           oyAllocateFunc_, oyDeAllocateFunc_ );
             oyStringAdd_( &text, "\n    Registration: ",
                           oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -2912,23 +2916,28 @@ int              oyCMMCanHandle_    ( oyCMMapi_s         * api,
  *                                     simplifies and speeds up the search
  *  @param[in]   queries               search for a match to capabilities
  *  @param[out]  cmm_used              inform about the selected CMM
+ *  @param[in]   registration          point'.' separated list of identifiers
+ *  @param[in]   filter_type           type of filter
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2007/12/12 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/12/12 (Oyranos: 0.1.8)
+ *  @date    2008/06/27
  */
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
                                        const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        char              * cmm_used,
-                                       const char        * category,
+                                       const char        * registration,
                                        oyFILTER_TYPE_e     filter_type )
 {
   int error = !type;
   oyCMMapi_s * api = 0,
              * api_fallback = 0;
+  oyCMMapi4_s * cmm_api4 = 0;
   char cmm_fallback[5] = {0,0,0,0,0},
        prefered_cmm[5] = {0,0,0,0,0};
-  
+  int  found = 0;
+  oyFILTER_TYPE_e cmm_api4_filter_type = 0;
 
   if(!cmm_required)
   {
@@ -2966,18 +2975,43 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
         {
           if(oyCMMapi_Check_(tmp) == type)
           {
-
-            if(memcmp( cmm, prefered_cmm, 4 ) == 0)
+            if(type == oyOBJECT_TYPE_CMM_API4_S)
             {
-              api = tmp;
-              error = !memcpy( cmm_used, cmm_info->cmm, 4 );
+              cmm_api4 = (oyCMMapi4_s *) tmp;
+              if(filter_type)
+              {
+                if(registration)
+                {
+                  oyFilterRegistrationToText( cmm_api4->registration, 0,
+                                              &cmm_api4_filter_type, 0 );
+                  if(cmm_api4_filter_type == filter_type && filter_type != 0)
+                  {
+                    if(oyFilterRegistrationMatch( cmm_api4->registration,
+                                                  registration ))
+                      found = 1;
+                  }
+                } else
+                  found = 1;
 
+                if(found)
+                {
+                  api = tmp;
+                  error = !memcpy( cmm_used, cmm_info->cmm, 4 );
+                }
+              }
             } else {
 
-              api_fallback = tmp;
-              error = !memcpy( cmm_fallback, cmm, 4 );
-            }
+              if(memcmp( cmm, prefered_cmm, 4 ) == 0)
+              {
+                api = tmp;
+                error = !memcpy( cmm_used, cmm_info->cmm, 4 );
 
+              } else {
+
+                api_fallback = tmp;
+                error = !memcpy( cmm_fallback, cmm, 4 );
+              }
+            }
           }
           tmp = tmp->next;
         }
@@ -7321,7 +7355,7 @@ OYAPI oyProfileList_s * OYEXPORT
         if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
         {
           if(size && 0)
-          { // TODO
+          { /* TODO short readings */
             full_name = oyFindProfile_(names[i]);
             block = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
             tmp = oyProfile_FromMemMove_( size, &block, 0, 0 );
@@ -8398,20 +8432,125 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
  *  @since   2008/06/24 (Oyranos: 0.1.8)
  *  @date    2008/06/24
  */
-const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     type )
+const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
+                                       oyNAME_e            type )
 {
-  const char * text = 0;
-
-  if(type)
-    switch(type) {
-    case oyFILTER_TYPE_COLOUR: text = "colour"; break;
-    case oyFILTER_TYPE_TONEMAP: text = "contrast or tone mapping"; break;
-    case oyFILTER_TYPE_IMAGE: text = "image"; break;
-    case oyFILTER_TYPE_GENERIC: text = "generic"; break;
-    default: text = "unknown"; break;
+  if(filter_type)
+  {
+    if(type == oyNAME_NICK || type == oyNAME_NAME)
+    {
+      if(filter_type == oyFILTER_TYPE_COLOUR) return "colour";
+      if(filter_type == oyFILTER_TYPE_TONEMAP) return "tonemap";
+      if(filter_type == oyFILTER_TYPE_IMAGE) return "image";
+      if(filter_type == oyFILTER_TYPE_GENERIC) return "generic";
     }
 
+      if(filter_type == oyFILTER_TYPE_COLOUR) return "colour";
+      if(filter_type == oyFILTER_TYPE_TONEMAP) return "contrast or tone mapping";
+      if(filter_type == oyFILTER_TYPE_IMAGE) return "image";
+      if(filter_type == oyFILTER_TYPE_GENERIC) return "generic";
+  }
+
+  return 0;
+}
+
+/** @func    oyFilterRegistrationToText
+ *  @brief   analyse registration string
+ *
+ *  @param         registration        registration string to analise
+ *  @param[in]     type                kind of answere in return
+ *  @param[out]    filter_type         fill the filter type
+ *  @param[in]     allocateFunc        use this or Oyranos standard allocator
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+char *         oyFilterRegistrationToText (
+                                       const char        * registration,
+                                       oyFILTER_REG_e      type,
+                                       oyFILTER_TYPE_e   * filter_type,
+                                       oyAllocFunc_t       allocateFunc )
+{
+  char  * text = 0;
+  char ** texts = 0;
+  int     texts_n = 0;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(registration)
+  {
+    texts = oyStringSplit_( registration, '.', &texts_n, oyAllocateFunc_);
+    if(texts_n >= type && type == oyFILTER_REG_TOP)
+      text = oyStringCopy_( texts[oyFILTER_REG_TOP-1], allocateFunc );
+    if(texts_n >= type && type == oyFILTER_REG_VENDOR)
+      text = oyStringCopy_( texts[oyFILTER_REG_VENDOR-1], allocateFunc );
+    if(texts_n >= type && type == oyFILTER_REG_TYPE)
+      text = oyStringCopy_( texts[oyFILTER_REG_TYPE-1], allocateFunc );
+    if(texts_n >= type && type == oyFILTER_REG_NAME)
+      text = oyStringCopy_( texts[oyFILTER_REG_NAME-1], allocateFunc );
+    if(texts_n >= type && type == oyFILTER_REG_FEATURES)
+      text = oyStringCopy_( texts[oyFILTER_REG_FEATURES-1], allocateFunc );
+    if(texts_n >= oyFILTER_REG_TYPE && filter_type)
+    {
+           if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour"))
+        *filter_type = oyFILTER_TYPE_COLOUR;
+      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "tonemap"))
+        *filter_type = oyFILTER_TYPE_TONEMAP;
+      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "image"))
+        *filter_type = oyFILTER_TYPE_IMAGE;
+      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "generic"))
+        *filter_type = oyFILTER_TYPE_GENERIC;
+    }
+    oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+  }
+
   return text;
+}
+
+/** @func    oyFilterRegistrationMatch
+ *  @brief   analyse registration string and compare with a given pattern
+ *
+ *  @param         registration        registration string to analise
+ *  @param[in]     pattern             pattern to compare with
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+int    oyFilterRegistrationMatch     ( const char        * registration,
+                                       const char        * pattern )
+{
+  char ** reg_texts = 0;
+  int     reg_texts_n = 0;
+  char ** p_texts = 0;
+  int     p_texts_n = 0;
+  char ** pc_texts = 0;
+  int     pc_texts_n = 0;
+  int     match = 0, i, j;
+
+  if(registration && pattern)
+  {
+    match = 1;
+    reg_texts = oyStringSplit_( registration,'.',&reg_texts_n, oyAllocateFunc_);
+    p_texts = oyStringSplit_( pattern,'.',&p_texts_n, oyAllocateFunc_);
+
+    for( i = 0; i < reg_texts_n && i < p_texts_n; ++i)
+    {
+      pc_texts = oyStringSplit_( p_texts[i],',',&pc_texts_n, oyAllocateFunc_);
+
+      for( j = 0; j < pc_texts_n; ++j)
+        if(!oyStrstr_( reg_texts[i], pc_texts[j] ))
+          match = 0;
+
+      oyStringListRelease_( &pc_texts, pc_texts_n, oyDeAllocateFunc_ );
+    }
+    oyStringListRelease_( &reg_texts, reg_texts_n, oyDeAllocateFunc_ );
+    oyStringListRelease_( &p_texts, p_texts_n, oyDeAllocateFunc_ );
+  }
+
+  return match;
 }
 
 /** @func    oyFilter_New_
@@ -8463,8 +8602,9 @@ static uint32_t filter_ids = 0;
  *  @date    2008/06/25
  */
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
-                                       const char        * category,
+                                       const char        * registration,
                                        const char        * cmm_required,
+                                       oyOptions_s       * options,
                                        oyObject_s          object )
 {
   oyFilter_s * s = oyFilter_New_( object );
@@ -8476,7 +8616,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
                                        cmm_required,
                                        capabilities,
                                        cmm_used,
-                                       category,
+                                       registration,
                                        filter_type );
   oyCMMapi4_s * cmm_api4 = 0;
   oyAllocFunc_t allocateFunc_ = 0;
@@ -8504,8 +8644,8 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
   }
 
-  if(error)
-    s = 0;
+  if(error && s)
+    oyFilter_Release( &s );
 
   return s;
 }
@@ -9547,13 +9687,18 @@ oyConversions_s  * oyConversions_CreateBasic (
 {
   oyConversions_s * s = oyConversions_New_( object );
   int error = !s;
+  oyFilter_s * filter = 0;
 
   if(!error)
   {
-    s->input = oyFilter_New( oyFILTER_TYPE_COLOUR, "image", 0, 0 );
+    s->input = oyFilter_New( oyFILTER_TYPE_GENERIC, "..generic.image.root",
+                             0,0, 0 );
     
     error = oyFilter_ImageSet ( s->input, input );
-    //TODO
+
+    filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..cmm",
+                           oyModuleGetActual(0), options, 0 );
+    /* TODO implement */
   }
 
   if(error)

@@ -974,13 +974,33 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
                                        char              * options );
 
 typedef enum {
+  oyFILTER_TYPE_NONE,                  /**< nothing */
   oyFILTER_TYPE_COLOUR,                /**< colour */
   oyFILTER_TYPE_TONEMAP,               /**< contrast or tone mapping */
   oyFILTER_TYPE_IMAGE,                 /**< image */
-  oyFILTER_TYPE_GENERIC                /**< generic */
+  oyFILTER_TYPE_GENERIC,               /**< generic */
+  oyFILTER_TYPE_MAX
 } oyFILTER_TYPE_e;
 
-const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     type );
+const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
+                                       oyNAME_e            type );
+
+typedef enum {
+  oyFILTER_REG_NONE,
+  oyFILTER_REG_TOP,
+  oyFILTER_REG_VENDOR,
+  oyFILTER_REG_TYPE,                   /**< oyFilterTypeToText/oyFILTER_TYPE_e*/
+  oyFILTER_REG_NAME,
+  oyFILTER_REG_FEATURES,
+  oyFILTER_REG_MAX
+} oyFILTER_REG_e;
+
+char * oyFilterRegistrationToText    ( const char        * registration,
+                                       oyFILTER_REG_e      type,
+                                       oyFILTER_TYPE_e   * filter_type,
+                                       oyAllocFunc_t       allocateFunc );
+int    oyFilterRegistrationMatch     ( const char        * registration,
+                                       const char        * pattern );
 
 typedef struct oyFilter_s_ oyFilter_s;
 typedef struct oyFilters_s_ oyFilters_s;
@@ -1039,8 +1059,9 @@ struct oyFilter_s_ {
 };
 
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,
-                                       const char        * category,
+                                       const char        * registration,
                                        const char        * cmm,
+                                       oyOptions_s       * options,
                                        oyObject_s          object );
 oyFilter_s * oyFilter_Copy           ( oyFilter_s        * filter,
                                        oyObject_s          object );
@@ -1107,7 +1128,7 @@ struct oyFilters_s_ {
  *  @brief  a filter chain to manipulate a image
  *
  *  Order of filters matters. \n
- *  The idea is like:
+ *  The idea is a bit like raytracing:
  *  @verbatim
     output_image -ask filter C-> C -ask filter B and process-> B ->ask filter A and process-> A ->ask source_image-> input_image
     @endverbatim
