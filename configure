@@ -590,7 +590,7 @@ if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   INSTALL="install -p $DEBUG_SWITCH"
-  oyranos_add="-framework ApplicationServices \$dl"
+  oyranos_add="-framework ApplicationServices \$ltdl"
   oyranos_x_add=""
 else
   test -n "$ECHO" && $ECHO "SO = .so" >> $CONF
@@ -603,7 +603,7 @@ else
         --copyright-holder='Kai-Uwe Behrmann' \
         --msgid-bugs-address='ku.b@gmx.de' \
         --from-code=utf-8" >> $CONF
-  oyranos_add="\$dl"
+  oyranos_add="\$ltdl"
   oyranos_x_add="\$X11_LIB_PATH \$X11 \$Xext \$Xinerama"
   if [ $OSUNAME = "Linux" ]; then
     test -n "$ECHO" && $ECHO "COPY = cp -vdpa" >> $CONF
@@ -662,7 +662,7 @@ test -n "$ECHO" && $ECHO "" >> $CONF_SH
 test -n "$INFOECHO" && $INFOECHO ""
 
 # tell about required libs
-LIBS_TEST="dl iconv intl m"; export LIBS_TEST
+LIBS_TEST="ltdl dl iconv intl m"; export LIBS_TEST
 X_ADD_2="X11 Xext Xinerama Xxf86vm"; export X_ADD_2
 
 # detect external libs and headers

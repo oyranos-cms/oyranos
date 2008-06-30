@@ -341,10 +341,10 @@ test2:	$(LIB_MONI_SONAMEFULL)
 	-o test2.o `oyranos-config --cflags`
 	echo Linking dynamic $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
-	test2.o `oyranos-config --ld_x_flags`
+	test2.o `oyranos-config --ldflags`
 	echo Linking static $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
-	test2.o `oyranos-config --ld_x_staticflags`
+	test2.o `oyranos-config --ldstaticflags`
 	
 
 check:	test2
