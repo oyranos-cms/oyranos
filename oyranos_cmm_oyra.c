@@ -1644,9 +1644,31 @@ oyWIDGET_EVENT_e oyraWidget_EventDummy
                                        oyWIDGET_EVENT_e    type )
 {return 0;}
 
-oyOptions_s* oyraOptions_GetDummy    ( oyOptions_s       * validate,
+oyOptions_s* oyraFilter_ImageRootValidateOptions
+                                     ( oyFilter_s        * filter,
+                                       oyOptions_s       * validate,
                                        uint32_t          * result )
-{return 0;}
+{
+  uint32_t error = !filter;
+  oyDATATYPE_e data_type = 0;
+
+  if(!error)
+    error = filter->type_ != oyOBJECT_TYPE_CMM_API4_S;
+
+  if(!error)
+    if(filter->image_ && filter->image_->layout_)
+    {
+      data_type = oyToDataType_m( filter->image_->layout_[0] );
+      if(!(data_type == oyUINT8 ||
+           data_type == oyUINT16 ||
+           data_type == oyDOUBLE))
+        error = 1;
+    }
+
+  *result = error;
+
+  return 0;
+}
 
 oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
@@ -1660,7 +1682,7 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
  *  @since   2008/02/08 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-oyCMMapi4_s   oyra_api4 = {
+oyCMMapi4_s   oyra_api4_image_root = {
 
   oyOBJECT_TYPE_CMM_API4_S,
   0,0,0,
@@ -1672,7 +1694,7 @@ oyCMMapi4_s   oyra_api4 = {
 
   "org.oyranos.image.image.root",
 
-  oyraOptions_GetDummy,
+  oyraFilter_ImageRootValidateOptions,
   oyraWidgetEvent,
 
   {oyOBJECT_TYPE_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
@@ -1692,7 +1714,7 @@ oyCMMapi3_s  oyra_api3 = {
 
   oyOBJECT_TYPE_CMM_API3_S,
   0,0,0,
-  (oyCMMapi_s*) & oyra_api4,
+  (oyCMMapi_s*) & oyra_api4_image_root,
   
   oyraCMMInit,
   oyraCMMMessageFuncSet,

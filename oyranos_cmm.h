@@ -141,7 +141,21 @@ typedef enum {
   oyWIDGET_UNDEFINED
 } oyWIDGET_EVENT_e;
 
-typedef oyOptions_s*(*oyOptions_Get_t)(oyOptions_s       * validate,
+/** @typedef oyFilter_ValidateOptions_t
+ *  @brief   a function to check and validate options
+ *
+ *  @param[in]     filter              the filter
+ *  @param[in]     validate            to validate
+ *  @param[out]    ret                 0 if nothing changed otherwise >=1
+ *  @return                            corrected options or zero
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
+ *  @date    2008/01/02
+ */
+typedef oyOptions_s * (*oyFilter_ValidateOptions_t)
+                                     ( oyFilter_s        * filter,
+                                       oyOptions_s       * validate,
                                        uint32_t          * result );
 typedef const char* (*oyWidgetGet_t) ( uint32_t          * result );
 typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_t)
@@ -284,7 +298,7 @@ typedef struct {
 
 
 /** @type    oyCMMConversion_Create_t
- *  @brief   create a basic filter context from two images
+ *  @brief   create a basic filter context from root image filter
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/06/24
@@ -326,12 +340,12 @@ typedef struct {
 
   const char     * registration;       /**< e.g. "org.oyranos.generic.scale.none,linear,cubic" */
 
-  oyOptions_Get_t  oyOptions_Get;      /**< provide options */
+  oyFilter_ValidateOptions_t oyFilter_ValidateOptions; /**< check options for validy and correct */
   oyWidgetEvent_t  oyWidget_Event;     /**< handle widget events */
 
-  oyName_s         name;               /**< translatable, eg "lcms" "little cms" "..." */
+  oyName_s         name;               /**< translatable, eg "scale" "image scaling" "..." */
   const char       category[256];      /**< menu structure */
-  oyOptions_s    * options;            /**< options */
+  oyOptions_s    * options;            /**< default options */
   const char     * opts_ui;            /**< xml ui elements for filter options*/
 } oyCMMapi4_s;
 

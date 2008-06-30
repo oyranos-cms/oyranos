@@ -61,8 +61,6 @@ main(int argc, char** argv)
   oyCMMInfo_s * cmm_info = 0;
   oyFilter_s * filter = 0;
 
-  texts = oyStringSplit_("...image", '.', &count, malloc );
-
   profiles = oyProfileListGet ( 0, &size, malloc );
   for( i = 0; i < (int) size; ++i )
     printf( "%d: %s\n", i, profiles[i]);

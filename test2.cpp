@@ -17,9 +17,9 @@ int main(int argc, char** argv)
   oy_debug = 0;
 
 
-  int erg =
-    oyranos::oyGetMonitorInfo ( display_name, &manufacturer, &model, &serial,
-                                myAllocFunc );
+  int erg = 0;
+    /*oyranos::oyGetMonitorInfo ( display_name, &manufacturer, &model, &serial,
+                                myAllocFunc );*/
 
   if(erg) {
     std::cout << "error while retrieving monitor profile!!\n";
@@ -40,8 +40,8 @@ int main(int argc, char** argv)
 
   std::cout << "Monitor profile name:" << std::endl;
   // now an more simple approach
-  char* profil_name =
-    oyranos::oyGetMonitorProfileName (display_name, myAllocFunc);
+  char* profil_name = 0;
+    /*oyranos::oyGetMonitorProfileName (display_name, myAllocFunc);*/
   if(profil_name)
     std::cout << profil_name << std::endl;
   else
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
   for(int i = (int)oyranos::oyDEFAULT_PROFILE_START + 1;
         i < (int)oyranos::oyDEFAULT_PROFILE_END ; ++i)
   {
-    std::cout <<"  "<< oyWidgetTitleGet( (oyranos::oyWIDGET)i,0,0,0,0 )
+    std::cout <<"  "<< oyWidgetTitleGet( (oyranos::oyWIDGET_e)i,0,0,0,0 )
               <<": ";
     char *default_name = oyranos::oyGetDefaultProfileName( 
                            (oyranos::oyDEFAULT_PROFILE)i, myAllocFunc );
@@ -65,12 +65,12 @@ int main(int argc, char** argv)
   std::cout << "... done\n" << std::endl;
 
   std::cout << "Profile Lists Test [1000]:\n";
-  int ref_count = 0;
-  char ** reference = oyranos::oyProfileListGet(0, &ref_count);
+  uint32_t ref_count = 0;
+  char ** reference = oyranos::oyProfileListGet(0, &ref_count, myAllocFunc);
   for(int i = 0; i < 1000; ++i)
   {
-    int count = 0;
-    char ** names = oyranos::oyProfileListGet(0, &count);
+    uint32_t count = 0;
+    char ** names = oyranos::oyProfileListGet(0, &count, myAllocFunc);
     if(count != ref_count)
       std::cout << "\n" << i << ": wrong profile count: " << count <<"/"<<
                    ref_count << std::endl;
