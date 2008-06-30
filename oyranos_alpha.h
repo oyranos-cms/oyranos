@@ -204,6 +204,18 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
                                        oyAllocFunc_t       allocateFunc,
                                        oyDeAllocFunc_t     deallocateFunc );
 
+typedef enum {
+  oyBOOLEAN_INTERSECTION,              /** and, the part covered by A and B */
+  oyBOOLEAN_SUBSTRACTION,              /** minus, the part covered by A but not by B */
+  oyBOOLEAN_DIFFERENZ,                 /** xor, exclusive parts of A and B */
+  oyBOOLEAN_UNION                      /** or, the parts covered by A or B or both */
+} oyBOOLEAN_e;
+
+int          oyName_boolean          ( oyName_s          * name_a,
+                                       oyName_s          * name_b,
+                                       oyNAME_e            name_type,
+                                       oyBOOLEAN_e         type );
+
 #define OY_HASH_SIZE 16
 
 #if 0
@@ -464,21 +476,22 @@ typedef struct {
   oyObject_s           oy_;            /**< base object */
 
   uint32_t             id;             /**< id to map for instance to events and widgets */
-  oyName_s           * name;           /**< nick, name, description/help */
-  const char         * config_path;    /**< full key name to store configuration, use three point separated string, eg "org.oyranos.lcms" */
-  const char         * config_key;     /**< key name to store configuration, eg "transform_precalculation" */
+  oyName_s             name;           /**< nick, name, description/help, e.g. "radius" "Radius" "..." */
+  const char         * registration;    /**< full key name to store configuration, e.g. "org.oyranos.generic.scale.none,linear,cubic", config key name will be name.nick */
   oyVALUETYPE_e        value_type;     /**< the type in value */
-  oyValue_u            value;          /**< the actual value */
-  oyValue_u            standard;       /**< the standard value */
-  oyValue_u            start;          /**< value range start */
-  oyValue_u            end;            /**< value range end */
+  oyValue_u          * value;          /**< the actual value */
+  oyValue_u          * standard;       /**< the standard value */
+  oyValue_u          * start;          /**< value range start */
+  oyValue_u          * end;            /**< value range end */
   uint32_t             flags;          /**<  */
 } oyOption_s;
 
-oyOption_s *   oyOption_New          ( oyObject_s          object );
+oyOption_s *   oyOption_New          ( oyObject_s          object,
+                                       const char        * name );
 oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
                                        oyObject_s          object );
 int            oyOption_Release      ( oyOption_s       ** option );
+
 
 /** @brief Options for rendering
     Options can be any flag or rendering intent and other informations needed to
@@ -490,11 +503,15 @@ typedef struct {
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyStructList_s     * opts;
+  oyStructList_s     * list;
 } oyOptions_s;
 
 oyOptions_s *  oyOptions_FromMem     ( size_t            * size,
                                        const char        * opts_text,
+                                       oyObject_s          object );
+oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
+                                       oyOptions_s       * options,
+                                       oyBOOLEAN_e         type,
                                        oyObject_s          object );
 oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
                                        oyObject_s          object );
@@ -510,7 +527,7 @@ int            oyOptions_MoveIn      ( oyOptions_s       * options,
                                        oyOption_s       ** option );
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option );
-char           oyOptions_GetMem      ( oyOptions_s       * options,
+char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAllocFunc_t       allocateFunc );
 
@@ -973,6 +990,7 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
                                        oyProfile_s       * profile,
                                        char              * options );
 
+
 typedef enum {
   oyFILTER_TYPE_NONE,                  /**< nothing */
   oyFILTER_TYPE_COLOUR,                /**< colour */
@@ -1035,14 +1053,14 @@ struct oyFilter_s_ {
   oyObject_s           oy_;            /**< base object */
 
   uint32_t             id_;            /**< identification for Oyranos */
-  const char         * registration_;  /**< a registration name, e.g. "org.oyranos.lcms" */
+  const char         * registration_;  /**< a registration name, e.g. "org.oyranos.generic.scale.none,linear,cubic" */
   oyName_s           * name_;          /**< nick, name, description/help */
   char                 cmm_[8];        /**< cmm name to look up for infos */
 
   oyFILTER_TYPE_e      filter_type_;   /**< filter type */
   char               * category_;      /**< the ui menue category for this filter */
 
-  oyOptions_s        * options_;       /**< options */
+  oyOptions_s        * options_;       /**< local options */
   char               * opts_ui_;       /**< xml ui elements for filter options*/
 
   oyImage_s          * image_;         /**< image, used for oyFILTER_TYPE_IMAGE */
@@ -1053,9 +1071,9 @@ struct oyFilter_s_ {
 
   oyFilter_s         * merged_to_;     /**< the filter, which does processing */
 
-  oyStructList_s     * data_;          /**< the filter private data */
+  oyImage_s          * stream_;        /**< access to pixel stream */
 
-  oyImage_s          * stream_;         /**< access to pixel stream */
+  oyStructList_s     * data_;          /**< the filter private data */
 };
 
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,

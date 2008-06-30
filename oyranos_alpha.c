@@ -208,11 +208,11 @@ int          oyIdToCMM               ( uint32_t            cmmId,
  *  pixel mask description 
  */
 enum {
+  oyLAYOUT,     /* remembering the layout */
   oyPOFF_X = 0, /* pixel count x offset */
   oyPOFF_Y,     /* pixel count y offset */
   oyCOFF,       /* channel offset */
   oyDATA_SIZE,  /* sample size in byte */
-  oyLAYOUT,     /* remembering the layout */
   oyCHANS,      /* number of channels */
   oyCHAN0       /* first colour channel */
 };
@@ -1536,7 +1536,7 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
   s->type = oyOBJECT_TYPE_NAME_S;
 
   {
-#define oySetString_(n_type)\
+#define oySetString_m(n_type)\
     if(!error) { \
       if(s->n_type && deallocateFunc) \
         deallocateFunc( s->n_type ); \
@@ -1545,11 +1545,11 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
     } 
     switch (type) {
     case oyNAME_NICK:
-         oySetString_(nick) break;
+         oySetString_m(nick) break;
     case oyNAME_NAME:
-         oySetString_(name) break;
+         oySetString_m(name) break;
     case oyNAME_DESCRIPTION:
-         oySetString_(description) break;
+         oySetString_m(description) break;
     default: break;
     }
 #undef oySetString_
@@ -1558,6 +1558,84 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
   return s;
 }
 
+/** @brief   test a boolean operator
+ *
+ *  The function requires to receive proper object arguments and valid ranges.
+ *
+ *  @return                            -1 for undefined, 1 - true, 0 - false
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/28 (Oyranos: 0.1.8)
+ *  @date    2008/06/28
+ */
+int          oyName_boolean          ( oyName_s          * name_a,
+                                       oyName_s          * name_b,
+                                       oyNAME_e            name_type,
+                                       oyBOOLEAN_e         type )
+{
+  int erg = -1;
+  int error = !name_a || !name_b ||
+              0 > name_type || name_type > oyNAME_DESCRIPTION ||
+              0 > type || type > oyBOOLEAN_UNION;
+
+  const char *text_a = 0;
+  const char *text_b = 0;
+
+  if(!error)
+  {
+    if(name_type == oyNAME_NAME)
+    {
+      text_a = name_a->name;
+      text_b = name_b->name;
+    } else
+    if(name_type == oyNAME_NICK)
+    {
+      text_a = name_a->nick;
+      text_b = name_b->nick;
+    } else
+    if(name_type == oyNAME_DESCRIPTION)
+    {
+      text_a = name_a->description;
+      text_b = name_b->description;
+    }
+
+
+    if(type == oyBOOLEAN_INTERSECTION)
+    {
+      if(text_a && text_b)
+        erg = oyStrcmp_( text_a, text_b ) == 0;
+      else
+        erg = 0;
+    }
+    if(type == oyBOOLEAN_SUBSTRACTION)
+    {
+      if(text_a && text_b)
+        erg = oyStrcmp_( text_a, text_b ) != 0;
+      else if(text_a)
+        erg = 1;
+      else
+        erg = 0;
+    }
+    if(type == oyBOOLEAN_DIFFERENZ)
+    {
+      if(text_a && text_b)
+        erg = oyStrcmp_( text_a, text_b ) != 0;
+      else if(text_a || text_b)
+        erg = 1;
+      else
+        erg = 0;
+    }
+    if(type == oyBOOLEAN_UNION)
+    {
+      if(text_a || text_b)
+        erg = 1;
+      else
+        erg = 0;
+    }
+  }
+
+  return erg;
+}
 
 
 
@@ -4479,6 +4557,14 @@ void           oyValueCopy           ( oyValue_u         * from,
        break;
   }
 }
+
+/** @func    oyValueClear
+ *  @brief   clear a oyValue_u union
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
 void           oyValueClear          ( oyValue_u         * v,
                                        oyVALUETYPE_e       type,
                                        oyDeAllocFunc_t     deallocateFunc )
@@ -4523,6 +4609,13 @@ void           oyValueClear          ( oyValue_u         * v,
        break;
   }
 }
+/** @func    oyValueRelease
+ *  @brief   release a oyValue_u union
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
 void           oyValueRelease        ( oyValue_u        ** v,
                                        oyVALUETYPE_e       type,
                                        oyDeAllocFunc_t     deallocateFunc )
@@ -4539,6 +4632,7 @@ void           oyValueRelease        ( oyValue_u        ** v,
   *v = 0;
 }
 
+
 /** @func    oyOption_New
  *  @brief   new option
  *
@@ -4546,7 +4640,8 @@ void           oyValueRelease        ( oyValue_u        ** v,
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-oyOption_s *   oyOption_New          ( oyObject_s          object )
+oyOption_s *   oyOption_New          ( oyObject_s          object,
+                                       const char        * name )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_TYPE_e type = oyOBJECT_TYPE_OPTION_S;
@@ -4580,7 +4675,7 @@ oyOption_s *   oyOption_New          ( oyObject_s          object )
  *  @brief   real copy a option object
  *
  *  @param[in]     option              option object
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -4592,28 +4687,36 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
   oyOption_s * s = 0;
   int error = 0;
   oyAllocFunc_t allocateFunc_ = 0;
+  oyDeAllocFunc_t deallocateFunc_ = 0;
 
   if(!option || !object)
     return s;
 
-  s = oyOption_New( object );
+  s = oyOption_New( object, option ? option->name.name : "" );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
 
   if(!error)
   {
     s->id = option->id;
-    s->name = oyName_copy( option->name, s->oy_ );
-    s->config_path = option->config_path;
-    s->config_key = option->config_key;
+    if(option->name.name)
+      oyName_set_ ( &s->name, option->name.name, oyNAME_NAME,
+                    allocateFunc_, deallocateFunc_ );
+    if(option->name.nick)
+      oyName_set_ ( &s->name, option->name.nick, oyNAME_NICK,
+                    allocateFunc_, deallocateFunc_ );
+    if(option->name.description)
+      oyName_set_ ( &s->name, option->name.description, oyNAME_DESCRIPTION,
+                    allocateFunc_, deallocateFunc_ );
+    s->registration = option->registration;
     s->value_type = option->value_type;
-    oyValueCopy( &s->value, &option->value, s->value_type,
+    oyValueCopy( s->value, option->value, s->value_type,
                  allocateFunc_, s->oy_->deallocateFunc_ );
-    oyValueCopy( &s->standard, &option->standard, s->value_type,
+    oyValueCopy( s->standard, option->standard, s->value_type,
                  allocateFunc_, s->oy_->deallocateFunc_ );
-    oyValueCopy( &s->start, &option->start, s->value_type,
+    oyValueCopy( s->start, option->start, s->value_type,
                  allocateFunc_, s->oy_->deallocateFunc_ );
-    oyValueCopy( &s->end, &option->end, s->value_type,
+    oyValueCopy( s->end, option->end, s->value_type,
                  allocateFunc_, s->oy_->deallocateFunc_ );
     s->flags = option->flags;
   }
@@ -4677,18 +4780,17 @@ int            oyOption_Release      ( oyOption_s       ** obj )
   /* ---- end of common object destructor ------- */
 
   s->id = 0;
-  s->config_path = 0;
-  s->config_key = 0;
+  s->registration = 0;
   s->flags = 0;
 
   if(s->oy_->deallocateFunc_)
   {
     oyDeAllocFunc_t deallocateFunc = s->oy_->deallocateFunc_;
 
-    oyValueClear( &s->value, s->value_type, deallocateFunc );
-    oyValueClear( &s->standard, s->value_type, deallocateFunc );
-    oyValueClear( &s->start, s->value_type, deallocateFunc );
-    oyValueClear( &s->end, s->value_type, deallocateFunc );
+    oyValueRelease( &s->value, s->value_type, deallocateFunc );
+    oyValueRelease( &s->standard, s->value_type, deallocateFunc );
+    oyValueRelease( &s->start, s->value_type, deallocateFunc );
+    oyValueRelease( &s->end, s->value_type, deallocateFunc );
 
     s->value_type = 0;
 
@@ -4699,6 +4801,26 @@ int            oyOption_Release      ( oyOption_s       ** obj )
 
   return 0;
 }
+
+/** @func    oyOption_Match_
+ *  @brief   two option matches
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/28 (Oyranos: 0.1.8)
+ *  @date    2008/06/28
+ */
+int            oyOption_Match_       ( oyOption_s        * option_a,
+                                       oyOption_s        * option_b )
+{
+  int erg = 0;
+
+  if( option_a && option_b && 
+      oyStrcmp_( option_a->name.name, option_b->name.name ) == 0 )
+    erg = 1;
+
+  return erg;
+}
+
 
 /** @func    oyOptions_New
  *  @brief   new options
@@ -4740,11 +4862,117 @@ oyOptions_s *  oyOptions_New         ( oyObject_s          object )
 oyOptions_s *  oyOptions_FromMem     ( size_t            * size,
                                        const char        * opts_text,
                                        oyObject_s          object );
+/** @func    oyOptions_FromBoolean
+ *  @brief   boolean operations on two sets of option
+ *
+ *  @param[in]     set_a               options set A
+ *  @param[in]     set_b               options set B
+ *  @param[in]     type                the operation to perform
+ *  @param         object              the optional object
+ *  @param
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/28 (Oyranos: 0.1.8)
+ *  @date    2008/06/28
+ */
+oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
+                                       oyOptions_s       * set_b,
+                                       oyBOOLEAN_e         type,
+                                       oyObject_s          object )
+{
+  int error = !set_a;
+  oyOptions_s * options = 0;
+  oyOption_s * option_a = 0, * option_b = 0, * option = 0;
+  int set_an = oyOptions_Count( set_a ),
+      set_bn = oyOptions_Count( set_b );
+  int i, j, k,
+      found = 0;
+
+  if(!error)
+  {
+    for(i = 0; i < set_an; ++i)
+    {
+      option_a = oyOptions_Get( set_a, i );
+
+      for(j = 0; j < set_bn; ++j)
+      {
+        option_b = oyOptions_Get( set_b, i );
+
+        found = oyName_boolean( &option_a->name, &option_b->name, oyNAME_NICK,
+                                type );
+
+        /* check various value ranges */
+        if(found == 1)
+        {
+          if(oyStrcmp_(option_a->name.nick, option_b->name.nick) == 0)
+          {
+            if(option_a->value_type != option_b->value_type)
+              found = 0;
+
+            if(found && option_a->value_type)
+            {
+              if(option_a->value_type == oyVAL_INT &&
+                 option_b->value)
+              {
+                if(option_a->start)
+                {
+                  found = option_b->value->int32 >= option_a->start->int32;
+                  if(found && option_b->start)
+                    found = option_b->start->int32 >= option_a->start->int32;
+                }
+                if(found && option_a->end)
+                {
+                  found = option_b->value->int32 <= option_a->end->int32;
+                  if(found && option_b->end)
+                    found = option_b->end->int32 <= option_a->end->int32;
+                }
+              }
+              if(option_a->value_type == oyVAL_DOUBLE &&
+                 option_b->value)
+              {
+                if(option_a->start)
+                {
+                  found = option_b->value->dbl >= option_a->start->dbl;
+                  if(found && option_b->start)
+                    found = option_b->start->dbl >= option_a->start->dbl;
+                }
+                if(found && option_a->end)
+                {
+                  found = option_b->value->dbl <= option_a->end->dbl;
+                  if(found && option_b->end)
+                    found = option_b->end->dbl <= option_a->end->dbl;
+                }
+              }
+/*
+  oyVAL_INT_LIST,
+  oyVAL_DOUBLE_LIST,
+  oyVAL_STRING,
+  oyVAL_STRING_LIST
+*/
+            }
+          }
+
+          for(k = 0; k < oyOptions_Count(options); ++k)
+          {
+            option = oyOptions_Get( options, k );
+          }
+        }
+
+        oyOption_Release( &option_b );
+      }
+
+      oyOption_Release( &option_a );
+    }
+  }
+
+  return options;
+}
+
 /** @func    oyOptions_Copy_
  *  @brief   real copy a options object
  *
  *  @param[in]     options             options object
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -4766,7 +4994,7 @@ oyOptions_s * oyOptions_Copy_        ( oyOptions_s       * options,
 
   if(!error)
   {
-    s->opts = oyStructList_Copy( options->opts, s->oy_ );
+    s->list = oyStructList_Copy( options->list, s->oy_ );
   }
 
   return s;
@@ -4827,7 +5055,7 @@ int            oyOptions_Release     ( oyOptions_s      ** obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  oyStructList_Release( &s->opts );
+  oyStructList_Release( &s->list );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -4845,13 +5073,22 @@ int            oyOptions_Release     ( oyOptions_s      ** obj )
 int            oyOptions_ReleaseAt   ( oyOptions_s       * list,
                                        int                 pos );
 oyOption_s *   oyOptions_Get         ( oyOptions_s       * list,
-                                       int                 pos );
-int            oyOptions_Count       ( oyOptions_s       * list );
+                                       int                 pos )
+{
+  if(list && list->type_ == oyOBJECT_TYPE_OPTIONS_S)
+    return (oyOption_s *) oyStructList_GetRefType( list->list, pos, oyOBJECT_TYPE_OPTION_S );
+  else
+    return 0;
+}
+int            oyOptions_Count       ( oyOptions_s       * list )
+{
+  return oyStructList_Count( list->list );
+}
 int            oyOptions_MoveIn      ( oyOptions_s       * options,
                                        oyOption_s       ** option );
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option );
-char           oyOptions_GetMem      ( oyOptions_s       * options,
+char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAllocFunc_t       allocateFunc );
 
@@ -7313,7 +7550,7 @@ OYAPI oyProfileList_s * OYEXPORT
  *  @brief   get a list of installed profiles
  *
  *  @param[in]     patterns            a list properties, e.g. classes
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/20 (Oyranos: 0.1.8)
@@ -8556,7 +8793,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 /** @func    oyFilter_New_
  *  @brief   allocate and initialise a new filter object
  *
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
@@ -8639,8 +8876,10 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->filter_type_ = filter_type;
     s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
 
-    s->options_ = cmm_api4->oyOptions_Get( 0, &ret );
+    s->options_ = cmm_api4->oyFilter_ValidateOptions( s, options, &ret );
     error = ret;
+    s->options_ = oyOptions_FromBoolean( cmm_api4->options, options,
+                                         oyBOOLEAN_SUBSTRACTION, s->oy_ );
     s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
   }
 
@@ -8654,7 +8893,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
  *  @brief   real copy a filter object
  *
  *  @param[in]     filter              filter object
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
@@ -8699,7 +8938,7 @@ oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
  *  @brief   copy or reference a filter object
  *
  *  @param[in]     filter              filter object
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
@@ -9636,7 +9875,7 @@ oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * cc )
 /** @func    oyConversions_New_
  *  @brief   allocate and initialise a new oyConversions_s object
  *
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
@@ -9713,7 +9952,7 @@ oyConversions_s  * oyConversions_CreateInput (
  *  @brief   real copy a oyConversions_s object
  *
  *  @param[in]     conversions         conversions object
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -9745,7 +9984,7 @@ oyConversions_s * oyConversions_Copy_( oyConversions_s   * conversions,
  *  @brief   copy or reference a oyConversions_s object
  *
  *  @param[in]     conversions         conversions object
- *  @param         object              the obligate object
+ *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
