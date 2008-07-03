@@ -3290,8 +3290,8 @@ oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api )
            s->oyCMMMessageFuncSet &&
            s->oyCMMCanHandle &&
            s->oyCMMProfile_Open &&
-           /*s->oyCMMProfile_GetText &&*/
-           s->oyCMMProfile_GetSignature &&
+           /*s->oyCMMProfile_GetText &&
+           s->oyCMMProfile_GetSignature &&*/
            s->oyCMMColourConversion_Create &&
            s->oyCMMColourConversion_FromMem &&
            s->oyCMMColourConversion_ToMem &&
@@ -5082,7 +5082,9 @@ oyOption_s *   oyOptions_Get         ( oyOptions_s       * list,
 }
 int            oyOptions_Count       ( oyOptions_s       * list )
 {
-  return oyStructList_Count( list->list );
+  if(list)
+    return oyStructList_Count( list->list );
+  else return 0;
 }
 int            oyOptions_MoveIn      ( oyOptions_s       * options,
                                        oyOption_s       ** option );
@@ -9075,6 +9077,8 @@ int          oyFilter_FilterGet      ( oyFilter_s        * filter,
 int          oyFilter_ImageSet       ( oyFilter_s        * filter,
                                        oyImage_s         * image )
 {
+  if(!filter)
+    return 1;
   filter->image_ = oyImage_Copy( image, 0 );
   return !filter->image_;
 }
@@ -9930,7 +9934,7 @@ oyConversions_s  * oyConversions_CreateBasic (
 
   if(!error)
   {
-    s->input = oyFilter_New( oyFILTER_TYPE_GENERIC, "..generic.image.root",
+    s->input = oyFilter_New( oyFILTER_TYPE_IMAGE, "...image.root",
                              0,0, 0 );
     
     error = oyFilter_ImageSet ( s->input, input );

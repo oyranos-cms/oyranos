@@ -1653,7 +1653,7 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
   oyDATATYPE_e data_type = 0;
 
   if(!error)
-    error = filter->type_ != oyOBJECT_TYPE_CMM_API4_S;
+    error = filter->type_ != oyOBJECT_TYPE_FILTER_S;
 
   if(!error)
     if(filter->image_ && filter->image_->layout_)
@@ -1696,6 +1696,8 @@ oyCMMapi4_s   oyra_api4_image_root = {
 
   oyraFilter_ImageRootValidateOptions,
   oyraWidgetEvent,
+
+  0,0,0,0,0,
 
   {oyOBJECT_TYPE_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
   "Image/Simple Image", /* category */

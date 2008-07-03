@@ -51,13 +51,17 @@ typedef int      (*oyCMMCanHandle_t) ( oyCMMQUERY_e        type,
 
 typedef int      (*oyCMMInit_t)      ( void );
 
+#define oyCMM_PROFILE "oyPR"
+#define oyCMM_COLOUR_CONVERSION "oyCC"
+
 /** @brief CMM pointer
  *
  *  The oyCMMptr_s is used internally and for CMM's.
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/07/02
  */
 typedef struct {
   oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_CMM_POINTER_S */
@@ -67,7 +71,7 @@ typedef struct {
   char                 cmm[5];         /*!< the CMM */
   char                 func_name[32];  /*!< optional the CMM's function name */
   oyPointer            ptr;            /*!< a CMM's data pointer */
-  char                 resource[5];    /**< the resource type */
+  char                 resource[5];    /**< the resource type, e.g. oyCMM_PROFILE, oyCMM_COLOUR_CONVERSION */
   oyStruct_releaseF_t  ptrRelease;     /*!< CMM's deallocation function */
   int                  ref;            /**< Oyranos reference counter */
 } oyCMMptr_s;
@@ -81,7 +85,6 @@ typedef struct {
 typedef int      (*oyCMMProfile_Open_t)( oyPointer         block,
                                        size_t              size,
                                        oyCMMptr_s        * oy );
-#define oyCMM_PROFILE "oyPR"
 
 typedef int      (*oyCMMColourConversion_Create_t) (
                                        oyCMMptr_s       ** cmm_profile_array,
@@ -105,7 +108,6 @@ typedef oyPointer(*oyCMMColourConversion_ToMem_t) (
                                        oyCMMptr_s        * oy,
                                        size_t            * size,
                                        oyAllocFunc_t       allocateFunc );
-#define oyCMM_COLOUR_CONVERSION "oyCC"
 
 typedef void     (*oyCMMProgress_t)  ( int                 ID,
                                        double              progress );
@@ -201,7 +203,7 @@ typedef struct {
 
   oyCMMProfile_Open_t oyCMMProfile_Open;
   /*oyCMMProfile_GetText_t oyCMMProfile_GetText;*/
-  oyCMMProfile_GetSignature_t oyCMMProfile_GetSignature;
+  /*oyCMMProfile_GetSignature_t oyCMMProfile_GetSignature;*/
   oyCMMColourConversion_Create_t oyCMMColourConversion_Create;
   oyCMMColourConversion_FromMem_t oyCMMColourConversion_FromMem;
   oyCMMColourConversion_ToMem_t oyCMMColourConversion_ToMem;
@@ -297,17 +299,91 @@ typedef struct {
 } oyCMMapi3_s;
 
 
-/** @type    oyCMMConversion_Create_t
+/** @type    oyCMMConversionCreate_t
  *  @brief   create a basic filter context from root image filter
  *
+ *  @param[in,out] filter              access to the complete filter struct, most important to handle is the oyOptions_s options member
+ *  @param[in]     cmm_profile_array   the CMM resources cached in Oyranos, e.g. oyCMM_PROFILE
+ *  @param[in]     profiles_n          number of cmm_profile_array elements
+ *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION
+ *
  *  @version Oyranos: 0.1.8
- *  @date    2008/06/24
  *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/07/02
  */
-typedef int      (*oyCMMConversion_Create_t) (
+typedef int      (*oyCMMConversionCreate_t) (
                                        oyFilter_s        * filter,
+                                       oyCMMptr_s       ** cmm_profile_array,
+                                       int                 profiles_n,
+                                       oyCMMptr_s        * oy );
+/** @type    oyCMMConversionFromMem_t
+ *  @brief   create a basic filter context from a memory blob
+ *
+ *  This function complements the oyCMMConversionToMem_t function.
+ *
+ *  @param[in,out] filter              access to the complete filter struct, most important to handle is the options and image members
+ *  @param[in]     mem                 the CMM memory blob
+ *  @param[in]     size                size in mem
+ *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/02 (Oyranos: 0.1.8)
+ *  @date    2008/07/02
+ */
+typedef int      (*oyCMMConversionFromMem_t) (
+                                       oyFilter_s        * filter,
+                                       oyPointer           mem,
+                                       size_t              size,
                                        oyCMMptr_s        * oy );
 
+/** @type    oyCMMConversionToMem_t
+ *  @brief   dump a CMM filter context into a memory blob
+ *
+ *  The goal is to have a data blob for later reusing. It is as well used for
+ *  exchange and analysis. A oyFILTER_TYPE_COLOUR filter should fill the data
+ *  blob with a device link style profile for easy forwarding and reuseable
+ *  on disk caching.
+ *  This function complements the oyCMMConversionFromMem_t function.
+ *
+ *  @param[in,out] filter              access to the complete filter struct, most important to handle is the options and image members
+ *  @param[out]    size                size in return 
+ *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION
+ *  @param         allocateFunc        memory allocator for the returned data
+ *  @return                            the CMM memory blob, preferedly ICC
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/02 (Oyranos: 0.1.8)
+ *  @date    2008/07/02
+ */
+typedef oyPointer(*oyCMMConversionToMem_t) (
+                                       oyFilter_s        * filter,
+                                       size_t            * size,
+                                       oyCMMptr_s        * oy,
+                                       oyAllocFunc_t       allocateFunc );
+
+/** @type    oyCMMConversionRun_t
+ *  @brief   convert the image
+ *
+ *  You have to call oyCMMConversionCreate_t or oyCMMConversionFromMem_t first.
+ *  The API should map to the oyImage_s handler APIs.
+ *
+ *  @param[in]     cmm_transform       the CMM's private data
+ *  @param[in]     point_x             position x
+ *  @param[in]     point_y             position y
+ *  @param[in]     channel             -1 for all, 0...n for the appropriate one
+ *  @param[in]     progress            a callback to show progress
+ *  @return                            the data
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/02 (Oyranos: 0.1.8)
+ *  @date    2008/07/02
+ */
+typedef oyPointer(*oyCMMConversionGetPoint_t)(
+                                       oyCMMptr_s        * cmm_transform,
+                                       double              point_x,
+                                       double              point_y,
+                                       int                 channel,
+                                       oyCMMProgress_t     progress );
 
 /** @struct oyCMMapi4_s
  *  @brief the API 4 to implement and set to provide Filter support
@@ -342,6 +418,12 @@ typedef struct {
 
   oyFilter_ValidateOptions_t oyFilter_ValidateOptions; /**< check options for validy and correct */
   oyWidgetEvent_t  oyWidget_Event;     /**< handle widget events */
+
+  oyCMMProfile_Open_t      oyCMMProfile_Open;
+  oyCMMConversionCreate_t  oyCMMConversionCreate;
+  oyCMMConversionToMem_t   oyCMMConversion_ToMem;
+  oyCMMConversionFromMem_t oyCMMConversionFromMem;
+  oyCMMConversionRun_t     oyCMMConversionRun;
 
   oyName_s         name;               /**< translatable, eg "scale" "image scaling" "..." */
   const char       category[256];      /**< menu structure */
