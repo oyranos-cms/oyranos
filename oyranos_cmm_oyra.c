@@ -1647,6 +1647,7 @@ oyWIDGET_EVENT_e oyraWidget_EventDummy
 oyOptions_s* oyraFilter_ImageRootValidateOptions
                                      ( oyFilter_s        * filter,
                                        oyOptions_s       * validate,
+                                       int                 statical,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -1675,6 +1676,9 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
                                        oyStruct_s        * event )
 {return 0;}
 
+
+
+
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementations
  *
@@ -1693,6 +1697,8 @@ oyCMMapi4_s   oyra_api4_image_root = {
   oyraCMMCanHandle,
 
   "org.oyranos.image.image.root",
+
+  {0,0,1},
 
   oyraFilter_ImageRootValidateOptions,
   oyraWidgetEvent,

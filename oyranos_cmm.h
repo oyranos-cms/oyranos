@@ -148,6 +148,7 @@ typedef enum {
  *
  *  @param[in]     filter              the filter
  *  @param[in]     validate            to validate
+ *  @param[in]     statical            convert to a statical version
  *  @param[out]    ret                 0 if nothing changed otherwise >=1
  *  @return                            corrected options or zero
  *
@@ -158,6 +159,7 @@ typedef enum {
 typedef oyOptions_s * (*oyFilter_ValidateOptions_t)
                                      ( oyFilter_s        * filter,
                                        oyOptions_s       * validate,
+                                       int                 statical,
                                        uint32_t          * result );
 typedef const char* (*oyWidgetGet_t) ( uint32_t          * result );
 typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_t)
@@ -299,7 +301,7 @@ typedef struct {
 } oyCMMapi3_s;
 
 
-/** @type    oyCMMConversionCreate_t
+/** @type    oyCMMFilter_CreateContext_t
  *  @brief   create a basic filter context from root image filter
  *
  *  @param[in,out] filter              access to the complete filter struct, most important to handle is the oyOptions_s options member
@@ -311,15 +313,15 @@ typedef struct {
  *  @since   2008/06/24 (Oyranos: 0.1.8)
  *  @date    2008/07/02
  */
-typedef int      (*oyCMMConversionCreate_t) (
+typedef int      (*oyCMMFilter_CreateContext_t) (
                                        oyFilter_s        * filter,
                                        oyCMMptr_s       ** cmm_profile_array,
                                        int                 profiles_n,
                                        oyCMMptr_s        * oy );
-/** @type    oyCMMConversionFromMem_t
+/** @type    oyCMMFilter_ContextFromMem_t
  *  @brief   create a basic filter context from a memory blob
  *
- *  This function complements the oyCMMConversionToMem_t function.
+ *  This function complements the oyCMMFilter_ContextToMem_t function.
  *
  *  @param[in,out] filter              access to the complete filter struct, most important to handle is the options and image members
  *  @param[in]     mem                 the CMM memory blob
@@ -330,20 +332,20 @@ typedef int      (*oyCMMConversionCreate_t) (
  *  @since   2008/07/02 (Oyranos: 0.1.8)
  *  @date    2008/07/02
  */
-typedef int      (*oyCMMConversionFromMem_t) (
+typedef int      (*oyCMMFilter_ContextFromMem_t) (
                                        oyFilter_s        * filter,
                                        oyPointer           mem,
                                        size_t              size,
                                        oyCMMptr_s        * oy );
 
-/** @type    oyCMMConversionToMem_t
+/** @type    oyCMMFilter_ContextToMem_t
  *  @brief   dump a CMM filter context into a memory blob
  *
  *  The goal is to have a data blob for later reusing. It is as well used for
  *  exchange and analysis. A oyFILTER_TYPE_COLOUR filter should fill the data
  *  blob with a device link style profile for easy forwarding and reuseable
  *  on disk caching.
- *  This function complements the oyCMMConversionFromMem_t function.
+ *  This function complements the oyCMMFilter_ContextFromMem_t function.
  *
  *  @param[in,out] filter              access to the complete filter struct, most important to handle is the options and image members
  *  @param[out]    size                size in return 
@@ -355,35 +357,40 @@ typedef int      (*oyCMMConversionFromMem_t) (
  *  @since   2008/07/02 (Oyranos: 0.1.8)
  *  @date    2008/07/02
  */
-typedef oyPointer(*oyCMMConversionToMem_t) (
+typedef oyPointer(*oyCMMFilter_ContextToMem_t) (
                                        oyFilter_s        * filter,
                                        size_t            * size,
                                        oyCMMptr_s        * oy,
                                        oyAllocFunc_t       allocateFunc );
 
-/** @type    oyCMMConversionRun_t
- *  @brief   convert the image
+
+/** @type    oyCMMFilter_GetNext_t
+ *  @brief   get a pixel or channel from the previous filter
  *
- *  You have to call oyCMMConversionCreate_t or oyCMMConversionFromMem_t first.
- *  The API should map to the oyImage_s handler APIs.
+ *  You have to call oyCMMFilter_CreateContext_t or oyCMMFilter_ContextFromMem_t first.
+ *  The API provides flexible pixel access and cache configuration by the
+ *  passed oyPixelAccess_s object. The filters internal precalculated data
+ *  are passed by the filter object.
  *
- *  @param[in]     cmm_transform       the CMM's private data
- *  @param[in]     point_x             position x
- *  @param[in]     point_y             position y
- *  @param[in]     channel             -1 for all, 0...n for the appropriate one
- *  @param[in]     progress            a callback to show progress
- *  @return                            the data
+ *  @verbatim
+    while (err == 0) {
+      memcpy( buf[n+x], oyCMMFilter_GetNext( filter_context, pixel_access, &err ), x );
+    }
+    @endverbatim
+ *
+ *  @param[in]     filter              including the CMM's private data
+ *  @param[in]     pixel_access        processing order instructions
+ *  @param[out]    error               -1 end; 0 on success; error > 1
+ *  @return                            pixel buffer
  *
  *  @version Oyranos: 0.1.8
- *  @since   2008/07/02 (Oyranos: 0.1.8)
- *  @date    2008/07/02
+ *  @since   2008/07/03 (Oyranos: 0.1.8)
+ *  @date    2008/07/04
  */
-typedef oyPointer(*oyCMMConversionGetPoint_t)(
-                                       oyCMMptr_s        * cmm_transform,
-                                       double              point_x,
-                                       double              point_y,
-                                       int                 channel,
-                                       oyCMMProgress_t     progress );
+typedef oyPointer(*oyCMMFilter_GetNext_t)(
+                                       oyFilter_s        * filter,
+                                       oyPixelAccess_s   * pixel_access,
+                                       int32_t           * error );
 
 /** @struct oyCMMapi4_s
  *  @brief the API 4 to implement and set to provide Filter support
@@ -416,14 +423,16 @@ typedef struct {
 
   const char     * registration;       /**< e.g. "org.oyranos.generic.scale.none,linear,cubic" */
 
+  int              version[3];         /**< 0: major - should be stable for the live time of a filter, 1: minor - mark new features, 2: patch version - correct errors */
+
   oyFilter_ValidateOptions_t oyFilter_ValidateOptions; /**< check options for validy and correct */
   oyWidgetEvent_t  oyWidget_Event;     /**< handle widget events */
 
-  oyCMMProfile_Open_t      oyCMMProfile_Open;
-  oyCMMConversionCreate_t  oyCMMConversionCreate;
-  oyCMMConversionToMem_t   oyCMMConversion_ToMem;
-  oyCMMConversionFromMem_t oyCMMConversionFromMem;
-  oyCMMConversionRun_t     oyCMMConversionRun;
+  oyCMMProfile_Open_t      oyCMMProfile_Open; /**< mandatory for "..colour" filters */
+  oyCMMFilter_CreateContext_t  oyCMMFilter_CreateContext; /**< mandatory for "..colour" filters */
+  oyCMMFilter_ContextToMem_t   oyCMMFilter_ContextToMem; /**< mandatory for "..colour" filters */
+  oyCMMFilter_ContextFromMem_t oyCMMFilter_ContextFromMem; /**< mandatory for "..colour" filters */
+  oyCMMFilter_GetNext_t oyCMMFilter_GetNext; /**< mandatory for all filters */
 
   oyName_s         name;               /**< translatable, eg "scale" "image scaling" "..." */
   const char       category[256];      /**< menu structure */

@@ -126,6 +126,7 @@ typedef enum {
   oyOBJECT_TYPE_COLOUR_CONVERSION_S,  /*!< oyColourConversion_s */
   oyOBJECT_TYPE_FILTER_S,             /**< oyFilter_s */
   oyOBJECT_TYPE_FILTERS_S,            /**< oyFilters_s */
+  oyOBJECT_TYPE_PIXEL_ACCESS_S,       /**< oyPixelAccess_s */
   oyOBJECT_TYPE_CONVERSIONS_S,        /**< oyConversions_s */
   oyOBJECT_TYPE_CMM_HANDLE_S = 50,    /**< oyCMMhandle_s */
   oyOBJECT_TYPE_CMM_POINTER_S,        /*!< oyCMMptr_s */
@@ -478,6 +479,7 @@ typedef struct {
   uint32_t             id;             /**< id to map for instance to events and widgets */
   oyName_s             name;           /**< nick, name, description/help, e.g. "radius" "Radius" "..." */
   const char         * registration;    /**< full key name to store configuration, e.g. "org.oyranos.generic.scale.none,linear,cubic", config key name will be name.nick */
+  int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
   oyValue_u          * standard;       /**< the standard value */
@@ -773,18 +775,18 @@ typedef struct {
   oyStruct_CopyF_t     copy;           /**< copy function */
   oyStruct_ReleaseF_t  release;        /**< release function */
   oyObject_s           oy_;
-  float x;
-  float y;
-  float width;
-  float height;
+  double x;
+  double y;
+  double width;
+  double height;
 } oyRegion_s;
 
 oyRegion_s *   oyRegion_New_         ( oyObject_s          object );
 oyRegion_s *   oyRegion_NewWith      ( oyObject_s          object,
-                                       float               x,
-                                       float               y,
-                                       float               width,
-                                       float               height );
+                                       double              x,
+                                       double              y,
+                                       double              width,
+                                       double              height );
 oyRegion_s *   oyRegion_NewFrom      ( oyObject_s          object,
                                        oyRegion_s        * ref );
 oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * region,
@@ -792,10 +794,10 @@ oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * region,
 int            oyRegion_Release      ( oyRegion_s       ** region );
 
 void           oyRegion_SetGeo       ( oyRegion_s        * edit_region,
-                                       float               x,
-                                       float               y,
-                                       float               width,
-                                       float               height );
+                                       double              x,
+                                       double              y,
+                                       double              width,
+                                       double              height );
 void           oyRegion_SetByRegion  ( oyRegion_s        * edit_region,
                                        oyRegion_s        * ref );
 void           oyRegion_Trim         ( oyRegion_s        * edit_region,
@@ -803,18 +805,18 @@ void           oyRegion_Trim         ( oyRegion_s        * edit_region,
 void           oyRegion_MoveInside   ( oyRegion_s        * edit_region,
                                        oyRegion_s        * ref );
 void           oyRegion_Scale        ( oyRegion_s        * edit_region,
-                                       float               factor );
+                                       double              factor );
 void           oyRegion_Normalise    ( oyRegion_s        * edit_region );
 void           oyRegion_Round        ( oyRegion_s        * edit_region );
 int            oyRegion_IsEqual      ( oyRegion_s        * region1,
                                        oyRegion_s        * region2 );
 int            oyRegion_IsInside     ( oyRegion_s        * region,
-                                       float               x,
-                                       float               y );
+                                       double              x,
+                                       double              y );
 int            oyRegion_CountPoints ( oyRegion_s        * region );
 int            oyRegion_Index        ( oyRegion_s        * region,
-                                       float               x,
-                                       float               y );
+                                       double              x,
+                                       double              y );
 char  *        oyRegion_Show         ( oyRegion_s        * region );
 
 
@@ -934,6 +936,8 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
 
     As well referencing of itself would be nice, to allow light copies.
 
+    The resolution is always in pixel per centimeter.
+
     Should oyImage_s become internal and we provide a user interface?
  */
 struct oyImage_s_ {
@@ -943,8 +947,8 @@ struct oyImage_s_ {
   oyObject_s           oy_;            /**< base object */
 
   oyRegion_s         * image_dimension;/**< image dimensions */
-  float                resolution_x;   /**< resolution in horizontal direction*/
-  float                resolution_y;   /**< resolution in vertical direction */
+  double               resolution_x;   /**< resolution in horizontal direction*/
+  double               resolution_y;   /**< resolution in vertical direction */
 
   oyPixel_t          * layout_;        /*!< samples mask */
   int                  width;          /*!< data width */
@@ -1073,7 +1077,7 @@ struct oyFilter_s_ {
 
   oyImage_s          * stream_;        /**< access to pixel stream */
 
-  oyStructList_s     * data_;          /**< the filter private data */
+  oyStruct_s         * data;           /**< the filters private data */
 };
 
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,
@@ -1140,7 +1144,64 @@ struct oyFilters_s_ {
   oyStructList_s     * filters;        /**< the filters */
 };
 
+typedef struct oyPixelAccess_s_ oyPixelAccess_s;
 
+/** @struct  oyPixelAccess_s
+ *  @brief   control pixel access order
+ *
+ *  A struct to control pixel access. Goal is to provide flexible pixel 
+ *  iterators. The order of access is defined by the array_xy and start_[x,y]
+ *  variables. The array_index(*2) maps to the array_xy pixel locations.
+ *  The cache can be specified independently by the array_cache_pixels variable.
+ *  array_cache_pixels is used to calculate the buffers located with getBuffer
+ *  and freeBuffer. Access to the buffers by concurrenting threads is not 
+ *  handled here. Therefore the user has to provide different oyPixelAccess_s
+ *  objects.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/04 (Oyranos: 0.1.8)
+ *  @date    2008/07/04
+ */
+struct oyPixelAccess_s_ {
+  oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_PIXEL_ACCESS_S */
+  oyStruct_CopyF_t     copy;           /**< copy function */
+  oyStruct_ReleaseF_t  release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  int32_t          start_x;            /**< the start point's x */
+  int32_t          start_y;            /**< the start point's y */
+  int32_t        * array_xy;           /**< array of shifts, e.g. 1,0,1,0,1,0 */
+  int              array_n;            /**< the number of points in array_xy */
+  int              array_index;        /**< to be advanced by the last caller */
+  size_t           array_cache_pixels; /**< pixels to process/cache at once */
+
+  int32_t          workspace_id;       /**< a ID to assign distinct resources to */
+  oyPointer      (*getBuffers)(  size_t            size,  /**< in bytes */
+                                 int               input, /**< 0 for data_out */
+                                 oyPixelAccess_s * ref );
+  int            (*freeBuffers)( oyPointer,  /**< free intermediate data */
+                                 oyPixelAccess_s * ref );
+
+  oyPointer        data_in;            /**< input data */
+  oyPointer        data_out;           /**< output data */
+};
+
+typedef enum {
+  oyPIXEL_ACCESS_POINT,
+  oyPIXEL_ACCESS_LINE,
+  oyPIXEL_ACCESS_IMAGE
+} oyPIXEL_ACCESS_TYPE_e;
+
+oyPixelAccess_s *  oyPixelAccess_Create (
+                                       int32_t             start_x,
+                                       int32_t             start_y,
+                                       oyFilter_s        * filter,
+                                       oyPIXEL_ACCESS_TYPE_e type,
+                                       oyObject_s          object );
+oyPixelAccess_s *  oyPixelAccess_Copy( oyPixelAccess_s   * obj,
+                                       oyObject_s          object );
+int                oyPixelAccess_Release(
+                                       oyPixelAccess_s  ** obj );
 
 /** @struct oyConversions_s
  *  @brief  a filter chain to manipulate a image
@@ -1163,6 +1224,7 @@ typedef struct {
 
   oyFilter_s         * input;          /**< the input image filter; Most users will start logically with this pice and chain their filters to get the final result. */
   oyFilter_s         * out_;           /**< the Oyranos output image. Oyranos will stream the filters starting from the end. */
+  oyPixelAccess_s    * one_pixel_cfg;  /**< one pixel accessor */
 } oyConversions_s;
 
 oyConversions_s  * oyConversions_CreateBasic (
@@ -1183,8 +1245,15 @@ oyConversions_s  * oyConversions_FilterAdd (
                                        oyFilter_s        * filter );
 oyConversions_s  * oyConversions_OutputAdd (
                                        oyImage_s         * input );
-int              * oyConversions_Run ( oyConversions_s   * conversion,
-                                       uint32_t            feedback );
+oyPointer        * oyConversions_GetNextPixel (
+                                       oyConversions_s   * conversion,
+                                       oyPixelAccess_s   * pixel_access,
+                                       int32_t           * feedback );
+oyPointer        * oyConversions_GetOnePixel (
+                                       oyConversions_s   * conversion,
+                                       int32_t             x,
+                                       int32_t             y,
+                                       int32_t           * feedback );
 oyProfile_s      * oyConversions_ToProfile (
                                        oyConversions_s   * conversion );
 

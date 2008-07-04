@@ -7846,10 +7846,10 @@ oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
  *  @date  4 december 2007 (API 0.1.8)
  */
 oyRegion_s *   oyRegion_NewWith      ( oyObject_s          object,
-                                       float               x,
-                                       float               y,
-                                       float               width,
-                                       float               height )
+                                       double              x,
+                                       double              y,
+                                       double              width,
+                                       double              height )
 {
   oyRegion_s * s = oyRegion_New_( object );
   if(s)
@@ -7947,10 +7947,10 @@ int            oyRegion_Release      ( oyRegion_s       ** obj )
  *  @date  4 december 2007 (API 0.1.8)
  */
 void           oyRegion_SetGeo       ( oyRegion_s        * edit_region,
-                                       float               x,
-                                       float               y,
-                                       float               width,
-                                       float               height )
+                                       double              x,
+                                       double              y,
+                                       double              width,
+                                       double              height )
 {
   oyRegion_s * s = edit_region;
   if(!s)
@@ -8056,7 +8056,7 @@ void           oyRegion_MoveInside   ( oyRegion_s        * edit_region,
  *  @date  4 december 2007 (API 0.1.8)
  */
 void           oyRegion_Scale        ( oyRegion_s        * edit_region,
-                                       float               factor )
+                                       double              factor )
 {
   oyRegion_s * s = edit_region;
   oyRegion_s * r = s;
@@ -8144,8 +8144,8 @@ int            oyRegion_IsEqual      ( oyRegion_s        * region1,
  *  @date  4 december 2007 (API 0.1.8)
  */
 int            oyRegion_IsInside     ( oyRegion_s        * region,
-                                       float               x,
-                                       float               y )
+                                       double              x,
+                                       double              y )
 {
   oyRegion_s * s = region;
   oyRegion_s * r = s;
@@ -8187,8 +8187,8 @@ int            oyRegion_CountPoints  ( oyRegion_s        * region )
  *  @date  4 december 2007 (API 0.1.8)
  */
 int            oyRegion_Index        ( oyRegion_s        * region,
-                                       float               x,
-                                       float               y )
+                                       double              x,
+                                       double              y )
 {
   oyRegion_s * s = region;
   oyRegion_s * r = s;
@@ -8878,7 +8878,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->filter_type_ = filter_type;
     s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
 
-    s->options_ = cmm_api4->oyFilter_ValidateOptions( s, options, &ret );
+    s->options_ = cmm_api4->oyFilter_ValidateOptions( s, options, 0, &ret );
     error = ret;
     s->options_ = oyOptions_FromBoolean( cmm_api4->options, options,
                                          oyBOOLEAN_SUBSTRACTION, s->oy_ );
@@ -8930,7 +8930,7 @@ oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
     s->profiles_ = oyProfileList_Copy( filter->profiles_, s->oy_ );
     s->parents_ = s->children_ = 0;
     s->merged_to_ = 0;
-    s->data_ = oyStructList_Copy( filter->data_, s->oy_ );
+    s->data = filter->data->copy( filter->data , s->oy_ );
   }
 
   return s;
@@ -10065,8 +10065,15 @@ oyConversions_s  * oyConversions_FilterAdd (
                                        oyFilter_s        * filter );
 oyConversions_s  * oyConversions_OutputAdd (
                                        oyImage_s         * input );
-int              * oyConversions_Run ( oyConversions_s   * conversion,
-                                       uint32_t            feedback );
+oyPointer        * oyConversions_GetNextPixel (
+                                       oyConversions_s   * conversion,
+                                       oyPixelAccess_s   * pixel_access,
+                                       int32_t           * feedback );
+oyPointer        * oyConversions_GetOnePixel (
+                                       oyConversions_s   * conversion,
+                                       int32_t             x,
+                                       int32_t             y,
+                                       int32_t           * feedback );
 oyProfile_s      * oyConversions_ToProfile (
                                        oyConversions_s   * conversion );
 

@@ -880,8 +880,8 @@ oyCMMapi1_s  lcms_api1 = {
   lcmsCMMCanHandle,
 
   lcmsCMMProfile_Open,
-  /*lcmsCMMProfile_GetText,*/
-  lcmsCMMProfile_GetSignature,
+  /*lcmsCMMProfile_GetText,
+  lcmsCMMProfile_GetSignature,*/
   lcmsCMMColourConversion_Create,
   lcmsCMMColourConversion_FromMem,
   lcmsCMMColourConversion_ToMem,
