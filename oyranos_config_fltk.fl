@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0107 
 i18n_type 1 
 i18n_include <libintl.h> 
 i18n_function _ 
@@ -270,7 +270,7 @@ class OyFl_Pack {: {public Fl_Pack}
   }
 } 
 
-class OyFl_Box {open : {public Fl_Box}
+class OyFl_Box {: {public Fl_Box}
 } {
   Function {OyFl_Box(int x, int y, int w, int h , const char *t = 0) : Fl_Box(x,y,w,h,t)} {open
   } {
@@ -368,7 +368,7 @@ static const char trailingBytesForUTF8[256] = {
   }
 } 
 
-class Option {open : {public OyFl_Pack} private
+class Option {: {public OyFl_Pack} private
 } {
   decl {OyFl_Box   *box;
   Fl_Choice*choice;
@@ -598,12 +598,11 @@ class Option {open : {public OyFl_Pack} private
 
   
   end();
-  resizable( box );} {selected
-    }
+  resizable( box );} {}
   }
 } 
 
-class ListEntry {: {public OyFl_Pack} private
+class ListEntry {open : {public OyFl_Pack} private
 } {
   decl {Fl_Box   *box;
   Fl_Button*button_add, *button_remove;
@@ -619,6 +618,7 @@ class ListEntry {: {public OyFl_Pack} private
     box = new Fl_Box( 0, 0, w-BUTTON_HEIGHT-spacing(), BUTTON_HEIGHT, name );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
+\#if 0
     if( flags & OY_LAYOUT_PATH_SELECTOR )
     if( strcmp( "/usr/share/color/icc", name ) != 0 &&
         strcmp( "~/.color/icc", name ) != 0 &&
@@ -629,6 +629,7 @@ class ListEntry {: {public OyFl_Pack} private
       button_remove->callback( rmPathCallback );
       button_remove->tooltip(_("Exclude this path"));
     } else
+\#endif
       new Fl_Box( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT );
 
     int width=0, height=0;
@@ -644,7 +645,8 @@ class ListEntry {: {public OyFl_Pack} private
 
     Fl_Pack::resizable(box);
     //Fl_Pack::size( parent()->w(), Fl_Pack::h() );
-    //if(name) delete [] name; // dont delete as it belongs now to the widget} {}
+    //if(name) delete [] name; // dont delete as it belongs now to the widget} {selected
+    }
   }
 } 
 
@@ -1026,7 +1028,7 @@ Function {} {open C
   }} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {564 439 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {564 457 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
