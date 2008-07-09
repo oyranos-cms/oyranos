@@ -645,8 +645,7 @@ class ListEntry {open : {public OyFl_Pack} private
 
     Fl_Pack::resizable(box);
     //Fl_Pack::size( parent()->w(), Fl_Pack::h() );
-    //if(name) delete [] name; // dont delete as it belongs now to the widget} {selected
-    }
+    //if(name) delete [] name; // dont delete as it belongs now to the widget} {}
   }
 } 
 
@@ -1028,7 +1027,7 @@ Function {} {open C
   }} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {564 457 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {564 466 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
@@ -1049,40 +1048,9 @@ Function {} {open C
       class Flmm_Tabs
     } {
       Fl_Group {} {
-        label Policy open
+        label Policy open selected
         tooltip {Reset to a standard Policy for Oyranos.} xywh {10 95 485 266} resizable
-      } {
-        Fl_Pack {} {open
-          xywh {10 105 485 256}
-        } {
-          Fl_Box {} {
-            xywh {30 180 25 25}
-          }
-          Fl_Choice policy_choice {open
-            xywh {30 155 196 25} box NO_BOX down_box BORDER_BOX
-          } {
-            MenuItem {} {
-              label {Office + Home}
-              xywh {15 15 100 20}
-            }
-            MenuItem {} {
-              label {Graphic Designers}
-              xywh {15 15 100 20}
-            }
-            MenuItem {} {
-              label PrePress
-              xywh {15 15 100 20}
-            }
-            MenuItem {} {
-              label Photographers
-              xywh {15 15 100 20}
-            }
-          }
-          Fl_Box {} {
-            xywh {40 190 25 25} resizable
-          }
-        }
-      }
+      } {}
     }
     Fl_Button {} {
       label {@-3reload}
