@@ -88,11 +88,8 @@ extern Fl_Double_Window *top_group;
 #include <FL/Fl_Box.H>
 extern Flmm_Tabs *top_tabs;
 #include <FL/Fl_Group.H>
-#include <FL/Fl_Pack.H>
-#include <FL/Fl_Choice.H>
-extern Fl_Choice *policy_choice;
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Pack.H>
 extern Fl_Box *policy_box;
-extern Fl_Menu_Item menu_policy_choice[];
 void listWindow( Fl_Widget *w );
 #endif

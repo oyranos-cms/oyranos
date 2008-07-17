@@ -523,6 +523,7 @@ ListEntry::ListEntry( int x, int y, int w, int h, const char * name, int flags )
     box = new Fl_Box( 0, 0, w-BUTTON_HEIGHT-spacing(), BUTTON_HEIGHT, name );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
+#if 0
     if( flags & OY_LAYOUT_PATH_SELECTOR )
     if( strcmp( "/usr/share/color/icc", name ) != 0 &&
         strcmp( "~/.color/icc", name ) != 0 &&
@@ -533,6 +534,7 @@ ListEntry::ListEntry( int x, int y, int w, int h, const char * name, int flags )
       button_remove->callback( rmPathCallback );
       button_remove->tooltip(_("Exclude this path"));
     } else
+#endif
       new Fl_Box( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT );
 
     int width=0, height=0;
@@ -1415,16 +1417,6 @@ static Fl_RGB_Image image_oyranos_logo(idata_oyranos_logo, 64, 64, 4, 0);
 
 Flmm_Tabs *top_tabs=(Flmm_Tabs *)0;
 
-Fl_Choice *policy_choice=(Fl_Choice *)0;
-
-Fl_Menu_Item menu_policy_choice[] = {
- {_("Office + Home"), 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
- {_("Graphic Designers"), 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
- {_("PrePress"), 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
- {_("Photographers"), 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
- {0,0,0,0,0,0,0,0,0}
-};
-
 static void cb_3reload(Fl_Button*, void*) {
   //Fl::pushed(&bPL);
   updateUI();
@@ -1565,18 +1557,6 @@ int main(int argc, char **argv) {
       o->when(FL_WHEN_RELEASE);
       { Fl_Group* o = new Fl_Group(10, 95, 485, 266, _("Policy"));
         o->tooltip(_("Reset to a standard Policy for Oyranos."));
-        { Fl_Pack* o = new Fl_Pack(10, 105, 485, 256);
-          new Fl_Box(30, 180, 25, 25);
-          { Fl_Choice* o = policy_choice = new Fl_Choice(30, 155, 196, 25);
-            o->box(FL_NO_BOX);
-            o->down_box(FL_BORDER_BOX);
-            o->menu(menu_policy_choice);
-          }
-          { Fl_Box* o = new Fl_Box(40, 190, 25, 25);
-            Fl_Group::current()->resizable(o);
-          }
-          o->end();
-        }
         o->end();
         Fl_Group::current()->resizable(o);
       }
