@@ -33,7 +33,7 @@ namespace oyranos
 
 int          oyModulRemove_          (const char *id);
 char**       oyModulsGetNames_       (int           *count,
-                                      oyAllocFunc_t alloc_func );
+                                      oyAlloc_f     alloc_func );
 oyGROUP_e    oyRegisterGroups_       (char *cmm, char *id,
                                       char *name, char *tooltip);
 int          oyModulRegisterXML_     (oyGROUP_e           group,

@@ -51,7 +51,7 @@ char*       oyWriteOptionToXML_(oyGROUP_e           group,
                     int               oytmplen);
 
 /* form for write backends */
-typedef oyChar* (*oyOptionWriteFunc_t)     ( oyOption_t_ ** opts,
+typedef oyChar* (*oyOptionWrite_f)     ( oyOption_t_ ** opts,
                           oyChar    ** values,
                           int            n,
                           oyChar     * mem,
@@ -427,7 +427,7 @@ oyWriteOptionToXML_(oyGROUP_e           group,
 char*
 oyPolicyToXML_  (oyGROUP_e           group,
                  int               add_header,
-                 oyAllocFunc_t     allocate_func)
+                 oyAlloc_f         allocate_func)
 {
 # define OYTMPLEN_ 80 /*/ TODO handle memory in more a secure way */
   /* allocate memory */

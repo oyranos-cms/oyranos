@@ -70,13 +70,13 @@ int     oySetProfile_Block                (const char      * name,
 /* separate from the external functions */
 int   oyPathsCount_             (void);
 char* oyPathName_               (int           number,
-                                 oyAllocFunc_t allocate_func);
+                                 oyAlloc_f     allocate_func);
 int   oyPathAdd_                (const char* pathname);
 void  oyPathRemove_             (const char* pathname);
 /*void  oyPathSleep_              (const char* pathname);
 void  oyPathActivate_           (const char* pathname);*/
 char* oyGetPathFromProfileName_ (const char*   profilename,
-                                 oyAllocFunc_t allocate_func);
+                                 oyAlloc_f     allocate_func);
 
 
 
@@ -101,7 +101,7 @@ char* oyGetDeviceProfile                  (oyDEVICETYP_e typ,
                                            const char* attrib1,
                                            const char* attrib2,
                                            const char* attrib3,
-                                           oyAllocFunc_t);
+                                           oyAlloc_f    );
 
 int	oySetDeviceProfile                (oyDEVICETYP_e typ,
                                            const char* manufacturer,
@@ -137,15 +137,15 @@ typedef enum {
 
 int    oyGetProfileBlockOSX              ( CMProfileRef prof,
                                            char **block, size_t *size,
-                                           oyAllocFunc_t allocate_func);
+                                           oyAlloc_f     allocate_func);
 char * oyGetProfileNameOSX               ( CMProfileRef prof,
-                                           oyAllocFunc_t allocate_func);
+                                           oyAlloc_f     allocate_func);
 #endif
 
-extern oyStruct_LockCreateF_t  oyStruct_LockCreateFunc_;
-extern oyLockReleaseF_t        oyLockReleaseFunc_;
-extern oyLockF_t               oyLockFunc_;
-extern oyUnLockF_t             oyUnLockFunc_;
+extern oyStruct_LockCreate_f   oyStruct_LockCreateFunc_;
+extern oyLockRelease_f         oyLockReleaseFunc_;
+extern oyLock_f                oyLockFunc_;
+extern oyUnLock_f              oyUnLockFunc_;
 
 #ifdef __cplusplus
 } /* extern "C" */

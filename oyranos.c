@@ -115,7 +115,7 @@ int oyMessageFunc_( int code, const char * format, ... )
 }
 
 
-oyMessageFunc_t oyMessageFunc_p = oyMessageFunc_;
+oyMessage_f     oyMessageFunc_p = oyMessageFunc_;
 
 /** @func    oyMessageFuncSet
  *  @brief
@@ -124,7 +124,7 @@ oyMessageFunc_t oyMessageFunc_p = oyMessageFunc_;
  *  @date    2008/04/03
  *  @since   2008/04/03 (Oyranos: 0.1.8)
  */
-int            oyMessageFuncSet      ( oyMessageFunc_t     message_func )
+int            oyMessageFuncSet      ( oyMessage_f         message_func )
 {
   if(message_func)
     oyMessageFunc_p = message_func;
@@ -151,9 +151,9 @@ oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
       DBG_V(strlen(full_name))
       if (strlen(full_name) < MAX_PATH) {
         sprintf(search,full_name);
-        search[strlen(full_name)] = 0;
+        search[strlen(full_name)] = '\000';
       } else
-        search[0] = 0;
+        search[0] = '\000';
     } else
       WARNc_PROFILE_S( _("not a profile:"), oyNoEmptyName_m_(full_name) )
   }
@@ -164,7 +164,7 @@ oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
 
 char*
 oyGetPathFromProfileName_       (const char*   fileName,
-                                 oyAllocFunc_t allocate_func)
+                                 oyAlloc_f     allocate_func)
 {
   char  *fullFileName = 0;
   char  *pathName = 0;
@@ -179,8 +179,8 @@ oyGetPathFromProfileName_       (const char*   fileName,
   if (fileName && !strchr(fileName, OY_SLASH_C))
   {
     char search[MAX_PATH];
-    int count = 0, 
-        len = (oyStrlen_(fileName) < MAX_PATH) ? 
+    int count = 0;
+    size_t len = (oyStrlen_(fileName) < MAX_PATH) ? 
                           oyStrlen_(fileName) : MAX_PATH;
     char ** path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
 
@@ -188,7 +188,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
     if(strlen(fileName) < MAX_PATH)
     {
-      memcpy(search, fileName, len); search[len] = 0;
+      memcpy(search, fileName, len); search[len] = '\000';
     } else {
       WARNc2_S( "%s %d", _("name longer than"), MAX_PATH)
       DBG_PROG_ENDE
@@ -200,16 +200,16 @@ oyGetPathFromProfileName_       (const char*   fileName,
     oyStringListRelease_( &path_names, count, oyDeAllocateFunc_ );
 
       if (success) { /* found */
-        int len = 0;
+        len = 0;
         DBG_S((search))
-        if(search[0] != 0) len = strlen(search);
+        if(search[0] != 0) len = oyStrlen_(search);
         if(len) {
           char *ptr = 0;
           oyAllocHelper_m_( pathName, char, len+1, allocate_func, return 0 );
-          sprintf(pathName, search);
+          oyStrcpy_(pathName, search);
           ptr = strrchr(pathName , OY_SLASH_C);
           if(ptr)
-            ptr[0] = 0;
+            ptr[0] = '\000';
         }
         DBG_PROG_S( pathName )
         DBG_PROG_ENDE
@@ -357,7 +357,7 @@ oyFlattenProfileProcSize (
 
 
 int
-oyGetProfileBlockOSX (CMProfileRef prof, char **block, size_t *size, oyAllocFunc_t allocate_func)
+oyGetProfileBlockOSX (CMProfileRef prof, char **block, size_t *size, oyAlloc_f allocate_func)
 {
     CMProfileLocation loc;
     Boolean bol;
@@ -425,7 +425,7 @@ oyGetProfileBlockOSX (CMProfileRef prof, char **block, size_t *size, oyAllocFunc
 }
 
 char*
-oyGetProfileNameOSX (CMProfileRef prof, oyAllocFunc_t allocate_func)
+oyGetProfileNameOSX (CMProfileRef prof, oyAlloc_f     allocate_func)
 {
   char * name = NULL;
   CMProfileLocation loc;
@@ -487,7 +487,7 @@ oyGroupSetGet            (oyGROUP_e group, int * count )
 
 char*
 oyGetDefaultProfileName_   (oyPROFILE_e       type,
-                            oyAllocFunc_t     allocate_func)
+                            oyAlloc_f         allocate_func)
 {
   char* name = 0;
   
@@ -921,7 +921,7 @@ oySetDeviceProfile_                (const char* manufacturer,
  */
 oyWIDGET_e    * oyWidgetListGet          (oyGROUP_e           group,
                                         int             * count,
-                                        oyAllocFunc_t     allocate_func )
+                                        oyAlloc_f         allocate_func )
 {
   oyWIDGET_e *list = NULL;
 
@@ -1100,7 +1100,7 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
 char*
 oyPolicyToXML          (oyGROUP_e           group,
                         int               add_header,
-                        oyAllocFunc_t     allocate_func)
+                        oyAlloc_f         allocate_func)
 {
   char* text = 0;
 
@@ -1205,7 +1205,7 @@ oyPathsCount         (void)
  */
 char*
 oyPathName           (int           number,
-                      oyAllocFunc_t allocate_func)
+                      oyAlloc_f     allocate_func)
 {
   char* name = NULL;
 
@@ -1287,7 +1287,7 @@ oyPathActivate       (const char* pathname)
  *  @return the path name where the profile was found in the Oyranos search path
  */
 char*
-oyGetPathFromProfileName (const char* profile_name, oyAllocFunc_t allocate_func)
+oyGetPathFromProfileName (const char* profile_name, oyAlloc_f     allocate_func)
 {
   char* path_name = NULL;
 
@@ -1371,7 +1371,7 @@ oySetDefaultProfileBlock   (oyPROFILE_e       type,
  */
 char*
 oyGetDefaultProfileName    (oyPROFILE_e       type,
-                            oyAllocFunc_t     allocate_func)
+                            oyAlloc_f         allocate_func)
 {
   char* name = NULL;
 
@@ -1404,7 +1404,7 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
  */
 char **  oyProfileListGet            ( const char        * coloursig,
                                        uint32_t          * size,
-                                       oyAllocFunc_t       allocateFunc )
+                                       oyAlloc_f           allocateFunc )
 {
   char **names = NULL;
 
@@ -1504,11 +1504,11 @@ oyGetProfileSize                  (const char* profilename)
  *  @param[in]  size     desired size, or zero for a complete copy
     @param[out] size     the size of the returned block
  *  @param      allocate_func the users memory allocation function
- *  @return             the profile block in memory allocated by oyAllocFunc_t
+ *  @return             the profile block in memory allocated by oyAlloc_f    
  */
 void*
 oyGetProfileBlock                 (const char* profilename, size_t *size,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   char* block = NULL;
 
@@ -1578,7 +1578,7 @@ oyGetProfileBlock                 (const char* profilename, size_t *size,
    }
    \endcode
 
-   \return allocated by oyAllocFunc_t
+   \return allocated by oyAlloc_f    
  */
 char*
 oyGetDeviceProfile                (oyDEVICETYP_e typ,
@@ -1590,7 +1590,7 @@ oyGetDeviceProfile                (oyDEVICETYP_e typ,
                                    const char* attrib1,
                                    const char* attrib2,
                                    const char* attrib3,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   char* profile_name = NULL;
 
@@ -1679,7 +1679,7 @@ oyEraseDeviceProfile              (oyDEVICETYP_e typ,
  *
  *  @param  count          the number of CMM's available
  *  @param  allocate_func  the users memory allocation function
- *  @return allocated by oyAllocFunc_t
+ *  @return allocated by oyAlloc_f    
  * 
    \code
    int    count, i;
@@ -1695,7 +1695,7 @@ oyEraseDeviceProfile              (oyDEVICETYP_e typ,
  */
 char**
 oyModulsGetNames       ( int        *count,
-                         oyAllocFunc_t allocate_func )
+                         oyAlloc_f     allocate_func )
 {
   char** ids = 0;
 

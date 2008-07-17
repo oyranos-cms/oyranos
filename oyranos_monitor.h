@@ -44,19 +44,19 @@ int   oyGetMonitorInfo            (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 int   oyGetScreenFromPosition     (const char *display_name,
                                    int x,
                                    int y);
 char* oyGetDisplayNameFromPosition(const char *display_name,
                                    int x,
                                    int y,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 char* oyGetMonitorProfile         (const char *display,
                                    size_t     *size,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 char* oyGetMonitorProfileName     (const char *display,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 
 /* TODO set a memory based profile */
 int   oySetMonitorProfile         (const char* display_name,

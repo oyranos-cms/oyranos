@@ -44,7 +44,7 @@ typedef void* oyPointer;
    }
  * \endcode<br>
  */
-typedef void* (*oyAllocFunc_t)         (size_t size);
+typedef void * (*oyAlloc_f)          ( size_t              size );
 
 /**
  * @param[in] data the pointer to free
@@ -55,16 +55,16 @@ typedef void* (*oyAllocFunc_t)         (size_t size);
    }
  * \endcode<br>
  */
-typedef void (*oyDeAllocFunc_t)       (void *data);
+typedef void (*oyDeAlloc_f)          ( void              * data );
 
 typedef enum {
   oyMSG_ERROR = 300,
   oyMSG_WARN,
   oyMSG_DBG
 } oyMSG_e;
-typedef int  (*oyMessageFunc_t)( int/*oyMSG_e*/ code, const char* format, ... );
-int            oyMessageFuncSet      ( oyMessageFunc_t     message_func );
-extern         oyMessageFunc_t         oyMessageFunc_p;
+typedef int  (*oyMessage_f)( int/*oyMSG_e*/ code, const char* format, ... );
+int            oyMessageFuncSet      ( oyMessage_f         message_func );
+extern         oyMessage_f             oyMessageFunc_p;
 
 
 /** @brief Widget Groups 
@@ -124,7 +124,7 @@ int         oySetBehaviour             (oyBEHAVIOUR_e     type,
 
 char*       oyPolicyToXML              (oyGROUP_e         group,
                                         int               add_header,
-                                        oyAllocFunc_t     alloc_func);
+                                        oyAlloc_f         alloc_func);
 int         oyReadXMLPolicy            (oyGROUP_e         group,
                                         const char       *xml);
 int         oyPolicySet                (const char      * policy,
@@ -143,10 +143,10 @@ typedef enum {
 #if 0
 int   oyPathsCount                     (void);
 char* oyPathName                       (int         number,
-                                        oyAllocFunc_t);
+                                        oyAlloc_f    );
 #endif
 char* oyGetPathFromProfileName         (const char* profile_name,
-                                        oyAllocFunc_t);
+                                        oyAlloc_f    );
 
 /* --- default profiles --- */
 
@@ -186,14 +186,14 @@ int         oySetDefaultProfileBlock   (oyPROFILE_e       type,
                                         void*             mem,
                                         size_t            size);
 char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
-                                        oyAllocFunc_t     alloc_func);
+                                        oyAlloc_f         alloc_func);
 
 
 /* --- profile lists --- */
 
 char **  oyProfileListGet            ( const char        * coloursig,
                                        uint32_t          * size,
-                                       oyAllocFunc_t       allocateFunc );
+                                       oyAlloc_f           allocateFunc );
 
 
 /* --- profile checking --- */
@@ -208,7 +208,7 @@ int   oyCheckProfileMem                (const void* mem, size_t size,
 
 size_t oyGetProfileSize                (const char * profilename);
 void*  oyGetProfileBlock               (const char * profilename, size_t * size,
-                                        oyAllocFunc_t alloc_func);
+                                        oyAlloc_f     alloc_func);
 
 
 /* --- options / GUI layout --- */
@@ -292,7 +292,7 @@ typedef enum {
 
 oyWIDGET_e  * oyWidgetListGet          (oyGROUP_e         group,
                                         int             * count,
-                                        oyAllocFunc_t     allocate_func );
+                                        oyAlloc_f         allocate_func );
 
 oyWIDGET_TYPE_e oyWidgetTitleGet       (oyWIDGET_e        option,
                                         const oyGROUP_e** categories,

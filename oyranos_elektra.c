@@ -559,7 +559,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
  */
 char*
 oyGetKeyString_ ( const char       *key_name,
-                 oyAllocFunc_t     allocate_func )
+                 oyAlloc_f         allocate_func )
 {
   char* name = 0;
   char* full_key_name = 0;
@@ -611,7 +611,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
                                     const char* attrib1,
                                     const char* attrib2,
                                     const char* attrib3,
-                                    oyAllocFunc_t allocate_func)
+                                    oyAlloc_f     allocate_func)
 {
   char* profileName = 0;
   int rc=0;

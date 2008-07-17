@@ -53,13 +53,13 @@ int   oyGetMonitorInfo_           (const char* display,
                                    char**      model,
                                    char**      serial,
                                    char**      display_geometry,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 #endif
 char* oyGetMonitorProfileName_    (const char *display_name,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 char* oyGetMonitorProfile_        (const char *display_name,
                                    size_t     *size,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 
 int   oyActivateMonitorProfile_   (const char* display_name,
                                    const char* profile_name);
@@ -75,7 +75,7 @@ int   oyGetScreenFromPosition_    (const char *display_name,
 char* oyGetDisplayNameFromPosition_(const char *raw_display_name,
                                    int x,
                                    int y,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 #if (defined(HAVE_X) && !defined(__APPLE__))
 int   oyMonitor_getScreenGeometry_   ( oyMonitor_s       * disp );
 int   oyMonitor_getGeometryIdentifier_(oyMonitor_s       * disp );
@@ -141,7 +141,7 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   char *t = 0;
   int len, i;
@@ -241,7 +241,7 @@ oyGetMonitorInfo_                 (const char* display_name,
                                    char**      model,
                                    char**      serial,
                                    char**      display_geometry,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   Display *display = 0;
   int screen = 0;
@@ -378,7 +378,7 @@ oyMonitor_nameToOsxID( const char* display_name )
 char*
 oyGetMonitorProfile_          (const char* display_name,
                                size_t *size,
-                               oyAllocFunc_t allocate_func)
+                               oyAlloc_f     allocate_func)
 {
   char       *moni_profile=0;
 
@@ -469,7 +469,7 @@ oyGetMonitorProfile_          (const char* display_name,
 
 char*
 oyGetMonitorProfileName_          (const char* display_name,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   char       *moni_profile=0;
 
@@ -693,7 +693,7 @@ char*
 oyGetDisplayNameFromPosition_     (const char *display_name,
                                    int x,
                                    int y,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   char *new_display_name = NULL;
 
@@ -1496,7 +1496,7 @@ oyGetMonitorInfo                  (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   int err = 0;
 
@@ -1533,7 +1533,7 @@ oyGetMonitorInfo                  (const char* display,
 char*
 oyGetMonitorProfile           (const char* display,
                                size_t *size,
-                               oyAllocFunc_t allocate_func)
+                               oyAlloc_f     allocate_func)
 {
   char* moni_profile = 0;
 
@@ -1556,7 +1556,7 @@ oyGetMonitorProfile           (const char* display,
  */
 char*
 oyGetMonitorProfileName           (const char* display,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   char* moni_profile = 0;
 
@@ -1661,7 +1661,7 @@ char*
 oyGetDisplayNameFromPosition      (const char *display_name,
                                    int x,
                                    int y,
-                                   oyAllocFunc_t allocate_func)
+                                   oyAlloc_f     allocate_func)
 {
   char *new_display_name = 0;
 

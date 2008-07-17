@@ -68,8 +68,8 @@ int           oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice);
 const oyOption_t_* oyOptionGet_        (oyWIDGET_e          type);
 
 oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
-                                        int             * count,
-                                        oyAllocFunc_t     allocate_func );
+                                       int               * count,
+                                       oyAlloc_f           allocate_func );
 oyWIDGET_TYPE_e oyWidgetTypeGet_         (oyWIDGET_e          type);
 oyWIDGET_TYPE_e oyWidgetTitleGet_        (oyWIDGET_e          option,
                                         const oyGROUP_e  ** categories,
@@ -99,7 +99,7 @@ int         oySetDefaultProfileBlock_  (oyPROFILE_e       type,
                                         void*             mem,
                                         size_t            size);
 char*       oyGetDefaultProfileName_   (oyPROFILE_e       type,
-                                        oyAllocFunc_t     alloc_func);
+                                       oyAlloc_f           alloc_func);
 
 char*       oyPolicyNameGet_         ( );
 int         oyPolicySet_             ( const char      * policy_file,
@@ -110,7 +110,7 @@ char **     oyConfigPathsGet_        ( int             * count,
                                        const char      * subdir,
                                        int               data,
                                        int               owner,
-                                       oyAllocFunc_t     allocateFunc );
+                                       oyAlloc_f         allocateFunc );
 char **     oyConfigFilesGet_        ( int             * count,
                                        const char      * subdir,
                                        int               data,
@@ -118,68 +118,68 @@ char **     oyConfigFilesGet_        ( int             * count,
                                        const char      * dir_string,
                                        const char      * string,
                                        const char      * suffix,
-                                       oyAllocFunc_t     allocateFunc );
+                                       oyAlloc_f         allocateFunc );
 char **     oyProfilePathsGet_       ( int             * count,
-                                       oyAllocFunc_t     allocate_func);
+                                       oyAlloc_f         allocate_func);
 char **     oyLibPathsGet_           ( int             * count,
                                        const char      * subdir,
                                        int               owner,
-                                       oyAllocFunc_t     allocateFunc );
+                                       oyAlloc_f         allocateFunc );
 char **     oyLibFilesGet_           ( int             * count,
                                        const char      * subdir,
                                        int               owner,
                                        const char      * dir_string,
                                        const char      * string,
                                        const char      * suffix,
-                                       oyAllocFunc_t     allocateFunc );
+                                       oyAlloc_f         allocateFunc );
 
 
 char*              oyStringCopy_     ( const char        * text,
-                                       oyAllocFunc_t       allocateFunc );
+                                       oyAlloc_f           allocateFunc );
 char*              oyStringAppend_   ( const char        * text,
                                        const char        * append,
-                                       oyAllocFunc_t       allocateFunc );
+                                       oyAlloc_f           allocateFunc );
 void               oyStringAdd_      ( char             ** text,
                                        const char        * append,
-                                       oyAllocFunc_t       allocateFunc,
-                                       oyDeAllocFunc_t     deallocFunc );
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocFunc );
 
 char**             oyStringSplit_    ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
-                                       oyAllocFunc_t       allocateFunc );
+                                       oyAlloc_f           allocateFunc );
 char**             oyStringListAppend_(const char       ** list,
                                        int                 n_alt,
                                        const char       ** append,
                                        int                 n_app,
                                        int               * count,
-                                       oyAllocFunc_t       allocateFunc );
+                                       oyAlloc_f           allocateFunc );
 void               oyStringListAdd_  ( char            *** list,
                                        int               * n,
                                        const char       ** append,
                                        int                 n_app,
-                                       oyAllocFunc_t       allocateFunc,
-                                       oyDeAllocFunc_t     deallocateFunc );
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc );
 void               oyStringListAddString_ ( char       *** list,
                                        int               * n,
                                        char             ** string,
-                                       oyAllocFunc_t       allocateFunc,
-                                       oyDeAllocFunc_t     deallocateFunc );
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc );
 void               oyStringListAddStaticString_ ( char *** list,
                                        int               * n,
                                        const char        * string,
-                                       oyAllocFunc_t       allocateFunc,
-                                       oyDeAllocFunc_t     deallocateFunc );
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc );
 void               oyStringListRelease_(char           *** l,
                                        int                 size,
-                                       oyDeAllocFunc_t     deallocFunc );
+                                       oyDeAlloc_f         deallocFunc );
 char**             oyStringListFilter_(const char       ** list,
                                        int                 n_alt,
                                        const char        * dir_string,
                                        const char        * string,
                                        const char        * suffix,
                                        int               * count,
-                                       oyAllocFunc_t       allocateFunc );
+                                       oyAlloc_f           allocateFunc );
 
 
 #ifdef __cplusplus

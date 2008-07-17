@@ -36,7 +36,7 @@
 #define lcmsTRANSFORM "lcCC"
 
 int lcmsCMMWarnFunc( int code, const char * format, ... );
-oyMessageFunc_t message = lcmsCMMWarnFunc;
+oyMessage_f message = lcmsCMMWarnFunc;
 
 int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText);
 
@@ -325,7 +325,7 @@ oyChar     *       lcmsCMMProfile_GetText(oyCMMptr_s        * cmm_ptr,
                                        oyNAME_e            type,
                                        const char          language[4],
                                        const char          country[4],
-                                       oyAllocFunc_t       allocateFunc )
+                                       oyAlloc_f           allocateFunc )
 {
   const char * name = 0;
   lcmsProfileWrap_s * s = lcmsCMMProfile_GetWrap_(cmm_ptr);
@@ -688,7 +688,7 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
 oyPointer  lcmsCMMColourConversion_ToMem (
                                        oyCMMptr_s        * oy,
                                        size_t            * size,
-                                       oyAllocFunc_t       allocateFunc )
+                                       oyAlloc_f           allocateFunc )
 {
   int error = !oy;
   lcmsTransformWrap_s * s = lcmsCMMTransform_GetWrap_( oy );
@@ -741,7 +741,7 @@ int              lcmsCMMColourConversion_Run (
                                        oyPointer           in_data,
                                        oyPointer           out_data,
                                        size_t              count,
-                                       oyCMMProgress_t     progress )
+                                       oyCMMProgress_f     progress )
 {
   int error = !oy;
 
@@ -854,7 +854,7 @@ int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText)
  *  @date    2007/11/00
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
-int            lcmsCMMMessageFuncSet ( oyMessageFunc_t     message_func )
+int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func )
 {
   message = message_func;
   return 0;

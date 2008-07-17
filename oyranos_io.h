@@ -51,7 +51,7 @@ int     oySetProfile_Block                (const char      * name,
 
 /* separate from the external functions */
 char* oyGetPathFromProfileName_           (const char*   profilename,
-                                           oyAllocFunc_t allocate_func);
+                                           oyAlloc_f     allocate_func);
 
 
 char **  oyProfileListGet_           ( const char        * coloursig,
@@ -60,7 +60,7 @@ char **  oyProfileListGet_           ( const char        * coloursig,
 size_t	oyGetProfileSize_                 (const char*   profilename);
 void*	oyGetProfileBlock_                (const char*   profilename,
                                            size_t       *size,
-                                           oyAllocFunc_t allocate_func);
+                                           oyAlloc_f     allocate_func);
 
 char**  oyPolicyListGet_                  (int         * size);
 char**  oyFileListGet_                    (const char * subpath,

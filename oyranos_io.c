@@ -88,7 +88,7 @@ oyReadFileSize_(const char* name)
 
 char*
 oyReadFileToMem_(const char* name, size_t *size,
-                 oyAllocFunc_t allocate_func)
+                 oyAlloc_f     allocate_func)
 {
   FILE *fp = 0;
   char* mem = 0;
@@ -753,7 +753,7 @@ oyLibListGet_                   (const char * subpath,
   return l.names;
 }
 
-typedef int (*pathSelectFunc_t_)(void*,const char*,const char*);
+typedef int (*pathSelect_f_)(void*,const char*,const char*);
 
 /** @internal
  *  doInPath and data must fit, doInPath can operate on data and after finishing
@@ -763,7 +763,7 @@ typedef int (*pathSelectFunc_t_)(void*,const char*,const char*);
 
  */
 int
-oyRecursivePaths_  ( pathSelectFunc_t_ doInPath,
+oyRecursivePaths_  ( pathSelect_f_ doInPath,
                      void* data,
                      const char ** path_names,
                      int count )
@@ -938,7 +938,7 @@ oyGetProfileSize_                  (const char* profilename)
 
 void*
 oyGetProfileBlock_                 (const char* profilename, size_t *size,
-                                    oyAllocFunc_t allocate_func)
+                                    oyAlloc_f     allocate_func)
 {
   char* fullFileName = 0;
   char* block = 0;

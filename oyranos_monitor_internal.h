@@ -103,7 +103,7 @@ void oyUnrollEdid1_               (struct oyDDC_EDID1_s_ *edi,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
-                                   oyAllocFunc_t allocate_func);
+                                   oyAlloc_f     allocate_func);
 
 
 #ifdef __cplusplus

@@ -232,7 +232,7 @@ oyModulAdd_        (oyModule_s *cmm)
  */
 char**
 oyModulsGetNames_( int        *count,
-                   oyAllocFunc_t alloc_func )
+                   oyAlloc_f     alloc_func )
 {
   char **ids = NULL;
   int    i;

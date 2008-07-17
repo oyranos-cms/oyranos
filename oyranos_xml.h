@@ -64,7 +64,7 @@ char*       oyWriteOptionToXML_(oyGROUP_e           group,
 
 char*       oyPolicyToXML_     (oyGROUP_e           group,
                                 int               add_header,
-                                oyAllocFunc_t     allocate_func);
+                                oyAlloc_f         allocate_func);
 
 int         oyReadXMLPolicy_   (oyGROUP_e           group, 
                                 const char       *xml);

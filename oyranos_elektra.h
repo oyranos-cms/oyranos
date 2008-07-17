@@ -45,13 +45,13 @@ void  oyClose_                  (void);
 
 int   oyPathsCount_             (void);
 char* oyPathName_               (int           number,
-                                 oyAllocFunc_t allocate_func);
+                                 oyAlloc_f     allocate_func);
 int   oyPathAdd_                (const char* pathname);
 void  oyPathRemove_             (const char* pathname);
 void  oyPathSleep_              (const char* pathname);
 void  oyPathActivate_           (const char* pathname);
 char* oyGetPathFromProfileName_ (const char*   profilename,
-                                 oyAllocFunc_t allocate_func);
+                                 oyAlloc_f     allocate_func);
 int   oySetProfile_             (const char      * name,
                                  oyPROFILE_e       type,
                                  const char      * comment);
@@ -65,7 +65,7 @@ char*   oyGetDeviceProfile_               (const char* manufacturer,
                                            const char* attrib1,
                                            const char* attrib2,
                                            const char* attrib3,
-                                           oyAllocFunc_t);
+                                           oyAlloc_f    );
 char**  oyGetDeviceProfile_s              (const char* manufacturer,
                                            const char* model,
                                            const char* product_id,
@@ -114,7 +114,7 @@ int     oySetBehaviour_        (oyBEHAVIOUR_e type,
 
 /* elektra key wrappers */
 char*   oyGetKeyString_        (const char       *key_name,
-                                oyAllocFunc_t     allocFunc );
+                                oyAlloc_f         allocFunc );
 int     oyAddKey_valueComment_ (const char* keyName,
                                 const char* value, const char* comment);
 int     oyKeySetHasValue_      (const char* keyParentName,

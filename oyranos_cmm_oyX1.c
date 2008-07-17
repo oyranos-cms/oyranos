@@ -27,7 +27,7 @@
 #define CMM_NICK "oyX1"
 
 int oyX1CMMWarnFunc( int code, const char * format, ... );
-oyMessageFunc_t message = oyX1CMMWarnFunc;
+oyMessage_f message = oyX1CMMWarnFunc;
 
 int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
                                        const char        * resource );
@@ -94,7 +94,7 @@ int oyX1CMMWarnFunc( int code, const char * format, ... )
  *  @date    2007/12/12
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  */
-int            oyX1CMMMessageFuncSet ( oyMessageFunc_t     message_func )
+int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
 {
   message = message_func;
   return 0;

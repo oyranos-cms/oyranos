@@ -41,7 +41,7 @@ namespace oyranos
 
 void* oyAllocateFunc_           (size_t        size);
 void* oyAllocateWrapFunc_       (size_t        size,
-                                 oyAllocFunc_t allocate_func);
+                                 oyAlloc_f     allocate_func);
 void  oyDeAllocateFunc_         (void *        data);
 
 
@@ -67,7 +67,15 @@ extern intptr_t oy_observe_pointer_;
 /* oyAllocHelper_ (void*, type, size_t, action) */ 
 #define oyAllocHelper_m_(ptr_, type, size_, alloc_func, action) { \
   if (ptr_ != NULL)    /* defined in oyranos_helper.h */    \
-    oyFree_m_( ptr_ )                                       \
+  { \
+    char text_fm[80];                                       \
+    if(oy_observe_pointer_ == (intptr_t)ptr_) {             \
+      oySnprintf1_( text_fm, 80, "pointer %s freed", #ptr_ ); \
+      WARNc_S( text_fm );                                   \
+    }                                                       \
+    oyDeAllocateFunc_ (ptr_);                               \
+    ptr_ = NULL;                                            \
+  }                                                         \
   if ((size_) <= 0) {                                       \
     WARNc2_S ("%s %d", _("nothing to allocate - size:"),    \
               (int)(size_) );                               \
@@ -82,6 +90,7 @@ extern intptr_t oy_observe_pointer_;
     action;                                                 \
   }                                                         \
 }
+
 
 /* oyPostAllocHelper_ (void*, size, action) */
 #define oyPostAllocHelper_m_(ptr_, size_, action) {         \
@@ -151,7 +160,7 @@ int oyMakeDir_    (const char* path);
 
 int   oyWriteMemToFile_ (const char* name, void* mem, size_t size);
 char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
-                         oyAllocFunc_t allocate_func);
+                         oyAlloc_f     allocate_func);
 
 
 

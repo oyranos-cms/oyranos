@@ -53,7 +53,7 @@ void        oyOptionStringsTranslateCheck_();
 /** @brief \internal UI strings for various behaviour options 
  *
  *  This Text array is an internal only variable.<br>
- *  The content is  available through the oyGetOptionUITitle funcion.
+ *  The content is  available through the oyGetOptionUITitle function.
  */
 oyOption_t_ *oy_option_= NULL; 
 
@@ -531,7 +531,7 @@ oyPathsCount_ ()
 }
 
 char*
-oyPathName_ (int number, oyAllocFunc_t allocate_func)
+oyPathName_ (int number, oyAlloc_f allocate_func)
 {
   int count = 0;
   char * name = 0;
@@ -549,7 +549,7 @@ oyPathName_ (int number, oyAllocFunc_t allocate_func)
 
 char **
 oyProfilePathsGet_    (int             * count,
-                       oyAllocFunc_t     allocateFunc)
+                       oyAlloc_f         allocateFunc)
 {
   char ** path_names = NULL;
 #if 1
@@ -615,7 +615,7 @@ oyProfilePathsGet_    (int             * count,
 
 char*
 oyStringCopy_      ( const char    * text,
-                     oyAllocFunc_t   allocateFunc )
+                     oyAlloc_f       allocateFunc )
 {
   char * text_copy = NULL;
     
@@ -637,7 +637,7 @@ oyStringCopy_      ( const char    * text,
  */
 char*              oyStringAppend_   ( const char        * text,
                                        const char        * append,
-                                       oyAllocFunc_t       allocateFunc )
+                                       oyAlloc_f           allocateFunc )
 {
   char * text_copy = NULL;
   int text_len = 0, append_len = 0;
@@ -672,8 +672,8 @@ char*              oyStringAppend_   ( const char        * text,
  */
 void               oyStringAdd_      ( char             ** text,
                                        const char        * append,
-                                       oyAllocFunc_t       allocateFunc,
-                                       oyDeAllocFunc_t     deallocFunc )
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocFunc )
 {
   char * text_copy = NULL;
 
@@ -691,7 +691,7 @@ void               oyStringAdd_      ( char             ** text,
 char**             oyStringSplit_    ( const char    * text,
                                        const char      delimiter,
                                        int           * count,
-                                       oyAllocFunc_t   allocateFunc )
+                                       oyAlloc_f       allocateFunc )
 {
   char ** list = 0;
   if(text && oyStrlen_(text) && delimiter)
@@ -747,8 +747,8 @@ void               oyStringListAdd_  ( char            *** list,
                                        int               * n,
                                        const char       ** append,
                                        int                 n_app,
-                                       oyAllocFunc_t       allocateFunc,
-                                       oyDeAllocFunc_t     deallocateFunc )
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc )
 {
   int alt_n = *n;
   char ** tmp = oyStringListAppend_((const char**)*list, alt_n, append, n_app,
@@ -762,8 +762,8 @@ void               oyStringListAdd_  ( char            *** list,
 void               oyStringListAddStaticString_ ( char *** list,
                                        int               * n,
                                        const char        * string,
-                                       oyAllocFunc_t       allocateFunc,
-                                       oyDeAllocFunc_t     deallocateFunc )
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc )
 {
   int alt_n = *n;
   char ** tmp = oyStringListAppend_((const char**)*list, alt_n,
@@ -778,8 +778,8 @@ void               oyStringListAddStaticString_ ( char *** list,
 void               oyStringListAddString_ ( char       *** list,
                                        int               * n,
                                        char             ** string,
-                                       oyAllocFunc_t       allocateFunc,
-                                       oyDeAllocFunc_t     deallocateFunc )
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc )
 {
   int alt_n = *n;
   char ** tmp = oyStringListAppend_((const char**)*list, alt_n,
@@ -797,7 +797,7 @@ char**             oyStringListAppend_( const char   ** list,
                                         const char   ** append,
                                         int             n_app,
                                         int           * count,
-                                        oyAllocFunc_t   allocateFunc )
+                                        oyAlloc_f       allocateFunc )
 {
   char ** nlist = 0;
 
@@ -844,7 +844,7 @@ char**             oyStringListFilter_(const char   ** list,
                                        const char    * string,
                                        const char    * suffix,
                                        int           * count,
-                                       oyAllocFunc_t   allocateFunc )
+                                       oyAlloc_f       allocateFunc )
 {
   char ** nl = 0;
   int nl_n = 0;
@@ -899,7 +899,7 @@ char**             oyStringListFilter_(const char   ** list,
 
 void          oyStringListRelease_    ( char          *** l,
                                         int               size,
-                                        oyDeAllocFunc_t   deallocFunc )
+                                        oyDeAlloc_f       deallocFunc )
 {
   char *** list = l;
 
@@ -936,7 +936,7 @@ void          oyStringListRelease_    ( char          *** l,
 char**  oyLibPathsGet_( int             * count,
                         const char      * subdir,
                         int               owner,
-                        oyAllocFunc_t     allocateFunc )
+                        oyAlloc_f         allocateFunc )
 {
   char ** paths = 0, ** tmp;
   int     n = 0, tmp_n = 0;
@@ -1012,7 +1012,7 @@ char**  oyLibPathsGet_( int             * count,
 char**  oyXDGPathsGet_( int             * count,
                         int               data,
                         int               owner,
-                        oyAllocFunc_t     allocateFunc )
+                        oyAlloc_f         allocateFunc )
 {
   char ** paths = 0, ** tmp;
   int     n = 0, tmp_n = 0;
@@ -1132,7 +1132,7 @@ oyConfigPathsGet_     (int             * count,
                        const char      * subdir,
                        int               data,
                        int               owner,
-                       oyAllocFunc_t     allocateFunc )
+                       oyAlloc_f         allocateFunc )
 {
   char ** paths = NULL;
   int ndp = 0;        /* number of default paths */
@@ -1203,7 +1203,7 @@ char **     oyConfigFilesGet_        ( int             * count,
                                        const char      * dir_string,
                                        const char      * string,
                                        const char      * suffix,
-                                       oyAllocFunc_t     allocateFunc )
+                                       oyAlloc_f         allocateFunc )
 {
   int l_n = 0;
   char** l = oyFileListGet_(subdir, &l_n, data, owner);
@@ -1226,7 +1226,7 @@ char **     oyLibFilesGet_           ( int             * count,
                                        const char      * dir_string,
                                        const char      * string,
                                        const char      * suffix,
-                                       oyAllocFunc_t     allocateFunc )
+                                       oyAlloc_f         allocateFunc )
 {
   int l_n = 0;
   char** l = oyLibListGet_(subdir, &l_n, owner);
@@ -1677,7 +1677,7 @@ void          oyOptionChoicesFree_     (oyWIDGET_TYPE_e   option,
 
 oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
                                         int             * count,
-                                        oyAllocFunc_t     allocate_func)
+                                        oyAlloc_f         allocate_func)
 {
 #define oyGROUP_DEFAULT_PROFILES_LEN oyWIDGET_DEFAULT_PROFILE_END - oyWIDGET_DEFAULT_PROFILE_START
 #define oyGROUP_BEHAVIOUR_RENDERING_LEN 2

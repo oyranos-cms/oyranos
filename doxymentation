@@ -190,6 +190,7 @@
     @subsection  suffixes  Declaration Overview
     - <b>_t</b> types
     - <b>_s</b> structs
+    - <b>_f</b> functions
     - <b>_e</b> enums
     - <b>_M</b> or <b>_m</b> or none for macro functions
     - ending underscore <b>_</b> for non editable internals

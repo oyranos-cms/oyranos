@@ -50,7 +50,7 @@ void  oyDeAllocateFunc_           (void*       block)
 }
 
 void* oyAllocateWrapFunc_       (size_t        size,
-                                 oyAllocFunc_t allocate_func)
+                                 oyAlloc_f     allocate_func)
 {
   if(allocate_func)
     return allocate_func (size);
