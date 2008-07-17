@@ -36,7 +36,7 @@
 #define CMM_NICK "oyra"
 
 int oyraCMMWarnFunc( int code, const char * format, ... );
-oyMessageFunc_t message = oyraCMMWarnFunc;
+oyMessage_f message = oyraCMMWarnFunc;
 
 
 
@@ -161,15 +161,11 @@ int oyraCMMWarnFunc( int code, const char * format, ... )
  *  @date    2008/01/02
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  */
-int            oyraCMMMessageFuncSet ( oyMessageFunc_t     message_func )
+int            oyraCMMMessageFuncSet ( oyMessage_f         message_func )
 {
   message = message_func;
   return 0;
 }
-
-int        oyraCMMCanHandle          ( oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{ return 0; }
 
 /** @func  oyraProfileCanHandle
  *  @brief inform about icTagTypeSignature capabilities
@@ -195,7 +191,6 @@ int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
          break;
     case oyQUERY_PROFILE_TAG_TYPE_READ:
          switch(value) {
-         case icSigCopyrightTag:
          case icSigMakeAndModelType:
          case icSigMultiLocalizedUnicodeType:
          case icSigWCSProfileTag:
@@ -280,7 +275,7 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
  *
  *  The output depends on the tags type signature in tag->tag_type_ as follows:
  *
- *  - icSigTextType and icSigCopyrightTag and icSigWCSProfileTag:
+ *  - icSigTextType and icSigWCSProfileTag:
  *    - since Oyranos 0.1.8 (API 0.1.8)
  *    - returns one string
  *
@@ -446,7 +441,6 @@ oyStructList_s * oyraProfileTag_GetValues(
     switch( (uint32_t)sig )
     {
       case icSigTextType:
-      case icSigCopyrightTag:
 
            len = tag->size_ * sizeof(oyChar);
            tmp = oyAllocateFunc_( len );
@@ -1644,6 +1638,54 @@ oyWIDGET_EVENT_e oyraWidget_EventDummy
                                        oyWIDGET_EVENT_e    type )
 {return 0;}
 
+
+/** @func    oyraFilter_ImageRootCanHandle
+ *  @brief   inform about image handling capabilities
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/10 (Oyranos: 0.1.8)
+ *  @date    2008/07/10
+ */
+int    oyraFilter_ImageRootCanHandle ( oyCMMQUERY_e      type,
+                                       uint32_t          value )
+{
+  int ret = -1;
+
+  switch(type)
+  {
+    case oyQUERY_OYRANOS_COMPATIBILITY:
+         ret = OYRANOS_VERSION; break;
+    case oyQUERY_PIXELLAYOUT_CHANNELCOUNT:
+         ret = 65535;
+         break;
+    case oyQUERY_PIXELLAYOUT_DATATYPE:
+         switch(value) {
+         case oyUINT8:
+         case oyUINT16:
+         case oyUINT32:
+         case oyFLOAT:
+         case oyDOUBLE:
+              ret = 1; break;
+         case oyHALF:
+         default:
+              ret = 0; break;
+         }
+         break;
+    case oyQUERY_PIXELLAYOUT_SWAP_COLOURCHANNELS:
+         ret = 1;
+         break;
+    case oyQUERY_PIXELLAYOUT_PLANAR:
+         ret = 1;
+         break;
+    case oyQUERY_HDR:
+         ret = 1;
+         break;
+    default: break;
+  }
+
+  return ret;
+}
+
 oyOptions_s* oyraFilter_ImageRootValidateOptions
                                      ( oyFilter_s        * filter,
                                        oyOptions_s       * validate,
@@ -1676,11 +1718,61 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
                                        oyStruct_s        * event )
 {return 0;}
 
+oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
+                                       oyPixelAccess_s   * pixel_access,
+                                       int32_t           * feedback )
+{
+  oyPointer * ptr = 0;
+  int x = pixel_access->start_xy[0];
+  int y = pixel_access->start_xy[1];
+  int max = 0, i, n;
+
+  /* calculate the pixel position we want */
+  if(pixel_access->array_xy)
+  {
+    /* we have a iteration description - use it */
+    n = pixel_access->array_cache_pixels;
+    if(pixel_access->array_n < pixel_access->array_cache_pixels)
+      n = pixel_access->array_n;
+
+    for( i = 0; i < n; ++i )
+      max += pixel_access->array_xy[i*2+0];
+
+    x += -1; //TODO
+  } else
+  {
+    /* fall back to a one by one pixel access */
+    x = pixel_access->start_xy[0];
+    y = pixel_access->start_xy[1];
+
+    if(pixel_access->start_xy[0] >= filter_node->filter->image_->width)
+    {
+      x = 0; pixel_access->start_xy[0] = 1;
+      y = ++pixel_access->start_xy[1];
+    } else
+      ++pixel_access->start_xy[0];
+
+    if(pixel_access->start_xy[1] >= filter_node->filter->image_->height && feedback)
+    {
+      *feedback = -1;
+      return 0;
+    }
+  }
+
+  ptr = filter_node->filter->image_->getPoint( filter_node->filter->image_, x, y, 0 );
+
+  if(!ptr && feedback)
+    *feedback = 1;
+
+  return ptr;
+}
 
 
 
 /** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementations
+ *  @brief    oyra oyCMMapi4_s implementation
+ *
+ *  a filter providing a source image
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/02/08 (Oyranos: 0.1.8)
@@ -1694,7 +1786,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
   
   oyraCMMInit,
   oyraCMMMessageFuncSet,
-  oyraCMMCanHandle,
+  oyraFilter_ImageRootCanHandle,
 
   "org.oyranos.image.image.root",
 
@@ -1703,12 +1795,15 @@ oyCMMapi4_s   oyra_api4_image_root = {
   oyraFilter_ImageRootValidateOptions,
   oyraWidgetEvent,
 
-  0,0,0,0,0,
+  0,0,0,0,
+  oyraFilter_ImageRootGetNext,
 
   {oyOBJECT_TYPE_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
   "Image/Simple Image", /* category */
   0,   /* options */
-  0    /* opts_ui_ */
+  0,   /* opts_ui_ */
+  0,   /* parents_max */
+  1    /* children_max */
 };
 
 /** @instance oyra_api3
