@@ -762,7 +762,7 @@ test -n "$ECHO" && $ECHO "" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_A $VERSION_A" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_B $VERSION_B" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_C $VERSION_C" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_NAME $VERSION" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_NAME \"$VERSION\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION $VERSION_L" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_DATE _(\"$TIME\")" >> $CONF_H
 test -n "$ECHO" && $ECHO "" >> $VERS_H
