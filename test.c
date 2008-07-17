@@ -34,7 +34,7 @@
 
 #include <oyranos.h>
 #include <oyranos_alpha.h>
-#include <oyranos_texts.h> // oyStringListRelease_
+#include <oyranos_texts.h> /* oyStringListRelease_ */
 
 /* forward declaration for oyranos_alpha.c */
 char ** oyCMMsGetNames_              ( int               * n,
@@ -45,12 +45,23 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
 char**             oyStringSplit_    ( const char    * text,
                                        const char      delimiter,
                                        int           * count,
-                                       oyAllocFunc_t   allocateFunc );
+                                       oyAlloc_f       allocateFunc );
 
 
 int
 main(int argc, char** argv)
 {
+  oyPointer pixel = 0;
+  oyPixelAccess_s * pixel_access = 0;
+  oyConversions_s * conversions = 0;
+  oyFilter_s      * filter = 0;
+  int32_t result = 0;
+  oyImage_s * image = 0;
+  float buf[24] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
+  oyProfile_s * prof = 0;
+  int w,h;
+
+#if 0
   int i, count = 0;
   uint32_t size = 0;
   char ** profiles = 0,
@@ -59,7 +70,6 @@ main(int argc, char** argv)
   oyProfileList_s * iccs, * patterns;
   oyProfile_s * profile, * temp_prof;
   oyCMMInfo_s * cmm_info = 0;
-  oyFilter_s * filter = 0;
 
   profiles = oyProfileListGet ( 0, &size, malloc );
   for( i = 0; i < (int) size; ++i )
@@ -100,8 +110,69 @@ main(int argc, char** argv)
     printf("%d: \"%s\": %s\n", i, texts[i], text );
   }
   oyStringListRelease_( &texts, count, free );
+#endif
 
-  filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "...image", 0,0,0 );
+
+  prof = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+  w = 4;
+  h = 2;
+  image = oyImage_Create( w, h, buf, oyTYPE_123_FLOAT, prof, 0 );
+
+  conversions = oyConversions_CreateInput ( image, 0 );
+  oyConversions_FilterAdd( conversions, filter );
+  oyConversions_OutputAdd( conversions, image );
+  oyImage_Release( &image );
+
+  /* create a very simple pixel iterator */
+  pixel_access = oyPixelAccess_Create( 0,0, conversions->input->filter,
+                                       oyPIXEL_ACCESS_IMAGE, 0 );
+
+  while(result == 0)
+  {
+    float * p = 0;
+    pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
+    p = pixel;
+
+    if(result == 0)
+      fprintf( stdout, "%.01f %.01f %.01f\n", p[0], p[1], p[2] );
+  }
+
+  /* turn into a line itereator */
+  pixel_access->array_xy = malloc(sizeof(uint32_t) * 2);
+  pixel_access->array_xy[0] = 1;
+  pixel_access->array_xy[0] = 0;
+  pixel_access->array_n = 1;
+  pixel_access->array_cache_pixels = w;
+  
+  while(result == 0)
+  {
+    float * p = 0;
+    pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
+    p = pixel;
+
+    if(result == 0)
+      fprintf( stdout, "%.01f %.01f %.01f\n", p[0], p[1], p[2] );
+  }
+
+  /* itereate in chunks */
+  pixel_access->array_xy = malloc(sizeof(uint32_t) * 2);
+  pixel_access->array_xy[0] = 1;
+  pixel_access->array_xy[0] = 0;
+  pixel_access->array_n = 1;
+  pixel_access->array_cache_pixels = 2;
+  
+  while(result == 0)
+  {
+    float * p = 0;
+    pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
+    p = pixel;
+
+    if(result == 0)
+      fprintf( stdout, "%.01f %.01f %.01f\n", p[0], p[1], p[2] );
+  }
+
+  oyConversions_Release( &conversions );
+  oyPixelAccess_Release( &pixel_access );
 
   return 0;
 }
