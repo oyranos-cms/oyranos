@@ -112,7 +112,7 @@ typedef enum {
   oyOBJECT_TYPE_NAMED_COLOURS_S,      /*!< oyNamedColours_s */
   oyOBJECT_TYPE_PROFILE_S,            /*!< oyProfile_s */
   oyOBJECT_TYPE_PROFILE_TAG_S,        /*!< oyProfileTag_s */
-  oyOBJECT_TYPE_PROFILE_LIST_S,       /*!< oyProfileList_s */
+  oyOBJECT_TYPE_PROFILES_S,           /*!< oyProfiles_s */
   oyOBJECT_TYPE_OPTION_S,             /*!< oyOption_s */
   oyOBJECT_TYPE_OPTIONS_S,            /*!< oyOptions_s */
   oyOBJECT_TYPE_WIDGET_S,             /**< oyWidget_s */
@@ -206,6 +206,8 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocateFunc );
+const char * oyName_get_             ( const oyName_s    * obj,
+                                       oyNAME_e            type );
 
 typedef enum {
   oyBOOLEAN_INTERSECTION,              /** and, the part covered by A and B */
@@ -684,28 +686,28 @@ typedef struct {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   oyStructList_s     * list_;          /**< list of profiles */
-} oyProfileList_s;
+} oyProfiles_s;
 
-OYAPI oyProfileList_s * OYEXPORT
-                 oyProfileList_New   ( oyObject_s          object );
-OYAPI oyProfileList_s * OYEXPORT
-                 oyProfileList_Copy  ( oyProfileList_s   * profile_list,
+OYAPI oyProfiles_s * OYEXPORT
+                 oyProfiles_New      ( oyObject_s          object );
+OYAPI oyProfiles_s * OYEXPORT
+                 oyProfiles_Copy     ( oyProfiles_s      * profile_list,
                                        oyObject_s          object);
-OYAPI oyProfileList_s * OYEXPORT
-                 oyProfileList_Create( oyProfileList_s   * patterns,
+OYAPI oyProfiles_s * OYEXPORT
+                 oyProfiles_Create   ( oyProfiles_s      * patterns,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
-                 oyProfileList_Release(oyProfileList_s  ** profile_list );
+                 oyProfiles_Release  ( oyProfiles_s     ** profile_list );
 
 
-oyProfileList_s* oyProfileList_MoveIn( oyProfileList_s   * list,
+oyProfiles_s   * oyProfiles_MoveIn   ( oyProfiles_s      * list,
                                        oyProfile_s      ** ptr,
                                        int                 pos );
-int              oyProfileList_ReleaseAt(oyProfileList_s * list,
+int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
                                        int                 pos );
-oyProfile_s *    oyProfileList_Get   ( oyProfileList_s   * list,
+oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
                                        int                 pos );
-int              oyProfileList_Count ( oyProfileList_s   * list );
+int              oyProfiles_Count    ( oyProfiles_s      * list );
  
 
 typedef enum {
@@ -1084,7 +1086,7 @@ struct oyFilter_s {
   char               * opts_ui_;       /**< xml ui elements for filter options*/
 
   oyImage_s          * image_;         /**< image, used for oyFILTER_TYPE_IMAGE */
-  oyProfileList_s    * profiles_;      /**< profiles */
+  oyProfiles_s       * profiles_;      /**< profiles */
 
   oyCMMapi4_s        * api_;           /**<  */
 };
@@ -1099,7 +1101,9 @@ oyFilter_s * oyFilter_Copy           ( oyFilter_s        * filter,
 int          oyFilter_Release        ( oyFilter_s       ** filter );
 
 
-const char * oyFilter_NameGet        ( oyFilter_s        * filter,
+const char * oyFilter_GetText        ( oyFilter_s        * filter,
+                                       oyNAME_e            name_type );
+const char * oyFilter_GetName        ( oyFilter_s        * filter,
                                        oyNAME_e            name_type );
 const char * oyFilter_CategoryGet    ( oyFilter_s        * filter,
                                        int                 nontranslated );
@@ -1118,10 +1122,10 @@ const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
                                        int                 flags );
 const char * oyFilter_WidgetsGet     ( oyFilter_s        * filter,
                                        int                 flags );
-oyProfileList_s* oyFilter_ProfilesSet( oyFilter_s        * filter,
-                                       oyProfileList_s   * profiles,
+oyProfiles_s*oyFilter_ProfilesSet    ( oyFilter_s        * filter,
+                                       oyProfiles_s      * profiles,
                                        int                 flags );
-oyProfileList_s* oyFilter_ProfilesGet( oyFilter_s        * filter,
+oyProfiles_s*oyFilter_ProfilesGet    ( oyFilter_s        * filter,
                                        int                 flags );
 int          oyFilter_ImageSet       ( oyFilter_s        * filter,
                                        oyImage_s         * image );
@@ -1284,7 +1288,7 @@ struct oyPixelAccess_s {
 
   int32_t          start_xy[2];        /**< the start point */
   int32_t          start_xy_old[2];    /**< the previous start point */
-  int32_t       ** array_xy;           /**< array of shifts, e.g. 1,0,2,0,1,0 */
+  int32_t        * array_xy;           /**< array of shifts, e.g. 1,0,2,0,1,0 */
   int              array_n;            /**< the number of points in array_xy */
   oyRegion_s     * request;            /**< requested image region */
   int              index;              /**< to be advanced by the last caller */
@@ -1413,7 +1417,7 @@ typedef struct {
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
-  oyProfileList_s    * profiles_;      /*!< effect / simulation profiles */ 
+  oyProfiles_s       * profiles_;      /*!< effect / simulation profiles */ 
   oyOptions_s        * options_;       /*!< conversion opts */
   oyImage_s          * image_in_;      /*!< input */
   oyImage_s          * image_out_;     /*!< output */
@@ -1421,7 +1425,7 @@ typedef struct {
 } oyColourConversion_s;
 
 oyColourConversion_s* oyColourConversion_Create (
-                                       oyProfileList_s   * list,
+                                       oyProfiles_s      * list,
                                        oyOptions_s       * opts,
                                        oyImage_s         * in,
                                        oyImage_s         * out,

@@ -1718,14 +1718,111 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
                                        oyStruct_s        * event )
 {return 0;}
 
+/** ncl2 profilbody */
+char profile_data[320] =
+  {
+/*0*/    0,0,1,64, 'o','y','r','a',
+    2,48,0,0, 'n','o','n','e',
+    'R','G','B',32, 'L','a','b',32,
+    0,0,0,0,0,0,0,0,
+/*32*/    0,0,0,0,97,99,115,112,
+    '*','n','i','x',0,0,0,0,
+    110,111,110,101,110,111,110,101,
+    -64,48,11,8,-40,-41,-1,-65,  
+/*64*/    0,0,0,0,0,0,-10,-42,
+    0,1,0,0,0,0,-45,45,
+    'o','y','r','a',0,0,0,0,
+    0,0,0,0,0,0,0,0,
+/*96*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+/*128*/    0,0,0,3,'d','e','s','c',
+    0,0,0,-88,0,0,0,33,
+    'c','p','r','t',0,0,0,-52,
+    0,0,0,29,'I','n','f','o',
+/*160*/    0,0,0,-20,0,0,0,0,
+    't','e','x','t',0,0,0,0,
+    'I','m','a','g','e',' ','r','o',
+    'o','t',' ','p','l','u','g','i',
+/*192*/    'n',0,0,0,0,0,0,0,
+    0,0,0,0,'t','e','x','t',
+    0,0,0,0,110,111,116,32,
+    99,111,112,121,114,105,103,104,
+/*224*/    116,101,100,32,100,97,116,97,
+    0,0,0,0,'t','e','x','t',
+    0,0,0,0,'s','t','a','r',
+    't',0,0,0,0,0,0,0,
+/*256*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0
+  };
+
+/** @func    oyraFilter_ImageRootContextToMem
+ *  @brief   implement oyCMMFilter_ContextToMem_f()
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/17 (Oyranos: 0.1.8)
+ *  @date    2008/07/17
+ */
+oyPointer  oyraFilter_ImageRootContextToMem (
+                                       oyFilter_s        * filter,
+                                       size_t            * size,
+                                       oyCMMptr_s        * oy,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyPointer ptr = 0;
+  icHeader * header = 0;
+  size_t len = 244, text_len = 0;
+  char * text = 0;
+  const char * temp = 0;
+  uint32_t * mem = 0;
+
+  if(!filter)
+    return 0;
+
+  temp = oyFilter_GetText( filter, oyNAME_NAME );
+  text_len = strlen(temp);
+  len += text_len + 1;
+  len = len > 320 ? len : 320;
+  ptr = allocateFunc(len);
+  header = ptr;
+
+  if(ptr)
+  {
+    *size = len;
+    memset(ptr,0,len);
+    memcpy(ptr, profile_data, 320);
+    text = ((char*)ptr)+244;
+    sprintf(text, "%s", oyFilter_GetText( filter, oyNAME_NAME ));
+    header->size = oyValueUInt32( len );
+    mem = ptr;
+    mem[41] = oyValueUInt32( text_len + 8 );
+  }
+
+  return ptr;
+}
+
+/** @func    oyraFilter_ImageRootGetNext
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/10 (Oyranos: 0.1.8)
+ *  @date    2008/07/17
+ */
 oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
                                        oyPixelAccess_s   * pixel_access,
                                        int32_t           * feedback )
 {
   oyPointer * ptr = 0;
-  int x = pixel_access->start_xy[0];
-  int y = pixel_access->start_xy[1];
-  int max = 0, i, n;
+  int x = pixel_access->start_xy[0], sx = x;
+  int y = pixel_access->start_xy[1], sy = y;
+  int remainder = 0, max = 0, i, n;
 
   /* calculate the pixel position we want */
   if(pixel_access->array_xy)
@@ -1736,9 +1833,27 @@ oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
       n = pixel_access->array_n;
 
     for( i = 0; i < n; ++i )
+    {
       max += pixel_access->array_xy[i*2+0];
+      if(i == pixel_access->array_cache_pixels % pixel_access->array_n)
+        remainder = max;
+    }
 
-    x += -1; //TODO
+    sx += max * pixel_access->array_cache_pixels / pixel_access->array_n +
+          remainder;
+
+    max = 0;
+    for( i = 0; i < n; ++i )
+    {
+      max += pixel_access->array_xy[i*2+1];
+      if(i == pixel_access->array_cache_pixels % pixel_access->array_n)
+        remainder = max;
+    }
+
+    sy += max * pixel_access->array_cache_pixels / pixel_access->array_n +
+          remainder;
+    pixel_access->start_xy[0] = sx;
+    pixel_access->start_xy[1] = sy;
   } else
   {
     /* fall back to a one by one pixel access */
@@ -1759,7 +1874,12 @@ oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
     }
   }
 
-  ptr = filter_node->filter->image_->getPoint( filter_node->filter->image_, x, y, 0 );
+  if(x < filter_node->filter->image_->width &&
+     y < filter_node->filter->image_->height)
+    ptr = filter_node->filter->image_->getPoint( filter_node->filter->image_,
+                                                 x, y, 0 );
+  else
+    ptr = 0;
 
   if(!ptr && feedback)
     *feedback = 1;
@@ -1795,7 +1915,10 @@ oyCMMapi4_s   oyra_api4_image_root = {
   oyraFilter_ImageRootValidateOptions,
   oyraWidgetEvent,
 
-  0,0,0,0,
+  0,
+  0,
+  oyraFilter_ImageRootContextToMem,
+  0,
   oyraFilter_ImageRootGetNext,
 
   {oyOBJECT_TYPE_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},

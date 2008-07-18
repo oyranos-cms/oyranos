@@ -35,6 +35,7 @@
 #include <oyranos.h>
 #include <oyranos_alpha.h>
 #include <oyranos_texts.h> /* oyStringListRelease_ */
+#include <oyranos_cmm.h>   /* for hacking into backend API */
 
 /* forward declaration for oyranos_alpha.c */
 char ** oyCMMsGetNames_              ( int               * n,
@@ -59,11 +60,12 @@ main(int argc, char** argv)
   oyImage_s * image = 0;
   float buf[24] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
   oyProfile_s * prof = 0;
-  int w,h;
+  int x,y,w,h, i;
+  char * ptr = 0;
+  uint32_t size = 0;
 
 #if 0
-  int i, count = 0;
-  uint32_t size = 0;
+  int count = 0;
   char ** profiles = 0,
        ** texts = 0,
         * text = 0;
@@ -126,7 +128,7 @@ main(int argc, char** argv)
   /* create a very simple pixel iterator */
   pixel_access = oyPixelAccess_Create( 0,0, conversions->input->filter,
                                        oyPIXEL_ACCESS_IMAGE, 0 );
-
+  result = 0;
   while(result == 0)
   {
     float * p = 0;
@@ -140,36 +142,52 @@ main(int argc, char** argv)
   /* turn into a line itereator */
   pixel_access->array_xy = malloc(sizeof(uint32_t) * 2);
   pixel_access->array_xy[0] = 1;
-  pixel_access->array_xy[0] = 0;
+  pixel_access->array_xy[1] = 0;
   pixel_access->array_n = 1;
   pixel_access->array_cache_pixels = w;
-  
+  result = 0;
+  x = y = 0;
   while(result == 0)
   {
     float * p = 0;
+
+    pixel_access->start_xy[0] = 1;
+    pixel_access->start_xy[1] = y++;
     pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
     p = pixel;
 
     if(result == 0)
-      fprintf( stdout, "%.01f %.01f %.01f\n", p[0], p[1], p[2] );
+    for(i = 0; i < pixel_access->array_cache_pixels*3; i += 3)
+      fprintf( stdout, "%.01f %.01f %.01f\n", p[i+0], p[i+1], p[i+2] );
   }
 
   /* itereate in chunks */
   pixel_access->array_xy = malloc(sizeof(uint32_t) * 2);
   pixel_access->array_xy[0] = 1;
-  pixel_access->array_xy[0] = 0;
+  pixel_access->array_xy[1] = 0;
   pixel_access->array_n = 1;
   pixel_access->array_cache_pixels = 2;
-  
+  result = 0;
+  x = y = 0;
   while(result == 0)
   {
     float * p = 0;
+
+    pixel_access->start_xy[0] = x;
+    pixel_access->start_xy[1] = y++;
     pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
     p = pixel;
 
     if(result == 0)
-      fprintf( stdout, "%.01f %.01f %.01f\n", p[0], p[1], p[2] );
+    for(i = 0; i < pixel_access->array_cache_pixels*3; i += 3)
+      fprintf( stdout, "%.01f %.01f %.01f\n", p[i+0], p[i+1], p[i+2] );
   }
+
+  if(conversions->input->filter->api_->oyCMMFilter_ContextToMem)
+    ptr = conversions->input->filter->api_->oyCMMFilter_ContextToMem( conversions->input->filter, &size, 0, malloc );
+
+  if(ptr)
+    oyWriteMemToFile_( "test_dbg.icc", ptr, size );
 
   oyConversions_Release( &conversions );
   oyPixelAccess_Release( &pixel_access );

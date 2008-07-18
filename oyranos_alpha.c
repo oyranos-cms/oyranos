@@ -92,7 +92,7 @@ oyCMMptr_s * oyProfile_GetCMMPtr_    ( oyProfile_s       * profile,
                                        oyNAME_e            type,
                                        const char        * language,
                                        const char        * country );*/
-oyCMMptr_s** oyProfileList_GetCMMptrs_(oyProfileList_s   * list,
+oyCMMptr_s** oyProfiles_GetCMMptrs_(oyProfiles_s   * list,
                                        const char        * cmm );
 oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
                                        size_t            * size,
@@ -104,17 +104,19 @@ int          oyProfile_Equal_        ( oyProfile_s       * profileA,
 int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
                                        oyProfile_s       * profile );
 int32_t      oyProfile_Hashed_       ( oyProfile_s       * s );
+char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
+                                       oyAlloc_f           allocateFunc );
 oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
                                        int                 pos );
 oyColourConversion_s* oyColourConversion_Create_ (
-                                       oyProfileList_s   * list,
+                                       oyProfiles_s   * list,
                                        oyOptions_s       * opts,
                                        oyImage_s         * in,
                                        oyImage_s         * out,
                                        oyObject_s          object);
 const oyChar *     oyColourConversion_GetID_ (
                                        oyColourConversion_s * s,
-                                       oyProfileList_s * list,
+                                       oyProfiles_s * list,
                                        oyOptions_s     * opts,
                                        oyImage_s       * in,
                                        oyImage_s       * out);
@@ -208,8 +210,8 @@ int          oyIdToCMM               ( uint32_t            cmmId,
  *  pixel mask description 
  */
 enum {
-  oyLAYOUT,     /* remembering the layout */
-  oyPOFF_X = 0, /* pixel count x offset */
+  oyLAYOUT = 0, /* remembering the layout */
+  oyPOFF_X,     /* pixel count x offset */
   oyPOFF_Y,     /* pixel count y offset */
   oyCOFF,       /* channel offset */
   oyDATA_SIZE,  /* sample size in byte */
@@ -1325,7 +1327,7 @@ const char *     oyStruct_TypeToText ( oyStruct_s        * oy_struct )
     case oyOBJECT_TYPE_NAMED_COLOURS_S: text = "oyNamedColours_s"; break;
     case oyOBJECT_TYPE_PROFILE_S: text = "oyProfile_s"; break;
     case oyOBJECT_TYPE_PROFILE_TAG_S: text = "oyProfileTag_s"; break;
-    case oyOBJECT_TYPE_PROFILE_LIST_S: text = "oyProfileList_s"; break;
+    case oyOBJECT_TYPE_PROFILES_S: text = "oyProfiles_s"; break;
     case oyOBJECT_TYPE_OPTION_S: text = "oyOption_s"; break;
     case oyOBJECT_TYPE_OPTIONS_S: text = "oyOptions_s"; break;
     case oyOBJECT_TYPE_WIDGET_S: text = "oyWidget_s"; break;
@@ -1556,6 +1558,38 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
   }
 
   return s;
+}
+
+/** @func    oyName_get_
+ *  @brief   get name
+ *
+ *  @param[in,out] obj                 name object
+ *  @param         type                type of name
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/18 (Oyranos: 0.1.8)
+ *  @date    2008/07/18
+ */
+const char * oyName_get_             ( const oyName_s    * obj,
+                                       oyNAME_e            type )
+{
+  const char * text = 0;
+  oyName_s * name = obj;
+  if(!obj)
+    return 0;
+
+  switch(type)
+  {
+    case oyNAME_NICK:
+         text = name->nick; break;
+    case oyNAME_DESCRIPTION:
+         text = name->description; break;
+    case oyNAME_NAME:
+    default:
+         text = name->name; break;
+  }
+
+  return text;
 }
 
 /** @brief   test a boolean operator
@@ -3875,23 +3909,14 @@ int          oyObject_SetNames        ( oyObject_s        object,
 const oyChar * oyObject_GetName       ( const oyObject_s        obj,
                                         oyNAME_e                type )
 {
-  const oyChar * text = 0;
+  const char * text = 0;
   if(!obj)
     return 0;
 
   if(!obj->name_)
     return 0;
 
-  switch(type)
-  {
-    case oyNAME_NICK:
-         text = obj->name_->nick; break;
-    case oyNAME_DESCRIPTION:
-         text = obj->name_->description; break;
-    case oyNAME_NAME:
-    default:
-         text = obj->name_->name; break;
-  }
+  text = oyName_get_( obj->name_, type );
 
   return text;
 }
@@ -6238,7 +6263,7 @@ OYAPI const oyChar* OYEXPORT
 /** @brief get a presentable name
  *
  *  The type argument should select the folloing string in return:<br> 
- *  - oy_NAME_NAME - a readable ID
+ *  - oy_NAME_NAME - a readable XML element
  *  - oy_NAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
  *
@@ -6301,22 +6326,23 @@ OYAPI const oyChar* OYEXPORT
     }
 
     if(type == oyNAME_NAME)
-    if(s->use_default_ && !found && !error)
     {
-      oyWidgetTitleGet( s->use_default_, 0, &text, 0, 0 );
+      uint32_t * i = (uint32_t*)&s->oy_->hash_[0];
+      char * file_name = oyProfile_GetFileName_r( s, oyAllocateFunc_ );
 
-      oySprintf_(temp, "%s", text);
-      if(oyStrlen_(temp))
-        found = 1;
-    }
+      if(oyProfile_Hashed_(s))
+        error = oyProfile_GetHash_( s );
 
-    /* Do we have a file_name_? */
-    if(type == oyNAME_NAME)
-    if(s->file_name_ && !found && !error)
-    {
-      oySprintf_(temp, "%s", s->file_name_);
-      if(oyStrlen_(temp))
-        found = 1;
+      if(s->use_default_ && !error)
+        oyWidgetTitleGet( s->use_default_, 0, &text, 0, 0 );
+
+      oySprintf_( temp, "<profile use_default=\"%s\" file_name=\"%s\" hash=\"%x%x%x%x\" />",
+             oyNoEmptyName_m_(text),
+             oyNoEmptyName_m_(file_name),
+             i[0], i[1], i[2], i[3] );
+
+      if(file_name) free(file_name); file_name = 0;
+      found = 1;
     }
 
     /* last rescue */
@@ -6394,6 +6420,80 @@ OYAPI oyPointer OYEXPORT
   return block;
 }
 
+/** @func    oyProfile_GetFileName_r
+ *  @brief   get the ICC profile location in the filesystem
+ *
+ *  This function tries to find a profile on disk matching a possibly memory
+ *  only profile. In case the profile was previously opened from file or as a
+ *  from Oyranos defaults the assiciated filename will simply be retuned.
+ *
+ *  @param         profile             the profile
+ *  @param         allocateFunc        memory allocator           
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/01 (Oyranos: 0.1.8)
+ *  @date    2008/02/01
+ */
+char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * name = 0;
+  oyProfile_s * s = profile, * tmp = 0;
+  int error = !s;
+  oyChar ** names = 0;
+  uint32_t count = 0, i = 0;
+  oyChar ** texts = 0;
+  int32_t   texts_n = 0;
+  oyChar *  hash = 0;
+  oyChar    tmp_hash[34];
+
+  if(!error && s->type_ == oyOBJECT_TYPE_PROFILE_S)
+  {
+    if(s->file_name_ && !hash)
+    {
+      name = s->file_name_;
+    } else {
+
+      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+
+      for(i = 0; i < count; ++i)
+      {
+        if(names[i])
+        {
+          if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+            tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
+
+          if(hash && tmp)
+          {
+            uint32_t * h = (uint32_t*)&tmp->oy_->hash_[0];
+            oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+            if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
+            {
+              name = names[i];
+              break;
+            }
+          } else
+          if(oyProfile_Equal_( s, tmp ))
+          {
+            name = names[i];
+            break;
+          }
+
+          oyProfile_Release( &tmp );
+        }
+      }
+
+      name = oyFindProfile_( name );
+      oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+    }
+
+    oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+  }
+
+  name = oyStringCopy_( s->file_name_, allocateFunc );
+
+  return name;
+}
 /** @func    oyProfile_GetFileName
  *  @brief   get the ICC profile location in the filesystem
  *
@@ -6408,7 +6508,7 @@ OYAPI oyPointer OYEXPORT
  *  @since   2008/02/01 (Oyranos: 0.1.8)
  *  @date    2008/02/01
  */
-const oyChar *     oyProfile_GetFileName ( oyProfile_s   * profile,
+const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
                                        int                 dl_pos )
 {
   const oyChar * name = 0;
@@ -7011,13 +7111,11 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
     error = 1;
 
   if(!error)
-  {
-    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
     n = oyProfile_GetTagCount( s );
-  }
 
   if(!error && n)
   {
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
     for(i = 0; i < n; ++i)
     {
       tmp = oyProfile_GetTagByPos_( s, i );
@@ -7035,7 +7133,7 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
     }
   }
 
-  if(s)
+  if(s && n)
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
 
   return tag;
@@ -7700,12 +7798,12 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-OYAPI oyProfileList_s * OYEXPORT
-                   oyProfileList_New ( oyObject_s          object )
+OYAPI oyProfiles_s * OYEXPORT
+                   oyProfiles_New ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_PROFILE_LIST_S;
-# define STRUCT_TYPE oyProfileList_s
+  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_PROFILES_S;
+# define STRUCT_TYPE oyProfiles_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
@@ -7719,8 +7817,8 @@ OYAPI oyProfileList_s * OYEXPORT
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyProfileList_Copy;
-  s->release = (oyStruct_Release_f) oyProfileList_Release;
+  s->copy = (oyStruct_Copy_f) oyProfiles_Copy;
+  s->release = (oyStruct_Release_f) oyProfiles_Release;
 
   s->oy_ = s_obj;
 
@@ -7738,18 +7836,18 @@ OYAPI oyProfileList_s * OYEXPORT
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-OYAPI oyProfileList_s * OYEXPORT
-                   oyProfileList_Copy  ( oyProfileList_s * obj,
+OYAPI oyProfiles_s * OYEXPORT
+                   oyProfiles_Copy  ( oyProfiles_s * obj,
                                          oyObject_s        object)
 {
-  oyProfileList_s * s = 0;
+  oyProfiles_s * s = 0;
   int error = 0;
   oyAlloc_f allocateFunc = 0;
 
   if(!obj)
     return s;
 
-  s = oyProfileList_New( object );
+  s = oyProfiles_New( object );
   error = !s;
 
   if(!error)
@@ -7773,7 +7871,7 @@ OYAPI oyProfileList_s * OYEXPORT
   return s;
 }
 
-/** @func    oyProfileList_Create
+/** @func    oyProfiles_Create
  *  @brief   get a list of installed profiles
  *
  *  @param[in]     patterns            a list properties, e.g. classes
@@ -7783,21 +7881,21 @@ OYAPI oyProfileList_s * OYEXPORT
  *  @since   2008/06/20 (Oyranos: 0.1.8)
  *  @date    2008/06/20
  */
-OYAPI oyProfileList_s * OYEXPORT
-                 oyProfileList_Create( oyProfileList_s   * patterns,
+OYAPI oyProfiles_s * OYEXPORT
+                 oyProfiles_Create( oyProfiles_s   * patterns,
                                        oyObject_s          object)
 {
-  oyProfileList_s * s = 0;
+  oyProfiles_s * s = 0;
   int error = 0;
 
   oyProfile_s * tmp = 0, * pattern = 0;
   char  ** names = 0, * full_name = 0;
   oyPointer block = 0;
   uint32_t names_n = 0, i = 0, j = 0,
-           patterns_n = oyProfileList_Count(patterns);
+           patterns_n = oyProfiles_Count(patterns);
   size_t   size = 128;
 
-  s = oyProfileList_New( object );
+  s = oyProfiles_New( object );
   error = !s;
 
   if(!error)
@@ -7806,7 +7904,7 @@ OYAPI oyProfileList_s * OYEXPORT
 
     for(j = 0; j < patterns_n; ++j)
     {
-      pattern = oyProfileList_Get(patterns, j);
+      pattern = oyProfiles_Get(patterns, j);
 
       if(pattern->size_ > 132)
         size = 0;
@@ -7833,11 +7931,11 @@ OYAPI oyProfileList_s * OYEXPORT
           for(j = 0; j < patterns_n; ++j)
           {
             if(tmp)
-              pattern = oyProfileList_Get(patterns, j);
+              pattern = oyProfiles_Get(patterns, j);
 
             if(oyProfile_Match_( pattern, tmp ))
             {
-              s = oyProfileList_MoveIn( s, &tmp, -1);
+              s = oyProfiles_MoveIn( s, &tmp, -1);
               error = !s;
               break;
             }
@@ -7845,7 +7943,7 @@ OYAPI oyProfileList_s * OYEXPORT
 
         } else {
 
-          s = oyProfileList_MoveIn( s, &tmp, -1);
+          s = oyProfiles_MoveIn( s, &tmp, -1);
           error = !s;
         }
       }
@@ -7863,20 +7961,20 @@ OYAPI oyProfileList_s * OYEXPORT
  *  @date  22 november 2007 (API 0.1.8)
  */
 OYAPI int  OYEXPORT
-                   oyProfileList_Release(oyProfileList_s** obj )
+                   oyProfiles_Release(oyProfiles_s** obj )
 {
   int error = 0;
   /* ---- start of common object destructor ----- */
-  oyProfileList_s * s = 0;
+  oyProfiles_s * s = 0;
 
   if(!obj || !*obj)
     return error;
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_PROFILE_LIST_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_PROFILES_S)
   {
-    WARNc_S(("Attempt to release a non oyProfileList_s object."))
+    WARNc_S(("Attempt to release a non oyProfiles_s object."))
     return 1;
   }
 
@@ -7906,7 +8004,7 @@ OYAPI int  OYEXPORT
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-oyProfileList_s* oyProfileList_MoveIn( oyProfileList_s   * list,
+oyProfiles_s* oyProfiles_MoveIn( oyProfiles_s   * list,
                                        oyProfile_s      ** obj,
                                        int                 pos )
 {
@@ -7915,7 +8013,7 @@ oyProfileList_s* oyProfileList_MoveIn( oyProfileList_s   * list,
   if(obj && *obj && (*obj)->type_ == oyOBJECT_TYPE_PROFILE_S)
   {
     if(!list)
-      list = oyProfileList_New(0);
+      list = oyProfiles_New(0);
 
     if(list && list->list_)
         error = oyStructList_MoveIn( list->list_, (oyStruct_s**) obj, pos );
@@ -7929,7 +8027,7 @@ oyProfileList_s* oyProfileList_MoveIn( oyProfileList_s   * list,
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-int              oyProfileList_ReleaseAt( oyProfileList_s * list,
+int              oyProfiles_ReleaseAt( oyProfiles_s * list,
                                        int                 pos )
 {
   int error = 0;
@@ -7949,7 +8047,7 @@ int              oyProfileList_ReleaseAt( oyProfileList_s * list,
  *  @since Oyranos: version 0.1.8  2007/11/22
  *  @date  20 december 2007 (API 0.1.8)
  */
-oyProfile_s *    oyProfileList_Get   ( oyProfileList_s   * list,
+oyProfile_s *    oyProfiles_Get   ( oyProfiles_s   * list,
                                        int                 pos )
 {
   oyProfile_s * obj = 0;
@@ -7971,11 +8069,11 @@ oyProfile_s *    oyProfileList_Get   ( oyProfileList_s   * list,
  *  @since Oyranos: version 0.1.8
  *  @date  23 november 2007 (API 0.1.8)
  */
-oyCMMptr_s** oyProfileList_GetCMMptrs_(oyProfileList_s   * list,
+oyCMMptr_s** oyProfiles_GetCMMptrs_(oyProfiles_s   * list,
                                        const char        * cmm )
 {
   oyCMMptr_s ** obj = 0;
-  int n = oyProfileList_Count( list );
+  int n = oyProfiles_Count( list );
 
 
   if(list && list->list_)
@@ -8008,7 +8106,7 @@ oyCMMptr_s** oyProfileList_GetCMMptrs_(oyProfileList_s   * list,
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-int              oyProfileList_Count ( oyProfileList_s   * list )
+int              oyProfiles_Count ( oyProfiles_s   * list )
 {
   int n = 0;
 
@@ -8563,32 +8661,44 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
   }
 
 
-  hashTextAdd_m( "{\n" );
-  oySprintf_( text, " channels:\n  all = %d\n  colour = %d\n", n, cchan_n );
+  oySprintf_( text, 
+                  "  <oyImage_s id=\"%d\" width=\"%d\" height=\"%d\" resolution=\"%.02f,%.02f\">\n",
+                  oyObject_GetId(image->oy_),
+                  image->width,
+                  image->height,
+                  image->resolution_x,
+                  image->resolution_y);
+  hashTextAdd_m( text );
+  oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
+  hashTextAdd_m( text );
+  oySprintf_( text, "    <channels all=\"%d\" colour=\"%d\" />\n", n, cchan_n );
   hashTextAdd_m( text );
   oySprintf_( text,
-              " offsets:\n  first colour sample = %d\n  next pixel = %d\n"
+              "    <offsets first_colour_sample=\"%d\" next_pixel=\"%d\" />\n"
               /*"  next line = %d\n"*/,
               coff_x, mask[oyPOFF_X]/*, mask[oyPOFF_Y]*/ );
   hashTextAdd_m( text );
 
   if(swap || oyToByteswap_m( pixel_layout ))
   {
-    hashTextAdd_m( " swap:\n" );
+    hashTextAdd_m( "    <swap" );
     if(swap)
-      hashTextAdd_m( "  colourswap = yes\n" );
+      hashTextAdd_m( " colourswap=\"yes\"" );
     if( oyToByteswap_m( pixel_layout ) )
-      hashTextAdd_m( "  byteswap = yes\n" );
+      hashTextAdd_m( " byteswap=\"yes\"" );
+    hashTextAdd_m( " />\n" );
   }
 
   if( oyToFlavor_m( pixel_layout ) )
   {
-    oySprintf_( text, " flawor = yes\n" );
+    oySprintf_( text, "    <flawor value=\"yes\" />\n" );
     hashTextAdd_m( text );
   }
-  oySprintf_( text, " sample type = %s[%dByte]\n", oyDatatypeToText(t), so );
+  oySprintf_( text, "    <sample_type value=\"%s[%dByte]\" />\n",
+                    oyDatatypeToText(t), so );
   hashTextAdd_m( text );
-  hashTextAdd_m( "}\n" );
+  oySprintf_( text, "  </oyImage_s>");
+  hashTextAdd_m( text );
 
   if(!error)
     error = oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
@@ -9150,7 +9260,7 @@ oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
     s->options_ = oyOptions_Copy( filter->options_, s->oy_ );
     s->opts_ui_ = oyStringCopy_( filter->opts_ui_, allocateFunc_ );
     s->image_ = oyImage_Copy_( filter->image_, s->oy_ );
-    s->profiles_ = oyProfileList_Copy( filter->profiles_, s->oy_ );
+    s->profiles_ = oyProfiles_Copy( filter->profiles_, s->oy_ );
     s->api_ = filter->api_;
   }
 
@@ -9221,7 +9331,7 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
 
   s->registration_ = 0;
 
-  oyProfileList_Release( &s->profiles_ );
+  oyProfiles_Release( &s->profiles_ );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -9239,8 +9349,74 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
 }
 
 
-/** @func    oyFilter_NameGet
+/** @func    oyFilter_GetText
+ *  @brief   get text
+ *
+ *  oyNAME_NAME provides a XML element with child elements and attributes
+ *
+ *  @param[in,out] obj                 filter object
+ *  @param         name_type           type of name
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/18 (Oyranos: 0.1.8)
+ *  @date    2008/07/18
+ */
+const char * oyFilter_GetText        ( oyFilter_s        * filter,
+                                       oyNAME_e            name_type )
+{
+  char * text = 0;
+  oyFilter_s * s = filter;
+  int error = !s;
+
+  if(error)
+    return 0;
+
+  if(name_type == oyNAME_NAME && !oyObject_GetName(s->oy_, name_type))
+  {
+    text = oyAllocateWrapFunc_( 512, s->oy_ ? s->oy_->allocateFunc_ : 0 );
+    if(!text)
+      error = 1;
+    sprintf(text, "<oyFilter_s registration=\"%s\" category=\"%s\" version=\"%d.%d.%d\">\n",
+                  s->registration_,
+                  s->category_,
+                  s->api_->version[0],
+                  s->api_->version[1],
+                  s->api_->version[2]
+           );
+
+    if(!error && filter->image_)
+      sprintf( &text[oyStrlen_(text)], "%s\n",
+      oyNoEmptyName_m_(oyObject_GetName( filter->image_->oy_, oyNAME_NICK )));
+
+    if(!error && filter->profiles_)
+    {
+      int i = 0, n = oyProfiles_Count(filter->profiles_);
+      oyProfile_s * profile = 0;
+      for(i = 0; i < n; ++i)
+      {
+        profile = oyProfiles_Get( filter->profiles_, i );
+        sprintf( &text[oyStrlen_(text)], "    %s\n",
+        oyNoEmptyName_m_(oyProfile_GetText( profile, oyNAME_NAME)) );
+      }
+    }
+
+    if(!error)
+      sprintf( &text[oyStrlen_(text)], "</oyFilter_s>" );
+
+    if(!error)
+      error = oyObject_SetName( s->oy_, text, name_type );
+
+    if(error)
+      WARNc_S(("MEM Error."))
+  }
+
+  return oyObject_GetName(filter->oy_, name_type);
+}
+
+/** @func    oyFilter_GetName
  *  @brief   get name
+ *
+ *  provides the original filter names
  *
  *  @param[in,out] obj                 filter object
  *  @param         name_type           type of name
@@ -9249,13 +9425,15 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-const char * oyFilter_NameGet        ( oyFilter_s        * filter,
+const char * oyFilter_GetName        ( oyFilter_s        * filter,
                                        oyNAME_e            name_type )
 {
-  if(!filter)
+  oyFilter_s * s = filter;
+
+  if(!s)
     return 0;
 
-  return oyObject_GetName(filter->oy_, name_type);
+  return oyNoEmptyName_m_( oyName_get_( filter->name_, name_type ) );
 }
 /** @func    oyFilter_CategoryGet
  *  @brief   get category string
@@ -9305,10 +9483,10 @@ const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
                                        int                 flags );
 const char * oyFilter_WidgetsGet     ( oyFilter_s        * filter,
                                        int                 flags );
-oyProfileList_s* oyFilter_ProfilesSet( oyFilter_s        * filter,
-                                       oyProfileList_s   * profiles,
+oyProfiles_s* oyFilter_ProfilesSet( oyFilter_s        * filter,
+                                       oyProfiles_s   * profiles,
                                        int                 flags );
-oyProfileList_s* oyFilter_ProfilesGet( oyFilter_s        * filter,
+oyProfiles_s* oyFilter_ProfilesGet( oyFilter_s        * filter,
                                        int                 flags );
 /** @func    oyFilter_ImageSet
  *  @brief   set filter image
@@ -9780,7 +9958,7 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
  *  @date  november 2007 (API 0.1.8)
  */
 oyColourConversion_s* oyColourConversion_Create (
-                                        oyProfileList_s * list,
+                                        oyProfiles_s * list,
                                         oyOptions_s     * opts,
                                         oyImage_s       * in,
                                         oyImage_s       * out,
@@ -9805,14 +9983,14 @@ oyColourConversion_s* oyColourConversion_Create (
  *  @since   2007/12/21 (Oyranos: 0.1.8)
  *  @date    2007/06/26
  */
-oyProfileList_s * oyConcatenateImageProfiles_ (
-                                        oyProfileList_s * list,
+oyProfiles_s * oyConcatenateImageProfiles_ (
+                                        oyProfiles_s * list,
                                         oyImage_s       * in,
                                         oyImage_s       * out,
                                         oyObject_s        obj )
 {
   int error = 0;
-  oyProfileList_s * p_list = 0;
+  oyProfiles_s * p_list = 0;
 
   if(!error)
   {
@@ -9825,27 +10003,27 @@ oyProfileList_s * oyConcatenateImageProfiles_ (
       oyProfile_s * tmp = 0;
 
       if(obj)
-        p_list = oyProfileList_New( obj );
+        p_list = oyProfiles_New( obj );
       else
-        p_list = oyProfileList_New( 0 );
+        p_list = oyProfiles_New( 0 );
       error = !p_list;
 
       if(!error)
       {
         tmp = oyProfile_Copy( in->profile_, 0);
-        p_list = oyProfileList_MoveIn( p_list, &tmp, 0 );
+        p_list = oyProfiles_MoveIn( p_list, &tmp, 0 );
         error = !p_list;
       }
 
-      p_list_n = oyProfileList_Count( p_list );
+      p_list_n = oyProfiles_Count( p_list );
 
-      if(!error && list && oyProfileList_Count(list))
+      if(!error && list && oyProfiles_Count(list))
       {
-        n = oyProfileList_Count(list);
+        n = oyProfiles_Count(list);
         for(i = 0; i < n; ++i)
         {
-          tmp = oyProfileList_Get( list,i );
-          p_list = oyProfileList_MoveIn( p_list, &tmp, i + p_list_n);
+          tmp = oyProfiles_Get( list,i );
+          p_list = oyProfiles_MoveIn( p_list, &tmp, i + p_list_n);
           error = !p_list;
         }
       }
@@ -9853,7 +10031,7 @@ oyProfileList_s * oyConcatenateImageProfiles_ (
       if(!error)
       {
         tmp = oyProfile_Copy(out->profile_, 0);
-        p_list = oyProfileList_MoveIn( p_list, &tmp, p_list_n);
+        p_list = oyProfiles_MoveIn( p_list, &tmp, p_list_n);
         error = !p_list;
       }
     }
@@ -9872,7 +10050,7 @@ oyProfileList_s * oyConcatenateImageProfiles_ (
 oyCMMptr_s *       oyColourConversion_CallCMM_ (
                                         const char      * cmm,
                                         oyColourConversion_s * s,
-                                        oyProfileList_s * list,
+                                        oyProfiles_s * list,
                                         oyOptions_s     * opts,
                                         oyImage_s       * in,
                                         oyImage_s       * out,
@@ -9898,7 +10076,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
 
   if(!error)
   {
-    oyProfileList_s * p_list = 0;
+    oyProfiles_s * p_list = 0;
     int i, n;
 
     if(obj)
@@ -9921,11 +10099,11 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
     if(!error)
     {
       int intent = oyGetBehaviour( oyBEHAVIOUR_RENDERING_INTENT );
-      oyCMMptr_s ** p = oyProfileList_GetCMMptrs_( p_list, cmm_used );
+      oyCMMptr_s ** p = oyProfiles_GetCMMptrs_( p_list, cmm_used );
       int layout_in = in->layout_[oyLAYOUT];
       int layout_out = out->layout_[oyLAYOUT];
 
-      n = oyProfileList_Count(p_list);
+      n = oyProfiles_Count(p_list);
       
       error = funcP( p, n, layout_in, layout_out, intent, 0,0, cmm_ptr );
 
@@ -9940,7 +10118,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
         *psid = oyProfileTag_Create( p_list->list_,
                      icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
 
-      oyProfileList_Release( &p_list );
+      oyProfiles_Release( &p_list );
     }
   }
 
@@ -9954,7 +10132,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
  */
 const oyChar *     oyColourConversion_GetID_ (
                                        oyColourConversion_s * s,
-                                       oyProfileList_s * list,
+                                       oyProfiles_s * list,
                                        oyOptions_s     * opts,
                                        oyImage_s       * in,
                                        oyImage_s       * out)
@@ -9970,25 +10148,19 @@ const oyChar *     oyColourConversion_GetID_ (
     int intent = oyGetBehaviour( oyBEHAVIOUR_RENDERING_INTENT );
 
     hashTextAdd_m( "oyCC\n" );
-    hashTextAdd_m( "profile in = \"" );
-    hashTextAdd_m( oyProfile_GetID( in->profile_ ) );
-
     hashTextAdd_m( "\"\nimage in = " );
     hashTextAdd_m( oyObject_GetName( in->oy_, oyNAME_NICK ) );
 
-    n = oyProfileList_Count( list );
+    n = oyProfiles_Count( list );
     for(i = 0; i < n; ++i)
     {
-      oyProfile_s * p = oyProfileList_Get( list, i );
+      oyProfile_s * p = oyProfiles_Get( list, i );
       if(i == 0)
         hashTextAdd_m( "  effect = \"" );
-      hashTextAdd_m( oyProfile_GetID( p ) );
+      hashTextAdd_m( oyProfile_GetText( p, oyNAME_NAME ) );
       oyProfile_Release( &p );
       hashTextAdd_m( "\"\n" );
     }
-
-    hashTextAdd_m( "profile out = \"" );
-    hashTextAdd_m( oyProfile_GetID( out->profile_ ) );
 
     hashTextAdd_m( "\"\nintent = " );
     oySprintf_( text, "%d\n", intent );
@@ -10023,7 +10195,7 @@ const oyChar *     oyColourConversion_GetID_ (
  *  @date  november 2007 (API 0.1.8)
  */
 oyColourConversion_s* oyColourConversion_Create_ (
-                                        oyProfileList_s * list,
+                                        oyProfiles_s * list,
                                         oyOptions_s     * opts,
                                         oyImage_s       * in,
                                         oyImage_s       * out,
@@ -10440,7 +10612,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
       /* icSigProfileSequenceIdentifierType */
       if(!psid)
       {
-        oyProfileList_s * p_list = 0;
+        oyProfiles_s * p_list = 0;
 
         p_list = oyConcatenateImageProfiles_( s->profiles_,
                             s->image_in_, s->image_out_, s->oy_ );
@@ -10448,7 +10620,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
         psid = oyProfileTag_Create( p_list->list_,
                      icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
 
-        oyProfileList_Release( &p_list );
+        oyProfiles_Release( &p_list );
 
         if(psid)
           error = oyProfile_AddTag ( prof, &psid, -1 );
@@ -10627,22 +10799,20 @@ oyPixelAccess_s *  oyPixelAccess_Create (
 
     if(type == oyPIXEL_ACCESS_POINT)
     {
-      s->array_xy = s->oy_->allocateFunc_(sizeof(int32_t*) * 1);
-      s->array_xy[0] = s->oy_->allocateFunc_(sizeof(int32_t) * 2);
-      s->array_xy[0][0] = s->array_xy[0][1] = 0;
+      s->array_xy = s->oy_->allocateFunc_(sizeof(int32_t) * 2);
+      s->array_xy[0] = s->array_xy[1] = 0;
       s->array_n = 1;
       s->array_cache_pixels = 1;
     } else
     if(type == oyPIXEL_ACCESS_LINE)
     {
-      s->array_xy = s->oy_->allocateFunc_(sizeof(int32_t*) * 2);// TODO
-      s->array_xy[0] = s->oy_->allocateFunc_(sizeof(int32_t) * 
+      s->array_xy = s->oy_->allocateFunc_(sizeof(int32_t) * 2 *
                                           filter->image_->width);
       /* set relative advancements from one pixel to the next in array_xy */
       for(i = 0; i < w; ++i)
       {
-        s->array_xy[i][0] = 1;
-        s->array_xy[i][1] = 0;
+        s->array_xy[i*2+0] = 1;
+        s->array_xy[i*2+1] = 0;
       }
       s->array_n = w;
       s->array_cache_pixels = w;
@@ -11027,6 +11197,40 @@ int          oyConversions_Release   ( oyConversions_s  ** obj )
   return 0;
 }
 
+/** @func    oyFilterNode_GetLastFromLinear_
+ *  @internal
+ *  @brief   get last node from a linear graph 
+ *
+ *  @param[in]     first               filter
+ *  @return                            last node
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/16 (Oyranos: 0.1.8)
+ *  @date    2008/07/16
+ */
+oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
+                                       oyFilterNode_s    * first )
+{
+  oyFilterNode_s * next = 0,
+                 * last = 0;
+
+      next = last = oyFilterNode_Copy( first, 0 );
+
+      while(next)
+      {
+        next = (oyFilterNode_s*) oyStructList_GetType_ (
+                   last->node->children, 0, oyOBJECT_TYPE_FILTER_NODE_S );
+      
+        if(next)
+        {
+          oyFilterNode_Release( &last );
+          last = next;
+        }
+      }
+
+  return last;
+}
+
 /** @func    oyConversions_FilterAdd
  *  @brief   add a filter to a oyConversions_s filter list
  *
@@ -11045,7 +11249,6 @@ int                oyConversions_FilterAdd (
   oyConversions_s * s = conversions;
   int error = !s;
   oyFilterNode_s * node = 0,
-                 * next = 0,
                  * last = 0;
 
   if(!error)
@@ -11073,34 +11276,22 @@ int                oyConversions_FilterAdd (
     {
       WARNc2_S( "%s: %s",
       _("attempt to add a incomplete filter"),
-                oyFilter_NameGet( filter, oyNAME_NAME) );
+                oyFilter_GetName( filter, oyNAME_NAME) );
       error = 1;
     }
     if(!error &&
-       (node->filter->api_->parents_max != 1 ||
-        node->filter->api_->children_max != 1))
+       (node->filter->api_->parents_max > 1 ||
+        node->filter->api_->children_max > 1))
     {
       WARNc2_S( "%s: %s",
       _("attempt to add a non linear filter to a linear graph"),
-                oyFilter_NameGet( node->filter, oyNAME_NAME) );
+                oyFilter_GetName( node->filter, oyNAME_NAME) );
       error = 1;
     }
 
     if(!error)
     {
-      next = last = oyFilterNode_Copy( s->input, 0 );
-
-      while(next)
-      {
-        next = (oyFilterNode_s*) oyStructList_GetType_ (
-                   s->input->node->children, 0, oyOBJECT_TYPE_FILTER_NODE_S );
-      
-        if(next)
-        {
-         oyFilterNode_Release( &last );
-         last = next;
-        }
-      }
+      last = oyFilterNode_GetLastFromLinear_( s->input );
 
       if(last)
         error = oyStructList_MoveIn( last->node->children,
@@ -11136,13 +11327,11 @@ int                oyConversions_OutputAdd (
   oyConversions_s * s = conversions;
   int error = !s;
   oyFilter_s * filter = 0;
-  oyFilterNode_s * node = 0;
+  oyFilterNode_s * last = 0;
 
   if(!error)
   {
-    if(node)
-      filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "...image.root",
-                                    0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "...image.root", 0,0, 0 );
 
     if(!error)
       error = oyFilter_ImageSet ( filter, output );
@@ -11150,11 +11339,12 @@ int                oyConversions_OutputAdd (
     if(!error)
       error = oyConversions_FilterAdd( conversions, filter );
 
+    last = oyFilterNode_GetLastFromLinear_( s->input );
     
 
     if(!error)
-      s->out_ = oyFilterNode_Copy( node, 0 );
-    oyFilterNode_Release( &node );
+      s->out_ = oyFilterNode_Copy( last, 0 );
+    oyFilterNode_Release( &last );
   }
 
   if(error)
