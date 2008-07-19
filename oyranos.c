@@ -37,7 +37,7 @@
 
 /* --- Helpers  --- */
 #if 1
-#define ERR if (rc<=0 && oy_debug) { oyMessageFunc_p(oyMSG_WARN,"%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
+#define ERR if (rc<=0 && oy_debug) { oyMessageFunc_p(oyMSG_WARN,0,"%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
 #else
 #define ERR
 #endif
@@ -72,14 +72,22 @@
  *  @date    2008/04/03
  *  @since   2008/04/03 (Oyranos: 0.1.8)
  */
-int oyMessageFunc_( int code, const char * format, ... )
+int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, ... )
 {
-  char* text = 0;
+  char * text = 0;
   va_list list;
   int i;
+  const char * type_name = "";
+  int id = -1;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
+
+  if(context && oyOBJECT_TYPE_NONE < context->type_) 
+  {
+    type_name = oyStruct_TypeToText( context );
+    id = oyObject_GetId( context->oy_ );
+  }
 
   oyAllocHelper_m_( text, char, 4096, oyAllocateFunc_, fprintf(stderr,"oyranos.c:80 oyMessageFunc_() Could not allocate 4096 byte of memory.\n"); return 1 );
 
@@ -104,6 +112,8 @@ int oyMessageFunc_( int code, const char * format, ... )
          fprintf( stderr, _("!!! ERROR"));fprintf( stderr, " %03f: ", DBG_UHR_);
          break;
   }
+
+  fprintf( stderr, "%s[%d] ", type_name, id );
 
   i = 0;
   while(text[i])

@@ -52,7 +52,6 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
                                        const double      * XYZmax,
                                        const double      * XYZwhite );
 
-typedef struct oyStruct_s oyStruct_s;
 typedef struct oyImage_s_ oyImage_s;
 
 
@@ -168,7 +167,7 @@ struct oyStruct_s {
 
 oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
                                        size_t              size );
-const char * oyStruct_TypeToText     ( oyStruct_s        * oy_struct );
+const char * oyStruct_TypeToText     ( const oyStruct_s  * oy_struct );
 
 typedef enum {
   oyNAME_NAME,                         /**< compatible to oyName_s/oyObject_s */
@@ -1130,6 +1129,9 @@ oyProfiles_s*oyFilter_ProfilesGet    ( oyFilter_s        * filter,
 int          oyFilter_ImageSet       ( oyFilter_s        * filter,
                                        oyImage_s         * image );
 oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter );
+oyPointer    oyFilter_TextToInfo     ( oyFilter_s        * filter,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
 
 
 /** @struct  oyFilters_s

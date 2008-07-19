@@ -121,6 +121,7 @@ main(int argc, char** argv)
   image = oyImage_Create( w, h, buf, oyTYPE_123_FLOAT, prof, 0 );
 
   conversions = oyConversions_CreateInput ( image, 0 );
+  filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..colour.cmm.icc", 0,0, 0 );
   oyConversions_FilterAdd( conversions, filter );
   oyConversions_OutputAdd( conversions, image );
   oyImage_Release( &image );

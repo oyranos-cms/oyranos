@@ -1314,7 +1314,7 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
  *  @date    2008/06/24
  *  @since   2008/06/24 (Oyranos: 0.1.8)
  */
-const char *     oyStruct_TypeToText ( oyStruct_s        * oy_struct )
+const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
 {
   const char * text = 0;
 
@@ -1574,7 +1574,7 @@ const char * oyName_get_             ( const oyName_s    * obj,
                                        oyNAME_e            type )
 {
   const char * text = 0;
-  oyName_s * name = obj;
+  const oyName_s * name = obj;
   if(!obj)
     return 0;
 
@@ -3244,6 +3244,8 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
 
         while(tmp)
         {
+          found = 0;
+
           if(oyCMMapi_Check_(tmp) == type)
           {
             if(type == oyOBJECT_TYPE_CMM_API4_S)
@@ -9526,6 +9528,105 @@ oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter )
     return 0;
 }
 
+/** Info profilbody */
+char info_profile_data[320] =
+  {
+/*0*/    0,0,1,64, 'o','y','r','a',
+    2,48,0,0, 'n','o','n','e',
+    'R','G','B',32, 'L','a','b',32,
+    0,0,0,0,0,0,0,0,
+/*32*/    0,0,0,0,97,99,115,112,
+    '*','n','i','x',0,0,0,0,
+    110,111,110,101,110,111,110,101,
+    -64,48,11,8,-40,-41,-1,-65,
+/*64*/    0,0,0,0,0,0,-10,-42,
+    0,1,0,0,0,0,-45,45,
+    'o','y','r','a',0,0,0,0,
+    0,0,0,0,0,0,0,0,
+/*96*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+/*128*/    0,0,0,3,'d','e','s','c',
+    0,0,0,-88,0,0,0,33,
+    'c','p','r','t',0,0,0,-52,
+    0,0,0,29,'I','n','f','o',
+/*160*/    0,0,0,-20,0,0,0,0,
+    't','e','x','t',0,0,0,0,
+    'F','i','l','t','e','r',' ','I',
+    'n','f','o',' ','X','M','L',0,
+/*192*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,'t','e','x','t',
+    0,0,0,0,110,111,116,32,
+    99,111,112,121,114,105,103,104,
+/*224*/    116,101,100,32,100,97,116,97,
+    0,0,0,0,'t','e','x','t',
+    0,0,0,0,'s','t','a','r',
+    't',0,0,0,0,0,0,0,
+/*256*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0
+  };
+
+/** @func    oyFilter_TextToInfo
+ *  @brief   serialise filter
+ *
+ *  Serialise into a Oyranos specific ICC profile containers "Info" text tag.
+ *  Not useable for binary contexts.
+ *
+ *  @param[in,out] filter              filter object
+ *  @param[out]    size                output size
+ *  @param[in]     oy                  oyranos stored filter blob
+ *  @param[in]     allocateFunc        memory allocator
+ *  @return                            the profile container
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/17 (Oyranos: 0.1.8)
+ *  @date    2008/07/18
+ */
+oyPointer    oyFilter_TextToInfo     ( oyFilter_s        * filter,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyPointer ptr = 0;
+  icHeader * header = 0;
+  size_t len = 244, text_len = 0;
+  char * text = 0;
+  const char * temp = 0;
+  uint32_t * mem = 0;
+  
+  if(!filter)
+    return 0;
+  
+  temp = oyFilter_GetText( filter, oyNAME_NAME );
+  text_len = strlen(temp);
+  len += text_len + 1;
+  len = len > 320 ? len : 320;
+  ptr = allocateFunc(len);
+  header = ptr;
+  
+  if(ptr)
+  { 
+    *size = len;
+    memset(ptr,0,len);
+    memcpy(ptr, info_profile_data, 320);
+
+    text = ((char*)ptr)+244;
+    sprintf(text, "%s", temp);
+    header->size = oyValueUInt32( len );
+    mem = ptr;
+    mem[41] = oyValueUInt32( text_len + 8 );
+  }
+
+  return ptr;
+}
+
+
 
 /** @func    oyFilters_New
  *  @brief   allocate a new Filters list
@@ -11043,12 +11144,12 @@ oyConversions_s  * oyConversions_CreateBasic (
   if(!error)
   {
     s->input = oyFilterNode_New( s->oy_ );
-    s->input->filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "...image.root",
+    s->input->filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root",
                                      0,0, 0 );
 
     error = oyFilter_ImageSet ( s->input->filter, input );
 
-    filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..cmm",
+    filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..colour",
                            oyModuleGetActual(0), options, 0 );
     /* TODO implement */
   }
@@ -11076,10 +11177,15 @@ oyConversions_s  * oyConversions_CreateInput (
   if(!error)
   {
     s->input = oyFilterNode_New( s->oy_ );
-    s->input->filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "...image.root",
+    s->input->filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root",
                                      0,0, 0 );
 
     error = oyFilter_ImageSet ( s->input->filter, input );
+
+    /* supposedly the node will work itself */
+    if(!error)
+      s->input->merged_to = oyFilterNode_Copy( s->input, 0 );
+
   }
 
   if(error)
@@ -11291,6 +11397,10 @@ int                oyConversions_FilterAdd (
 
     if(!error)
     {
+      /* supposedly the node will work itself */
+      if(!error)
+        node->merged_to = oyFilterNode_Copy( node, 0 );
+
       last = oyFilterNode_GetLastFromLinear_( s->input );
 
       if(last)
@@ -11298,6 +11408,9 @@ int                oyConversions_FilterAdd (
                                                       (oyStruct_s**) &node, 0 );
       else
         WARNc2_S( "%s: %d", _("?? Nothing to add ??"), oyObject_GetId(s->oy_));
+
+      if(!error)
+        error = !last;
     }
 
 
@@ -11331,7 +11444,7 @@ int                oyConversions_OutputAdd (
 
   if(!error)
   {
-    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "...image.root", 0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root", 0,0, 0 );
 
     if(!error)
       error = oyFilter_ImageSet ( filter, output );
@@ -11341,9 +11454,9 @@ int                oyConversions_OutputAdd (
 
     last = oyFilterNode_GetLastFromLinear_( s->input );
     
-
     if(!error)
       s->out_ = oyFilterNode_Copy( last, 0 );
+
     oyFilterNode_Release( &last );
   }
 
@@ -11369,11 +11482,10 @@ oyPointer        * oyConversions_GetNextPixel (
                                        oyPixelAccess_s   * pixel_access,
                                        int32_t           * feedback )
 {
-  oyFilterNode_s * worker = conversions->out_;
+  oyFilterNode_s * worker = 0;
   oyPointer pixel = 0;
 
-  if(conversions->out_->merged_to)
-    worker = conversions->out_->merged_to;
+  worker = conversions->out_->merged_to;
 
   pixel = worker->filter->api_->oyCMMFilter_GetNext( worker, pixel_access,
                                                      feedback);

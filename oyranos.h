@@ -34,6 +34,7 @@ namespace oyranos
 
 typedef char oyChar;
 typedef void* oyPointer;
+typedef struct oyStruct_s oyStruct_s;
 
 /**
  * @param[in] size the size to allocate
@@ -62,7 +63,10 @@ typedef enum {
   oyMSG_WARN,
   oyMSG_DBG
 } oyMSG_e;
-typedef int  (*oyMessage_f)( int/*oyMSG_e*/ code, const char* format, ... );
+typedef int  (*oyMessage_f)          ( int/*oyMSG_e*/      code, 
+                                       const oyStruct_s  * context,
+                                       const char        * format,
+                                       ... );
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
 extern         oyMessage_f             oyMessageFunc_p;
 

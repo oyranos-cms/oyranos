@@ -35,7 +35,7 @@
 
 #define CMM_NICK "oyra"
 
-int oyraCMMWarnFunc( int code, const char * format, ... );
+int oyraCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = oyraCMMWarnFunc;
 
 
@@ -130,10 +130,18 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
  *  @date    2008/01/02
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  */
-int oyraCMMWarnFunc( int code, const char * format, ... )
+int oyraCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... )
 {
   char* text = (char*)calloc(sizeof(char), 4096);
   va_list list;
+  const char * type_name = "";
+  int id = -1;
+
+  if(context && oyOBJECT_TYPE_NONE < context->type_)
+  {
+    type_name = oyStruct_TypeToText( context );
+    id = oyObject_GetId( context->oy_ );
+  }
 
   va_start( list, format);
   vsprintf( text, format, list);
@@ -148,6 +156,9 @@ int oyraCMMWarnFunc( int code, const char * format, ... )
          fprintf( stderr, "!!! ERROR"); fprintf( stderr, ": " );
          break;
   }
+
+  fprintf( stderr, "%s[%d] ", type_name, id );
+
   fprintf( stderr, text ); fprintf( stderr, "\n" );
   free( text );
 
@@ -1704,7 +1715,11 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
       data_type = oyToDataType_m( filter->image_->layout_[0] );
       if(!(data_type == oyUINT8 ||
            data_type == oyUINT16 ||
-           data_type == oyDOUBLE))
+           data_type == oyUINT32 ||
+           data_type == oyHALF ||
+           data_type == oyFLOAT ||
+           data_type == oyDOUBLE
+                                   ))
         error = 1;
     }
 
@@ -1718,57 +1733,17 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
                                        oyStruct_s        * event )
 {return 0;}
 
-/** ncl2 profilbody */
-char profile_data[320] =
-  {
-/*0*/    0,0,1,64, 'o','y','r','a',
-    2,48,0,0, 'n','o','n','e',
-    'R','G','B',32, 'L','a','b',32,
-    0,0,0,0,0,0,0,0,
-/*32*/    0,0,0,0,97,99,115,112,
-    '*','n','i','x',0,0,0,0,
-    110,111,110,101,110,111,110,101,
-    -64,48,11,8,-40,-41,-1,-65,  
-/*64*/    0,0,0,0,0,0,-10,-42,
-    0,1,0,0,0,0,-45,45,
-    'o','y','r','a',0,0,0,0,
-    0,0,0,0,0,0,0,0,
-/*96*/    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-/*128*/    0,0,0,3,'d','e','s','c',
-    0,0,0,-88,0,0,0,33,
-    'c','p','r','t',0,0,0,-52,
-    0,0,0,29,'I','n','f','o',
-/*160*/    0,0,0,-20,0,0,0,0,
-    't','e','x','t',0,0,0,0,
-    'I','m','a','g','e',' ','r','o',
-    'o','t',' ','p','l','u','g','i',
-/*192*/    'n',0,0,0,0,0,0,0,
-    0,0,0,0,'t','e','x','t',
-    0,0,0,0,110,111,116,32,
-    99,111,112,121,114,105,103,104,
-/*224*/    116,101,100,32,100,97,116,97,
-    0,0,0,0,'t','e','x','t',
-    0,0,0,0,'s','t','a','r',
-    't',0,0,0,0,0,0,0,
-/*256*/    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0
-  };
 
 /** @func    oyraFilter_ImageRootContextToMem
  *  @brief   implement oyCMMFilter_ContextToMem_f()
  *
+ *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
+ *  We do not have any binary context to include.
+ *  Thus oyFilter_TextToInfo() is fine.
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/17 (Oyranos: 0.1.8)
- *  @date    2008/07/17
+ *  @date    2008/07/18
  */
 oyPointer  oyraFilter_ImageRootContextToMem (
                                        oyFilter_s        * filter,
@@ -1776,36 +1751,7 @@ oyPointer  oyraFilter_ImageRootContextToMem (
                                        oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc )
 {
-  oyPointer ptr = 0;
-  icHeader * header = 0;
-  size_t len = 244, text_len = 0;
-  char * text = 0;
-  const char * temp = 0;
-  uint32_t * mem = 0;
-
-  if(!filter)
-    return 0;
-
-  temp = oyFilter_GetText( filter, oyNAME_NAME );
-  text_len = strlen(temp);
-  len += text_len + 1;
-  len = len > 320 ? len : 320;
-  ptr = allocateFunc(len);
-  header = ptr;
-
-  if(ptr)
-  {
-    *size = len;
-    memset(ptr,0,len);
-    memcpy(ptr, profile_data, 320);
-    text = ((char*)ptr)+244;
-    sprintf(text, "%s", oyFilter_GetText( filter, oyNAME_NAME ));
-    header->size = oyValueUInt32( len );
-    mem = ptr;
-    mem[41] = oyValueUInt32( text_len + 8 );
-  }
-
-  return ptr;
+  return oyFilter_TextToInfo( filter, size, allocateFunc );
 }
 
 /** @func    oyraFilter_ImageRootGetNext

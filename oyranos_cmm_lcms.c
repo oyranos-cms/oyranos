@@ -35,7 +35,7 @@
 #define lcmsPROFILE "lcPR"
 #define lcmsTRANSFORM "lcCC"
 
-int lcmsCMMWarnFunc( int code, const char * format, ... );
+int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = lcmsCMMWarnFunc;
 
 int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText);
@@ -445,7 +445,8 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
-    message(oyMSG_WARN,"%s: %d can not handle more than %d channels; found: %d",
+    message(oyMSG_WARN,0,
+                "%s: %d can not handle more than %d channels; found: %d",
                 __FILE__,__LINE__,CMMMaxChannels_M, chan_n);
 
   cmm_pixel = COLORSPACE_SH(PT_ANY);
@@ -780,6 +781,116 @@ int              lcmsCMMColourConversion_Run (
 }
 
 
+oyOptions_s* lcmsFilter_CmmIccValidateOptions
+                                     ( oyFilter_s        * filter,
+                                       oyOptions_s       * validate,
+                                       int                 statical,
+                                       uint32_t          * result )
+{
+  uint32_t error = !filter;
+
+  if(!error)
+    error = filter->filter_type_ != oyFILTER_TYPE_COLOUR;
+
+  *result = error;
+
+  return 0;
+}
+
+oyWIDGET_EVENT_e   lcmsWidgetEvent   ( oyOptions_s       * options,
+                                       oyWIDGET_EVENT_e    type,
+                                       oyStruct_s        * event )
+{return 0;}
+
+/** @func    lcmsFilter_CmmIccGetNext
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/18 (Oyranos: 0.1.8)
+ *  @date    2008/07/18
+ */
+oyPointer lcmsFilter_CmmIccGetNext   ( oyFilterNode_s    * filter_node,
+                                       oyPixelAccess_s   * pixel_access,
+                                       int32_t           * feedback )
+{
+  oyPointer * ptr = 0;
+  int x = pixel_access->start_xy[0], sx = x;
+  int y = pixel_access->start_xy[1], sy = y;
+  int remainder = 0, max = 0, i, n;
+
+  oyFilterNode_s * node = 0;
+
+  node = oyFilterNode_Copy( filter_node->merged_to, 0 );
+  node = (oyFilterNode_s*) filter_node->merged_to->node->parents->ptr_[0];
+
+  ptr = node->filter->api_->oyCMMFilter_GetNext( node, pixel_access,feedback);
+  return ptr;
+
+  /* calculate the pixel position we want */
+  if(pixel_access->array_xy)
+  {
+    /* we have a iteration description - use it */
+    n = pixel_access->array_cache_pixels;
+    if(pixel_access->array_n < pixel_access->array_cache_pixels)
+      n = pixel_access->array_n;
+
+    for( i = 0; i < n; ++i )
+    {
+      max += pixel_access->array_xy[i*2+0];
+      if(i == pixel_access->array_cache_pixels % pixel_access->array_n)
+        remainder = max;
+    }
+
+    sx += max * pixel_access->array_cache_pixels / pixel_access->array_n +
+          remainder;
+
+    max = 0;
+    for( i = 0; i < n; ++i )
+    {
+      max += pixel_access->array_xy[i*2+1];
+      if(i == pixel_access->array_cache_pixels % pixel_access->array_n)
+        remainder = max;
+    }
+
+    sy += max * pixel_access->array_cache_pixels / pixel_access->array_n +
+          remainder;
+    pixel_access->start_xy[0] = sx;
+    pixel_access->start_xy[1] = sy;
+  } else
+  {
+    /* fall back to a one by one pixel access */
+    x = pixel_access->start_xy[0];
+    y = pixel_access->start_xy[1];
+
+    if(pixel_access->start_xy[0] >= filter_node->filter->image_->width)
+    {
+      x = 0; pixel_access->start_xy[0] = 1;
+      y = ++pixel_access->start_xy[1];
+    } else
+      ++pixel_access->start_xy[0];
+
+    if(pixel_access->start_xy[1] >= filter_node->filter->image_->height && feedback)
+    {
+      *feedback = -1;
+      return 0;
+    }
+  }
+
+  if(x < filter_node->filter->image_->width &&
+     y < filter_node->filter->image_->height)
+    ptr = filter_node->filter->image_->getPoint( filter_node->filter->image_,
+                                                 x, y, 0 );
+  else
+    ptr = 0;
+
+  if(!ptr && feedback)
+    *feedback = 1;
+
+  return ptr;
+}
+
+
+
 
 /*
 oyPointer          oyCMMallocateFunc   ( size_t            size )
@@ -803,10 +914,18 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
  *  @date    2007/11/00
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
-int lcmsCMMWarnFunc( int code, const char * format, ... )
+int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... )
 {
   char* text = (char*)calloc(sizeof(char), 4096);
   va_list list;
+  const char * type_name = "";
+  int id = -1;
+
+  if(context && oyOBJECT_TYPE_NONE < context->type_)
+  {
+    type_name = oyStruct_TypeToText( context );
+    id = oyObject_GetId( context->oy_ );
+  }
 
   va_start( list, format);
   vsprintf( text, format, list);
@@ -821,6 +940,9 @@ int lcmsCMMWarnFunc( int code, const char * format, ... )
          fprintf( stderr, "!!! ERROR"); fprintf( stderr, ": " );
          break;
   }
+
+  fprintf( stderr, "%s[%d] ", type_name, id );
+
   fprintf( stderr, text ); fprintf( stderr, "\n" );
   free( text );
 
@@ -843,7 +965,7 @@ int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText)
   case LCMS_ERRC_ABORTED: code = oyMSG_ERROR; break;
   default: code = ErrorCode;
   }
-  message( code, ErrorText, 0 );
+  message( code, 0, ErrorText, 0 );
   return 0;
 }
 
@@ -862,6 +984,48 @@ int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func )
 
 
 
+/** @instance lcms_api4
+ *  @brief    littleCMS oyCMMapi4_s implementation
+ *
+ *  a filter providing CMM API's
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/18 (Oyranos: 0.1.8)
+ *  @date    2008/07/18
+ */
+oyCMMapi4_s   lcms_api4_cmm = {
+
+  oyOBJECT_TYPE_CMM_API4_S,
+  0,0,0,
+  0,
+
+  lcmsCMMInit,
+  lcmsCMMMessageFuncSet,
+  lcmsCMMCanHandle,
+
+  "org.oyranos.colour.cmm.icc.lcms",
+
+  {0,0,1},
+
+  lcmsFilter_CmmIccValidateOptions,
+  lcmsWidgetEvent,
+
+  0,
+  0,
+  /*lcmsFilter_CmmIccContextToMem*/0,
+  0,
+  lcmsFilter_CmmIccGetNext,
+
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
+  "Colour/CMM/littleCMS", /* category */
+  0,   /* options */
+  0,   /* opts_ui_ */
+  1,   /* parents_max */
+  1    /* children_max */
+};
+
+
+
 /** @instance lcms_api1
  *  @brief    lcms oyCMMapi1_s implementations
  *
@@ -873,7 +1037,7 @@ oyCMMapi1_s  lcms_api1 = {
 
   oyOBJECT_TYPE_CMM_API1_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & lcms_api4_cmm,
   
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,

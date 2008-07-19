@@ -43,15 +43,15 @@ extern int level_PROG;
 #define DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
 
 #if DEBUG == 1
-#define DBG oyMessageFunc_p(oyMSG_DBG,"%s:%d",__FILE__,__LINE__);
-#define DBG_S(txt) oyMessageFunc_p(oyMSG_DBG,"%s:%d %s",__FILE__,__LINE__,txt);
-#define DBG1_S(format,arg) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg);
-#define DBG2_S(format,arg,arg2) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2);
-#define DBG3_S(format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3);
-#define DBG4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4);
-#define DBG5_S(format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4,arg5);
-#define DBG6_S(format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4,arg5,arg6);
-#define DBG_V(var) oyMessageFunc_p(oyMSG_DBG,"%s:%d " #var ": %d",__FILE__,__LINE__,(int)var);
+#define DBG oyMessageFunc_p(oyMSG_DBG,0,"%s:%d",__FILE__,__LINE__);
+#define DBG_S(txt) oyMessageFunc_p(oyMSG_DBG,0,"%s:%d %s",__FILE__,__LINE__,txt);
+#define DBG1_S(format,arg) oyMessageFunc_p( oyMSG_DBG,0,"%s:%d " format,__FILE__,__LINE__,arg);
+#define DBG2_S(format,arg,arg2) oyMessageFunc_p( oyMSG_DBG,0,"%s:%d " format,__FILE__,__LINE__,arg,arg2);
+#define DBG3_S(format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_DBG,0,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3);
+#define DBG4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_DBG,0,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4);
+#define DBG5_S(format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_DBG,0,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4,arg5);
+#define DBG6_S(format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,0,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4,arg5,arg6);
+#define DBG_V(var) oyMessageFunc_p(oyMSG_DBG,0,"%s:%d " #var ": %d",__FILE__,__LINE__,(int)var);
 #define DBG_MEM DBG
 #else
 #define DBG
@@ -86,8 +86,8 @@ extern int level_PROG;
 #define DBG_PROG5_S DBG5_S
 #define DBG_PROG6_S DBG6_S
 #define DBG_PROG_V DBG_V
-#define DBG_PROG_START oyMessageFunc_p( oyMSG_DBG,"Start: %s:%d",__FILE__,__LINE__ );
-#define DBG_PROG_ENDE  oyMessageFunc_p( oyMSG_DBG," Ende: %s:%d",__FILE__,__LINE__ );
+#define DBG_PROG_START oyMessageFunc_p( oyMSG_DBG,0,"Start: %s:%d",__FILE__,__LINE__ );
+#define DBG_PROG_ENDE  oyMessageFunc_p( oyMSG_DBG,0,"  End: %s:%d",__FILE__,__LINE__ );
 #else
 #define DBG_PROG
 #define DBG_PROG_S
@@ -104,12 +104,19 @@ extern int level_PROG;
 
 #endif /* defined OY_CONFIG_H */
 
-#define WARNc          oyMessageFunc_p( oyMSG_WARN,"%s:%d",__FILE__,__LINE__ ); 
-#define WARNc_S(txt)   oyMessageFunc_p( oyMSG_WARN,"%s:%d %s",__FILE__,__LINE__,txt);
-#define WARNc1_S(format,arg) oyMessageFunc_p( oyMSG_WARN,"%s:%d " format,__FILE__,__LINE__,arg);
-#define WARNc2_S(format,arg,arg2) oyMessageFunc_p( oyMSG_WARN,"%s:%d " format,__FILE__,__LINE__,arg,arg2);
-#define WARNc3_S(format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_WARN,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3);
-#define WARNc4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_WARN,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4);
+#define WARNcc(ptr)    oyMessageFunc_p( oyMSG_WARN,ptr,"%s:%d",__FILE__,__LINE__ ); 
+#define WARNcc_S(ptr,txt)   oyMessageFunc_p( oyMSG_WARN,ptr,"%s:%d %s",__FILE__,__LINE__,txt);
+#define WARNcc1_S(ptr,format,arg) oyMessageFunc_p( oyMSG_WARN,ptr,"%s:%d " format,__FILE__,__LINE__,arg);
+#define WARNcc2_S(ptr,format,arg,arg2) oyMessageFunc_p( oyMSG_WARN,ptr,"%s:%d " format,__FILE__,__LINE__,arg,arg2);
+#define WARNcc3_S(ptr,format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_WARN,ptr,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3);
+#define WARNcc4_S(ptr,format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_WARN,ptr,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4);
+
+#define WARNc          oyMessageFunc_p( oyMSG_WARN,0,"%s:%d",__FILE__,__LINE__ ); 
+#define WARNc_S(txt)   oyMessageFunc_p( oyMSG_WARN,0,"%s:%d %s",__FILE__,__LINE__,txt);
+#define WARNc1_S(format,arg) oyMessageFunc_p( oyMSG_WARN,0,"%s:%d " format,__FILE__,__LINE__,arg);
+#define WARNc2_S(format,arg,arg2) oyMessageFunc_p( oyMSG_WARN,0,"%s:%d " format,__FILE__,__LINE__,arg,arg2);
+#define WARNc3_S(format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_WARN,0,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3);
+#define WARNc4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_WARN,0,"%s:%d " format,__FILE__,__LINE__,arg,arg2,arg3,arg4);
 
 #ifdef __cplusplus
 }

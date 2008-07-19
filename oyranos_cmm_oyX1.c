@@ -26,7 +26,7 @@
 
 #define CMM_NICK "oyX1"
 
-int oyX1CMMWarnFunc( int code, const char * format, ... );
+int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = oyX1CMMWarnFunc;
 
 int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
@@ -63,10 +63,18 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
  *  @date    2007/12/12
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  */
-int oyX1CMMWarnFunc( int code, const char * format, ... )
+int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... )
 {
   char* text = (char*)calloc(sizeof(char), 4096);
   va_list list;
+  const char * type_name = "";
+  int id = -1;
+
+  if(context && oyOBJECT_TYPE_NONE < context->type_)
+  {
+    type_name = oyStruct_TypeToText( context );
+    id = oyObject_GetId( context->oy_ );
+  }
 
   va_start( list, format);
   vsprintf( text, format, list);
@@ -81,6 +89,9 @@ int oyX1CMMWarnFunc( int code, const char * format, ... )
          fprintf( stderr, "!!! ERROR"); fprintf( stderr, ": " );
          break;
   }
+
+  fprintf( stderr, "%s[%d] ", type_name, id );
+
   fprintf( stderr, text ); fprintf( stderr, "\n" );
   free( text );
 
