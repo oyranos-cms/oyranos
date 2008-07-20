@@ -56,7 +56,7 @@ int main( int argc , char** argv )
   {
     int pos = 1;
     char *wrong_arg = 0;
-    printf("argc: %d\n", argc);
+    DBG_PROG1_S("argc: %d\n", argc);
     while(pos < argc)
     {
       switch(argv[pos][0])
@@ -66,16 +66,16 @@ int main( int argc , char** argv )
             {
               case 'h':
               default:
-                        printf("\n");
-                        printf("oyranos-policy v%d.%d.%d %s\n",
+                        fprintf( stderr, "\n");
+                        fprintf( stderr, "oyranos-policy v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a policy administration tool"));
-                        printf("%s\n",                 _("Usage"));
-                        printf("  %s\n",               _("Set new policy:"));
-                        printf("      %s\n",           argv[0]);
-                        printf("            %s\n",     _("policy filename"));
-                        printf("\n");
-                        printf("\n");
+                        fprintf( stderr, "%s\n",                 _("Usage"));
+                        fprintf( stderr, "  %s\n",               _("Set new policy:"));
+                        fprintf( stderr, "      %s\n",           argv[0]);
+                        fprintf( stderr, "            %s\n",     _("policy filename"));
+                        fprintf( stderr, "\n");
+                        fprintf( stderr, "\n");
                         exit (0);
                         break;
             }
@@ -85,7 +85,7 @@ int main( int argc , char** argv )
       }
       if( wrong_arg )
       {
-        printf("%s %s\n", _("wrong argument to option:"), wrong_arg);
+        fprintf(stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
         exit(1);
       }
       ++pos;
@@ -107,7 +107,7 @@ int main( int argc , char** argv )
   }
   else if ( fileName )
   {
-    printf("%s:%d could not read file: %s\n",__FILE__,__LINE__, fileName);
+    fprintf( stderr, "%s:%d could not read file: %s\n",__FILE__,__LINE__, fileName);
     return 1;
   }
 
@@ -115,7 +115,8 @@ int main( int argc , char** argv )
   {
     size = 0;
     xml = oyPolicyToXML( oyGROUP_ALL, 1, oyAllocateFunc_ );
-    printf("%s:%d new policy:\n%s\n",__FILE__,__LINE__,xml);
+    DBG_PROG2_S("%s:%d new policy:\n\n",__FILE__,__LINE__);
+    fprintf(stdout, "%s\n", xml);
 
     if(xml) oyDeAllocateFunc_( xml );
   }
