@@ -1206,6 +1206,8 @@ OYAPI int  OYEXPORT
  *  So it will be possible to implement options changing, which can affect
  *  the same filter instance in different graphs.
  *
+ *  This struct adheres additionally to the oyStruct_s to the oyNode_s layout.
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/08 (Oyranos: 0.1.8)
  *  @date    2008/07/10
@@ -1216,7 +1218,8 @@ struct oyFilterNode_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyNode_s           * node;           /**< the node information */
+  oyStructList_s     * parents;        /**< parent nodes */
+  oyStructList_s     * children;       /**< child nodes */
 
   oyFilter_s         * filter;         /**< the filter */
 
@@ -1390,6 +1393,7 @@ int                oyConversions_FilterAdd (
 int                oyConversions_OutputAdd (
                                        oyConversions_s   * conversions,
                                        oyImage_s         * input );
+int                oyConversions_Init( oyConversions_s   * conversions );
 oyPointer        * oyConversions_GetNextPixel (
                                        oyConversions_s   * conversions,
                                        oyPixelAccess_s   * pixel_access,

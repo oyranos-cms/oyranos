@@ -9923,8 +9923,9 @@ oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object )
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->node = oyNode_New( s->oy_ );
-  error = !s->node;
+  s->parents = oyStructList_New( s->oy_ );
+  s->children = oyStructList_New( s->oy_ );
+  error = !s->parents || !s->children;
   if(!error)
   {
   }
@@ -10027,7 +10028,8 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  oyNode_Release( &s->node );
+  oyStructList_Release( &s->parents );
+  oyStructList_Release( &s->children );
   oyFilterNode_Release( &s->merged_to );
   if( s->data && s->data->release )
     s->data->release( &s->data );
@@ -11325,7 +11327,7 @@ oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
       while(next)
       {
         next = (oyFilterNode_s*) oyStructList_GetType_ (
-                   last->node->children, 0, oyOBJECT_TYPE_FILTER_NODE_S );
+                   last->children, 0, oyOBJECT_TYPE_FILTER_NODE_S );
       
         if(next)
         {
@@ -11404,8 +11406,7 @@ int                oyConversions_FilterAdd (
       last = oyFilterNode_GetLastFromLinear_( s->input );
 
       if(last)
-        error = oyStructList_MoveIn( last->node->children,
-                                                      (oyStruct_s**) &node, 0 );
+        error = oyStructList_MoveIn( last->children, (oyStruct_s**) &node, 0 );
       else
         WARNc2_S( "%s: %d", _("?? Nothing to add ??"), oyObject_GetId(s->oy_));
 
@@ -11465,6 +11466,7 @@ int                oyConversions_OutputAdd (
 
   return error;
 }
+int                oyConversions_Init( oyConversions_s   * conversions );
 /** @func    oyConversions_GetNextPixel
  *  @brief   iterate over a conversions graph
  *

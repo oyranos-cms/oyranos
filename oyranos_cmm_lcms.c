@@ -821,9 +821,15 @@ oyPointer lcmsFilter_CmmIccGetNext   ( oyFilterNode_s    * filter_node,
   oyFilterNode_s * node = 0;
 
   node = oyFilterNode_Copy( filter_node->merged_to, 0 );
-  node = (oyFilterNode_s*) filter_node->merged_to->node->parents->ptr_[0];
+  node = (oyFilterNode_s*) filter_node->merged_to->parents->ptr_[0];
 
   ptr = node->filter->api_->oyCMMFilter_GetNext( node, pixel_access,feedback);
+
+  /* now do position blind manipulations */
+  for(i = 0; i < pixel_access->array_cache_pixels; ++i)
+    if(filter_node->filter->image_ == oyFLOAT)
+      ;
+
   return ptr;
 
   /* calculate the pixel position we want */
