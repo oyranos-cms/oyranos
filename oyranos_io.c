@@ -422,7 +422,7 @@ oyExtractPathFromFileName_ (const char* file_name)
 char*
 oyMakeFullFileDirName_ (const char* name)
 {
-  char *newName;
+  char *newName = 0;
   char *dirName = 0;
 
   DBG_PROG_START
