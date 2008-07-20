@@ -1833,7 +1833,69 @@ oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
   return ptr;
 }
 
+/** @func    oyraFilter_ImageOutputGetNext
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/19 (Oyranos: 0.1.8)
+ *  @date    2008/07/19
+ */
+oyPointer oyraFilter_ImageOutputGetNext( oyFilterNode_s    * filter_node,
+                                       oyPixelAccess_s   * pixel_access,
+                                       int32_t           * feedback )
+{
+  oyPointer * ptr = 0;
 
+  oyFilterNode_s * parent = 0;
+
+  parent = (oyFilterNode_s*) filter_node->merged_to->parents->ptr_[0];
+
+  ptr = parent->filter->api_->oyCMMFilter_GetNext( parent, pixel_access,feedback);
+
+  return ptr;
+}
+
+
+
+/** @instance oyra_api4
+ *  @brief    oyra oyCMMapi4_s implementation
+ *
+ *  a filter providing a target image
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/19 (Oyranos: 0.1.8)
+ *  @date    2008/07/19
+ */
+oyCMMapi4_s   oyra_api4_image_output = {
+
+  oyOBJECT_TYPE_CMM_API4_S,
+  0,0,0,
+  0,
+  
+  oyraCMMInit,
+  oyraCMMMessageFuncSet,
+  oyraFilter_ImageRootCanHandle,
+
+  "org.oyranos.image.image.output",
+
+  {0,0,1},
+
+  oyraFilter_ImageRootValidateOptions,
+  oyraWidgetEvent,
+
+  0,
+  0,
+  oyraFilter_ImageRootContextToMem,
+  0,
+  oyraFilter_ImageOutputGetNext,
+
+  {oyOBJECT_TYPE_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"},
+  "Image/Simple Image[out]", /* category */
+  0,   /* options */
+  0,   /* opts_ui_ */
+  1,   /* parents_max */
+  0    /* children_max */
+};
 
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
@@ -1848,7 +1910,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
 
   oyOBJECT_TYPE_CMM_API4_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & oyra_api4_image_output,
   
   oyraCMMInit,
   oyraCMMMessageFuncSet,
