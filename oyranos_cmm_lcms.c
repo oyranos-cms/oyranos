@@ -816,19 +816,31 @@ oyPointer lcmsFilter_CmmIccGetNext   ( oyFilterNode_s    * filter_node,
   oyPointer * ptr = 0;
   int x = pixel_access->start_xy[0], sx = x;
   int y = pixel_access->start_xy[1], sy = y;
-  int remainder = 0, max = 0, i, n;
+  int remainder = 0, max = 0, i,j, n;
+  float * values = 0;
+  int channels = 0;
 
-  oyFilterNode_s * node = 0;
+  oyFilterNode_s * parent = 0;
 
-  node = oyFilterNode_Copy( filter_node->merged_to, 0 );
-  node = (oyFilterNode_s*) filter_node->merged_to->parents->ptr_[0];
+  parent = (oyFilterNode_s *) oyStructList_GetRefType( filter_node->merged_to->parents, 0, oyOBJECT_TYPE_FILTER_NODE_S );
 
-  ptr = node->filter->api_->oyCMMFilter_GetNext( node, pixel_access,feedback);
+  ptr = parent->filter->api_->oyCMMFilter_GetNext( parent, pixel_access,feedback);
+
+  oyFilterNode_Release( &parent );
+
+  if(oyToDataType_m(filter_node->filter->image_->layout_[0]) == oyFLOAT)
+    message(oyMSG_WARN,0, "%s: %d can not handle oyFLOAT", __FILE__,__LINE__);
+
+  channels = oyToChannels_m(filter_node->filter->image_->layout_[0]);
 
   /* now do position blind manipulations */
-  for(i = 0; i < pixel_access->array_cache_pixels; ++i)
-    if(filter_node->filter->image_ == oyFLOAT)
-      ;
+  if(oyToDataType_m(filter_node->filter->image_->layout_[0]) == oyFLOAT);
+  {
+    values = (float*) ptr;
+    for(i = 0; i < pixel_access->array_cache_pixels; ++i)
+      for(j = 0; j < channels; ++j)
+        values[i*channels + j] -= 0.5;
+  }
 
   return ptr;
 
