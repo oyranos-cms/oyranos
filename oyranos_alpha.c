@@ -11357,6 +11357,7 @@ int                oyConversions_FilterAdd (
   oyConversions_s * s = conversions;
   int error = !s;
   oyFilterNode_s * node = 0,
+                 * temp = 0,
                  * last = 0;
 
   if(!error)
@@ -11405,13 +11406,22 @@ int                oyConversions_FilterAdd (
 
       last = oyFilterNode_GetLastFromLinear_( s->input );
 
-      if(last)
-        error = oyStructList_MoveIn( last->children, (oyStruct_s**) &node, 0 );
-      else
-        WARNc2_S( "%s: %d", _("?? Nothing to add ??"), oyObject_GetId(s->oy_));
-
       if(!error)
         error = !last;
+
+      if(!error)
+        error = oyFilter_ImageSet ( node->filter, last->filter->image_ );
+
+      if(last)
+      {
+        temp = node;
+        error = oyStructList_MoveIn( last->children, (oyStruct_s**) &node, 0 );
+        if(!error)
+          error = oyStructList_MoveIn( temp->parents, (oyStruct_s**) &last, 0 );
+        temp = 0;
+      }
+      else
+        WARNc2_S( "%s: %d", _("?? Nothing to add ??"), oyObject_GetId(s->oy_));
     }
 
 
@@ -11445,7 +11455,7 @@ int                oyConversions_OutputAdd (
 
   if(!error)
   {
-    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root", 0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.output", 0,0, 0 );
 
     if(!error)
       error = oyFilter_ImageSet ( filter, output );
@@ -11467,6 +11477,7 @@ int                oyConversions_OutputAdd (
   return error;
 }
 int                oyConversions_Init( oyConversions_s   * conversions );
+
 /** @func    oyConversions_GetNextPixel
  *  @brief   iterate over a conversions graph
  *
