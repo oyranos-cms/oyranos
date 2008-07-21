@@ -36,11 +36,6 @@ int         oySetBehaviour             (oyBEHAVIOUR_e       type,
                                         int               choice);
 
 
-/* path names */
-
-int   oyPathAdd                        (const char* pathname);
-void  oyPathRemove                     (const char* pathname);
-
 /* --- default profiles --- */
 
 int         oySetDefaultProfile        (oyPROFILE_e       type,
