@@ -1024,7 +1024,6 @@ oyActivateMonitorProfile_         (const char* display_name,
       oyFree_m_( atom_name )
     }
 
-    DBG_PROG1_S( "system: %s", text )
     oyFree_m_( text );
 #endif
   }
