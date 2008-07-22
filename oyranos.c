@@ -546,7 +546,8 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
       case oyASSUMED_GRAY:           /**< standard Gray assumed source profile*/
       case oyPROFILE_PROOF:          /**< standard proofing profile */
                 t = oyOptionGet_(type);
-                name = oyGetKeyString_( t->config_string, allocate_func );
+                if(t && t->config_string)
+                  name = oyGetKeyString_( t->config_string, allocate_func );
                 break;
       case oyDEFAULT_PROFILE_START:
       case oyDEFAULT_PROFILE_END:
