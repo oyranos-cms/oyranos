@@ -620,12 +620,12 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
 #else
   {
     const oyOption_t_ * t = oyOptionGet_(type);
-    if( !t->config_string )
+    if( !t || !t->config_string )
     {
       WARNc2_S( "%s %d", _("Option not supported type:"), type)
       return NULL;
-    }
-    name = oyGetKeyString_( t->config_string, allocate_func );
+    } else
+      name = oyGetKeyString_( t->config_string, allocate_func );
   }
 #endif
 
@@ -644,9 +644,14 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
     }
   } else {
     const oyOption_t_ * t = oyOptionGet_(type);
-    oyAllocHelper_m_( name, char, strlen( t->default_string ) + 1,
-                      allocate_func, return NULL );
-    sprintf( name, "%s", t->default_string );
+    if(t && t->default_string)
+    {
+      oyAllocHelper_m_( name, char, strlen( t->default_string ) + 1,
+                        allocate_func, return NULL );
+      sprintf( name, "%s", t->default_string );
+    } else {
+      WARNc2_S( "%s %d", _("Option not supported type:"), type)
+    }
   }
 
   DBG_PROG_ENDE
