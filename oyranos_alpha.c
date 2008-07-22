@@ -7022,10 +7022,14 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
 #if 0 /* we dont override the CMM's id */
       header->creator = *hi;
 #endif
-#if !defined(__APPLE__) && !defined(WIN32)
+#if defined(__APPLE__)
+      oySprintf_( h, "APPL" );
+#elif defined(WIN32)
+      oySprintf_( h, "MSFT" );
+#else
       oySprintf_( h, "*nix" );
-      header->platform = *hi;
 #endif
+      header->platform = *hi;
       *size = len;
     }
   }
