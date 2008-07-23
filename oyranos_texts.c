@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <iconv.h>
 
 #include "config.h"
 #include "oyranos.h"
@@ -30,6 +31,7 @@
 #include "oyranos_io.h"
 #include "oyranos_sentinel.h"
 #include "oyranos_xml.h"
+#include "oyranos_alpha.h"
 
 /* --- Helpers  --- */
 
@@ -920,6 +922,64 @@ void          oyStringListRelease_    ( char          *** l,
   DBG_PROG_ENDE
 }
 
+/** @func  oyIconv
+ *  @brief convert between codesets
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/05/27
+ *  @since   2008/07/23 (Oyranos: 0.1.8)
+ */
+int                oyIconv           ( const char        * input,
+                                       size_t              len,
+                                       char              * output,
+                                       const char        * from_codeset,
+                                       const char        * to_codeset )
+{
+  int error = 0;
+
+  char * out_txt = output;
+  char * in_txt = (char*)input;
+  const char * loc_env = setlocale( LC_MESSAGES, 0 ), *loc = to_codeset;
+  iconv_t cd;
+  size_t size, in_left = len, out_left = len;
+
+  /* application codeset */
+  if(!loc && oy_domain_codeset)
+    loc = oy_domain_codeset;
+  /* environment codeset */
+  if(!loc && loc_env)
+  {
+    char * loc_tmp = strchr(loc_env, '.');
+    if(loc_tmp && strlen(loc_tmp) > 2)
+      loc = loc_tmp + 1;
+  }
+  /* fallback codeset */
+  if(!loc)
+    loc = "UTF-8";
+
+  if(!from_codeset && !oy_domain_codeset)
+  {
+    error = !memcpy(output, input, sizeof(char) * len);
+    output[len] = 0;
+    return error;
+  }
+
+  cd = iconv_open( loc, from_codeset ? from_codeset : oy_domain_codeset );
+  size = iconv( cd, &in_txt, &in_left, &out_txt, &out_left);
+  iconv_close( cd );
+  *out_txt = 0;
+
+  if(size == (size_t)-1)
+    error = -1;
+  else
+    error = size;
+
+  return error;
+}
+
+
+
+
 
 /* Oyranos text handling */
 
@@ -1311,13 +1371,106 @@ oyPolicyWidgetListGet_( oyGROUP_e       group,
   return list;
 }
 
+/** @func    oyPoliciesEqual
+ *  @brief   compare between two policy texts
+ *
+ *  Do the comparision according to policy typical (oyGROUP_ALL) xml keys.
+ *
+ *  @return                            -1 in case of an error, 0 for not matching keys, 1 for all keys, which are common in policyA and policyB are equal
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/07/23
+ *  @since   2008/07/23 (Oyranos: 0.1.8)
+ */
+int                oyPoliciesEqual   ( const char        * policyA,
+                                       const char        * policyB )
+{
+  int j;
+  int n = 0;
+  oyWIDGET_e * list = NULL;
+  oyProfile_s * p_policyA = 0,
+              * p_policyB = 0;
+  int is_equal = 1;
+
+  DBG_PROG_START
+
+  list = oyPolicyWidgetListGet_( oyGROUP_ALL, &n );
+
+  if( !policyA || !policyB )
+    return -1;
+
+    {
+      const char * key = NULL;
+      char       * value = NULL,
+                 * value2 = NULL;
+
+      for(j = 0; j < n && is_equal ; ++j)
+      {
+        oyWIDGET_e oywid = list[j];
+        oyWIDGET_TYPE_e opt_type = oyWidgetTypeGet_( oywid );
+
+        const oyOption_t_ *t = oyOptionGet_( oywid );
+
+        key = t->config_string_xml;
+
+        /* read the value for the key */
+        value = oyXMLgetValue_(policyA, key);
+        value2 = oyXMLgetValue_(policyB, key);
+
+        if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
+        {
+          /* compare the keys */
+          if(value && strlen(value) && value2 && strlen(value2))
+          {
+            p_policyA = oyProfile_FromFile( value, 0, 0);
+            p_policyB = oyProfile_FromFile( value2, 0, 0);
+            if(!oyProfile_Equal( p_policyA, p_policyB))
+              is_equal = 0;
+          }
+
+        } else if(opt_type == oyWIDGETTYPE_BEHAVIOUR)
+        {
+          int val = -1,
+              val2 = -1;
+
+          /* convert value from string to int */
+          if(value)
+            val = atoi(value);
+          if(value2)
+            val2 = atoi(value2);
+
+          /* compare the keys */
+          if(value && val != val2)
+            is_equal = 0;
+
+        }
+
+        if(value) oyFree_m_(value);
+        if(value2) oyFree_m_(value2);
+
+      }
+    }
+
+  if( list ) oyFree_m_( list );
+
+  DBG_PROG_ENDE
+  return is_equal;
+}
+
+/** @func    oyPolicyNameGet_
+ *  @brief   get the name of a actual policy file
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/00/00
+ *  @since   2008/07/23 (Oyranos: 0.1.x)
+ */
 char*
 oyPolicyNameGet_()
 {
   int count = 0, i;
-  oyChar** policy_list = oyPolicyListGet_( &count );
-  oyChar *name = _("[none]");
-  oyChar *xml = NULL;
+  char** policy_list = oyPolicyListGet_( &count );
+  char *name = 0;/*_("[none]");*/
+  char *xml = NULL;
 
   DBG_PROG_START
 
@@ -1326,92 +1479,33 @@ oyPolicyNameGet_()
   oyI18NSet(1,0);
   xml[oyStrlen_(xml)-2] = 0;
 
+  if( !xml )
+  {
+    WARNc_S( "no policy data available??" );
+    return name;
+  }
+
   for( i = 0; i < count; ++i )
   {
-    oyChar * data = NULL/*,
-             * xml_g = NULL*/;   /* settings, generated from data file */
+    char * compare = NULL;   /* settings from policy file */
     size_t size = 0;
+    const char * fname = policy_list[i];
+    int is_policy = 1;
 
-    const oyChar* fname = policy_list[i];
-    data = oyReadFileToMem_( fname, &size, oyAllocateFunc_ );
+    compare = oyReadFileToMem_( fname, &size, oyAllocateFunc_ );
 
-    /* TODO: und als naechstes werden alle relevanten xml Schluessel ausgelesen,
-    // in der selben Form wie fuer oyPolicyToXML_ */
+    if( !compare || !size)
     {
-      int   err = 0;
-      int n = 0;
-      oyWIDGET_e * list = NULL;
-      const oyChar * key = NULL;
-      oyChar       * value = NULL;
-
-      list = oyPolicyWidgetListGet_( oyGROUP_ALL, &n );
-      for(i = 0; i < n; ++i)
-      {
-        oyWIDGET_e oywid = list[i];
-        oyWIDGET_TYPE_e opt_type = oyWidgetTypeGet_( oywid );
-
-        if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
-        {
-          const oyOption_t_ *t = oyOptionGet_( oywid );
-          key = t->config_string_xml;
-
-          /* read the value for the key */
-          value = oyXMLgetValue_(xml, key);
-
-          /* set the key */
-          if(value && strlen(value))
-          {
-            err = oySetDefaultProfile_( oywid, value);
-            if(err)
-            {
-               WARNc2_S( "Could not set default profile %s:%s", t->name ,
-                        value?value:"--" );
-            }
-            oyFree_m_(value);
-          }
-        } else if(opt_type == oyWIDGETTYPE_BEHAVIOUR)
-        {
-          const oyOption_t_ *t = oyOptionGet_( oywid );
-          int val = -1;
-
-          key = t->config_string_xml;
-
-          /* read the value for the key */
-          value = oyXMLgetValue_(xml, key);
-
-          /* convert value from string to int */
-          val = atoi(value);
-
-          /* set the key */
-          if( val != -1 && value )
-            err = oySetBehaviour_(oywid, val);
-
-          if(err)
-          {
-            WARNc2_S( "Could not set behaviour %s:%s .", t->name ,
-                      value?value:"--" );
-            return NULL;
-          }
-
-          if(value) oyFree_m_(value);
-        }
-      }
-
-      if( list ) oyFree_m_( list );
+      WARNc1_S( "no policy file available?? %s", fname );
+      is_policy = 0;
     }
 
-    if( !xml )
-    {
-      WARNc_S( "no policy data available??" );
-    }
-    else if( !data )
-    {
-      WARNc_S( "no policy file available??" );
-    } else if( oyStrstr_( data, xml ) )
-      name = policy_list[i];
+    if(oyPoliciesEqual( xml, compare ) == 1)
+      name = oyStringCopy_( policy_list[i], oyAllocateFunc_ );
 
-    oyFree_m_( data );
+    oyFree_m_( compare );
   }
+
   oyFree_m_( xml );
   oyStringListRelease_( &policy_list, count, oyDeAllocateFunc_ );
 
@@ -1577,8 +1671,8 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
   if( type == oyWIDGET_POLICY )
   {
     int count = 0;
-    oyChar * currentP = oyPolicyNameGet_ ();
-    oyChar ** list = oyPolicyListGet_( &count );
+    char * currentP = oyPolicyNameGet_ ();
+    char ** list = oyPolicyListGet_( &count );
     int c = -1, i;
 
     if( !list )
