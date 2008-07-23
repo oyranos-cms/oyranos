@@ -1509,6 +1509,7 @@ int main(int argc, char **argv) {
 #endif
     int err = fl_initialise_locale ( "oyranos", locale_paths[is_path],
                                      set_charset );
+    oy_domain_codeset = fl_i18n_codeset;
     if(err) {
       WARNc_S(("i18n initialisation failed"));
     }
