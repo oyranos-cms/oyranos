@@ -6442,8 +6442,6 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
   int error = !s;
   oyChar ** names = 0;
   uint32_t count = 0, i = 0;
-  oyChar ** texts = 0;
-  int32_t   texts_n = 0;
   oyChar *  hash = 0;
   oyChar    tmp_hash[34];
 
@@ -6486,8 +6484,6 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
       name = oyFindProfile_( name );
       oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
     }
-
-    oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
   }
 
   name = oyStringCopy_( s->file_name_, allocateFunc );

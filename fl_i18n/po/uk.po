@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eog 0.3\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-06-13 10:50+0200\n"
+"POT-Creation-Date: 2008-07-23 18:15+0200\n"
 "PO-Revision-Date: 2004-08-18 10:17+0300\n"
 "Last-Translator: Maxim Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
@@ -17,95 +17,95 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: fl_i18n.cxx:259
+#: fl_i18n.cxx:258
 msgid "osX locale obtained: "
 msgstr ""
 
-#: fl_i18n.cxx:262
+#: fl_i18n.cxx:261
 msgid "osX locale not obtained"
 msgstr ""
 
-#: fl_i18n.cxx:385
+#: fl_i18n.cxx:384
 msgid "try to set LANG"
 msgstr ""
 
-#: fl_i18n.cxx:404
+#: fl_i18n.cxx:403
 msgid "try locale in "
 msgstr ""
 
-#: fl_i18n.cxx:424
+#: fl_i18n.cxx:423
 msgid "set codeset for"
 msgstr ""
 
-#: fl_i18n.cxx:463
+#: fl_i18n.cxx:464
 msgid "Add to Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:464
+#: fl_i18n.cxx:465
 msgid "All Files (*)"
 msgstr ""
 
-#: fl_i18n.cxx:465
+#: fl_i18n.cxx:466
 msgid "Custom Filter"
 msgstr ""
 
-#: fl_i18n.cxx:466
+#: fl_i18n.cxx:467
 msgid "Please choose an existing file!"
 msgstr ""
 
-#: fl_i18n.cxx:467
+#: fl_i18n.cxx:468
 msgid "Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:468
+#: fl_i18n.cxx:469
 msgid "Filename"
 msgstr ""
 
-#: fl_i18n.cxx:469
+#: fl_i18n.cxx:470
 msgid "Manage Favorites"
 msgstr ""
 
-#: fl_i18n.cxx:471
+#: fl_i18n.cxx:472
 msgid "My Computer"
 msgstr ""
 
-#: fl_i18n.cxx:473
+#: fl_i18n.cxx:474
 msgid "Filesystems"
 msgstr ""
 
-#: fl_i18n.cxx:475
+#: fl_i18n.cxx:476
 msgid "New Directory?"
 msgstr ""
 
-#: fl_i18n.cxx:476
+#: fl_i18n.cxx:477
 msgid "Preview"
 msgstr ""
 
-#: fl_i18n.cxx:478 fl_i18n_example.cxx:32
+#: fl_i18n.cxx:479 fl_i18n_example.cxx:33
 msgid "Save"
 msgstr ""
 
-#: fl_i18n.cxx:480
+#: fl_i18n.cxx:481
 msgid "Show:"
 msgstr ""
 
-#: fl_i18n_example.cxx:14 fl_i18n_example.cxx:66 fl_i18n_example.cxx:70
+#: fl_i18n_example.cxx:15 fl_i18n_example.cxx:69 fl_i18n_example.cxx:73
 msgid "Hello, world!"
 msgstr "Привіт, світ!"
 
-#: fl_i18n_example.cxx:30
+#: fl_i18n_example.cxx:31
 msgid "File"
 msgstr ""
 
-#: fl_i18n_example.cxx:31
+#: fl_i18n_example.cxx:32
 msgid "Open"
 msgstr ""
 
-#: fl_i18n_example.cxx:33
+#: fl_i18n_example.cxx:34
 msgid "Quit"
 msgstr ""
 
-#: fl_i18n_example.cxx:67
+#: fl_i18n_example.cxx:70
 msgid "fl_i18n_example"
 msgstr ""
 
