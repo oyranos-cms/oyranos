@@ -419,27 +419,46 @@ struct  oyCMMapi4_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
+  /** e.g. "org.oyranos.generic.scale.none,linear,cubic" */
+  const char     * registration;
 
-  const char     * registration;       /**< e.g. "org.oyranos.generic.scale.none,linear,cubic" */
+  /** 0: major - should be stable for the live time of a filter, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int              version[3];
 
-  int              version[3];         /**< 0: major - should be stable for the live time of a filter, 1: minor - mark new features, 2: patch version - correct errors */
-
-  oyFilter_ValidateOptions_f oyFilter_ValidateOptions; /**< check options for validy and correct */
+  /** check options for validy and correct */
+  oyFilter_ValidateOptions_f oyFilter_ValidateOptions;
   oyWidgetEvent_f  oyWidget_Event;     /**< handle widget events */
 
-  oyCMMProfile_Open_f      oyCMMProfile_Open; /**< mandatory for "..colour" filters */
-  oyCMMFilter_CreateContext_f  oyCMMFilter_CreateContext; /**< mandatory for "..colour" filters */
-  oyCMMFilter_ContextToMem_f   oyCMMFilter_ContextToMem; /**< mandatory for "..colour" filters */
-  oyCMMFilter_ContextFromMem_f oyCMMFilter_ContextFromMem; /**< mandatory for "..colour" filters */
-  oyCMMFilter_GetNext_f oyCMMFilter_GetNext; /**< mandatory for all filters; Special care has to taken for the oyPixelAccess_s argument to this function. */
+  /** mandatory for "..colour" filters */
+  oyCMMProfile_Open_f      oyCMMProfile_Open;
+  /** mandatory for "..colour" filters */
+  oyCMMFilter_CreateContext_f  oyCMMFilter_CreateContext;
+  /** mandatory for "..colour" filters */
+  oyCMMFilter_ContextToMem_f   oyCMMFilter_ContextToMem;
+  /** mandatory for "..colour" filters */
+  oyCMMFilter_ContextFromMem_f oyCMMFilter_ContextFromMem;
+  /** mandatory for all filters; Special care has to taken for the
+      oyPixelAccess_s argument to this function. */
+  oyCMMFilter_GetNext_f oyCMMFilter_GetNext;
 
-  oyName_s         name;               /**< translatable, eg "scale" "image scaling" "..." */
+  /** translatable, eg "scale" "image scaling" "..." */
+  oyName_s         name;
   const char       category[256];      /**< menu structure */
   oyOptions_s    * options;            /**< default options */
   const char     * opts_ui;            /**< xml ui elements for filter options*/
 
-  uint32_t             parents_max;  /**< allowed number of parents, e.g. 1 for a linear node */
-  uint32_t             children_max;  /**< allowed number of children, e.g. 1 for a linear node */
+  /** allowed number of parents, e.g. 1 for a linear node */
+  uint32_t         parents_max;
+  /** allowed number of children, e.g. 1 for a linear node */
+  uint32_t         children_max;
+  /** We have to tell about valid input and output filters, eigther active by
+      the filter itself or by passively providing enough informations.
+
+      The oyCMMapi4_s::input member can be eigther a oyImage_s or oyOptions_s 
+      struct to describe what is possible with the according filters end. */
+  oyStruct_s    ** input;
 };
 
 
