@@ -50,9 +50,13 @@
 
 /* --- Helpers  --- */
 #if 1
-#define ERR if (rc<=0 && oy_debug) { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
+/*# define ERR if ((rc != KDB_ERR_OK && oy_debug) || rc > KDB_ERR_OK) \
+              { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }*/
+# define ERR  if(rc) \
+                        oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d %d: %s", \
+                        __FILE__,__LINE__, rc, kdbStrError(rc));
 #else
-#define ERR
+# define ERR
 #endif
 
 /* --- static variables   --- */
@@ -209,7 +213,7 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
 
       if(!oy_handle_)
         return 0;
-      rc=kdbGetKeyByParent (oy_handle_, name, pathkeyName, key);
+      rc=kdbGetKeyByParent (oy_handle_, name, pathkeyName, key); ERR
       if (rc)
         nth = i;
       i++;
@@ -268,11 +272,22 @@ oyAddKey_valueComment_ (const char* keyName,
   int rc=0;
   Key *key;
   char *name = NULL;
+  char *value_utf8 = NULL;
+  char *comment_utf8 = NULL;
 
   DBG_PROG_START
 
   oyAllocHelper_m_(name, char, MAX_PATH, 0, )
+  oyAllocHelper_m_(value_utf8, char, MAX_PATH, 0, )
+  oyAllocHelper_m_(comment_utf8, char, MAX_PATH, 0, )
+
   sprintf(name, "%s%s", oySelectUserSys_(), keyName);
+  if(value && oyStrlen_(value))
+    oyIconv( value, strlen(value) < MAX_PATH ? strlen(value) : MAX_PATH,
+             value_utf8, 0, "UTF-8" );
+  if(comment && oyStrlen_(comment))
+    oyIconv( comment, strlen(comment) < MAX_PATH ? strlen(comment) : MAX_PATH,
+             comment_utf8, 0, "UTF-8" );
 
   if (keyName)
     DBG_PROG_S(( keyName ));
@@ -286,19 +301,37 @@ oyAddKey_valueComment_ (const char* keyName,
   key = keyNew( KEY_END );
   keySetName( key, name );
 
-  /*rc=keyInit(key); ERR */
-  /*rc=keySetName (key, keyName); */
   if(!oy_handle_)
     return 0;
   rc=kdbGetKey( oy_handle_, key );
-  rc=keySetString (key, value);
-  rc=keySetComment (key, comment);
-  /*TODO debug */
+  if(rc != KDB_ERR_OK)
+    oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s",
+                     __FILE__,__LINE__, rc, kdbStrError(rc), name);
+  if(value)
+  {
+    rc=keySetString (key, value_utf8);
+    if(rc <= 0)
+      oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s value:%s",
+                       __FILE__,__LINE__, rc, kdbStrError(rc), name, value);
+  }
+  if(comment)
+  {
+    rc=keySetComment (key, comment_utf8);
+    if(rc <= 0)
+      oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s comment:%s",
+                       __FILE__,__LINE__, rc, kdbStrError(rc), name, comment);
+  }
+
   oyOpen_();
-  rc=kdbSetKey( oy_handle_, key );
+  rc=kdbSetKey( oy_handle_, key ); ERR
+  if(rc != KDB_ERR_OK)
+    oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s",
+                     __FILE__,__LINE__, rc, kdbStrError(rc), name);
   oyClose_();
 
   oyFree_m_( name )
+  oyFree_m_( value_utf8 )
+  oyFree_m_( comment_utf8 )
 
   DBG_PROG_ENDE
   return rc;
