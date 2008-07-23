@@ -62,46 +62,14 @@ int                oyraCMMInit       ( )
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/05/27
- *  @since   2008/05/27 (Oyranos: 0.1.8)
+ *  @since   2008/07/23 (Oyranos: 0.1.8)
  */
 int                oyraIconv         ( const char        * input,
                                        size_t              len,
                                        char              * output,
                                        const char        * from_codeset )
 {
-  int error = 0;
-
-  char * out_txt = output;
-  char * in_txt = (char*)input;
-  const char * loc_env = setlocale( LC_MESSAGES, 0 ), *loc = 0;
-  iconv_t cd;
-  size_t size, in_left = len, out_left = len;
-
-  /* application codeset */
-  if(oy_domain_codeset)
-    loc = oy_domain_codeset;
-  /* environment codeset */
-  if(!loc && loc_env)
-  {
-    char * loc_tmp = strchr(loc_env, '.');
-    if(loc_tmp && strlen(loc_tmp) > 2)
-      loc = loc_tmp + 1;
-  }
-  /* fallback codeset */
-  if(!loc)
-    loc = "UTF-8";
-
-  cd = iconv_open(loc,from_codeset);
-  size = iconv( cd, &in_txt, &in_left, &out_txt, &out_left);
-  iconv_close( cd );
-  *out_txt = 0;
-
-  if(size == (size_t)-1)
-    error = -1;
-  else
-    error = size;
-
-  return error;
+  return oyIconv(input, len, output, from_codeset, 0);
 }
 
 
