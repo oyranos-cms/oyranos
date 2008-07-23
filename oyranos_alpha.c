@@ -99,8 +99,6 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
                                        oyAlloc_f           allocateFunc );
 int          oyProfile_ToFile_       ( oyProfile_s       * profile,
                                        const char        * file_name );
-int          oyProfile_Equal_        ( oyProfile_s       * profileA,
-                                       oyProfile_s       * profileB );
 int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
                                        oyProfile_s       * profile );
 int32_t      oyProfile_Hashed_       ( oyProfile_s       * s );
@@ -6475,7 +6473,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
               break;
             }
           } else
-          if(oyProfile_Equal_( s, tmp ))
+          if(oyProfile_Equal( s, tmp ))
           {
             name = names[i];
             break;
@@ -6564,7 +6562,7 @@ const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
               break;
             }
           } else
-          if(oyProfile_Equal_( s, tmp ))
+          if(oyProfile_Equal( s, tmp ))
           {
             name = names[i];
             break;
@@ -6739,14 +6737,15 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
 #endif
 
 /** @internal
- *  @func    oyProfile_Equal_
+ *  @func    oyProfile_Equal
  *  @brief   check if two profiles are qual by their hash sum
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/02/03
  *  @since   2008/02/03 (Oyranos: 0.1.8)
  */
-int          oyProfile_Equal_        ( oyProfile_s       * profileA,
+OYAPI int OYEXPORT
+                   oyProfile_Equal   ( oyProfile_s       * profileA,
                                        oyProfile_s       * profileB )
 {
   int equal = 0;

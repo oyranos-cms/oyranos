@@ -503,12 +503,13 @@ int            oyOption_Release      ( oyOption_s       ** option );
 int            oyOption_GetId        ( oyOption_s        * option );
 
 
-/** @brief Options for rendering
-    Options can be any flag or rendering intent and other informations needed to
-    configure a process. The object contains variables for colour transforms.
+/** @brief generic Options
+ *
+ *  Options can be any flag or rendering intent and other informations needed to
+ *  configure a process. The object contains a list of oyOption_s objects.
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OPTIONS_S */
+  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_OPTIONS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -655,6 +656,9 @@ OYAPI const char   * OYEXPORT
                                          oyNAME_e          type );
 OYAPI const char  * OYEXPORT
                    oyProfile_GetID   ( oyProfile_s       * profile );
+OYAPI int OYEXPORT
+                   oyProfile_Equal   ( oyProfile_s       * profileA,
+                                       oyProfile_s       * profileB );
 OYAPI const char  * OYEXPORT
                    oyProfile_GetText ( oyProfile_s       * profile,
                                        oyNAME_e            type );
