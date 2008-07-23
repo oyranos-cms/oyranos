@@ -39,14 +39,13 @@
 
 #ifdef USE_GETTEXT
 # if !defined(WIN32) || (defined(WIN32) && defined(__MINGW32__))
-#define fl_i18n_printf(text) printf text
-static int lc = LC_MESSAGES;
+#  define fl_i18n_printf(text) printf text
 # else
-#define fl_i18n_printf(text)
-static int lc = LC_ALL;
+#  define fl_i18n_printf(text)
 # endif
+   static int lc = LC_ALL;
 #else
-#define fl_i18n_printf(text)
+# define fl_i18n_printf(text)
 #endif
 
 const char *fl_i18n_codeset = 0;
@@ -266,7 +265,7 @@ fl_initialise_locale( const char *domain, const char *locale_path,
   // set the locale info
   if(strlen(locale) && set_codeset == FL_I18N_SETCODESET_SELECT)
   {
-     tmp = setlocale (LC_MESSAGES, locale);
+     tmp = setlocale (lc, locale);
   }
   if (tmp)
     snprintf(locale,TEXTLEN, tmp);
@@ -279,14 +278,14 @@ fl_initialise_locale( const char *domain, const char *locale_path,
     // this is dangerous
   char *temp = setlocale (lc, NULL);
   char *previous_locale = temp ? icc_strdup_m(temp) : NULL;
-  temp = setlocale (lc, "");
+  if(set_codeset != FL_I18N_SETCODESET_NO)
+    temp = setlocale (lc, "");
   char *tmp = temp ? icc_strdup_m(temp) : NULL;
   if(tmp) {
     snprintf(locale,TEXTLEN, tmp);
     DBG_PROG_V( locale )
   }
-  /*if(!set_codeset)
-    setlocale (lc, previous_locale);*/
+
   if(previous_locale) free(previous_locale); previous_locale = NULL;
   if(tmp) free(tmp); tmp = NULL;
 
@@ -423,6 +422,8 @@ fl_initialise_locale( const char *domain, const char *locale_path,
     fl_i18n_codeset = cs;
     DBG_PROG_S( _("set codeset for") << domain << " to " << cs );
   }
+  if(set_codeset != FL_I18N_SETCODESET_NO)
+    setlocale (LC_NUMERIC, "C");
 
   // gettext initialisation end
   free(codeset);

@@ -4,6 +4,7 @@
 #include "fl_i18n_example.h"
 #include <FL/fl_draw.H>//#include "fl_i18n.H"
 #include <cstdio>
+#include <langinfo.h>
 
 void MyBox::draw() {
   fl_font( FL_HELVETICA, 24);
@@ -57,13 +58,15 @@ int main(int argc, char **argv) {
     int err = fl_initialise_locale ( domain, locale_paths[0],
                                      set_charset );
     if(err) {
-      printf("i18n initialisation failed");
+      fprintf( stderr,"i18n initialisation failed");
     } else
-      printf("Locale found in %s\n", locale_paths[0]);
+      fprintf( stderr, "Locale found in %s\n", locale_paths[0]);
   } else
-    printf("Locale not found in %s\n", locale_paths[0]);
+    fprintf( stderr, "Locale not found in %s\n", locale_paths[0]);
 
-  printf("%s\n",_("Hello, world!"));
+  fprintf( stdout, "nl_langinfo(CODESET): %s\n", nl_langinfo(CODESET) );
+
+  fprintf( stdout, "%s\n",_("Hello, world!"));
   { Fl_Double_Window* o = new Fl_Double_Window(235, 170, _("fl_i18n_example"));
     w = o;
     o->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
