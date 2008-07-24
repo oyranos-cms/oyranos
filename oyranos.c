@@ -1122,6 +1122,7 @@ int         oyPolicySaveActual        ( oyGROUP_e         group,
   char * text = 0;
   char * filename = 0;
   const char * xdg_home_dir = getenv("XDG_CONFIG_HOME");
+  char * path = 0, * ptr;
 
   DBG_PROG_START
   oyExportStart_(EXPORT_SETTING);
@@ -1135,8 +1136,13 @@ int         oyPolicySaveActual        ( oyGROUP_e         group,
   if(!error)
   {
     if(xdg_home_dir)
-      oyStringAdd_( &filename, xdg_home_dir, oyAllocateFunc_, oyDeAllocateFunc_ );
-    else
+    {
+      path = oyStringCopy_( xdg_home_dir, oyAllocateFunc_ );
+      ptr = oyStrchr_( path, ':' );
+      if(ptr)
+        *ptr = '\000';
+      oyStringAdd_( &filename, path, oyAllocateFunc_, oyDeAllocateFunc_ );
+    } else
       oyStringAdd_( &filename, "~/.config", oyAllocateFunc_, oyDeAllocateFunc_ );
 
     oyStringAdd_( &filename, "/color/settings/", oyAllocateFunc_, oyDeAllocateFunc_ );
