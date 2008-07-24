@@ -1121,6 +1121,24 @@ char**  oyXDGPathsGet_( int             * count,
           paths = tmp_neu;
           n = tmp_neu_n;
         }
+      } else
+      {
+        if(i == 0)
+          oyStringListAddStaticString_( &paths, &n, "~/.local/share",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+        if(i == 1)
+          oyStringListAddStaticString_( &paths, &n, "~/.config",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+        if(i == 2)
+        {
+          oyStringListAddStaticString_( &paths, &n, "/usr/share",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+          oyStringListAddStaticString_( &paths, &n, "/usr/local/share",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+        }
+        if(i == 4)
+          oyStringListAddStaticString_( &paths, &n, "/etc/xdg",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
       }
     }
   }
