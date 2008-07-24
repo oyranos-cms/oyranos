@@ -173,7 +173,7 @@ int main( int argc , char** argv )
 
     if(current_policy)
       fprintf( stdout, "%s \"%s\"\n",
-               _("Currently active policy"), names[current]);
+               _("Currently active policy:"), names[current]);
 
   } else
   if(!fileName)
