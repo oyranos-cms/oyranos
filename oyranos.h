@@ -126,6 +126,8 @@ int         oySetBehaviour             (oyBEHAVIOUR_e     type,
 
 /* --- policies --- */
 
+int         oyPolicySaveActual        ( oyGROUP_e         group,
+                                        const char      * name );
 char*       oyPolicyToXML              (oyGROUP_e         group,
                                         int               add_header,
                                         oyAlloc_f         alloc_func);
@@ -322,7 +324,8 @@ int           oyOptionFloatIntRangeGet (oyWIDGET_e        option,
 
 
 int            oyVersion             ( int                 type );
-oyChar *     oyVersionConfigureString( int                 type );
+char *         oyVersionString       ( int                 type,
+                                       oyAlloc_f           allocateFunc );
 
 int    oyProfileGetMD5               ( void       *buffer,
                                        size_t      size,

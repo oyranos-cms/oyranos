@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <langinfo.h>
 
 #include "config.h"
 #include "oyranos.h"
@@ -1104,6 +1105,53 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
  *  @{
  */
 
+/** @brief save a options group to a file
+ *
+ *  @param         group               use oyGROUP_ALL for a typical snapshot
+ *  @param         name                the name will become part of a filename
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/23 (Oyranos: 0.1.8)
+ *  @date    2008/07/23
+ */
+int         oyPolicySaveActual        ( oyGROUP_e         group,
+                                        const char      * name )
+{
+  int error = !name;
+  char * text = 0;
+  char * filename = 0;
+  const char * xdg_home_dir = getenv("XDG_CONFIG_HOME");
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_SETTING);
+
+  if(!error)
+  {
+    text = oyPolicyToXML_(group, 1, oyAllocateFunc_);
+    error = !text;
+  }
+
+  if(!error)
+  {
+    if(xdg_home_dir)
+      oyStringAdd_( &filename, xdg_home_dir, oyAllocateFunc_, oyDeAllocateFunc_ );
+    else
+      oyStringAdd_( &filename, "~/.config", oyAllocateFunc_, oyDeAllocateFunc_ );
+
+    oyStringAdd_( &filename, "/color/settings/", oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &filename, name, oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &filename, ".xml", oyAllocateFunc_, oyDeAllocateFunc_ );
+    if(oyIsFile_(filename))
+      WARNc2_S("%s %s",_("will overwrite policy file"), filename);
+    error = oyWriteMemToFile_( filename, text, oyStrlen_(text)+1 );
+  }
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return error;
+}
+
 /** Save a group of policy settings.\n
  *  Write only such variables, which are available and ignore unknown ones.
  *  This currently produces pseudo xml configuration files.
@@ -1813,28 +1861,74 @@ const char *   oyLang                ( void )
 
 /** @brief  give the compiled in library version
  *
- *  @param[in]  type           not used
+ *  @param[in]  type           0 - Oyranos API; 1 - start month, 2 - start year; 3 - development last month, 4 - development last year
  *
  *  @return                    OYRANOS_VERSION at library compile time
  */
 int            oyVersion             ( int                 type )
 {
+  if(type == 1)
+    return OYRANOS_START_MONTH;
+  if(type == 2)
+    return OYRANOS_START_YEAR;
+  if(type == 3)
+    return OYRANOS_DEVEL_MONTH;
+  if(type == 4)
+    return OYRANOS_DEVEL_YEAR;
+
   return OYRANOS_VERSION;
 }
 
 #include "config.log.h"
 /** @brief  give the configure options for Oyranos
  *
- *  @param[in] type            not used
+ *  @param[in] type            1 - OYRANOS_VERSION_NAME; 2 - git master hash; 3 - OYRANOS_CONFIG_DATE, 4 - development period
+ *  @param     allocateFunc    user allocator, e.g. malloc
  *
- *  @return                    OYRANOS_VERSION at library compile time
+ *  @return                    Oyranos configure output
  *
  *  @since     Oyranos: version 0.1.8
  *  @date      18 december 2007 (API 0.1.8)
  */
-oyChar *     oyVersionConfigureString( int                 type )
+char *       oyVersionString         ( int                 type,
+                                       oyAlloc_f           allocateFunc )
 {
-  return oy_config_log_;
+  char * text = 0, * tmp = 0;
+  char temp[24];
+  char * git = OYRANOS_GIT_MASTER;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(type == 1)
+    return oyStringCopy_(OYRANOS_VERSION_NAME, allocateFunc);
+  if(type == 2)
+  {
+    if(oyStrlen_(git))
+      return oyStringCopy_(git, allocateFunc);
+    else
+      return 0;
+  }
+  if(type == 3)
+    return oyStringCopy_(OYRANOS_CONFIG_DATE, allocateFunc);
+
+  if(type == 4)
+  {
+    oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(1)),
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+    oySprintf_( temp, " %d - ", oyVersion(2) );
+    oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
+    oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(3)),
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+    oySprintf_( temp, " %d", oyVersion(4) );
+    oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
+
+    tmp = oyStringCopy_( text , allocateFunc);
+    oyDeAllocateFunc_(text);
+    return tmp;
+  }
+
+  return oyStringCopy_(oy_config_log_, allocateFunc);
 }
 
 
