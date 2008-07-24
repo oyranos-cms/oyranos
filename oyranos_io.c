@@ -14,6 +14,7 @@
  *  @since    2004/11/25
  */
 
+#include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -162,8 +163,10 @@ oyWriteMemToFile_(const char* name, void* mem, size_t size)
   /*int   pt = 0;
   char* block = mem;*/
   const char* filename;
-  int r = 0;
+  char * full_name = 0;
+  int r = !name;
   size_t written_n = 0;
+  char * path = 0;
 
   DBG_PROG_START
 
@@ -171,13 +174,20 @@ oyWriteMemToFile_(const char* name, void* mem, size_t size)
 
   filename = name;
 
+  if(!r)
   {
-    fp = fopen(filename, "w");
+    full_name = oyResolveDirFileName_( filename );
+    path = oyExtractPathFromFileName_( full_name );
+    r = oyMakeDir_( path );
+  }
+
+  {
+    fp = fopen(full_name, "w");
     DBG_PROG2_S("fp = %d filename = %s", (int)(intptr_t)fp, filename)
     if ((fp != 0)
      && mem
      && size)
-    { DBG_PROG
+    {
 #if 0
       do {
         r = fputc ( block[pt++] , fp);
@@ -185,10 +195,26 @@ oyWriteMemToFile_(const char* name, void* mem, size_t size)
 #else
       written_n = fwrite( mem, size, 1, fp );
 #endif
+    } else
+    {
+      r = errno;
+      switch (errno)
+      {
+        case EACCES:       WARNc1_S("Permission denied: %s", filename); break;
+        case EIO:          WARNc1_S("EIO : %s", filename); break;
+        case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", filename); break;
+        case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", filename); break;
+        case ENOENT:       WARNc1_S("A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", filename); break;
+        case ENOTDIR:      WARNc1_S("ENOTDIR : %s", filename); break;
+        case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", filename); break;
+      }
     }
 
     if (fp) fclose (fp);
   }
+
+  if(path) oyDeAllocateFunc_( path );
+  if(full_name) oyDeAllocateFunc_( full_name );
 
   DBG_PROG_ENDE
   return r;
@@ -213,7 +239,7 @@ oyGetHomeDir_ ()
 }
 
 char*
-oyGetParent_ (const char* name)
+oyPathGetParent_ (const char* name)
 {
   char *parentDir = 0, *ptr = 0;
 
@@ -232,11 +258,11 @@ oyGetParent_ (const char* name)
       if (strrchr( parentDir, OY_SLASH_C))
       {
         ptr = strrchr (parentDir, OY_SLASH_C);
-        ptr[0] = 0;
+        ptr[0+1] = 0;
       }
     }
     else
-      ptr[0] = 0;
+      ptr[0+1] = 0;
   }
 
   DBG_PROG_S(parentDir)
@@ -266,8 +292,6 @@ oyIsDir_ (const char* path)
   DBG_PROG_ENDE
   return r;
 }
-
-#include <errno.h>
 
 int
 oyIsFileFull_ (const char* fullFileName)
@@ -335,16 +359,45 @@ oyIsFile_ (const char* fileName)
 int
 oyMakeDir_ (const char* path)
 {
-  char *name = oyResolveDirFileName_ (path);
-  int rc = 0;
+  char * full_name = oyResolveDirFileName_ (path),
+       * path_parent = 0,
+       * path_name = 0;
+  int rc = !full_name;
 
   mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH; /* 0755 */
 
   DBG_PROG_START
 
-  DBG_PROG
-  rc = mkdir (name, mode);
-  oyFree_m_ (name)
+
+  if(full_name)
+    path_name = oyExtractPathFromFileName_(full_name);
+  if(path_name)
+  {
+    if(!oyIsDir_(path_name))
+    {
+      path_parent = oyPathGetParent_(path_name);
+      if(!oyIsDir_(path_parent))
+      {
+        rc = oyMakeDir_(path_parent);
+        oyDeAllocateFunc_( path_parent );
+      }
+
+      rc = mkdir (path_name, mode);
+      if(rc)
+      switch (errno)
+      {
+        case EACCES:       WARNc1_S("Permission denied: %s", path); break;
+        case EIO:          WARNc1_S("EIO : %s", path); break;
+        case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", path); break;
+        case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", path); break;
+        case ENOENT:       WARNc1_S("A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", path); break;
+        case ENOTDIR:      WARNc1_S("ENOTDIR : %s", path); break;
+        case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", path); break;
+      }
+    }
+  }
+
+  oyFree_m_ (full_name)
 
   DBG_PROG_ENDE
   return rc;
@@ -412,7 +465,7 @@ oyExtractPathFromFileName_ (const char* file_name)
   oySprintf_( path_name, file_name );
   DBG_PROG1_S ("path_name = %s", path_name)
   ptr = strrchr (path_name, '/');
-  ptr[0] = 0;
+  ptr[0+1] = 0;
   DBG_PROG1_S ("path_name = %s", path_name)
   DBG_PROG1_S ("ptr = %s", ptr)
   DBG_PROG_ENDE
