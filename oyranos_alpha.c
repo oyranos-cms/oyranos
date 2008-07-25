@@ -7979,10 +7979,29 @@ OYAPI oyProfiles_s * OYEXPORT
 /** @func    oyProfiles_ForStd
  *  @brief   get a list of installed profiles
  *
- *  @param[in]     colour_space        standard profile class
+ *  @param[in]     colour_space        standard profile class, e.g. oyEDITING_RGB
  *  @param[out]    current             get the colour_space profile position
  *  @param         object              a optional object
  *  @return                            the profile list
+ *
+ *  @verbatim
+    oyPROFILE_e type = oyEDITING_RGB;
+    int current = 0,
+        size, i;
+    oyProfile_s * temp_prof = 0;
+    oyProfiles_s * iccs = 0;
+
+    iccs = oyProfiles_ForStd( type, &current, 0 );
+
+    size = oyProfiles_Count(iccs);
+    for( i = 0; i < size; ++i)
+    {
+      temp_prof = oyProfiles_Get( iccs, i );
+      printf("%s %d: \"%s\" %s\n", i == current ? "*":" ", i,
+             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
+             oyProfile_GetFileName(temp_prof, 0));
+      oyProfile_Release( &temp_prof );
+    } @endverbatim
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/25 (Oyranos: 0.1.8)
