@@ -7980,7 +7980,9 @@ OYAPI oyProfiles_s * OYEXPORT
  *  @brief   get a list of installed profiles
  *
  *  @param[in]     colour_space        standard profile class
- *  @param         object              the optional object
+ *  @param[out]    current             get the colour_space profile position
+ *  @param         object              a optional object
+ *  @return                            the profile list
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/25 (Oyranos: 0.1.8)
