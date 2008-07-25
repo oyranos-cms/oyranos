@@ -51,15 +51,17 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("Dump out the actual settings:"));
-  fprintf( stderr, "      %s\n",           argv[0]);
+  fprintf( stderr, "      %s -d\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("Set new policy:"));
-  fprintf( stderr, "      %s %s\n",           argv[0], _("policy filename"));
+  fprintf( stderr, "      %s -i %s\n",     argv[0], _("policy filename"));
   fprintf( stderr, "  %s\n",               _("List available policies:"));
   fprintf( stderr, "      %s -l\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("Currently active policy:"));
   fprintf( stderr, "      %s -c\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("Save and install to a new policy:"));
-  fprintf( stderr, "      %s -s %s\n",        argv[0], _("policy name"));
+  fprintf( stderr, "      %s -s %s\n",     argv[0], _("policy name"));
+  fprintf( stderr, "  %s\n",               _("Print a help text:"));
+  fprintf( stderr, "      %s -h\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
@@ -72,11 +74,12 @@ void  printfHelp (int argc, char** argv)
 int main( int argc , char** argv )
 {
   int error = 0;
-  const char* fileName = NULL,
-            * new_policy = NULL;
+  const char* new_policy = NULL,
+            * import_policy = NULL;
   size_t size = 0;
   char *xml = NULL;
-  int current_policy = 0, list_policies = 0;
+  int current_policy = 0, list_policies = 0,
+      dump_policy = 0;
 
   if(getenv("OYRANOS_DEBUG"))
   {
@@ -90,7 +93,7 @@ int main( int argc , char** argv )
 #endif
   oyI18NInit_();
 
-  if(argc >= 1)
+  if(argc >= 2)
   {
     int pos = 1;
     char *wrong_arg = 0;
@@ -102,6 +105,16 @@ int main( int argc , char** argv )
         case '-':
             switch (argv[pos][1])
             {
+              case 'c': current_policy = 1; break;
+              case 'd': dump_policy = 1; break;
+              case 'i': if( pos + 1 < argc )
+                        { import_policy = argv[pos+1];
+                          if( !oyStrlen_(import_policy) )
+                            wrong_arg = "-i";
+                        } else wrong_arg = "-i";
+                        if(oy_debug) fprintf(stderr,"import_policy=0\n"); ++pos;
+                        break;
+              case 'l': list_policies = 1; break;
               case 's': if( pos + 1 < argc )
                         { new_policy = argv[pos+1];
                           if( !oyStrlen_(new_policy) )
@@ -109,8 +122,6 @@ int main( int argc , char** argv )
                         } else wrong_arg = "-s";
                         if(oy_debug) fprintf(stderr,"new_policy=0\n"); ++pos;
                         break;
-              case 'c': current_policy = 1; break;
-              case 'l': list_policies = 1; break;
               case 'v': oy_debug += 1; break;
               case 'h':
               default:
@@ -120,15 +131,22 @@ int main( int argc , char** argv )
             }
             break;
         default:
-            fileName = argv[pos];
+                        printfHelp(argc, argv);
+                        exit (0);
+                        break;
       }
       if( wrong_arg )
       {
-        fprintf(stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
-        exit(1);
+       fprintf(stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
+       printfHelp(argc, argv);
+       exit(1);
       }
       ++pos;
     }
+  } else
+  {
+                        printfHelp(argc, argv);
+                        exit (0);
   }
 
   /* check the default paths */
@@ -136,7 +154,7 @@ int main( int argc , char** argv )
 
 
   /* load the policy file into memory */
-  xml = oyReadFileToMem_( oyMakeFullFileDirName_(fileName), &size,
+  xml = oyReadFileToMem_( oyMakeFullFileDirName_(import_policy), &size,
                           oyAllocateFunc_ );
   /* parse and set policy */
   if(xml)
@@ -144,9 +162,9 @@ int main( int argc , char** argv )
     oyReadXMLPolicy( oyGROUP_ALL, xml );
     oyDeAllocateFunc_( xml );
   }
-  else if ( fileName )
+  else if ( import_policy )
   {
-    fprintf( stderr, "%s:%d could not read file: %s\n",__FILE__,__LINE__, fileName);
+    fprintf( stderr, "%s:%d could not read file: %s\n",__FILE__,__LINE__, import_policy);
     return 1;
   }
 
@@ -164,7 +182,7 @@ int main( int argc , char** argv )
   if(current_policy || list_policies)
   {
     const char ** names = NULL;
-    int count = 0, i, current;
+    int count = 0, i, current = -1;
     oyOptionChoicesGet( oyWIDGET_POLICY, &count, &names, &current );
 
     if(list_policies)
@@ -173,10 +191,10 @@ int main( int argc , char** argv )
 
     if(current_policy)
       fprintf( stdout, "%s \"%s\"\n",
-               _("Currently active policy:"), names[current]);
+               _("Currently active policy:"), current>=0?names[current]:"---");
 
   } else
-  if(!fileName)
+  if(dump_policy)
   {
     size = 0;
     xml = oyPolicyToXML( oyGROUP_ALL, 1, oyAllocateFunc_ );

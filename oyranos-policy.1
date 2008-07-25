@@ -2,17 +2,39 @@
 .SH NAME
 oyranos-policy \- Oyranos CMS policy tool
 .SH SYNOPSIS
-.B oyranos-policy
+.B oyranos-policy 
+[-c] [-d] [-i filename]
+[-l] [-s filename] [-h]
 .SH DESCRIPTION
 The tool dumps out / read a configuration of the Oyranos colour management system (CMS).
 .SH OPTIONS
 .TP
-.B oyranos_settings_file_name
-must be in Oyranos' own xml-ish text format
+.B \-c
+show current active policy name
+.TP
+.B \-d
+dump out all settings in Oyranos' own xml-ish text format
+.TP
+.B \-i
+import;
+filename must be in Oyranos' own xml-ish text format
+.TP
+.B \-l
+list available policies
+.TP
+.B \-s
+Save and install to a new policy;
+filename must be in Oyranos' own xml-ish text format
+.TP
+.B \-l
+help text
 .SH EXAMPLES
 .TP
+Dump out the actual settings::
+.B oyranos-policy -d
+.TP
 Set new policy:
-.B oyranos-policy policy_filename
+.B oyranos-policy -i policy_filename
 .TP
 List available policies:
 .B oyranos-policy -l
@@ -22,6 +44,9 @@ Currently active policy:
 .TP
 Save and install to a new policy:
 .B oyranos-policy -s policy_name
+.TP
+Print a help text:
+.B oyranos-policy -h
 .PP
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
