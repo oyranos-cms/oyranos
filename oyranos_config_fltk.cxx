@@ -392,8 +392,8 @@ Option::Option( int x, int y, int w, int h, const char *name,
       }
     }
     if(occurence > 1)
-      WARNc_S((_("multiple occurencies of default %s profile: %d times"),
-               oyNoEmptyString_m_(name), occurence))
+      WARNc3_S("%s: %s %d", _("multiple occurencies of default profile"),
+               oyNoEmptyString_m_(name), occurence)
     choice->value( val );
 
     DBG_PROG_V((choice->size()))
@@ -558,7 +558,7 @@ static Fl_Group* addTab( Flmm_Tabs* tabs, const oyGROUP_e *groups ) {
   Fl_Group *tab = NULL; // actual tab
 
   if( !parent )
-    WARNc_S( ("wrong widget") );
+    WARNc_S( "wrong widget" );
 
   for( int k = 1; k <= groups[0]; ++k )
   {
@@ -636,7 +636,7 @@ static Fl_Widget* getWidget( Fl_Group* group, oyWIDGET_e oywid ) {
   Fl_Widget *wid = NULL;
 
   if( !group )
-    WARNc_S( ("wrong widget") );
+    WARNc_S( "wrong widget" );
 
     int wcount = group->children();
 
@@ -670,7 +670,7 @@ static Fl_Group* getTab( Flmm_Tabs* tabs, oyGROUP_e group, Fl_Group **container 
     *container = NULL;
 
   if( !parent )
-    WARNc_S( ("wrong widget") );
+    WARNc_S( "wrong widget" );
 
     int wcount = parent->children();
     tab = NULL;
@@ -1484,10 +1484,10 @@ int main(int argc, char **argv) {
         if (fscanf (pp, "%s", text) != 1)
         {
           pclose (pp);
-          WARNc_S(( "no executeable path found" ));
+          WARNc_S( "no executeable path found" );
         }
       } else {
-        WARNc_S(( "could not ask for executeable path" ));
+        WARNc_S( "could not ask for executeable path" );
       }
     }
     snprintf (path, len-1, "%s%s%s",text,DIR_SEPARATOR,reloc_path);
@@ -1511,7 +1511,7 @@ int main(int argc, char **argv) {
                                      set_charset );
     oy_domain_codeset = fl_i18n_codeset;
     if(err) {
-      WARNc_S(("i18n initialisation failed"));
+      WARNc_S("i18n initialisation failed");
     }
   }
   { Fl_Double_Window* o = top_group = new Fl_Double_Window(505, 410, _("Oyranos Configuration"));
