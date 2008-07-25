@@ -16,6 +16,7 @@
 #include "oyranos.h"
 #include "oyranos_debug.h"
 #include "oyranos_config.h"
+#include "oyranos_helper.h"
 #include "oyranos_alpha.h"
 #include "config.h"
 #include "fl_i18n/fl_i18n.H"

@@ -38,6 +38,7 @@ decl {\#include <FL/fl_draw.H>} {public
 decl {\#include "oyranos.h"
 \#include "oyranos_debug.h"
 \#include "oyranos_config.h"
+\#include "oyranos_helper.h"
 \#include "oyranos_alpha.h"
 \#include "config.h"} {public
 } 
@@ -480,7 +481,7 @@ class Option {: {public OyFl_Pack} private
     }
     if(occurence > 1)
       WARNc_S((_("multiple occurencies of default %s profile: %d times"),
-               name, occurence))
+               oyNoEmptyString_m_(name), occurence))
     choice->value( val );
 
     DBG_PROG_V((choice->size()))

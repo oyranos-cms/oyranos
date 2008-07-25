@@ -393,7 +393,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
     }
     if(occurence > 1)
       WARNc_S((_("multiple occurencies of default %s profile: %d times"),
-               name, occurence))
+               oyNoEmptyString_m_(name), occurence))
     choice->value( val );
 
     DBG_PROG_V((choice->size()))
