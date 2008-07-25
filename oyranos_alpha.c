@@ -7872,6 +7872,8 @@ OYAPI oyProfiles_s * OYEXPORT
   return s;
 }
 
+oyProfiles_s * oy_profile_list_cache_ = 0;
+
 /** @func    oyProfiles_Create
  *  @brief   get a list of installed profiles
  *
@@ -7892,7 +7894,7 @@ OYAPI oyProfiles_s * OYEXPORT
   oyProfile_s * tmp = 0, * pattern = 0;
   char  ** names = 0, * full_name = 0;
   oyPointer block = 0;
-  uint32_t names_n = 0, i = 0, j = 0,
+  uint32_t names_n = 0, i = 0, j = 0, n = 0,
            patterns_n = oyProfiles_Count(patterns);
   size_t   size = 128;
 
@@ -7909,23 +7911,44 @@ OYAPI oyProfiles_s * OYEXPORT
 
       if(pattern->size_ > 132)
         size = 0;
+
+      oyProfile_Release( &pattern );
     }
 
-    for(i = 0; i < names_n; ++i)
+    if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
     {
-      if(names[i])
+      for(i = 0; i < names_n; ++i)
       {
-        if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+        if(names[i])
         {
-          if(size && 0)
-          { /* TODO short readings */
-            full_name = oyFindProfile_(names[i]);
-            block = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
-            tmp = oyProfile_FromMemMove_( size, &block, 0, 0 );
+          if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+          {
+            if(size && 0)
+            { /* TODO short readings */
+              full_name = oyFindProfile_(names[i]);
+              block = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
+              tmp = oyProfile_FromMemMove_( size, &block, 0, 0 );
+            }
+            else
+            {
+              tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
+              oy_profile_list_cache_ = oyProfiles_MoveIn(oy_profile_list_cache_,
+                                                         &tmp, -1);
+              error = !oy_profile_list_cache_;
+            }
           }
-          else
-            tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
         }
+      }
+    }
+
+    n = oyProfiles_Count( oy_profile_list_cache_ );
+    if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
+      WARNc2_S("updated oy_profile_list_cache_ differs: %d %d",n, names_n);
+    oyStringListRelease_( &names, names_n, oyDeAllocateFunc_ ); names_n = 0;
+
+    for(i = 0; i < n; ++i)
+    {
+        tmp = oyProfiles_Get( oy_profile_list_cache_, i );
 
         if(patterns_n > 0)
         {
@@ -7947,13 +7970,123 @@ OYAPI oyProfiles_s * OYEXPORT
           s = oyProfiles_MoveIn( s, &tmp, -1);
           error = !s;
         }
-      }
     }
-
-    oyStringListRelease_( &names, names_n, oyDeAllocateFunc_ );
   }
 
   return s;
+}
+
+/** @func    oyProfiles_ForStd
+ *  @brief   get a list of installed profiles
+ *
+ *  @param[in]     colour_space        standard profile class
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/25 (Oyranos: 0.1.8)
+ *  @date    2008/07/25
+ */
+OYAPI oyProfiles_s * OYEXPORT
+                 oyProfiles_ForStd   ( oyPROFILE_e         colour_space,
+                                       int               * current,
+                                       oyObject_s          object)
+{
+  oyPROFILE_e type = colour_space;
+    char * default_p =
+           oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
+    int i, val = -1;
+
+    char  * temp = 0,
+          * text = 0;
+    uint32_t size = 0;
+    oyProfiles_s * iccs = 0, * patterns = 0;
+    oyProfile_s * profile = 0, * temp_prof = 0;
+
+
+    /* prepare the patterns according to the profile type */
+    if(type == oyEDITING_XYZ ||
+       type == oyASSUMED_XYZ)
+    {
+      profile = oyProfile_FromSignature( icSigXYZData,
+                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, oySIGNATURE_CLASS, icSigColorSpaceClass);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyEDITING_LAB ||
+       type == oyASSUMED_LAB)
+    {
+      profile = oyProfile_FromSignature( icSigLabData,
+                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, oySIGNATURE_CLASS, icSigColorSpaceClass);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyEDITING_RGB ||
+       type == oyASSUMED_RGB)
+    {
+      profile = oyProfile_FromSignature( icSigRgbData,
+                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, oySIGNATURE_CLASS, icSigColorSpaceClass);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      profile = oyProfile_FromSignature( icSigRgbData,
+                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, oySIGNATURE_CLASS, icSigInputClass);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      profile = oyProfile_FromSignature( icSigRgbData,
+                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, oySIGNATURE_CLASS, icSigDisplayClass);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyEDITING_CMYK ||
+       type == oyASSUMED_CMYK ||
+       type == oyPROFILE_PROOF)
+    {
+      profile = oyProfile_FromSignature( icSigCmykData,
+                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, oySIGNATURE_CLASS, icSigOutputClass);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyEDITING_GRAY ||
+       type == oyASSUMED_GRAY)
+    {
+      profile = oyProfile_FromSignature( icSigGrayData,
+                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, oySIGNATURE_CLASS, icSigColorSpaceClass);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+
+    /* get the profile list */
+    iccs = oyProfiles_Create( patterns, 0 );
+
+    /* detect the default profile position in our list */
+    size = oyProfiles_Count(iccs);
+    if(default_p)
+    for( i = 0; i < size; ++i)
+    {
+      temp_prof = oyProfiles_Get( iccs, i );
+      text = oyStringCopy_( oyProfile_GetFileName(temp_prof, 0),
+                            oyAllocateFunc_ );
+      temp = oyStrrchr_( text, '/' );
+      if(temp)
+        ++temp;
+      else
+        temp = text;
+
+      if(oyStrstr_( temp, default_p) &&
+         oyStrlen_( temp ) == oyStrlen_(default_p))
+      {
+        val = i;
+        break;
+      }
+
+      oyProfile_Release( &temp_prof );
+      oyDeAllocateFunc_( text );
+    }
+
+    if(current)
+      *current          = val;
+    oyFree_m_( default_p );
+
+  return iccs;
 }
 
 /** @internal

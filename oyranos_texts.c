@@ -23,6 +23,7 @@
 
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_alpha.h"
 #include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
@@ -1618,72 +1619,42 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
   if( oyWIDGET_DEFAULT_PROFILE_START < type &&
       type < oyWIDGET_DEFAULT_PROFILE_END )
   {
-    oyChar * default_p =
-           oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
-    int i, val = -1, occurence = 0;
-    uint32_t count = 0;
-    oyChar** names = oyProfileListGet_ ( NULL, &count );
-    oyChar** dup = NULL;
-    int dup_count = 0;
+    int i = 0, n = 0, count = 0;
+    char ** texts = 0,
+          * text = 0,
+          * temp = 0;
+    oyProfiles_s * iccs = 0;
+    oyProfile_s * temp_prof = 0;
 
-    oyAllocHelper_m_( dup, char*, count, oyAllocateFunc_, return 1 );
+    iccs = oyProfiles_ForStd( type, current, 0 );
+    n = oyProfiles_Count( iccs );
 
+    for(i = 0; i < n; ++i)
     {
-      int dup_pos = 0;
-      oyChar * name = NULL;
+      temp_prof = oyProfiles_Get( iccs, i );
+      text = oyStringCopy_( oyProfile_GetFileName(temp_prof, 0),
+                            oyAllocateFunc_ );
+      temp = oyStrrchr_( text, '/' );
+      if(temp)
+        ++temp;
+      else
+        temp = text;
 
-      for (i = 0; i < count; ++i)
-      {
-        int k;
-        int double_name = 0;
+      oyStringListAddStaticString_( &texts, &count, temp,
+                                    oyAllocateFunc_, oyDeAllocateFunc_);
 
-        name = names[i];
-        for(k = 0; k < i; ++k)
-          if(oyStrcmp_( name, names[k]) == 0 && 
-             oyStrlen_( name ) )
-          {
-            double_name = 1;
-            break;
-          }
-
-        if(!double_name)
-        {
-          oyAllocString_m_( dup[dup_pos], oyStrblen_(name), 
-                            oyAllocateFunc_, return 1 );
-          oySprintf_( dup[dup_pos], "%s", name);
-          ++dup_pos;
-        }
-
-        if(default_p)
-        if(oyStrstr_( name, default_p) &&
-           oyStrlen_( name ) == oyStrlen_(default_p))
-        {
-          if(val >= 0) {
-            ++occurence;
-          } else {
-            val = dup_pos-1;
-            ++occurence;
-          }
-        }
-        dup_count = dup_pos;
-      }
-      if(occurence > 1)
-        WARNc3_S("%s %s %d",default_p,
-                 _("multiple occurencies of default profile\n  Did you install multiple times?"),
-                  occurence);
+      oyProfile_Release( &temp_prof );
+      oyDeAllocateFunc_( text );
     }
     if( choices )
-      *choices              = dup_count;
+      *choices              = count;
 
     if( choices_string_list )
-      *choices_string_list = (const char **)dup; 
+      *choices_string_list = (const char **)texts; 
     else
-      oyStringListRelease_( &dup, dup_count, oyDeAllocateFunc_ );
-    oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+      oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
 
-    if(current)
-      *current          = val;
-    oyFree_m_( default_p );
+    oyProfiles_Release( &iccs );
   }
   else
   if( type == oyWIDGET_POLICY )
@@ -1745,7 +1716,7 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
   if( type == oyWIDGET_PATHS )
   {
     int count = 0;
-    oyChar ** list = oyProfilePathsGet_( &count, oyAllocateFunc_ );
+    char ** list = oyProfilePathsGet_( &count, oyAllocateFunc_ );
     int c = -1;
 
     if( !list )

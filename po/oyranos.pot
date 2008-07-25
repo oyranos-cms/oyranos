@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-07-24 12:42+0200\n"
+"POT-Creation-Date: 2008-07-25 10:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "file exists, please remove befor installing new profile."
 msgstr ""
 
-#: oyranos.c:1146
+#: oyranos.c:1152
 msgid "will overwrite policy file"
 msgstr ""
 
@@ -83,352 +83,346 @@ msgstr ""
 msgid "%d. path %s is not readable"
 msgstr ""
 
-#: oyranos_texts.c:145
+#: oyranos_texts.c:146
 msgid "Start"
 msgstr ""
 
-#: oyranos_texts.c:146
+#: oyranos_texts.c:147
 msgid "Oyranos Settings Group"
 msgstr ""
 
-#: oyranos_texts.c:153
+#: oyranos_texts.c:154
 msgid "Default Profiles"
 msgstr ""
 
-#: oyranos_texts.c:154
+#: oyranos_texts.c:155
 msgid "Source and Target Profiles for various situations"
 msgstr ""
 
-#: oyranos_texts.c:161
+#: oyranos_texts.c:162
 msgid "Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:162
+#: oyranos_texts.c:163
 msgid "Well behaving Colour Space for Editing"
 msgstr ""
 
-#: oyranos_texts.c:169
+#: oyranos_texts.c:170
 msgid "Assumed Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:170
+#: oyranos_texts.c:171
 msgid "Assumed Colour Space for untagged colours"
 msgstr ""
 
-#: oyranos_texts.c:177
+#: oyranos_texts.c:178
 msgid "Proofing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:178
+#: oyranos_texts.c:179
 msgid "Colour Space for Simulating real devices"
 msgstr ""
 
-#: oyranos_texts.c:185 oyranos_texts.c:262
+#: oyranos_texts.c:186 oyranos_texts.c:263
 msgid "Paths"
 msgstr ""
 
-#: oyranos_texts.c:186 oyranos_texts.c:263
+#: oyranos_texts.c:187 oyranos_texts.c:264
 msgid "Paths where ICC Profiles can be found"
 msgstr ""
 
-#: oyranos_texts.c:193 oyranos_texts.c:251 oyranos_cmm_oyra.c:1563
+#: oyranos_texts.c:194 oyranos_texts.c:252 oyranos_cmm_oyra.c:1563
 #: oyranos_config_fltk.cxx:1559
 msgid "Policy"
 msgstr ""
 
-#: oyranos_texts.c:194 oyranos_texts.c:252 oyranos_cmm_oyra.c:1563
+#: oyranos_texts.c:195 oyranos_texts.c:253 oyranos_cmm_oyra.c:1563
 msgid "Collections of settings in Oyranos"
 msgstr ""
 
-#: oyranos_texts.c:201
+#: oyranos_texts.c:202
 msgid "Behaviour"
 msgstr ""
 
-#: oyranos_texts.c:202
+#: oyranos_texts.c:203
 msgid "Settings affecting the Behaviour in various situations"
 msgstr ""
 
-#: oyranos_texts.c:209
+#: oyranos_texts.c:210
 msgid "Rendering"
 msgstr ""
 
-#: oyranos_texts.c:210
+#: oyranos_texts.c:211
 msgid ""
 "The kind of ICC standard gamut mapping for transforming colours between "
 "differently sized colour spaces"
 msgstr ""
 
-#: oyranos_texts.c:217
+#: oyranos_texts.c:218
 msgid "Save Mixed colour space Documents"
 msgstr ""
 
-#: oyranos_texts.c:218
+#: oyranos_texts.c:219
 msgid "Default Handling of Mixed Colour Spaces inside one single Document"
 msgstr ""
 
-#: oyranos_texts.c:225
+#: oyranos_texts.c:226
 msgid "Mismatching"
 msgstr ""
 
-#: oyranos_texts.c:226
+#: oyranos_texts.c:227
 msgid ""
 "Decide what to do when the default colour spaces dont match the current ones."
 msgstr ""
 
-#: oyranos_texts.c:233 oyranos_texts.c:372
+#: oyranos_texts.c:234 oyranos_texts.c:373
 msgid "Proofing"
 msgstr ""
 
-#: oyranos_texts.c:234
+#: oyranos_texts.c:235
 msgid "Default Proofing Settings"
 msgstr ""
 
-#: oyranos_texts.c:241
+#: oyranos_texts.c:242
 msgid "All"
 msgstr ""
 
-#: oyranos_texts.c:242
+#: oyranos_texts.c:243
 msgid "Oyranos Settings"
 msgstr ""
 
-#: oyranos_texts.c:272 oyranos_cmm_oyra.c:1521
+#: oyranos_texts.c:273 oyranos_cmm_oyra.c:1521
 msgid "Editing Rgb"
 msgstr ""
 
-#: oyranos_texts.c:273 oyranos_cmm_oyra.c:1522
+#: oyranos_texts.c:274 oyranos_cmm_oyra.c:1522
 msgid "Prefered Rgb Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:281
+#: oyranos_texts.c:282
 msgid "Editing Cmyk"
 msgstr ""
 
-#: oyranos_texts.c:282
+#: oyranos_texts.c:283
 msgid "Prefered Cmyk Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:290
+#: oyranos_texts.c:291
 msgid "Editing XYZ"
 msgstr ""
 
-#: oyranos_texts.c:291
+#: oyranos_texts.c:292
 msgid "Prefered XYZ Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:299
+#: oyranos_texts.c:300
 msgid "Editing Lab"
 msgstr ""
 
-#: oyranos_texts.c:300
+#: oyranos_texts.c:301
 msgid "Prefered CIE*Lab Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:308
+#: oyranos_texts.c:309
 msgid "Editing Gray"
 msgstr ""
 
-#: oyranos_texts.c:309
+#: oyranos_texts.c:310
 msgid "Prefered Gray Editing Colour Space"
 msgstr ""
 
-#: oyranos_texts.c:317
+#: oyranos_texts.c:318
 msgid "Assumed XYZ source"
 msgstr ""
 
-#: oyranos_texts.c:318
+#: oyranos_texts.c:319
 msgid "Assigning an untagged XYZ Image an colour space"
 msgstr ""
 
-#: oyranos_texts.c:326
+#: oyranos_texts.c:327
 msgid "Assumed Lab source"
 msgstr ""
 
-#: oyranos_texts.c:327
+#: oyranos_texts.c:328
 msgid "Assigning an untagged CIE*Lab Image an colour space"
 msgstr ""
 
-#: oyranos_texts.c:335
+#: oyranos_texts.c:336
 msgid "Assumed Rgb source"
 msgstr ""
 
-#: oyranos_texts.c:336
+#: oyranos_texts.c:337
 msgid "Assigning an untagged Rgb Image an colour space"
 msgstr ""
 
-#: oyranos_texts.c:344
+#: oyranos_texts.c:345
 msgid "Assumed Web source"
 msgstr ""
 
-#: oyranos_texts.c:345
+#: oyranos_texts.c:346
 msgid ""
 "Assigning an untagged Rgb Image with source from the WWW an colour space"
 msgstr ""
 
-#: oyranos_texts.c:354
+#: oyranos_texts.c:355
 msgid "Assumed Cmyk source"
 msgstr ""
 
-#: oyranos_texts.c:355
+#: oyranos_texts.c:356
 msgid "Assigning an untagged Cmyk Image this colour space"
 msgstr ""
 
-#: oyranos_texts.c:363
+#: oyranos_texts.c:364
 msgid "Assumed Gray source"
 msgstr ""
 
-#: oyranos_texts.c:364
+#: oyranos_texts.c:365
 msgid "Assigning an untagged Gray Image this colour space"
 msgstr ""
 
-#: oyranos_texts.c:373
+#: oyranos_texts.c:374
 msgid "Colour space for Simulating an Output Device"
 msgstr ""
 
-#: oyranos_texts.c:382
+#: oyranos_texts.c:383
 msgid "No Image profile"
 msgstr ""
 
-#: oyranos_texts.c:383
+#: oyranos_texts.c:384
 msgid ""
 "Image has no colour space embedded. What default action shall be performed?"
 msgstr ""
 
-#: oyranos_texts.c:385
+#: oyranos_texts.c:386
 msgid "Assign No Profile"
 msgstr ""
 
-#: oyranos_texts.c:385
+#: oyranos_texts.c:386
 msgid "Assign Assumed Profile"
 msgstr ""
 
-#: oyranos_texts.c:385 oyranos_texts.c:394 oyranos_texts.c:403
-#: oyranos_texts.c:412 oyranos_texts.c:421
+#: oyranos_texts.c:386 oyranos_texts.c:395 oyranos_texts.c:404
+#: oyranos_texts.c:413 oyranos_texts.c:422
 msgid "Promt"
 msgstr ""
 
-#: oyranos_texts.c:391
+#: oyranos_texts.c:392
 msgid "On Rgb Mismatch"
 msgstr ""
 
-#: oyranos_texts.c:392 oyranos_texts.c:401
+#: oyranos_texts.c:393 oyranos_texts.c:402
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr ""
 
-#: oyranos_texts.c:394 oyranos_texts.c:403 oyranos_texts.c:412
-#: oyranos_texts.c:421
+#: oyranos_texts.c:395 oyranos_texts.c:404 oyranos_texts.c:413
+#: oyranos_texts.c:422
 msgid "Preserve Numbers"
 msgstr ""
 
-#: oyranos_texts.c:394 oyranos_texts.c:403
+#: oyranos_texts.c:395 oyranos_texts.c:404
 msgid "Convert automatically"
 msgstr ""
 
-#: oyranos_texts.c:400
+#: oyranos_texts.c:401
 msgid "On Cmyk Mismatch"
 msgstr ""
 
-#: oyranos_texts.c:409
+#: oyranos_texts.c:410
 msgid "For Print"
 msgstr ""
 
-#: oyranos_texts.c:410
+#: oyranos_texts.c:411
 msgid "Handle Mixed colour spaces in Preparing a document for Print output."
 msgstr ""
 
-#: oyranos_texts.c:412
+#: oyranos_texts.c:413
 msgid "Convert to Default Cmyk Editing Space"
 msgstr ""
 
-#: oyranos_texts.c:412
+#: oyranos_texts.c:413
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr ""
 
-#: oyranos_texts.c:418
+#: oyranos_texts.c:419
 msgid "For Screen"
 msgstr ""
 
-#: oyranos_texts.c:419
+#: oyranos_texts.c:420
 msgid "Handle Mixed colour spaces in Preparing a document for Screen output."
 msgstr ""
 
-#: oyranos_texts.c:421
+#: oyranos_texts.c:422
 msgid "Convert to Default Rgb Editing Space"
 msgstr ""
 
-#: oyranos_texts.c:421
+#: oyranos_texts.c:422
 msgid "Convert to WWW (sRGB)"
 msgstr ""
 
-#: oyranos_texts.c:427
+#: oyranos_texts.c:428
 msgid "Default Rendering Intent"
 msgstr ""
 
-#: oyranos_texts.c:428
+#: oyranos_texts.c:429
 msgid "Rendering Intent for colour space Transformations."
 msgstr ""
 
-#: oyranos_texts.c:430
+#: oyranos_texts.c:431
 msgid "Perceptual"
 msgstr ""
 
-#: oyranos_texts.c:430 oyranos_texts.c:448
+#: oyranos_texts.c:431 oyranos_texts.c:449
 msgid "Relative Colorimetric"
 msgstr ""
 
-#: oyranos_texts.c:430 oyranos_alpha.c:419 oyranos_alpha.c:425
+#: oyranos_texts.c:431 oyranos_alpha.c:419 oyranos_alpha.c:425
 msgid "Saturation"
 msgstr ""
 
-#: oyranos_texts.c:430 oyranos_texts.c:448
+#: oyranos_texts.c:431 oyranos_texts.c:449
 msgid "Absolute Colorimetric"
 msgstr ""
 
-#: oyranos_texts.c:436
+#: oyranos_texts.c:437
 msgid "Use Black Point Compensation"
 msgstr ""
 
-#: oyranos_texts.c:437
+#: oyranos_texts.c:438
 msgid "BPC affects only the Relative Colorimetric Rendering Intent."
 msgstr ""
 
-#: oyranos_texts.c:439 oyranos_texts.c:457 oyranos_texts.c:466
+#: oyranos_texts.c:440 oyranos_texts.c:458 oyranos_texts.c:467
 msgid "No"
 msgstr ""
 
-#: oyranos_texts.c:439 oyranos_texts.c:457 oyranos_texts.c:466
+#: oyranos_texts.c:440 oyranos_texts.c:458 oyranos_texts.c:467
 msgid "Yes"
 msgstr ""
 
-#: oyranos_texts.c:445
+#: oyranos_texts.c:446
 msgid "Proofing Rendering Intent"
 msgstr ""
 
-#: oyranos_texts.c:446
+#: oyranos_texts.c:447
 msgid "Behaviour of colour space transformation for proofing"
 msgstr ""
 
-#: oyranos_texts.c:454
+#: oyranos_texts.c:455
 msgid "SoftProof by Default"
 msgstr ""
 
-#: oyranos_texts.c:455
+#: oyranos_texts.c:456
 msgid "Behaviour for Softproofing view at application startup"
 msgstr ""
 
-#: oyranos_texts.c:463
+#: oyranos_texts.c:464
 msgid "Hardproof by Default"
 msgstr ""
 
-#: oyranos_texts.c:464
+#: oyranos_texts.c:465
 msgid ""
 "Behaviour for preselecting Hardproofing with Standard Proofing Profile at "
 "print time"
-msgstr ""
-
-#: oyranos_texts.c:1654
-msgid ""
-"multiple occurencies of default profile\n"
-"  Did you install multiple times?"
 msgstr ""
 
 #: oyranos_monitor.c:330
@@ -503,7 +497,7 @@ msgstr ""
 msgid "-v verbose"
 msgstr ""
 
-#: oyranos_gamma.c:136 oyranos_policy.c:127
+#: oyranos_gamma.c:136 oyranos_policy.c:140
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -527,7 +521,7 @@ msgstr ""
 msgid "List available policies:"
 msgstr ""
 
-#: oyranos_policy.c:59 oyranos_policy.c:176
+#: oyranos_policy.c:59 oyranos_policy.c:194
 msgid "Currently active policy:"
 msgstr ""
 
@@ -539,11 +533,15 @@ msgstr ""
 msgid "policy name"
 msgstr ""
 
-#: oyranos_policy.c:158
+#: oyranos_policy.c:63
+msgid "Print a help text:"
+msgstr ""
+
+#: oyranos_policy.c:176
 msgid "installed new policy"
 msgstr ""
 
-#: oyranos_policy.c:161
+#: oyranos_policy.c:179
 msgid "installation of new policy file failed with error:"
 msgstr ""
 
@@ -1241,27 +1239,27 @@ msgstr ""
 msgid "100"
 msgstr ""
 
-#: oyranos_alpha.c:11370
+#: oyranos_alpha.c:11503
 msgid "No filter"
 msgstr ""
 
-#: oyranos_alpha.c:11378
+#: oyranos_alpha.c:11511
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr ""
 
-#: oyranos_alpha.c:11386
+#: oyranos_alpha.c:11519
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:11395
+#: oyranos_alpha.c:11528
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 
-#: oyranos_alpha.c:11423
+#: oyranos_alpha.c:11556
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:12163
+#: oyranos_alpha.c:12296
 msgid "---"
 msgstr ""
 
@@ -1341,8 +1339,7 @@ msgid "Show in external Viewer"
 msgstr ""
 
 #: oyranos_config_fltk.cxx:395
-#, c-format
-msgid "multiple occurencies of default %s profile: %d times"
+msgid "multiple occurencies of default profile"
 msgstr ""
 
 #: oyranos_config_fltk.cxx:502
@@ -1373,19 +1370,19 @@ msgstr ""
 msgid "Active Policy:"
 msgstr ""
 
-#: oyranos_helper.h:62
+#: oyranos_helper.h:63
 #, c-format
 msgid "nothing to delete %s"
 msgstr ""
 
-#: oyranos_helper.h:80
+#: oyranos_helper.h:81
 msgid "nothing to allocate - size:"
 msgstr ""
 
-#: oyranos_helper.h:88
+#: oyranos_helper.h:89
 msgid "Can not allocate memory for:"
 msgstr ""
 
-#: oyranos_helper.h:99
+#: oyranos_helper.h:100
 msgid "nothing allocated"
 msgstr ""
