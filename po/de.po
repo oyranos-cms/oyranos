@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-07-25 10:25+0200\n"
+"POT-Creation-Date: 2008-07-24 23:14+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -1258,27 +1258,27 @@ msgstr ""
 msgid "100"
 msgstr ""
 
-#: oyranos_alpha.c:11503
+#: oyranos_alpha.c:11524
 msgid "No filter"
 msgstr "kein Filter"
 
-#: oyranos_alpha.c:11511
+#: oyranos_alpha.c:11532
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr "Bitte fügen Sie erst ein Bildknoten in den Graphen vor andere Filtern"
 
-#: oyranos_alpha.c:11519
+#: oyranos_alpha.c:11540
 msgid "attempt to add a incomplete filter"
 msgstr "Versuch einen unvollständigen Filter hinzuzufügen"
 
-#: oyranos_alpha.c:11528
+#: oyranos_alpha.c:11549
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 
-#: oyranos_alpha.c:11556
+#: oyranos_alpha.c:11577
 msgid "?? Nothing to add ??"
 msgstr "?? Nichts hinzuzufügen ??"
 
-#: oyranos_alpha.c:12296
+#: oyranos_alpha.c:12317
 msgid "---"
 msgstr ""
 

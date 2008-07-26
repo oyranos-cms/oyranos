@@ -355,7 +355,7 @@ test:	test.o
 	test.o \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
-$(LIBFL_I18N):
+$(LIBFL_I18N):	fl_i18n/Makefile
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
 
 $(LINGUAS_SRC):	$(POT_FILE)
