@@ -212,26 +212,27 @@
     adapt to backends.
 
     @subsection object_design Object Design
-    All Oyranos structs have a first member called <i>type_</i> to better 
-    distinguish them. The according value is available as a enum from
-    oyOBJECT_TYPE_e.\n
-    The second member of a Object style struct is <i>oy_</i> and features common
+    All Oyranos structs (::oyStruct_s)have a first member called \a type_ to
+    better distinguish them. The according value is available as a enum from
+    ::oyOBJECT_TYPE_e.\n
+    Each object should implement a appropriate oyStruct_Copy_f() and a 
+    oyStruct_Release_f() function member on position 2 and 3. 
+    These allow to easily cast to functions of other objects. Many object
+    manipulators in Oyranos rely on this feature.
+    Thus each object can implement list functionality with a common base in the
+    above mentioned ::oyStructList_s. The resoning behind the above outlined use
+    of common API's is, even with C casting, they help in reducing code size, 
+    for easier maintaining and while fixing bugs.\n
+    The fourth member of a ::oyObject_s style struct is \a oy_ and features common
     properties, like memory management, naming and more.\n
     A new simple Oyranos data data structure should contain the type_ specifier.
     Complex data structures should contain the type_ and oy_ structure to allow
     the advanced features.\n
-    Providing of similiar functions for different Oyranos Objects, allows
-    theire use in a abstract way. A soft typecheck is possible over the type_ 
-    member. For a example see the internal oyPointerList_ struct with the 
+    Providing of similiar functions for different Oyranos objects, allows
+    their use in a abstract way. A soft typecheck is possible over the type_ 
+    member. For an example see the internal ::oyStructList_s struct with the 
     according C API. As casting in C is always blind, it is better to avoid, 
-    except you know what you do. Exposing seems not appropriate.
-    For instance, each object should implement a appropriate Release and Copy 
-    function with the same shape, arguments and return value, to easily cast
-    to functions of other objects providing similiar functionality.
-    Thus each object can implement list functionality with a common base in the
-    above mentioned oyPointerList_. The resoning behind the above outlined use
-    of common API's is, even with C casting, they help in reducing code size, 
-    for easier maintaining and while fixing bugs.
+    except you know what you do.
 
     @subsection api_naming API Naming
     Keeping API members in a lexical relation allowes
@@ -244,45 +245,13 @@
 
  */
 
-/** @page proposal Proposal
-    @section proposal Proposals
-    @subsection identity_proposal Profile Identity Proposal
-    One major benefit if a configuration system is the ashurance to use the
-    correct profiles.\n
-    A recently closed flaw in the ICC spec was a missing
-    identification tag inside the profile. While profiles may have varaying
-    names and descriptions, the now in the ICC standard included md5 checksum
-    approach fits well in the demand of easily and relyable distinguish between
-    various profiles.\n
-    The plan is to check or possibly recalculate the md5 sum and modify the
-    profile in the header accordingly. This makes sense especially for older
-    profiles. This feature makes of course only sense of the file access is
-    resonably quick. A hash table may help here.\n
-
-    @subsection correlation_proposal Correlation Proposal
-    An other toppic is the correlation of device and program settings during
-    image production and the selection of the correct profile for the needed
-    conversions. The profile should allways fit to the tool chain used. 
-    My suggestion is here to embedd these settings in a easy recoverable
-    way into the profile. A special ascii tag could be used therefor.\n
-    External libraries like sane or cups should tell Oyranos theyre
-    settings and query for a suitable profile. In the case of a not finding a
-    fitting profile the external library may ask for an alternative list of
-    settings. With selecting the desired settings the profile can be selected.
-    The goal herein is to give the user the freedom of choice and the security
-    regarding quality.
-
-    More proposals and ideas can be found on http://www.behrmann.name in the
-    Oyranos section.
- */
-
 /** @page install_current Installation
 
     @section install Installation
     Oyranos depends on following libraries:\n
 
     <ul>
-    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux , <a href="http://sourceforge.net/project/showfiles.php?group_id=117521">version 0.6.4</a> is needed due to API changes . </li>
+    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux, currently version 0.7 is requierd. </li>
     <li><a href="http://www.fltk.org">fltk</a> version >= 1.1.4 needed for a user interface\n
     you may configure fltk with several options enabled\n
     --enable-threads is needed for threads support (in ICC Examin)\n
@@ -302,10 +271,12 @@
     @section links Links
     - cross platform colour information exchange standard, called ICC - http://www.color.org
     - OpenICC: http://www.freedesktop.org/wiki/OpenIcc
-    - Email list: http://lists.freedesktop.org/mailman/listinfo/openicc
-    - Oyranos project page: http://www.oyranos.org/wiki
-    - Oyranos wiki: http://www.oyranos.org/wiki/index.php?title=Oyranos
+    - Email list: https://lists.sourceforge.net/lists/listinfo/oyranos-devel
+    - Bug reports: https://sourceforge.net/tracker/?group_id=177017&atid=879553
+    - Oyranos project page: http://www.oyranos.org/wiki/index.php?title=Oyranos
+    - Oyranos wiki: http://www.oyranos.org/wiki
     - Elektra, configuration engine used on Linux - http://elektra.sf.net
+    - littleCMS, colour conversion engine - http://www.littlecms.com
     - Xcalib, a vcgt to window server uploader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
     - Directory paths for colour profiles and other configuration data <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
     - X11 Requirements http://www.oyranos.org/wiki/index.php?title=Oyranos_X11_Requirements
