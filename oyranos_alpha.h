@@ -114,12 +114,6 @@ typedef enum {
   oyOBJECT_TYPE_PROFILES_S,           /*!< oyProfiles_s */
   oyOBJECT_TYPE_OPTION_S,             /*!< oyOption_s */
   oyOBJECT_TYPE_OPTIONS_S,            /*!< oyOptions_s */
-  oyOBJECT_TYPE_WIDGET_S,             /**< oyWidget_s */
-  oyOBJECT_TYPE_WIDGET_BUTTON_S,      /**< oyWidgetButton_s */
-  oyOBJECT_TYPE_WIDGET_CHOICE_S,      /**< oyWidgetChoice_s */
-  oyOBJECT_TYPE_WIDGET_GROUP_S,       /**< oyWidgetGroup_s */
-  oyOBJECT_TYPE_WIDGET_SLIDER_S,      /**< oyWidgetSlider_s */
-  oyOBJECT_TYPE_WIDGET_TEXT_S,        /**< oyWidgetText_s */
   oyOBJECT_TYPE_REGION_S,             /*!< oyRegion_s */
   oyOBJECT_TYPE_IMAGE_S,              /*!< oyImage_s */
   oyOBJECT_TYPE_COLOUR_CONVERSION_S,  /*!< oyColourConversion_s */
@@ -1060,10 +1054,16 @@ typedef struct oyFilterNode_s oyFilterNode_s;
  *  Filters are chained into a oyConversions_s in order to get applied to data.
  *  This happens by the oyFilterNode_s struct.
  *
+ *  It is possible to chain filters in different ways together. The aimed way
+ *  here is to use members and queries to find possible connections. For 
+ *  instance a one in one out filter can not be connected to two sources at 
+ *  once.
+ *
  *  The oyFILTER_TYPE_e describes different basic types of filters.
  *  - oyFILTER_TYPE_COLOUR filters contain only profiles and options. They can grab their surounding and concatenate the neighbour profiles to one profile transform for speed.
  *  - oyFILTER_TYPE_TONEMAP filters are similiar to oyFILTER_TYPE_COLOUR except they can work in a two dimensional domain to apply to HDR content. This distinction is driven by usage. A oyFILTER_TYPE_TONEMAP filter may contain profiles and options. But this is not required.
- *  - oyFILTER_TYPE_IMAGE is a container for one oyImage_s.
+ *  - oyFILTER_TYPE_IMAGE is a container for one oyImage_s. There is no 
+ *    assumption on how the buffers are implemented.
  *  - oyFILTER_TYPE_GENERIC can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
  *
  *  @param   profile_in

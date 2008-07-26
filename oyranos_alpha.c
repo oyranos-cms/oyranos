@@ -1328,12 +1328,6 @@ const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
     case oyOBJECT_TYPE_PROFILES_S: text = "oyProfiles_s"; break;
     case oyOBJECT_TYPE_OPTION_S: text = "oyOption_s"; break;
     case oyOBJECT_TYPE_OPTIONS_S: text = "oyOptions_s"; break;
-    case oyOBJECT_TYPE_WIDGET_S: text = "oyWidget_s"; break;
-    case oyOBJECT_TYPE_WIDGET_BUTTON_S: text = "oyWidgetButton_s"; break;
-    case oyOBJECT_TYPE_WIDGET_CHOICE_S: text = "oyWidgetChoice_s"; break;
-    case oyOBJECT_TYPE_WIDGET_GROUP_S: text = "oyWidgetGroup_s"; break;
-    case oyOBJECT_TYPE_WIDGET_SLIDER_S: text = "oyWidgetSlider_s"; break;
-    case oyOBJECT_TYPE_WIDGET_TEXT_S: text = "oyWidgetText_s"; break;
     case oyOBJECT_TYPE_REGION_S: text = "oyRegion_s"; break;
     case oyOBJECT_TYPE_IMAGE_S: text = "oyImage_s"; break;
     case oyOBJECT_TYPE_COLOUR_CONVERSION_S: text = "oyColourConversion_s";break;
@@ -8771,25 +8765,25 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
                              oyProfile_s * profile )
 {
   int n     = oyToChannels_m( pixel_layout );
+  int cchan_n = oyProfile_GetChannelsCount( profile );
   int coff_x = oyToColourOffset_m( pixel_layout );
   oyDATATYPE_e t = oyToDataType_m( pixel_layout );
   int swap  = oyToSwapColourChannels_m( pixel_layout );
   /*int revert= oyT_FLAVOR_M( pixel_layout );*/
-  oyPixel_t *mask = image->oy_->allocateFunc_( sizeof(int) * (oyCHAN0 + n + 1));
+  oyPixel_t *mask = image->oy_->allocateFunc_( sizeof(int) * (oyCHAN0 + 
+                    OY_MAX(n,cchan_n) + 1));
   int error = !mask;
   int so = oySizeofDatatype( t );
   int w = image->width;
   int h = image->height;
-  int cchan_n = 0;
   int i;
-  oyChar * text = oyAllocateFunc_(512);
-  oyChar * hash_text = 0;
+  char * text = oyAllocateFunc_(512);
+  char * hash_text = 0;
   oyImage_s * s = image;
 
   if(!s)
     return 0;
 
-  cchan_n = oyProfile_GetChannelsCount( profile );
 
   if(!error)
   {
