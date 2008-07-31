@@ -39,7 +39,7 @@
 
 /* forward declaration for oyranos_alpha.c */
 char ** oyCMMsGetNames_              ( int               * n,
-                                       oyOBJECT_TYPE_e   * types,
+                                       oyOBJECT_e        * types,
                                        int                 types_n );
 oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
@@ -58,11 +58,12 @@ main(int argc, char** argv)
   oyFilter_s      * filter = 0;
   int32_t result = 0;
   oyImage_s * image = 0;
-  float buf[24] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
+  double buf[24] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
   oyProfile_s * prof = 0;
   int x,y,w,h, i;
   char * ptr = 0;
   uint32_t size = 0;
+  int error = 0;
 
 #if 0
   int count = 0;
@@ -118,12 +119,14 @@ main(int argc, char** argv)
   prof = oyProfile_FromStd( oyASSUMED_WEB, 0 );
   w = 4;
   h = 2;
-  image = oyImage_Create( w, h, buf, oyTYPE_123_FLOAT, prof, 0 );
+  image = oyImage_Create( w, h, buf, OY_TYPE_123_DBL, prof, 0 );
 
   conversions = oyConversions_CreateInput ( image, 0 );
   filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..colour.cmm.icc", 0,0, 0 );
-  oyConversions_FilterAdd( conversions, filter );
-  oyConversions_OutputAdd( conversions, image );
+  error = oyConversions_FilterAdd( conversions, filter );
+  if(error)
+    fprintf( stdout, "could not add  filter: %s\n", "..colour.cmm.icc" );
+  error = oyConversions_OutputAdd( conversions, image );
   oyImage_Release( &image );
 
   /* create a very simple pixel iterator */
@@ -184,8 +187,8 @@ main(int argc, char** argv)
       fprintf( stdout, "%.01f %.01f %.01f\n", p[i+0], p[i+1], p[i+2] );
   }
 
-  if(conversions->input->filter->api_->oyCMMFilter_ContextToMem)
-    ptr = conversions->input->filter->api_->oyCMMFilter_ContextToMem( conversions->input->filter, &size, 0, malloc );
+  if(conversions->input->filter->api4_->oyCMMFilter_ContextToMem)
+    ptr = conversions->input->filter->api4_->oyCMMFilter_ContextToMem( conversions->input->filter, &size, 0, malloc );
 
   if(ptr)
     oyWriteMemToFile_( "test_dbg.icc", ptr, size );

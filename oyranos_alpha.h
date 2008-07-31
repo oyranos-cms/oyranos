@@ -52,7 +52,7 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
                                        const double      * XYZmax,
                                        const double      * XYZwhite );
 
-typedef struct oyImage_s_ oyImage_s;
+typedef struct oyImage_s oyImage_s;
 
 
 typedef oyStruct_s * (*oyStruct_Copy_f ) ( oyStruct_s *, oyPointer );
@@ -98,62 +98,68 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
 extern const char *oy_domain_codeset;
 
 /** @internal
- *  @brief Oyranos name structure
+ *  @brief Oyranos structure type
  *
- *  @since Oyranos: version 0.1.x
- *  @date  22 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/22 (Oyranos: 0.1.x)
+ *  @date    2008/07/31
  */
 typedef enum {
-  oyOBJECT_TYPE_NONE,
-  oyOBJECT_TYPE_OBJECT_S,             /**< oyObject_s */
-  oyOBJECT_TYPE_DISPLAY_S,            /**< oyDisplay_s */
-  oyOBJECT_TYPE_NAMED_COLOUR_S,       /*!< oyNamedColour_s */
-  oyOBJECT_TYPE_NAMED_COLOURS_S,      /*!< oyNamedColours_s */
-  oyOBJECT_TYPE_PROFILE_S,            /*!< oyProfile_s */
-  oyOBJECT_TYPE_PROFILE_TAG_S,        /*!< oyProfileTag_s */
-  oyOBJECT_TYPE_PROFILES_S,           /*!< oyProfiles_s */
-  oyOBJECT_TYPE_OPTION_S,             /*!< oyOption_s */
-  oyOBJECT_TYPE_OPTIONS_S,            /*!< oyOptions_s */
-  oyOBJECT_TYPE_REGION_S,             /*!< oyRegion_s */
-  oyOBJECT_TYPE_IMAGE_S,              /*!< oyImage_s */
-  oyOBJECT_TYPE_COLOUR_CONVERSION_S,  /*!< oyColourConversion_s */
-  oyOBJECT_TYPE_FILTER_S,             /**< oyFilter_s */
-  oyOBJECT_TYPE_FILTERS_S,            /**< oyFilters_s */
-  oyOBJECT_TYPE_FILTER_NODE_S,        /**< oyFilterNode_s */
-  oyOBJECT_TYPE_PIXEL_ACCESS_S,       /**< oyPixelAccess_s */
-  oyOBJECT_TYPE_CONVERSIONS_S,        /**< oyConversions_s */
-  oyOBJECT_TYPE_CMM_HANDLE_S = 50,    /**< oyCMMhandle_s */
-  oyOBJECT_TYPE_CMM_POINTER_S,        /*!< oyCMMptr_s */
-  oyOBJECT_TYPE_CMM_INFO_S,           /*!< oyCMMInfo_s */
-  oyOBJECT_TYPE_CMM_API_S,            /**< oyCMMapi_s */
-  oyOBJECT_TYPE_CMM_API1_S,           /**< oyCMMapi1_s */
-  oyOBJECT_TYPE_CMM_API2_S,           /**< oyCMMapi2_s */
-  oyOBJECT_TYPE_CMM_API3_S,           /**< oyCMMapi3_s */
-  oyOBJECT_TYPE_CMM_API4_S,           /**< oyCMMapi4_s */
-  oyOBJECT_TYPE_CMM_API_MAX,          /**< not defined */
-  oyOBJECT_TYPE_ICON_S = 80,          /*!< oyIcon_s */
-  oyOBJECT_TYPE_MODULE_S,             /*!< oyModule_s */
-  oyOBJECT_TYPE_EXTERNFUNC_S,         /*!< oyExternFunc_s */
-  oyOBJECT_TYPE_NAME_S,               /*!< oyName_s */
-  oyOBJECT_TYPE_COMP_S_,              /*!< oyComp_s_ */
-  oyOBJECT_TYPE_FILE_LIST_S_,         /*!< oyFileList_s_ */
-  oyOBJECT_TYPE_HASH_S,               /**< oyHash_s */
-  oyOBJECT_TYPE_HANDLE_S,             /**< oyHandle_s */
-  oyOBJECT_TYPE_STRUCT_LIST_S,        /**< oyStructList_s */
-  oyOBJECT_TYPE_NODE_S,               /**< oyNode_s */
-  oyOBJECT_TYPE_MAX
-} oyOBJECT_TYPE_e;
+  oyOBJECT_NONE,
+  oyOBJECT_OBJECT_S,                  /**< oyObject_s */
+  oyOBJECT_MONITOR_S,                 /**< oyMonitor_s */
+  oyOBJECT_NAMED_COLOUR_S,            /*!< oyNamedColour_s */
+  oyOBJECT_NAMED_COLOURS_S,           /*!< oyNamedColours_s */
+  oyOBJECT_PROFILE_S,                 /*!< oyProfile_s */
+  oyOBJECT_PROFILE_TAG_S,             /*!< oyProfileTag_s */
+  oyOBJECT_PROFILES_S,                /*!< oyProfiles_s */
+  oyOBJECT_OPTION_S,                  /*!< oyOption_s */
+  oyOBJECT_OPTIONS_S,                 /*!< oyOptions_s */
+  oyOBJECT_REGION_S,                  /*!< oyRegion_s */
+  oyOBJECT_IMAGE_S,                   /*!< oyImage_s */
+  oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s */
+  oyOBJECT_CONNECTOR_S,               /**< oyConnector_s */
+  oyOBJECT_FILTER_PLUG_S,             /**< oyFilterPlug_s */
+  oyOBJECT_FILTER_PLUGS_S,            /**< oyFilterPlugs_s */
+  oyOBJECT_FILTER_SOCKET_S,           /**< oyFilterSocket_s */
+  oyOBJECT_FILTER_S,                  /**< oyFilter_s */
+  oyOBJECT_FILTERS_S,                 /**< oyFilters_s */
+  oyOBJECT_FILTER_NODE_S,             /**< oyFilterNode_s */
+  oyOBJECT_PIXEL_ACCESS_S,            /**< oyPixelAccess_s */
+  oyOBJECT_CONVERSIONS_S,             /**< oyConversions_s */
+  oyOBJECT_CMM_HANDLE_S      = 50,    /**< oyCMMhandle_s */
+  oyOBJECT_CMM_POINTER_S,             /*!< oyCMMptr_s */
+  oyOBJECT_CMM_INFO_S,                /*!< oyCMMInfo_s */
+  oyOBJECT_CMM_API_S,                 /**< oyCMMapi_s */
+  oyOBJECT_CMM_API1_S,                /**< oyCMMapi1_s */
+  oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
+  oyOBJECT_CMM_API3_S,                /**< oyCMMapi3_s */
+  oyOBJECT_CMM_API4_S,                /**< oyCMMapi4_s */
+  oyOBJECT_CMM_API_MAX,               /**< not defined */
+  oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
+  oyOBJECT_MODULE_S,                  /*!< oyModule_s */
+  oyOBJECT_EXTERNFUNC_S,              /*!< oyExternFunc_s */
+  oyOBJECT_NAME_S,                    /*!< oyName_s */
+  oyOBJECT_COMP_S_,                   /*!< oyComp_s_ */
+  oyOBJECT_FILE_LIST_S_,              /*!< oyFileList_s_ */
+  oyOBJECT_HASH_S,                    /**< oyHash_s */
+  oyOBJECT_HANDLE_S,                  /**< oyHandle_s */
+  oyOBJECT_STRUCT_LIST_S,             /**< oyStructList_s */
+  oyOBJECT_MAX
+} oyOBJECT_e;
 
 
 typedef struct oyObject_s_* oyObject_s;
 
 /** @brief Oyranos base structure
  *
+ *  All Oyranos structures should be castable to this basic one.
+ *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
  */
 struct oyStruct_s {
-  oyOBJECT_TYPE_e      type_;          /**< struct type */
+  oyOBJECT_e           type_;          /**< struct type */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< features name and hash */
@@ -177,7 +183,7 @@ typedef enum {
  *  @date  october 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_NAME_S */
+  oyOBJECT_e           type;           /*!< internal struct type oyOBJECT_NAME_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
@@ -227,12 +233,12 @@ int          oyName_boolean          ( oyName_s          * name_a,
  *  @date  27 november 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_HANDLE_S*/
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_HANDLE_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
   oyPointer            ptr;            /**< can be any type */
-  oyOBJECT_TYPE_e      ptr_type;       /**< the type of the entry */
+  oyOBJECT_e           ptr_type;       /**< the type of the entry */
   oyStruct_release_f   ptrRelease;     /**< deallocation for ptr_ of list_type*/
   oyStruct_copy_f      ptrCopy;        /**< copy for ptr_ of list_type */
 } oyHandle_s;
@@ -244,7 +250,7 @@ int                oyHandle_release_ ( oyHandle_s       ** handle );
 
 int                oyHandle_set_     ( oyHandle_s        * handle,
                                        oyPointer           ptr,
-                                       oyOBJECT_TYPE_e     ptr_type,
+                                       oyOBJECT_e          ptr_type,
                                        oyStruct_release_f  ptrRelease,
                                        oyStruct_copy_f     ptrCopy );
 #endif
@@ -264,14 +270,14 @@ typedef struct oyStructList_s oyStructList_s;
  *  @date  october 2007 (API 0.1.8)
  */
 struct oyObject_s_ {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OBJECT_S*/
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_OBJECT_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   int                  id_;            /**< identification for Oyranos */
   oyAlloc_f            allocateFunc_;  /**< data  allocator */
   oyDeAlloc_f          deallocateFunc_;/**< data release function */
   oyPointer            parent_;        /*!< parent struct of parent_type */
-  oyOBJECT_TYPE_e      parent_type_;   /*!< parents struct type */
+  oyOBJECT_e           parent_type_;   /*!< parents struct type */
   oyPointer            backdoor_;      /*!< allow non breaking extensions */
   oyStructList_s     * handles_;       /*!< useful as list of oyStruct_s */
   oyName_s           * name_;          /*!< naming feature */
@@ -289,7 +295,7 @@ oyObject_s   oyObject_Copy            ( oyObject_s        object );
 int          oyObject_Release         ( oyObject_s      * oy );
 
 oyObject_s   oyObject_SetParent       ( oyObject_s        object,
-                                        oyOBJECT_TYPE_e   type,
+                                        oyOBJECT_e        type,
                                         oyPointer         ptr );
 /*oyPointer    oyObjectAlign            ( oyObject_s        oy,
                                         size_t          * size,
@@ -332,7 +338,7 @@ int          oyObject_GetId          ( oyObject_s        object );
  *  @date  24 november 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_HASH_S */
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_HASH_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< features name and hash */
@@ -347,9 +353,9 @@ oyHash_s *         oyHash_Copy_      ( oyHash_s          * entry,
 int                oyHash_Release_   ( oyHash_s         ** entry );
 
 int                oyHash_IsOf_      ( oyHash_s          * hash,
-                                       oyOBJECT_TYPE_e     type );
+                                       oyOBJECT_e          type );
 oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
-                                       oyOBJECT_TYPE_e     type );
+                                       oyOBJECT_e          type );
 int                oyHash_SetPointer_( oyHash_s          * hash,
                                        oyStruct_s        * obj );
 
@@ -362,7 +368,7 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
  *  @date  november 2007 (API 0.1.8)
  */
 struct oyStructList_s {
-  oyOBJECT_TYPE_e      type_;          /*!< internal struct type oyOBJECT_TYPE_STRUCT_LIST_S */
+  oyOBJECT_e           type_;          /*!< internal struct type oyOBJECT_STRUCT_LIST_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< features name and hash */
@@ -385,12 +391,12 @@ oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
                                        int                 pos );
 oyStruct_s *     oyStructList_GetType_(oyStructList_s    * list,
                                        int                 pos,
-                                       oyOBJECT_TYPE_e     type );
+                                       oyOBJECT_e          type );
 oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
                                        int                 pos );
 oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
                                        int                 pos,
-                                       oyOBJECT_TYPE_e     type );
+                                       oyOBJECT_e          type );
 int              oyStructList_ReferenceAt_( oyStructList_s * list,
                                        int                 pos );
 int              oyStructList_ReleaseAt( oyStructList_s  * list,
@@ -470,7 +476,7 @@ void           oyValueClear          ( oyValue_u         * v,
  *  @date    2008/04/14
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_OPTION_S */
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_OPTION_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -503,7 +509,7 @@ int            oyOption_GetId        ( oyOption_s        * option );
  *  configure a process. The object contains a list of oyOption_s objects.
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_OPTIONS_S */
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_OPTIONS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -572,7 +578,7 @@ typedef struct oyProfileTag_s oyProfileTag_s;
 /** @brief a profile and its attributes
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_PROFILE_S */
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_PROFILE_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -600,8 +606,8 @@ OYAPI oyProfile_s * OYEXPORT
     W  no cache write \n
 
  */
-#define oyNO_CACHE_READ             0x01        /** read not from cache */
-#define oyNO_CACHE_WRITE            0x02        /** write not from cache */
+#define OY_NO_CACHE_READ            0x01        /** read not from cache */
+#define OY_NO_CACHE_WRITE           0x02        /** write not from cache */
 /* decode */
 #define oyToNoCacheRead_m(r)        ((r)&1)
 #define oyToNoCacheWrite_m(w)       (((w) >> 1)&1)
@@ -678,7 +684,7 @@ const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
 /** @brief tell about the conversion profiles
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_PROFILE_LIST_S */
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_PROFILES_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -724,7 +730,7 @@ typedef enum {
  *  @date  1 january 2008 (API 0.1.8)
  */
 struct oyProfileTag_s {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_PROFILE_TAG_S */
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_PROFILE_TAG_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -787,7 +793,7 @@ typedef enum {
 
 /** @brief start with a simple rectangle */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /*!< internal struct type oyOBJECT_TYPE_REGION_S */
+  oyOBJECT_e           type_;          /**< internal struct type oyOBJECT_REGION_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;
@@ -874,59 +880,59 @@ typedef uint32_t oyPixel_t;
 #define oyByteSwap_m(x)             ((x) << 23)
 
 /** define some common types */
-#define oyTYPE_123_8       (oyChannels_m(3)|oyDataType_m(oyUINT8))
-#define oyTYPE_123_16      (oyChannels_m(3)|oyDataType_m(oyUINT16))
-#define oyTYPE_123_HALF    (oyChannels_m(3)|oyDataType_m(oyHALF))
-#define oyTYPE_123_FLOAT   (oyChannels_m(3)|oyDataType_m(oyFLOAT))
-#define oyTYPE_123_DBL     (oyChannels_m(3)|oyDataType_m(oyDOUBLE))
+#define OY_TYPE_123_8       (oyChannels_m(3)|oyDataType_m(oyUINT8))
+#define OY_TYPE_123_16      (oyChannels_m(3)|oyDataType_m(oyUINT16))
+#define OY_TYPE_123_HALF    (oyChannels_m(3)|oyDataType_m(oyHALF))
+#define OY_TYPE_123_FLOAT   (oyChannels_m(3)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_123_DBL     (oyChannels_m(3)|oyDataType_m(oyDOUBLE))
 
-#define oyTYPE_123A_8      (oyChannels_m(4)|oyDataType_m(oyUINT8))
-#define oyTYPE_123A_16     (oyChannels_m(4)|oyDataType_m(oyUINT16))
-#define oyTYPE_123A_HALF   (oyChannels_m(4)|oyDataType_m(oyHALF))
-#define oyTYPE_123A_FLOAT  (oyChannels_m(4)|oyDataType_m(oyFLOAT))
-#define oyTYPE_123A_DBL    (oyChannels_m(4)|oyDataType_m(oyDOUBLE))
+#define OY_TYPE_123A_8      (oyChannels_m(4)|oyDataType_m(oyUINT8))
+#define OY_TYPE_123A_16     (oyChannels_m(4)|oyDataType_m(oyUINT16))
+#define OY_TYPE_123A_HALF   (oyChannels_m(4)|oyDataType_m(oyHALF))
+#define OY_TYPE_123A_FLOAT  (oyChannels_m(4)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_123A_DBL    (oyChannels_m(4)|oyDataType_m(oyDOUBLE))
 
-#define oyTYPE_123AZ_HALF  (oyChannels_m(5)|oyDataType_m(oyHALF))
-#define oyTYPE_123AZ_FLOAT (oyChannels_m(5)|oyDataType_m(oyFLOAT))
-#define oyTYPE_123AZ_DBL   (oyChannels_m(5)|oyDataType_m(oyDOUBLE))
+#define OY_TYPE_123AZ_HALF  (oyChannels_m(5)|oyDataType_m(oyHALF))
+#define OY_TYPE_123AZ_FLOAT (oyChannels_m(5)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_123AZ_DBL   (oyChannels_m(5)|oyDataType_m(oyDOUBLE))
 
-#define oyTYPE_A123_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8))
-#define oyTYPE_A123_16     (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT16))
+#define OY_TYPE_A123_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8))
+#define OY_TYPE_A123_16     (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT16))
 
-#define oyTYPE_A321_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8)|oySwapColourChannels_m(oyYES))
-#define oyTYPE_A321_16     (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT16)|oySwapColourChannels_m(oyYES))
+#define OY_TYPE_A321_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8)|oySwapColourChannels_m(oyYES))
+#define OY_TYPE_A321_16     (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT16)|oySwapColourChannels_m(oyYES))
 
 /* some intermixed types will work as well */
-#define oyTYPE_123A_HALF_Z_FLOAT (oyChannels_m(4+1*2)|oyDataType_m(oyHALF))
+#define OY_TYPE_123A_HALF_Z_FLOAT (oyChannels_m(4+1*2)|oyDataType_m(oyHALF))
 
-#define oyTYPE_1234_8      (oyChannels_m(4)|oyDataType_m(oyUINT8))
-#define oyTYPE_1234A_8     (oyChannels_m(5)|oyDataType_m(oyUINT8))
-#define oyTYPE_1234_16     (oyChannels_m(4)|oyDataType_m(oyUINT16))
-#define oyTYPE_1234A_16    (oyChannels_m(5)|oyDataType_m(oyUINT16))
+#define OY_TYPE_1234_8      (oyChannels_m(4)|oyDataType_m(oyUINT8))
+#define OY_TYPE_1234A_8     (oyChannels_m(5)|oyDataType_m(oyUINT8))
+#define OY_TYPE_1234_16     (oyChannels_m(4)|oyDataType_m(oyUINT16))
+#define OY_TYPE_1234A_16    (oyChannels_m(5)|oyDataType_m(oyUINT16))
 
-#define oyTYPE_1234_8_REV  (oyChannels_m(4)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
-#define oyTYPE_1234A_8_REV (oyChannels_m(5)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
-#define oyTYPE_1234_16_REV (oyChannels_m(4)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
-#define oyTYPE_1234A_16_REV (oyChannels_m(5)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
+#define OY_TYPE_1234_8_REV  (oyChannels_m(4)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
+#define OY_TYPE_1234A_8_REV (oyChannels_m(5)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
+#define OY_TYPE_1234_16_REV (oyChannels_m(4)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
+#define OY_TYPE_1234A_16_REV (oyChannels_m(5)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
 
 
-#define oyTYPE_1_8         (oyChannels_m(1)|oyDataType_m(oyUINT8))
-#define oyTYPE_1_16        (oyChannels_m(1)|oyDataType_m(oyUINT16))
-#define oyTYPE_1_HALF      (oyChannels_m(1)|oyDataType_m(oyHALF))
-#define oyTYPE_1_FLOAT     (oyChannels_m(1)|oyDataType_m(oyFLOAT))
-#define oyTYPE_1A_8        (oyChannels_m(2)|oyDataType_m(oyUINT8))
-#define oyTYPE_1A_16       (oyChannels_m(2)|oyDataType_m(oyUINT16))
-#define oyTYPE_1A_HALF     (oyChannels_m(2)|oyDataType_m(oyHALF))
-#define oyTYPE_1A_FLOAT    (oyChannels_m(2)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_1_8         (oyChannels_m(1)|oyDataType_m(oyUINT8))
+#define OY_TYPE_1_16        (oyChannels_m(1)|oyDataType_m(oyUINT16))
+#define OY_TYPE_1_HALF      (oyChannels_m(1)|oyDataType_m(oyHALF))
+#define OY_TYPE_1_FLOAT     (oyChannels_m(1)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_1A_8        (oyChannels_m(2)|oyDataType_m(oyUINT8))
+#define OY_TYPE_1A_16       (oyChannels_m(2)|oyDataType_m(oyUINT16))
+#define OY_TYPE_1A_HALF     (oyChannels_m(2)|oyDataType_m(oyHALF))
+#define OY_TYPE_1A_FLOAT    (oyChannels_m(2)|oyDataType_m(oyFLOAT))
 
-#define oyTYPE_1_8_REV     (oyChannels_m(1)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
-#define oyTYPE_1_16_REV    (oyChannels_m(1)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
-#define oyTYPE_1_HALF_REV  (oyChannels_m(1)|oyDataType_m(oyHALF)|oyFlavor_m(oyYes))
-#define oyTYPE_1_FLOAT_REV (oyChannels_m(1)|oyDataType_m(oyFLOAT))|oyFlavor_m(oyYes)
-#define oyTYPE_1A_8_REV    (oyChannels_m(2)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
-#define oyTYPE_1A_16_REV   (oyChannels_m(2)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
-#define oyTYPE_1A_HALF_REV (oyChannels_m(2)|oyDataType_m(oyHALF)|oyFlavor_m(oyYes))
-#define oyTYPE_1A_FLOAT_REV (oyChannels_m(2)|oyDataType_m(oyFLOAT)|oyFlavor_m(oyYes))
+#define OY_TYPE_1_8_REV     (oyChannels_m(1)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
+#define OY_TYPE_1_16_REV    (oyChannels_m(1)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
+#define OY_TYPE_1_HALF_REV  (oyChannels_m(1)|oyDataType_m(oyHALF)|oyFlavor_m(oyYes))
+#define OY_TYPE_1_FLOAT_REV (oyChannels_m(1)|oyDataType_m(oyFLOAT))|oyFlavor_m(oyYes)
+#define OY_TYPE_1A_8_REV    (oyChannels_m(2)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
+#define OY_TYPE_1A_16_REV   (oyChannels_m(2)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
+#define OY_TYPE_1A_HALF_REV (oyChannels_m(2)|oyDataType_m(oyHALF)|oyFlavor_m(oyYes))
+#define OY_TYPE_1A_FLOAT_REV (oyChannels_m(2)|oyDataType_m(oyFLOAT)|oyFlavor_m(oyYes))
 
 /* decode */
 #define oyToChannels_m(c)           ((c)&255)
@@ -937,6 +943,22 @@ typedef uint32_t oyPixel_t;
 #define oyToFlavor_m(f)             (((f) >> 22)&1)
 #define oyToByteswap_m(x)           (((x) >> 23)&1)
 
+typedef enum {
+  oyCHANNELTYPE_UNDEFINED,            /**< as well for the list end */
+  oyCHANNELTYPE_OTHER,
+  oyCHANNELTYPE_LIGHTNESS,
+  oyCHANNELTYPE_COLOUR,
+  oyCHANNELTYPE_COLOUR_LIGHTNESS,
+  oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED,
+  oyCHANNELTYPE_DEPTH,
+  oyCHANNELTYPE_ALPHA1,
+  oyCHANNELTYPE_ALPHA2,
+  oyCHANNELTYPE_ALPHA3
+} oyCHANNELTYPE_e;
+
+oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
+                                       icColorSpaceSignature sig,
+                                       int                 pos );
 #if 0
 char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAlloc_f           allocateFunc );
@@ -956,8 +978,8 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
 
     Should oyImage_s become internal and we provide a user interface?
  */
-struct oyImage_s_ {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_IMAGE_S */
+struct oyImage_s {
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_IMAGE_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -966,7 +988,8 @@ struct oyImage_s_ {
   double               resolution_x;   /**< resolution in horizontal direction*/
   double               resolution_y;   /**< resolution in vertical direction */
 
-  oyPixel_t          * layout_;        /*!< samples mask */
+  oyPixel_t          * layout_;        /**< samples mask; the oyPixel_t pixel_layout variable passed during oyImage_Create is stored in position 0 */
+  oyCHANNELTYPE_e    * channel_layout; /**< non profile described channels */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
   oyOptions_s        * options_;       /*!< for instance channel layout (?) */
@@ -982,6 +1005,8 @@ struct oyImage_s_ {
   oyImage_GetTile_t    getTile;        /**< the tile interface */
   int                  tile_width;     /**< needed by the tile interface */
   int                  tile_height;    /**< needed by the tile interface */
+  uint16_t             subsampling[2]; /**< 1, 2 or 4 */
+  int                  sub_positioning;/**< 0 None, 1 Postscript, 2 CCIR 601-1*/
   oyStruct_s         * user_data;      /**< user provided pointer */
 };
 
@@ -1015,7 +1040,7 @@ typedef enum {
   oyFILTER_TYPE_NONE,                  /**< nothing */
   oyFILTER_TYPE_COLOUR,                /**< colour */
   oyFILTER_TYPE_TONEMAP,               /**< contrast or tone mapping */
-  oyFILTER_TYPE_IMAGE,                 /**< image */
+  oyFILTER_TYPE_IMAGE,                 /**< image storage */
   oyFILTER_TYPE_GENERIC,               /**< generic */
   oyFILTER_TYPE_MAX
 } oyFILTER_TYPE_e;
@@ -1043,16 +1068,250 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 typedef struct oyFilter_s oyFilter_s;
 typedef struct oyCMMapi4_s oyCMMapi4_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
+typedef struct oyConnector_s oyConnector_s;
+typedef struct oyFilterPlug_s oyFilterPlug_s;
+typedef struct oyFilterPlugs_s oyFilterPlugs_s;
+typedef struct oyFilterSocket_s oyFilterSocket_s;
+
+
+typedef enum {
+  /** a data manipulator. e.g. a normal filter */
+  oyCONNECTOR_MANIPULATOR,
+  /** a data generator, e.g. checkerboard, gradient */
+  oyCONNECTOR_GENERATOR,
+  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE */
+  oyCONNECTOR_IMAGE,
+  /** observer, a endpoint, only input, e.g. text log, thumbnail viewer */
+  oyCONNECTOR_OBSERVER,
+  /** a routing element, without data altering */
+  oyCONNECTOR_SPLITTER,
+  /** combines or splits image data, e.g. blending */
+  oyCONNECTOR_COMPOSITOR,
+
+  /** converts pixel layout to other formats */
+  oyCONNECTOR_CONVERTOR_PIXELDATA,
+  /** converts pixel layout to other formats, with precission loss, e.g. float -> uint8_t, only relevant for output connectors */
+  oyCONNECTOR_CONVERTOR_PIXELDATA_LOSSY,
+  /** combines gray channels, e.g. from colour */
+  oyCONNECTOR_COMPOSITOR_CHANNEL,
+  /** provides gray scale views of channels */
+  oyCONNECTOR_SPLITTER_CHANNEL,
+
+  /** provides values or text, only output */
+  oyCONNECTOR_ANALYSIS
+} oyCONNECTOR_e;
+
+typedef enum {
+  oyCONNECTOR_EVENT_OK,                /**< kind of ping */
+  oyCONNECTOR_EVENT_CONNECTED,         /**< connection established */
+  oyCONNECTOR_EVENT_RELEASED,          /**< released the connection */
+  oyCONNECTOR_EVENT_IMAGE_DATA_CHANGED,/**< call to update image views */
+  oyCONNECTOR_EVENT_IMAGE_STORAGE_CHANGED,/**< new data accessors */
+  oyCONNECTOR_EVENT_INCOMPATIBLE_IMAGE,/**< can not process image */
+  oyCONNECTOR_EVENT_INCOMPATIBLE_PROFILE,/**< can not handle profile */
+  oyCONNECTOR_EVENT_INCOMPLETE_GRAPH   /**< can not completely process */ 
+} oyCONNECTOR_EVENT_e;
+
+/** @struct oyConnector_s
+ *  @brief  a filter connection structure
+ *
+ *  \b Connectors \b have \b tree \b missions:
+ *  - The first is to tell others to about the 
+ *  filters intention to provide a connection endity. This is done by the pure
+ *  existence of the oyConnector_s inside the backend filter structure
+ *  (oyCMMapi4_s) and the oyFilterNode_s::inputs and 
+ *  oyFilterNode_s::outputs members. \n
+ *  - The second is to tell about the connectors capabilities, to allow for 
+ *  automatic checking for fittness to other connectors. \n
+ *  - The thierd task of this struct is to differenciate between \a input or
+ *  \a plug and \a output or \a socket. This is delegated to the
+ *  oyFilterSocket_s and oyFilterPlug_s structures.
+ *  
+ *
+ *  \b Routing: \n
+ *  The connector output side is always passive. The data stream is requested or
+ *  viewed by the input side. 
+ *  Changes are propagated by events (?). This turns the acyclic graph into a 
+ *  looped one. At least the event stays somewhat outside the data flow.
+ *  A \a plug local to the filter or filter node can be connected to a remote
+ *  \a socket connector and vice versa.
+ *
+ *  To signal a value is not initialised or does not apply, set the according
+ *  integer value to -1.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/26 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+struct oyConnector_s {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONNECTOR_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyFilterNode_s     * node;           /**< filter node for this connector */
+
+  oyName_s             name;           /**< e.g."Img", "Image", "Image Socket"*/
+
+  oyCONNECTOR_e        connector_type; /**< */
+  /** make requests and receive data, by part of oyFilterPlug_s */
+  int                  is_plug;
+  oyDATATYPE_e       * data_types;     /**< supported float's and int's */
+  int                  data_types_n;   /**< elements in data_types array */
+  int                  max_colour_offset;
+  int                  min_channels_count;
+  int                  max_channels_count;
+  int                  min_colour_count;
+  int                  max_colour_count;
+  int                  can_planar;     /**< can read separated channels */
+  int                  can_interwoven; /**< can read continuous channels */
+  int                  can_swap;       /**< can swap colour channels (BGR)*/
+  int                  can_swap_bytes; /**< non host byte order */
+  int                  can_revert;     /**< revert 1 -> 0 and 0 -> 1 */
+  int                  can_premultiplied_alpha;
+  int                  can_nonpremultiplied_alpha;
+  int                  can_subpixel;   /**< understand subpixel order */
+  /** describe which channel types the connector requires */
+  oyCHANNELTYPE_e    * channel_types;
+  int                  channel_types_n;/**< count in channel_types */
+  int                  id;             /**< relative to oyFilter_s, e.g. 1 */
+  /**< connector is mandatory or optional, important for backends */
+  int                  is_mandatory;
+};
+
+OYAPI oyConnector_s * OYEXPORT
+                 oyConnector_New     ( oyObject_s          object );
+OYAPI oyConnector_s * OYEXPORT
+                 oyConnector_Copy    ( oyConnector_s     * list,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyConnector_Release ( oyConnector_s    ** list );
+
+
+
+/** @struct oyFilterSocket_s
+ *  @brief  a filter connection structure
+ *
+ *  The passive output version of a oyConnector_s.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+struct oyFilterSocket_s {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_SOCKET_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
+
+  oyFilterPlugs_s    * requesting_plugs_;/**< all remote inputs */
+};
+
+OYAPI oyFilterSocket_s * OYEXPORT
+                 oyFilterSocket_New  ( oyObject_s          object );
+OYAPI oyFilterSocket_s * OYEXPORT
+                 oyFilterSocket_Copy ( oyFilterSocket_s  * list,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyFilterSocket_Release (
+                                       oyFilterSocket_s ** list );
+
+
+OYAPI int  OYEXPORT
+                 oyFilterSocket_Callback (
+                                       oyFilterSocket_s  * c,
+                                       oyCONNECTOR_EVENT_e e );
+
+/** @struct oyFilterPlug_s
+ *  @brief  a filter connection structure
+ *
+ *  The active input version of a oyConnector_s.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+struct oyFilterPlug_s {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_PLUG_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
+
+  oyFilterSocket_s   * remote_socket_; /**< the remote output */
+};
+
+OYAPI oyFilterPlug_s * OYEXPORT
+                 oyFilterPlug_New    ( oyObject_s          object );
+OYAPI oyFilterPlug_s * OYEXPORT
+                 oyFilterPlug_Copy   ( oyFilterPlug_s    * list,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyFilterPlug_Release( oyFilterPlug_s   ** list );
+
+
+OYAPI int  OYEXPORT
+                 oyFilterPlug_Callback(
+                                       oyFilterPlug_s    * c,
+                                       oyCONNECTOR_EVENT_e e );
+OYAPI int  OYEXPORT
+                 oyFilterPlug_Connect( oyFilterPlug_s   ** p,
+                                       oyFilterSocket_s ** s );
+
+/** @struct  oyFilterPlugs_s
+ *  @brief   a FilterPlugs list
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+struct oyFilterPlugs_s {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_PLUGS_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyStructList_s     * list_;          /**< the list data */
+};
+
+OYAPI oyFilterPlugs_s * OYEXPORT
+                 oyFilterPlugs_New   ( oyObject_s          object );
+OYAPI oyFilterPlugs_s * OYEXPORT
+                 oyFilterPlugs_Copy  ( oyFilterPlugs_s   * list,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyFilterPlugs_Release (
+                                       oyFilterPlugs_s  ** list );
+
+
+OYAPI oyFilterPlugs_s * OYEXPORT
+                 oyFilterPlugs_MoveIn( oyFilterPlugs_s   * list,
+                                       oyFilterPlug_s   ** ptr,
+                                       int                 pos );
+OYAPI int  OYEXPORT
+                 oyFilterPlugs_ReleaseAt (
+                                       oyFilterPlugs_s   * list,
+                                       int                 pos );
+OYAPI oyFilterPlug_s * OYEXPORT
+                 oyFilterPlugs_Get   ( oyFilterPlugs_s   * list,
+                                       int                 pos );
+OYAPI int  OYEXPORT
+                 oyFilterPlugs_Count ( oyFilterPlugs_s   * list );
+
 
 /** @struct oyFilter_s
  *  @brief  a filter to manipulate a image
  *
  *  This is the Oyranos filter object. There are basic classes of filters.
- *  Filters are a container concept. They can contain various data and options.
- *  Filters can be manipulated by changing their options or profiles.
+ *  Filters iimplement a container. They can contain various data and options.
+ *  Filters can be manipulated by changing their options or data.
  *
  *  Filters are chained into a oyConversions_s in order to get applied to data.
- *  This happens by the oyFilterNode_s struct.
+ *  The relation of filters in a graph is defined through the oyFilterNode_s
+ *  struct.
  *
  *  It is possible to chain filters in different ways together. The aimed way
  *  here is to use members and queries to find possible connections. For 
@@ -1077,7 +1336,7 @@ typedef struct oyFilterNode_s oyFilterNode_s;
  *  @date    2008/06/08
  */
 struct oyFilter_s {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_FILTER_S*/
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -1095,7 +1354,7 @@ struct oyFilter_s {
   oyImage_s          * image_;         /**< the referenced image */
   oyProfiles_s       * profiles_;      /**< profiles */
 
-  oyCMMapi4_s        * api_;           /**<  */
+  oyCMMapi4_s        * api4_;          /**<  */
 };
 
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,
@@ -1114,8 +1373,8 @@ const char * oyFilter_GetName        ( oyFilter_s        * filter,
                                        oyNAME_e            name_type );
 const char * oyFilter_CategoryGet    ( oyFilter_s        * filter,
                                        int                 nontranslated );
-#define oyFILTER_SET_TEST              0x01        /** only test */
-#define oyFILTER_GET_DEFAULT           0x01        /** defaults */
+#define OY_FILTER_SET_TEST             0x01        /** only test */
+#define OY_FILTER_GET_DEFAULT          0x01        /** defaults */
 /* decode */
 #define oyToFilterSetTest_m(r)         ((r)&1)
 #define oyToFilterGetDefaults_m(r)     ((r)&1)
@@ -1140,6 +1399,15 @@ oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter );
 oyPointer    oyFilter_TextToInfo     ( oyFilter_s        * filter,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
+OYAPI oyConnector_s * OYEXPORT
+             oyFilter_ShowConnector  ( oyFilter_s        * filter,
+                                       int                 as_pos,
+                                       int                 plug );
+OYAPI int  OYEXPORT
+             oyFilter_ShowConnectorCount(
+                                       oyFilter_s        * filter,
+                                       int                 plug,
+                                       uint32_t          * last_adds );
 
 
 /** @struct  oyFilters_s
@@ -1150,7 +1418,7 @@ oyPointer    oyFilter_TextToInfo     ( oyFilter_s        * filter,
  *  @date    2008/07/08
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_FILTERS_S */ 
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTERS_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -1180,31 +1448,6 @@ OYAPI oyFilter_s * OYEXPORT
 OYAPI int  OYEXPORT
                  oyFilters_Count     ( oyFilters_s       * list );
 
-/** @struct  oyNode_s
- *  @brief   a Node object
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/11 (Oyranos: 0.1.8)
- *  @date    2008/07/11
- */
-typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_NODE_S*/
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-
-  oyStructList_s     * parents;        /**< parent nodes */
-  oyStructList_s     * children;       /**< child nodes */
-} oyNode_s;
-
-OYAPI oyNode_s * OYEXPORT
-                 oyNode_New          ( oyObject_s          object );
-OYAPI oyNode_s * OYEXPORT
-                 oyNode_Copy         ( oyNode_s          * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyNode_Release      ( oyNode_s         ** list );
-
 
 
 /** @struct  oyFilterNode_s
@@ -1221,33 +1464,59 @@ OYAPI int  OYEXPORT
  *  @date    2008/07/10
  */
 struct oyFilterNode_s {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_FILTER_NODE_S*/
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_NODE_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyStructList_s     * parents;        /**< parent nodes */
-  oyStructList_s     * children;       /**< child nodes */
+  oyFilterPlug_s    ** plugs;          /**< active input connectors */
+  oyFilterSocket_s  ** sockets;        /**< active output connectors */
 
   oyFilter_s         * filter;         /**< the filter */
-
-  oyFilterNode_s     * merged_to;      /**< the node, which does processing */
 
   oyStruct_s         * data;           /**< the filters private data */
 };
 
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );
+oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
+                                       oyObject_s          object );
 oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
                                        oyObject_s          object );
 int          oyFilterNode_Release    ( oyFilterNode_s   ** node );
 
-int          oyFilterNode_FilterSet  ( oyFilterNode_s    * node,
-                                       oyFilters_s       * parents,
-                                       oyFilters_s       * children,
+oyConnector_s* oyFilterNode_Get      ( oyFilterNode_s    * node,
+                                       oyConnector_s     * pattern,
+                                       int                 input );
+
+#define OY_FILTERNODE_FREE             0x01        /** list free nodes */
+#define OY_FILTERNODE_CONNECTED        0x02        /** list connected nodes */
+/* decode */
+#define oyToFilterNode_Free_m(r)       ((r)&1)
+#define oyToFilterNode_Connected_m(r)  (((r) >> 1)&1)
+int            oyFilterNode_Count    ( oyFilterNode_s    * node,
+                                       oyConnector_s     * pattern,
+                                       int                 input,
                                        int                 flags );
-int          oyFilterNode_FilterGet  ( oyFilterNode_s    * node,
-                                       oyFilters_s      ** parents,
-                                       oyFilters_s      ** cildren );
+#define OY_FILTERNODE_RESOLVE_AUTOMATIC 0x01        /** as far as possible */
+/* decode */
+#define oyToFilterNode_ResoveAutomatic_m(r)      ((r)&1)
+int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
+                                       oyFilterNode_s    * output,
+                                       int                 flags );
+OYAPI int  OYEXPORT
+                 oyFilterNode_ConnectorMatch (
+                                       oyFilterNode_s    * node_first,
+                                       int                 pos_first,
+                                       oyConnector_s     * connector_second );
+OYAPI oyFilterSocket_s * OYEXPORT
+                 oyFilterNode_GetSocket (
+                                       oyFilterNode_s    * node,
+                                       int                 pos );
+OYAPI oyFilterPlug_s * OYEXPORT
+                 oyFilterNode_GetPlug( oyFilterNode_s    * node,
+                                       int                 pos );
+
+
 
 
 typedef struct oyPixelAccess_s oyPixelAccess_s;
@@ -1284,7 +1553,7 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
  *  The two cases for handling pixel access are array_xy or
  *  a set request variable. They are toupported by a filter in
  *  a function of type oyCMMFilter_GetNext_f() in
- *  oyCMMapi4_s::oyCMMFilter_GetNext.
+ *  oyCMMapi4_s::oyCMMConnector_GetNext.
  *
  *  Access to the buffers by concurrenting threads is handled by passing
  *  different oyPixelAccess_s objects pre thread.
@@ -1294,7 +1563,7 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
  *  @date    2008/07/04
  */
 struct oyPixelAccess_s {
-  oyOBJECT_TYPE_e      type;           /**< internal struct type oyOBJECT_TYPE_PIXEL_ACCESS_S */
+  oyOBJECT_e           type;           /**< internal struct type oyOBJECT_PIXEL_ACCESS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -1371,13 +1640,13 @@ int                oyPixelAccess_Release(
  *  @date    2008/06/08
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_CONVERSIONS_S*/
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONVERSIONS_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
   oyFilterNode_s     * input;          /**< the input image filter; Most users will start logically with this pice and chain their filters to get the final result. */
-  oyFilterNode_s     * out_;           /**< the Oyranos output image. Oyranos will stream the filters starting from the end. */
+  oyFilterNode_s     * out_;           /**< the Oyranos output image. Oyranos will stream the filters starting from the end. This element will be asked on its first plug. */
   oyPixelAccess_s    * one_pixel_cfg;  /**< one pixel accessor */
 } oyConversions_s;
 
@@ -1427,7 +1696,7 @@ int             ** oyConversions_GetAdjazenzlist (
     deprecate with the new filter architecture
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_COLOUR_CONVERSION_S */
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_COLOUR_CONVERSION_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -1467,7 +1736,7 @@ oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * s );
  *  TODO: needs to be Xatom compatible
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< struct type oyOBJECT_TYPE_NAMED_COLOUR_S */
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_NAMED_COLOUR_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -1536,7 +1805,7 @@ const char   *    oyNamedColour_GetName( oyNamedColour_s * s,
  *  TODO: make the object non visible
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /*!< struct type oyOBJECT_TYPE_NAMED_COLOURS_S */
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_NAMED_COLOURS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /*!< base object */
@@ -1576,7 +1845,7 @@ void              oyCopyColour       ( const double      * from,
  *  Since: 0.1.8
  */
 typedef struct {
-  oyOBJECT_TYPE_e  type;               /*!< struct type oyOBJECT_TYPE_ICON_S */
+  oyOBJECT_e       type;               /*!< struct type oyOBJECT_ICON_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
@@ -1616,7 +1885,7 @@ typedef struct oyCMMapi_s oyCMMapi_s;
  *  @date  5 december 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_TYPE_e  type;               /*!< struct type oyOBJECT_TYPE_CMM_INFO_S */
+  oyOBJECT_e       type;               /*!< struct type oyOBJECT_CMM_INFO_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */

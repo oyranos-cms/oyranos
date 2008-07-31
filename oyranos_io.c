@@ -552,7 +552,7 @@ oyFindProfile_ (const char* fileName)
 
 #define MAX_DEPTH 64
 struct oyFileList_s_ {
-  oyOBJECT_TYPE_e type;
+  oyOBJECT_e type;
   int hopp;
   const char* coloursig;
   int mem_count;
@@ -564,7 +564,7 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
 {
   struct oyFileList_s_ *l = (struct oyFileList_s_*)data;
 
-  if(l->type != oyOBJECT_TYPE_FILE_LIST_S_)
+  if(l->type != oyOBJECT_FILE_LIST_S_)
     WARNc_S("Could not find a oyFileList_s_ objetc.");
 
       if (!oyCheckProfile_(full_name, l->coloursig))
@@ -595,7 +595,7 @@ int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
   /* last 4 chars */
   const char * end = NULL;
 
-  if(l->type != oyOBJECT_TYPE_FILE_LIST_S_)
+  if(l->type != oyOBJECT_FILE_LIST_S_)
     WARNc_S("Could not find a oyFileList_s_ objetc.");
 
   if(strlen(full_name) > 4)
@@ -634,7 +634,7 @@ int oyFileListCb_ (void* data, const char* full_name, const char* filename)
   /* last 4 chars */
   const char * end = NULL;
 
-  if(l->type != oyOBJECT_TYPE_FILE_LIST_S_)
+  if(l->type != oyOBJECT_FILE_LIST_S_)
     WARNc_S("Could not find a oyFileList_s_ objetc.");
 
   if(strlen(full_name) > 4)
@@ -665,7 +665,7 @@ int oyFileListCb_ (void* data, const char* full_name, const char* filename)
 char **  oyProfileListGet_           ( const char        * coloursig,
                                        uint32_t          * size )
 {
-  struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  struct oyFileList_s_ l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int32_t count = 0;/*oyPathsCount_();*/
   char ** path_names = NULL;
 
@@ -697,7 +697,7 @@ char **  oyProfileListGet_           ( const char        * coloursig,
 char**
 oyPolicyListGet_                  (int * size)
 {
-  struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  struct oyFileList_s_ l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
  
@@ -735,7 +735,7 @@ oyFileListGet_                  (const char * subpath,
                                  int          data,
                                  int          owner)
 {
-  struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  struct oyFileList_s_ l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
  
@@ -779,7 +779,7 @@ oyLibListGet_                   (const char * subpath,
                                  int        * size,
                                  int          owner)
 {
-  struct oyFileList_s_ l = {oyOBJECT_TYPE_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  struct oyFileList_s_ l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
  

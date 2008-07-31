@@ -70,7 +70,7 @@ int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
   const char * type_name = "";
   int id = -1;
 
-  if(context && oyOBJECT_TYPE_NONE < context->type_)
+  if(context && oyOBJECT_NONE < context->type_)
   {
     type_name = oyStruct_TypeToText( context );
     id = oyObject_GetId( context->oy_ );
@@ -131,7 +131,7 @@ int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
  */
 oyCMMapi2_s oyX1_api2 = {
 
-  oyOBJECT_TYPE_CMM_API2_S,
+  oyOBJECT_CMM_API2_S,
   0,0,0,
   0,
 
@@ -161,19 +161,19 @@ oyCMMapi2_s oyX1_api2 = {
  */
 oyCMMInfo_s oyX1_cmm_module = {
 
-  oyOBJECT_TYPE_CMM_INFO_S,
+  oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
   "0.2",
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "oyX1", "Oyranos X11", "The window support backend of Oyranos."},
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/#download"},
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
+  {oyOBJECT_NAME_S, 0,0,0, "oyX1", "Oyranos X11", "The window support backend of Oyranos."},
+  {oyOBJECT_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/#download"},
+  {oyOBJECT_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
   108,
 
   (oyCMMapi_s*) & oyX1_api2,
   1,
 
-  {oyOBJECT_TYPE_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
 
 };
 

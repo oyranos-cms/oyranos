@@ -257,7 +257,7 @@ int                lcmsCMMProfile_Open ( oyPointer         block,
   oyCMMptr_s * s = 0;
   int error = 0;
 
-  if(oy->type != oyOBJECT_TYPE_CMM_POINTER_S || 
+  if(oy->type != oyOBJECT_CMM_POINTER_S || 
      strcmp(oy->cmm, CMM_NICK) != 0)
     error = 1;
 
@@ -663,7 +663,7 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
                                        oyCMMptr_s        * oy )
 {
   int error = 0;
-  oyCMMptr_s intern = {oyOBJECT_TYPE_CMM_POINTER_S, 0,0,0,
+  oyCMMptr_s intern = {oyOBJECT_CMM_POINTER_S, 0,0,0,
                        CMM_NICK, {0}, 0, {0}, 0, 0 };
   oyCMMptr_s * dls[] = {0, 0};
 
@@ -802,14 +802,73 @@ oyWIDGET_EVENT_e   lcmsWidgetEvent   ( oyOptions_s       * options,
                                        oyStruct_s        * event )
 {return 0;}
 
-/** @func    lcmsFilter_CmmIccGetNext
- *  @brief   implement oyCMMFilter_GetNext_f()
+
+oyDATATYPE_e lcms_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyDOUBLE, 0};
+
+oyConnector_s lcms_cmmIccSocket_connector = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  0, /* node */
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
+  oyCONNECTOR_MANIPULATOR, /* connector_type */
+  0, /* is_plug == oyFilterPlug_s */
+  lcms_cmmIcc_data_types, /* data_types */
+  3, /* data_types_n; elements in data_types array */
+  1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  16, /* max_channels_count; */
+  1, /* min_colour_count; */
+  16, /* max_colour_count; */
+  1, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap_bytes; non host byte order */
+  1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  0, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* channel_types_n */
+  1, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnector_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connector,0};
+
+oyConnector_s lcms_cmmIccPlug_connector = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  0, /* node */
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
+  oyCONNECTOR_MANIPULATOR, /* connector_type */
+  1, /* is_plug == oyFilterPlug_s */
+  lcms_cmmIcc_data_types, /* data_types */
+  3, /* data_types_n; elements in data_types array */
+  1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  16, /* max_channels_count; */
+  1, /* min_colour_count; */
+  16, /* max_colour_count; */
+  1, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap_bytes; non host byte order */
+  1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  0, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* channel_types_n */
+  1, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnector_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
+
+/** @func    lcmsFilterPlug_CmmIccGetNext
+ *  @brief   implement oyCMMFilterPlug_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/18 (Oyranos: 0.1.8)
  *  @date    2008/07/18
  */
-oyPointer lcmsFilter_CmmIccGetNext   ( oyFilterNode_s    * filter_node,
+oyPointer lcmsFilterPlug_CmmIccGetNext( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * pixel_access,
                                        int32_t           * feedback )
 {
@@ -817,26 +876,38 @@ oyPointer lcmsFilter_CmmIccGetNext   ( oyFilterNode_s    * filter_node,
   int x = pixel_access->start_xy[0], sx = x;
   int y = pixel_access->start_xy[1], sy = y;
   int remainder = 0, max = 0, i,j, n;
-  float * values = 0;
+  double * values = 0;
   int channels = 0;
+  oyDATATYPE_e data_type = 0;
 
-  oyFilterNode_s * parent = 0;
+  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
+  oyFilterPlug_s * plug = 0;
+  oyFilter_s * filter = 0,
+             * remote_filter = 0;
+  oyImage_s * image = 0;
+  
 
-  parent = (oyFilterNode_s *) oyStructList_GetRefType( filter_node->merged_to->parents, 0, oyOBJECT_TYPE_FILTER_NODE_S );
+  filter = socket->pattern->node->filter;
+  plug = (oyFilterPlug_s *)socket->pattern->node->plugs[0];
+  remote_filter = plug->remote_socket_->pattern->node->filter;
 
-  ptr = parent->filter->api_->oyCMMFilter_GetNext( parent, pixel_access,feedback);
+  ptr = remote_filter->api4_->oyCMMFilterPlug_GetNext( plug, pixel_access, feedback);
 
-  oyFilterNode_Release( &parent );
+  image = filter->image_;
+  data_type = oyToDataType_m(image->layout_[0]);
 
-  if(oyToDataType_m(filter_node->filter->image_->layout_[0]) == oyFLOAT)
+  if(data_type == oyFLOAT)
+  {
+    oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_IMAGE );
     message(oyMSG_WARN,0, "%s: %d can not handle oyFLOAT", __FILE__,__LINE__);
+  }
 
-  channels = oyToChannels_m(filter_node->filter->image_->layout_[0]);
+  channels = oyToChannels_m(image->layout_[0]);
 
   /* now do position blind manipulations */
-  if(oyToDataType_m(filter_node->filter->image_->layout_[0]) == oyFLOAT);
+  if(data_type == oyDOUBLE);
   {
-    values = (float*) ptr;
+    values = (double*) ptr;
     for(i = 0; i < pixel_access->array_cache_pixels; ++i)
       for(j = 0; j < channels; ++j)
         values[i*channels + j] -= 0.5;
@@ -880,24 +951,23 @@ oyPointer lcmsFilter_CmmIccGetNext   ( oyFilterNode_s    * filter_node,
     x = pixel_access->start_xy[0];
     y = pixel_access->start_xy[1];
 
-    if(pixel_access->start_xy[0] >= filter_node->filter->image_->width)
+    if(pixel_access->start_xy[0] >= image->width)
     {
       x = 0; pixel_access->start_xy[0] = 1;
       y = ++pixel_access->start_xy[1];
     } else
       ++pixel_access->start_xy[0];
 
-    if(pixel_access->start_xy[1] >= filter_node->filter->image_->height && feedback)
+    if(pixel_access->start_xy[1] >= image->height && feedback)
     {
       *feedback = -1;
       return 0;
     }
   }
 
-  if(x < filter_node->filter->image_->width &&
-     y < filter_node->filter->image_->height)
-    ptr = filter_node->filter->image_->getPoint( filter_node->filter->image_,
-                                                 x, y, 0 );
+  if(x < image->width &&
+     y < image->height)
+    ptr = image->getPoint( image, x, y, 0 );
   else
     ptr = 0;
 
@@ -939,7 +1009,7 @@ int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
   const char * type_name = "";
   int id = -1;
 
-  if(context && oyOBJECT_TYPE_NONE < context->type_)
+  if(context && oyOBJECT_NONE < context->type_)
   {
     type_name = oyStruct_TypeToText( context );
     id = oyObject_GetId( context->oy_ );
@@ -1013,7 +1083,7 @@ int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func )
  */
 oyCMMapi4_s   lcms_api4_cmm = {
 
-  oyOBJECT_TYPE_CMM_API4_S,
+  oyOBJECT_CMM_API4_S,
   0,0,0,
   0,
 
@@ -1032,14 +1102,19 @@ oyCMMapi4_s   lcms_api4_cmm = {
   0,
   /*lcmsFilter_CmmIccContextToMem*/0,
   0,
-  lcmsFilter_CmmIccGetNext,
+  lcmsFilterPlug_CmmIccGetNext,
 
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
+  {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
   "Colour/CMM/littleCMS", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
-  1,   /* parents_max */
-  1    /* children_max */
+
+  lcms_cmmIccPlug_connectors,   /* plugs */
+  1,   /* plugs_n */
+  0,   /* plugs_last_add */
+  lcms_cmmIccSocket_connectors,   /* sockets */
+  1,   /* sockets_n */
+  0    /* sockets_last_add */
 };
 
 
@@ -1053,7 +1128,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
  */
 oyCMMapi1_s  lcms_api1 = {
 
-  oyOBJECT_TYPE_CMM_API1_S,
+  oyOBJECT_CMM_API1_S,
   0,0,0,
   (oyCMMapi_s*) & lcms_api4_cmm,
   
@@ -1080,19 +1155,19 @@ oyCMMapi1_s  lcms_api1 = {
  */
 oyCMMInfo_s lcms_cmm_module = {
 
-  oyOBJECT_TYPE_CMM_INFO_S,
+  oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
   "0.6",
-  {oyOBJECT_TYPE_NAME_S, 0,0,0,"lcms", "Little CMS", "LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license."},
-  {oyOBJECT_TYPE_NAME_S, 0,0,0,"Marti", "Marti Maria", "littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"},
-  {oyOBJECT_TYPE_NAME_S, 0,0,0,"MIT", "Copyright (c) 1998-2008 Marti Maria Saguer", "MIT license: http://www.opensource.org/licenses/mit-license.php"},
+  {oyOBJECT_NAME_S, 0,0,0,"lcms", "Little CMS", "LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license."},
+  {oyOBJECT_NAME_S, 0,0,0,"Marti", "Marti Maria", "littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"},
+  {oyOBJECT_NAME_S, 0,0,0,"MIT", "Copyright (c) 1998-2008 Marti Maria Saguer", "MIT license: http://www.opensource.org/licenses/mit-license.php"},
   108,
 
   (oyCMMapi_s*) & lcms_api1,
   0,
 
-  {oyOBJECT_TYPE_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"}
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"}
 
 };
 

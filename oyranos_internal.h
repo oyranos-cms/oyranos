@@ -35,7 +35,7 @@ namespace oyranos
 /** @internal
     @brief used by sort engine */
 struct oyComp_s_ {
-  oyOBJECT_TYPE_e      type_;         /*!< internal struct type oyOBJECT_TYPE_COMP_S_ */
+  oyOBJECT_e           type_;         /*!< internal struct type oyOBJECT_COMP_S_ */
   struct oyComp_s_ *next;   /* chain connection */
   struct oyComp_s_ *begin;  /* chain connection */
   char            *name;   /* key name */
@@ -124,13 +124,6 @@ int oyEraseDeviceProfile                  (oyDEVICETYP_e typ,
                                            const char* attrib1,
                                            const char* attrib2,
                                            const char* attrib3);
-#if 0
-typedef enum {
-  oyOBJECT_TYPE_NONE,
-  oyOBJECT_TYPE_DISPLAY_S,
-  oyOBJECT_TYPE_NAMED_COLOUR
-} oyOBJECT_TYPE;
-#endif
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>

@@ -15,7 +15,7 @@
     @author Kai-Uwe Behrmann
     @date Project start: March 2004
 
-    <dl compact><dt><b>Internet:</b></dt><dd>http://www.oyranos.org</dd></dl>
+    <dl compact><dt>\b Internet:</dt><dd>http://www.oyranos.org</dd></dl>
 
     @n@n
     @section intro Introduction
@@ -82,7 +82,7 @@
     @endverbatim
     to link Oyranos into your application.
 
-    For C++ make shure you use the oyranos:: namespace.
+    The namespace in C++ is \b oyranos:: , e.g.\n \a oyranos::oyVersion()
 
  */
 /*    - @ref device_profiles - profiles which characterise devices */
@@ -125,13 +125,13 @@
 
     @section general_c_conventions General
     Oyranos is written in C for portability. All types belonging to its API's
-    are prefixed with a <b>oy</b>.\n
+    are prefixed with a \b oy.\n
     Oyranos objects naming is build after C++ conventions,
     where access to a class member is prefixed with the scope operator. \n
-    <i>oyranos::oyClass::oyClassFunction</i>\n
-    looks in Oyranos\n
-    <i>oyClass_Function</i>. Of course a function specific to a data object 
-    needs the object itself as argument, as the this pointer is not available.\n
+    \a oyranos::oyClass::oyClassFunction \n
+    looks in Oyranos \n
+    \a oyClass_Function. Of course a function specific to a data object 
+    needs the object itself as argument, as the this pointer is not available. \n
     Oyranos features a flexible memory management and allows easy integration
     with different memory management strategies.
 
@@ -143,7 +143,7 @@
 
     <p>Objects are transparent to allow easier debugging. But be aware to not
     change the private members of Oyranos objects directly. 
-    They are marked at end with a underscore <b>_</b>. Use the appropriate 
+    They are marked at end with a underscore \b _. Use the appropriate 
     functions for each object instead. Otherwise the objects are in danger to
     be handled inadequately.
     </p>
@@ -162,40 +162,39 @@
 
     @section  naming_convention Naming Conventions
     Declaration types are distinguishable through the below described naming
-    conventions.\n
-    A <b>oy</b> prefix is common for all functions, types and enums to
-    display a namespace in C.\n
-    <b>Functions</b> words are starting upper case, (after the oy prefix)
-    <i> oyVersion() </i>\n
-    <b>Enums</b> have all letters  written upper case. Words are separated by
+    conventions. \n
+    A \b oy prefix is common for all functions, types and enums to
+    display a namespace in C. \n
+    \b Functions words are starting upper case, (after the oy prefix)
+    oyVersion() \n
+    \b Enums have all letters  written upper case. Words are separated by
                       underscore
-      <i>oyOBJECT_TYPE_e</i>\n
-    <b>Variables</b> are written lower case and words are separated by underscore.
-      <i>file_name</i>\n
-    <b>Macros</b> are upper case and start with <b>OY_</b>:
-      <i>OY_HAVE_PNG</i>\n
+      ::oyOBJECT_e \n
+    \b Variables are written lower case and words are separated by underscore.
+      ::oy_domain_codeset \n
+    \b Macros are upper case and start with \b OY_ or \b oy:
+      ::OY_HAVE_PNG \n
     As one exception some macros are normal named to allow later typing:
-      <i>oyChar</i>\n
+      ::oyChar \n
       Function alike macros are named like normal functions followed by
-      a <b>_m</b>:
-      <i>oyColourOffset_m()</i>\n
+      a \b _m:
+      oyColourOffset_m() \n
       For enum alike macros it is more appropriate to omit the _M suffix:
-      <i>oyTYPE_123A_8</i>\n
-    <b>Stucts</b> words start upper case followed by a <b>_s</b>:
-      <i>oyProfile_s</i>\n
-    <b>Struct/object handling functions</b> start upper case with the struct
+      ::OY_TYPE_123A_8 \n
+    \b Stucts words start upper case followed by a \b _s:
+      oyProfile_s \n
+    \b Struct/object \b handling \b functions start upper case with the struct
     name, followed with the verb:
-      <i>oyProfile_GetChannelName</i>\n
+      oyProfile_GetChannelName() \n
 
     @subsection  suffixes  Declaration Overview
-    - <b>_t</b> types
-    - <b>_s</b> structs
-    - <b>_f</b> functions
-    - <b>_e</b> enums
-    - <b>_M</b> or <b>_m</b> or none for macro functions
-    - ending underscore <b>_</b> for non editable internals
-    - The namespace in C++ is <b>oyranos::</b>\n
-      <i>oyranos::oyVersion()</i>
+    - \b _t types, e.g. ::oyPixel_t
+    - \b _s structs, e.g. oyProfileTag_s
+    - \b _f functions, e.g. oyAlloc_f()
+    - \b _e enums, e.g. ::oyCONNECTOR_EVENT_e
+    - \b _u unions, e.g. ::oyValue_u
+    - \b _M or \b _m or none for macro functions, e.g. oyToChannels_m(), ::OY_TYPE_123A_HALF
+    - ending underscore \b _ for non editable internals, e.g. oyRegion_s::type_
 
 
     @section development Development Conventions
@@ -212,22 +211,24 @@
     adapt to backends.
 
     @subsection object_design Object Design
-    All Oyranos structs (::oyStruct_s)have a first member called \a type_ to
-    better distinguish them. The according value is available as a enum from
-    ::oyOBJECT_TYPE_e.\n
+    Almost all Oyranos structs are based on the same structure ::oyStruct_s.
+    They share first a member called \a type_ to better distinguish their type.
+    The according value is available as a enum from
+    ::oyOBJECT_e. \n
     Each object should implement a appropriate oyStruct_Copy_f() and a 
     oyStruct_Release_f() function member on position 2 and 3. 
-    These allow to easily cast to functions of other objects. Many object
-    manipulators in Oyranos rely on this feature.
+    These allow to easily cast to the same type of functions of other objects.
+    Many object manipulators in Oyranos rely on this feature.
     Thus each object can implement list functionality with a common base in the
     above mentioned ::oyStructList_s. The resoning behind the above outlined use
-    of common API's is, even with C casting, they help in reducing code size, 
-    for easier maintaining and while fixing bugs.\n
-    The fourth member of a ::oyObject_s style struct is \a oy_ and features common
-    properties, like memory management, naming and more.\n
-    A new simple Oyranos data data structure should contain the type_ specifier.
+    of a common struct base and API's is, even with C casting, these help in
+    reducing code size, at easier maintaining and in fixing bugs. \n
+    The fourth member of a ::oyObject_s style struct is \a oy_ and features
+    common properties, like memory management, naming and more. \n
+    A new simple Oyranos data data structure should contain the type_ specifier
+    and the two members of type oyStruct_Copy_f() and oyStruct_Release_f().
     Complex data structures should contain the type_ and oy_ structure to allow
-    the advanced features.\n
+    the advanced features. Otherwise the fourth member shall keep a intptr_t. \n
     Providing of similiar functions for different Oyranos objects, allows
     their use in a abstract way. A soft typecheck is possible over the type_ 
     member. For an example see the internal ::oyStructList_s struct with the 
@@ -237,9 +238,9 @@
     @subsection api_naming API Naming
     Keeping API members in a lexical relation allowes
     for later easy searching with tools of choice. So you find rather a 
-    getOyNamedColourName but oyNamedColour_GetName and can easily find the  
+    \a getOyNamedColourName but \a oyNamedColour_GetName and can easily find the
     related functions in the appropriate NamedColour API. The sheme follows
-    C++ syntax: (namespace)oy(ranos)::(class)NamedColour::(function)getName.
+    C++ syntax: (namespace)\b oy(ranos)::(class)\b NamedColour::(function)\b getName.
     This should as well help in designing OO wrappers to allow consistency among
     C Oyranos and its wrappers for various languages.
 

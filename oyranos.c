@@ -84,7 +84,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
 
-  if(context && oyOBJECT_TYPE_NONE < context->type_) 
+  if(context && oyOBJECT_NONE < context->type_) 
   {
     type_name = oyStruct_TypeToText( context );
     id = oyObject_GetId( context->oy_ );
@@ -736,7 +736,7 @@ oyInitComp_ (oyComp_t_ *list, oyComp_t_ *top)
 
   list->next = 0;
 
-  list->type_ = oyOBJECT_TYPE_COMP_S_;
+  list->type_ = oyOBJECT_COMP_S_;
   if (top)
     list->begin = top;
   else

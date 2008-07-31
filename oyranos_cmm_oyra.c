@@ -105,7 +105,7 @@ int oyraCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
   const char * type_name = "";
   int id = -1;
 
-  if(context && oyOBJECT_TYPE_NONE < context->type_)
+  if(context && oyOBJECT_NONE < context->type_)
   {
     type_name = oyStruct_TypeToText( context );
     id = oyObject_GetId( context->oy_ );
@@ -327,7 +327,7 @@ oyStructList_s * oyraProfileTag_GetValues(
   {
     oyStructList_s * list = oyStructList_New( 0 );
     oyName_s description_mluc = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "mluc",
       "\
@@ -338,7 +338,7 @@ oyStructList_s * oyraProfileTag_GetValues(
     - oyName_s::lang will hold i18n specifier, e.g. \"en_GB\""
     };
     oyName_s description_psid = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "psid",
       "\
@@ -353,7 +353,7 @@ oyStructList_s * oyraProfileTag_GetValues(
     - the icSigProfileDescriptionTag according to language in 1 + i * 5 + 4"
     };
     oyName_s description_MS10 = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "MS10",
       "\
@@ -362,7 +362,7 @@ oyStructList_s * oyraProfileTag_GetValues(
   - list: should contain only oyName_s"
     };
     oyName_s description_text = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "text",
       "\
@@ -371,7 +371,7 @@ oyStructList_s * oyraProfileTag_GetValues(
   - list: should contain only oyName_s"
     };
     oyName_s description_desc = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "desc",
       "\
@@ -767,7 +767,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                {
                  name = 0;
                  name = (oyName_s*) oyStructList_GetRefType( mfg_tmp,
-                                                   0, oyOBJECT_TYPE_NAME_S );
+                                                   0, oyOBJECT_NAME_S );
                  if(name)
                    mfg = name->name;
                }
@@ -791,7 +791,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                {
                  name = 0;
                  name = (oyName_s*) oyStructList_GetRefType( model_tmp,
-                                                   0, oyOBJECT_TYPE_NAME_S );
+                                                   0, oyOBJECT_NAME_S );
                  if(name)
                    model = name->name;
                }
@@ -916,7 +916,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                  {
                    name = 0;
                    name = (oyName_s*) oyStructList_GetRefType( desc_tmp,
-                                                     0, oyOBJECT_TYPE_NAME_S );
+                                                     0, oyOBJECT_NAME_S );
                    if(name)
                      tmp = name->name;
                  }
@@ -1012,7 +1012,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
   if(!error && !s)
   {
     oyName_s description_mluc = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "mluc",
       "\
@@ -1025,7 +1025,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
   - version: is not honoured; note 'mluc' is known since ICC v4"
     };
     oyName_s description_psid = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "psid",
       "\
@@ -1035,7 +1035,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
   - version: is not honoured; note 'psid' is known after ICC v4.2"
     };
     oyName_s description_text = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "text",
       "\
@@ -1045,7 +1045,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
   - version: is not honoured"
     };
     oyName_s description_desc = {
-      oyOBJECT_TYPE_NAME_S, 0,0,0,
+      oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
       "desc",
       "\
@@ -1089,7 +1089,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              string = (oyName_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_NAME_S );
+                                                   i, oyOBJECT_NAME_S );
              error = !string;
            }
 
@@ -1126,7 +1126,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              string = (oyName_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_NAME_S );
+                                                   i, oyOBJECT_NAME_S );
              error = !string;
            }
 
@@ -1196,7 +1196,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              prof = (oyProfile_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_PROFILE_S );
+                                                   i, oyOBJECT_PROFILE_S );
              error = !prof;
            }
 
@@ -1249,7 +1249,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
              if(!error)
              {
                tmptag = (oyProfileTag_s*) oyStructList_GetRefType( tag_list,
-                                               i, oyOBJECT_TYPE_PROFILE_TAG_S );
+                                               i, oyOBJECT_PROFILE_TAG_S );
                error = !tmptag;
              }
 
@@ -1261,7 +1261,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
                *((uint32_t*)&mem[12 + 8*i + 0]) = oyValueUInt32( pos );
 
                prof = (oyProfile_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_PROFILE_S );
+                                                   i, oyOBJECT_PROFILE_S );
                error = !prof || !prof->block_ || !prof->size_;
                error = oyProfileGetMD5( prof->block_, prof->size_,
                                         (unsigned char*)&mem[pos] );
@@ -1289,7 +1289,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              string = (oyName_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_NAME_S );
+                                                   i, oyOBJECT_NAME_S );
              error = !string;
            }
 
@@ -1317,7 +1317,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              string = (oyName_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_NAME_S );
+                                                   i, oyOBJECT_NAME_S );
              error = !string;
            }
 
@@ -1364,7 +1364,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              string = (oyName_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_NAME_S );
+                                                   i, oyOBJECT_NAME_S );
              error = !string;
            }
 
@@ -1402,7 +1402,7 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              string = (oyName_s*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_TYPE_NAME_S );
+                                                   i, oyOBJECT_NAME_S );
              error = !string;
            }
 
@@ -1475,8 +1475,8 @@ char       * oyraWidget_Get          ( const char        * func_name,
   {
 #if 0
     static oyParametersChoice_s oyra_default_widget_editing_rgb_param = {
-      /* type_; internal struct type oyOBJECT_TYPE_WIDGET_CHOICE_S */
-      oyOBJECT_TYPE_WIDGET_CHOICE_S,
+      /* type_; internal struct type oyOBJECT_WIDGET_CHOICE_S */
+      oyOBJECT_WIDGET_CHOICE_S,
       /*    copy; copy function */
       0,
       /*    release; release function */
@@ -1497,15 +1497,15 @@ char       * oyraWidget_Get          ( const char        * func_name,
     };
     static oyWidget_s   oyra_default_widget_editing_rgb = {
       /* type_ */
-      oyOBJECT_TYPE_WIDGET_S, 0,0,0,
+      oyOBJECT_WIDGET_S, 0,0,0,
 
       /* param_type */
-      oyOBJECT_TYPE_WIDGET_CHOICE_S,
+      oyOBJECT_WIDGET_CHOICE_S,
       /* id_ and flags */
       0, 0, 
 
       /* name */
-      { oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, 0,0 },
+      { oyOBJECT_NAME_S, 0,0,0, CMM_NICK, 0,0 },
       /* parameter */
       (oyWidgetParameters_u*)&oyra_default_widget_editing_rgb_param,
       /* config_path */
@@ -1538,7 +1538,7 @@ char       * oyraWidget_Get          ( const char        * func_name,
  *  @since   2008/02/08 (Oyranos: 0.1.8)
  */
 oyParametersChoice_s oyra_default_widget_policy_param = {
-  oyOBJECT_TYPE_WIDGET_CHOICE_S, /* type_; internal struct type oyOBJECT_TYPE_WIDGET_CHOICE_S */
+  oyOBJECT_WIDGET_CHOICE_S, /* type_; internal struct type oyOBJECT_WIDGET_CHOICE_S */
   0,  /*    copy; copy function */
   0,  /*    release; release function */
   0,  /*    oy_; base object */
@@ -1556,11 +1556,11 @@ oyParametersChoice_s oyra_default_widget_policy_param = {
  *  @since   2008/02/08 (Oyranos: 0.1.8)
  */
 oyWidget_s   oyra_default_widget_policy = {
-  oyOBJECT_TYPE_WIDGET_S, /* type_ */
+  oyOBJECT_WIDGET_S, /* type_ */
   0,0,0, /* object handlers, not needed for static structures */
-  oyOBJECT_TYPE_WIDGET_CHOICE_S, /* param_type */
+  oyOBJECT_WIDGET_CHOICE_S, /* param_type */
   0,0,   /* id_ and flags */
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, _("Policy"), _("Collections of settings in Oyranos")}, /* name */
+  {oyOBJECT_NAME_S, 0,0,0, CMM_NICK, _("Policy"), _("Collections of settings in Oyranos")}, /* name */
   0, /*(oyWidgetParameters_u*)&oyra_default_widget_policy_param, parameter */
   "org.oyranos.oyra", /* config_path */
   0,     /* config_key */
@@ -1579,7 +1579,7 @@ oyWidget_s *oyra_default_top_widgets_group[] = {
  *  @since   2008/02/07 (Oyranos: 0.1.8)
  */
 oyParametersGroup_s  oyra_default_top_widgets_param = {
-  oyOBJECT_TYPE_WIDGET_GROUP_S,  /* type_ */
+  oyOBJECT_WIDGET_GROUP_S,  /* type_ */
   0,0,0, /* object handlers, not needed for static structures */
   oyra_default_top_widgets_group,     /* widgets */
   1,     /* widgets_n */
@@ -1595,11 +1595,11 @@ oyParametersGroup_s  oyra_default_top_widgets_param = {
  *  @date    2008/02/07
  */
 oyWidget_s   oyra_default_top_widgets = {
-  oyOBJECT_TYPE_WIDGET_S, /* type_ */
+  oyOBJECT_WIDGET_S, /* type_ */
   0,0,0, /* object handlers, not needed for static structures */
-  oyOBJECT_TYPE_WIDGET_GROUP_S, /* param_type */
+  oyOBJECT_WIDGET_GROUP_S, /* param_type */
   0,0,   /* id_ and flags */
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, _("Oyranos Configuration"), _("Oyranos Control Panel")}, /* name */
+  {oyOBJECT_NAME_S, 0,0,0, CMM_NICK, _("Oyranos Configuration"), _("Oyranos Control Panel")}, /* name */
   (oyWidgetParameters_u*)&oyra_default_top_widgets_param,     /* parameter for widget */
   "org.oyranos.oyra", /* config_path */
   0,     /* config_key */
@@ -1675,7 +1675,7 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
   oyDATATYPE_e data_type = 0;
 
   if(!error)
-    error = filter->type_ != oyOBJECT_TYPE_FILTER_S;
+    error = filter->type_ != oyOBJECT_FILTER_S;
 
   if(!error)
     if(filter->image_ && filter->image_->layout_)
@@ -1722,21 +1722,24 @@ oyPointer  oyraFilter_ImageRootContextToMem (
   return oyFilter_TextToInfo( filter, size, allocateFunc );
 }
 
-/** @func    oyraFilter_ImageRootGetNext
+/** @func    oyraFilterPlug_ImageRootGetNext
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/10 (Oyranos: 0.1.8)
  *  @date    2008/07/17
  */
-oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
+oyPointer oyraFilterPlug_ImageRootGetNext( oyFilterPlug_s* requestor_plug,
                                        oyPixelAccess_s   * pixel_access,
                                        int32_t           * feedback )
 {
-  oyPointer * ptr = 0;
   int x = pixel_access->start_xy[0], sx = x;
   int y = pixel_access->start_xy[1], sy = y;
   int remainder = 0, max = 0, i, n;
+
+  oyPointer * ptr = 0;
+  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
+  oyImage_s * image = socket->pattern->node->filter->image_;
 
   /* calculate the pixel position we want */
   if(pixel_access->array_xy)
@@ -1774,24 +1777,23 @@ oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
     x = pixel_access->start_xy[0];
     y = pixel_access->start_xy[1];
 
-    if(pixel_access->start_xy[0] >= filter_node->filter->image_->width)
+    if(pixel_access->start_xy[0] >= image->width)
     {
       x = 0; pixel_access->start_xy[0] = 1;
       y = ++pixel_access->start_xy[1];
     } else
       ++pixel_access->start_xy[0];
 
-    if(pixel_access->start_xy[1] >= filter_node->filter->image_->height && feedback)
+    if(pixel_access->start_xy[1] >= image->height && feedback)
     {
       *feedback = -1;
       return 0;
     }
   }
 
-  if(x < filter_node->filter->image_->width &&
-     y < filter_node->filter->image_->height)
-    ptr = filter_node->filter->image_->getPoint( filter_node->filter->image_,
-                                                 x, y, 0 );
+  if(x < image->width &&
+     y < image->height)
+    ptr = image->getPoint( image, x, y, 0 );
   else
     ptr = 0;
 
@@ -1801,6 +1803,67 @@ oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
   return ptr;
 }
 
+oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
+                                         oyHALF, oyFLOAT, oyDOUBLE, 0};
+
+oyConnector_s oyra_imageRoot_connector = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  0, /* node */
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
+  oyCONNECTOR_IMAGE, /* connector_type */
+  0, /* is_plug == oyFilterPlug_s */
+  oyra_image_data_types, /* data_types */
+  6, /* data_types_n; elements in data_types array */
+  -1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  255, /* max_channels_count; */
+  1, /* min_colour_count; */
+  255, /* max_colour_count; */
+  0, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap_bytes; non host byte order */
+  0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  0, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* count in channel_types */
+  1, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnector_s * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connector,0};
+
+oyConnector_s oyra_imageOutput_connector = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  0, /* node */
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
+  oyCONNECTOR_IMAGE, /* connector_type */
+  1, /* is_plug == oyFilterPlug_s */
+  oyra_image_data_types,
+  6, /* data_types_n; elements in data_types array */
+  -1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  255, /* max_channels_count; */
+  1, /* min_colour_count; */
+  255, /* max_colour_count; */
+  0, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap_bytes; non host byte order */
+  0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  0, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* count in channel_types */
+  1, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnector_s* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_connector,0};
+
+uint32_t oyra_image_connectors_max[2] = {1,0};
+
 /** @func    oyraFilter_ImageOutputGetNext
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -1808,17 +1871,21 @@ oyPointer oyraFilter_ImageRootGetNext( oyFilterNode_s    * filter_node,
  *  @since   2008/07/19 (Oyranos: 0.1.8)
  *  @date    2008/07/19
  */
-oyPointer oyraFilter_ImageOutputGetNext( oyFilterNode_s    * filter_node,
+oyPointer oyraFilterPlug_ImageOutputGetNext( oyFilterPlug_s   * requestor_plug,
                                        oyPixelAccess_s   * pixel_access,
                                        int32_t           * feedback )
 {
   oyPointer * ptr = 0;
+  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
+  oyFilterPlug_s * plug = 0;
+  oyFilter_s * filter = 0,
+             * remote_filter = 0;
 
-  oyFilterNode_s * parent = 0;
+  filter = socket->pattern->node->filter;
+  plug = (oyFilterPlug_s *)socket->pattern->node->plugs[0];
+  remote_filter = plug->remote_socket_->pattern->node->filter;
 
-  parent = (oyFilterNode_s*) filter_node->merged_to->parents->ptr_[0];
-
-  ptr = parent->filter->api_->oyCMMFilter_GetNext( parent, pixel_access,feedback);
+  ptr = filter->api4_->oyCMMFilterPlug_GetNext( plug, pixel_access, feedback);
 
   return ptr;
 }
@@ -1836,7 +1903,7 @@ oyPointer oyraFilter_ImageOutputGetNext( oyFilterNode_s    * filter_node,
  */
 oyCMMapi4_s   oyra_api4_image_output = {
 
-  oyOBJECT_TYPE_CMM_API4_S,
+  oyOBJECT_CMM_API4_S,
   0,0,0,
   0,
   
@@ -1855,14 +1922,19 @@ oyCMMapi4_s   oyra_api4_image_output = {
   0,
   oyraFilter_ImageRootContextToMem,
   0,
-  oyraFilter_ImageOutputGetNext,
+  oyraFilterPlug_ImageOutputGetNext,
 
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"},
+  {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"},
   "Image/Simple Image[out]", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
-  1,   /* parents_max */
-  0    /* children_max */
+
+  oyra_imageOutput_connectors,   /* plugs */
+  1,   /* plugs_n */
+  0,   /* plugs_last_add */
+  0,   /* sockets */
+  0,   /* sockets_n */
+  0    /* sockets_last_add */
 };
 
 /** @instance oyra_api4
@@ -1876,7 +1948,7 @@ oyCMMapi4_s   oyra_api4_image_output = {
  */
 oyCMMapi4_s   oyra_api4_image_root = {
 
-  oyOBJECT_TYPE_CMM_API4_S,
+  oyOBJECT_CMM_API4_S,
   0,0,0,
   (oyCMMapi_s*) & oyra_api4_image_output,
   
@@ -1895,14 +1967,19 @@ oyCMMapi4_s   oyra_api4_image_root = {
   0,
   oyraFilter_ImageRootContextToMem,
   0,
-  oyraFilter_ImageRootGetNext,
+  oyraFilterPlug_ImageRootGetNext,
 
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
+  {oyOBJECT_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
   "Image/Simple Image", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
-  0,   /* parents_max */
-  1    /* children_max */
+
+  0,   /* plugs */
+  0,   /* plugs_n */
+  0,   /* plugs_last_add */
+  oyra_imageRoot_connectors,   /* sockets */
+  1,   /* sockets_n */
+  0    /* sockets_last_add */
 };
 
 /** @instance oyra_api3
@@ -1914,7 +1991,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
  */
 oyCMMapi3_s  oyra_api3 = {
 
-  oyOBJECT_TYPE_CMM_API3_S,
+  oyOBJECT_CMM_API3_S,
   0,0,0,
   (oyCMMapi_s*) & oyra_api4_image_root,
   
@@ -1935,19 +2012,19 @@ oyCMMapi3_s  oyra_api3 = {
  */
 oyCMMInfo_s oyra_cmm_module = {
 
-  oyOBJECT_TYPE_CMM_INFO_S,
+  oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
   "0.1.8",
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, CMM_NICK, "Oyranos modules", "Oyranos supplied modules"},
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/#download"},
-  {oyOBJECT_TYPE_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
+  {oyOBJECT_NAME_S, 0,0,0, CMM_NICK, "Oyranos modules", "Oyranos supplied modules"},
+  {oyOBJECT_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/#download"},
+  {oyOBJECT_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyra_api3,
   0,
 
-  {oyOBJECT_TYPE_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
 
 };
 

@@ -62,7 +62,7 @@ typedef int      (*oyCMMInit_f)      ( void );
  *  @date    2008/07/02
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_CMM_POINTER_S */
+  oyOBJECT_e           type;           /*!< internal struct type oyOBJECT_CMM_POINTER_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
@@ -173,7 +173,7 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
  *  @date  12 december 2007 (API 0.1.8)
  */
 struct oyCMMapi_s {
-  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -191,7 +191,7 @@ struct oyCMMapi_s {
  *  @date  21 december 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API1_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API1_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -244,7 +244,7 @@ typedef int   (*oyActivateMonitorProfiles_f) (
  *  @date  10 december 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API2_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API2_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -284,7 +284,7 @@ typedef int                 (*oyCMMProfileTag_Create_f) (
  *  @date    2008/01/02
  */
 typedef struct {
-  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API3_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API3_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -362,7 +362,7 @@ typedef oyPointer(*oyCMMFilter_ContextToMem_f) (
                                        oyAlloc_f           allocateFunc );
 
 
-/** @type    oyCMMFilter_GetNext_f
+/** @type    oyCMMFilterSocket_GetNext_f
  *  @brief   get a pixel or channel from the previous filter
  *
  *  You have to call oyCMMFilter_CreateContext_t or oyCMMFilter_ContextFromMem_t first.
@@ -372,20 +372,20 @@ typedef oyPointer(*oyCMMFilter_ContextToMem_f) (
  *
  *  @verbatim
     while (err == 0) {
-      memcpy( buf[x * n++], oyCMMFilter_GetNext( filter_context, pixel_access, &err ), x );
+      memcpy( buf[x * n++], oyCMMFilterSocket_GetNext( filter_socket, pixel_access, &err ), x );
     } @endverbatim
  *
- *  @param[in]     filter              including the CMM's private data
+ *  @param[in]     connector           including the CMM's private data, connector is the requesting plug to obtain a handle for calling back
  *  @param[in]     pixel_access        processing order instructions
  *  @param[out]    feedback            -1 end; 0 on success; error > 1
  *  @return                            pixel buffer
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/03 (Oyranos: 0.1.8)
- *  @date    2008/07/04
+ *  @date    2008/07/28
  */
-typedef oyPointer(*oyCMMFilter_GetNext_f)(
-                                       oyFilterNode_s    * filter_node,
+typedef oyPointer(*oyCMMFilterPlug_GetNext_f)(
+                                       oyFilterPlug_s    * connector,
                                        oyPixelAccess_s   * pixel_access,
                                        int32_t           * feedback );
 
@@ -409,7 +409,7 @@ typedef oyPointer(*oyCMMFilter_GetNext_f)(
  *  @date    2008/07/10
  */
 struct  oyCMMapi4_s {
-  oyOBJECT_TYPE_e  type;               /**< struct type oyOBJECT_TYPE_CMM_API4_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -428,11 +428,11 @@ struct  oyCMMapi4_s {
   int              version[3];
 
   /** check options for validy and correct */
-  oyFilter_ValidateOptions_f oyFilter_ValidateOptions;
-  oyWidgetEvent_f  oyWidget_Event;     /**< handle widget events */
+  oyFilter_ValidateOptions_f   oyFilter_ValidateOptions;
+  oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
 
   /** mandatory for "..colour" filters */
-  oyCMMProfile_Open_f      oyCMMProfile_Open;
+  oyCMMProfile_Open_f          oyCMMProfile_Open;
   /** mandatory for "..colour" filters */
   oyCMMFilter_CreateContext_f  oyCMMFilter_CreateContext;
   /** mandatory for "..colour" filters */
@@ -441,7 +441,7 @@ struct  oyCMMapi4_s {
   oyCMMFilter_ContextFromMem_f oyCMMFilter_ContextFromMem;
   /** mandatory for all filters; Special care has to taken for the
       oyPixelAccess_s argument to this function. */
-  oyCMMFilter_GetNext_f oyCMMFilter_GetNext;
+  oyCMMFilterPlug_GetNext_f    oyCMMFilterPlug_GetNext;
 
   /** translatable, eg "scale" "image scaling" "..." */
   oyName_s         name;
@@ -449,16 +449,16 @@ struct  oyCMMapi4_s {
   oyOptions_s    * options;            /**< default options */
   const char     * opts_ui;            /**< xml ui elements for filter options*/
 
-  /** allowed number of parents, e.g. 1 for a linear node */
-  uint32_t         parents_max;
-  /** allowed number of children, e.g. 1 for a linear node */
-  uint32_t         children_max;
-  /** We have to tell about valid input and output filters, eigther active by
-      the filter itself or by passively providing enough informations.
-
-      The oyCMMapi4_s::input member can be eigther a oyImage_s or oyOptions_s 
-      struct to describe what is possible with the according filters end. */
-  oyStruct_s    ** input;
+  /** We have to tell about valid input and output connectors, by 
+      passively providing enough informations. */
+  oyConnector_s ** plugs;
+  uint32_t         plugs_n;           /**< number of different plugs */ 
+  /** additional allowed number for last input connector, e.g. typical 0 */
+  uint32_t         plugs_last_add;
+  oyConnector_s ** sockets;
+  uint32_t         sockets_n;          /**< number of sockets */
+  /** additional allowed number for last output connector, e.g. typical 0 */
+  uint32_t         sockets_last_add;
 };
 
 

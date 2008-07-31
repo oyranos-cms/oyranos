@@ -31,7 +31,7 @@ namespace oyranos
 
 /** \internal  platformdependent */
 typedef struct {
-  oyOBJECT_TYPE_e type_;       /**< object type */
+  oyOBJECT_e       type_;              /**< object type oyOBJECT_MONITOR_S */
   char         *name;        /**< traditional display name - host:0 / :0 */
   char         *host;        /**< host name only - host */
   char         *identifier;  /**<  - 0.1_x_y_wxh */

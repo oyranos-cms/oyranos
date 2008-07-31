@@ -52,7 +52,7 @@ int          oyObject_Ref            ( oyObject_s          obj );
  *  @date  5 december 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type_;          /**< internal struct type oyOBJECT_TYPE_CMM_HANDLE_S */
+  oyOBJECT_e           type_;          /**< internal struct type oyOBJECT_CMM_HANDLE_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
@@ -164,7 +164,7 @@ typedef struct {
 
 
 char **          oyCMMsGetNames_     ( int               * n,
-                                       oyOBJECT_TYPE_e   * api_types,
+                                       oyOBJECT_e        * api_types,
                                        int                 types_n );
 char **          oyCMMsGetLibNames_  ( int               * n,
                                        const char        * required_cmm );
@@ -172,18 +172,18 @@ char *           oyCMMnameFromLibName_(const char        * lib_name);
 oyCMMInfo_s *    oyCMMInfoAtListFromLibName_(const char        * lib_name );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
 oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name );
-oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
+oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        const char        * cmm_required,
                                        oyCMMapiQueries_s * capabilities,
                                        char              * cmm_used,
                                        const char        * registration,
                                        oyFILTER_TYPE_e     filter_type );
 
-oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api );
+oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api );
 oyCMMhandle_s *  oyCMMFromCache_     ( const char        * cmm );
 oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
 int              oyCMMRelease_       ( const char        * cmm );
-unsigned int     oyCMMapiIsReady_    ( oyOBJECT_TYPE_e     type );
+unsigned int     oyCMMapiIsReady_    ( oyOBJECT_e          type );
 
 
 int          oyPointerReleaseFunc_   ( oyPointer         * ptr );
@@ -482,6 +482,80 @@ oyICCColourSpaceGetChannelName ( icColorSpaceSignature sig,
   }
   return "-";
 }
+
+/** @func    oyICCColourSpaceToChannelLayout
+ *  @brief   describe a channels characteristic
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
+                                       icColorSpaceSignature sig,
+                                       int                 pos )
+{
+  int n = oyICCColourSpaceGetChannelCount( sig );
+
+    if(sig == icSigXYZData) {
+         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 2) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+    }
+    if(sig == icSigLabData) {
+         if(pos == 0) return oyCHANNELTYPE_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR;
+         if(pos == 2) return oyCHANNELTYPE_COLOUR;
+    }
+    if(sig == icSigLuvData) {
+         if(pos == 0) return oyCHANNELTYPE_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR;
+         if(pos == 2) return oyCHANNELTYPE_COLOUR;
+    }
+    if(sig == icSigYCbCrData) {
+         if(pos == 0) return oyCHANNELTYPE_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR;
+         if(pos == 2) return oyCHANNELTYPE_COLOUR;
+    }
+    if(sig == icSigYxyData) {
+         if(pos == 0) return oyCHANNELTYPE_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR;
+         if(pos == 2) return oyCHANNELTYPE_COLOUR;
+    }
+    if(sig == icSigRgbData) {
+         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 2) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+    }
+    if(sig == icSigGrayData) {
+         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+    }
+    if(sig == icSigHsvData) {
+         if(pos == 0) return oyCHANNELTYPE_COLOUR;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR;
+         if(pos == 2) return oyCHANNELTYPE_LIGHTNESS;
+    }
+    if(sig == icSigHlsData) {
+         if(pos == 0) return oyCHANNELTYPE_COLOUR;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR;
+         if(pos == 2) return oyCHANNELTYPE_LIGHTNESS;
+    }
+    if(sig == icSigCmykData) {
+         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 2) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+    }
+    if(sig == icSigCmyData) {
+         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 2) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+    }
+
+  if(pos < n)
+    return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+  else
+    return oyCHANNELTYPE_OTHER;
+}
+
 
 /** @func  oyICCTagDescription
  *  @brief get tag description
@@ -1314,46 +1388,51 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
  */
 const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
 {
-  const char * text = 0;
+  const char * text = "unknown";
 
   if(oy_struct && oy_struct->type_)
     switch(oy_struct->type_) {
-    case oyOBJECT_TYPE_NONE: text = "Zero - none"; break;
-    case oyOBJECT_TYPE_OBJECT_S: text = "oyObject_s"; break;
-    case oyOBJECT_TYPE_DISPLAY_S: text = "oyDisplay_s"; break;
-    case oyOBJECT_TYPE_NAMED_COLOUR_S: text = "oyNamedColour_s"; break;
-    case oyOBJECT_TYPE_NAMED_COLOURS_S: text = "oyNamedColours_s"; break;
-    case oyOBJECT_TYPE_PROFILE_S: text = "oyProfile_s"; break;
-    case oyOBJECT_TYPE_PROFILE_TAG_S: text = "oyProfileTag_s"; break;
-    case oyOBJECT_TYPE_PROFILES_S: text = "oyProfiles_s"; break;
-    case oyOBJECT_TYPE_OPTION_S: text = "oyOption_s"; break;
-    case oyOBJECT_TYPE_OPTIONS_S: text = "oyOptions_s"; break;
-    case oyOBJECT_TYPE_REGION_S: text = "oyRegion_s"; break;
-    case oyOBJECT_TYPE_IMAGE_S: text = "oyImage_s"; break;
-    case oyOBJECT_TYPE_COLOUR_CONVERSION_S: text = "oyColourConversion_s";break;
-    case oyOBJECT_TYPE_FILTER_S: text = "oyFilter_s"; break;
-    case oyOBJECT_TYPE_FILTERS_S: text = "oyFilters_s"; break;
-    case oyOBJECT_TYPE_CONVERSIONS_S: text = "oyConversions_s"; break;
-    case oyOBJECT_TYPE_CMM_HANDLE_S: text = "oyCMMhandle_s"; break;
-    case oyOBJECT_TYPE_CMM_POINTER_S: text = "oyCMMptr_s"; break;
-    case oyOBJECT_TYPE_CMM_INFO_S: text = "oyCMMInfo_s"; break;
-    case oyOBJECT_TYPE_CMM_API_S: text = "oyCMMapi_s generic"; break;
-    case oyOBJECT_TYPE_CMM_API1_S: text = "oyCMMapi1_s old CMM"; break;
-    case oyOBJECT_TYPE_CMM_API2_S: text = "oyCMMapi2_s Monitors"; break;
-    case oyOBJECT_TYPE_CMM_API3_S: text = "oyCMMapi3_s Profile tags"; break;
-    case oyOBJECT_TYPE_CMM_API4_S: text = "oyCMMapi4_s Filter"; break;
-    case oyOBJECT_TYPE_CMM_API_MAX: text = "not defined"; break;
-    case oyOBJECT_TYPE_ICON_S: text = "oyIcon_s"; break;
-    case oyOBJECT_TYPE_MODULE_S: text = "oyModule_s"; break;
-    case oyOBJECT_TYPE_EXTERNFUNC_S: text = "oyExternFunc_s"; break;
-    case oyOBJECT_TYPE_NAME_S: text = "oyName_s"; break;
-    case oyOBJECT_TYPE_COMP_S_: text = "oyComp_s_"; break;
-    case oyOBJECT_TYPE_FILE_LIST_S_: text = "oyFileList_s_"; break;
-    case oyOBJECT_TYPE_HASH_S: text = "oyHash_s"; break;
-    case oyOBJECT_TYPE_HANDLE_S: text = "oyHandle_s"; break;
-    case oyOBJECT_TYPE_STRUCT_LIST_S: text = "oyStructList_s"; break;
-    case oyOBJECT_TYPE_MAX: text = "Max - none"; break;
-    default: text = "unknown"; break;
+    case oyOBJECT_NONE: text = "Zero - none"; break;
+    case oyOBJECT_OBJECT_S: text = "oyObject_s"; break;
+    case oyOBJECT_MONITOR_S: text = "oyMonitor_s"; break;
+    case oyOBJECT_NAMED_COLOUR_S: text = "oyNamedColour_s"; break;
+    case oyOBJECT_NAMED_COLOURS_S: text = "oyNamedColours_s"; break;
+    case oyOBJECT_PROFILE_S: text = "oyProfile_s"; break;
+    case oyOBJECT_PROFILE_TAG_S: text = "oyProfileTag_s"; break;
+    case oyOBJECT_PROFILES_S: text = "oyProfiles_s"; break;
+    case oyOBJECT_OPTION_S: text = "oyOption_s"; break;
+    case oyOBJECT_OPTIONS_S: text = "oyOptions_s"; break;
+    case oyOBJECT_REGION_S: text = "oyRegion_s"; break;
+    case oyOBJECT_IMAGE_S: text = "oyImage_s"; break;
+    case oyOBJECT_COLOUR_CONVERSION_S: text = "oyColourConversion_s";break;
+    case oyOBJECT_FILTER_S: text = "oyFilter_s"; break;
+    case oyOBJECT_FILTERS_S: text = "oyFilters_s"; break;
+    case oyOBJECT_CONVERSIONS_S: text = "oyConversions_s"; break;
+    case oyOBJECT_CONNECTOR_S: text = "oyConnector_s"; break;
+    case oyOBJECT_FILTER_PLUG_S: text = "oyFilterPlug_s"; break;
+    case oyOBJECT_FILTER_PLUGS_S: text = "oyFilterPlugs_s"; break;
+    case oyOBJECT_FILTER_SOCKET_S: text = "oyFilterSocket_s"; break;
+    case oyOBJECT_FILTER_NODE_S: text = "oyFilterNode_s"; break;
+    case oyOBJECT_PIXEL_ACCESS_S: text = "oyPixelAccess_s"; break;
+    case oyOBJECT_CMM_HANDLE_S: text = "oyCMMhandle_s"; break;
+    case oyOBJECT_CMM_POINTER_S: text = "oyCMMptr_s"; break;
+    case oyOBJECT_CMM_INFO_S: text = "oyCMMInfo_s"; break;
+    case oyOBJECT_CMM_API_S: text = "oyCMMapi_s generic"; break;
+    case oyOBJECT_CMM_API1_S: text = "oyCMMapi1_s old CMM"; break;
+    case oyOBJECT_CMM_API2_S: text = "oyCMMapi2_s Monitors"; break;
+    case oyOBJECT_CMM_API3_S: text = "oyCMMapi3_s Profile tags"; break;
+    case oyOBJECT_CMM_API4_S: text = "oyCMMapi4_s Filter"; break;
+    case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
+    case oyOBJECT_ICON_S: text = "oyIcon_s"; break;
+    case oyOBJECT_MODULE_S: text = "oyModule_s"; break;
+    case oyOBJECT_EXTERNFUNC_S: text = "oyExternFunc_s"; break;
+    case oyOBJECT_NAME_S: text = "oyName_s"; break;
+    case oyOBJECT_COMP_S_: text = "oyComp_s_"; break;
+    case oyOBJECT_FILE_LIST_S_: text = "oyFileList_s_"; break;
+    case oyOBJECT_HASH_S: text = "oyHash_s"; break;
+    case oyOBJECT_HANDLE_S: text = "oyHandle_s"; break;
+    case oyOBJECT_STRUCT_LIST_S: text = "oyStructList_s"; break;
+    case oyOBJECT_MAX: text = "Max - none"; break;
     }
 
   return text;
@@ -1369,7 +1448,7 @@ oyName_s *   oyName_new              ( oyObject_s          object )
 {
   oyAlloc_f allocateFunc = oyAllocateFunc_;
   /* ---- start of object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_NAME_S;
+  oyOBJECT_e type = oyOBJECT_NAME_S;
 # define STRUCT_TYPE oyName_s
   int error = 0;
   STRUCT_TYPE * s = 0;
@@ -1469,7 +1548,7 @@ int          oyName_release_         ( oyName_s       ** obj,
 
   s = *obj;
 
-  if( s->type != oyOBJECT_TYPE_NAME_S)
+  if( s->type != oyOBJECT_NAME_S)
   {
     WARNc_S(("Attempt to release a non oyName_s object."))
     return 1;
@@ -1516,7 +1595,7 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
   int error = 0;
   oyName_s * s = obj;
 
-  if(obj && obj->type != oyOBJECT_TYPE_NAME_S)
+  if(obj && obj->type != oyOBJECT_NAME_S)
   {
     WARNc_S(("Attempt to edit a non oyName_s object."))
     return 0;
@@ -1527,7 +1606,7 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
 
   if(!s) return 0;
 
-  s->type = oyOBJECT_TYPE_NAME_S;
+  s->type = oyOBJECT_NAME_S;
 
   {
 #define oySetString_m(n_type)\
@@ -1672,7 +1751,7 @@ int          oyName_boolean          ( oyName_s          * name_a,
  *  @param[in]     ptrCopy             This function is later called with the 
  *                                     pointer as the first arg. The second arg  *                                     will be zero.
  *  @param[in]     ptrRelease          A function to later release.
- *                                     With ptr_type part of oyOBJECT_TYPE_e,
+ *                                     With ptr_type part of oyOBJECT_e,
  *                                     the pointer to the pointer will be given
  *                                     as argument (void)(*)(void**),
  *                                     otherwise the simple
@@ -1685,7 +1764,7 @@ int          oyName_boolean          ( oyName_s          * name_a,
 oyStructList_s * oyStructList_New    ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_STRUCT_LIST_S;
+  oyOBJECT_e type = oyOBJECT_STRUCT_LIST_S;
 # define STRUCT_TYPE oyStructList_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -1784,7 +1863,7 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
   error = !s;
 
   if(!error)
-    if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+    if(s->type_ != oyOBJECT_STRUCT_LIST_S)
       error = 1;
 
   if(!error)
@@ -1899,7 +1978,7 @@ int              oyStructList_Release (oyStructList_s   ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_STRUCT_LIST_S)
   {
     WARNc_S(("Attempt to release a non oyStructList_s object."))
     return 1;
@@ -1952,7 +2031,7 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
 
   error = !s;
 
-  if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(s->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -1996,7 +2075,7 @@ oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
   oyStruct_s * obj = 0;
 
   if(!error)
-  if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(s->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -2020,7 +2099,7 @@ oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
  */
 oyStruct_s *     oyStructList_GetType_(oyStructList_s    * list,
                                        int                 pos,
-                                       oyOBJECT_TYPE_e     type )
+                                       oyOBJECT_e          type )
 {
   oyStruct_s * obj = oyStructList_Get_( list, pos );
 
@@ -2065,7 +2144,7 @@ oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
  */
 oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
                                        int                 pos,
-                                       oyOBJECT_TYPE_e     type )
+                                       oyOBJECT_e          type )
 {
   oyStruct_s * obj = oyStructList_GetRef( list, pos );
 
@@ -2099,7 +2178,7 @@ int              oyStructList_ReferenceAt_( oyStructList_s * list,
     error = 1;
 
   if(!error)
-  if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(s->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -2128,7 +2207,7 @@ int              oyStructList_ReferenceAt_( oyStructList_s * list,
   oyHandle_s ** p = 0;
 
   if(!error)
-  if(s->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(s->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -2149,171 +2228,13 @@ int              oyStructList_Count ( oyStructList_s   * list )
   oyStructList_s * s = list;
   int error = 0;
 
-  if(!(s && s->type_ == oyOBJECT_TYPE_STRUCT_LIST_S))
+  if(!(s && s->type_ == oyOBJECT_STRUCT_LIST_S))
     error = 1;
 
   if(!error)
     n = s->n_;
 
   return n;
-}
-
-/** @func    oyNode_New
- *  @brief   allocate a new Node object
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/11 (Oyranos: 0.1.8)
- *  @date    2008/07/11
- */
-OYAPI oyNode_s * OYEXPORT
-                   oyNode_New ( oyObject_s          object )
-{
-  /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_NODE_S;
-# define STRUCT_TYPE oyNode_s
-  int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
-
-  if(!s || !s_obj)
-  {
-    WARNc_S(("MEM Error."))
-    return NULL;
-  }
-
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
-
-  s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyNode_Copy;
-  s->release = (oyStruct_Release_f) oyNode_Release;
-
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
-  /* ---- end of common object constructor ------- */
-
-  if(!error)
-  {
-    s->parents = oyStructList_New( s->oy_ );
-    s->children = oyStructList_New( s->oy_ );
-  }
-
-  return s;
-}
-
-/** @func    oyNode_Copy_
- *  @brief   real copy a Node object
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/11 (Oyranos: 0.1.8)
- *  @date    2008/07/11
- */
-oyNode_s * oyNode_Copy_
-                                     ( oyNode_s          * obj,
-                                       oyObject_s          object )
-{
-  oyNode_s * s = 0;
-  int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
-
-  if(!obj || !object)
-    return s;
-
-  s = oyNode_New( object );
-  error = !s;
-
-  if(!error)
-  {
-    allocateFunc_ = s->oy_->allocateFunc_;
-
-    s->parents = oyStructList_Copy( obj->parents, s->oy_ );
-    s->children = oyStructList_Copy( obj->children, s->oy_ );
-  }
-
-  if(error)
-    oyNode_Release( &s );
-
-  return s;
-}
-/** @func    oyNode_Copy
- *  @brief   copy or reference a Node object
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/11 (Oyranos: 0.1.8)
- *  @date    2008/07/11
- */
-OYAPI oyNode_s * OYEXPORT
-                   oyNode_Copy       ( oyNode_s          * obj,
-                                       oyObject_s          object )
-{
-  oyNode_s * s = 0;
-
-  if(!obj)
-    return s;
-
-  if(obj && !object)
-  {
-    s = obj;
-    oyObject_Copy( s->oy_ );
-    return s;
-  }
-
-  s = oyNode_Copy_( obj, object );
-
-  return s;
-}
-/** @func    oyNode_Release
- *  @brief   release and possibly deallocate a Node object
- *
- *  @param[in,out] obj                 struct object
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/11 (Oyranos: 0.1.8)
- *  @date    2008/07/11
- */
-OYAPI int  OYEXPORT
-               oyNode_Release     ( oyNode_s      ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyNode_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_NODE_S)
-  {
-    WARNc_S(("Attempt to release a non oyNode_s object."))
-    return 1;
-  }
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-  oyStructList_Release( &s->parents );
-  oyStructList_Release( &s->children );
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
 }
 
 
@@ -2345,7 +2266,7 @@ oyCMMptr_New_ ( oyAlloc_f         allocateFunc )
 
   if(!error)
   {
-    s->type = oyOBJECT_TYPE_CMM_POINTER_S;
+    s->type = oyOBJECT_CMM_POINTER_S;
     s->copy = (oyStruct_Copy_f) oyCMMptr_Copy_;
     s->release = (oyStruct_Release_f) oyCMMptr_Release_;
   }
@@ -2369,7 +2290,7 @@ oyCMMptr_s *       oyCMMptr_Copy_    ( oyCMMptr_s        * cmm_ptr,
 
   error = !s;
 
-  if(!error && s && s->type != oyOBJECT_TYPE_CMM_POINTER_S)
+  if(!error && s && s->type != oyOBJECT_CMM_POINTER_S)
     error = 1;
 
   if(!error)
@@ -2399,7 +2320,7 @@ int                oyCMMptr_Release_ ( oyCMMptr_s       ** obj )
 
   error = !s;
 
-  if(!error && s && s->type != oyOBJECT_TYPE_CMM_POINTER_S)
+  if(!error && s && s->type != oyOBJECT_CMM_POINTER_S)
     error = 1;
 
   if(!error)
@@ -2519,7 +2440,7 @@ int          oyCMMdsoReference_    ( const char        * cmm,
     error = !oy_cmm_handles_;
   }
 
-  if(!error && oy_cmm_handles_->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(!error && oy_cmm_handles_->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   n = oyStructList_Count(oy_cmm_handles_);
@@ -2529,7 +2450,7 @@ int          oyCMMdsoReference_    ( const char        * cmm,
     oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
     oyCMMptr_s * s = 0;
 
-    if(obj && obj->type_ == oyOBJECT_TYPE_CMM_POINTER_S)
+    if(obj && obj->type_ == oyOBJECT_CMM_POINTER_S)
       s = (oyCMMptr_s*) obj;
 
     if( s && s->cmm && cmm &&
@@ -2582,7 +2503,7 @@ int          oyCMMdsoSearch_         ( const char        * cmm )
   if(!oy_cmm_handles_)
     return 1;
 
-  if(oy_cmm_handles_->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(oy_cmm_handles_->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   n = oyStructList_Count(oy_cmm_handles_);
@@ -2592,7 +2513,7 @@ int          oyCMMdsoSearch_         ( const char        * cmm )
     oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
     oyCMMptr_s * s = 0;
 
-    if(obj && obj->type_ == oyOBJECT_TYPE_CMM_POINTER_S)
+    if(obj && obj->type_ == oyOBJECT_CMM_POINTER_S)
       s = (oyCMMptr_s*) obj;
 
     error = !s;
@@ -2625,7 +2546,7 @@ int          oyCMMdsoRelease_      ( const char        * cmm )
   if(!oy_cmm_handles_)
     return 1;
 
-  if(oy_cmm_handles_->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(oy_cmm_handles_->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -2657,7 +2578,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
   if(found >= 0)
   {
     oyCMMptr_s * s = (oyCMMptr_s*)oyStructList_GetType_( oy_cmm_handles_, found,
-                                                  oyOBJECT_TYPE_CMM_POINTER_S );
+                                                  oyOBJECT_CMM_POINTER_S );
 
     if(s)
       dso_handle = s->ptr;
@@ -2688,7 +2609,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
 oyCMMhandle_s *    oyCMMhandle_New_    ( oyObject_s        object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_CMM_HANDLE_S;
+  oyOBJECT_e type = oyOBJECT_CMM_HANDLE_S;
 # define STRUCT_TYPE oyCMMhandle_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -2767,7 +2688,7 @@ int              oyCMMhandle_Release_( oyCMMhandle_s    ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_CMM_HANDLE_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_CMM_HANDLE_S)
   {
     WARNc_S("Attempt to release a non oyCMMhandle_s object.")
     return 1;
@@ -2848,7 +2769,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * cmm )
     error = !oy_cmm_infos_;
   }
 
-  if(!error && oy_cmm_infos_->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(!error && oy_cmm_infos_->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   n = oyStructList_Count(oy_cmm_infos_);
@@ -2856,13 +2777,13 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * cmm )
   for(i = 0; i < n; ++i)
   {
     oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_(oy_cmm_infos_,
-                                                i, oyOBJECT_TYPE_CMM_HANDLE_S );
+                                                i, oyOBJECT_CMM_HANDLE_S );
     oyCMMInfo_s * s = 0;
 
     if(cmmh)
       s = (oyCMMInfo_s*) cmmh->info;
 
-    if( s && s->type == oyOBJECT_TYPE_CMM_INFO_S &&
+    if( s && s->type == oyOBJECT_CMM_INFO_S &&
         *(uint32_t*)&s->cmm && cmm &&
         !memcmp( s->cmm, cmm, 4 ) )
     {
@@ -2958,7 +2879,7 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
       error = !dso_handle;
 
       if(error)
-        WARNc_S((dlerror()));
+        WARNc_S(dlerror());
     }
 
     /* open the module */
@@ -2974,7 +2895,7 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
       error = !cmm_info;
 
       if(error)
-        WARNc_S((dlerror()));
+        WARNc_S(dlerror());
 
       if(!error)
         if(oyCMMapi_Check_( cmm_info->api ))
@@ -3051,10 +2972,10 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
   char * text = 0, num[48];
   oyCMMapi_s * tmp = 0;
   oyCMMapi4_s * cmm_api4 = 0;
-  oyOBJECT_TYPE_e type = 0;
+  oyOBJECT_e type = 0;
   oyFILTER_TYPE_e filter_type = 0;
 
-  if(!cmm_info || cmm_info->type != oyOBJECT_TYPE_CMM_INFO_S)
+  if(!cmm_info || cmm_info->type != oyOBJECT_CMM_INFO_S)
     return oyStringCopy_("---", oyAllocateFunc_);
 
   oySprintf_(num,"%d", cmm_info->oy_compatibility );
@@ -3093,7 +3014,7 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
           oyStringAdd_( &text, oyStruct_TypeToText((oyStruct_s*)tmp),
                         oyAllocateFunc_, oyDeAllocateFunc_ );
 
-          if(type == oyOBJECT_TYPE_CMM_API4_S)
+          if(type == oyOBJECT_CMM_API4_S)
           {
             cmm_api4 = (oyCMMapi4_s*) tmp;
             oyStringAdd_( &text, "\n    Filter type: ",
@@ -3186,7 +3107,7 @@ int              oyCMMCanHandle_    ( oyCMMapi_s         * api,
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2008/06/27
  */
-oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
+oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        char              * cmm_used,
@@ -3211,7 +3132,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
   }
 
   if(!error &&
-     !(oyOBJECT_TYPE_CMM_API1_S <= type && type < oyOBJECT_TYPE_CMM_API_MAX))
+     !(oyOBJECT_CMM_API1_S <= type && type < oyOBJECT_CMM_API_MAX))
     error = 1;
 
   if(!error)
@@ -3240,7 +3161,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
 
           if(oyCMMapi_Check_(tmp) == type)
           {
-            if(type == oyOBJECT_TYPE_CMM_API4_S)
+            if(type == oyOBJECT_CMM_API4_S)
             {
               cmm_api4 = (oyCMMapi4_s *) tmp;
               if(filter_type)
@@ -3303,7 +3224,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_TYPE_e     type,
  *  @date    2008/06/24
  */
 char ** oyCMMsGetNames_              ( int               * n,
-                                       oyOBJECT_TYPE_e   * types,
+                                       oyOBJECT_e        * types,
                                        int                 types_n )
 {
   int error = !n;
@@ -3316,7 +3237,7 @@ char ** oyCMMsGetNames_              ( int               * n,
     int  files_n = 0;
     int i, j;
     char cmm[5] = {0,0,0,0,0};
-    oyOBJECT_TYPE_e type;
+    oyOBJECT_e type;
 
     files = oyCMMsGetLibNames_(&files_n, 0);
 
@@ -3433,12 +3354,12 @@ int              oyCMMRelease_       ( const char        * cmm )
   {
     oyCMMInfo_s * s = 0;
     oyCMMhandle_s * cmmh = (oyCMMhandle_s *) oyStructList_GetType_(
-                                oy_cmm_infos_, i, oyOBJECT_TYPE_CMM_HANDLE_S );
+                                oy_cmm_infos_, i, oyOBJECT_CMM_HANDLE_S );
 
     if(cmmh)
       s = (oyCMMInfo_s*) cmmh->info;
 
-    if( s && s->type == oyOBJECT_TYPE_CMM_INFO_S &&
+    if( s && s->type == oyOBJECT_CMM_INFO_S &&
         *(uint32_t*)&s->cmm && cmm &&
         !memcmp( s->cmm, cmm, 4 ) )
     {
@@ -3459,10 +3380,10 @@ int              oyCMMRelease_       ( const char        * cmm )
  *  @since Oyranos: version 0.1.8
  *  @date  6 december 2007 (API 0.1.8)
  */
-oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api )
+oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
 {
   int error = !api;
-  oyOBJECT_TYPE_e type = 0;
+  oyOBJECT_e type = 0;
 
   if(!error)
     type = api->type;
@@ -3470,7 +3391,7 @@ oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api )
   if(!error)
   switch(type)
   {
-    case oyOBJECT_TYPE_CMM_API1_S:
+    case oyOBJECT_CMM_API1_S:
     {
       oyCMMapi1_s * s = (oyCMMapi1_s*)api;
       if(!(s->oyCMMInit &&
@@ -3485,7 +3406,7 @@ oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api )
            s->oyCMMColourConversion_Run ) )
         error = 1;
     } break;
-    case oyOBJECT_TYPE_CMM_API2_S:
+    case oyOBJECT_CMM_API2_S:
     {
       oyCMMapi2_s * s = (oyCMMapi2_s*)api;
       if(!(s->oyCMMInit &&
@@ -3499,7 +3420,7 @@ oyOBJECT_TYPE_e  oyCMMapi_Check_     ( oyCMMapi_s        * api )
            s->oyActivateMonitorProfiles ) )
         error = 1;
     } break;
-    case oyOBJECT_TYPE_CMM_API3_S:
+    case oyOBJECT_CMM_API3_S:
     {
       oyCMMapi3_s * s = (oyCMMapi3_s*)api;
       if(!(s->oyCMMInit &&
@@ -3550,7 +3471,7 @@ oyObject_New  ( void )
   o = oyObject_SetAllocators_( o, oyAllocateFunc_, oyDeAllocateFunc_ );
 
   o->id_ = oy_object_id_++;
-  o->type_ = oyOBJECT_TYPE_OBJECT_S;
+  o->type_ = oyOBJECT_OBJECT_S;
   o->copy = (oyStruct_Copy_f) oyObject_Copy;
   o->release = (oyStruct_Release_f) oyObject_Release;
   o->version_ = oyVersion(0);
@@ -3581,7 +3502,7 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   o = oyObject_SetAllocators_( o, allocateFunc, deallocateFunc );
 
   o->id_ = oy_object_id_++;
-  o->type_ = oyOBJECT_TYPE_OBJECT_S;
+  o->type_ = oyOBJECT_OBJECT_S;
   o->copy = (oyStruct_Copy_f) oyObject_Copy;
   o->release = (oyStruct_Release_f) oyObject_Release;
   o->version_ = oyVersion(0);
@@ -3698,9 +3619,9 @@ int          oyObject_Release         ( oyObject_s      * obj )
 
   s = *obj;
 
-  if( s->type_ != oyOBJECT_TYPE_OBJECT_S)
+  if( s->type_ != oyOBJECT_OBJECT_S)
   {
-    WARNc_S(("Attempt to release a non oyObject_s object."))
+    WARNc_S("Attempt to release a non oyObject_s object.")
     return 1;
   }
 
@@ -3746,7 +3667,7 @@ int          oyObject_Ref            ( oyObject_s          obj )
   oyObject_s s = obj;
   int error = !s;
 
-  if( s->type_ != oyOBJECT_TYPE_OBJECT_S)
+  if( s->type_ != oyOBJECT_OBJECT_S)
   {
     WARNc2_S("Attempt to manipulate a non oyObject_s object; type: %d ID: %d",
              s->type_, s->id_)
@@ -3759,7 +3680,7 @@ int          oyObject_Ref            ( oyObject_s          obj )
   if(!error)
     ++s->ref_;
 
-  if(obj->parent_type_ == oyOBJECT_TYPE_NAMED_COLOURS_S)
+  if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
   {
     int e_a = error;
     error = pow(e_a,2.1);
@@ -3786,9 +3707,9 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   oyObject_s s = obj;
   int error = !s;
 
-  if( s->type_ != oyOBJECT_TYPE_OBJECT_S)
+  if( s->type_ != oyOBJECT_OBJECT_S)
   {
-    WARNc_S(("Attempt to manipulate a non oyObject_s object."))
+    WARNc_S("Attempt to manipulate a non oyObject_s object.")
     return 1;
   }
 
@@ -3798,7 +3719,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   if(!error && --s->ref_ > 0)
     ref = s->ref_;
 
-  if(obj->parent_type_ == oyOBJECT_TYPE_NAMED_COLOURS_S)
+  if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
   {
     int e_a = error;
     error = pow(e_a,2.1);
@@ -3827,7 +3748,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
  *  @date  november 2007 (API 0.1.8)
  */
 oyObject_s   oyObject_SetParent       ( oyObject_s        o,
-                                        oyOBJECT_TYPE_e   type,
+                                        oyOBJECT_e        type,
                                         oyPointer         parent )
 {
   int error = 0;
@@ -4117,7 +4038,7 @@ int            oyObject_GetId        ( oyObject_s          obj )
       {
         oyCMMptr_s * l_cmm_ptr = (oyCMMptr_s*)h->ptr;
 
-        if( l_cmm_ptr->type == oyOBJECT_TYPE_CMM_POINTER_S &&
+        if( l_cmm_ptr->type == oyOBJECT_CMM_POINTER_S &&
             l_cmm_ptr->cmm &&
             !oyStrcmp_( l_cmm_ptr->cmm, cmm ) )
           cmm_ptr = l_cmm_ptr;
@@ -4160,7 +4081,7 @@ oyHandle_s *       oyHandle_new_     ( oyAlloc_f           allocateFunc )
   error = !s;
 
   if(!error)
-    s->type_ = oyOBJECT_TYPE_HANDLE_S;
+    s->type_ = oyOBJECT_HANDLE_S;
 
   return s;
 }
@@ -4209,7 +4130,7 @@ int                oyHandle_release_ ( oyHandle_s       ** handle )
   error = !s;
 
   if(!error)
-    if(s->type_ != oyOBJECT_TYPE_HANDLE_S)
+    if(s->type_ != oyOBJECT_HANDLE_S)
       error = 1;
 
   if(!error)
@@ -4236,7 +4157,7 @@ int                oyHandle_release_ ( oyHandle_s       ** handle )
  */
 int                oyHandle_set_     ( oyHandle_s        * handle,
                                        oyPointer           ptr,
-                                       oyOBJECT_TYPE_e     ptr_type,
+                                       oyOBJECT_e          ptr_type,
                                        oyStruct_release_f   ptrRelease,
                                        oyStruct_copy_f      ptrCopy )
 {
@@ -4244,7 +4165,7 @@ int                oyHandle_set_     ( oyHandle_s        * handle,
   int error = !s;
 
   if(!error)
-    if(s->type_ != oyOBJECT_TYPE_HANDLE_S)
+    if(s->type_ != oyOBJECT_HANDLE_S)
       error = 1;
 
   if(!error)
@@ -4273,7 +4194,7 @@ int                oyHandle_set_     ( oyHandle_s        * handle,
 oyHash_s *   oyHash_New_             ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_HASH_S;
+  oyOBJECT_e type = oyOBJECT_HASH_S;
 # define STRUCT_TYPE oyHash_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -4281,7 +4202,7 @@ oyHash_s *   oyHash_New_             ( oyObject_s          object )
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -4313,7 +4234,7 @@ oyHash_s *   oyHash_CopyRef_         ( oyHash_s          * entry,
   int error = !s;
 
   if(!error)
-    if(s->type_ != oyOBJECT_TYPE_HASH_S)
+    if(s->type_ != oyOBJECT_HASH_S)
       error = 1;
 
   if(!error)
@@ -4338,9 +4259,9 @@ int                oyHash_Release_   ( oyHash_s         ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_HASH_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_HASH_S)
   {
-    WARNc_S(("Attempt to release a non oyHash_s object."))
+    WARNc_S("Attempt to release a non oyHash_s object.")
     return 1;
   }
 
@@ -4420,7 +4341,7 @@ oyHash_s *         oyHash_Copy_      ( oyHash_s          * orig,
 
   if(!orig)
   {
-    WARNc_S(("Attempt to copy without original."))
+    WARNc_S("Attempt to copy without original.")
 
     error = 1;
   }
@@ -4428,7 +4349,7 @@ oyHash_s *         oyHash_Copy_      ( oyHash_s          * orig,
   s = orig;
 
   if(!error)
-    if(s->type_ != oyOBJECT_TYPE_HASH_S)
+    if(s->type_ != oyOBJECT_HASH_S)
       error = 1;
 
   if(!error) 
@@ -4446,7 +4367,7 @@ oyHash_s *         oyHash_Copy_      ( oyHash_s          * orig,
 
     error = !s;
     if(error)
-      WARNc_S(("Could not create structure for hash."));
+      WARNc_S("Could not create structure for hash.");
   }
 
   if(error)
@@ -4462,7 +4383,7 @@ oyHash_s *         oyHash_Copy_      ( oyHash_s          * orig,
  *  @date  3 december 2007 (API 0.1.8)
  */
 int                oyHash_IsOf_      ( oyHash_s          * hash,
-                                       oyOBJECT_TYPE_e     type )
+                                       oyOBJECT_e          type )
 {
   return (hash && hash->entry && hash->entry->type_ == type);
 }
@@ -4473,7 +4394,7 @@ int                oyHash_IsOf_      ( oyHash_s          * hash,
  *  @date  3 december 2007 (API 0.1.8)
  */
 oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
-                                       oyOBJECT_TYPE_e     type )
+                                       oyOBJECT_e          type )
 {
   if(oyHash_IsOf_( hash, type))
     return hash->entry;
@@ -4518,7 +4439,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
   int error = !(cache_list && hash_text);
   int n = 0, i;
 
-  if(!error && cache_list->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(!error && cache_list->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -4533,7 +4454,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
   for(i = 0; i < n; ++i)
   {
     oyHash_s * compare = (oyHash_s*) oyStructList_GetType_( cache_list, i,
-                                                         oyOBJECT_TYPE_HASH_S );
+                                                         oyOBJECT_HASH_S );
 
     if(compare)
     if(memcmp(search_key->oy_->hash_, compare->oy_->hash_, OY_HASH_SIZE) == 0)
@@ -4652,7 +4573,7 @@ oyChar* oyCMMCacheListPrint_()
   for(i = 0; i < n ; ++i)
   {
     oyHash_s * compare = (oyHash_s*) oyStructList_GetType_(*cache_list, i,
-                                                         oyOBJECT_TYPE_HASH_S );
+                                                         oyOBJECT_HASH_S );
 
     if(compare)
     {
@@ -4846,7 +4767,7 @@ oyOption_s *   oyOption_New          ( oyObject_s          object,
                                        const char        * name )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_OPTION_S;
+  oyOBJECT_e type = oyOBJECT_OPTION_S;
 # define STRUCT_TYPE oyOption_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -4854,7 +4775,7 @@ oyOption_s *   oyOption_New          ( oyObject_s          object,
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -4971,9 +4892,9 @@ int            oyOption_Release      ( oyOption_s       ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_OPTION_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_OPTION_S)
   {
-    WARNc_S(("Attempt to release a non oyOption_s object."))
+    WARNc_S("Attempt to release a non oyOption_s object.")
     return 1;
   }
 
@@ -5052,7 +4973,7 @@ int            oyOption_Match_       ( oyOption_s        * option_a,
 oyOptions_s *  oyOptions_New         ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_OPTIONS_S;
+  oyOBJECT_e type = oyOBJECT_OPTIONS_S;
 # define STRUCT_TYPE oyOptions_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -5060,7 +4981,7 @@ oyOptions_s *  oyOptions_New         ( oyObject_s          object )
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -5263,9 +5184,9 @@ int            oyOptions_Release     ( oyOptions_s      ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_OPTIONS_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_OPTIONS_S)
   {
-    WARNc_S(("Attempt to release a non oyOptions_s object."))
+    WARNc_S("Attempt to release a non oyOptions_s object.")
     return 1;
   }
 
@@ -5295,8 +5216,8 @@ int            oyOptions_ReleaseAt   ( oyOptions_s       * list,
 oyOption_s *   oyOptions_Get         ( oyOptions_s       * list,
                                        int                 pos )
 {
-  if(list && list->type_ == oyOBJECT_TYPE_OPTIONS_S)
-    return (oyOption_s *) oyStructList_GetRefType( list->list, pos, oyOBJECT_TYPE_OPTION_S );
+  if(list && list->type_ == oyOBJECT_OPTIONS_S)
+    return (oyOption_s *) oyStructList_GetRefType( list->list, pos, oyOBJECT_OPTION_S );
   else
     return 0;
 }
@@ -5333,7 +5254,7 @@ oyProfile_s *
 oyProfile_New_ ( oyObject_s        object)
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_PROFILE_S;
+  oyOBJECT_e type = oyOBJECT_PROFILE_S;
 # define STRUCT_TYPE oyProfile_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -5341,7 +5262,7 @@ oyProfile_New_ ( oyObject_s        object)
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -5441,9 +5362,9 @@ oyStructList_s * oy_profile_s_file_cache_ = 0;
  *  @param[in]    flags          for future extension
  *  @param[in]    object         the optional base
  *
- *  flags supports oyNO_CACHE_READ and oyNO_CACHE_WRITE to disable cache reading
- *  and writing. The cache flags are useful for one time profiles or scanning
- *  large numbers of profiles.
+ *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
+ *  reading and writing. The cache flags are useful for one time profiles or
+ *  scanning large numbers of profiles.
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
@@ -5475,7 +5396,7 @@ oyProfile_FromFile            ( const char      * name,
 
       if(!oyToNoCacheRead_m(flags))
       {
-        s = (oyProfile_s*) oyHash_GetPointer_( entry, oyOBJECT_TYPE_PROFILE_S);
+        s = (oyProfile_s*) oyHash_GetPointer_( entry, oyOBJECT_PROFILE_S);
         s = oyProfile_Copy( s, 0 );
         if(s)
           return s;
@@ -5579,7 +5500,7 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
   {
     if(!error)
     {
-      oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API2_S,
+      oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S,
                                         "oyX1", 0, cmm, 0, 0 );
       if(api && *(uint32_t*)&cmm)
       {
@@ -5604,9 +5525,9 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
         if(!s->block_ || !s->size_)
         {
           error = 1;
-          WARNc_S(("Did not find monitor profile; nor a substitute."))
+          WARNc_S("Did not find monitor profile; nor a substitute.")
         } else
-          WARNc_S(("Did not find monitor profile; use sRGB instead."))
+          WARNc_S("Did not find monitor profile; use sRGB instead.")
       }
 
     } else if(funcP2)
@@ -5642,7 +5563,7 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
 
   if(error)
   {
-    WARNc_S(("Could not create structure for profile."))
+    WARNc_S("Could not create structure for profile.")
   }
 
   return s;
@@ -5775,7 +5696,7 @@ oyProfile_Copy_            ( const oyProfile_s  * profile,
 
   if(error)
   {
-    WARNc_S(("Could not create structure for profile."))
+    WARNc_S("Could not create structure for profile.")
   }
 
   return s;
@@ -5831,9 +5752,9 @@ oyProfile_Release( oyProfile_s ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_PROFILE_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_PROFILE_S)
   {
-    WARNc_S(("Attempt to release a non oyProfile_s object."))
+    WARNc_S("Attempt to release a non oyProfile_s object.")
     return 1;
   }
 
@@ -6389,7 +6310,7 @@ OYAPI oyPointer OYEXPORT
   if(s)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
-  if(!error && s->type_ == oyOBJECT_TYPE_PROFILE_S)
+  if(!error && s->type_ == oyOBJECT_PROFILE_S)
   {
     if(oyStructList_Count( s->tags_ ))
     {
@@ -6439,7 +6360,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
   oyChar *  hash = 0;
   oyChar    tmp_hash[34];
 
-  if(!error && s->type_ == oyOBJECT_TYPE_PROFILE_S)
+  if(!error && s->type_ == oyOBJECT_PROFILE_S)
   {
     if(s->file_name_ && !hash)
     {
@@ -6453,7 +6374,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
         if(names[i])
         {
           if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
-            tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
+            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
 
           if(hash && tmp)
           {
@@ -6513,7 +6434,7 @@ const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
   oyChar    tmp_hash[34];
   int       dl_n = 0;
 
-  if(!error && s->type_ == oyOBJECT_TYPE_PROFILE_S)
+  if(!error && s->type_ == oyOBJECT_PROFILE_S)
   {
     if(dl_pos >= 0)
     {
@@ -6540,7 +6461,7 @@ const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
         if(names[i])
         {
           if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
-            tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
+            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
 
           if(hash && tmp)
           {
@@ -6626,7 +6547,7 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
     {
       /* 3. check and 3.a take*/
       cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
-                                                  oyOBJECT_TYPE_CMM_POINTER_S);
+                                                  oyOBJECT_CMM_POINTER_S);
 
       if(!cmm_ptr)
       {
@@ -6634,7 +6555,7 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
         char cmm_used[] = {0,0,0,0,0};
         oyCMMProfile_Open_f funcP = 0;
 
-        oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+        oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
                                           cmm, 0, cmm_used, 0,0 );
         if(api && *(uint32_t*)&cmm_used)
         {
@@ -6702,7 +6623,7 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
     oyCMMptr_s  * cmm_ptr = 0;
 
 
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
                                       0, 0, cmm_used );
     if(api && *(uint32_t*)&cmm_used)
     {
@@ -6795,7 +6716,7 @@ int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
 int32_t      oyProfile_Hashed_       ( oyProfile_s       * s )
 {
   int32_t hashed = 0;
-  if(s && s->type_ == oyOBJECT_TYPE_PROFILE_S)
+  if(s && s->type_ == oyOBJECT_PROFILE_S)
       if(((uint32_t*)(&s->oy_->hash_[0])) ||
          ((uint32_t*)(&s->oy_->hash_[4])) ||
          ((uint32_t*)(&s->oy_->hash_[8])) ||
@@ -7102,7 +7023,7 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
   int i = 0, n = 0;
   icTagSignature tag_id_ = 0;
 
-  if(!error && profile->type_ != oyOBJECT_TYPE_PROFILE_S)
+  if(!error && profile->type_ != oyOBJECT_PROFILE_S)
     error = 1;
 
   if(!error)
@@ -7156,7 +7077,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
   int error = !profile;
   int n = 0;
 
-  if(!error && profile->type_ != oyOBJECT_TYPE_PROFILE_S)
+  if(!error && profile->type_ != oyOBJECT_PROFILE_S)
     error = 1;
 
   if(!error)
@@ -7314,7 +7235,7 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
   oyProfile_s *s = profile;
   int error = !s;
 
-  if(!error && !(s && s->type_ == oyOBJECT_TYPE_PROFILE_S && s->tags_))
+  if(!error && !(s && s->type_ == oyOBJECT_PROFILE_S && s->tags_))
     error = 1;
 
   if(!error)
@@ -7345,7 +7266,7 @@ int                oyProfile_AddTag  ( oyProfile_s       * profile,
   oyProfile_s * s = profile;
   int error = !s;
 
-  if(!(obj && *obj && (*obj)->type_ == oyOBJECT_TYPE_PROFILE_TAG_S))
+  if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
     error = 1;
 
   if(s)
@@ -7374,7 +7295,7 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
   oyProfile_s * s = profile;
   int error = 0;
 
-  if(!(s && s->type_ == oyOBJECT_TYPE_PROFILE_S))
+  if(!(s && s->type_ == oyOBJECT_PROFILE_S))
     error = 1;
 
   if(s)
@@ -7403,7 +7324,7 @@ OYAPI oyProfileTag_s * OYEXPORT
                    oyProfileTag_New ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_PROFILE_TAG_S;
+  oyOBJECT_e type = oyOBJECT_PROFILE_TAG_S;
 # define STRUCT_TYPE oyProfileTag_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -7411,7 +7332,7 @@ OYAPI oyProfileTag_s * OYEXPORT
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -7467,7 +7388,7 @@ OYAPI oyProfileTag_s * OYEXPORT
   oyCMMapiQuery_s *query_[2] = {0,0};
   oyCMMapiQueries_s queries = {1,0};
 
-  if(!error && list->type_ != oyOBJECT_TYPE_STRUCT_LIST_S)
+  if(!error && list->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(!error)
@@ -7484,7 +7405,7 @@ OYAPI oyProfileTag_s * OYEXPORT
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API3_S,
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S,
                                       cmm, &queries, cmm, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
@@ -7560,9 +7481,9 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_PROFILE_TAG_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_PROFILE_TAG_S)
   {
-    WARNc_S(("Attempt to release a non oyProfileTag_s object."))
+    WARNc_S("Attempt to release a non oyProfileTag_s object.")
     return 1;
   }
 
@@ -7605,7 +7526,7 @@ OYAPI int  OYEXPORT
   oyProfileTag_s * s = tag;
   int error = !s;
 
-  if(!error && s->type_ != oyOBJECT_TYPE_PROFILE_TAG_S)
+  if(!error && s->type_ != oyOBJECT_PROFILE_TAG_S)
     error = 1;
 
   if(!error)
@@ -7669,7 +7590,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   oyCMMapiQuery_s *query_[2] = {0,0};
   oyCMMapiQueries_s queries = {1,0};
 
-  if(!error && s->type_ != oyOBJECT_TYPE_PROFILE_TAG_S)
+  if(!error && s->type_ != oyOBJECT_PROFILE_TAG_S)
     error = 1;
 
   if(!error)
@@ -7685,7 +7606,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API3_S,
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S,
                                       cmm, &queries, cmm, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
@@ -7721,7 +7642,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
           {
             text = 0;
             name = (oyName_s*) oyStructList_GetRefType( values, i,
-                                                        oyOBJECT_TYPE_NAME_S );
+                                                        oyOBJECT_NAME_S );
             memcpy(t_l, name->lang, 8); t_c[0] = 0;
             t_ptr = oyStrchr_(t_l, '_');
             if(t_ptr)
@@ -7797,7 +7718,7 @@ OYAPI oyProfiles_s * OYEXPORT
                    oyProfiles_New ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_PROFILES_S;
+  oyOBJECT_e type = oyOBJECT_PROFILES_S;
 # define STRUCT_TYPE oyProfiles_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -7805,7 +7726,7 @@ OYAPI oyProfiles_s * OYEXPORT
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -7859,7 +7780,7 @@ OYAPI oyProfiles_s * OYEXPORT
 
   if(error)
   {
-    WARNc_S(("Could not create structure for profile."))
+    WARNc_S("Could not create structure for profile.")
     return 0;
   }
 
@@ -7925,7 +7846,7 @@ OYAPI oyProfiles_s * OYEXPORT
             }
             else
             {
-              tmp = oyProfile_FromFile( names[i], oyNO_CACHE_WRITE, 0 );
+              tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
               oy_profile_list_cache_ = oyProfiles_MoveIn(oy_profile_list_cache_,
                                                          &tmp, -1);
               error = !oy_profile_list_cache_;
@@ -8121,9 +8042,9 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_PROFILES_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_PROFILES_S)
   {
-    WARNc_S(("Attempt to release a non oyProfiles_s object."))
+    WARNc_S("Attempt to release a non oyProfiles_s object.")
     return 1;
   }
 
@@ -8159,7 +8080,7 @@ oyProfiles_s* oyProfiles_MoveIn( oyProfiles_s   * list,
 {
   int error = 0;
 
-  if(obj && *obj && (*obj)->type_ == oyOBJECT_TYPE_PROFILE_S)
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_S)
   {
     if(!list)
       list = oyProfiles_New(0);
@@ -8204,7 +8125,7 @@ oyProfile_s *    oyProfiles_Get   ( oyProfiles_s   * list,
   if(list && list->list_)
   {
     oyProfile_s * p = (oyProfile_s*) oyStructList_GetType_( list->list_,
-                                                 pos, oyOBJECT_TYPE_PROFILE_S );
+                                                 pos, oyOBJECT_PROFILE_S );
 
     if(p)
       obj = oyProfile_Copy(p, 0);
@@ -8235,13 +8156,13 @@ oyCMMptr_s** oyProfiles_GetCMMptrs_(oyProfiles_s   * list,
     for(i = 0; i < n; ++i)
     {
       oyProfile_s * p = (oyProfile_s*) oyStructList_GetType_( list->list_,
-                                                 i, oyOBJECT_TYPE_PROFILE_S );
+                                                 i, oyOBJECT_PROFILE_S );
 
       if(p)
       {
         oyCMMptr_s * cmm_ptr = oyProfile_GetCMMPtr_(p, cmm);
 
-        if(cmm_ptr && cmm_ptr->type == oyOBJECT_TYPE_CMM_POINTER_S)
+        if(cmm_ptr && cmm_ptr->type == oyOBJECT_CMM_POINTER_S)
           obj[i] = oyCMMptr_Copy_( cmm_ptr, 0 );
       }
     }
@@ -8284,7 +8205,7 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
 oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_REGION_S;
+  oyOBJECT_e type = oyOBJECT_REGION_S;
 # define STRUCT_TYPE oyRegion_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -8292,7 +8213,7 @@ oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -8388,9 +8309,9 @@ int            oyRegion_Release      ( oyRegion_s       ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_REGION_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_REGION_S)
   {
-    WARNc_S(("Attempt to release a non oyRegion_s object."))
+    WARNc_S("Attempt to release a non oyRegion_s object.")
     return 1;
   }
 
@@ -8751,13 +8672,17 @@ const oyChar * oyDatatypeToText      ( oyDATATYPE_e        t)
   return text;
 }
 
-/** @internal
- *  @brief describe a images channel and pixel layout
+/** @func    oyCombinePixelLayout2Mask_
+ *  @internal
+ *  @brief   describe a images channel and pixel layout
  *
- *  store some text in the images nick name as a ID
+ *  - gather informations about the pixel layout
+ *  - describe the colour channels characteristic into oyImage_s::channel_layout
+ *  - store some text in the images nick name as a ID
  *
- *  @since Oyranos: version 0.1.8
- *  @date 26 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
  */
 oyPixel_t*
 oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
@@ -8780,11 +8705,12 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
   char * text = oyAllocateFunc_(512);
   char * hash_text = 0;
   oyImage_s * s = image;
+  oyCHANNELTYPE_e * clayout = 0; /**< non profile described channels */
 
   if(!s)
     return 0;
 
-
+  /* describe the pixel layout and access */
   if(!error)
   {
     error = !memset( mask, 0, sizeof(mask) * sizeof(oyPixel_t*));
@@ -8809,7 +8735,22 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
         mask[oyCHAN0 + i] = coff_x + i;
   }
 
+  /* describe the channels characters */
+  if(!s->channel_layout)
+  {
+    clayout = image->oy_->allocateFunc_( sizeof(int) * ( OY_MAX(n,cchan_n)+ 1));
+    /* we dont know about the content */
+    for(i = 0; i < n; ++i)
+      clayout[i] = oyCHANNELTYPE_OTHER;
+    /* describe profile colours */
+    for(i = coff_x; i < coff_x + cchan_n; ++i)
+      clayout[i] = oyICCColourSpaceToChannelLayout( profile->sig_, i - coff_x );
+    /* place a end marker */
+    clayout[n] = oyCHANNELTYPE_UNDEFINED;
+      s->channel_layout = clayout;
+  }
 
+  /* describe the image */
   oySprintf_( text, 
                   "  <oyImage_s id=\"%d\" width=\"%d\" height=\"%d\" resolution=\"%.02f,%.02f\">\n",
                   oyObject_GetId(image->oy_),
@@ -8933,7 +8874,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         oyObject_s        object)
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_IMAGE_S;
+  oyOBJECT_e type = oyOBJECT_IMAGE_S;
 # define STRUCT_TYPE oyImage_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -8941,7 +8882,7 @@ oyImage_s *    oyImage_Create         ( int               width,
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -9085,9 +9026,9 @@ int            oyImage_Release        ( oyImage_s      ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_IMAGE_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_IMAGE_S)
   {
-    WARNc_S(("Attempt to release a non oyImage_s object."))
+    WARNc_S("Attempt to release a non oyImage_s object.")
     return 1;
   }
 
@@ -9109,6 +9050,9 @@ int            oyImage_Release        ( oyImage_s      ** obj )
 
     if(s->layout_)
       deallocateFunc( s->layout_ ); s->layout_ = 0;
+
+    if(s->channel_layout)
+      deallocateFunc( s->channel_layout ); s->channel_layout = 0;
 
     oyObject_Release( &s->oy_ );
 
@@ -9138,8 +9082,12 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
 
   if(pixel_layout)
   {
-    if(s->layout_ && s->oy_->deallocateFunc_)
-      s->oy_->deallocateFunc_(s->layout_);
+    if(s->oy_->deallocateFunc_)
+    {
+      if(s->layout_)
+        s->oy_->deallocateFunc_(s->layout_);
+      s->layout_ = 0;
+    }
     s->layout_ = oyCombinePixelLayout2Mask_ ( pixel_layout, s, s->profile_ );
   }
 
@@ -9148,6 +9096,900 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
 
   return error;
 }
+
+
+
+
+/** @func    oyConnector_New
+ *  @brief   allocate a new Connector object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyConnector_s * OYEXPORT
+                   oyConnector_New   ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CONNECTOR_S;
+# define STRUCT_TYPE oyConnector_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S("MEM Error.")
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyConnector_Copy;
+  s->release = (oyStruct_Release_f) oyConnector_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->name.type = oyOBJECT_NAME_S;
+
+  s->is_plug = -1;
+  s->max_colour_offset = -1;
+  s->min_channels_count = -1;
+  s->max_channels_count = -1;
+  s->min_colour_count = -1;
+  s->max_colour_count = -1;
+  s->can_planar = -1;
+  s->can_interwoven = -1;
+  s->can_swap = -1;
+  s->can_swap_bytes = -1;
+  s->can_revert = -1;
+  s->can_premultiplied_alpha = -1;
+  s->can_nonpremultiplied_alpha = -1;
+  s->can_subpixel = -1;
+
+  return s;
+}
+
+/** @func    oyConnector_Copy_
+ *  @brief   real copy a Connector object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
+                                       oyObject_s          object )
+{
+  oyConnector_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyConnector_New( object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+    s->name.nick = oyStringCopy_( obj->name.nick, allocateFunc_);
+    s->name.name = oyStringCopy_( obj->name.name, allocateFunc_);
+    s->name.description = oyStringCopy_( obj->name.description, allocateFunc_);
+
+    s->node = oyFilterNode_Copy( obj->node, 0 );
+
+    s->connector_type = obj->connector_type;
+    s->is_plug = obj->is_plug;
+    if(obj->data_types_n)
+    {
+      s->data_types = allocateFunc_( obj->data_types_n * sizeof(oyDATATYPE_e) );
+      error = !s->data_types;
+      error = !memcpy( s->data_types, obj->data_types,
+                       obj->data_types_n * sizeof(oyDATATYPE_e) );
+      if(!error)
+        s->data_types_n = obj->data_types_n;
+    }
+    s->max_colour_offset = obj->max_colour_offset;
+    s->min_channels_count = obj->min_channels_count;
+    s->max_channels_count = obj->max_channels_count;
+    s->min_colour_count = obj->min_colour_count;
+    s->max_colour_count = obj->max_colour_count;
+    s->can_planar = obj->can_planar;
+    s->can_interwoven = obj->can_interwoven;
+    s->can_swap = obj->can_swap;
+    s->can_swap_bytes = obj->can_swap_bytes;
+    s->can_revert = obj->can_revert;
+    s->can_premultiplied_alpha = obj->can_premultiplied_alpha;
+    s->can_nonpremultiplied_alpha = obj->can_nonpremultiplied_alpha;
+    s->can_subpixel = obj->can_subpixel;
+    if(obj->node)
+    {
+      int n = obj->channel_types_n;
+
+      s->channel_types = allocateFunc_( n * sizeof(oyCHANNELTYPE_e) );
+      error = !s->channel_types;
+      error = !memcpy( s->channel_types, obj->channel_types,
+                       n * sizeof(oyCHANNELTYPE_e) );
+      if(!error)
+        s->channel_types_n = n;
+    }
+    s->is_mandatory = obj->is_mandatory;
+  }
+
+  if(error)
+    oyConnector_Release( &s );
+
+  return s;
+}
+
+/** @func    oyConnector_Copy
+ *  @brief   copy or reference a Connector object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyConnector_s * OYEXPORT
+                   oyConnector_Copy  ( oyConnector_s     * obj,
+                                       oyObject_s          object )
+{
+  oyConnector_s * s = 0;
+
+  if(!obj)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyConnector_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** @func    oyConnector_Release
+ *  @brief   release and possibly deallocate a Connector object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI int  OYEXPORT
+               oyConnector_Release   ( oyConnector_s    ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyConnector_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_CONNECTOR_S)
+  {
+    WARNc_S("Attempt to release a non oyConnector_s object.")
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyFilterNode_Release( &s->node );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->name.nick) deallocateFunc( s->name.nick );
+    if(s->name.name) deallocateFunc( s->name.name );
+    if(s->name.description) deallocateFunc( s->name.description );
+
+    if(s->data_types)
+      deallocateFunc( s->data_types ); s->data_types = 0;
+    s->data_types_n = 0;
+
+    if(s->channel_types)
+      deallocateFunc( s->channel_types ); s->channel_types = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+const char *       oyConnectorEventToText (
+                                       oyCONNECTOR_EVENT_e e )
+{
+  const char * text = "unknown";
+  switch(e)
+  {
+    case oyCONNECTOR_EVENT_OK: text = "oyCONNECTOR_EVENT_OK: kind of ping"; break;
+    case oyCONNECTOR_EVENT_CONNECTED: text = "oyCONNECTOR_EVENT_CONNECTED: connection established"; break;
+    case oyCONNECTOR_EVENT_RELEASED: text = "oyCONNECTOR_EVENT_RELEASED: released the connection"; break;
+    case oyCONNECTOR_EVENT_IMAGE_DATA_CHANGED: text = "oyCONNECTOR_EVENT_IMAGE_DATA_CHANGED: call to update image views"; break;
+    case oyCONNECTOR_EVENT_IMAGE_STORAGE_CHANGED: text = "oyCONNECTOR_EVENT_IMAGE_STORAGE_CHANGED: new data accessors"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_IMAGE: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_IMAGE: can not process image"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_PROFILE: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_PROFILE: can not handle profile"; break;
+    case oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: text = "oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: can not completely process"; break;
+  }
+  return text;
+}
+
+/** @func    oyFilterSocket_Callback
+ *  @brief   tell about a oyConversion_s event
+ *
+ *  @param[in,out] c                   the connector
+ *  @param         e                   the event type
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/28 (Oyranos: 0.1.8)
+ *  @date    2008/07/28
+ */
+OYAPI int  OYEXPORT
+                 oyFilterSocket_Callback(
+                                       oyFilterSocket_s  * c,
+                                       oyCONNECTOR_EVENT_e e )
+{
+  /* currently catch nothing */
+
+  WARNc2_S("oyFilterSocket_s event: id : %d\n  event: \"%s\"",
+            c?oyObject_GetId(c->oy_):-1, oyConnectorEventToText(e) );
+
+  return 0;
+}
+
+/** @func    oyFilterPlug_Callback
+ *  @brief   tell about a oyConversion_s event
+ *
+ *  @param[in,out] c                   the connector
+ *  @param         e                   the event type
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/28 (Oyranos: 0.1.8)
+ *  @date    2008/07/28
+ */
+OYAPI int  OYEXPORT
+                 oyFilterPlug_Callback(
+                                       oyFilterPlug_s    * c,
+                                       oyCONNECTOR_EVENT_e e )
+{
+  /* currently catch nothing */
+
+  WARNc2_S("oyFilterPlug_s event: id : %d\n  event: \"%s\"",
+            c?oyObject_GetId(c->oy_):-1, oyConnectorEventToText(e) );
+
+  return 0;
+}
+
+
+/** @func    oyFilterSocket_New
+ *  @brief   allocate a new FilterSocket object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyFilterSocket_s * OYEXPORT
+                   oyFilterSocket_New( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_FILTER_SOCKET_S;
+# define STRUCT_TYPE oyFilterSocket_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S("MEM Error.")
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyFilterSocket_Copy;
+  s->release = (oyStruct_Release_f) oyFilterSocket_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  return s;
+}
+
+/** @func    oyFilterSocket_Copy_
+ *  @brief   real copy a FilterSocket object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+oyFilterSocket_s * oyFilterSocket_Copy_
+                                     ( oyFilterSocket_s  * obj,
+                                       oyObject_s          object )
+{
+  oyFilterSocket_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyFilterSocket_New( object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+    s->pattern = oyConnector_Copy( obj->pattern, s->oy_ );
+  }
+
+  if(error)
+    oyFilterSocket_Release( &s );
+
+  return s;
+}
+
+/** @func    oyFilterSocket_Copy
+ *  @brief   copy or reference a FilterSocket object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyFilterSocket_s * OYEXPORT
+                   oyFilterSocket_Copy(oyFilterSocket_s  * obj,
+                                       oyObject_s          object )
+{
+  oyFilterSocket_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_FILTER_SOCKET_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilterSocket_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** @func    oyFilterSocket_Release
+ *  @brief   release and possibly deallocate a FilterSocket object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI int  OYEXPORT
+               oyFilterSocket_Release( oyFilterSocket_s ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilterSocket_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_SOCKET_S)
+  {
+    WARNc_S("Attempt to release a non oyFilterSocket_s object.")
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  {
+    int count = oyFilterPlugs_Count( s->requesting_plugs_ ),
+        i;
+    oyFilterPlug_s * c = 0;
+    for(i = 0; i < count; ++i)
+    {
+      c = oyFilterPlugs_Get( s->requesting_plugs_, i );
+      oyFilterPlug_Callback( c, oyCONNECTOR_EVENT_RELEASED );
+      oyFilterPlug_Release( &c );
+    }
+  }
+
+  oyConnector_Release( &s->pattern );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** @func    oyFilterPlug_Connect
+ *  @brief   connect a oyFilterPlug_s with a oyFilterSocket_s
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/30 (Oyranos: 0.1.8)
+ *  @date    2008/07/31
+ */
+OYAPI int  OYEXPORT
+                 oyFilterPlug_Connect( oyFilterPlug_s   ** p,
+                                       oyFilterSocket_s ** s )
+{
+  oyFilterPlug_s * tp = *p;
+  oyFilterSocket_s * ts = *s;
+  if(tp->remote_socket_)
+    oyFilterSocket_Callback( tp->remote_socket_, oyCONNECTOR_EVENT_RELEASED );
+  oyFilterSocket_Release( &tp->remote_socket_ );
+
+  tp->remote_socket_ = *s; *s = 0;
+  return !(ts->requesting_plugs_ =
+                          oyFilterPlugs_MoveIn( ts->requesting_plugs_, p, -1 ));
+}
+
+
+/** @func    oyFilterPlug_New
+ *  @brief   allocate a new FilterPlug object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyFilterPlug_s * OYEXPORT
+                   oyFilterPlug_New  ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_FILTER_PLUG_S;
+# define STRUCT_TYPE oyFilterPlug_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyFilterPlug_Copy;
+  s->release = (oyStruct_Release_f) oyFilterPlug_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  return s;
+}
+
+/** @func    oyFilterPlug_Copy_
+ *  @brief   real copy a FilterPlug object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+oyFilterPlug_s * oyFilterPlug_Copy_
+                                     ( oyFilterPlug_s    * obj,
+                                       oyObject_s          object )
+{
+  oyFilterPlug_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyFilterPlug_New( object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+    s->pattern = oyConnector_Copy( obj->pattern, s->oy_ );
+  }
+
+  if(error)
+    oyFilterPlug_Release( &s );
+
+  return s;
+}
+
+/** @func    oyFilterPlug_Copy
+ *  @brief   copy or reference a FilterPlug object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyFilterPlug_s * OYEXPORT
+                   oyFilterPlug_Copy ( oyFilterPlug_s    * obj,
+                                       oyObject_s          object )
+{
+  oyFilterPlug_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_FILTER_PLUG_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilterPlug_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** @func    oyFilterPlug_Release
+ *  @brief   release and possibly deallocate a FilterPlug object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI int  OYEXPORT
+               oyFilterPlug_Release  ( oyFilterPlug_s   ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilterPlug_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_PLUG_S)
+  {
+    WARNc_S(("Attempt to release a non oyFilterPlug_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyFilterSocket_Callback( s->remote_socket_, oyCONNECTOR_EVENT_RELEASED );
+  oyFilterSocket_Release( &s->remote_socket_ );
+
+  oyConnector_Release( &s->pattern );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
+
+
+/** @func    oyFilterPlugs_New
+ *  @brief   allocate a new FilterPlugs list
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI oyFilterPlugs_s * OYEXPORT
+                   oyFilterPlugs_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_FILTER_PLUGS_S;
+# define STRUCT_TYPE oyFilterPlugs_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyFilterPlugs_Copy;
+  s->release = (oyStruct_Release_f) oyFilterPlugs_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->list_ = oyStructList_New( 0 );
+
+  return s;
+}
+
+/** @func    oyFilterPlugs_Copy_
+ *  @brief   real copy a FilterPlugs object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+oyFilterPlugs_s * oyFilterPlugs_Copy_
+                                     ( oyFilterPlugs_s       * obj,
+                                       oyObject_s          object )
+{
+  oyFilterPlugs_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyFilterPlugs_New( object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
+  }
+
+  if(error)
+    oyFilterPlugs_Release( &s );
+
+  return s;
+}
+
+/** @func    oyFilterPlugs_Copy
+ *  @brief   copy or reference a FilterPlugs list
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI oyFilterPlugs_s * OYEXPORT
+                   oyFilterPlugs_Copy ( oyFilterPlugs_s       * obj,
+                                       oyObject_s          object )
+{
+  oyFilterPlugs_s * s = 0;
+
+  if(!obj)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilterPlugs_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** @func    oyFilterPlugs_Release
+ *  @brief   release and possibly deallocate a FilterPlugs list
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI int  OYEXPORT
+               oyFilterPlugs_Release     ( oyFilterPlugs_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilterPlugs_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_PLUGS_S)
+  {
+    WARNc_S(("Attempt to release a non oyFilterPlugs_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyStructList_Release( &s->list_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
+/** @func    oyFilterPlugs_MoveIn
+ *  @brief   add a element to a FilterPlugs list
+ *
+ *  @param[in]     list                list
+ *  @param[in,out] obj                 list element
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI oyFilterPlugs_s * OYEXPORT
+                 oyFilterPlugs_MoveIn    ( oyFilterPlugs_s   * list,
+                                       oyFilterPlug_s   ** obj,
+                                       int                 pos )
+{
+  oyFilterPlugs_s * s = list;
+  int error = !s || s->type_ != oyOBJECT_FILTER_PLUGS_S;
+
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_FILTER_PLUG_S)
+  {
+    if(!s)
+    {
+      s = oyFilterPlugs_New(0);
+      error = !s;
+    }                                  
+
+    if(!error && !s->list_)
+    {
+      s->list_ = oyStructList_New( 0 );
+      error = !s->list_;
+    }
+      
+    if(!error)
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+  }   
+  
+  return s;
+}
+
+/** @func    oyFilterPlugs_ReleaseAt
+ *  @brief   release a element from a FilterPlugs list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI int  OYEXPORT
+                 oyFilterPlugs_ReleaseAt ( oyFilterPlugs_s * list,
+                                       int                 pos )
+{ 
+  int error = !list;
+
+  if(!error && list->type_ != oyOBJECT_FILTER_PLUGS_S)
+    error = 1;
+  
+  if(!error)
+    oyStructList_ReleaseAt( list->list_, pos );
+
+  return error;
+}
+
+/** @func    oyFilterPlugs_Get
+ *  @brief   get a element of a FilterPlugs list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI oyFilterPlug_s * OYEXPORT
+                 oyFilterPlugs_Get   ( oyFilterPlugs_s   * list,
+                                       int                 pos )
+{       
+  if(list && list->type_ == oyOBJECT_FILTER_PLUGS_S)
+    return (oyFilterPlug_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_FILTER_PLUG_S ); 
+  else  
+    return 0;
+}   
+
+/** @func    oyFilterPlugs_Count
+ *  @brief   count the elements in a FilterPlugs list
+ *
+ *  @param[in,out] list                the list
+ *  @return                            element count
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI int  OYEXPORT
+                 oyFilterPlugs_Count     ( oyFilterPlugs_s   * list )
+{       
+  if(list)
+    return oyStructList_Count( list->list_ );
+  else return 0;
+}
+
+
+
+
 
 
 /** @func    oyFilterTypeToText
@@ -9290,7 +10132,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 oyFilter_s * oyFilter_New_           ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_FILTER_S;
+  oyOBJECT_e type = oyOBJECT_FILTER_S;
 # define STRUCT_TYPE oyFilter_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -9335,7 +10177,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
   uint32_t ret = 0;
   oyCMMapiQueries_s * capabilities = 0;
   char cmm_used[] = {0,0,0,0,0};
-  oyCMMapi_s * cmm_api = oyCMMsGetApi_(oyOBJECT_TYPE_CMM_API4_S,
+  oyCMMapi_s * cmm_api = oyCMMsGetApi_(oyOBJECT_CMM_API4_S,
                                        cmm_required,
                                        capabilities,
                                        cmm_used,
@@ -9347,7 +10189,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
   if(!error)
     allocateFunc_ = s->oy_->allocateFunc_;
 
-  error = !(cmm_api && cmm_api->type == oyOBJECT_TYPE_CMM_API4_S);
+  error = !(cmm_api && cmm_api->type == oyOBJECT_CMM_API4_S);
 
   if(!error)
   {
@@ -9366,7 +10208,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->options_ = oyOptions_FromBoolean( cmm_api4->options, options,
                                          oyBOOLEAN_SUBSTRACTION, s->oy_ );
     s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
-    s->api_ = cmm_api4;
+    s->api4_ = cmm_api4;
   }
 
   if(error && s)
@@ -9410,7 +10252,7 @@ oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
     s->opts_ui_ = oyStringCopy_( filter->opts_ui_, allocateFunc_ );
     s->image_ = oyImage_Copy_( filter->image_, s->oy_ );
     s->profiles_ = oyProfiles_Copy( filter->profiles_, s->oy_ );
-    s->api_ = filter->api_;
+    s->api4_ = filter->api4_;
   }
 
   return s;
@@ -9466,7 +10308,7 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_FILTER_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_S)
   {
     WARNc_S(("Attempt to release a non oyFilter_s object."))
     return 1;
@@ -9528,9 +10370,9 @@ const char * oyFilter_GetText        ( oyFilter_s        * filter,
     sprintf(text, "<oyFilter_s registration=\"%s\" category=\"%s\" version=\"%d.%d.%d\">\n",
                   s->registration_,
                   s->category_,
-                  s->api_->version[0],
-                  s->api_->version[1],
-                  s->api_->version[2]
+                  s->api4_->version[0],
+                  s->api4_->version[1],
+                  s->api4_->version[2]
            );
 
     if(!error && filter->image_)
@@ -9623,7 +10465,7 @@ oyOptions_s* oyFilter_OptionsGet     ( oyFilter_s        * filter,
     return 0;
 
   if(oyToFilterGetDefaults_m(flags))
-    return oyOptions_Copy( filter->api_->options, filter->oy_ );
+    return oyOptions_Copy( filter->api4_->options, filter->oy_ );
   else
     return oyOptions_Copy( filter->options_, 0 );
 }
@@ -9773,6 +10615,100 @@ oyPointer    oyFilter_TextToInfo     ( oyFilter_s        * filter,
   return ptr;
 }
 
+/** @func    oyFilter_ShowConnector
+ *  @brief   get a connector description from a filter backend
+ *
+ *  The path to obtain a new connector.
+ *  The filter can say it has more connectors to provide for a certain kind of 
+ *  static connector eigther described in oyCMMapi4_s::inputs or
+ *  oyCMMapi4_s::outputs.
+ *
+ *  @param[in]   filter              the backend filter
+ *  @param[in]   as_pos              the according oyConnector_s
+ *  @param[in]   plug                select from 0 - plugs or 1 - sockets
+ *  @return                          the new oyConnector_s
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/28 (Oyranos: 0.1.8)
+ *  @date    2008/07/28
+ */
+OYAPI oyConnector_s * OYEXPORT
+             oyFilter_ShowConnector  ( oyFilter_s        * filter,
+                                       int                 as_pos,
+                                       int                 is_plug )
+{
+  oyConnector_s * pattern = 0;
+  oyObject_s object = 0;
+
+  if(!filter || filter->type_ != oyOBJECT_FILTER_S ||
+     !filter->api4_ || !filter->api4_)
+    return 0;
+
+  object = oyObject_New ();
+
+  if(filter->api4_->plugs_n < as_pos &&
+     as_pos < filter->api4_->plugs_n + filter->api4_->plugs_last_add )
+    as_pos = filter->api4_->plugs_n - 1;
+
+  {
+    if(is_plug)
+    {
+      if(filter->api4_->plugs_n > as_pos)
+        pattern = oyConnector_Copy( filter->api4_->plugs[as_pos], object );
+    } else {
+      if(filter->api4_->sockets_n > as_pos)
+        pattern = oyConnector_Copy( filter->api4_->sockets[as_pos], object );
+    }
+  }
+
+  oyObject_Release( &object );
+
+  return pattern;
+}
+
+/** @func    oyFilter_ShowConnectorCount
+ *  @brief   get the connector count from a filter backend
+ *
+ *  The path to obtain a new connector.
+ *  The filter can say it has more connectors to provide for a certain kind of 
+ *  static connector eigther described in oyCMMapi4_s::inputs or
+ *  oyCMMapi4_s::outputs.
+ *
+ *  @param       filter              the backend filter
+ *  @param       is_plug             select from 0 - plugs or 1 - sockets
+ *  @param[out]  last_adds           maximal copies of last connector as suggested by the filter backend
+ *  @return                          count of static connectors
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/28 (Oyranos: 0.1.8)
+ *  @date    2008/07/28
+ */
+OYAPI int  OYEXPORT
+             oyFilter_ShowConnectorCount( 
+                                       oyFilter_s        * filter,
+                                       int                 is_plug,
+                                       uint32_t          * last_adds )
+{
+  int n = 0;
+
+  if(!filter || filter->type_ != oyOBJECT_FILTER_S ||
+     !filter->api4_ || !filter->api4_)
+    return n;
+
+  if(is_plug)
+  {
+    n = filter->api4_->plugs_n;
+    if(last_adds)
+      *last_adds = filter->api4_->plugs_last_add;
+  } else {
+    n = filter->api4_->sockets_n;
+    if(last_adds)
+      *last_adds = filter->api4_->sockets_last_add;
+  }
+
+  return n;
+}
+
 
 
 /** @func    oyFilters_New
@@ -9786,7 +10722,7 @@ OYAPI oyFilters_s * OYEXPORT
                    oyFilters_New ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_FILTERS_S;
+  oyOBJECT_e type = oyOBJECT_FILTERS_S;
 # define STRUCT_TYPE oyFilters_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -9902,7 +10838,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_FILTERS_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_FILTERS_S)
   {
     WARNc_S(("Attempt to release a non oyFilters_s object."))
     return 1;
@@ -9946,9 +10882,9 @@ OYAPI oyFilters_s * OYEXPORT
                                        int                 pos )
 {
   oyFilters_s * s = list;
-  int error = !s || s->type_ != oyOBJECT_TYPE_FILTERS_S;
+  int error = !s || s->type_ != oyOBJECT_FILTERS_S;
 
-  if(obj && *obj && (*obj)->type_ == oyOBJECT_TYPE_FILTER_S)
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_FILTER_S)
   {
     if(!s)
     {
@@ -9985,7 +10921,7 @@ OYAPI int  OYEXPORT
 { 
   int error = !list;
 
-  if(!error && list->type_ != oyOBJECT_TYPE_FILTERS_S)
+  if(!error && list->type_ != oyOBJECT_FILTERS_S)
     error = 1;
   
   if(!error)
@@ -10008,8 +10944,8 @@ OYAPI oyFilter_s * OYEXPORT
                  oyFilters_Get       ( oyFilters_s       * list,
                                        int                 pos )
 {       
-  if(list && list->type_ == oyOBJECT_TYPE_FILTERS_S)
-    return (oyFilter_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_TYPE_FILTER_S ); 
+  if(list && list->type_ == oyOBJECT_FILTERS_S)
+    return (oyFilter_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_FILTER_S ); 
   else  
     return 0;
 }   
@@ -10034,7 +10970,7 @@ OYAPI int  OYEXPORT
 
 
 
-/** @func    oyFilterNode_New 
+/** @func    oyFilterNode_New
  *  @brief   allocate and initialise a new filter node object
  *
  *  @param         object              the optional object
@@ -10046,7 +10982,7 @@ OYAPI int  OYEXPORT
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_FILTER_NODE_S;
+  oyOBJECT_e type = oyOBJECT_FILTER_NODE_S;
 # define STRUCT_TYPE oyFilterNode_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -10070,18 +11006,59 @@ oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object )
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->parents = oyStructList_New( s->oy_ );
-  s->children = oyStructList_New( s->oy_ );
-  error = !s->parents || !s->children;
+  if(error)
+    oyFilterNode_Release( &s );
+
+  return s;
+}
+
+/** @func    oyFilterNode_Create
+ *  @brief   initialise a new filter node object properly
+ *
+ *  @param         filter              the mandatory filter
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/30 (Oyranos: 0.1.8)
+ *  @date    2008/07/30
+ */
+oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
+                                       oyObject_s          object )
+{
+  oyFilterNode_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!filter)
+    return s;
+
+  s = oyFilterNode_New( object );
+  error = !s;
+  allocateFunc_ = s->oy_->allocateFunc_;
+
   if(!error)
   {
+    s->filter = oyFilter_Copy( filter, object );
+
+    if(s->filter)
+    {
+      size_t len = sizeof(oyFilterSocket_s*) *
+             (s->filter->api4_->sockets_n + s->filter->api4_->sockets_last_add);
+      len = len?len:sizeof(oyFilterSocket_s*);
+      s->sockets = allocateFunc_( len );
+      memset( s->sockets, 0, len );
+
+      len = sizeof(oyFilterSocket_s*) *
+            (s->filter->api4_->plugs_n + s->filter->api4_->plugs_last_add);
+      len = len?len:sizeof(oyFilterSocket_s*);
+      s->plugs = allocateFunc_( len );
+      memset( s->plugs, 0, len );
+    }
   }
 
   return s;
 }
 
-oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
-                                       oyObject_s          object );
 /** @func    oyFilterNode_Copy_
  *  @brief   real copy a filter node object
  *
@@ -10102,15 +11079,12 @@ oyFilterNode_s *   oyFilterNode_Copy_( oyFilterNode_s    * node,
   if(!node || !object)
     return s;
 
-  s = oyFilterNode_New( object );
+  s = oyFilterNode_Create( node->filter, object );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
 
-  if(!error)
-  {
-    s->merged_to = 0;
+  if(!error && node->data && node->data->copy)
     s->data = node->data->copy( node->data , s->oy_ );
-  }
 
   return s;
 }
@@ -10163,7 +11137,7 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_FILTER_NODE_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_NODE_S)
   {
     WARNc_S(("Attempt to release a non oyFilterNode_s object."))
     return 1;
@@ -10175,9 +11149,6 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  oyStructList_Release( &s->parents );
-  oyStructList_Release( &s->children );
-  oyFilterNode_Release( &s->merged_to );
   if( s->data && s->data->release )
     s->data->release( &s->data );
   s->data = 0;
@@ -10185,6 +11156,18 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    uint32_t i;
+
+    if(s->sockets)
+    for(i = 0;
+        i < s->filter->api4_->sockets_n + s->filter->api4_->sockets_last_add;
+        ++i)
+      oyFilterSocket_Release( &s->sockets[i] );
+
+    for(i = 0;
+        i < s->filter->api4_->plugs_n + s->filter->api4_->plugs_last_add;
+        ++i)
+      oyFilterPlug_Release( &s->plugs[i] );
 
     oyObject_Release( &s->oy_ );
 
@@ -10192,6 +11175,201 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
   }
 
   return 0;
+}
+
+/** @func    oyFilterNode_ConnectorMatch
+ *  @brief   check if a connector match to a FilterNode
+ *
+ *  @param         node_first          first node
+ *  @param         pos_first           position of connector from first filter
+ *  @param         connector_second    second connector
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI int  OYEXPORT
+                 oyFilterNode_ConnectorMatch (
+                                       oyFilterNode_s    * node_first,
+                                       int                 pos_first,
+                                       oyConnector_s     * connector_second )
+{
+  int match = 0;
+  oyConnector_s * a = 0,  * b = connector_second;
+  oyImage_s * image = 0;
+  int colours_n = 0, n, i, j;
+  int coff = 0;
+  oyDATATYPE_e data_type = 0;
+
+  if(node_first && node_first->type_ == oyOBJECT_FILTER_NODE_S &&
+     node_first->filter)
+    a = oyFilter_ShowConnector( node_first->filter, pos_first, 0 );
+
+  if(a && b && b->type_ == oyOBJECT_CONNECTOR_S)
+  {
+    match = 1;
+    image = oyImage_Copy( node_first->filter->image_, 0 );
+
+    if(!b->is_plug)
+      match = 0;
+
+    if(!image) match = 0;
+    else if(match)
+    {
+      coff = oyToColourOffset_m( image->layout_[oyLAYOUT] );
+
+      /* channel counts */
+      colours_n = oyProfile_GetChannelsCount( image->profile_ );
+      if(image->layout_[oyCHANS] < b->min_channels_count ||
+         image->layout_[oyCHANS] > b->max_channels_count ||
+         colours_n < b->min_colour_count ||
+         colours_n > b->max_colour_count)
+        match = 0;
+
+      /* data types */
+      if(match)
+      {
+        data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+        n = b->data_types_n;
+        match = 0;
+        for(i = 0; i < n; ++i)
+          if(b->data_types[i] == data_type)
+            match = 1;
+      }
+
+      /* planar and interwoven capabilities */
+      if(b->max_colour_offset < image->layout_[oyCOFF] ||
+         (!b->can_planar && oyToPlanar_m(image->layout_[oyCOFF])) ||
+         (!b->can_interwoven && !oyToPlanar_m(image->layout_[oyCOFF])))
+        match = 0;
+
+      /* swap and byteswapping capabilities */
+      if((!b->can_swap && oyToSwapColourChannels_m(image->layout_[oyCOFF])) ||
+         (!b->can_swap_bytes && oyToByteswap_m(image->layout_[oyCOFF])))
+        match = 0;
+
+      /* revert or chockolat and vanilla */
+      if((!b->can_revert && oyToFlavor_m(image->layout_[oyCOFF])))
+        match = 0;
+
+      /* channel types */
+      if(match && b->channel_types)
+      {
+        n = image->layout_[oyCHANS];
+        for(i = 0; i < b->channel_types_n; ++i)
+        {
+          match = 0;
+          for(j = 0; j < n; ++j)
+            if(b->channel_types[i] == image->channel_layout[j] &&
+               !(!b->can_nonpremultiplied_alpha &&
+                 image->channel_layout[j] == oyCHANNELTYPE_COLOUR_LIGHTNESS) &&
+               !(!b->can_premultiplied_alpha &&
+                 image->channel_layout[j] == oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED))
+              match = 1;
+          if(!match)
+            break;
+        }
+      }
+
+      /* subpixels */
+      if(image->sub_positioning && !b->can_subpixel)
+        match = 0;
+    }
+  }
+
+  oyImage_Release( &image );
+  oyConnector_Release( &a );
+
+  return match;
+}
+
+/** @func    oyFilterNode_GetSocket
+ *  @brief   get a oyFilterSocket_s of type from a FilterNode
+ *
+ *  @param         node                filter node
+ *  @param         pos                 position of connector from filter
+ *  @return                            the socket - no copy!
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/30 (Oyranos: 0.1.8)
+ *  @date    2008/07/30
+ */
+OYAPI oyFilterSocket_s * OYEXPORT
+                 oyFilterNode_GetSocket (
+                                       oyFilterNode_s    * node,
+                                       int                 pos )
+{
+  oyFilterSocket_s * s = 0;
+
+  if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
+     pos < node->filter->api4_->sockets_n + node->filter->api4_->sockets_last_add)
+  {
+    oyAlloc_f allocateFunc_ = node->oy_->allocateFunc_;
+
+    if(!node->sockets)
+    {
+      size_t len = sizeof(oyFilterSocket_s*) *
+       (node->filter->api4_->sockets_n + node->filter->api4_->sockets_last_add);
+      node->sockets = allocateFunc_( len );
+      memset( node->sockets, 0, len );
+    }
+
+    if(!node->sockets[pos])
+    {
+      s = oyFilterSocket_New( node->oy_ );
+      s->pattern = oyFilter_ShowConnector( node->filter, pos, 0 );
+      s->pattern->node = oyFilterNode_Copy( node, 0 );
+      node->sockets[pos] = s;
+    }
+
+    s = node->sockets[pos];
+  }
+
+  return s;
+}
+
+/** @func    oyFilterNode_GetPlug
+ *  @brief   get a oyFilterPlug_s of type from a FilterNode
+ *
+ *  @param         node                filter node
+ *  @param         pos                 position of connector from filter
+ *  @return                            the plug - no copy
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/30 (Oyranos: 0.1.8)
+ *  @date    2008/07/30
+ */
+OYAPI oyFilterPlug_s * OYEXPORT
+                 oyFilterNode_GetPlug( oyFilterNode_s    * node,
+                                       int                 pos )
+{
+  oyFilterPlug_s * s = 0;
+
+  if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
+     pos < node->filter->api4_->plugs_n + node->filter->api4_->plugs_last_add)
+  {
+    oyAlloc_f allocateFunc_ = node->oy_->allocateFunc_;
+
+    if(!node->plugs)
+    {
+      size_t len = sizeof(oyFilterPlug_s*) *
+           (node->filter->api4_->plugs_n + node->filter->api4_->plugs_last_add);
+      node->plugs = allocateFunc_( len );
+      memset( node->plugs, 0, len );
+    }
+
+    if(!node->plugs[pos])
+    {
+      s = oyFilterPlug_New( node->oy_ );
+      s->pattern = oyFilter_ShowConnector( node->filter, pos, 1 );
+      s->pattern->node = oyFilterNode_Copy( node, 0 );
+      node->plugs[pos] = s;
+    }
+
+    s = node->plugs[pos];
+  }
+
+  return s;
 }
 
 
@@ -10314,7 +11492,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
                                       cmm, 0, cmm_used, 0,0 );
     if(api && *(uint32_t*)&cmm_used)
     {
@@ -10452,7 +11630,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
                                         oyObject_s        object)
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_COLOUR_CONVERSION_S;
+  oyOBJECT_e type = oyOBJECT_COLOUR_CONVERSION_S;
 # define STRUCT_TYPE oyColourConversion_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -10512,7 +11690,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
     {
       /* 3. check and 3.a take*/
       cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
-                                                  oyOBJECT_TYPE_CMM_POINTER_S);
+                                                  oyOBJECT_CMM_POINTER_S);
 
       if(!cmm_ptr)
       {
@@ -10572,7 +11750,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
 
       oyCMMptr_Release_( &cmm_ptr );
 #endif
-      /*cmm_ptr_orig = (oyCMMptr_s*) oyHash_GetPointer_(entry, oyOBJECT_TYPE_CMM_POINTER_S);
+      /*cmm_ptr_orig = (oyCMMptr_s*) oyHash_GetPointer_(entry, oyOBJECT_CMM_POINTER_S);
 
       cmm_ptr_orig->ptr = cmm_ptr->ptr;*/
     }
@@ -10599,7 +11777,7 @@ oyColourConversion_s* oyColourConversion_Copy (
   oyColourConversion_s * s = 0;
   int error = !obj;
 
-  if(!error && obj->type_ != oyOBJECT_TYPE_COLOUR_CONVERSION_S)
+  if(!error && obj->type_ != oyOBJECT_COLOUR_CONVERSION_S)
     error = 1;
 
   if(!error && obj->oy_)
@@ -10645,12 +11823,12 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
   if(!error)
   {
     hash = (oyHash_s*) oyStructList_GetRefType( s->cmms_, pos,
-                                                 oyOBJECT_TYPE_HASH_S);
+                                                 oyOBJECT_HASH_S);
     error = !hash;
 
     if(!error)
       cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( hash,
-                                                  oyOBJECT_TYPE_CMM_POINTER_S);
+                                                  oyOBJECT_CMM_POINTER_S);
 
     error = !cmm_ptr;
 
@@ -10662,7 +11840,7 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
                                       cc_cmm, 0, cmm_used, 0,0 );
     if(api && *(uint32_t*)&cmm_used)
     {
@@ -10747,7 +11925,7 @@ int        oyColourConversion_Release( oyColourConversion_s ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_COLOUR_CONVERSION_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_COLOUR_CONVERSION_S)
   {
     WARNc_S(("Attempt to release a non oyColourConversion_s object."))
     return 1;
@@ -10808,12 +11986,12 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
   if(!error)
   {
     hash = (oyHash_s*) oyStructList_GetRefType( s->cmms_, pos,
-                                                 oyOBJECT_TYPE_HASH_S );
+                                                 oyOBJECT_HASH_S );
     error = !hash;
 
     if(!error)
       cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( hash,
-                                                  oyOBJECT_TYPE_CMM_POINTER_S);
+                                                  oyOBJECT_CMM_POINTER_S);
 
     error = !cmm_ptr;
 
@@ -10825,7 +12003,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_TYPE_CMM_API1_S,
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
                                       cc_cmm, 0, cmm_used, 0,0 );
     if(api && *(uint32_t*)&cmm_used)
     {
@@ -10992,7 +12170,7 @@ oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * cc )
 oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_PIXEL_ACCESS_S;
+  oyOBJECT_e type = oyOBJECT_PIXEL_ACCESS_S;
 # define STRUCT_TYPE oyPixelAccess_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -11182,7 +12360,7 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
 
   s = *obj;
 
-  if( s->type != oyOBJECT_TYPE_PIXEL_ACCESS_S)
+  if( s->type != oyOBJECT_PIXEL_ACCESS_S)
   {
     WARNc_S(("Attempt to release a non oyPixelAccess_s object."))
     return 1;
@@ -11246,7 +12424,7 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
 oyConversions_s *  oyConversions_New_( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_CONVERSIONS_S;
+  oyOBJECT_e type = oyOBJECT_CONVERSIONS_S;
 # define STRUCT_TYPE oyConversions_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -11292,9 +12470,9 @@ oyConversions_s  * oyConversions_CreateBasic (
 
   if(!error)
   {
-    s->input = oyFilterNode_New( s->oy_ );
-    s->input->filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root",
-                                     0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root", 0,0, 0 );
+    s->input = oyFilterNode_Create( filter, s->oy_ );
+    oyFilter_Release( &filter );
 
     error = oyFilter_ImageSet ( s->input->filter, input );
 
@@ -11322,19 +12500,18 @@ oyConversions_s  * oyConversions_CreateInput (
 {
   oyConversions_s * s = oyConversions_New_( object );
   int error = !s;
+  oyFilter_s * filter = 0;
 
   if(!error)
   {
-    s->input = oyFilterNode_New( s->oy_ );
-    s->input->filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root",
-                                     0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root", 0,0, 0 );
+    s->input = oyFilterNode_Create( filter, s->oy_ );
+    oyFilter_Release( &filter );
 
-    error = oyFilter_ImageSet ( s->input->filter, input );
+    error = !s->input;
 
-    /* supposedly the node will work itself */
     if(!error)
-      s->input->merged_to = oyFilterNode_Copy( s->input, 0 );
-
+    error = oyFilter_ImageSet ( s->input->filter, input );
   }
 
   if(error)
@@ -11425,7 +12602,7 @@ int          oyConversions_Release   ( oyConversions_s  ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_CONVERSIONS_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_CONVERSIONS_S)
   {
     WARNc_S(("Attempt to release a non oyConversions_s object."))
     return 1;
@@ -11438,7 +12615,7 @@ int          oyConversions_Release   ( oyConversions_s  ** obj )
   /* ---- end of common object destructor ------- */
 
   oyFilterNode_Release( &s->input );
-  //oyFilterNode_Release( &s->out_ );
+  oyFilterNode_Release( &s->out_ );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -11468,17 +12645,25 @@ oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
 {
   oyFilterNode_s * next = 0,
                  * last = 0;
+  oyFilterSocket_s * socket = 0;
+  oyFilterPlug_s * plug = 0;
 
-      next = last = oyFilterNode_Copy( first, 0 );
+      next = last = first;
 
       while(next)
       {
-        next = (oyFilterNode_s*) oyStructList_GetType_ (
-                   last->children, 0, oyOBJECT_TYPE_FILTER_NODE_S );
-      
+        socket = last->sockets[0];
+
+        if(socket)
+          plug = oyFilterPlugs_Get( socket->requesting_plugs_, 0 );
+        if(plug)
+          next = plug->pattern->node;
+        else
+          next = 0;
+        oyFilterPlug_Release( &plug );
+
         if(next)
         {
-          oyFilterNode_Release( &last );
           last = next;
         }
       }
@@ -11506,11 +12691,13 @@ int                oyConversions_FilterAdd (
   oyFilterNode_s * node = 0,
                  * temp = 0,
                  * last = 0;
+  oyConnector_s  * connector_node = 0;
+  oyFilterPlug_s * plug_node = 0;
+  oyFilterSocket_s * socket_last = 0;
 
   if(!error)
   {
-    node = oyFilterNode_New( s->oy_ );
-    node->filter = oyFilter_Copy( filter, 0 );
+    node = oyFilterNode_Create( filter, s->oy_ );
 
     if(!error &&
        !node->filter)
@@ -11528,7 +12715,7 @@ int                oyConversions_FilterAdd (
       error = 1;
     }
     if(!error &&
-       (!node->filter || !node->filter->api_))
+       (!node->filter || !node->filter->api4_))
     {
       WARNc2_S( "%s: %s",
       _("attempt to add a incomplete filter"),
@@ -11536,8 +12723,8 @@ int                oyConversions_FilterAdd (
       error = 1;
     }
     if(!error &&
-       (node->filter->api_->parents_max > 1 ||
-        node->filter->api_->children_max > 1))
+       (node->filter->api4_->sockets_n > 1 ||
+        node->filter->api4_->plugs_n > 1))
     {
       WARNc2_S( "%s: %s",
       _("attempt to add a non linear filter to a linear graph"),
@@ -11547,10 +12734,6 @@ int                oyConversions_FilterAdd (
 
     if(!error)
     {
-      /* supposedly the node will work itself */
-      if(!error)
-        node->merged_to = oyFilterNode_Copy( node, 0 );
-
       last = oyFilterNode_GetLastFromLinear_( s->input );
 
       if(!error)
@@ -11562,9 +12745,18 @@ int                oyConversions_FilterAdd (
       if(last)
       {
         temp = node;
-        error = oyStructList_MoveIn( last->children, (oyStruct_s**) &node, 0 );
+        plug_node = oyFilterNode_GetPlug( node, 0 );
+        connector_node = plug_node->pattern;
+
+        if(oyFilterNode_ConnectorMatch( last, 0, connector_node ))
+        {
+          socket_last = oyFilterNode_GetSocket( last, 0 );
+        } else
+          error = 1;
+
         if(!error)
-          error = oyStructList_MoveIn( temp->parents, (oyStruct_s**) &last, 0 );
+          oyFilterPlug_Connect( &plug_node, &socket_last );
+
         temp = 0;
       }
       else
@@ -11575,7 +12767,7 @@ int                oyConversions_FilterAdd (
   }
 
   if(error)
-    oyFilterNode_Release( &last );
+    oyFilterNode_Release( &node );
 
   return error;
 }
@@ -11642,13 +12834,16 @@ oyPointer        * oyConversions_GetNextPixel (
                                        oyPixelAccess_s   * pixel_access,
                                        int32_t           * feedback )
 {
-  oyFilterNode_s * worker = 0;
+  oyFilterPlug_s * plug = 0;
+  oyFilter_s * filter = 0;
   oyPointer pixel = 0;
 
-  worker = conversions->out_->merged_to;
+  /* conversions->out_ has to be linear, so we access only the first socket */
+  plug = conversions->out_->plugs[0];
+  /* should be the same as conversions->out_->filter */
+  filter = plug->remote_socket_->pattern->node->filter;
 
-  pixel = worker->filter->api_->oyCMMFilter_GetNext( worker, pixel_access,
-                                                     feedback);
+  pixel = filter->api4_->oyCMMFilterPlug_GetNext( plug, pixel_access, feedback);
 
   return pixel;
 }
@@ -11672,17 +12867,17 @@ oyPointer        * oyConversions_GetOnePixel (
                                        int32_t             y,
                                        int32_t           * feedback )
 {
-  oyPixelAccess_s   * pixel_access = 0;
-  oyFilterNode_s * worker = conversions->out_;
+  oyPixelAccess_s * pixel_access = 0;
+  oyFilterPlug_s * plug = 0;
+  oyFilter_s * filter = 0;
   oyPointer pixel = 0;
 
-  if(conversions->out_->merged_to)
-    worker = conversions->out_->merged_to;
+  /* conversions->out_ has to be linear, so we access only the first socket */
+  plug = (oyFilterPlug_s*) ((oyFilterSocket_s *)conversions->out_->sockets[0])->requesting_plugs_->list_->ptr_[0];
+  filter = plug->remote_socket_->pattern->node->filter;
 
-  pixel_access = oyPixelAccess_Create ( x, y, worker->filter,
-                                        oyPIXEL_ACCESS_POINT, 0 );
-  pixel = worker->filter->api_->oyCMMFilter_GetNext( worker, pixel_access,
-                                                     feedback);
+  pixel_access = oyPixelAccess_Create ( x, y, filter, oyPIXEL_ACCESS_POINT, 0 );
+  pixel = filter->api4_->oyCMMFilterPlug_GetNext( plug, pixel_access, feedback);
 
   return pixel;
 }
@@ -11713,7 +12908,7 @@ int             ** oyConversions_GetAdjazenzlist (
   /* count nodes and edges */
   /* allocate adjazenzliste */
   /* fill adjazenzliste */
-  // TODO
+  /* TODO */
 
   return adjazenzliste;
 }
@@ -11758,7 +12953,7 @@ oyNamedColour_Create( const double      * chan,
 {
   int n = 0;
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_NAMED_COLOUR_S;
+  oyOBJECT_e type = oyOBJECT_NAMED_COLOUR_S;
 # define STRUCT_TYPE oyNamedColour_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -11911,7 +13106,7 @@ oyNamedColour_Release( oyNamedColour_s ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_NAMED_COLOUR_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_NAMED_COLOUR_S)
   {
     WARNc_S(("Attempt to release a non oyNamedColour_s object."))
     return 1;
@@ -12330,7 +13525,7 @@ const oyChar *    oyNamedColour_GetName( oyNamedColour_s * s,
 oyNamedColours_s* oyNamedColours_New ( oyObject_s       object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_TYPE_e type = oyOBJECT_TYPE_NAMED_COLOURS_S;
+  oyOBJECT_e type = oyOBJECT_NAMED_COLOURS_S;
 # define STRUCT_TYPE oyNamedColours_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
@@ -12389,8 +13584,8 @@ oyNamedColours_s* oyNamedColours_Copy( oyNamedColours_s  * colours,
   return s;
 }
 
-/** @func
- *  @brief 
+/** @func  oyNamedColours_Release
+ *  @brief release and probably free a named colour object
  *
  *  @since Oyranos: version 0.1.8
  *  @date  22 december 2007 (API 0.1.8)
@@ -12406,7 +13601,7 @@ int               oyNamedColours_Release ( oyNamedColours_s** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_TYPE_NAMED_COLOURS_S)
+  if( !s->oy_ || s->type_ != oyOBJECT_NAMED_COLOURS_S)
   {
     WARNc_S(("Attempt to release a non oyNamedColours_s object."))
     return 1;
@@ -12434,15 +13629,15 @@ int               oyNamedColours_Release ( oyNamedColours_s** obj )
   return error;
 }
 
-/** @func
- *  @brief 
+/** @func  oyNamedColours_Count
+ *  @brief count in oyNamedColours_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  22 december 2007 (API 0.1.8)
  */
 int               oyNamedColours_Count( oyNamedColours_s * obj )
 {
-  if(obj && obj->type_ == oyOBJECT_TYPE_NAMED_COLOURS_S)
+  if(obj && obj->type_ == oyOBJECT_NAMED_COLOURS_S)
     return oyStructList_Count( obj->list_ );
   else
     return -1;
@@ -12460,12 +13655,12 @@ oyNamedColour_s*  oyNamedColours_Get ( oyNamedColours_s  * obj,
   int error = !obj;
   oyNamedColour_s * s = 0;
 
-  if(!error && obj->type_ != oyOBJECT_TYPE_NAMED_COLOURS_S)
+  if(!error && obj->type_ != oyOBJECT_NAMED_COLOURS_S)
     error = 1;
 
   if(!error)
     s = (oyNamedColour_s*) oyStructList_GetRefType( obj->list_, position,
-                                                 oyOBJECT_TYPE_NAMED_COLOUR_S );
+                                                 oyOBJECT_NAMED_COLOUR_S );
 
  
   return s;
@@ -12484,7 +13679,7 @@ oyNamedColours_s * oyNamedColours_MoveIn ( oyNamedColours_s  * list,
   int error = 0;
   oyNamedColours_s * s = list;
 
-  if(obj && *obj && (*obj)->type_ == oyOBJECT_TYPE_NAMED_COLOUR_S)
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_NAMED_COLOUR_S)
   {
     if(!s)
     {
@@ -12516,7 +13711,7 @@ int               oyNamedColours_ReleaseAt ( oyNamedColours_s * obj,
 {
   int error = !obj;
 
-  if(!error && obj->type_ != oyOBJECT_TYPE_NAMED_COLOURS_S)
+  if(!error && obj->type_ != oyOBJECT_NAMED_COLOURS_S)
     error = 1;
 
   if(!error)

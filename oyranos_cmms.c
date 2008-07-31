@@ -37,7 +37,7 @@
     @brief the internal only used structure for external registred CMM functions
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type;           /*!< internal struct type oyOBJECT_TYPE_EXTERNFUNC_S */
+  oyOBJECT_e           type;           /*!< internal struct type oyOBJECT_EXTERNFUNC_S */
   char        * id;               /**< 4 letter short name */
   char        * name;             /**< short name */
   char        * description;      /**< long description */ /* TODO help license .. */
@@ -52,7 +52,7 @@ typedef struct {
     @brief the internal only used structure for external registred CMM's
  */
 typedef struct {
-  oyOBJECT_TYPE_e      type;           /**< internal struct type oyOBJECT_TYPE_MODULE_S */
+  oyOBJECT_e           type;           /**< internal struct type oyOBJECT_MODULE_S */
   char        cmm[5];           /**< 4 letter identifier */
   char       *name;             /**< short name */
   char       *description;      /**< long description */ /* TODO help license .. */
@@ -400,7 +400,7 @@ oyModulGetFromXML_( oyGROUP_e           group,
   cmm->funcs = count;
   for(i = 0; i < count; ++i)
   {
-    cmm->func[i].type        =   oyOBJECT_TYPE_EXTERNFUNC_S;
+    cmm->func[i].type        =   oyOBJECT_EXTERNFUNC_S;
     cmm->func[i].id          =   oyXMLgetValue_(func[i], "oyID");
     cmm->func[i].name        = _(oyXMLgetValue_(func[i], "oyNAME"));
     cmm->func[i].description = _(oyXMLgetValue_(func[i], "oyDESCRIPTION"));

@@ -110,12 +110,12 @@ int oyMonitor_height_( oyMonitor_s *disp ) { return disp->geo[5]; }
 int
 oyFree_( void *oy_structure )
 { int error = 0;
-  oyOBJECT_TYPE_e *type = (oyOBJECT_TYPE_e*) oy_structure;
+  oyOBJECT_e *type = (oyOBJECT_e*) oy_structure;
 
   if( type )
     switch( *type )
     {
-    case oyOBJECT_TYPE_DISPLAY_S:
+    case oyOBJECT_MONITOR_S:
       {
         oyMonitor_s *disp = (oyMonitor_s*)oy_structure;
 
@@ -1398,7 +1398,7 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
   if(!error)
     error = !memset( disp, 0, sizeof(oyMonitor_s) );
 
-  disp->type_ = oyOBJECT_TYPE_DISPLAY_S;
+  disp->type_ = oyOBJECT_MONITOR_S;
 
   if( display_name )
   {
@@ -1447,7 +1447,7 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
   
   s = *obj;
   
-  if( s->type_ != oyOBJECT_TYPE_DISPLAY_S)
+  if( s->type_ != oyOBJECT_MONITOR_S)
   { 
     WARNc_S("Attempt to release a non oyMonitor_s object.")
     return 1;
