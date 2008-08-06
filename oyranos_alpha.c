@@ -6178,8 +6178,8 @@ OYAPI const oyChar* OYEXPORT
 /** @brief get a presentable name
  *
  *  The type argument should select the folloing string in return:<br> 
- *  - oy_NAME_NAME - a readable XML element
- *  - oy_NAME_NICK - the hash ID
+ *  - oyNAME_NAME - a readable XML element
+ *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
  *
  *  @version Oyranos: 0.1.8
@@ -7894,11 +7894,16 @@ OYAPI oyProfiles_s * OYEXPORT
 /** @func    oyProfiles_ForStd
  *  @brief   get a list of installed profiles
  *
- *  @param[in]     colour_space        standard profile class, e.g. oyEDITING_RGB
+ *  Allow for a special case with oyDEFAULT_PROFILE_START in the colour_space
+ *  argument, to select all possible standard colour profiles, e.g. for 
+ *  typical colour conversions.
+ *
+ *  @param[in]     std_profile_class  standard profile class, e.g. oyEDITING_RGB
  *  @param[out]    current             get the colour_space profile position
  *  @param         object              a optional object
  *  @return                            the profile list
  *
+ *  @par Example - get all standard RGB profiles:
  *  @verbatim
     oyPROFILE_e type = oyEDITING_RGB;
     int current = 0,
@@ -7920,14 +7925,14 @@ OYAPI oyProfiles_s * OYEXPORT
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/25 (Oyranos: 0.1.8)
- *  @date    2008/07/25
+ *  @date    2008/08/06
  */
 OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_ForStd   ( oyPROFILE_e         colour_space,
+                 oyProfiles_ForStd   ( oyPROFILE_e         std_profile_class,
                                        int               * current,
                                        oyObject_s          object)
 {
-  oyPROFILE_e type = colour_space;
+  oyPROFILE_e type = std_profile_class;
     char * default_p =
            oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
     int i, val = -1;
@@ -7989,6 +7994,21 @@ OYAPI oyProfiles_s * OYEXPORT
       oyProfile_SetSignature( profile, oySIGNATURE_CLASS, icSigColorSpaceClass);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
     }
+    if(type == oyDEFAULT_PROFILE_START)
+    {
+      profile = oyProfile_FromSignature( icSigColorSpaceClass,
+                                         oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      profile = oyProfile_FromSignature( icSigInputClass,
+                                         oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      profile = oyProfile_FromSignature( icSigOutputClass,
+                                         oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      profile = oyProfile_FromSignature( icSigDisplayClass,
+                                         oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
 
     /* get the profile list */
     iccs = oyProfiles_Create( patterns, 0 );
@@ -8020,7 +8040,10 @@ OYAPI oyProfiles_s * OYEXPORT
 
     if(current)
       *current          = val;
-    oyFree_m_( default_p );
+
+    if(default_p)
+      oyFree_m_( default_p );
+    oyProfiles_Release( &patterns );
 
   return iccs;
 }
