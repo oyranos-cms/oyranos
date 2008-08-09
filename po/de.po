@@ -2,6 +2,7 @@
 # German translations for icc_examin
 # Copyright (C) 2005-2007 Kai-Uwe Behrmann
 # Kai-Uwe Behrmann <ku.b@gmx.de>, 2005-2007.
+# This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php)
 #
 msgid ""
 msgstr ""
