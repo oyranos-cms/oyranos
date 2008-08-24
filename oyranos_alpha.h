@@ -78,7 +78,7 @@ typedef oyPointer (*oyImage_GetLine_t) ( oyImage_s       * image,
                                          int               line_y,
                                          int             * height,
                                          int               channel );
-typedef oyPointer (*oyImage_GetTile_t) ( oyImage_s       * image,
+typedef oyPointer*(*oyImage_GetTile_t) ( oyImage_s       * image,
                                          int               tile_x,
                                          int               tile_y,
                                          int               channel );
@@ -117,6 +117,7 @@ typedef enum {
   oyOBJECT_OPTIONS_S,                 /*!< oyOptions_s */
   oyOBJECT_REGION_S,                  /*!< oyRegion_s */
   oyOBJECT_IMAGE_S,                   /*!< oyImage_s */
+  oyOBJECT_ARRAY2D_S,                 /**< oyArray2d_s */
   oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s */
   oyOBJECT_CONNECTOR_S,               /**< oyConnector_s */
   oyOBJECT_FILTER_PLUG_S,             /**< oyFilterPlug_s */
@@ -964,19 +965,177 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAlloc_f           allocateFunc );
 #endif
 
+/** @struct  oyArray2d_s
+ *  @brief   2d data array
+ *
+ *  oyArray2d_s is a in memory data view. The array2d holds pointers to lines in
+ *  the original memory blob. The arrays contained in array2d represent the 
+ *  samples. There is no information in which order the samples appear. No pixel
+ *  layout or meaning is provided. Given the coordinates x and y, a samples 
+ *  memory adress can be accessed by &array2d[y][x] . This adress must be
+ *  converted to the data type provided in oyArray2d_s::t.
+ *
+ *  The oyArray2d_s::data pointer should be observed in order to be signaled
+ *  about its invalidation.
+ *
+  \dot
+  digraph a {
+  nodesep=.05;
+  rankdir=LR
+      node [shape=record,fontname=Helvetica, fontsize=10, width=.1,height=.1];
+
+      e [ label="oyArray2d_s with 8 samples x 10 lines", shape=plaintext];
+
+      y [ label="<0>0|<1>1|<2>2|<3>3|<4>4|<5>5|<6>6|<7>7|<8>8|<9>9", height=2.0 , style=filled ];
+      node [width = 1.5];
+      0 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      1 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      2 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      3 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      4 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      5 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      6 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      7 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      8 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      9 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
+      e
+      y:0 -> 0:0
+      y:1 -> 1:0
+      y:2 -> 2:0
+      y:3 -> 3:0
+      y:4 -> 4:0
+      y:5 -> 5:0
+      y:6 -> 6:0
+      y:7 -> 7:0
+      y:8 -> 8:0
+      y:9 -> 9:0
+      0:7 -> 1:0 [arrowhead="open", style="dashed"];
+      1:7 -> 2:0 [arrowhead="open", style="dashed"];
+  }
+  \enddot
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_ARRAY2D_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyDATATYPE_e         t;              /**< data type */
+  int                  width;          /**< data width */
+  int                  height;         /**< data height */
+
+  unsigned char     ** array2d;        /**< sorted data */
+
+  oyPointer            data;           /**< the original in memory pointer */
+} oyArray2d_s;
+
+OYAPI oyArray2d_s * OYEXPORT
+                   oyArray2d_Create  ( oyPointer           data,
+                                       int                 width,
+                                       int                 height,
+                                       oyDATATYPE_e        type,
+                                       oyObject_s          object );
+OYAPI oyArray2d_s * OYEXPORT
+                 oyArray2d_New       ( oyObject_s          object );
+OYAPI oyArray2d_s * OYEXPORT
+                 oyArray2d_Copy      ( oyArray2d_s       * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyArray2d_Release   ( oyArray2d_s      ** obj );
+
+
+OYAPI int  OYEXPORT
+                 oyArray2d_DataSet   ( oyArray2d_s       * obj,
+                                       oyPointer           data );
+
 /** @brief a reference struct to gather information for image transformation
+ *
+ *  as we dont target a complete imaging solution, only raster is supported
+ *
+ *  Resolution is in pixel per centimeter.
+ *
+ *  Requirements: \n
+ *  - to provide a view on the image data we look at per line arrays
+ *  - it should be possible to echange the to be processed data without altering
+ *    the context
+ *  - oyImage_s should hold image dimensions,
+ *  - display region information and
+ *  - a reference to the data for conversion
+ *
+ *  To set a image data backend use oyImage_DataSet().
+ *  \dot
+ digraph oyImage_s {
+  nodesep=.1;
+  ranksep=1.;
+  rankdir=LR;
+  graph [fontname=Helvetica, fontsize=14];
+  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
 
-    as we dont target a complete imaging solution, only raster is supported
+  subgraph cluster_3 {
+    label="oyImage_s data backends";
+    color=white;
+    clusterrank=global;
 
-    oyImage_s should hold image dimensions,
-    oyDisplayRegion_s information and
-    a reference to the data for conversion
+      i [ label="... | <0>oyStruct_s * pixel | <1> oyImage_GetPoint_t getPoint | <2>oyImage_GetLine_t getLine | <3>oyImage_GetTile_t getTile | ..."];
 
-    As well referencing of itself would be nice, to allow light copies.
+      node [width = 2.5, style=filled];
+      pixel_A [label="oyArray2d_s arrayA"];
+      gp_p_A [label="Array2d_GetPointA"];
+      gp_l_A [label="Array2d_GetLineA"];
+      gp_t_A [label="Array2d_GetTileA"];
 
-    The resolution is always in pixel per centimeter.
+      pixel_B [label="mmap arrayB"];
+      gp_p_B [label="mmap_GetPointB"];
+      gp_l_B [label="mmap_GetLineB"];
+      gp_t_B [label="mmap_GetTileB"];
 
-    Should oyImage_s become internal and we provide a user interface?
+      subgraph cluster_0 {
+        rank=max;
+        color=red;
+        style=dashed;
+        node [style="filled"];
+        pixel_A; gp_p_A; gp_l_A; gp_t_A;
+        //pixel_A -> gp_p_A -> gp_l_A -> gp_t_A [color=white, arrowhead=none, dirtype=none];
+        label="backend A";
+      }
+
+      subgraph cluster_1 {
+        color=blue;
+        style=dashed;
+        node [style="filled"];
+        pixel_B; gp_p_B; gp_l_B; gp_t_B;
+        label="backend B";
+      }
+
+      subgraph cluster_2 {
+        color=gray;
+        node [style="filled"];
+        i;
+        label="oyImage_s";
+        URL="structoyImage__s.html";
+      }
+
+      i:0 -> pixel_A [arrowhead="open", color=red];
+      i:1 -> gp_p_A [arrowhead="open", color=red];
+      i:2 -> gp_l_A [arrowhead="open", color=red];
+      i:3 -> gp_t_A [arrowhead="open", color=red];
+      i:0 -> pixel_B [arrowhead="open", color=blue];
+      i:1 -> gp_p_B [arrowhead="open", color=blue];
+      i:2 -> gp_l_B [arrowhead="open", color=blue];
+      i:3 -> gp_t_B [arrowhead="open", color=blue];
+  }
+ }
+ \enddot
+ *
+ *  Should oyImage_s become internal and we provide a user interface?
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
  */
 struct oyImage_s {
   oyOBJECT_e           type_;          /*!< struct type oyOBJECT_IMAGE_S */
@@ -998,8 +1157,7 @@ struct oyImage_s {
   int                  display_pos_x;  /**< Possibly this can be part of the output profile; upper position on display of image*/
   int                  display_pos_y;  /*!< left position on display of image */
 
-
-  oyPointer            data;           /**< image data */
+  oyStruct_s         * pixel_data;     /**< struct passed to each subsequent call of get* pixel acessors */
   oyImage_GetPoint_t   getPoint;       /**< the point interface */
   oyImage_GetLine_t    getLine;        /**< the line interface */
   oyImage_GetTile_t    getTile;        /**< the tile interface */
@@ -1034,6 +1192,11 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
                                        oyPixel_t           pixel_layout,
                                        oyProfile_s       * profile,
                                        oyOptions_s       * options );
+int            oyImage_DataSet       ( oyImage_s         * image,
+                                       oyStruct_s       ** pixel_data,
+                                       oyImage_GetPoint_t  getPoint,
+                                       oyImage_GetLine_t   getLine,
+                                       oyImage_GetTile_t   getTile );
 
 
 typedef enum {

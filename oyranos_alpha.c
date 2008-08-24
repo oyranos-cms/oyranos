@@ -82,6 +82,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        oyPointer           ptr,
                                        oyStruct_release_f  ptrRelease );
 
+
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
@@ -1404,6 +1405,7 @@ const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
     case oyOBJECT_OPTIONS_S: text = "oyOptions_s"; break;
     case oyOBJECT_REGION_S: text = "oyRegion_s"; break;
     case oyOBJECT_IMAGE_S: text = "oyImage_s"; break;
+    case oyOBJECT_ARRAY2D_S: text = "oyArray2d_s"; break;
     case oyOBJECT_COLOUR_CONVERSION_S: text = "oyColourConversion_s";break;
     case oyOBJECT_FILTER_S: text = "oyFilter_s"; break;
     case oyOBJECT_FILTERS_S: text = "oyFilters_s"; break;
@@ -8740,7 +8742,7 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
     if(oyToPlanar_m( pixel_layout ))
     {
       mask[oyPOFF_X] = 1;
-      mask[oyCOFF] = w*h;
+      mask[oyCOFF] = w*h*n;
     } else {
       mask[oyPOFF_X] = n;
       mask[oyCOFF] = 1;
@@ -8827,67 +8829,373 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
 /** @} */
 
 
+
 /** \addtogroup image Image conversion API
  *  Colour conversion front end API's.
 
  *  @{
  */
 
+
+/** @func    oyArray2d_New
+ *  @relates oyArray2d_s
+ *  @brief   allocate a new Array2d object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI oyArray2d_s * OYEXPORT
+                   oyArray2d_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_ARRAY2D_S;
+# define STRUCT_TYPE oyArray2d_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyArray2d_Copy;
+  s->release = (oyStruct_Release_f) oyArray2d_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+
+  return s;
+}
+
+/** @func    oyArray2d_Create
+ *  @relates oyArray2d_s
+ *  @brief   allocate and initialise a oyArray2d_s object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI oyArray2d_s * OYEXPORT
+                   oyArray2d_Create  ( oyPointer           data,
+                                       int                 width,
+                                       int                 height,
+                                       oyDATATYPE_e        type,
+                                       oyObject_s          object )
+{
+  oyArray2d_s * s = 0;
+  int error = 0;
+
+  if(!width || !height || !type || !data)
+    return s;
+
+  s = oyArray2d_New( object );
+  error = !s;
+
+  if(!error)
+  {
+    int y_len = sizeof(unsigned char *) * (height + 1);
+
+    s->width = width;
+    s->height = height;
+    s->t = type;
+    s->data = data;
+    s->array2d = object->allocateFunc_( y_len );
+
+    error = oyArray2d_DataSet( s, data );
+  }
+
+  return s;
+}
+ 
+/** @func    oyArray2d_Copy_
+ *  @relates oyArray2d_s
+ *  @brief   real copy a Array2d object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+oyArray2d_s * oyArray2d_Copy_
+                                     ( oyArray2d_s       * obj,
+                                       oyObject_s          object )
+{
+  oyArray2d_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyArray2d_Create( obj->data, 
+                        obj->height, obj->width, obj->t, object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+  }
+
+  if(error)
+    oyArray2d_Release( &s );
+
+  return s;
+}
+
+/** @func    oyArray2d_Copy
+ *  @relates oyArray2d_s
+ *  @brief   copy or reference a Array2d object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI oyArray2d_s * OYEXPORT
+                   oyArray2d_Copy    ( oyArray2d_s       * obj,
+                                       oyObject_s          object )
+{
+  oyArray2d_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyArray2d_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** @func    oyArray2d_Release
+ *  @relates oyArray2d_s
+ *  @brief   release and possibly deallocate a Array2d object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI int  OYEXPORT
+               oyArray2d_Release     ( oyArray2d_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyArray2d_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_ARRAY2D_S)
+  {
+    WARNc_S(("Attempt to release a non oyArray2d_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    int y;
+
+    for( y = 0; y < s->height; ++y )
+      s->array2d[y] = 0;
+    deallocateFunc( s->array2d );
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** @func    oyArray2d_DataSet
+ *  @relates oyArray2d_s
+ *  @brief   set the data blob and (re-)initialise the object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI int  OYEXPORT
+                 oyArray2d_DataSet   ( oyArray2d_s       * obj,
+                                       oyPointer           data )
+{
+  oyArray2d_s * s = 0;
+  int error = 0;
+
+  if(!data)
+    return error;
+
+  if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
+    return 1;
+
+  s = obj;
+
+  {
+    int y_len = sizeof(unsigned char *) * (s->height + 1),
+        y;
+    uint8_t * u8 = data;
+
+    s->data = data;
+
+    error = !s->array2d;
+
+    if(!error)
+      error = !memset( s->array2d, 0, y_len );
+
+    if(!error)
+      for( y = 0; y < s->height; ++y )
+        s->array2d[y] = &u8[oySizeofDatatype( s->t ) * s->width * y];
+  }
+
+  return error;
+}
+
+
+
 /** @func    oyImage_GetPointContinous
+ *  @relates oyImage_s
  *  @brief   standard continus layout pixel accessor
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-oyPointer oyImage_GetPointContinous    ( oyImage_s       * image,
+oyPointer oyImage_GetArray2dPointContinous (
+                                         oyImage_s       * image,
                                          int               point_x,
                                          int               point_y,
                                          int               channel )
 {
-  int pos = (point_y * image->layout_[oyPOFF_Y] +
-                                 point_x * image->layout_[oyCHANS] +
-                                 image->layout_[oyCHAN0+channel]) *
-                                image->layout_[oyDATA_SIZE];
-  return &((char*)image->data)[ (point_y * image->layout_[oyPOFF_Y] +
-                                 point_x * image->layout_[oyCHANS] +
-                                 image->layout_[oyCHAN0+channel]) *
-                                image->layout_[oyDATA_SIZE]           ]; 
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  int pos = (point_x * image->layout_[oyCHANS]
+             + image->layout_[oyCHAN0+channel])
+            * image->layout_[oyDATA_SIZE];
+  return &array2d[ point_y ][ pos ]; 
 
 }
 
+/** @func    oyImage_GetLineContinous
+ *  @relates oyImage_s
+ *  @brief   standard continus layout line accessor
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+oyPointer oyImage_GetArray2dLineContinous (
+                                         oyImage_s       * image,
+                                         int               point_y,
+                                         int             * height,
+                                         int               channel )
+{
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  if(height) *height = 1;
+  return &array2d[ point_y ][ 0 ]; 
+}
+
 /** @func    oyImage_GetPointPlanar
+ *  @relates oyImage_s
  *  @brief   standard planar layout pixel accessor
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/06/26
+ *  @date    2008/08/24
  */
-oyPointer oyImage_GetPointPlanar       ( oyImage_s       * image,
+oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
                                          int               point_x,
                                          int               point_y,
                                          int               channel )
 {
-  return &((char*)image->data)[ (point_y * point_x +
-                                 image->layout_[oyCOFF] *  
-                                 image->layout_[oyCHAN0+channel]) *
-                                image->layout_[oyDATA_SIZE]           ]; 
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  WARNc_S("planar pixel access not implemented")
+  return 0;
+
+  return &array2d[ point_y ][ (point_x + image->layout_[oyCOFF]
+                               * image->layout_[oyCHAN0+channel])
+                              * image->layout_[oyDATA_SIZE]       ]; 
 
 }
 
+/** @func    oyImage_GetLinePlanar
+ *  @relates oyImage_s
+ *  @brief   standard continus layout line accessor
+ *
+ *  We assume a channel after channel behaviour without line interweaving.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/24
+ */
+oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
+                                         int               point_y,
+                                         int             * height,
+                                         int               channel )
+{
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  if(height) *height = 1;
+  WARNc_S("planar pixel access not implemented")
+  return 0;
 
-/** @brief collect infos about a image 
+  /* it makes no sense to use more than one line */                   
+  return &array2d[ 0 ][   image->width
+                        * image->layout_[oyCOFF]
+                        * image->layout_[oyCHAN0+channel]
+                        * image->layout_[oyDATA_SIZE] ];
+}
 
+
+/** @brief collect infos about a image
+ *  @relates oyImage_s
+ *
+ *  Create a image description and access object. The passed channels pointer
+ *  remains in the responsibility of the user. The image is a in memory blob.
+ *
     @param[in]    width        image width
     @param[in]    height       image height
     @param[in]    channels     pointer to the data buffer
     @param[in]    pixel_layout i.e. oyTYPE_123_16 for 16-bit RGB data
     @param[in]    y_offset     offset between two pixel rows
     @param[in]    profile      colour space description
-
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
  */
 oyImage_s *    oyImage_Create         ( int               width,
                                         int               height, 
@@ -8923,21 +9231,32 @@ oyImage_s *    oyImage_Create         ( int               width,
 
   s->width = width;
   s->height = height;
-  s->data = channels;
+  {
+    oyArray2d_s * a = oyArray2d_Create( channels,
+                                        s->width * oyToChannels_m(pixel_layout),
+                                        s->height,
+                                        oyToDataType_m(pixel_layout),
+                                        s_obj );
+    oyImage_DataSet ( s, (oyStruct_s**) &a, 0,0,0 );
+    s->pixel_data = (oyStruct_s*) a;
+  }
   s->profile_ = oyProfile_Copy( profile, 0 );
   s->image_dimension = oyRegion_NewWith( s->oy_, 0, 0, s->width, s->height);
 
   s->layout_ = oyCombinePixelLayout2Mask_ ( pixel_layout, s, profile );
 
-  if(s->data && s->layout_[oyCOFF] == 1)
-    s->getPoint = oyImage_GetPointContinous;
-  else if(s->data)
-    s->getPoint = oyImage_GetPointPlanar;
+  if(s->pixel_data && s->layout_[oyCOFF] == 1)
+    oyImage_DataSet( s, 0, oyImage_GetArray2dPointContinous,
+                           oyImage_GetArray2dLineContinous, 0 );
+  else if(s->pixel_data)
+    oyImage_DataSet( s, 0, oyImage_GetArray2dPointPlanar,
+                           oyImage_GetArray2dLinePlanar, 0 );
 
   return s;
 }
 
 /** @brief collect infos about a image for showing one a display
+ *  @relates oyImage_s
 
     @param[in]    width        image width
     @param[in]    height       image height
@@ -8987,6 +9306,7 @@ oyImage_s *    oyImage_CreateForDisplay( int               width,
 }
 
 /** @brief copy a image
+ *  @relates oyImage_s
  *
  *  @todo  implement
  * 
@@ -9010,6 +9330,7 @@ oyImage_s *    oyImage_Copy_          ( oyImage_s       * image,
 }
 
 /** @brief copy a image
+ *  @relates oyImage_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
@@ -9017,14 +9338,19 @@ oyImage_s *    oyImage_Copy_          ( oyImage_s       * image,
 oyImage_s *    oyImage_Copy           ( oyImage_s       * image,
                                         oyObject_s        object )
 {
-  oyImage_s * s = 0;
+  oyImage_s * s = image;
 
-  if(!image)
+  if(!s)
     return s;
 
-  if(image && !object)
+  if(s->type_ != oyOBJECT_IMAGE_S)
   {
-    s = image;
+    WARNc_S("Attempt to copy a non oyImage_s object.")
+    return 0;
+  }
+
+  if(!object)
+  {
     oyObject_Copy( s->oy_ );
     return s;
   }
@@ -9035,6 +9361,7 @@ oyImage_s *    oyImage_Copy           ( oyImage_s       * image,
 }
 
 /** @brief release a image
+ *  @relates oyImage_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
@@ -9063,7 +9390,11 @@ int            oyImage_Release        ( oyImage_s      ** obj )
 
   s->width = 0;
   s->height = 0;
-  s->data = 0;
+  if(s->pixel_data && s->pixel_data->release)
+    s->pixel_data->release( &s->pixel_data );
+
+  if(s->user_data && s->user_data->release)
+    s->user_data->release( &s->user_data );
 
   oyProfile_Release( &s->profile_ );
 
@@ -9086,6 +9417,7 @@ int            oyImage_Release        ( oyImage_s      ** obj )
 }
 
 /** @brief set a image
+ *  @relates oyImage_s
  *
  *  set critical options
  *
@@ -9120,10 +9452,65 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
   return error;
 }
 
+/** @func    oyImage_SetData
+ *  @relates oyImage_s
+ *  @brief   set a custom image data backend
+ *
+ *  This function allowes for exchanging of all the backend components. 
+ *
+ *  The pixel_data structure can hold in memory or mmap representations or file
+ *  pointers. The according point, line and/or tile functions shall use
+ *  the oyImage_s::pixel_data member to access the data and provide in this
+ *  interface.
+ *
+ *  @param         pixel_data          data struct will be moved in
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+int            oyImage_DataSet       ( oyImage_s         * image,
+                                       oyStruct_s       ** pixel_data,
+                                       oyImage_GetPoint_t  getPoint,
+                                       oyImage_GetLine_t   getLine,
+                                       oyImage_GetTile_t   getTile )
+{
+  oyImage_s * s = image;
+  int error = 0;
+
+  if(!s)
+    return 1;
+
+  if(s->type_ != oyOBJECT_IMAGE_S)
+  {
+    WARNc_S("Attempt to manipulate a non oyImage_s object.")
+    return 1;
+  }
+
+  if(pixel_data)
+  {
+    if(s->pixel_data && s->pixel_data->release)
+      s->pixel_data->release( &s->pixel_data );
+    s->pixel_data = *pixel_data;
+    *pixel_data = 0;
+  }
+
+  if(getPoint)
+    s->getPoint = getPoint;
+
+  if(getLine)
+    s->getLine = getLine;
+
+  if(getTile)
+    s->getTile = getTile;
+
+  return error;
+}
 
 
 
 /** @func    oyConnector_New
+ *  @relates oyConnector_s
  *  @brief   allocate a new Connector object
  *
  *  @version Oyranos: 0.1.8
@@ -9179,6 +9566,7 @@ OYAPI oyConnector_s * OYEXPORT
 }
 
 /** @func    oyConnector_Copy_
+ *  @relates oyConnector_s
  *  @brief   real copy a Connector object
  *
  *  @param[in]     obj                 struct object
@@ -9256,6 +9644,7 @@ oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
 }
 
 /** @func    oyConnector_Copy
+ *  @relates oyConnector_s
  *  @brief   copy or reference a Connector object
  *
  *  @param[in]     obj                 struct object
@@ -9287,6 +9676,7 @@ OYAPI oyConnector_s * OYEXPORT
 }
  
 /** @func    oyConnector_Release
+ *  @relates oyConnector_s
  *  @brief   release and possibly deallocate a Connector object
  *
  *  @param[in,out] obj                 struct object
@@ -11880,9 +12270,11 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
       oyPointer in = 0, out = 0;
       int count = 0;
 
-      if(s->image_in_ && s->image_in_->data)
+      if(s->image_in_ && s->image_in_->pixel_data)
       {
-        in = s->image_in_->data;
+        /* deprecated */
+        oyArray2d_s * a = (oyArray2d_s*) s->image_in_->pixel_data;
+        in = a->data;
 
 
         if(s->image_in_->regions)
@@ -11908,12 +12300,14 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
       {
         if(s->image_out_)
         {
-          if(s->image_out_->data)
-            out = s->image_out_->data;
+          if(s->image_out_->pixel_data)
+            /* deprecated */
+            out = ((oyArray2d_s*) s->image_out_->pixel_data)->data;
           else
             error = 1;
         } else
-          out = s->image_in_->data;
+          /* deprecated */
+          out = ((oyArray2d_s*) s->image_in_->pixel_data)->data;
       }
 
       if(!error)
