@@ -10,7 +10,8 @@
  *  @brief    monitor device detection
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2005/01/31
  */
 
@@ -32,6 +33,9 @@
 # include <X11/Xatom.h>
 # if HAVE_XIN
 #  include <X11/extensions/Xinerama.h>
+# endif
+# ifdef HAVE_XF86VMODE
+#  include <X11/extensions/xf86vmode.h>
 # endif
 #endif
 
@@ -951,7 +955,7 @@ oyActivateMonitorProfile_         (const char* display_name,
     oyAllocHelper_m_( text, char, MAX_PATH, 0, error = 1; goto Clean )
     DBG_PROG1_S( "profile_fullname %s", profile_fullname );
 
-    /* set vcgt tag with xcalib
+    /** set vcgt tag with xcalib
        not useable with multihead Xinerama at one screen
 
        @todo TODO xcalib should be configurable as a module
@@ -960,16 +964,38 @@ oyActivateMonitorProfile_         (const char* display_name,
                                profile_fullname);
     {
       Display * display = oyMonitor_device_( disp );
+      int effective_screen = oyMonitor_screen_( disp );
+      int screen = oyMonitor_deviceScreen_( disp );
+      XF86VidModeGamma gamma;
+      int size = 0,
+          can_gamma = 0;
+
       if(!display)
       {
         WARNc3_S("%s %s %s", _("open X Display failed"), dpy_name, display_name)
         return 1;
       }
 
-      if(ScreenCount( display ) > 1 || oyMonitor_screen_( disp ) == 0)
+#ifdef HAVE_XF86VMODE
+      if(effective_screen == screen)
+      {
+        /* check for gamma capabiliteis on the given screen */
+        if (XF86VidModeGetGamma(display, effective_screen, &gamma))
+          can_gamma = 1;
+        else
+        if (XF86VidModeGetGammaRampSize(display, effective_screen, &size))
+        {
+          if(size)
+            can_gamma = 1;
+        }
+      }
+#endif
+
+      /* Check for incapabilities of X gamma table access */
+      if(can_gamma || oyMonitor_screen_( disp ) == 0)
         error = system(text);
       if(error &&
-         error != 65280) { /*/ hack*/
+         error != 65280) { /* hack */
         WARNc2_S("%s %s", _("No monitor gamma curves by profile:"),
                 oyNoEmptyName_m_(profil_basename) )
       }

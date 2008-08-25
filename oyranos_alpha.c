@@ -10,7 +10,8 @@
  *  @brief    misc alpha APIs
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @par License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2004/11/25
  */
 
