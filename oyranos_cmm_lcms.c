@@ -807,7 +807,6 @@ oyDATATYPE_e lcms_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyDOUBLE, 0};
 
 oyConnector_s lcms_cmmIccSocket_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  0, /* node */
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
   oyCONNECTOR_MANIPULATOR, /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
@@ -835,7 +834,6 @@ oyConnector_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connector,0};
 
 oyConnector_s lcms_cmmIccPlug_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  0, /* node */
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
   oyCONNECTOR_MANIPULATOR, /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
@@ -887,9 +885,9 @@ oyPointer lcmsFilterPlug_CmmIccGetNext( oyFilterPlug_s    * requestor_plug,
   oyImage_s * image = 0;
   
 
-  filter = socket->pattern->node->filter;
-  plug = (oyFilterPlug_s *)socket->pattern->node->plugs[0];
-  remote_filter = plug->remote_socket_->pattern->node->filter;
+  filter = socket->node->filter;
+  plug = (oyFilterPlug_s *)socket->node->plugs[0];
+  remote_filter = plug->remote_socket_->node->filter;
 
   ptr = remote_filter->api4_->oyCMMFilterPlug_GetNext( plug, pixel_access, feedback);
 

@@ -1295,8 +1295,6 @@ struct oyConnector_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyFilterNode_s     * node;           /**< filter node for this connector */
-
   oyName_s             name;           /**< e.g."Img", "Image", "Image Socket"*/
 
   oyCONNECTOR_e        connector_type; /**< */
@@ -1375,6 +1373,8 @@ struct oyFilterSocket_s {
   oyObject_s           oy_;            /**< base object */
 
   oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
+  oyFilterNode_s     * node;           /**< filter node for this connector */
+
 
   oyFilterPlugs_s    * requesting_plugs_;/**< all remote inputs */
 };
@@ -1435,6 +1435,7 @@ struct oyFilterPlug_s {
   oyObject_s           oy_;            /**< base object */
 
   oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
+  oyFilterNode_s     * node;           /**< filter node for this connector */
 
   oyFilterSocket_s   * remote_socket_; /**< the remote output */
 };

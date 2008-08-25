@@ -1739,7 +1739,7 @@ oyPointer oyraFilterPlug_ImageRootGetNext( oyFilterPlug_s* requestor_plug,
 
   oyPointer * ptr = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyImage_s * image = socket->pattern->node->filter->image_;
+  oyImage_s * image = socket->node->filter->image_;
 
   /* calculate the pixel position we want */
   if(pixel_access->array_xy)
@@ -1808,7 +1808,6 @@ oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
 
 oyConnector_s oyra_imageRoot_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  0, /* node */
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
   oyCONNECTOR_IMAGE, /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
@@ -1836,7 +1835,6 @@ oyConnector_s * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connector,0};
 
 oyConnector_s oyra_imageOutput_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  0, /* node */
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
   oyCONNECTOR_IMAGE, /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
@@ -1881,9 +1879,9 @@ oyPointer oyraFilterPlug_ImageOutputGetNext( oyFilterPlug_s   * requestor_plug,
   oyFilter_s * filter = 0,
              * remote_filter = 0;
 
-  filter = socket->pattern->node->filter;
-  plug = (oyFilterPlug_s *)socket->pattern->node->plugs[0];
-  remote_filter = plug->remote_socket_->pattern->node->filter;
+  filter = socket->node->filter;
+  plug = (oyFilterPlug_s *)socket->node->plugs[0];
+  remote_filter = plug->remote_socket_->node->filter;
 
   ptr = filter->api4_->oyCMMFilterPlug_GetNext( plug, pixel_access, feedback);
 
