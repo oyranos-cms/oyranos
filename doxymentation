@@ -4,7 +4,6 @@
 
     @section text_contents Descriptive Contents
     @ref intro |
-    @ref concepts |
     @ref install |
     @ref links\n
     @ref tools |
@@ -88,39 +87,6 @@
  */
 /*    - @ref device_profiles - profiles which characterise devices */
 
-/** @page concepts Concepts
-
-    The here described concepts are targeted until version 1.0 of Oyranos.
-    They are intended to make the API consistent and its usage predictable.
-    A additional page shall describe the behaviour of Oyranos, default settings
-    and recommendations to developers who like to interact with the system.
-
-    @subsection os_concept Interoperatibility on Operating Systems
-    - Oyranos is intended to work on Posix systems and at least Windows.
-    - On Linux the <a href="http://elektra.sf.net">Elektra</a> configuration
-      library is used for managing and storing the configuration.
-    - If publically available, Oyranos will sit on top of native Colour
-      Management Systems like ColorSync&copy; or ICM&copy;.
-
-    @subsection path_concept Paths Configuration
-    - see <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
-
-    @subsection rights_concept Personality
-    - Users configure their own settings, while administrators 
-      configure system wide settings.
-    - User settings have priority over system settings
-    - All settings, called policy as a whole, shall be saveable and recoverable.
-
-    @subsection modul_concept Extensibility
-    - Register new capabilities and modules will help to build a flexible base
-      for further extensions.
-    - Therefore the internal data must be kept almost dynamic.
-    - Functions are needed, which show useful informations for GUIs, about the
-      content in the profiles and about possible errors.
-    - Some descriptors are provided as strings, and may help keeping 
-      the user interface consistent throughout toolkits. (translation?)
-
- */
 
 /** @page coding Coding Conventions
 
@@ -254,7 +220,8 @@
 
     <ul>
     <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux, currently version 0.7 is requierd. </li>
-    <li><a href="http://www.fltk.org">fltk</a> version >= 1.1.4 needed for a user interface\n
+    <li><a href="http://www.littlecms.com">littleCMS</a> standard CMM</li>
+    <li><a href="http://www.fltk.org">FLTK</a> version >= 1.1.4 needed for a user interface\n
     you may configure fltk with several options enabled\n
     --enable-threads is needed for threads support (in ICC Examin)\n
     --enable-xft is ok for antialiased fonts\n

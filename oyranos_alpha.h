@@ -10,7 +10,8 @@
  *  @brief    misc alpha APIs
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:
+ *  new BSD - see: http://www.opensource.org/licenses/bsd-license.php
  *  @since    2004/11/25
  */
 
@@ -1072,8 +1073,8 @@ OYAPI int  OYEXPORT
   nodesep=.1;
   ranksep=1.;
   rankdir=LR;
-  graph [fontname=Helvetica, fontsize=14];
-  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record,fontname=Helvetica, fontsize=10, width=.1];
 
   subgraph cluster_3 {
     label="oyImage_s data backends";
@@ -1276,28 +1277,10 @@ typedef enum {
 } oyCONNECTOR_EVENT_e;
 
 /** @struct oyConnector_s
- *  @brief  a filter connection structure
+ *  @brief  a filter connection description structure
  *
- *  \b Connectors \b have \b tree \b missions:
- *  - The first is to tell others to about the 
- *  filters intention to provide a connection endity. This is done by the pure
- *  existence of the oyConnector_s inside the backend filter structure
- *  (oyCMMapi4_s) and the oyFilterNode_s::inputs and 
- *  oyFilterNode_s::outputs members. \n
- *  - The second is to tell about the connectors capabilities, to allow for 
- *  automatic checking for fittness to other connectors. \n
- *  - The thierd task of this struct is to differenciate between \a input or
- *  \a plug and \a output or \a socket. This is delegated to the
- *  oyFilterSocket_s and oyFilterPlug_s structures.
- *  
- *
- *  \b Routing: \n
- *  The connector output side is always passive. The data stream is requested or
- *  viewed by the input side. 
- *  Changes are propagated by events (?). This turns the acyclic graph into a 
- *  looped one. At least the event stays somewhat outside the data flow.
- *  A \a plug local to the filter or filter node can be connected to a remote
- *  \a socket connector and vice versa.
+ *  This structure holds informations about the connection capabilities.
+ *  It holds common structure members of oyFilterPlug_s and oyFilterSocket_s.
  *
  *  To signal a value is not initialised or does not apply, set the according
  *  integer value to -1.
@@ -1356,6 +1339,30 @@ OYAPI int  OYEXPORT
  *  @brief  a filter connection structure
  *
  *  The passive output version of a oyConnector_s.
+ \dot
+digraph G {
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [URL="structoyFilterPlug__s.html", label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [arrowtail=box];
+} 
+ \enddot
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
@@ -1391,6 +1398,31 @@ OYAPI int  OYEXPORT
  *  @brief  a filter connection structure
  *
  *  The active input version of a oyConnector_s.
+ *  Each plug can connect to exact one socket.
+ \dot
+digraph G {
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [URL="structoyFilterSocket__s.html", label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [arrowtail=box];
+} 
+ \enddot
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
@@ -1469,7 +1501,7 @@ OYAPI int  OYEXPORT
  *  @brief  a filter to manipulate a image
  *
  *  This is the Oyranos filter object. There are basic classes of filters.
- *  Filters iimplement a container. They can contain various data and options.
+ *  Filters implement a container. They can contain various data and options.
  *  Filters can be manipulated by changing their options or data.
  *
  *  Filters are chained into a oyConversions_s in order to get applied to data.
@@ -1616,11 +1648,86 @@ OYAPI int  OYEXPORT
 /** @struct  oyFilterNode_s
  *  @brief   a FilterNode object
  *
+ *  Filter nodes chain filters into a oyConversions_s graph. The filter nodes
+ *  use plugs and sockets for creating connections. Each plug can only connect
+ *  to one socket.
+ \dot
+digraph G {
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>oyFilter_s A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>oyFilter_s B</td>
+  </tr>
+</table>>
+  ]
+
+  b:p->a:s [arrowtail=box, constraint=false];
+
+  subgraph cluster_0 {
+    color=gray;
+    label="FilterNode A";
+    a;
+  }
+  subgraph cluster_1 {
+    color=gray;
+    label="FilterNode B";
+    b;
+  }
+}
+ \enddot
+ *
  *  This object provides support for separation of options from chaining.
  *  So it will be possible to implement options changing, which can affect
  *  the same filter instance in different graphs.
  *
- *  This struct adheres additionally to the oyStruct_s to the oyNode_s layout.
+ *  A oyFilterNode_s can have various oyFilterPlug_s ' to obtain data from
+ *  different sources. The required number is described in the oyCMMapi4_s 
+ *  structure, which is part of oyFilter_s.
+ \dot
+digraph G {
+  rankdir=LR
+  subgraph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  node b [ label="{<plug> | Filter Node 2 |<socket>}"];
+  node c [ label="{<plug> | Filter Node 3 |<socket>}"];
+  node d [ label="{<plug> 2| Filter Node 4 |<socket>}"];
+
+  b:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  c:socket -> d:plug [arrowtail=normal, arrowhead=none];
+}
+ \enddot
+ *
+ *  oyFilterSocket_s is designed to accept arbitrary numbers of connections 
+ *  to allow for viewing on a filters data output or observe its state changes.
+ \dot
+digraph G {
+  rankdir=LR
+  subgraph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  node a [ label="{<plug> | Filter Node 1 |<socket>}"];
+  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  node d [ label="{<plug> 1| Filter Node 4 |<socket>}"];
+  node e [ label="{<plug> 1| Filter Node 5 |<socket>}"];
+
+  a:socket -> b:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> c:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> e:plug [arrowtail=normal, arrowhead=none];
+}
+ \enddot
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/08 (Oyranos: 0.1.8)
@@ -1770,16 +1877,80 @@ int                oyPixelAccess_Release(
 /** @struct oyConversions_s
  *  @brief  a filter chain or graph to manipulate a image
  *
- *  Order of filters matters. \n
- *  The idea is a bit like raytracing:
- *  @verbatim
-    output_image -ask filter C-> C -ask filter B and process-> B ->ask filter A and process-> A ->ask source_image-> input_image @endverbatim
+ *  Order of filters matters.
+ *  The processing direction is a bit like raytracing as nodes request their
+ *  parent.
  *
  *  The graph is allowed to be a directed graph without cycles.
+ \dot
+digraph G {
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="filled,rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  node a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  node d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+
+  subgraph cluster_0 {
+    label="Oyranos Filter Graph";
+    color=gray;
+
+    a:socket -> b:plug [arrowtail=normal, arrowhead=none, label=request];
+    b:socket -> d:plug [arrowtail=normal, arrowhead=none, label=request];
+    a:socket -> c:plug [arrowtail=normal, arrowhead=none, label=request];
+    c:socket -> d:plug [arrowtail=normal, arrowhead=none, label=request];
+  }
+}
+ \enddot
  *  oyConversions_s shall provide access to the graph and help in processing
  *  and managing nodes.\n
- *
- *  \b Creating \b graphs: \n
+ \dot
+digraph G {
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  node conversions [shape=plaintext, label=<
+<table border="0" cellborder="1" cellspacing="0" bgcolor="lightgray">
+  <tr><td>oyConversions_s</td></tr>
+  <tr><td>
+     <table border="0" cellborder="0" align="left">
+       <tr><td align="left">...</td></tr>
+       <tr><td align="left" port="in">+input</td></tr>
+       <tr><td align="left" port="out">+out_</td></tr>
+       <tr><td align="left">...</td></tr>
+     </table>
+     </td></tr>
+  <tr><td> </td></tr>
+</table>>,
+                    style=""];
+
+  node a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  node d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+
+  subgraph cluster_0 {
+    label="oyConversions_s with attached Filter Graph";
+    color=gray;
+
+    a:socket -> b:plug [arrowtail=normal];
+    b:socket -> d:plug [arrowtail=normal];
+    a:socket -> c:plug [arrowtail=normal];
+    c:socket -> d:plug [arrowtail=normal];
+
+    conversions:in -> a;
+    conversions:out -> d;
+  }
+
+  conversions
+}
+ \enddot
+ *  \b Creating \b Graphs: \n
  *  Most simple is to use the oyConversions_CreateBasic() function to create
  *  a profile to profile and possible image buffer to image buffer linear
  *  graph.\n
@@ -1792,11 +1963,39 @@ int                oyPixelAccess_Release(
  *  be accessed for this directly.
  *
  *  While it would be possible to have several open ends in a graph, there
- *  are two endpoints considered as special. Th input member prepresents the
+ *  are two endpoints considered as special. The input member prepresents the
  *  top most required node to be provided in a oyConversions_s graph. The
- *  input node is accessible for use manipulation. The other one is the out_
+ *  input node is accessible for user manipulation. The other one is the out_
  *  member. It is the closing node in the graph. It will be set by Oyranos
- *  during processing the graph, e.g. in oyConversions_OutputAdd().
+ *  during closing the graph, e.g. in oyConversions_OutputAdd().
+ *
+ *  \b Using \b Graphs: \n
+ *  To obtain the data the oyConversions_GetNextPixel() and
+ *  oyConversions_GetOnePixel() functions are available.
+ \dot
+digraph G {
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=12];
+
+  node a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  node d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+  node app [ label="application", style=filled ]
+
+  subgraph cluster_0 {
+    label="Data Flow";
+    color=gray;
+    a:socket -> b:plug [label=data];
+    b:socket -> d:plug [label=data];
+    a:socket -> c:plug [label=data];
+    c:socket -> d:plug [label=data];
+    d:socket -> app [label=<<table  border="0" cellborder="0"><tr><td>return of<br/>oyConversions_GetNextPixel()</td></tr></table>>];
+  }
+}
+ \enddot
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/08 (Oyranos: 0.1.8)

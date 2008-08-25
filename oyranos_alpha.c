@@ -8832,7 +8832,178 @@ oyCombinePixelLayout2Mask_ ( oyPixel_t     pixel_layout,
 
 /** \addtogroup image Image conversion API
  *  Colour conversion front end API's.
+ *
+ *  Colour conversions are realised by structures called acyclic graphs.
+ *
+ *  \b About \b Graphs: \n
+ *  The top object a user will handle is of type oyConversions_s. This 
+ *  contains oyFilterNode_s objects, which describe the connections of each
+ *  processing element, such as images with attached data and profile, and the
+ *  filters. The Oyranos node connection concept is splitted into various
+ *  structures.
+ \dot
+digraph G {
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded,filled"];
+  edge [fontname=Helvetica, fontsize=10];
 
+  node a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  node d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+
+  subgraph cluster_0 {
+    label="Oyranos Filter Graph";
+    color=gray;
+
+    a:socket -> b:plug [arrowhead=box, arrowtail=normal];
+    b:socket -> d:plug [arrowhead=box, arrowtail=normal];
+    a:socket -> c:plug [arrowhead=box, arrowtail=normal];
+    c:socket -> d:plug [arrowhead=box, arrowtail=normal];
+  }
+}
+ \enddot
+ *
+ *  \b Connectors \b have \b tree \b missions:
+ *  - The first is to tell others to about the 
+ *  filters intention to provide a connection endity. This is done by the pure
+ *  existence of the oyConnector_s inside the backend filter structure
+ *  (oyCMMapi4_s) and the oyFilterNode_s::sockets and 
+ *  oyFilterNode_s::plugs members. \n
+ *  - The second is to tell about the connectors capabilities, to allow for 
+ *  automatic checking for fittness to other connectors. \n
+ *  - The thierd task of this struct is to differenciate between \a input or
+ *  \a plug and \a output or \a socket. This is delegated to the
+ *  oyFilterSocket_s and oyFilterPlug_s structures.
+ *  
+ *
+ *  \b Routing: \n
+ *  The connector output side is always passive. The data stream is requested or
+ *  viewed by the input side. 
+ *  Changes are propagated by events (?). This turns the acyclic graph into a 
+ *  looped one. At least the event stays somewhat outside the data flow.
+ *  A \a plug local to the filter or filter node can be connected to a remote
+ *  \a socket connector and vice versa.
+ \dot
+digraph G {
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [label=request];
+} 
+ \enddot
+ * Statusinformation can be passed from the input side to the output side by
+ * callbacks.
+ \dot
+digraph G {
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [arrowhead=none, arrowtail=normal, label=callback];
+} 
+ \enddot
+ *
+ * The data flows from the socket to the plug.
+ \dot
+digraph G {
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [label=data];
+} 
+ \enddot
+ *
+ * A oyFilterNode_s can have various oyFilterPlug_s ' to obtain data from
+ * different sources. The required number is described in the oyCMMapi4_s 
+ * structure, which is part of oyFilter_s. But each plug can only connect to
+ * one socket.
+ \dot
+digraph G {
+  rankdir=LR
+  subgraph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  node b [ label="{<plug> | Filter Node 2 |<socket>}"];
+  node c [ label="{<plug> | Filter Node 3 |<socket>}"];
+  node d [ label="{<plug> 2| Filter Node 4 |<socket>}"];
+
+  b:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  c:socket -> d:plug [arrowtail=normal, arrowhead=none];
+}
+ \enddot
+ *
+ * oyFilterSocket_s is designed to accept arbitrary numbers of connections 
+ * to allow for viewing on a filters data output or observe its state changes.
+ \dot
+digraph G {
+  rankdir=LR
+  subgraph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  node a [ label="{<plug> | Filter Node 1 |<socket>}"];
+  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  node d [ label="{<plug> 1| Filter Node 4 |<socket>}"];
+  node e [ label="{<plug> 1| Filter Node 5 |<socket>}"];
+
+  a:socket -> b:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> c:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> e:plug [arrowtail=normal, arrowhead=none];
+}
+ \enddot
+ *
  *  @{
  */
 
