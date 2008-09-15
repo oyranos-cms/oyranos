@@ -483,7 +483,7 @@ typedef struct {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  uint32_t             id;             /**< id to map for instance to events and widgets */
+  uint32_t             id;             /**< id to map to events and widgets */
   oyName_s             name;           /**< nick, name, description/help, e.g. "radius" "Radius" "..." */
   const char         * registration;    /**< full key name to store configuration, e.g. "org.oyranos.generic.scale.none,linear,cubic", config key name will be name.nick */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
