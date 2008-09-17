@@ -45,7 +45,7 @@ OY_DEVEL_MONTH=7
 OY_DEVEL_YEAR=2008
 OY_GIT_MASTER="`cat .git/refs/heads/master`"
 time="`date +%y%m%d.%H%M%S`"
-TIME="$OY_START_MONTH $OY_START_YEAR - $OY_DEVEL_MONTH $OY_DEVEL_YEAR"
+DATE="$OY_START_MONTH $OY_START_YEAR - $OY_DEVEL_MONTH $OY_DEVEL_YEAR"
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
 if [ $VERSION_A -gt 9 ]; then
   VERSION_L="$VERSION_A"
@@ -768,17 +768,17 @@ test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_B $VERSION_B" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_C $VERSION_C" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_NAME \"$VERSION\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION $VERSION_L" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_START_MONTH $OY_START_MONTH" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_START_YEAR $OY_START_YEAR" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_MONTH $OY_DEVEL_MONTH" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_YEAR $OY_DEVEL_YEAR" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_START_MONTH \"$OY_START_MONTH\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_START_YEAR \"$OY_START_YEAR\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_MONTH \"$OY_DEVEL_MONTH\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_YEAR \"$OY_DEVEL_YEAR\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_CONFIG_DATE \"$time\"" >> $VERS_H
 if [ `echo $OY_GIT_MASTER | grep cat | wc -l` -lt 1 ]; then
   test -n "$ECHO" && $ECHO "#define OYRANOS_GIT_MASTER \"$OY_GIT_MASTER\"" >> $VERS_H
 else
   test -n "$ECHO" && $ECHO "#define OYRANOS_GIT_MASTER """ >> $VERS_H
 fi
-test -n "$ECHO" && $ECHO "#define OYRANOS_DATE \"$TIME\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_DATE \"$DATE\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "" >> $VERS_H
 
 test -n "$RPMECHO" && $RPMECHO "Version:         $VERSION" >> $SPEC
