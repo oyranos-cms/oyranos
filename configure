@@ -986,7 +986,7 @@ if [ $ERROR != 0 ]; then
 fi
 
 echo_="char * oy_config_log_=\" \\"
-test -n "$ECHO" && $ECHO -e "$echo_" >  $CONF_LOG.h
+test -n "$ECHO" && $ECHO "$echo_" >  $CONF_LOG.h
 cat $CONF_LOG | sed 's/\"/\\\"/g ; s/$/\ \\n\\/g'  >> $CONF_LOG.h
 echo_="\";"
 test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG.h
