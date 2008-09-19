@@ -377,7 +377,8 @@ Option::Option( int x, int y, int w, int h, const char *name,
         if(strcmp( choices[i], choices[k]) == 0 && 
            strlen( choices[i] ) &&
            i < k )
-          printf("Double occurency of profile: %s\n", choices[i]);
+          printf("%s:%d Double occurency of profile: %s\n",
+                  __FILE__,__LINE__,choices[i]);
 
 
       if(strstr( choices[i], default_p) && 
