@@ -520,35 +520,6 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_      (oyWIDGET_e        type,
   return t->type;
 }
 
-#if 0
-int
-oyPathsCount_ ()
-{
-  int count = 0;
-  char ** path_names = oyConfigPathsGet_( &count, "icc", oyALL, oyUSER_SYS,
-                                          oyAllocateFunc_ );
-
-  oyStringListRelease_( &path_names, count,  oyDeAllocateFunc_ );
-
-  return count;
-}
-
-char*
-oyPathName_ (int number, oyAlloc_f allocate_func)
-{
-  int count = 0;
-  char * name = 0;
-  char ** path_names = oyConfigPathsGet_( &count, "icc", oyALL, oyUSER_SYS,
-                                          oyAllocateFunc_ );
-
-  if(number < count)
-    name = oyStringCopy_( path_names[number], allocate_func );
-
-  oyStringListRelease_( &path_names, count,  oyDeAllocateFunc_ );
-
-  return name;
-}
-#endif
 
 char **
 oyProfilePathsGet_    (int             * count,
