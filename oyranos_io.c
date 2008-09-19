@@ -551,21 +551,14 @@ oyFindProfile_ (const char* fileName)
 /* profile and other file lists API */
 
 #define MAX_DEPTH 64
-struct oyFileList_s_ {
-  oyOBJECT_e type;
-  int hopp;
-  const char* coloursig;
-  int mem_count;
-  int count_files;
-  char** names;
-};
 
-int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
+int oyProfileListCb_ (oyFileList_s * data,
+                      const char* full_name, const char* filename)
 {
-  struct oyFileList_s_ *l = (struct oyFileList_s_*)data;
+  oyFileList_s *l = (oyFileList_s*)data;
 
   if(l->type != oyOBJECT_FILE_LIST_S_)
-    WARNc_S("Could not find a oyFileList_s_ objetc.");
+    WARNc_S("Could not find a oyFileList_s objetc.");
 
       if (!oyCheckProfile_(full_name, l->coloursig))
       {
@@ -589,14 +582,15 @@ int oyProfileListCb_ (void* data, const char* full_name, const char* filename)
   return 0;
 }
 
-int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
+int oyPolicyListCb_ (oyFileList_s * data,
+                     const char* full_name, const char* filename)
 {
-  struct oyFileList_s_ *l = (struct oyFileList_s_*)data;
+  oyFileList_s *l = (oyFileList_s*)data;
   /* last 4 chars */
   const char * end = NULL;
 
   if(l->type != oyOBJECT_FILE_LIST_S_)
-    WARNc_S("Could not find a oyFileList_s_ objetc.");
+    WARNc_S("Could not find a oyFileList_s objetc.");
 
   if(strlen(full_name) > 4)
     end = full_name + strlen(full_name) - 4;
@@ -628,14 +622,15 @@ int oyPolicyListCb_ (void* data, const char* full_name, const char* filename)
   return 0;
 }
 
-int oyFileListCb_ (void* data, const char* full_name, const char* filename)
+int oyFileListCb_ ( oyFileList_s * data,
+                    const char * full_name, const char * filename)
 {
-  struct oyFileList_s_ *l = (struct oyFileList_s_*)data;
+  oyFileList_s *l = (oyFileList_s*)data;
   /* last 4 chars */
   const char * end = NULL;
 
   if(l->type != oyOBJECT_FILE_LIST_S_)
-    WARNc_S("Could not find a oyFileList_s_ objetc.");
+    WARNc_S("Could not find a oyFileList_s objetc.");
 
   if(strlen(full_name) > 4)
     end = full_name + strlen(full_name) - 4;
@@ -665,7 +660,7 @@ int oyFileListCb_ (void* data, const char* full_name, const char* filename)
 char **  oyProfileListGet_           ( const char        * coloursig,
                                        uint32_t          * size )
 {
-  struct oyFileList_s_ l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int32_t count = 0;/*oyPathsCount_();*/
   char ** path_names = NULL;
 
@@ -683,7 +678,7 @@ char **  oyProfileListGet_           ( const char        * coloursig,
 
   oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 
-  oyRecursivePaths_( oyProfileListCb_, (void*) &l,
+  oyRecursivePaths_( oyProfileListCb_, &l,
                      (const char**)path_names, count );
 
   oyOptionChoicesFree( oyWIDGET_POLICY, &path_names, count );
@@ -697,7 +692,7 @@ char **  oyProfileListGet_           ( const char        * coloursig,
 char**
 oyPolicyListGet_                  (int * size)
 {
-  struct oyFileList_s_ l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
  
@@ -714,7 +709,7 @@ oyPolicyListGet_                  (int * size)
 
   oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 
-  oyRecursivePaths_(oyPolicyListCb_, (void*)&l,(const char**)path_names, count);
+  oyRecursivePaths_(oyPolicyListCb_, &l,(const char**)path_names, count);
 
   oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
 
@@ -735,7 +730,7 @@ oyFileListGet_                  (const char * subpath,
                                  int          data,
                                  int          owner)
 {
-  struct oyFileList_s_ l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
  
@@ -752,7 +747,7 @@ oyFileListGet_                  (const char * subpath,
 
   oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 
-  oyRecursivePaths_(oyFileListCb_, (void*) &l, (const char**)path_names, count);
+  oyRecursivePaths_(oyFileListCb_, &l, (const char**)path_names, count);
 
   oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
 
@@ -779,7 +774,7 @@ oyLibListGet_                   (const char * subpath,
                                  int        * size,
                                  int          owner)
 {
-  struct oyFileList_s_ l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  struct oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
  
@@ -796,7 +791,7 @@ oyLibListGet_                   (const char * subpath,
 
   oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 
-  oyRecursivePaths_(oyFileListCb_, (void*) &l, (const char**)path_names, count);
+  oyRecursivePaths_(oyFileListCb_, &l, (const char**)path_names, count);
 
   oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
 
@@ -806,7 +801,13 @@ oyLibListGet_                   (const char * subpath,
   return l.names;
 }
 
-typedef int (*pathSelect_f_)(void*,const char*,const char*);
+typedef int (*pathSelect_f_)(oyFileList_s*,const char*,const char*);
+
+int oyStrcmpWrap( const void * a, const void * b)
+{
+  const char ** ca = (const char**)a, ** cb = (const char**)b;
+  return strcmp(*ca,*cb);
+}
 
 /** @internal
  *  doInPath and data must fit, doInPath can operate on data and after finishing
@@ -817,7 +818,7 @@ typedef int (*pathSelect_f_)(void*,const char*,const char*);
  */
 int
 oyRecursivePaths_  ( pathSelect_f_ doInPath,
-                     void* data,
+                     oyFileList_s * data,
                      const char ** path_names,
                      int count )
 {
@@ -967,6 +968,9 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         if(dir[j]) closedir(dir[j]);;
         dir[j] = NULL;
       }
+
+    qsort( data->names, data->count_files, sizeof(char*),
+           oyStrcmpWrap );
   }
 
   DBG_PROG_ENDE

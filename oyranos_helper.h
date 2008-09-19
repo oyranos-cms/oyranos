@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "oyranos_debug.h"
+#include "oyranos_alpha.h"
 #if defined(OY_CONFIG_H)
 #include "oyranos.h"
 #else
@@ -149,8 +150,18 @@ char*   oyResolveDirFileName_      (const char* name);
 char*   oyExtractPathFromFileName_ (const char* name);
 char*   oyGetHomeDir_              ();
 char*   oyGetParent_               (const char* name);
-int     oyRecursivePaths_      (int (*doInPath) (void*,const char*,const char*),
-                                void        * data,
+struct oyFileList_s {
+  oyOBJECT_e type;                  /* oyOBJECT_FILE_LIST_S_ */
+  int hopp;
+  const char* coloursig;
+  int mem_count;
+  int count_files;
+  char** names;
+};
+typedef struct oyFileList_s oyFileList_s;
+int     oyRecursivePaths_      (int (*doInPath) (oyFileList_s *,
+                                const char*,const char*),
+                                struct oyFileList_s        * data,
                                 const char ** path_names,
                                 int           path_count);
 

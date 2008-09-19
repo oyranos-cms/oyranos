@@ -146,11 +146,14 @@ int            oyMessageFuncSet      ( oyMessage_f         message_func )
 
 
 int
-oyGetPathFromProfileNameCb_ (void* data, const char* full_name,
-                                         const char* filename)
+oyGetPathFromProfileNameCb_          ( oyFileList_s      * data,
+                                       const char        * full_name,
+                                       const char        * filename )
 {
-  char* search = (char*) data;
   int success = 0;
+  oyFileList_s * l = data;
+  char* search = l->names[0];
+
   DBG_S( search )
   if(strcmp(filename,search)==0) {
     size_t size = 128;
@@ -194,6 +197,11 @@ oyGetPathFromProfileName_       (const char*   fileName,
     size_t len = (oyStrlen_(fileName) < MAX_PATH) ? 
                           oyStrlen_(fileName) : MAX_PATH;
     char ** path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
+    char * l_names[2] = { 0, 0 };
+    oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 0, NULL, 0, 0, 0};
+
+    l_names[0] = search;
+    l.names = l_names;
 
     DBG_PROG
 
@@ -205,7 +213,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
       DBG_PROG_ENDE
       return 0;
     }
-    success = oyRecursivePaths_( oyGetPathFromProfileNameCb_, (void*)search,
+    success = oyRecursivePaths_( oyGetPathFromProfileNameCb_, &l,
                                  (const char**)path_names, count );
 
     oyStringListRelease_( &path_names, count, oyDeAllocateFunc_ );
