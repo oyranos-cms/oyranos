@@ -768,10 +768,10 @@ test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_B $VERSION_B" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_C $VERSION_C" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_NAME \"$VERSION\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION $VERSION_L" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_START_MONTH \"$OY_START_MONTH\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_START_YEAR \"$OY_START_YEAR\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_MONTH \"$OY_DEVEL_MONTH\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_YEAR \"$OY_DEVEL_YEAR\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_START_MONTH $OY_START_MONTH" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_START_YEAR $OY_START_YEAR" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_MONTH $OY_DEVEL_MONTH" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_YEAR $OY_DEVEL_YEAR" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_CONFIG_DATE \"$time\"" >> $VERS_H
 if [ `echo $OY_GIT_MASTER | grep cat | wc -l` -lt 1 ]; then
   test -n "$ECHO" && $ECHO "#define OYRANOS_GIT_MASTER \"$OY_GIT_MASTER\"" >> $VERS_H
