@@ -135,7 +135,7 @@ main(int argc, char** argv)
   result = 0;
   while(result == 0)
   {
-    float * p = 0;
+    double * p = 0;
     pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
     p = pixel;
 
@@ -153,7 +153,7 @@ main(int argc, char** argv)
   x = y = 0;
   while(result == 0)
   {
-    float * p = 0;
+    double * p = 0;
 
     pixel_access->start_xy[0] = 1;
     pixel_access->start_xy[1] = y++;
@@ -175,7 +175,7 @@ main(int argc, char** argv)
   x = y = 0;
   while(result == 0)
   {
-    float * p = 0;
+    double * p = 0;
 
     pixel_access->start_xy[0] = x;
     pixel_access->start_xy[1] = y++;
