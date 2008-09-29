@@ -4,6 +4,8 @@ oyranos-monitor \- Oyranos CMS monitor configuration
 .SH SYNOPSIS
 .B oyranos-monitor
 [-x num -y num  profilename]
+[-x num -y num]
+[-b -x num -y num]
 [-e -x num -y num]
 []
 .SH DESCRIPTION
@@ -19,6 +21,9 @@ get/set the y display position
 .B \-e
 reset the hardware gamma table to the defaults
 .TP
+.B \-b
+query the profile name from the Oyranos device profile data base
+.TP
 .B Set up the X11 server with the Oyranos stored monitor profile
 .SH EXAMPLES 
 .TP
@@ -31,11 +36,19 @@ Put the following in a setup script like .xinitrc:
 .PP 
 .TP
 Assign a ICC profile to a screen:
-.B oyranos-monitor -x pos -y pos  Profilname
+.B oyranos-monitor -x pos -y pos  profilename
 .PP 
 .TP
 Reset a screens hardware LUT in order to do a calibration:
-.B oyranos-monitor -e -x pos -y pos  Profilname
+.B oyranos-monitor -e -x pos -y pos  profilename
+.PP 
+.TP
+Query the server side, network transparent profile:
+.B oyranos-monitor -x pos -y pos
+.PP 
+.TP
+Query the Oyranos device data base profile on the local computer:
+.B oyranos-monitor -b -x pos -y pos
 .PP 
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)

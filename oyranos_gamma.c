@@ -43,6 +43,7 @@ int main( int argc , char** argv )
   char *monitor_profile = 0;
   int error = 0;
   int erase = 0;
+  int database = 0;
   char *ptr = NULL;
   int x = 0, y = 0;
   char *oy_display_name = NULL;
@@ -76,7 +77,6 @@ int main( int argc , char** argv )
   {
     int pos = 1;
     char *wrong_arg = 0;
-    printf("argc: %d\n", argc);
     while(pos < argc)
     {
       switch(argv[pos][0])
@@ -85,6 +85,7 @@ int main( int argc , char** argv )
             switch (argv[pos][1])
             {
               case 'e': erase = 1; monitor_profile = 0; break;
+              case 'b': database = 1; monitor_profile = 0; break;
               case 'x': if( pos + 1 < argc )
                         { x = atoi( argv[pos+1] );
                           if( x == 0 && strcmp(argv[pos+1],"0") )
@@ -117,6 +118,14 @@ int main( int argc , char** argv )
                         printf("  %s\n",               _("Activate profiles:"));
                         printf("      %s\n",           argv[0]);
                         printf("\n");
+                        printf("  %s\n",               _("Query server profile:"));
+                        printf("      %s\n",        argv[0]);
+                        printf("            -x pos -y pos\n");
+                        printf("\n");
+                        printf("  %s -b\n",            _("Query device data base profile:"));
+                        printf("      %s\n",        argv[0]);
+                        printf("            -x pos -y pos\n");
+                        printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
                         printf("\n");
@@ -143,17 +152,32 @@ int main( int argc , char** argv )
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
-    if(oy_debug) {
+    if(oy_debug || !monitor_profile)
+    {
       size_t size = 0;
-      oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
-      printf("%s:%d profile size: %d\n",__FILE__,__LINE__,(int)size);
+      oyProfile_s * prof = 0;
+      const char * filename = 0;
+      char * data = 0;
+
+      if(database)
+      {
+        filename = oyGetMonitorProfileNameFromDB( oy_display_name, oyAllocFunc);
+      } else {
+        data = oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
+        prof = oyProfile_FromMem( size, data, 0, 0 );
+        filename = oyProfile_GetFileName( prof, 0 );
+      }
+      printf("%s:%d profile \"%s\" size: %d\n",__FILE__,__LINE__,
+             filename, (int)size);
     }
 
     /* make shure the display name is correct including the screen */
-    oySetMonitorProfile (oy_display_name, monitor_profile);
+    if(monitor_profile)
+      oySetMonitorProfile (oy_display_name, monitor_profile);
   }
 
-  error = oyActivateMonitorProfiles (display_name);
+  if(argc == 1 || monitor_profile)
+    error = oyActivateMonitorProfiles (display_name);
 
   if(oy_debug) {
     size_t size = 0;
