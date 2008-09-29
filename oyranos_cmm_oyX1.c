@@ -144,7 +144,7 @@ oyCMMapi2_s oyX1_api2 = {
 
   oyGetDisplayNameFromPosition,
   oyGetMonitorProfile,
-  oyGetMonitorProfileName,
+  oyGetMonitorProfileNameFromDB,
 
   oySetMonitorProfile,
   oyActivateMonitorProfiles

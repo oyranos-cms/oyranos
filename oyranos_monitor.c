@@ -1548,7 +1548,7 @@ oyGetMonitorInfo                  (const char* display,
   return err;
 }
 
-/** @brief get the monitor profile
+/** @brief get the monitor profile from the server
 
  *  @param      display       the display string
  *  @param[out] size          the size of profile
@@ -1573,15 +1573,14 @@ oyGetMonitorProfile           (const char* display,
   return moni_profile;
 }
 
-/** @brief get the monitor profile filename
+/** @brief get the monitor profile filename from the device profile database
 
  *  @param      display       the display string
  *  @param      allocate_func function used to allocate memory for the string
  *  @return                   the profiles filename (if localy available)
  */
-char*
-oyGetMonitorProfileName           (const char* display,
-                                   oyAlloc_f     allocate_func)
+char*  oyGetMonitorProfileNameFromDB ( const char        * display,
+                                       oyAlloc_f           allocate_func )
 {
   char* moni_profile = 0;
 

@@ -55,8 +55,8 @@ char* oyGetDisplayNameFromPosition(const char *display_name,
 char* oyGetMonitorProfile         (const char *display,
                                    size_t     *size,
                                    oyAlloc_f     allocate_func);
-char* oyGetMonitorProfileName     (const char *display,
-                                   oyAlloc_f     allocate_func);
+char*  oyGetMonitorProfileNameFromDB ( const char        * display,
+                                       oyAlloc_f           allocate_func );
 
 /* TODO set a memory based profile */
 int   oySetMonitorProfile         (const char* display_name,
