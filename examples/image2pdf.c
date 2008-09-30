@@ -10,19 +10,20 @@
  *  @brief    public Oyranos API's
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:
+ *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2008/09/26
  *
- *  A sample application on how to compose a set of png's into a pdf, while
- *  keeping attention to user colour settings.
+ *  A sample application on how to compose a set of camera raw files into a pdf,
+ *  while keeping attention to user colour settings.
  *  
  *  Compile: cc -pedantic -Wall -g `oyranos-config --cflags` `oyranos-config --ld_x_flags` `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --libs lcms` image2pdf.c -o image2pdf
  */
 
 #include <stdio.h>
 #include <math.h>
-#include <oyranos/oyranos.h>
-#include <oyranos/oyranos_monitor.h>
+#include <oyranos.h>
+#include <oyranos_monitor.h>
 #include <lcms.h>
 #include <cairo.h>
 #include <cairo-pdf.h>
@@ -41,7 +42,8 @@ int main (int argc, char ** argv)
   double page_w = 210.0,         /* page width in mm */
          page_h = 297.0,
          resolution = 72.0,      /* page resolution */
-         scale = 1.0;
+         scale = 1.0,
+         frame = 0;
   int pixel_w, pixel_h,          /* page size in pixel */
       x,y,w=0,h=0,               /* image dimensions */
       depth=255,                 /* the used ppm levels of gray */
@@ -124,7 +126,7 @@ int main (int argc, char ** argv)
   data = oyGetMonitorProfile( 0, &size, malloc );
   monitor = cmsOpenProfileFromMem( data, size );
   printf( "monitor:  %d\n", size );
-  /*free( data );*/ size = 0;
+  free( data ); size = 0;
 
   /*  The editing profile can be obtained by Oyranos.
    *  It can be used as a blending colour space.
@@ -308,13 +310,23 @@ int main (int argc, char ** argv)
       y = ((pixel_w - pixel_w/20.0) - MIN(w,h)*scale)/2.0
           + pixel_w/20.0;
     }
+
+    /* draw a frame around the image */
+    frame = pixel_w/20.0 * scale;
+    cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
+    cairo_set_line_width (cr, 1.);
+    cairo_rectangle( cr, x - frame, y - frame,
+                         w*scale + 2*frame, h*scale + 2*frame);
+    cairo_stroke(cr);
+
+    /* draw the image */
     cairo_translate( cr, x, y );
     cairo_scale( cr, scale, scale );
     cairo_set_source_surface( cr, image_surf, 0,0 );
     cairo_paint( cr );
     cairo_restore( cr );
 
-    /* clean */
+    /* small clean */
     cairo_surface_destroy( image_surf );
     fclose( fp );
   }
