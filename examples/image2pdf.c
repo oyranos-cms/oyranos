@@ -1,4 +1,4 @@
-/** @file oyimage2pdf.c
+/** @file image2pdf.c
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -16,20 +16,31 @@
  *
  *  A sample application on how to compose a set of camera raw files into a pdf,
  *  while keeping attention to user colour settings.
+ *  Beside Cairo, lcms and Oyranos you need DCraw during runtime.
  *  
  *  Compile: cc -pedantic -Wall -g `oyranos-config --cflags` `oyranos-config --ld_x_flags` `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --libs lcms` image2pdf.c -o image2pdf
  */
 
 #include <stdio.h>
 #include <math.h>
-#include <oyranos.h>
+#include <oyranos.h>              /* Oyranos headers */
 #include <oyranos_monitor.h>
-#include <lcms.h>
-#include <cairo.h>
+#include <lcms.h>                 /* littleCMS – typical CMM on Linux */
+#include <cairo.h>                /* Cairo headers */
 #include <cairo-pdf.h>
 
 #define MIN(a,b) ((a<b)?(a):(b))
 #define MAX(a,b) ((a>b)?(a):(b))
+double       readShort(FILE * fp);
+char *       createProfile           ( float               gamma,
+                                       float               rx,
+                                       float               ry,
+                                       float               gx,
+                                       float               gy,
+                                       float               bx,
+                                       float               by,
+                                       const char        * name,
+                                       size_t            * size );
 
 int main (int argc, char ** argv)
 {
@@ -41,7 +52,7 @@ int main (int argc, char ** argv)
   cairo_status_t status;
   double page_w = 210.0,         /* page width in mm */
          page_h = 297.0,
-         resolution = 72.0,      /* page resolution */
+         resolution = 72.0,      /* Cairo PDF surface resolution */
          scale = 1.0,
          frame = 0;
   int pixel_w, pixel_h,          /* page size in pixel */
@@ -124,33 +135,36 @@ int main (int argc, char ** argv)
    *  http://www.freedesktop.org/wiki/Specifications/icc_profiles_in_x_spec
    */
   data = oyGetMonitorProfile( 0, &size, malloc );
+  if(!size || !data)
+  {
+    profile_name = oyGetDefaultProfileName( oyASSUMED_WEB, malloc );
+    data = oyGetProfileBlock( profile_name, &size, malloc );
+  }
   monitor = cmsOpenProfileFromMem( data, size );
   printf( "monitor:  %d\n", size );
   free( data ); size = 0;
 
   /*  The editing profile can be obtained by Oyranos.
-   *  It can be used as a blending colour space.
-   *  With the limitation of Cairo's 8-bit spaces it is not to recommend to
-   *  use something different than sRGB. So we just take the later here.
+   *  It could be used as blending colour space.
    */
-  profile_name = oyGetDefaultProfileName( oyASSUMED_WEB, malloc );
+  profile_name = oyGetDefaultProfileName( oyEDITING_RGB, malloc );
   data = oyGetProfileBlock( profile_name, &size, malloc );
   editing = cmsOpenProfileFromMem( data, size );
   printf("editing:  %s\n", profile_name);
-  /*free( data );*/ free( profile_name ); size = 0;
+  free( data ); free( profile_name ); size = 0;
 
-  /*  The output profile is equall to sRGB, as PDF output profiles are not
-   *  supported. 
+  /*  The output profile is equal to sRGB, as output profiles are curently not
+   *  supported in Cairo. 
    */
   profile_name = oyGetDefaultProfileName( oyASSUMED_WEB, malloc );
   data = oyGetProfileBlock( profile_name, &size, malloc );
   print = cmsOpenProfileFromMem( data, size );
   printf("print:    %s\n", profile_name);
-  /*free( data );*/ free( profile_name ); size = 0;
+  free( data ); free( profile_name ); size = 0;
 
-  /*  The printer profile is not easily available on Linux. 
-   *  Eighter maintain a own database for profile to queue profile assignment or
-   *  use the Oyranos proofing profile.
+  /*  The printer profile is not easily available on Linux.
+   *  Better maintain a own database for profile to queue profile assignment.
+   *  We use here just the Oyranos proofing profile.
    */
   profile_name = oyGetDefaultProfileName( oyPROFILE_PROOF, malloc );
   data = oyGetProfileBlock( profile_name, &size, malloc );
@@ -163,24 +177,12 @@ int main (int argc, char ** argv)
   bpc = oyGetBehaviour( oyBEHAVIOUR_RENDERING_BPC );
   proof_intent = oyGetBehaviour( oyBEHAVIOUR_RENDERING_INTENT_PROOF ) ?
                          INTENT_ABSOLUTE_COLORIMETRIC :
-                         INTENT_RELATIVE_COLORIMETRIC ;;
+                         INTENT_RELATIVE_COLORIMETRIC ;
   printf("intent:   %d, bpc: %d, proofing intent %d\n",
           rendering_intent, bpc, proof_intent);
 
-  /* build the colour context with littleCMS */
-  to_output = cmsCreateProofingTransform( editing, TYPE_BGRA_8,
-                            to_moni ? monitor : print,
-                         /* Cairo uses a Blue Green Red Alpha channel layout */
-                            TYPE_BGRA_8,
-                            proof,
-                            rendering_intent, proof_intent,
-                            do_proof ? cmsFLAGS_SOFTPROOFING : 0 |
-                            (bpc && rendering_intent == 1) ?
-                              cmsFLAGS_WHITEBLACKCOMPENSATION : 0 );
-
   cr = cairo_create( surface );
 
-  cmsDoTransform( to_output, &rgba, &rgba, 1 );
   cairo_set_source_rgba( cr, rgba[0]/255., rgba[1]/255., rgba[2]/255., 1.0 );
   cairo_rectangle( cr, 0, 0, pixel_w, pixel_h );
   cairo_fill( cr );
@@ -188,6 +190,8 @@ int main (int argc, char ** argv)
   for ( i=0; i < argc-o; ++i )
   {
     const char * filename = argv[i+o];
+
+    dcraw_icc_space = 0;
 
     /* obtain manufacturer and camera model from dcraw */
     sprintf (command, "PATH=.:$PATH ; dcraw -i '%s'\n", filename );
@@ -208,10 +212,10 @@ int main (int argc, char ** argv)
              info[0], info[1]);
 
 
-    /*  We can follow a hierarchie of profile sources to obtain a bets match
+    /*  We can follow a hierarchie of profile sources to obtain a best match
      *  for our given device.
      *  First of all its important to obtain a useful description of the device.
-     *  Dcraw provides this, and we write into the info[0] and info[1] strings.
+     *  DCraw provides this, and we write into the info[0] and info[1] strings.
      *  The following hierarchy is numbered step by step:
      */
 
@@ -250,20 +254,31 @@ int main (int argc, char ** argv)
     /* 4a. Oyranos assumed Rgb profile: our last possibility. */
     if(!dcraw_icc_space)
     {
-      dcraw_icc_space = "-o 1"; /* dcraw linear matrix to gamma sRGB */
-
-      /*  With the limitation of Cairo's 8-bit spaces it is not recommended to
-       *  use something different than sRGB. So we just take the later here.
+      /*  Tell DCraw to do the conversion with the build in matrices.
        */
-      profile_name = oyGetDefaultProfileName( oyASSUMED_WEB, malloc );
-      data = oyGetProfileBlock( profile_name, &size, malloc );
+      dcraw_icc_space = "-o 2"; /* dcraw linear matrix to Adobe Rgb */
+
+      data = createProfile( 1.0, 0.64, 0.33, 0.21, 0.71, 0.15, 0.06,
+                            "linearAdobeRGB1998", &size );
       input = cmsOpenProfileFromMem( data, size );
-      free( data ); free( profile_name );
+      free( data );
     }
 
+    /* build the colour context with littleCMS */
+    to_output = cmsCreateProofingTransform( input, TYPE_BGRA_8,
+                            to_moni ? monitor : print,
+                         /* Cairo uses a Blue Green Red Alpha channel layout */
+                            TYPE_BGRA_8,
+                            proof,
+                            rendering_intent, proof_intent,
+                            do_proof ? 
+                              cmsFLAGS_SOFTPROOFING : 0 |
+                             (bpc && rendering_intent == 1) ?
+                               cmsFLAGS_WHITEBLACKCOMPENSATION : 0 );
 
-    /* decode with camera white balance and pipe half size, be verbose */
-    sprintf (command, "PATH=.:$PATH ; dcraw -w -c -h -v %s '%s'\n",
+
+    /* decode with camera white balance and pipe half size, 16-bit, be verbose*/
+    sprintf (command, "PATH=.:$PATH ; dcraw -w -c -h -4 -v %s '%s'\n",
                       dcraw_icc_space, filename );
 
     fp = popen (command, "r");
@@ -279,9 +294,16 @@ int main (int argc, char ** argv)
     /* Cairo uses a Blue Green Red Alpha channel layout */
     for(j = 0; j < size; ++j)
     {
-      image_data[j*4+2] = fgetc( fp );
-      image_data[j*4+1] = fgetc( fp );
-      image_data[j*4+0] = fgetc( fp );
+      if(depth == 255)
+      {
+        image_data[j*4+2] = fgetc( fp );
+        image_data[j*4+1] = fgetc( fp );
+        image_data[j*4+0] = fgetc( fp );
+      } else { /* assuming 16-bit */
+        image_data[j*4+2] = readShort( fp )*255.;
+        image_data[j*4+1] = readShort( fp )*255.;
+        image_data[j*4+0] = readShort( fp )*255.;
+      }
       image_data[j*4+3] = 255;
 
       if(feof(fp))
@@ -327,6 +349,7 @@ int main (int argc, char ** argv)
     cairo_restore( cr );
 
     /* small clean */
+    cmsCloseProfile( input );
     cairo_surface_destroy( image_surf );
     fclose( fp );
   }
@@ -349,3 +372,65 @@ int main (int argc, char ** argv)
 
   return result;
 }
+
+int isBigEndian(void)
+{
+  int big = 0;
+  char testc[2] = {0,0};
+  uint16_t *testu = (uint16_t*)testc;
+  *testu = 1;
+  big = testc[1];
+  return big;
+}
+
+double readShort(FILE * fp)
+{
+  uint16_t s;
+  uint8_t * byte = (uint8_t*)&s;
+
+  if(isBigEndian())
+  {
+    byte[0] = fgetc( fp );
+    byte[1] = fgetc( fp );
+  } else {
+    byte[1] = fgetc( fp );
+    byte[0] = fgetc( fp );
+  }
+
+  return s/65535.0;
+}
+
+char *       createProfile           ( float               gamma,
+                                       float               rx,
+                                       float               ry,
+                                       float               gx,
+                                       float               gy,
+                                       float               bx,
+                                       float               by,
+                                       const char        * name,
+                                       size_t            * size )
+{
+  cmsCIExyYTRIPLE p = {{0,0,0},{0,0,0},{0,0,0}};
+  LPGAMMATABLE g[3];
+  cmsHPROFILE lp;
+  cmsCIExyY D65xyY = {0.31271, 0.32902, 1.0};
+  char * data;
+
+  p.Red.x = rx; p.Red.y = ry;
+  p.Green.x = gx; p.Green.y = gy;
+  p.Blue.x = bx; p.Blue.y = by;
+  g[0] = g[1] = g[2] = cmsBuildGamma(1, gamma);
+  lp = cmsCreateRGBProfile( &D65xyY, &p, g);
+  cmsAddTag( lp, icSigProfileDescriptionTag,  (char*)name );
+  cmsAddTag( lp, icSigCopyrightTag,
+             (char*)"2008 Kai-Uwe Behrmann, use freely");
+
+  *size = 0;
+  _cmsSaveProfileToMem( lp, 0, size );
+  data = malloc( *size );
+  _cmsSaveProfileToMem( lp, data, size );
+  cmsCloseProfile( lp );
+
+  return data;
+}
+
