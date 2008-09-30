@@ -29,6 +29,10 @@ LIB_CMM_LCMS = lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 LIB_CMM_oyX1 = lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 LIB_CMM_oyra = lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
+EXAMPLE1 = examples/image2pdf
+EXAMPLES = \
+	$(EXAMPLE1)
+
 #ifdef $(X11)
 LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
@@ -107,6 +111,11 @@ CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
 CXXFILES_Flmm = \
 	FL/Flmm_Tabs.cxx
+EXAMPLE1_C = \
+	$(EXAMPLE1).c
+EXAMPLES_C = \
+	$(EXAMPLE1_C)
+
 TEST_CPP = \
 	tests/dl_test.cxx \
 	tests/fltk_test.cxx \
@@ -152,11 +161,12 @@ Flmm_FILES = \
 	FL/CREDITS \
 	FL/README
 
+
 SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
 		$(CFILES_CMM_LCMS) $(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
-		$(CXXFILES_FLTK) test.c test2.cpp
+		$(CXXFILES_FLTK) test.c test2.cpp $(EXAMPLES_C)
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
 CMM_LCMS_OBJECTS = $(CFILES_CMM_LCMS:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
@@ -209,7 +219,7 @@ all:	mkdepend \
 	$(TARGET)-monitor $(X11) $(LIB_CMM_LCMS) \
 	$(LIB_CMM_oyX1) $(LIB_CMM_oyra) \
 	$(FLTK_GUI) $(TARGET)-policy \
-	$(TEST2) $(LINGUAS_SRC)
+	$(TEST2) $(EXAMPLES) $(LINGUAS_SRC)
 	cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test -d $${prof} && \
@@ -354,6 +364,16 @@ test:	test.o
 	$(CC) $(CFLAGS) -o test \
 	test.o \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
+
+$(EXAMPLE1): $(EXAMPLE1_C)
+	echo Compile $@ ...
+	-$(CC) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE1_C) \
+	-o $(EXAMPLE1).o `oyranos-config --cflags` `pkg-config --cflags cairo` \
+	`pkg-config --cflags lcms`
+	echo Linking $@ ...
+	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o $(EXAMPLE1) \
+	$(EXAMPLE1).o `oyranos-config --ld_x_flags` \
+	`pkg-config --libs cairo` `pkg-config --libs lcms`
 
 $(LIBFL_I18N):	fl_i18n/Makefile
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
@@ -608,7 +628,7 @@ clean:
 	$(CLEAN_OBJECTS) \
 	$(TARGET)-policy \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	test2 test \
+	test2 test $(EXAMPLES) \
 	$(TARGET)-config-fltk; \
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
