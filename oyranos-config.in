@@ -96,7 +96,7 @@ fi
   fi
 
 if [ "$echo_cflags" = "yes" ]; then
-  echo "-I$prefix/include"
+  echo "-I$includedir/oyranos"
 fi
 
 if [ "$echo_ldflags" = "yes" ]; then

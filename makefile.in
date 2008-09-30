@@ -7,7 +7,6 @@ RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
 MSGCAT = msgcat
 MSGFMT = msgfmt -c --statistics
 
-srcdir		= .
 docdir          = $(datadir)/doc/$(TARGET)
 cmmdir          = $(libdir)/color/cmms
 
@@ -129,6 +128,7 @@ CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
 TEST_FILES = $(TEST_CPP) $(TEST_H)
+EXAMPLE_FILES = $(EXAMPLES_C)
 
 MAN1 = oyranos-config.1 oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
 MAN3 = oyranos.3
@@ -166,7 +166,7 @@ SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
 		$(CFILES_CMM_LCMS) $(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
-		$(CXXFILES_FLTK) test.c test2.cpp $(EXAMPLES_C)
+		$(CXXFILES_FLTK) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
 CMM_LCMS_OBJECTS = $(CFILES_CMM_LCMS:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
@@ -351,7 +351,7 @@ test2:	$(LIB_MONI_SONAMEFULL)
 	-o test2.o `oyranos-config --cflags`
 	echo Linking dynamic $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
-	test2.o `oyranos-config --ldflags`
+	test2.o `oyranos-config --cflags`
 	echo Linking static $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
 	test2.o `oyranos-config --ldstaticflags`
@@ -369,11 +369,12 @@ $(EXAMPLE1): $(EXAMPLE1_C)
 	echo Compile $@ ...
 	-$(CC) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE1_C) \
 	-o $(EXAMPLE1).o `oyranos-config --cflags` `pkg-config --cflags cairo` \
-	`pkg-config --cflags lcms`
+	`pkg-config --cflags lcms` -I.
 	echo Linking $@ ...
 	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o $(EXAMPLE1) \
 	$(EXAMPLE1).o `oyranos-config --ld_x_flags` \
-	`pkg-config --libs cairo` `pkg-config --libs lcms`
+	`pkg-config --libs cairo` `pkg-config --libs lcms` -L. \
+	-Wl,--rpath -Wl,$(srcdir)
 
 $(LIBFL_I18N):	fl_i18n/Makefile
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
@@ -730,6 +731,8 @@ copy_files:
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 	mkdir $(DESTDIR)/tests
 	$(COPY) $(TEST_FILES) $(DESTDIR)/tests
+	mkdir $(DESTDIR)/examples
+	$(COPY) $(EXAMPLE_FILES) $(DESTDIR)/examples
 	mkdir $(DESTDIR)/FL
 	$(COPY) $(Flmm_FILES) $(DESTDIR)/FL
 	mkdir $(DESTDIR)/po
