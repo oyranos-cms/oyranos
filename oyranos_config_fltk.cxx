@@ -369,7 +369,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
       DBG_PROG_S( (default_p) )
     } else
       default_p = "";
-    int val = 0, occurence = 0;
+    int val = 0, occurence = 0, multiples = 0;
     for (i = 0; i < choices_n; ++i)
     {
       choice->add( choices[i] );
@@ -377,9 +377,12 @@ Option::Option( int x, int y, int w, int h, const char *name,
         if(strcmp( choices[i], choices[k]) == 0 && 
            strlen( choices[i] ) &&
            i < k )
+        {
+          if(val <= i)
+            ++multiples;
           printf("%s:%d Double occurency of profile: %s\n",
                   __FILE__,__LINE__,choices[i]);
-
+        }
 
       if(strstr( choices[i], default_p) && 
          strlen( choices[i] ) == strlen(default_p))
@@ -395,7 +398,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
     if(occurence > 1)
       WARNc3_S("%s: %s %d", _("multiple occurencies of default profile"),
                oyNoEmptyString_m_(name), occurence)
-    choice->value( val );
+    choice->value( val - multiples );
 
     DBG_PROG_V((choice->size()))
 
