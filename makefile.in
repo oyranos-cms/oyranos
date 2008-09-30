@@ -367,7 +367,7 @@ test:	test.o
 
 $(EXAMPLE1): $(EXAMPLE1_C)
 	echo Compile $@ ...
-	-$(CC) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE1_C) \
+	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE1_C) \
 	-o $(EXAMPLE1).o `oyranos-config --cflags` `pkg-config --cflags cairo` \
 	`pkg-config --cflags lcms` -I.
 	echo Linking $@ ...
