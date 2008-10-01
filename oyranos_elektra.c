@@ -43,6 +43,9 @@
 
 #if KDB_VERSION_NUM >= 700
 #define kdbGetString_m kdbGetString
+#define kdbGetChildKeys(a,b,c,d) kdbGetByName(a,c,b,d)
+#define ksAppendKeys ksAppend
+#define KDBHandle KDB
 #else
 #define kdbGetString_m kdbGetValue
 #endif
@@ -81,6 +84,7 @@ KeySet* oyReturnChildrenList_  (const char* keyParentName,int* rc);
 
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
+
 static KDBHandle * oy_handle_ = 0;
 
 void oyOpen_ (void)
@@ -195,11 +199,10 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
   oyAllocHelper_m_(name, char, MAX_PATH, 0, )
   sprintf(name, "%s%s", oySelectUserSys_(), keyParentName);
 
-  oyAllocHelper_m_(pathkeyName, char, strlen(keyBaseName) + 24, 0, )
+  oyAllocHelper_m_( pathkeyName, char,
+                    oyStrlen_(name) + strlen(keyBaseName) + 24, 0, )
 
   key = keyNew( KEY_END );
-  keySetName( key, keyBaseName );
-
   if(keyParentName)
     DBG_PROG_S((keyParentName));
   if(keyBaseName)
@@ -209,11 +212,13 @@ oySearchEmptyKeyname_ (const char* keyParentName, const char* keyBaseName)
 
     /* search for empty keyname */
     while (!nth)
-    { sprintf (pathkeyName , "%s%d", keyBaseName, i);
+    { sprintf (pathkeyName, "%s/%s%d", name, keyBaseName, i);
 
       if(!oy_handle_)
         return 0;
-      rc=kdbGetKeyByParent (oy_handle_, name, pathkeyName, key); ERR
+      keySetName( key, pathkeyName );
+
+      rc=kdbGetKey( oy_handle_, key ); ERR
       if (rc)
         nth = i;
       i++;
