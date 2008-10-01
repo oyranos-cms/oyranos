@@ -214,8 +214,8 @@ main(int argc, char **argv)
 
         if(screen_number == 32 || screen_number == i)
         {
-          DBG_PROG_S(("%s %s %s %s\n", manufacturer, model, serial,
-                                  display_name));
+          DBG_PROG4_S("%s %s %s %s\n", manufacturer, model, serial,
+                                  display_name);
 
           /* we must rely on eighter screens or Xinerama 
            * otherwise we split the behaviour without compensating missing
@@ -282,7 +282,7 @@ main(int argc, char **argv)
   }
 
   if(screen_number == -1)
-    DBG_PROG_S(( "%d\n", monitors ));
+    DBG_PROG1_S( "%d\n", monitors );
 
   XCloseDisplay( display );
 
