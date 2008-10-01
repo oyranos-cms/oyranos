@@ -57,7 +57,8 @@
               { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }*/
 # define ERR  if(rc) \
                         oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d %d: %s", \
-                        __FILE__,__LINE__, rc, kdbStrError(rc));
+                        __FILE__,__LINE__, \
+                        rc < 0 ? errno : rc, kdbStrError(rc < 0 ? errno : rc));
 #else
 # define ERR
 #endif
@@ -133,7 +134,8 @@ oyComp_t_* oyGetDeviceProfile_sList          (const char* manufacturer,
 KeySet*
 oyReturnChildrenList_ (const char* keyParentName, int* rc)
 {
-  int user_sys = oyUSER_SYS;
+  int user_sys = oyUSER_SYS,
+      ret = 0;
   KeySet*list_user = 0;
   KeySet*list_sys = 0;
   KeySet*list = ksNew(0);
@@ -153,7 +155,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
       *rc = 1;
       return 0;
     }
-    *rc =
+    ret =
       kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_SORT);
   }
   if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
@@ -164,7 +166,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
       *rc = 1;
       return 0;
     }
-    *rc =
+    ret =
       kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_SORT);
   }
 
