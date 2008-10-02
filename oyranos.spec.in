@@ -17,15 +17,20 @@ Summary:   Headers, configuration and static libs + documentation
 Group:     Development/System
 Requires:  %{name}-%{version}-%{release}
 
-%package      display
-Summary:    Oyranos display dependent libraries
+%package      monitor
+Summary:    Oyranos monitor dependent libraries
 Group:      Development/Libraries
-License: BSD/GPL
+License: BSD
 
-%package      panel
+%package      monitor-nvidia
+Summary:    Oyranos nvidia card support
+Group:      Development/Libraries
+License: GPL
+
+%package      ui-fltk
 Summary:    Oyranos sample configuration panel
 Group:      Productivity/Graphics/Other
-License: BSD+LGPL
+License: BSD
 
 %description
 Oyranos is a colour management system.
@@ -56,12 +61,17 @@ An internal device profile API allowes configuring of a
 profile in X.
 The documentation in html format is included.
 
-%description  display
-The display support libraries of the
+%description  monitor
+The monitor support libraries of the
 Oyranos colour management system.
-The display profile configuration part.
+The monitor profile configuration part.
 
-%description  panel
+%description  monitor-nvidia
+Display setup tool for the
+Oyranos colour management system.
+The nvidia EDID configuration part.
+
+%description  ui-fltk
 Oyranos is a colour management system.
 The sample configuration GUI.
 
@@ -108,18 +118,26 @@ rm -rf %{buildroot}
 %doc %{name}*.sh
 %doc doc/html
 
-%files display
+%files monitor
 %doc AUTHORS COPYING ChangeLog README
-%{_bindir}/%{name}-moni*
+%{_bindir}/%{name}-monitor
 %{_libdir}/lib%{name}_moni.so*
 %{_libdir}/color/cmms/lib%{name}_oyX1_cmm_module.so*
 
-%files panel
+%files monitor-nvidia
+%doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-monitor-nvidia
+
+%files ui-fltk
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-config-fl*
 
 
 %changelog
+* Thu Oct 02 2008 Kai-Uwe Behrmann
+- split display into monitor and monitor-nvidia
+- rename panel to ui-fltk
+
 * Fri Jan 25 2008 Kai-Uwe Behrmann
 - remove old kdb and cmm registration stuff
 
