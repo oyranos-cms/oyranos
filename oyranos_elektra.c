@@ -55,7 +55,7 @@ char oy_elektra_error_text[24];
 char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", rc);
                                  return oy_elektra_error_text; }
 
-#if ELEKTRA_VERSION > 700
+#if ELEKTRA_VERSION > 600
 #define kdbStrError(t) oy__kdbStrError(t)
 #endif
 
