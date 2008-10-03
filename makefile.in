@@ -221,12 +221,12 @@ all:	mkdepend \
 	$(FLTK_GUI) $(TARGET)-policy \
 	$(TEST2) $(EXAMPLES) $(LINGUAS_SRC)
 	test -d standard_profiles && \
-	( cd standard_profiles ); \
+	( cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test -d $${prof} && \
 	         echo -e "$${prof} profiles will be included" || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
-	done;
+	done; ) || echo "standard_profiles directory is not found - ignoring"
 	echo ... $@ done
 
 $(X11): $(TARGET)-monitor-nvidia
@@ -532,12 +532,12 @@ install_gui:	$(TARGET)-config-fltk
 
 install_profiles:
 	test -d standard_profiles && \
-	( cd standard_profiles ); \
+	( cd standard_profiles; \
 	for prof in $(STD_PROFILES); do \
 	     test -d $${prof} && \
 	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
-	done;
+	done; ) || echo "standard_profiles directory is not found - ignoring"
 
 install_linguas:
 	echo  Linguas ...
