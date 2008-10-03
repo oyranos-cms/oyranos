@@ -220,12 +220,14 @@ all:	mkdepend \
 	$(LIB_CMM_oyX1) $(LIB_CMM_oyra) \
 	$(FLTK_GUI) $(TARGET)-policy \
 	$(TEST2) $(EXAMPLES) $(LINGUAS_SRC)
-	cd standard_profiles; \
+	test -d standard_profiles && \
+	( cd standard_profiles ); \
 	for prof in $(STD_PROFILES); do \
 	     test -d $${prof} && \
 	         echo -e "$${prof} profiles will be included" || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
+	echo ... $@ done
 
 $(X11): $(TARGET)-monitor-nvidia
 
@@ -514,6 +516,7 @@ install_bin:	all doc
 install:	install_bin
 	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
 	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
+	echo ... $@ done
 
 install-main:	install_bin
 	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
@@ -528,7 +531,8 @@ install_gui:	$(TARGET)-config-fltk
 	$(POST) $(DESTDIR)$(bindir)/$(TARGET)-config-fltk
 
 install_profiles:
-	cd standard_profiles; \
+	test -d standard_profiles && \
+	( cd standard_profiles ); \
 	for prof in $(STD_PROFILES); do \
 	     test -d $${prof} && \
 	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
@@ -741,7 +745,7 @@ copy_files:
 	  test -f po/$${ling}.po \
 	  && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
 	done;
-	echo copy done
+	echo ... $@ done
 
 # mkdepend
 include mkdepend
