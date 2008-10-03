@@ -50,6 +50,14 @@
 #define kdbGetString_m kdbGetValue
 #endif
 
+char oy_elektra_error_text[24];
+
+char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", rc);
+                                 return oy_elektra_error_text; }
+
+#if ELEKTRA_VERSION > 700
+#define kdbStrError(t) oy__kdbStrError(t)
+#endif
 
 /* --- Helpers  --- */
 #if 1
