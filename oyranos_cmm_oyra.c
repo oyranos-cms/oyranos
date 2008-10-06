@@ -1722,85 +1722,49 @@ oyPointer  oyraFilter_ImageRootContextToMem (
   return oyFilter_TextToInfo( filter, size, allocateFunc );
 }
 
-/** @func    oyraFilterPlug_ImageRootGetNext
+/** @func    oyraFilterPlug_ImageRootRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/10 (Oyranos: 0.1.8)
- *  @date    2008/07/17
+ *  @date    2008/10/05
  */
-oyPointer oyraFilterPlug_ImageRootGetNext( oyFilterPlug_s* requestor_plug,
-                                       oyPixelAccess_s   * pixel_access,
-                                       int32_t           * feedback )
+int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket,
+                                       oyArray2d_s      ** pixel )
 {
-  int x = pixel_access->start_xy[0], sx = x;
-  int y = pixel_access->start_xy[1], sy = y;
-  int remainder = 0, max = 0, i, n;
-
+  int x = 0, y = 0, n = 0;
+  int result = 0, error = 0;
+  int is_allocated = 0;
   oyPointer * ptr = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyImage_s * image = socket->node->filter->image_;
 
-  /* calculate the pixel position we want */
-  if(pixel_access->array_xy)
-  {
-    /* we have a iteration description - use it */
-    n = pixel_access->array_cache_pixels;
-    if(pixel_access->array_n < pixel_access->array_cache_pixels)
-      n = pixel_access->array_n;
+  x = ticket->start_xy[0];
+  y = ticket->start_xy[1];
 
-    for( i = 0; i < n; ++i )
-    {
-      max += pixel_access->array_xy[i*2+0];
-      if(i == pixel_access->array_cache_pixels % pixel_access->array_n)
-        remainder = max;
-    }
+  result = oyPixelAccess_CalculateNextStartPixel( ticket, requestor_plug);
 
-    sx += max * pixel_access->array_cache_pixels / pixel_access->array_n +
-          remainder;
-
-    max = 0;
-    for( i = 0; i < n; ++i )
-    {
-      max += pixel_access->array_xy[i*2+1];
-      if(i == pixel_access->array_cache_pixels % pixel_access->array_n)
-        remainder = max;
-    }
-
-    sy += max * pixel_access->array_cache_pixels / pixel_access->array_n +
-          remainder;
-    pixel_access->start_xy[0] = sx;
-    pixel_access->start_xy[1] = sy;
-  } else
-  {
-    /* fall back to a one by one pixel access */
-    x = pixel_access->start_xy[0];
-    y = pixel_access->start_xy[1];
-
-    if(pixel_access->start_xy[0] >= image->width)
-    {
-      x = 0; pixel_access->start_xy[0] = 1;
-      y = ++pixel_access->start_xy[1];
-    } else
-      ++pixel_access->start_xy[0];
-
-    if(pixel_access->start_xy[1] >= image->height && feedback)
-    {
-      *feedback = -1;
-      return 0;
-    }
-  }
+  if(result != 0)
+    return result;
 
   if(x < image->width &&
-     y < image->height)
-    ptr = image->getPoint( image, x, y, 0 );
-  else
-    ptr = 0;
+     y < image->height &&
+     ticket->pixels_n)
+  {
+    n = ticket->pixels_n;
+    if(n == 1)
+      ptr = image->getPoint( image, x, y, 0, &is_allocated );
 
-  if(!ptr && feedback)
-    *feedback = 1;
+    result = !ptr;
 
-  return ptr;
+  } else {
+
+    error = oyImage_FillArray( image, 0, 1, pixel, 0 );
+
+  }
+
+  return result;
 }
 
 oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
@@ -1862,30 +1826,27 @@ oyConnector_s* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_connector,0};
 
 uint32_t oyra_image_connectors_max[2] = {1,0};
 
-/** @func    oyraFilter_ImageOutputGetNext
+/** @func    oyraFilter_ImageOutputRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/19 (Oyranos: 0.1.8)
- *  @date    2008/07/19
+ *  @date    2008/10/03
  */
-oyPointer oyraFilterPlug_ImageOutputGetNext( oyFilterPlug_s   * requestor_plug,
-                                       oyPixelAccess_s   * pixel_access,
-                                       int32_t           * feedback )
+int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket,
+                                       oyArray2d_s      ** pixel )
 {
-  oyPointer * ptr = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterPlug_s * plug = 0;
-  oyFilter_s * filter = 0,
-             * remote_filter = 0;
+  oyFilter_s * filter = 0;
+  int result = 0;
 
   filter = socket->node->filter;
-  plug = (oyFilterPlug_s *)socket->node->plugs[0];
-  remote_filter = plug->remote_socket_->node->filter;
 
-  ptr = filter->api4_->oyCMMFilterPlug_GetNext( plug, pixel_access, feedback);
+  /* to reuse the requestor_plug is a exception for the starting request */
+  result = filter->api4_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
 
-  return ptr;
+  return result;
 }
 
 
@@ -1920,7 +1881,7 @@ oyCMMapi4_s   oyra_api4_image_output = {
   0,
   oyraFilter_ImageRootContextToMem,
   0,
-  oyraFilterPlug_ImageOutputGetNext,
+  oyraFilterPlug_ImageOutputRun,
 
   {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"},
   "Image/Simple Image[out]", /* category */
@@ -1965,10 +1926,10 @@ oyCMMapi4_s   oyra_api4_image_root = {
   0,
   oyraFilter_ImageRootContextToMem,
   0,
-  oyraFilterPlug_ImageRootGetNext,
+  oyraFilterPlug_ImageRootRun,
 
   {oyOBJECT_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
-  "Image/Simple Image", /* category */
+  "Image/Simple Image[in]", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
 

@@ -859,40 +859,43 @@ oyConnector_s lcms_cmmIccPlug_connector = {
 };
 oyConnector_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
 
-/** @func    lcmsFilterPlug_CmmIccGetNext
+/** @func    lcmsFilterPlug_CmmIccRun
  *  @brief   implement oyCMMFilterPlug_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/18 (Oyranos: 0.1.8)
- *  @date    2008/07/18
+ *  @date    2008/10/03
  */
-oyPointer lcmsFilterPlug_CmmIccGetNext( oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * pixel_access,
-                                       int32_t           * feedback )
+int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket,
+                                       oyArray2d_s      ** pixel )
 {
-  oyPointer * ptr = 0;
-  int x = pixel_access->start_xy[0], sx = x;
-  int y = pixel_access->start_xy[1], sy = y;
-  int remainder = 0, max = 0, i,j, n;
-  double * values = 0;
+  int i,j,k, n;
+  int error = 0;
+  double * in_values = 0, * out_values = 0;
   int channels = 0;
   oyDATATYPE_e data_type = 0;
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterPlug_s * plug = 0;
   oyFilter_s * filter = 0,
-             * remote_filter = 0;
-  oyImage_s * image = 0;
+             * input_filter = 0;
+  oyImage_s * input_image = 0;
+  oyArray2d_s * array = 0;
   
 
   filter = socket->node->filter;
   plug = (oyFilterPlug_s *)socket->node->plugs[0];
-  remote_filter = plug->remote_socket_->node->filter;
+  input_filter = plug->remote_socket_->node->filter;
+  input_image = input_filter->image_;
 
-  ptr = remote_filter->api4_->oyCMMFilterPlug_GetNext( plug, pixel_access, feedback);
+  /* We let the input filter do its processing first. */
+  error = input_filter->api4_->oyCMMFilterPlug_Run( plug, ticket, pixel);
+  if(error != 0) return error;
 
-  image = filter->image_;
-  data_type = oyToDataType_m(image->layout_[0]);
+  array = *pixel;
+
+  data_type = oyToDataType_m( input_image->layout_[0] );
 
   if(data_type == oyFLOAT)
   {
@@ -900,79 +903,23 @@ oyPointer lcmsFilterPlug_CmmIccGetNext( oyFilterPlug_s    * requestor_plug,
     message(oyMSG_WARN,0, "%s: %d can not handle oyFLOAT", __FILE__,__LINE__);
   }
 
-  channels = oyToChannels_m(image->layout_[0]);
+  channels = oyToChannels_m( input_image->layout_[0] );
 
-  /* now do position blind manipulations */
-  if(data_type == oyDOUBLE);
+  /* now do some position blind manipulations */
+  for( k = 0; k < array->height; ++k)
   {
-    values = (double*) ptr;
-    for(i = 0; i < pixel_access->array_cache_pixels; ++i)
-      for(j = 0; j < channels; ++j)
-        values[i*channels + j] -= 0.5;
-  }
-
-  return ptr;
-
-  /* calculate the pixel position we want */
-  if(pixel_access->array_xy)
-  {
-    /* we have a iteration description - use it */
-    n = pixel_access->array_cache_pixels;
-    if(pixel_access->array_n < pixel_access->array_cache_pixels)
-      n = pixel_access->array_n;
-
-    for( i = 0; i < n; ++i )
+    if(data_type == oyDOUBLE);
     {
-      max += pixel_access->array_xy[i*2+0];
-      if(i == pixel_access->array_cache_pixels % pixel_access->array_n)
-        remainder = max;
-    }
-
-    sx += max * pixel_access->array_cache_pixels / pixel_access->array_n +
-          remainder;
-
-    max = 0;
-    for( i = 0; i < n; ++i )
-    {
-      max += pixel_access->array_xy[i*2+1];
-      if(i == pixel_access->array_cache_pixels % pixel_access->array_n)
-        remainder = max;
-    }
-
-    sy += max * pixel_access->array_cache_pixels / pixel_access->array_n +
-          remainder;
-    pixel_access->start_xy[0] = sx;
-    pixel_access->start_xy[1] = sy;
-  } else
-  {
-    /* fall back to a one by one pixel access */
-    x = pixel_access->start_xy[0];
-    y = pixel_access->start_xy[1];
-
-    if(pixel_access->start_xy[0] >= image->width)
-    {
-      x = 0; pixel_access->start_xy[0] = 1;
-      y = ++pixel_access->start_xy[1];
-    } else
-      ++pixel_access->start_xy[0];
-
-    if(pixel_access->start_xy[1] >= image->height && feedback)
-    {
-      *feedback = -1;
-      return 0;
+      in_values = (double*) array->array2d[k];
+      out_values = (double*) array->array2d[k];
+      n = array->width / channels;
+      for(i = 0; i < n; ++i)
+        for(j = 0; j < channels; ++j)
+          out_values[i*channels + j] = in_values[i*channels + j] - 0.5;
     }
   }
 
-  if(x < image->width &&
-     y < image->height)
-    ptr = image->getPoint( image, x, y, 0 );
-  else
-    ptr = 0;
-
-  if(!ptr && feedback)
-    *feedback = 1;
-
-  return ptr;
+  return error;
 }
 
 
@@ -1100,7 +1047,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   0,
   /*lcmsFilter_CmmIccContextToMem*/0,
   0,
-  lcmsFilterPlug_CmmIccGetNext,
+  lcmsFilterPlug_CmmIccRun,
 
   {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
   "Colour/CMM/littleCMS", /* category */

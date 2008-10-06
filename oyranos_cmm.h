@@ -362,7 +362,7 @@ typedef oyPointer(*oyCMMFilter_ContextToMem_f) (
                                        oyAlloc_f           allocateFunc );
 
 
-/** @type    oyCMMFilterSocket_GetNext_f
+/** @type    oyCMMFilterPlug_Run_f
  *  @brief   get a pixel or channel from the previous filter
  *
  *  You have to call oyCMMFilter_CreateContext_t or oyCMMFilter_ContextFromMem_t first.
@@ -377,17 +377,17 @@ typedef oyPointer(*oyCMMFilter_ContextToMem_f) (
  *
  *  @param[in]     connector           including the CMM's private data, connector is the requesting plug to obtain a handle for calling back
  *  @param[in]     pixel_access        processing order instructions
- *  @param[out]    feedback            -1 end; 0 on success; error > 1
- *  @return                            pixel buffer
+ *  @param[in,out] output              the data to place results into, its position is in start_xy relative to the previous mediator
+ *  @return                            -1 end; 0 on success; error > 1
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/03 (Oyranos: 0.1.8)
  *  @date    2008/07/28
  */
-typedef oyPointer(*oyCMMFilterPlug_GetNext_f)(
+typedef int (*oyCMMFilterPlug_Run_f)(
                                        oyFilterPlug_s    * connector,
                                        oyPixelAccess_s   * pixel_access,
-                                       int32_t           * feedback );
+                                       oyArray2d_s      ** output );
 
 /** @struct oyCMMapi4_s
  *  @brief the API 4 to implement and set to provide Filter support
@@ -441,7 +441,7 @@ struct  oyCMMapi4_s {
   oyCMMFilter_ContextFromMem_f oyCMMFilter_ContextFromMem;
   /** mandatory for all filters; Special care has to taken for the
       oyPixelAccess_s argument to this function. */
-  oyCMMFilterPlug_GetNext_f    oyCMMFilterPlug_GetNext;
+  oyCMMFilterPlug_Run_f        oyCMMFilterPlug_Run;
 
   /** translatable, eg "scale" "image scaling" "..." */
   oyName_s         name;

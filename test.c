@@ -47,6 +47,7 @@ char**             oyStringSplit_    ( const char    * text,
                                        const char      delimiter,
                                        int           * count,
                                        oyAlloc_f       allocateFunc );
+int                oyWriteMemToFile_ ( const char*, void*, size_t );
 
 
 int
@@ -54,13 +55,15 @@ main(int argc, char** argv)
 {
   oyPointer pixel = 0;
   oyPixelAccess_s * pixel_access = 0;
-  oyConversions_s * conversions = 0;
+  oyConversion_s * conversion = 0;
   oyFilter_s      * filter = 0;
   int32_t result = 0;
   oyImage_s * image = 0;
   double buf[24] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
+  double buf2[24] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  double * d = 0, * dest = 0;
   oyProfile_s * prof = 0;
-  int x,y,w,h, i;
+  int x,y,w,h, i,j;
   char * ptr = 0;
   uint32_t size = 0;
   int error = 0;
@@ -117,83 +120,91 @@ main(int argc, char** argv)
 
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, 0 );
-  w = 4;
-  h = 2;
-  image = oyImage_Create( w, h, buf, OY_TYPE_123_DBL, prof, 0 );
+  w = 9;
+  h = 32;
+  size = sizeof(double)*w*h*3;
+  d = malloc(size);
+  dest = malloc(size);
+  for(i = 0; i < w*h; ++i)
+    for(j=0; j < 3; ++j)
+      d[i*3+j] = 0.33*(j+1);
 
-  conversions = oyConversions_CreateInput ( image, 0 );
+  image = oyImage_Create( w, h, d, OY_TYPE_123_DBL, prof, 0 );
+
+  conversion = oyConversion_CreateInput ( image, 0 );
+  oyImage_Release( &image );
   filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..colour.cmm.icc", 0,0, 0 );
-  error = oyConversions_FilterAdd( conversions, filter );
+  error = oyConversion_FilterAdd( conversion, filter );
   if(error)
     fprintf( stdout, "could not add  filter: %s\n", "..colour.cmm.icc" );
-  error = oyConversions_OutputAdd( conversions, image );
-  oyImage_Release( &image );
+  image = oyImage_Create( w, h, dest, OY_TYPE_123_DBL, prof, 0 );
+  error = oyConversion_OutputAdd( conversion, image );
+
+  /* show the Oyranos graph with ghostview */
+  ptr =  oyConversion_ToText( conversion, "Oyranos simple Test Graph",0,malloc);
+  oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
+  /*system("dot -Tps test.dot -o test.ps; gv -spartan -antialias -magstep 0.7 test.ps &");*/
+  free(ptr); ptr = 0;
 
   /* create a very simple pixel iterator */
-  pixel_access = oyPixelAccess_Create( 0,0, conversions->input->filter,
+  pixel_access = oyPixelAccess_Create( 0,0, conversion->input->filter,
                                        oyPIXEL_ACCESS_IMAGE, 0 );
-  result = 0;
-  while(result == 0)
-  {
-    double * p = 0;
-    pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
-    p = pixel;
 
-    if(result == 0)
-      fprintf( stdout, "%.01f %.01f %.01f\n", p[0], p[1], p[2] );
-  }
+  double * d0 = &buf[0];
+  double * d1 = &buf2[0];
+  double * d2 = ((oyArray2d_s*)conversion->input->filter->image_->pixel_data)->array2d[0];
+  double * d3 = ((oyArray2d_s*)conversion->out_->filter->image_->pixel_data)->array2d[0];
 
-  /* turn into a line itereator */
-  pixel_access->array_xy = malloc(sizeof(uint32_t) * 2);
-  pixel_access->array_xy[0] = 1;
-  pixel_access->array_xy[1] = 0;
-  pixel_access->array_n = 1;
-  pixel_access->array_cache_pixels = w;
   result = 0;
   x = y = 0;
-  while(result == 0)
   {
-    double * p = 0;
+    double * p = dest;
 
-    pixel_access->start_xy[0] = 1;
-    pixel_access->start_xy[1] = y++;
-    pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
-    p = pixel;
+    pixel_access->start_xy[0] = x;
+    pixel_access->start_xy[1] = y;
+    result = oyConversion_Run( conversion, pixel_access, 0 );
 
     if(result == 0)
-    for(i = 0; i < pixel_access->array_cache_pixels*3; i += 3)
-      fprintf( stdout, "%.01f %.01f %.01f\n", p[i+0], p[i+1], p[i+2] );
+    for(i = 0; i < w*h*3; i += 3)
+    {
+      char br = (i/3+1)%w? ' ':'\n';
+      fprintf( stdout, "%.01f %.01f %.01f %c",
+               p[i+0], p[i+1], p[i+2], br );
+    }
   }
 
   /* itereate in chunks */
-  pixel_access->array_xy = malloc(sizeof(uint32_t) * 2);
-  pixel_access->array_xy[0] = 1;
-  pixel_access->array_xy[1] = 0;
-  pixel_access->array_n = 1;
-  pixel_access->array_cache_pixels = 2;
   result = 0;
   x = y = 0;
+  pixel_access->start_xy[0] = pixel_access->start_xy[1] = x;
   while(result == 0)
   {
     double * p = 0;
 
-    pixel_access->start_xy[0] = x;
-    pixel_access->start_xy[1] = y++;
-    pixel = oyConversions_GetNextPixel( conversions, pixel_access, &result );
+    result = oyConversion_Run( conversion, pixel_access, 0 );
     p = pixel;
 
     if(result == 0)
-    for(i = 0; i < pixel_access->array_cache_pixels*3; i += 3)
+    for(i = 0; i < pixel_access->pixels_n*3; i += 3)
       fprintf( stdout, "%.01f %.01f %.01f\n", p[i+0], p[i+1], p[i+2] );
+
+    x += 2;
+    if(x >= w)
+    {
+      pixel_access->start_xy[0] = 0;
+      pixel_access->start_xy[1] = ++y;
+      x = 0;
+    }
   }
 
-  if(conversions->input->filter->api4_->oyCMMFilter_ContextToMem)
-    ptr = conversions->input->filter->api4_->oyCMMFilter_ContextToMem( conversions->input->filter, &size, 0, malloc );
+
+  if(conversion->input->filter->api4_->oyCMMFilter_ContextToMem)
+    ptr = conversion->input->filter->api4_->oyCMMFilter_ContextToMem( conversion->input->filter, &size, 0, malloc );
 
   if(ptr)
     oyWriteMemToFile_( "test_dbg.icc", ptr, size );
 
-  oyConversions_Release( &conversions );
+  oyConversion_Release( &conversion );
   oyPixelAccess_Release( &pixel_access );
 
   return 0;

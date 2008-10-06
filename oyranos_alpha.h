@@ -71,18 +71,39 @@ typedef void      (*oyUnLock_f )     ( oyPointer           look,
                                        const char        * marker,
                                        int                 line );
 
+/** param[out]     is_allocated          are the points always newly allocated*/
 typedef oyPointer (*oyImage_GetPoint_t)( oyImage_s       * image,
                                          int               point_x,
                                          int               point_y,
-                                         int               channel );
+                                         int               channel,
+                                         int             * is_allocated );
+/** param[out]     is_allocated          are the lines always newly allocated */
 typedef oyPointer (*oyImage_GetLine_t) ( oyImage_s       * image,
                                          int               line_y,
                                          int             * height,
-                                         int               channel );
+                                         int               channel,
+                                         int             * is_allocated );
+/** param[out]     is_allocated          are the tiles always newly allocated */
 typedef oyPointer*(*oyImage_GetTile_t) ( oyImage_s       * image,
                                          int               tile_x,
                                          int               tile_y,
-                                         int               channel );
+                                         int               channel,
+                                         int             * is_allocated );
+typedef int       (*oyImage_SetPoint_t)( oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               channel,
+                                         oyPointer         data );
+typedef int       (*oyImage_SetLine_t) ( oyImage_s       * image,
+                                         int               line_y,
+                                         int             * height,
+                                         int               channel,
+                                         oyPointer         data );
+typedef int       (*oyImage_SetTile_t) ( oyImage_s       * image,
+                                         int               tile_x,
+                                         int               tile_y,
+                                         int               channel,
+                                         oyPointer         data );
 
 
 void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
@@ -128,7 +149,7 @@ typedef enum {
   oyOBJECT_FILTERS_S,                 /**< oyFilters_s */
   oyOBJECT_FILTER_NODE_S,             /**< oyFilterNode_s */
   oyOBJECT_PIXEL_ACCESS_S,            /**< oyPixelAccess_s */
-  oyOBJECT_CONVERSIONS_S,             /**< oyConversions_s */
+  oyOBJECT_CONVERSION_S,              /**< oyConversion_s */
   oyOBJECT_CMM_HANDLE_S      = 50,    /**< oyCMMhandle_s */
   oyOBJECT_CMM_POINTER_S,             /*!< oyCMMptr_s */
   oyOBJECT_CMM_INFO_S,                /*!< oyCMMInfo_s */
@@ -414,7 +435,7 @@ oyStructList_s** oyCMMCacheList_     ( void );
 char   *     oyCMMCacheListPrint_    ( void );
 
 
-/* --- colour conversions --- */
+/* --- colour conversion --- */
 
 /** @enum    oyVALUETYPE_e
  *  @brief   a value type
@@ -799,18 +820,20 @@ typedef struct {
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;
+
   double x;
   double y;
   double width;
   double height;
+
 } oyRegion_s;
 
 oyRegion_s *   oyRegion_New_         ( oyObject_s          object );
-oyRegion_s *   oyRegion_NewWith      ( oyObject_s          object,
-                                       double              x,
+oyRegion_s *   oyRegion_NewWith      ( double              x,
                                        double              y,
                                        double              width,
-                                       double              height );
+                                       double              height,
+                                       oyObject_s          object );
 oyRegion_s *   oyRegion_NewFrom      ( oyRegion_s        * ref,
                                        oyObject_s          object );
 oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * region,
@@ -1026,12 +1049,12 @@ typedef struct {
   oyObject_s           oy_;            /**< base object */
 
   oyDATATYPE_e         t;              /**< data type */
-  int                  width;          /**< data width */
-  int                  height;         /**< data height */
+  int                  width;          /**< width of actual data view */
+  int                  height;         /**< height of actual data view */
+  oyRegion_s         * data_area;      /**< size of reserve pixels, x,y <= 0, width,height >= data view width,height */
 
   unsigned char     ** array2d;        /**< sorted data */
-
-  oyPointer            data;           /**< the original in memory pointer */
+  int                  own_lines;      /**< is *array2d owned by this object? */
 } oyArray2d_s;
 
 OYAPI oyArray2d_s * OYEXPORT
@@ -1144,7 +1167,7 @@ struct oyImage_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyRegion_s         * image_dimension;/**< image dimensions */
+  oyRegion_s         * viewport;       /**< intented viewing area, normalised to the pixel width == 1.0 */
   double               resolution_x;   /**< resolution in horizontal direction*/
   double               resolution_y;   /**< resolution in vertical direction */
 
@@ -1154,14 +1177,16 @@ struct oyImage_s {
   int                  height;         /*!< data height */
   oyOptions_s        * options_;       /*!< for instance channel layout (?) */
   oyProfile_s        * profile_;       /*!< image profile */
-  oyRegion_s        ** regions;        /*!< region to render, if zero render all */
   int                  display_pos_x;  /**< Possibly this can be part of the output profile; upper position on display of image*/
   int                  display_pos_y;  /*!< left position on display of image */
 
-  oyStruct_s         * pixel_data;     /**< struct passed to each subsequent call of get* pixel acessors */
+  oyStruct_s         * pixel_data;     /**< struct used by each subsequent call of g/set* pixel acessors */
   oyImage_GetPoint_t   getPoint;       /**< the point interface */
   oyImage_GetLine_t    getLine;        /**< the line interface */
   oyImage_GetTile_t    getTile;        /**< the tile interface */
+  oyImage_SetPoint_t   setPoint;       /**< the point interface */
+  oyImage_SetLine_t    setLine;        /**< the line interface */
+  oyImage_SetTile_t    setTile;        /**< the tile interface */
   int                  tile_width;     /**< needed by the tile interface */
   int                  tile_height;    /**< needed by the tile interface */
   uint16_t             subsampling[2]; /**< 1, 2 or 4 */
@@ -1198,6 +1223,11 @@ int            oyImage_DataSet       ( oyImage_s         * image,
                                        oyImage_GetPoint_t  getPoint,
                                        oyImage_GetLine_t   getLine,
                                        oyImage_GetTile_t   getTile );
+int            oyImage_FillArray     ( oyImage_s         * image,
+                                       oyRegion_s        * region,
+                                       int                 do_copy,
+                                       oyArray2d_s      ** array,
+                                       oyObject_s          obj );
 
 
 typedef enum {
@@ -1374,7 +1404,7 @@ struct oyFilterSocket_s {
 
   oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
   oyFilterNode_s     * node;           /**< filter node for this connector */
-
+  char               * relatives_;     /**< hint about belonging to a filter */
 
   oyFilterPlugs_s    * requesting_plugs_;/**< all remote inputs */
 };
@@ -1436,6 +1466,7 @@ struct oyFilterPlug_s {
 
   oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
   oyFilterNode_s     * node;           /**< filter node for this connector */
+  char               * relatives_;     /**< hint about belonging to a filter */
 
   oyFilterSocket_s   * remote_socket_; /**< the remote output */
 };
@@ -1454,7 +1485,8 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s    * c,
                                        oyCONNECTOR_EVENT_e e );
 OYAPI int  OYEXPORT
-                 oyFilterPlug_Connect( oyFilterPlug_s   ** p,
+                 oyFilterPlug_ConnectIntoSocket (
+                                       oyFilterPlug_s   ** p,
                                        oyFilterSocket_s ** s );
 
 /** @struct  oyFilterPlugs_s
@@ -1505,7 +1537,7 @@ OYAPI int  OYEXPORT
  *  Filters implement a container. They can contain various data and options.
  *  Filters can be manipulated by changing their options or data.
  *
- *  Filters are chained into a oyConversions_s in order to get applied to data.
+ *  Filters are chained into a oyConversion_s in order to get applied to data.
  *  The relation of filters in a graph is defined through the oyFilterNode_s
  *  struct.
  *
@@ -1520,12 +1552,6 @@ OYAPI int  OYEXPORT
  *  - oyFILTER_TYPE_IMAGE is a container for one oyImage_s. There is no 
  *    assumption on how the buffers are implemented.
  *  - oyFILTER_TYPE_GENERIC can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
- *
- *  @param   profile_in
- *  @param   profile_out               should not be zero for a CMM.
- *  For a non CMM filter the oyProfile_s' can be a icColorSpaceSignature only. 
- *  @param   type                      is the functional type of filter 
- *  @param   category                  is useful for building menues
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/08 (Oyranos: 0.1.8)
@@ -1649,7 +1675,7 @@ OYAPI int  OYEXPORT
 /** @struct  oyFilterNode_s
  *  @brief   a FilterNode object
  *
- *  Filter nodes chain filters into a oyConversions_s graph. The filter nodes
+ *  Filter nodes chain filters into a oyConversion_s graph. The filter nodes
  *  use plugs and sockets for creating connections. Each plug can only connect
  *  to one socket.
  \dot
@@ -1740,10 +1766,11 @@ struct oyFilterNode_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyFilterPlug_s    ** plugs;          /**< active input connectors */
-  oyFilterSocket_s  ** sockets;        /**< active output connectors */
+  oyFilterPlug_s    ** plugs;          /**< active input connectors, list ends with a trailing zero */
+  oyFilterSocket_s  ** sockets;        /**< active output connectors, list ends with a trailing zero */
 
   oyFilter_s         * filter;         /**< the filter */
+  char               * relatives_;     /**< hint about belonging to a filter */
 
   oyStruct_s         * data;           /**< the filters private data */
 };
@@ -1799,39 +1826,120 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
  *  iterator. The order or pattern of access is defined by the array_xy and
  *  start_[x,y] variables.
  *
- *  The array_index specifies the iterator position in the array_xy index
- *  array or request region.
+ *  The index variable specifies the iterator position in the array_xy index
+ *  array.
  *
- *  The cache is the reason why this struct is separate from a oyFilterNode_s.
+ *  oyPixelAccess_s is like a job ticket. Goal is to maintain all intermediate
+ *  and processing dependend memory references here in this structure.
  *
- *  array_cache_pixels says how many pixels are to be processed for the cache.
- *  array_cache_pixels is used to calculate the buffers located with getBuffer
+ *  pixels_n says how many pixels are to be processed for the cache.
+ *  pixels_n is used to calculate the buffers located with getBuffer
  *  and freeBuffer.
- *  The amount of pixel specified in array_cache_pixels must be processed by
+ *  The amount of pixel specified in pixels_n must be processed by
  *  each filter, because other filters are relying on a properly filled cache.
  *  This variable also determins the size of the next iteration.
  *
- *  The relation of array_cache_pixels to array_xy and start_[x,y] is that a
- *  minimum of array_cache_pixels must be processed by starting with start_[x,y]
- *  and processing array_cache_pixels through array_xy. array_xy specifies
+ *  The relation of pixels_n to array_xy and start_[x,y] is that a
+ *  minimum of pixels_n must be processed by starting with start_[x,y]
+ *  and processing pixels_n through array_xy. array_xy specifies
  *  the offset pixel distance to a next pixel in x and y directions. In case
- *  array_cache_pixels is larger than array_n the array_xy has to be continued
+ *  pixels_n is larger than array_n the array_xy has to be continued
  *  at array_xy[0,1] after reaching its end (array_n). \n
  *  \b Example: \n
  *  Thus a line iterator behaviour can be specified by simply setting 
- *  array_xy = {1,0}, array_n = 1 and array_cache_pixels = image_width.
+ *  array_xy = {1,0}, for a advancement in x direction of one, array_n = 1, 
+ *  as we need just this type of advancement and pixels_n = image_width, 
+ *  for saying how often the pattern descibed in array_xy has to be applied.
  *
- *  The two cases for handling pixel access are array_xy or
- *  a set request variable. They are toupported by a filter in
- *  a function of type oyCMMFilter_GetNext_f() in
- *  oyCMMapi4_s::oyCMMConnector_GetNext.
+ *  Handling of pixel access is to be supported by a filter in a function of
+ *  type oyCMMFilter_GetNext_f() in oyCMMapi4_s::oyCMMConnector_GetNext().
  *
  *  Access to the buffers by concurrenting threads is handled by passing
- *  different oyPixelAccess_s objects pre thread.
+ *  different oyPixelAccess_s objects per thread.
+ *
+ *  From the backend point of view it is a requirement to obtain the 
+ *  intermediate buffers from somewhere. These are the ones to read from and
+ *  to write computed results into. \n
+ *
+ *  Pixel in- and output buffers separation:
+ *  - Copy the output area and request to manipulate it by each filter.
+ *    There is no overwriting of results.
+ *    Reads a bit fixed. How can filters decide upon the input size?
+ *    However, if a filter works on more than one dimension, it can
+ *    opt to get its area directly from a input mediator.
+ *  - Provide a opaque output and input area and request to copy by each filter.
+ *    Filters would overwrite previous manipulations or some mechanism of
+ *    swapping the input with the output side is needed.
+ *  - Some filters want different input and output areas. They see the mediator
+ *    as the previous, or the input, element in the graph.
+ *  - Will the mediators always be visible in order to get all informations
+ *    about the image? During setting up the graph this should be handled.
+ *
+ *  Access to input and output buffers:
+ *  - The output oyArray2d_s is to be provided for 1D colour transforms.
+ *  - The input oyArray2d_s is to be provided for multi dimensional
+ *    manipulators directly from the input mediator.
+ *
+ *  Thread synchronisation:
+ *  - The oyArray2d_s is a opaque memory blob. So different filters can act upon
+ *    this resource. It would be in the resposiblity of the graph to avoid
+ *    conflicts like using the same output for different manipulations. Given
+ *    that the output is acting actively, the potential is small anyway.
+ *  - The input should be neutral and not directly manipulated. What can happen
+ *    is that different threads request the same input area and the according
+ *    data is to be rendered first. So this easily could end in rendering two
+ *    times for the same result. Some scheduling in the mediators may help
+ *    solving this and improove on performance.
+ *
+ *  Area dimensions:
+ *  - One point is very simple to provide. It may easily require additional
+ *    preparations for area manipulations like blur.
+ *  - Line is the next hard. The advantage it is still simple and speed
+ *    efficient. Programming is a bit more demanding.
+ *  - Areas of pixel are easy to provide through oyArray2d_s. It can include the
+ *    above two cases.
+ *  - Pattern accessors are very flexible for manipulators. It's not clear how
+ *    the resulting complexity of translating the pattern to a array with known
+ *    pixel positions can be hidden from other filters, which need to know about
+ *    positions. One strategy would be to use mediators. They can request the
+ *    according pixels from previous filters. A function to convert the pattern
+ *    to a list of positions should be provided. Very elegant, but probably
+ *    better to do later after oyArray2d_s.
+ *
+ *  Possible strategies are (old text):
+ *  - Use mediators to convert between different pixel layouts and areas.
+ *    These could cache the record of a successful query. Mediators are Nodes in
+ *    the graph. As the graph and thus mediators can be accessed over
+ *    concurrenting entries a cache tends to be expensive.
+ *  - The oyPixelAccess_s could hold caches instead of mediators. It is the
+ *    structure, which is owned by a given thread anyway.
+ *    oyPixelAccess_s needs two buffers one for input and one for output.
+ *    As the graph is asked to provide the next pixel via a oyPixelAccess_s
+ *    struct, this struct must be associated with source and destination 
+ *    buffers. The mediator on output has to search through the chain for the 
+ *    previous
+ *    mediator and ask there for the input buffer. The ouput buffer is provided
+ *    by this mediator itself. These two buffers are set as the actual ones for
+ *    processing by the normal filters. It must be clear, what is a mediator,
+ *    for this scheme to work. As a mediator is reached in the processing graph,
+ *    its task is not only to convert between buffers but as well to update the
+ *    oyPixelAccess_s struct with the next mediators and its own buffer. Thus
+ *    the next inbetween filters can process on their part.
+ *    One advantage is that the mediators can pass their buffers to 
+ *    oyPixelAccess_s, which are independent to threads and can be shared.
+ *  - Each filter obtains a buffer being asked to fill it with the pixels 
+ *    positions described in oyPixelAccess_s. A filter is free to create a new
+ *    oyPixelAccess_s description and obtain for instance the surounding of the
+ *    requested pixels. There is no caching to be expected other than in 
+ *    the oyPixelAccess_s own output buffer.
+ *
+ *  @todo clear about pixel buffer copying, how to reach the buffers, thread
+ *        synchronisation, simple or complex pixel areas (point, line, area,
+ *        pattern )
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/04 (Oyranos: 0.1.8)
- *  @date    2008/07/04
+ *  @date    2008/10/22
  */
 struct oyPixelAccess_s {
   oyOBJECT_e           type;           /**< internal struct type oyOBJECT_PIXEL_ACCESS_S */
@@ -1840,28 +1948,20 @@ struct oyPixelAccess_s {
   oyObject_s           oy_;            /**< base object */
 
   int32_t          start_xy[2];        /**< the start point */
-  int32_t          start_xy_old[2];    /**< the previous start point */
-  int32_t        * array_xy;           /**< array of shifts, e.g. 1,0,2,0,1,0 */
-  int              array_n;            /**< the number of points in array_xy */
-  oyRegion_s     * request;            /**< requested image region */
+  int32_t          start_xy_old[2];    /**< @deprecated the previous start point */
+  int32_t        * array_xy;           /**< @deprecated array of shifts, e.g. 1,0,2,0,1,0 */
+  int              array_n;            /**< @deprecated the number of points in array_xy */
+
   int              index;              /**< to be advanced by the last caller */
-  size_t           array_cache_pixels; /**< pixels to process/cache at once */
+  size_t           pixels_n;           /**< pixels to process/cache at once; should be set to 0 or 1 */
 
   int32_t          workspace_id;       /**< a ID to assign distinct resources to */
-  oyPointer      (*getBuffers)(  size_t            size,  /**< in bytes */
-                                 int               input, /**< 0 for data_out */
-                                 oyPixelAccess_s * ref );
-  int            (*freeBuffers)( oyPointer,  /**< free intermediate data */
-                                 oyPixelAccess_s * ref );
-
-  oyPointer        data_in;            /**< input data cache */
-  oyPointer        data_out;           /**< output data cache */
 };
 
 typedef enum {
-  oyPIXEL_ACCESS_IMAGE,                /**< this requires to omit array_xy and work on native pixel representations like tiles or scanlines */
-  oyPIXEL_ACCESS_POINT,
-  oyPIXEL_ACCESS_LINE
+  oyPIXEL_ACCESS_IMAGE,
+  oyPIXEL_ACCESS_POINT,                /**< dont use */
+  oyPIXEL_ACCESS_LINE                  /**< dont use */
 } oyPIXEL_ACCESS_TYPE_e;
 
 oyPixelAccess_s *  oyPixelAccess_Create (
@@ -1875,7 +1975,11 @@ oyPixelAccess_s *  oyPixelAccess_Copy( oyPixelAccess_s   * obj,
 int                oyPixelAccess_Release(
                                        oyPixelAccess_s  ** obj );
 
-/** @struct oyConversions_s
+int                oyPixelAccess_CalculateNextStartPixel (
+                                       oyPixelAccess_s   * obj,
+                                       oyFilterPlug_s    * requestor_plug );
+
+/** @struct oyConversion_s
  *  @brief  a filter chain or graph to manipulate a image
  *
  *  Order of filters matters.
@@ -1906,7 +2010,7 @@ digraph G {
   }
 }
  \enddot
- *  oyConversions_s shall provide access to the graph and help in processing
+ *  oyConversion_s shall provide access to the graph and help in processing
  *  and managing nodes.\n
  \dot
 digraph G {
@@ -1915,9 +2019,9 @@ digraph G {
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
   edge [fontname=Helvetica, fontsize=10];
 
-  node conversions [shape=plaintext, label=<
+  node conversion [shape=plaintext, label=<
 <table border="0" cellborder="1" cellspacing="0" bgcolor="lightgray">
-  <tr><td>oyConversions_s</td></tr>
+  <tr><td>oyConversion_s</td></tr>
   <tr><td>
      <table border="0" cellborder="0" align="left">
        <tr><td align="left">...</td></tr>
@@ -1936,7 +2040,7 @@ digraph G {
   node d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
 
   subgraph cluster_0 {
-    label="oyConversions_s with attached Filter Graph";
+    label="oyConversion_s with attached Filter Graph";
     color=gray;
 
     a:socket -> b:plug [arrowtail=normal];
@@ -1944,20 +2048,20 @@ digraph G {
     a:socket -> c:plug [arrowtail=normal];
     c:socket -> d:plug [arrowtail=normal];
 
-    conversions:in -> a;
-    conversions:out -> d;
+    conversion:in -> a;
+    conversion:out -> d;
   }
 
-  conversions
+  conversion
 }
  \enddot
  *  \b Creating \b Graphs: \n
- *  Most simple is to use the oyConversions_CreateBasic() function to create
+ *  Most simple is to use the oyConversion_CreateBasic() function to create
  *  a profile to profile and possible image buffer to image buffer linear
  *  graph.\n
  *  The next possibility is to create a linear graph by chaining linear nodes
- *  together with oyConversions_CreateInput(), oyConversions_FilterAdd() and
- *  oyConversions_OutputAdd() in that order. A linear node is one that can have
+ *  together with oyConversion_CreateInput(), oyConversion_FilterAdd() and
+ *  oyConversion_OutputAdd() in that order. A linear node is one that can have
  *  exactly one parent and one child node. The above scheme illustrates a linear
  *  graph.\n
  *  The last possibility is to create a non linear graph. The input member
@@ -1965,14 +2069,14 @@ digraph G {
  *
  *  While it would be possible to have several open ends in a graph, there
  *  are two endpoints considered as special. The input member prepresents the
- *  top most required node to be provided in a oyConversions_s graph. The
+ *  top most required node to be provided in a oyConversion_s graph. The
  *  input node is accessible for user manipulation. The other one is the out_
  *  member. It is the closing node in the graph. It will be set by Oyranos
- *  during closing the graph, e.g. in oyConversions_OutputAdd().
+ *  during closing the graph, e.g. in oyConversion_OutputAdd().
  *
  *  \b Using \b Graphs: \n
- *  To obtain the data the oyConversions_GetNextPixel() and
- *  oyConversions_GetOnePixel() functions are available.
+ *  To obtain the data the oyConversion_GetNextPixel() and
+ *  oyConversion_GetOnePixel() functions are available.
  \dot
 digraph G {
   rankdir=LR
@@ -1993,7 +2097,7 @@ digraph G {
     b:socket -> d:plug [label=data];
     a:socket -> c:plug [label=data];
     c:socket -> d:plug [label=data];
-    d:socket -> app [label=<<table  border="0" cellborder="0"><tr><td>return of<br/>oyConversions_GetNextPixel()</td></tr></table>>];
+    d:socket -> app [label=<<table  border="0" cellborder="0"><tr><td>return of<br/>oyConversion_GetNextPixel()</td></tr></table>>];
   }
 }
  \enddot
@@ -2010,43 +2114,46 @@ typedef struct {
 
   oyFilterNode_s     * input;          /**< the input image filter; Most users will start logically with this pice and chain their filters to get the final result. */
   oyFilterNode_s     * out_;           /**< the Oyranos output image. Oyranos will stream the filters starting from the end. This element will be asked on its first plug. */
-  oyPixelAccess_s    * one_pixel_cfg;  /**< one pixel accessor */
-} oyConversions_s;
+} oyConversion_s;
 
-oyConversions_s  * oyConversions_CreateBasic (
+oyConversion_s  *  oyConversion_CreateBasic (
                                        oyImage_s         * input,
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
-oyConversions_s  * oyConversions_CreateInput (
+oyConversion_s  *  oyConversion_CreateInput (
                                        oyImage_s         * input,
                                        oyObject_s          object );
-oyConversions_s  * oyConversions_Copy( oyConversions_s   * conversions,
+oyConversion_s  *  oyConversion_Copy ( oyConversion_s    * conversion,
                                        oyObject_s          object );
-int                oyConversions_Release (
-                                       oyConversions_s  ** conversions );
+int                oyConversion_Release (
+                                       oyConversion_s   ** conversion );
 
 
-int                oyConversions_FilterAdd (
-                                       oyConversions_s   * conversions,
+int                oyConversion_FilterAdd (
+                                       oyConversion_s    * conversion,
                                        oyFilter_s        * filter );
-int                oyConversions_OutputAdd (
-                                       oyConversions_s   * conversions,
+int                oyConversion_OutputAdd (
+                                       oyConversion_s    * conversion,
                                        oyImage_s         * input );
-int                oyConversions_Init( oyConversions_s   * conversions );
-oyPointer        * oyConversions_GetNextPixel (
-                                       oyConversions_s   * conversions,
+int                oyConversion_Init ( oyConversion_s    * conversion );
+int                oyConversion_Run  ( oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access,
-                                       int32_t           * feedback );
-oyPointer        * oyConversions_GetOnePixel (
-                                       oyConversions_s   * conversions,
+                                       oyRegion_s        * region );
+oyPointer        * oyConversion_GetOnePixel (
+                                       oyConversion_s    * conversion,
                                        int32_t             x,
                                        int32_t             y,
                                        int32_t           * feedback );
-oyProfile_s      * oyConversions_ToProfile (
-                                       oyConversions_s   * conversions );
-int             ** oyConversions_GetAdjazenzlist (
-                                       oyConversions_s   * conversions,
+oyProfile_s      * oyConversion_ToProfile (
+                                       oyConversion_s    * conversion );
+int             ** oyConversion_GetAdjazenzlist (
+                                       oyConversion_s    * conversion,
+                                       oyAlloc_f           allocateFunc );
+char             * oyConversion_ToText (
+                                       oyConversion_s    * conversion,
+                                       const char        * head_line,
+                                       int                 reserved,
                                        oyAlloc_f           allocateFunc );
 
 /** @struct oyColourConversion_s
