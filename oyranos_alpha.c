@@ -5283,15 +5283,17 @@ char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 
-/** @func    oyOptions_HasString
+/** @func    oyOptions_FindString
  *  @relates oyOptions_s
  *  @brief   search for a certain option key and possibly value
+ *
+ *  This function returns the first found value for a given key.
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2008/10/07
  */
-char *         oyOptions_HasString   ( oyOptions_s       * options,
+char *         oyOptions_FindString  ( oyOptions_s       * options,
                                        const char        * key,
                                        const char        * value )
 {
@@ -5332,6 +5334,8 @@ char *         oyOptions_HasString   ( oyOptions_s       * options,
               if(!value ||
                  (value && oyStrstr_(value, text)))
                 found = 1;
+
+            if(found) break;
 
             ++j;
           }
