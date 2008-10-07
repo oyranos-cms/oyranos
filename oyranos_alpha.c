@@ -4627,6 +4627,7 @@ oyChar* oyCMMCacheListPrint_()
 
 
 /** @func    oyValueCopy
+ *  @relates oyOption_s
  *  @brief   copy a oyValue_u union
  *
  *  @version Oyranos: 0.1.8
@@ -4715,6 +4716,7 @@ void           oyValueCopy           ( oyValue_u         * from,
 }
 
 /** @func    oyValueClear
+ *  @relates oyOption_s
  *  @brief   clear a oyValue_u union
  *
  *  @version Oyranos: 0.1.8
@@ -4766,6 +4768,7 @@ void           oyValueClear          ( oyValue_u         * v,
   }
 }
 /** @func    oyValueRelease
+ *  @relates oyOption_s
  *  @brief   release a oyValue_u union
  *
  *  @version Oyranos: 0.1.8
@@ -13443,7 +13446,7 @@ oyConversion_s *   oyConversion_New_ ( oyObject_s          object )
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S("MEM Error.")
     return NULL;
   }
 
@@ -13476,21 +13479,20 @@ oyConversion_s   * oyConversion_CreateBasic (
                                        oyOptions_s       * options,
                                        oyObject_s          object )
 {
-  oyConversion_s * s = oyConversion_New_( object );
-  int error = !s;
+  oyConversion_s * s = 0;
+  int error = !input || !output;
   oyFilter_s * filter = 0;
 
   if(!error)
   {
-    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root", 0,0, 0 );
-    s->input = oyFilterNode_Create( filter, s->oy_ );
-    oyFilter_Release( &filter );
+    s = oyConversion_CreateInput ( input, 0 );
 
-    error = oyFilter_ImageSet ( s->input->filter, input );
+    filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..colour.cmm.icc", 0,0, 0 );
+    error = oyConversion_FilterAdd( s, filter );
+    if(error)
+      WARNc1_S( "could not add  filter: %s\n", "..colour.cmm.icc" );
 
-    filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..colour",
-                           oyModuleGetActual(0), options, 0 );
-    /* TODO implement */
+    error = oyConversion_OutputAdd( s, output );
   }
 
   if(error)
@@ -13813,7 +13815,7 @@ int                oyConversion_OutputAdd (
 
   if(!error)
   {
-    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.output", 0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.output", 0,0, 0);
 
     if(!error)
       error = oyFilter_ImageSet ( filter, output );
@@ -13834,7 +13836,6 @@ int                oyConversion_OutputAdd (
 
   return error;
 }
-int                oyConversion_Init( oyConversion_s   * conversion );
 
 /** @func    oyConversion_Run
  *  @relates oyConversion_s
