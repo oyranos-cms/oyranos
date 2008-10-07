@@ -2136,7 +2136,6 @@ int                oyConversion_FilterAdd (
 int                oyConversion_OutputAdd (
                                        oyConversion_s    * conversion,
                                        oyImage_s         * input );
-int                oyConversion_Init ( oyConversion_s    * conversion );
 int                oyConversion_Run  ( oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access,
                                        oyRegion_s        * region );
