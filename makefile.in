@@ -53,6 +53,7 @@ CHEADERS = \
 	$(TARGET)_alpha.h \
 	$(TARGET)_check.h \
 	$(TARGET)_cmm.h \
+	$(TARGET)_cmm_oyra.h \
 	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
@@ -96,7 +97,9 @@ CFILES_CMM_LCMS = \
 CFILES_CMM_oyX1 = \
 	$(TARGET)_cmm_oyX1.c
 CFILES_CMM_oyra = \
-	$(TARGET)_cmm_oyra.c
+	$(TARGET)_cmm_oyra.c \
+	$(TARGET)_cmm_oyra_image.c \
+	$(TARGET)_cmm_oyra_profile.c
 CFILES_MONI = \
 	$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
