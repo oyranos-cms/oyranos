@@ -5283,6 +5283,68 @@ char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 
+/** @func    oyOptions_HasString
+ *  @relates oyOptions_s
+ *  @brief   search for a certain option key and possibly value
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/10/07 (Oyranos: 0.1.8)
+ *  @date    2008/10/07
+ */
+char *         oyOptions_HasString   ( oyOptions_s       * options,
+                                       const char        * key,
+                                       const char        * value )
+{
+  char * text = 0;
+  int error = !options;
+
+  if(!error && options && options->type_ == oyOBJECT_OPTIONS_S)
+  {
+    oyOptions_s * set_a = options;
+    int set_an = oyOptions_Count( set_a ), i,j;
+    oyOption_s * option_a = 0;
+    int found = 0;
+
+    for(i = 0; i < set_an; ++i)
+    {
+      option_a = oyOptions_Get( set_a, i );
+
+      if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
+      {
+        if(oyStrcmp_( option_a->name.nick, key) == 0)
+        if(option_a->value_type == oyVAL_STRING)
+        {
+          text = option_a->value->string;
+
+          if(text && oyStrlen_( text ))
+            if(!value ||
+               (value && oyStrstr_(value, text)))
+              found = 1;
+        } else if(option_a->value_type == oyVAL_STRING_LIST)
+        {
+          j = 0;
+
+          while(option_a->value->string_list[j])
+          {
+            text = option_a->value->string_list[j];
+
+            if(text && oyStrlen_( text ))
+              if(!value ||
+                 (value && oyStrstr_(value, text)))
+                found = 1;
+
+            ++j;
+          }
+        }
+      }
+
+      error = !found;
+    }
+  }
+
+  return text;
+}
+
 /** @} */
 
 

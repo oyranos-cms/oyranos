@@ -564,6 +564,9 @@ int            oyOptions_Add         ( oyOptions_s       * options,
 char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
+char *         oyOptions_HasString   ( oyOptions_s       * options,
+                                       const char        * key,
+                                       const char        * value );
 
 
 /** @brief general profile infos
