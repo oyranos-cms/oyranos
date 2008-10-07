@@ -58,7 +58,7 @@ main(int argc, char** argv)
   oyConversion_s * conversion = 0;
   oyFilter_s      * filter = 0;
   int32_t result = 0;
-  oyImage_s * image = 0;
+  oyImage_s * image_in = 0, * image_out = 0;
   double buf[24] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
   double buf2[24] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   double * d = 0, * dest = 0;
@@ -119,7 +119,6 @@ main(int argc, char** argv)
 #endif
 
 
-  prof = oyProfile_FromStd( oyASSUMED_WEB, 0 );
   w = 9;
   h = 32;
   size = sizeof(double)*w*h*3;
@@ -129,26 +128,24 @@ main(int argc, char** argv)
     for(j=0; j < 3; ++j)
       d[i*3+j] = 0.33*(j+1);
 
-  image = oyImage_Create( w, h, d, OY_TYPE_123_DBL, prof, 0 );
-
-  conversion = oyConversion_CreateInput ( image, 0 );
-  oyImage_Release( &image );
-  filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..colour.cmm.icc", 0,0, 0 );
-  error = oyConversion_FilterAdd( conversion, filter );
-  if(error)
-    fprintf( stdout, "could not add  filter: %s\n", "..colour.cmm.icc" );
-  image = oyImage_Create( w, h, dest, OY_TYPE_123_DBL, prof, 0 );
-  error = oyConversion_OutputAdd( conversion, image );
+  prof = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+  image_in = oyImage_Create( w, h, d, OY_TYPE_123_DBL, prof, 0 );
+  image_out = oyImage_Create( w, h, dest, OY_TYPE_123_DBL, prof, 0 );
+  conversion = oyConversion_CreateBasic( image_in, image_out, 0, 0 );
+  oyImage_Release( &image_in );
+  oyImage_Release( &image_out );
+  oyProfile_Release( &prof );
+  /* create a very simple pixel iterator */
+  pixel_access = oyPixelAccess_Create( 0,0, conversion->input->filter,
+                                       oyPIXEL_ACCESS_IMAGE, 0 );
 
   /* show the Oyranos graph with ghostview */
   ptr =  oyConversion_ToText( conversion, "Oyranos simple Test Graph",0,malloc);
   oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
-  /*system("dot -Tps test.dot -o test.ps; gv -spartan -antialias -magstep 0.7 test.ps &");*/
+#if 1
+  system("dot -Tps test.dot -o test.ps; gv -spartan -antialias -magstep 0.7 test.ps &");
+#endif
   free(ptr); ptr = 0;
-
-  /* create a very simple pixel iterator */
-  pixel_access = oyPixelAccess_Create( 0,0, conversion->input->filter,
-                                       oyPIXEL_ACCESS_IMAGE, 0 );
 
   double * d0 = &buf[0];
   double * d1 = &buf2[0];
