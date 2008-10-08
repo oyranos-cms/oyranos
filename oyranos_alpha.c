@@ -5154,6 +5154,30 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   return options;
 }
 
+oyOptions_s * oy_default_behaviour_settings_ = 0;
+
+/** @func    oyOptions_FromDefaults
+ *  @relates oyOptions_s
+ *  @brief   provide the current state of Oyranos behaviour settings
+ *
+ *  The result will be derived from the applications current state of settings, 
+ *  which is a copy of the Oyranos settings during the first call to this
+ *  function. To store different states you need to implement on your own. 
+ *
+ *  @see oyOPTIONS_e for more details.
+ *
+ *  @param[in]     type                basic or advanced graphics
+ *  @param[in]     flags               OY_NO_CACHE_READ take from Oyranos global
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/10/08 (Oyranos: 0.1.8)
+ *  @date    2008/10/08
+ */
+oyOptions_s *  oyOptions_FromDefaults( oyOPTIONS_e         type,
+                                       uint32_t            flags,
+                                       oyObject_s          object );
+
 /** @func    oyOptions_Copy_
  *  @relates oyOptions_s
  *  @brief   real copy a options object

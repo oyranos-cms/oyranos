@@ -547,6 +547,24 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
+/** @enum    oyOPTIONS_e
+ *  @brief   usage type
+ *
+ *  The types of Oyranos default settings to include into the options set.
+ *  So proofing makes no sense for toolkit widgets, but for advanced
+ *  graphics displaying. All other Oyranos behaviour settings should be taken
+ *  over untouched.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/10/08 (Oyranos: 0.1.8)
+ *  @date    2008/10/08
+ */
+typedef enum {
+  oyOPTIONS_BASIC,                       /** basic settings, as typical for toolkits and office/web applciations */
+} oyOPTIONS_e;
+oyOptions_s *  oyOptions_FromDefaults( oyOPTIONS_e         type,
+                                       uint32_t            flags,
+                                       oyObject_s          object );
 oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
                                        oyObject_s          object );
 int            oyOptions_Release     ( oyOptions_s      ** options );
