@@ -5161,20 +5161,23 @@ oyOptions_s * oy_default_behaviour_settings_ = 0;
  *  @brief   provide the current state of Oyranos behaviour settings
  *
  *  The result will be derived from the applications current state of settings, 
- *  which is a copy of the Oyranos settings during the first call to this
- *  function. To store different states you need to implement on your own. 
+ *  which is itself a copy of the Oyranos settings during the first call to this
+ *  function. To store different states you need to implement on your own.
+ *  The returned object will be a copy not a reference.
+ *  The key names map to the registration/XML syntax.
  *
  *  @see oyOPTIONS_e for more details.
  *
  *  @param[in]     type                basic or advanced graphics
- *  @param[in]     flags               OY_NO_CACHE_READ take from Oyranos global
+ *  @param[in]     flags               OY_NO_CACHE_READ:take from Oyranos global
  *  @param         object              the optional object
+ *  @return                            copy of the current state
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/08 (Oyranos: 0.1.8)
  *  @date    2008/10/08
  */
-oyOptions_s *  oyOptions_FromDefaults( oyOPTIONS_e         type,
+oyOptions_s *  oyOptions_FromDefaults( oyOPTIONDEFAULTS_e  type,
                                        uint32_t            flags,
                                        oyObject_s          object );
 
@@ -5338,30 +5341,32 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
       if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
       {
         if(oyStrcmp_( option_a->name.nick, key) == 0)
-        if(option_a->value_type == oyVAL_STRING)
         {
-          text = option_a->value->string;
-
-          if(text && oyStrlen_( text ))
-            if(!value ||
-               (value && oyStrstr_(value, text)))
-              found = 1;
-        } else if(option_a->value_type == oyVAL_STRING_LIST)
-        {
-          j = 0;
-
-          while(option_a->value->string_list[j])
+          if(option_a->value_type == oyVAL_STRING)
           {
-            text = option_a->value->string_list[j];
+            text = option_a->value->string;
 
             if(text && oyStrlen_( text ))
               if(!value ||
                  (value && oyStrstr_(value, text)))
                 found = 1;
+          } else if(option_a->value_type == oyVAL_STRING_LIST)
+          {
+            j = 0;
 
-            if(found) break;
+            while(option_a->value->string_list[j])
+            {
+              text = option_a->value->string_list[j];
 
-            ++j;
+              if(text && oyStrlen_( text ))
+                if(!value ||
+                   (value && oyStrstr_(value, text)))
+                  found = 1;
+
+              if(found) break;
+
+              ++j;
+            }
           }
         }
       }
@@ -11023,7 +11028,7 @@ const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
 /** @func    oyFilterRegistrationToText
  *  @brief   analyse registration string
  *
- *  @param         registration        registration string to analise
+ *  @param         registration        registration string to analyse
  *  @param[in]     type                kind of answere in return
  *  @param[out]    filter_type         fill the filter type
  *  @param[in]     allocateFunc        use this or Oyranos standard allocator
@@ -11056,8 +11061,8 @@ char *         oyFilterRegistrationToText (
       text = oyStringCopy_( texts[oyFILTER_REG_TYPE-1], allocateFunc );
     if(texts_n >= type && type == oyFILTER_REG_NAME)
       text = oyStringCopy_( texts[oyFILTER_REG_NAME-1], allocateFunc );
-    if(texts_n >= type && type == oyFILTER_REG_FEATURES)
-      text = oyStringCopy_( texts[oyFILTER_REG_FEATURES-1], allocateFunc );
+    if(texts_n >= type && type == oyFILTER_REG_OPTION)
+      text = oyStringCopy_( texts[oyFILTER_REG_OPTION-1], allocateFunc );
     if(texts_n >= oyFILTER_REG_TYPE && filter_type)
     {
            if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour"))
