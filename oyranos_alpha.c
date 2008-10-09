@@ -11055,12 +11055,12 @@ char *         oyFilterRegistrationToText (
     texts = oyStringSplit_( registration, '.', &texts_n, oyAllocateFunc_);
     if(texts_n >= type && type == oyFILTER_REG_TOP)
       text = oyStringCopy_( texts[oyFILTER_REG_TOP-1], allocateFunc );
-    if(texts_n >= type && type == oyFILTER_REG_VENDOR)
-      text = oyStringCopy_( texts[oyFILTER_REG_VENDOR-1], allocateFunc );
+    if(texts_n >= type && type == oyFILTER_REG_DOMAIN)
+      text = oyStringCopy_( texts[oyFILTER_REG_DOMAIN-1], allocateFunc );
     if(texts_n >= type && type == oyFILTER_REG_TYPE)
       text = oyStringCopy_( texts[oyFILTER_REG_TYPE-1], allocateFunc );
-    if(texts_n >= type && type == oyFILTER_REG_NAME)
-      text = oyStringCopy_( texts[oyFILTER_REG_NAME-1], allocateFunc );
+    if(texts_n >= type && type == oyFILTER_REG_APPLICATION)
+      text = oyStringCopy_( texts[oyFILTER_REG_APPLICATION-1], allocateFunc );
     if(texts_n >= type && type == oyFILTER_REG_OPTION)
       text = oyStringCopy_( texts[oyFILTER_REG_OPTION-1], allocateFunc );
     if(texts_n >= oyFILTER_REG_TYPE && filter_type)

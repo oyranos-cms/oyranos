@@ -506,7 +506,7 @@ typedef struct {
 
   uint32_t             id;             /**< id to map to events and widgets */
   oyName_s             name;           /**< nick, name, description/help, e.g. "radius" "Radius" "..." */
-  const char         * registration;    /**< full key name to store configuration, e.g. "org.oyranos.generic.scale", config key name will be name.nick; @todo Whats the difference here? registration <-> XML? */
+  const char         * registration;    /**< full key name to store configuration, e.g. "sw/oyranos.org/generic/scale", config key name will be name.nick; @todo Whats the difference here? registration <-> XML? */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -1266,11 +1266,11 @@ const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
 
 typedef enum {
   oyFILTER_REG_NONE,
-  oyFILTER_REG_TOP,                    /**< e.g. "org" */
-  oyFILTER_REG_VENDOR,                 /**< e.g. "oyranos" */
-  oyFILTER_REG_TYPE,                   /**< oyFilterTypeToText/oyFILTER_TYPE_e, e.g. "generic" */
-  oyFILTER_REG_NAME,                   /**< e.g. "scale" */
-  oyFILTER_REG_OPTION,                 /**< e.g. "x" */
+  oyFILTER_REG_TOP,                    /**< e.g. "sw" for filters */
+  oyFILTER_REG_DOMAIN,                 /**< e.g. "oyranos.org" */
+  oyFILTER_REG_TYPE,                   /**< oyFilterTypeToText/oyFILTER_TYPE_e, e.g. "generic" filter group */
+  oyFILTER_REG_APPLICATION,            /**< e.g. "scale" filter name */
+  oyFILTER_REG_OPTION,                 /**< e.g. "x" filter option */
   oyFILTER_REG_MAX
 } oyFILTER_REG_e;
 
@@ -1585,7 +1585,7 @@ struct oyFilter_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  const char         * registration_;  /**< a registration name, e.g. "org.oyranos.generic.scale" */
+  const char         * registration_;  /**< a registration name, e.g. "sw/oyranos.org/generic/scale" */
   oyName_s           * name_;          /**< nick, name, description/help */
   char                 cmm_[8];        /**< cmm name to look up for infos */
 
