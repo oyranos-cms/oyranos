@@ -506,7 +506,7 @@ typedef struct {
 
   uint32_t             id;             /**< id to map to events and widgets */
   oyName_s             name;           /**< nick, name, description/help, e.g. "radius" "Radius" "..." */
-  const char         * registration;    /**< full key name to store configuration, e.g. "org.oyranos.generic.scale.none,linear,cubic", config key name will be name.nick */
+  const char         * registration;    /**< full key name to store configuration, e.g. "org.oyranos.generic.scale", config key name will be name.nick; @todo Whats the difference here? registration <-> XML? */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -547,7 +547,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
-/** @enum    oyOPTIONS_e
+/** @enum    oyOPTIONDEFAULTS_e
  *  @brief   usage type
  *
  *  The types of Oyranos default settings to include into the options set.
@@ -560,9 +560,10 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  *  @date    2008/10/08
  */
 typedef enum {
-  oyOPTIONS_BASIC,                       /** basic settings, as typical for toolkits and office/web applciations */
-} oyOPTIONS_e;
-oyOptions_s *  oyOptions_FromDefaults( oyOPTIONS_e         type,
+  oyOPTIONDEFAULTS_BASIC,              /** basic settings, as typical for toolkits and office/web applciations, disable proofing */
+  oyOPTIONDEFAULTS_ADVANCED            /** advanced settings, as typical for editing images, include proofing */
+} oyOPTIONDEFAULTS_e;
+oyOptions_s *  oyOptions_FromDefaults( oyOPTIONDEFAULTS_e  type,
                                        uint32_t            flags,
                                        oyObject_s          object );
 oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
@@ -1196,7 +1197,7 @@ struct oyImage_s {
   oyCHANNELTYPE_e    * channel_layout; /**< non profile described channels */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
-  oyOptions_s        * options_;       /*!< for instance channel layout (?) */
+  oyOptions_s        * options_;       /*!< channel layout (? undecided) */
   oyProfile_s        * profile_;       /*!< image profile */
   int                  display_pos_x;  /**< Possibly this can be part of the output profile; upper position on display of image*/
   int                  display_pos_y;  /*!< left position on display of image */
@@ -1265,11 +1266,11 @@ const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
 
 typedef enum {
   oyFILTER_REG_NONE,
-  oyFILTER_REG_TOP,
-  oyFILTER_REG_VENDOR,
-  oyFILTER_REG_TYPE,                   /**< oyFilterTypeToText/oyFILTER_TYPE_e*/
-  oyFILTER_REG_NAME,
-  oyFILTER_REG_FEATURES,
+  oyFILTER_REG_TOP,                    /**< e.g. "org" */
+  oyFILTER_REG_VENDOR,                 /**< e.g. "oyranos" */
+  oyFILTER_REG_TYPE,                   /**< oyFilterTypeToText/oyFILTER_TYPE_e, e.g. "generic" */
+  oyFILTER_REG_NAME,                   /**< e.g. "scale" */
+  oyFILTER_REG_OPTION,                 /**< e.g. "x" */
   oyFILTER_REG_MAX
 } oyFILTER_REG_e;
 
@@ -1584,12 +1585,12 @@ struct oyFilter_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  const char         * registration_;  /**< a registration name, e.g. "org.oyranos.generic.scale.none,linear,cubic" */
+  const char         * registration_;  /**< a registration name, e.g. "org.oyranos.generic.scale" */
   oyName_s           * name_;          /**< nick, name, description/help */
   char                 cmm_[8];        /**< cmm name to look up for infos */
 
   oyFILTER_TYPE_e      filter_type_;   /**< filter type */
-  char               * category_;      /**< the ui menue category for this filter */
+  char               * category_;      /**< the ui menue category for this filter, to be specified */
 
   oyOptions_s        * options_;       /**< local options */
   char               * opts_ui_;       /**< xml ui elements for filter options*/

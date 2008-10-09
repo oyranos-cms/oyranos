@@ -55,7 +55,7 @@ char oy_elektra_error_text[24];
 char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", rc);
                                  return oy_elektra_error_text; }
 
-#if ELEKTRA_VERSION > 600
+#if KDB_VERSION_NUM > 600
 #define kdbStrError(t) oy__kdbStrError(t)
 #endif
 
@@ -104,7 +104,6 @@ void oyOpen_ (void)
       WARNc_S("Could not initialise Elektra.");
     oyranos_init = 1;
   }
-  kdbOpen( oy_handle_ );
 }
 void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 /* @todo make oyOpen unnecessary */
@@ -319,7 +318,7 @@ oyAddKey_valueComment_ (const char* keyName,
   if(!oy_handle_)
     return 0;
   rc=kdbGetKey( oy_handle_, key );
-  if(rc != KDB_ERR_OK)
+  if(rc < 0)
     oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s",
                      __FILE__,__LINE__, rc, kdbStrError(rc), name);
   if(value)
@@ -339,7 +338,7 @@ oyAddKey_valueComment_ (const char* keyName,
 
   oyOpen_();
   rc=kdbSetKey( oy_handle_, key ); ERR
-  if(rc != KDB_ERR_OK)
+  if(rc < 0)
     oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s",
                      __FILE__,__LINE__, rc, kdbStrError(rc), name);
   oyClose_();
