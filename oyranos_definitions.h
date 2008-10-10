@@ -101,7 +101,7 @@
 #define OY_BEHAVIOUR_STD         OY_STD OY_SLASH "behaviour" OY_SLASH
 
 /** Oyranos default profiles key path in the elektra data base */
-#define OY_REGISTRED_PROFILES    OY_STD "/device_profiles"
+#define OY_REGISTRED_PROFILES    OY_STD OY_SLASH "device_profiles"
 /** elektra system keys */
 #define OY_SYS                   "system/"
 /** elektra user keys */

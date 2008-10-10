@@ -790,7 +790,7 @@ oyOptions_s* lcmsFilter_CmmIccValidateOptions
   uint32_t error = !filter;
 
   if(!error)
-    error = filter->filter_type_ != oyFILTER_TYPE_COLOUR;
+    error = filter->filter_type_ != oyFILTER_TYPE_COLOUR_ICC;
 
   *result = error;
 
@@ -1036,7 +1036,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsCMMMessageFuncSet,
   lcmsCMMCanHandle,
 
-  "org.oyranos.colour.cmm.icc.lcms",
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "colour_icc/lcms",
 
   {0,0,1},
 

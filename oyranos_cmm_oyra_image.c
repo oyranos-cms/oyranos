@@ -55,6 +55,7 @@ oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
 {
   uint32_t error = !filter;
   oyDATATYPE_e data_type = 0;
+  int planar, channels;
 
   if(!error)
     error = filter->type_ != oyOBJECT_FILTER_S;
@@ -69,7 +70,18 @@ oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
            data_type == oyDOUBLE
                                    ))
         error = 1;
+
+      planar = oyToPlanar_m( filter->image_->layout_[0] );
+      if(!error && planar)
+        error = 1;
+
+      channels = oyToChannels_m( filter->image_->layout_[0] );
+      if(!error && channels > 4)
+        error = 1;
     }
+
+  if(!error)
+    error = !oyOptions_FindString( validate, "filename", 0 );
 
   *result = error;
 
@@ -91,11 +103,25 @@ int      oyraFilterPlug_ImageOutputPPMRun (
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilter_s * filter = 0;
   int result = 0;
+  char * filename = 0;
+  FILE * fp = 0;
 
   filter = socket->node->filter;
 
   /* to reuse the requestor_plug is a exception for the starting request */
   result = filter->api4_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
+
+  if(result <= 0)
+    filename = oyOptions_FindString( filter->options_, "filename", 0 );
+
+  if(filename)
+    fp = fopen( filename, "rw" );
+
+  if(fp)
+  {
+    fprintf( fp, "P6\n1\n1 # %s\n255\n   ", socket->node->relatives_ );
+    fclose( fp );
+  }
 
   return result;
 }
@@ -131,6 +157,57 @@ oyConnector_s oyra_imageOutputPPM_connector = {
 oyConnector_s * oyra_imageOutputPPM_connectors[2] = 
              { &oyra_imageOutputPPM_connector, 0 };
 
+/** @instance oyra_api4
+ *  @brief    oyra oyCMMapi4_s implementation
+ *
+ *  A filter writing a PPM image.
+ *
+ *  @par Options:
+ *  - "filename" - the file name to write to
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/10/07 (Oyranos: 0.1.8)
+ *  @date    2008/10/07
+ */
+oyCMMapi4_s   oyra_api4_image_output_ppm = {
+
+  oyOBJECT_CMM_API4_S,
+  0,0,0,
+  0,
+  
+  oyraCMMInit,
+  oyraCMMMessageFuncSet,
+  oyraFilter_ImageOutputPPMCanHandle,
+
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output_ppm",
+
+  {0,0,1},
+
+  oyraFilter_ImageOutputPPMValidateOptions,
+  oyraWidgetEvent,
+
+  0,
+  0,
+  oyraFilter_ImageRootContextToMem,
+  0,
+  oyraFilterPlug_ImageOutputPPMRun,
+
+  {oyOBJECT_NAME_S, 0,0,0, "image_out_ppm", "Image[out_ppm]", "Output PPM Image Filter Object"},
+  "Image/Simple Image[out_ppm]", /* category */
+  0,   /* options */
+  0,   /* opts_ui_ */
+
+  oyra_imageOutputPPM_connectors,   /* plugs */
+  1,   /* plugs_n */
+  0,   /* plugs_last_add */
+  0,   /* sockets */
+  0,   /* sockets_n */
+  0    /* sockets_last_add */
+};
+
+
+
+/* ---------------------------------------------------------------------------*/
 
 
 /** @func    oyraFilter_ImageRootCanHandle
@@ -363,51 +440,6 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
  *
- *  a filter writing a PPM image
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/10/07 (Oyranos: 0.1.8)
- *  @date    2008/10/07
- */
-oyCMMapi4_s   oyra_api4_image_output_ppm = {
-
-  oyOBJECT_CMM_API4_S,
-  0,0,0,
-  0,
-  
-  oyraCMMInit,
-  oyraCMMMessageFuncSet,
-  oyraFilter_ImageOutputPPMCanHandle,
-
-  "org.oyranos.image.image.output_ppm",
-
-  {0,0,1},
-
-  oyraFilter_ImageOutputPPMValidateOptions,
-  oyraWidgetEvent,
-
-  0,
-  0,
-  oyraFilter_ImageRootContextToMem,
-  0,
-  oyraFilterPlug_ImageOutputPPMRun,
-
-  {oyOBJECT_NAME_S, 0,0,0, "image_out_ppm", "Image[out_ppm]", "Output PPM Image Filter Object"},
-  "Image/Simple Image[out_ppm]", /* category */
-  0,   /* options */
-  0,   /* opts_ui_ */
-
-  oyra_imageOutputPPM_connectors,   /* plugs */
-  1,   /* plugs_n */
-  0,   /* plugs_last_add */
-  0,   /* sockets */
-  0,   /* sockets_n */
-  0    /* sockets_last_add */
-};
-
-/** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
- *
  *  a filter providing a target image
  *
  *  @version Oyranos: 0.1.8
@@ -424,7 +456,7 @@ oyCMMapi4_s   oyra_api4_image_output = {
   oyraCMMMessageFuncSet,
   oyraFilter_ImageRootCanHandle,
 
-  "org.oyranos.image.image.output",
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output",
 
   {0,0,1},
 
@@ -469,7 +501,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
   oyraCMMMessageFuncSet,
   oyraFilter_ImageRootCanHandle,
 
-  "org.oyranos.image.image.root",
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/root",
 
   {0,0,1},
 

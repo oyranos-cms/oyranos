@@ -11011,12 +11011,14 @@ const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
     if(type == oyNAME_NICK || type == oyNAME_NAME)
     {
       if(filter_type == oyFILTER_TYPE_COLOUR) return "colour";
+      if(filter_type == oyFILTER_TYPE_COLOUR_ICC) return "colour_icc";
       if(filter_type == oyFILTER_TYPE_TONEMAP) return "tonemap";
       if(filter_type == oyFILTER_TYPE_IMAGE) return "image";
       if(filter_type == oyFILTER_TYPE_GENERIC) return "generic";
     }
 
       if(filter_type == oyFILTER_TYPE_COLOUR) return "colour";
+      if(filter_type == oyFILTER_TYPE_COLOUR_ICC) return "ICC CMM";
       if(filter_type == oyFILTER_TYPE_TONEMAP) return "contrast or tone mapping";
       if(filter_type == oyFILTER_TYPE_IMAGE) return "image";
       if(filter_type == oyFILTER_TYPE_GENERIC) return "generic";
@@ -11065,7 +11067,9 @@ char *         oyFilterRegistrationToText (
       text = oyStringCopy_( texts[oyFILTER_REG_OPTION-1], allocateFunc );
     if(texts_n >= oyFILTER_REG_TYPE && filter_type)
     {
-           if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour"))
+           if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour_icc"))
+        *filter_type = oyFILTER_TYPE_COLOUR_ICC;
+      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour"))
         *filter_type = oyFILTER_TYPE_COLOUR;
       else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "tonemap"))
         *filter_type = oyFILTER_TYPE_TONEMAP;
@@ -11104,8 +11108,9 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
   if(registration && pattern)
   {
     match = 1;
-    reg_texts = oyStringSplit_( registration,'.',&reg_texts_n, oyAllocateFunc_);
-    p_texts = oyStringSplit_( pattern,'.',&p_texts_n, oyAllocateFunc_);
+    reg_texts = oyStringSplit_( registration, OY_SLASH_C, &reg_texts_n,
+                                oyAllocateFunc_);
+    p_texts = oyStringSplit_( pattern, OY_SLASH_C, &p_texts_n, oyAllocateFunc_);
 
     for( i = 0; i < reg_texts_n && i < p_texts_n; ++i)
     {
@@ -11496,7 +11501,7 @@ oyProfiles_s* oyFilter_ProfilesGet( oyFilter_s        * filter,
  *  @relates oyFilter_s
  *  @brief   set filter image
  *
- *  Externally only useful for oyFILTER_TYPE_IMAGE / "..image"
+ *  Externally only useful for oyFILTER_TYPE_IMAGE / "//image"
  *
  *  @param[in,out] obj                 filter object
  *  @param         image               the image as source
@@ -13582,10 +13587,10 @@ oyConversion_s   * oyConversion_CreateBasic (
   {
     s = oyConversion_CreateInput ( input, 0 );
 
-    filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "..colour.cmm.icc", 0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_COLOUR_ICC, "//colour_icc", 0,0, 0 );
     error = oyConversion_FilterAdd( s, filter );
     if(error)
-      WARNc1_S( "could not add  filter: %s\n", "..colour.cmm.icc" );
+      WARNc1_S( "could not add  filter: %s\n", "//colour_icc" );
 
     error = oyConversion_OutputAdd( s, output );
   }
@@ -13614,7 +13619,7 @@ oyConversion_s   * oyConversion_CreateInput (
 
   if(!error)
   {
-    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.root", 0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "//image/root", 0,0, 0 );
     s->input = oyFilterNode_Create( filter, s->oy_ );
     oyFilter_Release( &filter );
 
@@ -13910,7 +13915,7 @@ int                oyConversion_OutputAdd (
 
   if(!error)
   {
-    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "..image.image.output", 0,0, 0);
+    filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "//image/output", 0,0, 0);
 
     if(!error)
       error = oyFilter_ImageSet ( filter, output );
@@ -13926,7 +13931,7 @@ int                oyConversion_OutputAdd (
     oyFilterNode_Release( &last );
   }
 
-  if(error)
+  if(error && s)
     oyFilterNode_Release( &s->out_ );
 
   return error;

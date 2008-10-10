@@ -1255,6 +1255,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 typedef enum {
   oyFILTER_TYPE_NONE,                  /**< nothing */
   oyFILTER_TYPE_COLOUR,                /**< colour */
+  oyFILTER_TYPE_COLOUR_ICC,            /**< colour icc style */
   oyFILTER_TYPE_TONEMAP,               /**< contrast or tone mapping */
   oyFILTER_TYPE_IMAGE,                 /**< image storage */
   oyFILTER_TYPE_GENERIC,               /**< generic */
@@ -1264,6 +1265,7 @@ typedef enum {
 const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
                                        oyNAME_e            type );
 
+/** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html */
 typedef enum {
   oyFILTER_REG_NONE,
   oyFILTER_REG_TOP,                    /**< e.g. "sw" for filters */
