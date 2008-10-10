@@ -562,7 +562,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
 
         DBG_PROG
 
-        list = oyReturnChildrenList_(OY_KEY OY_SLASH "default", &rc ); ERR
+        list = oyReturnChildrenList_(OY_STD, &rc ); ERR
         if(!list)
         {
           FOR_EACH_IN_KDBKEYSET( current, list )
