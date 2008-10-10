@@ -11052,7 +11052,7 @@ char *         oyFilterRegistrationToText (
 
   if(registration)
   {
-    texts = oyStringSplit_( registration, '.', &texts_n, oyAllocateFunc_);
+    texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
     if(texts_n >= type && type == oyFILTER_REG_TOP)
       text = oyStringCopy_( texts[oyFILTER_REG_TOP-1], allocateFunc );
     if(texts_n >= type && type == oyFILTER_REG_DOMAIN)
