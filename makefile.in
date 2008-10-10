@@ -587,6 +587,12 @@ uninstall:
 	          $(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT) \
 	          $(DESTDIR)$(libdir)/lib$${lib}.a; \
 	done
+	for lib in $(CMMS); do \
+	   $(RM) $(BUILDDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	         $(BUILDDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	         $(BUILDDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT) \
+	         $(BUILDDIR)$(cmmdir)/lib$${lib}.a; \
+	done
 	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
 	test -d standard_profiles && \
 	(  cd standard_profiles; \
