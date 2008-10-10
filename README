@@ -9,12 +9,35 @@ Internet:
     wiki: http://www.oyranos.org/wiki/index.php?title=Oyranos
 
 
-Building:
+Dependencies:
     A prerequisite is Elektra - http://www.libelektra.org
-    FLTK (--enable-threads) is needed for the example Gui.
+    FLTK (--enable-threads) is needed for the example Gui - http://www.fltk.org
     Xcalib a vcgt loader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
 
+  Debian:
+    locales
+    build-essential
+    libxml2-dev (if you want xml importing/exporting)
+    elektra-0.7.0 can now be installed successfully.
+
+    pkg-config
+    gettext
+    fltk1.1-dev
+    libpng12-dev
+    liblcms1-dev
+    libcairo2-dev
+    x11proto-xf86vidmode-dev
+    x11proto-xext-dev
+    libxxf86vm-dev
+    oyranos-0.1.8 can now be installed successfully.
+
+  optional:
+    ICC Examin to build afterwards. oyranos-config-fltk uses the profile viewer.
+
+
+Building:
     $ configure
     $ make
     $ make install
+
 

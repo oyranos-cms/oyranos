@@ -35,8 +35,5 @@ The Doxyfile_intern is for Oyranos developers, not for public installation.
 
 
 Dependencies
-xcalib
-FLTK (--enable-threads)
-Elektra (included)
-
+Can be found in README.
 
