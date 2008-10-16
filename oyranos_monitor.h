@@ -61,7 +61,7 @@ char*  oyGetMonitorProfileNameFromDB ( const char        * display,
 /* TODO set a memory based profile */
 int   oySetMonitorProfile         (const char* display_name,
                                    const char* profil_name );
-int   oyActivateMonitorProfiles   (const char* display_name);
+int      oyActivateMonitorProfiles   ( const char        * display_name );
 /* @} */
 
 #ifdef __cplusplus

@@ -41,6 +41,7 @@
 
 #include "oyranos.h"
 #include "oyranos_internal.h"
+#include "oyranos_monitor.h"
 #include "oyranos_monitor_internal.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
@@ -886,14 +887,23 @@ oyActivateMonitorProfile_         (const char* display_name,
   const char * profil_basename = 0;
   char* profile_name_ = 0;
   oyProfile_s * prof = 0;
+  size_t size = 0;
 #if defined( HAVE_X ) && !defined(__APPLE__)
   oyMonitor_s * disp = 0;
   char       *dpy_name = NULL;
   char *text = 0;
 #endif
 
-  DBG_PROG_START
+  char * moni_profile = oyGetMonitorProfile_( display_name,
+                                              &size, oyAllocateFunc_ );
 
+  if(moni_profile && size)
+    oyDeAllocateFunc_(moni_profile);
+
+  if(size)
+    return 0;
+
+  DBG_PROG_START
 #if defined( HAVE_X ) && !defined(__APPLE__)
   disp = oyMonitor_newFrom_( display_name );
   if(!disp)
@@ -1598,7 +1608,7 @@ char*  oyGetMonitorProfileNameFromDB ( const char        * display,
 /** @brief set the monitor profile by filename
 
  *  @param      display_name  the display string
- *  @param      profil_name   the file to use as monitor profile
+ *  @param      profil_name   the file to use as monitor profile or 0 to unset
  *  @return                   error
  */
 int
@@ -1618,11 +1628,19 @@ oySetMonitorProfile               (const char* display_name,
   return error;
 }
 
-/** @brief activate the monitor using the stored configuration
-
- *  @param      display_name  the display string
- *  @return                   error
+/** @func    oyActivateMonitorProfiles
+ *  @brief   activate the monitor using the stored configuration
+ *
+ *  Activate in case the appropriate profile is not yet setup in the server.
+ *
  *  @see oySetMonitorProfile for permanently configuring a monitor
+ *
+ *  @param   display_name              the display string
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2005/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/10/16
  */
 int
 oyActivateMonitorProfiles         (const char* display_name)
