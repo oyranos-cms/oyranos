@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-07-24 23:14+0200\n"
+"POT-Creation-Date: 2008-10-16 11:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,35 +26,35 @@ msgstr ""
 msgid "!!! ERROR"
 msgstr ""
 
-#: oyranos.c:169
+#: oyranos.c:172
 msgid "not a profile:"
 msgstr ""
 
-#: oyranos.c:204
+#: oyranos.c:212
 msgid "name longer than"
 msgstr ""
 
-#: oyranos.c:232
+#: oyranos.c:240
 msgid "profile not found in colour path:"
 msgstr ""
 
-#: oyranos.c:253
+#: oyranos.c:261
 msgid "profile not found:"
 msgstr ""
 
-#: oyranos.c:291
+#: oyranos.c:299
 msgid "wrong profile for static web colour space selected, need sRGB"
 msgstr ""
 
-#: oyranos.c:627 oyranos.c:655
+#: oyranos.c:635 oyranos.c:663
 msgid "Option not supported type:"
 msgstr ""
 
-#: oyranos.c:713
+#: oyranos.c:721
 msgid "file exists, please remove befor installing new profile."
 msgstr ""
 
-#: oyranos.c:1152
+#: oyranos.c:1160
 msgid "will overwrite policy file"
 msgstr ""
 
@@ -66,19 +66,19 @@ msgstr ""
 msgid "Did not find a type for option:"
 msgstr ""
 
-#: oyranos_elektra.c:446 oyranos_elektra.c:535
+#: oyranos_elektra.c:460 oyranos_elektra.c:549
 msgid "default profile type does not exist:"
 msgstr ""
 
-#: oyranos_io.c:879
+#: oyranos_io.c:880
 msgid "path is not a directory"
 msgstr ""
 
-#: oyranos_io.c:883
+#: oyranos_io.c:884
 msgid "path is a link: ignored"
 msgstr ""
 
-#: oyranos_io.c:888
+#: oyranos_io.c:889
 #, c-format
 msgid "%d. path %s is not readable"
 msgstr ""
@@ -131,12 +131,11 @@ msgstr ""
 msgid "Paths where ICC Profiles can be found"
 msgstr ""
 
-#: oyranos_texts.c:194 oyranos_texts.c:252 oyranos_cmm_oyra.c:1563
-#: oyranos_config_fltk.cxx:1559
+#: oyranos_texts.c:194 oyranos_texts.c:252 oyranos_config_fltk.cxx:1563
 msgid "Policy"
 msgstr ""
 
-#: oyranos_texts.c:195 oyranos_texts.c:253 oyranos_cmm_oyra.c:1563
+#: oyranos_texts.c:195 oyranos_texts.c:253
 msgid "Collections of settings in Oyranos"
 msgstr ""
 
@@ -191,11 +190,11 @@ msgstr ""
 msgid "Oyranos Settings"
 msgstr ""
 
-#: oyranos_texts.c:273 oyranos_cmm_oyra.c:1521
+#: oyranos_texts.c:273
 msgid "Editing Rgb"
 msgstr ""
 
-#: oyranos_texts.c:274 oyranos_cmm_oyra.c:1522
+#: oyranos_texts.c:274
 msgid "Prefered Rgb Editing Colour Space"
 msgstr ""
 
@@ -375,7 +374,7 @@ msgstr ""
 msgid "Relative Colorimetric"
 msgstr ""
 
-#: oyranos_texts.c:431 oyranos_alpha.c:419 oyranos_alpha.c:425
+#: oyranos_texts.c:431 oyranos_alpha.c:421 oyranos_alpha.c:427
 msgid "Saturation"
 msgstr ""
 
@@ -425,79 +424,87 @@ msgid ""
 "print time"
 msgstr ""
 
-#: oyranos_monitor.c:330
+#: oyranos_monitor.c:335
 msgid "unexpected EDID lenght"
 msgstr ""
 
-#: oyranos_monitor.c:333
+#: oyranos_monitor.c:338
 msgid "Cant read hardware information from device."
 msgstr ""
 
-#: oyranos_monitor.c:426 oyranos_monitor.c:965 oyranos_monitor.c:1333
+#: oyranos_monitor.c:431 oyranos_monitor.c:985 oyranos_monitor.c:1369
 msgid "open X Display failed"
 msgstr ""
 
-#: oyranos_monitor.c:441
+#: oyranos_monitor.c:446
 msgid "Could not get Xatom, probably your monitor profile is not set:"
 msgstr ""
 
-#: oyranos_monitor.c:973
+#: oyranos_monitor.c:1009
 msgid "No monitor gamma curves by profile:"
 msgstr ""
 
-#: oyranos_monitor.c:1007
+#: oyranos_monitor.c:1043
 msgid "Error obtaining profile"
 msgstr ""
 
-#: oyranos_monitor.c:1014 oyranos_monitor.c:1016
+#: oyranos_monitor.c:1050 oyranos_monitor.c:1052
 msgid "Error setting up atom"
 msgstr ""
 
-#: oyranos_monitor.c:1103
+#: oyranos_monitor.c:1139
 msgid "Error getting atom"
 msgstr ""
 
-#: oyranos_monitor.c:1352
+#: oyranos_monitor.c:1388
 msgid "Xinerama request failed"
 msgstr ""
 
-#: oyranos_monitor.c:1368
+#: oyranos_monitor.c:1404
 msgid "open X Screen failed"
 msgstr ""
 
-#: oyranos_gamma.c:106
+#: oyranos_gamma.c:107
 msgid "is a colour profile administration tool for monitors"
 msgstr ""
 
-#: oyranos_gamma.c:107 oyranos_policy.c:52
+#: oyranos_gamma.c:108 oyranos_policy.c:52
 msgid "Usage"
 msgstr ""
 
-#: oyranos_gamma.c:108
+#: oyranos_gamma.c:109
 msgid "Set new profile:"
 msgstr ""
 
-#: oyranos_gamma.c:111
+#: oyranos_gamma.c:112
 msgid "profile name"
 msgstr ""
 
-#: oyranos_gamma.c:113
+#: oyranos_gamma.c:114
 msgid "Unset profile:"
 msgstr ""
 
-#: oyranos_gamma.c:117
+#: oyranos_gamma.c:118
 msgid "Activate profiles:"
 msgstr ""
 
-#: oyranos_gamma.c:120
+#: oyranos_gamma.c:121
+msgid "Query server profile:"
+msgstr ""
+
+#: oyranos_gamma.c:125
+msgid "Query device data base profile:"
+msgstr ""
+
+#: oyranos_gamma.c:129
 msgid "General options:"
 msgstr ""
 
-#: oyranos_gamma.c:121
+#: oyranos_gamma.c:130
 msgid "-v verbose"
 msgstr ""
 
-#: oyranos_gamma.c:136 oyranos_policy.c:140
+#: oyranos_gamma.c:145 oyranos_policy.c:140
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -545,747 +552,738 @@ msgstr ""
 msgid "installation of new policy file failed with error:"
 msgstr ""
 
-#: oyranos_alpha.c:314
+#: oyranos_alpha.c:316
 msgid "XYZ"
 msgstr ""
 
-#: oyranos_alpha.c:315
+#: oyranos_alpha.c:317
 msgid "Lab"
 msgstr ""
 
-#: oyranos_alpha.c:316
+#: oyranos_alpha.c:318
 msgid "Luv"
 msgstr ""
 
-#: oyranos_alpha.c:317
+#: oyranos_alpha.c:319
 msgid "YCbCr"
 msgstr ""
 
-#: oyranos_alpha.c:318
+#: oyranos_alpha.c:320
 msgid "Yxy"
 msgstr ""
 
-#: oyranos_alpha.c:319
+#: oyranos_alpha.c:321
 msgid "Rgb"
 msgstr ""
 
-#: oyranos_alpha.c:320
+#: oyranos_alpha.c:322
 msgid "Gray"
 msgstr ""
 
-#: oyranos_alpha.c:321
+#: oyranos_alpha.c:323
 msgid "Hsv"
 msgstr ""
 
-#: oyranos_alpha.c:322
+#: oyranos_alpha.c:324
 msgid "Hls"
 msgstr ""
 
-#: oyranos_alpha.c:323
+#: oyranos_alpha.c:325
 msgid "Cmyk"
 msgstr ""
 
-#: oyranos_alpha.c:324
+#: oyranos_alpha.c:326
 msgid "Cmy"
 msgstr ""
 
-#: oyranos_alpha.c:325
+#: oyranos_alpha.c:327
 msgid "2color"
 msgstr ""
 
-#: oyranos_alpha.c:326
+#: oyranos_alpha.c:328
 msgid "3color"
 msgstr ""
 
-#: oyranos_alpha.c:327
+#: oyranos_alpha.c:329
 msgid "4color"
 msgstr ""
 
-#: oyranos_alpha.c:329
+#: oyranos_alpha.c:331
 msgid "5color"
 msgstr ""
 
-#: oyranos_alpha.c:331
+#: oyranos_alpha.c:333
 msgid "6color"
 msgstr ""
 
-#: oyranos_alpha.c:333
+#: oyranos_alpha.c:335
 msgid "7color"
 msgstr ""
 
-#: oyranos_alpha.c:335
+#: oyranos_alpha.c:337
 msgid "8color"
 msgstr ""
 
-#: oyranos_alpha.c:337
+#: oyranos_alpha.c:339
 msgid "9color"
 msgstr ""
 
-#: oyranos_alpha.c:339
+#: oyranos_alpha.c:341
 msgid "10color"
 msgstr ""
 
-#: oyranos_alpha.c:341
+#: oyranos_alpha.c:343
 msgid "11color"
 msgstr ""
 
-#: oyranos_alpha.c:343
+#: oyranos_alpha.c:345
 msgid "12color"
 msgstr ""
 
-#: oyranos_alpha.c:345
+#: oyranos_alpha.c:347
 msgid "13color"
 msgstr ""
 
-#: oyranos_alpha.c:347
+#: oyranos_alpha.c:349
 msgid "14color"
 msgstr ""
 
-#: oyranos_alpha.c:349
+#: oyranos_alpha.c:351
 msgid "15color"
 msgstr ""
 
-#: oyranos_alpha.c:385
+#: oyranos_alpha.c:387
 msgid "CIE X"
 msgstr ""
 
-#: oyranos_alpha.c:386 oyranos_alpha.c:405
+#: oyranos_alpha.c:388 oyranos_alpha.c:407
 msgid "CIE Y (Luminance)"
 msgstr ""
 
-#: oyranos_alpha.c:387
+#: oyranos_alpha.c:389
 msgid "CIE Z"
 msgstr ""
 
-#: oyranos_alpha.c:390 oyranos_alpha.c:395
+#: oyranos_alpha.c:392 oyranos_alpha.c:397
 msgid "CIE *L"
 msgstr ""
 
-#: oyranos_alpha.c:391
+#: oyranos_alpha.c:393
 msgid "CIE *a"
 msgstr ""
 
-#: oyranos_alpha.c:392
+#: oyranos_alpha.c:394
 msgid "CIE *b"
 msgstr ""
 
-#: oyranos_alpha.c:396
+#: oyranos_alpha.c:398
 msgid "CIE *u"
 msgstr ""
 
-#: oyranos_alpha.c:397
+#: oyranos_alpha.c:399
 msgid "CIE *v"
 msgstr ""
 
-#: oyranos_alpha.c:400
+#: oyranos_alpha.c:402
 msgid "Luminance Y"
 msgstr ""
 
-#: oyranos_alpha.c:401
+#: oyranos_alpha.c:403
 msgid "Colour b"
 msgstr ""
 
-#: oyranos_alpha.c:402
+#: oyranos_alpha.c:404
 msgid "Colour r"
 msgstr ""
 
-#: oyranos_alpha.c:406
+#: oyranos_alpha.c:408
 msgid "CIE x"
 msgstr ""
 
-#: oyranos_alpha.c:407
+#: oyranos_alpha.c:409
 msgid "CIE y"
 msgstr ""
 
-#: oyranos_alpha.c:410
+#: oyranos_alpha.c:412
 msgid "Red"
 msgstr ""
 
-#: oyranos_alpha.c:411
+#: oyranos_alpha.c:413
 msgid "Green"
 msgstr ""
 
-#: oyranos_alpha.c:412
+#: oyranos_alpha.c:414
 msgid "Blue"
 msgstr ""
 
-#: oyranos_alpha.c:415 oyranos_alpha.c:431
+#: oyranos_alpha.c:417 oyranos_alpha.c:433
 msgid "Black"
 msgstr ""
 
-#: oyranos_alpha.c:418 oyranos_alpha.c:423
+#: oyranos_alpha.c:420 oyranos_alpha.c:425
 msgid "Hue"
 msgstr ""
 
-#: oyranos_alpha.c:420
+#: oyranos_alpha.c:422
 msgid "Value"
 msgstr ""
 
-#: oyranos_alpha.c:424
+#: oyranos_alpha.c:426
 msgid "Lightness"
 msgstr ""
 
-#: oyranos_alpha.c:428 oyranos_alpha.c:434
+#: oyranos_alpha.c:430 oyranos_alpha.c:436
 msgid "Cyan"
 msgstr ""
 
-#: oyranos_alpha.c:429 oyranos_alpha.c:435
+#: oyranos_alpha.c:431 oyranos_alpha.c:437
 msgid "Magenta"
 msgstr ""
 
-#: oyranos_alpha.c:430 oyranos_alpha.c:436
+#: oyranos_alpha.c:432 oyranos_alpha.c:438
 msgid "Yellow"
 msgstr ""
 
-#: oyranos_alpha.c:464
+#: oyranos_alpha.c:466
 msgid "1. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:465
+#: oyranos_alpha.c:467
 msgid "2. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:466
+#: oyranos_alpha.c:468
 msgid "3. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:467
+#: oyranos_alpha.c:469
 msgid "4. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:468
+#: oyranos_alpha.c:470
 msgid "5. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:469
+#: oyranos_alpha.c:471
 msgid "6. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:470
+#: oyranos_alpha.c:472
 msgid "7. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:471
+#: oyranos_alpha.c:473
 msgid "8. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:472
+#: oyranos_alpha.c:474
 msgid "9. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:473
+#: oyranos_alpha.c:475
 msgid "10. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:474
+#: oyranos_alpha.c:476
 msgid "11. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:475
+#: oyranos_alpha.c:477
 msgid "12. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:476
+#: oyranos_alpha.c:478
 msgid "13. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:477
+#: oyranos_alpha.c:479
 msgid "14. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:478
+#: oyranos_alpha.c:480
 msgid "15. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:479
+#: oyranos_alpha.c:481
 msgid "16. Channel"
 msgstr ""
 
-#: oyranos_alpha.c:496
+#: oyranos_alpha.c:572
 msgid "Lockup table, device to PCS, intent perceptual"
 msgstr ""
 
-#: oyranos_alpha.c:497
+#: oyranos_alpha.c:573
 msgid "Lockup table, device to PCS, intent relative colorimetric"
 msgstr ""
 
-#: oyranos_alpha.c:498
+#: oyranos_alpha.c:574
 msgid "Lockup table, device to PCS, intent saturation"
 msgstr ""
 
-#: oyranos_alpha.c:499
+#: oyranos_alpha.c:575
 msgid "Blue Colorant"
 msgstr ""
 
-#: oyranos_alpha.c:500
+#: oyranos_alpha.c:576
 msgid "Blue tone reproduction curve"
 msgstr ""
 
-#: oyranos_alpha.c:501
+#: oyranos_alpha.c:577
 msgid "Lockup table, PCS to device, intent perceptual"
 msgstr ""
 
-#: oyranos_alpha.c:502
+#: oyranos_alpha.c:578
 msgid "Lockup table, PCS to device, intent relative colorimetric"
 msgstr ""
 
-#: oyranos_alpha.c:503
+#: oyranos_alpha.c:579
 msgid "Lockup table, PCS to device, intent saturation"
 msgstr ""
 
-#: oyranos_alpha.c:504
+#: oyranos_alpha.c:580
 msgid "Calibration date"
 msgstr ""
 
-#: oyranos_alpha.c:505
+#: oyranos_alpha.c:581
 msgid "Colour measurement data"
 msgstr ""
 
-#: oyranos_alpha.c:506
+#: oyranos_alpha.c:582
 msgid "Copyright"
 msgstr ""
 
-#: oyranos_alpha.c:507
+#: oyranos_alpha.c:583
 msgid "crdi"
 msgstr ""
 
-#: oyranos_alpha.c:508
+#: oyranos_alpha.c:584
 msgid "Device manufacturerer description"
 msgstr ""
 
-#: oyranos_alpha.c:509
+#: oyranos_alpha.c:585
 msgid "Device model description"
 msgstr ""
 
-#: oyranos_alpha.c:510
+#: oyranos_alpha.c:586
 msgid "gamut"
 msgstr ""
 
-#: oyranos_alpha.c:511
+#: oyranos_alpha.c:587
 msgid "Gray tone reproduction curve"
 msgstr ""
 
-#: oyranos_alpha.c:512
+#: oyranos_alpha.c:588
 msgid "Green Colorant"
 msgstr ""
 
-#: oyranos_alpha.c:513
+#: oyranos_alpha.c:589
 msgid "Green tone reproduction curve"
 msgstr ""
 
-#: oyranos_alpha.c:514
+#: oyranos_alpha.c:590
 msgid "Luminance"
 msgstr ""
 
-#: oyranos_alpha.c:515
+#: oyranos_alpha.c:591
 msgid "Measurement"
 msgstr ""
 
-#: oyranos_alpha.c:516
+#: oyranos_alpha.c:592
 msgid "Media black point"
 msgstr ""
 
-#: oyranos_alpha.c:517
+#: oyranos_alpha.c:593
 msgid "Media white point"
 msgstr ""
 
-#: oyranos_alpha.c:518 oyranos_alpha.c:655
+#: oyranos_alpha.c:594 oyranos_alpha.c:731
 msgid "Named Colour"
 msgstr ""
 
-#: oyranos_alpha.c:519
+#: oyranos_alpha.c:595
 msgid "Named Colour 2"
 msgstr ""
 
-#: oyranos_alpha.c:520
+#: oyranos_alpha.c:596
 msgid "Preview, perceptual"
 msgstr ""
 
-#: oyranos_alpha.c:521
+#: oyranos_alpha.c:597
 msgid "Preview, relative colorimetric"
 msgstr ""
 
-#: oyranos_alpha.c:522
+#: oyranos_alpha.c:598
 msgid "Preview, saturated"
 msgstr ""
 
-#: oyranos_alpha.c:523
+#: oyranos_alpha.c:599
 msgid "Profile description"
 msgstr ""
 
-#: oyranos_alpha.c:524
+#: oyranos_alpha.c:600
 msgid "Profile description, multilingual"
 msgstr ""
 
-#: oyranos_alpha.c:525
+#: oyranos_alpha.c:601
 msgid "Profile sequence description"
 msgstr ""
 
-#: oyranos_alpha.c:526
+#: oyranos_alpha.c:602
 msgid "Profile sequence identification"
 msgstr ""
 
-#: oyranos_alpha.c:527
+#: oyranos_alpha.c:603
 msgid "psd0"
 msgstr ""
 
-#: oyranos_alpha.c:528
+#: oyranos_alpha.c:604
 msgid "psd1"
 msgstr ""
 
-#: oyranos_alpha.c:529
+#: oyranos_alpha.c:605
 msgid "psd2"
 msgstr ""
 
-#: oyranos_alpha.c:530
+#: oyranos_alpha.c:606
 msgid "psd3"
 msgstr ""
 
-#: oyranos_alpha.c:531
+#: oyranos_alpha.c:607
 msgid "ps2s"
 msgstr ""
 
-#: oyranos_alpha.c:532
+#: oyranos_alpha.c:608
 msgid "ps2i"
 msgstr ""
 
-#: oyranos_alpha.c:533
+#: oyranos_alpha.c:609
 msgid "Red Colorant"
 msgstr ""
 
-#: oyranos_alpha.c:534
+#: oyranos_alpha.c:610
 msgid "Red tone reproduction curve"
 msgstr ""
 
-#: oyranos_alpha.c:535
+#: oyranos_alpha.c:611
 msgid "scrd"
 msgstr ""
 
-#: oyranos_alpha.c:536
+#: oyranos_alpha.c:612
 msgid "scrn"
 msgstr ""
 
-#: oyranos_alpha.c:537
+#: oyranos_alpha.c:613
 msgid "Technologie"
 msgstr ""
 
-#: oyranos_alpha.c:538
+#: oyranos_alpha.c:614
 msgid "bfd"
 msgstr ""
 
-#: oyranos_alpha.c:539
+#: oyranos_alpha.c:615
 msgid "Viewing conditions description"
 msgstr ""
 
-#: oyranos_alpha.c:540
+#: oyranos_alpha.c:616
 msgid "Viewing Conditions"
 msgstr ""
 
-#: oyranos_alpha.c:541
+#: oyranos_alpha.c:617
 msgid "Device colours"
 msgstr ""
 
-#: oyranos_alpha.c:542
+#: oyranos_alpha.c:618
 msgid "Measured colours"
 msgstr ""
 
-#: oyranos_alpha.c:543
+#: oyranos_alpha.c:619
 msgid "Profiling parameters"
 msgstr ""
 
-#: oyranos_alpha.c:544
+#: oyranos_alpha.c:620
 msgid "VideoCardGammaTable"
 msgstr ""
 
-#: oyranos_alpha.c:545
+#: oyranos_alpha.c:621
 msgid "Colour adaption matrix"
 msgstr ""
 
-#: oyranos_alpha.c:546
+#: oyranos_alpha.c:622
 msgid "Chromaticity"
 msgstr ""
 
-#: oyranos_alpha.c:547
+#: oyranos_alpha.c:623
 msgid "Named colour order"
 msgstr ""
 
-#: oyranos_alpha.c:548
+#: oyranos_alpha.c:624
 msgid "Named colour names"
 msgstr ""
 
-#: oyranos_alpha.c:549 oyranos_config_fltk.cxx:745
-#: oyranos_config_fltk.cxx:1577
+#: oyranos_alpha.c:625 oyranos_config_fltk.cxx:749
+#: oyranos_config_fltk.cxx:1581
 msgid "----"
 msgstr ""
 
-#: oyranos_alpha.c:649
+#: oyranos_alpha.c:725
 msgid "Input"
 msgstr ""
 
-#: oyranos_alpha.c:650
+#: oyranos_alpha.c:726
 msgid "Display"
 msgstr ""
 
-#: oyranos_alpha.c:651
+#: oyranos_alpha.c:727
 msgid "Output"
 msgstr ""
 
-#: oyranos_alpha.c:652
+#: oyranos_alpha.c:728
 msgid "Link"
 msgstr ""
 
-#: oyranos_alpha.c:653
+#: oyranos_alpha.c:729
 msgid "Abstract"
 msgstr ""
 
-#: oyranos_alpha.c:654
+#: oyranos_alpha.c:730
 msgid "Colour Space"
 msgstr ""
 
-#: oyranos_alpha.c:677
+#: oyranos_alpha.c:753
 msgid "Macintosh"
 msgstr ""
 
-#: oyranos_alpha.c:678
+#: oyranos_alpha.c:754
 msgid "Microsoft"
 msgstr ""
 
-#: oyranos_alpha.c:679
+#: oyranos_alpha.c:755
 msgid "Solaris"
 msgstr ""
 
-#: oyranos_alpha.c:680
+#: oyranos_alpha.c:756
 msgid "SGI"
 msgstr ""
 
-#: oyranos_alpha.c:681
+#: oyranos_alpha.c:757
 msgid "Taligent"
 msgstr ""
 
-#: oyranos_alpha.c:682
+#: oyranos_alpha.c:758
 msgid "Unix and derivatives"
 msgstr ""
 
-#: oyranos_alpha.c:755
+#: oyranos_alpha.c:831
 msgid "Digital camera"
 msgstr ""
 
-#: oyranos_alpha.c:756
+#: oyranos_alpha.c:832
 msgid "Film scanner"
 msgstr ""
 
-#: oyranos_alpha.c:757
+#: oyranos_alpha.c:833
 msgid "Reflective scanner"
 msgstr ""
 
-#: oyranos_alpha.c:758
+#: oyranos_alpha.c:834
 msgid "InkJet printer"
 msgstr ""
 
-#: oyranos_alpha.c:759
+#: oyranos_alpha.c:835
 msgid "Thermal wax printer"
 msgstr ""
 
-#: oyranos_alpha.c:760
+#: oyranos_alpha.c:836
 msgid "Electrophotographic printer"
 msgstr ""
 
-#: oyranos_alpha.c:761
+#: oyranos_alpha.c:837
 msgid "Electrostatic printer"
 msgstr ""
 
-#: oyranos_alpha.c:762
+#: oyranos_alpha.c:838
 msgid "Dye sublimation printer"
 msgstr ""
 
-#: oyranos_alpha.c:763
+#: oyranos_alpha.c:839
 msgid "Photographic paper printer"
 msgstr ""
 
-#: oyranos_alpha.c:764
+#: oyranos_alpha.c:840
 msgid "Film writer"
 msgstr ""
 
-#: oyranos_alpha.c:765
+#: oyranos_alpha.c:841
 msgid "Video Monitor"
 msgstr ""
 
-#: oyranos_alpha.c:766
+#: oyranos_alpha.c:842
 msgid "Video camera"
 msgstr ""
 
-#: oyranos_alpha.c:767
+#: oyranos_alpha.c:843
 msgid "Projection Television"
 msgstr ""
 
-#: oyranos_alpha.c:768
+#: oyranos_alpha.c:844
 msgid "Cathode ray tube display"
 msgstr ""
 
-#: oyranos_alpha.c:769
+#: oyranos_alpha.c:845
 msgid "Passive matrix monitor"
 msgstr ""
 
-#: oyranos_alpha.c:770
+#: oyranos_alpha.c:846
 msgid "Active matrix monitor"
 msgstr ""
 
-#: oyranos_alpha.c:771
+#: oyranos_alpha.c:847
 msgid "Photo CD"
 msgstr ""
 
-#: oyranos_alpha.c:772
+#: oyranos_alpha.c:848
 msgid "PhotoImageSetter"
 msgstr ""
 
-#: oyranos_alpha.c:773
+#: oyranos_alpha.c:849
 msgid "Gravure"
 msgstr ""
 
-#: oyranos_alpha.c:774
+#: oyranos_alpha.c:850
 msgid "Offset Lithography"
 msgstr ""
 
-#: oyranos_alpha.c:775
+#: oyranos_alpha.c:851
 msgid "Silkscreen"
 msgstr ""
 
-#: oyranos_alpha.c:776
+#: oyranos_alpha.c:852
 msgid "Flexography"
 msgstr ""
 
-#: oyranos_alpha.c:799
+#: oyranos_alpha.c:875
 msgid "ITU-R BT.709"
 msgstr ""
 
-#: oyranos_alpha.c:800
+#: oyranos_alpha.c:876
 msgid "SMPTE RP145-1994"
 msgstr ""
 
-#: oyranos_alpha.c:801
+#: oyranos_alpha.c:877
 msgid "EBU Tech.3213-E"
 msgstr ""
 
-#: oyranos_alpha.c:802
+#: oyranos_alpha.c:878
 msgid "P22"
 msgstr ""
 
-#: oyranos_alpha.c:804 oyranos_alpha.c:830 oyranos_alpha.c:851
-#: oyranos_alpha.c:871 oyranos_alpha.c:889
+#: oyranos_alpha.c:880 oyranos_alpha.c:906 oyranos_alpha.c:927
+#: oyranos_alpha.c:947 oyranos_alpha.c:965
 msgid "???"
 msgstr ""
 
-#: oyranos_alpha.c:819
+#: oyranos_alpha.c:895
 msgid "Illuminant unknown"
 msgstr ""
 
-#: oyranos_alpha.c:820
+#: oyranos_alpha.c:896
 msgid "Illuminant D50"
 msgstr ""
 
-#: oyranos_alpha.c:821
+#: oyranos_alpha.c:897
 msgid "Illuminant D65"
 msgstr ""
 
-#: oyranos_alpha.c:822
+#: oyranos_alpha.c:898
 msgid "Illuminant D93"
 msgstr ""
 
-#: oyranos_alpha.c:823
+#: oyranos_alpha.c:899
 msgid "Illuminant F2"
 msgstr ""
 
-#: oyranos_alpha.c:824
+#: oyranos_alpha.c:900
 msgid "Illuminant D55"
 msgstr ""
 
-#: oyranos_alpha.c:825
+#: oyranos_alpha.c:901
 msgid "Illuminant A"
 msgstr ""
 
-#: oyranos_alpha.c:826
+#: oyranos_alpha.c:902
 msgid "Illuminant with equal energy E"
 msgstr ""
 
-#: oyranos_alpha.c:827
+#: oyranos_alpha.c:903
 msgid "Illuminant F8"
 msgstr ""
 
-#: oyranos_alpha.c:844 oyranos_alpha.c:866
+#: oyranos_alpha.c:920 oyranos_alpha.c:942
 msgid "unknown"
 msgstr ""
 
-#: oyranos_alpha.c:845
+#: oyranos_alpha.c:921
 msgid "2 degree (1931)"
 msgstr ""
 
-#: oyranos_alpha.c:847
+#: oyranos_alpha.c:923
 msgid "10 degree (1964)"
 msgstr ""
 
-#: oyranos_alpha.c:867
+#: oyranos_alpha.c:943
 msgid "0/45, 45/0"
 msgstr ""
 
-#: oyranos_alpha.c:868
+#: oyranos_alpha.c:944
 msgid "0/d or d/0"
 msgstr ""
 
-#: oyranos_alpha.c:885
+#: oyranos_alpha.c:961
 msgid "0"
 msgstr ""
 
-#: oyranos_alpha.c:886
+#: oyranos_alpha.c:962
 msgid "100"
 msgstr ""
 
-#: oyranos_alpha.c:11524
+#: oyranos_alpha.c:13825
 msgid "No filter"
 msgstr ""
 
-#: oyranos_alpha.c:11532
+#: oyranos_alpha.c:13833
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr ""
 
-#: oyranos_alpha.c:11540
+#: oyranos_alpha.c:13841
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:11549
+#: oyranos_alpha.c:13850
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 
-#: oyranos_alpha.c:11577
+#: oyranos_alpha.c:13883
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:12317
+#: oyranos_alpha.c:14807
 msgid "---"
 msgstr ""
 
-#: oyranos_cmm_oyra.c:496
+#: oyranos_cmm_oyra_profile.c:344
 msgid "Error in ICC profile tag found!"
 msgstr ""
 
-#: oyranos_cmm_oyra.c:807
+#: oyranos_cmm_oyra_profile.c:655
 msgid "Manufacturer:"
 msgstr ""
 
-#: oyranos_cmm_oyra.c:816
+#: oyranos_cmm_oyra_profile.c:664
 msgid "Modell:"
 msgstr ""
 
-#: oyranos_cmm_oyra.c:825
+#: oyranos_cmm_oyra_profile.c:673
 msgid "Technology:"
-msgstr ""
-
-#: oyranos_cmm_oyra.c:1602 oyranos_config_fltk.cxx:1517
-#: oyranos_config_fltk.cxx:1534
-msgid "Oyranos Configuration"
-msgstr ""
-
-#: oyranos_cmm_oyra.c:1602
-msgid "Oyranos Control Panel"
 msgstr ""
 
 #: oyranos_config_fltk.cxx:18 oyranos_definitions.h:73
@@ -1338,51 +1336,55 @@ msgstr ""
 msgid "Show in external Viewer"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:395
+#: oyranos_config_fltk.cxx:399
 msgid "multiple occurencies of default profile"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:502
+#: oyranos_config_fltk.cxx:506
 msgid "@-3+"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:504
+#: oyranos_config_fltk.cxx:508
 msgid "Add Path containing ICC profiles"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:535
+#: oyranos_config_fltk.cxx:539
 msgid "Exclude this path"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1560
+#: oyranos_config_fltk.cxx:1521 oyranos_config_fltk.cxx:1538
+msgid "Oyranos Configuration"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:1564
 msgid "Reset to a standard Policy for Oyranos."
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1567
+#: oyranos_config_fltk.cxx:1571
 msgid "@-3reload"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1568
+#: oyranos_config_fltk.cxx:1572
 msgid "Refresh"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1574
+#: oyranos_config_fltk.cxx:1578
 msgid "Active Policy:"
 msgstr ""
 
-#: oyranos_helper.h:63
+#: oyranos_helper.h:64
 #, c-format
 msgid "nothing to delete %s"
 msgstr ""
 
-#: oyranos_helper.h:81
+#: oyranos_helper.h:82
 msgid "nothing to allocate - size:"
 msgstr ""
 
-#: oyranos_helper.h:89
+#: oyranos_helper.h:90
 msgid "Can not allocate memory for:"
 msgstr ""
 
-#: oyranos_helper.h:100
+#: oyranos_helper.h:101
 msgid "nothing allocated"
 msgstr ""
