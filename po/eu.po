@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-10-06 11:44+0200\n"
+"POT-Creation-Date: 2008-10-17 09:31+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -18,1953 +18,2319 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: icc_oyranos_extern.c:131
-msgid "XYZ"
-msgstr "XYZ"
-
-#: icc_oyranos_extern.c:132
-msgid "Lab"
-msgstr "Lab"
-
-#: icc_oyranos_extern.c:133
-msgid "Luv"
-msgstr "Luv"
-
-#: icc_oyranos_extern.c:134
-msgid "YCbCr"
-msgstr "YCbCr"
-
-#: icc_oyranos_extern.c:135
-msgid "Yxy"
-msgstr "Yxy"
-
-#: icc_oyranos_extern.c:136
-msgid "Rgb"
-msgstr "Gbu"
-
-#: icc_oyranos_extern.c:137 icc_draw.cpp:670 icc_gl.cpp:2190 icc_waehler.h:128
-msgid "Gray"
-msgstr "Grisa"
-
-#: icc_oyranos_extern.c:138
-msgid "Hsv"
-msgstr "Ñsb"
-
-#: icc_oyranos_extern.c:139
-msgid "Hls"
-msgstr "Ñas"
-
-#: icc_oyranos_extern.c:140
-msgid "Cmyk"
-msgstr "Cmyk"
-
-#: icc_oyranos_extern.c:141
-msgid "Cmy"
-msgstr "Cmy"
-
-#: icc_oyranos_extern.c:142
-msgid "2color"
-msgstr "2kolorea"
-
-#: icc_oyranos_extern.c:143
-msgid "3color"
-msgstr "3kolorea"
-
-#: icc_oyranos_extern.c:144
-msgid "4color"
-msgstr "4kolorea"
-
-#: icc_oyranos_extern.c:146
-msgid "5color"
-msgstr "5kolorea"
-
-#: icc_oyranos_extern.c:148
-msgid "6color"
-msgstr "6kolorea"
-
-#: icc_oyranos_extern.c:150
-msgid "7color"
-msgstr "7kolorea"
-
-#: icc_oyranos_extern.c:152
-msgid "8color"
-msgstr "8kolorea"
-
-#: icc_oyranos_extern.c:154
-msgid "9color"
-msgstr "9kolorea"
-
-#: icc_oyranos_extern.c:156
-msgid "10color"
-msgstr "10kolorea"
-
-#: icc_oyranos_extern.c:158
-msgid "11color"
-msgstr "11kolorea"
-
-#: icc_oyranos_extern.c:160
-msgid "12color"
-msgstr "12kolorea"
-
-#: icc_oyranos_extern.c:162
-msgid "13color"
-msgstr "13kolorea"
-
-#: icc_oyranos_extern.c:164
-msgid "14color"
-msgstr "14kolorea"
-
-#: icc_oyranos_extern.c:166
-msgid "15color"
-msgstr "15kolorea"
-
-#: agviewer.cpp:310 icc_gl.cpp:3292 icc_gl.cpp:3311 icc_gl.cpp:3430
-msgid "left-/middle-/right mouse button -> rotate/cut/menu"
-msgstr "saguaren ezkerreko/erdiko/eskuineko botoia -> biratu/ebaki/menua"
-
-#: agviewer.cpp:323
-msgid "Pause"
-msgstr "Pausarazi"
-
-#: agviewer.cpp:347 agviewer.cpp:355 icc_gl.cpp:3396 icc_gl.cpp:3407
-#: icc_gl.cpp:3412 icc_gl.cpp:3417
-msgid "left mouse button -> go back"
-msgstr "saguaren ezkerreko botoia -> joan atzera"
-
-#: icc_draw.cpp:243
-msgid " used too early!"
-msgstr " goizegi erabilita!"
-
-#: icc_draw.cpp:651
-msgid "unknown Colour"
-msgstr "kolore ezezaguna"
-
-#: icc_draw.cpp:660 icc_draw.cpp:671 icc_helfer.cpp:414
-#: icc_profile_tags.cpp:421 icc_helfer_osx.cpp:68 icc_helfer_x.cpp:64
-msgid "Red"
-msgstr "Gorria"
-
-#: icc_draw.cpp:663 icc_draw.cpp:673 icc_helfer.cpp:415
-#: icc_profile_tags.cpp:422 icc_helfer_osx.cpp:69 icc_helfer_x.cpp:65
-msgid "Green"
-msgstr "Berdea"
-
-#: icc_draw.cpp:666 icc_draw.cpp:675 icc_helfer.cpp:416
-#: icc_profile_tags.cpp:423 icc_helfer_osx.cpp:70 icc_helfer_x.cpp:66
-msgid "Blue"
-msgstr "Urdina"
-
-#: icc_draw.cpp:677 icc_helfer.cpp:424 icc_helfer.cpp:428
-msgid "Cyan"
-msgstr "Cyana"
-
-#: icc_draw.cpp:679 icc_helfer.cpp:425 icc_helfer.cpp:429
-msgid "Magenta"
-msgstr "Magenta"
-
-#: icc_draw.cpp:681 icc_helfer.cpp:426 icc_helfer.cpp:430
-msgid "Yellow"
-msgstr "Horia"
-
-#: icc_draw.cpp:683 icc_gl.cpp:2192 icc_helfer.cpp:417 icc_helfer.cpp:427
-msgid "Black"
-msgstr "Beltza"
-
-#: icc_draw.cpp:685 icc_helfer.cpp:613
-msgid "Luminance"
-msgstr "Luminantzia"
-
-#: icc_draw.cpp:687 icc_helfer.cpp:408
-msgid "Luminance Y"
-msgstr "Luminantzia Y"
-
-#: icc_draw.cpp:689 icc_helfer.cpp:399
-msgid "CIE X"
-msgstr "CIE X"
-
-#: icc_draw.cpp:691 icc_helfer.cpp:400 icc_helfer.cpp:411
-msgid "CIE Y (Luminance)"
-msgstr "CIE Y (luminantzia)"
-
-#: icc_draw.cpp:693 icc_helfer.cpp:401
-msgid "CIE Z"
-msgstr "CIE Z"
-
-#: icc_draw.cpp:695 icc_helfer.cpp:422
-msgid "Lightness"
-msgstr "Argitasuna"
-
-#: icc_draw.cpp:697 icc_helfer.cpp:420
-msgid "Value"
-msgstr "Balioa"
-
-#: icc_draw.cpp:699 icc_examin_farbraum.cpp:386 icc_examin_io.cpp:320
-#: icc_helfer.cpp:402 icc_helfer.cpp:405
-msgid "CIE *L"
-msgstr "CIE *L"
-
-#: icc_draw.cpp:701 icc_examin_farbraum.cpp:387 icc_examin_io.cpp:321
-#: icc_gl.cpp:1036 icc_gl.cpp:1110 icc_gl.cpp:1136 icc_gl.cpp:1144
-#: icc_helfer.cpp:403
-msgid "CIE *a"
-msgstr "CIE *a"
-
-#: icc_draw.cpp:703 icc_examin_farbraum.cpp:388 icc_examin_io.cpp:322
-#: icc_gl.cpp:1049 icc_gl.cpp:1152 icc_gl.cpp:1172 icc_gl.cpp:1179
-#: icc_helfer.cpp:404
-msgid "CIE *b"
-msgstr "CIE *b"
-
-#: icc_draw.cpp:705 icc_helfer.cpp:409
-msgid "Colour b"
-msgstr "b kolorea"
-
-#: icc_draw.cpp:707 icc_helfer.cpp:410
-msgid "Colour r"
-msgstr "r kolorea"
-
-#: icc_draw.cpp:746 icc_draw.cpp:807
-msgid " with "
-msgstr " honekin "
-
-#: icc_draw.cpp:746 icc_draw.cpp:807
-msgid " points"
-msgstr " puntu"
-
-#: icc_draw.cpp:753
-msgid " with Gamma: 1.0"
-msgstr " gammarekin: 1.0"
-
-#: icc_draw.cpp:766 icc_draw.cpp:785
-msgid " with one entry for gamma: "
-msgstr " gammaren sarrera batekin: "
-
-#: icc_examin.cpp:101
+#: oyranos.c:110
 #, c-format
 msgid "WARNING"
 msgstr ""
 
-#: icc_examin.cpp:105
+#: oyranos.c:113
 #, c-format
 msgid "!!! ERROR"
 msgstr ""
 
-#: icc_examin.cpp:254
-msgid "Gamut selector"
-msgstr "Kolore-gama hautatzailea"
-
-#: icc_examin.cpp:344 icc_examin.cpp:1268
-msgid "loaded"
-msgstr "kargatuta"
-
-#: icc_examin.cpp:350
-msgid "Ready"
-msgstr "Prest"
-
-#: icc_examin.cpp:399
-msgid ""
-"ICC colour profiles (*.{I,i}{C,c}{M,m,C,c})\tMeasurement (*.{txt,it8,IT8,RGB,"
-"CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Gamuts (*.{wrl,vrml}"
-msgstr ""
-"ICC kolore-profilak (*.{I,i}{C,c}{M,m,C,c})\tNeurketa (*.{txt,it8,IT8,RGB,"
-"CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Kolore-gama (*.{wrl,"
-"vrml}"
-
-#: icc_examin.cpp:399
-msgid "Which ICC profile?"
-msgstr "Zein ICC profila?"
-
-#: icc_examin.cpp:797 icc_examin.cpp:800
-msgid "Compare Measurement <-> Profile Colours"
-msgstr "Konparatu neurketa <-> profilaren koloreak"
-
-#: icc_examin.cpp:799
-msgid "none"
-msgstr "bat ere ez"
-
-#: icc_examin.cpp:817 icc_examin.cpp:821
-msgid "Gamut View"
-msgstr "Kolore-gamaren ikuspegia"
-
-#: icc_examin.cpp:872 icc_gl.h:274
-msgid "not available"
-msgstr "ez dago erabilgarri"
-
-#: icc_examin.cpp:1208
-msgid "Filename (ICC data type)"
-msgstr "Fitxategi-izena (ICC datu mota)"
-
-#: icc_examin.cpp:1211
-msgid "Filename (other data type)"
-msgstr "Fitxategi-izena (beste datu mota)"
-
-#: icc_examin.cpp:1213
-msgid "Filename (corrupted ICC data type)"
-msgstr "Fitxategi-izena (hondatutako ICC datu mota)"
-
-#: icc_examin.cpp:1218
-msgid "found no content for"
-msgstr "ez da honen edukirik aurkitu"
-
-#: icc_examin.cpp:1221
-msgid "Internal error"
-msgstr "Barneko errorea"
-
-#: icc_examin.cpp:1224
-msgid "No. Tag   Type   Size Description"
-msgstr "IDa Etik. Mota   Tam. Azalpena"
-
-#: icc_examin_io.cpp:328
-msgid "no net found in VRML file"
-msgstr "ez da sarerik aurkitu VRML fitxategian"
-
-#: icc_examin_io.cpp:372
-msgid "no net found. Is Argyll installed?"
-msgstr "ez da sarerik aurkitu. Argyll instalatuta dago?"
-
-#: icc_examin_io.cpp:557
-msgid "Stop loading "
-msgstr "Gelditu kargatzea "
-
-#: icc_examin_io.cpp:667
-msgid "HTML Documents (*.htm*)"
-msgstr "HTML dokumentuak (*.htm*)"
-
-#: icc_examin_io.cpp:671 icc_betrachter.cxx:624
-msgid "Save Report"
-msgstr "Gorde txostena"
-
-#: icc_examin_io.cpp:743
-msgid "ICC colour profiles (*.ic*)"
-msgstr "ICC kolore-profilak (*.ic*)"
-
-#: icc_examin_io.cpp:744 icc_betrachter.cxx:625
-msgid "Save Gamut as Profile"
-msgstr "Gorde kolore-gama profila gisa"
-
-#: icc_examin_io.cpp:746
-msgid "VRML Files (*.wrl)"
-msgstr "VRML fitxategiak (*.wrl)"
-
-#: icc_examin_io.cpp:747 icc_betrachter.cxx:626
-msgid "Save Gamut as VRML"
-msgstr "Gorde kolore-gama VRML gisa"
-
-#: icc_examin_tagwahl.cpp:59
-msgid "empty"
-msgstr "hutsa"
-
-#: icc_examin_tagwahl.cpp:157
-msgid "RGB primaries"
-msgstr "GBU primarioak"
-
-#: icc_fenster.cpp:243
-msgid "Log:"
-msgstr ""
-
-#: icc_fenster.cpp:245 icc_fenster.cpp:312 icc_betrachter.cxx:770
-msgid "Yes"
-msgstr "Bai"
-
-#: icc_fenster.cpp:309
-msgid "Information:"
-msgstr "Informazioa:"
-
-#: icc_gl.cpp:745 icc_gl.cpp:748 icc_gl.cpp:755 icc_gl.cpp:766 icc_gl.cpp:770
-#: icc_gl.cpp:785
-msgid "Could not open font in:"
-msgstr "Ezin izan da letra-tipoa ireki:"
-
-#: icc_gl.cpp:877
-#, c-format
-msgid "0,0,0"
-msgstr "0,0,0"
-
-#: icc_gl.cpp:2158 icc_gl.cpp:2168 icc_gl.cpp:2171 icc_gl.cpp:2173
-#: icc_gl.cpp:2176 icc_gl.cpp:2178
-msgid "Slice"
-msgstr "Zatitu"
-
-#: icc_gl.cpp:2159
-msgid "Rotate around slice"
-msgstr "Biratu zatiaren inguruan"
-
-#: icc_gl.cpp:2180
-msgid "Rotate around"
-msgstr "Biratu inguruan"
-
-#: icc_gl.cpp:2180
-msgid "axis"
-msgstr "ardatza"
-
-#: icc_gl.cpp:2185
-msgid "Slice plane"
-msgstr "Zati planoa"
-
-#: icc_gl.cpp:2188
-msgid "White"
-msgstr "Zuria"
-
-#: icc_gl.cpp:2189
-msgid "Light gray"
-msgstr "Gris argia"
-
-#: icc_gl.cpp:2191
-msgid "Dark gray"
-msgstr "Gris iluna"
-
-#: icc_gl.cpp:2195
-msgid "Background colour"
-msgstr "Atzeko planoaren kolorea"
-
-#: icc_gl.cpp:2200
-msgid "gray"
-msgstr "grisa"
-
-#: icc_gl.cpp:2201
-msgid "coloured"
-msgstr "koloreztatua"
-
-#: icc_gl.cpp:2202
-msgid "high contrast"
-msgstr "kontraste altua"
-
-#: icc_gl.cpp:2204
-msgid "Onion skins"
-msgstr ""
-
-#: icc_gl.cpp:2205
-msgid "Colour line"
-msgstr "Kolore-marra"
-
-#: icc_gl.cpp:2210
-msgid "Sphere 1dE"
-msgstr "1dE esfera"
-
-#: icc_gl.cpp:2211
-msgid "Sphere 2dE"
-msgstr "2dE esfera"
-
-#: icc_gl.cpp:2212
-msgid "Sphere 4dE"
-msgstr "4dE esfera"
-
-#: icc_gl.cpp:2215
-msgid "Star"
-msgstr "Izarra"
-
-#: icc_gl.cpp:2218
-msgid "Point"
-msgstr "Puntua"
-
-#: icc_gl.cpp:2221
-msgid "without markers"
-msgstr "markatzailerik gabe"
-
-#: icc_gl.cpp:2222
-msgid "Spektral line"
-msgstr "Marra espektrala"
-
-#: icc_gl.cpp:2225
-msgid "Texts"
-msgstr "Testuak"
-
-#: icc_gl.cpp:2227
-msgid "Texts/Arrows on/off"
-msgstr "Testuak/Geziak aktibatu/desaktibatu"
-
-#: icc_gl.cpp:2229
-msgid "Illustration"
-msgstr "Ilustrazioa"
-
-#: icc_gl.cpp:2582
-msgid "Pos"
-msgstr "Pos."
-
-#: icc_gl.cpp:2671 icc_profile_tags.cpp:320
-msgid "Channel"
-msgstr "Kanala"
-
-#: icc_helfer.cpp:258 icc_betrachter.cxx:410
-msgid "Perceptual"
-msgstr ""
-
-#: icc_helfer.cpp:261 icc_betrachter.cxx:411
-msgid "Relative Colorimetric"
-msgstr "Koloremetria erlatiboa"
-
-#: icc_helfer.cpp:264 icc_helfer.cpp:419 icc_helfer.cpp:423
-msgid "Saturation"
-msgstr "Saturazioa"
-
-#: icc_helfer.cpp:267 icc_betrachter.cxx:412
-msgid "Absolute Colorimetric"
-msgstr "Koloremetria absolutua"
-
-#: icc_helfer.cpp:394 icc_profile_tags.cpp:1178 icc_profile_tags.cpp:1185
-msgid "Colour"
-msgstr "Kolorea"
-
-#: icc_helfer.cpp:406
-msgid "CIE *u"
-msgstr "CIE *u"
-
-#: icc_helfer.cpp:407
-msgid "CIE *v"
-msgstr "CIE *v"
-
-#: icc_helfer.cpp:412
-msgid "CIE x"
-msgstr "CIE x"
-
-#: icc_helfer.cpp:413
-msgid "CIE y"
-msgstr "CIE y"
-
-#: icc_helfer.cpp:418 icc_helfer.cpp:421
-msgid "Hue"
-msgstr "Ñabardura"
-
-#: icc_helfer.cpp:445
-msgid "No Colour"
-msgstr "Kolorerik ez"
-
-#: icc_helfer.cpp:461
-msgid "Input"
-msgstr "Sarrera"
-
-#: icc_helfer.cpp:462
-msgid "Display"
-msgstr "Pantaila"
-
-#: icc_helfer.cpp:463
-msgid "Output"
-msgstr "Irteera"
-
-#: icc_helfer.cpp:464
-msgid "Link"
-msgstr "Esteka"
-
-#: icc_helfer.cpp:465
-msgid "Abstract"
-msgstr "Abstraktua"
-
-#: icc_helfer.cpp:466 icc_profile.cpp:906
-msgid "Colour Space"
-msgstr "Kolore-espazioa"
-
-#: icc_helfer.cpp:467 icc_helfer.cpp:617
-msgid "Named Colour"
-msgstr "Kolore izenduna"
-
-#: icc_helfer.cpp:489
-msgid "Macintosh"
-msgstr "Macintosh"
-
-#: icc_helfer.cpp:490
-msgid "Microsoft"
-msgstr "Microsoft"
-
-#: icc_helfer.cpp:491
-msgid "Solaris"
-msgstr "Solaris"
-
-#: icc_helfer.cpp:492
-msgid "SGI"
-msgstr "SGI"
-
-#: icc_helfer.cpp:493
-msgid "Taligent"
-msgstr "Taligent"
-
-#: icc_helfer.cpp:592
-msgid "Description"
-msgstr "Azalpena"
-
-#: icc_helfer.cpp:595
+#: oyranos.c:172
 #, fuzzy
-msgid "Lookup table, device to PCS, intent photometric"
-msgstr "Blokeatu taula, gailutik PCSra, fotometria helburuarekin"
-
-#: icc_helfer.cpp:596
-#, fuzzy
-msgid "Lookup table, device to PCS, intent relative colorimetric"
-msgstr "Blokeatu taula, gailutik PCSra, koloremetria erlatibo helburuarekin"
-
-#: icc_helfer.cpp:597
-#, fuzzy
-msgid "Lookup table, device to PCS, intent saturation"
-msgstr "Blokeatu taula, gailutik PCSra, saturazio helburuarekin"
-
-#: icc_helfer.cpp:598
-msgid "Blue Colorant"
-msgstr "Urdin koloragarria"
-
-#: icc_helfer.cpp:599
-msgid "Blue tone reproduction curve"
-msgstr "Tonu urdinaren erreprodukzio-kurba"
-
-#: icc_helfer.cpp:600
-#, fuzzy
-msgid "Lookup table, PCS to device, intent photometric"
-msgstr "Blokeatu taula, PCStik gailura, fotometria helburuarekin"
-
-#: icc_helfer.cpp:601
-#, fuzzy
-msgid "Lookup table, PCS to device, intent relative colorimetric"
-msgstr "Blokeatu taula, PCStik gailura, koloremetria erlatibo helburuarekin"
-
-#: icc_helfer.cpp:602
-#, fuzzy
-msgid "Lookup table, PCS to device, intent saturation"
-msgstr "Blokeatu taula, PCStik gailura, saturazio helburuarekin"
-
-#: icc_helfer.cpp:603
-msgid "Calibration date"
-msgstr "Kalibrazio-data"
-
-#: icc_helfer.cpp:604
-msgid "Colour measurement data"
-msgstr "Kolore-neurketaren datuak"
-
-#: icc_helfer.cpp:605
-msgid "Copyright"
-msgstr "Copyright-a"
-
-#: icc_helfer.cpp:606
-msgid "crdi"
-msgstr "crdi"
-
-#: icc_helfer.cpp:607
-msgid "Device manufacturerer description"
-msgstr "Gailuaren hornitzailearen azalpena"
-
-#: icc_helfer.cpp:608
-msgid "Device model description"
-msgstr "Gailu modeloaren azalpena"
-
-#: icc_helfer.cpp:609
-msgid "gamut"
-msgstr "kolore-gama"
-
-#: icc_helfer.cpp:610
-msgid "Gray tone reproduction curve"
-msgstr "Tonu grisaren erreprodukzio-kurba"
-
-#: icc_helfer.cpp:611
-msgid "Green Colorant"
-msgstr "Gris koloragarria"
-
-#: icc_helfer.cpp:612
-msgid "Green tone reproduction curve"
-msgstr "Tonu berdearen erreprodukzio-kurba"
-
-#: icc_helfer.cpp:614
-msgid "Measurement"
-msgstr "Neurketa"
-
-#: icc_helfer.cpp:615
-msgid "Media black point"
-msgstr "Puntu-beltza euskarria"
-
-#: icc_helfer.cpp:616
-msgid "Media white point"
-msgstr "Puntu-zuria euskarria"
-
-#: icc_helfer.cpp:618
-msgid "Named Colour 2"
-msgstr "2. kolore izenduna"
-
-#: icc_helfer.cpp:619
-msgid "Preview, photografic"
-msgstr "Aurrebista, fotografikoa"
-
-#: icc_helfer.cpp:620
-msgid "Preview, relative colorimetric"
-msgstr "Aurrebista, koloremetria erlatiboa"
-
-#: icc_helfer.cpp:621
-msgid "Preview, saturated"
-msgstr "Aurrebista, saturatua"
-
-#: icc_helfer.cpp:622
-msgid "Profile description"
-msgstr "Profilaren azalpena"
-
-#: icc_helfer.cpp:623
-msgid "Profile description, multilingual"
-msgstr "Profilaren azalpena, hizkuntza anitzetan"
-
-#: icc_helfer.cpp:624
-msgid "Profile sequence description"
-msgstr "Profila-sekuentziaren azalpena"
-
-#: icc_helfer.cpp:625
-msgid "psd0"
-msgstr "psa0"
-
-#: icc_helfer.cpp:626
-msgid "psd1"
-msgstr "psa1"
-
-#: icc_helfer.cpp:627
-msgid "psd2"
-msgstr "psa2"
-
-#: icc_helfer.cpp:628
-msgid "psd3"
-msgstr "psa3"
-
-#: icc_helfer.cpp:629
-msgid "ps2s"
-msgstr "ps2s"
-
-#: icc_helfer.cpp:630
-msgid "ps2i"
-msgstr "ps2i"
-
-#: icc_helfer.cpp:631
-msgid "Red Colorant"
-msgstr "Gorri koloragarria"
-
-#: icc_helfer.cpp:632
-msgid "Red tone reproduction curve"
-msgstr "Tonu gorriaren erreprodukzio-kurba"
-
-#: icc_helfer.cpp:633
-msgid "scrd"
-msgstr "scrd"
-
-#: icc_helfer.cpp:634
-msgid "scrn"
-msgstr "scrn"
-
-#: icc_helfer.cpp:635
-msgid "Technologie"
-msgstr "Teknologia"
-
-#: icc_helfer.cpp:636
-msgid "bfd"
-msgstr "bfd"
-
-#: icc_helfer.cpp:637
-msgid "Viewing conditions description"
-msgstr "Ikuspegiaren baldintzen azalpena"
-
-#: icc_helfer.cpp:638
-msgid "Viewing Conditions"
-msgstr "Ikuspegiaren baldintzak"
-
-#: icc_helfer.cpp:639
-msgid "Device colours"
-msgstr "Gailuaren koloreak"
-
-#: icc_helfer.cpp:640
-msgid "Measured colours"
-msgstr "Neurtutako koloreak"
-
-#: icc_helfer.cpp:641
-msgid "Profiling parameters"
-msgstr "Profila-parametroak"
-
-#: icc_helfer.cpp:642
-msgid "VideoCardGammaTable"
-msgstr "Bideo-txartelaren gamma taula"
-
-#: icc_helfer.cpp:643
-msgid "Colour adaption matrix"
-msgstr "Kolorea egokitzeko matrizea"
-
-#: icc_helfer.cpp:644
-msgid "Chromaticity"
-msgstr "Ñabardura"
-
-#: icc_helfer.cpp:645
-msgid "Named colour order"
-msgstr "Kolore izendunen ordena"
-
-#: icc_helfer.cpp:646
-msgid "Named colour names"
-msgstr "Kolore izendunen izenak"
-
-#: icc_helfer.cpp:647 icc_helfer.cpp:739
-msgid "----"
-msgstr "----"
-
-#: icc_helfer.cpp:717
-msgid "Digital camera"
-msgstr "Kamera digitala"
-
-#: icc_helfer.cpp:718
-msgid "Film scanner"
-msgstr "Film-eskanerra"
-
-#: icc_helfer.cpp:719
-msgid "Reflective scanner"
-msgstr "Eskaner islatzailea"
-
-#: icc_helfer.cpp:720
-msgid "InkJet printer"
-msgstr "Tintazko inprimagailua"
-
-#: icc_helfer.cpp:721
-msgid "Thermal wax printer"
-msgstr "Inprimagailu ezko-termala"
-
-#: icc_helfer.cpp:722
-msgid "Electrophotographic printer"
-msgstr "Inprimagailu elektrofotografikoa"
-
-#: icc_helfer.cpp:723
-msgid "Electrostatic printer"
-msgstr "Inprimagailu elektrostatikoa"
-
-#: icc_helfer.cpp:724
-msgid "Dye sublimation printer"
-msgstr "Sublimazio-koloragarrizko inprimagailua"
-
-#: icc_helfer.cpp:725
-msgid "Photographic paper printer"
-msgstr "Paper fotografikoko inprimagailua"
-
-#: icc_helfer.cpp:726
-msgid "Film writer"
-msgstr "Film-idazlea"
-
-#: icc_helfer.cpp:727
-msgid "Video Monitor"
-msgstr "Bideo-monitorea"
-
-#: icc_helfer.cpp:728
-msgid "Video camera"
-msgstr "Bideo-kamera"
-
-#: icc_helfer.cpp:729
-msgid "Projection Television"
-msgstr "Proiekziozko telebista"
-
-#: icc_helfer.cpp:730
-msgid "Cathode ray tube display"
-msgstr "Katodo-izpien hodizko pantaila"
-
-#: icc_helfer.cpp:731
-msgid "Passive matrix monitor"
-msgstr "Matrize pasibozko monitorea"
-
-#: icc_helfer.cpp:732
-msgid "Active matrix monitor"
-msgstr "Matrize aktibozko monitorea"
-
-#: icc_helfer.cpp:733
-msgid "Photo CD"
-msgstr "Photo CD"
-
-#: icc_helfer.cpp:734
-msgid "PhotoImageSetter"
-msgstr "Argazki ezartzailea"
-
-#: icc_helfer.cpp:735
-msgid "Gravure"
-msgstr "Sakongrabatzea"
-
-#: icc_helfer.cpp:736
-msgid "Offset Lithography"
-msgstr "Desplazamendu litografikoa"
-
-#: icc_helfer.cpp:737
-msgid "Silkscreen"
-msgstr "Serigrafia"
-
-#: icc_helfer.cpp:738
-msgid "Flexography"
-msgstr "Flexografia"
-
-#: icc_helfer.cpp:761
-msgid "ITU-R BT.709"
-msgstr "ITU-R BT.709"
-
-#: icc_helfer.cpp:762
-msgid "SMPTE RP145-1994"
-msgstr "SMPTE RP145-1994"
-
-#: icc_helfer.cpp:763
-msgid "EBU Tech.3213-E"
-msgstr "EBU Tech.3213-E"
-
-#: icc_helfer.cpp:764
-msgid "P22"
-msgstr "P22"
-
-#: icc_helfer.cpp:766 icc_helfer.cpp:790 icc_helfer.cpp:810 icc_helfer.cpp:828
-#: icc_helfer.cpp:845
-msgid "???"
-msgstr "???"
-
-#: icc_helfer.cpp:779
-msgid "Illuminant unknown"
-msgstr "Iluminatzaile ezezaguna"
-
-#: icc_helfer.cpp:780
-msgid "Illuminant D50"
-msgstr "D50 iluminatzailea"
-
-#: icc_helfer.cpp:781
-msgid "Illuminant D65"
-msgstr "D65 iluminatzailea"
-
-#: icc_helfer.cpp:782
-msgid "Illuminant D93"
-msgstr "D93 iluminatzailea"
-
-#: icc_helfer.cpp:783
-msgid "Illuminant F2"
-msgstr "F2 iluminatzailea"
-
-#: icc_helfer.cpp:784
-msgid "Illuminant D55"
-msgstr "D55 iluminatzailea"
-
-#: icc_helfer.cpp:785
-msgid "Illuminant A"
-msgstr "A iluminatzailea"
-
-#: icc_helfer.cpp:786
-msgid "Illuminant with equal energy E"
-msgstr "Iluminatzailea E energia berdinarekin"
-
-#: icc_helfer.cpp:787
-msgid "Illuminant F8"
-msgstr "F8 iluminatzailea"
-
-#: icc_helfer.cpp:788
-msgid "Illuminant ---"
-msgstr "--- iluminatzailea"
-
-#: icc_helfer.cpp:803 icc_helfer.cpp:823
-msgid "unknown"
-msgstr "ezezaguna"
-
-#: icc_helfer.cpp:804
-msgid "2 degree (1931)"
-msgstr "2 gradu (1931)"
-
-#: icc_helfer.cpp:806
-msgid "10 degree (1964)"
-msgstr "10 gradu (1964)"
-
-#: icc_helfer.cpp:808 icc_helfer.cpp:826 icc_helfer.cpp:843
-msgid "---"
-msgstr "---"
-
-#: icc_helfer.cpp:824
-msgid "0/45, 45/0"
-msgstr "0/45, 45/0"
-
-#: icc_helfer.cpp:825
-msgid "0/d or d/0"
-msgstr "0/d edo d/0"
-
-#: icc_helfer.cpp:841
-msgid "0"
-msgstr "0"
-
-#: icc_helfer.cpp:842
-msgid "100"
-msgstr "100"
-
-#: icc_helfer.cpp:862
-msgid "o'clock"
-msgstr "puntuan"
-
-#: icc_helfer.cpp:863
-msgid "seconds"
-msgstr "segundo"
-
-#: icc_helfer.cpp:1246
-msgid "Monitor Profile"
-msgstr "Monitorearen profila"
-
-#: icc_helfer.cpp:1273
-msgid "file size 0 for "
-msgstr "fitxategi honen tamaina 0: "
-
-#: icc_kette.cpp:195
-msgid "noName"
-msgstr "izengabea"
-
-#: icc_kette.cpp:212
-msgid "File not loaded!"
-msgstr "Fitxategia ez da kargatu."
-
-#: icc_measurement.cpp:931
-msgid "use sRGB"
-msgstr "erabili sGBU"
-
-#: icc_measurement.cpp:1231
-msgid "Report about ICC profile"
-msgstr "ICC profilari buruzko txostena"
-
-#: icc_measurement.cpp:1269
-msgid "Meas colour"
-msgstr "Neurtu kolorea"
-
-#: icc_measurement.cpp:1271
-msgid "Profile colour"
-msgstr "Profila-kolorea"
-
-#: icc_measurement.cpp:1348
-msgid "no measurment data or correct profile conversion available"
-msgstr "neurtzeko daturik edo profila zuzenaren bihurketa erabilgarririk ez"
-
-#: icc_measurement.cpp:1356
-msgid "Measurment- and profile colours from <b>"
-msgstr "Neurketa eta profila-kolorea hemendik:<b>"
-
-#: icc_measurement.cpp:1358
-msgid "RGB"
-msgstr "GBU"
-
-#: icc_measurement.cpp:1360
-msgid "CMYK"
-msgstr "CMYK"
-
-#: icc_measurement.cpp:1361
-msgid "</b> Measurement"
-msgstr "</b> neurketa"
-
-#: icc_measurement.cpp:1363
-msgid "CMM: <b>lcms</b>"
-msgstr "CMM: <b>lcms</b>"
-
-#: icc_measurement.cpp:1365
-msgid "averaging deviations (dE CIE*Lab):<b> "
-msgstr "batez besteko desbiderapena (dE CIE*Lab):<b> "
-
-#: icc_measurement.cpp:1365
-msgid "</b>  maximum: "
-msgstr "</b>  gehienezkoa: "
-
-#: icc_measurement.cpp:1365
-msgid "  minimum: "
-msgstr "  gutxienekoa: "
-
-#: icc_measurement.cpp:1365
-msgid "  (dE CIE 2000) averaging: "
-msgstr "  (dE CIE 2000) batez bestekoa: "
-
-#: icc_measurement.cpp:1365
-msgid "  maximum: "
-msgstr "  gehienezkoa: "
-
-#: icc_measurement.cpp:1395
-msgid "Measurement patch"
-msgstr "Neurketa bidea"
-
-#: icc_measurement.cpp:1396
-msgid "dE Lab"
-msgstr "dE Lab"
-
-#: icc_measurement.cpp:1397
-msgid "dE2000"
-msgstr "dE2000"
-
-#: icc_measurement.cpp:1398
-msgid "L"
-msgstr "L"
-
-#: icc_measurement.cpp:1399
-msgid "a"
-msgstr "a"
-
-#: icc_measurement.cpp:1400
-msgid "b"
-msgstr "b"
-
-#: icc_measurement.cpp:1401
-msgid "L'"
-msgstr "L'"
-
-#: icc_measurement.cpp:1402
-msgid "a'"
-msgstr "a'"
-
-#: icc_measurement.cpp:1403
-msgid "b'"
-msgstr "b'"
-
-#: icc_measurement.cpp:1404 my_file_chooser.cxx:276
-msgid "X"
-msgstr "X"
-
-#: icc_measurement.cpp:1405 icc_measurement.cpp:1419
-msgid "Y"
-msgstr "Y"
-
-#: icc_measurement.cpp:1406
-msgid "Z"
-msgstr "Z"
-
-#: icc_measurement.cpp:1408
-msgid "X'"
-msgstr "X'"
-
-#: icc_measurement.cpp:1409
-msgid "Y'"
-msgstr "Y'"
-
-#: icc_measurement.cpp:1410
-msgid "Z'"
-msgstr "Z'"
-
-#: icc_measurement.cpp:1413
-msgid "R"
-msgstr "G"
-
-#: icc_measurement.cpp:1414
-msgid "G"
-msgstr "B"
-
-#: icc_measurement.cpp:1415
-msgid "B"
-msgstr "U"
-
-#: icc_measurement.cpp:1417
-msgid "C"
-msgstr "C"
-
-#: icc_measurement.cpp:1418
-msgid "M"
-msgstr "M"
-
-#: icc_measurement.cpp:1420
-msgid "K"
-msgstr "K"
-
-#: icc_oyranos.cpp:168
-msgid "WARNING: Could not load corrupt or damaged profile."
-msgstr "ABISUA: ezin izan da hondatutako profila kargatu."
-
-#: icc_oyranos.cpp:174 icc_oyranos.cpp:371 icc_oyranos.cpp:377
-#: icc_oyranos.cpp:408 icc_oyranos.cpp:414 icc_oyranos.cpp:448
-#: icc_oyranos.cpp:454
-msgid "WARNING: Could not load profile."
-msgstr "ABISUA: ezin izan da profila kargatu."
-
-#: icc_oyranos.cpp:574 icc_profile_header.cpp:250 icc_helfer_x.cpp:180
-msgid "Manufacturer:"
-msgstr "Hornitzailea:   "
-
-#: icc_oyranos.cpp:580
-msgid "Model:"
-msgstr "Modeloa:"
-
-#: icc_oyranos.cpp:586
-msgid "Serial:"
-msgstr "Seriekoa:"
-
-#: icc_oyranos.cpp:1184 icc_vrml.cpp:151
-msgid "Std-exception occured: "
-msgstr "STD salbuespena gertatu da: "
-
-#: icc_oyranos.cpp:1187 icc_vrml.cpp:154
-msgid "Huch, unknown exception"
-msgstr "Salbuespen ezezaguna"
-
-#: icc_profile.cpp:172 icc_profile.cpp:190
-msgid "no profile"
+msgid "not a profile:"
 msgstr "profilik ez"
 
-#: icc_profile.cpp:172
-msgid "Size"
-msgstr "Tamaina"
+#: oyranos.c:212
+msgid "name longer than"
+msgstr ""
 
-#: icc_profile.cpp:255
-msgid "wrong tag size in profile "
-msgstr "okerreko etiketa-tamaina profilan "
+#: oyranos.c:240
+msgid "profile not found in colour path:"
+msgstr ""
 
-#: icc_profile.cpp:270
-msgid "tag list is corrupted for tag"
-msgstr "etiketa-zerrenda hondatuta dago: "
+#: oyranos.c:261
+#, fuzzy
+msgid "profile not found:"
+msgstr "Profila-kolorea"
 
-#: icc_profile.cpp:270
-msgid "not inside memory block"
-msgstr "ez dago memoria-blokearen barruan"
+#: oyranos.c:299
+msgid "wrong profile for static web colour space selected, need sRGB"
+msgstr ""
 
-#: icc_profile.cpp:417 icc_profile.cpp:447
-msgid " typ - no text output"
-msgstr " typ - irteerako testurik ez"
+#: oyranos.c:635 oyranos.c:663
+msgid "Option not supported type:"
+msgstr ""
 
-#: icc_profile.cpp:842
-msgid "Work Space"
-msgstr "Laneko area"
+#: oyranos.c:721
+msgid "file exists, please remove befor installing new profile."
+msgstr ""
 
-#: icc_profile.cpp:856
-msgid "Your"
-msgstr "Zure"
+#: oyranos.c:1160
+msgid "will overwrite policy file"
+msgstr ""
 
-#: icc_profile.cpp:857
-msgid "Profile\" is designed for an other device"
-msgstr "profila\" beste gailu batentzako ezarrita dago"
+#: oyranos_check.c:79
+#, fuzzy
+msgid "not found:"
+msgstr "Biratu inguruan"
 
-#: icc_profile.cpp:862
-msgid "Separation"
-msgstr "Bereizketa"
+#: oyranos_cmms.c:463
+msgid "Did not find a type for option:"
+msgstr ""
 
-#: icc_profile.cpp:875 icc_profile.cpp:898
-msgid "Device class"
-msgstr "Gailu-klasea"
+#: oyranos_elektra.c:460 oyranos_elektra.c:549
+msgid "default profile type does not exist:"
+msgstr ""
 
-#: icc_profile.cpp:877 icc_profile.cpp:900 icc_profile.cpp:908
-msgid "is not valid for an"
-msgstr "ez da baliozko "
+#: oyranos_io.c:880
+msgid "path is not a directory"
+msgstr ""
 
-#: icc_profile.cpp:879 icc_profile.cpp:902
-msgid "Profile\"."
+#: oyranos_io.c:884
+msgid "path is a link: ignored"
+msgstr ""
+
+#: oyranos_io.c:889
+#, c-format
+msgid "%d. path %s is not readable"
+msgstr ""
+
+#: oyranos_texts.c:146
+#, fuzzy
+msgid "Start"
+msgstr "Izarra"
+
+#: oyranos_texts.c:147
+#, fuzzy
+msgid "Oyranos Settings Group"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyranos_texts.c:154
+#, fuzzy
+msgid "Default Profiles"
 msgstr "profila\"."
 
-#: icc_profile.cpp:885
-msgid "Linearisation"
-msgstr "Linealisazioa"
+#: oyranos_texts.c:155
+msgid "Source and Target Profiles for various situations"
+msgstr ""
 
-#: icc_profile.cpp:910
-msgid "Profile at the moment\"."
-msgstr "Uneko profila\"."
-
-#: icc_profile_header.cpp:115
-msgid "Transparent, "
-msgstr "Gardena, "
-
-#: icc_profile_header.cpp:117
-msgid "Reflective, "
-msgstr "Isolatzailea, "
-
-#: icc_profile_header.cpp:120
-msgid "matte, "
-msgstr "distiragabea, "
-
-#: icc_profile_header.cpp:122
-msgid "glossy, "
-msgstr "satinatua, "
-
-#: icc_profile_header.cpp:125
-msgid "negative, "
-msgstr "negatiboa, "
-
-#: icc_profile_header.cpp:127
-msgid "positive, "
-msgstr "positiboa, "
-
-#: icc_profile_header.cpp:130
-msgid "black/white"
-msgstr "beltza/zuria"
-
-#: icc_profile_header.cpp:132
-msgid "colour"
-msgstr "kolorea"
-
-#: icc_profile_header.cpp:159
-msgid "Profile is embedded and "
-msgstr "Profila kapsulatuta dago eta "
-
-#: icc_profile_header.cpp:161
-msgid "Profile is not embedded and "
-msgstr "Profila ez dago kapsulatuta eta "
-
-#: icc_profile_header.cpp:164
-msgid "can not be used independently from image."
-msgstr "ezin da erabili iruditik independenteki"
-
-#: icc_profile_header.cpp:166
-msgid "can be used independently from image."
-msgstr "iruditik independenteki erabil daiteke."
-
-#: icc_profile_header.cpp:230
-msgid "found no header"
-msgstr "ez da goibururik aurkitu"
-
-#: icc_profile_header.cpp:235
-msgid "ICC profile header"
-msgstr "ICC profilaren goiburua"
-
-#: icc_profile_header.cpp:236
-msgid "Size:        "
-msgstr "Tamaina:        "
-
-#: icc_profile_header.cpp:237
-msgid "bytes"
-msgstr "byte"
-
-#: icc_profile_header.cpp:238
-msgid "CMM:         "
-msgstr "CMM:            "
-
-#: icc_profile_header.cpp:239
-msgid "Version:     "
-msgstr "Bertsioa:       "
-
-#: icc_profile_header.cpp:240
-msgid "Class:       "
-msgstr "Klasea:         "
-
-#: icc_profile_header.cpp:242
-msgid "Colour Space:"
-msgstr "Kolore-espazioa:"
-
-#: icc_profile_header.cpp:244
-msgid "PCS:         "
-msgstr "PCS:            "
-
-#: icc_profile_header.cpp:246
-msgid "Date:        "
-msgstr "Data:           "
-
-#: icc_profile_header.cpp:247
-msgid "Magic:       "
-msgstr "Magikoa:        "
-
-#: icc_profile_header.cpp:248
-msgid "Platform:    "
-msgstr "Plataforma:     "
-
-#: icc_profile_header.cpp:249
-msgid "Flags:       "
-msgstr "Banderak:       "
-
-#: icc_profile_header.cpp:251 icc_helfer_x.cpp:182
-msgid "Model:       "
-msgstr "Modeloa:        "
-
-#: icc_profile_header.cpp:252
-msgid "Attributes:  "
-msgstr "Atributuak:     "
-
-#: icc_profile_header.cpp:254
-msgid "Intent:      "
-msgstr "Helburua:       "
-
-#: icc_profile_header.cpp:256
-msgid "Illuminant:  "
-msgstr "Iluminatzailea: "
-
-#: icc_profile_header.cpp:260
-msgid "created by:  "
-msgstr "sortzailea:     "
-
-#: icc_profile_header.cpp:268
-msgid "File header invalid"
-msgstr "Fitxategiaren goiburua baliogabea"
-
-#: icc_profile_header.cpp:271
-msgid "    head  head    128 File header"
-msgstr "    goib. goib.   128 Fitxategi-goiburua"
-
-#: icc_profile_tags.cpp:258
-msgid "Standard Observer"
-msgstr "Behatzaile estandarra"
-
-#: icc_profile_tags.cpp:261
+#: oyranos_texts.c:162
 #, fuzzy
-msgid "Back side"
-msgstr "Atzeko planoan"
+msgid "Editing Colour Space"
+msgstr "Kolore-espazioa"
 
-#: icc_profile_tags.cpp:264
-msgid "Geometrie"
-msgstr "Geometria"
+#: oyranos_texts.c:163
+msgid "Well behaving Colour Space for Editing"
+msgstr ""
 
-#: icc_profile_tags.cpp:266
-msgid "Flare"
-msgstr "Erlantza"
-
-#: icc_profile_tags.cpp:268
-msgid "Illuminant Type"
-msgstr "Iluminatzaile mota"
-
-#: icc_profile_tags.cpp:283
-msgid "Conversion table with 16-bit precission:"
-msgstr "Bihurketa-taula 16 bit-eko doitzasunarekin:"
-
-#: icc_profile_tags.cpp:284 icc_profile_tags.cpp:303
-msgid "Intent:"
-msgstr "Helburua:"
-
-#: icc_profile_tags.cpp:285 icc_profile_tags.cpp:304
-msgid "Number of input channels"
-msgstr "Sarrerako kanal kopurua"
-
-#: icc_profile_tags.cpp:286 icc_profile_tags.cpp:305
-msgid "Number of output channels"
-msgstr "Irteerako kanal kopurua"
-
-#: icc_profile_tags.cpp:287 icc_profile_tags.cpp:306
-msgid "Matrix"
-msgstr "Matrizea"
-
-#: icc_profile_tags.cpp:288
-msgid "Linear input curve"
-msgstr "Sarrerako kurba lineala"
-
-#: icc_profile_tags.cpp:288 icc_profile_tags.cpp:290
-msgid "with"
-msgstr "honekin"
-
-#: icc_profile_tags.cpp:288 icc_profile_tags.cpp:290
-msgid "steps"
-msgstr "urratsak"
-
-#: icc_profile_tags.cpp:289 icc_profile_tags.cpp:307
+#: oyranos_texts.c:170
 #, fuzzy
-msgid "3D Lookup table with"
-msgstr "3D taula blokeatua honekin"
+msgid "Assumed Colour Space"
+msgstr "Kolore-espazioa"
 
-#: icc_profile_tags.cpp:289 icc_profile_tags.cpp:307
-msgid "points length per side"
-msgstr "puntu-luzera aldeko"
-
-#: icc_profile_tags.cpp:290
-msgid "Linear output curve"
-msgstr "Irteerako kurba lineala"
-
-#: icc_profile_tags.cpp:302
-msgid "Conversion table with 8-bit precission:"
-msgstr "Bihurketa-taula 8 bit-eko doitzasunarekin:"
-
-#: icc_profile_tags.cpp:401
-msgid "Error in ICC profile tag found!"
-msgstr "Errorea aurkitu da ICC profilako etiketan."
-
-#: icc_profile_tags.cpp:454
-msgid "Number of colours:"
-msgstr "Kolore kopurua:"
-
-#: icc_profile_tags.cpp:455
-msgid "Name"
-msgstr "Izena"
-
-#: icc_profile_tags.cpp:455
-msgid "CIE*Lab"
-msgstr "CIE*Lab"
-
-#: icc_profile_tags.cpp:456
-msgid "Device Colours"
-msgstr "Gailuaren koloreak"
-
-#: icc_profile_tags.cpp:529
-msgid "profiles where originally involved"
+#: oyranos_texts.c:171
+msgid "Assumed Colour Space for untagged colours"
 msgstr ""
 
-#: icc_ueber.cpp:68 icc_betrachter.cxx:722
-msgid "About ICC Examin"
-msgstr "ICC Examin-i buruz"
-
-#: icc_ueber.cpp:78
-msgid "ICC Examin Version"
-msgstr "ICC Examin-en bertsioa"
-
-#: icc_ueber.cpp:91
-msgid "Date"
-msgstr "Data"
-
-#: icc_ueber.cpp:98
-msgid "internet: www.behrmann.name <br>"
-msgstr "web gunea: www.behrmann.name <br>"
-
-#: icc_ueber.cpp:104
-msgid ""
-"ICC Examin is a viewer for colour profiles according to ICC standard  - www."
-"color.org . At the moment version 2 profiles are supported."
-msgstr ""
-"ICC Examin plugin-a ICC estandarraren araberako koloreen profilaren "
-"ikustailea da: www.color.org . Uneko bertsioak 2 profila soilik onartzen "
-"ditu."
-
-#: icc_ueber.cpp:111
-msgid ""
-"The appliance of colour profiles shall help to achive an easy colour data "
-"exchange, regardless which application or what kind of operating system is "
-"used. As well colour adaption between different devices is possible, "
-"provided the colour characteristics of both devices are known. The qulity of "
-"a colour transform from one to an other device depends mainly on the quality "
-"of the colour measurement and the used profiling algorithm during profile "
-"creation."
-msgstr ""
-"Koloreen profila aplikatzeak kolore-datuak elkartrukatzeko erraztasuna "
-"lortzen lagun dezake, berdin diolarik zein aplikazio edo sistema eragile "
-"erabiltzen den. Gailuen arteko kolore-moldaketa posiblea denez, bi gailuetan "
-"emandako kolore-ezaugarriak ezagunak dira. Kolorearen eraldaketaren (gailu "
-"batetik bestera) kalitatea kolorearen neurketaren kalitatearen arabera dago, "
-"baita profila sortzean erabilitako profila-algoritmoaren arabera ere."
-
-#: icc_ueber.cpp:123
-msgid ""
-"Colour profiles are often available from manufacturers of optical devices "
-"(digital camera, scanner, printer). With ICC Examin you can get an "
-"impression of the internal data , stored in a ICC profile. For profiles "
-"containing measurement data, ICC Examin can generate a quality report. The "
-"deviation, calculated from the measurement data is shown as well in the "
-"three dimensional gamut viewer.<br>"
-msgstr ""
-"Gailu optikoen (kamera digitala, eskanerra, inprimagailua) hornitzaileek "
-"eskuragarri jarri ohi dute koloreen profilak. ICC Examin plugin-arekin ICC "
-"profila baten barneko datuen inpresioa lor daiteke. ICC Examin-ek kalitate-"
-"txostena sor dezake profileek dituzten neurtzeko datuetatik.Desbiderapena, "
-"neurtzeko datuetatik kalkulatua, erakusten da, baita hiru dimentsiotako "
-"kolore-gama ikustailean."
-
-#: icc_ueber.cpp:134
-msgid ""
-"The internal colour transformations are currently realised with functions of "
-"the littleCMS program library."
-msgstr ""
-"littleCMS programaren liburutegiko funtzioak erabiliz lantzen dira barneko "
-"kolore eraldaketak."
-
-#: icc_ueber.cpp:152 icc_betrachter.cxx:645 icc_betrachter.cxx:647
-#: icc_betrachter.cxx:741
-msgid "Help"
-msgstr "Laguntza"
-
-#: icc_ueber.cpp:344 icc_betrachter.cxx:648 icc_betrachter.cxx:747
-msgid "License"
-msgstr "Lizentzia"
-
-#: icc_ueber.cpp:350
-msgid ""
-"    ICC Examin is licensed under the GPL version 2.    Especially all icc_* "
-"files are licensed under the GPL.<br>    The other source files may contain "
-"devergine licenses, which are detectable from file headers. "
-msgstr ""
-"    ICC Examin plugin-a GPL lizentziaren 2. bertsioarekin kaleratzen da. "
-"Batizpat icc_* fitxategi guztiak GPL lizentzia dute.<br>     Iturburuko "
-"bestelako fitxategiek beste lizentziak eduki ditzakete, fitxategietako "
-"goiburuetan agertzen direlarik."
-
-#: icc_ueber.cpp:755
-msgid "Acknowledgement"
-msgstr "Aitorpena"
-
-#: icc_ueber.cpp:761
-msgid ""
-"My cordially thank is especially dedicated to Marti Maria and the many "
-"writers of the Lcms-user email list."
-msgstr ""
-"Nire eskerrik goxoenak bereziki Marti Maria-rentzako da, eta Lcms-ko "
-"erabiltzaileen posta-zerrendako idazle guztientzako."
-
-#: icc_ueber.cpp:775
-msgid "ICC Examin uses following libraries:<br>\n"
-msgstr "ICC Examin-ek honako liburutegiak erabiltzen ditu:<br>\n"
-
-#: icc_ueber.cpp:780
-msgid "  FLTK: Bill Spitzack and others www.fltk.org<br>\n"
-msgstr "  FLTK: Bill Spitzack eta besteak: www.fltk.org<br>\n"
-
-#: icc_ueber.cpp:787
-msgid "  FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
-msgstr "  FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
-
-#: icc_ueber.cpp:794
-msgid "  littleCMS: Marti Maria www.littlecms.com<br>\n"
-msgstr "  littleCMS: Marti Maria www.littlecms.com<br>\n"
-
-#: icc_ueber.cpp:805
-msgid ""
-"  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
-msgstr ""
-"  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
-
-#: icc_ueber.cpp:813
-msgid ""
-"integrated sources, lock at the according files for licence conditions:<br>\n"
-msgstr ""
-"integratutako iturburuak, begiratu dagokien fitxategiak lizentzia-kontratua "
-"ezagutzeko:<br>\n"
-
-#: icc_ueber.cpp:818
-msgid "  agv 3D Navigation: Philip Winston<br>\n"
-msgstr "  agv 3D nabigazioa: Philip Winston<br>\n"
-
-#: icc_ueber.cpp:824
-msgid "  bsp rendering: Norman Chin<br>\n"
-msgstr ""
-
-#: icc_ueber.cpp:833
-msgid "For the visualisation of gamut (external):<br>\n"
-msgstr "Kolore-gamaren bisualizazioa (kanpokoa):<br>\n"
-
-#: icc_ueber.cpp:838
-msgid ""
-"  argyll: Greame Gill web.access.net.au/argyll/argyllcms.html<br<br><br>\n"
-msgstr ""
-"  argyll: Greame Gill web.access.net.au/argyll/argyllcms.html<br<br><br>\n"
-
-#: icc_ueber.cpp:852
-msgid "Project"
-msgstr "Proiektua"
-
-#: icc_ueber.cpp:854
-msgid "Documentation"
-msgstr "Dokumentazioa"
-
-#: icc_vrml.cpp:147
-msgid "exception occured: "
-msgstr "salbuespena gertatu da: "
-
-#: icc_helfer_osx.cpp:73
-msgid "Manufacturer: "
-msgstr "Hornitzailea: "
-
-#: icc_helfer_osx.cpp:75
-msgid "Model:      "
-msgstr "Modeloa:    "
-
-#: icc_helfer_osx.cpp:87 icc_helfer_x.cpp:197
-msgid "Gamma Red:   "
-msgstr "Gamma gorria:"
-
-#: icc_helfer_osx.cpp:93
-msgid "Gamma Green: "
-msgstr "Gamma berdea:"
-
-#: icc_helfer_osx.cpp:99 icc_helfer_x.cpp:209
-msgid "Gamma Blue:  "
-msgstr "Gamma urdina:"
-
-#: icc_helfer_x.cpp:86
-msgid "open X Display failed"
-msgstr "huts egin du X pantaila irekitzean"
-
-#: icc_helfer_x.cpp:127
-msgid "Screen:"
-msgstr "Pantaila:"
-
-#: icc_helfer_x.cpp:151
-msgid "XineramaScreen:"
-msgstr "Xinerama pantaila:"
-
-#: icc_helfer_x.cpp:203
-msgid "Gamma Green:"
-msgstr "Gamma berdea:"
-
-#: icc_helfer_x.cpp:227
-msgid "no gammagradient information obtained"
-msgstr "ez da gamma-gradientearen informaziorik lortu"
-
-#: icc_helfer_fltk.cpp:324
-msgid "Add to Favorites"
-msgstr "Gehitu gogokoei"
-
-#: icc_helfer_fltk.cpp:325
-msgid "All Files (*)"
-msgstr "Fitxategi denak (*)"
-
-#: icc_helfer_fltk.cpp:326
-msgid "Custom Filter"
-msgstr "Iragazki pertsonalizatua"
-
-#: icc_helfer_fltk.cpp:327
-msgid "Please choose an existing file!"
-msgstr "Aukeratu existitzen den fitxategia."
-
-#: icc_helfer_fltk.cpp:328 my_file_chooser.cxx:182
-msgid "Favorites"
-msgstr "Gogokoak"
-
-#: icc_helfer_fltk.cpp:329
-msgid "Filename"
-msgstr "Fitxategi-izena"
-
-#: icc_helfer_fltk.cpp:330 my_file_chooser.cxx:256
-msgid "Manage Favorites"
-msgstr "Kudeatu gogokoak"
-
-#: icc_helfer_fltk.cpp:332
-msgid "My Computer"
-msgstr "Ordenagailua"
-
-#: icc_helfer_fltk.cpp:334
-msgid "File Systems"
-msgstr "Fitxategi-sistema"
-
-#: icc_helfer_fltk.cpp:336
-msgid "New Directory?"
-msgstr "Direktorio berria?"
-
-#: icc_helfer_fltk.cpp:337 my_file_chooser.cxx:213
-msgid "Preview"
-msgstr "Aurrebista"
-
-#: icc_helfer_fltk.cpp:339 my_file_chooser.cxx:291
-msgid "Save"
-msgstr "Gorde"
-
-#: icc_helfer_fltk.cpp:341 my_file_chooser.cxx:175
-msgid "Show:"
-msgstr "Erakutsi:"
-
-#: icc_betrachter.cxx:166
-msgid "lineare entrance curve with 256 steps"
-msgstr "sarrerako kurba lineala 256 urratsekin"
-
-#: icc_betrachter.cxx:168
-msgid "lineare exit curve with 256 steps"
-msgstr "irteerako kurba lineala 256 urratsekin"
-
-#: icc_betrachter.cxx:401 icc_betrachter.cxx:622
-msgid "File"
-msgstr "Fitxategia"
-
-#: icc_betrachter.cxx:402
+#: oyranos_texts.c:178
 #, fuzzy
-msgid "Save as VRML"
-msgstr "Gorde kolore-gama VRML gisa"
+msgid "Proofing Colour Space"
+msgstr "Kolore-espazioa"
 
-#: icc_betrachter.cxx:403 icc_betrachter.cxx:627
-msgid "Quit"
-msgstr "Irten"
-
-#: icc_betrachter.cxx:405 icc_betrachter.cxx:630
-msgid "View"
-msgstr "Ikusi"
-
-#: icc_betrachter.cxx:406 icc_betrachter.cxx:631
-msgid "Whole Screen on/off"
-msgstr "Pantaila osoa aktibatu/desaktibatu"
-
-#: icc_betrachter.cxx:408 icc_betrachter.cxx:633
-msgid "Settings"
-msgstr "Ezarpenak"
-
-#: icc_betrachter.cxx:409
-msgid "Gamut Warning"
-msgstr "Kolore-gamaren abisua"
-
-#: icc_betrachter.cxx:413
-msgid "BPC"
-msgstr "BPC"
-
-#: icc_betrachter.cxx:414
-#, fuzzy
-msgid "Native Gamut"
-msgstr "Gorde kolore-gama VRML gisa"
-
-#: icc_betrachter.cxx:416 icc_betrachter.cxx:637
-msgid "Windows"
-msgstr "Leihoak"
-
-#: icc_betrachter.cxx:417
-msgid "Show Main Window"
-msgstr "Erakutsi leiho nagusia"
-
-#: icc_betrachter.cxx:418 icc_betrachter.cxx:643
-msgid "Log"
+#: oyranos_texts.c:179
+msgid "Colour Space for Simulating real devices"
 msgstr ""
 
-#: icc_betrachter.cxx:623
-msgid "Open"
-msgstr "Ireki"
+#: oyranos_texts.c:186 oyranos_texts.c:263
+#, fuzzy
+msgid "Paths"
+msgstr "Pausarazi"
 
-#: icc_betrachter.cxx:629 icc_betrachter.cxx:638 icc_betrachter.cxx:832
-msgid "Gamut"
-msgstr "Kolore-gama"
+#: oyranos_texts.c:187 oyranos_texts.c:264
+msgid "Paths where ICC Profiles can be found"
+msgstr ""
 
-#: icc_betrachter.cxx:634
+#: oyranos_texts.c:194 oyranos_texts.c:252 oyranos_config_fltk.cxx:1563
+msgid "Policy"
+msgstr ""
+
+#: oyranos_texts.c:195 oyranos_texts.c:253
+msgid "Collections of settings in Oyranos"
+msgstr ""
+
+#: oyranos_texts.c:202
+msgid "Behaviour"
+msgstr ""
+
+#: oyranos_texts.c:203
+msgid "Settings affecting the Behaviour in various situations"
+msgstr ""
+
+#: oyranos_texts.c:210
+msgid "Rendering"
+msgstr ""
+
+#: oyranos_texts.c:211
+msgid ""
+"The kind of ICC standard gamut mapping for transforming colours between "
+"differently sized colour spaces"
+msgstr ""
+
+#: oyranos_texts.c:218
+msgid "Save Mixed colour space Documents"
+msgstr ""
+
+#: oyranos_texts.c:219
+msgid "Default Handling of Mixed Colour Spaces inside one single Document"
+msgstr ""
+
+#: oyranos_texts.c:226
+msgid "Mismatching"
+msgstr ""
+
+#: oyranos_texts.c:227
+msgid ""
+"Decide what to do when the default colour spaces dont match the current ones."
+msgstr ""
+
+#: oyranos_texts.c:234 oyranos_texts.c:373
+#, fuzzy
+msgid "Proofing"
+msgstr "profila\"."
+
+#: oyranos_texts.c:235
+msgid "Default Proofing Settings"
+msgstr ""
+
+#: oyranos_texts.c:242
+msgid "All"
+msgstr ""
+
+#: oyranos_texts.c:243
 msgid "Oyranos Settings"
 msgstr "Oyranos-en ezarpenak"
 
-#: icc_betrachter.cxx:635
-msgid "LANG"
-msgstr "HIZK"
+#: oyranos_texts.c:273
+msgid "Editing Rgb"
+msgstr ""
 
-#: icc_betrachter.cxx:639
-msgid "Report View"
-msgstr "Txostenaren ikuspegia"
+#: oyranos_texts.c:274
+msgid "Prefered Rgb Editing Colour Space"
+msgstr ""
 
-#: icc_betrachter.cxx:640
-msgid "CGATS View"
-msgstr "CGATS ikuspegia"
+#: oyranos_texts.c:282
+msgid "Editing Cmyk"
+msgstr ""
 
-#: icc_betrachter.cxx:641
-msgid "Videocard Gamma"
-msgstr "Bideo-txartelaren gamma"
+#: oyranos_texts.c:283
+msgid "Prefered Cmyk Editing Colour Space"
+msgstr ""
 
-#: icc_betrachter.cxx:642
-msgid "Test Curves"
-msgstr "Probako kurbak"
+#: oyranos_texts.c:291
+msgid "Editing XYZ"
+msgstr ""
 
-#: icc_betrachter.cxx:646 icc_betrachter.cxx:736
-msgid "About"
-msgstr "Honi buruz"
+#: oyranos_texts.c:292
+msgid "Prefered XYZ Editing Colour Space"
+msgstr ""
 
-#: icc_betrachter.cxx:754
-msgid "Acknowlegement"
-msgstr "Aitorpena"
+#: oyranos_texts.c:300
+msgid "Editing Lab"
+msgstr ""
 
-#: icc_betrachter.cxx:760
-msgid "Links"
-msgstr "Estekak"
+#: oyranos_texts.c:301
+msgid "Prefered CIE*Lab Editing Colour Space"
+msgstr ""
 
-#: icc_betrachter.cxx:780
-msgid "Grafic Card Gamma Table"
-msgstr "Txartel grafikoaren gamma-taula"
+#: oyranos_texts.c:309
+msgid "Editing Gray"
+msgstr ""
 
-#: icc_betrachter.cxx:806
-msgid "Set"
-msgstr "Ezarri"
+#: oyranos_texts.c:310
+msgid "Prefered Gray Editing Colour Space"
+msgstr ""
 
-#: icc_betrachter.cxx:807
+#: oyranos_texts.c:318
+msgid "Assumed XYZ source"
+msgstr ""
+
+#: oyranos_texts.c:319
+msgid "Assigning an untagged XYZ Image an colour space"
+msgstr ""
+
+#: oyranos_texts.c:327
+msgid "Assumed Lab source"
+msgstr ""
+
+#: oyranos_texts.c:328
+msgid "Assigning an untagged CIE*Lab Image an colour space"
+msgstr ""
+
+#: oyranos_texts.c:336
+msgid "Assumed Rgb source"
+msgstr ""
+
+#: oyranos_texts.c:337
+msgid "Assigning an untagged Rgb Image an colour space"
+msgstr ""
+
+#: oyranos_texts.c:345
+msgid "Assumed Web source"
+msgstr ""
+
+#: oyranos_texts.c:346
 msgid ""
-"Set the current profile as monitor profile and upload vcgt tag to the video "
-"card"
-msgstr ""
-"Ezarri uneko profila monitorearen profila gisa eta kargatu vctg etiketa "
-"bideo-txartelean"
-
-#: icc_betrachter.cxx:812
-msgid "Reset"
-msgstr "Berrezarri"
-
-#: icc_betrachter.cxx:813
-msgid "reset to standard gamma"
-msgstr "berrezarri gamma estandarrera"
-
-#: icc_betrachter.cxx:817
-msgid "Load"
-msgstr "Kargatu"
-
-#: icc_betrachter.cxx:818
-msgid "Load the current monitor profile"
-msgstr "Kargatu uneko monitorearen profila"
-
-#: icc_betrachter.cxx:822
-msgid "Close"
-msgstr "Itxi"
-
-#: icc_betrachter.cxx:895
-msgid "ICC Examin"
-msgstr "ICC Examin"
-
-#: icc_betrachter.cxx:932
-msgid "Choose one profile tag"
-msgstr "Aukeratu profilaren etiketa"
-
-#: icc_betrachter.cxx:950
-msgid "Chain selection"
-msgstr "Kate-hautapena"
-
-#: icc_betrachter.cxx:951
-msgid "Choose a attribute"
-msgstr "Aukeratu atribututa"
-
-#: icc_betrachter.cxx:1013
-msgid "o"
+"Assigning an untagged Rgb Image with source from the WWW an colour space"
 msgstr ""
 
-#: icc_betrachter.cxx:1014
-msgid "Show all channels of this table a own window."
-msgstr "Erakutsi taula honen kanal guztiak leiho propioan"
+#: oyranos_texts.c:355
+msgid "Assumed Cmyk source"
+msgstr ""
 
-#: icc_betrachter.cxx:1092
-msgid "..."
-msgstr "..."
+#: oyranos_texts.c:356
+msgid "Assigning an untagged Cmyk Image this colour space"
+msgstr ""
 
-#: icc_betrachter.cxx:1095
-msgid "Loading .."
-msgstr "Kargatzen ..."
+#: oyranos_texts.c:364
+msgid "Assumed Gray source"
+msgstr ""
 
-#: my_file_chooser.cxx:163
-msgid "Choose File"
-msgstr "Aukeratu fitxategia"
+#: oyranos_texts.c:365
+msgid "Assigning an untagged Gray Image this colour space"
+msgstr ""
 
-#: my_file_chooser.cxx:203
-msgid "?"
-msgstr "?"
+#: oyranos_texts.c:374
+msgid "Colour space for Simulating an Output Device"
+msgstr ""
 
-#: my_file_chooser.cxx:232
-msgid "Filename:"
-msgstr "Fitxategi-izena:"
-
-#: my_file_chooser.cxx:238
-msgid "OK"
-msgstr "Ados"
-
-#: my_file_chooser.cxx:242 my_file_chooser.cxx:287
-msgid "Cancel"
-msgstr "Utzi"
-
-#: my_file_chooser.cxx:273
-msgid "@8>"
-msgstr "@8>"
-
-#: my_file_chooser.cxx:281
-msgid "@2>"
-msgstr "@2>"
-
-#: icc_cinepaint.cpp:198
-msgid "Image Profile..."
+#: oyranos_texts.c:383
+#, fuzzy
+msgid "No Image profile"
 msgstr "Irudiaren profila..."
 
-#: icc_cinepaint.cpp:199
-msgid "Proof Profile..."
-msgstr "Frogako profila..."
-
-#: icc_cinepaint.cpp:200
-msgid "Watch Colours 3D..."
-msgstr "Begiratu 3D koloreak..."
-
-#: icc_cinepaint.cpp:201
-msgid "Watch Colours 3D.2..."
-msgstr "Begiratu 3D.2 koloreak..."
-
-#: icc_cinepaint_intern.cpp:357 icc_cinepaint_intern.cpp:984
-msgid "No profil assigned to image."
-msgstr "Ez dago profilik esleituta irudiari."
-
-#: icc_cinepaint_intern.cpp:384
-msgid "Profil not written."
-msgstr "Profila ez da idatzi."
-
-#: icc_cinepaint_intern.cpp:1039
-msgid "Wrong profil assigned to image."
-msgstr "Okerreko profila irudiari esleituta."
-
-#: icc_cinepaint_intern.cpp:1254
-msgid "No active drawable found."
-msgstr "Ez da marrazgai aktiborik aurkitu."
-
-#: icc_cinepaint_intern.cpp:1560
-msgid "What kind of image is this?"
-msgstr "Zein motatako irudia da hau?"
-
-#: icc_cinepaint_intern.cpp:1654
-msgid "What kind of image is this?\n"
-msgstr "Zein motatako irudia da hau?\n"
-
-#: icc_examin_version.h:8
-msgid "0.46"
+#: oyranos_texts.c:384
+msgid ""
+"Image has no colour space embedded. What default action shall be performed?"
 msgstr ""
 
-#: icc_examin_version.h:9
-msgid "May"
-msgstr ""
-
-#: icc_examin_version.h:10
+#: oyranos_texts.c:386
 #, fuzzy
-msgid "2004"
-msgstr "dE2000"
+msgid "Assign No Profile"
+msgstr "profilik ez"
 
-#: icc_examin_version.h:11
-msgid "September"
+#: oyranos_texts.c:386
+msgid "Assign Assumed Profile"
 msgstr ""
 
-#: icc_examin_version.h:12
+#: oyranos_texts.c:386 oyranos_texts.c:395 oyranos_texts.c:404
+#: oyranos_texts.c:413 oyranos_texts.c:422
 #, fuzzy
-msgid "2008"
-msgstr "dE2000"
+msgid "Promt"
+msgstr "Proiektua"
 
-#: icc_utils.h:288 icc_utils.h:289 icc_utils.h:290 icc_utils.h:344
-#: icc_utils.h:345 icc_utils.h:346
-msgid "!!! Warning !!!"
-msgstr "Abisua !!!"
+#: oyranos_texts.c:392
+msgid "On Rgb Mismatch"
+msgstr ""
+
+#: oyranos_texts.c:393 oyranos_texts.c:402
+msgid "Action for Image profile and Editing profile mismatches."
+msgstr ""
+
+#: oyranos_texts.c:395 oyranos_texts.c:404 oyranos_texts.c:413
+#: oyranos_texts.c:422
+msgid "Preserve Numbers"
+msgstr ""
+
+#: oyranos_texts.c:395 oyranos_texts.c:404
+msgid "Convert automatically"
+msgstr ""
+
+#: oyranos_texts.c:401
+msgid "On Cmyk Mismatch"
+msgstr ""
+
+#: oyranos_texts.c:410
+msgid "For Print"
+msgstr ""
+
+#: oyranos_texts.c:411
+msgid "Handle Mixed colour spaces in Preparing a document for Print output."
+msgstr ""
+
+#: oyranos_texts.c:413
+msgid "Convert to Default Cmyk Editing Space"
+msgstr ""
+
+#: oyranos_texts.c:413
+msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
+msgstr ""
+
+#: oyranos_texts.c:419
+#, fuzzy
+msgid "For Screen"
+msgstr "Pantaila:"
+
+#: oyranos_texts.c:420
+msgid "Handle Mixed colour spaces in Preparing a document for Screen output."
+msgstr ""
+
+#: oyranos_texts.c:422
+msgid "Convert to Default Rgb Editing Space"
+msgstr ""
+
+#: oyranos_texts.c:422
+msgid "Convert to WWW (sRGB)"
+msgstr ""
+
+#: oyranos_texts.c:428
+msgid "Default Rendering Intent"
+msgstr ""
+
+#: oyranos_texts.c:429
+msgid "Rendering Intent for colour space Transformations."
+msgstr ""
+
+#: oyranos_texts.c:431
+msgid "Perceptual"
+msgstr ""
+
+#: oyranos_texts.c:431 oyranos_texts.c:449
+msgid "Relative Colorimetric"
+msgstr "Koloremetria erlatiboa"
+
+#: oyranos_texts.c:431 oyranos_alpha.c:421 oyranos_alpha.c:427
+msgid "Saturation"
+msgstr "Saturazioa"
+
+#: oyranos_texts.c:431 oyranos_texts.c:449
+msgid "Absolute Colorimetric"
+msgstr "Koloremetria absolutua"
+
+#: oyranos_texts.c:437
+msgid "Use Black Point Compensation"
+msgstr ""
+
+#: oyranos_texts.c:438
+msgid "BPC affects only the Relative Colorimetric Rendering Intent."
+msgstr ""
+
+#: oyranos_texts.c:440 oyranos_texts.c:458 oyranos_texts.c:467
+msgid "No"
+msgstr ""
+
+#: oyranos_texts.c:440 oyranos_texts.c:458 oyranos_texts.c:467
+msgid "Yes"
+msgstr "Bai"
+
+#: oyranos_texts.c:446
+msgid "Proofing Rendering Intent"
+msgstr ""
+
+#: oyranos_texts.c:447
+msgid "Behaviour of colour space transformation for proofing"
+msgstr ""
+
+#: oyranos_texts.c:455
+msgid "SoftProof by Default"
+msgstr ""
+
+#: oyranos_texts.c:456
+msgid "Behaviour for Softproofing view at application startup"
+msgstr ""
+
+#: oyranos_texts.c:464
+msgid "Hardproof by Default"
+msgstr ""
+
+#: oyranos_texts.c:465
+msgid ""
+"Behaviour for preselecting Hardproofing with Standard Proofing Profile at "
+"print time"
+msgstr ""
+
+#: oyranos_monitor.c:335
+msgid "unexpected EDID lenght"
+msgstr ""
+
+#: oyranos_monitor.c:338
+msgid "Cant read hardware information from device."
+msgstr ""
+
+#: oyranos_monitor.c:431 oyranos_monitor.c:985 oyranos_monitor.c:1369
+msgid "open X Display failed"
+msgstr "huts egin du X pantaila irekitzean"
+
+#: oyranos_monitor.c:446
+msgid "Could not get Xatom, probably your monitor profile is not set:"
+msgstr ""
+
+#: oyranos_monitor.c:1009
+msgid "No monitor gamma curves by profile:"
+msgstr ""
+
+#: oyranos_monitor.c:1043
+#, fuzzy
+msgid "Error obtaining profile"
+msgstr "okerreko etiketa-tamaina profilan "
+
+#: oyranos_monitor.c:1050 oyranos_monitor.c:1052
+msgid "Error setting up atom"
+msgstr ""
+
+#: oyranos_monitor.c:1139
+msgid "Error getting atom"
+msgstr ""
+
+#: oyranos_monitor.c:1388
+msgid "Xinerama request failed"
+msgstr ""
+
+#: oyranos_monitor.c:1404
+#, fuzzy
+msgid "open X Screen failed"
+msgstr "huts egin du X pantaila irekitzean"
+
+#: oyranos_gamma.c:107
+msgid "is a colour profile administration tool for monitors"
+msgstr ""
+
+#: oyranos_gamma.c:108 oyranos_policy.c:52
+msgid "Usage"
+msgstr ""
+
+#: oyranos_gamma.c:109
+#, fuzzy
+msgid "Set new profile:"
+msgstr "profilik ez"
+
+#: oyranos_gamma.c:112
+#, fuzzy
+msgid "profile name"
+msgstr "Fitxategi-izena"
+
+#: oyranos_gamma.c:114
+#, fuzzy
+msgid "Unset profile:"
+msgstr "profilik ez"
+
+#: oyranos_gamma.c:118
+msgid "Activate profiles:"
+msgstr ""
+
+#: oyranos_gamma.c:121
+msgid "Query server profile:"
+msgstr ""
+
+#: oyranos_gamma.c:125
+msgid "Query device data base profile:"
+msgstr ""
+
+#: oyranos_gamma.c:129
+msgid "General options:"
+msgstr ""
+
+#: oyranos_gamma.c:130
+msgid "-v verbose"
+msgstr ""
+
+#: oyranos_gamma.c:145 oyranos_policy.c:140
+msgid "wrong argument to option:"
+msgstr ""
+
+#: oyranos_policy.c:45
+msgid "is a policy administration tool"
+msgstr ""
+
+#: oyranos_policy.c:53
+msgid "Dump out the actual settings:"
+msgstr ""
+
+#: oyranos_policy.c:55
+msgid "Set new policy:"
+msgstr ""
+
+#: oyranos_policy.c:56
+#, fuzzy
+msgid "policy filename"
+msgstr "ez da fitxategi-izenik eman"
+
+#: oyranos_policy.c:57
+msgid "List available policies:"
+msgstr ""
+
+#: oyranos_policy.c:59 oyranos_policy.c:194
+msgid "Currently active policy:"
+msgstr ""
+
+#: oyranos_policy.c:61
+msgid "Save and install to a new policy:"
+msgstr ""
+
+#: oyranos_policy.c:62
+msgid "policy name"
+msgstr ""
+
+#: oyranos_policy.c:63
+msgid "Print a help text:"
+msgstr ""
+
+#: oyranos_policy.c:176
+msgid "installed new policy"
+msgstr ""
+
+#: oyranos_policy.c:179
+msgid "installation of new policy file failed with error:"
+msgstr ""
+
+#: oyranos_alpha.c:316
+msgid "XYZ"
+msgstr "XYZ"
+
+#: oyranos_alpha.c:317
+msgid "Lab"
+msgstr "Lab"
+
+#: oyranos_alpha.c:318
+msgid "Luv"
+msgstr "Luv"
+
+#: oyranos_alpha.c:319
+msgid "YCbCr"
+msgstr "YCbCr"
+
+#: oyranos_alpha.c:320
+msgid "Yxy"
+msgstr "Yxy"
+
+#: oyranos_alpha.c:321
+msgid "Rgb"
+msgstr "Gbu"
+
+#: oyranos_alpha.c:322
+msgid "Gray"
+msgstr "Grisa"
+
+#: oyranos_alpha.c:323
+msgid "Hsv"
+msgstr "Ñsb"
+
+#: oyranos_alpha.c:324
+msgid "Hls"
+msgstr "Ñas"
+
+#: oyranos_alpha.c:325
+msgid "Cmyk"
+msgstr "Cmyk"
+
+#: oyranos_alpha.c:326
+msgid "Cmy"
+msgstr "Cmy"
+
+#: oyranos_alpha.c:327
+msgid "2color"
+msgstr "2kolorea"
+
+#: oyranos_alpha.c:328
+msgid "3color"
+msgstr "3kolorea"
+
+#: oyranos_alpha.c:329
+msgid "4color"
+msgstr "4kolorea"
+
+#: oyranos_alpha.c:331
+msgid "5color"
+msgstr "5kolorea"
+
+#: oyranos_alpha.c:333
+msgid "6color"
+msgstr "6kolorea"
+
+#: oyranos_alpha.c:335
+msgid "7color"
+msgstr "7kolorea"
+
+#: oyranos_alpha.c:337
+msgid "8color"
+msgstr "8kolorea"
+
+#: oyranos_alpha.c:339
+msgid "9color"
+msgstr "9kolorea"
+
+#: oyranos_alpha.c:341
+msgid "10color"
+msgstr "10kolorea"
+
+#: oyranos_alpha.c:343
+msgid "11color"
+msgstr "11kolorea"
+
+#: oyranos_alpha.c:345
+msgid "12color"
+msgstr "12kolorea"
+
+#: oyranos_alpha.c:347
+msgid "13color"
+msgstr "13kolorea"
+
+#: oyranos_alpha.c:349
+msgid "14color"
+msgstr "14kolorea"
+
+#: oyranos_alpha.c:351
+msgid "15color"
+msgstr "15kolorea"
+
+#: oyranos_alpha.c:387
+msgid "CIE X"
+msgstr "CIE X"
+
+#: oyranos_alpha.c:388 oyranos_alpha.c:407
+msgid "CIE Y (Luminance)"
+msgstr "CIE Y (luminantzia)"
+
+#: oyranos_alpha.c:389
+msgid "CIE Z"
+msgstr "CIE Z"
+
+#: oyranos_alpha.c:392 oyranos_alpha.c:397
+msgid "CIE *L"
+msgstr "CIE *L"
+
+#: oyranos_alpha.c:393
+msgid "CIE *a"
+msgstr "CIE *a"
+
+#: oyranos_alpha.c:394
+msgid "CIE *b"
+msgstr "CIE *b"
+
+#: oyranos_alpha.c:398
+msgid "CIE *u"
+msgstr "CIE *u"
+
+#: oyranos_alpha.c:399
+msgid "CIE *v"
+msgstr "CIE *v"
+
+#: oyranos_alpha.c:402
+msgid "Luminance Y"
+msgstr "Luminantzia Y"
+
+#: oyranos_alpha.c:403
+msgid "Colour b"
+msgstr "b kolorea"
+
+#: oyranos_alpha.c:404
+msgid "Colour r"
+msgstr "r kolorea"
+
+#: oyranos_alpha.c:408
+msgid "CIE x"
+msgstr "CIE x"
+
+#: oyranos_alpha.c:409
+msgid "CIE y"
+msgstr "CIE y"
+
+#: oyranos_alpha.c:412
+msgid "Red"
+msgstr "Gorria"
+
+#: oyranos_alpha.c:413
+msgid "Green"
+msgstr "Berdea"
+
+#: oyranos_alpha.c:414
+msgid "Blue"
+msgstr "Urdina"
+
+#: oyranos_alpha.c:417 oyranos_alpha.c:433
+msgid "Black"
+msgstr "Beltza"
+
+#: oyranos_alpha.c:420 oyranos_alpha.c:425
+msgid "Hue"
+msgstr "Ñabardura"
+
+#: oyranos_alpha.c:422
+msgid "Value"
+msgstr "Balioa"
+
+#: oyranos_alpha.c:426
+msgid "Lightness"
+msgstr "Argitasuna"
+
+#: oyranos_alpha.c:430 oyranos_alpha.c:436
+msgid "Cyan"
+msgstr "Cyana"
+
+#: oyranos_alpha.c:431 oyranos_alpha.c:437
+msgid "Magenta"
+msgstr "Magenta"
+
+#: oyranos_alpha.c:432 oyranos_alpha.c:438
+msgid "Yellow"
+msgstr "Horia"
+
+#: oyranos_alpha.c:466
+#, fuzzy
+msgid "1. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:467
+#, fuzzy
+msgid "2. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:468
+#, fuzzy
+msgid "3. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:469
+#, fuzzy
+msgid "4. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:470
+#, fuzzy
+msgid "5. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:471
+#, fuzzy
+msgid "6. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:472
+#, fuzzy
+msgid "7. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:473
+#, fuzzy
+msgid "8. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:474
+#, fuzzy
+msgid "9. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:475
+#, fuzzy
+msgid "10. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:476
+#, fuzzy
+msgid "11. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:477
+#, fuzzy
+msgid "12. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:478
+#, fuzzy
+msgid "13. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:479
+#, fuzzy
+msgid "14. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:480
+#, fuzzy
+msgid "15. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:481
+#, fuzzy
+msgid "16. Channel"
+msgstr "Kanala"
+
+#: oyranos_alpha.c:572
+#, fuzzy
+msgid "Lockup table, device to PCS, intent perceptual"
+msgstr "Blokeatu taula, gailutik PCSra, fotometria helburuarekin"
+
+#: oyranos_alpha.c:573
+#, fuzzy
+msgid "Lockup table, device to PCS, intent relative colorimetric"
+msgstr "Blokeatu taula, gailutik PCSra, koloremetria erlatibo helburuarekin"
+
+#: oyranos_alpha.c:574
+#, fuzzy
+msgid "Lockup table, device to PCS, intent saturation"
+msgstr "Blokeatu taula, gailutik PCSra, saturazio helburuarekin"
+
+#: oyranos_alpha.c:575
+msgid "Blue Colorant"
+msgstr "Urdin koloragarria"
+
+#: oyranos_alpha.c:576
+msgid "Blue tone reproduction curve"
+msgstr "Tonu urdinaren erreprodukzio-kurba"
+
+#: oyranos_alpha.c:577
+#, fuzzy
+msgid "Lockup table, PCS to device, intent perceptual"
+msgstr "Blokeatu taula, PCStik gailura, fotometria helburuarekin"
+
+#: oyranos_alpha.c:578
+#, fuzzy
+msgid "Lockup table, PCS to device, intent relative colorimetric"
+msgstr "Blokeatu taula, PCStik gailura, koloremetria erlatibo helburuarekin"
+
+#: oyranos_alpha.c:579
+#, fuzzy
+msgid "Lockup table, PCS to device, intent saturation"
+msgstr "Blokeatu taula, PCStik gailura, saturazio helburuarekin"
+
+#: oyranos_alpha.c:580
+msgid "Calibration date"
+msgstr "Kalibrazio-data"
+
+#: oyranos_alpha.c:581
+msgid "Colour measurement data"
+msgstr "Kolore-neurketaren datuak"
+
+#: oyranos_alpha.c:582
+msgid "Copyright"
+msgstr "Copyright-a"
+
+#: oyranos_alpha.c:583
+msgid "crdi"
+msgstr "crdi"
+
+#: oyranos_alpha.c:584
+msgid "Device manufacturerer description"
+msgstr "Gailuaren hornitzailearen azalpena"
+
+#: oyranos_alpha.c:585
+msgid "Device model description"
+msgstr "Gailu modeloaren azalpena"
+
+#: oyranos_alpha.c:586
+msgid "gamut"
+msgstr "kolore-gama"
+
+#: oyranos_alpha.c:587
+msgid "Gray tone reproduction curve"
+msgstr "Tonu grisaren erreprodukzio-kurba"
+
+#: oyranos_alpha.c:588
+msgid "Green Colorant"
+msgstr "Gris koloragarria"
+
+#: oyranos_alpha.c:589
+msgid "Green tone reproduction curve"
+msgstr "Tonu berdearen erreprodukzio-kurba"
+
+#: oyranos_alpha.c:590
+msgid "Luminance"
+msgstr "Luminantzia"
+
+#: oyranos_alpha.c:591
+msgid "Measurement"
+msgstr "Neurketa"
+
+#: oyranos_alpha.c:592
+msgid "Media black point"
+msgstr "Puntu-beltza euskarria"
+
+#: oyranos_alpha.c:593
+msgid "Media white point"
+msgstr "Puntu-zuria euskarria"
+
+#: oyranos_alpha.c:594 oyranos_alpha.c:731
+msgid "Named Colour"
+msgstr "Kolore izenduna"
+
+#: oyranos_alpha.c:595
+msgid "Named Colour 2"
+msgstr "2. kolore izenduna"
+
+#: oyranos_alpha.c:596
+#, fuzzy
+msgid "Preview, perceptual"
+msgstr "Aurrebista, saturatua"
+
+#: oyranos_alpha.c:597
+msgid "Preview, relative colorimetric"
+msgstr "Aurrebista, koloremetria erlatiboa"
+
+#: oyranos_alpha.c:598
+msgid "Preview, saturated"
+msgstr "Aurrebista, saturatua"
+
+#: oyranos_alpha.c:599
+msgid "Profile description"
+msgstr "Profilaren azalpena"
+
+#: oyranos_alpha.c:600
+msgid "Profile description, multilingual"
+msgstr "Profilaren azalpena, hizkuntza anitzetan"
+
+#: oyranos_alpha.c:601
+msgid "Profile sequence description"
+msgstr "Profila-sekuentziaren azalpena"
+
+#: oyranos_alpha.c:602
+#, fuzzy
+msgid "Profile sequence identification"
+msgstr "Profila-sekuentziaren azalpena"
+
+#: oyranos_alpha.c:603
+msgid "psd0"
+msgstr "psa0"
+
+#: oyranos_alpha.c:604
+msgid "psd1"
+msgstr "psa1"
+
+#: oyranos_alpha.c:605
+msgid "psd2"
+msgstr "psa2"
+
+#: oyranos_alpha.c:606
+msgid "psd3"
+msgstr "psa3"
+
+#: oyranos_alpha.c:607
+msgid "ps2s"
+msgstr "ps2s"
+
+#: oyranos_alpha.c:608
+msgid "ps2i"
+msgstr "ps2i"
+
+#: oyranos_alpha.c:609
+msgid "Red Colorant"
+msgstr "Gorri koloragarria"
+
+#: oyranos_alpha.c:610
+msgid "Red tone reproduction curve"
+msgstr "Tonu gorriaren erreprodukzio-kurba"
+
+#: oyranos_alpha.c:611
+msgid "scrd"
+msgstr "scrd"
+
+#: oyranos_alpha.c:612
+msgid "scrn"
+msgstr "scrn"
+
+#: oyranos_alpha.c:613
+msgid "Technologie"
+msgstr "Teknologia"
+
+#: oyranos_alpha.c:614
+msgid "bfd"
+msgstr "bfd"
+
+#: oyranos_alpha.c:615
+msgid "Viewing conditions description"
+msgstr "Ikuspegiaren baldintzen azalpena"
+
+#: oyranos_alpha.c:616
+msgid "Viewing Conditions"
+msgstr "Ikuspegiaren baldintzak"
+
+#: oyranos_alpha.c:617
+msgid "Device colours"
+msgstr "Gailuaren koloreak"
+
+#: oyranos_alpha.c:618
+msgid "Measured colours"
+msgstr "Neurtutako koloreak"
+
+#: oyranos_alpha.c:619
+msgid "Profiling parameters"
+msgstr "Profila-parametroak"
+
+#: oyranos_alpha.c:620
+msgid "VideoCardGammaTable"
+msgstr "Bideo-txartelaren gamma taula"
+
+#: oyranos_alpha.c:621
+msgid "Colour adaption matrix"
+msgstr "Kolorea egokitzeko matrizea"
+
+#: oyranos_alpha.c:622
+msgid "Chromaticity"
+msgstr "Ñabardura"
+
+#: oyranos_alpha.c:623
+msgid "Named colour order"
+msgstr "Kolore izendunen ordena"
+
+#: oyranos_alpha.c:624
+msgid "Named colour names"
+msgstr "Kolore izendunen izenak"
+
+#: oyranos_alpha.c:625 oyranos_config_fltk.cxx:749
+#: oyranos_config_fltk.cxx:1581
+msgid "----"
+msgstr "----"
+
+#: oyranos_alpha.c:725
+msgid "Input"
+msgstr "Sarrera"
+
+#: oyranos_alpha.c:726
+msgid "Display"
+msgstr "Pantaila"
+
+#: oyranos_alpha.c:727
+msgid "Output"
+msgstr "Irteera"
+
+#: oyranos_alpha.c:728
+msgid "Link"
+msgstr "Esteka"
+
+#: oyranos_alpha.c:729
+msgid "Abstract"
+msgstr "Abstraktua"
+
+#: oyranos_alpha.c:730
+msgid "Colour Space"
+msgstr "Kolore-espazioa"
+
+#: oyranos_alpha.c:753
+msgid "Macintosh"
+msgstr "Macintosh"
+
+#: oyranos_alpha.c:754
+msgid "Microsoft"
+msgstr "Microsoft"
+
+#: oyranos_alpha.c:755
+msgid "Solaris"
+msgstr "Solaris"
+
+#: oyranos_alpha.c:756
+msgid "SGI"
+msgstr "SGI"
+
+#: oyranos_alpha.c:757
+msgid "Taligent"
+msgstr "Taligent"
+
+#: oyranos_alpha.c:758
+msgid "Unix and derivatives"
+msgstr ""
+
+#: oyranos_alpha.c:831
+msgid "Digital camera"
+msgstr "Kamera digitala"
+
+#: oyranos_alpha.c:832
+msgid "Film scanner"
+msgstr "Film-eskanerra"
+
+#: oyranos_alpha.c:833
+msgid "Reflective scanner"
+msgstr "Eskaner islatzailea"
+
+#: oyranos_alpha.c:834
+msgid "InkJet printer"
+msgstr "Tintazko inprimagailua"
+
+#: oyranos_alpha.c:835
+msgid "Thermal wax printer"
+msgstr "Inprimagailu ezko-termala"
+
+#: oyranos_alpha.c:836
+msgid "Electrophotographic printer"
+msgstr "Inprimagailu elektrofotografikoa"
+
+#: oyranos_alpha.c:837
+msgid "Electrostatic printer"
+msgstr "Inprimagailu elektrostatikoa"
+
+#: oyranos_alpha.c:838
+msgid "Dye sublimation printer"
+msgstr "Sublimazio-koloragarrizko inprimagailua"
+
+#: oyranos_alpha.c:839
+msgid "Photographic paper printer"
+msgstr "Paper fotografikoko inprimagailua"
+
+#: oyranos_alpha.c:840
+msgid "Film writer"
+msgstr "Film-idazlea"
+
+#: oyranos_alpha.c:841
+msgid "Video Monitor"
+msgstr "Bideo-monitorea"
+
+#: oyranos_alpha.c:842
+msgid "Video camera"
+msgstr "Bideo-kamera"
+
+#: oyranos_alpha.c:843
+msgid "Projection Television"
+msgstr "Proiekziozko telebista"
+
+#: oyranos_alpha.c:844
+msgid "Cathode ray tube display"
+msgstr "Katodo-izpien hodizko pantaila"
+
+#: oyranos_alpha.c:845
+msgid "Passive matrix monitor"
+msgstr "Matrize pasibozko monitorea"
+
+#: oyranos_alpha.c:846
+msgid "Active matrix monitor"
+msgstr "Matrize aktibozko monitorea"
+
+#: oyranos_alpha.c:847
+msgid "Photo CD"
+msgstr "Photo CD"
+
+#: oyranos_alpha.c:848
+msgid "PhotoImageSetter"
+msgstr "Argazki ezartzailea"
+
+#: oyranos_alpha.c:849
+msgid "Gravure"
+msgstr "Sakongrabatzea"
+
+#: oyranos_alpha.c:850
+msgid "Offset Lithography"
+msgstr "Desplazamendu litografikoa"
+
+#: oyranos_alpha.c:851
+msgid "Silkscreen"
+msgstr "Serigrafia"
+
+#: oyranos_alpha.c:852
+msgid "Flexography"
+msgstr "Flexografia"
+
+#: oyranos_alpha.c:875
+msgid "ITU-R BT.709"
+msgstr "ITU-R BT.709"
+
+#: oyranos_alpha.c:876
+msgid "SMPTE RP145-1994"
+msgstr "SMPTE RP145-1994"
+
+#: oyranos_alpha.c:877
+msgid "EBU Tech.3213-E"
+msgstr "EBU Tech.3213-E"
+
+#: oyranos_alpha.c:878
+msgid "P22"
+msgstr "P22"
+
+#: oyranos_alpha.c:880 oyranos_alpha.c:906 oyranos_alpha.c:927
+#: oyranos_alpha.c:947 oyranos_alpha.c:965
+msgid "???"
+msgstr "???"
+
+#: oyranos_alpha.c:895
+msgid "Illuminant unknown"
+msgstr "Iluminatzaile ezezaguna"
+
+#: oyranos_alpha.c:896
+msgid "Illuminant D50"
+msgstr "D50 iluminatzailea"
+
+#: oyranos_alpha.c:897
+msgid "Illuminant D65"
+msgstr "D65 iluminatzailea"
+
+#: oyranos_alpha.c:898
+msgid "Illuminant D93"
+msgstr "D93 iluminatzailea"
+
+#: oyranos_alpha.c:899
+msgid "Illuminant F2"
+msgstr "F2 iluminatzailea"
+
+#: oyranos_alpha.c:900
+msgid "Illuminant D55"
+msgstr "D55 iluminatzailea"
+
+#: oyranos_alpha.c:901
+msgid "Illuminant A"
+msgstr "A iluminatzailea"
+
+#: oyranos_alpha.c:902
+msgid "Illuminant with equal energy E"
+msgstr "Iluminatzailea E energia berdinarekin"
+
+#: oyranos_alpha.c:903
+msgid "Illuminant F8"
+msgstr "F8 iluminatzailea"
+
+#: oyranos_alpha.c:920 oyranos_alpha.c:942
+msgid "unknown"
+msgstr "ezezaguna"
+
+#: oyranos_alpha.c:921
+msgid "2 degree (1931)"
+msgstr "2 gradu (1931)"
+
+#: oyranos_alpha.c:923
+msgid "10 degree (1964)"
+msgstr "10 gradu (1964)"
+
+#: oyranos_alpha.c:943
+msgid "0/45, 45/0"
+msgstr "0/45, 45/0"
+
+#: oyranos_alpha.c:944
+msgid "0/d or d/0"
+msgstr "0/d edo d/0"
+
+#: oyranos_alpha.c:961
+msgid "0"
+msgstr "0"
+
+#: oyranos_alpha.c:962
+msgid "100"
+msgstr "100"
+
+#: oyranos_alpha.c:13825
+#, fuzzy
+msgid "No filter"
+msgstr "Iragazki pertsonalizatua"
+
+#: oyranos_alpha.c:13833
+msgid "Please add first a image node to the graph before adding other filters"
+msgstr ""
+
+#: oyranos_alpha.c:13841
+msgid "attempt to add a incomplete filter"
+msgstr ""
+
+#: oyranos_alpha.c:13850
+msgid "attempt to add a non linear filter to a linear graph"
+msgstr ""
+
+#: oyranos_alpha.c:13883
+msgid "?? Nothing to add ??"
+msgstr ""
+
+#: oyranos_alpha.c:14807
+msgid "---"
+msgstr "---"
+
+#: oyranos_cmm_oyra_profile.c:344
+msgid "Error in ICC profile tag found!"
+msgstr "Errorea aurkitu da ICC profilako etiketan."
+
+#: oyranos_cmm_oyra_profile.c:655
+msgid "Manufacturer:"
+msgstr "Hornitzailea:   "
+
+#: oyranos_cmm_oyra_profile.c:664
+#, fuzzy
+msgid "Modell:"
+msgstr "Modeloa:"
+
+#: oyranos_cmm_oyra_profile.c:673
+#, fuzzy
+msgid "Technology:"
+msgstr "Teknologia"
+
+#: oyranos_config_fltk.cxx:18 oyranos_definitions.h:73
+#, fuzzy
+msgid "[none]"
+msgstr "bat ere ez"
+
+#: oyranos_config_fltk.cxx:23 oyranos_config_fltk.cxx:111
+#, fuzzy
+msgid "setting"
+msgstr "Ezarpenak"
+
+#: oyranos_config_fltk.cxx:23 oyranos_config_fltk.cxx:39
+#: oyranos_config_fltk.cxx:111
+msgid "failed!"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:29
+#, fuzzy
+msgid "Select Profile"
+msgstr "profila\"."
+
+#: oyranos_config_fltk.cxx:39
+msgid "showing"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:52
+msgid "Show Profile failed. iccexamin not found"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:58
+msgid "Show Profile failed"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:62
+#, fuzzy
+msgid "Select a directory with ICC profiles"
+msgstr "ICC profilari buruzko txostena"
+
+#: oyranos_config_fltk.cxx:78
+#, c-format
+msgid "error setting path: %s"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:92
+msgid "Path"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:118
+msgid "Select Behaviour"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:362
+msgid "Show in external Viewer"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:399
+msgid "multiple occurencies of default profile"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:506
+msgid "@-3+"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:508
+msgid "Add Path containing ICC profiles"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:539
+msgid "Exclude this path"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:1521 oyranos_config_fltk.cxx:1538
+msgid "Oyranos Configuration"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:1564
+msgid "Reset to a standard Policy for Oyranos."
+msgstr ""
+
+#: oyranos_config_fltk.cxx:1571
+msgid "@-3reload"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:1572
+msgid "Refresh"
+msgstr ""
+
+#: oyranos_config_fltk.cxx:1578
+msgid "Active Policy:"
+msgstr ""
+
+#: oyranos_helper.h:64
+#, c-format
+msgid "nothing to delete %s"
+msgstr ""
+
+#: oyranos_helper.h:82
+msgid "nothing to allocate - size:"
+msgstr ""
+
+#: oyranos_helper.h:90
+msgid "Can not allocate memory for:"
+msgstr ""
+
+#: oyranos_helper.h:101
+msgid "nothing allocated"
+msgstr ""
+
+#~ msgid "left-/middle-/right mouse button -> rotate/cut/menu"
+#~ msgstr "saguaren ezkerreko/erdiko/eskuineko botoia -> biratu/ebaki/menua"
+
+#~ msgid "left mouse button -> go back"
+#~ msgstr "saguaren ezkerreko botoia -> joan atzera"
+
+#~ msgid " used too early!"
+#~ msgstr " goizegi erabilita!"
+
+#~ msgid "unknown Colour"
+#~ msgstr "kolore ezezaguna"
+
+#~ msgid " with "
+#~ msgstr " honekin "
+
+#~ msgid " points"
+#~ msgstr " puntu"
+
+#~ msgid " with Gamma: 1.0"
+#~ msgstr " gammarekin: 1.0"
+
+#~ msgid " with one entry for gamma: "
+#~ msgstr " gammaren sarrera batekin: "
+
+#~ msgid "Gamut selector"
+#~ msgstr "Kolore-gama hautatzailea"
+
+#~ msgid "loaded"
+#~ msgstr "kargatuta"
+
+#~ msgid "Ready"
+#~ msgstr "Prest"
+
+#~ msgid ""
+#~ "ICC colour profiles (*.{I,i}{C,c}{M,m,C,c})\tMeasurement (*.{txt,it8,IT8,"
+#~ "RGB,CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Gamuts (*.{wrl,"
+#~ "vrml}"
+#~ msgstr ""
+#~ "ICC kolore-profilak (*.{I,i}{C,c}{M,m,C,c})\tNeurketa (*.{txt,it8,IT8,RGB,"
+#~ "CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Kolore-gama (*."
+#~ "{wrl,vrml}"
+
+#~ msgid "Which ICC profile?"
+#~ msgstr "Zein ICC profila?"
+
+#~ msgid "Compare Measurement <-> Profile Colours"
+#~ msgstr "Konparatu neurketa <-> profilaren koloreak"
+
+#~ msgid "Gamut View"
+#~ msgstr "Kolore-gamaren ikuspegia"
+
+#~ msgid "not available"
+#~ msgstr "ez dago erabilgarri"
+
+#~ msgid "Filename (ICC data type)"
+#~ msgstr "Fitxategi-izena (ICC datu mota)"
+
+#~ msgid "Filename (other data type)"
+#~ msgstr "Fitxategi-izena (beste datu mota)"
+
+#~ msgid "Filename (corrupted ICC data type)"
+#~ msgstr "Fitxategi-izena (hondatutako ICC datu mota)"
+
+#~ msgid "found no content for"
+#~ msgstr "ez da honen edukirik aurkitu"
+
+#~ msgid "Internal error"
+#~ msgstr "Barneko errorea"
+
+#~ msgid "No. Tag   Type   Size Description"
+#~ msgstr "IDa Etik. Mota   Tam. Azalpena"
+
+#~ msgid "no net found in VRML file"
+#~ msgstr "ez da sarerik aurkitu VRML fitxategian"
+
+#~ msgid "no net found. Is Argyll installed?"
+#~ msgstr "ez da sarerik aurkitu. Argyll instalatuta dago?"
+
+#~ msgid "Stop loading "
+#~ msgstr "Gelditu kargatzea "
+
+#~ msgid "HTML Documents (*.htm*)"
+#~ msgstr "HTML dokumentuak (*.htm*)"
+
+#~ msgid "Save Report"
+#~ msgstr "Gorde txostena"
+
+#~ msgid "ICC colour profiles (*.ic*)"
+#~ msgstr "ICC kolore-profilak (*.ic*)"
+
+#~ msgid "Save Gamut as Profile"
+#~ msgstr "Gorde kolore-gama profila gisa"
+
+#~ msgid "VRML Files (*.wrl)"
+#~ msgstr "VRML fitxategiak (*.wrl)"
+
+#~ msgid "Save Gamut as VRML"
+#~ msgstr "Gorde kolore-gama VRML gisa"
+
+#~ msgid "empty"
+#~ msgstr "hutsa"
+
+#~ msgid "RGB primaries"
+#~ msgstr "GBU primarioak"
+
+#~ msgid "Information:"
+#~ msgstr "Informazioa:"
+
+#~ msgid "Could not open font in:"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#~ msgid "0,0,0"
+#~ msgstr "0,0,0"
+
+#~ msgid "Slice"
+#~ msgstr "Zatitu"
+
+#~ msgid "Rotate around slice"
+#~ msgstr "Biratu zatiaren inguruan"
+
+#~ msgid "axis"
+#~ msgstr "ardatza"
+
+#~ msgid "Slice plane"
+#~ msgstr "Zati planoa"
+
+#~ msgid "White"
+#~ msgstr "Zuria"
+
+#~ msgid "Light gray"
+#~ msgstr "Gris argia"
+
+#~ msgid "Dark gray"
+#~ msgstr "Gris iluna"
+
+#~ msgid "Background colour"
+#~ msgstr "Atzeko planoaren kolorea"
+
+#~ msgid "gray"
+#~ msgstr "grisa"
+
+#~ msgid "coloured"
+#~ msgstr "koloreztatua"
+
+#~ msgid "high contrast"
+#~ msgstr "kontraste altua"
+
+#~ msgid "Colour line"
+#~ msgstr "Kolore-marra"
+
+#~ msgid "Sphere 1dE"
+#~ msgstr "1dE esfera"
+
+#~ msgid "Sphere 2dE"
+#~ msgstr "2dE esfera"
+
+#~ msgid "Sphere 4dE"
+#~ msgstr "4dE esfera"
+
+#~ msgid "Point"
+#~ msgstr "Puntua"
+
+#~ msgid "without markers"
+#~ msgstr "markatzailerik gabe"
+
+#~ msgid "Spektral line"
+#~ msgstr "Marra espektrala"
+
+#~ msgid "Texts"
+#~ msgstr "Testuak"
+
+#~ msgid "Texts/Arrows on/off"
+#~ msgstr "Testuak/Geziak aktibatu/desaktibatu"
+
+#~ msgid "Illustration"
+#~ msgstr "Ilustrazioa"
+
+#~ msgid "Pos"
+#~ msgstr "Pos."
+
+#~ msgid "Colour"
+#~ msgstr "Kolorea"
+
+#~ msgid "No Colour"
+#~ msgstr "Kolorerik ez"
+
+#~ msgid "Description"
+#~ msgstr "Azalpena"
+
+#~ msgid "Preview, photografic"
+#~ msgstr "Aurrebista, fotografikoa"
+
+#~ msgid "Illuminant ---"
+#~ msgstr "--- iluminatzailea"
+
+#~ msgid "o'clock"
+#~ msgstr "puntuan"
+
+#~ msgid "seconds"
+#~ msgstr "segundo"
+
+#~ msgid "Monitor Profile"
+#~ msgstr "Monitorearen profila"
+
+#~ msgid "file size 0 for "
+#~ msgstr "fitxategi honen tamaina 0: "
+
+#~ msgid "noName"
+#~ msgstr "izengabea"
+
+#~ msgid "File not loaded!"
+#~ msgstr "Fitxategia ez da kargatu."
+
+#~ msgid "use sRGB"
+#~ msgstr "erabili sGBU"
+
+#~ msgid "Meas colour"
+#~ msgstr "Neurtu kolorea"
+
+#~ msgid "no measurment data or correct profile conversion available"
+#~ msgstr "neurtzeko daturik edo profila zuzenaren bihurketa erabilgarririk ez"
+
+#~ msgid "Measurment- and profile colours from <b>"
+#~ msgstr "Neurketa eta profila-kolorea hemendik:<b>"
+
+#~ msgid "RGB"
+#~ msgstr "GBU"
+
+#~ msgid "CMYK"
+#~ msgstr "CMYK"
+
+#~ msgid "</b> Measurement"
+#~ msgstr "</b> neurketa"
+
+#~ msgid "CMM: <b>lcms</b>"
+#~ msgstr "CMM: <b>lcms</b>"
+
+#~ msgid "averaging deviations (dE CIE*Lab):<b> "
+#~ msgstr "batez besteko desbiderapena (dE CIE*Lab):<b> "
+
+#~ msgid "</b>  maximum: "
+#~ msgstr "</b>  gehienezkoa: "
+
+#~ msgid "  minimum: "
+#~ msgstr "  gutxienekoa: "
+
+#~ msgid "  (dE CIE 2000) averaging: "
+#~ msgstr "  (dE CIE 2000) batez bestekoa: "
+
+#~ msgid "  maximum: "
+#~ msgstr "  gehienezkoa: "
+
+#~ msgid "Measurement patch"
+#~ msgstr "Neurketa bidea"
+
+#~ msgid "dE Lab"
+#~ msgstr "dE Lab"
+
+#~ msgid "dE2000"
+#~ msgstr "dE2000"
+
+#~ msgid "L"
+#~ msgstr "L"
+
+#~ msgid "a"
+#~ msgstr "a"
+
+#~ msgid "b"
+#~ msgstr "b"
+
+#~ msgid "L'"
+#~ msgstr "L'"
+
+#~ msgid "a'"
+#~ msgstr "a'"
+
+#~ msgid "b'"
+#~ msgstr "b'"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "Y"
+#~ msgstr "Y"
+
+#~ msgid "Z"
+#~ msgstr "Z"
+
+#~ msgid "X'"
+#~ msgstr "X'"
+
+#~ msgid "Y'"
+#~ msgstr "Y'"
+
+#~ msgid "Z'"
+#~ msgstr "Z'"
+
+#~ msgid "R"
+#~ msgstr "G"
+
+#~ msgid "G"
+#~ msgstr "B"
+
+#~ msgid "B"
+#~ msgstr "U"
+
+#~ msgid "C"
+#~ msgstr "C"
+
+#~ msgid "M"
+#~ msgstr "M"
+
+#~ msgid "K"
+#~ msgstr "K"
+
+#~ msgid "WARNING: Could not load corrupt or damaged profile."
+#~ msgstr "ABISUA: ezin izan da hondatutako profila kargatu."
+
+#~ msgid "WARNING: Could not load profile."
+#~ msgstr "ABISUA: ezin izan da profila kargatu."
+
+#~ msgid "Serial:"
+#~ msgstr "Seriekoa:"
+
+#~ msgid "Std-exception occured: "
+#~ msgstr "STD salbuespena gertatu da: "
+
+#~ msgid "Huch, unknown exception"
+#~ msgstr "Salbuespen ezezaguna"
+
+#~ msgid "Size"
+#~ msgstr "Tamaina"
+
+#~ msgid "tag list is corrupted for tag"
+#~ msgstr "etiketa-zerrenda hondatuta dago: "
+
+#~ msgid "not inside memory block"
+#~ msgstr "ez dago memoria-blokearen barruan"
+
+#~ msgid " typ - no text output"
+#~ msgstr " typ - irteerako testurik ez"
+
+#~ msgid "Work Space"
+#~ msgstr "Laneko area"
+
+#~ msgid "Your"
+#~ msgstr "Zure"
+
+#~ msgid "Profile\" is designed for an other device"
+#~ msgstr "profila\" beste gailu batentzako ezarrita dago"
+
+#~ msgid "Separation"
+#~ msgstr "Bereizketa"
+
+#~ msgid "Device class"
+#~ msgstr "Gailu-klasea"
+
+#~ msgid "is not valid for an"
+#~ msgstr "ez da baliozko "
+
+#~ msgid "Profile\"."
+#~ msgstr "profila\"."
+
+#~ msgid "Linearisation"
+#~ msgstr "Linealisazioa"
+
+#~ msgid "Profile at the moment\"."
+#~ msgstr "Uneko profila\"."
+
+#~ msgid "Transparent, "
+#~ msgstr "Gardena, "
+
+#~ msgid "Reflective, "
+#~ msgstr "Isolatzailea, "
+
+#~ msgid "matte, "
+#~ msgstr "distiragabea, "
+
+#~ msgid "glossy, "
+#~ msgstr "satinatua, "
+
+#~ msgid "negative, "
+#~ msgstr "negatiboa, "
+
+#~ msgid "positive, "
+#~ msgstr "positiboa, "
+
+#~ msgid "black/white"
+#~ msgstr "beltza/zuria"
+
+#~ msgid "colour"
+#~ msgstr "kolorea"
+
+#~ msgid "Profile is embedded and "
+#~ msgstr "Profila kapsulatuta dago eta "
+
+#~ msgid "Profile is not embedded and "
+#~ msgstr "Profila ez dago kapsulatuta eta "
+
+#~ msgid "can not be used independently from image."
+#~ msgstr "ezin da erabili iruditik independenteki"
+
+#~ msgid "can be used independently from image."
+#~ msgstr "iruditik independenteki erabil daiteke."
+
+#~ msgid "found no header"
+#~ msgstr "ez da goibururik aurkitu"
+
+#~ msgid "ICC profile header"
+#~ msgstr "ICC profilaren goiburua"
+
+#~ msgid "Size:        "
+#~ msgstr "Tamaina:        "
+
+#~ msgid "bytes"
+#~ msgstr "byte"
+
+#~ msgid "CMM:         "
+#~ msgstr "CMM:            "
+
+#~ msgid "Version:     "
+#~ msgstr "Bertsioa:       "
+
+#~ msgid "Class:       "
+#~ msgstr "Klasea:         "
+
+#~ msgid "Colour Space:"
+#~ msgstr "Kolore-espazioa:"
+
+#~ msgid "PCS:         "
+#~ msgstr "PCS:            "
+
+#~ msgid "Date:        "
+#~ msgstr "Data:           "
+
+#~ msgid "Magic:       "
+#~ msgstr "Magikoa:        "
+
+#~ msgid "Platform:    "
+#~ msgstr "Plataforma:     "
+
+#~ msgid "Flags:       "
+#~ msgstr "Banderak:       "
+
+#~ msgid "Model:       "
+#~ msgstr "Modeloa:        "
+
+#~ msgid "Attributes:  "
+#~ msgstr "Atributuak:     "
+
+#~ msgid "Intent:      "
+#~ msgstr "Helburua:       "
+
+#~ msgid "Illuminant:  "
+#~ msgstr "Iluminatzailea: "
+
+#~ msgid "created by:  "
+#~ msgstr "sortzailea:     "
+
+#~ msgid "File header invalid"
+#~ msgstr "Fitxategiaren goiburua baliogabea"
+
+#~ msgid "    head  head    128 File header"
+#~ msgstr "    goib. goib.   128 Fitxategi-goiburua"
+
+#~ msgid "Standard Observer"
+#~ msgstr "Behatzaile estandarra"
+
+#, fuzzy
+#~ msgid "Back side"
+#~ msgstr "Atzeko planoan"
+
+#~ msgid "Geometrie"
+#~ msgstr "Geometria"
+
+#~ msgid "Flare"
+#~ msgstr "Erlantza"
+
+#~ msgid "Illuminant Type"
+#~ msgstr "Iluminatzaile mota"
+
+#~ msgid "Conversion table with 16-bit precission:"
+#~ msgstr "Bihurketa-taula 16 bit-eko doitzasunarekin:"
+
+#~ msgid "Intent:"
+#~ msgstr "Helburua:"
+
+#~ msgid "Number of input channels"
+#~ msgstr "Sarrerako kanal kopurua"
+
+#~ msgid "Number of output channels"
+#~ msgstr "Irteerako kanal kopurua"
+
+#~ msgid "Matrix"
+#~ msgstr "Matrizea"
+
+#~ msgid "Linear input curve"
+#~ msgstr "Sarrerako kurba lineala"
+
+#~ msgid "with"
+#~ msgstr "honekin"
+
+#~ msgid "steps"
+#~ msgstr "urratsak"
+
+#, fuzzy
+#~ msgid "3D Lookup table with"
+#~ msgstr "3D taula blokeatua honekin"
+
+#~ msgid "points length per side"
+#~ msgstr "puntu-luzera aldeko"
+
+#~ msgid "Linear output curve"
+#~ msgstr "Irteerako kurba lineala"
+
+#~ msgid "Conversion table with 8-bit precission:"
+#~ msgstr "Bihurketa-taula 8 bit-eko doitzasunarekin:"
+
+#~ msgid "Number of colours:"
+#~ msgstr "Kolore kopurua:"
+
+#~ msgid "Name"
+#~ msgstr "Izena"
+
+#~ msgid "CIE*Lab"
+#~ msgstr "CIE*Lab"
+
+#~ msgid "Device Colours"
+#~ msgstr "Gailuaren koloreak"
+
+#~ msgid "About ICC Examin"
+#~ msgstr "ICC Examin-i buruz"
+
+#~ msgid "ICC Examin Version"
+#~ msgstr "ICC Examin-en bertsioa"
+
+#~ msgid "Date"
+#~ msgstr "Data"
+
+#~ msgid "internet: www.behrmann.name <br>"
+#~ msgstr "web gunea: www.behrmann.name <br>"
+
+#~ msgid ""
+#~ "ICC Examin is a viewer for colour profiles according to ICC standard  - "
+#~ "www.color.org . At the moment version 2 profiles are supported."
+#~ msgstr ""
+#~ "ICC Examin plugin-a ICC estandarraren araberako koloreen profilaren "
+#~ "ikustailea da: www.color.org . Uneko bertsioak 2 profila soilik onartzen "
+#~ "ditu."
+
+#~ msgid ""
+#~ "The appliance of colour profiles shall help to achive an easy colour data "
+#~ "exchange, regardless which application or what kind of operating system "
+#~ "is used. As well colour adaption between different devices is possible, "
+#~ "provided the colour characteristics of both devices are known. The qulity "
+#~ "of a colour transform from one to an other device depends mainly on the "
+#~ "quality of the colour measurement and the used profiling algorithm during "
+#~ "profile creation."
+#~ msgstr ""
+#~ "Koloreen profila aplikatzeak kolore-datuak elkartrukatzeko erraztasuna "
+#~ "lortzen lagun dezake, berdin diolarik zein aplikazio edo sistema eragile "
+#~ "erabiltzen den. Gailuen arteko kolore-moldaketa posiblea denez, bi "
+#~ "gailuetan emandako kolore-ezaugarriak ezagunak dira. Kolorearen "
+#~ "eraldaketaren (gailu batetik bestera) kalitatea kolorearen neurketaren "
+#~ "kalitatearen arabera dago, baita profila sortzean erabilitako profila-"
+#~ "algoritmoaren arabera ere."
+
+#~ msgid ""
+#~ "Colour profiles are often available from manufacturers of optical devices "
+#~ "(digital camera, scanner, printer). With ICC Examin you can get an "
+#~ "impression of the internal data , stored in a ICC profile. For profiles "
+#~ "containing measurement data, ICC Examin can generate a quality report. "
+#~ "The deviation, calculated from the measurement data is shown as well in "
+#~ "the three dimensional gamut viewer.<br>"
+#~ msgstr ""
+#~ "Gailu optikoen (kamera digitala, eskanerra, inprimagailua) hornitzaileek "
+#~ "eskuragarri jarri ohi dute koloreen profilak. ICC Examin plugin-arekin "
+#~ "ICC profila baten barneko datuen inpresioa lor daiteke. ICC Examin-ek "
+#~ "kalitate-txostena sor dezake profileek dituzten neurtzeko datuetatik."
+#~ "Desbiderapena, neurtzeko datuetatik kalkulatua, erakusten da, baita hiru "
+#~ "dimentsiotako kolore-gama ikustailean."
+
+#~ msgid ""
+#~ "The internal colour transformations are currently realised with functions "
+#~ "of the littleCMS program library."
+#~ msgstr ""
+#~ "littleCMS programaren liburutegiko funtzioak erabiliz lantzen dira "
+#~ "barneko kolore eraldaketak."
+
+#~ msgid "Help"
+#~ msgstr "Laguntza"
+
+#~ msgid "License"
+#~ msgstr "Lizentzia"
+
+#~ msgid ""
+#~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
+#~ "icc_* files are licensed under the GPL.<br>    The other source files may "
+#~ "contain devergine licenses, which are detectable from file headers. "
+#~ msgstr ""
+#~ "    ICC Examin plugin-a GPL lizentziaren 2. bertsioarekin kaleratzen da. "
+#~ "Batizpat icc_* fitxategi guztiak GPL lizentzia dute.<br>     Iturburuko "
+#~ "bestelako fitxategiek beste lizentziak eduki ditzakete, fitxategietako "
+#~ "goiburuetan agertzen direlarik."
+
+#~ msgid "Acknowledgement"
+#~ msgstr "Aitorpena"
+
+#~ msgid ""
+#~ "My cordially thank is especially dedicated to Marti Maria and the many "
+#~ "writers of the Lcms-user email list."
+#~ msgstr ""
+#~ "Nire eskerrik goxoenak bereziki Marti Maria-rentzako da, eta Lcms-ko "
+#~ "erabiltzaileen posta-zerrendako idazle guztientzako."
+
+#~ msgid "ICC Examin uses following libraries:<br>\n"
+#~ msgstr "ICC Examin-ek honako liburutegiak erabiltzen ditu:<br>\n"
+
+#~ msgid "  FLTK: Bill Spitzack and others www.fltk.org<br>\n"
+#~ msgstr "  FLTK: Bill Spitzack eta besteak: www.fltk.org<br>\n"
+
+#~ msgid "  FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
+#~ msgstr "  FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
+
+#~ msgid "  littleCMS: Marti Maria www.littlecms.com<br>\n"
+#~ msgstr "  littleCMS: Marti Maria www.littlecms.com<br>\n"
+
+#~ msgid ""
+#~ "  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
+#~ msgstr ""
+#~ "  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
+
+#~ msgid ""
+#~ "integrated sources, lock at the according files for licence conditions:"
+#~ "<br>\n"
+#~ msgstr ""
+#~ "integratutako iturburuak, begiratu dagokien fitxategiak lizentzia-"
+#~ "kontratua ezagutzeko:<br>\n"
+
+#~ msgid "  agv 3D Navigation: Philip Winston<br>\n"
+#~ msgstr "  agv 3D nabigazioa: Philip Winston<br>\n"
+
+#~ msgid "For the visualisation of gamut (external):<br>\n"
+#~ msgstr "Kolore-gamaren bisualizazioa (kanpokoa):<br>\n"
+
+#~ msgid ""
+#~ "  argyll: Greame Gill web.access.net.au/argyll/argyllcms.html<br<br><br>\n"
+#~ msgstr ""
+#~ "  argyll: Greame Gill web.access.net.au/argyll/argyllcms.html<br<br><br>\n"
+
+#~ msgid "Documentation"
+#~ msgstr "Dokumentazioa"
+
+#~ msgid "exception occured: "
+#~ msgstr "salbuespena gertatu da: "
+
+#~ msgid "Manufacturer: "
+#~ msgstr "Hornitzailea: "
+
+#~ msgid "Model:      "
+#~ msgstr "Modeloa:    "
+
+#~ msgid "Gamma Red:   "
+#~ msgstr "Gamma gorria:"
+
+#~ msgid "Gamma Green: "
+#~ msgstr "Gamma berdea:"
+
+#~ msgid "Gamma Blue:  "
+#~ msgstr "Gamma urdina:"
+
+#~ msgid "XineramaScreen:"
+#~ msgstr "Xinerama pantaila:"
+
+#~ msgid "Gamma Green:"
+#~ msgstr "Gamma berdea:"
+
+#~ msgid "no gammagradient information obtained"
+#~ msgstr "ez da gamma-gradientearen informaziorik lortu"
+
+#~ msgid "Add to Favorites"
+#~ msgstr "Gehitu gogokoei"
+
+#~ msgid "All Files (*)"
+#~ msgstr "Fitxategi denak (*)"
+
+#~ msgid "Please choose an existing file!"
+#~ msgstr "Aukeratu existitzen den fitxategia."
+
+#~ msgid "Favorites"
+#~ msgstr "Gogokoak"
+
+#~ msgid "Manage Favorites"
+#~ msgstr "Kudeatu gogokoak"
+
+#~ msgid "My Computer"
+#~ msgstr "Ordenagailua"
+
+#~ msgid "File Systems"
+#~ msgstr "Fitxategi-sistema"
+
+#~ msgid "New Directory?"
+#~ msgstr "Direktorio berria?"
+
+#~ msgid "Preview"
+#~ msgstr "Aurrebista"
+
+#~ msgid "Save"
+#~ msgstr "Gorde"
+
+#~ msgid "Show:"
+#~ msgstr "Erakutsi:"
+
+#~ msgid "lineare entrance curve with 256 steps"
+#~ msgstr "sarrerako kurba lineala 256 urratsekin"
+
+#~ msgid "lineare exit curve with 256 steps"
+#~ msgstr "irteerako kurba lineala 256 urratsekin"
+
+#~ msgid "File"
+#~ msgstr "Fitxategia"
+
+#, fuzzy
+#~ msgid "Save as VRML"
+#~ msgstr "Gorde kolore-gama VRML gisa"
+
+#~ msgid "Quit"
+#~ msgstr "Irten"
+
+#~ msgid "View"
+#~ msgstr "Ikusi"
+
+#~ msgid "Whole Screen on/off"
+#~ msgstr "Pantaila osoa aktibatu/desaktibatu"
+
+#~ msgid "Gamut Warning"
+#~ msgstr "Kolore-gamaren abisua"
+
+#~ msgid "BPC"
+#~ msgstr "BPC"
+
+#, fuzzy
+#~ msgid "Native Gamut"
+#~ msgstr "Gorde kolore-gama VRML gisa"
+
+#~ msgid "Windows"
+#~ msgstr "Leihoak"
+
+#~ msgid "Show Main Window"
+#~ msgstr "Erakutsi leiho nagusia"
+
+#~ msgid "Open"
+#~ msgstr "Ireki"
+
+#~ msgid "Gamut"
+#~ msgstr "Kolore-gama"
+
+#~ msgid "LANG"
+#~ msgstr "HIZK"
+
+#~ msgid "Report View"
+#~ msgstr "Txostenaren ikuspegia"
+
+#~ msgid "CGATS View"
+#~ msgstr "CGATS ikuspegia"
+
+#~ msgid "Videocard Gamma"
+#~ msgstr "Bideo-txartelaren gamma"
+
+#~ msgid "Test Curves"
+#~ msgstr "Probako kurbak"
+
+#~ msgid "About"
+#~ msgstr "Honi buruz"
+
+#~ msgid "Acknowlegement"
+#~ msgstr "Aitorpena"
+
+#~ msgid "Links"
+#~ msgstr "Estekak"
+
+#~ msgid "Grafic Card Gamma Table"
+#~ msgstr "Txartel grafikoaren gamma-taula"
+
+#~ msgid "Set"
+#~ msgstr "Ezarri"
+
+#~ msgid ""
+#~ "Set the current profile as monitor profile and upload vcgt tag to the "
+#~ "video card"
+#~ msgstr ""
+#~ "Ezarri uneko profila monitorearen profila gisa eta kargatu vctg etiketa "
+#~ "bideo-txartelean"
+
+#~ msgid "Reset"
+#~ msgstr "Berrezarri"
+
+#~ msgid "reset to standard gamma"
+#~ msgstr "berrezarri gamma estandarrera"
+
+#~ msgid "Load"
+#~ msgstr "Kargatu"
+
+#~ msgid "Load the current monitor profile"
+#~ msgstr "Kargatu uneko monitorearen profila"
+
+#~ msgid "Close"
+#~ msgstr "Itxi"
+
+#~ msgid "ICC Examin"
+#~ msgstr "ICC Examin"
+
+#~ msgid "Choose one profile tag"
+#~ msgstr "Aukeratu profilaren etiketa"
+
+#~ msgid "Chain selection"
+#~ msgstr "Kate-hautapena"
+
+#~ msgid "Choose a attribute"
+#~ msgstr "Aukeratu atribututa"
+
+#~ msgid "Show all channels of this table a own window."
+#~ msgstr "Erakutsi taula honen kanal guztiak leiho propioan"
+
+#~ msgid "..."
+#~ msgstr "..."
+
+#~ msgid "Loading .."
+#~ msgstr "Kargatzen ..."
+
+#~ msgid "Choose File"
+#~ msgstr "Aukeratu fitxategia"
+
+#~ msgid "?"
+#~ msgstr "?"
+
+#~ msgid "Filename:"
+#~ msgstr "Fitxategi-izena:"
+
+#~ msgid "OK"
+#~ msgstr "Ados"
+
+#~ msgid "Cancel"
+#~ msgstr "Utzi"
+
+#~ msgid "@8>"
+#~ msgstr "@8>"
+
+#~ msgid "@2>"
+#~ msgstr "@2>"
+
+#~ msgid "Proof Profile..."
+#~ msgstr "Frogako profila..."
+
+#~ msgid "Watch Colours 3D..."
+#~ msgstr "Begiratu 3D koloreak..."
+
+#~ msgid "Watch Colours 3D.2..."
+#~ msgstr "Begiratu 3D.2 koloreak..."
+
+#~ msgid "No profil assigned to image."
+#~ msgstr "Ez dago profilik esleituta irudiari."
+
+#~ msgid "Profil not written."
+#~ msgstr "Profila ez da idatzi."
+
+#~ msgid "Wrong profil assigned to image."
+#~ msgstr "Okerreko profila irudiari esleituta."
+
+#~ msgid "No active drawable found."
+#~ msgstr "Ez da marrazgai aktiborik aurkitu."
+
+#~ msgid "What kind of image is this?"
+#~ msgstr "Zein motatako irudia da hau?"
+
+#~ msgid "What kind of image is this?\n"
+#~ msgstr "Zein motatako irudia da hau?\n"
+
+#, fuzzy
+#~ msgid "2004"
+#~ msgstr "dE2000"
+
+#, fuzzy
+#~ msgid "2008"
+#~ msgstr "dE2000"
+
+#~ msgid "!!! Warning !!!"
+#~ msgstr "Abisua !!!"
 
 #, fuzzy
 #~ msgid "May 2004 - September 2008"
@@ -1972,13 +2338,6 @@ msgstr "Abisua !!!"
 
 #~ msgid "Photometric"
 #~ msgstr "Fotometrikoa"
-
-#~ msgid "no filename given"
-#~ msgstr "ez da fitxategi-izenik eman"
-
-#, fuzzy
-#~ msgid "Profiles"
-#~ msgstr "profila\"."
 
 #~ msgid "RGB result not available"
 #~ msgstr "GBUren emaitza ez dago erabilgarri"
