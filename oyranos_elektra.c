@@ -57,6 +57,7 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 
 #if KDB_VERSION_NUM > 600
 #define kdbStrError(t) oy__kdbStrError(t)
+#define errno rc
 #endif
 
 /* --- Helpers  --- */
