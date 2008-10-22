@@ -1,0 +1,12 @@
+Included are profiles created by Kai-Uwe Behrmann <www.behrmann.name>.
+
+The profiling software can be identified from the profiles.
+
+To recreate a profile, you need a profiler installed and the according
+characterisation data. The later should be included in each printing 
+profile, and is as well provided in the “target” directory.
+
+The targets where modified to satisfy ArgyllCMS' profiler.
+The original characterisation data can be downloaded from the respective 
+web sites.
+ 

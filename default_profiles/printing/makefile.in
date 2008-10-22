@@ -1,0 +1,124 @@
+
+COPY = cp -dpa
+RPMARCH = noarch
+RPMDIR = ../../rpmdir
+TARGET  = oyranos-printing-default
+VERSION = 0.5
+
+prefix      = $(INSTDIR)
+srcdir		= .
+
+PROFILES = \
+	webcoated_FOGRA28L_argl.icc \
+	uncoated_FOGRA29L_argl.icc \
+	uncoatedyellowish_FOGRA30L_argl.icc \
+	coated_FOGRA39L_argl.icc \
+	SC_paper_FOGRA40L_argl.icc \
+	SNAP_newsprint_TR002_argl.icc \
+	SWOP_coated_3_TR003_argl.icc \
+	SWOP_coated_5_TR005_argl.icc \
+	GRACoL_coated_TR006_argl.icc
+
+TARGETS = \
+	FOGRA28L.ti3 \
+	FOGRA29L.ti3 \
+	FOGRA30L.ti3 \
+	FOGRA39L.ti3 \
+	FOGRA40L.ti3 \
+	TR002.ti3 \
+	TR003.ti3 \
+	TR005.ti3 \
+	TR006.ti3
+
+DOKU = \
+	README \
+	LICENSE-ZLIB
+
+
+ALL_FILES = \
+	$(PROFILES) \
+	$(TARGETS) \
+	Makefile \
+	makefile.in \
+	build_print_profiles.sh \
+	$(DOKU)
+
+#.SILENT:
+
+all:	$(PROFILES)
+	echo done
+
+webcoated_FOGRA28L_argl.icc:
+	name=webcoated; targ=FOGRA28L; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+
+uncoated_FOGRA29L_argl.icc:
+	name=uncoated; targ=FOGRA29L; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+
+uncoatedyellowish_FOGRA30L_argl.icc:
+	name=uncoatedyellowish; targ=FOGRA30L; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 1. 1. .48 -l340"
+
+coated_FOGRA39L_argl.icc:
+	name=coated; targ=FOGRA39L; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+
+SC_paper_FOGRA40L_argl.icc:
+	name="SC paper"; targ=FOGRA40L; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 1. 1. .48 -l340"
+
+SNAP_newsprint_TR002_argl.icc:
+	name="SNAP newsprint"; targ=TR002; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .4 1. 1. .1 -l320"
+
+SWOP_coated_3_TR003_argl.icc:
+	name="SWOP coated 3"; targ=TR003; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .4 -l300"
+
+SWOP_coated_5_TR005_argl.icc:
+	name="SWOP coated 5"; targ=TR005; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+
+GRACoL_coated_TR006_argl.icc:
+	name="GRACoL coated"; targ=TR006; \
+	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+
+install:	$(PROFILES)
+	echo Installing in $(DESTDIR)$(syscolordir) ...
+	-make uninstall
+	mkdir -p $(DESTDIR)$(syscolordir)/$(iccdirname)
+	$(INSTALL) -m 644 $(PROFILES) $(DESTDIR)$(syscolordir)/$(iccdirname)
+	mkdir -p $(DESTDIR)$(syscolordir)/$(targetdirname)
+	$(INSTALL) -m 644 $(TARGETS) $(DESTDIR)$(syscolordir)/$(targetdirname)
+	echo ... Installation finished
+
+uninstall:
+	echo Uninstalling ...
+	for i in $(PROFILES); do \
+	  $(RM)   "$(DESTDIR)$(syscolordir)/$(iccdirname)/$${i}"; \
+	done
+	for i in $(TARGETS); do \
+	  $(RM)   "$(DESTDIR)$(syscolordir)/$(targetdirname)/$${i}"; \
+	done
+
+clean:
+	echo done
+
+targz:
+	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo -e "\c"
+	mkdir $(TARGET)-$(VERSION)
+	$(COPY) \
+	$(ALL_FILES) \
+	$(TARGET)-$(VERSION)
+	tar cf - $(TARGET)-$(VERSION)/ \
+	| gzip > $(TARGET)-$(VERSION).tar.gz
+	test -d $(TARGET)-$(VERSION) && \
+	test `pwd` != `(cd $(TARGET)-$(VERSION); pwd)` && \
+	rm -R $(TARGET)-$(VERSION) 
+
+copy_files:
+	test -d $(DESTDIR) && $(COPY) \
+	$(ALL_FILES) \
+	$(DESTDIR) || echo "no directory found to copy to:\"$(DESTDIR)\""
+

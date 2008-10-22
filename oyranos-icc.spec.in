@@ -1,34 +1,26 @@
 Summary: Colour Management System
 Name: oyranos
-License: GPL
+License: BSD
 Group: Development/Libraries
 URL: http://www.oyranos.org
-Vendor: Kai-Uwe Behrmann
+Vendor: Kai-Uwe Behrmann http://www.behrmann.name
 Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
 %description
-Oyranos is a colour management configuration system.
+Oyranos is a colour management system.
 It is primarily developed on free operating systems.
-Developers from other OSes can jump in the current
-discussion to make Oyranos aware of cross platform
-standards. Feel cordially invited to make constructive
-suggestions.
 
 Authors:
 --------
     Oyranos     Kai-Uwe Behrmann <www.behrmann.name>
 
-used components and libraries with divergine FOSS licenses:
-    Elektra     Avi Alkalay and others
-    md5         L. Peter Deutsch
-    libXNVCtrl  Nvidia
 
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -n %{name}-%{version}
 
 %build
 %configure --quick --enable-verbose
@@ -46,17 +38,17 @@ rm -rf %{buildroot}
 
 
 %package      RGB
-Summary:    Oyranos standard sRGB ICC profile +
+Summary:    Oyranos default sRGB ICC profile +
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
 License:    public domain
-Version:    0.4
+Version:    0.5
 %description  RGB
 The "WWW standard" sRGB profile and others
 
 %package      lcmsLAB
-Summary:    Oyranos standard PCS profiles
+Summary:    Oyranos default PCS profiles
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
@@ -65,22 +57,22 @@ Version:    0.5
 %description  lcmsLAB
 Special LCMS profiles.
 
-%package      LStarRGB
-Summary:    Oyranos standard Editing RGB profile
+%package      ECI-RGB
+Summary:    Oyranos default Editing RGB profile
 Group:      Applications/Graphics
-Vendor:     http://www.lstar-rgb.com
-URL:        http://www.lstar-rgb.com
-License:    LStar-RGB
-Version:    0.4
-%description  LStarRGB
+Vendor:     http://www.eci.org
+URL:        http://www.eci.org
+License:    ECI-RGB
+Version:    0.5
+%description  ECI-RGB
 The RGB profile maintaining perceptual equal lightness.
 
 %package      Cineon
 Summary:    Oyranos additional Cineon ICC Profiles
 Group:      Applications/Graphics
 URL:        http://www.behrmann.name
-License:    GPL
-Version:    0.4
+License:    zlib
+Version:    0.5
 %description  Cineon
 Cineon ICC Profiles
 
@@ -90,21 +82,43 @@ Group:      Applications/Graphics
 Vendor:     http://www.photogamut.org
 URL:        http://www.photogamut.org
 License:    PhotoGamut
-Version:    0.4
+Version:    0.5
 %description  PhotoGamutRGB
 A ICC Profile optimized for digital photos.
 
-%package      eci-offset2004
-Summary:    ECI Offset-Profiles 2004
+%package      Printing
+Summary:    Printing Profiles
 Group:      Applications/Graphics
-URL:        http://www.eci.org
-Vendor:     http://www.eci.org
-License:    Commercial Heidelberg
-Version:    1.1
-%description  eci-offset2004
-ECI Offset-Profiles according to ISO 12647-2. These are CMYK
-ICC profiles for ISO printing conditions. See http://eci.org for
-detailed specifications.
+URL:        http://www.behrmann.name
+Vendor:     http://www.behrmann.name
+License:    zlib
+Version:    0.5
+%description  Printing
+Printing profiles according to ISO 12647-2. These are CMYK
+ICC profiles for ISO Printing conditions.
+
+%package      target-fogra
+Summary:    FOGRA Printing Characterisation Data
+Group:      Applications/Graphics
+URL:        http://www.fogra.org
+Vendor:     http://www.fogra.org
+License:    zlib
+Version:    0.5
+%description  target-fogra
+Printing characterisation data according to ISO 12647-2.
+These are CMYK characterisation data for coated,
+webcoated, uncoated, uncoatedyellowish and SC paper.
+
+%package      target-npes
+Summary:    NPES Printing Characterisation Data
+Group:      Applications/Graphics
+URL:        http://www.npes.org
+Vendor:     http://www.npes.org
+License:    zlib
+Version:    0.5
+%description  target-npes
+Printing characterisation data. These are CMYK
+characterisation data for GRACoL, SWOP and SNAP.
 
 
 %files lcmsLAB
@@ -113,46 +127,72 @@ detailed specifications.
 %{_datadir}/color/icc/Lab.icc
 %{_datadir}/color/icc/XYZ.icc
 %{_datadir}/color/icc/Gray.icc
-%doc standard_profiles/base/LICENSE
+%doc default_profiles/base/LICENSE
 
 %files Cineon
 %defattr(-, root, root)
 %{_datadir}/color/icc/Cine*.icc
-%doc standard_profiles/base/COPYING
+%doc default_profiles/base/LICENSE-ZLIB
 
-%files LStarRGB
+%files ECI-RGB
 %defattr(-, root, root)
-%{_datadir}/color/icc/LStar-RGB.icc
+%{_datadir}/color/icc/eciRGB_*.icc
 # This should go in the package docs, not with the profiles.
-%doc standard_profiles/base/LStar-License.rtf
+%doc default_profiles/base/licence.rtf
 
 %files PhotoGamutRGB
 %defattr(-, root, root)
 %{_datadir}/color/icc/PhotoGamutRGB_avg6c.icc
-%doc standard_profiles/base/LICENSE
+%doc default_profiles/base/LICENSE
 
 %files RGB
 %defattr(-, root, root)
 %{_datadir}/color/icc/sRGB.icc
 %{_datadir}/color/icc/compatibleWithAdobeRGB1998.icc
-%doc standard_profiles/base/LICENSE
+%doc default_profiles/base/LICENSE
 
-%files eci-offset2004
+%files Printing
 %defattr(-, root, root)
-%{_datadir}/color/icc/ISOwebcoated.icc
-%{_datadir}/color/icc/ISOuncoated.icc
-%{_datadir}/color/icc/ISOuncoatedyellowish.icc
-%{_datadir}/color/icc/ISOcoated.icc
-%doc standard_profiles/eci/HeidelbergLicense_offset2004.pdf
-%doc standard_profiles/eci/ECI_Offset_2004_DEU.pdf
-%doc standard_profiles/eci/ECI_Offset_2004_ENG.pdf
-%doc standard_profiles/eci/ISOcoated_info.pdf
-%doc standard_profiles/eci/ISOuncoated_info.pdf
-%doc standard_profiles/eci/ISOuncoatedyellow_info.pdf
-%doc standard_profiles/eci/ISOwebcoated_info.pdf
+%{_datadir}/color/icc/webcoated_FOGRA28L_argl.icc
+%{_datadir}/color/icc/uncoated_FOGRA29L_argl.icc
+%{_datadir}/color/icc/uncoatedyellowish_FOGRA30L_argl.icc
+%{_datadir}/color/icc/coated_FOGRA39L_argl.icc
+%{_datadir}/color/icc/SC_paper_FOGRA40L_argl.icc
+%{_datadir}/color/icc/SNAP_newsprint_TR002_argl.icc
+%{_datadir}/color/icc/SWOP_coated_3_TR003_argl.icc
+%{_datadir}/color/icc/SWOP_coated_5_TR005_argl.icc
+%{_datadir}/color/icc/GRACoL_coated_TR006_argl.icc
+%doc default_profiles/printing/LICENSE-ZLIB
 
+%files target-fogra
+%defattr(-, root, root)
+%{_datadir}/color/target/FOGRA28L.ti3
+%{_datadir}/color/target/FOGRA29L.ti3
+%{_datadir}/color/target/FOGRA30L.ti3
+%{_datadir}/color/target/FOGRA39L.ti3
+%{_datadir}/color/target/FOGRA40L.ti3
+%doc default_profiles/printing/LICENSE-ZLIB
+
+%files target-npes
+%defattr(-, root, root)
+%{_datadir}/color/target/TR002.ti3
+%{_datadir}/color/target/TR003.ti3
+%{_datadir}/color/target/TR005.ti3
+%{_datadir}/color/target/TR006.ti3
+%doc default_profiles/printing/LICENSE-ZLIB
 
 %changelog
+* Wed Oct 22 2008 - Kai-Uwe Behrmann <ku.b at gmx.de>
+- update to new profiles
+- add characterisation data
+- remove ECI print profiles
+
+* Thu Feb 26 2008 - Kai-Uwe Behrmann <ku.b at gmx.de>
+- v0.5
+- change some licenses to public domain
+- new eciRGBv2 profiles
+- remove LStar-RGB
+
 * Sun Jul 9 2006 - Kai-Uwe Behrmann <ku.b at gmx.de>
 - add compatibleWithAdobeRGB1998.icc from Graeme Gill
 - move oyranos-sRGB to oyranos-RGB for inclusion of above profile

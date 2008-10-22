@@ -17,12 +17,12 @@ PKGC=$TARGET.pc
 MPKG="$TARGET"_monitor.pc
 VERS_H="$TARGET"_version.h
 zeile="$0 $@"
-if [ -f standard_profiles/eci/makefile.in ]; then
-  ECI_CONF=standard_profiles/eci/makefile
-  BASE_CONF=standard_profiles/base/makefile
-  PROFILE_DIR="standard_profiles/eci standard_profiles/base"
+if [ -f default_profiles/printing/makefile.in ]; then
+  PRINT_CONF=default_profiles/printing/makefile
+  BASE_CONF=default_profiles/base/makefile
+  PROFILE_DIR="default_profiles/printing default_profiles/base"
 else
-  ECI_CONF=error.txt
+  PRINT_CONF=error.txt
   BASE_CONF=error.txt
 fi
 MAKEFILE_DIR=". fl_i18n libXNVCtrl $PROFILE_DIR"; export MAKEFILE_DIR
@@ -129,7 +129,7 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       mandir="`echo $1 | sed s/--$switch=//`"
     fi
-    # syscolordir usercolordir iccdirname settingsdirname pixmapdir desktopdir
+    # syscolordir usercolordir iccdirname settingsdirname targetdirname pixmapdir desktopdir
     switch=syscolordir
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       syscolordir="`echo $1 | sed s/--$switch=//`"
@@ -145,6 +145,10 @@ if [ $# -gt 0 ]; then
     switch=settingsdirname
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       settingsdirname="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=targetdirname
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      targetdirname="`echo $1 | sed s/--$switch=//`"
     fi
     switch=pixmapdir
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
@@ -205,6 +209,7 @@ test -n "$INFOECHO" && $INFOECHO "   --syscolordir=[\$datadir/color]       Oyran
 test -n "$INFOECHO" && $INFOECHO "   --usercolordir=[~/.color]            Oyranos user color path"
 test -n "$INFOECHO" && $INFOECHO "   --iccdirname=[icc]                   Oyranos ICC profile directory"
 test -n "$INFOECHO" && $INFOECHO "   --settingsdirname=[settings]         Oyranos settings directory"
+test -n "$INFOECHO" && $INFOECHO "   --targetdirname=[target]             Oyranos target directory"
 test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
 test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg installation path"
 test -n "$INFOECHO" && $INFOECHO ""
@@ -259,7 +264,7 @@ test -n "$ECHO" && $ECHO "" > $CONF
 test -n "$ECHO" && $ECHO "" > $CONF_H
 test -n "$ECHO" && $ECHO "" > $CONF_I18N
 test -n "$ECHO" && $ECHO "" > $CONF_NV
-test -n "$ECHO" && $ECHO "" > $ECI_CONF
+test -n "$ECHO" && $ECHO "" > $PRINT_CONF
 test -n "$ECHO" && $ECHO "" > $BASE_CONF
 test -n "$ECHO" && $ECHO "" > $PKGC
 test -n "$ECHO" && $ECHO "" > $MPKG
@@ -486,7 +491,7 @@ fi
 if [ -z "$mandir" ]; then
   mandir="$datadir/man"
 fi
-# syscolordir usercolordir iccdirname settingsdirname pixmapdir desktopdir
+# syscolordir usercolordir iccdirname settingsdirname targetdirname pixmapdir desktopdir
 if [ -z "$syscolordir" ]; then
   syscolordir="$datadir/color"
 fi
@@ -498,6 +503,9 @@ if [ -z "$iccdirname" ]; then
 fi
 if [ -z "$settingsdirname" ]; then
   settingsdirname="settings"
+fi
+if [ -z "$targetdirname" ]; then
+  targetdirname="target"
 fi
 if [ -z "$pixmapdir" ]; then
   pixmapdir="$datadir/pixmaps"
@@ -747,6 +755,7 @@ test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "usercolordir=$usercolordir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $CONF_SH
 test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $CONF_SH
+test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $CONF_SH
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "oyranos_add=\"$oyranos_add\"" >> $CONF_SH
@@ -788,6 +797,7 @@ test -n "$RPMECHO" && $RPMECHO "%define syscolordir     $syscolordir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define usercolordir    $usercolordir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define iccdirname      $iccdirname" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define settingsdirname $settingsdirname" >> $SPEC
+test -n "$RPMECHO" && $RPMECHO "%define targetdirname   $targetdirname" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define pixmapdir       $pixmapdir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define desktopdir      $desktopdir" >> $SPEC
 test -n "$RPMECHO" && cat  "$SPEC" >> $SPECICC
@@ -810,6 +820,7 @@ test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $MPKG
 test -n "$ECHO" && $ECHO "usercolordir=$usercolordir" >> $MPKG
 test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $MPKG
 test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $MPKG
+test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $MPKG
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $MPKG
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $MPKG
 test -n "$ECHO" && cat  "$MPKG.in" >> $MPKG
@@ -832,6 +843,7 @@ test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $PKGC
 test -n "$ECHO" && $ECHO "usercolordir=$usercolordir" >> $PKGC
 test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $PKGC
+test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $PKGC
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $PKGC
 test -n "$ECHO" && cat  "$PKGC.in" >> $PKGC
@@ -872,6 +884,8 @@ if [ -n "$ECHO" ]; then
   test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="settingsdirname =       $settingsdirname"
   test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  echo_="targetdirname =         $targetdirname"
+  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="pixmapdir       =       $pixmapdir"
   test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="desktopdir      =       $desktopdir"
@@ -897,14 +911,17 @@ test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $CONF
 test -n "$ECHO" && $ECHO "usercolordir=$usercolordir" >> $CONF
 test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $CONF
 test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $CONF
+test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $CONF
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF
 test -n "$ECHO" && $ECHO "" >> $CONF
 
-test -n "$ECHO" && $ECHO "syscolordir = $syscolordir" >> $ECI_CONF
-test -n "$ECHO" && $ECHO "iccdirname = $iccdirname" >> $ECI_CONF
+test -n "$ECHO" && $ECHO "syscolordir = $syscolordir" >> $PRINT_CONF
+test -n "$ECHO" && $ECHO "iccdirname = $iccdirname" >> $PRINT_CONF
+test -n "$ECHO" && $ECHO "targetdirname = $targetdirname" >> $PRINT_CONF
 test -n "$ECHO" && $ECHO "syscolordir = $syscolordir" >> $BASE_CONF
 test -n "$ECHO" && $ECHO "iccdirname = $iccdirname" >> $BASE_CONF
+test -n "$ECHO" && $ECHO "targetdirname = $targetdirname" >> $BASE_CONF
 
 test -n "$ECHO" && $ECHO "" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $CONF_H
@@ -916,6 +933,7 @@ test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_TARGETDIRNAME  \"$targetdirname\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$srcdir\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
@@ -948,7 +966,7 @@ test -n "$ECHO" && $ECHO "CFLAGS = $CFLAGS"   >> $CONF
 test -n "$ECHO" && $ECHO "CXXFLAGS = $CXXFLAGS">>$CONF
 test -n "$ECHO" && $ECHO "LDFLAGS = $LDFLAGS" >> $CONF
 test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $CONF
-test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $ECI_CONF
+test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $PRINT_CONF
 test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $BASE_CONF
 
 test -n "$ECHO" && $ECHO "" >> $CONF

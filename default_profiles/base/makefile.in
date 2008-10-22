@@ -1,0 +1,79 @@
+LNK  = ln -s
+COPY = cp -dpa
+RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
+RPMDIR = ../../rpmdir
+TARGET  = oyranos-profiles-base
+VERSION = 0.5
+
+prefix      = $(INSTDIR)
+srcdir		= .
+
+FILES = \
+	LCMSLABI.ICM \
+	LCMSXYZI.ICM \
+	sRGB.icc \
+	CineLogCurve.icc \
+	CineonLog_M.icc \
+	CineonLog_M_Knee_10.icc \
+	CineonLog_M_Knee_20.icc \
+	CineonLog_M_Knee_30.icc \
+	CineonLog_M_Knee_60.icc \
+	Gray.icc \
+	eciRGB_v2.icc \
+	eciRGB_v2_ICCv4.icc \
+	PhotoGamutRGB_avg6c.icc \
+	compatibleWithAdobeRGB1998.icc
+
+DOKU = \
+	COPYING \
+	LICENSE \
+	LICENSE-ZLIB \
+	licence.rtf \
+	README
+
+
+ALL_FILES = \
+	$(FILES) \
+	Makefile \
+	makefile.in \
+	$(DOKU)
+
+all:
+	echo done
+
+install:
+	echo Installing in $(DESTDIR)$(syscolordir)/$(iccdirname) ...
+	-make uninstall
+	mkdir -p $(DESTDIR)$(syscolordir)/$(iccdirname)
+	$(INSTALL) -m 644 $(FILES) $(DESTDIR)$(syscolordir)/$(iccdirname)
+	$(LNK) LCMSLABI.ICM $(DESTDIR)$(syscolordir)/$(iccdirname)/Lab.icc
+	$(LNK) LCMSXYZI.ICM $(DESTDIR)$(syscolordir)/$(iccdirname)/XYZ.icc
+	echo ... Installation finished
+
+uninstall:
+	echo Uninstalling ...
+	for i in $(FILES); do \
+	  $(RM)   "$(DESTDIR)$(syscolordir)/$(iccdirname)/$${i}"; \
+	done
+	$(RM)   "$(DESTDIR)$(syscolordir)/$(iccdirname)/XYZ.icc"
+	$(RM)   "$(DESTDIR)$(syscolordir)/$(iccdirname)/Lab.icc"
+
+clean:
+	echo done
+
+targz:
+	mkdir $(TARGET)-$(VERSION)
+	$(COPY) \
+	$(ALL_FILES) \
+	$(TARGET)-$(VERSION)
+	tar cf - $(TARGET)-$(VERSION)/ \
+	| gzip > $(TARGET)-$(VERSION).tar.gz
+	test -d $(TARGET)-$(VERSION) && \
+	test `pwd` != `(cd $(TARGET)-$(VERSION); pwd)` && \
+	rm -R $(TARGET)-$(VERSION) 
+
+copy_files:
+	test -d $(DESTDIR) && $(COPY) \
+	$(ALL_FILES) \
+	$(DESTDIR) || echo "no directory found to copy to:\"$(DESTDIR)\""
+
