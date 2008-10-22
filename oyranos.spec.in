@@ -77,7 +77,7 @@ The sample configuration GUI.
 
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -n %{name}-%{version}
 
 %build
 %configure --enable-debug --enable-verbose
@@ -104,7 +104,8 @@ rm -rf %{buildroot}
 %{_libdir}/lib%{name}.so*
 %{_libdir}/color/cmms/lib%{name}_lcms_cmm_module.so*
 %{_libdir}/color/cmms/lib%{name}_oyra_cmm_module.so*
-%{_mandir}/man1/%{name}*
+%{_mandir}/man1/%{name}-config.1*
+%{_mandir}/man1/%{name}-policy*
 %{_mandir}/man3/%{name}.*
 %{_datadir}/locale/*/LC_MESSAGES/%{name}.*
 %{syscolordir}/%{settingsdirname}/*.policy.xml
@@ -123,6 +124,7 @@ rm -rf %{buildroot}
 %{_bindir}/%{name}-monitor
 %{_libdir}/lib%{name}_moni.so*
 %{_libdir}/color/cmms/lib%{name}_oyX1_cmm_module.so*
+%{_mandir}/man1/%{name}-monitor*
 
 %files monitor-nvidia
 %doc AUTHORS COPYING ChangeLog README
@@ -131,6 +133,7 @@ rm -rf %{buildroot}
 %files ui-fltk
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-config-fl*
+%{_mandir}/man1/%{name}-config-fltk.1*
 
 
 %changelog
