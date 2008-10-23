@@ -1240,7 +1240,9 @@ oyPolicySet                (const char      * policy_file,
 
 /*  @} */
 
-/** \addtogroup path_names Path Names API
+/**
+ *  @internal
+ *  \addtogroup path_names Path Names API
  *  Functions to handle path configuration for Oyranos.
  *
  *  Paths include operating system standard paths. For linux these are:
@@ -1351,32 +1353,6 @@ oyPathActivate       (const char* pathname)
 
   oyExportEnd_();
   DBG_PROG_ENDE
-}
-#endif
-
-#if 1
-/** Find out where in the Oyranos search path the specified profile resides.
- *
- *  @deprecated This function will be substituded by oyProfile_GetFileName.
- *
- *  @param  profile_name  the filename find in the Oyranos search path
- *  @param  allocate_func user provided function for allocating the string
-                          memory
- *  @return the path name where the profile was found in the Oyranos search path
- */
-char*
-oyGetPathFromProfileName (const char* profile_name, oyAlloc_f     allocate_func)
-{
-  char* path_name = NULL;
-
-  DBG_PROG_START
-  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
-
-  path_name = oyGetPathFromProfileName_ (profile_name, allocate_func);
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-  return path_name;
 }
 #endif
 
@@ -1602,6 +1578,32 @@ oyGetProfileBlock                 (const char* profilename, size_t *size,
   return block;
 }
 
+#if 1
+/** Find out where in the Oyranos search path the specified profile resides.
+ *
+ *  @deprecated This function will be substituded by oyProfile_GetFileName.
+ *
+ *  @param  profile_name  the filename find in the Oyranos search path
+ *  @param  allocate_func user provided function for allocating the string
+                          memory
+ *  @return the path name where the profile was found in the Oyranos search path
+ */
+char*
+oyGetPathFromProfileName (const char* profile_name, oyAlloc_f     allocate_func)
+{
+  char* path_name = NULL;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  path_name = oyGetPathFromProfileName_ (profile_name, allocate_func);
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return path_name;
+}
+#endif
+
 /** @} */
 
 
@@ -1747,13 +1749,17 @@ oyEraseDeviceProfile              (oyDEVICETYP_e typ,
 
 
 
-/** \addtogroup cmm_handling CMM Handling API
+/**
+ *  @internal
+ *  \addtogroup cmm_handling CMM Handling API
  *  Functions to handle ColorMatchingModules.
 
  *  @{
  */
 
-/** @brief  get the user allocated CMM 4 char ID's
+/**
+ *  @internal
+ *  @brief  get the user allocated CMM 4 char ID's
  *
  *  @param  count          the number of CMM's available
  *  @param  allocate_func  the users memory allocation function

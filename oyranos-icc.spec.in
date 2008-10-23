@@ -1,6 +1,6 @@
 Summary: Colour Management System
 Name: oyranos
-License: BSD
+License: zlib
 Group: Development/Libraries
 URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann http://www.behrmann.name
@@ -71,7 +71,6 @@ The RGB profile maintaining perceptual equal lightness.
 Summary:    Oyranos additional Cineon ICC Profiles
 Group:      Applications/Graphics
 URL:        http://www.behrmann.name
-License:    zlib
 Version:    0.5
 %description  Cineon
 Cineon ICC Profiles
@@ -91,7 +90,6 @@ Summary:    Printing Profiles
 Group:      Applications/Graphics
 URL:        http://www.behrmann.name
 Vendor:     http://www.behrmann.name
-License:    zlib
 Version:    0.5
 %description  Printing
 Printing profiles according to ISO 12647-2. These are CMYK
@@ -102,7 +100,6 @@ Summary:    FOGRA Printing Characterisation Data
 Group:      Applications/Graphics
 URL:        http://www.fogra.org
 Vendor:     http://www.fogra.org
-License:    zlib
 Version:    0.5
 %description  target-fogra
 Printing characterisation data according to ISO 12647-2.
@@ -114,7 +111,6 @@ Summary:    NPES Printing Characterisation Data
 Group:      Applications/Graphics
 URL:        http://www.npes.org
 Vendor:     http://www.npes.org
-License:    zlib
 Version:    0.5
 %description  target-npes
 Printing characterisation data. These are CMYK

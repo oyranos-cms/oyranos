@@ -53,7 +53,6 @@
     - @ref options - layout and describe options to the user; part of user policies
     - @ref behaviour - get and set common behaviour; part of user policies
     - @ref default_profiles - get and set commonly used profiles; part of user policies
-    - @ref path_names  - get information about configured and used profile search paths 
     - @ref profile_lists - provides the search path content as profile lists for your GUI
     - @ref profile_handling - file I/O and more
 
