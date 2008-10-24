@@ -23,6 +23,7 @@
 
 #include "oyranos.h"
 #include "oyranos_debug.h"
+#include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
@@ -49,6 +50,9 @@ void  printfHelp (int argc, char** argv)
   if(id)
   fprintf( stderr, "  Oyranos git id %s\n", oyNoEmptyName_m_(id) );
   fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",
+                                           _("Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."));
+  fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("Dump out the actual settings:"));
   fprintf( stderr, "      %s -d\n",        argv[0]);
@@ -58,6 +62,8 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s -l\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("Currently active policy:"));
   fprintf( stderr, "      %s -c\n",        argv[0]);
+  fprintf( stderr, "  %s\n",               _("List search paths:"));
+  fprintf( stderr, "      %s -p\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("Save and install to a new policy:"));
   fprintf( stderr, "      %s -s %s\n",     argv[0], _("policy name"));
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
@@ -78,7 +84,7 @@ int main( int argc , char** argv )
             * import_policy = NULL;
   size_t size = 0;
   char *xml = NULL;
-  int current_policy = 0, list_policies = 0,
+  int current_policy = 0, list_policies = 0, list_paths = 0,
       dump_policy = 0;
 
   if(getenv("OYRANOS_DEBUG"))
@@ -115,6 +121,7 @@ int main( int argc , char** argv )
                         if(oy_debug) fprintf(stderr,"import_policy=0\n"); ++pos;
                         break;
               case 'l': list_policies = 1; break;
+              case 'p': list_paths = 1; break;
               case 's': if( pos + 1 < argc )
                         { new_policy = argv[pos+1];
                           if( !oyStrlen_(new_policy) )
@@ -179,7 +186,7 @@ int main( int argc , char** argv )
                _("installation of new policy file failed with error:"), error);
 
   } else
-  if(current_policy || list_policies)
+  if(current_policy || list_policies || list_paths)
   {
     const char ** names = NULL;
     int count = 0, i, current = -1;
@@ -192,6 +199,18 @@ int main( int argc , char** argv )
     if(current_policy)
       fprintf( stdout, "%s \"%s\"\n",
                _("Currently active policy:"), current>=0?names[current]:"---");
+
+    if(list_paths)
+    {
+      char ** path_names = oyConfigPathsGet_( &count, "settings",
+                                              oyALL, oyUSER_SYS,
+                                              oyAllocateFunc_ );
+      fprintf(stdout, "%s:\n", _("Policy search paths"));
+      for(i = 0; i < count; ++i)
+        fprintf(stdout, "%s\n", path_names[i]);
+
+      oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
+    }
 
   } else
   if(dump_policy)

@@ -1,12 +1,12 @@
-.TH "oyranos-policy" 1 "Jily 24, 2008" "User Commands"
+.TH "oyranos-policy" 1 "October 24, 2008" "User Commands"
 .SH NAME
 oyranos-policy \- Oyranos CMS policy tool
 .SH SYNOPSIS
 .B oyranos-policy 
 [-c] [-d] [-i filename]
-[-l] [-s filename] [-h]
+[-l] [-p] [-s filename] [-v] [-h]
 .SH DESCRIPTION
-The tool dumps out / read a configuration of the Oyranos colour management system (CMS).
+The tool dumps out / read a configuration of the Oyranos colour management system (CMS). Search paths are influenced by the XDG_CONFIG_HOME shell variable.
 .SH OPTIONS
 .TP
 .B \-c
@@ -21,6 +21,9 @@ filename must be in Oyranos' own xml-ish text format
 .TP
 .B \-l
 list available policies
+.TP
+.B \-p
+list search paths
 .TP
 .B \-s
 Save and install to a new policy;
@@ -51,6 +54,6 @@ Print a help text:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH "SEE ALSO"
-oyranos-config(1) oyranos-policy(1) oyranos-monitor(1) oyranos(3)
+oyranos-config(1) oyranos-monitor(1) oyranos(3)
 .SH BUGS
 at: http://sourceforge.net/tracker/?group_id=177017&atid=879553
