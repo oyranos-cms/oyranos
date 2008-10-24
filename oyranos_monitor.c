@@ -1527,7 +1527,7 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
  *
  */
 int
-oyGetMonitorInfo                  (const char* display,
+oyGetMonitorInfo_lib              (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
@@ -1566,7 +1566,7 @@ oyGetMonitorInfo                  (const char* display,
  *  @return                   the memory block containing the profile
  */
 char*
-oyGetMonitorProfile           (const char* display,
+oyGetMonitorProfile_lib       (const char* display,
                                size_t *size,
                                oyAlloc_f     allocate_func)
 {
@@ -1589,7 +1589,7 @@ oyGetMonitorProfile           (const char* display,
  *  @param      allocate_func function used to allocate memory for the string
  *  @return                   the profiles filename (if localy available)
  */
-char*  oyGetMonitorProfileNameFromDB ( const char        * display,
+char*  oyGetMonitorProfileNameFromDB_lib ( const char        * display,
                                        oyAlloc_f           allocate_func )
 {
   char* moni_profile = 0;
@@ -1612,7 +1612,7 @@ char*  oyGetMonitorProfileNameFromDB ( const char        * display,
  *  @return                   error
  */
 int
-oySetMonitorProfile               (const char* display_name,
+oySetMonitorProfile_lib           (const char* display_name,
                                    const char* profil_name )
 {
   int error = 0;
@@ -1643,7 +1643,7 @@ oySetMonitorProfile               (const char* display_name,
  *  @date    2008/10/16
  */
 int
-oyActivateMonitorProfiles         (const char* display_name)
+oyActivateMonitorProfiles_lib         (const char* display_name)
 {
   int error = 0;
 
@@ -1668,7 +1668,7 @@ oyActivateMonitorProfiles         (const char* display_name)
  *  @return                   screen
  */
 int
-oyGetScreenFromPosition         (const char *display_name,
+oyGetScreenFromPosition_lib     (const char *display_name,
                                  int x,
                                  int y)
 {
@@ -1700,7 +1700,7 @@ oyGetScreenFromPosition         (const char *display_name,
  *  @return                   display name
  */
 char*
-oyGetDisplayNameFromPosition      (const char *display_name,
+oyGetDisplayNameFromPosition_lib      (const char *display_name,
                                    int x,
                                    int y,
                                    oyAlloc_f     allocate_func)

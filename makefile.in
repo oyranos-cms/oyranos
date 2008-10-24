@@ -274,7 +274,7 @@ $(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
-$(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS)
+$(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(LIB_MONI_SONAMEFULL)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $@ \
@@ -300,7 +300,7 @@ $(LIB_XNVCTRL).a:
 	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
 # the twinview library
-$(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a
+$(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a $(LIB_MONI_SONAMEFULL)
 	echo Linking $@ ...
 	-$(CC) $(CFLAGS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
@@ -318,7 +318,7 @@ $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 	echo Linking $@ ...
 	$(CXX) $(CXXFLAGS) -o $(TARGET)-config-fltk \
 	$(FLTK_OBJECTS) \
-	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LINK_LIB_PATH) \
+	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N)
 	$(REZ)
 
@@ -337,11 +337,11 @@ $(LIB_MONI_NAME):	$(MONI_OBJECTS)
 	$(RANLIB) $(LIB_MONI_NAME)
 
 # the monitor profile tool
-$(TARGET)-monitor:	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(TARGET)_gamma.o
+$(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
-	$(LIBSONAMEFULL) $(LIB_MONI_SONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
@@ -350,7 +350,7 @@ $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
 
-test2:	$(LIB_MONI_SONAMEFULL)
+test2:	$(LIBSONAMEFULL)
 	echo Compile $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -c test2.cpp \
 	-o test2.o `oyranos-config --cflags`
@@ -477,16 +477,6 @@ install_bin:	all doc
 		$(RANLIB) $(DESTDIR)$(cmmdir)/lib$${lib}.a \
 		) || echo ""; \
 	done
-	#$(INSTALL) -m 644 $(LIBNAME) $(DESTDIR)$(libdir)
-	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIBNAME)
-	#$(INSTALL) -m 755 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
-	#$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
-	#$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
-	#$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
-	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
-	#$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
-	#$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SONAME)
-	#$(LNK)  $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)/$(LIB_MONI_SO)
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
 	-$(INSTALL) -m 644 $(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)
@@ -494,7 +484,6 @@ install_bin:	all doc
 	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 icc34.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(TARGET)_monitor.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
 	test "$(FLTK_GUI)" && $(MAKE) DESTDIR=$(DESTDIR) install_gui || echo -e "GUI not installed"
 	echo Installing policy settings files ...
@@ -626,7 +615,7 @@ distclean: clean
 	-$(RM) libXNVCtrl/Makefile
 	-$(RM) default_profiles/base/Makefile
 	-$(RM) default_profiles/printing/Makefile
-	-$(RM) mkdepend config.h oyranos.pc oyranos_monitor.pc oyranos.spec
+	-$(RM) mkdepend config.h oyranos.pc oyranos.spec
 	-$(RM) oyranos-icc.spec config.log oyranos_version.h oyranos-config
 	-$(RM) config.sh
 	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)

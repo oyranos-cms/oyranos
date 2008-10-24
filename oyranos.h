@@ -337,6 +337,27 @@ const char *   oyLanguage            ( void );
 const char *   oyCountry             ( void );
 const char *   oyLang                ( void );
 
+int      oyGetMonitorInfo            ( const char        * display,
+                                       char             ** manufacturer,
+                                       char             ** model,
+                                       char             ** serial,
+                                       oyAlloc_f           allocate_func );
+int      oyGetScreenFromPosition     ( const char        * display_name,
+                                       int                 x,
+                                       int                 y );
+char *   oyGetDisplayNameFromPosition( const char        * display_name,
+                                       int                 x,
+                                       int                 y,
+                                       oyAlloc_f           allocate_func );
+char *   oyGetMonitorProfile         ( const char        * display,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func );
+char *   oyGetMonitorProfileNameFromDB(const char        * display,
+                                       oyAlloc_f           allocate_func );
+int      oySetMonitorProfile         ( const char        * display_name,
+                                       const char        * profil_name );
+int      oyActivateMonitorProfiles   ( const char        * display_name );
+
 #ifdef __cplusplus
 } /* extern "C" */
 } /* namespace oyranos */

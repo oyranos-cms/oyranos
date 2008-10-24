@@ -15373,7 +15373,12 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
 
 
 
-/** \addtogroup monitor_api
+/** \addtogroup monitor_api Monitor API
+ *  @brief Hardware detection and profile selection for monitors
+
+ *  The notation of screens for the X Window system is equal for traditional 
+ *  and Xinerama screens. \n
+ *  The X11 libraries will be loaded at runtime.
 
  *  @{
  */

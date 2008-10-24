@@ -29,8 +29,6 @@
 int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = oyX1CMMWarnFunc;
 
-int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
-                                       const char        * resource );
 
 /* --- implementations --- */
 
@@ -139,15 +137,15 @@ oyCMMapi2_s oyX1_api2 = {
   oyX1CMMMessageFuncSet,
   oyX1CMMCanHandle,
 
-  oyGetMonitorInfo,
-  oyGetScreenFromPosition,
+  oyGetMonitorInfo_lib,
+  oyGetScreenFromPosition_lib,
 
-  oyGetDisplayNameFromPosition,
-  oyGetMonitorProfile,
-  oyGetMonitorProfileNameFromDB,
+  oyGetDisplayNameFromPosition_lib,
+  oyGetMonitorProfile_lib,
+  oyGetMonitorProfileNameFromDB_lib,
 
-  oySetMonitorProfile,
-  oyActivateMonitorProfiles
+  oySetMonitorProfile_lib,
+  oyActivateMonitorProfiles_lib
 };
 
 

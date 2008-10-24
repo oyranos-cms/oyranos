@@ -27,42 +27,32 @@ namespace oyranos
 #endif /* __cplusplus */
 
 
-/** \addtogroup monitor_api Monitor API
- *  @brief Hardware detection and profile selection for monitors
-
- *  The notation of screens for the X Window system is equal for traditional 
- *  and Xinerama screens.
-
- *  @{
- */
-
  /*  @see @ref device_profiles */
 
 /* monitor names */
 
-int   oyGetMonitorInfo            (const char* display,
+int   oyGetMonitorInfo_lib        (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
                                    oyAlloc_f     allocate_func);
-int   oyGetScreenFromPosition     (const char *display_name,
+int   oyGetScreenFromPosition_lib (const char *display_name,
                                    int x,
                                    int y);
-char* oyGetDisplayNameFromPosition(const char *display_name,
+char* oyGetDisplayNameFromPosition_lib(const char *display_name,
                                    int x,
                                    int y,
                                    oyAlloc_f     allocate_func);
-char* oyGetMonitorProfile         (const char *display,
+char* oyGetMonitorProfile_lib     (const char *display,
                                    size_t     *size,
                                    oyAlloc_f     allocate_func);
-char*  oyGetMonitorProfileNameFromDB ( const char        * display,
+char*  oyGetMonitorProfileNameFromDB_lib ( const char        * display,
                                        oyAlloc_f           allocate_func );
 
 /* TODO set a memory based profile */
-int   oySetMonitorProfile         (const char* display_name,
+int   oySetMonitorProfile_lib     (const char* display_name,
                                    const char* profil_name );
-int      oyActivateMonitorProfiles   ( const char        * display_name );
-/* @} */
+int      oyActivateMonitorProfiles_lib( const char        * display_name );
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -122,7 +122,6 @@ rm -rf %{buildroot}
 %{_includedir}/%{name}/%{name}_config.h
 %{_includedir}/%{name}/%{name}_definitions.h
 %{_includedir}/%{name}/%{name}_icc.h
-%{_includedir}/%{name}/%{name}_monitor.h
 %{_includedir}/%{name}/%{name}_version.h
 %{_libdir}/pkgconfig/*
 %{_libdir}/*.a
