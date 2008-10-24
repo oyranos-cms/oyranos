@@ -26,7 +26,7 @@
 
 
 #include "oyranos.h"
-#include "oyranos_monitor.h"
+#include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
@@ -152,7 +152,7 @@ int main( int argc , char** argv )
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
-    if(oy_debug || !monitor_profile)
+    if(oy_debug || (!monitor_profile && !erase))
     {
       size_t size = 0;
       oyProfile_s * prof = 0;
@@ -168,11 +168,11 @@ int main( int argc , char** argv )
         filename = oyProfile_GetFileName( prof, 0 );
       }
       printf("%s:%d profile \"%s\" size: %d\n",__FILE__,__LINE__,
-             filename, (int)size);
+             filename?filename:OY_PROFILE_NONE, (int)size);
     }
 
     /* make shure the display name is correct including the screen */
-    if(monitor_profile)
+    if(monitor_profile || erase)
       oySetMonitorProfile (oy_display_name, monitor_profile);
   }
 
