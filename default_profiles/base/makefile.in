@@ -42,21 +42,22 @@ all:
 	echo done
 
 install:
-	echo Installing in $(DESTDIR)$(syscolordir)/$(iccdirname) ...
+	echo Installing base profiles in $(DESTDIR)$(syscolordir)/$(iccdirname) ...
 	-make uninstall
 	mkdir -p $(DESTDIR)$(syscolordir)/$(iccdirname)
 	$(INSTALL) -m 644 $(FILES) $(DESTDIR)$(syscolordir)/$(iccdirname)
 	$(LNK) LCMSLABI.ICM $(DESTDIR)$(syscolordir)/$(iccdirname)/Lab.icc
 	$(LNK) LCMSXYZI.ICM $(DESTDIR)$(syscolordir)/$(iccdirname)/XYZ.icc
-	echo ... Installation finished
+	echo ... base profile installation finished
 
 uninstall:
-	echo Uninstalling ...
+	echo Uninstalling base profiles ...
 	for i in $(FILES); do \
 	  $(RM)   "$(DESTDIR)$(syscolordir)/$(iccdirname)/$${i}"; \
 	done
 	$(RM)   "$(DESTDIR)$(syscolordir)/$(iccdirname)/XYZ.icc"
 	$(RM)   "$(DESTDIR)$(syscolordir)/$(iccdirname)/Lab.icc"
+	echo ... finished uninstalling base profiles
 
 clean:
 	echo done

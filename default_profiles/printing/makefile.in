@@ -85,22 +85,23 @@ GRACoL_coated_TR006_argl.icc:
 	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
 
 install:	$(PROFILES)
-	echo Installing in $(DESTDIR)$(syscolordir) ...
+	echo Installing printing profiles in $(DESTDIR)$(syscolordir)/$(iccdirname) ...
 	-make uninstall
 	mkdir -p $(DESTDIR)$(syscolordir)/$(iccdirname)
 	$(INSTALL) -m 644 $(PROFILES) $(DESTDIR)$(syscolordir)/$(iccdirname)
 	mkdir -p $(DESTDIR)$(syscolordir)/$(targetdirname)
 	$(INSTALL) -m 644 $(TARGETS) $(DESTDIR)$(syscolordir)/$(targetdirname)
-	echo ... Installation finished
+	echo ... printing profile Installation finished
 
 uninstall:
-	echo Uninstalling ...
+	echo Uninstalling printing profiles ...
 	for i in $(PROFILES); do \
 	  $(RM)   "$(DESTDIR)$(syscolordir)/$(iccdirname)/$${i}"; \
 	done
 	for i in $(TARGETS); do \
 	  $(RM)   "$(DESTDIR)$(syscolordir)/$(targetdirname)/$${i}"; \
 	done
+	echo ... done uninstall printing profiles
 
 clean:
 	echo done
