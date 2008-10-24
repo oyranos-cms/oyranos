@@ -1536,6 +1536,7 @@ int          oyName_release          ( oyName_s         ** obj )
 }
 
 /** @brief oyName_s deallocation
+ *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
@@ -1579,6 +1580,7 @@ int          oyName_release_         ( oyName_s       ** obj,
 
 
 /** @brief naming plus automatic allocation
+ *  @internal
  *
  *  @param[in]    object         the oyName_s struct
  *  @param[in]    name           the name should fit into usual labels
@@ -1635,6 +1637,7 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
 }
 
 /** @func    oyName_get_
+ *  @internal
  *  @brief   get name
  *
  *  @param[in,out] obj                 name object
@@ -2219,7 +2222,7 @@ int              oyStructList_ReferenceAt_( oyStructList_s * list,
   return p;
 }*/
 
-/** @internal
+/**
  *  @brief oyStructList_s count
  *
  *  @since Oyranos: version 0.1.8
@@ -2722,6 +2725,7 @@ int              oyCMMhandle_Release_( oyCMMhandle_s    ** obj )
   return error;
 }
 
+/** @internal */
 int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
                                        oyCMMInfo_s       * info,
                                        oyPointer           dso_handle )
@@ -2970,6 +2974,7 @@ oyCMMInfo_s *    oyCMMInfoAtListFromLibName_(const char        * lib_name )
   return cmm_info;
 }
 
+/** @internal */
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
 {
   char * text = 0, num[48];
@@ -4836,6 +4841,7 @@ oyOption_s *   oyOption_New          ( oyObject_s          object,
 
 /** @func    oyOption_Copy_
  *  @relates oyOption_s
+ *  @internal
  *  @brief   real copy a option object
  *
  *  @param[in]     option              option object
@@ -4987,6 +4993,7 @@ int            oyOption_GetId        ( oyOption_s        * obj )
 
 /** @func    oyOption_Match_
  *  @relates oyOption_s
+ *  @internal
  *  @brief   two option matches
  *
  *  @version Oyranos: 0.1.8
@@ -5183,6 +5190,7 @@ oyOptions_s *  oyOptions_FromDefaults( oyOPTIONDEFAULTS_e  type,
 
 /** @func    oyOptions_Copy_
  *  @relates oyOptions_s
+ *  @internal
  *  @brief   real copy a options object
  *
  *  @param[in]     options             options object
@@ -5613,6 +5621,7 @@ oyProfile_FromFile            ( const char      * name,
 }
 
 /** @brief   create from in memory blob
+ *  @internal
  *  @relates oyProfile_s
  *
  *  @param[in]    size           buffer size
@@ -5782,6 +5791,7 @@ OYAPI oyProfile_s * OYEXPORT
 }
 
 /** @brief   create new from existing profile struct
+ *  @internal
  *  @relates oyProfile_s
  *
  *  @param[in]    profile        other profile
@@ -6499,11 +6509,12 @@ OYAPI oyPointer OYEXPORT
 
 /** @func    oyProfile_GetFileName_r
  *  @relates oyProfile_s
+ *  @internal
  *  @brief   get the ICC profile location in the filesystem
  *
  *  This function tries to find a profile on disk matching a possibly memory
  *  only profile. In case the profile was previously opened from file or as a
- *  from Oyranos defaults the assiciated filename will simply be retuned.
+ *  from Oyranos defaults the associated filename will simply be retuned.
  *
  *  @param         profile             the profile
  *  @param         allocateFunc        memory allocator           
@@ -6574,7 +6585,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
  *
  *  This function tries to find a profile on disk matching a possibly memory
  *  only profile. In case the profile was previously opened from file or as a
- *  from Oyranos defaults the assiciated filename will simply be retuned.
+ *  from Oyranos defaults the associated filename will simply be retuned.
  *
  *  @param         profile             the profile
  *  @param         dl_pos              -1, or the position in a device links source chain
@@ -6662,6 +6673,7 @@ const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
 
 
 /** @brief get a CMM specific pointer
+ *  @internal
  *  @relates oyProfile_s
  *
  *  @since Oyranos: version 0.1.8
@@ -6839,6 +6851,7 @@ OYAPI int OYEXPORT
 
 /** @internal
  *  @func    oyProfile_Match_
+ *  @internal
  *  @relates oyProfile_s
  *  @brief   check if a profiles matches by some properties
  *
@@ -6876,6 +6889,7 @@ int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
 /** @internal
  *  @func    oyProfile_Hashed_
  *  @relates oyProfile_s
+ *  @internal
  *  @brief   check if a profile has a hash sum computed
  *
  *  @version Oyranos: 0.1.8
@@ -6922,6 +6936,7 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 }
 
 /** @func    oyProfile_WriteHeader_
+ *  @internal
  *  @relates oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
  *
@@ -6956,6 +6971,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
 }
 
 /** @func    oyProfile_WriteTagTable_
+ *  @internal
  *  @relates oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
  *
@@ -6992,6 +7008,7 @@ oyPointer    oyProfile_WriteTagTable_( oyProfile_s       * profile,
 }
 
 /** @func    oyProfile_WriteTags_
+ *  @internal
  *  @relates oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
  *
@@ -7179,7 +7196,6 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
 
 /** @func    oyProfile_GetTagById
  *  @relates oyProfile_s
- *  @internal
  *  @brief   get a profile tag by its tag signature
  *
  *  @param[in]     profile             the profile
@@ -7233,7 +7249,6 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
 
 /** @func    oyProfile_GetTag
  *  @relates oyProfile_s
- *  @internal
  *  @brief   get a profile tag
  *
  *  non thread save
@@ -7402,7 +7417,6 @@ oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
 
 /** @func    oyProfile_GetTagCount
  *  @relates oyProfile_s
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
@@ -7431,7 +7445,6 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
 
 /** @func    oyProfile_AddTag
  *  @relates oyProfile_s
- *  @internal
  *  @brief   add a tag to a profile
  *
  *  @version Oyranos: 0.1.8
@@ -7462,7 +7475,6 @@ int                oyProfile_AddTag  ( oyProfile_s       * profile,
 
 /** @func    oyProfile_TagReleaseAt
  *  @relates oyProfile_s
- *  @internal
  *  @brief   remove a tag from a profile
  *
  *  @version Oyranos: 0.1.8
@@ -7496,7 +7508,6 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
 
 /** @func    oyProfileTag_New
  *  @relates oyProfileTag_s
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
@@ -7616,7 +7627,6 @@ OYAPI oyProfileTag_s * OYEXPORT
 
 /** @func    oyProfileTag_Copy
  *  @relates oyProfileTag_s
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
@@ -7648,7 +7658,6 @@ OYAPI oyProfileTag_s * OYEXPORT
 
 /** @func    oyProfileTag_Release
  *  @relates oyProfileTag_s
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
@@ -7695,7 +7704,6 @@ OYAPI int  OYEXPORT
 
 /** @func    oyProfileTag_Set
  *  @relates oyProfileTag_s
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
@@ -7895,7 +7903,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
 
 
-/** @internal
+/**
  *  @relates oyProfiles_s
  *
  *  @since Oyranos: version 0.1.8
@@ -8238,7 +8246,7 @@ OYAPI oyProfiles_s * OYEXPORT
   return iccs;
 }
 
-/** @internal
+/**
  *  @relates oyProfiles_s
  *
  *  @since Oyranos: version 0.1.8
@@ -8283,7 +8291,7 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** @internal
+/**
  *  @relates oyProfiles_s
  *
  *  @since Oyranos: version 0.1.8
@@ -8307,7 +8315,7 @@ oyProfiles_s* oyProfiles_MoveIn( oyProfiles_s   * list,
   return list;
 }
 
-/** @internal
+/**
  *  @relates oyProfiles_s
  *
  *  @since Oyranos: version 0.1.8
@@ -8324,7 +8332,7 @@ int              oyProfiles_ReleaseAt( oyProfiles_s * list,
   return error;
 }
 
-/** @internal
+/**
  *  @relates oyProfiles_s
  *
  *  @param[in] list                    the profile list to use
@@ -8389,7 +8397,7 @@ oyCMMptr_s** oyProfiles_GetCMMptrs_(oyProfiles_s   * list,
   return obj;
 }
 
-/** @internal
+/**
  *  @relates oyProfiles_s
  *
  *  @since Oyranos: version 0.1.8
@@ -8827,7 +8835,7 @@ int            oyRegion_Index        ( oyRegion_s        * region,
   return (int)OY_ROUND((y - r->y) * r->width + (x - r->x));
 }
 
-/** @internal
+/**
  *  @relates oyRegion_s
  *  @brief   debug text
  *  not so threadsafe
@@ -8854,7 +8862,7 @@ oyChar*        oyRegion_Show         ( oyRegion_s        * r )
 
 
 
-/** @internal
+/**
  *  @brief oyDATATYPE_e to byte mapping
  *
  *  @since Oyranos: version 0.1.8
@@ -8880,7 +8888,7 @@ oySizeofDatatype (oyDATATYPE_e t)
   return n;
 }
 
-/** @internal
+/**
  *  @brief oyDATATYPE_e to string mapping
  *
  *  @since Oyranos: version 0.1.8
@@ -9204,6 +9212,7 @@ OYAPI oyArray2d_s * OYEXPORT
 
 /** @func    oyArray2d_Copy_
  *  @relates oyArray2d_s
+ *  @internal
  *  @brief   real copy a Array2d object
  *
  *  @param[in]     obj                 struct object
@@ -9282,6 +9291,7 @@ OYAPI oyArray2d_s * OYEXPORT
  
 /** @func    oyArray2d_Release
  *  @relates oyArray2d_s
+ *  @internal
  *  @brief   release and possibly deallocate a Array2d object
  *
  *  @param[in,out] obj                 struct object
@@ -9338,6 +9348,7 @@ OYAPI int  OYEXPORT
 
 /** @func    oyArray2d_DataSet
  *  @relates oyArray2d_s
+ *  @internal
  *  @brief   set the data blob and (re-)initialise the object
  *
  *  @param[in,out] obj                 struct object
@@ -9524,7 +9535,7 @@ oyImage_CombinePixelLayout2Mask_ (
 
 /** @func    oyImage_GetPointContinous
  *  @relates oyImage_s
- *  @brief   standard continus layout pixel accessor
+ *  @brief   standard continous layout pixel accessor
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -9549,7 +9560,7 @@ oyPointer oyImage_GetArray2dPointContinous (
 
 /** @func    oyImage_GetLineContinous
  *  @relates oyImage_s
- *  @brief   standard continus layout line accessor
+ *  @brief   standard continous layout line accessor
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/08/23 (Oyranos: 0.1.8)
@@ -9747,6 +9758,7 @@ oyImage_s *    oyImage_CreateForDisplay( int               width,
 }
 
 /** @brief   copy a image
+ *  @internal
  *  @relates oyImage_s
  *
  *  @todo  implement
@@ -10123,6 +10135,7 @@ OYAPI oyConnector_s * OYEXPORT
 }
 
 /** @func    oyConnector_Copy_
+ *  @internal
  *  @relates oyConnector_s
  *  @brief   real copy a Connector object
  *
@@ -10396,6 +10409,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
 
 /** @func    oyFilterSocket_Copy_
  *  @relates oyFilterSocket_s
+ *  @internal
  *  @brief   real copy a FilterSocket object
  *
  *  @param[in]     obj                 struct object
@@ -10598,6 +10612,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
 
 /** @func    oyFilterPlug_Copy_
  *  @relates oyFilterPlug_s
+ *  @internal
  *  @brief   real copy a FilterPlug object
  *
  *  @param[in]     obj                 struct object
@@ -10769,6 +10784,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
 
 /** @func    oyFilterPlugs_Copy_
  *  @relates oyFilterPlugs_s
+ *  @internal
  *  @brief   real copy a FilterPlugs object
  *
  *  @param[in]     obj                 struct object
@@ -11131,6 +11147,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 
 /** @func    oyFilter_New_
  *  @relates oyFilter_s
+ *  @internal
  *  @brief   allocate and initialise a new filter object
  *
  *  @param         object              the optional object
@@ -11230,6 +11247,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
 
 /** @func    oyFilter_Copy_
  *  @relates oyFilter_s
+ *  @internal
  *  @brief   real copy a filter object
  *
  *  @param[in]     filter              filter object
@@ -11537,7 +11555,9 @@ oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter )
     return 0;
 }
 
-/** Info profilbody */
+/** 
+ *  @internal
+ *  Info profilbody */
 char info_profile_data[320] =
   {
 /*0*/    0,0,1,64, 'o','y','r','a',
@@ -11777,6 +11797,7 @@ OYAPI oyFilters_s * OYEXPORT
 
 /** @func    oyFilters_Copy_
  *  @relates oyFilters_s
+ *  @internal
  *  @brief   real copy a Filters object
  *
  *  @param[in]     obj                 struct object
@@ -12100,6 +12121,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
 
 /** @func    oyFilterNode_Copy_
  *  @relates oyFilterNode_s
+ *  @internal
  *  @brief   real copy a filter node object
  *
  *  @param[in]     node                node filter object
@@ -12459,6 +12481,7 @@ oyColourConversion_s* oyColourConversion_Create (
 }
 
 /** @func    oyConcatenateImageProfiles_
+ *  @internal
  *  @brief   oyCMMColourConversion_ToMem_t implementation
  *
  *  @version Oyranos: 0.1.8
@@ -13187,6 +13210,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
 
 /** @func    oyColourConversion_ToProfile
  *  @relates oyColourConversion_s
+ *  @internal
  *  @brief   convert a oyColourConversion_Release to a profile
  *
  *  @version Oyranos: 0.1.8
@@ -13218,6 +13242,7 @@ oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * cc )
 
 /** @func    oyPixelAccess_New_
  *  @relates oyPixelAccess_s
+ *  @internal
  *  @brief   allocate and initialise a new oyPixelAccess_s object
  *
  *  @param         object              the optional object
@@ -13320,6 +13345,7 @@ oyPixelAccess_s *  oyPixelAccess_Create (
 
 /** @func    oyPixelAccess_Copy_
  *  @relates oyPixelAccess_s
+ *  @internal
  *  @brief   real copy a oyPixelAccess_s object
  *
  *  @param[in]     obj                 oyPixelAccess_s object
@@ -13527,6 +13553,7 @@ int                oyPixelAccess_CalculateNextStartPixel (
 
 /** @func    oyConversion_New_
  *  @relates oyConversion_s
+ *  @internal
  *  @brief   allocate and initialise a new oyConversion_s object
  *
  *  @param         object              the optional object
@@ -13637,6 +13664,7 @@ oyConversion_s   * oyConversion_CreateInput (
 
 /** @func    oyConversion_Copy_
  *  @relates oyConversion_s
+ *  @internal
  *  @brief   real copy a oyConversion_s object
  *
  *  @param[in]     conversion          conversion object
