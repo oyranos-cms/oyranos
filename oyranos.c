@@ -80,6 +80,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   int i;
   const char * type_name = "";
   int id = -1;
+  int sz = 4096;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
@@ -90,7 +91,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
     id = oyObject_GetId( context->oy_ );
   }
 
-  oyAllocHelper_m_( text, char, 4096, oyAllocateFunc_, fprintf(stderr,"oyranos.c:80 oyMessageFunc_() Could not allocate 4096 byte of memory.\n"); return 1 );
+  oyAllocHelper_m_( text, char, sz, oyAllocateFunc_, fprintf(stderr,"oyranos.c:80 oyMessageFunc_() Could not allocate 4096 byte of memory.\n"); return 1 );
 
   if(level_PROG < 30)
   {
@@ -1114,6 +1115,9 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
  */
 
 /** @brief save a options group to a file
+ *
+ *  The function is basically a wrapper for oyPolicyToXML() and will write
+ *  the resulting XML to a file somewhere in XDG_CONFIG_HOME.
  *
  *  @param         group               use oyGROUP_ALL for a typical snapshot
  *  @param         name                the name will become part of a filename
