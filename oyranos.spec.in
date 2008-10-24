@@ -17,11 +17,6 @@ Summary:   Headers, configuration and static libs + documentation
 Group:     Development/System
 Requires:  %{name}-%{version}-%{release}
 
-%package      alpha-devel
-Summary:   Header + documentation
-Group:     Development/System
-Requires:  %{name}-devel-%{version}-%{release}
-
 %package      monitor
 Summary:    Oyranos monitor dependent libraries
 Group:      Development/Libraries
@@ -63,14 +58,11 @@ query for profiles in that paths.
 An internal device profile API allowes configuring of a 
 profile in X.
 The documentation in html format is included.
-
-%description alpha-devel
 The object oriented Oyranos API's provide advanced access to
 ICC profiles, allow for filtering profile lists and provide
 a CMM independent colour conversion API. Single colour lookups 
-are supported as well.
+are supported.
 These API's are to be considered for changing very frequently.
-Documentation in html format is included.
 
 %description  monitor
 The monitor support libraries of the
@@ -91,7 +83,7 @@ The sample configuration GUI.
 %setup -n %{name}-%{version}
 
 %build
-%configure --enable-debug --enable-verbose
+%configure --enable-debug
 
 %install
 rm -rf %{buildroot}
@@ -126,6 +118,7 @@ rm -rf %{buildroot}
 %doc AUTHORS COPYING ChangeLog README
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/%{name}.h
+%{_includedir}/%{name}/%{name}_alpha.h
 %{_includedir}/%{name}/%{name}_config.h
 %{_includedir}/%{name}/%{name}_definitions.h
 %{_includedir}/%{name}/%{name}_icc.h
@@ -135,12 +128,6 @@ rm -rf %{buildroot}
 %{_libdir}/*.a
 %doc %{name}*.sh
 %doc doc/html
-
-%files alpha-devel
-%defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
-%{_includedir}/%{name}/%{name}_alpha.h
-%doc doc/html-alpha
 
 %files monitor
 %doc AUTHORS COPYING ChangeLog README
