@@ -79,7 +79,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ./
 FILE_PATTERNS          = oyranos_alpha.c \
-                         oyranos_alpha.h
+                         oyranos_alpha.h \
+                         doxymentation
 RECURSIVE              = NO
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = YES
