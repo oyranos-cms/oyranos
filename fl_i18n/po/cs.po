@@ -1,0 +1,110 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: fltk\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2008-07-23 18:16+0200\n"
+"PO-Revision-Date: 2008-10-23 20:49+0100\n"
+"Last-Translator: Milan Knizek <knizek@volny.cz>\n"
+"Language-Team: Czech <czech@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Czech\n"
+"X-Poedit-Country: CZECH REPUBLIC\n"
+"X-Poedit-Basepath: /home/modeluser/src/translations/oyranos_translations/fl_i18n/po\n"
+
+#: fl_i18n.cxx:258
+msgid "osX locale obtained: "
+msgstr ""
+
+#: fl_i18n.cxx:261
+msgid "osX locale not obtained"
+msgstr ""
+
+#: fl_i18n.cxx:384
+msgid "try to set LANG"
+msgstr ""
+
+#: fl_i18n.cxx:403
+msgid "try locale in "
+msgstr ""
+
+#: fl_i18n.cxx:423
+msgid "set codeset for"
+msgstr ""
+
+#: fl_i18n.cxx:464
+msgid "Add to Favorites"
+msgstr "Pridat k Oblibenym"
+
+#: fl_i18n.cxx:465
+msgid "All Files (*)"
+msgstr "Vsechny soubory (*)"
+
+#: fl_i18n.cxx:466
+msgid "Custom Filter"
+msgstr "Volitelny filtr"
+
+#: fl_i18n.cxx:467
+msgid "Please choose an existing file!"
+msgstr "Prosim zvolte existujici soubor"
+
+#: fl_i18n.cxx:468
+msgid "Favorites"
+msgstr "Oblibene"
+
+#: fl_i18n.cxx:469
+msgid "Filename"
+msgstr "Jmeno souboru"
+
+#: fl_i18n.cxx:470
+msgid "Manage Favorites"
+msgstr "Spravovat Oblibene"
+
+#: fl_i18n.cxx:472
+msgid "My Computer"
+msgstr "Muj pocitac"
+
+#: fl_i18n.cxx:474
+msgid "Filesystems"
+msgstr "Souborove systemy"
+
+#: fl_i18n.cxx:476
+msgid "New Directory?"
+msgstr "Novy adresar?"
+
+#: fl_i18n.cxx:477
+msgid "Preview"
+msgstr "Nahled"
+
+#: fl_i18n.cxx:479
+#: fl_i18n_example.cxx:33
+msgid "Save"
+msgstr "Ulozit"
+
+#: fl_i18n.cxx:481
+msgid "Show:"
+msgstr "Ukazat:"
+
+#: fl_i18n_example.cxx:15
+#: fl_i18n_example.cxx:69
+#: fl_i18n_example.cxx:73
+msgid "Hello, world!"
+msgstr "Ahoj, svete!"
+
+#: fl_i18n_example.cxx:31
+msgid "File"
+msgstr "Soubor"
+
+#: fl_i18n_example.cxx:32
+msgid "Open"
+msgstr "Otevrit"
+
+#: fl_i18n_example.cxx:34
+msgid "Quit"
+msgstr "Ukoncit"
+
+#: fl_i18n_example.cxx:70
+msgid "fl_i18n_example"
+msgstr ""
+
