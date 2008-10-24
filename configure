@@ -31,7 +31,6 @@ export CONF_H CONF CONF_SH CONF_LOG CONF_I18N CONF_TEMP_SH CONF_NV
 
 test -f error.tmp && rm error.tmp
 test -f $CONF_TEMP_SH && rm $CONF_TEMP_SH
-test -f $CONF_LOG && rm $CONF_LOG
 
 VERSION_A=0
 VERSION_B=1
@@ -237,7 +236,8 @@ fi
 if [ 0 -eq $rpm ]; then
   ECHO="echo"
   RPMECHO="echo"
-  echo -e "$zeile \$@\n\nexit 0\n\n" > $CONF_LOG
+  test -f $CONF_LOG && rm $CONF_LOG
+  $ECHO -e "$zeile \$@\n\nexit 0\n\n" > $CONF_LOG
   chmod 0755 $CONF_LOG
 else
   ECHO=""
@@ -304,12 +304,12 @@ fi
 if [ -z "$datadir" ]; then
   if [ -f $prefix/share/config.site ]; then
     . $prefix/share/config.site
-    (. $prefix/share/config.site >> $CONF_LOG )
+    test -n "$ECHO" && (. $prefix/share/config.site >> $CONF_LOG )
   fi
 else
   if [ -f $datadir/config.site ]; then
     . $datadir/config.site
-    (. $datadir/config.site >> $CONF_LOG )
+    test -n "$ECHO" && (. $datadir/config.site >> $CONF_LOG )
   fi
 fi
 
@@ -552,7 +552,8 @@ fi
 test -n "$ECHO" && $ECHO "LIB=/"$LIBDIR >> $CONF
 
 PATH=$PATH:/usr/X11R6/bin; export PATH
-FLTK_=`$fltkconfig --cxxflags 2>>$CONF_LOG`
+test -n "$ECHO" && $fltkconfig --cxxflags 2>>$CONF_LOG
+FLTK_=`$fltkconfig --cxxflags`
 if [ $? = 0 ] && [ -n "$FLTK_" ]; then
   FLTK=1
 fi
@@ -565,14 +566,16 @@ if [ "$FLTK" = 1 ]; then
   fi
 fi
 
-  elektra_mod=`pkg-config --modversion elektra`
-  elektra_min="0.7"
-  elektra_max="0.7.100"
+elektra_mod=`pkg-config --modversion elektra`
+elektra_min="0.7"
+elektra_max="0.7.100"
 
-    pkg-config  --atleast-version=$elektra_min elektra 2>>$CONF_LOG
-    if [ $? = 0 ]; then
-      pkg-config --max-version=$elektra_max elektra 2>>$CONF_LOG
-    fi
+test -n "$ECHO" && pkg-config  --atleast-version=$elektra_min elektra 2>>$CONF_LOG
+pkg-config  --atleast-version=$elektra_min elektra
+if [ $? = 0 ]; then
+  test -n "$ECHO" && pkg-config --max-version=$elektra_max elektra 2>>$CONF_LOG
+  pkg-config --max-version=$elektra_max elektra
+fi
 
 if [ $nodeps -eq 1 ]; then
   GCC_MM="echo \"\#disable dependency tracking\""
@@ -764,7 +767,7 @@ test -n "$INFOECHO" && $INFOECHO ""
 test -n "$ECHO" && cat  "$CONF_SH.in" >> $CONF_SH
 chmod 0755 "$CONF_SH"
 if [ -n "$ECHO" ]; then
-  echo_="$CONF_SH created"
+  echo_="created   $CONF_SH"
   test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
@@ -803,7 +806,8 @@ test -n "$RPMECHO" && $RPMECHO "%define desktopdir      $desktopdir" >> $SPEC
 test -n "$RPMECHO" && cat  "$SPEC" >> $SPECICC
 test -n "$RPMECHO" && cat  "$SPECICC.in" >> $SPECICC
 test -n "$RPMECHO" && cat  "$SPEC.in" >> $SPEC
-echo_="generated $SPEC from $SPEC.in and $SPECICC from $SPECICC.in"
+echo_="generated $SPEC from $SPEC.in
+generated $SPECICC from $SPECICC.in"
 test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 
 test -n "$ECHO" && $ECHO "Version: $VERSION" >> $MPKG
@@ -1001,15 +1005,19 @@ if [ $ERROR != 0 ]; then
   test -n "$INFOECHO" && $INFOECHO ""
   rm Makefile $CONF_H $CONF_SH $SPEC $PKGC $MPKG
   exit
+else
+  if [ -z "$quick" ]; then
+    test -n "$ECHO" && $ECHO "" > mkdepend
+    make depend
+  fi
 fi
 
 echo_="char * oy_config_log_=\" \\"
 test -n "$ECHO" && $ECHO "$echo_" >  $CONF_LOG.h
-cat $CONF_LOG | sed 's/\"/\\\"/g ; s/$/\ \\n\\/g'  >> $CONF_LOG.h
+test -n "$ECHO" && cat $CONF_LOG | sed 's/\"/\\\"/g ; s/$/\ \\n\\/g'  >> $CONF_LOG.h
 echo_="\";"
 test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG.h
 
-test -n "$ECHO" && $ECHO "" > mkdepend
 
 if [ -f error.txt ] && [ `cat error.txt | wc -l` -lt 1 ]; then
   rm error.txt
