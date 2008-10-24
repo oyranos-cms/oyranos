@@ -929,7 +929,7 @@ char  *        oyRegion_Show         ( oyRegion_s        * region );
 
 /** @enum    oyDATATYPE_e
  *  @brief   basic data types for anonymous pointers
- *  @ingroup object_image
+ *  @ingroup objects_image
  *
  *  @version Oyranos: 0.1.8
  *  @since   2007/00/00 (Oyranos: 0.1.8)
@@ -946,7 +946,7 @@ typedef enum {
 
 
 /** @type oyPixel_t 
- *  @ingroup object_image
+ *  @ingroup objects_image
     parametric type as shorthand for the channel layout in bitmaps \n
 
     should fit into a 32bit type, usual unsigned int or uint32_t \n
@@ -1039,7 +1039,7 @@ typedef uint32_t oyPixel_t;
 
 /** @enum    oyCHANNELTYPE_e
  *  @brief   channels types
- *  @ingroup object_image
+ *  @ingroup objects_image
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
@@ -1068,7 +1068,7 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
 
 /** @struct  oyArray2d_s
  *  @brief   2d data array
- *  @ingroup object_image
+ *  @ingroup objects_image
  *
  *  oyArray2d_s is a in memory data view. The array2d holds pointers to lines in
  *  the original memory blob. The arrays contained in array2d represent the 
@@ -1155,7 +1155,7 @@ OYAPI int  OYEXPORT
                                        oyPointer           data );
 
 /** @brief a reference struct to gather information for image transformation
- *  @ingroup object_image
+ *  @ingroup objects_image
  *
  *  as we dont target a complete imaging solution, only raster is supported
  *
