@@ -1,7 +1,0 @@
-
-Name: oyranos_monitor
-Description: Oyranos Colour Management monitor configuration
-Libs: -L${libdir} -loyranos_moni
-Requires: x11 xinerama oyranos
-Cflags: -I${includedir}/oyranos
-
