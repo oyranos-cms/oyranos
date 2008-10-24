@@ -15370,3 +15370,292 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
 /** @} alpha
  */
 
+
+
+
+/** \addtogroup monitor_api
+
+ *  @{
+ */
+
+/** Function: oyGetMonitorInfo
+ *  @brief   brief pick up monitor information with Xlib
+ *
+ *  @deprecated because sometimes is no ddc information available
+ *  @todo include connection information - grafic cart
+ *
+ *  @param      display       the display string
+ *  @param[out] manufacturer  the manufacturer of the monitor device
+ *  @param[out] model         the model of the monitor device
+ *  @param[out] serial        the serial number of the monitor device
+ *  @param      allocate_func the allocator for the above strings
+ *  @return     error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2005/00/00 (Oyranos: 0.1.x)
+ *  @date    2008/10/24
+ */
+int      oyGetMonitorInfo            ( const char        * display,
+                                       char             ** manufacturer,
+                                       char             ** model,
+                                       char             ** serial,
+                                       oyAlloc_f           allocate_func )
+{
+  int error = 0;
+  oyGetMonitorInfo_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S,
+                                      "oyX1", 0, cmm, 0, 0 );
+    if(api && *(uint32_t*)&cmm)
+    {
+      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
+      funcP = api2->oyGetMonitorInfo;
+    }
+  }
+
+  if(funcP)
+    error = funcP( display, manufacturer, model, serial, allocate_func );
+
+  return error;
+}
+
+/** Function: oyGetScreenFromPosition
+ *  @brief   screen number from position
+ *
+ *  This function will hit exact results only with Xinerama. \n
+ *  a platform specific function
+ *
+ *  @param      display_name  the display string
+ *  @param      x             x position on screen
+ *  @param      y             y position on screen
+ *  @return                   screen
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2005/00/00 (Oyranos: 0.1.x)
+ *  @date    2008/10/24
+ */
+int      oyGetScreenFromPosition     ( const char        * display_name,
+                                       int                 x,
+                                       int                 y )
+{
+  int error = 0;
+  oyGetScreenFromPosition_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+
+  int screen = 0;
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S,
+                                      "oyX1", 0, cmm, 0, 0 );
+    if(api && *(uint32_t*)&cmm)
+    {
+      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
+      funcP = api2->oyGetScreenFromPosition;
+    }
+  }
+
+  if(funcP)
+    screen = funcP( display_name, x, y );
+
+  return screen;
+}
+
+/** Function: oyGetDisplayNameFromPosition
+ *  @brief   display name from position
+ *
+ *  This function will hit exact results only with Xinerama.
+ *
+ *  @param      raw_display_name  raw display string
+ *  @param      x             x position on screen
+ *  @param      y             y position on screen
+ *  @param      allocate_func function used to allocate memory for the string
+ *  @return                   display name
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2005/00/00 (Oyranos: 0.1.x)
+ *  @date    2008/10/24
+ */
+char *   oyGetDisplayNameFromPosition( const char        * display_name,
+                                       int                 x,
+                                       int                 y,
+                                       oyAlloc_f           allocate_func )
+{
+  int error = 0;
+  oyGetDisplayNameFromPosition_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+
+  char * text = 0;
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S,
+                                      "oyX1", 0, cmm, 0, 0 );
+    if(api && *(uint32_t*)&cmm)
+    {
+      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
+      funcP = api2->oyGetDisplayNameFromPosition;
+    }
+  }
+
+  if(funcP)
+    text = funcP( display_name, x, y, allocate_func );
+
+  return text;
+}
+
+
+/** Function: oyGetMonitorProfile
+ *  @brief   get the monitor profile from the server
+ *
+ *  @param      display                the display string
+ *  @param[out] size                   the size of profile
+ *  @param      allocate_func          function used to allocate memory for the profile
+ *  @return                            the memory block containing the profile
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2005/00/00 (Oyranos: 0.1.x)
+ *  @date    2008/10/24
+ */
+char *   oyGetMonitorProfile         ( const char        * display,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func )
+{
+  int error = 0;
+  oyGetMonitorProfile_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+
+  char * block = 0;
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S,
+                                      "oyX1", 0, cmm, 0, 0 );
+    if(api && *(uint32_t*)&cmm)
+    {
+      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
+      funcP = api2->oyGetMonitorProfile;
+    }
+  }
+
+  if(funcP)
+    block = funcP( NULL, size, allocate_func );
+
+  return block;
+}
+
+/** Function: oyGetMonitorProfileNameFromDB
+ *  @brief   get the monitor profile filename from the device profile database
+ *
+ *  @param      display                the display string
+ *  @param      allocate_func function used to allocate memory for the string
+ *  @return                   the profiles filename (if localy available)
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2005/00/00 (Oyranos: 0.1.x)
+ *  @date    2008/10/24
+ */
+char *   oyGetMonitorProfileNameFromDB(const char        * display,
+                                       oyAlloc_f           allocate_func )
+{
+  int error = 0;
+  oyGetMonitorProfileName_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+
+  char * text = 0;
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S,
+                                      "oyX1", 0, cmm, 0, 0 );
+    if(api && *(uint32_t*)&cmm)
+    {
+      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
+      funcP = api2->oyGetMonitorProfileName;
+    }
+  }
+
+  if(funcP)
+    text = funcP( NULL, allocate_func );
+
+  return text;
+}
+
+/** Function: oySetMonitorProfile
+ *  @brief   set the monitor profile by filename
+ *
+ *  @param      display_name  the display string
+ *  @param      profil_name   the file to use as monitor profile or 0 to unset
+ *  @return                   error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2005/00/00 (Oyranos: 0.1.x)
+ *  @date    2008/10/24
+ */
+int      oySetMonitorProfile         ( const char        * display_name,
+                                       const char        * profil_name )
+{
+  int error = 0;
+  oySetMonitorProfile_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S,
+                                      "oyX1", 0, cmm, 0, 0 );
+    if(api && *(uint32_t*)&cmm)
+    {
+      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
+      funcP = api2->oySetMonitorProfile;
+    }
+  }
+
+  if(funcP)
+    error = funcP( display_name, profil_name );
+
+  return error;
+}
+
+/** Function: oyActivateMonitorProfiles
+ *  @brief   activate the monitor using the stored configuration
+ *
+ *  Activate in case the appropriate profile is not yet setup in the server.
+ *
+ *  @see oySetMonitorProfile for permanently configuring a monitor
+ *
+ *  @param   display_name              the display string
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2005/00/00 (Oyranos: 0.1.x)
+ *  @date    2008/10/24
+ */
+int      oyActivateMonitorProfiles   ( const char        * display_name )
+{
+  int error = 0;
+  oyActivateMonitorProfiles_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+
+  if(!error)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S,
+                                      "oyX1", 0, cmm, 0, 0 );
+    if(api && *(uint32_t*)&cmm)
+    {
+      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
+      funcP = api2->oyActivateMonitorProfiles;
+    }
+  }
+
+  if(funcP)
+    error = funcP( display_name );
+
+  return error;
+}
+
+
+/** @} monitor_api */
+

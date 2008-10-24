@@ -206,7 +206,6 @@ ALL_FILES = \
 	configure.sh \
 	makefile.in \
 	$(TARGET).pc.in \
-	$(TARGET)_monitor.pc.in \
 	$(TARGET).spec.in \
 	$(TARGET)-icc.spec.in \
 	$(TARGET)-config.in \
@@ -378,7 +377,7 @@ $(EXAMPLE1): $(EXAMPLE1_C)
 	`pkg-config --cflags lcms` -I.
 	echo Linking $@ ...
 	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o $(EXAMPLE1) \
-	$(EXAMPLE1).o `oyranos-config --ld_x_flags` \
+	$(EXAMPLE1).o `oyranos-config --ldflags` \
 	`pkg-config --libs cairo` `pkg-config --libs lcms` -L. \
 	-Wl,--rpath -Wl,$(srcdir)
 
@@ -483,7 +482,6 @@ install_bin:	all doc
 	#$(INSTALL) -m 755 $(LIBSONAMEFULL) $(DESTDIR)$(libdir)
 	#$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSONAME)
 	#$(LNK)  $(LIBSONAMEFULL) $(DESTDIR)$(libdir)/$(LIBSO)
-	$(INSTALL) -m 644 $(TARGET)_monitor.pc $(DESTDIR)$(libdir)/pkgconfig/
 	#$(INSTALL) -m 644 $(LIB_MONI_NAME) $(DESTDIR)$(libdir)
 	#$(RANLIB) $(DESTDIR)$(libdir)/$(LIB_MONI_NAME)
 	#$(INSTALL) -m 755 $(LIB_MONI_SONAMEFULL) $(DESTDIR)$(libdir)
@@ -578,7 +576,6 @@ uninstall:
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-policy
 	-$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
-	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET)_monitor.pc
 	for lib in $(LIBRARIES); do \
 	    $(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 	          $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \

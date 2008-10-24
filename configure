@@ -14,7 +14,6 @@ CONF_I18N=fl_i18n/makefile
 SPEC=$TARGET.spec
 SPECICC=$TARGET-icc.spec
 PKGC=$TARGET.pc
-MPKG="$TARGET"_monitor.pc
 VERS_H="$TARGET"_version.h
 zeile="$0 $@"
 if [ -f default_profiles/printing/makefile.in ]; then
@@ -267,7 +266,6 @@ test -n "$ECHO" && $ECHO "" > $CONF_NV
 test -n "$ECHO" && $ECHO "" > $PRINT_CONF
 test -n "$ECHO" && $ECHO "" > $BASE_CONF
 test -n "$ECHO" && $ECHO "" > $PKGC
-test -n "$ECHO" && $ECHO "" > $MPKG
 test -n "$RPMECHO" && $RPMECHO "" > $SPEC
 test -n "$RPMECHO" && $RPMECHO "" > $SPECICC
 
@@ -810,29 +808,6 @@ echo_="generated $SPEC from $SPEC.in
 generated $SPECICC from $SPECICC.in"
 test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 
-test -n "$ECHO" && $ECHO "Version: $VERSION" >> $MPKG
-test -n "$ECHO" && $ECHO "prefix=$prefix" >> $MPKG
-test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $MPKG
-test -n "$ECHO" && $ECHO "bindir=$bindir" >> $MPKG
-test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $MPKG
-test -n "$ECHO" && $ECHO "libdir=$libdir" >> $MPKG
-test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $MPKG
-test -n "$ECHO" && $ECHO "includedir=$includedir" >> $MPKG
-test -n "$ECHO" && $ECHO "datadir=$datadir" >> $MPKG
-test -n "$ECHO" && $ECHO "mandir=$mandir" >> $MPKG
-test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $MPKG
-test -n "$ECHO" && $ECHO "usercolordir=$usercolordir" >> $MPKG
-test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $MPKG
-test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $MPKG
-test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $MPKG
-test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $MPKG
-test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $MPKG
-test -n "$ECHO" && cat  "$MPKG.in" >> $MPKG
-if [ -n "$ECHO" ]; then
-  echo_="generated $MPKG from $MPKG.in"
-  test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-fi
-
 test -n "$ECHO" && $ECHO "Version: $VERSION" >> $PKGC
 test -n "$ECHO" && $ECHO "prefix=$prefix" >> $PKGC
 test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $PKGC
@@ -1003,7 +978,7 @@ if [ $ERROR != 0 ]; then
   echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   test -n "$ECHO" && $ECHO -e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   test -n "$INFOECHO" && $INFOECHO ""
-  rm Makefile $CONF_H $CONF_SH $SPEC $PKGC $MPKG
+  rm Makefile $CONF_H $CONF_SH $SPEC $PKGC
   exit
 else
   if [ -z "$quick" ]; then

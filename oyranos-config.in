@@ -41,12 +41,6 @@ do
 	--ldstaticflags)
 	    echo_ldstaticflags=yes
 	    ;;
-	--ld_x_flags)
-	    echo_ld_x_flags=yes
-	    ;;
-	--ld_x_staticflags)
-	    echo_ld_x_staticflags=yes
-	    ;;
 	--syscolordir)
 	    echo_syscolordir=yes
 	    ;;
@@ -74,8 +68,6 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --cflags            compiler flags"
   echo "  $0 --ldflags           dynamic link flags"
   echo "  $0 --ldstaticflags     static linking flags"
-  echo "  $0 --ld_x_flags        dynamic link flags with monitor support"
-  echo "  $0 --ld_x_staticflags  static link flags with monitor support"
   echo "  $0 --syscolordir       path to system main color directory"
   echo "  $0 --usercolordir      path to users main color directory"
   echo "  $0 --iccdirname        ICC profile directory name"
@@ -112,33 +104,6 @@ if [ "$echo_ldstaticflags" = "yes" ]; then
     echo "liboyranos.a $elektra $oyranos_add"
   else
     echo "$libdir/liboyranos.a $elektra $oyranos_add"
-  fi
-fi
-
-if [ "$echo_ld_x_flags" = "yes" ]; then
-  if [ -f liboyranos.so ]; then
-    echo "-L. -loyranos -loyranos_moni $elektra_dyn $oyranos_add"
-  else
-    echo "-L$libdir -loyranos -loyranos_moni $elektra_dyn $oyranos_add"
-  fi
-fi
-
-# only standard paths are here supported
-if [ -f $libdir/libX11.so ]; then
-  X11_PATH=-L$libdir
-fi
-if [ -f /usr/local/lib/libX11.so ]; then
-  X11_PATH=-L/usr/local/lib
-fi
-if [ -f /usr/X11R6/lib/libX11.so ]; then
-  X11_PATH=-L/usr/X11R6/lib
-fi
-
-if [ "$echo_ld_x_staticflags" = "yes" ]; then
-  if [ -f liboyranos.a ]; then
-    echo "liboyranos.a liboyranos_moni.a $elektra $X11_PATH $oyranos_add $oyranos_x_add"
-  else
-    echo "$libdir/liboyranos.a $libdir/liboyranos_moni.a $elektra $X11_PATH $oyranos_add $oyranos_x_add"
   fi
 fi
 
