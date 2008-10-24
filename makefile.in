@@ -143,7 +143,6 @@ DOKU =  AUTHORS \
         README
 DOC_TEMPLATES = \
 	Doxyfile \
-       	Doxyfile_alpha \
 	doxymentation
 
 LINGUAS_SRC = $(LING:.po=.gmo)
@@ -426,7 +425,6 @@ $(POT_FILE):
 doc:
 	echo Documentation ...
 	test -n 'which doxygen' && doxygen Doxyfile || echo "Will not create Documentation because doxygen is missing"
-	test -n 'which doxygen' && doxygen Doxyfile_alpha || echo "Will not create alpha Documentation because doxygen is missing"
 	echo ... Documentation done
 
 # the copy part for this directory level
@@ -512,8 +510,6 @@ install_bin:	all doc
 	$(INSTALL) -m 644 $(MAN3) $(DESTDIR)$(mandir)/man3
 	mkdir -p $(DESTDIR)$(docdir)/html
 	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
-	mkdir -p $(DESTDIR)$(docdir)/html-alpha
-	-$(INSTALL) -m 644 doc/html-alpha/* $(DESTDIR)$(docdir)/html-alpha
 	$(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
 	echo ... main Installation finished
 
@@ -615,7 +611,6 @@ uninstall:
 	  $(RM) $(DESTDIR)$(docdir)/$$file; \
 	done
 	-$(RM) -R $(DESTDIR)$(docdir)/html
-	-$(RM) -R $(DESTDIR)$(docdir)/html-alpha
 	for file in $(MAN1); do \
 	  $(RM) $(DESTDIR)$(mandir)/man1/$$file; \
 	done
@@ -639,7 +634,6 @@ distclean: clean
 	-$(RM) config.sh
 	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
 	-$(RM) -R doc/html
-	-$(RM) -R doc/html-alpha
 
 clean:
 	-$(RM) \

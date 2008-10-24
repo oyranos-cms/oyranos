@@ -72,34 +72,34 @@ typedef void      (*oyUnLock_f )     ( oyPointer           look,
                                        int                 line );
 
 /** param[out]     is_allocated          are the points always newly allocated*/
-typedef oyPointer (*oyImage_GetPoint_t)( oyImage_s       * image,
+typedef oyPointer (*oyImage_GetPoint_f)( oyImage_s       * image,
                                          int               point_x,
                                          int               point_y,
                                          int               channel,
                                          int             * is_allocated );
 /** param[out]     is_allocated          are the lines always newly allocated */
-typedef oyPointer (*oyImage_GetLine_t) ( oyImage_s       * image,
+typedef oyPointer (*oyImage_GetLine_f) ( oyImage_s       * image,
                                          int               line_y,
                                          int             * height,
                                          int               channel,
                                          int             * is_allocated );
 /** param[out]     is_allocated          are the tiles always newly allocated */
-typedef oyPointer*(*oyImage_GetTile_t) ( oyImage_s       * image,
+typedef oyPointer*(*oyImage_GetTile_f) ( oyImage_s       * image,
                                          int               tile_x,
                                          int               tile_y,
                                          int               channel,
                                          int             * is_allocated );
-typedef int       (*oyImage_SetPoint_t)( oyImage_s       * image,
+typedef int       (*oyImage_SetPoint_f)( oyImage_s       * image,
                                          int               point_x,
                                          int               point_y,
                                          int               channel,
                                          oyPointer         data );
-typedef int       (*oyImage_SetLine_t) ( oyImage_s       * image,
+typedef int       (*oyImage_SetLine_f) ( oyImage_s       * image,
                                          int               line_y,
                                          int             * height,
                                          int               channel,
                                          oyPointer         data );
-typedef int       (*oyImage_SetTile_t) ( oyImage_s       * image,
+typedef int       (*oyImage_SetTile_f) ( oyImage_s       * image,
                                          int               tile_x,
                                          int               tile_y,
                                          int               channel,
@@ -120,7 +120,8 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
 extern const char *oy_domain_codeset;
 
 /**
- *  @brief Oyranos structure type
+ *  @brief   Oyranos structure type
+ *  @ingroup objects_generic
  *
  *  @version Oyranos: 0.1.8
  *  @since   2007/11/22 (Oyranos: 0.1.x)
@@ -175,6 +176,7 @@ typedef enum {
 typedef struct oyObject_s_* oyObject_s;
 
 /** @brief Oyranos base structure
+ *  @ingroup objects_generic
  *
  *  All Oyranos structures should be castable to this basic one.
  *
@@ -194,6 +196,7 @@ const char * oyStruct_TypeToText     ( const oyStruct_s  * oy_struct );
 
 /** @enum    oyNAME_e
  *  @brief   describe the base types of a oyObject_s name
+ *  @ingroup objects_generic
  *
  *  @version Oyranos: 0.1.8
  *  @since   2007/10/00 (Oyranos: 0.1.8)
@@ -208,6 +211,7 @@ typedef enum {
 #define oyNAME_ID oyNAME_NICK
 
 /** @brief Oyranos name structure
+ *  @ingroup objects_generic
  *
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
@@ -296,6 +300,7 @@ typedef struct oyStructList_s oyStructList_s;
 
 /** @struct  oyObject_s
  *  @brief   Oyranos structure base
+ *  @ingroup objects_generic
  *
  *  The base object of Oyranos object system is self contained. It can be
  *  handled by the belonging function set. Complex objects for user interaction
@@ -365,6 +370,7 @@ int          oyObject_GetId          ( oyObject_s        object );
 
 /** @internal
  *  @brief a cache entry
+ *  @ingroup objects_generic
  *
  *  Combine hash, description and oyPointer to one searchable struct. The struct
  *  can be used in a oyStructList_s for a hash map or searchable cache.
@@ -398,6 +404,7 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
 
 /** @internal
  *  @brief a pointer list
+ *  @ingroup objects_generic
  *
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
  *
@@ -471,8 +478,9 @@ typedef enum {
 
 /** @union   oyValue_u
  *  @brief   a value
+ *  @ingroup objects_value
  *
-    @see     oyVALUETYPE_e
+ *  @see     oyVALUETYPE_e
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/02/16 (Oyranos: 0.1.x)
@@ -500,6 +508,7 @@ void           oyValueClear          ( oyValue_u         * v,
                                        oyDeAlloc_f         deallocateFunc );
 
 /** @brief Option for rendering
+ *  @ingroup objects_value
 
     @todo include the oyOptions_t_ type for gui elements
     should be used in a list oyColourTransformOptions_s to form a options set
@@ -541,6 +550,7 @@ int            oyOption_GetId        ( oyOption_s        * option );
 
 
 /** @brief generic Options
+ *  @ingroup objects_value
  *
  *  Options can be any flag or rendering intent and other informations needed to
  *  configure a process. The object contains a list of oyOption_s objects.
@@ -563,6 +573,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyObject_s          object );
 /** @enum    oyOPTIONDEFAULTS_e
  *  @brief   usage type
+ *  @ingroup objects_value
  *
  *  The types of Oyranos default settings to include into the options set.
  *  So proofing makes no sense for toolkit widgets, but for advanced
@@ -603,6 +614,7 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
 
 
 /** @brief general profile infos
+ *  @ingroup objects_profile
  *
  *  use for oyProfile_GetSignature
  *
@@ -635,6 +647,7 @@ typedef enum {
 typedef struct oyProfileTag_s oyProfileTag_s;
 
 /** @brief a profile and its attributes
+ *  @ingroup objects_profile
  */
 typedef struct {
   oyOBJECT_e           type_;          /*!< struct type oyOBJECT_PROFILE_S */
@@ -741,6 +754,7 @@ const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
 
 
 /** @brief tell about the conversion profiles
+ *  @ingroup objects_profile
  */
 typedef struct {
   oyOBJECT_e           type_;          /*!< struct type oyOBJECT_PROFILES_S */
@@ -784,6 +798,7 @@ typedef enum {
 
 /** @struct oyProfileTag_s
  *  @brief  a profile constituting element
+ *  @ingroup objects_profile
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
@@ -857,7 +872,9 @@ typedef enum {
 } oyDATALAYOUT_e;
 
 
-/** @brief start with a simple rectangle */
+/** @brief start with a simple rectangle
+ *  @ingroup objects_region
+ */
 typedef struct {
   oyOBJECT_e           type_;          /**< internal struct type oyOBJECT_REGION_S */
   oyStruct_Copy_f      copy;           /**< copy function */
@@ -912,6 +929,7 @@ char  *        oyRegion_Show         ( oyRegion_s        * region );
 
 /** @enum    oyDATATYPE_e
  *  @brief   basic data types for anonymous pointers
+ *  @ingroup object_image
  *
  *  @version Oyranos: 0.1.8
  *  @since   2007/00/00 (Oyranos: 0.1.8)
@@ -928,6 +946,7 @@ typedef enum {
 
 
 /** @type oyPixel_t 
+ *  @ingroup object_image
     parametric type as shorthand for the channel layout in bitmaps \n
 
     should fit into a 32bit type, usual unsigned int or uint32_t \n
@@ -1020,6 +1039,7 @@ typedef uint32_t oyPixel_t;
 
 /** @enum    oyCHANNELTYPE_e
  *  @brief   channels types
+ *  @ingroup object_image
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
@@ -1048,6 +1068,7 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
 
 /** @struct  oyArray2d_s
  *  @brief   2d data array
+ *  @ingroup object_image
  *
  *  oyArray2d_s is a in memory data view. The array2d holds pointers to lines in
  *  the original memory blob. The arrays contained in array2d represent the 
@@ -1134,6 +1155,7 @@ OYAPI int  OYEXPORT
                                        oyPointer           data );
 
 /** @brief a reference struct to gather information for image transformation
+ *  @ingroup object_image
  *
  *  as we dont target a complete imaging solution, only raster is supported
  *
@@ -1161,7 +1183,7 @@ OYAPI int  OYEXPORT
     color=white;
     clusterrank=global;
 
-      i [ label="... | <0>oyStruct_s * pixel | <1> oyImage_GetPoint_t getPoint | <2>oyImage_GetLine_t getLine | <3>oyImage_GetTile_t getTile | ..."];
+      i [ label="... | <0>oyStruct_s * pixel | <1> oyImage_GetPoint_f getPoint | <2>oyImage_GetLine_f getLine | <3>oyImage_GetTile_f getTile | ..."];
 
       node [width = 2.5, style=filled];
       pixel_A [label="oyArray2d_s arrayA"];
@@ -1238,12 +1260,12 @@ struct oyImage_s {
   int                  display_pos_y;  /*!< left position on display of image */
 
   oyStruct_s         * pixel_data;     /**< struct used by each subsequent call of g/set* pixel acessors */
-  oyImage_GetPoint_t   getPoint;       /**< the point interface */
-  oyImage_GetLine_t    getLine;        /**< the line interface */
-  oyImage_GetTile_t    getTile;        /**< the tile interface */
-  oyImage_SetPoint_t   setPoint;       /**< the point interface */
-  oyImage_SetLine_t    setLine;        /**< the line interface */
-  oyImage_SetTile_t    setTile;        /**< the tile interface */
+  oyImage_GetPoint_f   getPoint;       /**< the point interface */
+  oyImage_GetLine_f    getLine;        /**< the line interface */
+  oyImage_GetTile_f    getTile;        /**< the tile interface */
+  oyImage_SetPoint_f   setPoint;       /**< the point interface */
+  oyImage_SetLine_f    setLine;        /**< the line interface */
+  oyImage_SetTile_f    setTile;        /**< the tile interface */
   int                  tile_width;     /**< needed by the tile interface */
   int                  tile_height;    /**< needed by the tile interface */
   uint16_t             subsampling[2]; /**< 1, 2 or 4 */
@@ -1277,9 +1299,9 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
                                        oyOptions_s       * options );
 int            oyImage_DataSet       ( oyImage_s         * image,
                                        oyStruct_s       ** pixel_data,
-                                       oyImage_GetPoint_t  getPoint,
-                                       oyImage_GetLine_t   getLine,
-                                       oyImage_GetTile_t   getTile );
+                                       oyImage_GetPoint_f  getPoint,
+                                       oyImage_GetLine_f   getLine,
+                                       oyImage_GetTile_f   getTile );
 int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRegion_s        * region,
                                        int                 do_copy,
@@ -1289,6 +1311,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
 /** @enum    oyFILTER_TYPE_e
  *  @brief   basic filter classes
+ *  @ingroup objects_conversion
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
@@ -1307,7 +1330,9 @@ typedef enum {
 const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
                                        oyNAME_e            type );
 
-/** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html */
+/** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html 
+ *  @ingroup objects_conversion
+ */
 typedef enum {
   oyFILTER_REG_NONE,
   oyFILTER_REG_TOP,                    /**< e.g. "sw" for filters */
@@ -1336,6 +1361,7 @@ typedef struct oyFilterSocket_s oyFilterSocket_s;
 
 /** @enum    oyCONNECTOR_e
  *  @brief   basic connector classes
+ *  @ingroup objects_conversion
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
@@ -1370,6 +1396,7 @@ typedef enum {
 
 /** @enum    oyCONNECTOR_EVENT_e
  *  @brief   connector events types
+ *  @ingroup objects_conversion
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
@@ -1388,6 +1415,7 @@ typedef enum {
 
 /** @struct oyConnector_s
  *  @brief  a filter connection description structure
+ *  @ingroup objects_conversion
  *
  *  This structure holds informations about the connection capabilities.
  *  It holds common structure members of oyFilterPlug_s and oyFilterSocket_s.
@@ -1445,6 +1473,7 @@ OYAPI int  OYEXPORT
 
 /** @struct oyFilterSocket_s
  *  @brief  a filter connection structure
+ *  @ingroup objects_conversion
  *
  *  The passive output version of a oyConnector_s.
  \dot
@@ -1506,6 +1535,7 @@ OYAPI int  OYEXPORT
 
 /** @struct oyFilterPlug_s
  *  @brief  a filter connection structure
+ *  @ingroup objects_conversion
  *
  *  The active input version of a oyConnector_s.
  *  Each plug can connect to exact one socket.
@@ -1571,6 +1601,7 @@ OYAPI int  OYEXPORT
 
 /** @struct  oyFilterPlugs_s
  *  @brief   a FilterPlugs list
+ *  @ingroup objects_conversion
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
@@ -1612,6 +1643,7 @@ OYAPI int  OYEXPORT
 
 /** @struct oyFilter_s
  *  @brief  a filter to manipulate a image
+ *  @ingroup objects_conversion
  *
  *  This is the Oyranos filter object. There are basic classes of filters.
  *  Filters implement a container. They can contain various data and options.
@@ -1714,6 +1746,7 @@ OYAPI int  OYEXPORT
 
 /** @struct  oyFilters_s
  *  @brief   a Filters list
+ *  @ingroup objects_conversion
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/08 (Oyranos: 0.1.8)
@@ -1754,6 +1787,7 @@ OYAPI int  OYEXPORT
 
 /** @struct  oyFilterNode_s
  *  @brief   a FilterNode object
+ *  @ingroup objects_conversion
  *
  *  Filter nodes chain filters into a oyConversion_s graph. The filter nodes
  *  use plugs and sockets for creating connections. Each plug can only connect
@@ -1899,6 +1933,7 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
 
 /** @struct  oyPixelAccess_s
  *  @brief   control pixel access order
+ *  @ingroup objects_conversion
  *
  *  A struct to control pixel access. It is a kind of flexible pixel 
  *  iterator. The order or pattern of access is defined by the array_xy and
@@ -2066,6 +2101,7 @@ int                oyPixelAccess_CalculateNextStartPixel (
 
 /** @struct oyConversion_s
  *  @brief  a filter chain or graph to manipulate a image
+ *  @ingroup objects_conversion
  *
  *  Order of filters matters.
  *  The processing direction is a bit like raytracing as nodes request their
@@ -2272,12 +2308,12 @@ oyColourConversion_s* oyColourConversion_Copy (
                                        oyObject_s          object );
 int          oyColourConversion_Release ( oyColourConversion_s ** cc );
 
-int          oyColourConversion_Run  ( oyColourConversion_s * colour /*!< object*/
-                                     );                  /*!< return: error */
+int          oyColourConversion_Run  ( oyColourConversion_s * colour );
 oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * s );
 
 /** @struct oyNamedColour_s
  *  @brief colour patch with meta informations
+ *  @ingroup objects_single_colour
  *
  *  Data management on library side.
  *  User can control memory management at creation time.
@@ -2347,6 +2383,7 @@ const char   *    oyNamedColour_GetName( oyNamedColour_s * s,
                                        uint32_t            flags );
 
 /** @brief list of colour patches
+ *  @ingroup objects_single_colour
  *
  *  Data management on library side.
  *  User can control memory management at creation time.
@@ -2394,7 +2431,8 @@ void              oyCopyColour       ( const double      * from,
 
 /* --- CMM API --- */
 
-/** @brief icon data
+/** @brief   icon data
+ *  @ingroup cmm_handling
  *
  *  Since: 0.1.8
  */
@@ -2411,7 +2449,8 @@ typedef struct {
 
 typedef struct oyCMMapi_s oyCMMapi_s;
 
-/** @brief the CMM API resources struct to implement and set by a CMM
+/** @brief   the CMM API resources struct to implement and set by a CMM
+ *  @ingroup cmm_handling
  *
  *  Given an example CMM with name "little cms", which wants to use the 
  *  four-char ID 'lcms', the CMM can register itself to Oyranos as follows:
