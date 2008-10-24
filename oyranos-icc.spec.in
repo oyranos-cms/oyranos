@@ -37,61 +37,61 @@ rm -rf %{buildroot}
 %postun
 
 
-%package      RGB
+%package      icc-RGB
 Summary:    Oyranos default sRGB ICC profile +
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
 License:    public domain
 Version:    0.5
-%description  RGB
+%description  icc-RGB
 The "WWW standard" sRGB profile and others
 
-%package      lcmsLAB
+%package      icc-lcmsLAB
 Summary:    Oyranos default PCS profiles
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
 License:    public domain
 Version:    0.5
-%description  lcmsLAB
+%description  icc-lcmsLAB
 Special LCMS profiles.
 
-%package      ECI-RGB
+%package      icc-ECI-RGB
 Summary:    Oyranos default Editing RGB profile
 Group:      Applications/Graphics
 Vendor:     http://www.eci.org
 URL:        http://www.eci.org
 License:    ECI-RGB
 Version:    0.5
-%description  ECI-RGB
+%description  icc-ECI-RGB
 The RGB profile maintaining perceptual equal lightness.
 
-%package      Cineon
+%package      icc-Cineon
 Summary:    Oyranos additional Cineon ICC Profiles
 Group:      Applications/Graphics
 URL:        http://www.behrmann.name
 Version:    0.5
-%description  Cineon
+%description  icc-Cineon
 Cineon ICC Profiles
 
-%package      PhotoGamutRGB
+%package      icc-PhotoGamutRGB
 Summary:    Oyranos additional ICC Profile for Photoediting
 Group:      Applications/Graphics
 Vendor:     http://www.photogamut.org
 URL:        http://www.photogamut.org
 License:    PhotoGamut
 Version:    0.5
-%description  PhotoGamutRGB
+%description  icc-PhotoGamutRGB
 A ICC Profile optimized for digital photos.
 
-%package      Printing
+%package      icc-printing
 Summary:    Printing Profiles
 Group:      Applications/Graphics
 URL:        http://www.behrmann.name
 Vendor:     http://www.behrmann.name
 Version:    0.5
-%description  Printing
+%description  icc-printing
 Printing profiles according to ISO 12647-2. These are CMYK
 ICC profiles for ISO Printing conditions.
 
@@ -117,7 +117,7 @@ Printing characterisation data. These are CMYK
 characterisation data for GRACoL, SWOP and SNAP.
 
 
-%files lcmsLAB
+%files icc-lcmsLAB
 %defattr(-, root, root)
 %{_datadir}/color/icc/LCMS*.ICM
 %{_datadir}/color/icc/Lab.icc
@@ -125,29 +125,29 @@ characterisation data for GRACoL, SWOP and SNAP.
 %{_datadir}/color/icc/Gray.icc
 %doc default_profiles/base/LICENSE
 
-%files Cineon
+%files icc-Cineon
 %defattr(-, root, root)
 %{_datadir}/color/icc/Cine*.icc
 %doc default_profiles/base/LICENSE-ZLIB
 
-%files ECI-RGB
+%files icc-ECI-RGB
 %defattr(-, root, root)
 %{_datadir}/color/icc/eciRGB_*.icc
 # This should go in the package docs, not with the profiles.
 %doc default_profiles/base/licence.rtf
 
-%files PhotoGamutRGB
+%files icc-PhotoGamutRGB
 %defattr(-, root, root)
 %{_datadir}/color/icc/PhotoGamutRGB_avg6c.icc
 %doc default_profiles/base/LICENSE
 
-%files RGB
+%files icc-RGB
 %defattr(-, root, root)
 %{_datadir}/color/icc/sRGB.icc
 %{_datadir}/color/icc/compatibleWithAdobeRGB1998.icc
 %doc default_profiles/base/LICENSE
 
-%files Printing
+%files icc-printing
 %defattr(-, root, root)
 %{_datadir}/color/icc/webcoated_FOGRA28L_argl.icc
 %{_datadir}/color/icc/uncoated_FOGRA29L_argl.icc
