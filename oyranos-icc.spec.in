@@ -23,7 +23,7 @@ Authors:
 %setup -n %{name}-%{version}
 
 %build
-%configure --quick --enable-verbose
+%configure --quick
 
 %install
 rm -rf %{buildroot}
