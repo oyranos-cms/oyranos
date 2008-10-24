@@ -44,7 +44,7 @@
     Affected are default profiles and some behaviour settings.
     - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
       show details of profiles. 
-    - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \i oyranos-config \i --help to see the appropriate options.
+    - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \a oyranos-config \a --help to see the appropriate options.
 
     @section user User API Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
@@ -64,8 +64,8 @@
     file tree, are defined in oyranos_definitions.h.
     \n
 
-    More toppics about programming with Oyranos can be found on the @ref coding
-    page. 
+    More in depth topics about programming with Oyranos can be found on the
+    @ref coding page. 
 
     @subsection api_tutorial Programming Tutorial
     Frist you have to put a
@@ -228,11 +228,11 @@
     --enable-shared is sometimes a good choice for smaller executables</li>
     <li><a href="http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/">Xcalib</a> for loading a given  VideoCardGammaTag from profile to a running XFree86/Xorg session (optionally)</li>
     </ul>\n
-    For building unpack the tgz file and type #make; make install.\n\n
+    For building unpack the tgz file and type: make; make install.\n\n
     Optionally you can specifiy an other than the default prefix /opt/local by typing:\n
-    #configure.sh --prefix=/what/you/like\n
-    #make\n
-    #make install   (optionally)\n
+    configure.sh --prefix=/what/you/like\n
+    make\n
+    make install   (optionally)\n
  */
 
 /** @page links References
