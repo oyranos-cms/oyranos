@@ -513,7 +513,7 @@ typedef struct {
   oyValue_u          * standard;       /**< the standard value */
   oyValue_u          * start;          /**< value range start */
   oyValue_u          * end;            /**< value range end */
-  uint32_t             flags;          /**<  */
+  uint32_t             flags;          /**< */
 } oyOption_s;
 
 oyOption_s *   oyOption_New          ( oyObject_s          object,
@@ -2131,7 +2131,7 @@ digraph G {
  *  @date    2008/06/08
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONVERSIONS_S*/
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONVERSION_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
