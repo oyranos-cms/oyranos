@@ -77,7 +77,6 @@ oyMemBlockExtent_(char **mem, int old_len, int add)
     oyAllocHelper_m_( tmp, char, len, oyAllocateFunc_, return 0 );
     DBG_PROG1_S("len2: %d\n",len);
     memcpy( tmp, *mem, old_len  );
-    DBG_PROG2_S("%s // %s", *mem, tmp);
     oyFree_m_ (*mem);
     *mem = tmp;
     new_len = len;
@@ -396,7 +395,8 @@ oyWriteOptionToXML_(oyGROUP_e           group,
                  /* append xml keys and value */
                  oySprintf_( &mem[strlen(mem)], "%s<%s>%s</%s>\n\n", intent,
                           key, value, key);
-                 DBG_PROG_S(mem);
+                 if(oy_debug)
+                 { DBG_PROG; fprintf(stderr, "%s\n", mem); }
                } else
                  oySprintf_( &mem[strlen(mem)-1], " -->\n" );
                if(value) oyFree_m_(value);
