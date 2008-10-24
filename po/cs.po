@@ -4,585 +4,575 @@
 # First translator Milan Knizek <knizek@volny.cz>, 2008
 msgid ""
 msgstr ""
-"Project-Id-Version: icc_examin\n"
+"Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-10-24 10:51+0200\n"
-"PO-Revision-Date: 2008-10-16 20:18+0100\n"
+"POT-Creation-Date: 2008-10-16 22:25+0200\n"
+"PO-Revision-Date: 2008-10-23 20:49+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ASCII\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Czech\n"
+"X-Poedit-Country: CZECH REPUBLIC\n"
 
-#: oyranos.c:111
+#: oyranos.c:110
 #, c-format
 msgid "WARNING"
 msgstr "VAROVANI"
 
-#: oyranos.c:114
+#: oyranos.c:113
 #, c-format
 msgid "!!! ERROR"
 msgstr "!!! CHYBA"
 
-#: oyranos.c:173
-#, fuzzy
+#: oyranos.c:172
 msgid "not a profile:"
-msgstr "zadny profil"
+msgstr "neni profil:"
 
-#: oyranos.c:213
+#: oyranos.c:212
 msgid "name longer than"
-msgstr ""
+msgstr "jmeno delsi nez"
 
-#: oyranos.c:241
+#: oyranos.c:240
 msgid "profile not found in colour path:"
-msgstr ""
+msgstr "profil nenalezen v preddefinovanem adresari:"
 
-#: oyranos.c:262
-#, fuzzy
+#: oyranos.c:261
 msgid "profile not found:"
-msgstr "Barvy profilu"
+msgstr "profil nenalezen:"
 
-#: oyranos.c:300
+#: oyranos.c:299
 msgid "wrong profile for static web colour space selected, need sRGB"
-msgstr ""
+msgstr "spatny profil pro staticky web barvovy prostor, vyzadovano sRGB"
 
-#: oyranos.c:636 oyranos.c:664
+#: oyranos.c:635
+#: oyranos.c:663
 msgid "Option not supported type:"
-msgstr ""
+msgstr "Volba nepodporovaneho typu:"
 
-#: oyranos.c:722
+#: oyranos.c:721
 msgid "file exists, please remove befor installing new profile."
-msgstr ""
+msgstr "soubor existuje, odstrante jej prosim pred instalaci noveho profilu."
 
-#: oyranos.c:1164
+#: oyranos.c:1160
 msgid "will overwrite policy file"
-msgstr ""
+msgstr "prepise soubor pravidel"
 
 #: oyranos_check.c:79
-#, fuzzy
 msgid "not found:"
-msgstr "Rotovat dokola"
+msgstr "nenalezeno"
 
 #: oyranos_cmms.c:463
 msgid "Did not find a type for option:"
-msgstr ""
+msgstr "nenalezen typ pro volbu:"
 
-#: oyranos_elektra.c:461 oyranos_elektra.c:550
+#: oyranos_elektra.c:460
+#: oyranos_elektra.c:549
 msgid "default profile type does not exist:"
-msgstr ""
+msgstr "vychozi typ profilu neexistuje:"
 
 #: oyranos_io.c:880
 msgid "path is not a directory"
-msgstr ""
+msgstr "cesta neni adresar"
 
 #: oyranos_io.c:884
 msgid "path is a link: ignored"
-msgstr ""
+msgstr "cesta je odkaz: ignorovano"
 
 #: oyranos_io.c:889
 #, c-format
 msgid "%d. path %s is not readable"
-msgstr ""
+msgstr "%d. cestu %s nelze precist"
 
 #: oyranos_texts.c:146
-#, fuzzy
 msgid "Start"
-msgstr "Hvezda"
+msgstr "Zacatek"
 
 #: oyranos_texts.c:147
-#, fuzzy
 msgid "Oyranos Settings Group"
-msgstr "Nastaveni oyranos"
+msgstr "Skupina nastaveni Oyranosu"
 
 #: oyranos_texts.c:154
-#, fuzzy
 msgid "Default Profiles"
-msgstr "Ulozit gamut jako profil"
+msgstr "Vychozi profily"
 
 #: oyranos_texts.c:155
 msgid "Source and Target Profiles for various situations"
-msgstr ""
+msgstr "Vstupni a vystupni profily pro ruzne situace"
 
 #: oyranos_texts.c:162
-#, fuzzy
 msgid "Editing Colour Space"
-msgstr "Barvovy prostor"
+msgstr "Barvovy prostor pro editaci"
 
 #: oyranos_texts.c:163
 msgid "Well behaving Colour Space for Editing"
-msgstr ""
+msgstr "Dobre se chovajici barvovy prostor pro editaci"
 
 #: oyranos_texts.c:170
-#, fuzzy
 msgid "Assumed Colour Space"
-msgstr "Barvovy prostor"
+msgstr "Predpokladany barvovy prostor"
 
 #: oyranos_texts.c:171
 msgid "Assumed Colour Space for untagged colours"
-msgstr ""
+msgstr "Predpokladany barvovy prostor pro neoznacene barvy"
 
 #: oyranos_texts.c:178
-#, fuzzy
 msgid "Proofing Colour Space"
-msgstr "Barvovy prostor"
+msgstr "Barvovy prostor pro simulaci"
 
 #: oyranos_texts.c:179
 msgid "Colour Space for Simulating real devices"
-msgstr ""
+msgstr "Barvovy prostor pro simulaci skutecnych zarizeni"
 
-#: oyranos_texts.c:186 oyranos_texts.c:263
-#, fuzzy
+#: oyranos_texts.c:186
+#: oyranos_texts.c:263
 msgid "Paths"
-msgstr "Pozastavit"
+msgstr "Cesty"
 
-#: oyranos_texts.c:187 oyranos_texts.c:264
+#: oyranos_texts.c:187
+#: oyranos_texts.c:264
 msgid "Paths where ICC Profiles can be found"
-msgstr ""
+msgstr "Cesty, kde jsou ICC profily"
 
-#: oyranos_texts.c:194 oyranos_texts.c:252 oyranos_config_fltk.cxx:1563
+#: oyranos_texts.c:194
+#: oyranos_texts.c:252
+#: oyranos_config_fltk.cxx:1563
 msgid "Policy"
-msgstr ""
+msgstr "Politika"
 
-#: oyranos_texts.c:195 oyranos_texts.c:253
+#: oyranos_texts.c:195
+#: oyranos_texts.c:253
 msgid "Collections of settings in Oyranos"
-msgstr ""
+msgstr "Kolekce nastaveni Oyranosu"
 
 #: oyranos_texts.c:202
 msgid "Behaviour"
-msgstr ""
+msgstr "Chovani"
 
 #: oyranos_texts.c:203
 msgid "Settings affecting the Behaviour in various situations"
-msgstr ""
+msgstr "Nastaveni ovlivnujici chovani v ruznych situacich"
 
 #: oyranos_texts.c:210
 msgid "Rendering"
-msgstr ""
+msgstr "Transformace"
 
 #: oyranos_texts.c:211
-msgid ""
-"The kind of ICC standard gamut mapping for transforming colours between "
-"differently sized colour spaces"
-msgstr ""
+msgid "The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"
+msgstr "Typ standardniho mapovani ICC gamutu pro transformaci barev mezi barvovymi prostory ruznych velikosti"
 
 #: oyranos_texts.c:218
 msgid "Save Mixed colour space Documents"
-msgstr ""
+msgstr "Ulozit dokumenty se smisenymi barvovymi prostory"
 
 #: oyranos_texts.c:219
 msgid "Default Handling of Mixed Colour Spaces inside one single Document"
-msgstr ""
+msgstr "Vychozi zachazeni se smisenymi barvovymi prostory v ramci jednoho dokumentu"
 
 #: oyranos_texts.c:226
 msgid "Mismatching"
-msgstr ""
+msgstr "Nesoulad"
 
 #: oyranos_texts.c:227
-msgid ""
-"Decide what to do when the default colour spaces dont match the current ones."
-msgstr ""
+msgid "Decide what to do when the default colour spaces dont match the current ones."
+msgstr "Rozhodnout co delat, kdyz se vychozi barvovy prostor nerovna aktualnimu."
 
-#: oyranos_texts.c:234 oyranos_texts.c:373
-#, fuzzy
+#: oyranos_texts.c:234
+#: oyranos_texts.c:373
 msgid "Proofing"
-msgstr "Bod"
+msgstr "Simulace"
 
 #: oyranos_texts.c:235
 msgid "Default Proofing Settings"
-msgstr ""
+msgstr "Vychozi nastaveni simulace tisku"
 
 #: oyranos_texts.c:242
 msgid "All"
-msgstr ""
+msgstr "Vse"
 
 #: oyranos_texts.c:243
 msgid "Oyranos Settings"
-msgstr "Nastaveni oyranos"
+msgstr "Nastaveni Oyranosu"
 
 #: oyranos_texts.c:273
 msgid "Editing Rgb"
-msgstr ""
+msgstr "RGB editace"
 
 #: oyranos_texts.c:274
 msgid "Prefered Rgb Editing Colour Space"
-msgstr ""
+msgstr "Preferovany RGB barvovy prostor pro editaci"
 
 #: oyranos_texts.c:282
 msgid "Editing Cmyk"
-msgstr ""
+msgstr "CMYK editace"
 
 #: oyranos_texts.c:283
 msgid "Prefered Cmyk Editing Colour Space"
-msgstr ""
+msgstr "Preferovany CMYK barvovy prostor pro editaci"
 
 #: oyranos_texts.c:291
 msgid "Editing XYZ"
-msgstr ""
+msgstr "XYZ editace"
 
 #: oyranos_texts.c:292
 msgid "Prefered XYZ Editing Colour Space"
-msgstr ""
+msgstr "Preferovany XYZ barvovy prostor pro editaci"
 
 #: oyranos_texts.c:300
 msgid "Editing Lab"
-msgstr ""
+msgstr "Lab editace"
 
 #: oyranos_texts.c:301
 msgid "Prefered CIE*Lab Editing Colour Space"
-msgstr ""
+msgstr "Preferovany CIE*Lab barvovy prostor pro editaci"
 
 #: oyranos_texts.c:309
 msgid "Editing Gray"
-msgstr ""
+msgstr "Seda editace"
 
 #: oyranos_texts.c:310
 msgid "Prefered Gray Editing Colour Space"
-msgstr ""
+msgstr "Preferovany sedy barvovy prostor pro editaci"
 
 #: oyranos_texts.c:318
 msgid "Assumed XYZ source"
-msgstr ""
+msgstr "Predpokladany vstupni XYZ"
 
 #: oyranos_texts.c:319
 msgid "Assigning an untagged XYZ Image an colour space"
-msgstr ""
+msgstr "Prirazeni barvoveho prostoru neoznacenemu XYZ obrazku"
 
 #: oyranos_texts.c:327
 msgid "Assumed Lab source"
-msgstr ""
+msgstr "Predpokladany vstupni Lab"
 
 #: oyranos_texts.c:328
 msgid "Assigning an untagged CIE*Lab Image an colour space"
-msgstr ""
+msgstr "Prirazeni barvoveho prostoru neoznacenemu CIE*Lab obrazku"
 
 #: oyranos_texts.c:336
 msgid "Assumed Rgb source"
-msgstr ""
+msgstr "Predpokladany vstupni RGB"
 
 #: oyranos_texts.c:337
 msgid "Assigning an untagged Rgb Image an colour space"
-msgstr ""
+msgstr "Prirazeni barvoveho prostoru neoznacenemu RGB obrazku"
 
 #: oyranos_texts.c:345
 msgid "Assumed Web source"
-msgstr ""
+msgstr "Predpokladany vstupni Web"
 
 #: oyranos_texts.c:346
-msgid ""
-"Assigning an untagged Rgb Image with source from the WWW an colour space"
-msgstr ""
+msgid "Assigning an untagged Rgb Image with source from the WWW an colour space"
+msgstr "Prirazeni barvoveho prostoru neoznacenemu RGB obrazku pochazejiciho z WWW"
 
 #: oyranos_texts.c:355
 msgid "Assumed Cmyk source"
-msgstr ""
+msgstr "Predpokladany vstupni CMYK"
 
 #: oyranos_texts.c:356
 msgid "Assigning an untagged Cmyk Image this colour space"
-msgstr ""
+msgstr "Prirazeni barvoveho prostoru neoznacenemu CMYK obrazku"
 
 #: oyranos_texts.c:364
 msgid "Assumed Gray source"
-msgstr ""
+msgstr "Predpokladany vstupni sed"
 
 #: oyranos_texts.c:365
 msgid "Assigning an untagged Gray Image this colour space"
-msgstr ""
+msgstr "Prirazeni barvoveho prostoru neoznacenemu sedemu obrazku"
 
 #: oyranos_texts.c:374
 msgid "Colour space for Simulating an Output Device"
-msgstr ""
+msgstr "Barvovy prostor pro simulaci vystupniho zarizeni"
 
 #: oyranos_texts.c:383
-#, fuzzy
 msgid "No Image profile"
-msgstr "Profil obrazku..."
+msgstr "Zadny profil obrazku"
 
 #: oyranos_texts.c:384
-msgid ""
-"Image has no colour space embedded. What default action shall be performed?"
-msgstr ""
+msgid "Image has no colour space embedded. What default action shall be performed?"
+msgstr "Obrazek nema vlozeny barvovy prostor. Jaka vychozi akce ma byt provedena?"
 
 #: oyranos_texts.c:386
-#, fuzzy
 msgid "Assign No Profile"
-msgstr "zadny profil"
+msgstr "Nepriradit zadny profil"
 
 #: oyranos_texts.c:386
 msgid "Assign Assumed Profile"
-msgstr ""
+msgstr "Priradit predpokladany profil"
 
-#: oyranos_texts.c:386 oyranos_texts.c:395 oyranos_texts.c:404
-#: oyranos_texts.c:413 oyranos_texts.c:422
-#, fuzzy
+#: oyranos_texts.c:386
+#: oyranos_texts.c:395
+#: oyranos_texts.c:404
+#: oyranos_texts.c:413
+#: oyranos_texts.c:422
 msgid "Promt"
-msgstr "Projekt"
+msgstr "Dotazat se"
 
 #: oyranos_texts.c:392
 msgid "On Rgb Mismatch"
-msgstr ""
+msgstr "V pripade RGB nesouladu"
 
-#: oyranos_texts.c:393 oyranos_texts.c:402
+#: oyranos_texts.c:393
+#: oyranos_texts.c:402
 msgid "Action for Image profile and Editing profile mismatches."
-msgstr ""
+msgstr "Akce pro nesoulad profilu obrazku a editace."
 
-#: oyranos_texts.c:395 oyranos_texts.c:404 oyranos_texts.c:413
+#: oyranos_texts.c:395
+#: oyranos_texts.c:404
+#: oyranos_texts.c:413
 #: oyranos_texts.c:422
 msgid "Preserve Numbers"
-msgstr ""
+msgstr "Zachovat cisla"
 
-#: oyranos_texts.c:395 oyranos_texts.c:404
+#: oyranos_texts.c:395
+#: oyranos_texts.c:404
 msgid "Convert automatically"
-msgstr ""
+msgstr "Automaticky konvertovat"
 
 #: oyranos_texts.c:401
 msgid "On Cmyk Mismatch"
-msgstr ""
+msgstr "V pripade nesouladu CMYK"
 
 #: oyranos_texts.c:410
 msgid "For Print"
-msgstr ""
+msgstr "Pro tisk"
 
 #: oyranos_texts.c:411
 msgid "Handle Mixed colour spaces in Preparing a document for Print output."
-msgstr ""
+msgstr "Zachazeni se smisenymi barvovymi prostory pri priprave dokumentu pro tiskovy vystup."
 
 #: oyranos_texts.c:413
 msgid "Convert to Default Cmyk Editing Space"
-msgstr ""
+msgstr "Konvertovat do vychoziho CMYK barvoveho prostoru editace"
 
 #: oyranos_texts.c:413
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
-msgstr ""
+msgstr "Konvertovat do neoznaceneho CMYK se zachovanim CMYK cisel"
 
 #: oyranos_texts.c:419
-#, fuzzy
 msgid "For Screen"
-msgstr "Obrazovka:"
+msgstr "Pro obrazovku"
 
 #: oyranos_texts.c:420
 msgid "Handle Mixed colour spaces in Preparing a document for Screen output."
-msgstr ""
+msgstr "Zachazeni se smisenymi barvovymi prostory pri priprave dokumentu pro vystup na obrazovku"
 
 #: oyranos_texts.c:422
 msgid "Convert to Default Rgb Editing Space"
-msgstr ""
+msgstr "Konvertovat do vychoziho RGB prostoru editace"
 
 #: oyranos_texts.c:422
 msgid "Convert to WWW (sRGB)"
-msgstr ""
+msgstr "Konvertovat do WWW (sRGB)"
 
 #: oyranos_texts.c:428
 msgid "Default Rendering Intent"
-msgstr ""
+msgstr "Vychozi zamer transformace"
 
 #: oyranos_texts.c:429
 msgid "Rendering Intent for colour space Transformations."
-msgstr ""
+msgstr "Zamer transformace pro barvove prostory"
 
 #: oyranos_texts.c:431
 msgid "Perceptual"
 msgstr "Perceptualni"
 
-#: oyranos_texts.c:431 oyranos_texts.c:449
+#: oyranos_texts.c:431
+#: oyranos_texts.c:449
 msgid "Relative Colorimetric"
 msgstr "Relativni kolorimetricky"
 
-#: oyranos_texts.c:431 oyranos_alpha.c:421 oyranos_alpha.c:427
+#: oyranos_texts.c:431
+#: oyranos_alpha.c:421
+#: oyranos_alpha.c:427
 msgid "Saturation"
 msgstr "Saturacni"
 
-#: oyranos_texts.c:431 oyranos_texts.c:449
+#: oyranos_texts.c:431
+#: oyranos_texts.c:449
 msgid "Absolute Colorimetric"
 msgstr "Absolutni kolorimetricky"
 
 #: oyranos_texts.c:437
 msgid "Use Black Point Compensation"
-msgstr ""
+msgstr "Pouzit kompenzaci cerneho bodu (BPC)"
 
 #: oyranos_texts.c:438
 msgid "BPC affects only the Relative Colorimetric Rendering Intent."
-msgstr ""
+msgstr "BPC ovlivnuje pouze relativni kolorimetricky zamer transformace."
 
-#: oyranos_texts.c:440 oyranos_texts.c:458 oyranos_texts.c:467
+#: oyranos_texts.c:440
+#: oyranos_texts.c:458
+#: oyranos_texts.c:467
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
-#: oyranos_texts.c:440 oyranos_texts.c:458 oyranos_texts.c:467
+#: oyranos_texts.c:440
+#: oyranos_texts.c:458
+#: oyranos_texts.c:467
 msgid "Yes"
 msgstr "Ano"
 
 #: oyranos_texts.c:446
 msgid "Proofing Rendering Intent"
-msgstr ""
+msgstr "Zamer transformace simulace tisku"
 
 #: oyranos_texts.c:447
 msgid "Behaviour of colour space transformation for proofing"
-msgstr ""
+msgstr "Chovani zameru transformace barvoveho prostoru pro simulaci tisku"
 
 #: oyranos_texts.c:455
 msgid "SoftProof by Default"
-msgstr ""
+msgstr "SofProof jako vychozi"
 
 #: oyranos_texts.c:456
 msgid "Behaviour for Softproofing view at application startup"
-msgstr ""
+msgstr "Chovani pro Softproofing pri spusteni aplikace"
 
 #: oyranos_texts.c:464
 msgid "Hardproof by Default"
-msgstr ""
+msgstr "Hardproof jako vychozi"
 
 #: oyranos_texts.c:465
-msgid ""
-"Behaviour for preselecting Hardproofing with Standard Proofing Profile at "
-"print time"
-msgstr ""
+msgid "Behaviour for preselecting Hardproofing with Standard Proofing Profile at print time"
+msgstr "Chovani pro predvolbu Hardproofingu se standardnim profilem simulace v okamziku tisku"
 
 #: oyranos_monitor.c:335
 msgid "unexpected EDID lenght"
-msgstr ""
+msgstr "neocekavane delka EDID"
 
 #: oyranos_monitor.c:338
 msgid "Cant read hardware information from device."
-msgstr ""
+msgstr "Ze zarizeni nelze precist informaci o hardware"
 
-#: oyranos_monitor.c:431 oyranos_monitor.c:985 oyranos_monitor.c:1369
+#: oyranos_monitor.c:431
+#: oyranos_monitor.c:985
+#: oyranos_monitor.c:1369
 msgid "open X Display failed"
 msgstr "selhalo otevreni X displeje"
 
 #: oyranos_monitor.c:446
 msgid "Could not get Xatom, probably your monitor profile is not set:"
-msgstr ""
+msgstr "Nelze ziskat Xatom, pravdepodobne neni nastaven profil monitru:"
 
 #: oyranos_monitor.c:1009
 msgid "No monitor gamma curves by profile:"
-msgstr ""
+msgstr "Zadne gama krivky monitoru v profilu:"
 
 #: oyranos_monitor.c:1043
-#, fuzzy
 msgid "Error obtaining profile"
-msgstr "chybna velikost tagu v profilu"
+msgstr "Chyba pri ziskavani profilu"
 
-#: oyranos_monitor.c:1050 oyranos_monitor.c:1052
+#: oyranos_monitor.c:1050
+#: oyranos_monitor.c:1052
 msgid "Error setting up atom"
-msgstr ""
+msgstr "Chyba pri nastavovani atomu"
 
 #: oyranos_monitor.c:1139
 msgid "Error getting atom"
-msgstr ""
+msgstr "Chyba pri ziskavani atomu"
 
 #: oyranos_monitor.c:1388
 msgid "Xinerama request failed"
-msgstr ""
+msgstr "Xinerama pozadavek selhal"
 
 #: oyranos_monitor.c:1404
-#, fuzzy
 msgid "open X Screen failed"
 msgstr "selhalo otevreni X displeje"
 
 #: oyranos_gamma.c:107
 msgid "is a colour profile administration tool for monitors"
-msgstr ""
+msgstr "je administrativni nastroj pro barvove profily monitoru"
 
-#: oyranos_gamma.c:108 oyranos_policy.c:56
+#: oyranos_gamma.c:108
+#: oyranos_policy.c:52
 msgid "Usage"
-msgstr ""
+msgstr "Pouziti"
 
 #: oyranos_gamma.c:109
-#, fuzzy
 msgid "Set new profile:"
-msgstr "zadny profil"
+msgstr "Nastavit novy profil:"
 
 #: oyranos_gamma.c:112
-#, fuzzy
 msgid "profile name"
-msgstr "Jmeno souboru"
+msgstr "jmeno profilu"
 
 #: oyranos_gamma.c:114
-#, fuzzy
 msgid "Unset profile:"
-msgstr "zadny profil"
+msgstr "Odpojit profil:"
 
 #: oyranos_gamma.c:118
 msgid "Activate profiles:"
-msgstr ""
+msgstr "Aktivovat profily:"
 
 #: oyranos_gamma.c:121
 msgid "Query server profile:"
-msgstr ""
+msgstr "Dotazat se na profil serveru:"
 
 #: oyranos_gamma.c:125
 msgid "Query device data base profile:"
-msgstr ""
+msgstr "Dotazat se na profil databaze zarizeni:"
 
 #: oyranos_gamma.c:129
 msgid "General options:"
-msgstr ""
+msgstr "Obecne volby:"
 
 #: oyranos_gamma.c:130
 msgid "-v verbose"
-msgstr ""
+msgstr "-v upovidany vystup"
 
-#: oyranos_gamma.c:145 oyranos_policy.c:147
+#: oyranos_gamma.c:145
+#: oyranos_policy.c:140
 msgid "wrong argument to option:"
-msgstr ""
+msgstr "chybny argument pro volbu:"
 
-#: oyranos_policy.c:46
+#: oyranos_policy.c:45
 msgid "is a policy administration tool"
-msgstr ""
+msgstr "je administrativni nastroj pro politiky"
 
-#: oyranos_policy.c:54
-msgid ""
-"Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
-msgstr ""
+#: oyranos_policy.c:53
+msgid "Dump out the actual settings:"
+msgstr "Vypsat aktualni nastaveni:"
+
+#: oyranos_policy.c:55
+msgid "Set new policy:"
+msgstr "Nastavit novou politiku:"
+
+#: oyranos_policy.c:56
+msgid "policy filename"
+msgstr "nazev souboru politiky"
 
 #: oyranos_policy.c:57
-msgid "Dump out the actual settings:"
-msgstr ""
+msgid "List available policies:"
+msgstr "Vypsat dostupne politiky:"
 
 #: oyranos_policy.c:59
-msgid "Set new policy:"
-msgstr ""
-
-#: oyranos_policy.c:60
-#, fuzzy
-msgid "policy filename"
-msgstr "chybi nazev souboru"
+#: oyranos_policy.c:194
+msgid "Currently active policy:"
+msgstr "Aktualne aktivni politika:"
 
 #: oyranos_policy.c:61
-msgid "List available policies:"
-msgstr ""
-
-#: oyranos_policy.c:63 oyranos_policy.c:201
-msgid "Currently active policy:"
-msgstr ""
-
-#: oyranos_policy.c:65
-msgid "List search paths:"
-msgstr ""
-
-#: oyranos_policy.c:67
 msgid "Save and install to a new policy:"
-msgstr ""
+msgstr "Ulozit a instalovat do nove politiky:"
 
-#: oyranos_policy.c:68
+#: oyranos_policy.c:62
 msgid "policy name"
-msgstr ""
+msgstr "jmeno politiky"
 
-#: oyranos_policy.c:69
+#: oyranos_policy.c:63
 msgid "Print a help text:"
-msgstr ""
+msgstr "Vytisknout napovedu:"
 
-#: oyranos_policy.c:183
+#: oyranos_policy.c:176
 msgid "installed new policy"
-msgstr ""
+msgstr "instalovana nova politika"
 
-#: oyranos_policy.c:186
+#: oyranos_policy.c:179
 msgid "installation of new policy file failed with error:"
-msgstr ""
-
-#: oyranos_policy.c:208
-msgid "Policy search paths"
-msgstr ""
+msgstr "instalace nove politiky selhalo s chybou:"
 
 #: oyranos_alpha.c:316
 msgid "XYZ"
@@ -688,7 +678,8 @@ msgstr "15-barevny"
 msgid "CIE X"
 msgstr "CIE X"
 
-#: oyranos_alpha.c:388 oyranos_alpha.c:407
+#: oyranos_alpha.c:388
+#: oyranos_alpha.c:407
 msgid "CIE Y (Luminance)"
 msgstr "CIE Y (Jas)"
 
@@ -696,7 +687,8 @@ msgstr "CIE Y (Jas)"
 msgid "CIE Z"
 msgstr "CIE Z"
 
-#: oyranos_alpha.c:392 oyranos_alpha.c:397
+#: oyranos_alpha.c:392
+#: oyranos_alpha.c:397
 msgid "CIE *L"
 msgstr "CIE *L"
 
@@ -748,11 +740,13 @@ msgstr "Zelena"
 msgid "Blue"
 msgstr "Modra"
 
-#: oyranos_alpha.c:417 oyranos_alpha.c:433
+#: oyranos_alpha.c:417
+#: oyranos_alpha.c:433
 msgid "Black"
 msgstr "Cerna"
 
-#: oyranos_alpha.c:420 oyranos_alpha.c:425
+#: oyranos_alpha.c:420
+#: oyranos_alpha.c:425
 msgid "Hue"
 msgstr "Odstin"
 
@@ -764,97 +758,84 @@ msgstr "Hodnota"
 msgid "Lightness"
 msgstr "Svetlost"
 
-#: oyranos_alpha.c:430 oyranos_alpha.c:436
+#: oyranos_alpha.c:430
+#: oyranos_alpha.c:436
 msgid "Cyan"
 msgstr "Azurova"
 
-#: oyranos_alpha.c:431 oyranos_alpha.c:437
+#: oyranos_alpha.c:431
+#: oyranos_alpha.c:437
 msgid "Magenta"
 msgstr "Fialova"
 
-#: oyranos_alpha.c:432 oyranos_alpha.c:438
+#: oyranos_alpha.c:432
+#: oyranos_alpha.c:438
 msgid "Yellow"
 msgstr "Zluta"
 
 #: oyranos_alpha.c:466
-#, fuzzy
 msgid "1. Channel"
-msgstr "Kanal"
+msgstr "1. kanal"
 
 #: oyranos_alpha.c:467
-#, fuzzy
 msgid "2. Channel"
-msgstr "Kanal"
+msgstr "2. kanal"
 
 #: oyranos_alpha.c:468
-#, fuzzy
 msgid "3. Channel"
-msgstr "Kanal"
+msgstr "3. kanal"
 
 #: oyranos_alpha.c:469
-#, fuzzy
 msgid "4. Channel"
-msgstr "Kanal"
+msgstr "4. kanal"
 
 #: oyranos_alpha.c:470
-#, fuzzy
 msgid "5. Channel"
-msgstr "Kanal"
+msgstr "5. kanal"
 
 #: oyranos_alpha.c:471
-#, fuzzy
 msgid "6. Channel"
-msgstr "Kanal"
+msgstr "6. kanal"
 
 #: oyranos_alpha.c:472
-#, fuzzy
 msgid "7. Channel"
-msgstr "Kanal"
+msgstr "7. kanal"
 
 #: oyranos_alpha.c:473
-#, fuzzy
 msgid "8. Channel"
-msgstr "Kanal"
+msgstr "8. kanal"
 
 #: oyranos_alpha.c:474
-#, fuzzy
 msgid "9. Channel"
-msgstr "Kanal"
+msgstr "9. kanal"
 
 #: oyranos_alpha.c:475
-#, fuzzy
 msgid "10. Channel"
-msgstr "Kanal"
+msgstr "10. kanal"
 
 #: oyranos_alpha.c:476
-#, fuzzy
 msgid "11. Channel"
-msgstr "Kanal"
+msgstr "11. kanal"
 
 #: oyranos_alpha.c:477
-#, fuzzy
 msgid "12. Channel"
-msgstr "Kanal"
+msgstr "12. kanal"
 
 #: oyranos_alpha.c:478
-#, fuzzy
 msgid "13. Channel"
-msgstr "Kanal"
+msgstr "13. kanal"
 
 #: oyranos_alpha.c:479
-#, fuzzy
 msgid "14. Channel"
-msgstr "Kanal"
+msgstr "14. kanal"
 
 #: oyranos_alpha.c:480
-#, fuzzy
 msgid "15. Channel"
-msgstr "Kanal"
+msgstr "15. kanal"
 
 #: oyranos_alpha.c:481
-#, fuzzy
 msgid "16. Channel"
-msgstr "Kanal"
+msgstr "16. kanal"
 
 #: oyranos_alpha.c:572
 msgid "Lockup table, device to PCS, intent perceptual"
@@ -944,7 +925,8 @@ msgstr "Cerny bod media"
 msgid "Media white point"
 msgstr "Bily bod media"
 
-#: oyranos_alpha.c:594 oyranos_alpha.c:731
+#: oyranos_alpha.c:594
+#: oyranos_alpha.c:731
 msgid "Named Colour"
 msgstr "Pojmenovana barva"
 
@@ -977,9 +959,8 @@ msgid "Profile sequence description"
 msgstr "Popis sekvence profilu"
 
 #: oyranos_alpha.c:602
-#, fuzzy
 msgid "Profile sequence identification"
-msgstr "Popis sekvence profilu"
+msgstr "Identifikace sekvence profilu"
 
 #: oyranos_alpha.c:603
 msgid "psd0"
@@ -1069,7 +1050,8 @@ msgstr "Poradi pojmenovanych barev"
 msgid "Named colour names"
 msgstr "Jmena pojmenovanych barev"
 
-#: oyranos_alpha.c:625 oyranos_config_fltk.cxx:749
+#: oyranos_alpha.c:625
+#: oyranos_config_fltk.cxx:749
 #: oyranos_config_fltk.cxx:1581
 msgid "----"
 msgstr "----"
@@ -1120,7 +1102,7 @@ msgstr "Taligent"
 
 #: oyranos_alpha.c:758
 msgid "Unix and derivatives"
-msgstr ""
+msgstr "Unix a derivaty"
 
 #: oyranos_alpha.c:831
 msgid "Digital camera"
@@ -1226,8 +1208,11 @@ msgstr "EBU Tech.3213-E"
 msgid "P22"
 msgstr "P22"
 
-#: oyranos_alpha.c:880 oyranos_alpha.c:906 oyranos_alpha.c:927
-#: oyranos_alpha.c:947 oyranos_alpha.c:965
+#: oyranos_alpha.c:880
+#: oyranos_alpha.c:906
+#: oyranos_alpha.c:927
+#: oyranos_alpha.c:947
+#: oyranos_alpha.c:965
 msgid "???"
 msgstr "???"
 
@@ -1267,7 +1252,8 @@ msgstr "Iluminant s rovnomernou energii E"
 msgid "Illuminant F8"
 msgstr "Iluminant F8"
 
-#: oyranos_alpha.c:920 oyranos_alpha.c:942
+#: oyranos_alpha.c:920
+#: oyranos_alpha.c:942
 msgid "unknown"
 msgstr "neznamy"
 
@@ -1295,28 +1281,27 @@ msgstr "0"
 msgid "100"
 msgstr "100"
 
-#: oyranos_alpha.c:13853
-#, fuzzy
+#: oyranos_alpha.c:13825
 msgid "No filter"
-msgstr "Vlastni filtr"
+msgstr "Zadny filtr"
 
-#: oyranos_alpha.c:13861
+#: oyranos_alpha.c:13833
 msgid "Please add first a image node to the graph before adding other filters"
-msgstr ""
+msgstr "Prosim pridejte nejprve image node ke grafu pred pridanim ostatnich filtru"
 
-#: oyranos_alpha.c:13869
+#: oyranos_alpha.c:13841
 msgid "attempt to add a incomplete filter"
-msgstr ""
+msgstr "pokus o pridani neuplneho filtru"
 
-#: oyranos_alpha.c:13878
+#: oyranos_alpha.c:13850
 msgid "attempt to add a non linear filter to a linear graph"
-msgstr ""
+msgstr "pokus o pridani nelinearniho filtru k linearnimu grafu"
 
-#: oyranos_alpha.c:13911
+#: oyranos_alpha.c:13883
 msgid "?? Nothing to add ??"
-msgstr ""
+msgstr "?? Nic k pridani ??"
 
-#: oyranos_alpha.c:14835
+#: oyranos_alpha.c:14807
 msgid "---"
 msgstr "---"
 
@@ -1329,72 +1314,69 @@ msgid "Manufacturer:"
 msgstr "Vyrobce:     "
 
 #: oyranos_cmm_oyra_profile.c:664
-#, fuzzy
 msgid "Modell:"
 msgstr "Model:"
 
 #: oyranos_cmm_oyra_profile.c:673
-#, fuzzy
 msgid "Technology:"
-msgstr "Technologie"
+msgstr "Technologie:"
 
-#: oyranos_config_fltk.cxx:18 oyranos_definitions.h:73
-#, fuzzy
+#: oyranos_config_fltk.cxx:18
+#: oyranos_definitions.h:73
 msgid "[none]"
-msgstr "zadny"
+msgstr "[zadny]"
 
-#: oyranos_config_fltk.cxx:23 oyranos_config_fltk.cxx:111
-#, fuzzy
+#: oyranos_config_fltk.cxx:23
+#: oyranos_config_fltk.cxx:111
 msgid "setting"
-msgstr "Nastaveni"
+msgstr "nastaveni"
 
-#: oyranos_config_fltk.cxx:23 oyranos_config_fltk.cxx:39
+#: oyranos_config_fltk.cxx:23
+#: oyranos_config_fltk.cxx:39
 #: oyranos_config_fltk.cxx:111
 msgid "failed!"
-msgstr ""
+msgstr "selhalo!"
 
 #: oyranos_config_fltk.cxx:29
-#, fuzzy
 msgid "Select Profile"
-msgstr "Ulozit gamut jako profil"
+msgstr "Zvolit profil"
 
 #: oyranos_config_fltk.cxx:39
 msgid "showing"
-msgstr ""
+msgstr "ukazuji"
 
 #: oyranos_config_fltk.cxx:52
 msgid "Show Profile failed. iccexamin not found"
-msgstr ""
+msgstr "Ukazani profilu selhalo. iccexamin nenalezen"
 
 #: oyranos_config_fltk.cxx:58
 msgid "Show Profile failed"
-msgstr ""
+msgstr "Ukazani profilu selhalo"
 
 #: oyranos_config_fltk.cxx:62
-#, fuzzy
 msgid "Select a directory with ICC profiles"
-msgstr "Report o ICC profilu"
+msgstr "Zvolit adresar s ICC profily"
 
 #: oyranos_config_fltk.cxx:78
 #, c-format
 msgid "error setting path: %s"
-msgstr ""
+msgstr "chyba pri nastaveni cesty: %s"
 
 #: oyranos_config_fltk.cxx:92
 msgid "Path"
-msgstr ""
+msgstr "Cesta"
 
 #: oyranos_config_fltk.cxx:118
 msgid "Select Behaviour"
-msgstr ""
+msgstr "Zvolit chovani"
 
 #: oyranos_config_fltk.cxx:362
 msgid "Show in external Viewer"
-msgstr ""
+msgstr "Ukazat v externim prohlizeci"
 
 #: oyranos_config_fltk.cxx:399
 msgid "multiple occurencies of default profile"
-msgstr ""
+msgstr "vicenasobne vyskyty vychoziho profilu"
 
 #: oyranos_config_fltk.cxx:506
 msgid "@-3+"
@@ -1402,19 +1384,20 @@ msgstr ""
 
 #: oyranos_config_fltk.cxx:508
 msgid "Add Path containing ICC profiles"
-msgstr ""
+msgstr "Pridat cestu obsahujici ICC profily"
 
 #: oyranos_config_fltk.cxx:539
 msgid "Exclude this path"
-msgstr ""
+msgstr "Vyloucit tuto cestu"
 
-#: oyranos_config_fltk.cxx:1521 oyranos_config_fltk.cxx:1538
+#: oyranos_config_fltk.cxx:1521
+#: oyranos_config_fltk.cxx:1538
 msgid "Oyranos Configuration"
-msgstr ""
+msgstr "Konfigurace Oyranosu"
 
 #: oyranos_config_fltk.cxx:1564
 msgid "Reset to a standard Policy for Oyranos."
-msgstr ""
+msgstr "Obnovit standardni politiku pro Oyranos."
 
 #: oyranos_config_fltk.cxx:1571
 msgid "@-3reload"
@@ -1422,62 +1405,51 @@ msgstr ""
 
 #: oyranos_config_fltk.cxx:1572
 msgid "Refresh"
-msgstr ""
+msgstr "Znovu nacist"
 
 #: oyranos_config_fltk.cxx:1578
 msgid "Active Policy:"
-msgstr ""
+msgstr "Aktivni politika:"
 
 #: oyranos_helper.h:64
 #, c-format
 msgid "nothing to delete %s"
-msgstr ""
+msgstr "nic ke smazani %s"
 
 #: oyranos_helper.h:82
 msgid "nothing to allocate - size:"
-msgstr ""
+msgstr "nic k alokaci - velikost:"
 
 #: oyranos_helper.h:90
 msgid "Can not allocate memory for:"
-msgstr ""
+msgstr "Nelze alokovat pamet pro:"
 
 #: oyranos_helper.h:101
 msgid "nothing allocated"
-msgstr ""
+msgstr "nic nealokovano"
 
 #~ msgid "left-/middle-/right mouse button -> rotate/cut/menu"
 #~ msgstr "leve/prostredni/prave tlacitko mysi -> rotovat/vystrihnout/menu"
-
 #~ msgid "left mouse button -> go back"
 #~ msgstr "leve tlacitko mysi -> jit zpet"
-
 #~ msgid " used too early!"
 #~ msgstr " pouzito prilis brzy!"
-
 #~ msgid "unknown Colour"
 #~ msgstr "neznama barva"
-
 #~ msgid " with "
 #~ msgstr " s"
-
 #~ msgid " points"
 #~ msgstr " bodu"
-
 #~ msgid " with Gamma: 1.0"
 #~ msgstr " s gama: 1.0"
-
 #~ msgid " with one entry for gamma: "
 #~ msgstr " s jednim vstupem pro gama: "
-
 #~ msgid "Gamut selector"
 #~ msgstr "Volba gamutu"
-
 #~ msgid "loaded"
 #~ msgstr "nacteno"
-
 #~ msgid "Ready"
 #~ msgstr "Pripraveno"
-
 #~ msgid ""
 #~ "ICC colour profiles (*.{I,i}{C,c}{M,m,C,c})\tMeasurement (*.{txt,it8,IT8,"
 #~ "RGB,CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Gamuts (*.{wrl,"
@@ -1486,500 +1458,336 @@ msgstr ""
 #~ "ICC barvove profily (*.{I,i}{C,c}{M,m,C,c})\tMereni (*.{txt,it8,IT8,RGB,"
 #~ "CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tGamuty Argyll (*.{wrl,"
 #~ "vrml}"
-
 #~ msgid "Which ICC profile?"
 #~ msgstr "Ktery ICC profil?"
-
 #~ msgid "Compare Measurement <-> Profile Colours"
 #~ msgstr "Porovnat Mereni <-> Barvy profilu"
-
 #~ msgid "Gamut View"
 #~ msgstr "Zobrazeni gamutu"
-
 #~ msgid "not available"
 #~ msgstr "neni k dispozici"
-
 #~ msgid "Filename (ICC data type)"
 #~ msgstr "Nazev souboru (ICC typ)"
-
 #~ msgid "Filename (other data type)"
 #~ msgstr "Jmeno souboru (jiny typ)"
-
 #~ msgid "Filename (corrupted ICC data type)"
 #~ msgstr "Jmeno souboru (poruseny typ ICC dat)"
-
 #~ msgid "found no content for"
 #~ msgstr "nenalezen zadny obsah pro"
-
 #~ msgid "Internal error"
 #~ msgstr "Interni chyba"
-
 #~ msgid "No. Tag   Type   Size Description"
 #~ msgstr "C.  Tag   Typ     Vel. Popis"
-
 #~ msgid "RGB result not available"
 #~ msgstr "RGB vysledek neni k dispozici"
-
 #~ msgid "no net found in VRML file"
 #~ msgstr "nenalezena zadna sit ve VRML souboru"
-
 #~ msgid "no net found. Is Argyll installed?"
 #~ msgstr "nenalezena zadna sit. Je nainstalovan Argyll?"
-
 #~ msgid "Stop loading "
 #~ msgstr "Zastavit nacitani"
-
 #~ msgid "HTML Documents (*.htm*)"
 #~ msgstr "HTML Dokumenty (*.htm*)"
-
 #~ msgid "Save Report"
 #~ msgstr "Ulozit report"
-
 #~ msgid "ICC colour profiles (*.ic*)"
 #~ msgstr "ICC barvove profily (*.ic*)"
-
 #~ msgid "VRML Files (*.wrl)"
 #~ msgstr "VRML soubory (*.wrl)"
-
 #~ msgid "Save Gamut as VRML"
 #~ msgstr "Ulozit gamut jako VRML"
-
 #~ msgid "empty"
 #~ msgstr "prazdne"
-
 #~ msgid "RGB primaries"
 #~ msgstr "RGB primarni barvy"
-
 #~ msgid "Information:"
 #~ msgstr "Informace:"
-
 #~ msgid "mouse"
 #~ msgstr "mys"
-
 #~ msgid "Could not open font in:"
 #~ msgstr "Nemohu nacist pismo v:"
-
 #~ msgid "0,0,0"
 #~ msgstr "0,0,0"
-
 #~ msgid "Slice"
 #~ msgstr "Rez"
-
 #~ msgid "Rotate around slice"
 #~ msgstr "Rotovat okolo rezu"
-
 #~ msgid "axis"
 #~ msgstr "osa"
-
 #~ msgid "Slice plane"
 #~ msgstr "Rovina rezu"
-
 #~ msgid "White"
 #~ msgstr "Bila"
-
 #~ msgid "Light gray"
 #~ msgstr "Svetla sed"
-
 #~ msgid "Dark gray"
 #~ msgstr "Tmava sed"
-
 #~ msgid "Background colour"
 #~ msgstr "Barva pozadi"
-
 #~ msgid "gray"
 #~ msgstr "sede"
-
 #~ msgid "coloured"
 #~ msgstr "barevne"
-
 #~ msgid "high contrast"
 #~ msgstr "vysoky kontrast"
-
 #~ msgid "shells"
 #~ msgstr "plaste"
-
 #~ msgid "Colour line"
 #~ msgstr "Barevna cara"
-
 #~ msgid "Sphere 1dE"
 #~ msgstr "Koule 1dE"
-
 #~ msgid "Sphere 2dE"
 #~ msgstr "Koule 2dE"
-
 #~ msgid "Sphere 4dE"
 #~ msgstr "Koule 4dE"
-
 #~ msgid "without markers"
 #~ msgstr "bez znacek"
-
 #~ msgid "Spektral line"
 #~ msgstr "Spektralni cara"
-
 #~ msgid "Texts"
 #~ msgstr "Texty"
-
 #~ msgid "Texts/Arrows on/off"
 #~ msgstr "Texty/Sipky zap./vyp."
-
 #~ msgid "Illustration"
 #~ msgstr "Ilustrace"
-
 #~ msgid "Pos"
 #~ msgstr "Poz."
-
 #~ msgid "Colour"
 #~ msgstr "Barva"
-
 #~ msgid "No Colour"
 #~ msgstr "Bez barvy"
-
 #~ msgid "Description"
 #~ msgstr "Popis"
-
 #~ msgid "Illuminant ---"
 #~ msgstr "Iluminant ---"
-
 #~ msgid "o'clock"
 #~ msgstr "hodin"
-
 #~ msgid "seconds"
 #~ msgstr "vterin"
-
 #~ msgid "Monitor Profile"
 #~ msgstr "Profil monitoru"
-
 #~ msgid "file size 0 for "
 #~ msgstr "velikost souboru 0 pro"
-
 #~ msgid "noName"
 #~ msgstr "beze jmena"
-
 #~ msgid "File not loaded!"
 #~ msgstr "Soubor nenacten!"
-
 #~ msgid "use sRGB"
 #~ msgstr "pouzit sRGB"
-
 #~ msgid "Meas colour"
 #~ msgstr "Zmerene barvy"
-
 #~ msgid "no measurment data or correct profile conversion available"
 #~ msgstr "zadna zmerena data nebo nemozna konverze profilu"
-
 #~ msgid "Measurment- and profile colours from <b>"
 #~ msgstr "Zmerene barvy a barvy profilu z <b>"
-
 #~ msgid "RGB"
 #~ msgstr "RGB"
-
 #~ msgid "CMYK"
 #~ msgstr "CMYK"
-
 #~ msgid "</b> Measurement"
 #~ msgstr "</b> mereni"
-
 #~ msgid "CMM: <b>lcms</b>"
 #~ msgstr "CMM: <b>lcms</b>"
-
 #~ msgid "averaging deviations (dE CIE*Lab):<b> "
 #~ msgstr "prumerovane odchylky (dE CIE*Lab):<b> "
-
 #~ msgid "</b>  maximum: "
 #~ msgstr "</b>  maximum: "
-
 #~ msgid "  minimum: "
 #~ msgstr " minimum: "
-
 #~ msgid "  (dE CIE 2000) averaging: "
 #~ msgstr " (dE CIE 2000) prumery: "
-
 #~ msgid "  maximum: "
 #~ msgstr " maximum: "
-
 #~ msgid "Measurement patch"
 #~ msgstr "Mereny vzorek"
-
 #~ msgid "dE Lab"
 #~ msgstr "dE Lab"
-
 #~ msgid "dE2000"
 #~ msgstr "dE2000"
-
 #~ msgid "L"
 #~ msgstr "L"
-
 #~ msgid "a"
 #~ msgstr "a"
-
 #~ msgid "b"
 #~ msgstr "b"
-
 #~ msgid "L'"
 #~ msgstr "L'"
-
 #~ msgid "a'"
 #~ msgstr "a'"
-
 #~ msgid "b'"
 #~ msgstr "b'"
-
 #~ msgid "X"
 #~ msgstr "X"
-
 #~ msgid "Y"
 #~ msgstr "Y"
-
 #~ msgid "Z"
 #~ msgstr "Z"
-
 #~ msgid "X'"
 #~ msgstr "X'"
-
 #~ msgid "Y'"
 #~ msgstr "Y'"
-
 #~ msgid "Z'"
 #~ msgstr "Z'"
-
 #~ msgid "R"
 #~ msgstr "R"
-
 #~ msgid "G"
 #~ msgstr "G"
-
 #~ msgid "B"
 #~ msgstr "B"
-
 #~ msgid "C"
 #~ msgstr "C"
-
 #~ msgid "M"
 #~ msgstr "M"
-
 #~ msgid "K"
 #~ msgstr "K"
-
 #~ msgid "WARNING: Could not load corrupt or damaged profile."
 #~ msgstr "Varovani: nelze nacist poskozeny profil."
-
 #~ msgid "WARNING: Could not load profile."
 #~ msgstr "Varovani: Nelze nacist profil."
-
 #~ msgid "Serial:"
 #~ msgstr "Serie:"
-
 #~ msgid "Std-exception occured: "
 #~ msgstr "Nastala std. vyjimka: "
-
 #~ msgid "Huch, unknown exception"
 #~ msgstr "Uf, neznama vyjimka"
-
 #~ msgid "Size"
 #~ msgstr "Velikost"
-
 #~ msgid "tag list is corrupted for tag"
 #~ msgstr "Seznam tagu je poskozen u tagu"
-
 #~ msgid "not inside memory block"
 #~ msgstr "ne uvnitr bloku pameti"
-
 #~ msgid " typ - no text output"
 #~ msgstr "typ - zadny textovy vystup"
-
 #~ msgid "Work Space"
 #~ msgstr "Pracovni prostor"
-
 #~ msgid "Your"
 #~ msgstr "Vas"
-
 #~ msgid "Profile\" is designed for an other device"
 #~ msgstr "Profil\" je navrzen pro jine zarizeni"
-
 #~ msgid "Separation"
 #~ msgstr "Separace"
-
 #~ msgid "Device class"
 #~ msgstr "Trida zarizeni"
-
 #~ msgid "is not valid for an"
 #~ msgstr "neni platna pro"
-
 #~ msgid "Profile\"."
 #~ msgstr "Profil\"."
-
 #~ msgid "Linearisation"
 #~ msgstr "Linearizace"
-
 #~ msgid "Profile at the moment\"."
 #~ msgstr "Profil v tento okamzik\"."
-
 #~ msgid "Transparent, "
 #~ msgstr "Pruhledny, "
-
 #~ msgid "Reflective, "
 #~ msgstr "Odrazny, "
-
 #~ msgid "matte, "
 #~ msgstr "matny, "
-
 #~ msgid "glossy, "
 #~ msgstr "leskly, "
-
 #~ msgid "negative, "
 #~ msgstr "negativni, "
-
 #~ msgid "positive, "
 #~ msgstr "pozitivni, "
-
 #~ msgid "black/white"
 #~ msgstr "cerno/bily"
-
 #~ msgid "colour"
 #~ msgstr "barevny"
-
 #~ msgid "Profile is embedded and "
 #~ msgstr "Profil je vlozen a "
-
 #~ msgid "Profile is not embedded and "
 #~ msgstr "Profil neni vlozen a "
-
 #~ msgid "can not be used independently from image."
 #~ msgstr "nemuze byt pouzit nezavisle na obrazku."
-
 #~ msgid "can be used independently from image."
 #~ msgstr "muze byt pouzit nezavisle na obrazku."
-
 #~ msgid "found no header"
 #~ msgstr "nenalezena hlavicka"
-
 #~ msgid "ICC profile header"
 #~ msgstr "hlavicka ICC profilu"
-
 #~ msgid "Size:        "
 #~ msgstr "Velikost:    "
-
 #~ msgid "bytes"
 #~ msgstr "bajtu"
-
 #~ msgid "Version:     "
 #~ msgstr "Verze:       "
-
 #~ msgid "Class:       "
 #~ msgstr "Trida:       "
-
 #~ msgid "Colour Space:"
 #~ msgstr "Bar. prostor:"
-
 #~ msgid "Date:        "
 #~ msgstr "Datum:       "
-
 #~ msgid "Platform:    "
 #~ msgstr "Platforma:   "
-
 #~ msgid "Flags:       "
 #~ msgstr "Priznaky:    "
-
 #~ msgid "Model:       "
 #~ msgstr "Model:       "
-
 #~ msgid "Attributes:  "
 #~ msgstr "Atributy:    "
-
 #~ msgid "Intent:      "
 #~ msgstr "Zamer:       "
-
 #~ msgid "Illuminant:  "
 #~ msgstr "Osvetleni:   "
-
 #~ msgid "created by:  "
 #~ msgstr "Vytvoreno:   "
-
 #~ msgid "File header invalid"
 #~ msgstr "Hlavicka souboru neplatna"
-
 #~ msgid "Standard Observer"
 #~ msgstr "Standardni pozorovatel"
-
 #~ msgid "Backsite"
 #~ msgstr "Zadni strana"
-
 #~ msgid "Geometrie"
 #~ msgstr "Geometrie"
-
 #~ msgid "Flare"
 #~ msgstr "Presvetleni"
-
 #~ msgid "Illuminant Type"
 #~ msgstr "Typ iluminantu"
-
 #~ msgid "Conversion table with 16-bit precission:"
 #~ msgstr "Konverzni tabulka s 16 bitovou presnosti:"
-
 #~ msgid "Intent:"
 #~ msgstr "Zamer:"
-
 #~ msgid "Number of input channels"
 #~ msgstr "Pocet vstupnich kanalu"
-
 #~ msgid "Number of output channels"
 #~ msgstr "Pocet vystupnich kanalu"
-
 #~ msgid "Matrix"
 #~ msgstr "Matice"
-
 #~ msgid "Linear input curve"
 #~ msgstr "Linearni vstupni krivka"
-
 #~ msgid "with"
 #~ msgstr "s"
-
 #~ msgid "steps"
 #~ msgstr "kroky"
-
 #~ msgid "3D Lockup table with"
 #~ msgstr "3D vyhledavaci tabulka s"
-
 #~ msgid "points length per side"
 #~ msgstr "bodu delky jedne strany"
-
 #~ msgid "Linear output curve"
 #~ msgstr "Linearni vystupni krivka"
-
 #~ msgid "Conversion table with 8-bit precission:"
 #~ msgstr "Konverzni tabulka s 8 bitovou presnosti:"
-
 #~ msgid "Number of colours:"
 #~ msgstr "Pocet barev:"
-
 #~ msgid "Name"
 #~ msgstr "Jmeno"
-
 #~ msgid "CIE*Lab"
 #~ msgstr "CIE*Lab"
-
 #~ msgid "Device Colours"
 #~ msgstr "Barvy zarizeni"
-
 #~ msgid "About ICC Examin"
 #~ msgstr "O programu ICC Examin"
-
 #~ msgid "ICC Examin Version"
 #~ msgstr "ICC Examin Verze"
-
 #~ msgid "Date"
 #~ msgstr "Datum"
-
 #~ msgid "internet: www.behrmann.name <br>"
 #~ msgstr "internet: www.behrmann.name <br>"
-
 #~ msgid ""
 #~ "ICC Examin is a viewer for colour profiles according to ICC standard  - "
 #~ "www.color.org . At the moment version 2 profiles are supported."
 #~ msgstr ""
 #~ "ICC Examin je prohlizec pro barvove profily dle ICC standardu - www.color."
 #~ "org. V soucasnosti jsou podporovany profily verze 2."
-
 #~ msgid ""
 #~ "The appliance of colour profiles shall help to achive an easy colour data "
 #~ "exchange, regardless which application or what kind of operating system "
@@ -1995,7 +1803,6 @@ msgstr ""
 #~ "predpokladu, ze barevna charakteristika obou zarizeni je znama. Kvalita "
 #~ "barevne transformace z jednoho na druhe zarizeni zavisi predevsim na "
 #~ "kvalite mereni barev a pouziteho algoritmu pro tvorbu profilu."
-
 #~ msgid ""
 #~ "Colour profiles are often available from manufacturers of optical devices "
 #~ "(digital camera, scanner, printer). With ICC Examin you can get an "
@@ -2010,20 +1817,16 @@ msgstr ""
 #~ "obsahujici i zmerena data, ICC Examin muze vygenerovat report kvality. "
 #~ "Odchylka vypoctena ze zmerenych dat je tez zobrazena v tri rozmernem "
 #~ "prohlizeci gamutu.<br>"
-
 #~ msgid ""
 #~ "The internal colour transformations are currently realised with functions "
 #~ "of the littleCMS program library."
 #~ msgstr ""
 #~ "Interni barvove transformace jsou realizovany funkcemi knihoven programu "
 #~ "LittleCMS."
-
 #~ msgid "Help"
 #~ msgstr "Napoveda"
-
 #~ msgid "License"
 #~ msgstr "Licence"
-
 #~ msgid ""
 #~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
 #~ "icc_* files are licensed under the GPL.<br>    The other source files may "
@@ -2032,312 +1835,215 @@ msgstr ""
 #~ "    ICC Examin podleha licenci GPL verze 2. Zvlaste vsechny icc_* soubory "
 #~ "podlehaji licenci GPL.<br> Ostatni zdrojove soubory mohou obsahovat "
 #~ "odchylene licence, ktera jsou patrne z hlavicek souboru."
-
 #~ msgid "Acknowledgement"
 #~ msgstr "Podekovani"
-
 #~ msgid ""
 #~ "My cordially thank is especially dedicated to Marti Maria and the many "
 #~ "writers of the Lcms-user email list."
 #~ msgstr ""
 #~ "Muj srdecny dik je zvlaste venovan Marti Mariovi a mnoha prispevatelum "
 #~ "postovni konference LCMS-user."
-
 #~ msgid "ICC Examin uses following libraries:<br>\n"
 #~ msgstr "ICC Examin pouziva nasledujici knihovny:<br>\n"
-
 #~ msgid "  FLTK: Bill Spitzack and others www.fltk.org<br>\n"
 #~ msgstr " FLTK: Bill Spitzack a dalsi www.fltk.org<br>\n"
-
 #~ msgid "  FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
 #~ msgstr " FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
-
 #~ msgid "  littleCMS: Marti Maria www.littlecms.com<br>\n"
 #~ msgstr " littleCMS: Marti Maria www.littlecms.com<br>\n"
-
 #~ msgid ""
 #~ "  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
 #~ msgstr ""
 #~ "  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
-
 #~ msgid ""
 #~ "integrated sources, lock at the according files for licence conditions:"
 #~ "<br>\n"
 #~ msgstr "vclenene zdroje, viz prislusne soubory s podminkami licenci:<br>\n"
-
 #~ msgid "  agv 3D Navigation: Philip Winston<br>\n"
 #~ msgstr "  agv 3D Navigation: Philip Winston<br>\n"
-
 #~ msgid "For the visualisation of gamut (external):<br>\n"
 #~ msgstr "Pro vizualizaci gamutu (externe):<br>\n"
-
 #~ msgid ""
 #~ "  argyll: Greame Gill web.access.net.au/argyll/argyllcms.html<br<br><br>\n"
 #~ msgstr ""
 #~ "  argyll: Greame Gill web.access.net.au/argyll/argyllcms."
 #~ "html<br><br><br>\n"
-
 #~ msgid "Documentation"
 #~ msgstr "Dokumentace"
-
 #~ msgid "exception occured: "
 #~ msgstr "nastala vyjimka:"
-
 #~ msgid "Manufacturer: "
 #~ msgstr "Vyrobce:      "
-
 #~ msgid "Model:      "
 #~ msgstr "Model:      "
-
 #~ msgid "Gamma Red:   "
 #~ msgstr "Gama cervena:"
-
 #~ msgid "Gamma Green: "
 #~ msgstr "Gama zelena: "
-
 #~ msgid "Gamma Blue:  "
 #~ msgstr "Gama modra: "
-
 #~ msgid "XineramaScreen:"
 #~ msgstr "Xinerama obrazovka:"
-
 #~ msgid "Gamma Green:"
 #~ msgstr "Gama zelena:"
-
 #~ msgid "no gammagradient information obtained"
 #~ msgstr "nenalezena informace o gama prechodu"
-
 #~ msgid "Add to Favorites"
 #~ msgstr "Pridat k oblibenym zalozkam"
-
 #~ msgid "All Files (*)"
 #~ msgstr "Vsechny soubory (*)"
-
 #~ msgid "Please choose an existing file!"
 #~ msgstr "Prosim vyberte existujici soubor!"
-
 #~ msgid "Favorites"
 #~ msgstr "Oblibene"
-
 #~ msgid "Manage Favorites"
 #~ msgstr "Organizovat oblibene"
-
 #~ msgid "My Computer"
 #~ msgstr "Muj pocitac"
-
 #~ msgid "File Systems"
 #~ msgstr "Souborove systemy"
-
 #~ msgid "New Directory?"
 #~ msgstr "Novy adresar?"
-
 #~ msgid "Preview"
 #~ msgstr "Nahled"
-
 #~ msgid "Save"
 #~ msgstr "Ulozit"
-
 #~ msgid "Show:"
 #~ msgstr "Ukazat:"
-
 #~ msgid "lineare entrance curve with 256 steps"
 #~ msgstr "linearni vstupni krivka s 256 kroky"
-
 #~ msgid "lineare exit curve with 256 steps"
 #~ msgstr "linearni koncova krivka s 256 kroky"
-
 #~ msgid "File"
 #~ msgstr "Soubor"
-
 #~ msgid "Quit"
 #~ msgstr "Ukoncit"
-
 #~ msgid "View"
 #~ msgstr "Zobrazit"
-
 #~ msgid "Whole Screen on/off"
 #~ msgstr "Cela obrazovka zap./vyp."
-
 #~ msgid "Gamut Warning"
 #~ msgstr "Varovani gamutu"
-
 #~ msgid "BPC"
 #~ msgstr "BPC"
-
 #~ msgid "Windows"
 #~ msgstr "Okna"
-
 #~ msgid "Show Main Window"
 #~ msgstr "Ukazat hlavni okno"
-
 #~ msgid "Open"
 #~ msgstr "Otevrit"
-
 #~ msgid "Gamut"
 #~ msgstr "Gamut"
-
 #~ msgid "LANG"
 #~ msgstr "LANG"
-
 #~ msgid "Report View"
 #~ msgstr "Zobrazeni reportu"
-
 #~ msgid "CGATS View"
 #~ msgstr "Zobrazeni CGATS"
-
 #~ msgid "Videocard Gamma"
 #~ msgstr "Gama video karty"
-
 #~ msgid "Test Curves"
 #~ msgstr "Testovat krivky"
-
 #~ msgid "About"
 #~ msgstr "O programu"
-
 #~ msgid "Acknowlegement"
 #~ msgstr "Podekovani"
-
 #~ msgid "Links"
 #~ msgstr "Odkazy"
-
 #~ msgid "Grafic Card Gamma Table"
 #~ msgstr "Gama tabulka graficke karty"
-
 #~ msgid "Set"
 #~ msgstr "Nastavit"
-
 #~ msgid ""
 #~ "Set the current profile as monitor profile and upload vcgt tag to the "
 #~ "video card"
 #~ msgstr ""
 #~ "Nastavit aktualni profil jako profil monitoru a nacist VCGT tag do video "
 #~ "karty"
-
 #~ msgid "Reset"
 #~ msgstr "Obnovit"
-
 #~ msgid "reset to standard gamma"
 #~ msgstr "obnovit standardni gamma"
-
 #~ msgid "Load"
 #~ msgstr "Nacist"
-
 #~ msgid "Load the current monitor profile"
 #~ msgstr "Nacist aktualni profil monitoru"
-
 #~ msgid "Close"
 #~ msgstr "Zavrit"
-
 #~ msgid "ICC Examin"
 #~ msgstr "ICC Examin"
-
 #~ msgid "examin_invisible"
 #~ msgstr "examin_neviditelny"
-
 #~ msgid "tag_browser_invisible"
 #~ msgstr "tag_prohlizec_neviditelny"
-
 #~ msgid "Choose one profile tag"
 #~ msgstr "Vyberte jeden tag profilu"
-
 #~ msgid "Chain selection"
 #~ msgstr "Vyber retezu"
-
 #~ msgid "Choose a attribute"
 #~ msgstr "Zvolte atribut"
-
 #~ msgid "Show all channels of this table a own window."
 #~ msgstr "Ukazat vsechny kanaly teto tabulky v samostatnem okne."
-
 #~ msgid "..."
 #~ msgstr "..."
-
 #~ msgid "Loading .."
 #~ msgstr "Nacitam ..."
-
 #~ msgid "Choose File"
 #~ msgstr "Vyberte soubor"
-
 #~ msgid "?"
 #~ msgstr "?"
-
 #~ msgid "Filename:"
 #~ msgstr "Jmeno souboru:"
-
 #~ msgid "OK"
 #~ msgstr "OK"
-
 #~ msgid "Cancel"
 #~ msgstr "Cancel"
-
 #~ msgid "Proof Profile..."
 #~ msgstr "Profil nahledu tisku..."
-
 #~ msgid "Watch Colours 3D..."
 #~ msgstr "Sledovat Barvy 3D..."
-
 #~ msgid "Watch Colours 3D.2..."
 #~ msgstr "Sledovat Barvy 3D.2..."
-
 #~ msgid "No profil assigned to image."
 #~ msgstr "Obrazek nema prirazen profil."
-
 #~ msgid "Profil not written."
 #~ msgstr "Profil neni ulozen."
-
 #~ msgid "Wrong profil assigned to image."
 #~ msgstr "Obrazek ma prirazen chybny profil."
-
 #~ msgid "No active drawable found."
 #~ msgstr "Nenalezen zadny aktivni obrazek."
-
 #~ msgid "What kind of image is this?"
 #~ msgstr "O jaky druh obrazku se jedna?"
-
 #~ msgid "What kind of image is this?\n"
 #~ msgstr "O jaky druh obrazku se jedna?\n"
-
 #~ msgid "May 2004 - September 2007"
 #~ msgstr "kveten 2004 - zari 2007"
-
 #~ msgid "!!! Warning !!!"
 #~ msgstr "!!! Varovani !!!"
-
 #~ msgid "kein ICCwaehlerProfil??"
 #~ msgstr "zadny ICCwaehlerProfil??"
-
 #~ msgid "kein Fl_Widget??"
 #~ msgstr "zadny Fl_Widget??"
-
 #~ msgid "Log:"
 #~ msgstr "Zurnal:"
-
 #~ msgid "Onion skins"
 #~ msgstr "Pruklepovy papir"
-
 #~ msgid "Photometric"
 #~ msgstr "Fotometricky"
-
 #~ msgid "Preview, photografic"
 #~ msgstr "Nahled, fotograficky"
-
 #~ msgid "CMM: "
 #~ msgstr "CMM: "
-
 #~ msgid "PCS: "
 #~ msgstr "PCS: "
-
 #~ msgid "profiles where originally involved"
 #~ msgstr "profily byly puvodne pouzity"
-
 #~ msgid " bsp rendering: Norman Chin<br>\n"
 #~ msgstr " bsp vykreslovani: Norman Chin<br>\n"
-
 #~ msgid "Save as VRML"
 #~ msgstr "Ulozit gamut jako VRML"
-
 #~ msgid "Native Gamut"
 #~ msgstr "Ulozit gamut jako VRML"
-
 #~ msgid "Log"
 #~ msgstr "Zurnal"
+
