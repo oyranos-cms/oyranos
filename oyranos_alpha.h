@@ -119,7 +119,7 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
  */
 extern const char *oy_domain_codeset;
 
-/** @internal
+/**
  *  @brief Oyranos structure type
  *
  *  @version Oyranos: 0.1.8
@@ -192,6 +192,13 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
                                        size_t              size );
 const char * oyStruct_TypeToText     ( const oyStruct_s  * oy_struct );
 
+/** @enum    oyNAME_e
+ *  @brief   describe the base types of a oyObject_s name
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2007/10/00
+ */
 typedef enum {
   oyNAME_NAME,                         /**< compatible to oyName_s/oyObject_s */
   oyNAME_NICK,                         /**< compatible to oyName_s/oyObject_s */
@@ -231,6 +238,13 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
 const char * oyName_get_             ( const oyName_s    * obj,
                                        oyNAME_e            type );
 
+/** @enum    oyBOOLEAN_e
+ *  @brief   boolean operations
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/28 (Oyranos: 0.1.8)
+ *  @date    2008/06/28
+ */
 typedef enum {
   oyBOOLEAN_INTERSECTION,              /** and, the part covered by A and B */
   oyBOOLEAN_SUBSTRACTION,              /** minus, the part covered by A but not by B */
@@ -280,8 +294,8 @@ int                oyHandle_set_     ( oyHandle_s        * handle,
 
 typedef struct oyStructList_s oyStructList_s;
 
-/** @internal
- *  @brief Oyranos structure base
+/** @struct  oyObject_s
+ *  @brief   Oyranos structure base
  *
  *  The base object of Oyranos object system is self contained. It can be
  *  handled by the belonging function set. Complex objects for user interaction
@@ -823,6 +837,13 @@ char   **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        oyAlloc_f           allocateFunc );
 
 
+/** @enum    oyDATALAYOUT_e
+ *  @brief   ideas for basic data arrangements
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/00/00
+ */
 typedef enum {
   oyDATALAYOUT_NONE,
   oyDATALAYOUT_CURVE,                 /**< equally spaced curve, oyDATALAYOUT_e[0], size[1], min[2], max[3], elements[4]... */
@@ -889,6 +910,13 @@ int            oyRegion_Index        ( oyRegion_s        * region,
 char  *        oyRegion_Show         ( oyRegion_s        * region );
 
 
+/** @enum    oyDATATYPE_e
+ *  @brief   basic data types for anonymous pointers
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/00/00 (Oyranos: 0.1.8)
+ *  @date    2007/00/00
+ */
 typedef enum {
   oyUINT8,     /*!<  8-bit integer */
   oyUINT16,    /*!< 16-bit integer */
@@ -990,6 +1018,13 @@ typedef uint32_t oyPixel_t;
 #define oyToFlavor_m(f)             (((f) >> 22)&1)
 #define oyToByteswap_m(x)           (((x) >> 23)&1)
 
+/** @enum    oyCHANNELTYPE_e
+ *  @brief   channels types
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/00/00
+ */
 typedef enum {
   oyCHANNELTYPE_UNDEFINED,            /**< as well for the list end */
   oyCHANNELTYPE_OTHER,
@@ -1252,6 +1287,13 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyObject_s          obj );
 
 
+/** @enum    oyFILTER_TYPE_e
+ *  @brief   basic filter classes
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/00/00
+ */
 typedef enum {
   oyFILTER_TYPE_NONE,                  /**< nothing */
   oyFILTER_TYPE_COLOUR,                /**< colour */
@@ -1292,6 +1334,13 @@ typedef struct oyFilterPlugs_s oyFilterPlugs_s;
 typedef struct oyFilterSocket_s oyFilterSocket_s;
 
 
+/** @enum    oyCONNECTOR_e
+ *  @brief   basic connector classes
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/00/00
+ */
 typedef enum {
   /** a data manipulator. e.g. a normal filter */
   oyCONNECTOR_MANIPULATOR,
@@ -1319,6 +1368,13 @@ typedef enum {
   oyCONNECTOR_ANALYSIS
 } oyCONNECTOR_e;
 
+/** @enum    oyCONNECTOR_EVENT_e
+ *  @brief   connector events types
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/00/00
+ */
 typedef enum {
   oyCONNECTOR_EVENT_OK,                /**< kind of ping */
   oyCONNECTOR_EVENT_CONNECTED,         /**< connection established */
@@ -1745,13 +1801,12 @@ digraph G {
  \dot
 digraph G {
   rankdir=LR
-  subgraph [fontname=Helvetica, fontsize=12];
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
   edge [fontname=Helvetica, fontsize=10];
 
-  node b [ label="{<plug> | Filter Node 2 |<socket>}"];
-  node c [ label="{<plug> | Filter Node 3 |<socket>}"];
-  node d [ label="{<plug> 2| Filter Node 4 |<socket>}"];
+  b [ label="{<plug> | Filter Node 2 |<socket>}"];
+  c [ label="{<plug> | Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 |<socket>}"];
 
   b:socket -> d:plug [arrowtail=normal, arrowhead=none];
   c:socket -> d:plug [arrowtail=normal, arrowhead=none];
@@ -1763,15 +1818,14 @@ digraph G {
  \dot
 digraph G {
   rankdir=LR
-  subgraph [fontname=Helvetica, fontsize=12];
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
   edge [fontname=Helvetica, fontsize=10];
 
-  node a [ label="{<plug> | Filter Node 1 |<socket>}"];
-  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
-  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
-  node d [ label="{<plug> 1| Filter Node 4 |<socket>}"];
-  node e [ label="{<plug> 1| Filter Node 5 |<socket>}"];
+  a [ label="{<plug> | Filter Node 1 |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 1| Filter Node 4 |<socket>}"];
+  e [ label="{<plug> 1| Filter Node 5 |<socket>}"];
 
   a:socket -> b:plug [arrowtail=normal, arrowhead=none];
   a:socket -> c:plug [arrowtail=normal, arrowhead=none];
@@ -1982,6 +2036,13 @@ struct oyPixelAccess_s {
   int32_t          workspace_id;       /**< a ID to assign distinct resources to */
 };
 
+/** @enum    oyPIXEL_ACCESS_TYPE_e
+ *  @brief   pixel access types
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/00/00
+ */
 typedef enum {
   oyPIXEL_ACCESS_IMAGE,
   oyPIXEL_ACCESS_POINT,                /**< dont use */
@@ -2018,10 +2079,10 @@ digraph G {
   node [shape=record, fontname=Helvetica, fontsize=10, style="filled,rounded"];
   edge [fontname=Helvetica, fontsize=10];
 
-  node a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
-  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
-  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
-  node d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
 
   subgraph cluster_0 {
     label="Oyranos Filter Graph";
@@ -2043,7 +2104,7 @@ digraph G {
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
   edge [fontname=Helvetica, fontsize=10];
 
-  node conversion [shape=plaintext, label=<
+  conversion [shape=plaintext, label=<
 <table border="0" cellborder="1" cellspacing="0" bgcolor="lightgray">
   <tr><td>oyConversion_s</td></tr>
   <tr><td>
@@ -2058,10 +2119,10 @@ digraph G {
 </table>>,
                     style=""];
 
-  node a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
-  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
-  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
-  node d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
 
   subgraph cluster_0 {
     label="oyConversion_s with attached Filter Graph";
@@ -2108,11 +2169,11 @@ digraph G {
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
   edge [fontname=Helvetica, fontsize=12];
 
-  node a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
-  node b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
-  node c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
-  node d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
-  node app [ label="application", style=filled ]
+  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+  app [ label="application", style=filled ]
 
   subgraph cluster_0 {
     label="Data Flow";
@@ -2405,8 +2466,9 @@ char **        oyModulsGetNames      ( int               * count,
                                        oyAlloc_f           allocateFunc );
 /** Query for available options for a cmm
 
-    @param[in] cmm      the 4 char CMM ID or zero for the current CMM
-    @return             available options
+    @param[in]     cmm                 the 4 char CMM ID or zero for the current CMM
+    @param[in]     object              the optional base
+    @return                            available options
  */
 const char *   oyModulGetOptions     ( const char        * cmm,
                                        oyObject_s          object);
