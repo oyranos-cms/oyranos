@@ -95,18 +95,20 @@ if [ -n "$ARGYLL" ] && [ "$ARGYLL" -gt "0" ]; then
     argyll_max="0.61"
   fi
   if [ "$internalargyll" != "no" ]; then
-   if [ `ls $ARGYLL_VERSION | grep Readme.txt | wc -l` -gt 0 ]; then
-    echo_="local copy of argyll    detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+   if [ -d $ARGYLL_VERSION ]; then
+    if [ `ls $ARGYLL_VERSION | grep Readme.txt | wc -l` -gt 0 ]; then
+     echo_="local copy of argyll    detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
         echo "#define HAVE_ARGYLL 1" >> $CONF_H
         echo "ARGYLL = 1" >> $CONF
         echo "ARGYLL_VERSION = $ARGYLL_VERSION" >> $CONF
         echo "ARGYLL_H = -DUSE_ARGYLL -I\$(ARGYLL_VERSION) -I\$(ARGYLL_VERSION)/icc -I\$(ARGYLL_VERSION)/gamut -I\$(ARGYLL_VERSION)/numlib -I\$(ARGYLL_VERSION)/xicc -I\$(ARGYLL_VERSION)/cgats -I\$(ARGYLL_VERSION)/rspl -I\$(ARGYLL_VERSION)/spectro" >> $CONF
         echo "ARGYLL_LIBS = \$(ARGYLL_VERSION)/gamut/.libs/libargyllgamut.a \$(ARGYLL_VERSION)/xicc/.libs/libargyllxicc.a \$(ARGYLL_VERSION)/cgats/.libs/libcgats.a \$(ARGYLL_VERSION)/icc/.libs/libicc.a \$(ARGYLL_VERSION)/rspl/.libs/libargyllrspl.a \$(ARGYLL_VERSION)/numlib/.libs/libargyllnum.a" >> $CONF
         ARGYLL_FOUND=1
+    fi
    fi
   fi
   if [ -z "$ARGYLL_FOUND" ]; then
-    argyll_mod=`pkg-config --modversion argyll`
+    argyll_mod=`pkg-config --modversion argyll 2>>$CONF_LOG`
   fi
   if [ $? = 0 ] && [ -z "$ARGYLL_FOUND" ]; then
     pkg-config  --atleast-version=$argyll_min argyll 2>>$CONF_LOG
@@ -160,12 +162,17 @@ if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
     echo "OY = 1" >> $CONF
     echo "OYRANOS_H = `oyranos-config --cflags`" >> $CONF
     if [ -f /usr/X11R6/include/X11/extensions/xf86vmode.h ]; then
-      echo "OYRANOS_LIBS = `oyranos-config --ld_x_flags`" >> $CONF
+      echo "OYRANOS_LIBS = `oyranos-config --ldflags`" >> $CONF
     else
-      echo "OYRANOS_LIBS = `oyranos-config --ld_x_flags`" >> $CONF
+      echo "OYRANOS_LIBS = `oyranos-config --ldflags`" >> $CONF
     fi
   else
-    echo_="no Oyranos found"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    if [ $OYRANOS -eq 1 ]; then
+      echo_="!!! ERROR: no or too old Oyranos found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      ERROR=1
+    else
+      echo_="no Oyranos found"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
   fi
 fi
 
@@ -598,6 +605,10 @@ if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
       echo_="preparing Makefile in $i/"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo "" >> "$i/makefile"
+      echo "### End of automatic generated options ###" >> "$i/makefile"
+      echo "" >> "$i/makefile"
+      echo "" >> "$i/makefile"
       if [ $OSUNAME = "BSD" ]; then
         test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/#if/.if/g ; s/#end/.end/g ; s/#else/.else/g '  >> "$i/makefile"
       else
