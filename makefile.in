@@ -504,9 +504,6 @@ install_bin:	all doc
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
-	echo Installing CMM description files ...
-	#-mkdir -p $(DESTDIR)$(syscolordir)/cmms
-	#-$(INSTALL) -m 644 cmms/*.oy_cmm_register.xml $(DESTDIR)$(syscolordir)/cmms
 	mkdir -p $(DESTDIR)$(docdir)
 	$(INSTALL) -m 644 $(DOKU) $(DESTDIR)$(docdir)
 	mkdir -p $(DESTDIR)$(mandir)/man1
@@ -550,7 +547,7 @@ install_profiles:
 install_linguas:
 	echo  Linguas ...
 	for ling in $(LINGUAS); do \
-	  echo "installiere po/$${ling}.gmo ..."; \
+	  echo "Installing po/$${ling}.gmo ..."; \
 	  mkdir -p $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES; \
 	  test -f po/$${ling}.gmo \
 		&& (mkdir -p $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES; \
