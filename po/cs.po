@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: icc_examin\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-10-16 22:25+0200\n"
+"POT-Creation-Date: 2008-10-24 10:51+0200\n"
 "PO-Revision-Date: 2008-10-16 20:18+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -14,47 +14,47 @@ msgstr ""
 "Content-Type: text/plain; charset=ASCII\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyranos.c:110
+#: oyranos.c:111
 #, c-format
 msgid "WARNING"
 msgstr "VAROVANI"
 
-#: oyranos.c:113
+#: oyranos.c:114
 #, c-format
 msgid "!!! ERROR"
 msgstr "!!! CHYBA"
 
-#: oyranos.c:172
+#: oyranos.c:173
 #, fuzzy
 msgid "not a profile:"
 msgstr "zadny profil"
 
-#: oyranos.c:212
+#: oyranos.c:213
 msgid "name longer than"
 msgstr ""
 
-#: oyranos.c:240
+#: oyranos.c:241
 msgid "profile not found in colour path:"
 msgstr ""
 
-#: oyranos.c:261
+#: oyranos.c:262
 #, fuzzy
 msgid "profile not found:"
 msgstr "Barvy profilu"
 
-#: oyranos.c:299
+#: oyranos.c:300
 msgid "wrong profile for static web colour space selected, need sRGB"
 msgstr ""
 
-#: oyranos.c:635 oyranos.c:663
+#: oyranos.c:636 oyranos.c:664
 msgid "Option not supported type:"
 msgstr ""
 
-#: oyranos.c:721
+#: oyranos.c:722
 msgid "file exists, please remove befor installing new profile."
 msgstr ""
 
-#: oyranos.c:1160
+#: oyranos.c:1164
 msgid "will overwrite policy file"
 msgstr ""
 
@@ -67,7 +67,7 @@ msgstr "Rotovat dokola"
 msgid "Did not find a type for option:"
 msgstr ""
 
-#: oyranos_elektra.c:460 oyranos_elektra.c:549
+#: oyranos_elektra.c:461 oyranos_elektra.c:550
 msgid "default profile type does not exist:"
 msgstr ""
 
@@ -483,7 +483,7 @@ msgstr "selhalo otevreni X displeje"
 msgid "is a colour profile administration tool for monitors"
 msgstr ""
 
-#: oyranos_gamma.c:108 oyranos_policy.c:52
+#: oyranos_gamma.c:108 oyranos_policy.c:56
 msgid "Usage"
 msgstr ""
 
@@ -522,53 +522,66 @@ msgstr ""
 msgid "-v verbose"
 msgstr ""
 
-#: oyranos_gamma.c:145 oyranos_policy.c:140
+#: oyranos_gamma.c:145 oyranos_policy.c:147
 msgid "wrong argument to option:"
 msgstr ""
 
-#: oyranos_policy.c:45
+#: oyranos_policy.c:46
 msgid "is a policy administration tool"
 msgstr ""
 
-#: oyranos_policy.c:53
+#: oyranos_policy.c:54
+msgid ""
+"Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
+msgstr ""
+
+#: oyranos_policy.c:57
 msgid "Dump out the actual settings:"
 msgstr ""
 
-#: oyranos_policy.c:55
+#: oyranos_policy.c:59
 msgid "Set new policy:"
 msgstr ""
 
-#: oyranos_policy.c:56
+#: oyranos_policy.c:60
 #, fuzzy
 msgid "policy filename"
 msgstr "chybi nazev souboru"
 
-#: oyranos_policy.c:57
+#: oyranos_policy.c:61
 msgid "List available policies:"
 msgstr ""
 
-#: oyranos_policy.c:59 oyranos_policy.c:194
+#: oyranos_policy.c:63 oyranos_policy.c:201
 msgid "Currently active policy:"
 msgstr ""
 
-#: oyranos_policy.c:61
+#: oyranos_policy.c:65
+msgid "List search paths:"
+msgstr ""
+
+#: oyranos_policy.c:67
 msgid "Save and install to a new policy:"
 msgstr ""
 
-#: oyranos_policy.c:62
+#: oyranos_policy.c:68
 msgid "policy name"
 msgstr ""
 
-#: oyranos_policy.c:63
+#: oyranos_policy.c:69
 msgid "Print a help text:"
 msgstr ""
 
-#: oyranos_policy.c:176
+#: oyranos_policy.c:183
 msgid "installed new policy"
 msgstr ""
 
-#: oyranos_policy.c:179
+#: oyranos_policy.c:186
 msgid "installation of new policy file failed with error:"
+msgstr ""
+
+#: oyranos_policy.c:208
+msgid "Policy search paths"
 msgstr ""
 
 #: oyranos_alpha.c:316
@@ -1282,28 +1295,28 @@ msgstr "0"
 msgid "100"
 msgstr "100"
 
-#: oyranos_alpha.c:13825
+#: oyranos_alpha.c:13853
 #, fuzzy
 msgid "No filter"
 msgstr "Vlastni filtr"
 
-#: oyranos_alpha.c:13833
+#: oyranos_alpha.c:13861
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr ""
 
-#: oyranos_alpha.c:13841
+#: oyranos_alpha.c:13869
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:13850
+#: oyranos_alpha.c:13878
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 
-#: oyranos_alpha.c:13883
+#: oyranos_alpha.c:13911
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:14807
+#: oyranos_alpha.c:14835
 msgid "---"
 msgstr "---"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2008-10-16 11:54+0200\n"
+"POT-Creation-Date: 2008-10-24 10:51+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -18,46 +18,46 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: oyranos.c:110
+#: oyranos.c:111
 #, c-format
 msgid "WARNING"
 msgstr "WARNUNG"
 
-#: oyranos.c:113
+#: oyranos.c:114
 #, c-format
 msgid "!!! ERROR"
 msgstr "!!! Fehler"
 
-#: oyranos.c:172
+#: oyranos.c:173
 msgid "not a profile:"
 msgstr "kein Profil:"
 
-#: oyranos.c:212
+#: oyranos.c:213
 msgid "name longer than"
 msgstr "Name ist länger als"
 
-#: oyranos.c:240
+#: oyranos.c:241
 msgid "profile not found in colour path:"
 msgstr "Profil nicht im Profilepfad gefunden:"
 
-#: oyranos.c:261
+#: oyranos.c:262
 msgid "profile not found:"
 msgstr "Farbprofil nicht gefunden:"
 
-#: oyranos.c:299
+#: oyranos.c:300
 msgid "wrong profile for static web colour space selected, need sRGB"
 msgstr "Falsches Profil für statischen WWW Farbraum, benötige sRGB"
 
-#: oyranos.c:635 oyranos.c:663
+#: oyranos.c:636 oyranos.c:664
 msgid "Option not supported type:"
 msgstr "Option nicht unterstützten Typs:"
 
-#: oyranos.c:721
+#: oyranos.c:722
 msgid "file exists, please remove befor installing new profile."
 msgstr ""
 "Datei existiert, Bitte vor der Installation eines neuen Profiles entfernen."
 
-#: oyranos.c:1160
+#: oyranos.c:1164
 msgid "will overwrite policy file"
 msgstr "werde Richtliniendatei überschreiben"
 
@@ -69,7 +69,7 @@ msgstr "nicht gefunden:"
 msgid "Did not find a type for option:"
 msgstr "Fand keinen Typ für Option:"
 
-#: oyranos_elektra.c:460 oyranos_elektra.c:549
+#: oyranos_elektra.c:461 oyranos_elektra.c:550
 msgid "default profile type does not exist:"
 msgstr "Standard Profiltyp existiert nicht:"
 
@@ -488,7 +488,7 @@ msgstr "Öffnen des X Screens daneben"
 msgid "is a colour profile administration tool for monitors"
 msgstr "ist ein Farbprofilverwaltungswerkzeug für Bildschirme"
 
-#: oyranos_gamma.c:108 oyranos_policy.c:52
+#: oyranos_gamma.c:108 oyranos_policy.c:56
 msgid "Usage"
 msgstr "Benutzung"
 
@@ -524,53 +524,68 @@ msgstr "Allgemeine Optionen:"
 msgid "-v verbose"
 msgstr "-v plaudernd"
 
-#: oyranos_gamma.c:145 oyranos_policy.c:140
+#: oyranos_gamma.c:145 oyranos_policy.c:147
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 
-#: oyranos_policy.c:45
+#: oyranos_policy.c:46
 msgid "is a policy administration tool"
 msgstr "ist ein Richtlinienverwaltungswerkzeug"
 
-#: oyranos_policy.c:53
+#: oyranos_policy.c:54
+msgid ""
+"Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
+msgstr ""
+"Hinweis: Suchpfade werden durch die XDG_CONFIG_HOME Kommandozeilenvariable\n"
+"         beeinflusst."
+
+#: oyranos_policy.c:57
 msgid "Dump out the actual settings:"
 msgstr "Die aktuellen Einstellungen als XML ausgeben"
 
-#: oyranos_policy.c:55
+#: oyranos_policy.c:59
 msgid "Set new policy:"
 msgstr "Setzen einer neue Richtlinie:"
 
-#: oyranos_policy.c:56
+#: oyranos_policy.c:60
 msgid "policy filename"
 msgstr "Richtliniendateiname"
 
-#: oyranos_policy.c:57
+#: oyranos_policy.c:61
 msgid "List available policies:"
 msgstr "Liste der verfügbaren Richtlinien:"
 
-#: oyranos_policy.c:59 oyranos_policy.c:194
+#: oyranos_policy.c:63 oyranos_policy.c:201
 msgid "Currently active policy:"
 msgstr "Aktive Richtlinie:"
 
-#: oyranos_policy.c:61
+#: oyranos_policy.c:65
+msgid "List search paths:"
+msgstr "Zeige Suchpfade:"
+
+#: oyranos_policy.c:67
 msgid "Save and install to a new policy:"
 msgstr "Installieren einer neue Richtlinie:"
 
-#: oyranos_policy.c:62
+#: oyranos_policy.c:68
 msgid "policy name"
 msgstr "Richtlinienname"
 
-#: oyranos_policy.c:63
+#: oyranos_policy.c:69
 msgid "Print a help text:"
 msgstr "Zeige einen Hilfetext an:"
 
-#: oyranos_policy.c:176
+#: oyranos_policy.c:183
 msgid "installed new policy"
 msgstr "neue Richtlinie erfolgreich gespeichert"
 
-#: oyranos_policy.c:179
+#: oyranos_policy.c:186
 msgid "installation of new policy file failed with error:"
 msgstr "Speicherung der neuen Richtline schlug fehl mit Fehler:"
+
+#: oyranos_policy.c:208
+msgid "Policy search paths"
+msgstr "Richtliniensuchpfade"
 
 #: oyranos_alpha.c:316
 msgid "XYZ"
@@ -1266,27 +1281,27 @@ msgstr ""
 msgid "100"
 msgstr ""
 
-#: oyranos_alpha.c:13825
+#: oyranos_alpha.c:13853
 msgid "No filter"
 msgstr "kein Filter"
 
-#: oyranos_alpha.c:13833
+#: oyranos_alpha.c:13861
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr "Bitte fügen Sie erst ein Bildknoten in den Graphen vor andere Filtern"
 
-#: oyranos_alpha.c:13841
+#: oyranos_alpha.c:13869
 msgid "attempt to add a incomplete filter"
 msgstr "Versuch einen unvollständigen Filter hinzuzufügen"
 
-#: oyranos_alpha.c:13850
+#: oyranos_alpha.c:13878
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 
-#: oyranos_alpha.c:13883
+#: oyranos_alpha.c:13911
 msgid "?? Nothing to add ??"
 msgstr "?? Nichts hinzuzufügen ??"
 
-#: oyranos_alpha.c:14807
+#: oyranos_alpha.c:14835
 msgid "---"
 msgstr ""
 
