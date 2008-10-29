@@ -987,7 +987,7 @@ const oyChar *   oyICCMeasurementFlareDescription ( icMeasurementFlare sig )
 
 
 /**
- *  @} icc_low
+ *  @} *//* icc_low
  */
 
 
@@ -1119,7 +1119,7 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
 }
 
 /**
- *  @} colour_low
+ *  @} *//* colour_low
  */
 
 
@@ -1394,7 +1394,7 @@ int          oyPointerReleaseFunc_   ( oyPointer         * ptr )
 
 #define oyPointerRelease_m( ptr_ ) oyPointerReleaseFunc_((oyPointer*)ptr_)
 
-/** @} misc */
+/** @} *//* misc */
 
 
 
@@ -2294,10 +2294,10 @@ int              oyStructList_Count ( oyStructList_s   * list )
 }
 
 /**
- *  @} objects_generic
+ *  @} *//* objects_generic
  */
 
-/** @} misc */
+/** @} *//* misc */
 
 
 /** \addtogroup cmm_handling CMM Handling API
@@ -3504,7 +3504,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
 }
 
 
-/** @} */
+/** @} *//* cmm_handling */
 
 
 
@@ -4028,7 +4028,7 @@ int            oyObject_GetId        ( oyObject_s          obj )
 }
 
 /**
- *  @} objects_generic
+ *  @} *//* objects_generic
  */
 
 
@@ -4600,7 +4600,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
 
 
 /**
- *  @} objects_generic
+ *  @} *//* objects_generic
  */
 
 
@@ -5472,11 +5472,11 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
 }
 
 /**
- *  @} objects_value
+ *  @} *//* objects_value
  */
 
 
-/** @} misc */
+/** @} *//* misc */
 
 
 /** \addtogroup objects_profile Profile API
@@ -8511,7 +8511,7 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
   return n;
 }
 
-/** @} objects_profile */
+/** @} *//* objects_profile */
 
 
 
@@ -8965,7 +8965,7 @@ oyChar*        oyRegion_Show         ( oyRegion_s        * r )
 
 
 /**
- *  @} objects_region
+ *  @} *//* objects_region
  */
 
 
@@ -9025,7 +9025,7 @@ const oyChar * oyDatatypeToText      ( oyDATATYPE_e        t)
 }
 
 
-/** @} */
+/** @} *//* misc */
 
 
 
@@ -10019,7 +10019,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   return error;
 }
 
-/** @} objects_image */ 
+/** @} *//* objects_image */ 
 
 
 
@@ -15201,7 +15201,7 @@ int               oyNamedColours_ReleaseAt ( oyNamedColours_s * obj,
 }
 
 
-/** objects_single_colour @} */
+/** @} *//* objects_single_colour */
 
 
 /** \addtogroup cmm_handling CMM Handling API
@@ -15233,7 +15233,7 @@ int          oyIdToCMM               ( uint32_t            cmmId,
     return 0;
 }
 
-/** @} */
+/** @} *//* cmm_handling */
 
 
 /** \addtogroup misc Miscellaneous
@@ -15365,9 +15365,9 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
 }
 
 
-/** @} misc */
+/** @} *//*misc */
 
-/** @} alpha
+/** @} *//*alpha
  */
 
 
@@ -15400,7 +15400,7 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2008/10/24
  */
-int      oyGetMonitorInfo            ( const char        * display,
+int      oyGetMonitorInfo            ( const char        * display_name,
                                        char             ** manufacturer,
                                        char             ** model,
                                        char             ** serial,
@@ -15422,7 +15422,7 @@ int      oyGetMonitorInfo            ( const char        * display,
   }
 
   if(funcP)
-    error = funcP( display, manufacturer, model, serial, allocate_func );
+    error = funcP( display_name, manufacturer, model, serial, allocate_func );
 
   return error;
 }
@@ -15525,7 +15525,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2008/10/24
  */
-char *   oyGetMonitorProfile         ( const char        * display,
+char *   oyGetMonitorProfile         ( const char        * display_name,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func )
 {
@@ -15547,7 +15547,7 @@ char *   oyGetMonitorProfile         ( const char        * display,
   }
 
   if(funcP)
-    block = funcP( NULL, size, allocate_func );
+    block = funcP( display_name, size, allocate_func );
 
   return block;
 }
@@ -15563,7 +15563,7 @@ char *   oyGetMonitorProfile         ( const char        * display,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2008/10/24
  */
-char *   oyGetMonitorProfileNameFromDB(const char        * display,
+char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
                                        oyAlloc_f           allocate_func )
 {
   int error = 0;
@@ -15584,7 +15584,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display,
   }
 
   if(funcP)
-    text = funcP( NULL, allocate_func );
+    text = funcP( display_name, allocate_func );
 
   return text;
 }
@@ -15662,5 +15662,5 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 }
 
 
-/** @} monitor_api */
+/** @} *//* monitor_api */
 
