@@ -557,24 +557,6 @@ if [ $? = 0 ] && [ -n "$FLTK_" ]; then
 fi
 
 
-if [ "$FLTK" = 1 ]; then
-  test -n "$ECHO" && $ECHO "FLTK_GUI = $TARGET-config-fltk" >> $CONF
-  if [ `$fltkconfig --version` = "1.1.7" ]; then
-    echo -e "\c "
-  fi
-fi
-
-elektra_mod=`pkg-config --modversion elektra`
-elektra_min="0.7"
-elektra_max="0.7.100"
-
-test -n "$ECHO" && pkg-config  --atleast-version=$elektra_min elektra 2>>$CONF_LOG
-pkg-config  --atleast-version=$elektra_min elektra
-if [ $? = 0 ]; then
-  test -n "$ECHO" && pkg-config --max-version=$elektra_max elektra 2>>$CONF_LOG
-  pkg-config --max-version=$elektra_max elektra
-fi
-
 if [ $nodeps -eq 1 ]; then
   GCC_MM="echo \"\#disable dependency tracking\""
   nodeps_config_opt=--disable-dependency-tracking

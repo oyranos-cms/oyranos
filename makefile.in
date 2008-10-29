@@ -151,6 +151,8 @@ POT_SCRIPT = oyranos_xml_to_po.sh
 
 SCRIPTS = $(POT_SCRIPT)
 
+FLTK_GUI = $(TARGET)-config-fltk
+
 FLTK_FILES = \
 	oyranos_config_fltk.fl \
 	oyranos_config_fltk.h \
@@ -221,7 +223,7 @@ all:	mkdepend \
 	$(LIBSONAMEFULL) \
 	$(TARGET)-monitor $(X11) $(LIB_CMM_LCMS) \
 	$(LIB_CMM_oyX1) $(LIB_CMM_oyra) \
-	$(FLTK_GUI) $(TARGET)-policy \
+	$(TARGET)-policy $(FLTK_GUI) \
 	$(TEST2) $(EXAMPLES) $(LINGUAS_SRC)
 	test -d default_profiles && \
 	( cd default_profiles; \
@@ -540,7 +542,7 @@ install_linguas:
 
 # build a source distribution package
 dist: targz
-	test -d ../Archiv && mv ../Archiv/$(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz || mv $(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz
+	test -d ../Archiv && mv -v ../Archiv/$(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz || mv -v $(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz
 
 # build a binary rpm package
 rpm:	dist
