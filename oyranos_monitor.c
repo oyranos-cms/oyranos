@@ -317,7 +317,7 @@ oyGetMonitorInfo_                 (const char* display_name,
               "PATH=" OY_BINDIR ":$PATH; oyranos-monitor-nvidia -p" );
 
     error = system( txt );
-    if(txt) { free(txt); txt = 0; }
+    if(txt) { oyDeAllocateFunc_(txt); txt = 0; }
 
     /*if(!error)*/
     {
@@ -351,7 +351,7 @@ oyGetMonitorInfo_                 (const char* display_name,
   oyFree_m_( atom_name )
 
   if(prop_return && nitems_return) {
-    free (prop_return);
+    oyDeAllocateFunc_ (prop_return);
     DBG_PROG_ENDE
     return 0;
   } else {
@@ -523,10 +523,10 @@ oyGetMonitorProfileName_          (const char* display_name,
                                      host_name, display_geometry,
                                      0,0,0, allocate_func);
 
-  if(manufacturer) free(manufacturer);
-  if(model) free(model);
-  if(serial) free(serial);
-  if(display_geometry) free (display_geometry);
+  if(manufacturer) oyDeAllocateFunc_(manufacturer);
+  if(model) oyDeAllocateFunc_(model);
+  if(serial) oyDeAllocateFunc_(serial);
+  if(display_geometry) oyDeAllocateFunc_ (display_geometry);
   oyMonitor_release_( &disp );
 
 #endif
@@ -869,10 +869,10 @@ oyActivateMonitorProfiles_        (const char* display_name)
   for( i = 0; i < n_scr; ++i )
   {
     error = oyActivateMonitorProfile_( screen_names[i], 0 );
-    free( screen_names[i] ); screen_names[i] = 0;
+    oyDeAllocateFunc_( screen_names[i] ); screen_names[i] = 0;
   }
 
-  if (screen_names) free (screen_names);
+  if (screen_names) oyDeAllocateFunc_ (screen_names);
 
   DBG_PROG_ENDE
   return error;
@@ -1167,8 +1167,6 @@ oySetMonitorProfile_              (const char* display_name,
                               oyMonitor_hostName_(disp), display_geometry,
                               0,0,0, profil_name, 0,0);
 
-  oyMonitor_release_( &disp );
-
   prof = oyProfile_FromFile( profil_name, 0, 0 );
   profile_fullname = oyProfile_GetFileName( prof, -1 );
   DBG_PROG1_S( "profile_fullname %s", profile_fullname )
@@ -1178,11 +1176,12 @@ oySetMonitorProfile_              (const char* display_name,
 
   finish:
   DBG_PROG
-  if (manufacturer) free (manufacturer);
-  if (model) free (model);
-  if (serial) free (serial);
-  if (display_geometry) free (display_geometry);
+  if (manufacturer) oyDeAllocateFunc_ (manufacturer);
+  if (model) oyDeAllocateFunc_ (model);
+  if (serial) oyDeAllocateFunc_ (serial);
+  if (display_geometry) oyDeAllocateFunc_ (display_geometry);
   oyProfile_Release( &prof );
+  oyMonitor_release_( &disp );
 #endif
 
   DBG_PROG_ENDE
