@@ -201,16 +201,19 @@ INCL_DEP = $(INCL) $(SOURCES)
 
 DEFAULT_PROFILES = base printing
 
-ALL_FILES = \
-	$(DATA) \
-	$(DOKU) \
+CONFIG_FILES = \
 	configure \
 	configure.sh \
 	makefile.in \
 	$(TARGET).pc.in \
 	$(TARGET).spec.in \
 	$(TARGET)-icc.spec.in \
-	$(TARGET)-config.in \
+	$(TARGET)-config.in
+
+ALL_FILES = \
+	$(CONFIG_FILES) \
+	$(DATA) \
+	$(DOKU) \
 	$(SOURCES) \
 	$(CHEADERS) \
 	$(SCRIPTS) \
@@ -218,8 +221,9 @@ ALL_FILES = \
 	$(DOC_TEMPLATES) \
 	$(FLTK_FILES)
 
+
 # build all what is needed to run the libraries, helpers and the examples
-all:	mkdepend \
+all:	config.log.h mkdepend \
 	$(LIBSONAMEFULL) \
 	$(TARGET)-monitor $(X11) $(LIB_CMM_LCMS) \
 	$(LIB_CMM_oyX1) $(LIB_CMM_oyra) \
@@ -358,14 +362,15 @@ test2:	$(LIBSONAMEFULL)
 	-o test2.o `oyranos-config --cflags`
 	echo Linking dynamic $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
-	test2.o `oyranos-config --cflags`
+	test2.o `oyranos-config --ldlags`
 	echo Linking static $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
 	test2.o `oyranos-config --ldstaticflags`
 	
 
-check:	test2
-	test2
+check:	test
+	echo run ./test
+	./test
 
 test:	test.o
 	$(CC) $(CFLAGS) -o test \
@@ -429,9 +434,8 @@ doc:
 	echo ... Documentation done
 
 # the copy part for this directory level
-install_bin:	all doc
-	echo Installing main ...
-	-$(MAKE) DESTDIR=$(DESTDIR) uninstall
+install_bin:	all
+	echo Installing binaries ...
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
@@ -488,6 +492,24 @@ install_bin:	all doc
 	$(INSTALL) -m 644 $(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
 	test "$(FLTK_GUI)" && $(MAKE) DESTDIR=$(DESTDIR) install_gui || echo -e "GUI not installed"
+	echo ... binary Installation finished
+
+# install recursive
+install:
+	$(MAKE) DESTDIR=$(DESTDIR) uninstall
+	$(MAKE) DESTDIR=$(DESTDIR) install-main
+	$(MAKE) DESTDIR=$(DESTDIR) install-icc
+	echo ... $@ done
+
+install-main:
+	$(MAKE) DESTDIR=$(DESTDIR) install_bin
+	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
+	$(MAKE) DESTDIR=$(DESTDIR) install_docu
+
+install-icc:
+	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
+
+install_docu: doc
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
@@ -500,19 +522,7 @@ install_bin:	all doc
 	mkdir -p $(DESTDIR)$(docdir)/html
 	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
 	$(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
-	echo ... main Installation finished
-
-# install recursive
-install:	install_bin
-	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
-	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
-	echo ... $@ done
-
-install-main:	install_bin
-	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
-
-install-icc:
-	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
+	
 
 install_gui:	$(TARGET)-config-fltk
 	echo Installing UI ...
@@ -560,7 +570,14 @@ rpm:	dist
 
 # remove everything previously installed
 uninstall:
-	echo Uninstalling ...
+	$(MAKE) DESTDIR=$(DESTDIR) uninstall_bin
+	$(MAKE) DESTDIR=$(DESTDIR) uninstall_docu
+	$(MAKE) DESTDIR=$(DESTDIR) uninstall_profiles
+	$(MAKE) DESTDIR=$(DESTDIR) uninstall_linguas
+	echo ... $@ done
+
+uninstall_bin:
+	echo Uninstalling binaries ...
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-fltk
@@ -580,6 +597,10 @@ uninstall:
 	         $(BUILDDIR)$(cmmdir)/lib$${lib}.a; \
 	done
 	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
+	echo ... done uninstalling binaries
+	
+uninstall_profiles:
+	echo Uninstalling profiles ...
 	test -d default_profiles && \
 	(  cd default_profiles; \
 	   for prof in $(DEFAULT_PROFILES); do \
@@ -588,6 +609,17 @@ uninstall:
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	   done; \
         ) || echo "no profile directory found"
+	echo ... done uninstalling profiles
+	
+uninstall_linguas:
+	echo Uninstalling linguas ...
+	for ling in $(LINGUAS); do \
+	  $(RM) $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo; \
+	done;
+	echo ... done uninstalling linguas
+
+uninstall_docu:
+	echo Uninstalling docu ...
 	for i in settings/*.policy.xml; do \
 	  ii=`echo $${i} | sed s%settings\/%%g`; \
 	  $(RM)   $(DESTDIR)$(syscolordir)/$(settingsdirname)/$${ii}; \
@@ -605,10 +637,8 @@ uninstall:
 	for file in $(MAN3); do \
 	  $(RM) $(DESTDIR)$(mandir)/man3/$$file; \
 	done
-	for ling in $(LINGUAS); do \
-	  $(RM) $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo; \
-	done;
-	echo ... $@ done
+	echo ... done uninstalling docu
+
 
 # remove in this directory
 distclean: clean
@@ -651,8 +681,8 @@ clean:
 	echo ... $@ done
 
 # configure if the file config is not available
-config:
-	./configure
+config.log.h:	$(CONFIG_FILES) ./config.log
+	./config.log
 
 # try to resolve dependencies
 depend:
@@ -741,6 +771,27 @@ copy_files:
 	  && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
 	done;
 	echo ... $@ done
+
+help:
+	echo "... all :        build the binaries"
+	echo "... doc :        generate documentation; requires doxygen"
+	echo "  non default build targets:"
+	echo "... test :       do a test"
+	echo "... test2 :      build a second test binary"
+	echo "... check :      do a test build and run it"
+	echo "... "
+	echo "... install :    install the binaries, include files and data"
+	echo "... install_bin: install only binaries"
+	echo "... install-icc: install only profiles and targets"
+	echo "... uninstall"
+	echo "... clean :      remove binaries, object files and most processed data"
+	echo "... distclean :  remove all files processed from configure scripts"
+	echo "... rpm :        build RPM's"
+	echo "... dist :       build a distribution tarball and place local"
+	echo "... targz :      build a distribution tar ball"
+	echo "... tgz :        build a development tar ball"
+	echo "... copy_files : copy distribution files to a DESTDIR=xxx path"
+	echo "... depend :     resolve dependencies"
 
 # mkdepend
 include mkdepend
