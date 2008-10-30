@@ -310,7 +310,7 @@ int           oyOptionChoicesGet       (oyWIDGET_e        option,
                                         int             * choices,
                                         const char    *** choices_string_list,
                                         int             * current);
-void          oyOptionChoicesFree      (oyWIDGET_TYPE_e   option,
+void          oyOptionChoicesFree      (oyWIDGET_e        option,
                                         char          *** list,
                                         int               size);
 # ifdef oyInPlaning_

@@ -681,7 +681,7 @@ char **  oyProfileListGet_           ( const char        * coloursig,
   oyRecursivePaths_( oyProfileListCb_, &l,
                      (const char**)path_names, count );
 
-  oyOptionChoicesFree( (oyWIDGET_e)oyWIDGET_POLICY, &path_names, count );
+  oyStringListRelease_( &path_names, count, oyDeAllocateFunc_ );
 
   *size = l.count_files;
   oy_warn_ = 1;

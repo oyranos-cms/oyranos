@@ -1029,7 +1029,7 @@ int         oyOptionChoicesGet         (oyWIDGET_e          option,
  *  @param size     number of strings in the list to free
  */
 void
-oyOptionChoicesFree                  (oyWIDGET_TYPE_e     option,
+oyOptionChoicesFree                  (oyWIDGET_e        option,
                                       char          *** list,
                                       int               size)
 { DBG_PROG_START

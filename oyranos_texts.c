@@ -1706,7 +1706,7 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
 }
 
 
-void          oyOptionChoicesFree_     (oyWIDGET_TYPE_e   option,
+void          oyOptionChoicesFree_     (oyWIDGET_e        option,
                                         char          *** l,
                                         int               size)
 {

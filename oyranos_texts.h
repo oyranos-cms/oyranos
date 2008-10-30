@@ -80,7 +80,7 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          option,
                                         int             * choices,
                                         const char    *** choices_string_list,
                                         int             * current);
-void          oyOptionChoicesFree_     (oyWIDGET_TYPE_e     option,
+void          oyOptionChoicesFree_     (oyWIDGET_e        option,
                                         char          *** list,
                                         int               size);
 
