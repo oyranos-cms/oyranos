@@ -555,7 +555,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
       case oyASSUMED_LAB:            /**< standard Lab assumed source profile */
       case oyASSUMED_GRAY:           /**< standard Gray assumed source profile*/
       case oyPROFILE_PROOF:          /**< standard proofing profile */
-                t = oyOptionGet_(type);
+                t = oyOptionGet_((oyWIDGET_e)type);
                 if(t && t->config_string)
                   name = oyGetKeyString_( t->config_string, allocate_func );
                 break;
@@ -630,7 +630,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
   }
 #else
   {
-    const oyOption_t_ * t = oyOptionGet_(type);
+    const oyOption_t_ * t = oyOptionGet_((oyWIDGET_e)type);
     if( !t || !t->config_string )
     {
       WARNc2_S( "%s %d", _("Option not supported type:"), type)
@@ -654,7 +654,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
       oyFree_m_(f);
     }
   } else {
-    const oyOption_t_ * t = oyOptionGet_(type);
+    const oyOption_t_ * t = oyOptionGet_((oyWIDGET_e)type);
     if(t && t->default_string)
     {
       oyAllocHelper_m_( name, char, strlen( t->default_string ) + 1,
