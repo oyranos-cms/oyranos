@@ -588,7 +588,8 @@ test -n "$ECHO" && $ECHO "MAKEDEPEND	= $GCC_MM" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "LIBEXT = .dylib" >> $CONF
   GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
-  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib  $GCC_VERSION_INFO -install_name \$(libdir)/" >> $CONF
+  test -n "$ECHO" && $ECHO "DSO_LIB_VERSION = -install_name \$(libdir)/" >> $CONF
+  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib $GCC_VERSION_INFO  \$(DSO_LIB_VERSION)" >> $CONF
   test -n "$ECHO" && $ECHO "COPY = cp -pv" >> $CONF
   LDFLAGS="$LDFLAGS -L."
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
@@ -602,7 +603,7 @@ if [ $OSUNAME = "Darwin" ]; then
   oyranos_x_add=""
 else
   test -n "$ECHO" && $ECHO "SO = .so" >> $CONF
-  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -shared $GCC_VERSION_INFO -Wl,-soname -Wl," >> $CONF
+  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -shared $GCC_VERSION_INFO \$(DSO_LIB_VERSION)" >> $CONF
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
   test -n "$ECHO" && $ECHO "MSGMERG_OPTS = --update" >> $CONF
   test -n "$ECHO" && $ECHO "XGETTEXT_OPTIONS = --keyword=gettext --flag=gettext:1:pass-c-format \
@@ -677,6 +678,7 @@ X_ADD_2="X11 Xext Xinerama Xxf86vm"; export X_ADD_2
 if [ -n "$ECHO" ]; then
   ECHO="echo"; export ECHO
   LIBS=1; export LIBS
+  DSO_LINKING=1; export DSO_LINKING
   ELEKTRA=1; export ELEKTRA
   #OYRANOS=1; export OYRANOS
   LCMS=1; export LCMS
@@ -697,6 +699,7 @@ fi
   GETTEXT=2; export GETTEXT
   ./configure.sh
   LIBS=0; export LIBS
+  DSO_LINKING=0; export DSO_LINKING
   ELEKTRA=0; export ELEKTRA
   #OYRANOS=0; export OYRANOS
   LCMS=0; export LCMS
