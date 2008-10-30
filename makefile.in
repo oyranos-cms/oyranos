@@ -386,7 +386,7 @@ $(EXAMPLE1): $(EXAMPLE1_C)
 	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o $(EXAMPLE1) \
 	$(EXAMPLE1).o `oyranos-config --ldflags` \
 	`pkg-config --libs cairo` `pkg-config --libs lcms` -L. \
-	-Wl,--rpath -Wl,$(srcdir)
+	$(LINK_SRC_PATH)
 
 $(LIBFL_I18N):	fl_i18n/Makefile
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
