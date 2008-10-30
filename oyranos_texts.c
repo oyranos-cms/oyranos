@@ -114,7 +114,7 @@ oyOptionStringsTranslate_ ()
                              ch_n, ch0, ch1, ch2, ch3, \
                              conf, xml, \
                              val, def_name) { \
-      pos = id_; \
+      pos = (int)id_; \
       opt[pos]. type = t_; \
       opt[pos]. id = id_; \
       opt[pos]. category[0] = ca_n; \
