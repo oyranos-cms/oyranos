@@ -376,13 +376,13 @@ oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
   {
     const char *keyName = 0;
 
-    keyName = oyOptionGet_(type)-> config_string;
+    keyName = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
       if(keyName)
       {
         char val[12];
         const char *com =
-            oyOptionGet_(type)-> choice_list[ choice ];
+            oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ];
         snprintf(val, 12, "%d", choice);
         r = oyAddKey_valueComment_ (keyName, val, com);
         DBG_PROG4_S( "%s %d %s %s", keyName, type, val, com?com:"" )
@@ -408,7 +408,7 @@ oyGetBehaviour_      (oyBEHAVIOUR_e type)
 
   if( oyTestInsideBehaviourOptions_(type, 0) )
   {
-    key_name = oyOptionGet_(type)-> config_string;
+    key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
     if(key_name)
     {
@@ -427,7 +427,7 @@ oyGetBehaviour_      (oyBEHAVIOUR_e type)
   }
 
   if(c < 0)
-    c = oyOptionGet_(type)-> default_value;
+    c = oyOptionGet_((oyWIDGET_e)type)-> default_value;
 
   DBG_PROG_ENDE
   return c;
@@ -462,7 +462,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
 
     if(oyWidgetTitleGet_( type, 0,0,0,0 ) == oyWIDGETTYPE_DEFAULT_PROFILE)
     {
-      config_name = oyOptionGet_(type)-> config_string;
+      config_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 #ifdef __APPLE__
       /* these settings are not persistent (osX 10.4) */
       /*if (0)*/

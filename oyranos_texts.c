@@ -1597,7 +1597,7 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
     oyProfiles_s * iccs = 0;
     oyProfile_s * temp_prof = 0;
 
-    iccs = oyProfiles_ForStd( type, current, 0 );
+    iccs = oyProfiles_ForStd( (oyPROFILE_e)type, current, 0 );
     n = oyProfiles_Count( iccs );
 
     for(i = 0; i < n; ++i)
@@ -1992,7 +1992,7 @@ int
 oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice)
 {
   int r = 0;
-  const oyOption_t_ *t = oyOptionGet_(type);
+  const oyOption_t_ *t = oyOptionGet_((oyWIDGET_e)type);
  
   DBG_PROG_START
 
@@ -2023,7 +2023,7 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR_e       type,
                             const char      **option_string,
                             const char      **tooltip)
 {
-  const oyOption_t_ *t = oyOptionGet_(type);
+  const oyOption_t_ *t = oyOptionGet_((oyWIDGET_e)type);
 
   DBG_PROG_START
 
