@@ -23,7 +23,7 @@ if [ -n "$DSO_LINKING" ] && [ $DSO_LINKING -gt 0 ] && [ $OSUNAME != "Darwin" ]; 
           fi
           rm tests/libtest$EXEC_END
       fi
-    if [ -z "$DSO_VERSION" ] ; then
+    if [ -n "$DSO_VERSION" ] ; then
       rm -f tests/libtest$EXEC_END
       $CC $CFLAGS -shared -Wl,-h -Wl,my_so_name -I$includedir tests/library.c $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
       if [ -f tests/libtest ]; then
