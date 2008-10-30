@@ -231,14 +231,15 @@ test -n "$INFOECHO" && $INFOECHO ""
   done
 fi
 
-# cleaner sh shells do not support the -e option to echo
-if [ "-e" = `echo -e` ] then
+# BSD sh shells do not support the -e option to echo
+if [ "-e" = "`echo -e `" ]; then
   e=""
-  # config.log will not work as expected if called as pure BSD shell
-  test -n "$zeile" && zeile="exit 1"
 else
-  e=""
+  e=-e
 fi
+
+# config.log will not work as expected if called as pure BSD shell
+test -z "$zeile" && zeile="exit 1" || echo ""
 
 # RPM spec file generation
 if [ 0 -eq $rpm ]; then
@@ -246,9 +247,9 @@ if [ 0 -eq $rpm ]; then
   RPMECHO="echo"
   test -f $CONF_LOG && rm $CONF_LOG
   $ECHO $e "$zeile \$@" > $CONF_LOG
-  $ECHO $e "exit 0" > $CONF_LOG
-  $ECHO $e "" > $CONF_LOG
-  $ECHO $e "" > $CONF_LOG
+  $ECHO $e "exit 0" >> $CONF_LOG
+  $ECHO $e "" >> $CONF_LOG
+  $ECHO $e "" >> $CONF_LOG
   chmod 0755 $CONF_LOG
 else
   ECHO=""
