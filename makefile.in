@@ -125,6 +125,7 @@ TEST_CPP = \
 	tests/dE2000_test.cpp \
 	tests/gettext_test.cxx \
 	tests/lib_test.cxx \
+	tests/library.c \
 	tests/tiff_test.cxx
 TEST_H = \
 	tests/ciede2000testdata.h
