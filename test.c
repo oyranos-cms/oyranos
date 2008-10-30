@@ -120,14 +120,14 @@ main(int argc, char** argv)
 #endif
 
 
-  w = 9;
+  w = 7;
   h = 32;
   size = sizeof(double)*w*h*3;
   d = malloc(size);
   dest = malloc(size);
   for(i = 0; i < w*h; ++i)
     for(j=0; j < 3; ++j)
-      d[i*3+j] = 0.33*(j+1);
+      d[i*3+j] = i*3+j;
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, 0 );
   image_in = oyImage_Create( w, h, d, OY_TYPE_123_DBL, prof, 0 );
@@ -148,10 +148,6 @@ main(int argc, char** argv)
 #endif
   free(ptr); ptr = 0;
 
-  double * d0 = &buf[0];
-  double * d1 = &buf2[0];
-  double * d2 = ((oyArray2d_s*)conversion->input->filter->image_->pixel_data)->array2d[0];
-  double * d3 = ((oyArray2d_s*)conversion->out_->filter->image_->pixel_data)->array2d[0];
 
   result = 0;
   x = y = 0;

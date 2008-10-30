@@ -908,7 +908,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   /* now do some position blind manipulations */
   for( k = 0; k < array->height; ++k)
   {
-    if(data_type == oyDOUBLE);
+    if(data_type == oyDOUBLE)
     {
       in_values = (double*) array->array2d[k];
       out_values = (double*) array->array2d[k];
