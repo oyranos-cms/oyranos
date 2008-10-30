@@ -937,7 +937,7 @@ int                oyIconv           ( const char        * input,
   }
 
   cd = iconv_open( loc, from_codeset ? from_codeset : oy_domain_codeset );
-  size = iconv( cd, &in_txt, &in_left, &out_txt, &out_left);
+  size = iconv( cd, (const char**) &in_txt, &in_left, &out_txt, &out_left);
   iconv_close( cd );
   *out_txt = 0;
 
