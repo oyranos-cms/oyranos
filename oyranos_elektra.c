@@ -460,7 +460,8 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
     if ( type < 0 )
       WARNc2_S( "%s %d", _("default profile type does not exist:"), type  );
 
-    if(oyWidgetTitleGet_( type, 0,0,0,0 ) == oyWIDGETTYPE_DEFAULT_PROFILE)
+    if(oyWidgetTitleGet_( (oyWIDGET_e)type, 0,0,0,0 ) ==
+       oyWIDGETTYPE_DEFAULT_PROFILE)
     {
       config_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 #ifdef __APPLE__
