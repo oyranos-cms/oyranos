@@ -117,6 +117,7 @@ EXAMPLE1_C = \
 	$(EXAMPLE1).c
 EXAMPLES_C = \
 	$(EXAMPLE1_C)
+EXAMPLES_OBJECTS = $(EXAMPLES_C:.c=.o)
 
 TEST_CPP = \
 	tests/dl_test.cxx \
@@ -186,6 +187,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_LCMS_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
+	$(EXAMPLES_OBJECTS) \
 	$(FLTK_OBJECTS) \
 	$(Flmm_OBJECTS) \
 	$(TARGET)_gamma.o \
