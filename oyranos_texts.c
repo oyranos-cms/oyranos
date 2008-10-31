@@ -117,10 +117,10 @@ oyOptionStringsTranslate_ ()
       pos = (int)id_; \
       opt[pos]. type = t_; \
       opt[pos]. id = id_; \
-      opt[pos]. category[0] = ca_n; \
-      opt[pos]. category[1] = ca1; \
-      opt[pos]. category[2] = ca2; \
-      opt[pos]. category[3] = ca3; \
+      opt[pos]. category[0] = (oyGROUP_e)ca_n; \
+      opt[pos]. category[1] = (oyGROUP_e)ca1; \
+      opt[pos]. category[2] = (oyGROUP_e)ca2; \
+      opt[pos]. category[3] = (oyGROUP_e)ca3; \
       opt[pos]. flags = 0; \
       opt[pos]. name = labl; \
       opt[pos]. description = desc; \
@@ -1792,7 +1792,8 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
           {
             oyAllocHelper_m_( w, oyWIDGET_e , oyEDITING_GRAY - oyEDITING_XYZ + 1,
                               allocate_func, return NULL);
-            for ( oywid = oyEDITING_XYZ; oywid <= oyEDITING_GRAY; ++oywid )
+            for ( oywid = (oyWIDGET_e)oyEDITING_XYZ;
+                    oywid <= (oyWIDGET_e)oyEDITING_GRAY; ++oywid )
               w[pos++] = oywid;
 
            *count = pos;
@@ -1802,7 +1803,8 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
           {
             oyAllocHelper_m_( w, oyWIDGET_e , oyASSUMED_GRAY - oyASSUMED_XYZ + 1,
                               allocate_func, return NULL);
-            for ( oywid = oyASSUMED_XYZ; oywid <= oyASSUMED_GRAY; ++oywid )
+            for ( oywid = (oyWIDGET_e)oyASSUMED_XYZ;
+                    oywid <= (oyWIDGET_e)oyASSUMED_GRAY; ++oywid )
               w[pos++] = oywid;
 
            *count = pos;
@@ -1812,7 +1814,8 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
           {
             oyAllocHelper_m_( w, oyWIDGET_e , 1,
                               allocate_func, return NULL);
-            for ( oywid = oyPROFILE_PROOF; oywid <= oyPROFILE_PROOF; ++oywid )
+            for ( oywid = (oyWIDGET_e)oyPROFILE_PROOF;
+                    (oyWIDGET_e)oywid <= oyPROFILE_PROOF; ++oywid )
               w[pos++] = oywid;
 
            *count = pos;
@@ -2004,8 +2007,8 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice)
 
   DBG_PROG2_S( "type = %d behaviour %d", type, choice )
 
-  if ( oyWidgetTypeGet_( type ) == oyWIDGETTYPE_BEHAVIOUR ||
-       oyWidgetTypeGet_( type ) == oyWIDGETTYPE_CHOICE )
+  if ( oyWidgetTypeGet_( (oyWIDGET_e)type ) == oyWIDGETTYPE_BEHAVIOUR ||
+       oyWidgetTypeGet_( (oyWIDGET_e)type ) == oyWIDGETTYPE_CHOICE )
   {
     if ( choice >= 0 &&
          choice < t->choices )
