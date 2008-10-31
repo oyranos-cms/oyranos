@@ -1,3 +1,213 @@
+Version 0.1.8
+
+Iñaki Larrañaga Murgoitio (1):
+	* [po]: Basque translations from ICC Examin
+
+Kai-Uwe Behrmann (208):
+	* [conf]: detect distribution on Linux; correct comment
+	* [alpha]: tighten the oyCMMapi3_s profile tag API
+	* [oyra]: pseq tag for device link profiles
+	* [API]: support custom messaging with oyMessageFuncSet
+	* [build]: move -L./ in front to link local libraries
+	* [conf]: remove local elektra configuring
+	* [conf]: remove configure output
+	* [conf]: fix Elektra version check
+	* [and]: fl_i18n updates from ICC Examin
+	* [conf]: set compiling to verbose by default
+	* [build]: omit liboyranos_alpha and all local elektra targets
+	* [fix]: compile fix
+	* [fix]: fix for missed display/screen name
+	* [conf]: correct configure and remove old stuff in make
+	* [and]: osX debug system adaptions
+	* [conf]: more osX configure verbosity
+	* [and]: cleaning up
+	* [API]: remove "[none]" dummy profile from oyProfileListGet_ output
+	* [API]: switch back to naming first intent perceptual
+	* [oyra]: support icSigWCSProfileTag type
+	* [API]: continue even with missed Elektra handle
+	* [i18n]: unicode improvements
+	* [i18n]: remove wchar_t as it is wrong interface for UTF-16
+	* [alpha]: declare a point access handler (still needs implementation)
+	* [alpha]: move some CMM specific declarations
+	* [i18n]: replace sprintf with memcpy to avoid crashes on certain characters in wcslen
+	* [API]: move some specific functions to the icc header
+	* [and]: avoid some valgrind warnings
+	* [API]: fit to our function naming convention
+	* [API]: fit to our function naming convention
+	* [API]: replace parsed UI exchange with XML serialised
+	* [i18n]: fix codeset for ICC mluc
+	* [and]: remove lots of outdated functions and snipets
+	* [and]: avoid printf with filenames
+	* [fix]: fix iconverted string too short on output
+	* [fix]: fix freeing of already freed pointer bug
+	* [and]: remove unneeded type
+	* [alpha]: oyProfile_GetText can get normal icSigProfileDescriptionTag
+	* [and]: update
+	* [alpha]: more work on the filter API's
+	* [and]: fix lcmsCMMColourConversion_FromMem
+	* [and]: play with oyCMMapi4_s filter API
+	* [alpha]: more work on filters
+	* [alpha]: integrate oyImageHandler_s into oyImage_s
+	* [alpha]: implement first oyConversions_s functions
+	* [and]: update
+	* [alpha]: implement more of oyValue_u, oyOption_s, oyOptions_s and oyFilter_s API's
+	* [and]: correct string splitting
+	* [alpha]: propose registration scheme for plug-ins : with input from Markus Raabe
+	* [alpha]: implementation around the plugin registration
+	* [and]: update
+	* [build]: static linking with elektra
+	* [alpha]: declare and implement oyOptions_FromBoolean
+	* [alpha]: filter options in oyra
+	* [alpha]: declare image-root filter correctly
+	* [alpha]: more thoughts on resource handling and pixel access
+	* [and]: hide path manipulators
+	* [and]: remove static policy entries, as they get overwritten during runtime
+	* [API]: change typedefed funtion suffixes
+	* [API]: OYRANOS_VERSION_NAME becomes a string
+	* [alpha]: generalise nodes by oyNode_s
+	* [API]: change typedefed funtion suffixes
+	* [oyra]: implement more of a Image/Root filter
+	* [test]: test pixel access
+	* [API]: remove static policy names; they are detected dynamically by the files
+	* [alpha]: rename oyProfileList_s to oyProfiles_s
+	* [API]: make oyMessage_f() oyStruct_s context aware
+	* [alpha]: allow casting of oyFilterNode_s to oyNode_s
+	* [fix]: properly initialise pointer; fixes a crash in oyranos-policy
+	* [and]: cleaner output, direct error output to stderr
+	* [and]: set correctly to parent and children nodes
+	* [alpha]: let oyFilter_s::image_ be refered always from main parent
+	* [test]: small test cases for cmm_api4
+	* [alpha]: add "org.oyranos.image.image.output" filter and oyraFilter_ImageOutputGetNext
+	* [API]: remove path manipulation API's
+	* [fix]: fix NULL pointer access crash for kminfo
+	* [and]: remove duplicated message
+	* [and]: more Options related error checking
+	* [and]: provide platform identifers
+	* [and]: remove path manipulator functions
+	* [fix]: convince nl_langinfo API
+	* [alpha]: export oyProfile_Equal()
+	* [alpha]: export oyraIconv nach oyIconv()
+	* [and]: make oyranos locale aware in oyranos-config-fltk
+	* [and]: make Oyranos locale aware for Elektra
+	* [API]: oyPoliciesEqual()/oyPolicyNameGet_() is now based on key values
+	* [alpha]: more filter backend API work
+	* [and]: update
+	* [and]: allow for recursive directory writing
+	* [conf]: provide more configure time details
+	* [API]: new oyPolicySaveActual() API
+	* [doc]: extended options set and documentation
+	* [i18n]: i18n update
+	* [API]: enshure only the first path from xdg_config_home is used in oyPolicySaveActual()
+	* [API]: add useful defaults to oyXDGPathsGet_()
+	* [and]: change options and describe
+	* [fix]: fix empty string crash
+	* [fix]: fix empty string crash
+	* [and]: convert from old message function
+	* [and]: integrate new oyProfiles_ForStd() API into oyOptionChoicesGet()
+	* [doc]: update docu
+	* [doc]: add internal documentation formatter
+	* [doc]: add a code snippet to oyProfiles_ForStd() function docu
+	* [conf]: clean a sub directory before configuring
+	* [doc]: clean and add to documentation
+	* [alpha]: the widget enums are removed + a a bug fix for better pixel channel detection
+	* [and]: update
+	* [alpha]: introducing a oyConnector_s to oyFilterNodes_s
+	* [doc]: slight documentaion formatting
+	* [alpha]: add oyDEFAULT_PROFILE_START as argument for oyProfiles_ForStd()
+	* [doc]: add license infos
+	* [alpha]: add oyArray2d_s struct and use it in oyImage_s
+	* [doc]: add more documentation and remove Concept page from code docu
+	* [alpha]: simplify the internal structure dependencies
+	* [fix]: fix to [ 1955643 ] oyranos-monitor and xinerama VCGT second monitor not working
+	* [and]: update
+	* [and]: fix date macros in configure
+	* [and]: add filename and line to a command line printf
+	* [API]: remove unneeded path function
+	* [and]: add a strzct type to oyRecursivePaths_ callback
+	* [fix]: repair configure script as suggested by Milan Knízek
+	* [and]: rename internal oyImage_CombinePixelLayout2Mask_
+	* [and]: set correct data type for test
+	* [and]: turn configure date variables to numbers
+	* [build]: write library path into library for osX
+	* [API]: rename oyGetMonitorProfileName to oyGetMonitorProfileNameFromDB
+	* [cli]: add monitor profile querying to oyranos-monitor and document in the man page
+	* [fix]: fix multiple counting in FLTK choice
+	* [new]: Oyranos/Cairo/RawPhoto coding example
+	* [new]: integrate the new example into makefile.in
+	* [API]: publish the include directory where Oyranos headers are placed
+	* [doc]: add a nice frame around images
+	* [doc]: better code arrangement and 16-bit path until Cairo
+	* [build]: minor variable name correction for make
+	* [and]: update to Elektra v0.7.rc5
+	* [and]: omitt irrelevant elektra messages
+	* [fix]: correct DBG macro usage in oyranos_monitor_nvidia.c
+	* [pack]: split display into monitor and monitor-nvidia, rename panel to ui-fltk
+	* [and]: prepare for a removed kdbStrError()
+	* [and]: remove kdbStrError now
+	* [build]: slightly more verbose end of make
+	* [build]: small make fix
+	* [doc]: [graph] lots of smaller changes, more documenting and formatting, test update
+	* [and]: oyConversion_CreateBasic() is functional
+	* [alpha]: oyConversion_Init removed
+	* [doc]: oyConversion_CreateBasic is demonstrated
+	* [build]: split oyranos_cmm_oyra.c into several files
+	* [alpha]: add oyOptions_HasString() validation query
+	* [alpha]: rename to oyOptions_FindString()
+	* [alpha]: formulate more about default behaviour options handling
+	* [and]: update to svn and remove deprecated Elektra error API usage
+	* [and]: more config keys thinking
+	* [and]: more config key thinking
+	* [alpha]: apply suggested namespace scheme
+	* [alpha]: namespace change applied to parsing
+	* [doc]: describe debian dependencies : thanks to Markus Raabe
+	* [alpha]: update the plug-ins to the key namespace changes
+	* [build]: remove CMMs during make uninstall
+	* [fix]: oyActivateMonitorProfile() does only fill a empty server configuration
+	* [po]: remove incomplete translation
+	* [po]: update translations
+	* [po]: some esperanto translations
+	* [fix]: fix for the elektra-0.7.0 release
+	* [and]: update
+	* [and]: update
+	* [prof]: add default profiles
+	* [pack]: correct documentation packaging
+	* [prof]: add missing profile
+	* [doc]: documentation
+	* [doc]: add plain text intro to alpha documentation
+	* [and]: clean some entries
+	* [build]: be more verbose during make
+	* [pack]: straighten the ICC profile RPM names
+	* [cli]: add -p option and document
+	* [fix]: fix some overruns
+	* [po]: update and translate de
+	* [doc]: sort documentation
+	* [and]: minor tweaks
+	* [conf]: keep config.log during configuring in tact
+	* [doc]: add a comment to oyPolicySaveActual()
+	* [doc]: more documentation cleaning
+	* [doc]: fix doxygen warnings
+	* [doc]: merge alpha documentaion
+	* [doc]: merge alpha documentation
+	* [alpha]: monitor API is available as plug-in
+	* [build]: remove references for direct linking to liboyranos_monitor
+	* [conf]: the configure flag --enable-verbose is not required for make rpm
+	* [pack]: remove the alpha-devel RPM package as we integrated the documentation
+	* [doc]: correct image object documentation references
+	* [API]: remove oyranos_monitor.h from installed files
+	* [conf]: sync configure.sh with ICC Examin
+	* [and]: fix complile warning
+	* [and]: oyranos-monitor seems broken
+	* [and]: some fixes for the monitor backend
+	* [and]: additional monitor API bugfixes
+
+Milan Knízek (3):
+	* [po]: add czesh translation
+	* [po]: more translation
+	* [po]: more translations
+
+Pascal LACROIX (1):
+	* [po]: french translations from ICC Examin
+
 2007-07-18
 	* and: sensible for non EDID monitors, new wighting by display geometry
 	* cli: add -v for oyranos-monitor, oyranos_monitor_nvidia.c, oyranos_policy.c
@@ -41,6 +251,8 @@
 2007-05-14.
 	* conf: support configure option: --with-x (for osX)
 	* new: support osX first display profile
+
+Version 0.1.7
 
 2007-04-02
 	* new: distclean make target
