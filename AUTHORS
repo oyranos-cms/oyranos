@@ -14,6 +14,13 @@ lookup3:       Bob Jenkins        http://burtleburtle.net/bob/c/lookup3.c
 
 
 Translators:
-
+cs:            Milan Knizek <knizek@volny.cz> 2008
 de:            Kai-Uwe Behrmann <www.behrmann.name>
+eu:            Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2007
+fr:            Pascal LACROIX <lacroixpascal at vfemail.net>, 2006
 
+
+Data:
+target data:   Fogra, NPES
+profiles:      Marti Maria, ECI, Kai-Uwe Behrmann, ColorSolutions, Photogamut,
+               Graeme Gill
