@@ -911,7 +911,13 @@ int                oyIconv           ( const char        * input,
 
   char * out_txt = output;
   char * in_txt = (char*)input;
-  const char * loc_env = setlocale( LC_MESSAGES, 0 ), *loc = to_codeset;
+  const char * loc_env = 
+# ifdef USE_GETTEXT
+  setlocale( LC_MESSAGES, 0 )
+# else
+  0
+# endif
+  , *loc = to_codeset;
   iconv_t cd;
   size_t size, in_left = len, out_left = len;
 
