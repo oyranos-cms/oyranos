@@ -341,7 +341,7 @@ oyWriteOptionToXML_(oyGROUP_e           group,
 
          /* allocate new mem if needed */
          oytmplen = oyMemBlockExtent_(&mem, oytmplen, 360);
-         opt = oyOptionGet_( group );
+         opt = oyOptionGet_( (oyWIDGET_e)group );
          oySprintf_( &mem[strlen(mem)], "<%s>\n",
                   opt->config_string_xml );
          oySprintf_( &mem[strlen(mem)], "<!-- %s \n"
@@ -564,7 +564,7 @@ oyReadXMLPolicy_(oyGROUP_e           group,
       /* set the key */
       if(value && strlen(value))
       {
-        err = oySetDefaultProfile_( oywid, value);
+        err = oySetDefaultProfile_( (oyPROFILE_e)oywid, value);
         if(err)
         {
           WARNc2_S( "Could not set default profile %s:%s", t->name ,
@@ -587,7 +587,7 @@ oyReadXMLPolicy_(oyGROUP_e           group,
 
       /* set the key */
       if( val != -1 && value )
-        err = oySetBehaviour_(oywid, val);
+        err = oySetBehaviour_((oyBEHAVIOUR_e)oywid, val);
 
       if(err)
         {
