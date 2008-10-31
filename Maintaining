@@ -5,7 +5,7 @@ o git push remote (git push ssh://root@www.oyranos.org/git/icc_examin/)
 release:
 o update translation
 o update README
-o update Chanagelog (version hint + date)
+o update Chanagelog (version hint + date) # git shortlog --no-merges 0.1.8 ^0.1.7 > ShortLog; cat ChangeLog >> ShortLog; mv ShortLog ChangeLog
 o update doxymentation
 o create package
 o update behrmann web site
