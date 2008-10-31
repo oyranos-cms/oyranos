@@ -124,6 +124,7 @@ TEST_CPP = \
 	tests/fltk_test.cxx \
 	tests/dE2000_test.cpp \
 	tests/gettext_test.cxx \
+	tests/intptr_test.c \
 	tests/lib_test.cxx \
 	tests/library.c \
 	tests/tiff_test.cxx
