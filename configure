@@ -437,50 +437,60 @@ else
 fi
 OS_EXT=""
 test -n "$ECHO" && $ECHO "MAKEFILE_ARCH = Makefile$OS_EXT"  >> $CONF
-MACH_=`uname -m`
-MACH=BUILD_32
 BARCH=""
-LINE_ARCH=""
+
+# detect the compilers bus width options
+rm -f tests/intptr_test
+if [ -z "$CC" ]; then
+  COMPILER=cc
+else
+  COMPILER=$CC
+fi
+$COMPILER $CFLAGS tests/intptr_test.c -o tests/intptr_test 2>/dev/null
+if [ -f tests/intptr_test ]; then
+  tests/intptr_test
+  INTPTR_SIZE=$?
+  if [ $INTPTR_SIZE -eq 4 ]; then
+    echo_="32-bit build            detected"
+  elif [ $INTPTR_SIZE -eq 8 ]; then
+    echo_="64-bit build            detected"
+    test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
+    BARCH="64"
+  elif [ $INTPTR_SIZE -ne 0 ]; then
+    echo_="$INTPTR_SIZE-byte intptr_t          detected"
+  else
+    echo_="CPU bus width not         detected"
+  fi
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  rm tests/intptr_test
+else
+  $COMPILER $CFLAGS tests/intptr_test.c -o tests/intptr_test
+fi
+
+MACH_=`uname -m`
 if [ $? = 0 ]; then
-  if [ "$MACH_" = "i686" ]; then
-    echo_="32-bit system           detected"
+  if [ "$MACH_" = "x86_64" ]; then
+    echo_="X86_64                  detected"
     test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   else
-    if [ "$MACH_" = "x86_64" ]; then
-      MACH=BUILD_64
-      test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
-      echo_="X86_64                  will build in 64 bit mode"
+    if [ "$MACH_" = "sun4u" ]; then
+      echo_="spark ultra 4           detected"
       test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-      BARCH="64"
     else
-      if [ "$MACH_" = "sun4u" ]; then
-        MACH=BUILD_64
-        test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
-        echo_="spark ultra 4           will build in 64 bit mode"
-        test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-        BARCH="64"
-        LINE_ARCH="-64"
-      fi
+      echo_="$MACH_ system             detected"
+      test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
     fi
   fi
 fi
 LIBDIR="lib"$BARCH
-export MACH OSUNAME LIBDIR BARCH LINE_ARCH
+test -n "$ECHO" && $ECHO "BARCH=$BARCH" >> $CONF
+export OSUNAME LIBDIR BARCH
 
 
 # exec_prefix bindir sbindir libdir includedir datadir
 if [ -z "$exec_prefix" ]; then
   exec_prefix="$prefix"
 fi
-if [ "`echo $exec_prefix | grep 64 | wc -l`" -eq "1" ]; then
-  BARCH=""
-  LIBDIR="lib"
-  echo_="unset BARCH LIBDIR"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  export BARCH LIBDIR
-fi
-test -n "$ECHO" && $ECHO "BARCH=$BARCH" >> $CONF
-
 if [ -z "$bindir" ]; then
   bindir="$exec_prefix/bin"
 fi
@@ -532,10 +542,10 @@ PATH=$bindir:$PATH
 export PATH
 
 if [ -z "$CC" ]; then
-  CC=cc$LINE_ARCH
+  CC=cc
 fi
 if [ -z "$CXX" ]; then
-  CXX=c++$LINE_ARCH
+  CXX=c++
 fi
 
 test -n "$ECHO" && $ECHO "CXX = $CXX" >> $CONF
