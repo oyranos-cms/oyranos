@@ -3,7 +3,7 @@ The profiles in the base directory are provided according to different licenses.
 
 Group A
 sRGB, LCMSLAB.ICM, LCMSXYZ.ICM, the compatibleWithAdobeRGB.icc and the 
-Gray.icc, CineonLog_M*.icc, CineLogCurve.icc profiles are all in public domain.
+Gray.icc, CineonLog_M*.icc, CineLogCurve.icc profiles are all zlib licensed.
 Even though it is highly recommended to rename them before editing.
 
 
