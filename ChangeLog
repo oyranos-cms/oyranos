@@ -3,7 +3,7 @@ Version 0.1.8
 Iñaki Larrañaga Murgoitio (1):
 	* [po]: Basque translations from ICC Examin
 
-Kai-Uwe Behrmann (259):
+Kai-Uwe Behrmann (249):
 	* [conf]: detect distribution on Linux; correct comment
 	* [alpha]: tighten the oyCMMapi3_s profile tag API
 	* [oyra]: pseq tag for device link profiles
