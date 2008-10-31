@@ -740,7 +740,7 @@ targz:
 	for prof in $(DEFAULT_PROFILES); do \
 	     test -d $${prof} && \
 	         mkdir -p ../$(TARGET)-$(VERSION)/default_profiles/$${prof}; \
-	         (cd $${prof}; echo bin in `pwd`; $(MAKE) DESTDIR=../../$(TARGET)-$(VERSION)/default_profiles/$${prof} copy_files) || \
+	         (cd $${prof}; echo bin in `pwd`; $(MAKE) DESTDIR=../../$(TARGET)-$(VERSION)/default_profiles/$${prof} copy_files; $(RM) ../../$(TARGET)-$(VERSION)/default_profiles/$${prof}/Makefile) || \
 	         echo -e "$${prof} profile directory is not found - ignoring"; \
 	done;
 	tar cf - $(TARGET)-$(VERSION)/ \
@@ -755,6 +755,7 @@ copy_files:
 	mkdir $(DESTDIR)
 	cd fl_i18n && \
 	 $(MAKE) DESTDIR=../$(DESTDIR)/fl_i18n -f $(MAKEFILE_ARCH) copy_files
+	-$(RM) $(DESTDIR)/fl_i18n/Makefile
 	$(COPY) -R \
 	$(ALL_FILES) \
 	$(DESTDIR)
