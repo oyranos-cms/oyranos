@@ -42,7 +42,6 @@ Summary:    Oyranos default sRGB ICC profile +
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
-License:    public domain
 Version:    0.5
 %description  icc-RGB
 The "WWW standard" sRGB profile and others
@@ -52,7 +51,6 @@ Summary:    Oyranos default PCS profiles
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
-License:    public domain
 Version:    0.5
 %description  icc-lcmsLAB
 Special LCMS profiles.
@@ -123,7 +121,7 @@ characterisation data for GRACoL, SWOP and SNAP.
 %{_datadir}/color/icc/Lab.icc
 %{_datadir}/color/icc/XYZ.icc
 %{_datadir}/color/icc/Gray.icc
-%doc default_profiles/base/LICENSE
+%doc default_profiles/base/LICENSE-ZLIB
 
 %files icc-Cineon
 %defattr(-, root, root)
@@ -145,7 +143,7 @@ characterisation data for GRACoL, SWOP and SNAP.
 %defattr(-, root, root)
 %{_datadir}/color/icc/sRGB.icc
 %{_datadir}/color/icc/compatibleWithAdobeRGB1998.icc
-%doc default_profiles/base/LICENSE
+%doc default_profiles/base/LICENSE-ZLIB
 
 %files icc-printing
 %defattr(-, root, root)
