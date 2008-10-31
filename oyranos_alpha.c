@@ -587,69 +587,67 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
 {
 
   switch (sig) {
-    case icSigAToB0Tag: return _("Lockup table, device to PCS, intent perceptual"); break;
-    case icSigAToB1Tag: return _("Lockup table, device to PCS, intent relative colorimetric"); break;
-    case icSigAToB2Tag: return _("Lockup table, device to PCS, intent saturation"); break;
-    case icSigBlueColorantTag: return _("Blue Colorant"); break;
-    case icSigBlueTRCTag: return _("Blue tone reproduction curve"); break;
-    case icSigBToA0Tag: return _("Lockup table, PCS to device, intent perceptual"); break;
-    case icSigBToA1Tag: return _("Lockup table, PCS to device, intent relative colorimetric"); break;
-    case icSigBToA2Tag: return _("Lockup table, PCS to device, intent saturation"); break;
-    case icSigCalibrationDateTimeTag: return _("Calibration date"); break;
-    case icSigCharTargetTag: return _("Colour measurement data"); break;
-    case icSigCopyrightTag: return _("Copyright"); break;
-    case icSigCrdInfoTag: return _("crdi"); break;
-    case icSigDeviceMfgDescTag: return _("Device manufacturerer description"); break;
-    case icSigDeviceModelDescTag: return _("Device model description"); break;
-    case icSigGamutTag: return _("gamut"); break;
-    case icSigGrayTRCTag: return _("Gray tone reproduction curve"); break;
-    case icSigGreenColorantTag: return _("Green Colorant"); break;
-    case icSigGreenTRCTag: return _("Green tone reproduction curve"); break;
-    case icSigLuminanceTag: return _("Luminance"); break;
-    case icSigMeasurementTag: return _("Measurement"); break;
-    case icSigMediaBlackPointTag: return _("Media black point"); break;
-    case icSigMediaWhitePointTag: return _("Media white point"); break;
-    case icSigNamedColorTag: return _("Named Colour"); break;
-    case icSigNamedColor2Tag: return _("Named Colour 2"); break;
-    case icSigPreview0Tag: return _("Preview, perceptual"); break;
-    case icSigPreview1Tag: return _("Preview, relative colorimetric"); break;
-    case icSigPreview2Tag: return _("Preview, saturated"); break;
-    case icSigProfileDescriptionTag: return _("Profile description"); break;
-    case 1685283693: return _("Profile description, multilingual"); break;/*dscm*/
-    case icSigProfileSequenceDescTag: return _("Profile sequence description"); break;
-    case icSigProfileSequenceIdentifierTag: return _("Profile sequence identification"); break;
-    case icSigPs2CRD0Tag: return _("psd0"); break;
-    case icSigPs2CRD1Tag: return _("psd1"); break;
-    case icSigPs2CRD2Tag: return _("psd2"); break;
-    case icSigPs2CRD3Tag: return _("psd3"); break;
-    case icSigPs2CSATag: return _("ps2s"); break;
-    case icSigPs2RenderingIntentTag: return _("ps2i"); break;
-    case icSigRedColorantTag: return _("Red Colorant"); break;
-    case icSigRedTRCTag: return _("Red tone reproduction curve"); break;
-    case icSigScreeningDescTag: return _("scrd"); break;
-    case icSigScreeningTag: return _("scrn"); break;
-    case icSigTechnologyTag: return _("Technologie"); break;
-    case icSigUcrBgTag: return _("bfd"); break;
-    case icSigViewingCondDescTag: return _("Viewing conditions description"); break;
-    case icSigViewingConditionsTag: return _("Viewing Conditions"); break;
-    case 1147500100: return _("Device colours"); break;/*DevD*/
-    case 1128875332: return _("Measured colours"); break;/*CIED*/
-    case 1349350514: return _("Profiling parameters"); break;/*Pmtr*/
-    case 1986226036: return _("VideoCardGammaTable"); break;/*vcgt*/
-    case 1667785060: return _("Colour adaption matrix"); break; /*chad*/
-    case icSigChromaticityType: return _("Chromaticity"); break; /*chrm*/
-    case 1668051567: return _("Named colour order"); break;/*clro*/
-    case 1668051572: return _("Named colour names"); break;/*clrt*/
-    case 0: return _("----"); break;
+    case icSigAToB0Tag: return _("Lockup table, device to PCS, intent perceptual");
+    case icSigAToB1Tag: return _("Lockup table, device to PCS, intent relative colorimetric");
+    case icSigAToB2Tag: return _("Lockup table, device to PCS, intent saturation");
+    case icSigBlueColorantTag: return _("Blue Colorant");
+    case icSigBlueTRCTag: return _("Blue tone reproduction curve");
+    case icSigBToA0Tag: return _("Lockup table, PCS to device, intent perceptual");
+    case icSigBToA1Tag: return _("Lockup table, PCS to device, intent relative colorimetric");
+    case icSigBToA2Tag: return _("Lockup table, PCS to device, intent saturation");
+    case icSigCalibrationDateTimeTag: return _("Calibration date");
+    case icSigCharTargetTag: return _("Colour measurement data");
+    case icSigCopyrightTag: return _("Copyright");
+    case icSigCrdInfoTag: return _("crdi");
+    case icSigDeviceMfgDescTag: return _("Device manufacturerer description");
+    case icSigDeviceModelDescTag: return _("Device model description");
+    case icSigGamutTag: return _("gamut");
+    case icSigGrayTRCTag: return _("Gray tone reproduction curve");
+    case icSigGreenColorantTag: return _("Green Colorant");
+    case icSigGreenTRCTag: return _("Green tone reproduction curve");
+    case icSigLuminanceTag: return _("Luminance");
+    case icSigMeasurementTag: return _("Measurement");
+    case icSigMediaBlackPointTag: return _("Media black point");
+    case icSigMediaWhitePointTag: return _("Media white point");
+    case icSigNamedColorTag: return _("Named Colour");
+    case icSigNamedColor2Tag: return _("Named Colour 2");
+    case icSigPreview0Tag: return _("Preview, perceptual");
+    case icSigPreview1Tag: return _("Preview, relative colorimetric");
+    case icSigPreview2Tag: return _("Preview, saturated");
+    case icSigProfileDescriptionTag: return _("Profile description");
+    case 1685283693: return _("Profile description, multilingual");/*dscm*/
+    case icSigProfileSequenceDescTag: return _("Profile sequence description");
+    case icSigProfileSequenceIdentifierTag: return _("Profile sequence identification");
+    case icSigPs2CRD0Tag: return _("psd0");
+    case icSigPs2CRD1Tag: return _("psd1");
+    case icSigPs2CRD2Tag: return _("psd2");
+    case icSigPs2CRD3Tag: return _("psd3");
+    case icSigPs2CSATag: return _("ps2s");
+    case icSigPs2RenderingIntentTag: return _("ps2i");
+    case icSigRedColorantTag: return _("Red Colorant");
+    case icSigRedTRCTag: return _("Red tone reproduction curve");
+    case icSigScreeningDescTag: return _("scrd");
+    case icSigScreeningTag: return _("scrn");
+    case icSigTechnologyTag: return _("Technologie");
+    case icSigUcrBgTag: return _("bfd");
+    case icSigViewingCondDescTag: return _("Viewing conditions description");
+    case icSigViewingConditionsTag: return _("Viewing Conditions");
+    case 1147500100: return _("Device colours");/*DevD*/
+    case 1128875332: return _("Measured colours");/*CIED*/
+    case 1349350514: return _("Profiling parameters");/*Pmtr*/
+    case 1986226036: return _("VideoCardGammaTable");/*vcgt*/
+    case 1667785060: return _("Colour adaption matrix"); /*chad*/
+    case icSigChromaticityType: return _("Chromaticity"); /*chrm*/
+    case 1668051567: return _("Named colour order");/*clro*/
+    case 1668051572: return _("Named colour names");/*clrt*/
+    case 0: return _("----");
     default: { icUInt32Number i = oyValueUInt32(sig);
                static oyChar t[5];
                memcpy (t,(char*)&i, 4);
                t[4] = 0;
                return t;
-               break;
              }
   }
-  return "-";
 }
 
 
@@ -662,70 +660,68 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
 const oyChar *   oyICCTagName        ( icTagSignature      sig )
 {
   switch (sig) {
-    case icSigAToB0Tag: return "A2B0"; break;
-    case icSigAToB1Tag: return "A2B1"; break;
-    case icSigAToB2Tag: return "A2B2"; break;
-    case icSigBlueColorantTag: return "bXYZ"; break;
-    case icSigBlueTRCTag: return "bTRC"; break;
-    case icSigBToA0Tag: return "B2A0"; break;
-    case icSigBToA1Tag: return "B2A1"; break;
-    case icSigBToA2Tag: return "B2A2"; break;
-    case icSigCalibrationDateTimeTag: return "calt"; break;
-    case icSigCharTargetTag: return "targ"; break;
-    case icSigCopyrightTag: return "cprt"; break;
-    case icSigCrdInfoTag: return "crdi"; break;
-    case icSigDeviceMfgDescTag: return "dmnd"; break;
-    case icSigDeviceModelDescTag: return "dmdd"; break;
-    case icSigGamutTag: return "gamt"; break;
-    case icSigGrayTRCTag: return "kTRC"; break;
-    case icSigGreenColorantTag: return "gXYZ"; break;
-    case icSigGreenTRCTag: return "gTRC"; break;
-    case icSigLuminanceTag: return "lumi"; break;
-    case icSigMeasurementTag: return "meas"; break;
-    case icSigMediaBlackPointTag: return "bkpt"; break;
-    case icSigMediaWhitePointTag: return "wtpt"; break;
-    case icSigNamedColorTag: return "'ncol"; break;
-    case icSigNamedColor2Tag: return "ncl2"; break;
-    case icSigPreview0Tag: return "pre0"; break;
-    case icSigPreview1Tag: return "pre1"; break;
-    case icSigPreview2Tag: return "pre2"; break;
-    case icSigProfileDescriptionTag: return "desc"; break;
-    case 1685283693: return "dscm"; break;
-    case icSigProfileSequenceDescTag: return "pseq"; break;
-    case icSigProfileSequenceIdentifierTag: return "psid"; break;
-    case icSigPs2CRD0Tag: return "psd0"; break;
-    case icSigPs2CRD1Tag: return "psd1"; break;
-    case icSigPs2CRD2Tag: return "psd2"; break;
-    case icSigPs2CRD3Tag: return "psd3"; break;
-    case icSigPs2CSATag: return "ps2s"; break;
-    case icSigPs2RenderingIntentTag: return "ps2i"; break;
-    case icSigRedColorantTag: return "rXYZ"; break;
-    case icSigRedTRCTag: return "rTRC"; break;
-    case icSigScreeningDescTag: return "scrd"; break;
-    case icSigScreeningTag: return "scrn"; break;
-    case icSigTechnologyTag: return "tech"; break;
-    case icSigUcrBgTag: return "bfd"; break;
-    case icSigViewingCondDescTag: return "vued"; break;
-    case icSigViewingConditionsTag: return "view"; break;
-    case 1147500100: return "DevD"; break;
-    case 1128875332: return "CIED"; break;
-    case 1349350514: return "Pmtr"; break;
-    case 1986226036: return "vcgt"; break;
-    case 1667785060: return "chad"; break;
-    case icSigChromaticityType: return "chrm"; break;
-    case 1668051567: return "clro"; break;
-    case 1668051572: return "clrt"; break;
-    case 0x62303135: return "b015"; break; /* binuscan targ data */
-    case 0: return "----"; break;
+    case icSigAToB0Tag: return "A2B0";
+    case icSigAToB1Tag: return "A2B1";
+    case icSigAToB2Tag: return "A2B2";
+    case icSigBlueColorantTag: return "bXYZ";
+    case icSigBlueTRCTag: return "bTRC";
+    case icSigBToA0Tag: return "B2A0";
+    case icSigBToA1Tag: return "B2A1";
+    case icSigBToA2Tag: return "B2A2";
+    case icSigCalibrationDateTimeTag: return "calt";
+    case icSigCharTargetTag: return "targ";
+    case icSigCopyrightTag: return "cprt";
+    case icSigCrdInfoTag: return "crdi";
+    case icSigDeviceMfgDescTag: return "dmnd";
+    case icSigDeviceModelDescTag: return "dmdd";
+    case icSigGamutTag: return "gamt";
+    case icSigGrayTRCTag: return "kTRC";
+    case icSigGreenColorantTag: return "gXYZ";
+    case icSigGreenTRCTag: return "gTRC";
+    case icSigLuminanceTag: return "lumi";
+    case icSigMeasurementTag: return "meas";
+    case icSigMediaBlackPointTag: return "bkpt";
+    case icSigMediaWhitePointTag: return "wtpt";
+    case icSigNamedColorTag: return "'ncol";
+    case icSigNamedColor2Tag: return "ncl2";
+    case icSigPreview0Tag: return "pre0";
+    case icSigPreview1Tag: return "pre1";
+    case icSigPreview2Tag: return "pre2";
+    case icSigProfileDescriptionTag: return "desc";
+    case 1685283693: return "dscm";
+    case icSigProfileSequenceDescTag: return "pseq";
+    case icSigProfileSequenceIdentifierTag: return "psid";
+    case icSigPs2CRD0Tag: return "psd0";
+    case icSigPs2CRD1Tag: return "psd1";
+    case icSigPs2CRD2Tag: return "psd2";
+    case icSigPs2CRD3Tag: return "psd3";
+    case icSigPs2CSATag: return "ps2s";
+    case icSigPs2RenderingIntentTag: return "ps2i";
+    case icSigRedColorantTag: return "rXYZ";
+    case icSigRedTRCTag: return "rTRC";
+    case icSigScreeningDescTag: return "scrd";
+    case icSigScreeningTag: return "scrn";
+    case icSigTechnologyTag: return "tech";
+    case icSigUcrBgTag: return "bfd";
+    case icSigViewingCondDescTag: return "vued";
+    case icSigViewingConditionsTag: return "view";
+    case 1147500100: return "DevD";
+    case 1128875332: return "CIED";
+    case 1349350514: return "Pmtr";
+    case 1986226036: return "vcgt";
+    case 1667785060: return "chad";
+    case icSigChromaticityType: return "chrm";
+    case 1668051567: return "clro";
+    case 1668051572: return "clrt";
+    case 0x62303135: return "b015"; /* binuscan targ data */
+    case 0: return "----";
     default: { icUInt32Number i = oyValueUInt32( sig );
                static oyChar t[5];
                memcpy (t,(char*)&i, 4);
                t[4] = 0;
                return t;
-               break;
              }
   }
-  return "-";
 }
 
 
@@ -740,22 +736,20 @@ const oyChar *   oyICCDeviceClassDescription ( icProfileClassSignature sig )
 {
   switch (sig)
   {
-    case icSigInputClass: return _("Input"); break;
-    case icSigDisplayClass: return _("Display"); break;
-    case icSigOutputClass: return _("Output"); break;
-    case icSigLinkClass: return _("Link"); break;
-    case icSigAbstractClass: return _("Abstract"); break;
-    case icSigColorSpaceClass: return _("Colour Space"); break;
-    case icSigNamedColorClass: return _("Named Colour"); break;
+    case icSigInputClass: return _("Input");
+    case icSigDisplayClass: return _("Display");
+    case icSigOutputClass: return _("Output");
+    case icSigLinkClass: return _("Link");
+    case icSigAbstractClass: return _("Abstract");
+    case icSigColorSpaceClass: return _("Colour Space");
+    case icSigNamedColorClass: return _("Named Colour");
     default: { icUInt32Number i = oyValueUInt32( sig );
                static oyChar t[5];
                memcpy (t,(char*)&i, 4);
                t[4] = 0;
                return t;
-               break;
              }
   }
-  return "-";
 }
 
 /** Function: oyICCPlatformDescription
@@ -768,21 +762,19 @@ const oyChar *   oyICCPlatformDescription ( icPlatformSignature platform )
 {
   switch (platform)
   {
-    case icSigMacintosh: return _("Macintosh"); break;
-    case icSigMicrosoft: return _("Microsoft"); break;
-    case icSigSolaris: return _("Solaris"); break;
-    case icSigSGI: return _("SGI"); break;
-    case icSigTaligent: return _("Taligent"); break;
-    case icSigUnix: return _("Unix and derivatives"); break;
+    case icSigMacintosh: return _("Macintosh");
+    case icSigMicrosoft: return _("Microsoft");
+    case icSigSolaris: return _("Solaris");
+    case icSigSGI: return _("SGI");
+    case icSigTaligent: return _("Taligent");
+    case icSigUnix: return _("Unix and derivatives");
     default: { icUInt32Number i = oyValueUInt32(platform);
                static oyChar t[5];
                memcpy (t,(char*)&i, 4);
                t[4] = 0;
                return t;
-               break;
              }
   }
-  return "-";
 }
 
 
@@ -796,45 +788,42 @@ const oyChar *   oyICCTagTypeName    ( icTagTypeSignature  sig )
 {
 
   switch (sig) {
-    case icSigCurveType: return "curv"; break;
-    case icSigDataType: return "data"; break;
-    case icSigDateTimeType: return "dtim"; break;
-    case icSigLut16Type: return "mft2"; break;
-    case icSigLut8Type: return "mft1"; break;
-    case icSigMeasurementType: return "meas"; break;
-    case icSigNamedColorType: return "ncol"; break;
-    case icSigProfileSequenceDescType: return "pseq"; break;
-    case icSigProfileSequenceIdentifierType: return "psid"; break;
-    case icSigS15Fixed16ArrayType: return "sf32"; break;
-    case icSigScreeningType: return "scrn"; break;
-    case icSigSignatureType: return "sig"; break;
-    case icSigTextType: return "text"; break;
-    case icSigTextDescriptionType: return "desc"; break;
-    case icSigU16Fixed16ArrayType: return "uf32"; break;
-    case icSigUcrBgType: return "bfd"; break;
-    case icSigUInt16ArrayType: return "ui16"; break;
-    case icSigUInt32ArrayType: return "ui32"; break;
-    case icSigUInt64ArrayType: return "ui64"; break;
-    case icSigUInt8ArrayType: return "ui08"; break;
-    case icSigViewingConditionsType: return "view"; break;
-    case icSigXYZType: return "XYZ"; break;
-    /*case icSigXYZArrayType: return "XYZ"; break;*/
-    case icSigNamedColor2Type: return "ncl2"; break;
-    case icSigCrdInfoType: return "crdi"; break;
-    case icSigChromaticityType: return "chrm"; break;
-    case 1986226036: return "vcgt"; break;
-    case icSigCopyrightTag: return "cprt?"; break; /*??? (Imacon)*/
-    case 1835824483: return "mluc"; break;
+    case icSigCurveType: return "curv";
+    case icSigDataType: return "data";
+    case icSigDateTimeType: return "dtim";
+    case icSigLut16Type: return "mft2";
+    case icSigLut8Type: return "mft1";
+    case icSigMeasurementType: return "meas";
+    case icSigNamedColorType: return "ncol";
+    case icSigProfileSequenceDescType: return "pseq";
+    case icSigProfileSequenceIdentifierType: return "psid";
+    case icSigS15Fixed16ArrayType: return "sf32";
+    case icSigScreeningType: return "scrn";
+    case icSigSignatureType: return "sig";
+    case icSigTextType: return "text";
+    case icSigTextDescriptionType: return "desc";
+    case icSigU16Fixed16ArrayType: return "uf32";
+    case icSigUcrBgType: return "bfd";
+    case icSigUInt16ArrayType: return "ui16";
+    case icSigUInt32ArrayType: return "ui32";
+    case icSigUInt64ArrayType: return "ui64";
+    case icSigUInt8ArrayType: return "ui08";
+    case icSigViewingConditionsType: return "view";
+    case icSigXYZType: return "XYZ";
+    /*case icSigXYZArrayType: return "XYZ";*/
+    case icSigNamedColor2Type: return "ncl2";
+    case icSigCrdInfoType: return "crdi";
+    case icSigChromaticityType: return "chrm";
+    case 1986226036: return "vcgt";
+    case icSigCopyrightTag: return "cprt?"; /*??? (Imacon)*/
+    case 1835824483: return "mluc";
     default: { icUInt32Number i = oyValueUInt32( sig );
                static oyChar t[8];
                memcpy (t,(char*)&i, 4);
                t[4] = 0;
                return t;
-               break;
              }
   }
-
-  return "-";
 }
 
 /** Function: oyICCTechnologyDescription
@@ -846,38 +835,36 @@ const oyChar *   oyICCTagTypeName    ( icTagTypeSignature  sig )
 const oyChar *   oyICCTechnologyDescription ( icTechnologySignature sig )
 {
   switch (sig) {
-    case icSigDigitalCamera: return _("Digital camera"); break; /*dcam*/
-    case icSigFilmScanner: return _("Film scanner"); break; /*fscn*/
-    case icSigReflectiveScanner: return _("Reflective scanner"); break; /*rscn*/
-    case icSigInkJetPrinter: return _("InkJet printer"); break; /*ijet*/
-    case icSigThermalWaxPrinter: return _("Thermal wax printer"); break; /*twax*/
-    case icSigElectrophotographicPrinter: return _("Electrophotographic printer"); break; /*epho*/
-    case icSigElectrostaticPrinter: return _("Electrostatic printer"); break; /*esta*/
-    case icSigDyeSublimationPrinter: return _("Dye sublimation printer"); break; /*dsub*/
-    case icSigPhotographicPaperPrinter: return _("Photographic paper printer"); break; /*rpho*/
-    case icSigFilmWriter: return _("Film writer"); break; /*fprn*/
-    case icSigVideoMonitor: return _("Video Monitor"); break; /*vidm*/
-    case icSigVideoCamera: return _("Video camera"); break; /*vidc*/
-    case icSigProjectionTelevision: return _("Projection Television"); break; /*pjtv*/
-    case icSigCRTDisplay: return _("Cathode ray tube display"); break; /*CRT*/
-    case icSigPMDisplay: return _("Passive matrix monitor"); break; /*PMD*/
-    case icSigAMDisplay: return _("Active matrix monitor"); break; /*AMD*/
-    case icSigPhotoCD: return _("Photo CD"); break; /*KPCD*/
-    case icSigPhotoImageSetter: return _("PhotoImageSetter"); break; /*imgs*/
-    case icSigGravure: return _("Gravure"); break; /*grav*/
-    case icSigOffsetLithography: return _("Offset Lithography"); break; /*offs*/
-    case icSigSilkscreen: return _("Silkscreen"); break; /*silk*/
-    case icSigFlexography: return _("Flexography"); break; /*flex*/
+    case icSigDigitalCamera: return _("Digital camera"); /*dcam*/
+    case icSigFilmScanner: return _("Film scanner"); /*fscn*/
+    case icSigReflectiveScanner: return _("Reflective scanner"); /*rscn*/
+    case icSigInkJetPrinter: return _("InkJet printer"); /*ijet*/
+    case icSigThermalWaxPrinter: return _("Thermal wax printer"); /*twax*/
+    case icSigElectrophotographicPrinter: return _("Electrophotographic printer"); /*epho*/
+    case icSigElectrostaticPrinter: return _("Electrostatic printer"); /*esta*/
+    case icSigDyeSublimationPrinter: return _("Dye sublimation printer"); /*dsub*/
+    case icSigPhotographicPaperPrinter: return _("Photographic paper printer"); /*rpho*/
+    case icSigFilmWriter: return _("Film writer"); /*fprn*/
+    case icSigVideoMonitor: return _("Video Monitor"); /*vidm*/
+    case icSigVideoCamera: return _("Video camera"); /*vidc*/
+    case icSigProjectionTelevision: return _("Projection Television"); /*pjtv*/
+    case icSigCRTDisplay: return _("Cathode ray tube display"); /*CRT*/
+    case icSigPMDisplay: return _("Passive matrix monitor"); /*PMD*/
+    case icSigAMDisplay: return _("Active matrix monitor"); /*AMD*/
+    case icSigPhotoCD: return _("Photo CD"); /*KPCD*/
+    case icSigPhotoImageSetter: return _("PhotoImageSetter"); /*imgs*/
+    case icSigGravure: return _("Gravure"); /*grav*/
+    case icSigOffsetLithography: return _("Offset Lithography"); /*offs*/
+    case icSigSilkscreen: return _("Silkscreen"); /*silk*/
+    case icSigFlexography: return _("Flexography"); /*flex*/
     /*case icMaxEnumTechnology: return _("----"); break;*/
     default: { icUInt32Number i = oyValueUInt32( sig );
                static oyChar t[8];
                memcpy (t,(char*)&i, 4);
                t[4] = 0;
                return t;
-               break;
              }
   }
-  return "-";
 }
 
 /** Function: oyICCChromaticityColorantDescription
@@ -889,15 +876,14 @@ const oyChar *   oyICCTechnologyDescription ( icTechnologySignature sig )
 const oyChar *   oyICCChromaticityColorantDescription ( icSignature sig )
 {
   switch (sig) {
-    case 0: return ""; break;
-    case 1: return _("ITU-R BT.709"); break;
-    case 2: return _("SMPTE RP145-1994"); break;
-    case 3: return _("EBU Tech.3213-E"); break;
-    case 4: return _("P22"); break;
+    case 0: return "";
+    case 1: return _("ITU-R BT.709");
+    case 2: return _("SMPTE RP145-1994");
+    case 3: return _("EBU Tech.3213-E");
+    case 4: return _("P22");
 
-    default: return _("???"); break;
+    default: return _("???");
   }
-  return "-";
 }
 
 /** Function: oyICCIlluminantDescription
@@ -910,20 +896,19 @@ const oyChar *   oyICCChromaticityColorantDescription ( icSignature sig )
 const oyChar *   oyICCIlluminantDescription ( icIlluminant sig )
 {
   switch (sig) {
-    case icIlluminantUnknown: return _("Illuminant unknown"); break;
-    case icIlluminantD50: return _("Illuminant D50"); break;
-    case icIlluminantD65: return _("Illuminant D65"); break;
-    case icIlluminantD93: return _("Illuminant D93"); break;
-    case icIlluminantF2: return _("Illuminant F2"); break;
-    case icIlluminantD55: return _("Illuminant D55"); break;
-    case icIlluminantA: return _("Illuminant A"); break;
-    case icIlluminantEquiPowerE: return _("Illuminant with equal energy E"); break;
-    case icIlluminantF8: return _("Illuminant F8"); break;
+    case icIlluminantUnknown: return _("Illuminant unknown");
+    case icIlluminantD50: return _("Illuminant D50");
+    case icIlluminantD65: return _("Illuminant D65");
+    case icIlluminantD93: return _("Illuminant D93");
+    case icIlluminantF2: return _("Illuminant F2");
+    case icIlluminantD55: return _("Illuminant D55");
+    case icIlluminantA: return _("Illuminant A");
+    case icIlluminantEquiPowerE: return _("Illuminant with equal energy E");
+    case icIlluminantF8: return _("Illuminant F8");
     /*case icMaxEnumIluminant: return _("Illuminant ---"); break;*/
 
-    default: return _("???"); break;
+    default: return _("???");
   }
-  return "-";
 }
 
 /** Function: oyICCStandardObserverDescription
@@ -935,16 +920,13 @@ const oyChar *   oyICCIlluminantDescription ( icIlluminant sig )
 const oyChar *   oyICCStandardObserverDescription ( icStandardObserver sig )
 {
   switch (sig) {
-    case icStdObsUnknown: return _("unknown"); break;
+    case icStdObsUnknown: return _("unknown");
     case icStdObs1931TwoDegrees: return _("2 degree (1931)");
-         break;
     case icStdObs1964TenDegrees: return _("10 degree (1964)");
-         break;
     /*case icMaxStdObs: return _("---"); break;*/
 
-    default: return _("???"); break;
+    default: return _("???");
   }
-  return "-";
 }
 
 
@@ -957,14 +939,13 @@ const oyChar *   oyICCStandardObserverDescription ( icStandardObserver sig )
 const oyChar *   oyICCMeasurementGeometryDescription ( icMeasurementGeometry sig )
 {
   switch (sig) {
-    case icGeometryUnknown: return _("unknown"); break;
-    case icGeometry045or450: return _("0/45, 45/0"); break;
-    case icGeometry0dord0: return _("0/d or d/0"); break;
-    /*case icMaxGeometry: return _("---"); break;*/
+    case icGeometryUnknown: return _("unknown");
+    case icGeometry045or450: return _("0/45, 45/0");
+    case icGeometry0dord0: return _("0/d or d/0");
+    /*case icMaxGeometry: return _("---");*/
 
-    default: return _("???"); break;
+    default: return _("???");
   }
-  return "-";
 }
 
 /** Function: oyICCMeasurementFlareDescription
@@ -976,13 +957,12 @@ const oyChar *   oyICCMeasurementGeometryDescription ( icMeasurementGeometry sig
 const oyChar *   oyICCMeasurementFlareDescription ( icMeasurementFlare sig )
 {
   switch (sig) {
-    case icFlare0: return _("0"); break;
-    case icFlare100: return _("100"); break;
-    /*case icMaxFlare: return _("---"); break;*/
+    case icFlare0: return _("0");
+    case icFlare100: return _("100");
+    /*case icMaxFlare: return _("---");*/
 
-    default: return _("???"); break;
+    default: return _("???");
   }
-  return "-";
 }
 
 
