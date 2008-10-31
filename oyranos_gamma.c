@@ -93,7 +93,7 @@ int main( int argc , char** argv )
                         } else wrong_arg = "-x";
                         if(oy_debug) printf("x=%d\n",x); ++pos; break;
               case 'y': if( pos + 1 < argc )
-                        { y = atoi( argv[pos+1] ); ++pos; break;
+                        { y = atoi( argv[pos+1] );
                           if( y == 0 && strcmp(argv[pos+1],"0") )
                             wrong_arg = "-y";
                         } else wrong_arg = "-y";

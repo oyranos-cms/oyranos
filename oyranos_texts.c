@@ -141,7 +141,7 @@ oyOptionStringsTranslate_ ()
 
     /* The following defaults corespond to the office.policy.xml */
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_START, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_START, 0, 
       0, 0, 0,
       _("Start"),
       _("Oyranos Settings Group"),
@@ -149,7 +149,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_START", 0,NULL)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES, 0, 
       0, 0, 0,
       _("Default Profiles"),
       _("Source and Target Profiles for various situations"),
@@ -157,7 +157,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES", 0, NULL)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_EDIT, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_EDIT, 0, 
       0, 0, 0,
       _("Editing Colour Space"),
       _("Well behaving Colour Space for Editing"),
@@ -165,7 +165,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_EDIT", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED, 0, 
       0, 0, 0,
       _("Assumed Colour Space"),
       _("Assumed Colour Space for untagged colours"),
@@ -173,7 +173,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_ASSUMED", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_DEFAULT_PROFILES_PROOF, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF, 0, 
       0, 0, 0,
       _("Proofing Colour Space"),
       _("Colour Space for Simulating real devices"),
@@ -181,7 +181,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_PROOF", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_PATHS, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_PATHS, 0, 
       0, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
@@ -189,7 +189,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_PATHS", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_POLICY, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_POLICY, 0, 
       0, 0, 0,
       _("Policy"),
       _("Collections of settings in Oyranos"),
@@ -197,7 +197,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_POLICY", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR, 0, 
       0, 0, 0,
       _("Behaviour"),
       _("Settings affecting the Behaviour in various situations"),
@@ -205,7 +205,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_RENDERING, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_RENDERING, 0, 
       0, 0, 0,
       _("Rendering"),
       _("The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"),
@@ -213,7 +213,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_RENDERING", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0, 
       0, 0, 0,
       _("Save Mixed colour space Documents"),
       _("Default Handling of Mixed Colour Spaces inside one single Document"),
@@ -221,7 +221,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_MISSMATCH, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH, 0, 
       0, 0, 0,
       _("Mismatching"),
       _("Decide what to do when the default colour spaces dont match the current ones."),
@@ -229,7 +229,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_MISSMATCH", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_BEHAVIOUR_PROOF, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_PROOF, 0, 
       0, 0, 0,
       _("Proofing"),
       _("Default Proofing Settings"),
@@ -237,7 +237,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_PROOF", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyGROUP_ALL, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_ALL, 0, 
       0, 0, 0,
       _("All"),
       _("Oyranos Settings"),
