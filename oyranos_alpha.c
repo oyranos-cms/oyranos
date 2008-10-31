@@ -1221,8 +1221,9 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
   icColorSpaceSignature cspace = oyProfile_GetSignature( prof, oySIGNATURE_COLOUR_SPACE );
 
   int lcms_space = lcmsColorSpace( cspace );
+#if USE_GETTEXT
   const char * save_locale = setlocale(LC_NUMERIC, 0 );
-
+#endif
   format = fomate[lcms_space];
 
   n *= channels_n;
@@ -1249,8 +1250,9 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
               (int)n/channels_n
             );
 
+#if USE_GETTEXT
   setlocale(LC_NUMERIC, "C");
-
+#endif
     for(i = 0; i < n; ++i)
     {
       int modulo_k = i%(channels_n);
@@ -1296,7 +1298,9 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
     }
     oySprintf_( &daten[oyStrlen_(daten)], "\nEND_DATA\n");
 
+#if USE_GETTEXT
   setlocale(LC_NUMERIC, save_locale);
+#endif
     
   return text;
 }
@@ -14308,7 +14312,9 @@ char             * oyConversion_ToText (
     return 0;
   }
 
+#if USE_GETTEXT
   save_locale = setlocale(LC_NUMERIC, 0 );
+#endif
 
 #define stringAdd(t, txt) oyStringAdd_( t, txt, \
                                         oyAllocateFunc_, oyDeAllocateFunc_ )
@@ -14364,9 +14370,11 @@ char             * oyConversion_ToText (
   stringAdd( &text, "}\n" );
   stringAdd( &text, "\n" );
 
+#if USE_GETTEXT
   setlocale(LC_NUMERIC, "C");
   /* sensible printing */
   setlocale(LC_NUMERIC, save_locale);
+#endif
 
   oyStringAdd_( &text, "", allocateFunc, oyDeAllocateFunc_ );
 
