@@ -3,7 +3,7 @@ Version 0.1.8
 Iñaki Larrañaga Murgoitio (1):
 	* [po]: Basque translations from ICC Examin
 
-Kai-Uwe Behrmann (208):
+Kai-Uwe Behrmann (259):
 	* [conf]: detect distribution on Linux; correct comment
 	* [alpha]: tighten the oyCMMapi3_s profile tag API
 	* [oyra]: pseq tag for device link profiles
@@ -199,6 +199,48 @@ Kai-Uwe Behrmann (208):
 	* [and]: oyranos-monitor seems broken
 	* [and]: some fixes for the monitor backend
 	* [and]: additional monitor API bugfixes
+	* [and]: remove high level configuration checks for FLTK and Elektra
+	* [doc]: correct link to be named ColourWiki in documentation
+	* [build]: let make react more sensible to changes in configuration files
+	* [test]: improve the test case
+	* [and]: fix enum missmatches pointed out on Solaris
+	* [and]: fix enum missmatches pointed out on Solaris
+	* [conf]: fix config.log script for BSD shells
+	* [conf]: more fixes for BSD shell scripts
+	* [and]: fix enum missmatch warning
+	* [and]: fix enum mismatch
+	* [and]: test macro enum mismatch warning
+	* [and]: add missing errno.h include in oyranos_elektra.c
+	* [build]: fix for building on osX
+	* [and]: fix warning on osX and Solaris about const missing for a argument
+	* [conf]: avoid rpath for non linux builds
+	* [build]: complet clean in examples directory
+	* [conf]: test for dso name linker flags
+	* [conf]: verbose dso link name option during configure
+	* [and]: fix
+	* [conf]: add fallback for dso link name option
+	* [conf]: add test file
+	* [build]: fix solaris link error
+	* [build]: fix no getext compiling
+	* [build]: fix for non gettext build in oyranos_alpha.c
+	* [and]: take posix definition of iconv()
+	* [build]: remove GCC specifix -mimpure-text option
+	* [build]: add LCMS_H include path to lcms module; fixes build error
+	* [build]: add LCMS_H include path to general includes
+	* [and]: fix SunC compiler warnings
+	* [and]: fix SunC compiler warnings
+	* [and]: fix non used statement for options parsing
+	* [and]: remove unused statments in oyranos_alpha.c
+	* [fix]: fix some enum missmatch errors in oyranos_alpha.c
+	* [conf]: add intptr test to configure
+	* [conf]: add intptr test file
+	* [conf]: detect compiler settings for 32/64-bit builds suring configure
+	* [build]: let the make install target not fail due to missing profiles
+	* [doc]: give credit to translators and contributors of data
+	* [doc]: correct mentioning of licenses : zlib
+	* [doc]: some hints for ChangeLogs
+	* [doc]: update ChangeLog
+
 
 Milan Knízek (3):
 	* [po]: add czesh translation
