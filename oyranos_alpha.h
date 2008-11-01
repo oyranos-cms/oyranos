@@ -488,9 +488,9 @@ typedef enum {
  */
 typedef union {
   int32_t          int32;
-  int32_t        * int32_list;         /**< first is number of int32 in list */
+  int32_t        * int32_list;         /**< first is element number of int32 list */
   double           dbl;
-  double         * dbl_list;           /**< first is number of dbl in list */
+  double         * dbl_list;           /**< first is element number of dbl list */
   char           * string;             /**< null terminated */
   char          ** string_list;        /**< null terminated */
 } oyValue_u;
