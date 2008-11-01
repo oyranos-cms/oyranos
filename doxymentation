@@ -1,6 +1,6 @@
 /**
     @mainpage
-    <h3 align="center">Copyright 2004-2007 &copy; Kai-Uwe Behrmann</h3>
+    <h3 align="center">Copyright 2004-2008 &copy; Kai-Uwe Behrmann</h3>
 
     @section text_contents Descriptive Contents
     @ref intro |
@@ -11,7 +11,7 @@
     @ref coding |
     @ref api_tutorial
 
-    @author Kai-Uwe Behrmann
+    @author Kai-Uwe Behrmann and others
     @since  March 2004
 
     @par Internet:

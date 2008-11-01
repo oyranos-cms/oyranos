@@ -8,7 +8,8 @@ o update README
 o update Chanagelog (version hint + date) # git shortlog --no-merges 0.1.8 ^0.1.7 > ShortLog; cat ChangeLog >> ShortLog; mv ShortLog ChangeLog
 o update doxymentation
 o create package
+o upload (SF) # rsync -avP -e ssh oyranos-0.1.8.tar.gz beku@frs.sourceforge.net:uploads/
 o update behrmann web site
 o give a note on oyranos.org site
-o email to at least OpenICC
+o email to at least Oyranos-devel and OpenICC
 
