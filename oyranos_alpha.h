@@ -473,7 +473,8 @@ typedef enum {
   oyVAL_DOUBLE,    /*!< IEEE double precission floating point number */
   oyVAL_DOUBLE_LIST,
   oyVAL_STRING,
-  oyVAL_STRING_LIST
+  oyVAL_STRING_LIST,
+  oyVAL_STRUCT
 } oyVALUETYPE_e;
 
 /** @union   oyValue_u
@@ -493,6 +494,8 @@ typedef union {
   double         * dbl_list;           /**< first is element number of dbl list */
   char           * string;             /**< null terminated */
   char          ** string_list;        /**< null terminated */
+
+  oyStruct_s     * oy_struct;          /**< a struct, e.g. a profile */
 } oyValue_u;
 
 void           oyValueCopy           ( oyValue_u         * from,
@@ -1413,8 +1416,8 @@ typedef enum {
   oyCONNECTOR_EVENT_INCOMPLETE_GRAPH   /**< can not completely process */ 
 } oyCONNECTOR_EVENT_e;
 
-/** @struct oyConnector_s
- *  @brief  a filter connection description structure
+/** @struct  oyConnector_s
+ *  @brief   a filter connection description structure
  *  @ingroup objects_conversion
  *
  *  This structure holds informations about the connection capabilities.
@@ -1422,6 +1425,8 @@ typedef enum {
  *
  *  To signal a value is not initialised or does not apply, set the according
  *  integer value to -1.
+ *
+ *  @todo generalise the connector properties
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/26 (Oyranos: 0.1.8)
@@ -1665,6 +1670,9 @@ OYAPI int  OYEXPORT
  *  - oyFILTER_TYPE_IMAGE is a container for one oyImage_s. There is no 
  *    assumption on how the buffers are implemented.
  *  - oyFILTER_TYPE_GENERIC can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
+ *
+ *  @todo generalise the filters data, e.g. oyImage_s -> oyData_s
+ *                                          oyProfiles_s -> oyOptions_s
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/08 (Oyranos: 0.1.8)

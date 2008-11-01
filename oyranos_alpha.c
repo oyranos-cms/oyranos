@@ -4787,6 +4787,13 @@ void           oyValueCopy           ( oyValue_u         * from,
        to->string_list[n] = 0;
 
        break;
+  case oyVAL_STRUCT:
+       if(!from->oy_struct)
+         return;
+       if(from->oy_struct->copy)
+         to->oy_struct = from->oy_struct->copy( from->oy_struct,
+                                                from->oy_struct->oy_ );
+       break;
   }
 }
 
@@ -4839,6 +4846,10 @@ void           oyValueClear          ( oyValue_u         * v,
          deallocateFunc(v->string_list);
        }
 
+       break;
+  case oyVAL_STRUCT:
+       if(v->oy_struct->release)
+         v->oy_struct->release( &v->oy_struct );
        break;
   }
 }
