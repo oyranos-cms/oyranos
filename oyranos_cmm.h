@@ -8,7 +8,8 @@
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
 
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:
+ *  new BSD - see: <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2007/11/12
  */
 
@@ -74,12 +75,6 @@ typedef struct {
   int                  ref;            /**< Oyranos reference counter */
 } oyCMMptr_s;
 
-/*typedef oyChar * (*oyCMMProfile_GetText_f)( oyCMMptr_s   * cmm_ptr,
-                                       oyNAME_e            type,
-                                       const char          language[4],
-                                       const char          country[4],
-                                       oyAlloc_f           allocateFunc );
-*/
 typedef int      (*oyCMMProfile_Open_f)( oyPointer         block,
                                        size_t              size,
                                        oyCMMptr_s        * oy );
@@ -202,8 +197,6 @@ typedef struct {
   oyCMMCanHandle_f oyCMMCanHandle;
 
   oyCMMProfile_Open_f oyCMMProfile_Open;
-  /*oyCMMProfile_GetText_f oyCMMProfile_GetText;*/
-  /*oyCMMProfile_GetSignature_f oyCMMProfile_GetSignature;*/
   oyCMMColourConversion_Create_f oyCMMColourConversion_Create;
   oyCMMColourConversion_FromMem_f oyCMMColourConversion_FromMem;
   oyCMMColourConversion_ToMem_f oyCMMColourConversion_ToMem;

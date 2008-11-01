@@ -319,109 +319,6 @@ int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
   return error;
 }
 
-/* oyCMMProfileOpen_t */
-#if 0
-oyChar     *       lcmsCMMProfile_GetText(oyCMMptr_s        * cmm_ptr,
-                                       oyNAME_e            type,
-                                       const char          language[4],
-                                       const char          country[4],
-                                       oyAlloc_f           allocateFunc )
-{
-  const char * name = 0;
-  lcmsProfileWrap_s * s = lcmsCMMProfile_GetWrap_(cmm_ptr);
-
-  if(!lcmsCMMCheckPointer( cmm_ptr, oyCMM_PROFILE ) && s)
-  {
-    if(language && country)
-      cmsSetLanguage(language, country);
-
-    switch(type)
-    {
-      case oyNAME_ID:
-      case oyNAME_PROD_DESC:
-           name = cmsTakeProductDesc( s->lcms );
-           break;
-      case oyNAME_PROD_NAME:
-      case oyNAME_NAME:
-           name = cmsTakeProductName( s->lcms );
-           break;
-      case oyNAME_INFO:
-      case oyNAME_DESCRIPTION:
-           name = cmsTakeProductInfo( s->lcms );
-           break;
-      case oyNAME_COPYRIGHT:
-           name = cmsTakeCopyright( s->lcms );
-           break;
-      case oyNAME_MODELL:
-           name = cmsTakeModel( s->lcms );
-           break;
-      case oyNAME_MANUFACTURER:
-           name = cmsTakeManufacturer( s->lcms );
-           break;
-    }
-  }
-
-  if(name)
-  {
-    char * tmp = allocateFunc( sizeof(char) * strlen( name ) + 1 );
-
-    sprintf( tmp, "%s", name );
-    name = tmp;
-  }
-
-  return (char*)name;
-}
-#endif
-
-/** @func    lcmsCMMProfile_GetSignature
- *  @brief   the API 1 to implement and set by a CMM
- *
- *  @version Oyranos: 0.1.8
- *  @date    2007/12/10
- *  @since   2007/12/10 (Oyranos: 0.1.8)
- */
-icSignature      lcmsCMMProfile_GetSignature (oyCMMptr_s * cmm_ptr,
-                                       int                 pcs )
-{
-  icColorSpaceSignature sig = 0;
-  int error = !cmm_ptr;
-  cmsHPROFILE profile = 0;
-  icHeader *h = 0;
-  lcmsProfileWrap_s * s = 0;
-  
-  if(!error)
-    s = lcmsCMMProfile_GetWrap_( cmm_ptr );
-
-  if(!error)
-    error = !s;
-
-  if(!error)
-    profile = s->lcms;
-
-  if(s && s->sig)
-    return s->sig;
-
-  if(!error)
-    h = (icHeader*) s->block;
-
-  if(!error)
-  {
-    if(pcs)
-      sig = cmsGetPCS( s->lcms );
-    else
-      sig = cmsGetColorSpace( s->lcms );
-  }
-
-  if(!error)
-  {
-    if(pcs)
-      sig = oyValueCSpaceSig( h->pcs );
-    else
-      sig = oyValueCSpaceSig( h->colorSpace );
-  }
-
-  return sig;
-}
 
 
 /** @func    oyPixelToCMMPixelLayout_
@@ -1043,10 +940,10 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsFilter_CmmIccValidateOptions,
   lcmsWidgetEvent,
 
-  0,
-  0,
-  /*lcmsFilter_CmmIccContextToMem*/0,
-  0,
+  lcmsCMMProfile_Open,
+  0, /* oyCMMFilter_CreateContext_f */
+  0, /* lcmsFilter_CmmIccContextToMem */ /* oyCMMFilter_ContextToMem_f */
+  0, /* oyCMMFilter_ContextFromMem_f */
   lcmsFilterPlug_CmmIccRun,
 
   {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
@@ -1082,8 +979,6 @@ oyCMMapi1_s  lcms_api1 = {
   lcmsCMMCanHandle,
 
   lcmsCMMProfile_Open,
-  /*lcmsCMMProfile_GetText,
-  lcmsCMMProfile_GetSignature,*/
   lcmsCMMColourConversion_Create,
   lcmsCMMColourConversion_FromMem,
   lcmsCMMColourConversion_ToMem,
