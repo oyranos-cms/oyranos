@@ -11394,6 +11394,10 @@ oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
     s->image_ = oyImage_Copy_( filter->image_, s->oy_ );
     s->profiles_ = oyProfiles_Copy( filter->profiles_, s->oy_ );
     s->api4_ = filter->api4_;
+
+    if(!error && filter->backend_data && filter->backend_data->copy)
+      s->backend_data = filter->backend_data->copy( filter->backend_data , s->oy_ );
+
   }
 
   return s;
@@ -11462,6 +11466,10 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
+
+  if( s->backend_data && s->backend_data->release )
+    s->backend_data->release( &s->backend_data );
+  s->backend_data = 0;
 
   s->registration_ = 0;
 
@@ -12257,9 +12265,6 @@ oyFilterNode_s *   oyFilterNode_Copy_( oyFilterNode_s    * node,
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
 
-  if(!error && node->data && node->data->copy)
-    s->data = node->data->copy( node->data , s->oy_ );
-
   return s;
 }
 
@@ -12324,10 +12329,6 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
-
-  if( s->data && s->data->release )
-    s->data->release( &s->data );
-  s->data = 0;
 
   if(s->oy_->deallocateFunc_)
   {
@@ -13728,6 +13729,7 @@ oyConversion_s *   oyConversion_New_ ( oyObject_s          object )
 oyConversion_s   * oyConversion_CreateBasic (
                                        oyImage_s         * input,
                                        oyImage_s         * output,
+                                       oyProfiles_s      * profiles,
                                        oyOptions_s       * options,
                                        oyObject_s          object )
 {
@@ -13740,6 +13742,10 @@ oyConversion_s   * oyConversion_CreateBasic (
     s = oyConversion_CreateInput ( input, 0 );
 
     filter = oyFilter_New( oyFILTER_TYPE_COLOUR_ICC, "//colour_icc", 0,0, 0 );
+
+    if(filter && profiles)
+      filter->profiles_ = oyProfiles_Copy( profiles, 0 );
+
     error = oyConversion_FilterAdd( s, filter );
     if(error)
       WARNc1_S( "could not add  filter: %s\n", "//colour_icc" );

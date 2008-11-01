@@ -1645,9 +1645,10 @@ OYAPI int  OYEXPORT
  *  @brief  a filter to manipulate a image
  *  @ingroup objects_conversion
  *
- *  This is the Oyranos filter object. There are basic classes of filters.
- *  Filters implement a container. They can contain various data and options.
- *  Filters can be manipulated by changing their options or data.
+ *  This is the Oyranos filter object. Filters are categorised into basic
+ *  classes of filters described in the filter_type_ member.
+ *  Filters implement a container for data and options.
+ *  Filters can be manipulated by changing their options or data set.
  *
  *  Filters are chained into a oyConversion_s in order to get applied to data.
  *  The relation of filters in a graph is defined through the oyFilterNode_s
@@ -1689,6 +1690,8 @@ struct oyFilter_s {
   oyProfiles_s       * profiles_;      /**< profiles */
 
   oyCMMapi4_s        * api4_;          /**<  */
+
+  oyStruct_s         * backend_data;   /**< the filters private data */
 };
 
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,
@@ -1883,8 +1886,6 @@ struct oyFilterNode_s {
 
   oyFilter_s         * filter;         /**< the filter */
   char               * relatives_;     /**< hint about belonging to a filter */
-
-  oyStruct_s         * data;           /**< the filters private data */
 };
 
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );
@@ -2069,6 +2070,7 @@ struct oyPixelAccess_s {
   size_t           pixels_n;           /**< pixels to process/cache at once; should be set to 0 or 1 */
 
   int32_t          workspace_id;       /**< a ID to assign distinct resources to */
+  oyStruct_s     * user_data;          /**< user data, e.g. for error messages*/
 };
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
@@ -2240,6 +2242,7 @@ typedef struct {
 oyConversion_s  *  oyConversion_CreateBasic (
                                        oyImage_s         * input,
                                        oyImage_s         * output,
+                                       oyProfiles_s      * profiles,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 oyConversion_s  *  oyConversion_CreateInput (
