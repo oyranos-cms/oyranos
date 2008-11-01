@@ -13740,7 +13740,6 @@ oyConversion_s *   oyConversion_New_ ( oyObject_s          object )
 oyConversion_s   * oyConversion_CreateBasic (
                                        oyImage_s         * input,
                                        oyImage_s         * output,
-                                       oyProfiles_s      * profiles,
                                        oyOptions_s       * options,
                                        oyObject_s          object )
 {
@@ -13753,9 +13752,6 @@ oyConversion_s   * oyConversion_CreateBasic (
     s = oyConversion_CreateInput ( input, 0 );
 
     filter = oyFilter_New( oyFILTER_TYPE_COLOUR_ICC, "//colour_icc", 0,0, 0 );
-
-    if(filter && profiles)
-      filter->profiles_ = oyProfiles_Copy( profiles, 0 );
 
     error = oyConversion_FilterAdd( s, filter );
     if(error)

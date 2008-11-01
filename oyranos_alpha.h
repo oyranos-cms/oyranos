@@ -2250,7 +2250,6 @@ typedef struct {
 oyConversion_s  *  oyConversion_CreateBasic (
                                        oyImage_s         * input,
                                        oyImage_s         * output,
-                                       oyProfiles_s      * profiles,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 oyConversion_s  *  oyConversion_CreateInput (
