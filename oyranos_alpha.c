@@ -3177,7 +3177,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
     if(queries && *(uint32_t*)queries->prefered_cmm)
       error = !memcpy( prefered_cmm, queries->prefered_cmm, 4 );
     else
-      error = !memcpy( prefered_cmm, oyModuleGetActual( type ), 4 );
+      error = !memcpy( prefered_cmm, oyModuleGetActual( filter_type ), 4 );
   }
 
   if(!error &&
@@ -3358,7 +3358,7 @@ oyCMMInfo_s* oyCMMGet_               ( const char        * cmm )
 
   if(!error && !cmm)
   {
-    cmm = oyModuleGetActual(0);
+    cmm = oyModuleGetActual(oyFILTER_TYPE_COLOUR_ICC);
     error = !cmm;
   }
 
@@ -4876,6 +4876,7 @@ void           oyValueRelease        ( oyValue_u        ** v,
   deallocateFunc(*v);
   *v = 0;
 }
+
 
 static int oy_option_id_ = 0;
 
@@ -6778,7 +6779,7 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
 
   if(!error && !cmm)
   {
-    cmm = oyModuleGetActual(0);
+    cmm = oyModuleGetActual(oyFILTER_TYPE_COLOUR_ICC);
     error = !cmm;
   }
 
@@ -12775,11 +12776,11 @@ const oyChar *     oyColourConversion_GetID_ (
   int error = !s;
   int i, n;
 
-  oyChar * hash_text = 0;
+  char * hash_text = 0;
 
   if(!error)
   {
-    oyChar text[16];
+    char text[16];
     int intent = oyGetBehaviour( oyBEHAVIOUR_RENDERING_INTENT );
 
     hashTextAdd_m( "oyCC\n" );
@@ -12865,7 +12866,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
   if(!error)
   {
     oyCMMptr_s *cmm_ptr = 0;
-    const char *cmm = oyModuleGetActual( type );
+    const char *cmm = oyModuleGetActual( oyFILTER_TYPE_COLOUR_ICC );
     const oyChar * tmp = 0;
  
     oyHash_s * entry = 0;
@@ -15209,11 +15210,16 @@ int               oyNamedColours_ReleaseAt ( oyNamedColours_s * obj,
 
  *  @{
  */
-const char *  oyModuleGetActual       ( unsigned int       flags )
+const char *  oyModuleGetActual       ( oyFILTER_TYPE_e    type )
 {
+  static char * none = OY_PROFILE_NONE;
   oyExportStart_(EXPORT_CMMS);
   oyExportEnd_();
+
+  if(type == oyFILTER_TYPE_COLOUR || type == oyFILTER_TYPE_COLOUR_ICC)
   return "lcms";
+  else
+  return none;
 }
 
 uint32_t     oyCMMtoId               ( const char        * cmm )
