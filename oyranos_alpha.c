@@ -118,16 +118,15 @@ oyColourConversion_s* oyColourConversion_Create_ (
                                        oyImage_s         * in,
                                        oyImage_s         * out,
                                        oyObject_s          object);
-const oyChar *     oyColourConversion_GetID_ (
-                                       oyColourConversion_s * s,
-                                       oyProfiles_s * list,
-                                       oyOptions_s     * opts,
-                                       oyImage_s       * in,
-                                       oyImage_s       * out);
 oyPointer    oyColourConversion_ToMem_(
                                        oyColourConversion_s * oy,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
+const char *   oyColourContextGetID_ ( oyStruct_s      * s,
+                                       oyProfiles_s    * list,
+                                       oyOptions_s     * opts,
+                                       oyImage_s       * in,
+                                       oyImage_s       * out);
 
 int          oyCMMdsoRelease_        ( const char        * cmm );
 int          oyCMMdsoSearch_         ( const char        * cmm );
@@ -12763,12 +12762,18 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
 /** @internal describe a transform uniquely
  *  @relates oyColourConversion_s
  *
+ *  @param[in,out] s                   the context's object 
+ *  @param[in]     list                the profiles
+ *  @param[in]     opts                options
+ *  @param[in]     in                  input image
+ *  @param[in]     out                 output image
+ *  @return                            the objects ID text
+ *
  *  @since Oyranos: version 0.1.8
  *  @date  26 november 2007 (API 0.1.8)
  */
-const oyChar *     oyColourConversion_GetID_ (
-                                       oyColourConversion_s * s,
-                                       oyProfiles_s * list,
+const char *   oyColourContextGetID_ ( oyStruct_s      * s,
+                                       oyProfiles_s    * list,
                                        oyOptions_s     * opts,
                                        oyImage_s       * in,
                                        oyImage_s       * out)
@@ -12883,7 +12888,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
 
     /* 1. create hash text */
     hashTextAdd_m( cmm );
-    tmp = oyColourConversion_GetID_( s, list, opts, in, out );
+    tmp = oyColourContextGetID_( (oyStruct_s*)s, list, opts, in, out );
     hashTextAdd_m( tmp );
 
     /* 2. query in cache */
