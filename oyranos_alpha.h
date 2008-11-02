@@ -2522,6 +2522,7 @@ char **        oyModulsGetNames      ( int               * count,
 const char *   oyModulGetOptions     ( const char        * cmm,
                                        oyObject_s          object);
 const char *   oyModuleGetActual     ( unsigned int        flags );
+const char *   oyModuleGetActual     ( oyFILTER_TYPE_e     type );
 
 
 /* --- Image Colour Profile API --- */
