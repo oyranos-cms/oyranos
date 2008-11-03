@@ -304,8 +304,8 @@ typedef struct {
  *  @since   2008/06/24 (Oyranos: 0.1.8)
  *  @date    2008/07/02
  */
-typedef int      (*oyCMMFilter_CreateContext_f) (
-                                       oyFilter_s        * filter,
+typedef int      (*oyCMMFilterNode_CreateContext_f) (
+                                       oyFilterNode_s    * node,
                                        oyCMMptr_s       ** cmm_profile_array,
                                        int                 profiles_n,
                                        oyCMMptr_s        * oy );
@@ -427,7 +427,7 @@ struct  oyCMMapi4_s {
   /** mandatory for "..colour" filters */
   oyCMMProfile_Open_f          oyCMMProfile_Open;
   /** mandatory for "..colour" filters */
-  oyCMMFilter_CreateContext_f  oyCMMFilter_CreateContext;
+  oyCMMFilterNode_CreateContext_f  oyCMMFilterNode_CreateContext;
   /** mandatory for "..colour" filters */
   oyCMMFilter_ContextToMem_f   oyCMMFilter_ContextToMem;
   /** mandatory for "..colour" filters */

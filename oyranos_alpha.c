@@ -12191,46 +12191,71 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
  *  @param[in]     out                 output image
  *  @return                            the objects ID text
  *
- *  @since Oyranos: version 0.1.8
- *  @date  26 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
  */
-const char *   oyColourContextGetID_ ( oyStruct_s      * s,
+const char *   oyContextGetID_       ( oyStruct_s      * s,
                                        oyProfiles_s    * list,
                                        oyOptions_s     * opts,
-                                       oyImage_s       * in,
-                                       oyImage_s       * out)
+                                       oyStructList_s  * ins,
+                                       oyStructList_s  * outs )
 {
   int error = !s;
   int i, n;
 
   char * hash_text = 0;
 
+  oyStruct_s * oy_struct = 0;
+
   if(!error)
   {
-    char text[16];
-    int intent = oyGetBehaviour( oyBEHAVIOUR_RENDERING_INTENT );
-
     hashTextAdd_m( "oyCC\n" );
-    hashTextAdd_m( "\"\nimage in = " );
-    hashTextAdd_m( oyObject_GetName( in->oy_, oyNAME_NICK ) );
 
+    /* input data */
+    n = oyStructList_Count( ins );
+    for(i = 0; i < n; ++i)
+    {
+      oy_struct = oyStructList_Get_( ins, i );
+      hashTextAdd_m( "\"\ndata in = " );
+      hashTextAdd_m( oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
+    }
+
+    /* profiles TODO merge with options */
     n = oyProfiles_Count( list );
     for(i = 0; i < n; ++i)
     {
       oyProfile_s * p = oyProfiles_Get( list, i );
       if(i == 0)
-        hashTextAdd_m( "  effect = \"" );
+        hashTextAdd_m( "  profiles = \"" );
       hashTextAdd_m( oyProfile_GetText( p, oyNAME_NAME ) );
       oyProfile_Release( &p );
       hashTextAdd_m( "\"\n" );
     }
 
-    hashTextAdd_m( "\"\nintent = " );
-    oySprintf_( text, "%d\n", intent );
-    hashTextAdd_m( text );
+    /* options -> xforms */
+    n = oyOptions_Count( opts );
+    for(i = 0; i < n; ++i)
+    {
+      oyOption_s * o = oyOptions_Get( opts, i );
+      hashTextAdd_m( "  <options name=\"" );
+      hashTextAdd_m( oyName_get_( &o->name, oyNAME_NAME ) );
+      hashTextAdd_m( "\" type=\"" );
+      hashTextAdd_m( oyValueTypeText( o->value_type ) );
+      hashTextAdd_m( "\"" );
+      hashTextAdd_m( oyOption_GetText( o, oyNAME_NAME ) );
+      oyOption_Release( &o );
+      hashTextAdd_m( ">\n" );
+    }
 
-    hashTextAdd_m( "image out = " );
-    hashTextAdd_m( oyObject_GetName( out->oy_, oyNAME_NICK ) );
+    /* output data */
+    n = oyStructList_Count( outs );
+    for(i = 0; i < n; ++i)
+    {
+      oy_struct = oyStructList_Get_( outs, i );
+      hashTextAdd_m( "\"\ndata out = " );
+      hashTextAdd_m( oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
+    }
 
     oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
 
@@ -12240,6 +12265,29 @@ const char *   oyColourContextGetID_ ( oyStruct_s      * s,
   }
 
   hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
+
+  return hash_text;
+}
+
+const char *   oyColourContextGetID_ ( oyStruct_s      * s,
+                                       oyProfiles_s    * list,
+                                       oyOptions_s     * opts,
+                                       oyImage_s       * in,
+                                       oyImage_s       * out)
+{
+  const char * hash_text = 0;
+  oyStructList_s * ins = oyStructList_New(0),
+                 * outs = oyStructList_New(0);
+  oyStruct_s * s_in = (oyStruct_s*)oyImage_Copy( in, 0 ),
+             * s_out = (oyStruct_s*)oyImage_Copy( out, 0 );
+
+  oyStructList_MoveIn( ins, &s_in, -1 );
+  oyStructList_MoveIn( outs, &s_out, -1 );
+
+  hash_text = oyContextGetID_( s, list, opts, ins, outs );
+
+  oyStructList_Release( &ins );
+  oyStructList_Release( &outs );
 
   return hash_text;
 }
