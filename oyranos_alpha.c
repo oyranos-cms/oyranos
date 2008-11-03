@@ -10747,13 +10747,8 @@ oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
     s->category_ = oyStringCopy_( filter->category_, allocateFunc_ );
     s->options_ = oyOptions_Copy( filter->options_, s->oy_ );
     s->opts_ui_ = oyStringCopy_( filter->opts_ui_, allocateFunc_ );
-    s->image_ = oyImage_Copy_( filter->image_, s->oy_ );
     s->profiles_ = oyProfiles_Copy( filter->profiles_, s->oy_ );
     s->api4_ = filter->api4_;
-
-    if(!error && filter->backend_data && filter->backend_data->copy)
-      s->backend_data = filter->backend_data->copy( filter->backend_data , s->oy_ );
-
   }
 
   return s;
@@ -10822,10 +10817,6 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
-
-  if( s->backend_data && s->backend_data->release )
-    s->backend_data->release( &s->backend_data );
-  s->backend_data = 0;
 
   s->registration_ = 0;
 
@@ -11493,6 +11484,11 @@ oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object )
 
   s->relatives_ = 0;
 
+  if( s->backend_data && s->backend_data->release )
+    s->backend_data->release( &s->backend_data );
+  s->backend_data = 0;
+
+
   if(error)
     oyFilterNode_Release( &s );
 
@@ -11577,6 +11573,13 @@ oyFilterNode_s *   oyFilterNode_Copy_( oyFilterNode_s    * node,
   s = oyFilterNode_Create( node->filter, object );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
+
+
+  if(!error)
+  {
+    if(!error && node->backend_data && node->backend_data->copy)
+      s->backend_data = node->backend_data->copy( node->backend_data , s->oy_ );
+  }
 
   return s;
 }
