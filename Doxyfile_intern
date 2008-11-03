@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Oyranos
-PROJECT_NUMBER         = 0.1.8
+PROJECT_NUMBER         = 0.1.9
 OUTPUT_DIRECTORY       = doc_intern/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = German
