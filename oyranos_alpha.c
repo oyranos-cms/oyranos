@@ -4198,6 +4198,29 @@ void           oyValueRelease        ( oyValue_u        ** v,
   *v = 0;
 }
 
+/** Function oyValueTypeText
+ *  @relates oyValue_u
+ *  @brief   obtain a short string about union type
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
+{
+  switch(type)
+  {
+  case oyVAL_INT:         return "xs:integer";
+  case oyVAL_DOUBLE:      return "xs:double";
+  case oyVAL_INT_LIST:    return "xs:integer";
+  case oyVAL_DOUBLE_LIST: return "xs:double";
+  case oyVAL_STRING:      return "xs:string";
+  case oyVAL_STRING_LIST: return "xs:string";
+  case oyVAL_STRUCT:      return "struct";
+  }
+  return 0;
+}
+
 
 static int oy_option_id_ = 0;
 
