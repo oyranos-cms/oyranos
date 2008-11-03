@@ -1503,7 +1503,7 @@ digraph G {
   ]
   subgraph { rank=min a }
 
-  b:p->a:s [arrowtail=box];
+  b:p->a:s [arrowtail=crow, arrowhead=box];
 } 
  \enddot
  *
@@ -1568,7 +1568,7 @@ digraph G {
   ]
   subgraph { rank=min a }
 
-  b:p->a:s [arrowtail=box];
+  b:p->a:s [arrowtail=crow, arrowhead=box];
 } 
  \enddot
  *
@@ -1819,7 +1819,7 @@ digraph G {
 </table>>
   ]
 
-  b:p->a:s [arrowtail=box, constraint=false];
+  b:p->a:s [arrowtail=crow, arrowhead=box, constraint=false];
 
   subgraph cluster_0 {
     color=gray;

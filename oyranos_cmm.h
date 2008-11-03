@@ -292,10 +292,10 @@ typedef struct {
 } oyCMMapi3_s;
 
 
-/** @type    oyCMMFilter_CreateContext_f
- *  @brief   create a basic filter context from root image filter
+/** @type    oyCMMFilterNode_CreateContext_f
+ *  @brief   create a basic filter context from root image filter node
  *
- *  @param[in,out] filter              access to the complete filter struct, most important to handle is the oyOptions_s options member
+ *  @param[in,out] node                access to the complete filter node struct, most important to handle is the oyOptions_s filter->options member
  *  @param[in]     cmm_profile_array   the CMM resources cached in Oyranos, e.g. oyCMM_PROFILE
  *  @param[in]     profiles_n          number of cmm_profile_array elements
  *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION

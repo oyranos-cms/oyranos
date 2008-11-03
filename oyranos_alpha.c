@@ -5782,7 +5782,7 @@ OYAPI const oyChar* OYEXPORT
 /** @brief   get a presentable name
  *  @relates oyProfile_s
  *
- *  The type argument should select the folloing string in return:<br> 
+ *  The type argument should select the following string in return: \n
  *  - oyNAME_NAME - a readable XML element
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
@@ -5808,10 +5808,10 @@ OYAPI const oyChar* OYEXPORT
 
   if(!error && !text)
   {
-    oyChar * temp = 0;
+    char * temp = 0;
     int found = 0;
 
-    oyAllocHelper_m_( temp, oyChar, 1024, 0, error = 1 );
+    oyAllocHelper_m_( temp, char, 1024, 0, error = 1 );
 
     /* Ask the CMM? */
     if(!found && !error &&
@@ -6168,6 +6168,7 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
         char cmm_used[] = {0,0,0,0,0};
         oyCMMProfile_Open_f funcP = 0;
 
+        /* TODO update to oyCMMapi4_s::oyCMMProfile_Open_f */
         oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
                                           cmm, 0, cmm_used, 0,0 );
         if(api && *(uint32_t*)&cmm_used)
@@ -9387,10 +9388,10 @@ digraph G {
     label="Oyranos Filter Graph";
     color=gray;
 
-    a:socket -> b:plug [arrowhead=box, arrowtail=normal];
-    b:socket -> d:plug [arrowhead=box, arrowtail=normal];
-    a:socket -> c:plug [arrowhead=box, arrowtail=normal];
-    c:socket -> d:plug [arrowhead=box, arrowtail=normal];
+    a:socket -> b:plug [arrowhead=none, arrowtail=normal];
+    b:socket -> d:plug [arrowhead=none, arrowtail=normal];
+    a:socket -> c:plug [arrowhead=none, arrowtail=normal];
+    c:socket -> d:plug [arrowhead=none, arrowtail=normal];
   }
 }
  \enddot
@@ -12061,8 +12062,10 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
   return cmm_ptr;
 }
 
-/** @internal describe a transform uniquely
- *  @relates oyColourConversion_s
+/**
+ *  @internal
+ *  Function oyContextGetID_
+ *  @brief   describe a transform uniquely
  *
  *  @param[in,out] s                   the context's object 
  *  @param[in]     list                the profiles
@@ -13639,43 +13642,41 @@ char             * oyConversion_ToText (
   save_locale = setlocale(LC_NUMERIC, 0 );
 #endif
 
-#define stringAdd(t, txt) oyStringAdd_( t, txt, \
-                                        oyAllocateFunc_, oyDeAllocateFunc_ )
 
-  stringAdd( &text, "digraph G {\n" );
-  stringAdd( &text, "  rankdir=LR\n" );
-  stringAdd( &text, "  graph [fontname=Helvetica, fontsize=12];\n" );
-  stringAdd( &text, "  node [shape=record, fontname=Helvetica, fontsize=10, style=\"filled,rounded\"];\n" );
-  stringAdd( &text, "  edge [fontname=Helvetica, fontsize=10];\n" );
-  stringAdd( &text, "\n" );
-  stringAdd( &text, "  conversion [shape=plaintext, label=<\n" );
-  stringAdd( &text, "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n" );
-  stringAdd( &text, "  <tr><td>oyConversions_s</td></tr>\n" );
-  stringAdd( &text, "  <tr><td>\n" );
-  stringAdd( &text, "     <table border=\"0\" cellborder=\"0\" align=\"left\">\n" );
-  stringAdd( &text, "       <tr><td align=\"left\">...</td></tr>\n" );
-  stringAdd( &text, "       <tr><td align=\"left\" port=\"in\">+input</td></tr>\n" );
-  stringAdd( &text, "       <tr><td align=\"left\" port=\"out\">+out_</td></tr>\n" );
-  stringAdd( &text, "       <tr><td align=\"left\">...</td></tr>\n" );
-  stringAdd( &text, "     </table>\n" );
-  stringAdd( &text, "     </td></tr>\n" );
-  stringAdd( &text, "  <tr><td> </td></tr>\n" );
-  stringAdd( &text, "</table>>,\n" );
-  stringAdd( &text, "                    style=\"\", color=black];\n" );
-  stringAdd( &text, "\n" );
+  stringAdd( text, "digraph G {\n" );
+  stringAdd( text, "  rankdir=LR\n" );
+  stringAdd( text, "  graph [fontname=Helvetica, fontsize=12];\n" );
+  stringAdd( text, "  node [shape=record, fontname=Helvetica, fontsize=10, style=\"filled,rounded\"];\n" );
+  stringAdd( text, "  edge [fontname=Helvetica, fontsize=10];\n" );
+  stringAdd( text, "\n" );
+  stringAdd( text, "  conversion [shape=plaintext, label=<\n" );
+  stringAdd( text, "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n" );
+  stringAdd( text, "  <tr><td>oyConversions_s</td></tr>\n" );
+  stringAdd( text, "  <tr><td>\n" );
+  stringAdd( text, "     <table border=\"0\" cellborder=\"0\" align=\"left\">\n" );
+  stringAdd( text, "       <tr><td align=\"left\">...</td></tr>\n" );
+  stringAdd( text, "       <tr><td align=\"left\" port=\"in\">+input</td></tr>\n" );
+  stringAdd( text, "       <tr><td align=\"left\" port=\"out\">+out_</td></tr>\n" );
+  stringAdd( text, "       <tr><td align=\"left\">...</td></tr>\n" );
+  stringAdd( text, "     </table>\n" );
+  stringAdd( text, "     </td></tr>\n" );
+  stringAdd( text, "  <tr><td> </td></tr>\n" );
+  stringAdd( text, "</table>>,\n" );
+  stringAdd( text, "                    style=\"\", color=black];\n" );
+  stringAdd( text, "\n" );
 
   /* add more node descriptions */
   oyConversion_ToTextShowNode_( s->input, &text,
                                 reserved, 0, &counter,
                                 oyAllocateFunc_, oyDeAllocateFunc_ );
 
-  stringAdd( &text, "\n" );
-  stringAdd( &text, "  subgraph cluster_0 {\n" );
-  stringAdd( &text, "    label=\"" );
-  stringAdd( &text, head_line );
-  stringAdd( &text, "\"\n" );
-  stringAdd( &text, "    color=gray;\n" );
-  stringAdd( &text, "\n" );
+  stringAdd( text, "\n" );
+  stringAdd( text, "  subgraph cluster_0 {\n" );
+  stringAdd( text, "    label=\"" );
+  stringAdd( text, head_line );
+  stringAdd( text, "\"\n" );
+  stringAdd( text, "    color=gray;\n" );
+  stringAdd( text, "\n" );
 
   counter = 0;
   /* add more node placements */
@@ -13683,15 +13684,15 @@ char             * oyConversion_ToText (
                                 reserved, 1, &counter,
                                 oyAllocateFunc_, oyDeAllocateFunc_ );
 
-  stringAdd( &text, "\n" );
-  stringAdd( &text, "    conversion:in -> A [arrowhead=none, arrowtail=normal];\n" );
+  stringAdd( text, "\n" );
+  stringAdd( text, "    conversion:in -> A [arrowhead=none, arrowtail=normal];\n" );
   oySprintf_( temp, "    conversion:out -> %c;\n", 'A' + counter - 1 );
-  stringAdd( &text, temp );
-  stringAdd( &text, "  }\n" );
-  stringAdd( &text, "\n" );
-  stringAdd( &text, "  conversion\n" );
-  stringAdd( &text, "}\n" );
-  stringAdd( &text, "\n" );
+  stringAdd( text, temp );
+  stringAdd( text, "  }\n" );
+  stringAdd( text, "\n" );
+  stringAdd( text, "  conversion\n" );
+  stringAdd( text, "}\n" );
+  stringAdd( text, "\n" );
 
 #if USE_GETTEXT
   setlocale(LC_NUMERIC, "C");
@@ -14539,16 +14540,15 @@ int               oyNamedColours_ReleaseAt ( oyNamedColours_s * obj,
 
  *  @{
  */
-const char *  oyModuleGetActual       ( oyFILTER_TYPE_e    type )
+const char *   oyModuleGetActual     ( oyFILTER_TYPE_e     type )
 {
-  static char * none = OY_PROFILE_NONE;
   oyExportStart_(EXPORT_CMMS);
   oyExportEnd_();
 
   if(type == oyFILTER_TYPE_COLOUR || type == oyFILTER_TYPE_COLOUR_ICC)
   return "lcms";
   else
-  return none;
+  return OY_PROFILE_NONE;
 }
 
 uint32_t     oyCMMtoId               ( const char        * cmm )
