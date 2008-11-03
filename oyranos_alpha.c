@@ -10103,6 +10103,8 @@ oyFilterPlug_s * oyFilterPlug_Copy_
 
     s->pattern = oyConnector_Copy( obj->pattern, s->oy_ );
     s->node = oyFilterNode_Copy( obj->node, 0 );
+    if(obj->data && obj->data->copy)
+      s->data = obj->data->copy( obj->data, s->oy_ );
   }
 
   if(error)
@@ -10880,10 +10882,6 @@ const char * oyFilter_GetText        ( oyFilter_s        * filter,
                   s->api4_->version[2]
            );
 
-    if(!error && filter->image_)
-      sprintf( &text[oyStrlen_(text)], "%s\n",
-      oyNoEmptyName_m_(oyObject_GetName( filter->image_->oy_, oyNAME_NICK )));
-
     if(!error && filter->profiles_)
     {
       int i = 0, n = oyProfiles_Count(filter->profiles_);
@@ -10987,45 +10985,6 @@ oyProfiles_s* oyFilter_ProfilesSet( oyFilter_s        * filter,
                                        int                 flags );
 oyProfiles_s* oyFilter_ProfilesGet( oyFilter_s        * filter,
                                        int                 flags );
-/** Function: oyFilter_ImageSet
- *  @relates oyFilter_s
- *  @brief   set filter image
- *
- *  Externally only useful for oyFILTER_TYPE_IMAGE / "//image"
- *
- *  @param[in,out] filter              filter object
- *  @param         image               the image as source
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/06/26
- */
-int          oyFilter_ImageSet       ( oyFilter_s        * filter,
-                                       oyImage_s         * image )
-{
-  if(!filter)
-    return 1;
-  filter->image_ = oyImage_Copy( image, 0 );
-  return !filter->image_;
-}
-/** Function: oyFilter_ImageGet
- *  @relates oyFilter_s
- *  @brief   get filter image
- *
- *  @param[in,out] filter              filter object
- *  @return                            the source image
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/07 (Oyranos: 0.1.8)
- *  @date    2008/07/07
- */
-oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter )
-{
-  if(filter && filter->type_ == oyFILTER_TYPE_IMAGE)
-    return oyImage_Copy( filter->image_, 0 );
-  else
-    return 0;
-}
 
 /** 
  *  @internal
@@ -11742,8 +11701,9 @@ OYAPI int  OYEXPORT
 
   if(a && b && b->type_ == oyOBJECT_CONNECTOR_S)
   {
+    oyFilterSocket_s * sock_first = oyFilterNode_GetSocket( node_first, pos_first );
     match = 1;
-    image = oyImage_Copy( node_first->filter->image_, 0 );
+    image = oyImage_Copy( (oyImage_s*)sock_first->data, 0 );
 
     if(!b->is_plug)
       match = 0;
@@ -12774,16 +12734,18 @@ oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
 oyPixelAccess_s *  oyPixelAccess_Create (
                                        int32_t             start_x,
                                        int32_t             start_y,
-                                       oyFilter_s        * filter,
+                                       oyFilterSocket_s  * sock,
                                        oyPIXEL_ACCESS_TYPE_e type,
                                        oyObject_s          object )
 {
   oyPixelAccess_s * s = oyPixelAccess_New_( object );
-  int error = !s || !filter;
+  int error = !s || !sock;
   int w = 0;
 
   if(!error)
   {
+    oyImage_s * image = (oyImage_s*)sock->data;
+
     s->start_xy[0] = s->start_xy_old[0] = start_x;
     s->start_xy[1] = s->start_xy_old[1] = start_y;
 
@@ -12791,7 +12753,7 @@ oyPixelAccess_s *  oyPixelAccess_Create (
        error = oyFilter_ImageSet ( filter, image );
      
     s->data_in = filter->image_->data; */
-    w = filter->image_->width;
+    w = image->width;
 
     if(type == oyPIXEL_ACCESS_POINT)
     {
@@ -12987,7 +12949,7 @@ int                oyPixelAccess_CalculateNextStartPixel (
   int max = 0, i, n;
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyImage_s * image = socket->node->filter->image_;
+  oyImage_s * image = (oyImage_s*)socket->data;
 
   /* calculate the pixel position we want */
   if(pixel_access->array_xy)
@@ -13129,6 +13091,7 @@ oyConversion_s   * oyConversion_CreateInput (
   oyConversion_s * s = oyConversion_New_( object );
   int error = !s;
   oyFilter_s * filter = 0;
+  oyFilterSocket_s * sock = 0;
 
   if(!error)
   {
@@ -13139,7 +13102,8 @@ oyConversion_s   * oyConversion_CreateInput (
     error = !s->input;
 
     if(!error)
-    error = oyFilter_ImageSet ( s->input->filter, input );
+      sock = oyFilterNode_GetSocket ( s->input, 0 );
+      sock->data = (oyStruct_s*)oyImage_Copy( input, 0 );
   }
 
   if(error)
@@ -13329,7 +13293,8 @@ int                oyConversion_FilterAdd (
                  * last = 0;
   oyConnector_s  * node_plug_connector = 0;
   oyFilterPlug_s * node_plug = 0;
-  oyFilterSocket_s * socket_last = 0;
+  oyFilterSocket_s * socket_last = 0,
+                 * node_socket = 0;
 
   if(!error)
   {
@@ -13375,12 +13340,10 @@ int                oyConversion_FilterAdd (
       if(!error)
         error = !last;
 
-      if(!error && !node->filter->image_)
-        error = oyFilter_ImageSet ( node->filter, last->filter->image_ );
-
       if(last)
       {
         temp = node;
+        node_socket = oyFilterNode_GetSocket( node, 0 );
         node_plug = oyFilterNode_GetPlug( node, 0 );
         node_plug_connector = node_plug->pattern;
 
@@ -13390,6 +13353,11 @@ int                oyConversion_FilterAdd (
         } else
           error = 1;
 
+        if(!error && node_plug->remote_socket_->data)
+          node_socket->data = socket_last->data->copy( socket_last->data, 0 );
+
+        oyFilterSocket_Release( &node_socket );
+
         if(!error)
           oyFilterPlug_ConnectIntoSocket( &node_plug, &socket_last );
 
@@ -13398,8 +13366,6 @@ int                oyConversion_FilterAdd (
       else
         WARNc2_S( "%s: %d", _("?? Nothing to add ??"), oyObject_GetId(s->oy_));
     }
-
-
   }
 
   if(error)
@@ -13428,23 +13394,35 @@ int                oyConversion_OutputAdd (
   int error = !s;
   oyFilter_s * filter = 0;
   oyFilterNode_s * last = 0;
+  oyFilterSocket_s * socket_last = 0;
 
   if(!error)
   {
     filter = oyFilter_New( oyFILTER_TYPE_IMAGE, "//image/output", 0,0, 0);
 
     if(!error)
-      error = oyFilter_ImageSet ( filter, output );
-
-    if(!error)
       error = oyConversion_FilterAdd( conversion, filter );
 
     last = oyFilterNode_GetLastFromLinear_( s->input );
-    
+    socket_last = oyFilterNode_GetSocket( last, 0 );
+
+    /* oyConversion_FilterAdd references the input image in the new filter */
+    oyImage_Release( (oyImage_s**) &socket_last->data );
+    socket_last->data = (oyStruct_s*)oyImage_Copy( output, 0 );
+
     if(!error)
       s->out_ = oyFilterNode_Copy( last, 0 );
 
     oyFilterNode_Release( &last );
+
+    if(!error)
+    {
+      oyFilterNode_s * node = s->input;
+
+      while((node = oyFilterNode_GetNextFromLinear_( node )) != 0)
+        if(!error && node->filter->filter_type_ == oyFILTER_TYPE_COLOUR_ICC)
+          oyFilterNode_ContextSet_( node );
+    }
   }
 
   if(error && s)
@@ -13472,6 +13450,8 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
 {
   oyFilterPlug_s * plug = 0;
   oyFilter_s * filter = 0;
+  oyFilterSocket_s * sock = 0;
+  oyImage_s * image = 0;
   oyArray2d_s * array = 0;
   int error = 0, result;
 
@@ -13479,9 +13459,10 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
   plug = conversion->out_->plugs[0];
   /* should be the same as conversion->out_->filter */
   filter = conversion->out_->filter;
+  sock = oyFilterNode_GetSocket( conversion->out_, 0 );
+  image = (oyImage_s*) sock->data;
 
-  result = oyImage_FillArray( conversion->out_->filter->image_, region, 0,
-                              &array, 0 );
+  result = oyImage_FillArray( image, region, 0, &array, 0 );
   error = ( result != 0 );
 
   if(!error)
@@ -13517,17 +13498,18 @@ oyPointer        * oyConversion_GetOnePixel (
 {
   oyPixelAccess_s * pixel_access = 0;
   oyFilterPlug_s * plug = 0;
-  oyFilter_s * filter = 0;
+  oyFilterSocket_s * sock = 0;
   oyPointer pixel = 0;
   int error = 0;
 
   /* conversion->out_ has to be linear, so we access only the first socket */
   plug = (oyFilterPlug_s*) ((oyFilterSocket_s *)conversion->out_->sockets[0])->requesting_plugs_->list_->ptr_[0];
-  filter = plug->remote_socket_->node->filter;
+  sock = plug->remote_socket_;
 
-  pixel_access = oyPixelAccess_Create ( x, y, filter, oyPIXEL_ACCESS_POINT, 0 );
+  pixel_access = oyPixelAccess_Create ( x, y, sock, oyPIXEL_ACCESS_POINT, 0 );
   /* @todo */
-  error = filter->api4_->oyCMMFilterPlug_Run( plug, pixel_access, 0 );
+  error = sock->node->filter->api4_->oyCMMFilterPlug_Run( plug,
+                                                          pixel_access, 0 );
 
   return pixel;
 }

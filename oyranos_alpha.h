@@ -1521,6 +1521,8 @@ struct oyFilterSocket_s {
   oyFilterNode_s     * node;           /**< filter node for this connector */
   char               * relatives_;     /**< hint about belonging to a filter */
 
+  oyStruct_s         * data;           /**< unprocessed data model */
+
   oyFilterPlugs_s    * requesting_plugs_;/**< all remote inputs */
 };
 
@@ -1695,12 +1697,10 @@ struct oyFilter_s {
   oyOptions_s        * options_;       /**< local options */
   char               * opts_ui_;       /**< xml ui elements for filter options*/
 
-  oyImage_s          * image_;         /**< the referenced image */
+  /*oyImage_s          * image_;*/         /**< the referenced image */
   oyProfiles_s       * profiles_;      /**< profiles */
 
   oyCMMapi4_s        * api4_;          /**<  */
-
-  oyStruct_s         * backend_data;   /**< the filters private data */
 };
 
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,
@@ -1739,9 +1739,6 @@ oyProfiles_s*oyFilter_ProfilesSet    ( oyFilter_s        * filter,
                                        int                 flags );
 oyProfiles_s*oyFilter_ProfilesGet    ( oyFilter_s        * filter,
                                        int                 flags );
-int          oyFilter_ImageSet       ( oyFilter_s        * filter,
-                                       oyImage_s         * image );
-oyImage_s *  oyFilter_ImageGet       ( oyFilter_s        * filter );
 oyPointer    oyFilter_TextToInfo     ( oyFilter_s        * filter,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
@@ -2100,7 +2097,7 @@ typedef enum {
 oyPixelAccess_s *  oyPixelAccess_Create (
                                        int32_t             start_x,
                                        int32_t             start_y,
-                                       oyFilter_s        * filter,
+                                       oyFilterSocket_s  * sock,
                                        oyPIXEL_ACCESS_TYPE_e type,
                                        oyObject_s          object );
 oyPixelAccess_s *  oyPixelAccess_Copy( oyPixelAccess_s   * obj,
