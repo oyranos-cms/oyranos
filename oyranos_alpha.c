@@ -13673,7 +13673,7 @@ int                oyConversion_FilterAdd (
         } else
           error = 1;
 
-        if(!error && node_plug->remote_socket_->data)
+        if(!error && !node_socket->data)
           node_socket->data = socket_last->data->copy( socket_last->data, 0 );
 
         oyFilterSocket_Release( &node_socket );
