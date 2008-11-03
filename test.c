@@ -192,8 +192,8 @@ main(int argc, char** argv)
   }
 
 
-  if(conversion->input->filter->api4_->oyCMMFilter_ContextToMem)
-    ptr = conversion->input->filter->api4_->oyCMMFilter_ContextToMem( conversion->input->filter, &size, 0, malloc );
+  if(conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem)
+    ptr = conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem( conversion->input->filter, &size, 0, malloc );
 
   if(ptr)
     oyWriteMemToFile_( "test_dbg.icc", ptr, size );
