@@ -3311,6 +3311,27 @@ int            oyObject_GetId        ( oyObject_s          obj )
   return -1;
 }
 
+/** @internal
+ *  Function oyObject_Hashed_
+ *  @relates oyObject_s
+ *  @brief   check if a object has a hash sum computed
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/11/02
+ *  @since   2008/11/02 (Oyranos: 0.1.8)
+ */
+int32_t      oyObject_Hashed_        ( oyObject_s          s )
+{
+  int32_t hashed = 0;
+  if(s && s->type_ == oyOBJECT_OBJECT_S)
+      if(((uint32_t*)(&s->hash_[0])) ||
+         ((uint32_t*)(&s->hash_[4])) ||
+         ((uint32_t*)(&s->hash_[8])) ||
+         ((uint32_t*)(&s->hash_[12])) )
+        hashed = 1;
+  return hashed;
+}
+
 /**
  *  @} *//* objects_generic
  */
@@ -6288,14 +6309,10 @@ int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
  */
 int32_t      oyProfile_Hashed_       ( oyProfile_s       * s )
 {
-  int32_t hashed = 0;
   if(s && s->type_ == oyOBJECT_PROFILE_S)
-      if(((uint32_t*)(&s->oy_->hash_[0])) ||
-         ((uint32_t*)(&s->oy_->hash_[4])) ||
-         ((uint32_t*)(&s->oy_->hash_[8])) ||
-         ((uint32_t*)(&s->oy_->hash_[12])) )
-        hashed = 1;
-  return hashed;
+    return oyObject_Hashed_( s->oy_ );
+  else
+    return 0;
 }
 
 /** @internal
