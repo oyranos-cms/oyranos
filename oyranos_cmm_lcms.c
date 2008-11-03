@@ -756,7 +756,21 @@ oyConnector_s lcms_cmmIccPlug_connector = {
 };
 oyConnector_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
 
-/** @func    lcmsFilterPlug_CmmIccRun
+
+/** Function lcmsCMMFilter_CreateContext
+ *  @brief   implement oyCMMFilter_CreateContext_f()
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/01 (Oyranos: 0.1.8)
+ *  @date    2008/11/01
+ */
+int      lcmsCMMFilter_CreateContext ( oyFilter_s        * filter,
+                                       oyCMMptr_s       ** cmm_profile_array,
+                                       int                 profiles_n,
+                                       oyCMMptr_s        * oy )
+{ return 0; }
+
+/** Function lcmsFilterPlug_CmmIccRun
  *  @brief   implement oyCMMFilterPlug_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
@@ -784,7 +798,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   filter = socket->node->filter;
   plug = (oyFilterPlug_s *)socket->node->plugs[0];
   input_filter = plug->remote_socket_->node->filter;
-  input_image = input_filter->image_;
+  input_image = (oyImage_s*)plug->remote_socket_->data;
 
   /* We let the input filter do its processing first. */
   error = input_filter->api4_->oyCMMFilterPlug_Run( plug, ticket, pixel);
@@ -941,7 +955,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsWidgetEvent,
 
   lcmsCMMProfile_Open,
-  0, /* oyCMMFilter_CreateContext_f */
+  lcmsCMMFilter_CreateContext, /* oyCMMFilter_CreateContext_f */
   0, /* lcmsFilter_CmmIccContextToMem */ /* oyCMMFilter_ContextToMem_f */
   0, /* oyCMMFilter_ContextFromMem_f */
   lcmsFilterPlug_CmmIccRun,
