@@ -44,6 +44,7 @@ int          oyObject_Ref            ( oyObject_s          obj );
                                        const char        * resource,
                                        oyStructRelease_f   ptrRelease,
                                        oyChar            * func_name );*/
+int32_t      oyObject_Hashed_        ( oyObject_s          s );
 
 /** \addtogroup alpha Alpha API's
 
@@ -209,6 +210,9 @@ int          oyIdToCMM               ( uint32_t            cmmId,
                                        char              * cmm );
 
 
+
+#define stringAdd(t, txt) oyStringAdd_( &t, txt, \
+                                        oyAllocateFunc_, oyDeAllocateFunc_ )
 #define hashTextAdd_m( text_ ) \
   oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
                             s->oy_->deallocateFunc_ );
@@ -1060,19 +1064,37 @@ int          oyName_boolean          ( oyName_s          * name_a,
 
 
 
+/** @internal
+ *  Function oyStructList_Create
+ *  @brief   create a new oyStruct_s list
+ *
+ *  @param         parent_type         type of parent object
+ *  @param         list_name           optional list name
+ *  @param         object              the optional object
+ *  @return                            a empty list
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/02 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
+ */
+oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
+                                       const char        * list_name,
+                                       oyObject_s          object )
+{
+  oyStructList_s * s = oyStructList_New(object);
+
+  if(!s)
+    return s;
+
+  s->parent_type_ = parent_type;
+  if(list_name)
+    s->list_name = oyStringAppend_(0, list_name, s->oy_->allocateFunc_);
+
+  return s;
+}
 
 /** @internal
  *  @brief create a new pointer list
- *
- *  @param[in]     ptrCopy             This function is later called with the 
- *                                     pointer as the first arg. The second arg  *                                     will be zero.
- *  @param[in]     ptrRelease          A function to later release.
- *                                     With ptr_type part of oyOBJECT_e,
- *                                     the pointer to the pointer will be given
- *                                     as argument (void)(*)(void**),
- *                                     otherwise the simple
- *                                     pointer (void)(*)(void*).
- *  @return                            on success a empty list
  *
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
@@ -1130,7 +1152,7 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
     return s;
   }
 
-  s = oyStructList_New(obj);
+  s = oyStructList_Create( s->type_, s->list_name, obj);
 
   error = !s;
 
@@ -7309,7 +7331,7 @@ OYAPI oyProfiles_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->list_ = oyStructList_New( 0 );
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
 
   return s;
 }
@@ -10175,7 +10197,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->list_ = oyStructList_New( 0 );
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
 
   return s;
 }
@@ -10329,7 +10351,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
 
     if(!error && !s->list_)
     {
-      s->list_ = oyStructList_New( 0 );
+      s->list_ = oyStructList_Create( s->type_, 0, 0 );
       error = !s->list_;
     }
       
@@ -11198,7 +11220,7 @@ OYAPI oyFilters_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->list_ = oyStructList_New( 0 );
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
 
   return s;
 }
@@ -11352,7 +11374,7 @@ OYAPI oyFilters_s * OYEXPORT
 
     if(!error && !s->list_)
     {
-      s->list_ = oyStructList_New( 0 );
+      s->list_ = oyStructList_Create( s->type_, 0, 0 );
       error = !s->list_;
     }
       
@@ -14310,7 +14332,7 @@ oyNamedColours_s* oyNamedColours_New ( oyObject_s       object )
   /* ---- end of common object constructor ------- */
 
   if(!error)
-    s->list_ = oyStructList_New( object );
+    s->list_ = oyStructList_Create( s->type_, 0, object );
 
   return s;
 }
@@ -14454,7 +14476,7 @@ oyNamedColours_s * oyNamedColours_MoveIn ( oyNamedColours_s  * list,
 
     if(!error && !s->list_)
     {
-      s->list_ = oyStructList_New( 0 );
+      s->list_ = oyStructList_Create( s->type_, 0, 0 );
       error = !s->list_;
     }
 

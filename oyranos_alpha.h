@@ -1894,6 +1894,8 @@ struct oyFilterNode_s {
 
   oyFilter_s         * filter;         /**< the filter */
   char               * relatives_;     /**< hint about belonging to a filter */
+
+  oyStruct_s         * backend_data;   /**< the filters private data */
 };
 
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );
