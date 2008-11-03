@@ -13394,6 +13394,42 @@ int          oyConversion_Release    ( oyConversion_s   ** obj )
   return 0;
 }
 
+
+/**
+ *  @internal
+ *  Function: oyFilterNode_GetNextFromLinear_
+ *  @relates oyFilterNode_s
+ *  @brief   get next node from a linear graph 
+ *
+ *  @param[in]     first               filter
+ *  @return                            next node
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/01 (Oyranos: 0.1.8)
+ *  @date    2008/11/01
+ */
+oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
+                                       oyFilterNode_s    * first )
+{
+      oyFilterNode_s * next = 0;
+      oyFilterSocket_s * socket = 0;
+      oyFilterPlug_s * plug = 0;
+
+      {
+        socket = first->sockets[0];
+
+        if(socket)
+          plug = oyFilterPlugs_Get( socket->requesting_plugs_, 0 );
+        if(plug)
+          next = plug->node;
+        else
+          next = 0;
+        oyFilterPlug_Release( &plug );
+      }
+
+  return next;
+}
+
 /**
  *  @internal
  *  Function: oyFilterNode_GetLastFromLinear_
@@ -13412,33 +13448,148 @@ oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
 {
   oyFilterNode_s * next = 0,
                  * last = 0;
-  oyFilterSocket_s * socket = 0;
-  oyFilterPlug_s * plug = 0;
 
       next = last = first;
 
       while(next)
       {
-        socket = last->sockets[0];
-
-        if(socket)
-          plug = oyFilterPlugs_Get( socket->requesting_plugs_, 0 );
-        if(plug)
-          next = plug->node;
-        else
-          next = 0;
-        oyFilterPlug_Release( &plug );
+        next = oyFilterNode_GetNextFromLinear_( next );
 
         if(next)
-        {
           last = next;
-        }
       }
 
   return last;
 }
 
-/** Function: oyConversion_FilterAdd
+/**
+ *  @internal
+ *  Function oyFilterNode_ContextSet_
+ *  @relates oyFilterNode_s
+ *  @brief   set backend context in a filter 
+ *
+ *  @param[in]     s                   filter
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/02 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
+ */
+int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
+{
+  int error = 0;
+  oyFilter_s * s = node->filter;
+
+  if(!error)
+  {
+          oyCMMptr_s ** cmm_profile_array = 0,
+                      * cmm_ptr = 0;
+          int           cmm_profile_array_n = 0;
+          int i, n;
+          oyProfiles_s * list = 0;
+          oyStructList_s * in_datas = oyStructList_New(0),
+                         * out_datas = oyStructList_New(0);
+          oyStruct_s * data = 0;
+          oyHash_s * entry = 0;
+          char * hash_text = 0;
+          const char * tmp = 0;
+ 
+
+          n = oyOptions_Count( s->options_ );
+
+          for( i = 0; i < n; ++i )
+          {
+            oyOption_s * opt = oyOptions_Get( s->options_, i );
+
+            if(opt->value_type == oyVAL_STRUCT)
+            {
+              oyStruct_s * st = opt->value->oy_struct;
+              if(st->type_ == oyOBJECT_PROFILES_S)
+                list = oyProfiles_Copy( (oyProfiles_s*) st, 0 );
+            }
+
+            oyOption_Release( &opt );
+          }
+
+          cmm_profile_array = oyProfiles_GetCMMptrs_( list, s->cmm_ );
+          cmm_profile_array_n = oyProfiles_Count( list );
+
+          /*  Cache Search
+           *  1.     hash from input
+           *  2.     query for hash in cache
+           *  3.     check
+           *  3a.       eighter take cache entry
+           *  3b.       or ask CMM
+           *  3b.1.                update cache entry
+           */
+
+          /* 1. create hash text */
+          hashTextAdd_m( s->registration_ );
+
+          /* pick all plug (input) data */
+          i = 0;
+          while( node->plugs[i] && !error )
+          {
+            data = 0;
+            if(node->plugs[i]->remote_socket_->data)
+              data = data->copy( node->plugs[i]->remote_socket_->data, 0 );
+            error = oyStructList_MoveIn( in_datas, &data, -1 );
+          }
+
+          /* pick all sockets (output) data */
+          i = 0;
+          while( node->sockets[i] && !error )
+          {
+            data = 0;
+            if(node->sockets[i]->data)
+              data = data->copy( node->sockets[i]->data, 0 );
+            error = oyStructList_MoveIn( out_datas, &data, -1 );
+          }
+
+          /* make a description */
+          tmp = oyContextGetID_( (oyStruct_s*)node, list,
+                                 s->options_, in_datas, out_datas );
+          hashTextAdd_m( tmp );
+
+          /* 2. query in cache */
+          entry = oyCMMCacheListGetEntry_( hash_text );
+
+          if(s->oy_->deallocateFunc_)
+            s->oy_->deallocateFunc_( hash_text );
+
+          if(!error)
+          {
+            /* 3. check and 3.a take*/
+            cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+                                                        oyOBJECT_CMM_POINTER_S);
+
+            if(!cmm_ptr)
+            {
+              /* 3b. ask CMM */
+              error = s->api4_->oyCMMFilterNode_CreateContext ( 
+                                  node, cmm_profile_array, cmm_profile_array_n,
+                                  oyCMMptr_New_(oyAllocateFunc_) );
+
+              /* 3b.1. update cache entry */
+              error = oyHash_SetPointer_( entry,
+                                   (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
+            }
+
+            if(!error && cmm_ptr && cmm_ptr->ptr)
+            {
+              oyHash_s * c = oyHash_Copy_(entry, 0);
+              node->backend_data = (oyStruct_s*) c;
+            }
+
+            oyCMMptr_Release_( &cmm_ptr );
+
+          }
+  }
+
+  return error;
+}
+
+/** Function oyConversion_FilterAdd
  *  @relates oyConversion_s
  *  @brief   add a filter to a oyConversion_s filter list
  *
