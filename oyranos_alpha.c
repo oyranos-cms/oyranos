@@ -13533,8 +13533,9 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
           {
             data = 0;
             if(node->plugs[i]->remote_socket_->data)
-              data = data->copy( node->plugs[i]->remote_socket_->data, 0 );
+              data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
             error = oyStructList_MoveIn( in_datas, &data, -1 );
+            ++i;
           }
 
           /* pick all sockets (output) data */
@@ -13543,8 +13544,9 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
           {
             data = 0;
             if(node->sockets[i]->data)
-              data = data->copy( node->sockets[i]->data, 0 );
+              data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
             error = oyStructList_MoveIn( out_datas, &data, -1 );
+            ++i;
           }
 
           /* make a description */
@@ -13673,10 +13675,8 @@ int                oyConversion_FilterAdd (
         } else
           error = 1;
 
-        if(!error && !node_socket->data)
+        if(!error && node_socket && !node_socket->data)
           node_socket->data = socket_last->data->copy( socket_last->data, 0 );
-
-        oyFilterSocket_Release( &node_socket );
 
         if(!error)
           oyFilterPlug_ConnectIntoSocket( &node_plug, &socket_last );
@@ -13714,7 +13714,7 @@ int                oyConversion_OutputAdd (
   int error = !s;
   oyFilter_s * filter = 0;
   oyFilterNode_s * last = 0;
-  oyFilterSocket_s * socket_last = 0;
+  oyFilterPlug_s * plug_last = 0;
 
   if(!error)
   {
@@ -13724,11 +13724,11 @@ int                oyConversion_OutputAdd (
       error = oyConversion_FilterAdd( conversion, filter );
 
     last = oyFilterNode_GetLastFromLinear_( s->input );
-    socket_last = oyFilterNode_GetSocket( last, 0 );
+    plug_last = oyFilterNode_GetPlug( last, 0 );
 
     /* oyConversion_FilterAdd references the input image in the new filter */
-    oyImage_Release( (oyImage_s**) &socket_last->data );
-    socket_last->data = (oyStruct_s*)oyImage_Copy( output, 0 );
+    oyImage_Release( (oyImage_s**) &plug_last->remote_socket_->data );
+    plug_last->remote_socket_->data = (oyStruct_s*)oyImage_Copy( output, 0 );
 
     if(!error)
       s->out_ = oyFilterNode_Copy( last, 0 );
@@ -13770,7 +13770,6 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
 {
   oyFilterPlug_s * plug = 0;
   oyFilter_s * filter = 0;
-  oyFilterSocket_s * sock = 0;
   oyImage_s * image = 0;
   oyArray2d_s * array = 0;
   int error = 0, result;
@@ -13779,8 +13778,7 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
   plug = conversion->out_->plugs[0];
   /* should be the same as conversion->out_->filter */
   filter = conversion->out_->filter;
-  sock = oyFilterNode_GetSocket( conversion->out_, 0 );
-  image = (oyImage_s*) sock->data;
+  image = (oyImage_s*) plug->remote_socket_->data;
 
   result = oyImage_FillArray( image, region, 0, &array, 0 );
   error = ( result != 0 );

@@ -137,7 +137,8 @@ main(int argc, char** argv)
   oyImage_Release( &image_out );
   oyProfile_Release( &prof );
   /* create a very simple pixel iterator */
-  pixel_access = oyPixelAccess_Create( 0,0, conversion->input->filter,
+  pixel_access = oyPixelAccess_Create( 0,0,
+                                 oyFilterNode_GetSocket( conversion->input, 0 ),
                                        oyPIXEL_ACCESS_IMAGE, 0 );
 
   /* show the Oyranos graph with ghostview */
@@ -193,7 +194,7 @@ main(int argc, char** argv)
 
 
   if(conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem)
-    ptr = conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem( conversion->input->filter, &size, 0, malloc );
+    ptr = conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem( conversion->input, &size, 0, malloc );
 
   if(ptr)
     oyWriteMemToFile_( "test_dbg.icc", ptr, size );
