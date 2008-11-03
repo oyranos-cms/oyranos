@@ -80,6 +80,7 @@ CFILES = \
 	$(TARGET)_elektra.c \
 	$(TARGET)_helper.c \
 	$(TARGET)_i18n.c \
+	$(TARGET)_icc.c \
 	$(TARGET)_io.c \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel.c \
