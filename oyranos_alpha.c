@@ -4416,6 +4416,120 @@ int            oyOption_GetId        ( oyOption_s        * obj )
   return -1;
 }
 
+/** Function oyOption_GetText
+ *  @relates oyOption_s
+ *  @brief   get a text dump 
+ *
+ *  Only oyOption_s::value is written.
+
+ *  The type argument should select the following string in return: \n
+ *  - oyNAME_NAME - a readable XFORMS element
+ *  - oyNAME_NICK - the hash ID
+ *  - oyNAME_DESCRIPTION - option registration name
+ *
+ *  @param[in,out] obj                 the option
+ *  @param         type                oyNAME_NICK is equal to an ID
+ *  @return                            the text
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/02 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
+ */
+const char *   oyOption_GetText      ( oyOption_s        * obj,
+                                       oyNAME_e            type )
+{
+  int error = !obj;
+  const char * erg = 0;
+  oyValue_u * v = 0;
+  oyStructList_s * oy_struct_list = 0;
+
+  if(!error)
+    v = obj->value;
+
+  error = !v;
+
+  if(!error)
+  {
+    if(type <= oyNAME_DESCRIPTION)
+      erg = obj->registration;
+    else
+      erg = oyObject_GetName( obj->oy_, type );
+  }
+
+  if(!error && !erg)
+  {
+    int n = 1, i = 0;
+    char * tmp = oyAllocateFunc_(1024),
+         * text = 0;
+
+    stringAdd ( text, "<option>\n" );
+
+    switch(obj->value_type)
+    {
+    case oyVAL_INT_LIST:    n = v->int32_list[0]; break;
+    case oyVAL_DOUBLE_LIST: n = (int)v->dbl_list[0]; break;
+    case oyVAL_STRING_LIST: while( v->string_list[0] ) ++n; break;
+    case oyVAL_INT:
+    case oyVAL_DOUBLE:
+    case oyVAL_STRING:
+    case oyVAL_STRUCT:
+         n = 1; break;
+    }
+
+    if(obj->value_type == oyVAL_STRUCT)
+    {
+      oy_struct_list = (oyStructList_s*) v->oy_struct;
+      if(oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
+        n = oyStructList_Count( oy_struct_list );
+    }
+
+    for(i = 0; i < n; ++i)
+    {
+      stringAdd ( text, "  <item>" );
+      if(obj->value_type == oyVAL_INT)
+        oySprintf_(tmp, "%d", v->int32);
+      if(obj->value_type == oyVAL_DOUBLE)
+        oySprintf_(tmp, "%f", v->dbl); break;
+      if(obj->value_type == oyVAL_INT_LIST)
+        oySprintf_(tmp, "%d", v->int32_list[i+1]); break;
+      if(obj->value_type == oyVAL_DOUBLE_LIST)
+        oySprintf_(tmp, "%f", v->dbl_list[i+1]); break;
+
+      switch(obj->value_type)
+      {
+      case oyVAL_INT:
+      case oyVAL_DOUBLE:
+      case oyVAL_INT_LIST:
+      case oyVAL_DOUBLE_LIST: stringAdd( text, tmp ); break;
+      case oyVAL_STRING:      stringAdd( text, v->string ); break;
+      case oyVAL_STRING_LIST: stringAdd( text, v->string_list[i] ); break;
+      case oyVAL_STRUCT:      break;
+      }
+      if(obj->value_type == oyVAL_STRUCT)
+      {
+        if(oy_struct_list)
+        {
+          oyStruct_s * oy_struct = oyStructList_Get_( oy_struct_list, i );
+          if(oy_struct && oy_struct->oy_)
+            stringAdd ( text, oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
+        } else if(v->oy_struct->oy_)
+          stringAdd ( text, oyObject_GetName( v->oy_struct->oy_, oyNAME_NICK ));
+      }
+      stringAdd ( text, "  </item>\n" );
+    }
+    stringAdd ( text, "</option>\n" );
+
+    oyFree_m_( tmp );
+    oyFree_m_( text );
+
+    error = oyObject_SetName( obj->oy_, text, type );
+  }
+
+  erg = oyObject_GetName( obj->oy_, type );
+
+  return erg;
+}
+
 
 /** Function: oyOption_Match_
  *  @relates oyOption_s
