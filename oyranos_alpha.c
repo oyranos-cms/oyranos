@@ -10014,6 +10014,8 @@ oyFilterSocket_s * oyFilterSocket_Copy_
 
     s->pattern = oyConnector_Copy( obj->pattern, s->oy_ );
     s->node = oyFilterNode_Copy( obj->node, 0 );
+    if(obj->data && obj->data->copy)
+      s->data = obj->data->copy( obj->data, s->oy_ );
   }
 
   if(error)
@@ -10218,8 +10220,6 @@ oyFilterPlug_s * oyFilterPlug_Copy_
 
     s->pattern = oyConnector_Copy( obj->pattern, s->oy_ );
     s->node = oyFilterNode_Copy( obj->node, 0 );
-    if(obj->data && obj->data->copy)
-      s->data = obj->data->copy( obj->data, s->oy_ );
   }
 
   if(error)
