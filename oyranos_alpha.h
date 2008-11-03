@@ -420,6 +420,7 @@ struct oyStructList_s {
   int                  n_;             /**< the number of visible pointers */
   int                  n_reserved_;    /**< the number of allocated pointers */
   char               * list_name;      /**< name of list */
+  oyOBJECT_e           parent_type_;   /**< parents struct type */
 };
 
 oyStructList_s * oyStructList_New    ( oyObject_s          object );

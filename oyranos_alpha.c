@@ -4118,7 +4118,7 @@ void           oyValueCopy           ( oyValue_u         * from,
   }
 }
 
-/** Function: oyValueClear
+/** Function oyValueClear
  *  @relates oyValue_u
  *  @brief   clear a oyValue_u union
  *
@@ -4543,6 +4543,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   oyVAL_DOUBLE_LIST,
   oyVAL_STRING,
   oyVAL_STRING_LIST
+  oyVAL_STRUCT
 */
             }
           }
