@@ -2,6 +2,7 @@
 
 set > testset.txt
 ERROR=0
+WARNING=0
 STRIPOPT='s/-O.// ; s/-isysroot [[:graph:]]*// ; s/-arch ppc// ; s/-arch i386//'
 
 if [ -n "$PKG_CONFIG_PATH" ]; then
@@ -105,6 +106,7 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
         ERROR=1
       else
         echo_="    Warning Elektra:"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        WARNING=1
       fi
       echo_="  no or too old elektra found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       echo_="  need at least version $elektra_min, download: elektra.sf.net"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
@@ -172,6 +174,7 @@ if [ -n "$ARGYLL" ] && [ "$ARGYLL" -gt "0" ]; then
 #        ERROR=1
 #      else
         echo_="    Warning Argyll:"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        WARNING=1
       fi
       echo_="  no or too old argyll found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       echo_="  need at least version $argyll_min, download: www.argyllcms.com"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
@@ -236,6 +239,7 @@ if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
       ERROR=1
     else
       echo_="    Warning: no or too old LCMS found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      WARNING=1
     fi
     echo_="  need at least version 1.14, download: www.littlecms.com"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
   fi
@@ -300,7 +304,6 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
         for i in $MAKEFILE_DIR; do
           test -f "$i/makefile".in && echo "XF86VMODE = 1" >> "$i/makefile"
           test -f "$i/makefile".in && echo "XF86VMODE_INC = $found" >> "$i/makefile"
-          test -f "$i/makefile".in && echo "XF86VMODE_LIB = -lXxf86vm" >> "$i/makefile"
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
@@ -341,7 +344,6 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
         for i in $MAKEFILE_DIR; do
           test -f "$i/makefile".in && echo "XIN = 1" >> "$i/makefile"
           test -f "$i/makefile".in && echo "XINERAMA_INC = $found" >> "$i/makefile"
-          test -f "$i/makefile".in && echo "XINERAMA_LIB = -lXinerama" >> "$i/makefile"
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
@@ -384,12 +386,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
           fi
           rm tests/libtest$EXEC_END
       else
-        if [ $X11 -eq 1 ]; then
-          echo_="!!! ERROR lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-          ERROR=1
-        else
-          echo_="  Warning lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-        fi
+        echo_="lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       fi
     done
   fi
@@ -408,14 +405,19 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
           echo "$l=-l$l" >> "$CONF_TEMP_SH"
           rm tests/libtest$EXEC_END
       else
-        echo_="lib$l not found"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        if [ $X11 -eq 1 ]; then
+          echo_="!!! ERROR lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+          ERROR=1
+        else
+          echo_="lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        fi
       fi
     done
   fi
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
       test -f "$i/makefile".in && echo "X11_INCL=\$(XF86VMODE_INC) \$(XINERAMA_INC)" >> "$i/makefile"
-      test -f "$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 \$(XF86VMODE_LIB) $X_ADD_LIBS \$(XINERAMA_LIB)" >> "$i/makefile"
+      test -f "$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 $X_ADD_LIBS" >> "$i/makefile"
     done
   fi
 fi
@@ -530,6 +532,7 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
       echo_="!!! ERROR !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     else
       echo_="    Warning"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      WARNING=1
     fi
     echo_="           FLTK ($fltkconfig) is not found; download: www.fltk.org"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
   fi
@@ -676,6 +679,9 @@ fi
 # we cannot reimport, just return
 if [ "$ERROR" -ne "0" ]; then 
   echo "error" > error.tmp
+fi
+if [ "$WARNING" -ne "0" ]; then 
+  echo "warning" > warning.tmp
 fi
 exit $ERROR
 

@@ -1,8 +1,10 @@
-#!/bin/sh
+#!/bin/sh 
 
 TARGET=oyranos
 TARGET_NAME=Oyranos
+
 ERROR=0
+WARNING=0
 
 CONF_H=config.h
 CONF=makefile
@@ -70,6 +72,8 @@ nodeps=0
 rpm=0
 verbose=1
 X11=0
+X_ADD_2="X11 Xext Xinerama Xxf86vm"
+LIBS_TEST="ltdl dl iconv intl m"
 
 # find a suitable fltk-config script
 fltkconfig="fltk-config"
@@ -162,7 +166,7 @@ if [ $# -gt 0 ]; then
     fi
     switch=with-x
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
-      X11=2
+      X11=1
     fi
     switch=with-rpath
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
@@ -192,6 +196,18 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       nodeps="1"
     fi
+for i in $X_ADD_2; do
+    checklib=$i switch=disable-lib$checklib
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      nochecklibs="$nochecklibs $checklib"
+    fi
+done
+for i in $LIBS_TEST; do
+    checklib=$i switch=disable-lib$checklib
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      nochecklibs="$nochecklibs $checklib"
+    fi
+done
     switch=help
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
 test -n "$INFOECHO" && $INFOECHO "Usage:"
@@ -219,6 +235,14 @@ test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug 
 test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-verbose                    verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-dependency-tracking        no dependencies [default check]"
+for i in $X_ADD_2; do
+checklib=$i
+test -n "$INFOECHO" && $INFOECHO "   --disable-lib$checklib			do not check for $checklib"
+done
+for i in $LIBS_TEST; do
+checklib=$i
+test -n "$INFOECHO" && $INFOECHO "   --disable-lib$checklib			do not check for $checklib"
+done
 
 test -n "$INFOECHO" && $INFOECHO "   --quick                              generate config files only"
 test -n "$INFOECHO" && $INFOECHO "   --help"
@@ -681,8 +705,18 @@ test -n "$ECHO" && $ECHO "" >> $CONF_SH
 test -n "$INFOECHO" && $INFOECHO ""
 
 # tell about required libs
-LIBS_TEST="ltdl dl iconv intl m"; export LIBS_TEST
-X_ADD_2="X11 Xext Xinerama Xxf86vm"; export X_ADD_2
+new_libs=$LIBS_TEST
+for i in $nochecklibs; do
+  new_libs=`echo $new_libs | sed s/$i//`
+done
+LIBS_TEST=$new_libs
+new_libs=$X_ADD_2
+for i in $nochecklibs; do
+  new_libs=`echo $new_libs | sed s/$i//`
+done
+X_ADD_2=$new_libs
+export X_ADD_2
+export LIBS_TEST
 
 # detect external libs and headers
 if [ -n "$ECHO" ]; then
@@ -698,7 +732,7 @@ if [ -n "$ECHO" ]; then
   #FTGL=1; export FTGL
   FLTK=2; export FLTK
 if [ $OSUNAME != "Darwin" ] ; then
-  X11=2; 
+  X11=1; 
 fi
   export X11
   XINERAMA=2; export XINERAMA
@@ -988,11 +1022,21 @@ if [ $ERROR != 0 ]; then
   test -n "$INFOECHO" && $INFOECHO ""
   rm Makefile $CONF_H $CONF_SH $SPEC $PKGC
   exit
-else
-  if [ -z "$quick" ]; then
-    test -n "$ECHO" && $ECHO "" > mkdepend
-    make depend
-  fi
+elif [ $WARNING != 0 ]; then
+  echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  echo_="!!!                     Warning                              !!!"
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  echo_="!!!                     See Log above                        !!!"
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+fi
+
+if [ -z "$quick" ]; then
+  test -n "$ECHO" && $ECHO "" > mkdepend
+  make depend
 fi
 
 echo_="char * oy_config_log_=\" \\"
