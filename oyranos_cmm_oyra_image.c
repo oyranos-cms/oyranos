@@ -31,13 +31,18 @@
 #include <stdio.h>
 #include <string.h>
 
+oyPointer  oyraFilterNode_ImageRootContextToMem (
+                                       oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyCMMptr_s        * oy,
+                                       oyAlloc_f           allocateFunc );
 
 /** @func    oyraFilter_ImageOutputPPMCanHandle
  *  @brief   inform about image handling capabilities
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/07 (Oyranos: 0.1.8)
- *  @date    2008/10/07
+ *  @date    2008/11/03
  */
 int    oyraFilter_ImageOutputPPMCanHandle (
                                        oyCMMQUERY_e      type,
@@ -54,13 +59,20 @@ oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
+
+#if 0
   oyDATATYPE_e data_type = 0;
   int planar, channels;
+  oyImage_s * image = 0;
+
+  if(!error)
+    filter = node->filter;
 
   if(!error)
     error = filter->type_ != oyOBJECT_FILTER_S;
 
   if(!error)
+  {
     if(filter->image_ && filter->image_->layout_)
     {
       data_type = oyToDataType_m( filter->image_->layout_[0] );
@@ -79,6 +91,8 @@ oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
       if(!error && channels > 4)
         error = 1;
     }
+  }
+#endif
 
   if(!error)
     error = !oyOptions_FindString( validate, "filename", 0 );
@@ -188,7 +202,7 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
 
   0,
   0,
-  oyraFilter_ImageRootContextToMem,
+  oyraFilterNode_ImageRootContextToMem,
   0,
   oyraFilterPlug_ImageOutputPPMRun,
 
@@ -269,6 +283,7 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
   if(!error)
     error = filter->type_ != oyOBJECT_FILTER_S;
 
+#if 0
   if(!error)
     if(filter->image_ && filter->image_->layout_)
     {
@@ -282,13 +297,14 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
                                    ))
         error = 1;
     }
+#endif
 
   *result = error;
 
   return 0;
 }
 
-/** @func    oyraFilter_ImageRootContextToMem
+/** @func    oyraFilterNode_ImageRootContextToMem
  *  @brief   implement oyCMMFilter_ContextToMem_f()
  *
  *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
@@ -299,13 +315,13 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
  *  @since   2008/07/17 (Oyranos: 0.1.8)
  *  @date    2008/07/18
  */
-oyPointer  oyraFilter_ImageRootContextToMem (
-                                       oyFilter_s        * filter,
+oyPointer  oyraFilterNode_ImageRootContextToMem (
+                                       oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc )
 {
-  return oyFilter_TextToInfo( filter, size, allocateFunc );
+  return oyFilter_TextToInfo( node->filter, size, allocateFunc );
 }
 
 /** @func    oyraFilterPlug_ImageRootRun
@@ -324,7 +340,7 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
   int is_allocated = 0;
   oyPointer * ptr = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyImage_s * image = socket->node->filter->image_;
+  oyImage_s * image = (oyImage_s*)socket->data;
 
   x = ticket->start_xy[0];
   y = ticket->start_xy[1];
@@ -465,7 +481,7 @@ oyCMMapi4_s   oyra_api4_image_output = {
 
   0,
   0,
-  oyraFilter_ImageRootContextToMem,
+  oyraFilterNode_ImageRootContextToMem,
   0,
   oyraFilterPlug_ImageOutputRun,
 
@@ -510,7 +526,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
 
   0,
   0,
-  oyraFilter_ImageRootContextToMem,
+  oyraFilterNode_ImageRootContextToMem,
   0,
   oyraFilterPlug_ImageRootRun,
 

@@ -4858,11 +4858,12 @@ char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 
-/** Function: oyOptions_FindString
+/** Function oyOptions_FindString
  *  @relates oyOptions_s
  *  @brief   search for a certain option key and possibly value
  *
  *  This function returns the first found value for a given key.
+ *  The key is represented by the oyOption_s::name::nick
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/07 (Oyranos: 0.1.8)
@@ -10811,7 +10812,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->filter_type_ = filter_type;
     s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
 
-    s->options_ = cmm_api4->oyFilter_ValidateOptions( s, options, 0, &ret );
+    s->options_ = cmm_api4->oyCMMFilter_ValidateOptions( s, options, 0, &ret );
     error = ret;
     s->options_ = oyOptions_FromBoolean( cmm_api4->options, options,
                                          oyBOOLEAN_SUBSTRACTION, s->oy_ );

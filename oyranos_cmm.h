@@ -136,7 +136,7 @@ typedef enum {
   oyWIDGET_UNDEFINED
 } oyWIDGET_EVENT_e;
 
-/** @typedef oyFilter_ValidateOptions_t
+/** @typedef oyCMMFilter_ValidateOptions_f
  *  @brief   a function to check and validate options
  *
  *  @param[in]     filter              the filter
@@ -147,9 +147,9 @@ typedef enum {
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
- *  @date    2008/01/02
+ *  @date    2008/11/02
  */
-typedef oyOptions_s * (*oyFilter_ValidateOptions_f)
+typedef oyOptions_s * (*oyCMMFilter_ValidateOptions_f)
                                      ( oyFilter_s        * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
@@ -309,12 +309,12 @@ typedef int      (*oyCMMFilterNode_CreateContext_f) (
                                        oyCMMptr_s       ** cmm_profile_array,
                                        int                 profiles_n,
                                        oyCMMptr_s        * oy );
-/** @type    oyCMMFilter_ContextFromMem_f
+/** @type    oyCMMFilterNode_ContextFromMem_f
  *  @brief   create a basic filter context from a memory blob
  *
  *  This function complements the oyCMMFilter_ContextToMem_t() function.
  *
- *  @param[in,out] filter              access to the complete filter struct, most important to handle is the options and image members
+ *  @param[in,out] node                access to the complete filter struct, most important to handle is the options and image members
  *  @param[in]     mem                 the CMM memory blob
  *  @param[in]     size                size in mem
  *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION
@@ -323,13 +323,13 @@ typedef int      (*oyCMMFilterNode_CreateContext_f) (
  *  @since   2008/07/02 (Oyranos: 0.1.8)
  *  @date    2008/07/02
  */
-typedef int      (*oyCMMFilter_ContextFromMem_f) (
-                                       oyFilter_s        * filter,
+typedef int      (*oyCMMFilterNode_ContextFromMem_f) (
+                                       oyFilterNode_s    * node,
                                        oyPointer           mem,
                                        size_t              size,
                                        oyCMMptr_s        * oy );
 
-/** @type    oyCMMFilter_ContextToMem_f
+/** @type    oyCMMFilterNode_ContextToMem_f
  *  @brief   dump a CMM filter context into a memory blob
  *
  *  The goal is to have a data blob for later reusing. It is as well used for
@@ -338,7 +338,7 @@ typedef int      (*oyCMMFilter_ContextFromMem_f) (
  *  on disk caching.
  *  This function complements the oyCMMFilter_ContextFromMem_t() function.
  *
- *  @param[in,out] filter              access to the complete filter struct, most important to handle is the options and image members
+ *  @param[in,out] node                access to the complete filter struct, most important to handle is the options and image members
  *  @param[out]    size                size in return 
  *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION
  *  @param         allocateFunc        memory allocator for the returned data
@@ -348,8 +348,8 @@ typedef int      (*oyCMMFilter_ContextFromMem_f) (
  *  @since   2008/07/02 (Oyranos: 0.1.8)
  *  @date    2008/07/02
  */
-typedef oyPointer(*oyCMMFilter_ContextToMem_f) (
-                                       oyFilter_s        * filter,
+typedef oyPointer(*oyCMMFilterNode_ContextToMem_f) (
+                                       oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc );
@@ -399,7 +399,7 @@ typedef int (*oyCMMFilterPlug_Run_f)(
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2008/07/10
+ *  @date    2008/11/03
  */
 struct  oyCMMapi4_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
@@ -421,7 +421,7 @@ struct  oyCMMapi4_s {
   int              version[3];
 
   /** check options for validy and correct */
-  oyFilter_ValidateOptions_f   oyFilter_ValidateOptions;
+  oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
   oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
 
   /** mandatory for "..colour" filters */
@@ -429,9 +429,9 @@ struct  oyCMMapi4_s {
   /** mandatory for "..colour" filters */
   oyCMMFilterNode_CreateContext_f  oyCMMFilterNode_CreateContext;
   /** mandatory for "..colour" filters */
-  oyCMMFilter_ContextToMem_f   oyCMMFilter_ContextToMem;
+  oyCMMFilterNode_ContextToMem_f   oyCMMFilterNode_ContextToMem;
   /** mandatory for "..colour" filters */
-  oyCMMFilter_ContextFromMem_f oyCMMFilter_ContextFromMem;
+  oyCMMFilterNode_ContextFromMem_f oyCMMFilterNode_ContextFromMem;
   /** mandatory for all filters; Special care has to taken for the
       oyPixelAccess_s argument to this function. */
   oyCMMFilterPlug_Run_f        oyCMMFilterPlug_Run;

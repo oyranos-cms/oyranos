@@ -757,14 +757,15 @@ oyConnector_s lcms_cmmIccPlug_connector = {
 oyConnector_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
 
 
-/** Function lcmsCMMFilter_CreateContext
- *  @brief   implement oyCMMFilter_CreateContext_f()
+/** Function lcmsCMMFilterNode_CreateContext
+ *  @brief   implement oyCMMFilterNode_CreateContext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/11/01 (Oyranos: 0.1.8)
  *  @date    2008/11/01
  */
-int      lcmsCMMFilter_CreateContext ( oyFilter_s        * filter,
+int      lcmsCMMFilterNode_CreateContext (
+                                       oyFilterNode_s    * node,
                                        oyCMMptr_s       ** cmm_profile_array,
                                        int                 profiles_n,
                                        oyCMMptr_s        * oy )
@@ -955,9 +956,9 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsWidgetEvent,
 
   lcmsCMMProfile_Open,
-  lcmsCMMFilter_CreateContext, /* oyCMMFilter_CreateContext_f */
-  0, /* lcmsFilter_CmmIccContextToMem */ /* oyCMMFilter_ContextToMem_f */
-  0, /* oyCMMFilter_ContextFromMem_f */
+  lcmsCMMFilterNode_CreateContext, /* oyCMMFilterNode_CreateContext_f */
+  0, /* lcmsFilterNode_CmmIccContextToMem */ /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextFromMem_f */
   lcmsFilterPlug_CmmIccRun,
 
   {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
