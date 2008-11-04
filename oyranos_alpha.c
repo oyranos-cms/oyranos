@@ -12041,12 +12041,12 @@ oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
   uint32_t * mem = 0;
   oyFilterNode_s * s = node;
   oyStruct_s * data = 0;
+
   int i, n;
 
   if(!node)
     return 0;
 
-  hashTextAdd_m( 
   hashTextAdd_m( oyFilter_GetText( node->filter, oyNAME_NAME ) );
 
   text_len = strlen(hash_text) + 1;
@@ -13532,11 +13532,67 @@ oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
 
 /**
  *  @internal
+ *  Function oyFilterNode_DataGet_
+ *  @relates oyFilterNode_s
+ *  @brief   get the processing data from a filter node
+ *
+ *  @param[in]     node                filter
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/04 (Oyranos: 0.1.8)
+ *  @date    2008/11/04
+ */
+oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
+                                       int                 get_plug )
+{
+  int error = !node;
+  oyStructList_s * datas = 0;
+  oyStruct_s * data = 0;
+  int i;
+
+  if(!error)
+  {
+    datas = oyStructList_New(0);
+
+    if(get_plug)
+    {
+          /* pick all plug (input) data */
+          i = 0;
+          while( node->plugs[i] && !error )
+          {
+            data = 0;
+            if(node->plugs[i]->remote_socket_->data)
+              data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
+            error = oyStructList_MoveIn( datas, &data, -1 );
+            ++i;
+          }
+    } else
+    {
+          /* pick all sockets (output) data */
+          i = 0;
+          while( node->sockets[i] && !error )
+          {
+            data = 0;
+            if(node->sockets[i]->data)
+              data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
+            error = oyStructList_MoveIn( datas, &data, -1 );
+            ++i;
+          }
+
+    }
+  }
+
+  return datas;
+}
+
+/**
+ *  @internal
  *  Function oyFilterNode_ContextSet_
  *  @relates oyFilterNode_s
  *  @brief   set backend context in a filter 
  *
- *  @param[in]     s                   filter
+ *  @param[in]     node                filter
  *  @return                            error
  *
  *  @version Oyranos: 0.1.8
