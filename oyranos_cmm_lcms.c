@@ -769,7 +769,13 @@ int      lcmsCMMFilterNode_CreateContext (
                                        oyCMMptr_s       ** cmm_profile_array,
                                        int                 profiles_n,
                                        oyCMMptr_s        * oy )
-{ return 0; }
+{
+  int error = !node;
+
+  
+
+  return error;
+}
 
 /** Function lcmsFilterPlug_CmmIccRun
  *  @brief   implement oyCMMFilterPlug_GetNext_f()

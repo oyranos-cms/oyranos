@@ -635,7 +635,7 @@ Bool XNVCTRLQueryDDCCIBlockLutOperation (
     Display *dpy,
     int screen,
     unsigned int display_mask,
-    unsigned int color, // NV_CTRL_DDCCI_RED_LUT, NV_CTRL_DDCCI_GREEN_LUT, NV_CTRL_DDCCI_BLUE_LUT
+    unsigned int color, /* NV_CTRL_DDCCI_RED_LUT, NV_CTRL_DDCCI_GREEN_LUT, NV_CTRL_DDCCI_BLUE_LUT*/
     unsigned int offset,
     unsigned int size,
     unsigned int **value
@@ -692,7 +692,7 @@ Bool XNVCTRLSetDDCCIBlockLutOperation (
     Display *dpy,
     int screen,
     unsigned int display_mask,
-    unsigned int color, // NV_CTRL_DDCCI_RED_LUT, NV_CTRL_DDCCI_GREEN_LUT, NV_CTRL_DDCCI_BLUE_LUT
+    unsigned int color, /* NV_CTRL_DDCCI_RED_LUT, NV_CTRL_DDCCI_GREEN_LUT, NV_CTRL_DDCCI_BLUE_LUT*/
     unsigned int offset,
     unsigned int size,
     unsigned int *value

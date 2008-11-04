@@ -396,11 +396,11 @@ Bool NVCTRLQueryDDCCICapabilities (
     Display *dpy,
     int screen,
     unsigned int display_mask,
-    unsigned int **nvctrl_vcp_supported,    // Size is NV_CTRL_DDCCI_LAST_VCP+1
-    unsigned int **possible_values_offset,  // Size is NV_CTRL_DDCCI_LAST_VCP+1
-    unsigned int **possible_values_size,    // Size is NV_CTRL_DDCCI_LAST_VCP+1
+    unsigned int **nvctrl_vcp_supported,    /* Size is NV_CTRL_DDCCI_LAST_VCP+1*/
+    unsigned int **possible_values_offset,  /* Size is NV_CTRL_DDCCI_LAST_VCP+1*/
+    unsigned int **possible_values_size,    /* Size is NV_CTRL_DDCCI_LAST_VCP+1*/
     unsigned int **nvctrl_vcp_possible_values, 
-    unsigned int **nvctrl_string_vcp_supported // Size is NV_CTRL_STRING_LAST_ATTRIBUTE+1
+    unsigned int **nvctrl_string_vcp_supported /* Size is NV_CTRL_STRING_LAST_ATTRIBUTE+1*/
 );
 
 /* XNVCTRLQueryDDCCITimingReport

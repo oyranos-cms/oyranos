@@ -426,7 +426,6 @@ oyConnector_s oyra_imageOutput_connector = {
 };
 oyConnector_s* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_connector,0};
 
-uint32_t oyra_image_connectors_max[2] = {1,0};
 
 /** @func    oyraFilter_ImageOutputRun
  *  @brief   implement oyCMMFilter_GetNext_f()
