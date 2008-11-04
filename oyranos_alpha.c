@@ -1578,6 +1578,80 @@ int              oyStructList_Count ( oyStructList_s   * list )
 }
 
 /**
+ *  Function oyStructList_GetID
+ *  @relates oyStructList_s
+ *  @brief   eventually build and obtain the lists member names
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/11/04
+ *  @since   2008/11/04 (Oyranos: 0.1.8)
+ */
+const char *     oyStructList_GetID  ( oyStructList_s    * s,
+                                       int                 intent_spaces,
+                                       uint32_t            flags )
+{
+  int error = !s;
+  const char * text = 0;
+
+  if(!error)
+  {
+    text = oyObject_GetName( s->oy_, oyNAME_NICK );
+    if(!text)
+      text = oyStructList_GetText( s, oyNAME_NICK, intent_spaces, flags );
+  }
+
+  return text;
+}
+
+/**
+ *  Function oyStructList_GetText
+ *  @relates oyStructList_s
+ *  @brief   build and obtain the lists member names
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/11/04
+ *  @since   2008/11/04 (Oyranos: 0.1.8)
+ */
+const char * oyStructList_GetText    ( oyStructList_s    * s,
+                                       oyNAME_e            name_type,
+                                       int                 intent_spaces,
+                                       uint32_t            flags )
+{
+  int error = !s, i, n;
+  char * hash_text = 0;
+  char * text = 0;
+  oyStruct_s * oy_struct = 0;
+
+  if(!error)
+  {
+    oyAllocHelper_m_( text, char, intent_spaces + 2, 0, return 0 );
+    text[0] = '\n';
+    for(i = 1; i < name_type + 1; ++i)
+      text[i] = ' ';
+    text[i] = 0;
+    n = oyStructList_Count( s );
+    for(i = 0; i < n; ++i)
+    {
+      oy_struct = oyStructList_Get_( s, i );
+      hashTextAdd_m( text );
+      hashTextAdd_m( "data = " );
+      hashTextAdd_m( oyObject_GetName( oy_struct->oy_, name_type ) );
+    }
+
+    oyObject_SetName( s->oy_, hash_text, name_type );
+
+    if(s->oy_->deallocateFunc_)
+      s->oy_->deallocateFunc_( hash_text );
+    hash_text = 0;
+    oyFree_m_( text );
+
+    hash_text = (oyChar*) oyObject_GetName( s->oy_, name_type );
+  }
+
+  return hash_text;
+}
+
+/**
  *  @} *//* objects_generic
  */
 
@@ -10950,7 +11024,7 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
 }
 
 
-/** Function: oyFilter_GetText
+/** Function oyFilter_GetText
  *  @relates oyFilter_s
  *  @brief   get text
  *
@@ -11091,106 +11165,6 @@ oyProfiles_s* oyFilter_ProfilesSet( oyFilter_s        * filter,
                                        int                 flags );
 oyProfiles_s* oyFilter_ProfilesGet( oyFilter_s        * filter,
                                        int                 flags );
-
-/** 
- *  @internal
- *  Info profilbody */
-char info_profile_data[320] =
-  {
-/*0*/    0,0,1,64, 'o','y','r','a',
-    2,48,0,0, 'n','o','n','e',
-    'R','G','B',32, 'L','a','b',32,
-    0,0,0,0,0,0,0,0,
-/*32*/    0,0,0,0,97,99,115,112,
-    '*','n','i','x',0,0,0,0,
-    110,111,110,101,110,111,110,101,
-    -64,48,11,8,-40,-41,-1,-65,
-/*64*/    0,0,0,0,0,0,-10,-42,
-    0,1,0,0,0,0,-45,45,
-    'o','y','r','a',0,0,0,0,
-    0,0,0,0,0,0,0,0,
-/*96*/    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-/*128*/    0,0,0,3,'d','e','s','c',
-    0,0,0,-88,0,0,0,33,
-    'c','p','r','t',0,0,0,-52,
-    0,0,0,29,'I','n','f','o',
-/*160*/    0,0,0,-20,0,0,0,0,
-    't','e','x','t',0,0,0,0,
-    'F','i','l','t','e','r',' ','I',
-    'n','f','o',' ','X','M','L',0,
-/*192*/    0,0,0,0,0,0,0,0,
-    0,0,0,0,'t','e','x','t',
-    0,0,0,0,110,111,116,32,
-    99,111,112,121,114,105,103,104,
-/*224*/    116,101,100,32,100,97,116,97,
-    0,0,0,0,'t','e','x','t',
-    0,0,0,0,'s','t','a','r',
-    't',0,0,0,0,0,0,0,
-/*256*/    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0
-  };
-
-/** Function: oyFilter_TextToInfo
- *  @relates oyFilter_s
- *  @brief   serialise filter
- *
- *  Serialise into a Oyranos specific ICC profile containers "Info" text tag.
- *  Not useable for binary contexts.
- *
- *  @param[in,out] filter              filter object
- *  @param[out]    size                output size
- *  @param[in]     allocateFunc        memory allocator
- *  @return                            the profile container
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/17 (Oyranos: 0.1.8)
- *  @date    2008/07/18
- */
-oyPointer    oyFilter_TextToInfo     ( oyFilter_s        * filter,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc )
-{
-  oyPointer ptr = 0;
-  icHeader * header = 0;
-  size_t len = 244, text_len = 0;
-  char * text = 0;
-  const char * temp = 0;
-  uint32_t * mem = 0;
-  
-  if(!filter)
-    return 0;
-  
-  temp = oyFilter_GetText( filter, oyNAME_NAME );
-  text_len = strlen(temp) + 1;
-  len += text_len + 1;
-  len = len > 320 ? len : 320;
-  ptr = allocateFunc(len);
-  header = ptr;
-  
-  if(ptr)
-  { 
-    *size = len;
-    memset(ptr,0,len);
-    memcpy(ptr, info_profile_data, 320);
-
-    text = ((char*)ptr)+244;
-    sprintf(text, "%s", temp);
-    header->size = oyValueUInt32( len );
-    mem = ptr;
-    mem[41] = oyValueUInt32( text_len + 8 );
-  }
-
-  return ptr;
-}
 
 /** Function: oyFilter_ShowConnector
  *  @relates oyFilter_s
@@ -11991,6 +11965,112 @@ OYAPI oyFilterPlug_s * OYEXPORT
   return s;
 }
 
+/** 
+ *  @internal
+ *  Info profilbody */
+char info_profile_data[320] =
+  {
+/*0*/    0,0,1,64, 'o','y','r','a',
+    2,48,0,0, 'n','o','n','e',
+    'R','G','B',32, 'L','a','b',32,
+    0,0,0,0,0,0,0,0,
+/*32*/    0,0,0,0,97,99,115,112,
+    '*','n','i','x',0,0,0,0,
+    110,111,110,101,110,111,110,101,
+    -64,48,11,8,-40,-41,-1,-65,
+/*64*/    0,0,0,0,0,0,-10,-42,
+    0,1,0,0,0,0,-45,45,
+    'o','y','r','a',0,0,0,0,
+    0,0,0,0,0,0,0,0,
+/*96*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+/*128*/    0,0,0,3,'d','e','s','c',
+    0,0,0,-88,0,0,0,33,
+    'c','p','r','t',0,0,0,-52,
+    0,0,0,29,'I','n','f','o',
+/*160*/    0,0,0,-20,0,0,0,0,
+    't','e','x','t',0,0,0,0,
+    'F','i','l','t','e','r',' ','I',
+    'n','f','o',' ','X','M','L',0,
+/*192*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,'t','e','x','t',
+    0,0,0,0,110,111,116,32,
+    99,111,112,121,114,105,103,104,
+/*224*/    116,101,100,32,100,97,116,97,
+    0,0,0,0,'t','e','x','t',
+    0,0,0,0,'s','t','a','r',
+    't',0,0,0,0,0,0,0,
+/*256*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0
+  };
+
+/** Function: oyFilterNode_TextToInfo
+ *  @relates oyFilter_s
+ *  @brief   serialise filter
+ *
+ *  Serialise into a Oyranos specific ICC profile containers "Info" text tag.
+ *  Not useable for binary contexts.
+ *
+ *  @param[in,out] node                filter node
+ *  @param[out]    size                output size
+ *  @param[in]     allocateFunc        memory allocator
+ *  @return                            the profile container
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/17 (Oyranos: 0.1.8)
+ *  @date    2008/07/18
+ */
+oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyPointer ptr = 0;
+  icHeader * header = 0;
+  size_t len = 244, text_len = 0;
+  char * text = 0;
+  const char * temp = 0;
+  char * hash_text = 0;
+  uint32_t * mem = 0;
+  oyFilterNode_s * s = node;
+  oyStruct_s * data = 0;
+  int i, n;
+
+  if(!node)
+    return 0;
+
+  hashTextAdd_m( 
+  hashTextAdd_m( oyFilter_GetText( node->filter, oyNAME_NAME ) );
+
+  text_len = strlen(hash_text) + 1;
+  len += text_len + 1;
+  len = len > 320 ? len : 320;
+  ptr = allocateFunc(len);
+  header = ptr;
+  
+  if(ptr)
+  { 
+    *size = len;
+    memset(ptr,0,len);
+    memcpy(ptr, info_profile_data, 320);
+
+    text = ((char*)ptr)+244;
+    sprintf(text, "%s", hash_text);
+    header->size = oyValueUInt32( len );
+    mem = ptr;
+    mem[41] = oyValueUInt32( text_len + 8 );
+  }
+
+  return ptr;
+}
+
 
 
 
@@ -12195,11 +12275,11 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
  *  @since   2007/11/26 (Oyranos: 0.1.8)
  *  @date    2008/11/02
  */
-const char *   oyContextGetID_       ( oyStruct_s      * s,
-                                       oyProfiles_s    * list,
-                                       oyOptions_s     * opts,
-                                       oyStructList_s  * ins,
-                                       oyStructList_s  * outs )
+const char *   oyContextGetID_       ( oyStruct_s        * s,
+                                       oyProfiles_s      * list,
+                                       oyOptions_s       * opts,
+                                       oyStructList_s    * ins,
+                                       oyStructList_s    * outs )
 {
   int error = !s;
   int i, n;
@@ -12213,13 +12293,7 @@ const char *   oyContextGetID_       ( oyStruct_s      * s,
     hashTextAdd_m( "oyCC\n" );
 
     /* input data */
-    n = oyStructList_Count( ins );
-    for(i = 0; i < n; ++i)
-    {
-      oy_struct = oyStructList_Get_( ins, i );
-      hashTextAdd_m( "\"\ndata in = " );
-      hashTextAdd_m( oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
-    }
+    hashTextAdd_m( oyStructList_GetID( ins, 2, 0 ) );
 
     /* profiles TODO merge with options */
     n = oyProfiles_Count( list );
@@ -12249,13 +12323,7 @@ const char *   oyContextGetID_       ( oyStruct_s      * s,
     }
 
     /* output data */
-    n = oyStructList_Count( outs );
-    for(i = 0; i < n; ++i)
-    {
-      oy_struct = oyStructList_Get_( outs, i );
-      hashTextAdd_m( "\"\ndata out = " );
-      hashTextAdd_m( oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
-    }
+    hashTextAdd_m( oyStructList_GetID( outs, 2, 0 ) );
 
     oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
 

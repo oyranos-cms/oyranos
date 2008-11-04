@@ -447,6 +447,13 @@ int              oyStructList_ReferenceAt_( oyStructList_s * list,
 int              oyStructList_ReleaseAt( oyStructList_s  * list,
                                        int                 pos );
 int              oyStructList_Count  ( oyStructList_s    * list );
+const char *     oyStructList_GetText( oyStructList_s    * s,
+                                       oyNAME_e            name_type,
+                                       int                 intent_spaces,
+                                       uint32_t            flags );
+const char *     oyStructList_GetID  ( oyStructList_s    * s,
+                                       int                 intent_spaces,
+                                       uint32_t            flags );
 
 
 
@@ -1738,9 +1745,6 @@ oyProfiles_s*oyFilter_ProfilesSet    ( oyFilter_s        * filter,
                                        int                 flags );
 oyProfiles_s*oyFilter_ProfilesGet    ( oyFilter_s        * filter,
                                        int                 flags );
-oyPointer    oyFilter_TextToInfo     ( oyFilter_s        * filter,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc );
 OYAPI oyConnector_s * OYEXPORT
              oyFilter_ShowConnector  ( oyFilter_s        * filter,
                                        int                 as_pos,
@@ -1933,6 +1937,11 @@ OYAPI oyFilterSocket_s * OYEXPORT
 OYAPI oyFilterPlug_s * OYEXPORT
                  oyFilterNode_GetPlug( oyFilterNode_s    * node,
                                        int                 pos );
+const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
+                                       oyNAME_e            name_type );
+oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
 
 
 
