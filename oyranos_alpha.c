@@ -10862,7 +10862,6 @@ oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
     s->category_ = oyStringCopy_( filter->category_, allocateFunc_ );
     s->options_ = oyOptions_Copy( filter->options_, s->oy_ );
     s->opts_ui_ = oyStringCopy_( filter->opts_ui_, allocateFunc_ );
-    s->profiles_ = oyProfiles_Copy( filter->profiles_, s->oy_ );
     s->api4_ = filter->api4_;
   }
 
@@ -10935,8 +10934,6 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
 
   s->registration_ = 0;
 
-  oyProfiles_Release( &s->profiles_ );
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -10989,6 +10986,7 @@ const char * oyFilter_GetText        ( oyFilter_s        * filter,
                   s->api4_->version[2]
            );
 
+#if 0
     if(!error && filter->profiles_)
     {
       int i = 0, n = oyProfiles_Count(filter->profiles_);
@@ -11000,6 +10998,7 @@ const char * oyFilter_GetText        ( oyFilter_s        * filter,
         oyNoEmptyName_m_(oyProfile_GetText( profile, oyNAME_NAME)) );
       }
     }
+#endif
 
     if(!error)
       sprintf( &text[oyStrlen_(text)], "</oyFilter_s>" );
@@ -13498,6 +13497,8 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 
           n = oyOptions_Count( s->options_ );
 
+          /* if we have no */
+
           for( i = 0; i < n; ++i )
           {
             oyOption_s * opt = oyOptions_Get( s->options_, i );
@@ -13694,9 +13695,12 @@ int                oyConversion_FilterAdd (
   return error;
 }
 
-/** Function: oyConversion_OutputAdd
+/** Function oyConversion_OutputAdd
  *  @relates oyConversion_s
  *  @brief   close a oyConversion_s with a target image
+ *
+ *  Internally the image will be attached to the socket at which the last node
+ *  points through a plug.
  *
  *  @param[in,out] conversion          conversion object
  *  @param[in]     output              output image
@@ -13906,7 +13910,7 @@ void               oyConversion_ToTextShowNode_ (
         {
           if(sub_format == 1)
           {
-            oySprintf_(text, "    %c:socket -> %c:plug [arrowhead=box, arrowtail=normal];\n", name, name+1+j );
+            oySprintf_(text, "    %c:socket -> %c:plug [arrowhead=crow, arrowtail=box];\n", name, name+1+j );
             oyStringAdd_( stream, text, allocateFunc, deallocateFunc );
           }
  
@@ -13924,7 +13928,7 @@ void               oyConversion_ToTextShowNode_ (
  *  @relates oyConversion_s
  *  @brief   text description of a conversion graph
  *
- *  
+ *  @todo Should this function generate XFORMS compatible output? How?
  *
  *  @param[in]     conversion          conversion object
  *  @param[in]     head_line           text for inclusion

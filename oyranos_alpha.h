@@ -1699,9 +1699,6 @@ struct oyFilter_s {
   oyOptions_s        * options_;       /**< local options */
   char               * opts_ui_;       /**< xml ui elements for filter options*/
 
-  /*oyImage_s          * image_;*/         /**< the referenced image */
-  oyProfiles_s       * profiles_;      /**< profiles */
-
   oyCMMapi4_s        * api4_;          /**<  */
 };
 
