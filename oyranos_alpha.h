@@ -365,7 +365,7 @@ int          oyObject_UnLock           ( oyObject_s        object,
 int          oyObject_UnSetLocking     ( oyObject_s        object,
                                          const char      * marker,
                                          int               line );
-int          oyObject_GetId          ( oyObject_s        object );
+int          oyObject_GetId            ( oyObject_s        object );
 
 
 /** @internal
@@ -621,6 +621,8 @@ int            oyOptions_Add         ( oyOptions_s       * options,
 char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
+oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
+                                       const char        * key );
 char *         oyOptions_FindString  ( oyOptions_s       * options,
                                        const char        * key,
                                        const char        * value );
@@ -1896,7 +1898,7 @@ struct oyFilterNode_s {
   oyFilter_s         * filter;         /**< the filter */
   char               * relatives_;     /**< hint about belonging to a filter */
 
-  oyStruct_s         * backend_data;   /**< the filters private data */
+  oyStruct_s         * backend_data;   /**< the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_CreateContext() and cached through Oyranos */
 };
 
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );
@@ -2316,7 +2318,6 @@ typedef struct {
 } oyColourConversion_s;
 
 oyColourConversion_s* oyColourConversion_Create (
-                                       oyProfiles_s      * list,
                                        oyOptions_s       * opts,
                                        oyImage_s         * in,
                                        oyImage_s         * out,

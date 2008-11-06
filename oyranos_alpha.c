@@ -87,20 +87,23 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        oyStruct_release_f  ptrRelease );
+oyCMMptr_s * oyStruct_GetCMMPtr_     ( oyStruct_s        * data,
+                                       const char        * cmm );
+oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
+                                       const char        * cmm );
 
 
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
                                        oyObject_s          object);
-oyCMMptr_s * oyProfile_GetCMMPtr_    ( oyProfile_s       * profile,
-                                       const char        * cmm );
+oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
+                                       uint32_t            flags,
+                                       oyObject_s          object );
 /*oyChar *     oyProfile_GetCMMText_   ( oyProfile_s       * profile,
                                        oyNAME_e            type,
                                        const char        * language,
                                        const char        * country );*/
-oyCMMptr_s** oyProfiles_GetCMMptrs_(oyProfiles_s   * list,
-                                       const char        * cmm );
 oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
@@ -113,8 +116,11 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
                                        oyAlloc_f           allocateFunc );
 oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
                                        int                 pos );
+
+oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
+                                       int                 get_plug );
+
 oyColourConversion_s* oyColourConversion_Create_ (
-                                       oyProfiles_s   * list,
                                        oyOptions_s       * opts,
                                        oyImage_s         * in,
                                        oyImage_s         * out,
@@ -124,10 +130,13 @@ oyPointer    oyColourConversion_ToMem_(
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 const char *   oyColourContextGetID_ ( oyStruct_s      * s,
-                                       oyProfiles_s    * list,
                                        oyOptions_s     * opts,
                                        oyImage_s       * in,
                                        oyImage_s       * out);
+const char *   oyContextCollectData_ ( oyStruct_s        * s,
+                                       oyOptions_s       * opts,
+                                       oyStructList_s    * ins,
+                                       oyStructList_s    * outs );
 
 int          oyCMMdsoRelease_        ( const char        * cmm );
 int          oyCMMdsoSearch_         ( const char        * cmm );
@@ -1624,9 +1633,8 @@ const char * oyStructList_GetText    ( oyStructList_s    * s,
 
   if(!error)
   {
-    oyAllocHelper_m_( text, char, intent_spaces + 2, 0, return 0 );
-    text[0] = '\n';
-    for(i = 1; i < name_type + 1; ++i)
+    oyAllocHelper_m_( text, char, intent_spaces + 1, 0, return 0 );
+    for(i = 0; i < intent_spaces; ++i)
       text[i] = ' ';
     text[i] = 0;
     n = oyStructList_Count( s );
@@ -1634,13 +1642,14 @@ const char * oyStructList_GetText    ( oyStructList_s    * s,
     {
       oy_struct = oyStructList_Get_( s, i );
       hashTextAdd_m( text );
-      hashTextAdd_m( "data = " );
+      /*hashTextAdd_m( text );*/
       hashTextAdd_m( oyObject_GetName( oy_struct->oy_, name_type ) );
+      hashTextAdd_m( text );
     }
 
     oyObject_SetName( s->oy_, hash_text, name_type );
 
-    if(s->oy_->deallocateFunc_)
+    if(hash_text && s->oy_->deallocateFunc_)
       s->oy_->deallocateFunc_( hash_text );
     hash_text = 0;
     oyFree_m_( text );
@@ -2821,7 +2830,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->oyCMMCanHandle &&
-           s->oyCMMProfile_Open &&
+           s->oyCMMDataOpen &&
            /*s->oyCMMProfile_GetText &&
            s->oyCMMProfile_GetSignature &&*/
            s->oyCMMColourConversion_Create &&
@@ -4932,6 +4941,45 @@ char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 
+/** Function oyOptions_Find
+ *  @relates oyOptions_s
+ *  @brief   search for a certain option key
+ *
+ *  This function returns the first found option for a given key.
+ *  The key is represented by the oyOption_s::naddme::nick
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/05 (Oyranos: 0.1.9)
+ *  @date    2008/11/05
+ */
+oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
+                                       const char        * key )
+{
+  int error = !options;
+  oyOption_s * option_a = 0,
+             * option = 0;
+
+  if(!error && options && options->type_ == oyOBJECT_OPTIONS_S)
+  {
+    oyOptions_s * set_a = options;
+    int set_an = oyOptions_Count( set_a ), i;
+
+    for(i = 0; i < set_an; ++i)
+    {
+      option_a = oyOptions_Get( set_a, i );
+
+      if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
+        if(oyStrcmp_( option_a->name.nick, key) == 0)
+          option = oyOption_Copy( option_a, 0 );
+
+      oyOption_Release( &option_a );
+
+    }
+  }
+
+  return option;
+}
+
 /** Function oyOptions_FindString
  *  @relates oyOptions_s
  *  @brief   search for a certain option key and possibly value
@@ -4993,6 +5041,8 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
           }
         }
       }
+
+      oyOption_Release( &option_a );
 
       error = !found;
     }
@@ -5115,7 +5165,7 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
   if(type)
     name = oyGetDefaultProfileName ( type, allocateFunc );
 
-  s = oyProfile_FromFile( name, 0, object );
+  s = oyProfile_FromFile_( name, 0, object );
 
   if(s)
     s->use_default_ = type;
@@ -5123,14 +5173,17 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
   if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
     oy_profile_s_std_cache_[pos] = oyProfile_Copy( s, 0 );
 
+  oyProfile_GetID( s );
+
   return s;
 }
 
 
 oyStructList_s * oy_profile_s_file_cache_ = 0;
 
-
-/** @brief   create from file
+/**
+ *  @internal
+ *  @brief   create from file
  *  @relates oyProfile_s
  *
  *  @param[in]    name           profile file name or zero to detect display?
@@ -5141,13 +5194,12 @@ oyStructList_s * oy_profile_s_file_cache_ = 0;
  *  reading and writing. The cache flags are useful for one time profiles or
  *  scanning large numbers of profiles.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @since Oyranos: version 0.1.9
+ *  @date  november 2007 (API 0.1.9)
  */
-OYAPI oyProfile_s * OYEXPORT
-oyProfile_FromFile            ( const char      * name,
-                                uint32_t          flags,
-                                oyObject_s        object)
+oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
+                                       uint32_t            flags,
+                                       oyObject_s          object )
 {
   oyProfile_s * s = 0;
   int error = 0;
@@ -5236,6 +5288,34 @@ oyProfile_FromFile            ( const char      * name,
   }
 
   oyHash_Release_( &entry );
+
+  return s;
+}
+
+/** @brief   create from file
+ *  @relates oyProfile_s
+ *
+ *  @param[in]    name           profile file name or zero to detect display?
+ *  @param[in]    flags          for future extension
+ *  @param[in]    object         the optional base
+ *
+ *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
+ *  reading and writing. The cache flags are useful for one time profiles or
+ *  scanning large numbers of profiles.
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+OYAPI oyProfile_s * OYEXPORT
+oyProfile_FromFile            ( const char      * name,
+                                uint32_t          flags,
+                                oyObject_s        object)
+{
+  oyProfile_s * s = 0;
+
+  s = oyProfile_FromFile_( name, flags, object );
+
+  oyProfile_GetID( s );
 
   return s;
 }
@@ -5382,6 +5462,8 @@ oyProfile_FromMem             ( size_t            size,
   }
 
   s = oyProfile_FromMemMove_( size_, &block_, flags, object );
+
+  oyProfile_GetID( s );
 
   return s;
 }
@@ -5991,7 +6073,10 @@ OYAPI const oyChar* OYEXPORT
   oyProfileTag_s * tag = 0;
 
 
-  if(!error)
+  if(!error && type == oyNAME_NICK)
+    text = oyProfile_GetID( s );
+
+  if(!error && !text)
     if(type <= oyNAME_DESCRIPTION)
       text = oyObject_GetName( s->oy_, type );
 
@@ -6052,6 +6137,13 @@ OYAPI const oyChar* OYEXPORT
 
       if(file_name) free(file_name); file_name = 0;
       found = 1;
+    }
+
+    if(!found)
+    {
+      text = oyProfile_GetID( s );
+      if(oyStrlen_(text))
+        found = 1;
     }
 
     /* last rescue */
@@ -6296,18 +6388,18 @@ const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
 }
 
 
-/**
- *  @internal
+/** @internal
  *  @brief get a CMM specific pointer
- *  @relates oyProfile_s
+ *  @relates oyStruct_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  26 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.9
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
+ *  @date    2008/11/05
  */
-oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
+oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
                                         const char      * cmm )
 {
-  oyProfile_s * s = profile;
+  oyStruct_s * s = data;
   int error = !s;
   oyCMMptr_s * cmm_ptr = 0;
 
@@ -6337,7 +6429,7 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
     /* 1. create hash text */
     hashTextAdd_m( cmm );
     hashTextAdd_m( " oyPR:" );
-    tmp = oyProfile_GetID( s );
+    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
     hashTextAdd_m( tmp );
 
     /* 2. query in cache */
@@ -6355,15 +6447,15 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
       {
         /* 3b. ask CMM */
         char cmm_used[] = {0,0,0,0,0};
-        oyCMMProfile_Open_f funcP = 0;
+        oyCMMDataOpen_f funcP = 0;
 
-        /* TODO update to oyCMMapi4_s::oyCMMProfile_Open_f */
+        /* TODO update to oyCMMapi4_s::oyCMMDataOpen_f */
         oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
                                           cmm, 0, cmm_used, 0,0 );
         if(api && *(uint32_t*)&cmm_used)
         {
           oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
-          funcP = api1->oyCMMProfile_Open;
+          funcP = api1->oyCMMDataOpen;
         }
 
         if(funcP)
@@ -6377,7 +6469,7 @@ oyCMMptr_s * oyProfile_GetCMMPtr_     ( oyProfile_s     * profile,
 
           if(!error)
           {
-            error = funcP( s->block_, s->size_, cmm_ptr );
+            error = funcP( s, cmm_ptr );
 
 #if 0
             /* We have currently no means to trace all the spread resources. */
@@ -7985,19 +8077,20 @@ oyProfile_s *    oyProfiles_Get   ( oyProfiles_s   * list,
 }
 
 /** @internal
- *  @relates oyProfiles_s
+ *  @relates oyStructList_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  23 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.9
+ *  @since   2007/11/23 (Oyranos: 0.1.8)
+ *  @date    2008/11/05
  */
-oyCMMptr_s** oyProfiles_GetCMMptrs_(oyProfiles_s   * list,
+oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
                                        const char        * cmm )
 {
   oyCMMptr_s ** obj = 0;
-  int n = oyProfiles_Count( list );
+  int n = oyStructList_Count( list );
 
 
-  if(list && list->list_)
+  if(list && n)
   {
     int i = 0;
 
@@ -8006,12 +8099,11 @@ oyCMMptr_s** oyProfiles_GetCMMptrs_(oyProfiles_s   * list,
 
     for(i = 0; i < n; ++i)
     {
-      oyProfile_s * p = (oyProfile_s*) oyStructList_GetType_( list->list_,
-                                                 i, oyOBJECT_PROFILE_S );
+      oyStruct_s * o = oyStructList_Get_( list, i );
 
-      if(p)
+      if(o)
       {
-        oyCMMptr_s * cmm_ptr = oyProfile_GetCMMPtr_(p, cmm);
+        oyCMMptr_s * cmm_ptr = oyStruct_GetCMMPtr_(o, cmm);
 
         if(cmm_ptr && cmm_ptr->type == oyOBJECT_CMM_POINTER_S)
           obj[i] = oyCMMptr_Copy_( cmm_ptr, 0 );
@@ -11052,7 +11144,7 @@ const char * oyFilter_GetText        ( oyFilter_s        * filter,
     text = oyAllocateWrapFunc_( 512, s->oy_ ? s->oy_->allocateFunc_ : 0 );
     if(!text)
       error = 1;
-    sprintf(text, "<oyFilter_s registration=\"%s\" category=\"%s\" version=\"%d.%d.%d\">\n",
+    sprintf(text, "<oyFilter_s registration=\"%s\" category=\"%s\" version=\"%d.%d.%d\"/>\n",
                   s->registration_,
                   s->category_,
                   s->api4_->version[0],
@@ -11073,9 +11165,6 @@ const char * oyFilter_GetText        ( oyFilter_s        * filter,
       }
     }
 #endif
-
-    if(!error)
-      sprintf( &text[oyStrlen_(text)], "</oyFilter_s>" );
 
     if(!error)
       error = oyObject_SetName( s->oy_, text, name_type );
@@ -11965,6 +12054,67 @@ OYAPI oyFilterPlug_s * OYEXPORT
   return s;
 }
 
+/** Function oyFilterNode_GetText
+ *  @relates oyFilterNode_s
+ *  @brief   serialise filter node to text
+ *
+ *  Serialise into:
+ *  - oyNAME_NICK: XML ID
+ *  - oyNAME_NAME: XML
+ *  - oyNAME_DESCRIPTION: ??
+ *
+ *  @param[in,out] node                filter node
+ *  @param[out]    name_type           the type
+ *  @return                            the text
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/17 (Oyranos: 0.1.8)
+ *  @date    2008/07/18
+ */
+const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
+                                       oyNAME_e            name_type )
+{
+  const char * tmp = 0;
+  char * hash_text = 0;
+  oyFilterNode_s * s = node;
+
+  oyStructList_s * in_datas = oyStructList_New(0),
+                 * out_datas = oyStructList_New(0);
+
+  if(!node)
+    return 0;
+
+  /* 1. create hash text */
+  hashTextAdd_m( "<oyFilterNode_s>\n  " );
+
+  /* the filter text */
+  hashTextAdd_m( oyFilter_GetText( node->filter, oyNAME_NAME ) );
+
+  /* pick all plug (input) data */
+  in_datas = oyFilterNode_DataGet_( node, 1 );
+
+  /* pick all sockets (output) data */
+  out_datas = oyFilterNode_DataGet_( node, 0 );
+
+  /* make a description */
+  tmp = oyContextCollectData_( (oyStruct_s*)node, s->filter->options_,
+                               in_datas, out_datas );
+  hashTextAdd_m( tmp );
+
+  hashTextAdd_m( "</oyFilterNode_s>\n" );
+
+
+  oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
+
+  if(s->oy_->deallocateFunc_)
+    s->oy_->deallocateFunc_( hash_text );
+  hash_text = 0;
+
+  hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
+
+  return hash_text;
+}
+
 /** 
  *  @internal
  *  Info profilbody */
@@ -12012,9 +12162,9 @@ char info_profile_data[320] =
     0,0,0,0,0,0,0,0
   };
 
-/** Function: oyFilterNode_TextToInfo
- *  @relates oyFilter_s
- *  @brief   serialise filter
+/** Function oyFilterNode_TextToInfo
+ *  @relates oyFilterNode_s
+ *  @brief   serialise filter node to binary
  *
  *  Serialise into a Oyranos specific ICC profile containers "Info" text tag.
  *  Not useable for binary contexts.
@@ -12037,19 +12187,14 @@ oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
   size_t len = 244, text_len = 0;
   char * text = 0;
   const char * temp = 0;
-  char * hash_text = 0;
   uint32_t * mem = 0;
-  oyFilterNode_s * s = node;
-  oyStruct_s * data = 0;
-
-  int i, n;
 
   if(!node)
     return 0;
 
-  hashTextAdd_m( oyFilter_GetText( node->filter, oyNAME_NAME ) );
+  temp = oyFilterNode_GetText( node, oyNAME_NAME );
 
-  text_len = strlen(hash_text) + 1;
+  text_len = strlen(temp) + 1;
   len += text_len + 1;
   len = len > 320 ? len : 320;
   ptr = allocateFunc(len);
@@ -12062,7 +12207,7 @@ oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
     memcpy(ptr, info_profile_data, 320);
 
     text = ((char*)ptr)+244;
-    sprintf(text, "%s", hash_text);
+    sprintf(text, "%s", temp);
     header->size = oyValueUInt32( len );
     mem = ptr;
     mem[41] = oyValueUInt32( text_len + 8 );
@@ -12089,7 +12234,6 @@ oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
  *  @date  november 2007 (API 0.1.8)
  */
 oyColourConversion_s* oyColourConversion_Create (
-                                        oyProfiles_s * list,
                                         oyOptions_s     * opts,
                                         oyImage_s       * in,
                                         oyImage_s       * out,
@@ -12100,7 +12244,7 @@ oyColourConversion_s* oyColourConversion_Create (
   DBG_PROG_START
   oyExportStart_(EXPORT_CMMS);
 
-  s = oyColourConversion_Create_(list, opts, in, out, object);
+  s = oyColourConversion_Create_(opts, in, out, object);
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -12117,7 +12261,7 @@ oyColourConversion_s* oyColourConversion_Create (
  *  @date    2007/06/26
  */
 oyProfiles_s * oyConcatenateImageProfiles_ (
-                                        oyProfiles_s * list,
+                                        oyProfiles_s    * list,
                                         oyImage_s       * in,
                                         oyImage_s       * out,
                                         oyObject_s        obj )
@@ -12233,7 +12377,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
     if(!error)
     {
       int intent = oyGetBehaviour( oyBEHAVIOUR_RENDERING_INTENT );
-      oyCMMptr_s ** p = oyProfiles_GetCMMptrs_( p_list, cmm_used );
+      oyCMMptr_s ** p = oyStructList_GetCMMptrs_( p_list->list_, cmm_used );
       int layout_in = in->layout_[oyLAYOUT];
       int layout_out = out->layout_[oyLAYOUT];
 
@@ -12261,11 +12405,10 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
 
 /**
  *  @internal
- *  Function oyContextGetID_
+ *  Function oyContextCollectData_
  *  @brief   describe a transform uniquely
  *
  *  @param[in,out] s                   the context's object 
- *  @param[in]     list                the profiles
  *  @param[in]     opts                options
  *  @param[in]     in                  input image
  *  @param[in]     out                 output image
@@ -12275,8 +12418,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
  *  @since   2007/11/26 (Oyranos: 0.1.8)
  *  @date    2008/11/02
  */
-const char *   oyContextGetID_       ( oyStruct_s        * s,
-                                       oyProfiles_s      * list,
+const char *   oyContextCollectData_ ( oyStruct_s        * s,
                                        oyOptions_s       * opts,
                                        oyStructList_s    * ins,
                                        oyStructList_s    * outs )
@@ -12286,26 +12428,12 @@ const char *   oyContextGetID_       ( oyStruct_s        * s,
 
   char * hash_text = 0;
 
-  oyStruct_s * oy_struct = 0;
-
   if(!error)
   {
-    hashTextAdd_m( "oyCC\n" );
-
     /* input data */
-    hashTextAdd_m( oyStructList_GetID( ins, 2, 0 ) );
-
-    /* profiles TODO merge with options */
-    n = oyProfiles_Count( list );
-    for(i = 0; i < n; ++i)
-    {
-      oyProfile_s * p = oyProfiles_Get( list, i );
-      if(i == 0)
-        hashTextAdd_m( "  profiles = \"" );
-      hashTextAdd_m( oyProfile_GetText( p, oyNAME_NAME ) );
-      oyProfile_Release( &p );
-      hashTextAdd_m( "\"\n" );
-    }
+    hashTextAdd_m( "<data_in>\n" );
+    hashTextAdd_m( oyStructList_GetID( ins, 0, 0 ) );
+    hashTextAdd_m( "</data_in>\n" );
 
     /* options -> xforms */
     n = oyOptions_Count( opts );
@@ -12323,11 +12451,13 @@ const char *   oyContextGetID_       ( oyStruct_s        * s,
     }
 
     /* output data */
-    hashTextAdd_m( oyStructList_GetID( outs, 2, 0 ) );
+    hashTextAdd_m( "<data_out>\n" );
+    hashTextAdd_m( oyStructList_GetID( outs, 0, 0 ) );
+    hashTextAdd_m( "</data_out>\n" );
 
     oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
 
-    if(s->oy_->deallocateFunc_)
+    if(hash_text && s->oy_->deallocateFunc_)
       s->oy_->deallocateFunc_( hash_text );
     hash_text = 0;
   }
@@ -12338,7 +12468,6 @@ const char *   oyContextGetID_       ( oyStruct_s        * s,
 }
 
 const char *   oyColourContextGetID_ ( oyStruct_s      * s,
-                                       oyProfiles_s    * list,
                                        oyOptions_s     * opts,
                                        oyImage_s       * in,
                                        oyImage_s       * out)
@@ -12352,7 +12481,7 @@ const char *   oyColourContextGetID_ ( oyStruct_s      * s,
   oyStructList_MoveIn( ins, &s_in, -1 );
   oyStructList_MoveIn( outs, &s_out, -1 );
 
-  hash_text = oyContextGetID_( s, list, opts, ins, outs );
+  hash_text = oyContextCollectData_( s, opts, ins, outs );
 
   oyStructList_Release( &ins );
   oyStructList_Release( &outs );
@@ -12365,7 +12494,6 @@ const char *   oyColourContextGetID_ ( oyStruct_s      * s,
  *  @relates oyColourConversion_s
 
  *  @param[in]  cmm    zero or a cmm
- *  @param[in]  list   multi profiles, images should have already one profile
  *  @param[in]  opts   conversion opts
  *  @param[in]  in     input image
  *  @param[in]  out    output image
@@ -12375,7 +12503,6 @@ const char *   oyColourContextGetID_ ( oyStruct_s      * s,
  *  @date  november 2007 (API 0.1.8)
  */
 oyColourConversion_s* oyColourConversion_Create_ (
-                                        oyProfiles_s * list,
                                         oyOptions_s     * opts,
                                         oyImage_s       * in,
                                         oyImage_s       * out,
@@ -12426,7 +12553,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
 
     /* 1. create hash text */
     hashTextAdd_m( cmm );
-    tmp = oyColourContextGetID_( (oyStruct_s*)s, list, opts, in, out );
+    tmp = oyColourContextGetID_( (oyStruct_s*)s, opts, in, out );
     hashTextAdd_m( tmp );
 
     /* 2. query in cache */
@@ -12447,7 +12574,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
       if(!cmm_ptr)
       {
         /* 3b. ask CMM */
-        cmm_ptr = oyColourConversion_CallCMM_( cmm, s, list, opts, in, out,
+        cmm_ptr = oyColourConversion_CallCMM_( cmm, s, 0, opts, in, out,
                                                0, entry ? entry->oy_ : 0);
         error = !cmm_ptr;
 
@@ -13537,7 +13664,8 @@ oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
  *  @brief   get the processing data from a filter node
  *
  *  @param[in]     node                filter
- *  @return                            error
+ *  @param[in]     get_plug            1 get input, 0 get output data
+ *  @return                            the data list
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/11/04 (Oyranos: 0.1.8)
@@ -13609,36 +13737,39 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
           oyCMMptr_s ** cmm_profile_array = 0,
                       * cmm_ptr = 0;
           int           cmm_profile_array_n = 0;
-          int i, n;
-          oyProfiles_s * list = 0;
-          oyStructList_s * in_datas = oyStructList_New(0),
-                         * out_datas = oyStructList_New(0);
-          oyStruct_s * data = 0;
+          int i, n, j;
+          oyStructList_s * list = oyStructList_New(0);
           oyHash_s * entry = 0;
-          char * hash_text = 0;
-          const char * tmp = 0;
- 
+          const char * hash_text = 0;
+          oyOption_s * opt = 0; 
 
           n = oyOptions_Count( s->options_ );
 
-          /* if we have no */
-
+          /* collect effect profiles */
           for( i = 0; i < n; ++i )
           {
-            oyOption_s * opt = oyOptions_Get( s->options_, i );
+            opt = oyOptions_Get( s->options_, i );
 
             if(opt->value_type == oyVAL_STRUCT)
             {
               oyStruct_s * st = opt->value->oy_struct;
-              if(st->type_ == oyOBJECT_PROFILES_S)
-                list = oyProfiles_Copy( (oyProfiles_s*) st, 0 );
+
+              j = 0;
+              while(node->filter->api4_->cache_data_types[j])
+              {
+                if(st->type_ == node->filter->api4_->cache_data_types[j])
+                {
+                  st = st->copy( st, 0 );
+                  error = oyStructList_MoveIn( list, &st, -1 );
+                }
+                ++j;
+              }
             }
 
             oyOption_Release( &opt );
           }
-
-          cmm_profile_array = oyProfiles_GetCMMptrs_( list, s->cmm_ );
-          cmm_profile_array_n = oyProfiles_Count( list );
+          cmm_profile_array = oyStructList_GetCMMptrs_( list, s->cmm_ );
+          cmm_profile_array_n = oyStructList_Count( list );
 
           /*  Cache Search
            *  1.     hash from input
@@ -13650,40 +13781,10 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
            */
 
           /* 1. create hash text */
-          hashTextAdd_m( s->registration_ );
-
-          /* pick all plug (input) data */
-          i = 0;
-          while( node->plugs[i] && !error )
-          {
-            data = 0;
-            if(node->plugs[i]->remote_socket_->data)
-              data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
-            error = oyStructList_MoveIn( in_datas, &data, -1 );
-            ++i;
-          }
-
-          /* pick all sockets (output) data */
-          i = 0;
-          while( node->sockets[i] && !error )
-          {
-            data = 0;
-            if(node->sockets[i]->data)
-              data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
-            error = oyStructList_MoveIn( out_datas, &data, -1 );
-            ++i;
-          }
-
-          /* make a description */
-          tmp = oyContextGetID_( (oyStruct_s*)node, list,
-                                 s->options_, in_datas, out_datas );
-          hashTextAdd_m( tmp );
+          hash_text = oyFilterNode_GetText( node, oyNAME_NICK );
 
           /* 2. query in cache */
           entry = oyCMMCacheListGetEntry_( hash_text );
-
-          if(s->oy_->deallocateFunc_)
-            s->oy_->deallocateFunc_( hash_text );
 
           if(!error)
           {
@@ -14451,7 +14552,7 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
                          p_out,
                          0 );
 
-  conv   = oyColourConversion_Create( 0,0, in,out, 0 );
+  conv   = oyColourConversion_Create( 0, in,out, 0 );
   error  = oyColourConversion_Run( conv );
 
   oyColourConversion_Release( &conv );
@@ -15168,7 +15269,7 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
  *  @deprecated because sometimes is no ddc information available
  *  @todo include connection information - grafic cart
  *
- *  @param      display       the display string
+ *  @param      display_name  the display string
  *  @param[out] manufacturer  the manufacturer of the monitor device
  *  @param[out] model         the model of the monitor device
  *  @param[out] serial        the serial number of the monitor device
@@ -15253,7 +15354,7 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
  *
  *  This function will hit exact results only with Xinerama.
  *
- *  @param      raw_display_name  raw display string
+ *  @param      display_name  raw display string
  *  @param      x             x position on screen
  *  @param      y             y position on screen
  *  @param      allocate_func function used to allocate memory for the string
@@ -15295,7 +15396,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 /** Function: oyGetMonitorProfile
  *  @brief   get the monitor profile from the server
  *
- *  @param      display                the display string
+ *  @param      display_name           the display string
  *  @param[out] size                   the size of profile
  *  @param      allocate_func          function used to allocate memory for the profile
  *  @return                            the memory block containing the profile
@@ -15334,7 +15435,7 @@ char *   oyGetMonitorProfile         ( const char        * display_name,
 /** Function: oyGetMonitorProfileNameFromDB
  *  @brief   get the monitor profile filename from the device profile database
  *
- *  @param      display                the display string
+ *  @param      display_name           the display string
  *  @param      allocate_func function used to allocate memory for the string
  *  @return                   the profiles filename (if localy available)
  *

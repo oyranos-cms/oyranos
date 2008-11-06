@@ -185,28 +185,31 @@ oyConnector_s * oyra_imageOutputPPM_connectors[2] =
  */
 oyCMMapi4_s   oyra_api4_image_output_ppm = {
 
-  oyOBJECT_CMM_API4_S,
-  0,0,0,
-  0,
+  oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  0, /* oyCMMapi_s * next */
   
-  oyraCMMInit,
-  oyraCMMMessageFuncSet,
-  oyraFilter_ImageOutputPPMCanHandle,
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
+  /* registration */
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output_ppm",
 
-  {0,0,1},
+  {0,0,1}, /* int32_t version[3] */
 
-  oyraFilter_ImageOutputPPMValidateOptions,
-  oyraWidgetEvent,
+  0, /* uint32_t * cache_data_types */
 
-  0,
-  0,
-  oyraFilterNode_ImageRootContextToMem,
-  0,
-  oyraFilterPlug_ImageOutputPPMRun,
+  oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image_out_ppm", "Image[out_ppm]", "Output PPM Image Filter Object"},
+  0, /* oyCMMDataOpen_f */
+  0, /* oyCMMFilterNode_CreateContext_f */
+  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextFromMem_f */
+  oyraFilterPlug_ImageOutputPPMRun, /* oyCMMFilterPlug_Run_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "image_out_ppm", "Image[out_ppm]", "Output PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out_ppm]", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
@@ -278,7 +281,6 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
-  oyDATATYPE_e data_type = 0;
 
   if(!error)
     error = filter->type_ != oyOBJECT_FILTER_S;
@@ -287,7 +289,7 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
   if(!error)
     if(filter->image_ && filter->image_->layout_)
     {
-      data_type = oyToDataType_m( filter->image_->layout_[0] );
+      oyDATATYPE_e data_type = oyToDataType_m( filter->image_->layout_[0] );
       if(!(data_type == oyUINT8 ||
            data_type == oyUINT16 ||
            data_type == oyUINT32 ||
@@ -309,7 +311,7 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
  *
  *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
  *  We do not have any binary context to include.
- *  Thus oyFilter_TextToInfo() is fine.
+ *  Thus oyFilterNode_TextToInfo() is fine.
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/17 (Oyranos: 0.1.8)
@@ -321,7 +323,7 @@ oyPointer  oyraFilterNode_ImageRootContextToMem (
                                        oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc )
 {
-  return oyFilter_TextToInfo( node->filter, size, allocateFunc );
+  return oyFilterNode_TextToInfo( node, size, allocateFunc );
 }
 
 /** @func    oyraFilterPlug_ImageRootRun
@@ -463,28 +465,31 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
  */
 oyCMMapi4_s   oyra_api4_image_output = {
 
-  oyOBJECT_CMM_API4_S,
-  0,0,0,
-  0,
+  oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  0, /* oyCMMapi_s * next */
   
-  oyraCMMInit,
-  oyraCMMMessageFuncSet,
-  oyraFilter_ImageRootCanHandle,
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
 
+  /* registration */
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output",
 
-  {0,0,1},
+  {0,0,1}, /* int32_t version[3] */
 
-  oyraFilter_ImageRootValidateOptions,
-  oyraWidgetEvent,
+  0, /* uint32_t * cache_data_types */
 
-  0,
-  0,
-  oyraFilterNode_ImageRootContextToMem,
-  0,
-  oyraFilterPlug_ImageOutputRun,
+  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"},
+  0, /* oyCMMDataOpen_f */
+  0, /* oyCMMFilterNode_CreateContext_f */
+  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextFromMem_f */
+  oyraFilterPlug_ImageOutputRun, /* oyCMMFilterPlug_Run_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out]", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
@@ -508,28 +513,31 @@ oyCMMapi4_s   oyra_api4_image_output = {
  */
 oyCMMapi4_s   oyra_api4_image_root = {
 
-  oyOBJECT_CMM_API4_S,
-  0,0,0,
-  (oyCMMapi_s*) & oyra_api4_image_output,
+  oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  (oyCMMapi_s*) & oyra_api4_image_output, /* oyCMMapi_s * next */
   
-  oyraCMMInit,
-  oyraCMMMessageFuncSet,
-  oyraFilter_ImageRootCanHandle,
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
 
+  /* registration */
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/root",
 
-  {0,0,1},
+  {0,0,1}, /* int32_t version[3] */
 
-  oyraFilter_ImageRootValidateOptions,
-  oyraWidgetEvent,
+  0, /* uint32_t * cache_data_types */
 
-  0,
-  0,
-  oyraFilterNode_ImageRootContextToMem,
-  0,
-  oyraFilterPlug_ImageRootRun,
+  oyraFilter_ImageRootValidateOptions, /* uint32_t * cache_data_types */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"},
+  0, /* oyCMMDataOpen_f */
+  0, /* oyCMMFilterNode_CreateContext_f */
+  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextFromMem_f */
+  oyraFilterPlug_ImageRootRun, /* oyCMMFilterPlug_Run_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[in]", /* category */
   0,   /* options */
   0,   /* opts_ui_ */

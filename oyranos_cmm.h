@@ -75,8 +75,18 @@ typedef struct {
   int                  ref;            /**< Oyranos reference counter */
 } oyCMMptr_s;
 
-typedef int      (*oyCMMProfile_Open_f)( oyPointer         block,
-                                       size_t              size,
+
+/** @brief CMM data to Oyranos cache
+ *
+ *  @param[in]     data                the data struct know to the backend
+ *  @param[in,out] oy                  the Oyranos cache struct to fill by the backend
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/11/06
+ */
+typedef int      (*oyCMMDataOpen_f)  ( oyStruct_s        * data,
                                        oyCMMptr_s        * oy );
 
 typedef int      (*oyCMMColourConversion_Create_f) (
@@ -196,7 +206,7 @@ typedef struct {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  oyCMMProfile_Open_f oyCMMProfile_Open;
+  oyCMMDataOpen_f  oyCMMDataOpen;
   oyCMMColourConversion_Create_f oyCMMColourConversion_Create;
   oyCMMColourConversion_FromMem_f oyCMMColourConversion_FromMem;
   oyCMMColourConversion_ToMem_f oyCMMColourConversion_ToMem;
@@ -418,14 +428,17 @@ struct  oyCMMapi4_s {
   /** 0: major - should be stable for the live time of a filter, \n
       1: minor - mark new features, \n
       2: patch version - correct errors */
-  int              version[3];
+  int32_t          version[3];
+
+  /** zero terminated list of struct types, to cache in Oyranos */
+  uint32_t       * cache_data_types;
 
   /** check options for validy and correct */
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
   oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
 
-  /** mandatory for "..colour" filters */
-  oyCMMProfile_Open_f          oyCMMProfile_Open;
+  /** mandatory for "..colour" filters, register with cache_data_types */
+  oyCMMDataOpen_f                  oyCMMDataOpen;
   /** mandatory for "..colour" filters */
   oyCMMFilterNode_CreateContext_f  oyCMMFilterNode_CreateContext;
   /** mandatory for "..colour" filters */

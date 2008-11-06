@@ -194,7 +194,11 @@ main(int argc, char** argv)
 
 
   if(conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem)
-    ptr = conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem( conversion->input, &size, 0, malloc );
+  {
+    oyFilterPlug_s * plug = oyFilterNode_GetPlug( conversion->out_, 0 );
+    ptr = plug->remote_socket_->node->filter->api4_->oyCMMFilterNode_ContextToMem(
+             plug->remote_socket_->node, &size, 0, malloc );
+  }
 
   if(ptr)
     oyWriteMemToFile_( "test_dbg.icc", ptr, size );

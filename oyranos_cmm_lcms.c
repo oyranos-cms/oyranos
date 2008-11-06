@@ -51,7 +51,7 @@ int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
  *  @since   2007/12/10 (Oyranos: 0.1.8)
  */
 typedef struct {
-  int          type;                   /**< shall be lcPR */
+  uint32_t     type;                   /**< shall be lcPR */
   size_t       size;
   oyPointer    block;                  /**< Oyranos raw profile pointer. Dont free! */
   oyPointer    lcms;                   /**< cmsHPROFILE struct */
@@ -250,9 +250,8 @@ int lcmsCMMProfileReleaseWrap(oyPointer *p)
  *  @date    2007/11/12
  *  @since   2007/11/12 (Oyranos: 0.1.8)
  */
-int                lcmsCMMProfile_Open ( oyPointer         block,
-                                         size_t            size,
-                                         oyCMMptr_s      * oy )
+int          lcmsCMMProfile_Open     ( oyStruct_s        * data,
+                                       oyCMMptr_s        * oy )
 {
   oyCMMptr_s * s = 0;
   int error = 0;
@@ -265,7 +264,16 @@ int                lcmsCMMProfile_Open ( oyPointer         block,
   {
     char type_[4] = lcmsPROFILE;
     int type = *((int*)&type_);
+    size_t size = 0;
+    oyPointer block = 0;
     lcmsProfileWrap_s * s = calloc(sizeof(lcmsProfileWrap_s), 1);
+
+    if(data->type_ == oyOBJECT_PROFILE_S)
+    {
+      oyProfile_s * p = (oyProfile_s*)data;
+      size = p->size_;
+      block = p->block_;
+    }
 
     s->type = type;
     s->size = size;
@@ -375,8 +383,8 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
  *  @brief
  *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/00
  *  @since   2007/12/00 (Oyranos: 0.1.8)
+ *  @date    2007/12/00
  */
 int lcmsCMMDeleteTransformWrap(oyPointer * wrap)
 {
@@ -402,8 +410,8 @@ int lcmsCMMDeleteTransformWrap(oyPointer * wrap)
  *  @brief   fill a lcmsTransformWrap_s struct
  *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/21
  *  @since   2007/12/21 (Oyranos: 0.1.8)
+ *  @date    2007/12/21
  */
 lcmsTransformWrap_s* lcmsTransformWrap_Set_ (
                                        cmsHTRANSFORM       xform,
@@ -449,8 +457,8 @@ lcmsTransformWrap_s* lcmsTransformWrap_Set_ (
  *  @brief
  *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/00
  *  @since   2007/12/00 (Oyranos: 0.1.8)
+ *  @date    2007/12/00
  */
 int          lcmsCMMColourConversion_Create (
                                        oyCMMptr_s       ** cmm_profile,
@@ -547,8 +555,8 @@ int          lcmsCMMColourConversion_Create (
  *  lcmsCMMColourConversion_Create. => redirect
  *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/21
- *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @since   2007/12/21 (Oyranos: 0.1.8)
+ *  @date    2008/11/06
  */
 int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
                                        size_t              size,
@@ -563,10 +571,13 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
   oyCMMptr_s intern = {oyOBJECT_CMM_POINTER_S, 0,0,0,
                        CMM_NICK, {0}, 0, {0}, 0, 0 };
   oyCMMptr_s * dls[] = {0, 0};
+  oyProfile_s p = { oyOBJECT_PROFILE_S,0,0,0,0,0,0,0,0,0,0,0 };
 
   dls[0] = &intern;
+  p.block_ = mem;
+  p.size_ = size;
 
-  error = lcmsCMMProfile_Open ( mem, size, &intern );
+  error = lcmsCMMProfile_Open ( (oyStruct_s*)&p, &intern );
   error = lcmsCMMColourConversion_Create (
                                        dls, 1,
                                        oy_pixel_layout_in, oy_pixel_layout_out,
@@ -580,8 +591,8 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
  *  convert a lcms colour conversion context to a device link
  *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/21
  *  @since   2007/12/21 (Oyranos: 0.1.8)
+ *  @date    2007/12/21
  */
 oyPointer  lcmsCMMColourConversion_ToMem (
                                        oyCMMptr_s        * oy,
@@ -631,8 +642,8 @@ oyPointer  lcmsCMMColourConversion_ToMem (
  *  @brief
  *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/21
  *  @since   2007/12/21 (Oyranos: 0.1.8)
+ *  @date    2007/12/21
  */
 int              lcmsCMMColourConversion_Run (
                                        oyCMMptr_s        * oy,
@@ -755,7 +766,7 @@ oyConnector_s lcms_cmmIccPlug_connector = {
   0  /* is_mandatory; mandatory flag */
 };
 oyConnector_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
-
+uint32_t lcms_cache_data_types[] = { oyOBJECT_PROFILE_S, oyOBJECT_IMAGE_S, 0 };
 
 /** Function lcmsCMMFilterNode_CreateContext
  *  @brief   implement oyCMMFilterNode_CreateContext_f()
@@ -958,10 +969,12 @@ oyCMMapi4_s   lcms_api4_cmm = {
 
   {0,0,1},
 
+  lcms_cache_data_types,
+
   lcmsFilter_CmmIccValidateOptions,
   lcmsWidgetEvent,
 
-  lcmsCMMProfile_Open,
+  lcmsCMMProfile_Open, /* oyCMMDataOpen_f */
   lcmsCMMFilterNode_CreateContext, /* oyCMMFilterNode_CreateContext_f */
   0, /* lcmsFilterNode_CmmIccContextToMem */ /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextFromMem_f */
