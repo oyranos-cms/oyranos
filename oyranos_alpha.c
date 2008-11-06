@@ -4315,8 +4315,7 @@ static int oy_option_id_ = 0;
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-oyOption_s *   oyOption_New          ( oyObject_s          object,
-                                       const char        * name )
+oyOption_s *   oyOption_New          ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_OPTION_S;
@@ -4371,7 +4370,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
   if(!option || !object)
     return s;
 
-  s = oyOption_New( object, option ? option->name.name : "" );
+  s = oyOption_New( object );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
 
@@ -4809,7 +4808,23 @@ oyOptions_s * oy_default_behaviour_settings_ = 0;
  */
 oyOptions_s *  oyOptions_FromDefaults( oyOPTIONDEFAULTS_e  type,
                                        uint32_t            flags,
-                                       oyObject_s          object );
+                                       oyObject_s          object )
+{
+  oyOptions_s * s = 0;
+  oyOption_s * o = 0;
+  int error = 0;
+
+  if(!oy_default_behaviour_settings_)
+  {
+    oy_default_behaviour_settings_ = oyOptions_New(0);
+
+    /* add all static options */
+    o = oyOption_New( object );
+    
+  }
+
+  return s;
+}
 
 /** Function: oyOptions_Copy_
  *  @relates oyOptions_s
@@ -12216,6 +12231,234 @@ oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
   return ptr;
 }
 
+/**
+ *  @internal
+ *  Function: oyFilterNode_GetNextFromLinear_
+ *  @relates oyFilterNode_s
+ *  @brief   get next node from a linear graph 
+ *
+ *  @param[in]     first               filter
+ *  @return                            next node
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/01 (Oyranos: 0.1.8)
+ *  @date    2008/11/01
+ */
+oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
+                                       oyFilterNode_s    * first )
+{
+      oyFilterNode_s * next = 0;
+      oyFilterSocket_s * socket = 0;
+      oyFilterPlug_s * plug = 0;
+
+      {
+        socket = first->sockets[0];
+
+        if(socket)
+          plug = oyFilterPlugs_Get( socket->requesting_plugs_, 0 );
+        if(plug)
+          next = plug->node;
+        else
+          next = 0;
+        oyFilterPlug_Release( &plug );
+      }
+
+  return next;
+}
+
+/**
+ *  @internal
+ *  Function: oyFilterNode_GetLastFromLinear_
+ *  @relates oyFilterNode_s
+ *  @brief   get last node from a linear graph 
+ *
+ *  @param[in]     first               filter
+ *  @return                            last node
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/16 (Oyranos: 0.1.8)
+ *  @date    2008/07/16
+ */
+oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
+                                       oyFilterNode_s    * first )
+{
+  oyFilterNode_s * next = 0,
+                 * last = 0;
+
+      next = last = first;
+
+      while(next)
+      {
+        next = oyFilterNode_GetNextFromLinear_( next );
+
+        if(next)
+          last = next;
+      }
+
+  return last;
+}
+
+/**
+ *  @internal
+ *  Function oyFilterNode_DataGet_
+ *  @relates oyFilterNode_s
+ *  @brief   get the processing data from a filter node
+ *
+ *  @param[in]     node                filter
+ *  @param[in]     get_plug            1 get input, 0 get output data
+ *  @return                            the data list
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/04 (Oyranos: 0.1.8)
+ *  @date    2008/11/04
+ */
+oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
+                                       int                 get_plug )
+{
+  int error = !node;
+  oyStructList_s * datas = 0;
+  oyStruct_s * data = 0;
+  int i;
+
+  if(!error)
+  {
+    datas = oyStructList_New(0);
+
+    if(get_plug)
+    {
+          /* pick all plug (input) data */
+          i = 0;
+          while( node->plugs[i] && !error )
+          {
+            data = 0;
+            if(node->plugs[i]->remote_socket_->data)
+              data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
+            error = oyStructList_MoveIn( datas, &data, -1 );
+            ++i;
+          }
+    } else
+    {
+          /* pick all sockets (output) data */
+          i = 0;
+          while( node->sockets[i] && !error )
+          {
+            data = 0;
+            if(node->sockets[i]->data)
+              data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
+            error = oyStructList_MoveIn( datas, &data, -1 );
+            ++i;
+          }
+
+    }
+  }
+
+  return datas;
+}
+
+/**
+ *  @internal
+ *  Function oyFilterNode_ContextSet_
+ *  @relates oyFilterNode_s
+ *  @brief   set backend context in a filter 
+ *
+ *  @param[in]     node                filter
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/02 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
+ */
+int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
+{
+  int error = 0;
+  oyFilter_s * s = node->filter;
+
+  if(!error)
+  {
+          oyCMMptr_s ** cmm_profile_array = 0,
+                      * cmm_ptr = 0;
+          int           cmm_profile_array_n = 0;
+          int i, n, j;
+          oyStructList_s * list = oyStructList_New(0);
+          oyHash_s * entry = 0;
+          const char * hash_text = 0;
+          oyOption_s * opt = 0; 
+
+          n = oyOptions_Count( s->options_ );
+
+          /* collect effect profiles */
+          for( i = 0; i < n; ++i )
+          {
+            opt = oyOptions_Get( s->options_, i );
+
+            if(opt->value_type == oyVAL_STRUCT)
+            {
+              oyStruct_s * st = opt->value->oy_struct;
+
+              j = 0;
+              while(node->filter->api4_->cache_data_types[j])
+              {
+                if(st->type_ == node->filter->api4_->cache_data_types[j])
+                {
+                  st = st->copy( st, 0 );
+                  error = oyStructList_MoveIn( list, &st, -1 );
+                }
+                ++j;
+              }
+            }
+
+            oyOption_Release( &opt );
+          }
+          cmm_profile_array = oyStructList_GetCMMptrs_( list, s->cmm_ );
+          cmm_profile_array_n = oyStructList_Count( list );
+
+          /*  Cache Search
+           *  1.     hash from input
+           *  2.     query for hash in cache
+           *  3.     check
+           *  3a.       eighter take cache entry
+           *  3b.       or ask CMM
+           *  3b.1.                update cache entry
+           */
+
+          /* 1. create hash text */
+          hash_text = oyFilterNode_GetText( node, oyNAME_NICK );
+
+          /* 2. query in cache */
+          entry = oyCMMCacheListGetEntry_( hash_text );
+
+          if(!error)
+          {
+            /* 3. check and 3.a take*/
+            cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+                                                        oyOBJECT_CMM_POINTER_S);
+
+            if(!cmm_ptr)
+            {
+              /* 3b. ask CMM */
+              error = s->api4_->oyCMMFilterNode_CreateContext ( 
+                                  node, cmm_profile_array, cmm_profile_array_n,
+                                  oyCMMptr_New_(oyAllocateFunc_) );
+
+              /* 3b.1. update cache entry */
+              error = oyHash_SetPointer_( entry,
+                                   (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
+            }
+
+            if(!error && cmm_ptr && cmm_ptr->ptr)
+            {
+              oyHash_s * c = oyHash_Copy_(entry, 0);
+              node->backend_data = (oyStruct_s*) c;
+            }
+
+            oyCMMptr_Release_( &cmm_ptr );
+
+          }
+  }
+
+  return error;
+}
+
 
 
 
@@ -13589,234 +13832,6 @@ int          oyConversion_Release    ( oyConversion_s   ** obj )
   return 0;
 }
 
-
-/**
- *  @internal
- *  Function: oyFilterNode_GetNextFromLinear_
- *  @relates oyFilterNode_s
- *  @brief   get next node from a linear graph 
- *
- *  @param[in]     first               filter
- *  @return                            next node
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/11/01 (Oyranos: 0.1.8)
- *  @date    2008/11/01
- */
-oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
-                                       oyFilterNode_s    * first )
-{
-      oyFilterNode_s * next = 0;
-      oyFilterSocket_s * socket = 0;
-      oyFilterPlug_s * plug = 0;
-
-      {
-        socket = first->sockets[0];
-
-        if(socket)
-          plug = oyFilterPlugs_Get( socket->requesting_plugs_, 0 );
-        if(plug)
-          next = plug->node;
-        else
-          next = 0;
-        oyFilterPlug_Release( &plug );
-      }
-
-  return next;
-}
-
-/**
- *  @internal
- *  Function: oyFilterNode_GetLastFromLinear_
- *  @relates oyFilterNode_s
- *  @brief   get last node from a linear graph 
- *
- *  @param[in]     first               filter
- *  @return                            last node
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/16 (Oyranos: 0.1.8)
- *  @date    2008/07/16
- */
-oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
-                                       oyFilterNode_s    * first )
-{
-  oyFilterNode_s * next = 0,
-                 * last = 0;
-
-      next = last = first;
-
-      while(next)
-      {
-        next = oyFilterNode_GetNextFromLinear_( next );
-
-        if(next)
-          last = next;
-      }
-
-  return last;
-}
-
-/**
- *  @internal
- *  Function oyFilterNode_DataGet_
- *  @relates oyFilterNode_s
- *  @brief   get the processing data from a filter node
- *
- *  @param[in]     node                filter
- *  @param[in]     get_plug            1 get input, 0 get output data
- *  @return                            the data list
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/11/04 (Oyranos: 0.1.8)
- *  @date    2008/11/04
- */
-oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
-                                       int                 get_plug )
-{
-  int error = !node;
-  oyStructList_s * datas = 0;
-  oyStruct_s * data = 0;
-  int i;
-
-  if(!error)
-  {
-    datas = oyStructList_New(0);
-
-    if(get_plug)
-    {
-          /* pick all plug (input) data */
-          i = 0;
-          while( node->plugs[i] && !error )
-          {
-            data = 0;
-            if(node->plugs[i]->remote_socket_->data)
-              data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
-            error = oyStructList_MoveIn( datas, &data, -1 );
-            ++i;
-          }
-    } else
-    {
-          /* pick all sockets (output) data */
-          i = 0;
-          while( node->sockets[i] && !error )
-          {
-            data = 0;
-            if(node->sockets[i]->data)
-              data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
-            error = oyStructList_MoveIn( datas, &data, -1 );
-            ++i;
-          }
-
-    }
-  }
-
-  return datas;
-}
-
-/**
- *  @internal
- *  Function oyFilterNode_ContextSet_
- *  @relates oyFilterNode_s
- *  @brief   set backend context in a filter 
- *
- *  @param[in]     node                filter
- *  @return                            error
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/11/02 (Oyranos: 0.1.8)
- *  @date    2008/11/02
- */
-int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
-{
-  int error = 0;
-  oyFilter_s * s = node->filter;
-
-  if(!error)
-  {
-          oyCMMptr_s ** cmm_profile_array = 0,
-                      * cmm_ptr = 0;
-          int           cmm_profile_array_n = 0;
-          int i, n, j;
-          oyStructList_s * list = oyStructList_New(0);
-          oyHash_s * entry = 0;
-          const char * hash_text = 0;
-          oyOption_s * opt = 0; 
-
-          n = oyOptions_Count( s->options_ );
-
-          /* collect effect profiles */
-          for( i = 0; i < n; ++i )
-          {
-            opt = oyOptions_Get( s->options_, i );
-
-            if(opt->value_type == oyVAL_STRUCT)
-            {
-              oyStruct_s * st = opt->value->oy_struct;
-
-              j = 0;
-              while(node->filter->api4_->cache_data_types[j])
-              {
-                if(st->type_ == node->filter->api4_->cache_data_types[j])
-                {
-                  st = st->copy( st, 0 );
-                  error = oyStructList_MoveIn( list, &st, -1 );
-                }
-                ++j;
-              }
-            }
-
-            oyOption_Release( &opt );
-          }
-          cmm_profile_array = oyStructList_GetCMMptrs_( list, s->cmm_ );
-          cmm_profile_array_n = oyStructList_Count( list );
-
-          /*  Cache Search
-           *  1.     hash from input
-           *  2.     query for hash in cache
-           *  3.     check
-           *  3a.       eighter take cache entry
-           *  3b.       or ask CMM
-           *  3b.1.                update cache entry
-           */
-
-          /* 1. create hash text */
-          hash_text = oyFilterNode_GetText( node, oyNAME_NICK );
-
-          /* 2. query in cache */
-          entry = oyCMMCacheListGetEntry_( hash_text );
-
-          if(!error)
-          {
-            /* 3. check and 3.a take*/
-            cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
-                                                        oyOBJECT_CMM_POINTER_S);
-
-            if(!cmm_ptr)
-            {
-              /* 3b. ask CMM */
-              error = s->api4_->oyCMMFilterNode_CreateContext ( 
-                                  node, cmm_profile_array, cmm_profile_array_n,
-                                  oyCMMptr_New_(oyAllocateFunc_) );
-
-              /* 3b.1. update cache entry */
-              error = oyHash_SetPointer_( entry,
-                                   (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
-            }
-
-            if(!error && cmm_ptr && cmm_ptr->ptr)
-            {
-              oyHash_s * c = oyHash_Copy_(entry, 0);
-              node->backend_data = (oyStruct_s*) c;
-            }
-
-            oyCMMptr_Release_( &cmm_ptr );
-
-          }
-  }
-
-  return error;
-}
 
 /** Function oyConversion_FilterAdd
  *  @relates oyConversion_s

@@ -540,7 +540,7 @@ typedef struct {
 
   uint32_t             id;             /**< id to map to events and widgets */
   oyName_s             name;           /**< nick, name, description/help, e.g. "radius" "Radius" "..." */
-  const char         * registration;    /**< full key name to store configuration, e.g. "sw/oyranos.org/generic/scale", config key name will be name.nick; @todo Whats the difference here? registration <-> XML? */
+  const char         * registration;   /**< full key name to store configuration, e.g. "sw/oyranos.org/generic/scale", config key name will be name.nick; @todo Whats the difference here? registration <-> XML? */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -550,8 +550,7 @@ typedef struct {
   uint32_t             flags;          /**< */
 } oyOption_s;
 
-oyOption_s *   oyOption_New          ( oyObject_s          object,
-                                       const char        * name );
+oyOption_s *   oyOption_New          ( oyObject_s          object );
 oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
                                        oyObject_s          object );
 int            oyOption_Release      ( oyOption_s       ** option );
