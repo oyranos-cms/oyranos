@@ -4862,7 +4862,7 @@ oyOptions_s *  oyOptions_FromDefaults( oyOPTIONDEFAULTS_e  type,
     oy_default_behaviour_settings_ = oyOptions_New(0);
 
     /* add all static options */
-    o = oyOption_FromStatic_( static_opt, object );
+    //o = oyOption_FromStatic_( static_opt, object );
   }
 
   return s;
