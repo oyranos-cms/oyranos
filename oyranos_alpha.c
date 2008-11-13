@@ -855,6 +855,40 @@ int          oyName_release          ( oyName_s         ** obj )
   return error;
 }
 
+/** Function oyName_releaseMembers
+ *  @relates oyName_s
+ *  @brief   release only members
+ *
+ *  Useful to release the member strings but not the struct itself, which can
+ *  in this case be static. Deallocation uses oyDeAllocateFunc_().
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/13 (Oyranos: 0.1.9)
+ *  @date    2008/11/13
+ */
+int          oyName_releaseMembers   ( oyName_s         ** obj )
+{
+  int error = 0;
+  oyDeAlloc_f deallocateFunc = oyDeAllocateFunc_;
+  oyName_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if(s->nick)
+    deallocateFunc(s->nick); s->nick = 0;
+
+  if(s->name)
+    deallocateFunc(s->name); s->name = 0;
+
+  if(s->description)
+    deallocateFunc(s->description); s->description = 0;
+
+  return error;
+}
+
 /**
  *  @internal
  *  @brief oyName_s deallocation
@@ -4373,6 +4407,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
   s = oyOption_New( object );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
+  deallocateFunc_ = s->oy_->deallocateFunc_;
 
   if(!error)
   {
@@ -4390,12 +4425,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
     s->value_type = option->value_type;
     oyValueCopy( s->value, option->value, s->value_type,
                  allocateFunc_, s->oy_->deallocateFunc_ );
-    oyValueCopy( s->standard, option->standard, s->value_type,
-                 allocateFunc_, s->oy_->deallocateFunc_ );
-    oyValueCopy( s->start, option->start, s->value_type,
-                 allocateFunc_, s->oy_->deallocateFunc_ );
-    oyValueCopy( s->end, option->end, s->value_type,
-                 allocateFunc_, s->oy_->deallocateFunc_ );
+    s->source = option->source;
     s->flags = option->flags;
   }
 
@@ -4463,14 +4493,17 @@ int            oyOption_Release      ( oyOption_s       ** obj )
   s->registration = 0;
   s->flags = 0;
 
+  if(s->name.release)
+  {
+    oyStruct_s * name = (oyStruct_s*)&s->name;
+    s->name.release( &name );
+  }
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
     oyValueRelease( &s->value, s->value_type, deallocateFunc );
-    oyValueRelease( &s->standard, s->value_type, deallocateFunc );
-    oyValueRelease( &s->start, s->value_type, deallocateFunc );
-    oyValueRelease( &s->end, s->value_type, deallocateFunc );
 
     s->value_type = 0;
 
@@ -4719,53 +4752,8 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
         if(found == 1)
         {
           if(oyStrcmp_(option_a->name.nick, option_b->name.nick) == 0)
-          {
             if(option_a->value_type != option_b->value_type)
               found = 0;
-
-            if(found && option_a->value_type)
-            {
-              if(option_a->value_type == oyVAL_INT &&
-                 option_b->value)
-              {
-                if(option_a->start)
-                {
-                  found = option_b->value->int32 >= option_a->start->int32;
-                  if(found && option_b->start)
-                    found = option_b->start->int32 >= option_a->start->int32;
-                }
-                if(found && option_a->end)
-                {
-                  found = option_b->value->int32 <= option_a->end->int32;
-                  if(found && option_b->end)
-                    found = option_b->end->int32 <= option_a->end->int32;
-                }
-              }
-              if(option_a->value_type == oyVAL_DOUBLE &&
-                 option_b->value)
-              {
-                if(option_a->start)
-                {
-                  found = option_b->value->dbl >= option_a->start->dbl;
-                  if(found && option_b->start)
-                    found = option_b->start->dbl >= option_a->start->dbl;
-                }
-                if(found && option_a->end)
-                {
-                  found = option_b->value->dbl <= option_a->end->dbl;
-                  if(found && option_b->end)
-                    found = option_b->end->dbl <= option_a->end->dbl;
-                }
-              }
-/*
-  oyVAL_INT_LIST,
-  oyVAL_DOUBLE_LIST,
-  oyVAL_STRING,
-  oyVAL_STRING_LIST
-  oyVAL_STRUCT
-*/
-            }
-          }
 
           for(k = 0; k < oyOptions_Count(options); ++k)
           {
@@ -4781,6 +4769,61 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   }
 
   return options;
+}
+
+
+/**
+ *  @internal
+ *  Function oyOption_FromStatic_
+ *  @relates oyOption_s
+ *  @brief   provide the current state of Oyranos behaviour settings
+ *
+ *  @todo harmonise the xml key names to the elektra ones to form one namespace
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/06 (Oyranos: 0.1.9)
+ *  @date    2008/11/13
+ */
+oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
+                                       oyObject_s          object )
+{
+  oyOption_s * s = 0;
+  int error = !opt;
+
+  if(error)
+    return s;
+
+  s = oyOption_New( object );
+  if(!s)
+    return s;
+
+  s->id = opt->id;
+  oyName_set_ ( &s->name, opt->name, oyNAME_NAME,
+                oyAllocateFunc_, oyDeAllocateFunc_ );
+  oyName_set_ ( &s->name, opt->description, oyNAME_DESCRIPTION,
+                oyAllocateFunc_,oyDeAllocateFunc_ );
+  oyName_set_ ( &s->name, opt->config_string_xml, oyNAME_NICK,
+                oyAllocateFunc_, oyDeAllocateFunc_ );
+  s->name.copy = (oyStruct_Copy_f) oyName_copy;
+  s->name.release = (oyStruct_Release_f) oyName_releaseMembers;
+  s->registration = opt->config_string;
+  s->value = s->oy_->allocateFunc_(sizeof(oyValue_u));
+
+  if(oyWIDGET_BEHAVIOUR_START < opt->id && opt->id < oyWIDGET_BEHAVIOUR_END)
+  {
+    s->value_type = oyVAL_DOUBLE;
+    s->value->dbl = opt->default_value;
+    s->source = oyOPTIONSOURCE_FILTER;
+  } else
+  {
+    s->value_type = oyVAL_STRING;
+    s->value->string = oyGetDefaultProfileName( opt->id, s->oy_->allocateFunc_ );
+    if(!s->value->string)
+      s->value->string = oyStringCopy_( opt->default_string, s->oy_->allocateFunc_);
+    s->source = oyOPTIONSOURCE_FILTER;
+  }
+
+  return s;
 }
 
 oyOptions_s * oy_default_behaviour_settings_ = 0;
@@ -4819,8 +4862,7 @@ oyOptions_s *  oyOptions_FromDefaults( oyOPTIONDEFAULTS_e  type,
     oy_default_behaviour_settings_ = oyOptions_New(0);
 
     /* add all static options */
-    o = oyOption_New( object );
-    
+    o = oyOption_FromStatic_( static_opt, object );
   }
 
   return s;
