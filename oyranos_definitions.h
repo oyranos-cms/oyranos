@@ -141,7 +141,7 @@
 /** key name for the untagged data assumed source RGB profile */
 #define OY_DEFAULT_ASSUMED_RGB_PROFILE       OY_PROFILE_STD "assumed_rgb"
 /** name for the untagged data assumed source profile for www content */
-#define OY_DEFAULT_ASSUMED_WEB_PROFILE       OY_PROFILE_STD "assumed_web_rgb" /* static_profile */
+#define OY_DEFAULT_ASSUMED_WEB_PROFILE       OY_PROFILE_STD "assumed_web" /* static_profile */
 /** key name for the untagged data assumed source Cmyk profile */
 #define OY_DEFAULT_ASSUMED_CMYK_PROFILE      OY_PROFILE_STD "assumed_cmyk"
 /** key name for the untagged data assumed source Gray profile */
