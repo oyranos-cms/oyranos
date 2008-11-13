@@ -518,6 +518,23 @@ void           oyValueClear          ( oyValue_u         * v,
                                        oyVALUETYPE_e       type,
                                        oyDeAlloc_f         deallocateFunc );
 
+/** @enum    oyOPTIONSOURCE_e
+ *  @brief   a option source type
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/13 (Oyranos: 0.1.9)
+ *  @date    2008/11/13
+ */
+typedef enum {
+  oyOPTIONSOURCE_NONE,                 /**< not clear */
+  oyOPTIONSOURCE_USER,                 /**< user defaults, e.g. elektra/user */
+  oyOPTIONSOURCE_SYSTEM,               /**< system defaults, e.g. elektra/sys */
+  oyOPTIONSOURCE_FILTER,               /**< internal defaults, e.g. filter */
+  oyOPTIONSOURCE_DATA,                 /**< external defaults, e.g. policy */
+  oyOPTIONSOURCE_EDIT,                 /**< user modified */
+  oyOPTIONSOURCE_AUTOMATIC             /**< automatically modified */
+} oyOPTIONSOURCE_e;
+
 /** @brief Option for rendering
  *  @ingroup objects_value
 
@@ -544,9 +561,7 @@ typedef struct {
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
-  oyValue_u          * standard;       /**< the standard value */
-  oyValue_u          * start;          /**< value range start */
-  oyValue_u          * end;            /**< value range end */
+  oyOPTIONSOURCE_e     source;         /**< the source of this value */
   uint32_t             flags;          /**< */
 } oyOption_s;
 
