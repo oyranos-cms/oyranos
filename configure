@@ -202,7 +202,7 @@ for i in $X_ADD_2; do
       nochecklibs="$nochecklibs $checklib"
     fi
 done
-for i in $LIBS_TEST; do
+for i in $LIBS_TEST_1; do
     checklib=$i switch=disable-lib$checklib
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       nochecklibs="$nochecklibs $checklib"
@@ -239,7 +239,7 @@ for i in $X_ADD_2; do
 checklib=$i
 test -n "$INFOECHO" && $INFOECHO "   --disable-lib$checklib			do not check for $checklib"
 done
-for i in $LIBS_TEST; do
+for i in $LIBS_TEST_1; do
 checklib=$i
 test -n "$INFOECHO" && $INFOECHO "   --disable-lib$checklib			do not check for $checklib"
 done
@@ -705,11 +705,11 @@ test -n "$ECHO" && $ECHO "" >> $CONF_SH
 test -n "$INFOECHO" && $INFOECHO ""
 
 # tell about required libs
-new_libs=$LIBS_TEST
+new_libs=$LIBS_TEST_1
 for i in $nochecklibs; do
   new_libs=`echo $new_libs | sed s/$i//`
 done
-LIBS_TEST=$new_libs
+LIBS_TEST_1=$new_libs
 new_libs=$X_ADD_2
 for i in $nochecklibs; do
   new_libs=`echo $new_libs | sed s/$i//`
@@ -717,6 +717,7 @@ done
 X_ADD_2=$new_libs
 export X_ADD_2
 export LIBS_TEST
+export LIBS_TEST_1
 
 # detect external libs and headers
 if [ -n "$ECHO" ]; then
@@ -726,6 +727,7 @@ if [ -n "$ECHO" ]; then
   ELEKTRA=1; export ELEKTRA
   #OYRANOS=1; export OYRANOS
   LCMS=1; export LCMS
+  LIBXML2=1; export LIBXML2
   LIBPNG=2; export LIBPNG
   LIBTIFF=2; export LIBTIFF
   LIBOPENEXR=2; export LIBOPENEXR
@@ -747,6 +749,7 @@ fi
   ELEKTRA=0; export ELEKTRA
   #OYRANOS=0; export OYRANOS
   LCMS=0; export LCMS
+  LIBXML2=0; export LIBXML2
   LIBPNG=0; export LIBPNG
   LIBTIFF=0; export LIBTIFF
   LIBOPENEXR=0; export LIBOPENEXR

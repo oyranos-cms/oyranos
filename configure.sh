@@ -64,6 +64,31 @@ if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
   fi
 fi
 
+if [ -n "$LIBS_TEST_1" ]; then
+    for l in $LIBS_TEST_1; do
+      rm -f tests/libtest$EXEC_END
+      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+      if [ -f tests/libtest ]; then
+          echo_="lib$l is available"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+          if [ -z "$X_ADD_LIBS" ]; then
+            LDFLAGS="-l$l"
+          else
+            LDFLAGS="$LDFLAGS -l$l"
+          fi
+          echo "#define HAVE_$l 1"  >> $CONF_H
+          echo "$l=-l$l" >> "$CONF_TEMP_SH"
+          rm tests/libtest$EXEC_END
+      else
+        if [ $X11 -eq 1 ]; then
+          echo_="!!! ERROR lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+          ERROR=1
+        else
+          echo_="lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        fi
+      fi
+    done
+fi
+
 if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_min" ]; then
     elektra_min="0.7"
@@ -210,38 +235,100 @@ if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
   fi
 fi
 
-if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
-  pkg-config  --atleast-version=1.14 lcms
+if [ -n "$LIBXML2" ] && [ $LIBXML2 -gt 0 ]; then
+  name="libxml-2.0"
+  minversion=2
+  version=`pkg-config --modversion $name`
+  url="http://xmlsoft.org"
+  HAVE_LIB=0
+  ID=LIBXML2
+  ID_H="$ID"_H
+  ID_LIBS="$ID"_LIBS
+  pkg-config  --atleast-version=$minversion $name
   if [ $? = 0 ]; then
-    HAVE_LCMS=1
-    echo "#define HAVE_LCMS 1" >> $CONF_H
-    echo "LCMS = 1" >> $CONF
-    echo "LCMS_H = `pkg-config --cflags lcms | sed \"$STRIPOPT\"`" >> $CONF
-    echo "LCMS_LIBS = `pkg-config --libs lcms | sed \"$STRIPOPT\"`" >> $CONF
+    HAVE_LIB=1
+    echo "#define HAVE_$ID 1" >> $CONF_H
+    echo "$ID = 1" >> $CONF
+    echo "$ID_H = `pkg-config --cflags $name | sed \"$STRIPOPT\"`" >> $CONF
+    echo "$ID_LIBS = `pkg-config --libs $name | sed \"$STRIPOPT\"`" >> $CONF
   else
-    l=lcms 
+    l=xml2
     rm -f tests/libtest$EXEC_END
     $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
     if [ -f tests/libtest ]; then
-      HAVE_LCMS=1
-      echo "#define HAVE_LCMS 1" >> $CONF_H
-      echo "LCMS = 1" >> $CONF
-      echo "LCMS_H =" >> $CONF
-      echo "LCMS_LIBS = -llcms" >> $CONF
+      HAVE_LIBXML2=1
+      echo "#define HAVE_$ID 1" >> $CONF_H
+      echo "$ID = 1" >> $CONF
+      echo "$ID_H =" >> $CONF
+      echo "$ID_LIBS = -l$l" >> $CONF
       rm tests/libtest$EXEC_END
     fi
   fi
-  if [ -n $HAVE_LCMS ]; then
-    echo_="littleCMS               detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+  if [ -n $HAVE_LIB ]; then
+    if [ -n $version ]; then
+      echo_="libxml $version           detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    else
+      echo_="libxml-2.0              detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
   else
-    if [ $LCMS -eq 1 ]; then
-      echo_="!!! ERROR: no or too old LCMS found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    if [ $LIBXML2 -eq 1 ]; then
+      echo_="!!! ERROR: no or too old $name found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       ERROR=1
     else
-      echo_="    Warning: no or too old LCMS found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="    Warning: no or too old $name found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       WARNING=1
     fi
-    echo_="  need at least version 1.14, download: www.littlecms.com"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="  need at least version $minversion, download: $url"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+  fi
+fi
+
+if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
+  name="lcms"
+  libname=$name
+  minversion=1.14
+  url="http://www.littlecms.com"
+  TESTER=$LCMS
+  ID=LCMS
+
+  ID_H="$ID"_H
+  ID_LIBS="$ID"_LIBS
+  HAVE_LIB=0
+  version=`pkg-config --modversion $name`
+  pkg-config  --atleast-version=$minversion $name
+  if [ $? = 0 ]; then
+    HAVE_LIB=1
+    echo "#define HAVE_$ID 1" >> $CONF_H
+    echo "$ID = 1" >> $CONF
+    echo "$ID_H = `pkg-config --cflags $name | sed \"$STRIPOPT\"`" >> $CONF
+    echo "$ID_LIBS = `pkg-config --libs $name | sed \"$STRIPOPT\"`" >> $CONF
+  else
+    l=$libname
+    rm -f tests/libtest$EXEC_END
+    $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    if [ -f tests/libtest ]; then
+      HAVE_LIB=1
+      echo "#define HAVE_$ID 1" >> $CONF_H
+      echo "$ID = 1" >> $CONF
+      echo "$ID_H =" >> $CONF
+      echo "$ID_LIBS = -l$l" >> $CONF
+      rm tests/libtest$EXEC_END
+    fi
+  fi
+  if [ -n $HAVE_LIB ]; then
+    if [ -n $version ]; then
+      echo_="$name $version               detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    else
+      echo_="$name                    detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
+  else
+    if [ $TESTER -eq 1 ]; then
+      echo_="!!! ERROR: no or too old $name found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      ERROR=1
+    else
+      echo_="    Warning: no or too old $name found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      WARNING=1
+    fi
+    echo_="  need at least version $minversion, download: $url"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
   fi
 fi
 
