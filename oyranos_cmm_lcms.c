@@ -944,6 +944,22 @@ int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func )
   return 0;
 }
 
+char lcms_extra_options[] = {
+ " \n\
+  <xf:model>\n\
+   <xf:instance>\n\
+    <" OY_DOMAIN_INTERNAL " xmlns=\"\">\n\
+     <colour_icc>\n\
+      <" CMM_NICK ">\n\
+       <bpc>0</bpc>\n\
+       <cmyk_cmky_black_preservation>0</cmyk_cmky_black_preservation>\n\
+      </" CMM_NICK ">\n\
+     </colour_icc>\n\
+    </" OY_DOMAIN_INTERNAL ">\n\
+   </xf:instance>\n\
+  </xf:model>\n"
+};
+
 
 
 /** @instance lcms_api4
@@ -982,7 +998,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
 
   {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
   "Colour/CMM/littleCMS", /* category */
-  0,   /* options */
+  lcms_extra_options,   /* options */
   0,   /* opts_ui_ */
 
   lcms_cmmIccPlug_connectors,   /* plugs */
