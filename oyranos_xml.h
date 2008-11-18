@@ -68,6 +68,9 @@ char*       oyPolicyToXML_     (oyGROUP_e           group,
 
 int         oyReadXMLPolicy_   (oyGROUP_e           group, 
                                 const char       *xml);
+char *       oyXMLgetElement_        ( const char        * xml,
+                                       const char        * xpath,
+                                       const char        * key );
 
 #ifdef __cplusplus
 } /* extern "C" */

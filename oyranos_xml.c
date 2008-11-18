@@ -165,28 +165,21 @@ oyXMLgetValue_  (const oyChar  * xml,
 
 /* We dont get the starting point and length of the found value. */
 char*
-oyXMLgetField_  (const char       *xml,
-                 const char       *key,
+oyXMLgetField2_ (const char       *xml,
+                 const char       *start_key,
+                 const char       *end_key,
                  int              *len)
 {
   const char* val_pos = 0;
   char *value1 = 0, *value2 = 0;
   intptr_t l = 0;
-  int   len1 = strlen( key ) + 2,
-        len2 = strlen( key ) + 3;
-  char *key1 = NULL,
-       *key2 = NULL;
+  int   len1 = strlen( start_key ) + 2,
+        len2 = strlen( start_key ) + 3;
+  const char *key1 = start_key,
+             *key2 = end_key;
   int   open = 0;
 
-  oyAllocHelper_m_( key1, char, len1+1, oyAllocateFunc_, return NULL );
-  oyAllocHelper_m_( key2, char, len2+1, oyAllocateFunc_, return NULL );
-
   *len = 0;
-
-  sprintf(key1, "<%s>", key);
-  oySprintf_(key2, "</%s>", key);
-
-  if(!xml) goto clean;
 
   val_pos = value1 = strstr( xml, key1 ) + len1;
 
@@ -207,7 +200,7 @@ oyXMLgetField_  (const char       *xml,
         --open;
       else
       {
-        WARNc1_S("key: %s is not complete.", key)
+        WARNc1_S("key: %s is not complete.", key1)
         l = 0;
         return 0;
       }
@@ -220,12 +213,100 @@ oyXMLgetField_  (const char       *xml,
     value1 = NULL;
   }
 
+  *len = l;
+
+  return value1;
+}
+
+char*
+oyXMLgetField_  (const char       *xml,
+                 const char       *key,
+                 int              *len)
+{
+  char *value1 = 0;
+  intptr_t l = 0;
+  int   len1 = strlen( key ) + 2,
+        len2 = strlen( key ) + 3;
+  char *key1 = NULL,
+       *key2 = NULL;
+
+  oyAllocHelper_m_( key1, char, len1+1, oyAllocateFunc_, return NULL );
+  oyAllocHelper_m_( key2, char, len2+1, oyAllocateFunc_, return NULL );
+
+  *len = 0;
+
+  if(!xml) goto clean;
+
+  /* we search for a <key>...</key> pair */
+  oySprintf_(key1, "<%s>", key);
+  oySprintf_(key2, "</%s>", key);
+
+  value1 = oyXMLgetField2_( xml, key1, key2, len );
+
+  /* we try to find a <key ...>...</key> pattern */
+  if(!value1 && *len <= 0)
+  {
+    oySprintf_(key1, "<%s ", key);
+
+    value1 = oyXMLgetField2_( xml, key1, key2, len );
+  }
+
+
   clean:
   oyFree_m_(key1); oyFree_m_(key2);
 
   *len = l;
 
   return value1;
+}
+
+
+/**
+ *  @internal
+ *  Function oyXMLgetElement_
+ *  @brief   parse a text snippet for a XPATH expression
+ *
+ *  @param         xml                 the XML text
+ *  @param         key                 the element name
+ *  @return                            the element's start position
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/14 (Oyranos: 0.1.9)
+ *  @date    2008/11/14
+ */
+char*        oyXMLgetElement_        ( const char        * xml,
+                                       const char        * xpath,
+                                       const char        * key )
+{
+  char * text = 0;
+  const char * start = xml;
+  int xpaths_n = -1, pices_n = -1, i, j;
+  char ** xpaths = oyStringSplit_( xpath, '/', &xpaths_n, oyAllocateFunc_ ),
+       ** pices = 0;
+
+  for( i = 0; i < xpaths_n; ++i )
+  {
+    pices_n = -1;
+    pices = oyXMLgetArray_( start, xpaths[i], &pices_n );
+    for( j = 0; j < pices_n; ++j )
+    {
+      text = oyXMLgetElement_( pices[j], oyStrchr_( xpath, '/' ), key );
+      if(text) break;
+    }
+    if(text) break;
+  }
+
+  if(!xpath)
+  {
+    pices = oyXMLgetArray_( xml, key, &pices_n );
+    if(pices)
+      text = oyStringCopy_( pices[0], oyAllocateFunc_ );
+  }
+
+  if(pices)
+    oyStringListRelease_( &pices, pices_n, oyDeAllocateFunc_ );
+
+  return text;
 }
 
 /* There is no check for using the same key on a lower hirarchy. */
