@@ -557,7 +557,7 @@ typedef struct {
 
   uint32_t             id;             /**< id to map to events and widgets */
   oyName_s             name;           /**< nick, name, description/help, e.g. "radius" "Radius" "..." */
-  const char         * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/generic/scale", config key name will be name.nick;  registration <-> XML? */
+  char               * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/generic/scale", config key name will be name.nick;  registration <-> XML? */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -643,7 +643,9 @@ int            oyOptions_MoveIn      ( oyOptions_s       * options,
                                        oyOption_s       ** option,
                                        int                 pos );
 int            oyOptions_Add         ( oyOptions_s       * options,
-                                       oyOption_s        * option );
+                                       oyOption_s        * option,
+                                       int                 pos,
+                                       oyObject_s          object );
 char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );

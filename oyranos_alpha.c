@@ -4376,6 +4376,7 @@ oyOption_s *   oyOption_New          ( oyObject_s          object )
   /* ---- end of common object constructor ------- */
 
   s->id = oy_option_id_++;
+  s->name.type = oyOBJECT_NAME_S;
 
   return s;
 }
@@ -4420,7 +4421,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
     if(option->name.description)
       oyName_set_ ( &s->name, option->name.description, oyNAME_DESCRIPTION,
                     allocateFunc_, deallocateFunc_ );
-    s->registration = option->registration;
+    s->registration = oyStringCopy_( option->registration, allocateFunc_ );
     s->value_type = option->value_type;
     oyValueCopy( s->value, option->value, s->value_type,
                  allocateFunc_, s->oy_->deallocateFunc_ );
@@ -4489,7 +4490,6 @@ int            oyOption_Release      ( oyOption_s       ** obj )
   /* ---- end of common object destructor ------- */
 
   s->id = 0;
-  s->registration = 0;
   s->flags = 0;
 
   if(s->name.release)
@@ -4505,6 +4505,10 @@ int            oyOption_Release      ( oyOption_s       ** obj )
     oyValueRelease( &s->value, s->value_type, deallocateFunc );
 
     s->value_type = 0;
+
+    if(s->registration)
+      deallocateFunc( s->registration );
+    s->registration = 0;
 
     oyObject_Release( &s->oy_ );
 
@@ -4728,7 +4732,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object )
 {
-  int error = !set_a;
+  int error = !set_a && !set_b;
   oyOptions_s * options = 0;
   oyOption_s * option_a = 0, * option_b = 0, * option = 0;
   int set_an = oyOptions_Count( set_a ),
@@ -4752,13 +4756,34 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
         /* check various value ranges */
         if(found == 1)
         {
-          if(oyStrcmp_(option_a->name.nick, option_b->name.nick) == 0)
+          if(oyStrcmp_(oyOption_GetText(option_a, oyNAME_NICK),
+                       oyOption_GetText(option_b, oyNAME_NICK)) == 0)
             if(option_a->value_type != option_b->value_type)
               found = 0;
 
-          for(k = 0; k < oyOptions_Count(options); ++k)
+          if(found)
           {
-            option = oyOptions_Get( options, k );
+            int found_a = 1, found_b = 1;
+            for(k = 0; k < oyOptions_Count(options); ++k)
+            {
+              option = oyOptions_Get( options, k );
+              if(oyStrcmp_( oyOption_GetText(option, oyNAME_NICK),
+                            oyOption_GetText(option_a, oyNAME_NICK) ) == 0)
+                found_a = 0;
+
+              if(oyStrcmp_( oyOption_GetText(option, oyNAME_NICK),
+                            oyOption_GetText(option_b, oyNAME_NICK) ) == 0)
+                found_b = 0;
+            }
+            if(found_a)
+              oyOptions_Add( options, option_a, -1, object );
+
+            if(found_b)
+              oyOptions_Add( options, option_b, -1, object );
+
+            oyOption_Release( &option );
+
+            found = 1;
           }
         }
 
@@ -4767,6 +4792,10 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
 
       oyOption_Release( &option_a );
     }
+
+    if(!set_an && set_bn &&
+       (type == oyBOOLEAN_UNION || type == oyBOOLEAN_DIFFERENZ))
+      options = oyOptions_Copy( set_b, object );
   }
 
   return options;
@@ -4807,7 +4836,7 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
                 oyAllocateFunc_, oyDeAllocateFunc_ );
   s->name.copy = (oyStruct_Copy_f) oyName_copy;
   s->name.release = (oyStruct_Release_f) oyName_releaseMembers;
-  s->registration = opt->config_string;
+  s->registration = oyStringCopy_( opt->config_string, s->oy_->allocateFunc_ );
   s->value = s->oy_->allocateFunc_(sizeof(oyValue_u));
 
   if(oyWIDGET_BEHAVIOUR_START < opt->id && opt->id < oyWIDGET_BEHAVIOUR_END)
@@ -4829,6 +4858,64 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
 
 #include <libxml/parser.h>
 
+void           oyOptions_ParseXML_   ( oyOptions_s       * s,
+                                       char            *** texts,
+                                       int               * texts_n,
+                                       xmlDocPtr           doc,
+                                       xmlNodePtr          cur )
+{
+  oyOption_s * o = 0;
+  char * tmp = 0;
+  int i;
+  xmlChar *key = 0;
+
+  while (cur != NULL)
+  {
+    if(cur->type == XML_ELEMENT_NODE)
+      oyStringListAddStaticString_( texts, texts_n, cur->name,
+                                    oyAllocateFunc_, oyDeAllocateFunc_ );
+
+    if(cur->xmlChildrenNode)
+    {
+      oyOptions_ParseXML_( s, texts, texts_n, doc, cur->xmlChildrenNode );
+      *texts_n -= 1;
+      oyDeAllocateFunc_( (*texts)[*texts_n] );
+    }
+
+    if(cur->type == XML_TEXT_NODE && !cur->children &&
+       cur->content && cur->content[0] != '\n')
+    {
+      o = oyOption_New(0);
+
+      for( i = 0; i < *texts_n - 1; ++i )
+      {
+        if(i)
+          oyStringAdd_( &tmp, "/", oyAllocateFunc_, oyDeAllocateFunc_ );
+        oyStringAdd_( &tmp, (*texts)[i], oyAllocateFunc_, oyDeAllocateFunc_ );
+      }
+
+      oyName_set_ ( &o->name, (*texts)[*texts_n - 1], oyNAME_NICK,
+                    oyAllocateFunc_, oyDeAllocateFunc_ );
+      o->name.copy = (oyStruct_Copy_f) oyName_copy;
+      o->name.release = (oyStruct_Release_f) oyName_releaseMembers;
+      o->registration = oyStringCopy_( tmp, o->oy_->allocateFunc_ );
+      o->value = o->oy_->allocateFunc_(sizeof(oyValue_u));
+
+      o->value_type = oyVAL_STRING;
+
+      key = xmlNodeListGetString(doc, cur, 1);
+      o->value->string = oyStringCopy_( key, o->oy_->allocateFunc_ );
+      xmlFree(key);
+      oyFree_m_( tmp );
+
+      o->source = oyOPTIONSOURCE_FILTER;
+
+      oyOptions_MoveIn( s, &o, -1 );
+    }
+    cur = cur->next;
+  }
+}
+
 /** Function oyOptions_FromText
  *  @relates oyOptions_s
  *  @brief   deserialise a text file to oyOptions_s data
@@ -4846,16 +4933,34 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
                                        uint32_t            flags,
                                        oyObject_s          object )
 {
-  oyOptions_s * s = 0,
-              * opts_tmp = 0;
-  oyOption_s * o = 0;
+  oyOptions_s * s = 0;
   int error = !text;
   xmlDocPtr doc = 0;
-
+  xmlNodePtr cur = 0;
+  char ** texts = 0;
+  int texts_n = 0;
 
   if(!error)
   {
     doc = xmlParseMemory( text, oyStrlen_( text ) );
+    error = !doc;
+
+    if(doc)
+      cur = xmlDocGetRootElement(doc);
+    error = !cur;
+  }
+
+  if(!error)
+  {
+    s = oyOptions_New(0);
+
+    while (cur != NULL)
+    {
+      oyOptions_ParseXML_( s, &texts, &texts_n, doc, cur );
+      cur = cur->next;
+    }
+
+    xmlFreeDoc(doc);
   }
 
   return s;
@@ -5144,7 +5249,19 @@ int            oyOptions_Count       ( oyOptions_s       * list )
 }
 
 int            oyOptions_Add         ( oyOptions_s       * options,
-                                       oyOption_s        * option );
+                                       oyOption_s        * option,
+                                       int                 pos,
+                                       oyObject_s          object )
+{
+  oyOption_s *tmp = 0;
+
+  if(options && option)
+  {
+    tmp = oyOption_Copy( option, object );
+    oyOptions_MoveIn( options, &tmp, -1 );
+  }
+}
+
 char *         oyOptions_GetMem      ( oyOptions_s       * options,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
