@@ -2483,8 +2483,7 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
             cmm_api4 = (oyCMMapi4_s*) tmp;
             oyStringAdd_( &text, "\n    Filter type: ",
                           oyAllocateFunc_, oyDeAllocateFunc_ );
-            oyFilterRegistrationToText ( cmm_api4->registration,
-                                       oyFILTER_REG_NONE, &filter_type, 0 );
+            filter_type = oyFilterRegistrationToType( cmm_api4->registration );
             oyStringAdd_( &text, oyFilterTypeToText( filter_type,
                                                      oyNAME_DESCRIPTION ),
                           oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -2634,8 +2633,8 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
               {
                 if(registration)
                 {
-                  oyFilterRegistrationToText( cmm_api4->registration, 0,
-                                              &cmm_api4_filter_type, 0 );
+                  cmm_api4_filter_type = oyFilterRegistrationToType(
+                                              cmm_api4->registration );
                   if(cmm_api4_filter_type == filter_type && filter_type != 0)
                   {
                     if(oyFilterRegistrationMatch( cmm_api4->registration,
@@ -4703,13 +4702,15 @@ oyOptions_s *  oyOptions_New         ( oyObject_s          object )
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
+  s->list = oyStructList_New( 0 );
+
   return s;
 }
 
 oyOptions_s *  oyOptions_FromMem     ( size_t            * size,
                                        const char        * opts_text,
                                        oyObject_s          object );
-/** Function: oyOptions_FromBoolean
+/** Function oyOptions_FromBoolean
  *  @relates oyOptions_s
  *  @brief   boolean operations on two sets of option
  *
@@ -4826,49 +4827,120 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
   return s;
 }
 
+#include <libxml/parser.h>
+
+/** Function oyOptions_FromText
+ *  @relates oyOptions_s
+ *  @brief   deserialise a text file to oyOptions_s data
+ *
+ *  @param[in]     text                the text to process
+ *  @param[in]     flags               for future use
+ *  @param         object              the optional object
+ *  @return                            the data
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/17 (Oyranos: 0.1.9)
+ *  @date    2008/11/17
+ */
+oyOptions_s *  oyOptions_FromText    ( const char        * text,
+                                       uint32_t            flags,
+                                       oyObject_s          object )
+{
+  oyOptions_s * s = 0,
+              * opts_tmp = 0;
+  oyOption_s * o = 0;
+  int error = !text;
+  xmlDocPtr doc = 0;
+
+
+  if(!error)
+  {
+    doc = xmlParseMemory( text, oyStrlen_( text ) );
+  }
+
+  return s;
+}
+
 oyOptions_s * oy_default_behaviour_settings_ = 0;
 
-/** Function: oyOptions_FromDefaults
+/** Function oyOptions_ForFilter
  *  @relates oyOptions_s
  *  @brief   provide the current state of Oyranos behaviour settings
  *
  *  The result will be derived from the applications current state of settings, 
  *  which is itself a copy of the Oyranos settings during the first call to this
- *  function. To store different states you need to implement on your own.
+ *  function. To store different states you need to implement on your own stack.
  *  The returned object will be a copy not a reference.
  *  The key names map to the registration/XML syntax.
  *
  *  @see oyOPTIONS_e for more details.
  *
  *  @param[in]     type                basic or advanced graphics
- *  @param[in]     flags               OY_NO_CACHE_READ:take from Oyranos global
+ *  @param[in]     registration        the filter registration to search for
+ *  @param[in]     cmm                 a CMM to match
+ *  @param[in]     flags               for future use
  *  @param         object              the optional object
  *  @return                            copy of the current state
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.9
  *  @since   2008/10/08 (Oyranos: 0.1.8)
- *  @date    2008/10/08
+ *  @date    2008/11/13
  */
-oyOptions_s *  oyOptions_FromDefaults( oyOPTIONDEFAULTS_e  type,
+oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
+                                       const char        * registration,
+                                       const char        * cmm,
                                        uint32_t            flags,
                                        oyObject_s          object )
 {
-  oyOptions_s * s = 0;
+  oyOptions_s * s = 0,
+              * opts_tmp = 0,
+              * opts_tmp2 = 0;
   oyOption_s * o = 0;
   int error = 0;
+  oyCMMInfo_s * info = 0;
+  oyFILTER_TYPE_e filter_type = oyFilterRegistrationToType( registration );
+  char * type_txt = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,
+                                                0 );
+  oyFilter_s * filter = 0;
 
   if(!oy_default_behaviour_settings_)
   {
     oy_default_behaviour_settings_ = oyOptions_New(0);
 
+    /*
+        Programm:
+        1. get filter and its type
+        2. get implementation for filter type
+        3. parse static common options in implementation
+        4. parse static options in filter 
+        5. merge both
+     */
+
+    /*  1. get filter */
+    filter = oyFilter_New( filter_type, registration, cmm, 0, object );
+    /*                ... and type */
+    filter_type = filter->filter_type_;
+
+    /*  2. get implementation for filter type */
+    /*  @todo define a oyCMMapiX_s for default options / data handling ... */
+
+    /*  3. parse static common options in implementation */
+    /* requires step 2 */
+
+    /*  4. parse static options in filter */
+    opts_tmp2 = oyOptions_FromText( filter->api4_->options, flags, object );
+
+    /*     merge */
+    s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );
+
     /* add all static options */
-    //o = oyOption_FromStatic_( static_opt, object );
+    //o = oyOption_FromStatic_( opt, object );
   }
 
   return s;
 }
 
-/** Function: oyOptions_Copy_
+/** Function oyOptions_Copy_
  *  @relates oyOptions_s
  *  @internal
  *  @brief   real copy a options object
@@ -4885,23 +4957,22 @@ oyOptions_s * oyOptions_Copy_        ( oyOptions_s       * options,
 {
   oyOptions_s * s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
 
   if(!options || !object)
     return s;
 
   s = oyOptions_New( object );
   error = !s;
-  allocateFunc_ = s->oy_->allocateFunc_;
 
   if(!error)
-  {
     s->list = oyStructList_Copy( options->list, s->oy_ );
-  }
+
+  if(error)
+    oyOptions_Release( &s );
 
   return s;
 }
-/** Function: oyOptions_Copy
+/** Function oyOptions_Copy
  *  @relates oyOptions_s
  *  @brief   release options
  *
@@ -4909,27 +4980,30 @@ oyOptions_s * oyOptions_Copy_        ( oyOptions_s       * options,
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
+oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * obj,
                                        oyObject_s          object )
 {
   oyOptions_s * s = 0;
 
-  if(!options)
+  if(!obj || obj->type_ != oyOBJECT_OPTIONS_S)
     return s;
 
-  if(options && !object)
+  if(!obj)
+    return s;
+
+  if(obj && !object)
   {
-    s = options;
+    s = obj;
     oyObject_Copy( s->oy_ );
     return s;
   }
 
-  s = oyOptions_Copy_( options, object );
+  s = oyOptions_Copy_( obj, object );
 
   return s;
 }
 
-/** Function: oyOptions_Release
+/** Function oyOptions_Release
  *  @relates oyOptions_s
  *  @brief   release options
  *
@@ -4974,24 +5048,101 @@ int            oyOptions_Release     ( oyOptions_s      ** obj )
 }
 
 
-int            oyOptions_ReleaseAt   ( oyOptions_s       * list,
-                                       int                 pos );
-oyOption_s *   oyOptions_Get         ( oyOptions_s       * list,
+/** Function oyOptions_MoveIn
+ *  @relates oyOptions_s
+ *  @brief   add a element to a Options list
+ *
+ *  @param[in]     list                list
+ *  @param[in,out] obj                 list element
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/17 (Oyranos: 0.1.9)
+ *  @date    2008/11/17
+ */
+OYAPI int  OYEXPORT
+                 oyOptions_MoveIn    ( oyOptions_s       * list,
+                                       oyOption_s       ** obj,
                                        int                 pos )
 {
-  if(list && list->type_ == oyOBJECT_OPTIONS_S)
-    return (oyOption_s *) oyStructList_GetRefType( list->list, pos, oyOBJECT_OPTION_S );
-  else
-    return 0;
+  oyOptions_s * s = list;
+  int error = !s || s->type_ != oyOBJECT_OPTIONS_S;
+
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_OPTION_S)
+  {
+    if(!s)
+    {
+      s = oyOptions_New(0);
+      error = !s;
+    }                                  
+
+    if(!error && !s->list)
+    {
+      s->list = oyStructList_New( 0 );
+      error = !s->list;
+    }
+      
+    if(!error)
+      error = oyStructList_MoveIn( s->list, (oyStruct_s**)obj, pos );
+  }   
+  
+  return error;
 }
+
+/** Function oyOptions_ReleaseAt
+ *  @relates oyOptions_s
+ *  @brief   release a element from a Options list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/17 (Oyranos: 0.1.9)
+ *  @date    2008/11/17
+ */
+OYAPI int  OYEXPORT
+                  oyOptions_ReleaseAt ( oyOptions_s * list,
+                                       int                 pos )
+{ 
+  int error = !list;
+
+  if(!error && list->type_ != oyOBJECT_OPTIONS_S)
+    error = 1;
+  
+  if(!error)
+    oyStructList_ReleaseAt( list->list, pos );
+
+  return error;
+}
+
+/** Function oyOptions_Get
+ *  @relates oyOptions_s
+ *  @brief   get a element of a Options list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/17 (Oyranos: 0.1.9)
+ *  @date    2008/11/17
+ */
+OYAPI oyOption_s * OYEXPORT
+                 oyOptions_Get       ( oyOptions_s       * list,
+                                       int                 pos )
+{       
+  if(list && list->type_ == oyOBJECT_OPTIONS_S)
+    return (oyOption_s *) oyStructList_GetRefType( list->list, pos, oyOBJECT_OPTION_S ); 
+  else  
+    return 0;
+}   
+
 int            oyOptions_Count       ( oyOptions_s       * list )
 {
   if(list)
     return oyStructList_Count( list->list );
   else return 0;
 }
-int            oyOptions_MoveIn      ( oyOptions_s       * options,
-                                       oyOption_s       ** option );
+
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option );
 char *         oyOptions_GetMem      ( oyOptions_s       * options,
@@ -10846,22 +10997,63 @@ const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
   return 0;
 }
 
-/** Function: oyFilterRegistrationToText
+/** Function oyFilterRegistrationToType
  *  @brief   analyse registration string
  *
  *  @param         registration        registration string to analyse
  *  @param[in]     type                kind of answere in return
- *  @param[out]    filter_type         fill the filter type
+ *  @param[in]     allocateFunc        use this or Oyranos standard allocator
+ *  @return                            filter type
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/17 (Oyranos: 0.1.9)
+ *  @date    2008/11/17
+ */
+oyFILTER_TYPE_e  oyFilterRegistrationToType (
+                                       const char        * registration )
+{
+  char ** texts = 0;
+  int     texts_n = 0;
+  oyFILTER_TYPE_e filter_type = oyFILTER_TYPE_NONE;
+
+  if(registration)
+  {
+    texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
+
+    if(texts_n >= oyFILTER_REG_TYPE)
+    {
+           if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour_icc"))
+        filter_type = oyFILTER_TYPE_COLOUR_ICC;
+      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour"))
+        filter_type = oyFILTER_TYPE_COLOUR;
+      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "tonemap"))
+        filter_type = oyFILTER_TYPE_TONEMAP;
+      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "image"))
+        filter_type = oyFILTER_TYPE_IMAGE;
+      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "generic"))
+        filter_type = oyFILTER_TYPE_GENERIC;
+
+    }
+    oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+  }
+
+  return filter_type;
+}
+
+/** Function oyFilterRegistrationToText
+ *  @brief   analyse registration string
+ *
+ *  @param         registration        registration string to analyse
+ *  @param[in]     type                kind of answere in return
  *  @param[in]     allocateFunc        use this or Oyranos standard allocator
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.9
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/06/26
+ *  @date    2008/11/17
  */
 char *         oyFilterRegistrationToText (
                                        const char        * registration,
                                        oyFILTER_REG_e      type,
-                                       oyFILTER_TYPE_e   * filter_type,
                                        oyAlloc_f           allocateFunc )
 {
   char  * text = 0;
@@ -10884,26 +11076,13 @@ char *         oyFilterRegistrationToText (
       text = oyStringCopy_( texts[oyFILTER_REG_APPLICATION-1], allocateFunc );
     if(texts_n >= type && type == oyFILTER_REG_OPTION)
       text = oyStringCopy_( texts[oyFILTER_REG_OPTION-1], allocateFunc );
-    if(texts_n >= oyFILTER_REG_TYPE && filter_type)
-    {
-           if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour_icc"))
-        *filter_type = oyFILTER_TYPE_COLOUR_ICC;
-      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour"))
-        *filter_type = oyFILTER_TYPE_COLOUR;
-      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "tonemap"))
-        *filter_type = oyFILTER_TYPE_TONEMAP;
-      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "image"))
-        *filter_type = oyFILTER_TYPE_IMAGE;
-      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "generic"))
-        *filter_type = oyFILTER_TYPE_GENERIC;
-    }
     oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
   }
 
   return text;
 }
 
-/** Function: oyFilterRegistrationMatch
+/** Function oyFilterRegistrationMatch
  *  @brief   analyse registration string and compare with a given pattern
  *
  *  @param         registration        registration string to analise
@@ -11017,6 +11196,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
                                        filter_type );
   oyCMMapi4_s * cmm_api4 = 0;
   oyAlloc_f allocateFunc_ = 0;
+  oyOptions_s * opts_tmp = 0;
 
   if(!error)
     allocateFunc_ = s->oy_->allocateFunc_;
@@ -11035,9 +11215,15 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->filter_type_ = filter_type;
     s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
 
+    opts_tmp = oyOptions_ForFilter( s->filter_type_,
+                                    s->registration_, s->cmm_,
+                                    0, s->oy_ );
+#if 0
     s->options_ = cmm_api4->oyCMMFilter_ValidateOptions( s, options, 0, &ret );
+#endif
     error = ret;
-    s->options_ = oyOptions_FromBoolean( cmm_api4->options, options,
+    
+    s->options_ = oyOptions_FromBoolean( opts_tmp, options,
                                          oyBOOLEAN_SUBSTRACTION, s->oy_ );
     s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
     s->api4_ = cmm_api4;

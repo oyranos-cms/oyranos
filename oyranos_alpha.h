@@ -615,7 +615,12 @@ typedef enum {
   oyOPTIONDEFAULTS_BASIC,              /** basic settings, as typical for toolkits and office/web applciations, disable proofing */
   oyOPTIONDEFAULTS_ADVANCED            /** advanced settings, as typical for editing images, include proofing */
 } oyOPTIONDEFAULTS_e;
-oyOptions_s *  oyOptions_FromDefaults( oyOPTIONDEFAULTS_e  type,
+oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
+                                       const char        * registration,
+                                       const char        * cmm,
+                                       uint32_t            flags,
+                                       oyObject_s          object );
+oyOptions_s *  oyOptions_FromText    ( const char        * text,
                                        uint32_t            flags,
                                        oyObject_s          object );
 oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
@@ -629,7 +634,8 @@ oyOption_s *   oyOptions_Get         ( oyOptions_s       * list,
                                        int                 pos );
 int            oyOptions_Count       ( oyOptions_s       * list );
 int            oyOptions_MoveIn      ( oyOptions_s       * options,
-                                       oyOption_s       ** option );
+                                       oyOption_s       ** option,
+                                       int                 pos );
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option );
 char *         oyOptions_GetMem      ( oyOptions_s       * options,
@@ -1374,8 +1380,9 @@ typedef enum {
 
 char * oyFilterRegistrationToText    ( const char        * registration,
                                        oyFILTER_REG_e      type,
-                                       oyFILTER_TYPE_e   * filter_type,
                                        oyAlloc_f           allocateFunc );
+oyFILTER_TYPE_e  oyFilterRegistrationToType (
+                                       const char        * registration );
 int    oyFilterRegistrationMatch     ( const char        * registration,
                                        const char        * pattern );
 
