@@ -452,7 +452,7 @@ struct  oyCMMapi4_s {
   /** translatable, eg "scale" "image scaling" "..." */
   oyName_s         name;
   const char       category[256];      /**< menu structure */
-  oyOptions_s    * options;            /**< default options */
+  const char     * options;            /**< default options */
   const char     * opts_ui;            /**< xml ui elements for filter options*/
 
   /** We have to tell about valid input and output connectors, by 

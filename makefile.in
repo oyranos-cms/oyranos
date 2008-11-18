@@ -99,6 +99,7 @@ CFILES_CMM_oyX1 = \
 	$(TARGET)_cmm_oyX1.c
 CFILES_CMM_oyra = \
 	$(TARGET)_cmm_oyra.c \
+	$(TARGET)_cmm_oyra_settings.c \
 	$(TARGET)_cmm_oyra_image.c \
 	$(TARGET)_cmm_oyra_profile.c
 CFILES_MONI = \

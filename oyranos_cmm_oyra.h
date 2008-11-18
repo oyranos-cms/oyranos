@@ -74,6 +74,7 @@ extern oyDATATYPE_e  oyra_image_data_types[7];
 extern oyCMMapi4_s   oyra_api4_image_output_ppm;
 extern oyCMMapi4_s   oyra_api4_image_output;
 extern oyCMMapi4_s   oyra_api4_image_root;
+extern oyCMMapi4_s   oyra_api4_defaults_colour_settings;
 extern oyCMMapi3_s   oyra_api3;
 
 #endif /* OYRANOS_CMM_OYRA_H */
