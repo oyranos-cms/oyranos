@@ -43,7 +43,7 @@ INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
 	$(FLTK_H) $(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL)
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
-	$(ELEKTRA_LIBS) -lc $(I18N_LIB)
+	$(ELEKTRA_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB)
 
 MODULE_LDLIBS =	$(lc)
 
