@@ -9,7 +9,7 @@
 /**
  *  @brief    macros and definitions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: MIT <http://www.opensource.org/licenses/mit-license.php>
+ *  @par License: MIT <http://www.opensource.org/licenses/mit-license.php>
  *  @since    2004/11/25
  */
 

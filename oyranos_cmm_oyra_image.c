@@ -528,7 +528,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
 
   0, /* uint32_t * cache_data_types */
 
-  oyraFilter_ImageRootValidateOptions, /* uint32_t * cache_data_types */
+  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
   0, /* oyCMMDataOpen_f */

@@ -557,7 +557,7 @@ typedef struct {
 
   uint32_t             id;             /**< id to map to events and widgets */
   oyName_s             name;           /**< nick, name, description/help, e.g. "radius" "Radius" "..." */
-  const char         * registration;   /**< full key name to store configuration, e.g. "sw/oyranos.org/generic/scale", config key name will be name.nick; @todo Whats the difference here? registration <-> XML? */
+  const char         * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/generic/scale", config key name will be name.nick;  registration <-> XML? */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -576,11 +576,17 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
 
 
-/** @brief generic Options
+/**
+ *  @struct  oyOptions_s
+ *  @brief   generic Options
  *  @ingroup objects_value
  *
  *  Options can be any flag or rendering intent and other informations needed to
  *  configure a process. The object contains a list of oyOption_s objects.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
  */
 typedef struct {
   oyOBJECT_e           type_;          /**< struct type oyOBJECT_OPTIONS_S */
@@ -588,7 +594,7 @@ typedef struct {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  oyStructList_s     * list;
+  oyStructList_s     * list;           /**< the list data */
 } oyOptions_s;
 
 oyOptions_s *  oyOptions_FromMem     ( size_t            * size,
@@ -1348,6 +1354,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
  *  @brief   basic filter classes
  *  @ingroup objects_conversion
  *
+ *  These types are basic ones and valid to Oyranos and its usage as CMM 
+ *  framework.
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
  *  @date    2008/00/00
@@ -1706,8 +1715,7 @@ OYAPI int  OYEXPORT
  *    assumption on how the buffers are implemented.
  *  - oyFILTER_TYPE_GENERIC can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
  *
- *  @todo generalise the filters data, e.g. oyImage_s -> oyData_s
- *                                          oyProfiles_s -> oyOptions_s
+ *  @todo: dynamic registration of new filter types
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/08 (Oyranos: 0.1.8)

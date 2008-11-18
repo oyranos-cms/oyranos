@@ -343,7 +343,7 @@ oyXYZ2Lab (const double *XYZ, double * lab)
       lab[2] = (200.0*( XYZ_[1] -  XYZ_[2]));
 }
 
-/** Function: oyCIEabsXYZ2ICCrelXYZ
+/** Function oyCIEabsXYZ2ICCrelXYZ
  *  @brief CIE absolute colourimetric to ICC relative colorimetric
  *
  *  @param[in]     CIEXYZ              CIE absolute colourimetric input
@@ -366,7 +366,7 @@ void         oyCIEabsXYZ2ICCrelXYZ   ( const double      * CIEXYZ,
     ICCXYZ[i] = (CIEXYZ[i] - XYZmin[i]) / (XYZmax[i] - XYZmin[i]) * XYZwhite[i];
 }
 
-/** Function: oyICCXYZrel2CIEabsXYZ
+/** Function oyICCXYZrel2CIEabsXYZ
  *  @brief ICC relative colourimetric to CIE absolute colorimetric
  *
  *  @param[in]     ICCXYZ              ICC relative colourimetric input
@@ -412,7 +412,7 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
 
 /**
  *  @internal
- *  Function: lcmsColorSpace
+ *  Function lcmsColorSpace
  *  @brief get lcms notation from icColorSpaceSignature
  *
  *  @since Oyranos: version 0.1.8
@@ -442,7 +442,7 @@ int lcmsColorSpace(icColorSpaceSignature ProfileSpace)
        }
 }
 
-/** Function: oyDumpColourToCGATS
+/** Function oyDumpColourToCGATS
  *  @brief create CGATS text from double value array and a profile
  *
  *  The funtion operates on raw colour values. Alpha is not supported.
@@ -701,7 +701,7 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
   return allocateFunc( size );
 }
 
-/** Function: oyStruct_TypeToText
+/** Function oyStruct_TypeToText
  *  @brief Objects type to small string
  *
  *  @version Oyranos: 0.1.8
@@ -994,7 +994,7 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
 
 /**
  *  @internal
- *  Function: oyName_get_
+ *  Function oyName_get_
  *  @brief   get name
  *
  *  @param[in,out] obj                 name object
@@ -1396,7 +1396,7 @@ int              oyStructList_Release (oyStructList_s   ** obj )
 
 /**
  *  @internal
- *  Function: oyStructList_ReleaseAt
+ *  Function oyStructList_ReleaseAt
  *  @brief   oyStructList_s pointer release
  *
  *  release and shrink
@@ -1472,7 +1472,7 @@ oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
 
 /**
  *  @internal
- *  Function: oyStructList_GetType_
+ *  Function oyStructList_GetType_
  *  @brief oyStructList_s pointer access
  *
  *  non thread save
@@ -1519,7 +1519,7 @@ oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
   return obj;
 }
 
-/** Function: oyStructList_GetRefType
+/** Function oyStructList_GetRefType
  *  @brief oyStructList_s pointer access
  *
  *  @since Oyranos: version 0.1.8
@@ -2503,7 +2503,7 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
 }
 
 /** @internal
- *  Function: oyCMMCanHandle_
+ *  Function oyCMMCanHandle_
  *  @brief query a module for certain capabilities
  *
  *  @return                           sum of asked capabilities
@@ -2541,7 +2541,7 @@ int              oyCMMCanHandle_    ( oyCMMapi_s         * api,
 }
 
 /** @internal
- *  Function: oyCMMsGetApi_
+ *  Function oyCMMsGetApi_
  *  @brief get a module
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
@@ -3133,7 +3133,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
   return 0;
 }
 
-/** Function: oyObject_Ref
+/** Function oyObject_Ref
  *  @relates oyObject_s
  *  @internal
  *  @brief   increase the ref counter and return the above zero ref value
@@ -3175,7 +3175,7 @@ int          oyObject_Ref            ( oyObject_s          obj )
 
 /**
  *  @internal
- *  Function: oyObject_UnRef
+ *  Function oyObject_UnRef
  *  @relates oyObject_s
  *  @brief   decrease the ref counter and return the above zero ref value
  *
@@ -3296,7 +3296,7 @@ int          oyObject_SetNames        ( oyObject_s        object,
   return error;
 }
 
-/** Function: oyObject_GetName
+/** Function oyObject_GetName
  *  @relates oyObject_s
  *  @brief   object get names
  *
@@ -3322,7 +3322,7 @@ const oyChar * oyObject_GetName       ( const oyObject_s        obj,
   return text;
 }
 
-/** Function: oyObject_Lock
+/** Function oyObject_Lock
  *  @relates oyObject_s
  *  @brief   Lock a object
  *
@@ -3353,7 +3353,7 @@ int          oyObject_Lock             ( oyObject_s        object,
   return error;
 }
 
-/** Function: oyObject_UnLock
+/** Function oyObject_UnLock
  *  @relates oyObject_s
  *  @brief   Unlock a object
  *
@@ -3383,7 +3383,7 @@ int          oyObject_UnLock           ( oyObject_s        object,
   return error;
 }
 
-/** Function: oyObject_UnSetLocking
+/** Function oyObject_UnSetLocking
  *  @relates oyObject_s
  *  @brief   remove a object's lock pointer
  *
@@ -3411,7 +3411,7 @@ int          oyObject_UnSetLocking   ( oyObject_s          object,
   return error;
 }
 
-/** Function: oyObject_GetId
+/** Function oyObject_GetId
  *  @relates oyObject_s
  *  @brief   get the identification number of a object 
  *
@@ -4138,7 +4138,7 @@ oyChar* oyCMMCacheListPrint_()
  *  @{
  */
 
-/** Function: oyValueCopy
+/** Function oyValueCopy
  *  @relates oyValue_u
  *  @brief   copy a oyValue_u union
  *
@@ -4290,7 +4290,7 @@ void           oyValueClear          ( oyValue_u         * v,
        break;
   }
 }
-/** Function: oyValueRelease
+/** Function oyValueRelease
  *  @relates oyValue_u
  *  @brief   release a oyValue_u union
  *
@@ -4340,7 +4340,7 @@ const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
 
 static int oy_option_id_ = 0;
 
-/** Function: oyOption_New
+/** Function oyOption_New
  *  @relates oyOption_s
  *  @brief   new option
  *
@@ -4380,7 +4380,7 @@ oyOption_s *   oyOption_New          ( oyObject_s          object )
   return s;
 }
 
-/** Function: oyOption_Copy_
+/** Function oyOption_Copy_
  *  @relates oyOption_s
  *  @internal
  *  @brief   real copy a option object
@@ -4430,7 +4430,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
 
   return s;
 }
-/** Function: oyOption_Copy
+/** Function oyOption_Copy
  *  @relates oyOption_s
  *  @brief   copy or reference a option
  *
@@ -4458,7 +4458,7 @@ oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
   return s;
 }
 
-/** Function: oyOption_Release
+/** Function oyOption_Release
  *  @relates oyOption_s
  *  @brief   release a option
  *
@@ -4514,7 +4514,7 @@ int            oyOption_Release      ( oyOption_s       ** obj )
   return 0;
 }
 
-/** Function: oyOption_GetId
+/** Function oyOption_GetId
  *  @relates oyOption_s
  *  @brief   get the identification number of a option 
  *
@@ -4645,7 +4645,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 }
 
 
-/** Function: oyOption_Match_
+/** Function oyOption_Match_
  *  @relates oyOption_s
  *  @internal
  *  @brief   two option matches
@@ -4667,7 +4667,7 @@ int            oyOption_Match_       ( oyOption_s        * option_a,
 }
 
 
-/** Function: oyOptions_New
+/** Function oyOptions_New
  *  @relates oyOptions_s
  *  @brief   new options
  *
@@ -6381,7 +6381,7 @@ OYAPI const oyChar* OYEXPORT
   return text;
 }
 
-/** Function: oyProfile_GetMem
+/** Function oyProfile_GetMem
  *  @relates oyProfile_s
  *  @brief   get the ICC profile in memory
  *
@@ -6432,7 +6432,7 @@ OYAPI oyPointer OYEXPORT
 
 /**
  *  @internal
- *  Function: oyProfile_GetFileName_r
+ *  Function oyProfile_GetFileName_r
  *  @relates oyProfile_s
  *  @brief   get the ICC profile location in the filesystem
  *
@@ -6503,7 +6503,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
 
   return name;
 }
-/** Function: oyProfile_GetFileName
+/** Function oyProfile_GetFileName
  *  @relates oyProfile_s
  *  @brief   get the ICC profile location in the filesystem
  *
@@ -6753,7 +6753,7 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
 
 /**
  *  @internal
- *  Function: oyProfile_Equal
+ *  Function oyProfile_Equal
  *  @relates oyProfile_s
  *  @brief   check if two profiles are qual by their hash sum
  *
@@ -6777,7 +6777,7 @@ OYAPI int OYEXPORT
 }
 
 /** @internal
- *  Function: oyProfile_Match_
+ *  Function oyProfile_Match_
  *  @relates oyProfile_s
  *  @brief   check if a profiles matches by some properties
  *
@@ -6813,7 +6813,7 @@ int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
 }
 
 /** @internal
- *  Function: oyProfile_Hashed_
+ *  Function oyProfile_Hashed_
  *  @relates oyProfile_s
  *  @brief   check if a profile has a hash sum computed
  *
@@ -6858,7 +6858,7 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 
 /**
  *  @internal
- *  Function: oyProfile_WriteHeader_
+ *  Function oyProfile_WriteHeader_
  *  @relates oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
  *
@@ -6894,7 +6894,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
 
 /**
  *  @internal
- *  Function: oyProfile_WriteTagTable_
+ *  Function oyProfile_WriteTagTable_
  *  @relates oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
  *
@@ -6932,7 +6932,7 @@ oyPointer    oyProfile_WriteTagTable_( oyProfile_s       * profile,
 
 /**
  *  @internal
- *  Function: oyProfile_WriteTags_
+ *  Function oyProfile_WriteTags_
  *  @relates oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
  *
@@ -7063,7 +7063,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
 
 /**
  *  @internal
- *  Function: oyProfile_TagsToMem_
+ *  Function oyProfile_TagsToMem_
  *  @relates oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
  *
@@ -7119,7 +7119,7 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
   return block;
 }
 
-/** Function: oyProfile_GetTagById
+/** Function oyProfile_GetTagById
  *  @relates oyProfile_s
  *  @brief   get a profile tag by its tag signature
  *
@@ -7172,7 +7172,7 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
 }
 
 
-/** Function: oyProfile_GetTag
+/** Function oyProfile_GetTag
  *  @relates oyProfile_s
  *  @brief   get a profile tag
  *
@@ -7312,7 +7312,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
   return tag;
 }
 
-/** Function: oyProfile_GetTagByPos
+/** Function oyProfile_GetTagByPos
  *  @relates oyProfile_s
  *  @brief   get a profile tag
  *
@@ -7340,7 +7340,7 @@ oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
   return tag;
 }
 
-/** Function: oyProfile_GetTagCount
+/** Function oyProfile_GetTagCount
  *  @relates oyProfile_s
  *
  *  @since Oyranos: version 0.1.8
@@ -7368,7 +7368,7 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
   return n;
 }
 
-/** Function: oyProfile_AddTag
+/** Function oyProfile_AddTag
  *  @relates oyProfile_s
  *  @brief   add a tag to a profile
  *
@@ -7398,7 +7398,7 @@ int                oyProfile_AddTag  ( oyProfile_s       * profile,
   return error;
 }
 
-/** Function: oyProfile_TagReleaseAt
+/** Function oyProfile_TagReleaseAt
  *  @relates oyProfile_s
  *  @brief   remove a tag from a profile
  *
@@ -7431,7 +7431,7 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
 
 
 
-/** Function: oyProfileTag_New
+/** Function oyProfileTag_New
  *  @relates oyProfileTag_s
  *
  *  @since Oyranos: version 0.1.8
@@ -7468,7 +7468,7 @@ OYAPI oyProfileTag_s * OYEXPORT
   return s;
 }
 
-/** Function: oyProfileTag_Create
+/** Function oyProfileTag_Create
  *  @relates oyProfileTag_s
  *
  *  The API relies on an generic arguments inside a list. The arguments are not
@@ -7550,7 +7550,7 @@ OYAPI oyProfileTag_s * OYEXPORT
   return s;
 }
 
-/** Function: oyProfileTag_Copy
+/** Function oyProfileTag_Copy
  *  @relates oyProfileTag_s
  *
  *  @since Oyranos: version 0.1.8
@@ -7581,7 +7581,7 @@ OYAPI oyProfileTag_s * OYEXPORT
   return s;
 }
 
-/** Function: oyProfileTag_Release
+/** Function oyProfileTag_Release
  *  @relates oyProfileTag_s
  *
  *  @since Oyranos: version 0.1.8
@@ -7627,7 +7627,7 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function: oyProfileTag_Set
+/** Function oyProfileTag_Set
  *  @relates oyProfileTag_s
  *
  *  @since Oyranos: version 0.1.8
@@ -7659,7 +7659,7 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function: oyProfileTag_GetText
+/** Function oyProfileTag_GetText
  *  @relates oyProfileTag_s
  *
  *  For the affect of the parameters look at the appropriate module.
@@ -7910,7 +7910,7 @@ OYAPI oyProfiles_s * OYEXPORT
 
 oyProfiles_s * oy_profile_list_cache_ = 0;
 
-/** Function: oyProfiles_Create
+/** Function oyProfiles_Create
  *  @relates oyProfiles_s
  *  @brief   get a list of installed profiles
  *
@@ -8013,7 +8013,7 @@ OYAPI oyProfiles_s * OYEXPORT
   return s;
 }
 
-/** Function: oyProfiles_ForStd
+/** Function oyProfiles_ForStd
  *  @relates oyProfiles_s
  *  @brief   get a list of installed profiles
  *
@@ -8862,7 +8862,7 @@ const oyChar * oyDatatypeToText      ( oyDATATYPE_e        t)
  */
 
 
-/** Function: oyArray2d_New
+/** Function oyArray2d_New
  *  @relates oyArray2d_s
  *  @brief   allocate a new Array2d object
  *
@@ -8904,7 +8904,7 @@ OYAPI oyArray2d_s * OYEXPORT
 
 /**
  *  @internal
- *  Function: oyArray2d_Create_
+ *  Function oyArray2d_Create_
  *  @relates oyArray2d_s
  *  @brief   allocate and initialise a oyArray2d_s object widthout pixel
  *
@@ -8943,7 +8943,7 @@ OYAPI oyArray2d_s * OYEXPORT
   return s;
 }
 
-/** Function: oyArray2d_Create
+/** Function oyArray2d_Create
  *  @relates oyArray2d_s
  *  @brief   allocate and initialise a oyArray2d_s object
  *
@@ -8975,7 +8975,7 @@ OYAPI oyArray2d_s * OYEXPORT
 
 /**
  *  @internal
- *  Function: oyArray2d_Copy_
+ *  Function oyArray2d_Copy_
  *  @relates oyArray2d_s
  *  @brief   real copy a Array2d object
  *
@@ -9021,7 +9021,7 @@ oyArray2d_s * oyArray2d_Copy_
   return s;
 }
 
-/** Function: oyArray2d_Copy
+/** Function oyArray2d_Copy
  *  @relates oyArray2d_s
  *  @brief   copy or reference a Array2d object
  *
@@ -9055,7 +9055,7 @@ OYAPI oyArray2d_s * OYEXPORT
  
 /**
  *  @internal
- *  Function: oyArray2d_Release
+ *  Function oyArray2d_Release
  *  @relates oyArray2d_s
  *  @brief   release and possibly deallocate a Array2d object
  *
@@ -9113,7 +9113,7 @@ OYAPI int  OYEXPORT
 
 /**
  *  @internal
- *  Function: oyArray2d_DataSet
+ *  Function oyArray2d_DataSet
  *  @relates oyArray2d_s
  *  @brief   set the data blob and (re-)initialise the object
  *
@@ -9161,7 +9161,7 @@ OYAPI int  OYEXPORT
 
 /**
  *  @internal
- *  Function: oyImage_CombinePixelLayout2Mask_
+ *  Function oyImage_CombinePixelLayout2Mask_
  *  @relates oyImage_s
  *  @brief   describe a images channel and pixel layout
  *
@@ -9300,7 +9300,7 @@ oyImage_CombinePixelLayout2Mask_ (
 }
 
 
-/** Function: oyImage_GetPointContinous
+/** Function oyImage_GetPointContinous
  *  @relates oyImage_s
  *  @brief   standard continous layout pixel accessor
  *
@@ -9325,7 +9325,7 @@ oyPointer oyImage_GetArray2dPointContinous (
 
 }
 
-/** Function: oyImage_GetLineContinous
+/** Function oyImage_GetLineContinous
  *  @relates oyImage_s
  *  @brief   standard continous layout line accessor
  *
@@ -9347,7 +9347,7 @@ oyPointer oyImage_GetArray2dLineContinous (
   return &array2d[ point_y ][ 0 ]; 
 }
 
-/** Function: oyImage_GetPointPlanar
+/** Function oyImage_GetPointPlanar
  *  @relates oyImage_s
  *  @brief   standard planar layout pixel accessor
  *
@@ -9373,7 +9373,7 @@ oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
 
 }
 
-/** Function: oyImage_GetLinePlanar
+/** Function oyImage_GetLinePlanar
  *  @relates oyImage_s
  *  @brief   standard continus layout line accessor
  *
@@ -9664,7 +9664,7 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
   return error;
 }
 
-/** Function: oyImage_SetData
+/** Function oyImage_SetData
  *  @relates oyImage_s
  *  @brief   set a custom image data backend
  *
@@ -9724,7 +9724,7 @@ int            oyImage_DataSet       ( oyImage_s         * image,
   return error;
 }
 
-/** Function: oyImage_FillArray
+/** Function oyImage_FillArray
  *  @relates oyImage_s
  *  @brief   creata a array from a image and fill with data
  *
@@ -10026,7 +10026,7 @@ digraph G {
  *  @{
  */
 
-/** Function: oyConnector_New
+/** Function oyConnector_New
  *  @relates oyConnector_s
  *  @brief   allocate a new Connector object
  *
@@ -10084,7 +10084,7 @@ OYAPI oyConnector_s * OYEXPORT
 
 /**
  *  @internal
- *  Function: oyConnector_Copy_
+ *  Function oyConnector_Copy_
  *  @relates oyConnector_s
  *  @brief   real copy a Connector object
  *
@@ -10160,7 +10160,7 @@ oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
   return s;
 }
 
-/** Function: oyConnector_Copy
+/** Function oyConnector_Copy
  *  @relates oyConnector_s
  *  @brief   copy or reference a Connector object
  *
@@ -10192,7 +10192,7 @@ OYAPI oyConnector_s * OYEXPORT
   return s;
 }
  
-/** Function: oyConnector_Release
+/** Function oyConnector_Release
  *  @relates oyConnector_s
  *  @brief   release and possibly deallocate a Connector object
  *
@@ -10266,7 +10266,7 @@ const char *       oyConnectorEventToText (
   return text;
 }
 
-/** Function: oyFilterSocket_Callback
+/** Function oyFilterSocket_Callback
  *  @relates oyFilterSocket_s
  *  @brief   tell about a oyConversion_s event
  *
@@ -10290,7 +10290,7 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function: oyFilterPlug_Callback
+/** Function oyFilterPlug_Callback
  *  @relates oyFilterPlug_s
  *  @brief   tell about a oyConversion_s event
  *
@@ -10315,7 +10315,7 @@ OYAPI int  OYEXPORT
 }
 
 
-/** Function: oyFilterSocket_New
+/** Function oyFilterSocket_New
  *  @relates oyFilterSocket_s
  *  @brief   allocate a new FilterSocket object
  *
@@ -10358,7 +10358,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
 
 /**
  *  @internal
- *  Function: oyFilterSocket_Copy_
+ *  Function oyFilterSocket_Copy_
  *  @relates oyFilterSocket_s
  *  @brief   real copy a FilterSocket object
  *
@@ -10399,7 +10399,7 @@ oyFilterSocket_s * oyFilterSocket_Copy_
   return s;
 }
 
-/** Function: oyFilterSocket_Copy
+/** Function oyFilterSocket_Copy
  *  @relates oyFilterSocket_s
  *  @brief   copy or reference a FilterSocket object
  *
@@ -10431,7 +10431,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
   return s;
 }
  
-/** Function: oyFilterSocket_Release
+/** Function oyFilterSocket_Release
  *  @relates oyFilterSocket_s
  *  @brief   release and possibly deallocate a FilterSocket object
  *
@@ -10496,7 +10496,7 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function: oyFilterPlug_ConnectIntoSocket
+/** Function oyFilterPlug_ConnectIntoSocket
  *  @relates oyFilterPlug_s
  *  @brief   connect a oyFilterPlug_s with a oyFilterSocket_s
  *
@@ -10521,7 +10521,7 @@ OYAPI int  OYEXPORT
 }
 
 
-/** Function: oyFilterPlug_New
+/** Function oyFilterPlug_New
  *  @relates oyFilterPlug_s
  *  @brief   allocate a new FilterPlug object
  *
@@ -10564,7 +10564,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
 
 /**
  *  @internal
- *  Function: oyFilterPlug_Copy_
+ *  Function oyFilterPlug_Copy_
  *  @relates oyFilterPlug_s
  *  @brief   real copy a FilterPlug object
  *
@@ -10603,7 +10603,7 @@ oyFilterPlug_s * oyFilterPlug_Copy_
   return s;
 }
 
-/** Function: oyFilterPlug_Copy
+/** Function oyFilterPlug_Copy
  *  @relates oyFilterPlug_s
  *  @brief   copy or reference a FilterPlug object
  *
@@ -10635,7 +10635,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
   return s;
 }
  
-/** Function: oyFilterPlug_Release
+/** Function oyFilterPlug_Release
  *  @relates oyFilterPlug_s
  *  @brief   release and possibly deallocate a FilterPlug object
  *
@@ -10694,7 +10694,7 @@ OYAPI int  OYEXPORT
 
 
 
-/** Function: oyFilterPlugs_New
+/** Function oyFilterPlugs_New
  *  @relates oyFilterPlugs_s
  *  @brief   allocate a new FilterPlugs list
  *
@@ -10737,7 +10737,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
 
 /**
  *  @internal
- *  Function: oyFilterPlugs_Copy_
+ *  Function oyFilterPlugs_Copy_
  *  @relates oyFilterPlugs_s
  *  @brief   real copy a FilterPlugs object
  *
@@ -10774,7 +10774,7 @@ oyFilterPlugs_s * oyFilterPlugs_Copy_
   return s;
 }
 
-/** Function: oyFilterPlugs_Copy
+/** Function oyFilterPlugs_Copy
  *  @relates oyFilterPlugs_s
  *  @brief   copy or reference a FilterPlugs list
  *
@@ -10806,7 +10806,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
   return s;
 }
  
-/** Function: oyFilterPlugs_Release
+/** Function oyFilterPlugs_Release
  *  @relates oyFilterPlugs_s
  *  @brief   release and possibly deallocate a FilterPlugs list
  *
@@ -10854,7 +10854,7 @@ OYAPI int  OYEXPORT
 }
 
 
-/** Function: oyFilterPlugs_MoveIn
+/** Function oyFilterPlugs_MoveIn
  *  @relates oyFilterPlugs_s
  *  @brief   add a element to a FilterPlugs list
  *
@@ -10895,7 +10895,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
   return s;
 }
 
-/** Function: oyFilterPlugs_ReleaseAt
+/** Function oyFilterPlugs_ReleaseAt
  *  @relates oyFilterPlugs_s
  *  @brief   release a element from a FilterPlugs list
  *
@@ -10921,7 +10921,7 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function: oyFilterPlugs_Get
+/** Function oyFilterPlugs_Get
  *  @relates oyFilterPlugs_s
  *  @brief   get a element of a FilterPlugs list
  *
@@ -10942,7 +10942,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
     return 0;
 }   
 
-/** Function: oyFilterPlugs_Count
+/** Function oyFilterPlugs_Count
  *  @relates oyFilterPlugs_s
  *  @brief   count the elements in a FilterPlugs list
  *
@@ -10966,7 +10966,7 @@ OYAPI int  OYEXPORT
 
 
 
-/** Function: oyFilterTypeToText
+/** Function oyFilterTypeToText
  *  @brief   oyFILTER_TYPE_e to small text
  *
  *  @version Oyranos: 0.1.8
@@ -11129,7 +11129,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 
 /**
  *  @internal
- *  Function: oyFilter_New_
+ *  Function oyFilter_New_
  *  @relates oyFilter_s
  *  @brief   allocate and initialise a new filter object
  *
@@ -11169,7 +11169,7 @@ oyFilter_s * oyFilter_New_           ( oyObject_s          object )
   return s;
 }
 
-/** Function: oyFilter_New
+/** Function oyFilter_New
  *  @relates oyFilter_s
  *  @brief   lookup and initialise a new filter object
  *
@@ -11237,7 +11237,7 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
 
 /**
  *  @internal
- *  Function: oyFilter_Copy_
+ *  Function oyFilter_Copy_
  *  @relates oyFilter_s
  *  @brief   real copy a filter object
  *
@@ -11277,7 +11277,7 @@ oyFilter_s * oyFilter_Copy_          ( oyFilter_s        * filter,
   return s;
 }
 
-/** Function: oyFilter_Copy
+/** Function oyFilter_Copy
  *  @relates oyFilter_s
  *  @brief   copy or reference a filter object
  *
@@ -11307,7 +11307,7 @@ oyFilter_s * oyFilter_Copy           ( oyFilter_s        * filter,
 
   return s;
 }
-/** Function: oyFilter_Release
+/** Function oyFilter_Release
  *  @relates oyFilter_s
  *  @brief   release and zero a filter object
  *
@@ -11419,7 +11419,7 @@ const char * oyFilter_GetText        ( oyFilter_s        * filter,
   return oyObject_GetName(filter->oy_, name_type);
 }
 
-/** Function: oyFilter_GetName
+/** Function oyFilter_GetName
  *  @relates oyFilter_s
  *  @brief   get name
  *
@@ -11442,7 +11442,7 @@ const char * oyFilter_GetName        ( oyFilter_s        * filter,
 
   return oyNoEmptyName_m_( oyName_get_( filter->name_, name_type ) );
 }
-/** Function: oyFilter_CategoryGet
+/** Function oyFilter_CategoryGet
  *  @relates oyFilter_s
  *  @brief   get category string
  *
@@ -11483,7 +11483,9 @@ oyOptions_s* oyFilter_OptionsGet     ( oyFilter_s        * filter,
     return 0;
 
   if(oyToFilterGetDefaults_m(flags))
-    return oyOptions_Copy( filter->api4_->options, filter->oy_ );
+    return oyOptions_ForFilter( filter->filter_type_,
+                                filter->registration_, filter->cmm_,
+                                0, filter->oy_ );
   else
     return oyOptions_Copy( filter->options_, 0 );
 }
