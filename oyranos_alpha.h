@@ -540,6 +540,12 @@ typedef enum {
 
     @todo include the oyOptions_t_ type for gui elements
     should be used in a list oyColourTransformOptions_s to form a options set
+    oyOptions_t_ covers as well the UI part which should be separated as of the
+    SimpleToolkitAbstraction project:
+    http://www.oyranos.org/wiki/index.php?title=XML_Plug-in_options
+    As of this architecture change The UI part must be decided to obtain a
+    place. Probably in oyOptions_s?
+    Thus the oyOption_s::name member should be removed.
 
  *  The id field maps to a oyWidget_s object.
  *  Options and widgets are to be queried by the according function / CMM
