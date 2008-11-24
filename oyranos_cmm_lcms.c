@@ -946,18 +946,16 @@ int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func )
 
 char lcms_extra_options[] = {
  " \n\
-  <xf:model>\n\
-   <xf:instance>\n\
-    <" OY_DOMAIN_INTERNAL " xmlns=\"\">\n\
-     <colour_icc>\n\
-      <" CMM_NICK ">\n\
-       <bpc>0</bpc>\n\
-       <cmyk_cmky_black_preservation>0</cmyk_cmky_black_preservation>\n\
-      </" CMM_NICK ">\n\
-     </colour_icc>\n\
-    </" OY_DOMAIN_INTERNAL ">\n\
-   </xf:instance>\n\
-  </xf:model>\n"
+  <" OY_TOP_INTERNAL ">\n\
+   <" OY_DOMAIN_INTERNAL " xmlns=\"\">\n\
+    <colour_icc>\n\
+     <" CMM_NICK ">\n\
+      <bpc>0</bpc>\n\
+      <cmyk_cmky_black_preservation>0</cmyk_cmky_black_preservation>\n\
+     </" CMM_NICK ">\n\
+    </colour_icc>\n\
+   </" OY_DOMAIN_INTERNAL ">\n\
+  </" OY_TOP_INTERNAL ">\n"
 };
 
 
@@ -1006,7 +1004,9 @@ oyCMMapi4_s   lcms_api4_cmm = {
   0,   /* plugs_last_add */
   lcms_cmmIccSocket_connectors,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets_last_add */
+
+  0    /* api5_; keep empty */
 };
 
 
