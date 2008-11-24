@@ -159,6 +159,8 @@ typedef enum {
   oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
   oyOBJECT_CMM_API3_S,                /**< oyCMMapi3_s */
   oyOBJECT_CMM_API4_S,                /**< oyCMMapi4_s */
+  oyOBJECT_CMM_API5_S,                /**< oyCMMapi5_s */
+  oyOBJECT_CMM_DATA_TYPES_S,          /**< oyCMMDataTypes_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
   oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
   oyOBJECT_MODULE_S,                  /*!< oyModule_s */

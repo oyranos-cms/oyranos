@@ -745,6 +745,8 @@ const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
     case oyOBJECT_CMM_API2_S: text = "oyCMMapi2_s Monitors"; break;
     case oyOBJECT_CMM_API3_S: text = "oyCMMapi3_s Profile tags"; break;
     case oyOBJECT_CMM_API4_S: text = "oyCMMapi4_s Filter"; break;
+    case oyOBJECT_CMM_API5_S: text = "oyCMMapi5_s Filter"; break;
+    case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
     case oyOBJECT_ICON_S: text = "oyIcon_s"; break;
     case oyOBJECT_MODULE_S: text = "oyModule_s"; break;
@@ -2540,6 +2542,71 @@ int              oyCMMCanHandle_    ( oyCMMapi_s         * api,
   return capable;
 }
 
+oyStructList_s * oy_meta_backend_cache_ = 0;
+
+/** @internal
+ *  Function oyCMMMetaGetApi_
+ *  @brief   get a meta module
+ *
+ *  This function allowes to obtain a API for a modul/CMM type.
+ *
+ *  @param[in]   cmm_required          if present take this or fail, the arg
+ *                                     simplifies and speeds up the search
+ *  @param[in]   queries               search for a match to capabilities
+ *  @param[out]  cmm_used              inform about the selected CMM
+ *  @param[in]   registration          point'.' separated list of identifiers
+ *  @param[in]   filter_type           type of filter
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/24 (Oyranos: 0.1.9)
+ *  @date    2008/11/24
+ */
+oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
+                                       oyCMMapiQueries_s * queries,
+                                       char              * cmm_used,
+                                       const char        * registration,
+                                       oyFILTER_TYPE_e     filter_type )
+{
+  oyCMMapi_s * api = 0;
+  oyCMMapi5_s * s = 0;
+  int error = 0;
+  oyHash_s * entry = 0;
+  char * class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,0);
+
+  {
+    if(!class)
+      class = oyStringCopy_( oyFilterTypeToText( filter_type, oyNAME_NICK ),
+                             oyAllocateFunc_ );
+
+    if(!oy_meta_backend_cache_)
+      oy_meta_backend_cache_ = oyStructList_New( 0 );
+
+    entry = oyCacheListGetEntry_ ( oy_meta_backend_cache_, class );
+
+    oyFree_m_( class );
+
+    s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, oyOBJECT_CMM_API5_S );
+
+    if(s)
+    {
+      oyHash_Release_( &entry );
+      return s;
+    }
+  }
+
+  api = oyCMMsGetApi_( oyOBJECT_CMM_API5_S, cmm_required, queries, cmm_used,
+                       registration, filter_type );
+
+  if(api)
+    error = oyHash_SetPointer_( entry, (oyStruct_s*) api );
+
+  oyHash_Release_( &entry );
+
+  s = api;
+
+  return s;
+}
+
 /** @internal
  *  Function oyCMMsGetApi_
  *  @brief get a module
@@ -2646,6 +2713,9 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
 
                 if(found)
                 {
+                  if(!cmm_api4->api5_)
+                    cmm_api4->api5_ = oyCMMMetaGetApi_( 0, queries, 0, 0,
+                                                        filter_type );
                   api = tmp;
                   error = !memcpy( cmm_used, cmm_info->cmm, 4 );
                 }
@@ -2674,7 +2744,8 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
 
   if(!api)
   {
-    error = !memcpy( cmm_used, cmm_fallback, 4 );
+    if(cmm_used)
+      error = !memcpy( cmm_used, cmm_fallback, 4 );
     return api_fallback;
   }
 
@@ -4572,6 +4643,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
       erg = obj->registration;
     else
       erg = oyObject_GetName( obj->oy_, type );
+
+    error = oyObject_SetName( obj->oy_, erg, type );
   }
 
   if(!error && !erg)
@@ -4748,7 +4821,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
 
       for(j = 0; j < set_bn; ++j)
       {
-        option_b = oyOptions_Get( set_b, i );
+        option_b = oyOptions_Get( set_b, j );
 
         found = oyName_boolean( &option_a->name, &option_b->name, oyNAME_NICK,
                                 type );
@@ -5006,6 +5079,7 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
   oyFILTER_TYPE_e filter_type = oyFilterRegistrationToType( registration );
   char * type_txt = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,
                                                 0 );
+  oyCMMapi5_s * api5 = 0;
   oyFilter_s * filter = 0;
 
   if(!oy_default_behaviour_settings_)
@@ -5027,9 +5101,12 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
     filter_type = filter->filter_type_;
 
     /*  2. get implementation for filter type */
-    /*  @todo define a oyCMMapiX_s for default options / data handling ... */
+    api5 = filter->api4_->api5_;
 
     /*  3. parse static common options in implementation */
+    if(api5)
+      opts_tmp = oyOptions_FromText( api5->options,
+                                     flags, object );
     /* requires step 2 */
 
     /*  4. parse static options in filter */
