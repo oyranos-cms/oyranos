@@ -1314,7 +1314,7 @@ oyCMMapi3_s  oyra_api3 = {
 
   oyOBJECT_CMM_API3_S,
   0,0,0,
-  (oyCMMapi_s*) & oyra_api4_defaults_colour_settings,
+  (oyCMMapi_s*) & oyra_api5_colour_icc,
   
   oyraCMMInit,
   oyraCMMMessageFuncSet,
