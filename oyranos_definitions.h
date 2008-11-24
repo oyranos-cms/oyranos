@@ -83,7 +83,7 @@
 /** directory separator */
 #define OY_SLASH_C               '/'
 /** Top path for standard settings */
-#define OY_TOP_STD               "colour"
+#define OY_TOP_SHARED            "shared"
 /** use this path for non standardised filters and applications */
 #define OY_TOP_INTERNAL          "sw"
 /** Domain path for standard settings */
@@ -94,7 +94,7 @@
 #define OY_TYPE_STD              "default"
 
 /** Oyranos general key path in the elektra data base */
-#define OY_STD     OY_TOP_STD OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD
+#define OY_STD     OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD
 /** Type path for standard settings */
 #define OY_PROFILE_STD           OY_STD OY_SLASH "profile" OY_SLASH
 /** Type path for standard settings */
