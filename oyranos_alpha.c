@@ -2602,7 +2602,7 @@ oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
 
   oyHash_Release_( &entry );
 
-  s = api;
+  s = (oyCMMapi5_s*) api;
 
   return s;
 }
@@ -4614,7 +4614,7 @@ int            oyOption_GetId        ( oyOption_s        * obj )
  *  The type argument should select the following string in return: \n
  *  - oyNAME_NAME - a readable XFORMS element
  *  - oyNAME_NICK - the hash ID
- *  - oyNAME_DESCRIPTION - option registration name
+ *  - oyNAME_DESCRIPTION - option registration name with key and without value
  *
  *  @param[in,out] obj                 the option
  *  @param         type                oyNAME_NICK is equal to an ID
@@ -4629,6 +4629,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 {
   int error = !obj;
   const char * erg = 0;
+  char * txt = 0;
   oyValue_u * v = 0;
   oyStructList_s * oy_struct_list = 0;
 
@@ -4639,21 +4640,49 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 
   if(!error)
   {
-    if(type <= oyNAME_DESCRIPTION)
-      erg = obj->registration;
-    else
-      erg = oyObject_GetName( obj->oy_, type );
+    if(type == oyNAME_DESCRIPTION)
+    {
+      oyStringAdd_( &txt, obj->registration, oyAllocateFunc_,oyDeAllocateFunc_);
+      oyStringAdd_( &txt, "/", oyAllocateFunc_, oyDeAllocateFunc_ );
+      oyStringAdd_( &txt, obj->name.nick, oyAllocateFunc_, oyDeAllocateFunc_ );
 
-    error = oyObject_SetName( obj->oy_, erg, type );
+      error = oyObject_SetName( obj->oy_, txt, type );
+      oyFree_m_( txt );
+    }
   }
 
-  if(!error && !erg)
+  if(!error && 
+     ( type == oyNAME_NICK || type == oyNAME_NAME ))
   {
-    int n = 1, i = 0;
+    int n = 1, i = 0, j;
     char * tmp = oyAllocateFunc_(1024),
          * text = 0;
+    char ** list = 0;
 
-    stringAdd ( text, "<option>\n" );
+    if(!oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ))
+      oyOption_GetText(obj, oyNAME_DESCRIPTION);
+
+
+    if(type == oyNAME_NICK)
+    {
+      stringAdd ( text, oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ) );
+      stringAdd ( text, ":" );
+    } else if(type == oyNAME_NAME)
+    {
+      list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
+                             '/', &n, oyAllocateFunc_);
+      for( i = 0; i < n; ++i )
+      {
+        for(j = 0; j < i; ++j)
+          stringAdd ( text, " " );
+        stringAdd ( text, "<" );
+        stringAdd ( text, list[i] );
+        if(i+1==n)
+          stringAdd ( text, ">" );
+        else
+          stringAdd ( text, ">\n" );
+      }
+    }
 
     switch(obj->value_type)
     {
@@ -4676,15 +4705,14 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 
     for(i = 0; i < n; ++i)
     {
-      stringAdd ( text, "  <item>" );
       if(obj->value_type == oyVAL_INT)
         oySprintf_(tmp, "%d", v->int32);
       if(obj->value_type == oyVAL_DOUBLE)
-        oySprintf_(tmp, "%f", v->dbl); break;
+        oySprintf_(tmp, "%f", v->dbl);
       if(obj->value_type == oyVAL_INT_LIST)
-        oySprintf_(tmp, "%d", v->int32_list[i+1]); break;
+        oySprintf_(tmp, "%d", v->int32_list[i+1]);
       if(obj->value_type == oyVAL_DOUBLE_LIST)
-        oySprintf_(tmp, "%f", v->dbl_list[i+1]); break;
+        oySprintf_(tmp, "%f", v->dbl_list[i+1]);
 
       switch(obj->value_type)
       {
@@ -4706,14 +4734,32 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
         } else if(v->oy_struct->oy_)
           stringAdd ( text, oyObject_GetName( v->oy_struct->oy_, oyNAME_NICK ));
       }
-      stringAdd ( text, "  </item>\n" );
+      if(i)
+        stringAdd ( text, ":" );
     }
-    stringAdd ( text, "</option>\n" );
+
+    if(type == oyNAME_NAME)
+    {
+      list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
+                             '/', &n, oyAllocateFunc_);
+      for( i = n-1; i >= 0; --i )
+      {
+        if(i+1 < n)
+        for(j = 0; j < i; ++j)
+          stringAdd ( text, " " );
+        stringAdd ( text, "</" );
+        stringAdd ( text, list[i] );
+        if(i)
+          stringAdd ( text, ">\n" );
+        else
+          stringAdd ( text, ">" );
+      }
+    }
+
+    error = oyObject_SetName( obj->oy_, text, type );
 
     oyFree_m_( tmp );
     oyFree_m_( text );
-
-    error = oyObject_SetName( obj->oy_, text, type );
   }
 
   erg = oyObject_GetName( obj->oy_, type );
@@ -4812,6 +4858,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
       set_bn = oyOptions_Count( set_b );
   int i, j, k,
       found = 0;
+  const char * txt_1, * txt_2;
 
   if(!error)
   {
@@ -4829,32 +4876,40 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
         /* check various value ranges */
         if(found == 1)
         {
-          if(oyStrcmp_(oyOption_GetText(option_a, oyNAME_NICK),
-                       oyOption_GetText(option_b, oyNAME_NICK)) == 0)
+          txt_1 = oyOption_GetText(option_a, oyNAME_DESCRIPTION);
+          txt_2 = oyOption_GetText(option_b, oyNAME_DESCRIPTION);
+          if(oyStrcmp_( txt_1, txt_2 ) == 0)
             if(option_a->value_type != option_b->value_type)
               found = 0;
 
           if(found)
           {
             int found_a = 1, found_b = 1;
+
+            if(!options)
+              options = oyOptions_New(0);
+
             for(k = 0; k < oyOptions_Count(options); ++k)
             {
               option = oyOptions_Get( options, k );
-              if(oyStrcmp_( oyOption_GetText(option, oyNAME_NICK),
-                            oyOption_GetText(option_a, oyNAME_NICK) ) == 0)
+
+              txt_1 = oyOption_GetText(option, oyNAME_DESCRIPTION);
+              txt_2 = oyOption_GetText(option_a, oyNAME_DESCRIPTION);
+              if(oyStrcmp_( txt_1, txt_2 ) == 0)
                 found_a = 0;
 
-              if(oyStrcmp_( oyOption_GetText(option, oyNAME_NICK),
-                            oyOption_GetText(option_b, oyNAME_NICK) ) == 0)
+              txt_2 = oyOption_GetText(option_b, oyNAME_DESCRIPTION);
+              if(oyStrcmp_( txt_1, txt_2 ) == 0)
                 found_b = 0;
+
+              oyOption_Release( &option );
             }
+
             if(found_a)
               oyOptions_Add( options, option_a, -1, object );
 
             if(found_b)
               oyOptions_Add( options, option_b, -1, object );
-
-            oyOption_Release( &option );
 
             found = 1;
           }
