@@ -640,7 +640,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
   }
 #endif
 
-  if(name)
+  if(name && strlen(name))
   {
     DBG_PROG_S(name);
     /* cut off the path part of a file name */
