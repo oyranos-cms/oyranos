@@ -4204,6 +4204,8 @@ oyChar* oyCMMCacheListPrint_()
 }
 
 
+
+
 /** \addtogroup objects_value Values Handling
 
  *  @{
@@ -4409,6 +4411,7 @@ const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
 }
 
 
+
 static int oy_option_id_ = 0;
 
 /** Function oyOption_New
@@ -4610,7 +4613,7 @@ int            oyOption_GetId        ( oyOption_s        * obj )
  *  @brief   get a text dump 
  *
  *  Only oyOption_s::value is written.
-
+ *
  *  The type argument should select the following string in return: \n
  *  - oyNAME_NAME - a readable XFORMS element
  *  - oyNAME_NICK - the hash ID
@@ -4768,6 +4771,38 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 }
 
 
+/** Function oyOption_SetFromText
+ *  @relates oyOption_s
+ *  @brief   set a option value from a string
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/25 (Oyranos: 0.1.9)
+ *  @date    2008/11/25
+ */
+int            oyOption_SetFromText  ( oyOption_s        * obj,
+                                       const char        * text )
+{
+  int error = !obj;
+
+  if(!error)
+  {
+    if(obj->value)
+    {
+      oyDeAlloc_f deallocateFunc = obj->oy_->deallocateFunc_;
+
+      oyValueRelease( &obj->value, obj->value_type, deallocateFunc );
+    }
+
+    obj->value = obj->oy_->allocateFunc_(sizeof(oyValue_u));
+
+    obj->value->string = oyStringCopy_( text, obj->oy_->allocateFunc_ );
+    obj->value_type = oyVAL_STRING;
+  }
+
+  return error;
+}
+
+
 /** Function oyOption_Match_
  *  @relates oyOption_s
  *  @internal
@@ -4830,9 +4865,6 @@ oyOptions_s *  oyOptions_New         ( oyObject_s          object )
   return s;
 }
 
-oyOptions_s *  oyOptions_FromMem     ( size_t            * size,
-                                       const char        * opts_text,
-                                       oyObject_s          object );
 /** Function oyOptions_FromBoolean
  *  @relates oyOptions_s
  *  @brief   boolean operations on two sets of option
@@ -4937,6 +4969,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
  *  @brief   provide the current state of Oyranos behaviour settings
  *
  *  @todo harmonise the xml key names to the elektra ones to form one namespace
+ *  @deprecated we move to the oyCMMapi5_s for static stuff
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/06 (Oyranos: 0.1.9)
@@ -5036,7 +5069,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
       xmlFree(key);
       oyFree_m_( tmp );
 
-      o->source = oyOPTIONSOURCE_FILTER;
+      o->source = oyOPTIONSOURCE_DATA;
 
       oyOptions_MoveIn( s, &o, -1 );
     }
@@ -5100,18 +5133,17 @@ oyOptions_s * oy_default_behaviour_settings_ = 0;
  *  @relates oyOptions_s
  *  @brief   provide the current state of Oyranos behaviour settings
  *
- *  The result will be derived from the applications current state of settings, 
- *  which is itself a copy of the Oyranos settings during the first call to this
- *  function. To store different states you need to implement on your own stack.
- *  The returned object will be a copy not a reference.
- *  The key names map to the registration/XML syntax.
+ *  The returned options are read in from the Elektra settings and if thats not
+ *  available from the inbuild defaults. The later can explicitely selected with
+ *  oyOPTIONSOURCE_FILTER passed as flags argument.
+ *  The key names map to the registration and XML syntax.
  *
  *  @see oyOPTIONS_e for more details.
  *
  *  @param[in]     type                basic or advanced graphics
  *  @param[in]     registration        the filter registration to search for
  *  @param[in]     cmm                 a CMM to match
- *  @param[in]     flags               for future use
+ *  @param[in]     flags               for inbuild defaults - oyOPTIONSOURCE_FILTER
  *  @param         object              the optional object
  *  @return                            copy of the current state
  *
@@ -5133,21 +5165,24 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
   oyCMMInfo_s * info = 0;
   oyFILTER_TYPE_e filter_type = oyFilterRegistrationToType( registration );
   char * type_txt = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,
-                                                0 );
+                                                0 ),
+       * text;
   oyCMMapi5_s * api5 = 0;
   oyFilter_s * filter = 0;
+  int i,n;
 
   if(!oy_default_behaviour_settings_)
   {
     oy_default_behaviour_settings_ = oyOptions_New(0);
 
-    /*
+    /**
         Programm:
         1. get filter and its type
         2. get implementation for filter type
-        3. parse static common options in implementation
-        4. parse static options in filter 
+        3. parse static common options from meta backend
+        4. parse static options from filter 
         5. merge both
+        6. get stored values from disk
      */
 
     /*  1. get filter */
@@ -5158,20 +5193,43 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
     /*  2. get implementation for filter type */
     api5 = filter->api4_->api5_;
 
-    /*  3. parse static common options in implementation */
+    /*  3. parse static common options from meta backend */
     if(api5)
       opts_tmp = oyOptions_FromText( api5->options,
                                      flags, object );
     /* requires step 2 */
 
-    /*  4. parse static options in filter */
+    /*  4. parse static options from filter */
     opts_tmp2 = oyOptions_FromText( filter->api4_->options, flags, object );
 
-    /*     merge */
+    /*  5. merge */
     s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );
 
-    /* add all static options */
-    //o = oyOption_FromStatic_( opt, object );
+    /*  6. get stored values */
+    n = oyOptions_Count( s );
+    for(i = 0; i < n; ++i)
+    {
+      o = oyOptions_Get( s, i );
+      o->source = oyOPTIONSOURCE_FILTER;
+
+      /* oyOPTIONSOURCE_EDIT and oyOPTIONSOURCE_AUTOMATIC are ignored here
+       * because they are not global  */
+
+      if(!(flags & oyOPTIONSOURCE_FILTER))
+      {
+        oyExportStart_(EXPORT_SETTING);
+        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                oyAllocateFunc_ );
+        if(text && oyStrlen_(text))
+        {
+          error = oyOption_SetFromText( o, text );
+          o->source = oyOPTIONSOURCE_DISK;
+        }
+        oyFree_m_( text );
+      }
+
+      oyOption_Release( &o );
+    }
   }
 
   return s;
@@ -5386,17 +5444,67 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyObject_s          object )
 {
   oyOption_s *tmp = 0;
+  int error = !options || !option;
 
-  if(options && option)
+  if(!error)
   {
     tmp = oyOption_Copy( option, object );
     oyOptions_MoveIn( options, &tmp, -1 );
   }
+
+  return error;
 }
 
-char *         oyOptions_GetMem      ( oyOptions_s       * options,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc );
+
+/** Function oyOptions_GetText
+ *  @relates oyOptions_s
+ *  @brief   dump options to text
+ *
+ *  The type argument should select the following string in return: \n
+ *  - oyNAME_NAME - a readable XFORMS data model
+ *  - oyNAME_NICK - the hash ID
+ *  - oyNAME_DESCRIPTION - option registration name with key and without value
+ *
+ *  @param[in,out] options             the option
+ *  @param         type                oyNAME_NICK is equal to an ID
+ *  @return                            the text
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/25 (Oyranos: 0.1.9)
+ *  @date    2008/11/25
+ */
+const char *   oyOptions_GetText     ( oyOptions_s       * options,
+                                       oyNAME_e            type )
+{
+  int error = !options;
+  const char * erg = 0;
+  char * text = 0;
+  oyOption_s * o = 0;
+  int i, n;
+
+
+  if(!error)
+  {
+    n = oyOptions_Count( options );
+
+    for( i = 0; i < n; ++i )
+    {
+      o = oyOptions_Get( options, i );
+      stringAdd ( text, oyOption_GetText( o, type) );
+      stringAdd ( text, "\n" );
+
+      oyOption_Release( &o );
+    }
+
+    error = oyObject_SetName( options->oy_, text, type );
+
+    oyFree_m_( text );
+  }
+
+  erg = oyObject_GetName( options->oy_, type );
+
+  return erg;
+}
 
 /** Function oyOptions_Find
  *  @relates oyOptions_s

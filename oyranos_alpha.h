@@ -528,13 +528,12 @@ void           oyValueClear          ( oyValue_u         * v,
  *  @date    2008/11/13
  */
 typedef enum {
-  oyOPTIONSOURCE_NONE,                 /**< not clear */
-  oyOPTIONSOURCE_USER,                 /**< user defaults, e.g. elektra/user */
-  oyOPTIONSOURCE_SYSTEM,               /**< system defaults, e.g. elektra/sys */
-  oyOPTIONSOURCE_FILTER,               /**< internal defaults, e.g. filter */
-  oyOPTIONSOURCE_DATA,                 /**< external defaults, e.g. policy */
-  oyOPTIONSOURCE_EDIT,                 /**< user modified */
-  oyOPTIONSOURCE_AUTOMATIC             /**< automatically modified */
+  oyOPTIONSOURCE_NONE = 0,             /**< not clear */
+  oyOPTIONSOURCE_FILTER = 1,           /**< internal defaults, e.g. filter */
+  oyOPTIONSOURCE_DATA = 2,             /**< external defaults, e.g. policy */
+  oyOPTIONSOURCE_DISK = 4,             /**< user settings, e.g. elektra */
+  oyOPTIONSOURCE_EDIT = 8,             /**< user modified */
+  oyOPTIONSOURCE_AUTOMATIC = 16        /**< automatically modified */
 } oyOPTIONSOURCE_e;
 
 /** @brief Option for rendering
@@ -582,6 +581,8 @@ int            oyOption_Release      ( oyOption_s       ** option );
 int            oyOption_GetId        ( oyOption_s        * option );
 const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
+int            oyOption_SetFromText  ( oyOption_s        * obj,
+                                       const char        * text );
 
 
 /**
@@ -654,9 +655,8 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
                                        int                 pos,
                                        oyObject_s          object );
-char *         oyOptions_GetMem      ( oyOptions_s       * options,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc );
+const char *   oyOptions_GetText     ( oyOptions_s       * options,
+                                       oyNAME_e            type );
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
                                        const char        * key );
 char *         oyOptions_FindString  ( oyOptions_s       * options,
