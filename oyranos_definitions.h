@@ -91,7 +91,7 @@
 /** Domain path for Oyranos specific settings */
 #define OY_DOMAIN_INTERNAL       "oyranos.org"
 /** Type path for standard settings */
-#define OY_TYPE_STD              "default"
+#define OY_TYPE_STD              "colour"
 
 /** Oyranos general key path in the elektra data base */
 #define OY_STD     OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD
