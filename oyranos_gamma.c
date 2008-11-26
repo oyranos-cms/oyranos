@@ -119,11 +119,11 @@ int main( int argc , char** argv )
                         printf("      %s\n",           argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Query server profile:"));
-                        printf("      %s\n",        argv[0]);
+                        printf("      %s\n",           argv[0]);
                         printf("            -x pos -y pos\n");
                         printf("\n");
-                        printf("  %s -b\n",            _("Query device data base profile:"));
-                        printf("      %s\n",        argv[0]);
+                        printf("  %s\n",               _("Query device data base profile:"));
+                        printf("      %s -b\n",        argv[0]);
                         printf("            -x pos -y pos\n");
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
