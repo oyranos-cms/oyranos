@@ -75,21 +75,36 @@ oyOptions_s* oyra_defaultICCValidateOptions
  <xf:model> <xf:instance> - must be added in Oyranos to make the model complete
  */
 char oyra_default_colour_icc_options[] = {
- "\
-   <" OY_TOP_SHARED ">\n\
-    <" OY_DOMAIN_STD " xmlns=\"\">\n\
-     <" OY_TYPE_STD ">\n\
-      <profile>\n\
-       <editing_cmyk>coated_FOGRA39L_argl.icc</editing_cmyk>\n\
-       <editing_gray>Gray.icc</editing_gray>\n\
-       <editing_lab>Lab.icc</editing_lab>\n\
-       <editing_rgb>eciRGB_v2.icc</editing_rgb>\n\
-       <editing_xyz>XYZ.icc</editing_xyz>\n\
-      </profile>\n\
-     </" OY_TYPE_STD ">\n\
-    </" OY_DOMAIN_STD ">\n\
-   </" OY_TOP_SHARED ">\n\
- "
+ "\n\
+  <" OY_TOP_SHARED ">\n\
+   <" OY_DOMAIN_STD ">\n\
+    <" OY_TYPE_STD ">\n\
+     <profile>\n\
+      <editing_rgb>eciRGB_v2.icc</editing_rgb>\n\
+      <editing_cmyk>coated_FOGRA39L_argl.icc</editing_cmyk>\n\
+      <editing_gray>Gray.icc</editing_gray>\n\
+      <editing_lab>Lab.icc</editing_lab>\n\
+      <editing_xyz>XYZ.icc</editing_xyz>\n\
+     </profile>\n\
+     <behaviour>\n\
+      <action_untagged_assign>1</action_untagged_assign>\n\
+      <action_missmatch_cmyk>1</action_missmatch_cmyk>\n\
+      <action_missmatch_rgb>1</action_missmatch_rgb>\n\
+      <mixed_colour_spaces_print_doc_convert>1</mixed_colour_spaces_print_doc_convert>\n\
+      <mixed_colour_spaces_screen_doc_convert>2</mixed_colour_spaces_screen_doc_convert>\n\
+      <proof_hard.advanced>0</proof_hard.advanced>\n\
+      <proof_soft.advanced>0</proof_soft.advanced>\n\
+     </behaviour>\n\
+    </" OY_TYPE_STD ">\n\
+    <colour_icc>\n\
+     <behaviour>\n\
+      <rendering_intent>0</rendering_intent>\n\
+      <rendering_bpc>1</rendering_bpc>\n\
+      <rendering_intent_proof>0</rendering_intent_proof>\n\
+     </behaviour>\n\
+    </colour_icc>\n\
+   </" OY_DOMAIN_STD ">\n\
+  </" OY_TOP_SHARED ">\n"
 };
 
 char oyra_default_colour_icc_options_ui[] = {

@@ -945,12 +945,12 @@ int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func )
 }
 
 char lcms_extra_options[] = {
- " \n\
+ "\n\
   <" OY_TOP_INTERNAL ">\n\
    <" OY_DOMAIN_INTERNAL " xmlns=\"\">\n\
     <colour_icc>\n\
      <" CMM_NICK ">\n\
-      <bpc>0</bpc>\n\
+      <rendering_bpc>0</rendering_bpc>\n\
       <cmyk_cmky_black_preservation>0</cmyk_cmky_black_preservation>\n\
      </" CMM_NICK ">\n\
     </colour_icc>\n\
