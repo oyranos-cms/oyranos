@@ -606,9 +606,6 @@ typedef struct {
   oyStructList_s     * list;           /**< the list data */
 } oyOptions_s;
 
-oyOptions_s *  oyOptions_FromMem     ( size_t            * size,
-                                       const char        * opts_text,
-                                       oyObject_s          object );
 oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,
                                        oyBOOLEAN_e         type,
@@ -627,8 +624,8 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  *  @date    2008/10/08
  */
 typedef enum {
-  oyOPTIONDEFAULTS_BASIC,              /** basic settings, as typical for toolkits and office/web applciations, disable proofing */
-  oyOPTIONDEFAULTS_ADVANCED            /** advanced settings, as typical for editing images, include proofing */
+  oyOPTIONDEFAULTS_BASIC,              /** basic settings, as typical for toolkits and office/web applications, e.g. disable proofing */
+  oyOPTIONDEFAULTS_ADVANCED            /** advanced settings, as typical for editing, e.g. include proofing */
 } oyOPTIONDEFAULTS_e;
 oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
                                        const char        * registration,

@@ -5032,6 +5032,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
 
   while (cur != NULL)
   {
+    o = oyOption_New(0);
     if(cur->type == XML_ELEMENT_NODE)
       oyStringListAddStaticString_( texts, texts_n, cur->name,
                                     oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -5044,7 +5045,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
     }
 
     if(cur->type == XML_TEXT_NODE && !cur->children &&
-       cur->content && cur->content[0] != '\n')
+       cur->content && oyStrlen_(cur->content) && cur->content[0] != '\n')
     {
       o = oyOption_New(0);
 
@@ -5100,14 +5101,26 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
   xmlNodePtr cur = 0;
   char ** texts = 0;
   int texts_n = 0;
+  const char * root_start = "<top>", * root_end = "</top>";
+  char * tmp = 0;
 
   if(!error)
   {
-    doc = xmlParseMemory( text, oyStrlen_( text ) );
+    /* add a root level node - <top> */
+    tmp = oyStringAppend_( root_start, text, oyAllocateFunc_ );
+    oyStringAdd_( &tmp, root_end, oyAllocateFunc_, oyDeAllocateFunc_ );
+
+    doc = xmlParseMemory( tmp, oyStrlen_( tmp ) );
     error = !doc;
 
+    oyFree_m_( tmp );
+
     if(doc)
+    {
       cur = xmlDocGetRootElement(doc);
+      /* skip now the artifically added <top> level */
+      cur = cur->xmlChildrenNode;
+    }
     error = !cur;
   }
 
@@ -5115,11 +5128,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
   {
     s = oyOptions_New(0);
 
-    while (cur != NULL)
-    {
-      oyOptions_ParseXML_( s, &texts, &texts_n, doc, cur );
-      cur = cur->next;
-    }
+    oyOptions_ParseXML_( s, &texts, &texts_n, doc, cur );
 
     xmlFreeDoc(doc);
   }
@@ -5137,6 +5146,8 @@ oyOptions_s * oy_default_behaviour_settings_ = 0;
  *  available from the inbuild defaults. The later can explicitely selected with
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
+ *
+ *  @todo support the oyOPTIONDEFAULTS_e type argument in oyCMMapi[4,5]_s's
  *
  *  @see oyOPTIONS_e for more details.
  *
@@ -5465,6 +5476,8 @@ int            oyOptions_Add         ( oyOptions_s       * options,
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - option registration name with key and without value
  *
+ *  @todo streamline output and group, avoid writing all levels for each key
+ *
  *  @param[in,out] options             the option
  *  @param         type                oyNAME_NICK is equal to an ID
  *  @return                            the text
@@ -5501,7 +5514,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     oyFree_m_( text );
   }
 
-  erg = oyObject_GetName( options->oy_, type );
+  if(!error)
+    erg = oyObject_GetName( options->oy_, type );
 
   return erg;
 }
