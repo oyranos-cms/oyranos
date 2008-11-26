@@ -1034,6 +1034,63 @@ const char * oyName_get_             ( const oyName_s    * obj,
  *
  *  @return                            -1 for undefined, 1 - true, 0 - false
  *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/26 (Oyranos: 0.1.9)
+ *  @date    2008/11/26
+ */
+int          oyTextboolean_          ( const char        * text_a,
+                                       const char        * text_b,
+                                       oyBOOLEAN_e         type )
+{
+  int erg = -1;
+  int error = !text_a || !text_b ||
+              0 > type || type > oyBOOLEAN_UNION;
+
+  if(!error)
+  {
+    if(type == oyBOOLEAN_INTERSECTION)
+    {
+      if(text_a && text_b)
+        erg = oyStrcmp_( text_a, text_b ) == 0;
+      else
+        erg = 0;
+    }
+    if(type == oyBOOLEAN_SUBSTRACTION)
+    {
+      if(text_a && text_b)
+        erg = oyStrcmp_( text_a, text_b ) != 0;
+      else if(text_a)
+        erg = 1;
+      else
+        erg = 0;
+    }
+    if(type == oyBOOLEAN_DIFFERENZ)
+    {
+      if(text_a && text_b)
+        erg = oyStrcmp_( text_a, text_b ) != 0;
+      else if(text_a || text_b)
+        erg = 1;
+      else
+        erg = 0;
+    }
+    if(type == oyBOOLEAN_UNION)
+    {
+      if(text_a || text_b)
+        erg = 1;
+      else
+        erg = 0;
+    }
+  }
+
+  return erg;
+}
+
+/** @brief   test a boolean operator
+ *
+ *  The function requires to receive proper object arguments and valid ranges.
+ *
+ *  @return                            -1 for undefined, 1 - true, 0 - false
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/28 (Oyranos: 0.1.8)
  *  @date    2008/06/28
@@ -1069,39 +1126,7 @@ int          oyName_boolean          ( oyName_s          * name_a,
       text_b = name_b->description;
     }
 
-
-    if(type == oyBOOLEAN_INTERSECTION)
-    {
-      if(text_a && text_b)
-        erg = oyStrcmp_( text_a, text_b ) == 0;
-      else
-        erg = 0;
-    }
-    if(type == oyBOOLEAN_SUBSTRACTION)
-    {
-      if(text_a && text_b)
-        erg = oyStrcmp_( text_a, text_b ) != 0;
-      else if(text_a)
-        erg = 1;
-      else
-        erg = 0;
-    }
-    if(type == oyBOOLEAN_DIFFERENZ)
-    {
-      if(text_a && text_b)
-        erg = oyStrcmp_( text_a, text_b ) != 0;
-      else if(text_a || text_b)
-        erg = 1;
-      else
-        erg = 0;
-    }
-    if(type == oyBOOLEAN_UNION)
-    {
-      if(text_a || text_b)
-        erg = 1;
-      else
-        erg = 0;
-    }
+    erg = oyTextboolean_( text_a, text_b, type );
   }
 
   return erg;
@@ -4450,7 +4475,6 @@ oyOption_s *   oyOption_New          ( oyObject_s          object )
   /* ---- end of common object constructor ------- */
 
   s->id = oy_option_id_++;
-  s->name.type = oyOBJECT_NAME_S;
 
   return s;
 }
@@ -4486,15 +4510,6 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
   if(!error)
   {
     s->id = oy_option_id_++;
-    if(option->name.name)
-      oyName_set_ ( &s->name, option->name.name, oyNAME_NAME,
-                    allocateFunc_, deallocateFunc_ );
-    if(option->name.nick)
-      oyName_set_ ( &s->name, option->name.nick, oyNAME_NICK,
-                    allocateFunc_, deallocateFunc_ );
-    if(option->name.description)
-      oyName_set_ ( &s->name, option->name.description, oyNAME_DESCRIPTION,
-                    allocateFunc_, deallocateFunc_ );
     s->registration = oyStringCopy_( option->registration, allocateFunc_ );
     s->value_type = option->value_type;
     oyValueCopy( s->value, option->value, s->value_type,
@@ -4566,12 +4581,6 @@ int            oyOption_Release      ( oyOption_s       ** obj )
   s->id = 0;
   s->flags = 0;
 
-  if(s->name.release)
-  {
-    oyStruct_s * name = (oyStruct_s*)&s->name;
-    s->name.release( &name );
-  }
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -4632,7 +4641,6 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 {
   int error = !obj;
   const char * erg = 0;
-  char * txt = 0;
   oyValue_u * v = 0;
   oyStructList_s * oy_struct_list = 0;
 
@@ -4642,17 +4650,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
   error = !v;
 
   if(!error)
-  {
     if(type == oyNAME_DESCRIPTION)
-    {
-      oyStringAdd_( &txt, obj->registration, oyAllocateFunc_,oyDeAllocateFunc_);
-      oyStringAdd_( &txt, "/", oyAllocateFunc_, oyDeAllocateFunc_ );
-      oyStringAdd_( &txt, obj->name.nick, oyAllocateFunc_, oyDeAllocateFunc_ );
-
-      error = oyObject_SetName( obj->oy_, txt, type );
-      oyFree_m_( txt );
-    }
-  }
+      error = oyObject_SetName( obj->oy_, obj->registration, type );
 
   if(!error && 
      ( type == oyNAME_NICK || type == oyNAME_NAME ))
@@ -4818,7 +4817,7 @@ int            oyOption_Match_       ( oyOption_s        * option_a,
   int erg = 0;
 
   if( option_a && option_b && 
-      oyStrcmp_( option_a->name.name, option_b->name.name ) == 0 )
+      oyStrcmp_( option_a->registration, option_b->registration ) == 0 )
     erg = 1;
 
   return erg;
@@ -4902,8 +4901,8 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
       {
         option_b = oyOptions_Get( set_b, j );
 
-        found = oyName_boolean( &option_a->name, &option_b->name, oyNAME_NICK,
-                                type );
+        found = oyTextboolean_( oyStrrchr_( option_a->registration,'/'),
+                                oyStrrchr_( option_b->registration,'/'), type );
 
         /* check various value ranges */
         if(found == 1)
@@ -4989,15 +4988,8 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
     return s;
 
   s->id = opt->id;
-  oyName_set_ ( &s->name, opt->name, oyNAME_NAME,
-                oyAllocateFunc_, oyDeAllocateFunc_ );
-  oyName_set_ ( &s->name, opt->description, oyNAME_DESCRIPTION,
-                oyAllocateFunc_,oyDeAllocateFunc_ );
-  oyName_set_ ( &s->name, opt->config_string_xml, oyNAME_NICK,
-                oyAllocateFunc_, oyDeAllocateFunc_ );
-  s->name.copy = (oyStruct_Copy_f) oyName_copy;
-  s->name.release = (oyStruct_Release_f) oyName_releaseMembers;
-  s->registration = oyStringCopy_( opt->config_string, s->oy_->allocateFunc_ );
+  s->registration = oyStringAppend_( opt->config_string, opt->config_string_xml,
+                                     s->oy_->allocateFunc_ );
   s->value = s->oy_->allocateFunc_(sizeof(oyValue_u));
 
   if(oyWIDGET_BEHAVIOUR_START < opt->id && opt->id < oyWIDGET_BEHAVIOUR_END)
@@ -5049,17 +5041,13 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
     {
       o = oyOption_New(0);
 
-      for( i = 0; i < *texts_n - 1; ++i )
+      for( i = 0; i < *texts_n; ++i )
       {
         if(i)
           oyStringAdd_( &tmp, "/", oyAllocateFunc_, oyDeAllocateFunc_ );
         oyStringAdd_( &tmp, (*texts)[i], oyAllocateFunc_, oyDeAllocateFunc_ );
       }
 
-      oyName_set_ ( &o->name, (*texts)[*texts_n - 1], oyNAME_NICK,
-                    oyAllocateFunc_, oyDeAllocateFunc_ );
-      o->name.copy = (oyStruct_Copy_f) oyName_copy;
-      o->name.release = (oyStruct_Release_f) oyName_releaseMembers;
       o->registration = oyStringCopy_( tmp, o->oy_->allocateFunc_ );
       o->value = o->oy_->allocateFunc_(sizeof(oyValue_u));
 
@@ -5173,7 +5161,6 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
               * opts_tmp2 = 0;
   oyOption_s * o = 0;
   int error = 0;
-  oyCMMInfo_s * info = 0;
   oyFILTER_TYPE_e filter_type = oyFilterRegistrationToType( registration );
   char * type_txt = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,
                                                 0 ),
@@ -5216,10 +5203,16 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
     /*  5. merge */
     s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );
 
+    oyOptions_Release( &opts_tmp );
+    oyOptions_Release( &opts_tmp2 );
+
     /*  6. get stored values */
     n = oyOptions_Count( s );
+    opts_tmp = oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
+      int skip = 0;
+
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
 
@@ -5239,8 +5232,27 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
         oyFree_m_( text );
       }
 
+      text = oyFilterRegistrationToText( o->registration, oyFILTER_REG_TYPE, 0);
+      if(oyStrcmp_( type_txt, text ) != 0)
+        skip = 1;
+
+      oyFree_m_( text );
+
+      if(!skip && type == oyOPTIONDEFAULTS_BASIC)
+      {
+        text = oyStrrchr_( o->registration, '.' );
+        if(oyStrstr_( text, "advanced" ))
+          skip = 1;
+      }
+
+      if(!skip)
+        oyOptions_Add( opts_tmp, o, -1, object );
+
       oyOption_Release( &o );
     }
+
+    oyOptions_Release( &s );
+    s = opts_tmp; opts_tmp = 0;
   }
 
   return s;
@@ -5548,7 +5560,7 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
       option_a = oyOptions_Get( set_a, i );
 
       if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
-        if(oyStrcmp_( option_a->name.nick, key) == 0)
+        if(oyStrcmp_( oyStrrchr_(option_a->registration, '/'), key) == 0)
           option = oyOption_Copy( option_a, 0 );
 
       oyOption_Release( &option_a );
@@ -5590,7 +5602,7 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
 
       if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
       {
-        if(oyStrcmp_( option_a->name.nick, key) == 0)
+        if(oyStrcmp_( oyStrrchr_(option_a->registration, '/'), key) == 0)
         {
           if(option_a->value_type == oyVAL_STRING)
           {
@@ -13285,7 +13297,7 @@ const char *   oyContextCollectData_ ( oyStruct_s        * s,
     {
       oyOption_s * o = oyOptions_Get( opts, i );
       hashTextAdd_m( "  <options name=\"" );
-      hashTextAdd_m( oyName_get_( &o->name, oyNAME_NAME ) );
+      hashTextAdd_m( o->registration );
       hashTextAdd_m( "\" type=\"" );
       hashTextAdd_m( oyValueTypeText( o->value_type ) );
       hashTextAdd_m( "\"" );
