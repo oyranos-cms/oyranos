@@ -655,6 +655,9 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
                                        int                 pos,
                                        oyObject_s          object );
+int            oyOptions_DoFilter    ( oyOptions_s       * s,
+                                       uint32_t            flags,
+                                       const char        * filter_type );
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type );
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,

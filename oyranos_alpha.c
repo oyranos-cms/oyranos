@@ -5168,6 +5168,105 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
 }
 
 
+/** Function oyOptions_DoFilter
+ *  @relates oyOptions_s
+ *  @brief   filter the options
+ *
+ *  The returned options are read in from the Elektra settings and if thats not
+ *  available from the inbuild defaults. The later can explicitely selected with
+ *  oyOPTIONSOURCE_FILTER passed as flags argument. advanced options can be 
+ *  filtered out by adding oyOPTIONATTRIBUTE_ADVANCED.
+ *
+ *  @param         s                   the options
+ *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED; for front end options | oyOPTIONATTRIBUTE_FRONT
+ *  @param         object              the optional object
+ *  @return                            options
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ *  @date    2008/11/27
+ */
+int          oyOptions_DoFilter      ( oyOptions_s       * s,
+                                       uint32_t            flags,
+                                       const char        * filter_type )
+{
+  oyOptions_s * opts_tmp = 0;
+  oyOption_s * o = 0;
+  int error = !s;
+  char * text;
+  int i,n;
+
+  if(!error && (flags || filter_type))
+  {
+    /*  6. get stored values */
+    n = oyOptions_Count( s );
+    opts_tmp = oyOptions_New(0);
+    for(i = 0; i < n; ++i)
+    {
+      int skip = 0;
+
+      o = oyOptions_Get( s, i );
+
+      /* oyOPTIONSOURCE_EDIT and oyOPTIONSOURCE_AUTOMATIC are ignored here
+       * because they are not global  */
+
+      if(!(flags & oyOPTIONSOURCE_FILTER))
+      {
+        oyExportStart_(EXPORT_SETTING);
+        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                oyAllocateFunc_ );
+        if(text && oyStrlen_(text))
+        {
+          error = oyOption_SetFromText( o, text );
+          o->source = oyOPTIONSOURCE_DISK;
+        }
+        oyFree_m_( text );
+      }
+
+      if(filter_type)
+      {
+        text = oyFilterRegistrationToText( o->registration, oyFILTER_REG_TYPE,
+                                           0);
+        if(oyStrcmp_( filter_type, text ) != 0)
+          skip = 1;
+
+        oyFree_m_( text );
+      }
+
+      if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
+      {
+        text = oyStrrchr_( o->registration, '/' );
+        if(text)
+           text = oyStrchr_( text, '.' );
+        if(text)
+          if(oyStrstr_( text, "advanced" ))
+            skip = 1;
+      }
+
+      if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
+      {
+        text = oyStrrchr_( o->registration, '/' );
+        if(text)
+           text = oyStrchr_( text, '.' );
+        if(text)
+          if(oyStrstr_( text, "front" ))
+            skip = 1;
+      }
+
+      if(!skip)
+        oyOptions_Add( opts_tmp, o, -1, s->oy_ );
+
+      oyOption_Release( &o );
+    }
+
+    error = oyStructList_CopyFrom( s->list, opts_tmp->list, 0 );
+
+    oyOptions_Release( &opts_tmp );
+  }
+
+  return error;
+}
+
 /** Function oyOptions_ForMetaBackend
  *  @relates oyOptions_s
  *  @brief   provide Oyranos meta settings
