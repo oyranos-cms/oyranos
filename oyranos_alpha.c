@@ -117,6 +117,12 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
 oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
                                        int                 pos );
 
+oyFilter_s * oyFilter_New_           ( oyObject_s          object );
+int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
+                                       oyFILTER_TYPE_e     filter_type,
+                                       const char        * registration,
+                                       const char        * cmm_required );
+
 oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
                                        int                 get_plug );
 
@@ -4243,8 +4249,8 @@ oyChar* oyCMMCacheListPrint_()
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-void           oyValueCopy           ( oyValue_u         * from,
-                                       oyValue_u         * to,
+void           oyValueCopy           ( oyValue_u         * to,
+                                       oyValue_u         * from,
                                        oyVALUETYPE_e       type,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocateFunc )
@@ -5185,7 +5191,8 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
      */
 
     /*  1. get filter */
-    filter = oyFilter_New( filter_type, registration, cmm, 0, object );
+    filter = oyFilter_New_( object );
+    error = oyFilter_SetCMMapi4_( filter, filter_type, registration, cmm );
     /*                ... and type */
     filter_type = filter->filter_type_;
 
@@ -11553,23 +11560,22 @@ oyFilter_s * oyFilter_New_           ( oyObject_s          object )
   return s;
 }
 
-/** Function oyFilter_New
+/**
+ *  @internal
+ *  Function oyFilter_SetCMMapi4_
  *  @relates oyFilter_s
  *  @brief   lookup and initialise a new filter object
  *
- *  @version Oyranos: 0.1.8
- *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2008/06/25
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ *  @date    2008/11/27
  */
-oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
+int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
+                                       oyFILTER_TYPE_e     filter_type,
                                        const char        * registration,
-                                       const char        * cmm_required,
-                                       oyOptions_s       * options,
-                                       oyObject_s          object )
+                                       const char        * cmm_required )
 {
-  oyFilter_s * s = oyFilter_New_( object );
   int error = !s;
-  uint32_t ret = 0;
   oyCMMapiQueries_s * capabilities = 0;
   char cmm_used[] = {0,0,0,0,0};
   oyCMMapi_s * cmm_api = oyCMMsGetApi_(oyOBJECT_CMM_API4_S,
@@ -11580,7 +11586,6 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
                                        filter_type );
   oyCMMapi4_s * cmm_api4 = 0;
   oyAlloc_f allocateFunc_ = 0;
-  oyOptions_s * opts_tmp = 0;
 
   if(!error)
     allocateFunc_ = s->oy_->allocateFunc_;
@@ -11599,6 +11604,40 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->filter_type_ = filter_type;
     s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
 
+    s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
+    s->api4_ = cmm_api4;
+  }
+
+  if(error && s)
+    oyFilter_Release( &s );
+
+  return error;
+}
+
+/** Function oyFilter_New
+ *  @relates oyFilter_s
+ *  @brief   lookup and initialise a new filter object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/06/25
+ */
+oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
+                                       const char        * registration,
+                                       const char        * cmm_required,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  oyFilter_s * s = oyFilter_New_( object );
+  int error = !s;
+  uint32_t ret = 0;
+  oyOptions_s * opts_tmp = 0;
+
+  if(!error)
+    error = oyFilter_SetCMMapi4_( s, filter_type, registration, cmm_required );
+
+  if(!error)
+  {
     opts_tmp = oyOptions_ForFilter( s->registration_, s->cmm_,
                                     0, s->oy_ );
 #if 0
@@ -11609,8 +11648,6 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     /* @todo test oyBOOLEAN_SUBSTRACTION for correctness */
     s->options_ = oyOptions_FromBoolean( opts_tmp, options,
                                          oyBOOLEAN_SUBSTRACTION, s->oy_ );
-    s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
-    s->api4_ = cmm_api4;
   }
 
   if(error && s)
