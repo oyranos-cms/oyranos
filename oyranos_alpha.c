@@ -4889,66 +4889,46 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
       set_bn = oyOptions_Count( set_b );
   int i, j, k,
       found = 0;
-  const char * txt_1, * txt_2;
+  char * txt_1, * txt_2;
 
   if(!error)
   {
     for(i = 0; i < set_an; ++i)
     {
       option_a = oyOptions_Get( set_a, i );
+      txt_1 = oyFilterRegistrationToText( option_a->registration,
+                                          oyFILTER_REG_OPTION, 0);
 
       for(j = 0; j < set_bn; ++j)
       {
         option_b = oyOptions_Get( set_b, j );
+        txt_2 = oyFilterRegistrationToText( option_b->registration,
+                                            oyFILTER_REG_OPTION, 0);
 
-        found = oyTextboolean_( oyStrrchr_( option_a->registration,'/'),
-                                oyStrrchr_( option_b->registration,'/'), type );
+        found = oyTextboolean_( txt_1, txt_2, type );
 
-        /* check various value ranges */
-        if(found == 1)
+        /* add to the list */
+        if(found > 0)
         {
-          txt_1 = oyOption_GetText(option_a, oyNAME_DESCRIPTION);
-          txt_2 = oyOption_GetText(option_b, oyNAME_DESCRIPTION);
-          if(oyStrcmp_( txt_1, txt_2 ) == 0)
-            if(option_a->value_type != option_b->value_type)
-              found = 0;
+          if(!options)
+            options = oyOptions_New(0);
+
+          if(option_a->value_type != option_b->value_type)
+            found = 0;
 
           if(found)
           {
-            int found_a = 1, found_b = 1;
-
-            if(!options)
-              options = oyOptions_New(0);
-
-            for(k = 0; k < oyOptions_Count(options); ++k)
-            {
-              option = oyOptions_Get( options, k );
-
-              txt_1 = oyOption_GetText(option, oyNAME_DESCRIPTION);
-              txt_2 = oyOption_GetText(option_a, oyNAME_DESCRIPTION);
-              if(oyStrcmp_( txt_1, txt_2 ) == 0)
-                found_a = 0;
-
-              txt_2 = oyOption_GetText(option_b, oyNAME_DESCRIPTION);
-              if(oyStrcmp_( txt_1, txt_2 ) == 0)
-                found_b = 0;
-
-              oyOption_Release( &option );
-            }
-
-            if(found_a)
-              oyOptions_Add( options, option_a, -1, object );
-
-            if(found_b)
+            oyOptions_Add( options, option_a, -1, object );
+            if(found == 2)
               oyOptions_Add( options, option_b, -1, object );
-
-            found = 1;
           }
         }
 
+        oyFree_m_( txt_2 );
         oyOption_Release( &option_b );
       }
 
+      oyFree_m_( txt_1 );
       oyOption_Release( &option_a );
     }
 
@@ -5233,50 +5213,15 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
     opts_tmp = oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
-      int skip = 0;
-
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
-
-      /* oyOPTIONSOURCE_EDIT and oyOPTIONSOURCE_AUTOMATIC are ignored here
-       * because they are not global  */
-
-      if(!(flags & oyOPTIONSOURCE_FILTER))
-      {
-        oyExportStart_(EXPORT_SETTING);
-        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                oyAllocateFunc_ );
-        if(text && oyStrlen_(text))
-        {
-          error = oyOption_SetFromText( o, text );
-          o->source = oyOPTIONSOURCE_DISK;
-        }
-        oyFree_m_( text );
-      }
-
-      text = oyFilterRegistrationToText( o->registration, oyFILTER_REG_TYPE, 0);
-      if(oyStrcmp_( type_txt, text ) != 0)
-        skip = 1;
-
-      oyFree_m_( text );
-
-      if(!skip && !(flags & oyOPTIONDEFAULTS_ADVANCED))
-      {
-        text = oyStrrchr_( o->registration, '.' );
-        if(oyStrstr_( text, "advanced" ))
-          skip = 1;
-      }
-
-      if(!skip)
-        oyOptions_Add( opts_tmp, o, -1, object );
-
       oyOption_Release( &o );
     }
+    error = oyOptions_DoFilter ( s, flags, type_txt );
 
-    oyOptions_Release( &s );
-    s = opts_tmp; opts_tmp = 0;
     oyFilter_Release( &filter );
   }
+  oyDeAllocateFunc_( type_txt );
 
   return s;
 }
@@ -5484,6 +5429,16 @@ int            oyOptions_Count       ( oyOptions_s       * list )
   else return 0;
 }
 
+/** Function oyOptions_Add
+ *  @relates oyOptions_s
+ *  @brief   add a element to a Options list
+ *
+ *  We must not add any already listed option.
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/17 (Oyranos: 0.1.9)
+ *  @date    2008/11/17
+ */
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
                                        int                 pos,
@@ -5491,11 +5446,32 @@ int            oyOptions_Add         ( oyOptions_s       * options,
 {
   oyOption_s *tmp = 0;
   int error = !options || !option;
+  int n, i, skip = 0;
+  char * o_key, * l_key;
 
   if(!error)
   {
-    tmp = oyOption_Copy( option, object );
-    oyOptions_MoveIn( options, &tmp, -1 );
+    o_key = oyFilterRegistrationToText( option->registration,
+                                        oyFILTER_REG_OPTION, 0 );
+    n = oyOptions_Count( options );
+
+    for(i = 0; i < n; ++i)
+    {
+      tmp = oyOptions_Get( options, i );
+      l_key = oyFilterRegistrationToText( tmp->registration,
+                                          oyFILTER_REG_OPTION, 0 );
+      if(oyStrcmp_(l_key, o_key) == 0)
+        skip = 1;
+
+      oyFree_m_( l_key );
+      oyOption_Release( &tmp );
+    }
+
+    if(!skip)
+    {
+      tmp = oyOption_Copy( option, object );
+      oyOptions_MoveIn( options, &tmp, -1 );
+    }
   }
 
   return error;
