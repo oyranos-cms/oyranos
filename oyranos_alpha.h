@@ -1369,7 +1369,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 typedef enum {
   oyFILTER_TYPE_NONE,                  /**< nothing */
   oyFILTER_TYPE_COLOUR,                /**< colour */
-  oyFILTER_TYPE_COLOUR_ICC,            /**< colour icc style */
   oyFILTER_TYPE_TONEMAP,               /**< contrast or tone mapping */
   oyFILTER_TYPE_IMAGE,                 /**< image storage */
   oyFILTER_TYPE_GENERIC,               /**< generic */

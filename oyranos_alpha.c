@@ -2870,7 +2870,7 @@ oyCMMInfo_s* oyCMMGet_               ( const char        * cmm )
 
   if(!error && !cmm)
   {
-    cmm = oyModuleGetActual(oyFILTER_TYPE_COLOUR_ICC);
+    cmm = oyModuleGetActual(oyFILTER_TYPE_COLOUR);
     error = !cmm;
   }
 
@@ -7019,7 +7019,7 @@ oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
 
   if(!error && !cmm)
   {
-    cmm = oyModuleGetActual(oyFILTER_TYPE_COLOUR_ICC);
+    cmm = oyModuleGetActual(oyFILTER_TYPE_COLOUR);
     error = !cmm;
   }
 
@@ -11387,14 +11387,12 @@ const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
     if(type == oyNAME_NICK || type == oyNAME_NAME)
     {
       if(filter_type == oyFILTER_TYPE_COLOUR) return "colour";
-      if(filter_type == oyFILTER_TYPE_COLOUR_ICC) return "colour_icc";
       if(filter_type == oyFILTER_TYPE_TONEMAP) return "tonemap";
       if(filter_type == oyFILTER_TYPE_IMAGE) return "image";
       if(filter_type == oyFILTER_TYPE_GENERIC) return "generic";
     }
 
-      if(filter_type == oyFILTER_TYPE_COLOUR) return "colour";
-      if(filter_type == oyFILTER_TYPE_COLOUR_ICC) return "ICC CMM";
+      if(filter_type == oyFILTER_TYPE_COLOUR) return "CMM";
       if(filter_type == oyFILTER_TYPE_TONEMAP) return "contrast or tone mapping";
       if(filter_type == oyFILTER_TYPE_IMAGE) return "image";
       if(filter_type == oyFILTER_TYPE_GENERIC) return "generic";
@@ -11428,9 +11426,7 @@ oyFILTER_TYPE_e  oyFilterRegistrationToType (
 
     if(texts_n >= oyFILTER_REG_TYPE)
     {
-           if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour_icc"))
-        filter_type = oyFILTER_TYPE_COLOUR_ICC;
-      else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour"))
+           if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "colour"))
         filter_type = oyFILTER_TYPE_COLOUR;
       else if(oyStrstr_(texts[oyFILTER_REG_TYPE-1], "tonemap"))
         filter_type = oyFILTER_TYPE_TONEMAP;
@@ -13414,7 +13410,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
   if(!error)
   {
     oyCMMptr_s *cmm_ptr = 0;
-    const char *cmm = oyModuleGetActual( oyFILTER_TYPE_COLOUR_ICC );
+    const char *cmm = oyModuleGetActual( oyFILTER_TYPE_COLOUR );
     const oyChar * tmp = 0;
  
     oyHash_s * entry = 0;
@@ -14302,11 +14298,11 @@ oyConversion_s   * oyConversion_CreateBasic (
   {
     s = oyConversion_CreateInput ( input, 0 );
 
-    filter = oyFilter_New( oyFILTER_TYPE_COLOUR_ICC, "//colour_icc", 0,0, 0 );
+    filter = oyFilter_New( oyFILTER_TYPE_COLOUR, "//colour", 0,0, 0 );
 
     error = oyConversion_FilterAdd( s, filter );
     if(error)
-      WARNc1_S( "could not add  filter: %s\n", "//colour_icc" );
+      WARNc1_S( "could not add  filter: %s\n", "//colour" );
 
     error = oyConversion_OutputAdd( s, output );
   }
@@ -14619,7 +14615,7 @@ int                oyConversion_OutputAdd (
       oyFilterNode_s * node = s->input;
 
       while((node = oyFilterNode_GetNextFromLinear_( node )) != 0)
-        if(!error && node->filter->filter_type_ == oyFILTER_TYPE_COLOUR_ICC)
+        if(!error && node->filter->filter_type_ == oyFILTER_TYPE_COLOUR)
           oyFilterNode_ContextSet_( node );
     }
   }
@@ -15739,7 +15735,7 @@ const char *   oyModuleGetActual     ( oyFILTER_TYPE_e     type )
   oyExportStart_(EXPORT_CMMS);
   oyExportEnd_();
 
-  if(type == oyFILTER_TYPE_COLOUR || type == oyFILTER_TYPE_COLOUR_ICC)
+  if(type == oyFILTER_TYPE_COLOUR)
   return "lcms";
   else
   return OY_PROFILE_NONE;

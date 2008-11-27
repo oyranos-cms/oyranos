@@ -80,29 +80,25 @@ char oyra_default_colour_icc_options[] = {
    <" OY_DOMAIN_STD ">\n\
     <" OY_TYPE_STD ">\n\
      <profile>\n\
-      <editing_rgb>eciRGB_v2.icc</editing_rgb>\n\
-      <editing_cmyk>coated_FOGRA39L_argl.icc</editing_cmyk>\n\
-      <editing_gray>Gray.icc</editing_gray>\n\
-      <editing_lab>Lab.icc</editing_lab>\n\
-      <editing_xyz>XYZ.icc</editing_xyz>\n\
+      <editing_rgb.front>eciRGB_v2.icc</editing_rgb.front>\n\
+      <editing_cmyk.front>coated_FOGRA39L_argl.icc</editing_cmyk.front>\n\
+      <editing_gray.front>Gray.icc</editing_gray.front>\n\
+      <editing_lab.front>Lab.icc</editing_lab.front>\n\
+      <editing_xyz.front>XYZ.icc</editing_xyz.front>\n\
      </profile>\n\
      <behaviour>\n\
-      <action_untagged_assign>1</action_untagged_assign>\n\
-      <action_missmatch_cmyk>1</action_missmatch_cmyk>\n\
-      <action_missmatch_rgb>1</action_missmatch_rgb>\n\
-      <mixed_colour_spaces_print_doc_convert>1</mixed_colour_spaces_print_doc_convert>\n\
-      <mixed_colour_spaces_screen_doc_convert>2</mixed_colour_spaces_screen_doc_convert>\n\
-      <proof_hard.advanced>0</proof_hard.advanced>\n\
-      <proof_soft.advanced>0</proof_soft.advanced>\n\
-     </behaviour>\n\
-    </" OY_TYPE_STD ">\n\
-    <colour_icc>\n\
-     <behaviour>\n\
+      <action_untagged_assign.front>1</action_untagged_assign.front>\n\
+      <action_missmatch_cmyk.front>1</action_missmatch_cmyk.front>\n\
+      <action_missmatch_rgb.front>1</action_missmatch_rgb.front>\n\
+      <mixed_colour_spaces_print_doc_convert.front>1</mixed_colour_spaces_print_doc_convert.front>\n\
+      <mixed_colour_spaces_screen_doc_convert.front>2</mixed_colour_spaces_screen_doc_convert.front>\n\
+      <proof_hard.advanced.front>0</proof_hard.advanced.front>\n\
+      <proof_soft.advanced.front>0</proof_soft.advanced.front>\n\
       <rendering_intent>0</rendering_intent>\n\
       <rendering_bpc>1</rendering_bpc>\n\
       <rendering_intent_proof>0</rendering_intent_proof>\n\
      </behaviour>\n\
-    </colour_icc>\n\
+    </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_STD ">\n\
   </" OY_TOP_SHARED ">\n"
 };
@@ -208,7 +204,7 @@ const char * oyraICCDataNameGet(oyNAME_e type)
   else if(type == oyNAME_DESCRIPTION)
   return _("ICC colour profile for colour transformations");
   else
-  return "color_icc";
+  return "colour";
 }
 
 /** Function oyraICCDataLoadFromMem
@@ -286,7 +282,7 @@ oyCMMapi5_s  oyra_api5_colour_icc = {
   oyraFilter_CanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "colour_icc/oyra_meta",
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "colour/oyra_meta",
 
   {0,0,1}, /* int32_t version[3] */
 
