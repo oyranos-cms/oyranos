@@ -1037,8 +1037,10 @@ const char * oyName_get_             ( const oyName_s    * obj,
 /** @brief   test a boolean operator
  *
  *  The function requires to receive proper object arguments and valid ranges.
+ *  @todo test
  *
- *  @return                            -1 for undefined, 1 - true, 0 - false
+ *  @return                            -1 for undefined, 1 - true, 2 - both,
+ *                                     0 - false
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/26 (Oyranos: 0.1.9)
@@ -1057,7 +1059,7 @@ int          oyTextboolean_          ( const char        * text_a,
     if(type == oyBOOLEAN_INTERSECTION)
     {
       if(text_a && text_b)
-        erg = oyStrcmp_( text_a, text_b ) == 0;
+        erg = (oyStrcmp_( text_a, text_b ) == 0) ? 2 : 0;
       else
         erg = 0;
     }
@@ -1082,7 +1084,7 @@ int          oyTextboolean_          ( const char        * text_a,
     if(type == oyBOOLEAN_UNION)
     {
       if(text_a || text_b)
-        erg = 1;
+        erg = 2;
       else
         erg = 0;
     }
