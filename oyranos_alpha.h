@@ -525,15 +525,15 @@ void           oyValueClear          ( oyValue_u         * v,
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/13 (Oyranos: 0.1.9)
- *  @date    2008/11/13
+ *  @date    2008/11/27
  */
 typedef enum {
   oyOPTIONSOURCE_NONE = 0,             /**< not clear */
-  oyOPTIONSOURCE_FILTER = 1,           /**< internal defaults, e.g. filter */
-  oyOPTIONSOURCE_DATA = 2,             /**< external defaults, e.g. policy */
-  oyOPTIONSOURCE_DISK = 4,             /**< user settings, e.g. elektra */
-  oyOPTIONSOURCE_EDIT = 8,             /**< user modified */
-  oyOPTIONSOURCE_AUTOMATIC = 16        /**< automatically modified */
+  oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. filter */
+  oyOPTIONSOURCE_DATA = 4,             /**< external defaults, e.g. policy */
+  oyOPTIONSOURCE_DISK = 8,             /**< user settings, e.g. elektra */
+  oyOPTIONSOURCE_EDIT = 16,            /**< user modified */
+  oyOPTIONSOURCE_AUTOMATIC = 32        /**< automatically modified */
 } oyOPTIONSOURCE_e;
 
 /** @brief Option for rendering
@@ -618,16 +618,15 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  *  graphics displaying. All other Oyranos behaviour settings should be taken
  *  over untouched.
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.9
  *  @since   2008/10/08 (Oyranos: 0.1.8)
- *  @date    2008/10/08
+ *  @date    2008/11/27
  */
 typedef enum {
-  oyOPTIONDEFAULTS_BASIC,              /** basic settings, as typical for toolkits and office/web applications, e.g. disable proofing */
-  oyOPTIONDEFAULTS_ADVANCED            /** advanced settings, as typical for editing, e.g. include proofing */
+  oyOPTIONDEFAULTS_BASIC = 0,          /** basic settings, as typical for toolkits and office/web applications, e.g. disable proofing */
+  oyOPTIONDEFAULTS_ADVANCED = 128      /** advanced settings, as typical for editing, e.g. include proofing */
 } oyOPTIONDEFAULTS_e;
-oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
-                                       const char        * registration,
+oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
                                        uint32_t            flags,
                                        oyObject_s          object );

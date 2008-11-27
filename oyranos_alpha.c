@@ -5124,11 +5124,38 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
   return s;
 }
 
-oyOptions_s * oy_default_behaviour_settings_ = 0;
+
+/** Function oyOptions_ForMetaBackend
+ *  @relates oyOptions_s
+ *  @brief   provide Oyranos meta settings
+ *
+ *  The returned options are read in from the Elektra settings and if thats not
+ *  available from the inbuild defaults. The later can explicitely selected with
+ *  oyOPTIONSOURCE_FILTER passed as flags argument. advanced options can be 
+ *  filteres out by adding oyOPTIONDEFAULTS_ADVANCED.
+ *  The key names map to the registration and XML syntax.
+ *
+ *  @param[in]     registration        the filter registration to search for
+ *  @param[in]     cmm                 a CMM to match
+ *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONDEFAULTS_ADVANCED
+ *  @param         object              the optional object
+ *  @return                            options
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/10/08 (Oyranos: 0.1.8)
+ *  @date    2008/11/13
+ */
+oyOptions_s *oyOptions_ForMetaBackend( const char        * registration,
+                                       const char        * cmm,
+                                       uint32_t            flags,
+                                       oyObject_s          object )
+{
+}
+
 
 /** Function oyOptions_ForFilter
  *  @relates oyOptions_s
- *  @brief   provide the current state of Oyranos behaviour settings
+ *  @brief   provide Oyranos behaviour settings
  *
  *  The returned options are read in from the Elektra settings and if thats not
  *  available from the inbuild defaults. The later can explicitely selected with
@@ -5139,19 +5166,17 @@ oyOptions_s * oy_default_behaviour_settings_ = 0;
  *
  *  @see oyOPTIONS_e for more details.
  *
- *  @param[in]     type                basic or advanced graphics
  *  @param[in]     registration        the filter registration to search for
  *  @param[in]     cmm                 a CMM to match
- *  @param[in]     flags               for inbuild defaults - oyOPTIONSOURCE_FILTER
+ *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONDEFAULTS_ADVANCED
  *  @param         object              the optional object
- *  @return                            copy of the current state
+ *  @return                            the options
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/10/08 (Oyranos: 0.1.8)
  *  @date    2008/11/13
  */
-oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
-                                       const char        * registration,
+oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
                                        uint32_t            flags,
                                        oyObject_s          object )
@@ -5169,10 +5194,7 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
   oyFilter_s * filter = 0;
   int i,n;
 
-  if(!oy_default_behaviour_settings_)
   {
-    oy_default_behaviour_settings_ = oyOptions_New(0);
-
     /**
         Programm:
         1. get filter and its type
@@ -5238,7 +5260,7 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
 
       oyFree_m_( text );
 
-      if(!skip && type == oyOPTIONDEFAULTS_BASIC)
+      if(!skip && !(flags & oyOPTIONDEFAULTS_ADVANCED))
       {
         text = oyStrrchr_( o->registration, '.' );
         if(oyStrstr_( text, "advanced" ))
@@ -5253,6 +5275,7 @@ oyOptions_s *  oyOptions_ForFilter   ( oyOPTIONDEFAULTS_e  type,
 
     oyOptions_Release( &s );
     s = opts_tmp; opts_tmp = 0;
+    oyFilter_Release( &filter );
   }
 
   return s;
@@ -11598,14 +11621,14 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
     s->filter_type_ = filter_type;
     s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
 
-    opts_tmp = oyOptions_ForFilter( s->filter_type_,
-                                    s->registration_, s->cmm_,
+    opts_tmp = oyOptions_ForFilter( s->registration_, s->cmm_,
                                     0, s->oy_ );
 #if 0
     s->options_ = cmm_api4->oyCMMFilter_ValidateOptions( s, options, 0, &ret );
 #endif
     error = ret;
     
+    /* @todo test oyBOOLEAN_SUBSTRACTION for correctness */
     s->options_ = oyOptions_FromBoolean( opts_tmp, options,
                                          oyBOOLEAN_SUBSTRACTION, s->oy_ );
     s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
@@ -11853,7 +11876,7 @@ oyOptions_s* oyFilter_OptionsSet     ( oyFilter_s        * filter,
  *  @brief   get filter options
  *
  *  @param[in,out] filter              filter object
- *  @param         flags               possibly oyFILTER_GET_DEFAULT
+ *  @param         flags               possible: OY_FILTER_GET_DEFAULT | oyOPTIONSOURCE_FILTER | oyOPTIONDEFAULTS_ADVANCED
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -11865,10 +11888,9 @@ oyOptions_s* oyFilter_OptionsGet     ( oyFilter_s        * filter,
   if(!filter)
     return 0;
 
-  if(oyToFilterGetDefaults_m(flags))
-    return oyOptions_ForFilter( filter->filter_type_,
-                                filter->registration_, filter->cmm_,
-                                0, filter->oy_ );
+  if(flags)
+    return oyOptions_ForFilter( filter->registration_, filter->cmm_,
+                                flags, filter->oy_ );
   else
     return oyOptions_Copy( filter->options_, 0 );
 }
