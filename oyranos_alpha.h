@@ -444,7 +444,7 @@ oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
 oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
                                        int                 pos,
                                        oyOBJECT_e          type );
-int              oyStructList_ReferenceAt_( oyStructList_s * list,
+int              oyStructList_ReferenceAt_(oyStructList_s* list,
                                        int                 pos );
 int              oyStructList_ReleaseAt( oyStructList_s  * list,
                                        int                 pos );
@@ -456,6 +456,10 @@ const char *     oyStructList_GetText( oyStructList_s    * s,
 const char *     oyStructList_GetID  ( oyStructList_s    * s,
                                        int                 intent_spaces,
                                        uint32_t            flags );
+int              oyStructList_Clear  ( oyStructList_s    * s );
+int              oyStructList_CopyFrom(oyStructList_s    * list,
+                                       oyStructList_s    * from,
+                                       oyObject_s          object );
 
 
 

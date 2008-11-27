@@ -1405,8 +1405,7 @@ int              oyStructList_Release (oyStructList_s   ** obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  for(i = s->n_ - 1; i >= 0; --i)
-    oyStructList_ReleaseAt( s, i );
+  oyStructList_Clear(s);
 
   if(s->oy_->deallocateFunc_)
   {
@@ -1726,6 +1725,62 @@ const char * oyStructList_GetText    ( oyStructList_s    * s,
   }
 
   return hash_text;
+}
+
+/**
+ *  Function oyStructList_Clear
+ *  @relates oyStructList_s
+ *  @brief   release all listed objects
+ *
+ *  @version Oyranos: 0.1.9
+ *  @date    2008/11/27
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ */
+int              oyStructList_Clear  ( oyStructList_s    * s )
+{
+  int error = !(s && s->type_ == oyOBJECT_STRUCT_LIST_S), i;
+
+  if(!error)
+    for(i = s->n_ - 1; i >= 0; --i)
+      oyStructList_ReleaseAt( s, i );
+  return error;
+}
+
+/**
+ *  Function oyStructList_CopyFrom
+ *  @relates oyStructList_s
+ *  @brief   clean "list" and copy all listed objects from "from" to "list".
+ *
+ *  @version Oyranos: 0.1.9
+ *  @date    2008/11/27
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ */
+int              oyStructList_CopyFrom(oyStructList_s    * list,
+                                       oyStructList_s    * from,
+                                       oyObject_s          object )
+{
+  oyStructList_s * s = list;
+  int error = !(s && s->type_ == oyOBJECT_STRUCT_LIST_S && 
+                from && from->type_ == oyOBJECT_STRUCT_LIST_S),
+      i;
+  int from_n;
+  oyStruct_s * o;
+
+  if(!error)
+  {
+    error = oyStructList_Clear( list );
+
+    from_n = from->n_;
+    for(i = 0; i < from_n && !error; ++i)
+    {
+      o = oyStructList_Get_( from, i );
+      o = o->copy( o, object );
+      error = !o;
+      error = oyStructList_MoveIn( s, &o, -1 );
+    }
+  }
+
+  return error;
 }
 
 /**
