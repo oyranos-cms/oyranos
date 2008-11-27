@@ -1376,8 +1376,7 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
  */
 int              oyStructList_Release (oyStructList_s   ** obj )
 {
-  int i,
-      error = 0;
+  int error = 0;
   /* ---- start of common object destructor ----- */
   oyStructList_s * s = 0;
 
@@ -4512,6 +4511,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
     s->id = oy_option_id_++;
     s->registration = oyStringCopy_( option->registration, allocateFunc_ );
     s->value_type = option->value_type;
+    s->value = option->oy_->allocateFunc_(sizeof(oyValue_u));
     oyValueCopy( s->value, option->value, s->value_type,
                  allocateFunc_, s->oy_->deallocateFunc_ );
     s->source = option->source;
