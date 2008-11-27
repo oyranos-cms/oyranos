@@ -5112,12 +5112,12 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  The returned options are read in from the Elektra settings and if thats not
  *  available from the inbuild defaults. The later can explicitely selected with
  *  oyOPTIONSOURCE_FILTER passed as flags argument. advanced options can be 
- *  filteres out by adding oyOPTIONDEFAULTS_ADVANCED.
+ *  filteres out by adding oyOPTIONATTRIBUTE_ADVANCED.
  *  The key names map to the registration and XML syntax.
  *
  *  @param[in]     registration        the filter registration to search for
  *  @param[in]     cmm                 a CMM to match
- *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONDEFAULTS_ADVANCED
+ *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED
  *  @param         object              the optional object
  *  @return                            options
  *
@@ -5142,13 +5142,13 @@ oyOptions_s *oyOptions_ForMetaBackend( const char        * registration,
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
  *
- *  @todo support the oyOPTIONDEFAULTS_e type argument in oyCMMapi[4,5]_s's
+ *  @todo support the oyOPTIONATTRIBUTE_e type argument in oyCMMapi[4,5]_s's
  *
  *  @see oyOPTIONS_e for more details.
  *
  *  @param[in]     registration        the filter registration to search for
  *  @param[in]     cmm                 a CMM to match
- *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONDEFAULTS_ADVANCED
+ *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED
  *  @param         object              the optional object
  *  @return                            the options
  *
@@ -5168,8 +5168,7 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
   int error = 0;
   oyFILTER_TYPE_e filter_type = oyFilterRegistrationToType( registration );
   char * type_txt = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,
-                                                0 ),
-       * text;
+                                                0 );
   oyCMMapi5_s * api5 = 0;
   oyFilter_s * filter = 0;
   int i,n;
@@ -11454,6 +11453,13 @@ char *         oyFilterRegistrationToText (
       text = oyStringCopy_( texts[oyFILTER_REG_APPLICATION-1], allocateFunc );
     if(texts_n >= type && type == oyFILTER_REG_OPTION)
       text = oyStringCopy_( texts[oyFILTER_REG_OPTION-1], allocateFunc );
+    if(type == oyFILTER_REG_OPTION)
+    {
+      char * tmp = oyStrchr_( text, '.' );
+      if(tmp)
+        tmp[0] = 0;
+    }
+
     oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
   }
 
@@ -11848,7 +11854,7 @@ oyOptions_s* oyFilter_OptionsSet     ( oyFilter_s        * filter,
  *  @brief   get filter options
  *
  *  @param[in,out] filter              filter object
- *  @param         flags               possible: OY_FILTER_GET_DEFAULT | oyOPTIONSOURCE_FILTER | oyOPTIONDEFAULTS_ADVANCED
+ *  @param         flags               possible: OY_FILTER_GET_DEFAULT | oyOPTIONSOURCE_FILTER | oyOPTIONATTRIBUTE_ADVANCED
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)

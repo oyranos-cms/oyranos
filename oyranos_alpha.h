@@ -508,8 +508,8 @@ typedef union {
   oyStruct_s     * oy_struct;          /**< a struct, e.g. a profile */
 } oyValue_u;
 
-void           oyValueCopy           ( oyValue_u         * from,
-                                       oyValue_u         * to,
+void           oyValueCopy           ( oyValue_u         * to,
+                                       oyValue_u         * from,
                                        oyVALUETYPE_e       type,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocateFunc );
@@ -609,7 +609,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
-/** @enum    oyOPTIONDEFAULTS_e
+/** @enum    oyOPTIONATTRIBUTE_e
  *  @brief   usage type
  *  @ingroup objects_value
  *
@@ -623,9 +623,10 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  *  @date    2008/11/27
  */
 typedef enum {
-  oyOPTIONDEFAULTS_BASIC = 0,          /** basic settings, as typical for toolkits and office/web applications, e.g. disable proofing */
-  oyOPTIONDEFAULTS_ADVANCED = 128      /** advanced settings, as typical for editing, e.g. include proofing */
-} oyOPTIONDEFAULTS_e;
+  oyOPTIONATTRIBUTE_BASIC = 0,         /** basic settings, as typical for toolkits and office/web applications, e.g. disable proofing */
+  oyOPTIONATTRIBUTE_ADVANCED = 128,    /** advanced settings, as typical for editing, e.g. include proofing (options appended with ".advanced") */
+  oyOPTIONATTRIBUTE_FRONT = 256        /** front end options, handled by the framework, e.g. ".front" */
+} oyOPTIONATTRIBUTE_e;
 oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
                                        uint32_t            flags,
