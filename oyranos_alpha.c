@@ -5302,6 +5302,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
       {
         text = oyStrrchr_( o->registration, '/' );
+
         if(text)
            text = oyStrchr_( text, '.' );
         if(text)
@@ -5776,7 +5777,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
  *  @brief   search for a certain option key
  *
  *  This function returns the first found option for a given key.
- *  The key is represented by the oyOption_s::naddme::nick
+ *  The key is represented by the registration option level.
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/05 (Oyranos: 0.1.9)
@@ -5788,6 +5789,7 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
   int error = !options;
   oyOption_s * option_a = 0,
              * option = 0;
+  char * tmp = 0;
 
   if(!error && options && options->type_ == oyOBJECT_OPTIONS_S)
   {
@@ -5799,8 +5801,13 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
       option_a = oyOptions_Get( set_a, i );
 
       if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
-        if(oyStrcmp_( oyStrrchr_(option_a->registration, '/'), key) == 0)
+      {
+        tmp = oyFilterRegistrationToText( option_a->registration,
+                                          oyFILTER_REG_OPTION, 0 );
+        if(oyStrcmp_( tmp, key) == 0)
           option = oyOption_Copy( option_a, 0 );
+        oyFree_m_( tmp );
+      }
 
       oyOption_Release( &option_a );
 
@@ -5841,7 +5848,9 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
 
       if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
       {
-        if(oyStrcmp_( oyStrrchr_(option_a->registration, '/'), key) == 0)
+        char * tmp = oyFilterRegistrationToText( option_a->registration,
+                                                 oyFILTER_REG_OPTION, 0 );
+        if(oyStrcmp_( tmp, key) == 0)
         {
           if(option_a->value_type == oyVAL_STRING)
           {
@@ -5870,6 +5879,7 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
             }
           }
         }
+        oyFree_m_( tmp );
       }
 
       oyOption_Release( &option_a );
@@ -5879,6 +5889,31 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
   }
 
   return text;
+}
+
+/** Function oyOptions_SetFromText
+ *  @relates oyOptions_s
+ *  @brief   change a value
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ *  @date    2008/11/27
+ */
+int            oyOptions_SetFromText ( oyOptions_s       * obj,
+                                       const char        * option,
+                                       const char        * value )
+{
+  int error = !obj || obj->type_ != oyOBJECT_OPTIONS_S || !option || !value;
+  oyOption_s * o = 0;
+
+  if(!error)
+  {
+    o = oyOptions_Find( obj, option );
+    oyOption_SetFromText( o, value );
+    oyOption_Release( &o );
+  }
+
+  return error;
 }
 
 /**

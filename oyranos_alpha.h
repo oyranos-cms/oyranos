@@ -666,6 +666,9 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
 char *         oyOptions_FindString  ( oyOptions_s       * options,
                                        const char        * key,
                                        const char        * value );
+int            oyOptions_SetFromText ( oyOptions_s       * obj,
+                                       const char        * option,
+                                       const char        * value );
 
 
 /** @brief general profile infos
