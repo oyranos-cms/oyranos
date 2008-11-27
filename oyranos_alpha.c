@@ -4541,6 +4541,37 @@ oyOption_s *   oyOption_New          ( oyObject_s          object )
   return s;
 }
 
+int          oyOption_Copy__         ( oyOption_s        * to,
+                                       oyOption_s        * from )
+{
+  oyOption_s * s = to;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+  oyDeAlloc_f deallocateFunc_ = 0;
+
+  if(!to || !from)
+    return 1;
+
+  allocateFunc_ = s->oy_->allocateFunc_;
+  deallocateFunc_ = s->oy_->deallocateFunc_;
+
+  error = oyOption_Clear( s );
+
+  if(!error)
+  {
+    s->registration = oyStringCopy_( from->registration, allocateFunc_ );
+    s->value_type = from->value_type;
+    s->value = from->oy_->allocateFunc_(sizeof(oyValue_u));
+    oyValueCopy( s->value, from->value, s->value_type,
+                 allocateFunc_, s->oy_->deallocateFunc_ );
+    s->source = from->source;
+    s->flags = from->flags;
+  }
+
+  return 0;
+}
+
+
 /** Function oyOption_Copy_
  *  @relates oyOption_s
  *  @internal
@@ -4611,6 +4642,7 @@ oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
   return s;
 }
 
+
 /** Function oyOption_Release
  *  @relates oyOption_s
  *  @brief   release a option
@@ -4642,6 +4674,34 @@ int            oyOption_Release      ( oyOption_s       ** obj )
   /* ---- end of common object destructor ------- */
 
   s->id = 0;
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyOption_Clear( s );
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** Function oyOption_Clear
+ *  @relates oyOption_s
+ *  @brief   clear a option
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ *  @date    2008/11/27
+ */
+int            oyOption_Clear        ( oyOption_s        * s )
+{
+  if(!s)
+    return 1;
+
   s->flags = 0;
 
   if(s->oy_->deallocateFunc_)
@@ -4655,10 +4715,6 @@ int            oyOption_Release      ( oyOption_s       ** obj )
     if(s->registration)
       deallocateFunc( s->registration );
     s->registration = 0;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
   }
 
   return 0;
@@ -4947,10 +5003,10 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
 {
   int error = !set_a && !set_b;
   oyOptions_s * options = 0;
-  oyOption_s * option_a = 0, * option_b = 0, * option = 0;
+  oyOption_s * option_a = 0, * option_b = 0;
   int set_an = oyOptions_Count( set_a ),
       set_bn = oyOptions_Count( set_b );
-  int i, j, k,
+  int i, j,
       found = 0;
   char * txt_1, * txt_2;
 
@@ -5179,7 +5235,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *
  *  @param         s                   the options
  *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED; for front end options | oyOPTIONATTRIBUTE_FRONT
- *  @param         object              the optional object
+ *  @param         filter_type         the type level in a registration
  *  @return                            options
  *
  *  @version Oyranos: 0.1.9
@@ -5595,7 +5651,9 @@ int            oyOptions_Count       ( oyOptions_s       * list )
  *  @relates oyOptions_s
  *  @brief   add a element to a Options list
  *
- *  We must not add any already listed option.
+ *  We must not add any already listed option. 
+ *  A "shared" key has higher priority and substitutes and non "shared" one.
+ *  (oyFILTER_REG_TOP)
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/17 (Oyranos: 0.1.9)
@@ -5609,31 +5667,51 @@ int            oyOptions_Add         ( oyOptions_s       * options,
   oyOption_s *tmp = 0;
   int error = !options || !option;
   int n, i, skip = 0;
-  char * o_key, * l_key;
+  char * o_opt,
+       * o_top,
+       * l_opt,  /* l - list */
+       * l_top;
 
   if(!error)
   {
-    o_key = oyFilterRegistrationToText( option->registration,
+    o_opt = oyFilterRegistrationToText( option->registration,
                                         oyFILTER_REG_OPTION, 0 );
+    o_top = oyFilterRegistrationToText( option->registration,
+                                        oyFILTER_REG_TOP, 0 );
     n = oyOptions_Count( options );
 
     for(i = 0; i < n; ++i)
     {
       tmp = oyOptions_Get( options, i );
-      l_key = oyFilterRegistrationToText( tmp->registration,
+      l_opt = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_OPTION, 0 );
-      if(oyStrcmp_(l_key, o_key) == 0)
-        skip = 1;
+      l_top = oyFilterRegistrationToText( tmp->registration,
+                                          oyFILTER_REG_TOP, 0 );
+      if(oyStrcmp_(l_opt, o_opt) == 0)
+        skip = 2;
 
-      oyFree_m_( l_key );
+      /* replace as we priorise the "shared" namespace */
+      if(skip == 2)
+      {
+        if(oyStrcmp_(o_top, OY_TOP_SHARED) == 0 &&
+           oyStrcmp_(l_top, OY_TOP_SHARED) != 0)
+          oyOption_Copy__( tmp, option );
+        -- skip;
+      }
+
+      oyFree_m_( l_opt );
+      oyFree_m_( l_top );
       oyOption_Release( &tmp );
     }
 
-    if(!skip)
+    if(skip == 0)
     {
       tmp = oyOption_Copy( option, object );
       oyOptions_MoveIn( options, &tmp, -1 );
     }
+
+    oyFree_m_( o_opt );
+    oyFree_m_( o_top );
   }
 
   return error;
@@ -11543,8 +11621,6 @@ const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
  *  @brief   analyse registration string
  *
  *  @param         registration        registration string to analyse
- *  @param[in]     type                kind of answere in return
- *  @param[in]     allocateFunc        use this or Oyranos standard allocator
  *  @return                            filter type
  *
  *  @version Oyranos: 0.1.9

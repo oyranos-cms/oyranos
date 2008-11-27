@@ -586,6 +586,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
 int            oyOption_SetFromText  ( oyOption_s        * obj,
                                        const char        * text );
+int            oyOption_Clear        ( oyOption_s        * s );
 
 
 /**
@@ -999,7 +1000,7 @@ typedef enum {
 } oyDATATYPE_e;
 
 
-/** @type oyPixel_t 
+/** @typedef oyPixel_t 
  *  @ingroup objects_image
     parametric type as shorthand for the channel layout in bitmaps \n
 
