@@ -5306,7 +5306,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  Backends should handle the advanced options as well but shall normally
  *  not act upon them.
  *  On the front end side the CMM cache has to include them, as they will 
- *  influence the hash sum generation. The question arrises, wether to include
+ *  influence the hash sum generation. The question arrises, whether to include
  *  these options marked as non visible along the path or require the CMM cache
  *  code to check each time for them on cache lookup. The oyOption_s::flags
  *  is already in place. So we use it and do inclusion. Front end options can be
