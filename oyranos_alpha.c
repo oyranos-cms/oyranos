@@ -46,6 +46,8 @@ int          oyObject_Ref            ( oyObject_s          obj );
                                        oyChar            * func_name );*/
 int32_t      oyObject_Hashed_        ( oyObject_s          s );
 
+void         oyOption_SetFlags_      ( oyOption_s        * s );
+
 /** \addtogroup alpha Alpha API's
 
  *  @{
@@ -4324,13 +4326,16 @@ void           oyValueCopy           ( oyValue_u         * to,
   {
   case oyVAL_INT: to->int32 = from->int32; break;
   case oyVAL_INT_LIST:
+       if(to->int32_list && deallocateFunc)
+       {
+         deallocateFunc(to->int32_list);
+         to->int32_list = 0;
+       }
+
        if(!from->int32_list)
          return;
 
        n = from->int32_list[0];
-
-       if(to->int32_list && deallocateFunc)
-         deallocateFunc(to->int32_list);
 
        to->int32_list = allocateFunc( (n+1) * sizeof(int32_t) );
        to->int32_list[0] = n;
@@ -4339,13 +4344,16 @@ void           oyValueCopy           ( oyValue_u         * to,
        break;
   case oyVAL_DOUBLE: to->dbl = from->dbl; break;
   case oyVAL_DOUBLE_LIST:
+       if(to->dbl_list && deallocateFunc)
+       {
+         deallocateFunc(to->dbl_list);
+         to->dbl_list = 0;
+       }
+
        if(!from->dbl_list)
          return;
 
        n = from->dbl_list[0];
-
-       if(to->dbl_list && deallocateFunc)
-         deallocateFunc(to->dbl_list);
 
        to->dbl_list = allocateFunc( (n+1) * sizeof(double));
 
@@ -4355,19 +4363,26 @@ void           oyValueCopy           ( oyValue_u         * to,
 
        break;
   case oyVAL_STRING:
+       if(to->string && deallocateFunc)
+       {
+         deallocateFunc(to->string);
+         to->string = 0;
+       }
+
        to->string = oyStringCopy_(from->string, allocateFunc);
        break;
   case oyVAL_STRING_LIST:
-       if(!from->string_list)
-         return;
-
        if(to->string_list && deallocateFunc)
        {
          i = 0;
          while(to->string_list[i])
            deallocateFunc(to->string_list[i++]);
          deallocateFunc(to->string_list);
+         to->string_list = 0;
        }
+
+       if(!from->string_list)
+         return;
 
        i = 0;
        n = 0;
@@ -4385,6 +4400,13 @@ void           oyValueCopy           ( oyValue_u         * to,
 
        break;
   case oyVAL_STRUCT:
+       if(to->oy_struct && deallocateFunc)
+       {
+         if(to->oy_struct->release)
+           to->oy_struct->release( &to->oy_struct );
+         to->oy_struct = 0;
+       }
+
        if(!from->oy_struct)
          return;
        if(from->oy_struct->copy)
@@ -4462,7 +4484,7 @@ void           oyValueRelease        ( oyValue_u        ** v,
                                        oyVALUETYPE_e       type,
                                        oyDeAlloc_f         deallocateFunc )
 {
-  if(!v)
+  if(!v || !*v)
     return;
 
   if(!deallocateFunc)
@@ -4541,6 +4563,19 @@ oyOption_s *   oyOption_New          ( oyObject_s          object )
   return s;
 }
 
+/**
+ *  @internal
+ *  Function oyOption_Copy__
+ *  @relates oyOption_s
+ *  @brief   copy the content of a option to an other
+ *
+ *  @param[in]     option              option object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/11/27
+ */
 int          oyOption_Copy__         ( oyOption_s        * to,
                                        oyOption_s        * from )
 {
@@ -4561,9 +4596,9 @@ int          oyOption_Copy__         ( oyOption_s        * to,
   {
     s->registration = oyStringCopy_( from->registration, allocateFunc_ );
     s->value_type = from->value_type;
-    s->value = from->oy_->allocateFunc_(sizeof(oyValue_u));
+    s->value = allocateFunc_(sizeof(oyValue_u));
     oyValueCopy( s->value, from->value, s->value_type,
-                 allocateFunc_, s->oy_->deallocateFunc_ );
+                 allocateFunc_, deallocateFunc_ );
     s->source = from->source;
     s->flags = from->flags;
   }
@@ -4572,9 +4607,10 @@ int          oyOption_Copy__         ( oyOption_s        * to,
 }
 
 
-/** Function oyOption_Copy_
- *  @relates oyOption_s
+/**
  *  @internal
+ *  Function oyOption_Copy_
+ *  @relates oyOption_s
  *  @brief   real copy a option object
  *
  *  @param[in]     option              option object
@@ -4582,7 +4618,7 @@ int          oyOption_Copy__         ( oyOption_s        * to,
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/06/26
+ *  @date    2008/11/27
  */
 oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
                                        oyObject_s          object )
@@ -4601,16 +4637,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
   deallocateFunc_ = s->oy_->deallocateFunc_;
 
   if(!error)
-  {
-    s->id = oy_option_id_++;
-    s->registration = oyStringCopy_( option->registration, allocateFunc_ );
-    s->value_type = option->value_type;
-    s->value = option->oy_->allocateFunc_(sizeof(oyValue_u));
-    oyValueCopy( s->value, option->value, s->value_type,
-                 allocateFunc_, s->oy_->deallocateFunc_ );
-    s->source = option->source;
-    s->flags = option->flags;
-  }
+    oyOption_Copy__( s, option );
 
   return s;
 }
@@ -4921,9 +4948,10 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 }
 
 
-/** Function oyOption_Match_
- *  @relates oyOption_s
+/**
  *  @internal
+ *  Function oyOption_Match_
+ *  @relates oyOption_s
  *  @brief   two option matches
  *
  *  @version Oyranos: 0.1.8
@@ -4942,6 +4970,30 @@ int            oyOption_Match_       ( oyOption_s        * option_a,
   return erg;
 }
 
+/**
+ *  @internal
+ *  Function oyOption_SetFlags_
+ *  @relates oyOption_s
+ *  @brief   set the ::flags member
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ *  @date    2008/11/27
+ */
+void         oyOption_SetFlags_      ( oyOption_s        * o )
+{
+  char * tmp = 0;
+
+  if(o && o->registration && oyStrrchr_( o->registration, '/' ))
+  {
+      tmp = oyStrrchr_( o->registration, '/' );
+      if(oyStrstr_( tmp, "front" ))
+         o->flags |= oyOPTIONATTRIBUTE_FRONT;
+      if(oyStrstr_( tmp, "advanced" ))
+         o->flags |= oyOPTIONATTRIBUTE_ADVANCED;
+      tmp = 0;
+  }
+}
 
 /** Function oyOptions_New
  *  @relates oyOptions_s
@@ -5086,7 +5138,7 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
   if(!s)
     return s;
 
-  s->id = opt->id;
+  /*s->id = opt->id;*/
   s->registration = oyStringAppend_( opt->config_string, opt->config_string_xml,
                                      s->oy_->allocateFunc_ );
   s->value = s->oy_->allocateFunc_(sizeof(oyValue_u));
@@ -5103,13 +5155,27 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
     if(!s->value->string)
       s->value->string = oyStringCopy_( opt->default_string, s->oy_->allocateFunc_);
     s->source = oyOPTIONSOURCE_FILTER;
+    oyOption_SetFlags_( s );
   }
 
   return s;
 }
 
+
 #include <libxml/parser.h>
 
+/**
+ *  @internal
+ *  Function oyOptions_ParseXML_
+ *  @relates oyOptions_s
+ *  @brief   deserialise a text file to oyOptions_s data
+ *
+ *  This function is parsing libxml2 structures.
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/17 (Oyranos: 0.1.9)
+ *  @date    2008/11/17
+ */
 void           oyOptions_ParseXML_   ( oyOptions_s       * s,
                                        char            *** texts,
                                        int               * texts_n,
@@ -5159,6 +5225,8 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
 
       o->source = oyOPTIONSOURCE_DATA;
 
+      oyOption_SetFlags_( o );
+
       oyOptions_MoveIn( s, &o, -1 );
     }
     cur = cur->next;
@@ -5168,6 +5236,8 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
 /** Function oyOptions_FromText
  *  @relates oyOptions_s
  *  @brief   deserialise a text file to oyOptions_s data
+ *
+ *  This function is based on libxml2.
  *
  *  @param[in]     text                the text to process
  *  @param[in]     flags               for future use
@@ -5233,6 +5303,15 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  oyOPTIONSOURCE_FILTER passed as flags argument. advanced options can be 
  *  filtered out by adding oyOPTIONATTRIBUTE_ADVANCED.
  *
+ *  Backends should handle the advanced options as well but shall normally
+ *  not act upon them.
+ *  On the front end side the CMM cache has to include them, as they will 
+ *  influence the hash sum generation. The question arrises, wether to include
+ *  these options marked as non visible along the path or require the CMM cache
+ *  code to check each time for them on cache lookup. The oyOption_s::flags
+ *  is already in place. So we use it and do inclusion. Front end options can be
+ *  filtered as they do not affect the CMM cache.
+ *
  *  @param         s                   the options
  *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED; for front end options | oyOPTIONATTRIBUTE_FRONT
  *  @param         filter_type         the type level in a registration
@@ -5263,22 +5342,8 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
 
       o = oyOptions_Get( s, i );
 
-      /* oyOPTIONSOURCE_EDIT and oyOPTIONSOURCE_AUTOMATIC are ignored here
-       * because they are not global  */
 
-      if(!(flags & oyOPTIONSOURCE_FILTER))
-      {
-        oyExportStart_(EXPORT_SETTING);
-        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                oyAllocateFunc_ );
-        if(text && oyStrlen_(text))
-        {
-          error = oyOption_SetFromText( o, text );
-          o->source = oyOPTIONSOURCE_DISK;
-        }
-        oyFree_m_( text );
-      }
-
+      /* usage/type range filter */
       if(filter_type)
       {
         text = oyFilterRegistrationToText( o->registration, oyFILTER_REG_TYPE,
@@ -5289,16 +5354,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
         oyFree_m_( text );
       }
 
-      if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
-      {
-        text = oyStrrchr_( o->registration, '/' );
-        if(text)
-           text = oyStrchr_( text, '.' );
-        if(text)
-          if(oyStrstr_( text, "advanced" ))
-            skip = 1;
-      }
-
+      /* front end options filter */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
       {
         text = oyStrrchr_( o->registration, '/' );
@@ -5308,6 +5364,30 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
         if(text)
           if(oyStrstr_( text, "front" ))
             skip = 1;
+      }
+
+      /* advanced options mark and zero */
+      if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
+      {
+        text = oyStrrchr_( o->registration, '/' );
+        if(text)
+           text = oyStrchr_( text, '.' );
+        if(text)
+          if(oyStrstr_( text, "advanced" ))
+            oyOption_SetFromText( o, "0" );
+      } else
+      /* Elektra settings, modify value */
+      if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
+      {
+        oyExportStart_(EXPORT_SETTING);
+        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                oyAllocateFunc_ );
+        if(text && oyStrlen_(text))
+        {
+          error = oyOption_SetFromText( o, text );
+          o->source = oyOPTIONSOURCE_DISK;
+        }
+        oyFree_m_( text );
       }
 
       if(!skip)
@@ -5429,7 +5509,6 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
 
     /*  6. get stored values */
     n = oyOptions_Count( s );
-    opts_tmp = oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
       o = oyOptions_Get( s, i );
@@ -5653,8 +5732,13 @@ int            oyOptions_Count       ( oyOptions_s       * list )
  *  @brief   add a element to a Options list
  *
  *  We must not add any already listed option. 
- *  A "shared" key has higher priority and substitutes and non "shared" one.
+ *  A "shared" key has higher priority and substitutes a non "shared" one.
  *  (oyFILTER_REG_TOP)
+ *
+ *  Adding a new element without any checks is as simple as following code:
+ *  @verbatim
+ *     tmp = oyOption_Copy( option, object );
+ *     oyOptions_MoveIn( options, &tmp, -1 ); @endverbatim
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/17 (Oyranos: 0.1.9)
