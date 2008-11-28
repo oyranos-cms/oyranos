@@ -951,7 +951,7 @@ char lcms_extra_options[] = {
     <" OY_TYPE_STD ">\n\
      <" CMM_NICK ">\n\
       <rendering_bpc>0</rendering_bpc>\n\
-      <cmyk_cmky_black_preservation>0</cmyk_cmky_black_preservation>\n\
+      <cmyk_cmky_black_preservation.advanced>0</cmyk_cmky_black_preservation.advanced>\n\
      </" CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
