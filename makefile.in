@@ -201,7 +201,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 
 INCL_DEP = $(INCL) $(SOURCES)
 
-.PHONY:	doc test2
+.PHONY:	docu test2
 
 #TEST2 = test2
 
@@ -434,7 +434,7 @@ $(POT_FILE):
 	echo $(POT_FILE) fertig
 
 
-doc:
+docu:
 	echo Documentation ...
 	test -n 'which doxygen' && doxygen Doxyfile || echo "Will not create Documentation because doxygen is missing"
 	echo ... Documentation done
@@ -515,7 +515,11 @@ install-main:
 install-icc:
 	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
 
-install_docu: doc
+# synonymes
+doc:		docu
+install_doc:	install_docu
+
+install_docu: docu
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
@@ -781,7 +785,7 @@ copy_files:
 
 help:
 	echo "... all :        build the binaries"
-	echo "... doc :        generate documentation; requires doxygen"
+	echo "... docu :       generate documentation; requires doxygen"
 	echo "  non default build targets:"
 	echo "... test :       do a test"
 	echo "... test2 :      build a second test binary"
