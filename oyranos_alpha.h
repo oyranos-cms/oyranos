@@ -535,7 +535,7 @@ typedef enum {
   oyOPTIONSOURCE_NONE = 0,             /**< not clear */
   oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. filter */
   oyOPTIONSOURCE_DATA = 4,             /**< external defaults, e.g. policy */
-  oyOPTIONSOURCE_DISK = 8              /**< user settings, e.g. elektra */
+  oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. elektra */
 } oyOPTIONSOURCE_e;
 
 /** @brief Option for rendering
@@ -612,6 +612,9 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
+
+#define OY_OPTIONSOURCE_FILTER         2048
+#define OY_OPTIONSOURCE_META           4096
 /** @enum    oyOPTIONATTRIBUTE_e
  *  @brief   usage type
  *  @ingroup objects_value
@@ -627,8 +630,8 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  */
 typedef enum {
   oyOPTIONATTRIBUTE_BASIC = 0,         /** basic settings, as typical for toolkits and office/web applications, e.g. disable proofing */
-  oyOPTIONATTRIBUTE_EDIT = 16,         /**< user modified */
-  oyOPTIONATTRIBUTE_AUTOMATIC = 32,    /**< automatically modified */
+  oyOPTIONATTRIBUTE_EDIT = 32,         /**< user modified, e.g. after oyOption_SetFromText() */
+  oyOPTIONATTRIBUTE_AUTOMATIC = 64,    /**< automatically modified, e.g. by a CMM */
   oyOPTIONATTRIBUTE_ADVANCED = 128,    /** advanced settings, as typical for editing, e.g. include proofing (options appended with ".advanced") */
   oyOPTIONATTRIBUTE_FRONT = 256,       /** front end options, handled by the framework, e.g. ".front" */
   oyOPTIONATTRIBUTE_DOUBLE = 512       /** tell this options is included twice*/

@@ -46,7 +46,7 @@ int          oyObject_Ref            ( oyObject_s          obj );
                                        oyChar            * func_name );*/
 int32_t      oyObject_Hashed_        ( oyObject_s          s );
 
-void         oyOption_SetFlags_      ( oyOption_s        * s );
+void         oyOption_UpdateFlags_   ( oyOption_s        * s );
 
 /** \addtogroup alpha Alpha API's
 
@@ -4942,6 +4942,7 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 
     obj->value->string = oyStringCopy_( text, obj->oy_->allocateFunc_ );
     obj->value_type = oyVAL_STRING;
+    obj->flags |= oyOPTIONATTRIBUTE_EDIT;
   }
 
   return error;
@@ -4972,7 +4973,7 @@ int            oyOption_Match_       ( oyOption_s        * option_a,
 
 /**
  *  @internal
- *  Function oyOption_SetFlags_
+ *  Function oyOption_UpdateFlags_
  *  @relates oyOption_s
  *  @brief   set the ::flags member
  *
@@ -4980,7 +4981,7 @@ int            oyOption_Match_       ( oyOption_s        * option_a,
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2008/11/27
  */
-void         oyOption_SetFlags_      ( oyOption_s        * o )
+void         oyOption_UpdateFlags_   ( oyOption_s        * o )
 {
   char * tmp = 0;
 
@@ -5106,6 +5107,9 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
     if(!set_an && set_bn &&
        (type == oyBOOLEAN_UNION || type == oyBOOLEAN_DIFFERENZ))
       options = oyOptions_Copy( set_b, object );
+    if(set_an && !set_bn &&
+       (type == oyBOOLEAN_UNION))
+      options = oyOptions_Copy( set_a, object );
   }
 
   return options;
@@ -5155,7 +5159,7 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
     if(!s->value->string)
       s->value->string = oyStringCopy_( opt->default_string, s->oy_->allocateFunc_);
     s->source = oyOPTIONSOURCE_FILTER;
-    oyOption_SetFlags_( s );
+    oyOption_UpdateFlags_( s );
   }
 
   return s;
@@ -5225,7 +5229,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
 
       o->source = oyOPTIONSOURCE_DATA;
 
-      oyOption_SetFlags_( o );
+      oyOption_UpdateFlags_( o );
 
       oyOptions_MoveIn( s, &o, -1 );
     }
@@ -5304,7 +5308,8 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  filtered out by adding oyOPTIONATTRIBUTE_ADVANCED.
  *
  *  Backends should handle the advanced options as well but shall normally
- *  not act upon them.
+ *  not act upon them. The convention to set them zero, keeps them inactive.
+ *  
  *  On the front end side the CMM cache has to include them, as they will 
  *  influence the hash sum generation. The question arrises, whether to include
  *  these options marked as non visible along the path or require the CMM cache
@@ -5374,7 +5379,10 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
            text = oyStrchr_( text, '.' );
         if(text)
           if(oyStrstr_( text, "advanced" ))
+          {
             oyOption_SetFromText( o, "0" );
+            o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
+          }
       } else
       /* Elektra settings, modify value */
       if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
@@ -5385,7 +5393,8 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
         if(text && oyStrlen_(text))
         {
           error = oyOption_SetFromText( o, text );
-          o->source = oyOPTIONSOURCE_DISK;
+          o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
+          o->source = oyOPTIONSOURCE_USER;
         }
         oyFree_m_( text );
       }
@@ -5404,33 +5413,6 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
   return error;
 }
 
-/** Function oyOptions_ForMetaBackend
- *  @relates oyOptions_s
- *  @brief   provide Oyranos meta settings
- *
- *  The returned options are read in from the Elektra settings and if thats not
- *  available from the inbuild defaults. The later can explicitely selected with
- *  oyOPTIONSOURCE_FILTER passed as flags argument. advanced options can be 
- *  filteres out by adding oyOPTIONATTRIBUTE_ADVANCED.
- *  The key names map to the registration and XML syntax.
- *
- *  @param[in]     registration        the filter registration to search for
- *  @param[in]     cmm                 a CMM to match
- *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED
- *  @param         object              the optional object
- *  @return                            options
- *
- *  @version Oyranos: 0.1.9
- *  @since   2008/10/08 (Oyranos: 0.1.8)
- *  @date    2008/11/13
- */
-oyOptions_s *oyOptions_ForMetaBackend( const char        * registration,
-                                       const char        * cmm,
-                                       uint32_t            flags,
-                                       oyObject_s          object )
-{
-}
-
 
 /** Function oyOptions_ForFilter
  *  @relates oyOptions_s
@@ -5441,13 +5423,14 @@ oyOptions_s *oyOptions_ForMetaBackend( const char        * registration,
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
  *
- *  @todo support the oyOPTIONATTRIBUTE_e type argument in oyCMMapi[4,5]_s's
- *
- *  @see oyOPTIONS_e for more details.
+ *  To obtain all front end options from a meta backend use:@verbatim
+ *  flags = oyOPTIONATTRIBUTE_ADVANCED |
+ *          oyOPTIONATTRIBUTE_FRONT |
+ *          OY_OPTIONSOURCE_META @endverbatim
  *
  *  @param[in]     registration        the filter registration to search for
  *  @param[in]     cmm                 a CMM to match
- *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED
+ *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED | OY_OPTIONSOURCE_FILTER | OY_OPTIONSOURCE_META
  *  @param         object              the optional object
  *  @return                            the options
  *
@@ -5472,6 +5455,10 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
   oyFilter_s * filter = 0;
   int i,n;
 
+  /* by default we parse both sources */
+  if(!(flags & OY_OPTIONSOURCE_FILTER) && !(flags & OY_OPTIONSOURCE_META))
+    flags |= OY_OPTIONSOURCE_FILTER | OY_OPTIONSOURCE_META;
+
   {
     /**
         Programm:
@@ -5493,13 +5480,13 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
     api5 = filter->api4_->api5_;
 
     /*  3. parse static common options from meta backend */
-    if(api5)
-      opts_tmp = oyOptions_FromText( api5->options,
-                                     flags, object );
+    if(api5 && flags & OY_OPTIONSOURCE_META)
+      opts_tmp = oyOptions_FromText( api5->options, 0, object );
     /* requires step 2 */
 
     /*  4. parse static options from filter */
-    opts_tmp2 = oyOptions_FromText( filter->api4_->options, flags, object );
+    if(flags & OY_OPTIONSOURCE_FILTER)
+      opts_tmp2 = oyOptions_FromText( filter->api4_->options, 0, object );
 
     /*  5. merge */
     s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );
@@ -13624,6 +13611,11 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
       oyCMMptr_s ** p = oyStructList_GetCMMptrs_( p_list->list_, cmm_used );
       int layout_in = in->layout_[oyLAYOUT];
       int layout_out = out->layout_[oyLAYOUT];
+
+      char * o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0 );
+
+      if(o_txt && oyStrlen_(o_txt))
+        intent = atoi( o_txt );
 
       n = oyProfiles_Count(p_list);
       
