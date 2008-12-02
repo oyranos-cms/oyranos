@@ -753,7 +753,7 @@ const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
     case oyOBJECT_CMM_API2_S: text = "oyCMMapi2_s Monitors"; break;
     case oyOBJECT_CMM_API3_S: text = "oyCMMapi3_s Profile tags"; break;
     case oyOBJECT_CMM_API4_S: text = "oyCMMapi4_s Filter"; break;
-    case oyOBJECT_CMM_API5_S: text = "oyCMMapi5_s Filter"; break;
+    case oyOBJECT_CMM_API5_S: text = "oyCMMapi5_s MetaFilter"; break;
     case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
     case oyOBJECT_ICON_S: text = "oyIcon_s"; break;
@@ -7956,7 +7956,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
       uint32_t size = 0;
       uint32_t tag_count = 0;
       icTag *tag_list = 0;
-      int i = 0, j;
+      int i = 0;
       oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
       char h[5] = {"head"};
       uint32_t * hi = (uint32_t*)&h;
@@ -7987,8 +7987,11 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         size_t offset = oyValueUInt32( ic_tag->offset );
         size_t tag_size = oyValueUInt32( ic_tag->size );
         char *tmp = 0;
+#ifdef DEBUG
         oyChar **texts = 0;
         int32_t texts_n = 0;
+        int j;
+#endif
         oySTATUS_e status = oyOK;
         icTagSignature sig = oyValueUInt32( ic_tag->sig );
         icTagTypeSignature tag_type = 0;
