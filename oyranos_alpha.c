@@ -8443,6 +8443,8 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   oyCMMapiQuery_s *query_[2] = {0,0};
   oyCMMapiQueries_s queries = {1,0};
 
+  *n = 0;
+
   if(!error && s->type_ != oyOBJECT_PROFILE_TAG_S)
     error = 1;
 
@@ -8741,6 +8743,9 @@ OYAPI oyProfiles_s * OYEXPORT
           s = oyProfiles_MoveIn( s, &tmp, -1);
           error = !s;
         }
+
+        if(tmp)
+          oyProfile_Release( &tmp );
     }
   }
 
@@ -8798,6 +8803,7 @@ OYAPI oyProfiles_s * OYEXPORT
     uint32_t size = 0;
     oyProfiles_s * iccs = 0, * patterns = 0;
     oyProfile_s * profile = 0, * temp_prof = 0;
+    icSignature csp;
 
 
     if(type == oyEDITING_XYZ ||
@@ -8817,32 +8823,51 @@ OYAPI oyProfiles_s * OYEXPORT
     if(type == oyEDITING_XYZ ||
        type == oyASSUMED_XYZ)
     {
-      profile = oyProfile_FromSignature( icSigXYZData,
-                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      csp = icSigXYZData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
     }
     if(type == oyEDITING_LAB ||
        type == oyASSUMED_LAB)
     {
-      profile = oyProfile_FromSignature( icSigLabData,
-                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      csp = icSigLabData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
     }
     if(type == oyEDITING_RGB ||
        type == oyASSUMED_RGB)
     {
-      profile = oyProfile_FromSignature( icSigRgbData,
-                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      csp = icSigRgbData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
-      profile = oyProfile_FromSignature( icSigRgbData,
-                                        oySIGNATURE_COLOUR_SPACE, 0 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
-      profile = oyProfile_FromSignature( icSigRgbData,
-                                        oySIGNATURE_COLOUR_SPACE, 0 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
     }
@@ -8850,16 +8875,38 @@ OYAPI oyProfiles_s * OYEXPORT
        type == oyASSUMED_CMYK ||
        type == oyPROFILE_PROOF)
     {
-      profile = oyProfile_FromSignature( icSigCmykData,
-                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      csp = icSigCmykData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigOutputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
     }
     if(type == oyEDITING_GRAY ||
        type == oyASSUMED_GRAY)
     {
-      profile = oyProfile_FromSignature( icSigGrayData,
-                                        oySIGNATURE_COLOUR_SPACE, 0 );
+      csp = icSigGrayData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
     }
