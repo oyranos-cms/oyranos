@@ -368,7 +368,7 @@ test2:	$(LIBSONAMEFULL)
 	-o test2.o `oyranos-config --cflags`
 	echo Linking dynamic $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
-	test2.o `oyranos-config --ldlags`
+	test2.o `oyranos-config --ldflags`
 	echo Linking static $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
 	test2.o `oyranos-config --ldstaticflags`
