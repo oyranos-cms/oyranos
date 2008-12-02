@@ -5971,15 +5971,15 @@ char *         oyOptions_FindString  ( oyOptions_s       * options,
  *  @date    2008/11/27
  */
 int            oyOptions_SetFromText ( oyOptions_s       * obj,
-                                       const char        * option,
+                                       const char        * key,
                                        const char        * value )
 {
-  int error = !obj || obj->type_ != oyOBJECT_OPTIONS_S || !option || !value;
+  int error = !obj || obj->type_ != oyOBJECT_OPTIONS_S || !key || !value;
   oyOption_s * o = 0;
 
   if(!error)
   {
-    o = oyOptions_Find( obj, option );
+    o = oyOptions_Find( obj, key );
     oyOption_SetFromText( o, value );
     oyOption_Release( &o );
   }
@@ -7980,6 +7980,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
 
       tag_list = (icTag*)&((char*)s->block_)[132];
 
+      /* parse the profile and add tags to the oyProfile_s::tags_ list */
       for(i = 0; i < tag_count; ++i)
       {
         icTag *ic_tag = &tag_list[i];
@@ -8018,6 +8019,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         if(!error)
           error = !memcpy( tag_->required_cmm, OY_MODULE_NICK, 4 );
 
+#ifdef DEBUG
         DBG_PROG5_S("%d[%d @ %d]: %s %s", 
           i, (int)tag_->size_, (int)tag_->offset_orig,
           oyICCTagTypeName( tag_->tag_type_ ),
@@ -8027,6 +8029,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
           DBG_PROG2_S("%s: %s", tag_->last_cmm_, texts[j]?texts[j]:"");
         if(texts_n && texts)
           oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+#endif
 
         if(i == pos-1)
           tag = oyProfileTag_Copy( tag_, 0 );
@@ -8784,8 +8787,7 @@ OYAPI oyProfiles_s * OYEXPORT
                                        oyObject_s          object)
 {
   oyPROFILE_e type = std_profile_class;
-    char * default_p =
-           oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
+    char * default_p = 0;
     int i, val = -1;
 
     char  * temp = 0,
@@ -8794,6 +8796,19 @@ OYAPI oyProfiles_s * OYEXPORT
     oyProfiles_s * iccs = 0, * patterns = 0;
     oyProfile_s * profile = 0, * temp_prof = 0;
 
+
+    if(type == oyEDITING_XYZ ||
+       type == oyASSUMED_XYZ ||
+       type == oyEDITING_LAB ||
+       type == oyASSUMED_LAB ||
+       type == oyEDITING_RGB ||
+       type == oyASSUMED_RGB ||
+       type == oyEDITING_CMYK ||
+       type == oyASSUMED_CMYK ||
+       type == oyPROFILE_PROOF ||
+       type == oyEDITING_GRAY ||
+       type == oyASSUMED_GRAY)
+      default_p = oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
 
     /* prepare the patterns according to the profile type */
     if(type == oyEDITING_XYZ ||
