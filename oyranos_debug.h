@@ -38,7 +38,7 @@ extern int level_PROG;
 #if defined(OY_CONFIG_H)
 
 /* Debug system */
-#define DEBUG 1
+/*#define DEBUG 1*/
 
 #define DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
 
@@ -57,9 +57,18 @@ extern int level_PROG;
 #define DBG
 #define DBG_S(txt)
 #define DBG_V(var)
+#define DBG1_S(a,b)
+#define DBG2_S(a,b,c)
+#define DBG3_S(a,b,c,d)
+#define DBG4_S(a,b,c,d,e)
+#define DBG5_S(a,b,c,d,e,f)
+#define DBG6_S(a,b,c,d,e,f,h)
+#define DBG7_S(a,b,c,d,e,f,h,i)
+#define DBG8_S(a,b,c,d,e,f,h,i,j)
+#define DBG9_S(a,b,c,d,e,f,h,i,j,k)
 #define DBG_MEM
 #endif
-#if DEBUG == 1
+
 #define DBG_NUM DBG
 #define DBG_NUM_S DBG_S
 #define DBG_NUM1_S DBG1_S
@@ -67,16 +76,7 @@ extern int level_PROG;
 #define DBG_NUM3_S DBG3_S
 #define DBG_NUM4_S DBG4_S
 #define DBG_NUM_V DBG_V
-#else
-#define DBG_NUM
-#define DBG_NUM_S
-#define DBG_NUM1_S
-#define DBG_NUM2_S
-#define DBG_NUM3_S
-#define DBG_NUM4_S
-#define DBG_NUM_V
-#endif
-#if DEBUG == 1
+
 #define DBG_PROG DBG
 #define DBG_PROG_S DBG_S
 #define DBG_PROG1_S DBG1_S
@@ -86,20 +86,12 @@ extern int level_PROG;
 #define DBG_PROG5_S DBG5_S
 #define DBG_PROG6_S DBG6_S
 #define DBG_PROG_V DBG_V
+#if DEBUG == 1
 #define DBG_PROG_START oyMessageFunc_p( oyMSG_DBG,0,"Start: %s:%d",__FILE__,__LINE__ );
 #define DBG_PROG_ENDE  oyMessageFunc_p( oyMSG_DBG,0,"  End: %s:%d",__FILE__,__LINE__ );
 #else
-#define DBG_PROG
-#define DBG_PROG_S
-#define DBG_PROG1_S
-#define DBG_PROG2_S
-#define DBG_PROG3_S
-#define DBG_PROG4_S
-#define DBG_PROG5_S
-#define DBG_PROG6_S
-#define DBG_PROG_V
-#define DBG_PROG_START
-#define DBG_PROG_ENDE
+#define DBG_PROG_START DBG
+#define DBG_PROG_ENDE DBG
 #endif
 
 #endif /* defined OY_CONFIG_H */
