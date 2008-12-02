@@ -70,8 +70,8 @@
  *  @brief
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/04/03
  *  @since   2008/04/03 (Oyranos: 0.1.8)
+ *  @date    2008/04/03
  */
 int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, ... )
 {
@@ -91,7 +91,13 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
     id = oyObject_GetId( context->oy_ );
   }
 
-  oyAllocHelper_m_( text, char, sz, oyAllocateFunc_, fprintf(stderr,"oyranos.c:80 oyMessageFunc_() Could not allocate 4096 byte of memory.\n"); return 1 );
+  text = malloc( sz );
+  if(!text)
+  {
+    fprintf(stderr,
+     "oyranos.c:80 oyMessageFunc_() Could not allocate 4096 byte of memory.\n");
+    return 1;
+  }
 
   if(level_PROG < 30)
   {
@@ -163,10 +169,10 @@ oyGetPathFromProfileNameCb_          ( oyFileList_s      * data,
     oyFree_m_ (header);
     if (success) {
       DBG_S(full_name)
-      DBG_V(strlen(full_name))
-      if (strlen(full_name) < MAX_PATH) {
-        sprintf(search,full_name);
-        search[strlen(full_name)] = '\000';
+      DBG_V(oyStrlen_(full_name))
+      if (oyStrlen_(full_name) < MAX_PATH) {
+        oySprintf_(search,full_name);
+        search[oyStrlen_(full_name)] = '\000';
       } else
         search[0] = '\000';
     } else
@@ -206,7 +212,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
     DBG_PROG
 
-    if(strlen(fileName) < MAX_PATH)
+    if(oyStrlen_(fileName) < MAX_PATH)
     {
       memcpy(search, fileName, len); search[len] = '\000';
     } else {
@@ -227,7 +233,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
           char *ptr = 0;
           oyAllocHelper_m_( pathName, char, len+1, allocate_func, return 0 );
           oyStrcpy_(pathName, search);
-          ptr = strrchr(pathName , OY_SLASH_C);
+          ptr = oyStrrchr_(pathName , OY_SLASH_C);
           if(ptr)
             ptr[0] = '\000';
         }
@@ -518,7 +524,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
   /* a static_profile */
   if(type == oyASSUMED_WEB) {
     oyAllocHelper_m_( name, char, MAX_PATH, allocate_func, return NULL );
-    sprintf(name, OY_WEB_RGB);
+    oySprintf_(name, OY_WEB_RGB);
     DBG_PROG_S( name )
     return name;
   }
@@ -640,26 +646,26 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
   }
 #endif
 
-  if(name && strlen(name))
+  if(name && oyStrlen_(name))
   {
     DBG_PROG_S(name);
     /* cut off the path part of a file name */
-    if (strrchr (name, OY_SLASH_C))
+    if (oyStrrchr_ (name, OY_SLASH_C))
     {
       char * f = NULL;
 
-      oyAllocHelper_m_( f, char, strlen(name) + 1, oyAllocateFunc_, return 0);
-      sprintf( f, "%s", name );
-      sprintf( name, strrchr (f, OY_SLASH_C) + 1 );
+      oyAllocHelper_m_( f, char, oyStrlen_(name) + 1, oyAllocateFunc_, return 0);
+      oySprintf_( f, "%s", name );
+      oySprintf_( name, oyStrrchr_ (f, OY_SLASH_C) + 1 );
       oyFree_m_(f);
     }
   } else {
     const oyOption_t_ * t = oyOptionGet_((oyWIDGET_e)type);
     if(t && t->default_string)
     {
-      oyAllocHelper_m_( name, char, strlen( t->default_string ) + 1,
+      oyAllocHelper_m_( name, char, oyStrlen_( t->default_string ) + 1,
                         allocate_func, return NULL );
-      sprintf( name, "%s", t->default_string );
+      oySprintf_( name, "%s", t->default_string );
     } else {
       WARNc2_S( "%s %d", _("Option not supported type:"), type)
     }
@@ -696,16 +702,17 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
 
   DBG_PROG_START
 
-  if (strrchr (name, OY_SLASH_C))
-    fileName = strrchr (name, OY_SLASH_C);
+  if (oyStrrchr_ (name, OY_SLASH_C))
+    fileName = oyStrrchr_ (name, OY_SLASH_C);
   else
     fileName = name;
 
   oyAllocHelper_m_( fullFileName, char,
-                   strlen(OY_PROFILE_PATH_USER_DEFAULT) + strlen (fileName) + 4,
+                    oyStrlen_(OY_PROFILE_PATH_USER_DEFAULT) +
+                      oyStrlen_ (fileName) + 4,
                     oyAllocateFunc_, return 1);
 
-  sprintf (fullFileName, "%s%s", OY_PROFILE_PATH_USER_DEFAULT, OY_SLASH);
+  oySprintf_ (fullFileName, "%s%s", OY_PROFILE_PATH_USER_DEFAULT, OY_SLASH);
   len = oyStrlen_(fullFileName);
   memcpy( &fullFileName[len], fileName, oyStrlen_(fileName) );
   fullFileName[len + oyStrlen_(fileName)] = 0;
@@ -787,10 +794,10 @@ oySetComp_         (oyComp_t_ *compare, const char* keyName,
                     const char* value, int hits )
 {
   DBG_PROG_START
-  oyAllocHelper_m_( compare->name, char, strlen(keyName)+1, oyAllocateFunc_, );
-  memcpy (compare->name, keyName, strlen(keyName)+1); 
-  oyAllocHelper_m_( compare->val, char, strlen(value)+1, oyAllocateFunc_, );
-  memcpy (compare->val, value, strlen(value)+1); 
+  oyAllocHelper_m_( compare->name, char, oyStrlen_(keyName)+1, oyAllocateFunc_, );
+  memcpy (compare->name, keyName, oyStrlen_(keyName)+1); 
+  oyAllocHelper_m_( compare->val, char, oyStrlen_(value)+1, oyAllocateFunc_, );
+  memcpy (compare->val, value, oyStrlen_(value)+1); 
   compare->hits = hits;
   DBG_PROG_ENDE
 }
@@ -829,17 +836,17 @@ printComp (oyComp_t_* entry)
 
 # ifdef DEBUG
   DBG_PROG1_S("%d", (int)(intptr_t)entry)
-  sprintf( text, "%s:%d %s() begin %d next %d\n",
+  oySprintf_( text, "%s:%d %s() begin %d next %d\n",
            __FILE__,__LINE__,__func__,
            (int)(intptr_t)entry->begin, (int)(intptr_t)entry->next );
 
   if(entry->name)
-    sprintf( &text[strlen(text)], " name %s %d", entry->name,
+    oySprintf_( &text[oyStrlen_(text)], " name %s %d", entry->name,
                                   (int)(intptr_t)entry->name);
   if(entry->val)
-    sprintf( &text[strlen(text)], " val %s %d", entry->val,
+    oySprintf_( &text[oyStrlen_(text)], " val %s %d", entry->val,
                                   (int)(intptr_t)entry->val);
-  sprintf( &text[strlen(text)], " hits %d\n", entry->hits);
+  oySprintf_( &text[oyStrlen_(text)], " hits %d\n", entry->hits);
 
   DBG_PROG_ENDE
   return text;
@@ -884,23 +891,23 @@ oySetDeviceProfile_                (const char* manufacturer,
         || attrib2 || attrib3)
     { int len = 0;
       DBG_PROG
-      if (manufacturer) len += strlen(manufacturer);
-      if (model) len += strlen(model);
-      if (product_id) len += strlen(product_id);
-      if (host) len += strlen(host);
-      if (port) len += strlen(port);
-      if (attrib1) len += strlen(attrib1);
-      if (attrib2) len += strlen(attrib2);
-      if (attrib3) len += strlen(attrib3);
+      if (manufacturer) len += oyStrlen_(manufacturer);
+      if (model) len += oyStrlen_(model);
+      if (product_id) len += oyStrlen_(product_id);
+      if (host) len += oyStrlen_(host);
+      if (port) len += oyStrlen_(port);
+      if (attrib1) len += oyStrlen_(attrib1);
+      if (attrib2) len += oyStrlen_(attrib2);
+      if (attrib3) len += oyStrlen_(attrib3);
       oyAllocHelper_m_( comment, char, len+10, oyAllocateFunc_, );
-      if (manufacturer) sprintf (comment, "%s", manufacturer); DBG_PROG
-      if (model) sprintf (&comment[strlen(comment)], "%s", model); DBG_PROG
-      if (product_id) sprintf (&comment[strlen(comment)], "%s", product_id);
-      if (host) sprintf (&comment[strlen(comment)], "%s", host);
-      if (port) sprintf (&comment[strlen(comment)], "%s", port);
-      if (attrib1) sprintf (&comment[strlen(comment)], "%s", attrib1);
-      if (attrib2) sprintf (&comment[strlen(comment)], "%s", attrib2);
-      if (attrib3) sprintf (&comment[strlen(comment)], "%s", attrib3);
+      if (manufacturer) oySprintf_ (comment, "%s", manufacturer); DBG_PROG
+      if (model) oySprintf_ (&comment[oyStrlen_(comment)], "%s", model); DBG_PROG
+      if (product_id) oySprintf_ (&comment[oyStrlen_(comment)], "%s", product_id);
+      if (host) oySprintf_ (&comment[oyStrlen_(comment)], "%s", host);
+      if (port) oySprintf_ (&comment[oyStrlen_(comment)], "%s", port);
+      if (attrib1) oySprintf_ (&comment[oyStrlen_(comment)], "%s", attrib1);
+      if (attrib2) oySprintf_ (&comment[oyStrlen_(comment)], "%s", attrib2);
+      if (attrib3) oySprintf_ (&comment[oyStrlen_(comment)], "%s", attrib3);
     } DBG_PROG
 
     rc =  oySetProfile_ (profileName, oyDEVICE_PROFILE, comment); ERR
