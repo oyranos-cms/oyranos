@@ -10,7 +10,8 @@
  *  @brief    public Oyranos API's
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @par License:\n new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2004/11/25
  */
 
@@ -99,13 +100,16 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
     return 1;
   }
 
-  if(level_PROG < 30)
-  {
-    for (i = 0; i < level_PROG; i++)
-      oySprintf_( &text[oyStrlen_(text)], " ");
+  text[0] = 0;
 
-    fprintf(stderr,text);
-  }
+  if(level_PROG < 0)
+    level_PROG = 0;
+  if(level_PROG > 30)
+    level_PROG = 30;
+  for (i = 0; i < level_PROG; i++)
+    oySprintf_( &text[oyStrlen_(text)], " ");
+
+  fprintf(stderr,text);
 
   va_start( list, format);
   vsprintf( text, format, list);
