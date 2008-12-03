@@ -58,6 +58,8 @@ typedef void * (*oyAlloc_f)          ( size_t              size );
  */
 typedef void (*oyDeAlloc_f)          ( void              * data );
 
+extern int oy_debug;
+
 typedef enum {
   oyMSG_ERROR = 300,
   oyMSG_WARN,
