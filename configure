@@ -275,6 +275,8 @@ if [ 0 -eq $rpm ]; then
   $ECHO $e "" >> $CONF_LOG
   $ECHO $e "" >> $CONF_LOG
   chmod 0755 $CONF_LOG
+  # avoid a warning
+  $ECHO "" >  $CONF_LOG.h
 else
   ECHO=""
   RPMECHO="echo"
