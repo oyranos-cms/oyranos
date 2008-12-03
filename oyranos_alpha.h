@@ -667,7 +667,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type );
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
                                        const char        * key );
-char *         oyOptions_FindString  ( oyOptions_s       * options,
+const char *   oyOptions_FindString  ( oyOptions_s       * options,
                                        const char        * key,
                                        const char        * value );
 int            oyOptions_SetFromText ( oyOptions_s       * obj,

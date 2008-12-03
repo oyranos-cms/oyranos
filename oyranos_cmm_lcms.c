@@ -465,9 +465,7 @@ int          lcmsCMMColourConversion_Create (
                                        int                 profiles_n,
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
-                                       int                 intent,
-                                       int                 proofing_intent,
-                                       uint32_t            flags,
+                                       oyOptions_s *       opts,
                                        oyCMMptr_s        * oy )
 {
   oyPixel_t lcms_pixel_layout_in = 0;
@@ -479,6 +477,11 @@ int          lcmsCMMColourConversion_Create (
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
   lcmsTransformWrap_s * ltw  = 0;
+  int intent = 0,
+      bpc = 0,
+      gamut_warning = 0,
+      flags = 0;
+  const char * o_txt = 0;
 
   if(!cmm_profile || !profiles_n || !oy_pixel_layout_in || !oy_pixel_layout_out)
     return 1;
@@ -518,6 +521,28 @@ int          lcmsCMMColourConversion_Create (
                                                    colour_in);
   lcms_pixel_layout_out = oyPixelToCMMPixelLayout_(oy_pixel_layout_out,
                                                    colour_out);
+
+#ifndef oyStrlen_
+#define oyStrlen_ strlen
+#endif
+      o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0);
+      if(o_txt && oyStrlen_(o_txt))
+        intent = atoi( o_txt );
+
+      o_txt = oyOptions_FindString  ( opts, "rendering_bpc", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        bpc = atoi( o_txt );
+
+      o_txt = oyOptions_FindString  ( opts, "rendering_gamut_warning", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        gamut_warning = atoi( o_txt );
+
+      /* this should be moved to the CMM and not be handled here in Oyranos */
+      flags = bpc ?           flags | cmsFLAGS_WHITEBLACKCOMPENSATION :
+                              flags & (~cmsFLAGS_WHITEBLACKCOMPENSATION);
+      flags = gamut_warning ? flags | cmsFLAGS_GAMUTCHECK :
+                              flags & (~cmsFLAGS_GAMUTCHECK);
+
 
   if(!error)
   {
@@ -581,7 +606,7 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
   error = lcmsCMMColourConversion_Create (
                                        dls, 1,
                                        oy_pixel_layout_in, oy_pixel_layout_out,
-                                       intent, 0, 0, oy );
+                                       0, oy );
   return error;
 }
 

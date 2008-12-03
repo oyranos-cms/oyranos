@@ -94,9 +94,7 @@ typedef int      (*oyCMMColourConversion_Create_f) (
                                        int                 profiles_n,
                                        uint32_t            pixel_layout_in,
                                        uint32_t            pixel_layout_out,
-                                       int                 intent,
-                                       int                 proofing_intent,
-                                       uint32_t            flags,
+                                       oyOptions_s       * opts,
                                        oyCMMptr_s        * oy );
 typedef int      (*oyCMMColourConversion_FromMem_f) (
                                        oyPointer           mem,

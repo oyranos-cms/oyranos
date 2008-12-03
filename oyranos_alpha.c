@@ -1232,7 +1232,7 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
     return s;
   }
 
-  s = oyStructList_Create( s->type_, s->list_name, obj);
+  s = oyStructList_Create( list->type_, list->list_name, obj);
 
   error = !s;
 
@@ -5894,19 +5894,22 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
  *
  *  This function returns the first found value for a given key.
  *  The key is represented by the oyOption_s::name::nick
+ *  The returned string is valid along the livetime of the particular 
+ *  option value.
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.9
  *  @since   2008/10/07 (Oyranos: 0.1.8)
- *  @date    2008/10/07
+ *  @date    2008/12/03
  */
-char *         oyOptions_FindString  ( oyOptions_s       * options,
+const char *   oyOptions_FindString  ( oyOptions_s       * options,
                                        const char        * key,
                                        const char        * value )
 {
   char * text = 0;
   int error = !options;
 
-  if(!error && options && options->type_ == oyOBJECT_OPTIONS_S)
+  if(!error)
+  if(options->type_ == oyOBJECT_OPTIONS_S)
   {
     oyOptions_s * set_a = options;
     int set_an = oyOptions_Count( set_a ), i,j;
@@ -13672,19 +13675,19 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
 
     if(!error)
     {
-      int intent = oyGetBehaviour( oyBEHAVIOUR_RENDERING_INTENT );
       oyCMMptr_s ** p = oyStructList_GetCMMptrs_( p_list->list_, cmm_used );
       int layout_in = in->layout_[oyLAYOUT];
       int layout_out = out->layout_[oyLAYOUT];
 
-      char * o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0 );
-
-      if(o_txt && oyStrlen_(o_txt))
-        intent = atoi( o_txt );
+      if(!opts)
+        opts = oyOptions_ForFilter( "//colour", "lcms",
+                                            0/* oyOPTIONATTRIBUTE_ADVANCED |
+                                            oyOPTIONATTRIBUTE_FRONT |
+                                            OY_OPTIONSOURCE_META */, 0 );
 
       n = oyProfiles_Count(p_list);
-      
-      error = funcP( p, n, layout_in, layout_out, intent, 0,0, cmm_ptr );
+
+      error = funcP( p, n, layout_in, layout_out, opts, cmm_ptr );
 
       for(i = 0; i < n; ++i)
         if(!error)
