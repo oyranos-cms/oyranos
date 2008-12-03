@@ -87,13 +87,6 @@ int main( int argc , char** argv )
   int current_policy = 0, list_policies = 0, list_paths = 0,
       dump_policy = 0;
 
-  if(getenv("OYRANOS_DEBUG"))
-  {
-    int value = atoi(getenv("OYRANOS_DEBUG"));
-    if(value > 0)
-      oy_debug = value;
-  }
-
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
