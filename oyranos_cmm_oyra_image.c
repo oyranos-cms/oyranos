@@ -117,7 +117,7 @@ int      oyraFilterPlug_ImageOutputPPMRun (
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilter_s * filter = 0;
   int result = 0;
-  char * filename = 0;
+  const char * filename = 0;
   FILE * fp = 0;
 
   filter = socket->node->filter;
