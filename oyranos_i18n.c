@@ -10,7 +10,8 @@
  *  @brief    string translation
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2006/06/28
  */
 
@@ -51,6 +52,8 @@ const char *oy_country_ = 0;
  */
 void oyI18NInit_()
 {
+  DBG_PROG_START
+
   oy_lang_ = "C";
 
 #ifdef USE_GETTEXT
@@ -59,8 +62,10 @@ void oyI18NInit_()
     char * temp = 0;
     putenv("NLSPATH=" OY_LOCALEDIR); /* Solaris */
     bindtextdomain( oy_domain, oy_domain_path );
+    DBG_NUM2_S("oy_domain_path %s %s", oy_domain, oy_domain_path)
     if(oy_domain_codeset)
       bind_textdomain_codeset(oy_domain, oy_domain_codeset);
+    DBG_NUM2_S("oy_domain_codeset %s %s", oy_domain, oy_domain_codeset)
 
     if(getenv("LANG"))
     {
@@ -106,6 +111,8 @@ void oyI18NInit_()
   }
 #endif
   oyTextsCheck_ ();
+
+  DBG_PROG_ENDE
 }
 
 

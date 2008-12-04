@@ -10,7 +10,8 @@
  *  @brief    library sentinels
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2006/09/14
  */
 
@@ -74,6 +75,8 @@ void oyInit_()
 {
   static int initialised = 0;
 
+  DBG_PROG_START
+
   if(initialised)
     return;
   initialised = 1;
@@ -82,6 +85,7 @@ void oyInit_()
     oy_debug = atoi(getenv("OYRANOS_DEBUG"));
 
   oyI18NInit_ ();
+  DBG_PROG_ENDE
 }
 
 

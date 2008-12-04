@@ -50,12 +50,6 @@ char* oyFindProfile_ (const char* name);
 
 /* --- Helpers  --- */
 /* small helpers */
-#if 1
-#define ERR if (rc<=0 && oy_debug) { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
-#else
-#define ERR
-#endif
-
 
 /* --- function definitions --- */
 
@@ -67,11 +61,11 @@ oyReadFileSize_(const char* name)
   const char* filename = name;
   size_t size = 0;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
   {
     fp = fopen(filename, "r");
-    DBG_PROG2_S ("fp = %d filename = %s\n", (int)(intptr_t)fp, filename)
+    DBG_MEM2_S ("fp = %d filename = %s\n", (int)(intptr_t)fp, filename)
 
     if (fp)
     {
@@ -84,7 +78,7 @@ oyReadFileSize_(const char* name)
       WARNc1_S( "could not read %s", filename );
   }
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return size;
 }
 
@@ -96,13 +90,13 @@ oyReadFileToMem_(const char* name, size_t *size,
   char* mem = 0;
   const char* filename = name;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
-  DBG_PROG
+  DBG_MEM
 
   {
     fp = fopen(filename, "r");
-    DBG_PROG2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
+    DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
 
     if (fp)
     {
@@ -113,7 +107,7 @@ oyReadFileToMem_(const char* name, size_t *size,
         *size = ftell (fp);
       rewind(fp);
 
-      DBG_PROG1_S("%u\n",((unsigned int)((size_t)size)));
+      DBG_MEM1_S("%u\n",((unsigned int)((size_t)size)));
 
       /* allocate memory */
       oyAllocHelper_m_( mem, char, *size+1, oyAllocateFunc_, return 0);
@@ -125,7 +119,7 @@ oyReadFileToMem_(const char* name, size_t *size,
       {
         int s = fread(mem, sizeof(char), *size, fp);
 
-        DBG_PROG
+        DBG_MEM
 
         /* check again */
         if (s != *size)
@@ -153,7 +147,7 @@ oyReadFileToMem_(const char* name, size_t *size,
   /* clean up */
   if (fp) fclose (fp);
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return mem;
 }
 
@@ -279,18 +273,18 @@ oyIsDir_ (const char* path)
   int r = 0;
   char* name = oyResolveDirFileName_ (path);
 
-  DBG_PROG_START
+  DBG_MEM_START
 
   status.st_mode = 0;
   r = stat (name, &status);
-  DBG_PROG1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
-  DBG_PROG1_S("status.st_mode = %d", (int)status.st_mode)
-  DBG_PROG1_S("name = %s ", name)
+  DBG_MEM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
+  DBG_MEM1_S("status.st_mode = %d", (int)status.st_mode)
+  DBG_MEM1_S("name = %s ", name)
   oyFree_m_ (name)
   r = !r &&
        ((status.st_mode & S_IFMT) & S_IFDIR);
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return r;
 }
 
@@ -301,16 +295,16 @@ oyIsFileFull_ (const char* fullFileName)
   int r = 0;
   const char* name = fullFileName;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
-  DBG_NUM1_S("fullFileName = \"%s\"", fullFileName)
+  DBG_MEM1_S("fullFileName = \"%s\"", fullFileName)
   status.st_mode = 0;
   r = stat (name, &status);
 
-  DBG_NUM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
-  DBG_NUM1_S("status.st_mode = %d", (int)status.st_mode)
-  DBG_NUM1_S("name = %s", name)
-  DBG_NUM_V( r )
+  DBG_MEM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
+  DBG_MEM1_S("status.st_mode = %d", (int)status.st_mode)
+  DBG_MEM1_S("name = %s", name)
+  DBG_MEM_V( r )
   switch (r)
   {
     case EACCES:       WARNc1_S("EACCES = %d\n",r); break;
@@ -326,18 +320,18 @@ oyIsFileFull_ (const char* fullFileName)
        (   ((status.st_mode & S_IFMT) & S_IFREG)
         || ((status.st_mode & S_IFMT) & S_IFLNK));
 
-  DBG_NUM_V( r )
+  DBG_MEM_V( r )
   if (r)
   {
-    FILE* fp = fopen (name, "r"); DBG_PROG
+    FILE* fp = fopen (name, "r"); DBG_MEM
     if (!fp) { DBG_PROG
       r = 0;
     } else { DBG_PROG
       fclose (fp);
     }
-  } DBG_PROG
+  } DBG_MEM
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return r;
 }
 
@@ -347,13 +341,13 @@ oyIsFile_ (const char* fileName)
   int r = 0;
   char* name = oyResolveDirFileName_ (fileName);
 
-  DBG_PROG_START
+  DBG_MEM_START
 
   r = oyIsFileFull_(name);
 
-  oyFree_m_ (name) DBG_PROG
+  oyFree_m_ (name) DBG_MEM
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return r;
 }
 
@@ -411,9 +405,9 @@ oyResolveDirFileName_ (const char* name)
        * home = NULL;
   int len = 0;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
-  DBG_PROG_S(name)
+  DBG_MEM_S(name)
 
   /* user directory */
   if (name[0] == '~')
@@ -435,20 +429,20 @@ oyResolveDirFileName_ (const char* name)
 
       oyAllocHelper_m_( cn, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:379 oyResolveDirFileName_() Could not allocate 4096 byte of memory.\n"); return 0 );
       oySprintf_ (cn, "%s%s%s", getenv("PWD"), OY_SLASH, name);
-      DBG_PROG1_S("canonoical %s ", cn)
+      DBG_MEM1_S("canonoical %s ", cn)
       oySprintf_ (newName, cn);
       if(cn) free(cn); cn = 0;
     }
   }
 
   if(name)
-    DBG_PROG1_S ("name %s", name);
+    DBG_MEM1_S ("name %s", name);
   if(home)
-    DBG_PROG1_S ("home %s", home);
+    DBG_MEM1_S ("home %s", home);
   if(newName)
-    DBG_PROG1_S ("newName = %s", newName);
+    DBG_MEM1_S ("newName = %s", newName);
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return newName;
 }
 
@@ -458,18 +452,18 @@ oyExtractPathFromFileName_ (const char* file_name)
   char *path_name = 0;
   char *ptr;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
   oyAllocString_m_( path_name, strlen(file_name)+1,
                     oyAllocateFunc_, return 0 );
 
   oySprintf_( path_name, file_name );
-  DBG_PROG1_S ("path_name = %s", path_name)
+  DBG_MEM1_S ("path_name = %s", path_name)
   ptr = strrchr (path_name, '/');
   ptr[0+1] = 0;
-  DBG_PROG1_S ("path_name = %s", path_name)
-  DBG_PROG1_S ("ptr = %s", ptr)
-  DBG_PROG_ENDE
+  DBG_MEM1_S ("path_name = %s", path_name)
+  DBG_MEM1_S ("ptr = %s", ptr)
+  DBG_MEM_ENDE
   return path_name;
 }
 
@@ -479,16 +473,16 @@ oyMakeFullFileDirName_ (const char* name)
   char *newName = 0;
   char *dirName = 0;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
-  DBG_PROG
+  DBG_MEM
   if(name &&
      strrchr( name, OY_SLASH_C ))
-  { DBG_PROG
+  { DBG_MEM
     /* substitute ~ with HOME variable from environment */
     newName = oyResolveDirFileName_ (name);
   } else
-  { DBG_PROG
+  { DBG_MEM
     /* create directory name */
     oyAllocString_m_( newName, MAX_PATH,
                       oyAllocateFunc_, return 0 );
@@ -496,12 +490,12 @@ oyMakeFullFileDirName_ (const char* name)
     oySprintf_ (newName, "%s%s", dirName, OY_SLASH);
     if (name)
       oySprintf_ (strrchr(newName,OY_SLASH_C)+1, "%s", name);
-    DBG_PROG1_S("newName = %s", newName)
+    DBG_MEM1_S("newName = %s", newName)
   }
 
-  DBG_PROG1_S("newName = %s", newName)
+  DBG_MEM1_S("newName = %s", newName)
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return newName;
 }
 
@@ -828,7 +822,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
 
   static int war = 0;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
   ++war;
   if(war >= 413)
@@ -871,7 +865,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         case EIO:          WARNc2_S("EIO : %s %d", path, i); break;
         case ELOOP:        WARNc2_S("Too many symbolic links encountered while traversing the path: %s %d", path, i); break;
         case ENAMETOOLONG: WARNc2_S("ENAMETOOLONG : %s %d", path, i); break;
-        case ENOENT:       DBG_PROG2_S("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i); break;
+        case ENOENT:       DBG_MEM2_S("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i); break;
         case ENOTDIR:      WARNc2_S("ENOTDIR : %s %d", path, i); break;
         case EOVERFLOW:    WARNc2_S("EOVERFLOW : %s %d", path, i); break;
       }
@@ -919,22 +913,22 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         if(len+strlen(entry[k]->d_name) < 256)
           oySprintf_(&name[strlen(name)],"/%s", entry[k]->d_name);
         else {
-          DBG_PROG3_S("%d. %s/%s ignored", l, name, entry[k]->d_name)
+          DBG_MEM3_S("%d. %s/%s ignored", l, name, entry[k]->d_name)
           goto cont;
         }
       }
 
       if ((strcmp (entry[l]->d_name, "..") == 0) ||
           (strcmp (entry[l]->d_name, ".") == 0)) {
-        DBG_PROG2_S("%d. %s ignored", l, name)
+        DBG_MEM2_S("%d. %s ignored", l, name)
         goto cont;
       }
       if ((stat (name, &statbuf)) != 0) {
-        DBG_PROG2_S("%d. %s does not exist", l, name)
+        DBG_MEM2_S("%d. %s does not exist", l, name)
         goto cont;
       }
       if (!S_ISLNK(statbuf.st_mode)){/*((statbuf.st_mode & S_IFMT) & S_IFLNK))  */
-        DBG_PROG5_S("%d. %s is a link: ignored %d %d %d", l, name, (int)statbuf.st_mode , S_IFLNK, 0120000);
+        DBG_MEM5_S("%d. %s is a link: ignored %d %d %d", l, name, (int)statbuf.st_mode , S_IFLNK, 0120000);
         /*goto cont; */
       }
       if (S_ISDIR (statbuf.st_mode) &&
@@ -942,14 +936,14 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
 
         dir[l+1] = opendir (name);
         ++l;
-        DBG_PROG2_S("%d. %s directory", l, name);
+        DBG_MEM2_S("%d. %s directory", l, name);
         goto cont;
       }
       if(!S_ISREG (statbuf.st_mode)) {
-        DBG_PROG2_S("%d. %s is a non regular file", l, name);
+        DBG_MEM2_S("%d. %s is a non regular file", l, name);
         goto cont;
       }
-      DBG_PROG2_S( "%d. a valid file %s", l, name )
+      DBG_MEM2_S( "%d. a valid file %s", l, name )
 
       /* use all file extensions */
       /* go recursively without following links, due to security */
@@ -957,7 +951,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         r = doInPath(data, name, entry[l]->d_name);
         run = !r;
         if(r)
-          DBG3_S("%d. %d %d found", i, r, run);
+          DBG_MEM3_S("%d. %d %d found", i, r, run);
       }
 
       cont:
@@ -974,7 +968,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
            oyStrcmpWrap );
   }
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return r;
 }
 

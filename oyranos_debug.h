@@ -31,7 +31,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 /** debugging variable - set 0 to off (default), set 1 to switch debugging on */
-extern int oy_debug;
 extern clock_t oyranos_clock_;
 extern int level_PROG;
 
@@ -59,47 +58,56 @@ extern int level_PROG;
 #define DBG5_S(format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5);
 #define DBG6_S(format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6);
 #define DBG_V(var) oyMessageFunc_p(oyMSG_DBG,0,OY_DBG_FORMAT_ #var ": %d", OY_DBG_ARGS_,(int)var);
-#define DBG_MEM DBG
+#define DBG_START {++level_PROG; oyMessageFunc_p( oyMSG_DBG,0,"Start: " OY_DBG_FORMAT_, OY_DBG_ARGS_ );}
+#define DBG_ENDE  {oyMessageFunc_p( oyMSG_DBG,0,"  End: " OY_DBG_FORMAT_, OY_DBG_ARGS_ ); --level_PROG;}
 #else
-#define DBG
-#define DBG_S(txt)
-#define DBG_V(var)
-#define DBG1_S(a,b)
-#define DBG2_S(a,b,c)
-#define DBG3_S(a,b,c,d)
-#define DBG4_S(a,b,c,d,e)
-#define DBG5_S(a,b,c,d,e,f)
-#define DBG6_S(a,b,c,d,e,f,h)
-#define DBG7_S(a,b,c,d,e,f,h,i)
-#define DBG8_S(a,b,c,d,e,f,h,i,j)
-#define DBG9_S(a,b,c,d,e,f,h,i,j,k)
-#define DBG_MEM
+#define DBG ;
+#define DBG_S(txt) ;
+#define DBG_V(var) ;
+#define DBG1_S(a,b) ;
+#define DBG2_S(a,b,c) ;
+#define DBG3_S(a,b,c,d) ;
+#define DBG4_S(a,b,c,d,e) ;
+#define DBG5_S(a,b,c,d,e,f) ;
+#define DBG6_S(a,b,c,d,e,f,h) ;
+#define DBG7_S(a,b,c,d,e,f,h,i) ;
+#define DBG8_S(a,b,c,d,e,f,h,i,j) ;
+#define DBG9_S(a,b,c,d,e,f,h,i,j,k) ;
+#define DBG_START ;
+#define DBG_ENDE  ;
 #endif
 
-#define DBG_NUM DBG
-#define DBG_NUM_S DBG_S
-#define DBG_NUM1_S DBG1_S
-#define DBG_NUM2_S DBG2_S
-#define DBG_NUM3_S DBG3_S
-#define DBG_NUM4_S DBG4_S
-#define DBG_NUM_V DBG_V
+#define DBG_NUM if(oy_debug > 1)DBG
+#define DBG_NUM_S if(oy_debug > 1)DBG_S
+#define DBG_NUM1_S if(oy_debug > 1)DBG1_S
+#define DBG_NUM2_S if(oy_debug > 1)DBG2_S
+#define DBG_NUM3_S if(oy_debug > 1)DBG3_S
+#define DBG_NUM4_S if(oy_debug > 1)DBG4_S
+#define DBG_NUM_V if(oy_debug > 1)DBG_V
 
-#define DBG_PROG DBG
-#define DBG_PROG_S DBG_S
-#define DBG_PROG1_S DBG1_S
-#define DBG_PROG2_S DBG2_S
-#define DBG_PROG3_S DBG3_S
-#define DBG_PROG4_S DBG4_S
-#define DBG_PROG5_S DBG5_S
-#define DBG_PROG6_S DBG6_S
-#define DBG_PROG_V DBG_V
-#if DEBUG == 1
-#define DBG_PROG_START {++level_PROG; oyMessageFunc_p( oyMSG_DBG,0,"Start: " OY_DBG_FORMAT_, OY_DBG_ARGS_ );}
-#define DBG_PROG_ENDE  {oyMessageFunc_p( oyMSG_DBG,0,"  End: " OY_DBG_FORMAT_, OY_DBG_ARGS_ ); --level_PROG;}
-#else
-#define DBG_PROG_START DBG
-#define DBG_PROG_ENDE DBG
-#endif
+#define DBG_PROG if(oy_debug > 2)DBG
+#define DBG_PROG_S if(oy_debug > 2)DBG_S
+#define DBG_PROG1_S if(oy_debug > 2)DBG1_S
+#define DBG_PROG2_S if(oy_debug > 2)DBG2_S
+#define DBG_PROG3_S if(oy_debug > 2)DBG3_S
+#define DBG_PROG4_S if(oy_debug > 2)DBG4_S
+#define DBG_PROG5_S if(oy_debug > 2)DBG5_S
+#define DBG_PROG6_S if(oy_debug > 2)DBG6_S
+#define DBG_PROG_V if(oy_debug > 2)DBG_V
+#define DBG_PROG_START if(oy_debug > 2)DBG_START
+#define DBG_PROG_ENDE  if(oy_debug > 2)DBG_ENDE
+
+#define DBG_MEM if(oy_debug > 3)DBG
+#define DBG_MEM_S if(oy_debug > 3)DBG_S
+#define DBG_MEM1_S if(oy_debug > 3)DBG1_S
+#define DBG_MEM2_S if(oy_debug > 3)DBG2_S
+#define DBG_MEM3_S if(oy_debug > 3)DBG3_S
+#define DBG_MEM4_S if(oy_debug > 3)DBG4_S
+#define DBG_MEM5_S if(oy_debug > 3)DBG5_S
+#define DBG_MEM6_S if(oy_debug > 3)DBG6_S
+#define DBG_MEM_V if(oy_debug > 3)DBG_V
+#define DBG_MEM_START  if(oy_debug > 3)DBG_START
+#define DBG_MEM_ENDE   if(oy_debug > 3)DBG_ENDE
 
 #endif /* defined OY_CONFIG_H */
 

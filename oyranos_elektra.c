@@ -10,7 +10,8 @@
  *  @brief    elektra dependent functions
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2004/11/25
  */
 
@@ -62,8 +63,6 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 
 /* --- Helpers  --- */
 #if 1
-/*# define ERR if ((rc != KDB_ERR_OK && oy_debug) || rc > KDB_ERR_OK) \
-              { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }*/
 # define ERR  if(rc) \
                         oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d %d: %s", \
                         __FILE__,__LINE__, \

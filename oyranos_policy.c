@@ -10,7 +10,8 @@
  *  @brief    policy loader - for usage during installation and on commandline
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2006/09/14
  */
 
@@ -90,7 +91,7 @@ int main( int argc , char** argv )
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
-  oyI18NInit_();
+  oyExportStart_(EXPORT_CHECK_NO);
 
   if(argc >= 2)
   {

@@ -476,8 +476,7 @@ oyWriteOptionToXML_(oyGROUP_e           group,
                  /* append xml keys and value */
                  oySprintf_( &mem[strlen(mem)], "%s<%s>%s</%s>\n\n", intent,
                           key, value, key);
-                 if(oy_debug)
-                 { DBG_PROG; fprintf(stderr, "%s\n", mem); }
+                 DBG_PROG1_S( "%s\n", mem);
                } else
                  oySprintf_( &mem[strlen(mem)-1], " -->\n" );
                if(value) oyFree_m_(value);

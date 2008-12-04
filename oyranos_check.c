@@ -10,7 +10,8 @@
  *  @brief    input / output  methods
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2006/11/17
  */
 
@@ -47,14 +48,6 @@
 /* oyranos part */
 
 
-
-/* --- Helpers  --- */
-/* small helpers */
-#if 1
-#define ERR if (rc<=0 && oy_debug) { printf("%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
-#else
-#define ERR
-#endif
 
 
 /* --- function definitions --- */
@@ -94,7 +87,7 @@ oyCheckProfile_                    (const char* name,
     oyFree_m_(header);
   if(fullName) oyFree_m_(fullName);
 
-  DBG_NUM1_S("oyCheckProfileMem = %d",r)
+  DBG_PROG1_S("oyCheckProfileMem = %d",r)
 
   DBG_PROG_ENDE
   return r;

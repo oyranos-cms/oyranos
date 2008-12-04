@@ -102,10 +102,11 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
 
   text[0] = 0;
 
+# define MAX_LEVEL 20
   if(level_PROG < 0)
     level_PROG = 0;
-  if(level_PROG > 30)
-    level_PROG = 30;
+  if(level_PROG > MAX_LEVEL)
+    level_PROG = MAX_LEVEL;
   for (i = 0; i < level_PROG; i++)
     oySprintf_( &text[oyStrlen_(text)], " ");
 
@@ -118,13 +119,14 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   switch(code)
   {
     case oyMSG_WARN:
-         fprintf( stderr, _("WARNING")); fprintf( stderr, " %03f: ", DBG_UHR_);
+         fprintf( stderr, _("WARNING"));
          break;
     case oyMSG_ERROR:
-         fprintf( stderr, _("!!! ERROR"));fprintf( stderr, " %03f: ", DBG_UHR_);
+         fprintf( stderr, _("!!! ERROR"));
          break;
   }
 
+  fprintf( stderr, " %03f: ", DBG_UHR_);
   fprintf( stderr, "%s[%d] ", type_name, id );
 
   i = 0;
@@ -165,15 +167,15 @@ oyGetPathFromProfileNameCb_          ( oyFileList_s      * data,
   oyFileList_s * l = data;
   char* search = l->names[0];
 
-  DBG_S( search )
+  DBG_MEM_S( search )
   if(strcmp(filename,search)==0) {
     size_t size = 128;
     char* header = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
     success = !oyCheckProfileMem_ (header, size, 0);
     oyFree_m_ (header);
     if (success) {
-      DBG_S(full_name)
-      DBG_V(oyStrlen_(full_name))
+      DBG_MEM_S(full_name)
+      DBG_MEM_V(oyStrlen_(full_name))
       if (oyStrlen_(full_name) < MAX_PATH) {
         oySprintf_(search,full_name);
         search[oyStrlen_(full_name)] = '\000';
@@ -183,7 +185,7 @@ oyGetPathFromProfileNameCb_          ( oyFileList_s      * data,
       WARNc_PROFILE_S( _("not a profile:"), oyNoEmptyName_m_(full_name) )
   }
   /* break on success */
-  DBG_V(success)
+  DBG_MEM_V(success)
   return success;
 }
 
@@ -231,7 +233,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
       if (success) { /* found */
         len = 0;
-        DBG_S((search))
+        DBG_PROG_S((search))
         if(search[0] != 0) len = oyStrlen_(search);
         if(len) {
           char *ptr = 0;

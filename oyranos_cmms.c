@@ -10,7 +10,8 @@
  *  @brief    old CMM's framework
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2006/07/30
  */
 
@@ -323,8 +324,6 @@ oyModulGetFromXML_( oyGROUP_e           group,
   groups = oyXMLgetValue_(cmm_group, "oyGROUPS");
   groupa = oyXMLgetArray_(groups, "oyGROUP", &count);
 
-  /*oy_debug = 1;*/
-
   group_modules = count;
   cmm->group = NULL;
   oyAllocHelper_m_( cmm->group, oyOption_t_, group_modules,
@@ -497,7 +496,6 @@ oyModulGetFromXML_( oyGROUP_e           group,
     cmm->func[i].opts_start  =   oyModulsGetNewOptionRange_(count2);
     cmm->func[i].opts_end    =   cmm->func[i].opts_start + count2 - 1;
   }
-  /*oy_debug = 0;*/
 
   oy_domain = OY_TEXTDOMAIN;
   oy_domain_path = OY_LOCALEDIR;
