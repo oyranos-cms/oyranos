@@ -36,6 +36,7 @@ namespace oyranos
 /* library sentinels */
 void  oyInit_               (void);
 int   oyExportStart_        (int export_check);
+int   oyExportReset_        (int export_check);
 int   oyExportEnd_          (void);
 
 #define EXPORT_CHECK_NO 0x000000

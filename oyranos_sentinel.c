@@ -30,12 +30,13 @@
 #include "oyranos_sentinel.h"
 
 
+static int export_setting = 1;
+static int export_path = 1;
+static int export_monitor = 1;
+static int export_cmm = 1;
+
 int oyExportStart_(int export_check)
 {
-  static int export_setting = 1;
-  static int export_path = 1;
-  static int export_monitor = 1;
-  static int export_cmm = 1;
   /*static int export_cmms = 1;*/
   int start = 0;
 
@@ -58,6 +59,31 @@ int oyExportStart_(int export_check)
 
   oyInit_();
   return start;
+}
+
+int oyExportReset_(int export_check)
+{
+  int action = 0;
+  if(export_check & EXPORT_SETTING)
+  {
+    if(!export_setting) action = 1;
+    export_setting = 1;
+    oyCloseReal__();
+  }
+  
+  if(export_check & EXPORT_MONITOR)
+  {
+    if(!export_monitor) action = 1;
+    export_monitor = 1;
+  }
+  
+  if(export_check & EXPORT_CMMS)
+  {
+    if(!export_cmm) action = 1;
+    export_cmm = 1;
+  }
+  
+  return action;
 }
 
 int oyExportEnd_()
