@@ -109,7 +109,8 @@ void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 /* @todo make oyOpen unnecessary */
 void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
-
+void oyCloseReal__() { kdbClose( oy_handle_ );
+                       oy_handle_ = 0; }
 
 /* oyranos part */
 
@@ -319,28 +320,28 @@ oyAddKey_valueComment_ (const char* keyName,
     return 0;
   rc=kdbGetKey( oy_handle_, key );
   if(rc < 0)
-    oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s",
-                     __FILE__,__LINE__, rc, kdbStrError(rc), name);
+    oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_"key new? code:%d %s name:%s",
+                     OY_DBG_ARGS_, rc, kdbStrError(rc), name);
   if(value)
   {
     rc=keySetString (key, value_utf8);
     if(rc <= 0)
-      oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s value:%s",
-                       __FILE__,__LINE__, rc, kdbStrError(rc), name, value);
+      oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_"code:%d %s name:%s value:%s",
+                       OY_DBG_ARGS_, rc, kdbStrError(rc), name, value);
   }
   if(comment)
   {
     rc=keySetComment (key, comment_utf8);
     if(rc <= 0)
-      oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s comment:%s",
-                       __FILE__,__LINE__, rc, kdbStrError(rc), name, comment);
+      oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_"code:%d %s name:%s comment:%s",
+                       OY_DBG_ARGS_, rc, kdbStrError(rc), name, comment);
   }
 
   oyOpen_();
   rc=kdbSetKey( oy_handle_, key ); ERR
   if(rc < 0)
-    oyMessageFunc_p( oyMSG_WARN, 0, "%s:%d code:%d %s name:%s",
-                     __FILE__,__LINE__, rc, kdbStrError(rc), name);
+    oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_ "code:%d %s name:%s",
+                     OY_DBG_ARGS_, rc, kdbStrError(rc), name);
   oyClose_();
 
   oyFree_m_( name )

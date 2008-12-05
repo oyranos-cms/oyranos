@@ -94,6 +94,8 @@ int     oyEraseDeviceProfile_             (const char* manufacturer,
 
 void oyOpen  (void);
 void oyClose (void);
+/* better use oyExportReset_(EXPORT_SETTING) */
+void oyCloseReal__(void);
 
 
 
