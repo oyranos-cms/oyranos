@@ -266,11 +266,11 @@ oyTESTRESULT_e test_settings ()
     if(!text || !strlen(text))
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      "oyOptions_GetText() returned no text" );
+      "oyOptions_GetText() returned no text             " );
     } else
     {
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
-      "oyOptions_GetText() returned text %d", strlen(text) );
+      "oyOptions_GetText() returned text               %d", strlen(text) );
     }
   }
   
@@ -285,12 +285,12 @@ oyTESTRESULT_e test_settings ()
     if(count == countB)
     {
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
-      "obtained same count from oyOptions_FromText %d|%d",
+      "obtained same count from oyOptions_FromText %d|%d  ",
                       count, countB );
     } else
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      "oyOptions_FromText() returned different count %d|%d\n",
+      "oyOptions_FromText() returned different count %d|%d",
                       count, countB );
     }
   }
@@ -320,7 +320,7 @@ oyTESTRESULT_e test_settings ()
     } else
     {
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
-      "libxml2 returned document" );
+      "libxml2 returned document                        " );
     }
   }
 
@@ -331,6 +331,163 @@ oyTESTRESULT_e test_settings ()
 
   return result;
 }
+
+oyTESTRESULT_e test_profiles ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int i;
+  uint32_t size = 0;
+  int current = -1;
+  int count = 0,
+      countB = 0;
+  char * text = 0,
+      ** texts = 0;
+  const char * tmp = 0;
+  int error = 0;
+  oyProfiles_s * profs = 0;
+  oyProfile_s * p;
+
+  oyExportReset_(EXPORT_SETTING);
+
+  fprintf(stdout, "\n" );
+
+  /* compare the usual conversion profiles with the total of profiles */
+  profs = oyProfiles_ForStd( oyDEFAULT_PROFILE_START, &current, 0 );
+  count = oyProfiles_Count( profs );
+  if(!count)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "No profiles found for oyDEFAULT_PROFILE_START" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "profiles found for oyDEFAULT_PROFILE_START: %d (%d)", count, current );
+  }
+  oyProfiles_Release( &profs );
+
+  texts = oyProfileListGet( 0, &size, 0 );
+  if(!size)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "No profiles found for oyProfileListGet()" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "profiles found for oyProfileListGet:        %d", size );
+  }
+
+  if(size < count)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %d|%d", size, count );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %d|%d", size, count );
+  }
+
+
+  /* compare the default profile spaces with the total of profiles */
+  countB = 0;
+  for(i = oyEDITING_XYZ; i <= oyEDITING_GRAY; ++i)
+  {
+    profs = oyProfiles_ForStd( (oyPROFILE_e)i, &current, 0 );
+
+    count = oyProfiles_Count( profs );
+    countB += count;
+    if(!count)
+    {
+      PRINT_SUB( oyTESTRESULT_FAIL, 
+      "No profiles found for oyPROFILE_e %d             ", i );
+    } else
+    {
+      p = oyProfiles_Get( profs, current );
+      tmp = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+      PRINT_SUB( oyTESTRESULT_SUCCESS, 
+      "profiles found for oyPROFILE_e %d: %d \"%s\"", i, count, tmp ? tmp :"");
+    }
+
+    oyProfiles_Release( &profs );
+  }
+  if(size < countB)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyProfileListGet() returned less than oyPROFILE_e %d|%d", size, count );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyProfileListGet and oyPROFILE_e ok %d|%d", size, countB );
+  }
+
+
+  return result;
+}
+
+oyTESTRESULT_e test_monitor ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int screen1, screen2, screen3;
+  char * block, * text, * display_name;
+  size_t size = 0;
+  oyProfile_s * p, * p2;
+
+  oyExportReset_(EXPORT_SETTING);
+  fprintf(stdout, "\n" );
+
+  screen1 = oyGetScreenFromPosition( 0, 0,0 );
+  screen2 = oyGetScreenFromPosition( 0, 2000,0 );
+  screen3 = oyGetScreenFromPosition( 0, 3000,0 );
+  if(1)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "screens %d %d %d", screen1, screen2, screen3 );
+  }
+
+  display_name = oyGetDisplayNameFromPosition( 0, 0,0, malloc);
+  block = oyGetMonitorProfile( display_name, &size, malloc );
+  p = oyProfile_FromMem( size, block, 0,0 );
+
+  if(block)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "monitor profile from server \"%s\" %d", oyProfile_GetText( p, oyNAME_DESCRIPTION ), size );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "no default monitor profile %d", size );
+  }
+
+  text = oyGetMonitorProfileNameFromDB( display_name, malloc );
+  if(display_name) free(display_name);
+  if(text)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "monitor profile from Oyranos DB %s", text );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+    "no monitor profile from Oyranos DB" );
+  }
+
+  p2 = oyProfile_FromFile( text, 0, 0 );
+
+  if(text && strcmp( oyProfile_GetText( p2, oyNAME_DESCRIPTION ),
+                     oyProfile_GetText( p, oyNAME_DESCRIPTION )) == 0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "monitor profile from Oyranos DB matches the server one" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+    "no monitor profile from Oyranos DB differs from the server one" );
+  }
+
+
+  return result;
+}
+
 
 
 /*  main */
@@ -352,7 +509,8 @@ int main(int argc, char** argv)
   oyTestRun( test_version, "Version matching" );
   oyTestRun( test_elektra, "Elektra" );
   oyTestRun( test_settings, "default oyOptions_s settings" );
-
+  oyTestRun( test_profiles, "Profiles reading" );
+  oyTestRun( test_monitor,  "Monitor profiles" );
 
   /* give a summary */
 
