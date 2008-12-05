@@ -3293,9 +3293,10 @@ int          oyObject_Release         ( oyObject_s      * obj )
   return 0;
 }
 
-/** Function oyObject_Ref
- *  @relates oyObject_s
+/**
  *  @internal
+ *  Function oyObject_Ref
+ *  @relates oyObject_s
  *  @brief   increase the ref counter and return the above zero ref value
  *
  *  @version Oyranos: 0.1.8
@@ -4763,74 +4764,39 @@ int            oyOption_GetId        ( oyOption_s        * obj )
   return -1;
 }
 
-/** Function oyOption_GetText
- *  @relates oyOption_s
- *  @brief   get a text dump 
+/** Function oyOption_GetValueText
+ *  @realtes oyOption_s
+ *  @brief   get value as a text dump 
  *
- *  Only oyOption_s::value is written.
- *
- *  The type argument should select the following string in return: \n
- *  - oyNAME_NAME - a readable XFORMS element
- *  - oyNAME_NICK - the hash ID
- *  - oyNAME_DESCRIPTION - option registration name with key and without value
- *
- *  @param[in,out] obj                 the option
- *  @param         type                oyNAME_NICK is equal to an ID
+ *  @param         obj                 the option
+ *  @param         allocateFunc        user allocator
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.8
- *  @since   2008/11/02 (Oyranos: 0.1.8)
- *  @date    2008/11/02
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/12/05 (Oyranos: 0.1.9)
+ *  @date    2008/12/05
  */
-const char *   oyOption_GetText      ( oyOption_s        * obj,
-                                       oyNAME_e            type )
+char *         oyOption_GetValueText ( oyOption_s        * obj,
+                                       oyAlloc_f           allocateFunc )
 {
   int error = !obj;
-  const char * erg = 0;
+  char * erg = 0;
   oyValue_u * v = 0;
   oyStructList_s * oy_struct_list = 0;
 
   if(!error)
     v = obj->value;
 
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
   error = !v;
 
   if(!error)
-    if(type == oyNAME_DESCRIPTION)
-      error = oyObject_SetName( obj->oy_, obj->registration, type );
-
-  if(!error && 
-     ( type == oyNAME_NICK || type == oyNAME_NAME ))
   {
-    int n = 1, i = 0, j;
+    int n = 1, i = 0;
     char * tmp = oyAllocateFunc_(1024),
          * text = 0;
-    char ** list = 0;
-
-    if(!oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ))
-      oyOption_GetText(obj, oyNAME_DESCRIPTION);
-
-
-    if(type == oyNAME_NICK)
-    {
-      stringAdd ( text, oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ) );
-      stringAdd ( text, ":" );
-    } else if(type == oyNAME_NAME)
-    {
-      list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
-                             '/', &n, oyAllocateFunc_);
-      for( i = 0; i < n; ++i )
-      {
-        for(j = 0; j < i; ++j)
-          stringAdd ( text, " " );
-        stringAdd ( text, "<" );
-        stringAdd ( text, list[i] );
-        if(i+1==n)
-          stringAdd ( text, ">" );
-        else
-          stringAdd ( text, ">\n" );
-      }
-    }
 
     switch(obj->value_type)
     {
@@ -4885,6 +4851,98 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
       if(i)
         stringAdd ( text, ":" );
     }
+
+    erg = oyStringCopy_( text, allocateFunc );
+  
+    oyFree_m_( tmp );
+    oyFree_m_( text );
+  }
+
+
+  return erg;
+}
+
+/** Function oyOption_GetText
+ *  @relates oyOption_s
+ *  @brief   get a text dump 
+ *
+ *  Only oyOption_s::value is written.
+ *
+ *  The type argument should select the following string in return: \n
+ *  - oyNAME_NAME - a readable XFORMS element
+ *  - oyNAME_NICK - the hash ID
+ *  - oyNAME_DESCRIPTION - option registration name with key and without 
+ *                         attributes or value 
+ *
+ *  @param[in,out] obj                 the option
+ *  @param         type                oyNAME_NICK is equal to an ID
+ *  @return                            the text
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/02 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
+ */
+const char *   oyOption_GetText      ( oyOption_s        * obj,
+                                       oyNAME_e            type )
+{
+  int error = !obj;
+  const char * erg = 0;
+  oyValue_u * v = 0;
+
+  if(!error)
+    v = obj->value;
+
+  error = !v;
+
+  if(!error)
+    if(type == oyNAME_DESCRIPTION)
+    {
+      char * text = oyStringCopy_(obj->registration, oyAllocateFunc_),
+           * tmp = oyStrrchr_(text, '/');
+      if(oyStrrchr_(tmp, '.'))
+      {
+        tmp = oyStrrchr_(text, '.');
+        *tmp = 0;
+      }
+      error = oyObject_SetName( obj->oy_, text, type );
+      oyFree_m_(text);
+    }
+
+  if(!error && 
+     ( type == oyNAME_NICK || type == oyNAME_NAME ))
+  {
+    int n = 1, i = 0, j;
+    char * tmp = 0,
+         * text = 0;
+    char ** list = 0;
+
+    if(!oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ))
+      oyOption_GetText(obj, oyNAME_DESCRIPTION);
+
+
+    if(type == oyNAME_NICK)
+    {
+      stringAdd ( text, oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ) );
+      stringAdd ( text, ":" );
+    } else if(type == oyNAME_NAME)
+    {
+      list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
+                             '/', &n, oyAllocateFunc_);
+      for( i = 0; i < n; ++i )
+      {
+        for(j = 0; j < i; ++j)
+          stringAdd ( text, " " );
+        stringAdd ( text, "<" );
+        stringAdd ( text, list[i] );
+        if(i+1==n)
+          stringAdd ( text, ">" );
+        else
+          stringAdd ( text, ">\n" );
+      }
+    }
+
+    tmp = oyOption_GetValueText( obj, oyAllocateFunc_ );
+    stringAdd ( text, tmp );
 
     if(type == oyNAME_NAME)
     {
@@ -5336,6 +5394,9 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
   char * text;
   int i,n;
 
+  oyExportStart_(EXPORT_SETTING);
+  oyExportEnd_();
+
   if(!error && (flags || filter_type))
   {
     /*  6. get stored values */
@@ -5387,7 +5448,6 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       /* Elektra settings, modify value */
       if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
       {
-        oyExportStart_(EXPORT_SETTING);
         text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                 oyAllocateFunc_ );
         if(text && oyStrlen_(text))
@@ -5395,8 +5455,8 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
           error = oyOption_SetFromText( o, text );
           o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
           o->source = oyOPTIONSOURCE_USER;
+          oyFree_m_( text );
         }
-        oyFree_m_( text );
       }
 
       if(!skip)
@@ -5511,9 +5571,10 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
   return s;
 }
 
-/** Function oyOptions_Copy_
- *  @relates oyOptions_s
+/**
  *  @internal
+ *  Function oyOptions_Copy_
+ *  @relates oyOptions_s
  *  @brief   real copy a options object
  *
  *  @param[in]     options             options object

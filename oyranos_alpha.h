@@ -584,6 +584,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
 int            oyOption_SetFromText  ( oyOption_s        * obj,
                                        const char        * text );
+char *         oyOption_GetValueText ( oyOption_s        * obj,
+                                       oyAlloc_f           allocateFunc );
 int            oyOption_Clear        ( oyOption_s        * s );
 
 
