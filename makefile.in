@@ -376,6 +376,8 @@ test2:	$(LIBSONAMEFULL)
 	
 
 check:	tests/test_oyranos
+	${MAKE} install_bin
+	${MAKE} install-icc
 	echo run tests/test_oyranos
 	tests/test_oyranos
 

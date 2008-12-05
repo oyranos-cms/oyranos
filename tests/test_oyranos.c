@@ -341,10 +341,8 @@ oyTESTRESULT_e test_profiles ()
   int current = -1;
   int count = 0,
       countB = 0;
-  char * text = 0,
-      ** texts = 0;
+  char ** texts = 0;
   const char * tmp = 0;
-  int error = 0;
   oyProfiles_s * profs = 0;
   oyProfile_s * p;
 
