@@ -129,6 +129,7 @@ TEST_CPP = \
 	tests/intptr_test.c \
 	tests/lib_test.cxx \
 	tests/library.c \
+	tests/test_oyranos.c \
 	tests/tiff_test.cxx
 TEST_H = \
 	tests/ciede2000testdata.h
@@ -196,7 +197,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(Flmm_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
-	test2.o test.o
+	test2.o tests/test_oyranos.o test.o
 
 
 INCL_DEP = $(INCL) $(SOURCES)
@@ -374,14 +375,23 @@ test2:	$(LIBSONAMEFULL)
 	test2.o `oyranos-config --ldstaticflags`
 	
 
-check:	test
-	echo run ./test
-	./test
+check:	tests/test_oyranos
+	echo run tests/test_oyranos
+	tests/test_oyranos
 
 test:	test.o
 	$(CC) $(CFLAGS) -o test \
 	test.o \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
+
+tests/test_oyranos:	tests/test_oyranos.o
+	$(CC) $(CFLAGS) -o tests/test_oyranos \
+        tests/test_oyranos.o \
+        $(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
+
+tests/test_oyranos.o:	tests/test_oyranos.c oyranos_version.h
+	echo Compiling tests/test_oyranos.c
+	$(CC) -I./ -I../ $(CFLAGS) -pedantic -o $@ -c $<
 
 $(EXAMPLE1): $(EXAMPLE1_C)
 	echo Compile $@ ...
@@ -668,7 +678,7 @@ clean:
 	$(CLEAN_OBJECTS) \
 	$(TARGET)-policy \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	test2 test $(EXAMPLES) \
+	test2 test tests/test_oyranos $(EXAMPLES) \
 	$(TARGET)-config-fltk; \
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
