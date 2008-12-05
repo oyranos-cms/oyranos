@@ -110,7 +110,8 @@ void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
 void oyCloseReal__() { kdbClose( oy_handle_ );
-                       oy_handle_ = 0; }
+                       oy_handle_ = 0;
+                       oyranos_init = 0; }
 
 /* oyranos part */
 
