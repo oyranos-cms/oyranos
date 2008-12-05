@@ -5022,9 +5022,19 @@ int            oyOption_Match_       ( oyOption_s        * option_a,
 {
   int erg = 0;
 
-  if( option_a && option_b && 
-      oyStrcmp_( option_a->registration, option_b->registration ) == 0 )
-    erg = 1;
+  if( option_a && option_b )
+  {
+    char * a =  oyFilterRegistrationToText( option_a->registration,
+                                            oyFILTER_REG_TYPE, 0 );
+    char * b =  oyFilterRegistrationToText( option_b->registration,
+                                            oyFILTER_REG_TYPE, 0 );
+
+    if( oyStrcmp_( a, b ) == 0 )
+      erg = 1;
+
+    oyDeAllocateFunc_(a);
+    oyDeAllocateFunc_(b);
+  }
 
   return erg;
 }
