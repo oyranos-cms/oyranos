@@ -240,8 +240,8 @@ all:	config.log.h mkdepend \
 	( cd default_profiles; \
 	for prof in $(DEFAULT_PROFILES); do \
 	     test -d $${prof} && \
-	         echo -e "$${prof} profiles will be included" || \
-	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	         echo "$${prof} profiles will be included" || \
+	         echo "$${prof} profile directory is not found - ignoring"; \
 	done; ) || echo "default_profiles directory is not found - ignoring"
 	echo ... $@ done
 
@@ -512,7 +512,7 @@ install_bin:	all
 	$(INSTALL) -m 644 icc34.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
-	test "$(FLTK_GUI)" && $(MAKE) DESTDIR=$(DESTDIR) install_gui || echo -e "GUI not installed"
+	test "$(FLTK_GUI)" && $(MAKE) DESTDIR=$(DESTDIR) install_gui || echo "GUI not installed"
 	echo ... binary Installation finished
 
 # install recursive
@@ -561,7 +561,7 @@ install_profiles:
 	for prof in $(DEFAULT_PROFILES); do \
 	     test -d $${prof} && \
 	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
-	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	         echo "$${prof} profile directory is not found - ignoring"; \
 	done; ) || echo "default_profiles directory is not found - ignoring"
 
 install_linguas:
@@ -633,7 +633,7 @@ uninstall_profiles:
 	   for prof in $(DEFAULT_PROFILES); do \
 	     test -d $${prof} && \
 	         (cd $${prof}; $(MAKE)  DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) uninstall) || \
-	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	         echo "$${prof} profile directory is not found - ignoring"; \
 	   done; \
         ) || echo "no profile directory found"
 	echo ... done uninstalling profiles
@@ -764,7 +764,7 @@ targz:
 	     test -d $${prof} && \
 	         mkdir -p ../$(TARGET)-$(VERSION)/default_profiles/$${prof}; \
 	         (cd $${prof}; echo bin in `pwd`; $(MAKE) DESTDIR=../../$(TARGET)-$(VERSION)/default_profiles/$${prof} copy_files; $(RM) ../../$(TARGET)-$(VERSION)/default_profiles/$${prof}/Makefile) || \
-	         echo -e "$${prof} profile directory is not found - ignoring"; \
+	         echo "$${prof} profile directory is not found - ignoring"; \
 	done;
 	tar cf - $(TARGET)-$(VERSION)/ \
 	| gzip > $(TARGET)-$(MTIME).tgz
