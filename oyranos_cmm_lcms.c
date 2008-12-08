@@ -19,7 +19,8 @@
 
 #include <lcms.h>
 
-#include "oyranos_cmm.h"         /* the API this CMM implements */
+#include "oyranos_cmm.h"         /* the API's this CMM implements */
+#include "oyranos_cmms.h"        /* the API's this CMM uses from Oyranos */
 
 #include <math.h>
 
@@ -257,7 +258,7 @@ int          lcmsCMMProfile_Open     ( oyStruct_s        * data,
   int error = 0;
 
   if(oy->type != oyOBJECT_CMM_POINTER_S || 
-     strcmp(oy->cmm, CMM_NICK) != 0)
+     !oyCMMlibMatchesCMM(oy->lib_name, CMM_NICK) != 0)
     error = 1;
 
   if(!error)
@@ -314,11 +315,10 @@ int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
 
   if(cmm_ptr && cmm_ptr->ptr && strlen(cmm_ptr->resource))
   {
-    int * cmm_id = (int*)cmm_ptr->cmm;
     int * res_id = (int*)cmm_ptr->resource;
-    int * oy_id = (int*)CMM_NICK;
 
-    if(*cmm_id != *oy_id || *res_id != *((int*)(resource)) )
+    if(!oyCMMlibMatchesCMM(cmm_ptr->lib_name, CMM_NICK) ||
+       *res_id != *((int*)(resource)) )
       error = 1;
   } else {
     error = 1;
@@ -1077,7 +1077,7 @@ oyCMMInfo_s lcms_cmm_module = {
   {oyOBJECT_NAME_S, 0,0,0,"lcms", "Little CMS", "LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license."},
   {oyOBJECT_NAME_S, 0,0,0,"Marti", "Marti Maria", "littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"},
   {oyOBJECT_NAME_S, 0,0,0,"MIT", "Copyright (c) 1998-2008 Marti Maria Saguer", "MIT license: http://www.opensource.org/licenses/mit-license.php"},
-  108,
+  OYRANOS_VERSION,
 
   (oyCMMapi_s*) & lcms_api1,
   0,

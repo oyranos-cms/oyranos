@@ -166,7 +166,7 @@ oyCMMInfo_s oyX1_cmm_module = {
   {oyOBJECT_NAME_S, 0,0,0, "oyX1", "Oyranos X11", "The window support backend of Oyranos."},
   {oyOBJECT_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"},
   {oyOBJECT_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
-  108,
+  OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyX1_api2,
   1,

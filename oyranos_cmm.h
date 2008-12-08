@@ -67,7 +67,7 @@ typedef struct {
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
-  char                 cmm[5];         /*!< the CMM */
+  char               * lib_name;       /*!< the CMM */
   char                 func_name[32];  /*!< optional the CMM's function name */
   oyPointer            ptr;            /*!< a CMM's data pointer */
   char                 resource[5];    /**< the resource type, e.g. oyCMM_PROFILE, oyCMM_COLOUR_CONVERSION */
