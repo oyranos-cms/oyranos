@@ -400,9 +400,8 @@ if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
   version=`uname -r`
   echo_="Darwin $arch $version   detected";
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  test -n "$ECHO" && $ECHO "APPLE = 1" >> $CONF
-  test -n "$ECHO" && $ECHO "APPLE = 1" >> $CONF_I18N
-  test -n "$ECHO" && $ECHO "OSX_H = -DHAVE_OSX" >> $CONF
+  APPLE="1"
+  OSX_H="-DHAVE_OSX"
   test -n "$ECHO" && $ECHO "#define APPLE 1" >> $CONF_H
   OSUNAME=Darwin
 else
@@ -462,7 +461,6 @@ else
   fi
 fi
 OS_EXT=""
-test -n "$ECHO" && $ECHO "MAKEFILE_ARCH = Makefile$OS_EXT"  >> $CONF
 BARCH=""
 
 # detect the compilers bus width options
@@ -624,7 +622,7 @@ if [ $OSUNAME = "Darwin" ]; then
   GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
   test -n "$ECHO" && $ECHO "DSO_LIB_VERSION = -install_name \$(libdir)/" >> $CONF
   test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib $GCC_VERSION_INFO  \$(DSO_LIB_VERSION)" >> $CONF
-  test -n "$ECHO" && $ECHO "COPY = cp -pv" >> $CONF
+  COPY="cp -pv"
   LDFLAGS="$LDFLAGS -L."
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
   CFLAGS="$CFLAGS -DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
@@ -647,7 +645,8 @@ else
         --from-code=utf-8" >> $CONF
   oyranos_add="\$ltdl \$xml2"
   if [ $OSUNAME = "Linux" ]; then
-    test -n "$ECHO" && $ECHO "COPY = cp -vdpa" >> $CONF
+    COPY="cp -vdpa"
+    RM="rm -vf"
     LDFLAGS="$LDFLAGS -L."
     test -n "$ECHO" && $ECHO "LINK_FLAGS_STATIC =" >> $CONF
     if [ -n "$rpath" ]; then 
@@ -658,7 +657,8 @@ else
     CXXFLAGS="$CXXFLAGS -fPIC -DPIC"
     INSTALL="install -p $DEBUG_SWITCH"
   else
-    test -n "$ECHO" && $ECHO "COPY = cp -p" >> $CONF
+    COPY="cp -p"
+    RM="rm -f"
     if [ $OSUNAME = "BSD" ]; then
       LDFLAGS="$LDFLAGS"
       if [ -n "$rpath" ]; then 
@@ -678,12 +678,18 @@ else
     test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
     CFLAGS="$CFLAGS -fPIC"
     CXXFLAGS="$CXXFLAGS -fPIC"
-    test -n "$ECHO" && $ECHO "RM = rm -f" >> $CONF
-    test -n "$ECHO" && $ECHO "RM = rm -f" >> $CONF_NV
-    test -n "$ECHO" && $ECHO "RM = rm -vf" >> $PRINT_CONF
-    test -n "$ECHO" && $ECHO "RM = rm -vf" >> $BASE_CONF
   fi
 fi
+
+for i in $MAKEFILE_DIR; do
+  test -n "$ECHO" && $ECHO "COPY = $COPY" >> "$i/makefile"
+  test -n "$ECHO" && $ECHO "RM = $RM" >> "$i/makefile"
+  test -n "$ECHO" && $ECHO "$osuname" >> "$i/makefile"
+  test -n "$ECHO" && $ECHO "OSX_H = $OSX_H" >> "$i/makefile"
+  test -n "$ECHO" && $ECHO "EXEC_END = $EXEC_END" >> "$i/makefile"
+  test -n "$ECHO" && $ECHO "MAKEFILE_ARCH = Makefile$OS_EXT" >> "$i/makefile"
+done
+
 
 # export
 for i in CFLAGS CXXFLAGS LDFLAGS; do
