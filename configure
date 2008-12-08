@@ -461,7 +461,6 @@ else
   fi
 fi
 OS_EXT=""
-BARCH=""
 
 # detect the compilers bus width options
 rm -f tests/intptr_test
@@ -479,7 +478,6 @@ if [ -f tests/intptr_test ]; then
   elif [ $INTPTR_SIZE -eq 8 ]; then
     echo_="64-bit build            detected"
     test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
-    BARCH="64"
   elif [ $INTPTR_SIZE -ne 0 ]; then
     echo_="$INTPTR_SIZE-byte intptr_t          detected"
   else
@@ -506,9 +504,8 @@ if [ $? = 0 ]; then
     fi
   fi
 fi
-LIBDIR="lib"$BARCH
-test -n "$ECHO" && $ECHO "BARCH=$BARCH" >> $CONF
-export OSUNAME LIBDIR BARCH
+LIBDIR="lib"
+export OSUNAME LIBDIR
 
 
 # exec_prefix bindir sbindir libdir includedir datadir
