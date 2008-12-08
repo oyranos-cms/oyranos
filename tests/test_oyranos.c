@@ -91,7 +91,6 @@ oyTESTRESULT_e test_version()
 {
   char * vs = oyVersionString(2,0);
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  int i;
 
   fprintf(stdout, "\n" );
   fprintf(stdout, "compiled version:     %d\n", OYRANOS_VERSION );
@@ -269,7 +268,7 @@ oyTESTRESULT_e test_settings ()
       "oyOptions_FindString() returned one option" );
   }
 
-  ptr = xmlSaveToBuffer( buf, 0, 0 );
+  /*ptr = xmlSaveToBuffer( buf, 0, 0 );*/
 
 
   text = oyStringCopy_(oyOptions_GetText( opts, oyNAME_NAME ), oyAllocateFunc_);
@@ -337,7 +336,7 @@ oyTESTRESULT_e test_settings ()
   }
 
   xmlDocDumpFormatMemory( doc, &text, &i, 1 );
-  xmlSaveDoc( ptr, doc );
+  /*xmlSaveDoc( ptr, doc );*/
 
   oyOptions_Release( &opts );
 
