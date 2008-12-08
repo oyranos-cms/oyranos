@@ -259,13 +259,13 @@ fi
 if [ "-e" = "`echo -e `" ]; then
   e=""
 else
-  e=-e
+  e=""
 fi
 
 # config.log will not work as expected if called as pure BSD shell
 test -z "$zeile" && zeile="exit 1" || echo ""
 
-# RPM spec file generation
+# no RPM spec file generation
 if [ 0 -eq $rpm ]; then
   ECHO="echo"
   RPMECHO="echo"
