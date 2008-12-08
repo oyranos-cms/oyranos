@@ -455,7 +455,7 @@ docu:
 	echo ... Documentation done
 
 # the copy part for this directory level
-install_bin:	all
+install_bin:	all uninstall_bin
 	echo Installing binaries ...
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
