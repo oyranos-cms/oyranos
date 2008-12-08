@@ -67,6 +67,9 @@ void         oyModulRefreshI18N_     (const char *cmm);
 void         oyModulsRefreshI18N_    (void);
 
 
+int              oyCMMlibMatchesCMM  ( const char        * lib_name,
+                                       const char        * cmm );
+
 #ifdef __cplusplus
 } /* extern "C" */
 } /* namespace oyranos */
