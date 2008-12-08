@@ -605,7 +605,7 @@ if [ $nodeps -eq 1 ]; then
   GCC_MM="echo \"\#disable dependency tracking\""
   nodeps_config_opt=--disable-dependency-tracking
 else
-  GCC_MM="cc -MM"
+  GCC_MM="$CC -MM"
 fi
 
 OYAPI="#define OYAPI"
@@ -613,7 +613,14 @@ OYEXPORT="#define OYEXPORT"
 
 # set some compiler and linker options
 
-test -n "$ECHO" && $ECHO "MAKEDEPEND	= $GCC_MM" >> $CONF
+if [ `$CC -MM oyranos.h > test_tmp.txt; cat test_tmp.txt | grep oyranos.o | wc -l` -gt 0 ]; then
+  MAKEDEPEND="$GCC_MM"
+else
+  MAKEDEPEND="$echo #"
+fi
+rm test_tmp.txt
+
+test -n "$ECHO" && $ECHO "MAKEDEPEND	= $MAKEDEPEND" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "LIBEXT = .dylib" >> $CONF
   GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
