@@ -378,6 +378,8 @@ test2:	$(LIBSONAMEFULL)
 check:	tests/test_oyranos
 	${MAKE} install_bin
 	${MAKE} install-icc
+	echo current git version is:
+	n=0; for i in `git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
 	tests/test_oyranos
 
