@@ -387,6 +387,7 @@ test:	test.o
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
 tests/test_oyranos:	tests/test_oyranos.o
+	echo Linking tests/test_oyranos
 	$(CC) $(CFLAGS) -o tests/test_oyranos \
         tests/test_oyranos.o \
         $(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
