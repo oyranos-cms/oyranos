@@ -89,14 +89,26 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 
 oyTESTRESULT_e test_version()
 {
-  fprintf(stdout, "\n" );
-  fprintf(stdout, "compiled version: %d\n", OYRANOS_VERSION );
-  fprintf(stdout, "runtime version: %d\n", oyVersion(0) );
-  fprintf(stdout, "compiled git version: %s\n", OYRANOS_GIT_MASTER );
-  fprintf(stdout, "runtime git version: %s\n", oyVersionString(2,0) );
+  char * vs = oyVersionString(2,0);
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  int i;
 
-  return !(OYRANOS_VERSION == oyVersion(0) &&
-           strcmp(OYRANOS_GIT_MASTER, oyVersionString(2,0)) == 0);
+  fprintf(stdout, "\n" );
+  fprintf(stdout, "compiled version:     %d\n", OYRANOS_VERSION );
+  fprintf(stdout, " runtime version:     %d\n", oyVersion(0) );
+  fprintf(stdout, "compiled git version: %s\n", OYRANOS_GIT_MASTER );
+  fprintf(stdout, " runtime git version: %s\n", vs ? vs : "---" );
+
+  if(OYRANOS_VERSION == oyVersion(0))
+    result = oyTESTRESULT_SUCCESS;
+  else
+    result = oyTESTRESULT_FAIL;
+
+  if(!result && vs && strlen(OYRANOS_GIT_MASTER))
+    if(strcmp(OYRANOS_GIT_MASTER, vs?vs:"quark") != 0)
+      result = oyTESTRESULT_FAIL;
+
+  return result;
 }
 
 #include "oyranos_elektra.h"

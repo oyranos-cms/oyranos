@@ -375,7 +375,7 @@ test2:	$(LIBSONAMEFULL)
 	test2.o `oyranos-config --ldstaticflags`
 	
 
-check:	tests/test_oyranos
+check:	all tests/test_oyranos
 	${MAKE} install_bin
 	${MAKE} install-icc
 	echo current git version is:
@@ -578,6 +578,8 @@ install_linguas:
 # build a source distribution package
 dist: targz
 	test -d ../Archiv && mv -v ../Archiv/$(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz || mv -v $(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz
+
+dist-gzip:	dist
 
 # build a binary rpm package
 rpm:	dist
