@@ -390,12 +390,15 @@ oyTESTRESULT_e test_profiles ()
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %d|%d", size, count );
-  } else
+  } else if(count)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyProfileListGet and oyDEFAULT_PROFILE_START ok %d|%d", size, count );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %d|%d", size, count );
   }
-
 
   /* compare the default profile spaces with the total of profiles */
   countB = 0;
