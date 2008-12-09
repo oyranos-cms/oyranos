@@ -5353,7 +5353,8 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
   } else
   {
     s->value_type = oyVAL_STRING;
-    s->value->string = oyGetDefaultProfileName( opt->id, s->oy_->allocateFunc_ );
+    s->value->string = oyGetDefaultProfileName( (oyPROFILE_e)opt->id,
+                                                s->oy_->allocateFunc_ );
     if(!s->value->string)
       s->value->string = oyStringCopy_( opt->default_string, s->oy_->allocateFunc_);
     s->source = oyOPTIONSOURCE_FILTER;

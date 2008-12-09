@@ -396,7 +396,7 @@ tests/test_oyranos:	tests/test_oyranos.o
 
 tests/test_oyranos.o:	tests/test_oyranos.c oyranos_version.h
 	echo Compiling tests/test_oyranos.c
-	$(CC) -I./ -I../ $(CFLAGS) -pedantic -o $@ -c $<
+	$(CC) -I./ -I../ $(CFLAGS) -o $@ -c $<
 
 $(EXAMPLE1): $(EXAMPLE1_C)
 	echo Compile $@ ...
