@@ -1,11 +1,10 @@
-.TH "oyranos-config" 1 "February 20, 2007" "User Commands"
+.TH "oyranos-config" 1 "December 09, 2008" "User Commands"
 .SH NAME
 oyranos-config \- Oyranos CMS configuration query for builds and locations
 .SH SYNOPSIS
 .B oyranos-config
 [--version --api-version --num-version
  --cflags --ldflags --ldstaticflags
- --ld_x_flags --ld_x_staticflags
  --syscolordir --usercolordir
  --iccdirname --settingsdirname]
 .SH DESCRIPTION
@@ -29,12 +28,6 @@ linker flags for a C programm to link against the Oyranos library
 .TP
 .B \--ldstaticflags
 linker flags for a C programm to link statically against the Oyranos library
-.TP
-.B \--ld_x_flags
-linker flags for a C programm to link against the Oyranos and the Oyranos monitor libraries
-.TP
-.B \--ld_x_staticflags
-linker flags for a C programm to link statically against the Oyranos and the Oyranos monitor libraries
 .TP
 .B \--syscolordir
 get the systems CMS base directory name
