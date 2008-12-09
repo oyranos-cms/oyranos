@@ -6627,7 +6627,14 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
 
   if(error)
   {
-    WARNc1_S("Channels <= 0 %d", s->channels_n_)
+    icHeader *h = 0;
+    icSignature sig = 0;
+
+    h = (icHeader*) s->block_;
+
+    sig = oyValueCSpaceSig( h->colorSpace );
+
+    WARNc3_S("Channels <= 0 %d %s %s", s->channels_n_, oyICCColourSpaceGetName(sig), oyICCColourSpaceGetName(h->colorSpace))
   }
 
   return s;
@@ -16466,93 +16473,103 @@ int          oyIdToCMM               ( uint32_t            cmmId,
  *  @{
  */
 
+int                oyBigEndian       ( void )
+{
+  int big = 0;
+  char testc[2] = {0,0};
+  uint16_t *testu = (uint16_t*)testc;
+  *testu = 1;
+  big = testc[1];
+  return big;
+}
+
 
 /** @brief MSB<->LSB */
 icUInt16Number
 oyValueUInt16 (icUInt16Number val)
 {
-#if BYTE_ORDER == LITTLE_ENDIAN
-# define BYTES 2
-# define KORB  4
-  unsigned char        *temp  = (unsigned char*) &val;
-  unsigned char  korb[KORB];
-  int i;
-  for (i = 0; i < KORB ; i++ )
-    korb[i] = (int) 0;  /* empty */
-
+  if(!oyBigEndian())
   {
-  int klein = 0,
-      gross = BYTES - 1;
-  for (; klein < BYTES ; klein++ ) {
-    korb[klein] = temp[gross--];
-  }
-  }
+  # define BYTES 2
+  # define KORB  4
+    unsigned char        *temp  = (unsigned char*) &val;
+    unsigned char  korb[KORB];
+    int i;
+    for (i = 0; i < KORB ; i++ )
+      korb[i] = (int) 0;  /* empty */
 
-  {
-  unsigned int *erg = (unsigned int*) &korb[0];
+    {
+    int klein = 0,
+        gross = BYTES - 1;
+    for (; klein < BYTES ; klein++ ) {
+      korb[klein] = temp[gross--];
+    }
+    }
 
-# undef BYTES
-# undef KORB
-  return (long)*erg;
-  }
-#else
+    {
+    unsigned int *erg = (unsigned int*) &korb[0];
+
+  # undef BYTES
+  # undef KORB
+    return (long)*erg;
+    }
+  } else
   return (long)val;
-#endif
 }
 
 icUInt32Number
 oyValueUInt32 (icUInt32Number val)
 {
-#if BYTE_ORDER == LITTLE_ENDIAN
-  unsigned char        *temp = (unsigned char*) &val;
-
-  unsigned char  uint32[4];
-
-  uint32[0] = temp[3];
-  uint32[1] = temp[2];
-  uint32[2] = temp[1];
-  uint32[3] = temp[0];
-
+  if(!oyBigEndian())
   {
-  unsigned int *erg = (unsigned int*) &uint32[0];
+    unsigned char        *temp = (unsigned char*) &val;
+
+    unsigned char  uint32[4];
+
+    uint32[0] = temp[3];
+    uint32[1] = temp[2];
+    uint32[2] = temp[1];
+    uint32[3] = temp[0];
+
+    {
+    unsigned int *erg = (unsigned int*) &uint32[0];
 
 
-  return (icUInt32Number) *erg;
-  }
-#else
-  return (icUInt32Number)val;
-#endif
+    return (icUInt32Number) *erg;
+    }
+  } else
+    return (icUInt32Number)val;
 }
 
 unsigned long
 oyValueUInt64 (icUInt64Number val)
 {
-#if BYTE_ORDER == LITTLE_ENDIAN
-  unsigned char        *temp  = (unsigned char*) &val;
-
-  unsigned char  uint64[8];
-  int little = 0,
-      big    = 8;
-
-  for (; little < 8 ; little++ ) {
-    uint64[little] = temp[big--];
-  }
-
+  if(!oyBigEndian())
   {
-  unsigned long *erg = (unsigned long*) &uint64[0];
+    unsigned char        *temp  = (unsigned char*) &val;
 
-  return (long)*erg;
-  }
-#else
+    unsigned char  uint64[8];
+    int little = 0,
+        big    = 8;
+
+    for (; little < 8 ; little++ ) {
+      uint64[little] = temp[big--];
+    }
+
+    {
+    unsigned long *erg = (unsigned long*) &uint64[0];
+
+    return (long)*erg;
+    }
+  } else
   return (long)val;
-#endif
 }
 
 #define icValue_to_icUInt32Number_m(funkname, typ) \
 typ \
 funkname (typ val) \
 { \
-  icUInt32Number i = (typ) val; \
+  icUInt32Number i = (icUInt32Number) val; \
   return (typ) oyValueUInt32 (i); \
 }
 
