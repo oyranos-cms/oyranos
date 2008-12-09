@@ -6602,8 +6602,20 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
   if(!error)
     error = oyProfile_GetHash_( s );
 
+  if(error)
+  {
+    WARNc1_S( "hash error %d", error )
+    return 0;
+  }
+
   if(!error)
     error = !oyProfile_GetSignature ( s, oySIGNATURE_COLOUR_SPACE );
+
+  if(error)
+  {
+    WARNc1_S( "signature error %d", error )
+    return 0;
+  }
 
   if(!error)
   {
@@ -6615,7 +6627,7 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
 
   if(error)
   {
-    WARNc_S("Could not create structure for profile.")
+    WARNc1_S("Channels <= 0 %d", s->channels_n_)
   }
 
   return s;
