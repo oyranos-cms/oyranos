@@ -579,7 +579,7 @@ oyGetAllScreenNames_            (const char *display_name,
 
   display = oyMonitor_device_( disp );
 
-  if( (len = ScreenCount( display )) == 0 )
+  if( !display || (len = ScreenCount( display )) == 0 )
     return 0;
 
 # if HAVE_XIN
