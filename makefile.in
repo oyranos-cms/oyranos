@@ -375,9 +375,7 @@ test2:	$(LIBSONAMEFULL)
 	test2.o `oyranos-config --ldstaticflags`
 	
 
-check:	all tests/test_oyranos
-	${MAKE} install_bin
-	${MAKE} install-icc
+check:	all install_bin install-icc tests/test_oyranos
 	echo current git version is:
 	n=0; for i in `git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
@@ -455,7 +453,7 @@ docu:
 	echo ... Documentation done
 
 # the copy part for this directory level
-install_bin:	all uninstall_bin
+install_bin:	all uninstall_bin install_gui
 	echo Installing binaries ...
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
@@ -512,23 +510,15 @@ install_bin:	all uninstall_bin
 	$(INSTALL) -m 644 icc34.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
-	test "$(FLTK_GUI)" && $(MAKE) DESTDIR=$(DESTDIR) install_gui || echo "GUI not installed"
 	echo ... binary Installation finished
 
 # install recursive
-install:
-	$(MAKE) DESTDIR=$(DESTDIR) uninstall
-	$(MAKE) DESTDIR=$(DESTDIR) install-main
-	$(MAKE) DESTDIR=$(DESTDIR) install-icc
+install:	uninstall install-main install-icc
 	echo ... $@ done
 
-install-main:
-	$(MAKE) DESTDIR=$(DESTDIR) install_bin
-	$(MAKE) DESTDIR=$(DESTDIR) install_linguas
-	$(MAKE) DESTDIR=$(DESTDIR) install_docu
+install-main:	install_bin install_linguas install_docu
 
-install-icc:
-	$(MAKE) DESTDIR=$(DESTDIR) install_profiles
+install-icc:	install_profiles
 
 # synonymes
 doc:		docu
@@ -560,7 +550,7 @@ install_profiles:
 	( cd default_profiles; \
 	for prof in $(DEFAULT_PROFILES); do \
 	     test -d $${prof} && \
-	         (cd $${prof}; $(MAKE) DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
+	         (cd $${prof}; $(MAKE) DESTDIR="$(DESTDIR)" SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
 	         echo "$${prof} profile directory is not found - ignoring"; \
 	done; ) || echo "default_profiles directory is not found - ignoring"
 
@@ -596,11 +586,7 @@ rpm:	dist
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 
 # remove everything previously installed
-uninstall:
-	$(MAKE) DESTDIR=$(DESTDIR) uninstall_bin
-	$(MAKE) DESTDIR=$(DESTDIR) uninstall_docu
-	$(MAKE) DESTDIR=$(DESTDIR) uninstall_profiles
-	$(MAKE) DESTDIR=$(DESTDIR) uninstall_linguas
+uninstall:	uninstall_bin uninstall_docu uninstall_profiles uninstall_linguas
 	echo ... $@ done
 
 uninstall_bin:
@@ -632,7 +618,7 @@ uninstall_profiles:
 	(  cd default_profiles; \
 	   for prof in $(DEFAULT_PROFILES); do \
 	     test -d $${prof} && \
-	         (cd $${prof}; $(MAKE)  DESTDIR=$(DESTDIR) SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) uninstall) || \
+	         (cd $${prof}; $(MAKE)  DESTDIR="$(DESTDIR)" SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) uninstall) || \
 	         echo "$${prof} profile directory is not found - ignoring"; \
 	   done; \
         ) || echo "no profile directory found"
