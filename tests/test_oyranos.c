@@ -502,6 +502,15 @@ oyTESTRESULT_e test_monitor ()
 
 
 
+#define TEST_RUN( prog, text ) { \
+  if(argc > 1) { \
+    for(i = 1; i < argc; ++i) \
+      if(strstr(text, argv[i]) != 0) \
+        oyTestRun( prog, text ); \
+  } else \
+    oyTestRun( prog, text ); \
+}
+
 /*  main */
 int main(int argc, char** argv)
 {
@@ -518,11 +527,11 @@ int main(int argc, char** argv)
 
   /* do tests */
 
-  oyTestRun( test_version, "Version matching" );
-  oyTestRun( test_elektra, "Elektra" );
-  oyTestRun( test_settings, "default oyOptions_s settings" );
-  oyTestRun( test_profiles, "Profiles reading" );
-  oyTestRun( test_monitor,  "Monitor profiles" );
+  TEST_RUN( test_version, "Version matching" );
+  TEST_RUN( test_elektra, "Elektra" );
+  TEST_RUN( test_settings, "default oyOptions_s settings" );
+  TEST_RUN( test_profiles, "Profiles reading" );
+  TEST_RUN( test_monitor,  "Monitor profiles" );
 
   /* give a summary */
 
