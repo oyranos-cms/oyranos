@@ -627,6 +627,7 @@ if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "DSO_LIB_VERSION = -install_name \$(libdir)/" >> $CONF
   test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib $GCC_VERSION_INFO  \$(DSO_LIB_VERSION)" >> $CONF
   COPY="cp -pv"
+  RM="rm -vf"
   LDFLAGS="$LDFLAGS -L."
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
   CFLAGS="$CFLAGS -DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
