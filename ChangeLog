@@ -1,3 +1,141 @@
+Version 0.1.9
+
+Kai-Uwe Behrmann (134):
+	* [doc]: minor changes
+	* [doc]: minor changes
+	* [alpha]: remove unused plugin API's
+	* move image data out of oyFilterNode_s; add profile to oyConversion_CreateBasic
+	* [alpha]: add oyStruct_s     * oy_struct to oyValue_u
+	* [alpha]: revert adding of ia profiles argument from oyConversion_CreateBasic
+	* [alpha]: oyModuleGetActual() selects from the oyFILTER_TYPE_e    type arg
+	* [alpha]: generalise oyColourConversion_GetID_ -> oyColourContextGetID_()
+	* [alpha]: header change to 70e80a4  oyModuleGetActual()'s new arg type
+	* [alpha]: remove old oyModuleGetActual declaration
+	* [alpha]: split the ICC support code out to a new oyranos_icc.c
+	* [docu]: smaller doxygen output (git builds are broken since yesterday)
+	* [alpha]: complete 6e660e38 new oyranos_icc.c
+	* [alpha]: add a parant_type_ member to oyStructList_s
+	* [alpha]: add oyObject_Hashed_ internally
+	* [alpha]: add oyStructList_s::parent_type_ (see d9d58953fe)
+	* [alpha]: add oyValueTypeText() to output XFORM text
+	* [alpha]: move oyFilter_s::image_ -> oyFilterSocket_s::data
+	* [docu]: try to make the scheme graphis more clear
+	* [alpha]: add oyFilter_Node_s::backend_data to hold the CMM context
+	* [alpha]: add oyOption_GetText to serialise to XFORMS text
+	* [alpha]: add oyContextGetID_() to work on oyFilterNode_s
+	* [alpha]: add oyFilterNode_ContextSet_() and oyFilterNode_GetNextFromLinear_()
+	* [alpha]: corrects the c5a8c01dd patch applying
+	* [lcms]: get the image data correctly after the previous changes
+	* [conf]: switch to v0.1.9
+	* [alpha]: change CMM APIs to see oyFilterNode_s for context creation
+	* [conf]: let configure fail for missed libraries, provide --disable-libxxx
+	* [alpha]: fix a wrong access in the graph
+	* [test]: update to changed alpha API
+	* [alpha]: more fixes to run test.c's simple graph
+	* [alpha]: remove the oyFilter_s::profiles_ member
+	* [build]: beautify compiling by removing C++ comments from C sources
+	* [alpha]: move oyFilter_TextToInfo -> oyFilterNode_TextToInfo; add oyStructList_GetID
+	* [alpha]: adding oyFilterNode_DataGet_()
+	*[alpha]: new oyOptions_Find()
+	* [API] fix defaults for internal profile settings
+	* [alpha]: remove one arg of oyOption_New()
+	* [API]: one more step for XML/Elektra namespace synchronisation
+	* [alpha]: remove oyOptions_s ranges; add source hint
+	* [alpha]: implement oyOption_FromStatic_()
+	* [alpha]: minor change
+	* [alpha]: add default settings as XFORMS to "oyra" oyranos_cmm_oyra_settings.c
+	* [docu]: update to new download www page
+	* [alpha]: oyOptions_FromDefaults() -> oyOptions_ForFilter() + oyOptions_FromText() + oyFilterRegistrationToType()
+	* [lcms]: add CMM specific options
+	* [docu]: formatting and minor tweaks
+	* [conf]: check for libxml2
+	* [build]: link against libxml2
+	* [and]: add internal oyXMLgetElement_() to parse xpath expressions
+	* [alpha]: complete oyOptions_FromText() oyOptions_FromBoolean() oyOptions_Add()
+	* [docu]: update to "XML Plug-in options" ideas on ColourWiki
+	* [alpha]: mv oyranos_cmm_oyra_settings.c to oyranos_cmm_oyra_icc.c
+	* [alpha]: add backend meta API oyCMMapi5_s
+	* [and]: remove unneeded XML levels from lcms options
+	* [and]: rearrange API pointers
+	* [and]: rearrange API pointers
+	* [API]: move root key name from "colour" to "shared"
+	* [docu]: formatting
+	* [alpha]: add oyCMMMetaGetApi_ to access oyCMMapi5_s
+	* [and]: polish oyOptions_FromBoolean() and oyOption_GetText()
+	* [fix]: oyGetDefaultProfileName() for empty Elektra key
+	* [build]: set libxml2 include options
+	* [alpha]: new oyOption_SetFromText() and oyOptions_GetText()
+	* [docu]: correct text info for oyranos-monitor --help
+	* [and]: allow for roundtripping oyOptions_s <-> XML
+	* [alpha]: remove oyOption_s::name member and merge with registration
+	* [API]: OY_TYPE_STD  "default" "colour"
+	* [and]: update to last Elektra namespace proposal on ColourWiki
+	* [alpha]: sync between oyOPTIONSOURCE_e and oyOPTIONDEFAULTS_e
+	* [alpha]: remove "colour_icc"/oyFILTER_TYPE_COLOUR_ICC registration type
+	* [and]: oyOptions_Add() does not doublicate options in a set
+	* [alpha]: add oyOPTIONATTRIBUTE_FRONT/"front" to the registration option level
+	* [fix]: missed allocation of ::value in oyOption_Copy_()
+	* [alpha]: split oyFilter_New() in smaller internal components
+	* [alpha]: allow for a non binary answeres for boolean tests
+	* [alpha]: add oyStructList_Clear(), oyStructList_CopyFrom()
+	* [alpha]: add oyOptions_DoFilter()
+	* [alpha]: priorise "shared" in oyOptions_Add()
+	* [alpha]: add oyOptions_SetFromText()
+	* [lcms]: mark one option as advanced
+	* [alpha]: shuffle oyOPTIONSOURCE_e and oyOPTIONATTRIBUTE_e enums
+	* [alpha]: polish the Elektra namespace implementation
+	* [build]: make synonym to docu
+	* [docu]: typo
+	* [alpha]: allow for obtaining the meta and filter options separately
+	* [conf]: add xml2 to pkg-config and oyranos-config tools
+	* [build]: fix configuration for test2 target
+	* [conf]: add xml2 to pkg-config tool
+	* [and]: wrap standard string functions into Oyranos macros
+	* [and]: undefine default DEBUG in oyranos_debug.h
+	* [fix]: warning about unknown std. profile type in oyProfiles_FromStd()
+	* [and]: fix a compile warning
+	* [fix]: include missed profiles for oyProfile_ForStd()
+	* [build]: fix [ 2249349 ] configure failed
+	* [alpha]: add rendering_gamut_warning option
+	* [alpha]: move options handling into the filter for oyCMMapi1_s
+	* [API]: export oy_debug to provide a grip for external message functions
+	* [and]: add function call level intending again to debug output
+	* [and]: add __func__ info to debug output for __GNUC__
+	* [and]: remove OYRANOS_DEBUG checking
+	* [and]: rework the debug system
+	* [alpha]: add oyOption_GetValueText()
+	* [and]: add oyCloseReal__ to close Elektra
+	* [and]: add oyExportReset_()
+	* [test]: start with testing in Oyranos
+	* [build]: make check target points to tests/test_oyranos
+	* [docu]: formatting
+	* [and]: fix for oyCloseReal__()
+	* [alpha]: update oyOption_Match_() to suit current registration definition
+	* [test]: add profile reading and monitor profiles tests
+	* [build]: require a partitial install to satisfy a make check
+	* [build]: FreeBSD RM
+	* [build]: show git sha1 of git master
+	* [conf]: explicitely provide commands to sub directory makefiles
+	* [test]: allow "make check" for non git builds
+	* [conf]: remove GNU "echo -e" extension
+	* [test]: avoid redundant libxml2 call
+	* [build]: remove GNU "echo -e" extension
+	* [conf]: remove directory name guessing
+	* [test]: precise profile count fail
+	* [build]: move FLTK_H flags out of general C compiling
+	* [conf]: use current compiler for test
+	* [build]: couple make install_bin with uninstall_bin
+	* [alpha]: add oyCMMlibMatchesCMM()
+	* [alpha]: rename oyCMMptr_s::cmm to oyCMMptr_s::lib_name and update API's
+	* [alpha]: rename oyFilter_s::cmm_ to oyFilter_s::lib_name_
+	* [test]: allow filtering
+	* [fix]: test for X11 connection during communication
+	* [build] fix test_oyranos app building on Solaris
+	* [conf]: set "rm" for osX builds
+	* [and]: more warnings in oyProfile_FromMemMove_()
+	* [fix] SunC byte order macro bug
+	* [and] fix SunC compile warning
+
 Version 0.1.8
 
 Iñaki Larrañaga Murgoitio (1):
