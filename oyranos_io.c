@@ -323,13 +323,13 @@ oyIsFileFull_ (const char* fullFileName)
   DBG_MEM_V( r )
   if (r)
   {
-    FILE* fp = fopen (name, "r"); DBG_MEM
-    if (!fp) { DBG_PROG
+    FILE* fp = fopen (name, "r");
+    if (!fp) { DBG_PROG1_S("not existent: %s", name )
       r = 0;
-    } else { DBG_PROG
+    } else { DBG_MEM_S(name)
       fclose (fp);
     }
-  } DBG_MEM
+  }
 
   DBG_MEM_ENDE
   return r;

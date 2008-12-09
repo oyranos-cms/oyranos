@@ -78,7 +78,7 @@ void oyI18NInit_()
       char * tmp = 0;
       int len = oyStrlen_(oy_lang_);
 
-      oyAllocHelper_m_( tmp, char, len + 5, 0, return );
+      oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
       oySprintf_( tmp, "%s", oyStrchr_(oy_lang_,'_')+1 );
       if(oyStrlen_(tmp) > 2)
         tmp[2] = 0;
@@ -95,7 +95,7 @@ void oyI18NInit_()
 
       tmp = 0;
 
-      oyAllocHelper_m_( tmp, char, len + 5, 0, return );
+      oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
       oySprintf_( tmp, "%s", oy_lang_ );
       oy_language_ = tmp; tmp = 0;
 

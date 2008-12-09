@@ -8303,15 +8303,18 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
           error = !memcpy( tag_->required_cmm, OY_MODULE_NICK, 4 );
 
 #ifdef DEBUG
-        DBG_PROG5_S("%d[%d @ %d]: %s %s", 
-          i, (int)tag_->size_, (int)tag_->offset_orig,
-          oyICCTagTypeName( tag_->tag_type_ ),
-          oyICCTagDescription( tag_->use ) );
-        texts = oyProfileTag_GetText(tag_,&texts_n,0,0,0,0);
-        for(j = 0; j < texts_n; ++j)
-          DBG_PROG2_S("%s: %s", tag_->last_cmm_, texts[j]?texts[j]:"");
-        if(texts_n && texts)
-          oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+        if(oy_debug > 3)
+        {
+          DBG_PROG5_S("%d[%d @ %d]: %s %s", 
+            i, (int)tag_->size_, (int)tag_->offset_orig,
+            oyICCTagTypeName( tag_->tag_type_ ),
+            oyICCTagDescription( tag_->use ) );
+          texts = oyProfileTag_GetText(tag_,&texts_n,0,0,0,0);
+          for(j = 0; j < texts_n; ++j)
+            DBG_PROG2_S("%s: %s", tag_->last_cmm_, texts[j]?texts[j]:"");
+          if(texts_n && texts)
+            oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+        }
 #endif
 
         if(i == pos-1)

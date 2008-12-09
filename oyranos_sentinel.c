@@ -104,7 +104,10 @@ void oyInit_()
   DBG_PROG_START
 
   if(initialised)
+  {
+    DBG_PROG_ENDE
     return;
+  }
   initialised = 1;
 
   if(getenv("OYRANOS_DEBUG"))

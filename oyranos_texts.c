@@ -10,7 +10,8 @@
  *  @brief    pure text and string handling functions
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2004/11/25
  */
 
@@ -877,7 +878,7 @@ void          oyStringListRelease_    ( char          *** l,
 {
   char *** list = l;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
   if( l )
   {
@@ -891,7 +892,7 @@ void          oyStringListRelease_    ( char          *** l,
     *list = NULL;
   }
 
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
 }
 
 /** @func  oyIconv

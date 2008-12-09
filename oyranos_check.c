@@ -64,7 +64,7 @@ oyCheckProfile_                    (const char* name,
   size_t size = 0;
   int r = 1;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
   /*if(name) DBG_NUM_S((name)); */
   fullName = oyFindProfile_(name);
@@ -87,9 +87,7 @@ oyCheckProfile_                    (const char* name,
     oyFree_m_(header);
   if(fullName) oyFree_m_(fullName);
 
-  DBG_PROG1_S("oyCheckProfileMem = %d",r)
-
-  DBG_PROG_ENDE
+  DBG_MEM_ENDE
   return r;
 }
 
@@ -100,7 +98,7 @@ oyCheckProfileMem_                 (const void* mem, size_t size,
   char* block = (char*) mem;
   int offset = 36;
 
-  DBG_PROG_START
+  DBG_MEM_START
 
   if (size >= 128) 
   {
@@ -116,7 +114,7 @@ oyCheckProfileMem_                 (const void* mem, size_t size,
       if(coloursig)
         device_class = *((icProfileClassSignature*)coloursig);
 
-      DBG_PROG_ENDE
+      DBG_MEM_ENDE
       if(coloursig && memcmp(&prof_device_class,&device_class,4) != 0)
         return 1;
       else
@@ -125,13 +123,13 @@ oyCheckProfileMem_                 (const void* mem, size_t size,
       if(oy_warn_)
         WARNc4_S(" sign: %c%c%c%c ", (char)block[offset+0],
         (char)block[offset+1], (char)block[offset+2], (char)block[offset+3] );
-      DBG_PROG_ENDE
+      DBG_MEM_ENDE
       return 1;
     }
   } else {
     WARNc2_S("False profile - size = %d pos = %lu ", (int)size, (long int)block)
 
-    DBG_PROG_ENDE
+    DBG_MEM_ENDE
     return 1;
   }
 }
