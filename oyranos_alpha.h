@@ -1751,7 +1751,7 @@ struct oyFilter_s {
 
   const char         * registration_;  /**< a registration name, e.g. "sw/oyranos.org/generic/scale" */
   oyName_s           * name_;          /**< nick, name, description/help */
-  char                 cmm_[8];        /**< cmm name to look up for infos */
+  char               * lib_name_;      /**< the CMM */
 
   oyFILTER_TYPE_e      filter_type_;   /**< filter type */
   char               * category_;      /**< the ui menue category for this filter, to be specified */
