@@ -81,7 +81,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   int i;
   const char * type_name = "";
   int id = -1;
-  int sz = 4096;
+  size_t sz = 4096;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
@@ -113,7 +113,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   fprintf(stderr,text);
 
   va_start( list, format);
-  vsprintf( text, format, list);
+  vsnprintf( text, sz, format, list);
   va_end  ( list );
 
   switch(code)
