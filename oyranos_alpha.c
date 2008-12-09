@@ -10438,12 +10438,12 @@ oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
   unsigned char ** array2d = a->array2d;
   WARNc_S("planar pixel access not implemented")
   return 0;
-
+#if 0
   if(is_allocated) *is_allocated = 0;
   return &array2d[ point_y ][ (point_x + image->layout_[oyCOFF]
                                * image->layout_[oyCHAN0+channel])
                               * image->layout_[oyDATA_SIZE]       ]; 
-
+#endif
 }
 
 /** Function oyImage_GetLinePlanar
@@ -10467,13 +10467,14 @@ oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
   if(height) *height = 1;
   WARNc_S("planar pixel access not implemented")
   return 0;
-
+#if 0 /* SunC: warning: statement not reached */
   if(is_allocated) *is_allocated = 0;
   /* it makes no sense to use more than one line */                   
   return &array2d[ 0 ][   image->width
                         * image->layout_[oyCOFF]
                         * image->layout_[oyCHAN0+channel]
                         * image->layout_[oyDATA_SIZE] ];
+#endif
 }
 
 
