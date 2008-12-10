@@ -2409,20 +2409,35 @@ char **          oyCMMsGetLibNames_  ( int               * n,
   if(!error)
   {
     int  files_n = 0;
-    char lib_string[24];
-    const char * cmm = required_cmm;
+    char * lib_string = oyAllocateFunc_(24);
+    const char * cmm = 0;
 
     if(required_cmm)
-      oySprintf_( lib_string, "%s%s", cmm, OY_MODULE_NAME );
-    else
+    {
+      /* assuming a library file can not be smaller than the signature + 
+         OY_MODULE_NAME + file extension */
+      if(oyStrlen_(required_cmm) < 5)
+        cmm = required_cmm;
+
+      if(cmm)
+        oySprintf_( lib_string, "%s%s", cmm, OY_MODULE_NAME );
+      else
+        oyStringListAddStaticString_( &files, &files_n, required_cmm,
+                                       oyAllocateFunc_, oyDeAllocateFunc_ );
+
+    } else
       oySprintf_( lib_string, "%s", OY_MODULE_NAME );
 
     /* search for a matching module file */
-    files = oyLibFilesGet_( &files_n, 0, oyUSER_SYS,
-                            "cmms", lib_string, 0, oyAllocateFunc_ );
+    if(!files)
+      files = oyLibFilesGet_( &files_n, 0, oyUSER_SYS,
+                              "cmms", lib_string, 0, oyAllocateFunc_ );
     error = !files;
 
     *n = files_n;
+
+    if( lib_string )
+      oyFree_m_(lib_string);
   }
 
   return files;
@@ -2460,12 +2475,15 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
     /* open the module */
     if(!error)
     {
-      char info_sym[24];
+      char * info_sym = oyAllocateFunc_(24);
       int api_found = 0;
 
       oySprintf_( info_sym, "%s%s", cmm, OY_MODULE_NAME );
 
       cmm_info = (oyCMMInfo_s*) dlsym (dso_handle, info_sym);
+
+      if(info_sym)
+        oyFree_m_(info_sym);
 
       error = !cmm_info;
 
@@ -10438,10 +10456,10 @@ oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
                                          int             * is_allocated )
 {
   oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
-  unsigned char ** array2d = a->array2d;
   WARNc_S("planar pixel access not implemented")
   return 0;
 #if 0
+  unsigned char ** array2d = a->array2d;
   if(is_allocated) *is_allocated = 0;
   return &array2d[ point_y ][ (point_x + image->layout_[oyCOFF]
                                * image->layout_[oyCHAN0+channel])
@@ -10466,11 +10484,11 @@ oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
                                          int             * is_allocated )
 {
   oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
-  unsigned char ** array2d = a->array2d;
   if(height) *height = 1;
   WARNc_S("planar pixel access not implemented")
   return 0;
 #if 0 /* SunC: warning: statement not reached */
+  unsigned char ** array2d = a->array2d;
   if(is_allocated) *is_allocated = 0;
   /* it makes no sense to use more than one line */                   
   return &array2d[ 0 ][   image->width
