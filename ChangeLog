@@ -1,10 +1,10 @@
 Version 0.1.9
 
-Kai-Uwe Behrmann (134):
-	* [doc]: minor changes
-	* [doc]: minor changes
-	* [alpha]: remove unused plugin API's
-	* move image data out of oyFilterNode_s; add profile to oyConversion_CreateBasic
+Kai-Uwe Behrmann (144):
+	* [doc]: minor changes \
+	* [doc]: minor changes \
+	* [alpha]: remove unused plugin API's \
+	* [alpha]: move image data out of oyFilterNode_s; add profile to oyConversion_CreateBasic
 	* [alpha]: add oyStruct_s     * oy_struct to oyValue_u
 	* [alpha]: revert adding of ia profiles argument from oyConversion_CreateBasic
 	* [alpha]: oyModuleGetActual() selects from the oyFILTER_TYPE_e    type arg
@@ -37,7 +37,7 @@ Kai-Uwe Behrmann (134):
 	* [alpha]: move oyFilter_TextToInfo -> oyFilterNode_TextToInfo; add oyStructList_GetID
 	* [alpha]: adding oyFilterNode_DataGet_()
 	*[alpha]: new oyOptions_Find()
-	* [API] fix defaults for internal profile settings
+	* [API]: fix defaults for internal profile settings
 	* [alpha]: remove one arg of oyOption_New()
 	* [API]: one more step for XML/Elektra namespace synchronisation
 	* [alpha]: remove oyOptions_s ranges; add source hint
@@ -130,11 +130,22 @@ Kai-Uwe Behrmann (134):
 	* [alpha]: rename oyFilter_s::cmm_ to oyFilter_s::lib_name_
 	* [test]: allow filtering
 	* [fix]: test for X11 connection during communication
-	* [build] fix test_oyranos app building on Solaris
+	* [build]: fix test_oyranos app building on Solaris
 	* [conf]: set "rm" for osX builds
 	* [and]: more warnings in oyProfile_FromMemMove_()
-	* [fix] SunC byte order macro bug
-	* [and] fix SunC compile warning
+	* [fix]: SunC byte order macro bug
+	* [and]: fix SunC compile warning
+	* [docu]: update ChangeLog
+	* [docu]: update man pages
+	* [fix]: mem bug for too long messages
+	* [build]: allow DESTDIR variable with spaces
+	* [and]: adjust debug output
+	* [build]: fix installation to DESTDIR with empty spaces
+	* [build]: BUILDDIR changes
+	* [alpha]: add full qualified librarynames to oyCMMsGetLibNames_
+	* [build]: smaller compile messages
+	* [build]: repair trivial message
+
 
 Version 0.1.8
 
