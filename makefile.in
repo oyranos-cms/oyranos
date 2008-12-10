@@ -604,10 +604,10 @@ uninstall_bin:
 	          $(DESTDIR)$(libdir)/lib$${lib}.a; \
 	done
 	for lib in $(CMMS); do \
-	   $(RM) $(BUILDDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-	         $(BUILDDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-	         $(BUILDDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT) \
-	         $(BUILDDIR)$(cmmdir)/lib$${lib}.a; \
+	   $(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	         $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	         $(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT) \
+	         $(DESTDIR)$(cmmdir)/lib$${lib}.a; \
 	done
 	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
 	echo ... done uninstalling binaries
@@ -623,7 +623,10 @@ uninstall_profiles:
 	   done; \
         ) || echo "no profile directory found"
 	echo ... done uninstalling profiles
-	
+
+uninstall-icc:	uninstall_profiles
+
+
 uninstall_linguas:
 	echo Uninstalling linguas ...
 	for ling in $(LINGUAS); do \
