@@ -255,7 +255,7 @@ time:
 	echo $(MTIME)
 
 setup:
-	test -d  $(BUILDDIR) && echo output to $(BUILDDIR) .. || mkdir -p $(BUILDDIR)
+	test -d $(BUILDDIR). && echo "" || (echo output to $(BUILDDIR); mkdir -p $(BUILDDIR))
 
 # build all objects and libraries, link the headers to $(TARGET)
 $(BUILDDIR)$(LIBSONAMEFULL):	$(OBJECTS) $(BUILDDIR)$(LIBNAME)
