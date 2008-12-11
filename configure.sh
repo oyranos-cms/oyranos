@@ -756,6 +756,9 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
         test -f "$i/makefile".in && echo "DEBUG = $DEBUG_"  >> "$i/makefile"
         test -f "$i/makefile".in && echo "DEBUG_SWITCH = -v"  >> "$i/makefile"
       fi
+      if [ "$static" -eq "0" ]; then
+        test -f "$i/makefile".in && echo "STATIC = \$(RM)"  >> "$i/makefile"
+      fi
       if [ "$verbose" -eq "0" ]; then
         test -f "$i/makefile".in && echo ".SILENT:"  >> "$i/makefile"
       fi

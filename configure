@@ -70,6 +70,7 @@ INFOECHO="echo"
 debug=0
 nodeps=0
 rpm=0
+static=1
 verbose=1
 X11=0
 X_ADD_2="X11 Xext Xinerama Xxf86vm"
@@ -184,6 +185,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       debug="1"
     fi
+    switch=disable-static
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      static="0"
+    fi
     switch=enable-verbose
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       verbose="1"
@@ -232,6 +237,7 @@ test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X1
 test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rpath for ELF linking"
 test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
 test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug version [default disable]"
+test -n "$INFOECHO" && $INFOECHO "   --disable-static                     no static libraries [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-verbose                    verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-dependency-tracking        no dependencies [default check]"
@@ -557,7 +563,7 @@ if [ -z "$desktopdir" ]; then
 fi
 export prefix exec_prefix bindir sbindir libdir includedir datadir mandir
 export syscolordir usercolordir pixmapdir desktopdir
-export debug verbose fltkconfig
+export debug static verbose fltkconfig
 
 PATH=$bindir:$PATH
 export PATH

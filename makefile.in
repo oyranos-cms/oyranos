@@ -483,10 +483,11 @@ install_bin:	all uninstall_bin install_gui
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT); \
 		); \
-	   test -f $(BUILDDIR)lib$${lib}.a && \
+	   if [ "$(STATIC)" = "" ]; then test -f $(BUILDDIR)lib$${lib}.a && \
 		($(INSTALL) -m 644 $(BUILDDIR)lib$${lib}.a $(DESTDIR)$(libdir);\
 		$(RANLIB) $(DESTDIR)$(libdir)/lib$${lib}.a \
 		) || echo ""; \
+           fi; \
 	done
 	for lib in $(CMMS); do \
 	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
