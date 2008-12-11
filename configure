@@ -315,7 +315,7 @@ test -n "$RPMECHO" && $RPMECHO "" > $SPEC
 test -n "$RPMECHO" && $RPMECHO "" > $SPECICC
 
 
-src_dir="`(cd ..;pwd)`/""$TARGET"_"$VERSION"
+src_dir="."
 srcdir="`pwd`"
 
 #prefix

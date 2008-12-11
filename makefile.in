@@ -9,6 +9,7 @@ MSGFMT = msgfmt -c --statistics
 
 docdir          = $(datadir)/doc/$(TARGET)
 cmmdir          = $(libdir)/color/cmms
+SRCDIR          = $(src_dir)
 
 OY_MODULE_NAME  =_cmm_module
 LIBRARIES = $(TARGET) \
@@ -39,7 +40,7 @@ LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
 LIBFL_I18N = fl_i18n/libfl_i18n.a
 
 
-INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(srcdir) \
+INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
 	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H)
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
@@ -49,90 +50,90 @@ MODULE_LDLIBS =	$(lc)
 
 
 CHEADERS = \
-	$(srcdir)/$(TARGET).h \
-	$(srcdir)/$(TARGET)_alpha.h \
-	$(srcdir)/$(TARGET)_check.h \
-	$(srcdir)/$(TARGET)_cmm.h \
-	$(srcdir)/$(TARGET)_cmm_oyra.h \
-	$(srcdir)/$(TARGET)_cmms.h \
-	$(srcdir)/$(TARGET)_config.h \
-	$(srcdir)/$(TARGET)_debug.h \
-	$(srcdir)/$(TARGET)_definitions.h \
-	$(srcdir)/$(TARGET)_elektra.h \
-	$(srcdir)/$(TARGET)_helper.h \
-	$(srcdir)/$(TARGET)_i18n.h \
-	$(srcdir)/$(TARGET)_icc.h \
-	$(srcdir)/$(TARGET)_io.h \
-	$(srcdir)/$(TARGET)_internal.h \
-	$(srcdir)/$(TARGET)_monitor.h \
-	$(srcdir)/$(TARGET)_monitor_internal.h \
-	$(srcdir)/$(TARGET)_sentinel.h \
-	$(srcdir)/$(TARGET)_texts.h \
-	$(srcdir)/$(TARGET)_xml.h \
-	$(srcdir)/icc34.h \
-	$(srcdir)/md5.h \
-	$(srcdir)/lookup3.h
+	$(SRCDIR)/$(TARGET).h \
+	$(SRCDIR)/$(TARGET)_alpha.h \
+	$(SRCDIR)/$(TARGET)_check.h \
+	$(SRCDIR)/$(TARGET)_cmm.h \
+	$(SRCDIR)/$(TARGET)_cmm_oyra.h \
+	$(SRCDIR)/$(TARGET)_cmms.h \
+	$(SRCDIR)/$(TARGET)_config.h \
+	$(SRCDIR)/$(TARGET)_debug.h \
+	$(SRCDIR)/$(TARGET)_definitions.h \
+	$(SRCDIR)/$(TARGET)_elektra.h \
+	$(SRCDIR)/$(TARGET)_helper.h \
+	$(SRCDIR)/$(TARGET)_i18n.h \
+	$(SRCDIR)/$(TARGET)_icc.h \
+	$(SRCDIR)/$(TARGET)_io.h \
+	$(SRCDIR)/$(TARGET)_internal.h \
+	$(SRCDIR)/$(TARGET)_monitor.h \
+	$(SRCDIR)/$(TARGET)_monitor_internal.h \
+	$(SRCDIR)/$(TARGET)_sentinel.h \
+	$(SRCDIR)/$(TARGET)_texts.h \
+	$(SRCDIR)/$(TARGET)_xml.h \
+	$(SRCDIR)/icc34.h \
+	$(SRCDIR)/md5.h \
+	$(SRCDIR)/lookup3.h
 #	fl_$(TARGET).h
 CFILES = \
-	$(srcdir)/$(TARGET).c \
-	$(srcdir)/$(TARGET)_check.c \
-	$(srcdir)/$(TARGET)_cmms.c \
-	$(srcdir)/$(TARGET)_elektra.c \
-	$(srcdir)/$(TARGET)_helper.c \
-	$(srcdir)/$(TARGET)_i18n.c \
-	$(srcdir)/$(TARGET)_icc.c \
-	$(srcdir)/$(TARGET)_io.c \
-	$(srcdir)/$(TARGET)_misc.c \
-	$(srcdir)/$(TARGET)_sentinel.c \
-	$(srcdir)/$(TARGET)_texts.c \
-	$(srcdir)/$(TARGET)_widgets.c \
-	$(srcdir)/$(TARGET)_xml.c \
-	$(srcdir)/md5.c \
-	$(srcdir)/lookup3.c
+	$(SRCDIR)/$(TARGET).c \
+	$(SRCDIR)/$(TARGET)_check.c \
+	$(SRCDIR)/$(TARGET)_cmms.c \
+	$(SRCDIR)/$(TARGET)_elektra.c \
+	$(SRCDIR)/$(TARGET)_helper.c \
+	$(SRCDIR)/$(TARGET)_i18n.c \
+	$(SRCDIR)/$(TARGET)_icc.c \
+	$(SRCDIR)/$(TARGET)_io.c \
+	$(SRCDIR)/$(TARGET)_misc.c \
+	$(SRCDIR)/$(TARGET)_sentinel.c \
+	$(SRCDIR)/$(TARGET)_texts.c \
+	$(SRCDIR)/$(TARGET)_widgets.c \
+	$(SRCDIR)/$(TARGET)_xml.c \
+	$(SRCDIR)/md5.c \
+	$(SRCDIR)/lookup3.c
 CFILESC = \
-	$(srcdir)/$(TARGET)_debug.c
+	$(SRCDIR)/$(TARGET)_debug.c
 CFILES_ALPHA = \
-	$(srcdir)/$(TARGET)_alpha.c
+	$(SRCDIR)/$(TARGET)_alpha.c
 CFILES_CMM_LCMS = \
-	$(srcdir)/$(TARGET)_cmm_lcms.c
+	$(SRCDIR)/$(TARGET)_cmm_lcms.c
 CFILES_CMM_oyX1 = \
-	$(srcdir)/$(TARGET)_cmm_oyX1.c
+	$(SRCDIR)/$(TARGET)_cmm_oyX1.c
 CFILES_CMM_oyra = \
-	$(srcdir)/$(TARGET)_cmm_oyra.c \
-	$(srcdir)/$(TARGET)_cmm_oyra_icc.c \
-	$(srcdir)/$(TARGET)_cmm_oyra_image.c \
-	$(srcdir)/$(TARGET)_cmm_oyra_profile.c
+	$(SRCDIR)/$(TARGET)_cmm_oyra.c \
+	$(SRCDIR)/$(TARGET)_cmm_oyra_icc.c \
+	$(SRCDIR)/$(TARGET)_cmm_oyra_image.c \
+	$(SRCDIR)/$(TARGET)_cmm_oyra_profile.c
 CFILES_MONI = \
-	$(srcdir)/$(TARGET)_monitor.c
+	$(SRCDIR)/$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
-	$(srcdir)/$(TARGET)_monitor_nvidia.c
+	$(SRCDIR)/$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
-	$(srcdir)/$(TARGET)_gamma.c
+	$(SRCDIR)/$(TARGET)_gamma.c
 CFILES_POLICY = \
-	$(srcdir)/$(TARGET)_policy.c \
+	$(SRCDIR)/$(TARGET)_policy.c \
 
 CXXFILES_FLTK = \
-	$(srcdir)/$(TARGET)_config_fltk.cxx
+	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 CXXFILES_Flmm = \
-	$(srcdir)/FL/Flmm_Tabs.cxx
+	$(SRCDIR)/FL/Flmm_Tabs.cxx
 EXAMPLE1_C = \
-	$(srcdir)/$(EXAMPLE1).c
+	$(SRCDIR)/$(EXAMPLE1).c
 EXAMPLES_C = \
 	$(EXAMPLE1_C)
 EXAMPLES_OBJECTS = $(EXAMPLES_C:.c=.o)
 
 TEST_CPP = \
-	$(srcdir)/tests/dl_test.cxx \
-	$(srcdir)/tests/fltk_test.cxx \
-	$(srcdir)/tests/dE2000_test.cpp \
-	$(srcdir)/tests/gettext_test.cxx \
-	$(srcdir)/tests/intptr_test.c \
-	$(srcdir)/tests/lib_test.cxx \
-	$(srcdir)/tests/library.c \
-	$(srcdir)/tests/test_oyranos.c \
-	$(srcdir)/tests/tiff_test.cxx
+	$(SRCDIR)/tests/dl_test.cxx \
+	$(SRCDIR)/tests/fltk_test.cxx \
+	$(SRCDIR)/tests/dE2000_test.cpp \
+	$(SRCDIR)/tests/gettext_test.cxx \
+	$(SRCDIR)/tests/intptr_test.c \
+	$(SRCDIR)/tests/lib_test.cxx \
+	$(SRCDIR)/tests/library.c \
+	$(SRCDIR)/tests/test_oyranos.c \
+	$(SRCDIR)/tests/tiff_test.cxx
 TEST_H = \
-	$(srcdir)/tests/ciede2000testdata.h
+	$(SRCDIR)/tests/ciede2000testdata.h
 CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
@@ -142,36 +143,36 @@ EXAMPLE_FILES = $(EXAMPLES_C)
 MAN1 = oyranos-config.1 oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
 MAN3 = oyranos.3
 DATA = \
-	$(srcdir)/$(TARGET)_logo.png
-DOKU =  $(srcdir)/AUTHORS \
-        $(srcdir)/ChangeLog \
-        $(srcdir)/COPYING \
-        $(srcdir)/README
+	$(SRCDIR)/$(TARGET)_logo.png
+DOKU =  $(SRCDIR)/AUTHORS \
+        $(SRCDIR)/ChangeLog \
+        $(SRCDIR)/COPYING \
+        $(SRCDIR)/README
 DOC_TEMPLATES = \
-	$(srcdir)/Doxyfile \
-	$(srcdir)/doxymentation
+	$(SRCDIR)/Doxyfile \
+	$(SRCDIR)/doxymentation
 
 LINGUAS_SRC = $(LING:.po=.gmo)
-POT_FILE = $(srcdir)/po/$(TARGET).pot
-POT_SCRIPT = $(srcdir)/oyranos_xml_to_po.sh
+POT_FILE = $(SRCDIR)/po/$(TARGET).pot
+POT_SCRIPT = $(SRCDIR)/oyranos_xml_to_po.sh
 
 SCRIPTS = $(POT_SCRIPT)
 
 FLTK_GUI = $(BUILDDIR)$(TARGET)-config-fltk
 
 FLTK_FILES = \
-	$(srcdir)/oyranos_config_fltk.fl \
-	$(srcdir)/oyranos_config_fltk.h \
+	$(SRCDIR)/oyranos_config_fltk.fl \
+	$(SRCDIR)/oyranos_config_fltk.h \
 
 Flmm_FILES = \
-	$(srcdir)/FL/Flmm_Tabs.H \
+	$(SRCDIR)/FL/Flmm_Tabs.H \
 	$(CXXFILES_Flmm) \
-	$(srcdir)/FL/AUTHORS \
-	$(srcdir)/FL/ANNOUNCEMENT \
-	$(srcdir)/FL/CHANGES \
-	$(srcdir)/FL/COPYING \
-	$(srcdir)/FL/CREDITS \
-	$(srcdir)/FL/README
+	$(SRCDIR)/FL/AUTHORS \
+	$(SRCDIR)/FL/ANNOUNCEMENT \
+	$(SRCDIR)/FL/CHANGES \
+	$(SRCDIR)/FL/COPYING \
+	$(SRCDIR)/FL/CREDITS \
+	$(SRCDIR)/FL/README
 
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
@@ -720,19 +721,19 @@ depend:
 
 
 .c.o:
-	echo Compiling $(?F) ...
+	echo Compiling $< ...
 	$(CC) -I. $(CFLAGS) -c -o $(BUILDDIR)$@ $<
 
 .cxx.o:
-	echo Compiling $(?F) ...
+	echo Compiling $< ...
 	$(CXX) -I. $(CXXFLAGS) $(FLTK_H) -c -o $(BUILDDIR)$@ $<
 
 .cpp.o:	mkdepend
-	echo Compiling $(?F) ...
+	echo Compiling $< ...
 	$(CXX) -I. $(CXXFLAGS) -c -o $(BUILDDIR)$@ $<
 
 .fl.cxx:
-	echo Expanding $(?F) ...
+	echo Expanding $< ...
 	fluid -c $<
 
 .po:
