@@ -370,20 +370,20 @@ $(BUILDDIR)$(TARGET)-policy:	$(BUILDDIR)$(LIBSONAMEFULL) $(BUILDDIR)$(TARGET)_po
 $(BUILDDIR)test2:	$(BUILDDIR)$(LIBSONAMEFULL)
 	echo Compile $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -c test2.cpp \
-	-o $(BUILDDIR)test2.o `oyranos-config --cflags`
+	-o $(BUILDDIR)test2.o `./oyranos-config --cflags`
 	echo Linking dynamic $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $(BUILDDIR)test2_dyn \
-	$(BUILDDIR)test2.o `oyranos-config --ldflags`
+	$(BUILDDIR)test2.o `./oyranos-config --ldflags`
 	echo Linking static $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $(BUILDDIR)test2 \
-	$(BUILDDIR)test2.o `oyranos-config --ldstaticflags`
+	$(BUILDDIR)test2.o `./oyranos-config --ldstaticflags`
 	
 
 check:	all install_bin install-icc $(BUILDDIR)tests/test_oyranos
 	echo current git version is:
 	n=0; for i in `git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
-	$(BUILDDIR)tests/test_oyranos
+	LD_LIBRARY_PATH=./:$${LD_LIBRARY_PATH} $(BUILDDIR)tests/test_oyranos
 
 $(BUILDDIR)test:	$(BUILDDIR)test.o
 	$(CC) $(CFLAGS) -o $(BUILDDIR)test \
@@ -404,12 +404,12 @@ $(BUILDDIR)$(EXAMPLE1): $(EXAMPLE1_C)
 	echo Compile $@ ...
 	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE1_C) \
 	-o $(BUILDDIR)$(EXAMPLE1).o \
-	`oyranos-config --cflags` `pkg-config --cflags cairo` \
+	`./oyranos-config --cflags` `pkg-config --cflags cairo` \
 	`pkg-config --cflags lcms` -I.
 	echo Linking $@ ...
 	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall \
 	-o $(BUILDDIR)$(EXAMPLE1) \
-	$(BUILDDIR)$(EXAMPLE1).o `oyranos-config --ldflags` \
+	$(BUILDDIR)$(EXAMPLE1).o `./oyranos-config --ldflags` \
 	`pkg-config --libs cairo` `pkg-config --libs lcms` -L. \
 	$(LINK_SRC_PATH)
 
