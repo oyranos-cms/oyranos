@@ -383,7 +383,7 @@ check:	all install_bin install-icc $(BUILDDIR)tests/test_oyranos
 	echo current git version is:
 	n=0; for i in `git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
-	LD_LIBRARY_PATH=./:$${LD_LIBRARY_PATH} $(BUILDDIR)tests/test_oyranos
+	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} $(BUILDDIR)tests/test_oyranos
 
 $(BUILDDIR)test:	$(BUILDDIR)test.o
 	$(CC) $(CFLAGS) -o $(BUILDDIR)test \
