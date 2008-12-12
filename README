@@ -30,6 +30,8 @@ Dependencies:
     x11proto-xext-dev
     libxxf86vm-dev
     oyranos-0.1.8 can now be installed successfully.
+    doxygen
+    graphviz
 
   optional:
     ICC Examin to build afterwards. oyranos-config-fltk uses the profile viewer.
