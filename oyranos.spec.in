@@ -7,7 +7,7 @@ Vendor: Kai-Uwe Behrmann
 Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
 #BuildArch: %{_arch}
 #%ifos linux
-#Prereq: oyranos-LStarRGB oyranos-RGB oyranos-lcmsLAB oyranos-eci-offset2004
+#Prereq: oyranos-icc-RGB oyranos-icc-lcmsLAB oyranos-icc-ECI-RGB oyranos-icc-Cineaon oyranos-icc-printing oyranos-target-fogra oyranos-target-npes
 #%endif 
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
@@ -131,7 +131,6 @@ rm -rf %{buildroot}
 %files monitor
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
-%{_libdir}/lib%{name}_moni.so*
 %{_libdir}/color/cmms/lib%{name}_oyX1_cmm_module.so*
 %{_mandir}/man1/%{name}-monitor*
 
