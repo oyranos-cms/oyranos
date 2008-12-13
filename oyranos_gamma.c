@@ -172,9 +172,9 @@ int main( int argc , char** argv )
     }
 
     /* make shure the display name is correct including the screen */
-    if(monitor_profile || erase)
-      oySetMonitorProfile (oy_display_name, monitor_profile);
     if(monitor_profile)
+      oySetMonitorProfile (oy_display_name, monitor_profile);
+    if(monitor_profile || erase)
       oySetMonitorProfile (oy_display_name, 0);
   }
 
