@@ -2738,16 +2738,31 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
               }
             } else {
 
-              if(memcmp( cmm, prefered_cmm, 4 ) == 0)
+              if( /* if we found already a matching version, do not exchange*/
+                  oy_compatibility != OYRANOS_VERSION &&
+                    /* possibly newly found */
+                  ( oy_compatibility = 0 ||
+                    /* or a bigger version but not greater than current oy_ */
+                    ( cmm_info->oy_compatibility <= OYRANOS_VERSION &&
+                      oy_compatibility < cmm_info->oy_compatibility ) ||
+                    /* or we select a less greater in case we are above oy_ */
+                    ( cmm_info->oy_compatibility > OYRANOS_VERSION &&
+                      oy_compatibility > cmm_info->oy_compatibility )
+                  )
+                )
               {
-                api = tmp;
-                if(lib_used)
-                  *lib_used = oyStringCopy_( files[i], oyAllocateFunc_ );
+                if(memcmp( cmm, prefered_cmm, 4 ) == 0)
+                {
+                  api = tmp;
+                  if(lib_used)
+                    *lib_used = oyStringCopy_( files[i], oyAllocateFunc_ );
 
-              } else {
+                } else {
 
-                api_fallback = tmp;
-                lib_fallback = oyStringCopy_( files[i], oyAllocateFunc_ );
+                  api_fallback = tmp;
+                  lib_fallback = oyStringCopy_( files[i], oyAllocateFunc_ );
+                }
+                oy_compatibility = cmm_info->oy_compatibility;
               }
             }
           }
