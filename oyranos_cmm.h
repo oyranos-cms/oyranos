@@ -320,7 +320,7 @@ typedef oyStruct_s * (*oyCMMData_LoadFromMem_f) (
                                        uint32_t            flags,
                                        oyObject_s          object);
 
-/** @type    oyCMMData_LoadFromMem_f
+/** @type    oyCMMDataScan_f
  *  @brief   load a filter data from a in memory data blob
  *
  *  @param[in]     data                data blob
@@ -328,20 +328,20 @@ typedef oyStruct_s * (*oyCMMData_LoadFromMem_f) (
  *  @param[out]    registration        filter registration string
  *  @param[out]    name                filter name
  *  @param[in]     allocateFunc        e.g. malloc
- *  @return                            0 on success; error > 1
+ *  @return                            0 on success; error >= 1; unknown < 0
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/22 (Oyranos: 0.1.9)
  *  @date    2008/11/22
  */
-typedef int          (*oyCMMData_Scan_f) (
+typedef int          (*oyCMMDataScan_f) (
                                        oyPointer           data,
                                        size_t              size,
                                        char             ** registration,
                                        char             ** name,
                                        oyAlloc_f           allocateFunc );
 
-/** @type    oyCMMFilter_LoadFromMem_f
+/** @type    oyCMMFilter_Load_f
  *  @brief   load a filter from a in memory data blob
  *
  *  @param[in]     data                data blob
@@ -352,29 +352,35 @@ typedef int          (*oyCMMData_Scan_f) (
  *  @since   2008/11/22 (Oyranos: 0.1.9)
  *  @date    2008/11/22
  */
-typedef oyFilter_s * (*oyCMMFilter_LoadFromMem_f) (
+typedef oyFilter_s * (*oyCMMFilter_Load_f) (
                                        oyPointer           data,
-                                       size_t              size );
+                                       size_t              size,
+                                       const char        * file_name,
+                                       int                 num );
 
 /** @type    oyCMMFilter_Scan_f
  *  @brief   load a filter from a in memory data blob
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
+ *  @param[in]     file_name           the file for information or zero
+ *  @param[in]     num                 number of filter
  *  @param[out]    registration        filter registration string
  *  @param[out]    name                filter name
  *  @param[in]     allocateFunc        e.g. malloc
- *  @return                            0 on success; error > 1
+ *  @return                            0 on success; error >= 1; -1 not found; unknown < -1
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/11/22
+ *  @date    2008/12/12
  */
-typedef int          (*oyCMMFilter_Scan_f) (
+typedef int          (*oyCMMFilterScan_f) (
                                        oyPointer           data,
                                        size_t              size,
-                                       const char       ** registration,
-                                       const char       ** name,
+                                       const char        * file_name,
+                                       int                 num,
+                                       char             ** registration,
+                                       char             ** name,
                                        oyAlloc_f           allocateFunc );
 
 
@@ -400,20 +406,23 @@ typedef struct {
   /** obtain the translated resource name, e.g. oyNAME_NAME "ICC profile" */
   const char     * (*oyCMMDataNameGet) (oyNAME_e);
   oyCMMData_LoadFromMem_f          oyCMMDataLoadFromMem;
-  oyCMMData_Scan_f                 oyCMMDataScan;
+  oyCMMDataScan_f                 oyCMMDataScan;
 } oyCMMDataTypes_s;
 
 /** @struct oyCMMapi5_s
  *  @brief the API 5 to provide and implement script support
  *
- *  Filters can be provided in non library form. This API allowes for
- *  registring of paths and file types to be recognised as filters.
+ *  Filters can be provided in non library form, e.g. as text files. This API 
+ *  allowes for registring of paths and file types to be recognised as filters.
  *  The API must provide the means to search, list, verify and open these 
- *  script filters.
+ *  script filters through Oyranos. The filters are openen in Oyranos and passed
+ *  as blobs to the API function for obtaining light wight informations, e.g.
+ *  list the scanned filters in a user selection widget. Further the API is
+ *  responsible to open the filter and create a oyFilter_s object.
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/11/22
+ *  @date    2008/12/12
  */
 typedef struct {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
@@ -435,12 +444,15 @@ typedef struct {
   int32_t          version[3];
 
   /** a colon separated list of sub paths to expect the scripts in,
-      e.g. "color/shiva" */
-  const char     * paths;
-  const char     * ext;                /**< filename extensions, e.g. "shi" */
+      e.g. "color/shiva:color/ctl" */
+  const char     * sub_paths;
+  /** optional filename extensions, e.g. "shi:ctl" */
+  const char     * ext;
+  /** 0: libs - libraries, Oyranos searches in the XDG_LIBRARY_PATH and sub_paths, The library will be provided as file_name\n  1: scripts - platform independent filters, Oyranos will search in the XDG_DATA_* paths, Script are provided as i memory blobs */
+  int32_t          data_type;
 
-  oyCMMFilter_LoadFromMem_f        oyCMMFilterLoadFromMem;
-  oyCMMFilter_Scan_f               oyCMMFilterScan;
+  oyCMMFilter_Load_f               oyCMMFilterLoad;
+  oyCMMFilterScan_f                oyCMMFilterScan;
 
   /** check options for validy and correct */
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;

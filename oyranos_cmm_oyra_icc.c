@@ -17,6 +17,7 @@
 
 #include "config.h"
 #include "oyranos_alpha.h"
+#include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyra.h"
 #include "oyranos_helper.h"
@@ -25,12 +26,17 @@
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
 #include "oyranos_texts.h"
+
 #include <iconv.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#if !defined(WIN32)
+#include <dlfcn.h>
+#include <inttypes.h>
+#endif
 
 /** Function oyraFilter_CanHandle
  *  @brief   dummy
@@ -247,21 +253,128 @@ int          oyraICCDataScan         ( oyPointer           buf,
   if(filename && external)
     *filename = oyStringCopy_( external, allocateFunc );
 
+  oyProfile_Release( &temp_prof );
+
   return error;
 }
 
 oyCMMDataTypes_s icc_data[] = {
  {
-  oyOBJECT_CMM_API5_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
+  oyOBJECT_CMM_API5_S, /* oyStruct_s::type oyOBJECT_CMM_API5_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
   0, /* id */
-  "color/icc", /* paths */
-  "icc:icm", /* ext */
+  "color/icc", /* sub paths */
+  "icc:icm", /* file name extensions */
   oyraICCDataNameGet, /* oyCMMDataNameGet */
   oyraICCDataLoadFromMem, /* oyCMMDataLoadFromMem */
   oyraICCDataScan /* oyCMMDataScan */
  },{0} /* zero list end */
 };
+
+
+/**
+ *  @brief   oyra oyCMMapi5_s implementation
+ *
+ *  A interpreter preview for filters. This function implements
+ *  oyCMMFilterScan_f for oyCMMapi5_s::oyCMMFilterScan().
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/13 (Oyranos: 0.1.10)
+ *  @date    2008/12/13
+ */
+int          oyraFilterScan (          oyPointer           data,
+                                       size_t              size,
+                                       const char        * lib_name,
+                                       int                 num,
+                                       char             ** registration,
+                                       char             ** name,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyCMMInfo_s * cmm_info = 0;
+  oyCMMapi_s * api = 0;
+  oyCMMapi4_s * api4 = 0;
+  int error = !lib_name;
+  int ret = -2;
+  char * cmm = oyCMMnameFromLibName_(lib_name);
+
+  if(!error)
+  {
+    oyPointer dso_handle = 0;
+
+    if(!error)
+    {
+      if(lib_name)
+        dso_handle = dlopen(lib_name, RTLD_LAZY);
+
+      error = !dso_handle;
+
+      if(error)
+        WARNc_S(dlerror());
+    }
+
+    /* open the module */
+    if(!error)
+    {
+      char * info_sym = oyAllocateFunc_(24);
+
+      oySprintf_( info_sym, "%s%s", cmm, OY_MODULE_NAME );
+
+      cmm_info = (oyCMMInfo_s*) dlsym (dso_handle, info_sym);
+
+      if(info_sym)
+        oyFree_m_(info_sym);
+
+      error = !cmm_info;
+
+      if(error)
+        WARNc_S(dlerror());
+
+      if(!error)
+        if(oyCMMapi_Check_( cmm_info->api ))
+          api = cmm_info->api;
+
+      if(!error && api)
+      {
+        int x = 0;
+        int found = 0;
+        while(!found)
+        {
+          if(api->type == oyOBJECT_CMM_API4_S)
+          {
+            if(x == num)
+              found = 1;
+            else
+              ++x;
+          }
+          api = api->next;
+        }
+
+        if(api && found)
+        {
+          api4 = (oyCMMapi4_s *) api;
+          if(registration)
+            *registration = oyStringCopy_( api4->registration, allocateFunc );
+          if(name)
+            *name = oyStringCopy_( api4->name.name, allocateFunc );
+          ret = 0;
+        } else
+          ret = -1;
+      }
+    }
+
+    dlclose( dso_handle );
+    dso_handle = 0;
+  }
+
+  if(error)
+    ret = error;
+
+  if(cmm)
+    oyDeAllocateFunc_(cmm);
+  cmm = 0;
+
+  return ret;
+}
 
 /** @instance oyra_api5
  *  @brief    oyra oyCMMapi5_s implementation
@@ -287,11 +400,12 @@ oyCMMapi5_s  oyra_api5_colour_icc = {
 
   {0,0,1}, /* int32_t version[3] */
 
-  0, /* paths */
+  "color/cmm", /* sub_paths */
   0, /* ext */
+  0, /* data_type - 0: libs - libraries,\n  1: scripts - platform independent filters */
 
-  0, /* oyCMMFilter_LoadFromMem_f */
-  0, /* oyCMMFilter_Scan_f */
+  0, /* oyCMMFilter_Load_f */
+  oyraFilterScan, /* oyCMMFilter_Scan_f */
 
   oyra_defaultICCValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
