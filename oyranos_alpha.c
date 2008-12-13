@@ -11948,7 +11948,7 @@ char *         oyFilterRegistrationToText (
       text = oyStringCopy_( texts[oyFILTER_REG_APPLICATION-1], allocateFunc );
     if(texts_n >= type && type == oyFILTER_REG_OPTION)
       text = oyStringCopy_( texts[oyFILTER_REG_OPTION-1], allocateFunc );
-    if(type == oyFILTER_REG_OPTION)
+    if(text && type == oyFILTER_REG_OPTION)
     {
       char * tmp = oyStrchr_( text, '.' );
       if(tmp)
