@@ -10,7 +10,8 @@
  *  @brief    littleCMS CMM backend for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @par License:\n new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2007/11/12
  */
 
@@ -282,8 +283,8 @@ int          lcmsCMMProfile_Open     ( oyStruct_s        * data,
 
     s->lcms = CMMProfileOpen_M( block, size );
     oy->ptr = s;
-    sprintf( oy->func_name, "%s", CMMToString_M(CMMProfileOpen_M) );
-    sprintf( oy->resource, oyCMM_PROFILE ); 
+    snprintf( oy->func_name, 32, "%s", CMMToString_M(CMMProfileOpen_M) );
+    snprintf( oy->resource, 5, oyCMM_PROFILE ); 
     error = !oy->ptr;
   }
 
