@@ -1027,7 +1027,7 @@ test -n "$ECHO" && $ECHO "#endif /* OY_CONFIG_H */" >> $CONF_H
 
 test -f error.tmp && ERROR=1
 test -f error.tmp && rm error.tmp
-if [ $ERROR != 0 ]; then
+if [ $ERROR != 0 ] && [ -z "$quick" ]; then
   echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="!!!                     An ERROR occured                     !!!"
