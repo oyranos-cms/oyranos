@@ -1419,6 +1419,8 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 
 typedef struct oyFilter_s oyFilter_s;
 typedef struct oyCMMapi4_s oyCMMapi4_s;
+typedef struct oyCMMapi6_s oyCMMapi6_s;
+typedef struct oyCMMapi7_s oyCMMapi7_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
 typedef struct oyConnector_s oyConnector_s;
 typedef struct oyFilterPlug_s oyFilterPlug_s;
@@ -1759,7 +1761,9 @@ struct oyFilter_s {
   oyOptions_s        * options_;       /**< local options */
   char               * opts_ui_;       /**< xml ui elements for filter options*/
 
-  oyCMMapi4_s        * api4_;          /**<  */
+  oyCMMapi4_s        * api4_;          /**< oyranos library interfaces */
+  oyCMMapi6_s        * api6_;
+  oyCMMapi7_s        * api7_;
 };
 
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,

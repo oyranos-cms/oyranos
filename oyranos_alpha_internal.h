@@ -182,6 +182,9 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name );
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        const char        * cmm_required,
                                        oyCMMapiQueries_s * capabilities,
+                                       char             ** lib_used );
+oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
+                                       oyCMMapiQueries_s * capabilities,
                                        char             ** lib_used,
                                        const char        * registration,
                                        oyFILTER_TYPE_e     filter_type );
