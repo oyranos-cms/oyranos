@@ -300,6 +300,65 @@ typedef struct {
 } oyCMMapi3_s;
 
 
+/** @struct oyCMMapi7_s
+ *  @brief the API 7 to provide and implement context processing support
+ *
+ *  The context provided by a filter can be exotic. The API provides the means
+ *  to get him into a known format.
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/12/15 (Oyranos: 0.1.9)
+ *  @date    2008/12/15
+ */
+struct oyCMMapi7_s {
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
+  oyCMMapi_s     * next;
+
+  oyCMMInit_f      oyCMMInit;
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
+  oyCMMCanHandle_f oyCMMCanHandle;
+
+  /** e.g. "sw/oyranos.org/colour_shiva/common" */
+  const char     * registration;
+
+  /** 0: major - should be stable for the live time of a filter, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          version[3];
+};
+
+/** @struct oyCMMapi6_s
+ *  @brief the API 6 to provide and implement context conversion support
+ *
+ *  The context provided by a filter can be exotic. The API provides the means
+ *  to get him into a known format.
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/12/15 (Oyranos: 0.1.9)
+ *  @date    2008/12/15
+ */
+struct oyCMMapi6_s {
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
+  oyCMMapi_s     * next;
+
+  oyCMMInit_f      oyCMMInit;
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
+  oyCMMCanHandle_f oyCMMCanHandle;
+
+  /** e.g. "sw/oyranos.org/colour_shiva/common" */
+  const char     * registration;
+
+  /** 0: major - should be stable for the live time of a filter, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          version[3];
+};
 
 /** @type    oyCMMData_LoadFromMem_f
  *  @brief   load a filter data from a in memory data blob
