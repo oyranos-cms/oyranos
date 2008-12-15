@@ -13,16 +13,27 @@ SRCDIR          = $(src_dir)
 
 OY_MODULE_NAME  =_cmm_module
 LIBRARIES = $(TARGET)
-CMMS = 	$(TARGET)_lcms$(OY_MODULE_NAME) \
-	$(TARGET)_oyX1$(OY_MODULE_NAME) \
-	$(TARGET)_oyra$(OY_MODULE_NAME)
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
 LIBNAME = lib$(TARGET).a
-LIB_CMM_LCMS = lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
-LIB_CMM_oyX1 = lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
-LIB_CMM_oyra = lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
+LIB_CMM_START = $(BUILDDIR)lib$(TARGET)
+LIB_CMM_END = $(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
+
+CMMS = 	$(TARGET)_lcms$(OY_MODULE_NAME) \
+	$(TARGET)_oyIC$(OY_MODULE_NAME) \
+	$(TARGET)_oyX1$(OY_MODULE_NAME) \
+	$(TARGET)_oyra$(OY_MODULE_NAME)
+LIB_CMM_LCMS = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
+LIB_CMM_oyIC = $(LIB_CMM_START)_oyIC$(LIB_CMM_END)
+LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
+LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
+LIBS_CMM = \
+	$(LIB_CMM_LCMS) \
+	$(LIB_CMM_oyIC) \
+	$(LIB_CMM_oyX1) \
+	$(LIB_CMM_oyra)
+
 
 EXAMPLE1 = examples/image2pdf
 EXAMPLES = \
@@ -89,6 +100,7 @@ CFILESC = \
 	$(SRCDIR)/$(TARGET)_debug.c
 CFILES_ALPHA = \
 	$(SRCDIR)/$(TARGET)_alpha.c
+
 CFILES_CMM_LCMS = \
 	$(SRCDIR)/$(TARGET)_cmm_lcms.c
 CFILES_CMM_oyX1 = \
@@ -98,6 +110,8 @@ CFILES_CMM_oyra = \
 	$(SRCDIR)/$(TARGET)_cmm_oyra_icc.c \
 	$(SRCDIR)/$(TARGET)_cmm_oyra_image.c \
 	$(SRCDIR)/$(TARGET)_cmm_oyra_profile.c
+CFILES_CMM_LCMS =
+
 CFILES_MONI = \
 	$(SRCDIR)/$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
@@ -174,11 +188,13 @@ SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
 		$(CFILES_CMM_LCMS) $(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
+		$(CFILES_CMM_oyIC) \
 		$(CXXFILES_FLTK) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
 CMM_LCMS_OBJECTS = $(CFILES_CMM_LCMS:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
 CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
+CMM_oyIC_OBJECTS = $(CFILES_CMM_oyIC:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
@@ -188,6 +204,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_LCMS_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
+	$(CMM_oyIC_OBJECTS) \
 	$(EXAMPLES_OBJECTS) \
 	$(FLTK_OBJECTS) \
 	$(Flmm_OBJECTS) \
@@ -228,8 +245,8 @@ ALL_FILES = \
 # build all what is needed to run the libraries, helpers and the examples
 all:	setup config.log.h mkdepend \
 	$(BUILDDIR)$(LIBSONAMEFULL) \
-	$(BUILDDIR)$(TARGET)-monitor $(X11) $(BUILDDIR)$(LIB_CMM_LCMS) \
-	$(BUILDDIR)$(LIB_CMM_oyX1) $(BUILDDIR)$(LIB_CMM_oyra) \
+	$(BUILDDIR)$(TARGET)-monitor $(X11) \
+	$(LIBS_CMM) \
 	$(BUILDDIR)$(TARGET)-policy $(FLTK_GUI) \
 	$(BUILDDIR)$(TEST2) $(BUILDDIR)$(EXAMPLES) $(LINGUAS_SRC)
 	test -d default_profiles && \
@@ -265,7 +282,7 @@ $(BUILDDIR)$(LIBSONAMEFULL):	$(OBJECTS) $(BUILDDIR)$(LIBNAME)
 	$(RM)  $(BUILDDIR)$(LIBSO)
 	$(LNK) $(LIBSONAMEFULL) $(BUILDDIR)$(LIBSO)
 
-$(BUILDDIR)$(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
+$(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $(BUILDDIR)$@ \
@@ -275,7 +292,7 @@ $(BUILDDIR)$(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
-$(BUILDDIR)$(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
+$(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $(BUILDDIR)$@ \
@@ -285,7 +302,7 @@ $(BUILDDIR)$(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
-$(BUILDDIR)$(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
+$(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $(BUILDDIR)$@ \
@@ -294,6 +311,16 @@ $(BUILDDIR)$(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
+$(LIB_CMM_oyIC): $(CMM_oyIC_OBJECTS)
+	echo Linking $@ ...
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	-o $(BUILDDIR)$@ \
+	$(CMM_oyIC_OBJECTS) $(BUILDDIR)$(LIBSONAMEFULL) $(MODULE_LDLIBS)
+	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIC$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIC$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIC$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIC$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...
