@@ -120,16 +120,17 @@ rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 rm -rf %{buildroot}
 
 %post
+ldconfig
 
 %postun
-
+ldconfig
 
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-config
 %{_bindir}/%{name}-policy
-%{_libdir}/lib%{name}.so*
+%{_libdir}/lib%{name}.so.*
 %{_libdir}/color/cmms/lib%{name}_lcms_cmm_module.so*
 %{_libdir}/color/cmms/lib%{name}_oyra_cmm_module.so*
 %{_mandir}/man1/%{name}-config.1*
@@ -141,6 +142,7 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
+%{_libdir}/lib%{name}.so
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/%{name}.h
