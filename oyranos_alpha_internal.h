@@ -94,7 +94,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
 
 oyFilter_s * oyFilter_New_           ( oyObject_s          object );
 int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
-                                       oyFILTER_TYPE_e     filter_type,
                                        oyCMMapi4_s       * cmm_api4,
                                        const char        * lib_name );
 
@@ -194,8 +193,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
 oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
                                        oyCMMapiQueries_s * capabilities,
                                        char             ** lib_used,
-                                       const char        * registration,
-                                       oyFILTER_TYPE_e     filter_type );
+                                       const char        * registration );
 
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api );
 oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name );

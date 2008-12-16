@@ -1375,29 +1375,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyObject_s          obj );
 
 
-/** @enum    oyFILTER_TYPE_e
- *  @brief   basic filter classes
- *  @ingroup objects_conversion
- *
- *  These types are basic ones and valid to Oyranos and its usage as CMM 
- *  framework.
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/00/00 (Oyranos: 0.1.8)
- *  @date    2008/00/00
- */
-typedef enum {
-  oyFILTER_TYPE_NONE,                  /**< nothing */
-  oyFILTER_TYPE_COLOUR,                /**< colour */
-  oyFILTER_TYPE_TONEMAP,               /**< contrast or tone mapping */
-  oyFILTER_TYPE_IMAGE,                 /**< image storage */
-  oyFILTER_TYPE_GENERIC,               /**< generic */
-  oyFILTER_TYPE_MAX
-} oyFILTER_TYPE_e;
-
-const char *   oyFilterTypeToText    ( oyFILTER_TYPE_e     filter_type,
-                                       oyNAME_e            type );
-
 /** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html 
  *  @ingroup objects_conversion
  */
@@ -1405,7 +1382,7 @@ typedef enum {
   oyFILTER_REG_NONE,
   oyFILTER_REG_TOP,                    /**< e.g. "sw" for filters */
   oyFILTER_REG_DOMAIN,                 /**< e.g. "oyranos.org" */
-  oyFILTER_REG_TYPE,                   /**< oyFilterTypeToText/oyFILTER_TYPE_e, e.g. "generic" filter group */
+  oyFILTER_REG_TYPE,                   /**< e.g. "generic" filter group */
   oyFILTER_REG_APPLICATION,            /**< e.g. "scale" filter name */
   oyFILTER_REG_OPTION,                 /**< e.g. "x" filter option */
   oyFILTER_REG_MAX
@@ -1414,8 +1391,6 @@ typedef enum {
 char * oyFilterRegistrationToText    ( const char        * registration,
                                        oyFILTER_REG_e      type,
                                        oyAlloc_f           allocateFunc );
-oyFILTER_TYPE_e  oyFilterRegistrationToType (
-                                       const char        * registration );
 int    oyFilterRegistrationMatch     ( const char        * registration,
                                        const char        * pattern );
 
@@ -1721,7 +1696,7 @@ OYAPI int  OYEXPORT
  *  @ingroup objects_conversion
  *
  *  This is the Oyranos filter object. Filters are categorised into basic
- *  classes of filters described in the filter_type_ member.
+ *  classes of filters described in the registration_ (//xxx) member.
  *  Filters implement a container for data and options.
  *  Filters can be manipulated by changing their options or data set.
  *
@@ -1734,12 +1709,12 @@ OYAPI int  OYEXPORT
  *  instance a one in one out filter can not be connected to two sources at 
  *  once.
  *
- *  The oyFILTER_TYPE_e describes different basic types of filters.
- *  - oyFILTER_TYPE_COLOUR filters contain only profiles and options. They can grab their surounding and concatenate the neighbour profiles to one profile transform for speed.
- *  - oyFILTER_TYPE_TONEMAP filters are similiar to oyFILTER_TYPE_COLOUR except they can work in a two dimensional domain to apply to HDR content. This distinction is driven by usage. A oyFILTER_TYPE_TONEMAP filter may contain profiles and options. But this is not required.
- *  - oyFILTER_TYPE_IMAGE is a container for one oyImage_s. There is no 
+ *  The registration_ describes different basic types of filters (//xxx).
+ *  - "//colour" filters contain only profiles and options. They can grab their surounding and concatenate the neighbour profiles to one profile transform for speed.
+ *  - "//tonemap" filters are similiar to oyFILTER_TYPE_COLOUR except they can work in a two dimensional domain to apply to HDR content. This distinction is driven by usage. A oyFILTER_TYPE_TONEMAP filter may contain profiles and options. But this is not required.
+ *  - "//image" is a container for one oyImage_s. There is no 
  *    assumption on how the buffers are implemented.
- *  - oyFILTER_TYPE_GENERIC can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
+ *  - "//generic" can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
  *
  *  @todo: dynamic registration of new filter types
  *
@@ -1757,7 +1732,6 @@ struct oyFilter_s {
   oyName_s           * name_;          /**< nick, name, description/help */
   char               * lib_name_;      /**< the CMM to handle this filter */
 
-  oyFILTER_TYPE_e      filter_type_;   /**< filter type */
   char               * category_;      /**< the ui menue category for this filter, to be specified */
 
   oyOptions_s        * options_;       /**< local options */
@@ -1766,8 +1740,7 @@ struct oyFilter_s {
   oyCMMapi4_s        * api4_;          /**< oyranos library interfaces */
 };
 
-oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,
-                                       const char        * registration,
+oyFilter_s * oyFilter_New            ( const char        * registration,
                                        const char        * cmm,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
@@ -2586,7 +2559,7 @@ char **        oyModulsGetNames      ( int               * count,
  */
 const char *   oyModulGetOptions     ( const char        * cmm,
                                        oyObject_s          object);
-const char *   oyModuleGetActual     ( oyFILTER_TYPE_e     type );
+const char *   oyModuleGetActual     ( const char        * type );
 
 
 /* --- Image Colour Profile API --- */
