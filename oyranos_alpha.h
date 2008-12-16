@@ -160,6 +160,8 @@ typedef enum {
   oyOBJECT_CMM_API3_S,                /**< oyCMMapi3_s */
   oyOBJECT_CMM_API4_S,                /**< oyCMMapi4_s */
   oyOBJECT_CMM_API5_S,                /**< oyCMMapi5_s */
+  oyOBJECT_CMM_API6_S,                /**< oyCMMapi6_s */
+  oyOBJECT_CMM_API7_S,                /**< oyCMMapi7_s */
   oyOBJECT_CMM_DATA_TYPES_S,          /**< oyCMMDataTypes_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
   oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
@@ -1762,8 +1764,6 @@ struct oyFilter_s {
   char               * opts_ui_;       /**< xml ui elements for filter options*/
 
   oyCMMapi4_s        * api4_;          /**< oyranos library interfaces */
-  oyCMMapi6_s        * api6_;
-  oyCMMapi7_s        * api7_;
 };
 
 oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     type,
@@ -1937,9 +1937,9 @@ digraph G {
 }
  \enddot
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.9
  *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2008/07/10
+ *  @date    2008/12/16
  */
 struct oyFilterNode_s {
   oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_NODE_S*/
@@ -1954,6 +1954,7 @@ struct oyFilterNode_s {
   char               * relatives_;     /**< hint about belonging to a filter */
 
   oyStruct_s         * backend_data;   /**< the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_CreateContext() and cached through Oyranos */
+  oyCMMapi7_s        * api7_;
 };
 
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );

@@ -311,7 +311,7 @@ typedef struct {
  *  @date    2008/12/15
  */
 struct oyCMMapi7_s {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API7_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -341,7 +341,7 @@ struct oyCMMapi7_s {
  *  @date    2008/12/15
  */
 struct oyCMMapi6_s {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API6_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -474,7 +474,7 @@ typedef struct {
  *  Filters can be provided in non library form, e.g. as text files. This API 
  *  allowes for registring of paths and file types to be recognised as filters.
  *  The API must provide the means to search, list, verify and open these 
- *  script filters through Oyranos. The filters are openen in Oyranos and passed
+ *  script filters through Oyranos. The filters are opened in Oyranos and passed
  *  as blobs to the API function for obtaining light wight informations, e.g.
  *  list the scanned filters in a user selection widget. Further the API is
  *  responsible to open the filter and create a oyFilter_s object.
@@ -484,7 +484,7 @@ typedef struct {
  *  @date    2008/12/12
  */
 typedef struct {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API5_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -494,7 +494,7 @@ typedef struct {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/colour_shiva/common" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.generic/shiva" */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n

@@ -52,6 +52,11 @@ int32_t      oyObject_Hashed_        ( oyObject_s          s );
  *  @{
  */
 
+/** \addtogroup misc Miscellaneous
+
+ *  @{
+ */
+
 /** \addtogroup colour_low Basic colour calculations
 
  *  @{
@@ -535,6 +540,8 @@ const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
     case oyOBJECT_CMM_API3_S: text = "oyCMMapi3_s Profile tags"; break;
     case oyOBJECT_CMM_API4_S: text = "oyCMMapi4_s Filter"; break;
     case oyOBJECT_CMM_API5_S: text = "oyCMMapi5_s MetaFilter"; break;
+    case oyOBJECT_CMM_API6_S: text = "oyCMMapi6_s Context convertor"; break;
+    case oyOBJECT_CMM_API7_S: text = "oyCMMapi7_s Filter run"; break;
     case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
     case oyOBJECT_ICON_S: text = "oyIcon_s"; break;
@@ -2501,7 +2508,8 @@ oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
     }
   }
 
-  api = oyCMMsGetApi_( oyOBJECT_CMM_API5_S, cmm_required, queries, lib_used );
+  api = oyCMMsGetApi_( oyOBJECT_CMM_API5_S, cmm_required, queries, lib_used,
+                       0,0 );
 
   if(api)
     error = oyHash_SetPointer_( entry, (oyStruct_s*) api );
@@ -2514,40 +2522,41 @@ oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
 }
 
 /** @internal
+ *  @version Oyranos: 0.1.9
+ *  @since   2007/12/16 (Oyranos: 0.1.9)
+ *  @date    2008/12/16
+ */
+oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMapi_s        * api,
+                                       oyPointer           data )
+{
+  return oyCMMapi_Check_( api );
+}
+
+/** @internal
  *  Function oyCMMsGetApi__
- *  @brief get a module
+ *  @brief get a specified module
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
- *  The module system shall support:
- *    - use of the desired CMM for the task at hand
- *    - provide fallbacks for incapabilities
- *    - process in different ways and by different modules through the same API
- *
  *
  *  This function allowes to obtain a desired API from a certain library.
  *
  *  @param[in]   type                  the API to return
  *  @param[in]   lib_name              if present take this or fail, the arg
  *                                     simplifies and speeds up the search
- *  @param[in]   queries               search for a match to capabilities
- *  @param[in]   registration          point'.' separated list of identifiers
- *  @param[in]   filter_type           type of filter
+ *  @param[in]   apiCheck              custom api selector
+ *  @param[in]   check_pointer         data to pass to apiCheck
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/12/08 (Oyranos: 0.1.9)
- *  @date    2008/12/08
+ *  @date    2008/12/16
  */
 oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
                                        const char        * lib_name,
-                                       oyCMMapiQueries_s * queries,
-                                       const char        * registration,
-                                       oyFILTER_TYPE_e     filter_type )
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer )
 {
   int error = !type;
   oyCMMapi_s * api = 0;
-  oyCMMapi4_s * cmm_api4 = 0;
-  int  found = 0;
-  oyFILTER_TYPE_e cmm_api4_filter_type = 0;
 
   if(!error &&
      !(oyOBJECT_CMM_API1_S <= type && type < oyOBJECT_CMM_API_MAX))
@@ -2556,27 +2565,92 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
   if(!error)
   {
     /* open the module */
+    oyCMMInfo_s * cmm_info = oyCMMInfoAtListFromLibName_( lib_name );
+
+    if(cmm_info)
     {
-      oyCMMInfo_s * cmm_info = oyCMMInfoAtListFromLibName_( lib_name );
+      oyCMMapi_s * tmp = cmm_info->api;
 
-      if(cmm_info)
+      if(!apiCheck)
+        apiCheck = oyCMMapi_CheckWrap_;
+
+      while(tmp)
       {
-        oyCMMapi_s * tmp = cmm_info->api;
+        if(apiCheck(tmp, check_pointer) == type)
+          api = tmp;
 
-        while(tmp)
-        {
-          found = 0;
-
-          if(oyCMMapi_Check_(tmp) == type)
-            api = tmp;
-
-          tmp = tmp->next;
-        }
+        tmp = tmp->next;
       }
     }
   }
 
   return api;
+}
+
+/** @internal
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/12/16 (Oyranos: 0.1.9)
+ *  @date    2008/12/16
+ */
+typedef struct {
+  oyOBJECT_e type;
+  const char        * registration;
+  oyFILTER_TYPE_e filter_type;
+} api4_filter_s;
+
+/** @internal
+ *  Function oyCMMapi4_checkFilter_
+ *  @brief   filter the desired api
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/12/16 (Oyranos: 0.1.9)
+ *  @date    2008/12/16
+ */
+oyOBJECT_e   oyCMMapi4_checkFilter_  ( oyCMMapi_s        * api,
+                                       oyPointer           data )
+{
+  oyOBJECT_e type = oyOBJECT_NONE;
+  int error = !data || !api;
+  const char        * registration;
+  oyFILTER_TYPE_e     filter_type;
+  oyFILTER_TYPE_e cmm_api4_filter_type = 0;
+  api4_filter_s * api4_filter;
+  oyCMMapi4_s * cmm_api4 = (oyCMMapi4_s *) api;
+  int found = 0;
+
+  if(!error)
+    api4_filter = (api4_filter_s*) data;
+
+  if(!error &&
+     api->type == oyOBJECT_CMM_API4_S &&
+     api4_filter->type == oyOBJECT_CMM_API4_S)
+  {
+
+    filter_type = api4_filter->filter_type;
+    registration = api4_filter->registration;
+
+    if(filter_type)
+    {
+      if(registration)
+      {
+        cmm_api4_filter_type = oyFilterRegistrationToType(
+                                              cmm_api4->registration );
+        if(cmm_api4_filter_type == filter_type && filter_type != 0)
+        {
+          if(oyFilterRegistrationMatch( cmm_api4->registration,
+                                        registration ))
+            found = 1;
+        }
+      } else
+        found = 1;
+
+      if( found )
+        type = api->type;
+    }
+  }
+
+  return type;
 }
 
 /** @internal
@@ -2616,15 +2690,10 @@ oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
                                        const char        * registration,
                                        oyFILTER_TYPE_e     filter_type )
 {
-  oyOBJECT_e type = oyOBJECT_CMM_API4_S;
-  int error = !type;
-  oyCMMapi4_s * api_fallback = 0,
-              * api4 = 0,
-              * cmm_api4 = 0;
-  char * lib_fallback = 0,
-       prefered_cmm[5] = {0,0,0,0,0};
-  int  found = 0;
-  oyFILTER_TYPE_e cmm_api4_filter_type = 0;
+  int error = 0;
+  char prefered_cmm[5] = {0,0,0,0,0};
+  oyCMMapi4_s * api4 = 0;
+  api4_filter_s api4_filter = {oyOBJECT_CMM_API4_S};
 
   if(!cmm_required)
   {
@@ -2636,101 +2705,16 @@ oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
 
   if(!error)
   {
-    char ** files = 0;
-    int  files_n = 0;
-    int i, oy_compatibility = 0;
-    char cmm[5] = {0,0,0,0,0};
+    api4_filter.registration = registration;
+    api4_filter.filter_type = filter_type;
 
-    files = oyCMMsGetLibNames_(&files_n, cmm_required);
-
-    /* open the modules */
-    for( i = 0; i < files_n; ++i)
-    {
-      oyCMMInfo_s * cmm_info = oyCMMInfoAtListFromLibName_(files[i]);
-
-      if(cmm_info)
-      {
-        oyCMMapi_s * tmp = cmm_info->api;
-
-        error = !memcpy( cmm, cmm_info->cmm, 4 );
-
-        while(tmp)
-        {
-          found = 0;
-
-          if(oyCMMapi_Check_(tmp) == type)
-          {
-            {
-              cmm_api4 = (oyCMMapi4_s *) tmp;
-              if(filter_type)
-              {
-                if(registration)
-                {
-                  cmm_api4_filter_type = oyFilterRegistrationToType(
-                                              cmm_api4->registration );
-                  if(cmm_api4_filter_type == filter_type && filter_type != 0)
-                  {
-                    if(oyFilterRegistrationMatch( cmm_api4->registration,
-                                                  registration ))
-                      found = 1;
-                  }
-                } else
-                  found = 1;
-
-                if( found &&
-                    /* if we found already a matching version, do not exchange*/
-                    oy_compatibility != OYRANOS_VERSION &&
-                      /* possibly newly found */
-                    ( oy_compatibility = 0 ||
-                      /* or a bigger version but not greater than current oy_ */
-                      ( cmm_info->oy_compatibility <= OYRANOS_VERSION &&
-                        oy_compatibility < cmm_info->oy_compatibility ) ||
-                      /* or we select a less greater in case we are above oy_ */
-                      ( cmm_info->oy_compatibility > OYRANOS_VERSION &&
-                        oy_compatibility > cmm_info->oy_compatibility )
-                    )
-                  )
-                {
-                  oy_compatibility = cmm_info->oy_compatibility;
-
-                  if(memcmp( cmm, prefered_cmm, 4 ) == 0)
-                  {
-                    if(!cmm_api4->api5_)
-                      cmm_api4->api5_ = oyCMMMetaGetApi_( 0, queries, 0, 0,
-                                                          filter_type );
-                    api4 = (oyCMMapi4_s*) tmp;
-                    if(lib_used)
-                      *lib_used = oyStringCopy_( files[i], oyAllocateFunc_ );
-
-                  } else {
-
-                    api_fallback = (oyCMMapi4_s*) tmp;
-                    lib_fallback = oyStringCopy_( files[i], oyAllocateFunc_ );
-                  }
-                  oy_compatibility = cmm_info->oy_compatibility;
-                }
-              }
-            }
-          }
-          tmp = tmp->next;
-        }
-      }
-    }
-
-    oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
+    api4 = (oyCMMapi4_s*)oyCMMsGetApi_( oyOBJECT_CMM_API4_S,
+                                        cmm_required,
+                                        queries,
+                                        lib_used,
+                                        oyCMMapi4_checkFilter_,
+                                        &api4_filter );
   }
-
-  if(!api4 && api_fallback)
-  {
-    if(lib_used)
-      *lib_used = oyStringCopy_( lib_fallback, oyAllocateFunc_ );
-
-    if(lib_fallback)
-      oyFree_m_( lib_fallback );
-
-    return api_fallback;
-  }
-
 
   return api4;
 }
@@ -2760,24 +2744,29 @@ oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
  *                                     simplifies and speeds up the search
  *  @param[in]   queries               search for a match to capabilities
  *  @param[out]  lib_used              inform about the selected CMM
+ *  @param[in]   apiCheck              custom api selector
+ *  @param[in]   check_pointer         data to pass to apiCheck
  *
  *  @version Oyranos: 0.1.9
- *  @since   2007/12/12 (Oyranos: 0.1.8)
- *  @date    2008/12/15
+ *  @since   2007/12/12 (Oyranos: 0.1.9)
+ *  @date    2008/12/16
  */
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
-                                       char             ** lib_used )
+                                       char             ** lib_used,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer )
 {
   int error = !type;
   oyCMMapi_s * api = 0,
              * api_fallback = 0;
-  oyCMMapi4_s * cmm_api4 = 0;
   char * lib_fallback = 0,
        prefered_cmm[5] = {0,0,0,0,0};
   int  found = 0;
-  oyFILTER_TYPE_e cmm_api4_filter_type = 0;
+
+  if(!apiCheck)
+    apiCheck = oyCMMapi_CheckWrap_;
 
   if(!cmm_required)
     if(queries && *(uint32_t*)queries->prefered_cmm)
@@ -2811,7 +2800,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
         {
           found = 0;
 
-          if(oyCMMapi_Check_(tmp) == type)
+          if(apiCheck(tmp, check_pointer) == type)
           {
 
               if( /* if we found already a matching version, do not exchange*/
@@ -6440,7 +6429,7 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
   {
     if(!error)
     {
-      oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0 );
+      oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
       if(api && *(uint32_t*)&cmm)
       {
         oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
@@ -7551,7 +7540,7 @@ oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
 
         /* TODO update to oyCMMapi4_s::oyCMMDataOpen_f */
         oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
-                                          cmm, 0, &lib_used );
+                                          cmm, 0, &lib_used, 0,0 );
         if(api && *(uint32_t*)&cmm)
         {
           oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
@@ -8427,7 +8416,8 @@ OYAPI oyProfileTag_s * OYEXPORT
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, &queries, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, &queries, 0,
+                                      0,0 );
     if(api)
     {
       oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
@@ -8630,7 +8620,8 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, &queries, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, &queries, 0,
+                                      0,0 );
     if(api)
     {
       oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
@@ -12179,6 +12170,11 @@ int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
  *  @relates oyFilter_s
  *  @brief   lookup and initialise a new filter object
  *
+ *  backend selection: \n
+ *  - the user knows, which kind of filter is requested -> registration
+ *  - the user probably knows, which special CMM to use
+ *  - the user passes options, which might decide about a type of CMM (e.g. ICC)
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
  *  @date    2008/06/25
@@ -12198,11 +12194,18 @@ oyFilter_s * oyFilter_New            ( oyFILTER_TYPE_e     filter_type,
   char * lib_name = 0;
 
   if(!error)
+  {
+#if 1
     cmm_api4 = oyCMMsGetApi4_(         cmm_required,
                                        capabilities,
                                        &lib_name,
                                        registration,
                                        filter_type );
+#else
+    /* TODO */
+    oyCMMapi5_s * api5 = oyCMMapi5_Get_( registration, options );
+#endif
+  }
 
   if(!error)
     error = oyFilter_SetCMMapi4_( s, filter_type, cmm_api4, lib_name );
@@ -13807,7 +13810,8 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S, cmm, 0, &lib_used );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S, cmm, 0, &lib_used,
+                                      0,0 );
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
@@ -14189,8 +14193,8 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi__( oyOBJECT_CMM_API1_S,
-                                       cmm_ptr->lib_name, 0, 0,0 );
+    oyCMMapi_s *api = oyCMMsGetApi__( oyOBJECT_CMM_API1_S, cmm_ptr->lib_name,
+                                      0,0 );
     if(api)
     {
       oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
@@ -14347,8 +14351,8 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi__( oyOBJECT_CMM_API1_S,
-                                       cmm_ptr->lib_name, 0, 0,0 );
+    oyCMMapi_s *api = oyCMMsGetApi__( oyOBJECT_CMM_API1_S, cmm_ptr->lib_name,
+                                      0,0 );
     if(api)
     {
       oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
@@ -16541,7 +16545,7 @@ int      oyGetMonitorInfo            ( const char        * display_name,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
@@ -16582,7 +16586,7 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
@@ -16624,7 +16628,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
@@ -16663,7 +16667,7 @@ char *   oyGetMonitorProfile         ( const char        * display_name,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
@@ -16699,7 +16703,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
@@ -16748,7 +16752,7 @@ int      oySetMonitorProfile         ( const char        * display_name,
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
@@ -16786,7 +16790,7 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0 );
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
     if(api && *(uint32_t*)&cmm)
     {
       oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;

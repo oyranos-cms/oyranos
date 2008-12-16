@@ -387,7 +387,7 @@ int          oyraFilterScan (          oyPointer           data,
  */
 oyCMMapi5_s  oyra_api5_colour_icc = {
 
-  oyOBJECT_CMM_API5_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
+  oyOBJECT_CMM_API5_S, /* oyStruct_s::type */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
   (oyCMMapi_s*) & oyra_api4_image_root, /* oyCMMapi_s * next */
   
@@ -395,8 +395,8 @@ oyCMMapi5_s  oyra_api5_colour_icc = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
   oyraFilter_CanHandle, /* oyCMMCanHandle_f */
 
-  /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "colour/oyra_meta",
+  /* @todo registration: for what? */
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "colour/icc",
 
   {0,0,1}, /* int32_t version[3] */
 

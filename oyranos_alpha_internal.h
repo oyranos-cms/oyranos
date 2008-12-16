@@ -170,6 +170,8 @@ typedef struct {
 } oyCMMapiQueries_s;
 
 
+typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMapi_s        * api,
+                                       oyPointer           data );
 char **          oyCMMsGetNames_     ( int               * n,
                                        oyOBJECT_e        * api_types,
                                        int                 types_n );
@@ -179,10 +181,16 @@ char *           oyCMMnameFromLibName_(const char        * lib_name);
 oyCMMInfo_s *    oyCMMInfoAtListFromLibName_(const char        * lib_name );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
 oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name );
+oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
+                                       const char        * lib_name,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer );
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        const char        * cmm_required,
                                        oyCMMapiQueries_s * capabilities,
-                                       char             ** lib_used );
+                                       char             ** lib_used,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer );
 oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
                                        oyCMMapiQueries_s * capabilities,
                                        char             ** lib_used,
