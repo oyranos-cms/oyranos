@@ -120,6 +120,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       libdir="`echo $1 | sed s/--$switch=//`"
     fi
+    switch=cmmsubpath
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      cmmsubpath="`echo $1 | sed s/--$switch=//`"
+    fi
     switch=includedir
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       includedir="`echo $1 | sed s/--$switch=//`"
@@ -220,7 +224,8 @@ test -n "$INFOECHO" && $INFOECHO "   --prefix=[/usr/local]                packag
 test -n "$INFOECHO" && $INFOECHO "   --exec-prefix=[\$prefix]              package exec-prefix"
 test -n "$INFOECHO" && $INFOECHO "   --bindir=[\$exec-prefix/bin]          binary installation path"
 test -n "$INFOECHO" && $INFOECHO "   --sbindir=[\$exec-prefix/sbin]        super user binary installation path"
-test -n "$INFOECHO" && $INFOECHO "   --libdir=[\$exec-prefix/lib]          library installation path"
+test -n "$INFOECHO" && $INFOECHO "   --libdir=[\$exec-prefix/lib]          main library installation path"
+test -n "$INFOECHO" && $INFOECHO "   --cmmsubpath=[color/cmms]            module installation path"
 test -n "$INFOECHO" && $INFOECHO "   --includedir=[\$prefix/include]       include file installation"
 test -n "$INFOECHO" && $INFOECHO "   --datadir=[\$prefix/data]             application data base path"
 test -n "$INFOECHO" && $INFOECHO "   --mandir=[\$datadir/man]              manual installation path"
@@ -514,7 +519,7 @@ LIBDIR="lib"
 export OSUNAME LIBDIR
 
 
-# exec_prefix bindir sbindir libdir includedir datadir
+# exec_prefix bindir sbindir libdir cmmsubpath includedir datadir
 if [ -z "$exec_prefix" ]; then
   exec_prefix="$prefix"
 fi
@@ -527,9 +532,12 @@ fi
 if [ -z "$libdir" ]; then
   libdir="$exec_prefix/$LIBDIR"
 fi
-if [ -z "$cmmdir" ]; then
-  cmmdir="$libdir/color/cmms"
+metasubpath=$TARGET
+metadir="$libdir/$metasubpath"
+if [ -z "$cmmsubpath" ]; then
+  cmmsubpath="colour/moduls"
 fi
+cmmdir="$libdir/$cmmsubpath"
 if [ -z "$includedir" ]; then
   includedir="$prefix/include"
 fi
@@ -811,6 +819,8 @@ test -n "$ECHO" && $ECHO "bindir=$bindir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "libdir=$libdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $CONF_SH
+test -n "$ECHO" && $ECHO "cmmsubpath=$cmmsubpath" >> $CONF_SH
+test -n "$ECHO" && $ECHO "metasubpath=$metasubpath" >> $CONF_SH
 test -n "$ECHO" && $ECHO "includedir=$includedir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $CONF_SH
@@ -876,6 +886,8 @@ test -n "$ECHO" && $ECHO "bindir=$bindir" >> $PKGC
 test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $PKGC
 test -n "$ECHO" && $ECHO "libdir=$libdir" >> $PKGC
 test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $PKGC
+test -n "$ECHO" && $ECHO "cmmsubpath=$cmmsubpath" >> $PKGC
+test -n "$ECHO" && $ECHO "metasubpath=$metasubpath" >> $PKGC
 test -n "$ECHO" && $ECHO "includedir=$includedir" >> $PKGC
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $PKGC
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $PKGC
@@ -909,6 +921,8 @@ if [ -n "$ECHO" ]; then
   echo_="libdir          =       $libdir"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="cmmdir          =       $cmmdir"
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  echo_="cmmsubpath      =       $cmmsubpath"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="includedir      =       $includedir"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
@@ -944,6 +958,9 @@ test -n "$ECHO" && $ECHO "bindir=$bindir" >> $CONF
 test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $CONF
 test -n "$ECHO" && $ECHO "libdir=$libdir" >> $CONF
 test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $CONF
+test -n "$ECHO" && $ECHO "metadir=$metadir" >> $CONF
+test -n "$ECHO" && $ECHO "cmmsubpath=$cmmsubpath" >> $CONF
+test -n "$ECHO" && $ECHO "metasubpath=$metasubpath" >> $CONF
 test -n "$ECHO" && $ECHO "includedir=$includedir" >> $CONF
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $CONF
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $CONF
@@ -969,6 +986,8 @@ test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_CMMSUBPATH     \"$cmmsubpath\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_METASUBPATH    \"$metasubpath\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $CONF_H
