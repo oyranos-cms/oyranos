@@ -724,7 +724,7 @@ oyOptions_s* lcmsFilter_CmmIccValidateOptions
   uint32_t error = !filter;
 
   if(!error)
-    error = filter->filter_type_ != oyFILTER_TYPE_COLOUR;
+    error = oyFilterRegistrationMatch(filter->registration_, "//colour/icc");
 
   *result = error;
 
@@ -975,10 +975,9 @@ char lcms_extra_options[] = {
   <" OY_TOP_INTERNAL ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" CMM_NICK ">\n\
-      <rendering_bpc>0</rendering_bpc>\n\
+     <" "icc." CMM_NICK ">\n\
       <cmyk_cmky_black_preservation.advanced>0</cmyk_cmky_black_preservation.advanced>\n\
-     </" CMM_NICK ">\n\
+     </" "icc." CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
   </" OY_TOP_INTERNAL ">\n"
@@ -1005,7 +1004,8 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsCMMMessageFuncSet,
   lcmsCMMCanHandle,
 
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "colour/lcms",
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "icc." CMM_NICK,
 
   {0,0,1},
 
