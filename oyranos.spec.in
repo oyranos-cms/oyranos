@@ -131,8 +131,9 @@ ldconfig
 %{_bindir}/%{name}-config
 %{_bindir}/%{name}-policy
 %{_libdir}/lib%{name}.so.*
-%{_libdir}/color/cmms/lib%{name}_lcms_cmm_module.so*
-%{_libdir}/color/cmms/lib%{name}_oyra_cmm_module.so*
+%{_libdir}/%{cmmsubpath}/lib%{name}_lcms_cmm_module.so*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module.so*
+%{_libdir}/%{metasubpath}/lib%{name}_oyIM_cmm_module.so*
 %{_mandir}/man1/%{name}-config.1*
 %{_mandir}/man1/%{name}-policy*
 %{_mandir}/man3/%{name}.*
@@ -160,7 +161,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
-%{_libdir}/color/cmms/lib%{name}_oyX1_cmm_module.so*
+%{_libdir}/%{metasubpath}/lib%{name}_oyX1_cmm_module.so*
 %{_mandir}/man1/%{name}-monitor*
 
 %files monitor-nvidia

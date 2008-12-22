@@ -868,6 +868,8 @@ test -n "$RPMECHO" && $RPMECHO "Release:         $RELEASE" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define syscolordir     $syscolordir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define usercolordir    $usercolordir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define iccdirname      $iccdirname" >> $SPEC
+test -n "$RPMECHO" && $RPMECHO "%define cmmsubpath      $cmmsubpath" >> $SPEC
+test -n "$RPMECHO" && $RPMECHO "%define metasubpath     $metasubpath" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define settingsdirname $settingsdirname" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define targetdirname   $targetdirname" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define pixmapdir       $pixmapdir" >> $SPEC
