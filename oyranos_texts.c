@@ -979,14 +979,22 @@ char**  oyLibPathsGet_( int             * count,
 {
   char ** paths = 0, ** tmp;
   int     n = 0, tmp_n = 0;
-  char  * fix_paths[3] = {0,0,0};
-  int     fix_paths_n = 2;
   char *  vars[] = {"OY_MODULE_PATHS"};
   int     vars_n = 1;
   int     i;
+  char  * fix_paths[3] = {0,0,0};
+  int     fix_paths_n = 2;
 
-  fix_paths[0] = OY_LIBDIR OY_SLASH "color" OY_SLASH "cmms";
-  fix_paths[1] = OY_USER_PATH OY_SLASH "lib" OY_SLASH "color" OY_SLASH "cmms";
+  if(!subdir)
+  {
+    fix_paths[0] = OY_LIBDIR OY_SLASH OY_METASUBPATH;
+    fix_paths[1] = OY_USER_PATH OY_SLASH "lib" OY_SLASH OY_METASUBPATH;
+  } else {
+    fix_paths[0] = oyStringCopy_(OY_LIBDIR OY_SLASH, oyAllocateFunc_);
+    oyStringAdd_( &fix_paths[0], subdir, oyAllocateFunc_, oyDeAllocateFunc_);
+    fix_paths[1] = oyStringCopy_(OY_USER_PATH OY_SLASH, oyAllocateFunc_);
+    oyStringAdd_( &fix_paths[1], subdir, oyAllocateFunc_, oyDeAllocateFunc_);
+  }
 
   oyStringListAdd_( &paths, &n, (const char**)fix_paths, fix_paths_n,
                     oyAllocateFunc_, oyDeAllocateFunc_ );
