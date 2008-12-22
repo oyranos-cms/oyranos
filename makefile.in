@@ -59,8 +59,10 @@ MODULE_LDLIBS =	$(lc)
 CHEADERS = \
 	$(SRCDIR)/$(TARGET).h \
 	$(SRCDIR)/$(TARGET)_alpha.h \
+	$(SRCDIR)/$(TARGET)_alpha_internal.h \
 	$(SRCDIR)/$(TARGET)_check.h \
 	$(SRCDIR)/$(TARGET)_cmm.h \
+	$(SRCDIR)/$(TARGET)_cmm_oyIM.h \
 	$(SRCDIR)/$(TARGET)_cmm_oyra.h \
 	$(SRCDIR)/$(TARGET)_cmms.h \
 	$(SRCDIR)/$(TARGET)_config.h \
