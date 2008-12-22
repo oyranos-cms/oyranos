@@ -411,13 +411,13 @@ typedef int          (*oyCMMDataScan_f) (
  *  @since   2008/11/22 (Oyranos: 0.1.9)
  *  @date    2008/11/22
  */
-typedef oyFilter_s * (*oyCMMFilter_Load_f) (
+typedef oyCMMapi4_s *  (*oyCMMFilterLoad_f) (
                                        oyPointer           data,
                                        size_t              size,
                                        const char        * file_name,
                                        int                 num );
 
-/** @type    oyCMMFilter_Scan_f
+/** @type    oyCMMFilterScan_f
  *  @brief   load a filter from a in memory data blob
  *
  *  @param[in]     data                data blob
@@ -427,11 +427,13 @@ typedef oyFilter_s * (*oyCMMFilter_Load_f) (
  *  @param[out]    registration        filter registration string
  *  @param[out]    name                filter name
  *  @param[in]     allocateFunc        e.g. malloc
+ *  @param[out]    info                oyCMMInfo_s pointer to set
+ *  @param[in]     object              e.g. Oyranos object
  *  @return                            0 on success; error >= 1; -1 not found; unknown < -1
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/12/12
+ *  @date    2008/12/17
  */
 typedef int          (*oyCMMFilterScan_f) (
                                        oyPointer           data,
@@ -440,7 +442,9 @@ typedef int          (*oyCMMFilterScan_f) (
                                        int                 num,
                                        char             ** registration,
                                        char             ** name,
-                                       oyAlloc_f           allocateFunc );
+                                       oyAlloc_f           allocateFunc,
+                                       oyCMMInfo_s      ** info,
+                                       oyObject_s          object );
 
 
 /** @struct oyCMMDataTypes_s
@@ -494,7 +498,7 @@ typedef struct {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.generic/shiva" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.generic/shiva" or "sw/oyranos.org/colour/icc" */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -510,7 +514,7 @@ typedef struct {
   /** 0: libs - libraries, Oyranos searches in the XDG_LIBRARY_PATH and sub_paths, The library will be provided as file_name\n  1: scripts - platform independent filters, Oyranos will search in the XDG_DATA_* paths, Script are provided as i memory blobs */
   int32_t          data_type;
 
-  oyCMMFilter_Load_f               oyCMMFilterLoad;
+  oyCMMFilterLoad_f                oyCMMFilterLoad;
   oyCMMFilterScan_f                oyCMMFilterScan;
 
   /** check options for validy and correct */
@@ -521,6 +525,8 @@ typedef struct {
   const char     * opts_ui;            /**< xml ui elements for filter options*/
 
   oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
+
+  char           * id_;                /**< Oyranos id; keep to zero */
 } oyCMMapi5_s;
 
 
@@ -566,7 +572,7 @@ typedef int      (*oyCMMFilterNode_ContextFromMem_f) (
  *  @brief   dump a CMM filter context into a memory blob
  *
  *  The goal is to have a data blob for later reusing. It is as well used for
- *  exchange and analysis. A oyFILTER_TYPE_COLOUR filter should fill the data
+ *  exchange and analysis. A "//colour" filter should fill the data
  *  blob with a device link style profile for easy forwarding and reuseable
  *  on disk caching.
  *  This function complements the oyCMMFilter_ContextFromMem_t() function.
@@ -644,7 +650,7 @@ struct  oyCMMapi4_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/generic/scale" */
+  /** e.g. "sw/oyranos.org/generic/scale" or "sw/oyranos.org/colour/icc.lcms" */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -688,7 +694,8 @@ struct  oyCMMapi4_s {
   /** additional allowed number for last output connector, e.g. typical 0 */
   uint32_t         sockets_last_add;
 
-  oyCMMapi5_s    * api5_;              /**< meta backend; keep empty */
+  char           * id_;                /**< Oyranos id; keep to zero */
+  oyCMMapi5_s    * api5_;              /**< meta backend; keep to zero */
 };
 
 
