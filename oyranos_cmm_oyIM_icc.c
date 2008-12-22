@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_oyra_icc.c
+/** @file oyranos_cmm_oyIM_icc.c
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -12,14 +12,14 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:\n
  *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
- *  @since    2008/11/13
+ *  @since    2008/12/16
  */
 
 #include "config.h"
 #include "oyranos_alpha.h"
 #include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
-#include "oyranos_cmm_oyra.h"
+#include "oyranos_cmm_oyIM.h"
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
 #include "oyranos_i18n.h"
@@ -38,14 +38,14 @@
 #include <inttypes.h>
 #endif
 
-/** Function oyraFilter_CanHandle
+/** Function oyIMFilter_CanHandle
  *  @brief   dummy
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/13 (Oyranos: 0.1.9)
  *  @date    2008/11/13
  */
-int    oyraFilter_CanHandle          ( oyCMMQUERY_e      type,
+int    oyIMFilter_CanHandle          ( oyCMMQUERY_e      type,
                                        uint32_t          value )
 {
   int ret = -1;
@@ -53,14 +53,14 @@ int    oyraFilter_CanHandle          ( oyCMMQUERY_e      type,
   return ret;
 }
 
-/** Function oyra_defaultICCValidateOptions
+/** Function oyIM_defaultICCValidateOptions
  *  @brief   dummy
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/13 (Oyranos: 0.1.9)
  *  @date    2008/11/13
  */
-oyOptions_s* oyra_defaultICCValidateOptions
+oyOptions_s* oyIM_defaultICCValidateOptions
                                      ( oyFilter_s        * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
@@ -80,7 +80,7 @@ oyOptions_s* oyra_defaultICCValidateOptions
 /*
  <xf:model> <xf:instance> - must be added in Oyranos to make the model complete
  */
-char oyra_default_colour_icc_options[] = {
+char oyIM_default_colour_icc_options[] = {
  "\n\
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_STD ">\n\
@@ -110,7 +110,7 @@ char oyra_default_colour_icc_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-char oyra_default_colour_icc_options_ui[] = {
+char oyIM_default_colour_icc_options_ui[] = {
  "\
   <h3>Oyranos Default Profiles:</h3>\n\
   <table>\n\
@@ -204,24 +204,24 @@ char oyra_default_colour_icc_options_ui[] = {
 "
 }; 
 
-const char * oyraICCDataNameGet(oyNAME_e type)
+const char * oyIMICCDataNameGet(oyNAME_e type)
 {
   if(type == oyNAME_NAME)
   return _("ICC profile");
   else if(type == oyNAME_DESCRIPTION)
   return _("ICC colour profile for colour transformations");
   else
-  return "colour";
+  return OY_TYPE_STD;
 }
 
-/** Function oyraICCDataLoadFromMem
+/** Function oyIMICCDataLoadFromMem
  *  @brief   load a ICC profile from a in memory data blob
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/23 (Oyranos: 0.1.9)
  *  @date    2008/11/23
  */
-oyStruct_s * oyraICCDataLoadFromMem  ( size_t              buf_size,
+oyStruct_s * oyIMICCDataLoadFromMem  ( size_t              buf_size,
                                        const oyPointer     buf,
                                        uint32_t            flags,
                                        oyObject_s          object )
@@ -229,14 +229,14 @@ oyStruct_s * oyraICCDataLoadFromMem  ( size_t              buf_size,
   return (oyStruct_s*) oyProfile_FromMem( buf_size, buf, flags, object );
 }
 
-/** Function oyraICCDataScan
+/** Function oyIMICCDataScan
  *  @brief   load ICC profile informations from a in memory data blob
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/23 (Oyranos: 0.1.9)
  *  @date    2008/11/23
  */
-int          oyraICCDataScan         ( oyPointer           buf,
+int          oyIMICCDataScan         ( oyPointer           buf,
                                        size_t              buf_size,
                                        char             ** intern,
                                        char             ** filename,
@@ -265,15 +265,35 @@ oyCMMDataTypes_s icc_data[] = {
   0, /* id */
   "color/icc", /* sub paths */
   "icc:icm", /* file name extensions */
-  oyraICCDataNameGet, /* oyCMMDataNameGet */
-  oyraICCDataLoadFromMem, /* oyCMMDataLoadFromMem */
-  oyraICCDataScan /* oyCMMDataScan */
+  oyIMICCDataNameGet, /* oyCMMDataNameGet */
+  oyIMICCDataLoadFromMem, /* oyCMMDataLoadFromMem */
+  oyIMICCDataScan /* oyCMMDataScan */
  },{0} /* zero list end */
 };
 
+/**
+ *  @brief   oyIM oyCMMapi5_s implementation
+ *
+ *  A filter interpreter loading. This function implements
+ *  oyCMMFilterLoad_f for oyCMMapi5_s::oyCMMFilterLoad().
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/17 (Oyranos: 0.1.10)
+ *  @date    2008/12/17
+ */
+oyCMMapi4_s *  oyIMFilterLoad        ( oyPointer           data,
+                                       size_t              size,
+                                       const char        * file_name,
+                                       int                 num )
+{
+  oyCMMapi4_s * api4 = 0;
+  api4 = (oyCMMapi4_s*) oyCMMsGetApi__( oyOBJECT_CMM_API4_S, file_name,
+                                        0,0 );
+  return api4;
+}
 
 /**
- *  @brief   oyra oyCMMapi5_s implementation
+ *  @brief   oyIM oyCMMapi5_s implementation
  *
  *  A interpreter preview for filters. This function implements
  *  oyCMMFilterScan_f for oyCMMapi5_s::oyCMMFilterScan().
@@ -282,13 +302,15 @@ oyCMMDataTypes_s icc_data[] = {
  *  @since   2008/12/13 (Oyranos: 0.1.10)
  *  @date    2008/12/13
  */
-int          oyraFilterScan (          oyPointer           data,
+int          oyIMFilterScan          ( oyPointer           data,
                                        size_t              size,
                                        const char        * lib_name,
                                        int                 num,
                                        char             ** registration,
                                        char             ** name,
-                                       oyAlloc_f           allocateFunc )
+                                       oyAlloc_f           allocateFunc,
+                                       oyCMMInfo_s      ** info,
+                                       oyObject_s          object )
 {
   oyCMMInfo_s * cmm_info = 0;
   oyCMMapi_s * api = 0;
@@ -339,14 +361,17 @@ int          oyraFilterScan (          oyPointer           data,
         int found = 0;
         while(!found)
         {
-          if(api->type == oyOBJECT_CMM_API4_S)
+          if(api && api->type == oyOBJECT_CMM_API4_S)
           {
             if(x == num)
               found = 1;
             else
               ++x;
           }
-          api = api->next;
+          if(!api)
+            found = 1;
+          if(!found)
+            api = api->next;
         }
 
         if(api && found)
@@ -356,6 +381,8 @@ int          oyraFilterScan (          oyPointer           data,
             *registration = oyStringCopy_( api4->registration, allocateFunc );
           if(name)
             *name = oyStringCopy_( api4->name.name, allocateFunc );
+          if(info)
+            *info = oyCMMInfo_Copy( cmm_info, object );
           ret = 0;
         } else
           ret = -1;
@@ -376,8 +403,8 @@ int          oyraFilterScan (          oyPointer           data,
   return ret;
 }
 
-/** @instance oyra_api5
- *  @brief    oyra oyCMMapi5_s implementation
+/** @instance oyIM_api5
+ *  @brief    oyIM oyCMMapi5_s implementation
  *
  *  a interpreter for ICC CMM's
  *
@@ -385,33 +412,33 @@ int          oyraFilterScan (          oyPointer           data,
  *  @since   2008/11/13 (Oyranos: 0.1.9)
  *  @date    2008/11/23
  */
-oyCMMapi5_s  oyra_api5_colour_icc = {
+oyCMMapi5_s  oyIM_api5_colour_icc = {
 
   oyOBJECT_CMM_API5_S, /* oyStruct_s::type */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api4_image_root, /* oyCMMapi_s * next */
+  0, /* oyCMMapi_s * next */
   
-  oyraCMMInit, /* oyCMMInit_f */
-  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_CanHandle, /* oyCMMCanHandle_f */
+  oyIMCMMInit, /* oyCMMInit_f */
+  oyIMCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyIMFilter_CanHandle, /* oyCMMCanHandle_f */
 
   /* @todo registration: for what? */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "colour/icc",
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
 
-  "color/cmm", /* sub_paths */
+  OY_CMMSUBPATH, /* sub_paths */
   0, /* ext */
   0, /* data_type - 0: libs - libraries,\n  1: scripts - platform independent filters */
 
-  0, /* oyCMMFilter_Load_f */
-  oyraFilterScan, /* oyCMMFilter_Scan_f */
+  oyIMFilterLoad, /* oyCMMFilterLoad_f oyCMMFilterLoad */
+  oyIMFilterScan, /* oyCMMFilterScan_f */
 
-  oyra_defaultICCValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  oyraWidgetEvent, /* oyWidgetEvent_f */
+  oyIM_defaultICCValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyIMWidgetEvent, /* oyWidgetEvent_f */
 
-  oyra_default_colour_icc_options,   /* options */
-  oyra_default_colour_icc_options_ui,   /* opts_ui_ */
+  oyIM_default_colour_icc_options,   /* options */
+  oyIM_default_colour_icc_options_ui,   /* opts_ui_ */
 
   icc_data, /* data_types */
 };

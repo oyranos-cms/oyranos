@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_oyra_profiles.c
+/** @file oyranos_cmm_oyIM_profile.c
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -10,12 +10,13 @@
  *  @brief    backends for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @par License:\n new BSD <http://www.opensource.org/licenses/bsd-license.php>
- *  @since    2008/01/02
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2008/12/16
  */
 
 #include "config.h"
-#include "oyranos_cmm_oyra.h"
+#include "oyranos_cmm_oyIM.h"
 #include "oyranos_alpha.h"
 #include "oyranos_cmm.h"
 #include "oyranos_helper.h"
@@ -34,14 +35,14 @@
 
 /* --- implementations --- */
 
-/** @func  oyraProfileCanHandle
+/** @func  oyIMProfileCanHandle
  *  @brief inform about icTagTypeSignature capabilities
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/03 (Oyranos: 0.1.8)
  *  @date    2008/05/23
  */
-int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
+int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
                                        uint32_t          value )
 {
   int ret = -1;
@@ -86,7 +87,7 @@ int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
   return ret;
 }
 
-/** @func    oyraProfileTag_GetValues
+/** @func    oyIMProfileTag_GetValues
  *  @brief   get values from ICC profile tags
  *
  *  The function implements oyCMMProfileTag_GetValues_t for 
@@ -95,7 +96,7 @@ int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
  *  - function description
  *    - set the tag argument to zero
  *    - the returned list will be filled in with oyName_s' each matching a tag_type
- *      - oyNAME_NICK contains the module info, e.g. 'oyra'
+ *      - oyNAME_NICK contains the module info, e.g. 'oyIM'
  *      - oyNAME_NAME contains the tag_type, e.g. 'icSigMultiLocalizedUnicodeType' or 'mluc'
  *      - oyNAME_DESCRIPTION contains text as in above documentation
  *    - dont copy the list as content may be statically allocated
@@ -155,7 +156,7 @@ int        oyraProfileCanHandle      ( oyCMMQUERY_e      type,
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/05/23
  */
-oyStructList_s * oyraProfileTag_GetValues(
+oyStructList_s * oyIMProfileTag_GetValues(
                                        oyProfileTag_s    * tag )
 {
   oyStructList_s * values = 0;
@@ -301,7 +302,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                  if(!error)
                  {
                    /* WCS provides UTF-16LE */
-                   error = oyraIconv( &mem[dversatz], len, tmp, "UTF-16LE" );
+                   error = oyIMIconv( &mem[dversatz], len, tmp, "UTF-16LE" );
 
                    if(error != 0 || !oyStrlen_(tmp))
                    {
@@ -463,7 +464,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                  if(!error)
                  {
                    /* ICC says UTF-16BE */
-                   error = oyraIconv( &mem[dversatz], len, t, "UTF-16BE" );
+                   error = oyIMIconv( &mem[dversatz], len, t, "UTF-16BE" );
 
                    oy_struct = (oyStruct_s*) name;
                    /* eigther text or we have a non translatable string */
@@ -610,7 +611,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                oyProfileTag_Set( tmptag, icSigDeviceMfgDescTag,
                                          tag_sig, oyOK,
                                          tag->size_ - off, tmp );
-               mfg_tmp = oyraProfileTag_GetValues( tmptag );
+               mfg_tmp = oyIMProfileTag_GetValues( tmptag );
                if(oyStructList_Count( mfg_tmp ) )
                {
                  name = 0;
@@ -634,7 +635,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                oyProfileTag_Set( tmptag, icSigDeviceModelDescTag,
                                          tag_sig, oyOK,
                                          tag->size_ - off, tmp );
-               mfg_tmp = oyraProfileTag_GetValues( tmptag );
+               mfg_tmp = oyIMProfileTag_GetValues( tmptag );
                if(oyStructList_Count( model_tmp ) )
                {
                  name = 0;
@@ -759,7 +760,7 @@ oyStructList_s * oyraProfileTag_GetValues(
                                            tag->size_ - offset, tmp );
                  tmp = 0;
                  desc_tmp_n = 0;
-                 desc_tmp = oyraProfileTag_GetValues( tmptag );
+                 desc_tmp = oyIMProfileTag_GetValues( tmptag );
                  if(oyStructList_Count( desc_tmp ) )
                  {
                    name = 0;
@@ -793,7 +794,7 @@ oyStructList_s * oyraProfileTag_GetValues(
 }
 
 
-/** @func  oyraProfileTag_Create
+/** @func  oyIMProfileTag_Create
  *  @brief create a ICC profile tag
  *
  *  This is a module function. For usage in Oyranos 
@@ -823,7 +824,7 @@ oyStructList_s * oyraProfileTag_GetValues(
  *  - function description
  *    - set the tag argument to zero
  *    - provide a empty list to fill in with oyName_s' each matching a tag_type
- *      - oyNAME_NICK contains the module info, e.g. 'oyra'
+ *      - oyNAME_NICK contains the module info, e.g. 'oyIM'
  *      - oyNAME_NAME contains the tag_type, e.g. 'icSigMultiLocalizedUnicodeType' or 'mluc'
  *      - oyNAME_DESCRIPTION contains text as in above documentation
  *    - dont copy the list as content may be statically allocated
@@ -838,7 +839,7 @@ oyStructList_s * oyraProfileTag_GetValues(
  *  @since   2008/01/08 (Oyranos: 0.1.8)
  *  @date    2008/03/11
  */
-int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
+int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
                                        oyStructList_s    * list,
                                        icTagTypeSignature  tag_type,
                                        uint32_t            version )
@@ -1059,11 +1060,11 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error && tmptag->tag_type_ != icSigMultiLocalizedUnicodeType)
            {
              mluc_len = 0;
-             tmp_list = oyraProfileTag_GetValues( tmptag );
+             tmp_list = oyIMProfileTag_GetValues( tmptag );
 
              if(!error)
              {
-               error = oyraProfileTag_Create( tmptag, tmp_list,
+               error = oyIMProfileTag_Create( tmptag, tmp_list,
                                          icSigMultiLocalizedUnicodeType, 0 );
                tmp = 0;
 
@@ -1303,25 +1304,25 @@ int          oyraProfileTag_Create   ( oyProfileTag_s    * tag,
 }
 
 
-/** @instance oyra_api3
- *  @brief    oyra oyCMMapi3_s implementations
+/** @instance oyIM_api3
+ *  @brief    oyIM oyCMMapi3_s implementations
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/01/02
  */
-oyCMMapi3_s  oyra_api3 = {
+oyCMMapi3_s  oyIM_api3 = {
 
   oyOBJECT_CMM_API3_S,
   0,0,0,
-  (oyCMMapi_s*) & oyra_api5_colour_icc,
+  (oyCMMapi_s*) & oyIM_api5_colour_icc,
   
-  oyraCMMInit,
-  oyraCMMMessageFuncSet,
-  oyraProfileCanHandle,
+  oyIMCMMInit,
+  oyIMCMMMessageFuncSet,
+  oyIMProfileCanHandle,
 
-  oyraProfileTag_GetValues,
-  oyraProfileTag_Create
+  oyIMProfileTag_GetValues,
+  oyIMProfileTag_Create
 };
 
 
