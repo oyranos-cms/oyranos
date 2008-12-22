@@ -42,7 +42,6 @@
 char ** oyCMMsGetNames_              ( int               * n,
                                        oyOBJECT_e        * types,
                                        int                 types_n );
-oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
 char**             oyStringSplit_    ( const char    * text,
                                        const char      delimiter,
@@ -112,7 +111,7 @@ main(int argc, char** argv)
   texts = oyCMMsGetNames_(&count, 0 ,0 );
   for( i = 0; i < count; ++i)
   {
-    cmm_info = oyCMMGet_( texts[i] );
+    cmm_info = oyCMMGetInfo_( texts[i] );
     text = oyCMMInfoPrint_( cmm_info );
     printf("%d: \"%s\": %s\n", i, texts[i], text );
   }

@@ -8,7 +8,6 @@ MSGCAT = msgcat
 MSGFMT = msgfmt -c --statistics
 
 docdir          = $(datadir)/doc/$(TARGET)
-cmmdir          = $(libdir)/color/cmms
 SRCDIR          = $(src_dir)
 
 OY_MODULE_NAME  =_cmm_module
@@ -20,19 +19,21 @@ LIBNAME = lib$(TARGET).a
 LIB_CMM_START = $(BUILDDIR)lib$(TARGET)
 LIB_CMM_END = $(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
-CMMS = 	$(TARGET)_lcms$(OY_MODULE_NAME) \
-	$(TARGET)_oyIC$(OY_MODULE_NAME) \
-	$(TARGET)_oyX1$(OY_MODULE_NAME) \
+CMMS = \
+	$(TARGET)_lcms$(OY_MODULE_NAME) \
 	$(TARGET)_oyra$(OY_MODULE_NAME)
-LIB_CMM_LCMS = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
-LIB_CMM_oyIC = $(LIB_CMM_START)_oyIC$(LIB_CMM_END)
+META = \
+	$(TARGET)_oyIM$(OY_MODULE_NAME) \
+	$(TARGET)_oyX1$(OY_MODULE_NAME)
+LIB_CMM_oyIM = $(LIB_CMM_START)_oyIM$(LIB_CMM_END)
 LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
+LIB_CMM_lcms = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
 LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
 LIBS_CMM = \
-	$(LIB_CMM_LCMS) \
-	$(LIB_CMM_oyIC) \
+	$(LIB_CMM_oyIM) \
 	$(LIB_CMM_oyX1) \
-	$(LIB_CMM_oyra)
+	$(LIB_CMM_oyra) \
+	$(LIB_CMM_lcms)
 
 
 EXAMPLE1 = examples/image2pdf
@@ -101,16 +102,17 @@ CFILESC = \
 CFILES_ALPHA = \
 	$(SRCDIR)/$(TARGET)_alpha.c
 
-CFILES_CMM_LCMS = \
+CFILES_CMM_lcms = \
 	$(SRCDIR)/$(TARGET)_cmm_lcms.c
 CFILES_CMM_oyX1 = \
 	$(SRCDIR)/$(TARGET)_cmm_oyX1.c
 CFILES_CMM_oyra = \
 	$(SRCDIR)/$(TARGET)_cmm_oyra.c \
-	$(SRCDIR)/$(TARGET)_cmm_oyra_icc.c \
-	$(SRCDIR)/$(TARGET)_cmm_oyra_image.c \
-	$(SRCDIR)/$(TARGET)_cmm_oyra_profile.c
-CFILES_CMM_LCMS =
+	$(SRCDIR)/$(TARGET)_cmm_oyra_image.c
+CFILES_CMM_oyIM = \
+	$(SRCDIR)/$(TARGET)_cmm_oyIM.c \
+	$(SRCDIR)/$(TARGET)_cmm_oyIM_icc.c \
+	$(SRCDIR)/$(TARGET)_cmm_oyIM_profile.c
 
 CFILES_MONI = \
 	$(SRCDIR)/$(TARGET)_monitor.c
@@ -187,24 +189,24 @@ Flmm_FILES = \
 SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
-		$(CFILES_CMM_LCMS) $(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
-		$(CFILES_CMM_oyIC) \
+		$(CFILES_CMM_lcms) $(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
+		$(CFILES_CMM_oyIM) \
 		$(CXXFILES_FLTK) test.c test2.cpp
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
-CMM_LCMS_OBJECTS = $(CFILES_CMM_LCMS:.c=.o)
+CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
 CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
-CMM_oyIC_OBJECTS = $(CFILES_CMM_oyIC:.c=.o)
+CMM_oyIM_OBJECTS = $(CFILES_CMM_oyIM:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 
 CLEAN_OBJECTS = $(OBJECTS) \
 	$(MONI_OBJECTS) \
-	$(CMM_LCMS_OBJECTS) \
+	$(CMM_lcms_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
-	$(CMM_oyIC_OBJECTS) \
+	$(CMM_oyIM_OBJECTS) \
 	$(EXAMPLES_OBJECTS) \
 	$(FLTK_OBJECTS) \
 	$(Flmm_OBJECTS) \
@@ -282,11 +284,11 @@ $(BUILDDIR)$(LIBSONAMEFULL):	$(OBJECTS) $(BUILDDIR)$(LIBNAME)
 	$(RM)  $(BUILDDIR)$(LIBSO)
 	$(LNK) $(LIBSONAMEFULL) $(BUILDDIR)$(LIBSO)
 
-$(LIB_CMM_LCMS): $(CMM_LCMS_OBJECTS)
+$(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $(BUILDDIR)$@ \
-	$(CMM_LCMS_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS)
+	$(CMM_lcms_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -312,15 +314,15 @@ $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
-$(LIB_CMM_oyIC): $(CMM_oyIC_OBJECTS)
+$(LIB_CMM_oyIM): $(CMM_oyIM_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
 	-o $(BUILDDIR)$@ \
-	$(CMM_oyIC_OBJECTS) $(BUILDDIR)$(LIBSONAMEFULL) $(MODULE_LDLIBS)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIC$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIC$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIC$(OY_MODULE_NAME)$(SO)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIC$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(CMM_oyIM_OBJECTS) $(BUILDDIR)$(LIBSONAMEFULL) $(MODULE_LDLIBS)
+	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...
@@ -474,6 +476,7 @@ install_bin:	all uninstall_bin install_gui
 	-$(INSTALL) -m 755 $(BUILDDIR)$(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
+	mkdir -p $(DESTDIR)$(metadir)
 	mkdir -p $(DESTDIR)$(cmmdir)
 	$(INSTALL) -m 644 $(TARGET).pc $(DESTDIR)$(libdir)/pkgconfig/
 	for lib in $(LIBRARIES); do \
@@ -495,6 +498,25 @@ install_bin:	all uninstall_bin install_gui
 		$(RANLIB) $(DESTDIR)$(libdir)/lib$${lib}.a \
 		) || echo ""; \
            fi; \
+	done
+	for lib in $(META); do \
+	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		($(INSTALL) -m 755 $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(metadir) \
+		); \
+	   test -f NOT_$(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		(test -L $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		test -L $(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT) && ( \
+		$(RM) $(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT)) ; \
+		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+		$(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT); \
+		); \
+	   test -f $(BUILDDIR)lib$${lib}.a && \
+		($(INSTALL) -m 644 $(BUILDDIR)lib$${lib}.a $(DESTDIR)$(metadir);\
+		$(RANLIB) $(DESTDIR)$(metadir)/lib$${lib}.a \
+		) || echo ""; \
 	done
 	for lib in $(CMMS); do \
 	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
@@ -556,7 +578,7 @@ install_gui:	$(TARGET)-config-fltk
 	echo Installing UI ...
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(BUILDDIR)$(TARGET)-config-fltk $(DESTDIR)$(bindir)
-	$(POST) $(DESTDIR)$(bindir)/$(TARGET)-config-fltk
+	(cd $(DESTDIR)$(bindir)/; $(POST) $(DESTDIR)$(bindir)/$(TARGET)-config-fltk)
 
 install_profiles:
 	test -d default_profiles && \
@@ -615,6 +637,12 @@ uninstall_bin:
 	          $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
 	          $(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT) \
 	          $(DESTDIR)$(libdir)/lib$${lib}.a; \
+	done
+	for lib in $(META); do \
+	   $(RM) $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	         $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	         $(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT) \
+	         $(DESTDIR)$(metadir)/lib$${lib}.a; \
 	done
 	for lib in $(CMMS); do \
 	   $(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
@@ -700,7 +728,7 @@ clean:
 	         $(BUILDDIR)lib$${lib}$(SO)$(LIBEXT) \
 	         $(BUILDDIR)lib$${lib}.a; \
 	done
-	for lib in $(CMMS); do \
+	for lib in $(CMMS) $(META); do \
 	   $(RM) $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 	         $(BUILDDIR)lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
 	         $(BUILDDIR)lib$${lib}$(SO)$(LIBEXT) \
