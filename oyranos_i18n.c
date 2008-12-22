@@ -60,7 +60,14 @@ void oyI18NInit_()
   if(!oy_country_ || !oy_language_)
   {
     char * temp = 0;
-    putenv("NLSPATH=" OY_LOCALEDIR); /* Solaris */
+    if(getenv("OY_LOCALEDIR") && oyStrlen_(getenv("OY_LOCALEDIR")))
+      oy_domain_path = oyStringCopy_(getenv("OY_LOCALEDIR"), oyAllocateFunc_);
+
+    oyStringAdd_( &temp, "NLSPATH=", oyAllocateFunc_, oyDeAllocateFunc_);
+    oyStringAdd_( &temp, oy_domain_path, oyAllocateFunc_, oyDeAllocateFunc_);
+    putenv(temp); /* Solaris */
+    /*oyFree_m_(temp);  putenv requires a static string ??? */
+
     bindtextdomain( oy_domain, oy_domain_path );
     DBG_NUM2_S("oy_domain_path %s %s", oy_domain, oy_domain_path)
     if(oy_domain_codeset)
