@@ -10,7 +10,8 @@
  *  @brief    registration definitions for Oyranos backends
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @par License:\n new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2008/10/07
  */
 
@@ -74,7 +75,5 @@ extern oyDATATYPE_e  oyra_image_data_types[7];
 extern oyCMMapi4_s   oyra_api4_image_output_ppm;
 extern oyCMMapi4_s   oyra_api4_image_output;
 extern oyCMMapi4_s   oyra_api4_image_root;
-extern oyCMMapi5_s   oyra_api5_colour_icc;
-extern oyCMMapi3_s   oyra_api3;
 
 #endif /* OYRANOS_CMM_OYRA_H */

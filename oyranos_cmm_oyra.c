@@ -211,7 +211,7 @@ oyCMMInfo_s oyra_cmm_module = {
   {oyOBJECT_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
   OYRANOS_VERSION,
 
-  (oyCMMapi_s*) & oyra_api3,
+  (oyCMMapi_s*) & oyra_api4_image_output,
   0,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
