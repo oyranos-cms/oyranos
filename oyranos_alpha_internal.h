@@ -94,8 +94,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
 
 oyFilter_s * oyFilter_New_           ( oyObject_s          object );
 int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
-                                       oyCMMapi4_s       * cmm_api4,
-                                       const char        * lib_name );
+                                       oyCMMapi4_s       * cmm_api4 );
 
 oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
                                        int                 get_plug );
@@ -171,13 +170,8 @@ typedef struct {
 
 typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMapi_s        * api,
                                        oyPointer           data );
-char **          oyCMMsGetNames_     ( int               * n,
-                                       oyOBJECT_e        * api_types,
-                                       int                 types_n );
-char **          oyCMMsGetLibNames_  ( int               * n,
-                                       const char        * required_cmm );
 char *           oyCMMnameFromLibName_(const char        * lib_name);
-oyCMMInfo_s *    oyCMMInfoAtListFromLibName_(const char        * lib_name );
+oyCMMInfo_s *    oyCMMInfoFromLibName_(const char        * lib_name );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
 oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name );
 oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
@@ -192,7 +186,6 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        oyPointer           check_pointer );
 oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
                                        oyCMMapiQueries_s * capabilities,
-                                       char             ** lib_used,
                                        const char        * registration );
 
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api );
