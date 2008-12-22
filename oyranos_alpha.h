@@ -116,6 +116,9 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
  *  set here the codeset part, e.g. "UTF-8", which shall be delivered from
  *  Oyranos string translations.
  *  Set this variable before any call to Oyranos.
+ *  The environment variable OY_LOCALEDIR overrides the static inbuild 
+ *  OY_LOCALEDIR macro defined in config.h . OY_LOCALEDIR should match a 
+ *  corresponding $prefix/share/locale path.
  */
 extern const char *oy_domain_codeset;
 
@@ -238,6 +241,10 @@ oyName_s *   oyName_copy             ( oyName_s          * obj,
 int          oyName_release          ( oyName_s         ** obj );
 int          oyName_release_         ( oyName_s         ** name,
                                        oyDeAlloc_f         deallocateFunc );
+
+int          oyName_copy_            ( oyName_s          * dest,
+                                       oyName_s          * src,
+                                       oyObject_s          object );
 oyName_s *   oyName_set_             ( oyName_s          * obj,
                                        const char        * text,
                                        oyNAME_e            type,
@@ -1711,16 +1718,14 @@ OYAPI int  OYEXPORT
  *
  *  The registration_ describes different basic types of filters (//xxx).
  *  - "//colour" filters contain only profiles and options. They can grab their surounding and concatenate the neighbour profiles to one profile transform for speed.
- *  - "//tonemap" filters are similiar to oyFILTER_TYPE_COLOUR except they can work in a two dimensional domain to apply to HDR content. This distinction is driven by usage. A oyFILTER_TYPE_TONEMAP filter may contain profiles and options. But this is not required.
+ *  - "//tonemap" filters are similiar to "//colour" except they can work in a two dimensional domain to apply to HDR content. This distinction is driven by usage. A "//tonemap" filter may contain profiles and options. But this is not required.
  *  - "//image" is a container for one oyImage_s. There is no 
  *    assumption on how the buffers are implemented.
  *  - "//generic" can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
  *
- *  @todo: dynamic registration of new filter types
- *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.9
  *  @since   2008/06/08 (Oyranos: 0.1.8)
- *  @date    2008/06/08
+ *  @date    2008/12/16
  */
 struct oyFilter_s {
   oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_S*/
@@ -1730,7 +1735,6 @@ struct oyFilter_s {
 
   const char         * registration_;  /**< a registration name, e.g. "sw/oyranos.org/generic/scale" */
   oyName_s           * name_;          /**< nick, name, description/help */
-  char               * lib_name_;      /**< the CMM to handle this filter */
 
   char               * category_;      /**< the ui menue category for this filter, to be specified */
 
@@ -2527,9 +2531,9 @@ typedef struct oyCMMapi_s oyCMMapi_s;
  */
 typedef struct {
   oyOBJECT_e       type;               /*!< struct type oyOBJECT_CMM_INFO_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyPointer        dummy;              /**< keep to zero */
+  oyStruct_Copy_f      copy_;          /**< copy function; zero for static data */
+  oyStruct_Release_f   release_;       /**< release function; zero for static data */
+  oyObject_s       oy_;                /**< zero for static data */
   char             cmm[8];             /*!< ICC signature, eg 'lcms' */
   char           * backend_version;    /*!< non translatable, eg "v1.17" */
   oyName_s         name;               /*!< translatable, eg "lcms" "little cms" "..." */
@@ -2542,6 +2546,15 @@ typedef struct {
 
   oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
 } oyCMMInfo_s;
+
+OYAPI oyCMMInfo_s * OYEXPORT
+                 oyCMMInfo_New       ( oyObject_s          object );
+OYAPI oyCMMInfo_s * OYEXPORT
+                 oyCMMInfo_Copy      ( oyCMMInfo_s       * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyCMMInfo_Release   ( oyCMMInfo_s      ** obj );
+
 
 
 /** @deprecated */
