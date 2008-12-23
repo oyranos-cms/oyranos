@@ -2419,18 +2419,21 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
   oyStringAdd_( &text, num, oyAllocateFunc_, oyDeAllocateFunc_ );
   oyStringAdd_( &text, ":", oyAllocateFunc_, oyDeAllocateFunc_ );
 
-#define CMMINFO_ADD_NAME_TO_TEXT( name_, name_s ) \
+#define CMMINFO_ADD_NAME_TO_TEXT( name_, select ) \
   oyStringAdd_( &text, "\n  " name_ ":\n    ", oyAllocateFunc_, oyDeAllocateFunc_ );\
-  oyStringAdd_( &text, name_s.nick, oyAllocateFunc_, oyDeAllocateFunc_ ); \
+  oyStringAdd_( &text, cmm_info->getText( select, oyNAME_NICK, cmm_info->data),\
+                oyAllocateFunc_, oyDeAllocateFunc_ ); \
   oyStringAdd_( &text, "\n    ", oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, name_s.name, oyAllocateFunc_, oyDeAllocateFunc_ ); \
+  oyStringAdd_( &text, cmm_info->getText( select, oyNAME_NAME, cmm_info->data),\
+  oyAllocateFunc_, oyDeAllocateFunc_ ); \
   oyStringAdd_( &text, "\n    ", oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, name_s.description, oyAllocateFunc_, oyDeAllocateFunc_ ); \
+  oyStringAdd_( &text, cmm_info->getText( select, oyNAME_DESCRIPTION, cmm_info->data),\
+  oyAllocateFunc_, oyDeAllocateFunc_ ); \
   oyStringAdd_( &text, "\n", oyAllocateFunc_, oyDeAllocateFunc_ );
 
-  CMMINFO_ADD_NAME_TO_TEXT( "Name", cmm_info->name )
-  CMMINFO_ADD_NAME_TO_TEXT( "Manufacturer", cmm_info->manufacturer )
-  CMMINFO_ADD_NAME_TO_TEXT( "Copyright", cmm_info->copyright )
+  CMMINFO_ADD_NAME_TO_TEXT( "Name", "name" )
+  CMMINFO_ADD_NAME_TO_TEXT( "Manufacturer", "manufacturer" )
+  CMMINFO_ADD_NAME_TO_TEXT( "Copyright", "copyright" )
 
       if(cmm_info)
       {
@@ -2453,7 +2456,7 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
                           oyAllocateFunc_, oyDeAllocateFunc_ );
             oyStringAdd_( &text, cmm_api4->registration,
                           oyAllocateFunc_, oyDeAllocateFunc_ );
-            CMMINFO_ADD_NAME_TO_TEXT( "Name", cmm_api4->name )
+            CMMINFO_ADD_NAME_TO_TEXT( "Name", "name" )
           }
 
           tmp = tmp->next;
@@ -16301,10 +16304,6 @@ OYAPI oyCMMInfo_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->name.type = oyOBJECT_NAME_S;
-  s->manufacturer.type = oyOBJECT_NAME_S;
-  s->copyright.type = oyOBJECT_NAME_S;
-
   return s;
 }
 
@@ -16342,13 +16341,13 @@ oyCMMInfo_s * oyCMMInfo_Copy_
     if(obj->backend_version)
       s->backend_version = oyStringCopy_( obj->backend_version, allocateFunc_ );
 
-    oyName_copy_( &s->name, &obj->name, s->oy_ );
-    oyName_copy_( &s->manufacturer, &obj->manufacturer, s->oy_ );
-    oyName_copy_( &s->copyright, &obj->copyright, s->oy_ );
-
+    s->getText = obj->getText;
+    if(obj->data && obj->data->copy)
+      s->data = obj->data->copy( obj->data, object );
+    else
+      s->data = obj->data;
+      
     s->oy_compatibility = obj->oy_compatibility;
-
-    s->apis_n = -1;
   }
 
   if(error)
@@ -16422,6 +16421,8 @@ OYAPI int  OYEXPORT
     return 0;
   /* ---- end of common object destructor ------- */
 
+  if(s->data && s->data->release)
+    s->data->release( &s->data );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -16429,10 +16430,6 @@ OYAPI int  OYEXPORT
 
     if(s->backend_version)
       deallocateFunc( s->backend_version );
-
-    oyName_releaseMembers( &s->name, deallocateFunc );
-    oyName_releaseMembers( &s->manufacturer, deallocateFunc );
-    oyName_releaseMembers( &s->copyright, deallocateFunc );
 
     oyObject_Release( &s->oy_ );
 

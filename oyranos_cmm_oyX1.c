@@ -15,6 +15,7 @@
  */
 
 #include "oyranos_cmm.h"
+#include "oyranos_i18n.h"
 #include "oyranos_monitor.h"
 #include <string.h>
 #include <stdarg.h>
@@ -150,6 +151,45 @@ oyCMMapi2_s oyX1_api2 = {
 
 
 
+/**
+ *  This function implements oyCMMInfoGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/23 (Oyranos: 0.1.10)
+ *  @date    2008/12/23
+ */
+const char * oyX1GetText             ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * data )
+{
+         if(strcmp(select, "name")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _(CMM_NICK);
+    else if(type == oyNAME_NAME)
+      return _("Oyranos X11");
+    else
+      return _("The window support backend of Oyranos.");
+  } else if(strcmp(select, "manufacturer")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("Kai-Uwe");
+    else if(type == oyNAME_NAME)
+      return _("Kai-Uwe Behrmann");
+    else
+      return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
+  } else if(strcmp(select, "copyright")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("newBSD");
+    else if(type == oyNAME_NAME)
+      return _("Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD");
+    else
+      return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+  }
+  return 0;
+}
+
 /** @instance oyX1_cmm_module
  *  @brief    oyX1 module infos
  *
@@ -163,15 +203,13 @@ oyCMMInfo_s oyX1_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.2",
-  {oyOBJECT_NAME_S, 0,0,0, "oyX1", "Oyranos X11", "The window support backend of Oyranos."},
-  {oyOBJECT_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"},
-  {oyOBJECT_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
+  oyX1GetText, /* oyCMMInfoGetText_f */
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyX1_api2,
-  1,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 
+  0
 };
 

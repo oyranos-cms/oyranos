@@ -2501,6 +2501,22 @@ typedef struct {
 
 typedef struct oyCMMapi_s oyCMMapi_s;
 
+
+/**
+ *  @param         select              "name", "manufacturer" or "copyright"
+ *  @param         type                select flavour
+ *  @param         data                oyCMMInfo_s::data pointer
+ *  @return                            text string or zero
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/23 (Oyranos: 0.1.10)
+ *  @date    2008/12/23
+ */
+typedef
+const char *    (* oyCMMInfoGetText_f)(const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * data );
+
 /** @brief   the CMM API resources struct to implement and set by a CMM
  *  @ingroup cmm_handling
  *
@@ -2523,11 +2539,11 @@ typedef struct oyCMMapi_s oyCMMapi_s;
  *  and all other fields set appropriately.
  *
  *  The api field is a placeholder to get a real api struct assigned. If the CMM
- *  wants to provide more than one API, they can be chained. The apis_n member
- *  is to be set to the number of APIs.
+ *  wants to provide more than one API, they can be chained.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  5 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/05 (Oyranos: 0.1.8)
+ *  @date    2008/12/23
  */
 typedef struct {
   oyOBJECT_e       type;               /*!< struct type oyOBJECT_CMM_INFO_S */
@@ -2536,15 +2552,15 @@ typedef struct {
   oyObject_s       oy_;                /**< zero for static data */
   char             cmm[8];             /*!< ICC signature, eg 'lcms' */
   char           * backend_version;    /*!< non translatable, eg "v1.17" */
-  oyName_s         name;               /*!< translatable, eg "lcms" "little cms" "..." */
-  oyName_s         manufacturer;       /*!< translatable, eg "Marti" "Marti Maria" "support email: @; internet: www.littlecms.com; sources: ..." */
-  oyName_s         copyright;          /*!< translatable, eg "MIT","MIT License".. */
+  /** translatable, e.g. "name": "lcms" "little cms" "..." */
+  oyCMMInfoGetText_f getText;
+
   int              oy_compatibility;   /*!< last supported Oyranos CMM API : OYRANOS_VERSION */
 
-  oyCMMapi_s     * api;                /**< must be casted to a according API */
-  int              apis_n;             /**< count of implemented apis */
+  oyCMMapi_s     * api;                /**< must be casted to a according API, zero terminated list */
 
   oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
+  oyStruct_s     * data;               /**< private data passed to getName */
 } oyCMMInfo_s;
 
 OYAPI oyCMMInfo_s * OYEXPORT

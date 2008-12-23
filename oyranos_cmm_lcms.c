@@ -1062,6 +1062,45 @@ oyCMMapi1_s  lcms_api1 = {
 };
 
 
+/**
+ *  This function implements oyCMMInfoGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/23 (Oyranos: 0.1.10)
+ *  @date    2008/12/23
+ */
+const char * lcmsGetText             ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * data )
+{
+         if(strcmp(select, "name")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _(CMM_NICK);
+    else if(type == oyNAME_NAME)
+      return _("Little CMS");
+    else
+      return _("LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license.");
+  } else if(strcmp(select, "manufacturer")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("Marti");
+    else if(type == oyNAME_NAME)
+      return _("Marti Maria");
+    else
+      return _("littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm");
+  } else if(strcmp(select, "copyright")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("MIT");
+    else if(type == oyNAME_NAME)
+      return _("Copyright (c) 1998-2008 Marti Maria Saguer; MIT");
+    else
+      return _("MIT license: http://www.opensource.org/licenses/mit-license.php");
+  }
+  return 0;
+}
+
 /** @instance lcms_cmm_module
  *  @brief    lcms module infos
  *
@@ -1075,15 +1114,13 @@ oyCMMInfo_s lcms_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.6",
-  {oyOBJECT_NAME_S, 0,0,0,"lcms", "Little CMS", "LittleCMS is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license."},
-  {oyOBJECT_NAME_S, 0,0,0,"Marti", "Marti Maria", "littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"},
-  {oyOBJECT_NAME_S, 0,0,0,"MIT", "Copyright (c) 1998-2008 Marti Maria Saguer", "MIT license: http://www.opensource.org/licenses/mit-license.php"},
+  lcmsGetText,
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & lcms_api1,
-  0,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"}
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"},
 
+  0
 };
 

@@ -131,7 +131,6 @@ void               oyCMMdeallocateFunc(oyPointer           mem );*/
 
 typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
 
-typedef oyCMMInfo_s* (*oyCMMInfo_Get_f) (void);
 
 typedef enum {
   oyWIDGET_OK,

@@ -189,7 +189,62 @@ oyWIDGET_EVENT_e   oyIMWidgetEvent   ( oyOptions_s       * options,
 {return 0;}
 
 
+#define oyIMTexts_TYPE 875
 
+/* unfortunedly string initialisation is not posix compatible for static 
+ * fields */
+struct {
+  int type;
+  oyPointer a; oyPointer b; oyPointer c;
+  oyName_s name;
+  oyName_s manufacturer;
+  oyName_s copyright;
+} oyIM_texts = 
+{
+  875, 0,0,0,
+  {oyOBJECT_NAME_S, 0,0,0, CMM_NICK, "Oyranos modules", "Oyranos supplied modules"},
+  {oyOBJECT_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"},
+  {oyOBJECT_NAME_S, 0,0,0, "newBSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"}
+};
+
+/**
+ *  This function implements oyCMMInfoGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/23 (Oyranos: 0.1.10)
+ *  @date    2008/12/23
+ */
+const char * oyIMGetText             ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * data )
+{
+         if(strcmp(select, "name")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _(CMM_NICK);
+    else if(type == oyNAME_NAME)
+      return _("Oyranos modules");
+    else
+      return _("Oyranos supplied modules");
+  } else if(strcmp(select, "manufacturer")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("Kai-Uwe");
+    else if(type == oyNAME_NAME)
+      return _("Kai-Uwe Behrmann");
+    else
+      return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
+  } else if(strcmp(select, "copyright")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("newBSD");
+    else if(type == oyNAME_NAME)
+      return _("Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD");
+    else
+      return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+  }
+  return 0;
+}
 
 
 /** @instance oyIM_cmm_module
@@ -205,15 +260,13 @@ oyCMMInfo_s oyIM_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.1.10",
-  {oyOBJECT_NAME_S, 0,0,0, CMM_NICK, "Oyranos modules", "Oyranos supplied modules"},
-  {oyOBJECT_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"},
-  {oyOBJECT_NAME_S, 0,0,0, "new BSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"},
+  oyIMGetText, /* oyCMMInfoGetText_f */
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyIM_api3,
-  0,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 
+  (oyStruct_s*) &oyIM_texts
 };
 
