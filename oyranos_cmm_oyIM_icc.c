@@ -288,7 +288,7 @@ oyCMMapi4_s *  oyIMFilterLoad        ( oyPointer           data,
 {
   oyCMMapi4_s * api4 = 0;
   api4 = (oyCMMapi4_s*) oyCMMsGetApi__( oyOBJECT_CMM_API4_S, file_name,
-                                        0,0 );
+                                        0,0, num );
   return api4;
 }
 
@@ -423,7 +423,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   oyIMFilter_CanHandle, /* oyCMMCanHandle_f */
 
   /* @todo registration: for what? */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD ".image.tonemap.generic" OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
 

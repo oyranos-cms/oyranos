@@ -177,7 +177,8 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name );
 oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
                                        const char        * lib_name,
                                        oyCMMapi_Check_f    apiCheck,
-                                       oyPointer           check_pointer );
+                                       oyPointer           check_pointer,
+                                       int                 num );
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        const char        * cmm_required,
                                        oyCMMapiQueries_s * capabilities,

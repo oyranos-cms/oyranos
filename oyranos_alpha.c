@@ -2584,14 +2584,13 @@ oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
   char * class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,0);
   oyRegistrationData_s reg_filter = {oyOBJECT_CMM_API5_S};
   char * lib_name = 0;
+  char * api5_reg = 0;
 
   {
     if(!oy_meta_backend_cache_)
       oy_meta_backend_cache_ = oyStructList_New( 0 );
 
     entry = oyCacheListGetEntry_ ( oy_meta_backend_cache_, class );
-
-    oyFree_m_( class );
 
     s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, oyOBJECT_CMM_API5_S );
 
@@ -2602,7 +2601,12 @@ oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
     }
   }
 
-  reg_filter.registration = registration;
+  api5_reg = oyStringCopy_("//", oyAllocateFunc_ );
+  oyStringAdd_( &api5_reg, class, oyAllocateFunc_, oyDeAllocateFunc_ );
+  oyFree_m_( class );
+
+  reg_filter.registration = api5_reg;
+
 
   s = (oyCMMapi5_s*)oyCMMsGetApi_(      oyOBJECT_CMM_API5_S,
                                         cmm_required,
@@ -2610,6 +2614,8 @@ oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
                                         &lib_name,
                                         oyCMMapi5_selectFilter_,
                                         &reg_filter );
+
+  oyFree_m_( api5_reg );
 
   if(s)
   {
@@ -2646,17 +2652,20 @@ oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMapi_s        * api,
  *                                     simplifies and speeds up the search
  *  @param[in]   apiCheck              custom api selector
  *  @param[in]   check_pointer         data to pass to apiCheck
+ *  @param[in]   num                   position in api chain matching to type and apiCheck/check_pointer starting from zero, -1 means: pick the first match, useful in case the API position is known or to iterate through all matching API's
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/12/08 (Oyranos: 0.1.9)
- *  @date    2008/12/16
+ *  @date    2008/12/23
  */
 oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
                                        const char        * lib_name,
                                        oyCMMapi_Check_f    apiCheck,
-                                       oyPointer           check_pointer )
+                                       oyPointer           check_pointer,
+                                       int                 num )
 {
-  int error = !type;
+  int error = !type,
+      i = 0;
   oyCMMapi_s * api = 0;
 
   if(!error &&
@@ -2678,8 +2687,13 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
       while(tmp)
       {
         if(apiCheck(tmp, check_pointer) == type)
-          api = tmp;
+        {
+          if((num >= 0 && num == i) ||
+             num < 0 )
+            api = tmp;
 
+          ++i;
+        }
         tmp = tmp->next;
       }
     }
@@ -2815,7 +2829,7 @@ oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
 
     if(match)
     {
-      api4 = api5->oyCMMFilterLoad( 0,0, files[match_i], 0 );
+      api4 = api5->oyCMMFilterLoad( 0,0, files[match_i], match_j );
       api4->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
       api4->api5_ = api5;
     }
@@ -11970,11 +11984,13 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 {
   char ** reg_texts = 0;
   int     reg_texts_n = 0;
+  char ** regc_texts = 0;
+  int     regc_texts_n = 0;
   char ** p_texts = 0;
   int     p_texts_n = 0;
   char ** pc_texts = 0;
   int     pc_texts_n = 0;
-  int     match = 0, i, j;
+  int     match = 0, i, j, k;
 
   if(registration && pattern)
   {
@@ -11985,13 +12001,22 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 
     for( i = 0; i < reg_texts_n && i < p_texts_n; ++i)
     {
-      pc_texts = oyStringSplit_( p_texts[i],',',&pc_texts_n, oyAllocateFunc_);
+      regc_texts_n = 0;
+      regc_texts = oyStringSplit_( reg_texts[i],'.',&regc_texts_n,
+                                   oyAllocateFunc_);
+      pc_texts = oyStringSplit_( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
 
-      for( j = 0; j < pc_texts_n; ++j)
-        if(!oyStrstr_( reg_texts[i], pc_texts[j] ))
-          match = 0;
+      if(match && pc_texts_n && regc_texts_n)
+      {
+        match = 0;
+        for( j = 0; j < pc_texts_n; ++j)
+          for( k = 0; k < regc_texts_n; ++k )
+            if(oyStrstr_( regc_texts[k], pc_texts[j] ))
+              match = 1;
+      }
 
       oyStringListRelease_( &pc_texts, pc_texts_n, oyDeAllocateFunc_ );
+      oyStringListRelease_( &regc_texts, regc_texts_n, oyDeAllocateFunc_ );
     }
     oyStringListRelease_( &reg_texts, reg_texts_n, oyDeAllocateFunc_ );
     oyStringListRelease_( &p_texts, p_texts_n, oyDeAllocateFunc_ );
@@ -14105,7 +14130,7 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
   if(!error)
   {
     oyCMMapi_s *api = oyCMMsGetApi__( oyOBJECT_CMM_API1_S, cmm_ptr->lib_name,
-                                      0,0 );
+                                      0,0, -1 );
     if(api)
     {
       oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
@@ -14263,7 +14288,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
   if(!error)
   {
     oyCMMapi_s *api = oyCMMsGetApi__( oyOBJECT_CMM_API1_S, cmm_ptr->lib_name,
-                                      0,0 );
+                                      0,0, -1 );
     if(api)
     {
       oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;

@@ -247,7 +247,7 @@ oyCMMInfo_s oyra_cmm_module = {
   oyraGetText,
   OYRANOS_VERSION,
 
-  (oyCMMapi_s*) & oyra_api4_image_output,
+  (oyCMMapi_s*) & oyra_api4_image_root,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 

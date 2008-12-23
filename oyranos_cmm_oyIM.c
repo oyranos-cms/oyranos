@@ -201,7 +201,7 @@ struct {
   oyName_s copyright;
 } oyIM_texts = 
 {
-  875, 0,0,0,
+  oyIMTexts_TYPE, 0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, CMM_NICK, "Oyranos modules", "Oyranos supplied modules"},
   {oyOBJECT_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"},
   {oyOBJECT_NAME_S, 0,0,0, "newBSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"}
