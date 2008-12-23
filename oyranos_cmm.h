@@ -497,7 +497,7 @@ typedef struct {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.generic/shiva" or "sw/oyranos.org/colour/icc" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/shiva" or "sw/oyranos.org/colour/icc" */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -629,7 +629,7 @@ typedef int (*oyCMMFilterPlug_Run_f)(
  *  filled as folows:
  *  - top, e.g. "sw"
  *  - vendor, e.g. "oyranos.org"
- *  - filter type, e.g. "colour" or "tonemap" or "image" or "generic" matching the filter_type member
+ *  - filter type, e.g. "colour" or "tonemap" or "image" or "imaging" matching the filter_type member
  *  - filter name, e.g. "scale"
  *
  *  Different filters have to implement this struct each one per filter.
@@ -649,7 +649,7 @@ struct  oyCMMapi4_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/generic/scale" or "sw/oyranos.org/colour/icc.lcms" */
+  /** e.g. "sw/oyranos.org/imaging/scale" or "sw/oyranos.org/colour/icc.lcms" */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n

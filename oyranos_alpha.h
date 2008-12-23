@@ -574,7 +574,7 @@ typedef struct {
   oyObject_s           oy_;            /**< base object */
 
   uint32_t             id;             /**< id to map to events and widgets */
-  char               * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/generic/scale/x" */
+  char               * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/imaging/scale/x" */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -1389,7 +1389,7 @@ typedef enum {
   oyFILTER_REG_NONE,
   oyFILTER_REG_TOP,                    /**< e.g. "sw" for filters */
   oyFILTER_REG_DOMAIN,                 /**< e.g. "oyranos.org" */
-  oyFILTER_REG_TYPE,                   /**< e.g. "generic" filter group */
+  oyFILTER_REG_TYPE,                   /**< e.g. "imaging" filter group */
   oyFILTER_REG_APPLICATION,            /**< e.g. "scale" filter name */
   oyFILTER_REG_OPTION,                 /**< e.g. "x" filter option */
   oyFILTER_REG_MAX
@@ -1721,7 +1721,7 @@ OYAPI int  OYEXPORT
  *  - "//tonemap" filters are similiar to "//colour" except they can work in a two dimensional domain to apply to HDR content. This distinction is driven by usage. A "//tonemap" filter may contain profiles and options. But this is not required.
  *  - "//image" is a container for one oyImage_s. There is no 
  *    assumption on how the buffers are implemented.
- *  - "//generic" can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
+ *  - "//imaging" can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/06/08 (Oyranos: 0.1.8)
@@ -1733,7 +1733,7 @@ struct oyFilter_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
-  const char         * registration_;  /**< a registration name, e.g. "sw/oyranos.org/generic/scale" */
+  const char         * registration_;  /**< a registration name, e.g. "sw/oyranos.org/imaging/scale" */
   oyName_s           * name_;          /**< nick, name, description/help */
 
   char               * category_;      /**< the ui menue category for this filter, to be specified */
