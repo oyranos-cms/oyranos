@@ -16578,6 +16578,24 @@ icValue_to_icUInt32Number_m( oyValueProfCSig, icProfileClassSignature )
 icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
 
 
+oyPointer  oyStruct_LockCreateDummy_   ( oyStruct_s      * obj )    {return 0;}
+void       oyLockReleaseDummy_         ( oyPointer         lock,
+                                         const char      * marker,
+                                         int               line )   {;}
+void       oyLockDummy_                ( oyPointer         lock,
+                                         const char      * marker,
+                                         int               line )   {;}
+void       oyUnLockDummy_              ( oyPointer         look,
+                                         const char      * marker,
+                                         int               line ) {;}
+
+
+oyStruct_LockCreate_f   oyStruct_LockCreateFunc_ = oyStruct_LockCreateDummy_;
+oyLockRelease_f         oyLockReleaseFunc_ = oyLockReleaseDummy_;
+oyLock_f                oyLockFunc_        = oyLockDummy_;
+oyUnLock_f              oyUnLockFunc_      = oyUnLockDummy_;
+
+
 
 /** Function: oyThreadLockingSet
  *  @brief set locking functions for threaded applications
