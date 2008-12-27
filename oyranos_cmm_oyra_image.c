@@ -34,7 +34,6 @@
 oyPointer  oyraFilterNode_ImageRootContextToMem (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
-                                       oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc );
 
 /** @func    oyraFilter_ImageOutputPPMCanHandle
@@ -115,18 +114,18 @@ int      oyraFilterPlug_ImageOutputPPMRun (
                                        oyArray2d_s      ** pixel )
 {
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilter_s * filter = 0;
+  oyFilterNode_s * node = 0;
   int result = 0;
   const char * filename = 0;
   FILE * fp = 0;
 
-  filter = socket->node->filter;
+  node = socket->node;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = filter->api4_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
+  result = socket->node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
 
   if(result <= 0)
-    filename = oyOptions_FindString( filter->options_, "filename", 0 );
+    filename = oyOptions_FindString( node->filter->options_, "filename", 0 );
 
   if(filename)
     fp = fopen( filename, "rw" );
@@ -199,15 +198,13 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
   {0,0,1}, /* int32_t version[3] */
 
   0, /* uint32_t * cache_data_types */
+  0, /* uint32_t cache_flags */
 
   oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
   0, /* oyCMMDataOpen_f */
-  0, /* oyCMMFilterNode_CreateContext_f */
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
-  0, /* oyCMMFilterNode_ContextFromMem_f */
-  oyraFilterPlug_ImageOutputPPMRun, /* oyCMMFilterPlug_Run_f */
 
   {oyOBJECT_NAME_S, 0,0,0, "image_out_ppm", "Image[out_ppm]", "Output PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out_ppm]", /* category */
@@ -220,6 +217,36 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
   0,   /* sockets */
   0,   /* sockets_n */
   0    /* sockets_last_add */
+};
+
+/** @instance oyra_api7
+ *  @brief    oyra oyCMMapi7_s implementation
+ *
+ *  A filter writing a PPM image.
+ *
+ *  @par Options:
+ *  - "filename" - the file name to write to
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/10/07 (Oyranos: 0.1.8)
+ *  @date    2008/10/07
+ */
+oyCMMapi7_s   oyra_api7_image_output_ppm = {
+
+  oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  (oyCMMapi_s*) & oyra_api4_image_output_ppm, /* oyCMMapi_s * next */
+  
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
+
+  /* registration */
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output_ppm",
+
+  {0,0,1}, /* int32_t version[3] */
+
+  oyraFilterPlug_ImageOutputPPMRun, /* oyCMMFilterPlug_Run_f */
 };
 
 
@@ -320,7 +347,6 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
 oyPointer  oyraFilterNode_ImageRootContextToMem (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
-                                       oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc )
 {
   return oyFilterNode_TextToInfo( node, size, allocateFunc );
@@ -441,18 +467,45 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
                                        oyArray2d_s      ** pixel )
 {
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilter_s * filter = 0;
+  oyFilterNode_s * node = 0;
   int result = 0;
 
-  filter = socket->node->filter;
+  node = socket->node;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = filter->api4_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
+  result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
 
   return result;
 }
 
 
+#define OY_IMAGE_OUTPUT_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output"
+/** @instance oyra_api7
+ *  @brief    oyra oyCMMapi7_s implementation
+ *
+ *  a filter providing a target image
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+oyCMMapi7_s   oyra_api7_image_output = {
+
+  oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  0, /* oyCMMapi_s * next */
+  
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
+
+  /* registration */
+  OY_IMAGE_OUTPUT_REGISTRATION,
+
+  {0,0,1}, /* int32_t version[3] */
+
+  oyraFilterPlug_ImageOutputRun, /* oyCMMFilterPlug_Run_f */
+};
 
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
@@ -467,27 +520,25 @@ oyCMMapi4_s   oyra_api4_image_output = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  0, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api7_image_output, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
   oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output",
+  OY_IMAGE_OUTPUT_REGISTRATION,
 
   {0,0,1}, /* int32_t version[3] */
 
   0, /* uint32_t * cache_data_types */
+  0, /* uint32_t cache_flags */
 
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
   0, /* oyCMMDataOpen_f */
-  0, /* oyCMMFilterNode_CreateContext_f */
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
-  0, /* oyCMMFilterNode_ContextFromMem_f */
-  oyraFilterPlug_ImageOutputRun, /* oyCMMFilterPlug_Run_f */
 
   {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out]", /* category */
@@ -500,6 +551,35 @@ oyCMMapi4_s   oyra_api4_image_output = {
   0,   /* sockets */
   0,   /* sockets_n */
   0    /* sockets_last_add */
+};
+
+
+#define OY_IMAGE_ROOT_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/root"
+/** @instance oyra_api7
+ *  @brief    oyra oyCMMapi7_s implementation
+ *
+ *  a filter providing a source image
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+oyCMMapi7_s   oyra_api7_image_root = {
+
+  oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  (oyCMMapi_s*) & oyra_api4_image_output, /* oyCMMapi_s * next */
+  
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
+
+  /* registration */
+  OY_IMAGE_ROOT_REGISTRATION,
+
+  {0,0,1}, /* int32_t version[3] */
+
+  oyraFilterPlug_ImageRootRun, /* oyCMMFilterPlug_Run_f */
 };
 
 /** @instance oyra_api4
@@ -515,27 +595,25 @@ oyCMMapi4_s   oyra_api4_image_root = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api4_image_output, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api7_image_root, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
   oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/root",
+  OY_IMAGE_ROOT_REGISTRATION,
 
   {0,0,1}, /* int32_t version[3] */
 
   0, /* uint32_t * cache_data_types */
+  0, /* uint32_t cache_flags */
 
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
   0, /* oyCMMDataOpen_f */
-  0, /* oyCMMFilterNode_CreateContext_f */
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
-  0, /* oyCMMFilterNode_ContextFromMem_f */
-  oyraFilterPlug_ImageRootRun, /* oyCMMFilterPlug_Run_f */
 
   {oyOBJECT_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[in]", /* category */

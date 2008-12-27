@@ -1769,8 +1769,7 @@ oyEraseDeviceProfile              (oyDEVICETYP_e typ,
 /**
  *  @internal
  *  \addtogroup cmm_handling CMM Handling API
- *  Functions to handle ColorMatchingModules.
-
+ *
  *  @{
  */
 

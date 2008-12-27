@@ -26,7 +26,9 @@ namespace oyranos
 {
 #endif /* __cplusplus */
 
-/** @brief CMM capabilities query enum
+
+/** @brief   CMM capabilities query enum
+ *  @ingroup cmm_handling
  *
  *  @since: 0.1.8
  */
@@ -52,8 +54,10 @@ typedef int      (*oyCMMInit_f)      ( void );
 
 #define oyCMM_PROFILE "oyPR"
 #define oyCMM_COLOUR_CONVERSION "oyCC"
+#define oyCOLOUR_ICC_DEVICE_LINK "oyDL"
 
-/** @brief CMM pointer
+/** @brief   CMM pointer
+ *  @ingroup cmm_handling
  *
  *  The oyCMMptr_s is used internally and for CMM's.
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
@@ -76,7 +80,7 @@ typedef struct {
 } oyCMMptr_s;
 
 
-/** @brief CMM data to Oyranos cache
+/** @brief   CMM data to Oyranos cache
  *
  *  @param[in]     data                the data struct know to the backend
  *  @param[in,out] oy                  the Oyranos cache struct to fill by the backend
@@ -132,6 +136,7 @@ void               oyCMMdeallocateFunc(oyPointer           mem );*/
 typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
 
 
+/**  @ingroup cmm_handling */
 typedef enum {
   oyWIDGET_OK,
   oyWIDGET_CORRUPTED,
@@ -145,6 +150,7 @@ typedef enum {
 
 /** @typedef oyCMMFilter_ValidateOptions_f
  *  @brief   a function to check and validate options
+ *  @ingroup cmm_handling
  *
  *  @param[in]     filter              the filter
  *  @param[in]     validate            to validate
@@ -170,6 +176,7 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
 
 
 /** @brief the generic part if a API to implement and set by a CMM
+ *  @ingroup cmm_handling
  *
  *  @since Oyranos: version 0.1.8 2007/12/12
  *  @date  12 december 2007 (API 0.1.8)
@@ -188,6 +195,7 @@ struct oyCMMapi_s {
 
 
 /** @brief the API 1 to implement and set by a CMM
+ *  @ingroup cmm_handling
  *
  *  @since Oyranos: version 0.1.8 2007/12/05
  *  @date  21 december 2007 (API 0.1.8)
@@ -239,6 +247,7 @@ typedef int   (*oyActivateMonitorProfiles_f) (
 
 /** @struct oyCMMapi2_s
  *  @brief the API 2 to implement and set to provide windowing support
+ *  @ingroup cmm_handling
  *
  *  @since Oyranos: version 0.1.8
  *  @date  10 december 2007 (API 0.1.8)
@@ -278,6 +287,7 @@ typedef int                 (*oyCMMProfileTag_Create_f) (
 /** @struct oyCMMapi3_s
  *  @brief the API 3 to implement and set to provide low level ICC profile
  *         support
+ *  @ingroup cmm_handling
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
@@ -299,15 +309,46 @@ typedef struct {
 } oyCMMapi3_s;
 
 
+/** @type    oyCMMFilterPlug_Run_f
+ *  @brief   get a pixel or channel from the previous filter
+ *  @ingroup cmm_handling
+ *
+ *  You have to call oyCMMFilter_CreateContext_t or oyCMMFilter_ContextFromMem_t first.
+ *  The API provides flexible pixel access and cache configuration by the
+ *  passed oyPixelAccess_s object. The filters internal precalculated data
+ *  are passed by the filter object.
+ *
+ *  @verbatim
+    while (err == 0) {
+      memcpy( buf[x * n++], oyCMMFilterSocket_GetNext( filter_socket, pixel_access, &err ), x );
+    } @endverbatim
+ *
+ *  @param[in]     connector           including the CMM's private data, connector is the requesting plug to obtain a handle for calling back
+ *  @param[in]     pixel_access        processing order instructions
+ *  @param[in,out] output              the data to place results into, its position is in start_xy relative to the previous mediator
+ *  @return                            -1 end; 0 on success; error > 1
+ *
+ *  A requested context will be stored in oyFilterNode_s::backend_data.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/03 (Oyranos: 0.1.8)
+ *  @date    2008/07/28
+ */
+typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * connector,
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyArray2d_s      ** output );
+
 /** @struct oyCMMapi7_s
- *  @brief the API 7 to provide and implement context processing support
+ *  @brief the API 7 to implement data processing
+ *  @ingroup cmm_handling
  *
- *  The context provided by a filter can be exotic. The API provides the means
- *  to get him into a known format.
+ *  The filter context can be stored in oyFilterNode_s::backend_data if the
+ *  oyCMMapi7_s::data_type is filled with a understood format hint.
+ *  The registration should provide keyworks to select the processing function.
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/12/15 (Oyranos: 0.1.9)
- *  @date    2008/12/15
+ *  @date    2008/12/27
  */
 struct oyCMMapi7_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API7_S */
@@ -320,24 +361,68 @@ struct oyCMMapi7_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/colour_shiva/common" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU" */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
       1: minor - mark new features, \n
       2: patch version - correct errors */
   int32_t          version[3];
+
+  /** mandatory for all filters; Special care has to taken for the
+      oyPixelAccess_s argument to this function. */
+  oyCMMFilterPlug_Run_f oyCMMFilterPlug_Run;
+  /** e.g. oyCMMFilterPlug_Run specific context data "lcDL" */
+  char             data_type[8];
+
+  /** We have to tell about valid input and output connectors, by 
+      passively providing enough informations. */
+  oyConnector_s ** plugs;
+  uint32_t         plugs_n;            /**< number of different plugs */ 
+  /** additional allowed number for last input connector, e.g. typical 0 */
+  uint32_t         plugs_last_add;
+  oyConnector_s ** sockets;
+  uint32_t         sockets_n;          /**< number of sockets */
+  /** additional allowed number for last output connector, e.g. typical 0 */
+  uint32_t         sockets_last_add;
 };
+
+/** Function oyCMMdata_Convert_f
+ *  @brief   convert between data formats
+ *  @ingroup cmm_handling
+ *
+ *  The function might be used to provide a backend specific context.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+typedef int(*oyCMMdata_Convert_f)    ( oyStruct_s        * data_in,
+                                       oyStruct_s        * data_out );
 
 /** @struct oyCMMapi6_s
  *  @brief the API 6 to provide and implement context conversion support
+ *  @ingroup cmm_handling
  *
  *  The context provided by a filter can be exotic. The API provides the means
  *  to get him into a known format.
  *
- *  @version Oyranos: 0.1.9
+ \dot
+digraph G {
+  rankdir=LR
+  node [shape=record, fontname=Helvetica, fontsize=10];
+  edge [fontname=Helvetica, fontsize=10];
+
+  a [ label="ICC device link - oyDL" ];
+  b [ label="littleCMS specific device link - lcDL" ];
+
+  a -> b [arrowtail=none, arrowhead=normal];
+}
+ \enddot
+ *
+ *  @version Oyranos: 0.1.10
  *  @since   2008/12/15 (Oyranos: 0.1.9)
- *  @date    2008/12/15
+ *  @date    2008/12/27
  */
 struct oyCMMapi6_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API6_S */
@@ -350,17 +435,24 @@ struct oyCMMapi6_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/colour_shiva/common" */
+  /** e.g. "sw/oyranos.org/colour/icc.hydra" */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
       1: minor - mark new features, \n
       2: patch version - correct errors */
   int32_t          version[3];
+
+  /** oyCMMapi5_s typic data; e.g. "oyDL" */
+  char           * data_type_in;
+  /** oyCMMapi7_s specific data; e.g. "lcDL" */
+  char           * data_type_out;
+  oyCMMdata_Convert_f oyCMMdata_Convert;
 };
 
 /** @type    oyCMMData_LoadFromMem_f
  *  @brief   load a filter data from a in memory data blob
+ *  @ingroup cmm_handling
  *
  *  @param[in]     buf_size            data size
  *  @param[in]     buf                 data blob
@@ -378,8 +470,34 @@ typedef oyStruct_s * (*oyCMMData_LoadFromMem_f) (
                                        uint32_t            flags,
                                        oyObject_s          object);
 
+/** @type    oyCMMDataGetText_f
+ *  @brief   build a text string from a given data
+ *  @ingroup cmm_handling
+ *
+ *  Serialise into:
+ *  - oyNAME_NICK: XML ID
+ *  - oyNAME_NAME: XML
+ *  - oyNAME_DESCRIPTION: ??
+ *
+ *  @param[in]     data                data
+ *  @param[out]    type                the string type
+ *  @param[out]    pos                 oisition for oyStructList_s argument
+ *  @param[in]     allocateFunc        e.g. malloc
+ *  @return                            0 on success; error >= 1; unknown < 0
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/24 (Oyranos: 0.1.10)
+ *  @date    2008/12/24
+ */
+typedef char *   (*oyCMMDataGetText_f)(oyStruct_s        * data,
+                                       oyNAME_e            type,
+                                       int                 pos,
+                                       int                 flags,
+                                       oyAlloc_f           allocateFunc );
+
 /** @type    oyCMMDataScan_f
  *  @brief   load a filter data from a in memory data blob
+ *  @ingroup cmm_handling
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -401,6 +519,7 @@ typedef int          (*oyCMMDataScan_f) (
 
 /** @type    oyCMMFilter_Load_f
  *  @brief   load a filter from a in memory data blob
+ *  @ingroup cmm_handling
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -418,6 +537,7 @@ typedef oyCMMapi4_s *  (*oyCMMFilterLoad_f) (
 
 /** @type    oyCMMFilterScan_f
  *  @brief   load a filter from a in memory data blob
+ *  @ingroup cmm_handling
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -448,6 +568,7 @@ typedef int          (*oyCMMFilterScan_f) (
 
 /** @struct oyCMMDataTypes_s
  *  @brief the CMM API 5 data part
+ *  @ingroup cmm_handling
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/23 (Oyranos: 0.1.9)
@@ -465,14 +586,14 @@ typedef struct {
       e.g. "color/icc" */
   const char     * paths;
   const char     * exts;                /**< file extensions, e.g. "icc:icm" */
-  /** obtain the translated resource name, e.g. oyNAME_NAME "ICC profile" */
-  const char     * (*oyCMMDataNameGet) (oyNAME_e);
+  oyCMMDataGetText_f               oyCMMDataGetText;
   oyCMMData_LoadFromMem_f          oyCMMDataLoadFromMem;
-  oyCMMDataScan_f                 oyCMMDataScan;
+  oyCMMDataScan_f                  oyCMMDataScan;
 } oyCMMDataTypes_s;
 
 /** @struct oyCMMapi5_s
- *  @brief the API 5 to provide and implement script support
+ *  @brief the API 5 to provide and implement filter and script support
+ *  @ingroup cmm_handling
  *
  *  Filters can be provided in non library form, e.g. as text files. This API 
  *  allowes for registring of paths and file types to be recognised as filters.
@@ -497,7 +618,7 @@ typedef struct {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/shiva" or "sw/oyranos.org/colour/icc" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva" or "sw/oyranos.org/colour/icc" */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -530,55 +651,18 @@ typedef struct {
 
 
 
-/** @type    oyCMMFilterNode_CreateContext_f
- *  @brief   create a basic filter context from root image filter node
- *
- *  @param[in,out] node                access to the complete filter node struct, most important to handle is the oyOptions_s filter->options member
- *  @param[in]     cmm_profile_array   the CMM resources cached in Oyranos, e.g. oyCMM_PROFILE
- *  @param[in]     profiles_n          number of cmm_profile_array elements
- *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2008/07/02
- */
-typedef int      (*oyCMMFilterNode_CreateContext_f) (
-                                       oyFilterNode_s    * node,
-                                       oyCMMptr_s       ** cmm_profile_array,
-                                       int                 profiles_n,
-                                       oyCMMptr_s        * oy );
-/** @type    oyCMMFilterNode_ContextFromMem_f
- *  @brief   create a basic filter context from a memory blob
- *
- *  This function complements the oyCMMFilter_ContextToMem_t() function.
- *
- *  @param[in,out] node                access to the complete filter struct, most important to handle is the options and image members
- *  @param[in]     mem                 the CMM memory blob
- *  @param[in]     size                size in mem
- *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/02 (Oyranos: 0.1.8)
- *  @date    2008/07/02
- */
-typedef int      (*oyCMMFilterNode_ContextFromMem_f) (
-                                       oyFilterNode_s    * node,
-                                       oyPointer           mem,
-                                       size_t              size,
-                                       oyCMMptr_s        * oy );
-
 /** @type    oyCMMFilterNode_ContextToMem_f
- *  @brief   dump a CMM filter context into a memory blob
+ *  @brief   store a CMM filter context into a memory blob
+ *  @ingroup cmm_handling
  *
  *  The goal is to have a data blob for later reusing. It is as well used for
- *  exchange and analysis. A "//colour" filter should fill the data
- *  blob with a device link style profile for easy forwarding and reuseable
+ *  exchange and analysis. A oyCMMapi4_s filter with context_type member set to
+ *  something should implement this function and fill the data
+ *  blob with the according context data for easy forwarding and
  *  on disk caching.
- *  This function complements the oyCMMFilter_ContextFromMem_t() function.
  *
  *  @param[in,out] node                access to the complete filter struct, most important to handle is the options and image members
  *  @param[out]    size                size in return 
- *  @param[out]    oy                  the CMM resource to cache in Oyranos, e.g. oyCMM_COLOUR_CONVERSION
  *  @param         allocateFunc        memory allocator for the returned data
  *  @return                            the CMM memory blob, preferedly ICC
  *
@@ -589,54 +673,43 @@ typedef int      (*oyCMMFilterNode_ContextFromMem_f) (
 typedef oyPointer(*oyCMMFilterNode_ContextToMem_f) (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
-                                       oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc );
 
-
-/** @type    oyCMMFilterPlug_Run_f
- *  @brief   get a pixel or channel from the previous filter
+/** @type    oyCMMFilterNode_GetText_f
+ *  @brief   describe a CMM filter context
+ *  @ingroup cmm_handling
  *
- *  You have to call oyCMMFilter_CreateContext_t or oyCMMFilter_ContextFromMem_t first.
- *  The API provides flexible pixel access and cache configuration by the
- *  passed oyPixelAccess_s object. The filters internal precalculated data
- *  are passed by the filter object.
+ *  For a oyNAME_NICK and oyNAME_NAME type argument, the function shall
+ *  describe only those elements, which are relevant to the result of the
+ *  context creation. The resulting string is CMM specific by intention.
  *
- *  @verbatim
-    while (err == 0) {
-      memcpy( buf[x * n++], oyCMMFilterSocket_GetNext( filter_socket, pixel_access, &err ), x );
-    } @endverbatim
+ *  Serialise into:
+ *  - oyNAME_NICK: XML ID
+ *  - oyNAME_NAME: XML
+ *  - oyNAME_DESCRIPTION: ??
  *
- *  @param[in]     connector           including the CMM's private data, connector is the requesting plug to obtain a handle for calling back
- *  @param[in]     pixel_access        processing order instructions
- *  @param[in,out] output              the data to place results into, its position is in start_xy relative to the previous mediator
- *  @return                            -1 end; 0 on success; error > 1
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/03 (Oyranos: 0.1.8)
- *  @date    2008/07/28
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
  */
-typedef int (*oyCMMFilterPlug_Run_f)(
-                                       oyFilterPlug_s    * connector,
-                                       oyPixelAccess_s   * pixel_access,
-                                       oyArray2d_s      ** output );
+typedef char *(*oyCMMFilterNode_GetText_f) (
+                                       oyFilterNode_s    * node,
+                                       oyNAME_e            type,
+                                       oyAlloc_f           allocateFunc );
 
 /** @struct oyCMMapi4_s
  *  @brief the API 4 to implement and set to provide Filter support
- *
- *  The registration member provides the means to later sucessfully select 
- *  the according filter. The string is separated into sections by a point'.'.
- *  The sections are separated by comma',' as needed. The sections are to be
- *  filled as folows:
- *  - top, e.g. "sw"
- *  - vendor, e.g. "oyranos.org"
- *  - filter type, e.g. "colour" or "tonemap" or "image" or "imaging" matching the filter_type member
- *  - filter name, e.g. "scale"
+ *  @ingroup cmm_handling
  *
  *  Different filters have to implement this struct each one per filter.
  *
- *  @version Oyranos: 0.1.9
+ *  The ::oyCMMFilterNode_ContextToMem @see oyCMMFilterNode_ContextToMem_f
+ *  should be implemented in case the context_type is set to a
+ *  context data type.
+ *
+ *  @version Oyranos: 0.1.10
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2008/11/24
+ *  @date    2008/12/27
  */
 struct  oyCMMapi4_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
@@ -659,22 +732,22 @@ struct  oyCMMapi4_s {
 
   /** zero terminated list of struct types, to cache in Oyranos */
   uint32_t       * cache_data_types;
+  /** 0x01 include input data; 0x02 include output data */
+  uint32_t         cache_flags;
 
   /** check options for validy and correct */
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
   oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
 
-  /** mandatory for "..colour" filters, register with cache_data_types */
+  /** mandatory filters with cache_data_types */
   oyCMMDataOpen_f                  oyCMMDataOpen;
-  /** mandatory for "..colour" filters */
-  oyCMMFilterNode_CreateContext_f  oyCMMFilterNode_CreateContext;
-  /** mandatory for "..colour" filters */
+  /** mandatory for "//colour.icc" filters */
   oyCMMFilterNode_ContextToMem_f   oyCMMFilterNode_ContextToMem;
-  /** mandatory for "..colour" filters */
-  oyCMMFilterNode_ContextFromMem_f oyCMMFilterNode_ContextFromMem;
-  /** mandatory for all filters; Special care has to taken for the
-      oyPixelAccess_s argument to this function. */
-  oyCMMFilterPlug_Run_f        oyCMMFilterPlug_Run;
+  /** mandatory for a set oyCMMFilterNode_ContextToMem */
+  oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText;
+  /** the data type of the context returned by oyCMMapi4_s::oyCMMFilterNode_ContextToMem_f, mandatory for a set oyCMMFilterNode_ContextToMem
+   *  e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL" */
+  char             context_type[8];
 
   /** translatable, eg "scale" "image scaling" "..." */
   oyName_s         name;
@@ -682,19 +755,9 @@ struct  oyCMMapi4_s {
   const char     * options;            /**< default options */
   const char     * opts_ui;            /**< xml ui elements for filter options*/
 
-  /** We have to tell about valid input and output connectors, by 
-      passively providing enough informations. */
-  oyConnector_s ** plugs;
-  uint32_t         plugs_n;            /**< number of different plugs */ 
-  /** additional allowed number for last input connector, e.g. typical 0 */
-  uint32_t         plugs_last_add;
-  oyConnector_s ** sockets;
-  uint32_t         sockets_n;          /**< number of sockets */
-  /** additional allowed number for last output connector, e.g. typical 0 */
-  uint32_t         sockets_last_add;
-
   char           * id_;                /**< Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;              /**< meta backend; keep to zero */
+
 };
 
 

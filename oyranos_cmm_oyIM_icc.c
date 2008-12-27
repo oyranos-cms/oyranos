@@ -204,14 +204,75 @@ char oyIM_default_colour_icc_options_ui[] = {
 "
 }; 
 
-const char * oyIMICCDataNameGet(oyNAME_e type)
+char * oyIMstructGetText             ( oyStruct_s        * item,
+                                       oyNAME_e            type,
+                                       int                 flags,
+                                       oyAlloc_f           allocateFunc )
 {
-  if(type == oyNAME_NAME)
-  return _("ICC profile");
-  else if(type == oyNAME_DESCRIPTION)
-  return _("ICC colour profile for colour transformations");
-  else
-  return OY_TYPE_STD;
+  char * text = 0;
+  oyProfile_s * prof = 0;
+  oyImage_s * image = 0;
+
+  if(item->type_ == oyOBJECT_PROFILE_S)
+  {
+    text = oyStringCopy_( oyProfile_GetText( prof, oyNAME_DESCRIPTION ),
+                          allocateFunc );
+  } else if(item->type_ == oyOBJECT_IMAGE_S)
+  {
+    image = (oyImage_s*) item;
+
+    if(flags == oyOBJECT_PROFILE_S)
+      text = oyStringCopy_( oyProfile_GetText( image->profile_,
+                                               type ),
+                            allocateFunc );
+    else
+      text = oyStringCopy_( oyObject_GetName( image->oy_, type ),
+                            allocateFunc );
+  }
+
+  return text;
+}
+
+char * oyIMDataGetText               ( oyStruct_s        * data,
+                                       oyNAME_e            type,
+                                       int                 pos,
+                                       int                 flags,
+                                       oyAlloc_f           allocateFunc )
+{
+  int n = 0;
+  oyStructList_s * list = 0;
+  oyStruct_s * item = 0;
+  char * text = 0;
+
+  if(!data)
+  {
+    if(type == oyNAME_NAME)
+      text = oyStringCopy_( _("ICC profile"), allocateFunc );
+    else if(type == oyNAME_DESCRIPTION)
+      text = oyStringCopy_( _("ICC colour profile for colour transformations"),
+                            allocateFunc );
+    else
+      text = oyStringCopy_( OY_TYPE_STD, allocateFunc );
+  } else
+  {
+    if(data->type_ == oyOBJECT_STRUCT_LIST_S)
+    {
+      list = (oyStructList_s*) data;
+      n = oyStructList_Count( list );
+      item = oyStructList_GetRef( list, pos );
+    } else
+      item = data;
+
+    if(item &&
+       !(item->type_ == oyOBJECT_PROFILE_S ||
+         item->type_ == oyOBJECT_IMAGE_S))
+      item = 0;
+
+    if(item)
+      text = oyIMstructGetText( item, type, flags, allocateFunc );
+  }
+
+  return text;
 }
 
 /** Function oyIMICCDataLoadFromMem
@@ -265,7 +326,7 @@ oyCMMDataTypes_s icc_data[] = {
   0, /* id */
   "color/icc", /* sub paths */
   "icc:icm", /* file name extensions */
-  oyIMICCDataNameGet, /* oyCMMDataNameGet */
+  oyIMDataGetText, /* oyCMMDataGetText */
   oyIMICCDataLoadFromMem, /* oyCMMDataLoadFromMem */
   oyIMICCDataScan /* oyCMMDataScan */
  },{0} /* zero list end */

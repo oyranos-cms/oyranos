@@ -1774,20 +1774,6 @@ const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
                                        int                 flags );
 const char * oyFilter_WidgetsGet     ( oyFilter_s        * filter,
                                        int                 flags );
-oyProfiles_s*oyFilter_ProfilesSet    ( oyFilter_s        * filter,
-                                       oyProfiles_s      * profiles,
-                                       int                 flags );
-oyProfiles_s*oyFilter_ProfilesGet    ( oyFilter_s        * filter,
-                                       int                 flags );
-OYAPI oyConnector_s * OYEXPORT
-             oyFilter_ShowConnector  ( oyFilter_s        * filter,
-                                       int                 as_pos,
-                                       int                 plug );
-OYAPI int  OYEXPORT
-             oyFilter_ShowConnectorCount(
-                                       oyFilter_s        * filter,
-                                       int                 plug,
-                                       uint32_t          * last_adds );
 
 
 /** @struct  oyFilters_s
@@ -1930,7 +1916,8 @@ struct oyFilterNode_s {
   oyFilter_s         * filter;         /**< the filter */
   char               * relatives_;     /**< hint about belonging to a filter */
 
-  oyStruct_s         * backend_data;   /**< the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_CreateContext() and cached through Oyranos */
+  /** the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to oyCMMapi4_s::context_type */
+  oyStruct_s         * backend_data;
   oyCMMapi7_s        * api7_;
 };
 
@@ -1960,11 +1947,21 @@ int            oyFilterNode_Count    ( oyFilterNode_s    * node,
 int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
                                        oyFilterNode_s    * output,
                                        int                 flags );
+OYAPI oyConnector_s * OYEXPORT
+             oyFilterNode_ShowConnector (
+                                       oyFilterNode_s    * node,
+                                       int                 as_pos,
+                                       int                 plug );
 OYAPI int  OYEXPORT
-                 oyFilterNode_ConnectorMatch (
+             oyFilterNode_ConnectorMatch (
                                        oyFilterNode_s    * node_first,
                                        int                 pos_first,
                                        oyConnector_s     * connector_second );
+OYAPI int  OYEXPORT
+             oyFilterNode_ShowConnectorCount(
+                                       oyFilterNode_s    * node,
+                                       int                 plug,
+                                       uint32_t          * last_adds );
 OYAPI oyFilterSocket_s * OYEXPORT
                  oyFilterNode_GetSocket (
                                        oyFilterNode_s    * node,
@@ -2348,6 +2345,7 @@ typedef struct {
   oyImage_s          * image_in_;      /*!< input */
   oyImage_s          * image_out_;     /*!< output */
   oyStructList_s     * cmms_;          /**< list of CMM entries to call */
+  int32_t              flags;          /**< 0x01 is the warned bit */
 } oyColourConversion_s;
 
 oyColourConversion_s* oyColourConversion_Create (

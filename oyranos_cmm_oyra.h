@@ -73,7 +73,10 @@ oyPointer  oyraFilter_ImageRootContextToMem (
 extern oyDATATYPE_e  oyra_image_data_types[7];
 
 extern oyCMMapi4_s   oyra_api4_image_output_ppm;
+extern oyCMMapi7_s   oyra_api7_image_output_ppm;
 extern oyCMMapi4_s   oyra_api4_image_output;
+extern oyCMMapi7_s   oyra_api7_image_output;
 extern oyCMMapi4_s   oyra_api4_image_root;
+extern oyCMMapi7_s   oyra_api7_image_root;
 
 #endif /* OYRANOS_CMM_OYRA_H */

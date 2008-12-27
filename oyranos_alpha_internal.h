@@ -60,9 +60,9 @@ int                oyCMMptr_Release_ ( oyCMMptr_s       ** cmm_ptr );
 
 int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        const char        * lib_name,
-                                       const char        * func_name,
                                        const char        * resource,
                                        oyPointer           ptr,
+                                       const char        * func_name,
                                        oyStruct_release_f  ptrRelease );
 oyCMMptr_s * oyStruct_GetCMMPtr_     ( oyStruct_s        * data,
                                        const char        * cmm );

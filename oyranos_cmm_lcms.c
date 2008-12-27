@@ -37,6 +37,8 @@
 #define lcmsPROFILE "lcPR"
 #define lcmsTRANSFORM "lcCC"
 
+#define lcmsVERSION {0,0,1}
+
 int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = lcmsCMMWarnFunc;
 
@@ -245,14 +247,14 @@ int lcmsCMMProfileReleaseWrap(oyPointer *p)
 }
 
 
-/** @func    lcmsCMMProfileReleaseWrap
+/** @func    lcmsCMMDataOpen
  *  @brief   oyCMMProfileOpen_t implementation
  *
- *  @version Oyranos: 0.1.8
- *  @date    2007/11/12
+ *  @version Oyranos: 0.1.10
  *  @since   2007/11/12 (Oyranos: 0.1.8)
+ *  @date    2007/12/27
  */
-int          lcmsCMMProfile_Open     ( oyStruct_s        * data,
+int          lcmsCMMData_Open        ( oyStruct_s        * data,
                                        oyCMMptr_s        * oy )
 {
   oyCMMptr_s * s = 0;
@@ -603,7 +605,7 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
   p.block_ = mem;
   p.size_ = size;
 
-  error = lcmsCMMProfile_Open ( (oyStruct_s*)&p, &intern );
+  error = lcmsCMMData_Open ( (oyStruct_s*)&p, &intern );
   error = lcmsCMMColourConversion_Create (
                                        dls, 1,
                                        oy_pixel_layout_in, oy_pixel_layout_out,
@@ -801,18 +803,57 @@ uint32_t lcms_cache_data_types[] = { oyOBJECT_PROFILE_S, oyOBJECT_IMAGE_S, 0 };
  *  @since   2008/11/01 (Oyranos: 0.1.8)
  *  @date    2008/11/01
  */
-int      lcmsCMMFilterNode_CreateContext (
+oyPointer lcmsFilterNode_CmmIccContextToMem (
                                        oyFilterNode_s    * node,
-                                       oyCMMptr_s       ** cmm_profile_array,
-                                       int                 profiles_n,
-                                       oyCMMptr_s        * oy )
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
 {
-  int error = !node;
+  /*int error = !node || !size;*/
+  oyPointer ptr = 0;
+  int error = 0;
+  int channels = 0;
+  oyDATATYPE_e data_type = 0;
 
-  
+  oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
+  oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
+  oyFilter_s * filter = 0;
+  oyFilterNode_s * input_node = 0;
+  oyImage_s * input_image = 0;
 
-  return error;
+  filter = node->filter;
+  input_node = plug->remote_socket_->node;
+  input_image = (oyImage_s*)plug->remote_socket_->data;
+
+  data_type = oyToDataType_m( input_image->layout_[0] );
+
+  if(data_type == oyFLOAT)
+  {
+    oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_IMAGE );
+    message( oyMSG_WARN, (oyStruct_s*)node,
+             "%s: %d can not handle oyFLOAT", __FILE__,__LINE__ );
+  }
+
+  channels = oyToChannels_m( input_image->layout_[0] );
+
+  *size = 0;
+
+  return ptr;
 }
+
+/** Function lcmsCMMFilterNode_CreateContext
+ *  @brief   implement oyCMMFilterNode_GetText_f()
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
+                                       oyNAME_e            type,
+                                       oyAlloc_f           allocateFunc )
+{
+  return "TODO";
+}
+
 
 /** Function lcmsFilterPlug_CmmIccRun
  *  @brief   implement oyCMMFilterPlug_GetNext_f()
@@ -833,19 +874,19 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterPlug_s * plug = 0;
-  oyFilter_s * filter = 0,
-             * input_filter = 0;
+  oyFilter_s * filter = 0;
+  oyFilterNode_s * input_node = 0;
   oyImage_s * input_image = 0;
   oyArray2d_s * array = 0;
   
 
   filter = socket->node->filter;
   plug = (oyFilterPlug_s *)socket->node->plugs[0];
-  input_filter = plug->remote_socket_->node->filter;
+  input_node = plug->remote_socket_->node;
   input_image = (oyImage_s*)plug->remote_socket_->data;
 
   /* We let the input filter do its processing first. */
-  error = input_filter->api4_->oyCMMFilterPlug_Run( plug, ticket, pixel);
+  error = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket, pixel);
   if(error != 0) return error;
 
   array = *pixel;
@@ -985,6 +1026,41 @@ char lcms_extra_options[] = {
 
 
 
+/** @instance lcms_api7
+ *  @brief    littleCMS oyCMMapi7_s implementation
+ *
+ *  a filter providing CMM API's
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+oyCMMapi7_s   lcms_api7_cmm = {
+
+  oyOBJECT_CMM_API7_S,
+  0,0,0,
+  0,
+
+  lcmsCMMInit,
+  lcmsCMMMessageFuncSet,
+  lcmsCMMCanHandle,
+
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "icc." CMM_NICK ".CPU",
+
+  lcmsVERSION,
+
+  lcmsFilterPlug_CmmIccRun,  /* oyCMMFilterPlug_Run_f */
+  lcmsTRANSFORM,             /* data_type, "lcCC" */
+
+  lcms_cmmIccPlug_connectors,/* plugs */
+  1,                         /* plugs_n */
+  0,                         /* plugs_last_add */
+  lcms_cmmIccSocket_connectors,   /* sockets */
+  1,                         /* sockets_n */
+  0,                         /* sockets_last_add */
+};
+
 /** @instance lcms_api4
  *  @brief    littleCMS oyCMMapi4_s implementation
  *
@@ -998,7 +1074,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
 
   oyOBJECT_CMM_API4_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & lcms_api7_cmm,
 
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,
@@ -1007,30 +1083,23 @@ oyCMMapi4_s   lcms_api4_cmm = {
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc." CMM_NICK,
 
-  {0,0,1},
+  lcmsVERSION,
 
   lcms_cache_data_types,
+  0x01 | 0x02, /* uint32_t cache_flags; interesst in input and output data */
 
   lcmsFilter_CmmIccValidateOptions,
   lcmsWidgetEvent,
 
-  lcmsCMMProfile_Open, /* oyCMMDataOpen_f */
-  lcmsCMMFilterNode_CreateContext, /* oyCMMFilterNode_CreateContext_f */
-  0, /* lcmsFilterNode_CmmIccContextToMem */ /* oyCMMFilterNode_ContextToMem_f */
-  0, /* oyCMMFilterNode_ContextFromMem_f */
-  lcmsFilterPlug_CmmIccRun,
+  lcmsCMMData_Open, /* oyCMMDataOpen_f */
+  lcmsFilterNode_CmmIccContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  lcmsFilterNode_GetText, /* oyCMMFilterNode_GetText_f */
+  oyCOLOUR_ICC_DEVICE_LINK, /* data_type */
 
   {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
   "Colour/CMM/littleCMS", /* category */
   lcms_extra_options,   /* options */
   0,   /* opts_ui_ */
-
-  lcms_cmmIccPlug_connectors,   /* plugs */
-  1,   /* plugs_n */
-  0,   /* plugs_last_add */
-  lcms_cmmIccSocket_connectors,   /* sockets */
-  1,   /* sockets_n */
-  0,   /* sockets_last_add */
 
   0    /* api5_; keep empty */
 };
@@ -1054,7 +1123,7 @@ oyCMMapi1_s  lcms_api1 = {
   lcmsCMMMessageFuncSet,
   lcmsCMMCanHandle,
 
-  lcmsCMMProfile_Open,
+  lcmsCMMData_Open,
   lcmsCMMColourConversion_Create,
   lcmsCMMColourConversion_FromMem,
   lcmsCMMColourConversion_ToMem,

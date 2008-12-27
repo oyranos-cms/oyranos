@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 
+extern int oy_debug;
 void* myAllocFunc(size_t size) { return new char [size]; }
 
 int main(int argc, char** argv)

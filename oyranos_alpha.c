@@ -763,8 +763,8 @@ int          oyName_release_         ( oyName_s         ** obj,
  *  @internal
  *  @brief naming plus automatic allocation
  *
- *  @param[in]    object         the oyName_s struct
- *  @param[in]    name           the name should fit into usual labels
+ *  @param[in]    obj            the oyName_s struct
+ *  @param[in]    text           the name should fit into usual labels
  *  @param[in]    type           the kind of name
  *  @param[in]    allocateFunc   memory management (defaults to oyAllocateFunc_)
  *  @param[in]    deallocateFunc optional memory management 
@@ -1608,7 +1608,50 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
 
 
 /** \addtogroup cmm_handling CMM Handling API
-
+ *
+ *  CMM's in Oyranos are designed to be plugable into a framework of arbitrary
+ *  data formats and processing.
+ *
+ *  The oyCMMapi5_s plug-in structure defines a 
+ *  meta backend to load plug-ins, from a to be defined directory with
+ *  to be defined naming criterias. This API defines at the same time allowed
+ *  input data formats.
+ *
+ *  The oyCMMapi4_s is the structure for plug-ins in Oyranos. It is itself
+ *  not allocated by Oyranos itself. A meta backend must do this. A oyCMMapi4_s
+ *  can define a context data format, it provides. This context is a
+ *  intermediate processing state for all of the context data influencing
+ *  options and input datas. This structure may contain as well the GUI.
+ *
+ *  oyCMMapi7_s eighter deploys the context created in a oyCMMapi4_s filter, or
+ *  simply processes the Oyranos oyFilterNode_s graph element. It is responsible
+ *  to request data from the graph and process them.
+ *  Members are responsible to describe the filters capabilities for connecting
+ *  to other filters in the graph.
+ *
+ *  In case a oyCMMapi7_s function can not handle a certain provided context
+ *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
+ *  a fitting oyCMMapi6_s data convertor. This API is only required for filters,
+ *  which request contexts.
+ *
+ *  Each filter API provides a \b registration member string.
+ *  The registration member provides the means to later sucessfully select 
+ *  the according filter. The string is separated into sections by a slash'/'.
+ *  The sections can be subdivided by point'.' as needed. The sections are to be
+ *  filled as folows:
+ *  - top, e.g. "sw"
+ *  - vendor, e.g. "oyranos.org"
+ *  - filter type, e.g. "colour" or "tonemap" or "image" or "imaging"
+ *  - filter name, e.g. "icc.lcms"
+ * 
+ *  A complete registration might read: "sw/oyranos.org/colour/icc.lcms".
+ *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
+ *  might be useful in canonical processing a Oyranos registration text string.
+ *  Many functions allow for passing a registration string. To select a filter
+ *  from a broader set of filters matching can be obtained by omitting sections
+ *  like in the string "//colour". This string would result in a match for the
+ *  above given example.
+ *
  *  @{
  */
 
@@ -1722,15 +1765,15 @@ int                oyCMMptr_Release_ ( oyCMMptr_s       ** obj )
  *
  *  Has only a weak release behaviour. Use for initialising.
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2007/11/26 (Oyranos: 0.1.8)
- *  @date    2008/12/08
+ *  @date    2008/12/27
  */
 int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        const char        * lib_name,
-                                       const char        * func_name,
                                        const char        * resource,
                                        oyPointer           ptr,
+                                       const char        * func_name,
                                        oyStruct_release_f  ptrRelease )
 {
   oyCMMptr_s * s = cmm_ptr;
@@ -1842,7 +1885,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
     error = !s;
 
     if(!error)
-      error = oyCMMptr_Set_( s, lib_name, "oyDlclose", 0, ptr, oyDlclose );
+      error = oyCMMptr_Set_( s, lib_name, 0, ptr, "oyDlclose", oyDlclose );
 
     if(!error)
       oy_cmm_struct = (oyStruct_s*) s;
@@ -2567,7 +2610,6 @@ oyStructList_s * oy_meta_backend_cache_ = 0;
  *  @param[in]   cmm_required          if present take this or fail, the arg
  *                                     simplifies and speeds up the search
  *  @param[in]   queries               search for a match to capabilities
- *  @param[out]  lib_used              inform about the selected CMM
  *  @param[in]   registration          point'.' separated list of identifiers
  *
  *  @version Oyranos: 0.1.9
@@ -2766,7 +2808,6 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
  *  @param[in]   cmm_required          if present take this or fail, the arg
  *                                     simplifies and speeds up the search
  *  @param[in]   queries               search for a match to capabilities
- *  @param[out]  lib_used              inform about the selected CMM
  *  @param[in]   registration          point'.' separated list of identifiers
  *
  *  @version Oyranos: 0.1.9
@@ -3164,7 +3205,6 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
  *  @brief   object management 
  *
  *  @param[in]    object         the object
- *  @param[in]    type           object type
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
@@ -3756,8 +3796,8 @@ oyObject_s  oyObject_SetCMMPtr_      ( oyObject_s      object,
     }
 
     if(!error)
-      error = oyCMMptr_Set_( cmm_ptr, cmm, func_name, resource,
-                             ptr, ptrRelease );
+      error = oyCMMptr_Set_( cmm_ptr, cmm, resource,
+                             ptr, func_name, ptrRelease );
     WARNc_S(("Better write a oyCMMptr_s to global cache. %s %s %s", cmm, resource, func_name))
   }
 
@@ -4584,8 +4624,8 @@ oyOption_s *   oyOption_New          ( oyObject_s          object )
  *  @relates oyOption_s
  *  @brief   copy the content of a option to an other
  *
- *  @param[in]     option              option object
- *  @param         object              the optional object
+ *  @param[out]    to                  resulting options
+ *  @param[in]     from                input options
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -7542,13 +7582,10 @@ oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
         oyCMMDataOpen_f funcP = 0;
 
         /* TODO update to oyCMMapi4_s::oyCMMDataOpen_f */
-        oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
-                                          cmm, 0, &lib_used, 0,0 );
-        if(api && *(uint32_t*)&cmm)
-        {
-          oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
-          funcP = api1->oyCMMDataOpen;
-        }
+        oyCMMapi4_s * api4 = (oyCMMapi4_s*) oyCMMsGetApi_( oyOBJECT_CMM_API4_S,
+                                                       cmm, 0, &lib_used, 0,0 );
+        if(api4 && *(uint32_t*)&cmm)
+          funcP = api4->oyCMMDataOpen;
 
         if(funcP)
         {
@@ -7556,8 +7593,8 @@ oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
           error = !cmm_ptr;
 
           if(!error)
-            error = oyCMMptr_Set_( cmm_ptr, lib_used, 0,
-                                   oyCMM_PROFILE, 0, 0 );
+            error = oyCMMptr_Set_( cmm_ptr, lib_used,
+                                   oyCMM_PROFILE, 0, 0, 0 );
 
           if(!error)
           {
@@ -10071,6 +10108,7 @@ OYAPI int  OYEXPORT
  *  @brief   set the data blob and (re-)initialise the object
  *
  *  @param[in,out] obj                 struct object
+ *  @param[in]     data                the data
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/08/23 (Oyranos: 0.1.8)
@@ -12424,66 +12462,9 @@ const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
                                        int                 flags );
 const char * oyFilter_WidgetsGet     ( oyFilter_s        * filter,
                                        int                 flags );
-oyProfiles_s* oyFilter_ProfilesSet( oyFilter_s        * filter,
-                                       oyProfiles_s   * profiles,
-                                       int                 flags );
-oyProfiles_s* oyFilter_ProfilesGet( oyFilter_s        * filter,
-                                       int                 flags );
 
-/** Function: oyFilter_ShowConnector
- *  @relates oyFilter_s
- *  @brief   get a connector description from a filter backend
- *
- *  The path to obtain a new connector.
- *  The filter can say it has more connectors to provide for a certain kind of 
- *  static connector eigther described in oyCMMapi4_s::inputs or
- *  oyCMMapi4_s::outputs.
- *
- *  @param[in]   filter              the backend filter
- *  @param[in]   as_pos              the according oyConnector_s
- *  @param[in]   is_plug             select from 0 - plugs or 1 - sockets
- *  @return                          the new oyConnector_s
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/28 (Oyranos: 0.1.8)
- *  @date    2008/07/28
- */
-OYAPI oyConnector_s * OYEXPORT
-             oyFilter_ShowConnector  ( oyFilter_s        * filter,
-                                       int                 as_pos,
-                                       int                 is_plug )
-{
-  oyConnector_s * pattern = 0;
-  oyObject_s object = 0;
-
-  if(!filter || filter->type_ != oyOBJECT_FILTER_S ||
-     !filter->api4_ || !filter->api4_)
-    return 0;
-
-  object = oyObject_New ();
-
-  if(filter->api4_->plugs_n < as_pos &&
-     as_pos < filter->api4_->plugs_n + filter->api4_->plugs_last_add )
-    as_pos = filter->api4_->plugs_n - 1;
-
-  {
-    if(is_plug)
-    {
-      if(filter->api4_->plugs_n > as_pos)
-        pattern = oyConnector_Copy( filter->api4_->plugs[as_pos], object );
-    } else {
-      if(filter->api4_->sockets_n > as_pos)
-        pattern = oyConnector_Copy( filter->api4_->sockets[as_pos], object );
-    }
-  }
-
-  oyObject_Release( &object );
-
-  return pattern;
-}
-
-/** Function: oyFilter_ShowConnectorCount
- *  @relates oyFilter_s
+/** Function: oyFilterNode_ShowConnectorCount
+ *  @relates oyFilterNode_s
  *  @brief   get the connector count from a filter backend
  *
  *  The path to obtain a new connector.
@@ -12491,7 +12472,7 @@ OYAPI oyConnector_s * OYEXPORT
  *  static connector eigther described in oyCMMapi4_s::inputs or
  *  oyCMMapi4_s::outputs.
  *
- *  @param       filter              the backend filter
+ *  @param       node                the backend filter node
  *  @param       is_plug             select from 0 - plugs or 1 - sockets
  *  @param[out]  last_adds           maximal copies of last connector as suggested by the filter backend
  *  @return                          count of static connectors
@@ -12501,26 +12482,26 @@ OYAPI oyConnector_s * OYEXPORT
  *  @date    2008/07/28
  */
 OYAPI int  OYEXPORT
-             oyFilter_ShowConnectorCount( 
-                                       oyFilter_s        * filter,
+             oyFilterNode_ShowConnectorCount( 
+                                       oyFilterNode_s    * node,
                                        int                 is_plug,
                                        uint32_t          * last_adds )
 {
   int n = 0;
 
-  if(!filter || filter->type_ != oyOBJECT_FILTER_S ||
-     !filter->api4_ || !filter->api4_)
+  if(!node || node->type_ != oyOBJECT_FILTER_NODE_S ||
+     !node->api7_)
     return n;
 
   if(is_plug)
   {
-    n = filter->api4_->plugs_n;
+    n = node->api7_->plugs_n;
     if(last_adds)
-      *last_adds = filter->api4_->plugs_last_add;
+      *last_adds = node->api7_->plugs_last_add;
   } else {
-    n = filter->api4_->sockets_n;
+    n = node->api7_->sockets_n;
     if(last_adds)
-      *last_adds = filter->api4_->sockets_last_add;
+      *last_adds = node->api7_->sockets_last_add;
   }
 
   return n;
@@ -12857,7 +12838,7 @@ oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object )
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/30 (Oyranos: 0.1.8)
  *  @date    2008/07/30
- */
+ TODO select oyCMMapi7_s over registration string */
 oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
                                        oyObject_s          object )
 {
@@ -12879,14 +12860,14 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
     if(s->filter)
     {
       size_t len = sizeof(oyFilterSocket_s*) *
-             (s->filter->api4_->sockets_n + s->filter->api4_->sockets_last_add
+             (s->api7_->sockets_n + s->api7_->sockets_last_add
               + 1);
       len = len?len:sizeof(oyFilterSocket_s*);
       s->sockets = allocateFunc_( len );
       memset( s->sockets, 0, len );
 
       len = sizeof(oyFilterSocket_s*) *
-            (s->filter->api4_->plugs_n + s->filter->api4_->plugs_last_add + 1);
+            (s->api7_->plugs_n + s->api7_->plugs_last_add + 1);
       len = len?len:sizeof(oyFilterSocket_s*);
       s->plugs = allocateFunc_( len );
       memset( s->plugs, 0, len );
@@ -13005,12 +12986,12 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 
     if(s->sockets)
     for(i = 0;
-        i < s->filter->api4_->sockets_n + s->filter->api4_->sockets_last_add;
+        i < s->api7_->sockets_n + s->api7_->sockets_last_add;
         ++i)
       oyFilterSocket_Release( &s->sockets[i] );
 
     for(i = 0;
-        i < s->filter->api4_->plugs_n + s->filter->api4_->plugs_last_add;
+        i < s->api7_->plugs_n + s->api7_->plugs_last_add;
         ++i)
       oyFilterPlug_Release( &s->plugs[i] );
 
@@ -13024,6 +13005,59 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
   }
 
   return 0;
+}
+
+/** Function: oyFilterNode_ShowConnector
+ *  @relates oyFilterNode_s
+ *  @brief   get a connector description from a filter backend
+ *
+ *  The path to obtain a new connector.
+ *  The filter can say it has more connectors to provide for a certain kind of 
+ *  static connector eigther described in oyCMMapi4_s::inputs or
+ *  oyCMMapi4_s::outputs.
+ *
+ *  @param[in]   node                the backend filter node
+ *  @param[in]   as_pos              the according oyConnector_s
+ *  @param[in]   is_plug             select from 0 - plugs or 1 - sockets
+ *  @return                          the new oyConnector_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/07/28 (Oyranos: 0.1.8)
+ *  @date    2008/12/27
+ */
+OYAPI oyConnector_s * OYEXPORT
+             oyFilterNode_ShowConnector (
+                                       oyFilterNode_s    * node,
+                                       int                 as_pos,
+                                       int                 is_plug )
+{
+  oyConnector_s * pattern = 0;
+  oyObject_s object = 0;
+
+  if(!node || !node->filter || node->type_ != oyOBJECT_FILTER_NODE_S ||
+     !node->api7_)
+    return 0;
+
+  object = oyObject_New ();
+
+  if(node->api7_->plugs_n < as_pos &&
+     as_pos < node->api7_->plugs_n + node->api7_->plugs_last_add )
+    as_pos = node->api7_->plugs_n - 1;
+
+  {
+    if(is_plug)
+    {
+      if(node->api7_->plugs_n > as_pos)
+        pattern = oyConnector_Copy( node->api7_->plugs[as_pos], object );
+    } else {
+      if(node->api7_->sockets_n > as_pos)
+        pattern = oyConnector_Copy( node->api7_->sockets[as_pos], object );
+    }
+  }
+
+  oyObject_Release( &object );
+
+  return pattern;
 }
 
 /** Function: oyFilterNode_ConnectorMatch
@@ -13053,7 +13087,7 @@ OYAPI int  OYEXPORT
 
   if(node_first && node_first->type_ == oyOBJECT_FILTER_NODE_S &&
      node_first->filter)
-    a = oyFilter_ShowConnector( node_first->filter, pos_first, 0 );
+    a = oyFilterNode_ShowConnector( node_first, pos_first, 0 );
 
   if(a && b && b->type_ == oyOBJECT_CONNECTOR_S)
   {
@@ -13154,14 +13188,14 @@ OYAPI oyFilterSocket_s * OYEXPORT
   oyFilterSocket_s * s = 0;
 
   if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
-     pos < node->filter->api4_->sockets_n + node->filter->api4_->sockets_last_add)
+     pos < node->api7_->sockets_n + node->api7_->sockets_last_add)
   {
     oyAlloc_f allocateFunc_ = node->oy_->allocateFunc_;
 
     if(!node->sockets)
     {
       size_t len = sizeof(oyFilterSocket_s*) *
-       (node->filter->api4_->sockets_n + node->filter->api4_->sockets_last_add
+       (node->api7_->sockets_n + node->api7_->sockets_last_add
         + 1);
       node->sockets = allocateFunc_( len );
       memset( node->sockets, 0, len );
@@ -13170,7 +13204,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
     if(!node->sockets[pos])
     {
       s = oyFilterSocket_New( node->oy_ );
-      s->pattern = oyFilter_ShowConnector( node->filter, pos, 0 );
+      s->pattern = oyFilterNode_ShowConnector( node, pos, 0 );
       s->node = oyFilterNode_Copy( node, 0 );
       s->relatives_ = oyStringCopy_( node->relatives_, allocateFunc_ );
       node->sockets[pos] = s;
@@ -13201,14 +13235,14 @@ OYAPI oyFilterPlug_s * OYEXPORT
   oyFilterPlug_s * s = 0;
 
   if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
-     pos < node->filter->api4_->plugs_n + node->filter->api4_->plugs_last_add)
+     pos < node->api7_->plugs_n + node->api7_->plugs_last_add)
   {
     oyAlloc_f allocateFunc_ = node->oy_->allocateFunc_;
 
     if(!node->plugs)
     {
       size_t len = sizeof(oyFilterPlug_s*) *
-           (node->filter->api4_->plugs_n + node->filter->api4_->plugs_last_add
+           (node->api7_->plugs_n + node->api7_->plugs_last_add
             + 1);
       node->plugs = allocateFunc_( len );
       memset( node->plugs, 0, len );
@@ -13217,7 +13251,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
     if(!node->plugs[pos])
     {
       s = oyFilterPlug_New( node->oy_ );
-      s->pattern = oyFilter_ShowConnector( node->filter, pos, 1 );
+      s->pattern = oyFilterNode_ShowConnector( node, pos, 1 );
       s->node = oyFilterNode_Copy( node, 0 );
       s->relatives_ = oyStringCopy_( node->relatives_, allocateFunc_ );
       node->plugs[pos] = s;
@@ -13253,8 +13287,8 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   char * hash_text = 0;
   oyFilterNode_s * s = node;
 
-  oyStructList_s * in_datas = oyStructList_New(0),
-                 * out_datas = oyStructList_New(0);
+  oyStructList_s * in_datas = 0,
+                 * out_datas = 0;
 
   if(!node)
     return 0;
@@ -13493,6 +13527,8 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
             data = 0;
             if(node->plugs[i]->remote_socket_->data)
               data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
+            else
+              data = (oyStruct_s*) oyOption_New(0);
             error = oyStructList_MoveIn( datas, &data, -1 );
             ++i;
           }
@@ -13505,6 +13541,8 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
             data = 0;
             if(node->sockets[i]->data)
               data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
+            else
+              data = (oyStruct_s*) oyOption_New(0);
             error = oyStructList_MoveIn( datas, &data, -1 );
             ++i;
           }
@@ -13515,11 +13553,33 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
   return datas;
 }
 
+/** @internal
+ *  @brief   wrapper for oyDeAllocateFunc_
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+int oyPointerRelease                 ( oyPointer         * ptr )
+{
+  if(ptr && *ptr)
+  {
+    oyDeAllocateFunc_(*ptr);
+    *ptr = 0;
+    return 0;
+  }
+  return 1;
+}
+
+
 /**
  *  @internal
  *  Function oyFilterNode_ContextSet_
  *  @relates oyFilterNode_s
  *  @brief   set backend context in a filter 
+ *
+ *  The api4 data is passed to a interpolator specific transformer. The result
+ *  of this transformer will on request be cached by Oyranos as well.
  *
  *  @param[in]     node                filter
  *  @return                            error
@@ -13535,43 +13595,12 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 
   if(!error)
   {
-          oyCMMptr_s ** cmm_profile_array = 0,
-                      * cmm_ptr = 0;
-          int           cmm_profile_array_n = 0;
-          int i, n, j;
-          oyStructList_s * list = oyStructList_New(0);
+          size_t size = 0;
           oyHash_s * entry = 0;
           const char * hash_text = 0;
-          oyOption_s * opt = 0; 
+          oyPointer ptr = 0;
+          oyCMMptr_s * cmm_ptr = 0;
 
-          n = oyOptions_Count( s->options_ );
-
-          /* collect effect profiles */
-          for( i = 0; i < n; ++i )
-          {
-            opt = oyOptions_Get( s->options_, i );
-
-            if(opt->value_type == oyVAL_STRUCT)
-            {
-              oyStruct_s * st = opt->value->oy_struct;
-
-              j = 0;
-              while(node->filter->api4_->cache_data_types[j])
-              {
-                if(st->type_ == node->filter->api4_->cache_data_types[j])
-                {
-                  st = st->copy( st, 0 );
-                  error = oyStructList_MoveIn( list, &st, -1 );
-                }
-                ++j;
-              }
-            }
-
-            oyOption_Release( &opt );
-          }
-          cmm_profile_array = oyStructList_GetCMMptrs_( list,
-                                                         s->api4_->id_ );
-          cmm_profile_array_n = oyStructList_Count( list );
 
           /*  Cache Search
            *  1.     hash from input
@@ -13583,7 +13612,16 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
            */
 
           /* 1. create hash text */
+          hash_text = s->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
+                                                         oyAllocateFunc_ );
           hash_text = oyFilterNode_GetText( node, oyNAME_NICK );
+
+          {
+            size = 0;
+            ptr = oyFilterNode_TextToInfo ( node, &size, oyAllocateFunc_ );
+            if(ptr)
+              oyWriteMemToFile_( "test_dbg_colour.icc", ptr, size );
+          }
 
           /* 2. query in cache */
           entry = oyCMMCacheListGetEntry_( hash_text );
@@ -13596,10 +13634,16 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 
             if(!cmm_ptr)
             {
+              size = 0;
+              cmm_ptr = oyCMMptr_New_(oyAllocateFunc_);
+
               /* 3b. ask CMM */
-              error = s->api4_->oyCMMFilterNode_CreateContext ( 
-                                  node, cmm_profile_array, cmm_profile_array_n,
-                                  oyCMMptr_New_(oyAllocateFunc_) );
+              ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
+                                                            oyAllocateFunc_ );
+
+              error = oyCMMptr_Set_( cmm_ptr, s->api4_->id_,
+                                     oyCOLOUR_ICC_DEVICE_LINK,
+                                     ptr, "oyPointerRelease", oyPointerRelease);
 
               /* 3b.1. update cache entry */
               error = oyHash_SetPointer_( entry,
@@ -13627,7 +13671,6 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
  *  @brief   create and possibly precalculate a transform for a given image
  *  @relates oyColourConversion_s
 
- *  @param[in]     list                multi profiles, images should have already one profile
  *  @param[in]     opts                conversion opts
  *  @param[in]     in                  input image
  *  @param[in]     out                 output image
@@ -13768,7 +13811,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
     error = !cmm_ptr;
 
     if(!error)
-      error = oyCMMptr_Set_( cmm_ptr, lib_used,0, oyCMM_COLOUR_CONVERSION,0,0 );
+      error = oyCMMptr_Set_( cmm_ptr, lib_used, oyCMM_COLOUR_CONVERSION,0,0,0 );
 
     /* collect profiles */
     if(!error)
@@ -13822,8 +13865,8 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
  *
  *  @param[in,out] s                   the context's object 
  *  @param[in]     opts                options
- *  @param[in]     in                  input image
- *  @param[in]     out                 output image
+ *  @param[in]     ins                 input datas
+ *  @param[in]     outs                output datas
  *  @return                            the objects ID text
  *
  *  @version Oyranos: 0.1.8
@@ -13905,10 +13948,10 @@ const char *   oyColourContextGetID_ ( oyStruct_s      * s,
 /** @internal create and possibly precalculate a transform for a given image
  *  @relates oyColourConversion_s
 
- *  @param[in]  cmm    zero or a cmm
  *  @param[in]  opts   conversion opts
  *  @param[in]  in     input image
  *  @param[in]  out    output image
+ *  @param[in]  object the optional object
  *  @return            conversion
  *
  *  @since Oyranos: version 0.1.8
@@ -14187,6 +14230,16 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
 
         oyCMMdsoRelease_( cmm_ptr->lib_name );
       }
+    }
+  }
+
+  if(error)
+  {
+    if(!s->flags & 0x01)
+    {
+      WARNc2_S("Can not run %s %d", oyStruct_TypeToText( (oyStruct_s*) s ),
+                                    oyObject_GetId( s->oy_ ));
+      s->flags |= 0x01;
     }
   }
 
@@ -15051,8 +15104,8 @@ int                oyConversion_FilterAdd (
       error = 1;
     }
     if(!error &&
-       (node->filter->api4_->sockets_n > 1 ||
-        node->filter->api4_->plugs_n > 1))
+       (node->api7_->sockets_n > 1 ||
+        node->api7_->plugs_n > 1))
     {
       WARNc2_S( "%s: %s",
       _("attempt to add a non linear filter to a linear graph"),
@@ -15149,8 +15202,10 @@ int                oyConversion_OutputAdd (
 
       while((node = oyFilterNode_GetNextFromLinear_( node )) != 0)
         if(!error &&
-           oyFilterRegistrationMatch( node->filter->registration_, "//colour"))
+           node->filter->api4_->cache_data_types)
+        {
           oyFilterNode_ContextSet_( node );
+        }
     }
   }
 
@@ -15193,7 +15248,8 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
   error = ( result != 0 );
 
   if(!error)
-    error = filter->api4_->oyCMMFilterPlug_Run( plug, pixel_access, &array );
+    error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access,
+                                                          &array );
 
   if(!error)
     error = oyArray2d_Release( &array );
@@ -15235,8 +15291,7 @@ oyPointer        * oyConversion_GetOnePixel (
 
   pixel_access = oyPixelAccess_Create ( x, y, sock, oyPIXEL_ACCESS_POINT, 0 );
   /* @todo */
-  error = sock->node->filter->api4_->oyCMMFilterPlug_Run( plug,
-                                                          pixel_access, 0 );
+  error = sock->node->api7_->oyCMMFilterPlug_Run( plug, pixel_access, 0 );
 
   return pixel;
 }
@@ -15283,7 +15338,7 @@ void               oyConversion_ToTextShowNode_ (
                                        oyDeAlloc_f         deallocateFunc )
 {
   uint32_t last_adds = 0;
-  int n = oyFilter_ShowConnectorCount( node->filter, 1, &last_adds );
+  int n = oyFilterNode_ShowConnectorCount( node, 1, &last_adds );
   char text[256];
   char name = 'A' + *counter;
 
