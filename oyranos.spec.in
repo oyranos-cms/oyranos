@@ -134,9 +134,7 @@ ldconfig
 %{_libdir}/%{cmmsubpath}/lib%{name}_lcms_cmm_module.so*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module.so*
 %{_libdir}/%{metasubpath}/lib%{name}_oyIM_cmm_module.so*
-%{_mandir}/man1/%{name}-config.1*
 %{_mandir}/man1/%{name}-policy*
-%{_mandir}/man3/%{name}.*
 %{_datadir}/locale/*/LC_MESSAGES/%{name}.*
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 
@@ -154,6 +152,8 @@ ldconfig
 %{_includedir}/%{name}/%{name}_version.h
 %{_libdir}/pkgconfig/*
 %{_libdir}/*.a
+%{_mandir}/man3/%{name}-config.3*
+%{_mandir}/man3/%{name}.*
 %doc %{name}*.sh
 %doc doc/html
 

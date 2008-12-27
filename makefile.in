@@ -153,8 +153,8 @@ CXXFILES =
 TEST_FILES = $(TEST_CPP) $(TEST_H)
 EXAMPLE_FILES = $(EXAMPLES_C)
 
-MAN1 = oyranos-config.1 oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
-MAN3 = oyranos.3
+MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
+MAN3 = oyranos.3 oyranos-config.3
 DATA = \
 	$(SRCDIR)/$(TARGET)_logo.png
 DOKU =  $(SRCDIR)/AUTHORS \
