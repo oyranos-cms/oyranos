@@ -739,7 +739,8 @@ struct  oyCMMapi4_s {
 
   /** mandatory for "//colour.icc" filters */
   oyCMMFilterNode_ContextToMem_f   oyCMMFilterNode_ContextToMem;
-  /** mandatory for a set oyCMMFilterNode_ContextToMem */
+  /** optional for a set oyCMMFilterNode_ContextToMem,
+   *  used to override a Oyranos side hash creation */
   oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText;
   /** the data type of the context returned by oyCMMapi4_s::oyCMMFilterNode_ContextToMem_f, mandatory for a set oyCMMFilterNode_ContextToMem
    *  e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL" */
@@ -753,7 +754,6 @@ struct  oyCMMapi4_s {
 
   char           * id_;                /**< Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;              /**< meta backend; keep to zero */
-
 };
 
 

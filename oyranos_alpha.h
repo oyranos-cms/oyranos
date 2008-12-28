@@ -1459,10 +1459,10 @@ typedef enum {
   oyCONNECTOR_EVENT_OK,                /**< kind of ping */
   oyCONNECTOR_EVENT_CONNECTED,         /**< connection established */
   oyCONNECTOR_EVENT_RELEASED,          /**< released the connection */
-  oyCONNECTOR_EVENT_IMAGE_DATA_CHANGED,/**< call to update image views */
-  oyCONNECTOR_EVENT_IMAGE_STORAGE_CHANGED,/**< new data accessors */
-  oyCONNECTOR_EVENT_INCOMPATIBLE_IMAGE,/**< can not process image */
-  oyCONNECTOR_EVENT_INCOMPATIBLE_PROFILE,/**< can not handle profile */
+  oyCONNECTOR_EVENT_DATA_CHANGED,      /**< call to update image views */
+  oyCONNECTOR_EVENT_STORAGE_CHANGED,   /**< new data accessors */
+  oyCONNECTOR_EVENT_INCOMPATIBLE_DATA, /**< can not process image */
+  oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION,/**< can not handle profile */
   oyCONNECTOR_EVENT_INCOMPLETE_GRAPH   /**< can not completely process */ 
 } oyCONNECTOR_EVENT_e;
 
