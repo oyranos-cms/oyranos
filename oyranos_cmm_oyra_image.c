@@ -197,26 +197,20 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
 
   {0,0,1}, /* int32_t version[3] */
 
-  0, /* uint32_t * cache_data_types */
-  0, /* uint32_t cache_flags */
-
   oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  0, /* oyCMMDataOpen_f */
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
+  {0}, /* char context_type[8] */
 
   {oyOBJECT_NAME_S, 0,0,0, "image_out_ppm", "Image[out_ppm]", "Output PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out_ppm]", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
 
-  oyra_imageOutputPPM_connectors,   /* plugs */
-  1,   /* plugs_n */
-  0,   /* plugs_last_add */
-  0,   /* sockets */
-  0,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* id_ keep to zero */
+  0    /* api5_ keep to zero */
 };
 
 /** @instance oyra_api7
@@ -247,6 +241,14 @@ oyCMMapi7_s   oyra_api7_image_output_ppm = {
   {0,0,1}, /* int32_t version[3] */
 
   oyraFilterPlug_ImageOutputPPMRun, /* oyCMMFilterPlug_Run_f */
+  {0}, /* char data_type[8] */
+
+  oyra_imageOutputPPM_connectors,   /* plugs */
+  1,   /* plugs_n */
+  0,   /* plugs_last_add */
+  0,   /* sockets */
+  0,   /* sockets_n */
+  0    /* sockets_last_add */
 };
 
 
@@ -505,6 +507,14 @@ oyCMMapi7_s   oyra_api7_image_output = {
   {0,0,1}, /* int32_t version[3] */
 
   oyraFilterPlug_ImageOutputRun, /* oyCMMFilterPlug_Run_f */
+  {0}, /* char data_type[8] */
+
+  oyra_imageOutput_connectors,   /* plugs */
+  1,   /* plugs_n */
+  0,   /* plugs_last_add */
+  0,   /* sockets */
+  0,   /* sockets_n */
+  0    /* sockets_last_add */
 };
 
 /** @instance oyra_api4
@@ -531,26 +541,20 @@ oyCMMapi4_s   oyra_api4_image_output = {
 
   {0,0,1}, /* int32_t version[3] */
 
-  0, /* uint32_t * cache_data_types */
-  0, /* uint32_t cache_flags */
-
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  0, /* oyCMMDataOpen_f */
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
+  {0}, /* char context_type[8] */
 
   {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out]", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
 
-  oyra_imageOutput_connectors,   /* plugs */
-  1,   /* plugs_n */
-  0,   /* plugs_last_add */
-  0,   /* sockets */
-  0,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* id_ keep to zero */
+  0    /* api5_ keep to zero */
 };
 
 
@@ -580,6 +584,14 @@ oyCMMapi7_s   oyra_api7_image_root = {
   {0,0,1}, /* int32_t version[3] */
 
   oyraFilterPlug_ImageRootRun, /* oyCMMFilterPlug_Run_f */
+  {0}, /* char data_type[8] */
+
+  0,   /* plugs */
+  0,   /* plugs_n */
+  0,   /* plugs_last_add */
+  oyra_imageRoot_connectors,   /* sockets */
+  1,   /* sockets_n */
+  0    /* sockets_last_add */
 };
 
 /** @instance oyra_api4
@@ -606,26 +618,20 @@ oyCMMapi4_s   oyra_api4_image_root = {
 
   {0,0,1}, /* int32_t version[3] */
 
-  0, /* uint32_t * cache_data_types */
-  0, /* uint32_t cache_flags */
-
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  0, /* oyCMMDataOpen_f */
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
+  {0}, /* char context_type[8] */
 
   {oyOBJECT_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[in]", /* category */
   0,   /* options */
   0,   /* opts_ui_ */
 
-  0,   /* plugs */
-  0,   /* plugs_n */
-  0,   /* plugs_last_add */
-  oyra_imageRoot_connectors,   /* sockets */
-  1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* id_ keep to zero */
+  0    /* api5_ keep to zero */
 };
 
 

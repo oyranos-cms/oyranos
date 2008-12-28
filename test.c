@@ -193,13 +193,13 @@ main(int argc, char** argv)
 
 
   if(conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem)
-    ptr = conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem( conversion->input, &size, 0, malloc );
+    ptr = conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem( conversion->input, &size, malloc );
 
   if (0) /* dump the colour transformation */
   {
     oyFilterPlug_s * plug = oyFilterNode_GetPlug( conversion->out_, 0 );
     ptr = plug->remote_socket_->node->filter->api4_->oyCMMFilterNode_ContextToMem(
-             plug->remote_socket_->node, &size, 0, malloc );
+             plug->remote_socket_->node, &size, malloc );
   }
 
   if(ptr)
