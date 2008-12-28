@@ -88,7 +88,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
 
   if(context && oyOBJECT_NONE < context->type_) 
   {
-    type_name = oyStruct_TypeToText( context );
+    type_name = oyStructTypeToText( context->type_ );
     id = oyObject_GetId( context->oy_ );
   }
 

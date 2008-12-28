@@ -199,7 +199,7 @@ struct oyStruct_s {
 
 oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
                                        size_t              size );
-const char * oyStruct_TypeToText     ( const oyStruct_s  * oy_struct );
+const char * oyStructTypeToText      ( oyOBJECT_e          type );
 
 /** @enum    oyNAME_e
  *  @brief   describe the base types of a oyObject_s name
