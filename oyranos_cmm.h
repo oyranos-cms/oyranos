@@ -79,6 +79,9 @@ typedef struct {
   int                  ref;            /**< Oyranos reference counter */
 } oyCMMptr_s;
 
+oyCMMptr_s * oyCMMptr_LookUp         ( oyStruct_s        * data,
+                                       const char        * cmm );
+int          oyCMMptr_Release        ( oyCMMptr_s       ** obj );
 
 /** @brief   CMM data to Oyranos cache
  *
@@ -730,17 +733,10 @@ struct  oyCMMapi4_s {
       2: patch version - correct errors */
   int32_t          version[3];
 
-  /** zero terminated list of struct types, to cache in Oyranos */
-  uint32_t       * cache_data_types;
-  /** 0x01 include input data; 0x02 include output data */
-  uint32_t         cache_flags;
-
   /** check options for validy and correct */
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
   oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
 
-  /** mandatory filters with cache_data_types */
-  oyCMMDataOpen_f                  oyCMMDataOpen;
   /** mandatory for "//colour.icc" filters */
   oyCMMFilterNode_ContextToMem_f   oyCMMFilterNode_ContextToMem;
   /** mandatory for a set oyCMMFilterNode_ContextToMem */
