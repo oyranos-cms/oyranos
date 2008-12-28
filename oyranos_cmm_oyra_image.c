@@ -31,6 +31,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define CMM_VERSION {0,1,0}
+
 oyPointer  oyraFilterNode_ImageRootContextToMem (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
@@ -195,7 +197,9 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
   /* registration */
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output_ppm",
 
-  {0,0,1}, /* int32_t version[3] */
+  CMM_VERSION, /* int32_t version[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
 
   oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -207,10 +211,7 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
   {oyOBJECT_NAME_S, 0,0,0, "image_out_ppm", "Image[out_ppm]", "Output PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out_ppm]", /* category */
   0,   /* options */
-  0,   /* opts_ui_ */
-
-  0,   /* id_ keep to zero */
-  0    /* api5_ keep to zero */
+  0    /* opts_ui_ */
 };
 
 /** @instance oyra_api7
@@ -238,7 +239,9 @@ oyCMMapi7_s   oyra_api7_image_output_ppm = {
   /* registration */
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output_ppm",
 
-  {0,0,1}, /* int32_t version[3] */
+  CMM_VERSION, /* int32_t version[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
 
   oyraFilterPlug_ImageOutputPPMRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -504,7 +507,9 @@ oyCMMapi7_s   oyra_api7_image_output = {
   /* registration */
   OY_IMAGE_OUTPUT_REGISTRATION,
 
-  {0,0,1}, /* int32_t version[3] */
+  CMM_VERSION, /* int32_t version[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
 
   oyraFilterPlug_ImageOutputRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -539,7 +544,9 @@ oyCMMapi4_s   oyra_api4_image_output = {
   /* registration */
   OY_IMAGE_OUTPUT_REGISTRATION,
 
-  {0,0,1}, /* int32_t version[3] */
+  CMM_VERSION, /* int32_t version[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
 
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -551,10 +558,7 @@ oyCMMapi4_s   oyra_api4_image_output = {
   {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out]", /* category */
   0,   /* options */
-  0,   /* opts_ui_ */
-
-  0,   /* id_ keep to zero */
-  0    /* api5_ keep to zero */
+  0   /* opts_ui_ */
 };
 
 
@@ -581,7 +585,9 @@ oyCMMapi7_s   oyra_api7_image_root = {
   /* registration */
   OY_IMAGE_ROOT_REGISTRATION,
 
-  {0,0,1}, /* int32_t version[3] */
+  CMM_VERSION, /* int32_t version[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
 
   oyraFilterPlug_ImageRootRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -616,7 +622,9 @@ oyCMMapi4_s   oyra_api4_image_root = {
   /* registration */
   OY_IMAGE_ROOT_REGISTRATION,
 
-  {0,0,1}, /* int32_t version[3] */
+  CMM_VERSION, /* int32_t version[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
 
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -628,10 +636,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
   {oyOBJECT_NAME_S, 0,0,0, "image", "Image", "Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[in]", /* category */
   0,   /* options */
-  0,   /* opts_ui_ */
-
-  0,   /* id_ keep to zero */
-  0    /* api5_ keep to zero */
+  0    /* opts_ui_ */
 };
 
 

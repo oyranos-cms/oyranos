@@ -64,6 +64,9 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        oyPointer           ptr,
                                        const char        * func_name,
                                        oyStruct_release_f  ptrRelease );
+int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
+                                       oyCMMptr_s        * cmm_ptr_out,
+                                       oyFilterNode_s    * node );
 oyCMMptr_s * oyStruct_GetCMMPtr_     ( oyStruct_s        * data,
                                        const char        * cmm );
 oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
@@ -185,9 +188,10 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        char             ** lib_used,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
-oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
-                                       oyCMMapiQueries_s * capabilities,
-                                       const char        * registration );
+oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
+                                       oyCMMapiQueries_s * queries,
+                                       const char        * registration,
+                                       oyOBJECT_e          type );
 
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api );
 oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name );

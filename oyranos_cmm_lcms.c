@@ -37,7 +37,7 @@
 #define lcmsPROFILE "lcPR"
 #define lcmsTRANSFORM "lcCC"
 
-#define lcmsVERSION {0,0,1}
+#define lcmsVERSION {0,1,0}
 
 int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = lcmsCMMWarnFunc;
@@ -167,7 +167,7 @@ lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyCMMptr_s * cmm_ptr )
   char type_[4] = lcmsPROFILE;
   int type = *((int*)&type_);
 
-  if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, oyCMM_PROFILE ) &&
+  if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, lcmsPROFILE ) &&
      cmm_ptr->ptr)
     s = (lcmsProfileWrap_s*) cmm_ptr->ptr;
 
@@ -260,8 +260,7 @@ int          lcmsCMMData_Open        ( oyStruct_s        * data,
   oyCMMptr_s * s = 0;
   int error = 0;
 
-  if(oy->type != oyOBJECT_CMM_POINTER_S || 
-     !oyCMMlibMatchesCMM(oy->lib_name, CMM_NICK) != 0)
+  if(oy->type != oyOBJECT_CMM_POINTER_S)
     error = 1;
 
   if(!error)
@@ -286,7 +285,7 @@ int          lcmsCMMData_Open        ( oyStruct_s        * data,
     s->lcms = CMMProfileOpen_M( block, size );
     oy->ptr = s;
     snprintf( oy->func_name, 32, "%s", CMMToString_M(CMMProfileOpen_M) );
-    snprintf( oy->resource, 5, oyCMM_PROFILE ); 
+    snprintf( oy->resource, 5, lcmsPROFILE ); 
     error = !oy->ptr;
   }
 
@@ -627,7 +626,7 @@ int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
 {
   int error = 0;
   oyCMMptr_s intern = {oyOBJECT_CMM_POINTER_S, 0,0,0,
-                       CMM_NICK, {0}, 0, {0}, 0, 0 };
+                       CMM_NICK, {0}, 0, -1, {0}, 0, 0 };
   oyCMMptr_s * dls[] = {0, 0};
   oyProfile_s p = { oyOBJECT_PROFILE_S,0,0,0,0,0,0,0,0,0,0,0 };
 
@@ -867,12 +866,14 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
 
   cmm_ptr = oyCMMptr_LookUp( (oyStruct_s*)p, lcmsPROFILE );
 
+  cmm_ptr->lib_name = CMM_NICK;
+
   if(!cmm_ptr->ptr)
     error = lcmsCMMData_Open( (oyStruct_s*)p, cmm_ptr );
 
   if(!error)
   {
-    s = lcmsCMMProfile_GetWrap_( cmm_ptr->ptr );
+    s = lcmsCMMProfile_GetWrap_( cmm_ptr );
     error = !s;
   }
 
@@ -1048,9 +1049,66 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc )
 {
-  return "TODO";
+  return oyStringCopy_( oyFilterNode_GetText( node, type ), allocateFunc );
 }
 
+/** Function lcmsCMMdata_Convert
+ *  @brief   convert between data formats
+ *  @ingroup cmm_handling
+ *
+ *  The function might be used to provide a backend specific context.
+ *  Implements oyCMMdata_Convert_f
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2008/12/28
+ */
+int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
+                                       oyCMMptr_s        * data_out,
+                                       oyFilterNode_s    * node )
+{
+  int error = !data_in || !data_out;
+  oyCMMptr_s * cmm_ptr_in = data_in,
+             * cmm_ptr_out = data_out;
+  lcmsTransformWrap_s * ltw  = 0;
+  cmsHTRANSFORM xform = 0;
+  cmsHPROFILE lps[2] = {0,0};
+  oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
+  oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
+  oyImage_s * image_input = 0,
+            * image_output = 0;
+
+  image_input = (oyImage_s*)plug->remote_socket_->data;
+  image_output = (oyImage_s*)socket->data;
+
+  if(!error)
+    error = data_in->type != oyOBJECT_CMM_POINTER_S || 
+            data_out->type != oyOBJECT_CMM_POINTER_S;
+
+  if(!error)
+  {
+    cmm_ptr_in = (oyCMMptr_s*) data_in;
+    cmm_ptr_out = (oyCMMptr_s*) data_out;
+  }
+
+  if(!error &&
+     ( (strcmp( cmm_ptr_in->resource, oyCOLOUR_ICC_DEVICE_LINK ) != 0) ||
+       (strcmp( cmm_ptr_out->resource, lcmsTRANSFORM ) != 0) ) )
+    error = 1;
+
+  if(!error)
+  {
+    lps[0] = CMMProfileOpen_M( cmm_ptr_in->ptr, cmm_ptr_in->size );
+    xform = lcmsCMMColourConversion_Create_( lps, 1, 0,
+                                           image_input->layout_[0],
+                                           image_output->layout_[0],
+                                           node->filter->options_,
+                                           &ltw, cmm_ptr_out );
+    CMMProfileRelease_M (lps[0] );
+  }
+
+  return error;
+}
 
 /** Function lcmsFilterPlug_CmmIccRun
  *  @brief   implement oyCMMFilterPlug_GetNext_f()
@@ -1149,7 +1207,7 @@ int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
 
   if(context && oyOBJECT_NONE < context->type_)
   {
-    type_name = oyStruct_TypeToText( context );
+    type_name = oyStructTypeToText( context->type_ );
     id = oyObject_GetId( context->oy_ );
   }
 
@@ -1223,6 +1281,38 @@ char lcms_extra_options[] = {
 
 
 
+/** @instance lcms_api6
+ *  @brief    littleCMS oyCMMapi6_s implementation
+ *
+ *  a filter providing CMM API's
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2008/12/28
+ */
+oyCMMapi6_s   lcms_api6_cmm = {
+
+  oyOBJECT_CMM_API6_S,
+  0,0,0,
+  0,
+
+  lcmsCMMInit,
+  lcmsCMMMessageFuncSet,
+  lcmsCMMCanHandle,
+
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "icc." CMM_NICK ".CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
+
+  lcmsVERSION,
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  
+  oyCOLOUR_ICC_DEVICE_LINK,  /* data_type_in, "oyDL" */
+  lcmsTRANSFORM,             /* data_type_out, "lcCC" */
+  lcmsCMMdata_Convert        /* oyCMMdata_Convert_f oyCMMdata_Convert */
+};
+
+
 /** @instance lcms_api7
  *  @brief    littleCMS oyCMMapi7_s implementation
  *
@@ -1236,7 +1326,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
 
   oyOBJECT_CMM_API7_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & lcms_api6_cmm,
 
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,
@@ -1246,6 +1336,8 @@ oyCMMapi7_s   lcms_api7_cmm = {
   "icc." CMM_NICK ".CPU",
 
   lcmsVERSION,
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
 
   lcmsFilterPlug_CmmIccRun,  /* oyCMMFilterPlug_Run_f */
   lcmsTRANSFORM,             /* data_type, "lcCC" */
@@ -1281,20 +1373,20 @@ oyCMMapi4_s   lcms_api4_cmm = {
   "icc." CMM_NICK,
 
   lcmsVERSION,
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
 
   lcmsFilter_CmmIccValidateOptions,
   lcmsWidgetEvent,
 
   lcmsFilterNode_CmmIccContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   lcmsFilterNode_GetText, /* oyCMMFilterNode_GetText_f */
-  oyCOLOUR_ICC_DEVICE_LINK, /* data_type */
+  oyCOLOUR_ICC_DEVICE_LINK, /* context data_type */
 
   {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
   "Colour/CMM/littleCMS", /* category */
   lcms_extra_options,   /* options */
   0,   /* opts_ui_ */
-
-  0    /* api5_; keep empty */
 };
 
 

@@ -342,15 +342,15 @@ oyCMMDataTypes_s icc_data[] = {
  *  @since   2008/12/17 (Oyranos: 0.1.10)
  *  @date    2008/12/17
  */
-oyCMMapi4_s *  oyIMFilterLoad        ( oyPointer           data,
+oyCMMapiFilter_s * oyIMFilterLoad    ( oyPointer           data,
                                        size_t              size,
                                        const char        * file_name,
+                                       oyOBJECT_e          type,
                                        int                 num )
 {
-  oyCMMapi4_s * api4 = 0;
-  api4 = (oyCMMapi4_s*) oyCMMsGetApi__( oyOBJECT_CMM_API4_S, file_name,
-                                        0,0, num );
-  return api4;
+  oyCMMapiFilter_s * api = 0;
+  api = (oyCMMapiFilter_s*) oyCMMsGetApi__( type, file_name, 0,0, num );
+  return api;
 }
 
 /**
@@ -366,6 +366,7 @@ oyCMMapi4_s *  oyIMFilterLoad        ( oyPointer           data,
 int          oyIMFilterScan          ( oyPointer           data,
                                        size_t              size,
                                        const char        * lib_name,
+                                       oyOBJECT_e          type,
                                        int                 num,
                                        char             ** registration,
                                        char             ** name,
@@ -422,7 +423,7 @@ int          oyIMFilterScan          ( oyPointer           data,
         int found = 0;
         while(!found)
         {
-          if(api && api->type == oyOBJECT_CMM_API4_S)
+          if(api && api->type == type)
           {
             if(x == num)
               found = 1;
@@ -437,7 +438,8 @@ int          oyIMFilterScan          ( oyPointer           data,
 
         if(api && found)
         {
-          api4 = (oyCMMapi4_s *) api;
+          if(api->type == type)
+            api4 = (oyCMMapi4_s *) api;
           if(registration)
             *registration = oyStringCopy_( api4->registration, allocateFunc );
           if(name)
@@ -487,6 +489,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD ".image.tonemap.imaging" OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
+  0,   /* id_; keep empty */
 
   OY_CMMSUBPATH, /* sub_paths */
   0, /* ext */

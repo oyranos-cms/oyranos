@@ -24,7 +24,6 @@
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
-#include "oyranos_monitor.h" /* TODO remove? */
 #include "oyranos_sentinel.h"
 #include "oyranos_texts.h"
 #if !defined(WIN32)
@@ -502,19 +501,18 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
   return allocateFunc( size );
 }
 
-/** Function oyStruct_TypeToText
- *  @brief Objects type to small string
+/** Function oyStructTypeToText
+ *  @brief   Objects type to small string
  *
- *  @version Oyranos: 0.1.8
- *  @date    2008/06/24
+ *  @version Oyranos: 0.1.10
  *  @since   2008/06/24 (Oyranos: 0.1.8)
+ *  @date    2008/12/28
  */
-const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
+const char *     oyStructTypeToText  ( oyOBJECT_e          type )
 {
   const char * text = "unknown";
 
-  if(oy_struct && oy_struct->type_)
-    switch(oy_struct->type_) {
+  switch(type) {
     case oyOBJECT_NONE: text = "Zero - none"; break;
     case oyOBJECT_OBJECT_S: text = "oyObject_s"; break;
     case oyOBJECT_MONITOR_S: text = "oyMonitor_s"; break;
@@ -561,7 +559,7 @@ const char *     oyStruct_TypeToText ( const oyStruct_s  * oy_struct )
     case oyOBJECT_HANDLE_S: text = "oyHandle_s"; break;
     case oyOBJECT_STRUCT_LIST_S: text = "oyStructList_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
-    }
+  }
 
   return text;
 }
@@ -1819,6 +1817,41 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
   return error;
 }
 
+/** @internal
+ *  @brief   convert between oyCMMptr_s data
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2008/12/28
+ */
+int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
+                                       oyCMMptr_s        * cmm_ptr_out,
+                                       oyFilterNode_s    * node )
+{
+  int error = !cmm_ptr || !cmm_ptr_out;
+  oyCMMapi6_s * api6 = 0;
+  char * reg = 0;
+
+  if(!error)
+  {
+    reg = oyStringCopy_( "//icc.", oyAllocateFunc_ );
+    oyStringAdd_( &reg, cmm_ptr->resource, oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &reg, "_", oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &reg, cmm_ptr_out->resource,
+                  oyAllocateFunc_, oyDeAllocateFunc_ );
+
+    api6 = (oyCMMapi6_s*) oyCMMsGetFilterApi_( 0,0, reg, oyOBJECT_CMM_API6_S );
+
+    error = !api6;
+  }
+
+  if(!error && api6->oyCMMdata_Convert)
+    error = api6->oyCMMdata_Convert( cmm_ptr, cmm_ptr_out, node );
+  else
+    error = 1;
+
+  return error;
+}
 
 
 
@@ -2238,7 +2271,10 @@ char *           oyCMMnameFromLibName_(const char        * lib_name)
 
   if(lib_name && oyStrlen_(lib_name))
   {
-    char * tmp = oyStrstr_( lib_name, OY_MODULE_NAME );
+    const char * tmp = oyStrstr_( lib_name, OY_MODULE_NAME );
+
+    if(!tmp && oyStrlen_( lib_name ) == 4)
+      return oyStringCopy_( lib_name, oyAllocateFunc_ );
 
     if(tmp)
     {
@@ -2266,6 +2302,8 @@ int              oyCMMlibMatchesCMM  ( const char        * lib_name,
 
   if(oyStrcmp_(tmp, cmm) == 0)
     matches = 1;
+
+  oyFree_m_( tmp );
 
   return matches;
 }
@@ -2505,7 +2543,7 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
 
           oySprintf_(num," %d:", type );
           oyStringAdd_( &text, num, oyAllocateFunc_, oyDeAllocateFunc_ );
-          oyStringAdd_( &text, oyStruct_TypeToText((oyStruct_s*)tmp),
+          oyStringAdd_( &text, oyStructTypeToText( tmp->type ),
                         oyAllocateFunc_, oyDeAllocateFunc_ );
 
           if(type == oyOBJECT_CMM_API4_S)
@@ -2576,19 +2614,18 @@ typedef struct {
 } oyRegistrationData_s;
 
 /** @internal
- *  Function oyCMMapi5_selectFilter_
+ *  Function oyCMMapi_selectFilter_
  *  @brief   filter the desired api
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/12/16 (Oyranos: 0.1.9)
  *  @date    2008/12/16
  */
-oyOBJECT_e   oyCMMapi5_selectFilter_ ( oyCMMapi_s        * api,
+oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMapi_s        * api,
                                        oyPointer           data )
 {
-  oyOBJECT_e type = oyOBJECT_NONE,
-             searched = oyOBJECT_CMM_API5_S;
-  oyCMMapi5_s * cmm_api = (oyCMMapi5_s *) api;
+  oyOBJECT_e type = oyOBJECT_NONE;
+  oyCMMapiFilter_s * cmm_api = (oyCMMapiFilter_s *) api;
   int error = !data || !api;
   oyRegistrationData_s * reg_filter;
   int found = 0;
@@ -2597,8 +2634,7 @@ oyOBJECT_e   oyCMMapi5_selectFilter_ ( oyCMMapi_s        * api,
     reg_filter = (oyRegistrationData_s*) data;
 
   if(!error &&
-     api->type == searched &&
-     reg_filter->type == searched)
+     api->type == reg_filter->type)
   {
     if(reg_filter->registration)
     {
@@ -2615,42 +2651,46 @@ oyOBJECT_e   oyCMMapi5_selectFilter_ ( oyCMMapi_s        * api,
   return type;
 }
 
-oyStructList_s * oy_meta_backend_cache_ = 0;
+oyStructList_s * oy_backend_cache_ = 0;
 
 /** @internal
- *  Function oyCMMMetaGetApi_
- *  @brief   get a meta module
+ *  Function oyCMMFilterGetApi_
+ *  @brief   get a filter module
  *
- *  This function allowes to obtain a API for a modul/CMM type.
+ *  This function searches for a modul/CMM API.
  *
  *  @param[in]   cmm_required          if present take this or fail, the arg
  *                                     simplifies and speeds up the search
  *  @param[in]   queries               search for a match to capabilities
  *  @param[in]   registration          point'.' separated list of identifiers
+ *  @param[in]   type                  filter api type
  *
- *  @version Oyranos: 0.1.9
- *  @since   2008/11/24 (Oyranos: 0.1.9)
- *  @date    2008/11/24
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2008/12/28
  */
-oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
+oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        const char        * registration )
 {
   oyCMMapi5_s * s = 0;
   int error = 0;
   oyHash_s * entry = 0;
-  char * class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,0);
-  oyRegistrationData_s reg_filter = {oyOBJECT_CMM_API5_S};
+  char * class = 0;
+  oyRegistrationData_s reg_filter = {0,0};
   char * lib_name = 0;
-  char * api5_reg = 0;
+  char * api_reg = 0;
+  oyOBJECT_e type = oyOBJECT_CMM_API5_S;
+
+  class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,0);
 
   {
-    if(!oy_meta_backend_cache_)
-      oy_meta_backend_cache_ = oyStructList_New( 0 );
+    if(!oy_backend_cache_)
+      oy_backend_cache_ = oyStructList_New( 0 );
 
-    entry = oyCacheListGetEntry_ ( oy_meta_backend_cache_, class );
+    entry = oyCacheListGetEntry_ ( oy_backend_cache_, class );
 
-    s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, oyOBJECT_CMM_API5_S );
+    s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, type );
 
     if(s)
     {
@@ -2659,21 +2699,21 @@ oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
     }
   }
 
-  api5_reg = oyStringCopy_("//", oyAllocateFunc_ );
-  oyStringAdd_( &api5_reg, class, oyAllocateFunc_, oyDeAllocateFunc_ );
+  api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+  oyStringAdd_( &api_reg, class, oyAllocateFunc_, oyDeAllocateFunc_ );
   oyFree_m_( class );
 
-  reg_filter.registration = api5_reg;
+  reg_filter.type = type;
+  reg_filter.registration = api_reg;
 
-
-  s = (oyCMMapi5_s*)oyCMMsGetApi_(      oyOBJECT_CMM_API5_S,
+  s = (oyCMMapi5_s*)     oyCMMsGetApi_( type,
                                         cmm_required,
                                         queries,
                                         &lib_name,
-                                        oyCMMapi5_selectFilter_,
+                                        oyCMMapi_selectFilter_,
                                         &reg_filter );
 
-  oyFree_m_( api5_reg );
+  oyFree_m_( api_reg );
 
   if(s)
   {
@@ -2685,6 +2725,7 @@ oyCMMapi5_s *  oyCMMMetaGetApi_      ( const char        * cmm_required,
 
   return s;
 }
+
 
 /** @internal
  *  @version Oyranos: 0.1.9
@@ -2802,7 +2843,7 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
 
 
 /** @internal
- *  Function oyCMMsGetApi4_
+ *  Function oyCMMsGetFilterApi_
  *  @brief get a module
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
@@ -2830,15 +2871,18 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
  *  @since   2008/12/15 (Oyranos: 0.1.9)
  *  @date    2008/12/15
  */
-oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
+oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
-                                       const char        * registration )
+                                       const char        * registration,
+                                       oyOBJECT_e          type )
 {
-  int error = 0;
+  int error = type != oyOBJECT_CMM_API4_S &&
+              type != oyOBJECT_CMM_API6_S &&
+              type != oyOBJECT_CMM_API7_S;
   char prefered_cmm[5] = {0,0,0,0,0};
-  oyCMMapi4_s * api4 = 0;
+  oyCMMapiFilter_s * api = 0;
 
-  if(!cmm_required)
+  if(!error && cmm_required)
   {
     if(queries && *(uint32_t*)queries->prefered_cmm)
       error = !memcpy( prefered_cmm, queries->prefered_cmm, 4 );
@@ -2848,7 +2892,7 @@ oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
 
   if(!error)
   {
-    oyCMMapi5_s * api5 = oyCMMMetaGetApi_( 0, queries, registration);
+    oyCMMapi5_s * api5 = oyCMMGetMetaApi_( 0, queries, registration );
     char ** files = 0;
     int  files_n = 0;
     int i, j, match_j = -1, ret, match_i = -1;
@@ -2864,12 +2908,12 @@ oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
     for( i = 0; i < files_n; ++i)
     {
       ret = 0; j = 0;
-      ret = api5->oyCMMFilterScan( 0,0, files[0], j, &reg, 0,
-                                     oyAllocateFunc_, &info, object );
+      ret = api5->oyCMMFilterScan( 0,0, files[0], type, j,
+                                   &reg, 0, oyAllocateFunc_, &info, object );
       while(!ret)
       {
-        ret = api5->oyCMMFilterScan( 0,0, files[i], j, &reg, 0,
-                                     oyAllocateFunc_, 0, 0 );
+        ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
+                                     &reg, 0, oyAllocateFunc_, 0, 0 );
         if(!ret && reg)
         {
           if(oyFilterRegistrationMatch( reg, registration ))
@@ -2886,15 +2930,15 @@ oyCMMapi4_s *    oyCMMsGetApi4_      ( const char        * cmm_required,
 
     if(match)
     {
-      api4 = api5->oyCMMFilterLoad( 0,0, files[match_i], match_j );
-      api4->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
-      api4->api5_ = api5;
+      api = api5->oyCMMFilterLoad( 0,0, files[match_i], type, match_j );
+      api->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
+      api->api5_ = api5;
     }
 
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
   }
 
-  return api4;
+  return api;
 }
 
 /** @internal
@@ -5683,7 +5727,8 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
   error = !filter;
 
   if(!error)
-    cmm_api4 = oyCMMsGetApi4_( cmm, 0, registration );
+    cmm_api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( cmm, 0, registration,
+                                                   oyOBJECT_CMM_API4_S );
 
   lib_name = cmm_api4->id_;
 
@@ -7559,7 +7604,6 @@ oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
 
   if(!error)
   {
-    /*oyCMMptr_s *cmm_ptr = 0;*/
     const char * tmp = 0;
     char * lib_used = 0;
  
@@ -12269,9 +12313,8 @@ oyFilter_s * oyFilter_New            ( const char        * registration,
 
   if(!error)
   {
-    api4 = oyCMMsGetApi4_(             cmm_required,
-                                       queries,
-                                       registration );
+    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( cmm_required, queries,
+                                            registration, oyOBJECT_CMM_API4_S );
     error = !api4;
   }
 
@@ -12953,6 +12996,9 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
   if(!error)
   {
     s->filter = oyFilter_Copy( filter, object );
+
+    s->api7_ = (oyCMMapi7_s*) oyCMMsGetFilterApi_( 0, 0,
+                                   filter->registration_, oyOBJECT_CMM_API7_S );
 
     if(s->filter)
     {
@@ -13700,9 +13746,12 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
   {
           size_t size = 0;
           oyHash_s * entry = 0;
-          const char * hash_text = 0;
+          const char * hash_text_ = 0;
+          char * hash_text = 0,
+               * hash_temp = 0;
           oyPointer ptr = 0;
-          oyCMMptr_s * cmm_ptr = 0;
+          oyCMMptr_s * cmm_ptr = 0,
+                     * cmm_ptr_out = 0;
 
 
           /*  Cache Search
@@ -13716,10 +13765,17 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 
           /* 1. create hash text */
           if(s->api4_->oyCMMFilterNode_GetText)
-            hash_text = s->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
+          {
+            hash_temp = s->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
                                                            oyAllocateFunc_ );
-          else
-            hash_text = oyFilterNode_GetText( node, oyNAME_NICK );
+            hash_text_ = hash_temp;
+          } else
+            hash_text_ = oyFilterNode_GetText( node, oyNAME_NICK );
+
+          hash_text = oyStringCopy_( s->api4_->context_type, oyAllocateFunc_ );
+          oyStringAdd_( &hash_text, ":", oyAllocateFunc_, oyDeAllocateFunc_ );
+          oyStringAdd_( &hash_text, hash_text_,
+                        oyAllocateFunc_, oyDeAllocateFunc_);
 
           if(oy_debug)
           {
@@ -13748,22 +13804,34 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
                                                             oyAllocateFunc_ );
 
               error = oyCMMptr_Set_( cmm_ptr, s->api4_->id_,
-                                     oyCOLOUR_ICC_DEVICE_LINK,
+                                     s->api4_->context_type,
                                      ptr, "oyPointerRelease", oyPointerRelease);
+              cmm_ptr->size = size;
+
+              if(!error && cmm_ptr && cmm_ptr->ptr)
+              {
+                if( oyStrcmp_( node->api7_->context_type,
+                               s->api4_->context_type ) != 0 )
+                {
+                  cmm_ptr_out = oyCMMptr_New_(oyAllocateFunc_);
+                  error = oyCMMptr_Set_( cmm_ptr_out, 0,
+                                         node->api7_->context_type, ptr, 0, 0);
+
+                  /* search for a convertor and convert */
+                  oyCMMptr_ConvertData( cmm_ptr, cmm_ptr_out, node );
+                } else 
+                  cmm_ptr_out = cmm_ptr;
+
+                node->backend_data = (oyStruct_s*) cmm_ptr_out;
+              }
 
               /* 3b.1. update cache entry */
-              error = oyHash_SetPointer_( entry,
-                                   (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
-            }
-
-            if(!error && cmm_ptr && cmm_ptr->ptr)
-            {
-              oyHash_s * c = oyHash_Copy_(entry, 0);
-              node->backend_data = (oyStruct_s*) c;
+              error = oyHash_SetPointer_( entry, (oyStruct_s*)
+                                          oyCMMptr_Copy_( cmm_ptr, 0 ));
             }
 
             oyCMMptr_Release_( &cmm_ptr );
-
+            oyCMMptr_Release_( &cmm_ptr_out );
           }
   }
 
@@ -14343,7 +14411,7 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
   {
     if(!s->flags & 0x01)
     {
-      WARNc2_S("Can not run %s %d", oyStruct_TypeToText( (oyStruct_s*) s ),
+      WARNc2_S("Can not run %s %d", oyStructTypeToText( s->type_ ),
                                     oyObject_GetId( s->oy_ ));
       s->flags |= 0x01;
     }
@@ -15354,8 +15422,10 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
   error = ( result != 0 );
 
   if(!error)
+  {
     error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access,
                                                           &array );
+  }
 
   if(!error)
     error = oyArray2d_Release( &array );
