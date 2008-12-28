@@ -1710,6 +1710,22 @@ oyCMMptr_s *       oyCMMptr_Copy_    ( oyCMMptr_s        * cmm_ptr,
   return s;
 }
 
+
+/** Function oyCMMptr_Release
+ *  @brief   release a oyCMMptr_s
+ *  @relates oyCMMptr_s
+ *
+ *  Has only a weak release behaviour. Use for initialising.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2008/12/28
+ */
+int                oyCMMptr_Release  ( oyCMMptr_s       ** obj )
+{
+  return oyCMMptr_Release_( obj );
+}
+
 /** @internal
  *  @brief oyCMMptr_s release
  *
@@ -7582,10 +7598,10 @@ oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
         oyCMMDataOpen_f funcP = 0;
 
         /* TODO update to oyCMMapi4_s::oyCMMDataOpen_f */
-        oyCMMapi4_s * api4 = (oyCMMapi4_s*) oyCMMsGetApi_( oyOBJECT_CMM_API4_S,
+        oyCMMapi1_s * api1 = (oyCMMapi1_s*) oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
                                                        cmm, 0, &lib_used, 0,0 );
-        if(api4 && *(uint32_t*)&cmm)
-          funcP = api4->oyCMMDataOpen;
+        if(api1 && *(uint32_t*)&cmm)
+          funcP = api1->oyCMMDataOpen;
 
         if(funcP)
         {
@@ -7620,6 +7636,87 @@ oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
       }
     }
 
+
+    oyHash_Release_( &entry );
+  }
+
+  return cmm_ptr;
+}
+
+/** Function oyCMMptr_LookUp
+ *  @brief   get a CMM specific pointer
+ *  @relates oyCMMptr_s
+ *
+ *  The returned oyCMMptr_s has to be released after using by the backend with
+ *  oyCMMptr_Release().
+ *  In case the the oyCMMptr_s::ptr member is empty, it should be set by the
+ *  requesting backend.
+ *
+ *  @see e.g. lcmsCMMData_Open()
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2008/12/28
+ */
+oyCMMptr_s * oyCMMptr_LookUp          ( oyStruct_s      * data,
+                                        const char      * data_type )
+{
+  oyStruct_s * s = data;
+  int error = !s;
+  oyCMMptr_s * cmm_ptr = 0;
+
+  if(!error && !data_type)
+    error = !data_type;
+
+  if(!error)
+  {
+    /*oyCMMptr_s *cmm_ptr = 0;*/
+    const char * tmp = 0;
+ 
+    oyHash_s * entry = 0;
+    oyChar * hash_text = 0;
+
+    /** Cache Search
+     *  1.     hash from input
+     *  2.     query for hash in cache
+     *  3.     check
+     *  3a.       eighter take cache entry
+     */
+
+    /* 1. create hash text */
+    hashTextAdd_m( data_type );
+    hashTextAdd_m( ":" );
+    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
+    hashTextAdd_m( tmp );
+
+    /* 2. query in cache */
+    entry = oyCMMCacheListGetEntry_( hash_text );
+    if(s->oy_->deallocateFunc_)
+      s->oy_->deallocateFunc_( hash_text );
+
+    if(!error)
+    {
+      /* 3. check and 3.a take*/
+      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+                                                  oyOBJECT_CMM_POINTER_S);
+
+      if(!cmm_ptr)
+      {
+        cmm_ptr = oyCMMptr_New_(s->oy_->allocateFunc_);
+        error = !cmm_ptr;
+
+        if(!error)
+          error = oyCMMptr_Set_( cmm_ptr, 0,
+                                 data_type, 0, 0, 0 );
+
+        error = !cmm_ptr;
+
+        if(!error && cmm_ptr)
+          /* 3b.1. update cache entry */
+          error = oyHash_SetPointer_( entry,
+                                     (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
+      }
+    }
 
     oyHash_Release_( &entry );
   }
@@ -11249,10 +11346,10 @@ const char *       oyConnectorEventToText (
     case oyCONNECTOR_EVENT_OK: text = "oyCONNECTOR_EVENT_OK: kind of ping"; break;
     case oyCONNECTOR_EVENT_CONNECTED: text = "oyCONNECTOR_EVENT_CONNECTED: connection established"; break;
     case oyCONNECTOR_EVENT_RELEASED: text = "oyCONNECTOR_EVENT_RELEASED: released the connection"; break;
-    case oyCONNECTOR_EVENT_IMAGE_DATA_CHANGED: text = "oyCONNECTOR_EVENT_IMAGE_DATA_CHANGED: call to update image views"; break;
-    case oyCONNECTOR_EVENT_IMAGE_STORAGE_CHANGED: text = "oyCONNECTOR_EVENT_IMAGE_STORAGE_CHANGED: new data accessors"; break;
-    case oyCONNECTOR_EVENT_INCOMPATIBLE_IMAGE: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_IMAGE: can not process image"; break;
-    case oyCONNECTOR_EVENT_INCOMPATIBLE_PROFILE: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_PROFILE: can not handle profile"; break;
+    case oyCONNECTOR_EVENT_DATA_CHANGED: text = "oyCONNECTOR_EVENT_DATA_CHANGED: call to update image views"; break;
+    case oyCONNECTOR_EVENT_STORAGE_CHANGED: text = "oyCONNECTOR_EVENT_STORAGE_CHANGED: new data accessors"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: can not process data"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: can not handle option"; break;
     case oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: text = "oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: can not completely process"; break;
   }
   return text;
@@ -13272,6 +13369,12 @@ OYAPI oyFilterPlug_s * OYEXPORT
  *  - oyNAME_NAME: XML
  *  - oyNAME_DESCRIPTION: ??
  *
+ *  This function provides a complete description of the context. It might be 
+ *  more adequate to use only a subset for hashing as not all data and options
+ *  might have an effect to the context data result. 
+ *  The oyCMMapi4_s::oyCMMFilterNode_GetText() function provides a way to let a
+ *  module decide about what to place into a hash text.
+ *
  *  @param[in,out] node                filter node
  *  @param[out]    name_type           the type
  *  @return                            the text
@@ -13612,10 +13715,13 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
            */
 
           /* 1. create hash text */
-          hash_text = s->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
-                                                         oyAllocateFunc_ );
-          hash_text = oyFilterNode_GetText( node, oyNAME_NICK );
+          if(s->api4_->oyCMMFilterNode_GetText)
+            hash_text = s->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
+                                                           oyAllocateFunc_ );
+          else
+            hash_text = oyFilterNode_GetText( node, oyNAME_NICK );
 
+          if(oy_debug)
           {
             size = 0;
             ptr = oyFilterNode_TextToInfo ( node, &size, oyAllocateFunc_ );
@@ -15202,7 +15308,7 @@ int                oyConversion_OutputAdd (
 
       while((node = oyFilterNode_GetNextFromLinear_( node )) != 0)
         if(!error &&
-           node->filter->api4_->cache_data_types)
+           node->filter->api4_->oyCMMFilterNode_ContextToMem)
         {
           oyFilterNode_ContextSet_( node );
         }
