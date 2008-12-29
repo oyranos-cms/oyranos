@@ -2571,9 +2571,6 @@ OYAPI int  OYEXPORT
 
 
 
-/** @deprecated */
-int            oyModulRegisterXML    ( oyGROUP_e           group,
-                                       const char        * xml );
 
 /** obtain 4 char CMM identifiers and count of CMM's */
 char **        oyModulsGetNames      ( int               * count,
@@ -2632,6 +2629,14 @@ char   *       oyDumpColourToCGATS   ( const double      * channels,
 
 
 #endif /* OY_IN_PLANING */
+
+
+/* --- deprecated definitions --- */
+
+const char * oyStruct_TypeToText     ( const oyStruct_s  * st );
+/** @deprecated */
+int            oyModulRegisterXML    ( oyGROUP_e           group,
+                                       const char        * xml );
 
 #ifdef __cplusplus
 } /* extern "C" */

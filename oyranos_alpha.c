@@ -564,6 +564,18 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
   return text;
 }
 
+/** @internal
+ *  Function oyStruct_TypeToText
+ *  @brief   Objects type to small string
+ *  @deprecated
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/24
+ *  @since   2008/06/24 (Oyranos: 0.1.8)
+ */
+const char * oyStruct_TypeToText     ( const oyStruct_s  * st )
+{ return oyStructTypeToText( st->type_ ); }
+
 
 /** @brief oyName_s new
  *
