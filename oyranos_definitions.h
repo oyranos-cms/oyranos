@@ -58,7 +58,7 @@
  *  @date    2008/02/01
  *  @since   2008/02/01 (Oyranos: 0.1.8)
  */
-#define OY_MODULE_NICK                 "oyra"
+#define OY_MODULE_NICK                 "oyIM"
 
 #define OY_POLICY_HEADER "<!--?xml version=\"1.0\" encoding=\"UTF-8\"? -->\n\
 <!-- Oyranos policy format 1.0 -->"
