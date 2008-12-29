@@ -23,6 +23,11 @@
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
 #include "oyranos_cmms.h"        /* the API's this CMM uses from Oyranos */
 
+void* oyAllocateFunc_           (size_t        size);
+void* oyAllocateWrapFunc_       (size_t        size,
+                                 oyAlloc_f     allocate_func);
+void  oyDeAllocateFunc_         (void *        data);
+
 #include <math.h>
 
 
@@ -46,6 +51,9 @@ int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText);
 
 int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
                                        const char        * resource );
+char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
+                                       oyNAME_e            type,
+                                       oyAlloc_f           allocateFunc );
 
 /** @struct lcmsProfileWrap_s
  *  @brief lcms wrapper for profile data struct
@@ -559,7 +567,7 @@ int          lcmsCMMColourConversion_Create (
                                        oyOptions_s *       opts,
                                        oyCMMptr_s        * oy )
 {
-  cmsHPROFILE * lps = malloc(sizeof(cmsHPROFILE)*profiles_n+1);
+  cmsHPROFILE * lps = oyAllocateFunc_(sizeof(cmsHPROFILE)*profiles_n+1);
   cmsHTRANSFORM xform = 0;
   int i;
   int error = !(cmm_profile && lps);
@@ -667,7 +675,7 @@ oyPointer  lcmsCMMColourConversion_ToMem_ (
     {
         int nargs = 1, i;
         size_t size = sizeof(int) + nargs * sizeof(cmsPSEQDESC);
-        LPcmsSEQ pseq = (LPcmsSEQ) malloc(size);
+        LPcmsSEQ pseq = (LPcmsSEQ) oyAllocateFunc_(size);
         
         ZeroMemory(pseq, size);
         pseq ->n = nargs;
@@ -901,12 +909,12 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                                        oyAlloc_f           allocateFunc )
 {
   /*int error = !node || !size;*/
-  oyPointer ptr = 0;
+  oyPointer block = 0;
   int error = 0;
   int channels = 0;
   int n,i,len;
   oyDATATYPE_e data_type = 0;
-
+  size_t size_ = 0;
   oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
   oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
   oyFilter_s * filter = 0;
@@ -916,8 +924,13 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   cmsHPROFILE * lps = 0, simulation = 0;
   cmsHTRANSFORM xform = 0;
   oyOption_s * o = 0;
-  oyProfile_s * p = 0;
-  oyProfiles_s * profiles = 0;
+  oyProfile_s * p = 0,
+              * prof = 0;
+  oyProfiles_s * profiles = 0,
+               * profs = 0;
+  oyProfileTag_s * psid = 0,
+                 * info = 0,
+                 * cprt = 0;
   int profiles_n = 0;
 
   filter = node->filter;
@@ -950,11 +963,13 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   channels = oyToChannels_m( image_input->layout_[0] );
 
   len = sizeof(cmsHPROFILE) * (15 + 2 + 1);
-  lps = malloc( len );
+  lps = oyAllocateFunc_( len );
   memset( lps, 0, len );
 
   /* input profile */
   lps[ profiles_n++ ] = lcmsAddProfile( image_input->profile_ );
+  p = oyProfile_Copy( image_input->profile_, 0 );
+  profs = oyProfiles_MoveIn( profs, &p, -1 );
 
   /* effect profiles */
   o = oyOptions_Find( node->filter->options_, "profiles_effect" );
@@ -977,14 +992,11 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
         /* Look in the Oyranos cache for a CMM internal representation */
         lps[ profiles_n ] = lcmsAddProfile( p );
-        oyProfile_Release( &p );
+        profs = oyProfiles_MoveIn( profs, &p, -1 );
       }
     }
     oyOption_Release( &o );
   }
-
-  /* output profile */
-  lps[ profiles_n++ ] = lcmsAddProfile( image_output->profile_ );
 
   /* simulation profile */
   o = oyOptions_Find( node->filter->options_, "profiles_simulation" );
@@ -1007,8 +1019,10 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
         /* Look in the Oyranos cache for a CMM internal representation */
         if(i == 0)
+        {
           simulation = lcmsAddProfile( p );
-        else if(i == 1)
+          profs = oyProfiles_MoveIn( profs, &p, -1 );
+        } else if(i == 1)
           message( oyMSG_WARN, (oyStruct_s*)node,
            "%s: %d Currently only one in \"profiles_simulation\" supported: %d",
                    __FILE__,__LINE__, n );
@@ -1019,6 +1033,11 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     oyOption_Release( &o );
   }
 
+  /* output profile */
+  lps[ profiles_n++ ] = lcmsAddProfile( image_output->profile_ );
+  p = oyProfile_Copy( image_output->profile_, 0 );
+  profs = oyProfiles_MoveIn( profs, &p, -1 );
+
   *size = 0;
 
   /* create the context */
@@ -1027,14 +1046,113 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                                            image_output->layout_[0],
                                            node->filter->options_, 0, 0);
   error = !xform;
+
   if(!error)
   {
-    ptr = lcmsCMMColourConversion_ToMem_( xform, size, allocateFunc );
-    error = !ptr && !*size;
+    if(oy_debug)
+      block = lcmsCMMColourConversion_ToMem_( xform, size, oyAllocateFunc_ );
+    else
+      block = lcmsCMMColourConversion_ToMem_( xform, size, allocateFunc );
+    error = !block && !*size;
     cmsDeleteTransform( xform );
+  }
+
+
+  /* additional tags for debugging */
+  if(!error && oy_debug)
+  {
+    if(!error && size)
+    {
+      size_ = *size;
+
+      prof = oyProfile_FromMem( size_, block, 0, 0 );
+      psid = oyProfile_GetTagById( prof, icSigProfileSequenceIdentifierTag );
+
+      /* icSigProfileSequenceIdentifierType */
+      if(!psid)
+      {
+        psid = oyProfileTag_Create( profs->list_,
+                     icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
+
+        if(psid)
+          error = oyProfile_AddTag ( prof, &psid, -1 );
+      }
+
+      /* Info tag */
+      if(!error)
+      {
+        oyStructList_s * list = 0;
+        char h[5] = {"Info"};
+        uint32_t * hi = (uint32_t*)&h;
+        char * cc_name = lcmsFilterNode_GetText( node, oyNAME_NICK,
+                                                 oyAllocateFunc_ );
+        oyName_s * name = oyName_new(0);
+        const char * lib_name = node->filter->api4_->id_;
+
+        name = oyName_set_ ( name, cc_name, oyNAME_NAME,
+                             oyAllocateFunc_, oyDeAllocateFunc_ );
+        name = oyName_set_ ( name, lib_name, oyNAME_NICK,
+                             oyAllocateFunc_, oyDeAllocateFunc_ );
+        oyDeAllocateFunc_( cc_name );
+        list = oyStructList_New(0);
+        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, 0 );
+
+        if(!error)
+        {
+          info = oyProfileTag_Create( list, icSigTextType, 0,OY_MODULE_NICK, 0);
+          error = !info;
+        }
+
+        if(!error)
+          info->use = (icTagSignature)oyValueUInt32(*hi);
+
+        oyStructList_Release( &list );
+
+        if(info)
+          error = oyProfile_AddTag ( prof, &info, -1 );
+      }
+
+      if(!error)
+        cprt = oyProfile_GetTagById( prof, icSigCopyrightTag );
+
+      /* icSigCopyrightTag */
+      if(!error && !cprt)
+      {
+        oyStructList_s * list = 0;
+        const char * c_text = "no copyright; use freely";
+        oyName_s * name = oyName_new(0);
+
+        name = oyName_set_ ( name, c_text, oyNAME_NAME,
+                             oyAllocateFunc_, oyDeAllocateFunc_ );
+        list = oyStructList_New(0);
+        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0 );
+
+        if(!error)
+        {
+          cprt = oyProfileTag_Create( list, icSigTextType, 0,OY_MODULE_NICK, 0);
+          error = !cprt;
+        }
+
+        if(!error)
+          cprt->use = icSigCopyrightTag;
+
+        oyStructList_Release( &list );
+
+        if(cprt)
+          error = oyProfile_AddTag ( prof, &cprt, -1 );
+      }
+
+      if(block)
+        oyDeAllocateFunc_( block ); block = 0; size_ = 0;
+
+      block = oyProfile_GetMem( prof, &size_, 0, allocateFunc );
+
+      *size = size_;
+      oyProfile_Release( &prof );
+    }
   } 
 
-  return ptr;
+  return block;
 }
 
 

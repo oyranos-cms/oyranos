@@ -13874,7 +13874,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
   if(!error)
   {
           size_t size = 0;
-          oyHash_s * entry = 0;
+          oyHash_s * hash = 0;
           const char * hash_text_ = 0;
           char * hash_text = 0,
                * hash_temp = 0;
@@ -13915,12 +13915,12 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
           }
 
           /* 2. query in cache */
-          entry = oyCMMCacheListGetEntry_( hash_text );
+          hash = oyCMMCacheListGetEntry_( hash_text );
 
           if(!error)
           {
             /* 3. check and 3.a take*/
-            cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+            cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( hash,
                                                         oyOBJECT_CMM_POINTER_S);
 
             if(!cmm_ptr)
@@ -13948,20 +13948,24 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 
                   /* search for a convertor and convert */
                   oyCMMptr_ConvertData( cmm_ptr, cmm_ptr_out, node );
-                } else 
-                  cmm_ptr_out = cmm_ptr;
-
-                node->backend_data = (oyStruct_s*) cmm_ptr_out;
+                  node->backend_data = (oyStruct_s*) cmm_ptr_out;
+                } else
+                  node->backend_data = (oyStruct_s*)
+                                        oyCMMptr_Copy_( cmm_ptr, 0 );
               }
 
               /* 3b.1. update cache entry */
-              error = oyHash_SetPointer_( entry, (oyStruct_s*)
-                                          oyCMMptr_Copy_( cmm_ptr, 0 ));
+              error = oyHash_SetPointer_( hash, (oyStruct_s*) cmm_ptr);
+              cmm_ptr = 0;
             }
-
-            oyCMMptr_Release_( &cmm_ptr );
-            oyCMMptr_Release_( &cmm_ptr_out );
           }
+
+          if(oy_debug)
+          {
+            if(ptr && size && node->backend_data)
+              oyWriteMemToFile_( "test_dbg_colour_dl.icc", ptr, size );
+          }
+
   }
 
   return error;
@@ -15505,10 +15509,9 @@ int                oyConversion_OutputAdd (
 
       while((node = oyFilterNode_GetNextFromLinear_( node )) != 0)
         if(!error &&
-           node->filter->api4_->oyCMMFilterNode_ContextToMem)
-        {
+           node->filter->api4_->oyCMMFilterNode_ContextToMem &&
+           oyStrlen_(node->api7_->context_type))
           oyFilterNode_ContextSet_( node );
-        }
     }
   }
 
