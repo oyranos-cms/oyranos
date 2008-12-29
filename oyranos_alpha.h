@@ -1402,6 +1402,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
                                        const char        * pattern );
 
 typedef struct oyFilter_s oyFilter_s;
+typedef struct oyCMMptr_s oyCMMptr_s;
 typedef struct oyCMMapi4_s oyCMMapi4_s;
 typedef struct oyCMMapi6_s oyCMMapi6_s;
 typedef struct oyCMMapi7_s oyCMMapi7_s;
@@ -1463,6 +1464,7 @@ typedef enum {
   oyCONNECTOR_EVENT_STORAGE_CHANGED,   /**< new data accessors */
   oyCONNECTOR_EVENT_INCOMPATIBLE_DATA, /**< can not process image */
   oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION,/**< can not handle profile */
+  oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT,/**< can not handle profile */
   oyCONNECTOR_EVENT_INCOMPLETE_GRAPH   /**< can not completely process */ 
 } oyCONNECTOR_EVENT_e;
 
@@ -1917,7 +1919,7 @@ struct oyFilterNode_s {
   char               * relatives_;     /**< hint about belonging to a filter */
 
   /** the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to oyCMMapi4_s::context_type */
-  oyStruct_s         * backend_data;
+  oyCMMptr_s         * backend_data;
   oyCMMapi7_s        * api7_;
 };
 
