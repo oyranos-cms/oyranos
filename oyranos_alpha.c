@@ -1617,51 +1617,9 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
 /** @} *//* misc */
 
 
-/** \addtogroup cmm_handling CMM Handling API
- *
- *  CMM's in Oyranos are designed to be plugable into a framework of arbitrary
- *  data formats and processing.
- *
- *  The oyCMMapi5_s plug-in structure defines a 
- *  meta backend to load plug-ins, from a to be defined directory with
- *  to be defined naming criterias. This API defines at the same time allowed
- *  input data formats.
- *
- *  The oyCMMapi4_s is the structure for plug-ins in Oyranos. It is itself
- *  not allocated by Oyranos itself. A meta backend must do this. A oyCMMapi4_s
- *  can define a context data format, it provides. This context is a
- *  intermediate processing state for all of the context data influencing
- *  options and input datas. This structure may contain as well the GUI.
- *
- *  oyCMMapi7_s eighter deploys the context created in a oyCMMapi4_s filter, or
- *  simply processes the Oyranos oyFilterNode_s graph element. It is responsible
- *  to request data from the graph and process them.
- *  Members are responsible to describe the filters capabilities for connecting
- *  to other filters in the graph.
- *
- *  In case a oyCMMapi7_s function can not handle a certain provided context
- *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
- *  a fitting oyCMMapi6_s data convertor. This API is only required for filters,
- *  which request contexts.
- *
- *  Each filter API provides a \b registration member string.
- *  The registration member provides the means to later sucessfully select 
- *  the according filter. The string is separated into sections by a slash'/'.
- *  The sections can be subdivided by point'.' as needed. The sections are to be
- *  filled as folows:
- *  - top, e.g. "sw"
- *  - vendor, e.g. "oyranos.org"
- *  - filter type, e.g. "colour" or "tonemap" or "image" or "imaging"
- *  - filter name, e.g. "icc.lcms"
- * 
- *  A complete registration might read: "sw/oyranos.org/colour/icc.lcms".
- *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
- *  might be useful in canonical processing a Oyranos registration text string.
- *  Many functions allow for passing a registration string. To select a filter
- *  from a broader set of filters matching can be obtained by omitting sections
- *  like in the string "//colour". This string would result in a match for the
- *  above given example.
- *
+
+/** \addtogroup cmm_handling
+
  *  @{
  */
 
@@ -3334,6 +3292,165 @@ oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
   return obj;
 }
 
+/** @} *//* cmm_handling */
+
+
+
+/** \addtogroup backend_api CMM API
+ *
+ *  CMM's in Oyranos are designed to be plugable into a framework of arbitrary
+ *  data formats and processing.
+ *  @dot
+digraph Backends {
+  nodesep=.1;
+  ranksep=1.;
+  rankdir=LR;
+  graph [fontname=Helvetica, fontsize=14];
+  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
+
+  subgraph cluster_7 {
+    label="Oyranos Module Framework";
+    color=white;
+    clusterrank=global;
+
+      s [ label="Script Importer - \"oCTL\"\n oyCMMapi5_s"];
+      i [ label="Library Importer - \"oyIM\"\n oyCMMapi5_s"];
+
+      node [width = 2.5, style=filled];
+      o [ label="External Function Import\n Extendable Functionality\n Additional Dependencies\n ..."];
+      p [ label="Meta Backend / Filter Import\n oyFilterNode_s"];
+
+      api7_B [label="//image/root.oyra Processor\n oyCMMapi7_s"];
+
+      api4_A [label="//colour/icc.lcms Context\n oyCMMapi4_s"];
+      api6_A [label="//colour/icc.lcms Context Converter\n oyCMMapi6_s"];
+      api7_A [label="//colour/icc.lcms Processor\n oyCMMapi7_s"];
+
+      api6_C [label="//colour/icc.ctl Context Converter\n oyCMMapi6_s"];
+      api7_C [label="//colour/icc.ctl Processor\n oyCMMapi7_s"];
+
+      m [label="Monitor Functions\n oyCMMapi2_s"];
+      icc [label="ICC Profile Functions\n oyCMMapi3_s"];
+
+      subgraph cluster_6 {
+        color=gray;
+        label="Backends"
+
+        subgraph cluster_0 {
+          rank=max;
+          color=red;
+         style=dashed;
+          node [style="filled"];
+          api4_A; api6_A; api7_A;
+          //api4_A -> api6_A -> api7_A [color=white, arrowhead=none, dirtype=none];
+          label="\"lcms\"";
+        }
+
+        subgraph cluster_1 {
+          color=blue;
+          style=dashed;
+          node [style="filled"];
+          api7_B;
+          icc;
+          label="\"oyra\"";
+        }
+
+        subgraph cluster_2 {
+          color=yellow;
+          style=dashed;
+          node [style="filled"];
+          api6_C;
+          api7_C;
+          label="\"ctl \"";
+        }
+
+        subgraph cluster_3 {
+          color=gray;
+          style=dashed;
+          m;
+          label="\"oyX1\"";
+        }
+
+      }
+
+      subgraph cluster_4 {
+        color=gray;
+        node [style="filled"];
+        s;
+        i;
+        label="Meta Backends - Filter Importing";
+      }
+
+      subgraph cluster_5 {
+        color=gray;
+        node [style="filled"];
+        o;
+        p;
+        label="Oyranos - Abstract Graph/Filter API";
+      }
+
+      p -> i [arrowhead="open", color=gray];
+      p -> s [arrowhead="open", color=gray];
+      i -> api4_A [arrowhead="open", color=red];
+      i -> api6_A [arrowhead="open", color=red];
+      i -> api7_A [arrowhead="open", color=red];
+      i -> api7_B [arrowhead="open", color=blue];
+      s -> api6_C [arrowhead="open", color=yellow];
+      s -> api7_C [arrowhead="open", color=yellow];
+      o -> m [arrowhead="open", color=gray];
+      o -> icc [arrowhead="open", color=gray];
+  }
+} @enddot
+ *
+ *  The Filter API's are subdivided to allow for combinations. Especially
+ *  in the case of expensive preprocessing data, like in CMM's, it makes sense
+ *  to provide the means for combining complicated C libraries with hardware
+ *  accelerated modules. The following paragraphs provide a overview.
+ *
+ *  The oyCMMapi5_s plug-in structure defines a 
+ *  meta backend to load plug-ins, from a to be defined directory with
+ *  to be defined naming criterias. This API defines at the same time allowed
+ *  input data formats.
+ *
+ *  The oyCMMapi4_s is the structure for plug-ins in Oyranos. It is itself
+ *  not allocated by Oyranos itself. A meta backend must do this. A oyCMMapi4_s
+ *  can define a context data format, it provides. This context is a
+ *  intermediate processing state for all of the context data influencing
+ *  options and input datas. This structure may contain as well the GUI.
+ *
+ *  oyCMMapi7_s eighter deploys the context created in a oyCMMapi4_s filter, or
+ *  simply processes the Oyranos oyFilterNode_s graph element. It is responsible
+ *  to request data from the graph and process them.
+ *  Members are responsible to describe the filters capabilities for connecting
+ *  to other filters in the graph.
+ *
+ *  In case a oyCMMapi7_s function can not handle a certain provided context
+ *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
+ *  a fitting oyCMMapi6_s data convertor. This API is only required for filters,
+ *  which request contexts.
+ *
+ *  Each filter API provides a \b registration member string.
+ *  The registration member provides the means to later sucessfully select 
+ *  the according filter. The string is separated into sections by a slash'/'.
+ *  The sections can be subdivided by point'.' as needed. The sections are to be
+ *  filled as folows:
+ *  - top, e.g. "sw"
+ *  - vendor, e.g. "oyranos.org"
+ *  - filter type, e.g. "colour" or "tonemap" or "image" or "imaging"
+ *  - filter name, e.g. "icc.lcms"
+ * 
+ *  A complete registration might read: "sw/oyranos.org/colour/icc.lcms".
+ *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
+ *  might be useful in canonical processing a Oyranos registration text string.
+ *  Many functions allow for passing a registration string. To select a filter
+ *  from a broader set of filters matching can be obtained by omitting sections
+ *  like in the string "//colour". This string would result in a match for the
+ *  above given example.
+ *
+ *  @{
+ */
+
+
 /** Function oyCMMptr_LookUp
  *  @brief   get a CMM specific pointer
  *  @relates oyCMMptr_s
@@ -3416,8 +3533,7 @@ oyCMMptr_s * oyCMMptr_LookUp          ( oyStruct_s      * data,
   return cmm_ptr;
 }
 
-
-/** @} *//* cmm_handling */
+/** @} *//* backend_api */
 
 
 
@@ -16537,6 +16653,15 @@ int          oyIdToCMM               ( uint32_t            cmmId,
     return 0;
 }
 
+/** @} *//* cmm_handling */
+
+
+
+/** \addtogroup backend_api
+
+ *  @{
+ */
+
 /** Function oyCMMInfo_New
  *  @relates oyCMMInfo_s
  *  @brief   allocate a new CMMInfo object
@@ -16709,7 +16834,7 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** @} *//* cmm_handling */
+/** @} *//* backend_api */
 
 
 /** \addtogroup misc Miscellaneous

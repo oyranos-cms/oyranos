@@ -28,7 +28,7 @@ namespace oyranos
 
 
 /** @brief   CMM capabilities query enum
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @since: 0.1.8
  */
@@ -57,7 +57,7 @@ typedef int      (*oyCMMInit_f)      ( void );
 #define oyCOLOUR_ICC_DEVICE_LINK "oyDL"
 
 /** @brief   CMM pointer
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  The oyCMMptr_s is used internally and for CMM's.
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
@@ -140,7 +140,7 @@ void               oyCMMdeallocateFunc(oyPointer           mem );*/
 typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
 
 
-/**  @ingroup cmm_handling */
+/**  @ingroup backend_api */
 typedef enum {
   oyWIDGET_OK,
   oyWIDGET_CORRUPTED,
@@ -154,7 +154,7 @@ typedef enum {
 
 /** @typedef oyCMMFilter_ValidateOptions_f
  *  @brief   a function to check and validate options
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @param[in]     filter              the filter
  *  @param[in]     validate            to validate
@@ -180,7 +180,7 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
 
 
 /** @brief the generic part if a API to implement and set by a CMM
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @since Oyranos: version 0.1.8 2007/12/12
  *  @date  12 december 2007 (API 0.1.8)
@@ -199,7 +199,7 @@ struct oyCMMapi_s {
 
 
 /** @brief the API 1 to implement and set by a CMM
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @since Oyranos: version 0.1.8 2007/12/05
  *  @date  21 december 2007 (API 0.1.8)
@@ -251,7 +251,7 @@ typedef int   (*oyActivateMonitorProfiles_f) (
 
 /** @struct oyCMMapi2_s
  *  @brief the API 2 to implement and set to provide windowing support
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @since Oyranos: version 0.1.8
  *  @date  10 december 2007 (API 0.1.8)
@@ -291,7 +291,7 @@ typedef int                 (*oyCMMProfileTag_Create_f) (
 /** @struct oyCMMapi3_s
  *  @brief the API 3 to implement and set to provide low level ICC profile
  *         support
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
@@ -318,7 +318,7 @@ typedef struct oyCMMapi5_s oyCMMapi5_s;
 
 /** @struct oyCMMapiFilter_s
  *  @brief the filter API 4-7 interface
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.
@@ -352,7 +352,7 @@ typedef struct {
 
 /** @type    oyCMMData_LoadFromMem_f
  *  @brief   load a filter data from a in memory data blob
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @param[in]     buf_size            data size
  *  @param[in]     buf                 data blob
@@ -372,7 +372,7 @@ typedef oyStruct_s * (*oyCMMData_LoadFromMem_f) (
 
 /** @type    oyCMMDataGetText_f
  *  @brief   build a text string from a given data
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  Serialise into:
  *  - oyNAME_NICK: XML ID
@@ -397,7 +397,7 @@ typedef char *   (*oyCMMDataGetText_f)(oyStruct_s        * data,
 
 /** @type    oyCMMDataScan_f
  *  @brief   load a filter data from a in memory data blob
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -419,7 +419,7 @@ typedef int          (*oyCMMDataScan_f) (
 
 /** @type    oyCMMFilter_Load_f
  *  @brief   load a filter from a in memory data blob
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -438,7 +438,7 @@ typedef oyCMMapiFilter_s * (*oyCMMFilterLoad_f) (
 
 /** @type    oyCMMFilterScan_f
  *  @brief   load a filter from a in memory data blob
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -471,7 +471,7 @@ typedef int          (*oyCMMFilterScan_f) (
 
 /** @struct oyCMMDataTypes_s
  *  @brief the CMM API 5 data part
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/23 (Oyranos: 0.1.9)
@@ -496,7 +496,7 @@ typedef struct {
 
 /** @struct oyCMMapi5_s
  *  @brief the API 5 to provide and implement filter and script support
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  Filters can be provided in non library form, e.g. as text files. This API 
  *  allowes for registring of paths and file types to be recognised as filters.
@@ -554,7 +554,7 @@ struct oyCMMapi5_s {
 
 /** @type    oyCMMFilterPlug_Run_f
  *  @brief   get a pixel or channel from the previous filter
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  You have to call oyCMMFilter_CreateContext_t or oyCMMFilter_ContextFromMem_t first.
  *  The API provides flexible pixel access and cache configuration by the
@@ -583,7 +583,7 @@ typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * connector,
 
 /** @struct oyCMMapi7_s
  *  @brief the API 7 to implement data processing
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  The filter context can be stored in oyFilterNode_s::backend_data if the
  *  oyCMMapi7_s::context_type is filled with a understood format hint.
@@ -635,7 +635,7 @@ struct oyCMMapi7_s {
 
 /** Function oyCMMdata_Convert_f
  *  @brief   convert between data formats
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  The function might be used to provide a backend specific context.
  *
@@ -649,7 +649,7 @@ typedef int(*oyCMMdata_Convert_f)    ( oyCMMptr_s        * data_in,
 
 /** @struct oyCMMapi6_s
  *  @brief the API 6 to provide and implement context conversion support
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  The context provided by a filter can be exotic. The API provides the means
  *  to get him into a known format.
@@ -705,7 +705,7 @@ struct oyCMMapi6_s {
 
 /** @type    oyCMMFilterNode_ContextToMem_f
  *  @brief   store a CMM filter context into a memory blob
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  The goal is to have a data blob for later reusing. It is as well used for
  *  exchange and analysis. A oyCMMapi4_s filter with context_type member set to
@@ -729,7 +729,7 @@ typedef oyPointer(*oyCMMFilterNode_ContextToMem_f) (
 
 /** @type    oyCMMFilterNode_GetText_f
  *  @brief   describe a CMM filter context
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  For a oyNAME_NICK and oyNAME_NAME type argument, the function shall
  *  describe only those elements, which are relevant to the result of the
@@ -751,7 +751,7 @@ typedef char *(*oyCMMFilterNode_GetText_f) (
 
 /** @struct oyCMMapi4_s
  *  @brief the API 4 to implement and set to provide Filter support
- *  @ingroup cmm_handling
+ *  @ingroup backend_api
  *
  *  Different filters have to implement this struct each one per filter.
  *
