@@ -1804,7 +1804,7 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
 
   if(!error)
   {
-    reg = oyStringCopy_( "//icc.", oyAllocateFunc_ );
+    reg = oyStringCopy_( "///", oyAllocateFunc_ );
     oyStringAdd_( &reg, cmm_ptr->resource, oyAllocateFunc_, oyDeAllocateFunc_ );
     oyStringAdd_( &reg, "_", oyAllocateFunc_, oyDeAllocateFunc_ );
     oyStringAdd_( &reg, cmm_ptr_out->resource,
@@ -11523,6 +11523,7 @@ const char *       oyConnectorEventToText (
     case oyCONNECTOR_EVENT_STORAGE_CHANGED: text = "oyCONNECTOR_EVENT_STORAGE_CHANGED: new data accessors"; break;
     case oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: can not process data"; break;
     case oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: can not handle option"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT: can not handle context"; break;
     case oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: text = "oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: can not completely process"; break;
   }
   return text;
@@ -13087,7 +13088,7 @@ oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object )
   s->relatives_ = 0;
 
   if( s->backend_data && s->backend_data->release )
-    s->backend_data->release( &s->backend_data );
+    s->backend_data->release( (oyStruct_s**) & s->backend_data );
   s->backend_data = 0;
 
 
@@ -13183,7 +13184,8 @@ oyFilterNode_s *   oyFilterNode_Copy_( oyFilterNode_s    * node,
   if(!error)
   {
     if(!error && node->backend_data && node->backend_data->copy)
-      s->backend_data = node->backend_data->copy( node->backend_data , s->oy_ );
+      s->backend_data = (oyCMMptr_s*) node->backend_data->copy( (oyStruct_s*)
+                                                  node->backend_data , s->oy_ );
   }
 
   return s;
@@ -13906,7 +13908,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
           oyStringAdd_( &hash_text, hash_text_,
                         oyAllocateFunc_, oyDeAllocateFunc_);
 
-          if(oy_debug)
+          if(oy_debug > 3)
           {
             size = 0;
             ptr = oyFilterNode_TextToInfo ( node, &size, oyAllocateFunc_ );
@@ -13943,15 +13945,14 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
                                s->api4_->context_type ) != 0 )
                 {
                   cmm_ptr_out = oyCMMptr_New_(oyAllocateFunc_);
-                  error = oyCMMptr_Set_( cmm_ptr_out, 0,
-                                         node->api7_->context_type, ptr, 0, 0);
+                  error = oyCMMptr_Set_( cmm_ptr_out, node->api7_->id_,
+                                         node->api7_->context_type, 0, 0, 0);
 
                   /* search for a convertor and convert */
                   oyCMMptr_ConvertData( cmm_ptr, cmm_ptr_out, node );
-                  node->backend_data = (oyStruct_s*) cmm_ptr_out;
+                  node->backend_data = cmm_ptr_out;
                 } else
-                  node->backend_data = (oyStruct_s*)
-                                        oyCMMptr_Copy_( cmm_ptr, 0 );
+                  node->backend_data = oyCMMptr_Copy_( cmm_ptr, 0 );
               }
 
               /* 3b.1. update cache entry */
@@ -13960,7 +13961,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
             }
           }
 
-          if(oy_debug)
+          if(oy_debug > 3)
           {
             if(ptr && size && node->backend_data)
               oyWriteMemToFile_( "test_dbg_colour_dl.icc", ptr, size );
