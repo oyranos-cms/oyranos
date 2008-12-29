@@ -3190,6 +3190,232 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
   return type;
 }
 
+/** @internal
+ *  @brief get a CMM specific pointer
+ *  @relates oyStruct_s
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
+ *  @date    2008/11/05
+ */
+oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
+                                        const char      * cmm )
+{
+  oyStruct_s * s = data;
+  int error = !s;
+  oyCMMptr_s * cmm_ptr = 0;
+
+  if(!error && !cmm)
+  {
+    cmm = oyModuleGetActual("//colour");
+    error = !cmm;
+  }
+
+  if(!error)
+  {
+    const char * tmp = 0;
+    char * lib_used = 0;
+ 
+    oyHash_s * entry = 0;
+    oyChar * hash_text = 0;
+
+    /** Cache Search
+     *  1.     hash from input
+     *  2.     query for hash in cache
+     *  3.     check
+     *  3a.       eighter take cache entry
+     *  3b.       or ask CMM
+     *  3b.1.                update cache entry
+     */
+
+    /* 1. create hash text */
+    hashTextAdd_m( cmm );
+    hashTextAdd_m( " oyPR:" );
+    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
+    hashTextAdd_m( tmp );
+
+    /* 2. query in cache */
+    entry = oyCMMCacheListGetEntry_( hash_text );
+    if(s->oy_->deallocateFunc_)
+      s->oy_->deallocateFunc_( hash_text );
+
+    if(!error)
+    {
+      /* 3. check and 3.a take*/
+      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+                                                  oyOBJECT_CMM_POINTER_S);
+
+      if(!cmm_ptr)
+      {
+        /* 3b. ask CMM */
+        oyCMMDataOpen_f funcP = 0;
+
+        /* TODO update to oyCMMapi4_s::oyCMMDataOpen_f */
+        oyCMMapi1_s * api1 = (oyCMMapi1_s*) oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
+                                                       cmm, 0, &lib_used, 0,0 );
+        if(api1 && *(uint32_t*)&cmm)
+          funcP = api1->oyCMMDataOpen;
+
+        if(funcP)
+        {
+          cmm_ptr = oyCMMptr_New_(s->oy_->allocateFunc_);
+          error = !cmm_ptr;
+
+          if(!error)
+            error = oyCMMptr_Set_( cmm_ptr, lib_used,
+                                   oyCMM_PROFILE, 0, 0, 0 );
+
+          if(!error)
+          {
+            error = funcP( s, cmm_ptr );
+
+#if 0
+            /* We have currently no means to trace all the spread resources. */
+            if(!error)
+              error = oyCMMRelease_( cmm );
+#endif
+          }
+        }
+
+        if(lib_used)
+          oyFree_m_( lib_used );
+
+        error = !cmm_ptr;
+
+        if(!error && cmm_ptr && cmm_ptr->ptr)
+          /* 3b.1. update cache entry */
+          error = oyHash_SetPointer_( entry,
+                                      (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
+      }
+    }
+
+
+    oyHash_Release_( &entry );
+  }
+
+  return cmm_ptr;
+}
+
+/** @internal
+ *  @relates oyStructList_s
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2007/11/23 (Oyranos: 0.1.8)
+ *  @date    2008/11/05
+ */
+oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
+                                       const char        * lib_name )
+{
+  oyCMMptr_s ** obj = 0;
+  int n = oyStructList_Count( list );
+
+
+  if(list && n)
+  {
+    int i = 0;
+
+    if(n)
+      obj = list->oy_->allocateFunc_( sizeof(oyCMMptr_s*) * n); 
+
+    for(i = 0; i < n; ++i)
+    {
+      oyStruct_s * o = oyStructList_Get_( list, i );
+
+      if(o)
+      {
+        oyCMMptr_s * cmm_ptr = oyStruct_GetCMMPtr_(o, lib_name);
+
+        if(cmm_ptr && cmm_ptr->type == oyOBJECT_CMM_POINTER_S)
+          obj[i] = oyCMMptr_Copy_( cmm_ptr, 0 );
+      }
+    }
+  }
+
+  return obj;
+}
+
+/** Function oyCMMptr_LookUp
+ *  @brief   get a CMM specific pointer
+ *  @relates oyCMMptr_s
+ *
+ *  The returned oyCMMptr_s has to be released after using by the backend with
+ *  oyCMMptr_Release().
+ *  In case the the oyCMMptr_s::ptr member is empty, it should be set by the
+ *  requesting backend.
+ *
+ *  @see e.g. lcmsCMMData_Open()
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2008/12/28
+ */
+oyCMMptr_s * oyCMMptr_LookUp          ( oyStruct_s      * data,
+                                        const char      * data_type )
+{
+  oyStruct_s * s = data;
+  int error = !s;
+  oyCMMptr_s * cmm_ptr = 0;
+
+  if(!error && !data_type)
+    error = !data_type;
+
+  if(!error)
+  {
+    /*oyCMMptr_s *cmm_ptr = 0;*/
+    const char * tmp = 0;
+ 
+    oyHash_s * entry = 0;
+    oyChar * hash_text = 0;
+
+    /** Cache Search \n
+     *  1.     hash from input \n
+     *  2.     query for hash in cache \n
+     *  3.     check \n
+     *  3a.       eighter take cache entry or \n
+     *  3b.       update cache entry
+     */
+
+    /* 1. create hash text */
+    hashTextAdd_m( data_type );
+    hashTextAdd_m( ":" );
+    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
+    hashTextAdd_m( tmp );
+
+    /* 2. query in cache */
+    entry = oyCMMCacheListGetEntry_( hash_text );
+    if(s->oy_->deallocateFunc_)
+      s->oy_->deallocateFunc_( hash_text );
+
+    if(!error)
+    {
+      /* 3. check and 3.a take*/
+      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+                                                  oyOBJECT_CMM_POINTER_S);
+
+      if(!cmm_ptr)
+      {
+        cmm_ptr = oyCMMptr_New_(s->oy_->allocateFunc_);
+        error = !cmm_ptr;
+
+        if(!error)
+          error = oyCMMptr_Set_( cmm_ptr, 0,
+                                 data_type, 0, 0, 0 );
+
+        error = !cmm_ptr;
+
+        if(!error && cmm_ptr)
+          /* 3b.1. update cache entry */
+          error = oyHash_SetPointer_( entry,
+                                     (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
+      }
+    }
+
+    oyHash_Release_( &entry );
+  }
+
+  return cmm_ptr;
+}
+
 
 /** @} *//* cmm_handling */
 
@@ -7593,193 +7819,6 @@ const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
 }
 
 
-/** @internal
- *  @brief get a CMM specific pointer
- *  @relates oyStruct_s
- *
- *  @version Oyranos: 0.1.9
- *  @since   2007/11/26 (Oyranos: 0.1.8)
- *  @date    2008/11/05
- */
-oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
-                                        const char      * cmm )
-{
-  oyStruct_s * s = data;
-  int error = !s;
-  oyCMMptr_s * cmm_ptr = 0;
-
-  if(!error && !cmm)
-  {
-    cmm = oyModuleGetActual("//colour");
-    error = !cmm;
-  }
-
-  if(!error)
-  {
-    const char * tmp = 0;
-    char * lib_used = 0;
- 
-    oyHash_s * entry = 0;
-    oyChar * hash_text = 0;
-
-    /** Cache Search
-     *  1.     hash from input
-     *  2.     query for hash in cache
-     *  3.     check
-     *  3a.       eighter take cache entry
-     *  3b.       or ask CMM
-     *  3b.1.                update cache entry
-     */
-
-    /* 1. create hash text */
-    hashTextAdd_m( cmm );
-    hashTextAdd_m( " oyPR:" );
-    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
-    hashTextAdd_m( tmp );
-
-    /* 2. query in cache */
-    entry = oyCMMCacheListGetEntry_( hash_text );
-    if(s->oy_->deallocateFunc_)
-      s->oy_->deallocateFunc_( hash_text );
-
-    if(!error)
-    {
-      /* 3. check and 3.a take*/
-      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
-                                                  oyOBJECT_CMM_POINTER_S);
-
-      if(!cmm_ptr)
-      {
-        /* 3b. ask CMM */
-        oyCMMDataOpen_f funcP = 0;
-
-        /* TODO update to oyCMMapi4_s::oyCMMDataOpen_f */
-        oyCMMapi1_s * api1 = (oyCMMapi1_s*) oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
-                                                       cmm, 0, &lib_used, 0,0 );
-        if(api1 && *(uint32_t*)&cmm)
-          funcP = api1->oyCMMDataOpen;
-
-        if(funcP)
-        {
-          cmm_ptr = oyCMMptr_New_(s->oy_->allocateFunc_);
-          error = !cmm_ptr;
-
-          if(!error)
-            error = oyCMMptr_Set_( cmm_ptr, lib_used,
-                                   oyCMM_PROFILE, 0, 0, 0 );
-
-          if(!error)
-          {
-            error = funcP( s, cmm_ptr );
-
-#if 0
-            /* We have currently no means to trace all the spread resources. */
-            if(!error)
-              error = oyCMMRelease_( cmm );
-#endif
-          }
-        }
-
-        if(lib_used)
-          oyFree_m_( lib_used );
-
-        error = !cmm_ptr;
-
-        if(!error && cmm_ptr && cmm_ptr->ptr)
-          /* 3b.1. update cache entry */
-          error = oyHash_SetPointer_( entry,
-                                      (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
-      }
-    }
-
-
-    oyHash_Release_( &entry );
-  }
-
-  return cmm_ptr;
-}
-
-/** Function oyCMMptr_LookUp
- *  @brief   get a CMM specific pointer
- *  @relates oyCMMptr_s
- *
- *  The returned oyCMMptr_s has to be released after using by the backend with
- *  oyCMMptr_Release().
- *  In case the the oyCMMptr_s::ptr member is empty, it should be set by the
- *  requesting backend.
- *
- *  @see e.g. lcmsCMMData_Open()
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2008/12/28
- */
-oyCMMptr_s * oyCMMptr_LookUp          ( oyStruct_s      * data,
-                                        const char      * data_type )
-{
-  oyStruct_s * s = data;
-  int error = !s;
-  oyCMMptr_s * cmm_ptr = 0;
-
-  if(!error && !data_type)
-    error = !data_type;
-
-  if(!error)
-  {
-    /*oyCMMptr_s *cmm_ptr = 0;*/
-    const char * tmp = 0;
- 
-    oyHash_s * entry = 0;
-    oyChar * hash_text = 0;
-
-    /** Cache Search
-     *  1.     hash from input
-     *  2.     query for hash in cache
-     *  3.     check
-     *  3a.       eighter take cache entry
-     */
-
-    /* 1. create hash text */
-    hashTextAdd_m( data_type );
-    hashTextAdd_m( ":" );
-    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
-    hashTextAdd_m( tmp );
-
-    /* 2. query in cache */
-    entry = oyCMMCacheListGetEntry_( hash_text );
-    if(s->oy_->deallocateFunc_)
-      s->oy_->deallocateFunc_( hash_text );
-
-    if(!error)
-    {
-      /* 3. check and 3.a take*/
-      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
-                                                  oyOBJECT_CMM_POINTER_S);
-
-      if(!cmm_ptr)
-      {
-        cmm_ptr = oyCMMptr_New_(s->oy_->allocateFunc_);
-        error = !cmm_ptr;
-
-        if(!error)
-          error = oyCMMptr_Set_( cmm_ptr, 0,
-                                 data_type, 0, 0, 0 );
-
-        error = !cmm_ptr;
-
-        if(!error && cmm_ptr)
-          /* 3b.1. update cache entry */
-          error = oyHash_SetPointer_( entry,
-                                     (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
-      }
-    }
-
-    oyHash_Release_( &entry );
-  }
-
-  return cmm_ptr;
-}
-
 #if 0
 /** @brief get a CMM specific pointer
  *  @relates oyProfile_s
@@ -9422,44 +9461,6 @@ oyProfile_s *    oyProfiles_Get   ( oyProfiles_s   * list,
 
     if(p)
       obj = oyProfile_Copy(p, 0);
-  }
-
-  return obj;
-}
-
-/** @internal
- *  @relates oyStructList_s
- *
- *  @version Oyranos: 0.1.9
- *  @since   2007/11/23 (Oyranos: 0.1.8)
- *  @date    2008/11/05
- */
-oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
-                                       const char        * lib_name )
-{
-  oyCMMptr_s ** obj = 0;
-  int n = oyStructList_Count( list );
-
-
-  if(list && n)
-  {
-    int i = 0;
-
-    if(n)
-      obj = list->oy_->allocateFunc_( sizeof(oyCMMptr_s*) * n); 
-
-    for(i = 0; i < n; ++i)
-    {
-      oyStruct_s * o = oyStructList_Get_( list, i );
-
-      if(o)
-      {
-        oyCMMptr_s * cmm_ptr = oyStruct_GetCMMPtr_(o, lib_name);
-
-        if(cmm_ptr && cmm_ptr->type == oyOBJECT_CMM_POINTER_S)
-          obj[i] = oyCMMptr_Copy_( cmm_ptr, 0 );
-      }
-    }
   }
 
   return obj;
@@ -16575,7 +16576,8 @@ OYAPI oyCMMInfo_s * OYEXPORT
   return s;
 }
 
-/** Function oyCMMInfo_Copy_
+/** @internal
+ *  Function oyCMMInfo_Copy_
  *  @relates oyCMMInfo_s
  *  @brief   real copy a CMMInfo object
  *
