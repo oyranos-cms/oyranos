@@ -48,12 +48,11 @@ int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
 oyMessage_f message = lcmsCMMWarnFunc;
 
 int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText);
+int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func );
+int                lcmsCMMInit       ( );
+int                lcmsCMMCanHandle  ( oyCMMQUERY_e      type,
+                                       uint32_t          value );
 
-int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
-                                       const char        * resource );
-char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
-                                       oyNAME_e            type,
-                                       oyAlloc_f           allocateFunc );
 
 /** @struct lcmsProfileWrap_s
  *  @brief lcms wrapper for profile data struct
@@ -86,6 +85,88 @@ typedef struct {
   oyPixel_t    oy_pixel_layout_out;
 } lcmsTransformWrap_s;
 
+
+lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
+                                       cmsHTRANSFORM       xform,
+                                       icColorSpaceSignature colour_in,
+                                       icColorSpaceSignature colour_out,
+                                       oyPixel_t           oy_pixel_layout_in,
+                                       oyPixel_t           oy_pixel_layout_out,
+                                       oyCMMptr_s        * oy );
+lcmsTransformWrap_s * lcmsCMMTransform_GetWrap_(
+                                       oyCMMptr_s        * cmm_ptr );
+int lcmsCMMDeleteTransformWrap       ( oyPointer         * wrap );
+
+lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_(
+                                       oyCMMptr_s        * cmm_ptr );
+int lcmsCMMProfileReleaseWrap        ( oyPointer         * p );
+
+int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
+                                       const char        * resource );
+int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
+                                       icColorSpaceSignature colour_space );
+
+
+char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
+                                       oyNAME_e            type,
+                                       oyAlloc_f           allocateFunc );
+cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
+                                       cmsHPROFILE       * lps,
+                                       int                 profiles_n,
+                                       cmsHPROFILE       * proof,
+                                       oyPixel_t           oy_pixel_layout_in,
+                                       oyPixel_t           oy_pixel_layout_out,
+                                       oyOptions_s       * opts,
+                                       lcmsTransformWrap_s ** ltw,
+                                       oyCMMptr_s        * oy );
+int          lcmsCMMColourConversion_Create (
+                                       oyCMMptr_s       ** cmm_profile,
+                                       int                 profiles_n,
+                                       oyPixel_t           oy_pixel_layout_in,
+                                       oyPixel_t           oy_pixel_layout_out,
+                                       oyOptions_s *       opts,
+                                       oyCMMptr_s        * oy );
+int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
+                                       size_t              size,
+                                       oyPixel_t           oy_pixel_layout_in,
+                                       oyPixel_t           oy_pixel_layout_out,
+                                       icColorSpaceSignature colour_space_in,
+                                       icColorSpaceSignature colour_space_out,
+                                       int                 intent,
+                                       oyCMMptr_s        * oy );
+oyPointer  lcmsCMMColourConversion_ToMem_ (
+                                       cmsHTRANSFORM     * xform,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
+oyPointer  lcmsCMMColourConversion_ToMem (
+                                       oyCMMptr_s        * oy,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
+int              lcmsCMMColourConversion_Run (
+                                       oyCMMptr_s        * oy,
+                                       oyPointer           in_data,
+                                       oyPointer           out_data,
+                                       size_t              count,
+                                       oyCMMProgress_f     progress );
+oyOptions_s* lcmsFilter_CmmIccValidateOptions
+                                     ( oyFilter_s        * filter,
+                                       oyOptions_s       * validate,
+                                       int                 statical,
+                                       uint32_t          * result );
+cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p );
+oyPointer lcmsFilterNode_CmmIccContextToMem (
+                                       oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
+int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
+                                       oyCMMptr_s        * data_out,
+                                       oyFilterNode_s    * node );
+int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket,
+                                       oyArray2d_s      ** pixel );
+const char * lcmsGetText             ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * data );
 
 
 
@@ -199,7 +280,7 @@ lcmsTransformWrap_s * lcmsCMMTransform_GetWrap_( oyCMMptr_s * cmm_ptr )
   char type_[4] = lcmsTRANSFORM;
   int type = *((int*)&type_);
 
-  if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, oyCMM_COLOUR_CONVERSION ) &&
+  if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, lcmsTRANSFORM ) &&
      cmm_ptr->ptr)
     s = (lcmsTransformWrap_s*) cmm_ptr->ptr;
 
@@ -323,7 +404,8 @@ int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
 {
   int error = !cmm_ptr;
 
-  if(cmm_ptr && cmm_ptr->ptr && strlen(cmm_ptr->resource))
+  if(cmm_ptr && cmm_ptr->type == oyOBJECT_CMM_POINTER_S &&
+     cmm_ptr->ptr && strlen(cmm_ptr->resource))
   {
     int * res_id = (int*)cmm_ptr->resource;
 
@@ -896,7 +978,7 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
     return 0;
 }
 
-/** Function lcmsCMMFilterNode_CreateContext
+/** Function lcmsFilterNode_CmmIccContextToMem
  *  @brief   implement oyCMMFilterNode_CreateContext_f()
  *
  *  @version Oyranos: 0.1.8
@@ -1247,13 +1329,12 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterPlug_s * plug = 0;
-  oyFilter_s * filter = 0;
-  oyFilterNode_s * input_node = 0;
+  oyFilterNode_s * input_node = 0,
+                 * node = socket->node;
   oyImage_s * image_input = 0;
   oyArray2d_s * array = 0;
-  
+  lcmsTransformWrap_s * ltw  = 0;
 
-  filter = socket->node->filter;
   plug = (oyFilterPlug_s *)socket->node->plugs[0];
   input_node = plug->remote_socket_->node;
   image_input = (oyImage_s*)plug->remote_socket_->data;
@@ -1270,22 +1351,38 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   {
     oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message(oyMSG_WARN,0, "%s: %d can not handle oyFLOAT", __FILE__,__LINE__);
+    error = 1;
   }
 
   channels = oyToChannels_m( image_input->layout_[0] );
 
+  ltw = lcmsCMMTransform_GetWrap_( node->backend_data );
+
   /* now do some position blind manipulations */
-  for( k = 0; k < array->height; ++k)
+  if(ltw)
   {
-    if(data_type == oyDOUBLE)
+    for( k = 0; k < array->height; ++k)
     {
-      in_values = (double*) array->array2d[k];
-      out_values = (double*) array->array2d[k];
-      n = array->width / channels;
+      if(data_type == oyDOUBLE)
+      {
+        in_values = (double*) array->array2d[k];
+        out_values = (double*) array->array2d[k];
+        n = array->width / channels;
+
+        cmsDoTransform( ltw->lcms, in_values, out_values, n );
+
+      if(0)
       for(i = 0; i < n; ++i)
+      {
         for(j = 0; j < channels; ++j)
           out_values[i*channels + j] = in_values[i*channels + j] - 0.5;
+      }
+      }
     }
+  } else
+  {
+    oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
+    error = 1;
   }
 
   return error;

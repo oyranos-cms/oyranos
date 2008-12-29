@@ -66,7 +66,7 @@ typedef int      (*oyCMMInit_f)      ( void );
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2008/07/02
  */
-typedef struct {
+struct oyCMMptr_s {
   oyOBJECT_e           type;           /*!< internal struct type oyOBJECT_CMM_POINTER_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -78,7 +78,7 @@ typedef struct {
   char                 resource[5];    /**< the resource type, e.g. oyCMM_PROFILE, oyCMM_COLOUR_CONVERSION */
   oyStruct_release_f   ptrRelease;     /*!< CMM's deallocation function */
   int                  ref;            /**< Oyranos reference counter */
-} oyCMMptr_s;
+};
 
 oyCMMptr_s * oyCMMptr_LookUp         ( oyStruct_s        * data,
                                        const char        * cmm );

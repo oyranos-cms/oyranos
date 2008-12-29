@@ -126,7 +126,7 @@ main(int argc, char** argv)
   dest = malloc(size);
   for(i = 0; i < w*h; ++i)
     for(j=0; j < 3; ++j)
-      d[i*3+j] = i*3+j;
+      d[i*3+j] = (double)(i*3+j)/(double)size*sizeof(double);
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, 0 );
   image_in = oyImage_Create( w, h, d, OY_TYPE_123_DBL, prof, 0 );
@@ -162,7 +162,7 @@ main(int argc, char** argv)
     for(i = 0; i < w*h*3; i += 3)
     {
       char br = (i/3+1)%w? ' ':'\n';
-      fprintf( stdout, "%.01f %.01f %.01f %c",
+      fprintf( stdout, "%.03f %.03f %.03f %c",
                p[i+0], p[i+1], p[i+2], br );
     }
   }
