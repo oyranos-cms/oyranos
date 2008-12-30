@@ -179,7 +179,7 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
 
 
 
-/** @brief the generic part if a API to implement and set by a CMM
+/** @brief the generic part if a API to implement and set by a CMM or meta backend
  *  @ingroup backend_api
  *
  *  @since Oyranos: version 0.1.8 2007/12/12
@@ -494,8 +494,9 @@ typedef struct {
   oyCMMDataScan_f                  oyCMMDataScan;
 } oyCMMDataTypes_s;
 
+
 /** @struct oyCMMapi5_s
- *  @brief the API 5 to provide and implement filter and script support
+ *  @brief the API 5 to provide filter and script support
  *  @ingroup backend_api
  *
  *  Filters can be provided in non library form, e.g. as text files. This API 
@@ -547,9 +548,11 @@ struct oyCMMapi5_s {
   oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
 
   const char     * options;            /**< default options */
-  const char     * opts_ui;            /**< xml ui elements for filter options*/
+  const char     *(*getUI)(int update);/**< xml ui elements for filter options*/
 
   oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
+  oyCMMGetText_f   getText;            /**< describe selectors */
+  const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
 };
 
 /** @type    oyCMMFilterPlug_Run_f
@@ -582,7 +585,7 @@ typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * connector,
                                        oyArray2d_s      ** output );
 
 /** @struct oyCMMapi7_s
- *  @brief the API 7 to implement data processing
+ *  @brief the API 7 for data processing
  *  @ingroup backend_api
  *
  *  The filter context can be stored in oyFilterNode_s::backend_data if the
@@ -648,7 +651,7 @@ typedef int(*oyCMMdata_Convert_f)    ( oyCMMptr_s        * data_in,
                                        oyFilterNode_s    * node );
 
 /** @struct oyCMMapi6_s
- *  @brief the API 6 to provide and implement context conversion support
+ *  @brief the API 6 to provide context conversion support
  *  @ingroup backend_api
  *
  *  The context provided by a filter can be exotic. The API provides the means
@@ -750,10 +753,10 @@ typedef char *(*oyCMMFilterNode_GetText_f) (
                                        oyAlloc_f           allocateFunc );
 
 /** @struct oyCMMapi4_s
- *  @brief the API 4 to implement and set to provide Filter support
+ *  @brief the API 4 to set to provide Filter support
  *  @ingroup backend_api
  *
- *  Different filters have to implement this struct each one per filter.
+ *  Different filters have to provide this struct each one per filter.
  *
  *  The ::oyCMMFilterNode_ContextToMem @see oyCMMFilterNode_ContextToMem_f
  *  should be implemented in case the context_type is set to a
@@ -802,7 +805,7 @@ struct  oyCMMapi4_s {
   oyName_s         name;
   const char       category[256];      /**< menu structure */
   const char     * options;            /**< default options */
-  const char     * opts_ui;            /**< xml ui elements for filter options*/
+  const char     *(*getUI)(int update);/**< xml ui elements for filter options*/
 };
 
 
