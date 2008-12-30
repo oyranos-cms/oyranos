@@ -210,8 +210,6 @@ int          oyIdToCMM               ( uint32_t            cmmId,
 
 
 
-#define stringAdd(t, txt) oyStringAdd_( &t, txt, \
-                                        oyAllocateFunc_, oyDeAllocateFunc_ )
 #define hashTextAdd_m( text_ ) \
   oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
                             s->oy_->deallocateFunc_ );
