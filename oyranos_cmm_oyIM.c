@@ -191,32 +191,15 @@ oyWIDGET_EVENT_e   oyIMWidgetEvent   ( oyOptions_s       * options,
 
 #define oyIMTexts_TYPE 875
 
-/* unfortunedly string initialisation is not posix compatible for static 
- * fields */
-struct {
-  int type;
-  oyPointer a; oyPointer b; oyPointer c;
-  oyName_s name;
-  oyName_s manufacturer;
-  oyName_s copyright;
-} oyIM_texts = 
-{
-  oyIMTexts_TYPE, 0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, CMM_NICK, "Oyranos modules", "Oyranos supplied modules"},
-  {oyOBJECT_NAME_S, 0,0,0, "Kai-Uwe", "Kai-Uwe Behrmann", "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"},
-  {oyOBJECT_NAME_S, 0,0,0, "newBSD", "Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD", "new BSD license: http://www.opensource.org/licenses/bsd-license.php"}
-};
-
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
- *  @date    2008/12/23
+ *  @date    2008/12/30
  */
-const char * oyIMGetText             ( const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * data )
+const char * oyIMInfoGetText         ( const char        * select,
+                                       oyNAME_e            type )
 {
          if(strcmp(select, "name")==0)
   {
@@ -250,9 +233,9 @@ const char * oyIMGetText             ( const char        * select,
 /** @instance oyIM_cmm_module
  *  @brief    oyIM module infos
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/01/02 (Oyranos: 0.1.8)
- *  @date    2008/01/02
+ *  @date    2008/12/30
  */
 oyCMMInfo_s oyIM_cmm_module = {
 
@@ -260,13 +243,11 @@ oyCMMInfo_s oyIM_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.1.10",
-  oyIMGetText, /* oyCMMInfoGetText_f */
+  oyIMInfoGetText, /* oyCMMGetText_f */
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyIM_api3,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
-
-  (oyStruct_s*) &oyIM_texts
 };
 

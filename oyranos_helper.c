@@ -10,7 +10,8 @@
  *  @brief    helpers
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:\n
+ *  new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2005/09/02
  */
 

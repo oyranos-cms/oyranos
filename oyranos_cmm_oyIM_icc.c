@@ -110,15 +110,30 @@ char oyIM_default_colour_icc_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-char oyIM_default_colour_icc_options_ui[] = {
- "\
-  <h3>Oyranos Default Profiles:</h3>\n\
+#define A(long_text) STRING_ADD( tmp, long_text)
+
+const char * oyIMGetDefaultColourIccOptionsUI ( int update )
+{
+  static char * tmp = 0;
+
+  if(!update && tmp)
+    return tmp;
+
+  oyStringCopy_( "\
+  <h3>Oyranos ", oyAllocateFunc_ );
+
+  A(       _("Default Profiles"));
+  A(                         ":</h3>\n\
   <table>\n\
    <tr>\n\
-    <td>Editing Rgb:</td>\n\
+    <td>" );
+  A( _("Editing Rgb"));
+  A(              ":</td>\n\
     <td>\n\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/default/profile/editing_rgb\">\n\
-      <xf:choices label=\"Editing RGB\">\n\
+      <xf:choices label=\"" );
+  A(                   _("Editing Rgb"));
+  A(                                "\">\n\
        <sta:profiles cspace1=\"RGB\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
         <xf:label>sRGB.icc</xf:label>\n\
@@ -133,7 +148,9 @@ char oyIM_default_colour_icc_options_ui[] = {
     </td>\n\
    </tr>\n\
    <tr>\n\
-    <td>Editing Cmyk:</td>\n\
+    <td>" );
+  A( _("Editing Cmyk"));
+  A(               ":</td>\n\
     <td>\n\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/default/profile/editing_cmyk\">\n\
       <xf:choices>\n\
@@ -147,7 +164,9 @@ char oyIM_default_colour_icc_options_ui[] = {
     </td>\n\
    </tr>\n\
    <tr>\n\
-    <td>Editing Lab:</td>\n\
+    <td>" );
+  A( _("Editing Lab"));
+  A(              ":</td>\n\
     <td>\n\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/default/profile/editing_lab\">\n\
       <xf:choices xml:lang=\"en\" label=\"Editing Lab\">\n\
@@ -158,14 +177,16 @@ char oyIM_default_colour_icc_options_ui[] = {
        </xf:item>\n\
        <xf:item>\n\
         <xf:label>CIELab.icc</xf:label>\n\
-        <xf:value>CIELab.icc</xf:value>\n\
-       </xf:item>\n\
+        <xf:value>CIELab.icc</xf:value>\n" );
+  A(  "</xf:item>\n\
       </xf:choices>\n\
      </xf:select1>\n\
     </td>\n\
    </tr>\n\
    <tr>\n\
-    <td>Editing XYZ:</td>\n\
+    <td>" );
+  A( _("Editing XYZ") );
+  A(              ":</td>\n\
     <td>\n\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_xyz\">\n\
       <xf:choices>\n\
@@ -183,7 +204,9 @@ char oyIM_default_colour_icc_options_ui[] = {
     </td>\n\
    </tr>\n\
    <tr>\n\
-    <td>Editing Gray:</td>\n\
+    <td>" );
+  A( _("Editing Gray"));
+  A(               ":</td>\n\
     <td>\n\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_gray\">\n\
       <xf:choices>\n\
@@ -201,8 +224,10 @@ char oyIM_default_colour_icc_options_ui[] = {
     </td>\n\
    </tr>\n\
   </table>\n\
-"
-}; 
+" );
+
+  return tmp;
+} 
 
 char * oyIMstructGetText             ( oyStruct_s        * item,
                                        oyNAME_e            type,
@@ -471,9 +496,9 @@ int          oyIMFilterScan          ( oyPointer           data,
  *
  *  a interpreter for ICC CMM's
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/13 (Oyranos: 0.1.9)
- *  @date    2008/11/23
+ *  @date    2008/11/30
  */
 oyCMMapi5_s  oyIM_api5_colour_icc = {
 
@@ -502,7 +527,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   oyIMWidgetEvent, /* oyWidgetEvent_f */
 
   oyIM_default_colour_icc_options,   /* options */
-  oyIM_default_colour_icc_options_ui,   /* opts_ui_ */
+  oyIMGetDefaultColourIccOptionsUI,  /* getUI */
 
   icc_data, /* data_types */
 };

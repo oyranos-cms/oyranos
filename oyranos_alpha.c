@@ -1805,10 +1805,9 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
   if(!error)
   {
     reg = oyStringCopy_( "///", oyAllocateFunc_ );
-    oyStringAdd_( &reg, cmm_ptr->resource, oyAllocateFunc_, oyDeAllocateFunc_ );
-    oyStringAdd_( &reg, "_", oyAllocateFunc_, oyDeAllocateFunc_ );
-    oyStringAdd_( &reg, cmm_ptr_out->resource,
-                  oyAllocateFunc_, oyDeAllocateFunc_ );
+    STRING_ADD( reg, cmm_ptr->resource );
+    STRING_ADD( reg, "_" );
+    STRING_ADD( reg, cmm_ptr_out->resource );
 
     api6 = (oyCMMapi6_s*) oyCMMsGetFilterApi_( 0,0, reg, oyOBJECT_CMM_API6_S );
 
@@ -2479,57 +2478,53 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
 
   oySprintf_(num,"%d", cmm_info->oy_compatibility );
 
-  oyStringAdd_( &text, cmm_info->cmm, oyAllocateFunc_, oyDeAllocateFunc_ );
-  oyStringAdd_( &text, " ", oyAllocateFunc_, oyDeAllocateFunc_ );
-  oyStringAdd_( &text, cmm_info->backend_version, oyAllocateFunc_, oyDeAllocateFunc_ );
-  oyStringAdd_( &text, "/", oyAllocateFunc_, oyDeAllocateFunc_ );
-  oyStringAdd_( &text, num, oyAllocateFunc_, oyDeAllocateFunc_ );
-  oyStringAdd_( &text, ":", oyAllocateFunc_, oyDeAllocateFunc_ );
+  STRING_ADD( text, cmm_info->cmm );
+  STRING_ADD( text, " " );
+  STRING_ADD( text, cmm_info->backend_version );
+  STRING_ADD( text, "/" );
+  STRING_ADD( text, num );
+  STRING_ADD( text, ":" );
 
 #define CMMINFO_ADD_NAME_TO_TEXT( name_, select ) \
-  oyStringAdd_( &text, "\n  " name_ ":\n    ", oyAllocateFunc_, oyDeAllocateFunc_ );\
-  oyStringAdd_( &text, cmm_info->getText( select, oyNAME_NICK, cmm_info->data),\
-                oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, "\n    ", oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, cmm_info->getText( select, oyNAME_NAME, cmm_info->data),\
-  oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, "\n    ", oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, cmm_info->getText( select, oyNAME_DESCRIPTION, cmm_info->data),\
-  oyAllocateFunc_, oyDeAllocateFunc_ ); \
-  oyStringAdd_( &text, "\n", oyAllocateFunc_, oyDeAllocateFunc_ );
+  STRING_ADD( text, "\n  " ); \
+  STRING_ADD( text, name_ ); \
+  STRING_ADD( text, ":\n    " ); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_NICK ) ); \
+  STRING_ADD( text, "\n    " ); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_NAME ) ); \
+  STRING_ADD( text, "\n    " ); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_DESCRIPTION ) ); \
+  STRING_ADD( text, "\n" );
 
-  CMMINFO_ADD_NAME_TO_TEXT( "Name", "name" )
-  CMMINFO_ADD_NAME_TO_TEXT( "Manufacturer", "manufacturer" )
-  CMMINFO_ADD_NAME_TO_TEXT( "Copyright", "copyright" )
+  CMMINFO_ADD_NAME_TO_TEXT( _("Name"), "name" )
+  CMMINFO_ADD_NAME_TO_TEXT( _("Manufacturer"), "manufacturer" )
+  CMMINFO_ADD_NAME_TO_TEXT( _("Copyright"), "copyright" )
 
       if(cmm_info)
       {
         tmp = cmm_info->api;
-        oyStringAdd_( &text, "\n  API(s): ", oyAllocateFunc_, oyDeAllocateFunc_);
+        STRING_ADD( text, "\n  API(s): " );
 
         while(tmp)
         {
           type = oyCMMapi_Check_(tmp);
 
           oySprintf_(num," %d:", type );
-          oyStringAdd_( &text, num, oyAllocateFunc_, oyDeAllocateFunc_ );
-          oyStringAdd_( &text, oyStructTypeToText( tmp->type ),
-                        oyAllocateFunc_, oyDeAllocateFunc_ );
+          STRING_ADD( text, num );
+          STRING_ADD( text, oyStructTypeToText( tmp->type ) );
 
           if(type == oyOBJECT_CMM_API4_S)
           {
             cmm_api4 = (oyCMMapi4_s*) tmp;
-            oyStringAdd_( &text, "\n    Registration: ",
-                          oyAllocateFunc_, oyDeAllocateFunc_ );
-            oyStringAdd_( &text, cmm_api4->registration,
-                          oyAllocateFunc_, oyDeAllocateFunc_ );
+            STRING_ADD( text, "\n    Registration: " );
+            STRING_ADD( text, cmm_api4->registration );
             CMMINFO_ADD_NAME_TO_TEXT( "Name", "name" )
           }
 
           tmp = tmp->next;
         }
       }
-  oyStringAdd_( &text, "\n", oyAllocateFunc_, oyDeAllocateFunc_ );
+  STRING_ADD( text, "\n" );
 
   return text;
 }
@@ -2670,7 +2665,7 @@ oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
   }
 
   api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-  oyStringAdd_( &api_reg, class, oyAllocateFunc_, oyDeAllocateFunc_ );
+  STRING_ADD( api_reg, class );
   oyFree_m_( class );
 
   reg_filter.type = type;
@@ -3825,20 +3820,21 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   }
 
   if(!error)
+  {
     oyObject_Lock( s, __FILE__, __LINE__ );
 
-  if(!error && --s->ref_ > 0)
-    ref = s->ref_;
+    if(!error && --s->ref_ > 0)
+      ref = s->ref_;
 
-  if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
-  {
-    int e_a = error;
-    error = pow(e_a,2.1);
-    error = e_a;
-  }
+    if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
+    {
+      int e_a = error;
+      error = pow(e_a,2.1);
+      error = e_a;
+    }
 
-  if(!error)
     oyObject_UnLock( s, __FILE__, __LINE__ );
+  }
 
   return ref;
 }
@@ -4739,7 +4735,7 @@ oyChar* oyCMMCacheListPrint_()
 
   oySprintf_( refs,"%s:%d Oyranos CMM cache with %d entries:\n", 
               __FILE__,__LINE__, n);
-  oyStringAdd_( &text, refs, oyAllocateFunc_, oyDeAllocateFunc_ );
+  STRING_ADD( text, refs );
 
   for(i = 0; i < n ; ++i)
   {
@@ -4749,12 +4745,9 @@ oyChar* oyCMMCacheListPrint_()
     if(compare)
     {
       oySprintf_(refs,"%d: ", compare->oy_->ref_);
-      oyStringAdd_( &text, refs,
-                           oyAllocateFunc_, oyDeAllocateFunc_ );
-      oyStringAdd_( &text, oyObject_GetName(compare->oy_, oyNAME_NAME),
-                           oyAllocateFunc_, oyDeAllocateFunc_ );
-      oyStringAdd_( &text, "\n",
-                           oyAllocateFunc_, oyDeAllocateFunc_ );
+      STRING_ADD( text, refs );
+      STRING_ADD( text, oyObject_GetName(compare->oy_, oyNAME_NAME) );
+      STRING_ADD( text, "\n" );
     }
   }
 
@@ -5301,9 +5294,9 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
       case oyVAL_INT:
       case oyVAL_DOUBLE:
       case oyVAL_INT_LIST:
-      case oyVAL_DOUBLE_LIST: stringAdd( text, tmp ); break;
-      case oyVAL_STRING:      stringAdd( text, v->string ); break;
-      case oyVAL_STRING_LIST: stringAdd( text, v->string_list[i] ); break;
+      case oyVAL_DOUBLE_LIST: STRING_ADD( text, tmp ); break;
+      case oyVAL_STRING:      STRING_ADD( text, v->string ); break;
+      case oyVAL_STRING_LIST: STRING_ADD( text, v->string_list[i] ); break;
       case oyVAL_STRUCT:      break;
       }
       if(obj->value_type == oyVAL_STRUCT)
@@ -5312,12 +5305,12 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
         {
           oyStruct_s * oy_struct = oyStructList_Get_( oy_struct_list, i );
           if(oy_struct && oy_struct->oy_)
-            stringAdd ( text, oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
+            STRING_ADD ( text, oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
         } else if(v->oy_struct->oy_)
-          stringAdd ( text, oyObject_GetName( v->oy_struct->oy_, oyNAME_NICK ));
+          STRING_ADD ( text, oyObject_GetName( v->oy_struct->oy_, oyNAME_NICK ));
       }
       if(i)
-        stringAdd ( text, ":" );
+        STRING_ADD ( text, ":" );
     }
 
     erg = oyStringCopy_( text, allocateFunc );
@@ -5390,8 +5383,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 
     if(type == oyNAME_NICK)
     {
-      stringAdd ( text, oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ) );
-      stringAdd ( text, ":" );
+      STRING_ADD ( text, oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ) );
+      STRING_ADD ( text, ":" );
     } else if(type == oyNAME_NAME)
     {
       list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
@@ -5399,18 +5392,18 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
       for( i = 0; i < n; ++i )
       {
         for(j = 0; j < i; ++j)
-          stringAdd ( text, " " );
-        stringAdd ( text, "<" );
-        stringAdd ( text, list[i] );
+          STRING_ADD ( text, " " );
+        STRING_ADD ( text, "<" );
+        STRING_ADD ( text, list[i] );
         if(i+1==n)
-          stringAdd ( text, ">" );
+          STRING_ADD ( text, ">" );
         else
-          stringAdd ( text, ">\n" );
+          STRING_ADD ( text, ">\n" );
       }
     }
 
     tmp = oyOption_GetValueText( obj, oyAllocateFunc_ );
-    stringAdd ( text, tmp );
+    STRING_ADD ( text, tmp );
 
     if(type == oyNAME_NAME)
     {
@@ -5420,13 +5413,13 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
       {
         if(i+1 < n)
         for(j = 0; j < i; ++j)
-          stringAdd ( text, " " );
-        stringAdd ( text, "</" );
-        stringAdd ( text, list[i] );
+          STRING_ADD ( text, " " );
+        STRING_ADD ( text, "</" );
+        STRING_ADD ( text, list[i] );
         if(i)
-          stringAdd ( text, ">\n" );
+          STRING_ADD ( text, ">\n" );
         else
-          stringAdd ( text, ">" );
+          STRING_ADD ( text, ">" );
       }
     }
 
@@ -5750,8 +5743,8 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
       for( i = 0; i < *texts_n; ++i )
       {
         if(i)
-          oyStringAdd_( &tmp, "/", oyAllocateFunc_, oyDeAllocateFunc_ );
-        oyStringAdd_( &tmp, (*texts)[i], oyAllocateFunc_, oyDeAllocateFunc_ );
+          STRING_ADD( tmp, "/" );
+        STRING_ADD( tmp, (*texts)[i] );
       }
 
       o->registration = oyStringCopy_( tmp, o->oy_->allocateFunc_ );
@@ -5806,7 +5799,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
   {
     /* add a root level node - <top> */
     tmp = oyStringAppend_( root_start, text, oyAllocateFunc_ );
-    oyStringAdd_( &tmp, root_end, oyAllocateFunc_, oyDeAllocateFunc_ );
+    STRING_ADD( tmp, root_end );
 
     doc = xmlParseMemory( tmp, oyStrlen_( tmp ) );
     error = !doc;
@@ -6414,8 +6407,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     for( i = 0; i < n; ++i )
     {
       o = oyOptions_Get( options, i );
-      stringAdd ( text, oyOption_GetText( o, type) );
-      stringAdd ( text, "\n" );
+      STRING_ADD ( text, oyOption_GetText( o, type) );
+      STRING_ADD ( text, "\n" );
 
       oyOption_Release( &o );
     }
@@ -8395,10 +8388,8 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
       } else
         oyProfileTag_Release( &tmp );
     }
-  }
-
-  if(s && n)
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+  }
 
   return tag;
 }
@@ -12391,6 +12382,8 @@ int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
 {
   int error = !s;
   oyAlloc_f allocateFunc_ = 0;
+  static char * lang = 0;
+  int update = 1;
 
   if(!error)
     allocateFunc_ = s->oy_->allocateFunc_;
@@ -12405,7 +12398,16 @@ int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
 
     s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
 
-    s->opts_ui_ = oyStringCopy_( cmm_api4->opts_ui, allocateFunc_ );
+    /* we lock here as cmm_api4->getUI might not be thread save */
+    {
+      oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+      if(oyStrcmp_( oyNoEmptyName_m_(oyLanguage()), lang ) == 0)
+        update = 0;
+
+      s->opts_ui_ = oyStringCopy_( cmm_api4->getUI(update), allocateFunc_ );
+      oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+    }
+
     s->api4_ = cmm_api4;
   }
 
@@ -13904,9 +13906,8 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
             hash_text_ = oyFilterNode_GetText( node, oyNAME_NICK );
 
           hash_text = oyStringCopy_( s->api4_->context_type, oyAllocateFunc_ );
-          oyStringAdd_( &hash_text, ":", oyAllocateFunc_, oyDeAllocateFunc_ );
-          oyStringAdd_( &hash_text, hash_text_,
-                        oyAllocateFunc_, oyDeAllocateFunc_);
+          STRING_ADD( hash_text, ":" );
+          STRING_ADD( hash_text, hash_text_ );
 
           if(oy_debug > 3)
           {
@@ -15658,7 +15659,7 @@ void               oyConversion_ToTextShowNode_ (
     oySprintf_(text, "  %c [ label=\"{<plug> %d| Filter Node %c\\n Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n Type: \\\"%s\\\"|<socket>}\"];\n", name, n, name,
     node->filter->category_, node->filter->api4_->id_,
     node->filter->registration_ );
-    oyStringAdd_( stream, text, allocateFunc, deallocateFunc );
+    STRING_ADD( *stream, text );
   }
 
   {
@@ -15680,7 +15681,7 @@ void               oyConversion_ToTextShowNode_ (
           if(sub_format == 1)
           {
             oySprintf_(text, "    %c:socket -> %c:plug [arrowhead=crow, arrowtail=box];\n", name, name+1+j );
-            oyStringAdd_( stream, text, allocateFunc, deallocateFunc );
+            STRING_ADD( *stream, text );
           }
  
           oyConversion_ToTextShowNode_( remote_plug->node, stream,
@@ -15731,40 +15732,40 @@ char             * oyConversion_ToText (
 #endif
 
 
-  stringAdd( text, "digraph G {\n" );
-  stringAdd( text, "  rankdir=LR\n" );
-  stringAdd( text, "  graph [fontname=Helvetica, fontsize=12];\n" );
-  stringAdd( text, "  node [shape=record, fontname=Helvetica, fontsize=10, style=\"filled,rounded\"];\n" );
-  stringAdd( text, "  edge [fontname=Helvetica, fontsize=10];\n" );
-  stringAdd( text, "\n" );
-  stringAdd( text, "  conversion [shape=plaintext, label=<\n" );
-  stringAdd( text, "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n" );
-  stringAdd( text, "  <tr><td>oyConversions_s</td></tr>\n" );
-  stringAdd( text, "  <tr><td>\n" );
-  stringAdd( text, "     <table border=\"0\" cellborder=\"0\" align=\"left\">\n" );
-  stringAdd( text, "       <tr><td align=\"left\">...</td></tr>\n" );
-  stringAdd( text, "       <tr><td align=\"left\" port=\"in\">+input</td></tr>\n" );
-  stringAdd( text, "       <tr><td align=\"left\" port=\"out\">+out_</td></tr>\n" );
-  stringAdd( text, "       <tr><td align=\"left\">...</td></tr>\n" );
-  stringAdd( text, "     </table>\n" );
-  stringAdd( text, "     </td></tr>\n" );
-  stringAdd( text, "  <tr><td> </td></tr>\n" );
-  stringAdd( text, "</table>>,\n" );
-  stringAdd( text, "                    style=\"\", color=black];\n" );
-  stringAdd( text, "\n" );
+  STRING_ADD( text, "digraph G {\n" );
+  STRING_ADD( text, "  rankdir=LR\n" );
+  STRING_ADD( text, "  graph [fontname=Helvetica, fontsize=12];\n" );
+  STRING_ADD( text, "  node [shape=record, fontname=Helvetica, fontsize=10, style=\"filled,rounded\"];\n" );
+  STRING_ADD( text, "  edge [fontname=Helvetica, fontsize=10];\n" );
+  STRING_ADD( text, "\n" );
+  STRING_ADD( text, "  conversion [shape=plaintext, label=<\n" );
+  STRING_ADD( text, "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n" );
+  STRING_ADD( text, "  <tr><td>oyConversions_s</td></tr>\n" );
+  STRING_ADD( text, "  <tr><td>\n" );
+  STRING_ADD( text, "     <table border=\"0\" cellborder=\"0\" align=\"left\">\n" );
+  STRING_ADD( text, "       <tr><td align=\"left\">...</td></tr>\n" );
+  STRING_ADD( text, "       <tr><td align=\"left\" port=\"in\">+input</td></tr>\n" );
+  STRING_ADD( text, "       <tr><td align=\"left\" port=\"out\">+out_</td></tr>\n" );
+  STRING_ADD( text, "       <tr><td align=\"left\">...</td></tr>\n" );
+  STRING_ADD( text, "     </table>\n" );
+  STRING_ADD( text, "     </td></tr>\n" );
+  STRING_ADD( text, "  <tr><td> </td></tr>\n" );
+  STRING_ADD( text, "</table>>,\n" );
+  STRING_ADD( text, "                    style=\"\", color=black];\n" );
+  STRING_ADD( text, "\n" );
 
   /* add more node descriptions */
   oyConversion_ToTextShowNode_( s->input, &text,
                                 reserved, 0, &counter,
                                 oyAllocateFunc_, oyDeAllocateFunc_ );
 
-  stringAdd( text, "\n" );
-  stringAdd( text, "  subgraph cluster_0 {\n" );
-  stringAdd( text, "    label=\"" );
-  stringAdd( text, head_line );
-  stringAdd( text, "\"\n" );
-  stringAdd( text, "    color=gray;\n" );
-  stringAdd( text, "\n" );
+  STRING_ADD( text, "\n" );
+  STRING_ADD( text, "  subgraph cluster_0 {\n" );
+  STRING_ADD( text, "    label=\"" );
+  STRING_ADD( text, head_line );
+  STRING_ADD( text, "\"\n" );
+  STRING_ADD( text, "    color=gray;\n" );
+  STRING_ADD( text, "\n" );
 
   counter = 0;
   /* add more node placements */
@@ -15772,15 +15773,15 @@ char             * oyConversion_ToText (
                                 reserved, 1, &counter,
                                 oyAllocateFunc_, oyDeAllocateFunc_ );
 
-  stringAdd( text, "\n" );
-  stringAdd( text, "    conversion:in -> A [arrowhead=none, arrowtail=normal];\n" );
+  STRING_ADD( text, "\n" );
+  STRING_ADD( text, "    conversion:in -> A [arrowhead=none, arrowtail=normal];\n" );
   oySprintf_( temp, "    conversion:out -> %c;\n", 'A' + counter - 1 );
-  stringAdd( text, temp );
-  stringAdd( text, "  }\n" );
-  stringAdd( text, "\n" );
-  stringAdd( text, "  conversion\n" );
-  stringAdd( text, "}\n" );
-  stringAdd( text, "\n" );
+  STRING_ADD( text, temp );
+  STRING_ADD( text, "  }\n" );
+  STRING_ADD( text, "\n" );
+  STRING_ADD( text, "  conversion\n" );
+  STRING_ADD( text, "}\n" );
+  STRING_ADD( text, "\n" );
 
 #if USE_GETTEXT
   setlocale(LC_NUMERIC, "C");
@@ -15788,7 +15789,7 @@ char             * oyConversion_ToText (
   setlocale(LC_NUMERIC, save_locale);
 #endif
 
-  oyStringAdd_( &text, "", allocateFunc, oyDeAllocateFunc_ );
+  STRING_ADD( text, "" );
 
   return text;
 }
@@ -16741,10 +16742,6 @@ oyCMMInfo_s * oyCMMInfo_Copy_
       s->backend_version = oyStringCopy_( obj->backend_version, allocateFunc_ );
 
     s->getText = obj->getText;
-    if(obj->data && obj->data->copy)
-      s->data = obj->data->copy( obj->data, object );
-    else
-      s->data = obj->data;
       
     s->oy_compatibility = obj->oy_compatibility;
   }
@@ -16819,9 +16816,6 @@ OYAPI int  OYEXPORT
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
-
-  if(s->data && s->data->release)
-    s->data->release( &s->data );
 
   if(s->oy_->deallocateFunc_)
   {

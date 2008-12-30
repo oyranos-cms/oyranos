@@ -156,11 +156,10 @@ oyCMMapi2_s oyX1_api2 = {
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
- *  @date    2008/12/23
+ *  @date    2008/12/30
  */
 const char * oyX1GetText             ( const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * data )
+                                       oyNAME_e            type )
 {
          if(strcmp(select, "name")==0)
   {
@@ -193,9 +192,9 @@ const char * oyX1GetText             ( const char        * select,
 /** @instance oyX1_cmm_module
  *  @brief    oyX1 module infos
  *
- *  @version Oyranos: 0.1.8
- *  @date    2007/12/12
+ *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.8)
+ *  @date    2008/12/30
  */
 oyCMMInfo_s oyX1_cmm_module = {
 
@@ -209,7 +208,5 @@ oyCMMInfo_s oyX1_cmm_module = {
   (oyCMMapi_s*) & oyX1_api2,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
-
-  0
 };
 

@@ -164,9 +164,8 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
 int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket,
                                        oyArray2d_s      ** pixel );
-const char * lcmsGetText             ( const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * data );
+const char * lcmsInfoGetText         ( const char        * select,
+                                       oyNAME_e            type );
 
 
 
@@ -1636,11 +1635,10 @@ oyCMMapi1_s  lcms_api1 = {
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
- *  @date    2008/12/23
+ *  @date    2008/12/30
  */
-const char * lcmsGetText             ( const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * data )
+const char * lcmsInfoGetText         ( const char        * select,
+                                       oyNAME_e            type )
 {
          if(strcmp(select, "name")==0)
   {
@@ -1673,9 +1671,9 @@ const char * lcmsGetText             ( const char        * select,
 /** @instance lcms_cmm_module
  *  @brief    lcms module infos
  *
- *  @version Oyranos: 0.1.8
- *  @date    2007/11/00
+ *  @version Oyranos: 0.1.10
  *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/12/30
  */
 oyCMMInfo_s lcms_cmm_module = {
 
@@ -1683,13 +1681,11 @@ oyCMMInfo_s lcms_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.6",
-  lcmsGetText,
+  lcmsInfoGetText,
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & lcms_api1,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"},
-
-  0
 };
 

@@ -199,8 +199,7 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
  *  @date    2008/12/23
  */
 const char * oyraGetText             ( const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * data )
+                                       oyNAME_e            type )
 {
          if(strcmp(select, "name")==0)
   {
@@ -250,7 +249,5 @@ oyCMMInfo_s oyra_cmm_module = {
   (oyCMMapi_s*) & oyra_api4_image_root,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
-
-  0
 };
 
