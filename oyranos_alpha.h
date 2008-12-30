@@ -2503,9 +2503,13 @@ typedef struct oyCMMapi_s oyCMMapi_s;
 
 
 /**
- *  @param         select              "name", "manufacturer" or "copyright"
+ *  type:
+ *  - oyNAME_NICK: compact, e.g. "GPU"
+ *  - oyNAME_NAME: a short explanation, e.g. "Rendering with GPU"
+ *  - oyNAME_DESCRIPTION: a long explanation, e.g. "Accelerated calculations on a GPU"
+ *
+ *  @param         select              one from "name", "manufacturer" or "copyright"
  *  @param         type                select flavour
- *  @param         data                oyCMMInfo_s::data pointer
  *  @return                            text string or zero
  *
  *  @version Oyranos: 0.1.10
@@ -2513,9 +2517,8 @@ typedef struct oyCMMapi_s oyCMMapi_s;
  *  @date    2008/12/23
  */
 typedef
-const char *    (* oyCMMInfoGetText_f)(const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * data );
+const char *    (* oyCMMGetText_f)   ( const char        * select,
+                                       oyNAME_e            type );
 
 /** @brief   the CMM API resources struct to implement and set by a CMM
  *  @ingroup cmm_handling
@@ -2552,15 +2555,14 @@ typedef struct {
   oyObject_s       oy_;                /**< zero for static data */
   char             cmm[8];             /*!< ICC signature, eg 'lcms' */
   char           * backend_version;    /*!< non translatable, eg "v1.17" */
-  /** translatable, e.g. "name": "lcms" "little cms" "..." */
-  oyCMMInfoGetText_f getText;
+  /** translatable, e.g. "name": "lcms" "little cms" "A CMM with 100k ..." */
+  oyCMMGetText_f   getText;
 
   int              oy_compatibility;   /*!< last supported Oyranos CMM API : OYRANOS_VERSION */
 
   oyCMMapi_s     * api;                /**< must be casted to a according API, zero terminated list */
 
   oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
-  oyStruct_s     * data;               /**< private data passed to getName */
 } oyCMMInfo_s;
 
 OYAPI oyCMMInfo_s * OYEXPORT
