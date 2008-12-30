@@ -316,15 +316,15 @@ typedef struct {
 /* -------------------------------------------------------------------------*/
 typedef struct oyCMMapi5_s oyCMMapi5_s;
 
-/** @struct oyCMMapiFilter_s
- *  @brief the filter API 4-7 interface
+/** @struct  oyCMMapiFilter_s
+ *  @brief   the filter API 4-7 interface
  *  @ingroup backend_api
  *
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.
  *
  *  @version Oyranos: 0.1.10
- *  @since   2008/12/28 (Oyranos: 0.1.9)
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2008/12/28
  */
 typedef struct {
@@ -349,6 +349,8 @@ typedef struct {
   char           * id_;                /**< Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;              /**< meta backend; keep to zero */
 } oyCMMapiFilter_s;
+
+
 
 /** @type    oyCMMData_LoadFromMem_f
  *  @brief   load a filter data from a in memory data blob
@@ -533,7 +535,7 @@ struct oyCMMapi5_s {
   char           * id_;                /**< Oyranos id; keep to zero */
 
   /** a colon separated list of sub paths to expect the scripts in,
-      e.g. "color/shiva:color/ctl" */
+      e.g. "color/shiva:color/octl" */
   const char     * sub_paths;
   /** optional filename extensions, e.g. "shi:ctl" */
   const char     * ext;
@@ -591,6 +593,8 @@ typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * connector,
  *  The filter context can be stored in oyFilterNode_s::backend_data if the
  *  oyCMMapi7_s::context_type is filled with a understood format hint.
  *  The registration should provide keywords to select the processing function.
+ *
+ *  (in CM jargon - interpolator)
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/15 (Oyranos: 0.1.9)
@@ -761,6 +765,11 @@ typedef char *(*oyCMMFilterNode_GetText_f) (
  *  The ::oyCMMFilterNode_ContextToMem @see oyCMMFilterNode_ContextToMem_f
  *  should be implemented in case the context_type is set to a
  *  context data type.
+ *
+ *  @todo in commit 5a2b7396 the connection descriptors where moved to 
+ *  oyCMMapi7_s. For a context, which must be created from the processing data
+ *  this is not relyable, as the interpolator can not be shure that the context
+ *  plug-in supports the same or larger set of connectors.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/24 (Oyranos: 0.1.8)

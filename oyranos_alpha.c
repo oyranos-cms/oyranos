@@ -3321,8 +3321,8 @@ digraph Backends {
       api6_A [label="//colour/icc.lcms Context Converter\n oyCMMapi6_s"];
       api7_A [label="//colour/icc.lcms Processor\n oyCMMapi7_s"];
 
-      api6_C [label="//colour/icc.ctl Context Converter\n oyCMMapi6_s"];
-      api7_C [label="//colour/icc.ctl Processor\n oyCMMapi7_s"];
+      api6_C [label="//colour/icc.octl Context Converter\n oyCMMapi6_s"];
+      api7_C [label="//colour/icc.octl Processor\n oyCMMapi7_s"];
 
       m [label="Monitor Functions\n oyCMMapi2_s"];
       icc [label="ICC Profile Functions\n oyCMMapi3_s"];
@@ -3356,7 +3356,7 @@ digraph Backends {
           node [style="filled"];
           api6_C;
           api7_C;
-          label="\"ctl \"";
+          label="\"octl\"";
         }
 
         subgraph cluster_3 {
@@ -3402,27 +3402,119 @@ digraph Backends {
  *  to provide the means for combining complicated C libraries with hardware
  *  accelerated modules. The following paragraphs provide a overview.
  *
- *  The oyCMMapi5_s plug-in structure defines a 
- *  meta backend to load plug-ins, from a to be defined directory with
- *  to be defined naming criterias. This API defines at the same time allowed
- *  input data formats.
- *
- *  The oyCMMapi4_s is the structure for plug-ins in Oyranos. It is itself
- *  not allocated by Oyranos itself. A meta backend must do this. A oyCMMapi4_s
- *  can define a context data format, it provides. This context is a
- *  intermediate processing state for all of the context data influencing
- *  options and input datas. This structure may contain as well the GUI.
+ *  The oyCMMapi5_s plug-in structure defines a meta backend to load plug-ins,
+ *  from a to be defined directory with to be defined naming criterias. This
+ *  API defines at the same time allowed input data formats. The meta backend 
+ *  loads or constructs all parts of a plug-in, oyCMMapi4_s, oyCMMapi7_s and 
+ *  oyCMMapi6_s.
  *
  *  oyCMMapi7_s eighter deploys the context created in a oyCMMapi4_s filter, or
  *  simply processes the Oyranos oyFilterNode_s graph element. It is responsible
  *  to request data from the graph and process them.
  *  Members are responsible to describe the filters capabilities for connecting
- *  to other filters in the graph.
+ *  to other filters in the graph. Processors without context should describe
+ *  their own UI. Processors with context must delegate this to oyCMMapi4_s.
+ *  oyCMMapi7_s is mandatory.
+ *
+ *  The oyCMMapi4_s is a structure to create a context for a oyCMMapi7_s
+ *  processor. This context is a intermediate processing state for all of the
+ *  context data influencing options and input datas. This structure 
+ *  contains as well the GUI. oyCMMapi4_s is mandatory and must contain the same
+ *  registration string like the according oyCMMapi7_s.
  *
  *  In case a oyCMMapi7_s function can not handle a certain provided context
  *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
  *  a fitting oyCMMapi6_s data convertor. This API is only required for filters,
- *  which request contexts.
+ *  which request incompatible contexts from a oyCMMapi4_s structure.
+ *
+ *  @dot
+digraph Anatomy_A {
+  nodesep=.1;
+  ranksep=1.;
+  rankdir=LR;
+  graph [fontname=Helvetica, fontsize=14];
+  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
+
+  subgraph cluster_7 {
+    label="Different Filter Processors - Same Context + UI";
+    color=white;
+    clusterrank=global;
+
+      n [label="Filter Node A\n oyFilterNode_s" ];
+      n2 [label="Filter Node B\n oyFilterNode_s" ];
+
+      node [width = 2.5, style=filled];
+
+      api4_A [label="//colour/icc.lcms\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | <o>Options | <ui>XFORMS GUI"];
+      api6_A [label="//colour/icc.lcms Context Converter\n oyCMMapi6_s\n oyDL_lcCC"];
+      api7_A [label="//colour/icc.lcms Processor\n oyCMMapi7_s"];
+
+      api6_C [label="//colour/icc.octl Context Converter\n oyCMMapi6_s\n oyDL_oCTL"];
+      api7_C [label="//colour/icc.octl Processor\n oyCMMapi7_s"];
+
+      subgraph cluster_0 {
+        rank=max;
+        color=white;
+        style=dashed;
+        api4_A; api6_A; api7_A; n;
+        label="";
+      }
+      subgraph cluster_1 {
+        rank=max;
+        color=white;
+        style=dashed;
+        api7_C; api6_C; n2;
+        label="";
+      }
+
+      api4_A:f -> api6_A -> api7_A [arrowhead="open", color=black];
+      api4_A:f -> api6_C -> api7_C [arrowhead="open", color=black];
+      api4_A:o -> n [arrowhead="open", color=black];
+      api4_A:ui -> n [arrowhead="open", color=black];
+      api4_A:o -> n2 [arrowhead="open", color=black];
+      api4_A:ui -> n2 [arrowhead="open", color=black];
+  }
+} @enddot
+ *  @dot
+digraph Anatomy_B {
+  nodesep=.1;
+  ranksep=1.;
+  rankdir=LR;
+  graph [fontname=Helvetica, fontsize=14];
+  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
+
+  subgraph cluster_7 {
+    label="UI + Processor";
+    color=white;
+    clusterrank=global;
+
+      n [label="Filter Node\n oyFilterNode_s" ];
+
+      node [width = 2.5, style=filled];
+
+      api4_A [label="//image/root.oyra\n oyCMMapi4_s | <o>Options | <ui>XFORMS GUI"];
+      api7_A [label="//image/root.oyra Processor\n oyCMMapi7_s"];
+
+      subgraph cluster_0 {
+        rank=max;
+        color=white;
+        style=dashed;
+        n;
+        label="";
+
+        subgraph cluster_1 {
+          color=gray;
+          style=dashed;
+          node [style="filled"];
+          api4_A; api7_A;
+          label="";
+        }
+      }
+
+      api4_A:o -> n [arrowhead="open", color=black];
+      api4_A:ui -> n [arrowhead="open", color=black];
+  }
+} @enddot
  *
  *  Each filter API provides a \b registration member string.
  *  The registration member provides the means to later sucessfully select 
@@ -3441,6 +3533,13 @@ digraph Backends {
  *  from a broader set of filters matching can be obtained by omitting sections
  *  like in the string "//colour". This string would result in a match for the
  *  above given example.
+ *
+ *  To explicitely select a different processor and context creator the
+ *  according registration attribute must have a number and underscore prefix,
+ *  e.g. "4_lcms" "7_octl".
+ *  - "4_" - context+UI oyCMMapi4_s
+ *  - "6_" - context convertor oyCMMapi6_s
+ *  - "7_" - processor oyCMMapi7_s
  *
  *  @{
  */
@@ -12273,11 +12372,12 @@ char *         oyFilterRegistrationToText (
  *  @brief   analyse registration string and compare with a given pattern
  *
  *  @param         registration        registration string to analise
- *  @param[in]     pattern             pattern to compare with
+ *  @param         pattern             pattern to compare with
+ *  @param         api_number          select object type
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/06/26
+ *  @date    2008/12/31
  */
 int    oyFilterRegistrationMatch     ( const char        * registration,
                                        const char        * pattern )
