@@ -87,7 +87,7 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 
 /* --- actual tests --- */
 
-oyTESTRESULT_e test_version()
+oyTESTRESULT_e testVersion()
 {
   char * vs = oyVersionString(2,0);
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -111,7 +111,7 @@ oyTESTRESULT_e test_version()
 }
 
 #include "oyranos_elektra.h"
-oyTESTRESULT_e test_elektra()
+oyTESTRESULT_e testElektra()
 {
   int error = 0;
   char * value = 0,
@@ -202,7 +202,7 @@ oyTESTRESULT_e test_elektra()
 #include <libxml/parser.h>
 #include <libxml/xmlsave.h>
 
-oyTESTRESULT_e test_settings ()
+oyTESTRESULT_e testSettings ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
@@ -343,7 +343,7 @@ oyTESTRESULT_e test_settings ()
   return result;
 }
 
-oyTESTRESULT_e test_profiles ()
+oyTESTRESULT_e testProfiles ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
@@ -436,7 +436,7 @@ oyTESTRESULT_e test_profiles ()
   return result;
 }
 
-oyTESTRESULT_e test_monitor ()
+oyTESTRESULT_e testMonitor ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
@@ -500,6 +500,64 @@ oyTESTRESULT_e test_monitor ()
   return result;
 }
 
+oyTESTRESULT_e testRegistrationMatch ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
+                                "//colour/icc",
+                                oyOBJECT_CMM_API4_S ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "simple CMM selection                  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "simple CMM selection                  " );
+  }
+
+  if(!oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
+                                "//colour/icc.octl",
+                                oyOBJECT_CMM_API4_S ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "simple CMM selection no match         " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "simple CMM selection no match         " );
+  }
+
+  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
+                                "//colour/icc.4+lcms",
+                                oyOBJECT_CMM_API4_S ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "special CMM selection                 " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "special CMM selection                 " );
+  }
+
+  if(!oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
+                                "//colour/icc.4-lcms",
+                                oyOBJECT_CMM_API4_S ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "special CMM avoiding                  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "special CMM avoiding                  " );
+  }
+
+  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
+                                "//colour/icc.7-lcms",
+                                oyOBJECT_CMM_API4_S ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "special CMM avoiding, other API       " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "special CMM avoiding, other API       " );
+  }
+
+  return result;
+}
 
 
 #define TEST_RUN( prog, text ) { \
@@ -527,11 +585,12 @@ int main(int argc, char** argv)
 
   /* do tests */
 
-  TEST_RUN( test_version, "Version matching" );
-  TEST_RUN( test_elektra, "Elektra" );
-  TEST_RUN( test_settings, "default oyOptions_s settings" );
-  TEST_RUN( test_profiles, "Profiles reading" );
-  TEST_RUN( test_monitor,  "Monitor profiles" );
+  TEST_RUN( testVersion, "Version matching" );
+  TEST_RUN( testElektra, "Elektra" );
+  TEST_RUN( testSettings, "default oyOptions_s settings" );
+  TEST_RUN( testProfiles, "Profiles reading" );
+  TEST_RUN( testMonitor,  "Monitor profiles" );
+  TEST_RUN( testRegistrationMatch,  "Registration matching" );
 
   /* give a summary */
 

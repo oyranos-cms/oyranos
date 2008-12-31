@@ -1399,7 +1399,8 @@ char * oyFilterRegistrationToText    ( const char        * registration,
                                        oyFILTER_REG_e      type,
                                        oyAlloc_f           allocateFunc );
 int    oyFilterRegistrationMatch     ( const char        * registration,
-                                       const char        * pattern );
+                                       const char        * pattern,
+                                       oyOBJECT_e          api_number );
 
 typedef struct oyFilter_s oyFilter_s;
 typedef struct oyCMMptr_s oyCMMptr_s;

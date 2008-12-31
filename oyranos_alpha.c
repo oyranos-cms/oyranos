@@ -4,10 +4,6 @@
  *
  *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
  *
- */
-
-/**
- *  @internal
  *  @brief    misc alpha APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -1800,11 +1796,16 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
 {
   int error = !cmm_ptr || !cmm_ptr_out;
   oyCMMapi6_s * api6 = 0;
-  char * reg = 0;
+  char * reg = 0, * tmp = 0;
 
   if(!error)
   {
-    reg = oyStringCopy_( "///", oyAllocateFunc_ );
+    reg = oyStringCopy_( "//", oyAllocateFunc_ );
+    tmp = oyFilterRegistrationToText( node->filter->registration_,
+                                      oyFILTER_REG_TYPE,0);
+    STRING_ADD( reg, tmp );
+    oyFree_m_( tmp );
+    STRING_ADD( reg, "/" );
     STRING_ADD( reg, cmm_ptr->resource );
     STRING_ADD( reg, "_" );
     STRING_ADD( reg, cmm_ptr_out->resource );
@@ -1818,6 +1819,9 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
     error = api6->oyCMMdata_Convert( cmm_ptr, cmm_ptr_out, node );
   else
     error = 1;
+
+  if(error)
+    WARNc_S("Could not convert context");
 
   return error;
 }
@@ -2604,7 +2608,7 @@ oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMapi_s        * api,
     if(reg_filter->registration)
     {
       if(oyFilterRegistrationMatch( cmm_api->registration,
-                                    reg_filter->registration ))
+                                    reg_filter->registration, api->type ))
         found = 1;
     } else
       found = 1;
@@ -2794,7 +2798,7 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
     if(reg_filter->registration)
     {
       if(oyFilterRegistrationMatch( cmm_api->registration,
-                                    reg_filter->registration ))
+                                    reg_filter->registration, api->type ))
         found = 1;
     } else
       found = 1;
@@ -2831,6 +2835,7 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
  *                                     simplifies and speeds up the search
  *  @param[in]   queries               search for a match to capabilities
  *  @param[in]   registration          point'.' separated list of identifiers
+ *  @param[in]   type                  CMM API
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/12/15 (Oyranos: 0.1.9)
@@ -2860,7 +2865,7 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
     oyCMMapi5_s * api5 = oyCMMGetMetaApi_( 0, queries, registration );
     char ** files = 0;
     int  files_n = 0;
-    int i, j, match_j = -1, ret, match_i = -1;
+    int i, j, match_j = -1, ret, match_i = -1, rank = 0, old_rank = 0;
     char * match = 0, * reg = 0;
     oyCMMInfo_s * info = 0;
     oyObject_s object = oyObject_New();
@@ -2881,11 +2886,13 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
                                      &reg, 0, oyAllocateFunc_, 0, 0 );
         if(!ret && reg)
         {
-          if(oyFilterRegistrationMatch( reg, registration ))
+          rank = oyFilterRegistrationMatch( reg, registration, type );
+          if(rank > old_rank)
           {
             match = reg;
             match_j = j;
             match_i = i;
+            old_rank = rank;
           } else
             oyFree_m_( reg );
         }
@@ -3397,10 +3404,13 @@ digraph Backends {
   }
 } @enddot
  *
- *  The Filter API's are subdivided to allow for combinations. Especially
- *  in the case of expensive preprocessing data, like in CMM's, it makes sense
- *  to provide the means for combining complicated C libraries with hardware
- *  accelerated modules. The following paragraphs provide a overview.
+ *  The Filter API's are subdivided to allow for automaticaly combining of 
+ *  preprocessing and processing stages. Especially in the case of expensive
+ *  preprocessing data, like in CMM's, it makes sense to provide the means for
+ *  combining general purpose libraries with hardware accelerated modules.
+ *  This architecture allowes for combining by just providing enough interface
+ *  information about their supported data formats.
+ *  The following paragraphs provide a overview.
  *
  *  The oyCMMapi5_s plug-in structure defines a meta backend to load plug-ins,
  *  from a to be defined directory with to be defined naming criterias. This
@@ -3417,10 +3427,15 @@ digraph Backends {
  *  oyCMMapi7_s is mandatory.
  *
  *  The oyCMMapi4_s is a structure to create a context for a oyCMMapi7_s
- *  processor. This context is a intermediate processing state for all of the
+ *  processor. This context is a intermediate processing stage for all of the
  *  context data influencing options and input datas. This structure 
- *  contains as well the GUI. oyCMMapi4_s is mandatory and must contain the same
- *  registration string like the according oyCMMapi7_s.
+ *  contains as well the GUI. oyCMMapi4_s is mandatory because of its GUI parts.
+ *  A oyCMMapi4_s without a oyCMMapi7_s is useless.
+ *  oyCMMapi4_s must contain the same basic registration string like the 
+ *  according oyCMMapi7_s except some keywords in the application section. This
+ *  is explained more below in detail.
+ *  It is assumed that the generated context is worth to be cached. Oyranos 
+ *  requires therefore a serialised data blob from the context genarator.
  *
  *  In case a oyCMMapi7_s function can not handle a certain provided context
  *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
@@ -3524,22 +3539,49 @@ digraph Anatomy_B {
  *  - top, e.g. "sw"
  *  - vendor, e.g. "oyranos.org"
  *  - filter type, e.g. "colour" or "tonemap" or "image" or "imaging"
- *  - filter name, e.g. "icc.lcms"
- * 
- *  A complete registration might read: "sw/oyranos.org/colour/icc.lcms".
- *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
- *  might be useful in canonical processing a Oyranos registration text string.
- *  Many functions allow for passing a registration string. To select a filter
- *  from a broader set of filters matching can be obtained by omitting sections
- *  like in the string "//colour". This string would result in a match for the
- *  above given example.
+ *  - filter name, e.g. "icc.lcms.NOACCEL.CPU"
  *
+ *  The application registration string part should for general purpose modules
+ *  contain a convention string. "icc" signals to process colours with the help
+ *  of ICC style profiles, which can by convention be inserted into the options
+ *  list.
+ *
+ *  @par Filter registration:
+ *  A filter can add keywords but must omit the API number and the following
+ *  matching rule sign. Recommended keywords for the application section are:
+ *  - ACCEL for acceleration, required
+ *  - NOACCEL for no acceleration or plain software, required
+ *  - GPU, GLSL, HLSL, MMX, SSE, SSE2, 3DNow and so on for certain hardware
+ *    acceleration features \n
+ *  
+ *  \b Example: a complete module registration: \n
+ *  "sw/oyranos.org/colour/icc.lcms.NOACCEL.CPU" registers a plain software CMM
+ * 
+ *  @par Registration search pattern:
  *  To explicitely select a different processor and context creator the
- *  according registration attribute must have a number and underscore prefix,
+ *  according registration attribute must have a number and prefix,
  *  e.g. "4_lcms" "7_octl".
- *  - "4_" - context+UI oyCMMapi4_s
- *  - "6_" - context convertor oyCMMapi6_s
- *  - "7_" - processor oyCMMapi7_s
+ *  A search pattern can add keywords.
+ *  - a number followed by underscore, plus or minus signs the according API.
+ *    The feature of interesst must then be appended, e.g. "7_GPU" preferes
+ *    a GPU interpolator. This is useful to select a certain API of a module.
+ *    - underscore '_' means preference
+ *    - minus '-' means must skip
+ *    - plus '+' means must have
+ *  - "4[_,+,-]" - context+UI oyCMMapi4_s
+ *  - "6[_,+,-]" - context convertor oyCMMapi6_s
+ *  - "7[_,+,-]" - processor oyCMMapi7_s \n
+ *  
+ *  \b Example: a complete registration search pattern: \n
+ *  "//colour/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
+ *  interpolator with prefered GPU and HLSL but no GLSL support together with a
+ *  ICC compliant context generator and options.
+ *
+ *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
+ *  might be useful for canonical processing Oyranos registration text strings.
+ *  Many functions allow for passing a registration string. Matching can be 
+ *  obtained by omitting sections like in the string "//colour/icc". This string
+ *  would result in a match for any ICC compliant colour conversion filter.
  *
  *  @{
  */
@@ -12371,6 +12413,8 @@ char *         oyFilterRegistrationToText (
 /** Function oyFilterRegistrationMatch
  *  @brief   analyse registration string and compare with a given pattern
  *
+ *  The rules are described in the @ref backend_api overview.
+ *
  *  @param         registration        registration string to analise
  *  @param         pattern             pattern to compare with
  *  @param         api_number          select object type
@@ -12380,21 +12424,35 @@ char *         oyFilterRegistrationToText (
  *  @date    2008/12/31
  */
 int    oyFilterRegistrationMatch     ( const char        * registration,
-                                       const char        * pattern )
+                                       const char        * pattern,
+                                       oyOBJECT_e          api_number )
 {
   char ** reg_texts = 0;
   int     reg_texts_n = 0;
   char ** regc_texts = 0;
   int     regc_texts_n = 0;
+  char  * reg_text = 0;
   char ** p_texts = 0;
   int     p_texts_n = 0;
   char ** pc_texts = 0;
   int     pc_texts_n = 0;
-  int     match = 0, i, j, k;
+  char  * pc_text = 0;
+  int     match = 0, match_tmp = 0, i,j,k, api_num = oyOBJECT_NONE, pc_api_num;
+  char    pc_match_type = '+';
 
   if(registration && pattern)
   {
-    match = 1;
+    if(api_number == oyOBJECT_CMM_API4_S)
+      api_num = '4';
+    else if(api_number == oyOBJECT_CMM_API5_S)
+      api_num = '5';
+    else if(api_number == oyOBJECT_CMM_API6_S)
+      api_num = '6';
+    else if(api_number == oyOBJECT_CMM_API7_S)
+      api_num = '7';
+
+
+    match_tmp = 1;
     reg_texts = oyStringSplit_( registration, OY_SLASH_C, &reg_texts_n,
                                 oyAllocateFunc_);
     p_texts = oyStringSplit_( pattern, OY_SLASH_C, &p_texts_n, oyAllocateFunc_);
@@ -12406,13 +12464,45 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
                                    oyAllocateFunc_);
       pc_texts = oyStringSplit_( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
 
-      if(match && pc_texts_n && regc_texts_n)
+      if(match_tmp && pc_texts_n && regc_texts_n)
       {
-        match = 0;
         for( j = 0; j < pc_texts_n; ++j)
+        {
+          match_tmp = 0;
+          pc_api_num = 0;
+          pc_match_type = '+';
+          pc_text = pc_texts[j];
+
+          if(pc_text[0] == '4' ||
+             pc_text[0] == '5' ||
+             pc_text[0] == '6' ||
+             pc_text[0] == '7')
+          {
+            pc_api_num = pc_text[0];
+            ++ pc_text;
+            pc_match_type = pc_text[0];
+            ++ pc_text;
+          }
+
           for( k = 0; k < regc_texts_n; ++k )
-            if(oyStrstr_( regc_texts[k], pc_texts[j] ))
-              match = 1;
+          {
+            reg_text = regc_texts[k];
+            if((!pc_api_num || (pc_api_num && api_num == pc_api_num)) &&
+               oyStrstr_( reg_text, pc_text ))
+            {
+              if(pc_match_type == '+' ||
+                 pc_match_type == '_')
+              {
+                ++ match;
+                match_tmp = 1;
+              } else /* if(pc_match_type == '-') */
+                goto clean_up;
+            }
+          }
+
+          if(pc_match_type == '+' && !match_tmp)
+            goto clean_up;
+        }
       }
 
       oyStringListRelease_( &pc_texts, pc_texts_n, oyDeAllocateFunc_ );
@@ -12423,6 +12513,14 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
   }
 
   return match;
+
+
+  clean_up:
+      oyStringListRelease_( &pc_texts, pc_texts_n, oyDeAllocateFunc_ );
+      oyStringListRelease_( &regc_texts, regc_texts_n, oyDeAllocateFunc_ );
+    oyStringListRelease_( &reg_texts, reg_texts_n, oyDeAllocateFunc_ );
+    oyStringListRelease_( &p_texts, p_texts_n, oyDeAllocateFunc_ );
+  return 0;
 }
 
 /**
@@ -15501,7 +15599,8 @@ int                oyConversion_FilterAdd (
 
     if(!error &&
        (!s->input &&
-        !oyFilterRegistrationMatch( filter->registration_, "//image")))
+        !oyFilterRegistrationMatch( filter->registration_, "//image",
+                                    oyOBJECT_CMM_API4_S )))
     {
       WARNc2_S( "%s: %s",
       _("Please add first a image node to the graph before adding other filters"),
@@ -16738,7 +16837,7 @@ const char *   oyModuleGetActual     ( const char        * type )
   oyExportStart_(EXPORT_CMMS);
   oyExportEnd_();
 
-  if(oyFilterRegistrationMatch( type, "//colour"))
+  if(oyFilterRegistrationMatch( type, "//colour", oyOBJECT_CMM_API4_S ))
   return "lcms";
   else
   return OY_PROFILE_NONE;
