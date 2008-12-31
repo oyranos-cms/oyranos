@@ -12482,7 +12482,7 @@ int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
 {
   int error = !s;
   oyAlloc_f allocateFunc_ = 0;
-  static char * lang = 0;
+  static const char * lang = 0;
   int update = 1;
 
   if(!error)
@@ -12500,11 +12500,15 @@ int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
 
     /* we lock here as cmm_api4->getUI might not be thread save */
     {
+      if(!lang)
+        lang = oyLanguage();
+
       oyObject_Lock( s->oy_, __FILE__, __LINE__ );
       if(oyStrcmp_( oyNoEmptyName_m_(oyLanguage()), lang ) == 0)
         update = 0;
 
-      s->opts_ui_ = oyStringCopy_( cmm_api4->getUI(update), allocateFunc_ );
+      if(cmm_api4->getUI)
+        s->opts_ui_ = oyStringCopy_( cmm_api4->getUI(update), allocateFunc_ );
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
     }
 
