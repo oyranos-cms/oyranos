@@ -380,6 +380,7 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case icSigCrdInfoTag: return _("crdi");
     case icSigDeviceMfgDescTag: return _("Device manufacturerer description");
     case icSigDeviceModelDescTag: return _("Device model description");
+    case icSigDeviceSettingsTag: return _("Device Settings");
     case icSigGamutTag: return _("gamut");
     case icSigGrayTRCTag: return _("Gray tone reproduction curve");
     case icSigGreenColorantTag: return _("Green Colorant");
@@ -453,6 +454,7 @@ const oyChar *   oyICCTagName        ( icTagSignature      sig )
     case icSigCrdInfoTag: return "crdi";
     case icSigDeviceMfgDescTag: return "dmnd";
     case icSigDeviceModelDescTag: return "dmdd";
+    case icSigDeviceSettingsTag: return "DevS";
     case icSigGamutTag: return "gamt";
     case icSigGrayTRCTag: return "kTRC";
     case icSigGreenColorantTag: return "gXYZ";
@@ -570,6 +572,7 @@ const oyChar *   oyICCTagTypeName    ( icTagTypeSignature  sig )
     case icSigCurveType: return "curv";
     case icSigDataType: return "data";
     case icSigDateTimeType: return "dtim";
+    case icSigDeviceSettingsType: return "DevS";
     case icSigLut16Type: return "mft2";
     case icSigLut8Type: return "mft1";
     case icSigMeasurementType: return "meas";

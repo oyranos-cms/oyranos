@@ -152,6 +152,17 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *      - mluc translated by oyICCTagDescription in 1 + i * 5 + 3
  *      - the icSigProfileDescriptionTag according to language in 1 + i * 5 + 4
  *
+ *  - icSigDeviceSettingsType:
+ *    - since Oyranos 0.1.10 (API 0.1.10)
+ *    - returns
+ *      - 0: first string version
+ *      - 1: device serial
+ *      - 2: device name
+ *      - 3: device version
+ *      - 4: device signature/encoding
+ *      - 5: priority (0-255)
+ *      - 6: oyOption_s data blob
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/05/23

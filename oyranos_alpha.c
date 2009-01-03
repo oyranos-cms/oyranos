@@ -3534,8 +3534,8 @@ digraph Anatomy_B {
  *  Each filter API provides a \b registration member string.
  *  The registration member provides the means to later sucessfully select 
  *  the according filter. The string is separated into sections by a slash'/'.
- *  The sections can be subdivided by point'.' as needed. The sections are to be
- *  filled as folows:
+ *  The sections can be subdivided by point'.' for additional attributes as 
+ *  needed. The sections are to be filled as follows:
  *  - top, e.g. "sw"
  *  - vendor, e.g. "oyranos.org"
  *  - filter type, e.g. "colour" or "tonemap" or "image" or "imaging"

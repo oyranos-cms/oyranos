@@ -67,6 +67,14 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 #define icSigUnix 0x2A6E6978  /* '*nix' */
 #endif
 
+#ifndef icSigDeviceSettingsTag
+#define icSigDeviceSettingsTag 0x44657653 /* DevS */
+#endif
+
+#ifndef icSigDeviceSettingsType
+#define icSigDeviceSettingsType 0x44657653 /* DevS */
+#endif
+
 #ifndef icSigWCSProfileTag
 #define icSigWCSProfileTag 0x4D533130 /* MS10 */
 #endif
