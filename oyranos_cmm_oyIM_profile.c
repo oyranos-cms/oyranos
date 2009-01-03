@@ -59,6 +59,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          break;
     case oyQUERY_PROFILE_TAG_TYPE_READ:
          switch(value) {
+         case icSigDeviceSettingsType:
          case icSigMakeAndModelType:
          case icSigMultiLocalizedUnicodeType:
          case icSigWCSProfileTag:
@@ -93,7 +94,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *  The function implements oyCMMProfileTag_GetValues_t for 
  *  oyCMMapi3_s::oyCMMProfileTag_GetValues.
  *
- *  - function description
+ *  - function description are obtained by following steps:
  *    - set the tag argument to zero
  *    - the returned list will be filled in with oyName_s' each matching a tag_type
  *      - oyNAME_NICK contains the module info, e.g. 'oyIM'
@@ -163,9 +164,9 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *      - 5: priority (0-255)
  *      - 6: oyOption_s data blob
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/01/02 (Oyranos: 0.1.8)
- *  @date    2008/05/23
+ *  @date    2009/01/03
  */
 oyStructList_s * oyIMProfileTag_GetValues(
                                        oyProfileTag_s    * tag )
@@ -239,6 +240,22 @@ oyStructList_s * oyIMProfileTag_GetValues(
   - since Oyranos 0.1.8 (API 0.1.8)\
   - list: should contain only oyName_s"
     };
+    oyName_s description_DevS = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "DevS",
+      "\
+- icSigDeviceSettingsType:\
+  - since Oyranos 0.1.10 (API 0.1.10)\
+  - returns\
+    - 0: first string version\
+    - 1: device serial\
+    - 2: device name\
+    - 3: device version\
+    - 4: device signature/encoding\
+    - 5: priority (0-255)\
+    - 6: oyOption_s data blob"
+    };
     oyStruct_s * description = 0;
 
     description = (oyStruct_s*) &description_mluc;
@@ -257,6 +274,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
       error = oyStructList_MoveIn( list, &description, -1 );
 
     description = (oyStruct_s*) &description_desc;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1 );
+
+    description = (oyStruct_s*) &description_DevS;
     if(!error)
       error = oyStructList_MoveIn( list, &description, -1 );
 
@@ -279,9 +300,62 @@ oyStructList_s * oyIMProfileTag_GetValues(
     if(!error)
     switch( (uint32_t)sig )
     {
+      case icSigDeviceSettingsTag:
+
+           len = tag->size_ * sizeof(char);
+           tmp = oyAllocateFunc_( len );
+           error = tag->size_ < 80 || !memcpy( tmp, &mem[8], len - 8 );
+/*  - icSigDeviceSettingsType:
+ *    - since Oyranos 0.1.10 (API 0.1.10)
+ *    - returns */
+           /*      - 0: first string version */
+           if(!error)
+           {
+             oySprintf_( tmp, "%d", (int)((uint8_t) mem[8]) );
+             error = (char) mem[8] != 1;
+           }
+           if(!error)
+             oyStructList_MoveInName( texts, &tmp, -1 );
+           /*      - 1: device serial */
+           if(!error)
+             error = !memcpy( tmp, &mem[9], 12 );
+           tmp[12] = 0;
+           if(!error)
+             oyStructList_MoveInName( texts, &tmp, -1 );
+           /*      - 2: device name */
+           if(!error)
+             error = !memcpy( tmp, &mem[21], 12 );
+           tmp[12] = 0;
+           if(!error)
+             oyStructList_MoveInName( texts, &tmp, -1 );
+           /*      - 3: device version */
+           if(!error)
+             error = !memcpy( tmp, &mem[33], 12 );
+           tmp[12] = 0;
+           if(!error)
+             oyStructList_MoveInName( texts, &tmp, -1 );
+           /*      - 4: device signature/encoding */
+           if(!error)
+             error = !memcpy( tmp, &mem[45], 12 );
+           tmp[12] = 0;
+           if(!error)
+             oyStructList_MoveInName( texts, &tmp, -1 );
+           /*      - 5: priority (0-255) */
+           {
+             uint32_t blob_n = 0;
+             if(!error)
+             {
+               blob_n = oyValueUInt32( (uint32_t)*((uint32_t*) &mem[80]));
+               oySprintf_( tmp, "%d", (int)blob_n );
+             }
+             if(!error)
+               oyStructList_MoveInName( texts, &tmp, -1 );
+           /*      - 6: oyOption_s data blob */
+           }
+           break;
       case icSigTextType:
 
-           len = tag->size_ * sizeof(oyChar);
+           len = tag->size_ * sizeof(char);
            tmp = oyAllocateFunc_( len );
            error = !memcpy( tmp, &mem[8], len - 8 );
 
@@ -302,7 +376,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            }
            break;
       case icSigWCSProfileTag:
-           len = tag->size_ * sizeof(oyChar);
+           len = tag->size_ * sizeof(char);
            tmp = oyAllocateFunc_( len*2 + 1 );
 
            {
@@ -359,18 +433,17 @@ oyStructList_s * oyIMProfileTag_GetValues(
              oyStructList_AddName( texts,
                                  " Wrong \"desc\" tag count. Difference is :",
                                    -1 );
-             oyStringAdd_( &tmp, "   ", oyAllocateFunc_, oyDeAllocateFunc_);
-             oyStringAdd_( &tmp, nt, oyAllocateFunc_, oyDeAllocateFunc_);
+             STRING_ADD( tmp, "   " );
+             STRING_ADD( tmp, nt );
              oyStructList_MoveInName( texts, &tmp, -1 );
              oyStructList_AddName( texts,
                                  " Try ordinary tag length instead (?):",
                                    -1 );
              
-             oyStringAdd_( &tmp, "  ",
-                                  oyAllocateFunc_, oyDeAllocateFunc_);
+             STRING_ADD( tmp, "  " );
              error = !memcpy (txt, &mem[12], tag->size_ - 12);
              txt[ tag->size_ - 12 ] = 0;
-             oyStringAdd_( &tmp, txt, oyAllocateFunc_, oyDeAllocateFunc_);
+             STRING_ADD( tmp, txt );
              oyStructList_MoveInName( texts, &tmp, -1 );
            }
            else
@@ -517,7 +590,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  for (n_ = 1; n_ < g ; n_ = n_+2)
                    t[n_/2] = mem[dversatz + n_];
                  t[n_/2] = 0;
-                 oyStringAdd_( &tmp, t, oyAllocateFunc_, oyDeAllocateFunc_);
+                 STRING_ADD( tmp, t );
                  oyStructList_MoveInName( texts, &tmp, -1 );
                  oyFree_m_( t );
                }
@@ -588,7 +661,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 #endif
 
              oySprintf_(num, "%d", count);
-             oyStringAdd_( &tmp, num, oyAllocateFunc_, oyDeAllocateFunc_);
+             STRING_ADD( tmp, num );
              oyStructList_MoveInName( texts, &tmp, -1 );
 
              if(count > 256) count = 256;
@@ -602,10 +675,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
                {
 
                  oySprintf_(num, "%d", i);
-                 oyStringAdd_( &tmp, "profile[",
-                                      oyAllocateFunc_, oyDeAllocateFunc_);
-                 oyStringAdd_( &tmp, num, oyAllocateFunc_, oyDeAllocateFunc_);
-                 oyStringAdd_( &tmp, "]:", oyAllocateFunc_, oyDeAllocateFunc_);
+                 STRING_ADD( tmp, "profile[" );
+                 STRING_ADD( tmp, num );
+                 STRING_ADD( tmp, "]:" );
                  oyStructList_MoveInName( texts, &tmp, -1 );
 
                  mfg = oyICCTagName( oyValueUInt32(desc->deviceMfg) );
@@ -731,10 +803,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
              for(i = 0; i < count; ++i)
              {
                oySprintf_(num, "%d", i);
-               oyStringAdd_( &tmp, "profile[",
-                                      oyAllocateFunc_, oyDeAllocateFunc_);
-               oyStringAdd_( &tmp, num, oyAllocateFunc_, oyDeAllocateFunc_);
-               oyStringAdd_( &tmp, "]:", oyAllocateFunc_, oyDeAllocateFunc_);
+               STRING_ADD( tmp, "profile[" );
+               STRING_ADD( tmp, num );
+               STRING_ADD( tmp, "]:" );
                oyStructList_MoveInName( texts, &tmp, -1 );
 
                if(!error && 12 + i*8 + 8 < tag->size_)
