@@ -343,7 +343,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
            /*      - 5: priority (0-255) */
            {
              uint32_t blob_n = 0;
-             if(!error)
+             deviceSettingsType * DevS = (deviceSettingsType*) mem;
+             if(!error && DevS->data_size > 0)
              {
                blob_n = oyValueUInt32( (uint32_t)*((uint32_t*) &mem[80]));
                oySprintf_( tmp, "%d", (int)blob_n );

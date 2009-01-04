@@ -99,6 +99,32 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 #define icSigNativeDisplayInfoType 0x6e64696e /* 'ndin' */
 #endif
 
+/** @brief deviceSettingsType for ICC profiles
+ *  @ingroup icc_low
+ *
+ *  For details see: http://www.oyranos.org/wiki/index.php?title=Device_Settings_in_ICC_0.2
+ *
+ *  The tag size will be 84 + deviceSettingsType::data_size.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/04 (Oyranos: 0.1.10)
+ *  @date    2009/01/04
+ */
+typedef struct {
+  icTagTypeSignature type;             /**< "data" */
+  uint32_t         dummy;              /**< keep zero */
+  uint8_t          version;            /**< 1 - for version 0.2 */
+  char             device_serial[12];  /**< 12 byte field, null terminated, unused bytes must be set to zero */
+  char             driver_name[12];    /**< 12 byte field, null terminated, unused bytes must be set to zero */
+  char             driver_version[12]; /**< 12 byte field, null terminated, unused bytes must be set to zero */
+  char             driver_signature[12];/**< 12 byte field, null terminated, unused bytes must be set to zero */
+  uint8_t          priority;           /**< priority of appliance (low - 0 ... high - 255) */
+  uint8_t          reserved[22];       /**< keep to zero */
+  uint32_t         data_size;          /**< as follows starting from byte 84 */
+  /* with data_size being > zero the byte 84 is the starting one */
+} deviceSettingsType;
+
+
 #ifndef HAVE_LCMS
 
 #ifndef icSigChromaticityType
@@ -159,6 +185,7 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 #ifndef icSigHPGamutDescTag
 #define icSigHPGamutDescTag 1735226433 /* gmtA */
 #endif
+
 
 #endif /* HAVE_LCMS */
 
