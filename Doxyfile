@@ -81,6 +81,7 @@ INPUT                  = ./
 FILE_PATTERNS          = oyranos.c oyranos.h \
                          doxymentation \
                          oyranos_alpha.c oyranos_alpha.h \
+                         oyranos_icc.h oyranos_icc.c \
                          oyranos_cmm.h
 RECURSIVE              = NO
 EXCLUDE                = oyranos_gamma.c
