@@ -596,7 +596,12 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 char *         oyOption_GetValueText ( oyOption_s        * obj,
                                        oyAlloc_f           allocateFunc );
 int            oyOption_Clear        ( oyOption_s        * s );
-
+int            oyOption_SetFromData  ( oyOption_s        * option,
+                                       oyPointer           ptr,
+                                       size_t              size );
+oyPointer      oyOption_GetData      ( oyOption_s        * option,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
 
 /**
  *  @struct  oyOptions_s

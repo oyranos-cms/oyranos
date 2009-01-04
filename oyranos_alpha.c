@@ -5666,6 +5666,119 @@ void         oyOption_UpdateFlags_   ( oyOption_s        * o )
   }
 }
 
+/** Function oyOption_SetFromData
+ *  @relates oyOption_s
+ *  @brief   set value from a data blob
+ *
+ *  @param[in]     option              the option
+ *  @param[in]     ptr                 data
+ *  @param[in]     size                data size
+ *  @return                            0 - success, 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/04 (Oyranos: 0.1.10)
+ *  @date    2009/01/04
+ */
+int            oyOption_SetFromData  ( oyOption_s        * option,
+                                       oyPointer           ptr,
+                                       size_t              size )
+{
+  int error = !option || option->type_ != oyOBJECT_OPTION_S;
+  oyAlloc_f allocateFunc = oyAllocateFunc_;
+  oyDeAlloc_f deallocateFunc = oyDeAllocateFunc_;
+  int type_size = sizeof(int32_t);
+
+  if(error)
+  {
+    WARNc_S("Attempt to set a non oyOption_s object.")
+    return 1;
+  }
+
+  if(!error)
+  {
+    if(option->oy_)
+    {
+      allocateFunc = option->oy_->allocateFunc_;
+      deallocateFunc = option->oy_->deallocateFunc_;
+    }
+
+    oyValueClear( option->value, option->value_type, deallocateFunc );
+    option->value_type = oyVAL_INT_LIST;
+    option->value->int32_list = allocateFunc( size/type_size + type_size +
+                             (size%type_size ? type_size - size%type_size : 0));
+    error = !option->value->int32_list;
+  }
+
+  if(!error)
+  {
+    option->value->int32_list[0] = size;
+    error = !memcpy( &option->value->int32_list[1], ptr, size );
+  }
+
+  return error;
+}
+
+/** Function oyOption_GetFromData
+ *  @relates oyOption_s
+ *  @brief   get the data blob
+ *
+ *  @param[in]     option              the option
+ *  @param[out]    size                data size
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            data
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/04 (Oyranos: 0.1.10)
+ *  @date    2009/01/04
+ */
+oyPointer      oyOption_GetData      ( oyOption_s        * option,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = !option || option->type_ != oyOBJECT_OPTION_S;
+  oyPointer ptr = 0;
+  size_t size_ = 0;
+
+  if(error)
+  {
+    WARNc_S("Attempt to query a non oyOption_s object.")
+    return 0;
+  }
+
+  if(!error)
+  {
+    if(!allocateFunc &&
+       option->oy_)
+      allocateFunc = option->oy_->allocateFunc_;
+
+    if(!option->value || option->value_type != oyVAL_INT_LIST ||
+       option->value->int32_list[0] <= 0)
+      error = 1;
+  }
+
+  if( !error )
+  {
+    size_ = option->value->int32_list[0];
+    ptr = oyAllocateWrapFunc_( size_, allocateFunc );
+    error = !ptr;
+  }
+
+  if(!error)
+  {
+    error = !memcpy( ptr, &option->value->int32_list[1], size_ );
+    if(!error && size)
+      *size = size_;
+  }
+
+  if(error)
+    ptr = 0;
+
+  return ptr;
+}
+
+
+
+
 /** Function oyOptions_New
  *  @relates oyOptions_s
  *  @brief   new options
