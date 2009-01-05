@@ -2,19 +2,16 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2005-2008  Kai-Uwe Behrmann
+ *  @par Copyright:
+ *            2005-2009 (C) Kai-Uwe Behrmann
  *
- */
-
-/**
  *  @brief    gamma loader
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @par License:
+ *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2005/02/03
- */
-
-/**
+ *
  * It reads the default profile(s) from the Oyranos CMS and recalls this
  * profile(s)
  * as new default profile for a screen, including a possible curves upload to

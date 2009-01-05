@@ -1,9 +1,11 @@
-/*
+/** @file oyranos_monitor_nvidia.c
+ *
  * Oyranos is an open source Colour Management System 
  * 
- * Copyright (C) 2006  Kai-Uwe Behrmann
+ *  @par Copyright:
+ *            2006-2009 (C) Kai-Uwe Behrmann
  *
- * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @autor:   Kai-Uwe Behrmann <ku.b@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +22,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  * -----------------------------------------------------------------------------
- */
-
-/** @file @internal
+ *  @internal
  *  @brief example on how to set the EDID tag for multi monitor configurations.
+ *  @since    2006/04/14
  *
  *  monitor device detection
  * 
  */
-
-/* Date:      14. 04. 2006 */
 
 #define DEBUG 1
 
