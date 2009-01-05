@@ -120,7 +120,7 @@ oyTESTRESULT_e testI18N()
 
   fprintf(stdout, "\n" );
 
-  oyExportReset_(EXPORT_I18N);
+  oyI18Nreset();
 
   lang = oyLanguage();
   if(lang && strcmp(lang, "C") == 0)
@@ -132,7 +132,7 @@ oyTESTRESULT_e testI18N()
   }
 
   setlocale(LC_ALL,"");
-  oyExportReset_(EXPORT_I18N);
+  oyI18Nreset();
 
   lang = oyLanguage();
   if(strcmp(lang, "C") != 0)
