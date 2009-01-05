@@ -5684,8 +5684,8 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
                                        size_t              size )
 {
   int error = !option || option->type_ != oyOBJECT_OPTION_S;
-  oyAlloc_f allocateFunc = oyAllocateFunc_;
-  oyDeAlloc_f deallocateFunc = oyDeAllocateFunc_;
+  oyAlloc_f allocateFunc_ = oyAllocateFunc_;
+  oyDeAlloc_f deallocateFunc_ = oyDeAllocateFunc_;
   int type_size = sizeof(int32_t);
 
   if(error)
@@ -5698,15 +5698,22 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
   {
     if(option->oy_)
     {
-      allocateFunc = option->oy_->allocateFunc_;
-      deallocateFunc = option->oy_->deallocateFunc_;
+      allocateFunc_ = option->oy_->allocateFunc_;
+      deallocateFunc_ = option->oy_->deallocateFunc_;
     }
 
-    oyValueClear( option->value, option->value_type, deallocateFunc );
-    option->value_type = oyVAL_INT_LIST;
-    option->value->int32_list = allocateFunc( size/type_size + type_size +
+    oyValueClear( option->value, option->value_type, deallocateFunc_ );
+    if(!option->value)
+      option->value = allocateFunc_(sizeof(oyValue_u));
+    error = !option->value;
+  }
+
+  if(!error)
+  {
+    option->value->int32_list = allocateFunc_( size/type_size + type_size +
                              (size%type_size ? type_size - size%type_size : 0));
     error = !option->value->int32_list;
+    option->value_type = oyVAL_INT_LIST;
   }
 
   if(!error)
@@ -8721,7 +8728,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
 
       if(0 == pos)
         tag = oyProfileTag_Copy( tag_, 0 );
-      error = oyProfile_AddTag( s, &tag_, -1 );
+      error = oyProfile_TagMoveIn( s, &tag_, -1 );
 
 
       size = oyProfile_GetSignature( s, oySIGNATURE_SIZE );
@@ -8788,7 +8795,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
           tag = oyProfileTag_Copy( tag_, 0 );
 
         if(!error)
-          error = oyProfile_AddTag( s, &tag_, -1 );
+          error = oyProfile_TagMoveIn( s, &tag_, -1 );
       }
     }
   }
@@ -8852,15 +8859,15 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
   return n;
 }
 
-/** Function oyProfile_AddTag
+/** Function oyProfile_TagMoveIn
  *  @relates oyProfile_s
  *  @brief   add a tag to a profile
  *
- *  @version Oyranos: 0.1.8
- *  @date    2008/02/01
+ *  @version Oyranos: 0.1.10
  *  @since   2008/02/01 (Oyranos: 0.1.8)
+ *  @date    2009/01/05
  */
-int                oyProfile_AddTag  ( oyProfile_s       * profile,
+int                oyProfile_TagMoveIn(oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos )
 {
@@ -15012,7 +15019,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
         oyProfiles_Release( &p_list );
 
         if(psid)
-          error = oyProfile_AddTag ( prof, &psid, -1 );
+          error = oyProfile_TagMoveIn ( prof, &psid, -1 );
       }
 
       /* Info tag */
@@ -15045,7 +15052,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
         oyStructList_Release( &list );
 
         if(info)
-          error = oyProfile_AddTag ( prof, &info, -1 );
+          error = oyProfile_TagMoveIn ( prof, &info, -1 );
       }
 
       if(!error)
@@ -15075,7 +15082,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
         oyStructList_Release( &list );
 
         if(cprt)
-          error = oyProfile_AddTag ( prof, &cprt, -1 );
+          error = oyProfile_TagMoveIn ( prof, &cprt, -1 );
       }
 
       if(block)

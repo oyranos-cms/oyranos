@@ -1157,7 +1157,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                      icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
 
         if(psid)
-          error = oyProfile_AddTag ( prof, &psid, -1 );
+          error = oyProfile_TagMoveIn ( prof, &psid, -1 );
       }
 
       /* Info tag */
@@ -1191,7 +1191,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         oyStructList_Release( &list );
 
         if(info)
-          error = oyProfile_AddTag ( prof, &info, -1 );
+          error = oyProfile_TagMoveIn ( prof, &info, -1 );
       }
 
       if(!error)
@@ -1221,7 +1221,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         oyStructList_Release( &list );
 
         if(cprt)
-          error = oyProfile_AddTag ( prof, &cprt, -1 );
+          error = oyProfile_TagMoveIn ( prof, &cprt, -1 );
       }
 
       if(block)

@@ -111,17 +111,6 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
                                        oyLock_f            lockFunc,
                                        oyUnLock_f          unlockFunc );
 
-/** @brief codeset for Oyranos
- *
- *  set here the codeset part, e.g. "UTF-8", which shall be delivered from
- *  Oyranos string translations.
- *  Set this variable before any call to Oyranos.
- *  The environment variable OY_LOCALEDIR overrides the static inbuild 
- *  OY_LOCALEDIR macro defined in config.h . OY_LOCALEDIR should match a 
- *  corresponding $prefix/share/locale path.
- */
-extern const char *oy_domain_codeset;
-
 /**
  *  @brief   Oyranos structure type
  *  @ingroup objects_generic
@@ -822,7 +811,7 @@ oyProfileTag_s *   oyProfile_GetTagByPos ( oyProfile_s   * profile,
 oyProfileTag_s *   oyProfile_GetTagById ( oyProfile_s    * profile,
                                        icTagSignature      id );
 int                oyProfile_GetTagCount( oyProfile_s    * profile );
-int                oyProfile_AddTag  ( oyProfile_s       * profile,
+int                oyProfile_TagMoveIn(oyProfile_s       * profile,
                                        oyProfileTag_s   ** tag,
                                        int                 pos );
 int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
