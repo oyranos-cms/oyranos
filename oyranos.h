@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2009  Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -326,15 +326,30 @@ int            oyVersion             ( int                 type );
 char *         oyVersionString       ( int                 type,
                                        oyAlloc_f           allocateFunc );
 
+
 int    oyProfileGetMD5               ( void       *buffer,
                                        size_t      size,
                                        unsigned char *md5_return );
 
-void   oyI18NSet                     ( int active,
+
+/** @brief codeset for Oyranos
+ *
+ *  set here the codeset part, e.g. "UTF-8", which shall be delivered from
+ *  Oyranos string translations.
+ *  Set this variable before any call to Oyranos.
+ *  The environment variable OY_LOCALEDIR overrides the static inbuild 
+ *  OY_LOCALEDIR macro defined in config.h . OY_LOCALEDIR should match a 
+ *  corresponding $prefix/share/locale path.
+ */
+extern const char *oy_domain_codeset;
+
+void           oyI18NSet             ( int active,
                                        int reserved );
 const char *   oyLanguage            ( void );
 const char *   oyCountry             ( void );
 const char *   oyLang                ( void );
+void           oyI18Nreset           ( void );
+
 
 int      oyGetMonitorInfo            ( const char        * display,
                                        char             ** manufacturer,

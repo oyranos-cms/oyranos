@@ -37,9 +37,9 @@ extern const char *oy_domain_codeset;
 
 #define OY_TEXTDOMAIN "oyranos"
 
-/* library sentinels */
-void   oyI18NInit_                   ( void);
-void   oyI18Nrefresh_();
+void   oyI18NInit_                   ( void );
+void   oyI18Nrefresh_                ( void );
+void   oyI18Nreset_                  ( void );
 void   oyI18NSet_                    ( int active,
                                        int reserved );
 

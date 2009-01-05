@@ -34,6 +34,7 @@ static int export_setting = 1;
 static int export_path = 1;
 static int export_monitor = 1;
 static int export_cmm = 1;
+static int initialised = 0;
 
 int oyExportStart_(int export_check)
 {
@@ -82,7 +83,12 @@ int oyExportReset_(int export_check)
     if(!export_cmm) action = 1;
     export_cmm = 1;
   }
-  
+
+  initialised = 0;
+
+  if(export_check & EXPORT_I18N)
+    oyI18Nreset_();
+
   return action;
 }
 
@@ -99,8 +105,6 @@ int oyExportEnd_()
 
 void oyInit_()
 {
-  static int initialised = 0;
-
   DBG_PROG_START
 
   if(initialised)

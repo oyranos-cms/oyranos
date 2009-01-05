@@ -44,7 +44,8 @@ int   oyExportEnd_          (void);
 #define EXPORT_PATH     0x000002
 #define EXPORT_MONITOR  0x000004
 #define EXPORT_CMM      0x000008
-#define EXPORT_CMMS     0x000010
+#define EXPORT_CMMS     0x00000a
+#define EXPORT_I18N     0x000010
 
 #ifdef __cplusplus
 } /* extern "C" */

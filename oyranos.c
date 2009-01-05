@@ -2,11 +2,8 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2009  Kai-Uwe Behrmann
  *
- */
-
-/**
  *  @brief    public Oyranos API's
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -1892,6 +1889,21 @@ const char *   oyLang                ( void )
   DBG_PROG_ENDE
 
   return text;
+}
+
+/** @brief   reset i18n language and  country variables
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/05 (Oyranos: 0.1.10)
+ *  @date    2009/01/05
+ */
+void           oyI18Nreset           ( void )
+{
+  DBG_PROG_START
+  oyExportReset_(EXPORT_I18N);
+  oyExportStart_(EXPORT_CHECK_NO);
+  oyExportEnd_();
+  DBG_PROG_ENDE
 }
 
 

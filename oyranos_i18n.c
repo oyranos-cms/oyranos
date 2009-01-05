@@ -37,9 +37,9 @@
 const char *oy_domain = OY_TEXTDOMAIN;
 const char *oy_domain_path = OY_LOCALEDIR;
 const char *oy_domain_codeset = 0;
-const char *oy_lang_ = 0;
-const char *oy_language_ = 0;
-const char *oy_country_ = 0;
+char *oy_lang_ = 0;
+char *oy_language_ = 0;
+char *oy_country_ = 0;
 
 /* --- internal API definition --- */
 
@@ -54,7 +54,7 @@ void oyI18NInit_()
 {
   DBG_PROG_START
 
-  oy_lang_ = "C";
+  oy_lang_ = oyStringCopy_("C", oyAllocateFunc_);
 
 #ifdef USE_GETTEXT
   if(!oy_country_ || !oy_language_)
@@ -74,13 +74,17 @@ void oyI18NInit_()
       bind_textdomain_codeset(oy_domain, oy_domain_codeset);
     DBG_NUM2_S("oy_domain_codeset %s %s", oy_domain, oy_domain_codeset)
 
-    if(getenv("LANG"))
+    /* we use the posix setlocale interface;
+     * the environmental LANG variable is flacky */
+    if(setlocale(LC_MESSAGES, 0))
     {
-      temp = oyStringCopy_(getenv("LANG"), oyAllocateFunc_);
-      oy_lang_ = (const char*) temp;
+      temp = oyStringCopy_(setlocale(LC_MESSAGES, 0), oyAllocateFunc_);
+      oy_lang_ = temp;
     }
 
-    if(oy_lang_ && oyStrchr_(oy_lang_,'_'))
+    if(oy_lang_)
+    {
+    if(oyStrchr_(oy_lang_,'_'))
     {
       char * tmp = 0;
       int len = oyStrlen_(oy_lang_);
@@ -113,6 +117,8 @@ void oyI18NInit_()
       tmp = oyStrchr_(oy_language_,'_');
       if(tmp)
         tmp[0] = 0;
+    } else
+      oy_language_ = oyStringCopy_( oy_lang_, oyAllocateFunc_);
     }
     /*if(temp) oyDeAllocateFunc_(temp);*/
   }
@@ -150,6 +156,23 @@ oyI18Nrefresh_()
   oyModulsRefreshI18N_();
 }
 
+
+/** @internal
+ *  @brief reset all variables to renew
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/05 (Oyranos: 0.1.10)
+ *  @date    2009/01/05
+ */
+void           oyI18Nreset_          ( void )
+{
+  if(oy_lang_)
+    oyFree_m_( oy_lang_ );
+  if(oy_language_)
+    oyFree_m_( oy_language_ );
+  if(oy_country_)
+    oyFree_m_( oy_country_ );
+}
 
 /** @internal
  *  @brief  get Lang code/variable
