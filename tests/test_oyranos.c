@@ -110,6 +110,42 @@ oyTESTRESULT_e testVersion()
   return result;
 }
 
+#include <locale.h>
+#include "oyranos_sentinel.h"
+
+oyTESTRESULT_e testI18N()
+{
+  const char * lang = 0;
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  oyExportReset_(EXPORT_I18N);
+
+  lang = oyLanguage();
+  if(lang && strcmp(lang, "C") == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyLanguage() uninitialised good %s                ", lang );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyLanguage() uninitialised failed                 " );
+  }
+
+  setlocale(LC_ALL,"");
+  oyExportReset_(EXPORT_I18N);
+
+  lang = oyLanguage();
+  if(strcmp(lang, "C") != 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyLanguage() initialised good %s                  ", lang );
+  } else
+  { PRINT_SUB( oyTESTRESULT_XFAIL, 
+    "oyLanguage() initialised failed %s                ", lang );
+  }
+
+  return result;
+}
+
 #include "oyranos_elektra.h"
 oyTESTRESULT_e testElektra()
 {
@@ -195,9 +231,56 @@ oyTESTRESULT_e testElektra()
 
 
 #include <oyranos_alpha.h>
-#include <oyranos_texts.h> /* oyStringListRelease_ */
-#include <oyranos_cmm.h>
-#include <oyranos_xml.h>   /* for hacking into xml API */
+
+oyTESTRESULT_e testOption ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int error = 0;
+  oyOption_s * o;
+  const char * test_buffer = "test";
+  size_t size = strlen(test_buffer);
+  oyPointer ptr = oyAllocateFunc_( size );
+
+  oyExportReset_(EXPORT_SETTING);
+
+  fprintf(stdout, "\n" );
+
+  o = oyOption_New( 0 );
+  if(o)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_New() good                               " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_New() failed                             " );
+  }
+
+  memcpy( ptr, test_buffer, size );
+  error = oyOption_SetFromData( o, ptr, size );
+  if(!error)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_SetFromData() good                       " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_SetFromData() failed                     " );
+  }
+
+  oyDeAllocateFunc_( ptr ); ptr = 0;
+  size = 0;
+
+  ptr = oyOption_GetData( o, &size, oyAllocateFunc_ );
+  if(ptr && size && memcmp( ptr, test_buffer, 4 ) == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_GetData() good                           " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_GetData() failed                         " );
+  }
+
+
+  return result;
+}
+
 
 #include <libxml/parser.h>
 #include <libxml/xmlsave.h>
@@ -586,7 +669,9 @@ int main(int argc, char** argv)
   /* do tests */
 
   TEST_RUN( testVersion, "Version matching" );
+  TEST_RUN( testI18N, "Internationalisation" );
   TEST_RUN( testElektra, "Elektra" );
+  TEST_RUN( testOption, "basic oyOption_s" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testMonitor,  "Monitor profiles" );
