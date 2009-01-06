@@ -51,9 +51,9 @@ typedef struct oyImage_s oyImage_s;
 
 typedef oyStruct_s * (*oyStruct_Copy_f ) ( oyStruct_s *, oyPointer );
 typedef int       (*oyStruct_Release_f ) ( oyStruct_s ** );
-typedef oyPointer (*oyStruct_copy_f )  ( oyPointer, oyPointer );
-typedef int       (*oyStruct_release_f ) ( oyPointer * );
-typedef oyPointer (*oyStruct_LockCreate_f ) ( oyStruct_s * obj );
+typedef oyPointer (*oyPointer_copy_f )   ( oyPointer, size_t );
+typedef int       (*oyPointer_release_f )( oyPointer * );
+typedef oyPointer (*oyStruct_LockCreate_f)(oyStruct_s * obj );
 typedef void      (*oyLockRelease_f )( oyPointer           lock,
                                        const char        * marker,
                                        int                 line );
@@ -156,8 +156,8 @@ typedef enum {
   oyOBJECT_COMP_S_,                   /*!< oyComp_s_ */
   oyOBJECT_FILE_LIST_S_,              /*!< oyFileList_s_ */
   oyOBJECT_HASH_S,                    /**< oyHash_s */
-  oyOBJECT_HANDLE_S,                  /**< oyHandle_s */
   oyOBJECT_STRUCT_LIST_S,             /**< oyStructList_s */
+  oyOBJECT_BLOB_S,                    /**< oyBlob_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 
@@ -254,40 +254,39 @@ int          oyName_boolean          ( oyName_s          * name_a,
                                        oyNAME_e            name_type,
                                        oyBOOLEAN_e         type );
 
-#define OY_HASH_SIZE 16
-
-#if 0
-/** @internal
- *  @brief a handle
+/** @struct  oyBlob_s
+ *  @brief   a data blob object
  *
- *  allow for polymorphing\n
- *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
- *
- *  @since Oyranos: version 0.1.8
- *  @date  27 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.9
+ *  @since   2009/01/06 (Oyranos: 0.1.9)
+ *  @date    2009/01/06
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_HANDLE_S*/
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_BLOB_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyPointer        dummy;              /**< keep to zero */
-  oyPointer            ptr;            /**< can be any type */
-  oyOBJECT_e           ptr_type;       /**< the type of the entry */
-  oyStruct_release_f   ptrRelease;     /**< deallocation for ptr_ of list_type*/
-  oyStruct_copy_f      ptrCopy;        /**< copy for ptr_ of list_type */
-} oyHandle_s;
+  oyObject_s           oy_;            /**< base object */
 
-oyHandle_s *       oyHandle_new_     ( oyAlloc_f           allocateFunc );
-oyHandle_s *       oyHandle_copy_    ( oyHandle_s        * orig,
-                                       oyAlloc_f           allocateFunc );
-int                oyHandle_release_ ( oyHandle_s       ** handle );
+  size_t               size;           /**< data size */
+  oyPointer            ptr;            /**< data */
+} oyBlob_s;
 
-int                oyHandle_set_     ( oyHandle_s        * handle,
+OYAPI oyBlob_s * OYEXPORT
+                 oyBlob_New          ( oyObject_s          object );
+OYAPI oyBlob_s * OYEXPORT
+                 oyBlob_Copy         ( oyBlob_s          * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyBlob_Release      ( oyBlob_s         ** obj );
+
+OYAPI int  OYEXPORT
+                 oyBlob_SetFromData  ( oyBlob_s          * obj,
                                        oyPointer           ptr,
-                                       oyOBJECT_e          ptr_type,
-                                       oyStruct_release_f  ptrRelease,
-                                       oyStruct_copy_f     ptrCopy );
-#endif
+                                       size_t              size );
+
+
+#define OY_HASH_SIZE 16
+
 
 typedef struct oyStructList_s oyStructList_s;
 

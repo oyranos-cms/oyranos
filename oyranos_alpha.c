@@ -553,8 +553,8 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_COMP_S_: text = "oyComp_s_"; break;
     case oyOBJECT_FILE_LIST_S_: text = "oyFileList_s_"; break;
     case oyOBJECT_HASH_S: text = "oyHash_s"; break;
-    case oyOBJECT_HANDLE_S: text = "oyHandle_s"; break;
     case oyOBJECT_STRUCT_LIST_S: text = "oyStructList_s"; break;
+    case oyOBJECT_BLOB_S: text = "oyBlob_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
   }
 
@@ -1755,7 +1755,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
-                                       oyStruct_release_f  ptrRelease )
+                                       oyPointer_release_f ptrRelease )
 {
   oyCMMptr_s * s = cmm_ptr;
   int error = !s;
@@ -4215,266 +4215,225 @@ int32_t      oyObject_Hashed_        ( oyObject_s          s )
   return hashed;
 }
 
+
+
+/** Function oyBlob_New
+ *  @relates oyBlob_s
+ *  @brief   allocate a new Blob object
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2009/01/06 (Oyranos: 0.1.9)
+ *  @date    2009/01/06
+ */
+OYAPI oyBlob_s * OYEXPORT
+                   oyBlob_New        ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_BLOB_S;
+# define STRUCT_TYPE oyBlob_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyBlob_Copy;
+  s->release = (oyStruct_Release_f) oyBlob_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+
+  return s;
+}
+
+/** Function oyBlob_Copy_
+ *  @relates oyBlob_s
+ *  @brief   real copy a Blob object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2009/01/06 (Oyranos: 0.1.9)
+ *  @date    2009/01/06
+ */
+oyBlob_s * oyBlob_Copy_
+                                     ( oyBlob_s          * obj,
+                                       oyObject_s          object )
+{
+  oyBlob_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyBlob_New( object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+    if(obj->ptr && obj->size)
+    {
+      s->ptr = allocateFunc_( obj->size );
+      error = !s->ptr;
+      if(!error)
+        error = !memcpy( s->ptr, obj->ptr, obj->size );
+    }
+  }
+
+  if(!error)
+    s->size = obj->size;
+  else
+    oyBlob_Release( &s );
+
+  return s;
+}
+
+/** Function oyBlob_Copy
+ *  @relates oyBlob_s
+ *  @brief   copy or reference a Blob object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2009/01/06 (Oyranos: 0.1.9)
+ *  @date    2009/01/06
+ */
+OYAPI oyBlob_s * OYEXPORT
+                   oyBlob_Copy       ( oyBlob_s          * obj,
+                                       oyObject_s          object )
+{
+  oyBlob_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_BLOB_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyBlob_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyBlob_Release
+ *  @relates oyBlob_s
+ *  @brief   release and possibly deallocate a Blob object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2009/01/06 (Oyranos: 0.1.9)
+ *  @date    2009/01/06
+ */
+OYAPI int  OYEXPORT
+               oyBlob_Release     ( oyBlob_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyBlob_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_BLOB_S)
+  {
+    WARNc_S(("Attempt to release a non oyBlob_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->ptr && s->size)
+      deallocateFunc( s->ptr );
+    s->size = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** Function oyBlob_SetFromData
+ *  @relates oyBlob_s
+ *  @brief   set value from a data blob
+ *
+ *  @param[in]     blob                the data blob
+ *  @param[in]     ptr                 data
+ *  @param[in]     size                data size
+ *  @return                            0 - success, 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/06 (Oyranos: 0.1.10)
+ *  @date    2009/01/06
+ */
+int            oyBlob_SetFromData    ( oyBlob_s          * blob,
+                                       oyPointer           ptr,
+                                       size_t              size )
+{
+  oyBlob_s * s = blob;
+  int error = !s || s->type_ != oyOBJECT_BLOB_S;
+
+  if(error)
+  {
+    WARNc_S("Attempt to set a non oyBlob_s object.")
+    return 1;
+  }
+
+  if(!error)
+  {
+    if(s->ptr)
+      s->oy_->deallocateFunc_( s->ptr );
+    s->size = 0;
+
+    s->ptr = s->oy_->allocateFunc_( size );
+    error = !s->ptr;
+  }
+
+  if(!error)
+    error = !memcpy( s->ptr, ptr, size );
+
+  if(!error)
+    s->size = size;
+
+  return error;
+}
+
+
 /**
  *  @} *//* objects_generic
  */
-
-
-#if 0
-
-/** @brief   get CMM specific data pointer
- *  @relates oyObject_s
- *
- *  @param[in]    object         the object
- *  @param[in]    cmm            CMM name
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-oyCMMptr_s * oyObject_GetCMMPtr       ( oyObject_s        object,
-                                        const char      * cmm )
-{
-  oyObject_s s = object;
-  int error = 0;
-  oyCMMptr_s * cmm_ptr = 0;
-
-  if(!s)
-    error = 1;
-
-  if(!error && !cmm)
-    cmm = oyModuleGetActual( 0 );
-
-  if(!error && s->handles_)
-  {
-    int n = oyStructList_Count(s->handles_);
-    int i;
-
-    for(i = 0; i < n ; ++i)
-    {
-      oyHandle_s * h = oyStructList_Get_(s->handles_, i);
-
-      if(h->ptr)
-      {
-        oyCMMptr_s * lcmm_ptr = h->ptr;
-
-        if( lcmm_ptr->cmm &&
-            !oyStrcmp_( lcmm_ptr->cmm, cmm ) )
-          cmm_ptr = lcmm_ptr;
-      }
-    }
-  }
-
-  return cmm_ptr;
-}
-
-/** @internal
- *  @relates oyObject_s
- *  @brief   set CMM specific data pointer
- *
- *  @param[in]    object         the object
- *  @param[in]    cmm_ptr        CMM specific pointer
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-oyObject_s  oyObject_SetCMMPtr       ( oyObject_s       object,
-                                        oyCMMptr_s      * cmm_ptr )
-{
-  oyObject_s s = 0;
-  if(cmm_ptr)
-    s = oyObject_SetCMMPtr_( object, cmm_ptr->cmm,
-                             cmm_ptr->ptr, cmm_ptr->resource,
-                             cmm_ptr->ptrRelease, cmm_ptr->func_name);
-  return s;
-}
-
-/** @internal
- *  @relates oyObject_s
- *  @brief set CMM specific data pointer
- *
- *  @param[in]    object         the object
- *  @param[in]    cmm            CMM name
- *  @param[in]    cmm_ptr        CMM specific pointer or zero to remove
- *  @param[in]    resource       Oyranos CMM resource type
- *  @param[in]    ptrRelease     CMM specific pointer deallocator
- *  @param[in]    func_name      CMM function name to release the CMM pointer
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-oyObject_s  oyObject_SetCMMPtr_      ( oyObject_s      object,
-                                        const char      * cmm,
-                                        oyPointer         ptr,
-                                        const char      * resource,
-                                        oyStructRelease_f  ptrRelease,
-                                        oyChar          * func_name )
-{
-  oyObject_s s = object;
-  int error = 0;
-  oyCMMptr_s * cmm_ptr = 0;
-
-  if(!s) error = 1;
-
-  if(!error && !cmm)
-    cmm = oyModuleGetActual(0);
-
-  if(!error && s->handles_)
-  {
-    int n = oyStructList_Count(s->handles_);
-    int i;
-
-    for(i = 0; i < n ; ++i)
-    {
-      oyHandle_s * h = oyStructList_Get_(s->handles_, i);
-
-      if(h->ptr)
-      {
-        oyCMMptr_s * l_cmm_ptr = (oyCMMptr_s*)h->ptr;
-
-        if( l_cmm_ptr->type == oyOBJECT_CMM_POINTER_S &&
-            l_cmm_ptr->cmm &&
-            !oyStrcmp_( l_cmm_ptr->cmm, cmm ) )
-          cmm_ptr = l_cmm_ptr;
-      }
-    }
-  }
-
-  if(!error)
-  {
-    if(!cmm_ptr)
-    {
-      cmm_ptr = oyCMMptr_New_(object->allocateFunc_);
-      error = !cmm_ptr;
-    }
-
-    if(!error)
-      error = oyCMMptr_Set_( cmm_ptr, cmm, resource,
-                             ptr, func_name, ptrRelease );
-    WARNc_S(("Better write a oyCMMptr_s to global cache. %s %s %s", cmm, resource, func_name))
-  }
-
-  return s;
-}
-
-
-/** @internal
- *  @brief new Oyranos handle
- *
- *  @since Oyranos: version 0.1.8
- *  @date  28 november 2007 (API 0.1.8)
- */
-oyHandle_s *       oyHandle_new_     ( oyAlloc_f           allocateFunc )
-{
-  oyHandle_s * s = 0;
-  int error = 0;
-
-  s = oyAllocateWrapFunc_( sizeof(oyHandle_s), allocateFunc );
-  error = !s;
-
-  if(!error)
-    s->type_ = oyOBJECT_HANDLE_S;
-
-  return s;
-}
-
-/** @internal
- *  @brief copy Oyranos handle
- *
- *  @since Oyranos: version 0.1.8
- *  @date  28 november 2007 (API 0.1.8)
- */
-oyHandle_s *       oyHandle_copy_    ( oyHandle_s        * orig,
-                                       oyAlloc_f           allocateFunc )
-{
-  oyHandle_s * s = 0;
-  int error = 0;
-
-  s = oyAllocateWrapFunc_( sizeof(oyHandle_s), allocateFunc );
-  error = !s;
-
-  if(!error && orig)
-  {
-    error = oyHandle_set_( s, 0, orig->ptr_type,
-                           orig->ptrRelease, orig->ptrCopy );
-
-    if(orig->ptr && orig->ptrCopy)
-      s->ptr = orig->ptrCopy( orig->ptr, 0 );
-  }
-
-  return s;
-}
-
-/** @internal
- *  @relates oyHandle_s
- *  @brief   release Oyranos handle
- *
- *  @since Oyranos: version 0.1.8
- *  @date  28 november 2007 (API 0.1.8)
- */
-int                oyHandle_release_ ( oyHandle_s       ** handle )
-{
-  oyHandle_s * s = 0;
-  int error = 0;
-
-  if(handle && *handle)
-    s = *handle;
-
-  error = !s;
-
-  if(!error)
-    if(s->type_ != oyOBJECT_HANDLE_S)
-      error = 1;
-
-  if(!error)
-  {
-    oyHandle_set_(s, 0,0,0,0);
-    oyPointerRelease_m( &s );
-  }
-
-  if(!error)
-    *handle = 0;
-
-  return error;
-}
-
-/** @internal
- *  @relates oyHandle_s
- *  @brief   set properties of a Oyranos handle
- *
- *  The function sets all properties to the provided values.\n
- *  In case a pointer is found in handle, the release function will be applied.
- *  ptrRelease and ptrCopy should be set otherwise the behaviour is undefined.
- *
- *  @since Oyranos: version 0.1.8
- *  @date  28 november 2007 (API 0.1.8)
- */
-int                oyHandle_set_     ( oyHandle_s        * handle,
-                                       oyPointer           ptr,
-                                       oyOBJECT_e          ptr_type,
-                                       oyStruct_release_f   ptrRelease,
-                                       oyStruct_copy_f      ptrCopy )
-{
-  oyHandle_s * s = handle;
-  int error = !s;
-
-  if(!error)
-    if(s->type_ != oyOBJECT_HANDLE_S)
-      error = 1;
-
-  if(!error)
-  {
-    if(s->ptr && s->ptrRelease)
-      s->ptrRelease( &s->ptr );
-    s->ptr = ptr;
-    s->ptr_type = ptr_type;
-    s->ptrRelease = ptrRelease;
-    s->ptrCopy = ptrCopy;
-  }
-
-  return error;
-}
-
-#endif
 
 
 /** \addtogroup objects_generic
@@ -5678,7 +5637,7 @@ void         oyOption_UpdateFlags_   ( oyOption_s        * o )
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/04 (Oyranos: 0.1.10)
- *  @date    2009/01/04
+ *  @date    2009/01/06
  */
 int            oyOption_SetFromData  ( oyOption_s        * option,
                                        oyPointer           ptr,
@@ -5711,7 +5670,7 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
 
   if(!error)
   {
-    option->value->int32_list = allocateFunc_( size/type_size + type_size +
+    option->value->int32_list = allocateFunc_( size + type_size +
                              (size%type_size ? type_size - size%type_size : 0));
     error = !option->value->int32_list;
     option->value_type = oyVAL_INT_LIST;
@@ -9155,7 +9114,7 @@ OYAPI int  OYEXPORT
  *  @relates oyProfileTag_s
  *
  *  For the affect of the parameters look at the appropriate module.
- *  @see oyraProfileTag_GetValues
+ *  @see oyIMProfileTag_GetValues
  *
  *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
  *  element from the tag parameter.
@@ -9192,9 +9151,11 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   char cmm[] = {0,0,0,0,0}, 
        t_l[8], t_c[8], *t_ptr;
   int implicite_i18n = 0;
-  char ** texts = 0, * text = 0, *temp = 0;
+  char ** texts = 0, * text = 0, * text_tmp = 0, * temp = 0;
   oyStructList_s * values = 0;
   oyName_s * name = 0;
+  oyBlob_s * blob = 0;
+  size_t size = 0;
   int values_n = 0, i = 0, k;
   int32_t texts_n = 0;
   oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_READ, 0, oyREQUEST_HARD};
@@ -9247,6 +9208,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
       if(oyStructList_Count( values ) )
       {
         name = 0;
+        blob = 0;
         values_n = oyStructList_Count( values );
 
         for(k = 0; k < 4; ++k)
@@ -9256,29 +9218,47 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
             text = 0;
             name = (oyName_s*) oyStructList_GetRefType( values, i,
                                                         oyOBJECT_NAME_S );
-            memcpy(t_l, name->lang, 8); t_c[0] = 0;
-            t_ptr = oyStrchr_(t_l, '_');
-            if(t_ptr)
+            if(!name)
+            blob = (oyBlob_s*) oyStructList_GetRefType( values, i,
+                                                        oyOBJECT_BLOB_S );
+            if(name)
             {
-              memcpy(t_c, t_ptr+1, 3);
-              *t_ptr = 0;
+              memcpy(t_l, name->lang, 8); t_c[0] = 0;
+              t_ptr = oyStrchr_(t_l, '_');
+              if(t_ptr)
+              {
+                memcpy(t_c, t_ptr+1, 3);
+                *t_ptr = 0;
+              }
             }
 
             if(name)
               text = name->name;
-            if(name)
+            else if(blob && blob->ptr && blob->size)
+            {
+              error = oyStringFromData_( blob->ptr, blob->size, &text_tmp,
+                      &size, oyAllocateFunc_ );
+              if(!error && size && text_tmp)
+                text = text_tmp;
+            }
+
+            if(text)
             /* select by language and/or country or best i18n match or all */
             if(
-               (k == 0 && language && oyStrcmp_( language, t_l ) == 0 &&
-                          country  && oyStrcmp_( country, t_c ) )       ||
-               (k == 1 && language && oyStrcmp_( language, t_l ) == 0 &&
+               (k == 0 && language && oyStrlen_( language ) &&
+                          oyStrcmp_( language, t_l ) == 0 &&
+                          country  && oyStrlen_( country ) &&
+                          oyStrcmp_( country, t_c ) )       ||
+               (k == 1 && language && oyStrlen_( language ) &&
+                          oyStrcmp_( language, t_l ) == 0 &&
                           (!country || implicite_i18n ))                ||
-               (k == 2 && country  && oyStrcmp_( country, t_c ) == 0  &&
+               (k == 2 && country  && oyStrlen_( country ) &&
+                          oyStrcmp_( country, t_c ) == 0  &&
                           (!language || implicite_i18n ))               ||
                (k == 3 && ((!language && !country) || implicite_i18n))
               )
             {
-              if(oyStrlen_(name->lang) && !implicite_i18n)
+              if(name && oyStrlen_(name->lang) && !implicite_i18n)
               {
                 /* string with i18n infos -> "de_DE:Licht" */
                 temp = oyStringAppend_(name->lang, ":", oyAllocateFunc_);
@@ -9306,6 +9286,9 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
               k = 4;
               break;
             }
+
+            if(text_tmp)
+              oyFree_m_( text_tmp );
           }
         }
 
