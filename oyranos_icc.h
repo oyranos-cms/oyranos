@@ -110,7 +110,7 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
  *  @date    2009/01/04
  */
 typedef struct {
-  icTagTypeSignature type;             /**< "data" */
+  icTagTypeSignature type;             /**< "DevS" */
   uint32_t         dummy;              /**< keep zero */
   uint8_t          version;            /**< 1 - for version 0.2 */
   char             device_serial[12];  /**< 12 byte field, null terminated, unused bytes must be set to zero */

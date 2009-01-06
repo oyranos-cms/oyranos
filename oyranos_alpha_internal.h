@@ -63,7 +63,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
-                                       oyStruct_release_f  ptrRelease );
+                                       oyPointer_release_f ptrRelease );
 int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
                                        oyCMMptr_s        * cmm_ptr_out,
                                        oyFilterNode_s    * node );
