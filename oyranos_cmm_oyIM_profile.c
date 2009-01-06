@@ -154,13 +154,20 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *  - icSigDeviceSettingsType:
  *    - since Oyranos 0.1.10 (API 0.1.10)
  *    - returns
- *      - 0: first string version
- *      - 1: device serial
- *      - 2: device name
- *      - 3: device version
- *      - 4: device signature/encoding
- *      - 5: priority (0-255)
- *      - 6: oyOption_s data blob
+ *      - version announce string
+ *      - string version
+ *      - announce string
+ *      - device serial
+ *      - announce string
+ *      - driver name
+ *      - announce string
+ *      - driver version
+ *      - announce string
+ *      - driver signature/encoding
+ *      - announce string
+ *      - priority (0-255)
+ *      - announce string
+ *      - oyBlob_s data blob
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/01/02 (Oyranos: 0.1.8)
@@ -180,6 +187,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
   int32_t size_ = -1;
   char num[32];
   oyName_s * name = 0;
+  oyBlob_s * o = 0;
 
   /* provide information about the function */
   if(!tag)
@@ -246,13 +254,20 @@ oyStructList_s * oyIMProfileTag_GetValues(
 - icSigDeviceSettingsType:\
   - since Oyranos 0.1.10 (API 0.1.10)\
   - returns\
-    - 0: first string version\
-    - 1: device serial\
-    - 2: device name\
-    - 3: device version\
-    - 4: device signature/encoding\
-    - 5: priority (0-255)\
-    - 6: oyOption_s data blob"
+    - version announce string \
+    - string version \
+    - announce string\
+    - device serial\
+    - announce string\
+    - driver name\
+    - announce string\
+    - driver version\
+    - announce string\
+    - driver signature/encoding\
+    - announce string\
+    - priority (0-255)\
+    - announce string\
+    - oyBlob_s data blob"
     };
     oyStruct_s * description = 0;
 
@@ -303,53 +318,95 @@ oyStructList_s * oyIMProfileTag_GetValues(
            len = tag->size_ * sizeof(char);
            tmp = oyAllocateFunc_( len );
            error = tag->size_ < 80 || !memcpy( tmp, &mem[8], len - 8 );
-/*  - icSigDeviceSettingsType:
- *    - since Oyranos 0.1.10 (API 0.1.10)
- *    - returns */
+           /*  - icSigDeviceSettingsType:
+            *    - since Oyranos 0.1.10 (API 0.1.10)
+            *    - returns */
            /*      - 0: first string version */
            if(!error)
            {
+             oySprintf_( tmp, "%s", _("Tag Version:") );
+             oyStructList_AddName( texts, tmp, -1 );
+
              oySprintf_( tmp, "%d", (int)((uint8_t) mem[8]) );
              error = (char) mem[8] != 1;
            }
            if(!error)
-             oyStructList_MoveInName( texts, &tmp, -1 );
+             oyStructList_AddName( texts, tmp, -1 );
            /*      - 1: device serial */
            if(!error)
+           {
+             oySprintf_( tmp, "%s", _("Device Serial:") );
+             oyStructList_AddName( texts, tmp, -1 );
+
              error = !memcpy( tmp, &mem[9], 12 );
+           }
            tmp[12] = 0;
            if(!error)
-             oyStructList_MoveInName( texts, &tmp, -1 );
-           /*      - 2: device name */
+             oyStructList_AddName( texts, tmp, -1 );
+           /*      - 2: driver name */
            if(!error)
+           {
+             oySprintf_( tmp, "%s", _("Driver name:") );
+             oyStructList_AddName( texts, tmp, -1 );
+
              error = !memcpy( tmp, &mem[21], 12 );
+           }
            tmp[12] = 0;
            if(!error)
-             oyStructList_MoveInName( texts, &tmp, -1 );
-           /*      - 3: device version */
+             oyStructList_AddName( texts, tmp, -1 );
+           /*      - 3: driver version */
            if(!error)
+           {
+             oySprintf_( tmp, "%s", _("Driver version:") );
+             oyStructList_AddName( texts, tmp, -1 );
+
              error = !memcpy( tmp, &mem[33], 12 );
+           }
            tmp[12] = 0;
            if(!error)
-             oyStructList_MoveInName( texts, &tmp, -1 );
-           /*      - 4: device signature/encoding */
+             oyStructList_AddName( texts, tmp, -1 );
+           /*      - 4: driver signature/encoding */
            if(!error)
+           {
+             oySprintf_( tmp, "%s", _("Driver signature/encoding:") );
+             oyStructList_AddName( texts, tmp, -1 );
+
              error = !memcpy( tmp, &mem[45], 12 );
+           }
            tmp[12] = 0;
            if(!error)
-             oyStructList_MoveInName( texts, &tmp, -1 );
+             oyStructList_AddName( texts, tmp, -1 );
            /*      - 5: priority (0-255) */
            {
-             uint32_t blob_n = 0;
+             uint32_t i = 0;
              deviceSettingsType * DevS = (deviceSettingsType*) mem;
              if(!error && DevS->data_size > 0)
              {
-               blob_n = oyValueUInt32( (uint32_t)*((uint32_t*) &mem[80]));
-               oySprintf_( tmp, "%d", (int)blob_n );
+               oySprintf_( tmp, "%s", _("Priority:") );
+               oyStructList_AddName( texts, tmp, -1 );
+
+               i = *(uint8_t*)&mem[57];
+               oySprintf_( tmp, "%d", (int)i );
              }
              if(!error)
-               oyStructList_MoveInName( texts, &tmp, -1 );
-           /*      - 6: oyOption_s data blob */
+               oyStructList_AddName( texts, tmp, -1 );
+           /*      - 6: oyBlob_s data blob */
+             i = 0;
+             if(!error)
+             {
+               i = oyValueUInt32( (uint32_t)*((uint32_t*) &mem[80]));
+               oySprintf_( tmp, "%d", (int)i );
+             }
+             if(!error && i && i + 84 <= len)
+             {
+               oySprintf_( tmp, "%s", _("Data:") );
+               oyStructList_AddName( texts, tmp, -1 );
+
+               o = oyBlob_New( 0 );
+               oyBlob_SetFromData( o, &mem[84], i );
+               oyStructList_MoveIn( texts, (oyStruct_s**)&o, -1 );
+             }
+             oyFree_m_( tmp );
            }
            break;
       case icSigTextType:
