@@ -638,6 +638,57 @@ char*              oyStringAppend_   ( const char        * text,
 }
 
 /** @internal 
+ *  @brief   search in a data pointer for text
+ *
+ *  Extract only the visible text. Stop for any other non print or space sign. 
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/06 (Oyranos: 0.1.10)
+ *  @date    2009/01/06
+ */
+int                oyStringFromData_ ( const oyPointer     ptr,
+                                       size_t              size,
+                                       char             ** text_new,
+                                       size_t            * text_new_size,
+                                       oyAlloc_f           allocateFunc )
+{
+  const char * text = (const char*) ptr;
+  char * text_tmp = 0;
+  int j,
+      error = 0;
+
+  if(ptr && size)
+  {
+    j = 0;
+
+    while(j < size)
+      if(!isprint( text[j] ) && !isspace( text[j] ))
+      {
+        text = 0;
+        break;
+      } else
+        ++j;
+
+    if(text)
+    {
+      text_tmp = allocateFunc( j );
+      error = !text_tmp;
+      error = !memcpy( text_tmp, text, j-1 );
+      if(error)
+        text_tmp[j-1] = 0;
+    }
+  }
+
+  if(!error && text)
+  {
+    *text_new = text_tmp;
+    *text_new_size = j - 1;
+  }
+
+  return error;
+}
+
+/** @internal 
  *  @brief add a string and care about de-/allocation
  *
  *  @since Oyranos: version 0.1.8

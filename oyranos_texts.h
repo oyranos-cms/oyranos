@@ -138,6 +138,11 @@ char*              oyStringCopy_     ( const char        * text,
 char*              oyStringAppend_   ( const char        * text,
                                        const char        * append,
                                        oyAlloc_f           allocateFunc );
+int                oyStringFromData_ ( const oyPointer     ptr,
+                                       size_t              size,
+                                       char             ** text,
+                                       size_t            * text_size,
+                                       oyAlloc_f           allocateFunc );
 #define STRING_ADD(t, txt) oyStringAdd_( &t, txt, \
                                          oyAllocateFunc_, oyDeAllocateFunc_ )
 void               oyStringAdd_      ( char             ** text,
