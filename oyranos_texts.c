@@ -718,9 +718,11 @@ char**             oyStringSplit_    ( const char    * text,
                                        oyAlloc_f       allocateFunc )
 {
   char ** list = 0;
+  int n = 0;
+
   if(text && oyStrlen_(text) && delimiter)
   {
-    int n = 0, i;
+    int i;
     char * tmp = (char*)text;
 
     if(tmp[0] == delimiter) ++n;
@@ -757,12 +759,12 @@ char**             oyStringSplit_    ( const char    * text,
       }
     }
 
-    if(count)
-      *count = n;
-
     if(tmp)
       oyDeAllocateFunc_(tmp);
   }
+
+  if(count)
+    *count = n;
 
   return list;
 }

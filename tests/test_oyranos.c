@@ -327,7 +327,7 @@ oyTESTRESULT_e testSettings ()
 
       tmp = oyFilterRegistrationToText( oyOption_GetText(o, oyNAME_DESCRIPTION),
                                         oyFILTER_REG_OPTION, 0 );
-      if(strcmp(tmp,"cmyk_cmky_black_preservation") == 0)
+      if(strcmp( oyNoEmptyString_m_(tmp),"cmyk_cmky_black_preservation") == 0)
         ++size;
 
       oyDeAllocateFunc_(tmp);
