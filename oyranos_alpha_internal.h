@@ -94,6 +94,9 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
                                        oyAlloc_f           allocateFunc );
 oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
                                        int                 pos );
+int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
+                                       oyProfileTag_s   ** obj,
+                                       int                 pos );
 
 oyFilter_s * oyFilter_New_           ( oyObject_s          object );
 int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
