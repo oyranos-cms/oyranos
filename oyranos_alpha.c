@@ -795,9 +795,9 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
   }
 
   if(!s)
-    oyAllocHelper_m_( s, oyName_s, 1, allocateFunc, error = 1 );
+    s = oyName_new(0);
 
-  if(!s) return 0;
+  if(!s) return s;
 
   s->type = oyOBJECT_NAME_S;
 
@@ -1280,12 +1280,12 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
   {
       if(0 <= pos && pos < s->n_)
       {
-          if(s->ptr_[pos])
+          if(s->ptr_[pos] && s->ptr_[pos]->release)
             s->ptr_[pos]->release( (oyStruct_s**)&s->ptr_[pos] );
 
           if(pos < s->n_ - 1)
             error = !memmove( &s->ptr_[pos], &s->ptr_[pos+1],
-                              sizeof(oyStruct_s*) * s->n_ - pos - 1);
+                              sizeof(oyStruct_s*) * (s->n_ - pos - 1));
 
           --s->n_;
       }
@@ -8688,7 +8688,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
 
       if(0 == pos)
         tag = oyProfileTag_Copy( tag_, 0 );
-      error = oyProfile_TagMoveIn( s, &tag_, -1 );
+      error = oyProfile_TagMoveIn_( s, &tag_, -1 );
 
 
       size = oyProfile_GetSignature( s, oySIGNATURE_SIZE );
@@ -8755,7 +8755,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
           tag = oyProfileTag_Copy( tag_, 0 );
 
         if(!error)
-          error = oyProfile_TagMoveIn( s, &tag_, -1 );
+          error = oyProfile_TagMoveIn_( s, &tag_, -1 );
       }
     }
   }
@@ -8809,7 +8809,7 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
   if(!error)
     n = oyStructList_Count( s->tags_ );
 
-  if(!n)
+  if(!error && !n)
   {
     oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( s, 0 );
     oyProfileTag_Release( &tag );
@@ -8819,15 +8819,16 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
   return n;
 }
 
-/** Function oyProfile_TagMoveIn
+/** @internal
+ *  Function oyProfile_TagMoveIn_
  *  @relates oyProfile_s
  *  @brief   add a tag to a profile
  *
  *  @version Oyranos: 0.1.10
- *  @since   2008/02/01 (Oyranos: 0.1.8)
- *  @date    2009/01/05
+ *  @since   2009/01/06 (Oyranos: 0.1.10)
+ *  @date    2009/01/06
  */
-int                oyProfile_TagMoveIn(oyProfile_s       * profile,
+int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos )
 {
@@ -8840,8 +8841,57 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
   if(s)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
+
   if(!error)
     error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos );
+
+  if(s)
+    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+
+  return error;
+}
+
+/** Function oyProfile_TagMoveIn
+ *  @relates oyProfile_s
+ *  @brief   add a tag to a profile
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/02/01 (Oyranos: 0.1.8)
+ *  @date    2009/01/06
+ */
+int                oyProfile_TagMoveIn(oyProfile_s       * profile,
+                                       oyProfileTag_s   ** obj,
+                                       int                 pos )
+{
+  oyProfile_s * s = profile;
+  int error = !s, i,n;
+  oyProfileTag_s * tag = 0;
+
+  if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
+    error = 1;
+
+  if(s)
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+
+  if(!error)
+  {
+    /** Initialise tag list. */
+    n = oyProfile_GetTagCount( s );
+
+    /** Avoid double occurencies of tags. */
+    for( i = 0; i < n; ++i )
+    {
+      tag = oyProfile_GetTagByPos( s, i );
+      if(tag->use == (*obj)->use)
+      {
+        oyProfile_TagReleaseAt(s, i);
+        n = oyProfile_GetTagCount( s );
+      }
+      oyProfileTag_Release( &tag );
+    }
+    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos );
+  }
 
   if(s)
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
@@ -8999,6 +9049,59 @@ OYAPI oyProfileTag_s * OYEXPORT
   }
 
   return s;
+}
+
+/** Function oyProfileTag_CreateFromText
+ *  @relates oyProfileTag_s
+ *
+ *  @param[in]     text                a string
+ *  @param[in]     tag_type            type to create, e.g. icSigTextDescriptionType or icSigTextType
+ *  @param[in]     tag_usage           signature, e.g. icSigCopyrightTag
+ *  @param[in]     object              the user object for the tag creation
+ *  @return                            a profile tag
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/06 (Oyranos: 0.1.10)
+ *  @date    2009/01/06
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_CreateFromText (
+                                       const char        * text,
+                                       icTagTypeSignature  tag_type,
+                                       icTagSignature      tag_usage,
+                                       oyObject_s          object )
+{
+  int error = !text;
+  oyProfileTag_s * tag = 0;
+  oyName_s * name = 0;
+  oyStructList_s * list = 0;
+
+  if(!error)
+  {
+    name = oyName_set_ ( name, text, oyNAME_NAME,
+                         oyAllocateFunc_, oyDeAllocateFunc_ );
+    error = !name;
+  }
+
+  if(!error)
+  {
+    memcpy( name->lang, "en_GB", 5 );
+    list = oyStructList_New(0);
+    error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0 );
+  }
+
+  if(!error)
+  {
+    tag = oyProfileTag_Create( list, tag_type, 0, OY_MODULE_NICK, object);
+    error = !tag;
+  }
+
+  if(!error)
+  tag->use = tag_usage;
+
+  oyStructList_Release( &list );
+
+  return tag;
 }
 
 /** Function oyProfileTag_Copy
@@ -15003,7 +15106,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
         oyProfiles_Release( &p_list );
 
         if(psid)
-          error = oyProfile_TagMoveIn ( prof, &psid, -1 );
+          error = oyProfile_TagMoveIn_( prof, &psid, -1 );
       }
 
       /* Info tag */
@@ -15036,7 +15139,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
         oyStructList_Release( &list );
 
         if(info)
-          error = oyProfile_TagMoveIn ( prof, &info, -1 );
+          error = oyProfile_TagMoveIn_( prof, &info, -1 );
       }
 
       if(!error)
@@ -15066,7 +15169,7 @@ oyPointer    oyColourConversion_ToMem_( oyColourConversion_s * s,
         oyStructList_Release( &list );
 
         if(cprt)
-          error = oyProfile_TagMoveIn ( prof, &cprt, -1 );
+          error = oyProfile_TagMoveIn_( prof, &cprt, -1 );
       }
 
       if(block)
