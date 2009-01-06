@@ -889,7 +889,13 @@ OYAPI oyProfileTag_s * OYEXPORT
                                        icTagTypeSignature  tag_type,
                                        uint32_t            version,
                                        const char        * required_cmm,
-                                       oyObject_s          object);
+                                       oyObject_s          object );
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_CreateFromText (
+                                       const char        * text,
+                                       icTagTypeSignature  tag_type,
+                                       icTagSignature      tag_usage,
+                                       oyObject_s          object );
 OYAPI oyProfileTag_s * OYEXPORT
                oyProfileTag_Copy     ( oyProfileTag_s    * obj,
                                        oyObject_s          object);
