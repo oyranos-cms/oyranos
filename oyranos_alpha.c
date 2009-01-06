@@ -5646,7 +5646,6 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
   int error = !option || option->type_ != oyOBJECT_OPTION_S;
   oyAlloc_f allocateFunc_ = oyAllocateFunc_;
   oyDeAlloc_f deallocateFunc_ = oyDeAllocateFunc_;
-  int type_size = sizeof(int32_t);
 
   if(error)
   {
@@ -5670,22 +5669,19 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
 
   if(!error)
   {
-    option->value->int32_list = allocateFunc_( size + type_size +
-                             (size%type_size ? type_size - size%type_size : 0));
-    error = !option->value->int32_list;
-    option->value_type = oyVAL_INT_LIST;
+    option->value->oy_struct = (oyStruct_s*) oyBlob_New( 0 );
+    error = !option->value->oy_struct;
+    option->value_type = oyVAL_STRUCT;
   }
 
   if(!error)
-  {
-    option->value->int32_list[0] = size;
-    error = !memcpy( &option->value->int32_list[1], ptr, size );
-  }
+    error = oyBlob_SetFromData( (oyBlob_s*) option->value->oy_struct,
+                                ptr, size );
 
   return error;
 }
 
-/** Function oyOption_GetFromData
+/** Function oyOption_GetData
  *  @relates oyOption_s
  *  @brief   get the data blob
  *
@@ -5696,7 +5692,7 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/04 (Oyranos: 0.1.10)
- *  @date    2009/01/04
+ *  @date    2009/01/06
  */
 oyPointer      oyOption_GetData      ( oyOption_s        * option,
                                        size_t            * size,
@@ -5705,6 +5701,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
   int error = !option || option->type_ != oyOBJECT_OPTION_S;
   oyPointer ptr = 0;
   size_t size_ = 0;
+  oyBlob_s * blob = 0;
 
   if(error)
   {
@@ -5718,21 +5715,24 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
        option->oy_)
       allocateFunc = option->oy_->allocateFunc_;
 
-    if(!option->value || option->value_type != oyVAL_INT_LIST ||
-       option->value->int32_list[0] <= 0)
+    if(!option->value || option->value_type != oyVAL_STRUCT ||
+       option->value->oy_struct->type_ != oyOBJECT_BLOB_S ||
+       !((oyBlob_s*)(option->value->oy_struct))->ptr ||
+       ((oyBlob_s*)(option->value->oy_struct))->size == 0)
       error = 1;
   }
 
   if( !error )
   {
-    size_ = option->value->int32_list[0];
+    blob = (oyBlob_s*)option->value->oy_struct;
+    size_ = blob->size;
     ptr = oyAllocateWrapFunc_( size_, allocateFunc );
     error = !ptr;
   }
 
   if(!error)
   {
-    error = !memcpy( ptr, &option->value->int32_list[1], size_ );
+    error = !memcpy( ptr, blob->ptr, size_ );
     if(!error && size)
       *size = size_;
   }

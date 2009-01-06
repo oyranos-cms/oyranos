@@ -478,7 +478,7 @@ typedef enum {
   oyVAL_DOUBLE_LIST,
   oyVAL_STRING,
   oyVAL_STRING_LIST,
-  oyVAL_STRUCT
+  oyVAL_STRUCT     /**< for pure data blobs use oyBlob_s herein */
 } oyVALUETYPE_e;
 
 /** @union   oyValue_u
@@ -499,7 +499,7 @@ typedef union {
   char           * string;             /**< null terminated */
   char          ** string_list;        /**< null terminated */
 
-  oyStruct_s     * oy_struct;          /**< a struct, e.g. a profile */
+  oyStruct_s     * oy_struct;          /**< a struct, e.g. a profile, or oyBlob_s for a data pointer */
 } oyValue_u;
 
 void           oyValueCopy           ( oyValue_u         * to,
