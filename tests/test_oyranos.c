@@ -274,6 +274,7 @@ oyTESTRESULT_e testOption ()
     "oyOption_GetData() failed                         " );
   }
 
+  oyOption_Release( &o );
 
   return result;
 }
@@ -565,8 +566,10 @@ oyTESTRESULT_e testMonitor ()
 
   p2 = oyProfile_FromFile( text, 0, 0 );
 
-  if(text && strcmp( oyProfile_GetText( p2, oyNAME_DESCRIPTION ),
-                     oyProfile_GetText( p, oyNAME_DESCRIPTION )) == 0)
+  if(text &&
+     strcmp( oyNoEmptyString_m_(oyProfile_GetText( p2, oyNAME_DESCRIPTION )),
+             oyNoEmptyString_m_(oyProfile_GetText( p , oyNAME_DESCRIPTION )))
+     == 0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "monitor profile from Oyranos DB matches the server one" );
