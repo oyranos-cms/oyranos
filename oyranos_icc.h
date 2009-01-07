@@ -98,7 +98,7 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 #define icSigNativeDisplayInfoType 0x6e64696e /* 'ndin' */
 #endif
 
-/** @brief deviceSettingsType for ICC profiles
+/** @brief deviceSettingsType tag for ICC profiles
  *  @ingroup icc_low
  *
  *  For details see: http://www.oyranos.org/wiki/index.php?title=Device_Settings_in_ICC_0.2

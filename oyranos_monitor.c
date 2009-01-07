@@ -1140,7 +1140,7 @@ oySetMonitorProfile_              (const char* display_name,
       XDeleteProperty( display, w, atom );
 
       {
-        char *dpy_name = strdup( display_name );
+        char *dpy_name = strdup( oyNoEmptyString_m_(display_name) );
         char  command[1024];
         char *ptr = NULL;
         int r;
