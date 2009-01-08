@@ -1533,8 +1533,6 @@ oyGetMonitorInfo_lib              (const char* display,
   int err = 0;
 
   DBG_PROG_START
-  if( oyExportStart_(EXPORT_MONITOR))
-    oyActivateMonitorProfiles_(display);
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
   err = oyGetMonitorInfo_( display, manufacturer, model, serial, 0,
@@ -1550,7 +1548,6 @@ oyGetMonitorInfo_lib              (const char* display,
   if(*serial)
     DBG_PROG_S( *serial );
 
-  oyExportEnd_();
   DBG_PROG_ENDE
   return err;
 }
@@ -1592,8 +1589,7 @@ char*  oyGetMonitorProfileNameFromDB_lib ( const char        * display,
   char* moni_profile = 0;
 
   DBG_PROG_START
-  if( oyExportStart_(EXPORT_PATH | EXPORT_SETTING | EXPORT_MONITOR) )
-    oyActivateMonitorProfiles_(display);
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
   moni_profile = oyGetMonitorProfileName_( display, allocate_func );
 
@@ -1615,8 +1611,7 @@ oySetMonitorProfile_lib           (const char* display_name,
   int error = 0;
 
   DBG_PROG_START
-  if( oyExportStart_(EXPORT_PATH | EXPORT_SETTING | EXPORT_MONITOR) )
-    oyActivateMonitorProfiles_(display_name);
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING | EXPORT_MONITOR);
 
   error = oySetMonitorProfile_( display_name, profil_name );
 
@@ -1672,8 +1667,6 @@ oyGetScreenFromPosition_lib     (const char *display_name,
   int screen = 0;
 
   DBG_PROG_START
-  if( oyExportStart_(EXPORT_MONITOR) )
-    oyActivateMonitorProfiles_(display_name);
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
   screen = oyGetScreenFromPosition_( display_name, x,y );
@@ -1681,7 +1674,6 @@ oyGetScreenFromPosition_lib     (const char *display_name,
 
   DBG_PROG3_S( "x %d y %d screen %d", x,y,screen );
 
-  oyExportEnd_();
   DBG_PROG_ENDE
   return screen;
 }
@@ -1705,14 +1697,11 @@ oyGetDisplayNameFromPosition_lib      (const char *display_name,
   char *new_display_name = 0;
 
   DBG_PROG_START
-  if( oyExportStart_(EXPORT_MONITOR) )
-    oyActivateMonitorProfiles_(display_name);
 
   new_display_name = oyGetDisplayNameFromPosition_( display_name, x,y,
                                                     allocate_func );
   DBG_PROG3_S( "x %d y %d new_display_name %s", x,y,new_display_name );
 
-  oyExportEnd_();
   DBG_PROG_ENDE
   return new_display_name;
 }
