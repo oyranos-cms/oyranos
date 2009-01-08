@@ -434,11 +434,53 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
-        echo_="X Xinerma not found in /usr/X11R6/include/X11/extensions/Xinerama.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        echo_="X Xinerama not found in /usr/X11R6/include/X11/extensions/Xinerama.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
         echo_="  /usr/include/X11/extensions/Xinerama.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
         echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
   fi
+
+  if [ -n "$XRANDR" ] && [ $XRANDR -gt 0 ]; then
+    found=""
+    version=""
+    pc_package=xrandr
+    if [ -z "$found" ]; then
+      pkg-config  --atleast-version=1.0 $pc_package
+      if [ $? = 0 ]; then
+        found=`pkg-config --cflags $pc_package`
+        version=`pkg-config --modversion $pc_package`
+      fi
+    fi
+    if [ -z "$found" ]; then
+      if [ -f /usr/X11R6/include/X11/extensions/Xrandr.h ]; then
+        found="-I/usr/X11R6/include"
+      elif [ -f /usr/include/X11/extensions/Xrandr.h ]; then
+        found="-I/usr/include"
+      elif [ -f $includedir/X11/extensions/Xrandr.h ]; then
+        found="-I$includedir"
+      fi
+    fi
+    if [ -n "$found" ]; then
+      if [ -n "$version" ]; then
+        echo_="X Xrandr $version          detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      else
+        echo_="X Xrandr                detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      fi
+      echo "#define HAVE_XRANDR 1" >> $CONF_H
+      if [ -n "$MAKEFILE_DIR" ]; then
+        for i in $MAKEFILE_DIR; do
+          test -f "$i/makefile".in && echo "XRANDR = 1" >> "$i/makefile"
+          test -f "$i/makefile".in && echo "XRANDR_INC = $found" >> "$i/makefile"
+        done
+      fi
+    elif [ $OSUNAME = "Linux" ]; then
+        echo_="X Xrandr not found in /usr/X11R6/include/X11/extensions/Xrandr.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        echo_="  /usr/include/X11/extensions/Xrandr.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
+  fi
+
+
   echo "X_CPP = \$(X_CPPFILES)" >> $CONF
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
@@ -503,7 +545,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   fi
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
-      test -f "$i/makefile".in && echo "X11_INCL=\$(XF86VMODE_INC) \$(XINERAMA_INC)" >> "$i/makefile"
+      test -f "$i/makefile".in && echo "X11_INCL=\$(XF86VMODE_INC) \$(XINERAMA_INC) \$(XRANDR_INC)" >> "$i/makefile"
       test -f "$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 $X_ADD_LIBS" >> "$i/makefile"
     done
   fi
