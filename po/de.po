@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-01-06 16:03+0100\n"
+"POT-Creation-Date: 2009-01-09 07:31+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -1137,47 +1137,59 @@ msgstr ""
 "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf "
 "dem Drucker beim Programmstart"
 
-#: oyranos_monitor.c:333
+#: oyranos_monitor.c:334
 msgid "unexpected EDID lenght"
 msgstr "unerwartetet EDID Größe"
 
-#: oyranos_monitor.c:336
+#: oyranos_monitor.c:337
 msgid "Cant read hardware information from device."
 msgstr "Kann Geräteinformation nicht auslesen."
 
-#: oyranos_monitor.c:429 oyranos_monitor.c:983 oyranos_monitor.c:1366
+#: oyranos_monitor.c:438 oyranos_monitor.c:1016 oyranos_monitor.c:1509
 msgid "open X Display failed"
 msgstr "Öffnen des X Displays daneben"
 
-#: oyranos_monitor.c:444
+#: oyranos_monitor.c:453
 msgid "Could not get Xatom, probably your monitor profile is not set:"
 msgstr ""
 "Konnte Xatom nicht finden. Wahrscheinlich ist das Monitorprofil nicht "
 "gesetzt."
 
-#: oyranos_monitor.c:1007
+#: oyranos_monitor.c:1040
 msgid "No monitor gamma curves by profile:"
 msgstr "Keine Grafikkartengammakurven im Profil:"
 
-#: oyranos_monitor.c:1041
+#: oyranos_monitor.c:1074
 msgid "Error obtaining profile"
 msgstr "Fehler beim Erhalten des Profiles"
 
-#: oyranos_monitor.c:1048 oyranos_monitor.c:1050
+#: oyranos_monitor.c:1081 oyranos_monitor.c:1083
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
-#: oyranos_monitor.c:1137
+#: oyranos_monitor.c:1171
 msgid "Error getting atom"
 msgstr "Fehler beim Suchen des Xatoms"
 
-#: oyranos_monitor.c:1385
+#: oyranos_monitor.c:1417
 msgid "Xinerama request failed"
 msgstr "Xineramaanfrage daneben"
 
-#: oyranos_monitor.c:1401
+#: oyranos_monitor.c:1432
 msgid "open X Screen failed"
 msgstr "Öffnen des X Screens daneben"
+
+#: oyranos_monitor.c:1502
+msgid "allocation failed"
+msgstr "kein Speicher"
+
+#: oyranos_monitor.c:1516
+msgid "no Screen found"
+msgstr "keine Anzeige gefunden"
+
+#: oyranos_monitor.c:1587
+msgid "less Xinerama monitors than XRandR ones"
+msgstr "weniger Xinerama als XRandR Monitore"
 
 #: oyranos_gamma.c:104
 msgid "is a colour profile administration tool for monitors"
@@ -1290,27 +1302,27 @@ msgstr "Name"
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: oyranos_alpha.c:15700
+#: oyranos_alpha.c:15803
 msgid "No filter"
 msgstr "kein Filter"
 
-#: oyranos_alpha.c:15710
+#: oyranos_alpha.c:15813
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr "Bitte fügen Sie erst ein Bildknoten in den Graphen vor andere Filtern"
 
-#: oyranos_alpha.c:15718
+#: oyranos_alpha.c:15821
 msgid "attempt to add a incomplete filter"
 msgstr "Versuch einen unvollständigen Filter hinzuzufügen"
 
-#: oyranos_alpha.c:15727
+#: oyranos_alpha.c:15830
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 
-#: oyranos_alpha.c:15761
+#: oyranos_alpha.c:15864
 msgid "?? Nothing to add ??"
 msgstr "?? Nichts hinzuzufügen ??"
 
-#: oyranos_alpha.c:16707
+#: oyranos_alpha.c:16810
 msgid "---"
 msgstr ""
 
@@ -1341,7 +1353,8 @@ msgstr ""
 msgid ""
 "littleCMS project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"
-msgstr "littleCMS Projekt; www: http://www.littlecms.com; Support/email: "
+msgstr ""
+"littleCMS Projekt; www: http://www.littlecms.com; Support/email: "
 "support@littlecms.com; Quellen: http://www.littlecms.com/downloads.htm"
 
 #: oyranos_cmm_lcms.c:1661
@@ -1376,8 +1389,8 @@ msgstr ""
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
-msgstr "Oyranos Projekt: www: http://www.oyranos.com; "
-"Support/email: ku.b@gmx.de; "
+msgstr ""
+"Oyranos Projekt: www: http://www.oyranos.com; Support/email: ku.b@gmx.de; "
 "Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 
 #: oyranos_cmm_oyX1.c:182 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
@@ -2263,9 +2276,6 @@ msgstr "nichts reserviert"
 
 #~ msgid "View"
 #~ msgstr "Ansicht"
-
-#~ msgid "Whole Screen on/off"
-#~ msgstr "Ganzer Bildschirm an/aus"
 
 #~ msgid "BPC"
 #~ msgstr "BPC"

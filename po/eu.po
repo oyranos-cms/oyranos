@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-01-06 16:03+0100\n"
+"POT-Creation-Date: 2009-01-09 07:31+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1162,47 +1162,61 @@ msgid ""
 "print time"
 msgstr ""
 
-#: oyranos_monitor.c:333
+#: oyranos_monitor.c:334
 msgid "unexpected EDID lenght"
 msgstr ""
 
-#: oyranos_monitor.c:336
+#: oyranos_monitor.c:337
 msgid "Cant read hardware information from device."
 msgstr ""
 
-#: oyranos_monitor.c:429 oyranos_monitor.c:983 oyranos_monitor.c:1366
+#: oyranos_monitor.c:438 oyranos_monitor.c:1016 oyranos_monitor.c:1509
 msgid "open X Display failed"
 msgstr "huts egin du X pantaila irekitzean"
 
-#: oyranos_monitor.c:444
+#: oyranos_monitor.c:453
 msgid "Could not get Xatom, probably your monitor profile is not set:"
 msgstr ""
 
-#: oyranos_monitor.c:1007
+#: oyranos_monitor.c:1040
 msgid "No monitor gamma curves by profile:"
 msgstr ""
 
-#: oyranos_monitor.c:1041
+#: oyranos_monitor.c:1074
 #, fuzzy
 msgid "Error obtaining profile"
 msgstr "okerreko etiketa-tamaina profilan "
 
-#: oyranos_monitor.c:1048 oyranos_monitor.c:1050
+#: oyranos_monitor.c:1081 oyranos_monitor.c:1083
 msgid "Error setting up atom"
 msgstr ""
 
-#: oyranos_monitor.c:1137
+#: oyranos_monitor.c:1171
 msgid "Error getting atom"
 msgstr ""
 
-#: oyranos_monitor.c:1385
+#: oyranos_monitor.c:1417
 msgid "Xinerama request failed"
 msgstr ""
 
-#: oyranos_monitor.c:1401
+#: oyranos_monitor.c:1432
 #, fuzzy
 msgid "open X Screen failed"
 msgstr "huts egin du X pantaila irekitzean"
+
+#: oyranos_monitor.c:1502
+#, fuzzy
+msgid "allocation failed"
+msgstr "Kalibrazio-data"
+
+#: oyranos_monitor.c:1516
+#, fuzzy
+msgid "no Screen found"
+msgstr "Pantaila osoa aktibatu/desaktibatu"
+
+#: oyranos_monitor.c:1587
+msgid "less Xinerama monitors than XRandR ones"
+msgstr ""
 
 #: oyranos_gamma.c:104
 msgid "is a colour profile administration tool for monitors"
@@ -1318,28 +1332,28 @@ msgstr "Izena"
 msgid "Manufacturer"
 msgstr "Hornitzailea:   "
 
-#: oyranos_alpha.c:15700
+#: oyranos_alpha.c:15803
 #, fuzzy
 msgid "No filter"
 msgstr "Iragazki pertsonalizatua"
 
-#: oyranos_alpha.c:15710
+#: oyranos_alpha.c:15813
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr ""
 
-#: oyranos_alpha.c:15718
+#: oyranos_alpha.c:15821
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:15727
+#: oyranos_alpha.c:15830
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 
-#: oyranos_alpha.c:15761
+#: oyranos_alpha.c:15864
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:16707
+#: oyranos_alpha.c:16810
 msgid "---"
 msgstr "---"
 
@@ -2307,9 +2321,6 @@ msgstr ""
 
 #~ msgid "View"
 #~ msgstr "Ikusi"
-
-#~ msgid "Whole Screen on/off"
-#~ msgstr "Pantaila osoa aktibatu/desaktibatu"
 
 #~ msgid "Gamut Warning"
 #~ msgstr "Kolore-gamaren abisua"
