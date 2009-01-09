@@ -2634,6 +2634,14 @@ const char * oyStruct_TypeToText     ( const oyStruct_s  * st );
 /** @deprecated */
 int            oyModulRegisterXML    ( oyGROUP_e           group,
                                        const char        * xml );
+int      oyGetMonitorInfo            ( const char        * display,
+                                       char             ** manufacturer,
+                                       char             ** model,
+                                       char             ** serial,
+                                       char             ** display_geometry,
+                                       char             ** system_port,
+                                       oyBlob_s         ** edit,
+                                       oyAlloc_f           allocate_func );
 
 #ifdef __cplusplus
 } /* extern "C" */
