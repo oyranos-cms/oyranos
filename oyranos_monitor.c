@@ -38,6 +38,7 @@
 #endif
 
 #include "oyranos.h"
+#include "oyranos_alpha.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal.h"
@@ -50,14 +51,6 @@
 /* --- internal API definition --- */
 
 
-#if (defined(HAVE_X) && !defined(__APPLE__))
-int   oyGetMonitorInfo_           (const char* display,
-                                   char**      manufacturer,
-                                   char**      model,
-                                   char**      serial,
-                                   char**      display_geometry,
-                                   oyAlloc_f     allocate_func);
-#endif
 char* oyGetMonitorProfileName_    (const char *display_name,
                                    oyAlloc_f     allocate_func);
 char* oyGetMonitorProfile_        (const char *display_name,
@@ -92,6 +85,8 @@ char**oyGetAllScreenNames_        (const char *display_name, int *n_scr );
 const char* oyMonitor_name_( oyMonitor_s *disp ) { return disp->name; }
 const char* oyMonitor_hostName_( oyMonitor_s *disp ) { return disp->host; }
 const char* oyMonitor_identifier_( oyMonitor_s *disp ) { return disp->identifier; }
+const char* oyMonitor_systemPort_( oyMonitor_s *disp ) { return disp->system_port; }
+oyBlob_s *  oyMonitor_edid_( oyMonitor_s * disp ) { return oyBlob_Copy( disp->edid, 0 ); }
 /** @internal the screen appendment for the root window properties */
 char*       oyMonitor_screenIdentifier_( oyMonitor_s *disp )
 { char *number = 0;
@@ -125,6 +120,9 @@ oyFree_( void *oy_structure )
         oyFree_m_( disp->name )
         oyFree_m_( disp->host )
         oyFree_m_( disp->identifier )
+        if(disp->system_port)
+          oyFree_m_( disp->system_port );
+        oyBlob_Release( &disp->edid );
         disp->geo[0] = disp->geo[1] = -1;
         if( disp->display ) { XCloseDisplay( disp->display ); disp->display=0;}
       }
@@ -244,6 +242,8 @@ oyGetMonitorInfo_                 (const char* display_name,
                                    char**      model,
                                    char**      serial,
                                    char**      display_geometry,
+                                       char             ** system_port,
+                                       oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func)
 {
   Display *display = 0;
@@ -257,6 +257,7 @@ oyGetMonitorInfo_                 (const char* display_name,
   struct oyDDC_EDID1_s_ *edi=0;
   char *t;
   oyMonitor_s * disp = 0;
+  int error = 0;
 
   DBG_PROG_START
 
@@ -276,7 +277,21 @@ oyGetMonitorInfo_                 (const char* display_name,
   } else {
     return 1;
   }
-  DBG_PROG 
+
+  if( system_port ) 
+
+  {
+    t = 0;
+    if( oyMonitor_systemPort_( disp ) &&
+        oyStrlen_(oyMonitor_systemPort_( disp )) )
+    {
+      len = oyStrlen_(oyMonitor_systemPort_( disp ));
+      ++len;
+      t = (char*)oyAllocateWrapFunc_( len, allocate_func );
+      sprintf(t, oyMonitor_systemPort_( disp ));
+    }
+    *system_port = t; t = 0;
+  }
 
   if( display_geometry )
   {
@@ -342,6 +357,14 @@ oyGetMonitorInfo_                 (const char* display_name,
   edi = (struct oyDDC_EDID1_s_*) prop_return;
 
   oyUnrollEdid1_( edi, manufacturer, model, serial, allocate_func );
+
+  if(edid)
+  {
+    *edid = oyBlob_New(0);
+    error = !*edid;
+    if(!error)
+      error = oyBlob_SetFromData( *edid, edi, nitems_return );
+  }
 
   CleanUp:
 
@@ -497,14 +520,16 @@ oyGetMonitorProfileName_          (const char* display_name,
   char       *manufacturer=0,
              *model=0,
              *serial=0,
-             *display_geometry=0;
+             *display_geometry=0,
+             * system_port = 0;
   const char *host_name = 0;
   oyMonitor_s * disp = 0;
 
   DBG_PROG_START
 
   oyGetMonitorInfo_( display_name,
-                     &manufacturer, &model, &serial, &display_geometry,
+                     &manufacturer, &model, &serial,
+                     &display_geometry, &system_port, 0,
                      oyAllocateFunc_);
 
   disp = oyMonitor_newFrom_( display_name );
@@ -518,13 +543,14 @@ oyGetMonitorProfileName_          (const char* display_name,
   /* It's not network transparent. */
   /* If working remotely, better fetch the whole profile instead. */
   moni_profile = oyGetDeviceProfile( oyDISPLAY, manufacturer, model, serial,
-                                     host_name, display_geometry,
-                                     0,0,0, allocate_func);
+                                     host_name, system_port,
+                                     display_geometry, 0,0, allocate_func);
 
   if(manufacturer) oyDeAllocateFunc_(manufacturer);
   if(model) oyDeAllocateFunc_(model);
   if(serial) oyDeAllocateFunc_(serial);
   if(display_geometry) oyDeAllocateFunc_ (display_geometry);
+  if(system_port) oyDeAllocateFunc_ (system_port);
   oyMonitor_release_( &disp );
 
 #endif
@@ -580,20 +606,24 @@ oyGetAllScreenNames_            (const char *display_name,
   if( !display || (len = ScreenCount( display )) == 0 )
     return 0;
 
+# if HAVE_XRANDR
+  if(disp->info_source == oyX11INFO_SOURCE_XRANDR)
+    len = disp->active_outputs;
+# endif
+
 # if HAVE_XIN
   /* test for Xinerama screens */
-  if( len == 1 )
-  if( XineramaIsActive( display ) )
-  {
-    int n_scr_info = 0;
-    XineramaScreenInfo *scr_info = XineramaQueryScreens( display, &n_scr_info );
-    oyPostAllocHelper_m_(scr_info, n_scr_info, return 0 )
+  if(disp->info_source == oyX11INFO_SOURCE_XINERAMA)
+    {
+      int n_scr_info = 0;
+      XineramaScreenInfo *scr_info = XineramaQueryScreens( display, &n_scr_info );
+      oyPostAllocHelper_m_(scr_info, n_scr_info, return 0 )
 
-    if( n_scr_info >= 1 )
-      len = n_scr_info;
+      if( n_scr_info >= 1 )
+        len = n_scr_info;
 
-    XFree( scr_info );
-  }
+      XFree( scr_info );
+    }
 # endif
 
   oyAllocHelper_m_( list, char*, len, 0, return NULL )
@@ -818,8 +848,8 @@ oyMonitor_getGeometryIdentifier_         (oyMonitor_s  *disp)
 
   oyAllocHelper_m_( disp->identifier, char, len, 0, return 1 )
 
-  oySnprintf5_( disp->identifier, len, "%d_%d+%d+%dx%d", 
-            oyMonitor_screen_(disp), oyMonitor_x_(disp), oyMonitor_y_(disp),
+  oySnprintf4_( disp->identifier, len, "%d+%d+%dx%d", 
+            oyMonitor_x_(disp), oyMonitor_y_(disp),
             oyMonitor_width_(disp), oyMonitor_height_(disp) );
 
   return 0;
@@ -1091,7 +1121,8 @@ oySetMonitorProfile_              (const char* display_name,
   char       *manufacturer=0,
              *model=0,
              *serial=0,
-             *display_geometry=0;
+             *display_geometry=0,
+             * system_port = 0;
   const char *profile_fullname = 0;
   oyMonitor_s * disp = 0;
   oyProfile_s * prof = 0;
@@ -1101,7 +1132,7 @@ oySetMonitorProfile_              (const char* display_name,
   error  =
     oyGetMonitorInfo_ (display_name,
                        &manufacturer, &model, &serial, &display_geometry,
-                       oyAllocateFunc_);
+                       &system_port, 0, oyAllocateFunc_);
 
   disp = oyMonitor_newFrom_( display_name );
   if(!disp)
@@ -1162,8 +1193,8 @@ oySetMonitorProfile_              (const char* display_name,
   DBG_PROG1_S( "profil_name = %s", profil_name )
 
   error =  oySetDeviceProfile(oyDISPLAY, manufacturer, model, serial,
-                              oyMonitor_hostName_(disp), display_geometry,
-                              0,0,0, profil_name, 0,0);
+                              oyMonitor_hostName_(disp), system_port,
+                              display_geometry, 0,0, profil_name, 0,0);
 
   prof = oyProfile_FromFile( profil_name, 0, 0 );
   profile_fullname = oyProfile_GetFileName( prof, -1 );
@@ -1178,6 +1209,7 @@ oySetMonitorProfile_              (const char* display_name,
   if (model) oyDeAllocateFunc_ (model);
   if (serial) oyDeAllocateFunc_ (serial);
   if (display_geometry) oyDeAllocateFunc_ (display_geometry);
+  if (system_port) oyDeAllocateFunc_ (system_port);
   oyProfile_Release( &prof );
   oyMonitor_release_( &disp );
 #endif
@@ -1351,28 +1383,35 @@ oyMonitor_getScreenGeometry_            (oyMonitor_s *disp)
   int error = 0;
   int screen = 0;
 
-  disp->display = XOpenDisplay (disp->name);
-
-  /* switch to Xinerama mode */
-  if( !disp->display ) {
-    char *text = oyChangeScreenName_( disp->name, 0 );
-    oyPostAllocHelper_m_( text, 1, return 1 )
-
-    disp->display = XOpenDisplay( text );
-    oyFree_m_( text );
-
-    if( !disp->display )
-      oyPostAllocHelper_m_( disp->display, 1,
-                            WARNc_S(_("open X Display failed")); return 1 )
-
-    disp->screen = 0;
-  }
 
   disp->geo[0] = oyGetDisplayNumber_( disp );
   disp->geo[1] = screen = oyMonitor_getScreenFromDisplayName_( disp );
 
+# if HAVE_XRANDR
+  if( disp->info_source == oyX11INFO_SOURCE_XRANDR )
+  {
+    XRRCrtcInfo * crtc_info = 0;
+
+    crtc_info = XRRGetCrtcInfo( disp->display, disp->res, disp->output->crtc );
+    if(crtc_info)
+    {
+      disp->geo[2] = crtc_info->x;
+      disp->geo[3] = crtc_info->y;
+      disp->geo[4] = crtc_info->width;
+      disp->geo[5] = crtc_info->height;
+
+      XRRFreeCrtcInfo( crtc_info );
+    } else
+    {
+      WARNc3_S( "%s output: \"%s\" crtc: %d",
+               _("XRandR CrtcInfo request failed"), 
+               oyNoEmptyString_m_(disp->output->name), disp->output->crtc)
+    }
+  }
+# endif /* HAVE_XRANDR */
+
 # if HAVE_XIN
-  if( XineramaIsActive( disp->display ) )
+  if( disp->info_source == oyX11INFO_SOURCE_XINERAMA )
   {
     int n_scr_info = 0;
 
@@ -1386,7 +1425,6 @@ oyMonitor_getScreenGeometry_            (oyMonitor_s *disp)
       return 1;
     }
     {
-        disp->geo[1] = screen;
         disp->geo[2] = scr_info[screen].x_org;
         disp->geo[3] = scr_info[screen].y_org;
         disp->geo[4] = scr_info[screen].width;
@@ -1394,13 +1432,13 @@ oyMonitor_getScreenGeometry_            (oyMonitor_s *disp)
     }
     XFree( scr_info );
   }
-  else
-# endif
+# endif /* HAVE_XIN */
+
+  if( disp->info_source == oyX11INFO_SOURCE_SCREEN )
   {
     Screen *scr = XScreenOfDisplay( disp->display, screen );
     oyPostAllocHelper_m_(scr, 1, WARNc_S(_("open X Screen failed")); return 1;)
     {
-        disp->geo[1] = screen;
         disp->geo[2] = 0;
         disp->geo[3] = 0;
         disp->geo[4] = XWidthOfScreen( scr );
@@ -1415,8 +1453,9 @@ oyMonitor_getScreenGeometry_            (oyMonitor_s *disp)
 /** @internal
  *  @brief create a monitor information stuct for a given display name
  *
- *  @since Oyranos: version 0.x.x
- *  @date  17 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/17 (Oyranos: 0.1.8)
+ *  @date    2009/01/09
  */
 oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
 {
@@ -1449,6 +1488,145 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
       (disp->host = oyExtractHostName_( disp->name )) == 0 )
     error = 1;
 
+  {
+  Display *display = 0;
+  int i;
+  int     major_versionp = 0;
+  int     minor_versionp = 0;
+  int n = 0,
+      len = 0;
+  int monitors = 0;
+
+  disp->display = XOpenDisplay (disp->name);
+
+  /* switch to Xinerama mode */
+  if( !disp->display ) {
+    char *text = oyChangeScreenName_( disp->name, 0 );
+    oyPostAllocHelper_m_( text, 1,
+                          WARNc_S(_("allocation failed"));return 0 )
+
+    disp->display = XOpenDisplay( text );
+    oyFree_m_( text );
+
+    if( !disp->display )
+      oyPostAllocHelper_m_( disp->display, 1,
+                            WARNc_S(_("open X Display failed")); return 0 )
+
+    disp->screen = 0;
+  }
+  display = oyMonitor_device_( disp );
+
+  if( !display || (len = ScreenCount( display )) <= 0 )
+  {
+    WARNc2_S("%s: \"%s\"", _("no Screen found"),
+                           oyNoEmptyString_m_(disp->name));
+    return 0;
+  }
+
+  disp->info_source = oyX11INFO_SOURCE_SCREEN;
+
+  if(len == 1)
+  {
+# if HAVE_XRANDR
+    XRRQueryVersion( display, &major_versionp, &minor_versionp );
+
+
+    if((major_versionp*100 + minor_versionp) >= 102)
+    {
+      Window w = RootWindow(display, oyMonitor_screen_(disp));
+      XRRScreenResources * res = XRRGetScreenResources(display, w);
+      int selected_screen = oyMonitor_getScreenFromDisplayName_( disp );
+
+      if(res)
+        n = res->noutput;
+      for(i = 0; i < n; ++i)
+      {
+        XRRScreenResources * res_temp = res ? res : disp->res;
+        XRROutputInfo * output = XRRGetOutputInfo( display, res_temp,
+                                                   res_temp->outputs[i]);
+  
+        /* we work on connected outputs */
+        if( output && output->crtc )
+        {
+          XRRCrtcGamma * gamma = 0;
+
+          if(monitors == 0)
+          {
+            gamma = XRRGetCrtcGamma( display, output->crtc );
+            if(gamma && gamma->size &&
+               strcmp("default", output->name) != 0)
+            {
+              disp->info_source = oyX11INFO_SOURCE_XRANDR;
+
+              XRRFreeGamma( gamma );
+            } else
+            {
+              XRRFreeOutputInfo( output );
+              break;
+            }
+          }
+
+          if(selected_screen == monitors &&
+             disp->info_source == oyX11INFO_SOURCE_XRANDR)
+          {
+            disp->output = output;
+            output = 0;
+            disp->res = res;
+            res = 0;
+            if(disp->output->name && oyStrlen_(disp->output->name))
+              disp->system_port = oyStringCopy_( disp->output->name,
+                                                 oyAllocateFunc_ );
+            break;
+          }
+
+          ++ monitors;
+        }
+
+        if(output)
+          XRRFreeOutputInfo( output );
+      }
+
+      if(res)
+        XRRFreeScreenResources(res); res = 0;
+
+      if(disp->info_source == oyX11INFO_SOURCE_XRANDR)
+      {
+        if(monitors >= len && disp->output)
+          disp->active_outputs = monitors;
+        else
+          disp->info_source = oyX11INFO_SOURCE_SCREEN;
+      }
+    }
+# endif /* HAVE_XRANDR */
+
+    if(disp->info_source == oyX11INFO_SOURCE_SCREEN)
+    {
+# if HAVE_XIN
+      /* test for Xinerama screens */
+      if( XineramaIsActive( display ) )
+      {
+        int n_scr_info = 0;
+        XineramaScreenInfo *scr_info = XineramaQueryScreens( display,
+                                                             &n_scr_info );
+        oyPostAllocHelper_m_(scr_info, n_scr_info, return 0 )
+
+        if( n_scr_info >= 1 )
+          len = n_scr_info;
+
+        if(n_scr_info < monitors)
+        {
+          WARNc3_S( "%s: %d < %d", _("less Xinerama monitors than XRandR ones"),
+                    n_scr_info, monitors );
+        } else
+          disp->info_source = oyX11INFO_SOURCE_XINERAMA;
+
+        XFree( scr_info );
+      }
+# endif /* HAVE_XIN */
+    }
+  }
+  }
+
   for( i = 0; i < 6; ++i ) disp->geo[i] = -1;
   if( !error &&
       oyMonitor_getScreenGeometry_( disp ) )
@@ -1458,6 +1636,12 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
       oyMonitor_getGeometryIdentifier_( disp ) ) 
     error = 1;
 
+  if( !disp->system_port || !oyStrlen_( disp->system_port ) )
+  if( 0 <= oyMonitor_screen_( disp ) && oyMonitor_screen_( disp ) < 10000 )
+  {
+    disp->system_port = (char*)oyAllocateWrapFunc_( 12, oyAllocateFunc_ );
+    oySprintf_( disp->system_port, "%d_", oyMonitor_screen_( disp ) );
+  }
 
   DBG_PROG_ENDE
   return disp;
@@ -1495,6 +1679,12 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
 
   if( s->display )
   {
+# ifdef HAVE_XRANDR
+    if(s->output)
+      XRRFreeOutputInfo( s->output ); s->output = 0;
+    if(s->res)
+      XRRFreeScreenResources( s->res ); s->res = 0;
+# endif
     XCloseDisplay( s->display );
     s->display=0;
   }
@@ -1528,6 +1718,9 @@ oyGetMonitorInfo_lib              (const char* display,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
+                                       char             ** display_geometry,
+                                       char             ** system_port,
+                                       oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func)
 {
   int err = 0;
@@ -1536,7 +1729,7 @@ oyGetMonitorInfo_lib              (const char* display,
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
   err = oyGetMonitorInfo_( display, manufacturer, model, serial, 0,
-                           allocate_func);
+                           system_port, edid, allocate_func);
 #else
   err = 1;
 #endif
