@@ -352,11 +352,6 @@ const char *   oyLang                ( void );
 void           oyI18Nreset           ( void );
 
 
-int      oyGetMonitorInfo            ( const char        * display,
-                                       char             ** manufacturer,
-                                       char             ** model,
-                                       char             ** serial,
-                                       oyAlloc_f           allocate_func );
 int      oyGetScreenFromPosition     ( const char        * display_name,
                                        int                 x,
                                        int                 y );
