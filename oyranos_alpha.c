@@ -17426,13 +17426,14 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
 /** Function: oyGetMonitorInfo
  *  @brief   brief pick up monitor information with Xlib
  *
- *  @deprecated because sometimes is no ddc information available
- *  @todo include connection information - grafic cart
+ *  @deprecated because the functionality shall be integrated into a general framwork
  *
  *  @param      display_name  the display string
  *  @param[out] manufacturer  the manufacturer of the monitor device
  *  @param[out] model         the model of the monitor device
  *  @param[out] serial        the serial number of the monitor device
+ *  @param[out] system_port   the system port name the monitor device is connectted to
+ *  @param[out] edid          the edid data blob of the monitor device
  *  @param      allocate_func the allocator for the above strings
  *  @return     error
  *
@@ -17444,6 +17445,9 @@ int      oyGetMonitorInfo            ( const char        * display_name,
                                        char             ** manufacturer,
                                        char             ** model,
                                        char             ** serial,
+                                       char             ** system_port,
+                                       char             ** display_geometry,
+                                       oyBlob_s         ** edid,
                                        oyAlloc_f           allocate_func )
 {
   int error = 0;
@@ -17461,7 +17465,9 @@ int      oyGetMonitorInfo            ( const char        * display_name,
   }
 
   if(funcP)
-    error = funcP( display_name, manufacturer, model, serial, allocate_func );
+    error = funcP( display_name, manufacturer, model, serial, 
+                   display_geometry, system_port,
+                   edid, allocate_func );
 
   return error;
 }

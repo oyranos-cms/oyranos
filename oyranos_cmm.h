@@ -223,10 +223,30 @@ typedef struct {
 } oyCMMapi1_s;
 
 
+/** @type    oyGetMonitorInfo_f
+ *  @brief   get available informations from a monitor device
+ *  @ingroup backend_api
+ *
+ *  @param[in]     display             display name
+ *  @param[out]    manufacturer        string
+ *  @param[out]    model               string
+ *  @param[out]    serial              string
+ *  @param[out]    display_geometry    string
+ *  @param[out]    system_port         string
+ *  @param[out]    edid                binary blob
+ *  @return                            0 - good; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2006/00/00 (Oyranos: 0.1.x)
+ *  @date    2009/01/08
+ */
 typedef int   (*oyGetMonitorInfo_f)  ( const char        * display,
                                        char             ** manufacturer,
                                        char             ** model,
                                        char             ** serial,
+                                       char             ** system_port,
+                                       char             ** display_geometry,
+                                       oyBlob_s         ** edid,
                                        oyAlloc_f           allocate_func);
 typedef int   (*oyGetScreenFromPosition_f) (
                                        const char        * display_name,
