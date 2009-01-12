@@ -915,7 +915,8 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
           if      (i == 0) n += 2;
           else if (i == 1) n += 2;
           else if (i == 2) n += 5;
-          else if (i == 4) n += 4;
+          else if (i == 3) n += 4;
+          else if (i == 4) n += 2;
           else             ++n;
           DBG_PROG1_S( "attribute count n = %d", n );
         }
