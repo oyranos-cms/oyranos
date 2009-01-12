@@ -848,7 +848,7 @@ oyMonitor_getGeometryIdentifier_         (oyMonitor_s  *disp)
 
   oyAllocHelper_m_( disp->identifier, char, len, 0, return 1 )
 
-  oySnprintf4_( disp->identifier, len, "%d+%d+%dx%d", 
+  oySnprintf4_( disp->identifier, len, "_%d+%d+%dx%d", 
             oyMonitor_x_(disp), oyMonitor_y_(disp),
             oyMonitor_width_(disp), oyMonitor_height_(disp) );
 
@@ -1576,7 +1576,6 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
             if(disp->output->name && oyStrlen_(disp->output->name))
               disp->system_port = oyStringCopy_( disp->output->name,
                                                  oyAllocateFunc_ );
-            break;
           }
 
           ++ monitors;
@@ -1640,7 +1639,7 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
   if( 0 <= oyMonitor_screen_( disp ) && oyMonitor_screen_( disp ) < 10000 )
   {
     disp->system_port = (char*)oyAllocateWrapFunc_( 12, oyAllocateFunc_ );
-    oySprintf_( disp->system_port, "%d_", oyMonitor_screen_( disp ) );
+    oySprintf_( disp->system_port, "%d", oyMonitor_screen_( disp ) );
   }
 
   DBG_PROG_ENDE
