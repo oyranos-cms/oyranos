@@ -18,6 +18,7 @@
 #define OYRANOS_MONITOR_H
 
 #include "oyranos.h"
+#include "oyranos_alpha.h"
 
 #ifdef __cplusplus
 extern "C" {
