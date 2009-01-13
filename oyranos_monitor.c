@@ -264,7 +264,7 @@ oyGetMonitorInfo_                 (const char* display_name,
   if(display_name)
     DBG_PROG1_S("display_name %s",display_name);
 
-  disp = oyMonitor_newFrom_( display_name );
+  disp = oyMonitor_newFrom_( display_name, 1 );
   if(!disp)
     return 1;
 
@@ -279,7 +279,6 @@ oyGetMonitorInfo_                 (const char* display_name,
   }
 
   if( system_port ) 
-
   {
     t = 0;
     if( oyMonitor_systemPort_( disp ) &&
@@ -443,7 +442,7 @@ oyGetMonitorProfile_          (const char* display_name,
   if(display_name)
     DBG_PROG1_S("display_name %s",display_name);
 
-  disp = oyMonitor_newFrom_( display_name );
+  disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
     return 0;
 
@@ -532,7 +531,7 @@ oyGetMonitorProfileName_          (const char* display_name,
                      &display_geometry, &system_port, 0,
                      oyAllocateFunc_);
 
-  disp = oyMonitor_newFrom_( display_name );
+  disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
     return 0;
 
@@ -597,7 +596,7 @@ oyGetAllScreenNames_            (const char *display_name,
 
   *n_scr = 0;
 
-  disp = oyMonitor_newFrom_( display_name );
+  disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
     return 0;
 
@@ -655,7 +654,7 @@ oyGetScreenFromPosition_        (const char *display_name,
   Display *display = 0;
   oyMonitor_s * disp = 0;
 
-  disp = oyMonitor_newFrom_( display_name );
+  disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
     return 1;
 
@@ -694,7 +693,7 @@ oyGetScreenFromPosition_        (const char *display_name,
       screen_name = oyChangeScreenName_( display_name, i );
       oyPostAllocHelper_m_( screen_name, 1, oyMonitor_release_( &disp ); return 0 )
 
-      disp = oyMonitor_newFrom_( screen_name );
+      disp = oyMonitor_newFrom_( screen_name, 0 );
       if(!disp)
         return 0;
 
@@ -758,7 +757,7 @@ oyGetDisplayNameFromPosition_     (const char *display_name,
   Display *display = 0;
   oyMonitor_s * disp = 0;
 
-  disp = oyMonitor_newFrom_( display_name );
+  disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
     return 0;
 
@@ -800,7 +799,7 @@ oyGetDisplayNameFromPosition_     (const char *display_name,
       screen_name = oyChangeScreenName_( display_name, i );
       oyPostAllocHelper_m_( screen_name, 1, return 0 )
 
-      disp = oyMonitor_newFrom_( screen_name );
+      disp = oyMonitor_newFrom_( screen_name, 0 );
       if(!disp)
          return 0;
 
@@ -933,7 +932,7 @@ oyActivateMonitorProfile_         (const char* display_name,
 
   DBG_PROG_START
 #if defined( HAVE_X ) && !defined(__APPLE__)
-  disp = oyMonitor_newFrom_( display_name );
+  disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
     return 1;
 
@@ -1134,7 +1133,7 @@ oySetMonitorProfile_              (const char* display_name,
                        &manufacturer, &model, &serial, &display_geometry,
                        &system_port, 0, oyAllocateFunc_);
 
-  disp = oyMonitor_newFrom_( display_name );
+  disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
   {
     DBG_PROG_ENDE
@@ -1453,11 +1452,16 @@ oyMonitor_getScreenGeometry_            (oyMonitor_s *disp)
 /** @internal
  *  @brief create a monitor information stuct for a given display name
  *
+ *  @param   display_name              Oyranos display name
+ *  @param   expensive                 probe XRandR even if it causes flickering
+ *  @return                            a monitor information structure
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/17 (Oyranos: 0.1.8)
- *  @date    2009/01/09
+ *  @date    2009/01/13
  */
-oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
+oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
+                                       int                 expensive )
 {
   int error = 0;
   int i = 0;
@@ -1531,12 +1535,16 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
     XRRQueryVersion( display, &major_versionp, &minor_versionp );
 
 
-    if((major_versionp*100 + minor_versionp) >= 102)
+    if((major_versionp*100 + minor_versionp) >= 102 && expensive)
     {
       Window w = RootWindow(display, oyMonitor_screen_(disp));
-      XRRScreenResources * res = XRRGetScreenResources(display, w);
+      XRRScreenResources * res = 0;
       int selected_screen = oyMonitor_getScreenFromDisplayName_( disp );
 
+      /* a havily expensive call */
+      DBG_NUM_S("going to call XRRGetScreenResources()");
+      res = XRRGetScreenResources(display, w);
+      DBG_NUM_S("end of call XRRGetScreenResources()");
       if(res)
         n = res->noutput;
       for(i = 0; i < n; ++i)
@@ -1544,7 +1552,7 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name )
         XRRScreenResources * res_temp = res ? res : disp->res;
         XRROutputInfo * output = XRRGetOutputInfo( display, res_temp,
                                                    res_temp->outputs[i]);
-  
+ 
         /* we work on connected outputs */
         if( output && output->crtc )
         {

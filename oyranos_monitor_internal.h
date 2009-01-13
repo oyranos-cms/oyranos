@@ -58,7 +58,8 @@ typedef struct {
   oyX11INFO_SOURCE_e   info_source; /**< */
 } oyMonitor_s;
 
-oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name );
+oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
+                                       int                 expensive );
 int          oyMonitor_release_      ( oyMonitor_s      ** disp );
 
 const char*  oyMonitor_name_         ( oyMonitor_s       * disp );
