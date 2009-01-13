@@ -336,9 +336,9 @@ $(LIB_XNVCTRL).a:
 $(BUILDDIR)$(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(BUILDDIR)$(LIB_XNVCTRL).a $(MONI_OBJECTS)
 	echo Linking $@ ...
 	-$(CC) $(CFLAGS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
-	-o $(BUILDDIR)$(TARGET)-monitor-nvidia -L./   $(LDLIBS) $(X11_LIBS) \
+	-o $(BUILDDIR)$(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
+	$(LDLIBS) $(X11_LIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(BUILDDIR)$(LIBSONAMEFULL) \
-	$(MONI_OBJECTS) \
 	$(LINK_LIB_PATH)
 
 $(target)_config_fltk.o:	$(TARGET)_config_fltk.cxx
