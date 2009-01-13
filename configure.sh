@@ -445,19 +445,10 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
     version=""
     pc_package=xrandr
     if [ -z "$found" ]; then
-      pkg-config  --atleast-version=1.0 $pc_package
+      pkg-config  --atleast-version=1.2 $pc_package
       if [ $? = 0 ]; then
         found=`pkg-config --cflags $pc_package`
         version=`pkg-config --modversion $pc_package`
-      fi
-    fi
-    if [ -z "$found" ]; then
-      if [ -f /usr/X11R6/include/X11/extensions/Xrandr.h ]; then
-        found="-I/usr/X11R6/include"
-      elif [ -f /usr/include/X11/extensions/Xrandr.h ]; then
-        found="-I/usr/include"
-      elif [ -f $includedir/X11/extensions/Xrandr.h ]; then
-        found="-I$includedir"
       fi
     fi
     if [ -n "$found" ]; then
@@ -474,9 +465,14 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
-        echo_="X Xrandr not found in /usr/X11R6/include/X11/extensions/Xrandr.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-        echo_="  /usr/include/X11/extensions/Xrandr.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-        echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      pkg-config  --atleast-version=1.0 $pc_package
+      if [ $? = 0 ]; then
+        version=`pkg-config --modversion $pc_package`
+      fi
+      if [ -n "$version" ]; then
+        echo_="X Xrandr $version          detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      fi
+      echo_="X Xrandr not sufficiently found in $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
   fi
 
