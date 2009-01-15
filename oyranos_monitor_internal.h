@@ -50,7 +50,8 @@ typedef struct {
   int           screen;      /**< external screen number to call for X */
 # ifdef HAVE_XRANDR
   XRRScreenResources * res;            /**< XRandR root window struct */
-  XRROutputInfo      * output;         /**< XRandR output */
+  RROutput             output;         /**< XRandR output */
+  XRROutputInfo      * output_info;    /**< XRandR output info */
   int                  active_outputs; /**< outputs with crtc and gamma size */
 # endif
   char               * system_port;    /**< the operating systems port name */
@@ -76,6 +77,17 @@ int          oyMonitor_x_            ( oyMonitor_s       * disp );
 int          oyMonitor_y_            ( oyMonitor_s       * disp );
 int          oyMonitor_width_        ( oyMonitor_s       * disp );
 int          oyMonitor_height_       ( oyMonitor_s       * disp );
+oyX11INFO_SOURCE_e 
+             oyMonitor_infoSource_   ( oyMonitor_s       * disp );
+
+# ifdef HAVE_XRANDR
+XRRScreenResources *
+             oyMonitor_xrrResource_  ( oyMonitor_s       * disp );
+RROutput     oyMonitor_xrrOutput_    ( oyMonitor_s       * disp );
+XRROutputInfo *
+             oyMonitor_xrrOutputInfo_( oyMonitor_s       * disp );
+int          oyMonitor_activeOutputs_( oyMonitor_s       * disp );
+# endif
 
 #endif
 
