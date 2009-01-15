@@ -33,6 +33,7 @@
 #include <string.h>
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
+void  oyDeAllocFunc ( oyPointer ptr) { free (ptr); }
 
 int main( int argc , char** argv )
 {
@@ -162,10 +163,15 @@ int main( int argc , char** argv )
       } else {
         data = oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
         prof = oyProfile_FromMem( size, data, 0, 0 );
+        if(size && data)
+          oyDeAllocFunc( data );
+        data = 0; size = 0;
         filename = oyProfile_GetFileName( prof, 0 );
       }
       printf("%s:%d profile \"%s\" size: %d\n",__FILE__,__LINE__,
              filename?filename:OY_PROFILE_NONE, (int)size);
+
+      oyProfile_Release( &prof );
     }
 
     /* make shure the display name is correct including the screen */
@@ -183,6 +189,9 @@ int main( int argc , char** argv )
     oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
     printf("%s:%d profile size: %d\n",__FILE__,__LINE__,(int)size);
   }
+
+  if(oy_display_name)
+    oyDeAllocFunc(oy_display_name);
 
   return error;
 }
