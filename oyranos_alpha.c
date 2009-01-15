@@ -8104,8 +8104,8 @@ const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
     if(s->file_name_ && !hash)
     {
       name = s->file_name_;
-    } else {
-
+    } else
+    {
       names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
 
       for(i = 0; i < count; ++i)
@@ -8139,10 +8139,12 @@ const oyChar *     oyProfile_GetFileName( oyProfile_s    * profile,
       oyDeAllocateFunc_( s->file_name_ );
       s->file_name_ = (char*)name;
 
-      oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+      if(names)
+        oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
     }
 
-    oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+    if(texts)
+      oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
   }
 
   return name;
