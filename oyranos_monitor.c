@@ -67,6 +67,9 @@ int   oyMonitor_getScreenFromDisplayName_( oyMonitor_s   * disp );
 int   oyGetScreenFromPosition_    (const char *display_name,
                                    int         x,
                                    int         y);
+int      oyGetAllScreenNames         ( const char        * display_name,
+                                       char            *** display_names,
+                                       oyAlloc_f           allocateFunc );
 #endif
 char* oyGetDisplayNameFromPosition_(const char *raw_display_name,
                                    int x,
@@ -578,6 +581,27 @@ oyGetMonitorProfileName_          (const char* display_name,
 
   DBG_PROG_ENDE
   return moni_profile;
+}
+
+int      oyGetAllScreenNames         ( const char        * display_name,
+                                       char            *** display_names,
+                                       oyAlloc_f           allocateFunc )
+{
+  int i = 0;
+  char** list = 0;
+
+  list = oyGetAllScreenNames_( display_name, &i );
+
+  *display_names = 0;
+
+  if(list && i)
+  {
+    *display_names = oyStringListAppend_( 0, 0, (const char**)list, i, &i,
+                                          allocateFunc );
+    oyStringListRelease_( &list, i, oyDeAllocateFunc_ );
+  }
+
+  return i; 
 }
 
 char**

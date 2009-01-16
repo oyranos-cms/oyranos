@@ -39,6 +39,8 @@ int   oyGetMonitorInfo_lib        (const char* display,
                                        char             ** system_port,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func);
+int   oyGetScreens_lib               ( char            *** display_names,
+                                       int               * display_names_n );
 int   oyGetScreenFromPosition_lib (const char *display_name,
                                    int x,
                                    int y);
