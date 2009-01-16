@@ -158,6 +158,7 @@ typedef enum {
   oyOBJECT_HASH_S,                    /**< oyHash_s */
   oyOBJECT_STRUCT_LIST_S,             /**< oyStructList_s */
   oyOBJECT_BLOB_S,                    /**< oyBlob_s */
+  oyOBJECT_CONFIG_S,                  /**< oyConfig_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 
@@ -173,10 +174,10 @@ typedef struct oyObject_s_* oyObject_s;
  *  @date  1 january 2008 (API 0.1.8)
  */
 struct oyStruct_s {
-  oyOBJECT_e           type_;          /**< struct type */
+  oyOBJECT_e           type_;          /**< @private struct type */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< features name and hash */
+  oyObject_s           oy_;            /**< @private features name and hash */
 };
 
 oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
@@ -201,6 +202,7 @@ typedef enum {
 
 /** @brief Oyranos name structure
  *  @ingroup objects_generic
+ *  @extends oyStruct_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
@@ -254,36 +256,6 @@ int          oyName_boolean          ( oyName_s          * name_a,
                                        oyNAME_e            name_type,
                                        oyBOOLEAN_e         type );
 
-/** @struct  oyBlob_s
- *  @brief   a data blob object
- *
- *  @version Oyranos: 0.1.9
- *  @since   2009/01/06 (Oyranos: 0.1.9)
- *  @date    2009/01/06
- */
-typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_BLOB_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-
-  size_t               size;           /**< data size */
-  oyPointer            ptr;            /**< data */
-} oyBlob_s;
-
-OYAPI oyBlob_s * OYEXPORT
-                 oyBlob_New          ( oyObject_s          object );
-OYAPI oyBlob_s * OYEXPORT
-                 oyBlob_Copy         ( oyBlob_s          * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyBlob_Release      ( oyBlob_s         ** obj );
-
-OYAPI int  OYEXPORT
-                 oyBlob_SetFromData  ( oyBlob_s          * obj,
-                                       oyPointer           ptr,
-                                       size_t              size );
-
 
 #define OY_HASH_SIZE 16
 
@@ -293,6 +265,7 @@ typedef struct oyStructList_s oyStructList_s;
 /** @struct  oyObject_s
  *  @brief   Oyranos structure base
  *  @ingroup objects_generic
+ *  @extends oyStruct_s
  *
  *  The base object of Oyranos object system is self contained. It can be
  *  handled by the belonging function set. Complex objects for user interaction
@@ -304,21 +277,21 @@ typedef struct oyStructList_s oyStructList_s;
  *  @date  october 2007 (API 0.1.8)
  */
 struct oyObject_s_ {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_OBJECT_S*/
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_OBJECT_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  int                  id_;            /**< identification for Oyranos */
-  oyAlloc_f            allocateFunc_;  /**< data  allocator */
-  oyDeAlloc_f          deallocateFunc_;/**< data release function */
-  oyPointer            parent_;        /*!< parent struct of parent_type */
-  oyOBJECT_e           parent_type_;   /*!< parents struct type */
-  oyPointer            backdoor_;      /*!< allow non breaking extensions */
-  oyStructList_s     * handles_;       /*!< useful as list of oyStruct_s */
-  oyName_s           * name_;          /*!< naming feature */
-  int                  ref_;           /*!< reference counter */
-  int                  version_;       /*!< OYRANOS_VERSION */
-  unsigned char        hash_[2*OY_HASH_SIZE];
-  oyPointer            lock_;          /**< the user provided lock */
+  int                  id_;            /**< @private identification for Oyranos */
+  oyAlloc_f            allocateFunc_;  /**< @private data  allocator */
+  oyDeAlloc_f          deallocateFunc_;/**< @private data release function */
+  oyPointer            parent_;        /*!< @private parent struct of parent_type */
+  oyOBJECT_e           parent_type_;   /*!< @private parents struct type */
+  oyPointer            backdoor_;      /*!< @private allow non breaking extensions */
+  oyStructList_s     * handles_;       /*!< @private useful as list of oyStruct_s */
+  oyName_s           * name_;          /*!< @private naming feature */
+  int                  ref_;           /*!< @private reference counter */
+  int                  version_;       /*!< @private OYRANOS_VERSION */
+  unsigned char        hash_[2*OY_HASH_SIZE]; /** @private */
+  oyPointer            lock_;          /**< @private the user provided lock */
 };
 
 oyObject_s   oyObject_New             ( void );
@@ -363,6 +336,7 @@ int          oyObject_GetId            ( oyObject_s        object );
 /** @internal
  *  @brief a cache entry
  *  @ingroup objects_generic
+ *  @extends oyStruct_s
  *
  *  Combine hash, description and oyPointer to one searchable struct. The struct
  *  can be used in a oyStructList_s for a hash map or searchable cache.
@@ -373,10 +347,10 @@ int          oyObject_GetId            ( oyObject_s        object );
  *  @date  24 november 2007 (API 0.1.8)
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_HASH_S */
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_HASH_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< features name and hash */
+  oyObject_s           oy_;            /**< @private features name and hash */
   oyStruct_s         * entry;          /**< holds a pointer to something */
 } oyHash_s;
 
@@ -394,9 +368,41 @@ oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
 int                oyHash_SetPointer_( oyHash_s          * hash,
                                        oyStruct_s        * obj );
 
+/** @struct  oyBlob_s
+ *  @brief   a data blob object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2009/01/06 (Oyranos: 0.1.9)
+ *  @date    2009/01/06
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_BLOB_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< @private base object */
+
+  size_t               size;           /**< data size */
+  oyPointer            ptr;            /**< data */
+} oyBlob_s;
+
+OYAPI oyBlob_s * OYEXPORT
+                 oyBlob_New          ( oyObject_s          object );
+OYAPI oyBlob_s * OYEXPORT
+                 oyBlob_Copy         ( oyBlob_s          * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyBlob_Release      ( oyBlob_s         ** obj );
+
+OYAPI int  OYEXPORT
+                 oyBlob_SetFromData  ( oyBlob_s          * obj,
+                                       oyPointer           ptr,
+                                       size_t              size );
+
 /** @internal
  *  @brief a pointer list
  *  @ingroup objects_generic
+ *  @extends oyStruct_s
  *
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
  *
@@ -404,15 +410,15 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
  *  @date  november 2007 (API 0.1.8)
  */
 struct oyStructList_s {
-  oyOBJECT_e           type_;          /*!< internal struct type oyOBJECT_STRUCT_LIST_S */
+  oyOBJECT_e           type_;          /*!< @private internal struct type oyOBJECT_STRUCT_LIST_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< features name and hash */
-  oyStruct_s        ** ptr_;           /**< the list data */
-  int                  n_;             /**< the number of visible pointers */
-  int                  n_reserved_;    /**< the number of allocated pointers */
+  oyObject_s           oy_;            /**< @private features name and hash */
+  oyStruct_s        ** ptr_;           /**< @private the list data */
+  int                  n_;             /**< @private the number of visible pointers */
+  int                  n_reserved_;    /**< @private the number of allocated pointers */
   char               * list_name;      /**< name of list */
-  oyOBJECT_e           parent_type_;   /**< parents struct type */
+  oyOBJECT_e           parent_type_;   /**< @private parents struct type */
 };
 
 oyStructList_s * oyStructList_New    ( oyObject_s          object );
@@ -530,6 +536,7 @@ typedef enum {
 
 /** @brief Option for rendering
  *  @ingroup objects_value
+ *  @extends oyStruct_s
 
     @todo include the oyOptions_t_ type for gui elements
     should be used in a list oyColourTransformOptions_s to form a options set
@@ -549,10 +556,10 @@ typedef enum {
  *  @date    2008/04/14
  */
 typedef struct {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_OPTION_S */
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_OPTION_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   uint32_t             id;             /**< id to map to events and widgets */
   char               * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/imaging/scale/x" */
@@ -588,6 +595,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
  *  @struct  oyOptions_s
  *  @brief   generic Options
  *  @ingroup objects_value
+ *  @extends oyStruct_s
  *
  *  Options can be any flag or rendering intent and other informations needed to
  *  configure a process. The object contains a list of oyOption_s objects.
@@ -597,10 +605,10 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
  *  @date    2008/06/26
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_OPTIONS_S */
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_OPTIONS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   oyStructList_s     * list;           /**< the list data */
 } oyOptions_s;
@@ -707,26 +715,27 @@ typedef struct oyProfileTag_s oyProfileTag_s;
 
 /** @brief a profile and its attributes
  *  @ingroup objects_profile
+ *  @extends oyStruct_s
  */
 typedef struct {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_PROFILE_S */
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_PROFILE_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-  char               * file_name_;     /*!< file name for loading on request */
-  size_t               size_;          /*!< ICC profile size */
-  void               * block_;         /*!< ICC profile data */
-  icColorSpaceSignature sig_;          /*!< ICC profile signature */
-  oyPROFILE_e          use_default_;   /*!< if > 0 : take from settings */
-  oyObject_s         * names_chan_;    /*!< user visible channel description */
-  int                  channels_n_;    /*!< number of channels */
-  oyStructList_s     * tags_;          /**< list of header + tags */
+  oyObject_s           oy_;            /**< @private base object */
+  char               * file_name_;     /*!< @private file name for loading on request */
+  size_t               size_;          /*!< @private ICC profile size */
+  void               * block_;         /*!< @private ICC profile data */
+  icColorSpaceSignature sig_;          /*!< @private ICC profile signature */
+  oyPROFILE_e          use_default_;   /*!< @private if > 0 : take from settings */
+  oyObject_s         * names_chan_;    /*!< @private user visible channel description */
+  int                  channels_n_;    /*!< @private number of channels */
+  oyStructList_s     * tags_;          /**< @private list of header + tags */
 } oyProfile_s;
 
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromStd ( oyPROFILE_e         colour_space,
                                        oyObject_s          object);
-/** @type oyIO_t 
+/** @typedef oyIO_t
     parametric type as shorthand for IO flags \n
 
     should fit into a 32bit type, usual unsigned int or uint32_t \n
@@ -814,13 +823,14 @@ const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
 
 /** @brief tell about the conversion profiles
  *  @ingroup objects_profile
+ *  @extends oyStruct_s
  */
 typedef struct {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_PROFILES_S */
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_PROFILES_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-  oyStructList_s     * list_;          /**< list of profiles */
+  oyObject_s           oy_;            /**< @private base object */
+  oyStructList_s     * list_;          /**< @private list of profiles */
 } oyProfiles_s;
 
 OYAPI oyProfiles_s * OYEXPORT
@@ -858,26 +868,27 @@ typedef enum {
 /** @struct oyProfileTag_s
  *  @brief  a profile constituting element
  *  @ingroup objects_profile
+ *  @extends oyStruct_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
  */
 struct oyProfileTag_s {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_PROFILE_TAG_S */
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_PROFILE_TAG_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   icTagSignature       use;            /**< tag functionality inside profile */
-  icTagTypeSignature   tag_type_;      /**< tag type to decode the data block */
+  icTagTypeSignature   tag_type_;      /**< @private tag type to decode the data block */
 
-  oySTATUS_e           status_;        /**< status at load time */
+  oySTATUS_e           status_;        /**< @private status at load time */
 
   size_t               offset_orig;    /**< information from profile read */
-  size_t               size_;          /**< data block size */
-  oyPointer            block_;         /**< the data to interprete */
+  size_t               size_;          /**< @private data block size */
+  oyPointer            block_;         /**< @private the data to interprete */
 
-  char                 profile_cmm_[5];/**< the profile prefered CMM */
+  char                 profile_cmm_[5];/**< @private the profile prefered CMM */
   char                 required_cmm[5];/**< selected a certain CMM */
   char                 last_cmm_[5];   /**< info: last processing CMM */
 };
@@ -939,12 +950,13 @@ typedef enum {
 
 /** @brief start with a simple rectangle
  *  @ingroup objects_region
+ *  @extends oyStruct_s
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< internal struct type oyOBJECT_REGION_S */
+  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_REGION_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;
+  oyObject_s           oy_;            /**< @private */
 
   double x;
   double y;
@@ -1134,6 +1146,7 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
 /** @struct  oyArray2d_s
  *  @brief   2d data array
  *  @ingroup objects_image
+ *  @extends oyStruct_s
  *
  *  oyArray2d_s is a in memory data view. The array2d holds pointers to lines in
  *  the original memory blob. The arrays contained in array2d represent the 
@@ -1147,6 +1160,7 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
  *
   \dot
   digraph a {
+  bgcolor="transparent";
   nodesep=.05;
   rankdir=LR
       node [shape=record,fontname=Helvetica, fontsize=10, width=.1,height=.1];
@@ -1186,10 +1200,10 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
  *  @date    2008/08/23
  */
 typedef struct {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_ARRAY2D_S */
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_ARRAY2D_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   oyDATATYPE_e         t;              /**< data type */
   int                  width;          /**< width of actual data view */
@@ -1219,8 +1233,10 @@ OYAPI int  OYEXPORT
                  oyArray2d_DataSet   ( oyArray2d_s       * obj,
                                        oyPointer           data );
 
-/** @brief a reference struct to gather information for image transformation
+/** @struct  oyImage_s
+ *  @brief   a reference struct to gather information for image transformation
  *  @ingroup objects_image
+ *  @extends oyStruct_s
  *
  *  as we dont target a complete imaging solution, only raster is supported
  *
@@ -1237,6 +1253,7 @@ OYAPI int  OYEXPORT
  *  To set a image data backend use oyImage_DataSet().
  *  \dot
  digraph oyImage_s {
+  bgcolor="transparent";
   nodesep=.1;
   ranksep=1.;
   rankdir=LR;
@@ -1306,10 +1323,10 @@ OYAPI int  OYEXPORT
  *  @date    2008/08/23
  */
 struct oyImage_s {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_IMAGE_S */
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_IMAGE_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   oyRegion_s         * viewport;       /**< intented viewing area, normalised to the pixel width == 1.0 */
   double               resolution_x;   /**< resolution in horizontal direction*/
@@ -1319,8 +1336,8 @@ struct oyImage_s {
   oyCHANNELTYPE_e    * channel_layout; /**< non profile described channels */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
-  oyOptions_s        * options_;       /*!< channel layout (? undecided) */
-  oyProfile_s        * profile_;       /*!< image profile */
+  oyOptions_s        * options_;       /*!< @private channel layout (? undecided) */
+  oyProfile_s        * profile_;       /*!< @private image profile */
   int                  display_pos_x;  /**< Possibly this can be part of the output profile; upper position on display of image*/
   int                  display_pos_y;  /*!< left position on display of image */
 
@@ -1464,6 +1481,7 @@ typedef enum {
 /** @struct  oyConnector_s
  *  @brief   a filter connection description structure
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  This structure holds informations about the connection capabilities.
  *  It holds common structure members of oyFilterPlug_s and oyFilterSocket_s.
@@ -1478,10 +1496,10 @@ typedef enum {
  *  @date    2008/07/29
  */
 struct oyConnector_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONNECTOR_S */
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   oyName_s             name;           /**< e.g."Img", "Image", "Image Socket"*/
 
@@ -1521,13 +1539,15 @@ OYAPI int  OYEXPORT
 
 
 
-/** @struct oyFilterSocket_s
- *  @brief  a filter connection structure
+/** @struct  oyFilterSocket_s
+ *  @brief   a filter connection structure
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  The passive output version of a oyConnector_s.
  \dot
 digraph G {
+  bgcolor="transparent";
   node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
   edge[ fontname=Helvetica, fontsize=10 ];
   rankdir=LR
@@ -1556,18 +1576,18 @@ digraph G {
  *  @date    2008/07/29
  */
 struct oyFilterSocket_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_SOCKET_S */
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_SOCKET_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
   oyFilterNode_s     * node;           /**< filter node for this connector */
-  char               * relatives_;     /**< hint about belonging to a filter */
+  char               * relatives_;     /**< @private hint about belonging to a filter */
 
   oyStruct_s         * data;           /**< unprocessed data model */
 
-  oyFilterPlugs_s    * requesting_plugs_;/**< all remote inputs */
+  oyFilterPlugs_s    * requesting_plugs_;/**< @private all remote inputs */
 };
 
 OYAPI oyFilterSocket_s * OYEXPORT
@@ -1588,11 +1608,13 @@ OYAPI int  OYEXPORT
 /** @struct oyFilterPlug_s
  *  @brief  a filter connection structure
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  The active input version of a oyConnector_s.
  *  Each plug can connect to exact one socket.
  \dot
 digraph G {
+  bgcolor="transparent";
   node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
   edge[ fontname=Helvetica, fontsize=10 ];
   rankdir=LR
@@ -1621,16 +1643,16 @@ digraph G {
  *  @date    2008/07/29
  */
 struct oyFilterPlug_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_PLUG_S */
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_PLUG_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
   oyFilterNode_s     * node;           /**< filter node for this connector */
-  char               * relatives_;     /**< hint about belonging to a filter */
+  char               * relatives_;     /**< @private hint about belonging to a filter */
 
-  oyFilterSocket_s   * remote_socket_; /**< the remote output */
+  oyFilterSocket_s   * remote_socket_; /**< @private the remote output */
 };
 
 OYAPI oyFilterPlug_s * OYEXPORT
@@ -1654,18 +1676,19 @@ OYAPI int  OYEXPORT
 /** @struct  oyFilterPlugs_s
  *  @brief   a FilterPlugs list
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
  *  @date    2008/07/29
  */
 struct oyFilterPlugs_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_PLUGS_S */ 
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_PLUGS_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
-  oyStructList_s     * list_;          /**< the list data */
+  oyStructList_s     * list_;          /**< @private the list data */
 };
 
 OYAPI oyFilterPlugs_s * OYEXPORT
@@ -1696,6 +1719,7 @@ OYAPI int  OYEXPORT
 /** @struct oyFilter_s
  *  @brief  a filter to manipulate a image
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  This is the Oyranos filter object. Filters are categorised into basic
  *  classes of filters described in the registration_ (//xxx) member.
@@ -1723,20 +1747,20 @@ OYAPI int  OYEXPORT
  *  @date    2008/12/16
  */
 struct oyFilter_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_S*/
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
-  const char         * registration_;  /**< a registration name, e.g. "sw/oyranos.org/imaging/scale" */
-  oyName_s           * name_;          /**< nick, name, description/help */
+  const char         * registration_;  /**< @private a registration name, e.g. "sw/oyranos.org/imaging/scale" */
+  oyName_s           * name_;          /**< @private nick, name, description/help */
 
-  char               * category_;      /**< the ui menue category for this filter, to be specified */
+  char               * category_;      /**< @private the ui menue category for this filter, to be specified */
 
-  oyOptions_s        * options_;       /**< local options */
-  char               * opts_ui_;       /**< xml ui elements for filter options*/
+  oyOptions_s        * options_;       /**< @private local options */
+  char               * opts_ui_;       /**< @private xml ui elements for filter options*/
 
-  oyCMMapi4_s        * api4_;          /**< oyranos library interfaces */
+  oyCMMapi4_s        * api4_;          /**< @private oyranos library interfaces */
 };
 
 oyFilter_s * oyFilter_New            ( const char        * registration,
@@ -1774,18 +1798,19 @@ const char * oyFilter_WidgetsGet     ( oyFilter_s        * filter,
 /** @struct  oyFilters_s
  *  @brief   a Filters list
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/08 (Oyranos: 0.1.8)
  *  @date    2008/07/08
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTERS_S */ 
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTERS_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
-  oyStructList_s     * list_;          /**< the list data */
+  oyStructList_s     * list_;          /**< @private the list data */
 } oyFilters_s;
 
 OYAPI oyFilters_s * OYEXPORT
@@ -1815,12 +1840,14 @@ OYAPI int  OYEXPORT
 /** @struct  oyFilterNode_s
  *  @brief   a FilterNode object
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  Filter nodes chain filters into a oyConversion_s graph. The filter nodes
  *  use plugs and sockets for creating connections. Each plug can only connect
  *  to one socket.
  \dot
 digraph G {
+  bgcolor="transparent";
   node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
   a [label=<
 <table border="0" cellborder="1" cellspacing="4">
@@ -1861,6 +1888,7 @@ digraph G {
  *  structure, which is part of oyFilter_s.
  \dot
 digraph G {
+  bgcolor="transparent";
   rankdir=LR
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
   edge [fontname=Helvetica, fontsize=10];
@@ -1878,6 +1906,7 @@ digraph G {
  *  to allow for viewing on a filters data output or observe its state changes.
  \dot
 digraph G {
+  bgcolor="transparent";
   rankdir=LR
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
   edge [fontname=Helvetica, fontsize=10];
@@ -1900,16 +1929,16 @@ digraph G {
  *  @date    2008/12/16
  */
 struct oyFilterNode_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_NODE_S*/
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_NODE_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   oyFilterPlug_s    ** plugs;          /**< active input connectors, list ends with a trailing zero */
   oyFilterSocket_s  ** sockets;        /**< active output connectors, list ends with a trailing zero */
 
   oyFilter_s         * filter;         /**< the filter */
-  char               * relatives_;     /**< hint about belonging to a filter */
+  char               * relatives_;     /**< @private hint about belonging to a filter */
 
   /** the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to oyCMMapi4_s::context_type */
   oyCMMptr_s         * backend_data;
@@ -1971,6 +2000,35 @@ oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
                                        oyAlloc_f           allocateFunc );
 
 
+/** @struct  oyConfig_s
+ *  @brief   a Device object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/15 (Oyranos: 0.1.10)
+ *  @date    2009/01/15
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONFIG_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< @private base object */
+
+  uint32_t             id;             /**< id inside registration */
+  char               * registration;   /**< basic key path name to store configuration, e.g. "sw/oyranos.org/imaging/scale/x" */
+  int                  version[3];     /**< as for oyCMMapi4_s::version */
+
+  oyOptions_s        * options;
+} oyConfig_s;
+
+OYAPI oyConfig_s * OYEXPORT
+                   oyConfig_New      ( oyObject_s          object );
+OYAPI oyConfig_s * OYEXPORT
+                   oyConfig_Copy     ( oyConfig_s        * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+               oyConfig_Release      ( oyConfig_s       ** obj );
+
 
 
 typedef struct oyPixelAccess_s oyPixelAccess_s;
@@ -1978,6 +2036,7 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
 /** @struct  oyPixelAccess_s
  *  @brief   control pixel access order
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  A struct to control pixel access. It is a kind of flexible pixel 
  *  iterator. The order or pattern of access is defined by the array_xy and
@@ -2102,7 +2161,7 @@ struct oyPixelAccess_s {
   oyOBJECT_e           type;           /**< internal struct type oyOBJECT_PIXEL_ACCESS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   int32_t          start_xy[2];        /**< the start point */
   int32_t          start_xy_old[2];    /**< @deprecated the previous start point */
@@ -2147,6 +2206,7 @@ int                oyPixelAccess_CalculateNextStartPixel (
 /** @struct oyConversion_s
  *  @brief  a filter chain or graph to manipulate a image
  *  @ingroup objects_conversion
+ *  @extends oyStruct_s
  *
  *  Order of filters matters.
  *  The processing direction is a bit like raytracing as nodes request their
@@ -2155,6 +2215,7 @@ int                oyPixelAccess_CalculateNextStartPixel (
  *  The graph is allowed to be a directed graph without cycles.
  \dot
 digraph G {
+  bgcolor="transparent";
   rankdir=LR
   graph [fontname=Helvetica, fontsize=12];
   node [shape=record, fontname=Helvetica, fontsize=10, style="filled,rounded"];
@@ -2180,6 +2241,7 @@ digraph G {
  *  and managing nodes.\n
  \dot
 digraph G {
+  bgcolor="transparent";
   rankdir=LR
   graph [fontname=Helvetica, fontsize=12];
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
@@ -2245,6 +2307,7 @@ digraph G {
  *  oyConversion_GetOnePixel() functions are available.
  \dot
 digraph G {
+  bgcolor="transparent";
   rankdir=LR
   graph [fontname=Helvetica, fontsize=12];
   node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
@@ -2273,13 +2336,13 @@ digraph G {
  *  @date    2008/06/08
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONVERSION_S*/
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONVERSION_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
+  oyObject_s           oy_;            /**< @private base object */
 
   oyFilterNode_s     * input;          /**< the input image filter; Most users will start logically with this pice and chain their filters to get the final result. */
-  oyFilterNode_s     * out_;           /**< the Oyranos output image. Oyranos will stream the filters starting from the end. This element will be asked on its first plug. */
+  oyFilterNode_s     * out_;           /**< @private the Oyranos output image. Oyranos will stream the filters starting from the end. This element will be asked on its first plug. */
 } oyConversion_s;
 
 oyConversion_s  *  oyConversion_CreateBasic (
@@ -2331,15 +2394,15 @@ char             * oyConversion_ToText (
     deprecate with the new filter architecture
  */
 typedef struct {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_COLOUR_CONVERSION_S */
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_COLOUR_CONVERSION_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-  oyProfiles_s       * profiles_;      /*!< effect / simulation profiles */ 
-  oyOptions_s        * options_;       /*!< conversion opts */
-  oyImage_s          * image_in_;      /*!< input */
-  oyImage_s          * image_out_;     /*!< output */
-  oyStructList_s     * cmms_;          /**< list of CMM entries to call */
+  oyObject_s           oy_;            /**< @private base object */
+  oyProfiles_s       * profiles_;      /*!< @private effect / simulation profiles */ 
+  oyOptions_s        * options_;       /*!< @private conversion opts */
+  oyImage_s          * image_in_;      /*!< @private input */
+  oyImage_s          * image_out_;     /*!< @private output */
+  oyStructList_s     * cmms_;          /**< @private list of CMM entries to call */
   int32_t              flags;          /**< 0x01 is the warned bit */
 } oyColourConversion_s;
 
@@ -2359,6 +2422,7 @@ oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * s );
 /** @struct oyNamedColour_s
  *  @brief colour patch with meta informations
  *  @ingroup objects_single_colour
+ *  @extends oyStruct_s
  *
  *  Data management on library side.
  *  User can control memory management at creation time.
@@ -2371,15 +2435,15 @@ oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * s );
  *  TODO: needs to be Xatom compatible
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_NAMED_COLOUR_S */
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_NAMED_COLOUR_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-  double             * channels_;      /**< eigther parsed or calculated otherwise */
-  double               XYZ_[3];        /**< CIE*XYZ representation */
-  char               * blob_;          /**< advanced : CGATS / ICC ? */
-  size_t               blob_len_;      /**< advanced : CGATS / ICC ? */
-  oyProfile_s        * profile_;       /**< ICC */
+  oyObject_s           oy_;            /**< @private base object */
+  double             * channels_;      /**< @private eigther parsed or calculated otherwise */
+  double               XYZ_[3];        /**< @private CIE*XYZ representation */
+  char               * blob_;          /**< @private advanced : CGATS / ICC ? */
+  size_t               blob_len_;      /**< @private advanced : CGATS / ICC ? */
+  oyProfile_s        * profile_;       /**< @private ICC */
 } oyNamedColour_s;
 
 oyNamedColour_s*  oyNamedColour_Create( const double      * chan,
@@ -2429,6 +2493,7 @@ const char   *    oyNamedColour_GetName( oyNamedColour_s * s,
 
 /** @brief list of colour patches
  *  @ingroup objects_single_colour
+ *  @extends oyStruct_s
  *
  *  Data management on library side.
  *  User can control memory management at creation time.
@@ -2441,11 +2506,11 @@ const char   *    oyNamedColour_GetName( oyNamedColour_s * s,
  *  TODO: make the object non visible
  */
 typedef struct {
-  oyOBJECT_e           type_;          /*!< struct type oyOBJECT_NAMED_COLOURS_S */
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_NAMED_COLOURS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /*!< base object */
-  oyStructList_s     * list_;          /**< colour list */
+  oyObject_s           oy_;            /*!< @private base object */
+  oyStructList_s     * list_;          /**< @private colour list */
 } oyNamedColours_s;
 
 oyNamedColours_s* oyNamedColours_New ( oyObject_s       object );
@@ -2478,6 +2543,7 @@ void              oyCopyColour       ( const double      * from,
 
 /** @brief   icon data
  *  @ingroup cmm_handling
+ *  @extends oyStruct_s
  *
  *  Since: 0.1.8
  */
@@ -2486,8 +2552,8 @@ typedef struct {
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
-  int              width;
-  int              height;
+  int              width;              /**< */
+  int              height;             /**< */
   float          * data;               /*!< should be sRGB matched */
   char           * file_list;          /*!< colon ':' delimited list of icon file names, SVG, PNG */
 } oyIcon_s;
@@ -2515,6 +2581,7 @@ const char *    (* oyCMMGetText_f)   ( const char        * select,
 
 /** @brief   the CMM API resources struct to implement and set by a CMM
  *  @ingroup cmm_handling
+ *  @extends oyStruct_s
  *
  *  Given an example CMM with name "little cms", which wants to use the 
  *  four-char ID 'lcms', the CMM can register itself to Oyranos as follows:
@@ -2545,7 +2612,7 @@ typedef struct {
   oyOBJECT_e       type;               /*!< struct type oyOBJECT_CMM_INFO_S */
   oyStruct_Copy_f      copy_;          /**< copy function; zero for static data */
   oyStruct_Release_f   release_;       /**< release function; zero for static data */
-  oyObject_s       oy_;                /**< zero for static data */
+  oyObject_s       oy_;                /**< @private zero for static data */
   char             cmm[8];             /*!< ICC signature, eg 'lcms' */
   char           * backend_version;    /*!< non translatable, eg "v1.17" */
   /** translatable, e.g. "name": "lcms" "little cms" "A CMM with 100k ..." */
