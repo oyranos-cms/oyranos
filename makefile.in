@@ -466,7 +466,9 @@ $(POT_FILE):
 
 docu:
 	echo Documentation ...
-	test -n 'which doxygen' && doxygen Doxyfile || echo "Will not create Documentation because doxygen is missing"
+	test -n 'which doxygen' && (doxygen Doxyfile; $(COPY) oyranos_logo.png doc/html/) || echo "Will not create Documentation because doxygen is missing"
+	test -d doc_intern/html/ && $(COPY) oyranos_logo.png doc_intern/html/ ||\
+	 echo ""
 	echo ... Documentation done
 
 # the copy part for this directory level
