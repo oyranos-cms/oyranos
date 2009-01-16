@@ -47,10 +47,30 @@ typedef enum {
   oyQUERY_MAX
 } oyCMMQUERY_e;
 
+/**
+ *  typedef oyCMMCanHandle_f
+ *  @brief   CMM feature declaration function
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi_s
+ */
 typedef int      (*oyCMMCanHandle_f) ( oyCMMQUERY_e        type,
                                        uint32_t            value );
 
+/**
+ *  typedef oyCMMInit_f
+ *  @brief   optional CMM init function
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi_s
+ */
 typedef int      (*oyCMMInit_f)      ( void );
+
+/**
+ *  typedef oyCMMMessageFuncSet_f
+ *  @brief   optionaly sets a CMM message function
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi_s
+ */
+typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
 
 #define oyCMM_PROFILE "oyPR"
 #define oyCMM_COLOUR_CONVERSION "oyCC"
@@ -58,6 +78,7 @@ typedef int      (*oyCMMInit_f)      ( void );
 
 /** @brief   CMM pointer
  *  @ingroup backend_api
+ *  @extends oyStruct_s
  *
  *  The oyCMMptr_s is used internally and for CMM's.
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
@@ -83,6 +104,7 @@ struct oyCMMptr_s {
 oyCMMptr_s * oyCMMptr_LookUp         ( oyStruct_s        * data,
                                        const char        * cmm );
 int          oyCMMptr_Release        ( oyCMMptr_s       ** obj );
+
 
 /** @brief   CMM data to Oyranos cache
  *
@@ -137,8 +159,6 @@ typedef icSignature (*oyCMMProfile_GetSignature_f) (
 /*oyPointer          oyCMMallocateFunc ( size_t              size );
 void               oyCMMdeallocateFunc(oyPointer           mem );*/
 
-typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
-
 
 /**  @ingroup backend_api */
 typedef enum {
@@ -152,9 +172,11 @@ typedef enum {
   oyWIDGET_UNDEFINED
 } oyWIDGET_EVENT_e;
 
-/** @typedef oyCMMFilter_ValidateOptions_f
- *  @brief   a function to check and validate options
- *  @ingroup backend_api
+/** typedef  oyCMMFilter_ValidateOptions_f
+ *  @brief    a function to check and validate options
+ *  @ingroup  backend_api
+ *  @memberof oyCMMapi4_s
+ *  @memberof oyCMMapi5_s
  *
  *  @param[in]     filter              the filter
  *  @param[in]     validate            to validate
@@ -172,6 +194,10 @@ typedef oyOptions_s * (*oyCMMFilter_ValidateOptions_f)
                                        int                 statical,
                                        uint32_t          * result );
 typedef const char* (*oyWidgetGet_f) ( uint32_t          * result );
+/**
+ *  @typedef  oyWidgetEvent_f
+ *  @ingroup  backend_api
+ */
 typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
                                      ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
@@ -181,6 +207,7 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
 
 /** @brief the generic part if a API to implement and set by a CMM or meta backend
  *  @ingroup backend_api
+ *  @extends oyStruct_s
  *
  *  @since Oyranos: version 0.1.8 2007/12/12
  *  @date  12 december 2007 (API 0.1.8)
@@ -192,14 +219,16 @@ struct oyCMMapi_s {
   oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
-  oyCMMInit_f      oyCMMInit;
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
+  oyCMMInit_f      oyCMMInit;          /**< @memberof oyCMMapi_s */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< @memberof oyCMMapi_s */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< @memberof oyCMMapi_s */
 };
 
 
-/** @brief the API 1 to implement and set by a CMM
+/** @struct  oyCMMapi1_s
+ *  @brief   the API 1 to implement and set by a CMM
  *  @ingroup backend_api
+ *  @extends oyCMMapi_s
  *
  *  @since Oyranos: version 0.1.8 2007/12/05
  *  @date  21 december 2007 (API 0.1.8)
@@ -211,9 +240,9 @@ typedef struct {
   oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
-  oyCMMInit_f      oyCMMInit;
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
+  oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   oyCMMDataOpen_f  oyCMMDataOpen;
   oyCMMColourConversion_Create_f oyCMMColourConversion_Create;
@@ -223,7 +252,7 @@ typedef struct {
 } oyCMMapi1_s;
 
 
-/** @type    oyGetMonitorInfo_f
+/** @typedef oyGetMonitorInfo_f
  *  @brief   get available informations from a monitor device
  *  @ingroup backend_api
  *
@@ -269,9 +298,10 @@ typedef int   (*oyActivateMonitorProfiles_f) (
                                        const char        * display_name);
 
 
-/** @struct oyCMMapi2_s
- *  @brief the API 2 to implement and set to provide windowing support
+/** @struct  oyCMMapi2_s
+ *  @brief   the API 2 to implement and set to provide windowing support
  *  @ingroup backend_api
+ *  @extends oyCMMapi_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  10 december 2007 (API 0.1.8)
@@ -283,9 +313,9 @@ typedef struct {
   oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
-  oyCMMInit_f      oyCMMInit;
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
+  oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   oyGetMonitorInfo_f oyGetMonitorInfo;
   oyGetScreenFromPosition_f oyGetScreenFromPosition;
@@ -300,18 +330,28 @@ typedef struct {
 } oyCMMapi2_s;
 
 
+
+/**
+ *  typedef oyCMMProfileTag_GetValues_f
+ *  @memberof oyCMMapi3_s
+ */
 typedef oyStructList_s *    (*oyCMMProfileTag_GetValues_f) (
                                        oyProfileTag_s    * tag );
+/**
+ *  typedef oyCMMProfileTag_Create_f
+ *  @memberof oyCMMapi3_s
+ */
 typedef int                 (*oyCMMProfileTag_Create_f) ( 
                                        oyProfileTag_s    * tag,
                                        oyStructList_s    * list,
                                        icTagTypeSignature  tag_type,
                                        uint32_t            version );
 
-/** @struct oyCMMapi3_s
- *  @brief the API 3 to implement and set to provide low level ICC profile
- *         support
+/** @struct  oyCMMapi3_s
+ *  @brief   the API 3 to implement and set to provide low level ICC profile
+ *           support
  *  @ingroup backend_api
+ *  @extends oyCMMapi_s
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
@@ -324,12 +364,12 @@ typedef struct {
   oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
-  oyCMMInit_f      oyCMMInit;
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
+  oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
-  oyCMMProfileTag_GetValues_f oyCMMProfileTag_GetValues;
-  oyCMMProfileTag_Create_f oyCMMProfileTag_Create;
+  oyCMMProfileTag_GetValues_f oyCMMProfileTag_GetValues; /**< @memberof oyCMMapi3_s */
+  oyCMMProfileTag_Create_f oyCMMProfileTag_Create; /**< @memberof oyCMMapi3_s */
 } oyCMMapi3_s;
 
 
@@ -339,6 +379,7 @@ typedef struct oyCMMapi5_s oyCMMapi5_s;
 /** @struct  oyCMMapiFilter_s
  *  @brief   the filter API 4-7 interface
  *  @ingroup backend_api
+ *  @extends oyCMMapi_s
  *
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.
@@ -352,11 +393,11 @@ typedef struct {
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;
+  oyCMMapi_s     * next;               /**< the next CMM api */
 
-  oyCMMInit_f      oyCMMInit;
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
+  oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU" */
   const char     * registration;
@@ -372,9 +413,10 @@ typedef struct {
 
 
 
-/** @type    oyCMMData_LoadFromMem_f
+/** typedef oyCMMData_LoadFromMem_f
  *  @brief   load a filter data from a in memory data blob
  *  @ingroup backend_api
+ *  @memberof oyCMMDataTypes_s
  *
  *  @param[in]     buf_size            data size
  *  @param[in]     buf                 data blob
@@ -392,9 +434,10 @@ typedef oyStruct_s * (*oyCMMData_LoadFromMem_f) (
                                        uint32_t            flags,
                                        oyObject_s          object);
 
-/** @type    oyCMMDataGetText_f
+/** typedef oyCMMDataGetText_f
  *  @brief   build a text string from a given data
  *  @ingroup backend_api
+ *  @memberof oyCMMDataTypes_s
  *
  *  Serialise into:
  *  - oyNAME_NICK: XML ID
@@ -417,9 +460,10 @@ typedef char *   (*oyCMMDataGetText_f)(oyStruct_s        * data,
                                        int                 flags,
                                        oyAlloc_f           allocateFunc );
 
-/** @type    oyCMMDataScan_f
+/** typedef oyCMMDataScan_f
  *  @brief   load a filter data from a in memory data blob
  *  @ingroup backend_api
+ *  @memberof oyCMMDataTypes_s
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -439,9 +483,37 @@ typedef int          (*oyCMMDataScan_f) (
                                        char             ** name,
                                        oyAlloc_f           allocateFunc );
 
-/** @type    oyCMMFilter_Load_f
+/** @struct  oyCMMDataTypes_s
+ *  @brief   the CMM API 5 data part
+ *  @ingroup backend_api
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/23 (Oyranos: 0.1.9)
+ *  @date    2008/11/23
+ */
+typedef struct {
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API5_DATA_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
+
+  /** internal id, has to match to oyCMMapi4_s::cache_data_types */
+  uint32_t         id; 
+  /** a colon separated list of sub paths to expect the data in,
+      e.g. "color/icc" */
+  const char     * paths;
+  const char     * exts;                /**< file extensions, e.g. "icc:icm" */
+  oyCMMDataGetText_f               oyCMMDataGetText; /**< */
+  oyCMMData_LoadFromMem_f          oyCMMDataLoadFromMem; /**< */
+  oyCMMDataScan_f                  oyCMMDataScan; /**< */
+} oyCMMDataTypes_s;
+
+
+/** typedef oyCMMFilterLoad_f
  *  @brief   load a filter from a in memory data blob
  *  @ingroup backend_api
+ *  @memberof oyCMMapi5_s
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -458,9 +530,10 @@ typedef oyCMMapiFilter_s * (*oyCMMFilterLoad_f) (
                                        oyOBJECT_e          type,
                                        int                 num );
 
-/** @type    oyCMMFilterScan_f
+/** typedef oyCMMFilterScan_f
  *  @brief   load a filter from a in memory data blob
  *  @ingroup backend_api
+ *  @memberof oyCMMapi5_s
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -491,35 +564,11 @@ typedef int          (*oyCMMFilterScan_f) (
                                        oyObject_s          object );
 
 
-/** @struct oyCMMDataTypes_s
- *  @brief the CMM API 5 data part
+
+/** @struct  oyCMMapi5_s
+ *  @brief   the API 5 to provide filter and script support
  *  @ingroup backend_api
- *
- *  @version Oyranos: 0.1.9
- *  @since   2008/11/23 (Oyranos: 0.1.9)
- *  @date    2008/11/23
- */
-typedef struct {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API5_DATA_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
-
-  /** internal id, has to match to oyCMMapi4_s::cache_data_types */
-  uint32_t         id; 
-  /** a colon separated list of sub paths to expect the data in,
-      e.g. "color/icc" */
-  const char     * paths;
-  const char     * exts;                /**< file extensions, e.g. "icc:icm" */
-  oyCMMDataGetText_f               oyCMMDataGetText;
-  oyCMMData_LoadFromMem_f          oyCMMDataLoadFromMem;
-  oyCMMDataScan_f                  oyCMMDataScan;
-} oyCMMDataTypes_s;
-
-
-/** @struct oyCMMapi5_s
- *  @brief the API 5 to provide filter and script support
- *  @ingroup backend_api
+ *  @extends oyCMMapi_s
  *
  *  Filters can be provided in non library form, e.g. as text files. This API 
  *  allowes for registring of paths and file types to be recognised as filters.
@@ -540,9 +589,9 @@ struct oyCMMapi5_s {
   oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
-  oyCMMInit_f      oyCMMInit;
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
+  oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva" or "sw/oyranos.org/colour/icc" */
   const char     * registration;
@@ -560,10 +609,10 @@ struct oyCMMapi5_s {
   /** optional filename extensions, e.g. "shi:ctl" */
   const char     * ext;
   /** 0: libs - libraries, Oyranos searches in the XDG_LIBRARY_PATH and sub_paths, The library will be provided as file_name\n  1: scripts - platform independent filters, Oyranos will search in the XDG_DATA_* paths, Script are provided as i memory blobs */
-  int32_t          data_type;
+  int32_t          data_type;          /**< */
 
-  oyCMMFilterLoad_f                oyCMMFilterLoad;
-  oyCMMFilterScan_f                oyCMMFilterScan;
+  oyCMMFilterLoad_f                oyCMMFilterLoad; /**< */
+  oyCMMFilterScan_f                oyCMMFilterScan; /**< */
 
   /** check options for validy and correct */
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
@@ -577,9 +626,10 @@ struct oyCMMapi5_s {
   const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
 };
 
-/** @type    oyCMMFilterPlug_Run_f
+/** typedef oyCMMFilterPlug_Run_f
  *  @brief   get a pixel or channel from the previous filter
  *  @ingroup backend_api
+ *  @memberof oyCMMapi7_s
  *
  *  You have to call oyCMMFilter_CreateContext_t or oyCMMFilter_ContextFromMem_t first.
  *  The API provides flexible pixel access and cache configuration by the
@@ -606,9 +656,10 @@ typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * connector,
                                        oyPixelAccess_s   * pixel_access,
                                        oyArray2d_s      ** output );
 
-/** @struct oyCMMapi7_s
- *  @brief the API 7 for data processing
+/** @struct  oyCMMapi7_s
+ *  @brief   the API 7 for data processing
  *  @ingroup backend_api
+ *  @extends oyCMMapiFilter_s
  *
  *  The filter context can be stored in oyFilterNode_s::backend_data if the
  *  oyCMMapi7_s::context_type is filled with a understood format hint.
@@ -627,9 +678,10 @@ struct oyCMMapi7_s {
   oyPointer        dummyc;             /**< keep to zero */
   oyCMMapi_s     * next;
 
-  oyCMMInit_f      oyCMMInit;
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
+
+  oyCMMInit_f      oyCMMInit;          /**< @memberof oyCMMapi7_s */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< @memberof oyCMMapi7_s */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< @memberof oyCMMapi7_s */
 
   /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU" */
   const char     * registration;
@@ -660,9 +712,11 @@ struct oyCMMapi7_s {
   uint32_t         sockets_last_add;
 };
 
-/** Function oyCMMdata_Convert_f
+/**
+ *  typedef oyCMMdata_Convert_f
  *  @brief   convert between data formats
  *  @ingroup backend_api
+ *  @memberof oyCMMapi6_s
  *
  *  The function might be used to provide a backend specific context.
  *
@@ -674,9 +728,10 @@ typedef int(*oyCMMdata_Convert_f)    ( oyCMMptr_s        * data_in,
                                        oyCMMptr_s        * data_out,
                                        oyFilterNode_s    * node );
 
-/** @struct oyCMMapi6_s
- *  @brief the API 6 to provide context conversion support
+/** @struct  oyCMMapi6_s
+ *  @brief   the API 6 to provide context conversion support
  *  @ingroup backend_api
+ *  @extends oyCMMapiFilter_s
  *
  *  The context provided by a filter can be exotic. The API provides the means
  *  to get him into a known format.
@@ -730,9 +785,10 @@ struct oyCMMapi6_s {
 
 
 
-/** @type    oyCMMFilterNode_ContextToMem_f
+/** typedef oyCMMFilterNode_ContextToMem_f
  *  @brief   store a CMM filter context into a memory blob
  *  @ingroup backend_api
+ *  @memberof oyCMMapi4_s
  *
  *  The goal is to have a data blob for later reusing. It is as well used for
  *  exchange and analysis. A oyCMMapi4_s filter with context_type member set to
@@ -740,7 +796,9 @@ struct oyCMMapi6_s {
  *  blob with the according context data for easy forwarding and
  *  on disk caching.
  *
- *  @param[in,out] node                access to the complete filter struct, most important to handle is the options and image members
+ *  @param[in,out] node                access to the complete filter struct,
+ *                                     most important to handle is the options
+ *                                     and image members
  *  @param[out]    size                size in return 
  *  @param         allocateFunc        memory allocator for the returned data
  *  @return                            the CMM memory blob, preferedly ICC
@@ -754,9 +812,10 @@ typedef oyPointer(*oyCMMFilterNode_ContextToMem_f) (
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 
-/** @type    oyCMMFilterNode_GetText_f
+/** typedef oyCMMFilterNode_GetText_f
  *  @brief   describe a CMM filter context
  *  @ingroup backend_api
+ *  @memberof oyCMMapi4_s
  *
  *  For a oyNAME_NICK and oyNAME_NAME type argument, the function shall
  *  describe only those elements, which are relevant to the result of the
@@ -776,9 +835,10 @@ typedef char *(*oyCMMFilterNode_GetText_f) (
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc );
 
-/** @struct oyCMMapi4_s
- *  @brief the API 4 to set to provide Filter support
+/** @struct  oyCMMapi4_s
+ *  @brief   the API 4 to set to provide Filter support
  *  @ingroup backend_api
+ *  @extends oyCMMapiFilter_s
  *
  *  Different filters have to provide this struct each one per filter.
  *
@@ -819,7 +879,7 @@ struct  oyCMMapi4_s {
 
   /** check options for validy and correct */
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
-  oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
+  oyWidgetEvent_f                  oyWidget_Event; /**< handle widget events */
 
   /** mandatory for "//colour.icc" filters */
   oyCMMFilterNode_ContextToMem_f   oyCMMFilterNode_ContextToMem;
