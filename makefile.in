@@ -227,7 +227,7 @@ DEFAULT_PROFILES = base printing
 
 CONFIG_FILES = \
 	configure \
-	configure.sh \
+	configure_tests.sh \
 	makefile.in \
 	$(TARGET).pc.in \
 	$(TARGET).spec.in \

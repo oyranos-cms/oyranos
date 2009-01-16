@@ -769,7 +769,7 @@ fi
   DEBUG=1; export DEBUG
   PO=1; export PO
   GETTEXT=2; export GETTEXT
-  ./configure.sh
+  ./configure_tests.sh
   LIBS=0; export LIBS
   DSO_LINKING=0; export DSO_LINKING
   ELEKTRA=0; export ELEKTRA
@@ -1041,7 +1041,7 @@ test -n "$INFOECHO" && $INFOECHO ""
 # prepare makefile from MAKEFILE_DIR
 if [ -n "$ECHO" ]; then
   PREPARE_MAKEFILES=1; export PREPARE_MAKEFILES
-  ./configure.sh
+  ./configure_tests.sh
   PREPARE_MAKEFILES=0; export PREPARE_MAKEFILES
 fi
 
