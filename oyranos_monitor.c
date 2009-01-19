@@ -75,6 +75,7 @@ char* oyGetDisplayNameFromPosition_(const char *raw_display_name,
                                    int x,
                                    int y,
                                    oyAlloc_f     allocate_func);
+char**oyGetAllScreenNames_        (const char *display_name, int *n_scr );
 #if (defined(HAVE_X) && !defined(__APPLE__))
 int   oyMonitor_getScreenGeometry_   ( oyMonitor_s       * disp );
 int   oyMonitor_getGeometryIdentifier_(oyMonitor_s       * disp );
@@ -82,7 +83,6 @@ char* oyMonitor_getAtomName_         ( oyMonitor_s       * disp,
                                        const char        * base );
 char* oyChangeScreenName_            ( const char        * display_name,
                                        int                 screen );
-char**oyGetAllScreenNames_        (const char *display_name, int *n_scr );
 
 /** @internal Display functions */
 const char* oyMonitor_name_( oyMonitor_s *disp ) { return disp->name; }
