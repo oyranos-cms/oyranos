@@ -163,7 +163,10 @@ DOKU =  $(SRCDIR)/AUTHORS \
         $(SRCDIR)/README
 DOC_TEMPLATES = \
 	$(SRCDIR)/Doxyfile \
-	$(SRCDIR)/doxymentation
+	$(SRCDIR)/doxymentation \
+	$(SRCDIR)/doxygen.css \
+	$(SRCDIR)/doxygen.footer \
+	$(SRCDIR)/doxygen.header
 
 LINGUAS_SRC = $(LING:.po=.gmo)
 POT_FILE = $(SRCDIR)/po/$(TARGET).pot
