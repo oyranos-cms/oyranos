@@ -459,6 +459,7 @@ oyGetMonitorProfile_          (const char* display_name,
                                oyAlloc_f     allocate_func)
 {
   char       *moni_profile=0;
+  int error = 0;
 
 #ifdef __APPLE__
 
@@ -483,7 +484,6 @@ oyGetMonitorProfile_          (const char* display_name,
 
   oyMonitor_s * disp = 0;
   oyBlob_s * prop = 0;
-  int error = 0;
 
   DBG_PROG_START
 
