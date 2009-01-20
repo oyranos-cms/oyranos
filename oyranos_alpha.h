@@ -582,8 +582,12 @@ int            oyOption_Release      ( oyOption_s       ** option );
 int            oyOption_GetId        ( oyOption_s        * option );
 const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
+#define OY_STRING_LIST                 0x01 /** create a oyVAL_STRING_LIST */
+/* decode */
+#define oyToStringList_m(r)            ((r)&1)
 int            oyOption_SetFromText  ( oyOption_s        * obj,
-                                       const char        * text );
+                                       const char        * text, 
+                                       uint32_t            flags );
 char *         oyOption_GetValueText ( oyOption_s        * obj,
                                        oyAlloc_f           allocateFunc );
 int            oyOption_Clear        ( oyOption_s        * s );
@@ -651,6 +655,7 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
 oyOptions_s *  oyOptions_FromText    ( const char        * text,
                                        uint32_t            flags,
                                        oyObject_s          object );
+oyOptions_s *  oyOptions_New         ( oyObject_s          object );
 oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
                                        oyObject_s          object );
 int            oyOptions_Release     ( oyOptions_s      ** options );
