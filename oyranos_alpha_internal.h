@@ -191,10 +191,24 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        char             ** lib_used,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
+oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
+                                       oyCMMapiQueries_s * queries,
+                                       const char        * registration );
+oyCMMapiFilter_s**oyCMMsGetFilterApis_(const char        * cmm_required,
+                                       oyCMMapiQueries_s * queries,
+                                       const char        * registration,
+                                       oyOBJECT_e          type,
+                                       int              ** rank_list,
+                                       int               * count );
 oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        const char        * registration,
                                        oyOBJECT_e          type );
+oyCMMapiBase_s *oyCMMsGetApiFromRegistration_(
+                                       oyOBJECT_e          type,
+                                       const char        * cmm_required,
+                                       oyCMMapiQueries_s * queries,
+                                       const char        * registration );
 
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api );
 oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name );
