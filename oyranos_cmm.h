@@ -985,7 +985,7 @@ typedef oyConfigs_s *  (*oyConfigs_FromPattern_f) (
 typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
 
 /** @struct  oyCMMapi8_s
- *  @brief   the API 8 to set to plug-in specific configurations
+ *  @brief   the API 8 to handle plug-in specific data or configurations
  *  @ingroup backend_api
  *  @extends oyCMMapiFilter_s
  *

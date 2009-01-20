@@ -14,8 +14,11 @@
  */
 
 #include "oyranos_cmm.h"
+#include "oyranos_debug.h"
 #include "oyranos_i18n.h"
 #include "oyranos_monitor.h"
+#include "oyranos_texts.h"
+
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -25,6 +28,7 @@
 /* --- internal definitions --- */
 
 #define CMM_NICK "oyX1"
+#define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.monitor." CMM_NICK
 
 int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = oyX1CMMWarnFunc;
@@ -134,11 +138,14 @@ oyConfigs_s *  oyX1Configs_FromPattern (
 {
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0;
+  oyOption_s * o = 0;
   char * text = 0;
   char ** texts = 0;
-  int texts_n = 0;
+  int texts_n = 0, i, n,
+      error = 0;
   const char * value1 = 0,
-             * value2 = 0;
+             * value2 = 0,
+             * value3 = 0;
   int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
@@ -147,8 +154,8 @@ oyConfigs_s *  oyX1Configs_FromPattern (
   if(!options || !oyOptions_Count( options ))
   {
     /** oyMSG_WARN should make shure our message is visible. */
-    message( oyMSG_WARN, (oyStruct_s*)options, "%s:%d %s()\n %s",
-             __FILE__,__LINE__,__func__,
+    message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n %s",
+             OY_DBG_ARGS_,
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, (oyStruct_s*)options, "%s()\n %s", __func__,
       "The presence of option \"list\" will provide a list of available\n"
@@ -183,16 +190,70 @@ oyConfigs_s *  oyX1Configs_FromPattern (
     configs = oyConfigs_New(0);
 
     value1 = oyOptions_FindString( options, "display_name", 0 );
-    value2 = oyOptions_FindString( options, "list", 0 );
+    //message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);
 
+    value2 = oyOptions_FindString( options, "list", 0 );
     if(value2)
+    {
       texts_n = oyGetAllScreenNames( value1, &texts, allocateFunc );
 
-    config = 0;
+      for( i = 0; i < texts_n; ++i )
+      {
+        config = oyConfig_New(0);
+        error = !config;
+
+        if(!error)
+        error = oyOptions_SetFromText( config->options,
+                                       CMM_BASE_REG OY_SLASH "display",
+                                       texts[i], OY_CREATE_NEW );
+
+        oyConfigs_MoveIn( configs, &config, -1 );
+      }
+    }
+
+    value2 = oyOptions_FindString( options, "properties", 0 );
+    value3 = oyOptions_FindString( options, "edid", 0 );
+    if(value2)
+    {
+      char * di=0, *mf=0, *mo=0, *se=0, *dg=0, *sp=0;
+      oyBlob_s * edid = 0;
+
+      if(!value1 && 0)
+      {
+        message(oyMSG_WARN, (oyStruct_s*)options, "The \"display\" argument is missed to select a appropriate device through for the \"properties\" call.");
+      }
+
+      error = oyGetMonitorInfo_lib( value1, &mf, &mo, &se, &dg, &sp,
+                                    value3 ? &edid : 0, allocateFunc );
+ 
+      if(!error)
+      {
+        config = oyConfig_New(0);
+        error = !config;
+        if(!error && value1)
+        error = oyOptions_SetFromText( config->options,
+                                       CMM_BASE_REG OY_SLASH "display",
+                                       value1, OY_CREATE_NEW );
+        if(!error && mf)
+        error = oyOptions_SetFromText( config->options,
+                                       CMM_BASE_REG OY_SLASH "manufacturer",
+                                       mf, OY_CREATE_NEW );
+        if(!error && mo)
+        error = oyOptions_SetFromText( config->options,
+                                       CMM_BASE_REG OY_SLASH "model",
+                                       mo, OY_CREATE_NEW );
+
+        oyConfigs_MoveIn( configs, &config, -1 );
+      } else
+        message( oyMSG_WARN, (oyStruct_s*)options, 
+                 OY_DBG_FORMAT_ "Could not complete \"properties\" call.",
+                 OY_DBG_ARGS_);
+    }
   }
 
   return configs;
 }
+
 
 /** @instance oyX1_api8
  *  @brief    oyX1 oyCMMapi8_s implementations
@@ -210,13 +271,13 @@ oyCMMapi8_s oyX1_api8 = {
   oyX1CMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
   oyX1CMMCanHandle,          /**< oyCMMCanHandle_f oyCMMCanHandle */
 
-  "shared/freedesktop.org/colour/config.monitor.xorg", /**< registration */
+  CMM_BASE_REG,              /**< registration */
   {0,1,0},                   /**< int32_t version[3] */
   0,                         /**< char * id_ */
 
-  0,                       /**< oyCMMapi5_s * api5_ */
-  oyX1Configs_FromPattern, /**< oyConfigs_FromPattern_f oyConfigs_FromPattern */
-  0/*oyX1Config_Match*/    /**< oyConfig_Check_f oyConfig_Match */
+  0,                         /**< oyCMMapi5_s * api5_ */
+  oyX1Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
+  0/*oyX1Config_Match*/      /**< oyConfig_Check_f oyConfig_Match */
 };
 
 
