@@ -161,7 +161,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
-%{_libdir}/%{metasubpath}/lib%{name}_oyX1_cmm_module.so*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module.so*
 %{_mandir}/man1/%{name}-monitor*
 
 %files monitor-nvidia
