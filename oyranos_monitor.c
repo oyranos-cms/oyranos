@@ -67,9 +67,6 @@ int   oyMonitor_getScreenFromDisplayName_( oyMonitor_s   * disp );
 int   oyGetScreenFromPosition_    (const char *display_name,
                                    int         x,
                                    int         y);
-int      oyGetAllScreenNames         ( const char        * display_name,
-                                       char            *** display_names,
-                                       oyAlloc_f           allocateFunc );
 #endif
 char* oyGetDisplayNameFromPosition_(const char *raw_display_name,
                                    int x,

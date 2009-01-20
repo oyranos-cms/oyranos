@@ -58,6 +58,9 @@ char*  oyGetMonitorProfileNameFromDB_lib ( const char        * display,
 int   oySetMonitorProfile_lib     (const char* display_name,
                                    const char* profil_name );
 int      oyActivateMonitorProfiles_lib( const char        * display_name );
+int      oyGetAllScreenNames         ( const char        * display_name,
+                                       char            *** display_names,
+                                       oyAlloc_f           allocateFunc );
 
 #ifdef __cplusplus
 } /* extern "C" */
