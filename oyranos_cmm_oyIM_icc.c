@@ -110,12 +110,11 @@ char oyIM_default_colour_icc_options[] = {
 
 #define A(long_text) STRING_ADD( tmp, long_text)
 
-const char * oyIMGetDefaultColourIccOptionsUI ( int update )
+int oyIMGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
+                                       char              ** ui_text,
+                                       oyAlloc_f            allocateFunc )
 {
-  static char * tmp = 0;
-
-  if(!update && tmp)
-    return tmp;
+  char * tmp = 0;
 
   oyStringCopy_( "\
   <h3>Oyranos ", oyAllocateFunc_ );
@@ -224,7 +223,17 @@ const char * oyIMGetDefaultColourIccOptionsUI ( int update )
   </table>\n\
 " );
 
-  return tmp;
+  if(allocateFunc && tmp)
+  {
+    char * t = oyStringCopy_( tmp, allocateFunc );
+    oyFree_m_( tmp );
+    tmp = t; t = 0;
+  } else
+    return 1;
+
+  *ui_text = tmp;
+
+  return 0;
 } 
 
 char * oyIMstructGetText             ( oyStruct_s        * item,
@@ -525,7 +534,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   oyIMWidgetEvent, /* oyWidgetEvent_f */
 
   oyIM_default_colour_icc_options,   /* options */
-  oyIMGetDefaultColourIccOptionsUI,  /* getUI */
+  oyIMGetDefaultColourIccOptionsUI,  /* oyCMMuiGet */
 
   icc_data, /* data_types */
 };
