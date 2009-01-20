@@ -5673,14 +5673,22 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
  *  @memberof oyOption_s
  *  @brief   set a option value from a string
  *
+ *  @param         obj                 the option
+ *  @param         text                the text to set
+ *  @param         flags               possible is OY_STRING_LIST
+ *  @return                            0 - success, 1 - error
+ *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/25 (Oyranos: 0.1.9)
  *  @date    2008/11/25
  */
 int            oyOption_SetFromText  ( oyOption_s        * obj,
-                                       const char        * text )
+                                       const char        * text,
+                                       uint32_t            flags )
 {
   int error = !obj;
+  char ** list = 0;
+  int n = 0;
 
   if(!error)
   {
@@ -5693,8 +5701,17 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 
     obj->value = obj->oy_->allocateFunc_(sizeof(oyValue_u));
 
-    obj->value->string = oyStringCopy_( text, obj->oy_->allocateFunc_ );
-    obj->value_type = oyVAL_STRING;
+    if(oyToStringList_m(flags))
+    {
+      /** Split for flags & OY_STRING_LIST at newline. */
+      list = oyStringSplit_( text, '\n', &n, obj->oy_->allocateFunc_ );
+      obj->value->string_list = list; list = 0;
+      obj->value_type = oyVAL_STRING_LIST;
+    } else
+    {
+      obj->value->string = oyStringCopy_( text, obj->oy_->allocateFunc_ );
+      obj->value_type = oyVAL_STRING;
+    }
     obj->flags |= oyOPTIONATTRIBUTE_EDIT;
   }
 
@@ -6264,7 +6281,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
         if(text)
           if(oyStrstr_( text, "advanced" ))
           {
-            oyOption_SetFromText( o, "0" );
+            oyOption_SetFromText( o, "0", 0 );
             o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
           }
       } else
@@ -6275,7 +6292,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
                                 oyAllocateFunc_ );
         if(text && oyStrlen_(text))
         {
-          error = oyOption_SetFromText( o, text );
+          error = oyOption_SetFromText( o, text, 0 );
           o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
           o->source = oyOPTIONSOURCE_USER;
           oyFree_m_( text );
@@ -6939,10 +6956,10 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
       error = !o;
 
       if(!error)
-        error = oyOption_SetFromText( o, value );
+        error = oyOption_SetFromText( o, value, 0 );
     }
 
-    oyOption_SetFromText( o, value );
+    oyOption_SetFromText( o, value, 0 );
     oyOption_Release( &o );
   }
 
@@ -14613,6 +14630,7 @@ OYAPI oyConfig_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
+  s->options = oyOptions_New( s->oy_ );
 
   return s;
 }
@@ -14645,6 +14663,8 @@ oyConfig_s * oyConfig_Copy_          ( oyConfig_s        * obj,
   if(!error)
   {
     allocateFunc_ = s->oy_->allocateFunc_;
+
+    s->options = oyOptions_Copy( obj->options, s->oy_ );
   }
 
   if(error)
@@ -14718,6 +14738,7 @@ OYAPI int  OYEXPORT
     return 0;
   /* ---- end of common object destructor ------- */
 
+  oyOptions_Release( &s->options );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -14730,6 +14751,7 @@ OYAPI int  OYEXPORT
 
   return 0;
 }
+
 
 /** Function oyConfigs_New
  *  @memberof oyConfigs_s
