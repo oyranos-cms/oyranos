@@ -243,13 +243,22 @@ oyTESTRESULT_e testOption ()
 
   fprintf(stdout, "\n" );
 
-  o = oyOption_New( 0 );
+  o = oyOption_New( 0, 0 );
   if(o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_New() good                               " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyOption_New() failed                             " );
+  }
+
+  error = oyOption_New( 0, "blabla" ) != 0;
+  if(o)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_New() with wrong registration rejected: ok");
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_New() with wrong registration not rejected");
   }
 
   memcpy( ptr, test_buffer, size );
@@ -309,7 +318,7 @@ oyTESTRESULT_e testSettings ()
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );
 
-  oyOptions_SetFromText( opts, "cmyk_cmky_black_preservation", "1" );
+  oyOptions_SetFromText( opts, "cmyk_cmky_black_preservation", "1", 0 );
 
   count = oyOptions_Count( opts );
   if(!count)
