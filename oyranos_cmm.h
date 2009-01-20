@@ -217,7 +217,7 @@ struct oyCMMapi_s {
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;
+  oyCMMapi_s     * next;               /**< the next api in chain or zero */
 
   oyCMMInit_f      oyCMMInit;          /**< @memberof oyCMMapi_s */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< @memberof oyCMMapi_s */
@@ -376,10 +376,46 @@ typedef struct {
 /* -------------------------------------------------------------------------*/
 typedef struct oyCMMapi5_s oyCMMapi5_s;
 
-/** @struct  oyCMMapiFilter_s
- *  @brief   the filter API 4-7 interface
+/** @struct  oyCMMapiBase_s
+ *  @brief   the filter API 4-8 interface
  *  @ingroup backend_api
  *  @extends oyCMMapi_s
+ *
+ *  The registration should provide keywords for selection.
+ *  The api5_ member is missed for oyCMMapi5_s.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/16 (Oyranos: 0.1.10)
+ *  @date    2009/01/16
+ */
+typedef struct {
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API7_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
+  oyCMMapi_s     * next;               /**< the next CMM api */
+
+  oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
+
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU" */
+  const char     * registration;
+
+  /** 0: major - should be stable for the live time of a filter, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          version[3];
+
+  char           * id_;                /**< @private Oyranos id; keep to zero */
+} oyCMMapiBase_s;
+
+
+
+/** @struct  oyCMMapiFilter_s
+ *  @brief   the filter API 4,6,7 interface
+ *  @ingroup backend_api
+ *  @extends oyCMMapiBase_s
  *
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.
@@ -407,10 +443,30 @@ typedef struct {
       2: patch version - correct errors */
   int32_t          version[3];
 
-  char           * id_;                /**< Oyranos id; keep to zero */
-  oyCMMapi5_s    * api5_;              /**< meta backend; keep to zero */
+  char           * id_;                /**< @private Oyranos id; keep to zero */
+  oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
 } oyCMMapiFilter_s;
 
+
+/** typedef  oyCMMuiGet_f
+ *  @brief   obtain a XFORMS ui description
+ *  @ingroup backend_api
+ *
+ *  The structures can provide a XFORMS ui based on the backends own
+ *  set of options. They are in the property of the caller.
+ *
+ *  @param[in]     options             the options to display
+ *  @param[out]    ui_text             the XFORMS string
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            0 on success; error >= 1; -1 not understood; unknown < -1
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/18 (Oyranos: 0.1.10)
+ *  @date    2009/01/18
+ */
+typedef int  (*oyCMMuiGet_f)         ( oyOptions_s        * options,
+                                       char              ** ui_text,
+                                       oyAlloc_f            allocateFunc );
 
 
 /** typedef oyCMMData_LoadFromMem_f
@@ -535,9 +591,9 @@ typedef oyCMMapiFilter_s * (*oyCMMFilterLoad_f) (
  *  @ingroup backend_api
  *  @memberof oyCMMapi5_s
  *
- *  @param[in]     data                data blob
+ *  @param[in]     data                filter data blob
  *  @param[in]     size                data size
- *  @param[in]     file_name           the file for information or zero
+ *  @param[in]     file_name           the filter file for information or zero
  *  @param[in]     type                filter type
  *  @param[in]     num                 number of filter
  *  @param[out]    registration        filter registration string
@@ -568,7 +624,7 @@ typedef int          (*oyCMMFilterScan_f) (
 /** @struct  oyCMMapi5_s
  *  @brief   the API 5 to provide filter and script support
  *  @ingroup backend_api
- *  @extends oyCMMapi_s
+ *  @extends oyCMMapiBase_s
  *
  *  Filters can be provided in non library form, e.g. as text files. This API 
  *  allowes for registring of paths and file types to be recognised as filters.
@@ -601,7 +657,7 @@ struct oyCMMapi5_s {
       2: patch version - correct errors */
   int32_t          version[3];
 
-  char           * id_;                /**< Oyranos id; keep to zero */
+  char           * id_;                /**< @private Oyranos id; keep to zero */
 
   /** a colon separated list of sub paths to expect the scripts in,
       e.g. "color/shiva:color/octl" */
@@ -619,7 +675,7 @@ struct oyCMMapi5_s {
   oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
 
   const char     * options;            /**< default options */
-  const char     *(*getUI)(int update);/**< xml ui elements for filter options*/
+  oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
 
   oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
   oyCMMGetText_f   getText;            /**< describe selectors */
@@ -691,8 +747,8 @@ struct oyCMMapi7_s {
       2: patch version - correct errors */
   int32_t          version[3];
 
-  char           * id_;                /**< Oyranos id; keep to zero */
-  oyCMMapi5_s    * api5_;              /**< meta backend; keep to zero */
+  char           * id_;                /**< @private Oyranos id; keep to zero */
+  oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
 
   /** mandatory for all filters; Special care has to taken for the
       oyPixelAccess_s argument to this function. */
@@ -773,8 +829,8 @@ struct oyCMMapi6_s {
       2: patch version - correct errors */
   int32_t          version[3];
 
-  char           * id_;                /**< Oyranos id; keep to zero */
-  oyCMMapi5_s    * api5_;              /**< meta backend; keep to zero */
+  char           * id_;                /**< @private Oyranos id; keep to zero */
+  oyCMMapi5_s    * api5_;              /**< @private meta backend; keep to zero */
 
   /** oyCMMapi4_s typic data; e.g. "oyDL" */
   char           * data_type_in;
@@ -874,14 +930,14 @@ struct  oyCMMapi4_s {
       2: patch version - correct errors */
   int32_t          version[3];
 
-  char           * id_;                /**< Oyranos id; keep to zero */
-  oyCMMapi5_s    * api5_;              /**< meta backend; keep to zero */
+  char           * id_;                /**< @private Oyranos id; keep to zero */
+  oyCMMapi5_s    * api5_;              /**< @private meta backend; keep to zero */
 
   /** check options for validy and correct */
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
   oyWidgetEvent_f                  oyWidget_Event; /**< handle widget events */
 
-  /** mandatory for "//colour.icc" filters */
+  /** mandatory for "//colour/icc" filters */
   oyCMMFilterNode_ContextToMem_f   oyCMMFilterNode_ContextToMem;
   /** optional for a set oyCMMFilterNode_ContextToMem,
    *  used to override a Oyranos side hash creation */
@@ -894,7 +950,98 @@ struct  oyCMMapi4_s {
   oyName_s         name;
   const char       category[256];      /**< menu structure */
   const char     * options;            /**< default options */
-  const char     *(*getUI)(int update);/**< xml ui elements for filter options*/
+  oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
+};
+
+
+/** typedef  oyConfigs_FromPattern_f
+ *  @brief   return available configurations
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi8_s
+ *
+ *  @param   registration              a selection string marked with "///config"
+ *  @param   options                   the complete options from the ui
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/18 (Oyranos: 0.1.10)
+ *  @date    2009/01/18
+ */
+typedef oyConfigs_s *  (*oyConfigs_FromPattern_f) (
+                                       const char        * registration,
+                                       oyOptions_s       * options );
+/** typedef  oyConfig_Check_f
+ *  @brief   check for correctness
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi8_s
+ *
+ *  @param   config                    the to be checked configuration
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/16 (Oyranos: 0.1.10)
+ *  @date    2009/01/16
+ */
+typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
+
+/** @struct  oyCMMapi8_s
+ *  @brief   the API 8 to set to plug-in specific configurations
+ *  @ingroup backend_api
+ *  @extends oyCMMapiFilter_s
+ *
+ *  Oyranos can know about possible configurations sets forming a oyConfig_s.
+ *  They are stored under the base key path decided by each configuration 
+ *  backend individually in its oyCMMapi8_s::registration.
+ *
+ *  The backend knows what to configure. This can be devices, filters or 
+ *  something else. A oyCMMapi8_s backend counts the understood endities
+ *  and veryfies a provided oyConfig_s for correctness. Oyranos requires just
+ *  the thourth string in the key path to be of type "config".
+ *
+ *  In the case of a device a application can ask Oyranos for all or a subset
+ *  of available devices with oyConfigs_FromPattern.
+ *
+ *  A application can select one of the provided endities and modify it.
+ *  In order to use the oyConfig_s endity it is adviced to let Oyranos ask the
+ *  backend if the modified oyConfig_s endity is still valid through 
+ *  oyConfig_Check_f.
+ *  Oyranos will check in advance wether the provided understood options match
+ *  already and pass for a possible oyBlob_s options checking to the backend.
+ *
+ *  For automatic UI's this backend API should provide a XFORMS UI about the
+ *  result and return a oyConfig_s for a filled form.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/16 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+struct oyCMMapi8_s {
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
+  oyCMMapi_s     * next;
+
+  oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
+
+  /** The oyFILTER_REG_APPLICATION of "config" is obligatory.
+   *  e.g. "shared/freedesktop.org/colour/config.scanner.sane" or 
+   *       "shared/freedesktop.org/colour/config.monitor.xorg" ...\n
+   */
+  const char     * registration;
+
+  /** 0: major - should be stable for the live time of a backend, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          version[3];
+
+  char           * id_;                /**< @private Oyranos id; keep to zero */
+  oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
+
+  oyConfigs_FromPattern_f oyConfigs_FromPattern; /**< obtain matching configs */
+  oyConfig_Check_f oyConfig_Match;     /**< test config */
 };
 
 
