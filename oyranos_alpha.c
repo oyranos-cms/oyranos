@@ -3442,7 +3442,7 @@ digraph Backends {
       api6_C [label="//colour/icc.octl Context Converter\n oyCMMapi6_s"];
       api7_C [label="//colour/icc.octl Processor\n oyCMMapi7_s"];
 
-      m [label="Monitor Functions\n oyCMMapi2_s"];
+      m [label="Config (Device) Functions\n oyCMMapi8_s"];
       icc [label="ICC Profile Functions\n oyCMMapi3_s"];
 
       subgraph cluster_6 {
@@ -3526,8 +3526,8 @@ digraph Backends {
  *  The oyCMMapi5_s plug-in structure defines a meta backend to load plug-ins,
  *  from a to be defined directory with to be defined naming criterias. This
  *  API defines at the same time allowed input data formats. The meta backend 
- *  loads or constructs all parts of a plug-in, oyCMMapi4_s, oyCMMapi7_s and 
- *  oyCMMapi6_s.
+ *  loads or constructs all parts of a plug-in, oyCMMapi4_s, oyCMMapi7_s, 
+ *  oyCMMapi6_s and oyCMMapi8_s.
  *
  *  oyCMMapi7_s eighter deploys the context created in a oyCMMapi4_s filter, or
  *  simply processes the Oyranos oyFilterNode_s graph element. It is responsible
@@ -3552,6 +3552,9 @@ digraph Backends {
  *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
  *  a fitting oyCMMapi6_s data convertor. This API is only required for filters,
  *  which request incompatible contexts from a oyCMMapi4_s structure.
+ *
+ *  The oyCMMapi8_s provides a general interface to backends to export data,
+ *  like additional filter input data and options.
  *
  *  @dot
 digraph Anatomy_A {
@@ -5203,11 +5206,15 @@ static int oy_option_id_ = 0;
  *  @memberof oyOption_s
  *  @brief   new option
  *
+ *  @param         object              optional user object
+ *  @param         registration        no or full qualified registration
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-oyOption_s *   oyOption_New          ( oyObject_s          object )
+oyOption_s *   oyOption_New          ( oyObject_s          object,
+                                       const char        * registration )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_OPTION_S;
@@ -5235,6 +5242,19 @@ oyOption_s *   oyOption_New          ( oyObject_s          object )
   /* ---- end of common object constructor ------- */
 
   s->id = oy_option_id_++;
+
+  if(registration)
+  {
+    if(!oyStrlen_(registration) ||
+       !oyStrrchr_( registration, OY_SLASH_C ))
+    {
+      WARNc2_S("%s: %s",
+               "passed a incomplete registration string to option creation",
+               registration );
+      return 0;
+    } else
+      s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
+  }
 
   return s;
 }
@@ -5307,7 +5327,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
   if(!option || !object)
     return s;
 
-  s = oyOption_New( object );
+  s = oyOption_New( object, 0 );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
   deallocateFunc_ = s->oy_->deallocateFunc_;
@@ -6001,7 +6021,7 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
   if(error)
     return s;
 
-  s = oyOption_New( object );
+  s = oyOption_New( object, 0 );
   if(!s)
     return s;
 
@@ -6057,7 +6077,6 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
 
   while (cur != NULL)
   {
-    o = oyOption_New(0);
     if(cur->type == XML_ELEMENT_NODE)
       oyStringListAddStaticString_( texts, texts_n, cur->name,
                                     oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -6072,8 +6091,6 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
     if(cur->type == XML_TEXT_NODE && !cur->children &&
        cur->content && oyStrlen_(cur->content) && cur->content[0] != '\n')
     {
-      o = oyOption_New(0);
-
       for( i = 0; i < *texts_n; ++i )
       {
         if(i)
@@ -6081,7 +6098,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
         STRING_ADD( tmp, (*texts)[i] );
       }
 
-      o->registration = oyStringCopy_( tmp, o->oy_->allocateFunc_ );
+      o = oyOption_New(0, tmp);
       o->value = o->oy_->allocateFunc_(sizeof(oyValue_u));
 
       o->value_type = oyVAL_STRING;
@@ -6763,7 +6780,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
  *  @brief   search for a certain option key
  *
  *  This function returns the first found option for a given key.
- *  The key is represented by the registration option level.
+ *  The key is represented by a registrations option level.
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/05 (Oyranos: 0.1.9)
@@ -6772,10 +6789,11 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
                                        const char        * key )
 {
-  int error = !options;
+  int error = !options || !key;
   oyOption_s * option_a = 0,
              * option = 0;
   char * tmp = 0;
+  const char * opt_key = key;
 
   if(!error && options && options->type_ == oyOBJECT_OPTIONS_S)
   {
@@ -6790,7 +6808,13 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
       {
         tmp = oyFilterRegistrationToText( option_a->registration,
                                           oyFILTER_REG_OPTION, 0 );
-        if(oyStrcmp_( tmp, key) == 0)
+        if(oyStrchr_( key, OY_SLASH_C ))
+        {
+          opt_key = oyStrrchr_( key, OY_SLASH_C );
+          ++ opt_key;
+        }
+
+        if(oyStrcmp_( tmp, opt_key) == 0)
           option = oyOption_Copy( option_a, 0 );
         oyFree_m_( tmp );
       }
@@ -6884,20 +6908,40 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *  @memberof oyOptions_s
  *  @brief   change a value
  *
- *  @version Oyranos: 0.1.9
+ *  @param         obj                 the options list or set to manipulate
+ *  @param         registration        the options registration name, e.g.
+ *                                  "share/freedesktop.org/colour/my_app/my_opt"
+ *  @param         value               the value to set
+ *  @param         flags               can be OY_CREATE_NEW for a new option
+ *
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/27 (Oyranos: 0.1.9)
- *  @date    2008/11/27
+ *  @date    2009/01/20
  */
 int            oyOptions_SetFromText ( oyOptions_s       * obj,
-                                       const char        * key,
-                                       const char        * value )
+                                       const char        * registration,
+                                       const char        * value,
+                                       uint32_t            flags )
 {
-  int error = !obj || obj->type_ != oyOBJECT_OPTIONS_S || !key || !value;
+  int error = !obj || obj->type_ != oyOBJECT_OPTIONS_S || !registration ||
+              !value;
   oyOption_s * o = 0;
 
   if(!error)
   {
-    o = oyOptions_Find( obj, key );
+    o = oyOptions_Find( obj, registration );
+
+    /** Add a new option if the OY_CREATE_NEW flag is present.
+     */
+    if(!o && oyToCreateNew_m(flags))
+    {
+      o = oyOption_New( obj->oy_, registration );
+      error = !o;
+
+      if(!error)
+        error = oyOption_SetFromText( o, value );
+    }
+
     oyOption_SetFromText( o, value );
     oyOption_Release( &o );
   }
@@ -14368,7 +14412,7 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
             if(node->plugs[i]->remote_socket_->data)
               data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
             else
-              data = (oyStruct_s*) oyOption_New(0);
+              data = (oyStruct_s*) oyOption_New(0, 0);
             error = oyStructList_MoveIn( datas, &data, -1 );
             ++i;
           }
@@ -14382,7 +14426,7 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
             if(node->sockets[i]->data)
               data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
             else
-              data = (oyStruct_s*) oyOption_New(0);
+              data = (oyStruct_s*) oyOption_New(0, 0);
             error = oyStructList_MoveIn( datas, &data, -1 );
             ++i;
           }

@@ -572,7 +572,8 @@ typedef struct {
   uint32_t             flags;          /**< | oyOPTIONATTRIBUTE_e */
 } oyOption_s;
 
-oyOption_s *   oyOption_New          ( oyObject_s          object );
+oyOption_s *   oyOption_New          ( oyObject_s          object,
+                                       const char        * registration );
 oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
                                        oyObject_s          object );
 int            oyOption_Release      ( oyOption_s       ** option );
@@ -677,9 +678,13 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
 const char *   oyOptions_FindString  ( oyOptions_s       * options,
                                        const char        * key,
                                        const char        * value );
+#define OY_CREATE_NEW                  0x01        /** create */
+/* decode */
+#define oyToCreateNew_m(r)        ((r)&1)
 int            oyOptions_SetFromText ( oyOptions_s       * obj,
                                        const char        * key,
-                                       const char        * value );
+                                       const char        * value,
+                                       uint32_t            flags );
 
 
 /** @brief general profile infos
