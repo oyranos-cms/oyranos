@@ -6929,7 +6929,8 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *  @param         registration        the options registration name, e.g.
  *                                  "share/freedesktop.org/colour/my_app/my_opt"
  *  @param         value               the value to set
- *  @param         flags               can be OY_CREATE_NEW for a new option
+ *  @param         flags               can be OY_CREATE_NEW for a new option,
+ *                                     or OY_STRING_LIST
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/11/27 (Oyranos: 0.1.9)
@@ -6956,7 +6957,10 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
       error = !o;
 
       if(!error)
-        error = oyOption_SetFromText( o, value, 0 );
+        /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
+        error = oyOption_SetFromText( o, value, flags );
+
+      oyOptions_MoveIn( obj, &o, -1 );
     }
 
     oyOption_SetFromText( o, value, 0 );

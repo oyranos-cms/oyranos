@@ -683,9 +683,9 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
 const char *   oyOptions_FindString  ( oyOptions_s       * options,
                                        const char        * key,
                                        const char        * value );
-#define OY_CREATE_NEW                  0x01        /** create */
+#define OY_CREATE_NEW                  0x02        /** create */
 /* decode */
-#define oyToCreateNew_m(r)        ((r)&1)
+#define oyToCreateNew_m(r)             (((r) >> 1)&1)
 int            oyOptions_SetFromText ( oyOptions_s       * obj,
                                        const char        * key,
                                        const char        * value,
