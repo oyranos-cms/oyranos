@@ -29,6 +29,7 @@
 int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = oyX1CMMWarnFunc;
 
+extern oyCMMapi8_s oyX1_api8;
 
 /* --- implementations --- */
 
@@ -120,6 +121,105 @@ int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
                                        uint32_t            value ) {return 0;}
 
 
+/** Function oyX1Configs_FromPattern
+ *  @brief   oyX1 oyCMMapi8_s Xorg monitors
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/01/19
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ */
+oyConfigs_s *  oyX1Configs_FromPattern (
+                                       const char        * registration,
+                                       oyOptions_s       * options )
+{
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0;
+  char * text = 0;
+  char ** texts = 0;
+  int texts_n = 0;
+  const char * value1 = 0,
+             * value2 = 0;
+  int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
+                                        oyOBJECT_CMM_API8_S );
+  oyAlloc_f allocateFunc = malloc;
+  oyDeAlloc_f deallocateFunc = free;
+
+  if(!options || !oyOptions_Count( options ))
+  {
+    /** oyMSG_WARN should make shure our message is visible. */
+    message( oyMSG_WARN, (oyStruct_s*)options, "%s:%d %s()\n %s",
+             __FILE__,__LINE__,__func__,
+      "The following help text informs about the communication protocol.");
+    message( oyMSG_WARN, (oyStruct_s*)options, "%s()\n %s", __func__,
+      "The presence of option \"list\" will provide a list of available\n"
+      " devices. Use the returned values as option \"display_name\" to select a"
+      " device.");
+    message( oyMSG_WARN, (oyStruct_s*)options, "%s()\n %s", __func__,
+      "The presence of option \"properties\" will provide a devices \n"
+      " properties. Requires one device identifier returned with the \n"
+      " \"list_all\" option. The properties may cover following entries, wich\n"
+      " can be used as well as filters:\n"
+      " - \"manufacturer\"\n"
+      " - \"model\"\n"
+      " - \"serial\"\n"
+      " - \"host\"\n"
+      " - \"system_port\"\n"
+      " - \"display_geometry\" (specific) x,y,widthxheight ,e.g."
+      " \"0,0,1024x786\"\n"
+      " If the option key word \"edid\" (specific) is present the EDID\n"
+      " information will be passed inside a oyBlob_s struct.\n"
+      " \n"
+      " One option \"display_name\" (specific) will select the according X\n"
+      " display. If not the backend will try to get this information from \n"
+      " your \"DISPLAY\" environment variable or uses what the system\n"
+      " provides. The option is identical with the entries returned from a\n"
+      " \"list\" request."
+       );
+    return 0;
+  }
+
+  if(rank)
+  {
+    configs = oyConfigs_New(0);
+
+    value1 = oyOptions_FindString( options, "display_name", 0 );
+    value2 = oyOptions_FindString( options, "list", 0 );
+
+    if(value2)
+      texts_n = oyGetAllScreenNames( value1, &texts, allocateFunc );
+
+    config = 0;
+  }
+
+  return configs;
+}
+
+/** @instance oyX1_api8
+ *  @brief    oyX1 oyCMMapi8_s implementations
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/01/19
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ */
+oyCMMapi8_s oyX1_api8 = {
+  oyOBJECT_CMM_API8_S,
+  0,0,0,
+  0,                         /**< next */
+
+  oyX1CMMInit,               /**< oyCMMInit_f      oyCMMInit */
+  oyX1CMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
+  oyX1CMMCanHandle,          /**< oyCMMCanHandle_f oyCMMCanHandle */
+
+  "shared/freedesktop.org/colour/config.monitor.xorg", /**< registration */
+  {0,1,0},                   /**< int32_t version[3] */
+  0,                         /**< char * id_ */
+
+  0,                       /**< oyCMMapi5_s * api5_ */
+  oyX1Configs_FromPattern, /**< oyConfigs_FromPattern_f oyConfigs_FromPattern */
+  0/*oyX1Config_Match*/    /**< oyConfig_Check_f oyConfig_Match */
+};
+
+
 /** @instance oyX1_api2
  *  @brief    oyX1 oyCMMapi2_s implementations
  *
@@ -131,7 +231,7 @@ oyCMMapi2_s oyX1_api2 = {
 
   oyOBJECT_CMM_API2_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & oyX1_api8,
 
   oyX1CMMInit,
   oyX1CMMMessageFuncSet,
@@ -204,7 +304,7 @@ oyCMMInfo_s oyX1_cmm_module = {
   oyX1GetText, /* oyCMMInfoGetText_f */
   OYRANOS_VERSION,
 
-  (oyCMMapi_s*) & oyX1_api2,
+  (oyCMMapi_s*) & oyX1_api8,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
