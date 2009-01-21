@@ -329,7 +329,8 @@ oyGetMonitorInfo_                 (const char* display_name,
                                    char**      display_geometry,
                                        char             ** system_port,
                                        oyBlob_s         ** edid,
-                                   oyAlloc_f     allocate_func)
+                                   oyAlloc_f     allocate_func,
+                                       oyStruct_s        * user_data )
 {
   int len;
   struct oyDDC_EDID1_s_ *edi=0;
@@ -398,7 +399,7 @@ oyGetMonitorInfo_                 (const char* display_name,
   {
     if( prop->size != 128 )
     {
-      WARNc4_S("\n\t  %s %d; %s %s",_("unexpected EDID lenght"),
+      WARNcc4_S(user_data, "\n\t  %s %d; %s %s",_("unexpected EDID lenght"),
                (int)prop->size,
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
                _("Cant read hardware information from device."))
@@ -425,6 +426,10 @@ oyGetMonitorInfo_                 (const char* display_name,
     DBG_PROG_ENDE
     return 0;
   } else {
+    WARNcc3_S( user_data, "%s: %s \n\t%s",
+               _("no EDID available from X properties"),
+               "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
+               _("Cant read hardware information from device."))
     DBG_PROG_ENDE
     return 1;
   }
@@ -551,7 +556,7 @@ oyGetMonitorProfileName_          (const char* display_name,
   oyGetMonitorInfo_( display_name,
                      &manufacturer, &model, &serial,
                      &display_geometry, &system_port, 0,
-                     oyAllocateFunc_);
+                     oyAllocateFunc_, 0 );
 
   disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
@@ -1174,7 +1179,7 @@ oySetMonitorProfile_              (const char* display_name,
   error  =
     oyGetMonitorInfo_ (display_name,
                        &manufacturer, &model, &serial, &display_geometry,
-                       &system_port, 0, oyAllocateFunc_);
+                       &system_port, 0, oyAllocateFunc_, 0);
 
   disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
@@ -1790,15 +1795,16 @@ oyGetMonitorInfo_lib              (const char* display,
                                        char             ** display_geometry,
                                        char             ** system_port,
                                        oyBlob_s         ** edid,
-                                   oyAlloc_f     allocate_func)
+                                   oyAlloc_f     allocate_func,
+                                       oyStruct_s        * user_data)
 {
   int err = 0;
 
   DBG_PROG_START
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
-  err = oyGetMonitorInfo_( display, manufacturer, model, serial, 0,
-                           system_port, edid, allocate_func);
+  err = oyGetMonitorInfo_( display, manufacturer, model, serial,
+                display_geometry, system_port, edid, allocate_func, user_data );
 #else
   err = 1;
 #endif
