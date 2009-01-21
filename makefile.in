@@ -450,11 +450,12 @@ $(LINGUAS_SRC):	$(POT_FILE)
         || (echo $${ling}.po is not yet ready ... skipping) \
 	done;
 
-$(POT_FILE):
+$(POT_FILE):	$(SOURCES) $(CHEADERS)
+	echo Generating $(POT_FILE) ...
 	mkdir -p ./po
 	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
 	-d $(TARGET) \
-	-o $(POT_FILE) \
+	-o $(POT_FILE) -c \
 	$(SOURCES) $(CHEADERS) || echo -e "\c"
 	$(MSGCAT) po/*.pot -o po/oyranos.pot
 	for ling in po/*.po; do \
@@ -464,7 +465,7 @@ $(POT_FILE):
 	         $(POT_FILE) || \
 	      echo -e "\c"; \
 	done;
-	echo $(POT_FILE) fertig
+	echo ... $(POT_FILE) done
 
 
 docu:
