@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-01-09 07:31+0100\n"
+"POT-Creation-Date: 2009-01-21 06:53+0100\n"
 "PO-Revision-Date: 2008-10-23 20:49+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -370,7 +370,7 @@ msgstr "Datum kalibrace"
 msgid "Colour measurement data"
 msgstr "Data z barvoveho mereni"
 
-#: oyranos_icc.c:377 oyranos_alpha.c:2506
+#: oyranos_icc.c:377 oyranos_alpha.c:2510
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -451,6 +451,7 @@ msgstr "Popis profilu"
 msgid "Profile description, multilingual"
 msgstr "Popis profilu, vicejazycny"
 
+#. dscm
 #: oyranos_icc.c:397
 msgid "Profile sequence description"
 msgstr "Popis sekvence profilu"
@@ -519,34 +520,42 @@ msgstr "Pozorovaci podminky"
 msgid "Device colours"
 msgstr "Barvy zarizeni"
 
+#. DevD
 #: oyranos_icc.c:414
 msgid "Measured colours"
 msgstr "Zmerene barvy"
 
+#. CIED
 #: oyranos_icc.c:415
 msgid "Profiling parameters"
 msgstr "Parametry profilovani"
 
+#. Pmtr
 #: oyranos_icc.c:416
 msgid "VideoCardGammaTable"
 msgstr "VideoCardGammaTable"
 
+#. vcgt
 #: oyranos_icc.c:417
 msgid "Colour adaption matrix"
 msgstr "Matice prizpusobeni barev"
 
+#. chad
 #: oyranos_icc.c:418
 msgid "Chromaticity"
 msgstr "Chromaticita"
 
+#. chrm
 #: oyranos_icc.c:419
 msgid "Named colour order"
 msgstr "Poradi pojmenovanych barev"
 
+#. clro
 #: oyranos_icc.c:420
 msgid "Named colour names"
 msgstr "Jmena pojmenovanych barev"
 
+#. clrt
 #: oyranos_icc.c:421 oyranos_config_fltk.cxx:749 oyranos_config_fltk.cxx:1581
 msgid "----"
 msgstr "----"
@@ -603,86 +612,107 @@ msgstr "Unix a derivaty"
 msgid "Digital camera"
 msgstr "Digitalni fotoaparat"
 
+#. dcam
 #: oyranos_icc.c:619
 msgid "Film scanner"
 msgstr "Filmovy skener"
 
+#. fscn
 #: oyranos_icc.c:620
 msgid "Reflective scanner"
 msgstr "Odrazny skener"
 
+#. rscn
 #: oyranos_icc.c:621
 msgid "InkJet printer"
 msgstr "Inkoustova tiskarna"
 
+#. ijet
 #: oyranos_icc.c:622
 msgid "Thermal wax printer"
 msgstr "Tepelna voskova tiskarna"
 
+#. twax
 #: oyranos_icc.c:623
 msgid "Electrophotographic printer"
 msgstr "Elektrofotograficka tiskarna"
 
+#. epho
 #: oyranos_icc.c:624
 msgid "Electrostatic printer"
 msgstr "Elektrostaticka tiskarna"
 
+#. esta
 #: oyranos_icc.c:625
 msgid "Dye sublimation printer"
 msgstr "Sublimacni tiskarna"
 
+#. dsub
 #: oyranos_icc.c:626
 msgid "Photographic paper printer"
 msgstr "Tiskarna na fotograficky papir"
 
+#. rpho
 #: oyranos_icc.c:627
 msgid "Film writer"
 msgstr "Zapisovac na film"
 
+#. fprn
 #: oyranos_icc.c:628
 msgid "Video Monitor"
 msgstr "Video monitor"
 
+#. vidm
 #: oyranos_icc.c:629
 msgid "Video camera"
 msgstr "Video kamera"
 
+#. vidc
 #: oyranos_icc.c:630
 msgid "Projection Television"
 msgstr "Projekcni televize"
 
+#. pjtv
 #: oyranos_icc.c:631
 msgid "Cathode ray tube display"
 msgstr "CRT obrazovka"
 
+#. CRT
 #: oyranos_icc.c:632
 msgid "Passive matrix monitor"
 msgstr "Monitor s pasivni matici"
 
+#. PMD
 #: oyranos_icc.c:633
 msgid "Active matrix monitor"
 msgstr "Monitor s aktivni matici"
 
+#. AMD
 #: oyranos_icc.c:634
 msgid "Photo CD"
 msgstr "Photo CD"
 
+#. KPCD
 #: oyranos_icc.c:635
 msgid "PhotoImageSetter"
 msgstr "PhotoImageSetter"
 
+#. imgs
 #: oyranos_icc.c:636
 msgid "Gravure"
 msgstr "Gravura"
 
+#. grav
 #: oyranos_icc.c:637
 msgid "Offset Lithography"
 msgstr "Offsetova litografie"
 
+#. offs
 #: oyranos_icc.c:638
 msgid "Silkscreen"
 msgstr "Sitotisk"
 
+#. silk
 #: oyranos_icc.c:639
 msgid "Flexography"
 msgstr "Flexografie"
@@ -703,6 +733,10 @@ msgstr "EBU Tech.3213-E"
 msgid "P22"
 msgstr "P22"
 
+#. case icMaxEnumIluminant: return _("Illuminant ---"); break;
+#. case icMaxStdObs: return _("---"); break;
+#. case icMaxGeometry: return _("---");
+#. case icMaxFlare: return _("---");
 #: oyranos_icc.c:665 oyranos_icc.c:690 oyranos_icc.c:708 oyranos_icc.c:727
 #: oyranos_icc.c:744
 msgid "???"
@@ -793,7 +827,7 @@ msgstr "Zacatek"
 msgid "Oyranos Settings Group"
 msgstr "Skupina nastaveni Oyranosu"
 
-#: oyranos_texts.c:153 oyranos_cmm_oyIM_icc.c:123
+#: oyranos_texts.c:153 oyranos_cmm_oyIM_icc.c:122
 msgid "Default Profiles"
 msgstr "Vychozi profily"
 
@@ -896,7 +930,7 @@ msgstr "Vse"
 msgid "Oyranos Settings"
 msgstr "Nastaveni Oyranosu"
 
-#: oyranos_texts.c:272 oyranos_cmm_oyIM_icc.c:128 oyranos_cmm_oyIM_icc.c:133
+#: oyranos_texts.c:272 oyranos_cmm_oyIM_icc.c:127 oyranos_cmm_oyIM_icc.c:132
 msgid "Editing Rgb"
 msgstr "RGB editace"
 
@@ -904,7 +938,7 @@ msgstr "RGB editace"
 msgid "Prefered Rgb Editing Colour Space"
 msgstr "Preferovany RGB barvovy prostor pro editaci"
 
-#: oyranos_texts.c:281 oyranos_cmm_oyIM_icc.c:150
+#: oyranos_texts.c:281 oyranos_cmm_oyIM_icc.c:149
 msgid "Editing Cmyk"
 msgstr "CMYK editace"
 
@@ -912,7 +946,7 @@ msgstr "CMYK editace"
 msgid "Prefered Cmyk Editing Colour Space"
 msgstr "Preferovany CMYK barvovy prostor pro editaci"
 
-#: oyranos_texts.c:290 oyranos_cmm_oyIM_icc.c:186
+#: oyranos_texts.c:290 oyranos_cmm_oyIM_icc.c:185
 msgid "Editing XYZ"
 msgstr "XYZ editace"
 
@@ -920,7 +954,7 @@ msgstr "XYZ editace"
 msgid "Prefered XYZ Editing Colour Space"
 msgstr "Preferovany XYZ barvovy prostor pro editaci"
 
-#: oyranos_texts.c:299 oyranos_cmm_oyIM_icc.c:166
+#: oyranos_texts.c:299 oyranos_cmm_oyIM_icc.c:165
 msgid "Editing Lab"
 msgstr "Lab editace"
 
@@ -928,7 +962,7 @@ msgstr "Lab editace"
 msgid "Prefered CIE*Lab Editing Colour Space"
 msgstr "Preferovany CIE*Lab barvovy prostor pro editaci"
 
-#: oyranos_texts.c:308 oyranos_cmm_oyIM_icc.c:206
+#: oyranos_texts.c:308 oyranos_cmm_oyIM_icc.c:205
 msgid "Editing Gray"
 msgstr "Seda editace"
 
@@ -1000,6 +1034,7 @@ msgid ""
 msgstr ""
 "Obrazek nema vlozeny barvovy prostor. Jaka vychozi akce ma byt provedena?"
 
+#. choices
 #: oyranos_texts.c:385
 msgid "Assign No Profile"
 msgstr "Nepriradit zadny profil"
@@ -1021,6 +1056,7 @@ msgstr "V pripade RGB nesouladu"
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Akce pro nesoulad profilu obrazku a editace."
 
+#. choices
 #: oyranos_texts.c:394 oyranos_texts.c:403 oyranos_texts.c:412
 #: oyranos_texts.c:421
 msgid "Preserve Numbers"
@@ -1078,10 +1114,12 @@ msgstr "Vychozi zamer transformace"
 msgid "Rendering Intent for colour space Transformations."
 msgstr "Zamer transformace pro barvove prostory"
 
+#. choices
 #: oyranos_texts.c:430
 msgid "Perceptual"
 msgstr "Perceptualni"
 
+#. choices
 #: oyranos_texts.c:430 oyranos_texts.c:448
 msgid "Relative Colorimetric"
 msgstr "Relativni kolorimetricky"
@@ -1098,6 +1136,7 @@ msgstr "Pouzit kompenzaci cerneho bodu (BPC)"
 msgid "BPC affects only the Relative Colorimetric Rendering Intent."
 msgstr "BPC ovlivnuje pouze relativni kolorimetricky zamer transformace."
 
+#. choices
 #: oyranos_texts.c:439 oyranos_texts.c:457 oyranos_texts.c:466
 msgid "No"
 msgstr "Ne"
@@ -1134,101 +1173,107 @@ msgstr ""
 "Chovani pro predvolbu Hardproofingu se standardnim profilem simulace v "
 "okamziku tisku"
 
-#: oyranos_monitor.c:334
+#: oyranos_monitor.c:401
 msgid "unexpected EDID lenght"
 msgstr "neocekavane delka EDID"
 
-#: oyranos_monitor.c:337
+#: oyranos_monitor.c:404
 msgid "Cant read hardware information from device."
 msgstr "Ze zarizeni nelze precist informaci o hardware"
 
-#: oyranos_monitor.c:438 oyranos_monitor.c:1016 oyranos_monitor.c:1509
-msgid "open X Display failed"
-msgstr "selhalo otevreni X displeje"
-
-#: oyranos_monitor.c:453
+#: oyranos_monitor.c:505
 msgid "Could not get Xatom, probably your monitor profile is not set:"
 msgstr "Nelze ziskat Xatom, pravdepodobne neni nastaven profil monitru:"
 
-#: oyranos_monitor.c:1040
+#: oyranos_monitor.c:1055 oyranos_monitor.c:1568
+msgid "open X Display failed"
+msgstr "selhalo otevreni X displeje"
+
+#. hack
+#: oyranos_monitor.c:1079
 msgid "No monitor gamma curves by profile:"
 msgstr "Zadne gama krivky monitoru v profilu:"
 
-#: oyranos_monitor.c:1074
+#: oyranos_monitor.c:1113
 msgid "Error obtaining profile"
 msgstr "Chyba pri ziskavani profilu"
 
-#: oyranos_monitor.c:1081 oyranos_monitor.c:1083
+#: oyranos_monitor.c:1120 oyranos_monitor.c:1122
 msgid "Error setting up atom"
 msgstr "Chyba pri nastavovani atomu"
 
-#: oyranos_monitor.c:1171
+#: oyranos_monitor.c:1210
 msgid "Error getting atom"
 msgstr "Chyba pri ziskavani atomu"
 
-#: oyranos_monitor.c:1417
+#: oyranos_monitor.c:1456
+#, fuzzy
+msgid "XRandR CrtcInfo request failed"
+msgstr "Xinerama pozadavek selhal"
+
+#: oyranos_monitor.c:1474
 msgid "Xinerama request failed"
 msgstr "Xinerama pozadavek selhal"
 
-#: oyranos_monitor.c:1432
+#: oyranos_monitor.c:1490
 msgid "open X Screen failed"
 msgstr "selhalo otevreni X displeje"
 
-#: oyranos_monitor.c:1502
+#: oyranos_monitor.c:1561
 #, fuzzy
 msgid "allocation failed"
 msgstr "Datum kalibrace"
 
-#: oyranos_monitor.c:1516
+#: oyranos_monitor.c:1576
 #, fuzzy
 msgid "no Screen found"
 msgstr "Cela obrazovka zap./vyp."
 
-#: oyranos_monitor.c:1587
+#: oyranos_monitor.c:1687
 msgid "less Xinerama monitors than XRandR ones"
 msgstr ""
 
-#: oyranos_gamma.c:104
+#: oyranos_gamma.c:105
 msgid "is a colour profile administration tool for monitors"
 msgstr "je administrativni nastroj pro barvove profily monitoru"
 
-#: oyranos_gamma.c:105 oyranos_policy.c:52
+#: oyranos_gamma.c:106 oyranos_policy.c:52
 msgid "Usage"
 msgstr "Pouziti"
 
-#: oyranos_gamma.c:106
+#: oyranos_gamma.c:107
 msgid "Set new profile:"
 msgstr "Nastavit novy profil:"
 
-#: oyranos_gamma.c:109
+#: oyranos_gamma.c:110
 msgid "profile name"
 msgstr "jmeno profilu"
 
-#: oyranos_gamma.c:111
+#: oyranos_gamma.c:112
 msgid "Unset profile:"
 msgstr "Odpojit profil:"
 
-#: oyranos_gamma.c:115
+#: oyranos_gamma.c:116
 msgid "Activate profiles:"
 msgstr "Aktivovat profily:"
 
-#: oyranos_gamma.c:118
+#: oyranos_gamma.c:119
 msgid "Query server profile:"
 msgstr "Dotazat se na profil serveru:"
 
-#: oyranos_gamma.c:122
+#: oyranos_gamma.c:123
 msgid "Query device data base profile:"
 msgstr "Dotazat se na profil databaze zarizeni:"
 
-#: oyranos_gamma.c:126
+#: oyranos_gamma.c:127
 msgid "General options:"
 msgstr "Obecne volby:"
 
-#: oyranos_gamma.c:127
+#: oyranos_gamma.c:128
 msgid "-v verbose"
 msgstr "-v upovidany vystup"
 
-#: oyranos_gamma.c:142 oyranos_policy.c:136
+#: oyranos_gamma.c:143 oyranos_policy.c:136
 msgid "wrong argument to option:"
 msgstr "chybny argument pro volbu:"
 
@@ -1289,37 +1334,46 @@ msgstr "instalace nove politiky selhalo s chybou:"
 msgid "Policy search paths"
 msgstr ""
 
-#: oyranos_alpha.c:2504
+#: oyranos_alpha.c:2508
 msgid "Name"
 msgstr "Jmeno"
 
-#: oyranos_alpha.c:2505
+#: oyranos_alpha.c:2509
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Vyrobce:     "
 
-#: oyranos_alpha.c:15803
+#: oyranos_alpha.c:2907
+#, fuzzy
+msgid "Could not open meta backend API"
+msgstr "Nemohu nacist pismo v:"
+
+#: oyranos_alpha.c:12795 oyranos_alpha.c:12811
+msgid "with '.' is not allowed"
+msgstr ""
+
+#: oyranos_alpha.c:16540
 msgid "No filter"
 msgstr "Zadny filtr"
 
-#: oyranos_alpha.c:15813
+#: oyranos_alpha.c:16550
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr ""
 "Prosim pridejte nejprve image node ke grafu pred pridanim ostatnich filtru"
 
-#: oyranos_alpha.c:15821
+#: oyranos_alpha.c:16558
 msgid "attempt to add a incomplete filter"
 msgstr "pokus o pridani neuplneho filtru"
 
-#: oyranos_alpha.c:15830
+#: oyranos_alpha.c:16567
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr "pokus o pridani nelinearniho filtru k linearnimu grafu"
 
-#: oyranos_alpha.c:15864
+#: oyranos_alpha.c:16601
 msgid "?? Nothing to add ??"
 msgstr "?? Nic k pridani ??"
 
-#: oyranos_alpha.c:16810
+#: oyranos_alpha.c:17548
 msgid "---"
 msgstr "---"
 
@@ -1365,37 +1419,37 @@ msgstr ""
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:168
+#: oyranos_cmm_oyX1.c:329
 msgid "Oyranos X11"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:170
+#: oyranos_cmm_oyX1.c:331
 msgid "The window support backend of Oyranos."
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:174 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
+#: oyranos_cmm_oyX1.c:335 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
 msgid "Kai-Uwe"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:176 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
+#: oyranos_cmm_oyX1.c:337 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:178 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
+#: oyranos_cmm_oyX1.c:339 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:182 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
+#: oyranos_cmm_oyX1.c:343 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
 msgid "newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:184 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
+#: oyranos_cmm_oyX1.c:345 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
 msgid "Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:186 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
+#: oyranos_cmm_oyX1.c:347 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr ""
 
@@ -1408,12 +1462,12 @@ msgstr "Nastaveni Oyranosu"
 msgid "Oyranos supplied modules"
 msgstr ""
 
-#: oyranos_cmm_oyIM_icc.c:273
+#: oyranos_cmm_oyIM_icc.c:282
 #, fuzzy
 msgid "ICC profile"
 msgstr "Ktery ICC profil?"
 
-#: oyranos_cmm_oyIM_icc.c:275
+#: oyranos_cmm_oyIM_icc.c:284
 #, fuzzy
 msgid "ICC colour profile for colour transformations"
 msgstr "Zamer transformace pro barvove prostory"
@@ -1466,6 +1520,14 @@ msgstr "Model:"
 msgid "Technology:"
 msgstr "Technologie:"
 
+#. * @brief none profile
+#. *
+#. *  The name of a non existent profile.
+#. *
+#. *  @version Oyranos: 0.1.8
+#. *  @date    2008/02/06
+#. *  @since   2008/02/06 (Oyranos: 0.1.8)
+#.
 #: oyranos_config_fltk.cxx:18 oyranos_definitions.h:72
 msgid "[none]"
 msgstr "[zadny]"
@@ -1552,11 +1614,15 @@ msgstr "Znovu nacist"
 msgid "Active Policy:"
 msgstr "Aktivni politika:"
 
+#. oyFree_ (void*)
+#. defined in oyranos_helper.h
 #: oyranos_helper.h:64
 #, c-format
 msgid "nothing to delete %s"
 msgstr "nic ke smazani %s"
 
+#. oyAllocHelper_ (void*, type, size_t, action)
+#. defined in oyranos_helper.h
 #: oyranos_helper.h:82
 msgid "nothing to allocate - size:"
 msgstr "nic k alokaci - velikost:"
@@ -1565,6 +1631,8 @@ msgstr "nic k alokaci - velikost:"
 msgid "Can not allocate memory for:"
 msgstr "Nelze alokovat pamet pro:"
 
+#. oyPostAllocHelper_ (void*, size, action)
+#. defined in oyranos_helper.h
 #: oyranos_helper.h:101
 msgid "nothing allocated"
 msgstr "nic nealokovano"
@@ -1676,9 +1744,6 @@ msgstr "nic nealokovano"
 
 #~ msgid "mouse"
 #~ msgstr "mys"
-
-#~ msgid "Could not open font in:"
-#~ msgstr "Nemohu nacist pismo v:"
 
 #~ msgid "0,0,0"
 #~ msgstr "0,0,0"
