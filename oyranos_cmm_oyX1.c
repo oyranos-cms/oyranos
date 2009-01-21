@@ -124,6 +124,10 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
 int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
                                        uint32_t            value ) {return 0;}
 
+#define OPTIONS_ADD(opts, name) if(!error && name) \
+        error = oyOptions_SetFromText( opts, \
+                                       CMM_BASE_REG OY_SLASH #name, \
+                                       name, OY_CREATE_NEW );
 
 /** Function oyX1Configs_FromPattern
  *  @brief   oyX1 oyCMMapi8_s Xorg monitors
@@ -176,7 +180,7 @@ oyConfigs_s *  oyX1Configs_FromPattern (
       " If the option key word \"edid\" (specific) is present the EDID\n"
       " information will be passed inside a oyBlob_s struct.\n"
       " \n"
-      " One option \"display_name\" (specific) will select the according X\n"
+      " One option \"device_name\" (specific) will select the according X\n"
       " display. If not the backend will try to get this information from \n"
       " your \"DISPLAY\" environment variable or uses what the system\n"
       " provides. The option is identical with the entries returned from a\n"
@@ -189,7 +193,7 @@ oyConfigs_s *  oyX1Configs_FromPattern (
   {
     configs = oyConfigs_New(0);
 
-    value1 = oyOptions_FindString( options, "display_name", 0 );
+    value1 = oyOptions_FindString( options, "device_name", 0 );
     //message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);
 
     value2 = oyOptions_FindString( options, "list", 0 );
@@ -204,7 +208,7 @@ oyConfigs_s *  oyX1Configs_FromPattern (
 
         if(!error)
         error = oyOptions_SetFromText( config->options,
-                                       CMM_BASE_REG OY_SLASH "display",
+                                       CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
         oyConfigs_MoveIn( configs, &config, -1 );
@@ -215,39 +219,42 @@ oyConfigs_s *  oyX1Configs_FromPattern (
     value3 = oyOptions_FindString( options, "edid", 0 );
     if(value2)
     {
-      char * di=0, *mf=0, *mo=0, *se=0, *dg=0, *sp=0;
+      char * manufacturer=0, *model=0, *serial=0, *host=0, *display_geometry=0,
+           * system_port=0;
       oyBlob_s * edid = 0;
 
-      if(!value1 && 0)
+      if(!value1)
       {
-        message(oyMSG_WARN, (oyStruct_s*)options, "The \"display\" argument is missed to select a appropriate device through for the \"properties\" call.");
+        message(oyMSG_WARN, (oyStruct_s*)options, "The \"device_name\" argument is missed to select a appropriate device for the \"properties\" call.");
       }
 
-      error = oyGetMonitorInfo_lib( value1, &mf, &mo, &se, &dg, &sp,
-                                    value3 ? &edid : 0, allocateFunc );
+      error = oyGetMonitorInfo_lib( value1,
+               &manufacturer, &model, &serial, &display_geometry, &system_port,
+                                    value3 ? &edid : 0, allocateFunc,
+                                    (oyStruct_s*)options );
  
-      if(!error)
       {
         config = oyConfig_New(0);
         error = !config;
         if(!error && value1)
         error = oyOptions_SetFromText( config->options,
-                                       CMM_BASE_REG OY_SLASH "display",
+                                       CMM_BASE_REG OY_SLASH "device_name",
                                        value1, OY_CREATE_NEW );
-        if(!error && mf)
-        error = oyOptions_SetFromText( config->options,
-                                       CMM_BASE_REG OY_SLASH "manufacturer",
-                                       mf, OY_CREATE_NEW );
-        if(!error && mo)
-        error = oyOptions_SetFromText( config->options,
-                                       CMM_BASE_REG OY_SLASH "model",
-                                       mo, OY_CREATE_NEW );
+
+        OPTIONS_ADD( config->options, manufacturer )
+        OPTIONS_ADD( config->options, model )
+        OPTIONS_ADD( config->options, serial )
+        OPTIONS_ADD( config->options, display_geometry )
+        OPTIONS_ADD( config->options, system_port )
+        OPTIONS_ADD( config->options, host )
 
         oyConfigs_MoveIn( configs, &config, -1 );
-      } else
+      }
+      if(error)
         message( oyMSG_WARN, (oyStruct_s*)options, 
-                 OY_DBG_FORMAT_ "Could not complete \"properties\" call.",
-                 OY_DBG_ARGS_);
+                 OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
+               " oyGetMonitorInfo_lib returned with error; device_name: \"%s\"",
+                 OY_DBG_ARGS_, oyNoEmptyString_m_( value1) );
     }
   }
 
