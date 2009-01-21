@@ -6930,7 +6930,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *                                  "share/freedesktop.org/colour/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         flags               can be OY_CREATE_NEW for a new option,
- *                                     or OY_STRING_LIST
+ *                                     OY_STRING_LIST or OY_ADD_ALWAYS
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/11/27 (Oyranos: 0.1.9)
@@ -6951,7 +6951,8 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
-    if(!o && oyToCreateNew_m(flags))
+    if((!o && oyToCreateNew_m(flags)) ||
+        oyToAddAlways_m(flags))
     {
       o = oyOption_New( obj->oy_, registration );
       error = !o;
@@ -6963,7 +6964,7 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
       oyOptions_MoveIn( obj, &o, -1 );
     }
 
-    oyOption_SetFromText( o, value, 0 );
+    oyOption_SetFromText( o, value, flags );
     oyOption_Release( &o );
   }
 
@@ -14815,6 +14816,8 @@ OYAPI oyConfigs_s * OYEXPORT
   int error = !registration_domain;
   oyCMMapi8_s * cmm_api8 = 0;
 
+  oyExportStart_(EXPORT_CHECK_NO);
+
   if(!error)
   {
     s = oyConfigs_New( object );
@@ -14836,6 +14839,7 @@ OYAPI oyConfigs_s * OYEXPORT
   if(!error)
     s = cmm_api8->oyConfigs_FromPattern( registration_domain, options );
 
+  oyExportEnd_();
   return s;
 }
 
@@ -15089,6 +15093,8 @@ OYAPI int  OYEXPORT
       reg_list_n = 0,
       apis_n = 0;
 
+  oyExportStart_(EXPORT_CHECK_NO);
+
   if(!error)
   {
     apis = oyCMMsGetFilterApis_( 0, 0, registration_pattern,
@@ -15116,6 +15122,7 @@ OYAPI int  OYEXPORT
   if(count)
     *count = reg_list_n;
 
+  oyExportEnd_();
   return error;
 }
 
