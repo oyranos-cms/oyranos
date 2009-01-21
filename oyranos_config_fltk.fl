@@ -40,6 +40,7 @@ decl {\#include "oyranos.h"
 \#include "oyranos_config.h"
 \#include "oyranos_helper.h"
 \#include "oyranos_alpha.h"
+\#include "oyranos_texts.h"
 \#include "config.h"} {public
 } 
 

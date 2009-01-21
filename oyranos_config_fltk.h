@@ -18,6 +18,7 @@
 #include "oyranos_config.h"
 #include "oyranos_helper.h"
 #include "oyranos_alpha.h"
+#include "oyranos_texts.h"
 #include "config.h"
 #include "fl_i18n/fl_i18n.H"
 #include <iostream>

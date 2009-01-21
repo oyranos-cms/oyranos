@@ -133,6 +133,10 @@ char **     oyLibFilesGet_           ( int             * count,
                                        oyAlloc_f         allocateFunc );
 
 
+/* oyNoEmptyName_( name ) */
+#define oyNoEmptyName_m_( text_nem ) text_nem?text_nem:"\"---\""
+#define oyNoEmptyString_m_ oyNoEmptyName_m_
+
 char*              oyStringCopy_     ( const char        * text,
                                        oyAlloc_f           allocateFunc );
 char*              oyStringAppend_   ( const char        * text,

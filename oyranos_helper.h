@@ -46,9 +46,6 @@ void* oyAllocateWrapFunc_       (size_t        size,
 void  oyDeAllocateFunc_         (void *        data);
 
 
-/* oyNoEmptyName_( name ) */
-#define oyNoEmptyName_m_( text_nem ) text_nem?text_nem:"\"---\""
-#define oyNoEmptyString_m_ oyNoEmptyName_m_
 extern intptr_t oy_observe_pointer_;
 
 /* oyFree_ (void*) */
