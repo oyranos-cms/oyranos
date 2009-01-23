@@ -515,13 +515,13 @@ const oyChar *   oyICCDeviceClassDescription ( icProfileClassSignature sig )
 {
   switch (sig)
   {
-    case icSigInputClass: return _("Input");
-    case icSigDisplayClass: return _("Display");
-    case icSigOutputClass: return _("Output");
-    case icSigLinkClass: return _("Link");
-    case icSigAbstractClass: return _("Abstract");
-    case icSigColorSpaceClass: return _("Colour Space");
-    case icSigNamedColorClass: return _("Named Colour");
+    case icSigInputClass: return _("Input");               /* scnr */
+    case icSigDisplayClass: return _("Display");           /* mntr */
+    case icSigOutputClass: return _("Output");             /* prtr */
+    case icSigLinkClass: return _("Link");                 /* link */
+    case icSigAbstractClass: return _("Abstract");         /* abst */
+    case icSigColorSpaceClass: return _("Colour Space");   /* spac */
+    case icSigNamedColorClass: return _("Named Colour");   /* nmcl */
     default: { icUInt32Number i = oyValueUInt32( sig );
                static oyChar t[5];
                memcpy (t,(char*)&i, 4);
