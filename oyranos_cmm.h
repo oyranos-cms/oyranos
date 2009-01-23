@@ -353,6 +353,8 @@ typedef int                 (*oyCMMProfileTag_Create_f) (
  *  @ingroup backend_api
  *  @extends oyCMMapi_s
  *
+ *  This API provides weak interface compile time checking.
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/01/02
@@ -959,16 +961,19 @@ struct  oyCMMapi4_s {
  *  @ingroup backend_api
  *  @memberof oyCMMapi8_s
  *
- *  @param   registration              a selection string marked with "///config"
- *  @param   options                   the complete options from the ui
+ *  @param[in]     registration        a selection string marked with "///config"
+ *  @param[in]     options             the complete options from the ui
+ *  @param[out]    configs             the returned configurations
+ *  @return                            0 - good, 1 <= error, -1 >= unknown issue, look for messages
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/18 (Oyranos: 0.1.10)
  *  @date    2009/01/18
  */
-typedef oyConfigs_s *  (*oyConfigs_FromPattern_f) (
+typedef int      (*oyConfigs_FromPattern_f) (
                                        const char        * registration,
-                                       oyOptions_s       * options );
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** configs );
 /** typedef  oyConfig_Check_f
  *  @brief   check for correctness
  *  @ingroup backend_api
@@ -992,6 +997,8 @@ typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
  *  Oyranos can know about possible configurations sets forming a oyConfig_s.
  *  They are stored under the base key path decided by each configuration 
  *  backend individually in its oyCMMapi8_s::registration.
+ *
+ *  This API provides weak interface compile time checking.
  *
  *  The backend knows what to configure. This can be devices, filters or 
  *  something else. A oyCMMapi8_s backend counts the understood endities
