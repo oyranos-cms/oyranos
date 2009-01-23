@@ -37,6 +37,7 @@ int   oyGetMonitorInfo_lib        (const char* display,
                                    char**      serial,
                                        char             ** display_geometry,
                                        char             ** system_port,
+                                       char             ** host,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data );
@@ -55,13 +56,17 @@ char* oyGetMonitorProfile_lib     (const char *display,
 char*  oyGetMonitorProfileNameFromDB_lib ( const char        * display,
                                        oyAlloc_f           allocate_func );
 
-/* TODO set a memory based profile */
 int   oySetMonitorProfile_lib     (const char* display_name,
                                    const char* profil_name );
 int      oyActivateMonitorProfiles_lib( const char        * display_name );
 int      oyGetAllScreenNames         ( const char        * display_name,
                                        char            *** display_names,
                                        oyAlloc_f           allocateFunc );
+
+int      oyX1MonitorProfileSetup     ( const char        * display_name,
+                                       const char        * profil_name );
+int      oyX1MonitorProfileUnset     ( const char        * display_name );
+
 
 #ifdef __cplusplus
 } /* extern "C" */
