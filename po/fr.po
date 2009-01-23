@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-01-21 06:53+0100\n"
+"POT-Creation-Date: 2009-01-23 09:37+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: ALL <ku.b@gmx.de>\n"
@@ -66,7 +66,7 @@ msgstr ""
 msgid "Did not find a type for option:"
 msgstr ""
 
-#: oyranos_elektra.c:460 oyranos_elektra.c:550
+#: oyranos_elektra.c:446 oyranos_elektra.c:536
 msgid "default profile type does not exist:"
 msgstr ""
 
@@ -444,7 +444,8 @@ msgstr ""
 msgid "Media white point"
 msgstr ""
 
-#: oyranos_icc.c:390 oyranos_icc.c:524
+#. nmcl
+#: oyranos_icc.c:390 oyranos_icc.c:541
 msgid "Named Colour"
 msgstr "Couleur désignée"
 
@@ -469,289 +470,296 @@ msgstr "Aperçu, saturation"
 msgid "Profile description"
 msgstr ""
 
-#: oyranos_icc.c:396
+#. dscm
+#: oyranos_icc.c:397
 msgid "Profile description, multilingual"
 msgstr ""
 
-#. dscm
-#: oyranos_icc.c:397
+#: oyranos_icc.c:398
 msgid "Profile sequence description"
 msgstr ""
 
-#: oyranos_icc.c:398
+#: oyranos_icc.c:399
 msgid "Profile sequence identification"
 msgstr ""
 
-#: oyranos_icc.c:399
+#: oyranos_icc.c:400
 msgid "psd0"
 msgstr ""
 
-#: oyranos_icc.c:400
+#: oyranos_icc.c:401
 msgid "psd1"
 msgstr ""
 
-#: oyranos_icc.c:401
+#: oyranos_icc.c:402
 msgid "psd2"
 msgstr ""
 
-#: oyranos_icc.c:402
+#: oyranos_icc.c:403
 msgid "psd3"
 msgstr ""
 
-#: oyranos_icc.c:403
+#: oyranos_icc.c:404
 msgid "ps2s"
 msgstr ""
 
-#: oyranos_icc.c:404
+#: oyranos_icc.c:405
 msgid "ps2i"
 msgstr ""
 
-#: oyranos_icc.c:405
+#: oyranos_icc.c:406
 msgid "Red Colorant"
 msgstr ""
 
-#: oyranos_icc.c:406
+#: oyranos_icc.c:407
 msgid "Red tone reproduction curve"
 msgstr ""
 
-#: oyranos_icc.c:407
+#: oyranos_icc.c:408
 msgid "scrd"
 msgstr ""
 
-#: oyranos_icc.c:408
+#: oyranos_icc.c:409
 msgid "scrn"
 msgstr ""
 
-#: oyranos_icc.c:409
+#: oyranos_icc.c:410
 msgid "Technologie"
 msgstr ""
 
-#: oyranos_icc.c:410
+#: oyranos_icc.c:411
 msgid "bfd"
 msgstr ""
 
-#: oyranos_icc.c:411
+#: oyranos_icc.c:412
 msgid "Viewing conditions description"
 msgstr ""
 
-#: oyranos_icc.c:412
+#: oyranos_icc.c:413
 msgid "Viewing Conditions"
 msgstr ""
 
-#: oyranos_icc.c:413
+#. DevD
+#: oyranos_icc.c:415
 msgid "Device colours"
 msgstr ""
 
-#. DevD
-#: oyranos_icc.c:414
+#. CIED
+#: oyranos_icc.c:417
 msgid "Measured colours"
 msgstr ""
 
-#. CIED
-#: oyranos_icc.c:415
+#. Pmtr
+#: oyranos_icc.c:419
 msgid "Profiling parameters"
 msgstr ""
 
-#. Pmtr
-#: oyranos_icc.c:416
+#. vcgt
+#: oyranos_icc.c:421
 msgid "VideoCardGammaTable"
 msgstr ""
 
-#. vcgt
-#: oyranos_icc.c:417
+#. chad
+#: oyranos_icc.c:423
 msgid "Colour adaption matrix"
 msgstr ""
 
-#. chad
-#: oyranos_icc.c:418
+#. chrm
+#: oyranos_icc.c:425
 msgid "Chromaticity"
 msgstr ""
 
-#. chrm
-#: oyranos_icc.c:419
+#. clro
+#: oyranos_icc.c:427
 msgid "Named colour order"
 msgstr ""
 
-#. clro
-#: oyranos_icc.c:420
+#. clrt
+#: oyranos_icc.c:429
 msgid "Named colour names"
 msgstr ""
 
-#. clrt
-#: oyranos_icc.c:421 oyranos_config_fltk.cxx:749 oyranos_config_fltk.cxx:1581
+#: oyranos_icc.c:430 oyranos_config_fltk.cxx:749 oyranos_config_fltk.cxx:1581
 msgid "----"
 msgstr ""
 
-#: oyranos_icc.c:518
+#. scnr
+#: oyranos_icc.c:529
 msgid "Input"
 msgstr "Entrée"
 
-#: oyranos_icc.c:519
+#. mntr
+#: oyranos_icc.c:531
 msgid "Display"
 msgstr "Écran"
 
-#: oyranos_icc.c:520
+#. prtr
+#: oyranos_icc.c:533
 msgid "Output"
 msgstr "Sortie"
 
-#: oyranos_icc.c:521
+#. link
+#: oyranos_icc.c:535
 msgid "Link"
 msgstr "Lien"
 
-#: oyranos_icc.c:522
+#. abst
+#: oyranos_icc.c:537
 msgid "Abstract"
 msgstr "Soustraction"
 
-#: oyranos_icc.c:523
+#. spac
+#: oyranos_icc.c:539
 msgid "Colour Space"
 msgstr "Espace colorimétrique"
 
-#: oyranos_icc.c:544
+#: oyranos_icc.c:561
 msgid "Macintosh"
 msgstr ""
 
-#: oyranos_icc.c:545
+#: oyranos_icc.c:562
 msgid "Microsoft"
 msgstr ""
 
-#: oyranos_icc.c:546
+#: oyranos_icc.c:563
 msgid "Solaris"
 msgstr ""
 
-#: oyranos_icc.c:547
+#: oyranos_icc.c:564
 msgid "SGI"
 msgstr ""
 
-#: oyranos_icc.c:548
+#: oyranos_icc.c:565
 msgid "Taligent"
 msgstr ""
 
-#: oyranos_icc.c:549
+#: oyranos_icc.c:566
 msgid "Unix and derivatives"
 msgstr ""
 
-#: oyranos_icc.c:618
+#. dcam
+#: oyranos_icc.c:637
 msgid "Digital camera"
 msgstr ""
 
-#. dcam
-#: oyranos_icc.c:619
+#. fscn
+#: oyranos_icc.c:639
 msgid "Film scanner"
 msgstr ""
 
-#. fscn
-#: oyranos_icc.c:620
+#. rscn
+#: oyranos_icc.c:641
 msgid "Reflective scanner"
 msgstr ""
 
-#. rscn
-#: oyranos_icc.c:621
+#. ijet
+#: oyranos_icc.c:643
 msgid "InkJet printer"
 msgstr ""
 
-#. ijet
-#: oyranos_icc.c:622
+#. twax
+#: oyranos_icc.c:645
 msgid "Thermal wax printer"
 msgstr ""
 
-#. twax
-#: oyranos_icc.c:623
+#. epho
+#: oyranos_icc.c:647
 msgid "Electrophotographic printer"
 msgstr ""
 
-#. epho
-#: oyranos_icc.c:624
+#. esta
+#: oyranos_icc.c:649
 msgid "Electrostatic printer"
 msgstr ""
 
-#. esta
-#: oyranos_icc.c:625
+#. dsub
+#: oyranos_icc.c:651
 msgid "Dye sublimation printer"
 msgstr ""
 
-#. dsub
-#: oyranos_icc.c:626
+#. rpho
+#: oyranos_icc.c:653
 msgid "Photographic paper printer"
 msgstr ""
 
-#. rpho
-#: oyranos_icc.c:627
+#. fprn
+#: oyranos_icc.c:655
 msgid "Film writer"
 msgstr ""
 
-#. fprn
-#: oyranos_icc.c:628
+#. vidm
+#: oyranos_icc.c:657
 msgid "Video Monitor"
 msgstr ""
 
-#. vidm
-#: oyranos_icc.c:629
+#. vidc
+#: oyranos_icc.c:659
 msgid "Video camera"
 msgstr ""
 
-#. vidc
-#: oyranos_icc.c:630
+#. pjtv
+#: oyranos_icc.c:661
 msgid "Projection Television"
 msgstr ""
 
-#. pjtv
-#: oyranos_icc.c:631
+#. CRT
+#: oyranos_icc.c:663
 msgid "Cathode ray tube display"
 msgstr ""
 
-#. CRT
-#: oyranos_icc.c:632
+#. PMD
+#: oyranos_icc.c:665
 msgid "Passive matrix monitor"
 msgstr ""
 
-#. PMD
-#: oyranos_icc.c:633
+#. AMD
+#: oyranos_icc.c:667
 msgid "Active matrix monitor"
 msgstr ""
 
-#. AMD
-#: oyranos_icc.c:634
+#. KPCD
+#: oyranos_icc.c:669
 msgid "Photo CD"
 msgstr ""
 
-#. KPCD
-#: oyranos_icc.c:635
+#. imgs
+#: oyranos_icc.c:671
 msgid "PhotoImageSetter"
 msgstr ""
 
-#. imgs
-#: oyranos_icc.c:636
+#. grav
+#: oyranos_icc.c:673
 msgid "Gravure"
 msgstr ""
 
-#. grav
-#: oyranos_icc.c:637
+#. offs
+#: oyranos_icc.c:675
 msgid "Offset Lithography"
 msgstr ""
 
-#. offs
-#: oyranos_icc.c:638
+#. silk
+#: oyranos_icc.c:677
 msgid "Silkscreen"
 msgstr ""
 
-#. silk
-#: oyranos_icc.c:639
+#. flex
+#: oyranos_icc.c:679
 msgid "Flexography"
 msgstr ""
 
-#: oyranos_icc.c:660
+#: oyranos_icc.c:700
 msgid "ITU-R BT.709"
 msgstr ""
 
-#: oyranos_icc.c:661
+#: oyranos_icc.c:701
 msgid "SMPTE RP145-1994"
 msgstr ""
 
-#: oyranos_icc.c:662
+#: oyranos_icc.c:702
 msgid "EBU Tech.3213-E"
 msgstr ""
 
-#: oyranos_icc.c:663
+#: oyranos_icc.c:703
 msgid "P22"
 msgstr ""
 
@@ -759,72 +767,72 @@ msgstr ""
 #. case icMaxStdObs: return _("---"); break;
 #. case icMaxGeometry: return _("---");
 #. case icMaxFlare: return _("---");
-#: oyranos_icc.c:665 oyranos_icc.c:690 oyranos_icc.c:708 oyranos_icc.c:727
-#: oyranos_icc.c:744
+#: oyranos_icc.c:705 oyranos_icc.c:730 oyranos_icc.c:748 oyranos_icc.c:767
+#: oyranos_icc.c:784
 msgid "???"
 msgstr ""
 
-#: oyranos_icc.c:679
+#: oyranos_icc.c:719
 msgid "Illuminant unknown"
 msgstr ""
 
-#: oyranos_icc.c:680
+#: oyranos_icc.c:720
 msgid "Illuminant D50"
 msgstr ""
 
-#: oyranos_icc.c:681
+#: oyranos_icc.c:721
 msgid "Illuminant D65"
 msgstr ""
 
-#: oyranos_icc.c:682
+#: oyranos_icc.c:722
 msgid "Illuminant D93"
 msgstr ""
 
-#: oyranos_icc.c:683
+#: oyranos_icc.c:723
 msgid "Illuminant F2"
 msgstr ""
 
-#: oyranos_icc.c:684
+#: oyranos_icc.c:724
 msgid "Illuminant D55"
 msgstr ""
 
-#: oyranos_icc.c:685
+#: oyranos_icc.c:725
 msgid "Illuminant A"
 msgstr ""
 
-#: oyranos_icc.c:686
+#: oyranos_icc.c:726
 msgid "Illuminant with equal energy E"
 msgstr ""
 
-#: oyranos_icc.c:687
+#: oyranos_icc.c:727
 msgid "Illuminant F8"
 msgstr ""
 
-#: oyranos_icc.c:703 oyranos_icc.c:722
+#: oyranos_icc.c:743 oyranos_icc.c:762
 msgid "unknown"
 msgstr "inconnue"
 
-#: oyranos_icc.c:704
+#: oyranos_icc.c:744
 msgid "2 degree (1931)"
 msgstr ""
 
-#: oyranos_icc.c:705
+#: oyranos_icc.c:745
 msgid "10 degree (1964)"
 msgstr ""
 
-#: oyranos_icc.c:723
+#: oyranos_icc.c:763
 msgid "0/45, 45/0"
 msgstr ""
 
-#: oyranos_icc.c:724
+#: oyranos_icc.c:764
 msgid "0/d or d/0"
 msgstr ""
 
-#: oyranos_icc.c:740
+#: oyranos_icc.c:780
 msgid "0"
 msgstr ""
 
-#: oyranos_icc.c:741
+#: oyranos_icc.c:781
 msgid "100"
 msgstr ""
 
@@ -1192,60 +1200,65 @@ msgid ""
 "print time"
 msgstr ""
 
-#: oyranos_monitor.c:401
+#: oyranos_monitor.c:399
 msgid "unexpected EDID lenght"
 msgstr ""
 
-#: oyranos_monitor.c:404
+#: oyranos_monitor.c:402 oyranos_monitor.c:429
 msgid "Cant read hardware information from device."
 msgstr ""
 
-#: oyranos_monitor.c:505
+#: oyranos_monitor.c:427
+msgid "no EDID available from X properties"
+msgstr ""
+
+#: oyranos_monitor.c:507
 msgid "Could not get Xatom, probably your monitor profile is not set:"
 msgstr ""
 
-#: oyranos_monitor.c:1055 oyranos_monitor.c:1568
+#: oyranos_monitor.c:1052 oyranos_monitor.c:1252 oyranos_monitor.c:1733
 msgid "open X Display failed"
 msgstr ""
 
 #. hack
-#: oyranos_monitor.c:1079
+#: oyranos_monitor.c:1076 oyranos_monitor.c:1276
 msgid "No monitor gamma curves by profile:"
 msgstr ""
 
-#: oyranos_monitor.c:1113
+#: oyranos_monitor.c:1110 oyranos_monitor.c:1310
 msgid "Error obtaining profile"
 msgstr ""
 
-#: oyranos_monitor.c:1120 oyranos_monitor.c:1122
+#: oyranos_monitor.c:1117 oyranos_monitor.c:1119 oyranos_monitor.c:1317
+#: oyranos_monitor.c:1319
 msgid "Error setting up atom"
 msgstr ""
 
-#: oyranos_monitor.c:1210
+#: oyranos_monitor.c:1393
 msgid "Error getting atom"
 msgstr ""
 
-#: oyranos_monitor.c:1456
+#: oyranos_monitor.c:1621
 msgid "XRandR CrtcInfo request failed"
 msgstr ""
 
-#: oyranos_monitor.c:1474
+#: oyranos_monitor.c:1639
 msgid "Xinerama request failed"
 msgstr ""
 
-#: oyranos_monitor.c:1490
+#: oyranos_monitor.c:1655
 msgid "open X Screen failed"
 msgstr ""
 
-#: oyranos_monitor.c:1561
+#: oyranos_monitor.c:1726
 msgid "allocation failed"
 msgstr ""
 
-#: oyranos_monitor.c:1576
+#: oyranos_monitor.c:1741
 msgid "no Screen found"
 msgstr ""
 
-#: oyranos_monitor.c:1687
+#: oyranos_monitor.c:1852
 msgid "less Xinerama monitors than XRandR ones"
 msgstr ""
 
@@ -1366,32 +1379,32 @@ msgstr "Fabricant:   "
 msgid "Could not open meta backend API"
 msgstr ""
 
-#: oyranos_alpha.c:12795 oyranos_alpha.c:12811
+#: oyranos_alpha.c:12796 oyranos_alpha.c:12812
 msgid "with '.' is not allowed"
 msgstr ""
 
-#: oyranos_alpha.c:16540
+#: oyranos_alpha.c:16693
 #, fuzzy
 msgid "No filter"
 msgstr "Ouvrir Profil"
 
-#: oyranos_alpha.c:16550
+#: oyranos_alpha.c:16703
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr ""
 
-#: oyranos_alpha.c:16558
+#: oyranos_alpha.c:16711
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:16567
+#: oyranos_alpha.c:16720
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 
-#: oyranos_alpha.c:16601
+#: oyranos_alpha.c:16754
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:17548
+#: oyranos_alpha.c:17701
 msgid "---"
 msgstr ""
 
@@ -1436,37 +1449,37 @@ msgstr ""
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:329
+#: oyranos_cmm_oyX1.c:393
 msgid "Oyranos X11"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:331
+#: oyranos_cmm_oyX1.c:395
 msgid "The window support backend of Oyranos."
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:335 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
+#: oyranos_cmm_oyX1.c:399 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
 msgid "Kai-Uwe"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:337 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
+#: oyranos_cmm_oyX1.c:401 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:339 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
+#: oyranos_cmm_oyX1.c:403 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:343 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
+#: oyranos_cmm_oyX1.c:407 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
 msgid "newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:345 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
+#: oyranos_cmm_oyX1.c:409 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
 msgid "Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:347 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
+#: oyranos_cmm_oyX1.c:411 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr ""
 
@@ -1633,24 +1646,24 @@ msgstr ""
 
 #. oyFree_ (void*)
 #. defined in oyranos_helper.h
-#: oyranos_helper.h:64
+#: oyranos_helper.h:61
 #, c-format
 msgid "nothing to delete %s"
 msgstr ""
 
 #. oyAllocHelper_ (void*, type, size_t, action)
 #. defined in oyranos_helper.h
-#: oyranos_helper.h:82
+#: oyranos_helper.h:79
 msgid "nothing to allocate - size:"
 msgstr ""
 
-#: oyranos_helper.h:90
+#: oyranos_helper.h:87
 msgid "Can not allocate memory for:"
 msgstr ""
 
 #. oyPostAllocHelper_ (void*, size, action)
 #. defined in oyranos_helper.h
-#: oyranos_helper.h:101
+#: oyranos_helper.h:98
 msgid "nothing allocated"
 msgstr ""
 
