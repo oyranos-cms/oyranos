@@ -2043,7 +2043,8 @@ typedef struct {
 } oyConfig_s;
 
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_New          ( oyObject_s          object );
+               oyConfig_New          ( oyObject_s          object,
+                                       const char        * registration );
 OYAPI oyConfig_s * OYEXPORT
                oyConfig_Copy         ( oyConfig_s        * obj,
                                        oyObject_s          object);
@@ -2058,6 +2059,12 @@ OYAPI int  OYEXPORT
                                        const char        * registration_domain,
                                        oyOptions_s       * options,
                                        oyBlob_s          * data );
+int            oyConfig_Add          ( oyConfig_s        * config,
+                                       const char        * key,
+                                       const char        * value,
+                                       uint32_t            flags );
+OYAPI int  OYEXPORT
+               oyConfig_Save         ( oyConfig_s        * config );
 /*OYAPI oyConfigs_s * OYEXPORT
                oyConfigs_Get         ( oyConfig_s        * config,
                                        oyOptions_s       * options,
@@ -2084,10 +2091,11 @@ typedef struct {
 
 OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_New       ( oyObject_s          object );
-OYAPI oyConfigs_s * OYEXPORT
+OYAPI int  OYEXPORT
                oyConfigs_NewFromDomain(const char        * registration_domain,
                                        oyOptions_s       * options,
-                                       oyObject_s          object );
+                                       oyObject_s          object,
+                                       oyConfigs_s      ** configs );
 OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_Copy      ( oyConfigs_s       * list,
                                        oyObject_s          object);

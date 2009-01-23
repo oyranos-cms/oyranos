@@ -6878,9 +6878,9 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
 
       if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
       {
-        char * tmp = oyFilterRegistrationToText( option_a->registration,
-                                                 oyFILTER_REG_OPTION, 0 );
-        if(oyStrcmp_( tmp, key) == 0)
+        char * key_tmp = oyFilterRegistrationToText( option_a->registration,
+                                                     oyFILTER_REG_OPTION, 0 );
+        if(oyStrcmp_( key_tmp, key) == 0)
         {
           if(option_a->value_type == oyVAL_STRING)
           {
@@ -6909,7 +6909,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
             }
           }
         }
-        oyFree_m_( tmp );
+        oyFree_m_( key_tmp );
       }
 
       oyOption_Release( &option_a );
@@ -12763,9 +12763,9 @@ OYAPI int  OYEXPORT
  *  @param[in]     type                kind of answere in return
  *  @param[in]     allocateFunc        use this or Oyranos standard allocator
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/11/17
+ *  @date    2008/11/22
  */
 char *         oyFilterRegistrationToText (
                                        const char        * registration,
@@ -12823,6 +12823,9 @@ char *         oyFilterRegistrationToText (
       if(tmp)
         tmp[0] = 0;
     }
+    /** oyFILTER_REG_MAX returns the last level which is the key name. */
+    if(type == oyFILTER_REG_MAX)
+      text = oyStringCopy_( texts[texts_n-1], allocateFunc );
 
     oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
   }
@@ -14608,7 +14611,8 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
  *  @date    2009/01/15
  */
 OYAPI oyConfig_s * OYEXPORT
-                   oyConfig_New      ( oyObject_s          object )
+                   oyConfig_New      ( oyObject_s          object,
+                                       const char        * registration )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_CONFIG_S;
@@ -14636,6 +14640,8 @@ OYAPI oyConfig_s * OYEXPORT
   /* ---- end of common object constructor ------- */
 
   s->options = oyOptions_New( s->oy_ );
+  if(registration)
+    s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
 
   return s;
 }
@@ -14662,7 +14668,7 @@ oyConfig_s * oyConfig_Copy_          ( oyConfig_s        * obj,
   if(!obj || !object)
     return s;
 
-  s = oyConfig_New( object );
+  s = oyConfig_New( object, obj->registration );
   error = !s;
 
   if(!error)
@@ -14670,6 +14676,7 @@ oyConfig_s * oyConfig_Copy_          ( oyConfig_s        * obj,
     allocateFunc_ = s->oy_->allocateFunc_;
 
     s->options = oyOptions_Copy( obj->options, s->oy_ );
+    error = !memcpy( s->version, obj->version, 3*sizeof(int) );
   }
 
   if(error)
@@ -14757,6 +14764,133 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
+/** Function oyProfile_FromConfig
+ *  @memberof oyConfig_s
+ *  @brief   look up a profile from a oyConfig_s
+ *
+ *  @param[in]     config              the configuration
+ *  @param[in]     object              user object
+ *  @return                            a profile
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/01/21
+ */
+OYAPI oyProfile_s * OYEXPORT
+               oyProfile_FromConfig  ( oyConfig_s        * config,
+                                       oyObject_s          object)
+{
+  oyProfile_s * p = 0;
+  oyOption_s * o = 0;
+  int error = !config;
+
+  return p;
+}
+
+/** Function oyConfig_Save
+ *  @memberof oyConfig_s
+ *  @brief   store a oyConfig_s in DB
+ *
+ *  @param[in]     config              the configuration
+ *  @return                            0 - good, 1 >= error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/01/21
+ */
+OYAPI int  OYEXPORT
+               oyConfig_Save         ( oyConfig_s        * config )
+{
+  int error = !config;
+  oyOption_s * o = 0;
+  int n,i;
+  char * key_base_name = 0,
+       * key_name = 0,
+       * key_top = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  if(!error)
+  {
+    key_base_name = oySearchEmptyKeyname_( config->registration );
+    error = !key_base_name;
+    if(!error)
+    {
+      STRING_ADD( key_base_name, OY_SLASH );
+    }
+
+    n = oyOptions_Count( config->options );
+    for( i = 0; i < n; ++i )
+    {
+      o = oyOptions_Get( config->options, i );
+      key_top = oyFilterRegistrationToText( o->registration,
+                                            oyFILTER_REG_MAX, 0 );
+
+
+      STRING_ADD( key_name, key_base_name );
+      STRING_ADD( key_name, key_top );
+      if(o->value_type == oyVAL_STRING && o->value && o->value->string)
+        error = oyAddKey_valueComment_(key_name, o->value->string, 0);
+      else if(o->value_type == oyVAL_STRUCT &&
+              o->value && o->value->oy_struct->type_ == oyOBJECT_BLOB_S)
+        error = 0;/*oyAddKeyBlobComment_();*/
+      else
+        WARNcc_S( (oyStruct_s*)o,
+                    "Could not save non string non binary option" );
+
+      oyOption_Release( &o );
+      oyFree_m_( key_name );
+    }
+  }
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return error;
+}
+
+/** Function oyConfig_Add
+ *  @memberof oyConfig_s
+ *  @brief   add a key value pair to a oyConfig_s
+ *
+ *  @param[in]     config              the configuration
+ *  @param[in]     key                 a key name, e.g. "my_key"
+ *  @param[in]     value               a value, e.g. "my_value"
+ *  @param[in]     flags               @see oyOptions_SetFromText()
+ *  @return                            0 - good, 1 >= error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/01/21
+ */
+int            oyConfig_Add          ( oyConfig_s        * config,
+                                       const char        * key,
+                                       const char        * value,
+                                       uint32_t            flags )
+{
+  int error = !config || !key;
+  char * tmp = 0;
+
+  if(!error)
+  {
+    STRING_ADD( tmp, config->registration );
+    if(tmp[oyStrlen_(tmp)-1] != OY_SLASH_C)
+      STRING_ADD( tmp, OY_SLASH );
+
+    if(oyStrrchr_( key, OY_SLASH_C ) != 0)
+      STRING_ADD( tmp, oyStrrchr_( key, OY_SLASH_C )+1 );
+    else
+      STRING_ADD( tmp, key );
+
+    /** We provide basically a wrapper for oyOptions_SetFromText(). */
+    error = oyOptions_SetFromText( config->options, tmp, value, flags );
+
+    oyFree_m_( tmp );
+  }
+
+  return error;
+}
+
 
 /** Function oyConfigs_New
  *  @memberof oyConfigs_s
@@ -14803,17 +14937,26 @@ OYAPI oyConfigs_s * OYEXPORT
  *  @memberof oyConfigs_s
  *  @brief   allocate a new Config object with empty options
  *
+ *  @param[in]     registration_domain                     the backend to call to
+ *  @param[in]     options                                 options to specify the calling into backends
+ *                                                         messages are bound to this object
+ *  @param[in]     object                                  a optional user object
+ *  @param[out]    configs                                 the returned configurations
+ *  @return                                                0 - good, 1 <= error, -1 >= issues,
+ *                                                         look for messages
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/16 (Oyranos: 0.1.10)
  *  @date    2009/01/19
  */
-OYAPI oyConfigs_s * OYEXPORT
+OYAPI int  OYEXPORT
                oyConfigs_NewFromDomain(const char        * registration_domain,
                                        oyOptions_s       * options,
-                                       oyObject_s          object )
+                                       oyObject_s          object,
+                                       oyConfigs_s      ** configs )
 {
   oyConfigs_s * s = 0;
-  int error = !registration_domain;
+  int error = !registration_domain || !configs;
   oyCMMapi8_s * cmm_api8 = 0;
 
   oyExportStart_(EXPORT_CHECK_NO);
@@ -14837,10 +14980,13 @@ OYAPI oyConfigs_s * OYEXPORT
   }
 
   if(!error)
-    s = cmm_api8->oyConfigs_FromPattern( registration_domain, options );
+    error = cmm_api8->oyConfigs_FromPattern( registration_domain, options, &s );
+
+  if(!error)
+    *configs = s; s = 0;
 
   oyExportEnd_();
-  return s;
+  return error;
 }
 
 /** @internal
@@ -18214,6 +18360,8 @@ int      oyGetMonitorInfo            ( const char        * display_name,
     error = funcP( display_name, manufacturer, model, serial, 
                    display_geometry, system_port,
                    edid, allocate_func );
+  else
+    error = 1;
 
   return error;
 }
@@ -18255,6 +18403,8 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
 
   if(funcP)
     screen = funcP( display_name, x, y );
+  else
+    error = 1;
 
   return screen;
 }
@@ -18297,6 +18447,8 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 
   if(funcP)
     text = funcP( display_name, x, y, allocate_func );
+  else
+    error = 1;
 
   return text;
 }
@@ -18336,6 +18488,8 @@ char *   oyGetMonitorProfile         ( const char        * display_name,
 
   if(funcP)
     block = funcP( display_name, size, allocate_func );
+  else
+    error = 1;
 
   return block;
 }
@@ -18372,6 +18526,8 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
 
   if(funcP)
     text = funcP( display_name, allocate_func );
+  else
+    error = 1;
 
   return text;
 }
@@ -18421,6 +18577,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
 
   if(funcP)
     error = funcP( display_name, profil_name );
+  else
+    error = 1;
 
   return error;
 }
@@ -18459,6 +18617,8 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 
   if(funcP)
     error = funcP( display_name );
+  else
+    error = 1;
 
   return error;
 }
