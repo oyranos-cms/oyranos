@@ -129,47 +129,21 @@ int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
-/** Function oyX1Configs_FromPattern
- *  @brief   oyX1 oyCMMapi8_s Xorg monitors
- *
- *  @version Oyranos: 0.1.10
- *  @date    2009/01/19
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- */
-oyConfigs_s *  oyX1Configs_FromPattern (
-                                       const char        * registration,
-                                       oyOptions_s       * options )
+void     oyX1Configs_FromPatternUsage( oyStruct_s        * options )
 {
-  oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0;
-  oyOption_s * o = 0;
-  char * text = 0;
-  char ** texts = 0;
-  int texts_n = 0, i, n,
-      error = 0;
-  const char * value1 = 0,
-             * value2 = 0,
-             * value3 = 0;
-  int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
-                                        oyOBJECT_CMM_API8_S );
-  oyAlloc_f allocateFunc = malloc;
-  oyDeAlloc_f deallocateFunc = free;
-
-  if(!options || !oyOptions_Count( options ))
-  {
     /** oyMSG_WARN should make shure our message is visible. */
-    message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n %s",
+    message( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
              OY_DBG_ARGS_,
       "The following help text informs about the communication protocol.");
-    message( oyMSG_WARN, (oyStruct_s*)options, "%s()\n %s", __func__,
+    message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"list\" will provide a list of available\n"
       " devices. Use the returned values as option \"display_name\" to select a"
-      " device.");
-    message( oyMSG_WARN, (oyStruct_s*)options, "%s()\n %s", __func__,
-      "The presence of option \"properties\" will provide a devices \n"
+      " device. This is a cheap call.");
+    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+      "The presence of option \"properties\" will provide the devices \n"
       " properties. Requires one device identifier returned with the \n"
-      " \"list_all\" option. The properties may cover following entries, wich\n"
-      " can be used as well as filters:\n"
+      " \"list_all\" option. The properties may cover following entries,\n"
+      " which can be used as well as filters:\n"
       " - \"manufacturer\"\n"
       " - \"model\"\n"
       " - \"serial\"\n"
@@ -183,18 +157,60 @@ oyConfigs_s *  oyX1Configs_FromPattern (
       " One option \"device_name\" (specific) will select the according X\n"
       " display. If not the backend will try to get this information from \n"
       " your \"DISPLAY\" environment variable or uses what the system\n"
-      " provides. The option is identical with the entries returned from a\n"
-      " \"list\" request."
+      " provides. The option is identical with the options returned from\n"
+      " a \"list\" request. This call is a expensive one."
        );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+      "The presence of option \"setup\" will setup the device from a profile.\n"
+      " The option \"display_name\" must be present.\n"
+      " The option \"profile_name\" must be present."
+      );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+      "The presence of option \"unset\" will invalidate a profile of a device.\n"
+      " The option \"display_name\" must be present."
+      );
+
+  return;
+}
+
+/** Function oyX1Configs_FromPattern
+ *  @brief   oyX1 oyCMMapi8_s Xorg monitors
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/01/19
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ */
+int            oyX1Configs_FromPattern (
+                                       const char        * registration,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** s )
+{
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0;
+  oyOption_s * o = 0;
+  char ** texts = 0;
+  int texts_n = 0, i,
+      error = !s;
+  const char * value1 = 0,
+             * value2 = 0,
+             * value3 = 0;
+  int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
+                                        oyOBJECT_CMM_API8_S );
+  oyAlloc_f allocateFunc = malloc;
+
+  if(!options || !oyOptions_Count( options ))
+  {
+    /** oyMSG_WARN should make shure our message is visible. */
+    oyX1Configs_FromPatternUsage( (oyStruct_s*)options );
     return 0;
   }
 
-  if(rank)
+  if(rank && error <= 0)
   {
     configs = oyConfigs_New(0);
 
     value1 = oyOptions_FindString( options, "device_name", 0 );
-    //message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);
+    /*message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);*/
 
     value2 = oyOptions_FindString( options, "list", 0 );
     if(value2)
@@ -203,16 +219,21 @@ oyConfigs_s *  oyX1Configs_FromPattern (
 
       for( i = 0; i < texts_n; ++i )
       {
-        config = oyConfig_New(0);
+        config = oyConfig_New( 0, CMM_BASE_REG );
         error = !config;
 
-        if(!error)
+        if(error <= 0)
         error = oyOptions_SetFromText( config->options,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
         oyConfigs_MoveIn( configs, &config, -1 );
       }
+
+      if(error <= 0)
+        *s = configs;
+
+      return error;
     }
 
     value2 = oyOptions_FindString( options, "properties", 0 );
@@ -225,16 +246,22 @@ oyConfigs_s *  oyX1Configs_FromPattern (
 
       if(!value1)
       {
-        message(oyMSG_WARN, (oyStruct_s*)options, "The \"device_name\" argument is missed to select a appropriate device for the \"properties\" call.");
+        message(oyMSG_WARN, (oyStruct_s*)options, "The \"device_name\" argument is\n"
+                " missed to select a appropriate device for the \"properties\" call.");
       }
 
       error = oyGetMonitorInfo_lib( value1,
                &manufacturer, &model, &serial, &display_geometry, &system_port,
-                                    value3 ? &edid : 0, allocateFunc,
+                              &host, value3 ? &edid : 0, allocateFunc,
                                     (oyStruct_s*)options );
  
+      if(error != 0)
+        message( oyMSG_WARN, (oyStruct_s*)options, 
+                 OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
+                 " oyGetMonitorInfo_lib returned with %s; device_name: \"%s\"",
+                 OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)", oyNoEmptyString_m_( value1) );
       {
-        config = oyConfig_New(0);
+        config = oyConfig_New( 0, CMM_BASE_REG );
         error = !config;
         if(!error && value1)
         error = oyOptions_SetFromText( config->options,
@@ -247,18 +274,48 @@ oyConfigs_s *  oyX1Configs_FromPattern (
         OPTIONS_ADD( config->options, display_geometry )
         OPTIONS_ADD( config->options, system_port )
         OPTIONS_ADD( config->options, host )
+        if(!error && edid)
+        {
+          o = oyOption_New( 0, CMM_BASE_REG OY_SLASH "edid" );
+          error = !o;
+          if(!error)
+          error = oyOption_SetFromData( o, edid->ptr, edid->size );
+          if(!error)
+            oyOptions_MoveIn( config->options, &o, -1 );
+          oyBlob_Release( &edid );
+        }
 
         oyConfigs_MoveIn( configs, &config, -1 );
       }
-      if(error)
-        message( oyMSG_WARN, (oyStruct_s*)options, 
-                 OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-               " oyGetMonitorInfo_lib returned with error; device_name: \"%s\"",
-                 OY_DBG_ARGS_, oyNoEmptyString_m_( value1) );
+
+      if(error <= 0)
+        *s = configs;
+
+      return error;
+    }
+
+    value2 = oyOptions_FindString( options, "setup", 0 );
+    value3 = oyOptions_FindString( options, "profile_name", 0 );
+    if(value2 && value1)
+    {
+      error = oyX1MonitorProfileSetup( value1, value3 );
+      return error;
+    }
+
+    value2 = oyOptions_FindString( options, "unset", 0 );
+    if(value2 && value1)
+    {
+      error = oyX1MonitorProfileUnset( value1 );
+      return error;
     }
   }
 
-  return configs;
+  message(oyMSG_WARN, (oyStruct_s*)options, "\n "
+                "This point should not be reached.\n"
+                );
+  oyX1Configs_FromPatternUsage( (oyStruct_s*)options );
+
+  return error;
 }
 
 
