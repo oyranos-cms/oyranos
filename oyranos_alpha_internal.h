@@ -198,8 +198,8 @@ oyCMMapiFilter_s**oyCMMsGetFilterApis_(const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        const char        * registration,
                                        oyOBJECT_e          type,
-                                       int              ** rank_list,
-                                       int               * count );
+                                       uint32_t         ** rank_list,
+                                       uint32_t          * count );
 oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        const char        * registration,
