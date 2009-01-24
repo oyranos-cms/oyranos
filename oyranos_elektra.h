@@ -116,7 +116,9 @@ int     oyAddKey_valueComment_ (const char* keyName,
                                 const char* value, const char* comment);
 int     oyKeySetHasValue_      (const char* keyParentName,
                                 const char* ask_value);
-char*   oySearchEmptyKeyname_  (const char* keyParentName);
+char*   oySearchEmptyKeyname_        ( const char        * keyParentName );
+char **            oyKeySetGetNames_ ( const char        * key_parent_name,
+                                       int               * n );
 
 
 #ifdef __cplusplus

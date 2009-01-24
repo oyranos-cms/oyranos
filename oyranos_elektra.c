@@ -229,6 +229,48 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
   return new_key_name;
 } 
 
+char **            oyKeySetGetNames_ ( const char        * key_parent_name,
+                                       int               * n )
+{
+  int error = !key_parent_name || !n;
+  int rc=0;
+  char* current_name = (char*) calloc (sizeof(char), MAX_PATH);
+  KeySet * my_key_set = 0;
+  Key * current = 0;
+  const char *name = NULL;
+  char ** texts = 0;
+
+  DBG_PROG_START
+
+  name = key_parent_name;
+
+  if(!error)
+    *n = 0;
+
+  if(!error)
+    my_key_set = oyReturnChildrenList_( name, &rc );
+
+  if(my_key_set)
+  {
+    FOR_EACH_IN_KDBKEYSET( current, my_key_set )
+    {
+      keyGetName(current, current_name, MAX_PATH);
+      if(current_name &&
+         oyStrstr_(current_name, name) &&
+         !oyStrrchr_(&((char*)oyStrstr_(current_name, name))[oyStrlen_(name)+1],
+                     OY_SLASH_C ) )
+        oyStringListAddStaticString_( &texts, n,
+                                      oyStrstr_(current_name, name),
+                                      oyAllocateFunc_, oyDeAllocateFunc_);
+    }
+  }
+  ksDel (my_key_set);
+  oyClose_();
+
+  DBG_PROG_ENDE
+  return texts;
+}
+
 int
 oyKeySetHasValue_     (const char* keyParentName, const char* ask_value)
 {
@@ -241,16 +283,14 @@ oyKeySetHasValue_     (const char* keyParentName, const char* ask_value)
   DBG_PROG_START
 
   myKeySet = oyReturnChildrenList_( keyParentName, &rc );
-        if(!myKeySet)
+        if(myKeySet)
         {
           FOR_EACH_IN_KDBKEYSET( current, myKeySet )
           {
             keyGetName(current, value, MAX_PATH);
-            DBG_NUM_S(( value ))
             if(strstr(value, ask_value) != 0 &&
                strlen(value) == strlen(ask_value))
             {
-              DBG_PROG_S((value))
               result = 1;
               break;
             }
