@@ -5274,6 +5274,8 @@ int            oyOption_ValueFromDB  ( oyOption_s        * option )
 {
   int error = !option || !option->registration;
   char * text = 0;
+  oyPointer ptr = 0;
+  size_t size = 0;
 
   oyExportStart_(EXPORT_SETTING);
 
@@ -5285,6 +5287,17 @@ int            oyOption_ValueFromDB  ( oyOption_s        * option )
     {
       oyOption_SetFromText( option, text, 0 );
       oyFree_m_( text );
+    }
+
+  }
+
+  if(!text && !error)
+  {
+    ptr = oyGetKeyBinary_( option->registration, &size, oyAllocateFunc_ );
+    if(ptr && size)
+    {
+      oyOption_SetFromData( option, ptr, size );
+      oyFree_m_( ptr );
     }
   }
 
@@ -5313,6 +5326,7 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
 
   if(!error)
   {
+    /** This is merely a wrapper to oyOption_New() and oyOption_ValueFromDB().*/
     o = oyOption_New( registration, object );
     error = oyOption_ValueFromDB( o );
   }

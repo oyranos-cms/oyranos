@@ -112,6 +112,9 @@ int     oySetBehaviour_        (oyBEHAVIOUR_e type,
 /* elektra key wrappers */
 char*   oyGetKeyString_        (const char       *key_name,
                                 oyAlloc_f         allocFunc );
+oyPointer  oyGetKeyBinary_           ( const char        * key_name,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func );
 int     oyAddKey_valueComment_ (const char* keyName,
                                 const char* value, const char* comment);
 int     oyKeySetHasValue_      (const char* keyParentName,
