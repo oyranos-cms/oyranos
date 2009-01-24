@@ -43,11 +43,11 @@ int          oyObject_Ref            ( oyObject_s          obj );
                                        oyChar            * func_name );*/
 int32_t      oyObject_Hashed_        ( oyObject_s          s );
 
-char **          oyCMMsGetNames_     ( int               * n,
+char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,
                                        const char        * required_cmm );
-char **          oyCMMsGetLibNames_  ( int               * n,
+char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm );
 
 /** \addtogroup alpha Alpha API's
@@ -2293,7 +2293,7 @@ int              oyCMMlibMatchesCMM  ( const char        * lib_name,
  *  @since   2008/12/16 (Oyranos: 0.1.9)
  *  @date    2008/12/16
  */
-char **          oyCMMsGetNames_     ( int               * n,
+char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,
                                        const char        * required_cmm )
@@ -2355,7 +2355,7 @@ char **          oyCMMsGetNames_     ( int               * n,
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2008/12/16
  */
-char **          oyCMMsGetLibNames_  ( int               * n,
+char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm )
 {
   return oyCMMsGetNames_(n, OY_METASUBPATH, 0, required_cmm);
@@ -2855,8 +2855,8 @@ oyCMMapiFilter_s**oyCMMsGetFilterApis_(const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        const char        * registration,
                                        oyOBJECT_e          type,
-                                       int              ** rank_list,
-                                       int               * count )
+                                       uint32_t         ** rank_list,
+                                       uint32_t          * count )
 {
   int error = type != oyOBJECT_CMM_API4_S &&
               type != oyOBJECT_CMM_API6_S &&
@@ -2864,7 +2864,7 @@ oyCMMapiFilter_s**oyCMMsGetFilterApis_(const char        * cmm_required,
               type != oyOBJECT_CMM_API8_S;
   char prefered_cmm[5] = {0,0,0,0,0};
   oyCMMapiFilter_s ** api = 0;
-  int * rank_list_ = 0;
+  uint32_t * rank_list_ = 0;
 
   if(!error && cmm_required)
   {
@@ -2893,7 +2893,7 @@ oyCMMapiFilter_s**oyCMMsGetFilterApis_(const char        * cmm_required,
   {
     oyCMMapi5_s * api5 = oyCMMGetMetaApi_( 0, queries, registration );
     char ** files = 0;
-    int  files_n = 0;
+    uint32_t  files_n = 0;
     int i, j, k = 0, match_j = -1, ret, match_i = -1, rank = 0, old_rank = 0;
     char * match = 0, * reg = 0;
     oyCMMInfo_s * info = 0;
@@ -2924,7 +2924,7 @@ oyCMMapiFilter_s**oyCMMsGetFilterApis_(const char        * cmm_required,
 
             if(!rank_list_ && !api)
             {                                //  TODO @todo error
-              oyAllocHelper_m_( *rank_list, int, files_n+1, 0, return 0 );
+              oyAllocHelper_m_( *rank_list, uint32_t, files_n+1, 0, return 0 );
               oyAllocHelper_m_( api, oyCMMapiFilter_s*, files_n+1, 0, return 0);
               rank_list_ = *rank_list;
             }
@@ -3084,7 +3084,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
   if(!error)
   {
     char ** files = 0;
-    int  files_n = 0;
+    uint32_t  files_n = 0;
     int i, oy_compatibility = 0;
     char cmm[5] = {0,0,0,0,0};
 
@@ -5213,8 +5213,8 @@ static int oy_option_id_ = 0;
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-oyOption_s *   oyOption_New          ( oyObject_s          object,
-                                       const char        * registration )
+oyOption_s *   oyOption_New          ( const char        * registration,
+                                       oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_OPTION_S;
@@ -5257,6 +5257,67 @@ oyOption_s *   oyOption_New          ( oyObject_s          object,
   }
 
   return s;
+}
+
+/** Function oyOption_ValueFromDB
+ *  @memberof oyOption_s
+ *  @brief   value filled from DB if available
+ *
+ *  @param         option              the option
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
+ *  @date    2009/01/24
+ */
+int            oyOption_ValueFromDB  ( oyOption_s        * option )
+{
+  int error = !option || !option->registration;
+  char * text = 0;
+
+  oyExportStart_(EXPORT_SETTING);
+
+  if(!error)
+  {
+    text = oyGetKeyString_( option->registration, oyAllocateFunc_ );
+
+    if(text)
+    {
+      oyOption_SetFromText( option, text, 0 );
+      oyFree_m_( text );
+    }
+  }
+
+  oyExportEnd_();
+
+  return error;
+}
+
+/** Function oyOption_FromDB
+ *  @memberof oyOption_s
+ *  @brief   new option with registration and value filled from DB if available
+ *
+ *  @param         registration        no or full qualified registration
+ *  @param         object              the optional object
+ *  @return                            the option
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
+ *  @date    2009/01/24
+ */
+oyOption_s *   oyOption_FromDB       ( const char        * registration,
+                                       oyObject_s          object )
+{
+  int error = !registration;
+  oyOption_s * o = 0;
+
+  if(!error)
+  {
+    o = oyOption_New( registration, object );
+    error = oyOption_ValueFromDB( o );
+  }
+
+  return o;
 }
 
 /**
@@ -5327,7 +5388,7 @@ oyOption_s * oyOption_Copy_          ( oyOption_s        * option,
   if(!option || !object)
     return s;
 
-  s = oyOption_New( object, 0 );
+  s = oyOption_New( 0, object );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
   deallocateFunc_ = s->oy_->deallocateFunc_;
@@ -5893,6 +5954,30 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
   return ptr;
 }
 
+/** Function oyOption_SetRegistration
+ *  @memberof oyOption_s
+ *  @brief   get the registration
+ *
+ *  @param[in]     option              the option
+ *  @param[in]     registration        the option's registration and key name
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
+ *  @date    2009/01/24
+ */
+int            oyOption_SetRegistration (
+                                       oyOption_s        * option,
+                                       const char        * registration )
+{
+  int error = !option;
+  if(!error)
+    option->registration = oyStringCopy_( registration,
+                                          option->oy_->allocateFunc_ );
+
+  return error;
+}
+
 
 
 
@@ -6038,7 +6123,7 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
   if(error)
     return s;
 
-  s = oyOption_New( object, 0 );
+  s = oyOption_New( 0, object );
   if(!s)
     return s;
 
@@ -6115,7 +6200,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
         STRING_ADD( tmp, (*texts)[i] );
       }
 
-      o = oyOption_New(0, tmp);
+      o = oyOption_New( tmp, 0 );
       o->value = o->oy_->allocateFunc_(sizeof(oyValue_u));
 
       o->value_type = oyVAL_STRING;
@@ -6388,10 +6473,12 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilter_s        * filter,
 
     /*  6. get stored values */
     n = oyOptions_Count( s );
-    for(i = 0; i < n; ++i)
+    for(i = 0; i < n && !error; ++i)
     {
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
+      /* ask Elektra */
+      error = oyOption_ValueFromDB( o );
       oyOption_Release( &o );
     }
     error = oyOptions_DoFilter ( s, flags, type_txt );
@@ -6696,7 +6783,7 @@ int            oyOptions_Add         ( oyOptions_s       * options,
   if(!error)
   {
     o_opt = oyFilterRegistrationToText( option->registration,
-                                        oyFILTER_REG_OPTION, 0 );
+                                        oyFILTER_REG_MAX, 0 );
     o_top = oyFilterRegistrationToText( option->registration,
                                         oyFILTER_REG_TOP, 0 );
     n = oyOptions_Count( options );
@@ -6705,7 +6792,7 @@ int            oyOptions_Add         ( oyOptions_s       * options,
     {
       tmp = oyOptions_Get( options, i );
       l_opt = oyFilterRegistrationToText( tmp->registration,
-                                          oyFILTER_REG_OPTION, 0 );
+                                          oyFILTER_REG_MAX, 0 );
       l_top = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_TOP, 0 );
       if(oyStrcmp_(l_opt, o_opt) == 0)
@@ -6954,7 +7041,7 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
     if((!o && oyToCreateNew_m(flags)) ||
         oyToAddAlways_m(flags))
     {
-      o = oyOption_New( obj->oy_, registration );
+      o = oyOption_New( registration, obj->oy_ );
       error = !o;
 
       if(!error)
@@ -14611,8 +14698,8 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
  *  @date    2009/01/15
  */
 OYAPI oyConfig_s * OYEXPORT
-                   oyConfig_New      ( oyObject_s          object,
-                                       const char        * registration )
+                   oyConfig_New      ( const char        * registration,
+                                       oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_CONFIG_S;
@@ -14668,7 +14755,7 @@ oyConfig_s * oyConfig_Copy_          ( oyConfig_s        * obj,
   if(!obj || !object)
     return s;
 
-  s = oyConfig_New( object, obj->registration );
+  s = oyConfig_New( obj->registration, object );
   error = !s;
 
   if(!error)
@@ -15228,16 +15315,16 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                  oyConfigDomainList  ( const char        * registration_pattern,
                                        char            *** list,
-                                       int               * count,
-                                       int              ** rank_list,
+                                       uint32_t          * count,
+                                       uint32_t         ** rank_list,
                                        oyAlloc_f           allocateFunc )
 {
   oyCMMapiFilter_s ** apis = 0;
   int error = !list || !count;
   char ** reg_lists = 0;
   int i = 0,
-      reg_list_n = 0,
-      apis_n = 0;
+      reg_list_n = 0;
+  uint32_t apis_n = 0;
 
   oyExportStart_(EXPORT_CHECK_NO);
 
@@ -15272,6 +15359,83 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+/** Function oyConfigs_FromDB
+ *  @memberof oyConfigs_s
+ *  @brief   get all oyConfigs_s and their matches to a set of options
+ *
+ *  @param[in]     registration        the filter
+ *  @param[in]     options             the match options
+ *  @param[out]    rank_list           the rank fitting to list
+ *  @param[in]     object              a optional user object
+ *  @return                            the found configurations
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/23 (Oyranos: 0.1.10)
+ *  @date    2009/01/23
+ */
+OYAPI oyConfigs_s * OYEXPORT
+                 oyConfigs_FromDB    ( const char        * registration,
+                                       oyOptions_s       * options,
+                                       uint32_t         ** rank_list,
+                                       oyObject_s          object )
+{
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0;
+  oyOption_s * o = 0;
+  char ** texts = 0,
+       ** key_set_names = 0,
+       ** config_key_names = 0;
+  uint32_t count = 0,
+         * d_rank_list = 0,
+           max_rank = 0;
+  int error = !registration;
+  int i, j, k, max_rank_pos = -1, n = 0, k_n = 0;
+
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  if(!error)
+  {
+    error = oyConfigDomainList( registration, &texts, &count, &d_rank_list, 0 );
+    if(count)
+      configs = oyConfigs_New( 0 );
+
+    for(i = 0; i < count; ++i)
+    {
+      key_set_names = oyKeySetGetNames_( texts[i], &n );
+
+      if(!error)
+      for(j = 0; j < n; ++j)
+      {
+        config_key_names = oyKeySetGetNames_( key_set_names[j], &k_n );
+
+        config = oyConfig_New( texts[i], object );
+        error = !config;
+
+        for(k = 0; k < k_n; ++k)
+        {
+          if(!error)
+            o = oyOption_FromDB( config_key_names[k], object );
+          error = !o;
+          if(!error)
+            error = oyOptions_Add( config->options, o, -1, 0 );
+          else
+          {
+            WARNcc1_S( (oyStruct_s*) options, "Could not generate key %s",
+                       config_key_names[k] );
+            break;
+          }
+          oyOption_Release( &o );
+        }
+        oyConfigs_MoveIn( configs, &config, -1 );
+      }
+    }
+
+    oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
+  }
+
+  oyExportEnd_();
+  return configs;
+}
 
 
 

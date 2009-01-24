@@ -572,8 +572,10 @@ typedef struct {
   uint32_t             flags;          /**< | oyOPTIONATTRIBUTE_e */
 } oyOption_s;
 
-oyOption_s *   oyOption_New          ( oyObject_s          object,
-                                       const char        * registration );
+oyOption_s *   oyOption_New          ( const char        * registration,
+                                       oyObject_s          object );
+oyOption_s *   oyOption_FromDB       ( const char        * registration,
+                                       oyObject_s          object );
 oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
                                        oyObject_s          object );
 int            oyOption_Release      ( oyOption_s       ** option );
@@ -597,6 +599,10 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
 oyPointer      oyOption_GetData      ( oyOption_s        * option,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
+int            oyOption_SetRegistration (
+                                       oyOption_s        * option,
+                                       const char        * registration );
+int            oyOption_ValueFromDB  ( oyOption_s        * option );
 
 /**
  *  @struct  oyOptions_s
@@ -2033,7 +2039,7 @@ typedef struct {
   /** This property contains the identifier for communication with a Oyranos
    *  or a backend through Oyranos. It defines the basic key path name to store
    *  configuration.\n
-   *  e.g. "shared/freedesktop.org/colour/config.monitor.xorg.1" */
+   *  e.g. "shared/freedesktop.org/colour/config.monitor.xorg" */
   char               * registration;
   int                  version[3];     /**< as for oyCMMapi4_s::version */
 
@@ -2043,8 +2049,8 @@ typedef struct {
 } oyConfig_s;
 
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_New          ( oyObject_s          object,
-                                       const char        * registration );
+               oyConfig_New          ( const char        * registration,
+                                       oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
                oyConfig_Copy         ( oyConfig_s        * obj,
                                        oyObject_s          object);
@@ -2065,10 +2071,6 @@ int            oyConfig_Add          ( oyConfig_s        * config,
                                        uint32_t            flags );
 OYAPI int  OYEXPORT
                oyConfig_Save         ( oyConfig_s        * config );
-/*OYAPI oyConfigs_s * OYEXPORT
-               oyConfigs_Get         ( oyConfig_s        * config,
-                                       oyOptions_s       * options,
-                                       oyBlob_s          * data );*/
 
 /** @struct  oyConfigs_s
  *  @brief   a Configs list
@@ -2116,11 +2118,16 @@ OYAPI oyConfig_s * OYEXPORT
 OYAPI int  OYEXPORT
                  oyConfigs_Count     ( oyConfigs_s       * list );
 OYAPI int  OYEXPORT
-                 oyConfigDomainList  ( const char        * filter,
+                 oyConfigDomainList  ( const char        * registration_pattern,
                                        char            *** list,
-                                       int               * count,
-                                       int              ** rank_list,
+                                       uint32_t          * count,
+                                       uint32_t         ** rank_list,
                                        oyAlloc_f           allocateFunc );
+OYAPI oyConfigs_s * OYEXPORT
+                 oyConfigs_FromDB    ( const char        * registration,
+                                       oyOptions_s       * options,
+                                       uint32_t         ** rank_list,
+                                       oyObject_s          object );
 
 
 
