@@ -219,7 +219,7 @@ int            oyX1Configs_FromPattern (
 
       for( i = 0; i < texts_n; ++i )
       {
-        config = oyConfig_New( 0, CMM_BASE_REG );
+        config = oyConfig_New( CMM_BASE_REG, 0 );
         error = !config;
 
         if(error <= 0)
@@ -261,7 +261,7 @@ int            oyX1Configs_FromPattern (
                  " oyGetMonitorInfo_lib returned with %s; device_name: \"%s\"",
                  OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)", oyNoEmptyString_m_( value1) );
       {
-        config = oyConfig_New( 0, CMM_BASE_REG );
+        config = oyConfig_New( CMM_BASE_REG, 0 );
         error = !config;
         if(!error && value1)
         error = oyOptions_SetFromText( config->options,
@@ -276,7 +276,7 @@ int            oyX1Configs_FromPattern (
         OPTIONS_ADD( config->options, host )
         if(!error && edid)
         {
-          o = oyOption_New( 0, CMM_BASE_REG OY_SLASH "edid" );
+          o = oyOption_New( CMM_BASE_REG OY_SLASH "edid", 0 );
           error = !o;
           if(!error)
           error = oyOption_SetFromData( o, edid->ptr, edid->size );
