@@ -318,6 +318,36 @@ int            oyX1Configs_FromPattern (
   return error;
 }
 
+/** Function oyX1Config_Check
+ *  @brief   oyX1 oyCMMapi8_s Xorg monitor check
+ *
+ *  @param[in]     config              the monitor device configuration
+ *  @return                            rank value
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/01/26
+ *  @since   2009/01/26 (Oyranos: 0.1.10)
+ */
+int            oyX1Config_Check      ( oyConfig_s        * config )
+{
+  int error = !config,
+      rank = 1;
+
+  if(!config)
+  {
+    message(oyMSG_DBG, (oyStruct_s*)config, OY_DBG_FORMAT_ "\n "
+                "No config argument provided.\n", OY_DBG_ARGS_ );
+    return 0;
+  }
+
+  if(error <= 0)
+  {
+    /* evaluate a driver specific part of the options */
+  }
+
+  return rank;
+}
+
 
 /** @instance oyX1_api8
  *  @brief    oyX1 oyCMMapi8_s implementations
@@ -341,7 +371,7 @@ oyCMMapi8_s oyX1_api8 = {
 
   0,                         /**< oyCMMapi5_s * api5_ */
   oyX1Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
-  0/*oyX1Config_Match*/      /**< oyConfig_Check_f oyConfig_Match */
+  oyX1Config_Check           /**< oyConfig_Check_f oyConfig_Check */
 };
 
 

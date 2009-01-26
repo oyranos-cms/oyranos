@@ -980,12 +980,12 @@ typedef int      (*oyConfigs_FromPattern_f) (
  *  @memberof oyCMMapi8_s
  *
  *  @param   config                    the to be checked configuration
- *  @return                            0 - good, >= 1 - error + a message should
- *                                     be sent
+ *  @return                            0 - indifferent, >= 1 - rank, <= -1 error
+ *                                     + a message should be sent
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/16 (Oyranos: 0.1.10)
- *  @date    2009/01/16
+ *  @date    2009/01/26
  */
 typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
 
@@ -1023,10 +1023,11 @@ typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
  *  @date    2009/01/19
  */
 struct oyCMMapi8_s {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
+  oyOBJECT_e           type;           /**< struct type oyOBJECT_CMM_API8_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< @private base object */
+
   oyCMMapi_s     * next;
 
   oyCMMInit_f      oyCMMInit;          /**< */
@@ -1048,7 +1049,7 @@ struct oyCMMapi8_s {
   oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
 
   oyConfigs_FromPattern_f oyConfigs_FromPattern; /**< obtain matching configs */
-  oyConfig_Check_f oyConfig_Match;     /**< test config */
+  oyConfig_Check_f oyConfig_Check;     /**< test config */
 };
 
 

@@ -7072,6 +7072,963 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
   return error;
 }
 
+
+/** Function oyConfig_New
+ *  @memberof oyConfig_s
+ *  @brief   allocate a new Config object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/15 (Oyranos: 0.1.10)
+ *  @date    2009/01/15
+ */
+OYAPI oyConfig_s * OYEXPORT
+                   oyConfig_New      ( const char        * registration,
+                                       oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CONFIG_S;
+# define STRUCT_TYPE oyConfig_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyConfig_Copy;
+  s->release = (oyStruct_Release_f) oyConfig_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->options = oyOptions_New( s->oy_ );
+  if(registration)
+    s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
+
+  return s;
+}
+
+/** Function oyConfig_FromDomain
+ *  @brief   search a configuration in the DB for a configuration from backend
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     domain_config       the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/26 (Oyranos: 0.1.10)
+ *  @date    2009/01/26
+ */
+OYAPI oyConfig_s * OYEXPORT
+               oyConfig_FromDomain   ( oyConfig_s        * domain_config,
+                                       int32_t           * rank_value,
+                                       oyObject_s          object)
+{
+  int error = !domain_config;
+  int rank = 0, max_rank = 0, i, n;
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0, * max_config = 0;
+
+  if(!error)
+  {
+    configs = oyConfigs_FromDB( domain_config->registration, 0 );
+
+    n = oyConfigs_Count( configs );
+
+    for( i = 0; i < n; ++i )
+    {
+      config = oyConfigs_Get( configs, i );
+
+      rank = oyConfig_Compare( domain_config, config, &rank );
+      if(max_rank < rank)
+      {
+        max_rank = rank;
+        max_config = oyConfig_Copy( config, 0 );
+      }
+
+      oyConfig_Release( &config );
+    }
+  }
+
+  if(!error && rank_value)
+    *rank_value = max_rank;
+
+  return max_config;
+}
+
+/** @internal
+ *  Function oyConfig_Copy_
+ *  @memberof oyConfig_s
+ *  @brief   real copy a Config object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/15 (Oyranos: 0.1.10)
+ *  @date    2009/01/15
+ */
+oyConfig_s * oyConfig_Copy_          ( oyConfig_s        * obj,
+                                       oyObject_s          object )
+{
+  oyConfig_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyConfig_New( obj->registration, object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+    s->options = oyOptions_Copy( obj->options, s->oy_ );
+    error = !memcpy( s->version, obj->version, 3*sizeof(int) );
+  }
+
+  if(error)
+    oyConfig_Release( &s );
+
+  return s;
+}
+
+/** Function oyConfig_Copy
+ *  @memberof oyConfig_s
+ *  @brief   copy or reference a Config object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/15 (Oyranos: 0.1.10)
+ *  @date    2009/01/15
+ */
+OYAPI oyConfig_s * OYEXPORT
+                   oyConfig_Copy     ( oyConfig_s        * obj,
+                                       oyObject_s          object )
+{
+  oyConfig_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_CONFIG_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyConfig_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyConfig_Release
+ *  @memberof oyConfig_s
+ *  @brief   release and possibly deallocate a Config object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/15 (Oyranos: 0.1.10)
+ *  @date    2009/01/15
+ */
+OYAPI int  OYEXPORT
+               oyConfig_Release      ( oyConfig_s       ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyConfig_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_CONFIG_S)
+  {
+    WARNc_S(("Attempt to release a non oyConfig_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyOptions_Release( &s->options );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** Function oyProfile_FromConfig
+ *  @memberof oyConfig_s
+ *  @brief   look up a profile from a oyConfig_s
+ *
+ *  @param[in]     config              the configuration
+ *  @param[in]     object              user object
+ *  @return                            a profile
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/01/21
+ */
+OYAPI oyProfile_s * OYEXPORT
+               oyProfile_FromConfig  ( oyConfig_s        * config,
+                                       oyObject_s          object)
+{
+  /*oyProfile_s * p = 0;
+  oyOption_s * o = 0;
+  int error = !config;
+
+  return p;*/
+}
+
+/** Function oyConfig_Add
+ *  @memberof oyConfig_s
+ *  @brief   add a key value pair to a oyConfig_s
+ *
+ *  @param[in]     config              the configuration
+ *  @param[in]     key                 a key name, e.g. "my_key"
+ *  @param[in]     value               a value, e.g. "my_value"
+ *  @param[in]     flags               @see oyOptions_SetFromText()
+ *  @return                            0 - good, 1 >= error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/01/21
+ */
+int            oyConfig_Add          ( oyConfig_s        * config,
+                                       const char        * key,
+                                       const char        * value,
+                                       uint32_t            flags )
+{
+  int error = !config || !key;
+  char * tmp = 0;
+
+  if(!error)
+  {
+    STRING_ADD( tmp, config->registration );
+    if(tmp[oyStrlen_(tmp)-1] != OY_SLASH_C)
+      STRING_ADD( tmp, OY_SLASH );
+
+    if(oyStrrchr_( key, OY_SLASH_C ) != 0)
+      STRING_ADD( tmp, oyStrrchr_( key, OY_SLASH_C )+1 );
+    else
+      STRING_ADD( tmp, key );
+
+    /** We provide basically a wrapper for oyOptions_SetFromText(). */
+    error = oyOptions_SetFromText( config->options, tmp, value, flags );
+
+    oyFree_m_( tmp );
+  }
+
+  return error;
+}
+
+/** Function oyConfig_SaveToDB
+ *  @memberof oyConfig_s
+ *  @brief   store a oyConfig_s in DB
+ *
+ *  @param[in]     config              the configuration
+ *  @return                            0 - good, 1 >= error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/01/21
+ */
+OYAPI int  OYEXPORT
+               oyConfig_SaveToDB     ( oyConfig_s        * config )
+{
+  int error = !config;
+  oyOption_s * o = 0;
+  int n,i;
+  char * key_base_name = 0,
+       * key_name = 0,
+       * key_top = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  if(!error)
+  {
+    key_base_name = oySearchEmptyKeyname_( config->registration );
+    error = !key_base_name;
+    if(!error)
+    {
+      STRING_ADD( key_base_name, OY_SLASH );
+    }
+
+    n = oyOptions_Count( config->options );
+    for( i = 0; i < n; ++i )
+    {
+      o = oyOptions_Get( config->options, i );
+      key_top = oyFilterRegistrationToText( o->registration,
+                                            oyFILTER_REG_MAX, 0 );
+
+
+      STRING_ADD( key_name, key_base_name );
+      STRING_ADD( key_name, key_top );
+      if(o->value_type == oyVAL_STRING && o->value && o->value->string)
+        error = oyAddKey_valueComment_(key_name, o->value->string, 0);
+      else if(o->value_type == oyVAL_STRUCT &&
+              o->value && o->value->oy_struct->type_ == oyOBJECT_BLOB_S)
+        error = 0;/*oyAddKeyBlobComment_();*/
+      else
+        WARNcc_S( (oyStruct_s*)o,
+                    "Could not save non string non binary option" );
+
+      oyOption_Release( &o );
+      oyFree_m_( key_name );
+    }
+  }
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return error;
+}
+
+
+/** Function oyConfig_Compare
+ *  @brief   check for matching to a given pattern
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     domain_config       the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[in]     pattern             the to be compared configuration from
+ *                                     elsewhere
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/26 (Oyranos: 0.1.10)
+ *  @date    2009/01/26
+ */
+int            oyConfig_Compare      ( oyConfig_s        * domain_config,
+                                       oyConfig_s        * pattern,
+                                       int32_t           * rank_value )
+{
+  int error = !domain_config || pattern;
+  int domain_n, pattern_n, i, j,
+      rank = 0,
+      d_rank = 0;
+  oyOption_s * d = 0,
+             * p = 0;
+  char * d_opt = 0, * d_val = 0,
+       * p_opt = 0, * p_val = 0;
+
+  if(!error)
+
+  if(!error)
+  {
+    domain_n = oyOptions_Count( domain_config->options );
+    pattern_n = oyOptions_Count( pattern->options );
+    for(i = 0; i < domain_n; ++i)
+    {
+      d = oyOptions_Get( domain_config->options, i );
+      d_opt = oyFilterRegistrationToText( d->registration, oyFILTER_REG_MAX, 0);
+      d_val = oyOption_GetValueText( d, oyAllocateFunc_ );
+
+      d_rank = oyConfig_DomainRank( domain_config );
+      if(d_rank > 0 && d_val && d_opt)
+      for( j = 0; j < pattern_n; ++j )
+      {
+        p = oyOptions_Get( pattern->options, j );
+
+        p_opt = oyFilterRegistrationToText( p->registration, oyFILTER_REG_MAX,
+                                            0 );
+
+        if(p_opt && oyStrcmp_(d_opt, p_opt) == 0)
+        {
+          p_val = oyOption_GetValueText( p, oyAllocateFunc_ );
+
+          /** Option name is equal and and value matches : increase rank value*/
+          if(p_val && oyStrstr_( d_opt, p_opt ))
+          {
+            ++rank;
+
+            oyFree_m_(p_val);
+          }
+        }
+
+        /*
+        rank += oyFilterRegistrationMatch( d->registration, p->registration,
+                                           oyOBJECT_CMM_API8_S); */
+
+        oyOption_Release( &p );
+      }
+      oyOption_Release( &d );
+    }
+  }
+
+  if(rank_value)
+    *rank_value = rank;
+
+  return error;
+}
+
+/** Function oyConfig_DomainRank
+ *  @brief   check for being recognised by a given backend
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     config              the configuration to be checked
+ *                                     wether or not the backend can make
+ *                                     sense of it and support the data
+ *  @return                            0 - indifferent, <= -1 - no fit
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/26 (Oyranos: 0.1.10)
+ *  @date    2009/01/26
+ */
+OYAPI int  OYEXPORT
+               oyConfig_DomainRank   ( oyConfig_s        * config )
+{
+  oyCMMapiFilter_s ** apis = 0;
+  int error = !config;
+  int i = 0,
+      rank = 0;
+  uint32_t * rank_list = 0,
+           max_rank = 0;
+  uint32_t apis_n = 0;
+  oyCMMapi8_s * cmm_api8 = 0;
+
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  if(!error)
+  {
+    apis = oyCMMsGetFilterApis_( 0, 0, config->registration,
+                                 oyOBJECT_CMM_API8_S,
+                                 &rank_list, &apis_n);
+    error = !apis;
+  }
+
+  if(!error)
+  {
+    for(i = 0; i < apis_n; ++i)
+    {
+      cmm_api8 = (oyCMMapi8_s*) apis[i];
+
+      /** Ask the backend if it wants later on to accept this configuration. */
+      rank = cmm_api8->oyConfig_Check( config ) * rank_list[i];
+      if(max_rank < rank)
+        max_rank = rank;
+
+      if(cmm_api8->release)
+        cmm_api8->release( (oyStruct_s**)&cmm_api8 );
+    }
+  }
+
+  if(apis)
+    oyFree_m_( apis );
+
+  if(error && max_rank >= 0)
+    rank = -1;
+  else
+    rank = max_rank;
+
+  oyExportEnd_();
+  return rank;
+}
+
+
+
+/** Function oyConfigs_New
+ *  @memberof oyConfigs_s
+ *  @brief   allocate a new Configs list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI oyConfigs_s * OYEXPORT
+                   oyConfigs_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CONFIGS_S;
+# define STRUCT_TYPE oyConfigs_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyConfigs_Copy;
+  s->release = (oyStruct_Release_f) oyConfigs_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->list_ = oyStructList_New( 0 );
+
+  return s;
+}
+
+/** Function oyConfigs_NewFromDomain
+ *  @memberof oyConfigs_s
+ *  @brief   send a request to a configuration backend
+ *
+ *  The convention an empty options argument should be send an Warning message
+ *  containing intructions on how to talk with the backend as a fallback for
+ *  programmers. Otherwise the calls are pure convention and depend on the usage
+ *  and agreement of the partners.
+ *
+ *  For the convention to call to colour devices
+ *  @see oyX1Configs_FromPatternUsage().
+ *
+ *  @param[in]     registration_domain                     the backend to call to
+ *  @param[in]     options                                 options to specify the calling into backends
+ *                                                         messages are bound to this object
+ *  @param[in]     object                                  a optional user object
+ *  @param[out]    configs                                 the returned configurations
+ *  @return                                                0 - good, 1 <= error, -1 >= issues,
+ *                                                         look for messages
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/16 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI int  OYEXPORT
+               oyConfigs_NewFromDomain(const char        * registration_domain,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object,
+                                       oyConfigs_s      ** configs )
+{
+  oyConfigs_s * s = 0;
+  int error = !registration_domain || !configs;
+  oyCMMapi8_s * cmm_api8 = 0;
+
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  if(!error)
+  {
+    s = oyConfigs_New( object );
+    error = !s;
+  }
+  /**
+   *  1. first we search for oyCMMapi8_s complex config support matching to our
+   *     registration_domain
+   *  2. if we find a backend, we ask for the options
+   *  3. add the options to the config (in the backend)
+   */
+  if(!error)
+  {
+    cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0,0, registration_domain,
+                                                     oyOBJECT_CMM_API8_S );
+    error = !cmm_api8;
+  }
+
+  if(!error)
+    error = cmm_api8->oyConfigs_FromPattern( registration_domain, options, &s );
+
+  if(!error)
+    *configs = s; s = 0;
+
+  oyExportEnd_();
+  return error;
+}
+
+/** @internal
+ *  Function oyConfigs_Copy_
+ *  @memberof oyConfigs_s
+ *  @brief   real copy a Configs object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+oyConfigs_s * oyConfigs_Copy_
+                                     ( oyConfigs_s       * obj,
+                                       oyObject_s          object )
+{
+  oyConfigs_s * s = 0;
+  int error = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyConfigs_New( object );
+  error = !s;
+
+  if(!error)
+    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
+
+  if(error)
+    oyConfigs_Release( &s );
+
+  return s;
+}
+
+/** Function oyConfigs_Copy
+ *  @memberof oyConfigs_s
+ *  @brief   copy or reference a Configs list
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI oyConfigs_s * OYEXPORT
+                   oyConfigs_Copy ( oyConfigs_s       * obj,
+                                       oyObject_s          object )
+{
+  oyConfigs_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_CONFIGS_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyConfigs_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyConfigs_Release
+ *  @memberof oyConfigs_s
+ *  @brief   release and possibly deallocate a Configs list
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI int  OYEXPORT
+               oyConfigs_Release     ( oyConfigs_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyConfigs_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_CONFIGS_S)
+  {
+    WARNc_S(("Attempt to release a non oyConfigs_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyStructList_Release( &s->list_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
+/** Function oyConfigs_MoveIn
+ *  @memberof oyConfigs_s
+ *  @brief   add a element to a Configs list
+ *
+ *  @param[in]     list                list
+ *  @param[in,out] obj                 list element
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI int  OYEXPORT
+                 oyConfigs_MoveIn    ( oyConfigs_s   * list,
+                                       oyConfig_s   ** obj,
+                                       int                 pos )
+{
+  oyConfigs_s * s = list;
+  int error = !s || s->type_ != oyOBJECT_CONFIGS_S;
+
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_CONFIG_S)
+  {
+    if(!s)
+    {
+      s = oyConfigs_New(0);
+      error = !s;
+    }                                  
+
+    if(!error && !s->list_)
+    {
+      s->list_ = oyStructList_New( 0 );
+      error = !s->list_;
+    }
+      
+    if(!error)
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+  }   
+  
+  return error;
+}
+
+/** Function oyConfigs_ReleaseAt
+ *  @memberof oyConfigs_s
+ *  @brief   release a element from a Configs list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI int  OYEXPORT
+                  oyConfigs_ReleaseAt ( oyConfigs_s * list,
+                                       int                 pos )
+{ 
+  int error = !list;
+
+  if(!error && list->type_ != oyOBJECT_CONFIGS_S)
+    error = 1;
+  
+  if(!error)
+    oyStructList_ReleaseAt( list->list_, pos );
+
+  return error;
+}
+
+/** Function oyConfigs_Get
+ *  @memberof oyConfigs_s
+ *  @brief   get a element of a Configs list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI oyConfig_s * OYEXPORT
+                 oyConfigs_Get       ( oyConfigs_s   * list,
+                                       int                 pos )
+{       
+  if(list && list->type_ == oyOBJECT_CONFIGS_S)
+    return (oyConfig_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_CONFIG_S ); 
+  else  
+    return 0;
+}   
+
+/** Function oyConfigs_Count
+ *  @memberof oyConfigs_s
+ *  @brief   count the elements in a Configs list
+ *
+ *  @param[in,out] list                the list
+ *  @return                            element count
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI int  OYEXPORT
+                 oyConfigs_Count     ( oyConfigs_s   * list )
+{       
+  if(list && list->type_ == oyOBJECT_CONFIGS_S)
+    return oyStructList_Count( list->list_ );
+  else return 0;
+}
+
+/** Function oyConfigDomainList
+ *  @memberof oyConfigs_s
+ *  @brief   count and show the global oyConfigs_s suppliers
+ *
+ *  @param[in]     registration_pattern a optional filter
+ *  @param[out]    list                the list
+ *  @param[out]    count               the list count
+ *  @param[out]    rank_list           the rank fitting to list
+ *  @param[in]     allocateFunc        the user allocator for list
+ *  @return                            0 - good, >= 1 - error, <= -1 unknown
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+OYAPI int  OYEXPORT
+                 oyConfigDomainList  ( const char        * registration_pattern,
+                                       char            *** list,
+                                       uint32_t          * count,
+                                       uint32_t         ** rank_list,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyCMMapiFilter_s ** apis = 0;
+  int error = !list || !count;
+  char ** reg_lists = 0;
+  int i = 0,
+      reg_list_n = 0;
+  uint32_t apis_n = 0;
+
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  if(!error)
+  {
+    apis = oyCMMsGetFilterApis_( 0, 0, registration_pattern,
+                                 oyOBJECT_CMM_API8_S,
+                                 rank_list, &apis_n);
+    error = !apis;
+  }
+
+  if(!error)
+  {
+    if(!allocateFunc)
+      allocateFunc = oyAllocateFunc_;
+
+    for(i = 0; i < apis_n; ++i)
+      oyStringListAddStaticString_( &reg_lists, &reg_list_n,
+                                    oyNoEmptyString_m_(apis[i]->registration),
+                                    oyAllocateFunc_, oyDeAllocateFunc_ );
+    if(reg_list_n && reg_lists)
+      *list = oyStringListAppend_( (const char**)reg_lists, reg_list_n, 0,0,
+                                   &reg_list_n, allocateFunc );
+
+    oyStringListRelease_( &reg_lists, reg_list_n, oyDeAllocateFunc_ );
+  }
+
+  if(count)
+    *count = reg_list_n;
+
+  oyExportEnd_();
+  return error;
+}
+
+/** Function oyConfigs_FromDB
+ *  @memberof oyConfigs_s
+ *  @brief   get all oyConfigs_s from DB
+ *
+ *  @param[in]     registration        the filter
+ *  @param[in]     object              a optional user object
+ *  @return                            the found configurations list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/23 (Oyranos: 0.1.10)
+ *  @date    2009/01/23
+ */
+OYAPI oyConfigs_s * OYEXPORT
+                 oyConfigs_FromDB    ( const char        * registration,
+                                       oyObject_s          object )
+{
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0;
+  oyOption_s * o = 0;
+  char ** texts = 0,
+       ** key_set_names = 0,
+       ** config_key_names = 0;
+  uint32_t count = 0,
+         * d_rank_list = 0;
+  int error = !registration;
+  int i, j, k, n = 0, k_n = 0;
+
+  /** 0. setup Elektra */
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  if(!error)
+  {
+    /** 1. get all backend names for the registration pattern */
+    error = oyConfigDomainList( registration, &texts, &count, &d_rank_list, 0 );
+    if(count)
+      configs = oyConfigs_New( 0 );
+
+    for(i = 0; i < count; ++i)
+    {
+      /** 2. obtain the directory structure for configurations */
+      key_set_names = oyKeySetGetNames_( texts[i], &n );
+
+      if(!error)
+      for(j = 0; j < n; ++j)
+      {
+        /** 3. obtain all keys from one configuration directory */
+        config_key_names = oyKeySetGetNames_( key_set_names[j], &k_n );
+
+        config = oyConfig_New( texts[i], object );
+        error = !config;
+
+        for(k = 0; k < k_n; ++k)
+        {
+          /** 4. create a oyOption_s from a Elektra DB key/value pair */
+          if(!error)
+            o = oyOption_FromDB( config_key_names[k], object );
+          error = !o;
+          if(!error)
+            error = oyOptions_Add( config->options, o, -1, 0 );
+          else
+          {
+            WARNcc1_S( (oyStruct_s*) object, "Could not generate key %s",
+                       config_key_names[k] );
+            break;
+          }
+          oyOption_Release( &o );
+        }
+
+        oyConfigs_MoveIn( configs, &config, -1 );
+      }
+    }
+
+    oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
+  }
+
+  oyExportEnd_();
+  return configs;
+}
+
+
+
 /**
  *  @} *//* objects_value
  */
@@ -14703,756 +15660,6 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 
 
 
-/** Function oyConfig_New
- *  @memberof oyConfig_s
- *  @brief   allocate a new Config object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/15 (Oyranos: 0.1.10)
- *  @date    2009/01/15
- */
-OYAPI oyConfig_s * OYEXPORT
-                   oyConfig_New      ( const char        * registration,
-                                       oyObject_s          object )
-{
-  /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_CONFIG_S;
-# define STRUCT_TYPE oyConfig_s
-  int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
-
-  if(!s || !s_obj)
-  {
-    WARNc_S(("MEM Error."))
-    return NULL;
-  }
-
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
-
-  s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyConfig_Copy;
-  s->release = (oyStruct_Release_f) oyConfig_Release;
-
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
-  /* ---- end of common object constructor ------- */
-
-  s->options = oyOptions_New( s->oy_ );
-  if(registration)
-    s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
-
-  return s;
-}
-
-/** @internal
- *  Function oyConfig_Copy_
- *  @memberof oyConfig_s
- *  @brief   real copy a Config object
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/15 (Oyranos: 0.1.10)
- *  @date    2009/01/15
- */
-oyConfig_s * oyConfig_Copy_          ( oyConfig_s        * obj,
-                                       oyObject_s          object )
-{
-  oyConfig_s * s = 0;
-  int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
-
-  if(!obj || !object)
-    return s;
-
-  s = oyConfig_New( obj->registration, object );
-  error = !s;
-
-  if(!error)
-  {
-    allocateFunc_ = s->oy_->allocateFunc_;
-
-    s->options = oyOptions_Copy( obj->options, s->oy_ );
-    error = !memcpy( s->version, obj->version, 3*sizeof(int) );
-  }
-
-  if(error)
-    oyConfig_Release( &s );
-
-  return s;
-}
-
-/** Function oyConfig_Copy
- *  @memberof oyConfig_s
- *  @brief   copy or reference a Config object
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/15 (Oyranos: 0.1.10)
- *  @date    2009/01/15
- */
-OYAPI oyConfig_s * OYEXPORT
-                   oyConfig_Copy     ( oyConfig_s        * obj,
-                                       oyObject_s          object )
-{
-  oyConfig_s * s = 0;
-
-  if(!obj || obj->type_ != oyOBJECT_CONFIG_S)
-    return s;
-
-  if(obj && !object)
-  {
-    s = obj;
-    oyObject_Copy( s->oy_ );
-    return s;
-  }
-
-  s = oyConfig_Copy_( obj, object );
-
-  return s;
-}
- 
-/** Function oyConfig_Release
- *  @memberof oyConfig_s
- *  @brief   release and possibly deallocate a Config object
- *
- *  @param[in,out] obj                 struct object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/15 (Oyranos: 0.1.10)
- *  @date    2009/01/15
- */
-OYAPI int  OYEXPORT
-               oyConfig_Release      ( oyConfig_s       ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyConfig_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  if( !s->oy_ || s->type_ != oyOBJECT_CONFIG_S)
-  {
-    WARNc_S(("Attempt to release a non oyConfig_s object."))
-    return 1;
-  }
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-  oyOptions_Release( &s->options );
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
-}
-
-/** Function oyProfile_FromConfig
- *  @memberof oyConfig_s
- *  @brief   look up a profile from a oyConfig_s
- *
- *  @param[in]     config              the configuration
- *  @param[in]     object              user object
- *  @return                            a profile
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/01/21
- */
-OYAPI oyProfile_s * OYEXPORT
-               oyProfile_FromConfig  ( oyConfig_s        * config,
-                                       oyObject_s          object)
-{
-  oyProfile_s * p = 0;
-  oyOption_s * o = 0;
-  int error = !config;
-
-  return p;
-}
-
-/** Function oyConfig_Save
- *  @memberof oyConfig_s
- *  @brief   store a oyConfig_s in DB
- *
- *  @param[in]     config              the configuration
- *  @return                            0 - good, 1 >= error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/01/21
- */
-OYAPI int  OYEXPORT
-               oyConfig_Save         ( oyConfig_s        * config )
-{
-  int error = !config;
-  oyOption_s * o = 0;
-  int n,i;
-  char * key_base_name = 0,
-       * key_name = 0,
-       * key_top = 0;
-
-  DBG_PROG_START
-  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
-
-  if(!error)
-  {
-    key_base_name = oySearchEmptyKeyname_( config->registration );
-    error = !key_base_name;
-    if(!error)
-    {
-      STRING_ADD( key_base_name, OY_SLASH );
-    }
-
-    n = oyOptions_Count( config->options );
-    for( i = 0; i < n; ++i )
-    {
-      o = oyOptions_Get( config->options, i );
-      key_top = oyFilterRegistrationToText( o->registration,
-                                            oyFILTER_REG_MAX, 0 );
-
-
-      STRING_ADD( key_name, key_base_name );
-      STRING_ADD( key_name, key_top );
-      if(o->value_type == oyVAL_STRING && o->value && o->value->string)
-        error = oyAddKey_valueComment_(key_name, o->value->string, 0);
-      else if(o->value_type == oyVAL_STRUCT &&
-              o->value && o->value->oy_struct->type_ == oyOBJECT_BLOB_S)
-        error = 0;/*oyAddKeyBlobComment_();*/
-      else
-        WARNcc_S( (oyStruct_s*)o,
-                    "Could not save non string non binary option" );
-
-      oyOption_Release( &o );
-      oyFree_m_( key_name );
-    }
-  }
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-  return error;
-}
-
-/** Function oyConfig_Add
- *  @memberof oyConfig_s
- *  @brief   add a key value pair to a oyConfig_s
- *
- *  @param[in]     config              the configuration
- *  @param[in]     key                 a key name, e.g. "my_key"
- *  @param[in]     value               a value, e.g. "my_value"
- *  @param[in]     flags               @see oyOptions_SetFromText()
- *  @return                            0 - good, 1 >= error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/01/21
- */
-int            oyConfig_Add          ( oyConfig_s        * config,
-                                       const char        * key,
-                                       const char        * value,
-                                       uint32_t            flags )
-{
-  int error = !config || !key;
-  char * tmp = 0;
-
-  if(!error)
-  {
-    STRING_ADD( tmp, config->registration );
-    if(tmp[oyStrlen_(tmp)-1] != OY_SLASH_C)
-      STRING_ADD( tmp, OY_SLASH );
-
-    if(oyStrrchr_( key, OY_SLASH_C ) != 0)
-      STRING_ADD( tmp, oyStrrchr_( key, OY_SLASH_C )+1 );
-    else
-      STRING_ADD( tmp, key );
-
-    /** We provide basically a wrapper for oyOptions_SetFromText(). */
-    error = oyOptions_SetFromText( config->options, tmp, value, flags );
-
-    oyFree_m_( tmp );
-  }
-
-  return error;
-}
-
-
-/** Function oyConfigs_New
- *  @memberof oyConfigs_s
- *  @brief   allocate a new Configs list
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI oyConfigs_s * OYEXPORT
-                   oyConfigs_New ( oyObject_s          object )
-{
-  /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_CONFIGS_S;
-# define STRUCT_TYPE oyConfigs_s
-  int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
-
-  if(!s || !s_obj)
-  {
-    WARNc_S(("MEM Error."))
-    return NULL;
-  }
-
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
-
-  s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyConfigs_Copy;
-  s->release = (oyStruct_Release_f) oyConfigs_Release;
-
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
-  /* ---- end of common object constructor ------- */
-
-  s->list_ = oyStructList_New( 0 );
-
-  return s;
-}
-
-/** Function oyConfigs_NewFromDomain
- *  @memberof oyConfigs_s
- *  @brief   allocate a new Config object with empty options
- *
- *  @param[in]     registration_domain                     the backend to call to
- *  @param[in]     options                                 options to specify the calling into backends
- *                                                         messages are bound to this object
- *  @param[in]     object                                  a optional user object
- *  @param[out]    configs                                 the returned configurations
- *  @return                                                0 - good, 1 <= error, -1 >= issues,
- *                                                         look for messages
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/16 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI int  OYEXPORT
-               oyConfigs_NewFromDomain(const char        * registration_domain,
-                                       oyOptions_s       * options,
-                                       oyObject_s          object,
-                                       oyConfigs_s      ** configs )
-{
-  oyConfigs_s * s = 0;
-  int error = !registration_domain || !configs;
-  oyCMMapi8_s * cmm_api8 = 0;
-
-  oyExportStart_(EXPORT_CHECK_NO);
-
-  if(!error)
-  {
-    s = oyConfigs_New( object );
-    error = !s;
-  }
-  /**
-   *  1. first we search for oyCMMapi8_s complex config support matching to our
-   *     registration_domain
-   *  2. if we find a backend, we ask for the options
-   *  3. add the options to the config (in the backend)
-   */
-  if(!error)
-  {
-    cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0,0, registration_domain,
-                                                     oyOBJECT_CMM_API8_S );
-    error = !cmm_api8;
-  }
-
-  if(!error)
-    error = cmm_api8->oyConfigs_FromPattern( registration_domain, options, &s );
-
-  if(!error)
-    *configs = s; s = 0;
-
-  oyExportEnd_();
-  return error;
-}
-
-/** @internal
- *  Function oyConfigs_Copy_
- *  @memberof oyConfigs_s
- *  @brief   real copy a Configs object
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-oyConfigs_s * oyConfigs_Copy_
-                                     ( oyConfigs_s       * obj,
-                                       oyObject_s          object )
-{
-  oyConfigs_s * s = 0;
-  int error = 0;
-
-  if(!obj || !object)
-    return s;
-
-  s = oyConfigs_New( object );
-  error = !s;
-
-  if(!error)
-    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
-
-  if(error)
-    oyConfigs_Release( &s );
-
-  return s;
-}
-
-/** Function oyConfigs_Copy
- *  @memberof oyConfigs_s
- *  @brief   copy or reference a Configs list
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI oyConfigs_s * OYEXPORT
-                   oyConfigs_Copy ( oyConfigs_s       * obj,
-                                       oyObject_s          object )
-{
-  oyConfigs_s * s = 0;
-
-  if(!obj || obj->type_ != oyOBJECT_CONFIGS_S)
-    return s;
-
-  if(obj && !object)
-  {
-    s = obj;
-    oyObject_Copy( s->oy_ );
-    return s;
-  }
-
-  s = oyConfigs_Copy_( obj, object );
-
-  return s;
-}
- 
-/** Function oyConfigs_Release
- *  @memberof oyConfigs_s
- *  @brief   release and possibly deallocate a Configs list
- *
- *  @param[in,out] obj                 struct object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI int  OYEXPORT
-               oyConfigs_Release     ( oyConfigs_s      ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyConfigs_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  if( !s->oy_ || s->type_ != oyOBJECT_CONFIGS_S)
-  {
-    WARNc_S(("Attempt to release a non oyConfigs_s object."))
-    return 1;
-  }
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-  oyStructList_Release( &s->list_ );
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
-}
-
-
-/** Function oyConfigs_MoveIn
- *  @memberof oyConfigs_s
- *  @brief   add a element to a Configs list
- *
- *  @param[in]     list                list
- *  @param[in,out] obj                 list element
- *  @param         pos                 position
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI int  OYEXPORT
-                 oyConfigs_MoveIn    ( oyConfigs_s   * list,
-                                       oyConfig_s   ** obj,
-                                       int                 pos )
-{
-  oyConfigs_s * s = list;
-  int error = !s || s->type_ != oyOBJECT_CONFIGS_S;
-
-  if(obj && *obj && (*obj)->type_ == oyOBJECT_CONFIG_S)
-  {
-    if(!s)
-    {
-      s = oyConfigs_New(0);
-      error = !s;
-    }                                  
-
-    if(!error && !s->list_)
-    {
-      s->list_ = oyStructList_New( 0 );
-      error = !s->list_;
-    }
-      
-    if(!error)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
-  }   
-  
-  return error;
-}
-
-/** Function oyConfigs_ReleaseAt
- *  @memberof oyConfigs_s
- *  @brief   release a element from a Configs list
- *
- *  @param[in,out] list                the list
- *  @param         pos                 position
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI int  OYEXPORT
-                  oyConfigs_ReleaseAt ( oyConfigs_s * list,
-                                       int                 pos )
-{ 
-  int error = !list;
-
-  if(!error && list->type_ != oyOBJECT_CONFIGS_S)
-    error = 1;
-  
-  if(!error)
-    oyStructList_ReleaseAt( list->list_, pos );
-
-  return error;
-}
-
-/** Function oyConfigs_Get
- *  @memberof oyConfigs_s
- *  @brief   get a element of a Configs list
- *
- *  @param[in,out] list                the list
- *  @param         pos                 position
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI oyConfig_s * OYEXPORT
-                 oyConfigs_Get       ( oyConfigs_s   * list,
-                                       int                 pos )
-{       
-  if(list && list->type_ == oyOBJECT_CONFIGS_S)
-    return (oyConfig_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_CONFIG_S ); 
-  else  
-    return 0;
-}   
-
-/** Function oyConfigs_Count
- *  @memberof oyConfigs_s
- *  @brief   count the elements in a Configs list
- *
- *  @param[in,out] list                the list
- *  @return                            element count
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI int  OYEXPORT
-                 oyConfigs_Count     ( oyConfigs_s   * list )
-{       
-  if(list && list->type_ == oyOBJECT_CONFIGS_S)
-    return oyStructList_Count( list->list_ );
-  else return 0;
-}
-
-/** Function oyConfigDomainList
- *  @memberof oyConfigs_s
- *  @brief   count and show the global oyConfigs_s suppliers
- *
- *  @param[in]     registration_pattern a optional filter
- *  @param[out]    list                the list
- *  @param[out]    count               the list count
- *  @param[out]    rank_list           the rank fitting to list
- *  @param[in]     allocateFunc        the user allocator for list
- *  @return                            0 - good, >= 1 - error, <= -1 unknown
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI int  OYEXPORT
-                 oyConfigDomainList  ( const char        * registration_pattern,
-                                       char            *** list,
-                                       uint32_t          * count,
-                                       uint32_t         ** rank_list,
-                                       oyAlloc_f           allocateFunc )
-{
-  oyCMMapiFilter_s ** apis = 0;
-  int error = !list || !count;
-  char ** reg_lists = 0;
-  int i = 0,
-      reg_list_n = 0;
-  uint32_t apis_n = 0;
-
-  oyExportStart_(EXPORT_CHECK_NO);
-
-  if(!error)
-  {
-    apis = oyCMMsGetFilterApis_( 0, 0, registration_pattern,
-                                 oyOBJECT_CMM_API8_S,
-                                 rank_list, &apis_n);
-    error = !apis;
-  }
-
-  if(!error)
-  {
-    if(!allocateFunc)
-      allocateFunc = oyAllocateFunc_;
-
-    for(i = 0; i < apis_n; ++i)
-      oyStringListAddStaticString_( &reg_lists, &reg_list_n,
-                                    oyNoEmptyString_m_(apis[i]->registration),
-                                    oyAllocateFunc_, oyDeAllocateFunc_ );
-    if(reg_list_n && reg_lists)
-      *list = oyStringListAppend_( (const char**)reg_lists, reg_list_n, 0,0,
-                                   &reg_list_n, allocateFunc );
-
-    oyStringListRelease_( &reg_lists, reg_list_n, oyDeAllocateFunc_ );
-  }
-
-  if(count)
-    *count = reg_list_n;
-
-  oyExportEnd_();
-  return error;
-}
-
-/** Function oyConfigs_FromDB
- *  @memberof oyConfigs_s
- *  @brief   get all oyConfigs_s and their matches to a set of options
- *
- *  @param[in]     registration        the filter
- *  @param[in]     options             the match options
- *  @param[out]    rank_list           the rank fitting to list
- *  @param[in]     object              a optional user object
- *  @return                            the found configurations
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/23 (Oyranos: 0.1.10)
- *  @date    2009/01/23
- */
-OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_FromDB    ( const char        * registration,
-                                       oyOptions_s       * options,
-                                       uint32_t         ** rank_list,
-                                       oyObject_s          object )
-{
-  oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0;
-  oyOption_s * o = 0;
-  char ** texts = 0,
-       ** key_set_names = 0,
-       ** config_key_names = 0;
-  uint32_t count = 0,
-         * d_rank_list = 0,
-           max_rank = 0;
-  int error = !registration;
-  int i, j, k, max_rank_pos = -1, n = 0, k_n = 0;
-
-  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
-
-  if(!error)
-  {
-    error = oyConfigDomainList( registration, &texts, &count, &d_rank_list, 0 );
-    if(count)
-      configs = oyConfigs_New( 0 );
-
-    for(i = 0; i < count; ++i)
-    {
-      key_set_names = oyKeySetGetNames_( texts[i], &n );
-
-      if(!error)
-      for(j = 0; j < n; ++j)
-      {
-        config_key_names = oyKeySetGetNames_( key_set_names[j], &k_n );
-
-        config = oyConfig_New( texts[i], object );
-        error = !config;
-
-        for(k = 0; k < k_n; ++k)
-        {
-          if(!error)
-            o = oyOption_FromDB( config_key_names[k], object );
-          error = !o;
-          if(!error)
-            error = oyOptions_Add( config->options, o, -1, 0 );
-          else
-          {
-            WARNcc1_S( (oyStruct_s*) options, "Could not generate key %s",
-                       config_key_names[k] );
-            break;
-          }
-          oyOption_Release( &o );
-        }
-        oyConfigs_MoveIn( configs, &config, -1 );
-      }
-    }
-
-    oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
-  }
-
-  oyExportEnd_();
-  return configs;
-}
-
-
-
 /** @internal
  *  @brief   create and possibly precalculate a transform for a given image
  *  @memberof oyColourConversion_s
@@ -18740,23 +18947,86 @@ int      oySetMonitorProfile         ( const char        * display_name,
                                        const char        * profil_name )
 {
   int error = 0;
-  oySetMonitorProfile_f funcP = 0;
-  char cmm[] = "oyX1";
+  oyOption_s * o = 0;
+  oyOptions_s * options_list = 0,
+              * options = 0,
+              * options_devices = 0;
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0,
+             * device = 0;
+  int i, j, k, n, j_n, k_n, device_names_n;
+  uint32_t count = 0,
+         * rank_list = 0;
+  char ** texts = 0,
+        * text = 0,
+       ** device_names = 0;
 
-  if(!error)
+
+  options = oyOptions_New( 0 );
+  options_devices = oyOptions_New( 0 );
+  /* add list call to backend arguments */
+  error = oyOptions_SetFromText( options, "//colour/config/list", "_true_",
+                                 OY_CREATE_NEW );
+
+  /** get all device backend names */
+  error = oyConfigDomainList  ( "//colour/config.monitor", &texts, &count,
+                                &rank_list, 0 );
+
+  /** ask each backend */
+  for( i = 0; i < count; ++i )
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
-    if(api && *(uint32_t*)&cmm)
+    const char * registration_domain = texts[i];
+    printf("%d[%d]: %s\n", i, rank_list[i], registration_domain);
+
+    /** call into backend */
+    error = oyConfigs_NewFromDomain( registration_domain,
+                                       options_list,
+                                       0, &configs );
+    j_n = oyConfigs_Count( configs );
+    for( j = 0; j < j_n; ++j )
     {
-      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
-      funcP = api2->oySetMonitorProfile;
+      config = oyConfigs_Get( configs, j );
+      if(j == 0)
+        device = oyConfig_Copy( config, 0 );
+
+      k_n = oyOptions_Count( config->options );
+      for( k = 0; k < k_n; ++k )
+      {
+        o = oyOptions_Get( config->options, k );
+
+        /** collect the device_name's and backend keys into a set of options */
+        error = oyOptions_SetFromText( options_devices, o->registration,
+                                       o->value->string,
+                                       OY_CREATE_NEW | OY_ADD_ALWAYS );
+
+        oyOption_Release( &o );
+      }
+
+      oyConfig_Release( &config );
     }
+
+    oyConfigs_Release( &configs );
   }
 
-  if(funcP)
-    error = funcP( display_name, profil_name );
-  else
-    error = 1;
+  n = oyOptions_Count( options_devices );
+  if(display_name)
+  {
+    for(i = 0; i < n; ++i)
+    {
+      o = oyOptions_Get( options_devices, i );
+
+      if( o->value && o->value_type == oyVAL_STRING &&
+          oyStrcmp_( o->value->string, display_name ) == 0)
+      {
+        
+      }
+    }
+  
+    /*error = oyConfigs_NewFromDomain( "",
+                                       oyOptions_s       * options,
+                                       oyObject_s          object,
+                                       oyConfigs_s      ** configs );*/
+  }
 
   return error;
 }

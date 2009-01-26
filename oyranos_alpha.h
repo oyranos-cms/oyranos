@@ -536,7 +536,7 @@ typedef enum {
   oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. elektra */
 } oyOPTIONSOURCE_e;
 
-/** @brief Option for rendering
+/** @brief   a option
  *  @ingroup objects_value
  *  @extends oyStruct_s
 
@@ -700,6 +700,122 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
                                        uint32_t            flags );
 
 
+/** @struct  oyConfig_s
+ *  @brief   a group of options for a device
+ *  @ingroup objects_value
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/15 (Oyranos: 0.1.10)
+ *  @date    2009/01/15
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONFIG_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< @private base object */
+
+  uint32_t             id;             /**< id to map to events and widgets */
+  /** This property contains the identifier for communication with a Oyranos
+   *  or a backend through Oyranos. It defines the basic key path name to store
+   *  configuration.\n
+   *  e.g. "shared/freedesktop.org/colour/config.monitor.xorg" */
+  char               * registration;
+  int                  version[3];     /**< as for oyCMMapi4_s::version */
+
+  /** properties,
+  e.g. "shared/freedesktop.org/colour/config.monitor.xorg.1/manufacturer=EIZO"*/
+  oyOptions_s        * options;
+} oyConfig_s;
+
+OYAPI oyConfig_s * OYEXPORT
+               oyConfig_New          ( const char        * registration,
+                                       oyObject_s          object );
+OYAPI oyConfig_s * OYEXPORT
+               oyConfig_FromDomain   ( oyConfig_s        * domain_config,
+                                       int32_t           * rank_value,
+                                       oyObject_s          object);
+OYAPI oyConfig_s * OYEXPORT
+               oyConfig_Copy         ( oyConfig_s        * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+               oyConfig_Release      ( oyConfig_s       ** obj );
+
+OYAPI int  OYEXPORT
+               oyConfig_Set          ( oyConfig_s        * config,
+                                       const char        * registration_domain,
+                                       oyOptions_s       * options,
+                                       oyBlob_s          * data );
+int            oyConfig_Add          ( oyConfig_s        * config,
+                                       const char        * key,
+                                       const char        * value,
+                                       uint32_t            flags );
+OYAPI int  OYEXPORT
+               oyConfig_SaveToDB     ( oyConfig_s        * config );
+OYAPI int  OYEXPORT
+               oyConfig_Compare      ( oyConfig_s        * domain_config,
+                                       oyConfig_s        * pattern,
+                                       int32_t           * rank_value );
+OYAPI int  OYEXPORT
+               oyConfig_DomainRank   ( oyConfig_s        * config );
+
+/** @struct  oyConfigs_s
+ *  @brief   a Configs list
+ *  @ingroup objects_value
+ *  @extends oyStruct_s
+ *
+ *  Managing the plural of oyConfig_s for the sake of typesafty.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONFIGS_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyStructList_s     * list_;          /**< the list data */
+} oyConfigs_s;
+
+OYAPI oyConfigs_s * OYEXPORT
+                 oyConfigs_New       ( oyObject_s          object );
+OYAPI int  OYEXPORT
+               oyConfigs_NewFromDomain(const char        * registration_domain,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object,
+                                       oyConfigs_s      ** configs );
+OYAPI oyConfigs_s * OYEXPORT
+                 oyConfigs_Copy      ( oyConfigs_s       * list,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyConfigs_Release   ( oyConfigs_s      ** list );
+
+
+OYAPI int  OYEXPORT
+                 oyConfigs_MoveIn    ( oyConfigs_s       * list,
+                                       oyConfig_s       ** ptr,
+                                       int                 pos );
+OYAPI int  OYEXPORT
+                 oyConfigs_ReleaseAt ( oyConfigs_s       * list,
+                                       int                 pos );
+OYAPI oyConfig_s * OYEXPORT
+                 oyConfigs_Get       ( oyConfigs_s       * list,
+                                       int                 pos );
+OYAPI int  OYEXPORT
+                 oyConfigs_Count     ( oyConfigs_s       * list );
+OYAPI int  OYEXPORT
+                 oyConfigDomainList  ( const char        * registration_pattern,
+                                       char            *** list,
+                                       uint32_t          * count,
+                                       uint32_t         ** rank_list,
+                                       oyAlloc_f           allocateFunc );
+OYAPI oyConfigs_s * OYEXPORT
+                 oyConfigs_FromDB    ( const char        * registration,
+                                       oyObject_s          object );
+
+
 /** @brief general profile infos
  *  @ingroup objects_profile
  *
@@ -785,6 +901,10 @@ OYAPI oyProfile_s * OYEXPORT
                                        icSignature         sig,
                                        oySIGNATURE_TYPE_e  type,
                                        oyObject_s          object );
+OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromConfig
+                                     ( oyConfig_s        * config,
+                                       oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_Copy    ( oyProfile_s       * profile,
                                        oyObject_s          object);
@@ -2020,114 +2140,6 @@ oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 
-
-/** @struct  oyConfig_s
- *  @brief   a Device object
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/15 (Oyranos: 0.1.10)
- *  @date    2009/01/15
- */
-typedef struct {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONFIG_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  uint32_t             id;             /**< id to map to events and widgets */
-  /** This property contains the identifier for communication with a Oyranos
-   *  or a backend through Oyranos. It defines the basic key path name to store
-   *  configuration.\n
-   *  e.g. "shared/freedesktop.org/colour/config.monitor.xorg" */
-  char               * registration;
-  int                  version[3];     /**< as for oyCMMapi4_s::version */
-
-  /** properties,
-  e.g. "shared/freedesktop.org/colour/config.monitor.xorg.1/manufacturer=EIZO"*/
-  oyOptions_s        * options;
-} oyConfig_s;
-
-OYAPI oyConfig_s * OYEXPORT
-               oyConfig_New          ( const char        * registration,
-                                       oyObject_s          object );
-OYAPI oyConfig_s * OYEXPORT
-               oyConfig_Copy         ( oyConfig_s        * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-               oyConfig_Release      ( oyConfig_s       ** obj );
-
-OYAPI oyProfile_s * OYEXPORT
-               oyProfile_FromConfig  ( oyConfig_s        * config,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-               oyConfig_Set          ( oyConfig_s        * config,
-                                       const char        * registration_domain,
-                                       oyOptions_s       * options,
-                                       oyBlob_s          * data );
-int            oyConfig_Add          ( oyConfig_s        * config,
-                                       const char        * key,
-                                       const char        * value,
-                                       uint32_t            flags );
-OYAPI int  OYEXPORT
-               oyConfig_Save         ( oyConfig_s        * config );
-
-/** @struct  oyConfigs_s
- *  @brief   a Configs list
- *  @extends oyStruct_s
- *
- *  Managing the plural of oyConfig_s for the sake of typesafty.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-typedef struct {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONFIGS_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-
-  oyStructList_s     * list_;          /**< the list data */
-} oyConfigs_s;
-
-OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_New       ( oyObject_s          object );
-OYAPI int  OYEXPORT
-               oyConfigs_NewFromDomain(const char        * registration_domain,
-                                       oyOptions_s       * options,
-                                       oyObject_s          object,
-                                       oyConfigs_s      ** configs );
-OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_Copy      ( oyConfigs_s       * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyConfigs_Release   ( oyConfigs_s      ** list );
-
-
-OYAPI int  OYEXPORT
-                 oyConfigs_MoveIn    ( oyConfigs_s       * list,
-                                       oyConfig_s       ** ptr,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyConfigs_ReleaseAt ( oyConfigs_s       * list,
-                                       int                 pos );
-OYAPI oyConfig_s * OYEXPORT
-                 oyConfigs_Get       ( oyConfigs_s       * list,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyConfigs_Count     ( oyConfigs_s       * list );
-OYAPI int  OYEXPORT
-                 oyConfigDomainList  ( const char        * registration_pattern,
-                                       char            *** list,
-                                       uint32_t          * count,
-                                       uint32_t         ** rank_list,
-                                       oyAlloc_f           allocateFunc );
-OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_FromDB    ( const char        * registration,
-                                       oyOptions_s       * options,
-                                       uint32_t         ** rank_list,
-                                       oyObject_s          object );
 
 
 
