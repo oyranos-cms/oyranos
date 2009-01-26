@@ -252,7 +252,7 @@ oyTESTRESULT_e testOption ()
     "oyOption_New() failed                             " );
   }
 
-  error = oyOption_New( 0, "blabla" ) != 0;
+  error = oyOption_New( "blabla", 0 ) != 0;
   if(o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_New() with wrong registration rejected: ok");
