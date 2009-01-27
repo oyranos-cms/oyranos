@@ -137,7 +137,7 @@ void     oyX1Configs_FromPatternUsage( oyStruct_s        * options )
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"list\" will provide a list of available\n"
-      " devices. Use the returned values as option \"display_name\" to select a"
+      " devices. Use the returned values as option \"device_name\" to select a"
       " device. This is a cheap call.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"properties\" will provide the devices \n"
@@ -162,12 +162,12 @@ void     oyX1Configs_FromPatternUsage( oyStruct_s        * options )
        );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"setup\" will setup the device from a profile.\n"
-      " The option \"display_name\" must be present.\n"
+      " The option \"device_name\" must be present.\n"
       " The option \"profile_name\" must be present."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"unset\" will invalidate a profile of a device.\n"
-      " The option \"display_name\" must be present."
+      " The option \"device_name\" must be present."
       );
 
   return;
@@ -348,6 +348,17 @@ int            oyX1Config_Check      ( oyConfig_s        * config )
   return rank;
 }
 
+oyRankPad oyX1_rank_map[] = {
+  {"device_name", 1, -1, 0},
+  {"profile_name", 0, 0, 0},
+  {"manufacturer", 1, -1, 0},
+  {"model", 5, -5, 0},
+  {"serial", 10, -2, 0},
+  {"host", 2, 0, 0},
+  {"system_port", 2, 0, 0},
+  {"display_geometry", 1, 0, 0},
+  {0,0,0,0}
+};
 
 /** @instance oyX1_api8
  *  @brief    oyX1 oyCMMapi8_s implementations
@@ -371,7 +382,8 @@ oyCMMapi8_s oyX1_api8 = {
 
   0,                         /**< oyCMMapi5_s * api5_ */
   oyX1Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
-  oyX1Config_Check           /**< oyConfig_Check_f oyConfig_Check */
+  oyX1Config_Check,          /**< oyConfig_Check_f oyConfig_Check */
+  oyX1_rank_map              /**< oyRankPad ** rank_map */
 };
 
 
