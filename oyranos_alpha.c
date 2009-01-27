@@ -7129,7 +7129,7 @@ int            oyOptions_SetSource   ( oyOptions_s       * options,
   return error;
 }
 
-/** Function oyRankPadCopy
+/** Function oyRankMapCopy
  *  @memberof oyConfig_s
  *  @brief   copy a rank map
  *
@@ -7137,7 +7137,7 @@ int            oyOptions_SetSource   ( oyOptions_s       * options,
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/01/27
  */
-oyRankPad *        oyRankPadCopy     ( const oyRankPad   * rank_map,
+oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
                                        oyAlloc_f           allocateFunc )
 {
   oyRankPad * map = 0;
@@ -7231,7 +7231,7 @@ OYAPI oyConfig_s * OYEXPORT
  *  @date    2009/01/26
  */
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_ForDomain   ( oyConfig_s        * domain_config,
+               oyConfig_ForDomain    ( oyConfig_s        * domain_config,
                                        int32_t           * rank_value,
                                        oyObject_s          object)
 {
@@ -7250,7 +7250,8 @@ OYAPI oyConfig_s * OYEXPORT
     {
       config = oyConfigs_Get( configs, i );
 
-      rank = oyConfig_Compare( domain_config, config, &rank );
+      error = oyConfig_Compare( domain_config, config, &rank );
+      DBG_PROG1_S("rank: %d\n", rank);
       if(max_rank < rank)
       {
         max_rank = rank;
@@ -7299,7 +7300,7 @@ oyConfig_s * oyConfig_Copy_          ( oyConfig_s        * obj,
     s->options = oyOptions_Copy( obj->options, s->oy_ );
     error = !memcpy( s->version, obj->version, 3*sizeof(int) );
 
-    s->rank_map = oyRankPadCopy( obj->rank_map, allocateFunc_ );
+    s->rank_map = oyRankMapCopy( obj->rank_map, allocateFunc_ );
   }
 
   if(error)
@@ -7353,6 +7354,7 @@ OYAPI oyConfig_s * OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_Release      ( oyConfig_s       ** obj )
 {
+  int i = 0;
   /* ---- start of common object destructor ----- */
   oyConfig_s * s = 0;
 
@@ -7378,6 +7380,13 @@ OYAPI int  OYEXPORT
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->rank_map)
+    {
+      while(s->rank_map[i].key)
+        deallocateFunc( s->rank_map[i++].key );
+      deallocateFunc( s->rank_map );
+    }
 
     oyObject_Release( &s->oy_ );
 
@@ -7536,16 +7545,15 @@ int            oyConfig_Compare      ( oyConfig_s        * domain_config,
                                        oyConfig_s        * pattern,
                                        int32_t           * rank_value )
 {
-  int error = !domain_config || pattern;
-  int domain_n, pattern_n, i, j,
+  int error = !domain_config || !pattern;
+  int domain_n, pattern_n, i, j, k,
       rank = 0,
-      d_rank = 0;
+      d_rank = 0,
+      has_opt;
   oyOption_s * d = 0,
              * p = 0;
   char * d_opt = 0, * d_val = 0,
        * p_opt = 0, * p_val = 0;
-
-  if(!error)
 
   if(!error)
   {
@@ -7556,6 +7564,7 @@ int            oyConfig_Compare      ( oyConfig_s        * domain_config,
       d = oyOptions_Get( domain_config->options, i );
       d_opt = oyFilterRegistrationToText( d->registration, oyFILTER_REG_MAX, 0);
       d_val = oyOption_GetValueText( d, oyAllocateFunc_ );
+      has_opt = 0;
 
       d_rank = oyConfig_DomainRank( domain_config );
       if(d_rank > 0 && d_val && d_opt)
@@ -7569,43 +7578,62 @@ int            oyConfig_Compare      ( oyConfig_s        * domain_config,
         if(p_opt && oyStrcmp_(d_opt, p_opt) == 0)
         {
           p_val = oyOption_GetValueText( p, oyAllocateFunc_ );
+          has_opt = 1;
 
           /** Option name is equal and and value matches : increase rank value*/
-          if(p_val && oyStrstr_( d_opt, p_opt ))
+          if(p_val && oyStrstr_( d_val, p_val ))
           {
-            j = 0;
             if(domain_config->rank_map)
-              while(domain_config->rank_map[j].key)
+            {
+              k = 0;
+              while(domain_config->rank_map[k].key)
               {
-                if(oyStrcmp_(domain_config->rank_map[j].key, d_opt) == 0)
-                  rank += domain_config->rank_map[j].match_value;
-                ++j;
+                if(oyStrcmp_(domain_config->rank_map[k].key, d_opt) == 0)
+                {
+                  rank += domain_config->rank_map[k].match_value;
+                  break;
+                }
+                ++k;
               }
-            else
+            } else
               ++rank;
 
             oyFree_m_(p_val);
           } else if(domain_config->rank_map)
-            while(domain_config->rank_map[j].key)
-            {
-              if(oyStrcmp_(domain_config->rank_map[j].key, d_opt) == 0)
-                rank += domain_config->rank_map[j].none_match_value;
-              ++j;
-            }
-        } else if(domain_config->rank_map)
-          while(domain_config->rank_map[j].key)
           {
-            if(oyStrcmp_(domain_config->rank_map[j].key, d_opt) == 0)
-              rank += domain_config->rank_map[j].not_found_value;
-            ++j;
+            k = 0;
+            while(domain_config->rank_map[k].key)
+            {
+              if(oyStrcmp_(domain_config->rank_map[k].key, d_opt) == 0)
+              {
+                rank += domain_config->rank_map[k].none_match_value;
+                break;
+              }
+              ++k;
+            }
           }
-
+        }
         /*
         rank += oyFilterRegistrationMatch( d->registration, p->registration,
                                            oyOBJECT_CMM_API8_S); */
 
         oyOption_Release( &p );
       }
+
+      if(!has_opt && domain_config->rank_map)
+      {
+        k = 0;
+          while(domain_config->rank_map[k].key)
+          {
+            if(oyStrcmp_(domain_config->rank_map[k].key, d_opt) == 0)
+            {
+              rank += domain_config->rank_map[k].not_found_value;
+              break;
+            }
+            ++k;
+          }
+      }
+
       oyOption_Release( &d );
     }
   }
@@ -7657,8 +7685,11 @@ OYAPI int  OYEXPORT
     {
       cmm_api8 = (oyCMMapi8_s*) apis[i];
 
+      error = !cmm_api8->oyConfig_Check;
+      if(!error)
       /** Ask the backend if it wants later on to accept this configuration. */
-      rank = cmm_api8->oyConfig_Check( config ) * rank_list[i];
+        rank = cmm_api8->oyConfig_Check( config ) * rank_list[i];
+
       if(max_rank < rank)
         max_rank = rank;
 
@@ -7756,8 +7787,10 @@ OYAPI int  OYEXPORT
                                        oyConfigs_s      ** configs )
 {
   oyConfigs_s * s = 0;
+  oyConfig_s * config = 0;
   int error = !registration_domain || !configs;
   oyCMMapi8_s * cmm_api8 = 0;
+  int i, n;
 
   oyExportStart_(EXPORT_CHECK_NO);
 
@@ -7786,7 +7819,17 @@ OYAPI int  OYEXPORT
     error = cmm_api8->oyConfigs_FromPattern( registration_domain, options, &s );
 
   if(!error)
-    error = oyOptions_SetSource( options, oyOPTIONSOURCE_FILTER );
+  {
+    n = oyConfigs_Count( s );
+    for(i = 0; i < n && !error; ++i)
+    {
+      config = oyConfigs_Get( s, i );
+
+      error = oyOptions_SetSource( options, oyOPTIONSOURCE_FILTER );
+
+      oyConfig_Release( &config );
+    }
+  }
 
   if(!error)
     *configs = s; s = 0;
@@ -19138,7 +19181,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
   oyOptions_s * options_list = 0,
               * options = 0,
               * options_devices = 0;
-  oyConfigs_s * configs = 0;
+  oyConfigs_s * configs = 0,
+              * devices = 0;
   oyConfig_s * config = 0,
              * device = 0;
   int i, j, k, n, j_n, k_n, device_names_n, device_pos;
@@ -19147,6 +19191,7 @@ int      oySetMonitorProfile         ( const char        * display_name,
   char ** texts = 0,
         * text = 0,
        ** device_names = 0;
+  const char * tmp = 0;
 
   if(error > 0)
   {
@@ -19172,9 +19217,12 @@ int      oySetMonitorProfile         ( const char        * display_name,
     printf("%d[%d]: %s\n", i, rank_list[i], registration_domain);
 
     /** call into backend */
-    error = oyConfigs_NewFromDomain( registration_domain,
-                                       options_list,
-                                       0, &configs );
+    error = oyConfigs_NewFromDomain( registration_domain, options_list, 0,
+                                     &configs );
+
+    if(!error)
+      devices = oyConfigs_New( 0 );
+
     j_n = oyConfigs_Count( configs );
     for( j = 0; j < j_n; ++j )
     {
@@ -19182,20 +19230,11 @@ int      oySetMonitorProfile         ( const char        * display_name,
       if(j == 0)
         device = oyConfig_Copy( config, 0 );
 
-      k_n = oyOptions_Count( config->options );
-      for( k = 0; k < k_n; ++k )
-      {
-        o = oyOptions_Get( config->options, k );
-
-        /** Compare with the device_name option and identify multible entries.
-         *  Collect the device_name's and backend keys into a set of options */
-        if(oyStrcmp_( o->value->string, display_name ) == 0)
-          error = oyOptions_SetFromText( options_devices, o->registration,
-                                         o->value->string,
-                                         OY_CREATE_NEW | OY_ADD_ALWAYS );
-
-        oyOption_Release( &o );
-      }
+      /** Compare with the display_name with the device_name option and
+       *  collect the matching devices. */
+      tmp = oyOptions_FindString( config->options, "device_name", 0 );
+      if(oyStrcmp_( tmp, display_name ) == 0)
+        oyConfigs_MoveIn( devices, &config, -1 );
 
       oyConfig_Release( &config );
     }
@@ -19203,28 +19242,48 @@ int      oySetMonitorProfile         ( const char        * display_name,
     oyConfigs_Release( &configs );
   }
 
-  /** Now remove all matching entries to find place for a new one or extend an
-   *  an existing one which provides more entries than our device has.
+  /** Now remove all DB configurations fully matching devices.
    */
-  n = oyOptions_Count( options_devices );
-  if(display_name)
+  if(!error)
   {
-    for(i = 0; i < n; ++i)
-    {
-      o = oyOptions_Get( options_devices, i );
+#if 0
+    configs = oyConfigs_FromDB( domain_config->registration, 0 );
 
-      if( o->value && o->value_type == oyVAL_STRING &&
-          oyStrcmp_( o->value->string, display_name ) == 0)
+    n = oyConfigs_Count( configs );
+    for( i = 0; i < n; ++i )
+    {
+      config = oyConfigs_Get( configs, i );
+
+      j_n = oyConfigs_Count( devices );
+      for(j = 0; j < j_n; ++j)
       {
+        config = oyConfigs_Get( devices, j );
+
+        k_n = oyOptions_Count( config->options );
+        for(k = 0; k < k_n; ++k)
+        {
         
+        j_n = oyOptions_Count( options_devices );
+        for(j = 0; j < j_n; j++)
+        {
+          o = oyOptions_Get( options_devices, i );
+
+        if( o->value && o->value_type == oyVAL_STRING &&
+            oyStrcmp_( o->value->string, display_name ) == 0)
+        {
+        
+        }
+        }
       }
     }
-  
+#endif
     /*error = oyConfigs_NewFromDomain( "",
                                        oyOptions_s       * options,
                                        oyObject_s          object,
                                        oyConfigs_s      ** configs );*/
   }
+  /** Find place for a new one.
+   */
 
   return error;
 }

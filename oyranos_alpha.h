@@ -717,7 +717,7 @@ typedef struct {
   int32_t not_found_value;             /**< add to rank sum when entry is not found */
 } oyRankPad;
 
-oyRankPad *        oyRankPadCopy     ( const oyRankPad   * rank_map,
+oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
                                        oyAlloc_f           allocateFunc );
 
 

@@ -34,6 +34,7 @@ int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
 oyMessage_f message = oyX1CMMWarnFunc;
 
 extern oyCMMapi8_s oyX1_api8;
+oyRankPad oyX1_rank_map[];
 
 /* --- implementations --- */
 
@@ -129,7 +130,7 @@ int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
-void     oyX1Configs_FromPatternUsage( oyStruct_s        * options )
+void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
 {
     /** oyMSG_WARN should make shure our message is visible. */
     message( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
@@ -201,7 +202,7 @@ int            oyX1Configs_FromPattern (
   if(!options || !oyOptions_Count( options ))
   {
     /** oyMSG_WARN should make shure our message is visible. */
-    oyX1Configs_FromPatternUsage( (oyStruct_s*)options );
+    oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
     return 0;
   }
 
@@ -226,6 +227,10 @@ int            oyX1Configs_FromPattern (
         error = oyOptions_SetFromText( config->options,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
+
+        if(error <= 0)
+          config->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                            config->oy_->allocateFunc_ );
 
         oyConfigs_MoveIn( configs, &config, -1 );
       }
@@ -285,6 +290,9 @@ int            oyX1Configs_FromPattern (
           oyBlob_Release( &edid );
         }
 
+        if(error <= 0)
+          config->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                            config->oy_->allocateFunc_ );
         oyConfigs_MoveIn( configs, &config, -1 );
       }
 
@@ -313,7 +321,7 @@ int            oyX1Configs_FromPattern (
   message(oyMSG_WARN, (oyStruct_s*)options, "\n "
                 "This point should not be reached.\n"
                 );
-  oyX1Configs_FromPatternUsage( (oyStruct_s*)options );
+  oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
 
   return error;
 }
@@ -348,16 +356,23 @@ int            oyX1Config_Check      ( oyConfig_s        * config )
   return rank;
 }
 
+/** @instance oyX1_rank_map
+ *  @brief    oyRankPad map for mapping device to configuration informations
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/01/27
+ *  @since   2009/01/27 (Oyranos: 0.1.10)
+ */
 oyRankPad oyX1_rank_map[] = {
-  {"device_name", 1, -1, 0},
-  {"profile_name", 0, 0, 0},
-  {"manufacturer", 1, -1, 0},
-  {"model", 5, -5, 0},
-  {"serial", 10, -2, 0},
-  {"host", 2, 0, 0},
-  {"system_port", 2, 0, 0},
-  {"display_geometry", 1, 0, 0},
-  {0,0,0,0}
+  {"device_name", 2, -1, 0},           /**< is good */
+  {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
+  {"manufacturer", 1, -1, 0},          /**< is nice */
+  {"model", 5, -5, 0},                 /**< important, should not fail */
+  {"serial", 10, -2, 0},               /**< important, could slightly fail */
+  {"host", 1, 0, 0},                   /**< nice to match */
+  {"system_port", 2, 0, 0},            /**< good to match */
+  {"display_geometry", 3, 0, 0},       /**< important to match */
+  {0,0,0,0}                            /**< end of list */
 };
 
 /** @instance oyX1_api8
