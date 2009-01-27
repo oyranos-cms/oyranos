@@ -598,7 +598,7 @@ oyName_s *   oyName_new              ( oyObject_s          object )
 
   if(!s)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -1011,11 +1011,14 @@ oyStructList_s * oyStructList_New    ( oyObject_s          object )
 # define STRUCT_TYPE oyStructList_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -2053,11 +2056,14 @@ oyCMMhandle_s *    oyCMMhandle_New_    ( oyObject_s        object )
 # define STRUCT_TYPE oyCMMhandle_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -3882,6 +3888,12 @@ oyObject_NewFrom_( oyObject_s      object )
   oyObject_s o = 0;
   int error = 0;
 
+  if(object && object->type_ != oyOBJECT_OBJECT_S)
+  {
+    WARNc_S("Attempt to manipulate a non oyObject_s object.")
+    return o;
+  }
+
   if(object)
     o = oyObject_NewWithAllocators( object->allocateFunc_,
                                     object->deallocateFunc_ );
@@ -4349,11 +4361,14 @@ OYAPI oyBlob_s * OYEXPORT
 # define STRUCT_TYPE oyBlob_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -4571,11 +4586,14 @@ oyHash_s *   oyHash_New_             ( oyObject_s          object )
 # define STRUCT_TYPE oyHash_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -5221,11 +5239,14 @@ oyOption_s *   oyOption_New          ( const char        * registration,
 # define STRUCT_TYPE oyOption_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -5329,6 +5350,7 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
     /** This is merely a wrapper to oyOption_New() and oyOption_ValueFromDB().*/
     o = oyOption_New( registration, object );
     error = oyOption_ValueFromDB( o );
+    o->source = oyOPTIONSOURCE_DATA;
   }
 
   return o;
@@ -6010,11 +6032,14 @@ oyOptions_s *  oyOptions_New         ( oyObject_s          object )
 # define STRUCT_TYPE oyOptions_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -7080,7 +7105,7 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/01/27
  */
-oyRankPad *        oyRankPadCopy     ( const oyRankPad  ** rank_map,
+oyRankPad *        oyRankPadCopy     ( const oyRankPad   * rank_map,
                                        oyAlloc_f           allocateFunc )
 {
   oyRankPad * map = 0;
@@ -7092,7 +7117,7 @@ oyRankPad *        oyRankPadCopy     ( const oyRankPad  ** rank_map,
 
   if(!error)
   {
-    while( rank_map[n++]->key ) {}
+    while( rank_map[n++].key ) {}
 
     oyAllocHelper_m_( map, oyRankPad, n + 1, allocateFunc, error = 1 );
   }
@@ -7101,10 +7126,10 @@ oyRankPad *        oyRankPadCopy     ( const oyRankPad  ** rank_map,
   {
     for(i = 0; i < n; ++i)
     {
-      map[i].key = oyStringCopy_( rank_map[i]->key, allocateFunc );
-      map[i].match_value = rank_map[i]->match_value;
-      map[i].none_match_value = rank_map[i]->none_match_value;
-      map[i].not_found_value = rank_map[i]->not_found_value;
+      map[i].key = oyStringCopy_( rank_map[i].key, allocateFunc );
+      map[i].match_value = rank_map[i].match_value;
+      map[i].none_match_value = rank_map[i].none_match_value;
+      map[i].not_found_value = rank_map[i].not_found_value;
     }
   }
 
@@ -7128,11 +7153,14 @@ OYAPI oyConfig_s * OYEXPORT
 # define STRUCT_TYPE oyConfig_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -7155,7 +7183,7 @@ OYAPI oyConfig_s * OYEXPORT
   return s;
 }
 
-/** Function oyConfig_FromDomain
+/** Function oyConfig_ForDomain
  *  @brief   search a configuration in the DB for a configuration from backend
  *  @memberof oyConfig_s
  *
@@ -7171,7 +7199,7 @@ OYAPI oyConfig_s * OYEXPORT
  *  @date    2009/01/26
  */
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_FromDomain   ( oyConfig_s        * domain_config,
+               oyConfig_ForDomain   ( oyConfig_s        * domain_config,
                                        int32_t           * rank_value,
                                        oyObject_s          object)
 {
@@ -7238,6 +7266,8 @@ oyConfig_s * oyConfig_Copy_          ( oyConfig_s        * obj,
 
     s->options = oyOptions_Copy( obj->options, s->oy_ );
     error = !memcpy( s->version, obj->version, 3*sizeof(int) );
+
+    s->rank_map = oyRankPadCopy( obj->rank_map, allocateFunc_ );
   }
 
   if(error)
@@ -7511,11 +7541,32 @@ int            oyConfig_Compare      ( oyConfig_s        * domain_config,
           /** Option name is equal and and value matches : increase rank value*/
           if(p_val && oyStrstr_( d_opt, p_opt ))
           {
-            ++rank;
+            j = 0;
+            if(domain_config->rank_map)
+              while(domain_config->rank_map[j].key)
+              {
+                if(oyStrcmp_(domain_config->rank_map[j].key, d_opt) == 0)
+                  rank += domain_config->rank_map[j].match_value;
+                ++j;
+              }
+            else
+              ++rank;
 
             oyFree_m_(p_val);
+          } else if(domain_config->rank_map)
+            while(domain_config->rank_map[j].key)
+            {
+              if(oyStrcmp_(domain_config->rank_map[j].key, d_opt) == 0)
+                rank += domain_config->rank_map[j].none_match_value;
+              ++j;
+            }
+        } else if(domain_config->rank_map)
+          while(domain_config->rank_map[j].key)
+          {
+            if(oyStrcmp_(domain_config->rank_map[j].key, d_opt) == 0)
+              rank += domain_config->rank_map[j].not_found_value;
+            ++j;
           }
-        }
 
         /*
         rank += oyFilterRegistrationMatch( d->registration, p->registration,
@@ -7614,11 +7665,14 @@ OYAPI oyConfigs_s * OYEXPORT
 # define STRUCT_TYPE oyConfigs_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -8096,11 +8150,14 @@ oyProfile_New_ ( oyObject_s        object)
 # define STRUCT_TYPE oyProfile_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -10224,11 +10281,14 @@ OYAPI oyProfileTag_s * OYEXPORT
 # define STRUCT_TYPE oyProfileTag_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -10700,11 +10760,14 @@ OYAPI oyProfiles_s * OYEXPORT
 # define STRUCT_TYPE oyProfiles_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -11245,11 +11308,14 @@ oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
 # define STRUCT_TYPE oyRegion_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -11755,11 +11821,14 @@ OYAPI oyArray2d_s * OYEXPORT
 # define STRUCT_TYPE oyArray2d_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -12312,11 +12381,14 @@ oyImage_s *    oyImage_Create         ( int               width,
 # define STRUCT_TYPE oyImage_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -12927,11 +12999,14 @@ OYAPI oyConnector_s * OYEXPORT
 # define STRUCT_TYPE oyConnector_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -13217,11 +13292,14 @@ OYAPI oyFilterSocket_s * OYEXPORT
 # define STRUCT_TYPE oyFilterSocket_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -13423,11 +13501,14 @@ OYAPI oyFilterPlug_s * OYEXPORT
 # define STRUCT_TYPE oyFilterPlug_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -13596,11 +13677,14 @@ OYAPI oyFilterPlugs_s * OYEXPORT
 # define STRUCT_TYPE oyFilterPlugs_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -14063,11 +14147,14 @@ oyFilter_s * oyFilter_New_           ( oyObject_s          object )
 # define STRUCT_TYPE oyFilter_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -14378,7 +14465,7 @@ const char * oyFilter_GetText        ( oyFilter_s        * filter,
       error = oyObject_SetName( s->oy_, text, name_type );
 
     if(error)
-      WARNc_S(("MEM Error."))
+      WARNc_S(_("MEM Error."));
   }
 
   return oyObject_GetName(filter->oy_, name_type);
@@ -14520,11 +14607,14 @@ OYAPI oyFilters_s * OYEXPORT
 # define STRUCT_TYPE oyFilters_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -14790,11 +14880,14 @@ oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object )
 # define STRUCT_TYPE oyFilterNode_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -15999,11 +16092,14 @@ oyColourConversion_s* oyColourConversion_Create_ (
 # define STRUCT_TYPE oyColourConversion_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -16551,11 +16647,14 @@ oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
 # define STRUCT_TYPE oyPixelAccess_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -16867,11 +16966,14 @@ oyConversion_s *   oyConversion_New_ ( oyObject_s          object )
 # define STRUCT_TYPE oyConversion_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S("MEM Error.")
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -17556,11 +17658,14 @@ oyNamedColour_Create( const double      * chan,
 # define STRUCT_TYPE oyNamedColour_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -18148,11 +18253,14 @@ oyNamedColours_s* oyNamedColours_New ( oyObject_s       object )
 # define STRUCT_TYPE oyNamedColours_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
@@ -18407,11 +18515,14 @@ OYAPI oyCMMInfo_s * OYEXPORT
 # define STRUCT_TYPE oyCMMInfo_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
-    WARNc_S(("MEM Error."))
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 

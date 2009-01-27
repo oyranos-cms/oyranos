@@ -715,7 +715,7 @@ typedef struct {
   int32_t not_found_value;             /**< add to rank sum when entry is not found */
 } oyRankPad;
 
-oyRankPad *        oyRankPadCopy     ( const oyRankPad  ** rank_map,
+oyRankPad *        oyRankPadCopy     ( const oyRankPad   * rank_map,
                                        oyAlloc_f           allocateFunc );
 
 
@@ -753,7 +753,7 @@ OYAPI oyConfig_s * OYEXPORT
                oyConfig_New          ( const char        * registration,
                                        oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_FromDomain   ( oyConfig_s        * domain_config,
+               oyConfig_ForDomain    ( oyConfig_s        * domain_config,
                                        int32_t           * rank_value,
                                        oyObject_s          object);
 OYAPI oyConfig_s * OYEXPORT
