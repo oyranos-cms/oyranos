@@ -699,6 +699,25 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
                                        const char        * value,
                                        uint32_t            flags );
 
+/** @brief   a means to rank the result of comparing two key's
+ *
+ *  The structure is part of an other data structure and to be maintained by
+ *  that. So it is not a full member of the oyStruct_s object familiy.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/27 (Oyranos: 0.1.10)
+ *  @date    2009/01/27
+*/
+typedef struct {
+  char *  key;                         /**< key name to evaluate with this pad*/
+  int32_t match_value;                 /**< add to rank sum when matching */
+  int32_t none_match_value;            /**< add to rank sum when not matching*/
+  int32_t not_found_value;             /**< add to rank sum when entry is not found */
+} oyRankPad;
+
+oyRankPad *        oyRankPadCopy     ( const oyRankPad  ** rank_map,
+                                       oyAlloc_f           allocateFunc );
+
 
 /** @struct  oyConfig_s
  *  @brief   a group of options for a device
@@ -726,6 +745,8 @@ typedef struct {
   /** properties,
   e.g. "shared/freedesktop.org/colour/config.monitor.xorg.1/manufacturer=EIZO"*/
   oyOptions_s        * options;
+
+  oyRankPad          * rank_map;       /**< zero terminated list; key compare */
 } oyConfig_s;
 
 OYAPI oyConfig_s * OYEXPORT

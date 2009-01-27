@@ -989,6 +989,7 @@ typedef int      (*oyConfigs_FromPattern_f) (
  */
 typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
 
+
 /** @struct  oyCMMapi8_s
  *  @brief   the API 8 to handle plug-in specific data or configurations
  *  @ingroup backend_api
@@ -1038,7 +1039,7 @@ struct oyCMMapi8_s {
    *  e.g. "shared/freedesktop.org/colour/config.scanner.sane" or 
    *       "shared/freedesktop.org/colour/config.monitor.xorg" ...\n
    */
-  const char     * registration;
+  char           * registration;
 
   /** 0: major - should be stable for the live time of a backend, \n
       1: minor - mark new features, \n
@@ -1050,6 +1051,8 @@ struct oyCMMapi8_s {
 
   oyConfigs_FromPattern_f oyConfigs_FromPattern; /**< obtain matching configs */
   oyConfig_Check_f oyConfig_Check;     /**< test config */
+  oyRankPad      * rank_map;           /**< zero terminated list of rank
+                                        *   attributes */
 };
 
 
