@@ -531,8 +531,8 @@ void           oyValueClear          ( oyValue_u         * v,
  */
 typedef enum {
   oyOPTIONSOURCE_NONE = 0,             /**< not clear */
-  oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. filter */
-  oyOPTIONSOURCE_DATA = 4,             /**< external defaults, e.g. policy */
+  oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. backend */
+  oyOPTIONSOURCE_DATA = 4,             /**< external defaults, e.g. policy, DB*/
   oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. elektra */
 } oyOPTIONSOURCE_e;
 
@@ -698,6 +698,8 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
                                        const char        * key,
                                        const char        * value,
                                        uint32_t            flags );
+int            oyOptions_SetSource   ( oyOptions_s       * options,
+                                       oyOPTIONSOURCE_e    source );
 
 /** @brief   a means to rank the result of comparing two key's
  *

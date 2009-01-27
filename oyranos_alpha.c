@@ -7097,6 +7097,38 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
   return error;
 }
 
+/** Function oyOptions_SetSource
+ *  @memberof oyOptions_s
+ *  @brief   set source attribute
+ *
+ *  @param         options             the options list or set to manipulate
+ *  @param         source              the options new source attribute
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/27 (Oyranos: 0.1.9)
+ *  @date    2009/01/27
+ */
+int            oyOptions_SetSource   ( oyOptions_s       * options,
+                                       oyOPTIONSOURCE_e    source )
+{
+  int error = !(options && options->type_ == oyOBJECT_OPTIONS_S);
+  int i,n;
+  oyOption_s * o = 0;
+
+  if(!error)
+  {
+    n = oyOptions_Count( options );
+    for(i = 0; i < n; ++i)
+    {
+      o = oyOptions_Get( options, i );
+      o->source = source;
+      oyOption_Release( &o );
+    }
+  }
+
+  return error;
+}
+
 /** Function oyRankPadCopy
  *  @memberof oyConfig_s
  *  @brief   copy a rank map
@@ -7748,7 +7780,13 @@ OYAPI int  OYEXPORT
   }
 
   if(!error)
+    error = !cmm_api8->oyConfigs_FromPattern;
+
+  if(!error)
     error = cmm_api8->oyConfigs_FromPattern( registration_domain, options, &s );
+
+  if(!error)
+    error = oyOptions_SetSource( options, oyOPTIONSOURCE_FILTER );
 
   if(!error)
     *configs = s; s = 0;
