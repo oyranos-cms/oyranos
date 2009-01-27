@@ -7072,6 +7072,44 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
   return error;
 }
 
+/** Function oyRankPadCopy
+ *  @memberof oyConfig_s
+ *  @brief   copy a rank map
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/27 (Oyranos: 0.1.10)
+ *  @date    2009/01/27
+ */
+oyRankPad *        oyRankPadCopy     ( const oyRankPad  ** rank_map,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyRankPad * map = 0;
+  int error = !rank_map;
+  int n = 0, i;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(!error)
+  {
+    while( rank_map[n++]->key ) {}
+
+    oyAllocHelper_m_( map, oyRankPad, n + 1, allocateFunc, error = 1 );
+  }
+
+  if(!error)
+  {
+    for(i = 0; i < n; ++i)
+    {
+      map[i].key = oyStringCopy_( rank_map[i]->key, allocateFunc );
+      map[i].match_value = rank_map[i]->match_value;
+      map[i].none_match_value = rank_map[i]->none_match_value;
+      map[i].not_found_value = rank_map[i]->not_found_value;
+    }
+  }
+
+  return map;
+}
 
 /** Function oyConfig_New
  *  @memberof oyConfig_s
@@ -18946,7 +18984,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
 int      oySetMonitorProfile         ( const char        * display_name,
                                        const char        * profil_name )
 {
-  int error = 0;
+  int error = !display_name || !display_name[0];
   oyOption_s * o = 0;
   oyOptions_s * options_list = 0,
               * options = 0,
@@ -18954,13 +18992,19 @@ int      oySetMonitorProfile         ( const char        * display_name,
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0,
              * device = 0;
-  int i, j, k, n, j_n, k_n, device_names_n;
+  int i, j, k, n, j_n, k_n, device_names_n, device_pos;
   uint32_t count = 0,
          * rank_list = 0;
   char ** texts = 0,
         * text = 0,
        ** device_names = 0;
 
+  if(error > 0)
+  {
+    WARNc1_S( "No display_name argument provided. Give up. %s",
+              oyNoEmptyString_m_(profil_name) );
+    return error;
+  }
 
   options = oyOptions_New( 0 );
   options_devices = oyOptions_New( 0 );
@@ -18994,10 +19038,12 @@ int      oySetMonitorProfile         ( const char        * display_name,
       {
         o = oyOptions_Get( config->options, k );
 
-        /** collect the device_name's and backend keys into a set of options */
-        error = oyOptions_SetFromText( options_devices, o->registration,
-                                       o->value->string,
-                                       OY_CREATE_NEW | OY_ADD_ALWAYS );
+        /** Compare with the device_name option and identify multible entries.
+         *  Collect the device_name's and backend keys into a set of options */
+        if(oyStrcmp_( o->value->string, display_name ) == 0)
+          error = oyOptions_SetFromText( options_devices, o->registration,
+                                         o->value->string,
+                                         OY_CREATE_NEW | OY_ADD_ALWAYS );
 
         oyOption_Release( &o );
       }
@@ -19008,6 +19054,9 @@ int      oySetMonitorProfile         ( const char        * display_name,
     oyConfigs_Release( &configs );
   }
 
+  /** Now remove all matching entries to find place for a new one or extend an
+   *  an existing one which provides more entries than our device has.
+   */
   n = oyOptions_Count( options_devices );
   if(display_name)
   {
