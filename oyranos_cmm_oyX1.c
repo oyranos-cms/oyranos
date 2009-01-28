@@ -139,12 +139,12 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"list\" will provide a list of available\n"
       " devices. Use the returned values as option \"device_name\" to select a"
-      " device. This is a cheap call.");
+      " device. The option \"display_geometry\" may be added to additionally"
+      " obtain display geometry information. \"list\" is a cheap call.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"properties\" will provide the devices \n"
       " properties. Requires one device identifier returned with the \n"
-      " \"list_all\" option. The properties may cover following entries,\n"
-      " which can be used as well as filters:\n"
+      " \"list\" option. The properties may cover following entries:\n"
       " - \"manufacturer\"\n"
       " - \"model\"\n"
       " - \"serial\"\n"
@@ -155,11 +155,11 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " If the option key word \"edid\" (specific) is present the EDID\n"
       " information will be passed inside a oyBlob_s struct.\n"
       " \n"
-      " One option \"device_name\" (specific) will select the according X\n"
-      " display. If not the backend will try to get this information from \n"
+      " One option \"device_name\" will select the according X display.\n"
+      " If not the backend will try to get this information from \n"
       " your \"DISPLAY\" environment variable or uses what the system\n"
       " provides. The option is identical with the options returned from\n"
-      " a \"list\" request. This call is a expensive one."
+      " a \"list\" request. The \"properties\" call is a expensive one."
        );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"setup\" will setup the device from a profile.\n"
@@ -214,6 +214,7 @@ int            oyX1Configs_FromPattern (
     /*message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);*/
 
     value2 = oyOptions_FindString( options, "list", 0 );
+    value3 = oyOptions_FindString( options, "display_geometry", 0 );
     if(value2)
     {
       texts_n = oyGetAllScreenNames( value1, &texts, allocateFunc );
@@ -227,6 +228,19 @@ int            oyX1Configs_FromPattern (
         error = oyOptions_SetFromText( config->options,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
+
+        if(value3)
+        {
+          oyRegion_s * rect = oyX1Region_FromDevice( texts[i] );
+          if(!rect)
+          {
+            WARNc1_S("Could not obtain region information for %s", texts[i]);
+          } else
+          {
+            o = oyOption_New( registration, 0 );
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
+          }
+        }
 
         if(error <= 0)
           config->rank_map = oyRankMapCopy( oyX1_rank_map,
@@ -251,11 +265,15 @@ int            oyX1Configs_FromPattern (
 
       if(!value1)
       {
-        message(oyMSG_WARN, (oyStruct_s*)options, "The \"device_name\" argument is\n"
-                " missed to select a appropriate device for the \"properties\" call.");
+        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                "The \"device_name\" argument is\n"
+                " missed to select a appropriate device for the \"properties\""
+                " call.", OY_DBG_ARGS_ );
+        error = 1;
       }
 
-      error = oyGetMonitorInfo_lib( value1,
+      if(error <= 0)
+        error = oyGetMonitorInfo_lib( value1,
                &manufacturer, &model, &serial, &display_geometry, &system_port,
                               &host, value3 ? &edid : 0, allocateFunc,
                                     (oyStruct_s*)options );
@@ -265,6 +283,8 @@ int            oyX1Configs_FromPattern (
                  OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
                  " oyGetMonitorInfo_lib returned with %s; device_name: \"%s\"",
                  OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)", oyNoEmptyString_m_( value1) );
+
+      if(error <= 0)
       {
         config = oyConfig_New( CMM_BASE_REG, 0 );
         error = !config;
