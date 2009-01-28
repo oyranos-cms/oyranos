@@ -1116,7 +1116,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
     return rc;
   }
 
-  value = (char*) calloc (sizeof(char), MAX_PATH);
+  oyAllocHelper_m_( value, char, MAX_PATH, 0, return 1 )
   profile_name = oyGetDeviceProfile_ (manufacturer, model, product_id,
                                       host, port, attrib1, attrib2, attrib3,
                                       oyAllocateFunc_);
@@ -1146,5 +1146,88 @@ oyEraseDeviceProfile_              (const char* manufacturer,
   return rc;
 }
 
+int                oyEraseKey_       ( const char        * key_name )
+{
+  int error = !key_name,
+      rc = 0,
+      success = 0;
+  Key * key = 0,
+      * current = 0;
+  KeySet * ks = 0;
+  char * name = NULL,
+       * value = NULL;
 
+  if(!oy_handle_)
+    return 1;
+
+  oyAllocHelper_m_( name, char, MAX_PATH, 0, return 1 )
+
+  oySprintf_( name, "%s%s", oySelectUserSys_(), key_name );
+
+  if(!error)
+  {
+    key = keyNew( name, KEY_END );
+    rc = kdbGetKey( oy_handle_, key );
+
+    if(!keyIsDir( key ))
+    {
+      if( keyRemove( key ) == 1 )
+      {
+        rc = kdbSetKey( oy_handle_, key );
+        if(rc == 0)
+        {
+          DBG_PROG1_S( "removed key %s", name );
+          success = 1;
+        }
+      }
+      keyDel( key );
+
+      if(success)
+        return error;
+
+      rc = kdbRemove ( oy_handle_, name ); 
+      if(rc == 0)    
+      {
+        success = 1;
+        return error;
+      }
+    }
+
+    rc = 0;
+    ks = oyReturnChildrenList_( key_name, &rc ); /* rc == 0 */
+    if(ks)
+    {
+      oyAllocHelper_m_( value, char, MAX_PATH, 0, return 1 )
+
+      FOR_EACH_IN_KDBKEYSET( current, ks )
+      {
+        keyGetName(current, value, MAX_PATH);
+
+        if(strstr(value, key_name) != 0)
+        {
+          rc = kdbRemove ( oy_handle_, value );
+          if(rc == 0)
+          {
+            DBG_PROG1_S( "removed key %s", value );
+            ++success;
+          }
+        }
+      }
+
+      oyFree_m_( value );
+    }
+
+    rc = kdbRemove ( oy_handle_, name );
+    if(rc == 0)
+    {
+      DBG_PROG1_S( "removed key %s", name );
+      ++success;
+    }
+  }
+
+
+  oyFree_m_( name );
+
+  return error;
+}
 

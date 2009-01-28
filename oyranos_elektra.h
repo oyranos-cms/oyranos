@@ -122,6 +122,7 @@ int     oyKeySetHasValue_      (const char* keyParentName,
 char*   oySearchEmptyKeyname_        ( const char        * keyParentName );
 char **            oyKeySetGetNames_ ( const char        * key_parent_name,
                                        int               * n );
+int                oyEraseKey_       ( const char        * key_name );
 
 
 #ifdef __cplusplus
