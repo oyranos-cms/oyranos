@@ -765,6 +765,66 @@ oyGetScreenFromPosition_        (const char *display_name,
 }
 #endif
 
+/** @internal
+ *  Function oyX1Region_FromDevice
+ *  @memberof monitor_api
+ *  @brief   value filled a oyStruct_s object
+ *
+ *  @param         device_name         the Oyranos specific device name
+ *  @return                            the region the device projects to
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/28 (Oyranos: 0.1.10)
+ *  @date    2009/01/28
+ */
+oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name )
+{
+  oyRegion_s * region = 0;
+  int error = !device_name;
+
+  if(!error)
+  {
+#ifdef __APPLE__
+
+    GDHandle      device;
+    DisplayIDType screenID;
+    Rect          r = {0,0,640,480};
+    char * new_display_name = oyAllocateWrapFunc_( 24, allocate_func );
+
+    device = GetDeviceList();
+    while (device)
+    {
+      r = (**device).gdRect;
+      DMGetDisplayIDByGDevice(device, &screenID, false);
+
+      oySnprintf1_( new_display_name, 24, "%d", (int)screenID );
+
+      if(oyStrcmp_( device_name, new_display_name ) == 0)
+      {
+        region = oyRegion_NewWith( r.left, r.top,
+                                   r.right - r.left, r.bottom - r.top, 0 );
+
+        return region;
+      }
+    }
+
+#else
+    oyMonitor_s * disp = 0;
+
+    disp = oyMonitor_newFrom_( device_name, 0 );
+    if(!disp)
+      return 0;
+
+    region = oyRegion_NewWith( oyMonitor_x_(disp), oyMonitor_x_(disp),
+                           oyMonitor_width_(disp), oyMonitor_height_(disp), 0 );
+
+    oyMonitor_release_( &disp );
+#endif
+  }
+
+  return region;
+}
+
 /** @internal This function will only with Xinerama hit exact results
  *  Anyway, we handle multiple screens too.
  */

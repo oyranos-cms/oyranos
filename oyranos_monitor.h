@@ -63,9 +63,10 @@ int      oyGetAllScreenNames         ( const char        * display_name,
                                        char            *** display_names,
                                        oyAlloc_f           allocateFunc );
 
-int      oyX1MonitorProfileSetup     ( const char        * display_name,
+int          oyX1MonitorProfileSetup ( const char        * display_name,
                                        const char        * profil_name );
-int      oyX1MonitorProfileUnset     ( const char        * display_name );
+int          oyX1MonitorProfileUnset ( const char        * display_name );
+oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name );
 
 
 #ifdef __cplusplus
