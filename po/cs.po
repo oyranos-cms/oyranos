@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-01-23 09:37+0100\n"
+"POT-Creation-Date: 2009-01-28 16:05+0100\n"
 "PO-Revision-Date: 2008-10-23 20:49+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -66,7 +66,7 @@ msgstr "nenalezeno"
 msgid "Did not find a type for option:"
 msgstr "nenalezen typ pro volbu:"
 
-#: oyranos_elektra.c:446 oyranos_elektra.c:536
+#: oyranos_elektra.c:486 oyranos_elektra.c:576
 msgid "default profile type does not exist:"
 msgstr "vychozi typ profilu neexistuje:"
 
@@ -370,7 +370,7 @@ msgstr "Datum kalibrace"
 msgid "Colour measurement data"
 msgstr "Data z barvoveho mereni"
 
-#: oyranos_icc.c:377 oyranos_alpha.c:2510
+#: oyranos_icc.c:377 oyranos_alpha.c:2516
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -1197,52 +1197,52 @@ msgstr ""
 msgid "Could not get Xatom, probably your monitor profile is not set:"
 msgstr "Nelze ziskat Xatom, pravdepodobne neni nastaven profil monitru:"
 
-#: oyranos_monitor.c:1052 oyranos_monitor.c:1252 oyranos_monitor.c:1733
+#: oyranos_monitor.c:1112 oyranos_monitor.c:1312 oyranos_monitor.c:1793
 msgid "open X Display failed"
 msgstr "selhalo otevreni X displeje"
 
 #. hack
-#: oyranos_monitor.c:1076 oyranos_monitor.c:1276
+#: oyranos_monitor.c:1136 oyranos_monitor.c:1336
 msgid "No monitor gamma curves by profile:"
 msgstr "Zadne gama krivky monitoru v profilu:"
 
-#: oyranos_monitor.c:1110 oyranos_monitor.c:1310
+#: oyranos_monitor.c:1170 oyranos_monitor.c:1370
 msgid "Error obtaining profile"
 msgstr "Chyba pri ziskavani profilu"
 
-#: oyranos_monitor.c:1117 oyranos_monitor.c:1119 oyranos_monitor.c:1317
-#: oyranos_monitor.c:1319
+#: oyranos_monitor.c:1177 oyranos_monitor.c:1179 oyranos_monitor.c:1377
+#: oyranos_monitor.c:1379
 msgid "Error setting up atom"
 msgstr "Chyba pri nastavovani atomu"
 
-#: oyranos_monitor.c:1393
+#: oyranos_monitor.c:1453
 msgid "Error getting atom"
 msgstr "Chyba pri ziskavani atomu"
 
-#: oyranos_monitor.c:1621
+#: oyranos_monitor.c:1681
 #, fuzzy
 msgid "XRandR CrtcInfo request failed"
 msgstr "Xinerama pozadavek selhal"
 
-#: oyranos_monitor.c:1639
+#: oyranos_monitor.c:1699
 msgid "Xinerama request failed"
 msgstr "Xinerama pozadavek selhal"
 
-#: oyranos_monitor.c:1655
+#: oyranos_monitor.c:1715
 msgid "open X Screen failed"
 msgstr "selhalo otevreni X displeje"
 
-#: oyranos_monitor.c:1726
+#: oyranos_monitor.c:1786
 #, fuzzy
 msgid "allocation failed"
 msgstr "Datum kalibrace"
 
-#: oyranos_monitor.c:1741
+#: oyranos_monitor.c:1801
 #, fuzzy
 msgid "no Screen found"
 msgstr "Cela obrazovka zap./vyp."
 
-#: oyranos_monitor.c:1852
+#: oyranos_monitor.c:1912
 msgid "less Xinerama monitors than XRandR ones"
 msgstr ""
 
@@ -1347,48 +1347,71 @@ msgstr "instalace nove politiky selhalo s chybou:"
 msgid "Policy search paths"
 msgstr ""
 
-#: oyranos_alpha.c:2508
+#: oyranos_alpha.c:601 oyranos_alpha.c:1021 oyranos_alpha.c:2066
+#: oyranos_alpha.c:4374 oyranos_alpha.c:4599 oyranos_alpha.c:5252
+#: oyranos_alpha.c:6087 oyranos_alpha.c:7241 oyranos_alpha.c:7948
+#: oyranos_alpha.c:8559 oyranos_alpha.c:10690 oyranos_alpha.c:11169
+#: oyranos_alpha.c:11717 oyranos_alpha.c:12230 oyranos_alpha.c:12790
+#: oyranos_alpha.c:13408 oyranos_alpha.c:13701 oyranos_alpha.c:13910
+#: oyranos_alpha.c:14086 oyranos_alpha.c:14556 oyranos_alpha.c:14867
+#: oyranos_alpha.c:15016 oyranos_alpha.c:15289 oyranos_alpha.c:16501
+#: oyranos_alpha.c:17056 oyranos_alpha.c:17375 oyranos_alpha.c:18067
+#: oyranos_alpha.c:18662 oyranos_alpha.c:18924
+msgid "MEM Error."
+msgstr ""
+
+#: oyranos_alpha.c:2514
 msgid "Name"
 msgstr "Jmeno"
 
-#: oyranos_alpha.c:2509
+#: oyranos_alpha.c:2515
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Vyrobce:     "
 
-#: oyranos_alpha.c:2907
+#: oyranos_alpha.c:2913
 #, fuzzy
 msgid "Could not open meta backend API"
 msgstr "Nemohu nacist pismo v:"
 
-#: oyranos_alpha.c:12796 oyranos_alpha.c:12812
+#: oyranos_alpha.c:7414 oyranos_alpha.c:19565
+#, fuzzy
+msgid "Could not open device"
+msgstr "Nemohu nacist pismo v:"
+
+#: oyranos_alpha.c:14375 oyranos_alpha.c:14391
 msgid "with '.' is not allowed"
 msgstr ""
 
-#: oyranos_alpha.c:16693
+#: oyranos_alpha.c:17617
 msgid "No filter"
 msgstr "Zadny filtr"
 
-#: oyranos_alpha.c:16703
+#: oyranos_alpha.c:17627
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr ""
 "Prosim pridejte nejprve image node ke grafu pred pridanim ostatnich filtru"
 
-#: oyranos_alpha.c:16711
+#: oyranos_alpha.c:17635
 msgid "attempt to add a incomplete filter"
 msgstr "pokus o pridani neuplneho filtru"
 
-#: oyranos_alpha.c:16720
+#: oyranos_alpha.c:17644
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr "pokus o pridani nelinearniho filtru k linearnimu grafu"
 
-#: oyranos_alpha.c:16754
+#: oyranos_alpha.c:17678
 msgid "?? Nothing to add ??"
 msgstr "?? Nic k pridani ??"
 
-#: oyranos_alpha.c:17701
+#: oyranos_alpha.c:18628
 msgid "---"
 msgstr "---"
+
+#: oyranos_alpha.c:19592
+#, fuzzy
+msgid "Could not open profile"
+msgstr "Nemohu nacist pismo v:"
 
 #: oyranos_cmm_lcms.c:1647
 msgid "Little CMS"
@@ -1432,37 +1455,37 @@ msgstr ""
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:393
+#: oyranos_cmm_oyX1.c:470
 msgid "Oyranos X11"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:395
+#: oyranos_cmm_oyX1.c:472
 msgid "The window support backend of Oyranos."
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:399 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
+#: oyranos_cmm_oyX1.c:476 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
 msgid "Kai-Uwe"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:401 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
+#: oyranos_cmm_oyX1.c:478 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:403 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
+#: oyranos_cmm_oyX1.c:480 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:407 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
+#: oyranos_cmm_oyX1.c:484 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
 msgid "newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:409 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
+#: oyranos_cmm_oyX1.c:486 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
 msgid "Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:411 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
+#: oyranos_cmm_oyX1.c:488 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr ""
 
