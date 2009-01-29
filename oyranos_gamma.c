@@ -41,6 +41,7 @@ int main( int argc , char** argv )
   char *monitor_profile = 0;
   int error = 0;
   int erase = 0;
+  int list = 0;
   int database = 0;
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -84,6 +85,7 @@ int main( int argc , char** argv )
             {
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'b': database = 1; monitor_profile = 0; break;
+              case 'l': list = 1; monitor_profile = 0; break;
               case 'x': if( pos + 1 < argc )
                         { x = atoi( argv[pos+1] );
                           if( x == 0 && strcmp(argv[pos+1],"0") )
@@ -124,6 +126,9 @@ int main( int argc , char** argv )
                         printf("      %s -b\n",        argv[0]);
                         printf("            -x pos -y pos\n");
                         printf("\n");
+                        printf("  %s\n",               _("List devices:"));
+                        printf("      %s -l\n",        argv[0]);
+                        printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
                         printf("\n");
@@ -150,7 +155,7 @@ int main( int argc , char** argv )
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
-    if(oy_debug || (!monitor_profile && !erase))
+    if(oy_debug || (!monitor_profile && !erase && !list))
     {
       size_t size = 0;
       oyProfile_s * prof = 0;
@@ -172,6 +177,25 @@ int main( int argc , char** argv )
              filename?filename:OY_PROFILE_NONE, (int)size);
 
       oyProfile_Release( &prof );
+    }
+
+    if(list)
+    {
+      char ** texts = 0;
+      uint32_t texts_n = 0;
+      int i = 0;
+
+      error = oyDevicesList( "monitor", &texts, &texts_n, 1, malloc );
+      if(!error)
+      {
+        for(i = 0; i < texts_n; ++i)
+        {
+          printf("%s\n", texts[i]? texts[i]:"???");
+          if(texts[i])
+            free( texts[i] );
+        }
+        free(texts);
+      }
     }
 
     /* make shure the display name is correct including the screen */
