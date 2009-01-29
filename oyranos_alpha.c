@@ -7052,7 +7052,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
       if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
       {
         char * key_tmp = oyFilterRegistrationToText( option_a->registration,
-                                                     oyFILTER_REG_OPTION, 0 );
+                                                     oyFILTER_REG_MAX, 0 );
         if(oyStrcmp_( key_tmp, key) == 0)
         {
           if(option_a->value_type == oyVAL_STRING)
@@ -7980,11 +7980,6 @@ OYAPI int  OYEXPORT
 
   oyExportStart_(EXPORT_CHECK_NO);
 
-  if(!error)
-  {
-    s = oyConfigs_New( object );
-    error = !s;
-  }
   /**
    *  1. first we search for oyCMMapi8_s complex config support matching to our
    *     registration_domain
@@ -19439,6 +19434,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
                                  "true", OY_CREATE_NEW );
   error = oyOptions_SetFromText( options, "//colour/config/display_geometry",
                                  "true", OY_CREATE_NEW );
+  /** we want a fuzzy look at our display, not the narrow "device_name" */
   error = oyOptions_SetFromText( options, "//colour/config/display_name",
                                  display_name, OY_CREATE_NEW );
 
@@ -19580,16 +19576,15 @@ int      oySetMonitorProfile         ( const char        * display_name,
                                        const char        * profile_name )
 {
   int error = !display_name || !display_name[0];
-  oyOption_s * o = 0,
-             * od = 0;
+  oyOption_s * od = 0;
   oyOptions_s * options = 0;
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0,
              * device = 0;
   oyProfile_s * p = 0;
-  int i, j, k, n, j_n, k_n, equal;
-  char * o_opt = 0,
-       * d_opt = 0,
+  int i, j, n, j_n, equal;
+  char * d_opt = 0;
+  const char * device_name = 0,
        * o_val = 0,
        * d_val = 0;
 
@@ -19621,6 +19616,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
     return error;
   }
 
+  device_name = oyOptions_FindString( device->options, "device_name", 0 );
+
   /** 3. unset the device colour/profile settings for no profile_name argument
    */
   if(!profile_name)
@@ -19629,6 +19626,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
     /** 3.1 set a general request */
     error = oyOptions_SetFromText( options, "//colour/config/unset",
                                    "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/device_name",
+                                   device_name, OY_CREATE_NEW );
 
     /** 3.2 send the query to a backend */
     error = oyConfigs_FromDomain( device->registration, options, 0, 0 );
@@ -19653,49 +19652,42 @@ int      oySetMonitorProfile         ( const char        * display_name,
   if(!error)
   {
     /** 4.1 get stored DB's configurations */
-    configs = oyConfigs_FromDB( config->registration, 0 );
+    configs = oyConfigs_FromDB( device->registration, 0 );
 
     n = oyConfigs_Count( configs );
     for( i = 0; i < n; ++i )
     {
       config = oyConfigs_Get( configs, i );
 
-      j_n = oyOptions_Count( config->options );
+      equal = 0;
+
+      j_n = oyOptions_Count( device->options );
       for(j = 0; j < j_n; ++j)
       {
-        o = oyOptions_Get( config->options, j );
-        o_opt = oyFilterRegistrationToText( o->registration,
+        od = oyOptions_Get( device->options, j );
+        d_opt = oyFilterRegistrationToText( od->registration,
                                             oyFILTER_REG_MAX, 0 );
+        d_val = oyOptions_FindString( device->options, d_opt, 0 );
 
-        equal = 0;
-        k_n = oyOptions_Count( device->options );
-        for(k = 0; k < k_n; ++k)
-        {
-          od = oyOptions_Get( device->options, k );
-          d_opt = oyFilterRegistrationToText( od->registration,
-                                              oyFILTER_REG_MAX, 0 );
+        o_val = oyOptions_FindString( config->options, d_opt, 0 );
 
-          /** 4.1.1 compare if each device key matches to one configuration
-           *          key */
-          if( d_opt && o_opt && d_val && o_val &&
-              oyStrcmp_( d_opt, o_opt ) == 0 &&
-              oyStrcmp_( d_val, o_val ) == 0)
-          {
-            ++equal;
-          }
-          oyOption_Release( &od );
-          oyFree_m_( d_opt );
-        }
+        /** 4.1.1 compare if each device key matches to one configuration
+         *          key */
+        if( d_val && o_val &&
+            oyStrcmp_( d_val, o_val ) == 0)
+          ++equal;
 
-        /** 4.1.2 if the 4.1.1 condition is true remove the configuration */
-        if(equal == k_n)
-          oyConfig_EraseFromDB( config );
-
-        oyOption_Release( &o );
-        oyFree_m_( o_opt );
+        oyOption_Release( &od );
+        oyFree_m_( d_opt );
       }
+
+      /** 4.1.2 if the 4.1.1 condition is true remove the configuration */
+      if(equal == j_n)
+        oyConfig_EraseFromDB( config );
+
       oyConfig_Release( &config );
     }
+    oyConfigs_Release( &configs );
   }
 
   /** 5. save the new configuration with a associated profile \n
@@ -19706,6 +19698,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
   /** 5.2 save the configuration to DB (Elektra) */
   if(!error)
     error = oyConfig_SaveToDB( device );
+
+  oyConfig_Release( &device );
 
   return error;
 }
