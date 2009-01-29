@@ -1449,11 +1449,12 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
       atom_name = oyMonitor_getAtomName_( disp, "_ICC_PROFILE" );
       atom = XInternAtom (display, atom_name, True);
-      if (atom == None) {
+      if (atom != None)
+        XDeleteProperty( display, w, atom );
+      else
+      {
         WARNc2_S("%s \"%s\"", _("Error getting atom"), atom_name);
       }
-
-      XDeleteProperty( display, w, atom );
 
       {
         char *dpy_name = strdup( oyNoEmptyString_m_(display_name) );
