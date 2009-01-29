@@ -138,9 +138,11 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"list\" will provide a list of available\n"
-      " devices. Use the returned values as option \"device_name\" to select a"
-      " device. The option \"display_geometry\" may be added to additionally"
-      " obtain display geometry information. \"list\" is a cheap call.");
+      " devices. Use the returned values as option \"device_name\" to select a\n"
+      " device. The option \"display_geometry\" may be added to additionally\n"
+      " obtain display geometry information. The option \"display_name\" is\n"
+      " optional to pass the X11 display name and obtain a unfiltered result.\n"
+      " \"list\" is a cheap call.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"properties\" will provide the devices \n"
       " properties. Requires one device identifier returned with the \n"
@@ -178,8 +180,8 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
  *  @brief   oyX1 oyCMMapi8_s Xorg monitors
  *
  *  @version Oyranos: 0.1.10
- *  @date    2009/01/19
  *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/28
  */
 int            oyX1Configs_FromPattern (
                                        const char        * registration,
@@ -194,7 +196,8 @@ int            oyX1Configs_FromPattern (
       error = !s;
   const char * value1 = 0,
              * value2 = 0,
-             * value3 = 0;
+             * value3 = 0,
+             * display_name = 0;
   int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
@@ -210,6 +213,7 @@ int            oyX1Configs_FromPattern (
   {
     configs = oyConfigs_New(0);
 
+    display_name = oyOptions_FindString( options, "display_name", 0 );
     value1 = oyOptions_FindString( options, "device_name", 0 );
     /*message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);*/
 
@@ -217,7 +221,8 @@ int            oyX1Configs_FromPattern (
     value3 = oyOptions_FindString( options, "display_geometry", 0 );
     if(value2)
     {
-      texts_n = oyGetAllScreenNames( value1, &texts, allocateFunc );
+      texts_n = oyGetAllScreenNames( display_name ? display_name : value1,
+                                     &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -239,6 +244,7 @@ int            oyX1Configs_FromPattern (
           {
             o = oyOption_New( registration, 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
+            oyOptions_MoveIn( config->options, &o, -1 );
           }
         }
 
