@@ -242,7 +242,7 @@ int            oyX1Configs_FromPattern (
             WARNc1_S("Could not obtain region information for %s", texts[i]);
           } else
           {
-            o = oyOption_New( registration, 0 );
+            o = oyOption_New( CMM_BASE_REG OY_SLASH "display_geometry", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
             oyOptions_MoveIn( config->options, &o, -1 );
           }
@@ -283,7 +283,7 @@ int            oyX1Configs_FromPattern (
                &manufacturer, &model, &serial, &display_geometry, &system_port,
                               &host, value3 ? &edid : 0, allocateFunc,
                                     (oyStruct_s*)options );
- 
+
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
                  OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
@@ -344,9 +344,11 @@ int            oyX1Configs_FromPattern (
     }
   }
 
-  message(oyMSG_WARN, (oyStruct_s*)options, "\n "
-                "This point should not be reached.\n"
+  message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                "This point should not be reached. Options:\n%s", OY_DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
                 );
+
   oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
 
   return error;
