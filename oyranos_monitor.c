@@ -815,7 +815,7 @@ oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name )
     if(!disp)
       return 0;
 
-    region = oyRegion_NewWith( oyMonitor_x_(disp), oyMonitor_x_(disp),
+    region = oyRegion_NewWith( oyMonitor_x_(disp), oyMonitor_y_(disp),
                            oyMonitor_width_(disp), oyMonitor_height_(disp), 0 );
 
     oyMonitor_release_( &disp );
