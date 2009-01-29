@@ -140,8 +140,11 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       "The presence of option \"list\" will provide a list of available\n"
       " devices. Use the returned values as option \"device_name\" to select a\n"
       " device. The option \"display_geometry\" may be added to additionally\n"
-      " obtain display geometry information. The option \"display_name\" is\n"
-      " optional to pass the X11 display name and obtain a unfiltered result.\n"
+      " obtain display geometry information as a oyRegion_s object.\n"
+      " The option \"icc_profile\" may be added to obtain a oyProfile_s.\n"
+      " The option \"display_name\" is optional to pass the X11 display name\n"
+      " and obtain a unfiltered result.\n"
+      " The option \"device_name\" may be added as a filter.\n"
       " \"list\" is a cheap call.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"properties\" will provide the devices \n"
@@ -170,6 +173,10 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"unset\" will invalidate a profile of a device.\n"
+      " The option \"device_name\" must be present."
+      );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+      "The presence of option \"get\" will provide a profile of the device.\n"
       " The option \"device_name\" must be present."
       );
 
@@ -226,6 +233,10 @@ int            oyX1Configs_FromPattern (
 
       for( i = 0; i < texts_n; ++i )
       {
+        /* filter */
+        if(value1 && strcmp(value1, texts[i]) != 0)
+          continue;
+
         config = oyConfig_New( CMM_BASE_REG, 0 );
         error = !config;
 
@@ -247,6 +258,29 @@ int            oyX1Configs_FromPattern (
             oyOptions_MoveIn( config->options, &o, -1 );
           }
         }
+
+        value3 = oyOptions_FindString( options, "icc_profile", 0 );
+        if(value3)
+        {
+          size_t size = 0;
+          char * data = oyX1GetMonitorProfile( texts[i], &size, allocateFunc );
+          oyProfile_s * p = 0;
+
+          
+          if(!size & !data)
+          {
+            WARNc1_S("Could not obtain _ICC_PROFILE information for %s",
+            texts[i]);
+          } else
+          {
+            p = oyProfile_FromMem( size, data, 0, 0 );
+            o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            oyOptions_MoveIn( config->options, &o, -1 );
+            free( data );
+          }
+        }
+
 
         if(error <= 0)
           config->rank_map = oyRankMapCopy( oyX1_rank_map,
@@ -330,16 +364,31 @@ int            oyX1Configs_FromPattern (
 
     value2 = oyOptions_FindString( options, "setup", 0 );
     value3 = oyOptions_FindString( options, "profile_name", 0 );
-    if(value2 && value1)
+    if(error <= 0 && value2)
     {
-      error = oyX1MonitorProfileSetup( value1, value3 );
+      error = !value1 || !value3;
+      if(error >= 1)
+        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                "The device_name/profile_name option is missed. Options:\n%s",
+                OY_DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
+                );
+      else
+        error = oyX1MonitorProfileSetup( value1, value3 );
       return error;
     }
 
     value2 = oyOptions_FindString( options, "unset", 0 );
-    if(value2 && value1)
+    if(error <= 0 && value2)
     {
-      error = oyX1MonitorProfileUnset( value1 );
+      error = !value1;
+      if(error >= 1)
+        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                "The device_name option is missed. Options:\n%s", OY_DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
+                );
+      else
+        error = oyX1MonitorProfileUnset( value1 );
       return error;
     }
   }
@@ -437,6 +486,7 @@ oyCMMapi8_s oyX1_api8 = {
  *  @date    2007/12/12
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  */
+#if 0
 oyCMMapi2_s oyX1_api2 = {
 
   oyOBJECT_CMM_API2_S,
@@ -457,7 +507,7 @@ oyCMMapi2_s oyX1_api2 = {
   oySetMonitorProfile_lib,
   oyActivateMonitorProfiles_lib
 };
-
+#endif
 
 
 /**
