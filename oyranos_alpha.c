@@ -8587,6 +8587,7 @@ OYAPI int  OYEXPORT
  *  @param[in]     device_class        the device class, e.g. "monitor"
  *  @param[out]    list                the list
  *  @param[out]    list_n              the list count
+ *  @param[in]     flags               1 for verbose
  *  @param[in]     allocateFunc        the user allocator for list
  *  @return                            0 - good, >= 1 - error, <= -1 unknown
  *
@@ -8598,16 +8599,22 @@ OYAPI int  OYEXPORT
                  oyDevicesList       ( const char        * device_class,
                                        char            *** list,
                                        uint32_t          * list_n,
+                                       uint32_t            flags,
                                        oyAlloc_f           allocateFunc )
 {
   int error = !device_class || !device_class[0] || !list || !list_n;
   oyOptions_s * options = 0;
+  oyOption_s * o = 0;
   oyConfigs_s * devices = 0;
-  oyConfig_s * config = 0;
+  oyConfig_s * device = 0;
+  oyProfile_s * p = 0;
+  oyRegion_s * r = 0;
   int j, j_n, count = 0;
   uint32_t texts_n = 0;
   char ** texts = 0;
+  char * text = 0, * temp = 0;
   const char * tmp = 0;
+  char num[64] = {0};
 
   if(error > 0)
   {
@@ -8621,6 +8628,13 @@ OYAPI int  OYEXPORT
   /** 1.1 add "list" call to backend arguments */
   error = oyOptions_SetFromText( options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
+  if(flags & 1)
+  {
+    error = oyOptions_SetFromText( options, "//colour/config/display_geometry",
+                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/icc_profile",
+                                   "true", OY_CREATE_NEW );
+  }
 
   /** 1.2 ask each backend */
   if(!error)
@@ -8630,24 +8644,61 @@ OYAPI int  OYEXPORT
   j_n = oyConfigs_Count( devices );
   for( j = 0; j < j_n; ++j )
   {
-    config = oyConfigs_Get( devices, j );
+    device = oyConfigs_Get( devices, j );
 
     /** 1.2.1 add device_name to the string list */
-    tmp = oyOptions_FindString( config->options, "device_name", 0 );
-    oyStringListAddStaticString_( list, &count, oyNoEmptyString_m_(tmp),
+    tmp = oyOptions_FindString( device->options, "device_name", 0 );
+
+    STRING_ADD( text, "\"" );
+    STRING_ADD( text, tmp );
+    STRING_ADD( text, "\"  " );
+
+    o = oyOptions_Find( device->options, "display_geometry" );
+
+    if(o && o->value && o->value->oy_struct &&
+       o->value->oy_struct->type_ == oyOBJECT_REGION_S)
+    {
+      r = (oyRegion_s*) o->value->oy_struct;
+
+      oySprintf_( num, "%d,%d,%dx%d", (int)r->x, (int)r->y,
+                                      (int)r->width, (int)r->height );
+      
+      temp = oyRegion_Show( r );
+      STRING_ADD( text, temp );
+      oyFree_m_(temp);
+    }
+    oyOption_Release( &o );
+
+    o = oyOptions_Find( device->options, "icc_profile" );
+
+    if( o && o->value && o->value->oy_struct && 
+             o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+    {
+      p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+      tmp = oyProfile_GetFileName( p, 0 );
+
+      STRING_ADD( text, "  " );
+      if(oyStrrchr_( tmp, OY_SLASH_C ))
+        STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
+      else
+        STRING_ADD( text, tmp );
+
+      oyProfile_Release( &p );
+    }
+
+    oyStringListAddStaticString_( list, &count, oyNoEmptyString_m_(text),
                                     oyAllocateFunc_, oyDeAllocateFunc_ );
 
-    oyConfig_Release( &config );
+    oyFree_m_( text );
+    oyConfig_Release( &device );
   }
 
   oyConfigs_Release( &devices );
   oyOptions_Release( &options );
 
-  oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
-
   if(list && allocateFunc)
   {
-    texts = oyStringListAppend_( (const char**) list, count, 0,0, &count,
+    texts = oyStringListAppend_( (const char**) *list, count, 0,0, &count,
                                  allocateFunc );
     oyStringListRelease_( list, count, oyDeAllocateFunc_ );
     *list = texts;

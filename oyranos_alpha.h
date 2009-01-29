@@ -861,6 +861,7 @@ OYAPI int  OYEXPORT
                  oyDevicesList       ( const char        * device_class,
                                        char            *** list,
                                        uint32_t          * count,
+                                       uint32_t            flags,
                                        oyAlloc_f           allocateFunc );
 
 
