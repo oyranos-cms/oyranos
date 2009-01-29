@@ -791,6 +791,10 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_DomainRank   ( oyConfig_s        * config );
 
+int          oyActivateDeviceProfile ( const char        * device_name,
+                                       const char        * device_class );
+
+
 /** @struct  oyConfigs_s
  *  @brief   a Configs list
  *  @ingroup objects_value
@@ -852,6 +856,7 @@ OYAPI int  OYEXPORT
                                        uint32_t          * count,
                                        uint32_t         ** rank_list,
                                        oyAlloc_f           allocateFunc );
+
 OYAPI int  OYEXPORT
                  oyDevicesList       ( const char        * device_class,
                                        char            *** list,
@@ -947,8 +952,13 @@ OYAPI oyProfile_s * OYEXPORT
                                        oySIGNATURE_TYPE_e  type,
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromConfig
-                                     ( oyConfig_s        * config,
+                   oyProfile_FromDevice
+                                     ( const char        * device_name,
+                                       const char        * device_class,
+                                       oyObject_s          object);
+OYAPI oyProfile_s * OYEXPORT
+               oyProfile_FromDB      ( const char        * device_name,
+                                       const char        * device_class,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_Copy    ( oyProfile_s       * profile,

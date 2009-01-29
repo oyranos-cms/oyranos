@@ -7520,27 +7520,115 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function oyProfile_FromConfig
+/** Function oyProfile_FromDevice
  *  @memberof oyConfig_s
- *  @brief   look up a profile from a oyConfig_s
+ *  @brief   look up a profile from a device
  *
- *  @param[in]     config              the configuration
+ *  @param[in]     device_name         a device name from oyDevicesList()
+ *  @param[in]     device_class        a device class, e.g. "monitor"
  *  @param[in]     object              user object
  *  @return                            a profile
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/01/21
+ *  @date    2009/01/29
  */
 OYAPI oyProfile_s * OYEXPORT
-               oyProfile_FromConfig  ( oyConfig_s        * config,
+               oyProfile_FromDevice  ( const char        * device_name,
+                                       const char        * device_class,
                                        oyObject_s          object)
 {
-  /*oyProfile_s * p = 0;
+  oyProfile_s * p = 0;
+  oyOptions_s * options = 0;
   oyOption_s * o = 0;
-  int error = !config;
+  int error = !device_name  || !device_class;
+  oyConfig_s * device = 0;
 
-  return p;*/
+  if(!error)
+  {
+    options = oyOptions_New( object );
+    /* add "list" call to backend arguments */
+    error = oyOptions_SetFromText( options, "//colour/config/list",
+                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/device_name",
+                                   device_name, OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/icc_profile",
+                                   "true", OY_CREATE_NEW );
+
+    device = oyConfig_FromDeviceName( device_name, device_class, options,
+                                      object );
+
+    if(!device)
+      WARNc2_S( "Could not get a device from %s %s",
+                device_name, device_class )
+    else
+      o = oyOptions_Find( device->options, "icc_profile" );
+
+    if(!o)
+      WARNc2_S( "Could not get a \"icc_profile\" from %s %s", 
+                device_name, device_class )
+    else if(o->value_type != oyVAL_STRUCT ||
+            !(o->value && o->value->oy_struct && 
+              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S))
+      WARNc2_S( "Could not get \"icc_profile\" data from %s %s", 
+                device_name, device_class )
+    else
+      p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+
+    oyConfig_Release( &device );
+  } else
+    WARNc_S( "device_name/device_class is missed." );
+
+  return p;
+}
+
+/** Function oyProfile_FromDB
+ *  @memberof oyConfig_s
+ *  @brief   look up a profile from the DB
+ *
+ *  The function asks the backend for a detailed and possible expensive list
+ *  of device information and tries to find a matching configuration in the DB.
+ *  The device informations are the same as for saving to DB.
+ *
+ *  @param[in]     device_name         a device name from oyDevicesList()
+ *  @param[in]     device_class        a device class, e.g. "monitor"
+ *  @param[in]     object              user object
+ *  @return                            a profile
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/29 (Oyranos: 0.1.10)
+ *  @date    2009/01/29
+ */
+OYAPI oyProfile_s * OYEXPORT
+               oyProfile_FromDB      ( const char        * device_name,
+                                       const char        * device_class,
+                                       oyObject_s          object)
+{
+  oyProfile_s * p = 0;
+  int error = !device_name  || !device_class;
+  oyConfig_s * device = 0,
+             * config = 0;
+  int32_t rank = 0;
+  const char * profile_name = 0;
+
+  if(!error)
+  {
+    /* 1. query the full device information */
+    device = oyConfig_FromDeviceName( device_name, device_class, 0, 0 );
+
+    /* 2. look up the DB to find a match */
+    config = oyConfig_ForDomain( device, &rank, 0 );
+
+    if(config && rank > 0)
+      profile_name = oyOptions_FindString( config->options, "profile_name", 0 );
+    p = oyProfile_FromFile( profile_name, 0, 0 );
+
+    oyConfig_Release( &device );
+    oyConfig_Release( &config );
+  } else
+    WARNc_S( "device_name/device_class is missed." );
+
+  return p;
 }
 
 /** Function oyConfig_Add
@@ -19602,7 +19690,7 @@ int      oySetMonitorProfile         ( const char        * display_name,
   error = oyOptions_SetFromText( options, "//colour/config/properties",
                                  "true", OY_CREATE_NEW );
 
-  /** 1.2 get all monitor device backend names */
+  /** 1.2 get monitor device */
   if(!error)
     device = oyConfig_FromDeviceName( display_name, "monitor", options, 0 );
 
@@ -19704,42 +19792,112 @@ int      oySetMonitorProfile         ( const char        * display_name,
   return error;
 }
 
+int          oyActivateDeviceProfile ( const char        * device_name,
+                                       const char        * device_class )
+{
+  int error = !device_name || !device_name[0] ||
+              !device_class || !device_class[0];
+  oyOptions_s * options = 0;
+  oyConfig_s * device = 0,
+             * config = 0;
+  oyProfile_s * p = 0;
+  const char * profile_name = 0;
+
+  if(error > 0)
+  {
+    WARNc_S( "No device_name argument provided. Give up." );
+    return error;
+  }
+
+  {
+    /* 1. ask for the profile the device is setup with */
+    p = oyProfile_FromDevice( device_name, "monitor", 0 );
+    if(p)
+    {
+      oyProfile_Release( &p );
+      return error;
+    }
+
+    /* 2. query the full device information */
+    p = oyProfile_FromDB( device_name, device_class, 0 );
+    profile_name = oyProfile_GetFileName( p, -1 );
+
+    /* 3. setup the device through the backend */
+    options = oyOptions_New( 0 );
+    error = oyOptions_SetFromText( options, "//colour/config/setup",
+                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/device_name",
+                                   device_name, OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/profile_name",
+                                   profile_name, OY_CREATE_NEW );
+    /* 3.1 send the query to a backend */
+    error = oyConfigs_ForDeviceClass( device_class, options, 0, 0 );
+
+    oyProfile_Release( &p ); 
+    oyConfig_Release( &config );
+    oyConfig_Release( &device );
+    oyOptions_Release( &options );
+  }
+
+  return error;
+}
+
 /** Function: oyActivateMonitorProfiles
  *  @brief   activate the monitor using the stored configuration
  *
  *  Activate in case the appropriate profile is not yet setup in the server. \n
  *  To deactivate a profile in the server call 
- *  oySetMonitorProfile( display_name, 0 ).
+ *  oySetMonitorProfile( device_name, 0 ).
  *
  *  @see oySetMonitorProfile for permanently configuring a monitor
  *
- *  @param   display_name              the display string
+ *  @param   device_name               the device string
  *  @return                            error
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2005/00/00 (Oyranos: 0.1.x)
- *  @date    2008/10/24
+ *  @date    2009/01/28
  */
 int      oyActivateMonitorProfiles   ( const char        * display_name )
 {
-  int error = 0;
-  oyActivateMonitorProfiles_f funcP = 0;
-  char cmm[] = "oyX1";
+  int error = !display_name || !display_name[0];
+  oyOptions_s * options = 0;
+  oyConfig_s * device = 0;
+  oyConfigs_s * devices = 0;
+  const char * device_class = "monitor",
+             * device_name = 0;
+  int i, n;
 
-  if(!error)
+  if(error > 0)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
-    if(api && *(uint32_t*)&cmm)
-    {
-      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
-      funcP = api2->oyActivateMonitorProfiles;
-    }
+    WARNc_S( "No device_name argument provided. Give up." );
+    return error;
   }
 
-  if(funcP)
-    error = funcP( display_name );
-  else
-    error = 1;
+  {
+    options = oyOptions_New( 0 );
+    /* 1. set a general request */
+    error = oyOptions_SetFromText( options, "//colour/config/list",
+                                   "true", OY_CREATE_NEW );
+    /* we want a fuzzy look at our display, not as narrow as "device_name" */
+    error = oyOptions_SetFromText( options, "//colour/config/display_name",
+                                   display_name, OY_CREATE_NEW );
+    error = oyConfigs_ForDeviceClass ( device_class, options, &devices, 0 );
+
+    n = oyConfigs_Count( devices );
+    for(i = 0; i < n; ++i)
+    {
+      device = oyConfigs_Get( devices, i );
+
+      device_name = oyOptions_FindString( device->options, "device_name", 0 );
+
+      oyActivateDeviceProfile( device_name, device_class );
+      oyConfig_Release( &device );
+    }
+
+    oyConfigs_Release( &devices );
+    oyOptions_Release( &options );
+  }
 
   return error;
 }
