@@ -7003,9 +7003,10 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
           ++ opt_key;
         }
 
-        if(oyStrcmp_( tmp, opt_key) == 0)
+        if(tmp && oyStrcmp_( tmp, opt_key) == 0)
           option = oyOption_Copy( option_a, 0 );
-        oyFree_m_( tmp );
+        if(tmp)
+          oyFree_m_( tmp );
       }
 
       oyOption_Release( &option_a );
@@ -7316,16 +7317,24 @@ OYAPI oyConfig_s * OYEXPORT
 }
 
 /** Function oyConfig_FromDeviceName
- *  @brief   ask a backend for extensive device informations
+ *  @brief   ask a backend for device informations or other direct calls
  *  @memberof oyConfig_s
  *
  *  @param[in]     device_name         the device name as returned by
- *                                     oyConfigs_FromPattern_f
+ *                                     oyConfigs_FromPattern_f, mandatory
  *  @param[in]     device_class        registration ::oyFILTER_REG_APPLICATION
- *                                     part, e.g. "monitor"
- *  @param[in]     flags               reserved
+ *                                     part, e.g. "monitor", mandatory
+ *  @param[in]     options             options to pass to the backend, for zero
+ *                                     the verbose and expensive "properties"
+ *                                     call is assumed
  *  @param[in]     object              the optional object
  *  @return                            a device
+ *
+ *  @verbatim
+    // pass empty options to the backend to get a usage message
+    oyOptions_s * options = oyOptions_New( 0 );
+    oyConfig_s * device = oyConfig_FromDeviceName( ":0.0", "monitor", options, 0);
+    @endverbatim
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/28 (Oyranos: 0.1.10)
@@ -7334,21 +7343,13 @@ OYAPI oyConfig_s * OYEXPORT
 OYAPI oyConfig_s * OYEXPORT
                oyConfig_FromDeviceName(const char        * device_name,
                                        const char        * device_class,
-                                       uint32_t            flags,
+                                       oyOptions_s       * options,
                                        oyObject_s          object )
 {
   int error = !device_name || !device_name[0] ||
               !device_class || !device_class[0];
-  oyOptions_s * options = 0;
   oyConfigs_s * devices = 0;
-  oyConfig_s * config = 0,
-             * device = 0;
-  int i, j, j_n;
-  uint32_t count = 0,
-         * rank_list = 0;
-  char ** texts = 0,
-        * device_class_registration = 0;
-  const char * tmp = 0;
+  oyConfig_s * device = 0;
 
   if(error > 0)
   {
@@ -7360,55 +7361,30 @@ OYAPI oyConfig_s * OYEXPORT
 
   /** 1. obtain detailed and expensive device informations */
 
-  options = oyOptions_New( 0 );
-  /** 1.1 add "properties" call to backend arguments */
-  error = oyOptions_SetFromText( options, "//colour/config/properties",
-                                 "_true_", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( options, "//colour/config/device_name",
-                                 device_name, OY_CREATE_NEW );
-
-  /** 1.2.1 build a device class registration string */
-  if(!error)
+  if(!options)
   {
-    device_class_registration = oyStringCopy_( "//colour/config.",
-                                               oyAllocateFunc_ );
-    STRING_ADD( device_class_registration, device_class );
-    error = !device_class_registration;
+    options = oyOptions_New( 0 );
+    error = !options;
+    /** 1.1 add "properties" call to backend arguments */
+    if(!error)
+    error = oyOptions_SetFromText( options, "//colour/config/properties",
+                                   "true", OY_CREATE_NEW );
   }
 
-  /** 1.2.2 get all device class backend names */
+  /** 1.1.2 set device filter */
   if(!error)
-    error = oyConfigDomainList  ( device_class_registration, &texts, &count,
-                                  &rank_list, 0 );
+    error = oyOptions_SetFromText( options, "//colour/config/device_name",
+                                   device_name, OY_CREATE_NEW );
 
-  /** 1.3 ask each backend */
-  for( i = 0; i < count; ++i )
-  {
-    const char * registration_domain = texts[i];
+  /** 2. get the device */
+  error = oyConfigs_ForDeviceClass( device_class, options, &devices, object );
 
-    /** 1.3.1 call into backend */
-    error = oyConfigs_NewFromDomain( registration_domain, options, 0,
-                                     &devices );
+  device = oyConfigs_Get( devices, 0 );
 
-    j_n = oyConfigs_Count( devices );
-    for( j = 0; j < j_n; ++j )
-    {
-      config = oyConfigs_Get( devices, j );
+  oyConfigs_Release( &devices );
 
-      /** 1.3.1.1 Compare with the display_name with the device_name option and
-       *          collect the matching devices. */
-      tmp = oyOptions_FindString( config->options, "device_name", 0 );
-      if(oyStrcmp_( tmp, device_name ) == 0)
-        device = oyConfig_Copy( config, 0 );
 
-      oyConfig_Release( &config );
-    }
-
-    oyConfigs_Release( &devices );
-  }
-  oyOptions_Release( &options );
-
-  /** 2. check for success of device detection */
+  /** 3. check for success of device detection */
   error = !device;
   if(error)
     WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name );
@@ -7966,7 +7942,7 @@ OYAPI oyConfigs_s * OYEXPORT
   return s;
 }
 
-/** Function oyConfigs_NewFromDomain
+/** Function oyConfigs_FromDomain
  *  @memberof oyConfigs_s
  *  @brief   send a request to a configuration backend
  *
@@ -7981,8 +7957,8 @@ OYAPI oyConfigs_s * OYEXPORT
  *  @param[in]     registration_domain                     the backend to call to
  *  @param[in]     options                                 options to specify the calling into backends
  *                                                         messages are bound to this object
- *  @param[in]     object                                  a optional user object
  *  @param[out]    configs                                 the returned configurations
+ *  @param[in]     object                                  a optional user object
  *  @return                                                0 - good, 1 <= error, -1 >= issues,
  *                                                         look for messages
  *
@@ -7991,10 +7967,10 @@ OYAPI oyConfigs_s * OYEXPORT
  *  @date    2009/01/19
  */
 OYAPI int  OYEXPORT
-               oyConfigs_NewFromDomain(const char        * registration_domain,
+               oyConfigs_FromDomain  ( const char        * registration_domain,
                                        oyOptions_s       * options,
-                                       oyObject_s          object,
-                                       oyConfigs_s      ** configs )
+                                       oyConfigs_s      ** configs,
+                                       oyObject_s          object )
 {
   oyConfigs_s * s = 0;
   oyConfig_s * config = 0;
@@ -8049,6 +8025,113 @@ OYAPI int  OYEXPORT
     oyConfigs_Release( &s );
 
   oyExportEnd_();
+  return error;
+}
+
+/** Function oyConfigs_ForDeviceClass
+ *  @brief   ask a backend for device informations or other direct calls
+ *  @memberof oyConfigs_s
+ *
+ *  @param[in]     device_class        registration ::oyFILTER_REG_APPLICATION
+ *                                     part, e.g. "monitor", mandatory
+ *  @param[in]     options             options to pass to the backend, for zero
+ *                                     the usage instructions are requested,
+ *                                     a option "device_name" can be used as 
+ *                                     filter
+ *  @param[out]    devices             the devices
+ *  @param[in]     object              the optional object
+ *  @return                            0 - good, >= 1 - error
+ *
+ *  @verbatim
+    // pass empty options to the backend to get a usage message
+    oyOptions_s * options = oyOptions_New( 0 );
+    oyConfig_s * device = oyConfig_FromDeviceName( "monitor", options, 0, 0 );
+    @endverbatim
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/28 (Oyranos: 0.1.10)
+ *  @date    2009/01/28
+ */
+OYAPI int  OYEXPORT
+             oyConfigs_ForDeviceClass( const char        * device_class,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** devices,
+                                       oyObject_s          object )
+{
+  int error = !device_class || !device_class[0];
+  oyConfig_s * config = 0;
+  oyConfigs_s * configs = 0;
+  int i, j, j_n;
+  uint32_t count = 0,
+         * rank_list = 0;
+  char ** texts = 0,
+        * device_class_registration = 0;
+  const char * tmp = 0,
+             * device_name = 0;
+
+  if(error > 0)
+  {
+    WARNc_S( "No device_class argument provided. Give up" );
+    return 0;
+  }
+
+  /** 1. obtain detailed and expensive device informations */
+  if(options)
+  {
+    options = oyOptions_Copy( options, 0 );
+    device_name = oyOptions_FindString( options, "device_name", 0 );
+  }
+
+  /** 1.2.1 build a device class registration string */
+  if(!error)
+  {
+    device_class_registration = oyStringCopy_( "//colour/config.",
+                                               oyAllocateFunc_ );
+    STRING_ADD( device_class_registration, device_class );
+    error = !device_class_registration;
+  }
+
+  /** 1.2.2 get all device class backend names */
+  if(!error)
+    error = oyConfigDomainList  ( device_class_registration, &texts, &count,
+                                  &rank_list, 0 );
+
+  if(devices && !*devices)
+    *devices = oyConfigs_New( object );
+
+  /** 1.3 ask each backend */
+  for( i = 0; i < count; ++i )
+  {
+    const char * registration_domain = texts[i];
+
+    /** 1.3.1 call into backend */
+    error = oyConfigs_FromDomain( registration_domain, options, &configs,
+                                     object);
+
+    j_n = oyConfigs_Count( configs );
+    for( j = 0; j < j_n; ++j )
+    {
+      config = oyConfigs_Get( configs, j );
+
+      if(device_name)
+      {
+        /** 1.3.1.1 Compare with the display_name with the device_name option
+         *          and collect the matching devices. */
+        tmp = oyOptions_FindString( config->options, "device_name", 0 );
+        if(oyStrcmp_( tmp, device_name ) == 0)
+          oyConfigs_MoveIn( *devices, &config, -1 );
+      } else
+        /** 1.3.1.2 ... or collect all device configurations */
+        oyConfigs_MoveIn( *devices, &config, -1 );
+
+      oyConfig_Release( &config );
+    }
+
+    oyConfigs_Release( &configs );
+  }
+
+  oyOptions_Release( &options );
+
   return error;
 }
 
@@ -8438,11 +8521,9 @@ OYAPI int  OYEXPORT
   oyOptions_s * options = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * config = 0;
-  int i, j, j_n, count = 0;
-  uint32_t texts_n = 0,
-         * rank_list = 0;
-  char ** texts = 0,
-        * device_class_registration = 0;
+  int j, j_n, count = 0;
+  uint32_t texts_n = 0;
+  char ** texts = 0;
   const char * tmp = 0;
 
   if(error > 0)
@@ -8454,48 +8535,29 @@ OYAPI int  OYEXPORT
   /** 1. obtain detailed and expensive device informations */
 
   options = oyOptions_New( 0 );
-  /** 1.1 add "properties" call to backend arguments */
+  /** 1.1 add "list" call to backend arguments */
   error = oyOptions_SetFromText( options, "//colour/config/list",
-                                 "_true_", OY_CREATE_NEW );
+                                 "true", OY_CREATE_NEW );
 
-  /** 1.2.1 build a device class registration string */
+  /** 1.2 ask each backend */
   if(!error)
+    error = oyConfigs_ForDeviceClass( device_class, options, &devices, 0 );
+
+
+  j_n = oyConfigs_Count( devices );
+  for( j = 0; j < j_n; ++j )
   {
-    device_class_registration = oyStringCopy_( "//colour/config.",
-                                               oyAllocateFunc_ );
-    STRING_ADD( device_class_registration, device_class );
-    error = !device_class_registration;
-  }
+    config = oyConfigs_Get( devices, j );
 
-  /** 1.2.2 get all device class backend names */
-  if(!error)
-    error = oyConfigDomainList  ( device_class_registration, &texts, &texts_n,
-                                  &rank_list, 0 );
-
-  /** 1.3 ask each backend */
-  for( i = 0; i < texts_n; ++i )
-  {
-    const char * registration_domain = texts[i];
-
-    /** 1.3.1 call into backend */
-    error = oyConfigs_NewFromDomain( registration_domain, options, 0,
-                                     &devices );
-
-    j_n = oyConfigs_Count( devices );
-    for( j = 0; j < j_n; ++j )
-    {
-      config = oyConfigs_Get( devices, j );
-
-      /** 1.3.1.1 Add to the list */
-      tmp = oyOptions_FindString( config->options, "device_name", 0 );
-      oyStringListAddStaticString_( list, &count, oyNoEmptyString_m_(tmp),
+    /** 1.2.1 add device_name to the string list */
+    tmp = oyOptions_FindString( config->options, "device_name", 0 );
+    oyStringListAddStaticString_( list, &count, oyNoEmptyString_m_(tmp),
                                     oyAllocateFunc_, oyDeAllocateFunc_ );
 
-      oyConfig_Release( &config );
-    }
-
-    oyConfigs_Release( &devices );
+    oyConfig_Release( &config );
   }
+
+  oyConfigs_Release( &devices );
   oyOptions_Release( &options );
 
   oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
@@ -19360,28 +19422,51 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
 char *   oyGetDisplayNameFromPosition( const char        * display_name,
                                        int                 x,
                                        int                 y,
-                                       oyAlloc_f           allocate_func )
+                                       oyAlloc_f           allocateFunc )
 {
   int error = 0;
-  oyGetDisplayNameFromPosition_f funcP = 0;
-  char cmm[] = {"oyX1"};
-
   char * text = 0;
+  oyConfig_s * device = 0;
+  oyConfigs_s * devices = 0;
+  oyOptions_s * options = 0;
+  oyOption_s * o = 0;
+  oyRegion_s * r = 0;
+  int n, i;
+  const char * device_name = 0;
 
-  if(!error)
+  options = oyOptions_New(0);
+  error = oyOptions_SetFromText( options, "//colour/config/list",
+                                 "true", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( options, "//colour/config/display_geometry",
+                                 "true", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( options, "//colour/config/display_name",
+                                 display_name, OY_CREATE_NEW );
+
+  error = oyConfigs_ForDeviceClass ( "monitor", options, &devices, 0 );
+
+  oyOptions_Release( &options );
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  n = oyConfigs_Count( devices );
+  for( i = 0; i < n; ++i )
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
-    if(api && *(uint32_t*)&cmm)
-    {
-      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
-      funcP = api2->oyGetDisplayNameFromPosition;
-    }
-  }
+    device = oyConfigs_Get( devices, i );
+    o = oyOptions_Find( device->options, "display_geometry" );
 
-  if(funcP)
-    text = funcP( display_name, x, y, allocate_func );
-  else
-    error = 1;
+    if(o && o->value && o->value->oy_struct &&
+       o->value->oy_struct->type_ == oyOBJECT_REGION_S)
+      r = (oyRegion_s*) o->value->oy_struct;
+
+    if(r && oyRegion_IsInside( r, x,y ))
+    {
+      device_name = oyOptions_FindString( device->options, "device_name", 0 );
+      text = oyStringCopy_( device_name, allocateFunc );
+    }
+    oyConfig_Release( &device );
+  }
+  oyConfigs_Release( &devices );
 
   return text;
 }
@@ -19498,20 +19583,15 @@ int      oySetMonitorProfile         ( const char        * display_name,
   oyOption_s * o = 0,
              * od = 0;
   oyOptions_s * options = 0;
-  oyConfigs_s * configs = 0,
-              * devices = 0;
+  oyConfigs_s * configs = 0;
   oyConfig_s * config = 0,
              * device = 0;
   oyProfile_s * p = 0;
   int i, j, k, n, j_n, k_n, equal;
-  uint32_t count = 0,
-         * rank_list = 0;
-  char ** texts = 0,
-        * o_opt = 0,
-        * d_opt = 0,
-        * o_val = 0,
-        * d_val = 0;
-  const char * tmp = 0;
+  char * o_opt = 0,
+       * d_opt = 0,
+       * o_val = 0,
+       * d_val = 0;
 
   if(error > 0)
   {
@@ -19521,41 +19601,16 @@ int      oySetMonitorProfile         ( const char        * display_name,
   }
 
   /** 1. obtain detailed and expensive device informations */
-
+ 
   options = oyOptions_New( 0 );
   /** 1.1 add "properties" call to backend arguments */
   error = oyOptions_SetFromText( options, "//colour/config/properties",
-                                 "_true_", OY_CREATE_NEW );
+                                 "true", OY_CREATE_NEW );
 
   /** 1.2 get all monitor device backend names */
-  error = oyConfigDomainList  ( "//colour/config.monitor", &texts, &count,
-                                &rank_list, 0 );
+  if(!error)
+    device = oyConfig_FromDeviceName( display_name, "monitor", options, 0 );
 
-  /** 1.3 ask each backend */
-  for( i = 0; i < count; ++i )
-  {
-    const char * registration_domain = texts[i];
-
-    /** 1.3.1 call into backend */
-    error = oyConfigs_NewFromDomain( registration_domain, options, 0,
-                                     &devices );
-
-    j_n = oyConfigs_Count( devices );
-    for( j = 0; j < j_n; ++j )
-    {
-      config = oyConfigs_Get( devices, j );
-
-      /** 1.3.1.1 Compare with the display_name with the device_name option and
-       *          collect the matching devices. */
-      tmp = oyOptions_FindString( config->options, "device_name", 0 );
-      if(oyStrcmp_( tmp, display_name ) == 0)
-        device = oyConfig_Copy( config, 0 );
-
-      oyConfig_Release( &config );
-    }
-
-    oyConfigs_Release( &devices );
-  }
   oyOptions_Release( &options );
 
   /** 2. check for success of device detection */
@@ -19573,16 +19628,16 @@ int      oySetMonitorProfile         ( const char        * display_name,
     options = oyOptions_New( 0 );
     /** 3.1 set a general request */
     error = oyOptions_SetFromText( options, "//colour/config/unset",
-                                   "_true_", OY_CREATE_NEW );
+                                   "true", OY_CREATE_NEW );
 
     /** 3.2 send the query to a backend */
-    error = oyConfigs_NewFromDomain( device->registration, options, 0, 0 );
+    error = oyConfigs_FromDomain( device->registration, options, 0, 0 );
 
     oyOptions_Release( &options );
     return error;
 
   } else
-  /** 3.3 ... or load profile from file name argument */
+    /** 3.3 ... or load profile from file name argument */
     p = oyProfile_FromFile( profile_name, 0, 0 );
 
   /** 3.4 check for success of profile loading */

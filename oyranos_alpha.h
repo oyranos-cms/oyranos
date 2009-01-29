@@ -763,7 +763,7 @@ OYAPI oyConfig_s * OYEXPORT
 OYAPI oyConfig_s * OYEXPORT
                oyConfig_FromDeviceName(const char        * device_name,
                                        const char        * reg_class,
-                                       uint32_t            flags,
+                                       oyOptions_s       * options,
                                        oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
                oyConfig_Copy         ( oyConfig_s        * obj,
@@ -814,10 +814,19 @@ typedef struct {
 OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_New       ( oyObject_s          object );
 OYAPI int  OYEXPORT
-               oyConfigs_NewFromDomain(const char        * registration_domain,
+               oyConfigs_FromDomain  ( const char        * registration_domain,
                                        oyOptions_s       * options,
-                                       oyObject_s          object,
-                                       oyConfigs_s      ** configs );
+                                       oyConfigs_s      ** configs,
+                                       oyObject_s          object );
+OYAPI int  OYEXPORT
+               oyConfigs_ForDeviceClass (
+                                       const char        * device_class,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** configs,
+                                       oyObject_s          object );
+OYAPI oyConfigs_s * OYEXPORT
+                 oyConfigs_FromDB    ( const char        * registration,
+                                       oyObject_s          object );
 OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_Copy      ( oyConfigs_s       * list,
                                        oyObject_s          object);
@@ -837,9 +846,6 @@ OYAPI oyConfig_s * OYEXPORT
                                        int                 pos );
 OYAPI int  OYEXPORT
                  oyConfigs_Count     ( oyConfigs_s       * list );
-OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_FromDB    ( const char        * registration,
-                                       oyObject_s          object );
 OYAPI int  OYEXPORT
                  oyConfigDomainList  ( const char        * registration_pattern,
                                        char            *** list,
