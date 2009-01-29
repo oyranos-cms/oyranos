@@ -41,24 +41,7 @@ int   oyGetMonitorInfo_lib        (const char* display,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data );
-int   oyGetScreens_lib               ( char            *** display_names,
-                                       int               * display_names_n );
-int   oyGetScreenFromPosition_lib (const char *display_name,
-                                   int x,
-                                   int y);
-char* oyGetDisplayNameFromPosition_lib(const char *display_name,
-                                   int x,
-                                   int y,
-                                   oyAlloc_f     allocate_func);
-char* oyGetMonitorProfile_lib     (const char *display,
-                                   size_t     *size,
-                                   oyAlloc_f     allocate_func);
-char*  oyGetMonitorProfileNameFromDB_lib ( const char        * display,
-                                       oyAlloc_f           allocate_func );
 
-int   oySetMonitorProfile_lib     (const char* display_name,
-                                   const char* profil_name );
-int      oyActivateMonitorProfiles_lib( const char        * display_name );
 int      oyGetAllScreenNames         ( const char        * display_name,
                                        char            *** display_names,
                                        oyAlloc_f           allocateFunc );
@@ -67,6 +50,9 @@ int          oyX1MonitorProfileSetup ( const char        * display_name,
                                        const char        * profil_name );
 int          oyX1MonitorProfileUnset ( const char        * display_name );
 oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name );
+char *       oyX1GetMonitorProfile   ( const char        * device_name,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func );
 
 
 #ifdef __cplusplus
