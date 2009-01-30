@@ -74,6 +74,15 @@ oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
 
 
 void         oyOption_UpdateFlags_   ( oyOption_s        * s );
+int    oyOptions_SetInstrumentTextKey_(oyOptions_s       * options,
+                                       const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       const char        * key,
+                                       const char        * value );
+char * oyInstrumentRegistrationCreate_(const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       const char        * key,
+                                       char              * old_text );
 
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,

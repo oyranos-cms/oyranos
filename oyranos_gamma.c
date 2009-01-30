@@ -182,10 +182,9 @@ int main( int argc , char** argv )
     if(list)
     {
       char ** texts = 0;
-      uint32_t texts_n = 0;
-      int i = 0;
+      uint32_t texts_n = 0, i;
 
-      error = oyDevicesList( "monitor", &texts, &texts_n, 1, malloc );
+      error = oyInstrumentList( 0, "monitor", 0, &texts, &texts_n, 1, malloc );
       if(!error)
       {
         for(i = 0; i < texts_n; ++i)

@@ -8580,14 +8580,123 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyDevicesList
- *  @memberof oyConfigs_s
- *  @brief   get all devices matching to a device class
+/**
+ *  @} *//* objects_value
+ */
+
+/** @} *//* misc */
+
+
+/** \addtogroup devices_handling Devices API's
+
+ *  @{
+ */
+
+
+/** @internal
+ *  Function oyInstrumentRegistrationCreate_
+ *  @brief   combine a instrument registration
  *
- *  @param[in]     device_class        the device class, e.g. "monitor"
+ *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
+ *                                     defaults to "colour" (optional)
+ *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
+ *                                     ::oyFILTER_REG_APPLICATION
+ *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
+ *  @param[in]     old_text            string to reuse
+ *  @return                            the new registration
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+char * oyInstrumentRegistrationCreate_(const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       const char        * key,
+                                       char              * old_text )
+{
+  char * text = old_text;
+  const char * instrument_type_ = instrument_type;
+
+  if(!instrument_type_)
+    instrument_type = "colour";
+
+  STRING_ADD( text, "//" );
+  STRING_ADD( text, instrument_type_ );
+  STRING_ADD( text, "/config/" );
+  STRING_ADD( text, key );
+
+  return text;
+}
+
+/** @internal
+ *  Function oyOptions_SetInstrumentTextKey_
+ *  @brief   set a instrument option
+ *
+ *  @param[in/out] options             options for the instrument
+ *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
+ *                                     defaults to "colour" (optional)
+ *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
+ *                                     ::oyFILTER_REG_APPLICATION
+ *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
+ *  @param[in]     value               value of type ::oyVAL_STRING
+ *  @return                            the new registration
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+int    oyOptions_SetInstrumentTextKey_(oyOptions_s       * options,
+                                       const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       const char        * key,
+                                       const char        * value )
+{
+  char * text = 0;
+  int error = 0;
+
+  text = oyInstrumentRegistrationCreate_( instrument_type, instrument_class,
+                                          key, text );
+  error = oyOptions_SetFromText( options, text, value, OY_CREATE_NEW );
+
+  oyFree_m_( text );
+
+  return error;
+}
+
+/** Function oyInstrumentList
+ *  @brief   get all instruments matching to a instrument class and/or type
+ *
+ *  The following example lists all visible monitor devices:
+ *  @verbatim
+    char ** texts = 0;
+    uint32_t texts_n = 0, i;
+    const char * type = 0;             // implicitely "colour"
+    oyOptions_s * opts = 0;            // not needed here
+    uint32_t flags = 1;                // 1 - be verbose
+
+    error = oyInstrumentList( type, "monitor", opts, &texts, &texts_n, flags,
+                              malloc );
+    if(!error)
+    {
+      for(i = 0; i < texts_n; ++i)
+      {
+        printf("%s\n", texts[i] ? texts[i] : "???");
+        if(texts[i])
+          free( texts[i] );
+      }
+      free(texts);
+    }
+
+    @endverbatim
+ *
+ *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
+ *                                     defaults to "colour" (optional)
+ *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
+ *                                     ::oyFILTER_REG_APPLICATION
+ *  @param[in]     options             options for the instrument
  *  @param[out]    list                the list
  *  @param[out]    list_n              the list count
- *  @param[in]     flags               1 for verbose
+ *  @param[in]     flags               0 - id, 1 - one line verbosity
  *  @param[in]     allocateFunc        the user allocator for list
  *  @return                            0 - good, >= 1 - error, <= -1 unknown
  *
@@ -8596,25 +8705,25 @@ OYAPI int  OYEXPORT
  *  @date    2009/01/19
  */
 OYAPI int  OYEXPORT
-                 oyDevicesList       ( const char        * device_class,
+                 oyInstrumentList    ( const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       oyOptions_s       * options,
                                        char            *** list,
                                        uint32_t          * list_n,
                                        uint32_t            flags,
                                        oyAlloc_f           allocateFunc )
 {
-  int error = !device_class || !device_class[0] || !list || !list_n;
-  oyOptions_s * options = 0;
+  int error = !instrument_class || !instrument_class[0] || !list || !list_n;
   oyOption_s * o = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
   oyProfile_s * p = 0;
   oyRegion_s * r = 0;
   int j, j_n, count = 0;
-  uint32_t texts_n = 0;
   char ** texts = 0;
-  char * text = 0, * temp = 0;
+  char * text = 0;
   const char * tmp = 0;
-  char num[64] = {0};
+  static char * num = 0;
 
   if(error > 0)
   {
@@ -8622,23 +8731,33 @@ OYAPI int  OYEXPORT
     return error;
   }
 
+  if(!num)
+    oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
+
   /** 1. obtain detailed and expensive device informations */
 
-  options = oyOptions_New( 0 );
-  /** 1.1 add "list" call to backend arguments */
-  error = oyOptions_SetFromText( options, "//colour/config/list",
-                                 "true", OY_CREATE_NEW );
+  if(!options)
+  {
+    options = oyOptions_New( 0 );
+    /** 1.1 add "list" call to backend arguments */
+    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
+                                             instrument_class,
+                                             "list", "true" );
+  }
+
   if(flags & 1)
   {
-    error = oyOptions_SetFromText( options, "//colour/config/display_geometry",
-                                   "true", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( options, "//colour/config/icc_profile",
-                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
+                                             instrument_class,
+                                             "display_geometry", "true" );
+    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
+                                             instrument_class,
+                                             "icc_profile", "true" );
   }
 
   /** 1.2 ask each backend */
   if(!error)
-    error = oyConfigs_ForDeviceClass( device_class, options, &devices, 0 );
+    error = oyConfigs_ForDeviceClass( instrument_class, options, &devices, 0 );
 
 
   j_n = oyConfigs_Count( devices );
@@ -8663,9 +8782,8 @@ OYAPI int  OYEXPORT
       oySprintf_( num, "%d,%d,%dx%d", (int)r->x, (int)r->y,
                                       (int)r->width, (int)r->height );
       
-      temp = oyRegion_Show( r );
-      STRING_ADD( text, temp );
-      oyFree_m_(temp);
+      tmp = oyRegion_Show( r );
+      STRING_ADD( text, tmp );
     }
     oyOption_Release( &o );
 
@@ -8717,11 +8835,8 @@ OYAPI int  OYEXPORT
 
 
 /**
- *  @} *//* objects_value
+ *  @} *//* devices_handling
  */
-
-
-/** @} *//* misc */
 
 
 /** \addtogroup objects_profile Profile API
@@ -12312,7 +12427,7 @@ int            oyRegion_Index        ( oyRegion_s        * region,
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyChar*        oyRegion_Show         ( oyRegion_s        * r )
+const char*    oyRegion_Show         ( oyRegion_s        * r )
 {
   static oyChar *text = 0;
 

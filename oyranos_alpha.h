@@ -858,9 +858,11 @@ OYAPI int  OYEXPORT
                                        oyAlloc_f           allocateFunc );
 
 OYAPI int  OYEXPORT
-                 oyDevicesList       ( const char        * device_class,
+                 oyInstrumentList    ( const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       oyOptions_s       * options,
                                        char            *** list,
-                                       uint32_t          * count,
+                                       uint32_t          * list_n,
                                        uint32_t            flags,
                                        oyAlloc_f           allocateFunc );
 
@@ -1197,7 +1199,7 @@ int            oyRegion_CountPoints ( oyRegion_s        * region );
 int            oyRegion_Index        ( oyRegion_s        * region,
                                        double              x,
                                        double              y );
-char  *        oyRegion_Show         ( oyRegion_s        * region );
+const char *   oyRegion_Show         ( oyRegion_s        * region );
 
 
 /** @enum    oyDATATYPE_e
