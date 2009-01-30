@@ -5286,7 +5286,7 @@ oyOption_s *   oyOption_New          ( const char        * registration,
   return s;
 }
 
-/** Function oyOption_ValueFromDB
+/** Function oyOption_SetValueFromDB
  *  @memberof oyOption_s
  *  @brief   value filled from DB if available
  *
@@ -5297,7 +5297,7 @@ oyOption_s *   oyOption_New          ( const char        * registration,
  *  @since   2009/01/24 (Oyranos: 0.1.10)
  *  @date    2009/01/24
  */
-int            oyOption_ValueFromDB  ( oyOption_s        * option )
+int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 {
   int error = !option || !option->registration;
   char * text = 0;
@@ -5395,9 +5395,9 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
 
   if(!error)
   {
-    /** This is merely a wrapper to oyOption_New() and oyOption_ValueFromDB().*/
+    /** This is merely a wrapper to oyOption_New() and oyOption_SetValueFromDB().*/
     o = oyOption_New( registration, object );
-    error = oyOption_ValueFromDB( o );
+    error = oyOption_SetValueFromDB( o );
     o->source = oyOPTIONSOURCE_DATA;
   }
 
@@ -6566,7 +6566,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilter_s        * filter,
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
       /* ask Elektra */
-      error = oyOption_ValueFromDB( o );
+      error = oyOption_SetValueFromDB( o );
       oyOption_Release( &o );
     }
     error = oyOptions_DoFilter ( s, flags, type_txt );
@@ -7265,11 +7265,11 @@ OYAPI oyConfig_s * OYEXPORT
   return s;
 }
 
-/** Function oyConfig_ForDomain
+/** Function oyConfig_FromDB
  *  @brief   search a configuration in the DB for a configuration from backend
  *  @memberof oyConfig_s
  *
- *  @param[in]     domain_config       the to be checked configuration from
+ *  @param[in]     instrument          the to be checked configuration from
  *                                     oyConfigs_FromPattern_f
  *  @param[out]    rank_value          the number of matches between config and
  *                                     pattern, -1 means invalid
@@ -7282,18 +7282,18 @@ OYAPI oyConfig_s * OYEXPORT
  *  @date    2009/01/26
  */
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_ForDomain    ( oyConfig_s        * domain_config,
+               oyConfig_FromDB       ( oyConfig_s        * instrument,
                                        int32_t           * rank_value,
                                        oyObject_s          object)
 {
-  int error = !domain_config;
+  int error = !instrument;
   int rank = 0, max_rank = 0, i, n;
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0, * max_config = 0;
 
   if(!error)
   {
-    configs = oyConfigs_FromDB( domain_config->registration, 0 );
+    configs = oyConfigs_FromDB( instrument->registration, 0 );
 
     n = oyConfigs_Count( configs );
 
@@ -7301,7 +7301,7 @@ OYAPI oyConfig_s * OYEXPORT
     {
       config = oyConfigs_Get( configs, i );
 
-      error = oyConfig_Compare( domain_config, config, &rank );
+      error = oyConfig_Compare( instrument, config, &rank );
       DBG_PROG1_S("rank: %d\n", rank);
       if(max_rank < rank)
       {
@@ -7627,7 +7627,7 @@ OYAPI oyProfile_s * OYEXPORT
                                           instrument_name, 0, 0 );
 
     /* 2. look up the DB to find a match */
-    config = oyConfig_ForDomain( instrument, &rank, 0 );
+    config = oyConfig_FromDB( instrument, &rank, 0 );
 
     if(config && rank > 0)
       profile_name = oyOptions_FindString( config->options, "profile_name", 0 );
@@ -7812,7 +7812,7 @@ OYAPI int  OYEXPORT
  *  @brief   check for matching to a given pattern
  *  @memberof oyConfig_s
  *
- *  @param[in]     domain_config       the to be checked configuration from
+ *  @param[in]     instrument          the to be checked configuration from
  *                                     oyConfigs_FromPattern_f
  *  @param[in]     pattern             the to be compared configuration from
  *                                     elsewhere
@@ -7825,11 +7825,11 @@ OYAPI int  OYEXPORT
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  *  @date    2009/01/26
  */
-int            oyConfig_Compare      ( oyConfig_s        * domain_config,
+int            oyConfig_Compare      ( oyConfig_s        * instrument,
                                        oyConfig_s        * pattern,
                                        int32_t           * rank_value )
 {
-  int error = !domain_config || !pattern;
+  int error = !instrument || !pattern;
   int domain_n, pattern_n, i, j, k,
       rank = 0,
       d_rank = 0,
@@ -7841,16 +7841,16 @@ int            oyConfig_Compare      ( oyConfig_s        * domain_config,
 
   if(!error)
   {
-    domain_n = oyOptions_Count( domain_config->options );
+    domain_n = oyOptions_Count( instrument->options );
     pattern_n = oyOptions_Count( pattern->options );
     for(i = 0; i < domain_n; ++i)
     {
-      d = oyOptions_Get( domain_config->options, i );
+      d = oyOptions_Get( instrument->options, i );
       d_opt = oyFilterRegistrationToText( d->registration, oyFILTER_REG_MAX, 0);
       d_val = oyOption_GetValueText( d, oyAllocateFunc_ );
       has_opt = 0;
 
-      d_rank = oyConfig_DomainRank( domain_config );
+      d_rank = oyConfig_DomainRank( instrument );
       if(d_rank > 0 && d_val && d_opt)
       for( j = 0; j < pattern_n; ++j )
       {
@@ -7867,14 +7867,14 @@ int            oyConfig_Compare      ( oyConfig_s        * domain_config,
           /** Option name is equal and and value matches : increase rank value*/
           if(p_val && oyStrstr_( d_val, p_val ))
           {
-            if(domain_config->rank_map)
+            if(instrument->rank_map)
             {
               k = 0;
-              while(domain_config->rank_map[k].key)
+              while(instrument->rank_map[k].key)
               {
-                if(oyStrcmp_(domain_config->rank_map[k].key, d_opt) == 0)
+                if(oyStrcmp_(instrument->rank_map[k].key, d_opt) == 0)
                 {
-                  rank += domain_config->rank_map[k].match_value;
+                  rank += instrument->rank_map[k].match_value;
                   break;
                 }
                 ++k;
@@ -7883,14 +7883,14 @@ int            oyConfig_Compare      ( oyConfig_s        * domain_config,
               ++rank;
 
             oyFree_m_(p_val);
-          } else if(domain_config->rank_map)
+          } else if(instrument->rank_map)
           {
             k = 0;
-            while(domain_config->rank_map[k].key)
+            while(instrument->rank_map[k].key)
             {
-              if(oyStrcmp_(domain_config->rank_map[k].key, d_opt) == 0)
+              if(oyStrcmp_(instrument->rank_map[k].key, d_opt) == 0)
               {
-                rank += domain_config->rank_map[k].none_match_value;
+                rank += instrument->rank_map[k].none_match_value;
                 break;
               }
               ++k;
@@ -7904,14 +7904,14 @@ int            oyConfig_Compare      ( oyConfig_s        * domain_config,
         oyOption_Release( &p );
       }
 
-      if(!has_opt && domain_config->rank_map)
+      if(!has_opt && instrument->rank_map)
       {
         k = 0;
-          while(domain_config->rank_map[k].key)
+          while(instrument->rank_map[k].key)
           {
-            if(oyStrcmp_(domain_config->rank_map[k].key, d_opt) == 0)
+            if(oyStrcmp_(instrument->rank_map[k].key, d_opt) == 0)
             {
-              rank += domain_config->rank_map[k].not_found_value;
+              rank += instrument->rank_map[k].not_found_value;
               break;
             }
             ++k;

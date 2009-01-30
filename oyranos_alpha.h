@@ -603,7 +603,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
 int            oyOption_SetRegistration (
                                        oyOption_s        * option,
                                        const char        * registration );
-int            oyOption_ValueFromDB  ( oyOption_s        * option );
+int            oyOption_SetValueFromDB(oyOption_s        * option );
 int            oyOption_StructMoveIn ( oyOption_s        * option,
                                        oyStruct_s       ** s );
 
@@ -758,7 +758,7 @@ OYAPI oyConfig_s * OYEXPORT
                oyConfig_New          ( const char        * registration,
                                        oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_ForDomain    ( oyConfig_s        * domain_config,
+               oyConfig_FromDB       ( oyConfig_s        * instrument,
                                        int32_t           * rank_value,
                                        oyObject_s          object);
 OYAPI oyConfig_s * OYEXPORT
@@ -787,7 +787,7 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_EraseFromDB  ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
-               oyConfig_Compare      ( oyConfig_s        * domain_config,
+               oyConfig_Compare      ( oyConfig_s        * instrument,
                                        oyConfig_s        * pattern,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
@@ -853,6 +853,7 @@ OYAPI oyConfig_s * OYEXPORT
                                        int                 pos );
 OYAPI int  OYEXPORT
                  oyConfigs_Count     ( oyConfigs_s       * list );
+
 OYAPI int  OYEXPORT
                  oyConfigDomainList  ( const char        * registration_pattern,
                                        char            *** list,
