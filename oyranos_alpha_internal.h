@@ -203,7 +203,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
 oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        const char        * registration );
-oyCMMapiFilter_s**oyCMMsGetFilterApis_(const char        * cmm_required,
+oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        const char        * registration,
                                        oyOBJECT_e          type,

@@ -762,8 +762,9 @@ OYAPI oyConfig_s * OYEXPORT
                                        int32_t           * rank_value,
                                        oyObject_s          object);
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_FromDeviceName(const char        * device_name,
-                                       const char        * reg_class,
+               oyConfig_FromInstrument(const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       const char        * instrument_name,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
@@ -824,8 +825,9 @@ OYAPI int  OYEXPORT
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object );
 OYAPI int  OYEXPORT
-               oyConfigs_ForDeviceClass (
-                                       const char        * device_class,
+               oyConfigs_FromInstrumentClass (
+                                       const char        * instrument_type,
+                                       const char        * instrument_class,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object );

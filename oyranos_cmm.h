@@ -427,10 +427,10 @@ typedef struct {
  *  @date    2008/12/28
  */
 struct oyCMMapiFilter_s {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API7_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API[4,6,7,8]_S */
+  oyStruct_Copy_f  copy;               /**< copy function */
+  oyStruct_Release_f release;          /**< release function */
+  oyObject_s       oy_;                /**< @private base object */
   oyCMMapi_s     * next;               /**< the next CMM api */
 
   oyCMMInit_f      oyCMMInit;          /**< */

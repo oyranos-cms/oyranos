@@ -138,17 +138,17 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"list\" will provide a list of available\n"
-      " devices. Use the returned values as option \"device_name\" to select a\n"
-      " device. The option \"display_geometry\" may be added to additionally\n"
-      " obtain display geometry information as a oyRegion_s object.\n"
+      " instruments. Use the returned values as option \"instrument_name\" to\n"
+      " select a instrument. The option \"display_geometry\" may be added to\n"
+      " additionally obtain display geometry information as a oyRegion_s object.\n"
       " The option \"icc_profile\" may be added to obtain a oyProfile_s.\n"
       " The option \"display_name\" is optional to pass the X11 display name\n"
       " and obtain a unfiltered result.\n"
-      " The option \"device_name\" may be added as a filter.\n"
+      " The option \"instrument_name\" may be added as a filter.\n"
       " \"list\" is a cheap call.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"properties\" will provide the devices \n"
-      " properties. Requires one device identifier returned with the \n"
+      "The presence of option \"properties\" will provide the instruments \n"
+      " properties. Requires one instrument identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
       " - \"manufacturer\"\n"
       " - \"model\"\n"
@@ -160,24 +160,24 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " If the option key word \"edid\" (specific) is present the EDID\n"
       " information will be passed inside a oyBlob_s struct.\n"
       " \n"
-      " One option \"device_name\" will select the according X display.\n"
+      " One option \"instrument_name\" will select the according X display.\n"
       " If not the backend will try to get this information from \n"
       " your \"DISPLAY\" environment variable or uses what the system\n"
       " provides. The option is identical with the options returned from\n"
       " a \"list\" request. The \"properties\" call is a expensive one."
        );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"setup\" will setup the device from a profile.\n"
-      " The option \"device_name\" must be present.\n"
+      "The presence of option \"setup\" will setup the instrument from a profile.\n"
+      " The option \"instrument_name\" must be present.\n"
       " The option \"profile_name\" must be present."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"unset\" will invalidate a profile of a device.\n"
-      " The option \"device_name\" must be present."
+      "The presence of option \"unset\" will invalidate a profile of a instrument.\n"
+      " The option \"instrument_name\" must be present."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"get\" will provide a profile of the device.\n"
-      " The option \"device_name\" must be present."
+      "The presence of option \"get\" will provide a profile of the instrument.\n"
+      " The option \"instrument_name\" must be present."
       );
 
   return;
@@ -221,7 +221,7 @@ int            oyX1Configs_FromPattern (
     configs = oyConfigs_New(0);
 
     display_name = oyOptions_FindString( options, "display_name", 0 );
-    value1 = oyOptions_FindString( options, "device_name", 0 );
+    value1 = oyOptions_FindString( options, "instrument_name", 0 );
     /*message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);*/
 
     value2 = oyOptions_FindString( options, "list", 0 );
@@ -242,7 +242,7 @@ int            oyX1Configs_FromPattern (
 
         if(error <= 0)
         error = oyOptions_SetFromText( config->options,
-                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       CMM_BASE_REG OY_SLASH "instrument_name",
                                        texts[i], OY_CREATE_NEW );
 
         if(value3)
@@ -306,9 +306,9 @@ int            oyX1Configs_FromPattern (
       if(!value1)
       {
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
-                "The \"device_name\" argument is\n"
-                " missed to select a appropriate device for the \"properties\""
-                " call.", OY_DBG_ARGS_ );
+                "The \"instrument_name\" argument is\n"
+                " missed to select a appropriate instrument for the"
+                " \"properties\" call.", OY_DBG_ARGS_ );
         error = 1;
       }
 
@@ -321,8 +321,9 @@ int            oyX1Configs_FromPattern (
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
                  OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-                 " oyGetMonitorInfo_lib returned with %s; device_name: \"%s\"",
-                 OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)", oyNoEmptyString_m_( value1) );
+                 " oyGetMonitorInfo_lib returned with %s; instrument_name:"
+                 " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
+                 oyNoEmptyString_m_( value1) );
 
       if(error <= 0)
       {
@@ -330,7 +331,7 @@ int            oyX1Configs_FromPattern (
         error = !config;
         if(!error && value1)
         error = oyOptions_SetFromText( config->options,
-                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       CMM_BASE_REG OY_SLASH "instrument_name",
                                        value1, OY_CREATE_NEW );
 
         OPTIONS_ADD( config->options, manufacturer )
@@ -369,7 +370,7 @@ int            oyX1Configs_FromPattern (
       error = !value1 || !value3;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
-                "The device_name/profile_name option is missed. Options:\n%s",
+              "The instrument_name/profile_name option is missed. Options:\n%s",
                 OY_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -384,8 +385,8 @@ int            oyX1Configs_FromPattern (
       error = !value1;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
-                "The device_name option is missed. Options:\n%s", OY_DBG_ARGS_,
-                oyOptions_GetText( options, oyNAME_NICK )
+                "The instrument_name option is missed. Options:\n%s",
+                OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
         error = oyX1MonitorProfileUnset( value1 );
@@ -406,7 +407,7 @@ int            oyX1Configs_FromPattern (
 /** Function oyX1Config_Check
  *  @brief   oyX1 oyCMMapi8_s Xorg monitor check
  *
- *  @param[in]     config              the monitor device configuration
+ *  @param[in]     config              the monitor instrument configuration
  *  @return                            rank value
  *
  *  @version Oyranos: 0.1.10
@@ -434,15 +435,15 @@ int            oyX1Config_Check      ( oyConfig_s        * config )
 }
 
 /** @instance oyX1_rank_map
- *  @brief    oyRankPad map for mapping device to configuration informations
+ *  @brief    oyRankPad map for mapping instrument to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/01/27
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  */
 oyRankPad oyX1_rank_map[] = {
-  {"device_name", 2, -1, 0},           /**< is good */
-  {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
+  {"instrument_name", 2, -1, 0},       /**< is good */
+  {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
   {"model", 5, -5, 0},                 /**< important, should not fail */
   {"serial", 10, -2, 0},               /**< important, could slightly fail */

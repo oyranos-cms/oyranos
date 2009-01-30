@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-01-28 16:05+0100\n"
+"POT-Creation-Date: 2009-01-30 22:13+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -373,7 +373,7 @@ msgstr "Kalibrationsdatum"
 msgid "Colour measurement data"
 msgstr "Farbmessdaten"
 
-#: oyranos_icc.c:377 oyranos_alpha.c:2516
+#: oyranos_icc.c:377 oyranos_alpha.c:2517
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -1186,111 +1186,114 @@ msgstr ""
 "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf "
 "dem Drucker beim Programmstart"
 
-#: oyranos_monitor.c:399
+#: oyranos_monitor.c:385
 msgid "unexpected EDID lenght"
 msgstr "unerwartetet EDID Größe"
 
-#: oyranos_monitor.c:402 oyranos_monitor.c:429
+#: oyranos_monitor.c:388 oyranos_monitor.c:415
 msgid "Cant read hardware information from device."
 msgstr "Kann Geräteinformation nicht auslesen."
 
-#: oyranos_monitor.c:427
+#: oyranos_monitor.c:413
 msgid "no EDID available from X properties"
 msgstr "kein EDID von X Atomen verfügbar"
 
-#: oyranos_monitor.c:507
+#: oyranos_monitor.c:492
 msgid "Could not get Xatom, probably your monitor profile is not set:"
 msgstr ""
 "Konnte Xatom nicht finden. Wahrscheinlich ist das Monitorprofil nicht "
 "gesetzt."
 
-#: oyranos_monitor.c:1112 oyranos_monitor.c:1312 oyranos_monitor.c:1793
+#: oyranos_monitor.c:804 oyranos_monitor.c:1303
 msgid "open X Display failed"
 msgstr "Öffnen des X Displays daneben"
 
 #. hack
-#: oyranos_monitor.c:1136 oyranos_monitor.c:1336
+#: oyranos_monitor.c:828
 msgid "No monitor gamma curves by profile:"
 msgstr "Keine Grafikkartengammakurven im Profil:"
 
-#: oyranos_monitor.c:1170 oyranos_monitor.c:1370
+#: oyranos_monitor.c:862
 msgid "Error obtaining profile"
 msgstr "Fehler beim Erhalten des Profiles"
 
-#: oyranos_monitor.c:1177 oyranos_monitor.c:1179 oyranos_monitor.c:1377
-#: oyranos_monitor.c:1379
+#: oyranos_monitor.c:869 oyranos_monitor.c:871
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
-#: oyranos_monitor.c:1453
+#: oyranos_monitor.c:965
 msgid "Error getting atom"
 msgstr "Fehler beim Suchen des Xatoms"
 
-#: oyranos_monitor.c:1681
+#: oyranos_monitor.c:1191
 msgid "XRandR CrtcInfo request failed"
 msgstr "XRandR CrtcInfo Anfrage daneben"
 
-#: oyranos_monitor.c:1699
+#: oyranos_monitor.c:1209
 msgid "Xinerama request failed"
 msgstr "Xineramaanfrage daneben"
 
-#: oyranos_monitor.c:1715
+#: oyranos_monitor.c:1225
 msgid "open X Screen failed"
 msgstr "Öffnen des X Screens daneben"
 
-#: oyranos_monitor.c:1786
+#: oyranos_monitor.c:1296
 msgid "allocation failed"
 msgstr "kein Speicher"
 
-#: oyranos_monitor.c:1801
+#: oyranos_monitor.c:1311
 msgid "no Screen found"
 msgstr "keine Anzeige gefunden"
 
-#: oyranos_monitor.c:1912
+#: oyranos_monitor.c:1422
 msgid "less Xinerama monitors than XRandR ones"
 msgstr "weniger Xinerama als XRandR Monitore"
 
-#: oyranos_gamma.c:105
+#: oyranos_gamma.c:107
 msgid "is a colour profile administration tool for monitors"
 msgstr "ist ein Farbprofilverwaltungswerkzeug für Bildschirme"
 
-#: oyranos_gamma.c:106 oyranos_policy.c:52
+#: oyranos_gamma.c:108 oyranos_policy.c:52
 msgid "Usage"
 msgstr "Benutzung"
 
-#: oyranos_gamma.c:107
+#: oyranos_gamma.c:109
 msgid "Set new profile:"
 msgstr "Setze neues Profil:"
 
-#: oyranos_gamma.c:110
+#: oyranos_gamma.c:112
 msgid "profile name"
 msgstr "Profilname"
 
-#: oyranos_gamma.c:112
+#: oyranos_gamma.c:114
 msgid "Unset profile:"
 msgstr "Melde Profil ab:"
 
-#: oyranos_gamma.c:116
+#: oyranos_gamma.c:118
 msgid "Activate profiles:"
 msgstr "Aktivieren eines Profiles:"
 
-#: oyranos_gamma.c:119
+#: oyranos_gamma.c:121
 msgid "Query server profile:"
 msgstr "Frage nach Serverprofil:"
 
-#: oyranos_gamma.c:123
+#: oyranos_gamma.c:125
 msgid "Query device data base profile:"
 msgstr "Befrage Gerätedatenbank nach Profil:"
 
-#: oyranos_gamma.c:127
+#: oyranos_gamma.c:129
+msgid "List devices:"
+msgstr "Instrumentenliste:"
+
+#: oyranos_gamma.c:132
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
-#: oyranos_gamma.c:128
+#: oyranos_gamma.c:133
 msgid "-v verbose"
 msgstr "-v plaudernd"
 
-#: oyranos_gamma.c:143 oyranos_policy.c:136
+#: oyranos_gamma.c:148 oyranos_policy.c:136
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 
@@ -1353,65 +1356,65 @@ msgstr "Speicherung der neuen Richtline schlug fehl mit Fehler:"
 msgid "Policy search paths"
 msgstr "Richtliniensuchpfade"
 
-#: oyranos_alpha.c:601 oyranos_alpha.c:1021 oyranos_alpha.c:2066
-#: oyranos_alpha.c:4374 oyranos_alpha.c:4599 oyranos_alpha.c:5252
-#: oyranos_alpha.c:6087 oyranos_alpha.c:7241 oyranos_alpha.c:7948
-#: oyranos_alpha.c:8559 oyranos_alpha.c:10690 oyranos_alpha.c:11169
-#: oyranos_alpha.c:11717 oyranos_alpha.c:12230 oyranos_alpha.c:12790
-#: oyranos_alpha.c:13408 oyranos_alpha.c:13701 oyranos_alpha.c:13910
-#: oyranos_alpha.c:14086 oyranos_alpha.c:14556 oyranos_alpha.c:14867
-#: oyranos_alpha.c:15016 oyranos_alpha.c:15289 oyranos_alpha.c:16501
-#: oyranos_alpha.c:17056 oyranos_alpha.c:17375 oyranos_alpha.c:18067
-#: oyranos_alpha.c:18662 oyranos_alpha.c:18924
+#: oyranos_alpha.c:602 oyranos_alpha.c:1022 oyranos_alpha.c:2067
+#: oyranos_alpha.c:4377 oyranos_alpha.c:4602 oyranos_alpha.c:5255
+#: oyranos_alpha.c:6090 oyranos_alpha.c:7245 oyranos_alpha.c:8021
+#: oyranos_alpha.c:8905 oyranos_alpha.c:11037 oyranos_alpha.c:11516
+#: oyranos_alpha.c:12064 oyranos_alpha.c:12577 oyranos_alpha.c:13137
+#: oyranos_alpha.c:13755 oyranos_alpha.c:14048 oyranos_alpha.c:14257
+#: oyranos_alpha.c:14433 oyranos_alpha.c:14903 oyranos_alpha.c:15214
+#: oyranos_alpha.c:15363 oyranos_alpha.c:15636 oyranos_alpha.c:16848
+#: oyranos_alpha.c:17403 oyranos_alpha.c:17722 oyranos_alpha.c:18414
+#: oyranos_alpha.c:19009 oyranos_alpha.c:19271
 msgid "MEM Error."
 msgstr "Speicher Fehler"
 
-#: oyranos_alpha.c:2514
+#: oyranos_alpha.c:2515
 msgid "Name"
 msgstr "Name"
 
-#: oyranos_alpha.c:2515
+#: oyranos_alpha.c:2516
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: oyranos_alpha.c:2913
+#: oyranos_alpha.c:2912
 msgid "Could not open meta backend API"
 msgstr "Konnte Meta Schnittstelle nicht öffnen"
 
-#: oyranos_alpha.c:7414 oyranos_alpha.c:19565
-msgid "Could not open device"
-msgstr "Konnte Gerät nicht öffnen"
+#: oyranos_alpha.c:7398 oyranos_alpha.c:20188
+msgid "Could not open instrument"
+msgstr "Konnte Instrument nicht öffnen"
 
-#: oyranos_alpha.c:14375 oyranos_alpha.c:14391
+#: oyranos_alpha.c:14722 oyranos_alpha.c:14738
 msgid "with '.' is not allowed"
 msgstr "mit '.' ist nicht erlaubt"
 
-#: oyranos_alpha.c:17617
+#: oyranos_alpha.c:17964
 msgid "No filter"
 msgstr "kein Filter"
 
-#: oyranos_alpha.c:17627
+#: oyranos_alpha.c:17974
 msgid "Please add first a image node to the graph before adding other filters"
 msgstr "Bitte fügen Sie erst ein Bildknoten in den Graphen vor andere Filtern"
 
-#: oyranos_alpha.c:17635
+#: oyranos_alpha.c:17982
 msgid "attempt to add a incomplete filter"
 msgstr "Versuch einen unvollständigen Filter hinzuzufügen"
 
-#: oyranos_alpha.c:17644
+#: oyranos_alpha.c:17991
 msgid "attempt to add a non linear filter to a linear graph"
 msgstr ""
 "Versuch ein nicht linearen Filter zu einem linearen Grafen hinzuzufügen"
 
-#: oyranos_alpha.c:17678
+#: oyranos_alpha.c:18025
 msgid "?? Nothing to add ??"
 msgstr "?? Nichts hinzuzufügen ??"
 
-#: oyranos_alpha.c:18628
+#: oyranos_alpha.c:18975
 msgid "---"
 msgstr ""
 
-#: oyranos_alpha.c:19592
+#: oyranos_alpha.c:20220
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
 
@@ -1458,23 +1461,23 @@ msgstr ""
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr "MIT Lizenz: http://www.opensource.org/licenses/mit-license.php"
 
-#: oyranos_cmm_oyX1.c:470
+#: oyranos_cmm_oyX1.c:529
 msgid "Oyranos X11"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:472
+#: oyranos_cmm_oyX1.c:531
 msgid "The window support backend of Oyranos."
 msgstr "Die Fenstersystemunterstützung für Oyranos"
 
-#: oyranos_cmm_oyX1.c:476 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
+#: oyranos_cmm_oyX1.c:535 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
 msgid "Kai-Uwe"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:478 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
+#: oyranos_cmm_oyX1.c:537 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:480 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
+#: oyranos_cmm_oyX1.c:539 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
@@ -1482,15 +1485,15 @@ msgstr ""
 "Oyranos Projekt: www: http://www.oyranos.com; Support/email: ku.b@gmx.de; "
 "Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 
-#: oyranos_cmm_oyX1.c:484 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
+#: oyranos_cmm_oyX1.c:543 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
 msgid "newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:486 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
+#: oyranos_cmm_oyX1.c:545 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
 msgid "Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:488 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
+#: oyranos_cmm_oyX1.c:547 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/bsd-license.php"
 
@@ -1670,6 +1673,9 @@ msgstr "Kann nicht reservieren für:"
 #: oyranos_helper.h:98
 msgid "nothing allocated"
 msgstr "nichts reserviert"
+
+#~ msgid "Could not open device"
+#~ msgstr "Konnte Gerät nicht öffnen"
 
 #~ msgid "Oyranos Control Panel"
 #~ msgstr "Oyranos Konfiguration"
@@ -2642,9 +2648,6 @@ msgstr "nichts reserviert"
 
 #~ msgid "Preview files"
 #~ msgstr "Vorschau"
-
-#~ msgid "List mode"
-#~ msgstr "Standard Anzeige"
 
 #~ msgid "Wide list mode"
 #~ msgstr "Weite Anzeige"
