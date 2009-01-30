@@ -546,6 +546,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CMM_API7_S: text = "oyCMMapi7_s Filter run"; break;
     case oyOBJECT_CMM_API8_S: text = "oyCMMapi8_s Filter run"; break;
     case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
+    case oyOBJECT_CMM_API_FILTERS_S: text="oyCMMapiFilters_s Filter list";break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
     case oyOBJECT_ICON_S: text = "oyIcon_s"; break;
     case oyOBJECT_MODULE_S: text = "oyModule_s"; break;
@@ -2864,10 +2865,7 @@ oyCMMapiFilter_s**oyCMMsGetFilterApis_(const char        * cmm_required,
                                        uint32_t         ** rank_list,
                                        uint32_t          * count )
 {
-  int error = type != oyOBJECT_CMM_API4_S &&
-              type != oyOBJECT_CMM_API6_S &&
-              type != oyOBJECT_CMM_API7_S &&
-              type != oyOBJECT_CMM_API8_S;
+  int error = !oyIsOfTypeCMMapiFilter( type );
   char prefered_cmm[5] = {0,0,0,0,0};
   oyCMMapiFilter_s ** api = 0;
   uint32_t * rank_list_ = 0;
@@ -19375,6 +19373,285 @@ OYAPI int  OYEXPORT
   }
 
   return 0;
+}
+
+
+/** Function oyCMMapiFilters_New
+ *  @memberof oyCMMapiFilters_s
+ *  @brief   allocate a new CMMapiFilters list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+OYAPI oyCMMapiFilters_s * OYEXPORT
+                 oyCMMapiFilters_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CMM_API_FILTERS_S;
+# define STRUCT_TYPE oyCMMapiFilters_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(("MEM Error."))
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyCMMapiFilters_Copy;
+  s->release = (oyStruct_Release_f) oyCMMapiFilters_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->list_ = oyStructList_New( 0 );
+
+  return s;
+}
+
+/** @internal
+ *  Function oyCMMapiFilters_Copy_
+ *  @memberof oyCMMapiFilters_s
+ *  @brief   real copy a CMMapiFilters object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+oyCMMapiFilters_s * oyCMMapiFilters_Copy_(
+                                       oyCMMapiFilters_s * obj,
+                                       oyObject_s          object )
+{
+  oyCMMapiFilters_s * s = 0;
+  int error = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyCMMapiFilters_New( object );
+  error = !s;
+
+  if(!error)
+    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
+
+  if(error)
+    oyCMMapiFilters_Release( &s );
+
+  return s;
+}
+
+/** Function oyCMMapiFilters_Copy
+ *  @memberof oyCMMapiFilters_s
+ *  @brief   copy or reference a CMMapiFilters list
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+OYAPI oyCMMapiFilters_s * OYEXPORT
+                 oyCMMapiFilters_Copy( oyCMMapiFilters_s * obj,
+                                       oyObject_s          object)
+{
+  oyCMMapiFilters_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_CMM_API_FILTERS_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyCMMapiFilters_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyCMMapiFilters_Release
+ *  @memberof oyCMMapiFilters_s
+ *  @brief   release and possibly deallocate a CMMapiFilters list
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+OYAPI int  OYEXPORT
+               oyCMMapiFilters_Release(oyCMMapiFilters_s** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyCMMapiFilters_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  if( !s->oy_ || s->type_ != oyOBJECT_CMM_API_FILTERS_S)
+  {
+    WARNc_S(("Attempt to release a non oyCMMapiFilters_s object."))
+    return 1;
+  }
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyStructList_Release( &s->list_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** @internal
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type )
+{
+  int success = type == oyOBJECT_CMM_API4_S ||
+                type == oyOBJECT_CMM_API6_S ||
+                type == oyOBJECT_CMM_API7_S ||
+                type == oyOBJECT_CMM_API8_S;
+  return success;
+}
+
+/** Function oyCMMapiFilters_MoveIn
+ *  @memberof oyCMMapiFilters_s
+ *  @brief   add a element to a CMMapiFilters list
+ *
+ *  @param[in]     list                list
+ *  @param[in,out] obj                 list element
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+OYAPI int  OYEXPORT
+                 oyCMMapiFilters_MoveIn (
+                                       oyCMMapiFilters_s * list,
+                                       oyCMMapiFilter_s ** obj,
+                                       int                 pos )
+{
+  oyCMMapiFilters_s * s = list;
+  int error = !s || s->type_ != oyOBJECT_CMM_API_FILTERS_S;
+
+  if(obj && *obj && oyIsOfTypeCMMapiFilter( (*obj)->type ))
+  {
+    if(!s)
+    {
+      s = oyCMMapiFilters_New(0);
+      error = !s;
+    }                                  
+
+    if(!error && !s->list_)
+    {
+      s->list_ = oyStructList_New( 0 );
+      error = !s->list_;
+    }
+      
+    if(!error)
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+  }   
+  
+  return error;
+}
+
+/** Function oyCMMapiFilters_ReleaseAt
+ *  @memberof oyCMMapiFilters_s
+ *  @brief   release a element from a CMMapiFilters list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+OYAPI int  OYEXPORT
+                 oyCMMapiFilters_ReleaseAt (
+                                       oyCMMapiFilters_s * list,
+                                       int                 pos )
+{ 
+  int error = !list;
+
+  if(!error && list->type_ != oyOBJECT_CMM_API_FILTERS_S)
+    error = 1;
+  
+  if(!error)
+    oyStructList_ReleaseAt( list->list_, pos );
+
+  return error;
+}
+
+/** Function oyCMMapiFilters_Get
+ *  @memberof oyCMMapiFilters_s
+ *  @brief   get a element of a CMMapiFilters list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+OYAPI oyCMMapiFilter_s * OYEXPORT
+                 oyCMMapiFilters_Get ( oyCMMapiFilters_s * list,
+                                       int                 pos )
+{       
+  if(list && list->type_ == oyOBJECT_CMM_API_FILTERS_S)
+    return (oyCMMapiFilter_s *) oyStructList_GetRef( list->list_, pos ); 
+  else  
+    return 0;
+}   
+
+/** Function oyCMMapiFilters_Count
+ *  @memberof oyCMMapiFilters_s
+ *  @brief   count the elements in a CMMapiFilters list
+ *
+ *  @param[in,out] list                the list
+ *  @return                            element count
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+OYAPI int  OYEXPORT
+                 oyCMMapiFilters_Count(oyCMMapiFilters_s * list )
+{       
+  if(list && list->type_ == oyOBJECT_CMM_API_FILTERS_S)
+    return oyStructList_Count( list->list_ );
+  else return 0;
 }
 
 /** @} *//* backend_api */

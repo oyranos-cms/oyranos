@@ -213,6 +213,7 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
                                        oyCMMapiQueries_s * queries,
                                        const char        * registration,
                                        oyOBJECT_e          type );
+int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type );
 oyCMMapiBase_s *oyCMMsGetApiFromRegistration_(
                                        oyOBJECT_e          type,
                                        const char        * cmm_required,
