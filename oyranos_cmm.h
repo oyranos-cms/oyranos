@@ -426,7 +426,7 @@ typedef struct {
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2008/12/28
  */
-typedef struct {
+struct oyCMMapiFilter_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API7_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
@@ -447,7 +447,7 @@ typedef struct {
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
-} oyCMMapiFilter_s;
+};
 
 
 /** typedef  oyCMMuiGet_f
