@@ -530,22 +530,57 @@ oyTESTRESULT_e testMonitor ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
-  int screen1, screen2, screen3;
+  int n, i, error = 0;
   char * block, * text, * display_name;
   size_t size = 0;
   oyProfile_s * p, * p2;
+  oyConfigs_s * instruments = 0;
+  oyConfig_s * c = 0;
 
   oyExportReset_(EXPORT_SETTING);
   fprintf(stdout, "\n" );
 
-  screen1 = oyGetScreenFromPosition( 0, 0,0 );
-  screen2 = oyGetScreenFromPosition( 0, 2000,0 );
-  screen3 = oyGetScreenFromPosition( 0, 3000,0 );
-  if(1)
+
+  error = oyInstrumentsGet( "colour", "monitor", 0, &instruments );
+  n = oyConfigs_Count( instruments );
+  if(!error)
   {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "screens %d %d %d", screen1, screen2, screen3 );
+    for(i = 0; i < n; ++i)
+    {
+      c = oyConfigs_Get( instruments, i );
+
+      error = oyInstrumentGetInfo( c, oyNAME_NICK, 0, &text, 0 );
+
+      if(text && text[0])
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument: %s", text )
+      else
+        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+
+      if(text)
+        free( text );
+
+      error = oyInstrumentGetInfo( c, oyNAME_NAME, 0, &text, 0 );
+
+      if(text && text[0])
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument: %s", text )
+      else
+        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+
+      if(text)
+        free( text );
+
+      error = oyInstrumentGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
+
+      if(text && text[0])
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument:\n%s", text )
+      else
+        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+
+      if(text)
+        free( text );
+    }
   }
+  oyConfigs_Release( &instruments );
 
   display_name = oyGetDisplayNameFromPosition( 0, 0,0, malloc);
   block = oyGetMonitorProfile( display_name, &size, malloc );
