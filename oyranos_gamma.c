@@ -181,20 +181,25 @@ int main( int argc , char** argv )
 
     if(list)
     {
-      char ** texts = 0;
-      uint32_t texts_n = 0, i;
+      char * text = 0;
+      uint32_t n = 0, i;
+      oyConfigs_s * instruments = 0;
+      oyConfig_s * c = 0;
 
-      error = oyInstrumentList( 0, "monitor", 0, &texts, &texts_n, 1, malloc );
+      error = oyInstrumentsGet( 0, "monitor", 0, &instruments );
+      n = oyConfigs_Count( instruments );
       if(!error)
       {
-        for(i = 0; i < texts_n; ++i)
+        for(i = 0; i < n; ++i)
         {
-          printf("%s\n", texts[i]? texts[i]:"???");
-          if(texts[i])
-            free( texts[i] );
+          c = oyConfigs_Get( instruments, i );
+          error = oyInstrumentGetInfo( c, oyNAME_NAME, 0, &text, 0 );
+          printf("%s\n", text? text:"???");
+          if(text)
+            free( text );
         }
-        free(texts);
       }
+      oyConfigs_Release( &instruments );
     }
 
     /* make shure the display name is correct including the screen */

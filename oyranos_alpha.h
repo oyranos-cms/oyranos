@@ -768,6 +768,11 @@ OYAPI oyConfig_s * OYEXPORT
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
+               oyConfig_FromInstrumentCall (
+                                       oyConfig_s        * instrument,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object );
+OYAPI oyConfig_s * OYEXPORT
                oyConfig_Copy         ( oyConfig_s        * obj,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
@@ -793,8 +798,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_DomainRank   ( oyConfig_s        * config );
 
-int          oyActivateDeviceProfile ( const char        * device_name,
-                                       const char        * device_class );
 
 
 /** @struct  oyConfigs_s
@@ -861,14 +864,6 @@ OYAPI int  OYEXPORT
                                        uint32_t         ** rank_list,
                                        oyAlloc_f           allocateFunc );
 
-OYAPI int  OYEXPORT
-                 oyInstrumentList    ( const char        * instrument_type,
-                                       const char        * instrument_class,
-                                       oyOptions_s       * options,
-                                       char            *** list,
-                                       uint32_t          * list_n,
-                                       uint32_t            flags,
-                                       oyAlloc_f           allocateFunc );
 
 
 
@@ -959,13 +954,13 @@ OYAPI oyProfile_s * OYEXPORT
                                        oySIGNATURE_TYPE_e  type,
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromDevice
-                                     ( const char        * device_name,
-                                       const char        * device_class,
+                   oyProfile_FromInstrument
+                                     ( const char        * instrument_class,
+                                       const char        * instrument_name,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
-               oyProfile_FromDB      ( const char        * device_name,
-                                       const char        * device_class,
+                   oyProfile_FromDB  ( const char        * instrument_class,
+                                       const char        * instrument_name,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_Copy    ( oyProfile_s       * profile,
@@ -1128,6 +1123,38 @@ char   **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        const char        * country,
                                        int32_t           * tag_size,
                                        oyAlloc_f           allocateFunc );
+
+
+
+OYAPI int  OYEXPORT
+         oyInstrumentProfileActivate ( const char        * instrument_class,
+                                       const char        * instrument_name );
+OYAPI int  OYEXPORT
+         oyInstrumentProfileActivates( const char        * instrument_class );
+
+
+OYAPI int  OYEXPORT /* ersetzt oyInstrumentList() */
+           oyInstrumentsGet          ( const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** instruments );
+OYAPI int  OYEXPORT
+           oyInstrumentSetup         ( oyConfig_s        * instrument );
+OYAPI int  OYEXPORT /* Brauchen wir das? */
+           oyInstrumentsSetup        ( oyConfigs_s       * instruments );
+OYAPI int  OYEXPORT
+           oyInstrumentGetInfo       ( oyConfig_s        * instrument,
+                                       oyNAME_e            type,
+                                       uint32_t            flags,
+                                       char             ** info_text,
+                                       oyAlloc_f           allocateFunc );
+OYAPI int  OYEXPORT
+           oyInstrumentSetProfile    ( oyConfig_s        * instrument,
+                                       oyProfile_s       * profile );
+OYAPI int  OYEXPORT
+           oyInstrumentGetProfile    ( oyConfig_s        * instrument,
+                                       oyProfile_s      ** profile );
+
 
 
 /** @enum    oyDATALAYOUT_e
