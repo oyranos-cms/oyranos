@@ -15,6 +15,7 @@
 
 #include "oyranos_cmm.h"
 #include "oyranos_debug.h"
+#include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_monitor.h"
 #include "oyranos_texts.h"
@@ -183,6 +184,79 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
   return;
 }
 
+int          oyX1InstrumentFromName_ ( const char        * instrument_name,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** instrument,
+                                       oyAlloc_f           allocateFunc )
+{
+  const char * value3 = 0;
+  oyOption_s * o = 0;
+  int error = !instrument || !instrument_name;
+
+    value3 = oyOptions_FindString( options, "edid", 0 );
+
+    if(!error)
+    {
+      char * manufacturer=0, *model=0, *serial=0, *host=0, *display_geometry=0,
+           * system_port=0;
+      oyBlob_s * edid = 0;
+
+      if(!instrument_name)
+      {
+        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                "The \"instrument_name\" argument is\n"
+                " missed to select a appropriate instrument for the"
+                " \"properties\" call.", OY_DBG_ARGS_ );
+        error = 1;
+      }
+
+      if(error <= 0)
+        error = oyGetMonitorInfo_lib( instrument_name,
+                                      &manufacturer, &model, &serial,
+                                      &display_geometry, &system_port,
+                                      &host, value3 ? &edid : 0, allocateFunc,
+                                      (oyStruct_s*)options );
+
+      if(error != 0)
+        message( oyMSG_WARN, (oyStruct_s*)options, 
+                 OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
+                 " oyGetMonitorInfo_lib returned with %s; instrument_name:"
+                 " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
+                 oyNoEmptyString_m_( instrument_name ) );
+
+      if(error <= 0)
+      {
+        if(!*instrument)
+          *instrument = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !*instrument;
+        if(!error && instrument_name)
+        error = oyOptions_SetFromText( (*instrument)->options,
+                                       CMM_BASE_REG OY_SLASH "instrument_name",
+                                       instrument_name, OY_CREATE_NEW );
+
+        OPTIONS_ADD( (*instrument)->options, manufacturer )
+        OPTIONS_ADD( (*instrument)->options, model )
+        OPTIONS_ADD( (*instrument)->options, serial )
+        OPTIONS_ADD( (*instrument)->options, display_geometry )
+        OPTIONS_ADD( (*instrument)->options, system_port )
+        OPTIONS_ADD( (*instrument)->options, host )
+        if(!error && edid)
+        {
+          o = oyOption_New( CMM_BASE_REG OY_SLASH "edid", 0 );
+          error = !o;
+          if(!error)
+          error = oyOption_SetFromData( o, edid->ptr, edid->size );
+          if(!error)
+            oyOptions_MoveIn( (*instrument)->options, &o, -1 );
+          oyBlob_Release( &edid );
+        }
+      }
+    }
+
+  return error;
+}
+
+
 /** Function oyX1Configs_FromPattern
  *  @brief   oyX1 oyCMMapi8_s Xorg monitors
  *
@@ -195,11 +269,15 @@ int            oyX1Configs_FromPattern (
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** s )
 {
-  oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0;
+  oyConfigs_s * instruments = 0;
+  oyConfig_s * instrument = 0;
   oyOption_s * o = 0;
+  oyRegion_s * rect = 0;
+  const oyRegion_s * r = 0;
+  oyProfile_s * p = 0;
   char ** texts = 0;
-  int texts_n = 0, i,
+  char * text = 0;
+  int texts_n = 0, i, n,
       error = !s;
   const char * value1 = 0,
              * value2 = 0,
@@ -208,6 +286,11 @@ int            oyX1Configs_FromPattern (
   int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
+  static char * num = 0;
+  const char * tmp = 0;
+
+  if(!num)
+    oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
 
   if(!options || !oyOptions_Count( options ))
   {
@@ -218,7 +301,7 @@ int            oyX1Configs_FromPattern (
 
   if(rank && error <= 0)
   {
-    configs = oyConfigs_New(0);
+    instruments = oyConfigs_New(0);
 
     display_name = oyOptions_FindString( options, "display_name", 0 );
     value1 = oyOptions_FindString( options, "instrument_name", 0 );
@@ -237,17 +320,17 @@ int            oyX1Configs_FromPattern (
         if(value1 && strcmp(value1, texts[i]) != 0)
           continue;
 
-        config = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !config;
+        instrument = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !instrument;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( config->options,
+        error = oyOptions_SetFromText( instrument->options,
                                        CMM_BASE_REG OY_SLASH "instrument_name",
                                        texts[i], OY_CREATE_NEW );
 
-        if(value3)
+        if(value3 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          oyRegion_s * rect = oyX1Region_FromDevice( texts[i] );
+          rect = oyX1Region_FromDevice( texts[i] );
           if(!rect)
           {
             WARNc1_S("Could not obtain region information for %s", texts[i]);
@@ -255,16 +338,15 @@ int            oyX1Configs_FromPattern (
           {
             o = oyOption_New( CMM_BASE_REG OY_SLASH "display_geometry", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
-            oyOptions_MoveIn( config->options, &o, -1 );
+            oyOptions_MoveIn( instrument->options, &o, -1 );
           }
         }
 
         value3 = oyOptions_FindString( options, "icc_profile", 0 );
-        if(value3)
+        if(value3 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           size_t size = 0;
           char * data = oyX1GetMonitorProfile( texts[i], &size, allocateFunc );
-          oyProfile_s * p = 0;
 
           
           if(!size & !data)
@@ -276,89 +358,101 @@ int            oyX1Configs_FromPattern (
             p = oyProfile_FromMem( size, data, 0, 0 );
             o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( config->options, &o, -1 );
+            oyOptions_MoveIn( instrument->options, &o, -1 );
             free( data );
           }
         }
 
+        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        {
+          o = oyOptions_Find( instrument->options, "display_geometry" );
+          r = (oyRegion_s*) o->value->oy_struct;
+
+          num[0] = 0; text = 0; tmp = 0;
+          sprintf( num, "%d,%d,%dx%d", (int)r->x, (int)r->y,
+                                       (int)r->width, (int)r->height );
+      
+          tmp = oyRegion_Show( (oyRegion_s*)r );
+          STRING_ADD( text, tmp );
+          oyOption_Release( &o );
+
+          o = oyOptions_Find( instrument->options, "icc_profile" );
+
+          if( o && o->value && o->value->oy_struct && 
+              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+          {
+            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+            tmp = oyProfile_GetFileName( p, 0 );
+
+            STRING_ADD( text, "  " );
+            if(oyStrrchr_( tmp, OY_SLASH_C ))
+              STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
+            else
+              STRING_ADD( text, tmp );
+
+            oyProfile_Release( &p );
+          }
+
+          if(error <= 0)
+          error = oyOptions_SetFromText( instrument->options,
+                                         CMM_BASE_REG OY_SLASH "oyNAME_NAME",
+                                         text, OY_CREATE_NEW );
+          oyFree_m_( text );
+        }
+
+        if(oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
+        {
+          error = oyX1InstrumentFromName_( value1, options, &instrument,
+                                           allocateFunc );
+          if(error <= 0 && instruments)
+          {
+            n = oyOptions_Count( instrument->options );
+            for( i = 0; i < n; ++i )
+            {
+              o = oyOptions_Get( instrument->options, i );
+
+              STRING_ADD( text, oyStrrchr_( o->registration, OY_SLASH_C ) + 1 );
+              STRING_ADD( text, ":\n" );
+              STRING_ADD( text, o->value->string );
+              STRING_ADD( text, "\n" );
+              
+              oyOption_Release( &o );
+            }
+          }
+
+          if(error <= 0)
+          error = oyOptions_SetFromText( instrument->options,
+                                     CMM_BASE_REG OY_SLASH "oyNAME_DESCRIPTION",
+                                         text, OY_CREATE_NEW );
+          oyFree_m_( text );
+        }
 
         if(error <= 0)
-          config->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                            config->oy_->allocateFunc_ );
+          instrument->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                               instrument->oy_->allocateFunc_ );
 
-        oyConfigs_MoveIn( configs, &config, -1 );
+        oyConfigs_MoveIn( instruments, &instrument, -1 );
       }
 
       if(error <= 0)
-        *s = configs;
+        *s = instruments;
 
       return error;
     }
 
     value2 = oyOptions_FindString( options, "properties", 0 );
-    value3 = oyOptions_FindString( options, "edid", 0 );
     if(value2)
     {
-      char * manufacturer=0, *model=0, *serial=0, *host=0, *display_geometry=0,
-           * system_port=0;
-      oyBlob_s * edid = 0;
+      error = oyX1InstrumentFromName_( value1, options, &instrument,
+                                       allocateFunc );
 
-      if(!value1)
-      {
-        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
-                "The \"instrument_name\" argument is\n"
-                " missed to select a appropriate instrument for the"
-                " \"properties\" call.", OY_DBG_ARGS_ );
-        error = 1;
-      }
+      if(error <= 0 && instrument)
+        instrument->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                                instrument->oy_->allocateFunc_);
+      oyConfigs_MoveIn( instruments, &instrument, -1 );
 
       if(error <= 0)
-        error = oyGetMonitorInfo_lib( value1,
-               &manufacturer, &model, &serial, &display_geometry, &system_port,
-                              &host, value3 ? &edid : 0, allocateFunc,
-                                    (oyStruct_s*)options );
-
-      if(error != 0)
-        message( oyMSG_WARN, (oyStruct_s*)options, 
-                 OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-                 " oyGetMonitorInfo_lib returned with %s; instrument_name:"
-                 " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
-                 oyNoEmptyString_m_( value1) );
-
-      if(error <= 0)
-      {
-        config = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !config;
-        if(!error && value1)
-        error = oyOptions_SetFromText( config->options,
-                                       CMM_BASE_REG OY_SLASH "instrument_name",
-                                       value1, OY_CREATE_NEW );
-
-        OPTIONS_ADD( config->options, manufacturer )
-        OPTIONS_ADD( config->options, model )
-        OPTIONS_ADD( config->options, serial )
-        OPTIONS_ADD( config->options, display_geometry )
-        OPTIONS_ADD( config->options, system_port )
-        OPTIONS_ADD( config->options, host )
-        if(!error && edid)
-        {
-          o = oyOption_New( CMM_BASE_REG OY_SLASH "edid", 0 );
-          error = !o;
-          if(!error)
-          error = oyOption_SetFromData( o, edid->ptr, edid->size );
-          if(!error)
-            oyOptions_MoveIn( config->options, &o, -1 );
-          oyBlob_Release( &edid );
-        }
-
-        if(error <= 0)
-          config->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                            config->oy_->allocateFunc_ );
-        oyConfigs_MoveIn( configs, &config, -1 );
-      }
-
-      if(error <= 0)
-        *s = configs;
+        *s = instruments;
 
       return error;
     }
