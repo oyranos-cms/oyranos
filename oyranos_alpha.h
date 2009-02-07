@@ -954,9 +954,7 @@ OYAPI oyProfile_s * OYEXPORT
                                        oySIGNATURE_TYPE_e  type,
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromInstrument
-                                     ( const char        * instrument_class,
-                                       const char        * instrument_name,
+             oyProfile_FromInstrument( oyConfig_s        * instrument,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromDB  ( const char        * instrument_class,
@@ -1126,22 +1124,14 @@ char   **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
 
 
-OYAPI int  OYEXPORT
-         oyInstrumentProfileActivate ( const char        * instrument_class,
-                                       const char        * instrument_name );
-OYAPI int  OYEXPORT
-         oyInstrumentProfileActivates( const char        * instrument_class );
 
-
-OYAPI int  OYEXPORT /* ersetzt oyInstrumentList() */
+OYAPI int  OYEXPORT
            oyInstrumentsGet          ( const char        * instrument_type,
                                        const char        * instrument_class,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** instruments );
 OYAPI int  OYEXPORT
            oyInstrumentSetup         ( oyConfig_s        * instrument );
-OYAPI int  OYEXPORT /* Brauchen wir das? */
-           oyInstrumentsSetup        ( oyConfigs_s       * instruments );
 OYAPI int  OYEXPORT
            oyInstrumentGetInfo       ( oyConfig_s        * instrument,
                                        oyNAME_e            type,
