@@ -195,6 +195,7 @@ int main( int argc , char** argv )
           c = oyConfigs_Get( instruments, i );
           error = oyInstrumentGetInfo( c, oyNAME_NAME, 0, &text, 0 );
           printf("%s\n", text? text:"???");
+
           if(text)
             free( text );
         }

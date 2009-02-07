@@ -1140,7 +1140,7 @@ OYAPI int  OYEXPORT
                                        oyAlloc_f           allocateFunc );
 OYAPI int  OYEXPORT
            oyInstrumentSetProfile    ( oyConfig_s        * instrument,
-                                       oyProfile_s       * profile );
+                                       const char        * profile_name );
 OYAPI int  OYEXPORT
            oyInstrumentGetProfile    ( oyConfig_s        * instrument,
                                        oyProfile_s      ** profile );
