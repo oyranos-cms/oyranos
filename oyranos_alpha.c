@@ -7397,9 +7397,7 @@ OYAPI oyConfig_s * OYEXPORT
 
   /** 3. check for success of instrument detection */
   error = !instrument;
-  if(!error)
-  {
-  } else
+  if(error)
     WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name );
 
   return instrument;
@@ -8335,17 +8333,21 @@ OYAPI int  OYEXPORT
     oyConfigs_Release( &configs );
   }
 
-  j_n = oyConfigs_Count( *instruments );
+  if(instruments)
+    j_n = oyConfigs_Count( *instruments );
+  else
+    j_n = 0;
+
   for( j = 0; j < j_n; ++j )
   {
     instrument = oyConfigs_Get( *instruments, j );
 
     /** The basic call on how to obtain the configuration is added here as
      *  the objects name. "properties" and "list" are known. */
-    if(oyOptions_FindString(options, "properties", 0) ||
-       oyOptions_FindString(options, "oyNAME_DESCRIPTION", 0))
+    if(oyOptions_FindString( options, "properties", 0 ) ||
+       oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
       oyObject_SetName( instrument->oy_, "properties", oyNAME_NAME );
-    else if(oyOptions_FindString(options, "list", 0))
+    else if(oyOptions_FindString( options, "list", 0 ))
       oyObject_SetName( instrument->oy_, "list", oyNAME_NAME );
 
     oyConfig_Release( &instrument );
@@ -9107,7 +9109,7 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
 
   if(error > 0)
   {
-    WARNc1_S( "No display_name argument provided. Give up. %s",
+    WARNc1_S( "No instrument argument provided. Give up. %s",
               oyNoEmptyString_m_(profile_name) );
     return error;
   }
@@ -9157,6 +9159,12 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
 
   instrument_name = oyOptions_FindString( instrument->options,
                                           "instrument_name", 0 );
+  error = !instrument_name;
+  if(error)
+  {
+    WARNc1_S( "%s", _("Could not open instrument") );
+    goto cleanup;
+  }
 
   /** 3. unset the instrument colour/profile settings for no profile_name
    *     argument */
@@ -12792,8 +12800,8 @@ int            oyRegion_IsInside     ( oyRegion_s        * region,
 
   if (x < r->x) return FALSE;
   if (y < r->y) return FALSE;
-  if (x > (r->x + r->width)) return FALSE;
-  if (y > (r->y + r->height)) return FALSE;
+  if (x >= (r->x + r->width)) return FALSE;
+  if (y >= (r->y + r->height)) return FALSE;
   return in;
 }
 
@@ -20407,7 +20415,8 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
        o->value->oy_struct->type_ == oyOBJECT_REGION_S)
       r = (oyRegion_s*) o->value->oy_struct;
 
-    if(r && oyRegion_IsInside( r, x,y ))
+    if(!instrument_name &&
+       r && oyRegion_IsInside( r, x,y ))
     {
       instrument_name = oyOptions_FindString( instrument->options,
                                               "instrument_name", 0 );
