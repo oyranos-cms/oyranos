@@ -682,6 +682,8 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
                                        int                 pos,
                                        oyObject_s          object );
+int            oyOptions_AppendOpts  ( oyOptions_s       * list,
+                                       oyOptions_s       * append );
 int            oyOptions_DoFilter    ( oyOptions_s       * s,
                                        uint32_t            flags,
                                        const char        * filter_type );
@@ -703,6 +705,9 @@ int            oyOptions_SetFromText ( oyOptions_s       * obj,
                                        uint32_t            flags );
 int            oyOptions_SetSource   ( oyOptions_s       * options,
                                        oyOPTIONSOURCE_e    source );
+OYAPI int  OYEXPORT
+               oyOptions_SaveToDB    ( oyOptions_s       * options,
+                                       const char        * key_base_name );
 
 /** @brief   a means to rank the result of comparing two key's
  *
@@ -747,9 +752,17 @@ typedef struct {
   char               * registration;
   int                  version[3];     /**< as for oyCMMapi4_s::version */
 
-  /** properties,
-  e.g. "shared/freedesktop.org/colour/config.monitor.xorg.1/manufacturer=EIZO"*/
-  oyOptions_s        * options;
+  /** data base (Elektra) properties,
+  e.g. "shared/freedesktop.org/colour/config.monitor.xorg/1/manufacturer=EIZO"*/
+  oyOptions_s        * db;
+  /** These are the backend core properties, the ones to identify the 
+   *  instrument and store in DB. They must be filled by the backend.
+  e.g. "shared/freedesktop.org/colour/config.monitor.xorg/manufacturer=EIZO" */
+  oyOptions_s        * backend_core;
+  /** Additional informations from backends, with non identification purpose,
+   *  can be stored herein,
+  e.g. "shared/freedesktop.org/colour/config.monitor.xorg/edid=oyBlob_s*" */
+  oyOptions_s        * data;
 
   oyRankPad          * rank_map;       /**< zero terminated list; key compare */
 } oyConfig_s;
@@ -758,18 +771,9 @@ OYAPI oyConfig_s * OYEXPORT
                oyConfig_New          ( const char        * registration,
                                        oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_FromDB       ( oyConfig_s        * instrument,
-                                       int32_t           * rank_value,
-                                       oyObject_s          object);
-OYAPI oyConfig_s * OYEXPORT
                oyConfig_FromInstrument(const char        * instrument_type,
                                        const char        * instrument_class,
                                        const char        * instrument_name,
-                                       oyOptions_s       * options,
-                                       oyObject_s          object );
-OYAPI oyConfig_s * OYEXPORT
-               oyConfig_FromInstrumentCall (
-                                       oyConfig_s        * instrument,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
@@ -783,10 +787,16 @@ OYAPI int  OYEXPORT
                                        const char        * registration_domain,
                                        oyOptions_s       * options,
                                        oyBlob_s          * data );
-int            oyConfig_Add          ( oyConfig_s        * config,
+OYAPI int  OYEXPORT
+               oyConfig_Add          ( oyConfig_s        * config,
                                        const char        * key,
                                        const char        * value,
                                        uint32_t            flags );
+OYAPI int  OYEXPORT
+               oyConfig_ClearData    ( oyConfig_s        * config );
+OYAPI int  OYEXPORT
+               oyConfig_GetDB        ( oyConfig_s        * instrument,
+                                       int32_t           * rank_value );
 OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
@@ -797,7 +807,18 @@ OYAPI int  OYEXPORT
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
                oyConfig_DomainRank   ( oyConfig_s        * config );
-
+OYAPI const char * OYEXPORT
+               oyConfig_FindString   ( oyConfig_s        * config,
+                                       const char        * key,
+                                       const char        * value );
+OYAPI oyOption_s * OYEXPORT
+               oyConfig_Find         ( oyConfig_s        * config,
+                                       const char        * key );
+OYAPI int  OYEXPORT
+               oyConfig_Count        ( oyConfig_s        * config );
+OYAPI oyOption_s * OYEXPORT
+               oyConfig_Get          ( oyConfig_s        * config,
+                                       int                 pos );
 
 
 /** @struct  oyConfigs_s
@@ -954,11 +975,7 @@ OYAPI oyProfile_s * OYEXPORT
                                        oySIGNATURE_TYPE_e  type,
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
-             oyProfile_FromInstrument( oyConfig_s        * instrument,
-                                       oyObject_s          object);
-OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromDB  ( const char        * instrument_class,
-                                       const char        * instrument_name,
+                   oyProfile_FromDB  ( oyConfig_s        * instrument,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_Copy    ( oyProfile_s       * profile,
@@ -1138,6 +1155,9 @@ OYAPI int  OYEXPORT
                                        uint32_t            flags,
                                        char             ** info_text,
                                        oyAlloc_f           allocateFunc );
+OYAPI int  OYEXPORT
+           oyInstrumentCall          ( oyConfig_s        * instrument,
+                                       oyOptions_s       * options );
 OYAPI int  OYEXPORT
            oyInstrumentSetProfile    ( oyConfig_s        * instrument,
                                        const char        * profile_name );

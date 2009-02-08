@@ -240,16 +240,16 @@ int          oyX1InstrumentFromName_ ( const char        * instrument_name,
           *instrument = oyConfig_New( CMM_BASE_REG, 0 );
         error = !*instrument;
         if(!error && instrument_name)
-        error = oyOptions_SetFromText( (*instrument)->options,
+        error = oyOptions_SetFromText( (*instrument)->backend_core,
                                        CMM_BASE_REG OY_SLASH "instrument_name",
                                        instrument_name, OY_CREATE_NEW );
 
-        OPTIONS_ADD( (*instrument)->options, manufacturer )
-        OPTIONS_ADD( (*instrument)->options, model )
-        OPTIONS_ADD( (*instrument)->options, serial )
-        OPTIONS_ADD( (*instrument)->options, display_geometry )
-        OPTIONS_ADD( (*instrument)->options, system_port )
-        OPTIONS_ADD( (*instrument)->options, host )
+        OPTIONS_ADD( (*instrument)->backend_core, manufacturer )
+        OPTIONS_ADD( (*instrument)->backend_core, model )
+        OPTIONS_ADD( (*instrument)->backend_core, serial )
+        OPTIONS_ADD( (*instrument)->backend_core, display_geometry )
+        OPTIONS_ADD( (*instrument)->backend_core, system_port )
+        OPTIONS_ADD( (*instrument)->backend_core, host )
         if(!error && edid)
         {
           o = oyOption_New( CMM_BASE_REG OY_SLASH "edid", 0 );
@@ -257,7 +257,7 @@ int          oyX1InstrumentFromName_ ( const char        * instrument_name,
           if(!error)
           error = oyOption_SetFromData( o, edid->ptr, edid->size );
           if(!error)
-            oyOptions_MoveIn( (*instrument)->options, &o, -1 );
+            oyOptions_MoveIn( (*instrument)->backend_core, &o, -1 );
           oyBlob_Release( &edid );
         }
       }
@@ -335,7 +335,7 @@ int            oyX1Configs_FromPattern (
         error = !instrument;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( instrument->options,
+        error = oyOptions_SetFromText( instrument->backend_core,
                                        CMM_BASE_REG OY_SLASH "instrument_name",
                                        texts[i], OY_CREATE_NEW );
 
@@ -349,7 +349,7 @@ int            oyX1Configs_FromPattern (
           {
             o = oyOption_New( CMM_BASE_REG OY_SLASH "display_geometry", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
-            oyOptions_MoveIn( instrument->options, &o, -1 );
+            oyOptions_MoveIn( instrument->backend_core, &o, -1 );
           }
         }
 
@@ -369,14 +369,14 @@ int            oyX1Configs_FromPattern (
             p = oyProfile_FromMem( size, data, 0, 0 );
             o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( instrument->options, &o, -1 );
+            oyOptions_MoveIn( instrument->backend_core, &o, -1 );
             free( data );
           }
         }
 
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          o = oyOptions_Find( instrument->options, "display_geometry" );
+          o = oyOptions_Find( instrument->backend_core, "display_geometry" );
           r = (oyRegion_s*) o->value->oy_struct;
 
           num[0] = 0; text = 0; tmp = 0;
@@ -387,7 +387,7 @@ int            oyX1Configs_FromPattern (
           STRING_ADD( text, tmp );
           oyOption_Release( &o );
 
-          o = oyOptions_Find( instrument->options, "icc_profile" );
+          o = oyOptions_Find( instrument->backend_core, "icc_profile" );
 
           if( o && o->value && o->value->oy_struct && 
               o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
@@ -405,7 +405,7 @@ int            oyX1Configs_FromPattern (
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( instrument->options,
+          error = oyOptions_SetFromText( instrument->backend_core,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
           oyFree_m_( text );
@@ -417,10 +417,10 @@ int            oyX1Configs_FromPattern (
                                            allocateFunc );
           if(error <= 0 && instruments)
           {
-            n = oyOptions_Count( instrument->options );
+            n = oyOptions_Count( instrument->backend_core );
             for( i = 0; i < n; ++i )
             {
-              o = oyOptions_Get( instrument->options, i );
+              o = oyOptions_Get( instrument->backend_core, i );
 
               STRING_ADD( text, oyStrrchr_( o->registration, OY_SLASH_C ) + 1 );
               STRING_ADD( text, ":\n" );
@@ -432,7 +432,7 @@ int            oyX1Configs_FromPattern (
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( instrument->options,
+          error = oyOptions_SetFromText( instrument->backend_core,
                                      CMM_BASE_REG OY_SLASH "oyNAME_DESCRIPTION",
                                          text, OY_CREATE_NEW );
           oyFree_m_( text );
