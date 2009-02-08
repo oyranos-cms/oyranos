@@ -201,7 +201,7 @@ int          oyX1InstrumentFromName_ ( const char        * instrument_name,
 {
   const char * value3 = 0;
   oyOption_s * o = 0;
-  int error = !instrument || !instrument_name;
+  int error = !instrument;
 
     value3 = oyOptions_FindString( options, "edid", 0 );
 
@@ -292,6 +292,7 @@ int            oyX1Configs_FromPattern (
   const char * value1 = 0,
              * value2 = 0,
              * value3 = 0,
+             * value4 = 0,
              * display_name = 0;
   int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
@@ -352,8 +353,8 @@ int            oyX1Configs_FromPattern (
           }
         }
 
-        value3 = oyOptions_FindString( options, "icc_profile", 0 );
-        if(value3 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        value4 = oyOptions_FindString( options, "icc_profile", 0 );
+        if(value4 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           size_t size = 0;
           char * data = oyX1GetMonitorProfile( texts[i], &size, allocateFunc );
