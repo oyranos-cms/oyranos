@@ -1156,7 +1156,7 @@ OYAPI int  OYEXPORT
                                        char             ** info_text,
                                        oyAlloc_f           allocateFunc );
 OYAPI int  OYEXPORT
-           oyInstrumentCall          ( oyConfig_s        * instrument,
+           oyInstrumentBackendCall   ( oyConfig_s        * instrument,
                                        oyOptions_s       * options );
 OYAPI int  OYEXPORT
            oyInstrumentSetProfile    ( oyConfig_s        * instrument,

@@ -214,7 +214,7 @@ int          oyX1InstrumentFromName_ ( const char        * instrument_name,
           if(!error)
           error = oyOption_SetFromData( o, edid->ptr, edid->size );
           if(!error)
-            oyOptions_MoveIn( (*instrument)->backend_core, &o, -1 );
+            oyOptions_MoveIn( (*instrument)->data, &o, -1 );
           oyBlob_Release( &edid );
         }
       }
@@ -306,7 +306,7 @@ int            oyX1Configs_FromPattern (
           {
             o = oyOption_New( CMM_BASE_REG OY_SLASH "display_geometry", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
-            oyOptions_MoveIn( instrument->backend_core, &o, -1 );
+            oyOptions_MoveIn( instrument->data, &o, -1 );
           }
         }
 
@@ -326,25 +326,25 @@ int            oyX1Configs_FromPattern (
             p = oyProfile_FromMem( size, data, 0, 0 );
             o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( instrument->backend_core, &o, -1 );
+            oyOptions_MoveIn( instrument->data, &o, -1 );
             free( data );
           }
         }
 
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          o = oyOptions_Find( instrument->backend_core, "display_geometry" );
+          o = oyOptions_Find( instrument->data, "display_geometry" );
           r = (oyRegion_s*) o->value->oy_struct;
 
           num[0] = 0; text = 0; tmp = 0;
-          sprintf( num, "%d,%d,%dx%d", (int)r->x, (int)r->y,
+          sprintf( num, "%d+%d:%dx%d", (int)r->x, (int)r->y,
                                        (int)r->width, (int)r->height );
       
           tmp = oyRegion_Show( (oyRegion_s*)r );
           STRING_ADD( text, tmp );
           oyOption_Release( &o );
 
-          o = oyOptions_Find( instrument->backend_core, "icc_profile" );
+          o = oyOptions_Find( instrument->data, "icc_profile" );
 
           if( o && o->value && o->value->oy_struct && 
               o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
@@ -362,7 +362,7 @@ int            oyX1Configs_FromPattern (
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( instrument->backend_core,
+          error = oyOptions_SetFromText( instrument->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
           oyFree_m_( text );
@@ -389,7 +389,7 @@ int            oyX1Configs_FromPattern (
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( instrument->backend_core,
+          error = oyOptions_SetFromText( instrument->data,
                                      CMM_BASE_REG OY_SLASH "oyNAME_DESCRIPTION",
                                          text, OY_CREATE_NEW );
           oyFree_m_( text );
