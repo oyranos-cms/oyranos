@@ -37,8 +37,10 @@ LIBS_CMM = \
 
 
 EXAMPLE1 = examples/image2pdf
+EXAMPLE2 = examples/$(LIB_CMM_START)_dDev$(LIB_CMM_END)
 EXAMPLES = \
-	$(EXAMPLE1)
+	$(BUILDDIR)$(EXAMPLE1) \
+	$(BUILDDIR)$(EXAMPLE2)
 
 #ifdef $(X11)
 LIB_XNVCTRL = libXNVCtrl
@@ -131,8 +133,11 @@ CXXFILES_Flmm = \
 	$(SRCDIR)/FL/Flmm_Tabs.cxx
 EXAMPLE1_C = \
 	$(SRCDIR)/$(EXAMPLE1).c
+EXAMPLE2_C = \
+	$(SRCDIR)/examples/oyranos_cmm_dDev.c
 EXAMPLES_C = \
-	$(EXAMPLE1_C)
+	$(EXAMPLE1_C) \
+	$(EXAMPLE2_C)
 EXAMPLES_OBJECTS = $(EXAMPLES_C:.c=.o)
 
 TEST_CPP = \
@@ -255,7 +260,7 @@ all:	setup config.log.h mkdepend \
 	$(BUILDDIR)$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
 	$(BUILDDIR)$(TARGET)-policy $(FLTK_GUI) \
-	$(BUILDDIR)$(TEST2) $(BUILDDIR)$(EXAMPLES) $(LINGUAS_SRC)
+	$(BUILDDIR)$(TEST2) $(EXAMPLES) $(LINGUAS_SRC)
 	test -d default_profiles && \
 	( cd default_profiles; \
 	for prof in $(DEFAULT_PROFILES); do \
@@ -415,6 +420,8 @@ $(BUILDDIR)tests/test_oyranos.o:	tests/test_oyranos.c oyranos_version.h
 	echo Compiling tests/test_oyranos.c
 	$(CC) -I./ -I../ $(CFLAGS) -o $(BUILDDIR)$@ -c $<
 
+examples: $(EXAMPLES)
+
 $(BUILDDIR)$(EXAMPLE1): $(EXAMPLE1_C)
 	echo Compile $@ ...
 	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE1_C) \
@@ -426,6 +433,18 @@ $(BUILDDIR)$(EXAMPLE1): $(EXAMPLE1_C)
 	-o $(BUILDDIR)$(EXAMPLE1) \
 	$(BUILDDIR)$(EXAMPLE1).o `./oyranos-config --ldflags` \
 	`pkg-config --libs cairo` `pkg-config --libs lcms` -L. \
+	$(LINK_SRC_PATH)
+
+$(BUILDDIR)$(EXAMPLE2): $(EXAMPLE2_C)
+	echo Compile $@ ...
+	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE2_C) \
+	-o $(BUILDDIR)$(EXAMPLE2).o \
+	`./oyranos-config --cflags` -I.
+	echo Linking $@ ...
+	$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall $(LINK_FLAGS_DYNAMIC)$@ \
+	-o $(BUILDDIR)$@ \
+	$(BUILDDIR)$(EXAMPLE2).o `./oyranos-config --ldflags` \
+	-L. \
 	$(LINK_SRC_PATH)
 
 $(LIBFL_I18N):	fl_i18n/Makefile
@@ -550,6 +569,7 @@ install_bin:	all uninstall_bin install_gui
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
 	-$(INSTALL) -m 644 $(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 icc34.h $(DESTDIR)$(includedir)/$(TARGET)
@@ -726,7 +746,7 @@ clean:
 	$(BUILDDIR)$(TARGET)-policy \
 	$(BUILDDIR)$(TARGET)-monitor $(BUILDDIR)$(TARGET)-monitor-nvidia \
 	$(BUILDDIR)test2 $(BUILDDIR)test $(BUILDDIR)tests/test_oyranos \
-	$(BUILDDIR)$(EXAMPLES) \
+	$(EXAMPLES) \
 	$(BUILDDIR)$(TARGET)-config-fltk; \
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
