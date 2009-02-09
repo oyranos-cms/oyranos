@@ -31,8 +31,7 @@
 #define CMM_NICK "oyX1"
 #define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.monitor." CMM_NICK
 
-int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
-oyMessage_f message = oyX1CMMWarnFunc;
+oyMessage_f message = 0;
 
 extern oyCMMapi8_s oyX1_api8;
 oyRankPad oyX1_rank_map[];
@@ -60,48 +59,6 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
   if(mem)
     free(mem);
 }*/
-
-/** @func    oyX1CMMWarnFunc
- *  @brief   API requirement
- *
- *  @version Oyranos: 0.1.8
- *  @date    2007/12/12
- *  @since   2007/12/12 (Oyranos: 0.1.8)
- */
-int oyX1CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... )
-{
-  char* text = (char*)calloc(sizeof(char), 4096);
-  va_list list;
-  const char * type_name = "";
-  int id = -1;
-
-  if(context && oyOBJECT_NONE < context->type_)
-  {
-    type_name = oyStructTypeToText( context->type_ );
-    id = oyObject_GetId( context->oy_ );
-  }
-
-  va_start( list, format);
-  vsprintf( text, format, list);
-  va_end  ( list );
-
-  switch(code)
-  {
-    case oyMSG_WARN:
-         fprintf( stderr, "WARNING"); fprintf( stderr, ": " );
-         break;
-    case oyMSG_ERROR:
-         fprintf( stderr, "!!! ERROR"); fprintf( stderr, ": " );
-         break;
-  }
-
-  fprintf( stderr, "%s[%d] ", type_name, id );
-
-  fprintf( stderr, text ); fprintf( stderr, "\n" );
-  free( text );
-
-  return 0;
-}
 
 /** @func  oyX1CMMMessageFuncSet
  *  @brief API requirement
