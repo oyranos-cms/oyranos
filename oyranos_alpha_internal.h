@@ -83,6 +83,11 @@ char * oyInstrumentRegistrationCreate_(const char        * instrument_type,
                                        const char        * instrument_class,
                                        const char        * key,
                                        char              * old_text );
+int    oyOptions_SetRegistrationTextKey_(
+                                       oyOptions_s       * options,
+                                       const char        * registration,
+                                       const char        * key,
+                                       const char        * value );
 
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
