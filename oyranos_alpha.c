@@ -6999,7 +6999,7 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
       if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
       {
         tmp = oyFilterRegistrationToText( option_a->registration,
-                                          oyFILTER_REG_OPTION, 0 );
+                                          oyFILTER_REG_MAX, 0 );
         if(oyStrchr_( key, OY_SLASH_C ))
         {
           opt_key = oyStrrchr_( key, OY_SLASH_C );
@@ -7363,7 +7363,6 @@ OYAPI oyConfig_s * OYEXPORT
  *                                     oyConfigs_FromPattern_f
  *  @param[out]    rank_value          the number of matches between config and
  *                                     pattern, -1 means invalid
- *  @param[in]     object              the optional object
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent
  *
@@ -7411,166 +7410,6 @@ OYAPI int  OYEXPORT
     instrument->db = oyOptions_Copy( max_config->db, 0 );
     oyConfig_Release( &max_config );
   }
-
-  return error;
-}
-
-/** Function oyConfig_FromInstrument
- *  @brief   ask a backend for instrument informations or other direct calls
- *  @memberof oyConfig_s
- *
- *  @param[in]     instrument_type     the instrument type, e.g. "colour",
- *                                     mandatory
- *  @param[in]     instrument_class    registration ::oyFILTER_REG_APPLICATION
- *                                     part, e.g. "monitor", mandatory
- *  @param[in]     instrument_name     the instrument name as returned by
- *                                     oyConfigs_FromPattern_f, mandatory,
-                                       ::oyFILTER_REG_OPTION
- *  @param[in]     options             options to pass to the backend, for zero
- *                                     the verbose and expensive "properties"
- *                                     call is assumed
- *  @param[in]     object              the optional object
- *  @return                            a instrument
- *
- *  @verbatim
-    // pass empty options to the backend to get a usage message
-    oyOptions_s * options = oyOptions_New( 0 );
-    oyConfig_s * instrument = oyConfig_FromInstrument( "colour", "monitor",
-                                                       ":0.0", options, 0);
-    @endverbatim
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/28 (Oyranos: 0.1.10)
- *  @date    2009/01/28
- */
-OYAPI oyConfig_s * OYEXPORT
-               oyConfig_FromInstrument(const char        * instrument_type,
-                                       const char        * instrument_class,
-                                       const char        * instrument_name,
-                                       oyOptions_s       * options,
-                                       oyObject_s          object )
-{
-  int error = !instrument_name || !instrument_name[0] ||
-              !instrument_class || !instrument_class[0];
-  oyConfigs_s * instruments = 0;
-  oyConfig_s * instrument = 0;
-
-  if(error > 0)
-  {
-    WARNc2_S( "No instrument_name/instrument_class argument provided. Give up: %s/%s",
-              oyNoEmptyString_m_(instrument_name),
-              oyNoEmptyString_m_(instrument_class) );
-    return 0;
-  }
-
-  /** 1. obtain detailed and expensive instrument informations */
-
-  if(!options)
-  {
-    options = oyOptions_New( 0 );
-    error = !options;
-    /** 1.1 add "properties" call to backend arguments */
-    if(!error)
-    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
-                                             instrument_class,
-                                             "properties", "true" );
-  }
-
-  /** 1.1.2 set instrument filter */
-  if(!error)
-    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
-                                             instrument_class,
-                                             "instrument_name",instrument_name);
-
-  /** 2. get the instrument */
-  error = oyConfigs_FromInstrumentClass( instrument_type, instrument_class,
-                                         options, &instruments, object );
-
-  instrument = oyConfigs_Get( instruments, 0 );
-
-  oyConfigs_Release( &instruments );
-
-
-  /** 3. check for success of instrument detection */
-  error = !instrument;
-  if(error)
-    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name );
-
-  return instrument;
-}
-
-/** Function oyInstrumentBackendCall
- *  @brief   get instrument answere from options
- *
- *  @param[in]     instrument          the instrument
- *  @param[in]     options             options for the instrument
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/02 (Oyranos: 0.1.10)
- *  @date    2009/02/02
- */
-OYAPI int  OYEXPORT
-               oyInstrumentBackendCall(oyConfig_s        * instrument,
-                                       oyOptions_s       * options )
-{
-  int error = !instrument;
-  oyConfigs_s * instruments = 0;
-  oyConfig_s * config = 0;
-  const char * instrument_name = 0;
-
-  if(error > 0)
-  {
-    WARNc_S( "No instrument argument provided. Give up" );
-    return 0;
-  }
-
-  /** 1. obtain detailed and expensive instrument informations */
-
-  if(!error)
-  {
-    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
-  }
-
-  if(!options)
-  {
-    options = oyOptions_New( 0 );
-    error = !options;
-    /** 1.1 add "properties" call to backend arguments */
-    if(!error)
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
-                                               "properties", "true" );
-  }
-
-  /** 1.1.2 set instrument filter */
-  if(!error)
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
-                                             "instrument_name",instrument_name);
-
-  /** 2. get the instrument */
-  error = oyConfigs_FromDomain( instrument->registration, options, &instruments,
-                                0 );
-
-  config = oyConfigs_Get( instruments, 0 );
-  /** 3. check for success of instrument detection */
-  error = !config;
-
-  /** 4. copy results to the instrument */
-  if(!error)
-  {
-    if(oyOptions_FindString( options, "properties", 0 ) ||
-       oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
-    {
-      oyOptions_Release( &config->backend_core );
-      instrument->backend_core = oyOptions_Copy( config->backend_core, 0 );
-    }
-    error = oyOptions_AppendOpts( instrument->data, config->data );
-  } else
-    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name )
-
-  oyConfigs_Release( &instruments );
 
   return error;
 }
@@ -7707,99 +7546,15 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function oyProfile_FromDB
- *  @memberof oyConfig_s
- *  @brief   look up a profile from a instrument
- *
- *  @param[in]     instrument          a instrument
- *  @param[in]     object              user object
- *  @return                            a profile
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/02/09
- */
-OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromDB  ( oyConfig_s        * instrument,
-                                       oyObject_s          object)
-{
-  oyProfile_s * p = 0;
-  oyOption_s * o = 0;
-  int error = !instrument;
-  const char * instrument_name = 0;
 
-  if(!error)
-  {
-    o = oyConfig_Find( instrument, "profile_name" );
-    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
-
-    if(!o)
-      error = oyConfig_GetDB( instrument, 0 );
-
-    if(!instrument)
-      WARNc1_S( "Could not get a instrument %s",
-                oyNoEmptyString_m_(instrument_name) )
-    else
-      o = oyConfig_Find( instrument, "profile_name" );
-
-    if(!o)
-      WARNc1_S( "Could not get a \"profile_name\" from %s", 
-                oyNoEmptyString_m_(instrument_name) )
-    else if(o->value_type != oyVAL_STRUCT ||
-            !(o->value && o->value->oy_struct && 
-              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S))
-      WARNc1_S( "Could not get \"profile_name\" data from %s", 
-                oyNoEmptyString_m_(instrument_name) )
-    else
-      p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
-
-  } else
-    WARNc_S( "instrument is missed." );
-
-  return p;
-}
-
-/** Function oyProfileNameFromDB
- *  @memberof oyConfig_s
- *  @brief   look up a profile from the DB
- *
- *  The function asks the backend for a detailed and possible expensive list
- *  of instrument information and tries to find a matching configuration in the
- *  DB. The instrument informations are the same as for saving to DB.
- *
- *  @param[in]     instrument          a instrument
- *  @param[in]     object              user object
- *  @return                            a profile name
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/29 (Oyranos: 0.1.10)
- *  @date    2009/02/08
- */
-OYAPI const char * OYEXPORT
-               oyProfileNameFromDB   ( oyConfig_s        * instrument,
-                                       oyObject_s          object)
-{
-  int error = !instrument;
-  int32_t rank = 0;
-  const char * profile_name = 0;
-
-  if(!error)
-  {
-    /* 2. look up the DB to find a match */
-    error = oyConfig_GetDB( instrument, &rank );
-
-    if(!error && rank > 0)
-      profile_name = oyConfig_FindString( instrument, "profile_name", 0 );
-
-  } else
-    WARNc_S( "instrument is missed." );
-
-  return profile_name;
-}
-
-/** Function oyConfig_Add
+/** Function oyConfig_AddDBData
  *  @memberof oyConfig_s
  *  @brief   add a key value pair to a oyConfig_s::db
+ *
+ *  This functions handles canonical user side settings. The keys added with
+ *  this function can later be stored in the DB. A call to oyConfig_GetDB() or
+ *  oyConfig_ClearDBData() overwrite the added entries. \n
+ *  Backends should add informations to oyConfig_s::data.
  *
  *  @param[in]     config              the configuration
  *  @param[in]     key                 a key name, e.g. "my_key"
@@ -7812,7 +7567,7 @@ OYAPI const char * OYEXPORT
  *  @date    2009/02/08
  */
 OYAPI int  OYEXPORT
-               oyConfig_Add          ( oyConfig_s        * config,
+               oyConfig_AddDBData    ( oyConfig_s        * config,
                                        const char        * key,
                                        const char        * value,
                                        uint32_t            flags )
@@ -7844,6 +7599,9 @@ OYAPI int  OYEXPORT
  *  @memberof oyConfig_s
  *  @brief   remove all additional data from the oyConfig_s::db object cache
  *
+ *  Clear the local DB cache. The function will be called as well from
+ *  oyConfig_GetDB().
+ *
  *  @param[in]     config              the configuration
  *  @return                            0 - good, 1 >= error
  *
@@ -7852,7 +7610,7 @@ OYAPI int  OYEXPORT
  *  @date    2009/02/08
  */
 OYAPI int  OYEXPORT
-               oyConfig_ClearData    ( oyConfig_s        * config )
+               oyConfig_ClearDBData    ( oyConfig_s        * config )
 {
   int error = !config;
 
@@ -8910,7 +8668,7 @@ OYAPI int  OYEXPORT
 /** @} *//* misc */
 
 
-/** \addtogroup instruments_handling Devices API's
+/** \addtogroup instruments_handling Instrument API
 
  *  @{
  */
@@ -9083,6 +8841,170 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+/** Function oyInstrumentGet
+ *  @brief   ask a backend for instrument informations or other direct calls
+ *
+ *  @param[in]     instrument_type     the instrument type, e.g. "colour",
+ *                                     mandatory
+ *  @param[in]     instrument_class    registration ::oyFILTER_REG_APPLICATION
+ *                                     part, e.g. "monitor", mandatory
+ *  @param[in]     instrument_name     the instrument name as returned by
+ *                                     oyConfigs_FromPattern_f, mandatory,
+                                       ::oyFILTER_REG_OPTION
+ *  @param[in]     options             options to pass to the backend, for zero
+ *                                     the verbose and expensive "properties"
+ *                                     call is assumed
+ *  @param[out]    instrument          the returned instrument
+ *  @return                            error
+ *
+ *  @verbatim
+    // pass empty options to the backend to get a usage message
+    oyOptions_s * options = oyOptions_New( 0 );
+    oyInstrumentGet( "colour", "monitor", ":0.0", options, 0 );
+    @endverbatim
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/09
+ */
+OYAPI int  OYEXPORT
+           oyInstrumentGet           ( const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       const char        * instrument_name,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** instrument )
+{
+  int error = !instrument_name || !instrument_name[0] ||
+              !instrument_class || !instrument_class[0];
+  oyConfigs_s * instruments = 0;
+  oyConfig_s * s = 0;
+
+  if(error > 0)
+  {
+    WARNc2_S( "No instrument_name/instrument_class argument provided. Give up: %s/%s",
+              oyNoEmptyString_m_(instrument_name),
+              oyNoEmptyString_m_(instrument_class) );
+    return 0;
+  }
+
+  /** 1. obtain detailed and expensive instrument informations */
+
+  if(!options)
+  {
+    options = oyOptions_New( 0 );
+    error = !options;
+    /** 1.1 add "properties" call to backend arguments */
+    if(!error)
+    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
+                                             instrument_class,
+                                             "properties", "true" );
+  }
+
+  /** 1.1.2 set instrument filter */
+  if(!error)
+    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
+                                             instrument_class,
+                                             "instrument_name",instrument_name);
+
+  /** 2. get the instrument */
+  error = oyConfigs_FromInstrumentClass( instrument_type, instrument_class,
+                                         options, &instruments, 0 );
+
+  s = oyConfigs_Get( instruments, 0 );
+
+  oyConfigs_Release( &instruments );
+
+
+  /** 3. check for success of instrument detection */
+  error = !s;
+  if(error)
+    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name );
+
+  if(instrument)
+    *instrument = s;
+  else
+    oyConfig_Release( &s );
+
+  return error;
+}
+
+/** Function oyInstrumentBackendCall
+ *  @brief   get instrument answere from options
+ *
+ *  @param[in]     instrument          the instrument
+ *  @param[in]     options             options for the instrument
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/02 (Oyranos: 0.1.10)
+ *  @date    2009/02/02
+ */
+OYAPI int  OYEXPORT
+               oyInstrumentBackendCall(oyConfig_s        * instrument,
+                                       oyOptions_s       * options )
+{
+  int error = !instrument;
+  oyConfigs_s * instruments = 0;
+  oyConfig_s * config = 0;
+  const char * instrument_name = 0;
+
+  if(error > 0)
+  {
+    WARNc_S( "No instrument argument provided. Give up" );
+    return 0;
+  }
+
+  /** 1. obtain detailed and expensive instrument informations */
+
+  if(!error)
+  {
+    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+  }
+
+  if(!options)
+  {
+    options = oyOptions_New( 0 );
+    error = !options;
+    /** 1.1 add "properties" call to backend arguments */
+    if(!error)
+    error = oyOptions_SetRegistrationTextKey_( options,
+                                               instrument->registration,
+                                               "properties", "true" );
+  }
+
+  /** 1.1.2 set instrument filter */
+  if(!error)
+    error = oyOptions_SetRegistrationTextKey_( options,
+                                               instrument->registration,
+                                             "instrument_name",instrument_name);
+
+  /** 2. get the instrument */
+  error = oyConfigs_FromDomain( instrument->registration, options, &instruments,
+                                0 );
+
+  config = oyConfigs_Get( instruments, 0 );
+  /** 3. check for success of instrument detection */
+  error = !config;
+
+  /** 4. copy results to the instrument */
+  if(!error)
+  {
+    if(oyOptions_FindString( options, "properties", 0 ) ||
+       oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
+    {
+      oyOptions_Release( &instrument->backend_core );
+      instrument->backend_core = oyOptions_Copy( config->backend_core, 0 );
+    }
+    error = oyOptions_AppendOpts( instrument->data, config->data );
+  } else
+    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name )
+
+  oyConfigs_Release( &instruments );
+
+  return error;
+}
+
+
 /** Function oyInstrumentSetup
  *  @brief   activate the instrument using the stored configuration
  *
@@ -9099,9 +9021,7 @@ OYAPI int  OYEXPORT
   int error = !instrument;
   oyOptions_s * options = 0;
   oyProfile_s * p = 0;
-  const char * profile_name = 0;
-  char * instrument_type = 0,
-       * instrument_class = 0;
+  char * profile_name = 0;
   const char * instrument_name = 0;
 
   if(error > 0)
@@ -9112,14 +9032,6 @@ OYAPI int  OYEXPORT
 
   instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
 
-  if(!error)
-  {
-    instrument_type = oyFilterRegistrationToText( instrument->registration,
-                                                  oyFILTER_REG_TYPE, 0 );
-    instrument_class = oyFilterRegistrationToText( instrument->registration,
-                                                   oyFILTER_REG_APPLICATION, 0);
-  }
-
 
   if(error > 0)
   {
@@ -9129,7 +9041,7 @@ OYAPI int  OYEXPORT
 
   {
     /* 1. ask for the profile the instrument is setup with */
-    p = oyProfile_FromDB( instrument, 0 );
+    error = oyInstrumentGetProfile( instrument, &p );
     if(p)
     {
       oyProfile_Release( &p );
@@ -9138,7 +9050,7 @@ OYAPI int  OYEXPORT
     }
 
     /* 2. query the full instrument information */
-    profile_name = oyProfileNameFromDB( instrument, 0 );
+    error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
 
     /* 3. setup the instrument through the backend */
     options = oyOptions_New( 0 );
@@ -9149,14 +9061,11 @@ OYAPI int  OYEXPORT
     error = oyOptions_SetFromText( options, "//colour/config/profile_name",
                                    profile_name, OY_CREATE_NEW );
     /* 3.1 send the query to a backend */
-    error = oyConfigs_FromInstrumentClass( instrument_type, instrument_class,
-                                           options, 0, 0 );
+    error = oyInstrumentBackendCall( instrument, options );
 
     oyOptions_Release( &options );
-    if(instrument_type)
-      oyFree_m_( instrument_type );
-    if(instrument_class)
-      oyFree_m_( instrument_class );
+    if(profile_name)
+      oyFree_m_( profile_name );
   }
 
   return error;
@@ -9324,6 +9233,7 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+
 /** Function oyInstrumentSetProfile
  *  @brief   set the instrument profile
  *
@@ -9482,9 +9392,9 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
    *  5.1 add the profile simply to the instrument configuration */
   if(!error)
   {
-    error = oyConfig_ClearData( instrument );
-    error = oyConfig_Add( instrument, "profile_name", profile_name,
-                          OY_CREATE_NEW );
+    error = oyConfig_ClearDBData( instrument );
+    error = oyConfig_AddDBData( instrument, "profile_name", profile_name,
+                                OY_CREATE_NEW );
   }
 
   /** 5.2 save the configuration to DB (Elektra) */
@@ -9493,6 +9403,64 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
 
   cleanup:
   oyConfig_Release( &instrument_tmp );
+
+  return error;
+}
+
+/** Function oyInstrumentProfileFromDB
+ *  @brief   look up a profile of a instrument from DB
+ *
+ *  The function asks the backend for a detailed and possible expensive list
+ *  of instrument information and tries to find a matching configuration in the
+ *  DB. The instrument informations are the same as for saving to DB.
+ *
+ *  @param[in]     instrument          a instrument
+ *  @param[in]     profile_name        profile's name in DB
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/02/09
+ */
+OYAPI int OYEXPORT oyInstrumentProfileFromDB
+                                     ( oyConfig_s        * instrument,
+                                       char             ** profile_name,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyOption_s * o = 0;
+  int error = !instrument || !profile_name;
+  const char * instrument_name = 0;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(!error)
+  {
+    o = oyConfig_Find( instrument, "profile_name" );
+    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+
+    if(!o)
+      error = oyConfig_GetDB( instrument, 0 );
+
+    if(!instrument)
+      WARNc1_S( "Could not get a instrument %s",
+                oyNoEmptyString_m_(instrument_name) )
+    else
+      o = oyConfig_Find( instrument, "profile_name" );
+
+    if(!o)
+      WARNc1_S( "Could not get a \"profile_name\" from %s", 
+                oyNoEmptyString_m_(instrument_name) )
+    else if(o->value_type != oyVAL_STRING ||
+            !(o->value && o->value->string && o->value->string[0]) )
+      WARNc1_S( "Could not get \"profile_name\" data from %s", 
+                oyNoEmptyString_m_(instrument_name) )
+    else
+      *profile_name = oyStringCopy_( o->value->string, allocateFunc );
+
+  } else
+    WARNc_S( "missed argument(s)" );
 
   return error;
 }
@@ -20605,7 +20573,7 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
  *  @param      display_name  raw display string
  *  @param      x             x position on screen
  *  @param      y             y position on screen
- *  @param      allocate_func function used to allocate memory for the string
+ *  @param      allocateFunc  function used to allocate memory for the string
  *  @return                   display name
  *
  *  @version Oyranos: 0.1.8
@@ -20685,25 +20653,39 @@ char *   oyGetMonitorProfile         ( const char        * display_name,
                                        oyAlloc_f           allocate_func )
 {
   int error = 0;
-  oyGetMonitorProfile_f funcP = 0;
-  char cmm[] = {"oyX1"};
-
+  oyConfig_s * instrument = 0;
+  oyConfigs_s * instruments = 0;
+  oyOptions_s * options = 0;
+  oyProfile_s * p = 0;
   char * block = 0;
+  const char * instrument_type = "colour",
+             * instrument_class = "monitor";
+
+  if(!options)
+  {
+    options = oyOptions_New( 0 );
+    /** 1.1 add "list" call to backend arguments */
+    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
+                                             instrument_class,
+                                             "list", "true" );
+    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
+                                             instrument_class,
+                                             "display_name", display_name );
+  }
 
   if(!error)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
-    if(api && *(uint32_t*)&cmm)
-    {
-      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
-      funcP = api2->oyGetMonitorProfile;
-    }
+    error = oyInstrumentsGet( instrument_type, instrument_class, options,
+                              &instruments );
+    instrument = oyConfigs_Get( instruments, 0 );
+    error = oyInstrumentGetProfile    ( instrument, &p );
   }
 
-  if(funcP)
-    block = funcP( display_name, size, allocate_func );
-  else
-    error = 1;
+  if(!error)
+  {
+    block = oyProfile_GetMem( p, size, 0, allocate_func );
+    error = !block || !size;
+  }
 
   return block;
 }
@@ -20712,8 +20694,8 @@ char *   oyGetMonitorProfile         ( const char        * display_name,
  *  @brief   get the monitor profile filename from the instrument
  *           database
  *
- *  @param         display_name        the display string
- *  @param         allocate_func       user function used to allocate memory 
+ *  @param         instrument          the instrument
+ *  @param         allocateFunc        user function used to allocate memory 
  *  @return                            the profile filename
  *
  *  @version Oyranos: 0.1.10
@@ -20721,23 +20703,19 @@ char *   oyGetMonitorProfile         ( const char        * display_name,
  *  @date    2009/02/08
  */
 char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * instrument,
-                                       oyAlloc_f           allocate_func )
+                                       oyAlloc_f           allocateFunc )
 {
   int error = !instrument;
   oyProfile_s * p = 0;
-  const char * profile_name = 0;
+  char * profile_name = 0;
   char * text = 0;
 
-  if(!error)
-  {
-    p = oyProfile_FromDB( instrument, 0 );
-    error = !p;
-  }
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
 
   if(!error)
   {
-    profile_name = oyProfile_GetFileName( p, -1 );
-    error = !profile_name;
+    error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
   }
 
   if(!error)
@@ -20745,9 +20723,11 @@ char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * instrument,
     if(profile_name && oyStrrchr_( profile_name, OY_SLASH_C ) != 0)
       profile_name = oyStrrchr_( profile_name, OY_SLASH_C ) + 1;
 
-    text = oyStringCopy_( profile_name, allocate_func );
+    text = oyStringCopy_( profile_name, allocateFunc );
   }
 
+  if(profile_name)
+    oyFree_m_( profile_name );
   oyProfile_Release( &p );
 
   return text;
@@ -20772,8 +20752,11 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
   oyOptions_s * options = 0;
   oyConfig_s * instrument = 0;
   oyProfile_s * p = 0;
-  const char * profile_name = 0;
+  char * profile_name = 0;
   char * text = 0;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
 
   if(error > 0)
   {
@@ -20783,21 +20766,14 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
 
   if(error > 0)
   {
-    WARNc1_S( "No display_name argument provided. Give up. %s",
-              oyNoEmptyString_m_(profile_name) );
+    WARNc_S( "No display_name argument provided. Give up." );
     return 0;
   }
 
-  /** 1. obtain detailed and expensive instrument informations */
-  options = oyOptions_New( 0 );
-  /** 1.1 add "properties" call to backend arguments */
-  error = oyOptions_SetFromText( options, "//colour/config/properties",
-                                 "true", OY_CREATE_NEW );
-
-  /** 1.2 get monitor instrument */
+  /** 1. get monitor instrument */
   if(!error)
-    instrument = oyConfig_FromInstrument( "colour", "monitor", display_name,
-                                          options, 0 );
+    error = oyInstrumentGet( "colour", "monitor", display_name,
+                             options, &instrument );
 
   oyOptions_Release( &options );
 
@@ -20810,13 +20786,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
   }
 
   if(!error)
-    error = oyInstrumentGetProfile( instrument, &p );
-
-  if(!error)
-  {
-    profile_name = oyProfile_GetFileName( p, -1 );
-    error = !profile_name;
-  }
+    error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
 
   if(!error)
   {
@@ -20826,6 +20796,8 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
     text = oyStringCopy_( profile_name, allocateFunc );
   }
 
+  if(profile_name)
+    oyFree_m_( profile_name );
   oyProfile_Release( &p );
   oyConfig_Release( &instrument );
 
@@ -20880,8 +20852,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
 
   /** 1.2 get monitor instrument */
   if(!error)
-    instrument = oyConfig_FromInstrument( "colour", "monitor", display_name,
-                                          options, 0 );
+    error = oyInstrumentGet( "colour", "monitor", display_name,
+                             options, &instrument );
 
   oyOptions_Release( &options );
 

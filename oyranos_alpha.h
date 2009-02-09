@@ -771,12 +771,6 @@ OYAPI oyConfig_s * OYEXPORT
                oyConfig_New          ( const char        * registration,
                                        oyObject_s          object );
 OYAPI oyConfig_s * OYEXPORT
-               oyConfig_FromInstrument(const char        * instrument_type,
-                                       const char        * instrument_class,
-                                       const char        * instrument_name,
-                                       oyOptions_s       * options,
-                                       oyObject_s          object );
-OYAPI oyConfig_s * OYEXPORT
                oyConfig_Copy         ( oyConfig_s        * obj,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
@@ -788,12 +782,12 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options,
                                        oyBlob_s          * data );
 OYAPI int  OYEXPORT
-               oyConfig_Add          ( oyConfig_s        * config,
+               oyConfig_AddDBData    ( oyConfig_s        * config,
                                        const char        * key,
                                        const char        * value,
                                        uint32_t            flags );
 OYAPI int  OYEXPORT
-               oyConfig_ClearData    ( oyConfig_s        * config );
+               oyConfig_ClearDBData  ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
                oyConfig_GetDB        ( oyConfig_s        * instrument,
                                        int32_t           * rank_value );
@@ -975,9 +969,6 @@ OYAPI oyProfile_s * OYEXPORT
                                        oySIGNATURE_TYPE_e  type,
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromDB  ( oyConfig_s        * instrument,
-                                       oyObject_s          object);
-OYAPI oyProfile_s * OYEXPORT
                    oyProfile_Copy    ( oyProfile_s       * profile,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT oyProfile_Release( oyProfile_s      ** profile );
@@ -1141,12 +1132,17 @@ char   **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
 
 
-
 OYAPI int  OYEXPORT
            oyInstrumentsGet          ( const char        * instrument_type,
                                        const char        * instrument_class,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** instruments );
+OYAPI int  OYEXPORT
+           oyInstrumentGet           ( const char        * instrument_type,
+                                       const char        * instrument_class,
+                                       const char        * instrument_name,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** instrument );
 OYAPI int  OYEXPORT
            oyInstrumentSetup         ( oyConfig_s        * instrument );
 OYAPI int  OYEXPORT
@@ -1164,6 +1160,10 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyInstrumentGetProfile    ( oyConfig_s        * instrument,
                                        oyProfile_s      ** profile );
+OYAPI int  OYEXPORT
+           oyInstrumentProfileFromDB ( oyConfig_s        * instrument,
+                                       char             ** profile_name,
+                                       oyAlloc_f           allocateFunc );
 
 
 
