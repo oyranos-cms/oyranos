@@ -14,8 +14,8 @@
  *
  *
  *
- *  The library name must cover "cmm_module_" + the four char nick, which is
- *  "dDev" for this example module. E.g.:
+ *  The library name must cover the four char nick + "_cmm_module", which is
+ *  "dDev_cmm_module" for this example module. E.g.:
  *  $(CC) $(CFLAGS) -shared oyranos_cmm_dDev.c -o liboyranos_dDev_cmm_module.so
  */
 
@@ -270,6 +270,7 @@ int            dDevConfigs_FromPattern (
   {
     instruments = oyConfigs_New(0);
 
+    /* "list" call section */
     value1 = oyOptions_FindString( options, "instrument_name", 0 );
     value2 = oyOptions_FindString( options, "list", 0 );
     if(value2)
@@ -297,7 +298,13 @@ int            dDevConfigs_FromPattern (
           size_t size = 6;
           const char * data = "dummy";
 
-          
+          /* In case the devices do not support network transparent ICC profile
+           * setup, then use the DB stored profile, e.g.
+           * @see oyInstrumentProfileFromDB() + oyProfile_FromFile()
+           * This will then turn the backend in a pure local one. One the
+           * opposite the Xorg-"oyX1" backend puts the profile in X server.
+           */
+
           if(!size & !data)
           {
             message(oyMSG_WARN, (oyStruct_s*)options, dDev_DBG_FORMAT_ "\n "
@@ -321,7 +328,7 @@ int            dDevConfigs_FromPattern (
           if( o && o->value && o->value->oy_struct && 
               o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
           {
-            /* our dummy profile will vertainly fail */
+            /* our dummy profile will certainly fail */
             p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
             tmp = oyProfile_GetFileName( p, 0 );
 
@@ -383,6 +390,7 @@ int            dDevConfigs_FromPattern (
       return error;
     }
 
+    /* "properties" call section */
     value2 = oyOptions_FindString( options, "properties", 0 );
     if(value2)
     {
@@ -400,6 +408,7 @@ int            dDevConfigs_FromPattern (
       return error;
     }
 
+    /* "setup" call section */
     value2 = oyOptions_FindString( options, "setup", 0 );
     value3 = oyOptions_FindString( options, "profile_name", 0 );
     if(error <= 0 && value2)
@@ -416,6 +425,7 @@ int            dDevConfigs_FromPattern (
       return error;
     }
 
+    /* "unset" call section */
     value2 = oyOptions_FindString( options, "unset", 0 );
     if(error <= 0 && value2)
     {
@@ -431,6 +441,8 @@ int            dDevConfigs_FromPattern (
     }
   }
 
+
+  /* not to be reached section, e.g. warning */
   message(oyMSG_WARN, (oyStruct_s*)options, dDev_DBG_FORMAT_ "\n "
                 "This point should not be reached. Options:\n%s", dDev_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
