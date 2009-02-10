@@ -20605,46 +20605,33 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 /** Function: oyGetMonitorProfile
  *  @brief   get the monitor profile from the server
  *
- *  @param      display_name           the display string
+ *  @param      instrument_name        the display string
  *  @param[out] size                   the size of profile
  *  @param      allocate_func          function used to allocate memory for the profile
  *  @return                            the memory block containing the profile
  *
  *  @version Oyranos: 0.1.8
  *  @since   2005/00/00 (Oyranos: 0.1.x)
- *  @date    2008/10/24
+ *  @date    2009/02/10
  */
-char *   oyGetMonitorProfile         ( const char        * display_name,
+char *   oyGetMonitorProfile         ( const char        * instrument_name,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func )
 {
   int error = 0;
   oyConfig_s * instrument = 0;
-  oyConfigs_s * instruments = 0;
   oyOptions_s * options = 0;
   oyProfile_s * p = 0;
   char * block = 0;
   const char * instrument_type = "colour",
              * instrument_class = "monitor";
 
-  if(!options)
-  {
-    options = oyOptions_New( 0 );
-    /** 1.1 add "list" call to backend arguments */
-    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
-                                             instrument_class,
-                                             "list", "true" );
-    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
-                                             instrument_class,
-                                             "display_name", display_name );
-  }
-
   if(!error)
   {
-    error = oyInstrumentsGet( instrument_type, instrument_class, options,
-                              &instruments );
-    instrument = oyConfigs_Get( instruments, 0 );
+    error = oyInstrumentGet( instrument_type, instrument_class, instrument_name,
+                             options, &instrument );
     error = oyInstrumentGetProfile    ( instrument, &p );
+    oyConfig_Release( &instrument );
   }
 
   if(!error)
