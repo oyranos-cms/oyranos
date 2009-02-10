@@ -1005,7 +1005,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
 
   fprintf(stdout, "\n" );
 
-  int i, j, k, k_n;
+  int i, k, k_n;
   int error = 0;
 
 #ifdef USE_GETTEXT
@@ -1016,7 +1016,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
   oyConfig_s * config = 0;
   oyOption_s * o = 0;
   int devices_n = 0;
-
+  char * text = 0;
 
   error = oyInstrumentsGet( 0, "monitor", 0, &configs );
   devices_n = oyConfigs_Count( configs );
@@ -1030,8 +1030,22 @@ oyTESTRESULT_e testCMMMonitorListing ()
   for( i = 0; i < devices_n; ++i )
   {
     config = oyConfigs_Get( configs, i );
-    printf( "%d oyConfig_FindString(..\"instrument_name\"..): %s\n", i,
+    printf( "  %d oyConfig_FindString(..\"instrument_name\"..): %s\n", i,
             oyConfig_FindString( config, "instrument_name",0 ) );
+
+    error = oyInstrumentProfileFromDB( config, &text, myAllocFunc );
+    if(text)
+      fprintf( stdout, "  %d oyInstrumentProfileFromDB(): %s\n", i, text );
+    else
+      fprintf( stdout, "  %d oyInstrumentProfileFromDB(): ---\n", i );
+
+    error = oyInstrumentGetInfo( config, oyNAME_NICK, 0, &text, 0 );
+    fprintf( stdout, "  %d oyInstrumentGetInfo)(..oyNAME_NICK..): \"%s\"\n",
+             i, text? text:"???");
+    error = oyInstrumentGetInfo( config, oyNAME_NAME, 0, &text, 0 );
+    fprintf( stdout, "  %d oyInstrumentGetInfo)(..oyNAME_NAME..): \"%s\"\n",
+             i, text? text:"???");
+
     oyConfig_Release( &config );
   }
   oyConfigs_Release( &configs );
@@ -1050,7 +1064,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
     {
       o = oyConfig_Get( config, k );
 
-      printf( "%d::%d %s %s\n", j,k,
+      printf( "  %d %s: \"%s\"\n", k,
               o->registration, o->value->string );
 
       oyOption_Release( &o );
@@ -1118,8 +1132,6 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   oyConfig_s * config = 0,
              * device = 0;
   oyOption_s * o = 0;
-
-  //oyInstrumentProfileFromDB()
 
   fprintf( stdout, "load a instrument ...\n");
   error = oyInstrumentGet( 0, "monitor", ":0.0", 0, &device );
