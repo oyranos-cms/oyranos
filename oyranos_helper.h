@@ -181,14 +181,14 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
 #define OY_HYP3(a,b,c) pow( (a)*(a) + (b)*(b) + (c)*(c) , 1.0/2.0)
 #define OY_ROUND(a)    ((a) + 0.5)
 
+/* --- miscellaneous helpers --- */
+
 #ifndef TRUE
 #define TRUE 1
 #endif
 #ifndef FALSE
 #define FALSE 0
 #endif
-
-/* --- miscellaneous helpers --- */
 
 int                oyMiscBlobGetMD5_ ( void              * buffer,
                                        size_t              size,
