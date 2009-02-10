@@ -578,6 +578,8 @@ oyTESTRESULT_e testMonitor ()
 
       if(text)
         free( text );
+
+      oyConfig_Release( &c );
     }
   }
   oyConfigs_Release( &instruments );
@@ -689,9 +691,14 @@ oyTESTRESULT_e testRegistrationMatch ()
 
 #define TEST_RUN( prog, text ) { \
   if(argc > 1) { \
-    for(i = 1; i < argc; ++i) \
-      if(strstr(text, argv[i]) != 0) \
-        oyTestRun( prog, text ); \
+    if(strcmp("-l", argv[1]) == 0) \
+    { \
+      printf( "%s\n", text); \
+    } else { \
+      for(i = 1; i < argc; ++i) \
+        if(strstr(text, argv[i]) != 0) \
+          oyTestRun( prog, text ); \
+    } \
   } else \
     oyTestRun( prog, text ); \
 }
@@ -723,22 +730,30 @@ int main(int argc, char** argv)
 
   /* give a summary */
 
-  fprintf( stderr, "\n################################################################\n" );
-  fprintf( stderr, "#                                                              #\n" );
-  fprintf( stderr, "#                     Results                                  #\n" );
-  for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
-    fprintf( stderr, "    Tests with status %s: %d\n", oyTestResultToString(i),
-                                                   results[i] );
+  if(!(argc > 1 &&  
+       strcmp("-l", argv[1]) == 0))
+  {
 
-  error = (results[oyTESTRESULT_FAIL] ||
-           results[oyTESTRESULT_SYSERROR] ||
-           results[oyTESTRESULT_UNKNOWN]
-          );
+    fprintf( stderr, "\n################################################################\n" );
+    fprintf( stderr, "#                                                              #\n" );
+    fprintf( stderr, "#                     Results                                  #\n" );
+    for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
+      fprintf( stderr, "    Tests with status %s: %d\n",
+                       oyTestResultToString( (oyTESTRESULT_e)i ), results[i] );
 
-  if(error)
-    fprintf( stderr, "    Tests FAILED\n" );
-  else
-    fprintf( stderr, "    Tests SUCCEEDED\n" );
+    error = (results[oyTESTRESULT_FAIL] ||
+             results[oyTESTRESULT_SYSERROR] ||
+             results[oyTESTRESULT_UNKNOWN]
+            );
+
+    if(error)
+      fprintf( stderr, "    Tests FAILED\n" );
+    else
+      fprintf( stderr, "    Tests SUCCEEDED\n" );
+
+    fprintf( stderr, "\n    Hint: the '-l' option will list all test names\n" );
+
+  }
 
   return error;
 }
