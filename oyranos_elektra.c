@@ -343,7 +343,7 @@ oyAddKey_valueComment_ (const char* keyName,
   if(!oy_handle_)
     return 0;
   rc=kdbGetKey( oy_handle_, key );
-  if(rc < 0)
+  if(rc < 0 && oy_debug)
     oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_"key new? code:%d %s name:%s",
                      OY_DBG_ARGS_, rc, kdbStrError(rc), name);
   if(value)
