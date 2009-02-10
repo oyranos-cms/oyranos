@@ -7638,13 +7638,19 @@ OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config )
 {
   int error = !config;
+  oyOptions_s * opts = 0;
 
   DBG_PROG_START
 
   if(!error)
   {
-    error = oyOptions_SaveToDB( config->db, config->registration );
-    error = oyOptions_SaveToDB( config->backend_core, config->registration );
+    opts = oyOptions_New( 0 );
+    oyOptions_AppendOpts( opts, config->db );
+    oyOptions_AppendOpts( opts, config->backend_core );
+
+    error = oyOptions_SaveToDB( opts, config->registration );
+
+    oyOptions_Release( &opts );
   }
 
   DBG_PROG_ENDE
@@ -7684,7 +7690,7 @@ OYAPI int  OYEXPORT
 
     if(i != 4)
     {
-      o = oyOptions_Get( config->backend_core, 0 );
+      o = oyOptions_Get( config->db, 0 );
       i = 0;
       text = o->registration;
       if(text)
@@ -9113,11 +9119,18 @@ OYAPI int  OYEXPORT
     return error;
   }
 
-  if(!num)
-    oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
-
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
+
+  if(type == oyNAME_NICK)
+  {
+    tmp = oyOptions_FindString( instrument->backend_core,"instrument_name", 0 );
+    *info_text = oyStringCopy_( tmp, allocateFunc );
+    return error;
+  }
+
+  if(!num)
+    oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
 
   if(!options)
   {
@@ -9293,7 +9306,7 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
 
 
   /** 1. obtain detailed and expensive instrument informations */
-  if(!oyOptions_Count( instrument->backend_core ))
+  if(oyOptions_Count( instrument->backend_core ) < 2)
   { 
     options = oyOptions_New( 0 );
     /** 1.1 add "properties" call to backend arguments */
@@ -9762,9 +9775,6 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
 {
   oyProfile_s * s = oyProfile_New_( object );
   int error = 0;
-  oyGetMonitorProfile_f funcP = 0;
-  oyGetMonitorProfileName_f funcP2 = 0;
-  char cmm[] = {"oyX1"};
 
   if(block  && *block && size)
   {
@@ -9778,39 +9788,6 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
 
   if (!s->block_)
   {
-    if(!error)
-    {
-      oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
-      if(api && *(uint32_t*)&cmm)
-      {
-        oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
-        funcP = api2->oyGetMonitorProfile;
-        funcP2= api2->oyGetMonitorProfileName;
-      }
-      /*error = !funcP || !funcP2;*/
-    }
-
-    if(funcP)
-      s->block_ = funcP( NULL, &s->size_, s->oy_->allocateFunc_ );
-
-    if(!error && (!s->block_ || !s->size_))
-    {
-      s->file_name_ = oyGetDefaultProfileName( oyASSUMED_WEB,
-                                               s->oy_->allocateFunc_ );
-      if(!error && s->file_name_)
-      {
-        s->block_ = oyGetProfileBlock( s->file_name_, &s->size_,
-                                       s->oy_->allocateFunc_ );
-        if(!s->block_ || !s->size_)
-        {
-          error = 1;
-          WARNc_S("Did not find monitor profile; nor a substitute.")
-        } else
-          WARNc_S("Did not find monitor profile; use sRGB instead.")
-      }
-
-    } else if(funcP2)
-      s->file_name_ = funcP2( NULL, s->oy_->allocateFunc_ );
   }
 
   /* Comparision strategies
@@ -20549,25 +20526,7 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
                                        int                 y )
 {
   int error = 0;
-  oyGetScreenFromPosition_f funcP = 0;
-  char cmm[] = {"oyX1"};
-
   int screen = 0;
-
-  if(!error)
-  {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API2_S, cmm, 0, 0, 0,0 );
-    if(api && *(uint32_t*)&cmm)
-    {
-      oyCMMapi2_s * api2 = (oyCMMapi2_s*) api;
-      funcP = api2->oyGetScreenFromPosition;
-    }
-  }
-
-  if(funcP)
-    screen = funcP( display_name, x, y );
-  else
-    error = 1;
 
   return screen;
 }
