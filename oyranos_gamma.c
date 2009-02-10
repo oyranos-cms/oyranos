@@ -193,6 +193,8 @@ int main( int argc , char** argv )
         for(i = 0; i < n; ++i)
         {
           c = oyConfigs_Get( instruments, i );
+          error = oyInstrumentGetInfo( c, oyNAME_NICK, 0, &text, 0 );
+          printf("\"%s\" ", text? text:"???");
           error = oyInstrumentGetInfo( c, oyNAME_NAME, 0, &text, 0 );
           printf("%s\n", text? text:"???");
 
