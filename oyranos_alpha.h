@@ -849,8 +849,9 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object );
-OYAPI oyConfigs_s * OYEXPORT
+OYAPI int OYEXPORT
                  oyConfigs_FromDB    ( const char        * registration,
+                                       oyConfigs_s      ** configs,
                                        oyObject_s          object );
 OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_Copy      ( oyConfigs_s       * list,

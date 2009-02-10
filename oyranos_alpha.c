@@ -7381,7 +7381,7 @@ OYAPI int  OYEXPORT
 
   if(!error)
   {
-    configs = oyConfigs_FromDB( instrument->registration, 0 );
+    error = oyConfigs_FromDB( instrument->registration, &configs, 0 );
 
     n = oyConfigs_Count( configs );
 
@@ -8515,18 +8515,20 @@ OYAPI int  OYEXPORT
  *  @brief   get all oyConfigs_s from DB
  *
  *  @param[in]     registration        the filter
+ *  @param[out]    configs             the found configuration list
  *  @param[in]     object              a optional user object
- *  @return                            the found configurations list
+ *  @return                            error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/23 (Oyranos: 0.1.10)
- *  @date    2009/01/23
+ *  @date    2009/02/10
  */
-OYAPI oyConfigs_s * OYEXPORT
+OYAPI int OYEXPORT
                  oyConfigs_FromDB    ( const char        * registration,
+                                       oyConfigs_s      ** configs,
                                        oyObject_s          object )
 {
-  oyConfigs_s * configs = 0;
+  oyConfigs_s * s = 0;
   oyConfig_s * config = 0;
   oyOption_s * o = 0;
   char ** texts = 0,
@@ -8545,7 +8547,7 @@ OYAPI oyConfigs_s * OYEXPORT
     /** 1. get all backend names for the registration pattern */
     error = oyConfigDomainList( registration, &texts, &count, &d_rank_list, 0 );
     if(count)
-      configs = oyConfigs_New( 0 );
+      s = oyConfigs_New( 0 );
 
     for(i = 0; i < count; ++i)
     {
@@ -8578,15 +8580,20 @@ OYAPI oyConfigs_s * OYEXPORT
           oyOption_Release( &o );
         }
 
-        oyConfigs_MoveIn( configs, &config, -1 );
+        oyConfigs_MoveIn( s, &config, -1 );
       }
     }
 
     oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
   }
 
+  if(configs)
+    *configs = s;
+  else
+    oyConfigs_Release( &s );
+
   oyExportEnd_();
-  return configs;
+  return error;
 }
 
 /** Function oyConfigDomainList
@@ -9350,7 +9357,7 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
   if(!error)
   {
     /** 4.1 get stored DB's configurations */
-    configs = oyConfigs_FromDB( instrument->registration, 0 );
+    error = oyConfigs_FromDB( instrument->registration, &configs, 0 );
 
     n = oyConfigs_Count( configs );
     for( i = 0; i < n; ++i )
