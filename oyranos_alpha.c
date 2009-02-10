@@ -8995,6 +8995,9 @@ OYAPI int  OYEXPORT
   error = oyConfigs_FromDomain( instrument->registration, options, &instruments,
                                 0 );
 
+  if(!instruments)
+    return error;
+
   config = oyConfigs_Get( instruments, 0 );
   /** 3. check for success of instrument detection */
   error = !config;
@@ -9013,6 +9016,7 @@ OYAPI int  OYEXPORT
     WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name )
 
   oyConfigs_Release( &instruments );
+  oyConfig_Release( &config );
 
   return error;
 }
