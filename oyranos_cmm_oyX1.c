@@ -326,6 +326,7 @@ int            oyX1Configs_FromPattern (
           {
             WARNc1_S("Could not obtain _ICC_PROFILE information for %s",
             texts[i]);
+            error = -1;
           } else
           {
             p = oyProfile_FromMem( size, data, 0, 0 );
