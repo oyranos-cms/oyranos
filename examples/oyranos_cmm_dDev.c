@@ -301,15 +301,21 @@ int            dDevConfigs_FromPattern (
           /* In case the devices do not support network transparent ICC profile
            * setup, then use the DB stored profile, e.g.
            * @see oyInstrumentProfileFromDB() + oyProfile_FromFile()
-           * This will then turn the backend in a pure local one. One the
-           * opposite the Xorg-"oyX1" backend puts the profile in X server.
+           * This will then turn the backend in a pure local one.
+           *
+           * One the opposite the Xorg-"oyX1" backend puts the profile in 
+           * X server.
+           * Then it is up to Oyranos to take action. The backend needs to
+           * report a issue to inform Oyranos, as seen below.
            */
 
-          if(!size & !data)
+          /** Warn and return issue on not found profile. */
+          if(!size || !data)
           {
             message(oyMSG_WARN, (oyStruct_s*)options, dDev_DBG_FORMAT_ "\n "
                 "Could not obtain icc_profile information for %s",
                 dDev_DBG_ARGS_, texts[i]);
+            error = -1;
           } else
           {
             p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );

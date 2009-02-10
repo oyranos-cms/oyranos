@@ -322,7 +322,8 @@ int            oyX1Configs_FromPattern (
           char * data = oyX1GetMonitorProfile( texts[i], &size, allocateFunc );
 
           
-          if(!size & !data)
+          /** Warn and return issue on not found profile. */
+          if(!size || !data)
           {
             WARNc1_S("Could not obtain _ICC_PROFILE information for %s",
             texts[i]);
