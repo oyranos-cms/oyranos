@@ -29,6 +29,8 @@
 #endif
 #include <math.h>
 
+#define OY_ERR if(l_error != 0) error = l_error;
+
 /* internal declarations */
 oyObject_s   oyObject_SetAllocators_ ( oyObject_s          object,
                                        oyAlloc_f           allocateFunc,
@@ -8112,7 +8114,8 @@ OYAPI int  OYEXPORT
 {
   oyConfigs_s * s = 0;
   oyConfig_s * config = 0;
-  int error = !registration_domain;
+  int error = !registration_domain,
+      l_error = 0;
   oyCMMapi8_s * cmm_api8 = 0;
   int i, n;
 
@@ -8144,8 +8147,10 @@ OYAPI int  OYEXPORT
     {
       config = oyConfigs_Get( s, i );
 
-      error = oyOptions_SetSource( config->backend_core, oyOPTIONSOURCE_FILTER);
-      error = oyOptions_SetSource( config->data, oyOPTIONSOURCE_FILTER );
+      l_error = oyOptions_SetSource( config->backend_core,
+                                     oyOPTIONSOURCE_FILTER); OY_ERR
+      l_error = oyOptions_SetSource( config->data,
+                                     oyOPTIONSOURCE_FILTER ); OY_ERR
 
       oyConfig_Release( &config );
     }
@@ -8956,7 +8961,8 @@ OYAPI int  OYEXPORT
                oyInstrumentBackendCall(oyConfig_s        * instrument,
                                        oyOptions_s       * options )
 {
-  int error = !instrument;
+  int error = !instrument,
+      l_error = 0;
   oyConfigs_s * instruments = 0;
   oyConfig_s * config = 0;
   const char * instrument_name = 0;
@@ -8977,30 +8983,30 @@ OYAPI int  OYEXPORT
   if(!options)
   {
     options = oyOptions_New( 0 );
-    error = !options;
+    l_error = !options; OY_ERR
     /** 1.1 add "properties" call to backend arguments */
     if(error <= 0)
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
-                                               "properties", "true" );
+    l_error = oyOptions_SetRegistrationTextKey_( options,
+                                                 instrument->registration,
+                                                 "properties", "true" ); OY_ERR
   }
 
   /** 1.1.2 set instrument filter */
   if(error <= 0)
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
-                                             "instrument_name",instrument_name);
+    l_error = oyOptions_SetRegistrationTextKey_( options,
+                                      instrument->registration,
+                                      "instrument_name",instrument_name); OY_ERR
 
   /** 2. get the instrument */
-  error = oyConfigs_FromDomain( instrument->registration, options, &instruments,
-                                0 );
+  l_error = oyConfigs_FromDomain( instrument->registration, options,
+                                  &instruments, 0 ); OY_ERR
 
   if(!instruments)
     return error;
 
   config = oyConfigs_Get( instruments, 0 );
   /** 3. check for success of instrument detection */
-  error = !config;
+  l_error = !config; OY_ERR
 
   /** 4. copy results to the instrument */
   if(error <= 0)
@@ -9011,7 +9017,7 @@ OYAPI int  OYEXPORT
       oyOptions_Release( &instrument->backend_core );
       instrument->backend_core = oyOptions_Copy( config->backend_core, 0 );
     }
-    error = oyOptions_AppendOpts( instrument->data, config->data );
+    l_error = oyOptions_AppendOpts( instrument->data, config->data ); OY_ERR
   } else
     WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name )
 
@@ -9058,7 +9064,7 @@ OYAPI int  OYEXPORT
 
   {
     /* 1. ask for the profile the instrument is setup with */
-    error = oyInstrumentGetProfile( instrument, &p );
+    error = oyInstrumentAskProfile( instrument, &p );
     if(p)
     {
       oyProfile_Release( &p );
@@ -9217,6 +9223,49 @@ OYAPI int  OYEXPORT
            oyInstrumentGetProfile    ( oyConfig_s        * instrument,
                                        oyProfile_s      ** profile )
 {
+  int error = !instrument,
+      l_error = 0;
+
+  l_error = oyInstrumentAskProfile( instrument, profile ); OY_ERR
+
+  /** This function does a instrument setup in case no profile is delivered. */
+  if(error != 0 && !*profile)
+    l_error = oyInstrumentSetup( instrument ); OY_ERR
+
+  l_error = oyInstrumentAskProfile( instrument, profile ); OY_ERR
+
+  /** As a last means oyASSUMED_WEB is delivered. */
+  if(!*profile)
+  {
+    *profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+    if(error == 0)
+      error = -1;
+  }
+
+  return error;
+}
+
+/** Function oyInstrumentAskProfile
+ *  @brief   ask for the instrument profile
+ *
+ *  The profile argument does two things. If set to zero the function solely
+ *  unsets the graphic card luts and the server stored profile. So pretty all
+ *  server side informatin should go away. \n
+ *  With a profile given, the function will lookup the monitor in the 
+ *  Oyranos instrument database and stores the given profile there.
+ *
+ *  @param[in]     instrument          the instrument
+ *  @param[out]    profile             the instrument's ICC profile
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/10 (Oyranos: 0.1.10)
+ *  @date    2009/02/10
+ */
+OYAPI int  OYEXPORT
+           oyInstrumentAskProfile    ( oyConfig_s        * instrument,
+                                       oyProfile_s      ** profile )
+{
   int error = !instrument;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
@@ -9249,6 +9298,8 @@ OYAPI int  OYEXPORT
   if(error <= 0)
     o = oyConfig_Find( instrument, "icc_profile" );
 
+  if(error <= 0 && !o)
+    error = oyInstrumentBackendCall( instrument, options );
 
   if(o && o->value_type == oyVAL_STRUCT &&
      o->value && o->value->oy_struct && 
