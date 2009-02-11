@@ -9195,9 +9195,13 @@ OYAPI int  OYEXPORT
     @endverbatim
  *
  *  @param[in]     instrument          the instrument
- *  @param[in]     type                oyNAME_NAME - a short one line text,
- *                                     oyNAME_NICK - one word,
- *                                     oyNAME_DESCRIPTION - expensive text
+ *  @param[in]     type                influences the info_text output
+ *                                     - oyNAME_NAME - a short one line text,
+ *                                     - oyNAME_NICK - one word,
+ *                                     - oyNAME_DESCRIPTION - expensive text, even
+ *                                     lines contain the property key name,
+ *                                     odd lines contain the value,
+ *                                     lines are separated by newline '\\n'
  *  @param[in]     flags               reserved
  *  @param[out]    info_text           the text
  *  @param[in]     allocateFunc        the user allocator for info_text
