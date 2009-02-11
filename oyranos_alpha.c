@@ -7396,6 +7396,7 @@ OYAPI int  OYEXPORT
       if(max_rank < rank)
       {
         max_rank = rank;
+        oyConfig_Release( &max_config );
         max_config = oyConfig_Copy( config, 0 );
       }
 
@@ -7781,7 +7782,7 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_instrument,
           has_opt = 1;
 
           /** Option name is equal and and value matches : increase rank value*/
-          if(p_val && oyStrstr_( d_val, p_val ))
+          if(p_val && oyStrcmp_( d_val, p_val ) == 0)
           {
             if(instrument->rank_map)
             {
@@ -9512,6 +9513,8 @@ OYAPI int OYEXPORT oyInstrumentProfileFromDB
   oyOptions_s * options = 0;
   int error = !instrument || !profile_name;
   const char * instrument_name = 0;
+  char * tmp = 0, * tmp2 = 0;
+  int32_t rank_value = 0;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
@@ -9531,30 +9534,51 @@ OYAPI int OYEXPORT oyInstrumentProfileFromDB
       error = oyOptions_SetFromText( options, "//colour/config/instrument_name",
                                      instrument_name, OY_CREATE_NEW );
 
+      instrument_name = 0;
+
       /* 1.2 get monitor instrument */
       if(error <= 0)
         error = oyInstrumentBackendCall( instrument, options );
 
       oyOptions_Release( &options );
+
+      /* renew outdated string */
+      o = oyConfig_Find( instrument, "profile_name" );
+      instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+      oyOption_Release( &o );
     }
 
     if(!o)
-      error = oyConfig_GetDB( instrument, 0 );
-
-    if(!instrument)
-      WARNc1_S( "Could not get a instrument %s",
-                oyNoEmptyString_m_(instrument_name) )
-    else
+    {
+      error = oyConfig_GetDB( instrument, &rank_value );
       o = oyConfig_Find( instrument, "profile_name" );
+    }
 
     if(!o)
-      WARNc1_S( "Could not get a \"profile_name\" from %s", 
-                oyNoEmptyString_m_(instrument_name) )
-    else if(o->value_type != oyVAL_STRING ||
+    {
+      o = oyOptions_Get( instrument->db, 0 );
+      if(o)
+        tmp = oyStringCopy_(o->registration, oyAllocateFunc_);
+      if(tmp && oyStrrchr_( tmp, OY_SLASH_C))
+      {
+        tmp2 = oyStrrchr_( tmp, OY_SLASH_C);
+        tmp2[0] = 0;
+      }
+      WARNc3_S( "\n Could not get a \"profile_name\" from %s\n"
+                " registration: \"%s\" rank: %d", 
+                oyNoEmptyString_m_(instrument_name), oyNoEmptyString_m_(tmp),
+                (int)rank_value )
+      if(tmp)
+        oyFree_m_(tmp); tmp2 = 0;
+      oyOption_Release( &o );
+      error = -1;
+    } else if(o->value_type != oyVAL_STRING ||
             !(o->value && o->value->string && o->value->string[0]) )
+    {
       WARNc1_S( "Could not get \"profile_name\" data from %s", 
                 oyNoEmptyString_m_(instrument_name) )
-    else
+      error = -1;
+    } else
       *profile_name = oyStringCopy_( o->value->string, allocateFunc );
 
   } else
