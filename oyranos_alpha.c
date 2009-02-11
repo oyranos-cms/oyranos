@@ -8905,17 +8905,17 @@ OYAPI int  OYEXPORT
     return 0;
   }
 
-  /** 1. obtain detailed and expensive instrument informations */
+  /** 1. obtain basic instrument informations */
 
   if(!options)
   {
     options = oyOptions_New( 0 );
     error = !options;
-    /** 1.1 add "properties" call to backend arguments */
+    /** 1.1 add "list" call to backend arguments */
     if(error <= 0)
     error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
                                              instrument_class,
-                                             "properties", "true" );
+                                             "list", "true" );
   }
 
   /** 1.1.2 set instrument filter */
@@ -9194,7 +9194,7 @@ OYAPI int  OYEXPORT
 }
 
 /** Function oyInstrumentGetProfile
- *  @brief   get the instrument profile
+ *  @brief   order a instrument profile
  *
  *  The profile argument does two things. If set to zero the function solely
  *  unsets the graphic card luts and the server stored profile. So pretty all
@@ -9228,7 +9228,8 @@ OYAPI int  OYEXPORT
 
   l_error = oyInstrumentAskProfile( instrument, profile ); OY_ERR
 
-  /** This function does a instrument setup in case no profile is delivered. */
+  /** This function does a instrument setup in case no profile is delivered
+   *  by the according backend. */
   if(error != 0 && !*profile)
     l_error = oyInstrumentSetup( instrument ); OY_ERR
 
@@ -9270,6 +9271,9 @@ OYAPI int  OYEXPORT
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
 
+  if(error >= 1)
+    return error;
+
   if(!options)
   {
     options = oyOptions_New( 0 );
@@ -9297,9 +9301,6 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
     o = oyConfig_Find( instrument, "icc_profile" );
-
-  if(error <= 0 && !o)
-    error = oyInstrumentBackendCall( instrument, options );
 
   if(o && o->value_type == oyVAL_STRUCT &&
      o->value && o->value->oy_struct && 
@@ -9508,6 +9509,7 @@ OYAPI int OYEXPORT oyInstrumentProfileFromDB
                                        oyAlloc_f           allocateFunc )
 {
   oyOption_s * o = 0;
+  oyOptions_s * options = 0;
   int error = !instrument || !profile_name;
   const char * instrument_name = 0;
 
@@ -9518,6 +9520,23 @@ OYAPI int OYEXPORT oyInstrumentProfileFromDB
   {
     o = oyConfig_Find( instrument, "profile_name" );
     instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+
+    /* 1. obtain detailed and expensive instrument informations */
+    if(oyOptions_Count( instrument->backend_core ) < 2)
+    { 
+      options = oyOptions_New( 0 );
+      /* 1.1 add "properties" call to backend arguments */
+      error = oyOptions_SetFromText( options, "//colour/config/properties",
+                                     "true", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( options, "//colour/config/instrument_name",
+                                     instrument_name, OY_CREATE_NEW );
+
+      /* 1.2 get monitor instrument */
+      if(error <= 0)
+        error = oyInstrumentBackendCall( instrument, options );
+
+      oyOptions_Release( &options );
+    }
 
     if(!o)
       error = oyConfig_GetDB( instrument, 0 );
@@ -20803,9 +20822,11 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
   if(error <= 0)
   {
     if(profile_name && oyStrrchr_( profile_name, OY_SLASH_C ) != 0)
-      profile_name = oyStrrchr_( profile_name, OY_SLASH_C ) + 1;
+      text = oyStringCopy_( oyStrrchr_( profile_name, OY_SLASH_C ) + 1,
+                            allocateFunc );
+    else
+      text = oyStringCopy_( profile_name, allocateFunc );
 
-    text = oyStringCopy_( profile_name, allocateFunc );
   }
 
   if(profile_name)
