@@ -656,11 +656,11 @@ oyTESTRESULT_e testMonitor ()
   if(block)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "monitor profile from server \"%s\" %d", oyProfile_GetText( p, oyNAME_DESCRIPTION ), size );
+    "monitor profile from server \"%s\" %d \"%s\"", oyProfile_GetText( p, oyNAME_DESCRIPTION ), size, display_name );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "no default monitor profile %d", size );
+    "no default monitor profile %d \"%s\"", size, display_name );
   }
 
   text = oyGetMonitorProfileNameFromDB( display_name, malloc );

@@ -622,7 +622,7 @@ oyTESTRESULT_e testMonitor ()
   } else
   {
     PRINT_SUB( oyTESTRESULT_XFAIL,
-    "no monitor profile from Oyranos DB differs from the server one" );
+    "monitor profile from Oyranos DB differs from the server one" );
   }
 
 
