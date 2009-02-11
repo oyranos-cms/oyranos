@@ -3422,7 +3422,33 @@ oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
 /** \addtogroup backend_api CMM API
  *
  *  CMM's in Oyranos are designed to be plugable into a framework of arbitrary
- *  data formats and processing.
+ *  data formats and processing. On the user side the oyFilterNode_s and
+ *  Instrument API's are visible endities. They handle user requests to map and
+ *  transform them to instructions for plugable backend modules. 
+ *
+ *  \b Meta \b Backends:
+ *  The format of backend modules is plugable as well. A Meta module can support
+ *  different formats of backends, allowing to support backends to be written
+ *  even i nscripting languages.
+ *
+ *  \b High \b Abstraction: Most backend API's have no idea themselve about what
+ *  kind of data they handle. They follow very generic and abstract ideas and
+ *  rules on how to do data processing in a acyclic graph. The overal idea of
+ *  Oyranos' graphs can be read in the @ref objects_conversion. 
+ *  The backend API's can implement different processing stages and tell how to
+ *  combine them in a graph by Oyranos. 
+ *  Most of the processing logic is inside Oyranos's core. But for efficiency
+ *  and flexibility backends have access to their connected neighbour plug-ins.
+ *  For instance they have to call their forerunner to request for data.
+ *
+ *  \b Examples: For learning how backends can
+ *  do useful work see the delivered modules like the lcms and oyIM ones in
+ *  files like "oyranos_cmm_xxxx.c". They are linked as libraries and are
+ *  installed in the "$cmmdir" and "$libdir/oyranos" paths shown during the
+ *  configuration process.
+ *
+ *  Below a architectural overview is shown:
+ *
  *  @dot
 digraph Backends {
   bgcolor="transparent";
@@ -3432,7 +3458,7 @@ digraph Backends {
   graph [fontname=Helvetica, fontsize=14];
   node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
 
-  subgraph cluster_7 {
+  subgraph cluster_8 {
     label="Oyranos Module Framework";
     color=white;
     clusterrank=global;
@@ -3456,7 +3482,7 @@ digraph Backends {
       m [label="Config (Device) Functions\n oyCMMapi8_s"];
       icc [label="ICC Profile Functions\n oyCMMapi3_s"];
 
-      subgraph cluster_6 {
+      subgraph cluster_7 {
         color=gray;
         label="Backends"
 
@@ -3475,11 +3501,18 @@ digraph Backends {
           style=dashed;
           node [style="filled"];
           api7_B;
-          icc;
           label="\"oyra\"";
         }
 
         subgraph cluster_2 {
+          color=blue;
+          style=dashed;
+          node [style="filled"];
+          icc;
+          label="\"oyIM\"";
+        }
+
+        subgraph cluster_3 {
           color=yellow;
           style=dashed;
           node [style="filled"];
@@ -3488,7 +3521,7 @@ digraph Backends {
           label="\"octl\"";
         }
 
-        subgraph cluster_3 {
+        subgraph cluster_4 {
           color=gray;
           style=dashed;
           m;
@@ -3497,7 +3530,7 @@ digraph Backends {
 
       }
 
-      subgraph cluster_4 {
+      subgraph cluster_5 {
         color=gray;
         node [style="filled"];
         s;
@@ -3505,7 +3538,7 @@ digraph Backends {
         label="Meta Backends - Filter Importing";
       }
 
-      subgraph cluster_5 {
+      subgraph cluster_6 {
         color=gray;
         node [style="filled"];
         o;
@@ -3521,12 +3554,12 @@ digraph Backends {
       i -> api7_B [arrowhead="open", color=blue];
       s -> api6_C [arrowhead="open", color=yellow];
       s -> api7_C [arrowhead="open", color=yellow];
-      o -> m [arrowhead="open", color=gray];
+      i -> m [arrowhead="open", color=gray];
       o -> icc [arrowhead="open", color=gray];
   }
 } @enddot
  *
- *  The Filter API's are subdivided to allow for automaticaly combining of 
+ *  The Filter API's are subdivided to allow for automatical combining of 
  *  preprocessing and processing stages. Especially in the case of expensive
  *  preprocessing data, like in CMM's, it makes sense to provide the means for
  *  combining general purpose libraries with hardware accelerated modules.
@@ -3565,7 +3598,8 @@ digraph Backends {
  *  which request incompatible contexts from a oyCMMapi4_s structure.
  *
  *  The oyCMMapi8_s provides a general interface to backends to export data,
- *  like additional filter input data and options.
+ *  like additional filter input data and options. The @ref instruments_handling
+ *  deployes these backends.
  *
  *  @dot
 digraph Anatomy_A {
@@ -14234,7 +14268,17 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 /** \addtogroup objects_conversion Conversion API's
  *  Colour conversion front end API's.
  *
- *  Colour conversions are realised by structures called acyclic graphs.
+ *  Colour conversions are realised by structures called acyclic graphs. A graph
+ *  combines several processing elements and their according stages into one
+ *  process model. A very simple graph will link elements just one by one to
+ *  form a chain. More complex graphs are possible by branching and rejoining of
+ *  data processing arms.
+ *  Datas are requested always from the end. This makes it simple to create
+ *  views at data. A observer tells the to be viewed plugin that it wants
+ *  to connect and can request the data stream.
+ *  In the other direction plug-ins can send events along the pipe through
+ *  callbacks, e.g. for reporting errors or requesting updating of parameters.
+ *  The @ref backend_api explains how to create backends to plug into Oyranos.
  *
  *  \b About \b Graphs: \n
  *  The top object a user will handle is of type oyConversion_s. This 
