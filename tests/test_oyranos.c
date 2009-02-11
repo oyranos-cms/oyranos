@@ -531,7 +531,7 @@ oyTESTRESULT_e testMonitor ()
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   int n, i, error = 0;
-  char * block, * text, * display_name;
+  char * block, * text = 0, * display_name;
   size_t size = 0;
   oyProfile_s * p, * p2;
   oyConfigs_s * instruments = 0;
@@ -548,16 +548,6 @@ oyTESTRESULT_e testMonitor ()
     for(i = 0; i < n; ++i)
     {
       c = oyConfigs_Get( instruments, i );
-
-      error = oyInstrumentGetInfo( c, oyNAME_NICK, 0, &text, 0 );
-
-      if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument: %s", text )
-      else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
-
-      if(text)
-        free( text );
 
       error = oyInstrumentGetInfo( c, oyNAME_NAME, 0, &text, 0 );
 
@@ -579,52 +569,68 @@ oyTESTRESULT_e testMonitor ()
       if(text)
         free( text );
 
+
+      /* get the old oyMonitorxxx API conforming display name */
+      error = oyInstrumentGetInfo( c, oyNAME_NICK, 0, &text, 0 );
+
+      if(text && text[0])
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument: %s", text )
+      else
+        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+
+      display_name = text;
+
+      size = 0;
+      block = oyGetMonitorProfile( display_name, &size, malloc );
+      p = oyProfile_FromMem( size, block, 0,0 );
+
+      if(block)
+      {
+        PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "monitor profile from server \"%s\" %d",
+        oyProfile_GetText( p, oyNAME_DESCRIPTION ), size );
+      } else
+      {
+        PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "no default monitor profile %d", size );
+      }
+
+      text = oyGetMonitorProfileNameFromDB( display_name, malloc );
+      if(display_name) free(display_name);
+      if(text)
+      {
+        PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "monitor profile from Oyranos DB %s", text );
+      } else
+      {
+        PRINT_SUB( oyTESTRESULT_XFAIL,
+        "no monitor profile from Oyranos DB" );
+      }
+
+      p2 = oyProfile_FromFile( text, 0, 0 );
+
+      if(text &&
+         strcmp( oyNoEmptyString_m_(oyProfile_GetText( p2,oyNAME_DESCRIPTION )),
+                 oyNoEmptyString_m_(oyProfile_GetText( p ,oyNAME_DESCRIPTION )))
+         == 0)
+      {
+        PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "monitor profile from Oyranos DB matches the server one" );
+      } else
+      {
+        PRINT_SUB( oyTESTRESULT_XFAIL,
+        "monitor profile from Oyranos DB differs from the server one" );
+      }
+
+      if(text)
+        free( text );
+
       oyConfig_Release( &c );
     }
   }
   oyConfigs_Release( &instruments );
 
   display_name = oyGetDisplayNameFromPosition( 0, 0,0, malloc);
-  block = oyGetMonitorProfile( display_name, &size, malloc );
-  p = oyProfile_FromMem( size, block, 0,0 );
-
-  if(block)
-  {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "monitor profile from server \"%s\" %d", oyProfile_GetText( p, oyNAME_DESCRIPTION ), size );
-  } else
-  {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "no default monitor profile %d", size );
-  }
-
-  text = oyGetMonitorProfileNameFromDB( display_name, malloc );
-  if(display_name) free(display_name);
-  if(text)
-  {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "monitor profile from Oyranos DB %s", text );
-  } else
-  {
-    PRINT_SUB( oyTESTRESULT_XFAIL,
-    "no monitor profile from Oyranos DB" );
-  }
-
-  p2 = oyProfile_FromFile( text, 0, 0 );
-
-  if(text &&
-     strcmp( oyNoEmptyString_m_(oyProfile_GetText( p2, oyNAME_DESCRIPTION )),
-             oyNoEmptyString_m_(oyProfile_GetText( p , oyNAME_DESCRIPTION )))
-     == 0)
-  {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "monitor profile from Oyranos DB matches the server one" );
-  } else
-  {
-    PRINT_SUB( oyTESTRESULT_XFAIL,
-    "monitor profile from Oyranos DB differs from the server one" );
-  }
-
 
   return result;
 }
