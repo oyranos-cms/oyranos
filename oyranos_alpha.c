@@ -9054,8 +9054,6 @@ OYAPI int  OYEXPORT
     return 0;
   }
 
-  instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
-
 
   if(error > 0)
   {
@@ -9075,6 +9073,9 @@ OYAPI int  OYEXPORT
 
     /* 2. query the full instrument information */
     error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
+
+    /* 2.1 get instrument_name */
+    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
 
     /* 3. setup the instrument through the backend */
     options = oyOptions_New( 0 );
