@@ -712,21 +712,11 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
   const char * profil_basename = 0;
   char* profile_name_ = 0;
   oyProfile_s * prof = 0;
-  size_t size = 0;
 #if defined( HAVE_X ) && !defined(__APPLE__)
   oyMonitor_s * disp = 0;
   char       *dpy_name = NULL;
   char *text = 0;
 #endif
-
-  char * moni_profile = oyX1GetMonitorProfile( display_name,
-                                              &size, oyAllocateFunc_ );
-
-  if(moni_profile && size)
-    oyDeAllocateFunc_(moni_profile);
-
-  if(size)
-    return 0;
 
   DBG_PROG_START
 #if defined( HAVE_X ) && !defined(__APPLE__)
@@ -824,10 +814,13 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       if(can_gamma || oyMonitor_screen_( disp ) == 0)
         error = system(text);
       if(error &&
-         error != 65280) { /* hack */
+         error != 65280)
+      { /* hack */
         WARNc2_S("%s %s", _("No monitor gamma curves by profile:"),
                 oyNoEmptyName_m_(profil_basename) )
-      }
+      } else
+        /* take xcalib error not serious, turn into a issue */
+        error = -1;
     }
 
     DBG_PROG1_S( "system: %s", text )
