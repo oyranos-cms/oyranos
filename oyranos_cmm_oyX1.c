@@ -518,7 +518,7 @@ oyRankPad oyX1_rank_map[] = {
   {"serial", 10, -2, 0},               /**< important, could slightly fail */
   {"host", 1, 0, 0},                   /**< nice to match */
   {"system_port", 2, 0, 0},            /**< good to match */
-  {"display_geometry", 3, 0, 0},       /**< important to match */
+  {"display_geometry", 3, -1, 0},       /**< important to match */
   {0,0,0,0}                            /**< end of list */
 };
 
