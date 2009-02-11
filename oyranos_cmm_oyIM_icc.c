@@ -484,7 +484,8 @@ int          oyIMFilterScan          ( oyPointer           data,
       }
     }
 
-    dlclose( dso_handle );
+    if(dso_handle)
+      dlclose( dso_handle );
     dso_handle = 0;
   }
 
