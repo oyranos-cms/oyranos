@@ -8722,7 +8722,22 @@ OYAPI int  OYEXPORT
 
 
 /** \addtogroup instruments_handling Instrument API
-
+ *
+ *  Instruments are a special form of configurations. Their access is grouped
+ *  for effective performance. Known instruments are queried with
+ *  oyInstrumentsGet().
+ *  A single instrument can be obtained by oyInstrumentGet(). The \a
+ *  instrument_type argument defaults to "colour" and can be omitted for this
+ *  group. The \a instrument_class argument specifies a subgroup, e.g. 
+ *  "monitor".
+ *
+ *  All other functions return a handle to the device. With this handle it is
+ *  possible to get informations (oyInstrumentGetInfo()), query it's current,
+ *  possibly remote profile (strong oyInstrumentGetProfile() /
+ *  weak oyInstrumentAskProfile()) set the profile persistent
+ *  (oyInstrumentSetProfile()) or query the persitent stored profile
+ *  (oyInstrumentProfileFromDB()).
+ *
  *  @{
  */
 
@@ -8844,6 +8859,16 @@ int    oyOptions_SetRegistrationTextKey_(
 /** Function oyInstrumentsGet
  *  @brief   get all instruments matching to a instrument class and type
  *
+ *  @verbatim
+    // get all monitors
+    oyConfig_s * monitors = 0;
+    int error = oyInstrumentsGet( 0, "monitor", 0, &monitors );
+    // see how many are included
+    int n = oyConfigs_Count( monitors );
+    // release them
+    oyConfigs_Release( &monitors );
+    @endverbatim
+ *
  *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
  *                                     defaults to "colour" (optional)
  *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
@@ -8897,8 +8922,20 @@ OYAPI int  OYEXPORT
 /** Function oyInstrumentGet
  *  @brief   ask a backend for instrument informations or other direct calls
  *
+ *  @verbatim
+    oyConfig_s * instrument = oyInstrumentGet( 0, "monitor", ":0.0", 0,
+                                               &instrument );
+    oyConfig_Release( &instrument );
+    @endverbatim
+ *
+ *  @verbatim
+    // pass empty options to the backend to get a usage message
+    oyOptions_s * options = oyOptions_New( 0 );
+    oyInstrumentGet( "colour", "monitor", ":0.0", options, 0 );
+    @endverbatim
+ *
  *  @param[in]     instrument_type     the instrument type, e.g. "colour",
- *                                     mandatory
+ *                                     defaults to "colour" (optional)
  *  @param[in]     instrument_class    registration ::oyFILTER_REG_APPLICATION
  *                                     part, e.g. "monitor", mandatory
  *  @param[in]     instrument_name     the instrument name as returned by
@@ -8909,12 +8946,6 @@ OYAPI int  OYEXPORT
  *                                     call is assumed
  *  @param[out]    instrument          the returned instrument
  *  @return                            error
- *
- *  @verbatim
-    // pass empty options to the backend to get a usage message
-    oyOptions_s * options = oyOptions_New( 0 );
-    oyInstrumentGet( "colour", "monitor", ":0.0", options, 0 );
-    @endverbatim
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/28 (Oyranos: 0.1.10)
@@ -14327,9 +14358,9 @@ digraph G {
  *  \b Routing: \n
  *  The connector output, called socket, side is primarily passive. The data
  *  stream is requested or viewed by the input side, called plug. 
- *  Changes are propagated by events (?). This turns the acyclic graph into a 
- *  looped one. The event use the same graph just in the other direction.
- *  Events and data requests are distingt.
+ *  Changes are propagated by events. This turns the acyclic graph into a 
+ *  dual one. The events use the same graph just in the other direction.
+ *  Events and data requests are distinct.
  *  A \a plug local to the filter or filter node can be connected to a remote
  *  \a socket connector and vice versa.
  \dot
