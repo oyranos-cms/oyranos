@@ -562,8 +562,32 @@ oyTESTRESULT_e testMonitor ()
       error = oyInstrumentGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument:\n%s", text )
-      else
+      {
+        char * list = text, * tmp = 0, * line = malloc(128);
+        int even = 1;
+
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument    " )
+
+        tmp = list;
+        while(list && list[0])
+        {
+          snprintf( line, 128, "%s", list );
+          if(strchr( line, '\n' ))
+          {
+            tmp = strchr( line, '\n' );
+            tmp[0] = 0;
+          }
+          if(even)
+            printf( "%s\n", line );
+          else
+            printf( "  %s\n", line );
+          list = strchr( list, '\n' );
+          if(list) ++list;
+          even = !even;
+        }
+        free( line );
+
+      } else
         PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
 
       if(text)
