@@ -9039,7 +9039,6 @@ OYAPI int  OYEXPORT
     return 0;
   }
 
-  /** 1. obtain detailed and expensive instrument informations */
 
   if(error <= 0)
   {
@@ -9048,6 +9047,8 @@ OYAPI int  OYEXPORT
 
   if(!options)
   {
+    /** 1. obtain detailed and expensive instrument informations for a
+     *     zero options argument. */
     options = oyOptions_New( 0 );
     l_error = !options; OY_ERR
     /** 1.1 add "properties" call to backend arguments */
@@ -9057,13 +9058,13 @@ OYAPI int  OYEXPORT
                                                  "properties", "true" ); OY_ERR
   }
 
-  /** 1.1.2 set instrument filter */
+  /** 2. set instrument filter */
   if(error <= 0)
     l_error = oyOptions_SetRegistrationTextKey_( options,
                                       instrument->registration,
                                       "instrument_name",instrument_name); OY_ERR
 
-  /** 2. get the instrument */
+  /** 3. talk to the backend */
   l_error = oyConfigs_FromDomain( instrument->registration, options,
                                   &instruments, 0 ); OY_ERR
 
@@ -9071,7 +9072,7 @@ OYAPI int  OYEXPORT
     return error;
 
   config = oyConfigs_Get( instruments, 0 );
-  /** 3. check for success of instrument detection */
+  /** 3.1 check for success */
   l_error = !config; OY_ERR
 
   /** 4. copy results to the instrument */
@@ -9163,6 +9164,35 @@ OYAPI int  OYEXPORT
 
 /** Function oyInstrumentGetInfo
  *  @brief   get all instruments matching to a instrument class and type
+ *
+ *  @verbatim
+    // print all properties
+    int error = oyInstrumentGetInfo( instrument, oyNAME_DESCRIPTION, 0, &text,
+                                     malloc );
+    char * list = text, * tmp = 0, * line = malloc(128);
+    int even = 1;
+
+        tmp = list;
+        while(list && list[0])
+        {
+          snprintf( line, 128, "%s", list );
+          if(strchr( line, '\n' ))
+          {
+            tmp = strchr( line, '\n' );
+            tmp[0] = 0;
+          }
+          if(even)
+            printf( "%s\n", line );
+          else
+            printf( "  %s\n", line );
+          list = strchr( list, '\n' );
+          if(list) ++list;
+          even = !even;
+        }
+
+    if(line) free(line);
+    if(text) free(text);
+    @endverbatim
  *
  *  @param[in]     instrument          the instrument
  *  @param[in]     type                oyNAME_NAME - a short one line text,
@@ -9316,11 +9346,12 @@ OYAPI int  OYEXPORT
 /** Function oyInstrumentAskProfile
  *  @brief   ask for the instrument profile
  *
- *  The profile argument does two things. If set to zero the function solely
- *  unsets the graphic card luts and the server stored profile. So pretty all
- *  server side informatin should go away. \n
- *  With a profile given, the function will lookup the monitor in the 
- *  Oyranos instrument database and stores the given profile there.
+ *  Ask for a profile associated with the instrument. A instrument capable to
+ *  hold a profile only the held profile will be checked and returned.
+ *  In case this profile is not found a error of -1 should be returned.
+ *
+ *  The instrument might not be able to hold a profile, then just the DB profile
+ *  can be returned without an issue.
  *
  *  @param[in]     instrument          the instrument
  *  @param[out]    profile             the instrument's ICC profile
@@ -9385,10 +9416,12 @@ OYAPI int  OYEXPORT
  *  @brief   set the instrument profile
  *
  *  The profile argument does two things. If set to zero the function solely
- *  unsets the graphic card luts and the server stored profile. So pretty all
- *  server side informatin should go away. \n
+ *  calls \a unset in the backend, e.g. unset graphic card luts and server
+ *  stored profile. So pretty all iinstrument/server side informatin should
+ *  go away. \n
  *  With a profile given, the function will lookup the monitor in the 
- *  Oyranos instrument database and stores the given profile there. \n
+ *  Oyranos instrument database and stores the given profile there.
+ *
  *  To sum up, to set a new profile please call the following sequence:
  *  @verbatim
     // store new settings in the Oyranos data base
