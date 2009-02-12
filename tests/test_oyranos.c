@@ -536,12 +536,18 @@ oyTESTRESULT_e testMonitor ()
   oyProfile_s * p, * p2;
   oyConfigs_s * instruments = 0;
   oyConfig_s * c = 0;
+  oyOptions_s * options = oyOptions_New( 0 );
 
   oyExportReset_(EXPORT_SETTING);
   fprintf(stdout, "\n" );
 
 
-  error = oyInstrumentsGet( "colour", "monitor", 0, &instruments );
+  error = oyOptions_SetFromText( options, "//colour/config/properties",
+                                 "true", OY_CREATE_NEW );
+
+  error = oyInstrumentsGet( "colour", "monitor", options, &instruments );
+  oyOptions_Release( &options );
+
   n = oyConfigs_Count( instruments );
   if(!error)
   {
@@ -619,7 +625,7 @@ oyTESTRESULT_e testMonitor ()
         "no default monitor profile %d", size );
       }
 
-      text = oyGetMonitorProfileNameFromDB( display_name, malloc );
+      error = oyInstrumentProfileFromDB( c, &text, malloc );
       if(display_name) free(display_name);
       if(text)
       {
@@ -650,6 +656,7 @@ oyTESTRESULT_e testMonitor ()
         free( text );
 
       oyConfig_Release( &c );
+      fprintf(stdout, "\n" );
     }
   }
   oyConfigs_Release( &instruments );
