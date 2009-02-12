@@ -1147,6 +1147,8 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyInstrumentSetup         ( oyConfig_s        * instrument );
 OYAPI int  OYEXPORT
+           oyInstrumentUnset         ( oyConfig_s        * instrument );
+OYAPI int  OYEXPORT
            oyInstrumentGetInfo       ( oyConfig_s        * instrument,
                                        oyNAME_e            type,
                                        uint32_t            flags,

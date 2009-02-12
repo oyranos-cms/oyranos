@@ -9162,6 +9162,81 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+/** Function oyInstrumentUnset
+ *  @brief   unset the instrument profile
+ *
+ *  The function solely calls \a unset in the backend, e.g. unset graphic card
+ *  luts and server stored profile. So pretty all instrument/server side 
+ *  informatin should go away. \n
+ *
+ *  @param         instrument          the instrument
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/12 (Oyranos: 0.1.10)
+ *  @date    2009/02/12
+ */
+int      oyInstrumentUnset           ( oyConfig_s        * instrument )
+{
+  int error = !instrument;
+  oyOptions_s * options = 0;
+  oyProfile_s * p = 0;
+  char * profile_name = 0;
+  const char * instrument_name = 0;
+
+  if(error > 0)
+  {
+    WARNc_S( "No instrument argument provided. Give up" );
+    return 0;
+  }
+
+
+  if(error > 0)
+  {
+    WARNc_S( "No instrument_name argument provided. Give up." );
+    return error;
+  }
+
+  {
+    /* 1. ask for the profile the instrument is setup with */
+    error = oyInstrumentAskProfile( instrument, &p );
+    if(p)
+    {
+      oyProfile_Release( &p );
+      /** We ignore a instrument, which already has its profile setup. */
+      return error;
+    }
+
+    /* 2. query the full instrument information */
+    error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
+
+    /* 2.1 get instrument_name */
+    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+
+    /* 3. unset the instrument through the backend */
+    options = oyOptions_New( 0 );
+    /** 3.1 set a general request */
+    error = oyOptions_SetFromText( options, "//colour/config/unset",
+                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/instrument_name",
+                                   instrument_name, OY_CREATE_NEW );
+
+    /** 3.2 send the query to a backend */
+    error = oyConfigs_FromDomain( instrument->registration, options, 0, 0 );
+
+    oyOptions_Release( &options );
+    /* 3.1 send the query to a backend */
+    error = oyInstrumentBackendCall( instrument, options );
+
+    oyOptions_Release( &options );
+    if(profile_name)
+      oyFree_m_( profile_name );
+  }
+
+  return error;
+}
+
+
 /** Function oyInstrumentGetInfo
  *  @brief   get all instruments matching to a instrument class and type
  *
@@ -9297,20 +9372,14 @@ OYAPI int  OYEXPORT
 /** Function oyInstrumentGetProfile
  *  @brief   order a instrument profile
  *
- *  The profile argument does two things. If set to zero the function solely
- *  unsets the graphic card luts and the server stored profile. So pretty all
- *  server side informatin should go away. \n
- *  With a profile given, the function will lookup the monitor in the 
- *  Oyranos instrument database and stores the given profile there. \n
- *  To sum up, to set a new profile please call the following sequence:
- *  @verbatim
-    // store new settings in the Oyranos data base
-    oyInstrumentSetProfile( instrument, profile );
-    // remove any instrument entries
-    oyInstrumentSetProfile( instrument, 0 );
-    // update the instrument from the newly Oyranos data base settings
-    oyInstrumentSetup( instrument );
-    @endverbatim
+ *  This function is designed to satisfy most users as it tries to deliver
+ *  a profile all the time. 
+ *  Following code can almost allways expect some profile to go with.
+ *  It tries hard to get a current profile or set the system up and retry or
+ *  get at least one basic profile.
+ *
+ *  For a basic and thus weaker call to the instrument use
+ *  oyInstrumentAskProfile() instead.
  *
  *  @param         instrument          the instrument
  *  @param         profile             the instrument's ICC profile
@@ -9419,19 +9488,16 @@ OYAPI int  OYEXPORT
 /** Function oyInstrumentSetProfile
  *  @brief   set the instrument profile
  *
- *  The profile argument does two things. If set to zero the function solely
- *  calls \a unset in the backend, e.g. unset graphic card luts and server
- *  stored profile. So pretty all iinstrument/server side informatin should
- *  go away. \n
- *  With a profile given, the function will lookup the monitor in the 
- *  Oyranos instrument database and stores the given profile there.
+ *  The function will lookup the monitor in the Oyranos instrument database
+ *  and stores the given profile there.
  *
- *  To sum up, to set a new profile please call the following sequence:
+ *  To set a new profile und update the instrument please call the following
+ *  sequence:
  *  @verbatim
     // store new settings in the Oyranos data base
     oyInstrumentSetProfile( instrument, profile );
     // remove any instrument entries
-    oyInstrumentSetProfile( instrument, 0 );
+    oyInstrumentUnset( instrument );
     // update the instrument from the newly Oyranos data base settings
     oyInstrumentSetup( instrument );
     @endverbatim
@@ -9443,12 +9509,12 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/07 (Oyranos: 0.1.10)
- *  @date    2009/02/07
+ *  @date    2009/02/12
  */
 int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
                                        const char        * profile_name )
 {
-  int error = !instrument;
+  int error = !instrument || !profile_name || !profile_name[0];
   oyOption_s * od = 0;
   oyOptions_s * options = 0;
   oyConfigs_s * configs = 0;
@@ -9500,28 +9566,10 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
     goto cleanup;
   }
 
-  /** 3. unset the instrument colour/profile settings for no profile_name
-   *     argument */
-  if(!profile_name)
-  {
-    options = oyOptions_New( 0 );
-    /** 3.1 set a general request */
-    error = oyOptions_SetFromText( options, "//colour/config/unset",
-                                   "true", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( options, "//colour/config/instrument_name",
-                                   instrument_name, OY_CREATE_NEW );
+  /** 3 load profile from file name argument */
+  p = oyProfile_FromFile( profile_name, 0, 0 );
 
-    /** 3.2 send the query to a backend */
-    error = oyConfigs_FromDomain( instrument->registration, options, 0, 0 );
-
-    oyOptions_Release( &options );
-    goto cleanup;
-
-  } else
-    /** 3.3 ... or load profile from file name argument */
-    p = oyProfile_FromFile( profile_name, 0, 0 );
-
-  /** 3.4 check for success of profile loading */
+  /** 3.1 check for success of profile loading */
   error = !p;
   if(error)
   {
@@ -21035,7 +21083,11 @@ int      oySetMonitorProfile         ( const char        * display_name,
     return error;
   }
 
-  error = oyInstrumentSetProfile( instrument, profile_name );
+  if(profile_name)
+    error = oyInstrumentSetProfile( instrument, profile_name );
+  else
+    error = oyInstrumentUnset( instrument );
+
   oyConfig_Release( &instrument );
 
   return error;
