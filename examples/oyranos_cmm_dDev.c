@@ -178,13 +178,24 @@ int          dDevInstrumentFromName_ ( const char        * instrument_name,
                 " missed to select a appropriate instrument for the"
                 " \"properties\" call.", dDev_DBG_ARGS_ );
         error = 1;
+        return error;
       }
 
       /* now get the data from somewhere*/
-      manufacturer = "People";
-      model = "people-one";
-      serial = "12";
-      system_port = "usb-2";
+      if(strcmp(instrument_name, "dDev_1"))
+      {
+        manufacturer = "People_1";
+        model = "people-one";
+        serial = "11";
+        system_port = "usb-01";
+      } else if(strcmp(instrument_name, "dDev_2"))
+      {
+        manufacturer = "Village_2";
+        model = "yard-two";
+        serial = "22";
+        system_port = "usb-02";
+      }
+
       host = "localhost";
 
       if(error != 0)
@@ -225,6 +236,19 @@ int          dDevInstrumentFromName_ ( const char        * instrument_name,
   return error;
 }
 
+int dDevGetDevices                   ( char            *** list,
+                                       oyAlloc_f           allocateFunc )
+{
+  int len = sizeof(char*) * 3;
+  char ** texts = allocateFunc( len );
+
+  memset( texts, 0, len );
+  texts[0] = allocateFunc(24); sprintf( texts[0], "dDev_1" );
+  texts[1] = allocateFunc(24); sprintf( texts[1], "dDev_2" );
+
+  *list = texts;
+  return 2;
+}
 
 /** Function dDevConfigs_FromPattern
  *  @brief   dDev oyCMMapi8_s dummy instruments
@@ -244,7 +268,7 @@ int            dDevConfigs_FromPattern (
   oyProfile_s * p = 0;
   char ** texts = 0;
   char * text = 0;
-  int texts_n = 0, i, n,
+  int texts_n = 0, i,
       error = !s;
   const char * value1 = 0,
              * value2 = 0,
@@ -275,7 +299,7 @@ int            dDevConfigs_FromPattern (
     value2 = oyOptions_FindString( options, "list", 0 );
     if(value2)
     {
-      texts_n = 0; /* getDevices( value1, &texts, allocateFunc ); */
+      texts_n = dDevGetDevices( &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -371,13 +395,30 @@ int            dDevConfigs_FromPattern (
     value2 = oyOptions_FindString( options, "properties", 0 );
     if(value2)
     {
-      error = dDevInstrumentFromName_( value1, options, &instrument,
-                                       allocateFunc );
+      texts_n = dDevGetDevices( &texts, allocateFunc );
 
-      if(error <= 0 && instrument)
-        instrument->rank_map = oyRankMapCopy( dDev_rank_map,
+      for( i = 0; i < texts_n; ++i )
+      {
+        /* filter */
+        if(value1 && strcmp(value1, texts[i]) != 0)
+          continue;
+
+        instrument = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !instrument;
+
+        if(error <= 0)
+        error = oyOptions_SetFromText( instrument->backend_core,
+                                       CMM_BASE_REG OY_SLASH "instrument_name",
+                                       texts[i], OY_CREATE_NEW );
+
+        error = dDevInstrumentFromName_( value1, options, &instrument,
+                                         allocateFunc );
+
+        if(error <= 0 && instrument)
+          instrument->rank_map = oyRankMapCopy( dDev_rank_map,
                                                 instrument->oy_->allocateFunc_);
-      oyConfigs_MoveIn( instruments, &instrument, -1 );
+        oyConfigs_MoveIn( instruments, &instrument, -1 );
+      }
 
       if(error <= 0)
         *s = instruments;
