@@ -375,33 +375,6 @@ int            oyX1Configs_FromPattern (
           oyFree_m_( text );
         }
 
-        if(oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
-        {
-          error = oyX1InstrumentFromName_( value1, options, &instrument,
-                                           allocateFunc );
-          if(error <= 0 && instruments)
-          {
-            n = oyOptions_Count( instrument->backend_core );
-            for( i = 0; i < n; ++i )
-            {
-              o = oyOptions_Get( instrument->backend_core, i );
-
-              STRING_ADD( text, oyStrrchr_( o->registration, OY_SLASH_C ) + 1 );
-              STRING_ADD( text, ":\n" );
-              STRING_ADD( text, o->value->string );
-              STRING_ADD( text, "\n" );
-              
-              oyOption_Release( &o );
-            }
-          }
-
-          if(error <= 0)
-          error = oyOptions_SetFromText( instrument->data,
-                                     CMM_BASE_REG OY_SLASH "oyNAME_DESCRIPTION",
-                                         text, OY_CREATE_NEW );
-          oyFree_m_( text );
-        }
-
         if(error <= 0)
           instrument->rank_map = oyRankMapCopy( oyX1_rank_map,
                                                instrument->oy_->allocateFunc_ );
@@ -418,13 +391,31 @@ int            oyX1Configs_FromPattern (
     value2 = oyOptions_FindString( options, "properties", 0 );
     if(value2)
     {
-      error = oyX1InstrumentFromName_( value1, options, &instrument,
-                                       allocateFunc );
+      texts_n = oyGetAllScreenNames( display_name ? display_name : value1,
+                                     &texts, allocateFunc );
 
-      if(error <= 0 && instrument)
-        instrument->rank_map = oyRankMapCopy( oyX1_rank_map,
+      for( i = 0; i < texts_n; ++i )
+      {
+        /* filter */
+        if(value1 && strcmp(value1, texts[i]) != 0)
+          continue;
+
+        instrument = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !instrument;
+
+        if(error <= 0)
+        error = oyOptions_SetFromText( instrument->backend_core,
+                                       CMM_BASE_REG OY_SLASH "instrument_name",
+                                       texts[i], OY_CREATE_NEW );
+
+        error = oyX1InstrumentFromName_( texts[i], options, &instrument,
+                                         allocateFunc );
+
+        if(error <= 0 && instrument)
+          instrument->rank_map = oyRankMapCopy( oyX1_rank_map,
                                                 instrument->oy_->allocateFunc_);
-      oyConfigs_MoveIn( instruments, &instrument, -1 );
+        oyConfigs_MoveIn( instruments, &instrument, -1 );
+      }
 
       if(error <= 0)
         *s = instruments;
@@ -548,36 +539,6 @@ oyCMMapi8_s oyX1_api8 = {
   oyX1_rank_map              /**< oyRankPad ** rank_map */
 };
 
-
-/** @instance oyX1_api2
- *  @brief    oyX1 oyCMMapi2_s implementations
- *
- *  @version Oyranos: 0.1.8
- *  @date    2007/12/12
- *  @since   2007/12/12 (Oyranos: 0.1.8)
- */
-#if 0
-oyCMMapi2_s oyX1_api2 = {
-
-  oyOBJECT_CMM_API2_S,
-  0,0,0,
-  (oyCMMapi_s*) & oyX1_api8,
-
-  oyX1CMMInit,
-  oyX1CMMMessageFuncSet,
-  oyX1CMMCanHandle,
-
-  oyGetMonitorInfo_lib,
-  oyGetScreenFromPosition_lib,
-
-  oyGetDisplayNameFromPosition_lib,
-  oyGetMonitorProfile_lib,
-  oyGetMonitorProfileNameFromDB_lib,
-
-  oySetMonitorProfile_lib,
-  oyActivateMonitorProfiles_lib
-};
-#endif
 
 
 /**
