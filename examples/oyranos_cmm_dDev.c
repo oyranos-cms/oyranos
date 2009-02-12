@@ -182,13 +182,13 @@ int          dDevInstrumentFromName_ ( const char        * instrument_name,
       }
 
       /* now get the data from somewhere*/
-      if(strcmp(instrument_name, "dDev_1"))
+      if(strcmp(instrument_name, "dDev_1") == 0)
       {
         manufacturer = "People_1";
         model = "people-one";
         serial = "11";
         system_port = "usb-01";
-      } else if(strcmp(instrument_name, "dDev_2"))
+      } else if(strcmp(instrument_name, "dDev_2") == 0)
       {
         manufacturer = "Village_2";
         model = "yard-two";
