@@ -8869,6 +8869,26 @@ int    oyOptions_SetRegistrationTextKey_(
     oyConfigs_Release( &monitors );
     @endverbatim
  *
+ *  For obtaining expensive "properties" informations at once, add the according
+ *  option.
+ *  @verbatim
+    // get all monitors the expensive way
+    oyConfig_s * monitors = 0;
+    oyOptions_s * options = oyOptions_New( 0 );
+    int error = 0;
+
+    error = oyOptions_SetFromText( options, "//colour/config/properties",
+                                   "true", OY_CREATE_NEW );
+    error = oyInstrumentsGet( 0, "monitor", 0, &monitors );
+    oyOptions_Release( &options );
+
+    // see how many are included
+    int n = oyConfigs_Count( monitors );
+
+    // release them
+    oyConfigs_Release( &monitors );
+    @endverbatim
+ *
  *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
  *                                     defaults to "colour" (optional)
  *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
@@ -9293,11 +9313,14 @@ OYAPI int  OYEXPORT
                                        char             ** info_text,
                                        oyAlloc_f           allocateFunc )
 {
-  int error = !instrument;
+  int error = !instrument || !info_text;
   oyOptions_s * options = 0;
+  oyOption_s * o = 0;
   oyConfig_s * config = 0;
   const char * tmp = 0;
   static char * num = 0;
+  char * text = 0;
+  int i, n;
 
   if(error > 0)
   {
@@ -9314,6 +9337,42 @@ OYAPI int  OYEXPORT
     *info_text = oyStringCopy_( tmp, allocateFunc );
     return error;
   }
+
+  if(type == oyNAME_DESCRIPTION)
+  {
+    /* get expensive infos */
+    if(oyOptions_Count( instrument->backend_core ) < 2)
+    {
+      options = oyOptions_New( 0 );
+      error = oyOptions_SetFromText( options, "//colour/config/properties",
+                                     "true", OY_CREATE_NEW );
+
+      if(error <= 0)
+        error = oyInstrumentBackendCall( instrument, options );
+
+      oyOptions_Release( &options );
+    }
+
+    if(error <= 0)
+    {
+      n = oyOptions_Count( instrument->backend_core );
+      for( i = 0; i < n; ++i )
+      {
+        o = oyOptions_Get( instrument->backend_core, i );
+        
+        STRING_ADD( text, oyStrrchr_( o->registration, OY_SLASH_C ) + 1 );
+        STRING_ADD( text, ":\n" );
+        STRING_ADD( text, o->value->string );
+        STRING_ADD( text, "\n" );
+             
+        oyOption_Release( &o );
+      }
+    }
+    *info_text = oyStringCopy_( text, allocateFunc );
+    oyFree_m_(text);
+    return error;
+  }
+
 
   if(!num)
     oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
@@ -9339,10 +9398,6 @@ OYAPI int  OYEXPORT
     error = oyOptions_SetRegistrationTextKey_( options,
                                                instrument->registration,
                                                "oyNAME_NAME", "true" );
-    if(type == oyNAME_DESCRIPTION)
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
-                                               "oyNAME_DESCRIPTION", "true" );
   }
 
 

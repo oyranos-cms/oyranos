@@ -354,35 +354,6 @@ int            dDevConfigs_FromPattern (
           free( text );
         }
 
-        if(oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
-        {
-          text = calloc( 4096, sizeof(char) );
-
-          error = dDevInstrumentFromName_( value1, options, &instrument,
-                                           allocateFunc );
-          if(error <= 0 && instruments)
-          {
-            n = oyOptions_Count( instrument->backend_core );
-            for( i = 0; i < n; ++i )
-            {
-              o = oyOptions_Get( instrument->backend_core, i );
-
-              STRING_ADD( text, strrchr( o->registration, OY_SLASH_C ) + 1 );
-              STRING_ADD( text, ":\n" );
-              STRING_ADD( text, o->value->string );
-              STRING_ADD( text, "\n" );
-              
-              oyOption_Release( &o );
-            }
-          }
-
-          if(error <= 0)
-          error = oyOptions_SetFromText( instrument->data,
-                                     CMM_BASE_REG OY_SLASH "oyNAME_DESCRIPTION",
-                                         text, OY_CREATE_NEW );
-          free( text );
-        }
-
         if(error <= 0)
           instrument->rank_map = oyRankMapCopy( dDev_rank_map,
                                                 instrument->oy_->allocateFunc_);
