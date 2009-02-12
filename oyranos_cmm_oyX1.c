@@ -248,14 +248,16 @@ int            oyX1Configs_FromPattern (
   const oyRegion_s * r = 0;
   oyProfile_s * p = 0;
   char ** texts = 0;
-  char * text = 0;
-  int texts_n = 0, i, n,
+  char * text = 0,
+       * instrument_name_temp = 0;
+  int texts_n = 0, i,
       error = !s;
   const char * value1 = 0,
              * value2 = 0,
              * value3 = 0,
              * value4 = 0,
-             * display_name = 0;
+             * display_name = 0,
+             * instrument_name = 0;
   int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
@@ -280,12 +282,39 @@ int            oyX1Configs_FromPattern (
     value1 = oyOptions_FindString( options, "instrument_name", 0 );
     /*message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);*/
 
+    if(display_name && display_name[0])
+      instrument_name = display_name;
+    else if(value1 && value1[0])
+      instrument_name = value1;
+    else
+    {
+      tmp = getenv("DISPLAY");
+      if(!tmp)
+      {
+        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+              "DISPLAY variable not set: giving up\n. Options:\n%s",
+                OY_DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
+                );
+        error = 1;
+        return error;
+      }
+
+      instrument_name_temp = oyStringCopy_( tmp, oyAllocateFunc_ );
+      if(instrument_name_temp &&
+         (text = strchr(instrument_name_temp,':')) != 0)
+        if( (text = strchr(instrument_name_temp, '.')) != 0 )
+          text[0] = '\000';
+
+      instrument_name = instrument_name_temp;
+      text = 0;
+    }
+
     value2 = oyOptions_FindString( options, "list", 0 );
     value3 = oyOptions_FindString( options, "display_geometry", 0 );
     if(value2)
     {
-      texts_n = oyGetAllScreenNames( display_name ? display_name : value1,
-                                     &texts, allocateFunc );
+      texts_n = oyGetAllScreenNames( instrument_name, &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -385,14 +414,15 @@ int            oyX1Configs_FromPattern (
       if(error <= 0)
         *s = instruments;
 
-      return error;
+      oyStringListRelease_( &texts, texts_n, free );
+
+      goto cleanup;
     }
 
     value2 = oyOptions_FindString( options, "properties", 0 );
     if(value2)
     {
-      texts_n = oyGetAllScreenNames( display_name ? display_name : value1,
-                                     &texts, allocateFunc );
+      texts_n = oyGetAllScreenNames( instrument_name, &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -420,7 +450,9 @@ int            oyX1Configs_FromPattern (
       if(error <= 0)
         *s = instruments;
 
-      return error;
+      oyStringListRelease_( &texts, texts_n, free );
+
+      goto cleanup;
     }
 
     value2 = oyOptions_FindString( options, "setup", 0 );
@@ -436,7 +468,8 @@ int            oyX1Configs_FromPattern (
                 );
       else
         error = oyX1MonitorProfileSetup( value1, value3 );
-      return error;
+
+      goto cleanup;
     }
 
     value2 = oyOptions_FindString( options, "unset", 0 );
@@ -450,7 +483,8 @@ int            oyX1Configs_FromPattern (
                 );
       else
         error = oyX1MonitorProfileUnset( value1 );
-      return error;
+
+      goto cleanup;
     }
   }
 
@@ -460,6 +494,11 @@ int            oyX1Configs_FromPattern (
                 );
 
   oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+
+  cleanup:
+  if(instrument_name_temp)
+    oyFree_m_( instrument_name_temp );
+
 
   return error;
 }
