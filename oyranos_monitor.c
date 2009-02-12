@@ -176,7 +176,8 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
   for( i = 0; i < 4; ++i)
   {
     unsigned char *block = edi->text1 + i * 18;
-    char **target = NULL;
+    char **target = NULL,
+         * tmp = 0;
 
     if(block[0] == 0 && block[1] == 0 && block[2] == 0)
     {
@@ -196,6 +197,11 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
           t = (char*)oyAllocateWrapFunc_( 16, allocate_func );
           oySnprintf_(t, 15, (char*)&block[5]);
           t[15] = '\000';
+          if(oyStrrchr_(t, '\n'))
+          {
+            tmp = oyStrrchr_(t, '\n');
+            tmp[0] = 0;
+          }
           *target = t; DBG_PROG_S( *target )
         }
       }
