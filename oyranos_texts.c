@@ -594,8 +594,7 @@ oyStringCopy_      ( const char    * text,
     
   if(text)
   {
-      text_copy = allocateFunc(strlen(text) + 1);
-      oyAllocHelper_m_( text_copy, oyChar, oyStrlen_(text) + 1,
+      oyAllocHelper_m_( text_copy, char, oyStrlen_(text) + 1,
                         allocateFunc, return 0 );
       oyStrcpy_( text_copy, text );
   }
