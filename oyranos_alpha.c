@@ -9553,7 +9553,7 @@ OYAPI int  OYEXPORT
     oyInstrumentSetProfile( instrument, profile );
     // remove any instrument entries
     oyInstrumentUnset( instrument );
-    // update the instrument from the newly Oyranos data base settings
+    // update the instrument from the newly added Oyranos data base settings
     oyInstrumentSetup( instrument );
     @endverbatim
  *

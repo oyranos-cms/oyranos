@@ -1474,12 +1474,24 @@ char **  oyProfileListGet            ( const char        * coloursig,
                                        uint32_t          * size,
                                        oyAlloc_f           allocateFunc )
 {
-  char **names = NULL;
+  char **names = NULL,
+       ** tmp = 0;
+  uint32_t n = 0;
+  int tmp_n = 0;
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  names = oyProfileListGet_(coloursig, size);
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  tmp = oyProfileListGet_(coloursig, &n);
+  names = oyStringListAppend_( (const char**)tmp, n, 0,0, &tmp_n,
+                               allocateFunc );
+
+  oyStringListRelease_( &tmp, n, oyDeAllocateFunc_ );
+
+  *size = tmp_n;
 
   oyExportEnd_();
   DBG_PROG_ENDE
