@@ -542,6 +542,11 @@ oyGetAllScreenNames_            (const char *display_name,
   GDHandle                                device;
   DisplayIDType                           screenID;
 
+  *n_scr = 0;
+
+  if(!display_name || !display_name[0])
+    return 0;
+
   device = GetDeviceList();
   while (device)
   {
@@ -566,6 +571,9 @@ oyGetAllScreenNames_            (const char *display_name,
   oyMonitor_s * disp = 0;
 
   *n_scr = 0;
+
+  if(!display_name || !display_name[0])
+    return 0;
 
   disp = oyMonitor_newFrom_( display_name, 0 );
   if(!disp)
@@ -1015,7 +1023,7 @@ oyGetDisplayNumber_        (oyMonitor_s *disp)
     const char *txt = strchr( display_name, ':' );
     
     if( !txt )
-    { WARNc_S( "invalid display name" )
+    { WARNc1_S( "invalid display name: %s", display_name )
       return -1;
     }
 
@@ -1047,7 +1055,7 @@ int   oyMonitor_getScreenFromDisplayName_( oyMonitor_s   * disp )
     const char *txt = strchr( display_name, ':' );
     
     if( !txt )
-    { WARNc_S( "invalid display name" )
+    { WARNc1_S( "invalid display name: %s", display_name )
       return -1;
     }
 
@@ -1132,7 +1140,7 @@ oyChangeScreenName_                (const char* display_name,
 
     /* fail if no display was given */
     if( !txt )
-    { WARNc_S( "invalid display name" )
+    { WARNc1_S( "invalid display name: %s", display_name )
       host_name[0] = 0;
       return host_name;
     }
@@ -1168,6 +1176,9 @@ oyMonitor_getScreenGeometry_            (oyMonitor_s *disp)
 
   disp->geo[0] = oyGetDisplayNumber_( disp );
   disp->geo[1] = screen = oyMonitor_getScreenFromDisplayName_( disp );
+
+  if(screen < 0)
+    return screen;
 
 # if HAVE_XRANDR
   if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
@@ -1430,14 +1441,15 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
   }
   }
 
-  for( i = 0; i < 6; ++i ) disp->geo[i] = -1;
-  if( !error &&
-      oyMonitor_getScreenGeometry_( disp ) )
-    error = 1;
+  for( i = 0; i < 6; ++i )
+    disp->geo[i] = -1;
 
   if( !error &&
-      oyMonitor_getGeometryIdentifier_( disp ) ) 
+      oyMonitor_getScreenGeometry_( disp ) != 0 )
     error = 1;
+
+  if( error <= 0 )
+    error = oyMonitor_getGeometryIdentifier_( disp );
 
   if( !disp->system_port || !oyStrlen_( disp->system_port ) )
   if( 0 <= oyMonitor_screen_( disp ) && oyMonitor_screen_( disp ) < 10000 )
