@@ -22,6 +22,12 @@
 #include "oyranos_cmm.h"
 #include "oyranos_cmms.h"
 
+#ifdef __cplusplus
+extern "C" {
+namespace oyranos
+{
+#endif /* __cplusplus */
+
 /** \addtogroup alpha Alpha API's
 
  *  @{
@@ -268,5 +274,10 @@ enum {
 
 /** @} *//*alpha
  */
+
+#ifdef __cplusplus
+} /* extern "C" */
+} /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OYRANOS_ALPHA_INTERNAL_H */
