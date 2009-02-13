@@ -1128,7 +1128,6 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   int k, k_n;
   int32_t rank = 0;
   int error = 0;
-  oyConfigs_s * configs = 0;
   oyConfig_s * config = 0,
              * device = 0;
   oyOption_s * o = 0;
@@ -1170,6 +1169,163 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
     //error = oyConfig_EraseFromDB( config );
   }
 
+
+  return result;
+}
+
+
+#include "oyranos_alpha_internal.h"
+
+oyTESTRESULT_e testCMMsShow ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int i, j, k;
+  uint32_t size = 0;
+  int32_t texts_n = 0;
+  uint32_t count = 0;
+  char ** profiles = 0,
+       ** texts = 0,
+        * text = 0,
+        * text_tmp = (char*)oyAllocateFunc_(65535);
+  oyProfiles_s * iccs;
+  oyProfile_s * temp_prof;
+  oyProfileTag_s * tag = 0;
+  oyCMMInfo_s * cmm_info = 0;
+  oyCMMapi4_s * cmm_api4 = 0;
+  oyCMMapi6_s * cmm_api6 = 0;
+  oyCMMapi_s * tmp = 0;
+  oyCMMapiFilter_s * cmm_filter = 0;
+  oyPROFILE_e type = oyDEFAULT_PROFILE_START;
+  int current = 0;
+
+
+  fprintf(stdout, "\n" );
+
+  texts = oyCMMsGetLibNames_( &count, 0 );
+
+  for( i = 0; i < (int)count; ++i)
+  {
+    cmm_info = oyCMMInfoFromLibName_( texts[i] );
+    text = oyCMMInfoPrint_( cmm_info );
+    tmp = cmm_info->api;
+
+
+        while(tmp)
+        {
+          oyOBJECT_e type = oyOBJECT_NONE;
+          char num[48],
+               * api_reg = 0;
+
+          type = oyCMMapi_Check_(tmp);
+
+          oySprintf_(num,"    %d:", type );
+          oyStringAdd_( &text, num, oyAllocateFunc_, oyDeAllocateFunc_ );
+          oyStringAdd_( &text, oyStruct_TypeToText((oyStruct_s*)tmp),
+                        oyAllocateFunc_, oyDeAllocateFunc_ );
+          STRING_ADD( text, "\n" );
+
+          if(type == oyOBJECT_CMM_API5_S)
+          {
+            cmm_filter = (oyCMMapiFilter_s*) tmp;
+
+            {
+              oyCMMapiFilter_s * api = 0;
+              oyCMMapiFilters_s * apis = 0;
+              uint32_t * rank_list = 0;
+              uint32_t apis_n = 0;
+              char * classe = 0;
+
+              classe = oyFilterRegistrationToText( cmm_filter->registration,
+                                                   oyFILTER_REG_TYPE, 0 );
+              api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+              STRING_ADD( api_reg, classe );
+              oyFree_m_( classe );
+
+
+              STRING_ADD( text, "    API(s) load from Meta backend:\n" );
+
+              for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API8_S; j++)
+              {
+                apis = oyCMMsGetFilterApis_( 0, 0, api_reg, (oyOBJECT_e)j,
+                                             &rank_list, &apis_n );
+
+                apis_n = oyCMMapiFilters_Count( apis );
+                for(k = 0; k < (int)apis_n; ++k)
+                {
+                  api = oyCMMapiFilters_Get( apis, k );
+
+                  snprintf( text_tmp, 65536,
+                            "      [%s]: \"%s\"  %d\n        %s\n",
+                            oyStructTypeToText(api->type),
+                            api->registration,
+                            (int)rank_list[k], api->id_ );
+                  STRING_ADD( text, text_tmp );
+
+                  if(api->type == oyOBJECT_CMM_API4_S)
+                  {
+                    cmm_api4 = (oyCMMapi4_s*) api;
+                    oyStringAdd_( &text, "        category: ",
+                                  oyAllocateFunc_, oyDeAllocateFunc_ );
+                    if(cmm_api4->category)
+                    oyStringAdd_( &text, cmm_api4->category,
+                                  oyAllocateFunc_, oyDeAllocateFunc_ );
+                    oyStringAdd_( &text, "\n        options: ",
+                                  oyAllocateFunc_, oyDeAllocateFunc_ );
+                    if(cmm_api4->options)
+                    oyStringAdd_( &text, cmm_api4->options,
+                                  oyAllocateFunc_, oyDeAllocateFunc_ );
+                    oyStringAdd_( &text, oyXMLgetElement_(cmm_api4->options,
+                                  "freedesktop.org/default/profile",
+                                  "editing_rgb" ),
+                                  oyAllocateFunc_, oyDeAllocateFunc_ );
+                    STRING_ADD( text, "\n" );
+                  }
+
+                  if(api->type == oyOBJECT_CMM_API6_S)
+                  {
+                    cmm_api6 = (oyCMMapi6_s*) api;
+                    snprintf( text_tmp, 65536,
+                            "        \"%s\" -> \"%s\"\n",
+                            cmm_api6->data_type_in,
+                            cmm_api6->data_type_out );
+                    STRING_ADD( text, text_tmp );
+                  }
+
+                  STRING_ADD( text, "\n" );
+                  //oyCMMapiFilter_Release( &api );
+                }
+                oyCMMapiFilters_Release( &apis );
+              }
+              oyFree_m_(api_reg);
+            }
+          } else
+          if(oyIsOfTypeCMMapiFilter( type ))
+          {
+            cmm_filter = (oyCMMapiFilter_s*) tmp;
+
+            snprintf( text_tmp, 65535, "%s: %s\n",
+                      oyStructTypeToText( tmp->type ),
+                      cmm_filter->registration );
+            STRING_ADD( text, text_tmp );
+
+          }
+
+          tmp = tmp->next;
+        }
+
+    printf("%d: \"%s\": %s\n\n", i, texts[i], text );
+
+  }
+  oyStringListRelease_( &texts, count, free );
+
+  if( count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyCMMsGetLibNames_( ) found %d                     ", count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyCMMsGetLibNames_( ) found %d                     ", count );
+  }
 
   return result;
 }
@@ -1226,6 +1382,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMMonitorListing, "CMM monitor listing" );
   TEST_RUN( testCMMDBListing, "CMM DB listing" );
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
+  TEST_RUN( testCMMsShow, "CMMs show" );
 
   /* give a summary */
   if(!(argc > 1 &&  

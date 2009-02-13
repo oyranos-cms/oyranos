@@ -220,7 +220,7 @@ const char * oyIMInfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return _("newBSD");
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD");
+      return _("Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
   }
