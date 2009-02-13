@@ -546,7 +546,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CMM_API5_S: text = "oyCMMapi5_s MetaFilter"; break;
     case oyOBJECT_CMM_API6_S: text = "oyCMMapi6_s Context convertor"; break;
     case oyOBJECT_CMM_API7_S: text = "oyCMMapi7_s Filter run"; break;
-    case oyOBJECT_CMM_API8_S: text = "oyCMMapi8_s Filter run"; break;
+    case oyOBJECT_CMM_API8_S: text = "oyCMMapi8_s Instruments"; break;
     case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
     case oyOBJECT_CMM_API_FILTERS_S: text="oyCMMapiFilters_s Filter list";break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
@@ -2521,13 +2521,13 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
       if(cmm_info)
       {
         tmp = cmm_info->api;
-        STRING_ADD( text, "\n  API(s): " );
+        STRING_ADD( text, "\n  API(s):\n" );
 
         while(tmp)
         {
           type = oyCMMapi_Check_(tmp);
 
-          oySprintf_(num," %d:", type );
+          oySprintf_(num,"    %d:", type );
           STRING_ADD( text, num );
           STRING_ADD( text, oyStructTypeToText( tmp->type ) );
 
@@ -2538,6 +2538,7 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
             STRING_ADD( text, cmm_api4->registration );
             CMMINFO_ADD_NAME_TO_TEXT( "Name", "name" )
           }
+          STRING_ADD( text, "\n" );
 
           tmp = tmp->next;
         }
@@ -15761,6 +15762,9 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
     oyStringListRelease_( &reg_texts, reg_texts_n, oyDeAllocateFunc_ );
     oyStringListRelease_( &p_texts, p_texts_n, oyDeAllocateFunc_ );
   }
+
+  if(match_tmp == 1 && !match)
+    match = 1;
 
   return match;
 
