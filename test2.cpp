@@ -599,47 +599,47 @@ oyTESTRESULT_e testMonitor ()
   char * block, * text, * display_name;
   size_t size = 0;
   oyProfile_s * p, * p2;
-  oyConfigs_s * instruments = 0;
+  oyConfigs_s * devices = 0;
   oyConfig_s * c = 0;
 
   oyExportReset_(EXPORT_SETTING);
   fprintf(stdout, "\n" );
 
 
-  error = oyInstrumentsGet( "colour", "monitor", 0, &instruments );
-  n = oyConfigs_Count( instruments );
+  error = oyDevicesGet( "colour", "monitor", 0, &devices );
+  n = oyConfigs_Count( devices );
   if(!error)
   {
     for(i = 0; i < n; ++i)
     {
-      c = oyConfigs_Get( instruments, i );
+      c = oyConfigs_Get( devices, i );
 
-      error = oyInstrumentGetInfo( c, oyNAME_NICK, 0, &text, 0 );
+      error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument: %s", text )
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
       else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
         free( text );
 
-      error = oyInstrumentGetInfo( c, oyNAME_NAME, 0, &text, 0 );
+      error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument: %s", text )
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
       else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
         free( text );
 
-      error = oyInstrumentGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
+      error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument:\n%s", text )
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "device:\n%s", text )
       else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
         free( text );
@@ -647,7 +647,7 @@ oyTESTRESULT_e testMonitor ()
       oyConfig_Release( &c );
     }
   }
-  oyConfigs_Release( &instruments );
+  oyConfigs_Release( &devices );
 
   display_name = oyGetDisplayNameFromPosition( 0, 0,0, malloc);
   block = oyGetMonitorProfile( display_name, &size, malloc );
@@ -1018,32 +1018,32 @@ oyTESTRESULT_e testCMMMonitorListing ()
   int devices_n = 0;
   char * text = 0;
 
-  error = oyInstrumentsGet( 0, "monitor", 0, &configs );
+  error = oyDevicesGet( 0, "monitor", 0, &configs );
   devices_n = oyConfigs_Count( configs );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyInstrumentsGet() \"monitor\": %d     ", devices_n );
+    "oyDevicesGet() \"monitor\": %d     ", devices_n );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyInstrumentsGet() \"monitor\": %d     ", devices_n );
+    "oyDevicesGet() \"monitor\": %d     ", devices_n );
   }
   for( i = 0; i < devices_n; ++i )
   {
     config = oyConfigs_Get( configs, i );
-    printf( "  %d oyConfig_FindString(..\"instrument_name\"..): %s\n", i,
-            oyConfig_FindString( config, "instrument_name",0 ) );
+    printf( "  %d oyConfig_FindString(..\"device_name\"..): %s\n", i,
+            oyConfig_FindString( config, "device_name",0 ) );
 
-    error = oyInstrumentProfileFromDB( config, &text, myAllocFunc );
+    error = oyDeviceProfileFromDB( config, &text, myAllocFunc );
     if(text)
-      fprintf( stdout, "  %d oyInstrumentProfileFromDB(): %s\n", i, text );
+      fprintf( stdout, "  %d oyDeviceProfileFromDB(): %s\n", i, text );
     else
-      fprintf( stdout, "  %d oyInstrumentProfileFromDB(): ---\n", i );
+      fprintf( stdout, "  %d oyDeviceProfileFromDB(): ---\n", i );
 
-    error = oyInstrumentGetInfo( config, oyNAME_NICK, 0, &text, 0 );
-    fprintf( stdout, "  %d oyInstrumentGetInfo)(..oyNAME_NICK..): \"%s\"\n",
+    error = oyDeviceGetInfo( config, oyNAME_NICK, 0, &text, 0 );
+    fprintf( stdout, "  %d oyDeviceGetInfo)(..oyNAME_NICK..): \"%s\"\n",
              i, text? text:"???");
-    error = oyInstrumentGetInfo( config, oyNAME_NAME, 0, &text, 0 );
-    fprintf( stdout, "  %d oyInstrumentGetInfo)(..oyNAME_NAME..): \"%s\"\n",
+    error = oyDeviceGetInfo( config, oyNAME_NAME, 0, &text, 0 );
+    fprintf( stdout, "  %d oyDeviceGetInfo)(..oyNAME_NAME..): \"%s\"\n",
              i, text? text:"???");
 
     oyConfig_Release( &config );
@@ -1051,14 +1051,14 @@ oyTESTRESULT_e testCMMMonitorListing ()
   oyConfigs_Release( &configs );
   fprintf( stdout, "\n");
 
-  error = oyInstrumentGet( 0, "monitor", ":0.1", 0, &config );
+  error = oyDeviceGet( 0, "monitor", ":0.1", 0, &config );
   k_n = oyConfig_Count( config );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyInstrumentGet(..\"monitor\" \":0.1\"..) %d     ", k_n );
+    "oyDeviceGet(..\"monitor\" \":0.1\"..) %d     ", k_n );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyInstrumentGet(..\"monitor\" \":0.1\"..) %d     ", k_n );
+    "oyDeviceGet(..\"monitor\" \":0.1\"..) %d     ", k_n );
   }
     for( k = 0; k < k_n; ++k )
     {
@@ -1132,18 +1132,18 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
              * device = 0;
   oyOption_s * o = 0;
 
-  fprintf( stdout, "load a instrument ...\n");
-  error = oyInstrumentGet( 0, "monitor", ":0.0", 0, &device );
+  fprintf( stdout, "load a device ...\n");
+  error = oyDeviceGet( 0, "monitor", ":0.0", 0, &device );
   k_n = oyConfig_Count( config );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyInstrumentGet(..\"monitor\" \":0.0\".. &device ) %d", k_n );
+    "oyDeviceGet(..\"monitor\" \":0.0\".. &device ) %d", k_n );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyInstrumentGet(..\"monitor\" \":0.0\".. &device) %d", k_n );
+    "oyDeviceGet(..\"monitor\" \":0.0\".. &device) %d", k_n );
   }
 
-  fprintf( stdout, "... and search for the instruments DB entry ...\n");
+  fprintf( stdout, "... and search for the devices DB entry ...\n");
   error = oyConfig_GetDB( device, &rank );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,

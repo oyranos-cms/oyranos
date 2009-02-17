@@ -13670,7 +13670,6 @@ OYAPI int  OYEXPORT
     return 0;
   /* ---- end of common object destructor ------- */
 
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -13684,6 +13683,8 @@ OYAPI int  OYEXPORT
       s->array2d[y] = 0;
     }
     deallocateFunc( s->array2d - (size_t)(dsize * -s->data_area->y) );
+
+    oyRegion_Release( &s->data_area );
 
     oyObject_Release( &s->oy_ );
 
@@ -18661,7 +18662,7 @@ oyConversion_s   * oyConversion_CreateBasic (
 
   if(error <= 0)
   {
-    s = oyConversion_CreateInput ( input, 0 );
+    s = oyConversion_CreateInput ( input, 0, 0 );
 
     filter = oyFilter_New( "//colour/icc", 0,0, 0 );
 
@@ -18669,7 +18670,7 @@ oyConversion_s   * oyConversion_CreateBasic (
     if(error)
       WARNc1_S( "could not add  filter: %s\n", "//colour" );
 
-    error = oyConversion_OutputAdd( s, output );
+    error = oyConversion_OutputAdd( s, 0, output );
   }
 
   if(error)
@@ -18683,11 +18684,12 @@ oyConversion_s   * oyConversion_CreateBasic (
  *  @brief   initialise from a input image for later adding more filters
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/07/07
  *  @since   2008/07/07 (Oyranos: 0.1.8)
+ *  @date    2009/02/17
  */
 oyConversion_s   * oyConversion_CreateInput (
                                        oyImage_s         * input,
+                                       const char        * filter_registration,
                                        oyObject_s          object )
 {
   oyConversion_s * s = oyConversion_New_( object );
@@ -18697,7 +18699,9 @@ oyConversion_s   * oyConversion_CreateInput (
 
   if(error <= 0)
   {
-    filter = oyFilter_New( "//image/root", 0,0, 0 );
+    if(!filter_registration)
+      filter_registration = "//image/root";
+    filter = oyFilter_New( filter_registration, 0,0, 0 );
     s->input = oyFilterNode_Create( filter, s->oy_ );
     oyFilter_Release( &filter );
 
@@ -18948,10 +18952,11 @@ int                oyConversion_FilterAdd (
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/06 (Oyranos: 0.1.8)
- *  @date    2008/07/06
+ *  @date    2009/02/17
  */
 int                oyConversion_OutputAdd (
                                        oyConversion_s    * conversion,
+                                       const char        * filter_registration,
                                        oyImage_s         * output )
 {
   oyConversion_s * s = conversion;
@@ -18962,7 +18967,10 @@ int                oyConversion_OutputAdd (
 
   if(error <= 0)
   {
-    filter = oyFilter_New( "//image/output", 0,0, 0);
+    if(!filter_registration)
+      filter_registration = "//image/output";
+
+    filter = oyFilter_New( filter_registration, 0,0, 0);
 
     if(error <= 0)
       error = oyConversion_FilterAdd( conversion, filter );
@@ -19018,7 +19026,7 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
   oyFilter_s * filter = 0;
   oyImage_s * image = 0;
   oyArray2d_s * array = 0;
-  int error = 0, result;
+  int error = 0, result, l_error = 0;
 
   /* conversion->out_ has to be linear, so we access only the first socket */
   plug = conversion->out_->plugs[0];
@@ -19035,8 +19043,8 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
                                                           &array );
   }
 
-  if(error <= 0)
-    error = oyArray2d_Release( &array );
+  if(error != 0)
+    l_error = oyArray2d_Release( &array ); OY_ERR
 
   /* @todo write data back to image in case we obtained copies only */
 

@@ -2568,8 +2568,9 @@ oyConversion_s  *  oyConversion_CreateBasic (
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
-oyConversion_s  *  oyConversion_CreateInput (
+oyConversion_s   * oyConversion_CreateInput (
                                        oyImage_s         * input,
+                                       const char        * filter_registration,
                                        oyObject_s          object );
 oyConversion_s  *  oyConversion_Copy ( oyConversion_s    * conversion,
                                        oyObject_s          object );
@@ -2582,6 +2583,7 @@ int                oyConversion_FilterAdd (
                                        oyFilter_s        * filter );
 int                oyConversion_OutputAdd (
                                        oyConversion_s    * conversion,
+                                       const char        * filter_registration,
                                        oyImage_s         * input );
 int                oyConversion_Run  ( oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access,

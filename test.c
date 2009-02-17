@@ -53,57 +53,6 @@ main(int argc, char** argv)
   uint32_t size = 0;
   int error = 0;
 
-#if 0
-  int count = 0;
-  char ** profiles = 0,
-       ** texts = 0,
-        * text = 0;
-  oyProfiles_s * iccs, * patterns;
-  oyProfile_s * profile, * temp_prof;
-  oyCMMInfo_s * cmm_info = 0;
-
-  profiles = oyProfileListGet ( 0, &size, malloc );
-  for( i = 0; i < (int) size; ++i )
-    printf( "%d: %s\n", i, profiles[i]);
-
-  oyStringListRelease_( &profiles, size, free );
-
-  profile = oyProfile_FromSignature( icSigInputClass,
-                                        oySIGNATURE_CLASS, 0 );
-  patterns = oyProfiles_MoveIn( 0, &profile, -1 );
-  profile = oyProfile_FromSignature( icSigDisplayClass,
-                                        oySIGNATURE_CLASS, 0 );
-  patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
-  profile = oyProfile_FromSignature( icSigOutputClass,
-                                        oySIGNATURE_CLASS, 0 );
-  patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
-  profile = oyProfile_FromSignature( icSigColorSpaceClass,
-                                        oySIGNATURE_CLASS, 0 );
-  patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
-
-  iccs = oyProfiles_Create( patterns, 0 );
-
-  size = oyProfiles_Count(iccs);
-  for( i = 0; i < size; ++i)
-  {
-    temp_prof = oyProfiles_Get( iccs, i );
-    printf("%d: \"%s\" %s\n", i,
-                             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
-                             oyProfile_GetFileName(temp_prof, 0));
-    oyProfile_Release( &temp_prof );
-  }
-
-  texts = oyCMMsGetNames_(&count, 0 ,0 );
-  for( i = 0; i < count; ++i)
-  {
-    cmm_info = oyCMMGetInfo_( texts[i] );
-    text = oyCMMInfoPrint_( cmm_info );
-    printf("%d: \"%s\": %s\n", i, texts[i], text );
-  }
-  oyStringListRelease_( &texts, count, free );
-#endif
-
-
   w = 7;
   h = 32;
   size = sizeof(double)*w*h*3;
@@ -117,8 +66,6 @@ main(int argc, char** argv)
   image_in = oyImage_Create( w, h, d, OY_TYPE_123_DBL, prof, 0 );
   image_out = oyImage_Create( w, h, dest, OY_TYPE_123_DBL, prof, 0 );
   conversion = oyConversion_CreateBasic( image_in, image_out, 0, 0 );
-  oyImage_Release( &image_in );
-  oyImage_Release( &image_out );
   oyProfile_Release( &prof );
   /* create a very simple pixel iterator */
   pixel_access = oyPixelAccess_Create( 0,0,
@@ -168,12 +115,12 @@ main(int argc, char** argv)
       fprintf( stdout, "%.01f %.01f %.01f\n", p[i+0], p[i+1], p[i+2] );
 
     x += 2;
-    if(x >= w)
+    /*if(x >= w)
     {
       pixel_access->start_xy[0] = 0;
       pixel_access->start_xy[1] = ++y;
       x = 0;
-    }
+    }*/
   }
 
 
@@ -191,7 +138,25 @@ main(int argc, char** argv)
     oyWriteMemToFile_( "test_dbg.icc", ptr, size );
 
   oyConversion_Release( &conversion );
+
+
+  conversion = oyConversion_CreateInput ( image_in, 0, 0 );
+
+  filter = oyFilter_New( "//colour/icc", 0,0, 0 );
+
+  error = oyConversion_FilterAdd( conversion, filter );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//colour" );
+  
+  error = oyConversion_OutputAdd( conversion, 0, image_out );
+
+  result = oyConversion_Run( conversion, pixel_access, 0 );
+
+  oyImage_Release( &image_in );
+  oyImage_Release( &image_out );
   oyPixelAccess_Release( &pixel_access );
+
+
 
   return 0;
 }
