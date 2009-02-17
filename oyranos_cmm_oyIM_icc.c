@@ -425,7 +425,7 @@ int          oyIMFilterScan          ( oyPointer           data,
       error = !dso_handle;
 
       if(error)
-        WARNc_S(dlerror());
+        WARNc2_S("\n  %s:\n  \"%s\"", lib_name, dlerror() );
     }
 
     /* open the module */
@@ -443,7 +443,7 @@ int          oyIMFilterScan          ( oyPointer           data,
       error = !cmm_info;
 
       if(error)
-        WARNc_S(dlerror());
+        WARNc2_S("\n  %s:\n  \"%s\"", lib_name, dlerror() );
 
       if(!error)
         if(oyCMMapi_Check_( cmm_info->api ))
