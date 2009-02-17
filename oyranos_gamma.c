@@ -183,26 +183,26 @@ int main( int argc , char** argv )
     {
       char * text = 0;
       uint32_t n = 0, i;
-      oyConfigs_s * instruments = 0;
+      oyConfigs_s * devices = 0;
       oyConfig_s * c = 0;
 
-      error = oyInstrumentsGet( 0, "monitor", 0, &instruments );
-      n = oyConfigs_Count( instruments );
+      error = oyDevicesGet( 0, "monitor", 0, &devices );
+      n = oyConfigs_Count( devices );
       if(!error)
       {
         for(i = 0; i < n; ++i)
         {
-          c = oyConfigs_Get( instruments, i );
-          error = oyInstrumentGetInfo( c, oyNAME_NICK, 0, &text, 0 );
+          c = oyConfigs_Get( devices, i );
+          error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
           printf("\"%s\" ", text? text:"???");
-          error = oyInstrumentGetInfo( c, oyNAME_NAME, 0, &text, 0 );
+          error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
           printf("%s\n", text? text:"???");
 
           if(text)
             free( text );
         }
       }
-      oyConfigs_Release( &instruments );
+      oyConfigs_Release( &devices );
     }
 
     /* make shure the display name is correct including the screen */

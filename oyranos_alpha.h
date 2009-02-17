@@ -756,7 +756,7 @@ typedef struct {
   e.g. "shared/freedesktop.org/colour/config.monitor.xorg/1/manufacturer=EIZO"*/
   oyOptions_s        * db;
   /** These are the backend core properties, the ones to identify the 
-   *  instrument and store in DB. They must be filled by the backend.
+   *  device and store in DB. They must be filled by the backend.
   e.g. "shared/freedesktop.org/colour/config.monitor.xorg/manufacturer=EIZO" */
   oyOptions_s        * backend_core;
   /** Additional informations from backends, with non identification purpose,
@@ -789,14 +789,14 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_ClearDBData  ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
-               oyConfig_GetDB        ( oyConfig_s        * instrument,
+               oyConfig_GetDB        ( oyConfig_s        * device,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
                oyConfig_EraseFromDB  ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
-               oyConfig_Compare      ( oyConfig_s        * instrument,
+               oyConfig_Compare      ( oyConfig_s        * device,
                                        oyConfig_s        * pattern,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
@@ -843,9 +843,9 @@ OYAPI int  OYEXPORT
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object );
 OYAPI int  OYEXPORT
-               oyConfigs_FromInstrumentClass (
-                                       const char        * instrument_type,
-                                       const char        * instrument_class,
+               oyConfigs_FromDeviceClass (
+                                       const char        * device_type,
+                                       const char        * device_class,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object );
@@ -1134,40 +1134,40 @@ char   **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
 
 OYAPI int  OYEXPORT
-           oyInstrumentsGet          ( const char        * instrument_type,
-                                       const char        * instrument_class,
+           oyDevicesGet              ( const char        * device_type,
+                                       const char        * device_class,
                                        oyOptions_s       * options,
-                                       oyConfigs_s      ** instruments );
+                                       oyConfigs_s      ** devices );
 OYAPI int  OYEXPORT
-           oyInstrumentGet           ( const char        * instrument_type,
-                                       const char        * instrument_class,
-                                       const char        * instrument_name,
+           oyDeviceGet               ( const char        * device_type,
+                                       const char        * device_class,
+                                       const char        * device_name,
                                        oyOptions_s       * options,
-                                       oyConfig_s       ** instrument );
+                                       oyConfig_s       ** device );
 OYAPI int  OYEXPORT
-           oyInstrumentSetup         ( oyConfig_s        * instrument );
+           oyDeviceSetup             ( oyConfig_s        * device );
 OYAPI int  OYEXPORT
-           oyInstrumentUnset         ( oyConfig_s        * instrument );
+           oyDeviceUnset             ( oyConfig_s        * device );
 OYAPI int  OYEXPORT
-           oyInstrumentGetInfo       ( oyConfig_s        * instrument,
+           oyDeviceGetInfo           ( oyConfig_s        * device,
                                        oyNAME_e            type,
                                        uint32_t            flags,
                                        char             ** info_text,
                                        oyAlloc_f           allocateFunc );
 OYAPI int  OYEXPORT
-           oyInstrumentBackendCall   ( oyConfig_s        * instrument,
+           oyDeviceBackendCall       ( oyConfig_s        * device,
                                        oyOptions_s       * options );
 OYAPI int  OYEXPORT
-           oyInstrumentSetProfile    ( oyConfig_s        * instrument,
+           oyDeviceSetProfile        ( oyConfig_s        * device,
                                        const char        * profile_name );
 OYAPI int  OYEXPORT
-           oyInstrumentGetProfile    ( oyConfig_s        * instrument,
+           oyDeviceGetProfile        ( oyConfig_s        * device,
                                        oyProfile_s      ** profile );
 OYAPI int  OYEXPORT
-           oyInstrumentAskProfile    ( oyConfig_s        * instrument,
+           oyDeviceAskProfile        ( oyConfig_s        * device,
                                        oyProfile_s      ** profile );
 OYAPI int  OYEXPORT
-           oyInstrumentProfileFromDB ( oyConfig_s        * instrument,
+           oyDeviceProfileFromDB     ( oyConfig_s        * device,
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc );
 

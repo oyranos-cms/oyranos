@@ -546,7 +546,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CMM_API5_S: text = "oyCMMapi5_s MetaFilter"; break;
     case oyOBJECT_CMM_API6_S: text = "oyCMMapi6_s Context convertor"; break;
     case oyOBJECT_CMM_API7_S: text = "oyCMMapi7_s Filter run"; break;
-    case oyOBJECT_CMM_API8_S: text = "oyCMMapi8_s Instruments"; break;
+    case oyOBJECT_CMM_API8_S: text = "oyCMMapi8_s Devices"; break;
     case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
     case oyOBJECT_CMM_API_FILTERS_S: text="oyCMMapiFilters_s Filter list";break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
@@ -3424,7 +3424,7 @@ oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
  *
  *  CMM's in Oyranos are designed to be plugable into a framework of arbitrary
  *  data formats and processing. On the user side the oyFilterNode_s and
- *  Instrument API's are visible endities. They handle user requests to map and
+ *  Device API's are visible endities. They handle user requests to map and
  *  transform them to instructions for plugable backend modules. 
  *
  *  \b Meta \b Backends:
@@ -3599,7 +3599,7 @@ digraph Backends {
  *  which request incompatible contexts from a oyCMMapi4_s structure.
  *
  *  The oyCMMapi8_s provides a general interface to backends to export data,
- *  like additional filter input data and options. The @ref instruments_handling
+ *  like additional filter input data and options. The @ref devices_handling
  *  deployes these backends.
  *
  *  @dot
@@ -7396,7 +7396,7 @@ OYAPI oyConfig_s * OYEXPORT
  *  @brief   search a configuration in the DB for a configuration from backend
  *  @memberof oyConfig_s
  *
- *  @param[in]     instrument          the to be checked configuration from
+ *  @param[in]     device              the to be checked configuration from
  *                                     oyConfigs_FromPattern_f
  *  @param[out]    rank_value          the number of matches between config and
  *                                     pattern, -1 means invalid
@@ -7408,17 +7408,17 @@ OYAPI oyConfig_s * OYEXPORT
  *  @date    2009/01/26
  */
 OYAPI int  OYEXPORT
-               oyConfig_GetDB        ( oyConfig_s        * instrument,
+               oyConfig_GetDB        ( oyConfig_s        * device,
                                        int32_t           * rank_value )
 {
-  int error = !instrument;
+  int error = !device;
   int rank = 0, max_rank = 0, i, n;
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0, * max_config = 0;
 
   if(error <= 0)
   {
-    error = oyConfigs_FromDB( instrument->registration, &configs, 0 );
+    error = oyConfigs_FromDB( device->registration, &configs, 0 );
 
     n = oyConfigs_Count( configs );
 
@@ -7426,7 +7426,7 @@ OYAPI int  OYEXPORT
     {
       config = oyConfigs_Get( configs, i );
 
-      error = oyConfig_Compare( instrument, config, &rank );
+      error = oyConfig_Compare( device, config, &rank );
       DBG_PROG1_S("rank: %d\n", rank);
       if(max_rank < rank)
       {
@@ -7444,8 +7444,8 @@ OYAPI int  OYEXPORT
 
   if(error <= 0 && max_config)
   {
-    oyOptions_Release( &instrument->db );
-    instrument->db = oyOptions_Copy( max_config->db, 0 );
+    oyOptions_Release( &device->db );
+    device->db = oyOptions_Copy( max_config->db, 0 );
     oyConfig_Release( &max_config );
   }
 
@@ -7762,7 +7762,7 @@ OYAPI int  OYEXPORT
  *  @brief   check for matching to a given pattern
  *  @memberof oyConfig_s
  *
- *  @param[in]     backend_instrument  the to be checked configuration from
+ *  @param[in]     backend_device      the to be checked configuration from
  *                                     oyConfigs_FromPattern_f
  *  @param[in]     db_pattern          the to be compared configuration from
  *                                     elsewhere
@@ -7775,11 +7775,11 @@ OYAPI int  OYEXPORT
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  *  @date    2009/01/26
  */
-int            oyConfig_Compare      ( oyConfig_s        * backend_instrument,
+int            oyConfig_Compare      ( oyConfig_s        * backend_device,
                                        oyConfig_s        * db_pattern,
                                        int32_t           * rank_value )
 {
-  int error = !backend_instrument || !db_pattern;
+  int error = !backend_device || !db_pattern;
   int domain_n, pattern_n, i, j, k,
       rank = 0,
       d_rank = 0,
@@ -7789,20 +7789,20 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_instrument,
   char * d_opt = 0, * d_val = 0,
        * p_opt = 0, * p_val = 0;
   oyConfig_s * pattern = db_pattern,
-             * instrument = backend_instrument;
+             * device = backend_device;
 
   if(error <= 0)
   {
-    domain_n = oyOptions_Count( instrument->backend_core );
+    domain_n = oyOptions_Count( device->backend_core );
     pattern_n = oyOptions_Count( pattern->db );
     for(i = 0; i < domain_n; ++i)
     {
-      d = oyOptions_Get( instrument->backend_core, i );
+      d = oyOptions_Get( device->backend_core, i );
       d_opt = oyFilterRegistrationToText( d->registration, oyFILTER_REG_MAX, 0);
       d_val = oyOption_GetValueText( d, oyAllocateFunc_ );
       has_opt = 0;
 
-      d_rank = oyConfig_DomainRank( instrument );
+      d_rank = oyConfig_DomainRank( device );
       if(d_rank > 0 && d_val && d_opt)
       for( j = 0; j < pattern_n; ++j )
       {
@@ -7819,14 +7819,14 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_instrument,
           /** Option name is equal and and value matches : increase rank value*/
           if(p_val && oyStrcmp_( d_val, p_val ) == 0)
           {
-            if(instrument->rank_map)
+            if(device->rank_map)
             {
               k = 0;
-              while(instrument->rank_map[k].key)
+              while(device->rank_map[k].key)
               {
-                if(oyStrcmp_(instrument->rank_map[k].key, d_opt) == 0)
+                if(oyStrcmp_(device->rank_map[k].key, d_opt) == 0)
                 {
-                  rank += instrument->rank_map[k].match_value;
+                  rank += device->rank_map[k].match_value;
                   break;
                 }
                 ++k;
@@ -7835,14 +7835,14 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_instrument,
               ++rank;
 
             oyFree_m_(p_val);
-          } else if(instrument->rank_map)
+          } else if(device->rank_map)
           {
             k = 0;
-            while(instrument->rank_map[k].key)
+            while(device->rank_map[k].key)
             {
-              if(oyStrcmp_(instrument->rank_map[k].key, d_opt) == 0)
+              if(oyStrcmp_(device->rank_map[k].key, d_opt) == 0)
               {
-                rank += instrument->rank_map[k].none_match_value;
+                rank += device->rank_map[k].none_match_value;
                 break;
               }
               ++k;
@@ -7856,14 +7856,14 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_instrument,
         oyOption_Release( &p );
       }
 
-      if(!has_opt && instrument->rank_map)
+      if(!has_opt && device->rank_map)
       {
         k = 0;
-          while(instrument->rank_map[k].key)
+          while(device->rank_map[k].key)
           {
-            if(oyStrcmp_(instrument->rank_map[k].key, d_opt) == 0)
+            if(oyStrcmp_(device->rank_map[k].key, d_opt) == 0)
             {
-              rank += instrument->rank_map[k].not_found_value;
+              rank += device->rank_map[k].not_found_value;
               break;
             }
             ++k;
@@ -8127,7 +8127,7 @@ OYAPI oyConfigs_s * OYEXPORT
  *  programmers. Otherwise the calls are pure convention and depend on the usage
  *  and agreement of the partners.
  *
- *  For the convention to call to colour instruments
+ *  For the convention to call to colour devices
  *  @see oyX1Configs_FromPatternUsage().
  *
  *  @param[in]     registration_domain                     the backend to call to
@@ -8203,26 +8203,26 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfigs_FromInstrumentClass
- *  @brief   ask a backend for instrument informations or other direct calls
+/** Function oyConfigs_FromDeviceClass
+ *  @brief   ask a backend for device informations or other direct calls
  *  @memberof oyConfigs_s
  *
- *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
+ *  @param[in]     device_type     the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to "colour" (optional)
- *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
+ *  @param[in]     device_class    the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
  *  @param[in]     options             options to pass to the backend, for zero
  *                                     the usage instructions are requested,
- *                                     a option "instrument_name" can be used 
+ *                                     a option "device_name" can be used 
  *                                     as filter
- *  @param[out]    instruments         the instruments
+ *  @param[out]    devices         the devices
  *  @param[in]     object              the optional object
  *  @return                            0 - good, >= 1 - error
  *
  *  @verbatim
     // pass empty options to the backend to get a usage message
     oyOptions_s * options = 0;
-    int error = oyConfig_FromInstrumentClass( "colour", "monitor",
+    int error = oyConfig_FromDeviceClass( "colour", "monitor",
                                               options, 0, 0 );
     @endverbatim
  *
@@ -8231,54 +8231,54 @@ OYAPI int  OYEXPORT
  *  @date    2009/01/30
  */
 OYAPI int  OYEXPORT
-             oyConfigs_FromInstrumentClass (
-                                       const char        * instrument_type,
-                                       const char        * instrument_class,
+             oyConfigs_FromDeviceClass (
+                                       const char        * device_type,
+                                       const char        * device_class,
                                        oyOptions_s       * options,
-                                       oyConfigs_s      ** instruments,
+                                       oyConfigs_s      ** devices,
                                        oyObject_s          object )
 {
-  int error = !instrument_class || !instrument_class[0];
-  oyConfig_s * instrument = 0;
+  int error = !device_class || !device_class[0];
+  oyConfig_s * device = 0;
   oyConfigs_s * configs = 0;
   int i, j, j_n;
   uint32_t count = 0,
          * rank_list = 0;
   char ** texts = 0,
-        * instrument_class_registration = 0;
+        * device_class_registration = 0;
   const char * tmp = 0,
-             * instrument_name = 0;
+             * device_name = 0;
 
   if(error > 0)
   {
-    WARNc_S( "No instrument_class argument provided. Give up" );
+    WARNc_S( "No device_class argument provided. Give up" );
     return 0;
   }
 
-  /** 1. obtain detailed and expensive instrument informations */
+  /** 1. obtain detailed and expensive device informations */
   if(options)
   {
     options = oyOptions_Copy( options, 0 );
-    instrument_name = oyOptions_FindString( options, "instrument_name", 0 );
+    device_name = oyOptions_FindString( options, "device_name", 0 );
   }
 
-  /** 1.2.1 build a instrument class registration string */
+  /** 1.2.1 build a device class registration string */
   if(error <= 0)
   {
-    instrument_class_registration = oyInstrumentRegistrationCreate_(
-                                          instrument_type, instrument_class,
-                                          instrument_name,
-                                          instrument_class_registration );
-    error = !instrument_class_registration;
+    device_class_registration = oyDeviceRegistrationCreate_(
+                                          device_type, device_class,
+                                          device_name,
+                                          device_class_registration );
+    error = !device_class_registration;
   }
 
-  /** 1.2.2 get all instrument class backend names */
+  /** 1.2.2 get all device class backend names */
   if(error <= 0)
-    error = oyConfigDomainList  ( instrument_class_registration, &texts, &count,
+    error = oyConfigDomainList  ( device_class_registration, &texts, &count,
                                   &rank_list, 0 );
 
-  if(instruments && !*instruments)
-    *instruments = oyConfigs_New( object );
+  if(devices && !*devices)
+    *devices = oyConfigs_New( object );
 
   /** 1.3 ask each backend */
   for( i = 0; i < count; ++i )
@@ -8292,43 +8292,43 @@ OYAPI int  OYEXPORT
     j_n = oyConfigs_Count( configs );
     for( j = 0; j < j_n; ++j )
     {
-      instrument = oyConfigs_Get( configs, j );
+      device = oyConfigs_Get( configs, j );
 
-      if(instrument_name)
+      if(device_name)
       {
-        /** 1.3.1.1 Compare with the display_name with the instrument_name option
-         *          and collect the matching instruments. */
-        tmp = oyConfig_FindString( instrument, "instrument_name", 0 );
-        if(oyStrcmp_( tmp, instrument_name ) == 0)
-          oyConfigs_MoveIn( *instruments, &instrument, -1 );
+        /** 1.3.1.1 Compare with the display_name with the device_name option
+         *          and collect the matching devices. */
+        tmp = oyConfig_FindString( device, "device_name", 0 );
+        if(oyStrcmp_( tmp, device_name ) == 0)
+          oyConfigs_MoveIn( *devices, &device, -1 );
       } else
-        /** 1.3.1.2 ... or collect all instrument configurations */
-        oyConfigs_MoveIn( *instruments, &instrument, -1 );
+        /** 1.3.1.2 ... or collect all device configurations */
+        oyConfigs_MoveIn( *devices, &device, -1 );
 
-      oyConfig_Release( &instrument );
+      oyConfig_Release( &device );
     }
 
     oyConfigs_Release( &configs );
   }
 
-  if(instruments)
-    j_n = oyConfigs_Count( *instruments );
+  if(devices)
+    j_n = oyConfigs_Count( *devices );
   else
     j_n = 0;
 
   for( j = 0; j < j_n; ++j )
   {
-    instrument = oyConfigs_Get( *instruments, j );
+    device = oyConfigs_Get( *devices, j );
 
     /** The basic call on how to obtain the configuration is added here as
      *  the objects name. "properties" and "list" are known. */
     if(oyOptions_FindString( options, "properties", 0 ) ||
        oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
-      oyObject_SetName( instrument->oy_, "properties", oyNAME_NAME );
+      oyObject_SetName( device->oy_, "properties", oyNAME_NAME );
     else if(oyOptions_FindString( options, "list", 0 ))
-      oyObject_SetName( instrument->oy_, "list", oyNAME_NAME );
+      oyObject_SetName( device->oy_, "list", oyNAME_NAME );
 
-    oyConfig_Release( &instrument );
+    oyConfig_Release( &device );
   }
 
   oyOptions_Release( &options );
@@ -8722,34 +8722,34 @@ OYAPI int  OYEXPORT
 /** @} *//* misc */
 
 
-/** \addtogroup instruments_handling Instrument API
+/** \addtogroup devices_handling Device API
  *
- *  Instruments are a special form of configurations. Their access is grouped
- *  for effective performance. Known instruments are queried with
- *  oyInstrumentsGet().
- *  A single instrument can be obtained by oyInstrumentGet(). The \a
- *  instrument_type argument defaults to "colour" and can be omitted for this
- *  group. The \a instrument_class argument specifies a subgroup, e.g. 
+ *  Devices are a special form of configurations. Their access is grouped
+ *  for effective performance. Known devices are queried with
+ *  oyDevicesGet().
+ *  A single device can be obtained by oyDeviceGet(). The \a
+ *  device_type argument defaults to "colour" and can be omitted for this
+ *  group. The \a device_class argument specifies a subgroup, e.g. 
  *  "monitor".
  *
  *  All other functions return a handle to the device. With this handle it is
- *  possible to get informations (oyInstrumentGetInfo()), query it's current,
- *  possibly remote profile (strong oyInstrumentGetProfile() /
- *  weak oyInstrumentAskProfile()) set the profile persistent
- *  (oyInstrumentSetProfile()) or query the persitent stored profile
- *  (oyInstrumentProfileFromDB()).
+ *  possible to get informations (oyDeviceGetInfo()), query it's current,
+ *  possibly remote profile (strong oyDeviceGetProfile() /
+ *  weak oyDeviceAskProfile()) set the profile persistent
+ *  (oyDeviceSetProfile()) or query the persitent stored profile
+ *  (oyDeviceProfileFromDB()).
  *
  *  @{
  */
 
 
 /** @internal
- *  Function oyInstrumentRegistrationCreate_
- *  @brief   combine a instrument registration
+ *  Function oyDeviceRegistrationCreate_
+ *  @brief   combine a device registration
  *
- *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
+ *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to "colour" (optional)
- *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
+ *  @param[in]     device_class        the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
  *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
  *  @param[in]     old_text            string to reuse
@@ -8759,24 +8759,24 @@ OYAPI int  OYEXPORT
  *  @since   2009/01/30 (Oyranos: 0.1.10)
  *  @date    2009/01/30
  */
-char * oyInstrumentRegistrationCreate_(const char        * instrument_type,
-                                       const char        * instrument_class,
+char * oyDeviceRegistrationCreate_   ( const char        * device_type,
+                                       const char        * device_class,
                                        const char        * key,
                                        char              * old_text )
 {
   char * text = old_text;
-  const char * instrument_type_ = instrument_type;
+  const char * device_type_ = device_type;
 
-  if(!instrument_type_)
-    instrument_type_ = "colour";
+  if(!device_type_)
+    device_type_ = "colour";
 
   STRING_ADD( text, "//" );
-  STRING_ADD( text, instrument_type_ );
+  STRING_ADD( text, device_type_ );
   STRING_ADD( text, "/config" );
-  if(instrument_class)
+  if(device_class)
   {
     STRING_ADD( text, "." );
-    STRING_ADD( text, instrument_class );
+    STRING_ADD( text, device_class );
   }
   if(key)
   {
@@ -8788,13 +8788,13 @@ char * oyInstrumentRegistrationCreate_(const char        * instrument_type,
 }
 
 /** @internal
- *  Function oyOptions_SetInstrumentTextKey_
- *  @brief   set a instrument option
+ *  Function oyOptions_SetDeviceTextKey_
+ *  @brief   set a device option
  *
- *  @param[in/out] options             options for the instrument
- *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
+ *  @param[in/out] options             options for the device
+ *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to "colour" (optional)
- *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
+ *  @param[in]     device_class        the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
  *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
  *  @param[in]     value               value of type ::oyVAL_STRING
@@ -8804,16 +8804,16 @@ char * oyInstrumentRegistrationCreate_(const char        * instrument_type,
  *  @since   2009/01/30 (Oyranos: 0.1.10)
  *  @date    2009/01/30
  */
-int    oyOptions_SetInstrumentTextKey_(oyOptions_s       * options,
-                                       const char        * instrument_type,
-                                       const char        * instrument_class,
+int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
+                                       const char        * device_type,
+                                       const char        * device_class,
                                        const char        * key,
                                        const char        * value )
 {
   char * text = 0;
   int error = 0;
 
-  text = oyInstrumentRegistrationCreate_( instrument_type, instrument_class,
+  text = oyDeviceRegistrationCreate_( device_type, device_class,
                                           key, text );
   error = oyOptions_SetFromText( options, text, value, OY_CREATE_NEW );
 
@@ -8824,9 +8824,9 @@ int    oyOptions_SetInstrumentTextKey_(oyOptions_s       * options,
 
 /** @internal
  *  Function oyOptions_SetRegistrationTextKey_
- *  @brief   set a instrument option
+ *  @brief   set a device option
  *
- *  @param[in/out] options             options for the instrument
+ *  @param[in/out] options             options for the device
  *  @param[in]     registration        the registration string
  *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
  *  @param[in]     value               value of type ::oyVAL_STRING
@@ -8857,13 +8857,13 @@ int    oyOptions_SetRegistrationTextKey_(
 }
 
 
-/** Function oyInstrumentsGet
- *  @brief   get all instruments matching to a instrument class and type
+/** Function oyDevicesGet
+ *  @brief   get all devices matching to a device class and type
  *
  *  @verbatim
     // get all monitors
     oyConfig_s * monitors = 0;
-    int error = oyInstrumentsGet( 0, "monitor", 0, &monitors );
+    int error = oyDevicesGet( 0, "monitor", 0, &monitors );
     // see how many are included
     int n = oyConfigs_Count( monitors );
     // release them
@@ -8880,7 +8880,7 @@ int    oyOptions_SetRegistrationTextKey_(
 
     error = oyOptions_SetFromText( options, "//colour/config/properties",
                                    "true", OY_CREATE_NEW );
-    error = oyInstrumentsGet( 0, "monitor", 0, &monitors );
+    error = oyDevicesGet( 0, "monitor", 0, &monitors );
     oyOptions_Release( &options );
 
     // see how many are included
@@ -8890,12 +8890,12 @@ int    oyOptions_SetRegistrationTextKey_(
     oyConfigs_Release( &monitors );
     @endverbatim
  *
- *  @param[in]     instrument_type     the instrument type ::oyFILTER_REG_TYPE,
+ *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to "colour" (optional)
- *  @param[in]     instrument_class    the instrument class, e.g. "monitor",
+ *  @param[in]     device_class        the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
- *  @param[in]     options             options for the instrument
- *  @param[out]    instruments         the found instruments
+ *  @param[in]     options             options for the device
+ *  @param[out]    devices             the found devices
  *  @return                            0 - good, >= 1 - error, <= -1 unknown
  *
  *  @version Oyranos: 0.1.10
@@ -8903,12 +8903,12 @@ int    oyOptions_SetRegistrationTextKey_(
  *  @date    2009/02/02
  */
 OYAPI int  OYEXPORT
-           oyInstrumentsGet          ( const char        * instrument_type,
-                                       const char        * instrument_class,
+           oyDevicesGet              ( const char        * device_type,
+                                       const char        * device_class,
                                        oyOptions_s       * options,
-                                       oyConfigs_s      ** instruments )
+                                       oyConfigs_s      ** devices )
 {
-  int error = !instrument_class || !instrument_class[0];
+  int error = !device_class || !device_class[0];
   static char * num = 0;
 
   if(error > 0)
@@ -8920,52 +8920,52 @@ OYAPI int  OYEXPORT
   if(!num)
     oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
 
-  /** 1. obtain detailed and expensive instrument informations */
+  /** 1. obtain detailed and expensive device informations */
 
   if(!options)
   {
     options = oyOptions_New( 0 );
     /** 1.1 add "list" call to backend arguments */
-    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
-                                             instrument_class,
+    error = oyOptions_SetDeviceTextKey_( options, device_type,
+                                             device_class,
                                              "list", "true" );
   }
 
   /** 1.2 ask each backend */
   if(error <= 0)
-    error = oyConfigs_FromInstrumentClass( instrument_type, instrument_class,
-                                           options, instruments, 0 );
+    error = oyConfigs_FromDeviceClass( device_type, device_class,
+                                           options, devices, 0 );
 
 
   return error;
 }
 
-/** Function oyInstrumentGet
- *  @brief   ask a backend for instrument informations or other direct calls
+/** Function oyDeviceGet
+ *  @brief   ask a backend for device informations or other direct calls
  *
  *  @verbatim
-    oyConfig_s * instrument = oyInstrumentGet( 0, "monitor", ":0.0", 0,
-                                               &instrument );
-    oyConfig_Release( &instrument );
+    oyConfig_s * device = oyDeviceGet( 0, "monitor", ":0.0", 0,
+                                               &device );
+    oyConfig_Release( &device );
     @endverbatim
  *
  *  @verbatim
     // pass empty options to the backend to get a usage message
     oyOptions_s * options = oyOptions_New( 0 );
-    oyInstrumentGet( "colour", "monitor", ":0.0", options, 0 );
+    oyDeviceGet( "colour", "monitor", ":0.0", options, 0 );
     @endverbatim
  *
- *  @param[in]     instrument_type     the instrument type, e.g. "colour",
+ *  @param[in]     device_type         the device type, e.g. "colour",
  *                                     defaults to "colour" (optional)
- *  @param[in]     instrument_class    registration ::oyFILTER_REG_APPLICATION
+ *  @param[in]     device_class        registration ::oyFILTER_REG_APPLICATION
  *                                     part, e.g. "monitor", mandatory
- *  @param[in]     instrument_name     the instrument name as returned by
+ *  @param[in]     device_name         the device name as returned by
  *                                     oyConfigs_FromPattern_f, mandatory,
                                        ::oyFILTER_REG_OPTION
  *  @param[in]     options             options to pass to the backend, for zero
  *                                     the verbose and expensive "properties"
  *                                     call is assumed
- *  @param[out]    instrument          the returned instrument
+ *  @param[out]    device              the returned device
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -8973,26 +8973,26 @@ OYAPI int  OYEXPORT
  *  @date    2009/02/09
  */
 OYAPI int  OYEXPORT
-           oyInstrumentGet           ( const char        * instrument_type,
-                                       const char        * instrument_class,
-                                       const char        * instrument_name,
+           oyDeviceGet               ( const char        * device_type,
+                                       const char        * device_class,
+                                       const char        * device_name,
                                        oyOptions_s       * options,
-                                       oyConfig_s       ** instrument )
+                                       oyConfig_s       ** device )
 {
-  int error = !instrument_name || !instrument_name[0] ||
-              !instrument_class || !instrument_class[0];
-  oyConfigs_s * instruments = 0;
+  int error = !device_name || !device_name[0] ||
+              !device_class || !device_class[0];
+  oyConfigs_s * devices = 0;
   oyConfig_s * s = 0;
 
   if(error > 0)
   {
-    WARNc2_S( "No instrument_name/instrument_class argument provided. Give up: %s/%s",
-              oyNoEmptyString_m_(instrument_name),
-              oyNoEmptyString_m_(instrument_class) );
+    WARNc2_S( "No device_name/device_class argument provided. Give up: %s/%s",
+              oyNoEmptyString_m_(device_name),
+              oyNoEmptyString_m_(device_class) );
     return 0;
   }
 
-  /** 1. obtain basic instrument informations */
+  /** 1. obtain basic device informations */
 
   if(!options)
   {
@@ -9000,44 +9000,44 @@ OYAPI int  OYEXPORT
     error = !options;
     /** 1.1 add "list" call to backend arguments */
     if(error <= 0)
-    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
-                                             instrument_class,
+    error = oyOptions_SetDeviceTextKey_( options, device_type,
+                                             device_class,
                                              "list", "true" );
   }
 
-  /** 1.1.2 set instrument filter */
+  /** 1.1.2 set device filter */
   if(error <= 0)
-    error = oyOptions_SetInstrumentTextKey_( options, instrument_type,
-                                             instrument_class,
-                                             "instrument_name",instrument_name);
+    error = oyOptions_SetDeviceTextKey_( options, device_type,
+                                             device_class,
+                                             "device_name",device_name);
 
-  /** 2. get the instrument */
-  error = oyConfigs_FromInstrumentClass( instrument_type, instrument_class,
-                                         options, &instruments, 0 );
+  /** 2. get the device */
+  error = oyConfigs_FromDeviceClass( device_type, device_class,
+                                         options, &devices, 0 );
 
-  s = oyConfigs_Get( instruments, 0 );
+  s = oyConfigs_Get( devices, 0 );
 
-  oyConfigs_Release( &instruments );
+  oyConfigs_Release( &devices );
 
 
-  /** 3. check for success of instrument detection */
+  /** 3. check for success of device detection */
   error = !s;
   if(error)
-    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name );
+    WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name );
 
-  if(instrument)
-    *instrument = s;
+  if(device)
+    *device = s;
   else
     oyConfig_Release( &s );
 
   return error;
 }
 
-/** Function oyInstrumentBackendCall
- *  @brief   get instrument answere from options
+/** Function oyDeviceBackendCall
+ *  @brief   get device answere from options
  *
- *  @param[in]     instrument          the instrument
- *  @param[in]     options             options for the instrument
+ *  @param[in]     device          the device
+ *  @param[in]     options             options for the device
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -9045,81 +9045,81 @@ OYAPI int  OYEXPORT
  *  @date    2009/02/02
  */
 OYAPI int  OYEXPORT
-               oyInstrumentBackendCall(oyConfig_s        * instrument,
+               oyDeviceBackendCall   ( oyConfig_s        * device,
                                        oyOptions_s       * options )
 {
-  int error = !instrument,
+  int error = !device,
       l_error = 0;
-  oyConfigs_s * instruments = 0;
+  oyConfigs_s * devices = 0;
   oyConfig_s * config = 0;
-  const char * instrument_name = 0;
+  const char * device_name = 0;
 
   if(error > 0)
   {
-    WARNc_S( "No instrument argument provided. Give up" );
+    WARNc_S( "No device argument provided. Give up" );
     return 0;
   }
 
 
   if(error <= 0)
   {
-    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+    device_name = oyConfig_FindString( device, "device_name", 0);
   }
 
   if(!options)
   {
-    /** 1. obtain detailed and expensive instrument informations for a
+    /** 1. obtain detailed and expensive device informations for a
      *     zero options argument. */
     options = oyOptions_New( 0 );
     l_error = !options; OY_ERR
     /** 1.1 add "properties" call to backend arguments */
     if(error <= 0)
     l_error = oyOptions_SetRegistrationTextKey_( options,
-                                                 instrument->registration,
+                                                 device->registration,
                                                  "properties", "true" ); OY_ERR
   }
 
-  /** 2. set instrument filter */
+  /** 2. set device filter */
   if(error <= 0)
     l_error = oyOptions_SetRegistrationTextKey_( options,
-                                      instrument->registration,
-                                      "instrument_name",instrument_name); OY_ERR
+                                      device->registration,
+                                      "device_name",device_name); OY_ERR
 
   /** 3. talk to the backend */
-  l_error = oyConfigs_FromDomain( instrument->registration, options,
-                                  &instruments, 0 ); OY_ERR
+  l_error = oyConfigs_FromDomain( device->registration, options,
+                                  &devices, 0 ); OY_ERR
 
-  if(!instruments)
+  if(!devices)
     return error;
 
-  config = oyConfigs_Get( instruments, 0 );
+  config = oyConfigs_Get( devices, 0 );
   /** 3.1 check for success */
   l_error = !config; OY_ERR
 
-  /** 4. copy results to the instrument */
+  /** 4. copy results to the device */
   if(error <= 0)
   {
     if(oyOptions_FindString( options, "properties", 0 ) ||
        oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
     {
-      oyOptions_Release( &instrument->backend_core );
-      instrument->backend_core = oyOptions_Copy( config->backend_core, 0 );
+      oyOptions_Release( &device->backend_core );
+      device->backend_core = oyOptions_Copy( config->backend_core, 0 );
     }
-    l_error = oyOptions_AppendOpts( instrument->data, config->data ); OY_ERR
+    l_error = oyOptions_AppendOpts( device->data, config->data ); OY_ERR
   } else
-    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name )
+    WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name )
 
-  oyConfigs_Release( &instruments );
+  oyConfigs_Release( &devices );
   oyConfig_Release( &config );
 
   return error;
 }
 
 
-/** Function oyInstrumentSetup
- *  @brief   activate the instrument using the stored configuration
+/** Function oyDeviceSetup
+ *  @brief   activate the device using the stored configuration
  *
- *  @param[in]     instrument          the instrument
+ *  @param[in]     device          the device
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -9127,53 +9127,53 @@ OYAPI int  OYEXPORT
  *  @date    2009/02/07
  */
 OYAPI int  OYEXPORT
-         oyInstrumentSetup           ( oyConfig_s        * instrument )
+         oyDeviceSetup               ( oyConfig_s        * device )
 {
-  int error = !instrument;
+  int error = !device;
   oyOptions_s * options = 0;
   oyProfile_s * p = 0;
   char * profile_name = 0;
-  const char * instrument_name = 0;
+  const char * device_name = 0;
 
   if(error > 0)
   {
-    WARNc_S( "No instrument argument provided. Give up" );
+    WARNc_S( "No device argument provided. Give up" );
     return 0;
   }
 
 
   if(error > 0)
   {
-    WARNc_S( "No instrument_name argument provided. Give up." );
+    WARNc_S( "No device_name argument provided. Give up." );
     return error;
   }
 
   {
-    /* 1. ask for the profile the instrument is setup with */
-    error = oyInstrumentAskProfile( instrument, &p );
+    /* 1. ask for the profile the device is setup with */
+    error = oyDeviceAskProfile( device, &p );
     if(p)
     {
       oyProfile_Release( &p );
-      /** We ignore a instrument, which already has its profile setup. */
+      /** We ignore a device, which already has its profile setup. */
       return error;
     }
 
-    /* 2. query the full instrument information */
-    error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
+    /* 2. query the full device information */
+    error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
-    /* 2.1 get instrument_name */
-    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+    /* 2.1 get device_name */
+    device_name = oyConfig_FindString( device, "device_name", 0);
 
-    /* 3. setup the instrument through the backend */
+    /* 3. setup the device through the backend */
     options = oyOptions_New( 0 );
     error = oyOptions_SetFromText( options, "//colour/config/setup",
                                    "true", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( options, "//colour/config/instrument_name",
-                                   instrument_name, OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/device_name",
+                                   device_name, OY_CREATE_NEW );
     error = oyOptions_SetFromText( options, "//colour/config/profile_name",
                                    profile_name, OY_CREATE_NEW );
     /* 3.1 send the query to a backend */
-    error = oyInstrumentBackendCall( instrument, options );
+    error = oyDeviceBackendCall( device, options );
 
     oyOptions_Release( &options );
     if(profile_name)
@@ -9183,71 +9183,71 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyInstrumentUnset
- *  @brief   unset the instrument profile
+/** Function oyDeviceUnset
+ *  @brief   unset the device profile
  *
  *  The function solely calls \a unset in the backend, e.g. unset graphic card
- *  luts and server stored profile. So pretty all instrument/server side 
+ *  luts and server stored profile. So pretty all device/server side 
  *  informatin should go away. \n
  *
- *  @param         instrument          the instrument
+ *  @param         device          the device
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/12 (Oyranos: 0.1.10)
  *  @date    2009/02/12
  */
-int      oyInstrumentUnset           ( oyConfig_s        * instrument )
+int      oyDeviceUnset               ( oyConfig_s        * device )
 {
-  int error = !instrument;
+  int error = !device;
   oyOptions_s * options = 0;
   oyProfile_s * p = 0;
   char * profile_name = 0;
-  const char * instrument_name = 0;
+  const char * device_name = 0;
 
   if(error > 0)
   {
-    WARNc_S( "No instrument argument provided. Give up" );
+    WARNc_S( "No device argument provided. Give up" );
     return 0;
   }
 
 
   if(error > 0)
   {
-    WARNc_S( "No instrument_name argument provided. Give up." );
+    WARNc_S( "No device_name argument provided. Give up." );
     return error;
   }
 
   {
-    /* 1. ask for the profile the instrument is setup with */
-    error = oyInstrumentAskProfile( instrument, &p );
+    /* 1. ask for the profile the device is setup with */
+    error = oyDeviceAskProfile( device, &p );
     if(p)
     {
       oyProfile_Release( &p );
-      /** We ignore a instrument, which already has its profile setup. */
+      /** We ignore a device, which already has its profile setup. */
       return error;
     }
 
-    /* 2. query the full instrument information */
-    error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
+    /* 2. query the full device information */
+    error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
-    /* 2.1 get instrument_name */
-    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+    /* 2.1 get device_name */
+    device_name = oyConfig_FindString( device, "device_name", 0);
 
-    /* 3. unset the instrument through the backend */
+    /* 3. unset the device through the backend */
     options = oyOptions_New( 0 );
     /** 3.1 set a general request */
     error = oyOptions_SetFromText( options, "//colour/config/unset",
                                    "true", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( options, "//colour/config/instrument_name",
-                                   instrument_name, OY_CREATE_NEW );
+    error = oyOptions_SetFromText( options, "//colour/config/device_name",
+                                   device_name, OY_CREATE_NEW );
 
     /** 3.2 send the query to a backend */
-    error = oyConfigs_FromDomain( instrument->registration, options, 0, 0 );
+    error = oyConfigs_FromDomain( device->registration, options, 0, 0 );
 
     oyOptions_Release( &options );
     /* 3.1 send the query to a backend */
-    error = oyInstrumentBackendCall( instrument, options );
+    error = oyDeviceBackendCall( device, options );
 
     oyOptions_Release( &options );
     if(profile_name)
@@ -9258,12 +9258,12 @@ int      oyInstrumentUnset           ( oyConfig_s        * instrument )
 }
 
 
-/** Function oyInstrumentGetInfo
- *  @brief   get all instruments matching to a instrument class and type
+/** Function oyDeviceGetInfo
+ *  @brief   get all devices matching to a device class and type
  *
  *  @verbatim
     // print all properties
-    int error = oyInstrumentGetInfo( instrument, oyNAME_DESCRIPTION, 0, &text,
+    int error = oyDeviceGetInfo( device, oyNAME_DESCRIPTION, 0, &text,
                                      malloc );
     char * list = text, * tmp = 0, * line = malloc(128);
     int even = 1;
@@ -9290,7 +9290,7 @@ int      oyInstrumentUnset           ( oyConfig_s        * instrument )
     if(text) free(text);
     @endverbatim
  *
- *  @param[in]     instrument          the instrument
+ *  @param[in]     device          the device
  *  @param[in]     type                influences the info_text output
  *                                     - oyNAME_NAME - a short one line text,
  *                                     - oyNAME_NICK - one word,
@@ -9308,13 +9308,13 @@ int      oyInstrumentUnset           ( oyConfig_s        * instrument )
  *  @date    2009/02/02
  */
 OYAPI int  OYEXPORT
-           oyInstrumentGetInfo       ( oyConfig_s        * instrument,
+           oyDeviceGetInfo           ( oyConfig_s        * device,
                                        oyNAME_e            type,
                                        uint32_t            flags,
                                        char             ** info_text,
                                        oyAlloc_f           allocateFunc )
 {
-  int error = !instrument || !info_text;
+  int error = !device || !info_text;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
   oyConfig_s * config = 0;
@@ -9334,7 +9334,7 @@ OYAPI int  OYEXPORT
 
   if(type == oyNAME_NICK)
   {
-    tmp = oyOptions_FindString( instrument->backend_core,"instrument_name", 0 );
+    tmp = oyOptions_FindString( device->backend_core,"device_name", 0 );
     *info_text = oyStringCopy_( tmp, allocateFunc );
     return error;
   }
@@ -9342,24 +9342,24 @@ OYAPI int  OYEXPORT
   if(type == oyNAME_DESCRIPTION)
   {
     /* get expensive infos */
-    if(oyOptions_Count( instrument->backend_core ) < 2)
+    if(oyOptions_Count( device->backend_core ) < 2)
     {
       options = oyOptions_New( 0 );
       error = oyOptions_SetFromText( options, "//colour/config/properties",
                                      "true", OY_CREATE_NEW );
 
       if(error <= 0)
-        error = oyInstrumentBackendCall( instrument, options );
+        error = oyDeviceBackendCall( device, options );
 
       oyOptions_Release( &options );
     }
 
     if(error <= 0)
     {
-      n = oyOptions_Count( instrument->backend_core );
+      n = oyOptions_Count( device->backend_core );
       for( i = 0; i < n; ++i )
       {
-        o = oyOptions_Get( instrument->backend_core, i );
+        o = oyOptions_Get( device->backend_core, i );
         
         STRING_ADD( text, oyStrrchr_( o->registration, OY_SLASH_C ) + 1 );
         STRING_ADD( text, ":\n" );
@@ -9389,7 +9389,7 @@ OYAPI int  OYEXPORT
   {
     /* add "list" call to backend arguments */
     error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
+                                               device->registration,
                                                "list", "true" );
   }
 
@@ -9397,24 +9397,24 @@ OYAPI int  OYEXPORT
   {
     if(type == oyNAME_NAME)
     error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
+                                               device->registration,
                                                "oyNAME_NAME", "true" );
   }
 
 
   /** 1.2 ask each backend */
   if(error <= 0)
-    error = oyInstrumentBackendCall( instrument, options );
+    error = oyDeviceBackendCall( device, options );
 
-  if(error <= 0 && instrument->backend_core)
+  if(error <= 0 && device->backend_core)
   {
-    /** 1.2.1 add instrument_name to the string list */
+    /** 1.2.1 add device_name to the string list */
     if(type == oyNAME_NICK)
-      tmp = oyOptions_FindString( instrument->backend_core,"instrument_name",0);
+      tmp = oyOptions_FindString( device->backend_core,"device_name",0);
     else if(type == oyNAME_NAME)
-      tmp = oyOptions_FindString( instrument->data, "oyNAME_NAME", 0 );
+      tmp = oyOptions_FindString( device->data, "oyNAME_NAME", 0 );
     else if(type == oyNAME_DESCRIPTION)
-      tmp = oyOptions_FindString( instrument->data, "oyNAME_DESCRIPTION", 0 );
+      tmp = oyOptions_FindString( device->data, "oyNAME_DESCRIPTION", 0 );
   }
 
   *info_text = oyStringCopy_( tmp, allocateFunc );
@@ -9425,8 +9425,8 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyInstrumentGetProfile
- *  @brief   order a instrument profile
+/** Function oyDeviceGetProfile
+ *  @brief   order a device profile
  *
  *  This function is designed to satisfy most users as it tries to deliver
  *  a profile all the time. 
@@ -9434,11 +9434,11 @@ OYAPI int  OYEXPORT
  *  It tries hard to get a current profile or set the system up and retry or
  *  get at least one basic profile.
  *
- *  For a basic and thus weaker call to the instrument use
- *  oyInstrumentAskProfile() instead.
+ *  For a basic and thus weaker call to the device use
+ *  oyDeviceAskProfile() instead.
  *
- *  @param         instrument          the instrument
- *  @param         profile             the instrument's ICC profile
+ *  @param         device          the device
+ *  @param         profile             the device's ICC profile
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -9446,20 +9446,20 @@ OYAPI int  OYEXPORT
  *  @date    2009/02/09
  */
 OYAPI int  OYEXPORT
-           oyInstrumentGetProfile    ( oyConfig_s        * instrument,
+           oyDeviceGetProfile        ( oyConfig_s        * device,
                                        oyProfile_s      ** profile )
 {
-  int error = !instrument,
+  int error = !device,
       l_error = 0;
 
-  l_error = oyInstrumentAskProfile( instrument, profile ); OY_ERR
+  l_error = oyDeviceAskProfile( device, profile ); OY_ERR
 
-  /** This function does a instrument setup in case no profile is delivered
+  /** This function does a device setup in case no profile is delivered
    *  by the according backend. */
   if(error != 0 && !*profile)
-    l_error = oyInstrumentSetup( instrument ); OY_ERR
+    l_error = oyDeviceSetup( device ); OY_ERR
 
-  l_error = oyInstrumentAskProfile( instrument, profile ); OY_ERR
+  l_error = oyDeviceAskProfile( device, profile ); OY_ERR
 
   /** As a last means oyASSUMED_WEB is delivered. */
   if(!*profile)
@@ -9472,18 +9472,18 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyInstrumentAskProfile
- *  @brief   ask for the instrument profile
+/** Function oyDeviceAskProfile
+ *  @brief   ask for the device profile
  *
- *  Ask for a profile associated with the instrument. A instrument capable to
+ *  Ask for a profile associated with the device. A device capable to
  *  hold a profile only the held profile will be checked and returned.
  *  In case this profile is not found a error of -1 should be returned.
  *
- *  The instrument might not be able to hold a profile, then just the DB profile
+ *  The device might not be able to hold a profile, then just the DB profile
  *  can be returned without an issue.
  *
- *  @param[in]     instrument          the instrument
- *  @param[out]    profile             the instrument's ICC profile
+ *  @param[in]     device          the device
+ *  @param[out]    profile             the device's ICC profile
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -9491,10 +9491,10 @@ OYAPI int  OYEXPORT
  *  @date    2009/02/10
  */
 OYAPI int  OYEXPORT
-           oyInstrumentAskProfile    ( oyConfig_s        * instrument,
+           oyDeviceAskProfile        ( oyConfig_s        * device,
                                        oyProfile_s      ** profile )
 {
-  int error = !instrument;
+  int error = !device;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
 
@@ -9512,22 +9512,22 @@ OYAPI int  OYEXPORT
   {
     /* add "list" call to backend arguments */
     error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
+                                               device->registration,
                                                "list", "true" );
   }
 
   if(error <= 0)
   {
     error = oyOptions_SetRegistrationTextKey_( options,
-                                               instrument->registration,
+                                               device->registration,
                                                "icc_profile", "true" );
   }
 
   if(error <= 0)
-    error = oyInstrumentBackendCall( instrument, options );
+    error = oyDeviceBackendCall( device, options );
 
   if(error <= 0)
-    o = oyConfig_Find( instrument, "icc_profile" );
+    o = oyConfig_Find( device, "icc_profile" );
 
   if(o && o->value_type == oyVAL_STRUCT &&
      o->value && o->value->oy_struct && 
@@ -9541,25 +9541,25 @@ OYAPI int  OYEXPORT
 }
 
 
-/** Function oyInstrumentSetProfile
- *  @brief   set the instrument profile
+/** Function oyDeviceSetProfile
+ *  @brief   set the device profile
  *
- *  The function will lookup the monitor in the Oyranos instrument database
+ *  The function will lookup the monitor in the Oyranos device database
  *  and stores the given profile there.
  *
- *  To set a new profile und update the instrument please call the following
+ *  To set a new profile und update the device please call the following
  *  sequence:
  *  @verbatim
     // store new settings in the Oyranos data base
-    oyInstrumentSetProfile( instrument, profile );
-    // remove any instrument entries
-    oyInstrumentUnset( instrument );
-    // update the instrument from the newly added Oyranos data base settings
-    oyInstrumentSetup( instrument );
+    oyDeviceSetProfile( device, profile );
+    // remove any device entries
+    oyDeviceUnset( device );
+    // update the device from the newly added Oyranos data base settings
+    oyDeviceSetup( device );
     @endverbatim
  *
- *  @param         instrument          the instrument
- *  @param         profile_name        the instrument's ICC profile or zero to
+ *  @param         device          the device
+ *  @param         profile_name        the device's ICC profile or zero to
  *                                     unset
  *  @return                            error
  *
@@ -9567,58 +9567,58 @@ OYAPI int  OYEXPORT
  *  @since   2009/02/07 (Oyranos: 0.1.10)
  *  @date    2009/02/12
  */
-int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
+int      oyDeviceSetProfile      ( oyConfig_s        * device,
                                        const char        * profile_name )
 {
-  int error = !instrument || !profile_name || !profile_name[0];
+  int error = !device || !profile_name || !profile_name[0];
   oyOption_s * od = 0;
   oyOptions_s * options = 0;
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0,
-             * instrument_tmp = 0;
+             * device_tmp = 0;
   oyProfile_s * p = 0;
   int i, j, n, j_n, equal;
   char * d_opt = 0;
-  const char * instrument_name = 0,
+  const char * device_name = 0,
              * o_val = 0,
              * d_val = 0;
 
   if(error > 0)
   {
-    WARNc1_S( "No instrument argument provided. Give up. %s",
+    WARNc1_S( "No device argument provided. Give up. %s",
               oyNoEmptyString_m_(profile_name) );
     return error;
   }
 
 
-  /** 1. obtain detailed and expensive instrument informations */
-  if(oyOptions_Count( instrument->backend_core ) < 2)
+  /** 1. obtain detailed and expensive device informations */
+  if(oyOptions_Count( device->backend_core ) < 2)
   { 
     options = oyOptions_New( 0 );
     /** 1.1 add "properties" call to backend arguments */
     error = oyOptions_SetFromText( options, "//colour/config/properties",
                                    "true", OY_CREATE_NEW );
 
-    /** 1.2 get monitor instrument */
+    /** 1.2 get monitor device */
     if(error <= 0)
-      error = oyInstrumentBackendCall( instrument, options );
+      error = oyDeviceBackendCall( device, options );
 
     oyOptions_Release( &options );
   }
 
   if(error <= 0)
-    error = !oyOptions_Count( instrument->backend_core );
+    error = !oyOptions_Count( device->backend_core );
 
   if(error <= 0)
   {
-    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
-    error = !instrument_name;
+    device_name = oyConfig_FindString( device, "device_name", 0);
+    error = !device_name;
   }
 
-  /** 2. check for success of instrument detection */
+  /** 2. check for success of device detection */
   if(error)
   {
-    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), instrument_name );
+    WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name );
     goto cleanup;
   }
 
@@ -9634,11 +9634,11 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
   }
 
   /** 4. Now remove all those DB configurations fully matching the selected
-   *     instrument.  */
+   *     device.  */
   if(error <= 0)
   {
     /** 4.1 get stored DB's configurations */
-    error = oyConfigs_FromDB( instrument->registration, &configs, 0 );
+    error = oyConfigs_FromDB( device->registration, &configs, 0 );
 
     n = oyConfigs_Count( configs );
     for( i = 0; i < n; ++i )
@@ -9647,17 +9647,17 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
 
       equal = 0;
 
-      j_n = oyConfig_Count( instrument );
+      j_n = oyConfig_Count( device );
       for(j = 0; j < j_n; ++j)
       {
-        od = oyConfig_Get( instrument, j );
+        od = oyConfig_Get( device, j );
         d_opt = oyFilterRegistrationToText( od->registration,
                                             oyFILTER_REG_MAX, 0 );
-        d_val = oyConfig_FindString( instrument, d_opt, 0 );
+        d_val = oyConfig_FindString( device, d_opt, 0 );
 
         o_val = oyConfig_FindString( config, d_opt, 0 );
 
-        /** 4.1.1 compare if each instrument key matches to one configuration
+        /** 4.1.1 compare if each device key matches to one configuration
          *          key */
         if( d_val && o_val &&
             oyStrcmp_( d_val, o_val ) == 0)
@@ -9677,32 +9677,32 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
   }
 
   /** 5. save the new configuration with a associated profile \n
-   *  5.1 add the profile simply to the instrument configuration */
+   *  5.1 add the profile simply to the device configuration */
   if(error <= 0)
   {
-    error = oyConfig_ClearDBData( instrument );
-    error = oyConfig_AddDBData( instrument, "profile_name", profile_name,
+    error = oyConfig_ClearDBData( device );
+    error = oyConfig_AddDBData( device, "profile_name", profile_name,
                                 OY_CREATE_NEW );
   }
 
   /** 5.2 save the configuration to DB (Elektra) */
   if(error <= 0)
-    error = oyConfig_SaveToDB( instrument );
+    error = oyConfig_SaveToDB( device );
 
   cleanup:
-  oyConfig_Release( &instrument_tmp );
+  oyConfig_Release( &device_tmp );
 
   return error;
 }
 
-/** Function oyInstrumentProfileFromDB
- *  @brief   look up a profile of a instrument from DB
+/** Function oyDeviceProfileFromDB
+ *  @brief   look up a profile of a device from DB
  *
  *  The function asks the backend for a detailed and possible expensive list
- *  of instrument information and tries to find a matching configuration in the
- *  DB. The instrument informations are the same as for saving to DB.
+ *  of device information and tries to find a matching configuration in the
+ *  DB. The device informations are the same as for saving to DB.
  *
- *  @param[in]     instrument          a instrument
+ *  @param[in]     device          a device
  *  @param[in]     profile_name        profile's name in DB
  *  @param[in]     allocateFunc        user allocator
  *  @return                            error
@@ -9711,15 +9711,15 @@ int      oyInstrumentSetProfile      ( oyConfig_s        * instrument,
  *  @since   2009/01/21 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-OYAPI int OYEXPORT oyInstrumentProfileFromDB
-                                     ( oyConfig_s        * instrument,
+OYAPI int OYEXPORT oyDeviceProfileFromDB
+                                     ( oyConfig_s        * device,
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc )
 {
   oyOption_s * o = 0;
   oyOptions_s * options = 0;
-  int error = !instrument || !profile_name;
-  const char * instrument_name = 0;
+  int error = !device || !profile_name;
+  const char * device_name = 0;
   char * tmp = 0, * tmp2 = 0;
   int32_t rank_value = 0;
 
@@ -9728,42 +9728,42 @@ OYAPI int OYEXPORT oyInstrumentProfileFromDB
 
   if(error <= 0)
   {
-    o = oyConfig_Find( instrument, "profile_name" );
-    instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+    o = oyConfig_Find( device, "profile_name" );
+    device_name = oyConfig_FindString( device, "device_name", 0);
 
-    /* 1. obtain detailed and expensive instrument informations */
-    if(oyOptions_Count( instrument->backend_core ) < 2)
+    /* 1. obtain detailed and expensive device informations */
+    if(oyOptions_Count( device->backend_core ) < 2)
     { 
       options = oyOptions_New( 0 );
       /* 1.1 add "properties" call to backend arguments */
       error = oyOptions_SetFromText( options, "//colour/config/properties",
                                      "true", OY_CREATE_NEW );
-      error = oyOptions_SetFromText( options, "//colour/config/instrument_name",
-                                     instrument_name, OY_CREATE_NEW );
+      error = oyOptions_SetFromText( options, "//colour/config/device_name",
+                                     device_name, OY_CREATE_NEW );
 
-      instrument_name = 0;
+      device_name = 0;
 
-      /* 1.2 get monitor instrument */
+      /* 1.2 get monitor device */
       if(error <= 0)
-        error = oyInstrumentBackendCall( instrument, options );
+        error = oyDeviceBackendCall( device, options );
 
       oyOptions_Release( &options );
 
       /* renew outdated string */
-      o = oyConfig_Find( instrument, "profile_name" );
-      instrument_name = oyConfig_FindString( instrument, "instrument_name", 0);
+      o = oyConfig_Find( device, "profile_name" );
+      device_name = oyConfig_FindString( device, "device_name", 0);
       oyOption_Release( &o );
     }
 
     if(!o)
     {
-      error = oyConfig_GetDB( instrument, &rank_value );
-      o = oyConfig_Find( instrument, "profile_name" );
+      error = oyConfig_GetDB( device, &rank_value );
+      o = oyConfig_Find( device, "profile_name" );
     }
 
     if(!o)
     {
-      o = oyOptions_Get( instrument->db, 0 );
+      o = oyOptions_Get( device->db, 0 );
       if(o)
         tmp = oyStringCopy_(o->registration, oyAllocateFunc_);
       if(tmp && oyStrrchr_( tmp, OY_SLASH_C))
@@ -9773,7 +9773,7 @@ OYAPI int OYEXPORT oyInstrumentProfileFromDB
       }
       WARNc3_S( "\n Could not get a \"profile_name\" from %s\n"
                 " registration: \"%s\" rank: %d", 
-                oyNoEmptyString_m_(instrument_name), oyNoEmptyString_m_(tmp),
+                oyNoEmptyString_m_(device_name), oyNoEmptyString_m_(tmp),
                 (int)rank_value )
       if(tmp)
         oyFree_m_(tmp); tmp2 = 0;
@@ -9783,7 +9783,7 @@ OYAPI int OYEXPORT oyInstrumentProfileFromDB
             !(o->value && o->value->string && o->value->string[0]) )
     {
       WARNc1_S( "Could not get \"profile_name\" data from %s", 
-                oyNoEmptyString_m_(instrument_name) )
+                oyNoEmptyString_m_(device_name) )
       error = -1;
     } else
       *profile_name = oyStringCopy_( o->value->string, allocateFunc );
@@ -9796,7 +9796,7 @@ OYAPI int OYEXPORT oyInstrumentProfileFromDB
 
 
 /**
- *  @} *//* instruments_handling
+ *  @} *//* devices_handling
  */
 
 
@@ -20875,24 +20875,24 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 {
   int error = 0;
   char * text = 0;
-  oyConfig_s * instrument = 0;
-  oyConfigs_s * instruments = 0;
+  oyConfig_s * device = 0;
+  oyConfigs_s * devices = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
   oyRegion_s * r = 0;
   int n, i;
-  const char * instrument_name = 0;
+  const char * device_name = 0;
 
   options = oyOptions_New(0);
   error = oyOptions_SetFromText( options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
   error = oyOptions_SetFromText( options, "//colour/config/display_geometry",
                                  "true", OY_CREATE_NEW );
-  /** we want a fuzzy look at our display, not the narrow "instrument_name" */
+  /** we want a fuzzy look at our display, not the narrow "device_name" */
   error = oyOptions_SetFromText( options, "//colour/config/display_name",
                                  display_name, OY_CREATE_NEW );
 
-  error = oyConfigs_FromInstrumentClass ( 0, "monitor", options, &instruments,
+  error = oyConfigs_FromDeviceClass ( 0, "monitor", options, &devices,
                                           0 );
 
   oyOptions_Release( &options );
@@ -20900,25 +20900,25 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
-  n = oyConfigs_Count( instruments );
+  n = oyConfigs_Count( devices );
   for( i = 0; i < n; ++i )
   {
-    instrument = oyConfigs_Get( instruments, i );
-    o = oyConfig_Find( instrument, "display_geometry" );
+    device = oyConfigs_Get( devices, i );
+    o = oyConfig_Find( device, "display_geometry" );
 
     if(o && o->value && o->value->oy_struct &&
        o->value->oy_struct->type_ == oyOBJECT_REGION_S)
       r = (oyRegion_s*) o->value->oy_struct;
 
-    if(!instrument_name &&
+    if(!device_name &&
        r && oyRegion_IsInside( r, x,y ))
     {
-      instrument_name = oyConfig_FindString( instrument, "instrument_name", 0 );
-      text = oyStringCopy_( instrument_name, allocateFunc );
+      device_name = oyConfig_FindString( device, "device_name", 0 );
+      text = oyStringCopy_( device_name, allocateFunc );
     }
-    oyConfig_Release( &instrument );
+    oyConfig_Release( &device );
   }
-  oyConfigs_Release( &instruments );
+  oyConfigs_Release( &devices );
 
   return text;
 }
@@ -20927,7 +20927,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 /** Function: oyGetMonitorProfile
  *  @brief   get the monitor profile from the server
  *
- *  @param      instrument_name        the display string
+ *  @param      device_name        the display string
  *  @param[out] size                   the size of profile
  *  @param      allocate_func          function used to allocate memory for the profile
  *  @return                            the memory block containing the profile
@@ -20936,24 +20936,24 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2009/02/10
  */
-char *   oyGetMonitorProfile         ( const char        * instrument_name,
+char *   oyGetMonitorProfile         ( const char        * device_name,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func )
 {
   int error = 0;
-  oyConfig_s * instrument = 0;
+  oyConfig_s * device = 0;
   oyOptions_s * options = 0;
   oyProfile_s * p = 0;
   char * block = 0;
-  const char * instrument_type = "colour",
-             * instrument_class = "monitor";
+  const char * device_type = "colour",
+             * device_class = "monitor";
 
   if(error <= 0)
   {
-    error = oyInstrumentGet( instrument_type, instrument_class, instrument_name,
-                             options, &instrument );
-    error = oyInstrumentGetProfile    ( instrument, &p );
-    oyConfig_Release( &instrument );
+    error = oyDeviceGet( device_type, device_class, device_name,
+                             options, &device );
+    error = oyDeviceGetProfile    ( device, &p );
+    oyConfig_Release( &device );
   }
 
   if(error <= 0)
@@ -20966,10 +20966,10 @@ char *   oyGetMonitorProfile         ( const char        * instrument_name,
 }
 
 /** Function: oyMonitorProfileNameFromDB
- *  @brief   get the monitor profile filename from the instrument
+ *  @brief   get the monitor profile filename from the device
  *           database
  *
- *  @param         instrument          the instrument
+ *  @param         device          the device
  *  @param         allocateFunc        user function used to allocate memory 
  *  @return                            the profile filename
  *
@@ -20977,10 +20977,10 @@ char *   oyGetMonitorProfile         ( const char        * instrument_name,
  *  @since   2009/02/08 (Oyranos: 0.1.10)
  *  @date    2009/02/08
  */
-char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * instrument,
+char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * device,
                                        oyAlloc_f           allocateFunc )
 {
-  int error = !instrument;
+  int error = !device;
   oyProfile_s * p = 0;
   char * profile_name = 0;
   char * text = 0;
@@ -20990,7 +20990,7 @@ char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * instrument,
 
   if(error <= 0)
   {
-    error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
+    error = oyDeviceProfileFromDB( device, &profile_name, 0 );
   }
 
   if(error <= 0)
@@ -21009,7 +21009,7 @@ char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * instrument,
 }
 
 /** Function: oyGetMonitorProfileNameFromDB
- *  @brief   get the monitor profile filename from the instrument profile
+ *  @brief   get the monitor profile filename from the device profile
  *           database
  *
  *  @param      display_name           the display string
@@ -21025,7 +21025,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
 {
   int error = !display_name || !display_name[0];
   oyOptions_s * options = 0;
-  oyConfig_s * instrument = 0;
+  oyConfig_s * device = 0;
   oyProfile_s * p = 0;
   char * profile_name = 0;
   char * text = 0;
@@ -21045,23 +21045,23 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
     return 0;
   }
 
-  /** 1. get monitor instrument */
+  /** 1. get monitor device */
   if(error <= 0)
-    error = oyInstrumentGet( "colour", "monitor", display_name,
-                             options, &instrument );
+    error = oyDeviceGet( "colour", "monitor", display_name,
+                             options, &device );
 
   oyOptions_Release( &options );
 
-  /** 2. check for success of instrument detection */
-  error = !instrument;
+  /** 2. check for success of device detection */
+  error = !device;
   if(error)
   {
-    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), display_name );
+    WARNc2_S( "%s: \"%s\"", _("Could not open device"), display_name );
     return 0;
   }
 
   if(error <= 0)
-    error = oyInstrumentProfileFromDB( instrument, &profile_name, 0 );
+    error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
   if(error <= 0)
   {
@@ -21076,7 +21076,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
   if(profile_name)
     oyFree_m_( profile_name );
   oyProfile_Release( &p );
-  oyConfig_Release( &instrument );
+  oyConfig_Release( &device );
 
   return text;
 }
@@ -21088,7 +21088,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
  *  unsets the graphic card luts and the server stored profile. So pretty all
  *  server side informatin should go away. \n
  *  With a profile name given the function will lookup the monitor in the 
- *  Oyranos instrument database and stores the given profile there. \n
+ *  Oyranos device database and stores the given profile there. \n
  *  To sum up, to set a new profile please call the following sequence:
  *  @verbatim
     // store new settings in the Oyranos data base
@@ -21112,7 +21112,7 @@ int      oySetMonitorProfile         ( const char        * display_name,
 {
   int error = !display_name || !display_name[0];
   oyOptions_s * options = 0;
-  oyConfig_s * instrument = 0;
+  oyConfig_s * device = 0;
 
   if(error > 0)
   {
@@ -21121,33 +21121,33 @@ int      oySetMonitorProfile         ( const char        * display_name,
     return error;
   }
 
-  /** 1. obtain detailed and expensive instrument informations */
+  /** 1. obtain detailed and expensive device informations */
   options = oyOptions_New( 0 );
   /** 1.1 add "properties" call to backend arguments */
   error = oyOptions_SetFromText( options, "//colour/config/properties",
                                  "true", OY_CREATE_NEW );
 
-  /** 1.2 get monitor instrument */
+  /** 1.2 get monitor device */
   if(error <= 0)
-    error = oyInstrumentGet( "colour", "monitor", display_name,
-                             options, &instrument );
+    error = oyDeviceGet( "colour", "monitor", display_name,
+                             options, &device );
 
   oyOptions_Release( &options );
 
-  /** 2. check for success of instrument detection */
-  error = !instrument;
+  /** 2. check for success of device detection */
+  error = !device;
   if(error)
   {
-    WARNc2_S( "%s: \"%s\"", _("Could not open instrument"), display_name );
+    WARNc2_S( "%s: \"%s\"", _("Could not open device"), display_name );
     return error;
   }
 
   if(profile_name)
-    error = oyInstrumentSetProfile( instrument, profile_name );
+    error = oyDeviceSetProfile( device, profile_name );
   else
-    error = oyInstrumentUnset( instrument );
+    error = oyDeviceUnset( device );
 
-  oyConfig_Release( &instrument );
+  oyConfig_Release( &device );
 
   return error;
 }
@@ -21158,11 +21158,11 @@ int      oySetMonitorProfile         ( const char        * display_name,
  *
  *  Activate in case the appropriate profile is not yet setup in the server. \n
  *  To deactivate a profile in the server call 
- *  oySetMonitorProfile( instrument_name, 0 ).
+ *  oySetMonitorProfile( device_name, 0 ).
  *
  *  @see oySetMonitorProfile for permanently configuring a monitor
  *
- *  @param   display_name              the instrument string
+ *  @param   display_name              the device string
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -21173,15 +21173,15 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 {
   int error = !display_name || !display_name[0];
   oyOptions_s * options = 0;
-  oyConfig_s * instrument = 0;
-  oyConfigs_s * instruments = 0;
-  const char * instrument_class = "monitor",
-             * instrument_name = 0;
+  oyConfig_s * device = 0;
+  oyConfigs_s * devices = 0;
+  const char * device_class = "monitor",
+             * device_name = 0;
   int i, n;
 
   if(error > 0)
   {
-    WARNc_S( "No instrument_name argument provided. Give up." );
+    WARNc_S( "No device_name argument provided. Give up." );
     return error;
   }
 
@@ -21190,24 +21190,24 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
     /* 1. set a general request */
     error = oyOptions_SetFromText( options, "//colour/config/list",
                                    "true", OY_CREATE_NEW );
-    /* we want a fuzzy look at our display, not as narrow as "instrument_name"*/
+    /* we want a fuzzy look at our display, not as narrow as "device_name"*/
     error = oyOptions_SetFromText( options, "//colour/config/display_name",
                                    display_name, OY_CREATE_NEW );
-    error = oyConfigs_FromInstrumentClass ( 0, instrument_class, options,
-                                            &instruments, 0 );
+    error = oyConfigs_FromDeviceClass ( 0, device_class, options,
+                                            &devices, 0 );
 
-    n = oyConfigs_Count( instruments );
+    n = oyConfigs_Count( devices );
     for(i = 0; i < n; ++i)
     {
-      instrument = oyConfigs_Get( instruments, i );
+      device = oyConfigs_Get( devices, i );
 
-      instrument_name = oyConfig_FindString( instrument, "instrument_name", 0 );
+      device_name = oyConfig_FindString( device, "device_name", 0 );
 
-      oyInstrumentSetup( instrument );
-      oyConfig_Release( &instrument );
+      oyDeviceSetup( device );
+      oyConfig_Release( &device );
     }
 
-    oyConfigs_Release( &instruments );
+    oyConfigs_Release( &devices );
     oyOptions_Release( &options );
   }
 

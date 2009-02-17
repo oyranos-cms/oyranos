@@ -96,8 +96,8 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"list\" will provide a list of available\n"
-      " instruments. The actual instrument name can be found in option\n"
-      " \"instrument_name\". The call is as lightwight as possible.\n"
+      " devices. The actual device name can be found in option\n"
+      " \"device_name\". The call is as lightwight as possible.\n"
       " The option \"display_name\" is optional to pass the X11 display name\n"
       " and obtain a unfiltered result.\n"
       " The option \"oyNAME_NAME\" returns a string containting geometry and\n"
@@ -114,13 +114,13 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " call into a expensive one.\n"
       " The bidirectional optional \"edid\" (specific) key word will\n"
       " additionally add the EDID information inside a oyBlob_s struct.\n"
-      " The option \"instrument_name\" may be added as a filter.\n"
+      " The option \"device_name\" may be added as a filter.\n"
       " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION above."
       " Informations are stored in the returned oyConfig_s::data member."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"properties\" will provide the instruments \n"
-      " properties. Requires one instrument identifier returned with the \n"
+      "The presence of option \"properties\" will provide the devices \n"
+      " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
       " - \"manufacturer\"\n"
       " - \"model\"\n"
@@ -130,40 +130,40 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " - \"display_geometry\" (specific) x,y,widthxheight ,e.g."
       " \"0,0,1024x786\"\n"
       " \n"
-      " One option \"instrument_name\" will select the according X display.\n"
+      " One option \"device_name\" will select the according X display.\n"
       " If not the backend will try to get this information from \n"
       " your \"DISPLAY\" environment variable or uses what the system\n"
-      " provides. The \"instrument_name\" should be identical with the one\n"
+      " provides. The \"device_name\" should be identical with the one\n"
       " returned from a \"list\" request.\n"
       " The \"properties\" call might be a expensive one. Informations are\n"
       " stored in the returned oyConfig_s::backend_core member."
        );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"setup\" will setup the instrument from a profile.\n"
-      " The option \"instrument_name\" must be present, see \"list\" above.\n"
+      "The presence of option \"setup\" will setup the device from a profile.\n"
+      " The option \"device_name\" must be present, see \"list\" above.\n"
       " The option \"profile_name\" must be present, containing a ICC profile\n"      " file name."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"unset\" will invalidate a profile of a instrument.\n"
-      " The option \"instrument_name\" must be present, see \"list\" above.\n"
+      "The presence of option \"unset\" will invalidate a profile of a device.\n"
+      " The option \"device_name\" must be present, see \"list\" above.\n"
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"get\" will provide a oyProfile_s of the\n"
-      " instrument in a \"icc_profile\" option.\n"
-      " The option \"instrument_name\" must be present, see \"list\" above.\n"
+      " device in a \"icc_profile\" option.\n"
+      " The option \"device_name\" must be present, see \"list\" above.\n"
       );
 
   return;
 }
 
-int          oyX1InstrumentFromName_ ( const char        * instrument_name,
+int          oyX1DeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
-                                       oyConfig_s       ** instrument,
+                                       oyConfig_s       ** device,
                                        oyAlloc_f           allocateFunc )
 {
   const char * value3 = 0;
   oyOption_s * o = 0;
-  int error = !instrument;
+  int error = !device;
 
     value3 = oyOptions_FindString( options, "edid", 0 );
 
@@ -173,17 +173,17 @@ int          oyX1InstrumentFromName_ ( const char        * instrument_name,
            * system_port=0;
       oyBlob_s * edid = 0;
 
-      if(!instrument_name)
+      if(!device_name)
       {
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
-                "The \"instrument_name\" argument is\n"
-                " missed to select a appropriate instrument for the"
+                "The \"device_name\" argument is\n"
+                " missed to select a appropriate device for the"
                 " \"properties\" call.", OY_DBG_ARGS_ );
         error = 1;
       }
 
       if(error <= 0)
-        error = oyGetMonitorInfo_lib( instrument_name,
+        error = oyGetMonitorInfo_lib( device_name,
                                       &manufacturer, &model, &serial,
                                       &display_geometry, &system_port,
                                       &host, value3 ? &edid : 0, allocateFunc,
@@ -192,26 +192,26 @@ int          oyX1InstrumentFromName_ ( const char        * instrument_name,
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
                  OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-                 " oyGetMonitorInfo_lib returned with %s; instrument_name:"
+                 " oyGetMonitorInfo_lib returned with %s; device_name:"
                  " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
-                 oyNoEmptyString_m_( instrument_name ) );
+                 oyNoEmptyString_m_( device_name ) );
 
       if(error <= 0)
       {
-        if(!*instrument)
-          *instrument = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !*instrument;
-        if(!error && instrument_name)
-        error = oyOptions_SetFromText( (*instrument)->backend_core,
-                                       CMM_BASE_REG OY_SLASH "instrument_name",
-                                       instrument_name, OY_CREATE_NEW );
+        if(!*device)
+          *device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !*device;
+        if(!error && device_name)
+        error = oyOptions_SetFromText( (*device)->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       device_name, OY_CREATE_NEW );
 
-        OPTIONS_ADD( (*instrument)->backend_core, manufacturer )
-        OPTIONS_ADD( (*instrument)->backend_core, model )
-        OPTIONS_ADD( (*instrument)->backend_core, serial )
-        OPTIONS_ADD( (*instrument)->backend_core, display_geometry )
-        OPTIONS_ADD( (*instrument)->backend_core, system_port )
-        OPTIONS_ADD( (*instrument)->backend_core, host )
+        OPTIONS_ADD( (*device)->backend_core, manufacturer )
+        OPTIONS_ADD( (*device)->backend_core, model )
+        OPTIONS_ADD( (*device)->backend_core, serial )
+        OPTIONS_ADD( (*device)->backend_core, display_geometry )
+        OPTIONS_ADD( (*device)->backend_core, system_port )
+        OPTIONS_ADD( (*device)->backend_core, host )
         if(!error && edid)
         {
           o = oyOption_New( CMM_BASE_REG OY_SLASH "edid", 0 );
@@ -219,7 +219,7 @@ int          oyX1InstrumentFromName_ ( const char        * instrument_name,
           if(!error)
           error = oyOption_SetFromData( o, edid->ptr, edid->size );
           if(!error)
-            oyOptions_MoveIn( (*instrument)->data, &o, -1 );
+            oyOptions_MoveIn( (*device)->data, &o, -1 );
           oyBlob_Release( &edid );
         }
       }
@@ -241,15 +241,15 @@ int            oyX1Configs_FromPattern (
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** s )
 {
-  oyConfigs_s * instruments = 0;
-  oyConfig_s * instrument = 0;
+  oyConfigs_s * devices = 0;
+  oyConfig_s * device = 0;
   oyOption_s * o = 0;
   oyRegion_s * rect = 0;
   const oyRegion_s * r = 0;
   oyProfile_s * p = 0;
   char ** texts = 0;
   char * text = 0,
-       * instrument_name_temp = 0;
+       * device_name_temp = 0;
   int texts_n = 0, i,
       error = !s;
   const char * value1 = 0,
@@ -257,7 +257,7 @@ int            oyX1Configs_FromPattern (
              * value3 = 0,
              * value4 = 0,
              * display_name = 0,
-             * instrument_name = 0;
+             * device_name = 0;
   int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
@@ -276,16 +276,16 @@ int            oyX1Configs_FromPattern (
 
   if(rank && error <= 0)
   {
-    instruments = oyConfigs_New(0);
+    devices = oyConfigs_New(0);
 
     display_name = oyOptions_FindString( options, "display_name", 0 );
-    value1 = oyOptions_FindString( options, "instrument_name", 0 );
+    value1 = oyOptions_FindString( options, "device_name", 0 );
     /*message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);*/
 
     if(display_name && display_name[0])
-      instrument_name = display_name;
+      device_name = display_name;
     else if(value1 && value1[0])
-      instrument_name = value1;
+      device_name = value1;
     else
     {
       tmp = getenv("DISPLAY");
@@ -300,13 +300,13 @@ int            oyX1Configs_FromPattern (
         return error;
       }
 
-      instrument_name_temp = oyStringCopy_( tmp, oyAllocateFunc_ );
-      if(instrument_name_temp &&
-         (text = strchr(instrument_name_temp,':')) != 0)
-        if( (text = strchr(instrument_name_temp, '.')) != 0 )
+      device_name_temp = oyStringCopy_( tmp, oyAllocateFunc_ );
+      if(device_name_temp &&
+         (text = strchr(device_name_temp,':')) != 0)
+        if( (text = strchr(device_name_temp, '.')) != 0 )
           text[0] = '\000';
 
-      instrument_name = instrument_name_temp;
+      device_name = device_name_temp;
       text = 0;
     }
 
@@ -314,7 +314,7 @@ int            oyX1Configs_FromPattern (
     value3 = oyOptions_FindString( options, "display_geometry", 0 );
     if(value2)
     {
-      texts_n = oyGetAllScreenNames( instrument_name, &texts, allocateFunc );
+      texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -322,12 +322,12 @@ int            oyX1Configs_FromPattern (
         if(value1 && strcmp(value1, texts[i]) != 0)
           continue;
 
-        instrument = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !instrument;
+        device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !device;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( instrument->backend_core,
-                                       CMM_BASE_REG OY_SLASH "instrument_name",
+        error = oyOptions_SetFromText( device->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
         if(value3 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
@@ -340,7 +340,7 @@ int            oyX1Configs_FromPattern (
           {
             o = oyOption_New( CMM_BASE_REG OY_SLASH "display_geometry", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
-            oyOptions_MoveIn( instrument->data, &o, -1 );
+            oyOptions_MoveIn( device->data, &o, -1 );
           }
         }
 
@@ -362,14 +362,14 @@ int            oyX1Configs_FromPattern (
             p = oyProfile_FromMem( size, data, 0, 0 );
             o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( instrument->data, &o, -1 );
+            oyOptions_MoveIn( device->data, &o, -1 );
             free( data );
           }
         }
 
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          o = oyOptions_Find( instrument->data, "display_geometry" );
+          o = oyOptions_Find( device->data, "display_geometry" );
           r = (oyRegion_s*) o->value->oy_struct;
 
           num[0] = 0; text = 0; tmp = 0;
@@ -380,7 +380,7 @@ int            oyX1Configs_FromPattern (
           STRING_ADD( text, tmp );
           oyOption_Release( &o );
 
-          o = oyOptions_Find( instrument->data, "icc_profile" );
+          o = oyOptions_Find( device->data, "icc_profile" );
 
           if( o && o->value && o->value->oy_struct && 
               o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
@@ -398,21 +398,21 @@ int            oyX1Configs_FromPattern (
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( instrument->data,
+          error = oyOptions_SetFromText( device->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
           oyFree_m_( text );
         }
 
         if(error <= 0)
-          instrument->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                               instrument->oy_->allocateFunc_ );
+          device->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                               device->oy_->allocateFunc_ );
 
-        oyConfigs_MoveIn( instruments, &instrument, -1 );
+        oyConfigs_MoveIn( devices, &device, -1 );
       }
 
       if(error <= 0)
-        *s = instruments;
+        *s = devices;
 
       oyStringListRelease_( &texts, texts_n, free );
 
@@ -422,7 +422,7 @@ int            oyX1Configs_FromPattern (
     value2 = oyOptions_FindString( options, "properties", 0 );
     if(value2)
     {
-      texts_n = oyGetAllScreenNames( instrument_name, &texts, allocateFunc );
+      texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -430,25 +430,25 @@ int            oyX1Configs_FromPattern (
         if(value1 && strcmp(value1, texts[i]) != 0)
           continue;
 
-        instrument = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !instrument;
+        device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !device;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( instrument->backend_core,
-                                       CMM_BASE_REG OY_SLASH "instrument_name",
+        error = oyOptions_SetFromText( device->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
-        error = oyX1InstrumentFromName_( texts[i], options, &instrument,
+        error = oyX1DeviceFromName_( texts[i], options, &device,
                                          allocateFunc );
 
-        if(error <= 0 && instrument)
-          instrument->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                                instrument->oy_->allocateFunc_);
-        oyConfigs_MoveIn( instruments, &instrument, -1 );
+        if(error <= 0 && device)
+          device->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                                device->oy_->allocateFunc_);
+        oyConfigs_MoveIn( devices, &device, -1 );
       }
 
       if(error <= 0)
-        *s = instruments;
+        *s = devices;
 
       oyStringListRelease_( &texts, texts_n, free );
 
@@ -462,7 +462,7 @@ int            oyX1Configs_FromPattern (
       error = !value1 || !value3;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
-              "The instrument_name/profile_name option is missed. Options:\n%s",
+              "The device_name/profile_name option is missed. Options:\n%s",
                 OY_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -478,7 +478,7 @@ int            oyX1Configs_FromPattern (
       error = !value1;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
-                "The instrument_name option is missed. Options:\n%s",
+                "The device_name option is missed. Options:\n%s",
                 OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
@@ -496,8 +496,8 @@ int            oyX1Configs_FromPattern (
   oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
 
   cleanup:
-  if(instrument_name_temp)
-    oyFree_m_( instrument_name_temp );
+  if(device_name_temp)
+    oyFree_m_( device_name_temp );
 
 
   return error;
@@ -506,7 +506,7 @@ int            oyX1Configs_FromPattern (
 /** Function oyX1Config_Check
  *  @brief   oyX1 oyCMMapi8_s Xorg monitor check
  *
- *  @param[in]     config              the monitor instrument configuration
+ *  @param[in]     config              the monitor device configuration
  *  @return                            rank value
  *
  *  @version Oyranos: 0.1.10
@@ -534,15 +534,15 @@ int            oyX1Config_Check      ( oyConfig_s        * config )
 }
 
 /** @instance oyX1_rank_map
- *  @brief    oyRankPad map for mapping instrument to configuration informations
+ *  @brief    oyRankPad map for mapping device to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/01/27
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  */
 oyRankPad oyX1_rank_map[] = {
-  {"instrument_name", 2, -1, 0},       /**< is good */
-  {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
+  {"device_name", 2, -1, 0},       /**< is good */
+  {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
   {"model", 5, -5, 0},                 /**< important, should not fail */
   {"serial", 10, -2, 0},               /**< important, could slightly fail */

@@ -80,13 +80,13 @@ oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
 
 
 void         oyOption_UpdateFlags_   ( oyOption_s        * s );
-int    oyOptions_SetInstrumentTextKey_(oyOptions_s       * options,
-                                       const char        * instrument_type,
-                                       const char        * instrument_class,
+int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
+                                       const char        * device_type,
+                                       const char        * device_class,
                                        const char        * key,
                                        const char        * value );
-char * oyInstrumentRegistrationCreate_(const char        * instrument_type,
-                                       const char        * instrument_class,
+char * oyDeviceRegistrationCreate_   ( const char        * device_type,
+                                       const char        * device_class,
                                        const char        * key,
                                        char              * old_text );
 int    oyOptions_SetRegistrationTextKey_(

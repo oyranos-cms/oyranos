@@ -534,7 +534,7 @@ oyTESTRESULT_e testMonitor ()
   char * block, * text = 0, * display_name;
   size_t size = 0;
   oyProfile_s * p, * p2;
-  oyConfigs_s * instruments = 0;
+  oyConfigs_s * devices = 0;
   oyConfig_s * c = 0;
   oyOptions_s * options = oyOptions_New( 0 );
 
@@ -545,34 +545,34 @@ oyTESTRESULT_e testMonitor ()
   error = oyOptions_SetFromText( options, "//colour/config/properties",
                                  "true", OY_CREATE_NEW );
 
-  error = oyInstrumentsGet( "colour", "monitor", options, &instruments );
+  error = oyDevicesGet( "colour", "monitor", options, &devices );
   oyOptions_Release( &options );
 
-  n = oyConfigs_Count( instruments );
+  n = oyConfigs_Count( devices );
   if(!error)
   {
     for(i = 0; i < n; ++i)
     {
-      c = oyConfigs_Get( instruments, i );
+      c = oyConfigs_Get( devices, i );
 
-      error = oyInstrumentGetInfo( c, oyNAME_NAME, 0, &text, 0 );
+      error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument: %s", text )
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
       else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
         free( text );
 
-      error = oyInstrumentGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
+      error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
 
       if(text && text[0])
       {
         char * list = text, * tmp = 0, * line = malloc(128);
         int even = 1;
 
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument    " )
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "device    " )
 
         tmp = list;
         while(list && list[0])
@@ -594,19 +594,19 @@ oyTESTRESULT_e testMonitor ()
         free( line );
 
       } else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
         free( text );
 
 
       /* get the old oyMonitorxxx API conforming display name */
-      error = oyInstrumentGetInfo( c, oyNAME_NICK, 0, &text, 0 );
+      error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "instrument: %s", text )
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
       else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "instrument: ---" )
+        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       display_name = text;
 
@@ -625,7 +625,7 @@ oyTESTRESULT_e testMonitor ()
         "no default monitor profile %d", size );
       }
 
-      error = oyInstrumentProfileFromDB( c, &text, malloc );
+      error = oyDeviceProfileFromDB( c, &text, malloc );
       if(display_name) free(display_name);
       if(text)
       {
@@ -659,7 +659,7 @@ oyTESTRESULT_e testMonitor ()
       fprintf(stdout, "\n" );
     }
   }
-  oyConfigs_Release( &instruments );
+  oyConfigs_Release( &devices );
 
   display_name = oyGetDisplayNameFromPosition( 0, 0,0, malloc);
 
