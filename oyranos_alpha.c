@@ -17119,7 +17119,7 @@ char info_profile_data[320] =
     0,0,0,0,0,0,0,0
   };
 
-/** Function oyFilterNode_TextToInfo
+/** Function oyFilterNode_TextToInfo_
  *  @memberof oyFilterNode_s
  *  @brief   serialise filter node to binary
  *
@@ -17135,7 +17135,7 @@ char info_profile_data[320] =
  *  @since   2008/07/17 (Oyranos: 0.1.8)
  *  @date    2008/07/18
  */
-oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
+oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
@@ -17378,7 +17378,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
           if(oy_debug > 3)
           {
             size = 0;
-            ptr = oyFilterNode_TextToInfo ( node, &size, oyAllocateFunc_ );
+            ptr = oyFilterNode_TextToInfo_( node, &size, oyAllocateFunc_ );
             if(ptr)
               oyWriteMemToFile_( "test_dbg_colour.icc", ptr, size );
           }
@@ -17406,25 +17406,24 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
                                      ptr, "oyPointerRelease", oyPointerRelease);
               cmm_ptr->size = size;
 
-              if(error <= 0 && cmm_ptr && cmm_ptr->ptr)
-              {
-                if( oyStrcmp_( node->api7_->context_type,
-                               s->api4_->context_type ) != 0 )
-                {
-                  cmm_ptr_out = oyCMMptr_New_(oyAllocateFunc_);
-                  error = oyCMMptr_Set_( cmm_ptr_out, node->api7_->id_,
-                                         node->api7_->context_type, 0, 0, 0);
-
-                  /* search for a convertor and convert */
-                  oyCMMptr_ConvertData( cmm_ptr, cmm_ptr_out, node );
-                  node->backend_data = cmm_ptr_out;
-                } else
-                  node->backend_data = oyCMMptr_Copy_( cmm_ptr, 0 );
-              }
-
               /* 3b.1. update cache entry */
               error = oyHash_SetPointer_( hash, (oyStruct_s*) cmm_ptr);
-              cmm_ptr = 0;
+            }
+
+            if(error <= 0 && cmm_ptr && cmm_ptr->ptr)
+            {
+              if( oyStrcmp_( node->api7_->context_type,
+                             s->api4_->context_type ) != 0 )
+              {
+                cmm_ptr_out = oyCMMptr_New_(oyAllocateFunc_);
+                error = oyCMMptr_Set_( cmm_ptr_out, node->api7_->id_,
+                                       node->api7_->context_type, 0, 0, 0);
+
+                /* search for a convertor and convert */
+                oyCMMptr_ConvertData( cmm_ptr, cmm_ptr_out, node );
+                node->backend_data = cmm_ptr_out;
+              } else
+                node->backend_data = oyCMMptr_Copy_( cmm_ptr, 0 );
             }
           }
 

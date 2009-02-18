@@ -2242,7 +2242,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
                                        int                 pos );
 const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type );
-oyPointer    oyFilterNode_TextToInfo ( oyFilterNode_s    * node,
+oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 

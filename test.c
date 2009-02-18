@@ -148,8 +148,10 @@ main(int argc, char** argv)
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//colour" );
   
-  error = oyConversion_OutputAdd( conversion, 0, image_out );
+  error = oyConversion_OutputAdd( conversion, "//image/output_ppm", image_out );
 
+  pixel_access->start_xy[0] = 0;
+  pixel_access->start_xy[1] = 0;
   result = oyConversion_Run( conversion, pixel_access, 0 );
 
   oyImage_Release( &image_in );
