@@ -45,6 +45,7 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
                                        const double      * XYZmin,
                                        const double      * XYZmax,
                                        const double      * XYZwhite );
+int                oyBigEndian       ( void );
 
 typedef struct oyImage_s oyImage_s;
 
@@ -1265,6 +1266,8 @@ typedef enum {
   oyFLOAT,     /*!< IEEE floating point number */
   oyDOUBLE     /*!< IEEE double precission floating point number */
 } oyDATATYPE_e;
+
+int      oySizeofDatatype            ( oyDATATYPE_e        t );
 
 
 /** @typedef oyPixel_t 
