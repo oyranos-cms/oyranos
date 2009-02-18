@@ -107,7 +107,7 @@ oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/07 (Oyranos: 0.1.8)
- *  @date    2008/10/07
+ *  @date    2009/02/18
  */
 int      oyraFilterPlug_ImageOutputPPMRun (
                                        oyFilterPlug_s    * requestor_plug,
@@ -119,22 +119,171 @@ int      oyraFilterPlug_ImageOutputPPMRun (
   int result = 0;
   const char * filename = 0;
   FILE * fp = 0;
-
-  node = socket->node;
+  oyArray2d_s * array = *pixel;
 
   /* to reuse the requestor_plug is a exception for the starting request */
   result = socket->node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
+
+  node = requestor_plug->node;
 
   if(result <= 0)
     filename = oyOptions_FindString( node->filter->options_, "filename", 0 );
 
   if(filename)
-    fp = fopen( filename, "rw" );
+    fp = fopen( filename, "wb" );
 
   if(fp)
   {
-    fprintf( fp, "P6\n1\n1 # %s\n255\n   ", socket->node->relatives_ );
-    fclose( fp );
+      size_t pt = 0;
+      char text[128];
+      int  len = 0;
+      int  i,j,k,n;
+      char bytes[48];
+      oyImage_s *image_input = (oyImage_s*)requestor_plug->remote_socket_->data;
+
+      int cchan_n = oyProfile_GetChannelsCount( image_input->profile_ );
+      int channels = oyToChannels_m( image_input->layout_[0] );
+      oyDATATYPE_e data_type = oyToDataType_m( image_input->layout_[0] );
+      int alpha = channels - cchan_n;
+      int byteps = oySizeofDatatype( data_type );
+      const char * colourspacename = oyProfile_GetText( image_input->profile_,
+                                                        oyNAME_DESCRIPTION );
+      char * vs = oyVersionString(1,malloc);
+      const uint8_t * out_values = 0, * u8;
+      double * dbls;
+      float flt;
+
+            fputc( 'P', fp );
+      if(alpha) 
+            fputc( '7', fp );
+      else
+      {
+        if(byteps == 1 ||
+           byteps == 2)
+        {
+          if(channels == 1)
+            fputc( '5', fp );
+          else
+            fputc( '6', fp );
+        } else
+        if (byteps == 4 || byteps == 8)
+        {
+          if(channels == 1)
+            fputc( 'f', fp ); /* PFM gray */
+          else
+            fputc( 'F', fp ); /* PFM rgb */
+        }
+      }
+
+      fputc( '\n', fp );
+
+      snprintf( text, 84, "# CREATOR: Oyranos-%s " CMM_NICK "\"%s\"\n",
+                oyNoEmptyString_m_(vs), node->relatives_ );
+      if(vs) free(vs); vs = 0;
+      len = strlen( text );
+      do { fputc ( text[pt++] , fp);
+      } while (--len); pt = 0;
+
+      {
+        time_t  cutime;         /* Time since epoch */
+        struct tm       *gmt;
+        char time_str[24];
+
+        cutime = time(NULL); /* time right NOW */
+        gmt = gmtime(&cutime);
+        strftime(time_str, 24, "%Y/%m/%d %H:%M:%S", gmt);
+        snprintf( text, 84, "# DATE/TIME: %s\n", time_str );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp);
+        } while (--len); pt = 0;
+      }
+
+      snprintf( text, 84, "# COLORSPACE: %s\n", colourspacename ?
+                colourspacename : "--" );
+      len = strlen( text );
+      do { fputc ( text[pt++] , fp);
+      } while (--len); pt = 0;
+
+      if(byteps == 1)
+        snprintf( bytes, 84, "255" );
+      else
+      if(byteps == 2)
+        snprintf( bytes, 84, "65535" );
+      else
+      if (byteps == 4 || byteps == 8) 
+      {
+        if(oyBigEndian())
+          snprintf( bytes, 84, "1.0" );
+        else
+          snprintf( bytes, 84, "-1.0" );
+      }
+      else
+        message( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ " byteps: %d",
+             OY_DBG_ARGS_, byteps );
+
+
+      if(alpha)
+      {
+        const char *tupl = "RGB_ALPHA";
+
+        if(channels == 2)
+          tupl = "GRAYSCALE_ALPHA";
+        snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
+                  "%s\nTUPLTYPE %s\nENDHDR\n",
+               image_input->width, image_input->height, channels, bytes, tupl );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp);
+        } while (--len); pt = 0;
+
+      }
+      else
+      {
+        snprintf( text, 84, "%d %d\n", image_input->width, image_input->height);
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp);
+        } while (--len); pt = 0;
+
+        snprintf( text, 84, "%s\n", bytes );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp);
+        } while (--len); pt = 0;
+      }
+
+      n = array->width * byteps;
+      if(byteps == 8)
+      {
+        n = array->width;
+        u8 = (uint8_t*) &flt;
+      }
+
+      for( k = 0; k < array->height; ++k)
+      {
+        out_values = array->array2d[k];
+        if(byteps == 8)
+        {
+          dbls = (double*)out_values;
+          for(i = 0; i < n; ++i)
+          {
+            flt = dbls[i];
+            for(j = 0; j < 4; ++j)
+              fputc ( u8[j], fp);
+          }
+        } else 
+        for(i = 0; i < n; ++i)
+        {
+          if(!oyBigEndian() && (byteps == 2))
+          { if(i%2)
+              fputc ( out_values[i - 1] , fp);
+            else
+              fputc ( out_values[i + 1] , fp);
+          } else
+            fputc ( out_values[i] , fp);
+        }
+      }
+
+      fflush( fp );
+      fclose (fp);
   }
 
   return result;

@@ -42,6 +42,7 @@ main(int argc, char** argv)
   oyPixelAccess_s * pixel_access = 0;
   oyConversion_s * conversion = 0;
   oyFilter_s      * filter = 0;
+  oyOptions_s * options = 0;
   int32_t result = 0;
   oyImage_s * image_in = 0, * image_out = 0;
   double buf[24] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
@@ -149,6 +150,10 @@ main(int argc, char** argv)
     fprintf( stderr, "could not add  filter: %s\n", "//colour" );
   
   error = oyConversion_OutputAdd( conversion, "//image/output_ppm", image_out );
+  options = oyFilter_OptionsGet( conversion->out_->filter, OY_FILTER_GET_DEFAULT );
+  error = oyOptions_SetFromText( options, "//image/output_ppm/filename",
+                                 "test_dbg.ppm", OY_CREATE_NEW );
+  oyOptions_Release( &options );
 
   pixel_access->start_xy[0] = 0;
   pixel_access->start_xy[1] = 0;
