@@ -13379,11 +13379,11 @@ const char*    oyRegion_Show         ( oyRegion_s        * r )
 /**
  *  @brief oyDATATYPE_e to byte mapping
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2007/11/00
  */
-int
-oySizeofDatatype (oyDATATYPE_e t)
+int      oySizeofDatatype            ( oyDATATYPE_e        t )
 {
   int n = 0;
   switch(t)
@@ -16181,12 +16181,19 @@ oyOptions_s* oyFilter_OptionsSet     ( oyFilter_s        * filter,
 oyOptions_s* oyFilter_OptionsGet     ( oyFilter_s        * filter,
                                        int                 flags )
 {
+  oyOptions_s * options = 0;
+
   if(!filter)
     return 0;
 
-  if(flags)
-    return oyOptions_ForFilter_( filter, flags, filter->oy_ );
-  else
+  if(flags || !filter->options_)
+  {
+    options = oyOptions_ForFilter_( filter, flags, filter->oy_ );
+    if(!filter->options_)
+      filter->options_ = oyOptions_Copy( options, 0 );
+    return options;
+
+  } else
     return oyOptions_Copy( filter->options_, 0 );
 }
 const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
