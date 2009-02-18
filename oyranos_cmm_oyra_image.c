@@ -342,7 +342,7 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
  *
  *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
  *  We do not have any binary context to include.
- *  Thus oyFilterNode_TextToInfo() is fine.
+ *  Thus oyFilterNode_TextToInfo_() is fine.
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/17 (Oyranos: 0.1.8)
@@ -353,7 +353,7 @@ oyPointer  oyraFilterNode_ImageRootContextToMem (
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
-  return oyFilterNode_TextToInfo( node, size, allocateFunc );
+  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
 }
 
 /** @func    oyraFilterPlug_ImageRootRun
