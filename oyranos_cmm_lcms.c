@@ -1026,13 +1026,13 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
   if(image_input->type_ != oyOBJECT_IMAGE_S)
   {
-    oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
+    oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message( oyMSG_WARN, (oyStruct_s*)node,
              "%s: %d missed input image %d", __FILE__,__LINE__, image_input->type_ );
   }
   if(image_output->type_ != oyOBJECT_IMAGE_S)
   {
-    oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
+    oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message( oyMSG_WARN, (oyStruct_s*)node,
              "%s: %d missed output image %d", __FILE__,__LINE__, image_input->type_ );
   }
@@ -1041,7 +1041,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
   if(data_type == oyFLOAT)
   {
-    oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
+    oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message( oyMSG_WARN, (oyStruct_s*)node,
              "%s: %d can not handle oyFLOAT", __FILE__,__LINE__ );
   }
@@ -1070,7 +1070,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     if( o->value_type != oyVAL_STRUCT ||
         o->value->oy_struct->type_ != oyOBJECT_PROFILES_S)
     {
-      oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
+      oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
       message( oyMSG_WARN, (oyStruct_s*)node,
                "%s: %d incompatible \"profiles_effect\"", __FILE__,__LINE__ );
       
@@ -1097,7 +1097,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     if( o->value_type != oyVAL_STRUCT ||
         o->value->oy_struct->type_ != oyOBJECT_PROFILES_S)
     {
-      oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
+      oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
       message( oyMSG_WARN, (oyStruct_s*)node,
                "%s: %d incompatible \"profiles_simulation\"",__FILE__,__LINE__);
       
@@ -1364,7 +1364,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   if(data_type == oyFLOAT)
   {
-    oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
+    oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message(oyMSG_WARN,0, "%s: %d can not handle oyFLOAT", __FILE__,__LINE__);
     error = 1;
   }
@@ -1388,7 +1388,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
       } else
       {
-        oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
+        oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
         error = 1;
       }
 
@@ -1396,7 +1396,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   } else
   {
-    oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
+    oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
     error = 1;
   }
 

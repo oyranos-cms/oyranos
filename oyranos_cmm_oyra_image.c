@@ -642,7 +642,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
             memcpy(var_s, &data[start], l);
             var_s[l] = 0;
             var = atof(var_s);
-#           ifdef DEBUG
+#           ifdef DEBUG_
             printf("var = \"%s\"  %d\n",var_s, l);
 #           endif
           }

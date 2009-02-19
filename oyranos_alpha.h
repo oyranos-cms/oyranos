@@ -335,6 +335,7 @@ int          oyObject_UnSetLocking     ( oyObject_s        object,
                                          const char      * marker,
                                          int               line );
 int          oyObject_GetId            ( oyObject_s        object );
+int          oyObject_GetRefCount      ( oyObject_s        object );
 
 
 /** @internal
@@ -1855,7 +1856,7 @@ OYAPI int  OYEXPORT
 
 OYAPI int  OYEXPORT
                  oyFilterSocket_Callback (
-                                       oyFilterSocket_s  * c,
+                                       oyFilterPlug_s    * c,
                                        oyCONNECTOR_EVENT_e e );
 
 /** @struct oyFilterPlug_s

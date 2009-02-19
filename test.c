@@ -77,7 +77,7 @@ main(int argc, char** argv)
                                        oyPIXEL_ACCESS_IMAGE, 0 );
 
   /* show the Oyranos graph with ghostview */
-  ptr =  oyConversion_ToText( conversion, "Oyranos simple Test Graph",0,malloc);
+  ptr = oyConversion_ToText( conversion, "Oyranos simple Test Graph",0,malloc);
   oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
 #if 1
   system("dot -Tps test.dot -o test.ps; gv -spartan -antialias -magstep 0.7 test.ps &");
@@ -130,6 +130,7 @@ main(int argc, char** argv)
 
   if(conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem)
     ptr = conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem( conversion->input, &size, malloc );
+  free(ptr); ptr = 0;
 
   if (0) /* dump the colour transformation */
   {
@@ -177,7 +178,17 @@ main(int argc, char** argv)
   result = oyConversion_RunPixel( conversion, pixel_access );
 
   oyPixelAccess_Release( &pixel_access );
+  oyImage_Release( &image_in );
+  oyImage_Release( &image_out );
+  oyProfile_Release( &prof );
+  ptr = oyConversion_ToText( conversion, "Oyranos simple Test Graph",0,malloc);
+  oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
+#if 1
+  system("dot -Tps test.dot -o test.ps; gv -spartan -antialias -magstep 0.7 test.ps &");
+#endif
+  free(ptr); ptr = 0;
 
+  oyConversion_Release( &conversion );
 
 
   return 0;

@@ -31,6 +31,10 @@
 
 #define OY_ERR if(l_error != 0) error = l_error;
 
+#ifdef DEBUG_
+#define DEBUG_OBJECT 1
+#endif
+
 /* internal declarations */
 oyObject_s   oyObject_SetAllocators_ ( oyObject_s          object,
                                        oyAlloc_f           allocateFunc,
@@ -4046,6 +4050,9 @@ int          oyObject_Release         ( oyObject_s      * obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
+  if(oyObject_GetRefCount( s ) < -1)
+    return 0;
+
   oyName_release_( &s->name_, s->deallocateFunc_ );
 
   s->id_ = 0;
@@ -4095,7 +4102,13 @@ int          oyObject_Ref            ( oyObject_s          obj )
     oyObject_Lock( s, __FILE__, __LINE__ );
 
   if(error <= 0)
+  {
     ++s->ref_;
+  }
+#   if DEBUG_OBJECT
+    WARNc3_S("%s   ID: %d refs: %d",
+             oyStructTypeToText( s->parent_type_ ), s->id_, s->ref_)
+#   endif
 
   if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
   {
@@ -4136,8 +4149,17 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   {
     oyObject_Lock( s, __FILE__, __LINE__ );
 
+    if(s->ref_ < 0)
+      ref = 0;
+
     if(error <= 0 && --s->ref_ > 0)
       ref = s->ref_;
+
+#   ifndef DEBUG_OBJECT
+    if(s->ref_ < -1)
+#   endif
+      WARNc3_S("%s ID: %d refs: %d",
+             oyStructTypeToText( s->parent_type_ ), s->id_, s->ref_)
 
     if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
     {
@@ -4361,6 +4383,22 @@ int            oyObject_GetId        ( oyObject_s          obj )
 {
   if(obj)
     return obj->id_;
+
+  return -1;
+}
+
+/** Function oyObject_GetRefCount
+ *  @memberof oyObject_s
+ *  @brief   get the identification number of a object 
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/19 (Oyranos: 0.1.10)
+ *  @date    2009/02/19
+ */
+int            oyObject_GetRefCount  ( oyObject_s          obj )
+{
+  if(obj)
+    return obj->ref_;
 
   return -1;
 }
@@ -14898,20 +14936,47 @@ const char *       oyConnectorEventToText (
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/28 (Oyranos: 0.1.8)
- *  @date    2008/07/28
+ *  @date    2009/02/19
  */
 OYAPI int  OYEXPORT
                  oyFilterSocket_Callback(
-                                       oyFilterSocket_s  * c,
+                                       oyFilterPlug_s    * c,
                                        oyCONNECTOR_EVENT_e e )
 {
+  int n, i;
+  oyFilterSocket_s * s;
+  oyFilterPlug_s * p;
   /* currently catch nothing */
 
-  WARNc3_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n  event: \"%s\"",
-            c&&c->node ? oyObject_GetId(c->node->oy_) : -1,
-            c ? oyObject_GetId(c->oy_) : -1,
-            oyConnectorEventToText(e)
+  WARNc4_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n  event: \"%s\" plug[%d]",
+            (c && c->remote_socket_ && c->remote_socket_->node) ?
+                   oyObject_GetId(c->remote_socket_->node->oy_) : -1,
+            (c && c->remote_socket_) ? oyObject_GetId(c->remote_socket_->oy_)
+                                     : -1,
+            oyConnectorEventToText(e),
+            c ? oyObject_GetId( c->oy_ ) : -1
           );
+
+  if(!c)
+    return 1;
+
+  s = c->remote_socket_;
+
+  if(!s)
+    return 0;
+
+  n = oyFilterPlugs_Count( s->requesting_plugs_ );
+
+  if(e == oyCONNECTOR_EVENT_RELEASED)
+    for(i = 0; i < n; ++i)
+    {
+      p = oyFilterPlugs_Get( s->requesting_plugs_, i );
+      if(p == c)
+      {
+        oyFilterPlugs_ReleaseAt( s->requesting_plugs_, i );
+        break;
+      }
+    }
 
   return 0;
 }
@@ -14934,8 +14999,16 @@ OYAPI int  OYEXPORT
 {
   /* currently catch nothing */
 
-  WARNc2_S("oyFilterPlug_s event: id : %d\n  event: \"%s\"",
-            c?oyObject_GetId(c->oy_):-1, oyConnectorEventToText(e) );
+  WARNc4_S("oyFilterNode_s[%d]->oyFilterPlug_s[%d]\n  event: \"%s\" socket[%d]",
+            (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
+            c ? oyObject_GetId(c->oy_) : -1,
+            oyConnectorEventToText(e),
+            (c && c->remote_socket_) ?
+                                   oyObject_GetId( c->remote_socket_->oy_ ) : -1
+          );
+
+  if(c && e == oyCONNECTOR_EVENT_RELEASED)
+    c->remote_socket_ = 0;
 
   return 0;
 }
@@ -15093,12 +15166,19 @@ OYAPI int  OYEXPORT
     return 0;
   /* ---- end of common object destructor ------- */
 
+  if(oyObject_GetRefCount( s->oy_) < -1)
+    return 0;
+
+  oyObject_Ref(s->oy_);
+
   oyFilterNode_Release( &s->node );
 
   {
-    int count = oyFilterPlugs_Count( s->requesting_plugs_ ),
+    int count = 0,
         i;
     oyFilterPlug_s * c = 0;
+
+    count = oyFilterPlugs_Count( s->requesting_plugs_ );
     for(i = 0; i < count; ++i)
     {
       c = oyFilterPlugs_Get( s->requesting_plugs_, i );
@@ -15107,6 +15187,7 @@ OYAPI int  OYEXPORT
     }
   }
 
+  oyObject_UnRef(s->oy_);
   oyConnector_Release( &s->pattern );
 
   if(s->oy_->deallocateFunc_)
@@ -15141,8 +15222,16 @@ OYAPI int  OYEXPORT
   oyFilterPlug_s * tp = *p;
   oyFilterSocket_s * ts = *s;
   if(tp->remote_socket_)
-    oyFilterSocket_Callback( tp->remote_socket_, oyCONNECTOR_EVENT_RELEASED );
+    oyFilterSocket_Callback( tp, oyCONNECTOR_EVENT_RELEASED );
   oyFilterSocket_Release( &tp->remote_socket_ );
+
+# if DEBUG_OBJECT
+      WARNc6_S("%s Id: %d -> %s Id: %d\n  %s -> %s",
+             oyStructTypeToText( (*p)->type_ ), oyObject_GetId((*p)->oy_),
+             oyStructTypeToText( (*s)->type_ ), oyObject_GetId((*s)->oy_),
+             (*p)->node->relatives_,
+             (*s)->node->relatives_ )
+#endif
 
   tp->remote_socket_ = *s; *s = 0;
   return !(ts->requesting_plugs_ =
@@ -15300,9 +15389,12 @@ OYAPI int  OYEXPORT
     return 0;
   /* ---- end of common object destructor ------- */
 
+  if(oyObject_GetRefCount( s->oy_) < -1)
+    return 0;
+
   oyFilterNode_Release( &s->node );
 
-  oyFilterSocket_Callback( s->remote_socket_, oyCONNECTOR_EVENT_RELEASED );
+  oyFilterSocket_Callback( s, oyCONNECTOR_EVENT_RELEASED );
   oyFilterSocket_Release( &s->remote_socket_ );
 
   oyConnector_Release( &s->pattern );
@@ -16067,6 +16159,9 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
+    if(s->name_->release)
+      s->name_->release( (oyStruct_s**)&s->name_ );
+
     if(s->category_)
       deallocateFunc( s->category_ ); s->category_ = 0;
 
@@ -16714,7 +16809,7 @@ oyFilterNode_s * oyFilterNode_Copy   ( oyFilterNode_s    * node,
 
   return s;
 }
-/** Function: oyFilterNode_Release
+/** Function oyFilterNode_Release
  *  @memberof oyFilterNode_s
  *  @brief   release and zero a filter node object
  *
@@ -16726,6 +16821,7 @@ oyFilterNode_s * oyFilterNode_Copy   ( oyFilterNode_s    * node,
  */
 int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 {
+  uint32_t s_n = 0, p_n = 0, i;
   /* ---- start of common object destructor ----- */
   oyFilterNode_s * s = 0;
 
@@ -16742,14 +16838,30 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 
   *obj = 0;
 
-  if(oyObject_UnRef(s->oy_))
-    return 0;
   /* ---- end of common object destructor ------- */
+
+  oyObject_UnRef(s->oy_);
+
+  if(s->sockets)
+    for(i = 0;
+        i < s->api7_->sockets_n + s->api7_->sockets_last_add;
+        ++i)
+      if(s->sockets[i]) ++s_n;
+
+  if(s->plugs)
+    for(i = 0;
+        i < s->api7_->plugs_n + s->api7_->plugs_last_add;
+        ++i)
+      if(s->plugs[i]) ++p_n;
+
+  if(oyObject_GetRefCount( s->oy_ ) > s_n + p_n)
+    return 0;
+
+  oyObject_Ref(s->oy_);
 
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    uint32_t i;
 
     if(s->sockets)
     for(i = 0;
@@ -16761,6 +16873,8 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
         i < s->api7_->plugs_n + s->api7_->plugs_last_add;
         ++i)
       oyFilterPlug_Release( &s->plugs[i] );
+
+    oyObject_UnRef(s->oy_);
 
     if(s->relatives_)
       deallocateFunc( s->relatives_ );
@@ -18694,6 +18808,7 @@ oyConversion_s   * oyConversion_CreateBasic (
     error = oyConversion_FilterAdd( s, filter );
     if(error)
       WARNc1_S( "could not add  filter: %s\n", "//colour" );
+    oyFilter_Release( &filter );
 
     error = oyConversion_OutputAdd( s, 0, output );
   }
@@ -18935,8 +19050,8 @@ int                oyConversion_FilterAdd (
       if(last)
       {
         temp = node;
-        node_socket = oyFilterNode_GetSocket( node, 0 );
-        node_plug = oyFilterNode_GetPlug( node, 0 );
+        node_socket = oyFilterSocket_Copy( oyFilterNode_GetSocket( node, 0 ),0);
+        node_plug = oyFilterPlug_Copy( oyFilterNode_GetPlug( node, 0 ), 0 );
         node_plug_connector = node_plug->pattern;
 
         if(oyFilterNode_ConnectorMatch( last, 0, node_plug_connector ))
@@ -19171,7 +19286,10 @@ void               oyConversion_ToTextShowNode_ (
 
   if(sub_format == 0)
   {
-    oySprintf_(text, "  %c [ label=\"{<plug> %d| Filter Node %c\\n Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n Type: \\\"%s\\\"|<socket>}\"];\n", name, n, name,
+    oySprintf_(text, "  %c [ label=\"{<plug> %d| Filter Node %d\\n"
+                     " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
+                     " Type: \\\"%s\\\"|<socket>}\"];\n",
+    name, n, node->oy_->id_,
     node->filter->category_, node->filter->api4_->id_,
     node->filter->registration_ );
     STRING_ADD( *stream, text );
@@ -19247,7 +19365,7 @@ char             * oyConversion_ToText (
 #endif
 
 
-  STRING_ADD( text, "digraph Graph {\n" );
+  STRING_ADD( text, "digraph G {\n" );
   STRING_ADD( text, "bgcolor=\"transparent\"\n" );
   STRING_ADD( text, "  rankdir=LR\n" );
   STRING_ADD( text, "  graph [fontname=Helvetica, fontsize=12];\n" );
