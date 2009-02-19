@@ -2394,6 +2394,10 @@ struct oyPixelAccess_s {
 
   int32_t          workspace_id;       /**< a ID to assign distinct resources to */
   oyStruct_s     * user_data;          /**< user data, e.g. for error messages*/
+  oyArray2d_s    * array;              /**< processing data. The position is in
+                                            start_xy relative to the previous
+                                            mediator in the graph. */
+  oyRegion_s     * roi;                /**< region of interesst */
 };
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
@@ -2590,8 +2594,7 @@ int                oyConversion_OutputAdd (
                                        const char        * filter_registration,
                                        oyImage_s         * input );
 int                oyConversion_Run  ( oyConversion_s    * conversion,
-                                       oyPixelAccess_s   * pixel_access,
-                                       oyRegion_s        * region );
+                                       oyPixelAccess_s   * pixel_access );
 oyPointer        * oyConversion_GetOnePixel (
                                        oyConversion_s    * conversion,
                                        int32_t             x,
