@@ -42,6 +42,7 @@ main(int argc, char** argv)
   oyPixelAccess_s * pixel_access = 0;
   oyConversion_s * conversion = 0;
   oyFilter_s      * filter = 0;
+  oyFilterSocket_s * sock = 0;
   oyOptions_s * options = 0;
   int32_t result = 0;
   oyImage_s * image_in = 0, * image_out = 0;
@@ -140,18 +141,27 @@ main(int argc, char** argv)
 
   oyConversion_Release( &conversion );
 
+  conversion = oyConversion_New( 0 );
+  filter = oyFilter_New( "//image/input_ppm", 0,0, 0 );
+  conversion->input = oyFilterNode_Create( filter, 0 );
+  oyFilter_Release( &filter );
 
-  conversion = oyConversion_CreateInput ( image_in, 0, 0 );
+  options = oyFilter_OptionsGet( conversion->input->filter,
+                                 OY_FILTER_GET_DEFAULT );
+  error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
+                                 "test_dbg.ppm", OY_CREATE_NEW );
+  oyOptions_Release( &options );
+  sock = oyFilterNode_GetSocket ( conversion->input, 0 );
+  conversion->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0, 0 );
 
   filter = oyFilter_New( "//colour/icc", 0,0, 0 );
-
   error = oyConversion_FilterAdd( conversion, filter );
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//colour" );
   
   error = oyConversion_OutputAdd( conversion, "//image/output_ppm", image_out );
   options = oyFilter_OptionsGet( conversion->out_->filter, OY_FILTER_GET_DEFAULT );
-  error = oyOptions_SetFromText( options, "//image/output_ppm/filename",
+  error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
                                  "test_dbg.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
 
