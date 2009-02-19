@@ -7149,32 +7149,36 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2009/01/20
  */
-int            oyOptions_SetFromText ( oyOptions_s       * obj,
+int            oyOptions_SetFromText ( oyOptions_s      ** obj,
                                        const char        * registration,
                                        const char        * value,
                                        uint32_t            flags )
 {
-  int error = !obj || obj->type_ != oyOBJECT_OPTIONS_S || !registration ||
+  int error = (obj && *obj && (*obj)->type_ != oyOBJECT_OPTIONS_S) ||
+              !registration ||
               !value;
   oyOption_s * o = 0;
 
   if(error <= 0)
   {
-    o = oyOptions_Find( obj, registration );
+    if(!*obj)
+      *obj = oyOptions_New( 0 );
+
+    o = oyOptions_Find( *obj, registration );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
     if((!o && oyToCreateNew_m(flags)) ||
         oyToAddAlways_m(flags))
     {
-      o = oyOption_New( registration, obj->oy_ );
+      o = oyOption_New( registration, (*obj)->oy_ );
       error = !o;
 
       if(error <= 0)
         /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
         error = oyOption_SetFromText( o, value, flags );
 
-      oyOptions_MoveIn( obj, &o, -1 );
+      oyOptions_MoveIn( (*obj), &o, -1 );
     }
 
     oyOption_SetFromText( o, value, flags );
@@ -7625,7 +7629,7 @@ OYAPI int  OYEXPORT
       STRING_ADD( tmp, key );
 
     /** We provide basically a wrapper for oyOptions_SetFromText(). */
-    error = oyOptions_SetFromText( config->db, tmp, value, flags );
+    error = oyOptions_SetFromText( &config->db, tmp, value, flags );
 
     oyFree_m_( tmp );
   }
@@ -8815,7 +8819,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
 
   text = oyDeviceRegistrationCreate_( device_type, device_class,
                                           key, text );
-  error = oyOptions_SetFromText( options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
 
@@ -8849,7 +8853,7 @@ int    oyOptions_SetRegistrationTextKey_(
   STRING_ADD( text, "/" );
   STRING_ADD( text, key );
 
-  error = oyOptions_SetFromText( options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
 
@@ -8878,7 +8882,7 @@ int    oyOptions_SetRegistrationTextKey_(
     oyOptions_s * options = oyOptions_New( 0 );
     int error = 0;
 
-    error = oyOptions_SetFromText( options, "//colour/config/properties",
+    error = oyOptions_SetFromText( &options, "//colour/config/properties",
                                    "true", OY_CREATE_NEW );
     error = oyDevicesGet( 0, "monitor", 0, &monitors );
     oyOptions_Release( &options );
@@ -9165,12 +9169,11 @@ OYAPI int  OYEXPORT
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. setup the device through the backend */
-    options = oyOptions_New( 0 );
-    error = oyOptions_SetFromText( options, "//colour/config/setup",
+    error = oyOptions_SetFromText( &options, "//colour/config/setup",
                                    "true", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( options, "//colour/config/device_name",
+    error = oyOptions_SetFromText( &options, "//colour/config/device_name",
                                    device_name, OY_CREATE_NEW );
-    error = oyOptions_SetFromText( options, "//colour/config/profile_name",
+    error = oyOptions_SetFromText( &options, "//colour/config/profile_name",
                                    profile_name, OY_CREATE_NEW );
     /* 3.1 send the query to a backend */
     error = oyDeviceBackendCall( device, options );
@@ -9235,11 +9238,10 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. unset the device through the backend */
-    options = oyOptions_New( 0 );
     /** 3.1 set a general request */
-    error = oyOptions_SetFromText( options, "//colour/config/unset",
+    error = oyOptions_SetFromText( &options, "//colour/config/unset",
                                    "true", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( options, "//colour/config/device_name",
+    error = oyOptions_SetFromText( &options, "//colour/config/device_name",
                                    device_name, OY_CREATE_NEW );
 
     /** 3.2 send the query to a backend */
@@ -9344,8 +9346,7 @@ OYAPI int  OYEXPORT
     /* get expensive infos */
     if(oyOptions_Count( device->backend_core ) < 2)
     {
-      options = oyOptions_New( 0 );
-      error = oyOptions_SetFromText( options, "//colour/config/properties",
+      error = oyOptions_SetFromText( &options, "//colour/config/properties",
                                      "true", OY_CREATE_NEW );
 
       if(error <= 0)
@@ -9594,9 +9595,8 @@ int      oyDeviceSetProfile      ( oyConfig_s        * device,
   /** 1. obtain detailed and expensive device informations */
   if(oyOptions_Count( device->backend_core ) < 2)
   { 
-    options = oyOptions_New( 0 );
     /** 1.1 add "properties" call to backend arguments */
-    error = oyOptions_SetFromText( options, "//colour/config/properties",
+    error = oyOptions_SetFromText( &options, "//colour/config/properties",
                                    "true", OY_CREATE_NEW );
 
     /** 1.2 get monitor device */
@@ -9734,11 +9734,10 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
     /* 1. obtain detailed and expensive device informations */
     if(oyOptions_Count( device->backend_core ) < 2)
     { 
-      options = oyOptions_New( 0 );
       /* 1.1 add "properties" call to backend arguments */
-      error = oyOptions_SetFromText( options, "//colour/config/properties",
+      error = oyOptions_SetFromText( &options, "//colour/config/properties",
                                      "true", OY_CREATE_NEW );
-      error = oyOptions_SetFromText( options, "//colour/config/device_name",
+      error = oyOptions_SetFromText( &options, "//colour/config/device_name",
                                      device_name, OY_CREATE_NEW );
 
       device_name = 0;
@@ -18604,8 +18603,7 @@ int                oyPixelAccess_CalculateNextStartPixel (
 
 
 /**
- *  @internal
- *  Function: oyConversion_New_
+ *  Function oyConversion_New
  *  @memberof oyConversion_s
  *  @brief   allocate and initialise a new oyConversion_s object
  *
@@ -18613,9 +18611,9 @@ int                oyPixelAccess_CalculateNextStartPixel (
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2008/06/24
+ *  @date    2009/02/18
  */
-oyConversion_s *   oyConversion_New_ ( oyObject_s          object )
+oyConversion_s *   oyConversion_New  ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_CONVERSION_S;
@@ -18698,7 +18696,7 @@ oyConversion_s   * oyConversion_CreateInput (
                                        const char        * filter_registration,
                                        oyObject_s          object )
 {
-  oyConversion_s * s = oyConversion_New_( object );
+  oyConversion_s * s = oyConversion_New( object );
   int error = !s;
   oyFilter_s * filter = 0;
   oyFilterSocket_s * sock = 0;
@@ -18749,7 +18747,7 @@ oyConversion_s * oyConversion_Copy_  ( oyConversion_s    * conversion,
   if(!conversion || !object)
     return s;
 
-  s = oyConversion_New_( object );
+  s = oyConversion_New( object );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
 
@@ -18924,7 +18922,12 @@ int                oyConversion_FilterAdd (
         {
           socket_last = oyFilterNode_GetSocket( last, 0 );
         } else
+        {
+          WARNc2_S( "\n  %s: %s",
+          "Filter conectors do not match",
+                oyFilter_GetName( node->filter, oyNAME_NAME) );
           error = 1;
+        }
 
         if(error <= 0 && node_socket && !node_socket->data)
           node_socket->data = socket_last->data->copy( socket_last->data, 0 );
@@ -18985,8 +18988,11 @@ int                oyConversion_OutputAdd (
     plug_last = oyFilterNode_GetPlug( last, 0 );
 
     /* oyConversion_FilterAdd references the input image in the new filter */
-    oyImage_Release( (oyImage_s**) &plug_last->remote_socket_->data );
-    plug_last->remote_socket_->data = (oyStruct_s*)oyImage_Copy( output, 0 );
+    if(plug_last)
+    {
+      oyImage_Release( (oyImage_s**) &plug_last->remote_socket_->data );
+      plug_last->remote_socket_->data = (oyStruct_s*)oyImage_Copy( output, 0 );
+    }
 
     if(error <= 0)
       s->out_ = oyFilterNode_Copy( last, 0 );
@@ -20897,13 +20903,12 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   int n, i;
   const char * device_name = 0;
 
-  options = oyOptions_New(0);
-  error = oyOptions_SetFromText( options, "//colour/config/list",
+  error = oyOptions_SetFromText( &options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( options, "//colour/config/display_geometry",
+  error = oyOptions_SetFromText( &options, "//colour/config/display_geometry",
                                  "true", OY_CREATE_NEW );
   /** we want a fuzzy look at our display, not the narrow "device_name" */
-  error = oyOptions_SetFromText( options, "//colour/config/display_name",
+  error = oyOptions_SetFromText( &options, "//colour/config/display_name",
                                  display_name, OY_CREATE_NEW );
 
   error = oyConfigs_FromDeviceClass ( 0, "monitor", options, &devices,
@@ -21136,9 +21141,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
   }
 
   /** 1. obtain detailed and expensive device informations */
-  options = oyOptions_New( 0 );
   /** 1.1 add "properties" call to backend arguments */
-  error = oyOptions_SetFromText( options, "//colour/config/properties",
+  error = oyOptions_SetFromText( &options, "//colour/config/properties",
                                  "true", OY_CREATE_NEW );
 
   /** 1.2 get monitor device */
@@ -21200,12 +21204,11 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
   }
 
   {
-    options = oyOptions_New( 0 );
     /* 1. set a general request */
-    error = oyOptions_SetFromText( options, "//colour/config/list",
+    error = oyOptions_SetFromText( &options, "//colour/config/list",
                                    "true", OY_CREATE_NEW );
     /* we want a fuzzy look at our display, not as narrow as "device_name"*/
-    error = oyOptions_SetFromText( options, "//colour/config/display_name",
+    error = oyOptions_SetFromText( &options, "//colour/config/display_name",
                                    display_name, OY_CREATE_NEW );
     error = oyConfigs_FromDeviceClass ( 0, device_class, options,
                                             &devices, 0 );

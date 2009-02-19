@@ -700,7 +700,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
 /* decode */
 #define oyToCreateNew_m(r)             (((r) >> 1)&1)
 #define oyToAddAlways_m(r)             (((r) >> 2)&1)
-int            oyOptions_SetFromText ( oyOptions_s       * obj,
+int            oyOptions_SetFromText ( oyOptions_s      ** obj,
                                        const char        * key,
                                        const char        * value,
                                        uint32_t            flags );
@@ -2566,6 +2566,7 @@ typedef struct {
   oyFilterNode_s     * out_;           /**< @private the Oyranos output image. Oyranos will stream the filters starting from the end. This element will be asked on its first plug. */
 } oyConversion_s;
 
+oyConversion_s *   oyConversion_New  ( oyObject_s          object );
 oyConversion_s  *  oyConversion_CreateBasic (
                                        oyImage_s         * input,
                                        oyImage_s         * output,

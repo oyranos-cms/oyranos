@@ -84,7 +84,7 @@ int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
                                        uint32_t            value ) {return 0;}
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( opts, \
+        error = oyOptions_SetFromText( &opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
@@ -202,7 +202,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
           *device = oyConfig_New( CMM_BASE_REG, 0 );
         error = !*device;
         if(!error && device_name)
-        error = oyOptions_SetFromText( (*device)->backend_core,
+        error = oyOptions_SetFromText( &(*device)->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
@@ -326,7 +326,7 @@ int            oyX1Configs_FromPattern (
         error = !device;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( device->backend_core,
+        error = oyOptions_SetFromText( &device->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
@@ -398,7 +398,7 @@ int            oyX1Configs_FromPattern (
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( device->data,
+          error = oyOptions_SetFromText( &device->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
           oyFree_m_( text );
@@ -434,7 +434,7 @@ int            oyX1Configs_FromPattern (
         error = !device;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( device->backend_core,
+        error = oyOptions_SetFromText( &device->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 

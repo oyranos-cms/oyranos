@@ -90,7 +90,7 @@ int            dDevCMMCanHandle      ( oyCMMQUERY_e        type,
                                        uint32_t            value ) {return 0;}
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( opts, \
+        error = oyOptions_SetFromText( &opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
@@ -211,7 +211,7 @@ int          dDevInstrumentFromName_ ( const char        * instrument_name,
           *instrument = oyConfig_New( CMM_BASE_REG, 0 );
         error = !*instrument;
         if(!error && instrument_name)
-        error = oyOptions_SetFromText( (*instrument)->backend_core,
+        error = oyOptions_SetFromText( &(*instrument)->backend_core,
                                        CMM_BASE_REG OY_SLASH "instrument_name",
                                        instrument_name, OY_CREATE_NEW );
 
@@ -311,7 +311,7 @@ int            dDevConfigs_FromPattern (
         error = !instrument;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( instrument->backend_core,
+        error = oyOptions_SetFromText( &instrument->backend_core,
                                        CMM_BASE_REG OY_SLASH "instrument_name",
                                        texts[i], OY_CREATE_NEW );
 
@@ -372,7 +372,7 @@ int            dDevConfigs_FromPattern (
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( instrument->data,
+          error = oyOptions_SetFromText( &instrument->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
           free( text );
@@ -407,7 +407,7 @@ int            dDevConfigs_FromPattern (
         error = !instrument;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( instrument->backend_core,
+        error = oyOptions_SetFromText( &instrument->backend_core,
                                        CMM_BASE_REG OY_SLASH "instrument_name",
                                        texts[i], OY_CREATE_NEW );
 

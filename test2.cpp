@@ -326,7 +326,7 @@ oyTESTRESULT_e testSettings ()
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );
 
-  oyOptions_SetFromText( opts, "cmyk_cmky_black_preservation", "1", 0 );
+  oyOptions_SetFromText( &opts, "cmyk_cmky_black_preservation", "1", 0 );
 
   count = oyOptions_Count( opts );
   if(!count)
@@ -886,10 +886,8 @@ oyTESTRESULT_e testCMMConfigsListing ()
   fprintf( stdout, "\n");
 
 
-  options_list = oyOptions_New( 0 );
-  options_devices = oyOptions_New( 0 );
   /* add list call to backend arguments */
-  error = oyOptions_SetFromText( options_list, "//colour/config/list", "true",
+  error = oyOptions_SetFromText( &options_list, "//colour/config/list", "true",
                                  OY_CREATE_NEW );
 
   fprintf( stdout, "oyConfigs_FromDomain() \"list\" call:\n" );
@@ -911,7 +909,7 @@ oyTESTRESULT_e testCMMConfigsListing ()
         o = oyConfig_Get( config, k );
 
         /* collect the device_name's into a set of options for later */
-        error = oyOptions_SetFromText( options_devices, o->registration,
+        error = oyOptions_SetFromText( &options_devices, o->registration,
                                        o->value->string,
                                        OY_CREATE_NEW | OY_ADD_ALWAYS );
         printf("  %d::%d::%d %s %s\n", i,j,k,
@@ -936,14 +934,13 @@ oyTESTRESULT_e testCMMConfigsListing ()
 
     for( l = 0; l < devices_n; ++l )
     {
-      options = oyOptions_New( 0 );
       /* set a general request */
-      error = oyOptions_SetFromText( options, "//colour/config/properties",
+      error = oyOptions_SetFromText( &options, "//colour/config/properties",
                                      "true", OY_CREATE_NEW );
 
       /* set the device_name */
       o = oyOptions_Get( options_devices, l );
-      error = oyOptions_SetFromText( options, o->registration,
+      error = oyOptions_SetFromText( &options, o->registration,
                                      o->value->string, OY_CREATE_NEW );
       oyOption_Release( &o );
 

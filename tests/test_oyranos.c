@@ -318,7 +318,7 @@ oyTESTRESULT_e testSettings ()
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );
 
-  oyOptions_SetFromText( opts, "cmyk_cmky_black_preservation", "1", 0 );
+  oyOptions_SetFromText( &opts, "cmyk_cmky_black_preservation", "1", 0 );
 
   count = oyOptions_Count( opts );
   if(!count)
@@ -536,13 +536,13 @@ oyTESTRESULT_e testMonitor ()
   oyProfile_s * p, * p2;
   oyConfigs_s * devices = 0;
   oyConfig_s * c = 0;
-  oyOptions_s * options = oyOptions_New( 0 );
+  oyOptions_s * options = 0;
 
   oyExportReset_(EXPORT_SETTING);
   fprintf(stdout, "\n" );
 
 
-  error = oyOptions_SetFromText( options, "//colour/config/properties",
+  error = oyOptions_SetFromText( &options, "//colour/config/properties",
                                  "true", OY_CREATE_NEW );
 
   error = oyDevicesGet( "colour", "monitor", options, &devices );
