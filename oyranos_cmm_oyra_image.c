@@ -37,8 +37,7 @@ oyPointer  oyraFilterNode_ImageRootContextToMem (
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket,
-                                       oyArray2d_s      ** pixel );
+                                       oyPixelAccess_s   * ticket );
 int wread ( unsigned char   *data,    /* read a word */
             size_t  pos,
             size_t  max,
@@ -119,18 +118,17 @@ oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
  */
 int      oyraFilterPlug_ImageOutputPPMRun (
                                        oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket,
-                                       oyArray2d_s      ** pixel )
+                                       oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterNode_s * node = 0;
   int result = 0;
   const char * filename = 0;
   FILE * fp = 0;
-  oyArray2d_s * array = *pixel;
+  oyArray2d_s * array = ticket->array;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = socket->node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
+  result = socket->node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
 
   node = requestor_plug->node;
 
@@ -475,15 +473,13 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
  */
 int      oyraFilterPlug_ImageInputPPMRun (
                                        oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket,
-                                       oyArray2d_s      ** pixel )
+                                       oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket = 0;
   oyFilterNode_s * node = 0;
   int error = 0;
   const char * filename = 0;
   FILE * fp = 0;
-  oyArray2d_s * array = 0;
   oyDATATYPE_e data_type = oyUINT8;
   oyPROFILE_e profile_type = oyEDITING_RGB;
   oyProfile_s * prof = 0;
@@ -505,14 +501,11 @@ int      oyraFilterPlug_ImageInputPPMRun (
     
   size_t start, end;
 
-  if(pixel)
-    array = *pixel;
-
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
   {
     socket = requestor_plug->remote_socket_;
     node = requestor_plug->node;
-    error = oyraFilterPlug_ImageRootRun( requestor_plug, ticket, pixel );
+    error = oyraFilterPlug_ImageRootRun( requestor_plug, ticket );
 
     return error;
 
@@ -532,7 +525,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   /* to reuse the requestor_plug is a exception for the starting request */
   if(requestor_plug)
     error = socket->node->api7_->oyCMMFilterPlug_Run( requestor_plug,
-                                                       ticket, pixel );
+                                                      ticket );
 
 
   if(error <= 0)
@@ -1075,8 +1068,7 @@ oyPointer  oyraFilterNode_ImageRootContextToMem (
  *  @date    2008/10/05
  */
 int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket,
-                                       oyArray2d_s      ** pixel )
+                                       oyPixelAccess_s   * ticket )
 {
   int x = 0, y = 0, n = 0;
   int result = 0, error = 0;
@@ -1105,8 +1097,7 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
 
   } else {
 
-    error = oyImage_FillArray( image, 0, 1, pixel, 0 );
-
+    error = oyImage_FillArray( image, 0, 1, &ticket->array, 0 );
   }
 
   return result;
@@ -1178,8 +1169,7 @@ oyConnector_s* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_connector,0};
  *  @date    2008/10/03
  */
 int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket,
-                                       oyArray2d_s      ** pixel )
+                                       oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterNode_s * node = 0;
@@ -1188,7 +1178,7 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
   node = socket->node;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket, pixel );
+  result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
 
   return result;
 }

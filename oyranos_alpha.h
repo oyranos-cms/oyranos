@@ -2593,7 +2593,8 @@ int                oyConversion_OutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,
                                        oyImage_s         * input );
-int                oyConversion_Run  ( oyConversion_s    * conversion,
+int                oyConversion_RunPixel (
+                                       oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access );
 oyPointer        * oyConversion_GetOnePixel (
                                        oyConversion_s    * conversion,

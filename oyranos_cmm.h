@@ -695,13 +695,12 @@ struct oyCMMapi5_s {
  *  are passed by the filter object.
  *
  *  @verbatim
-    while (err == 0) {
-      memcpy( buf[x * n++], oyCMMFilterSocket_GetNext( filter_socket, pixel_access, &err ), x );
-    } @endverbatim
+    while (
+    error = oyCMMFilterSocket_GetNext( filter_plug, pixel_access ) == 0
+    ) {}; @endverbatim
  *
- *  @param[in]     connector           including the CMM's private data, connector is the requesting plug to obtain a handle for calling back
+ *  @param[in]     plug                including the CMM's private data, connector is the requesting plug to obtain a handle for calling back
  *  @param[in]     pixel_access        processing order instructions
- *  @param[in,out] output              the data to place results into, its position is in start_xy relative to the previous mediator
  *  @return                            -1 end; 0 on success; error > 1
  *
  *  A requested context will be stored in oyFilterNode_s::backend_data.
@@ -710,9 +709,8 @@ struct oyCMMapi5_s {
  *  @since   2008/07/03 (Oyranos: 0.1.8)
  *  @date    2008/07/28
  */
-typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * connector,
-                                       oyPixelAccess_s   * pixel_access,
-                                       oyArray2d_s      ** output );
+typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * plug,
+                                       oyPixelAccess_s   * pixel_access );
 
 /** @struct  oyCMMapi7_s
  *  @brief   the API 7 for data processing

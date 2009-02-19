@@ -18381,7 +18381,7 @@ oyPixelAccess_s *  oyPixelAccess_Create (
       /** @todo how can we know about the various backend capabilities
        *  - back report the processed number of pixels in the passed pointer
        *  - restrict for a line interface only, would fit to oyArray2D_s
-       *  - + handle inside an to be created function oyConversion_Run()
+       *  - + handle inside an to be created function oyConversion_RunPixel()
        */
     }
   }
@@ -18517,6 +18517,8 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
+  oyArray2d_Release( &s->array );
+  oyRegion_Release( &s->roi );
 
   if(s->oy_ && s->oy_->deallocateFunc_)
   {
@@ -19017,7 +19019,7 @@ int                oyConversion_OutputAdd (
   return error;
 }
 
-/** Function: oyConversion_Run
+/** Function: oyConversion_RunPixel
  *  @memberof oyConversion_s
  *  @brief   iterate over a conversion graph
  *
@@ -19030,14 +19032,13 @@ int                oyConversion_OutputAdd (
  *  @since   2008/07/06 (Oyranos: 0.1.8)
  *  @date    2008/10/02
  */
-int                oyConversion_Run  ( oyConversion_s    * conversion,
-                                       oyPixelAccess_s   * pixel_access,
-                                       oyRegion_s        * region )
+int                oyConversion_RunPixel (
+                                       oyConversion_s    * conversion,
+                                       oyPixelAccess_s   * pixel_access )
 {
   oyFilterPlug_s * plug = 0;
   oyFilter_s * filter = 0;
   oyImage_s * image = 0;
-  oyArray2d_s * array = 0;
   int error = 0, result, l_error = 0;
 
   /* conversion->out_ has to be linear, so we access only the first socket */
@@ -19046,17 +19047,15 @@ int                oyConversion_Run  ( oyConversion_s    * conversion,
   filter = conversion->out_->filter;
   image = (oyImage_s*) plug->remote_socket_->data;
 
-  result = oyImage_FillArray( image, region, 0, &array, 0 );
+  result = oyImage_FillArray( image, pixel_access->roi, 0,
+                              &pixel_access->array, 0 );
   error = ( result != 0 );
 
   if(error <= 0)
-  {
-    error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access,
-                                                          &array );
-  }
+    error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
   if(error != 0)
-    l_error = oyArray2d_Release( &array ); OY_ERR
+    l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
 
   /* @todo write data back to image in case we obtained copies only */
 
@@ -19095,7 +19094,7 @@ oyPointer        * oyConversion_GetOnePixel (
 
   pixel_access = oyPixelAccess_Create ( x, y, sock, oyPIXEL_ACCESS_POINT, 0 );
   /* @todo */
-  error = sock->node->api7_->oyCMMFilterPlug_Run( plug, pixel_access, 0 );
+  error = sock->node->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
   return pixel;
 }

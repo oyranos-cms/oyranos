@@ -90,7 +90,7 @@ main(int argc, char** argv)
 
     pixel_access->start_xy[0] = x;
     pixel_access->start_xy[1] = y;
-    result = oyConversion_Run( conversion, pixel_access, 0 );
+    result = oyConversion_RunPixel( conversion, pixel_access );
 
     if(result == 0)
     for(i = 0; i < w*h*3; i += 3)
@@ -109,7 +109,7 @@ main(int argc, char** argv)
   {
     double * p = 0;
 
-    result = oyConversion_Run( conversion, pixel_access, 0 );
+    result = oyConversion_RunPixel( conversion, pixel_access );
     p = pixel;
 
     if(result == 0)
@@ -149,10 +149,10 @@ main(int argc, char** argv)
   options = oyFilter_OptionsGet( conversion->input->filter,
                                  OY_FILTER_GET_DEFAULT );
   error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
-                                 "test_dbg.ppm", OY_CREATE_NEW );
+                                 "oyranos_logo.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
   sock = oyFilterNode_GetSocket ( conversion->input, 0 );
-  conversion->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0, 0 );
+  conversion->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0 );
 
   filter = oyFilter_New( "//colour/icc", 0,0, 0 );
   error = oyConversion_FilterAdd( conversion, filter );
@@ -167,7 +167,7 @@ main(int argc, char** argv)
 
   pixel_access->start_xy[0] = 0;
   pixel_access->start_xy[1] = 0;
-  result = oyConversion_Run( conversion, pixel_access, 0 );
+  result = oyConversion_RunPixel( conversion, pixel_access );
 
   oyImage_Release( &image_in );
   oyImage_Release( &image_out );

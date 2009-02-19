@@ -160,8 +160,7 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
                                        oyCMMptr_s        * data_out,
                                        oyFilterNode_s    * node );
 int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket,
-                                       oyArray2d_s      ** pixel );
+                                       oyPixelAccess_s   * ticket );
 const char * lcmsInfoGetText         ( const char        * select,
                                        oyNAME_e            type );
 
@@ -1316,8 +1315,7 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
  *  @date    2008/10/03
  */
 int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket,
-                                       oyArray2d_s      ** pixel )
+                                       oyPixelAccess_s   * ticket )
 {
   int i,j,k, n;
   int error = 0;
@@ -1338,10 +1336,10 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   image_input = (oyImage_s*)plug->remote_socket_->data;
 
   /* We let the input filter do its processing first. */
-  error = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket, pixel);
+  error = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket );
   if(error != 0) return error;
 
-  array = *pixel;
+  array = ticket->array;
 
   data_type = oyToDataType_m( image_input->layout_[0] );
 
