@@ -438,9 +438,9 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
-    message(oyMSG_WARN,0,
-                "%s: %d can not handle more than %d channels; found: %d",
-                __FILE__,__LINE__,CMMMaxChannels_M, chan_n);
+    message( oyMSG_WARN,0, "%s:%d "
+             "can not handle more than %d channels; found: %d",
+             __FILE__,__LINE__, CMMMaxChannels_M, chan_n);
 
   cmm_pixel = COLORSPACE_SH(PT_ANY);
   cmm_pixel |= CHANNELS_SH(cchans);
@@ -951,6 +951,13 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
   oyCMMptr_s * cmm_ptr = 0;
   lcmsProfileWrap_s * s = 0;
 
+  if(!p || p->type_ != oyOBJECT_PROFILE_S)
+  {
+    message( oyMSG_WARN,0, "%s:%d "
+             "no profile provided", __FILE__,__LINE__ );
+    return 0;
+  }
+
   cmm_ptr = oyCMMptr_LookUp( (oyStruct_s*)p, lcmsPROFILE );
 
   cmm_ptr->lib_name = CMM_NICK;
@@ -1047,6 +1054,12 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
   /* input profile */
   lps[ profiles_n++ ] = lcmsAddProfile( image_input->profile_ );
+  if(!image_input->profile_)
+  {
+    message( oyMSG_WARN, (oyStruct_s*)node, "%s: %d "
+             "missed image_input->profile_", __FILE__,__LINE__ );
+    return 0;
+  }
   p = oyProfile_Copy( image_input->profile_, 0 );
   profs = oyProfiles_MoveIn( profs, &p, -1 );
 
@@ -1113,6 +1126,12 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   }
 
   /* output profile */
+  if(!image_output->profile_)
+  {
+    message( oyMSG_WARN, (oyStruct_s*)node, "%s: %d "
+             "missed image_output->profile_", __FILE__,__LINE__ );
+    return 0;
+  }
   lps[ profiles_n++ ] = lcmsAddProfile( image_output->profile_ );
   p = oyProfile_Copy( image_output->profile_, 0 );
   profs = oyProfiles_MoveIn( profs, &p, -1 );

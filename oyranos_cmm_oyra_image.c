@@ -763,16 +763,16 @@ int      oyraFilterPlug_ImageInputPPMRun (
     switch(spp)
     {
       case 1:
-           profile_type = oyEDITING_GRAY;
+           profile_type = oyASSUMED_GRAY;
            break;
       case 2:
-           profile_type = oyEDITING_GRAY;
+           profile_type = oyASSUMED_GRAY;
            break;
       case 3:
-           profile_type = oyEDITING_RGB;
+           profile_type = oyASSUMED_RGB;
            break;
       case 4:
-           profile_type = oyEDITING_RGB;
+           profile_type = oyASSUMED_RGB;
            break;
     }
 
