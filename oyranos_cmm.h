@@ -1019,6 +1019,9 @@ typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
  *  For automatic UI's this backend API should provide a XFORMS UI about the
  *  result and return a oyConfig_s for a filled form.
  *
+ *  A empty device backend is provided with oyranos_cmm_dDev.c in Oyranos'
+ *  examples/ directory.
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/16 (Oyranos: 0.1.10)
  *  @date    2009/01/19

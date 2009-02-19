@@ -1942,7 +1942,11 @@ int            oyVersion             ( int                 type )
 #include "config.log.h"
 /** @brief  give the configure options for Oyranos
  *
- *  @param[in] type            1 - OYRANOS_VERSION_NAME; 2 - git master hash; 3 - OYRANOS_CONFIG_DATE, 4 - development period
+ *  @param[in] type
+                               - 1  OYRANOS_VERSION_NAME;
+                               - 2  git master hash;
+                               - 3  OYRANOS_CONFIG_DATE,
+                               - 4  development period
  *  @param     allocateFunc    user allocator, e.g. malloc
  *
  *  @return                    Oyranos configure output
