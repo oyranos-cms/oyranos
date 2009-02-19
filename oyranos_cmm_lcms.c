@@ -1378,22 +1378,22 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   {
     for( k = 0; k < array->height; ++k)
     {
-      if(data_type == oyDOUBLE)
-      {
-        in_values = (double*) array->array2d[k];
-        out_values = (double*) array->array2d[k];
-        n = array->width / channels;
+      n = array->width / channels;
 
-        cmsDoTransform( ltw->lcms, in_values, out_values, n );
-
-      if(0)
-      for(i = 0; i < n; ++i)
+      if(data_type == oyUINT8 ||
+         data_type == oyUINT16 ||
+         data_type == oyDOUBLE)
       {
-        for(j = 0; j < channels; ++j)
-          out_values[i*channels + j] = in_values[i*channels + j] - 0.5;
+        cmsDoTransform( ltw->lcms, array->array2d[k], array->array2d[k], n );
+
+      } else
+      {
+        oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
+        error = 1;
       }
-      }
+
     }
+
   } else
   {
     oyFilterSocket_Callback( socket, oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
