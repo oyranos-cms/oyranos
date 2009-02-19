@@ -4050,9 +4050,6 @@ int          oyObject_Release         ( oyObject_s      * obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  if(oyObject_GetRefCount( s ) < -1)
-    return 0;
-
   oyName_release_( &s->name_, s->deallocateFunc_ );
 
   s->id_ = 0;
@@ -15166,9 +15163,6 @@ OYAPI int  OYEXPORT
     return 0;
   /* ---- end of common object destructor ------- */
 
-  if(oyObject_GetRefCount( s->oy_) < -1)
-    return 0;
-
   oyObject_Ref(s->oy_);
 
   oyFilterNode_Release( &s->node );
@@ -15388,9 +15382,6 @@ OYAPI int  OYEXPORT
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
-
-  if(oyObject_GetRefCount( s->oy_) < -1)
-    return 0;
 
   oyFilterNode_Release( &s->node );
 
