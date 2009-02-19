@@ -124,6 +124,10 @@ extern int level_PROG;
 #define WARNc2_S(format,arg,arg2) oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2);
 #define WARNc3_S(format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3);
 #define WARNc4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4);
+#define WARNc5_S(format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5);
+#define WARNc6_S(format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6);
+#define WARNc7_S(format,arg,arg2,arg3,arg4,arg5,arg6,arg7) oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6,arg7);
+#define WARNc8_S(format,arg,arg2,arg3,arg4,arg5,arg6,arg7,arg8) oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
 
 #ifdef __cplusplus
 }
