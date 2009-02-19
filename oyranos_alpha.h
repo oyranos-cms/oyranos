@@ -1580,7 +1580,10 @@ struct oyImage_s {
   double               resolution_x;   /**< resolution in horizontal direction*/
   double               resolution_y;   /**< resolution in vertical direction */
 
-  oyPixel_t          * layout_;        /**< samples mask; the oyPixel_t pixel_layout variable passed during oyImage_Create is stored in position 0 */
+  oyPixel_t          * layout_;        /**< @private samples mask;
+                                            the oyPixel_t pixel_layout variable
+                                            passed during oyImage_Create is
+                                            stored in position 0 */
   oyCHANNELTYPE_e    * channel_layout; /**< non profile described channels */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
@@ -2592,7 +2595,7 @@ int                oyConversion_FilterAdd (
 int                oyConversion_OutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,
-                                       oyImage_s         * input );
+                                       oyImage_s         * output );
 int                oyConversion_RunPixel (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access );

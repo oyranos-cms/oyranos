@@ -68,6 +68,8 @@ main(int argc, char** argv)
   image_in = oyImage_Create( w, h, d, OY_TYPE_123_DBL, prof, 0 );
   image_out = oyImage_Create( w, h, dest, OY_TYPE_123_DBL, prof, 0 );
   conversion = oyConversion_CreateBasic( image_in, image_out, 0, 0 );
+  oyImage_Release( &image_in );
+  oyImage_Release( &image_out );
   oyProfile_Release( &prof );
   /* create a very simple pixel iterator */
   pixel_access = oyPixelAccess_Create( 0,0,
@@ -154,6 +156,11 @@ main(int argc, char** argv)
   sock = oyFilterNode_GetSocket ( conversion->input, 0 );
   conversion->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0 );
 
+  image_in = oyImage_Copy( (oyImage_s*)conversion->input->sockets[0]->data, 0 );
+  prof = oyProfile_FromFile( "Lab.icc", 0, 0 );
+  image_out = oyImage_Create( image_in->width, image_in->height, 0, 
+                              image_in->layout_[0], prof, 0 );
+
   filter = oyFilter_New( "//colour/icc", 0,0, 0 );
   error = oyConversion_FilterAdd( conversion, filter );
   if(error > 0)
@@ -169,8 +176,6 @@ main(int argc, char** argv)
   pixel_access->start_xy[1] = 0;
   result = oyConversion_RunPixel( conversion, pixel_access );
 
-  oyImage_Release( &image_in );
-  oyImage_Release( &image_out );
   oyPixelAccess_Release( &pixel_access );
 
 

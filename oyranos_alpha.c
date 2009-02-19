@@ -13502,7 +13502,7 @@ OYAPI oyArray2d_s * OYEXPORT
   oyArray2d_s * s = 0;
   int error = 0;
 
-  if(!width || !height || !type)
+  if(!width || !height)
     return s;
 
   s = oyArray2d_New( object );
@@ -13518,7 +13518,7 @@ OYAPI oyArray2d_s * OYEXPORT
     s->data_area = oyRegion_NewWith( 0,0, width, height, s->oy_ );
     s->array2d = s->oy_->allocateFunc_( y_len );
     error = !memset( s->array2d, 0, y_len );
-    s->own_lines = 0;
+    s->own_lines = oyNO;
   }
 
   return s;
@@ -13542,14 +13542,24 @@ OYAPI oyArray2d_s * OYEXPORT
   oyArray2d_s * s = 0;
   int error = 0;
 
-  if(!width || !height || !type || !data)
+  if(!width || !height)
     return s;
 
   s = oyArray2d_Create_( width, height, type, object );
   error = !s;
 
   if(error <= 0)
-    error = oyArray2d_DataSet( s, data );
+  {
+    if(data)
+      error = oyArray2d_DataSet( s, data );
+    else
+    {
+      data = s->oy_->allocateFunc_( width * height *
+                                    oySizeofDatatype( oyToDataType_m(type)) );
+      error = oyArray2d_DataSet( s, data );
+      s->own_lines = oyYES;
+    }
+  }
 
   return s;
 }
@@ -13586,7 +13596,7 @@ oyArray2d_s * oyArray2d_Copy_
   if(error <= 0)
   {
     allocateFunc_ = s->oy_->allocateFunc_;
-    s->own_lines = 1;
+    s->own_lines = oyYES;
     for(i = 0; i < s->height; ++i)
     {
       size = s->width * oySizeofDatatype( s->t );
@@ -13714,7 +13724,7 @@ OYAPI int  OYEXPORT
   int error = 0;
 
   if(!data)
-    return error;
+    return 1;
 
   if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
     return 1;
@@ -13731,7 +13741,7 @@ OYAPI int  OYEXPORT
     if(error <= 0)
       error = !memset( s->array2d, 0, y_len );
 
-    s->own_lines = 0;
+    s->own_lines = oyNO;
 
     if(error <= 0)
       for( y = 0; y < s->height; ++y )
@@ -14373,6 +14383,12 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     s = oyArray2d_Create_( pixel_region->width, pixel_region->height,
                            data_type, obj );
 
+  if( !s )
+  {
+    WARNc_S("Could not create array.");
+    error = 1;
+  }
+
   if(image->getTile)
   {
   }
@@ -14891,8 +14907,11 @@ OYAPI int  OYEXPORT
 {
   /* currently catch nothing */
 
-  WARNc2_S("oyFilterSocket_s event: id : %d\n  event: \"%s\"",
-            c?oyObject_GetId(c->oy_):-1, oyConnectorEventToText(e) );
+  WARNc3_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n  event: \"%s\"",
+            c&&c->node ? oyObject_GetId(c->node->oy_) : -1,
+            c ? oyObject_GetId(c->oy_) : -1,
+            oyConnectorEventToText(e)
+          );
 
   return 0;
 }
@@ -18992,8 +19011,11 @@ int                oyConversion_OutputAdd (
     /* oyConversion_FilterAdd references the input image in the new filter */
     if(plug_last)
     {
-      oyImage_Release( (oyImage_s**) &plug_last->remote_socket_->data );
-      plug_last->remote_socket_->data = (oyStruct_s*)oyImage_Copy( output, 0 );
+      if(output)
+      {
+        oyImage_Release( (oyImage_s**) &plug_last->remote_socket_->data );
+        plug_last->remote_socket_->data = (oyStruct_s*)oyImage_Copy( output, 0);
+      }
     }
 
     if(error <= 0)
@@ -19617,7 +19639,7 @@ int          oyNamedColour_GetColour ( oyNamedColour_s   * colour,
                                        oyDATATYPE_e        buf_type,
                                        uint32_t            flags )
 {
-  int error = !colour || !profile || !buf || !buf_type;
+  int error = !colour || !profile || !buf;
   oyProfile_s * p_in = colour->profile_;
 
   /* XYZ has priority */
