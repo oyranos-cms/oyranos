@@ -389,10 +389,13 @@ int            oyX1Configs_FromPattern (
             tmp = oyProfile_GetFileName( p, 0 );
 
             STRING_ADD( text, "  " );
-            if(oyStrrchr_( tmp, OY_SLASH_C ))
-              STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
-            else
-              STRING_ADD( text, tmp );
+            if(tmp)
+            {
+              if(oyStrrchr_( tmp, OY_SLASH_C ))
+                STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
+              else
+                STRING_ADD( text, tmp );
+            }
 
             oyProfile_Release( &p );
           }
