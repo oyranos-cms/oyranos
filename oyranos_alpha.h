@@ -2597,7 +2597,7 @@ int                oyConversion_OutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,
                                        oyImage_s         * output );
-int                oyConversion_RunPixel (
+int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access );
 oyPointer        * oyConversion_GetOnePixel (
@@ -2605,6 +2605,14 @@ oyPointer        * oyConversion_GetOnePixel (
                                        int32_t             x,
                                        int32_t             y,
                                        int32_t           * feedback );
+#define OY_OUTPUT                      0x01
+#define OY_INPUT                       0x02
+/* decode */
+#define oyToOutput_m(r)                ((r)&1)
+#define oyToInput_m(r)                 (((r) >> 1)&1)
+oyImage_s        * oyConversion_GetImage (
+                                       oyConversion_s    * conversion,
+                                       uint32_t            flags );
 oyProfile_s      * oyConversion_ToProfile (
                                        oyConversion_s    * conversion );
 int             ** oyConversion_GetAdjazenzlist (

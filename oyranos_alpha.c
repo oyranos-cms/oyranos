@@ -18505,7 +18505,7 @@ oyPixelAccess_s *  oyPixelAccess_Create (
       /** @todo how can we know about the various backend capabilities
        *  - back report the processed number of pixels in the passed pointer
        *  - restrict for a line interface only, would fit to oyArray2D_s
-       *  - + handle inside an to be created function oyConversion_RunPixel()
+       *  - + handle inside an to be created function oyConversion_RunPixels()
        */
     }
   }
@@ -19147,7 +19147,7 @@ int                oyConversion_OutputAdd (
   return error;
 }
 
-/** Function: oyConversion_RunPixel
+/** Function: oyConversion_RunPixels
  *  @memberof oyConversion_s
  *  @brief   iterate over a conversion graph
  *
@@ -19160,7 +19160,7 @@ int                oyConversion_OutputAdd (
  *  @since   2008/07/06 (Oyranos: 0.1.8)
  *  @date    2008/10/02
  */
-int                oyConversion_RunPixel (
+int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access )
 {
@@ -19190,7 +19190,7 @@ int                oyConversion_RunPixel (
   return error;
 }
 
-/** Function: oyConversion_GetOnePixel
+/** Function oyConversion_GetOnePixel
  *  @memberof oyConversion_s
  *  @brief   compute one pixel at the given position
  *
@@ -19216,7 +19216,8 @@ oyPointer        * oyConversion_GetOnePixel (
   oyPointer pixel = 0;
   int error = 0;
 
-  /* conversion->out_ has to be linear, so we access only the first socket */
+  /* conversion->out_ has to be linear, so we access only the first socket
+   * (terrible long) */
   plug = (oyFilterPlug_s*) ((oyFilterSocket_s *)conversion->out_->sockets[0])->requesting_plugs_->list_->ptr_[0];
   sock = plug->remote_socket_;
 
@@ -19226,6 +19227,55 @@ oyPointer        * oyConversion_GetOnePixel (
 
   return pixel;
 }
+
+/** Function oyConversion_GetImage
+ *  @memberof oyConversion_s
+ *  @brief   get a image copy at the desired position
+ *
+ *  @param[in,out] conversion          conversion object
+ *  @param[in]     flags               OY_INTPUT or OY_OUTPUT
+ *  @return                            the image
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/19 (Oyranos: 0.1.10)
+ *  @date    2009/02/19
+ */
+oyImage_s        * oyConversion_GetImage (
+                                       oyConversion_s    * conversion,
+                                       uint32_t            flags )
+{
+  oyImage_s * image = 0;
+  oyFilterPlug_s * plug = 0;
+  oyFilterSocket_s * sock = 0;
+  int error = !conversion || conversion->type_ != oyOBJECT_CONVERSION_S;
+  oyConversion_s * s = conversion;
+
+  if(!s || s->type_ != oyOBJECT_CONVERSION_S)
+  {
+    WARNc_S(("Attempt to read a non oyConversion_s object."))
+    return 0;
+  }
+
+  if(!error)
+  {
+    if(oyToInput_m(flags))
+    {
+      sock = oyFilterNode_GetSocket( s->input, 0 );
+      if(sock)
+        image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
+
+    } else
+    if(oyToOutput_m(flags))
+    {
+      plug = oyFilterNode_GetPlug( s->out_, 0 );
+      if(plug)
+        image = oyImage_Copy( (oyImage_s*) plug->remote_socket_->data, 0);
+    }
+  }
+
+  return image;
+}
+
 
 oyProfile_s      * oyConversion_ToProfile (
                                        oyConversion_s    * conversion );
