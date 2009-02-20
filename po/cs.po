@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-01-30 22:13+0100\n"
+"POT-Creation-Date: 2009-02-20 13:40+0100\n"
 "PO-Revision-Date: 2008-10-23 20:49+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -370,7 +370,7 @@ msgstr "Datum kalibrace"
 msgid "Colour measurement data"
 msgstr "Data z barvoveho mereni"
 
-#: oyranos_icc.c:377 oyranos_alpha.c:2517
+#: oyranos_icc.c:377 oyranos_alpha.c:2515
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -1181,67 +1181,67 @@ msgstr ""
 "Chovani pro predvolbu Hardproofingu se standardnim profilem simulace v "
 "okamziku tisku"
 
-#: oyranos_monitor.c:385
+#: oyranos_monitor.c:391
 msgid "unexpected EDID lenght"
 msgstr "neocekavane delka EDID"
 
-#: oyranos_monitor.c:388 oyranos_monitor.c:415
+#: oyranos_monitor.c:394 oyranos_monitor.c:421
 msgid "Cant read hardware information from device."
 msgstr "Ze zarizeni nelze precist informaci o hardware"
 
-#: oyranos_monitor.c:413
+#: oyranos_monitor.c:419
 msgid "no EDID available from X properties"
 msgstr ""
 
-#: oyranos_monitor.c:492
+#: oyranos_monitor.c:498
 msgid "Could not get Xatom, probably your monitor profile is not set:"
 msgstr "Nelze ziskat Xatom, pravdepodobne neni nastaven profil monitru:"
 
-#: oyranos_monitor.c:804 oyranos_monitor.c:1303
+#: oyranos_monitor.c:808 oyranos_monitor.c:1313
 msgid "open X Display failed"
 msgstr "selhalo otevreni X displeje"
 
 #. hack
-#: oyranos_monitor.c:828
+#: oyranos_monitor.c:833
 msgid "No monitor gamma curves by profile:"
 msgstr "Zadne gama krivky monitoru v profilu:"
 
-#: oyranos_monitor.c:862
+#: oyranos_monitor.c:869
 msgid "Error obtaining profile"
 msgstr "Chyba pri ziskavani profilu"
 
-#: oyranos_monitor.c:869 oyranos_monitor.c:871
+#: oyranos_monitor.c:876 oyranos_monitor.c:878
 msgid "Error setting up atom"
 msgstr "Chyba pri nastavovani atomu"
 
-#: oyranos_monitor.c:965
+#: oyranos_monitor.c:972
 msgid "Error getting atom"
 msgstr "Chyba pri ziskavani atomu"
 
-#: oyranos_monitor.c:1191
+#: oyranos_monitor.c:1201
 #, fuzzy
 msgid "XRandR CrtcInfo request failed"
 msgstr "Xinerama pozadavek selhal"
 
-#: oyranos_monitor.c:1209
+#: oyranos_monitor.c:1219
 msgid "Xinerama request failed"
 msgstr "Xinerama pozadavek selhal"
 
-#: oyranos_monitor.c:1225
+#: oyranos_monitor.c:1235
 msgid "open X Screen failed"
 msgstr "selhalo otevreni X displeje"
 
-#: oyranos_monitor.c:1296
+#: oyranos_monitor.c:1306
 #, fuzzy
 msgid "allocation failed"
 msgstr "Datum kalibrace"
 
-#: oyranos_monitor.c:1311
+#: oyranos_monitor.c:1321
 #, fuzzy
 msgid "no Screen found"
 msgstr "Cela obrazovka zap./vyp."
 
-#: oyranos_monitor.c:1422
+#: oyranos_monitor.c:1432
 msgid "less Xinerama monitors than XRandR ones"
 msgstr ""
 
@@ -1350,77 +1350,78 @@ msgstr "instalace nove politiky selhalo s chybou:"
 msgid "Policy search paths"
 msgstr ""
 
-#: oyranos_alpha.c:602 oyranos_alpha.c:1022 oyranos_alpha.c:2067
-#: oyranos_alpha.c:4377 oyranos_alpha.c:4602 oyranos_alpha.c:5255
-#: oyranos_alpha.c:6090 oyranos_alpha.c:7245 oyranos_alpha.c:8021
-#: oyranos_alpha.c:8905 oyranos_alpha.c:11037 oyranos_alpha.c:11516
-#: oyranos_alpha.c:12064 oyranos_alpha.c:12577 oyranos_alpha.c:13137
-#: oyranos_alpha.c:13755 oyranos_alpha.c:14048 oyranos_alpha.c:14257
-#: oyranos_alpha.c:14433 oyranos_alpha.c:14903 oyranos_alpha.c:15214
-#: oyranos_alpha.c:15363 oyranos_alpha.c:15636 oyranos_alpha.c:16848
-#: oyranos_alpha.c:17403 oyranos_alpha.c:17722 oyranos_alpha.c:18414
-#: oyranos_alpha.c:19009 oyranos_alpha.c:19271
+#: oyranos_alpha.c:608 oyranos_alpha.c:1028 oyranos_alpha.c:2069
+#: oyranos_alpha.c:4441 oyranos_alpha.c:4658 oyranos_alpha.c:5307
+#: oyranos_alpha.c:6132 oyranos_alpha.c:7374 oyranos_alpha.c:8101
+#: oyranos_alpha.c:9828 oyranos_alpha.c:12008 oyranos_alpha.c:12487
+#: oyranos_alpha.c:13057 oyranos_alpha.c:13579 oyranos_alpha.c:14146
+#: oyranos_alpha.c:14765 oyranos_alpha.c:15092 oyranos_alpha.c:15310
+#: oyranos_alpha.c:15482 oyranos_alpha.c:15951 oyranos_alpha.c:16261
+#: oyranos_alpha.c:16417 oyranos_alpha.c:16686 oyranos_alpha.c:17912
+#: oyranos_alpha.c:18463 oyranos_alpha.c:18779 oyranos_alpha.c:19528
+#: oyranos_alpha.c:20119 oyranos_alpha.c:20377
 msgid "MEM Error."
 msgstr ""
 
-#: oyranos_alpha.c:2515
+#: oyranos_alpha.c:2513
 msgid "Name"
 msgstr "Jmeno"
 
-#: oyranos_alpha.c:2516
+#: oyranos_alpha.c:2514
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Vyrobce:     "
 
-#: oyranos_alpha.c:2912
+#: oyranos_alpha.c:2911
 #, fuzzy
 msgid "Could not open meta backend API"
 msgstr "Nemohu nacist pismo v:"
 
-#: oyranos_alpha.c:7398 oyranos_alpha.c:20188
+#: oyranos_alpha.c:9038 oyranos_alpha.c:9118 oyranos_alpha.c:9616
+#: oyranos_alpha.c:21253 oyranos_alpha.c:21334
 #, fuzzy
-msgid "Could not open instrument"
+msgid "Could not open device"
 msgstr "Nemohu nacist pismo v:"
 
-#: oyranos_alpha.c:14722 oyranos_alpha.c:14738
-msgid "with '.' is not allowed"
-msgstr ""
-
-#: oyranos_alpha.c:17964
-msgid "No filter"
-msgstr "Zadny filtr"
-
-#: oyranos_alpha.c:17974
-msgid "Please add first a image node to the graph before adding other filters"
-msgstr ""
-"Prosim pridejte nejprve image node ke grafu pred pridanim ostatnich filtru"
-
-#: oyranos_alpha.c:17982
-msgid "attempt to add a incomplete filter"
-msgstr "pokus o pridani neuplneho filtru"
-
-#: oyranos_alpha.c:17991
-msgid "attempt to add a non linear filter to a linear graph"
-msgstr "pokus o pridani nelinearniho filtru k linearnimu grafu"
-
-#: oyranos_alpha.c:18025
-msgid "?? Nothing to add ??"
-msgstr "?? Nic k pridani ??"
-
-#: oyranos_alpha.c:18975
-msgid "---"
-msgstr "---"
-
-#: oyranos_alpha.c:20220
+#: oyranos_alpha.c:9627
 #, fuzzy
 msgid "Could not open profile"
 msgstr "Nemohu nacist pismo v:"
 
-#: oyranos_cmm_lcms.c:1647
+#: oyranos_alpha.c:15767 oyranos_alpha.c:15783
+msgid "with '.' is not allowed"
+msgstr ""
+
+#: oyranos_alpha.c:19021
+msgid "No filter"
+msgstr "Zadny filtr"
+
+#: oyranos_alpha.c:19031
+msgid "Please add first a image node to the graph before adding other filters"
+msgstr ""
+"Prosim pridejte nejprve image node ke grafu pred pridanim ostatnich filtru"
+
+#: oyranos_alpha.c:19039
+msgid "attempt to add a incomplete filter"
+msgstr "pokus o pridani neuplneho filtru"
+
+#: oyranos_alpha.c:19048
+msgid "attempt to add a non linear filter to a linear graph"
+msgstr "pokus o pridani nelinearniho filtru k linearnimu grafu"
+
+#: oyranos_alpha.c:19087
+msgid "?? Nothing to add ??"
+msgstr "?? Nic k pridani ??"
+
+#: oyranos_alpha.c:20085
+msgid "---"
+msgstr "---"
+
+#: oyranos_cmm_lcms.c:1664
 msgid "Little CMS"
 msgstr ""
 
-#: oyranos_cmm_lcms.c:1649
+#: oyranos_cmm_lcms.c:1666
 msgid ""
 "LittleCMS is a CMM, a color management engine; it implements fast transforms "
 "between ICC profiles. \"Little\" stands for its small overhead. With a "
@@ -1431,64 +1432,64 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: oyranos_cmm_lcms.c:1653
+#: oyranos_cmm_lcms.c:1670
 #, fuzzy
 msgid "Marti"
 msgstr "Matice"
 
-#: oyranos_cmm_lcms.c:1655
+#: oyranos_cmm_lcms.c:1672
 msgid "Marti Maria"
 msgstr ""
 
-#: oyranos_cmm_lcms.c:1657
+#: oyranos_cmm_lcms.c:1674
 msgid ""
 "littleCMS project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm"
 msgstr ""
 
-#: oyranos_cmm_lcms.c:1661
+#: oyranos_cmm_lcms.c:1678
 msgid "MIT"
 msgstr ""
 
-#: oyranos_cmm_lcms.c:1663
+#: oyranos_cmm_lcms.c:1680
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
-#: oyranos_cmm_lcms.c:1665
+#: oyranos_cmm_lcms.c:1682
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:529
+#: oyranos_cmm_oyX1.c:601
 msgid "Oyranos X11"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:531
+#: oyranos_cmm_oyX1.c:603
 msgid "The window support backend of Oyranos."
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:535 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
+#: oyranos_cmm_oyX1.c:607 oyranos_cmm_oyra.c:213 oyranos_cmm_oyIM.c:213
 msgid "Kai-Uwe"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:537 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
+#: oyranos_cmm_oyX1.c:609 oyranos_cmm_oyra.c:215 oyranos_cmm_oyIM.c:215
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:539 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
+#: oyranos_cmm_oyX1.c:611 oyranos_cmm_oyra.c:217 oyranos_cmm_oyIM.c:217
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:543 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
+#: oyranos_cmm_oyX1.c:615 oyranos_cmm_oyra.c:221 oyranos_cmm_oyIM.c:221
 msgid "newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:545 oyranos_cmm_oyra.c:223 oyranos_cmm_oyIM.c:223
+#: oyranos_cmm_oyX1.c:617 oyranos_cmm_oyra.c:223
 msgid "Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: oyranos_cmm_oyX1.c:547 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
+#: oyranos_cmm_oyX1.c:619 oyranos_cmm_oyra.c:225 oyranos_cmm_oyIM.c:225
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr ""
 
@@ -1499,6 +1500,10 @@ msgstr "Nastaveni Oyranosu"
 
 #: oyranos_cmm_oyra.c:209 oyranos_cmm_oyIM.c:209
 msgid "Oyranos supplied modules"
+msgstr ""
+
+#: oyranos_cmm_oyIM.c:223
+msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
 #: oyranos_cmm_oyIM_icc.c:282
@@ -1653,6 +1658,11 @@ msgstr "Znovu nacist"
 msgid "Active Policy:"
 msgstr "Aktivni politika:"
 
+#: oyranos_alpha_internal.h:258 oyranos_alpha_internal.h:266
+#, fuzzy
+msgid "Unexpected object type:"
+msgstr "pokus o pridani neuplneho filtru"
+
 #. oyFree_ (void*)
 #. defined in oyranos_helper.h
 #: oyranos_helper.h:61
@@ -1677,7 +1687,7 @@ msgid "nothing allocated"
 msgstr "nic nealokovano"
 
 #, fuzzy
-#~ msgid "Could not open device"
+#~ msgid "Could not open instrument"
 #~ msgstr "Nemohu nacist pismo v:"
 
 #~ msgid "left-/middle-/right mouse button -> rotate/cut/menu"
