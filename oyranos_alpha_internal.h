@@ -252,6 +252,23 @@ int          oyIdToCMM               ( uint32_t            cmmId,
   oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
                             s->oy_->deallocateFunc_ );
 
+#define oyCheckType_m( typ, action ) \
+  if( !s || !s->oy_ || s->type != typ) \
+  { \
+    WARNc3_S( "%s %s(found: %s)", _("Attempt to read a object not of type:"), \
+              oyStructTypeToText( typ ), \
+              oyStructTypeToText( s ? s->type : oyOBJECT_NONE )) \
+    action; \
+  }
+#define oyCheckType__m( type, action ) \
+  if( !s || !s->oy_ || s->type_ != type) \
+  { \
+    WARNc3_S( "%s %s(found: %s)", _("Attempt to read a object not of type:"), \
+              oyStructTypeToText( type ), \
+              oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE )) \
+    action; \
+  }
+
 /** \addtogroup misc Miscellaneous
 
  *  @{
