@@ -1230,11 +1230,7 @@ int              oyStructList_Release (oyStructList_s   ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_STRUCT_LIST_S)
-  {
-    WARNc_S(("Attempt to release a non oyStructList_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 1 )
 
   *obj = 0;
 
@@ -2141,11 +2137,7 @@ int              oyCMMhandle_Release_( oyCMMhandle_s    ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_CMM_HANDLE_S)
-  {
-    WARNc_S("Attempt to release a non oyCMMhandle_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_CMM_HANDLE_S, return 1 )
 
   *obj = 0;
 
@@ -4565,11 +4557,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_BLOB_S)
-  {
-    WARNc_S(("Attempt to release a non oyBlob_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_BLOB_S, return 1 )
 
   *obj = 0;
 
@@ -4614,11 +4602,7 @@ int            oyBlob_SetFromData    ( oyBlob_s          * blob,
   oyBlob_s * s = blob;
   int error = !s || s->type_ != oyOBJECT_BLOB_S;
 
-  if(error)
-  {
-    WARNc_S("Attempt to set a non oyBlob_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_BLOB_S, return 1 )
 
   if(error <= 0)
   {
@@ -4730,11 +4714,7 @@ int                oyHash_Release_   ( oyHash_s         ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_HASH_S)
-  {
-    WARNc_S("Attempt to release a non oyHash_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_HASH_S, return 1 )
 
   *obj = 0;
 
@@ -5601,11 +5581,7 @@ int            oyOption_Release      ( oyOption_s       ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_OPTION_S)
-  {
-    WARNc_S("Attempt to release a non oyOption_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
 
   *obj = 0;
 
@@ -6013,12 +5989,9 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
   int error = !option || option->type_ != oyOBJECT_OPTION_S;
   oyAlloc_f allocateFunc_ = oyAllocateFunc_;
   oyDeAlloc_f deallocateFunc_ = oyDeAllocateFunc_;
+  oyOption_s * s = option;
 
-  if(error)
-  {
-    WARNc_S("Attempt to set a non oyOption_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
 
   if(error <= 0)
   {
@@ -6069,12 +6042,9 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
   oyPointer ptr = 0;
   size_t size_ = 0;
   oyBlob_s * blob = 0;
+  oyOption_s * s = option;
 
-  if(error)
-  {
-    WARNc_S("Attempt to query a non oyOption_s object.")
-    return 0;
-  }
+  oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
 
   if(error <= 0)
   {
@@ -6788,11 +6758,7 @@ int            oyOptions_Release     ( oyOptions_s      ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_OPTIONS_S)
-  {
-    WARNc_S("Attempt to release a non oyOptions_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
 
   *obj = 0;
 
@@ -7588,11 +7554,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_CONFIG_S)
-  {
-    WARNc_S(("Attempt to release a non oyConfig_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   *obj = 0;
 
@@ -8462,11 +8424,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_CONFIGS_S)
-  {
-    WARNc_S(("Attempt to release a non oyConfigs_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_CONFIGS_S, return 1 )
 
   *obj = 0;
 
@@ -8507,7 +8465,10 @@ OYAPI int  OYEXPORT
                                        int                 pos )
 {
   oyConfigs_s * s = list;
-  int error = !s || s->type_ != oyOBJECT_CONFIGS_S;
+  int error = !s;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_CONFIGS_S, return 1 )
 
   if(obj && *obj && (*obj)->type_ == oyOBJECT_CONFIG_S)
   {
@@ -8542,14 +8503,15 @@ OYAPI int  OYEXPORT
  *  @date    2009/01/19
  */
 OYAPI int  OYEXPORT
-                  oyConfigs_ReleaseAt ( oyConfigs_s * list,
+                 oyConfigs_ReleaseAt ( oyConfigs_s       * list,
                                        int                 pos )
 { 
   int error = !list;
+  oyConfigs_s * s = list;
 
-  if(error <= 0 && list->type_ != oyOBJECT_CONFIGS_S)
-    error = 1;
-  
+  if(s)
+    oyCheckType__m( oyOBJECT_CONFIGS_S, return 1 )
+
   if(error <= 0)
     oyStructList_ReleaseAt( list->list_, pos );
 
@@ -8571,6 +8533,11 @@ OYAPI oyConfig_s * OYEXPORT
                  oyConfigs_Get       ( oyConfigs_s   * list,
                                        int                 pos )
 {       
+  oyConfigs_s * s = list;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
+
   if(list && list->type_ == oyOBJECT_CONFIGS_S)
     return (oyConfig_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_CONFIG_S ); 
   else  
@@ -8591,9 +8558,15 @@ OYAPI oyConfig_s * OYEXPORT
 OYAPI int  OYEXPORT
                  oyConfigs_Count     ( oyConfigs_s   * list )
 {       
-  if(list && list->type_ == oyOBJECT_CONFIGS_S)
-    return oyStructList_Count( list->list_ );
-  else return 0;
+  oyConfigs_s * s = list;
+
+  if(!s)
+    return 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
+
+  return oyStructList_Count( list->list_ );
 }
 
 /** Function oyConfigs_FromDB
@@ -9090,15 +9063,11 @@ OYAPI int  OYEXPORT
   int error = !device,
       l_error = 0;
   oyConfigs_s * devices = 0;
-  oyConfig_s * config = 0;
+  oyConfig_s * config = 0,
+             * s = device;
   const char * device_name = 0;
 
-  if(error > 0)
-  {
-    WARNc_S( "No device argument provided. Give up" );
-    return 0;
-  }
-
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   if(error <= 0)
   {
@@ -9173,19 +9142,9 @@ OYAPI int  OYEXPORT
   oyProfile_s * p = 0;
   char * profile_name = 0;
   const char * device_name = 0;
+  oyConfig_s * s = device;
 
-  if(error > 0)
-  {
-    WARNc_S( "No device argument provided. Give up" );
-    return 0;
-  }
-
-
-  if(error > 0)
-  {
-    WARNc_S( "No device_name argument provided. Give up." );
-    return error;
-  }
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   {
     /* 1. ask for the profile the device is setup with */
@@ -9242,19 +9201,9 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
   oyProfile_s * p = 0;
   char * profile_name = 0;
   const char * device_name = 0;
+  oyConfig_s * s = device;
 
-  if(error > 0)
-  {
-    WARNc_S( "No device argument provided. Give up" );
-    return 0;
-  }
-
-
-  if(error > 0)
-  {
-    WARNc_S( "No device_name argument provided. Give up." );
-    return error;
-  }
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   {
     /* 1. ask for the profile the device is setup with */
@@ -9359,6 +9308,9 @@ OYAPI int  OYEXPORT
   static char * num = 0;
   char * text = 0;
   int i, n;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   if(error > 0)
   {
@@ -9487,6 +9439,10 @@ OYAPI int  OYEXPORT
 {
   int error = !device,
       l_error = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
 
   l_error = oyDeviceAskProfile( device, profile ); OY_ERR
 
@@ -9533,9 +9489,10 @@ OYAPI int  OYEXPORT
   int error = !device;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
+  oyConfig_s * s = device;
 
-  if(error >= 1)
-    return error;
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
 
   if(!options)
   {
@@ -9603,7 +9560,7 @@ OYAPI int  OYEXPORT
  *  @since   2009/02/07 (Oyranos: 0.1.10)
  *  @date    2009/02/12
  */
-int      oyDeviceSetProfile      ( oyConfig_s        * device,
+int      oyDeviceSetProfile          ( oyConfig_s        * device,
                                        const char        * profile_name )
 {
   int error = !device || !profile_name || !profile_name[0];
@@ -9618,10 +9575,13 @@ int      oyDeviceSetProfile      ( oyConfig_s        * device,
   const char * device_name = 0,
              * o_val = 0,
              * d_val = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   if(error > 0)
   {
-    WARNc1_S( "No device argument provided. Give up. %s",
+    WARNc1_S( "No profile argument provided. Give up. %s",
               oyNoEmptyString_m_(profile_name) );
     return error;
   }
@@ -9757,6 +9717,9 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
   const char * device_name = 0;
   char * tmp = 0, * tmp2 = 0;
   int32_t rank_value = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
@@ -9894,6 +9857,9 @@ static int
 oyProfile_GetHash_( oyProfile_s * s )
 {
   int error = 1;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
   if(s->block_ && s->size_)
   {
     memset( s->oy_->hash_, 0, OY_HASH_SIZE*2 );
@@ -10266,8 +10232,8 @@ OYAPI oyProfile_s * OYEXPORT
  *  @date  november 2007 (API 0.1.8)
  */
 OYAPI oyProfile_s * OYEXPORT
-oyProfile_Copy_            ( const oyProfile_s  * profile,
-                                oyObject_s        object)
+oyProfile_Copy_                      ( const oyProfile_s * profile,
+                                       oyObject_s          object)
 {
   oyProfile_s * s = 0;
   int error = 0;
@@ -10275,6 +10241,8 @@ oyProfile_Copy_            ( const oyProfile_s  * profile,
 
   if(!profile)
     return s;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   s = oyProfile_New_( object );
   allocateFunc = s->oy_->allocateFunc_;
@@ -10341,10 +10309,14 @@ OYAPI oyProfile_s * OYEXPORT
 oyProfile_Copy                ( oyProfile_s     * profile,
                                 oyObject_s        object)
 {
-  oyProfile_s * s = 0;
+  oyProfile_s * s = profile;
 
-  if(!profile)
-    return s;
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  s = 0;
 
   if(profile && !object)
   {
@@ -10380,11 +10352,7 @@ oyProfile_Release( oyProfile_s ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_PROFILE_S)
-  {
-    WARNc_S("Attempt to release a non oyProfile_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
 
   *obj = 0;
 
@@ -10434,8 +10402,12 @@ oyProfile_Release( oyProfile_s ** obj )
 int
 oyProfile_GetChannelsCount( oyProfile_s * profile )
 {
-  if(!profile)
+  oyProfile_s * s = profile;
+
+  if(!s)
     return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(profile->channels_n_)
     return profile->channels_n_;
@@ -10460,6 +10432,8 @@ oyProfile_GetSignature ( oyProfile_s * s,
 
   if(!s)
     return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(s->sig_ && type == oySIGNATURE_COLOUR_SPACE)
     return s->sig_;
@@ -10536,13 +10510,15 @@ OYAPI int OYEXPORT
                                        oySIGNATURE_TYPE_e  type )
 {
   oyProfile_s * s = profile;
-  int error = 0;
+  int error = !s;
   oyPointer block_ = 0;
   size_t size_ = 128;
   icHeader *h = 0;
 
-  if(error <= 0)
-    error = !s;
+  if(!s)
+    return 1;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
 
   if(error <= 0 && type == oySIGNATURE_COLOUR_SPACE)
   {
@@ -10639,17 +10615,23 @@ void
 oyProfile_SetChannelNames            ( oyProfile_s       * profile,
                                        oyObject_s        * names_chan )
 {
-  oyProfile_s * c = profile;
+  oyProfile_s * s = profile;
   int n = oyProfile_GetChannelsCount( profile );
+  int error = !s;
+
+  if(error)
+    return;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return )
 
   if(names_chan && n)
   {
     int i = 0;
-    c->names_chan_ = c->oy_->allocateFunc_( (n + 1 ) * sizeof(oyObject_s) );
-    c->names_chan_[ n ] = NULL;
+    s->names_chan_ = s->oy_->allocateFunc_( (n + 1 ) * sizeof(oyObject_s) );
+    s->names_chan_[ n ] = NULL;
     for( ; i < n; ++i )
       if(names_chan[i])
-        c->names_chan_[i] = oyObject_Copy( names_chan[i] );
+        s->names_chan_[i] = oyObject_Copy( names_chan[i] );
   }
 }
 
@@ -10676,6 +10658,8 @@ oyProfile_GetChannelName           ( oyProfile_s   * profile,
 
   if(!s)
     return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if( 0 <= pos && pos < n )
     return "-";
@@ -10707,6 +10691,8 @@ oyProfile_GetChannelNames           ( oyProfile_s   * profile )
 
   if(!profile)
     return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(!s->names_chan_ && n)
   {
@@ -10751,6 +10737,11 @@ OYAPI const oyChar* OYEXPORT
 {
   int error = !s;
   const oyChar * text = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(error <= 0)
     text = oyObject_GetName( s->oy_, oyNAME_NICK );
@@ -10832,6 +10823,10 @@ OYAPI const oyChar* OYEXPORT
   int32_t texts_n = 0;
   oyProfileTag_s * tag = 0;
 
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(error <= 0 && type == oyNAME_NICK)
     text = oyProfile_GetID( s );
@@ -10956,6 +10951,11 @@ OYAPI oyPointer OYEXPORT
   oyProfile_s * s = profile;
   int error = !s;
 
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
   if(s)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
@@ -11012,7 +11012,12 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
   char *  hash = 0;
   char    tmp_hash[34];
 
-  if(error <= 0 && s->type_ == oyOBJECT_PROFILE_S)
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
   {
     if(s->file_name_ && !hash)
     {
@@ -11089,7 +11094,12 @@ const char *       oyProfile_GetFileName (
   char    tmp_hash[34];
   int       dl_n = 0;
 
-  if(error <= 0 && s->type_ == oyOBJECT_PROFILE_S)
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
   {
     if(dl_pos >= 0)
     {
@@ -11293,6 +11303,11 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
   int error = !s || !file_name;
   oyPointer buf = 0;
   size_t size = 0;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
 
   if(error <= 0)
   {
@@ -11590,8 +11605,10 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
   int i = 0, n = 0;
   icTagSignature tag_id_ = 0;
 
-  if(error <= 0 && profile->type_ != oyOBJECT_PROFILE_S)
-    error = 1;
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(error <= 0)
     n = oyProfile_GetTagCount( s );
@@ -11638,9 +11655,14 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
                                        int                 pos )
 {
   oyProfileTag_s * tag = 0;
-  oyProfile_s * s = 0;
+  oyProfile_s * s = profile;
   int error = !profile;
   int n = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(error <= 0 && profile->type_ != oyOBJECT_PROFILE_S)
     error = 1;
@@ -11785,6 +11807,11 @@ oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
   oyProfileTag_s * tag = 0;
   oyProfile_s * s = profile;
 
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
   if(s)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
@@ -11808,7 +11835,12 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
   oyProfile_s *s = profile;
   int error = !s;
 
-  if(error <= 0 && !(s && s->type_ == oyOBJECT_PROFILE_S && s->tags_))
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0 && !s->tags_)
     error = 1;
 
   if(error <= 0)
@@ -11839,6 +11871,11 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
 {
   oyProfile_s * s = profile;
   int error = !s;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
 
   if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
     error = 1;
@@ -11871,6 +11908,11 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
   oyProfile_s * s = profile;
   int error = !s, i,n;
   oyProfileTag_s * tag = 0;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
 
   if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
     error = 1;
@@ -11916,7 +11958,12 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
                                        int                 pos )
 {
   oyProfile_s * s = profile;
-  int error = 0;
+  int error = !s;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
 
   if(!(s && s->type_ == oyOBJECT_PROFILE_S))
     error = 1;
@@ -12161,11 +12208,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_PROFILE_TAG_S)
-  {
-    WARNc_S("Attempt to release a non oyProfileTag_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
 
   *obj = 0;
 
@@ -12206,8 +12249,10 @@ OYAPI int  OYEXPORT
   oyProfileTag_s * s = tag;
   int error = !s;
 
-  if(error <= 0 && s->type_ != oyOBJECT_PROFILE_TAG_S)
-    error = 1;
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
 
   if(error <= 0)
   {
@@ -12275,8 +12320,10 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
   *n = 0;
 
-  if(error <= 0 && s->type_ != oyOBJECT_PROFILE_TAG_S)
-    error = 1;
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
 
   if(error <= 0)
   {
@@ -12473,7 +12520,11 @@ OYAPI oyProfiles_s * OYEXPORT
   oyAlloc_f allocateFunc = 0;
 
   if(!obj)
-    return s;
+    return 0;
+
+  obj = s;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
   s = oyProfiles_New( object );
   error = !s;
@@ -12837,11 +12888,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_PROFILES_S)
-  {
-    WARNc_S("Attempt to release a non oyProfiles_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 1 )
 
   *obj = 0;
 
@@ -12870,11 +12917,15 @@ OYAPI int  OYEXPORT
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-oyProfiles_s* oyProfiles_MoveIn( oyProfiles_s   * list,
+oyProfiles_s* oyProfiles_MoveIn      ( oyProfiles_s      * list,
                                        oyProfile_s      ** obj,
                                        int                 pos )
 {
   int error = 0;
+  oyProfiles_s * s = list;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
   if(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_S)
   {
@@ -12894,10 +12945,16 @@ oyProfiles_s* oyProfiles_MoveIn( oyProfiles_s   * list,
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
  */
-int              oyProfiles_ReleaseAt( oyProfiles_s * list,
+int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
                                        int                 pos )
 {
   int error = 0;
+  oyProfiles_s * s = list;
+
+  if(!s)
+    return 1;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 1 )
 
   if(list && list->list_)
     error = oyStructList_ReleaseAt( list->list_, pos );
@@ -12915,10 +12972,16 @@ int              oyProfiles_ReleaseAt( oyProfiles_s * list,
  *  @since Oyranos: version 0.1.8  2007/11/22
  *  @date  20 december 2007 (API 0.1.8)
  */
-oyProfile_s *    oyProfiles_Get   ( oyProfiles_s   * list,
+oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
                                        int                 pos )
 {
   oyProfile_s * obj = 0;
+  oyProfiles_s * s = list;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
   if(list && list->list_)
   {
@@ -12941,6 +13004,12 @@ oyProfile_s *    oyProfiles_Get   ( oyProfiles_s   * list,
 int              oyProfiles_Count ( oyProfiles_s   * list )
 {
   int n = 0;
+  oyProfiles_s * s = list;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
   if(list && list->list_)
     n = oyStructList_Count( list->list_ );
@@ -13054,6 +13123,12 @@ oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * orig,
   if(!orig)
     return s;
 
+  if(!orig)
+    return 0;
+
+  s = orig;
+  oyCheckType__m( oyOBJECT_REGION_S, return 0 )
+
   if(object)
   {
     s = oyRegion_NewFrom( orig, object );
@@ -13085,11 +13160,7 @@ int            oyRegion_Release      ( oyRegion_s       ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_REGION_S)
-  {
-    WARNc_S("Attempt to release a non oyRegion_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_REGION_S, return 1 )
 
   *obj = 0;
 
@@ -13125,6 +13196,8 @@ void           oyRegion_SetGeo       ( oyRegion_s        * edit_region,
   oyRegion_s * s = edit_region;
   if(!s)
     return;
+  oyCheckType__m( oyOBJECT_REGION_S, return )
+
   s->x = x;
   s->y = y;
   s->width = width;
@@ -13144,6 +13217,7 @@ void           oyRegion_SetByRegion  ( oyRegion_s        * edit_region,
   oyRegion_s * s = edit_region;
   if(!s || !ref)
     return;
+  oyCheckType__m( oyOBJECT_REGION_S, return )
 
   oyRegion_SetGeo( s, ref->x, ref->y, ref->width, ref->height );
 }
@@ -13162,6 +13236,7 @@ void           oyRegion_Trim         ( oyRegion_s        * edit_region,
   oyRegion_s * r = s;
   if(!s)
     return;
+  oyCheckType__m( oyOBJECT_REGION_S, return )
 
   if (r->x < ref->x)
   { 
@@ -13201,6 +13276,7 @@ void           oyRegion_MoveInside   ( oyRegion_s        * edit_region,
 
   if(!s)
     return;
+  oyCheckType__m( oyOBJECT_REGION_S, return )
 
   oyRegion_Normalise( s );
 
@@ -13237,6 +13313,7 @@ void           oyRegion_Scale        ( oyRegion_s        * edit_region,
   
   if(!s)
     return;
+  oyCheckType__m( oyOBJECT_REGION_S, return )
 
   r->x *= factor;
   r->y *= factor;
@@ -13258,6 +13335,7 @@ void           oyRegion_Normalise    ( oyRegion_s        * edit_region )
   
   if(!s)
     return;
+  oyCheckType__m( oyOBJECT_REGION_S, return )
 
   if(r->width < 0) {
     r->x += r->width;
@@ -13702,11 +13780,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_ARRAY2D_S)
-  {
-    WARNc_S(("Attempt to release a non oyArray2d_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
 
   *obj = 0;
 
@@ -14195,11 +14269,7 @@ oyImage_s *    oyImage_Copy           ( oyImage_s       * image,
   if(!s)
     return s;
 
-  if(s->type_ != oyOBJECT_IMAGE_S)
-  {
-    WARNc_S("Attempt to copy a non oyImage_s object.")
-    return 0;
-  }
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
 
   if(!object)
   {
@@ -14228,11 +14298,7 @@ int            oyImage_Release        ( oyImage_s      ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_IMAGE_S)
-  {
-    WARNc_S("Attempt to release a non oyImage_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
   *obj = 0;
 
@@ -14330,11 +14396,7 @@ int            oyImage_DataSet       ( oyImage_s         * image,
   if(!s)
     return 1;
 
-  if(s->type_ != oyOBJECT_IMAGE_S)
-  {
-    WARNc_S("Attempt to manipulate a non oyImage_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
   if(pixel_data)
   {
@@ -14379,20 +14441,17 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyObject_s          obj )
 {
   int error = 0;
-  oyArray2d_s * s = *array;
+  oyArray2d_s * a = *array;
+  oyImage_s * s = image;
   oyRegion_s * pixel_region = 0;
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int size = 0, channel_n;
 
   if(!image)
-    return 0;
+    return 1;
 
-  if(image->type_ != oyOBJECT_IMAGE_S)
-  {
-    WARNc_S("Attempt to access a non oyImage_s object.")
-    return 0;
-  }
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
   data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
   size = oySizeofDatatype( data_type );
@@ -14408,17 +14467,17 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   pixel_region->x *= channel_n;
   pixel_region->width *= channel_n;
 
-  if( s && s->width != pixel_region->width )
+  if( a && a->width != pixel_region->width )
   {
-    WARNc_S("s->width != pixel_region->width  not yet implemented");
-    oyArray2d_Release( &s );
+    WARNc_S("a->width != pixel_region->width  not yet implemented");
+    oyArray2d_Release( &a );
   }
 
-  if(!s)
-    s = oyArray2d_Create_( pixel_region->width, pixel_region->height,
+  if(!a)
+    a = oyArray2d_Create_( pixel_region->width, pixel_region->height,
                            data_type, obj );
 
-  if( !s )
+  if( !a )
   {
     WARNc_S("Could not create array.");
     error = 1;
@@ -14438,10 +14497,10 @@ int            oyImage_FillArray     ( oyImage_s         * image,
         i,j, height;
     size_t len;
 
-    s->data_area->x = -x;
-    s->data_area->y = 0;
-    s->data_area->width = image->width;
-    s->data_area->height = h;
+    a->data_area->x = -x;
+    a->data_area->y = 0;
+    a->data_area->width = image->width;
+    a->data_area->height = h;
 
     for( i = 0; i < h; )
     {
@@ -14453,17 +14512,17 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       {
         if(do_copy)
         {
-          if(!s->array2d[i+j])
-            oyAllocHelper_m_( s->array2d[i+j], unsigned char, len,
-                              s->oy_ ? s->oy_->allocateFunc_ : 0,
+          if(!a->array2d[i+j])
+            oyAllocHelper_m_( a->array2d[i+j], unsigned char, len,
+                              a->oy_ ? a->oy_->allocateFunc_ : 0,
                               error = 1; break );
 
-          error = !memcpy( s->array2d[i+j], &data[j * size * s->width], len );
+          error = !memcpy( a->array2d[i+j], &data[j * size * a->width], len );
 
         } else
-          s->array2d[i+j] = &data[j * size * s->width];
+          a->array2d[i+j] = &data[j * size * a->width];
 
-        s->array2d[i+j] = &s->array2d[i+j][size * x];
+        a->array2d[i+j] = &a->array2d[i+j][size * x];
       }
 
       i += height;
@@ -14477,9 +14536,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   }
 
   if(error)
-    oyArray2d_Release( &s );
+    oyArray2d_Release( &a );
 
-  *array = s;
+  *array = a;
 
   return error;
 }
@@ -14870,11 +14929,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_CONNECTOR_S)
-  {
-    WARNc_S("Attempt to release a non oyConnector_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
 
   *obj = 0;
 
@@ -15151,11 +15206,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_SOCKET_S)
-  {
-    WARNc_S("Attempt to release a non oyFilterSocket_s object.")
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 1 )
 
   *obj = 0;
 
@@ -15371,11 +15422,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_PLUG_S)
-  {
-    WARNc_S(("Attempt to release a non oyFilterPlug_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 1 )
 
   *obj = 0;
 
@@ -15545,11 +15592,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_PLUGS_S)
-  {
-    WARNc_S(("Attempt to release a non oyFilterPlugs_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_FILTER_PLUGS_S, return 1 )
 
   *obj = 0;
 
@@ -16132,11 +16175,7 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_S)
-  {
-    WARNc_S(("Attempt to release a non oyFilter_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_FILTER_S, return 1 )
 
   *obj = 0;
 
@@ -16488,11 +16527,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_FILTERS_S)
-  {
-    WARNc_S(("Attempt to release a non oyFilters_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_FILTERS_S, return 1 )
 
   *obj = 0;
 
@@ -16821,11 +16856,7 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_FILTER_NODE_S)
-  {
-    WARNc_S(("Attempt to release a non oyFilterNode_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
 
   *obj = 0;
 
@@ -18171,11 +18202,7 @@ int        oyColourConversion_Release( oyColourConversion_s ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_COLOUR_CONVERSION_S)
-  {
-    WARNc_S(("Attempt to release a non oyColourConversion_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_COLOUR_CONVERSION_S, return 1 )
 
   *obj = 0;
 
@@ -18623,11 +18650,7 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
 
   s = *obj;
 
-  if( s->type != oyOBJECT_PIXEL_ACCESS_S)
-  {
-    WARNc_S(("Attempt to release a non oyPixelAccess_s object."))
-    return 1;
-  }
+  oyCheckType_m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
 
   if( !s->oy_ )
   {
@@ -18938,11 +18961,7 @@ int          oyConversion_Release    ( oyConversion_s   ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_CONVERSION_S)
-  {
-    WARNc_S(("Attempt to release a non oyConversion_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
   *obj = 0;
 
@@ -19247,14 +19266,10 @@ oyImage_s        * oyConversion_GetImage (
   oyImage_s * image = 0;
   oyFilterPlug_s * plug = 0;
   oyFilterSocket_s * sock = 0;
-  int error = !conversion || conversion->type_ != oyOBJECT_CONVERSION_S;
+  int error = 0;
   oyConversion_s * s = conversion;
 
-  if(!s || s->type_ != oyOBJECT_CONVERSION_S)
-  {
-    WARNc_S(("Attempt to read a non oyConversion_s object."))
-    return 0;
-  }
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
   if(!error)
   {
@@ -19395,11 +19410,7 @@ char             * oyConversion_ToText (
   const char * save_locale = 0;
   int counter = 0;
 
-  if(!s || s->type_ != oyOBJECT_CONVERSION_S)
-  {
-    WARNc_S(("Attempt to read a non oyConversion_s object."))
-    return 0;
-  }
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
 #if USE_GETTEXT
   save_locale = setlocale(LC_NUMERIC, 0 );
@@ -19663,11 +19674,7 @@ oyNamedColour_Release( oyNamedColour_s ** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_NAMED_COLOUR_S)
-  {
-    WARNc_S(("Attempt to release a non oyNamedColour_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_NAMED_COLOUR_S, return 1 )
 
   *obj = 0;
 
@@ -20179,11 +20186,7 @@ int               oyNamedColours_Release ( oyNamedColours_s** obj )
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_NAMED_COLOURS_S)
-  {
-    WARNc_S(("Attempt to release a non oyNamedColours_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_NAMED_COLOURS_S, return 1 )
 
   *obj = 0;
 
@@ -20489,11 +20492,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type != oyOBJECT_CMM_INFO_S)
-  {
-    WARNc_S(("Attempt to release a non oyCMMInfo_s object."))
-    return 1;
-  }
+  oyCheckType_m( oyOBJECT_CMM_INFO_S, return 1 )
 
   *obj = 0;
 
@@ -20645,11 +20644,7 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
-  if( !s->oy_ || s->type_ != oyOBJECT_CMM_API_FILTERS_S)
-  {
-    WARNc_S(("Attempt to release a non oyCMMapiFilters_s object."))
-    return 1;
-  }
+  oyCheckType__m( oyOBJECT_CMM_API_FILTERS_S, return 1 )
 
   *obj = 0;
 

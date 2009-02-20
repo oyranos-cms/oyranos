@@ -88,11 +88,13 @@ main(int argc, char** argv)
   result = 0;
   x = y = 0;
   {
-    double * p = dest;
+    double * p;
 
     pixel_access->start_xy[0] = x;
     pixel_access->start_xy[1] = y;
-    result = oyConversion_RunPixel( conversion, pixel_access );
+    result = oyConversion_RunPixels( conversion, pixel_access );
+
+    p = pixel_access->array->array2d[0];
 
     if(result == 0)
     for(i = 0; i < w*h*3; i += 3)
@@ -111,7 +113,7 @@ main(int argc, char** argv)
   {
     double * p = 0;
 
-    result = oyConversion_RunPixel( conversion, pixel_access );
+    result = oyConversion_RunPixels( conversion, pixel_access );
     p = pixel;
 
     if(result == 0)
@@ -144,6 +146,9 @@ main(int argc, char** argv)
 
   oyConversion_Release( &conversion );
 
+
+
+
   conversion = oyConversion_New( 0 );
   filter = oyFilter_New( "//image/input_ppm", 0,0, 0 );
   conversion->input = oyFilterNode_Create( filter, 0 );
@@ -175,7 +180,7 @@ main(int argc, char** argv)
 
   pixel_access->start_xy[0] = 0;
   pixel_access->start_xy[1] = 0;
-  result = oyConversion_RunPixel( conversion, pixel_access );
+  result = oyConversion_RunPixels( conversion, pixel_access );
 
   oyPixelAccess_Release( &pixel_access );
   oyImage_Release( &image_in );
@@ -187,6 +192,10 @@ main(int argc, char** argv)
   system("dot -Tps test.dot -o test.ps; gv -spartan -antialias -magstep 0.7 test.ps &");
 #endif
   free(ptr); ptr = 0;
+
+  image_out = oyConversion_GetImage( conversion, OY_OUTPUT );
+  fprintf( stdout, "image: %dx%d\n", image_out->width, image_out->height );
+  oyImage_Release( &image_out );
 
   oyConversion_Release( &conversion );
 

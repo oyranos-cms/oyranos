@@ -255,17 +255,17 @@ int          oyIdToCMM               ( uint32_t            cmmId,
 #define oyCheckType_m( typ, action ) \
   if( !s || !s->oy_ || s->type != typ) \
   { \
-    WARNc3_S( "%s %s(found: %s)", _("Attempt to read a object not of type:"), \
-              oyStructTypeToText( typ ), \
-              oyStructTypeToText( s ? s->type : oyOBJECT_NONE )) \
+    WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
+              oyStructTypeToText( s ? s->type : oyOBJECT_NONE ), \
+              oyStructTypeToText( typ )) \
     action; \
   }
 #define oyCheckType__m( type, action ) \
   if( !s || !s->oy_ || s->type_ != type) \
   { \
-    WARNc3_S( "%s %s(found: %s)", _("Attempt to read a object not of type:"), \
-              oyStructTypeToText( type ), \
-              oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE )) \
+    WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
+              oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \
+              oyStructTypeToText( type )) \
     action; \
   }
 
