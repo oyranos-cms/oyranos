@@ -1376,23 +1376,21 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   /* now do some position blind manipulations */
   if(ltw)
   {
-    for( k = 0; k < array->height; ++k)
-    {
-      n = array->width / channels;
+    n = (int)(array->width+0.5) / channels;
 
-      if(data_type == oyUINT8 ||
+    if(!(data_type == oyUINT8 ||
          data_type == oyUINT16 ||
-         data_type == oyDOUBLE)
-      {
+         data_type == oyDOUBLE))
+    {
+      oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
+      error = 1;
+    }
+
+    /*  - - - - - conversion - - - - - */
+    if(!error)
+      for( k = 0; k < array->height; ++k)
         cmsDoTransform( ltw->lcms, array->array2d[k], array->array2d[k], n );
 
-      } else
-      {
-        oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
-        error = 1;
-      }
-
-    }
 
   } else
   {
