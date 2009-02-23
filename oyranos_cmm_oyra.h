@@ -29,6 +29,7 @@
 /* --- internal definitions --- */
 
 #define CMM_NICK "oyra"
+#define CMM_VERSION {0,1,0}
 
 extern oyMessage_f message;
 
@@ -67,6 +68,12 @@ oyPointer  oyraFilter_ImageRootContextToMem (
                                        size_t            * size,
                                        oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc );
+oyPointer  oyraFilterNode_ImageRootContextToMem (
+                                       oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
+int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket );
 
 extern oyDATATYPE_e  oyra_image_data_types[7];
 

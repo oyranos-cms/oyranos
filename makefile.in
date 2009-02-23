@@ -112,7 +112,8 @@ CFILES_CMM_oyX1 = \
 	$(SRCDIR)/$(TARGET)_cmm_oyX1.c
 CFILES_CMM_oyra = \
 	$(SRCDIR)/$(TARGET)_cmm_oyra.c \
-	$(SRCDIR)/$(TARGET)_cmm_oyra_image.c
+	$(SRCDIR)/$(TARGET)_cmm_oyra_image.c \
+	$(SRCDIR)/$(TARGET)_cmm_oyra_image_ppm.c
 CFILES_CMM_oyIM = \
 	$(SRCDIR)/$(TARGET)_cmm_oyIM.c \
 	$(SRCDIR)/$(TARGET)_cmm_oyIM_icc.c \
