@@ -90,7 +90,6 @@ typedef int       (*oyImage_SetPoint_f)( oyImage_s       * image,
                                          oyPointer         data );
 typedef int       (*oyImage_SetLine_f) ( oyImage_s       * image,
                                          int               line_y,
-                                         int             * height,
                                          int               channel,
                                          oyPointer         data );
 typedef int       (*oyImage_SetTile_f) ( oyImage_s       * image,
@@ -1241,7 +1240,9 @@ void           oyRegion_Normalise    ( oyRegion_s        * edit_region );
 void           oyRegion_Round        ( oyRegion_s        * edit_region );
 int            oyRegion_IsEqual      ( oyRegion_s        * region1,
                                        oyRegion_s        * region2 );
-int            oyRegion_IsInside     ( oyRegion_s        * region,
+int            oyRegion_IsInside     ( oyRegion_s        * test,
+                                       oyRegion_s        * ref );
+int            oyRegion_PointIsInside( oyRegion_s        * region,
                                        double              x,
                                        double              y );
 int            oyRegion_CountPoints ( oyRegion_s        * region );
@@ -1635,7 +1636,10 @@ int            oyImage_DataSet       ( oyImage_s         * image,
                                        oyStruct_s       ** pixel_data,
                                        oyImage_GetPoint_f  getPoint,
                                        oyImage_GetLine_f   getLine,
-                                       oyImage_GetTile_f   getTile );
+                                       oyImage_GetTile_f   getTile,
+                                       oyImage_SetPoint_f  setPoint,
+                                       oyImage_SetLine_f   setLine,
+                                       oyImage_SetTile_f   setTile );
 int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRegion_s        * region,
                                        int                 do_copy,
@@ -2401,7 +2405,10 @@ struct oyPixelAccess_s {
   oyArray2d_s    * array;              /**< processing data. The position is in
                                             start_xy relative to the previous
                                             mediator in the graph. */
-  oyRegion_s     * roi;                /**< region of interesst */
+  oyRegion_s     * output_image_roi;   /**< region of interesst; The region
+                                            is to be seen in relation to the
+                                            output_image (of the last filter).*/
+  oyImage_s      * output_image;       /**< the image which issued the request*/
 };
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
