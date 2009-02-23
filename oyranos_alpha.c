@@ -4146,6 +4146,8 @@ int          oyObject_UnRef          ( oyObject_s          obj )
 
 #   ifndef DEBUG_OBJECT
     if(s->ref_ < -1)
+#   else
+    if(s->id_ == 247)
 #   endif
       WARNc3_S("%s ID: %d refs: %d",
              oyStructTypeToText( s->parent_type_ ), s->id_, s->ref_)
@@ -13396,10 +13398,29 @@ int            oyRegion_IsEqual      ( oyRegion_s        * region1,
  *  @brief   compare
  *  @memberof oyRegion_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  4 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/23 (Oyranos: 0.1.10)
+ *  @date    2009/02/23
  */
-int            oyRegion_IsInside     ( oyRegion_s        * region,
+int            oyRegion_IsInside     ( oyRegion_s        * test,
+                                       oyRegion_s        * ref )
+{
+  return oyRegion_PointIsInside( ref, test->x, test->y ) &&
+         oyRegion_PointIsInside( ref, test->x + test->width - 1, test->y ) &&
+         oyRegion_PointIsInside( ref, test->x + test->width - 1,
+                                      test->y + test->height - 1) &&
+         oyRegion_PointIsInside( ref, test->x, test->y + test->height - 1 );
+}
+
+/**
+ *  @brief   compare
+ *  @memberof oyRegion_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/04 (Oyranos: 0.1.8)
+ *  @date    2009/02/23
+ */
+int            oyRegion_PointIsInside( oyRegion_s        * region,
                                        double              x,
                                        double              y )
 {
@@ -13609,7 +13630,7 @@ OYAPI oyArray2d_s * OYEXPORT
 OYAPI oyArray2d_s * OYEXPORT
                    oyArray2d_Create_ ( int                 width,
                                        int                 height,
-                                       oyDATATYPE_e        type,
+                                       oyDATATYPE_e        data_type,
                                        oyObject_s          object )
 {
   oyArray2d_s * s = 0;
@@ -13627,7 +13648,7 @@ OYAPI oyArray2d_s * OYEXPORT
 
     s->width = width;
     s->height = height;
-    s->t = type;
+    s->t = data_type;
     s->data_area = oyRegion_NewWith( 0,0, width, height, s->oy_ );
     s->array2d = s->oy_->allocateFunc_( y_len );
     error = !memset( s->array2d, 0, y_len );
@@ -13649,7 +13670,7 @@ OYAPI oyArray2d_s * OYEXPORT
                    oyArray2d_Create  ( oyPointer           data,
                                        int                 width,
                                        int                 height,
-                                       oyDATATYPE_e        type,
+                                       oyDATATYPE_e        data_type,
                                        oyObject_s          object )
 {
   oyArray2d_s * s = 0;
@@ -13658,7 +13679,7 @@ OYAPI oyArray2d_s * OYEXPORT
   if(!width || !height)
     return s;
 
-  s = oyArray2d_Create_( width, height, type, object );
+  s = oyArray2d_Create_( width, height, data_type, object );
   error = !s;
 
   if(error <= 0)
@@ -13668,7 +13689,7 @@ OYAPI oyArray2d_s * OYEXPORT
     else
     {
       data = s->oy_->allocateFunc_( width * height *
-                                    oySizeofDatatype( oyToDataType_m(type)) );
+                                    oySizeofDatatype( data_type ) );
       error = oyArray2d_DataSet( s, data );
       s->own_lines = oyYES;
     }
@@ -14046,7 +14067,70 @@ oyPointer oyImage_GetArray2dLineContinous (
   unsigned char ** array2d = a->array2d;
   if(height) *height = 1;
   if(is_allocated) *is_allocated = 0;
+  if(point_y >= a->height)
+    WARNc2_S("point_y < a->height failed(%d/%d)", point_y, a->height)
   return &array2d[ point_y ][ 0 ]; 
+}
+
+/** Function oyImage_SetPointContinous
+ *  @memberof oyImage_s
+ *  @brief   standard continous layout pixel accessor
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/22 (Oyranos: 0.1.10)
+ *  @date    2009/02/22
+ */
+int       oyImage_SetArray2dPointContinous (
+                                         oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               channel,
+                                         oyPointer         data )
+{
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  int pos = (point_x * image->layout_[oyCHANS]
+             + image->layout_[oyCHAN0+channel])
+            * image->layout_[oyDATA_SIZE];
+  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[0] );
+  int byteps = oySizeofDatatype( data_type );
+  int channels = 1;
+
+  if(channel < 0)
+    channels = oyToChannels_m( image->layout_[0] );
+
+  memcpy( &array2d[ point_y ][ pos ], data, byteps * channels );
+
+  return 0;
+
+}
+
+/** Function oyImage_SetLineContinous
+ *  @memberof oyImage_s
+ *  @brief   standard continous layout line accessor
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/22 (Oyranos: 0.1.10)
+ *  @date    2009/02/22
+ */
+int       oyImage_SetArray2dLineContinous (
+                                         oyImage_s       * image,
+                                         int               point_y,
+                                         int               channel,
+                                         oyPointer         data )
+{
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[0] );
+  int byteps = oySizeofDatatype( data_type );
+  int channels = 1;
+
+  if(channel < 0)
+    channels = oyToChannels_m( image->layout_[0] );
+
+  memcpy( &array2d[ point_y ][ 0 ], data, byteps * channels );
+
+  return 0; 
 }
 
 /** Function oyImage_GetPointPlanar
@@ -14167,7 +14251,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         s->height,
                                         oyToDataType_m(pixel_layout),
                                         s_obj );
-    oyImage_DataSet ( s, (oyStruct_s**) &a, 0,0,0 );
+    oyImage_DataSet ( s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
   s->profile_ = oyProfile_Copy( profile, 0 );
   s->viewport = oyRegion_NewWith( 0, 0, 1.0, s->height/s->width, s->oy_ );
@@ -14176,10 +14260,12 @@ oyImage_s *    oyImage_Create         ( int               width,
 
   if(s->pixel_data && s->layout_[oyCOFF] == 1)
     oyImage_DataSet( s, 0, oyImage_GetArray2dPointContinous,
-                           oyImage_GetArray2dLineContinous, 0 );
+                           oyImage_GetArray2dLineContinous, 0,
+                           oyImage_SetArray2dPointContinous,
+                           oyImage_SetArray2dLineContinous, 0 );
   else if(s->pixel_data)
     oyImage_DataSet( s, 0, oyImage_GetArray2dPointPlanar,
-                           oyImage_GetArray2dLinePlanar, 0 );
+                           oyImage_GetArray2dLinePlanar, 0, 0,0,0 );
 
   return s;
 }
@@ -14378,6 +14464,9 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
  *  @param         getPoint            interface function
  *  @param         getLine             interface function
  *  @param         getTile             interface function
+ *  @param         setPoint            interface function
+ *  @param         setLine             interface function
+ *  @param         setTile             interface function
  *  @return                            error
  *
  *  @version Oyranos: 0.1.8
@@ -14388,7 +14477,10 @@ int            oyImage_DataSet       ( oyImage_s         * image,
                                        oyStruct_s       ** pixel_data,
                                        oyImage_GetPoint_f  getPoint,
                                        oyImage_GetLine_f   getLine,
-                                       oyImage_GetTile_f   getTile )
+                                       oyImage_GetTile_f   getTile,
+                                       oyImage_SetPoint_f  setPoint,
+                                       oyImage_SetLine_f   setLine,
+                                       oyImage_SetTile_f   setTile )
 {
   oyImage_s * s = image;
   int error = 0;
@@ -14414,6 +14506,15 @@ int            oyImage_DataSet       ( oyImage_s         * image,
 
   if(getTile)
     s->getTile = getTile;
+
+  if(setPoint)
+    s->setPoint = setPoint;
+
+  if(setLine)
+    s->setLine = setLine;
+
+  if(setTile)
+    s->setTile = setTile;
 
   return error;
 }
@@ -14447,6 +14548,10 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int size = 0, channel_n;
+  int x = 0,
+      y = 0,
+      w = 0,
+      h = 0;
 
   if(!image)
     return 1;
@@ -14464,43 +14569,46 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   }
 
   oyRegion_Scale( pixel_region, image->width );
+  oyRegion_Round( pixel_region );
   pixel_region->x *= channel_n;
   pixel_region->width *= channel_n;
+  x = OY_ROUND( pixel_region->x );
+  y = OY_ROUND( pixel_region->y );
+  w = OY_ROUND( pixel_region->width );
+  h = OY_ROUND( pixel_region->height );
 
-  if( a && a->width != pixel_region->width )
+  if( a )
   {
-    WARNc_S("a->width != pixel_region->width  not yet implemented");
-    oyArray2d_Release( &a );
-  }
-
-  if(!a)
-    a = oyArray2d_Create_( pixel_region->width, pixel_region->height,
-                           data_type, obj );
-
-  if( !a )
-  {
-    WARNc_S("Could not create array.");
-    error = 1;
-  }
-
-  if(image->getTile)
-  {
+    if( w != a->width &&
+        h != a->height )
+    {
+      printf("  pixel_region: %s\n", oyRegion_Show( pixel_region ));
+      WARNc1_S( "requested region exceeds data array %s",
+                oyRegion_Show( a->data_area ) );
+      oyArray2d_Release( array );
+      a = 0;
+    }
   }
 
   if(image->getLine)
   {
     unsigned char * data = 0;
-    int x = OY_ROUND( pixel_region->x ),
-        y = OY_ROUND( pixel_region->y ),
-        w = OY_ROUND( pixel_region->width ),
-        h = OY_ROUND( pixel_region->height ),
-        i,j, height;
+    int i,j, height;
     size_t len;
 
-    a->data_area->x = -x;
-    a->data_area->y = 0;
-    a->data_area->width = image->width;
-    a->data_area->height = h;
+    if(!a)
+    {
+      a = oyArray2d_Create_( w, h, data_type, obj );
+      a->data_area->x = -x;
+      a->data_area->y = 0;
+      a->data_area->width = image->width * channel_n;
+      a->data_area->height = h;
+    }
+
+    if( !a )
+    {
+      WARNc_S("Could not create array.")
+    }
 
     for( i = 0; i < h; )
     {
@@ -14517,28 +14625,40 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                               a->oy_ ? a->oy_->allocateFunc_ : 0,
                               error = 1; break );
 
-          error = !memcpy( a->array2d[i+j], &data[j * size * a->width], len );
+          error = !memcpy( a->array2d[i+j],
+                    &data[j * size * (int)OY_ROUND(a->data_area->width) +
+                          size * x], len );
 
         } else
-          a->array2d[i+j] = &data[j * size * a->width];
+        {
+          a->array2d[i+j] = 
+                    &data[j * size * (int)OY_ROUND(a->data_area->width)];
 
-        a->array2d[i+j] = &a->array2d[i+j][size * x];
+          a->array2d[i+j] = &a->array2d[i+j][size * x];
+        }
       }
 
       i += height;
 
       if(error) break;
     }
-  }
-
+  } else
   if(image->getPoint)
   {
+    WARNc_S("image->getPoint  not yet supported")
+  } else
+  if(image->getTile)
+  {
+    WARNc_S("image->getTile  not yet supported")
+    error = 1;
   }
 
   if(error)
     oyArray2d_Release( &a );
 
   *array = a;
+
+  oyRegion_Release( &pixel_region );
 
   return error;
 }
@@ -16189,7 +16309,7 @@ int          oyFilter_Release        ( oyFilter_s       ** obj )
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
-    if(s->name_->release)
+    if(s->name_ && s->name_->release)
       s->name_->release( (oyStruct_s**)&s->name_ );
 
     if(s->category_)
@@ -18476,6 +18596,8 @@ oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
+  s->output_image_roi = oyRegion_NewFrom( 0, 0 );
+
   return s;
 }
 
@@ -18510,6 +18632,13 @@ oyPixelAccess_s *  oyPixelAccess_Create (
      
     s->data_in = filter->image_->data; */
     w = image->width;
+
+    /** The filters have no obligation to pass end to end informations.
+        The ticket must hold all pices of interesst.
+     */
+    s->output_image_roi->width = 1.0;
+    s->output_image_roi->height = image->height / (double)image->width;
+    s->output_image = oyImage_Copy( image, 0 );
 
     if(type == oyPIXEL_ACCESS_POINT)
     {
@@ -18591,6 +18720,8 @@ oyPixelAccess_s * oyPixelAccess_Copy_( oyPixelAccess_s   * obj,
     s->index = 0;
     s->pixels_n = obj->pixels_n;
     s->workspace_id = obj->workspace_id;
+    s->output_image_roi = oyRegion_Copy( obj->output_image_roi, s->oy_ );
+    s->output_image = oyImage_Copy( obj->output_image, 0 );
   }
 
   if(error)
@@ -18665,7 +18796,8 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
   /* ---- end of common object destructor ------- */
 
   oyArray2d_Release( &s->array );
-  oyRegion_Release( &s->roi );
+  oyRegion_Release( &s->output_image_roi );
+  oyImage_Release( &s->output_image );
 
   if(s->oy_ && s->oy_->deallocateFunc_)
   {
@@ -19194,7 +19326,7 @@ int                oyConversion_RunPixels (
   filter = conversion->out_->filter;
   image = (oyImage_s*) plug->remote_socket_->data;
 
-  result = oyImage_FillArray( image, pixel_access->roi, 0,
+  result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
                               &pixel_access->array, 0 );
   error = ( result != 0 );
 
@@ -21105,7 +21237,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
       r = (oyRegion_s*) o->value->oy_struct;
 
     if(!device_name &&
-       r && oyRegion_IsInside( r, x,y ))
+       r && oyRegion_PointIsInside( r, x,y ))
     {
       device_name = oyConfig_FindString( device, "device_name", 0 );
       text = oyStringCopy_( device_name, allocateFunc );
