@@ -2219,15 +2219,13 @@ oyConnector_s* oyFilterNode_Get      ( oyFilterNode_s    * node,
 /* decode */
 #define oyToFilterNode_Free_m(r)       ((r)&1)
 #define oyToFilterNode_Connected_m(r)  (((r) >> 1)&1)
-int            oyFilterNode_Count    ( oyFilterNode_s    * node,
-                                       oyConnector_s     * pattern,
+int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
                                        int                 input,
                                        int                 flags );
-#define OY_FILTERNODE_RESOLVE_AUTOMATIC 0x01        /** as far as possible */
-/* decode */
-#define oyToFilterNode_ResoveAutomatic_m(r)      ((r)&1)
 int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
+                                       int                 pos_socket,
                                        oyFilterNode_s    * output,
+                                       int                 pos_plug,
                                        int                 flags );
 OYAPI oyConnector_s * OYEXPORT
              oyFilterNode_ShowConnector (
@@ -2239,11 +2237,6 @@ OYAPI int  OYEXPORT
                                        oyFilterNode_s    * node_first,
                                        int                 pos_first,
                                        oyConnector_s     * connector_second );
-OYAPI int  OYEXPORT
-             oyFilterNode_ShowConnectorCount(
-                                       oyFilterNode_s    * node,
-                                       int                 plug,
-                                       uint32_t          * last_adds );
 OYAPI oyFilterSocket_s * OYEXPORT
                  oyFilterNode_GetSocket (
                                        oyFilterNode_s    * node,

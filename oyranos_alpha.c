@@ -16465,50 +16465,6 @@ const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
 const char * oyFilter_WidgetsGet     ( oyFilter_s        * filter,
                                        int                 flags );
 
-/** Function: oyFilterNode_ShowConnectorCount
- *  @memberof oyFilterNode_s
- *  @brief   get the connector count from a filter backend
- *
- *  The path to obtain a new connector.
- *  The filter can say it has more connectors to provide for a certain kind of 
- *  static connector eigther described in oyCMMapi4_s::inputs or
- *  oyCMMapi4_s::outputs.
- *
- *  @param       node                the backend filter node
- *  @param       is_plug             select from 0 - plugs or 1 - sockets
- *  @param[out]  last_adds           maximal copies of last connector as suggested by the filter backend
- *  @return                          count of static connectors
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/28 (Oyranos: 0.1.8)
- *  @date    2008/07/28
- */
-OYAPI int  OYEXPORT
-             oyFilterNode_ShowConnectorCount( 
-                                       oyFilterNode_s    * node,
-                                       int                 is_plug,
-                                       uint32_t          * last_adds )
-{
-  int n = 0;
-
-  if(!node || node->type_ != oyOBJECT_FILTER_NODE_S ||
-     !node->api7_)
-    return n;
-
-  if(is_plug)
-  {
-    n = node->api7_->plugs_n;
-    if(last_adds)
-      *last_adds = node->api7_->plugs_last_add;
-  } else {
-    n = node->api7_->sockets_n;
-    if(last_adds)
-      *last_adds = node->api7_->sockets_last_add;
-  }
-
-  return n;
-}
-
 
 
 /** Function: oyFilters_New
@@ -16867,14 +16823,12 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
     if(s->filter)
     {
       size_t len = sizeof(oyFilterSocket_s*) *
-             (s->api7_->sockets_n + s->api7_->sockets_last_add
-              + 1);
+             (oyFilterNode_EdgeCount( s, 0, 0 ) + 1);
       len = len?len:sizeof(oyFilterSocket_s*);
       s->sockets = allocateFunc_( len );
       memset( s->sockets, 0, len );
 
-      len = sizeof(oyFilterSocket_s*) *
-            (s->api7_->plugs_n + s->api7_->plugs_last_add + 1);
+      len = sizeof(oyFilterSocket_s*) * (oyFilterNode_EdgeCount( s, 1, 0 ) + 1);
       len = len?len:sizeof(oyFilterSocket_s*);
       s->plugs = allocateFunc_( len );
       memset( s->plugs, 0, len );
@@ -16986,13 +16940,13 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 
   if(s->sockets)
     for(i = 0;
-        i < s->api7_->sockets_n + s->api7_->sockets_last_add;
+        i < oyFilterNode_EdgeCount( s, 0, 0 );
         ++i)
       if(s->sockets[i]) ++s_n;
 
   if(s->plugs)
     for(i = 0;
-        i < s->api7_->plugs_n + s->api7_->plugs_last_add;
+        i < oyFilterNode_EdgeCount( s, 1, 0 );
         ++i)
       if(s->plugs[i]) ++p_n;
 
@@ -17007,12 +16961,12 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 
     if(s->sockets)
     for(i = 0;
-        i < s->api7_->sockets_n + s->api7_->sockets_last_add;
+        i < oyFilterNode_EdgeCount( s, 0, 0 );
         ++i)
       oyFilterSocket_Release( &s->sockets[i] );
 
     for(i = 0;
-        i < s->api7_->plugs_n + s->api7_->plugs_last_add;
+        i < oyFilterNode_EdgeCount( s, 1, 0 );
         ++i)
       oyFilterPlug_Release( &s->plugs[i] );
 
@@ -17028,6 +16982,59 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
   }
 
   return 0;
+}
+
+/** Function oyFilterNode_EdgeCount
+ *  @memberof oyFilterNode_s
+ *  @brief   count real and potential connections to a filter node object
+ *
+ *  @param         node                the node
+ *  @param         input               1 - plugs; 0 - sockets
+ *  @param         flags               specify which number to return
+ *                                     - OY_FILTERNODE_FREE: count available
+ *                                     - OY_FILTERNODE_CONNECTED: count used
+ +  @return                            the number of possible edges
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/24 (Oyranos: 0.1.10)
+ *  @date    2009/02/24
+ */
+int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
+                                       int                 input,
+                                       int                 flags )
+{
+  oyFilterNode_s * s = node;
+  int n = 0, i,
+      possible = 0,
+      connected = 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  if(!node->filter || !node->api7_)
+    return 0;
+
+  /* sockets */
+  if(input)
+  {
+    i = 0;
+    while(node->plugs[i++]) { ++connected; }
+    possible = node->api7_->plugs_n + node->api7_->plugs_last_add;
+
+  } else
+  {
+    i = 0;
+    while(node->sockets[i++]) { ++connected; }
+    possible = node->api7_->sockets_n + node->api7_->sockets_last_add;
+  }
+
+  if(oyToFilterNode_Free_m(flags))
+    n = possible - connected;
+  else if(oyToFilterNode_Connected_m(flags))
+    n = connected;
+  else
+    n = possible;
+
+  return n;
 }
 
 /** Function: oyFilterNode_ShowConnector
@@ -17064,7 +17071,7 @@ OYAPI oyConnector_s * OYEXPORT
   object = oyObject_New ();
 
   if(node->api7_->plugs_n < as_pos &&
-     as_pos < node->api7_->plugs_n + node->api7_->plugs_last_add )
+     as_pos < oyFilterNode_EdgeCount( node, 1, 0 ))
     as_pos = node->api7_->plugs_n - 1;
 
   {
@@ -17211,15 +17218,14 @@ OYAPI oyFilterSocket_s * OYEXPORT
   oyFilterSocket_s * s = 0;
 
   if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
-     pos < node->api7_->sockets_n + node->api7_->sockets_last_add)
+     pos < oyFilterNode_EdgeCount( node, 0, 0 ))
   {
     oyAlloc_f allocateFunc_ = node->oy_->allocateFunc_;
 
     if(!node->sockets)
     {
       size_t len = sizeof(oyFilterSocket_s*) *
-       (node->api7_->sockets_n + node->api7_->sockets_last_add
-        + 1);
+                   (oyFilterNode_EdgeCount( node, 0, 0 ) + 1);
       node->sockets = allocateFunc_( len );
       memset( node->sockets, 0, len );
     }
@@ -17258,15 +17264,14 @@ OYAPI oyFilterPlug_s * OYEXPORT
   oyFilterPlug_s * s = 0;
 
   if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
-     pos < node->api7_->plugs_n + node->api7_->plugs_last_add)
+     pos < oyFilterNode_EdgeCount( node, 1, 0 ))
   {
     oyAlloc_f allocateFunc_ = node->oy_->allocateFunc_;
 
     if(!node->plugs)
     {
       size_t len = sizeof(oyFilterPlug_s*) *
-           (node->api7_->plugs_n + node->api7_->plugs_last_add
-            + 1);
+                   (oyFilterNode_EdgeCount( node, 1, 0 ) + 1);
       node->plugs = allocateFunc_( len );
       memset( node->plugs, 0, len );
     }
@@ -17406,6 +17411,9 @@ char info_profile_data[320] =
  *
  *  Serialise into a Oyranos specific ICC profile containers "Info" text tag.
  *  Not useable for binary contexts.
+ *
+ *  This function is currently a ICC only thing and yet just for debugging
+ *  useful.
  *
  *  @param[in,out] node                filter node
  *  @param[out]    size                output size
@@ -19472,8 +19480,7 @@ void               oyConversion_ToTextShowNode_ (
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocateFunc )
 {
-  uint32_t last_adds = 0;
-  int n = oyFilterNode_ShowConnectorCount( node, 1, &last_adds );
+  int n = oyFilterNode_EdgeCount( node, 1, 0 );
   char text[256];
   char name = 'A' + *counter;
 
