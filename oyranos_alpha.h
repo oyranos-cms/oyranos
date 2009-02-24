@@ -2524,10 +2524,10 @@ digraph G {
  *  a profile to profile and possible image buffer to image buffer linear
  *  graph.\n
  *  The next possibility is to create a linear graph by chaining linear nodes
- *  together with oyConversion_CreateInput(), oyConversion_FilterAdd() and
- *  oyConversion_OutputAdd() in that order. A linear node is one that can have
- *  exactly one parent and one child node. The above scheme illustrates a linear
- *  graph.\n
+ *  together with oyConversion_CreateInput(), oyConversion_LinFilterAdd() and
+ *  oyConversion_LinOutputAdd() in that order. A linear node is one that can
+ *  have exactly one parent and one child node. The above scheme illustrates a
+ *  linear graph.\n
  *  The last possibility is to create a non linear graph. The input member
  *  be accessed for this directly.
  *
@@ -2536,7 +2536,7 @@ digraph G {
  *  top most required node to be provided in a oyConversion_s graph. The
  *  input node is accessible for user manipulation. The other one is the out_
  *  member. It is the closing node in the graph. It will be set by Oyranos
- *  during closing the graph, e.g. in oyConversion_OutputAdd().
+ *  during closing the graph, e.g. in oyConversion_LinOutputAdd().
  *
  *  \b Using \b Graphs: \n
  *  To obtain the data the oyConversion_GetNextPixel() and
@@ -2597,10 +2597,10 @@ int                oyConversion_Release (
                                        oyConversion_s   ** conversion );
 
 
-int                oyConversion_FilterAdd (
+int                oyConversion_LinFilterAdd (
                                        oyConversion_s    * conversion,
                                        oyFilter_s        * filter );
-int                oyConversion_OutputAdd (
+int                oyConversion_LinOutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,
                                        oyImage_s         * output );

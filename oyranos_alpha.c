@@ -18958,12 +18958,12 @@ oyConversion_s   * oyConversion_CreateBasic (
 
     filter = oyFilter_New( "//colour/icc", 0,0, 0 );
 
-    error = oyConversion_FilterAdd( s, filter );
+    error = oyConversion_LinFilterAdd( s, filter );
     if(error)
       WARNc1_S( "could not add  filter: %s\n", "//colour" );
     oyFilter_Release( &filter );
 
-    error = oyConversion_OutputAdd( s, 0, output );
+    error = oyConversion_LinOutputAdd( s, 0, output );
   }
 
   if(error)
@@ -19124,7 +19124,7 @@ int          oyConversion_Release    ( oyConversion_s   ** obj )
 }
 
 
-/** Function oyConversion_FilterAdd
+/** Function oyConversion_LinFilterAdd
  *  @memberof oyConversion_s
  *  @brief   add a filter to a oyConversion_s filter list
  *
@@ -19136,7 +19136,7 @@ int          oyConversion_Release    ( oyConversion_s   ** obj )
  *  @since   2008/07/09 (Oyranos: 0.1.8)
  *  @date    2008/07/10
  */
-int                oyConversion_FilterAdd (
+int                oyConversion_LinFilterAdd (
                                        oyConversion_s    * conversion,
                                        oyFilter_s        * filter )
 {
@@ -19233,7 +19233,7 @@ int                oyConversion_FilterAdd (
   return error;
 }
 
-/** Function oyConversion_OutputAdd
+/** Function oyConversion_LinOutputAdd
  *  @memberof oyConversion_s
  *  @brief   close a oyConversion_s with a target image
  *
@@ -19248,7 +19248,7 @@ int                oyConversion_FilterAdd (
  *  @since   2008/07/06 (Oyranos: 0.1.8)
  *  @date    2009/02/17
  */
-int                oyConversion_OutputAdd (
+int                oyConversion_LinOutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,
                                        oyImage_s         * output )
@@ -19267,12 +19267,12 @@ int                oyConversion_OutputAdd (
     filter = oyFilter_New( filter_registration, 0,0, 0);
 
     if(error <= 0)
-      error = oyConversion_FilterAdd( conversion, filter );
+      error = oyConversion_LinFilterAdd( conversion, filter );
 
     last = oyFilterNode_GetLastFromLinear_( s->input );
     plug_last = oyFilterNode_GetPlug( last, 0 );
 
-    /* oyConversion_FilterAdd references the input image in the new filter */
+    /* oyConversion_LinFilterAdd references the input image in the new filter */
     if(plug_last)
     {
       if(output)
