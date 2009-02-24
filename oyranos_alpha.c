@@ -18722,6 +18722,11 @@ oyPixelAccess_s * oyPixelAccess_Copy_( oyPixelAccess_s   * obj,
     s->workspace_id = obj->workspace_id;
     s->output_image_roi = oyRegion_Copy( obj->output_image_roi, s->oy_ );
     s->output_image = oyImage_Copy( obj->output_image, 0 );
+    s->array = oyArray2d_Copy( obj->array, 0 );
+    if(obj->user_data && obj->user_data->copy)
+      s->user_data = obj->user_data->copy( obj->user_data, 0 );
+    else
+      s->user_data = obj->user_data;
   }
 
   if(error)
@@ -18798,6 +18803,8 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
   oyArray2d_Release( &s->array );
   oyRegion_Release( &s->output_image_roi );
   oyImage_Release( &s->output_image );
+  if(s->user_data && s->user_data->release)
+      s->user_data->release( &s->user_data );
 
   if(s->oy_ && s->oy_->deallocateFunc_)
   {
