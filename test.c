@@ -168,11 +168,11 @@ main(int argc, char** argv)
                               image_in->layout_[0], prof, 0 );
 
   filter = oyFilter_New( "//colour/icc", 0,0, 0 );
-  error = oyConversion_FilterAdd( conversion, filter );
+  error = oyConversion_LinFilterAdd( conversion, filter );
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//colour" );
   
-  error = oyConversion_OutputAdd( conversion, "//image/output_ppm", image_out );
+  error = oyConversion_LinOutputAdd( conversion, "//image/output_ppm", image_out );
   options = oyFilter_OptionsGet( conversion->out_->filter, OY_FILTER_GET_DEFAULT );
   error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
                                  "test_dbg.ppm", OY_CREATE_NEW );
