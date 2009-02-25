@@ -1461,7 +1461,11 @@ typedef struct {
   oyRegion_s         * data_area;      /**< size of reserve pixels, x,y <= 0, width,height >= data view width,height */
 
   unsigned char     ** array2d;        /**< sorted data */
-  int                  own_lines;      /**< is *array2d owned by this object? */
+  int                  own_lines;      /**< Is *array2d owned by this object?
+                                            - 0 not owned by the object
+                                            - 1 one monolithic memory block
+                                                starting in array2d[0]
+                                            - 2 several memory blocks */
 } oyArray2d_s;
 
 OYAPI oyArray2d_s * OYEXPORT
@@ -2208,7 +2212,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
                                        oyObject_s          object );
 oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
                                        oyObject_s          object );
-int          oyFilterNode_Release    ( oyFilterNode_s   ** node );
+int            oyFilterNode_Release  ( oyFilterNode_s   ** node );
 
 oyConnector_s* oyFilterNode_Get      ( oyFilterNode_s    * node,
                                        oyConnector_s     * pattern,
@@ -2223,28 +2227,27 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
                                        int                 input,
                                        int                 flags );
 int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
-                                       int                 pos_socket,
+                                       const char        * socket_nick,
                                        oyFilterNode_s    * output,
-                                       int                 pos_plug,
+                                       const char        * plug_nick,
                                        int                 flags );
 OYAPI oyConnector_s * OYEXPORT
-             oyFilterNode_ShowConnector (
+               oyFilterNode_ShowConnector (
                                        oyFilterNode_s    * node,
                                        int                 as_pos,
                                        int                 plug );
 OYAPI int  OYEXPORT
-             oyFilterNode_ConnectorMatch (
+               oyFilterNode_ConnectorMatch (
                                        oyFilterNode_s    * node_first,
                                        int                 pos_first,
                                        oyConnector_s     * connector_second );
 OYAPI oyFilterSocket_s * OYEXPORT
-                 oyFilterNode_GetSocket (
-                                       oyFilterNode_s    * node,
+               oyFilterNode_GetSocket( oyFilterNode_s    * node,
                                        int                 pos );
 OYAPI oyFilterPlug_s * OYEXPORT
-                 oyFilterNode_GetPlug( oyFilterNode_s    * node,
+               oyFilterNode_GetPlug  ( oyFilterNode_s    * node,
                                        int                 pos );
-const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
+const char *   oyFilterNode_GetText  ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type );
 oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
                                        size_t            * size,

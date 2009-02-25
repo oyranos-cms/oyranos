@@ -2776,6 +2776,8 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
         tmp = tmp->next;
       }
     }
+
+    oyCMMInfo_Release( &cmm_info );
   }
 
   return api;
@@ -3146,6 +3148,8 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
           tmp = tmp->next;
         }
       }
+
+      oyCMMInfo_Release( &cmm_info );
     }
 
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
@@ -13730,7 +13734,7 @@ oyArray2d_s * oyArray2d_Copy_
   if(error <= 0)
   {
     allocateFunc_ = s->oy_->allocateFunc_;
-    s->own_lines = oyYES;
+    s->own_lines = 2;
     for(i = 0; i < s->height; ++i)
     {
       size = s->width * oySizeofDatatype( s->t );
@@ -13817,7 +13821,8 @@ OYAPI int  OYEXPORT
 
     for( y = s->data_area->y; y < s->data_area->height; ++y )
     {
-      if(s->own_lines)
+      if((s->own_lines == 1 && y == 0) ||
+         s->own_lines == 2)
         deallocateFunc( s->array2d[y] );
       s->array2d[y] = 0;
     }
@@ -16188,6 +16193,7 @@ oyFilter_s * oyFilter_New            ( const char        * registration,
     /* @todo test oyBOOLEAN_SUBSTRACTION for correctness */
     s->options_ = oyOptions_FromBoolean( opts_tmp, options,
                                          oyBOOLEAN_SUBSTRACTION, s->oy_ );
+    oyOptions_Release( &opts_tmp );
   }
 
   if(lib_name)
@@ -16921,7 +16927,7 @@ oyFilterNode_s * oyFilterNode_Copy   ( oyFilterNode_s    * node,
  */
 int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 {
-  uint32_t s_n = 0, p_n = 0, i;
+  uint32_t s_n = 0, p_n = 0, i, n;
   /* ---- start of common object destructor ----- */
   oyFilterNode_s * s = 0;
 
@@ -16939,16 +16945,18 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
   oyObject_UnRef(s->oy_);
 
   if(s->sockets)
-    for(i = 0;
-        i < oyFilterNode_EdgeCount( s, 0, 0 );
-        ++i)
+  {
+    n = oyFilterNode_EdgeCount( s, 0, 0 );
+    for(i = 0; i < n; ++i)
       if(s->sockets[i]) ++s_n;
+  }
 
   if(s->plugs)
-    for(i = 0;
-        i < oyFilterNode_EdgeCount( s, 1, 0 );
-        ++i)
+  {
+    n = oyFilterNode_EdgeCount( s, 1, 0 );
+    for(i = 0; i < n; ++i)
       if(s->plugs[i]) ++p_n;
+  }
 
   if(oyObject_GetRefCount( s->oy_ ) > s_n + p_n)
     return 0;
@@ -16960,15 +16968,18 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
     if(s->sockets)
-    for(i = 0;
-        i < oyFilterNode_EdgeCount( s, 0, 0 );
-        ++i)
-      oyFilterSocket_Release( &s->sockets[i] );
+    {
+      n = oyFilterNode_EdgeCount( s, 0, 0 );
+      for(i = 0; i < n; ++i)
+        oyFilterSocket_Release( &s->sockets[i] );
+    }
 
-    for(i = 0;
-        i < oyFilterNode_EdgeCount( s, 1, 0 );
-        ++i)
-      oyFilterPlug_Release( &s->plugs[i] );
+    if(s->plugs)
+    {
+      n = oyFilterNode_EdgeCount( s, 1, 0 );
+      for(i = 0; i < n; ++i)
+        oyFilterPlug_Release( &s->plugs[i] );
+    }
 
     oyObject_UnRef(s->oy_);
 
@@ -17016,15 +17027,23 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
   /* sockets */
   if(input)
   {
-    i = 0;
-    while(node->plugs[i++]) { ++connected; }
     possible = node->api7_->plugs_n + node->api7_->plugs_last_add;
+    if(node->api7_->plugs_last_add)
+      --possible;
+    if(node->plugs)
+      for(i = 0; i < possible; ++i)
+        if(node->plugs[i])
+          ++connected;
 
   } else
   {
-    i = 0;
-    while(node->sockets[i++]) { ++connected; }
     possible = node->api7_->sockets_n + node->api7_->sockets_last_add;
+    if(node->api7_->sockets_last_add)
+      --possible;
+    if(node->sockets)
+      for(i = 0; i < possible; ++i)
+        if(node->sockets[i])
+          ++connected;
   }
 
   if(oyToFilterNode_Free_m(flags))
@@ -17549,7 +17568,7 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
   int error = !node;
   oyStructList_s * datas = 0;
   oyStruct_s * data = 0;
-  int i;
+  int i, n;
 
   if(error <= 0)
   {
@@ -17558,8 +17577,9 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
     if(get_plug)
     {
           /* pick all plug (input) data */
-          i = 0;
-          while( node->plugs[i] && error <= 0 )
+          n = oyFilterNode_EdgeCount( node, 1, 0 );
+          for( i = 0; i < n && error <= 0; ++i)
+          if(node->plugs[i])
           {
             data = 0;
             if(node->plugs[i]->remote_socket_->data)
@@ -17572,8 +17592,9 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
     } else
     {
           /* pick all sockets (output) data */
-          i = 0;
-          while( node->sockets[i] && error <= 0 )
+          n = oyFilterNode_EdgeCount( node, 0, 0 );
+          for( i = 0; i < n && error <= 0; ++i)
+          if(node->sockets[i])
           {
             data = 0;
             if(node->sockets[i]->data)
@@ -19209,17 +19230,29 @@ int                oyConversion_LinFilterAdd (
         temp = node;
         node_socket = oyFilterSocket_Copy( oyFilterNode_GetSocket( node, 0 ),0);
         node_plug = oyFilterPlug_Copy( oyFilterNode_GetPlug( node, 0 ), 0 );
-        node_plug_connector = node_plug->pattern;
 
-        if(oyFilterNode_ConnectorMatch( last, 0, node_plug_connector ))
-        {
-          socket_last = oyFilterNode_GetSocket( last, 0 );
-        } else
+        if(!node_plug)
         {
           WARNc2_S( "\n  %s: %s",
-          "Filter conectors do not match",
+          "Filter has no node",
                 oyFilter_GetName( node->filter, oyNAME_NAME) );
           error = 1;
+        }
+
+        if(error <= 0)
+        {
+          node_plug_connector = node_plug->pattern;
+
+          if(oyFilterNode_ConnectorMatch( last, 0, node_plug_connector ))
+          {
+            socket_last = oyFilterNode_GetSocket( last, 0 );
+          } else
+          {
+            WARNc2_S( "\n  %s: %s",
+            "Filter connectors do not match",
+                  oyFilter_GetName( node->filter, oyNAME_NAME) );
+            error = 1;
+          }
         }
 
         if(error <= 0 && node_socket && !node_socket->data)
@@ -19277,8 +19310,11 @@ int                oyConversion_LinOutputAdd (
     if(error <= 0)
       error = oyConversion_LinFilterAdd( conversion, filter );
 
-    last = oyFilterNode_GetLastFromLinear_( s->input );
-    plug_last = oyFilterNode_GetPlug( last, 0 );
+    if(error <= 0)
+    {
+      last = oyFilterNode_GetLastFromLinear_( s->input );
+      plug_last = oyFilterNode_GetPlug( last, 0 );
+    }
 
     /* oyConversion_LinFilterAdd references the input image in the new filter */
     if(plug_last)
@@ -19330,10 +19366,20 @@ int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access )
 {
+  oyConversion_s * s = conversion;
   oyFilterPlug_s * plug = 0;
   oyFilter_s * filter = 0;
   oyImage_s * image = 0;
   int error = 0, result, l_error = 0;
+
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
+
+  if(!conversion->out_ || !conversion->out_->plugs ||
+     !conversion->out_->plugs[0])
+  {
+    WARNc1_S("graph incomplete [%d]", s ? oyObject_GetId( s->oy_ ) : -1)
+    return 1;
+  }
 
   /* conversion->out_ has to be linear, so we access only the first socket */
   plug = conversion->out_->plugs[0];
@@ -19483,6 +19529,9 @@ void               oyConversion_ToTextShowNode_ (
   int n = oyFilterNode_EdgeCount( node, 1, 0 );
   char text[256];
   char name = 'A' + *counter;
+  oyFilterNode_s * s = node;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return )
 
   ++*counter;
 
@@ -19498,9 +19547,11 @@ void               oyConversion_ToTextShowNode_ (
   }
 
   {
-    int i = 0;
+    int i;
 
-    while( node->sockets[i] )
+    n = oyFilterNode_EdgeCount( node, 0, 0 );
+    for(i = 0; i < n; ++i )
+    if(node->sockets[i])
     {
       int j = 0,
           np = oyFilterPlugs_Count( node->sockets[i]->requesting_plugs_ );
@@ -19524,7 +19575,6 @@ void               oyConversion_ToTextShowNode_ (
                                         allocateFunc, deallocateFunc );
         }
       }
-      ++i;
     }
   }
 }
@@ -20638,11 +20688,13 @@ OYAPI int  OYEXPORT
 
   s = *obj;
 
+  if(!(s && s->type == oyOBJECT_CMM_INFO_S && !s->release_))
   oyCheckType_m( oyOBJECT_CMM_INFO_S, return 1 )
 
   *obj = 0;
 
-  if(oyObject_UnRef(s->oy_))
+  
+  if(!s->oy_ || oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
 
