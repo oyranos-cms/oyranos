@@ -14,7 +14,7 @@
 
 
 #include "oyranos_alpha.h"
-#include "oyranos_alpha_internal.h"
+#include "oyranos_alpha_graph.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmms.h"
 #include "oyranos_elektra.h"
@@ -16822,9 +16822,32 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
   if(error <= 0)
   {
     s->filter = oyFilter_Copy( filter, object );
+    if(!s->filter)
+    {
+      WARNc2_S("Could not copy filter: %s %s",
+               filter->registration_, filter->category_)
+      error = 1;
+    }
 
-    s->api7_ = (oyCMMapi7_s*) oyCMMsGetFilterApi_( 0, 0,
-                                   filter->registration_, oyOBJECT_CMM_API7_S );
+    if(error <= 0)
+      s->api7_ = (oyCMMapi7_s*) oyCMMsGetFilterApi_( 0, 0,
+                                s->filter->registration_, oyOBJECT_CMM_API7_S );
+    if(error <= 0 && !s->api7_)
+    {
+      WARNc2_S("Could not obtain filter api7 for: %s %s",
+               filter->registration_, filter->category_)
+      error = 1;
+    }
+
+    if(s->api7_)
+    {
+      s->plugs_n_ = s->api7_->plugs_n + s->api7_->plugs_last_add;
+      if(s->api7_->plugs_last_add)
+        --s->plugs_n_;
+      s->sockets_n_ = s->api7_->sockets_n + s->api7_->sockets_last_add;
+      if(s->api7_->sockets_last_add)
+        --s->sockets_n_;
+    }
 
     if(s->filter)
     {
@@ -17027,9 +17050,7 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
   /* sockets */
   if(input)
   {
-    possible = node->api7_->plugs_n + node->api7_->plugs_last_add;
-    if(node->api7_->plugs_last_add)
-      --possible;
+    possible = node->plugs_n_;
     if(node->plugs)
       for(i = 0; i < possible; ++i)
         if(node->plugs[i])
@@ -17037,9 +17058,7 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
 
   } else
   {
-    possible = node->api7_->sockets_n + node->api7_->sockets_last_add;
-    if(node->api7_->sockets_last_add)
-      --possible;
+    possible = node->sockets_n_;
     if(node->sockets)
       for(i = 0; i < possible; ++i)
         if(node->sockets[i])
@@ -17376,6 +17395,8 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
 
   return hash_text;
 }
+
+
 
 /** 
  *  @internal

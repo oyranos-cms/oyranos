@@ -1804,7 +1804,7 @@ OYAPI int  OYEXPORT
 /** @struct  oyFilterSocket_s
  *  @brief   a filter connection structure
  *  @ingroup objects_conversion
- *  @extends oyStruct_s
+ *  @extends oySocket_s
  *
  *  The passive output version of a oyConnector_s.
  \dot
@@ -1843,13 +1843,13 @@ struct oyFilterSocket_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
   oyFilterNode_s     * node;           /**< filter node for this connector */
-  char               * relatives_;     /**< @private hint about belonging to a filter */
-
+  oyFilterPlugs_s    * requesting_plugs_;/**< @private all remote inputs */
   oyStruct_s         * data;           /**< unprocessed data model */
 
-  oyFilterPlugs_s    * requesting_plugs_;/**< @private all remote inputs */
+  oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
+  char               * relatives_;     /**< @private hint about belonging to a filter */
+
 };
 
 OYAPI oyFilterSocket_s * OYEXPORT
@@ -1870,7 +1870,7 @@ OYAPI int  OYEXPORT
 /** @struct oyFilterPlug_s
  *  @brief  a filter connection structure
  *  @ingroup objects_conversion
- *  @extends oyStruct_s
+ *  @extends oyPlug_s
  *
  *  The active input version of a oyConnector_s.
  *  Each plug can connect to exact one socket.
@@ -1910,12 +1910,13 @@ struct oyFilterPlug_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
   oyFilterNode_s     * node;           /**< filter node for this connector */
-  char               * relatives_;     /**< @private hint about belonging to a filter */
-
   oyFilterSocket_s   * remote_socket_; /**< @private the remote output */
+
+  oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
+  char               * relatives_;     /**< @private hint about belonging to a filter */
 };
+
 
 OYAPI oyFilterPlug_s * OYEXPORT
                  oyFilterPlug_New    ( oyObject_s          object );
@@ -1938,7 +1939,7 @@ OYAPI int  OYEXPORT
 /** @struct  oyFilterPlugs_s
  *  @brief   a FilterPlugs list
  *  @ingroup objects_conversion
- *  @extends oyStruct_s
+ *  @extends oyPlugs_s
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
@@ -2102,7 +2103,7 @@ OYAPI int  OYEXPORT
 /** @struct  oyFilterNode_s
  *  @brief   a FilterNode object
  *  @ingroup objects_conversion
- *  @extends oyStruct_s
+ *  @extends oyNode_s
  *
  *  Filter nodes chain filters into a oyConversion_s graph. The filter nodes
  *  use plugs and sockets for creating connections. Each plug can only connect
@@ -2196,8 +2197,10 @@ struct oyFilterNode_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  oyFilterPlug_s    ** plugs;          /**< active input connectors, list ends with a trailing zero */
-  oyFilterSocket_s  ** sockets;        /**< active output connectors, list ends with a trailing zero */
+  oyFilterPlug_s    ** plugs;          /**< possible input connectors */
+  int                  plugs_n_;       /**< readonly number of inputs */
+  oyFilterSocket_s  ** sockets;        /**< possible output connectors */
+  int                  sockets_n_;     /**< readonly number of outputs */
 
   oyFilter_s         * filter;         /**< the filter */
   char               * relatives_;     /**< @private hint about belonging to a filter */
@@ -2252,6 +2255,9 @@ const char *   oyFilterNode_GetText  ( oyFilterNode_s    * node,
 oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
+oyOption_s *   oyFilterNode_GetAdjazenzList (
+                                       oyFilterNode_s    * node,
+                                       int                 flags );
 
 
 
@@ -2618,9 +2624,6 @@ oyImage_s        * oyConversion_GetImage (
                                        uint32_t            flags );
 oyProfile_s      * oyConversion_ToProfile (
                                        oyConversion_s    * conversion );
-int             ** oyConversion_GetAdjazenzlist (
-                                       oyConversion_s    * conversion,
-                                       oyAlloc_f           allocateFunc );
 char             * oyConversion_ToText (
                                        oyConversion_s    * conversion,
                                        const char        * head_line,
