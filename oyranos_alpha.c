@@ -17396,6 +17396,26 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   return hash_text;
 }
 
+/** Function oyFilterNode_GetId
+ *  @memberof oyFilterNode_s
+ *  @brief   get the object Id
+ *
+ *  @param[in]     node                filter node
+ *  @return                            the object Id
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/25 (Oyranos: 0.1.10)
+ *  @date    2009/02/25
+ */
+OYAPI int  OYEXPORT
+               oyFilterNode_GetId    ( oyFilterNode_s    * node )
+{
+  oyFilterNode_s * s = node;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return -1 )
+
+  return oyObject_GetId( node->oy_ );
+}
 
 
 /** 
