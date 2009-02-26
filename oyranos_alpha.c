@@ -14,7 +14,7 @@
 
 
 #include "oyranos_alpha.h"
-#include "oyranos_alpha_graph.h"
+#include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmms.h"
 #include "oyranos_elektra.h"
@@ -17416,7 +17416,6 @@ OYAPI int  OYEXPORT
 
   return oyObject_GetId( node->oy_ );
 }
-
 
 /** 
  *  @internal
