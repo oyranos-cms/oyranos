@@ -1763,7 +1763,9 @@ struct oyConnector_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  oyName_s             name;           /**< e.g."Img", "Image", "Image Socket"*/
+  /** unique strings, nick and name will be used as the connector's type ID,
+   *  e.g."Img", "Image", "Image Socket"*/
+  oyName_s             name;           
 
   oyCONNECTOR_e        connector_type; /**< */
   /** make requests and receive data, by part of oyFilterPlug_s */
@@ -2221,11 +2223,13 @@ oyConnector_s* oyFilterNode_Get      ( oyFilterNode_s    * node,
                                        oyConnector_s     * pattern,
                                        int                 input );
 
-#define OY_FILTERNODE_FREE             0x01        /** list free nodes */
-#define OY_FILTERNODE_CONNECTED        0x02        /** list connected nodes */
+#define OY_FILTEREDGE_FREE             0x01        /** list free edges */
+#define OY_FILTEREDGE_CONNECTED        0x02        /** list connected edges */
+#define OY_FILTEREDGE_LASTTYPE         0x04        /** list last type edges */
 /* decode */
-#define oyToFilterNode_Free_m(r)       ((r)&1)
-#define oyToFilterNode_Connected_m(r)  (((r) >> 1)&1)
+#define oyToFilterEdge_Free_m(r)       ((r)&1)
+#define oyToFilterEdge_Connected_m(r)  (((r) >> 1)&1)
+#define oyToFilterEdge_LastType_m(r)   (((r) >> 2)&1)
 int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
                                        int                 input,
                                        int                 flags );
@@ -2244,6 +2248,13 @@ OYAPI int  OYEXPORT
                                        oyFilterNode_s    * node_first,
                                        int                 pos_first,
                                        oyConnector_s     * connector_second );
+OYAPI int  OYEXPORT
+               oyFilterNode_GetConnectorPos (
+                                       oyFilterNode_s    * node,
+                                       int                 is_input,
+                                       const char        * type_ID,
+                                       int                 nth_of_type,
+                                       int                 flags );
 OYAPI oyFilterSocket_s * OYEXPORT
                oyFilterNode_GetSocket( oyFilterNode_s    * node,
                                        int                 pos );
@@ -2257,7 +2268,7 @@ OYAPI int  OYEXPORT
 oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
-oyOption_s *   oyFilterNode_GetAdjazenzList (
+oyOption_s *   oyFilterNode_GetAdjacencyList (
                                        oyFilterNode_s    * node,
                                        int                 flags );
 

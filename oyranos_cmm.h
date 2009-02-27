@@ -762,7 +762,7 @@ struct oyCMMapi7_s {
   uint32_t         plugs_n;            /**< number of different plugs */ 
   /** additional allowed number for last input connector, e.g. typical 0 */
   uint32_t         plugs_last_add;
-  oyConnector_s ** sockets;
+  oyConnector_s ** sockets;            /**< the socket description */
   uint32_t         sockets_n;          /**< number of sockets */
   /** additional allowed number for last output connector, e.g. typical 0 */
   uint32_t         sockets_last_add;

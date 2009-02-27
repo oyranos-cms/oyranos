@@ -15123,15 +15123,16 @@ OYAPI int  OYEXPORT
   int n, i;
   oyFilterSocket_s * s;
   oyFilterPlug_s * p;
-  /* currently catch nothing */
 
-  WARNc4_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n  event: \"%s\" plug[%d]",
+  WARNc5_S("\n  oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
+             "  event: \"%s\" plug[%d/node%d]",
             (c && c->remote_socket_ && c->remote_socket_->node) ?
                    oyObject_GetId(c->remote_socket_->node->oy_) : -1,
             (c && c->remote_socket_) ? oyObject_GetId(c->remote_socket_->oy_)
                                      : -1,
             oyConnectorEventToText(e),
-            c ? oyObject_GetId( c->oy_ ) : -1
+            c ? oyObject_GetId( c->oy_ ) : -1,
+            c ? (c->node ? oyObject_GetId( c->node->oy_ ) : -1) : -1
           );
 
   if(!c)
@@ -15174,8 +15175,6 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s    * c,
                                        oyCONNECTOR_EVENT_e e )
 {
-  /* currently catch nothing */
-
   WARNc4_S("oyFilterNode_s[%d]->oyFilterPlug_s[%d]\n  event: \"%s\" socket[%d]",
             (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
             c ? oyObject_GetId(c->oy_) : -1,
@@ -15389,8 +15388,15 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s   ** p,
                                        oyFilterSocket_s ** s )
 {
-  oyFilterPlug_s * tp = *p;
-  oyFilterSocket_s * ts = *s;
+  oyFilterPlug_s * tp = 0;
+  oyFilterSocket_s * ts = 0;
+
+  if(!p || !*p || !s || !*s)
+    return 1;
+
+  tp = *p;
+  ts = *s;
+
   if(tp->remote_socket_)
     oyFilterSocket_Callback( tp, oyCONNECTOR_EVENT_RELEASED );
   oyFilterSocket_Release( &tp->remote_socket_ );
@@ -16863,7 +16869,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
       memset( s->plugs, 0, len );
 
       s->relatives_ = allocateFunc_( oyStrlen_(filter->category_) + 24 );
-      oySprintf_( s->relatives_, "%d: %s", oyObject_GetId(filter->oy_), s->filter->category_);
+      oySprintf_( s->relatives_, "%d: %s", oyObject_GetId(s->oy_), s->filter->category_);
     }
   }
 
@@ -17023,22 +17029,24 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
  *  @brief   count real and potential connections to a filter node object
  *
  *  @param         node                the node
- *  @param         input               1 - plugs; 0 - sockets
+ *  @param         is_input            1 - plugs; 0 - sockets
  *  @param         flags               specify which number to return
- *                                     - OY_FILTERNODE_FREE: count available
- *                                     - OY_FILTERNODE_CONNECTED: count used
- +  @return                            the number of possible edges
+ *                                     - OY_FILTEREDGE_FREE: count available
+ *                                     - OY_FILTEREDGE_CONNECTED: count used
+ *                                     - OY_FILTEREDGE_LASTTYPE: account only
+ *                                       for the last connector type
+ *  @return                            the number of possible edges
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/24 (Oyranos: 0.1.10)
- *  @date    2009/02/24
+ *  @date    2009/02/27
  */
 int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
-                                       int                 input,
+                                       int                 is_input,
                                        int                 flags )
 {
   oyFilterNode_s * s = node;
-  int n = 0, i,
+  int n = 0, start, i,
       possible = 0,
       connected = 0;
 
@@ -17047,32 +17055,162 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
   if(!node->filter || !node->api7_)
     return 0;
 
-  /* sockets */
-  if(input)
+  /* plugs */
+  if(is_input)
   {
-    possible = node->plugs_n_;
+    if(oyToFilterEdge_LastType_m(flags))
+    {
+      possible = s->api7_->plugs_last_add + 1;
+      start = s->api7_->plugs_n - 1;
+    } else
+    {
+      possible = node->plugs_n_;
+      start = 0;
+    }
+
     if(node->plugs)
-      for(i = 0; i < possible; ++i)
-        if(node->plugs[i])
+      for(i = start; i < possible; ++i)
+        if(node->plugs[i] && node->plugs[i]->remote_socket_)
           ++connected;
 
+    if(oyToFilterEdge_Free_m(flags))
+      n = possible - connected;
+    else if(oyToFilterEdge_Connected_m(flags))
+      n = connected;
+    else
+      n = possible;
+
   } else
+  /* ... sockets */
   {
-    possible = node->sockets_n_;
+    if(oyToFilterEdge_LastType_m(flags))
+    {
+      possible = s->api7_->sockets_last_add + 1;
+      start = s->api7_->sockets_n - 1;
+    } else
+    {
+      possible = node->sockets_n_;
+      start = 0;
+    }
+
     if(node->sockets)
       for(i = 0; i < possible; ++i)
         if(node->sockets[i])
-          ++connected;
+          connected += oyFilterPlugs_Count(node->sockets[i]->requesting_plugs_);
+
+    if(oyToFilterEdge_Free_m(flags))
+      n = possible ? INT32_MAX : 0;
+    else if(oyToFilterEdge_Connected_m(flags))
+      n = connected;
+    else
+      n = possible;
   }
 
-  if(oyToFilterNode_Free_m(flags))
-    n = possible - connected;
-  else if(oyToFilterNode_Connected_m(flags))
-    n = connected;
-  else
-    n = possible;
 
   return n;
+}
+
+/** Function oyFilterNode_Connect
+ *  @memberof oyFilterNode_s
+ *  @brief   connect two nodes by a edge
+ *
+ *  @param         input               the node to provide a socket
+ *  @param         socket_nick         name of socket
+ *  @param         output              the node providing a plug
+ *  @param         plug_nick           name of plug
+ *  @param         flags               unused
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/26 (Oyranos: 0.1.10)
+ *  @date    2009/02/26
+ */
+int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
+                                       const char        * socket_nick,
+                                       oyFilterNode_s    * output,
+                                       const char        * plug_nick,
+                                       int                 flags )
+{
+  oyFilterNode_s * s = input;
+  int error = !s;
+  oyConnector_s  * out_plug_connector = 0;
+  oyFilterPlug_s * out_plug = 0;
+  oyFilterSocket_s * output_socket = 0,
+                   * in_socket = 0;
+  int pos, out_pos;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+  s = output;
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+
+  if(error <= 0)
+  {
+    if(error <= 0 &&
+       (!s->filter || !s->filter->api4_))
+    {
+      WARNc2_S( "%s: %s",
+      _("attempt to add a incomplete filter"), s->relatives_ );
+      error = 1;
+    }
+    if(error <= 0 &&
+       !oyFilterNode_EdgeCount( input, 0, OY_FILTEREDGE_FREE ))
+    {
+      WARNc2_S( "%s: %s", "input node has no free socket",
+                oyFilter_GetName( input->filter, oyNAME_NAME) );
+      error = 1;
+    }
+
+    if(error <= 0)
+    {
+      if(socket_nick)
+        pos = oyFilterNode_GetConnectorPos( input, 0, socket_nick, 0,
+                                            0 );
+      else
+        pos = 0;
+      in_socket = oyFilterNode_GetSocket( input, pos );
+      in_socket = oyFilterSocket_Copy( in_socket, 0 );
+
+      if(plug_nick)
+        out_pos = oyFilterNode_GetConnectorPos( output, 1, plug_nick, 0,
+                                                OY_FILTEREDGE_FREE );
+      else
+        out_pos = 0;
+      out_plug = oyFilterNode_GetPlug( output, out_pos );
+      out_plug = oyFilterPlug_Copy( out_plug, 0 );
+
+      if(!out_plug)
+      {
+        WARNc2_S( "\n  %s: %s", "Filter has no node",
+                  oyFilter_GetName( input->filter, oyNAME_NAME) );
+        error = 1;
+      }
+
+      if(error <= 0)
+      {
+        out_plug_connector = out_plug->pattern;
+
+        if(oyFilterNode_ConnectorMatch( input, pos, out_plug_connector ))
+          output_socket = oyFilterNode_GetSocket( output, 0 );
+        else
+        {
+          WARNc3_S( "\n  %s: %s -> %s", "Filter connectors do not match",
+                    input->relatives_, output->relatives_ );
+          error = 1;
+        }
+      }
+
+      if(error <= 0 && output_socket && !output_socket->data && in_socket)
+        output_socket->data = in_socket->data->copy( in_socket->data, 0 );
+
+      if(error <= 0)
+        oyFilterPlug_ConnectIntoSocket( &out_plug, &in_socket );
+
+    } else
+      WARNc2_S( "%s: %d", _("?? Nothing to add ??"),
+                oyObject_GetId(input->oy_));
+  }
+
+  return error;
 }
 
 /** Function: oyFilterNode_ShowConnector
@@ -17108,19 +17246,21 @@ OYAPI oyConnector_s * OYEXPORT
 
   object = oyObject_New ();
 
-  if(node->api7_->plugs_n < as_pos &&
-     as_pos < oyFilterNode_EdgeCount( node, 1, 0 ))
-    as_pos = node->api7_->plugs_n - 1;
-
+  if(is_plug)
   {
-    if(is_plug)
-    {
-      if(node->api7_->plugs_n > as_pos)
-        pattern = oyConnector_Copy( node->api7_->plugs[as_pos], object );
-    } else {
-      if(node->api7_->sockets_n > as_pos)
-        pattern = oyConnector_Copy( node->api7_->sockets[as_pos], object );
-    }
+    if(node->api7_->plugs_n >= as_pos &&
+       as_pos < oyFilterNode_EdgeCount( node, 1, 0 ))
+      as_pos = node->api7_->plugs_n - 1;
+
+    if(node->api7_->plugs_n > as_pos)
+      pattern = oyConnector_Copy( node->api7_->plugs[as_pos], object );
+  } else {
+    if(node->api7_->sockets_n >= as_pos &&
+       as_pos < oyFilterNode_EdgeCount( node, 0, 0 ))
+      as_pos = node->api7_->sockets_n - 1;
+
+    if(node->api7_->sockets_n > as_pos)
+      pattern = oyConnector_Copy( node->api7_->sockets[as_pos], object );
   }
 
   oyObject_Release( &object );
@@ -17236,12 +17376,161 @@ OYAPI int  OYEXPORT
   return match;
 }
 
-/** Function: oyFilterNode_GetSocket
+/** Function oyFilterNode_GetConnectorPos
+ *  @memberof oyFilterNode_s
+ *  @brief   get a oyFilterSocket_s or oyFilterPlug_s position from a FilterNode
+ *
+ *  @param         node                filter node
+ *  @param         is_input            1 - plugs; 0 - sockets
+ *  @param         type_ID             the nick name of the connector type for
+ *                                     this filter
+ *  @param         nth_of_type         the position in the group of the
+ *                                     connector type for this filter; Note
+ *                                     this parameter makes only sense for the
+ *                                     last filter defined connector, as only
+ *                                     this one can occure multiple times.
+ *  @param         flags               specify which status to return
+ *                                     - zero means: take all into account
+ *                                     - OY_FILTEREDGE_FREE: next free available
+ *                                     - OY_FILTEREDGE_CONNECTED: consider used
+ *  @return                            the absolute position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/26 (Oyranos: 0.1.10)
+ *  @date    2009/02/26
+ */
+OYAPI int  OYEXPORT
+               oyFilterNode_GetConnectorPos (
+                                       oyFilterNode_s    * node,
+                                       int                 is_input,
+                                       const char        * type_ID,
+                                       int                 nth_of_type,
+                                       int                 flags )
+{
+  oyFilterNode_s * s = node;
+  int pos = -1,
+      i, j, n, n2,
+      nth = -1;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return pos )
+
+  if(!type_ID)
+  {
+    WARNc1_S("no ID argument given %s", s->relatives_ );
+    return pos;
+  }
+
+  if(nth_of_type == -1)
+    nth_of_type = 0;
+
+  /* plugs */
+  if(is_input)
+  {
+    n = node->api7_->plugs_n;
+    for( i = 0; i < n; ++i )
+    {
+      if(oyStrcmp_(type_ID, node->api7_->plugs[i]->name.nick) == 0)
+      {
+        if( i == n - 1 && node->api7_->plugs_last_add)
+          n2 = node->api7_->plugs_last_add;
+        else
+          n2 = 0;
+
+        for( j = 0; j <= n2; ++j )
+        {
+          if(oyToFilterEdge_Free_m(flags))
+          {
+            if( node->plugs[i + j] )
+              continue;
+            else
+              ++nth;
+
+          } else
+          if(oyToFilterEdge_Connected_m(flags))
+          {
+            if( node->plugs[i + j] )
+              ++nth;
+            else
+              continue;
+
+          } else
+            ++nth;
+
+          if( nth == nth_of_type )
+          {
+            pos = i + j;
+            return pos;
+
+          } else
+            ++nth;
+        }
+      }
+    }
+  } else
+  /* ... or sockets */
+  {
+    /* 1. count possible connectors */
+    n = node->api7_->sockets_n;
+    for( i = 0; i < n; ++i )
+    {
+      /* 2. compare type_ID argument with the socket type */
+      if(oyStrcmp_(type_ID, node->api7_->sockets[i]->name.nick) == 0)
+      {
+
+        /* 3. iterate through at least connectors or connectors that where added
+              to the last one */
+        if( i == n - 1 && node->api7_->sockets_last_add)
+          n2 = node->api7_->sockets_last_add;
+        else
+          n2 = 0;
+
+        for( j = 0; j <= n2; ++j )
+        {
+          /* 3.1 check only unused connectors */
+          if(oyToFilterEdge_Free_m(flags))
+          {
+            if( node->sockets[i + j] )
+              continue;
+            else
+              ++nth;
+
+          } else
+          /* 3.2 check only used connectors */
+          if(oyToFilterEdge_Connected_m(flags))
+          {
+            if( node->sockets[i + j] )
+              ++nth;
+            else
+              continue;
+
+          } else
+          /* 3.3 count all connectors */
+            ++nth;
+
+          /* 4. check the type relative positional parameter */
+          if( nth == nth_of_type )
+          {
+            /* 4.1 return as we otherwise would need to leave two loops */
+            pos = i + j;
+            return pos;
+
+          } else
+            ++nth;
+        }
+      }
+    }
+  }
+
+  return pos;
+}
+
+
+/** Function oyFilterNode_GetSocket
  *  @memberof oyFilterNode_s
  *  @brief   get a oyFilterSocket_s of type from a FilterNode
  *
  *  @param         node                filter node
- *  @param         pos                 position of connector from filter
+ *  @param         pos                 absolute position of connector
  *  @return                            the socket - no copy!
  *
  *  @version Oyranos: 0.1.8
@@ -17415,6 +17704,116 @@ OYAPI int  OYEXPORT
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return -1 )
 
   return oyObject_GetId( node->oy_ );
+}
+
+
+int    oyAdjacencyListAddEdge_       ( oyFilterPlug_s    * plug,
+                                       char             ** al )
+{
+  int added = 0, found = 0;
+  char * ptr = *al;
+  char * line = 0,
+       * temp = oyAllocateFunc_( 48 );
+  int len = 0;
+
+  oySprintf_( temp, "%d", oyFilterNode_GetId( plug->node ) );
+  STRING_ADD( line, temp );
+  STRING_ADD( line, "[" );
+  STRING_ADD( line, plug->pattern->name.nick );
+  STRING_ADD( line, "]->[" );
+  STRING_ADD( line, plug->remote_socket_->pattern->name.nick );
+  STRING_ADD( line, "]" );
+  oySprintf_( temp, "%d\n", oyFilterNode_GetId( plug->remote_socket_->node ) );
+  STRING_ADD( line, temp );
+
+  len = oyStrlen_( line );
+
+  while(!found)
+  {
+    if(memcmp( ptr, line, len ) != 0)
+    {
+      if( oyStrchr_(ptr, '\n') )
+        ptr = oyStrchr_(ptr, '\n') + 1;
+      else
+        break;
+
+    } else
+      found = 1;
+  }
+
+  if(!found)
+  {
+    oyStringAdd_( al, line, oyAllocateFunc_, oyDeAllocateFunc_ );
+    added = !found;
+  }
+
+  oyFree_m_( temp )
+
+  return added;
+}
+
+int  oyFilterNode_AddToAdjacencyList_( oyFilterNode_s    * s,
+                                       char             ** al )
+{
+  int n, i, j, p_n;
+  oyFilterPlug_s * p = 0;
+
+  n = oyFilterNode_EdgeCount( s, 1, 0 );
+  for( i = 0; i < n; ++i )
+  {
+    if( s->plugs[i] && s->plugs[i]->remote_socket_ )
+      if(oyAdjacencyListAddEdge_( s->plugs[i], al ))
+        oyFilterNode_AddToAdjacencyList_( s->plugs[i]->remote_socket_->node,al);
+  }
+
+  n = oyFilterNode_EdgeCount( s, 0, 0 );
+  for( i = 0; i < n; ++i )
+  {
+    if( s->sockets[i] && s->sockets[i]->requesting_plugs_ )
+    {
+      p_n = oyFilterPlugs_Count( s->sockets[i]->requesting_plugs_ );
+      for( j = 0; j < p_n; ++j )
+      {
+        p = oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
+
+        if(oyAdjacencyListAddEdge_( p, al ))
+          oyFilterNode_AddToAdjacencyList_( p->node, al );
+      }
+    }
+  }
+
+  return 0;
+}
+
+/** Function oyFilterNode_GetAdjacencyList
+ *  @memberof oyFilterNode_s
+ *  @brief   get a graphs adjazency list
+ *
+ *  @param[in]     node                filter node
+ *  @param[in]     flags               unused
+ *  @return                            the object Id
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/25 (Oyranos: 0.1.10)
+ *  @date    2009/02/27
+ */
+oyOption_s *   oyFilterNode_GetAdjacencyList (
+                                       oyFilterNode_s    * node,
+                                       int                 flags )
+{
+  oyFilterNode_s * s = node;
+  oyOption_s * o = 0;
+  char * text = 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  text = oyStringCopy_( "", oyAllocateFunc_ );
+  oyFilterNode_AddToAdjacencyList_( s, &text );
+
+  o = oyOption_New( "sw/oyranos.org/adjazenzlist", 0 );
+  oyOption_SetFromText( o, text, 0 );
+
+  return o;
 }
 
 /** 
@@ -19527,7 +19926,7 @@ oyImage_s        * oyConversion_GetImage (
 
 oyProfile_s      * oyConversion_ToProfile (
                                        oyConversion_s    * conversion );
-/** Function: oyConversion_GetAdjazenzlist
+/** Function: oyConversion_GetAdjacencylist
  *  @memberof oyConversion_s
  *  @brief   adjazenzliste of a conversion graph
  *
@@ -19541,7 +19940,7 @@ oyProfile_s      * oyConversion_ToProfile (
  *  @since   2008/07/09 (Oyranos: 0.1.8)
  *  @date    2008/07/09
  */
-int             ** oyConversion_GetAdjazenzlist (
+int             ** oyConversion_GetAdjacencylist (
                                        oyConversion_s    * conversion,
                                        oyAlloc_f           allocateFunc )
 {
@@ -19662,7 +20061,7 @@ char             * oyConversion_ToText (
   STRING_ADD( text, "\n" );
   STRING_ADD( text, "  conversion [shape=plaintext, label=<\n" );
   STRING_ADD( text, "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n" );
-  STRING_ADD( text, "  <tr><td>oyConversions_s</td></tr>\n" );
+  STRING_ADD( text, "  <tr><td>oyConversion_s</td></tr>\n" );
   STRING_ADD( text, "  <tr><td>\n" );
   STRING_ADD( text, "     <table border=\"0\" cellborder=\"0\" align=\"left\">\n" );
   STRING_ADD( text, "       <tr><td align=\"left\">...</td></tr>\n" );
