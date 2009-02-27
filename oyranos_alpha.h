@@ -2219,9 +2219,6 @@ oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
                                        oyObject_s          object );
 int            oyFilterNode_Release  ( oyFilterNode_s   ** node );
 
-oyConnector_s* oyFilterNode_Get      ( oyFilterNode_s    * node,
-                                       oyConnector_s     * pattern,
-                                       int                 input );
 
 #define OY_FILTEREDGE_FREE             0x01        /** list free edges */
 #define OY_FILTEREDGE_CONNECTED        0x02        /** list connected edges */
