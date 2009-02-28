@@ -134,6 +134,7 @@ typedef enum {
   oyOBJECT_FILTER_CORE_S,             /**< oyFilterCore_s */
   oyOBJECT_FILTER_CORES_S,            /**< oyFilterCores_s */
   oyOBJECT_FILTER_NODE_S,             /**< oyFilterNode_s */
+  oyOBJECT_FILTER_NODES_S,            /**< oyFilterNodes_s */
   oyOBJECT_PIXEL_ACCESS_S,            /**< oyPixelAccess_s */
   oyOBJECT_CONVERSION_S,              /**< oyConversion_s */
   oyOBJECT_CMM_HANDLE_S      = 50,    /**< oyCMMhandle_s */
@@ -1679,6 +1680,7 @@ typedef struct oyCMMapi7_s oyCMMapi7_s;
 typedef struct oyCMMapi8_s oyCMMapi8_s;
 typedef struct oyCMMapiFilter_s oyCMMapiFilter_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
+typedef struct oyFilterNodes_s oyFilterNodes_s;
 typedef struct oyConnector_s oyConnector_s;
 typedef struct oyFilterPlug_s oyFilterPlug_s;
 typedef struct oyFilterPlugs_s oyFilterPlugs_s;
@@ -2269,6 +2271,47 @@ oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
 oyOption_s *   oyFilterNode_GetAdjacencyList (
                                        oyFilterNode_s    * node,
                                        int                 flags );
+
+
+
+/** @struct  oyFilterNodes_s
+ *  @brief   a FilterNodes list
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+struct oyFilterNodes_s {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_NODES_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyStructList_s     * list_;          /**< the list data */
+};
+
+OYAPI oyFilterNodes_s * OYEXPORT
+           oyFilterNodes_New         ( oyObject_s          object );
+OYAPI oyFilterNodes_s * OYEXPORT
+           oyFilterNodes_Copy        ( oyFilterNodes_s   * list,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+           oyFilterNodes_Release     ( oyFilterNodes_s  ** list );
+
+
+OYAPI int  OYEXPORT
+           oyFilterNodes_MoveIn      ( oyFilterNodes_s   * list,
+                                       oyFilterNode_s   ** ptr,
+                                       int                 pos );
+OYAPI int  OYEXPORT
+           oyFilterNodes_ReleaseAt   ( oyFilterNodes_s   * list,
+                                       int                 pos );
+OYAPI oyFilterNode_s * OYEXPORT
+           oyFilterNodes_Get         ( oyFilterNodes_s   * list,
+                                       int                 pos );
+OYAPI int  OYEXPORT
+           oyFilterNodes_Count       ( oyFilterNodes_s   * list );
 
 
 

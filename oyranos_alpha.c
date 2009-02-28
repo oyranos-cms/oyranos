@@ -18315,6 +18315,290 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 }
 
 
+/** Function oyFilterNodes_New
+ *  @memberof oyFilterNodes_s
+ *  @brief   allocate a new FilterNodes list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI oyFilterNodes_s * OYEXPORT
+           oyFilterNodes_New         ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_FILTER_NODES_S;
+# define STRUCT_TYPE oyFilterNodes_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyFilterNodes_Copy;
+  s->release = (oyStruct_Release_f) oyFilterNodes_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->list_ = oyStructList_New( 0 );
+
+  return s;
+}
+
+/** @internal
+ *  Function oyFilterNodes_Copy_
+ *  @memberof oyFilterNodes_s
+ *  @brief   real copy a FilterNodes object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+oyFilterNodes_s * oyFilterNodes_Copy_
+                                     ( oyFilterNodes_s   * obj,
+                                       oyObject_s          object )
+{
+  oyFilterNodes_s * s = 0;
+  int error = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyFilterNodes_New( object );
+  error = !s;
+
+  if(!error)
+    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
+
+  if(error)
+    oyFilterNodes_Release( &s );
+
+  return s;
+}
+
+/** Function oyFilterNodes_Copy
+ *  @memberof oyFilterNodes_s
+ *  @brief   copy or reference a FilterNodes list
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI oyFilterNodes_s * OYEXPORT
+           oyFilterNodes_Copy        ( oyFilterNodes_s   * obj,
+                                       oyObject_s          object )
+{
+  oyFilterNodes_s * s = 0;
+
+  if(!obj)
+    return s;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilterNodes_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyFilterNodes_Release
+ *  @memberof oyFilterNodes_s
+ *  @brief   release and possibly deallocate a FilterNodes list
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI int  OYEXPORT
+           oyFilterNodes_Release     ( oyFilterNodes_s  ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilterNodes_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyStructList_Release( &s->list_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
+/** Function oyFilterNodes_MoveIn
+ *  @memberof oyFilterNodes_s
+ *  @brief   add a element to a FilterNodes list
+ *
+ *  @param[in]     list                list
+ *  @param[in,out] obj                 list element
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI int  OYEXPORT
+           oyFilterNodes_MoveIn      ( oyFilterNodes_s   * list,
+                                       oyFilterNode_s   ** obj,
+                                       int                 pos )
+{
+  oyFilterNodes_s * s = list;
+  int error = 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 1 )
+
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    if(!s)
+    {
+      s = oyFilterNodes_New(0);
+      error = !s;
+    }                                  
+
+    if(!error && !s->list_)
+    {
+      s->list_ = oyStructList_New( 0 );
+      error = !s->list_;
+    }
+      
+    if(!error)
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+  }   
+  
+  return error;
+}
+
+/** Function oyFilterNodes_ReleaseAt
+ *  @memberof oyFilterNodes_s
+ *  @brief   release a element from a FilterNodes list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI int  OYEXPORT
+           oyFilterNodes_ReleaseAt   ( oyFilterNodes_s   * list,
+                                       int                 pos )
+{ 
+  int error = !list;
+  oyFilterNodes_s * s = list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 1 )
+
+  if(!error && list->type_ != oyOBJECT_FILTER_NODES_S)
+    error = 1;
+  
+  if(!error)
+    oyStructList_ReleaseAt( list->list_, pos );
+
+  return error;
+}
+
+/** Function oyFilterNodes_Get
+ *  @memberof oyFilterNodes_s
+ *  @brief   get a element of a FilterNodes list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI oyFilterNode_s * OYEXPORT
+           oyFilterNodes_Get         ( oyFilterNodes_s   * list,
+                                       int                 pos )
+{       
+  int error = !list;
+  oyFilterNodes_s * s = list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
+
+  if(!error)
+    return (oyFilterNode_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_FILTER_NODE_S ); 
+  else  
+    return 0;
+}   
+
+/** Function oyFilterNodes_Count
+ *  @memberof oyFilterNodes_s
+ *  @brief   count the elements in a FilterNodes list
+ *
+ *  @param[in,out] list                the list
+ *  @return                            element count
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI int  OYEXPORT
+           oyFilterNodes_Count       ( oyFilterNodes_s   * list )
+{       
+  int error = !list;
+  oyFilterNodes_s * s = list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
+
+  if(!error)
+    return oyStructList_Count( list->list_ );
+  else return 0;
+}
+
+
+
 
 /** @internal
  *  @brief   create and possibly precalculate a transform for a given image
