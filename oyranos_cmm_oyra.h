@@ -56,7 +56,7 @@ int      oyraProfileTag_Create       ( oyProfileTag_s    * tag,
 int      oyraFilter_ImageRootCanHandle(oyCMMQUERY_e      type,
                                        uint32_t          value );
 oyOptions_s* oyraFilter_ImageRootValidateOptions (
-                                       oyFilter_s        * filter,
+                                       oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
                                        uint32_t          * result );
@@ -64,7 +64,7 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
 oyPointer  oyraFilter_ImageRootContextToMem (
-                                       oyFilter_s        * filter,
+                                       oyFilterCore_s    * filter,
                                        size_t            * size,
                                        oyCMMptr_s        * oy,
                                        oyAlloc_f           allocateFunc );
@@ -81,6 +81,8 @@ extern oyCMMapi4_s   oyra_api4_image_input_ppm;
 extern oyCMMapi7_s   oyra_api7_image_input_ppm;
 extern oyCMMapi4_s   oyra_api4_image_output_ppm;
 extern oyCMMapi7_s   oyra_api7_image_output_ppm;
+extern oyCMMapi4_s   oyra_api4_image_regions;
+extern oyCMMapi7_s   oyra_api7_image_regions;
 extern oyCMMapi4_s   oyra_api4_image_output;
 extern oyCMMapi7_s   oyra_api7_image_output;
 extern oyCMMapi4_s   oyra_api4_image_root;

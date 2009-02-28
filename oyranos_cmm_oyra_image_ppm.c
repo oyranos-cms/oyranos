@@ -52,7 +52,7 @@ int    oyraFilter_ImageOutputPPMCanHandle (
 }
 
 oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
-                                     ( oyFilter_s        * filter,
+                                     ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
                                        uint32_t          * result )
@@ -339,7 +339,7 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api7_image_input_ppm, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api7_image_output_ppm, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
@@ -381,7 +381,7 @@ oyCMMapi7_s   oyra_api7_image_output_ppm = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api4_image_output_ppm, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api4_image_input_ppm, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
@@ -425,7 +425,7 @@ int    oyraFilter_ImageInputPPMCanHandle (
 }
 
 oyOptions_s* oyraFilter_ImageInputPPMValidateOptions
-                                     ( oyFilter_s        * filter,
+                                     ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
                                        uint32_t          * result )
@@ -845,7 +845,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
 oyConnector_s oyra_imageInputPPM_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Plug"},
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Socket"},
   oyCONNECTOR_IMAGE, /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_ppm_data_types,
@@ -888,7 +888,7 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  0, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api7_image_input_ppm, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
@@ -930,7 +930,7 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api4_image_input_ppm, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) 0, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
