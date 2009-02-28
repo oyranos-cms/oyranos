@@ -2690,6 +2690,8 @@ int                oyConversion_LinOutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,
                                        oyImage_s         * output );
+int                oyConversion_PreProcess (
+                                       oyConversion_s    * conversion );
 int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access );

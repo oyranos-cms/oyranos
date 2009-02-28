@@ -20267,6 +20267,33 @@ int                oyConversion_LinOutputAdd (
   return error;
 }
 
+int                oyConversion_PreProcess (
+                                       oyConversion_s    * conversion )
+{
+  oyConversion_s * s = conversion;
+  oyFilterGraph_s * g = 0;
+  oyFilterNode_s * node = 0;
+  int i, n;
+
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
+
+  g = oyFilterGraph_FromNode( conversion->out_, 0 );
+  n = oyFilterNodes_Count( g->nodes );
+  for(i = 0; i < n; ++i)
+  {
+    node = oyFilterNodes_Get( g->nodes, i );
+
+    if(!node->backend_data &&
+       node->filter->api4_->oyCMMFilterNode_ContextToMem &&
+       strlen(node->api7_->context_type))
+      oyFilterNode_ContextSet_( node );
+
+    oyFilterNode_Release( &node );
+  }
+
+  return 0;
+}
+
 /** Function: oyConversion_RunPixels
  *  @memberof oyConversion_s
  *  @brief   iterate over a conversion graph
