@@ -122,6 +122,7 @@ extern intptr_t oy_observe_pointer_;
            snprintf( str_, len_, patrn_, arg, arg2, arg3, arg4 )
 #define oySnprintf5_( str_, len_, patrn_, arg, arg2, arg3, arg4, arg5 ) \
            snprintf( str_, len_, patrn_, arg, arg2, arg3, arg4, arg5 )
+#define oySscanf_ sscanf
 #define oyStrcpy_( targ_, src_ ) \
            strcpy( targ_, src_ )
 #define oyStrchr_( str_, c_ ) \
