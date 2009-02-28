@@ -131,8 +131,8 @@ typedef enum {
   oyOBJECT_FILTER_PLUG_S,             /**< oyFilterPlug_s */
   oyOBJECT_FILTER_PLUGS_S,            /**< oyFilterPlugs_s */
   oyOBJECT_FILTER_SOCKET_S,           /**< oyFilterSocket_s */
-  oyOBJECT_FILTER_S,                  /**< oyFilter_s */
-  oyOBJECT_FILTERS_S,                 /**< oyFilters_s */
+  oyOBJECT_FILTER_CORE_S,             /**< oyFilterCore_s */
+  oyOBJECT_FILTER_CORES_S,            /**< oyFilterCores_s */
   oyOBJECT_FILTER_NODE_S,             /**< oyFilterNode_s */
   oyOBJECT_PIXEL_ACCESS_S,            /**< oyPixelAccess_s */
   oyOBJECT_CONVERSION_S,              /**< oyConversion_s */
@@ -1671,7 +1671,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
                                        const char        * pattern,
                                        oyOBJECT_e          api_number );
 
-typedef struct oyFilter_s oyFilter_s;
+typedef struct oyFilterCore_s oyFilterCore_s;
 typedef struct oyCMMptr_s oyCMMptr_s;
 typedef struct oyCMMapi4_s oyCMMapi4_s;
 typedef struct oyCMMapi6_s oyCMMapi6_s;
@@ -1788,7 +1788,7 @@ struct oyConnector_s {
   /** describe which channel types the connector requires */
   oyCHANNELTYPE_e    * channel_types;
   int                  channel_types_n;/**< count in channel_types */
-  int                  id;             /**< relative to oyFilter_s, e.g. 1 */
+  int                  id;             /**< relative to oyFilterCore_s, e.g. 1*/
   /**< connector is mandatory or optional, important for backends */
   int                  is_mandatory;
 };
@@ -1981,8 +1981,8 @@ OYAPI int  OYEXPORT
                  oyFilterPlugs_Count ( oyFilterPlugs_s   * list );
 
 
-/** @struct oyFilter_s
- *  @brief  a filter to manipulate a image
+/** @struct oyFilterCore_s
+ *  @brief  a basic filter to manipulate data
  *  @ingroup objects_conversion
  *  @extends oyStruct_s
  *
@@ -2007,11 +2007,11 @@ OYAPI int  OYEXPORT
  *    assumption on how the buffers are implemented.
  *  - "//imaging" can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/06/08 (Oyranos: 0.1.8)
- *  @date    2008/12/16
+ *  @date    2009/02/28
  */
-struct oyFilter_s {
+struct oyFilterCore_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -2028,77 +2028,78 @@ struct oyFilter_s {
   oyCMMapi4_s        * api4_;          /**< @private oyranos library interfaces */
 };
 
-oyFilter_s * oyFilter_New            ( const char        * registration,
+oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
                                        const char        * cmm,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
-oyFilter_s * oyFilter_Copy           ( oyFilter_s        * filter,
+oyFilterCore_s * oyFilterCore_Copy   ( oyFilterCore_s    * filter,
                                        oyObject_s          object );
-int          oyFilter_Release        ( oyFilter_s       ** filter );
+int          oyFilterCore_Release    ( oyFilterCore_s   ** filter );
 
 
-const char * oyFilter_GetText        ( oyFilter_s        * filter,
+const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
                                        oyNAME_e            name_type );
-const char * oyFilter_GetName        ( oyFilter_s        * filter,
+const char * oyFilterCore_GetName    ( oyFilterCore_s    * filter,
                                        oyNAME_e            name_type );
-const char * oyFilter_CategoryGet    ( oyFilter_s        * filter,
+const char * oyFilterCore_CategoryGet( oyFilterCore_s    * filter,
                                        int                 nontranslated );
 #define OY_FILTER_SET_TEST             0x01        /** only test */
 #define OY_FILTER_GET_DEFAULT          0x01        /** defaults */
 /* decode */
 #define oyToFilterSetTest_m(r)         ((r)&1)
 #define oyToFilterGetDefaults_m(r)     ((r)&1)
-oyOptions_s* oyFilter_OptionsSet     ( oyFilter_s        * filter,
+oyOptions_s* oyFilterCore_OptionsSet ( oyFilterCore_s    * filter,
                                        oyOptions_s       * options,
                                        int                 flags );
-oyOptions_s* oyFilter_OptionsGet     ( oyFilter_s        * filter,
+oyOptions_s* oyFilterCore_OptionsGet ( oyFilterCore_s    * filter,
                                        int                 flags );
-const char * oyFilter_WidgetsSet     ( oyFilter_s        * filter,
+const char * oyFilterCore_WidgetsSet ( oyFilterCore_s    * filter,
                                        const char        * widgets,
                                        int                 flags );
-const char * oyFilter_WidgetsGet     ( oyFilter_s        * filter,
+const char * oyFilterCore_WidgetsGet ( oyFilterCore_s    * filter,
                                        int                 flags );
 
 
-/** @struct  oyFilters_s
- *  @brief   a Filters list
+/** @struct  oyFilterCores_s
+ *  @brief   a FilterCore list
  *  @ingroup objects_conversion
  *  @extends oyStruct_s
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2008/07/08
+ *  @date    2009/02/28
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTERS_S */ 
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_CORES_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
   oyStructList_s     * list_;          /**< @private the list data */
-} oyFilters_s;
+} oyFilterCores_s;
 
-OYAPI oyFilters_s * OYEXPORT
-                 oyFilters_New       ( oyObject_s          object );
-OYAPI oyFilters_s * OYEXPORT
-                 oyFilters_Copy      ( oyFilters_s       * list,
+OYAPI oyFilterCores_s * OYEXPORT
+                 oyFilterCores_New   ( oyObject_s          object );
+OYAPI oyFilterCores_s * OYEXPORT
+                 oyFilterCores_Copy  ( oyFilterCores_s   * list,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
-                 oyFilters_Release   ( oyFilters_s      ** list );
+                 oyFilterCores_Release(oyFilterCores_s  ** list );
 
 
-OYAPI oyFilters_s * OYEXPORT
-                 oyFilters_MoveIn    ( oyFilters_s       * list,
-                                       oyFilter_s       ** ptr,
+OYAPI oyFilterCores_s * OYEXPORT
+                 oyFilterCores_MoveIn( oyFilterCores_s   * list,
+                                       oyFilterCore_s   ** ptr,
                                        int                 pos );
 OYAPI int  OYEXPORT
-                 oyFilters_ReleaseAt ( oyFilters_s       * list,
+                 oyFilterCores_ReleaseAt (
+                                       oyFilterCores_s   * list,
                                        int                 pos );
-OYAPI oyFilter_s * OYEXPORT
-                 oyFilters_Get       ( oyFilters_s       * list,
+OYAPI oyFilterCore_s * OYEXPORT
+                 oyFilterCores_Get   ( oyFilterCores_s   * list,
                                        int                 pos );
 OYAPI int  OYEXPORT
-                 oyFilters_Count     ( oyFilters_s       * list );
+                 oyFilterCores_Count ( oyFilterCores_s   * list );
 
 
 
@@ -2116,7 +2117,7 @@ digraph G {
   node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
   a [label=<
 <table border="0" cellborder="1" cellspacing="4">
-  <tr> <td>oyFilter_s A</td>
+  <tr> <td>oyFilterCore_s A</td>
       <td bgcolor="red" width="10" port="s"> socket </td>
   </tr>
 </table>>
@@ -2124,7 +2125,7 @@ digraph G {
   b [label=<
 <table border="0" cellborder="1" cellspacing="4">
   <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
-      <td>oyFilter_s B</td>
+      <td>oyFilterCore_s B</td>
   </tr>
 </table>>
   ]
@@ -2150,7 +2151,7 @@ digraph G {
  *
  *  A oyFilterNode_s can have various oyFilterPlug_s ' to obtain data from
  *  different sources. The required number is described in the oyCMMapi4_s 
- *  structure, which is part of oyFilter_s.
+ *  structure, which is part of oyFilterCore_s.
  \dot
 digraph G {
   bgcolor="transparent";
@@ -2204,7 +2205,7 @@ struct oyFilterNode_s {
   oyFilterSocket_s  ** sockets;        /**< possible output connectors */
   int                  sockets_n_;     /**< readonly number of outputs */
 
-  oyFilter_s         * filter;         /**< the filter */
+  oyFilterCore_s     * filter;         /**< the filter */
   char               * relatives_;     /**< @private hint about belonging to a filter */
 
   /** the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to oyCMMapi4_s::context_type */
@@ -2213,7 +2214,7 @@ struct oyFilterNode_s {
 };
 
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );
-oyFilterNode_s *   oyFilterNode_Create(oyFilter_s        * filter,
+oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
                                        oyObject_s          object );
 oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
                                        oyObject_s          object );
@@ -2611,7 +2612,7 @@ int                oyConversion_Release (
 
 int                oyConversion_LinFilterAdd (
                                        oyConversion_s    * conversion,
-                                       oyFilter_s        * filter );
+                                       oyFilterCore_s    * filter );
 int                oyConversion_LinOutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,

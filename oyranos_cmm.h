@@ -189,7 +189,7 @@ typedef enum {
  *  @date    2008/11/02
  */
 typedef oyOptions_s * (*oyCMMFilter_ValidateOptions_f)
-                                     ( oyFilter_s        * filter,
+                                     ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
                                        uint32_t          * result );

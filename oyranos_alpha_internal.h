@@ -118,8 +118,8 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos );
 
-oyFilter_s * oyFilter_New_           ( oyObject_s          object );
-int          oyFilter_SetCMMapi4_    ( oyFilter_s        * s,
+oyFilterCore_s * oyFilterCore_New_   ( oyObject_s          object );
+int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
                                        oyCMMapi4_s       * cmm_api4 );
 
 oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,

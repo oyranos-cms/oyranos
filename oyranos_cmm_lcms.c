@@ -147,7 +147,7 @@ int              lcmsCMMColourConversion_Run (
                                        size_t              count,
                                        oyCMMProgress_f     progress );
 oyOptions_s* lcmsFilter_CmmIccValidateOptions
-                                     ( oyFilter_s        * filter,
+                                     ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
                                        uint32_t          * result );
@@ -857,7 +857,7 @@ int              lcmsCMMColourConversion_Run (
 
 
 oyOptions_s* lcmsFilter_CmmIccValidateOptions
-                                     ( oyFilter_s        * filter,
+                                     ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
                                        uint32_t          * result )
@@ -903,7 +903,7 @@ oyConnector_s lcms_cmmIccSocket_connector = {
   0, /* can_subpixel; understand subpixel order */
   0, /* oyCHANNELTYPE_e    * channel_types; */
   0, /* channel_types_n */
-  1, /* id; relative to oyFilter_s, e.g. 1 */
+  1, /* id; relative to oyFilterCore_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
 oyConnector_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connector,0};
@@ -930,7 +930,7 @@ oyConnector_s lcms_cmmIccPlug_connector = {
   0, /* can_subpixel; understand subpixel order */
   0, /* oyCHANNELTYPE_e    * channel_types; */
   0, /* channel_types_n */
-  1, /* id; relative to oyFilter_s, e.g. 1 */
+  1, /* id; relative to oyFilterCore_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
 oyConnector_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
@@ -1003,7 +1003,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   size_t size_ = 0;
   oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
   oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
-  oyFilter_s * filter = 0;
+  oyFilterCore_s * filter = 0;
   oyFilterNode_s * input_node = 0;
   oyImage_s * image_input = 0,
             * image_output = 0;

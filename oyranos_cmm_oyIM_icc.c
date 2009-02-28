@@ -59,7 +59,7 @@ int    oyIMFilter_CanHandle          ( oyCMMQUERY_e      type,
  *  @date    2008/11/13
  */
 oyOptions_s* oyIM_defaultICCValidateOptions
-                                     ( oyFilter_s        * filter,
+                                     ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
                                        uint32_t          * result )
@@ -67,7 +67,7 @@ oyOptions_s* oyIM_defaultICCValidateOptions
   uint32_t error = !filter;
 
   if(!error)
-    error = filter->type_ != oyOBJECT_FILTER_S;
+    error = filter->type_ != oyOBJECT_FILTER_CORE_S;
 
   *result = error;
 
