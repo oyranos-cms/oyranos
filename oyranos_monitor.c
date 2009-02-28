@@ -262,6 +262,7 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
   if(!error)
   {
     display = oyMonitor_device_( disp );
+# ifdef HAVE_XRANDR
     if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
     {
       atom = XInternAtom( display,
@@ -280,6 +281,7 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
 
       }
     }
+# endif
     atom = 0;
 
     if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA ||
