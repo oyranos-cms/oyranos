@@ -149,7 +149,7 @@ Kai-Uwe Behrmann (144):
 
 Version 0.1.8
 
-Iñaki Larrañaga Murgoitio (1):
+IÃ±aki LarraÃ±aga Murgoitio (1):
 	* [po]: Basque translations from ICC Examin
 
 Kai-Uwe Behrmann (249):
@@ -273,7 +273,7 @@ Kai-Uwe Behrmann (249):
 	* [and]: add filename and line to a command line printf
 	* [API]: remove unneeded path function
 	* [and]: add a strzct type to oyRecursivePaths_ callback
-	* [fix]: repair configure script as suggested by Milan Knízek
+	* [fix]: repair configure script as suggested by Milan KnÃ­zek
 	* [and]: rename internal oyImage_CombinePixelLayout2Mask_
 	* [and]: set correct data type for test
 	* [and]: turn configure date variables to numbers
@@ -391,7 +391,7 @@ Kai-Uwe Behrmann (249):
 	* [doc]: update ChangeLog
 
 
-Milan Knízek (3):
+Milan KnÃ­zek (3):
 	* [po]: add czesh translation
 	* [po]: more translation
 	* [po]: more translations
@@ -630,13 +630,13 @@ Version 0.1.7
 	* neu: oyPolicyToXML
 
 2005-11-22
-	* neu: Optionen für GrundVerhalten
+	* neu: Optionen fÃ¼r GrundVerhalten
 	* und: oyranos-config-flu wird nicht mehr statisch gelinkt
 
 2005-11-21
 	* und: Wiki aktualisieren
 	* neu: statisches OY_DEFAULT_ASSUMED_WEB_PROFILE
-	* neu: Integration der standard_profiles in das Übersetzungssystem
+	* neu: Integration der standard_profiles in das Ãœbersetzungssystem
 	* neu: oyranos.pc und oyranos_monitor.pc
 
 2005-10-20
@@ -651,13 +651,13 @@ Version 0.1.7
 	* fix: 0 EDID atom crash (no monitor attached)
 
 2005-09-07
-	* neu: Benutzer und System Einstellungen werden berücksichtigt
-	* neu: oyOpen oyClose sind überflüssig
+	* neu: Benutzer und System Einstellungen werden berÃ¼cksichtigt
+	* neu: oyOpen oyClose sind Ã¼berflÃ¼ssig
 
 2005-09-06
 	* neu: rekursive Dateisuche; Link Erkennen weiter schwierig
 	* und: oyActivateMonitor vereinfacht
-	* und: statisches und dynamische Verknüpfen mit Elektra
+	* und: statisches und dynamische VerknÃ¼pfen mit Elektra
 
 2005-09-05
 	* neu: DefaultProfile Funktionen umgeschrieben
@@ -665,7 +665,7 @@ Version 0.1.7
 	* und: Quelltextdokumentation
 
 2005-09-04
-	* neu: oyAllocFunc_t für benutzereigene Speicherreservierungen
+	* neu: oyAllocFunc_t fÃ¼r benutzereigene Speicherreservierungen
 	* und: Quelltextdokumentation
 
 2005-09-03
@@ -693,13 +693,13 @@ Version 0.1.7
 
 2005-02-03
 	* neu: Monitorprofil setzen und lesen
-	* neu: oyranos-gamma lädt ICC vcgt tag in Grafikkarte
+	* neu: oyranos-gamma lÃ¤dt ICC vcgt tag in Grafikkarte
 
 2005-02-01
 	* neu: Monitor Erkennen
 
 2004-12-7
-	* neu: Speicherblöcke mit Profildaten abfragen
+	* neu: SpeicherblÃ¶cke mit Profildaten abfragen
 	* allgm: gcc 3.4
 
 2004-11-30
@@ -710,7 +710,7 @@ Version 0.1.7
 2004-11-29
 	* neu: DEBUG makros
 	* neu: Datei Suche in Pfadliste
-	* neu: Profilprüfung - Signatur
+	* neu: ProfilprÃ¼fung - Signatur
 	* allg: Bereinigen doppelter Texte
 	* neu: Datei und Verzeichnis Tests
 
