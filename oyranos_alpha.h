@@ -135,6 +135,7 @@ typedef enum {
   oyOBJECT_FILTER_CORES_S,            /**< oyFilterCores_s */
   oyOBJECT_FILTER_NODE_S,             /**< oyFilterNode_s */
   oyOBJECT_FILTER_NODES_S,            /**< oyFilterNodes_s */
+  oyOBJECT_FILTER_GRAPH_S,            /**< oyFilterGraph_s */
   oyOBJECT_PIXEL_ACCESS_S,            /**< oyPixelAccess_s */
   oyOBJECT_CONVERSION_S,              /**< oyConversion_s */
   oyOBJECT_CMM_HANDLE_S      = 50,    /**< oyCMMhandle_s */
@@ -1246,7 +1247,7 @@ int            oyRegion_IsInside     ( oyRegion_s        * test,
 int            oyRegion_PointIsInside( oyRegion_s        * region,
                                        double              x,
                                        double              y );
-int            oyRegion_CountPoints ( oyRegion_s        * region );
+double         oyRegion_CountPoints ( oyRegion_s        * region );
 int            oyRegion_Index        ( oyRegion_s        * region,
                                        double              x,
                                        double              y );
@@ -1679,6 +1680,7 @@ typedef struct oyCMMapi6_s oyCMMapi6_s;
 typedef struct oyCMMapi7_s oyCMMapi7_s;
 typedef struct oyCMMapi8_s oyCMMapi8_s;
 typedef struct oyCMMapiFilter_s oyCMMapiFilter_s;
+typedef struct oyFilterGraph_s oyFilterGraph_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
 typedef struct oyFilterNodes_s oyFilterNodes_s;
 typedef struct oyConnector_s oyConnector_s;
@@ -2268,9 +2270,6 @@ OYAPI int  OYEXPORT
 oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
-oyOption_s *   oyFilterNode_GetAdjacencyList (
-                                       oyFilterNode_s    * node,
-                                       int                 flags );
 
 
 
@@ -2312,6 +2311,37 @@ OYAPI oyFilterNode_s * OYEXPORT
                                        int                 pos );
 OYAPI int  OYEXPORT
            oyFilterNodes_Count       ( oyFilterNodes_s   * list );
+
+
+
+/** @struct  oyFilterGraph_s
+ *  @brief   a FilterGraph object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+struct oyFilterGraph_s {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_GRAPH_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyFilterNodes_s    * nodes;          /**< the nodes in the graph */
+  oyFilterPlugs_s    * edges;          /**< the edges in the graph */
+};
+
+OYAPI oyFilterGraph_s * OYEXPORT
+           oyFilterGraph_New         ( oyObject_s          object );
+OYAPI oyFilterGraph_s * OYEXPORT
+           oyFilterGraph_FromNode    ( oyFilterNode_s    * node,
+                                       int                 flags );
+OYAPI oyFilterGraph_s * OYEXPORT
+           oyFilterGraph_Copy        ( oyFilterGraph_s   * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+           oyFilterGraph_Release     ( oyFilterGraph_s  ** obj );
 
 
 

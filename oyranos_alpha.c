@@ -538,6 +538,8 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_FILTER_PLUGS_S: text = "oyFilterPlugs_s"; break;
     case oyOBJECT_FILTER_SOCKET_S: text = "oyFilterSocket_s"; break;
     case oyOBJECT_FILTER_NODE_S: text = "oyFilterNode_s"; break;
+    case oyOBJECT_FILTER_NODES_S: text = "oyFilterNodes_s"; break;
+    case oyOBJECT_FILTER_GRAPH_S: text = "oyFilterGraph_s"; break;
     case oyOBJECT_PIXEL_ACCESS_S: text = "oyPixelAccess_s"; break;
     case oyOBJECT_CMM_HANDLE_S: text = "oyCMMhandle_s"; break;
     case oyOBJECT_CMM_POINTER_S: text = "oyCMMptr_s"; break;
@@ -13446,21 +13448,19 @@ int            oyRegion_PointIsInside( oyRegion_s        * region,
  *  @brief   count number of points covered by this region
  *  @memberof oyRegion_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  4 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/04 (Oyranos: 0.1.8)
+ *  @date    2009/02/23
  */
-int            oyRegion_CountPoints  ( oyRegion_s        * region )
+double         oyRegion_CountPoints  ( oyRegion_s        * region )
 {
   oyRegion_s * s = region;
   oyRegion_s * r = s;
-  int w,h;
   
   if(!s)
     return FALSE;
 
-  w = (int)OY_ROUND(r->width);
-  h = (int)OY_ROUND(r->height);
-  return (w) * (h);
+  return r->width * r->height;
 }
 
 /** @brief   return position inside region, assuming region size
@@ -17248,14 +17248,14 @@ OYAPI oyConnector_s * OYEXPORT
 
   if(is_plug)
   {
-    if(node->api7_->plugs_n >= as_pos &&
+    if(node->api7_->plugs_n <= as_pos &&
        as_pos < oyFilterNode_EdgeCount( node, 1, 0 ))
       as_pos = node->api7_->plugs_n - 1;
 
     if(node->api7_->plugs_n > as_pos)
       pattern = oyConnector_Copy( node->api7_->plugs[as_pos], object );
   } else {
-    if(node->api7_->sockets_n >= as_pos &&
+    if(node->api7_->sockets_n <= as_pos &&
        as_pos < oyFilterNode_EdgeCount( node, 0, 0 ))
       as_pos = node->api7_->sockets_n - 1;
 
@@ -17707,241 +17707,7 @@ OYAPI int  OYEXPORT
 }
 
 
-int    oyAdjacencyListAddEdge_       ( oyFilterPlug_s    * plug,
-                                       char             ** al )
-{
-  int added = 0, found = 0;
-  char * ptr = *al;
-  char * line = 0,
-       * temp = oyAllocateFunc_( 48 );
-  int len = 0;
 
-  oySprintf_( temp, "%d", oyFilterNode_GetId( plug->node ) );
-  STRING_ADD( line, temp );
-  STRING_ADD( line, "[" );
-  STRING_ADD( line, plug->pattern->name.nick );
-  STRING_ADD( line, "]->[" );
-  STRING_ADD( line, plug->remote_socket_->pattern->name.nick );
-  STRING_ADD( line, "]" );
-  oySprintf_( temp, "%d\n", oyFilterNode_GetId( plug->remote_socket_->node ) );
-  STRING_ADD( line, temp );
-
-  len = oyStrlen_( line );
-
-  while(!found)
-  {
-    if(memcmp( ptr, line, len ) != 0)
-    {
-      if( oyStrchr_(ptr, '\n') )
-        ptr = oyStrchr_(ptr, '\n') + 1;
-      else
-        break;
-
-    } else
-      found = 1;
-  }
-
-  if(!found)
-  {
-    oyStringAdd_( al, line, oyAllocateFunc_, oyDeAllocateFunc_ );
-    added = !found;
-  }
-
-  oyFree_m_( temp )
-
-  return added;
-}
-
-int  oyFilterNode_AddToAdjacencyList_( oyFilterNode_s    * s,
-                                       char             ** al )
-{
-  int n, i, j, p_n;
-  oyFilterPlug_s * p = 0;
-
-  n = oyFilterNode_EdgeCount( s, 1, 0 );
-  for( i = 0; i < n; ++i )
-  {
-    if( s->plugs[i] && s->plugs[i]->remote_socket_ )
-      if(oyAdjacencyListAddEdge_( s->plugs[i], al ))
-        oyFilterNode_AddToAdjacencyList_( s->plugs[i]->remote_socket_->node,al);
-  }
-
-  n = oyFilterNode_EdgeCount( s, 0, 0 );
-  for( i = 0; i < n; ++i )
-  {
-    if( s->sockets[i] && s->sockets[i]->requesting_plugs_ )
-    {
-      p_n = oyFilterPlugs_Count( s->sockets[i]->requesting_plugs_ );
-      for( j = 0; j < p_n; ++j )
-      {
-        p = oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
-
-        if(oyAdjacencyListAddEdge_( p, al ))
-          oyFilterNode_AddToAdjacencyList_( p->node, al );
-      }
-    }
-  }
-
-  return 0;
-}
-
-int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
-                                       oyStructList_s    * nodes,
-                                       oyFilterPlugs_s   * edges )
-{
-  int added = 0, found = 0,
-      i,n;
-  oyFilterPlug_s * p = 0;
-  oyFilterNode_s * node = 0;
-
-  n = oyFilterPlugs_Count( edges );
-  for(i = 0; i < n; ++i)
-  {
-    p = oyFilterPlugs_Get( edges, i );
-    if(oyObject_GetId( p->oy_ ) == oyObject_GetId( plug->oy_ ))
-      found = 1;
-    oyFilterPlug_Release( &p );
-  }
-
-  if(!found)
-  {
-    p = oyFilterPlug_Copy(plug, 0);
-    oyFilterPlugs_MoveIn( edges, &p, -1 );
-    added = !found;
-
-
-    found = 0;
-    n = oyStructList_Count( nodes );
-    for(i = 0; i < n; ++i)
-    {
-      node = (oyFilterNode_s*) oyStructList_GetRefType( nodes, i,
-                                                       oyOBJECT_FILTER_NODE_S );
-      if(oyObject_GetId( plug->node->oy_ ) == oyObject_GetId( node->oy_ ))
-        found = 1;
-      oyFilterNode_Release( &node );
-    }
-    if(!found)
-    {
-      node = oyFilterNode_Copy( plug->node, 0 );
-      oyStructList_MoveIn( nodes, (oyStruct_s**) & node, -1 );
-    }
-
-    found = 0;
-    n = oyStructList_Count( nodes );
-    for(i = 0; i < n; ++i)
-    {
-      node = (oyFilterNode_s*) oyStructList_GetRefType( nodes, i,
-                                                       oyOBJECT_FILTER_NODE_S );
-      if(plug->remote_socket_ && plug->remote_socket_->node)
-      {
-        if(oyObject_GetId( plug->remote_socket_->node->oy_ ) ==
-           oyObject_GetId( node->oy_ ))
-          found = 1;
-
-      } else
-        found = 1;
-
-      oyFilterNode_Release( &node );
-    }
-    if(!found)
-    {
-      node = oyFilterNode_Copy( plug->remote_socket_->node, 0 );
-      oyStructList_MoveIn( nodes, (oyStruct_s**) & node, -1 );
-    }
-  }
-
-  return added;
-}
-
-int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
-                                       oyStructList_s    * nodes,
-                                       oyFilterPlugs_s   * edges )
-{
-  int n, i, j, p_n;
-  oyFilterPlug_s * p = 0;
-
-  n = oyFilterNode_EdgeCount( s, 1, 0 );
-  for( i = 0; i < n; ++i )
-  {
-    if( s->plugs[i] && s->plugs[i]->remote_socket_ )
-      if(oyAdjacencyListAdd_( s->plugs[i], nodes, edges ))
-        oyFilterNode_AddToAdjacencyLst_( s->plugs[i]->remote_socket_->node, 
-                                         nodes, edges );
-  }
-
-  n = oyFilterNode_EdgeCount( s, 0, 0 );
-  for( i = 0; i < n; ++i )
-  {
-    if( s->sockets[i] && s->sockets[i]->requesting_plugs_ )
-    {
-      p_n = oyFilterPlugs_Count( s->sockets[i]->requesting_plugs_ );
-      for( j = 0; j < p_n; ++j )
-      {
-        p = oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
-
-        if(oyAdjacencyListAdd_( p, nodes, edges ))
-          oyFilterNode_AddToAdjacencyLst_( p->node,
-                                           nodes, edges );
-      }
-    }
-  }
-
-  return 0;
-}
-
-#define OY_REFERENCES 0x01
-
-/** Function oyFilterNode_GetAdjacencyList
- *  @memberof oyFilterNode_s
- *  @brief   get a graphs adjazency list
- *
- *  @param[in]     node                filter node
- *  @param[in]     flags               0 or OY_REFERENCES
- *  @return                            the object Id
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/25 (Oyranos: 0.1.10)
- *  @date    2009/02/27
- */
-oyOption_s *   oyFilterNode_GetAdjacencyList (
-                                       oyFilterNode_s    * node,
-                                       int                 flags )
-{
-  oyFilterNode_s * s = node;
-  oyOption_s * o = 0;
-  char * text = 0;
-
-  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
-
-
-  if( (((flags) >> 0)&255) == 1 ) /* OY_REFERENCES */
-  {
-    oyFilterPlugs_s * edges = oyFilterPlugs_New( 0 );
-    oyStructList_s * nodes = oyStructList_Create( 0, "nodes", 0 );
-
-    oyFilterNode_AddToAdjacencyLst_( s, nodes, edges );
-
-    o = oyOption_New( "sw/oyranos.org/misc/adjacency_refs", 0 );
-    o->value = o->oy_->allocateFunc_(sizeof(oyValue_u));
-    o->value_type = oyVAL_STRUCT;
-    o->value->oy_struct = (oyStruct_s*) oyStructList_New( 0 );
-
-    oyStructList_MoveIn( (oyStructList_s*) o->value->oy_struct,
-                         (oyStruct_s**) &nodes, -1 );
-    oyStructList_MoveIn( (oyStructList_s*) o->value->oy_struct,
-                         (oyStruct_s**) &edges, -1 );
-    
-  } else
-  {
-    text = oyStringCopy_( "", oyAllocateFunc_ );
-    oyFilterNode_AddToAdjacencyList_( s, &text );
-    o = oyOption_New( "sw/oyranos.org/misc/adjacency_list", 0 );
-    oyOption_SetFromText( o, text, 0 );
-    oyFree_m_( text );
-  }
-
-  return o;
-}
 
 /** 
  *  @internal
@@ -18595,6 +18361,308 @@ OYAPI int  OYEXPORT
   if(!error)
     return oyStructList_Count( list->list_ );
   else return 0;
+}
+
+
+/** Function oyFilterGraph_New
+ *  @memberof oyFilterGraph_s
+ *  @brief   allocate a new FilterGraph object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI oyFilterGraph_s * OYEXPORT
+           oyFilterGraph_New         ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_FILTER_GRAPH_S;
+# define STRUCT_TYPE oyFilterGraph_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyFilterGraph_Copy;
+  s->release = (oyStruct_Release_f) oyFilterGraph_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+
+  return s;
+}
+
+int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
+                                       oyFilterNodes_s   * nodes,
+                                       oyFilterPlugs_s   * edges )
+{
+  int added = 0, found = 0,
+      i,n;
+  oyFilterPlug_s * p = 0;
+  oyFilterNode_s * node = 0;
+
+  n = oyFilterPlugs_Count( edges );
+  for(i = 0; i < n; ++i)
+  {
+    p = oyFilterPlugs_Get( edges, i );
+    if(oyObject_GetId( p->oy_ ) == oyObject_GetId( plug->oy_ ))
+      found = 1;
+    oyFilterPlug_Release( &p );
+  }
+
+  if(!found)
+  {
+    p = oyFilterPlug_Copy(plug, 0);
+    oyFilterPlugs_MoveIn( edges, &p, -1 );
+    added = !found;
+
+
+    found = 0;
+    n = oyFilterNodes_Count( nodes );
+    for(i = 0; i < n; ++i)
+    {
+      node = oyFilterNodes_Get( nodes, i );
+      if(oyObject_GetId( plug->node->oy_ ) == oyObject_GetId( node->oy_ ))
+        found = 1;
+      oyFilterNode_Release( &node );
+    }
+    if(!found)
+    {
+      node = oyFilterNode_Copy( plug->node, 0 );
+      oyFilterNodes_MoveIn( nodes, &node, -1 );
+    }
+
+    found = 0;
+    n = oyFilterNodes_Count( nodes );
+    for(i = 0; i < n; ++i)
+    {
+      node = oyFilterNodes_Get( nodes, i );
+      if(plug->remote_socket_ && plug->remote_socket_->node)
+      {
+        if(oyObject_GetId( plug->remote_socket_->node->oy_ ) ==
+           oyObject_GetId( node->oy_ ))
+          found = 1;
+
+      } else
+        found = 1;
+
+      oyFilterNode_Release( &node );
+    }
+    if(!found)
+    {
+      node = oyFilterNode_Copy( plug->remote_socket_->node, 0 );
+      oyFilterNodes_MoveIn( nodes, &node, -1 );
+    }
+  }
+
+  return added;
+}
+
+int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
+                                       oyFilterNodes_s   * nodes,
+                                       oyFilterPlugs_s   * edges )
+{
+  int n, i, j, p_n;
+  oyFilterPlug_s * p = 0;
+
+  n = oyFilterNode_EdgeCount( s, 1, 0 );
+  for( i = 0; i < n; ++i )
+  {
+    if( s->plugs[i] && s->plugs[i]->remote_socket_ )
+      if(oyAdjacencyListAdd_( s->plugs[i], nodes, edges ))
+        oyFilterNode_AddToAdjacencyLst_( s->plugs[i]->remote_socket_->node, 
+                                         nodes, edges );
+  }
+
+  n = oyFilterNode_EdgeCount( s, 0, 0 );
+  for( i = 0; i < n; ++i )
+  {
+    if( s->sockets[i] && s->sockets[i]->requesting_plugs_ )
+    {
+      p_n = oyFilterPlugs_Count( s->sockets[i]->requesting_plugs_ );
+      for( j = 0; j < p_n; ++j )
+      {
+        p = oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
+
+        if(oyAdjacencyListAdd_( p, nodes, edges ))
+          oyFilterNode_AddToAdjacencyLst_( p->node,
+                                           nodes, edges );
+      }
+    }
+  }
+
+  return 0;
+}
+
+/** Function oyFilterGraph_FromNode
+ *  @memberof oyFilterNode_s
+ *  @brief   get a graphs adjazency list
+ *
+ *  @param[in]     node                filter node
+ *  @param[in]     flags               unused
+ *  @return                            the graph
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/25 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI oyFilterGraph_s * OYEXPORT
+           oyFilterGraph_FromNode    ( oyFilterNode_s    * node,
+                                       int                 flags )
+{
+  oyFilterNode_s * s = node;
+  oyFilterNodes_s * nodes = 0;
+  oyFilterPlugs_s * edges = 0;
+  oyFilterGraph_s * graph = 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  {
+    nodes = oyFilterNodes_New( 0 );
+    edges = oyFilterPlugs_New( 0 );
+
+    oyFilterNode_AddToAdjacencyLst_( s, nodes, edges );
+
+    graph = oyFilterGraph_New( 0 );
+    graph->nodes = nodes;
+    graph->edges = edges;
+  }
+
+  return graph;
+}
+
+
+/** @internal
+ *  Function oyFilterGraph_Copy_
+ *  @memberof oyFilterGraph_s
+ *  @brief   real copy a FilterGraph object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+oyFilterGraph_s * oyFilterGraph_Copy_
+                                     ( oyFilterGraph_s   * obj,
+                                       oyObject_s          object )
+{
+  oyFilterGraph_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyFilterGraph_New( object );
+  error = !s;
+
+  s->nodes = oyFilterNodes_Copy( obj->nodes, 0 );
+  s->edges = oyFilterPlugs_Copy( obj->edges, 0 );
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+  }
+
+  if(error)
+    oyFilterGraph_Release( &s );
+
+  return s;
+}
+
+/** Function oyFilterGraph_Copy
+ *  @memberof oyFilterGraph_s
+ *  @brief   copy or reference a FilterGraph object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI oyFilterGraph_s * OYEXPORT
+           oyFilterGraph_Copy        ( oyFilterGraph_s   * obj,
+                                       oyObject_s          object )
+{
+  oyFilterGraph_s * s = 0;
+
+  if(!obj)
+    return s;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilterGraph_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyFilterGraph_Release
+ *  @memberof oyFilterGraph_s
+ *  @brief   release and possibly deallocate a FilterGraph object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+OYAPI int  OYEXPORT
+           oyFilterGraph_Release     ( oyFilterGraph_s  ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilterGraph_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyFilterNodes_Release( &s->nodes );
+  oyFilterPlugs_Release( &s->edges );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
 }
 
 
@@ -20375,20 +20443,14 @@ char             * oyConversion_ToText (
   const char * save_locale = 0;
 
   oyFilterNode_s * node = s->input;
-  oyFilterPlugs_s * edges = 0;
   oyFilterPlug_s * p = 0;
-  oyStructList_s * nodes = 0,
-                 * adjacency_list;
-  oyOption_s * o = 0;
+  oyFilterGraph_s * adjacency_list = 0;
   int i, n,
       nodes_n = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
-  o = oyFilterNode_GetAdjacencyList( node, OY_REFERENCES );
-  adjacency_list = (oyStructList_s *) o->value->oy_struct;
-  nodes = oyStructList_GetRefType( adjacency_list, 0, oyOBJECT_STRUCT_LIST_S );
-  edges = oyStructList_GetRefType( adjacency_list, 1, oyOBJECT_FILTER_PLUGS_S );
+  adjacency_list = oyFilterGraph_FromNode( node, 0 );
 
 #if USE_GETTEXT
   save_locale = setlocale(LC_NUMERIC, 0 );
@@ -20419,10 +20481,10 @@ char             * oyConversion_ToText (
   STRING_ADD( text, "\n" );
 
   /* add more node descriptions */
-  nodes_n = oyStructList_Count( nodes );
+  nodes_n = oyFilterNodes_Count( adjacency_list->nodes );
   for(i = 0; i < nodes_n; ++i)
   {
-    node = oyStructList_GetRefType( nodes, i, oyOBJECT_FILTER_NODE_S );
+    node = oyFilterNodes_Get( adjacency_list->nodes, i );
     n = oyFilterNode_EdgeCount( node, 1, 0 );
 
     oySprintf_(temp, "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
@@ -20448,10 +20510,10 @@ char             * oyConversion_ToText (
   STRING_ADD( text, "\n" );
 
   /* add more node placements */
-  n = oyFilterPlugs_Count( edges );
+  n = oyFilterPlugs_Count( adjacency_list->edges );
   for(i = 0; i < n; ++i)
   {
-    p = oyFilterPlugs_Get( edges, i );
+    p = oyFilterPlugs_Get( adjacency_list->edges, i );
 
     oySprintf_( temp,
                 "    %d:socket -> %d:plug [arrowhead=crow, arrowtail=box];\n",
@@ -20482,6 +20544,7 @@ char             * oyConversion_ToText (
 
   STRING_ADD( text, "" );
 
+  oyFilterGraph_Release( &adjacency_list );
   oyFree_m_( temp );
 
   return text;
