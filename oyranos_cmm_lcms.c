@@ -1024,6 +1024,9 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   image_input = (oyImage_s*)plug->remote_socket_->data;
   image_output = (oyImage_s*)socket->data;
 
+  if(!image_input)
+    return 0;
+
   if(image_input->type_ != oyOBJECT_IMAGE_S)
   {
     oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
@@ -1387,14 +1390,18 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     }
 
     /*  - - - - - conversion - - - - - */
+    message(oyMSG_WARN,0, "%s: %d Start transform", __FILE__,__LINE__);
     if(!error)
       for( k = 0; k < array->height; ++k)
         cmsDoTransform( ltw->lcms, array->array2d[k], array->array2d[k], n );
+    message(oyMSG_WARN,0, "%s: %d End transform", __FILE__,__LINE__);
 
 
   } else
   {
     oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
+    error = oyOptions_SetFromText( &ticket->graph->options,
+                               "//image/profile/dirty", "true", OY_CREATE_NEW );
     error = 1;
   }
 
