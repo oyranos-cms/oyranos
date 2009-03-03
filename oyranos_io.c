@@ -847,11 +847,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
           path_is_double = 1;
         oyFree_m_( pp );
       }
-      for( j = 0; j < MAX_DEPTH; ++j )
-      {
-        dir[j] = NULL;
-        entry[j] = NULL;
-      }
+      for( j = 0; j < MAX_DEPTH; ++j ) { dir[j] = NULL; entry[j] = NULL; }
     }
     if( path_is_double )
       continue;
@@ -956,11 +952,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         ;
     }
 
-    for( j = 0; j < MAX_DEPTH; ++j )
-      {
-        if(dir[j]) closedir(dir[j]);;
-        dir[j] = NULL;
-      }
+    for( j = 0; j < MAX_DEPTH; ++j ) { if(dir[j]) closedir(dir[j]);; dir[j] = NULL; }
 
     qsort( data->names, data->count_files, sizeof(char*),
            oyStrcmpWrap );

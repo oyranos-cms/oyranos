@@ -226,7 +226,7 @@ int main( int argc , char** argv )
   printf("  /* ---- end of common object constructor ------- */\n");
   printf("\n");
   if(list)
-  printf("  s->list_ = oyStructList_New( 0 );\n");
+  printf("  s->list_ = oyStructList_Create( s->type_, 0, 0 );\n");
   printf("\n");
   printf("  return s;\n");
   printf("}\n");
@@ -296,10 +296,10 @@ int main( int argc , char** argv )
                            class_base, space, class_name, space);
   printf("                                       oyObject_s          object )\n");
   printf("{\n");
-  printf("  %s * s = 0;\n", class_name);
+  printf("  %s * s = obj;\n", class_name);
   printf("\n");
   printf("  if(!obj)\n");
-  printf("    return s;\n");
+  printf("    return 0;\n");
   printf("\n");
   printf("  oyCheckType__m( %s, return 0 )\n", class_enum);
   printf("\n");
@@ -404,7 +404,7 @@ int main( int argc , char** argv )
   printf("\n");
   printf("    if(!error && !s->list_)\n");
   printf("    {\n");
-  printf("      s->list_ = oyStructList_New( 0 );\n");
+  printf("      s->list_ = oyStructList_Create( s->type_, 0, 0 );\n");
   printf("      error = !s->list_;\n");
   printf("    }\n");
   printf("      \n");
