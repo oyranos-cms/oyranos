@@ -1082,6 +1082,11 @@ char**  oyLibPathsGet_( int             * count,
   paths = tmp;
   n = tmp_n;
 
+  if(fix_paths[0])
+    oyFree_m_(fix_paths[0]);
+  if(fix_paths[1])
+    oyFree_m_(fix_paths[1]);
+
   if(count)
     *count = n;
 
