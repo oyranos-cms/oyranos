@@ -2873,6 +2873,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
   oyCMMapiFilters_s * apis = 0;
   oyCMMapiFilter_s * api = 0;
   uint32_t * rank_list_ = 0;
+  int rank_list_n = 5;
 
   if(error <= 0 && cmm_required)
   {
@@ -2931,13 +2932,25 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
           {
 
             if(!rank_list_ && !apis)
-            {                                //  TODO @todo error
-              oyAllocHelper_m_( *rank_list, uint32_t, files_n+1, 0, return 0 );
-              apis = oyCMMapiFilters_New(0);
+            {
+              oyAllocHelper_m_( *rank_list, uint32_t, rank_list_n+1, 0,
+                                return 0 );
               rank_list_ = *rank_list;
+              apis = oyCMMapiFilters_New(0);
+            } else
+            if(*count >= rank_list_n)
+            {
+              rank_list_n *= 2;
+              rank_list_ = 0;
+              oyAllocHelper_m_( rank_list_, uint32_t, rank_list_n+1, 0,
+                                return 0 );
+              error = !memcpy( rank_list_, *rank_list,
+                               sizeof(uint32_t) * rank_list_n/2 );
+              oyFree_m_(*rank_list);
+              *rank_list = rank_list_;
             }
 
-            rank_list_[k] = rank;
+            rank_list_[k++] = rank;
             api = api5->oyCMMFilterLoad( 0,0, files[i], type, j);
             api->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
             api->api5_ = api5;
@@ -4062,7 +4075,8 @@ int          oyObject_Release         ( oyObject_s      * obj )
     if(s->backdoor_)
       deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
 
-    error = oyStructList_Release(&s->handles_);
+    if(s->handles_ && s->handles_->release)
+      error = s->handles_->release( &s->handles_ );
 
     deallocateFunc( s );
     oyLockReleaseFunc_( lock, __FILE__, __LINE__ );
@@ -6153,7 +6167,7 @@ oyOptions_s *  oyOptions_New         ( oyObject_s          object )
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->list = oyStructList_New( 0 );
+  s->list = oyStructList_Create( s->type_, 0, 0 );
 
   return s;
 }
@@ -7138,6 +7152,9 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
 
       error = !found;
     }
+
+    if(!found)
+      text = 0;
   }
 
   return text;
@@ -8005,6 +8022,9 @@ OYAPI oyOption_s * OYEXPORT
 {
   oyOption_s * o = 0;
 
+  if(!config)
+    return 0;
+
   o = oyOptions_Find( config->data, key );
   if(!o)
     o = oyOptions_Find( config->backend_core, key );
@@ -8122,7 +8142,7 @@ OYAPI oyConfigs_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->list_ = oyStructList_New( 0 );
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
 
   return s;
 }
@@ -9849,7 +9869,7 @@ oyProfile_New_ ( oyObject_s        object)
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->tags_ = oyStructList_New( 0 );
+  s->tags_ = oyStructList_Create( s->type_, 0, 0 );
 
   return s;
 }
@@ -11062,6 +11082,11 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
       }
 
       name = oyFindProfile_( name );
+      if(name)
+      {
+        s->file_name_ = oyStringCopy_( name, s->oy_->allocateFunc_ );
+        oyDeAllocateFunc_( name );
+      }
       oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
     }
   }
@@ -13977,7 +14002,10 @@ oyImage_CombinePixelLayout2Mask_ (
                   image->resolution_x,
                   image->resolution_y);
   hashTextAdd_m( text );
-  oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
+  if(oy_debug)
+    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
+  else
+    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));
   hashTextAdd_m( text );
   oySprintf_( text, "    <channels all=\"%d\" colour=\"%d\" />\n", n, cchan_n );
   hashTextAdd_m( text );
@@ -14120,7 +14148,9 @@ int       oyImage_SetArray2dPointContinous (
  */
 int       oyImage_SetArray2dLineContinous (
                                          oyImage_s       * image,
+                                         int               point_x,
                                          int               point_y,
+                                         int               pixel_n,
                                          int               channel,
                                          oyPointer         data )
 {
@@ -14129,11 +14159,18 @@ int       oyImage_SetArray2dLineContinous (
   oyDATATYPE_e data_type = oyToDataType_m( image->layout_[0] );
   int byteps = oySizeofDatatype( data_type );
   int channels = 1;
+  int offset = point_x;
+
+  if(pixel_n < 0)
+    pixel_n = image->width - point_x;
 
   if(channel < 0)
+  {
     channels = oyToChannels_m( image->layout_[0] );
+    offset *= channels;
+  }
 
-  memcpy( &array2d[ point_y ][ 0 ], data, byteps * channels );
+  memcpy( &array2d[ point_y ][ offset ], data, pixel_n * byteps * channels );
 
   return 0; 
 }
@@ -14259,7 +14296,8 @@ oyImage_s *    oyImage_Create         ( int               width,
     oyImage_DataSet ( s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
   s->profile_ = oyProfile_Copy( profile, 0 );
-  s->viewport = oyRegion_NewWith( 0, 0, 1.0, s->height/s->width, s->oy_ );
+  if(s->width != 0.0)
+    s->viewport = oyRegion_NewWith( 0, 0, 1.0, s->height/s->width, s->oy_ );
 
   error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout, profile );
 
@@ -14278,43 +14316,71 @@ oyImage_s *    oyImage_Create         ( int               width,
 /** @brief   collect infos about a image for showing one a display
  *  @memberof oyImage_s
 
-    @param[in]    width        image width
-    @param[in]    height       image height
-    @param[in]    channels     pointer to the data buffer
-    @param[in]    pixel_layout i.e. oyTYPE_123_16 for 16-bit RGB data
-    @param[in]    display_name  display name
-    @param[in]    display_pos_x left image position on display
-    @param[in]    display_pos_y top image position on display
-    @param[in]    object       the optional base
+    @param[in]     width               image width
+    @param[in]     height              image height
+    @param[in]     channels            pointer to the data buffer
+    @param[in]     pixel_layout        i.e. oyTYPE_123_16 for 16-bit RGB data
+    @param[in]     display_name        display name
+    @param[in]     window_pos_x        left image position on display
+    @param[in]     window_pos_y        top image position on display
+    @param[in]     window_width        width to show in window
+    @param[in]     window_height       height to show in window
+    @param[in]     object              the optional base
  *
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
  */
-oyImage_s *    oyImage_CreateForDisplay(int               width,
-                                        int               height, 
-                                        oyPointer         channels,
-                                        oyPixel_t         pixel_layout,
-                                        const char      * display_name,
-                                        int               display_pos_x,
-                                        int               display_pos_y,
-                                        oyObject_s        object)
+oyImage_s *    oyImage_CreateForDisplay ( int              width,
+                                       int                 height, 
+                                       oyPointer           channels,
+                                       oyPixel_t           pixel_layout,
+                                       const char        * display_name,
+                                       int                 display_pos_x,
+                                       int                 display_pos_y,
+                                       int                 display_width,
+                                       int                 display_height,
+                                       oyObject_s          object)
 {
+  oyProfile_s * p = oyProfile_FromFile ("XYZ.icc",0,0);
   oyImage_s * s = oyImage_Create( width, height, channels, pixel_layout,
-                                  0, object );
+                                  p, object );
   int error = !s;
+  oyOption_s * o = 0;
+  oyRegion_s * display_region = 0;
+
+  oyProfile_Release( &p );
 
   if(error <= 0)
   {
-    oyProfile_Release( &s->profile_ );
-    s->profile_ = oyProfile_FromFile (0,0,0);
     if(!s->profile_)
       error = 1;
 
     if(error <= 0)
       error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout, s->profile_ );
 
-    s->display_pos_x = display_pos_x;
-    s->display_pos_y = display_pos_y;
+    if(error <= 0)
+      display_region = oyRegion_NewWith( display_pos_x, display_pos_y,
+                                       display_width, display_height ,0 );
+    error = !display_region;
+    if(error <= 0)
+      o = oyOption_New( "//image/output/display_region", object );
+    error = !o;
+    if(error <= 0)
+      error = oyOption_StructMoveIn( o, (oyStruct_s**) &display_region );
+    if(error <= 0 && !s->options)
+      s->options = oyOptions_New( object );
+    if(error <= 0)
+      error = oyOptions_MoveIn( s->options, &o, -1 );
+    
+    if(error <= 0 && display_name)
+      error = oyOptions_SetFromText( &s->options, "//image/output/display_name",
+                                     display_name, OY_CREATE_NEW );
+
+    if(error > 0)
+    {
+      oyImage_Release( &s );
+      WARNc1_S("Could not create image %d", oyObject_GetId( object ));
+    }
   }
 
   return s;
@@ -14430,8 +14496,9 @@ int            oyImage_Release        ( oyImage_s      ** obj )
  *
  *  set critical options
  *
- *  @since Oyranos: version 0.1.8
- *  @date  19 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/12/19 (Oyranos: 0.1.8)
+ *  @date    2009/03/01
  */
 int            oyImage_SetCritical    ( oyImage_s       * image,
                                         oyPixel_t         pixel_layout,
@@ -14441,14 +14508,49 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
   oyImage_s * s = image;
   int error = !s;
 
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
   if(profile)
+  {
+    oyProfile_Release( &s->profile_ );
     s->profile_ = oyProfile_Copy( profile, 0 );
+  }
+
+  if(options)
+  {
+    oyOptions_Release( &s->options );
+    s->options = oyOptions_Copy( options, s->oy_ );
+  }
 
   if(pixel_layout)
     error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout, s->profile_ );
+  else
+    /* update to new ID for possible new context hashing */
+    error = oyImage_CombinePixelLayout2Mask_ ( s, s->layout_[oyLAYOUT],
+                                               s->profile_ );
 
-  if(options)
-    s->options_ = oyOptions_Copy( options, s->oy_ );
+  /* Not shure whether it is a good idea to have automatic image data
+     allocation here. Anyway this is intented as a fallback for empty images, 
+     like a unspecified output image to be catched here. */
+  if((!s->setLine || !s->getLine) &&
+     (!s->setPoint || !s->getPoint) &&
+     s->width && s->height)
+  {
+    oyPixel_t pixel_layout = s->layout_[oyLAYOUT];
+    oyPointer channels = 0;
+
+    oyArray2d_s * a = oyArray2d_Create( channels,
+                                        s->width * oyToChannels_m(pixel_layout),
+                                        s->height,
+                                        oyToDataType_m(pixel_layout),
+                                        s->oy_ );
+      
+    oyImage_DataSet( s,    (oyStruct_s**) &a,
+                           oyImage_GetArray2dPointContinous,
+                           oyImage_GetArray2dLineContinous, 0,
+                           oyImage_SetArray2dPointContinous,
+                           oyImage_SetArray2dLineContinous, 0 );
+  }
 
   return error;
 }
@@ -14664,6 +14766,70 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   *array = a;
 
   oyRegion_Release( &pixel_region );
+
+  return error;
+}
+
+/** Function oyImage_ReadArray
+ *  @memberof oyImage_s
+ *  @brief   read a array into a image
+ *
+ *  The region will be considered relative to the image.
+ *  The given array should match that region.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/02/28
+ */
+int            oyImage_ReadArray     ( oyImage_s         * image,
+                                       oyRegion_s        * region,
+                                       oyArray2d_s       * array )
+{
+  oyImage_s * s = image;
+  int error = !image || !array;
+  oyRegion_s * pixel_region = oyRegion_Copy( region, region->oy_ );
+  oyDATATYPE_e data_type = oyUINT8;
+  int size = 0, channel_n, i, offset, width;
+
+  if(error)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+  size = oySizeofDatatype( data_type );
+  channel_n = image->layout_[oyCHANS];
+
+  oyRegion_Scale( pixel_region, image->width );
+  oyRegion_Round( pixel_region );
+  offset = pixel_region->x;
+  pixel_region->x *= channel_n;
+  width = pixel_region->width;
+  pixel_region->width *= channel_n;
+
+  if(array->width > pixel_region->width || array->height > pixel_region->height)
+  {
+    WARNc3_S( "array (%dx%d) is too big for region %s",
+               pixel_region->width, array->height,
+               oyRegion_Show( pixel_region ) );
+    error = 1;
+  }
+
+  if(!error & !image->setLine)
+  {
+    WARNc1_S( "only the setLine() interface is yet supported; image[%d]",
+              oyObject_GetId( image->oy_ ) );
+    error = 1;
+  }
+
+  if(!error)
+  {
+    for(i = 0; i < array->height; ++i)
+    {
+      image->setLine( image, offset, pixel_region->y + i, width, -1,
+                      array->array2d[i] );
+    }
+  }
 
   return error;
 }
@@ -17167,21 +17333,27 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
                                             0 );
       else
         pos = 0;
-      in_socket = oyFilterNode_GetSocket( input, pos );
-      in_socket = oyFilterSocket_Copy( in_socket, 0 );
+      if(pos >= 0)
+      {
+        in_socket = oyFilterNode_GetSocket( input, pos );
+        in_socket = oyFilterSocket_Copy( in_socket, 0 );
+      }
 
       if(plug_nick)
         out_pos = oyFilterNode_GetConnectorPos( output, 1, plug_nick, 0,
                                                 OY_FILTEREDGE_FREE );
       else
         out_pos = 0;
-      out_plug = oyFilterNode_GetPlug( output, out_pos );
-      out_plug = oyFilterPlug_Copy( out_plug, 0 );
+      if(out_pos >= 0)
+      {
+        out_plug = oyFilterNode_GetPlug( output, out_pos );
+        out_plug = oyFilterPlug_Copy( out_plug, 0 );
+      }
 
       if(!out_plug)
       {
-        WARNc2_S( "\n  %s: %s", "Filter has no node",
-                  oyFilterCore_GetName( input->filter, oyNAME_NAME) );
+        WARNc2_S( "\n  %s: \"%s\"", "Could not find plug for filter",
+                  oyFilterCore_GetName( output->filter, oyNAME_NAME) );
         error = 1;
       }
 
@@ -17199,7 +17371,8 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
         }
       }
 
-      if(error <= 0 && output_socket && !output_socket->data && in_socket)
+      if(error <= 0 && output_socket && !output_socket->data && 
+         in_socket && in_socket->data)
         output_socket->data = in_socket->data->copy( in_socket->data, 0 );
 
       if(error <= 0)
@@ -17306,8 +17479,9 @@ OYAPI int  OYEXPORT
     if(!b->is_plug)
       match = 0;
 
-    if(!image) match = 0;
-    else if(match)
+    /** For a zero set pixel layout we skip most tests and assume it will be
+        checked later. */
+    if(image && image->layout_[oyLAYOUT] && match)
     {
       coff = oyToColourOffset_m( image->layout_[oyLAYOUT] );
 
@@ -18038,7 +18212,10 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
             {
               size = 0;
               cmm_ptr = oyCMMptr_New_(oyAllocateFunc_);
+            }
 
+            if(!cmm_ptr->ptr)
+            {
               /* 3b. ask CMM */
               ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
                                                             oyAllocateFunc_ );
@@ -18054,6 +18231,9 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 
             if(error <= 0 && cmm_ptr && cmm_ptr->ptr)
             {
+              if(node->backend_data && node->backend_data->release)
+                node->backend_data->release( (oyStruct_s**)&node->backend_data);
+
               if( oyStrcmp_( node->api7_->context_type,
                              s->api4_->context_type ) != 0 )
               {
@@ -18120,7 +18300,7 @@ OYAPI oyFilterNodes_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->list_ = oyStructList_New( 0 );
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
 
   return s;
 }
@@ -18174,10 +18354,10 @@ OYAPI oyFilterNodes_s * OYEXPORT
            oyFilterNodes_Copy        ( oyFilterNodes_s   * obj,
                                        oyObject_s          object )
 {
-  oyFilterNodes_s * s = 0;
+  oyFilterNodes_s * s = obj;
 
   if(!obj)
-    return s;
+    return 0;
 
   oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
 
@@ -18270,7 +18450,7 @@ OYAPI int  OYEXPORT
 
     if(!error && !s->list_)
     {
-      s->list_ = oyStructList_New( 0 );
+      s->list_ = oyStructList_Create( s->type_, 0, 0 );
       error = !s->list_;
     }
       
@@ -18403,6 +18583,7 @@ OYAPI oyFilterGraph_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
+  s->options = oyOptions_New( 0 );
 
   return s;
 }
@@ -18575,6 +18756,7 @@ oyFilterGraph_s * oyFilterGraph_Copy_
 
   s->nodes = oyFilterNodes_Copy( obj->nodes, 0 );
   s->edges = oyFilterPlugs_Copy( obj->edges, 0 );
+  s->options = oyOptions_Copy( obj->options, object );
 
   if(!error)
   {
@@ -18602,10 +18784,10 @@ OYAPI oyFilterGraph_s * OYEXPORT
            oyFilterGraph_Copy        ( oyFilterGraph_s   * obj,
                                        oyObject_s          object )
 {
-  oyFilterGraph_s * s = 0;
+  oyFilterGraph_s * s = obj;
 
   if(!obj)
-    return s;
+    return 0;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
 
@@ -18652,6 +18834,7 @@ OYAPI int  OYEXPORT
 
   oyFilterNodes_Release( &s->nodes );
   oyFilterPlugs_Release( &s->edges );
+  oyOptions_Release( &s->options );
 
   if(s->oy_->deallocateFunc_)
   {
@@ -18665,6 +18848,53 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
+/** Function: oyFilterGraph_PrepareContexts
+ *  @memberof oyFilterGraph_s
+ *  @brief   iterate over a filter graph and possibly prepare contexts
+ *
+ *  @param[in,out] node                a filter node
+ *  @return                            0 on success, else error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/28 (Oyranos: 0.1.10)
+ *  @date    2009/03/01
+ */
+OYAPI int  OYEXPORT
+           oyFilterGraph_PrepareContexts (
+                                       oyFilterGraph_s   * graph,
+                                       int                 flags )
+{
+  oyOption_s * o = 0;
+  oyFilterNode_s * node = 0;
+  oyFilterGraph_s * s = graph;
+  int i, n, do_it;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 1 )
+
+  n = oyFilterNodes_Count( s->nodes );
+  for(i = 0; i < n; ++i)
+  {
+    node = oyFilterNodes_Get( s->nodes, i );
+
+    if(flags || !node->backend_data)
+      do_it = 1;
+    else
+      do_it = 0;
+
+    if(do_it &&
+       node->filter->api4_->oyCMMFilterNode_ContextToMem &&
+       strlen(node->api7_->context_type))
+      oyFilterNode_ContextSet_( node );
+
+    oyFilterNode_Release( &node );
+  }
+
+  /* clean the graph */
+  o = oyOptions_Find( s->options, "dirty" );
+  oyOption_SetFromText( o, "false", 0 );
+
+  return 0;
+}
 
 
 
@@ -19571,6 +19801,7 @@ oyPixelAccess_s *  oyPixelAccess_Create (
   {
     oyImage_s * image = (oyImage_s*)sock->data;
 
+
     s->start_xy[0] = s->start_xy_old[0] = start_x;
     s->start_xy[1] = s->start_xy_old[1] = start_y;
 
@@ -19578,14 +19809,17 @@ oyPixelAccess_s *  oyPixelAccess_Create (
        error = oyFilterCore_ImageSet ( filter, image );
      
     s->data_in = filter->image_->data; */
+    if(image)
     w = image->width;
 
     /** The filters have no obligation to pass end to end informations.
         The ticket must hold all pices of interesst.
      */
     s->output_image_roi->width = 1.0;
-    s->output_image_roi->height = image->height / (double)image->width;
+    if(image)
+      s->output_image_roi->height = image->height / (double)image->width;
     s->output_image = oyImage_Copy( image, 0 );
+    s->graph = oyFilterGraph_FromNode( sock->node, 0 );
 
     if(type == oyPIXEL_ACCESS_POINT)
     {
@@ -19674,6 +19908,7 @@ oyPixelAccess_s * oyPixelAccess_Copy_( oyPixelAccess_s   * obj,
       s->user_data = obj->user_data->copy( obj->user_data, 0 );
     else
       s->user_data = obj->user_data;
+    s->graph = oyFilterGraph_Copy( obj->graph, 0 );
   }
 
   if(error)
@@ -19822,11 +20057,14 @@ int                oyPixelAccess_CalculateNextStartPixel (
     if(pixel_access->start_xy[0] >= image->width)
     {
       x = 0; pixel_access->start_xy[0] = 1;
-      y = ++pixel_access->start_xy[1];
-    } else
+      if(image->width > 0)
+        y = ++pixel_access->start_xy[1];
+      else
+        y = pixel_access->start_xy[1];
+    } else if(image->width > 0)
       ++pixel_access->start_xy[0];
 
-    if(pixel_access->start_xy[1] >= image->height)
+    if(pixel_access->start_xy[1] >= image->height && image->height)
     {
       return -1;
     }
@@ -20267,33 +20505,6 @@ int                oyConversion_LinOutputAdd (
   return error;
 }
 
-int                oyConversion_PreProcess (
-                                       oyConversion_s    * conversion )
-{
-  oyConversion_s * s = conversion;
-  oyFilterGraph_s * g = 0;
-  oyFilterNode_s * node = 0;
-  int i, n;
-
-  oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
-
-  g = oyFilterGraph_FromNode( conversion->out_, 0 );
-  n = oyFilterNodes_Count( g->nodes );
-  for(i = 0; i < n; ++i)
-  {
-    node = oyFilterNodes_Get( g->nodes, i );
-
-    if(!node->backend_data &&
-       node->filter->api4_->oyCMMFilterNode_ContextToMem &&
-       strlen(node->api7_->context_type))
-      oyFilterNode_ContextSet_( node );
-
-    oyFilterNode_Release( &node );
-  }
-
-  return 0;
-}
-
 /** Function: oyConversion_RunPixels
  *  @memberof oyConversion_s
  *  @brief   iterate over a conversion graph
@@ -20305,7 +20516,7 @@ int                oyConversion_PreProcess (
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/06 (Oyranos: 0.1.8)
- *  @date    2008/10/02
+ *  @date    2009/03/01
  */
 int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
@@ -20315,7 +20526,7 @@ int                oyConversion_RunPixels (
   oyFilterPlug_s * plug = 0;
   oyFilterCore_s * filter = 0;
   oyImage_s * image = 0;
-  int error = 0, result, l_error = 0;
+  int error = 0, result, l_error = 0, i,n;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
@@ -20340,9 +20551,22 @@ int                oyConversion_RunPixels (
     error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
   if(error != 0)
-    l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
+  {
+    n = oyFilterNodes_Count( pixel_access->graph->nodes );
+    for(i = 0; i < n; ++i)
+    {
+      l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
 
-  /* @todo write data back to image in case we obtained copies only */
+      if(error != 0 &&
+         oyOptions_FindString( pixel_access->graph->options, "dirty", "true" ))
+      {
+        oyFilterGraph_PrepareContexts( pixel_access->graph, 1 );
+        error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
+                                                              pixel_access);
+      } else
+        break;
+    }
+  }
 
   return error;
 }
@@ -21651,7 +21875,7 @@ OYAPI oyCMMapiFilters_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->list_ = oyStructList_New( 0 );
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
 
   return s;
 }
