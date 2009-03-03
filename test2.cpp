@@ -1237,6 +1237,7 @@ oyTESTRESULT_e testCMMsShow ()
                                                    oyFILTER_REG_TYPE, 0 );
               api_reg = oyStringCopy_("//", oyAllocateFunc_ );
               STRING_ADD( api_reg, classe );
+              if(classe)
               oyFree_m_( classe );
 
 
@@ -1252,7 +1253,7 @@ oyTESTRESULT_e testCMMsShow ()
                 {
                   api = oyCMMapiFilters_Get( apis, k );
 
-                  snprintf( text_tmp, 65536,
+                  snprintf( text_tmp, 65535,
                             "      [%s]: \"%s\"  %d\n        %s\n",
                             oyStructTypeToText(api->type),
                             api->registration,
@@ -1282,7 +1283,7 @@ oyTESTRESULT_e testCMMsShow ()
                   if(api->type == oyOBJECT_CMM_API6_S)
                   {
                     cmm_api6 = (oyCMMapi6_s*) api;
-                    snprintf( text_tmp, 65536,
+                    snprintf( text_tmp, 65535,
                             "        \"%s\" -> \"%s\"\n",
                             cmm_api6->data_type_in,
                             cmm_api6->data_type_out );
@@ -1323,6 +1324,8 @@ oyTESTRESULT_e testCMMsShow ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyCMMsGetLibNames_( ) found %d                     ", count );
   }
+
+  oyDeAllocateFunc_( text_tmp );
 
   return result;
 }

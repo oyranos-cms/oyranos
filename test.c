@@ -41,7 +41,7 @@ main(int argc, char** argv)
   oyPointer pixel = 0;
   oyPixelAccess_s * pixel_access = 0;
   oyConversion_s * conversion = 0;
-  oyFilter_s      * filter = 0;
+  oyFilterCore_s   * filter = 0;
   oyFilterSocket_s * sock = 0;
   oyOptions_s * options = 0;
   int32_t result = 0;
@@ -150,11 +150,11 @@ main(int argc, char** argv)
 
 
   conversion = oyConversion_New( 0 );
-  filter = oyFilter_New( "//image/input_ppm", 0,0, 0 );
+  filter = oyFilterCore_New( "//image/input_ppm", 0,0, 0 );
   conversion->input = oyFilterNode_Create( filter, 0 );
-  oyFilter_Release( &filter );
+  oyFilterCore_Release( &filter );
 
-  options = oyFilter_OptionsGet( conversion->input->filter,
+  options = oyFilterCore_OptionsGet( conversion->input->filter,
                                  OY_FILTER_GET_DEFAULT );
   error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
                                  "oyranos_logo.ppm", OY_CREATE_NEW );
@@ -167,13 +167,13 @@ main(int argc, char** argv)
   image_out = oyImage_Create( image_in->width, image_in->height, 0, 
                               image_in->layout_[0], prof, 0 );
 
-  filter = oyFilter_New( "//colour/icc", 0,0, 0 );
+  filter = oyFilterCore_New( "//colour/icc", 0,0, 0 );
   error = oyConversion_LinFilterAdd( conversion, filter );
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//colour" );
   
   error = oyConversion_LinOutputAdd( conversion, "//image/output_ppm", image_out );
-  options = oyFilter_OptionsGet( conversion->out_->filter, OY_FILTER_GET_DEFAULT );
+  options = oyFilterCore_OptionsGet( conversion->out_->filter, OY_FILTER_GET_DEFAULT );
   error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
                                  "test_dbg.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
