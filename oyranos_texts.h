@@ -134,7 +134,7 @@ char **     oyLibFilesGet_           ( int             * count,
 
 
 /* oyNoEmptyName_( name ) */
-#define oyNoEmptyName_m_( text_nem ) text_nem?text_nem:"\"---\""
+#define oyNoEmptyName_m_( text_nem ) text_nem?text_nem:"---"
 #define oyNoEmptyString_m_ oyNoEmptyName_m_
 
 char*              oyStringCopy_     ( const char        * text,
