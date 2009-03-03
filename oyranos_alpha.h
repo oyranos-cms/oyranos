@@ -89,7 +89,9 @@ typedef int       (*oyImage_SetPoint_f)( oyImage_s       * image,
                                          int               channel,
                                          oyPointer         data );
 typedef int       (*oyImage_SetLine_f) ( oyImage_s       * image,
-                                         int               line_y,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               pixel_n,
                                          int               channel,
                                          oyPointer         data );
 typedef int       (*oyImage_SetTile_f) ( oyImage_s       * image,
@@ -278,8 +280,9 @@ typedef struct oyStructList_s oyStructList_s;
  *  The memory management can be controlled by the user and will affect internal
  *  and derived data.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2009/03/01
  */
 struct oyObject_s_ {
   oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_OBJECT_S*/
@@ -291,7 +294,8 @@ struct oyObject_s_ {
   oyPointer            parent_;        /*!< @private parent struct of parent_type */
   oyOBJECT_e           parent_type_;   /*!< @private parents struct type */
   oyPointer            backdoor_;      /*!< @private allow non breaking extensions */
-  oyStructList_s     * handles_;       /*!< @private useful as list of oyStruct_s */
+  oyStruct_s         * handles_;       /**< @private addational data and infos,
+                                            currently oyOptions_s */
   oyName_s           * name_;          /*!< @private naming feature */
   int                  ref_;           /*!< @private reference counter */
   int                  version_;       /*!< @private OYRANOS_VERSION */
@@ -1595,10 +1599,8 @@ struct oyImage_s {
   oyCHANNELTYPE_e    * channel_layout; /**< non profile described channels */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
-  oyOptions_s        * options_;       /*!< @private channel layout (? undecided) */
+  oyOptions_s        * options;        /**< display_region, display_name ... */
   oyProfile_s        * profile_;       /*!< @private image profile */
-  int                  display_pos_x;  /**< Possibly this can be part of the output profile; upper position on display of image*/
-  int                  display_pos_y;  /*!< left position on display of image */
 
   oyStruct_s         * pixel_data;     /**< struct used by each subsequent call of g/set* pixel acessors */
   oyImage_GetPoint_f   getPoint;       /**< the point interface */
@@ -1621,13 +1623,15 @@ oyImage_s *    oyImage_Create        ( int                 width,
                                        oyPixel_t           pixel_layout,
                                        oyProfile_s       * profile,
                                        oyObject_s          object);
-oyImage_s *    oyImage_CreateForDisplay( int               width,
+oyImage_s *    oyImage_CreateForDisplay ( int              width,
                                        int                 height, 
                                        oyPointer           channels,
                                        oyPixel_t           pixel_layout,
                                        const char        * display_name,
-                                       int                 display_pos_x,
-                                       int                 display_pos_y,
+                                       int                 window_pos_x,
+                                       int                 window_pos_y,
+                                       int                 window_width,
+                                       int                 window_height,
                                        oyObject_s          object);
 oyImage_s *    oyImage_Copy          ( oyImage_s         * image,
                                        oyObject_s          object );
@@ -1651,6 +1655,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                        int                 do_copy,
                                        oyArray2d_s      ** array,
                                        oyObject_s          obj );
+int            oyImage_ReadArray     ( oyImage_s         * image,
+                                       oyRegion_s        * region,
+                                       oyArray2d_s       * array );
 
 
 /** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html 
@@ -1739,7 +1746,7 @@ typedef enum {
   oyCONNECTOR_EVENT_DATA_CHANGED,      /**< call to update image views */
   oyCONNECTOR_EVENT_STORAGE_CHANGED,   /**< new data accessors */
   oyCONNECTOR_EVENT_INCOMPATIBLE_DATA, /**< can not process image */
-  oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION,/**< can not handle profile */
+  oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION,/**< can not handle option */
   oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT,/**< can not handle profile */
   oyCONNECTOR_EVENT_INCOMPLETE_GRAPH   /**< can not completely process */ 
 } oyCONNECTOR_EVENT_e;
@@ -2330,6 +2337,7 @@ struct oyFilterGraph_s {
 
   oyFilterNodes_s    * nodes;          /**< the nodes in the graph */
   oyFilterPlugs_s    * edges;          /**< the edges in the graph */
+  oyOptions_s        * options;        /**< options, "dirty" ... */
 };
 
 OYAPI oyFilterGraph_s * OYEXPORT
@@ -2343,6 +2351,10 @@ OYAPI oyFilterGraph_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyFilterGraph_Release     ( oyFilterGraph_s  ** obj );
 
+OYAPI int  OYEXPORT
+           oyFilterGraph_PrepareContexts (
+                                       oyFilterGraph_s   * graph,
+                                       int                 flags );
 
 
 
@@ -2495,6 +2507,7 @@ struct oyPixelAccess_s {
                                             is to be seen in relation to the
                                             output_image (of the last filter).*/
   oyImage_s      * output_image;       /**< the image which issued the request*/
+  oyFilterGraph_s * graph;             /**< the graph to process */
 };
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
@@ -2690,8 +2703,6 @@ int                oyConversion_LinOutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,
                                        oyImage_s         * output );
-int                oyConversion_PreProcess (
-                                       oyConversion_s    * conversion );
 int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access );
