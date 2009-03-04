@@ -101,28 +101,31 @@ oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
   return 0;
 }
 
-/** @func    oyraFilterPlug_ImageOutputPPMRun
+/** @func    oyraFilterPlug_ImageOutputPPMWrite
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2009/02/18
  */
-int      oyraFilterPlug_ImageOutputPPMRun (
+int      oyraFilterPlug_ImageOutputPPMWrite (
                                        oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterNode_s * node = 0;
+  oyFilterPlug_s * plug = 0;
+  oyFilterNode_s * input_node = 0,
+                 * node = 0;
   int result = 0;
   const char * filename = 0;
   FILE * fp = 0;
-  oyArray2d_s * array = ticket->array;
+
+  node = socket->node;
+  plug = (oyFilterPlug_s *)node->plugs[0];
+  input_node = plug->remote_socket_->node;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = socket->node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
-
-  node = requestor_plug->node;
+  result = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket );
 
   if(result <= 0)
     filename = oyOptions_FindString( node->filter->options_, "filename", 0 );
@@ -295,7 +298,35 @@ int      oyraFilterPlug_ImageOutputPPMRun (
 oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
                                              oyFLOAT, oyDOUBLE, 0};
 
-oyConnector_s oyra_imageOutputPPM_connector = {
+oyConnector_s oyra_imageOutputPPM_connector_out = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Plug"},
+  oyCONNECTOR_IMAGE, /* connector_type */
+  0, /* is_plug == oyFilterPlug_s */
+  oyra_image_ppm_data_types,
+  4, /* data_types_n; elements in data_types array */
+  -1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  4, /* max_channels_count; */
+  1, /* min_colour_count; */
+  4, /* max_colour_count; */
+  0, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap_bytes; non host byte order */
+  0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  0, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* count in channel_types */
+  1, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnector_s * oyra_imageOutputPPM_connectors_socket[2] = 
+             { &oyra_imageOutputPPM_connector_out, 0 };
+
+oyConnector_s oyra_imageOutputPPM_connector_in = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Plug"},
   oyCONNECTOR_IMAGE, /* connector_type */
@@ -317,11 +348,11 @@ oyConnector_s oyra_imageOutputPPM_connector = {
   0, /* can_subpixel; understand subpixel order */
   0, /* oyCHANNELTYPE_e    * channel_types; */
   0, /* count in channel_types */
-  1, /* id; relative to oyFilter_s, e.g. 1 */
+  2, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s * oyra_imageOutputPPM_connectors[2] = 
-             { &oyra_imageOutputPPM_connector, 0 };
+oyConnector_s * oyra_imageOutputPPM_connectors_plug[2] = 
+             { &oyra_imageOutputPPM_connector_in, 0 };
 
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
@@ -335,18 +366,18 @@ oyConnector_s * oyra_imageOutputPPM_connectors[2] =
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2008/10/07
  */
-oyCMMapi4_s   oyra_api4_image_output_ppm = {
+oyCMMapi4_s   oyra_api4_image_write_ppm = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api7_image_output_ppm, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api7_image_write_ppm, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
   oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output_ppm",
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/write_ppm",
 
   CMM_VERSION, /* int32_t version[3] */
   0,   /* id_; keep empty */
@@ -359,8 +390,8 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image_out_ppm", "Image[out_ppm]", "Output PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Image/Simple Image[out_ppm]", /* category */
+  {oyOBJECT_NAME_S, 0,0,0, "image_write_ppm", "Image[write_ppm]", "Write PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Image/Simple Image[write_ppm]", /* category */
   0,   /* options */
   0    /* opts_ui_ */
 };
@@ -377,7 +408,7 @@ oyCMMapi4_s   oyra_api4_image_output_ppm = {
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2008/10/07
  */
-oyCMMapi7_s   oyra_api7_image_output_ppm = {
+oyCMMapi7_s   oyra_api7_image_write_ppm = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -388,20 +419,20 @@ oyCMMapi7_s   oyra_api7_image_output_ppm = {
   oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/output_ppm",
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/write_ppm",
 
   CMM_VERSION, /* int32_t version[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilterPlug_ImageOutputPPMRun, /* oyCMMFilterPlug_Run_f */
+  oyraFilterPlug_ImageOutputPPMWrite, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
 
-  oyra_imageOutputPPM_connectors,   /* plugs */
+  oyra_imageOutputPPM_connectors_plug,   /* plugs */
   1,   /* plugs_n */
   0,   /* plugs_last_add */
-  0,   /* sockets */
-  0,   /* sockets_n */
+  oyra_imageOutputPPM_connectors_socket,   /* sockets */
+  1,   /* sockets_n */
   0    /* sockets_last_add */
 };
 
@@ -498,10 +529,11 @@ int      oyraFilterPlug_ImageInputPPMRun (
     
   size_t start, end;
 
-  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
+  /* passing through the data reading */
+  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
+     requestor_plug->remote_socket_->data)
   {
     socket = requestor_plug->remote_socket_;
-    node = requestor_plug->node;
     error = oyraFilterPlug_ImageRootRun( requestor_plug, ticket );
 
     return error;
@@ -516,13 +548,11 @@ int      oyraFilterPlug_ImageInputPPMRun (
     requestor_plug = 0;
     node = socket->node;
 
-  } else
-    return 1;
-
-  /* to reuse the requestor_plug is a exception for the starting request */
-  if(requestor_plug)
-    error = socket->node->api7_->oyCMMFilterPlug_Run( requestor_plug,
-                                                      ticket );
+  } else {
+    /* second option to open the file */
+    socket = requestor_plug->remote_socket_;
+    node = socket->node;
+  }
 
 
   if(error <= 0)
@@ -828,7 +858,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
     return FALSE;
   }
 
-  error = oyOptions_SetFromText( &image_in->options_,
+  error = oyOptions_SetFromText( &image_in->options,
                         "//image/input_ppm/filename", filename, OY_CREATE_NEW );
 
   if(error <= 0)
@@ -836,10 +866,21 @@ int      oyraFilterPlug_ImageInputPPMRun (
     socket->data = (oyStruct_s*)oyImage_Copy( image_in, 0 );
   }
 
+  if(ticket &&
+     ticket->output_image &&
+     ticket->output_image->width == 0 &&
+     ticket->output_image->height == 0)
+  {
+    ticket->output_image->width = image_in->width;
+    ticket->output_image->height = image_in->height;
+    oyImage_SetCritical( ticket->output_image, image_in->layout_[0], 0,0 );
+  }
+
   oyImage_Release( &image_in );
   oyFree_m_ (data)
 
-  return error;
+  /* return an error to cause the graph to retry */
+  return 1;
 }
 
 
