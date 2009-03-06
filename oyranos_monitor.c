@@ -417,7 +417,7 @@ oyGetMonitorInfo_                 (const char* display_name,
     DBG_PROG_ENDE
     return 0;
   } else {
-    WARNcc3_S( user_data, "%s: %s \n\t%s",
+    WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
                _("no EDID available from X properties"),
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
                _("Cant read hardware information from device."))
@@ -496,8 +496,9 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
     if(!error)
       *size = prop->size;
     oyBlob_Release( &prop );
-  } else
-    WARNc1_S("%s", _("Could not get Xatom, probably your monitor profile is not set:"));
+  } /*else
+    WARNc1_S("\n  %s",
+         _("Could not get Xatom, probably your monitor profile is not set:"));*/
 
   oyMonitor_release_( &disp );
 #endif /* TODO WIN */
