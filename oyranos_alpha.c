@@ -18917,6 +18917,14 @@ OYAPI oyFilterGraph_s * OYEXPORT
   return s;
 }
 
+/** @internal
+ *  Function oyAdjacencyListAdd_
+ *  @brief   get a graphs adjazency list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/25 (Oyranos: 0.1.10)
+ *  @date    2009/03/06
+ */
 int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
                                        oyFilterNodes_s   * nodes,
                                        oyFilterPlugs_s   * edges,
@@ -18929,7 +18937,7 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
   oyFilterNode_s * node = 0;
 
   if(selector &&
-     (oyOptions_FindString( plug->node->tags, selector, 0 ) == 0 ||
+     (oyOptions_FindString( plug->node->tags, selector, 0 ) == 0 &&
       oyOptions_FindString( plug->remote_socket_->node->tags, selector,0) == 0))
     return added;
 
@@ -18994,6 +19002,14 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
   return added;
 }
 
+/** @internal
+ *  Function oyFilterNode_AddToAdjacencyLst_
+ *  @brief   get a graphs adjazency list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/25 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
 int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
                                        oyFilterNodes_s   * nodes,
                                        oyFilterPlugs_s   * edges,
