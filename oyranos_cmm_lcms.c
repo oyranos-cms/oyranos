@@ -1019,7 +1019,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                  * cprt = 0;
   int profiles_n = 0;
 
-  filter = node->filter;
+  filter = node->core;
   input_node = plug->remote_socket_->node;
   image_input = (oyImage_s*)plug->remote_socket_->data;
   image_output = (oyImage_s*)socket->data;
@@ -1067,7 +1067,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   profs = oyProfiles_MoveIn( profs, &p, -1 );
 
   /* effect profiles */
-  o = oyOptions_Find( node->filter->options_, "profiles_effect" );
+  o = oyOptions_Find( node->core->options_, "profiles_effect" );
   if(o)
   {
     if( o->value_type != oyVAL_STRUCT ||
@@ -1094,7 +1094,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   }
 
   /* simulation profile */
-  o = oyOptions_Find( node->filter->options_, "profiles_simulation" );
+  o = oyOptions_Find( node->core->options_, "profiles_simulation" );
   if(o)
   {
     if( o->value_type != oyVAL_STRUCT ||
@@ -1145,7 +1145,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   xform = lcmsCMMColourConversion_Create_( lps, profiles_n, simulation,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
-                                           node->filter->options_, 0, 0);
+                                           node->core->options_, 0, 0);
   error = !xform;
 
   if(!error)
@@ -1188,7 +1188,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         char * cc_name = lcmsFilterNode_GetText( node, oyNAME_NICK,
                                                  oyAllocateFunc_ );
         oyName_s * name = oyName_new(0);
-        const char * lib_name = node->filter->api4_->id_;
+        const char * lib_name = node->core->api4_->id_;
 
         name = oyName_set_ ( name, cc_name, oyNAME_NAME,
                              oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -1321,7 +1321,7 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
     xform = lcmsCMMColourConversion_Create_( lps, 1, 0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
-                                           node->filter->options_,
+                                           node->core->options_,
                                            &ltw, cmm_ptr_out );
     CMMProfileRelease_M (lps[0] );
   }

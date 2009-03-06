@@ -128,7 +128,7 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
   result = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket );
 
   if(result <= 0)
-    filename = oyOptions_FindString( node->filter->options_, "filename", 0 );
+    filename = oyOptions_FindString( node->core->options_, "filename", 0 );
 
   if(filename)
     fp = fopen( filename, "wb" );
@@ -390,8 +390,8 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image_write_ppm", "Image[write_ppm]", "Write PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Image/Simple Image[write_ppm]", /* category */
+  {oyOBJECT_NAME_S, 0,0,0, "write_ppm", "Image[write_ppm]", "Write PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Files/Write PPM", /* category */
   0,   /* options */
   0    /* opts_ui_ */
 };
@@ -556,7 +556,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
 
   if(error <= 0)
-    filename = oyOptions_FindString( node->filter->options_, "filename", 0 );
+    filename = oyOptions_FindString( node->core->options_, "filename", 0 );
 
   if(filename)
     fp = fopen( filename, "rm" );
@@ -858,7 +858,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
     return FALSE;
   }
 
-  error = oyOptions_SetFromText( &image_in->options,
+  error = oyOptions_SetFromText( &image_in->tags,
                         "//image/input_ppm/filename", filename, OY_CREATE_NEW );
 
   if(error <= 0)
@@ -949,8 +949,8 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image_in_ppm", "Image[in_ppm]", "Input PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Image/Simple Image[in_ppm]", /* category */
+  {oyOBJECT_NAME_S, 0,0,0, "input_ppm", "Image[input_ppm]", "Input PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Files/Read PPM", /* category */
   0,   /* options */
   0    /* opts_ui_ */
 };
