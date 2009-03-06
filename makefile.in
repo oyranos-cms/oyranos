@@ -202,7 +202,7 @@ SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
 		$(CFILES_CMM_lcms) $(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
 		$(CFILES_CMM_oyIM) \
-		$(CXXFILES_FLTK) test.c test2.cpp
+		$(CXXFILES_FLTK)
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
@@ -226,7 +226,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	test2.o tests/test_oyranos.o test.o
 
 
-INCL_DEP = $(INCL) $(SOURCES)
+INCL_DEP = $(INCL) $(SOURCES) $(CXXFILES_Flmm) $(EXAMPLES_C) test.c test2.cpp
 
 .PHONY:	docu test2
 
