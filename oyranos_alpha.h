@@ -1669,6 +1669,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyRegion_s        * region,
                                        oyArray2d_s       * array );
+oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
+oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
 
 /** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html 
