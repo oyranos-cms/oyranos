@@ -1610,7 +1610,7 @@ struct oyImage_s {
   oyCHANNELTYPE_e    * channel_layout; /**< non profile described channels */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
-  oyOptions_s        * options;        /**< display_region, display_name ... */
+  oyOptions_s        * tags;           /**< display_region, display_name ... */
   oyProfile_s        * profile_;       /*!< @private image profile */
 
   oyStruct_s         * pixel_data;     /**< struct used by each subsequent call of g/set* pixel acessors */
@@ -2227,8 +2227,9 @@ struct oyFilterNode_s {
   oyFilterSocket_s  ** sockets;        /**< possible output connectors */
   int                  sockets_n_;     /**< readonly number of outputs */
 
-  oyFilterCore_s     * filter;         /**< the filter */
+  oyFilterCore_s     * core;           /**< the filter core */
   char               * relatives_;     /**< @private hint about belonging to a filter */
+  oyOptions_s        * tags;           /**< infos, e.g. group markers */
 
   /** the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to oyCMMapi4_s::context_type */
   oyCMMptr_s         * backend_data;
