@@ -2739,13 +2739,16 @@ int                oyConversion_Release (
                                        oyConversion_s   ** conversion );
 
 
-int                oyConversion_LinFilterAdd (
+/*int                oyConversion_LinFilterAdd (
                                        oyConversion_s    * conversion,
                                        oyFilterCore_s    * filter );
 int                oyConversion_LinOutputAdd (
                                        oyConversion_s    * conversion,
                                        const char        * filter_registration,
-                                       oyImage_s         * output );
+                                       oyImage_s         * output );*/
+int                oyConversion_Set  ( oyConversion_s    * conversion,
+                                       oyFilterNode_s    * input,
+                                       oyFilterNode_s    * output );
 int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access );
