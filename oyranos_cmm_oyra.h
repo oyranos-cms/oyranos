@@ -79,10 +79,12 @@ extern oyDATATYPE_e  oyra_image_data_types[7];
 
 extern oyCMMapi4_s   oyra_api4_image_input_ppm;
 extern oyCMMapi7_s   oyra_api7_image_input_ppm;
-extern oyCMMapi4_s   oyra_api4_image_output_ppm;
-extern oyCMMapi7_s   oyra_api7_image_output_ppm;
+extern oyCMMapi4_s   oyra_api4_image_write_ppm;
+extern oyCMMapi7_s   oyra_api7_image_write_ppm;
 extern oyCMMapi4_s   oyra_api4_image_regions;
 extern oyCMMapi7_s   oyra_api7_image_regions;
+extern oyCMMapi4_s   oyra_api4_image_display;
+extern oyCMMapi7_s   oyra_api7_image_display;
 extern oyCMMapi4_s   oyra_api4_image_output;
 extern oyCMMapi7_s   oyra_api7_image_output;
 extern oyCMMapi4_s   oyra_api4_image_root;
