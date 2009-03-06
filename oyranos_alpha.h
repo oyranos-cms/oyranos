@@ -2383,7 +2383,22 @@ OYAPI int  OYEXPORT
            oyFilterGraph_PrepareContexts (
                                        oyFilterGraph_s   * graph,
                                        int                 flags );
-
+OYAPI oyFilterNode_s * OYEXPORT
+           oyFilterGraph_GetNode     ( oyFilterGraph_s   * graph,
+                                       int                 pos,
+                                       const char        * registration );
+OYAPI int  OYEXPORT
+           oyFilterGraph_SetFromNode ( oyFilterGraph_s   * graph,
+                                       oyFilterNode_s    * node,
+                                       const char        * mark,
+                                       int                 flags );
+OYAPI char * OYEXPORT
+           oyFilterGraph_ToText      ( oyFilterGraph_s   * graph,
+                                       oyFilterNode_s    * input,
+                                       oyFilterNode_s    * output,
+                                       const char        * head_line,
+                                       int                 reserved,
+                                       oyAlloc_f           allocateFunc );
 
 
 typedef struct oyPixelAccess_s oyPixelAccess_s;
