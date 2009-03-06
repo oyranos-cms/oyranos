@@ -2075,8 +2075,6 @@ const char * oyFilterCore_CategoryGet( oyFilterCore_s    * filter,
 oyOptions_s* oyFilterCore_OptionsSet ( oyFilterCore_s    * filter,
                                        oyOptions_s       * options,
                                        int                 flags );
-oyOptions_s* oyFilterCore_OptionsGet ( oyFilterCore_s    * filter,
-                                       int                 flags );
 const char * oyFilterCore_WidgetsSet ( oyFilterCore_s    * filter,
                                        const char        * widgets,
                                        int                 flags );
@@ -2284,6 +2282,8 @@ OYAPI oyFilterSocket_s * OYEXPORT
 OYAPI oyFilterPlug_s * OYEXPORT
                oyFilterNode_GetPlug  ( oyFilterNode_s    * node,
                                        int                 pos );
+oyOptions_s*   oyFilterNode_OptionsGet(oyFilterNode_s    * node,
+                                       int                 flags );
 const char *   oyFilterNode_GetText  ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type );
 OYAPI int  OYEXPORT
