@@ -191,8 +191,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
-                 OY_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-                 " oyGetMonitorInfo_lib returned with %s; device_name:"
+                 OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
+                 "  oyGetMonitorInfo_lib returned with %s; device_name:"
                  " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
                  oyNoEmptyString_m_( device_name ) );
 
@@ -354,8 +354,8 @@ int            oyX1Configs_FromPattern (
           /** Warn and return issue on not found profile. */
           if(!size || !data)
           {
-            WARNc1_S("Could not obtain _ICC_PROFILE information for %s",
-            texts[i]);
+            WARNc1_S("\n  Could not obtain _ICC_PROFILE(_xxx) information for "
+                     "%s", texts[i]);
             error = -1;
           } else
           {
