@@ -2237,6 +2237,11 @@ struct oyFilterNode_s {
 };
 
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );
+oyFilterNode_s *   oyFilterNode_NewWith (
+                                       const char        * registration,
+                                       const char        * cmm,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object );
 oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
                                        oyObject_s          object );
 oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
@@ -2259,6 +2264,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
                                        oyFilterNode_s    * output,
                                        const char        * plug_nick,
                                        int                 flags );
+int            oyFilterNode_Disconnect(oyFilterPlug_s    * edge );
 OYAPI oyConnector_s * OYEXPORT
                oyFilterNode_ShowConnector (
                                        oyFilterNode_s    * node,
@@ -2291,6 +2297,14 @@ OYAPI int  OYEXPORT
 oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
+oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
+                                       int                 socket_pos );
+int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
+                                       oyStruct_s        * data,
+                                       int                 socket_pos,
+                                       oyObject_s        * object );
+
+void oyShowGraph_( oyFilterNode_s * c, const char * selector );
 
 
 
