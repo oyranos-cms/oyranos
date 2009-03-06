@@ -696,6 +696,13 @@ int            oyOptions_DoFilter    ( oyOptions_s       * s,
                                        const char        * filter_type );
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type );
+int            oyOptions_CountType   ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       oyOBJECT_e          type );
+oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
+                                       int                 pos,
+                                       const char        * registration,
+                                       oyOBJECT_e          type );
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
                                        const char        * key );
 const char *   oyOptions_FindString  ( oyOptions_s       * options,
