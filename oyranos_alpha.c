@@ -1814,7 +1814,7 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
   if(error <= 0)
   {
     reg = oyStringCopy_( "//", oyAllocateFunc_ );
-    tmp = oyFilterRegistrationToText( node->filter->registration_,
+    tmp = oyFilterRegistrationToText( node->core->registration_,
                                       oyFILTER_REG_TYPE,0);
     STRING_ADD( reg, tmp );
     oyFree_m_( tmp );
@@ -7027,6 +7027,102 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   return erg;
 }
 
+/** Function oyOptions_CountTyped
+ *  @memberof oyOptions_s
+ *  @brief   search for options with special attributes
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/04 (Oyranos: 0.1.10)
+ *  @date    2009/03/04
+ */
+int            oyOptions_CountType   ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       oyOBJECT_e          type )
+{
+  int error = !options;
+  int i, n, m = 0, found;
+  oyOption_s * o = 0;
+  oyOptions_s * s = options;
+
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 );
+
+    n = oyOptions_Count( options );
+    for(i = 0; i < n;  ++i)
+    {
+      o = oyOptions_Get( options, i );
+      found = 1;
+
+      if(found && registration &&
+         !oyFilterRegistrationMatch( o->registration, registration, 0 ))
+          found = 0;
+
+      if(found && type && o->value_type == oyVAL_STRUCT &&
+         o->value && o->value->oy_struct->type_ == type)
+        ++m;
+
+      oyOption_Release( &o );
+    }
+
+  return m;
+}
+
+/** Function oyOptions_GetType
+ *  @memberof oyOptions_s
+ *  @brief   select from options with special attribute
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/04 (Oyranos: 0.1.10)
+ *  @date    2009/03/04
+ */
+oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
+                                       int                 pos,
+                                       const char        * registration,
+                                       oyOBJECT_e          type )
+{
+  int error = !options;
+  int i, n, m = -1, found;
+  oyOption_s * o = 0;
+  oyOptions_s * s = options;
+  oyStruct_s * st = 0;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 );
+
+    n = oyOptions_Count( options );
+    for(i = 0; i < n;  ++i)
+    {
+      o = oyOptions_Get( options, i );
+      found = 1;
+
+      if(found && registration &&
+         !oyFilterRegistrationMatch( o->registration, registration, 0 ))
+          found = 0;
+
+      if(found && type && 
+         (o->value_type != oyVAL_STRUCT || !o->value ||
+          o->value->oy_struct->type_ != type))
+        found = 0;
+
+      if(found)
+      if(pos == -1 || ++m == pos)
+      {
+        if(o->value->oy_struct->copy)
+          st = o->value->oy_struct->copy( o->value->oy_struct, 0 );
+        else
+          st = o->value->oy_struct;
+
+        oyOption_Release( &o );
+        break;
+      }
+
+      oyOption_Release( &o );
+    }
+
+  return st;
+}
+
 /** Function oyOptions_Find
  *  @memberof oyOptions_s
  *  @brief   search for a certain option key
@@ -7116,7 +7212,8 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
       {
         char * key_tmp = oyFilterRegistrationToText( option_a->registration,
                                                      oyFILTER_REG_MAX, 0 );
-        if(oyStrcmp_( key_tmp, key) == 0)
+        if((!oyStrchr_(key, OY_SLASH_C) && oyStrcmp_( key_tmp, key) == 0) ||
+           oyStrcmp_( option_a->registration, key ) == 0 )
         {
           if(option_a->value_type == oyVAL_STRING)
           {
@@ -7205,9 +7302,63 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
         error = oyOption_SetFromText( o, value, flags );
 
       oyOptions_MoveIn( (*obj), &o, -1 );
+
+    } else
+      oyOption_SetFromText( o, value, flags );
+
+    oyOption_Release( &o );
+  }
+
+  return error;
+}
+
+/** Function oyOptions_MoveInStruct
+ *  @memberof oyOptions_s
+ *  @brief   change a value
+ *
+ *  @param         obj                 the options list or set to manipulate
+ *  @param         registration        the options registration name, e.g.
+ *                                  "share/freedesktop.org/colour/my_app/my_opt"
+ *  @param         oy_struct           the Oyranos style object to move in
+ *  @param         flags               can be OY_CREATE_NEW for a new option,
+ *                                     or OY_ADD_ALWAYS
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
+                                       const char        * registration,
+                                       oyStruct_s       ** oy_struct,
+                                       uint32_t            flags )
+{
+  int error = (obj && *obj && (*obj)->type_ != oyOBJECT_OPTIONS_S) ||
+              !registration ||
+              !oy_struct;
+  oyOption_s * o = 0;
+
+  if(error <= 0)
+  {
+    if(!*obj)
+      *obj = oyOptions_New( 0 );
+
+    o = oyOptions_Find( *obj, registration );
+
+    /** Add a new option if the OY_CREATE_NEW flag is present.
+     */
+    if((!o && oyToCreateNew_m(flags)) ||
+        oyToAddAlways_m(flags))
+    {
+      o = oyOption_New( registration, (*obj)->oy_ );
+      error = !o;
+
+      if(error <= 0)
+        error = oyOption_StructMoveIn( o, oy_struct );
+
+      oyOptions_MoveIn( (*obj), &o, -1 );
     }
 
-    oyOption_SetFromText( o, value, flags );
+    error = oyOption_StructMoveIn( o, oy_struct );
     oyOption_Release( &o );
   }
 
@@ -14257,6 +14408,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         oyProfile_s     * profile,
                                         oyObject_s        object)
 {
+  oyRegion_s * display_region = 0;
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_IMAGE_S;
 # define STRUCT_TYPE oyImage_s
@@ -14310,6 +14462,17 @@ oyImage_s *    oyImage_Create         ( int               width,
     oyImage_DataSet( s, 0, oyImage_GetArray2dPointPlanar,
                            oyImage_GetArray2dLinePlanar, 0, 0,0,0 );
 
+  if(error <= 0)
+  {
+    display_region = oyRegion_New_( 0 );
+
+    error = !display_region;
+    if(error <= 0)
+      oyOptions_MoveInStruct( &s->tags,
+                              "//image/output/display_region",
+                              (oyStruct_s**)&display_region, OY_CREATE_NEW );
+  }
+
   return s;
 }
 
@@ -14345,7 +14508,6 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
   oyImage_s * s = oyImage_Create( width, height, channels, pixel_layout,
                                   p, object );
   int error = !s;
-  oyOption_s * o = 0;
   oyRegion_s * display_region = 0;
 
   oyProfile_Release( &p );
@@ -14359,21 +14521,16 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
       error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout, s->profile_ );
 
     if(error <= 0)
-      display_region = oyRegion_NewWith( display_pos_x, display_pos_y,
-                                       display_width, display_height ,0 );
+    {
+      display_region = (oyRegion_s*) oyOptions_GetType( s->tags, -1,
+                                          "display_region", oyOBJECT_REGION_S );
+      oyRegion_SetGeo( display_region, display_pos_x, display_pos_y,
+                                       display_width, display_height );
+    }
     error = !display_region;
-    if(error <= 0)
-      o = oyOption_New( "//image/output/display_region", object );
-    error = !o;
-    if(error <= 0)
-      error = oyOption_StructMoveIn( o, (oyStruct_s**) &display_region );
-    if(error <= 0 && !s->options)
-      s->options = oyOptions_New( object );
-    if(error <= 0)
-      error = oyOptions_MoveIn( s->options, &o, -1 );
     
     if(error <= 0 && display_name)
-      error = oyOptions_SetFromText( &s->options, "//image/output/display_name",
+      error = oyOptions_SetFromText( &s->tags, "//image/output/display_name",
                                      display_name, OY_CREATE_NEW );
 
     if(error > 0)
@@ -14518,8 +14675,8 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
 
   if(options)
   {
-    oyOptions_Release( &s->options );
-    s->options = oyOptions_Copy( options, s->oy_ );
+    oyOptions_Release( &s->tags );
+    s->tags = oyOptions_Copy( options, s->oy_ );
   }
 
   if(pixel_layout)
@@ -14710,6 +14867,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       a->data_area->y = 0;
       a->data_area->width = image->width * channel_n;
       a->data_area->height = h;
+      /* we allocate each line */
+      a->own_lines = 2;
+      do_copy = 1;
     }
 
     if( !a )
@@ -14831,7 +14991,49 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     }
   }
 
+  oyRegion_Release( &pixel_region );
+
   return error;
+}
+
+/** Function oyImage_PixelLayoutGet
+ *  @memberof oyImage_s
+ *  @brief   get the pixel layout
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return s->layout_[oyLAYOUT];
+}
+
+/** Function oyImage_TagsGet
+ *  @memberof oyImage_s
+ *  @brief   get object tags
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return oyOptions_Copy( s->tags, 0 );
 }
 
 /** @} *//* objects_image */ 
@@ -16325,7 +16527,6 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
  *  back end selection: \n
  *  - the user knows, which kind of filter is requested -> registration, e.g. "//color"
  *  - the user probably knows, which special CMM to use (e.g. lcms, icc, shiva)
- *  - the user passes options, which might decide about a type of CMM (e.g. ICC)
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/06/24 (Oyranos: 0.1.8)
@@ -16605,38 +16806,6 @@ const char * oyFilterCore_CategoryGet( oyFilterCore_s    * filter,
   return filter->category_;
 }
 
-oyOptions_s* oyFilterCore_OptionsSet ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * options,
-                                       int                 flags );
-/** Function: oyFilterCore_OptionsGet
- *  @memberof oyFilterCore_s
- *  @brief   get filter options
- *
- *  @param[in,out] filter              filter object
- *  @param         flags               possible: OY_FILTER_GET_DEFAULT | oyOPTIONSOURCE_FILTER | oyOPTIONATTRIBUTE_ADVANCED
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-oyOptions_s* oyFilterCore_OptionsGet ( oyFilterCore_s    * filter,
-                                       int                 flags )
-{
-  oyOptions_s * options = 0;
-
-  if(!filter)
-    return 0;
-
-  if(flags || !filter->options_)
-  {
-    options = oyOptions_ForFilter_( filter, flags, filter->oy_ );
-    if(!filter->options_)
-      filter->options_ = oyOptions_Copy( options, 0 );
-    return options;
-
-  } else
-    return oyOptions_Copy( filter->options_, 0 );
-}
 const char * oyFilterCore_WidgetsSet ( oyFilterCore_s    * filter,
                                        const char        * widgets,
                                        int                 flags );
@@ -16966,7 +17135,7 @@ oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object )
   return s;
 }
 
-/** Function: oyFilterNode_Create
+/** Function oyFilterNode_Create
  *  @memberof oyFilterNode_s
  *  @brief   initialise a new filter node object properly
  *
@@ -16993,8 +17162,8 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
 
   if(error <= 0)
   {
-    s->filter = oyFilterCore_Copy( filter, object );
-    if(!s->filter)
+    s->core = oyFilterCore_Copy( filter, object );
+    if(!s->core)
     {
       WARNc2_S("Could not copy filter: %s %s",
                filter->registration_, filter->category_)
@@ -17003,7 +17172,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
 
     if(error <= 0)
       s->api7_ = (oyCMMapi7_s*) oyCMMsGetFilterApi_( 0, 0,
-                                s->filter->registration_, oyOBJECT_CMM_API7_S );
+                                s->core->registration_, oyOBJECT_CMM_API7_S );
     if(error <= 0 && !s->api7_)
     {
       WARNc2_S("Could not obtain filter api7 for: %s %s",
@@ -17021,7 +17190,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
         --s->sockets_n_;
     }
 
-    if(s->filter)
+    if(s->core)
     {
       size_t len = sizeof(oyFilterSocket_s*) *
              (oyFilterNode_EdgeCount( s, 0, 0 ) + 1);
@@ -17035,11 +17204,37 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
       memset( s->plugs, 0, len );
 
       s->relatives_ = allocateFunc_( oyStrlen_(filter->category_) + 24 );
-      oySprintf_( s->relatives_, "%d: %s", oyObject_GetId(s->oy_), s->filter->category_);
+      oySprintf_( s->relatives_, "%d: %s", oyObject_GetId(s->oy_), s->core->category_);
     }
   }
 
   return s;
+}
+
+/** Function oyFilterNode_NewWith
+ *  @memberof oyFilterNode_s
+ *  @brief   initialise a new filter node object properly
+ *
+ *  @param         registration        a registration string, @see backend_api
+ *  @param         cmm                 a CMM selector
+ *  @param         options             options for the filter
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+oyFilterNode_s *   oyFilterNode_NewWith (
+                                       const char        * registration,
+                                       const char        * cmm,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  oyFilterCore_s * core = oyFilterCore_New( registration, cmm, options, object);
+  oyFilterNode_s * node = oyFilterNode_Create( core, object );
+
+  oyFilterCore_Release( &core );
+  return node;
 }
 
 /**
@@ -17065,7 +17260,7 @@ oyFilterNode_s *   oyFilterNode_Copy_( oyFilterNode_s    * node,
   if(!node || !object)
     return s;
 
-  s = oyFilterNode_Create( node->filter, object );
+  s = oyFilterNode_Create( node->core, object );
   error = !s;
   allocateFunc_ = s->oy_->allocateFunc_;
 
@@ -17158,6 +17353,8 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
 
   oyObject_Ref(s->oy_);
 
+  oyOptions_Release( &s->tags );
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -17218,7 +17415,7 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
 
-  if(!node->filter || !node->api7_)
+  if(!node->core || !node->api7_)
     return 0;
 
   /* plugs */
@@ -17312,7 +17509,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
   if(error <= 0)
   {
     if(error <= 0 &&
-       (!s->filter || !s->filter->api4_))
+       (!s->core || !s->core->api4_))
     {
       WARNc2_S( "%s: %s",
       _("attempt to add a incomplete filter"), s->relatives_ );
@@ -17322,7 +17519,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
        !oyFilterNode_EdgeCount( input, 0, OY_FILTEREDGE_FREE ))
     {
       WARNc2_S( "%s: %s", "input node has no free socket",
-                oyFilterCore_GetName( input->filter, oyNAME_NAME) );
+                oyFilterCore_GetName( input->core, oyNAME_NAME) );
       error = 1;
     }
 
@@ -17353,7 +17550,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
       if(!out_plug)
       {
         WARNc2_S( "\n  %s: \"%s\"", "Could not find plug for filter",
-                  oyFilterCore_GetName( output->filter, oyNAME_NAME) );
+                  oyFilterCore_GetName( output->core, oyNAME_NAME) );
         error = 1;
       }
 
@@ -17386,6 +17583,25 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
   return error;
 }
 
+/** Function oyFilterNode_Disconnect
+ *  @memberof oyFilterNode_s
+ *  @brief   disconnect two nodes by a edge
+ *
+ *  @param         edge                plug
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/04 (Oyranos: 0.1.10)
+ *  @date    2009/03/04
+ */
+int            oyFilterNode_Disconnect(oyFilterPlug_s    * edge )
+{
+  oyFilterPlug_s * s = edge;
+  oyFilterSocket_Callback( s, oyCONNECTOR_EVENT_RELEASED );
+  oyFilterSocket_Release( &s->remote_socket_ );
+  return 0;
+}
+
 /** Function: oyFilterNode_ShowConnector
  *  @memberof oyFilterNode_s
  *  @brief   get a connector description from a filter backend
@@ -17413,7 +17629,7 @@ OYAPI oyConnector_s * OYEXPORT
   oyConnector_s * pattern = 0;
   oyObject_s object = 0;
 
-  if(!node || !node->filter || node->type_ != oyOBJECT_FILTER_NODE_S ||
+  if(!node || !node->core || node->type_ != oyOBJECT_FILTER_NODE_S ||
      !node->api7_)
     return 0;
 
@@ -17467,7 +17683,7 @@ OYAPI int  OYEXPORT
   oyDATATYPE_e data_type = 0;
 
   if(node_first && node_first->type_ == oyOBJECT_FILTER_NODE_S &&
-     node_first->filter)
+     node_first->core)
     a = oyFilterNode_ShowConnector( node_first, pos_first, 0 );
 
   if(a && b && b->type_ == oyOBJECT_CONNECTOR_S)
@@ -17614,7 +17830,7 @@ OYAPI int  OYEXPORT
         {
           if(oyToFilterEdge_Free_m(flags))
           {
-            if( node->plugs[i + j] )
+            if( node->plugs[i + j] && node->plugs[i + j]->remote_socket_ )
               continue;
             else
               ++nth;
@@ -17622,7 +17838,7 @@ OYAPI int  OYEXPORT
           } else
           if(oyToFilterEdge_Connected_m(flags))
           {
-            if( node->plugs[i + j] )
+            if( node->plugs[i + j] && node->plugs[i + j]->remote_socket_ )
               ++nth;
             else
               continue;
@@ -17663,7 +17879,8 @@ OYAPI int  OYEXPORT
           /* 3.1 check only unused connectors */
           if(oyToFilterEdge_Free_m(flags))
           {
-            if( node->sockets[i + j] )
+            if( node->sockets[i + j] &&
+                oyFilterPlugs_Count( node->sockets[i + j]->requesting_plugs_ ) )
               continue;
             else
               ++nth;
@@ -17672,7 +17889,8 @@ OYAPI int  OYEXPORT
           /* 3.2 check only used connectors */
           if(oyToFilterEdge_Connected_m(flags))
           {
-            if( node->sockets[i + j] )
+            if( node->sockets[i + j] &&
+                oyFilterPlugs_Count( node->sockets[i + j]->requesting_plugs_ ) )
               ++nth;
             else
               continue;
@@ -17792,6 +18010,42 @@ OYAPI oyFilterPlug_s * OYEXPORT
   return s;
 }
 
+oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
+                                       oyOptions_s       * options,
+                                       int                 flags );
+/** Function: oyFilterNode_OptionsGet
+ *  @memberof oyFilterNode_s
+ *  @brief   get filter options
+ *
+ *  @param[in,out] filter              filter object
+ *  @param         flags               possible: OY_FILTER_GET_DEFAULT | oyOPTIONSOURCE_FILTER | oyOPTIONATTRIBUTE_ADVANCED
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2009/03/05
+ */
+oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
+                                       int                 flags )
+{
+  oyOptions_s * options = 0;
+  oyFilterNode_s * s = node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  if(flags || !node->core->options_)
+  {
+    options = oyOptions_ForFilter_( node->core, flags, node->core->oy_ );
+    if(!node->core->options_)
+      node->core->options_ = oyOptions_Copy( options, 0 );
+    return options;
+
+  } else
+    return oyOptions_Copy( node->core->options_, 0 );
+}
+
 /** Function oyFilterNode_GetText
  *  @memberof oyFilterNode_s
  *  @brief   serialise filter node to text
@@ -17832,7 +18086,7 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   hashTextAdd_m( "<oyFilterNode_s>\n  " );
 
   /* the filter text */
-  hashTextAdd_m( oyFilterCore_GetText( node->filter, oyNAME_NAME ) );
+  hashTextAdd_m( oyFilterCore_GetText( node->core, oyNAME_NAME ) );
 
   /* pick all plug (input) data */
   in_datas = oyFilterNode_DataGet_( node, 1 );
@@ -17841,7 +18095,7 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   out_datas = oyFilterNode_DataGet_( node, 0 );
 
   /* make a description */
-  tmp = oyContextCollectData_( (oyStruct_s*)node, s->filter->options_,
+  tmp = oyContextCollectData_( (oyStruct_s*)node, s->core->options_,
                                in_datas, out_datas );
   hashTextAdd_m( tmp );
 
@@ -17986,6 +18240,81 @@ oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
 
   return ptr;
 }
+
+/** Function oyFilterNode_DataGet
+ *  @memberof oyFilterNode_s
+ *  @brief   get process data from a filter socket
+ *
+ *  @param[in]     node                filter node
+ *  @param[in]     socket_pos          position of socket
+ *  @return                            the data
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
+                                       int                 socket_pos )
+{
+  oyFilterNode_s * s = node;
+  oyStruct_s * data = 0;
+  oyFilterSocket_s * socket = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 );
+
+  socket = oyFilterNode_GetSocket( node, socket_pos );
+  if(socket)
+    data = socket->data;
+
+  return data;
+}
+
+/** Function oyFilterNode_DataSet
+ *  @memberof oyFilterNode_s
+ *  @brief   Set process data to a filter socket
+ *
+ *  @param[in,out] node                filter node
+ *  @param[in]     data                data
+ *  @param[in]     socket_pos          position of socket
+ *  @param[in]     object              a object to not only set a reference
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
+                                       oyStruct_s        * data,
+                                       int                 socket_pos,
+                                       oyObject_s        * object )
+{
+  oyFilterNode_s * s = node;
+  oyFilterSocket_s * socket = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 );
+
+  socket = oyFilterNode_GetSocket( node, socket_pos );
+  
+  if(socket)
+  {
+    if(socket->data && socket->data->release)
+      socket->data->release( &socket->data );
+
+    if(data && data->copy)
+      socket->data = data->copy( data, object );
+    else
+      socket->data = data;
+  }
+
+  return 0;
+}
+
 
 /**
  *  @internal
@@ -18155,7 +18484,7 @@ int oyPointerRelease                 ( oyPointer         * ptr )
 int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
 {
   int error = 0;
-  oyFilterCore_s * s = node->filter;
+  oyFilterCore_s * s = node->core;
 
   if(error <= 0)
   {
@@ -18590,12 +18919,19 @@ OYAPI oyFilterGraph_s * OYEXPORT
 
 int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
                                        oyFilterNodes_s   * nodes,
-                                       oyFilterPlugs_s   * edges )
+                                       oyFilterPlugs_s   * edges,
+                                       const char        * selector,
+                                       int                 flags )
 {
   int added = 0, found = 0,
       i,n;
   oyFilterPlug_s * p = 0;
   oyFilterNode_s * node = 0;
+
+  if(selector &&
+     (oyOptions_FindString( plug->node->tags, selector, 0 ) == 0 ||
+      oyOptions_FindString( plug->remote_socket_->node->tags, selector,0) == 0))
+    return added;
 
   n = oyFilterPlugs_Count( edges );
   for(i = 0; i < n; ++i)
@@ -18614,40 +18950,44 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
 
 
     found = 0;
-    n = oyFilterNodes_Count( nodes );
-    for(i = 0; i < n; ++i)
     {
-      node = oyFilterNodes_Get( nodes, i );
-      if(oyObject_GetId( plug->node->oy_ ) == oyObject_GetId( node->oy_ ))
-        found = 1;
-      oyFilterNode_Release( &node );
-    }
-    if(!found)
-    {
-      node = oyFilterNode_Copy( plug->node, 0 );
-      oyFilterNodes_MoveIn( nodes, &node, -1 );
+      n = oyFilterNodes_Count( nodes );
+      for(i = 0; i < n; ++i)
+      {
+        node = oyFilterNodes_Get( nodes, i );
+        if(oyObject_GetId( plug->node->oy_ ) == oyObject_GetId( node->oy_))
+          found = 1;
+        oyFilterNode_Release( &node );
+      }
+      if(!found)
+      {
+        node = oyFilterNode_Copy( plug->node, 0 );
+        oyFilterNodes_MoveIn( nodes, &node, -1 );
+      }
     }
 
-    found = 0;
-    n = oyFilterNodes_Count( nodes );
-    for(i = 0; i < n; ++i)
     {
-      node = oyFilterNodes_Get( nodes, i );
-      if(plug->remote_socket_ && plug->remote_socket_->node)
+      found = 0;
+      n = oyFilterNodes_Count( nodes );
+      for(i = 0; i < n; ++i)
       {
-        if(oyObject_GetId( plug->remote_socket_->node->oy_ ) ==
-           oyObject_GetId( node->oy_ ))
+        node = oyFilterNodes_Get( nodes, i );
+        if(plug->remote_socket_ && plug->remote_socket_->node)
+        {
+          if(oyObject_GetId( plug->remote_socket_->node->oy_ ) ==
+             oyObject_GetId( node->oy_ ))
+            found = 1;
+
+        } else
           found = 1;
 
-      } else
-        found = 1;
-
-      oyFilterNode_Release( &node );
-    }
-    if(!found)
-    {
-      node = oyFilterNode_Copy( plug->remote_socket_->node, 0 );
-      oyFilterNodes_MoveIn( nodes, &node, -1 );
+        oyFilterNode_Release( &node );
+      }
+      if(!found)
+      {
+        node = oyFilterNode_Copy( plug->remote_socket_->node, 0 );
+        oyFilterNodes_MoveIn( nodes, &node, -1 );
+      }
     }
   }
 
@@ -18656,7 +18996,9 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
 
 int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
                                        oyFilterNodes_s   * nodes,
-                                       oyFilterPlugs_s   * edges )
+                                       oyFilterPlugs_s   * edges,
+                                       const char        * mark,
+                                       int                 flags )
 {
   int n, i, j, p_n;
   oyFilterPlug_s * p = 0;
@@ -18665,9 +19007,9 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
   for( i = 0; i < n; ++i )
   {
     if( s->plugs[i] && s->plugs[i]->remote_socket_ )
-      if(oyAdjacencyListAdd_( s->plugs[i], nodes, edges ))
+      if(oyAdjacencyListAdd_( s->plugs[i], nodes, edges, mark, flags ))
         oyFilterNode_AddToAdjacencyLst_( s->plugs[i]->remote_socket_->node, 
-                                         nodes, edges );
+                                         nodes, edges, mark, flags );
   }
 
   n = oyFilterNode_EdgeCount( s, 0, 0 );
@@ -18680,9 +19022,9 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
       {
         p = oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
 
-        if(oyAdjacencyListAdd_( p, nodes, edges ))
+        if(oyAdjacencyListAdd_( p, nodes, edges, mark, flags ))
           oyFilterNode_AddToAdjacencyLst_( p->node,
-                                           nodes, edges );
+                                           nodes, edges, mark, flags );
       }
     }
   }
@@ -18700,28 +19042,20 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/25 (Oyranos: 0.1.10)
- *  @date    2009/02/28
+ *  @date    2009/03/04
  */
 OYAPI oyFilterGraph_s * OYEXPORT
            oyFilterGraph_FromNode    ( oyFilterNode_s    * node,
                                        int                 flags )
 {
   oyFilterNode_s * s = node;
-  oyFilterNodes_s * nodes = 0;
-  oyFilterPlugs_s * edges = 0;
   oyFilterGraph_s * graph = 0;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
 
   {
-    nodes = oyFilterNodes_New( 0 );
-    edges = oyFilterPlugs_New( 0 );
-
-    oyFilterNode_AddToAdjacencyLst_( s, nodes, edges );
-
     graph = oyFilterGraph_New( 0 );
-    graph->nodes = nodes;
-    graph->edges = edges;
+    oyFilterGraph_SetFromNode( graph, s, 0, flags );
   }
 
   return graph;
@@ -18848,7 +19182,7 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function: oyFilterGraph_PrepareContexts
+/** Function oyFilterGraph_PrepareContexts
  *  @memberof oyFilterGraph_s
  *  @brief   iterate over a filter graph and possibly prepare contexts
  *
@@ -18882,7 +19216,7 @@ OYAPI int  OYEXPORT
       do_it = 0;
 
     if(do_it &&
-       node->filter->api4_->oyCMMFilterNode_ContextToMem &&
+       node->core->api4_->oyCMMFilterNode_ContextToMem &&
        strlen(node->api7_->context_type))
       oyFilterNode_ContextSet_( node );
 
@@ -18896,6 +19230,279 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
+/** Function oyFilterGraph_GetNode
+ *  @memberof oyFilterGraph_s
+ *  @brief   select a node
+ *
+ *  @param[in]     node                a filter graph
+ *  @param[in]     pos                 the position in a matching list,
+                                       or -1 to select the first match
+ *  @param[in]     registration        criterium to generate the matching list,
+                                       or zero for no criterium
+ *  @return                            the filter node
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/04 (Oyranos: 0.1.10)
+ *  @date    2009/03/01
+ */
+OYAPI oyFilterNode_s * OYEXPORT
+           oyFilterGraph_GetNode     ( oyFilterGraph_s   * graph,
+                                       int                 pos,
+                                       const char        * registration )
+{
+  oyFilterNode_s * node = 0;
+  oyFilterGraph_s * s = graph;
+  int i, n, m = -1, found;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+
+  n = oyFilterNodes_Count( s->nodes );
+  for(i = 0; i < n; ++i)
+  {
+    node = oyFilterNodes_Get( s->nodes, i );
+
+    found = 1;
+
+    if(found && registration &&
+       !oyFilterRegistrationMatch( node->core->api4_->registration,
+                                   registration, 0 ))
+      found = 0;
+
+    if(found)
+    if(pos == -1 || ++m == pos)
+      break;;
+
+    oyFilterNode_Release( &node );
+  }
+
+  return node;
+}
+
+/** Function oyFilterGraph_SetFromNode
+ *  @memberof oyFilterNode_s
+ *  @brief   get a graphs adjazency list
+ *
+ *  @param[in]     graph               a graph object
+ *  @param[in]     node                filter node
+ *  @param[in]     mark                a selection
+ *  @param[in]     flags               unused
+ *  @return                            the graph
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/04 (Oyranos: 0.1.10)
+ *  @date    2009/03/04
+ */
+OYAPI int  OYEXPORT
+           oyFilterGraph_SetFromNode ( oyFilterGraph_s   * graph,
+                                       oyFilterNode_s    * node,
+                                       const char        * mark,
+                                       int                 flags )
+{
+  oyFilterGraph_s * s = graph;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 1 )
+
+  oyFilterNodes_Release( &s->nodes );
+  oyFilterPlugs_Release( &s->edges );
+
+  {
+    s->nodes = oyFilterNodes_New( 0 );
+    s->edges = oyFilterPlugs_New( 0 );
+
+    oyFilterNode_AddToAdjacencyLst_( node, s->nodes, s->edges, mark, flags );
+  }
+
+  return 0;
+}
+
+/** Function oyFilterGraph_ToText
+ *  @memberof oyFilterGraph_s
+ *  @brief   text description of a graph
+ *
+ *  @todo Should this function generate XFORMS compatible output? How?
+ *
+ *  @param[in]     graph               graphy object
+ *  @param[in]     input               start node of a oyConversion_s
+ *  @param[in]     output              end node and if present a switch
+ *                                     to interprete input and output as start
+ *                                     and end node of a oyConversion_s
+ *  @param[in]     head_line           text for inclusion
+ *  @param[in]     reserved            future format selector (dot, xml ...)
+ *  @param[in]     allocateFunc        allocation function
+ *  @return                            the graph description
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/10/04 (Oyranos: 0.1.8)
+ *  @date    2009/03/05
+ */
+OYAPI char * OYEXPORT
+           oyFilterGraph_ToText      ( oyFilterGraph_s   * graph,
+                                       oyFilterNode_s    * input,
+                                       oyFilterNode_s    * output,
+                                       const char        * head_line,
+                                       int                 reserved,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * text = 0, 
+       * temp = oyAllocateFunc_(1024),
+       * tmp = 0, * txt = 0, * t = 0;
+  oyFilterNode_s * node = 0;
+  const char * save_locale = 0;
+  oyFilterGraph_s * s = graph;
+
+  oyFilterPlug_s * p = 0;
+  int i, n,
+      nodes_n = 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+
+#if USE_GETTEXT
+  save_locale = setlocale(LC_NUMERIC, 0 );
+#endif
+
+
+  STRING_ADD( text, "digraph G {\n" );
+  STRING_ADD( text, "bgcolor=\"transparent\"\n" );
+  STRING_ADD( text, "  rankdir=LR\n" );
+  STRING_ADD( text, "  graph [fontname=Helvetica, fontsize=12];\n" );
+  STRING_ADD( text, "  node [shape=record, fontname=Helvetica, fontsize=10, style=\"filled,rounded\"];\n" );
+  STRING_ADD( text, "  edge [fontname=Helvetica, fontsize=10];\n" );
+  STRING_ADD( text, "\n" );
+  if(input && output)
+  {
+  STRING_ADD( text, "  conversion [shape=plaintext, label=<\n" );
+  STRING_ADD( text, "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n" );
+  STRING_ADD( text, "  <tr><td>oyConversion_s</td></tr>\n" );
+  STRING_ADD( text, "  <tr><td>\n" );
+  STRING_ADD( text, "     <table border=\"0\" cellborder=\"0\" align=\"left\">\n" );
+  STRING_ADD( text, "       <tr><td align=\"left\">...</td></tr>\n" );
+  STRING_ADD( text, "       <tr><td align=\"left\" port=\"in\">+input</td></tr>\n" );
+  STRING_ADD( text, "       <tr><td align=\"left\" port=\"out\">+out_</td></tr>\n" );
+  STRING_ADD( text, "       <tr><td align=\"left\">...</td></tr>\n" );
+  STRING_ADD( text, "     </table>\n" );
+  STRING_ADD( text, "     </td></tr>\n" );
+  STRING_ADD( text, "  <tr><td> </td></tr>\n" );
+  STRING_ADD( text, "</table>>,\n" );
+  STRING_ADD( text, "                    style=\"\", color=black];\n" );
+  }
+  STRING_ADD( text, "\n" );
+
+  /* add more node descriptions */
+  nodes_n = oyFilterNodes_Count( s->nodes );
+  for(i = 0; i < nodes_n; ++i)
+  {
+    node = oyFilterNodes_Get( s->nodes, i );
+    n = oyFilterNode_EdgeCount( node, 1, 0 );
+
+    /** The function is more verbose with the oy_debug variable set. */
+    if(!oy_debug && 
+       oyStrchr_( node->core->api4_->id_, OY_SLASH_C ))
+    {
+      STRING_ADD( tmp, node->core->api4_->id_ );
+      t = oyStrrchr_( tmp, OY_SLASH_C );
+      *t = 0;
+      STRING_ADD( txt, t+1 );
+      oyFree_m_(tmp);
+    } else
+      STRING_ADD( txt, node->core->api4_->id_ );
+
+    oySprintf_(temp, "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
+                     " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
+                     " Type: \\\"%s\\\"|<socket>}\"];\n",
+                     oyFilterNode_GetId( node ), n,
+                     node->oy_->id_,
+                     node->core->category_,
+                     txt,
+                     node->core->registration_ );
+    STRING_ADD( text, temp );
+    oyFree_m_(txt);
+
+    oyFilterNode_Release( &node );
+  }
+
+
+  STRING_ADD( text, "\n" );
+  STRING_ADD( text, "  subgraph cluster_0 {\n" );
+  STRING_ADD( text, "    label=\"" );
+  STRING_ADD( text, head_line );
+  STRING_ADD( text, "\"\n" );
+  STRING_ADD( text, "    color=gray;\n" );
+  STRING_ADD( text, "\n" );
+
+  /* add more node placements */
+  n = oyFilterPlugs_Count( s->edges );
+  for(i = 0; i < n; ++i)
+  {
+    p = oyFilterPlugs_Get( s->edges, i );
+
+    oySprintf_( temp,
+                "    %d:socket -> %d:plug [arrowhead=crow, arrowtail=box];\n",
+                oyFilterNode_GetId( p->remote_socket_->node ),
+                oyFilterNode_GetId( p->node ) );
+    STRING_ADD( text, temp );
+
+    oyFilterPlug_Release( &p );
+  }
+
+  STRING_ADD( text, "\n" );
+  if(input && output)
+  {
+  oySprintf_( temp, "    conversion:in -> %d [arrowhead=none, arrowtail=normal];\n", oyFilterNode_GetId( input ) );
+  STRING_ADD( text, temp );
+  oySprintf_( temp, "    conversion:out -> %d;\n",
+                    oyFilterNode_GetId( output ) );
+  STRING_ADD( text, temp );
+  }
+  STRING_ADD( text, "  }\n" );
+  STRING_ADD( text, "\n" );
+  if(input && output)
+  STRING_ADD( text, "  conversion\n" );
+  STRING_ADD( text, "}\n" );
+  STRING_ADD( text, "\n" );
+
+#if USE_GETTEXT
+  setlocale(LC_NUMERIC, "C");
+  /* sensible printing */
+  setlocale(LC_NUMERIC, save_locale);
+#endif
+
+  STRING_ADD( text, "" );
+
+  oyFree_m_( temp );
+
+  return text;
+}
+
+void oyShowGraph__( oyFilterGraph_s * s )
+{
+  char * ptr = 0;
+  int error = 0;
+  oyFilterGraph_s * adjacency_list = s;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return )
+  /*return;*/
+
+  ptr = oyFilterGraph_ToText( adjacency_list, 0, 0,
+                              "Oyranos Test Graph", 0, malloc );
+  oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
+  error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias -magstep 0.7 test.ps &");
+
+  free(ptr); ptr = 0;
+}
+void oyShowGraph_( oyFilterNode_s * s, const char * selector )
+{
+  oyFilterGraph_s * adjacency_list = 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return )
+  /*return;*/
+
+  adjacency_list = oyFilterGraph_New( 0 );
+  oyFilterGraph_SetFromNode( adjacency_list, s, selector, 0 );
+
+  oyShowGraph__(adjacency_list);
+
+  oyFilterGraph_Release( &adjacency_list );
+}
 
 
 /** @internal
@@ -19778,9 +20385,19 @@ oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
   return s;
 }
 
-/** Function: oyPixelAccess_Create
+/** Function oyPixelAccess_Create
  *  @memberof oyPixelAccess_s
  *  @brief   allocate iand initialise a basic oyPixelAccess_s object
+ *
+ *  @verbatim
+  // conversion->out_ has to be linear, so we access only the first plug
+  plug = oyFilterNode_GetPlug( conversion->out_, 0 );
+
+  // create a very simple pixel iterator
+  if(plug)
+    pixel_access = oyPixelAccess_Create( 0,0, plug->remote_socket_,
+                                         oyPIXEL_ACCESS_IMAGE, 0 );
+@endverbatim
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/07/07
@@ -20119,7 +20736,7 @@ oyConversion_s *   oyConversion_New  ( oyObject_s          object )
   return s;
 }
 
-/** Function: oyConversion_CreateBasic
+/** Function oyConversion_CreateBasic
  *  @memberof oyConversion_s
  *  @brief   allocate initialise a basic oyConversion_s object
  *
@@ -20135,18 +20752,17 @@ oyConversion_s   * oyConversion_CreateBasic (
 {
   oyConversion_s * s = 0;
   int error = !input || !output;
-  oyFilterCore_s * filter = 0;
+  oyFilterNode_s * node = 0;
 
   if(error <= 0)
   {
     s = oyConversion_CreateInput ( input, 0, 0 );
 
-    filter = oyFilterCore_New( "//colour/icc", 0,0, 0 );
+    node = oyFilterNode_NewWith( "//colour/icc", 0,0, 0 );
 
-    error = oyConversion_LinFilterAdd( s, filter );
+    error = oyConversion_LinFilterAdd( s, node );
     if(error)
       WARNc1_S( "could not add  filter: %s\n", "//colour" );
-    oyFilterCore_Release( &filter );
 
     error = oyConversion_LinOutputAdd( s, 0, output );
   }
@@ -20172,16 +20788,15 @@ oyConversion_s   * oyConversion_CreateInput (
 {
   oyConversion_s * s = oyConversion_New( object );
   int error = !s;
-  oyFilterCore_s * filter = 0;
+  oyFilterNode_s * node = 0;
   oyFilterSocket_s * sock = 0;
 
   if(error <= 0)
   {
     if(!filter_registration)
       filter_registration = "//image/root";
-    filter = oyFilterCore_New( filter_registration, 0,0, 0 );
-    s->input = oyFilterNode_Create( filter, s->oy_ );
-    oyFilterCore_Release( &filter );
+    node = oyFilterNode_NewWith( filter_registration, 0,0, object );
+    s->input = node;
 
     error = !s->input;
 
@@ -20317,18 +20932,17 @@ int          oyConversion_Release    ( oyConversion_s   ** obj )
  *  @param[in]     filter              filter
  *  @return                            error
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/07/09 (Oyranos: 0.1.8)
- *  @date    2008/07/10
+ *  @date    2009/03/05
  */
 int                oyConversion_LinFilterAdd (
                                        oyConversion_s    * conversion,
-                                       oyFilterCore_s    * filter )
+                                       oyFilterNode_s    * node )
 {
   oyConversion_s * s = conversion;
   int error = !s;
-  oyFilterNode_s * node = 0,
-                 * temp = 0,
+  oyFilterNode_s * temp = 0,
                  * last = 0;
   oyConnector_s  * node_plug_connector = 0;
   oyFilterPlug_s * node_plug = 0;
@@ -20337,10 +20951,8 @@ int                oyConversion_LinFilterAdd (
 
   if(error <= 0)
   {
-    node = oyFilterNode_Create( filter, s->oy_ );
-
     if(error <= 0 && 
-       (!node || !node->filter))
+       (!node || !node->core))
     {
       WARNc2_S( "%s: %d", _("No filter"), oyObject_GetId( s->oy_ ) );
       error = 1;
@@ -20348,7 +20960,7 @@ int                oyConversion_LinFilterAdd (
 
     if(error <= 0 &&
        (!s->input &&
-        !oyFilterRegistrationMatch( filter->registration_, "//image",
+        !oyFilterRegistrationMatch( node->core->registration_, "//image",
                                     oyOBJECT_CMM_API4_S )))
     {
       WARNc2_S( "%s: %s",
@@ -20357,11 +20969,11 @@ int                oyConversion_LinFilterAdd (
       error = 1;
     }
     if(error <= 0 &&
-       (!node->filter || !node->filter->api4_))
+       (!node->core || !node->core->api4_))
     {
       WARNc2_S( "%s: %s",
       _("attempt to add a incomplete filter"),
-                oyFilterCore_GetName( filter, oyNAME_NAME) );
+                oyFilterCore_GetName( node->core, oyNAME_NAME) );
       error = 1;
     }
     if(error <= 0 &&
@@ -20370,7 +20982,7 @@ int                oyConversion_LinFilterAdd (
     {
       WARNc2_S( "%s: %s",
       _("attempt to add a non linear filter to a linear graph"),
-                oyFilterCore_GetName( node->filter, oyNAME_NAME) );
+                oyFilterCore_GetName( node->core, oyNAME_NAME) );
       error = 1;
     }
 
@@ -20391,7 +21003,7 @@ int                oyConversion_LinFilterAdd (
         {
           WARNc2_S( "\n  %s: %s",
           "Filter has no node",
-                oyFilterCore_GetName( node->filter, oyNAME_NAME) );
+                oyFilterCore_GetName( node->core, oyNAME_NAME) );
           error = 1;
         }
 
@@ -20406,7 +21018,7 @@ int                oyConversion_LinFilterAdd (
           {
             WARNc2_S( "\n  %s: %s",
             "Filter connectors do not match",
-                  oyFilterCore_GetName( node->filter, oyNAME_NAME) );
+                  oyFilterCore_GetName( node->core, oyNAME_NAME) );
             error = 1;
           }
         }
@@ -20424,9 +21036,6 @@ int                oyConversion_LinFilterAdd (
     }
   }
 
-  if(error)
-    oyFilterNode_Release( &node );
-
   return error;
 }
 
@@ -20441,9 +21050,9 @@ int                oyConversion_LinFilterAdd (
  *  @param[in]     output              output image
  *  @return                            error
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/07/06 (Oyranos: 0.1.8)
- *  @date    2009/02/17
+ *  @date    2009/04/05
  */
 int                oyConversion_LinOutputAdd (
                                        oyConversion_s    * conversion,
@@ -20452,7 +21061,7 @@ int                oyConversion_LinOutputAdd (
 {
   oyConversion_s * s = conversion;
   int error = !s;
-  oyFilterCore_s * filter = 0;
+  oyFilterNode_s * node = 0;
   oyFilterNode_s * last = 0;
   oyFilterPlug_s * plug_last = 0;
 
@@ -20461,10 +21070,10 @@ int                oyConversion_LinOutputAdd (
     if(!filter_registration)
       filter_registration = "//image/output";
 
-    filter = oyFilterCore_New( filter_registration, 0,0, 0);
+    node = oyFilterNode_NewWith( filter_registration, 0,0, conversion->oy_ );
 
     if(error <= 0)
-      error = oyConversion_LinFilterAdd( conversion, filter );
+      error = oyConversion_LinFilterAdd( conversion, node );
 
     if(error <= 0)
     {
@@ -20489,11 +21098,11 @@ int                oyConversion_LinOutputAdd (
 
     if(error <= 0)
     {
-      oyFilterNode_s * node = s->input;
+      node = s->input;
 
       while((node = oyFilterNode_GetNextFromLinear_( node )) != 0)
         if(error <= 0 &&
-           node->filter->api4_->oyCMMFilterNode_ContextToMem &&
+           node->core->api4_->oyCMMFilterNode_ContextToMem &&
            oyStrlen_(node->api7_->context_type))
           oyFilterNode_ContextSet_( node );
     }
@@ -20505,18 +21114,64 @@ int                oyConversion_LinOutputAdd (
   return error;
 }
 
-/** Function: oyConversion_RunPixels
+/** Function oyConversion_Set
+ *  @memberof oyConversion_s
+ *  @brief   set input and output of a conversion graph
+ *
+ *  @param[in,out] conversion          conversion object
+ *  @param[in]     input               input node
+ *  @param[in]     output              output node
+ *  @return                            0 on success, else error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+int                oyConversion_Set  ( oyConversion_s    * conversion,
+                                       oyFilterNode_s    * input,
+                                       oyFilterNode_s    * output )
+{
+  oyConversion_s * s = conversion;
+  int error = 0;
+
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
+
+  if(input)
+    s->input = input;
+
+  if(output)
+    s->out_ = output;
+
+  return error;
+}
+
+/** Function oyConversion_RunPixels
  *  @memberof oyConversion_s
  *  @brief   iterate over a conversion graph
  *
+ *  @verbatim
+    // use the output
+    oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
+    // get the data and draw the image
+    for(i = 0; i < image->height; ++i)
+    {
+      image_data = image->getLine( image, i, &height, -1, &is_allocated );
+
+      // ...
+
+      if(is_allocated)
+        free( image_data );
+    }
+@endverbatim
+ *
  *  @param[in,out] conversion          conversion object
- *  @param[in,out] pixel_access        pixel iterator configuration
+ *  @param[in,out] pixel_access        optional pixel iterator configuration
  *  @param[in]     region              the region relative to the output image viewport to render
  *  @return                            0 on success, else error
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/07/06 (Oyranos: 0.1.8)
- *  @date    2009/03/01
+ *  @date    2009/03/06
  */
 int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
@@ -20526,7 +21181,7 @@ int                oyConversion_RunPixels (
   oyFilterPlug_s * plug = 0;
   oyFilterCore_s * filter = 0;
   oyImage_s * image = 0;
-  int error = 0, result, l_error = 0, i,n;
+  int error = 0, result, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
@@ -20537,10 +21192,20 @@ int                oyConversion_RunPixels (
     return 1;
   }
 
-  /* conversion->out_ has to be linear, so we access only the first socket */
-  plug = conversion->out_->plugs[0];
+  /* conversion->out_ has to be linear, so we access only the first plug */
+  plug = oyFilterNode_GetPlug( conversion->out_, 0 );
+
+  if(!pixel_access)
+  {
+    /* create a very simple pixel iterator as job ticket */
+    if(plug)
+      pixel_access = oyPixelAccess_Create( 0,0, plug->remote_socket_,
+                                           oyPIXEL_ACCESS_IMAGE, 0 );
+    tmp_ticket = 1;
+  }
+
   /* should be the same as conversion->out_->filter */
-  filter = conversion->out_->filter;
+  filter = conversion->out_->core;
   image = (oyImage_s*) plug->remote_socket_->data;
 
   result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
@@ -20552,13 +21217,19 @@ int                oyConversion_RunPixels (
 
   if(error != 0)
   {
+    dirty = oyOptions_FindString( pixel_access->graph->options, "dirty", "true")
+            ? 1 : 0;
+
+    /* refresh the graph representation */
+    oyFilterGraph_SetFromNode( pixel_access->graph, conversion->input, 0, 0 );
+
     n = oyFilterNodes_Count( pixel_access->graph->nodes );
     for(i = 0; i < n; ++i)
     {
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
 
       if(error != 0 &&
-         oyOptions_FindString( pixel_access->graph->options, "dirty", "true" ))
+         dirty)
       {
         oyFilterGraph_PrepareContexts( pixel_access->graph, 1 );
         error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
@@ -20567,6 +21238,9 @@ int                oyConversion_RunPixels (
         break;
     }
   }
+
+  if(tmp_ticket)
+    oyPixelAccess_Release( &pixel_access );
 
   return error;
 }
@@ -20639,7 +21313,16 @@ oyImage_s        * oyConversion_GetImage (
     {
       sock = oyFilterNode_GetSocket( s->input, 0 );
       if(sock)
+      {
         image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
+
+        if(!image)
+        {
+          /* TODO: remove the following hack */
+          s->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0 );
+          image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
+        }
+      }
 
     } else
     if(oyToOutput_m(flags))
@@ -20657,15 +21340,6 @@ oyImage_s        * oyConversion_GetImage (
 oyProfile_s      * oyConversion_ToProfile (
                                        oyConversion_s    * conversion );
 
-void               oyConversion_ToTextShowNode_ (
-                                       oyFilterNode_s    * node,
-                                       char             ** stream,
-                                       int                 reserved,
-                                       int                 sub_format,
-                                       int               * counter,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc );
-
 /** Function: oyConversion_ToText
  *  @memberof oyConversion_s
  *  @brief   text description of a conversion graph
@@ -20680,7 +21354,7 @@ void               oyConversion_ToTextShowNode_ (
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/04 (Oyranos: 0.1.8)
- *  @date    2009/02/28
+ *  @date    2009/03/05
  */
 char             * oyConversion_ToText (
                                        oyConversion_s    * conversion,
@@ -20688,115 +21362,20 @@ char             * oyConversion_ToText (
                                        int                 reserved,
                                        oyAlloc_f           allocateFunc )
 {
-  char * text = 0, 
-       * temp = oyAllocateFunc_(1024);
   oyConversion_s * s = conversion;
-  const char * save_locale = 0;
-
-  oyFilterNode_s * node = s->input;
-  oyFilterPlug_s * p = 0;
+  char * text = 0;
   oyFilterGraph_s * adjacency_list = 0;
-  int i, n,
-      nodes_n = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
-  adjacency_list = oyFilterGraph_FromNode( node, 0 );
+  adjacency_list = oyFilterGraph_New( 0 );
+  oyFilterGraph_SetFromNode( adjacency_list, conversion->input, 0, 0 );
 
-#if USE_GETTEXT
-  save_locale = setlocale(LC_NUMERIC, 0 );
-#endif
-
-
-  STRING_ADD( text, "digraph G {\n" );
-  STRING_ADD( text, "bgcolor=\"transparent\"\n" );
-  STRING_ADD( text, "  rankdir=LR\n" );
-  STRING_ADD( text, "  graph [fontname=Helvetica, fontsize=12];\n" );
-  STRING_ADD( text, "  node [shape=record, fontname=Helvetica, fontsize=10, style=\"filled,rounded\"];\n" );
-  STRING_ADD( text, "  edge [fontname=Helvetica, fontsize=10];\n" );
-  STRING_ADD( text, "\n" );
-  STRING_ADD( text, "  conversion [shape=plaintext, label=<\n" );
-  STRING_ADD( text, "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n" );
-  STRING_ADD( text, "  <tr><td>oyConversion_s</td></tr>\n" );
-  STRING_ADD( text, "  <tr><td>\n" );
-  STRING_ADD( text, "     <table border=\"0\" cellborder=\"0\" align=\"left\">\n" );
-  STRING_ADD( text, "       <tr><td align=\"left\">...</td></tr>\n" );
-  STRING_ADD( text, "       <tr><td align=\"left\" port=\"in\">+input</td></tr>\n" );
-  STRING_ADD( text, "       <tr><td align=\"left\" port=\"out\">+out_</td></tr>\n" );
-  STRING_ADD( text, "       <tr><td align=\"left\">...</td></tr>\n" );
-  STRING_ADD( text, "     </table>\n" );
-  STRING_ADD( text, "     </td></tr>\n" );
-  STRING_ADD( text, "  <tr><td> </td></tr>\n" );
-  STRING_ADD( text, "</table>>,\n" );
-  STRING_ADD( text, "                    style=\"\", color=black];\n" );
-  STRING_ADD( text, "\n" );
-
-  /* add more node descriptions */
-  nodes_n = oyFilterNodes_Count( adjacency_list->nodes );
-  for(i = 0; i < nodes_n; ++i)
-  {
-    node = oyFilterNodes_Get( adjacency_list->nodes, i );
-    n = oyFilterNode_EdgeCount( node, 1, 0 );
-
-    oySprintf_(temp, "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
-                     " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
-                     " Type: \\\"%s\\\"|<socket>}\"];\n",
-                     oyFilterNode_GetId( node ), n,
-                     node->oy_->id_,
-                     node->filter->category_,
-                     node->filter->api4_->id_,
-                     node->filter->registration_ );
-    STRING_ADD( text, temp );
-
-    oyFilterNode_Release( &node );
-  }
-
-
-  STRING_ADD( text, "\n" );
-  STRING_ADD( text, "  subgraph cluster_0 {\n" );
-  STRING_ADD( text, "    label=\"" );
-  STRING_ADD( text, head_line );
-  STRING_ADD( text, "\"\n" );
-  STRING_ADD( text, "    color=gray;\n" );
-  STRING_ADD( text, "\n" );
-
-  /* add more node placements */
-  n = oyFilterPlugs_Count( adjacency_list->edges );
-  for(i = 0; i < n; ++i)
-  {
-    p = oyFilterPlugs_Get( adjacency_list->edges, i );
-
-    oySprintf_( temp,
-                "    %d:socket -> %d:plug [arrowhead=crow, arrowtail=box];\n",
-                oyFilterNode_GetId( p->remote_socket_->node ),
-                oyFilterNode_GetId( p->node ) );
-    STRING_ADD( text, temp );
-
-    oyFilterPlug_Release( &p );
-  }
-
-  STRING_ADD( text, "\n" );
-  oySprintf_( temp, "    conversion:in -> %d [arrowhead=none, arrowtail=normal];\n", oyFilterNode_GetId( s->input ) );
-  STRING_ADD( text, temp );
-  oySprintf_( temp, "    conversion:out -> %d;\n",
-                    oyFilterNode_GetId( s->out_ ) );
-  STRING_ADD( text, temp );
-  STRING_ADD( text, "  }\n" );
-  STRING_ADD( text, "\n" );
-  STRING_ADD( text, "  conversion\n" );
-  STRING_ADD( text, "}\n" );
-  STRING_ADD( text, "\n" );
-
-#if USE_GETTEXT
-  setlocale(LC_NUMERIC, "C");
-  /* sensible printing */
-  setlocale(LC_NUMERIC, save_locale);
-#endif
-
-  STRING_ADD( text, "" );
+  text = oyFilterGraph_ToText( adjacency_list,
+                               conversion->input, conversion->out_,
+                               head_line, reserved, allocateFunc );
 
   oyFilterGraph_Release( &adjacency_list );
-  oyFree_m_( temp );
 
   return text;
 }
@@ -22365,7 +22944,6 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
                                        int                 x,
                                        int                 y )
 {
-  int error = 0;
   int screen = 0;
 
   return screen;
