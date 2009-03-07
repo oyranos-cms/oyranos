@@ -272,7 +272,7 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
                 fputc ( u8[j], fp);
             }
           } else 
-          for(i = 0; i < n; ++i)
+          for(i = 0; i < len; ++i)
           {
             if(!oyBigEndian() && (byteps == 2))
             { if(i%2)
@@ -842,7 +842,87 @@ int      oyraFilterPlug_ImageInputPPMRun (
   }
 
   oyAllocHelper_m_( buf, uint8_t, mem_n, 0, return 1);
-  error = !memcpy( buf, &data[fpos], mem_n );
+
+  /* the following code is almost completely taken from ku.b's ppm CP plug-in */
+  {
+    int h, j_h = 0, p, n_samples, n_bytes;
+    int byte_swap = !oyBigEndian();
+    unsigned char *d_8 = 0;
+    unsigned char *src = &data[fpos];
+
+    uint16_t *d_16;
+    float  *d_f;
+
+    for(h = 0; h < height; ++h)
+    {
+        n_samples = 1 * width * spp;
+        n_bytes = n_samples * byteps;
+
+        d_8  = buf;
+        d_16 = (uint16_t*)buf;
+        d_f  = (float*)buf;
+
+        /*  TODO 1 bit raw and ascii */
+        if (type == 1 || type == 4) {
+
+        /*  TODO ascii  */
+        } else if (type == 2 || type == 3) {
+
+
+        /*  raw and floats */
+        } else if (type == 5 || type == 6 ||
+                   type == -5 || type == -6 ||
+                   type == 7 )
+        {
+          if(byteps == 1) {
+            d_8 = &src[ h * width * spp * byteps ];
+          } else if(byteps == 2) {
+            d_16 = (uint16_t*)& src[ h * width * spp * byteps ];
+          } else if(byteps == 4) {
+            d_f = (float*)&src[ h * width * spp * byteps ];
+          }
+          memcpy (&buf[ h * width * spp * byteps ],
+                  &src[ (j_h + h) * width * spp * byteps ],
+                  1 * width * spp * byteps);
+        }
+
+        /* normalise and byteswap */
+        if( byte_swap )
+        {
+          unsigned char *c_buf = &buf[ h * width * spp * byteps ];
+          char  tmp;
+          if (byteps == 2) {         /* 16 bit */
+            for (p = 0; p < n_bytes; p += 2)
+            {
+              tmp = c_buf[p];
+              c_buf[p] = c_buf[p+1];
+              c_buf[p+1] = tmp;
+            }
+          } else if (byteps == 4) {  /* float */
+            for (p = 0; p < n_bytes; p += 4)
+            {
+              tmp = c_buf[p];
+              c_buf[p] = c_buf[p+3];
+              c_buf[p+3] = tmp;
+              tmp = c_buf[p+1];
+              c_buf[p+1] = c_buf[p+2];
+              c_buf[p+2] = tmp;
+            }
+          }
+        }
+
+        if (byteps == 1 && maxval < 255) {         /*  8 bit */
+          for (p = 0; p < n_samples; ++p)
+            d_8[p] = (d_8[p] * 255) / maxval;
+        } else if (byteps == 2 && maxval < 65535) {/* 16 bit */
+          for (p = 0; p < n_samples; ++p)
+            d_16 [p] = (d_16[p] * 65535) / maxval;
+        } else if (byteps == 4 && maxval != 1.0) {  /* float */
+          for (p = 0; p < n_samples; ++p)
+            d_f[p] = d_f[p] * maxval;
+        }
+    }
+  }
 
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
   prof = oyProfile_FromStd( profile_type, 0 );
