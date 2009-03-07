@@ -1375,7 +1375,7 @@ typedef uint32_t oyPixel_t;
 /* decode */
 #define oyToChannels_m(c)           ((c)&255)
 #define oyToColourOffset_m(o)       (((o) >> 8)&255)
-#define oyToDataType_m(t)           (((t) >> 16)&15)
+#define oyToDataType_m(t)           ((oyDATATYPE_e)(((t) >> 16)&15))
 #define oyToSwapColourChannels_m(s) (((s) >> 20)&1)
 #define oyToPlanar_m(p)             (((p) >> 21)&1)
 #define oyToFlavor_m(f)             (((f) >> 22)&1)
@@ -2386,7 +2386,8 @@ OYAPI int  OYEXPORT
 OYAPI oyFilterNode_s * OYEXPORT
            oyFilterGraph_GetNode     ( oyFilterGraph_s   * graph,
                                        int                 pos,
-                                       const char        * registration );
+                                       const char        * registration,
+                                       const char        * mark );
 OYAPI int  OYEXPORT
            oyFilterGraph_SetFromNode ( oyFilterGraph_s   * graph,
                                        oyFilterNode_s    * node,
