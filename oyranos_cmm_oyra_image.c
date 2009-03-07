@@ -130,6 +130,15 @@ oyPointer  oyraFilterNode_ImageDisplayContextToMem (
   return oyFilterNode_TextToInfo_( node, size, allocateFunc );
 }
 
+char *   oyraFilterNode_ImageDisplayID(oyFilterNode_s    * node )
+{
+  char * ID = malloc(128);
+
+  sprintf( ID, "//image/display/filter_id_%d", oyObject_GetId( node->oy_ ));
+
+  return ID;
+}
+
 int  oyraFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
                                        oyImage_s         * image )
 {
@@ -145,15 +154,14 @@ int  oyraFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   oyRegion_s * r;
   oyConfigs_s * devices = 0;
   char * tmp = 0,
-       * ID = malloc(128);
+       * ID = 0;
 
 
   if(oy_debug) WARNc_S("Init Start");
 
-  sprintf( ID, "//image/display/filter_id_%d", oyObject_GetId( node->oy_ ));
-
   input_node = node->plugs[0]->remote_socket_->node;
 
+  ID = oyraFilterNode_ImageDisplayID( node );
 
   /* insert a "regions" filter to handle multiple monitors */
   regions = oyFilterNode_NewWith( "//image/regions", 0,0, 0 );
@@ -306,6 +314,7 @@ int      oyraFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       display_pos_y;
   int dirty = 0,
       init = 0;
+  char * ID = 0;
 
   x = ticket->start_xy[0];
   y = ticket->start_xy[1];
@@ -315,6 +324,7 @@ int      oyraFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   if(result != 0)
     return result;
 
+  ID = oyraFilterNode_ImageDisplayID( node );
 
   {
     /* display stuff */
@@ -343,7 +353,7 @@ int      oyraFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
 
     /* look for our requisites */
-    regions = oyFilterGraph_GetNode( display_graph, -1, "//image/regions" );
+    regions = oyFilterGraph_GetNode( display_graph, -1, "//image/regions", ID );
 
     /* get cached devices */
     devices = (oyConfigs_s*)oyOptions_GetType( node->core->options_, -1, 
@@ -421,18 +431,22 @@ int      oyraFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     oyConfigs_Release( &devices );
 
     /* stop here and request an update */
-    if(dirty)
+    if(dirty > 0)
     {
       oyFilterNode_Release( &regions );
-      return dirty;
+      result = dirty;
+      goto clean;
     }
 
 
     /* make the graph flow: process the upstream "regions" node */
     regions->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
 
-    oyFilterNode_Release( &regions );
   }
+
+  clean:
+  oyFilterNode_Release( &regions );
+  if(ID) free(ID);    
 
   return result;
 }
@@ -730,6 +744,12 @@ int      oyraFilterPlug_ImageRegionsRun(oyFilterPlug_s   * requestor_plug,
 
       if(oyRegion_CountPoints(  new_ticket->output_image_roi ) > 0)
       {
+        /* prepare the array for the following filter */
+        if(!new_ticket->array)
+          oyImage_FillArray( new_ticket->output_image,
+                             new_ticket->output_image_roi, 0,
+                            &new_ticket->array, 0 );
+
         /* start new call */
         l_result = input_node->api7_->oyCMMFilterPlug_Run( node->plugs[i],
                                                            new_ticket );
