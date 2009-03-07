@@ -1350,18 +1350,33 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   oyFilterNode_s * input_node = 0,
                  * node = socket->node;
   oyImage_s * image_input = 0;
-  oyArray2d_s * array = 0;
+  oyArray2d_s * array_in = 0, * array_out = 0;
   lcmsTransformWrap_s * ltw  = 0;
+  oyPixelAccess_s * new_ticket = ticket;
 
   plug = (oyFilterPlug_s *)socket->node->plugs[0];
   input_node = plug->remote_socket_->node;
   image_input = (oyImage_s*)plug->remote_socket_->data;
 
+  if(oyImage_PixelLayoutGet( image_input ) != 
+     oyImage_PixelLayoutGet( ticket->output_image ))
+  {
+    /* adapt the region of interesst to the new image dimensions */
+    /* create a new ticket to avoid pixel layout conflicts */
+    new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
+    oyArray2d_Release( &new_ticket->array );
+    oyImage_Release( &new_ticket->output_image );
+    new_ticket->output_image = oyImage_Copy( image_input, 0 );
+    error = oyImage_FillArray( image_input, new_ticket->output_image_roi, 0,
+                                 &new_ticket->array, 0 );
+  }
+
   /* We let the input filter do its processing first. */
-  error = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket );
+  error = input_node->api7_->oyCMMFilterPlug_Run( plug, new_ticket );
   if(error != 0) return error;
 
-  array = ticket->array;
+  array_in = new_ticket->array;
+  array_out = ticket->array;
 
   data_type = oyToDataType_m( image_input->layout_[0] );
 
@@ -1379,7 +1394,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   /* now do some position blind manipulations */
   if(ltw)
   {
-    n = (int)(array->width+0.5) / channels;
+    n = (int)(array_out->width+0.5) / channels;
 
     if(!(data_type == oyUINT8 ||
          data_type == oyUINT16 ||
@@ -1390,11 +1405,14 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     }
 
     /*  - - - - - conversion - - - - - */
-    message(oyMSG_WARN,0, "%s: %d Start transform", __FILE__,__LINE__);
+    message(oyMSG_WARN,(oyStruct_s*)ticket, "%s: %d Start lines: %d",
+            __FILE__,__LINE__, array_out->height);
     if(!error)
-      for( k = 0; k < array->height; ++k)
-        cmsDoTransform( ltw->lcms, array->array2d[k], array->array2d[k], n );
-    message(oyMSG_WARN,0, "%s: %d End transform", __FILE__,__LINE__);
+      for( k = 0; k < array_out->height; ++k)
+        cmsDoTransform( ltw->lcms, array_in->array2d[k],
+                                   array_out->array2d[k], n );
+    message(oyMSG_WARN,(oyStruct_s*)ticket, "%s: %d End width: %d",
+            __FILE__,__LINE__, n);
 
 
   } else
@@ -1404,6 +1422,10 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                "//image/profile/dirty", "true", OY_CREATE_NEW );
     error = 1;
   }
+
+  if(oyImage_PixelLayoutGet( image_input ) != 
+     oyImage_PixelLayoutGet( ticket->output_image ))
+    oyPixelAccess_Release( &new_ticket );
 
   return error;
 }
