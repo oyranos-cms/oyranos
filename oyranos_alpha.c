@@ -18520,7 +18520,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
           STRING_ADD( hash_text, ":" );
           STRING_ADD( hash_text, hash_text_ );
 
-          if(oy_debug > 3)
+          if(oy_debug == 1)
           {
             size = 0;
             ptr = oyFilterNode_TextToInfo_( node, &size, oyAllocateFunc_ );
@@ -18578,7 +18578,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
             }
           }
 
-          if(oy_debug > 3)
+          if(oy_debug == 1)
           {
             if(ptr && size && node->backend_data)
               oyWriteMemToFile_( "test_dbg_colour_dl.icc", ptr, size );
@@ -19264,7 +19264,8 @@ OYAPI int  OYEXPORT
 OYAPI oyFilterNode_s * OYEXPORT
            oyFilterGraph_GetNode     ( oyFilterGraph_s   * graph,
                                        int                 pos,
-                                       const char        * registration )
+                                       const char        * registration,
+                                       const char        * mark )
 {
   oyFilterNode_s * node = 0;
   oyFilterGraph_s * s = graph;
@@ -19282,6 +19283,10 @@ OYAPI oyFilterNode_s * OYEXPORT
     if(found && registration &&
        !oyFilterRegistrationMatch( node->core->api4_->registration,
                                    registration, 0 ))
+      found = 0;
+
+    if(found && mark &&
+       oyOptions_FindString( node->tags, mark, 0 ) == 0 )
       found = 0;
 
     if(found)
@@ -21243,6 +21248,8 @@ int                oyConversion_RunPixels (
     for(i = 0; i < n; ++i)
     {
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
+      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
+                                   &pixel_access->array, 0 ); OY_ERR
 
       if(error != 0 &&
          dirty)
@@ -21334,7 +21341,7 @@ oyImage_s        * oyConversion_GetImage (
 
         if(!image)
         {
-          /* TODO: remove the following hack */
+          /* TODO: remove the following hack; the socket->plug cast is ugly */
           s->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0 );
           image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
         }
