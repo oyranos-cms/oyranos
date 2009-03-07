@@ -354,7 +354,8 @@ int            oyX1Configs_FromPattern (
           /** Warn and return issue on not found profile. */
           if(!size || !data)
           {
-            WARNc1_S("\n  Could not obtain _ICC_PROFILE(_xxx) information for "
+            message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+            "Could not obtain _ICC_PROFILE(_xxx) information for ",OY_DBG_ARGS_,
                      "%s", texts[i]);
             error = -1;
           } else
