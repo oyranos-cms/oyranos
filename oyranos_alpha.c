@@ -6551,7 +6551,8 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
 }
 
 
-/** Function oyOptions_ForFilter_
+/** @internal
+ *  Function oyOptions_ForFilter_
  *  @memberof oyOptions_s
  *  @brief   provide Oyranos behaviour settings
  *

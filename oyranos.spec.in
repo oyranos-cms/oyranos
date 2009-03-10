@@ -146,6 +146,7 @@ ldconfig
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/%{name}.h
 %{_includedir}/%{name}/%{name}_alpha.h
+%{_includedir}/%{name}/%{name}_cmm.h
 %{_includedir}/%{name}/%{name}_config.h
 %{_includedir}/%{name}/%{name}_definitions.h
 %{_includedir}/%{name}/%{name}_icc.h
