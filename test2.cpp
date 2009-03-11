@@ -4,7 +4,7 @@
  *
  *  Copyright (C) 2004-2009  Kai-Uwe Behrmann
  *
- *  @brief    Oyranos test siute
+ *  @brief    Oyranos test suite
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:\n
@@ -312,8 +312,6 @@ oyTESTRESULT_e testSettings ()
   int error = 0;
   oyOptions_s * opts = 0;
   oyOption_s * o;
-  xmlSaveCtxtPtr ptr;
-  xmlBufferPtr buf;
   xmlDocPtr doc = 0;
 
   oyExportReset_(EXPORT_SETTING);
@@ -1178,23 +1176,15 @@ oyTESTRESULT_e testCMMsShow ()
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   int i, j, k;
-  uint32_t size = 0;
-  int32_t texts_n = 0;
   uint32_t count = 0;
-  char ** profiles = 0,
-       ** texts = 0,
+  char ** texts = 0,
         * text = 0,
         * text_tmp = (char*)oyAllocateFunc_(65535);
-  oyProfiles_s * iccs;
-  oyProfile_s * temp_prof;
-  oyProfileTag_s * tag = 0;
   oyCMMInfo_s * cmm_info = 0;
   oyCMMapi4_s * cmm_api4 = 0;
   oyCMMapi6_s * cmm_api6 = 0;
   oyCMMapi_s * tmp = 0;
   oyCMMapiFilter_s * cmm_filter = 0;
-  oyPROFILE_e type = oyDEFAULT_PROFILE_START;
-  int current = 0;
 
 
   fprintf(stdout, "\n" );

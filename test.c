@@ -94,14 +94,16 @@ main(int argc, char** argv)
     pixel_access->start_xy[1] = y;
     result = oyConversion_RunPixels( conversion, pixel_access );
 
-    p = pixel_access->array->array2d[0];
+    p = (double*)pixel_access->array->array2d[0];
 
     if(result == 0)
-    for(i = 0; i < w*h*3; i += 3)
+    for(i = 0; i < pixel_access->array->height; ++i)
+    for(j = 0; j < pixel_access->array->width; j += 3)
     {
-      char br = (i/3+1)%w? ' ':'\n';
+      char br = (j != pixel_access->array->width - 3) ? ' ':'\n';
+      p = (double*)pixel_access->array->array2d[i];
       fprintf( stdout, "%.03f %.03f %.03f %c",
-               p[i+0], p[i+1], p[i+2], br );
+               p[j+0], p[j+1], p[j+2], br );
     }
   }
 
@@ -130,14 +132,14 @@ main(int argc, char** argv)
   }
 
 
-  if(conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem)
-    ptr = conversion->input->filter->api4_->oyCMMFilterNode_ContextToMem( conversion->input, &size, malloc );
+  if(conversion->input->core->api4_->oyCMMFilterNode_ContextToMem)
+    ptr = conversion->input->core->api4_->oyCMMFilterNode_ContextToMem( conversion->input, &size, malloc );
   free(ptr); ptr = 0;
 
   if (0) /* dump the colour transformation */
   {
     oyFilterPlug_s * plug = oyFilterNode_GetPlug( conversion->out_, 0 );
-    ptr = plug->remote_socket_->node->filter->api4_->oyCMMFilterNode_ContextToMem(
+    ptr = plug->remote_socket_->node->core->api4_->oyCMMFilterNode_ContextToMem(
              plug->remote_socket_->node, &size, malloc );
   }
 
@@ -145,7 +147,7 @@ main(int argc, char** argv)
     oyWriteMemToFile_( "test_dbg.icc", ptr, size );
 
   oyConversion_Release( &conversion );
-
+  return 0;
 
 
 
@@ -154,8 +156,7 @@ main(int argc, char** argv)
   conversion->input = oyFilterNode_Create( filter, 0 );
   oyFilterCore_Release( &filter );
 
-  options = oyFilterCore_OptionsGet( conversion->input->filter,
-                                 OY_FILTER_GET_DEFAULT );
+  options = oyFilterNode_OptionsGet( conversion->input, OY_FILTER_GET_DEFAULT );
   error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
                                  "oyranos_logo.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
@@ -173,7 +174,7 @@ main(int argc, char** argv)
     fprintf( stderr, "could not add  filter: %s\n", "//colour" );
   
   error = oyConversion_LinOutputAdd( conversion, "//image/output_ppm", image_out );
-  options = oyFilterCore_OptionsGet( conversion->out_->filter, OY_FILTER_GET_DEFAULT );
+  options = oyFilterNode_OptionsGet( conversion->out_, OY_FILTER_GET_DEFAULT );
   error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
                                  "test_dbg.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );

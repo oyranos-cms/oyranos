@@ -228,9 +228,10 @@ CLEAN_OBJECTS = $(OBJECTS) \
 
 INCL_DEP = $(INCL) $(SOURCES) $(CXXFILES_Flmm) $(EXAMPLES_C) test.c test2.cpp
 
-.PHONY:	docu test2
+.PHONY:	docu
 
-#TEST2 = test2
+TEST  = test
+TEST2 = test2
 
 DEFAULT_PROFILES = base printing
 
@@ -252,7 +253,8 @@ ALL_FILES = \
 	$(SCRIPTS) \
 	$(MAN1) $(MAN3) \
 	$(DOC_TEMPLATES) \
-	$(FLTK_FILES)
+	$(FLTK_FILES) \
+	test.c test2.cpp
 
 
 # build all what is needed to run the libraries, helpers and the examples
@@ -388,10 +390,7 @@ $(BUILDDIR)$(TARGET)-policy:	$(BUILDDIR)$(LIBSONAMEFULL) $(BUILDDIR)$(TARGET)_po
 	$(BUILDDIR)$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
 
-$(BUILDDIR)test2:	$(BUILDDIR)$(LIBSONAMEFULL)
-	echo Compile $@ ...
-	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -c test2.cpp \
-	-o $(BUILDDIR)test2.o `./oyranos-config --cflags`
+$(BUILDDIR)test2:	$(BUILDDIR)test2.o $(BUILDDIR)$(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $(BUILDDIR)test2_dyn \
 	$(BUILDDIR)test2.o `./oyranos-config --ldflags`
