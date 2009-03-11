@@ -1055,6 +1055,7 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
     new_roi->width *= correct;
     new_roi->height *= correct;
     error = oyImage_FillArray( image, new_roi, 1, &ticket->array, 0 );
+    oyRegion_Release( &new_roi );
   }
 
   return result;
