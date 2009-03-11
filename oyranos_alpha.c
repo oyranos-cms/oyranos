@@ -20624,6 +20624,7 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
   oyArray2d_Release( &s->array );
   oyRegion_Release( &s->output_image_roi );
   oyImage_Release( &s->output_image );
+  oyFilterGraph_Release( &s->graph );
   if(s->user_data && s->user_data->release)
       s->user_data->release( &s->user_data );
 
@@ -20774,19 +20775,39 @@ oyConversion_s   * oyConversion_CreateBasic (
 {
   oyConversion_s * s = 0;
   int error = !input || !output;
-  oyFilterNode_s * node = 0;
+  oyFilterNode_s * in = 0, * out = 0;
 
   if(error <= 0)
   {
-    s = oyConversion_CreateInput ( input, 0, 0 );
+    s = oyConversion_New ( 0 );
+    error = !s;    
 
-    node = oyFilterNode_NewWith( "//colour/icc", 0,0, 0 );
+    if(error <= 0)
+      in = oyFilterNode_NewWith( "//image/root", 0,0, 0 );
+    if(error <= 0)
+      error = oyConversion_Set( s, in, 0 );
+    if(error <= 0)
+      error = oyFilterNode_DataSet( in, (oyStruct_s*)input, 0, 0 );
 
-    error = oyConversion_LinFilterAdd( s, node );
-    if(error)
-      WARNc1_S( "could not add  filter: %s\n", "//colour" );
+    if(error <= 0)
+      out = oyFilterNode_NewWith( "//colour/icc", 0,0, 0 );
+    if(error <= 0)
+      error = oyFilterNode_DataSet( out, (oyStruct_s*)output, 0, 0 );
+    if(error <= 0)
+      error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
 
-    error = oyConversion_LinOutputAdd( s, 0, output );
+    in = out; out = 0;
+
+    if(error <= 0)
+      out = oyFilterNode_NewWith( "//image/output", 0,0, 0 );
+    if(error <= 0)
+    {
+      error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
+      if(error)
+        WARNc1_S( "could not add  filter: %s\n", "//image/output" );
+    }
+    if(error <= 0)
+      error = oyConversion_Set( s, 0, out );
   }
 
   if(error)
@@ -20795,7 +20816,8 @@ oyConversion_s   * oyConversion_CreateBasic (
   return s;
 }
 
-/** Function: oyConversion_CreateInput
+/** @internal
+ *  Function oyConversion_CreateInput
  *  @memberof oyConversion_s
  *  @brief   initialise from a input image for later adding more filters
  *
@@ -21224,7 +21246,15 @@ int                oyConversion_RunPixels (
       pixel_access = oyPixelAccess_Create( 0,0, plug->remote_socket_,
                                            oyPIXEL_ACCESS_IMAGE, 0 );
     tmp_ticket = 1;
+
+  } else
+  {
+    int result = oyPixelAccess_CalculateNextStartPixel( pixel_access, plug);
+
+    if(result != 0)
+      return result;
   }
+
 
   /* should be the same as conversion->out_->filter */
   filter = conversion->out_->core;
@@ -21264,7 +21294,12 @@ int                oyConversion_RunPixels (
   }
 
   if(tmp_ticket)
+  {
+    /* write the data to the output image */
+    result = oyImage_ReadArray( image, pixel_access->output_image_roi,
+                                       pixel_access->array );
     oyPixelAccess_Release( &pixel_access );
+  }
 
   return error;
 }
@@ -21690,7 +21725,7 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 {
   oyImage_s * in  = NULL,
             * out = NULL;
-  oyColourConversion_s * conv = NULL;
+  oyConversion_s * conv = NULL;
   int error = 0;
 
   in    = oyImage_Create( 1,1, 
@@ -21706,10 +21741,10 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
                          p_out,
                          0 );
 
-  conv   = oyColourConversion_Create( 0, in,out, 0 );
-  error  = oyColourConversion_Run( conv );
+  conv   = oyConversion_CreateBasic( in,out, 0, 0 );
+  error  = oyConversion_RunPixels( conv, 0 );
 
-  oyColourConversion_Release( &conv );
+  oyConversion_Release( &conv );
   oyImage_Release( &in );
   oyImage_Release( &out );
 
