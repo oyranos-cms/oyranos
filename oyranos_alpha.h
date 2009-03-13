@@ -1236,6 +1236,10 @@ oyRegion_s *   oyRegion_NewWith      ( double              x,
                                        oyObject_s          object );
 oyRegion_s *   oyRegion_NewFrom      ( oyRegion_s        * ref,
                                        oyObject_s          object );
+oyRegion_s *   oyRegion_SamplesFromImage (
+                                       oyImage_s         * image,
+                                       oyRegion_s        * image_region,
+                                       oyObject_s          object );
 oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * region,
                                        oyObject_s          object );
 int            oyRegion_Release      ( oyRegion_s       ** region );
@@ -1410,6 +1414,8 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAlloc_f           allocateFunc );
 #endif
 
+typedef struct oyArray2d_s oyArray2d_s;
+
 /** @struct  oyArray2d_s
  *  @brief   2d data array
  *  @ingroup objects_image
@@ -1466,7 +1472,7 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
  *  @since   2008/08/23 (Oyranos: 0.1.8)
  *  @date    2008/08/23
  */
-typedef struct {
+struct oyArray2d_s {
   oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_ARRAY2D_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -1483,7 +1489,9 @@ typedef struct {
                                             - 1 one monolithic memory block
                                                 starting in array2d[0]
                                             - 2 several memory blocks */
-} oyArray2d_s;
+  oyStructList_s     * refs_;          /**< references of other arrays to this*/
+  oyArray2d_s        * refered_;       /**< array this one refers to */
+};
 
 OYAPI oyArray2d_s * OYEXPORT
                    oyArray2d_Create  ( oyPointer           data,
@@ -1665,10 +1673,12 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRegion_s        * region,
                                        int                 do_copy,
                                        oyArray2d_s      ** array,
+                                       oyRegion_s        * array_region,
                                        oyObject_s          obj );
 int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyRegion_s        * region,
-                                       oyArray2d_s       * array );
+                                       oyArray2d_s       * array,
+                                       oyRegion_s        * array_region );
 oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
 oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
