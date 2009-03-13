@@ -646,7 +646,7 @@ oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name )
     GDHandle      device;
     DisplayIDType screenID;
     Rect          r = {0,0,640,480};
-    char * new_display_name = oyAllocateWrapFunc_( 24, allocate_func );
+    char * new_display_name = oyAllocateWrapFunc_( 24, 0 );
 
     device = GetDeviceList();
     while (device)
@@ -915,21 +915,16 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 #ifdef __APPLE__
 
     {
-      CMProfileLocation loc;
       CMError err = 0;
       CMProfileRef prof=NULL;
       DisplayIDType screenID = 0;
 
-      loc.locType = cmPathBasedProfile;
-      oySnprintf1_( loc.u.pathLoc.path, 255, "%s", profile_fullname);
 
-      err = CMOpenProfile ( &prof, &loc );
       screenID = oyMonitor_nameToOsxID( display_name );
 
       if( screenID && !err )
         err = CMSetProfileByAVID ( screenID, prof );
 
-      CMCloseProfile( prof );
     }
 
 #else /* HAVE_X */
