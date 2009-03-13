@@ -1367,8 +1367,8 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     oyArray2d_Release( &new_ticket->array );
     oyImage_Release( &new_ticket->output_image );
     new_ticket->output_image = oyImage_Copy( image_input, 0 );
-    error = oyImage_FillArray( image_input, new_ticket->output_image_roi, 0,
-                                 &new_ticket->array, 0 );
+    error = oyImage_FillArray( image_input, new_ticket->output_image_roi, 1,
+                                 &new_ticket->array, 0, 0 );
   }
 
   /* We let the input filter do its processing first. */

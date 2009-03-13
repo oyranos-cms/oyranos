@@ -13293,6 +13293,50 @@ oyRegion_s *   oyRegion_NewFrom      ( oyRegion_s        * ref,
   return s;
 }
 
+/** Function oyRegion_SamplesFromImage
+ *  @memberof oyRegion_s
+ *  @brief   new from image
+ *
+ *  @param[in]     image               a image
+ *  @param[in]     image_region        optional region from image
+ *  @param[in]     object              optional object
+ *  @return                            the resuting region in sample dimensions
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/13 (Oyranos: 0.1.10)
+ *  @date    2009/03/13
+ */
+oyRegion_s *   oyRegion_SamplesFromImage (
+                                       oyImage_s         * image,
+                                       oyRegion_s        * image_region,
+                                       oyObject_s          object )
+{
+  int error = !image,
+      channel_n = 0;
+  oyRegion_s * s = 0;
+
+  if(!error && image->type_ != oyOBJECT_IMAGE_S)
+    return 0;
+
+  channel_n = image->layout_[oyCHANS];
+
+  if(!image_region)
+  {
+    s = oyRegion_NewWith( 0,0, image->width, image->height, object );
+    s->width *= channel_n;
+
+  } else
+  {
+    s = oyRegion_NewFrom( image_region, object );
+    oyRegion_Scale( s, image->width );
+    s->x *= channel_n;
+    s->width *= channel_n;
+    oyRegion_Round( s );
+  }
+
+  return s;
+}
+
 /**
  *  @brief   copy/reference from other region
  *  @memberof oyRegion_s
@@ -13960,7 +14004,6 @@ OYAPI oyArray2d_s * OYEXPORT
 }
  
 /**
- *  @internal
  *  Function oyArray2d_Release
  *  @memberof oyArray2d_s
  *  @brief   release and possibly deallocate a Array2d object
@@ -14062,6 +14105,83 @@ OYAPI int  OYEXPORT
 
   return error;
 }
+
+#if 0
+/**
+ *  Function oyArray2d_DataCopy
+ *  @memberof oyArray2d_s
+ *  @brief   copy data
+ *
+ *  @todo just refere the other arrays, with refs_ and refered_ members,
+ *        reuse memory
+ *
+ *  @param[in,out] obj                 the array to fill in
+ *  @param[in]     roi_obj             region of interesst in samples
+ *  @param[in]     source              the source data
+ *  @param[in]     roi_source          region of interesst in samples
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/12 (Oyranos: 0.1.10)
+ *  @date    2009/03/12
+ */
+OYAPI int  OYEXPORT
+                 oyArray2d_DataCopy  ( oyArray2d_s      ** obj,
+                                       oyRegion_s        * obj_source,
+                                       oyArray2d_s       * source,
+                                       oyRegion_s        * roi_source )
+{
+  oyArray2d_s * s = *obj,
+              * src = source;
+  int error = 0;
+  int new_roi = !roi;
+
+  if(!src || !s)
+    return 1;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+
+  if(error <= 0)
+  {
+    if(!roi)
+      roi = oyRegion_NewWith( 0,0, s->width, s->height, s->oy_ );
+    error = !roi;
+  }
+
+  /* possibly expensive hack */
+  if(*obj)
+    oyArray2d_Release( obj );
+
+  if(!(*obj))
+  {
+    *obj = oyArray2d_Create( 0, roi->height, roi->width, src->t, src->oy_ );
+    error = !*obj;
+  }
+
+  if(error <= 0)
+  {
+    oyAlloc_f allocateFunc_ = s->oy_->allocateFunc_;
+    int i, size;
+
+    s->own_lines = 2;
+    for(i = 0; i < roi->height; ++i)
+    {
+      size = roi->width * oySizeofDatatype( s->t );
+      if(!s->array2d[i])
+        oyAllocHelper_m_( s->array2d[i], unsigned char, size, allocateFunc_,
+                          error = 1; break );
+      error = !memcpy( s->array2d[i], src->array2d[i], size );
+    }
+  }
+
+  if(error)
+    oyArray2d_Release( obj );
+
+  if(new_roi)
+    oyRegion_Release( &roi );
+
+  return error;
+}
+#endif
 
 
 /**
@@ -14796,6 +14916,13 @@ int            oyImage_DataSet       ( oyImage_s         * image,
  *  Pixel layouts should be normalised within this function. So it works like a
  *  mediator.
  *
+ *  @param[in]     image               the image
+ *  @param[in]     region              the image region
+ *  @param[in]     do_copy             do copy into the array
+ *  @param[out]    array               array to fill
+ *  @param[in]     array_region        the array region in samples
+ *  @param[in]     obj                 the optional user object
+ *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/02 (Oyranos: 0.1.8)
  *  @date    2008/10/05
@@ -14804,19 +14931,17 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRegion_s        * region,
                                        int                 do_copy,
                                        oyArray2d_s      ** array,
+                                       oyRegion_s        * array_region,
                                        oyObject_s          obj )
 {
   int error = 0;
   oyArray2d_s * a = *array;
   oyImage_s * s = image;
-  oyRegion_s * pixel_region = 0;
+  oyRegion_s * pixel_region = 0, * r;
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int size = 0, channel_n;
-  int x = 0,
-      y = 0,
-      w = 0,
-      h = 0;
+  int new_array_region = !array_region;
 
   if(!image)
     return 1;
@@ -14826,83 +14951,96 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
   size = oySizeofDatatype( data_type );
   channel_n = image->layout_[oyCHANS];
-  pixel_region = oyRegion_NewFrom( region, 0 );
-  if( !region )
+  pixel_region = oyRegion_SamplesFromImage( image, region, 0 );
+
+  if(!error && !array_region)
   {
-    pixel_region->width = 1.0;
-    pixel_region->height = image->height / (double)image->width;
+    r = oyRegion_NewWith( 0,0, region->width, region->height, 0 );
+    array_region = oyRegion_SamplesFromImage( image, r, 0 );
+    error = !array_region;
+    oyRegion_Release( &r );
   }
 
-  oyRegion_Scale( pixel_region, image->width );
-  oyRegion_Round( pixel_region );
-  pixel_region->x *= channel_n;
-  pixel_region->width *= channel_n;
-  x = OY_ROUND( pixel_region->x );
-  y = OY_ROUND( pixel_region->y );
-  w = OY_ROUND( pixel_region->width );
-  h = OY_ROUND( pixel_region->height );
-
-  if( a )
+  if(!error && 
+     (!a ||
+      (a && ( pixel_region->width > a->width ||
+              pixel_region->height > a->height )) ||
+      pixel_region->width != array_region->width ||
+      pixel_region->height != array_region->height)
+    )
   {
-    if( w != a->width &&
-        h != a->height )
+    oyArray2d_Release( array );
+    a = oyArray2d_Create_( array_region->width, array_region->height,
+                           data_type, obj );
+    error = !a;
+    if(!error)
     {
-      printf("  pixel_region: %s\n", oyRegion_Show( pixel_region ));
-      WARNc1_S( "requested region exceeds data array %s",
-                oyRegion_Show( a->data_area ) );
-      oyArray2d_Release( array );
-      a = 0;
+      if(array_region->x)
+        a->data_area->x = -array_region->x;
+      /* allocate each single line */
+      if(do_copy)
+        a->own_lines = 2;
     }
   }
 
+  if( !a )
+  {
+    WARNc_S("Could not create array.")
+  }
+
+  if( !error && a )
+  {
+    if(a && a->width > pixel_region->width)
+      a->width = pixel_region->width;
+    if(a && a->height > pixel_region->height)
+      a->height = pixel_region->height;
+  }
+
+  if(!error)
+  {
   if(image->getLine)
   {
     unsigned char * data = 0;
     int i,j, height;
-    size_t len;
+    size_t len = size * array_region->width + array_region->x,
+           wlen = pixel_region->width * size,
+           ay;
+    oyPointer src, dst;
 
-    if(!a)
-    {
-      a = oyArray2d_Create_( w, h, data_type, obj );
-      a->data_area->x = -x;
-      a->data_area->y = 0;
-      a->data_area->width = image->width * channel_n;
-      a->data_area->height = h;
-      /* we allocate each line */
-      a->own_lines = 2;
-      do_copy = 1;
-    }
-
-    if( !a )
-    {
-      WARNc_S("Could not create array.")
-    }
-
-    for( i = 0; i < h; )
+    for( i = 0; i < pixel_region->height; )
     {
       height = is_allocated = 0;
-      data = image->getLine( image, y+i, &height, -1, &is_allocated );
-      len = size * w;
+      data = image->getLine( image, pixel_region->y + i, &height, -1,
+                             &is_allocated );
 
       for( j = 0; j < height; ++j )
       {
+        if( i + j >= array_region->height )
+          break;
+
+        ay = array_region->y + i + j;
+
         if(do_copy)
         {
-          if(!a->array2d[i+j])
-            oyAllocHelper_m_( a->array2d[i+j], unsigned char, len,
+          if(!a->array2d[ay])
+            oyAllocHelper_m_( a->array2d[ay], 
+                              unsigned char, len,
                               a->oy_ ? a->oy_->allocateFunc_ : 0,
                               error = 1; break );
 
-          error = !memcpy( a->array2d[i+j],
-                    &data[j * size * (int)OY_ROUND(a->data_area->width) +
-                          size * x], len );
+          dst = &a->array2d[ay][(int)array_region->x * size];
+          src = &data[j * size * (int)OY_ROUND(a->data_area->width) +                                 size * (int)pixel_region->x];
+
+          if(dst != src)
+            error = !memcpy( dst, src, wlen );
 
         } else
         {
-          a->array2d[i+j] = 
+          a->array2d[ay] = 
                     &data[j * size * (int)OY_ROUND(a->data_area->width)];
 
-          a->array2d[i+j] = &a->array2d[i+j][size * x];
+          a->array2d[ay] = &a->array2d[i+j]
+                              [size * (int)(array_region->x + pixel_region->x)];
         }
       }
 
@@ -14920,6 +15058,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     WARNc_S("image->getTile  not yet supported")
     error = 1;
   }
+  }
 
   if(error)
     oyArray2d_Release( &a );
@@ -14927,6 +15066,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   *array = a;
 
   oyRegion_Release( &pixel_region );
+  if(new_array_region)
+    oyRegion_Release( &array_region );
 
   return error;
 }
@@ -14944,13 +15085,15 @@ int            oyImage_FillArray     ( oyImage_s         * image,
  */
 int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyRegion_s        * region,
-                                       oyArray2d_s       * array )
+                                       oyArray2d_s       * array,
+                                       oyRegion_s        * array_region )
 {
   oyImage_s * s = image;
   int error = !image || !array;
-  oyRegion_s * pixel_region = oyRegion_Copy( region, region->oy_ );
+  oyRegion_s * pixel_region = 0;
   oyDATATYPE_e data_type = oyUINT8;
-  int size = 0, channel_n, i, offset, width;
+  int size = 0, channel_n, i, offset, width,
+      new_array_region = !array_region;
 
   if(error)
     return 0;
@@ -14961,17 +15104,14 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   size = oySizeofDatatype( data_type );
   channel_n = image->layout_[oyCHANS];
 
-  oyRegion_Scale( pixel_region, image->width );
-  oyRegion_Round( pixel_region );
-  offset = pixel_region->x;
-  pixel_region->x *= channel_n;
-  width = pixel_region->width;
-  pixel_region->width *= channel_n;
+  pixel_region = oyRegion_SamplesFromImage( image, region, 0 );
+  width = pixel_region->width / channel_n;
 
-  if(array->width > pixel_region->width || array->height > pixel_region->height)
+  if(array->width < pixel_region->width ||
+     array->height < pixel_region->height)
   {
-    WARNc3_S( "array (%dx%d) is too big for region %s",
-               pixel_region->width, array->height,
+    WARNc3_S( "array (%dx%d) is too small for region %s",
+               (int)array->width, (int)array->height,
                oyRegion_Show( pixel_region ) );
     error = 1;
   }
@@ -14983,16 +15123,25 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     error = 1;
   }
 
+  if(!error && !array_region)
+  {
+    array_region = oyRegion_NewWith( 0,0, array->width, array->height, 0 );
+    error = !array_region;
+  }
+
   if(!error)
   {
-    for(i = 0; i < array->height; ++i)
+    offset = pixel_region->x / channel_n;
+    for(i = array_region->y; i < array_region->height; ++i)
     {
       image->setLine( image, offset, pixel_region->y + i, width, -1,
-                      array->array2d[i] );
+                      &array->array2d[i][(int)OY_ROUND(array_region->x) * size] );
     }
   }
 
   oyRegion_Release( &pixel_region );
+  if(new_array_region)
+    oyRegion_Release( &array_region );
 
   return error;
 }
@@ -21261,7 +21410,7 @@ int                oyConversion_RunPixels (
   image = (oyImage_s*) plug->remote_socket_->data;
 
   result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
-                              &pixel_access->array, 0 );
+                              &pixel_access->array, 0, 0 );
   error = ( result != 0 );
 
   if(error <= 0)
@@ -21280,15 +21429,17 @@ int                oyConversion_RunPixels (
     {
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
       l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
-                                   &pixel_access->array, 0 ); OY_ERR
-
+                                   &pixel_access->array, 0, 0 ); OY_ERR
+      
       if(error != 0 &&
          dirty)
       {
         oyFilterGraph_PrepareContexts( pixel_access->graph, 1 );
         error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
                                                               pixel_access);
-      } else
+      }
+
+      if(error == 0)
         break;
     }
   }
@@ -21297,7 +21448,7 @@ int                oyConversion_RunPixels (
   {
     /* write the data to the output image */
     result = oyImage_ReadArray( image, pixel_access->output_image_roi,
-                                       pixel_access->array );
+                                       pixel_access->array, 0 );
     oyPixelAccess_Release( &pixel_access );
   }
 
