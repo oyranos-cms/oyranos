@@ -495,7 +495,7 @@ $(POT_FILE):	$(SOURCES) $(CHEADERS)
 
 docu:
 	echo Documentation ...
-	test -n 'which doxygen' && (doxygen Doxyfile; $(COPY) $(TAGET)_logo.png doc/html/) || echo "Will not create Documentation because doxygen is missing"
+	test -n 'which doxygen' && (doxygen Doxyfile; $(COPY) $(TARGET)_logo.png doc/html/) || echo "Will not create Documentation because doxygen is missing"
 	test -d doc_intern/html/ && $(COPY) $(TARGET)_logo.png doc_intern/html/ ||\
 	 echo ""
 	echo ... Documentation done
