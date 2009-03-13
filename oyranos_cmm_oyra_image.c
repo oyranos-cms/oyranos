@@ -690,7 +690,7 @@ int      oyraFilterPlug_ImageRegionsRun(oyFilterPlug_s   * requestor_plug,
                  * node = socket->node;
   oyImage_s * image = (oyImage_s*)socket->data;
   oyOption_s * o = 0;
-  oyRegion_s * r;
+  oyRegion_s * r, * sr;
   oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;
 
@@ -744,20 +744,27 @@ int      oyraFilterPlug_ImageRegionsRun(oyFilterPlug_s   * requestor_plug,
 
       if(oyRegion_CountPoints(  new_ticket->output_image_roi ) > 0)
       {
-        /* prepare the array for the following filter */
+        /* fill the array region for the following filter */
         if(!new_ticket->array)
           oyImage_FillArray( new_ticket->output_image,
-                             new_ticket->output_image_roi, 0,
-                            &new_ticket->array, 0 );
+                             new_ticket->output_image_roi, 1,
+                            &new_ticket->array, 0, 0 );
 
-        /* start new call */
+        /* start new call into branch */
         l_result = input_node->api7_->oyCMMFilterPlug_Run( node->plugs[i],
                                                            new_ticket );
         if(l_result != 0 && (result <= 0 || l_result > 0))
           result = l_result;
 
+        /* The image is used as intermediate cache between the forward and
+           backward array. @todo use direct array copy oyArray2d_DataCopy() */
         error = oyImage_ReadArray( image, new_ticket->output_image_roi,
-                                   new_ticket->array );
+                                   new_ticket->array, 0 );
+        sr = oyRegion_SamplesFromImage( image, new_ticket->output_image_roi, 0);
+        error = oyImage_FillArray( new_ticket->output_image,
+                                   new_ticket->output_image_roi, 1,
+                                  &ticket->array, sr, 0 );
+        oyRegion_Release( &sr );
       }
       oyPixelAccess_Release( &new_ticket );
 
@@ -1054,7 +1061,7 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
     double correct = ticket->output_image->width / (double) image->width;
     new_roi->width *= correct;
     new_roi->height *= correct;
-    error = oyImage_FillArray( image, new_roi, 1, &ticket->array, 0 );
+    error = oyImage_FillArray( image, new_roi, 1, &ticket->array, 0, 0 );
     oyRegion_Release( &new_roi );
   }
 
