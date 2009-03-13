@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-icc">
+         <comment>ICC colour profile</comment>
+         <comment xml:lang="de">ICC Farbprofil</comment>
+         <comment xml:lang="en_US">ICC color profile</comment>
+         <magic priority="50">
+                <match type="string" value="acsp" offset="36"/>
+         </magic>
+         <glob pattern="*.icc"/>
+         <glob pattern="*.ICC"/>
+         <glob pattern="*.icm"/>
+         <glob pattern="*.ICM"/>
+         <generic-icon name="oyranos_logo"/>
+  </mime-type>
+</mime-info>

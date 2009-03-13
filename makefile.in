@@ -161,12 +161,16 @@ EXAMPLE_FILES = $(EXAMPLES_C)
 
 MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
 MAN3 = oyranos.3 oyranos-config.3
-DATA = \
-	$(SRCDIR)/$(TARGET)_logo.png
+ICONS = \
+	$(SRCDIR)/$(TARGET)_logo.png \
+	$(SRCDIR)/lcms_logo2.png
 DOKU =  $(SRCDIR)/AUTHORS \
         $(SRCDIR)/ChangeLog \
         $(SRCDIR)/COPYING \
         $(SRCDIR)/README
+MIME_TYPES = \
+	$(SRCDIR)/x-colour-cgats.xml \
+	$(SRCDIR)/x-colour-icc.xml
 DOC_TEMPLATES = \
 	$(SRCDIR)/Doxyfile \
 	$(SRCDIR)/doxymentation \
@@ -246,8 +250,9 @@ CONFIG_FILES = \
 
 ALL_FILES = \
 	$(CONFIG_FILES) \
-	$(DATA) \
 	$(DOKU) \
+	$(ICONS) \
+	$(MIME_TYPES) \
 	$(SOURCES) \
 	$(CHEADERS) \
 	$(SCRIPTS) \
@@ -490,8 +495,8 @@ $(POT_FILE):	$(SOURCES) $(CHEADERS)
 
 docu:
 	echo Documentation ...
-	test -n 'which doxygen' && (doxygen Doxyfile; $(COPY) oyranos_logo.png doc/html/) || echo "Will not create Documentation because doxygen is missing"
-	test -d doc_intern/html/ && $(COPY) oyranos_logo.png doc_intern/html/ ||\
+	test -n 'which doxygen' && (doxygen Doxyfile; $(COPY) $(TAGET)_logo.png doc/html/) || echo "Will not create Documentation because doxygen is missing"
+	test -d doc_intern/html/ && $(COPY) $(TARGET)_logo.png doc_intern/html/ ||\
 	 echo ""
 	echo ... Documentation done
 
@@ -581,9 +586,22 @@ install_bin:	all uninstall_bin install_gui
 install:	uninstall install-main install-icc
 	echo ... $@ done
 
-install-main:	install_bin install_linguas install_docu
+install-main:	install_bin install_mime install_linguas install_docu
 
 install-icc:	install_profiles
+
+install_mime:
+	echo installing mime types into $(DESTDIR)$(datadir)/mime/packages ...
+	mkdir -p $(DESTDIR)$(datadir)/mime/packages/
+	for mime in $(MIME_TYPES); do \
+	  $(INSTALL) -m 644 $${mime} \
+	    $(DESTDIR)$(datadir)/mime/packages/$${mime}; \
+	done
+	echo adding icons to $(DESTDIR)$(pixmapdir) ...
+	mkdir -p $(DESTDIR)$(pixmapdir)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
+	$(INSTALL) -m 644 $(SRCDIR)/lcms_logo2.png $(DESTDIR)$(pixmapdir)/lcms_logo2.png
+	echo ... done installing mime types
 
 # synonymes
 doc:		docu
@@ -651,7 +669,7 @@ rpm:	dist
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 
 # remove everything previously installed
-uninstall:	uninstall_bin uninstall_docu uninstall_profiles uninstall_linguas
+uninstall:	uninstall_bin uninstall_docu uninstall-icc uninstall_linguas
 	echo ... $@ done
 
 uninstall_bin:
@@ -695,8 +713,17 @@ uninstall_profiles:
         ) || echo "no profile directory found"
 	echo ... done uninstalling profiles
 
-uninstall-icc:	uninstall_profiles
+uninstall-icc:	uninstall_mime uninstall_profiles
 
+uninstall_mime:
+	echo uninstalling mime types from $(DESTDIR)$(datadir)/mime/packages ...
+	for mime in $(MIME_TYPES); do \
+	  $(RM) $(DESTDIR)$(datadir)/mime/packages/$${mime}; \
+	done
+	echo removing icons from $(DESTDIR)$(pixmapdir) ...
+	$(RM) $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
+	$(RM) $(DESTDIR)$(pixmapdir)/lcms_logo2.png
+	echo ... done uninstalling mime types
 
 uninstall_linguas:
 	echo Uninstalling linguas ...

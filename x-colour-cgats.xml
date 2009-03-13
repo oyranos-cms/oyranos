@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="text/x-colour-cgats">
+         <comment>CGATS colour measurements</comment>
+         <comment xml:lang="de">CGATS Farbmessdaten</comment>
+         <comment xml:lang="en_US">CGATS color measurements</comment>
+         <glob pattern="*.cgats"/>
+         <glob pattern="*.ti1"/>
+         <glob pattern="*.ti2"/>
+         <glob pattern="*.ti3"/>
+         <glob pattern="*.cie"/>
+         <glob pattern="*.ncie"/>
+         <glob pattern="*.rgb"/>
+         <glob pattern="*.cmyk"/>
+         <glob pattern="*.lab"/>
+         <glob pattern="*.it8"/>
+         <glob pattern="*.q60"/>
+         <generic-icon name="oyranos_logo"/>
+  </mime-type>
+</mime-info>
