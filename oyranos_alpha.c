@@ -15333,7 +15333,7 @@ digraph G {
   ]
   subgraph { rank=min a }
 
-  b:p->a:s [label=data];
+  b:p->a:s [arrowhead=none, arrowtail=normal, label=data];
 } 
  \enddot
  *
