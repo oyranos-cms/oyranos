@@ -36,6 +36,12 @@
 #  include <X11/extensions/xf86vmode.h>
 # endif
 #endif
+#ifdef __APPLE__
+/* old style Quicktime APIs */
+#include <Carbon/Carbon.h>
+/* newer style CoreGraphics APIs like CGDirectDisplay.h and so on */
+#include <ApplicationServices/ApplicationServices.h>
+#endif
 
 #include "oyranos.h"
 #include "oyranos_alpha.h"
@@ -542,14 +548,22 @@ oyGetAllScreenNames_            (const char *display_name,
 #ifdef __APPLE__
 
   int ids[256];
+# if 0
   GDHandle                                device;
   DisplayIDType                           screenID;
+# else
+  CGDisplayErr err = kCGErrorSuccess;
+  CGDisplayCount alloc_disps = 0;
+  CGDirectDisplayID * active_displays = 0;
+  CGDisplayCount count = 0;
+# endif
 
   *n_scr = 0;
 
   if(!display_name || !display_name[0])
     return 0;
 
+# if 0
   device = GetDeviceList();
   while (device)
   {
@@ -558,6 +572,24 @@ oyGetAllScreenNames_            (const char *display_name,
 
     device = GetNextDevice( device );
   }
+# else
+  err = CGGetActiveDisplayList( alloc_disps, active_displays, &count );
+  if(count <= 0 || err != kCGErrorSuccess)
+  {
+    WARNc2_S("%s %s", _("open X Display failed"), display_name)
+    return 0;
+  }
+  alloc_disps = count + 1;
+  oyAllocHelper_m_( active_displays, CGDirectDisplayID, alloc_disps,0,return 0);
+  if(active_displays)
+    err = CGGetActiveDisplayList( alloc_disps, active_displays, &count);
+  for(i = 0; i < count && i < 256; ++i)
+  {
+    ids[i] = i;
+  }
+  WARNc1_S("display count = %d", count);
+  i = count;
+# endif
 
   *n_scr = i;
   oyAllocHelper_m_( list, char*, *n_scr, 0, return NULL )
