@@ -14925,7 +14925,7 @@ int            oyImage_DataSet       ( oyImage_s         * image,
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/02 (Oyranos: 0.1.8)
- *  @date    2008/10/05
+ *  @date    2009/03/16
  */
 int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRegion_s        * region,
@@ -14942,6 +14942,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   int is_allocated = 0;
   int size = 0, channel_n;
   int new_array_region = !array_region;
+  double a_orig_width = 0, a_orig_height = 0;
 
   if(!image)
     return 1;
@@ -14990,10 +14991,17 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if( !error && a )
   {
+    /* change intermediately and store old values for later recovering */
     if(a && a->width > pixel_region->width)
+    {
+      a_orig_width = a->width;
       a->width = pixel_region->width;
+    }
     if(a && a->height > pixel_region->height)
+    {
+      a_orig_height = a->height;
       a->height = pixel_region->height;
+    }
   }
 
   if(!error)
@@ -15062,6 +15070,14 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if(error)
     oyArray2d_Release( &a );
+  else
+  {
+    /* set back, what was changed intermediately above */
+    if(a_orig_width != 0)
+      a->width = a_orig_width;
+    if(a_orig_height != 0)
+      a->height = a_orig_height;
+  }
 
   *array = a;
 
