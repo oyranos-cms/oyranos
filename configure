@@ -73,6 +73,7 @@ rpm=0
 static=1
 verbose=1
 X11=0
+X_ADD="Xcolor Xfixes"
 X_ADD_2="X11 Xext Xinerama Xxf86vm Xrandr"
 LIBS_TEST="ltdl dl iconv intl m xml2"
 
@@ -740,6 +741,7 @@ for i in $nochecklibs; do
   new_libs=`echo $new_libs | sed s/$i//`
 done
 X_ADD_2=$new_libs
+export X_ADD
 export X_ADD_2
 export LIBS_TEST
 export LIBS_TEST_1
@@ -760,8 +762,9 @@ if [ -n "$ECHO" ]; then
   FLTK=2; export FLTK
 if [ $OSUNAME != "Darwin" ] ; then
   X11=1; 
+  XCOLOR=1
 fi
-  export X11
+  export X11 XCOLOR
   XINERAMA=2; export XINERAMA
   XRANDR=2; export XRANDR
   XF86VMODE=2; export XF86VMODE
@@ -781,7 +784,7 @@ fi
   LIBOPENEXR=0; export LIBOPENEXR
   #FTGL=0; export FTGL
   FLTK=0; export FLTK
-  X11=0; export X11
+  X11=0; XCOLOR=0; export X11 XCOLOR
   XINERAMA=0; export XINERAMA
   XRANDR=0; export XRANDR
   XF86VMODE=0; export XF86VMODE
