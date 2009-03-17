@@ -29,7 +29,7 @@
 /* --- internal definitions --- */
 
 #define CMM_NICK "oyra"
-#define CMM_VERSION {0,1,0}
+#define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 extern oyMessage_f message;
 
@@ -83,8 +83,6 @@ extern oyCMMapi4_s   oyra_api4_image_write_ppm;
 extern oyCMMapi7_s   oyra_api7_image_write_ppm;
 extern oyCMMapi4_s   oyra_api4_image_regions;
 extern oyCMMapi7_s   oyra_api7_image_regions;
-extern oyCMMapi4_s   oyra_api4_image_display;
-extern oyCMMapi7_s   oyra_api7_image_display;
 extern oyCMMapi4_s   oyra_api4_image_output;
 extern oyCMMapi7_s   oyra_api7_image_output;
 extern oyCMMapi4_s   oyra_api4_image_root;
