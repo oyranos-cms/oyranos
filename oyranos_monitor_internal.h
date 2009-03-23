@@ -89,6 +89,19 @@ XRROutputInfo *
 int          oyMonitor_activeOutputs_( oyMonitor_s       * disp );
 # endif
 
+#elif defined(__APPLE__)
+/** \internal  platformdependent */
+typedef struct {
+  oyOBJECT_e       type_;              /**< object type oyOBJECT_MONITOR_S */
+  char         *name;        /**< traditional display name - host:0 / :0 */
+  char         *host;        /**< host name only - host */
+  char         *identifier;  /**<  - _x_y_wxh */
+  int           geo[6];      /**< display screen x y width height */
+  CGDirectDisplayID *display;/**< logical display */
+  int           screen;      /**< external screen number to call for X */
+  char               * system_port;    /**< the operating systems port name */
+  oyBlob_s           * edid;           /**< edid for the device */
+} oyMonitor_s;
 #endif
 
 int oyFree_       (void *oy_structure);

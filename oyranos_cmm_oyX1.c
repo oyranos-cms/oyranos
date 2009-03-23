@@ -189,23 +189,42 @@ int  oyX1FilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 # if defined(HAVE_X11) && defined (HAVE_Xcolor)
   if(win_id)
   {
+    Atom netColorTarget;
     Window w = (Window) win_id->ptr;
     const char * display_name = oyOptions_FindString( image->tags,
                                                       "display_name", 0 );
     Display * display = XOpenDisplay( display_name );
     oyBlob_Release( &win_id );
     WARNc2_S("\n  Display: %s Window id: %d", display_name, w );
+
     {
-        /* Upload the region to the window. */
-        XRectangle rec[2] = { { 50, 25, 200, 175 }, {0} };
-        XserverRegion reg = XFixesCreateRegion( display, rec, 2);
+      oyRegion_s * display_region = (oyRegion_s*) oyOptions_GetType( 
+                                          image->tags, -1,
+                                          "display_region", oyOBJECT_REGION_S );
+      /* Upload the region to the window. */
+      XRectangle rec[2] = { { 0,0,0,0 }, { 0,0,0,0 } };
+      XserverRegion reg = 0;
+      XcolorRegion region;
 
-        XcolorRegion region;
-        region.region = reg;
-        memset( region.md5, 0, 16 );
+      rec[0].x = display_region->x;
+      rec[0].y = display_region->y;
+      rec[0].width = display_region->width;
+      rec[0].height = display_region->height;
 
-        XcolorRegionInsert( display, w, 0, &region, 1 );
+      reg = XFixesCreateRegion( display, rec, 1);
+
+      region.region = reg;
+      memset( region.md5, 0, 16 );
+
+      error = XcolorRegionInsert( display, w, 0, &region, 1 );
+      netColorTarget = XInternAtom( display, "_NET_COLOR_TARGET", True );
+      XChangeProperty( display, w, netColorTarget, XA_STRING, 8,
+                       PropModeReplace,
+                       (unsigned char *) ":0.0", strlen(":0.0") );
+
+      oyRegion_Release( &display_region );
     }
+    XClearWindow( display, w );
   }
 # endif
 

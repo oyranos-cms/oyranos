@@ -301,7 +301,7 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
         w = RootWindow( display, oyMonitor_deviceScreen_( disp ) );
       if(w)
         /* AnyPropertyType does not work for _ICC_PROFILE ---vvvvvvvvvv */
-        XGetWindowProperty( display, w, atom, 0, INT_MAX, 0, XA_CARDINAL,
+        XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_CARDINAL,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
       if(atom_name)
