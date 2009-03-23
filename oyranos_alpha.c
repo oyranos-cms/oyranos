@@ -10400,6 +10400,58 @@ OYAPI oyProfile_s * OYEXPORT
   return s;
 }
 
+/** @brief   look up a profile from it's md5 hash sum
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    md5            hash sum
+ *  @param[in]    object         the optional base
+ *  @return                      a profile
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/20 (Oyranos: 0.1.10)
+ *  @date    2009/03/20
+ */
+OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromMD5(  uint32_t          * md5,
+                                       oyObject_s          object )
+{
+  oyProfile_s * s = 0, * tmp = 0;
+  int error = !md5,
+      equal = 0;
+  char ** names = 0;
+  uint32_t count = 0, i = 0;
+
+  if(error)
+    return 0;
+
+  if(error <= 0)
+  {
+    names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+
+    for(i = 0; i < count; ++i)
+    {
+      if(names[i])
+      {
+        if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+          tmp = oyProfile_FromFile( names[i], 0, 0 );
+
+        equal = memcmp( md5, tmp->oy_->hash_, OY_HASH_SIZE );
+        if(equal == 0)
+          {
+            s = tmp;
+            break;
+          }
+
+          oyProfile_Release( &tmp );
+        }
+      }
+
+      oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+  }
+
+  return s;
+}
+
 /**
  *  @internal
  *  @brief   create new from existing profile struct
@@ -11171,8 +11223,9 @@ OYAPI oyPointer OYEXPORT
  *  @brief   get the ICC profile location in the filesystem
  *
  *  This function tries to find a profile on disk matching a possibly memory
- *  only profile. In case the profile was previously opened from file or as a
- *  from Oyranos defaults the associated filename will simply be retuned.
+ *  only profile. In case the profile was previously opened from file or 
+ *  from a Oyranos default profile, the associated filename will simply be
+ *  retuned.
  *
  *  @param         profile             the profile
  *  @param         allocateFunc        memory allocator           

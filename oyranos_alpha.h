@@ -988,6 +988,9 @@ OYAPI oyProfile_s * OYEXPORT
                                        oySIGNATURE_TYPE_e  type,
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromMD5(  uint32_t          * md5,
+                                       oyObject_s          object );
+OYAPI oyProfile_s * OYEXPORT
                    oyProfile_Copy    ( oyProfile_s       * profile,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT oyProfile_Release( oyProfile_s      ** profile );
