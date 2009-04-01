@@ -2928,6 +2928,9 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
         if(!ret && reg)
         {
           rank = oyFilterRegistrationMatch( reg, registration, type );
+          if(rank && OYRANOS_VERSION == info->oy_compatibility)
+            ++rank;
+
           if(rank && rank_list)
           {
 
