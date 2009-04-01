@@ -434,9 +434,20 @@ oyGetMonitorInfo_                 (const char* display_name,
 #endif
 
 #ifdef __APPLE__
-DisplayIDType
-oyMonitor_nameToOsxID( const char* display_name )
+OSErr oyCMIterateDeviceInfoProc          ( const CMDeviceInfo* dev_info,
+                                           void              * ptr )
 {
+  char ** my_data = (char**) ptr;
+
+  /* watch the device */
+  WARNc2_S( "%s %d", dev_info->deviceClass, dev_info->deviceID );
+
+  return noErr;
+}
+
+CGDirectDisplayID  oyMonitor_nameToOsxID ( const char        * display_name )
+{
+#if 0
   DisplayIDType screenID=0;
   GDHandle device = 0;
 
@@ -449,6 +460,54 @@ oyMonitor_nameToOsxID( const char* display_name )
     screenID = atoi(display_name);
 
   return screenID;
+#else
+  {
+    UInt32 seed = 0,
+           count = 0;
+    char * my_data = 0;
+    CMError cm_err = CMIterateColorDevices( oyCMIterateDeviceInfoProc, 
+                                            &seed, &count, &my_data );
+  }
+#endif
+
+  int pos = 0;
+  CGDisplayErr err = kCGErrorSuccess;
+  CGDisplayCount alloc_disps = 0;
+  CGDirectDisplayID * active_displays = 0,
+                    * cg_direct_display_id = 0;
+  CGDisplayCount count = 0;
+  io_service_t io_service = 0;
+
+  err = CGGetActiveDisplayList( alloc_disps, active_displays, &count );
+  if(count <= 0 || err != kCGErrorSuccess)
+  {
+    WARNc2_S("%s %s", _("open X Display failed"), display_name)
+    return 0;
+  }
+  alloc_disps = count + 1;
+  oyAllocHelper_m_( active_displays, CGDirectDisplayID, alloc_disps,0,return 0);
+  if(active_displays)
+    err = CGGetActiveDisplayList( alloc_disps, active_displays, &count);
+
+  if(display_name && display_name[0])
+    pos = atoi( display_name );
+
+  if(err)
+  {
+    WARNc1_S( "CGGetActiveDisplayList call with error %d", err );
+  } else
+  {
+    oyAllocHelper_m_( cg_direct_display_id, CGDirectDisplayID, 1, 0, return 0);
+    memcpy( cg_direct_display_id, active_displays[pos],
+               sizeof(CGDirectDisplayID) );
+
+    WARNc1_S( "vendor; %d  ",
+              CGDisplayVendorNumber(cg_direct_display_id) );
+
+    oyFree_m_( active_displays );
+  }
+
+  return cg_direct_display_id;
 }
 #endif
 
@@ -462,7 +521,7 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 #ifdef __APPLE__
 
   CMProfileRef prof=NULL;
-  DisplayIDType screenID=0;
+  CGDirectDisplayID screenID=0;
   CMProfileLocation loc;
   int err = 0;
   char * block = NULL;
@@ -548,31 +607,14 @@ oyGetAllScreenNames_            (const char *display_name,
 #ifdef __APPLE__
 
   int ids[256];
-# if 0
-  GDHandle                                device;
-  DisplayIDType                           screenID;
-# else
   CGDisplayErr err = kCGErrorSuccess;
   CGDisplayCount alloc_disps = 0;
   CGDirectDisplayID * active_displays = 0;
   CGDisplayCount count = 0;
-# endif
+  io_service_t io_service = 0;
 
   *n_scr = 0;
 
-  if(!display_name || !display_name[0])
-    return 0;
-
-# if 0
-  device = GetDeviceList();
-  while (device)
-  {
-    DMGetDisplayIDByGDevice(device, &screenID, false);
-    ids[i++] = screenID;
-
-    device = GetNextDevice( device );
-  }
-# else
   err = CGGetActiveDisplayList( alloc_disps, active_displays, &count );
   if(count <= 0 || err != kCGErrorSuccess)
   {
@@ -585,11 +627,11 @@ oyGetAllScreenNames_            (const char *display_name,
     err = CGGetActiveDisplayList( alloc_disps, active_displays, &count);
   for(i = 0; i < count && i < 256; ++i)
   {
+    io_service = CGDisplayIOServicePort ( active_displays[i] );
     ids[i] = i;
   }
   WARNc1_S("display count = %d", count);
   i = count;
-# endif
 
   *n_scr = i;
   oyAllocHelper_m_( list, char*, *n_scr, 0, return NULL )
@@ -805,7 +847,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       CMProfileLocation loc;
       CMError err = 0;
       CMProfileRef prof=NULL;
-      DisplayIDType screenID = 0;
+      CGDirectDisplayID screenID = 0;
 
       loc.locType = cmPathBasedProfile;
       oySnprintf1_( loc.u.pathLoc.path, 255, "%s", profile_fullname);
@@ -949,7 +991,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
     {
       CMError err = 0;
       CMProfileRef prof=NULL;
-      DisplayIDType screenID = 0;
+      CGDirectDisplayID screenID = 0;
 
 
       screenID = oyMonitor_nameToOsxID( display_name );
