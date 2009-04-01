@@ -52,12 +52,14 @@ int main( int argc , char** argv )
 #endif
   oyI18NInit_();
 
+#ifndef __APPLE__
   if(!display_name)
   {
-    printf("DISPLAY variable not set: giving up\n");
+    WARNc_S( _("DISPLAY variable not set: giving up.") );
     error = 1;
     return error;
   }
+#endif
 
   if(getenv("OYRANOS_DEBUG"))
   {

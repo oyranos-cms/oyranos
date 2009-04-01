@@ -915,6 +915,7 @@ int            oyX1Configs_FromPattern (
     else
     {
       tmp = getenv("DISPLAY");
+#if !defined(__APPLE__)
       if(!tmp)
       {
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
@@ -933,6 +934,7 @@ int            oyX1Configs_FromPattern (
           text[0] = '\000';
 
       device_name = device_name_temp;
+#endif
       text = 0;
     }
 
