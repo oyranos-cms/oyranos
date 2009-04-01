@@ -190,6 +190,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       debug="1"
     fi
+    switch=enable-devel
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      devel="1"
+    fi
     switch=disable-static
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       static="0"
@@ -243,6 +247,7 @@ test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X1
 test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rpath for ELF linking"
 test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
 test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug version [default disable]"
+test -n "$INFOECHO" && $INFOECHO "   --enable-devel                       devel mode for osX [default disable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-static                     no static libraries [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-verbose                    verbose compiling [default enable]"
@@ -639,7 +644,7 @@ test -n "$ECHO" && $ECHO "MAKEDEPEND	= $MAKEDEPEND" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "LIBEXT = .dylib" >> $CONF
   GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
-  test -n "$ECHO" && $ECHO "DSO_LIB_VERSION = -install_name \$(libdir)/" >> $CONF
+  test -n "$ECHO" && $ECHO "DSO_LIB_VERSION = -install_name " >> $CONF
   test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib $GCC_VERSION_INFO  \$(DSO_LIB_VERSION)" >> $CONF
   COPY="cp -pv"
   RM="rm -vf"
@@ -652,6 +657,9 @@ if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   INSTALL="install -p $DEBUG_SWITCH"
   oyranos_add="-framework ApplicationServices \$ltdl \$xml2"
+  if [ -n "$devel" ]; then
+    DEVEL_LIBS="\$(LIBS_CMM)"
+  fi
 else
   test -n "$ECHO" && $ECHO "SO = .so" >> $CONF
   test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -shared $GCC_VERSION_INFO \$(DSO_LIB_VERSION)" >> $CONF
@@ -670,7 +678,7 @@ else
     LDFLAGS="$LDFLAGS -L."
     test -n "$ECHO" && $ECHO "LINK_FLAGS_STATIC =" >> $CONF
     if [ -n "$rpath" ]; then 
-      test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
+      test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
       test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
     fi
     CFLAGS="$CFLAGS -fPIC -DPIC"
@@ -682,7 +690,7 @@ else
     if [ $OSUNAME = "BSD" ]; then
       LDFLAGS="$LDFLAGS"
       if [ -n "$rpath" ]; then 
-        test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl,\$(libdir)" >> $CONF
+        test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
         test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
       fi
       INSTALL="install -p $DEBUG_SWITCH"
@@ -1022,7 +1030,7 @@ test -n "$ECHO" && $ECHO "#endif /*OYRANOS_VERSION_H*/" >> $VERS_H
 
 CFLAGS="$CFLAGS_COMMON `echo $CFLAGS | $STRIPOPT`"
 CXXFLAGS="$CXXFLAGS_COMMON `echo $CXXFLAGS | $STRIPOPT`"
-LDFLAGS="`echo $LDFLAGS | $STRIPOPT` \$(dl)"
+LDFLAGS="`echo $LDFLAGS | $STRIPOPT` \$(dl) \$(DEVEL_LIBS)"
 
 test -n "$ECHO" && $ECHO "CFLAGS=$CFLAGS"     >> $CONF_NV
 test -n "$ECHO" && $ECHO "CFLAGS = $CFLAGS"   >> $CONF_I18N
@@ -1030,10 +1038,12 @@ test -n "$ECHO" && $ECHO "CXXFLAGS = $CXXFLAGS">>$CONF_I18N
 test -n "$ECHO" && $ECHO "LDFLAGS = $LDFLAGS" >> $CONF_I18N
 test -n "$ECHO" && $ECHO "CFLAGS = $CFLAGS"   >> $CONF
 test -n "$ECHO" && $ECHO "CXXFLAGS = $CXXFLAGS">>$CONF
+test -n "$ECHO" && $ECHO "DEVEL_LIBS = $DEVEL_LIBS" >> $CONF
 test -n "$ECHO" && $ECHO "LDFLAGS = $LDFLAGS" >> $CONF
 test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $CONF
 test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $PRINT_CONF
 test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $BASE_CONF
+
 
 test -n "$ECHO" && $ECHO "" >> $CONF
 test -n "$ECHO" && $ECHO "" >> $CONF

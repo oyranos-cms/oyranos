@@ -268,7 +268,7 @@ all:	setup config.log.h mkdepend \
 	$(BUILDDIR)$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
 	$(BUILDDIR)$(TARGET)-policy $(FLTK_GUI) \
-	$(BUILDDIR)$(TEST2) $(EXAMPLES) $(LINGUAS_SRC)
+	$(EXAMPLES) $(LINGUAS_SRC)
 	test -d default_profiles && \
 	( cd default_profiles; \
 	for prof in $(DEFAULT_PROFILES); do \
@@ -291,9 +291,9 @@ setup:
 	test -d $(BUILDDIR). && echo "" || (echo output to $(BUILDDIR); mkdir -p $(BUILDDIR))
 
 # build all objects and libraries, link the headers to $(TARGET)
-$(BUILDDIR)$(LIBSONAMEFULL):	$(OBJECTS) $(BUILDDIR)$(LIBNAME)
+$(BUILDDIR)$(LIBSONAMEFULL):	$(OBJECTS) $(BUILDDIR)$(LIBNAME) $(DEVEL_LIBS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(libdir)/$@ \
 	-o $(BUILDDIR)$(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(libdir) $(LDLIBS) $(m)
@@ -304,10 +304,9 @@ $(BUILDDIR)$(LIBSONAMEFULL):	$(OBJECTS) $(BUILDDIR)$(LIBNAME)
 
 $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $(BUILDDIR)$@ \
-	$(CMM_lcms_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS) \
-	$(BUILDDIR)$(LIBSONAMEFULL)
+	$(CMM_lcms_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -315,10 +314,9 @@ $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 
 $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $(BUILDDIR)$@ \
-	$(CMM_oyX1_OBJECTS) $(MONI_OBJECTS) $(BUILDDIR)$(LIBSONAMEFULL) \
-	$(X11_LIBS) $(MODULE_LDLIBS)
+	$(CMM_oyX1_OBJECTS) $(MONI_OBJECTS) $(X11_LIBS) $(MODULE_LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -326,9 +324,9 @@ $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 
 $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $(BUILDDIR)$@ \
-	$(CMM_oyra_OBJECTS) $(BUILDDIR)$(LIBSONAMEFULL) $(MODULE_LDLIBS)
+	$(CMM_oyra_OBJECTS) $(MODULE_LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -336,9 +334,9 @@ $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 
 $(LIB_CMM_oyIM): $(CMM_oyIM_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$@ \
+	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(metadir)/$@ \
 	-o $(BUILDDIR)$@ \
-	$(CMM_oyIM_OBJECTS) $(BUILDDIR)$(LIBSONAMEFULL) $(MODULE_LDLIBS)
+	$(CMM_oyIM_OBJECTS) $(MODULE_LDLIBS)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -398,13 +396,13 @@ $(BUILDDIR)$(TARGET)-policy:	$(BUILDDIR)$(LIBSONAMEFULL) $(BUILDDIR)$(TARGET)_po
 $(BUILDDIR)test2:	$(BUILDDIR)test2.o $(BUILDDIR)$(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $(BUILDDIR)test2_dyn \
-	$(BUILDDIR)test2.o `./oyranos-config --ldflags`
+	$(BUILDDIR)test2.o -L./ `./oyranos-config --ldflags`
 	echo Linking static $@ ...
 	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $(BUILDDIR)test2 \
-	$(BUILDDIR)test2.o `./oyranos-config --ldstaticflags`
+	$(BUILDDIR)test2.o -L./ `./oyranos-config --ldstaticflags`
 	
 
-check:	all install_bin install-icc $(BUILDDIR)tests/test_oyranos
+check:	all install_bin install-icc $(BUILDDIR)tests/test_oyranos $(BUILDDIR)$(TEST2)
 	echo current git version is:
 	n=0; for i in `git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
@@ -791,7 +789,9 @@ clean:
 	         $(BUILDDIR)lib$${lib}$(SO)$(LIBEXT) \
 	         $(BUILDDIR)lib$${lib}.a; \
 	done
+ifdef $(LIB_XNVCTRL)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
+endif
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
 	echo ... $@ done
 
