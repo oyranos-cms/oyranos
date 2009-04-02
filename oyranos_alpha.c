@@ -2870,9 +2870,10 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
 {
   int error = !oyIsOfTypeCMMapiFilter( type );
   char prefered_cmm[5] = {0,0,0,0,0};
-  oyCMMapiFilters_s * apis = 0;
-  oyCMMapiFilter_s * api = 0;
-  uint32_t * rank_list_ = 0;
+  oyCMMapiFilters_s * apis = 0, * apis2 = 0;
+  oyCMMapiFilter_s * api = 0,
+                   * api2 = 0;
+  uint32_t * rank_list_ = 0, * rank_list2_ = 0;
   int rank_list_n = 5;
 
   if(error <= 0 && cmm_required)
@@ -2903,7 +2904,8 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     oyCMMapi5_s * api5 = oyCMMGetMetaApi_( 0, queries, registration );
     char ** files = 0;
     uint32_t  files_n = 0;
-    int i, j, k = 0, match_j = -1, ret, match_i = -1, rank = 0, old_rank = 0;
+    int i, j, k = 0, match_j = -1, ret, match_i = -1, rank = 0, old_rank = 0,
+        n, accept;
     char * match = 0, * reg = 0;
     oyCMMInfo_s * info = 0;
     oyObject_s object = oyObject_New();
@@ -2979,15 +2981,69 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
 
     if(match && !rank_list)
     {
-      apis = oyCMMapiFilters_New( 0 );
+      apis2 = oyCMMapiFilters_New( 0 );
       api = api5->oyCMMFilterLoad( 0,0, files[match_i], type, match_j );
       api->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
       api->api5_ = api5;
-      oyCMMapiFilters_MoveIn( apis, &api, -1 );
+      oyCMMapiFilters_MoveIn( apis2, &api, -1 );
       if(count)
         *count = 1;
     }
 
+    if(rank_list_)
+    {
+      /* filter doubled entries */
+      n = oyCMMapiFilters_Count( apis );
+      oyAllocHelper_m_( rank_list2_, uint32_t, rank_list_n+1, 0, return 0 );
+      k = 0;
+      for(i = 0 ; i < n; ++i)
+      {
+        api = oyCMMapiFilters_Get( apis, i );
+        accept = 1;
+
+        for(j = 0; j < n; ++j)
+        {
+          if(j == i)
+            continue;
+
+          api2 = oyCMMapiFilters_Get( apis, j );
+
+          /* for equal registration compare rank and version */
+          if(oyStrcmp_( api->registration,  api2->registration ) == 0 &&
+             (rank_list_[i] < rank_list_[j] ||
+              api->version[0] < api2->version[0] ||
+              (api->version[0] == api2->version[0] &&
+               api->version[1] < api2->version[1]) ||
+              (api->version[0] == api2->version[0] && 
+               api->version[1] == api2->version[1] &&
+               api->version[2] < api2->version[2])))
+            accept = 0;
+
+          if(api2->release)
+            api2->release( (oyStruct_s**)&api2 );
+        }
+
+        if(!apis2)
+          apis2 = oyCMMapiFilters_New( 0 );
+
+        if(accept)
+        {
+          oyCMMapiFilters_MoveIn( apis2, &api, -1 );
+          rank_list2_[k++] = rank_list_[i];
+        }
+
+        if(api && api->release)
+          api->release( (oyStruct_s**)&api );
+      }
+
+      if(rank_list)
+        *rank_list = rank_list2_;
+      if(rank_list_)
+        oyFree_m_(rank_list_);
+      if(count)
+        *count = k;
+    }
+      
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
 
   }
@@ -2998,7 +3054,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     error = oyHash_SetPointer_( entry, (oyStruct_s*) s );
   }*/
 
-  return apis;
+  return apis2;
 }
 
 /** @internal
