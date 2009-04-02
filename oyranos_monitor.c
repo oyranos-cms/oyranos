@@ -62,20 +62,11 @@
 int   oyMonitor_getScreenFromDisplayName_( oyMonitor_s   * disp );
 #endif
 char**oyGetAllScreenNames_        (const char *display_name, int *n_scr );
-#if (defined(HAVE_X) && !defined(__APPLE__))
 int   oyMonitor_getScreenGeometry_   ( oyMonitor_s       * disp );
-int   oyMonitor_getGeometryIdentifier_(oyMonitor_s       * disp );
-char* oyMonitor_getAtomName_         ( oyMonitor_s       * disp,
-                                       const char        * base );
-char* oyChangeScreenName_            ( const char        * display_name,
-                                       int                 screen );
-
 /** @internal Display functions */
 const char* oyMonitor_name_( oyMonitor_s *disp ) { return disp->name; }
 const char* oyMonitor_hostName_( oyMonitor_s *disp ) { return disp->host; }
 const char* oyMonitor_identifier_( oyMonitor_s *disp ) { return disp->identifier; }
-const char* oyMonitor_systemPort_( oyMonitor_s *disp ) { return disp->system_port; }
-oyBlob_s *  oyMonitor_edid_( oyMonitor_s * disp ) { return oyBlob_Copy( disp->edid, 0 ); }
 /** @internal the screen appendment for the root window properties */
 char*       oyMonitor_screenIdentifier_( oyMonitor_s *disp )
 { char *number = 0;
@@ -85,7 +76,6 @@ char*       oyMonitor_screenIdentifier_( oyMonitor_s *disp )
   if( disp->geo[1] >= 1 && !disp->screen ) sprintf( number,"_%d", disp->geo[1]);
   return number;
 }
-Display* oyMonitor_device_( oyMonitor_s *disp ) { return disp->display; }
 int oyMonitor_deviceScreen_( oyMonitor_s *disp ) { return disp->screen; }
 int oyMonitor_number_( oyMonitor_s *disp ) { return disp->geo[0]; }
 int oyMonitor_screen_( oyMonitor_s *disp ) { return disp->geo[1]; }
@@ -93,6 +83,14 @@ int oyMonitor_x_( oyMonitor_s *disp ) { return disp->geo[2]; }
 int oyMonitor_y_( oyMonitor_s *disp ) { return disp->geo[3]; }
 int oyMonitor_width_( oyMonitor_s *disp ) { return disp->geo[4]; }
 int oyMonitor_height_( oyMonitor_s *disp ) { return disp->geo[5]; }
+int   oyMonitor_getGeometryIdentifier_(oyMonitor_s       * disp );
+#if defined(__APPLE__)
+CGDirectDisplayID oyMonitor_device_( oyMonitor_s *disp ) { return disp->id; }
+#elif defined(HAVE_X)
+Display* oyMonitor_device_( oyMonitor_s *disp ) { return disp->display; }
+const char* oyMonitor_systemPort_( oyMonitor_s *disp ) { return disp->system_port; }
+oyBlob_s *  oyMonitor_edid_( oyMonitor_s * disp ) { return oyBlob_Copy( disp->edid, 0 ); }
+
 oyX11INFO_SOURCE_e
     oyMonitor_infoSource_( oyMonitor_s *disp ) { return disp->info_source; }
 # ifdef HAVE_XRANDR
@@ -104,6 +102,11 @@ XRROutputInfo *
     oyMonitor_xrrOutputInfo_( oyMonitor_s * disp ) { return disp->output_info; }
 int oyMonitor_activeOutputs_( oyMonitor_s * disp ) { return disp->active_outputs; }
 #endif
+
+char* oyMonitor_getAtomName_         ( oyMonitor_s       * disp,
+                                       const char        * base );
+char* oyChangeScreenName_            ( const char        * display_name,
+                                       int                 screen );
 
 int
 oyFree_( void *oy_structure )
@@ -438,14 +441,22 @@ OSErr oyCMIterateDeviceInfoProc          ( const CMDeviceInfo* dev_info,
                                            void              * ptr )
 {
   char ** my_data = (char**) ptr;
+  char dev_class[8] = {0,0,0,0,0,0,0,0};
+
+  memcpy( dev_class, &dev_info->deviceClass, 4 );
+  dev_class[4] = 0;
 
   /* watch the device */
-  WARNc2_S( "%s %d", dev_info->deviceClass, dev_info->deviceID );
+  /*WARNc2_S( "%s %d", dev_class, dev_info->deviceID );*/
+
+  if(dev_info->deviceClass == cmDisplayDeviceClass)
+  {
+  }
 
   return noErr;
 }
 
-CGDirectDisplayID  oyMonitor_nameToOsxID ( const char        * display_name )
+CGDirectDisplayID oyMonitor_nameToOsxID ( const char        * display_name )
 {
 #if 0
   DisplayIDType screenID=0;
@@ -460,21 +471,13 @@ CGDirectDisplayID  oyMonitor_nameToOsxID ( const char        * display_name )
     screenID = atoi(display_name);
 
   return screenID;
-#else
-  {
-    UInt32 seed = 0,
-           count = 0;
-    char * my_data = 0;
-    CMError cm_err = CMIterateColorDevices( oyCMIterateDeviceInfoProc, 
-                                            &seed, &count, &my_data );
-  }
 #endif
 
   int pos = 0;
   CGDisplayErr err = kCGErrorSuccess;
   CGDisplayCount alloc_disps = 0;
   CGDirectDisplayID * active_displays = 0,
-                    * cg_direct_display_id = 0;
+                    cg_direct_display_id = 0;
   CGDisplayCount count = 0;
   io_service_t io_service = 0;
 
@@ -497,12 +500,7 @@ CGDirectDisplayID  oyMonitor_nameToOsxID ( const char        * display_name )
     WARNc1_S( "CGGetActiveDisplayList call with error %d", err );
   } else
   {
-    oyAllocHelper_m_( cg_direct_display_id, CGDirectDisplayID, 1, 0, return 0);
-    memcpy( cg_direct_display_id, active_displays[pos],
-               sizeof(CGDirectDisplayID) );
-
-    WARNc1_S( "vendor; %d  ",
-              CGDisplayVendorNumber(cg_direct_display_id) );
+    cg_direct_display_id = active_displays[pos];
 
     oyFree_m_( active_displays );
   }
@@ -510,6 +508,8 @@ CGDirectDisplayID  oyMonitor_nameToOsxID ( const char        * display_name )
   return cg_direct_display_id;
 }
 #endif
+
+
 
 char *       oyX1GetMonitorProfile   ( const char        * device_name,
                                        size_t            * size,
@@ -520,8 +520,8 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
 #ifdef __APPLE__
 
-  CMProfileRef prof=NULL;
-  CGDirectDisplayID screenID=0;
+  CMProfileRef prof = NULL;
+  CGDirectDisplayID screenID = 0;
   CMProfileLocation loc;
   int err = 0;
   char * block = NULL;
@@ -530,12 +530,20 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
   screenID = oyMonitor_nameToOsxID( device_name );
 
-  CMGetProfileByAVID(screenID, &prof);
+  CMGetProfileByAVID( (CMDisplayIDType)screenID, &prof );
   CMGetProfileLocation(prof, &loc);
 
   err = oyGetProfileBlockOSX (prof, &block, size, allocate_func);
   moni_profile = block;
   if (prof) CMCloseProfile(prof);
+
+  {
+    UInt32 seed = 0,
+           count = 0;
+    char * my_data = 0;
+    CMError cm_err = CMIterateColorDevices( oyCMIterateDeviceInfoProc, 
+                                            &seed, &count, &my_data );
+  }
 
 #else /* HAVE_X */
 
@@ -630,7 +638,6 @@ oyGetAllScreenNames_            (const char *display_name,
     io_service = CGDisplayIOServicePort ( active_displays[i] );
     ids[i] = i;
   }
-  WARNc1_S("display count = %d", count);
   i = count;
 
   *n_scr = i;
@@ -715,31 +722,6 @@ oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name )
 
   if(!error)
   {
-#ifdef __APPLE__
-
-    GDHandle      device;
-    DisplayIDType screenID;
-    Rect          r = {0,0,640,480};
-    char * new_display_name = oyAllocateWrapFunc_( 24, 0 );
-
-    device = GetDeviceList();
-    while (device)
-    {
-      r = (**device).gdRect;
-      DMGetDisplayIDByGDevice(device, &screenID, false);
-
-      oySnprintf1_( new_display_name, 24, "%d", (int)screenID );
-
-      if(oyStrcmp_( device_name, new_display_name ) == 0)
-      {
-        region = oyRegion_NewWith( r.left, r.top,
-                                   r.right - r.left, r.bottom - r.top, 0 );
-
-        return region;
-      }
-    }
-
-#else
     oyMonitor_s * disp = 0;
 
     disp = oyMonitor_newFrom_( device_name, 0 );
@@ -750,14 +732,12 @@ oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name )
                            oyMonitor_width_(disp), oyMonitor_height_(disp), 0 );
 
     oyMonitor_release_( &disp );
-#endif
   }
 
   return region;
 }
 
 
-#if defined( HAVE_X ) && !defined(__APPLE)
 /** @internal
     takes a chaked display name and point as argument and
     gives a string back for search in the db
@@ -776,6 +756,7 @@ oyMonitor_getGeometryIdentifier_         (oyMonitor_s  *disp)
   return 0;
 }
 
+#if defined( HAVE_X ) && !defined(__APPLE)
 char* oyMonitor_getAtomName_         ( oyMonitor_s       * disp,
                                        const char        * base )
 {
@@ -856,7 +837,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       screenID = oyMonitor_nameToOsxID( display_name );
 
       if( screenID && !err )
-        err = CMSetProfileByAVID ( screenID, prof );
+        err = CMSetProfileByAVID ( (CMDisplayIDType)screenID, prof );
 
       CMCloseProfile( prof );
     }
@@ -997,7 +978,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
       screenID = oyMonitor_nameToOsxID( display_name );
 
       if( screenID && !err )
-        err = CMSetProfileByAVID ( screenID, prof );
+        err = CMSetProfileByAVID ( (CMDisplayIDType)screenID, prof );
 
     }
 
@@ -1534,11 +1515,111 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
   return disp;
 }
 
+#elif defined(__APPLE__)
+
+/** @internal
+ *  @brief create a monitor information struct for a given display name
+ *
+ *  @param   display_name              Oyranos display name
+ *  @param   expensive                 probe XRandR even if it causes flickering
+ *  @return                            a monitor information structure
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/17 (Oyranos: 0.1.8)
+ *  @date    2009/04/01
+ */
+oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
+                                       int                 expensive )
+{
+  int error = 0;
+  int i = 0;
+  oyMonitor_s * disp = 0;
+
+  DBG_PROG_START
+
+  disp = oyAllocateFunc_( sizeof(oyMonitor_s) );
+  error = !disp;
+  if(!error)
+    error = !memset( disp, 0, sizeof(oyMonitor_s) );
+
+  disp->type_ = oyOBJECT_MONITOR_S;
+
+  if( display_name )
+  {
+    if( strlen( display_name ) )
+      disp->name = strdup( display_name );
+  } else
+  {
+    if(getenv("DISPLAY") && strlen(getenv("DISPLAY")))
+      disp->name = strdup( getenv("DISPLAY") );
+    else
+      disp->name = strdup( "0" );
+  }
+
+  if( !error &&
+      (disp->host = strdup( "0" )) == 0 )
+    error = 1;
+
+  for( i = 0; i < 6; ++i )
+    disp->geo[i] = -1;
+
+  disp->id = oyMonitor_nameToOsxID( display_name );
+
+  if( !error &&
+      oyMonitor_getScreenGeometry_( disp ) != 0 )
+    error = 1;
+
+  if( error <= 0 )
+    error = oyMonitor_getGeometryIdentifier_( disp );
+
+  /*if( !disp->system_port || !oyStrlen_( disp->system_port ) )
+  if( 0 <= oyMonitor_screen_( disp ) && oyMonitor_screen_( disp ) < 10000 )
+  {
+    disp->system_port = (char*)oyAllocateWrapFunc_( 12, oyAllocateFunc_ );
+    oySprintf_( disp->system_port, "%d", oyMonitor_screen_( disp ) );
+  }*/
+
+  DBG_PROG_ENDE
+  return disp;
+}
+
+/** @internal get the geometry of a screen 
+ *
+ *  @param          disp      display info structure
+ *  @return         error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/00/00 (Oyranos: 0.1.8)
+ *  @date    2009/04/01
+ */
+int  oyMonitor_getScreenGeometry_    ( oyMonitor_s       * disp )
+{
+  int error = 0;
+
+  {
+    CGRect            r = CGRectNull;
+
+    disp->geo[0] = 0; /* @todo how is display management handled in osX? */
+    disp->geo[1] = disp->screen;
+
+    r = CGDisplayBounds( oyMonitor_device_( disp ) );
+
+    disp->geo[2] = r.origin.x;
+    disp->geo[3] = r.origin.y;
+    disp->geo[4] = r.size.width;
+    disp->geo[5] = r.size.height;
+  }
+
+  return error;
+}
+#endif
+
 /** @internal
  *  @brief release a monitor information stuct
  *
- *  @since Oyranos: version 0.1.8
- *  @date  17 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/17 (Oyranos: 0.1.8)
+ *  @date    2009/04/01
  */
 int          oyMonitor_release_      ( oyMonitor_s      ** obj )
 {
@@ -1558,23 +1639,26 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
   }
   /* ---- end of common object destructor ------- */
 
-  oyDeAllocateFunc_( s->name );
-  oyDeAllocateFunc_( s->host );
-  oyDeAllocateFunc_( s->identifier );
+  if(s->name) oyDeAllocateFunc_( s->name );
+  if(s->host) oyDeAllocateFunc_( s->host );
+  if(s->identifier) oyDeAllocateFunc_( s->identifier );
+
 
   s->geo[0] = s->geo[1] = -1;
 
+# if !defined(__APPLE__)
   if( s->display )
   {
-# ifdef HAVE_XRANDR
+#  ifdef HAVE_XRANDR
     if(s->output_info)
       XRRFreeOutputInfo( s->output_info ); s->output_info = 0;
     if(s->res)
       XRRFreeScreenResources( s->res ); s->res = 0;
-# endif
+#  endif
     XCloseDisplay( s->display );
     s->display=0;
   }
+# endif
 
   oyDeAllocateFunc_( s );
   s = 0;
@@ -1583,7 +1667,6 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
 
   return error; 
 }
-#endif
 
 
 /* separate from the internal functions */

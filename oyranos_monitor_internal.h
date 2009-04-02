@@ -59,27 +59,9 @@ typedef struct {
   oyX11INFO_SOURCE_e   info_source; /**< */
 } oyMonitor_s;
 
-oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
-                                       int                 expensive );
-int          oyMonitor_release_      ( oyMonitor_s      ** disp );
-
-const char*  oyMonitor_name_         ( oyMonitor_s       * disp );
-const char*  oyMonitor_hostName_     ( oyMonitor_s       * disp );
-const char*  oyMonitor_identifier_   ( oyMonitor_s       * disp );
-const char * oyMonitor_systemPort_   ( oyMonitor_s       * disp );
-oyBlob_s   * oyMonitor_edid_         ( oyMonitor_s       * disp );
-char*        oyMonitor_screenNumber_ ( oyMonitor_s       * disp );
 Display*     oyMonitor_device_       ( oyMonitor_s       * disp );
-int          oyMonitor_deviceScreenNumber_( oyMonitor_s  * disp );
-int          oyMonitor_number_       ( oyMonitor_s       * disp );
-int          oyMonitor_screen_       ( oyMonitor_s       * disp );
-int          oyMonitor_x_            ( oyMonitor_s       * disp );
-int          oyMonitor_y_            ( oyMonitor_s       * disp );
-int          oyMonitor_width_        ( oyMonitor_s       * disp );
-int          oyMonitor_height_       ( oyMonitor_s       * disp );
 oyX11INFO_SOURCE_e 
              oyMonitor_infoSource_   ( oyMonitor_s       * disp );
-
 # ifdef HAVE_XRANDR
 XRRScreenResources *
              oyMonitor_xrrResource_  ( oyMonitor_s       * disp );
@@ -93,16 +75,35 @@ int          oyMonitor_activeOutputs_( oyMonitor_s       * disp );
 /** \internal  platformdependent */
 typedef struct {
   oyOBJECT_e       type_;              /**< object type oyOBJECT_MONITOR_S */
-  char         *name;        /**< traditional display name - host:0 / :0 */
-  char         *host;        /**< host name only - host */
-  char         *identifier;  /**<  - _x_y_wxh */
-  int           geo[6];      /**< display screen x y width height */
-  CGDirectDisplayID *display;/**< logical display */
-  int           screen;      /**< external screen number to call for X */
-  char               * system_port;    /**< the operating systems port name */
-  oyBlob_s           * edid;           /**< edid for the device */
+  char           * name;               /**< display name, like screen */
+  char           * host;               /**< host name only - host */
+  char           * identifier;         /**<  - _x_y_wxh */
+  int              geo[6];             /**< display screen x y width height */
+  CGDirectDisplayID id;                /**< osX monitor */
+  int              screen;             /**< pos in osX CGGetActiveDisplayList */
 } oyMonitor_s;
+
+CGDirectDisplayID  oyMonitor_device_ ( oyMonitor_s       * disp );
 #endif
+
+oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
+                                       int                 expensive );
+int          oyMonitor_release_      ( oyMonitor_s      ** disp );
+
+const char*  oyMonitor_name_         ( oyMonitor_s       * disp );
+const char*  oyMonitor_hostName_     ( oyMonitor_s       * disp );
+const char*  oyMonitor_identifier_   ( oyMonitor_s       * disp );
+const char * oyMonitor_systemPort_   ( oyMonitor_s       * disp );
+oyBlob_s   * oyMonitor_edid_         ( oyMonitor_s       * disp );
+char*        oyMonitor_screenNumber_ ( oyMonitor_s       * disp );
+int          oyMonitor_deviceScreenNumber_( oyMonitor_s  * disp );
+int          oyMonitor_number_       ( oyMonitor_s       * disp );
+int          oyMonitor_screen_       ( oyMonitor_s       * disp );
+int          oyMonitor_x_            ( oyMonitor_s       * disp );
+int          oyMonitor_y_            ( oyMonitor_s       * disp );
+int          oyMonitor_width_        ( oyMonitor_s       * disp );
+int          oyMonitor_height_       ( oyMonitor_s       * disp );
+
 
 int oyFree_       (void *oy_structure);
 
