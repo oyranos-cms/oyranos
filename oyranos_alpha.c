@@ -2845,6 +2845,8 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
  *
  *
  *  This function allowes to obtain API's for matching modules/CMM's.
+ *  The modules are filtered for double occurencies. The highest rank or
+ *  version is selected.
  *
  *  @param[in]   cmm_required          if present take this or fail, the arg
  *                                     simplifies and speeds up the search
@@ -13831,7 +13833,8 @@ const char*    oyRegion_Show         ( oyRegion_s        * r )
     text = oyAllocateFunc_(sizeof(oyChar) * 512);
 
   if(r)
-    oySprintf_(text, "%.02f+%.02f:%.02fx%.02f",r->x , r->y, r->width , r->height);
+    oySprintf_(text, "%.02fx%.02f%s%.02f%s%.02f", r->width,r->height,
+                     r->x<0?"":"+", r->x, r->y<0?"":"+", r->y);
   else
     oySprintf_(text, "no region");
 
