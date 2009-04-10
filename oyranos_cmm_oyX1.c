@@ -245,7 +245,7 @@ int  oyX1FilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   error = oyOptions_SetFromText( &options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options,
-                                 "//colour/config/display_geometry",
+                                 "//colour/config/device_region",
                                  "true", OY_CREATE_NEW );
   o = oyOptions_Find( image->tags, "display_name" );
   o = oyOption_Copy( o, 0 );
@@ -435,7 +435,7 @@ int      oyX1FilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       c = oyConfigs_Get( devices, i );
 
       /* get device dimension */
-      o = oyConfig_Find( c, "display_geometry" );
+      o = oyConfig_Find( c, "device_region" );
       if(o && o->value_type == oyVAL_STRUCT)
         rd = (oyRegion_s *) o->value->oy_struct;
       oyOption_Release( &o );
@@ -716,7 +716,7 @@ int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
 
 void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
 {
-    /** oyMSG_WARN should make shure our message is visible. */
+    /** oyMSG_WARN shall make shure our message will be visible. */
     message( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
              OY_DBG_ARGS_,
       "The following help text informs about the communication protocol.");
@@ -725,10 +725,11 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " devices. The actual device name can be found in option\n"
       " \"device_name\". The call is as lightwight as possible.\n"
       " The option \"display_name\" is optional to pass the X11 display name\n"
-      " and obtain a unfiltered result.\n"
+      " and obtain a unfiltered result. It the way to get all monitors\n"
+      " connected to a display.\n"
       " The option \"oyNAME_NAME\" returns a string containting geometry and\n"
       " if available, the profile name or size.\n"
-      " The bidirectional option \"display_geometry\" will cause to\n"
+      " The bidirectional option \"device_region\" will cause to\n"
       " additionally add display geometry information as a oyRegion_s\n"
       " object.\n"
       " The bidirectional option \"icc_profile\" will add a oyProfile_s.\n"
@@ -878,24 +879,19 @@ int            oyX1Configs_FromPattern (
        * device_name_temp = 0;
   int texts_n = 0, i,
       error = !s;
-  const char * value1 = 0,
-             * value2 = 0,
-             * value3 = 0,
-             * value4 = 0,
-             * display_name = 0,
+  const char * odevice_name = 0,
+             * oprofile_name = 0,
+             * odisplay_name = 0,
              * device_name = 0;
   int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
-  static char * num = 0;
   const char * tmp = 0;
 
-  if(!num)
-    oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
 
+  /** 1. In case no option is provided or something fails, show a message. */
   if(!options || !oyOptions_Count( options ))
   {
-    /** oyMSG_WARN should make shure our message is visible. */
     oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
     return 0;
   }
@@ -904,14 +900,16 @@ int            oyX1Configs_FromPattern (
   {
     devices = oyConfigs_New(0);
 
-    display_name = oyOptions_FindString( options, "display_name", 0 );
-    value1 = oyOptions_FindString( options, "device_name", 0 );
+
+    /** 2. obtain a proper device_name */
+    odisplay_name = oyOptions_FindString( options, "display_name", 0 );
+    odevice_name = oyOptions_FindString( options, "device_name", 0 );
     /*message(oyMSG_WARN, (oyStruct_s*)options, "list: %s", value2);*/
 
-    if(display_name && display_name[0])
-      device_name = display_name;
-    else if(value1 && value1[0])
-      device_name = value1;
+    if(odisplay_name && odisplay_name[0])
+      device_name = odisplay_name;
+    else if(odevice_name && odevice_name[0])
+      device_name = odevice_name;
     else
     {
       tmp = getenv("DISPLAY");
@@ -938,27 +936,31 @@ int            oyX1Configs_FromPattern (
       text = 0;
     }
 
-    value2 = oyOptions_FindString( options, "list", 0 );
-    value3 = oyOptions_FindString( options, "display_geometry", 0 );
-    if(value2)
+    /** 3.  handle the actual call */
+    /** 3.1 "list" call */
+    if(oyOptions_FindString( options, "list", 0 ))
     {
       texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
 
+      /** 3.1.1 iterate over all requested devices */
       for( i = 0; i < texts_n; ++i )
       {
         /* filter */
-        if(value1 && strcmp(value1, texts[i]) != 0)
+        if(odevice_name && strcmp(odevice_name, texts[i]) != 0)
           continue;
 
         device = oyConfig_New( OYX1_MONITOR_REGISTRATION, 0 );
         error = !device;
 
+        /** 3.1.2 tell the "device_name" */
         if(error <= 0)
         error = oyOptions_SetFromText( &device->backend_core,
                                        OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
-        if(value3 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        /** 3.1.3 tell the "device_region" in a oyRegion_s */
+        if(oyOptions_FindString( options, "device_region", 0 ) ||
+           oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           rect = oyX1Region_FromDevice( texts[i] );
           if(!rect)
@@ -966,14 +968,15 @@ int            oyX1Configs_FromPattern (
             WARNc1_S("Could not obtain region information for %s", texts[i]);
           } else
           {
-            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "display_geometry", 0 );
+            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "device_region", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
             oyOptions_MoveIn( device->data, &o, -1 );
           }
         }
 
-        value4 = oyOptions_FindString( options, "icc_profile", 0 );
-        if(value4 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        /** 3.1.4 tell the "icc_profile" in a oyProfile_s */
+        if( oyOptions_FindString( options, "icc_profile", 0 ) ||
+            oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           size_t size = 0;
           char * data = oyX1GetMonitorProfile( texts[i], &size, allocateFunc );
@@ -997,14 +1000,13 @@ int            oyX1Configs_FromPattern (
           }
         }
 
+        /** 3.1.5 contruct a oyNAME_NAME string */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          o = oyOptions_Find( device->data, "display_geometry" );
+          o = oyOptions_Find( device->data, "device_region" );
           r = (oyRegion_s*) o->value->oy_struct;
 
-          num[0] = 0; text = 0; tmp = 0;
-          sprintf( num, "%d+%d:%dx%d", (int)r->x, (int)r->y,
-                                       (int)r->width, (int)r->height );
+          text = 0; tmp = 0;
       
           tmp = oyRegion_Show( (oyRegion_s*)r );
           STRING_ADD( text, tmp );
@@ -1037,9 +1039,11 @@ int            oyX1Configs_FromPattern (
           oyFree_m_( text );
         }
 
+
+        /** 3.1.6 add the rank scheme to combine properties */
         if(error <= 0)
           device->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                               device->oy_->allocateFunc_ );
+                                            device->oy_->allocateFunc_ );
 
         oyConfigs_MoveIn( devices, &device, -1 );
       }
@@ -1050,17 +1054,19 @@ int            oyX1Configs_FromPattern (
       oyStringListRelease_( &texts, texts_n, free );
 
       goto cleanup;
-    }
 
-    value2 = oyOptions_FindString( options, "properties", 0 );
-    if(value2)
+    } else
+
+
+    /** 3.2 "properties" call; provide extensive infos for the DB entry */
+    if(oyOptions_FindString( options, "properties", 0 ))
     {
       texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
         /* filter */
-        if(value1 && strcmp(value1, texts[i]) != 0)
+        if(odevice_name && strcmp(odevice_name, texts[i]) != 0)
           continue;
 
         device = oyConfig_New( OYX1_MONITOR_REGISTRATION, 0 );
@@ -1071,12 +1077,15 @@ int            oyX1Configs_FromPattern (
                                        OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
+        /** 3.2.1 add properties */
         error = oyX1DeviceFromName_( texts[i], options, &device,
-                                         allocateFunc );
+                                     allocateFunc );
 
+
+        /** 3.2.2 add the rank map to wight properties for ranking in the DB */
         if(error <= 0 && device)
           device->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                                device->oy_->allocateFunc_);
+                                            device->oy_->allocateFunc_);
         oyConfigs_MoveIn( devices, &device, -1 );
       }
 
@@ -1086,13 +1095,15 @@ int            oyX1Configs_FromPattern (
       oyStringListRelease_( &texts, texts_n, free );
 
       goto cleanup;
-    }
 
-    value2 = oyOptions_FindString( options, "setup", 0 );
-    value3 = oyOptions_FindString( options, "profile_name", 0 );
-    if(error <= 0 && value2)
+    } else
+
+    /** 3.3 "setup" call; bring a profile to the device */
+    if(error <= 0 &&
+       oyOptions_FindString( options, "setup", 0 ))
     {
-      error = !value1 || !value3;
+      oprofile_name = oyOptions_FindString( options, "profile_name", 0 );
+      error = !odevice_name || !oprofile_name;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
               "The device_name/profile_name option is missed. Options:\n%s",
@@ -1100,26 +1111,29 @@ int            oyX1Configs_FromPattern (
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
-        error = oyX1MonitorProfileSetup( value1, value3 );
+        error = oyX1MonitorProfileSetup( odevice_name, oprofile_name );
 
       goto cleanup;
-    }
 
-    value2 = oyOptions_FindString( options, "unset", 0 );
-    if(error <= 0 && value2)
+    } else
+
+    /** 3.4 "unset" call; clear a profile from a device */
+    if(error <= 0 &&
+       oyOptions_FindString( options, "unset", 0 ))
     {
-      error = !value1;
+      error = !odevice_name;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "The device_name option is missed. Options:\n%s",
                 OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
-        error = oyX1MonitorProfileUnset( value1 );
+        error = oyX1MonitorProfileUnset( odevice_name );
 
       goto cleanup;
     }
   }
+
 
   message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "This point should not be reached. Options:\n%s", OY_DBG_ARGS_,
@@ -1127,6 +1141,7 @@ int            oyX1Configs_FromPattern (
                 );
 
   oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+
 
   cleanup:
   if(device_name_temp)
