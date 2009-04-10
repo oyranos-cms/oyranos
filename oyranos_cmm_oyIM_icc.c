@@ -420,12 +420,15 @@ int          oyIMFilterScan          ( oyPointer           data,
     if(!error)
     {
       if(lib_name)
-        dso_handle = dlopen(lib_name, RTLD_LAZY);
+        dso_handle = dlopen( lib_name, RTLD_LAZY );
 
       error = !dso_handle;
 
       if(error)
-        WARNc2_S("\n  %s:\n  \"%s\"", lib_name, dlerror() );
+      {
+        WARNc2_S( "\n  dlopen( %s, RTLD_LAZY):\n  \"%s\"", lib_name, dlerror() );
+        system("  echo $LD_LIBRARY_PATH");
+      }
     }
 
     /* open the module */
