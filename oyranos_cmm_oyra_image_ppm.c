@@ -290,6 +290,10 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
 
       fflush( fp );
       fclose (fp);
+
+    /*message( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "write file %s",
+             OY_DBG_ARGS_, filename );*/
   }
 
   return result;

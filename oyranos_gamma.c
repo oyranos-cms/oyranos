@@ -172,7 +172,7 @@ int main( int argc , char** argv )
         prof = oyProfile_FromMem( size, data, 0, 0 );
         if(size && data)
           oyDeAllocFunc( data );
-        data = 0; size = 0;
+        data = 0;
         filename = oyProfile_GetFileName( prof, 0 );
       }
       printf("%s:%d profile \"%s\" size: %d\n",__FILE__,__LINE__,
