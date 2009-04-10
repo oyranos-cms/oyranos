@@ -613,6 +613,8 @@ int            oyOption_SetRegistration (
 int            oyOption_SetValueFromDB(oyOption_s        * option );
 int            oyOption_StructMoveIn ( oyOption_s        * option,
                                        oyStruct_s       ** s );
+oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
+                                       oyOBJECT_e          type );
 
 /**
  *  @struct  oyOptions_s
