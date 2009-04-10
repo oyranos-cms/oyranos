@@ -532,14 +532,92 @@ oyTESTRESULT_e testMonitor ()
 
   int n, i, error = 0;
   char * block, * text = 0, * display_name;
+  const char * tmp = 0;
   size_t size = 0;
-  oyProfile_s * p, * p2;
+  oyProfile_s * p = 0, * p2;
   oyConfigs_s * devices = 0;
   oyConfig_s * c = 0;
   oyOptions_s * options = 0;
+  oyOption_s * o = 0;
+  oyRegion_s * r = 0;
 
   oyExportReset_(EXPORT_SETTING);
   fprintf(stdout, "\n" );
+
+  /* get all monitors */
+  error = oyDevicesGet( 0, "monitor", 0, &devices );
+  /* see how many are included */
+  n = oyConfigs_Count( devices );
+  if(n)
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+               "\"list\" device(s): %d                    ", n )
+  else
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+               "\"list\" device(s): ---                   " )
+
+  for( i = 0; i < n; ++i )
+  {
+    c = oyConfigs_Get( devices, i );
+    oyDeviceGetProfile( c, &p );
+
+    if(p)
+    {
+      tmp = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+               "device[%d]: \"%s\"              ", i,
+               tmp ? tmp :"" );
+    } else
+    {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+               "device[%d]: no profile                             ", i );
+    }
+
+    oyProfile_Release( &p );
+    oyConfig_Release( &c );
+  }
+  /* release devices */
+  oyConfigs_Release( &devices );
+
+
+  /* get all monitors */
+  error = oyOptions_SetFromText( &options, "//colour/config/list",
+                                 "true", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//colour/config/device_region",
+                                 "true", OY_CREATE_NEW );
+  error = oyDevicesGet( 0, "monitor", options, &devices );
+  oyOptions_Release( &options );
+  /* see how many are included */
+  n = oyConfigs_Count( devices );
+  if(n)
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+               "\"list\" + device_region device(s): %d    ", n )
+  else
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+               "\"list\" device(s): ---                   " )
+
+  for( i = 0; i < n; ++i )
+  {
+    c = oyConfigs_Get( devices, i );
+    o = oyConfig_Find( c, "device_region" );
+    r = (oyRegion_s *) oyOption_StructGet( o, oyOBJECT_REGION_S );
+
+    if(r)
+    {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+               "device[%d]: %s    ", i,
+               oyRegion_Show(r) );
+    } else
+    {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+               "device[%d]: no region                             ", i );
+    }
+
+    oyRegion_Release( &r );
+    oyOption_Release( &o );
+    oyConfig_Release( &c );
+  }
+  /* release devices */
+  oyConfigs_Release( &devices );
 
 
   error = oyOptions_SetFromText( &options, "//colour/config/properties",
@@ -549,6 +627,13 @@ oyTESTRESULT_e testMonitor ()
   oyOptions_Release( &options );
 
   n = oyConfigs_Count( devices );
+  if(n)
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+               "\"properties\" device(s): %d              ", n )
+  else
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+               "\"properties\" device(s): ---             " )
+
   if(!error)
   {
     for(i = 0; i < n; ++i)
@@ -558,7 +643,7 @@ oyTESTRESULT_e testMonitor ()
       error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
+        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text)
       else
         PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
