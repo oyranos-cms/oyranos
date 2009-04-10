@@ -2034,10 +2034,13 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
 
   if(!dso_handle)
   {
-    dso_handle = dlopen(lib_name, RTLD_LAZY);
+    dso_handle = dlopen( lib_name, RTLD_LAZY );
 
     if(!dso_handle)
-      WARNc_S((dlerror()))
+    {
+      WARNc2_S( "\n  dlopen( %s, RTLD_LAZY):\n  \"%s\"", lib_name, dlerror() );
+      system("  echo $LD_LIBRARY_PATH");
+    }
   }
 
   if(dso_handle)
@@ -2381,6 +2384,7 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
   oyCMMhandle_s * cmm_handle = 0;
   int error = !lib_name;
   char * cmm = oyCMMnameFromLibName_(lib_name);
+  const char * error_text = 0;
 
   if(error <= 0)
   {
@@ -2394,7 +2398,11 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
       error = !dso_handle;
 
       if(error)
-        WARNc_S(dlerror());
+      {
+        error_text = dlerror();
+        WARNc2_S( "\n  error while dlopen'ing lib:\n    %s\n  dlerror(): %s",
+                  lib_name, error_text ? error_text : "no text" );
+      }
     }
 
     /* open the module */
@@ -5470,7 +5478,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 
 /** Function oyOption_SetStruct
  *  @memberof oyOption_s
- *  @brief   value filled a oyStruct_s object
+ *  @brief   value filled by a oyStruct_s object
  *
  *  @param         option              the option
  *  @param         s                   the Oyranos style object
@@ -5508,6 +5516,36 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
   }
 
   return error;
+}
+
+/** Function oyOption_GetStruct
+ *  @memberof oyOption_s
+ *  @brief   ask for a oyStruct_s object
+ *
+ *  @param         option              the option
+ *  @param         type                the Oranos oyOBJECT_e object type
+ *  @return                            Oyranos struct
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/09 (Oyranos: 0.1.10)
+ *  @date    2009/03/09
+ */
+oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
+                                       oyOBJECT_e          type )
+{
+  oyStruct_s * s = 0;
+  oyOption_s * o = option;
+
+  if( o && o->value && o->value_type == oyVAL_STRUCT && o->value->oy_struct &&
+      o->value->oy_struct->type_ == type)
+  {
+    if(o->value->oy_struct->copy)
+      s = o->value->oy_struct->copy( o->value->oy_struct, 0 ); 
+    else
+      s = o->value->oy_struct;
+  }
+
+  return s;
 }
 
 /** Function oyOption_FromDB
@@ -9439,7 +9477,6 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
 {
   int error = !device;
   oyOptions_s * options = 0;
-  oyProfile_s * p = 0;
   char * profile_name = 0;
   const char * device_name = 0;
   oyConfig_s * s = device;
@@ -9447,29 +9484,20 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   {
-    /* 1. ask for the profile the device is setup with */
-    error = oyDeviceAskProfile( device, &p );
-    if(p)
-    {
-      oyProfile_Release( &p );
-      /** We ignore a device, which already has its profile setup. */
-      return error;
-    }
-
-    /* 2. query the full device information */
+    /* 1. query the full device information */
     error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
-    /* 2.1 get device_name */
+    /* 1.1 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
 
-    /* 3. unset the device through the backend */
-    /** 3.1 set a general request */
+    /* 2. unset the device through the backend */
+    /** 2.1 set a general request */
     error = oyOptions_SetFromText( &options, "//colour/config/unset",
                                    "true", OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//colour/config/device_name",
                                    device_name, OY_CREATE_NEW );
 
-    /** 3.2 send the query to a backend */
+    /** 2.2 send the query to a backend */
     error = oyConfigs_FromDomain( device->registration, options, 0, 0 );
 
     oyOptions_Release( &options );
@@ -23322,7 +23350,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 
   error = oyOptions_SetFromText( &options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//colour/config/display_geometry",
+  error = oyOptions_SetFromText( &options, "//colour/config/device_region",
                                  "true", OY_CREATE_NEW );
   /** we want a fuzzy look at our display, not the narrow "device_name" */
   error = oyOptions_SetFromText( &options, "//colour/config/display_name",
@@ -23340,7 +23368,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   for( i = 0; i < n; ++i )
   {
     device = oyConfigs_Get( devices, i );
-    o = oyConfig_Find( device, "display_geometry" );
+    o = oyConfig_Find( device, "device_region" );
 
     if(o && o->value && o->value->oy_struct &&
        o->value->oy_struct->type_ == oyOBJECT_REGION_S)
