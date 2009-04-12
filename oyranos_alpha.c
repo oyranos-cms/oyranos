@@ -14752,10 +14752,10 @@ oyImage_s *    oyImage_Create         ( int               width,
     @param[in]     channels            pointer to the data buffer
     @param[in]     pixel_layout        i.e. oyTYPE_123_16 for 16-bit RGB data
     @param[in]     display_name        display name
-    @param[in]     window_pos_x        left image position on display
-    @param[in]     window_pos_y        top image position on display
-    @param[in]     window_width        width to show in window
-    @param[in]     window_height       height to show in window
+    @param[in]     display_pos_x       left image position on display
+    @param[in]     display_pos_y       top image position on display
+    @param[in]     display_width       width to show in window
+    @param[in]     display_height      height to show in window
     @param[in]     object              the optional base
  *
  *  @since Oyranos: version 0.1.8
@@ -18277,7 +18277,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
   return s;
 }
 
-/** Function: oyFilterNode_GetPlug
+/** Function oyFilterNode_GetPlug
  *  @memberof oyFilterNode_s
  *  @brief   get a oyFilterPlug_s of type from a FilterNode
  *
@@ -18326,11 +18326,11 @@ OYAPI oyFilterPlug_s * OYEXPORT
 oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
                                        oyOptions_s       * options,
                                        int                 flags );
-/** Function: oyFilterNode_OptionsGet
+/** Function oyFilterNode_OptionsGet
  *  @memberof oyFilterNode_s
  *  @brief   get filter options
  *
- *  @param[in,out] filter              filter object
+ *  @param[in,out] node                filter object
  *  @param         flags               possible: OY_FILTER_GET_DEFAULT | oyOPTIONSOURCE_FILTER | oyOPTIONATTRIBUTE_ADVANCED
  *
  *  @version Oyranos: 0.1.10
@@ -19515,7 +19515,8 @@ OYAPI int  OYEXPORT
  *  @memberof oyFilterGraph_s
  *  @brief   iterate over a filter graph and possibly prepare contexts
  *
- *  @param[in,out] node                a filter node
+ *  @param[in,out] graph               a filter graph
+ *  @param[in]     flags               1 - enforce a context preparation
  *  @return                            0 on success, else error
  *
  *  @version Oyranos: 0.1.10
@@ -19563,11 +19564,12 @@ OYAPI int  OYEXPORT
  *  @memberof oyFilterGraph_s
  *  @brief   select a node
  *
- *  @param[in]     node                a filter graph
+ *  @param[in]     graph               a filter graph
  *  @param[in]     pos                 the position in a matching list,
                                        or -1 to select the first match
  *  @param[in]     registration        criterium to generate the matching list,
                                        or zero for no criterium
+ *  @param[in]     mark                marking string to use as a selector
  *  @return                            the filter node
  *
  *  @version Oyranos: 0.1.10
@@ -21285,7 +21287,7 @@ int          oyConversion_Release    ( oyConversion_s   ** obj )
  *  @brief   add a filter to a oyConversion_s filter list
  *
  *  @param[in,out] conversion          conversion object
- *  @param[in]     filter              filter
+ *  @param[in]     node                filter node
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -21403,6 +21405,7 @@ int                oyConversion_LinFilterAdd (
  *  points through a plug.
  *
  *  @param[in,out] conversion          conversion object
+ *  @param[in]     filter_registration filter registration; defaults to "//image/output"
  *  @param[in]     output              output image
  *  @return                            error
  *
@@ -21522,7 +21525,6 @@ int                oyConversion_Set  ( oyConversion_s    * conversion,
  *
  *  @param[in,out] conversion          conversion object
  *  @param[in,out] pixel_access        optional pixel iterator configuration
- *  @param[in]     region              the region relative to the output image viewport to render
  *  @return                            0 on success, else error
  *
  *  @version Oyranos: 0.1.10
