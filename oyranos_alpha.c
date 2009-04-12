@@ -8918,6 +8918,10 @@ OYAPI int OYEXPORT
           oyOption_Release( &o );
         }
 
+        /* add information about the data's origin */
+        oyConfig_AddDBData( config, "key_set_name", key_set_names[j],
+                            OY_CREATE_NEW );
+
         oyConfigs_MoveIn( s, &config, -1 );
       }
     }

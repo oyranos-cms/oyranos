@@ -33,7 +33,7 @@
 #include <string.h>
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
-void  oyDeAllocFunc ( oyPointer ptr) { free (ptr); }
+void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
 
 int main( int argc , char** argv )
 {
@@ -46,6 +46,10 @@ int main( int argc , char** argv )
   char *ptr = NULL;
   int x = 0, y = 0;
   char *oy_display_name = NULL;
+  oyProfile_s * prof = 0;
+  size_t size = 0;
+  const char * filename = 0;
+  char * data = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -157,24 +161,20 @@ int main( int argc , char** argv )
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
-    if(oy_debug || (!monitor_profile && !erase && !list))
+    if(!monitor_profile && !erase && !list)
     {
-      size_t size = 0;
-      oyProfile_s * prof = 0;
-      const char * filename = 0;
-      char * data = 0;
-
       if(database)
       {
         filename = oyGetMonitorProfileNameFromDB( oy_display_name, oyAllocFunc);
+        prof = oyProfile_FromFile( filename, 0, 0 );
+        data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
       } else {
         data = oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
         prof = oyProfile_FromMem( size, data, 0, 0 );
-        if(size && data)
-          oyDeAllocFunc( data );
-        data = 0;
         filename = oyProfile_GetFileName( prof, 0 );
       }
+      if(size && data) oyDeAllocFunc( data ); data = 0;
+
       printf("%s:%d profile \"%s\" size: %d\n",__FILE__,__LINE__,
              filename?filename:OY_PROFILE_NONE, (int)size);
 
@@ -195,6 +195,7 @@ int main( int argc , char** argv )
         for(i = 0; i < n; ++i)
         {
           c = oyConfigs_Get( devices, i );
+
           error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
           printf("\"%s\" ", text? text:"???");
           error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
@@ -202,6 +203,29 @@ int main( int argc , char** argv )
 
           if(text)
             free( text );
+
+          /* verbose adds */
+          if(oy_debug)
+          {
+            oyDeviceAskProfile( c, &prof );
+            data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
+            if(size && data)
+              oyDeAllocFunc( data );
+            filename = oyProfile_GetFileName( prof, 0 );
+            printf( "%s:%d server profile \"%s\" size: %d\n",__FILE__,__LINE__,
+                    filename?filename:OY_PROFILE_NONE, (int)size );
+
+            oyDeviceProfileFromDB( c, &text, oyAllocFunc );
+            printf( "%s:%d DB profile \"%s\"\n  DB registration key set: %s\n",
+                    __FILE__,__LINE__,
+                    text?text:OY_PROFILE_NONE,
+                    oyConfig_FindString( c, "key_set_name", 0 ) );
+
+            oyProfile_Release( &prof );
+            oyDeAllocFunc( text );
+          }
+
+          oyConfig_Release( &c );
         }
       }
       oyConfigs_Release( &devices );
@@ -216,12 +240,6 @@ int main( int argc , char** argv )
 
   if(argc == 1 || monitor_profile)
     error = oyActivateMonitorProfiles (display_name);
-
-  if(oy_debug) {
-    size_t size = 0;
-    oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
-    printf("%s:%d profile size: %d\n",__FILE__,__LINE__,(int)size);
-  }
 
   if(oy_display_name)
     oyDeAllocFunc(oy_display_name);
