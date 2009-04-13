@@ -167,6 +167,8 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 {
   int error = 0;
   oyBlob_s * win_id = 0;
+  unsigned int width,height,d;
+  int x,y;
 
   win_id = (oyBlob_s*) oyOptions_GetType( image->tags, -1, "window_id",
                                             oyOBJECT_BLOB_S );
@@ -175,7 +177,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
   if(win_id)
   {
     Atom netColorTarget;
-    Window w = (Window) win_id->ptr;
+    Window w = (Window) win_id->ptr, w_return;
     const char * display_name = oyOptions_FindString( image->tags,
                                                       "display_name", 0 );
     Display * display = XOpenDisplay( display_name );
@@ -185,10 +187,14 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     oyRegion_s * display_region = (oyRegion_s*) oyOptions_GetType( 
                                       image->tags, -1,
                                       "display_region", oyOBJECT_REGION_S );
+#ifdef DEBUG
+    char * tmp = oyStringCopy_( oyRegion_Show(display_region), oyAllocateFunc_);
 
-      WARNc4_S("  Display: %s Window id: %d  %s %s",
-               display_name, w, oyRegion_Show(display_region),
+    WARNc4_S("  Display: %s Window id: %d  %s %s",
+               display_name, w, tmp,
                oyRegion_Show( old_display_region ) );
+    oyFree_m_( tmp );
+#endif
 
     oyBlob_Release( &win_id );
 
@@ -213,8 +219,11 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 
       WARNc3_S("  Display: %s Window id: %d  %s",
                display_name, w, oyRegion_Show(display_region) );
-      rec[0].x = display_region->x;
-      rec[0].y = display_region->y;
+      /* We need window relative coordinates */
+      XGetGeometry( display, w, &w_return, &x, &y, &width, &height,
+                    &d,&d );
+      rec[0].x = display_region->x - x;
+      rec[0].y = display_region->y - y;
       rec[0].width = display_region->width;
       rec[0].height = display_region->height;
 
@@ -229,7 +238,10 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
                        PropModeReplace,
                        (unsigned char *) ":0.0", strlen(":0.0") );
 
+      /* remember the old region */
+      oyRegion_SetByRegion( old_display_region, display_region );
     }
+
     XClearWindow( display, w );
     oyRegion_Release( &display_region );
     oyRegion_Release( &old_display_region );
