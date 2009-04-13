@@ -807,6 +807,15 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding, other API       " );
   }
 
+  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
+                                "lcms", 0 ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "select by keyname                     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "select by keyname                     " );
+  }
+
   return result;
 }
 
