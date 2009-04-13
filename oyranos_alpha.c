@@ -3829,8 +3829,9 @@ digraph Anatomy_B {
  *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
  *  might be useful for canonical processing Oyranos registration text strings.
  *  Many functions allow for passing a registration string. Matching can be 
- *  obtained by omitting sections like in the string "//colour/icc". This string
- *  would result in a match for any ICC compliant colour conversion filter.
+ *  obtained by omitting sections like in the string "//colour/icc", where the
+ *  elements between slashes is o,itted. This string would result in a match 
+ *  for any ICC compliant colour conversion filter.
  *
  *  See as well <a href="http://www.oyranos.org/wiki/index.php?title=Concepts#Elektra_namespace">Concepts#Elektra_namespace</a> on ColourWiki.
  *  @{
@@ -7230,18 +7231,21 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
  *  This function returns the first found option for a given key.
  *  The key is represented by a registrations option level.
  *
+ *  @param         options             set of options
+ *  @param         registration        registration or key
+ *  @return                            a matching options
+ *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/05 (Oyranos: 0.1.9)
- *  @date    2008/11/05
+ *  @date    2009/04/13
  */
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
-                                       const char        * key )
+                                       const char        * registration )
 {
-  int error = !options || !key;
-  oyOption_s * option_a = 0,
+  int error = !options || !registration;
+  oyOption_s * o = 0,
              * option = 0;
-  char * tmp = 0;
-  const char * opt_key = key;
+  int found;
 
   if(error <= 0 && options && options->type_ == oyOBJECT_OPTIONS_S)
   {
@@ -7250,26 +7254,20 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
 
     for(i = 0; i < set_an; ++i)
     {
-      option_a = oyOptions_Get( set_a, i );
+      o = oyOptions_Get( options, i );
+      found = 1;
 
-      if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
+      if(found && registration &&
+         !oyFilterRegistrationMatch( o->registration, registration, 0 ))
+          found = 0;
+
+      if(found)
       {
-        tmp = oyFilterRegistrationToText( option_a->registration,
-                                          oyFILTER_REG_MAX, 0 );
-        if(oyStrchr_( key, OY_SLASH_C ))
-        {
-          opt_key = oyStrrchr_( key, OY_SLASH_C );
-          ++ opt_key;
-        }
-
-        if(tmp && oyStrcmp_( tmp, opt_key) == 0)
-          option = oyOption_Copy( option_a, 0 );
-        if(tmp)
-          oyFree_m_( tmp );
+        option = o;
+        break;
       }
 
-      oyOption_Release( &option_a );
-
+      oyOption_Release( &o );
     }
   }
 
@@ -7287,68 +7285,58 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/10/07 (Oyranos: 0.1.8)
- *  @date    2008/12/03
+ *  @date    2009/04/13
  */
 const char *   oyOptions_FindString  ( oyOptions_s       * options,
-                                       const char        * key,
+                                       const char        * registration,
                                        const char        * value )
 {
   char * text = 0;
   int error = !options;
+  oyOptions_s * s = options;
+  oyOption_s * o = 0;
+  int found = 0, j;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 );
 
   if(error <= 0)
-  if(options->type_ == oyOBJECT_OPTIONS_S)
   {
-    oyOptions_s * set_a = options;
-    int set_an = oyOptions_Count( set_a ), i,j;
-    oyOption_s * option_a = 0;
-    int found = 0;
+    o = oyOptions_Find( options, registration );
 
-    for(i = 0; i < set_an; ++i)
+    if(o && o->type_ == oyOBJECT_OPTION_S)
     {
-      option_a = oyOptions_Get( set_a, i );
-
-      if(option_a && option_a->type_ == oyOBJECT_OPTION_S)
+      if(o->value_type == oyVAL_STRING)
       {
-        char * key_tmp = oyFilterRegistrationToText( option_a->registration,
-                                                     oyFILTER_REG_MAX, 0 );
-        if((!oyStrchr_(key, OY_SLASH_C) && oyStrcmp_( key_tmp, key) == 0) ||
-           oyStrcmp_( option_a->registration, key ) == 0 )
+        text = o->value->string;
+
+        if(text && oyStrlen_( text ))
+          if(!value ||
+             (value && oyStrstr_(value, text)))
+            found = 1;
+      } else if(o->value_type == oyVAL_STRING_LIST)
+      {
+        j = 0;
+
+        while(o->value->string_list[j])
         {
-          if(option_a->value_type == oyVAL_STRING)
-          {
-            text = option_a->value->string;
+          text = o->value->string_list[j];
 
-            if(text && oyStrlen_( text ))
-              if(!value ||
-                 (value && oyStrstr_(value, text)))
-                found = 1;
-          } else if(option_a->value_type == oyVAL_STRING_LIST)
-          {
-            j = 0;
+          if(text && oyStrlen_( text ))
+            if(!value ||
+               (value && oyStrstr_(value, text)))
+              found = 1;
 
-            while(option_a->value->string_list[j])
-            {
-              text = option_a->value->string_list[j];
+          if(found) break;
 
-              if(text && oyStrlen_( text ))
-                if(!value ||
-                   (value && oyStrstr_(value, text)))
-                  found = 1;
-
-              if(found) break;
-
-              ++j;
-            }
-          }
+          ++j;
         }
-        oyFree_m_( key_tmp );
       }
-
-      oyOption_Release( &option_a );
-
-      error = !found;
     }
+
+    oyOption_Release( &o );
+
+    error = !found;
 
     if(!found)
       text = 0;
@@ -16622,12 +16610,12 @@ char *         oyFilterRegistrationToText (
  *  The rules are described in the @ref backend_api overview.
  *
  *  @param         registration        registration string to analise
- *  @param         pattern             pattern to compare with
+ *  @param         pattern             pattern or key name to compare with
  *  @param         api_number          select object type
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/12/31
+ *  @date    2009/04/13
  */
 int    oyFilterRegistrationMatch     ( const char        * registration,
                                        const char        * pattern,
@@ -16645,7 +16633,8 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
   char  * pc_text = 0;
   int     match = 0, match_tmp = 0, i,j,k, api_num = oyOBJECT_NONE, pc_api_num;
   char    pc_match_type = '+';
-
+  char * key_tmp = 0;
+ 
   if(registration && pattern)
   {
     if(api_number == oyOBJECT_CMM_API4_S)
@@ -16668,9 +16657,23 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
     for( i = 0; i < reg_texts_n && i < p_texts_n; ++i)
     {
       regc_texts_n = 0;
-      regc_texts = oyStringSplit_( reg_texts[i],'.',&regc_texts_n,
-                                   oyAllocateFunc_);
-      pc_texts = oyStringSplit_( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
+
+      /* allow a key only in *pattern to filter from *registration */
+      if(p_texts_n == 1)
+      {
+        key_tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_MAX,0);
+        regc_texts = oyStringSplit_( key_tmp,'.',&regc_texts_n,
+                                     oyAllocateFunc_);
+        oyFree_m_( key_tmp );
+        pc_texts = oyStringSplit_( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
+        i = reg_texts_n;
+      } else
+      /* level by level comparision */
+      {
+        regc_texts = oyStringSplit_( reg_texts[i],'.',&regc_texts_n,
+                                     oyAllocateFunc_);
+        pc_texts = oyStringSplit_( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
+      }
 
       if(match_tmp && pc_texts_n && regc_texts_n)
       {
@@ -16696,7 +16699,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
           {
             reg_text = regc_texts[k];
             if((!pc_api_num || (pc_api_num && api_num == pc_api_num)) &&
-               oyStrstr_( reg_text, pc_text ))
+               oyStrcmp_( reg_text, pc_text ) == 0)
             {
               if(pc_match_type == '+' ||
                  pc_match_type == '_')
