@@ -748,6 +748,12 @@ if [ -n "$GETTEXT" ] && [ $GETTEXT -gt 0 ]; then
     else
       echo_="no or too old Gettext found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
+
+    if [ "`msgcat --help`" != "" ]; then
+      echo_="msgcat                  detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    else
+      echo_="msgcat                  not detected; gettext-dev(el) missed?"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
 fi
 
 if [ -n "$PO" ] && [ $PO -gt 0 ]; then

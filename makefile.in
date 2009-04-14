@@ -498,7 +498,7 @@ $(POT_FILE):	$(SOURCES) $(CHEADERS)
 	-d $(TARGET) \
 	-o $(POT_FILE) -c \
 	$(SOURCES) $(CHEADERS) || echo -e "\c"
-	$(MSGCAT) po/*.pot -o po/oyranos.pot
+	-$(MSGCAT) po/*.pot -o po/oyranos.pot
 	for ling in po/*.po; do \
 	  lingua=`echo $${ling} | sed 's%po\/%%g ; s%.po%%'`; \
 	  test `which $(MSGMERGE)` && \
