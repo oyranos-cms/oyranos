@@ -59,10 +59,8 @@ extern oyCMMapi7_s   oydi_api7_image_display;
 
 /* OY_IMAGE_DISPLAY_REGISTRATION ---------------------------------------------*/
 
-#ifdef HAVE_X11
+#if defined(HAVE_X11) && defined(HAVE_Xcolor)
 #include <X11/extensions/Xfixes.h>
-#endif
-#ifdef HAVE_Xcolor
 #include <Xcolor.h>
 #endif
 
