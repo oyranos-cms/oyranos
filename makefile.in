@@ -39,12 +39,6 @@ LIBS_CMM = \
 	$(LIB_CMM_lcms)
 
 
-EXAMPLE1 = examples/image2pdf
-EXAMPLE2 = examples/$(LIB_CMM_START)_dDev$(LIB_CMM_END)
-EXAMPLES = \
-	$(BUILDDIR)$(EXAMPLE1) \
-	$(BUILDDIR)$(EXAMPLE2)
-
 #ifdef $(X11)
 LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
@@ -137,14 +131,6 @@ CXXFILES_FLTK = \
 	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 CXXFILES_Flmm = \
 	$(SRCDIR)/FL/Flmm_Tabs.cxx
-EXAMPLE1_C = \
-	$(SRCDIR)/$(EXAMPLE1).c
-EXAMPLE2_C = \
-	$(SRCDIR)/examples/oyranos_cmm_dDev.c
-EXAMPLES_C = \
-	$(EXAMPLE1_C) \
-	$(EXAMPLE2_C)
-EXAMPLES_OBJECTS = $(EXAMPLES_C:.c=.o)
 
 TEST_CPP = \
 	$(SRCDIR)/tests/dl_test.cxx \
@@ -162,12 +148,20 @@ CPPFILES =
 CXXFILES =
 #	fl_oyranos.cxx
 TEST_FILES = $(TEST_CPP) $(TEST_H)
-EXAMPLE_FILES = $(EXAMPLES_C)
+EXAMPLE_FILES = \
+	$(SRCDIR)/examples/colour_desktop/colour_desktop.c \
+	$(SRCDIR)/examples/dummy_device/oyranos_cmm_dDev.c \
+	$(SRCDIR)/examples/image2pdf/image2pdf.c \
+	$(SRCDIR)/examples/image_display/image_display.cpp \
+	$(SRCDIR)/examples/xcmsevents/xcmsevents.c \
+	$(SRCDIR)/examples/README \
+	$(SRCDIR)/examples/makefile
 
 MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
 MAN3 = oyranos.3 oyranos-config.3
 ICONS = \
 	$(SRCDIR)/$(TARGET)_logo.png \
+	$(SRCDIR)/$(TARGET)_logo.h \
 	$(SRCDIR)/lcms_logo2.png
 DOKU =  $(SRCDIR)/AUTHORS \
         $(SRCDIR)/ChangeLog \
@@ -230,7 +224,6 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
-	$(EXAMPLES_OBJECTS) \
 	$(FLTK_OBJECTS) \
 	$(Flmm_OBJECTS) \
 	$(TARGET)_gamma.o \
@@ -238,7 +231,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	test2.o tests/test_oyranos.o test.o
 
 
-INCL_DEP = $(INCL) $(SOURCES) $(CXXFILES_Flmm) $(EXAMPLES_C) test.c test2.cpp
+INCL_DEP = $(INCL) $(SOURCES) $(CXXFILES_Flmm) test.c test2.cpp
 
 .PHONY:	docu
 
@@ -270,13 +263,13 @@ ALL_FILES = \
 	test.c test2.cpp
 
 
-# build all what is needed to run the libraries, helpers and the examples
+# build all what is needed to run the libraries, helpers
 all:	setup config.log.h mkdepend \
 	$(BUILDDIR)$(LIBSONAMEFULL) \
 	$(BUILDDIR)$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
 	$(BUILDDIR)$(TARGET)-policy $(FLTK_GUI) \
-	$(EXAMPLES) $(LINGUAS_SRC)
+	$(LINGUAS_SRC)
 	test -d default_profiles && \
 	( cd default_profiles; \
 	for prof in $(DEFAULT_PROFILES); do \
@@ -440,33 +433,6 @@ $(BUILDDIR)tests/test_oyranos:	$(BUILDDIR)tests/test_oyranos.o
 $(BUILDDIR)tests/test_oyranos.o:	tests/test_oyranos.c oyranos_version.h
 	echo Compiling tests/test_oyranos.c
 	$(CC) -I./ -I../ $(CFLAGS) -o $(BUILDDIR)$@ -c $<
-
-examples: $(EXAMPLES)
-
-$(BUILDDIR)$(EXAMPLE1): $(EXAMPLE1_C)
-	echo Compile $@ ...
-	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE1_C) \
-	-o $(BUILDDIR)$(EXAMPLE1).o \
-	`./oyranos-config --cflags` `pkg-config --cflags cairo` \
-	`pkg-config --cflags lcms` -I.
-	echo Linking $@ ...
-	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall \
-	-o $(BUILDDIR)$(EXAMPLE1) \
-	$(BUILDDIR)$(EXAMPLE1).o `./oyranos-config --ldflags` \
-	`pkg-config --libs cairo` `pkg-config --libs lcms` -L. \
-	$(LINK_SRC_PATH)
-
-$(BUILDDIR)$(EXAMPLE2): $(EXAMPLE2_C)
-	echo Compile $@ ...
-	-$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -c $(EXAMPLE2_C) \
-	-o $(BUILDDIR)$(EXAMPLE2).o \
-	`./oyranos-config --cflags` -I.
-	echo Linking $@ ...
-	$(CC) `echo $(CFLAGS) | sed s/-0.//g` -g -Wall $(LINK_FLAGS_DYNAMIC)$@ \
-	-o $(BUILDDIR)$@ \
-	$(BUILDDIR)$(EXAMPLE2).o `./oyranos-config --ldflags` \
-	-L. \
-	$(LINK_SRC_PATH)
 
 $(LIBFL_I18N):	fl_i18n/Makefile
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
@@ -789,7 +755,6 @@ clean:
 	$(BUILDDIR)$(TARGET)-policy \
 	$(BUILDDIR)$(TARGET)-monitor $(BUILDDIR)$(TARGET)-monitor-nvidia \
 	$(BUILDDIR)test2 $(BUILDDIR)test $(BUILDDIR)tests/test_oyranos \
-	$(EXAMPLES) \
 	$(BUILDDIR)$(TARGET)-config-fltk; \
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
@@ -888,14 +853,17 @@ copy_files:
 	$(COPY) -R \
 	$(ALL_FILES) \
 	$(DESTDIR)
-	$(COPY) -r settings $(DESTDIR)
+	$(COPY) -R settings $(DESTDIR)
 	#$(COPY) -r cmms $(DESTDIR)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 	mkdir $(DESTDIR)/tests
 	$(COPY) $(TEST_FILES) $(DESTDIR)/tests
 	mkdir $(DESTDIR)/examples
-	$(COPY) $(EXAMPLE_FILES) $(DESTDIR)/examples
+	for exmpl in $(EXAMPLE_FILES); do \
+	  mkdir -p $(DESTDIR)/$${exmpl}; rmdir $(DESTDIR)/$${exmpl}; \
+	  $(COPY) -R $${exmpl} $(DESTDIR)/$${exmpl}; \
+	done;
 	mkdir $(DESTDIR)/FL
 	$(COPY) $(Flmm_FILES) $(DESTDIR)/FL
 	mkdir $(DESTDIR)/po

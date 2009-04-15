@@ -64,30 +64,6 @@ if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
   fi
 fi
 
-if [ -n "$LIBS_TEST_1" ]; then
-    for l in $LIBS_TEST_1; do
-      rm -f tests/libtest$EXEC_END
-      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
-      if [ -f tests/libtest ]; then
-          echo_="lib$l is available"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-          if [ -z "$X_ADD_LIBS" ]; then
-            LDFLAGS="-l$l"
-          else
-            LDFLAGS="$LDFLAGS -l$l"
-          fi
-          echo "#define HAVE_$l 1"  >> $CONF_H
-          echo "$l=-l$l" >> "$CONF_TEMP_SH"
-          rm tests/libtest$EXEC_END
-      else
-        if [ $X11 -eq 1 ]; then
-          echo_="!!! ERROR lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-          ERROR=1
-        else
-          echo_="lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-        fi
-      fi
-    done
-fi
 
 if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_min" ]; then
