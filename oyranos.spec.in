@@ -166,6 +166,7 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module.so*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oydi_cmm_module.so*
 %{_mandir}/man1/%{name}-monitor*
 
 %files monitor-nvidia
@@ -181,6 +182,9 @@ ldconfig
 
 
 %changelog
+* Wed Apr 15 2009 Kai-Uwe Behrmann
+- add oydi module
+
 * Thu Oct 02 2008 Kai-Uwe Behrmann
 - split display into monitor and monitor-nvidia
 - rename panel to ui-fltk
