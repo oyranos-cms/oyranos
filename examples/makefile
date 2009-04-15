@@ -40,7 +40,7 @@ $(TARGET1):	$(TARGET1).cpp
 
 $(TARGET2):	$(TARGET2).c
 	echo Compiling $@ ...
-	-$(CC) $(DEBUG) -I.. $(OY_CFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
+	-$(CC) $(DEBUG) $(OY_CFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -lXcolor $< -o $@
 
 $(TARGET3):	colour_desktop/colour_desktop.c
@@ -50,7 +50,7 @@ $(TARGET3):	colour_desktop/colour_desktop.c
 
 $(TARGET4):	$(TARGET4).c
 	echo Compiling $@ ...
-	-$(CC) $(DEBUG) -I.. $(TARGET4_FLAGS) -lXcolor $< -o $@
+	-$(CC) $(DEBUG) $(TARGET4_FLAGS) -lXcolor $< -o $@
 
 $(TARGET5):	dummy_device/oyranos_cmm_dDev.c
 	echo Compiling $@ ...

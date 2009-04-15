@@ -1,7 +1,37 @@
-colour_desktop: compiz desktop colour management plug-in; use "make install" to
-                use a local copy
-dummy_device:   dummy device backend
-image2pdf:      simple RAW to Cairo renderer
-image_display:  a rudimentary ppm file displayer using Oyranos
-xcmsevents:     X11 CMS events observer (_ICC_PROFILE_xxx, _NET_COLOR_xxx )
+Overview:
+    This directory contains example applications.
+
+  colour_desktop: compiz desktop colour management plug-in; use "make install"
+                  to use a local copy
+  dummy_device:   dummy device backend
+  image2pdf:      simple RAW to Cairo renderer
+  image_display:  a rudimentary ppm file displayer using Oyranos
+  xcmsevents:     X11 CMS events observer (_ICC_PROFILE_xxx, _NET_COLOR_xxx )
+
+
+Dependencies:
+  all:
+      * installed Oyranos
+  colour_desktop and xcmsevents:
+      * Xcolor from Tomas Carnecky and the Xfixes extension
+  colour_desktop:
+      * compiz-fusion
+  image2pdf:
+      * Cairo, dcraw
+  image_display:
+      * FLTK
+
+
+Notes:
+    colour_desktop and image_display are compatible in that image_display
+    colour corrects its image area itself, while remaining the widget area un
+    changed. The desktop and the image_display non image area is colour
+    corrected by colour_desktop under compiz. colour_desktop must be switched
+    on to do so. A monitor profile should be installed eigther with 
+    oyranos-monitor or some other tool.
+
+
+Building:
+    $ make
+    $ make install   # for the compiz plug-in
 
