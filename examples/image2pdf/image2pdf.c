@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <icc34.h>
 #include <lcms.h>                 /* littleCMS – typical CMM on Linux */
 #include <oyranos.h>              /* Oyranos headers */
 #include <oyranos_monitor.h>
