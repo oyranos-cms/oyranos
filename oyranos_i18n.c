@@ -64,7 +64,8 @@ void oyI18NInit_()
     oyStringAdd_( &temp, "NLSPATH=", oyAllocateFunc_, oyDeAllocateFunc_);
     oyStringAdd_( &temp, oy_domain_path, oyAllocateFunc_, oyDeAllocateFunc_);
     putenv(temp); /* Solaris */
-    /*oyFree_m_(temp);  putenv requires a static string ??? */
+    if(oy_debug_memory)
+      oyFree_m_(temp);  /* putenv requires a static string ??? */
 
     bindtextdomain( oy_domain, oy_domain_path );
     DBG_NUM2_S("oy_domain_path %s %s", oy_domain, oy_domain_path)
@@ -76,6 +77,8 @@ void oyI18NInit_()
      * the environmental LANG variable is flacky */
     if(setlocale(LC_MESSAGES, 0))
     {
+      if(oy_lang_)
+        oyDeAllocateFunc_(oy_lang_);
       temp = oyStringCopy_(setlocale(LC_MESSAGES, 0), oyAllocateFunc_);
       oy_lang_ = temp;
     }
@@ -118,7 +121,7 @@ void oyI18NInit_()
     } else
       oy_language_ = oyStringCopy_( oy_lang_, oyAllocateFunc_);
     }
-    /*if(temp) oyDeAllocateFunc_(temp);*/
+    if(oy_debug_memory && temp) oyDeAllocateFunc_(temp);
   }
 #endif
   oyTextsCheck_ ();

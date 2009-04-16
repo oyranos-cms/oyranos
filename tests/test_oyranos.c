@@ -223,6 +223,11 @@ oyTESTRESULT_e testElektra()
   } else
     result = oyTESTRESULT_SUCCESS;
 
+  if(start)
+    oyDeAllocateFunc_(start);
+  if(value)
+    oyDeAllocateFunc_(value);
+
   return result;
 }
 
@@ -243,6 +248,15 @@ oyTESTRESULT_e testOption ()
 
   fprintf(stdout, "\n" );
 
+  o = oyOption_New( "blabla", 0 );
+  if(!o)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_New() with wrong registration rejected: ok");
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_New() with wrong registration not rejected");
+  }
+
   o = oyOption_New( 0, 0 );
   if(o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -250,15 +264,6 @@ oyTESTRESULT_e testOption ()
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyOption_New() failed                             " );
-  }
-
-  error = oyOption_New( "blabla", 0 ) != 0;
-  if(o)
-  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyOption_New() with wrong registration rejected: ok");
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyOption_New() with wrong registration not rejected");
   }
 
   memcpy( ptr, test_buffer, size );
@@ -284,6 +289,8 @@ oyTESTRESULT_e testOption ()
   }
 
   oyOption_Release( &o );
+  oyDeAllocateFunc_( ptr ); ptr = 0;
+  size = 0;
 
   return result;
 }
@@ -304,8 +311,8 @@ oyTESTRESULT_e testSettings ()
   int error = 0;
   oyOptions_s * opts = 0;
   oyOption_s * o;
-  xmlSaveCtxtPtr ptr;
-  xmlBufferPtr buf;
+  /*xmlSaveCtxtPtr ptr;
+  xmlBufferPtr buf;*/
   xmlDocPtr doc = 0;
 
   oyExportReset_(EXPORT_SETTING);
@@ -374,9 +381,8 @@ oyTESTRESULT_e testSettings ()
       "oyOptions_GetText() returned text               %d", strlen(text) );
     }
   }
-  
-
   oyOptions_Release( &opts );
+
 
   /* Roundtrip test */
   opts = oyOptions_FromText( text, 0, 0 );
@@ -408,8 +414,9 @@ oyTESTRESULT_e testSettings ()
     oyOption_Release( &o );
   }
 
-  text = oyStringAppend_( "<a>\n", text, 0 );
-  oyStringAdd_( &text, "</a>", 0, 0 );
+  tmp = oyStringAppend_( "<a>\n", text, 0 );
+  oyStringAdd_( &tmp, "</a>", 0, 0 );
+  oyDeAllocateFunc_(text); text = tmp; tmp = 0;
 
   doc = xmlParseMemory( text, oyStrlen_( text ) );
   error = !doc;
@@ -425,8 +432,11 @@ oyTESTRESULT_e testSettings ()
     }
   }
 
+  oyDeAllocateFunc_(text); text = 0;
   xmlDocDumpFormatMemory( doc, &text, &i, 1 );
+  oyDeAllocateFunc_(text); text = 0;
   /*xmlSaveDoc( ptr, doc );*/
+  xmlFreeDoc( doc ); doc = 0;
 
   oyOptions_Release( &opts );
 
@@ -885,6 +895,8 @@ int main(int argc, char** argv)
     fprintf( stderr, "\n    Hint: the '-l' option will list all test names\n" );
 
   }
+
+  oyFinish_(0);
 
   return error;
 }

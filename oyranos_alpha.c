@@ -2885,6 +2885,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
                    * api2 = 0;
   uint32_t * rank_list_ = 0, * rank_list2_ = 0;
   int rank_list_n = 5;
+  oyObject_s object = oyObject_New();
 
   if(error <= 0 && cmm_required)
   {
@@ -2918,7 +2919,6 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
         n, accept;
     char * match = 0, * reg = 0;
     oyCMMInfo_s * info = 0;
-    oyObject_s object = oyObject_New();
 
     error = !api5;
 
@@ -2932,7 +2932,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     {
       ret = 0; j = 0;
       ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
-                                   &reg, 0, oyAllocateFunc_, &info, object );
+                                   0, 0, oyAllocateFunc_, &info, object );
       while(!ret)
       {
         ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
@@ -2949,7 +2949,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
             if(!rank_list_ && !apis)
             {
               oyAllocHelper_m_( *rank_list, uint32_t, rank_list_n+1, 0,
-                                return 0 );
+                                goto clean );
               rank_list_ = *rank_list;
               apis = oyCMMapiFilters_New(0);
             } else
@@ -2958,7 +2958,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
               rank_list_n *= 2;
               rank_list_ = 0;
               oyAllocHelper_m_( rank_list_, uint32_t, rank_list_n+1, 0,
-                                return 0 );
+                                goto clean );
               error = !memcpy( rank_list_, *rank_list,
                                sizeof(uint32_t) * rank_list_n/2 );
               oyFree_m_(*rank_list);
@@ -2982,11 +2982,13 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
             match_j = j;
             match_i = i;
             old_rank = rank;
-          } else
-            oyFree_m_( reg );
+          }
         }
         ++j;
+        if(reg) oyFree_m_( reg );
       }
+
+      oyCMMInfo_Release( &info );
     }
 
     if(match && !rank_list)
@@ -3004,7 +3006,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     {
       /* filter doubled entries */
       n = oyCMMapiFilters_Count( apis );
-      oyAllocHelper_m_( rank_list2_, uint32_t, rank_list_n+1, 0, return 0 );
+      oyAllocHelper_m_( rank_list2_, uint32_t, rank_list_n+1, 0, goto clean );
       k = 0;
       for(i = 0 ; i < n; ++i)
       {
@@ -3055,7 +3057,6 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     }
       
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
-
   }
 
   /*if(api)
@@ -3063,6 +3064,9 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     api->id_ = lib_name;
     error = oyHash_SetPointer_( entry, (oyStruct_s*) s );
   }*/
+
+  clean:
+    oyObject_Release( &object );
 
   return apis2;
 }
@@ -5422,6 +5426,7 @@ oyOption_s *   oyOption_New          ( const char        * registration,
       WARNc2_S("%s: %s",
                "passed a incomplete registration string to option creation",
                registration );
+      oyOption_Release( &s );
       return 0;
     } else
       s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
@@ -5949,6 +5954,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
         else
           STRING_ADD ( text, ">\n" );
       }
+
+      oyStringListRelease_( &list, n, oyDeAllocateFunc_ );
     }
 
     tmp = oyOption_GetValueText( obj, oyAllocateFunc_ );
@@ -5970,6 +5977,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
         else
           STRING_ADD ( text, ">" );
       }
+
+      oyStringListRelease_( &list, n, oyDeAllocateFunc_ );
     }
 
     error = oyObject_SetName( obj->oy_, text, type );
@@ -6526,6 +6535,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
 
     oyOptions_ParseXML_( s, &texts, &texts_n, doc, cur );
 
+    oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
     xmlFreeDoc(doc);
   }
 
@@ -16998,11 +17008,12 @@ int          oyFilterCore_Release    ( oyFilterCore_s   ** obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  s->registration_ = 0;
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->registration_)
+      deallocateFunc( s->registration_ );
 
     if(s->name_ && s->name_->release)
       s->name_->release( (oyStruct_s**)&s->name_ );

@@ -341,7 +341,7 @@ oyAddKey_valueComment_ (const char* keyName,
   keySetName( key, name );
 
   if(!oy_handle_)
-    return 0;
+    goto clean;
   rc=kdbGetKey( oy_handle_, key );
   if(rc < 0 && oy_debug)
     oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_"key new? code:%d %s name:%s",
@@ -369,6 +369,8 @@ oyAddKey_valueComment_ (const char* keyName,
   oyClose_();
   keyDel( key );
 
+
+  clean:
   oyFree_m_( name )
   oyFree_m_( value_utf8 )
   oyFree_m_( comment_utf8 )
@@ -689,18 +691,18 @@ oyPointer  oyGetKeyBinary_           ( const char        * key_name,
 
   if( !key_name || strlen( key_name ) > MAX_PATH-1 )
   { WARNc_S("wrong string format given");
-    return 0;
+    goto clean2;
   }
 
   full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
 
   if( !full_key_name )
-    return 0;
+    goto clean2;
 
   sprintf( full_key_name, "%s%s", OY_USER, key_name );
 
   if(!oy_handle_)
-    return 0;
+    goto clean2;
 
   if(oyKeyIsBinary_(full_key_name))
     ptr = oyGetKeyBinary__ ( full_key_name, size, allocate_func );
@@ -712,7 +714,8 @@ oyPointer  oyGetKeyBinary_           ( const char        * key_name,
       ptr = oyGetKeyBinary__ ( full_key_name, size, allocate_func );
   }
 
-  free( full_key_name );
+  clean2:
+  oyDeAllocateFunc_( full_key_name );
 
   DBG_PROG_ENDE
   return ptr;
@@ -733,20 +736,20 @@ oyGetKeyString_ ( const char       *key_name,
 
   if( !key_name || strlen( key_name ) > MAX_PATH-1 )
   { WARNc_S("wrong string format given");
-    return 0;
+    goto clean3;
   }
 
   name = (char*) oyAllocateWrapFunc_( MAX_PATH, allocate_func );
   full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
 
   if( !name || !full_key_name )
-    return 0;
+    goto clean3;
 
   sprintf( full_key_name, "%s%s", OY_USER, key_name );
 
   name[0] = 0;
   if(!oy_handle_)
-    return 0;
+    goto clean3;
 
   if(oyKeyIsString_(full_key_name))
     rc = kdbGetString_m ( oy_handle_, full_key_name, name, MAX_PATH );
@@ -758,7 +761,7 @@ oyGetKeyString_ ( const char       *key_name,
       rc = kdbGetString_m ( oy_handle_, full_key_name, name, MAX_PATH );
   }
 
-  free( full_key_name );
+  oyDeAllocateFunc_( full_key_name );
 
   DBG_PROG_S((name))
   DBG_PROG_ENDE
@@ -766,6 +769,13 @@ oyGetKeyString_ ( const char       *key_name,
     return name;
   else
     return 0;
+
+  clean3:
+  if(name)
+    oyDeAllocateFunc_(name);
+  if(full_key_name)
+    oyDeAllocateFunc_( full_key_name );
+  return 0;
 }
 
 
