@@ -3968,6 +3968,7 @@ oyObject_New  ( void )
   o->copy = (oyStruct_Copy_f) oyObject_Copy;
   o->release = (oyStruct_Release_f) oyObject_Release;
   o->version_ = oyVersion(0);
+  o->hash_ptr_ = 0;
   ++o->ref_;
 
   return o;
@@ -4000,6 +4001,7 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   o->copy = (oyStruct_Copy_f) oyObject_Copy;
   o->release = (oyStruct_Release_f) oyObject_Release;
   o->version_ = oyVersion(0);
+  o->hash_ptr_ = 0;
   ++o->ref_;
 
   return o;
@@ -4144,7 +4146,8 @@ int          oyObject_Release         ( oyObject_s      * obj )
     oyDeAlloc_f deallocateFunc = s->deallocateFunc_;
     oyPointer lock = s->lock_;
 
-    s->hash_[0] = 0;
+    if(s->hash_ptr_)
+      deallocateFunc(s->hash_ptr_); s->hash_ptr_ = 0;
 
     if(s->backdoor_)
       deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
@@ -4500,13 +4503,68 @@ int            oyObject_GetRefCount  ( oyObject_s          obj )
 int32_t      oyObject_Hashed_        ( oyObject_s          s )
 {
   int32_t hashed = 0;
-  if(s && s->type_ == oyOBJECT_OBJECT_S)
-      if(((uint32_t*)(&s->hash_[0])) ||
-         ((uint32_t*)(&s->hash_[4])) ||
-         ((uint32_t*)(&s->hash_[8])) ||
-         ((uint32_t*)(&s->hash_[12])) )
+  if(s && s->type_ == oyOBJECT_OBJECT_S && s->hash_ptr_)
+      if(((uint32_t*)(&s->hash_ptr_[0])) ||
+         ((uint32_t*)(&s->hash_ptr_[4])) ||
+         ((uint32_t*)(&s->hash_ptr_[8])) ||
+         ((uint32_t*)(&s->hash_ptr_[12])) )
         hashed = 1;
   return hashed;
+}
+
+/** @internal
+ *  Function oyObject_HashSet
+ *  @memberof oyObject_s
+ *  @brief   check if a object has a hash allocated and set it
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/04/16
+ *  @since   2009/04/16 (Oyranos: 0.1.10)
+ */
+int          oyObject_HashSet          ( oyObject_s        s,
+                                         const unsigned char * hash )
+{
+  int error = 0;
+
+  if(s && s->type_ == oyOBJECT_OBJECT_S && !s->hash_ptr_)
+  {
+    s->hash_ptr_ = s->allocateFunc_(OY_HASH_SIZE*2);
+    error = !s->hash_ptr_;
+  }
+
+  if(!error)
+  {
+    if(hash)
+      memcpy( s->hash_ptr_, hash, OY_HASH_SIZE*2 );
+    else
+      memset( s->hash_ptr_, 0, OY_HASH_SIZE*2 );
+  }
+
+  return error;
+}
+
+/** @internal
+ *  Function oyObject_HashEqual
+ *  @memberof oyObject_s
+ *  @brief   check if two objects hash is equal
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/04/16
+ *  @since   2009/04/16 (Oyranos: 0.1.10)
+ */
+int          oyObject_HashEqual        ( oyObject_s        s1,
+                                         oyObject_s        s2 )
+{
+  int equal = 0;
+
+  if(s1 && s1->type_ == oyOBJECT_OBJECT_S && s1->hash_ptr_ &&
+     s2 && s2->type_ == oyOBJECT_OBJECT_S && s2->hash_ptr_)
+  {
+    if(memcmp(s1->hash_ptr_, s2->hash_ptr_, OY_HASH_SIZE) == 0)
+      equal = 1;
+  }
+
+  return equal;
 }
 
 
@@ -4767,6 +4825,9 @@ oyHash_s *   oyHash_New_             ( oyObject_s          object )
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
+  oyAllocHelper_m_( s->oy_->hash_ptr_, unsigned char, OY_HASH_SIZE*2,
+                    s->oy_->allocateFunc_, oyHash_Release_( &s ));
+
   return s;
 }
 
@@ -4856,10 +4917,10 @@ oyHash_s *         oyHash_Get_       ( const char        * hash_text,
 
   if(error <= 0)
   {
-    val = (uint32_t*) &s->oy_->hash_;
+    val = (uint32_t*) s->oy_->hash_ptr_;
 
     if(oyStrlen_(hash_text) < OY_HASH_SIZE)
-      memcpy(s->oy_->hash_, hash_text, oyStrlen_(hash_text)+1);
+      memcpy(s->oy_->hash_ptr_, hash_text, oyStrlen_(hash_text)+1);
     else
 #if 0
       error = oyMiscBlobGetMD5_( (void*)hash_text, oyStrlen_(hash_text),
@@ -5008,8 +5069,8 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
     oyHash_s * compare = (oyHash_s*) oyStructList_GetType_( cache_list, i,
                                                          oyOBJECT_HASH_S );
 
-    if(compare)
-    if(memcmp(search_key->oy_->hash_, compare->oy_->hash_, OY_HASH_SIZE) == 0)
+    if(compare )
+    if(oyObject_HashEqual(search_key->oy_, compare->oy_))
       entry = compare;
   }
 
@@ -10133,10 +10194,10 @@ oyProfile_GetHash_( oyProfile_s * s )
 
   if(s->block_ && s->size_)
   {
-    memset( s->oy_->hash_, 0, OY_HASH_SIZE*2 );
-    error = oyProfileGetMD5( s->block_, s->size_, s->oy_->hash_ );
+    oyObject_HashSet( s->oy_, 0 );
+    error = oyProfileGetMD5( s->block_, s->size_, s->oy_->hash_ptr_ );
     if(error)
-      memset(s->oy_->hash_, 0, OY_HASH_SIZE*2 );
+      oyObject_HashSet( s->oy_, 0 );
   }
   return error;
 }
@@ -10526,7 +10587,10 @@ OYAPI oyProfile_s * OYEXPORT
         if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
           tmp = oyProfile_FromFile( names[i], 0, 0 );
 
-        equal = memcmp( md5, tmp->oy_->hash_, OY_HASH_SIZE );
+        if(tmp->oy_->hash_ptr_)
+          equal = memcmp( md5, tmp->oy_->hash_ptr_, OY_HASH_SIZE );
+        else
+          equal = 1;
         if(equal == 0)
           {
             s = tmp;
@@ -10699,8 +10763,6 @@ oyProfile_Release( oyProfile_s ** obj )
 
     if(s->names_chan_)
       deallocateFunc( s->names_chan_ ); s->names_chan_ = 0;
-
-    s->oy_->hash_[0] = 0;
 
     if(s->block_)
       deallocateFunc( s->block_ ); s->block_ = 0; s->size_ = 0;
@@ -11102,8 +11164,11 @@ OYAPI const oyChar* OYEXPORT
 
       if(error <= 0)
       {
-        uint32_t * i = (uint32_t*)&s->oy_->hash_[0];
-        oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
+        uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
+        if(i)
+          oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
+        else
+          oySprintf_(temp, "                " );
         if(oyStrlen_(temp))
           found = 1;
       }
@@ -11201,7 +11266,7 @@ OYAPI const oyChar* OYEXPORT
 
     if(type == oyNAME_NAME)
     {
-      uint32_t * i = (uint32_t*)&s->oy_->hash_[0];
+      uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
       char * file_name = oyProfile_GetFileName_r( s, oyAllocateFunc_ );
 
       if(oyProfile_Hashed_(s))
@@ -11210,10 +11275,14 @@ OYAPI const oyChar* OYEXPORT
       if(s->use_default_ && error <= 0)
         oyWidgetTitleGet( (oyWIDGET_e)s->use_default_, 0, &text, 0, 0 );
 
-      oySprintf_( temp, "<profile use_default=\"%s\" file_name=\"%s\" hash=\"%x%x%x%x\" />",
+      oySprintf_( temp, "<profile use_default=\"%s\" file_name=\"%s\" hash=\"",
              oyNoEmptyName_m_(text),
-             oyNoEmptyName_m_(file_name),
+             oyNoEmptyName_m_(file_name) );
+      if(i)
+        oySprintf_( &temp[oyStrlen_(temp)], "%x%x%x%x\" />",
              i[0], i[1], i[2], i[3] );
+      else
+        oySprintf_( &temp[oyStrlen_(temp)], "                \" />" );
 
       if(file_name) free(file_name); file_name = 0;
       found = 1;
@@ -11232,7 +11301,7 @@ OYAPI const oyChar* OYEXPORT
 
     if(!found && error <= 0)
     {
-      uint32_t * i = (uint32_t*)&s->oy_->hash_[0];
+      uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
       oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
       if(oyStrlen_(temp))
         found = 1;
@@ -11359,8 +11428,11 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
 
           if(hash && tmp)
           {
-            uint32_t * h = (uint32_t*)&tmp->oy_->hash_[0];
-            oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+            uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
+            if(h)
+              oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+            else
+              oySprintf_(tmp_hash, "                " );
             if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
             {
               name = names[i];
@@ -11459,8 +11531,11 @@ const char *       oyProfile_GetFileName (
 
           if(hash && tmp)
           {
-            uint32_t * h = (uint32_t*)&tmp->oy_->hash_[0];
-            oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+            uint32_t * h = (uint32_t*)tmp->oy_->hash_ptr_;
+            if(h)
+              oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+            else
+              oySprintf_(tmp_hash, "                " );
             if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
             {
               name = names[i];
@@ -11548,8 +11623,8 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
  *  @brief   check if two profiles are qual by their hash sum
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/02/03
  *  @since   2008/02/03 (Oyranos: 0.1.8)
+ *  @date    2009/04/16
  */
 OYAPI int OYEXPORT
                    oyProfile_Equal   ( oyProfile_s       * profileA,
@@ -11558,10 +11633,7 @@ OYAPI int OYEXPORT
   int equal = 0;
 
   if(profileA && profileB)
-  {
-    equal = memcmp( profileA->oy_->hash_, profileB->oy_->hash_, OY_HASH_SIZE )
-            == 0;
-  }
+    equal = oyObject_HashEqual( profileA->oy_, profileB->oy_ );
 
   return equal;
 }

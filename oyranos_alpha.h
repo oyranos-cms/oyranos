@@ -299,7 +299,7 @@ struct oyObject_s_ {
   oyName_s           * name_;          /*!< @private naming feature */
   int                  ref_;           /*!< @private reference counter */
   int                  version_;       /*!< @private OYRANOS_VERSION */
-  unsigned char        hash_[2*OY_HASH_SIZE]; /** @private */
+  unsigned char      * hash_ptr_;      /** @private 2*OY_HASH_SIZE */
   oyPointer            lock_;          /**< @private the user provided lock */
 };
 
@@ -341,6 +341,10 @@ int          oyObject_UnSetLocking     ( oyObject_s        object,
                                          int               line );
 int          oyObject_GetId            ( oyObject_s        object );
 int          oyObject_GetRefCount      ( oyObject_s        object );
+int          oyObject_HashSet          ( oyObject_s        object,
+                                         const unsigned char * hash );
+int          oyObject_HashEqual        ( oyObject_s        s1,
+                                         oyObject_s        s2 );
 
 
 /** @internal
