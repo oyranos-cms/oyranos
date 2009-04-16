@@ -119,4 +119,8 @@ void oyInit_()
   DBG_PROG_ENDE
 }
 
+void     oyFinish_                   ( int                 unused )
+{
+  oyI18Nreset_();
+}
 
