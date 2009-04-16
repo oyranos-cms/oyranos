@@ -27,6 +27,9 @@
 intptr_t oy_observe_pointer_ = 0;
 
 /* --- internal API definition --- */
+static int oy_alloc_count_ = 0;
+static int oy_allocs_count_ = 0;
+int oy_debug_memory = 0;
 
 /* internal memory handling */
 void* oyAllocateFunc_           (size_t        size)
@@ -35,7 +38,15 @@ void* oyAllocateFunc_           (size_t        size)
   void *ptr = calloc (sizeof (char), size);
 
   if( !ptr )
+  {
     WARNc1_S( "Can not allocate %d byte.", (int)size );
+  }
+    else if(oy_debug_memory)
+  {
+    oy_alloc_count_ += size;
+    printf( "%s:%d %d allocate %d  %d\n", __FILE__,__LINE__,oy_allocs_count_, (int)size, oy_alloc_count_ );
+    ++oy_allocs_count_;
+  }
 
   return ptr;
 }
@@ -45,7 +56,11 @@ void  oyDeAllocateFunc_           (void*       block)
   if( !block ) {
     WARNc_S( "Memory block is empty." )
   } else
+  {
     free( block );
+    if(oy_debug_memory)
+      printf( "%s:%d %d deallocated\n", __FILE__,__LINE__,--oy_allocs_count_ );
+  }
 }
 
 void* oyAllocateWrapFunc_       (size_t        size,

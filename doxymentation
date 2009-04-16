@@ -6,6 +6,7 @@
     @ref install |
     @ref links\n
     @ref tools |
+    @ref environment |
     @ref user |
     @ref coding |
     @ref api_tutorial
@@ -232,6 +233,26 @@
     configure.sh --prefix=/what/you/like\n
     make\n
     make install   (optionally)\n
+ */
+
+/** @page environment Environment Variables
+
+    @section path_vars Path Variables
+    The XDG variables affect Oyranos' profile search. Oyranos searches under
+    each provided paths color/icc directory, 
+    e.g. XDG_DATA_HOME=~/.local/share results in a additional search in
+    ~/.local/share/color/icc. More details can be found in <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>.
+
+    @section i18n_vars Internationalisation Variables
+    OY_LOCALEDIR is described together with the internal ::oy_domain_codeset.
+
+    @section debug_vars Debugging Variables
+    OYRANOS_DEBUG influences the internal ::oy_debug variable. Its value
+    changes the output level. See as well oyranos_debug.[h,c] . The configure
+    switch --enable-debug enables most of the available output. \n
+    OYRANOS_DEBUG_MEMORY sets the internal ::oy_debug_memory variable on and
+    helps somewhat in detecting memory leaks. This variable is dangerous and 
+    should not to be run for production use.
  */
 
 /** @page links References

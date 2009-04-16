@@ -115,6 +115,9 @@ void oyInit_()
   if(getenv("OYRANOS_DEBUG"))
     oy_debug = atoi(getenv("OYRANOS_DEBUG"));
 
+  if(getenv("OYRANOS_DEBUG_MEMORY"))
+    oy_debug_memory = atoi(getenv("OYRANOS_DEBUG_MEMORY"));
+
   oyI18NInit_ ();
   DBG_PROG_ENDE
 }
