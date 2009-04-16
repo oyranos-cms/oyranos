@@ -31,6 +31,8 @@
 
 #include <assert.h>
 #include <string.h>
+#include <sys/time.h>
+#include <time.h>
 
 #include <stdarg.h>
 #include <icc34.h>
@@ -124,6 +126,7 @@ typedef struct {
 	Atom netColorProfiles;
 	Atom netColorRegions;
 	Atom netColorTarget;
+  Atom netColorDesktop;
 } PrivDisplay;
 
 typedef struct {
@@ -670,12 +673,14 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 	(*d->handleEvent) (d, event);
 	WRAP(pd, d, handleEvent, pluginHandleEvent);
 
-	switch (event->type) {
+	switch (event->type)
+  {
 	case PropertyNotify:
 #if defined(PLUGIN_DEBUG)
 		if (event->xproperty.atom == pd->netColorProfiles ||
 				event->xproperty.atom == pd->netColorRegions ||
-				event->xproperty.atom == pd->netColorTarget )
+				event->xproperty.atom == pd->netColorTarget ||
+        event->xproperty.atom == pd->netColorDesktop);
 			printf( "%s:%d PropertyNotify: %s\n", __FILE__,__LINE__,
   	         	XGetAtomName( event->xany.display, event->xproperty.atom ) );
 #endif
@@ -685,6 +690,8 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 		} else if (event->xproperty.atom == pd->netColorTarget) {
 			CompWindow *w = findWindowAtDisplay(d, event->xproperty.window);
 			updateWindowOutput(w);
+
+    /* update for a changing monitor profile */
     } else if(
            strstr( XGetAtomName( event->xany.display, event->xproperty.atom ),
                    "_ICC_PROFILE") != 0)
@@ -779,7 +786,6 @@ static void damageWindow(CompWindow *w, void *closure)
     addWindowDamage(w);
 }
 
-Region wreg = 0;
 
 /**
  * CompScreen::drawWindow
@@ -798,8 +804,6 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
 	CompScreen *s = w->screen;
 	PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   int i;
-
-  wreg = region;
 
 	UNWRAP(ps, s, drawWindow);
 	Bool status = (*s->drawWindow) (w, transform, attrib, region, mask);
@@ -1069,6 +1073,26 @@ static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *
 	pd->netColorProfiles = XInternAtom(d->display, "_NET_COLOR_PROFILES", False);
 	pd->netColorRegions = XInternAtom(d->display, "_NET_COLOR_REGIONS", False);
 	pd->netColorTarget = XInternAtom(d->display, "_NET_COLOR_TARGET", False);
+  pd->netColorDesktop = XInternAtom(d->display, "_NET_COLOR_DESKTOP", False);
+
+  unsigned long n = 0;
+  char * data = fetchProperty( d->display, RootWindow(d->display,0),
+                               pd->netColorDesktop, XA_CARDINAL, &n, False);
+
+  /* set the colour management desktop service activity atom */
+  pid_t pid = getpid();
+  pid_t old_pid = 0;
+  if(n && data)
+    old_pid = *((pid_t*)data);
+  if(old_pid)
+    compLogMessage( d, "colour_desktop", CompLogLevelWarn,
+                    DBG_STRING "\n!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
+                    "Eigther there was a previous crash or your setup can be double colour corrected.",
+                    DBG_ARGS, old_pid );
+  XChangeProperty( d->display, RootWindow(d->display,0),
+                                pd->netColorDesktop, XA_CARDINAL,
+                                8, PropModeReplace, (unsigned char*)&pid,
+                                sizeof(pid_t) );
 
 	return TRUE;
 }
@@ -1142,6 +1166,9 @@ static CompBool pluginFiniDisplay(CompPlugin *plugin, CompObject *object, void *
 
 	UNWRAP(pd, d, handleEvent);
 
+  /* remove desktop colour management service mark */
+  XDeleteProperty( d->display, RootWindow(d->display, 0), pd->netColorDesktop );
+
 	return TRUE;
 }
 
@@ -1175,6 +1202,7 @@ static dispatchObjectProc dispatchFiniObject[] = {
 static CompBool pluginInit(CompPlugin *p)
 {
 	corePrivateIndex = allocateCorePrivateIndex();
+
 	if (corePrivateIndex < 0)
 		return FALSE;
 

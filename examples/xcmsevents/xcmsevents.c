@@ -92,8 +92,8 @@ int main(int argc, char *argv[])
   Atom aProfile = XInternAtom( display, "_NET_COLOR_PROFILES", False ),
        aTarget = XInternAtom( display, "_NET_COLOR_TARGET", False ),
        aCM = XInternAtom( display, "_NET_COLOR_MANAGEMENT", False ),
-       aRegion = XInternAtom( display, "_NET_COLOR_REGIONS", False );
-
+       aRegion = XInternAtom( display, "_NET_COLOR_REGIONS", False ),
+       aDesktop = XInternAtom( display, "_NET_COLOR_DESKTOP", False );
 
   attrs.colormap = cmap;
   attrs.border_pixel = 0;
@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
   printf( "atom: \"_NET_COLOR_TARGET\": %d\n", (int)aTarget );
   printf( "atom: \"_NET_COLOR_MANAGEMENT\": %d\n", (int)aCM );
   printf( "atom: \"_NET_COLOR_REGIONS\": %d\n", (int)aRegion );
+  printf( "atom: \"_NET_COLOR_DESKTOP\": %d\n", (int)aDesktop );
   printf( "root window ID: %d\n", (int)root );
   printf( "running \"oyranos-monitor -l\":\n" );
   system( "oyranos-monitor -l" );
@@ -146,6 +147,7 @@ int main(int argc, char *argv[])
         if(event.xproperty.atom == aProfile ||
            event.xproperty.atom == aCM ||
            event.xproperty.atom == aRegion ||
+           event.xproperty.atom == aDesktop ||
            strstr( XGetAtomName( event.xany.display, event.xproperty.atom ), 
                    "_ICC_PROFILE") != 0)
         r = XGetWindowProperty( display, event.xany.window,
@@ -176,6 +178,21 @@ int main(int argc, char *argv[])
         } else if( event.xproperty.atom == aCM )
         {
           /* should not happen */
+
+        } else if( event.xproperty.atom == aDesktop )
+        {
+          static pid_t old_pid = 0;
+          if(n && data)
+          {
+            if(*((pid_t*)data) && old_pid)
+              printf("!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
+                     "Eigther there was a previous crash or your setup can be double colour corrected.", old_pid );
+            old_pid = *((pid_t*)data);
+          } else
+            old_pid = 0;
+          printf("PropertyNotify : %s    %d          %s\n",
+               XGetAtomName( event.xany.display, event.xproperty.atom ),
+               old_pid, printWindowName( display, event.xany.window ) );
 
         } else if( event.xproperty.atom == aRegion )
         {
