@@ -52,6 +52,7 @@ if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
       if [ -f tests/libtest ]; then
           echo "$l=-l$l" >> "$CONF_TEMP_SH"
           LDFLAGS="$LDFLAGS -l$l"
+          echo "#define HAVE_$l 1" >> $CONF_H
           echo_="lib$l is available"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
           if [ -n "$MAKEFILE_DIR" ]; then
             for i in $MAKEFILE_DIR; do

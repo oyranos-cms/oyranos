@@ -34,7 +34,7 @@ all:	$(TARGETS)
 
 $(TARGET1):	$(TARGET1).cpp
 	echo Compiling $@ ...
-	-$(CPP) $(CFLAGS) $(LDFLAGS) $(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
+	-$(CPP) $(CFLAGS) $(X11) $(LDFLAGS) $(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
 	$< -o $@
 	fltk-config --post $@
 
