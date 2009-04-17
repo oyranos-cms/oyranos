@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_alpha_internal.h"
 #include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
@@ -125,5 +126,6 @@ void oyInit_()
 void     oyFinish_                   ( int                 unused )
 {
   oyI18Nreset_();
+  oyAlphaFinish_( unused );
 }
 
