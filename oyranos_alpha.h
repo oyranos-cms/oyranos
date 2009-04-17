@@ -125,7 +125,7 @@ typedef enum {
   oyOBJECT_PROFILES_S,                /*!< oyProfiles_s */
   oyOBJECT_OPTION_S,                  /*!< oyOption_s */
   oyOBJECT_OPTIONS_S,                 /*!< oyOptions_s */
-  oyOBJECT_REGION_S,                  /*!< oyRegion_s */
+  oyOBJECT_RECTANGLE_S,               /**< oyRectangle_s */
   oyOBJECT_IMAGE_S,                   /*!< oyImage_s */
   oyOBJECT_ARRAY2D_S,                 /**< oyArray2d_s */
   oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s */
@@ -1221,11 +1221,11 @@ typedef enum {
 
 
 /** @brief start with a simple rectangle
- *  @ingroup objects_region
+ *  @ingroup objects_rectangle
  *  @extends oyStruct_s
  */
 typedef struct {
-  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_REGION_S */
+  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_RECTANGLE_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private */
@@ -1235,51 +1235,52 @@ typedef struct {
   double width;
   double height;
 
-} oyRegion_s;
+} oyRectangle_s;
 
-oyRegion_s *   oyRegion_New_         ( oyObject_s          object );
-oyRegion_s *   oyRegion_NewWith      ( double              x,
+oyRectangle_s* oyRectangle_New_      ( oyObject_s          object );
+oyRectangle_s* oyRectangle_NewWith   ( double              x,
                                        double              y,
                                        double              width,
                                        double              height,
                                        oyObject_s          object );
-oyRegion_s *   oyRegion_NewFrom      ( oyRegion_s        * ref,
+oyRectangle_s* oyRectangle_NewFrom   ( oyRectangle_s     * ref,
                                        oyObject_s          object );
-oyRegion_s *   oyRegion_SamplesFromImage (
+oyRectangle_s* oyRectangle_SamplesFromImage (
                                        oyImage_s         * image,
-                                       oyRegion_s        * image_region,
+                                       oyRectangle_s     * image_rectangle,
                                        oyObject_s          object );
-oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * region,
+oyRectangle_s* oyRectangle_Copy      ( oyRectangle_s     * rectangle,
                                        oyObject_s          object );
-int            oyRegion_Release      ( oyRegion_s       ** region );
+int            oyRectangle_Release   ( oyRectangle_s    ** rectangle );
 
-void           oyRegion_SetGeo       ( oyRegion_s        * edit_region,
+void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
                                        double              x,
                                        double              y,
                                        double              width,
                                        double              height );
-void           oyRegion_SetByRegion  ( oyRegion_s        * edit_region,
-                                       oyRegion_s        * ref );
-void           oyRegion_Trim         ( oyRegion_s        * edit_region,
-                                       oyRegion_s        * ref );
-void           oyRegion_MoveInside   ( oyRegion_s        * edit_region,
-                                       oyRegion_s        * ref );
-void           oyRegion_Scale        ( oyRegion_s        * edit_region,
+void           oyRectangle_SetByRectangle (
+                                       oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref );
+void           oyRectangle_Trim      ( oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref );
+void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref );
+void           oyRectangle_Scale     ( oyRectangle_s     * edit_rectangle,
                                        double              factor );
-void           oyRegion_Normalise    ( oyRegion_s        * edit_region );
-void           oyRegion_Round        ( oyRegion_s        * edit_region );
-int            oyRegion_IsEqual      ( oyRegion_s        * region1,
-                                       oyRegion_s        * region2 );
-int            oyRegion_IsInside     ( oyRegion_s        * test,
-                                       oyRegion_s        * ref );
-int            oyRegion_PointIsInside( oyRegion_s        * region,
+void           oyRectangle_Normalise ( oyRectangle_s     * edit_rectangle );
+void           oyRectangle_Round     ( oyRectangle_s     * edit_rectangle );
+int            oyRectangle_IsEqual   ( oyRectangle_s     * rectangle1,
+                                       oyRectangle_s     * rectangle2 );
+int            oyRectangle_IsInside  ( oyRectangle_s     * test,
+                                       oyRectangle_s     * ref );
+int            oyRectangle_PointIsInside( oyRectangle_s  * rectangle,
                                        double              x,
                                        double              y );
-double         oyRegion_CountPoints ( oyRegion_s        * region );
-int            oyRegion_Index        ( oyRegion_s        * region,
+double         oyRectangle_CountPoints(oyRectangle_s     * rectangle );
+int            oyRectangle_Index     ( oyRectangle_s     * rectangle,
                                        double              x,
                                        double              y );
-const char *   oyRegion_Show         ( oyRegion_s        * region );
+const char *   oyRectangle_Show      ( oyRectangle_s     * rectangle );
 
 
 /** @enum    oyDATATYPE_e
@@ -1490,7 +1491,7 @@ struct oyArray2d_s {
   oyDATATYPE_e         t;              /**< data type */
   int                  width;          /**< width of actual data view */
   int                  height;         /**< height of actual data view */
-  oyRegion_s         * data_area;      /**< size of reserve pixels, x,y <= 0, width,height >= data view width,height */
+  oyRectangle_s      * data_area;      /**< size of reserve pixels, x,y <= 0, width,height >= data view width,height */
 
   unsigned char     ** array2d;        /**< sorted data */
   int                  own_lines;      /**< Is *array2d owned by this object?
@@ -1535,7 +1536,7 @@ OYAPI int  OYEXPORT
  *  - it should be possible to echange the to be processed data without altering
  *    the context
  *  - oyImage_s should hold image dimensions,
- *  - display region information and
+ *  - display rectangle information and
  *  - a reference to the data for conversion
  *
  *  To set a image data backend use oyImage_DataSet().
@@ -1616,7 +1617,7 @@ struct oyImage_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  oyRegion_s         * viewport;       /**< intented viewing area, normalised to the pixel width == 1.0 */
+  oyRectangle_s      * viewport;       /**< intented viewing area, normalised to the pixel width == 1.0 */
   double               resolution_x;   /**< resolution in horizontal direction*/
   double               resolution_y;   /**< resolution in vertical direction */
 
@@ -1627,7 +1628,7 @@ struct oyImage_s {
   oyCHANNELTYPE_e    * channel_layout; /**< non profile described channels */
   int                  width;          /*!< data width */
   int                  height;         /*!< data height */
-  oyOptions_s        * tags;           /**< display_region, display_name ... */
+  oyOptions_s        * tags;           /**< display_rectangle, display_name ... */
   oyProfile_s        * profile_;       /*!< @private image profile */
 
   oyStruct_s         * pixel_data;     /**< struct used by each subsequent call of g/set* pixel acessors */
@@ -1679,15 +1680,15 @@ int            oyImage_DataSet       ( oyImage_s         * image,
                                        oyImage_SetLine_f   setLine,
                                        oyImage_SetTile_f   setTile );
 int            oyImage_FillArray     ( oyImage_s         * image,
-                                       oyRegion_s        * region,
+                                       oyRectangle_s     * rectangle,
                                        int                 do_copy,
                                        oyArray2d_s      ** array,
-                                       oyRegion_s        * array_region,
+                                       oyRectangle_s     * array_rectangle,
                                        oyObject_s          obj );
 int            oyImage_ReadArray     ( oyImage_s         * image,
-                                       oyRegion_s        * region,
+                                       oyRectangle_s     * rectangle,
                                        oyArray2d_s       * array,
-                                       oyRegion_s        * array_region );
+                                       oyRectangle_s     * array_rectangle );
 oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
 oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
@@ -2566,8 +2567,9 @@ struct oyPixelAccess_s {
   oyArray2d_s    * array;              /**< processing data. The position is in
                                             start_xy relative to the previous
                                             mediator in the graph. */
-  oyRegion_s     * output_image_roi;   /**< region of interesst; The region
-                                            is to be seen in relation to the
+  oyRectangle_s  * output_image_roi;   /**< rectangle of interesst; The
+                                            rectangle is to be seen in relation
+                                            to the
                                             output_image (of the last filter).*/
   oyImage_s      * output_image;       /**< the image which issued the request*/
   oyFilterGraph_s * graph;             /**< the graph to process */

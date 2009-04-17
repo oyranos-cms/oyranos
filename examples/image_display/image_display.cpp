@@ -92,7 +92,7 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
 class Fl_Oy_Box : public Fl_Box
 {
   oyConversion_s * context;
-  oyRegion_s * old_display_region;
+  oyRectangle_s * old_display_rectangle;
 
   void draw()
   {
@@ -108,7 +108,7 @@ class Fl_Oy_Box : public Fl_Box
       oyPointer image_data = 0;
       int channels = 0;
       oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
-      oyRegion_s * display_region = 0;
+      oyRectangle_s * display_rectangle = 0;
       oyOptions_s * image_tags = 0;
       oyDATATYPE_e data_type = oyUINT8;
       oyPixel_t pt = 0;
@@ -174,25 +174,25 @@ class Fl_Oy_Box : public Fl_Box
 
       /* Inform about the images display coverage.  */
       image_tags = oyImage_TagsGet( image );
-      display_region = (oyRegion_s*) oyOptions_GetType( image_tags, -1,
-                                          "display_region", oyOBJECT_REGION_S );
+      display_rectangle = (oyRectangle_s*) oyOptions_GetType( image_tags, -1,
+                                    "display_rectangle", oyOBJECT_RECTANGLE_S );
       oyOptions_Release( &image_tags );
-      oyRegion_SetGeo( display_region, X,Y,W,H );
+      oyRectangle_SetGeo( display_rectangle, X,Y,W,H );
 
-      /* decide wether to refresh the cached region of our static image */
+      /* decide wether to refresh the cached rectangle of our static image */
       if(context->out_ &&
-         !oyRegion_IsEqual( display_region, old_display_region ) )
+         !oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) )
       {
 #ifdef DEBUG
-        printf( "%s:%d new display region: %s +%d+%d\n", __FILE__,__LINE__,
-                oyRegion_Show(display_region), x(), y() ),
+        printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
+                oyRectangle_Show(display_rectangle), x(), y() ),
 #endif
 
         /* convert the image data */
         oyConversion_RunPixels( context, 0 );
 
-        /* remember the old region */
-        oyRegion_SetByRegion( old_display_region, display_region );
+        /* remember the old rectangle */
+        oyRectangle_SetByRectangle( old_display_rectangle, display_rectangle );
       }
 
       if(verbose)
@@ -217,13 +217,13 @@ public:
   Fl_Oy_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h)
   {
     context = 0;
-    old_display_region = oyRegion_NewWith( 0,0,0,0, 0 );
+    old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
   };
 
   ~Fl_Oy_Box(void)
   {
     oyConversion_Release( &context );
-    oyRegion_Release( &old_display_region );
+    oyRectangle_Release( &old_display_rectangle );
   };
 
   void setConversion( oyConversion_s * c ) 
@@ -306,7 +306,7 @@ main(int argc, char** argv)
                                  "test_dbg_in.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
   oyFilterNode_DataSet( out, (oyStruct_s*)image_in, 0, 0 );
-  /*r = oyRegion_NewWith(0.25,0,0,0,0);
+  /*r = oyRectangle_NewWith(0.25,0,0,0,0);
   o = oyOption_New( "//image/input/offset", 0 );
   error = oyOption_StructMoveIn( o, (oyStruct_s**)&r );
   error = oyOptions_MoveIn( options, &o, -1 );*/

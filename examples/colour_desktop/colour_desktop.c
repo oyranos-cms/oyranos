@@ -157,7 +157,7 @@ typedef struct {
 	PrivColorRegion *pRegion;
 
   /* old absolute region */
-  oyRegion_s * absoluteWindowRegionOld;
+  oyRectangle_s * absoluteWindowRectangleOld;
 
 	/* active stack range */
 	unsigned long active;
@@ -369,7 +369,7 @@ static void updateWindowRegions(CompWindow *w)
 	if (pw->nRegions)
 		free(pw->pRegion);
 	pw->nRegions = 0;
-  oyRegion_Release( &pw->absoluteWindowRegionOld );
+  oyRectangle_Release( &pw->absoluteWindowRectangleOld );
 
 
 	/* fetch the regions */
@@ -422,7 +422,7 @@ static void updateWindowRegions(CompWindow *w)
 	compLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d", count, pw->stencil_id);
 #endif
 
-  pw->absoluteWindowRegionOld = oyRegion_NewWith( 0,0, w->width, w->height, 0 );
+  pw->absoluteWindowRectangleOld = oyRectangle_NewWith( 0,0, w->width, w->height, 0 );
 
 	addWindowDamage(w);
 
@@ -512,7 +512,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   oyPointer data = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
-  oyRegion_s * r = 0;
+  oyRectangle_s * r = 0;
   oyProfile_s * p = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
@@ -526,7 +526,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
      from the according Oyranos backend */
   error = oyOptions_SetFromText( &options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//colour/config/device_region",
+  error = oyOptions_SetFromText( &options, "//colour/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   /*error = oyOptions_SetFromText( &options,
                                  "//colour/config/display_name",
@@ -550,18 +550,18 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   {
     device = oyConfigs_Get( devices, i );
 
-    o = oyConfig_Find( device, "device_region" );
+    o = oyConfig_Find( device, "device_rectangle" );
     if( !o )
     {
       compLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                      DBG_STRING"monitor region request failed", DBG_ARGS);
+                      DBG_STRING"monitor rectangle request failed", DBG_ARGS);
       return;
     }
-    r = (oyRegion_s*) oyOption_StructGet( o, oyOBJECT_REGION_S );
+    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
     if( !r )
     {
       compLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                      DBG_STRING"monitor region request failed", DBG_ARGS);
+                      DBG_STRING"monitor rectangle request failed", DBG_ARGS);
       return;
     }
     oyOption_Release( &o );
@@ -579,7 +579,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 #if defined(PLUGIN_DEBUG)
       compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
                       DBG_STRING "  screen output found %s %s",
-                      DBG_ARGS, ps->ccontexts[i].name, oyRegion_Show(r) );
+                      DBG_ARGS, ps->ccontexts[i].name, oyRectangle_Show(r) );
 #endif
 
     } else
@@ -816,29 +816,29 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
 	if (pw->active == 0)
     updateWindowRegions( w );
 
-  oyRegion_s * rect = oyRegion_NewWith( w->serverX, w->serverY, w->serverWidth, w->serverHeight, 0 );
+  oyRectangle_s * rect = oyRectangle_NewWith( w->serverX, w->serverY, w->serverWidth, w->serverHeight, 0 );
 
   /* update to window movements and resizes */
-  if( !oyRegion_IsEqual( rect, pw->absoluteWindowRegionOld ) )
+  if( !oyRectangle_IsEqual( rect, pw->absoluteWindowRectangleOld ) )
   {
 		forEachWindowOnScreen(s, damageWindow, NULL);
 
-    if(rect->width != pw->absoluteWindowRegionOld->width ||
-       rect->height != pw->absoluteWindowRegionOld->height )
+    if(rect->width != pw->absoluteWindowRectangleOld->width ||
+       rect->height != pw->absoluteWindowRectangleOld->height )
       updateWindowRegions( w );
 
     /* Clear the stencil buffer with zero. But we do not know when the loop
      * starts */
     //glClear(GL_STENCIL_BUFFER_BIT);
 
-    oyRegion_SetByRegion( pw->absoluteWindowRegionOld, rect );
+    oyRectangle_SetByRectangle( pw->absoluteWindowRectangleOld, rect );
 
 #if defined(PLUGIN_DEBUG)
-    printf( DBG_STRING "%s\n", DBG_ARGS, oyRegion_Show(rect) );
+    printf( DBG_STRING "%s\n", DBG_ARGS, oyRectangle_Show(rect) );
 #endif
   }
 
-  oyRegion_Release( &rect );
+  oyRectangle_Release( &rect );
 
   /* skip the stencil drawing for to be scissored windows */
   if( !pw->stencil_id )
@@ -1136,7 +1136,7 @@ static CompBool pluginInitWindow(CompPlugin *plugin, CompObject *object, void *p
   pw->pRegion = 0;
 	pw->active = 0;
 
-  pw->absoluteWindowRegionOld = 0;
+  pw->absoluteWindowRectangleOld = 0;
 	pw->output = NULL;
 
 	return TRUE;

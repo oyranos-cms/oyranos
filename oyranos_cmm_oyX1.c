@@ -115,8 +115,8 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " connected to a display.\n"
       " The option \"oyNAME_NAME\" returns a string containting geometry and\n"
       " if available, the profile name or size.\n"
-      " The bidirectional option \"device_region\" will cause to\n"
-      " additionally add display geometry information as a oyRegion_s\n"
+      " The bidirectional option \"device_rectangle\" will cause to\n"
+      " additionally add display geometry information as a oyRectangle_s\n"
       " object.\n"
       " The bidirectional option \"icc_profile\" will add a oyProfile_s.\n"
       " The bidirectional option \"oyNAME_DESCRIPTION\" adds a string\n"
@@ -257,8 +257,8 @@ int            oyX1Configs_FromPattern (
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
   oyOption_s * o = 0;
-  oyRegion_s * rect = 0;
-  const oyRegion_s * r = 0;
+  oyRectangle_s * rect = 0;
+  const oyRectangle_s * r = 0;
   oyProfile_s * p = 0;
   char ** texts = 0;
   char * text = 0,
@@ -344,17 +344,17 @@ int            oyX1Configs_FromPattern (
                                        OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
-        /** 3.1.3 tell the "device_region" in a oyRegion_s */
-        if(oyOptions_FindString( options, "device_region", 0 ) ||
+        /** 3.1.3 tell the "device_rectangle" in a oyRectangle_s */
+        if(oyOptions_FindString( options, "device_rectangle", 0 ) ||
            oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          rect = oyX1Region_FromDevice( texts[i] );
+          rect = oyX1Rectangle_FromDevice( texts[i] );
           if(!rect)
           {
-            WARNc1_S("Could not obtain region information for %s", texts[i]);
+            WARNc1_S("Could not obtain rectangle information for %s", texts[i]);
           } else
           {
-            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "device_region", 0 );
+            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "device_rectangle", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
             oyOptions_MoveIn( device->data, &o, -1 );
           }
@@ -389,12 +389,12 @@ int            oyX1Configs_FromPattern (
         /** 3.1.5 contruct a oyNAME_NAME string */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          o = oyOptions_Find( device->data, "device_region" );
-          r = (oyRegion_s*) o->value->oy_struct;
+          o = oyOptions_Find( device->data, "device_rectangle" );
+          r = (oyRectangle_s*) o->value->oy_struct;
 
           text = 0; tmp = 0;
       
-          tmp = oyRegion_Show( (oyRegion_s*)r );
+          tmp = oyRectangle_Show( (oyRectangle_s*)r );
           STRING_ADD( text, tmp );
           oyOption_Release( &o );
 

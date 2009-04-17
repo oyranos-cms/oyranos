@@ -42,14 +42,14 @@ oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
 /* OY_IMAGE_REGIONS_REGISTRATION ---------------------------------------------*/
 
 
-/** @func    oyraFilter_ImageRegionsCanHandle
+/** @func    oyraFilter_ImageRectanglesCanHandle
  *  @brief   inform about image handling capabilities
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/23 (Oyranos: 0.1.10)
  *  @date    2009/02/23
  */
-int    oyraFilter_ImageRegionsCanHandle(oyCMMQUERY_e     type,
+int    oyraFilter_ImageRectanglesCanHandle(oyCMMQUERY_e     type,
                                        uint32_t          value )
 {
   int ret = -1;
@@ -89,7 +89,7 @@ int    oyraFilter_ImageRegionsCanHandle(oyCMMQUERY_e     type,
   return ret;
 }
 
-oyOptions_s* oyraFilter_ImageRegionsValidateOptions
+oyOptions_s* oyraFilter_ImageRectanglesValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
                                        int                 statical,
@@ -105,7 +105,7 @@ oyOptions_s* oyraFilter_ImageRegionsValidateOptions
   return 0;
 }
 
-/** @func    oyraFilterNode_ImageRegionsContextToMem
+/** @func    oyraFilterNode_ImageRectanglesContextToMem
  *  @brief   implement oyCMMFilter_ContextToMem_f()
  *
  *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
@@ -116,7 +116,7 @@ oyOptions_s* oyraFilter_ImageRegionsValidateOptions
  *  @since   2009/02/23 (Oyranos: 0.1.10)
  *  @date    2009/02/23
  */
-oyPointer  oyraFilterNode_ImageRegionsContextToMem (
+oyPointer  oyraFilterNode_ImageRectanglesContextToMem (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
@@ -124,14 +124,15 @@ oyPointer  oyraFilterNode_ImageRegionsContextToMem (
   return oyFilterNode_TextToInfo_( node, size, allocateFunc );
 }
 
-/** @func    oyraFilterPlug_ImageRegionsRun
+/** @func    oyraFilterPlug_ImageRectanglesRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/23 (Oyranos: 0.1.10)
  *  @date    2009/03/04
  */
-int      oyraFilterPlug_ImageRegionsRun(oyFilterPlug_s   * requestor_plug,
+int      oyraFilterPlug_ImageRectanglesRun (
+                                       oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
   int x = 0, y = 0, n = 0, i;
@@ -143,7 +144,7 @@ int      oyraFilterPlug_ImageRegionsRun(oyFilterPlug_s   * requestor_plug,
                  * node = socket->node;
   oyImage_s * image = (oyImage_s*)socket->data;
   oyOption_s * o = 0;
-  oyRegion_s * r, * sr;
+  oyRectangle_s * r, * sr;
   oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;
 
@@ -174,30 +175,30 @@ int      oyraFilterPlug_ImageRegionsRun(oyFilterPlug_s   * requestor_plug,
       return dirty;
 
     n = oyOptions_CountType( node->core->options_,
-                             "//image/regions/region", oyOBJECT_REGION_S );
+                         "//image/rectangles/rectangle", oyOBJECT_RECTANGLE_S );
 
-    /* regions stuff */
+    /* rectangles stuff */
     for(i = 0; i < n; ++i)
     {
-      /* select current region */
-      r = (oyRegion_s*)oyOptions_GetType( node->core->options_, i,
-                             "//image/regions/region", oyOBJECT_REGION_S );
+      /* select current rectangle */
+      r = (oyRectangle_s*)oyOptions_GetType( node->core->options_, i,
+                         "//image/rectangles/rectangle", oyOBJECT_RECTANGLE_S );
 
-      /* Map each matching plug to a new ticket with a corrected region. */
+      /* Map each matching plug to a new ticket with a corrected rectangle. */
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyArray2d_Release( &new_ticket->array );
 
       if(r)
-        oyRegion_SetByRegion( new_ticket->output_image_roi, r );
+        oyRectangle_SetByRectangle( new_ticket->output_image_roi, r );
 
       /* select node */
       input_node = node->plugs[i]->remote_socket_->node;
-      /* adapt the region of interesst to the new image dimensions */
-      oyRegion_Trim( new_ticket->output_image_roi, ticket->output_image_roi );
+      /* adapt the rectangle of interesst to the new image dimensions */
+      oyRectangle_Trim( new_ticket->output_image_roi, ticket->output_image_roi );
 
-      if(oyRegion_CountPoints(  new_ticket->output_image_roi ) > 0)
+      if(oyRectangle_CountPoints(  new_ticket->output_image_roi ) > 0)
       {
-        /* fill the array region for the following filter */
+        /* fill the array rectangle for the following filter */
         if(!new_ticket->array)
           oyImage_FillArray( new_ticket->output_image,
                              new_ticket->output_image_roi, 1,
@@ -213,11 +214,11 @@ int      oyraFilterPlug_ImageRegionsRun(oyFilterPlug_s   * requestor_plug,
            backward array. @todo use direct array copy oyArray2d_DataCopy() */
         error = oyImage_ReadArray( image, new_ticket->output_image_roi,
                                    new_ticket->array, 0 );
-        sr = oyRegion_SamplesFromImage( image, new_ticket->output_image_roi, 0);
+        sr = oyRectangle_SamplesFromImage( image, new_ticket->output_image_roi, 0);
         error = oyImage_FillArray( new_ticket->output_image,
                                    new_ticket->output_image_roi, 1,
                                   &ticket->array, sr, 0 );
-        oyRegion_Release( &sr );
+        oyRectangle_Release( &sr );
       }
       oyPixelAccess_Release( &new_ticket );
 
@@ -229,9 +230,9 @@ int      oyraFilterPlug_ImageRegionsRun(oyFilterPlug_s   * requestor_plug,
 }
 
 
-oyConnector_s oyra_imageRegions_plug = {
+oyConnector_s oyra_imageRectangles_plug = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Regions Plug"},
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Plug"},
   oyCONNECTOR_SPLITTER, /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
@@ -254,11 +255,11 @@ oyConnector_s oyra_imageRegions_plug = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s *oyra_imageRegions_plugs[2] = {&oyra_imageRegions_plug,0};
+oyConnector_s *oyra_imageRectangles_plugs[2] = {&oyra_imageRectangles_plug,0};
 
-oyConnector_s oyra_imageRegions_socket = {
+oyConnector_s oyra_imageRectangles_socket = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Regions Plug"},
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Plug"},
   oyCONNECTOR_IMAGE, /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
@@ -281,20 +282,20 @@ oyConnector_s oyra_imageRegions_socket = {
   2, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s *oyra_imageRegions_sockets[2] = {&oyra_imageRegions_socket,0};
+oyConnector_s *oyra_imageRectangles_sockets[2] = {&oyra_imageRectangles_socket,0};
 
 
-#define OY_IMAGE_REGIONS_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/regions"
+#define OY_IMAGE_REGIONS_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/rectangles"
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
  *
- *  a filter routing the graph to several regions
+ *  a filter routing the graph to several rectangles
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/24 (Oyranos: 0.1.10)
  *  @date    2009/02/24
  */
-oyCMMapi7_s   oyra_api7_image_regions = {
+oyCMMapi7_s   oyra_api7_image_rectangles = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -302,7 +303,7 @@ oyCMMapi7_s   oyra_api7_image_regions = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageRegionsCanHandle, /* oyCMMCanHandle_f */
+  oyraFilter_ImageRectanglesCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_REGIONS_REGISTRATION,
@@ -311,13 +312,13 @@ oyCMMapi7_s   oyra_api7_image_regions = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilterPlug_ImageRegionsRun, /* oyCMMFilterPlug_Run_f */
+  oyraFilterPlug_ImageRectanglesRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
 
-  oyra_imageRegions_plugs,   /* plugs */
+  oyra_imageRectangles_plugs,   /* plugs */
   1,   /* plugs_n */
   UINT16_MAX,   /* plugs_last_add */
-  oyra_imageRegions_sockets,   /* sockets */
+  oyra_imageRectangles_sockets,   /* sockets */
   1,   /* sockets_n */
   0    /* sockets_last_add */
 };
@@ -325,21 +326,21 @@ oyCMMapi7_s   oyra_api7_image_regions = {
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
  *
- *  a filter routing the graph to several regions
+ *  a filter routing the graph to several rectangles
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/24 (Oyranos: 0.1.10)
  *  @date    2009/02/24
  */
-oyCMMapi4_s   oyra_api4_image_regions = {
+oyCMMapi4_s   oyra_api4_image_rectangles = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api7_image_regions, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api7_image_rectangles, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageRegionsCanHandle, /* oyCMMCanHandle_f */
+  oyraFilter_ImageRectanglesCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_REGIONS_REGISTRATION,
@@ -355,8 +356,8 @@ oyCMMapi4_s   oyra_api4_image_regions = {
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "regions", "Regions", "Regions Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Graph/Regions", /* category */
+  {oyOBJECT_NAME_S, 0,0,0, "rectangles", "Rectangles", "Rectangles Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Graph/Rectangles", /* category */
   0,   /* options */
   0    /* opts_ui_ */
 };
@@ -509,13 +510,13 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
 
   } else {
 
-    /* adapt the region of interesst to the new image dimensions */
-    oyRegion_s * new_roi = oyRegion_NewFrom( ticket->output_image_roi, 0 );
+    /* adapt the rectangle of interesst to the new image dimensions */
+    oyRectangle_s * new_roi = oyRectangle_NewFrom( ticket->output_image_roi, 0);
     double correct = ticket->output_image->width / (double) image->width;
     new_roi->width *= correct;
     new_roi->height *= correct;
     error = oyImage_FillArray( image, new_roi, 1, &ticket->array, 0, 0 );
-    oyRegion_Release( &new_roi );
+    oyRectangle_Release( &new_roi );
   }
 
   return result;
@@ -697,7 +698,7 @@ oyCMMapi7_s   oyra_api7_image_output = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api4_image_regions, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api4_image_rectangles, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */

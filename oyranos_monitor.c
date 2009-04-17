@@ -704,20 +704,20 @@ oyGetAllScreenNames_            (const char *display_name,
 
 
 /** @internal
- *  Function oyX1Region_FromDevice
+ *  Function oyX1Rectangle_FromDevice
  *  @memberof monitor_api
  *  @brief   value filled a oyStruct_s object
  *
  *  @param         device_name         the Oyranos specific device name
- *  @return                            the region the device projects to
+ *  @return                            the rectangle the device projects to
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/28 (Oyranos: 0.1.10)
  *  @date    2009/01/28
  */
-oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name )
+oyRectangle_s* oyX1Rectangle_FromDevice ( const char        * device_name )
 {
-  oyRegion_s * region = 0;
+  oyRectangle_s * rectangle = 0;
   int error = !device_name;
 
   if(!error)
@@ -728,13 +728,13 @@ oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name )
     if(!disp)
       return 0;
 
-    region = oyRegion_NewWith( oyMonitor_x_(disp), oyMonitor_y_(disp),
+    rectangle = oyRectangle_NewWith( oyMonitor_x_(disp), oyMonitor_y_(disp),
                            oyMonitor_width_(disp), oyMonitor_height_(disp), 0 );
 
     oyMonitor_release_( &disp );
   }
 
-  return region;
+  return rectangle;
 }
 
 

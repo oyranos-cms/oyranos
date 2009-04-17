@@ -169,7 +169,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
   int x,y;
 
   win_id = (oyBlob_s*) oyOptions_GetType( image->tags, -1, "window_id",
-                                            oyOBJECT_BLOB_S );
+                                          oyOBJECT_BLOB_S );
 
 # if defined(HAVE_X11) && defined (HAVE_Xcolor)
   if(win_id)
@@ -179,51 +179,52 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     const char * display_name = oyOptions_FindString( image->tags,
                                                       "display_name", 0 );
     Display * display = XOpenDisplay( display_name );
-    oyRegion_s * old_display_region = (oyRegion_s*) oyOptions_GetType( 
-                                      image->tags, -1,
-                                      "old_display_region", oyOBJECT_REGION_S );
-    oyRegion_s * display_region = (oyRegion_s*) oyOptions_GetType( 
-                                      image->tags, -1,
-                                      "display_region", oyOBJECT_REGION_S );
+    oyRectangle_s * old_display_rectangle = (oyRectangle_s*) oyOptions_GetType( 
+                                       image->tags, -1, "old_display_rectangle",
+                                       oyOBJECT_RECTANGLE_S );
+    oyRectangle_s * display_rectangle = (oyRectangle_s*) oyOptions_GetType( 
+                                       image->tags, -1, "display_rectangle",
+                                       oyOBJECT_RECTANGLE_S );
 #ifdef DEBUG
-    char * tmp = oyStringCopy_( oyRegion_Show(display_region), oyAllocateFunc_);
+    char * tmp = oyStringCopy_( oyRectangle_Show(display_rectangle), oyAllocateFunc_);
 
-    WARNc4_S("  Display: %s Window id: %d  %s %s",
-               display_name, w, tmp,
-               oyRegion_Show( old_display_region ) );
+    message( oyMSG_DBG, (oyStruct_s*)image,
+             "%s:%d  Display: %s Window id: %d  %s %s", __FILE__,__LINE__,
+             display_name, w, tmp, oyRectangle_Show( old_display_rectangle ) );
     oyFree_m_( tmp );
 #endif
 
     oyBlob_Release( &win_id );
 
-    if(!old_display_region)
+    if(!old_display_rectangle)
     {
-      old_display_region = oyRegion_NewFrom( 0,0 );
+      old_display_rectangle = oyRectangle_NewFrom( 0,0 );
 
       oyOptions_MoveInStruct( &image->tags,
-                            "//image/display/old_display_region",
-                            (oyStruct_s**) &old_display_region, OY_CREATE_NEW );
-      old_display_region = (oyRegion_s*) oyOptions_GetType(
-                                      image->tags, -1,
-                                      "old_display_region", oyOBJECT_REGION_S );
+                            "//image/display/old_display_rectangle",
+                            (oyStruct_s**) &old_display_rectangle, OY_CREATE_NEW );
+      old_display_rectangle = (oyRectangle_s*) oyOptions_GetType(
+                                      image->tags, -1, "old_display_rectangle",
+                                      oyOBJECT_RECTANGLE_S );
     }
 
-    if(!oyRegion_IsEqual( display_region, old_display_region ))
+    if(!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ))
     {
       /* Upload the region to the window. */
       XRectangle rec[2] = { { 0,0,0,0 }, { 0,0,0,0 } };
       XserverRegion reg = 0;
       XcolorRegion region;
 
-      WARNc3_S("  Display: %s Window id: %d  %s",
-               display_name, w, oyRegion_Show(display_region) );
+      message( oyMSG_DBG, (oyStruct_s*)image,
+               "%s:%d  Display: %s Window id: %d  %s", __FILE__,__LINE__,
+               display_name, w, oyRectangle_Show(display_rectangle) );
       /* We need window relative coordinates */
       XGetGeometry( display, w, &w_return, &x, &y, &width, &height,
                     &d,&d );
-      rec[0].x = display_region->x - x;
-      rec[0].y = display_region->y - y;
-      rec[0].width = display_region->width;
-      rec[0].height = display_region->height;
+      rec[0].x = display_rectangle->x - x;
+      rec[0].y = display_rectangle->y - y;
+      rec[0].width = display_rectangle->width;
+      rec[0].height = display_rectangle->height;
 
       reg = XFixesCreateRegion( display, rec, 1);
 
@@ -236,14 +237,16 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
                        PropModeReplace,
                        (unsigned char *) ":0.0", strlen(":0.0") );
 
-      /* remember the old region */
-      oyRegion_SetByRegion( old_display_region, display_region );
+      /* remember the old rectangle */
+      oyRectangle_SetByRectangle( old_display_rectangle, display_rectangle );
     }
 
     XClearWindow( display, w );
-    oyRegion_Release( &display_region );
-    oyRegion_Release( &old_display_region );
-  }
+    oyRectangle_Release( &display_rectangle );
+    oyRectangle_Release( &old_display_rectangle );
+  } else
+    message( oyMSG_WARN, (oyStruct_s*)image,
+             "%s:%d no window_id image tag found", __FILE__,__LINE__ );
 # endif
 
   return error;
@@ -258,10 +261,10 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   oyFilterNode_s * input_node = 0,
                  * node = socket->node,
                  * cmm_node = 0,
-                 * regions = 0;
+                 * rectangles = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
-  oyRegion_s * r;
+  oyRectangle_s * r;
   oyConfigs_s * devices = 0;
   char * tmp = 0,
        * ID = 0;
@@ -272,15 +275,15 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
   ID = oydiFilterNode_ImageDisplayID( node );
 
-  /* insert a "regions" filter to handle multiple monitors */
-  regions = oyFilterNode_NewWith( "//image/regions", 0,0, 0 );
+  /* insert a "rectangles" filter to handle multiple monitors */
+  rectangles = oyFilterNode_NewWith( "//image/rectangles", 0,0, 0 );
   /* mark the new node as belonging to this node */
-  oyOptions_SetFromText( &regions->tags, ID, "true", OY_CREATE_NEW );
+  oyOptions_SetFromText( &rectangles->tags, ID, "true", OY_CREATE_NEW );
 
-  /* insert "regions" between "display" and its input_node */
+  /* insert "rectangles" between "display" and its input_node */
   oyFilterNode_Disconnect( node->plugs[0] );
-  error = oyFilterNode_Connect( input_node, "Img", regions, "Img",0 );
-  error = oyFilterNode_Connect( regions, "Img", node, "Img",0 );
+  error = oyFilterNode_Connect( input_node, "Img", rectangles, "Img",0 );
+  error = oyFilterNode_Connect( rectangles, "Img", node, "Img",0 );
 
 
 
@@ -289,7 +292,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   error = oyOptions_SetFromText( &options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options,
-                                 "//colour/config/device_region",
+                                 "//colour/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   o = oyOptions_Find( image->tags, "display_name" );
   o = oyOption_Copy( o, 0 );
@@ -312,14 +315,14 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   oyOption_Release( &o );
 
 
-  m = oyFilterNode_EdgeCount( regions, 1, OY_FILTEREDGE_CONNECTED );
+  m = oyFilterNode_EdgeCount( rectangles, 1, OY_FILTEREDGE_CONNECTED );
 
-  /* add new regions and colour CMMs as needed */
+  /* add new rectangles and colour CMMs as needed */
   if(n > m)
   {
     for(i = 0; i < n-m; ++i)
     {
-      /* The first region is the one provided by the user graph. */
+      /* The first rectangle is the one provided by the user graph. */
       if(m != 0 || i != 0)
       {
         if(oyFilterRegistrationMatch( input_node->core->registration_,
@@ -336,9 +339,9 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
                                OY_CREATE_NEW );
 
         /* position the new CMM between the original CMMs input and 
-           "regions" */
+           "rectangles" */
         error = oyFilterNode_Connect( cmm_node, "Img",
-                                      regions, "Img", 0 );
+                                      rectangles, "Img", 0 );
         if(error > 0)
           WARNc1_S( "could not add  new CMM: %s\n",
                     input_node->core->registration_ );
@@ -360,19 +363,19 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   }
 
 
-  m = oyOptions_CountType( regions->core->options_,
-                           "//image/regions/region", oyOBJECT_REGION_S );
-  /* add missed regions */
+  m = oyOptions_CountType( rectangles->core->options_,
+                         "//image/rectangles/rectangle", oyOBJECT_RECTANGLE_S );
+  /* add missed rectangles */
   if(n > m)
   {
     tmp = oyAllocateFunc_(64);
 
     for(i = m; i < n;  ++i)
     {
-      oySprintf_( tmp, "//image/regions/region/%d", i );
+      oySprintf_( tmp, "//image/rectangles/rectangle/%d", i );
 
-      r = oyRegion_NewWith( 0., 0., 0., 0., 0);
-      oyOptions_MoveInStruct( &regions->core->options_, tmp,
+      r = oyRectangle_NewWith( 0., 0., 0., 0., 0);
+      oyOptions_MoveInStruct( &rectangles->core->options_, tmp,
                               (oyStruct_s**)&r, OY_CREATE_NEW );
     }
 
@@ -382,7 +385,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
   /* describe all our newly created filters and add them to this node */
   display_graph = oyFilterGraph_New( 0 );
-  oyFilterGraph_SetFromNode( display_graph, regions, ID, 0 );
+  oyFilterGraph_SetFromNode( display_graph, rectangles, ID, 0 );
   oyOptions_MoveInStruct( &node->core->options_,
                           "//image/display/display_graph",
                           (oyStruct_s**) &display_graph, OY_CREATE_NEW );
@@ -411,11 +414,11 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   oyFilterGraph_s * display_graph = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterNode_s * node = socket->node,
-                 * regions = 0;
+                 * rectangles = 0;
   oyImage_s * image = (oyImage_s*)socket->data,
             * input_image = 0;
   oyOption_s * o = 0;
-  oyRegion_s * r, * rd, * ri;
+  oyRectangle_s * r, * rd, * ri;
   oyConfigs_s * devices = 0;
   oyConfig_s * c = 0;
   oyProfile_s * p = 0;
@@ -460,64 +463,64 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       error = !display_graph;
     }
 
-    /* set server side region */
+    /* set server side rectangle */
     oydiFilterSocket_SetWindowRegion( socket, image );
 
     /* look for our requisites */
-    regions = oyFilterGraph_GetNode( display_graph, -1, "//image/regions", ID );
+    rectangles = oyFilterGraph_GetNode( display_graph, -1, "//image/rectangles", ID );
 
     /* get cached devices */
     devices = (oyConfigs_s*)oyOptions_GetType( node->core->options_, -1, 
                                 "//image/display/devices", oyOBJECT_CONFIGS_S );
 
     n = oyConfigs_Count( devices );
-    if(!n || oyFilterNode_EdgeCount( regions, 1, OY_FILTEREDGE_CONNECTED ) < n)
+    if(!n || oyFilterNode_EdgeCount( rectangles, 1, OY_FILTEREDGE_CONNECTED ) < n)
       return 1;
 
-    /* process all display regions */
+    /* process all display rectangles */
     if(error <= 0)
     for(i = 0; i < n; ++i)
     {
       c = oyConfigs_Get( devices, i );
 
       /* get device dimension */
-      o = oyConfig_Find( c, "device_region" );
+      o = oyConfig_Find( c, "device_rectangle" );
       if(o && o->value_type == oyVAL_STRUCT)
-        rd = (oyRegion_s *) o->value->oy_struct;
+        rd = (oyRectangle_s *) o->value->oy_struct;
       oyOption_Release( &o );
 
-      /* get current work region */
-      r = (oyRegion_s *) oyOptions_GetType( regions->core->options_, i, 
-                                  "//image/regions/region", oyOBJECT_REGION_S );
+      /* get current work rectangle */
+      r = (oyRectangle_s *) oyOptions_GetType( rectangles->core->options_, i, 
+                         "//image/rectangles/rectangle", oyOBJECT_RECTANGLE_S );
 
-      /* get display region to project into */
-      o = oyOptions_Find( image->tags, "display_region" );
+      /* get display rectangle to project into */
+      o = oyOptions_Find( image->tags, "display_rectangle" );
       if(o && o->value_type == oyVAL_STRUCT && o->value &&
-         o->value->oy_struct->type_ == oyOBJECT_REGION_S)
-        ri = (oyRegion_s *) o->value->oy_struct;
+         o->value->oy_struct->type_ == oyOBJECT_RECTANGLE_S)
+        ri = (oyRectangle_s *) o->value->oy_struct;
       oyOption_Release( &o );
 
-      /* trim and adapt the work region */
-      oyRegion_SetByRegion( r, ri );
+      /* trim and adapt the work rectangle */
+      oyRectangle_SetByRectangle( r, ri );
       display_pos_x = r->x;
       display_pos_y = r->y;
-      oyRegion_Trim( r, rd );
+      oyRectangle_Trim( r, rd );
       r->x -= display_pos_x;
       r->y -= display_pos_y;
-      if(oy_debug) WARNc2_S("image %d: %s", i, oyRegion_Show( r ));
+      if(oy_debug) WARNc2_S("image %d: %s", i, oyRectangle_Show( r ));
 
-      /* all regions are relative to image dimensions */
+      /* all rectangles are relative to image dimensions */
       if(image->width != 0)
-        oyRegion_Scale( r, 1./image->width );
+        oyRectangle_Scale( r, 1./image->width );
 
       /* select actual image from the according CMM node */
-      if(regions->plugs && regions->plugs[i] &&
-         regions->plugs[i]->remote_socket_)
-        input_image = (oyImage_s*)regions->plugs[i]->remote_socket_->data;
+      if(rectangles->plugs && rectangles->plugs[i] &&
+         rectangles->plugs[i]->remote_socket_)
+        input_image = (oyImage_s*)rectangles->plugs[i]->remote_socket_->data;
       else
       {
         input_image = 0;
-        WARNc2_S("image %d: is missed", i, oyRegion_Show( r ));
+        WARNc2_S("image %d: is missed", i, oyRectangle_Show( r ));
       }
 
       /* set the device profile of all CMM's image data */
@@ -544,19 +547,19 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     /* stop here and request an update */
     if(dirty > 0)
     {
-      oyFilterNode_Release( &regions );
+      oyFilterNode_Release( &rectangles );
       result = dirty;
       goto clean;
     }
 
 
-    /* make the graph flow: process the upstream "regions" node */
-    regions->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
+    /* make the graph flow: process the upstream "rectangles" node */
+    rectangles->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
 
   }
 
   clean:
-  oyFilterNode_Release( &regions );
+  oyFilterNode_Release( &rectangles );
   if(ID) free(ID);    
 
   return result;

@@ -269,6 +269,9 @@ int          oyIdToCMM               ( uint32_t            cmmId,
     action; \
   }
 
+void     oyAlphaFinish_              ( int                 unused );
+
+
 /** \addtogroup misc Miscellaneous
 
  *  @{

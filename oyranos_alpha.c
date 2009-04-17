@@ -526,7 +526,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_PROFILES_S: text = "oyProfiles_s"; break;
     case oyOBJECT_OPTION_S: text = "oyOption_s"; break;
     case oyOBJECT_OPTIONS_S: text = "oyOptions_s"; break;
-    case oyOBJECT_REGION_S: text = "oyRegion_s"; break;
+    case oyOBJECT_RECTANGLE_S: text = "oyRectangle_s"; break;
     case oyOBJECT_IMAGE_S: text = "oyImage_s"; break;
     case oyOBJECT_ARRAY2D_S: text = "oyArray2d_s"; break;
     case oyOBJECT_COLOUR_CONVERSION_S: text = "oyColourConversion_s";break;
@@ -11133,7 +11133,7 @@ OYAPI const oyChar* OYEXPORT
 
   if(error <= 0 && !text)
   {
-    oyChar * temp = 0;
+    char * temp = 0;
     int found = 0;
 
     oyAllocHelper_m_( temp, oyChar, 1024, 0, error = 1 );
@@ -13043,6 +13043,8 @@ OYAPI oyProfiles_s * OYEXPORT
               error = !s;
               break;
             }
+
+            oyProfile_Release( &pattern );
           }
 
         } else {
@@ -13051,8 +13053,7 @@ OYAPI oyProfiles_s * OYEXPORT
           error = !s;
         }
 
-        if(tmp)
-          oyProfile_Release( &tmp );
+        oyProfile_Release( &tmp );
     }
   }
 
@@ -13428,7 +13429,7 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
  *  @{
  */
 
-/** \addtogroup objects_region Region Handling
+/** \addtogroup objects_rectangle Rectangle Handling
 
  *  @{
  */
@@ -13436,16 +13437,16 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
 
 /** @internal
  *  @brief   new
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
+oyRectangle_s* oyRectangle_New_      ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_REGION_S;
-# define STRUCT_TYPE oyRegion_s
+  oyOBJECT_e type = oyOBJECT_RECTANGLE_S;
+# define STRUCT_TYPE oyRectangle_s
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   STRUCT_TYPE * s = 0;
@@ -13462,8 +13463,8 @@ oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyRegion_Copy;
-  s->release = (oyStruct_Release_f) oyRegion_Release;
+  s->copy = (oyStruct_Copy_f) oyRectangle_Copy;
+  s->release = (oyStruct_Release_f) oyRectangle_Release;
 
   s->oy_ = s_obj;
 
@@ -13476,94 +13477,94 @@ oyRegion_s *   oyRegion_New_         ( oyObject_s          object )
 
 /** 
  *  @brief   new with geometry
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyRegion_s *   oyRegion_NewWith      ( double              x,
+oyRectangle_s* oyRectangle_NewWith   ( double              x,
                                        double              y,
                                        double              width,
                                        double              height,
                                        oyObject_s          object )
 {
-  oyRegion_s * s = oyRegion_New_( object );
+  oyRectangle_s * s = oyRectangle_New_( object );
   if(s)
-    oyRegion_SetGeo( s, x, y, width, height );
+    oyRectangle_SetGeo( s, x, y, width, height );
   return s;
 }
 
 /**
- *  @brief   new from other region
- *  @memberof oyRegion_s
+ *  @brief   new from other rectangle
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyRegion_s *   oyRegion_NewFrom      ( oyRegion_s        * ref,
+oyRectangle_s* oyRectangle_NewFrom   ( oyRectangle_s     * ref,
                                        oyObject_s          object )
 {
-  oyRegion_s * s = oyRegion_New_( object );
+  oyRectangle_s * s = oyRectangle_New_( object );
   if(s)
-    oyRegion_SetByRegion(s, ref);
+    oyRectangle_SetByRectangle(s, ref);
   return s;
 }
 
-/** Function oyRegion_SamplesFromImage
- *  @memberof oyRegion_s
+/** Function oyRectangle_SamplesFromImage
+ *  @memberof oyRectangle_s
  *  @brief   new from image
  *
  *  @param[in]     image               a image
- *  @param[in]     image_region        optional region from image
+ *  @param[in]     image_rectangle     optional rectangle from image
  *  @param[in]     object              optional object
- *  @return                            the resuting region in sample dimensions
+ *  @return                            the resuting rectangle in sample dimensions
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/03/13 (Oyranos: 0.1.10)
  *  @date    2009/03/13
  */
-oyRegion_s *   oyRegion_SamplesFromImage (
+oyRectangle_s* oyRectangle_SamplesFromImage (
                                        oyImage_s         * image,
-                                       oyRegion_s        * image_region,
+                                       oyRectangle_s     * image_rectangle,
                                        oyObject_s          object )
 {
   int error = !image,
       channel_n = 0;
-  oyRegion_s * s = 0;
+  oyRectangle_s * s = 0;
 
   if(!error && image->type_ != oyOBJECT_IMAGE_S)
     return 0;
 
   channel_n = image->layout_[oyCHANS];
 
-  if(!image_region)
+  if(!image_rectangle)
   {
-    s = oyRegion_NewWith( 0,0, image->width, image->height, object );
+    s = oyRectangle_NewWith( 0,0, image->width, image->height, object );
     s->width *= channel_n;
 
   } else
   {
-    s = oyRegion_NewFrom( image_region, object );
-    oyRegion_Scale( s, image->width );
+    s = oyRectangle_NewFrom( image_rectangle, object );
+    oyRectangle_Scale( s, image->width );
     s->x *= channel_n;
     s->width *= channel_n;
-    oyRegion_Round( s );
+    oyRectangle_Round( s );
   }
 
   return s;
 }
 
 /**
- *  @brief   copy/reference from other region
- *  @memberof oyRegion_s
+ *  @brief   copy/reference from other rectangle
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * orig,
+oyRectangle_s* oyRectangle_Copy      ( oyRectangle_s     * orig,
                                        oyObject_s          object )
 {
-  oyRegion_s * s = 0;
+  oyRectangle_s * s = 0;
 
   if(!orig)
     return s;
@@ -13572,11 +13573,11 @@ oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * orig,
     return 0;
 
   s = orig;
-  oyCheckType__m( oyOBJECT_REGION_S, return 0 )
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return 0 )
 
   if(object)
   {
-    s = oyRegion_NewFrom( orig, object );
+    s = oyRectangle_NewFrom( orig, object );
 
   } else {
 
@@ -13589,23 +13590,23 @@ oyRegion_s *   oyRegion_Copy         ( oyRegion_s        * orig,
 
 /**
  *  @brief   release
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-int            oyRegion_Release      ( oyRegion_s       ** obj )
+int            oyRectangle_Release   ( oyRectangle_s    ** obj )
 {
   int error = 0;
   /* ---- start of common object destructor ----- */
-  oyRegion_s * s = 0;
+  oyRectangle_s * s = 0;
 
   if(!obj || !*obj)
     return 0;
 
   s = *obj;
 
-  oyCheckType__m( oyOBJECT_REGION_S, return 1 )
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return 1 )
 
   *obj = 0;
 
@@ -13627,21 +13628,21 @@ int            oyRegion_Release      ( oyRegion_s       ** obj )
 
 /**
  *  @brief   set geometry
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_SetGeo       ( oyRegion_s        * edit_region,
+void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
                                        double              x,
                                        double              y,
                                        double              width,
                                        double              height )
 {
-  oyRegion_s * s = edit_region;
+  oyRectangle_s * s = edit_rectangle;
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_REGION_S, return )
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   s->x = x;
   s->y = y;
@@ -13651,37 +13652,38 @@ void           oyRegion_SetGeo       ( oyRegion_s        * edit_region,
 
 /**
  *  @brief   copy values
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_SetByRegion  ( oyRegion_s        * edit_region,
-                                       oyRegion_s        * ref )
+void           oyRectangle_SetByRectangle (
+                                       oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref )
 {
-  oyRegion_s * s = edit_region;
+  oyRectangle_s * s = edit_rectangle;
   if(!s || !ref)
     return;
-  oyCheckType__m( oyOBJECT_REGION_S, return )
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
-  oyRegion_SetGeo( s, ref->x, ref->y, ref->width, ref->height );
+  oyRectangle_SetGeo( s, ref->x, ref->y, ref->width, ref->height );
 }
 
 /**
- *  @brief   trim edit_region to ref extents
- *  @memberof oyRegion_s
+ *  @brief   trim edit_rectangle to ref extents
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_Trim         ( oyRegion_s        * edit_region,
-                                       oyRegion_s        * ref )
+void           oyRectangle_Trim      ( oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref )
 {
-  oyRegion_s * s = edit_region;
-  oyRegion_s * r = s;
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * r = s;
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_REGION_S, return )
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   if (r->x < ref->x)
   { 
@@ -13703,27 +13705,27 @@ void           oyRegion_Trim         ( oyRegion_s        * edit_region,
   if( r->height < 0 )
     r->height = 0;
 
-  oyRegion_Normalise( r );
+  oyRectangle_Normalise( r );
 }
 
 /**
- *  @brief   trim edit_region to ref extents
- *  @memberof oyRegion_s
+ *  @brief   trim edit_rectangle to ref extents
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_MoveInside   ( oyRegion_s        * edit_region,
-                                       oyRegion_s        * ref )
+void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref )
 {
-  oyRegion_s * s = edit_region;
-  oyRegion_s * a = ref;
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * a = ref;
 
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_REGION_S, return )
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
-  oyRegion_Normalise( s );
+  oyRectangle_Normalise( s );
 
   if (s->x < a->x)
     s->x = a->x;
@@ -13745,20 +13747,20 @@ void           oyRegion_MoveInside   ( oyRegion_s        * edit_region,
 
 /**
  *  @brief   scale with origin in the top left corner
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_Scale        ( oyRegion_s        * edit_region,
+void           oyRectangle_Scale     ( oyRectangle_s     * edit_rectangle,
                                        double              factor )
 {
-  oyRegion_s * s = edit_region;
-  oyRegion_s * r = s;
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * r = s;
   
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_REGION_S, return )
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   r->x *= factor;
   r->y *= factor;
@@ -13768,19 +13770,19 @@ void           oyRegion_Scale        ( oyRegion_s        * edit_region,
 
 /**
  *  @brief   normalise swapped values for width and height
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_Normalise    ( oyRegion_s        * edit_region )
+void           oyRectangle_Normalise ( oyRectangle_s     * edit_rectangle )
 {
-  oyRegion_s * s = edit_region;
-  oyRegion_s * r = s;
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * r = s;
   
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_REGION_S, return )
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   if(r->width < 0) {
     r->x += r->width;
@@ -13794,15 +13796,15 @@ void           oyRegion_Normalise    ( oyRegion_s        * edit_region )
 
 /**
  *  @brief   scale with origin in the top left corner
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-void           oyRegion_Round        ( oyRegion_s        * edit_region )
+void           oyRectangle_Round     ( oyRectangle_s     * edit_rectangle )
 {
-  oyRegion_s * s = edit_region;
-  oyRegion_s * r = s;
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * r = s;
   
   if(!s)
     return;
@@ -13815,17 +13817,17 @@ void           oyRegion_Round        ( oyRegion_s        * edit_region )
 
 /**
  *  @brief   compare
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-int            oyRegion_IsEqual      ( oyRegion_s        * region1,
-                                       oyRegion_s        * region2 )
+int            oyRectangle_IsEqual   ( oyRectangle_s     * rectangle1,
+                                       oyRectangle_s     * rectangle2 )
 {
   int gleich = TRUE;
-  oyRegion_s * r1 = region1;
-  oyRegion_s * r2 = region2;
+  oyRectangle_s * r1 = rectangle1;
+  oyRectangle_s * r2 = rectangle2;
   
   if(!r1 || !r2)
     return FALSE;
@@ -13839,36 +13841,37 @@ int            oyRegion_IsEqual      ( oyRegion_s        * region1,
 
 /**
  *  @brief   compare
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/23 (Oyranos: 0.1.10)
  *  @date    2009/02/23
  */
-int            oyRegion_IsInside     ( oyRegion_s        * test,
-                                       oyRegion_s        * ref )
+int            oyRectangle_IsInside  ( oyRectangle_s     * test,
+                                       oyRectangle_s     * ref )
 {
-  return oyRegion_PointIsInside( ref, test->x, test->y ) &&
-         oyRegion_PointIsInside( ref, test->x + test->width - 1, test->y ) &&
-         oyRegion_PointIsInside( ref, test->x + test->width - 1,
+  return oyRectangle_PointIsInside( ref, test->x, test->y ) &&
+         oyRectangle_PointIsInside( ref, test->x + test->width - 1, test->y ) &&
+         oyRectangle_PointIsInside( ref, test->x + test->width - 1,
                                       test->y + test->height - 1) &&
-         oyRegion_PointIsInside( ref, test->x, test->y + test->height - 1 );
+         oyRectangle_PointIsInside( ref, test->x, test->y + test->height - 1 );
 }
 
 /**
  *  @brief   compare
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/04 (Oyranos: 0.1.8)
  *  @date    2009/02/23
  */
-int            oyRegion_PointIsInside( oyRegion_s        * region,
+int            oyRectangle_PointIsInside (
+                                       oyRectangle_s     * rectangle,
                                        double              x,
                                        double              y )
 {
-  oyRegion_s * s = region;
-  oyRegion_s * r = s;
+  oyRectangle_s * s = rectangle;
+  oyRectangle_s * r = s;
   int in = TRUE;
   
   if(!s)
@@ -13882,17 +13885,17 @@ int            oyRegion_PointIsInside( oyRegion_s        * region,
 }
 
 /**
- *  @brief   count number of points covered by this region
- *  @memberof oyRegion_s
+ *  @brief   count number of points covered by this rectangle
+ *  @memberof oyRectangle_s
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/04 (Oyranos: 0.1.8)
  *  @date    2009/02/23
  */
-double         oyRegion_CountPoints  ( oyRegion_s        * region )
+double         oyRectangle_CountPoints(oyRectangle_s     * rectangle )
 {
-  oyRegion_s * s = region;
-  oyRegion_s * r = s;
+  oyRectangle_s * s = rectangle;
+  oyRectangle_s * r = s;
   
   if(!s)
     return FALSE;
@@ -13900,18 +13903,18 @@ double         oyRegion_CountPoints  ( oyRegion_s        * region )
   return r->width * r->height;
 }
 
-/** @brief   return position inside region, assuming region size
- *  @memberof oyRegion_s
+/** @brief   return position inside rectangle, assuming rectangle size
+ *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-int            oyRegion_Index        ( oyRegion_s        * region,
+int            oyRectangle_Index     ( oyRectangle_s     * rectangle,
                                        double              x,
                                        double              y )
 {
-  oyRegion_s * s = region;
-  oyRegion_s * r = s;
+  oyRectangle_s * s = rectangle;
+  oyRectangle_s * r = s;
   
   if(!s)
     return FALSE;
@@ -13920,14 +13923,14 @@ int            oyRegion_Index        ( oyRegion_s        * region,
 }
 
 /**
- *  @memberof oyRegion_s
+ *  @memberof oyRectangle_s
  *  @brief   debug text
  *  not so threadsafe
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
  */
-const char*    oyRegion_Show         ( oyRegion_s        * r )
+const char*    oyRectangle_Show      ( oyRectangle_s     * r )
 {
   static oyChar *text = 0;
 
@@ -13938,7 +13941,7 @@ const char*    oyRegion_Show         ( oyRegion_s        * r )
     oySprintf_(text, "%.02fx%.02f%s%.02f%s%.02f", r->width,r->height,
                      r->x<0?"":"+", r->x, r->y<0?"":"+", r->y);
   else
-    oySprintf_(text, "no region");
+    oySprintf_(text, "no rectangle");
 
   return text;
 
@@ -13946,7 +13949,7 @@ const char*    oyRegion_Show         ( oyRegion_s        * r )
 
 
 /**
- *  @} *//* objects_region
+ *  @} *//* objects_rectangle
  */
 
 
@@ -14091,7 +14094,7 @@ OYAPI oyArray2d_s * OYEXPORT
     s->width = width;
     s->height = height;
     s->t = data_type;
-    s->data_area = oyRegion_NewWith( 0,0, width, height, s->oy_ );
+    s->data_area = oyRectangle_NewWith( 0,0, width, height, s->oy_ );
     s->array2d = s->oy_->allocateFunc_( y_len );
     error = !memset( s->array2d, 0, y_len );
     s->own_lines = oyNO;
@@ -14265,7 +14268,7 @@ OYAPI int  OYEXPORT
     }
     deallocateFunc( s->array2d - (size_t)(dsize * -s->data_area->y) );
 
-    oyRegion_Release( &s->data_area );
+    oyRectangle_Release( &s->data_area );
 
     oyObject_Release( &s->oy_ );
 
@@ -14333,9 +14336,9 @@ OYAPI int  OYEXPORT
  *        reuse memory
  *
  *  @param[in,out] obj                 the array to fill in
- *  @param[in]     roi_obj             region of interesst in samples
+ *  @param[in]     roi_obj             rectangle of interesst in samples
  *  @param[in]     source              the source data
- *  @param[in]     roi_source          region of interesst in samples
+ *  @param[in]     roi_source          rectangle of interesst in samples
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/03/12 (Oyranos: 0.1.10)
@@ -14343,9 +14346,9 @@ OYAPI int  OYEXPORT
  */
 OYAPI int  OYEXPORT
                  oyArray2d_DataCopy  ( oyArray2d_s      ** obj,
-                                       oyRegion_s        * obj_source,
+                                       oyRectangle_s     * obj_source,
                                        oyArray2d_s       * source,
-                                       oyRegion_s        * roi_source )
+                                       oyRectangle_s     * roi_source )
 {
   oyArray2d_s * s = *obj,
               * src = source;
@@ -14360,7 +14363,7 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     if(!roi)
-      roi = oyRegion_NewWith( 0,0, s->width, s->height, s->oy_ );
+      roi = oyRectangle_NewWith( 0,0, s->width, s->height, s->oy_ );
     error = !roi;
   }
 
@@ -14394,7 +14397,7 @@ OYAPI int  OYEXPORT
     oyArray2d_Release( obj );
 
   if(new_roi)
-    oyRegion_Release( &roi );
+    oyRectangle_Release( &roi );
 
   return error;
 }
@@ -14746,7 +14749,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         oyProfile_s     * profile,
                                         oyObject_s        object)
 {
-  oyRegion_s * display_region = 0;
+  oyRectangle_s * display_rectangle = 0;
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_IMAGE_S;
 # define STRUCT_TYPE oyImage_s
@@ -14787,7 +14790,7 @@ oyImage_s *    oyImage_Create         ( int               width,
   }
   s->profile_ = oyProfile_Copy( profile, 0 );
   if(s->width != 0.0)
-    s->viewport = oyRegion_NewWith( 0, 0, 1.0, s->height/s->width, s->oy_ );
+    s->viewport = oyRectangle_NewWith( 0, 0, 1.0, s->height/s->width, s->oy_ );
 
   error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout, profile );
 
@@ -14802,13 +14805,13 @@ oyImage_s *    oyImage_Create         ( int               width,
 
   if(error <= 0)
   {
-    display_region = oyRegion_New_( 0 );
+    display_rectangle = oyRectangle_New_( 0 );
 
-    error = !display_region;
+    error = !display_rectangle;
     if(error <= 0)
       oyOptions_MoveInStruct( &s->tags,
-                              "//image/output/display_region",
-                              (oyStruct_s**)&display_region, OY_CREATE_NEW );
+                              "//image/output/display_rectangle",
+                              (oyStruct_s**)&display_rectangle, OY_CREATE_NEW );
   }
 
   return s;
@@ -14846,7 +14849,7 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
   oyImage_s * s = oyImage_Create( width, height, channels, pixel_layout,
                                   p, object );
   int error = !s;
-  oyRegion_s * display_region = 0;
+  oyRectangle_s * display_rectangle = 0;
 
   oyProfile_Release( &p );
 
@@ -14860,12 +14863,12 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
 
     if(error <= 0)
     {
-      display_region = (oyRegion_s*) oyOptions_GetType( s->tags, -1,
-                                          "display_region", oyOBJECT_REGION_S );
-      oyRegion_SetGeo( display_region, display_pos_x, display_pos_y,
+      display_rectangle = (oyRectangle_s*) oyOptions_GetType( s->tags, -1,
+                                    "display_rectangle", oyOBJECT_RECTANGLE_S );
+      oyRectangle_SetGeo( display_rectangle, display_pos_x, display_pos_y,
                                        display_width, display_height );
     }
-    error = !display_region;
+    error = !display_rectangle;
     
     if(error <= 0 && display_name)
       error = oyOptions_SetFromText( &s->tags, "//image/output/display_name",
@@ -15125,7 +15128,7 @@ int            oyImage_DataSet       ( oyImage_s         * image,
  *  @memberof oyImage_s
  *  @brief   creata a array from a image and fill with data
  *
- *  The region will be considered relative to the data.
+ *  The rectangle will be considered relative to the data.
  *  A given array will be filled. do_copy makes the distinction to reuse a 
  *  available array2d. If do_copy is set to false, a owned array is freed and
  *  newly allocated or a the new array is set according to the get* API
@@ -15134,10 +15137,10 @@ int            oyImage_DataSet       ( oyImage_s         * image,
  *  mediator.
  *
  *  @param[in]     image               the image
- *  @param[in]     region              the image region
+ *  @param[in]     rectangle           the image rectangle
  *  @param[in]     do_copy             do copy into the array
  *  @param[out]    array               array to fill
- *  @param[in]     array_region        the array region in samples
+ *  @param[in]     array_rectangle     the array rectangle in samples
  *  @param[in]     obj                 the optional user object
  *
  *  @version Oyranos: 0.1.8
@@ -15145,20 +15148,20 @@ int            oyImage_DataSet       ( oyImage_s         * image,
  *  @date    2009/03/16
  */
 int            oyImage_FillArray     ( oyImage_s         * image,
-                                       oyRegion_s        * region,
+                                       oyRectangle_s     * rectangle,
                                        int                 do_copy,
                                        oyArray2d_s      ** array,
-                                       oyRegion_s        * array_region,
+                                       oyRectangle_s     * array_rectangle,
                                        oyObject_s          obj )
 {
   int error = 0;
   oyArray2d_s * a = *array;
   oyImage_s * s = image;
-  oyRegion_s * pixel_region = 0, * r;
+  oyRectangle_s * pixel_rectangle = 0, * r;
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int size = 0, channel_n;
-  int new_array_region = !array_region;
+  int new_array_rectangle = !array_rectangle;
   double a_orig_width = 0, a_orig_height = 0;
 
   if(!image)
@@ -15169,32 +15172,32 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
   size = oySizeofDatatype( data_type );
   channel_n = image->layout_[oyCHANS];
-  pixel_region = oyRegion_SamplesFromImage( image, region, 0 );
+  pixel_rectangle = oyRectangle_SamplesFromImage( image, rectangle, 0 );
 
-  if(!error && !array_region)
+  if(!error && !array_rectangle)
   {
-    r = oyRegion_NewWith( 0,0, region->width, region->height, 0 );
-    array_region = oyRegion_SamplesFromImage( image, r, 0 );
-    error = !array_region;
-    oyRegion_Release( &r );
+    r = oyRectangle_NewWith( 0,0, rectangle->width, rectangle->height, 0 );
+    array_rectangle = oyRectangle_SamplesFromImage( image, r, 0 );
+    error = !array_rectangle;
+    oyRectangle_Release( &r );
   }
 
   if(!error && 
      (!a ||
-      (a && ( pixel_region->width > a->width ||
-              pixel_region->height > a->height )) ||
-      pixel_region->width != array_region->width ||
-      pixel_region->height != array_region->height)
+      (a && ( pixel_rectangle->width > a->width ||
+              pixel_rectangle->height > a->height )) ||
+      pixel_rectangle->width != array_rectangle->width ||
+      pixel_rectangle->height != array_rectangle->height)
     )
   {
     oyArray2d_Release( array );
-    a = oyArray2d_Create_( array_region->width, array_region->height,
+    a = oyArray2d_Create_( array_rectangle->width, array_rectangle->height,
                            data_type, obj );
     error = !a;
     if(!error)
     {
-      if(array_region->x)
-        a->data_area->x = -array_region->x;
+      if(array_rectangle->x)
+        a->data_area->x = -array_rectangle->x;
       /* allocate each single line */
       if(do_copy)
         a->own_lines = 2;
@@ -15209,15 +15212,15 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   if( !error && a )
   {
     /* change intermediately and store old values for later recovering */
-    if(a && a->width > pixel_region->width)
+    if(a && a->width > pixel_rectangle->width)
     {
       a_orig_width = a->width;
-      a->width = pixel_region->width;
+      a->width = pixel_rectangle->width;
     }
-    if(a && a->height > pixel_region->height)
+    if(a && a->height > pixel_rectangle->height)
     {
       a_orig_height = a->height;
-      a->height = pixel_region->height;
+      a->height = pixel_rectangle->height;
     }
   }
 
@@ -15227,23 +15230,23 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   {
     unsigned char * data = 0;
     int i,j, height;
-    size_t len = size * array_region->width + array_region->x,
-           wlen = pixel_region->width * size,
+    size_t len = size * array_rectangle->width + array_rectangle->x,
+           wlen = pixel_rectangle->width * size,
            ay;
     oyPointer src, dst;
 
-    for( i = 0; i < pixel_region->height; )
+    for( i = 0; i < pixel_rectangle->height; )
     {
       height = is_allocated = 0;
-      data = image->getLine( image, pixel_region->y + i, &height, -1,
+      data = image->getLine( image, pixel_rectangle->y + i, &height, -1,
                              &is_allocated );
 
       for( j = 0; j < height; ++j )
       {
-        if( i + j >= array_region->height )
+        if( i + j >= array_rectangle->height )
           break;
 
-        ay = array_region->y + i + j;
+        ay = array_rectangle->y + i + j;
 
         if(do_copy)
         {
@@ -15253,8 +15256,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                               a->oy_ ? a->oy_->allocateFunc_ : 0,
                               error = 1; break );
 
-          dst = &a->array2d[ay][(int)array_region->x * size];
-          src = &data[j * size * (int)OY_ROUND(a->data_area->width) +                                 size * (int)pixel_region->x];
+          dst = &a->array2d[ay][(int)array_rectangle->x * size];
+          src = &data[j * size * (int)OY_ROUND(a->data_area->width) +                                 size * (int)pixel_rectangle->x];
 
           if(dst != src)
             error = !memcpy( dst, src, wlen );
@@ -15265,7 +15268,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                     &data[j * size * (int)OY_ROUND(a->data_area->width)];
 
           a->array2d[ay] = &a->array2d[i+j]
-                              [size * (int)(array_region->x + pixel_region->x)];
+                        [size * (int)(array_rectangle->x + pixel_rectangle->x)];
         }
       }
 
@@ -15298,9 +15301,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   *array = a;
 
-  oyRegion_Release( &pixel_region );
-  if(new_array_region)
-    oyRegion_Release( &array_region );
+  oyRectangle_Release( &pixel_rectangle );
+  if(new_array_rectangle)
+    oyRectangle_Release( &array_rectangle );
 
   return error;
 }
@@ -15309,24 +15312,24 @@ int            oyImage_FillArray     ( oyImage_s         * image,
  *  @memberof oyImage_s
  *  @brief   read a array into a image
  *
- *  The region will be considered relative to the image.
- *  The given array should match that region.
+ *  The rectangle will be considered relative to the image.
+ *  The given array should match that rectangle.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/28 (Oyranos: 0.1.10)
  *  @date    2009/02/28
  */
 int            oyImage_ReadArray     ( oyImage_s         * image,
-                                       oyRegion_s        * region,
+                                       oyRectangle_s     * rectangle,
                                        oyArray2d_s       * array,
-                                       oyRegion_s        * array_region )
+                                       oyRectangle_s     * array_rectangle )
 {
   oyImage_s * s = image;
   int error = !image || !array;
-  oyRegion_s * pixel_region = 0;
+  oyRectangle_s * pixel_rectangle = 0;
   oyDATATYPE_e data_type = oyUINT8;
   int size = 0, channel_n, i, offset, width,
-      new_array_region = !array_region;
+      new_array_rectangle = !array_rectangle;
 
   if(error)
     return 0;
@@ -15337,15 +15340,15 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   size = oySizeofDatatype( data_type );
   channel_n = image->layout_[oyCHANS];
 
-  pixel_region = oyRegion_SamplesFromImage( image, region, 0 );
-  width = pixel_region->width / channel_n;
+  pixel_rectangle = oyRectangle_SamplesFromImage( image, rectangle, 0 );
+  width = pixel_rectangle->width / channel_n;
 
-  if(array->width < pixel_region->width ||
-     array->height < pixel_region->height)
+  if(array->width < pixel_rectangle->width ||
+     array->height < pixel_rectangle->height)
   {
-    WARNc3_S( "array (%dx%d) is too small for region %s",
+    WARNc3_S( "array (%dx%d) is too small for rectangle %s",
                (int)array->width, (int)array->height,
-               oyRegion_Show( pixel_region ) );
+               oyRectangle_Show( pixel_rectangle ) );
     error = 1;
   }
 
@@ -15356,25 +15359,25 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     error = 1;
   }
 
-  if(!error && !array_region)
+  if(!error && !array_rectangle)
   {
-    array_region = oyRegion_NewWith( 0,0, array->width, array->height, 0 );
-    error = !array_region;
+    array_rectangle = oyRectangle_NewWith( 0,0, array->width, array->height, 0 );
+    error = !array_rectangle;
   }
 
   if(!error)
   {
-    offset = pixel_region->x / channel_n;
-    for(i = array_region->y; i < array_region->height; ++i)
+    offset = pixel_rectangle->x / channel_n;
+    for(i = array_rectangle->y; i < array_rectangle->height; ++i)
     {
-      image->setLine( image, offset, pixel_region->y + i, width, -1,
-                      &array->array2d[i][(int)OY_ROUND(array_region->x) * size] );
+      image->setLine( image, offset, pixel_rectangle->y + i, width, -1,
+                      &array->array2d[i][(int)OY_ROUND(array_rectangle->x) * size] );
     }
   }
 
-  oyRegion_Release( &pixel_region );
-  if(new_array_region)
-    oyRegion_Release( &array_region );
+  oyRectangle_Release( &pixel_rectangle );
+  if(new_array_rectangle)
+    oyRectangle_Release( &array_rectangle );
 
   return error;
 }
@@ -20459,7 +20462,7 @@ int        oyColourConversion_Run    ( oyColourConversion_s * s )
         /*intptr_t off_x = s->image_in_->layout_[oyPOFF_X],
                  sample_size = s->image_in_->layout_[oyDATA_SIZE];
 
-        in += (intptr_t) oyRegion_Index( s->image_in_->region, 0,0 ) *
+        in += (intptr_t) oyRectangle_Index( s->image_in_->rectangle, 0,0 ) *
                          off_x * sample_size;*/
 
         count = s->image_in_->width * s->image_in_->height;
@@ -20802,7 +20805,7 @@ oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->output_image_roi = oyRegion_NewFrom( 0, 0 );
+  s->output_image_roi = oyRectangle_NewFrom( 0, 0 );
 
   return s;
 }
@@ -20940,7 +20943,7 @@ oyPixelAccess_s * oyPixelAccess_Copy_( oyPixelAccess_s   * obj,
     s->index = 0;
     s->pixels_n = obj->pixels_n;
     s->workspace_id = obj->workspace_id;
-    s->output_image_roi = oyRegion_Copy( obj->output_image_roi, s->oy_ );
+    s->output_image_roi = oyRectangle_Copy( obj->output_image_roi, s->oy_ );
     s->output_image = oyImage_Copy( obj->output_image, 0 );
     s->array = oyArray2d_Copy( obj->array, 0 );
     if(obj->user_data && obj->user_data->copy)
@@ -21022,7 +21025,7 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
   /* ---- end of common object destructor ------- */
 
   oyArray2d_Release( &s->array );
-  oyRegion_Release( &s->output_image_roi );
+  oyRectangle_Release( &s->output_image_roi );
   oyImage_Release( &s->output_image );
   oyFilterGraph_Release( &s->graph );
   if(s->user_data && s->user_data->release)
@@ -23436,13 +23439,13 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   oyConfigs_s * devices = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
-  oyRegion_s * r = 0;
+  oyRectangle_s * r = 0;
   int n, i;
   const char * device_name = 0;
 
   error = oyOptions_SetFromText( &options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//colour/config/device_region",
+  error = oyOptions_SetFromText( &options, "//colour/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   /** we want a fuzzy look at our display, not the narrow "device_name" */
   error = oyOptions_SetFromText( &options, "//colour/config/display_name",
@@ -23460,14 +23463,14 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   for( i = 0; i < n; ++i )
   {
     device = oyConfigs_Get( devices, i );
-    o = oyConfig_Find( device, "device_region" );
+    o = oyConfig_Find( device, "device_rectangle" );
 
     if(o && o->value && o->value->oy_struct &&
-       o->value->oy_struct->type_ == oyOBJECT_REGION_S)
-      r = (oyRegion_s*) o->value->oy_struct;
+       o->value->oy_struct->type_ == oyOBJECT_RECTANGLE_S)
+      r = (oyRectangle_s*) o->value->oy_struct;
 
     if(!device_name &&
-       r && oyRegion_PointIsInside( r, x,y ))
+       r && oyRectangle_PointIsInside( r, x,y ))
     {
       device_name = oyConfig_FindString( device, "device_name", 0 );
       text = oyStringCopy_( device_name, allocateFunc );
@@ -23770,4 +23773,20 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 
 
 /** @} *//* monitor_api */
+
+
+/** @internal
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/04/16 (Oyranos: 0.1.10)
+ *  @date    2009/04/16
+ */
+void     oyAlphaFinish_              ( int                 unused )
+{
+  oyProfiles_Release( &oy_profile_list_cache_ );
+  oyStructList_Release( &oy_backend_cache_ );
+  oyStructList_Release( &oy_cmm_cache_ );
+  oyStructList_Release( &oy_profile_s_file_cache_ );
+}
+
 

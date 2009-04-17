@@ -49,7 +49,8 @@ int      oyGetAllScreenNames         ( const char        * display_name,
 int          oyX1MonitorProfileSetup ( const char        * display_name,
                                        const char        * profil_name );
 int          oyX1MonitorProfileUnset ( const char        * display_name );
-oyRegion_s * oyX1Region_FromDevice   ( const char        * device_name );
+oyRectangle_s * oyX1Rectangle_FromDevice (
+                                       const char        * device_name );
 char *       oyX1GetMonitorProfile   ( const char        * device_name,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func );
