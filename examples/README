@@ -35,3 +35,9 @@ Building:
     $ make
     $ make install   # for the compiz plug-in
 
+
+Known Issues:
+  xcmsevents:
+    xcmsevents needs window manager supporting the extended ICCCM hint
+    _NET_CLIENT_LIST. E.g. twm does not provide this information.
+

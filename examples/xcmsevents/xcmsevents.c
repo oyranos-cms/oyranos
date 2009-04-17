@@ -77,11 +77,11 @@ static inline unsigned long XcolorProfileCount(void *data, unsigned long nBytes)
 int main(int argc, char *argv[])
 {
   /* Open the display and create our window. */
-  Display *display = XOpenDisplay(NULL);
-  int screen = DefaultScreen( display );
-  Window root = XRootWindow( display, screen );
-  Visual *vis = DefaultVisual( display, screen );
-  Colormap cmap = XCreateColormap( display, root, vis, AllocNone );
+  Display * display = 0;
+  int screen = -1;
+  Window root = 0;
+  Visual * vis = 0;
+  Colormap cmap = 0;
   XSetWindowAttributes attrs;
   Window w;
   static int nWindows = 0;
@@ -91,14 +91,27 @@ int main(int argc, char *argv[])
   unsigned long left = 0, n = 0;
   unsigned char * data = 0;
   static pid_t old_pid = 0;
+  const char * display_name = getenv("DISPLAY");
+  Atom aProfile, aTarget, aCM, aRegion, aDesktop;
 
+  display = XOpenDisplay(NULL);
+  if(!display)
+  {
+    printf( "could not open display %s\n", display_name?display_name:"???" );
+    exit (1);
+  }
+
+  screen = DefaultScreen( display );
+  root = XRootWindow( display, screen );
+  vis = DefaultVisual( display, screen );
+  cmap = XCreateColormap( display, root, vis, AllocNone );
 
   /* define the observers interesst */
-  Atom aProfile = XInternAtom( display, "_NET_COLOR_PROFILES", False ),
-       aTarget = XInternAtom( display, "_NET_COLOR_TARGET", False ),
-       aCM = XInternAtom( display, "_NET_COLOR_MANAGEMENT", False ),
-       aRegion = XInternAtom( display, "_NET_COLOR_REGIONS", False ),
-       aDesktop = XInternAtom( display, "_NET_COLOR_DESKTOP", False );
+  aProfile = XInternAtom( display, "_NET_COLOR_PROFILES", False );
+  aTarget = XInternAtom( display, "_NET_COLOR_TARGET", False );
+  aCM = XInternAtom( display, "_NET_COLOR_MANAGEMENT", False );
+  aRegion = XInternAtom( display, "_NET_COLOR_REGIONS", False );
+  aDesktop = XInternAtom( display, "_NET_COLOR_DESKTOP", False );
 
   attrs.colormap = cmap;
   attrs.border_pixel = 0;
@@ -111,6 +124,15 @@ int main(int argc, char *argv[])
 
   /*XMapWindow( display, w );*/
 
+  /* check if we can see other clients */
+  XGetWindowProperty( display, RootWindow(display,0),
+                      XInternAtom(display, "_NET_CLIENT_LIST", False),
+                      0, ~0, False, XA_CARDINAL,
+                      &actual,&format, &n, &left, &data );
+  if(!data && !n)
+    printf("\nThe extented ICCCM hint _NET_CLIENT_LIST atom is missed\n"
+           "!!! xcmsevents will work limited !!!\n\n");
+
   XGetWindowProperty( display, RootWindow(display,0),
                       aDesktop, 0, ~0, False, XA_CARDINAL,
                       &actual,&format, &n, &left, &data );
@@ -119,7 +141,7 @@ int main(int argc, char *argv[])
     old_pid = *((pid_t*)data);
 
   /* print some general information */
-  printf( "xcmsevents - observes X11 colour management system evens\n"
+  printf( "xcmsevents - observes X11 colour management system events\n"
           "  (c) 2009 - Kai-Uwe Behrmann  license: newBSD\n" );
   printf( "atom: \"_NET_COLOR_PROFILES\": %d\n", (int)aProfile );
   printf( "atom: \"_NET_COLOR_TARGET\": %d\n", (int)aTarget );
@@ -224,7 +246,10 @@ int main(int argc, char *argv[])
             const char * name = 0;
 
             if(!regions[i].region)
+            {
+              printf("server region id with zero: left %d\n", (int)n-i);
               break;
+            }
 
             rect = XFixesFetchRegion( display, regions[i].region, &nRect );
             md5 = (uint32_t*)&regions[i].md5[0];
