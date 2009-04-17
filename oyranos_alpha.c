@@ -21792,7 +21792,7 @@ oyImage_s        * oyConversion_GetImage (
     if(oyToOutput_m(flags))
     {
       plug = oyFilterNode_GetPlug( s->out_, 0 );
-      if(plug)
+      if(plug && plug->remote_socket_)
         image = oyImage_Copy( (oyImage_s*) plug->remote_socket_->data, 0);
     }
   }
