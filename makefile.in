@@ -233,7 +233,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 
 INCL_DEP = $(INCL) $(SOURCES) $(CXXFILES_Flmm) test.c test2.cpp
 
-.PHONY:	docu
+.PHONY:	docu examples
 
 TEST  = test
 TEST2 = test2
@@ -413,11 +413,14 @@ $(BUILDDIR)test2:	$(BUILDDIR)test2.o $(BUILDDIR)$(LIBSONAMEFULL)
 	$(BUILDDIR)test2.o -L./ `./oyranos-config --ldstaticflags`
 	
 
-check:	all install_bin install-icc $(BUILDDIR)tests/test_oyranos $(BUILDDIR)$(TEST2)
+check:	all install_bin install-icc $(BUILDDIR)tests/test_oyranos $(BUILDDIR)$(TEST2) examples
 	echo current git version is:
 	n=0; for i in `git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
 	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} $(BUILDDIR)tests/test_oyranos
+
+examples:
+	cd examples && ($(MAKE) clean; $(MAKE))
 
 $(BUILDDIR)test:	$(BUILDDIR)test.o
 	$(CC) $(CFLAGS) -o $(BUILDDIR)test \
@@ -881,6 +884,7 @@ help:
 	echo "... test :       do a test"
 	echo "... test2 :      build a second test binary"
 	echo "... check :      do a test build and run it"
+	echo "... examples :   try building the example directory"
 	echo "... "
 	echo "... install :    install the binaries, include files and data"
 	echo "... install_bin: install only binaries"
