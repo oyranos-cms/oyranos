@@ -180,57 +180,90 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     const char * display_name = oyOptions_FindString( image->tags,
                                                       "display_name", 0 );
     Display * display = XOpenDisplay( display_name );
-    oyRectangle_s * old_display_rectangle = (oyRectangle_s*) oyOptions_GetType( 
-                                       image->tags, -1, "old_display_rectangle",
-                                       oyOBJECT_RECTANGLE_S );
     oyRectangle_s * display_rectangle = (oyRectangle_s*) oyOptions_GetType( 
                                        image->tags, -1, "display_rectangle",
                                        oyOBJECT_RECTANGLE_S );
+    oyRectangle_s * old_window_rectangle = (oyRectangle_s*) oyOptions_GetType(
+                                       image->tags, -1, "old_window_rectangle",
+                                       oyOBJECT_RECTANGLE_S ),
+                  * window_rectangle = 0;
 #ifdef DEBUG
     char * tmp = oyStringCopy_( oyRectangle_Show(display_rectangle), oyAllocateFunc_);
 
     message( oyMSG_DBG, (oyStruct_s*)image,
              "%s:%d  Display: %s Window id: %d  %s %s", __FILE__,__LINE__,
-             display_name, w, tmp, oyRectangle_Show( old_display_rectangle ) );
+             display_name, w, tmp, oyRectangle_Show( old_window_rectangle ) );
     oyFree_m_( tmp );
 #endif
 
     oyBlob_Release( &win_id );
 
-    if(!old_display_rectangle)
+    if(!old_window_rectangle)
     {
-      old_display_rectangle = oyRectangle_NewFrom( 0,0 );
+      old_window_rectangle = oyRectangle_NewFrom( 0,0 );
 
       oyOptions_MoveInStruct( &image->tags,
-                            "//image/display/old_display_rectangle",
-                            (oyStruct_s**) &old_display_rectangle, OY_CREATE_NEW );
-      old_display_rectangle = (oyRectangle_s*) oyOptions_GetType(
-                                      image->tags, -1, "old_display_rectangle",
+                            "//image/display/old_window_rectangle",
+                            (oyStruct_s**) &old_window_rectangle, OY_CREATE_NEW );
+      old_window_rectangle = (oyRectangle_s*) oyOptions_GetType(
+                                      image->tags, -1, "old_window_rectangle",
                                       oyOBJECT_RECTANGLE_S );
     }
 
-    if(!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ))
+    /* We need window relative coordinates. (Works not everywhere? - FVWM) */
+    XGetGeometry( display, w, &w_return, &x, &y, &width, &height, &d,&d );
+    message( oyMSG_DBG, (oyStruct_s*)image,
+               "%s:%d  Display: %s Window id: %d  %s @+%d+%d(%d)",
+               __FILE__,__LINE__,
+               display_name, w, oyRectangle_Show(display_rectangle), x,y,d );
+
+    window_rectangle = oyRectangle_NewFrom( display_rectangle, 0 );
+    window_rectangle->x -= x;
+    window_rectangle->y -= y;
+
+    /* Has the window moved on display? */
+    if(!oyRectangle_IsEqual( window_rectangle, old_window_rectangle ))
     {
       /* Upload the region to the window. */
-      XRectangle rec[2] = { { 0,0,0,0 }, { 0,0,0,0 } };
+      XRectangle rec[2] = { { 0,0,0,0 }, { 0,0,0,0 } },
+               * rect = 0;
+      int nRect = 0;
       XserverRegion reg = 0;
       XcolorRegion region, *old_regions = 0;
       unsigned long old_regions_n = 0;
       int pos = -1;
       const char * display_string = DisplayString(display);
 
-      message( oyMSG_DBG, (oyStruct_s*)image,
-               "%s:%d  Display: %s Window id: %d  %s", __FILE__,__LINE__,
-               display_name, w, oyRectangle_Show(display_rectangle) );
-      /* We need window relative coordinates */
-      XGetGeometry( display, w, &w_return, &x, &y, &width, &height,
-                    &d,&d );
-      rec[0].x = display_rectangle->x - x;
-      rec[0].y = display_rectangle->y - y;
-      rec[0].width = display_rectangle->width;
-      rec[0].height = display_rectangle->height;
+      rec[0].x = window_rectangle->x;
+      rec[0].y = window_rectangle->y;
+      rec[0].width = window_rectangle->width;
+      rec[0].height = window_rectangle->height;
 
       reg = XFixesCreateRegion( display, rec, 1);
+      rect = XFixesFetchRegion( display, reg, &nRect );
+      if(!nRect)
+      {
+        message( oyMSG_WARN, (oyStruct_s*)image,
+                 "%s:%d  "
+                 "Display: %s Window id: %d  Could not load Xregion:%d",
+                 __FILE__,__LINE__,
+                 display_name, w, (int)reg );
+        
+      } else if(rect[0].x != rec[0].x ||
+                rect[0].y != rec[0].y )
+      {
+        message( oyMSG_WARN, (oyStruct_s*)image,
+                 "%s:%d  "
+                 "Display: %s Window id: %d  Xregion:%d has wrong position %d,%d",
+                 __FILE__,__LINE__,
+                 display_name, w, (int)reg, rect[0].x, rect[0].y );
+      } else
+        message( oyMSG_DBG, (oyStruct_s*)image,
+                 "%s:%d  "
+                 "Display: %s Window id: %d  Xregion:%d uploaded %dx%d+%d+%d",
+                 __FILE__,__LINE__,
+                 display_name, w, (int)reg,
+                 rect[0].width, rect[0].height, rect[0].x, rect[0].y );
 
       region.region = reg;
       memset( region.md5, 0, 16 );
@@ -240,8 +273,6 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
       /* remove our own old region */
       for(i = 0; i < old_regions_n; ++i)
       {
-        int nRect = 0;
-        XRectangle * rect = 0;
 
         if(!old_regions[i].region || pos >= 0)
           break;
@@ -250,10 +281,10 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 
         for(j = 0; j < nRect; ++j)
         {
-          if(old_display_rectangle->x == rect[j].x &&
-             old_display_rectangle->y == rect[j].y &&
-             old_display_rectangle->width == rect[j].width &&
-             old_display_rectangle->height == rect[j].height )
+          if(old_window_rectangle->x == rect[j].x &&
+             old_window_rectangle->y == rect[j].y &&
+             old_window_rectangle->width == rect[j].width &&
+             old_window_rectangle->height == rect[j].height )
           {
             pos = i;
             break;
@@ -282,12 +313,13 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
                        (unsigned char*) display_string, strlen(display_string));
 
       /* remember the old rectangle */
-      oyRectangle_SetByRectangle( old_display_rectangle, display_rectangle );
+      oyRectangle_SetByRectangle( old_window_rectangle, window_rectangle );
     }
 
     XClearWindow( display, w );
     oyRectangle_Release( &display_rectangle );
-    oyRectangle_Release( &old_display_rectangle );
+    oyRectangle_Release( &window_rectangle );
+    oyRectangle_Release( &old_window_rectangle );
   } else
     message( oyMSG_WARN, (oyStruct_s*)image,
              "%s:%d no window_id image tag found", __FILE__,__LINE__ );
@@ -313,7 +345,9 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   char * tmp = 0,
        * ID = 0;
 
-  if(oy_debug) WARNc_S("Init Start");
+  if(oy_debug) 
+    message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d  Init Start",
+                 __FILE__,__LINE__);
 
   input_node = node->plugs[0]->remote_socket_->node;
 
@@ -374,8 +408,11 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
           cmm_node = oyFilterNode_NewWith( input_node->core->registration_,
                                            0,0, 0 );
         else
-          WARNc2_S("\n  Filter %s expects a colour conversion filter as"
-                   " input\n  But obtained: %s", node->relatives_,
+          message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d"
+                   "\n  Filter %s expects a colour conversion filter as"
+                   " input\n  But obtained: %s",
+                   __FILE__,__LINE__,
+                   node->relatives_,
                    input_node->relatives_ );
 
         /* mark the new node as belonging to this node */
@@ -387,7 +424,9 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
         error = oyFilterNode_Connect( cmm_node, "Img",
                                       rectangles, "Img", 0 );
         if(error > 0)
-          WARNc1_S( "could not add  new CMM: %s\n",
+          message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d"
+                    "could not add  new CMM: %s\n",
+                   __FILE__,__LINE__,
                     input_node->core->registration_ );
 
         error = oyFilterNode_Connect( 
@@ -436,7 +475,9 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
 
 
-  if(oy_debug) WARNc_S("Init End");
+  if(oy_debug)
+    message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d  Init End",
+                 __FILE__,__LINE__);
 
   free(ID); ID = 0;
 
@@ -551,7 +592,9 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       oyRectangle_Trim( r, rd );
       r->x -= display_pos_x;
       r->y -= display_pos_y;
-      if(oy_debug) WARNc2_S("image %d: %s", i, oyRectangle_Show( r ));
+      if(oy_debug)
+        message( oyMSG_DBG, (oyStruct_s*)image,
+             "%s:%d  image %d: %s", __FILE__,__LINE__, i, oyRectangle_Show(r));
 
       /* all rectangles are relative to image dimensions */
       if(image->width != 0)
@@ -564,7 +607,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       else
       {
         input_image = 0;
-        WARNc2_S("image %d: is missed", i, oyRectangle_Show( r ));
+        message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d  image %d: is missed",
+                 __FILE__,__LINE__, i, oyRectangle_Show( r ) );
       }
 
       /* set the device profile of all CMM's image data */
