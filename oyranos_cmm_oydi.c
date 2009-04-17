@@ -60,6 +60,7 @@ extern oyCMMapi7_s   oydi_api7_image_display;
 /* OY_IMAGE_DISPLAY_REGISTRATION ---------------------------------------------*/
 
 #if defined(HAVE_X11) && defined(HAVE_Xcolor)
+#include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
 #include <Xcolor.h>
 #endif
@@ -166,7 +167,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
   int error = 0;
   oyBlob_s * win_id = 0;
   unsigned int width,height,d;
-  int x,y;
+  int x,y, i,j;
 
   win_id = (oyBlob_s*) oyOptions_GetType( image->tags, -1, "window_id",
                                           oyOBJECT_BLOB_S );
@@ -213,7 +214,10 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
       /* Upload the region to the window. */
       XRectangle rec[2] = { { 0,0,0,0 }, { 0,0,0,0 } };
       XserverRegion reg = 0;
-      XcolorRegion region;
+      XcolorRegion region, *old_regions = 0;
+      unsigned long old_regions_n = 0;
+      int pos = -1;
+      const char * display_string = DisplayString(display);
 
       message( oyMSG_DBG, (oyStruct_s*)image,
                "%s:%d  Display: %s Window id: %d  %s", __FILE__,__LINE__,
@@ -231,11 +235,51 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
       region.region = reg;
       memset( region.md5, 0, 16 );
 
+      /* look for old regions */
+      old_regions = XcolorRegionFetch( display, w, &old_regions_n );
+      /* remove our own old region */
+      for(i = 0; i < old_regions_n; ++i)
+      {
+        int nRect = 0;
+        XRectangle * rect = 0;
+
+        if(!old_regions[i].region || pos >= 0)
+          break;
+
+        rect = XFixesFetchRegion( display, old_regions[i].region, &nRect );
+
+        for(j = 0; j < nRect; ++j)
+        {
+          if(old_display_rectangle->x == rect[j].x &&
+             old_display_rectangle->y == rect[j].y &&
+             old_display_rectangle->width == rect[j].width &&
+             old_display_rectangle->height == rect[j].height )
+          {
+            pos = i;
+            break;
+          }
+        }
+      }
+      if(pos >= 0)
+      {
+        int undeleted_n = old_regions_n;
+        XcolorRegionDelete( display, w, pos, 1 );
+        old_regions = XcolorRegionFetch( display, w, &old_regions_n );
+        if(undeleted_n - old_regions_n != 1)
+          message( oyMSG_WARN, (oyStruct_s*)image,
+                   "%s:%d  removed %d; have still %d", __FILE__,__LINE__,
+                   pos, (int)old_regions_n );
+      } else
+        message( oyMSG_WARN, (oyStruct_s*)image,
+                 "%s:%d  no region to delete? %d", __FILE__,__LINE__,
+                 (int)old_regions_n );
+
+      /* upload the new or changed region to the X server */
       error = XcolorRegionInsert( display, w, 0, &region, 1 );
       netColorTarget = XInternAtom( display, "_NET_COLOR_TARGET", True );
       XChangeProperty( display, w, netColorTarget, XA_STRING, 8,
                        PropModeReplace,
-                       (unsigned char *) ":0.0", strlen(":0.0") );
+                       (unsigned char*) display_string, strlen(display_string));
 
       /* remember the old rectangle */
       oyRectangle_SetByRectangle( old_display_rectangle, display_rectangle );

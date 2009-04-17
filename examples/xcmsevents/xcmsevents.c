@@ -86,6 +86,11 @@ int main(int argc, char *argv[])
   Window w;
   static int nWindows = 0;
   static Window * Windows = 0;
+  Atom actual = 0;
+  int format = 0;
+  unsigned long left = 0, n = 0;
+  unsigned char * data = 0;
+  static pid_t old_pid = 0;
 
 
   /* define the observers interesst */
@@ -106,6 +111,13 @@ int main(int argc, char *argv[])
 
   /*XMapWindow( display, w );*/
 
+  XGetWindowProperty( display, RootWindow(display,0),
+                      aDesktop, 0, ~0, False, XA_CARDINAL,
+                      &actual,&format, &n, &left, &data );
+  n += left;
+  if(n && data)
+    old_pid = *((pid_t*)data);
+
   /* print some general information */
   printf( "xcmsevents - observes X11 colour management system evens\n"
           "  (c) 2009 - Kai-Uwe Behrmann  license: newBSD\n" );
@@ -113,7 +125,7 @@ int main(int argc, char *argv[])
   printf( "atom: \"_NET_COLOR_TARGET\": %d\n", (int)aTarget );
   printf( "atom: \"_NET_COLOR_MANAGEMENT\": %d\n", (int)aCM );
   printf( "atom: \"_NET_COLOR_REGIONS\": %d\n", (int)aRegion );
-  printf( "atom: \"_NET_COLOR_DESKTOP\": %d\n", (int)aDesktop );
+  printf( "atom: \"_NET_COLOR_DESKTOP\": %d %d\n", (int)aDesktop,(int)old_pid );
   printf( "root window ID: %d\n", (int)root );
   printf( "running \"oyranos-monitor -l\":\n" );
   system( "oyranos-monitor -l" );
@@ -136,10 +148,12 @@ int main(int argc, char *argv[])
 
     } else if( event.type == PropertyNotify )
     {
-      Atom actual = 0;
-      int format = 0, i,j = 0, r;
-      unsigned long left = 0, n = 0;
-      unsigned char * data = 0;
+      int i,j = 0, r;
+
+      actual = 0;
+      format = 0;
+      left = 0; n = 0;
+      data = 0;
 
       /* --- report --- */
       if(w != event.xany.window)
@@ -181,7 +195,6 @@ int main(int argc, char *argv[])
 
         } else if( event.xproperty.atom == aDesktop )
         {
-          static pid_t old_pid = 0;
           if(n && data)
           {
             if(*((pid_t*)data) && old_pid)
@@ -196,19 +209,27 @@ int main(int argc, char *argv[])
 
         } else if( event.xproperty.atom == aRegion )
         {
+          /* n seems not to be relyable */
           XcolorRegion * regions = XcolorRegionFetch( display,
                                     event.xany.window, &n );
-          printf("PropertyNotify : %s    vvvvv      %s\n",
+          printf("PropertyNotify : %s    vvvvv      %s %d\n",
                XGetAtomName( event.xany.display, event.xproperty.atom ),
-               printWindowName( display, event.xany.window ) );
+               printWindowName( display, event.xany.window ), (int)n );
           for(i = 0; i < n; ++i)
           {
             int nRect = 0;
-            XRectangle * rect = XFixesFetchRegion( display, regions[i].region,
-                                                   &nRect );
-            uint32_t * md5 = (uint32_t*)&regions[i].md5[0];
-            oyProfile_s * p = oyProfile_FromMD5( md5, 0 );
-            const char * name = oyProfile_GetFileName( p, 0 );
+            XRectangle * rect = 0;
+            uint32_t * md5 = 0;
+            oyProfile_s * p = 0;
+            const char * name = 0;
+
+            if(!regions[i].region)
+              break;
+
+            rect = XFixesFetchRegion( display, regions[i].region, &nRect );
+            md5 = (uint32_t*)&regions[i].md5[0];
+            p = oyProfile_FromMD5( md5, 0 );
+            name = oyProfile_GetFileName( p, 0 );
 
             printf("    %d local look up: %s[%x%x%x%x]:\n", i, name?name:"???",
                    md5[0], md5[1], md5[2], md5[3] );
