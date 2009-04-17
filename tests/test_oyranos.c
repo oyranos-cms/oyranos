@@ -549,7 +549,7 @@ oyTESTRESULT_e testMonitor ()
   oyConfig_s * c = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
-  oyRegion_s * r = 0;
+  oyRectangle_s * r = 0;
 
   oyExportReset_(EXPORT_SETTING);
   fprintf(stdout, "\n" );
@@ -592,7 +592,7 @@ oyTESTRESULT_e testMonitor ()
   /* get all monitors */
   error = oyOptions_SetFromText( &options, "//colour/config/list",
                                  "true", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//colour/config/device_region",
+  error = oyOptions_SetFromText( &options, "//colour/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   error = oyDevicesGet( 0, "monitor", options, &devices );
   oyOptions_Release( &options );
@@ -600,7 +600,7 @@ oyTESTRESULT_e testMonitor ()
   n = oyConfigs_Count( devices );
   if(n)
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-               "\"list\" + device_region device(s): %d    ", n )
+               "\"list\" + device_rectangle device(s): %d    ", n )
   else
     PRINT_SUB( oyTESTRESULT_XFAIL,
                "\"list\" device(s): ---                   " )
@@ -608,21 +608,21 @@ oyTESTRESULT_e testMonitor ()
   for( i = 0; i < n; ++i )
   {
     c = oyConfigs_Get( devices, i );
-    o = oyConfig_Find( c, "device_region" );
-    r = (oyRegion_s *) oyOption_StructGet( o, oyOBJECT_REGION_S );
+    o = oyConfig_Find( c, "device_rectangle" );
+    r = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
 
     if(r)
     {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
                "device[%d]: %s    ", i,
-               oyRegion_Show(r) );
+               oyRectangle_Show(r) );
     } else
     {
     PRINT_SUB( oyTESTRESULT_FAIL,
-               "device[%d]: no region                             ", i );
+               "device[%d]: no rectangle                          ", i );
     }
 
-    oyRegion_Release( &r );
+    oyRectangle_Release( &r );
     oyOption_Release( &o );
     oyConfig_Release( &c );
   }
