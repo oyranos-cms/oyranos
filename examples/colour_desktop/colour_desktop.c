@@ -45,7 +45,6 @@
 /* Uncomment the following line if you want to enable debugging output */
 //#define PLUGIN_DEBUG 1
 
-
 /**
  * The 3D lookup texture has 64 points in each dimension, using 16 bit integers.
  * That means each active region will use 1.5MiB of texture memory.
@@ -55,8 +54,16 @@
 #define STENCIL_ID (pw->stencil_id*ps->nCcontexts + i + 1)
 
 
-#define DBG_STRING "\n  %s:%d %s() "
-#define DBG_ARGS __FILE__,__LINE__,__func__
+#define DBG_STRING "\n  %s:%d %s() %.02f "
+#define DBG_ARGS __FILE__,__LINE__,__func__,(double)clock()/CLOCKS_PER_SEC
+#if defined(PLUGIN_DEBUG) || defined(DEBUG)
+#define START_CLOCK(text) printf( DBG_STRING text " - ", DBG_ARGS );
+#define END_CLOCK         printf("%.02f\n", (double)clock()/CLOCKS_PER_SEC );
+#else
+#define START_CLOCK(text)
+#define END_CLOCK
+#endif
+
 
 
 typedef CompBool (*dispatchObjectProc) (CompPlugin *plugin, CompObject *object, void *privateData);
@@ -520,8 +527,9 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   const char * device_name = 0;
   char num[12];
 
+  START_CLOCK("freeOutput:")
   /* clean memory */
-  freeOutput(ps);
+  freeOutput(ps); END_CLOCK
 
   /* obtain device informations, including geometry and ICC profiles
      from the according Oyranos backend */
@@ -602,7 +610,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
     if (ps->ccontexts[i].oy_profile)
     {
-#ifdef DEBUG  // expensive lookup
+#ifdef DEBUG  /* expensive lookup */
       const char * tmp = oyProfile_GetFileName( ps->ccontexts[i].oy_profile, 0 );
       
       compLogMessage(s->display, "colour_desktop", CompLogLevelInfo,
@@ -611,6 +619,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
              (strrchr(tmp, OY_SLASH_C)) ? strrchr(tmp, OY_SLASH_C) + 1 : tmp );
 #endif
 
+      START_CLOCK("create images")
       oyProfile_s * src_profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
       oyProfile_s * dst_profile = ps->ccontexts[i].oy_profile;
 
@@ -619,6 +628,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
       oyImage_s * image_in = oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
                                              ps->ccontexts[i].clut, 
                                              pixel_layout, src_profile, 0 );
+      oyProfile_Release( &src_profile );
       oyImage_s * image_out= oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
                                              ps->ccontexts[i].clut,
                                              pixel_layout, dst_profile, 0 );
@@ -626,9 +636,11 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
       /* rendering_high_precission maps to lcms' cmsFLAGS_NOTPRECALC */
       error = oyOptions_SetFromText( &options, "//colour/icc/rendering_high_precission",
                                      "1", OY_CREATE_NEW );
+      END_CLOCK
 
+      START_CLOCK("oyConversion_CreateBasic: ")
       ps->ccontexts[i].cc = oyConversion_CreateBasic( image_in, image_out,
-                                                      options, 0 );
+                                                      options, 0 ); END_CLOCK
 
       if (ps->ccontexts[i].cc == NULL)
       {
@@ -638,6 +650,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
         continue;
       }
 
+      START_CLOCK("fill array: ")
       uint16_t in[3];
       for (int r = 0; r < GRIDPOINTS; ++r)
       {
@@ -652,12 +665,17 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
               ps->ccontexts[i].clut[b][g][r][j] = in[j];
           }
         }
-      }
-      oyConversion_RunPixels( ps->ccontexts[i].cc, 0 );
+      } END_CLOCK
 
-      cdCreateTexture( &ps->ccontexts[i] );
+      START_CLOCK("oyConversion_RunPixels: ")
+      oyConversion_RunPixels( ps->ccontexts[i].cc, 0 ); END_CLOCK
+
+      START_CLOCK("cdCreateTexture: ")
+      cdCreateTexture( &ps->ccontexts[i] ); END_CLOCK
 
       oyOptions_Release( &options );
+      oyImage_Release( &image_in );
+      oyImage_Release( &image_out );
 
     } else {
       compLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
@@ -675,11 +693,12 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
                   DBG_STRING "Updated screen outputs, %d total now %d",
                   DBG_ARGS, ps->nCcontexts, updateWindows);
 #endif
+  START_CLOCK("damageWindow(s)")
   if(updateWindows)
   {
     int all = 1;
     forEachWindowOnScreen( s, damageWindow, &all );
-  }
+  } END_CLOCK
 }
 
 /**
@@ -716,8 +735,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
            strstr( XGetAtomName( event->xany.display, event->xproperty.atom ),
                    "_ICC_PROFILE") != 0)
     {
-      const char * name = 0,
-                 * an = XGetAtomName( event->xany.display,
+      const char * an = XGetAtomName( event->xany.display,
                                       event->xproperty.atom );
       oyPointer data = 0;
       unsigned long n = 0;
@@ -727,18 +745,29 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 
       data = fetchProperty( d->display, event->xany.window,
                             event->xproperty.atom, XA_CARDINAL, &n, False);
+#ifdef DEBUG /* expensive lookup */
       if(n)
       {
+        const char * name = 0;
         oyProfile_s * p = oyProfile_FromMem( n, data, 0, 0 );
         name = oyProfile_GetFileName( p, 0 );
         if(name && strchr(name, '/'))
           name = strrchr( name, '/' ) + 1;
+        oyProfile_Release( &p );
       }
       printf(" PropertyNotify : %s    \"%s\"[%d]\n",
              an, name?name:"removed",(int)n );
+#endif
 
       if(n)
       {
+        int screen = 0;
+        if(strlen(an) > strlen("_ICC_PROFILE_"))
+          an += strlen("_ICC_PROFILE_");
+        screen = atoi( an );
+
+        printf(":%d Profile changed on screen: %d\n", __LINE__, screen );
+
         updateOutputConfiguration( findScreenAtDisplay(d, event->xany.window),
                                    TRUE);
       }
@@ -782,7 +811,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 static Region absoluteRegion(CompWindow *w, Region region)
 {
   Region r = XCreateRegion();
-   XUnionRegion( region, r, r );
+  XUnionRegion( region, r, r );
 
   for (int i = 0; i < r->numRects; ++i) {
     r->rects[i].x1 += w->attrib.x;
@@ -801,9 +830,26 @@ static void damageWindow(CompWindow *w, void *closure)
   PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
   int * all = closure;
 
-  /* scrissored region seem to be insensible to artifacts from other windows */
-  if(pw->stencil_id || (all && *all == 1))
+  /* scrissored rects seem to be insensible to artifacts from other windows */
+  if((pw->stencil_id || (all && *all == 1)) &&
+      pw->absoluteWindowRectangleOld /*&&
+      (w->type ==1 || w->type == 128) &&
+      w->resName*/)
+  {
+#if defined(PLUGIN_DEBUG_)
+    printf( "damaged - %dx%d+%d+%d  %s\n", 
+            w->serverWidth, w->serverHeight,w->serverX, w->serverY,
+            w->resName?w->resName:"???" );
+#endif
+    /* what is so expensive */
     addWindowDamage(w);
+  }
+#if defined(PLUGIN_DEBUG_)
+  else
+    printf( "%dx%d+%d+%d  resName %s\n", 
+            w->serverWidth, w->serverHeight,w->serverX, w->serverY,
+            w->resName?w->resName:"???" );
+#endif
 }
 
 
@@ -892,11 +938,11 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
 #if defined(PLUGIN_DEBUG_)
     //if(b->y2 - b->y1 == 190)
     //if((int)pw->stencil_id == 7)
-    printf( DBG_STRING "%dx%d+%d+%d  %d[%d] on %d", DBG_ARGS,
+    printf( DBG_STRING "%dx%d+%d+%d  %d[%d] on %d\n", DBG_ARGS,
             b->x2 - b->x1, b->y2 - b->y1, b->x1, b->y1,
             (int)pw->stencil_id, (int)STENCIL_ID, i );
     b = &region->extents;
-    printf( DBG_STRING "region: %dx%d+%d+%d", DBG_ARGS,
+    printf( DBG_STRING "region: %dx%d+%d+%d\n", DBG_ARGS,
             b->x2 - b->x1, b->y2 - b->y1, b->x1, b->y1 );
 #endif
 
@@ -923,7 +969,9 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
 
   XDestroyRegion( aRegion ); aRegion = 0;
 
-  //printf( DBG_STRING "", DBG_ARGS );
+#if defined(PLUGIN_DEBUG_)
+  printf( DBG_STRING "\n", DBG_ARGS );
+#endif
 
   return status;
 }
@@ -1045,6 +1093,9 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
   glDisable(GL_STENCIL_TEST);
   glDisable(GL_SCISSOR_TEST);
 
+#if defined(PLUGIN_DEBUG_)
+  printf( DBG_STRING "\n", DBG_ARGS );
+#endif
 }
 
 
