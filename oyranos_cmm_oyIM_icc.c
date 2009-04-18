@@ -102,6 +102,7 @@ char oyIM_default_colour_icc_options[] = {
       <rendering_bpc>1</rendering_bpc>\n\
       <rendering_intent_proof>0</rendering_intent_proof>\n\
       <rendering_gamut_warning.advanced>0</rendering_gamut_warning.advanced>\n\
+      <rendering_high_precission.advanced>0</rendering_high_precission.advanced>\n\
      </behaviour>\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_STD ">\n\
