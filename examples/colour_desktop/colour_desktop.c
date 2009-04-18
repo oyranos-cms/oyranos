@@ -30,13 +30,14 @@
 #include <compiz-core.h>
 
 #include <assert.h>
+#include <math.h>     // floor()
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
+#include <unistd.h>   // getpid()
 
 #include <stdarg.h>
 #include <icc34.h>
-#include <lcms.h>
 #include <oyranos_alpha.h>
 
 #include <Xcolor.h>
@@ -69,7 +70,7 @@ typedef CompBool (*dispatchObjectProc) (CompPlugin *plugin, CompObject *object, 
  */
 typedef struct {
   uint8_t md5[16];
-  cmsHPROFILE lcmsProfile;
+  oyProfile_s * oy_profile;
 
   unsigned long refCount;
 } PrivColorProfile;
@@ -97,8 +98,8 @@ typedef struct {
  */
 typedef struct {
   char name[32];
-  cmsHPROFILE lcmsProfile;
-  cmsHTRANSFORM xform;
+  oyProfile_s * oy_profile;
+  oyConversion_s * cc;
   GLushort clut[GRIDPOINTS][GRIDPOINTS][GRIDPOINTS][3];
   GLuint glTexture;
   GLfloat scale, offset;
@@ -490,12 +491,12 @@ static void freeOutput( PrivScreen *ps )
   {
     for (unsigned long i = 0; i < ps->nCcontexts; ++i)
     {
-      if(ps->ccontexts[i].lcmsProfile)
-        cmsCloseProfile(ps->ccontexts[i].lcmsProfile);
-      if(ps->ccontexts[i].xform)
-         cmsDeleteTransform( ps->ccontexts[i].xform );
+      if(ps->ccontexts[i].oy_profile)
+        oyProfile_Release( &ps->ccontexts[i].oy_profile );
+      if(ps->ccontexts[i].cc)
+         oyConversion_Release( &ps->ccontexts[i].cc );
       if(ps->ccontexts[i].glTexture)
-        glDeleteTextures(1, &ps->ccontexts[i].glTexture);
+        glDeleteTextures( 1, &ps->ccontexts[i].glTexture );
       ps->ccontexts[i].glTexture = 0;
     }
     free(ps->ccontexts);
@@ -511,12 +512,9 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   int error = 0,
       n;
-  size_t size = 0;
-  oyPointer data = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
   oyRectangle_s * r = 0;
-  oyProfile_s * p = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
   const char * device_name = 0;
@@ -596,59 +594,78 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
     o = oyConfig_Find( device, "icc_profile" );
 
-    p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+    ps->ccontexts[i].oy_profile = (oyProfile_s*) 
+                                  oyOption_StructGet( o, oyOBJECT_PROFILE_S );
 
-    if(!p)
-      oyDeviceGetProfile( device, &p );
+    if(!ps->ccontexts[i].oy_profile)
+      oyDeviceGetProfile( device, &ps->ccontexts[i].oy_profile );
 
-    if (p)
+    if (ps->ccontexts[i].oy_profile)
     {
-      const char * tmp = oyProfile_GetFileName( p, 0 );
+#ifdef DEBUG  // expensive lookup
+      const char * tmp = oyProfile_GetFileName( ps->ccontexts[i].oy_profile, 0 );
       
       compLogMessage(s->display, "colour_desktop", CompLogLevelInfo,
              DBG_STRING "Output %s: extracted profile from Oyranos: %s",
              DBG_ARGS, ps->ccontexts[i].name,
              (strrchr(tmp, OY_SLASH_C)) ? strrchr(tmp, OY_SLASH_C) + 1 : tmp );
-      data = oyProfile_GetMem( p, &size, 0, malloc );
-      ps->ccontexts[i].lcmsProfile = cmsOpenProfileFromMem(data, size);
-      if(data)
-        free( data );
+#endif
 
-      cmsHPROFILE srcProfile = cmsCreate_sRGBProfile();
-      cmsHPROFILE dstProfile = ps->ccontexts[i].lcmsProfile;
+      oyProfile_s * src_profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+      oyProfile_s * dst_profile = ps->ccontexts[i].oy_profile;
 
-      ps->ccontexts[i].xform = 
-        cmsCreateTransform( srcProfile, TYPE_RGB_16,
-                            dstProfile, TYPE_RGB_16,
-                            INTENT_PERCEPTUAL, cmsFLAGS_NOTPRECALC);
+      oyPixel_t pixel_layout = OY_TYPE_123_16;
 
-      cmsHTRANSFORM xform = ps->ccontexts[i].xform;
-      if (xform == NULL)
+      oyImage_s * image_in = oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
+                                             ps->ccontexts[i].clut, 
+                                             pixel_layout, src_profile, 0 );
+      oyImage_s * image_out= oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
+                                             ps->ccontexts[i].clut,
+                                             pixel_layout, dst_profile, 0 );
+      oyOptions_s * options = 0;
+      /* rendering_high_precission maps to lcms' cmsFLAGS_NOTPRECALC */
+      error = oyOptions_SetFromText( &options, "//colour/icc/rendering_high_precission",
+                                     "1", OY_CREATE_NEW );
+
+      ps->ccontexts[i].cc = oyConversion_CreateBasic( image_in, image_out,
+                                                      options, 0 );
+
+      if (ps->ccontexts[i].cc == NULL)
+      {
+        compLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                      DBG_STRING "no conversion created for %s",
+                      DBG_ARGS, ps->ccontexts[i].name);
         continue;
-      unsigned short in[3];
+      }
+
+      uint16_t in[3];
       for (int r = 0; r < GRIDPOINTS; ++r)
       {
         in[0] = floor((double) r / (GRIDPOINTS - 1) * 65535.0 + 0.5);
         for (int g = 0; g < GRIDPOINTS; ++g) {
           in[1] = floor((double) g / (GRIDPOINTS - 1) * 65535.0 + 0.5);
-          for (int b = 0; b < GRIDPOINTS; ++b) {
+          for (int b = 0; b < GRIDPOINTS; ++b)
+          {
             in[2] = floor((double) b / (GRIDPOINTS - 1) * 65535.0 + 0.5);
-            cmsDoTransform(xform, in, ps->ccontexts[i].clut[b][g][r], 1);
+            for(int j = 0; j < 3; ++j)
+              /* BGR */
+              ps->ccontexts[i].clut[b][g][r][j] = in[j];
           }
         }
       }
+      oyConversion_RunPixels( ps->ccontexts[i].cc, 0 );
 
       cdCreateTexture( &ps->ccontexts[i] );
 
+      oyOptions_Release( &options );
 
     } else {
       compLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
                       DBG_STRING "Output %s: omitting sRGB->sRGB conversion",
                       DBG_ARGS, ps->ccontexts[i].name);
-      ps->ccontexts[i].lcmsProfile = 0; /*cmsCreate_sRGBProfile();*/
+      ps->ccontexts[i].oy_profile = 0; /*cmsCreate_sRGBProfile();*/
     }
 
-    oyProfile_Release( &p );
     oyConfig_Release( &device );
   }
 
@@ -1157,7 +1174,7 @@ static dispatchObjectProc dispatchInitObject[] = {
 static CompBool pluginFiniCore(CompPlugin *plugin, CompObject *object, void *privateData)
 {
   /* Don't crash if something goes wrong inside lcms */
-  cmsErrorAction(LCMS_ERRC_WARNING);
+  //cmsErrorAction(LCMS_ERRC_WARNING);
 
   return TRUE;
 }
