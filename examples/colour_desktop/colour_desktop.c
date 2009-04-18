@@ -62,44 +62,46 @@ typedef CompBool (*dispatchObjectProc) (CompPlugin *plugin, CompObject *object, 
 
 
 /**
- * When a profile is uploaded into the root window, the plugin fetches the property
- * and creates a lcms profile object. Each profile has a reference count to allow
- * clients to share profiles. When the ref-count drops to zero, the profile is released.
+ * When a profile is uploaded into the root window, the plugin fetches the 
+ * property and creates a lcms profile object. Each profile has a reference
+ * count to allow clients to share profiles. When the ref-count drops to zero,
+ * the profile is released.
  */
 typedef struct {
-	uint8_t md5[16];
-	cmsHPROFILE lcmsProfile;
+  uint8_t md5[16];
+  cmsHPROFILE lcmsProfile;
 
-	unsigned long refCount;
+  unsigned long refCount;
 } PrivColorProfile;
 
 /**
- * The XserverRegion is dereferenced only when the client sends a _NET_COLOR_MANAGEMENT
- * ClientMessage to its window. This allows clients to change the region as the window
- * is resized and later send _N_C_M to tell the plugin to re-fetch the region from the
- * server.
- * The profile is resolved as soon as the client uploads the regions into the window.
- * That means clients need to upload profiles first and then the regions. Otherwise
- * the plugin won't be able to find the profile and no color transformation will
- * be done.
+ * The XserverRegion is dereferenced only when the client sends a
+ * _NET_COLOR_MANAGEMENT ClientMessage to its window. This allows clients to
+ * change the region as the window is resized and later send _N_C_M to tell the
+ * plugin to re-fetch the region from the server.
+ * The profile is resolved as soon as the client uploads the regions into the
+ * window. That means clients need to upload profiles first and then the 
+ * regions. Otherwise the plugin won't be able to find the profile and no color
+ * transformation will be done.
  */
 typedef struct {
-	/* These members are only valid when this region is part of the
-	 * active stack range. */
-	Region xRegion;
+  /* These members are only valid when this region is part of the
+   * active stack range. */
+  Region xRegion;
 } PrivColorRegion;
 
 /**
- * Output profiles are currently only fetched using XRandR. For backwards compatibility
- * the code should fall back to root window properties (_ICC_PROFILE).
+ * Output profiles are currently only fetched using XRandR. For backwards 
+ * compatibility the code should fall back to root window properties 
+ * (_ICC_PROFILE).
  */
 typedef struct {
-	char name[32];
-	cmsHPROFILE lcmsProfile;
+  char name[32];
+  cmsHPROFILE lcmsProfile;
   cmsHTRANSFORM xform;
   GLushort clut[GRIDPOINTS][GRIDPOINTS][GRIDPOINTS][3];
-	GLuint glTexture;
-	GLfloat scale, offset;
+  GLuint glTexture;
+  GLfloat scale, offset;
   XRectangle xRect;
 } PrivColorOutput;
 
@@ -109,61 +111,61 @@ static CompMetadata pluginMetadata;
 static int corePrivateIndex;
 
 typedef struct {
-	int childPrivateIndex;
+  int childPrivateIndex;
 
-	ObjectAddProc objectAdd;
+  ObjectAddProc objectAdd;
 } PrivCore;
 
 typedef struct {
-	int childPrivateIndex;
+  int childPrivateIndex;
 
-	HandleEventProc handleEvent;
+  HandleEventProc handleEvent;
 
-	/* ClientMessage sent by the application */
-	Atom netColorManagement;
+  /* ClientMessage sent by the application */
+  Atom netColorManagement;
 
-	/* Window properties */
-	Atom netColorProfiles;
-	Atom netColorRegions;
-	Atom netColorTarget;
+  /* Window properties */
+  Atom netColorProfiles;
+  Atom netColorRegions;
+  Atom netColorTarget;
   Atom netColorDesktop;
 } PrivDisplay;
 
 typedef struct {
-	int childPrivateIndex;
+  int childPrivateIndex;
 
-	/* hooked functions */
-	DrawWindowProc drawWindow;
-	DrawWindowTextureProc drawWindowTexture;
+  /* hooked functions */
+  DrawWindowProc drawWindow;
+  DrawWindowTextureProc drawWindowTexture;
 
-	/* profiles attached to the screen */
-	unsigned long nProfiles;
-	PrivColorProfile *profile;
+  /* profiles attached to the screen */
+  unsigned long nProfiles;
+  PrivColorProfile *profile;
 
-	/* compiz fragement function */
-	int function, param, unit;
+  /* compiz fragement function */
+  int function, param, unit;
 
-	/* XRandR outputs and the associated profiles */
-	unsigned long nCcontexts;
-	PrivColorOutput *ccontexts;
+  /* XRandR outputs and the associated profiles */
+  unsigned long nCcontexts;
+  PrivColorOutput *ccontexts;
 } PrivScreen;
 
 typedef struct {
   /* stencil buffer id */
   unsigned long stencil_id;
 
-	/* regions attached to the window */
-	unsigned long nRegions;
-	PrivColorRegion *pRegion;
+  /* regions attached to the window */
+  unsigned long nRegions;
+  PrivColorRegion *pRegion;
 
   /* old absolute region */
   oyRectangle_s * absoluteWindowRectangleOld;
 
-	/* active stack range */
-	unsigned long active;
+  /* active stack range */
+  unsigned long active;
 
-	/* active XRandR output */
-	char *output;
+  /* active XRandR output */
+  char *output;
 } PrivWindow;
 
 static Region absoluteRegion(CompWindow *w, Region region);
@@ -173,80 +175,81 @@ static void damageWindow(CompWindow *w, void *closure);
  *    Private Data Allocation
  *
  * These are helper functions that really should be part of compiz. The private
- * data setup and handling currently requires macros and duplicates code all over
- * the place. These functions, along with the object setup code (at the very bottom
- * of this source file) make it much simpler.
+ * data setup and handling currently requires macros and duplicates code all 
+ * over the place. These functions, along with the object setup code (at the 
+ * very bottom of this source file) make it much simpler.
  */
 
 static void *compObjectGetPrivate(CompObject *o)
 {
-	if (o == NULL)
-		return &corePrivateIndex;
+  if (o == NULL)
+    return &corePrivateIndex;
 
-	int *privateIndex = compObjectGetPrivate(o->parent);
-	if (privateIndex == NULL)
-		return NULL;
+  int *privateIndex = compObjectGetPrivate(o->parent);
+  if (privateIndex == NULL)
+    return NULL;
 
-	return o->privates[*privateIndex].ptr;
+  return o->privates[*privateIndex].ptr;
 }
 
 static void *compObjectAllocPrivate(CompObject *parent, CompObject *object, int size)
 {
-	int *privateIndex = compObjectGetPrivate(parent);
-	if (privateIndex == NULL)
-		return NULL;
+  int *privateIndex = compObjectGetPrivate(parent);
+  if (privateIndex == NULL)
+    return NULL;
 
-	int *privateData = malloc(size);
-	if (privateData == NULL)
-		return NULL;
+  int *privateData = malloc(size);
+  if (privateData == NULL)
+    return NULL;
 
-	/* allocate an index for child objects */
-	if (object->type < 3) {
-		*privateData = compObjectAllocatePrivateIndex(object, object->type + 1);
-		if (*privateData == -1) {
-			free(privateData);
-			return NULL;
-		}
-	}
+  /* allocate an index for child objects */
+  if (object->type < 3) {
+    *privateData = compObjectAllocatePrivateIndex(object, object->type + 1);
+    if (*privateData == -1) {
+      free(privateData);
+      return NULL;
+    }
+  }
 
-	object->privates[*privateIndex].ptr = privateData;
+  object->privates[*privateIndex].ptr = privateData;
 
-	return privateData;
+  return privateData;
 }
 
 static void compObjectFreePrivate(CompObject *parent, CompObject *object)
 {
-	int *privateIndex = compObjectGetPrivate(parent);
-	if (privateIndex == NULL)
-		return;
+  int *privateIndex = compObjectGetPrivate(parent);
+  if (privateIndex == NULL)
+    return;
 
-	int *privateData = object->privates[*privateIndex].ptr;
-	if (privateData == NULL)
-		return;
+  int *privateData = object->privates[*privateIndex].ptr;
+  if (privateData == NULL)
+    return;
 
-	/* free index of child objects */
-	if (object->type < 3)
-		compObjectFreePrivateIndex(object, object->type + 1, *privateData);
+  /* free index of child objects */
+  if (object->type < 3)
+    compObjectFreePrivateIndex(object, object->type + 1, *privateData);
 
-	object->privates[*privateIndex].ptr = NULL;
+  object->privates[*privateIndex].ptr = NULL;
 
-	free(privateData);
+  free(privateData);
 }
 
 /**
- * Xcolor helper functions. I didn't really want to put them into the Xcolor library.
+ * Xcolor helper functions. I didn't really want to put them into the Xcolor
+ * library.
  * Other window managers are free to copy those when needed.
  */
 
 static inline XcolorRegion *XcolorRegionNext(XcolorRegion *region)
 {
-	unsigned char *ptr = (unsigned char *) region;
-	return (XcolorRegion *) (ptr + sizeof(XcolorRegion));
+  unsigned char *ptr = (unsigned char *) region;
+  return (XcolorRegion *) (ptr + sizeof(XcolorRegion));
 }
 
 static inline unsigned long XcolorRegionCount(void *data, unsigned long nBytes)
 {
-	return nBytes / sizeof(XcolorRegion);
+  return nBytes / sizeof(XcolorRegion);
 }
 
 
@@ -256,11 +259,11 @@ static inline unsigned long XcolorRegionCount(void *data, unsigned long nBytes)
 
 static int getFetchTarget(CompTexture *texture)
 {
-	if (texture->target == GL_TEXTURE_2D) {
-		return COMP_FETCH_TARGET_2D;
-	} else {
-		return COMP_FETCH_TARGET_RECT;
-	}
+  if (texture->target == GL_TEXTURE_2D) {
+    return COMP_FETCH_TARGET_2D;
+  } else {
+    return COMP_FETCH_TARGET_RECT;
+  }
 }
 
 /**
@@ -269,33 +272,33 @@ static int getFetchTarget(CompTexture *texture)
  */
 static int getProfileShader(CompScreen *s, CompTexture *texture, int param, int unit)
 {
-	PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
+  PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
 
-	if (ps->function && ps->param == param && ps->unit == unit)
-		return ps->function;
+  if (ps->function && ps->param == param && ps->unit == unit)
+    return ps->function;
 
-	if (ps->function)
-		destroyFragmentFunction(s, ps->function);
+  if (ps->function)
+    destroyFragmentFunction(s, ps->function);
 
-	CompFunctionData *data = createFunctionData();
+  CompFunctionData *data = createFunctionData();
 
-	addFetchOpToFunctionData(data, "output", NULL, getFetchTarget(texture));
+  addFetchOpToFunctionData(data, "output", NULL, getFetchTarget(texture));
 
-	addDataOpToFunctionData(data, "MAD output, output, program.env[%d], program.env[%d];", param, param + 1);
-	addDataOpToFunctionData(data, "TEX output, output, texture[%d], 3D;", unit);
-	addColorOpToFunctionData (data, "output", "output");
+  addDataOpToFunctionData(data, "MAD output, output, program.env[%d], program.env[%d];", param, param + 1);
+  addDataOpToFunctionData(data, "TEX output, output, texture[%d], 3D;", unit);
+  addColorOpToFunctionData (data, "output", "output");
 
-	ps->function = createFragmentFunction(s, "colour_desktop", data);
-	ps->param = param;
-	ps->unit = unit;
+  ps->function = createFragmentFunction(s, "colour_desktop", data);
+  ps->param = param;
+  ps->unit = unit;
 
 #if defined(PLUGIN_DEBUG)
-	compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+  compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
                   DBG_STRING "Shader compiled: %d/%d/%d", DBG_ARGS,
                   ps->function, param, unit);
 #endif
 
-	return ps->function;
+  return ps->function;
 }
 
 /**
@@ -303,25 +306,25 @@ static int getProfileShader(CompScreen *s, CompTexture *texture, int param, int 
  */
 static Region convertRegion(Display *dpy, XserverRegion src)
 {
-	Region ret = XCreateRegion();
+  Region ret = XCreateRegion();
 
-	int nRects = 0;
-	XRectangle *rect = XFixesFetchRegion(dpy, src, &nRects);
+  int nRects = 0;
+  XRectangle *rect = XFixesFetchRegion(dpy, src, &nRects);
 
-	for (int i = 0; i < nRects; ++i) {
-		XUnionRectWithRegion(&rect[i], ret, ret);
-	}
+  for (int i = 0; i < nRects; ++i) {
+    XUnionRectWithRegion(&rect[i], ret, ret);
+  }
 
-	XFree(rect);
+  XFree(rect);
 
-	return ret;
+  return ret;
 }
 
 static Region windowRegion( CompWindow * w )
 {
   Region r = XCreateRegion();
   XRectangle rect = {0,0,w->width, w->height};
- 	XUnionRectWithRegion( &rect, r, r );
+  XUnionRectWithRegion( &rect, r, r );
  return r;
 }
 
@@ -330,21 +333,21 @@ static Region windowRegion( CompWindow * w )
  */
 static void *fetchProperty(Display *dpy, Window w, Atom prop, Atom type, unsigned long *n, Bool delete)
 {
-	Atom actual;
-	int format;
-	unsigned long left;
-	unsigned char *data;
+  Atom actual;
+  int format;
+  unsigned long left;
+  unsigned char *data;
 
-	int result = XGetWindowProperty(dpy, w, prop, 0, ~0, delete, type, &actual, &format, n, &left, &data);
+  int result = XGetWindowProperty(dpy, w, prop, 0, ~0, delete, type, &actual, &format, n, &left, &data);
 #if defined(PLUGIN_DEBUG)
-	printf( "%s:%d %s delete: %d %s %lu\n", __FILE__,__LINE__,
+  printf( "%s:%d %s delete: %d %s %lu\n", __FILE__,__LINE__,
                 XGetAtomName( dpy, prop ), delete,
                 (result == Success) ? "fine" : "err", *n );
 #endif
-	if (result == Success)
-		return (void *) data;
+  if (result == Success)
+    return (void *) data;
 
-	return NULL;
+  return NULL;
 }
 
 static unsigned long colour_desktop_stencil_id_pool = 0;
@@ -355,79 +358,79 @@ static unsigned long colour_desktop_stencil_id_pool = 0;
  */
 static void updateWindowRegions(CompWindow *w)
 {
-	PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
+  PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
 
-	CompDisplay *d = w->screen->display;
-	PrivDisplay *pd = compObjectGetPrivate((CompObject *) d);
+  CompDisplay *d = w->screen->display;
+  PrivDisplay *pd = compObjectGetPrivate((CompObject *) d);
 
-	/* free existing data structures */
-	for (unsigned long i = 0; i < pw->nRegions; ++i) {
-		if (pw->pRegion[i].xRegion != 0) {
-			XDestroyRegion(pw->pRegion[i].xRegion);
-		}
-	}
-	if (pw->nRegions)
-		free(pw->pRegion);
-	pw->nRegions = 0;
+  /* free existing data structures */
+  for (unsigned long i = 0; i < pw->nRegions; ++i) {
+    if (pw->pRegion[i].xRegion != 0) {
+      XDestroyRegion(pw->pRegion[i].xRegion);
+    }
+  }
+  if (pw->nRegions)
+    free(pw->pRegion);
+  pw->nRegions = 0;
   oyRectangle_Release( &pw->absoluteWindowRectangleOld );
 
 
-	/* fetch the regions */
-	unsigned long nBytes;
-	void *data = fetchProperty(d->display, w->id, pd->netColorRegions, XA_CARDINAL, &nBytes, False);
+  /* fetch the regions */
+  unsigned long nBytes;
+  void *data = fetchProperty(d->display, w->id, pd->netColorRegions, XA_CARDINAL, &nBytes, False);
 
-	/* allocate the list */
-	unsigned long count = 1;
+  /* allocate the list */
+  unsigned long count = 1;
   if(data)
     count += XcolorRegionCount(data, nBytes + 1);
 
-	pw->pRegion = malloc(count * sizeof(PrivColorRegion));
-	if (pw->pRegion == NULL)
-		goto out;
+  pw->pRegion = malloc(count * sizeof(PrivColorRegion));
+  if (pw->pRegion == NULL)
+    goto out;
 
-	memset(pw->pRegion, 0, count * sizeof(PrivColorRegion));
+  memset(pw->pRegion, 0, count * sizeof(PrivColorRegion));
 
   /* get the complete windows region and put it at the end */
   pw->pRegion[count-1].xRegion = windowRegion( w );
 
 
-	/* fill in the possible application region(s) */
-	XcolorRegion *region = data;
+  /* fill in the possible application region(s) */
+  XcolorRegion *region = data;
   Region wRegion = pw->pRegion[count-1].xRegion;
-	for (unsigned long i = 0; i < (count - 1); ++i)
+  for (unsigned long i = 0; i < (count - 1); ++i)
   {
-		pw->pRegion[i].xRegion = convertRegion( d->display, region->region );
+    pw->pRegion[i].xRegion = convertRegion( d->display, region->region );
 
 #if defined(PLUGIN_DEBUG)
     BOX * b = &pw->pRegion[i].xRegion->extents;
     if(b)
-	  printf( DBG_STRING "\n  substract region[%d] %dx%d+%d+%d\n",DBG_ARGS,(int)i,
+    printf( DBG_STRING "\n  substract region[%d] %dx%d+%d+%d\n",DBG_ARGS,(int)i,
             b->x2 - b->x1, b->y2 - b->y1, b->x1, b->y1 );
 #endif
 
     /* substract a application region from the window region */
     XSubtractRegion( wRegion, pw->pRegion[i].xRegion, wRegion );
 
-		region = XcolorRegionNext(region);
-	}
+    region = XcolorRegionNext(region);
+  }
 
-	pw->nRegions = count;
-	pw->active = 1;
+  pw->nRegions = count;
+  pw->active = 1;
   if(pw->nRegions > 1)
     pw->stencil_id = colour_desktop_stencil_id_pool++;
   else
     pw->stencil_id = 0;
 
 #if defined(PLUGIN_DEBUG)
-	compLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d", count, pw->stencil_id);
+  compLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d", count, pw->stencil_id);
 #endif
 
   pw->absoluteWindowRectangleOld = oyRectangle_NewWith( 0,0, w->width, w->height, 0 );
 
-	addWindowDamage(w);
+  addWindowDamage(w);
 
 out:
-	XFree(data);
+  XFree(data);
 }
 
 
@@ -436,19 +439,19 @@ out:
  */
 static void updateWindowOutput(CompWindow *w)
 {
-	PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
+  PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
 
-	CompDisplay *d = w->screen->display;
-	PrivDisplay *pd = compObjectGetPrivate((CompObject *) d);
+  CompDisplay *d = w->screen->display;
+  PrivDisplay *pd = compObjectGetPrivate((CompObject *) d);
 
-	if (pw->output)
-		XFree(pw->output);
+  if (pw->output)
+    XFree(pw->output);
 
-	unsigned long nBytes;
-	pw->output = fetchProperty(d->display, w->id, pd->netColorTarget, XA_STRING, &nBytes, False);
+  unsigned long nBytes;
+  pw->output = fetchProperty(d->display, w->id, pd->netColorTarget, XA_STRING, &nBytes, False);
 
 #if defined(_NET_COLOR_DEBUG)
-	compLogMessage(d, "colour_desktop", CompLogLevelDebug, "Updated window output, target is %s", pw->output);
+  compLogMessage(d, "colour_desktop", CompLogLevelDebug, "Updated window output, target is %s", pw->output);
 #endif
 
   if(!pw->nRegions)
@@ -461,42 +464,42 @@ static void cdCreateTexture( PrivColorOutput *ccontext )
 {
     glBindTexture(GL_TEXTURE_3D, ccontext->glTexture);
 
-		ccontext->scale = (GLfloat) (GRIDPOINTS - 1) / GRIDPOINTS;
-		ccontext->offset = (GLfloat) 1.0 / (2 * GRIDPOINTS);
+    ccontext->scale = (GLfloat) (GRIDPOINTS - 1) / GRIDPOINTS;
+    ccontext->offset = (GLfloat) 1.0 / (2 * GRIDPOINTS);
 
 #if defined(PLUGIN_DEBUG)
-	  printf( DBG_STRING "\n", DBG_ARGS );
+    printf( DBG_STRING "\n", DBG_ARGS );
 #endif
 
-		glGenTextures(1, &ccontext->glTexture);
-		glBindTexture(GL_TEXTURE_3D, ccontext->glTexture);
+    glGenTextures(1, &ccontext->glTexture);
+    glBindTexture(GL_TEXTURE_3D, ccontext->glTexture);
 
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-		glTexImage3D( GL_TEXTURE_3D, 0, GL_RGB16, GRIDPOINTS,GRIDPOINTS,GRIDPOINTS,
+    glTexImage3D( GL_TEXTURE_3D, 0, GL_RGB16, GRIDPOINTS,GRIDPOINTS,GRIDPOINTS,
                   0, GL_RGB, GL_UNSIGNED_SHORT, ccontext->clut);
 }
 
 static void freeOutput( PrivScreen *ps )
 {
-	if (ps->nCcontexts > 0)
+  if (ps->nCcontexts > 0)
   {
-		for (unsigned long i = 0; i < ps->nCcontexts; ++i)
+    for (unsigned long i = 0; i < ps->nCcontexts; ++i)
     {
       if(ps->ccontexts[i].lcmsProfile)
         cmsCloseProfile(ps->ccontexts[i].lcmsProfile);
       if(ps->ccontexts[i].xform)
- 	      cmsDeleteTransform( ps->ccontexts[i].xform );
+         cmsDeleteTransform( ps->ccontexts[i].xform );
       if(ps->ccontexts[i].glTexture)
-	      glDeleteTextures(1, &ps->ccontexts[i].glTexture);
+        glDeleteTextures(1, &ps->ccontexts[i].glTexture);
       ps->ccontexts[i].glTexture = 0;
     }
-		free(ps->ccontexts);
-	}
+    free(ps->ccontexts);
+  }
 }
 
 /**
@@ -505,7 +508,7 @@ static void freeOutput( PrivScreen *ps )
  */
 static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 {
-	PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
+  PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   int error = 0,
       n;
   size_t size = 0;
@@ -517,7 +520,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
   const char * device_name = 0;
-	char num[12];
+  char num[12];
 
   /* clean memory */
   freeOutput(ps);
@@ -539,14 +542,14 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
   n = oyConfigs_Count( devices );
 #if defined(PLUGIN_DEBUG)
-	compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+  compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
                   DBG_STRING "Oyranos monitor \"%s\" devices found: %d",
                   DBG_ARGS, DisplayString( s->display->display ), n);
 #endif
 
-	ps->nCcontexts = n;
-	ps->ccontexts = malloc(ps->nCcontexts * sizeof(PrivColorOutput));
-	for (unsigned long i = 0; i < ps->nCcontexts; ++i)
+  ps->nCcontexts = n;
+  ps->ccontexts = malloc(ps->nCcontexts * sizeof(PrivColorOutput));
+  for (unsigned long i = 0; i < ps->nCcontexts; ++i)
   {
     device = oyConfigs_Get( devices, i );
 
@@ -598,21 +601,21 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
     if(!p)
       oyDeviceGetProfile( device, &p );
 
-		if (p)
+    if (p)
     {
       const char * tmp = oyProfile_GetFileName( p, 0 );
       
-			compLogMessage(s->display, "colour_desktop", CompLogLevelInfo,
+      compLogMessage(s->display, "colour_desktop", CompLogLevelInfo,
              DBG_STRING "Output %s: extracted profile from Oyranos: %s",
              DBG_ARGS, ps->ccontexts[i].name,
              (strrchr(tmp, OY_SLASH_C)) ? strrchr(tmp, OY_SLASH_C) + 1 : tmp );
       data = oyProfile_GetMem( p, &size, 0, malloc );
-			ps->ccontexts[i].lcmsProfile = cmsOpenProfileFromMem(data, size);
+      ps->ccontexts[i].lcmsProfile = cmsOpenProfileFromMem(data, size);
       if(data)
         free( data );
 
       cmsHPROFILE srcProfile = cmsCreate_sRGBProfile();
-		  cmsHPROFILE dstProfile = ps->ccontexts[i].lcmsProfile;
+      cmsHPROFILE dstProfile = ps->ccontexts[i].lcmsProfile;
 
       ps->ccontexts[i].xform = 
         cmsCreateTransform( srcProfile, TYPE_RGB_16,
@@ -621,13 +624,13 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
       cmsHTRANSFORM xform = ps->ccontexts[i].xform;
       if (xform == NULL)
-			  continue;
+        continue;
       unsigned short in[3];
       for (int r = 0; r < GRIDPOINTS; ++r)
       {
         in[0] = floor((double) r / (GRIDPOINTS - 1) * 65535.0 + 0.5);
         for (int g = 0; g < GRIDPOINTS; ++g) {
-			    in[1] = floor((double) g / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+          in[1] = floor((double) g / (GRIDPOINTS - 1) * 65535.0 + 0.5);
           for (int b = 0; b < GRIDPOINTS; ++b) {
             in[2] = floor((double) b / (GRIDPOINTS - 1) * 65535.0 + 0.5);
             cmsDoTransform(xform, in, ps->ccontexts[i].clut[b][g][r], 1);
@@ -638,16 +641,16 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
       cdCreateTexture( &ps->ccontexts[i] );
 
 
-		} else {
-			compLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
+    } else {
+      compLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
                       DBG_STRING "Output %s: omitting sRGB->sRGB conversion",
                       DBG_ARGS, ps->ccontexts[i].name);
-			ps->ccontexts[i].lcmsProfile = 0; /*cmsCreate_sRGBProfile();*/
-		}
+      ps->ccontexts[i].lcmsProfile = 0; /*cmsCreate_sRGBProfile();*/
+    }
 
     oyProfile_Release( &p );
     oyConfig_Release( &device );
-	}
+  }
 
 
 #if defined(PLUGIN_DEBUG)
@@ -658,7 +661,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   if(updateWindows)
   {
     int all = 1;
-		forEachWindowOnScreen( s, damageWindow, &all );
+    forEachWindowOnScreen( s, damageWindow, &all );
   }
 }
 
@@ -667,29 +670,29 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
  */
 static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 {
-	PrivDisplay *pd = compObjectGetPrivate((CompObject *) d);
+  PrivDisplay *pd = compObjectGetPrivate((CompObject *) d);
 
-	UNWRAP(pd, d, handleEvent);
-	(*d->handleEvent) (d, event);
-	WRAP(pd, d, handleEvent, pluginHandleEvent);
+  UNWRAP(pd, d, handleEvent);
+  (*d->handleEvent) (d, event);
+  WRAP(pd, d, handleEvent, pluginHandleEvent);
 
-	switch (event->type)
+  switch (event->type)
   {
-	case PropertyNotify:
+  case PropertyNotify:
 #if defined(PLUGIN_DEBUG)
-		if (event->xproperty.atom == pd->netColorProfiles ||
-				event->xproperty.atom == pd->netColorRegions ||
-				event->xproperty.atom == pd->netColorTarget ||
+    if (event->xproperty.atom == pd->netColorProfiles ||
+        event->xproperty.atom == pd->netColorRegions ||
+        event->xproperty.atom == pd->netColorTarget ||
         event->xproperty.atom == pd->netColorDesktop);
-			printf( "%s:%d PropertyNotify: %s\n", __FILE__,__LINE__,
-  	         	XGetAtomName( event->xany.display, event->xproperty.atom ) );
+      printf( "%s:%d PropertyNotify: %s\n", __FILE__,__LINE__,
+               XGetAtomName( event->xany.display, event->xproperty.atom ) );
 #endif
     if (event->xproperty.atom == pd->netColorRegions) {
-			CompWindow *w = findWindowAtDisplay(d, event->xproperty.window);
-			updateWindowRegions(w);
-		} else if (event->xproperty.atom == pd->netColorTarget) {
-			CompWindow *w = findWindowAtDisplay(d, event->xproperty.window);
-			updateWindowOutput(w);
+      CompWindow *w = findWindowAtDisplay(d, event->xproperty.window);
+      updateWindowRegions(w);
+    } else if (event->xproperty.atom == pd->netColorTarget) {
+      CompWindow *w = findWindowAtDisplay(d, event->xproperty.window);
+      updateWindowOutput(w);
 
     /* update for a changing monitor profile */
     } else if(
@@ -725,33 +728,33 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 
       if(data) XFree(data);
     }
-		break;
-	case ClientMessage:
-		if (event->xclient.message_type == pd->netColorManagement)
-		{
+    break;
+  case ClientMessage:
+    if (event->xclient.message_type == pd->netColorManagement)
+    {
 #if defined(PLUGIN_DEBUG)
-			printf( "%s:%d ClientMessage: %s\n", __FILE__,__LINE__,
-  	         	XGetAtomName( event->xany.display, event->xclient.message_type) );
+      printf( "%s:%d ClientMessage: %s\n", __FILE__,__LINE__,
+               XGetAtomName( event->xany.display, event->xclient.message_type) );
 #endif
-			CompWindow *w = findWindowAtDisplay (d, event->xclient.window);
-			PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
+      CompWindow *w = findWindowAtDisplay (d, event->xclient.window);
+      PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
 
-			pw->active = 1;
-		}
-		break;
-	default:
+      pw->active = 1;
+    }
+    break;
+  default:
 #ifdef HAVE_XRANDR
-		if (event->type == d->randrEvent + RRNotify) {
-			XRRNotifyEvent *rrn = (XRRNotifyEvent *) event;
-			CompScreen *s = findScreenAtDisplay(d, rrn->window);
+    if (event->type == d->randrEvent + RRNotify) {
+      XRRNotifyEvent *rrn = (XRRNotifyEvent *) event;
+      CompScreen *s = findScreenAtDisplay(d, rrn->window);
 #if defined(PLUGIN_DEBUG)
-			printf( "%s:%d XRRNotifyEvent\n", __FILE__,__LINE__ );
+      printf( "%s:%d XRRNotifyEvent\n", __FILE__,__LINE__ );
 #endif
-			updateOutputConfiguration(s, TRUE);
-		}
+      updateOutputConfiguration(s, TRUE);
+    }
 #endif
-		break;
-	}
+    break;
+  }
 }
 
 /**
@@ -762,18 +765,18 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 static Region absoluteRegion(CompWindow *w, Region region)
 {
   Region r = XCreateRegion();
- 	XUnionRegion( region, r, r );
+   XUnionRegion( region, r, r );
 
-	for (int i = 0; i < r->numRects; ++i) {
-		r->rects[i].x1 += w->attrib.x;
-		r->rects[i].x2 += w->attrib.x;
-		r->rects[i].y1 += w->attrib.y;
-		r->rects[i].y2 += w->attrib.y;
+  for (int i = 0; i < r->numRects; ++i) {
+    r->rects[i].x1 += w->attrib.x;
+    r->rects[i].x2 += w->attrib.x;
+    r->rects[i].y1 += w->attrib.y;
+    r->rects[i].y2 += w->attrib.y;
 
-		EXTENTS(&r->rects[i], r);
-	}
+    EXTENTS(&r->rects[i], r);
+  }
 
-	return r;
+  return r;
 }
 
 static void damageWindow(CompWindow *w, void *closure)
@@ -801,19 +804,19 @@ static void damageWindow(CompWindow *w, void *closure)
  */
 static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, const FragmentAttrib *attrib, Region region, unsigned int mask)
 {
-	CompScreen *s = w->screen;
-	PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
+  CompScreen *s = w->screen;
+  PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   int i;
 
-	UNWRAP(ps, s, drawWindow);
-	Bool status = (*s->drawWindow) (w, transform, attrib, region, mask);
-	WRAP(ps, s, drawWindow, pluginDrawWindow);
+  UNWRAP(ps, s, drawWindow);
+  Bool status = (*s->drawWindow) (w, transform, attrib, region, mask);
+  WRAP(ps, s, drawWindow, pluginDrawWindow);
 
-	/* If no regions have been enabled, just return as we're done */
-	PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
+  /* If no regions have been enabled, just return as we're done */
+  PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
 
   /* initialise window regions */
-	if (pw->active == 0)
+  if (pw->active == 0)
     updateWindowRegions( w );
 
   oyRectangle_s * rect = oyRectangle_NewWith( w->serverX, w->serverY, w->serverWidth, w->serverHeight, 0 );
@@ -821,7 +824,7 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
   /* update to window movements and resizes */
   if( !oyRectangle_IsEqual( rect, pw->absoluteWindowRectangleOld ) )
   {
-		forEachWindowOnScreen(s, damageWindow, NULL);
+    forEachWindowOnScreen(s, damageWindow, NULL);
 
     if(rect->width != pw->absoluteWindowRectangleOld->width ||
        rect->height != pw->absoluteWindowRectangleOld->height )
@@ -842,7 +845,7 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
 
   /* skip the stencil drawing for to be scissored windows */
   if( !pw->stencil_id )
-  	return status;
+    return status;
 
   PrivColorRegion *reg = pw->pRegion + pw->nRegions - 1;
   Region aRegion = absoluteRegion( w, reg->xRegion);
@@ -880,16 +883,16 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
             b->x2 - b->x1, b->y2 - b->y1, b->x1, b->y1 );
 #endif
 
-		w->vCount = w->indexCount = 0;
-		(*w->screen->addWindowGeometry) (w, &w->matrix, 1, intersection, region);
+    w->vCount = w->indexCount = 0;
+    (*w->screen->addWindowGeometry) (w, &w->matrix, 1, intersection, region);
 
-		/* If the geometry is non-empty, draw the window */
-		if (w->vCount > 0)
+    /* If the geometry is non-empty, draw the window */
+    if (w->vCount > 0)
     {
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			(*w->drawWindowGeometry) (w);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		}
+      glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+      (*w->drawWindowGeometry) (w);
+      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
 
     cleanDrawWindow:
     XDestroyRegion( intersection );
@@ -905,7 +908,7 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
 
   //printf( DBG_STRING "", DBG_ARGS );
 
-	return status;
+  return status;
 }
 
 /**
@@ -917,26 +920,26 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
  */
 static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const FragmentAttrib *attrib, unsigned int mask)
 {
-	CompScreen *s = w->screen;
-	PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
+  CompScreen *s = w->screen;
+  PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
 
-	UNWRAP(ps, s, drawWindowTexture);
-	(*s->drawWindowTexture) (w, texture, attrib, mask);
-	WRAP(ps, s, drawWindowTexture, pluginDrawWindowTexture);
+  UNWRAP(ps, s, drawWindowTexture);
+  (*s->drawWindowTexture) (w, texture, attrib, mask);
+  WRAP(ps, s, drawWindowTexture, pluginDrawWindowTexture);
 
- 	PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
-	if (pw->active == 0)
-		return;
+   PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
+  if (pw->active == 0)
+    return;
 
-	/* Set up the shader */
-	FragmentAttrib fa = *attrib;
+  /* Set up the shader */
+  FragmentAttrib fa = *attrib;
 
-	int param = allocFragmentParameters(&fa, 2);
-	int unit = allocFragmentTextureUnits(&fa, 1);
+  int param = allocFragmentParameters(&fa, 2);
+  int unit = allocFragmentTextureUnits(&fa, 1);
 
-	int function = getProfileShader(s, texture, param, unit);
-	if (function)
-		addFragmentFunction(&fa, function);
+  int function = getProfileShader(s, texture, param, unit);
+  if (function)
+    addFragmentFunction(&fa, function);
 
 #if 1
   if( pw->stencil_id )
@@ -956,7 +959,7 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
   {
     /* get the window region */
     PrivColorRegion *reg = pw->pRegion + pw->nRegions - 1;
-		Region tmp = absoluteRegion( w, reg->xRegion);
+    Region tmp = absoluteRegion( w, reg->xRegion);
     Region screen = XCreateRegion();
     XUnionRectWithRegion( &ps->ccontexts[i].xRect, screen, screen );    
     Region intersection = XCreateRegion();
@@ -977,19 +980,19 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
       goto cleanDrawTexture;
 
     PrivColorOutput * c = &ps->ccontexts[i];
-		/* Set the environment variables */
-		glProgramEnvParameter4dARB( GL_FRAGMENT_PROGRAM_ARB, param + 0, 
+    /* Set the environment variables */
+    glProgramEnvParameter4dARB( GL_FRAGMENT_PROGRAM_ARB, param + 0, 
                                 c->scale, c->scale, c->scale, 1.0);
-		glProgramEnvParameter4dARB( GL_FRAGMENT_PROGRAM_ARB, param + 1,
+    glProgramEnvParameter4dARB( GL_FRAGMENT_PROGRAM_ARB, param + 1,
                                 c->offset, c->offset, c->offset, 0.0);
 
-		/* Activate the 3D texture */
-		(*s->activeTexture) (GL_TEXTURE0_ARB + unit);
-		glEnable(GL_TEXTURE_3D);
-		glBindTexture(GL_TEXTURE_3D, c->glTexture);
-		(*s->activeTexture) (GL_TEXTURE0_ARB);
+    /* Activate the 3D texture */
+    (*s->activeTexture) (GL_TEXTURE0_ARB + unit);
+    glEnable(GL_TEXTURE_3D);
+    glBindTexture(GL_TEXTURE_3D, c->glTexture);
+    (*s->activeTexture) (GL_TEXTURE0_ARB);
 
-		/* Only draw where the stencil value matches the window and output */
+    /* Only draw where the stencil value matches the window and output */
     glStencilFunc(GL_EQUAL, STENCIL_ID, ~0);
 
 #if defined(PLUGIN_DEBUG_)
@@ -1005,16 +1008,16 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
 #endif
 #endif
 
-		/* Now draw the window texture */
-		UNWRAP(ps, s, drawWindowTexture);
-		(*s->drawWindowTexture) (w, texture, &fa, mask);
-		WRAP(ps, s, drawWindowTexture, pluginDrawWindowTexture);
+    /* Now draw the window texture */
+    UNWRAP(ps, s, drawWindowTexture);
+    (*s->drawWindowTexture) (w, texture, &fa, mask);
+    WRAP(ps, s, drawWindowTexture, pluginDrawWindowTexture);
 
     cleanDrawTexture:
     XDestroyRegion( intersection );
     XDestroyRegion( tmp );
     XDestroyRegion( screen );
-	}
+  }
 
   /* Deactivate the 3D texture */
   (*s->activeTexture) (GL_TEXTURE0_ARB + unit);
@@ -1029,24 +1032,24 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
 
 
 /**
- * This is really stupid, object->parent isn't inisialized when pluginInitObject()
- * is called. So this is a wrapper to get the parent because compObjectAllocPrivate()
- * needs it.
+ * This is really stupid, object->parent isn't inisialized when 
+ * pluginInitObject() is called. So this is a wrapper to get the parent because
+ * compObjectAllocPrivate() needs it.
  */
 static CompObject *getParent(CompObject *object)
 {
-	switch (object->type) {
-	case 0:
-		return NULL;
-	case 1:
-		return (CompObject *) &core;
-	case 2:
-		return (CompObject *) ((CompScreen *) object)->display;
-	case 3:
-		return (CompObject *) ((CompWindow *) object)->screen;
-	default:
-		return NULL;
-	}
+  switch (object->type) {
+  case 0:
+    return NULL;
+  case 1:
+    return (CompObject *) &core;
+  case 2:
+    return (CompObject *) ((CompScreen *) object)->display;
+  case 3:
+    return (CompObject *) ((CompWindow *) object)->screen;
+  default:
+    return NULL;
+  }
 }
 
 /**
@@ -1055,24 +1058,24 @@ static CompObject *getParent(CompObject *object)
 
 static CompBool pluginInitCore(CompPlugin *plugin, CompObject *object, void *privateData)
 {
-	return TRUE;
+  return TRUE;
 }
 
 static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *privateData)
 {
-	CompDisplay *d = (CompDisplay *) object;
-	PrivDisplay *pd = privateData;
+  CompDisplay *d = (CompDisplay *) object;
+  PrivDisplay *pd = privateData;
 
-	if (d->randrExtension == False)
-		return FALSE;
+  if (d->randrExtension == False)
+    return FALSE;
 
-	WRAP(pd, d, handleEvent, pluginHandleEvent);
+  WRAP(pd, d, handleEvent, pluginHandleEvent);
 
-	pd->netColorManagement = XInternAtom(d->display, "_NET_COLOR_MANAGEMENT", False);
+  pd->netColorManagement = XInternAtom(d->display, "_NET_COLOR_MANAGEMENT", False);
 
-	pd->netColorProfiles = XInternAtom(d->display, "_NET_COLOR_PROFILES", False);
-	pd->netColorRegions = XInternAtom(d->display, "_NET_COLOR_REGIONS", False);
-	pd->netColorTarget = XInternAtom(d->display, "_NET_COLOR_TARGET", False);
+  pd->netColorProfiles = XInternAtom(d->display, "_NET_COLOR_PROFILES", False);
+  pd->netColorRegions = XInternAtom(d->display, "_NET_COLOR_REGIONS", False);
+  pd->netColorTarget = XInternAtom(d->display, "_NET_COLOR_TARGET", False);
   pd->netColorDesktop = XInternAtom(d->display, "_NET_COLOR_DESKTOP", False);
 
   unsigned long n = 0;
@@ -1094,56 +1097,56 @@ static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *
                                 8, PropModeReplace, (unsigned char*)&pid,
                                 sizeof(pid_t) );
 
-	return TRUE;
+  return TRUE;
 }
 
 static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *privateData)
 {
-	CompScreen *s = (CompScreen *) object;
-	PrivScreen *ps = privateData;
+  CompScreen *s = (CompScreen *) object;
+  PrivScreen *ps = privateData;
 
-	GLint stencilBits = 0;
-	glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
-	if (stencilBits == 0)
-		return FALSE;
+  GLint stencilBits = 0;
+  glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
+  if (stencilBits == 0)
+    return FALSE;
 
-	WRAP(ps, s, drawWindow, pluginDrawWindow);
-	WRAP(ps, s, drawWindowTexture, pluginDrawWindowTexture);
+  WRAP(ps, s, drawWindow, pluginDrawWindow);
+  WRAP(ps, s, drawWindowTexture, pluginDrawWindowTexture);
 
-	ps->nProfiles = 0;
-	ps->profile = NULL;
+  ps->nProfiles = 0;
+  ps->profile = NULL;
 
-	ps->function = 0;
+  ps->function = 0;
 
-	/* XRandR setup code */
+  /* XRandR setup code */
 
 #ifdef HAVE_XRANDR
-	XRRSelectInput(s->display->display, s->root, RROutputPropertyNotifyMask);
+  XRRSelectInput(s->display->display, s->root, RROutputPropertyNotifyMask);
 #endif
 
-	ps->nCcontexts = 0;
-	updateOutputConfiguration(s, FALSE);
+  ps->nCcontexts = 0;
+  updateOutputConfiguration(s, FALSE);
 
-	return TRUE;
+  return TRUE;
 }
 
 static CompBool pluginInitWindow(CompPlugin *plugin, CompObject *object, void *privateData)
 {
-	/* CompWindow *w = (CompWindow *) object; */
-	PrivWindow *pw = privateData;
+  /* CompWindow *w = (CompWindow *) object; */
+  PrivWindow *pw = privateData;
 
-	pw->nRegions = 0;
+  pw->nRegions = 0;
   pw->pRegion = 0;
-	pw->active = 0;
+  pw->active = 0;
 
   pw->absoluteWindowRectangleOld = 0;
-	pw->output = NULL;
+  pw->output = NULL;
 
-	return TRUE;
+  return TRUE;
 }
 
 static dispatchObjectProc dispatchInitObject[] = {
-	pluginInitCore, pluginInitDisplay, pluginInitScreen, pluginInitWindow
+  pluginInitCore, pluginInitDisplay, pluginInitScreen, pluginInitWindow
 };
 
 /**
@@ -1153,46 +1156,46 @@ static dispatchObjectProc dispatchInitObject[] = {
 
 static CompBool pluginFiniCore(CompPlugin *plugin, CompObject *object, void *privateData)
 {
-	/* Don't crash if something goes wrong inside lcms */
-	cmsErrorAction(LCMS_ERRC_WARNING);
+  /* Don't crash if something goes wrong inside lcms */
+  cmsErrorAction(LCMS_ERRC_WARNING);
 
-	return TRUE;
+  return TRUE;
 }
 
 static CompBool pluginFiniDisplay(CompPlugin *plugin, CompObject *object, void *privateData)
 {
-	CompDisplay *d = (CompDisplay *) object;
-	PrivDisplay *pd = privateData;
+  CompDisplay *d = (CompDisplay *) object;
+  PrivDisplay *pd = privateData;
 
-	UNWRAP(pd, d, handleEvent);
+  UNWRAP(pd, d, handleEvent);
 
   /* remove desktop colour management service mark */
   XDeleteProperty( d->display, RootWindow(d->display, 0), pd->netColorDesktop );
 
-	return TRUE;
+  return TRUE;
 }
 
 static CompBool pluginFiniScreen(CompPlugin *plugin, CompObject *object, void *privateData)
 {
-	CompScreen *s = (CompScreen *) object;
-	PrivScreen *ps = privateData;
+  CompScreen *s = (CompScreen *) object;
+  PrivScreen *ps = privateData;
 
   /* clean memory */
   freeOutput(ps);
 
-	UNWRAP(ps, s, drawWindow);
-	UNWRAP(ps, s, drawWindowTexture);
+  UNWRAP(ps, s, drawWindow);
+  UNWRAP(ps, s, drawWindowTexture);
 
-	return TRUE;
+  return TRUE;
 }
 
 static CompBool pluginFiniWindow(CompPlugin *plugin, CompObject *object, void *privateData)
 {
-	return TRUE;
+  return TRUE;
 }
 
 static dispatchObjectProc dispatchFiniObject[] = {
-	pluginFiniCore, pluginFiniDisplay, pluginFiniScreen, pluginFiniWindow
+  pluginFiniCore, pluginFiniDisplay, pluginFiniScreen, pluginFiniWindow
 };
 
 
@@ -1201,63 +1204,63 @@ static dispatchObjectProc dispatchFiniObject[] = {
  */
 static CompBool pluginInit(CompPlugin *p)
 {
-	corePrivateIndex = allocateCorePrivateIndex();
+  corePrivateIndex = allocateCorePrivateIndex();
 
-	if (corePrivateIndex < 0)
-		return FALSE;
+  if (corePrivateIndex < 0)
+    return FALSE;
 
-	return TRUE;
+  return TRUE;
 }
 
 static CompBool pluginInitObject(CompPlugin *p, CompObject *o)
 {
-	static const int privateSizes[] = {
-		sizeof(PrivCore), sizeof(PrivDisplay), sizeof(PrivScreen), sizeof(PrivWindow)
-	};
+  static const int privateSizes[] = {
+    sizeof(PrivCore), sizeof(PrivDisplay), sizeof(PrivScreen), sizeof(PrivWindow)
+  };
 
-	void *privateData = compObjectAllocPrivate(getParent(o), o, privateSizes[o->type]);
-	if (privateData == NULL)
-		return TRUE;
+  void *privateData = compObjectAllocPrivate(getParent(o), o, privateSizes[o->type]);
+  if (privateData == NULL)
+    return TRUE;
 
-	if (dispatchInitObject[o->type](p, o, privateData) == FALSE)
-		compObjectFreePrivate(getParent(o), o);
+  if (dispatchInitObject[o->type](p, o, privateData) == FALSE)
+    compObjectFreePrivate(getParent(o), o);
 
-	return TRUE;
+  return TRUE;
 }
 
 static void pluginFiniObject(CompPlugin *p, CompObject *o)
 {
-	void *privateData = compObjectGetPrivate(o);
-	if (privateData == NULL)
-		return;
+  void *privateData = compObjectGetPrivate(o);
+  if (privateData == NULL)
+    return;
 
-	dispatchFiniObject[o->type](p, o, privateData);
-	compObjectFreePrivate(getParent(o), o);
+  dispatchFiniObject[o->type](p, o, privateData);
+  compObjectFreePrivate(getParent(o), o);
 }
 
 static void pluginFini(CompPlugin *p)
 {
-	freeCorePrivateIndex(corePrivateIndex);
+  freeCorePrivateIndex(corePrivateIndex);
 }
 
 static CompMetadata *pluginGetMetadata(CompPlugin *p)
 {
-	return &pluginMetadata;
+  return &pluginMetadata;
 }
 
 CompPluginVTable pluginVTable = {
-	"colour_desktop",
-	pluginGetMetadata,
-	pluginInit,
-	pluginFini,
-	pluginInitObject,
-	pluginFiniObject,
-	0,
-	0
+  "colour_desktop",
+  pluginGetMetadata,
+  pluginInit,
+  pluginFini,
+  pluginInitObject,
+  pluginFiniObject,
+  0,
+  0
 };
 
 CompPluginVTable *getCompPluginInfo20070830(void)
 {
-	return &pluginVTable;
+  return &pluginVTable;
 }
 
