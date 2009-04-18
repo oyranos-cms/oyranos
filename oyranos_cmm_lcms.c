@@ -567,6 +567,7 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
   int intent = 0,
       bpc = 0,
       gamut_warning = 0,
+      high_precission = 0,
       flags = 0;
   const char * o_txt = 0;
 
@@ -603,11 +604,17 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
       if(o_txt && oyStrlen_(o_txt))
         gamut_warning = atoi( o_txt );
 
+      o_txt = oyOptions_FindString  ( opts, "rendering_high_precission", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        high_precission = atoi( o_txt );
+
       /* this should be moved to the CMM and not be handled here in Oyranos */
       flags = bpc ?           flags | cmsFLAGS_WHITEBLACKCOMPENSATION :
                               flags & (~cmsFLAGS_WHITEBLACKCOMPENSATION);
       flags = gamut_warning ? flags | cmsFLAGS_GAMUTCHECK :
                               flags & (~cmsFLAGS_GAMUTCHECK);
+      flags = high_precission ? flags | cmsFLAGS_NOTPRECALC :
+                              flags & (~cmsFLAGS_NOTPRECALC);
 
 
   if(!error)
