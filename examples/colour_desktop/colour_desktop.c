@@ -22,7 +22,7 @@
 
 #include <X11/extensions/Xfixes.h>
 
-//#define HAVE_XRANDR
+#define HAVE_XRANDR
 #ifdef HAVE_XRANDR
 #include <X11/extensions/Xrandr.h>
 #endif
