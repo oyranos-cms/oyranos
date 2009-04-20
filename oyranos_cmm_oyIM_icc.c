@@ -503,6 +503,28 @@ int          oyIMFilterScan          ( oyPointer           data,
   return ret;
 }
 
+/** Function oyIMFilterSocket_MatchPlug
+ *  @brief   verify connectors matching each other
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi5_s
+ *
+ *  @param         socket              a filter socket
+ *  @param         plug                a filter plug
+ *  @return                            1 on success, otherwise 0
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/04/20 (Oyranos: 0.1.10)
+ *  @date    2009/04/20
+ */
+int          oyIMFilterSocket_MatchPlug (
+                                       oyFilterSocket_s  * socket,
+                                       oyFilterPlug_s    * plug )
+{
+  int match = 1;
+
+  return match;
+}
+
 /** @instance oyIM_api5
  *  @brief    oyIM oyCMMapi5_s implementation
  *
@@ -542,6 +564,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   oyIMGetDefaultColourIccOptionsUI,  /* oyCMMuiGet */
 
   icc_data, /* data_types */
+  oyIMFilterSocket_MatchPlug /** oyCMMFilterSocket_MatchPlug_f */
 };
 
 

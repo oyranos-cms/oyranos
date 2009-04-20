@@ -659,7 +659,7 @@ oyDATATYPE_e oyx1_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
 oyConnector_s oyx1_Display_plug = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Plug"},
-  oyCONNECTOR_SPLITTER, /* connector_type */
+  "//image/splitter", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */

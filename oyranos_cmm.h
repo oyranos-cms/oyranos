@@ -621,7 +621,22 @@ typedef int          (*oyCMMFilterScan_f) (
                                        oyCMMInfo_s      ** info,
                                        oyObject_s          object );
 
-
+/** typedef  oyCMMFilterSocket_MatchPlugIn_f
+ *  @brief   verify connectors matching each other
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi5_s
+ *
+ *  @param         socket              a filter socket
+ *  @param         plug                a filter plug
+ *  @return                            1 on success, otherwise 0
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/04/20 (Oyranos: 0.1.10)
+ *  @date    2009/04/20
+ */
+typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
+                                       oyFilterSocket_s  * socket,
+                                       oyFilterPlug_s    * plug );
 
 /** @struct  oyCMMapi5_s
  *  @brief   the API 5 to provide filter and script support
@@ -638,7 +653,7 @@ typedef int          (*oyCMMFilterScan_f) (
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/12/12
+ *  @date    2009/04/20
  */
 struct oyCMMapi5_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API5_S */
@@ -682,6 +697,9 @@ struct oyCMMapi5_s {
   oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
   oyCMMGetText_f   getText;            /**< describe selectors */
   const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
+
+  /** check if two filter connectors can match each other */
+  oyCMMFilterSocket_MatchPlug_f  filterSocket_MatchPlug;
 };
 
 /** typedef oyCMMFilterPlug_Run_f

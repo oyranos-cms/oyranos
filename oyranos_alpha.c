@@ -534,6 +534,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_FILTER_CORES_S: text = "oyFilterCores_s"; break;
     case oyOBJECT_CONVERSION_S: text = "oyConversion_s"; break;
     case oyOBJECT_CONNECTOR_S: text = "oyConnector_s"; break;
+    case oyOBJECT_CONNECTOR_IMAGE_S: text = "oyConnectorImage_s"; break;
     case oyOBJECT_FILTER_PLUG_S: text = "oyFilterPlug_s"; break;
     case oyOBJECT_FILTER_PLUGS_S: text = "oyFilterPlugs_s"; break;
     case oyOBJECT_FILTER_SOCKET_S: text = "oyFilterSocket_s"; break;
@@ -14866,7 +14867,7 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
       display_rectangle = (oyRectangle_s*) oyOptions_GetType( s->tags, -1,
                                     "display_rectangle", oyOBJECT_RECTANGLE_S );
       oyRectangle_SetGeo( display_rectangle, display_pos_x, display_pos_y,
-                                       display_width, display_height );
+                                             display_width, display_height );
     }
     error = !display_rectangle;
     
@@ -15711,7 +15712,7 @@ oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
     s->name.name = oyStringCopy_( obj->name.name, allocateFunc_);
     s->name.description = oyStringCopy_( obj->name.description, allocateFunc_);
 
-    s->connector_type = obj->connector_type;
+    s->connector_type = oyStringCopy_( obj->connector_type, allocateFunc_ );
     s->is_plug = obj->is_plug;
     if(obj->data_types_n)
     {
@@ -18064,7 +18065,7 @@ OYAPI oyConnector_s * OYEXPORT
  *  @brief   check if a connector match to a FilterNode
  *
  *  @param         node_first          first node
- *  @param         pos_first           position of connector from first filter
+ *  @param         pos_first           position of connector from first node
  *  @param         connector_second    second connector
  *
  *  @version Oyranos: 0.1.8
