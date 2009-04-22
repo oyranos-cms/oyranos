@@ -420,7 +420,7 @@ check:	all install_bin install-icc $(BUILDDIR)tests/test_oyranos $(BUILDDIR)$(TE
 	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} $(BUILDDIR)tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; $(MAKE))
+	cd examples && ($(MAKE) clean; INCLUDE=-I$(includedir) $(MAKE))
 
 $(BUILDDIR)test:	$(BUILDDIR)test.o
 	$(CC) $(CFLAGS) -o $(BUILDDIR)test \

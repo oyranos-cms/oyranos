@@ -16,10 +16,9 @@ PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
 TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos))
-LDFLAGS = $(OY_LDFLAGS) $(FLTK_LDFLAGS)
+LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
-CFLAGS = $(OY_CFLAGS) $(FLTK_CFLAGS) \
-	 $(DEBUG) -DTARGET=\"$(TARGET)\"
+CFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
 
 
 UNAME := $(shell (uname -s))
@@ -34,27 +33,28 @@ all:	$(TARGETS)
 
 $(TARGET1):	$(TARGET1).cpp
 	echo Compiling $@ ...
-	-$(CPP) $(CFLAGS) $(X11) $(LDFLAGS) $(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
+	-$(CPP) -DTARGET=\"$(TARGET)\" $(CFLAGS) $(FLTK_CFLAGS) $(X11) \
+	$(LDFLAGS) $(OY_LDFLAGS) $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
 	$< -o $@
 	fltk-config --post $@
 
 $(TARGET2):	$(TARGET2).c
 	echo Compiling $@ ...
-	-$(CC) $(DEBUG) $(OY_CFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
+	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -lXcolor $< -o $@
 
 $(TARGET3):	colour_desktop/colour_desktop.c
 	echo Compiling $@ ...
-	-$(CC) $(DEBUG) -std=c99 -fPIC -shared $(OY_CFLAGS) $(OY_LDFLAGS) \
+	-$(CC) $(CFLAGS) -std=c99 -fPIC -shared $(LDFLAGS) $(OY_LDFLAGS) \
 	$(TARGET3_FLAGS) -lXcolor $< -o $@
 
 $(TARGET4):	$(TARGET4).c
 	echo Compiling $@ ...
-	-$(CC) $(DEBUG) $(TARGET4_FLAGS) -lXcolor $< -o $@
+	-$(CC) $(CFLAGS) $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $< -o $@
 
 $(TARGET5):	dummy_device/oyranos_cmm_dDev.c
 	echo Compiling $@ ...
-	-$(CC) $(DEBUG) -shared $(OY_CFLAGS) $(OY_LDFLAGS) $< -o $@
+	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
 
 clean:
 	echo cleaning ...
