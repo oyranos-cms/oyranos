@@ -1,6 +1,7 @@
 o keep the API's consitent
 o remove old stuff
 o git push remote (git push ssh://root@www.oyranos.org/git/icc_examin/)
+o update the feature page on ColourWiki
 
 release:
 o update translation
