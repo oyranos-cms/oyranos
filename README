@@ -31,6 +31,8 @@ Dependencies:
     x11proto-xf86vidmode-dev
     x11proto-xext-dev
     libxxf86vm-dev
+    libxrandr-dev
+    libxinerama-dev
     oyranos-0.1.8 can now be installed successfully.
     doxygen
     graphviz
