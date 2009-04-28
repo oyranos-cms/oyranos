@@ -166,7 +166,6 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 {
   int error = 0;
   oyBlob_s * win_id = 0;
-  unsigned int width,height,d;
   int x,y, i,j;
 
   win_id = (oyBlob_s*) oyOptions_GetType( image->tags, -1, "window_id",
@@ -177,6 +176,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
   {
     Atom netColorTarget;
     Window w = (Window) win_id->ptr, w_return;
+    XWindowAttributes attr;
     const char * display_name = oyOptions_FindString( image->tags,
                                                       "display_name", 0 );
     Display * display = XOpenDisplay( display_name );
@@ -211,11 +211,14 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     }
 
     /* We need window relative coordinates. (Works not everywhere? - FVWM) */
-    XGetGeometry( display, w, &w_return, &x, &y, &width, &height, &d,&d );
+    XGetWindowAttributes( display, w, &attr );
+    XTranslateCoordinates( display, w, attr.root, 
+                                  -attr.border_width, -attr.border_width,
+                                  &x, &y, &w_return);
     message( oyMSG_DBG, (oyStruct_s*)image,
-               "%s:%d  Display: %s Window id: %d  %s @+%d+%d(%d)",
+               "%s:%d  Display: %s Window id: %d  %s @+%d+%d",
                __FILE__,__LINE__,
-               display_name, w, oyRectangle_Show(display_rectangle), x,y,d );
+               display_name, w, oyRectangle_Show(display_rectangle), x,y );
 
     window_rectangle = oyRectangle_NewFrom( display_rectangle, 0 );
     window_rectangle->x -= x;
