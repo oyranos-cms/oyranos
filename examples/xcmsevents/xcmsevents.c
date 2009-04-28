@@ -10,6 +10,8 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/Xutil.h>
+#include <X11/Xmu/WinUtil.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -30,7 +32,11 @@ char * printWindowName( Display * display, Window w )
   int screen = DefaultScreen( display );
   Window root = XRootWindow( display, screen );
   int dest_x_return, dest_y_return;
-  Window child_return;
+  Window child_return, window;
+  Atom actual = 0;
+  int format = 0;
+  unsigned long left = 0, n = 0;
+  unsigned char * data = 0;
 
   if(!text) text = malloc(80);
 
@@ -41,17 +47,72 @@ char * printWindowName( Display * display, Window w )
   XTranslateCoordinates( display, w, root, x_return, y_return,
                          &dest_x_return, &dest_y_return, &child_return );
 
+  /* a pain to work with that cruft */
+  window = XmuClientWindow( display, w );
+
+  XGetWindowProperty( display, window,
+                      XInternAtom(display, "WM_NAME", False),
+                      0, ~0, False, XA_STRING,
+                      &actual, &format, &n, &left, &data );
+
+
   if( RootWindow( display, DefaultScreen( display ) ) == w )
     sprintf( text, "root window" );
   else
-    sprintf( text, "%dx%d%s%d%s%d (id:%d)", width_return, height_return,
+    sprintf( text, "%dx%d%s%d%s%d %s", width_return, height_return,
              dest_x_return<0?"":"+", dest_x_return,
              dest_y_return<0?"":"+", dest_y_return,
-             (int)w );
+             data?(char*)data:"" );
 
   return text;
 }
 
+void     printWindowRegions          ( Display           * display,
+                                       Window              w,
+                                       int                 always )
+{
+  unsigned long n = 0;
+  int i, j;
+  XcolorRegion * regions = 0;
+
+  /* a pain to work with that cruft */
+  w = XmuClientWindow( display, w );
+
+  regions = XcolorRegionFetch( display, w, &n );
+
+  if(!always && !n)
+    return;
+
+          printf("PropertyNotify : %s    vvvvv      %s %d\n",
+               XGetAtomName( display, 
+                             XInternAtom( display,"_NET_COLOR_REGIONS", False)),
+               printWindowName( display, w ), (int)n );
+          for(i = 0; i < n; ++i)
+          {
+            int nRect = 0;
+            XRectangle * rect = 0;
+            uint32_t * md5 = 0;
+            oyProfile_s * p = 0;
+            const char * name = 0;
+
+            if(!regions[i].region)
+            {
+              printf("server region id with zero: left %d\n", (int)n-i);
+              break;
+            }
+
+            rect = XFixesFetchRegion( display, regions[i].region, &nRect );
+            md5 = (uint32_t*)&regions[i].md5[0];
+            p = oyProfile_FromMD5( md5, 0 );
+            name = oyProfile_GetFileName( p, 0 );
+
+            printf("    %d local look up: %s[%x%x%x%x]:\n", i, name?name:"???",
+                   md5[0], md5[1], md5[2], md5[3] );
+            for(j = 0; j < nRect; ++j)
+            printf("        %dx%d+%d+%d\n",
+                   rect[j].width, rect[j].height, rect[j].x, rect[j].y );
+          }
+}
 
 /* code from Tomas Carnecky */
 static inline XcolorProfile *XcolorProfileNext(XcolorProfile *profile)
@@ -93,6 +154,7 @@ int main(int argc, char *argv[])
   static pid_t old_pid = 0;
   const char * display_name = getenv("DISPLAY");
   Atom aProfile, aTarget, aCM, aRegion, aDesktop;
+  Status status = 0;
 
   display = XOpenDisplay(NULL);
   if(!display)
@@ -131,7 +193,7 @@ int main(int argc, char *argv[])
                       &actual,&format, &n, &left, &data );
   if(!data && !n)
     printf("\nThe extented ICCCM hint _NET_CLIENT_LIST atom is missed\n"
-           "!!! xcmsevents will work limited !!!\n\n");
+             "!!! xcmsevents will work limited !!!\n\n");
 
   XGetWindowProperty( display, RootWindow(display,0),
                       aDesktop, 0, ~0, False, XA_CARDINAL,
@@ -153,11 +215,54 @@ int main(int argc, char *argv[])
   system( "oyranos-monitor -l" );
   printf( "\n" );
 
+  /* tell about existing regions */
+  {
+    Window root_return = 0,
+           parent_return = 0, 
+         * children_return = 0,
+         * wins = 0;
+    unsigned int nchildren_return = 0, wins_n = 0;
+    int i;
+    XWindowAttributes window_attributes_return;
+
+    XSync( display, 0 );
+    status = XQueryTree( display, root,
+                         &root_return, &parent_return,
+                         &children_return, &nchildren_return );
+    wins = malloc(sizeof(Window) * nchildren_return );
+    memcpy( wins, children_return, sizeof(Window) * nchildren_return );
+    XFree( children_return );
+    children_return = wins; wins = 0;
+
+    for(i = nchildren_return - 1; i >= 0; --i)
+    {
+      root_return = 0;
+      status = XQueryTree( display, children_return[i],
+                           &root_return, &parent_return,
+                           &wins, &wins_n );
+      status = XGetWindowAttributes( display, children_return[i],
+                                     &window_attributes_return );
+      if(window_attributes_return.map_state == IsViewable &&
+         parent_return == root)
+      {
+        printWindowRegions( display, children_return[i], 0 );
+        /*printf( "[%d] \"%s\"\n", (int)children_return[i],
+                     printWindowName(display, children_return[i]) );*/
+
+      }
+
+      XFree( wins );
+    }
+
+    free( children_return );
+  }
+
   /* observe the root window as well for newly appearing windows */
   XSelectInput( display, root,
                 PropertyChangeMask |   /* _NET_COLOR_PROFILES */
                 ExposureMask );        /* _NET_COLOR_MANAGEMENT */
 
+  /* observe events */
   for(;;)
   {
     XEvent event;
@@ -231,37 +336,8 @@ int main(int argc, char *argv[])
 
         } else if( event.xproperty.atom == aRegion )
         {
-          /* n seems not to be relyable */
-          XcolorRegion * regions = XcolorRegionFetch( display,
-                                    event.xany.window, &n );
-          printf("PropertyNotify : %s    vvvvv      %s %d\n",
-               XGetAtomName( event.xany.display, event.xproperty.atom ),
-               printWindowName( display, event.xany.window ), (int)n );
-          for(i = 0; i < n; ++i)
-          {
-            int nRect = 0;
-            XRectangle * rect = 0;
-            uint32_t * md5 = 0;
-            oyProfile_s * p = 0;
-            const char * name = 0;
+          printWindowRegions( event.xany.display, event.xany.window, 1 );
 
-            if(!regions[i].region)
-            {
-              printf("server region id with zero: left %d\n", (int)n-i);
-              break;
-            }
-
-            rect = XFixesFetchRegion( display, regions[i].region, &nRect );
-            md5 = (uint32_t*)&regions[i].md5[0];
-            p = oyProfile_FromMD5( md5, 0 );
-            name = oyProfile_GetFileName( p, 0 );
-
-            printf("    %d local look up: %s[%x%x%x%x]:\n", i, name?name:"???",
-                   md5[0], md5[1], md5[2], md5[3] );
-            for(j = 0; j < nRect; ++j)
-            printf("        %dx%d+%d+%d\n",
-                   rect[j].width, rect[j].height, rect[j].x, rect[j].y );
-          }
         } else if(
            strstr( XGetAtomName( event.xany.display, event.xproperty.atom ), 
                    "_ICC_PROFILE") != 0)
