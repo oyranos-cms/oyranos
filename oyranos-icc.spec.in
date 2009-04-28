@@ -120,6 +120,7 @@ characterisation data for GRACoL, SWOP and SNAP.
 %{_datadir}/color/icc/LCMS*.ICM
 %{_datadir}/color/icc/Lab.icc
 %{_datadir}/color/icc/XYZ.icc
+%{_datadir}/color/icc/ITULab.icc
 %{_datadir}/color/icc/Gray.icc
 %doc default_profiles/base/LICENSE-ZLIB
 
