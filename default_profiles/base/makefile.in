@@ -6,7 +6,7 @@ TARGET  = oyranos-profiles-base
 VERSION = 0.5
 
 prefix      = $(INSTDIR)
-srcdir		= .
+SRCDIR		= ../../$(src_dir)
 
 FILES = \
 	LCMSLABI.ICM \
@@ -19,6 +19,7 @@ FILES = \
 	CineonLog_M_Knee_30.icc \
 	CineonLog_M_Knee_60.icc \
 	Gray.icc \
+	ITULab.icc \
 	eciRGB_v2.icc \
 	eciRGB_v2_ICCv4.icc \
 	PhotoGamutRGB_avg6c.icc \
@@ -45,7 +46,8 @@ install:
 	echo Installing base profiles in $(DESTDIR)$(syscolordir)/$(iccdirname) ...
 	-make uninstall
 	mkdir -p $(DESTDIR)$(syscolordir)/$(iccdirname)
-	$(INSTALL) -m 644 $(FILES) $(DESTDIR)$(syscolordir)/$(iccdirname)
+	cd $(SRCDIR) && \
+	  $(INSTALL) -m 644 $(FILES) $(DESTDIR)$(syscolordir)/$(iccdirname)
 	-$(LNK) LCMSLABI.ICM $(DESTDIR)$(syscolordir)/$(iccdirname)/Lab.icc
 	-$(LNK) LCMSXYZI.ICM $(DESTDIR)$(syscolordir)/$(iccdirname)/XYZ.icc
 	echo ... base profile installation finished
@@ -74,7 +76,8 @@ targz:
 	rm -R $(TARGET)-$(VERSION) 
 
 copy_files:
-	test -d $(DESTDIR) && $(COPY) \
-	$(ALL_FILES) \
-	$(DESTDIR) || echo "no directory found to copy to:\"$(DESTDIR)\""
+	cd $(SRCDIR) && \
+	  test -d $(DESTDIR) && $(COPY) \
+	  $(ALL_FILES) \
+	  $(DESTDIR) || echo "no directory found to copy to:\"$(DESTDIR)\""
 

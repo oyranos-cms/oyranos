@@ -9,6 +9,7 @@ MSGFMT = msgfmt -c --statistics
 
 docdir          = $(datadir)/doc/$(TARGET)
 SRCDIR          = $(src_dir)
+BUILDDIR        = $(build_dir)/
 
 OY_MODULE_NAME  =_cmm_module
 LIBRARIES = $(TARGET)
@@ -16,7 +17,7 @@ LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
 LIBNAME = lib$(TARGET).a
-LIB_CMM_START = $(BUILDDIR)lib$(TARGET)
+LIB_CMM_START = lib$(TARGET)
 LIB_CMM_END = $(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
 CMMS = \
@@ -56,148 +57,147 @@ MODULE_LDLIBS =	-l$(TARGET) $(lc)
 
 
 CHEADERS = \
-	$(SRCDIR)/$(TARGET).h \
-	$(SRCDIR)/$(TARGET)_alpha.h \
-	$(SRCDIR)/$(TARGET)_alpha_internal.h \
-	$(SRCDIR)/$(TARGET)_check.h \
-	$(SRCDIR)/$(TARGET)_cmm.h \
-	$(SRCDIR)/$(TARGET)_cmm_oyIM.h \
-	$(SRCDIR)/$(TARGET)_cmm_oyra.h \
-	$(SRCDIR)/$(TARGET)_cmms.h \
-	$(SRCDIR)/$(TARGET)_config.h \
-	$(SRCDIR)/$(TARGET)_debug.h \
-	$(SRCDIR)/$(TARGET)_definitions.h \
-	$(SRCDIR)/$(TARGET)_elektra.h \
-	$(SRCDIR)/$(TARGET)_helper.h \
-	$(SRCDIR)/$(TARGET)_i18n.h \
-	$(SRCDIR)/$(TARGET)_icc.h \
-	$(SRCDIR)/$(TARGET)_io.h \
-	$(SRCDIR)/$(TARGET)_internal.h \
-	$(SRCDIR)/$(TARGET)_monitor.h \
-	$(SRCDIR)/$(TARGET)_monitor_internal.h \
-	$(SRCDIR)/$(TARGET)_sentinel.h \
-	$(SRCDIR)/$(TARGET)_texts.h \
-	$(SRCDIR)/$(TARGET)_xml.h \
-	$(SRCDIR)/icc34.h \
-	$(SRCDIR)/md5.h \
-	$(SRCDIR)/lookup3.h
+	$(TARGET).h \
+	$(TARGET)_alpha.h \
+	$(TARGET)_alpha_internal.h \
+	$(TARGET)_check.h \
+	$(TARGET)_cmm.h \
+	$(TARGET)_cmm_oyIM.h \
+	$(TARGET)_cmm_oyra.h \
+	$(TARGET)_cmms.h \
+	$(TARGET)_config.h \
+	$(TARGET)_debug.h \
+	$(TARGET)_definitions.h \
+	$(TARGET)_elektra.h \
+	$(TARGET)_helper.h \
+	$(TARGET)_i18n.h \
+	$(TARGET)_icc.h \
+	$(TARGET)_io.h \
+	$(TARGET)_internal.h \
+	$(TARGET)_monitor.h \
+	$(TARGET)_monitor_internal.h \
+	$(TARGET)_sentinel.h \
+	$(TARGET)_texts.h \
+	$(TARGET)_xml.h \
+	icc34.h \
+	md5.h \
+	lookup3.h
 #	fl_$(TARGET).h
 CFILES = \
-	$(SRCDIR)/$(TARGET).c \
-	$(SRCDIR)/$(TARGET)_check.c \
-	$(SRCDIR)/$(TARGET)_cmms.c \
-	$(SRCDIR)/$(TARGET)_elektra.c \
-	$(SRCDIR)/$(TARGET)_helper.c \
-	$(SRCDIR)/$(TARGET)_i18n.c \
-	$(SRCDIR)/$(TARGET)_icc.c \
-	$(SRCDIR)/$(TARGET)_io.c \
-	$(SRCDIR)/$(TARGET)_misc.c \
-	$(SRCDIR)/$(TARGET)_sentinel.c \
-	$(SRCDIR)/$(TARGET)_texts.c \
-	$(SRCDIR)/$(TARGET)_widgets.c \
-	$(SRCDIR)/$(TARGET)_xml.c \
-	$(SRCDIR)/md5.c \
-	$(SRCDIR)/lookup3.c
+	$(TARGET).c \
+	$(TARGET)_check.c \
+	$(TARGET)_cmms.c \
+	$(TARGET)_elektra.c \
+	$(TARGET)_helper.c \
+	$(TARGET)_i18n.c \
+	$(TARGET)_icc.c \
+	$(TARGET)_io.c \
+	$(TARGET)_misc.c \
+	$(TARGET)_sentinel.c \
+	$(TARGET)_texts.c \
+	$(TARGET)_widgets.c \
+	$(TARGET)_xml.c \
+	md5.c \
+	lookup3.c
 CFILESC = \
-	$(SRCDIR)/$(TARGET)_debug.c
+	$(TARGET)_debug.c
 CFILES_ALPHA = \
-	$(SRCDIR)/$(TARGET)_alpha.c
+	$(TARGET)_alpha.c
 
 CFILES_CMM_lcms = \
-	$(SRCDIR)/$(TARGET)_cmm_lcms.c
+	$(TARGET)_cmm_lcms.c
 CFILES_CMM_oydi = \
-	$(SRCDIR)/$(TARGET)_cmm_oydi.c
+	$(TARGET)_cmm_oydi.c
 CFILES_CMM_oyX1 = \
-	$(SRCDIR)/$(TARGET)_cmm_oyX1.c
+	$(TARGET)_cmm_oyX1.c
 CFILES_CMM_oyra = \
-	$(SRCDIR)/$(TARGET)_cmm_oyra.c \
-	$(SRCDIR)/$(TARGET)_cmm_oyra_image.c \
-	$(SRCDIR)/$(TARGET)_cmm_oyra_image_ppm.c
+	$(TARGET)_cmm_oyra.c \
+	$(TARGET)_cmm_oyra_image.c \
+	$(TARGET)_cmm_oyra_image_ppm.c
 CFILES_CMM_oyIM = \
-	$(SRCDIR)/$(TARGET)_cmm_oyIM.c \
-	$(SRCDIR)/$(TARGET)_cmm_oyIM_icc.c \
-	$(SRCDIR)/$(TARGET)_cmm_oyIM_profile.c
+	$(TARGET)_cmm_oyIM.c \
+	$(TARGET)_cmm_oyIM_icc.c \
+	$(TARGET)_cmm_oyIM_profile.c
 
 CFILES_MONI = \
-	$(SRCDIR)/$(TARGET)_monitor.c
+	$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
-	$(SRCDIR)/$(TARGET)_monitor_nvidia.c
+	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
-	$(SRCDIR)/$(TARGET)_gamma.c
+	$(TARGET)_gamma.c
 CFILES_POLICY = \
-	$(SRCDIR)/$(TARGET)_policy.c \
+	$(TARGET)_policy.c \
 
 CXXFILES_FLTK = \
-	$(SRCDIR)/$(TARGET)_config_fltk.cxx
+	$(TARGET)_config_fltk.cxx
 CXXFILES_Flmm = \
-	$(SRCDIR)/FL/Flmm_Tabs.cxx
+	FL/Flmm_Tabs.cxx
 
 TEST_CPP = \
-	$(SRCDIR)/tests/dl_test.cxx \
-	$(SRCDIR)/tests/fltk_test.cxx \
-	$(SRCDIR)/tests/dE2000_test.cpp \
-	$(SRCDIR)/tests/gettext_test.cxx \
-	$(SRCDIR)/tests/intptr_test.c \
-	$(SRCDIR)/tests/lib_test.cxx \
-	$(SRCDIR)/tests/library.c \
-	$(SRCDIR)/tests/test_oyranos.c \
-	$(SRCDIR)/tests/tiff_test.cxx
+	tests/dl_test.cxx \
+	tests/fltk_test.cxx \
+	tests/dE2000_test.cpp \
+	tests/gettext_test.cxx \
+	tests/intptr_test.c \
+	tests/lib_test.cxx \
+	tests/library.c \
+	tests/test_oyranos.c \
+	tests/tiff_test.cxx
 TEST_H = \
-	$(SRCDIR)/tests/ciede2000testdata.h
+	tests/ciede2000testdata.h
 CPPFILES =
 CXXFILES =
-#	fl_oyranos.cxx
 TEST_FILES = $(TEST_CPP) $(TEST_H)
 EXAMPLE_FILES = \
-	$(SRCDIR)/examples/colour_desktop/colour_desktop.c \
-	$(SRCDIR)/examples/dummy_device/oyranos_cmm_dDev.c \
-	$(SRCDIR)/examples/image2pdf/image2pdf.c \
-	$(SRCDIR)/examples/image_display/image_display.cpp \
-	$(SRCDIR)/examples/xcmsevents/xcmsevents.c \
-	$(SRCDIR)/examples/README \
-	$(SRCDIR)/examples/makefile
+	examples/colour_desktop/colour_desktop.c \
+	examples/dummy_device/oyranos_cmm_dDev.c \
+	examples/image2pdf/image2pdf.c \
+	examples/image_display/image_display.cpp \
+	examples/xcmsevents/xcmsevents.c \
+	examples/README \
+	examples/makefile
 
 MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
 MAN3 = oyranos.3 oyranos-config.3
 ICONS = \
-	$(SRCDIR)/$(TARGET)_logo.png \
-	$(SRCDIR)/$(TARGET)_logo.h \
-	$(SRCDIR)/lcms_logo2.png
-DOKU =  $(SRCDIR)/AUTHORS \
-        $(SRCDIR)/ChangeLog \
-        $(SRCDIR)/COPYING \
-        $(SRCDIR)/README
+	$(TARGET)_logo.png \
+	$(TARGET)_logo.h \
+	lcms_logo2.png
+DOKU =  AUTHORS \
+        ChangeLog \
+        COPYING \
+        README
 MIME_TYPES = \
-	$(SRCDIR)/x-colour-cgats.xml \
-	$(SRCDIR)/x-colour-icc.xml
+	x-colour-cgats.xml \
+	x-colour-icc.xml
 DOC_TEMPLATES = \
-	$(SRCDIR)/Doxyfile \
-	$(SRCDIR)/doxymentation \
-	$(SRCDIR)/doxygen.css \
-	$(SRCDIR)/doxygen.footer \
-	$(SRCDIR)/doxygen.header
+	Doxyfile \
+	doxymentation \
+	doxygen.css \
+	doxygen.footer \
+	doxygen.header
 
 LINGUAS_SRC = $(LING:.po=.gmo)
-POT_FILE = $(SRCDIR)/po/$(TARGET).pot
-POT_SCRIPT = $(SRCDIR)/oyranos_xml_to_po.sh
+POT_FILE = po/$(TARGET).pot
+POT_SCRIPT = oyranos_xml_to_po.sh
 
 SCRIPTS = $(POT_SCRIPT)
 
-FLTK_GUI = $(BUILDDIR)$(TARGET)-config-fltk
+FLTK_GUI = $(TARGET)-config-fltk
 
 FLTK_FILES = \
-	$(SRCDIR)/oyranos_config_fltk.fl \
-	$(SRCDIR)/oyranos_config_fltk.h \
+	oyranos_config_fltk.fl \
+	oyranos_config_fltk.h \
 
 Flmm_FILES = \
-	$(SRCDIR)/FL/Flmm_Tabs.H \
+	FL/Flmm_Tabs.H \
 	$(CXXFILES_Flmm) \
-	$(SRCDIR)/FL/AUTHORS \
-	$(SRCDIR)/FL/ANNOUNCEMENT \
-	$(SRCDIR)/FL/CHANGES \
-	$(SRCDIR)/FL/COPYING \
-	$(SRCDIR)/FL/CREDITS \
-	$(SRCDIR)/FL/README
+	FL/AUTHORS \
+	FL/ANNOUNCEMENT \
+	FL/CHANGES \
+	FL/COPYING \
+	FL/CREDITS \
+	FL/README
 
 
 SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
@@ -207,6 +207,22 @@ SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
 		$(CFILES_CMM_oyIM) \
 		$(CXXFILES_FLTK)
+
+# we need these files to generate explicite targets for out of tree builds
+COBJECTS = \
+	$(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) \
+	$(MONI_OBJECTS) \
+	$(CMM_lcms_OBJECTS) \
+	$(CMM_oydi_OBJECTS) \
+	$(CMM_oyX1_OBJECTS) \
+	$(CMM_oyra_OBJECTS) \
+	$(CMM_oyIM_OBJECTS) \
+	$(TARGET)_gamma.o \
+	$(TARGET)_policy.o \
+	tests/test_oyranos.o test.o
+CPPOBJECTS =	test2.o $(CPPFILES)
+CXXOBJECTS =	$(CXXFILES) $(CXXFILES_FLTK)
+
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_oydi_OBJECTS = $(CFILES_CMM_oydi:.c=.o)
@@ -225,13 +241,13 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(FLTK_OBJECTS) \
-	$(Flmm_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	test2.o tests/test_oyranos.o test.o
 
 
-INCL_DEP = $(INCL) $(SOURCES) $(CXXFILES_Flmm) test.c test2.cpp
+INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
+	test.c test2.cpp
 
 .PHONY:	docu examples
 
@@ -241,16 +257,15 @@ TEST2 = test2
 DEFAULT_PROFILES = base printing
 
 CONFIG_FILES = \
-	configure \
-	configure_tests.sh \
-	makefile.in \
-	$(TARGET).pc.in \
-	$(TARGET).spec.in \
-	$(TARGET)-icc.spec.in \
-	$(TARGET)-config.in
+	$(SRCDIR)/configure \
+	$(SRCDIR)/configure_tests.sh \
+	$(SRCDIR)/makefile.in \
+	$(SRCDIR)/$(TARGET).pc.in \
+	$(SRCDIR)/$(TARGET).spec.in \
+	$(SRCDIR)/$(TARGET)-icc.spec.in \
+	$(SRCDIR)/$(TARGET)-config.in
 
 ALL_FILES = \
-	$(CONFIG_FILES) \
 	$(DOKU) \
 	$(ICONS) \
 	$(MIME_TYPES) \
@@ -264,11 +279,11 @@ ALL_FILES = \
 
 
 # build all what is needed to run the libraries, helpers
-all:	setup config.log.h mkdepend \
-	$(BUILDDIR)$(LIBSONAMEFULL) \
-	$(BUILDDIR)$(TARGET)-monitor $(X11) \
+all:	config.log.h mkdepend \
+	$(LIBSONAMEFULL) \
+	$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
-	$(BUILDDIR)$(TARGET)-policy $(FLTK_GUI) \
+	$(TARGET)-policy $(FLTK_GUI) \
 	$(LINGUAS_SRC)
 	test -d default_profiles && \
 	( cd default_profiles; \
@@ -288,200 +303,199 @@ MTIME   := $(shell date +%y%m%d.%H%M%S)
 time:
 	echo $(MTIME)
 
-setup:
-	test -d $(BUILDDIR). && echo "" || (echo output to $(BUILDDIR); mkdir -p $(BUILDDIR))
-
 # build all objects and libraries, link the headers to $(TARGET)
-$(BUILDDIR)$(LIBSONAMEFULL):	$(OBJECTS) $(BUILDDIR)$(LIBNAME) $(DEVEL_LIBS)
+$(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(libdir)/$@ \
-	-o $(BUILDDIR)$(LIBSONAMEFULL) \
+	-o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(libdir) $(LDLIBS) $(m)
-	$(RM)  $(BUILDDIR)$(LIBSONAME)
-	$(LNK) $(LIBSONAMEFULL) $(BUILDDIR)$(LIBSONAME)
-	$(RM)  $(BUILDDIR)$(LIBSO)
-	$(LNK) $(LIBSONAMEFULL) $(BUILDDIR)$(LIBSO)
+	$(RM)  $(LIBSONAME)
+	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
+	$(RM)  $(LIBSO)
+	$(LNK) $(LIBSONAMEFULL) $(LIBSO)
 
 $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
-	-o $(BUILDDIR)$@ \
+	-o $@ \
 	$(CMM_lcms_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_CMM_oydi): $(CMM_oydi_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
-	-o $(BUILDDIR)$@ \
+	-o $@ \
 	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(Xcolor) $(Xfixes) $(MODULE_LDLIBS)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
-	-o $(BUILDDIR)$@ \
+	-o $@ \
 	$(CMM_oyX1_OBJECTS) $(MONI_OBJECTS) $(X11_LIBS) $(MODULE_LDLIBS)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
-	-o $(BUILDDIR)$@ \
+	-o $@ \
 	$(CMM_oyra_OBJECTS) $(MODULE_LDLIBS)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_CMM_oyIM): $(CMM_oyIM_OBJECTS)
 	echo Linking $@ ...
 	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(metadir)/$@ \
-	-o $(BUILDDIR)$@ \
+	-o $@ \
 	$(CMM_oyIM_OBJECTS) $(MODULE_LDLIBS)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(RM)  $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO)$(LIBEXT)
-	$(LNK) $@ $(BUILDDIR)lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile)
-	test -L $(BUILDDIR)$(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a $(BUILDDIR).
+	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
 # the twinview library
-$(BUILDDIR)$(TARGET)-monitor-nvidia:	$(TARGET)_monitor_nvidia.c $(BUILDDIR)$(LIB_XNVCTRL).a $(MONI_OBJECTS)
+$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a $(MONI_OBJECTS)
 	echo Linking $@ ...
-	-$(CC) $(CFLAGS) $(INCL) $(TARGET)_monitor_nvidia.c -I./$(LIB_XNVCTRL) \
-	-o $(BUILDDIR)$(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
+	-$(CC) $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c -I$(SRCDIR)/$(LIB_XNVCTRL) \
+	-o $(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
 	$(LDLIBS) $(X11_LIBS) \
-	-L./$(LIB_XNVCTRL) -lXNVCtrl $(BUILDDIR)$(LIBSONAMEFULL) \
+	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) \
 	$(LINK_LIB_PATH)
 
-$(target)_config_fltk.o:	$(TARGET)_config_fltk.cxx
-	$(CXX) -I.. $(CXXFLAGS) $(FLTK_H) -c $<
-FL/Flmm_Tabs.o:	FL/Flmm_Tabs.cxx
+$(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
+	echo Compiling $*.cxx
+	$(CXX) -I$(SRCDIR) $(CXXFLAGS) $(FLTK_H) -c $<
+FL/Flmm_Tabs.o:	$(SRCDIR)/FL/Flmm_Tabs.cxx
 	echo Compiling FL/Flmm_Tabs.cxx
-	$(CXX) -I./FL -I./ -I../ $(CXXFLAGS) $(FLTK_H) -o $(BUILDDIR)$@ -c $<
+	$(CXX) -I./FL -I$(SRCDIR)/FL $(CXXFLAGS) $(FLTK_H) -o $@ -c $<
 
 # general configuration tool example
 $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 	echo Linking $@ ...
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)$(TARGET)-config-fltk \
+	$(CXX) $(CXXFLAGS) -o $(TARGET)-config-fltk \
 	$(FLTK_OBJECTS) \
-	$(BUILDDIR)$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
+	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N)
 	$(REZ)
 
+fltk-gui:	oyranos_config_fltk.o
 
-$(BUILDDIR)$(LIBNAME):	$(OBJECTS)
+$(LIBNAME):	$(OBJECTS)
 	echo Linking $@ ...
-	test -f $(BUILDDIR)$(LIBNAME) && $(RM) $(BUILDDIR)$(LIBNAME) || echo ""
-	$(COLLECT) $(LINK_FLAGS_STATIC) $(BUILDDIR)$(LIBNAME) \
+	test -f $(LIBNAME) && $(RM) $(LIBNAME) || echo ""
+	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) \
 		$(OBJECTS)
-	$(RANLIB) $(BUILDDIR)$(LIBNAME)
+	$(RANLIB) $(LIBNAME)
 
 # the monitor profile tool
-$(BUILDDIR)$(TARGET)-monitor:	$(BUILDDIR)$(LIBSONAMEFULL) $(BUILDDIR)$(TARGET)_gamma.o
+$(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) -o $(BUILDDIR)$(TARGET)-monitor \
-	$(BUILDDIR)$(TARGET)_gamma.o \
-	$(BUILDDIR)$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+	$(CC) $(CFLAGS) -o $(TARGET)-monitor \
+	$(TARGET)_gamma.o \
+	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
-$(BUILDDIR)$(TARGET)-policy:	$(BUILDDIR)$(LIBSONAMEFULL) $(BUILDDIR)$(TARGET)_policy.o
+$(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) -o $(BUILDDIR)$(TARGET)-policy \
-	$(BUILDDIR)$(TARGET)_policy.o \
-	$(BUILDDIR)$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+	$(CC) $(CFLAGS) -o $(TARGET)-policy \
+	$(TARGET)_policy.o \
+	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
 
-$(BUILDDIR)test2:	$(BUILDDIR)test2.o $(BUILDDIR)$(LIBSONAMEFULL)
+test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
-	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $(BUILDDIR)test2_dyn \
-	$(BUILDDIR)test2.o -L./ `./oyranos-config --ldflags`
+	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
+	test2.o -L./ `./oyranos-config --ldflags`
 	echo Linking static $@ ...
-	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $(BUILDDIR)test2 \
-	$(BUILDDIR)test2.o -L./ `./oyranos-config --ldstaticflags`
+	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
+	test2.o -L./ `./oyranos-config --ldstaticflags`
 	
 
-check:	all install_bin install-icc $(BUILDDIR)tests/test_oyranos $(BUILDDIR)$(TEST2) examples
+check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples
 	echo current git version is:
-	n=0; for i in `git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
+	n=0; for i in `cd $(SRCDIR); git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
-	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} $(BUILDDIR)tests/test_oyranos
+	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; INCLUDE=-I$(includedir) $(MAKE))
+	cd examples && ($(MAKE) clean; INCLUDE=-I$(includedir) SRCDIR=../$(SRCDIR)/examples/ $(MAKE); pwd)
 
-$(BUILDDIR)test:	$(BUILDDIR)test.o
-	$(CC) $(CFLAGS) -o $(BUILDDIR)test \
-	$(BUILDDIR)test.o \
-	$(BUILDDIR)$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
+test:	test.o
+	$(CC) $(CFLAGS) -o test \
+	test.o \
+	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
-$(BUILDDIR)tests/test_oyranos:	$(BUILDDIR)tests/test_oyranos.o
+tests/test_oyranos:	tests/test_oyranos.o
 	echo Linking tests/test_oyranos
-	$(CC) $(CFLAGS) -o $(BUILDDIR)tests/test_oyranos \
-        $(BUILDDIR)tests/test_oyranos.o \
-        $(BUILDDIR)$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
-
-$(BUILDDIR)tests/test_oyranos.o:	tests/test_oyranos.c oyranos_version.h
-	echo Compiling tests/test_oyranos.c
-	$(CC) -I./ -I../ $(CFLAGS) -o $(BUILDDIR)$@ -c $<
+	$(CC) $(CFLAGS) -o tests/test_oyranos \
+        tests/test_oyranos.o \
+        $(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
 $(LIBFL_I18N):	fl_i18n/Makefile
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
 
 $(LINGUAS_SRC):	$(POT_FILE)
 	echo Linguas ... $(@:.gmo=)
+	mkdir -p po/
 	for ling in $(@:.gmo=); do \
-	  lingua=`echo $${ling} | sed s%po\/%%g`; \
-	  echo "update $${ling}.gmo ..."; \
+	  lingua=`echo $${ling} | sed s%po/%%g | sed s%$(SRCDIR)/%%g`; \
+	  echo "update po/$${lingua}.gmo ..."; \
 	  test -f $${ling}.po \
-        && ($(MSGFMT) -o $${ling}.gmo $${ling}.po; \
-            if [ ! -d $${ling} ]; then \
-              mkdir $${ling}; \
+        && ($(MSGFMT) -o po/$${lingua}.gmo $${ling}.po; \
+            if [ ! -d po/$${lingua} ]; then \
+              mkdir po/$${lingua}; \
             fi; \
-            if [ ! -d ./$${ling}/LC_MESSAGES ]; then \
-              mkdir $${ling}/LC_MESSAGES; \
+            if [ ! -d po/$${lingua}/LC_MESSAGES ]; then \
+              mkdir po/$${lingua}/LC_MESSAGES; \
             fi; \
-            test -L $${ling}/LC_MESSAGES/$(TARGET).mo \
-              && $(RM) $${ling}/LC_MESSAGES/$(TARGET).mo \
-              || echo $${ling}/LC_MESSAGES/$(TARGET).mo nicht gefunden; \
-            ln -s ../../$${lingua}.gmo $$ling/LC_MESSAGES/$(TARGET).mo;) \
+            test -L po/$${lingua}/LC_MESSAGES/$(TARGET).mo \
+              && $(RM) po/$${lingua}/LC_MESSAGES/$(TARGET).mo \
+              || echo po/$${lingua}/LC_MESSAGES/$(TARGET).mo nicht gefunden; \
+            ln -s ../../$${lingua}.gmo po/$${lingua}/LC_MESSAGES/$(TARGET).mo;) \
         || (echo $${ling}.po is not yet ready ... skipping) \
 	done;
 
-$(POT_FILE):	$(SOURCES) $(CHEADERS)
-	echo Generating $(POT_FILE) ...
-	mkdir -p ./po
+$(POT_FILE):
+	echo Generating $(SRCDIR)/$(POT_FILE) ...
+	mkdir -p $(SRCDIR)/po
 	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
 	-d $(TARGET) \
-	-o $(POT_FILE) -c \
+	-o $(SRCDIR)/$(POT_FILE) -c \
 	$(SOURCES) $(CHEADERS) || echo -e "\c"
-	-$(MSGCAT) po/*.pot -o po/oyranos.pot
-	for ling in po/*.po; do \
-	  lingua=`echo $${ling} | sed 's%po\/%%g ; s%.po%%'`; \
+	-$(MSGCAT) $(SRCDIR)/po/*.pot -o $(SRCDIR)/po/oyranos.pot
+	for ling in $(SRCDIR)/po/*.po; do \
+	  lingua=`echo $${ling} | sed 's%$(SRCDIR)/po/%%g ; s%.po%%'`; \
 	  test `which $(MSGMERGE)` && \
-	         $(MSGMERGE) $(MSGMERG_OPTS) po/$${lingua}.po \
-	         $(POT_FILE) || \
+	         $(MSGMERGE) $(MSGMERG_OPTS) $(SRCDIR)/po/$${lingua}.po \
+	         $(SRCDIR)/$(POT_FILE) || \
 	      echo -e "\c"; \
 	done;
-	echo ... $(POT_FILE) done
+	echo ... $(SRCDIR)/$(POT_FILE) done
 
 
 docu:
 	echo Documentation ...
-	test -n 'which doxygen' && (doxygen Doxyfile; $(COPY) $(TARGET)_logo.png doc/html/) || echo "Will not create Documentation because doxygen is missing"
-	test -d doc_intern/html/ && $(COPY) $(TARGET)_logo.png doc_intern/html/ ||\
+	test -f Doxyfile || ($(COPY) $(SRCDIR)/Doxyfile . && \
+	                     echo "INPUT = $(SRCDIR)" >> Doxyfile && \
+			     ln -s $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation .)
+	test -n 'which doxygen' && (doxygen Doxyfile; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc/html/) || echo "Will not create Documentation because doxygen is missing"
+	test -d doc_intern/html/ && $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc_intern/html/ ||\
 	 echo ""
 	echo ... Documentation done
 
@@ -489,21 +503,21 @@ docu:
 install_bin:	all uninstall_bin install_gui
 	echo Installing binaries ...
 	mkdir -p $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(BUILDDIR)$(TARGET)-config     $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(BUILDDIR)$(TARGET)-monitor    $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(BUILDDIR)$(TARGET)-policy     $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(BUILDDIR)$(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	mkdir -p $(DESTDIR)$(metadir)
 	mkdir -p $(DESTDIR)$(cmmdir)
 	$(INSTALL) -m 644 $(TARGET).pc $(DESTDIR)$(libdir)/pkgconfig/
 	for lib in $(LIBRARIES); do \
-	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
-		($(INSTALL) -m 755 $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(libdir) \
 		); \
-	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
@@ -512,18 +526,18 @@ install_bin:	all uninstall_bin install_gui
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT); \
 		); \
-	   if [ "$(STATIC)" = "" ]; then test -f $(BUILDDIR)lib$${lib}.a && \
-		($(INSTALL) -m 644 $(BUILDDIR)lib$${lib}.a $(DESTDIR)$(libdir);\
+	   if [ "$(STATIC)" = "" ]; then test -f lib$${lib}.a && \
+		($(INSTALL) -m 644 lib$${lib}.a $(DESTDIR)$(libdir);\
 		$(RANLIB) $(DESTDIR)$(libdir)/lib$${lib}.a \
 		) || echo ""; \
            fi; \
 	done
 	for lib in $(META); do \
-	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
-		($(INSTALL) -m 755 $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(metadir) \
 		); \
-	   test -f NOT_$(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
@@ -532,17 +546,17 @@ install_bin:	all uninstall_bin install_gui
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT); \
 		); \
-	   test -f $(BUILDDIR)lib$${lib}.a && \
-		($(INSTALL) -m 644 $(BUILDDIR)lib$${lib}.a $(DESTDIR)$(metadir);\
+	   test -f lib$${lib}.a && \
+		($(INSTALL) -m 644 lib$${lib}.a $(DESTDIR)$(metadir);\
 		$(RANLIB) $(DESTDIR)$(metadir)/lib$${lib}.a \
 		) || echo ""; \
 	done
 	for lib in $(CMMS); do \
-	   test -f $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
-		($(INSTALL) -m 755 $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(cmmdir) \
 		); \
-	   test -f NOT_$(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
+	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
@@ -551,19 +565,19 @@ install_bin:	all uninstall_bin install_gui
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT); \
 		); \
-	   test -f $(BUILDDIR)lib$${lib}.a && \
-		($(INSTALL) -m 644 $(BUILDDIR)lib$${lib}.a $(DESTDIR)$(cmmdir);\
+	   test -f lib$${lib}.a && \
+		($(INSTALL) -m 644 lib$${lib}.a $(DESTDIR)$(cmmdir);\
 		$(RANLIB) $(DESTDIR)$(cmmdir)/lib$${lib}.a \
 		) || echo ""; \
 	done
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
-	-$(INSTALL) -m 644 $(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 icc34.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
+	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(SRCDIR)/icc34.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
 	echo ... binary Installation finished
 
@@ -579,7 +593,7 @@ install_mime:
 	echo installing mime types into $(DESTDIR)$(datadir)/mime/packages ...
 	mkdir -p $(DESTDIR)$(datadir)/mime/packages/
 	for mime in $(MIME_TYPES); do \
-	  $(INSTALL) -m 644 $${mime} \
+	  $(INSTALL) -m 644 $(SRCDIR)/$${mime} \
 	    $(DESTDIR)$(datadir)/mime/packages/$${mime}; \
 	done
 	echo adding icons to $(DESTDIR)$(pixmapdir) ...
@@ -595,22 +609,26 @@ install_doc:	install_docu
 install_docu: docu
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
-	-$(INSTALL) -m 644 settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
+	-$(INSTALL) -m 644 $(SRCDIR)/settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	mkdir -p $(DESTDIR)$(docdir)
-	$(INSTALL) -m 644 $(DOKU) $(DESTDIR)$(docdir)
+	cd $(SRCDIR) && \
+	  $(INSTALL) -m 644 $(DOKU) $(DESTDIR)$(docdir)
 	mkdir -p $(DESTDIR)$(mandir)/man1
-	$(INSTALL) -m 644 $(MAN1) $(DESTDIR)$(mandir)/man1
+	cd $(SRCDIR) && \
+	  $(INSTALL) -m 644 $(MAN1) $(DESTDIR)$(mandir)/man1
 	mkdir -p $(DESTDIR)$(mandir)/man3
-	$(INSTALL) -m 644 $(MAN3) $(DESTDIR)$(mandir)/man3
+	cd $(SRCDIR) && \
+	  $(INSTALL) -m 644 $(MAN3) $(DESTDIR)$(mandir)/man3
 	mkdir -p $(DESTDIR)$(docdir)/html
 	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
-	$(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
+	cd $(SRCDIR) && \
+	  $(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
 	
 
 install_gui:	$(TARGET)-config-fltk
 	echo Installing UI ...
 	mkdir -p $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(BUILDDIR)$(TARGET)-config-fltk $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-config-fltk $(DESTDIR)$(bindir)
 	(cd $(DESTDIR)$(bindir)/; $(POST) $(DESTDIR)$(bindir)/$(TARGET)-config-fltk)
 
 install_profiles:
@@ -623,10 +641,9 @@ install_profiles:
 	done; ) || echo "default_profiles directory is not found - ignoring"
 
 install_linguas:
-	echo  Linguas ...
+	echo Install linguas ...
 	for ling in $(LINGUAS); do \
 	  echo "Installing po/$${ling}.gmo ..."; \
-	  mkdir -p $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES; \
 	  test -f po/$${ling}.gmo \
 		&& (mkdir -p $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES; \
             $(INSTALL) -m 644 po/$${ling}.gmo $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo ) \
@@ -641,15 +658,15 @@ dist-gzip:	dist
 
 # build a binary rpm package
 rpm:	dist
-	./configure --prefix=/usr --rpm-only # generate the spec file
+	$(SRCDIR)/configure --prefix=/usr --rpm-only # generate the spec file
 	mkdir -p rpmdir/BUILD \
 	rpmdir/SPECS \
 	rpmdir/SOURCES \
 	rpmdir/SRPMS \
 	rpmdir/RPMS/$(RPMARCH)
 	cp -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
-	rpmbuild --clean -ba $(srcdir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
-	rpmbuild --clean -ba $(srcdir)/$(TARGET)-icc.spec --define "_topdir $$PWD/rpmdir"
+	rpmbuild --clean -ba $(build_dir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
+	rpmbuild --clean -ba $(build_dir)/$(TARGET)-icc.spec --define "_topdir $$PWD/rpmdir"
 	@echo "============================================================"
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 
@@ -755,25 +772,25 @@ distclean: clean
 clean:
 	-$(RM) \
 	$(CLEAN_OBJECTS) \
-	$(BUILDDIR)$(TARGET)-policy \
-	$(BUILDDIR)$(TARGET)-monitor $(BUILDDIR)$(TARGET)-monitor-nvidia \
-	$(BUILDDIR)test2 $(BUILDDIR)test $(BUILDDIR)tests/test_oyranos \
-	$(BUILDDIR)$(TARGET)-config-fltk; \
+	$(TARGET)-policy \
+	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
+	test2 test tests/test_oyranos \
+	$(TARGET)-config-fltk; \
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo; \
 	done;
 	for lib in $(LIBRARIES); do \
-	   $(RM) $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-	         $(BUILDDIR)lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-	         $(BUILDDIR)lib$${lib}$(SO)$(LIBEXT) \
-	         $(BUILDDIR)lib$${lib}.a; \
+	   $(RM) lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	         lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	         lib$${lib}$(SO)$(LIBEXT) \
+	         lib$${lib}.a; \
 	done
 	for lib in $(CMMS) $(META); do \
-	   $(RM) $(BUILDDIR)lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-	         $(BUILDDIR)lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-	         $(BUILDDIR)lib$${lib}$(SO)$(LIBEXT) \
-	         $(BUILDDIR)lib$${lib}.a; \
+	   $(RM) lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
+	         lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+	         lib$${lib}$(SO)$(LIBEXT) \
+	         lib$${lib}.a; \
 	done
 ifdef $(LIB_XNVCTRL)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
@@ -786,32 +803,51 @@ config.log.h:	$(CONFIG_FILES) ./config.log
 	./config.log
 
 # try to resolve dependencies
-depend:
+depend:	cobjects
 	echo "setting up dependencies ..."
 	echo "MAKEDEPEND_ISUP = 1" > mkdepend
 	echo "#nicht editieren/dont edit - automatisch generiert" >> mkdepend
-	-$(MAKEDEPEND) -I./ $(INCL_DEP) >> mkdepend
+	-(for file in $(INCL_DEP); do \
+	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
+	  $(MAKEDEPEND) -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
+
+cobjects:
+	echo preparing dependency compilation ...
+	echo "#nicht editieren/dont edit - automatisch generiert" > cobjects
+	echo "" >> cobjects
+	for i in $(COBJECTS); do \
+	  echo "$${i}:" >> cobjects; \
+	  echo "	echo Compiling $${i} ..." >> cobjects; \
+	  echo '	$$(CC) -I. -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.c' >> cobjects; \
+	  echo "" >> cobjects; \
+	done
+	for i in $(CPPOBJECTS); do \
+	  echo "$${i}:" >> cobjects; \
+	  echo "	echo Compiling $${i} ..." >> cobjects; \
+	  echo '	$$(CC) -I. -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
+	  echo "" >> cobjects; \
+	done
 
 
 # Build commands and filename extensions...
-.SUFFIXES:	.0 .1 .3 .c .cxx .h .fl .man .o .z
+.SUFFIXES:	.c .cxx .h .fl .o .po
 
 
 .c.o:
-	echo Compiling $< ...
-	$(CC) -I. $(CFLAGS) -c -o $(BUILDDIR)$@ $<
+	echo Compiling $(SRCDIR)/$< ...
+	$(CC) -I. $(CFLAGS) -c -o $@ $(SRCDIR)/$<
 
 .cxx.o:
-	echo Compiling $< ...
-	$(CXX) -I. $(CXXFLAGS) $(FLTK_H) -c -o $(BUILDDIR)$@ $<
+	echo Compiling $(SRCDIR)/$< ...
+	$(CXX) -I. $(CXXFLAGS) $(FLTK_H) -c -o $@ $(SRCDIR)/$<
 
 .cpp.o:	mkdepend
-	echo Compiling $< ...
-	$(CXX) -I. $(CXXFLAGS) -c -o $(BUILDDIR)$@ $<
+	echo Compiling $(SRCDIR)/$< ...
+	$(CXX) -I. $(CXXFLAGS) -c -o $@ $(SRCDIR)/$<
 
 .fl.cxx:
-	echo Expanding $< ...
-	fluid -c $<
+	echo Expanding $(SRCDIR)/$< ...
+	fluid -c $(SRCDIR)/$<
 
 .po:
 	echo Generating $@ ...
@@ -832,48 +868,54 @@ tgz:
 # build the source package including the subdirectories
 targz:
 	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo -e "\c"
-	$(MAKE) DESTDIR=$(TARGET)-$(VERSION) copy_files
+	$(MAKE) DESTDIR=$(build_dir)/$(TARGET)-$(VERSION) copy_files
 	cd default_profiles; \
 	for prof in $(DEFAULT_PROFILES); do \
 	     test -d $${prof} && \
 	         mkdir -p ../$(TARGET)-$(VERSION)/default_profiles/$${prof}; \
-	         (cd $${prof}; echo bin in `pwd`; $(MAKE) DESTDIR=../../$(TARGET)-$(VERSION)/default_profiles/$${prof} copy_files; $(RM) ../../$(TARGET)-$(VERSION)/default_profiles/$${prof}/Makefile) || \
+	         (cd $${prof}; echo bin in `pwd`; $(MAKE) DESTDIR=$(build_dir)/$(TARGET)-$(VERSION)/default_profiles/$${prof} copy_files; $(RM) $(build_dir)/$(TARGET)-$(VERSION)/default_profiles/$${prof}/Makefile) || \
 	         echo "$${prof} profile directory is not found - ignoring"; \
 	done;
 	tar cf - $(TARGET)-$(VERSION)/ \
-	| gzip > $(TARGET)-$(MTIME).tgz
-	test -d $(TARGET)-$(VERSION) && \
-	test `pwd` != `(cd $(TARGET)-$(VERSION); pwd)` && \
-	$(RM) -R $(TARGET)-$(VERSION)
+	| gzip > $(build_dir)/$(TARGET)-$(MTIME).tgz
+	test -d $(build_dir)/$(TARGET)-$(VERSION) && \
+	test `pwd` != `(cd $(build_dir)/$(TARGET)-$(VERSION); pwd)` && \
+	$(RM) -R $(build_dir)/$(TARGET)-$(VERSION)
 	test -d ../Archiv && mv -v $(TARGET)-*.tgz ../Archiv || echo "no copy"
 
 # basic file set
 copy_files:
 	mkdir $(DESTDIR)
 	cd fl_i18n && \
-	 $(MAKE) DESTDIR=../$(DESTDIR)/fl_i18n -f $(MAKEFILE_ARCH) copy_files
+	  $(MAKE) DESTDIR=$(DESTDIR)/fl_i18n -f $(MAKEFILE_ARCH) copy_files
 	-$(RM) $(DESTDIR)/fl_i18n/Makefile
-	$(COPY) -R \
-	$(ALL_FILES) \
-	$(DESTDIR)
-	$(COPY) -R settings $(DESTDIR)
+	cd $(SRCDIR) && \
+	  $(COPY) -R $(ALL_FILES) $(DESTDIR)
+	$(COPY) $(CONFIG_FILES) $(DESTDIR)
+	cd $(SRCDIR) && \
+	  $(COPY) -R settings $(DESTDIR)
 	#$(COPY) -r cmms $(DESTDIR)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
-	$(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
+	cd $(SRCDIR) && \
+	  $(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 	mkdir $(DESTDIR)/tests
-	$(COPY) $(TEST_FILES) $(DESTDIR)/tests
+	cd $(SRCDIR) && \
+	  $(COPY) $(TEST_FILES) $(DESTDIR)/tests
 	mkdir $(DESTDIR)/examples
 	for exmpl in $(EXAMPLE_FILES); do \
 	  mkdir -p $(DESTDIR)/$${exmpl}; rmdir $(DESTDIR)/$${exmpl}; \
-	  $(COPY) -R $${exmpl} $(DESTDIR)/$${exmpl}; \
+	  cd $(SRCDIR) && \
+	    $(COPY) -R $${exmpl} $(DESTDIR)/$${exmpl}; \
 	done;
 	mkdir $(DESTDIR)/FL
-	$(COPY) $(Flmm_FILES) $(DESTDIR)/FL
+	cd $(SRCDIR) && \
+	  $(COPY) $(Flmm_FILES) $(DESTDIR)/FL
 	mkdir $(DESTDIR)/po
-	$(COPY) $(POT_FILE) $(DESTDIR)/po
+	cd $(SRCDIR) && \
+	  $(COPY) $(POT_FILE) $(DESTDIR)/po
 	for ling in $(LINGUAS); do \
-	  test -f po/$${ling}.po \
-	  && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
+	  test -f $(SRCDIR)/po/$${ling}.po \
+	  && $(COPY) $(SRCDIR)/po/$${ling}.po $(DESTDIR)/po/; \
 	done;
 	echo ... $@ done
 
@@ -904,6 +946,7 @@ help:
 
 # mkdepend
 include mkdepend
+include cobjects
 
 #ifndef MAKEDEPEND_ISUP
 mkdepend: depend

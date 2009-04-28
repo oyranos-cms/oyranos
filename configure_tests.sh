@@ -5,6 +5,8 @@ ERROR=0
 WARNING=0
 STRIPOPT='s/-O.// ; s/-isysroot [[:graph:]]*// ; s/-arch ppc// ; s/-arch i386//'
 
+mkdir -p tests
+
 if [ -n "$PKG_CONFIG_PATH" ]; then
   PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$libdir/pkgconfig
 else
@@ -14,24 +16,24 @@ export PKG_CONFIG_PATH
 
 if [ -n "$DSO_LINKING" ] && [ $DSO_LINKING -gt 0 ] && [ $OSUNAME != "Darwin" ]; then
       rm -f tests/libtest$EXEC_END
-      $CC $CFLAGS -shared -Wl,-soname -Wl,my_so_name -I$includedir tests/library.c $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
+      $CC $CFLAGS -shared -Wl,-soname -Wl,my_so_name -I$includedir $ROOT_DIR/tests/library.c $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
       if [ -f tests/libtest ]; then
           DSO_VERSION="-Wl,-soname -Wl,"
           if [ -n "$MAKEFILE_DIR" ]; then
             for i in $MAKEFILE_DIR; do
-              test -f "$i/makefile".in && echo "DSO_LIB_VERSION = $DSO_VERSION" >> "$i/makefile"
+              test -f "$ROOT_DIR/$i/makefile".in && echo "DSO_LIB_VERSION = $DSO_VERSION" >> "$i/makefile"
             done
           fi
           rm tests/libtest$EXEC_END
       fi
     if [ -z "$DSO_VERSION" ] ; then
       rm -f tests/libtest$EXEC_END
-      $CC $CFLAGS -shared -Wl,-h -Wl,my_so_name -I$includedir tests/library.c $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
+      $CC $CFLAGS -shared -Wl,-h -Wl,my_so_name -I$includedir $ROOT_DIR/tests/library.c $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
       if [ -f tests/libtest ]; then
           DSO_VERSION="-Wl,-h -Wl,"
           if [ -n "$MAKEFILE_DIR" ]; then
             for i in $MAKEFILE_DIR; do
-              test -f "$i/makefile".in && echo "DSO_LIB_VERSION = $DSO_VERSION" >> "$i/makefile"
+              test -f "$ROOT_DIR/$i/makefile".in && echo "DSO_LIB_VERSION = $DSO_VERSION" >> "$i/makefile"
             done
           fi
           rm tests/libtest$EXEC_END
@@ -48,7 +50,7 @@ if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
   if [ -n "$LIBS_TEST" ]; then
     for l in $LIBS_TEST; do
       rm -f tests/libtest$EXEC_END
-      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L$libdir -l$l -o tests/libtest 2>/dev/null
+      $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L$libdir -l$l -o tests/libtest 2>/dev/null
       if [ -f tests/libtest ]; then
           echo "$l=-l$l" >> "$CONF_TEMP_SH"
           LDFLAGS="$LDFLAGS -l$l"
@@ -56,7 +58,7 @@ if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
           echo_="lib$l is available"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
           if [ -n "$MAKEFILE_DIR" ]; then
             for i in $MAKEFILE_DIR; do
-              test -f "$i/makefile".in && echo "$l = -l$l" >> "$i/makefile"
+              test -f "$ROOT_DIR/$i/makefile".in && echo "$l = -l$l" >> "$i/makefile"
             done
           fi
           rm tests/libtest$EXEC_END
@@ -231,7 +233,7 @@ if [ -n "$LIBXML2" ] && [ $LIBXML2 -gt 0 ]; then
   else
     l=xml2
     rm -f tests/libtest$EXEC_END
-    $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
     if [ -f tests/libtest ]; then
       HAVE_LIBXML2=1
       echo "#define HAVE_$ID 1" >> $CONF_H
@@ -281,7 +283,7 @@ if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
   else
     l=$libname
     rm -f tests/libtest$EXEC_END
-    $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
     if [ -f tests/libtest ]; then
       HAVE_LIB=1
       echo "#define HAVE_$ID 1" >> $CONF_H
@@ -366,8 +368,8 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
       echo "#define HAVE_XF86VMODE 1" >> $CONF_H
       if [ -n "$MAKEFILE_DIR" ]; then
         for i in $MAKEFILE_DIR; do
-          test -f "$i/makefile".in && echo "XF86VMODE = 1" >> "$i/makefile"
-          test -f "$i/makefile".in && echo "XF86VMODE_INC = $found" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XF86VMODE = 1" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XF86VMODE_INC = $found" >> "$i/makefile"
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
@@ -406,8 +408,8 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
       echo "#define HAVE_XIN 1" >> $CONF_H
       if [ -n "$MAKEFILE_DIR" ]; then
         for i in $MAKEFILE_DIR; do
-          test -f "$i/makefile".in && echo "XIN = 1" >> "$i/makefile"
-          test -f "$i/makefile".in && echo "XINERAMA_INC = $found" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XIN = 1" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XINERAMA_INC = $found" >> "$i/makefile"
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
@@ -437,8 +439,8 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
       echo "#define HAVE_XRANDR 1" >> $CONF_H
       if [ -n "$MAKEFILE_DIR" ]; then
         for i in $MAKEFILE_DIR; do
-          test -f "$i/makefile".in && echo "XRANDR = 1" >> "$i/makefile"
-          test -f "$i/makefile".in && echo "XRANDR_INC = $found" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XRANDR = 1" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XRANDR_INC = $found" >> "$i/makefile"
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
@@ -457,17 +459,17 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   echo "X_CPP = \$(X_CPPFILES)" >> $CONF
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
-      test -f "$i/makefile".in && echo "X11_LIB_PATH = -L/usr/X11R6/lib\$(BARCH) -L/usr/lib\$(BARCH) -L\$(libdir)" >> "$i/makefile"
+      test -f "$ROOT_DIR/$i/makefile".in && echo "X11_LIB_PATH = -L/usr/X11R6/lib\$(BARCH) -L/usr/lib\$(BARCH) -L\$(libdir)" >> "$i/makefile"
     done
   fi
   if [ -n "$CONF_SH" ]; then
-    test -f "$CONF_SH".in && echo "X11_LIB_PATH=\"-L/usr/X11R6/lib\$BARCH -L/usr/lib\$BARCH -L\$libdir\"" >> "$CONF_SH"
+    test -f "$ROOT_DIR/$CONF_SH".in && echo "X11_LIB_PATH=\"-L/usr/X11R6/lib\$BARCH -L/usr/lib\$BARCH -L\$libdir\"" >> "$CONF_SH"
   fi
 
   if [ -n "$X_ADD" ]; then
     for l in $X_ADD; do
       rm -f tests/libtest$EXEC_END
-      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+      $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
       if [ -f tests/libtest ]; then
           echo_="lib$l is available"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
           if [ -z "$X_ADD_LIBS" ]; then
@@ -495,7 +497,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   if [ -n "$X_ADD_2" ]; then
     for l in $X_ADD_2; do
       rm -f tests/libtest$EXEC_END
-      $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+      $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
       if [ -f tests/libtest ]; then
           echo_="lib$l is available"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
           if [ -z "$X_ADD_LIBS" ]; then
@@ -518,8 +520,8 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   fi
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
-      test -f "$i/makefile".in && echo "X11_INCL=\$(XF86VMODE_INC) \$(XINERAMA_INC) \$(XRANDR_INC)" >> "$i/makefile"
-      test -f "$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 $X_ADD_LIBS" >> "$i/makefile"
+      test -f "$ROOT_DIR/$i/makefile".in && echo "X11_INCL=\$(XF86VMODE_INC) \$(XINERAMA_INC) \$(XRANDR_INC)" >> "$i/makefile"
+      test -f "$ROOT_DIR/$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 $X_ADD_LIBS" >> "$i/makefile"
     done
   fi
 fi
@@ -552,8 +554,8 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
       echo "#define HAVE_X 1" >> $CONF_H
       if [ -n "$MAKEFILE_DIR" ]; then
         for i in $MAKEFILE_DIR; do
-          test -f "$i/makefile".in && echo "X11 = X11" >> "$i/makefile"
-          test -f "$i/makefile".in && echo "X_H = -I/usr/X11R6/include -I/usr/include $found \$(X11_INCL)" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "X11 = X11" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "X_H = -I/usr/X11R6/include -I/usr/include $found \$(X11_INCL)" >> "$i/makefile"
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
@@ -575,7 +577,7 @@ if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
   else
     l=ftgl 
     rm -f tests/libtest$EXEC_END
-    $CXX $CFLAGS -I$includedir tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
     if [ -f tests/libtest ]; then
       echo_="FTGL                    detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       echo "#define HAVE_FTGL 1" >> $CONF_H
@@ -610,7 +612,7 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
     if [ "0" -ne "`$fltkconfig --compile tests/fltk_test.cxx 2>&1 | grep lock | wc -l`" ]; then
       echo_="!!! ERROR: FLTK has no threads support !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       echo_="           Configure FLTK with the --enable-threads option and recompile."; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-      $fltkconfig --compile tests/fltk_test.cxx 1>> $CONF_LOG 2>> $CONF_LOG
+      $fltkconfig --compile $ROOT_DIR/tests/fltk_test.cxx 1>> $CONF_LOG 2>> $CONF_LOG
       ERROR=1
     else
       test -f fltk_test$EXEC_END && rm fltk_test$EXEC_END || rm fltk-test$EXEC_END
@@ -697,7 +699,7 @@ fi
 
 if [ -n "$LIBTIFF" ] && [ $LIBTIFF -gt 0 ]; then
   rm -f tests/libtest$EXEC_END
-  $CXX $CFLAGS -I$includedir tests/tiff_test.cxx $LDFLAGS -L$libdir -ltiff -ljpeg -o tests/libtest 2>>$CONF_LOG
+  $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/tiff_test.cxx $LDFLAGS -L$libdir -ltiff -ljpeg -o tests/libtest 2>>$CONF_LOG
     if [ -f tests/libtest ]; then
       echo_="`tests/libtest`
                         detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
@@ -711,10 +713,10 @@ fi
 
 if [ -n "$GETTEXT" ] && [ $GETTEXT -gt 0 ]; then
   rm -f tests/libtest$EXEC_END
-    $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
+    $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/gettext_test.cxx $LDFLAGS -L$libdir -o tests/libtest 2>/dev/null
     if [ ! -f tests/libtest ]; then
-       echo $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -lintl -o tests/libtest >> $CONF_LOG
-       $CXX $CFLAGS -I$includedir tests/gettext_test.cxx $LDFLAGS -L$libdir -lintl -o tests/libtest 2>>$CONF_LOG
+       echo $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/gettext_test.cxx $LDFLAGS -L$libdir -lintl -o tests/libtest >> $CONF_LOG
+       $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/gettext_test.cxx $LDFLAGS -L$libdir -lintl -o tests/libtest 2>>$CONF_LOG
     fi
     if [ -f tests/libtest ]; then
       echo_="Gettext                 detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
@@ -735,9 +737,9 @@ if [ -n "$GETTEXT" ] && [ $GETTEXT -gt 0 ]; then
 fi
 
 if [ -n "$PO" ] && [ $PO -gt 0 ]; then
-  pos_dir="`ls po/*.po 2> /dev/null`"
+  pos_dir="`ls $ROOT_DIR/po/*.po 2> /dev/null`"
   LING="`echo $pos_dir`"
-  LINGUAS="`echo $pos_dir | sed 's/\.po//g ; s/po\///g'`"
+  LINGUAS="`echo $pos_dir | sed s%\.po%%g | sed s%$ROOT_DIR/%%g`"
   echo "LINGUAS = $LINGUAS" >> $CONF
   echo_="translations available: $LINGUAS"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
   echo "LING = $LING" >> $CONF
@@ -753,9 +755,9 @@ if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then
       echo "" >> "$i/makefile"
       echo "" >> "$i/makefile"
       if [ $OSUNAME = "BSD" ]; then
-        test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/#if/.if/g ; s/#end/.end/g ; s/#else/.else/g '  >> "$i/makefile"
+        test -f "$ROOT_DIR/$i/makefile".in && cat  "$ROOT_DIR/$i/makefile".in | sed 's/#if/.if/g ; s/#end/.end/g ; s/#else/.else/g '  >> "$i/makefile"
       else
-        test -f "$i/makefile".in && cat  "$i/makefile".in | sed 's/#if/if/g ; s/#elif/elif/g ; s/#else/else/g ; s/#end/end/g '  >> "$i/makefile"
+        test -f "$ROOT_DIR/$i/makefile".in && cat  "$ROOT_DIR/$i/makefile".in | sed 's/#if/if/g ; s/#elif/elif/g ; s/#else/else/g ; s/#end/end/g '  >> "$i/makefile"
       fi
       mv "$i/makefile" "$i/Makefile"
       if [ "$i" != "." ]; then
@@ -775,14 +777,14 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
         else
           DEBUG_="-Wall -g -DDEBUG --pedantic"
         fi
-        test -f "$i/makefile".in && echo "DEBUG = $DEBUG_"  >> "$i/makefile"
-        test -f "$i/makefile".in && echo "DEBUG_SWITCH = -v"  >> "$i/makefile"
+        test -f "$ROOT_DIR/$i/makefile".in && echo "DEBUG = $DEBUG_"  >> "$i/makefile"
+        test -f "$ROOT_DIR/$i/makefile".in && echo "DEBUG_SWITCH = -v"  >> "$i/makefile"
       fi
       if [ "$static" = "0" ]; then
-        test -f "$i/makefile".in && echo "STATIC = \$(RM)"  >> "$i/makefile"
+        test -f "$ROOT_DIR/$i/makefile".in && echo "STATIC = \$(RM)"  >> "$i/makefile"
       fi
       if [ "$verbose" -eq "0" ]; then
-        test -f "$i/makefile".in && echo ".SILENT:"  >> "$i/makefile"
+        test -f "$ROOT_DIR/$i/makefile".in && echo ".SILENT:"  >> "$i/makefile"
       fi
     done
   fi

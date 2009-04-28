@@ -28,31 +28,35 @@ endif
 
 .SILENT:
 
-all:	$(TARGETS)
+all:	colour_desktop $(TARGETS)
 	echo ... all done
 
-$(TARGET1):	$(TARGET1).cpp
+colour_desktop:
+	mkdir -p colour_desktop dummy_device image2pdf image_display xcmsevents
+	
+
+$(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	echo Compiling $@ ...
 	-$(CPP) -DTARGET=\"$(TARGET)\" $(CFLAGS) $(FLTK_CFLAGS) $(X11) \
 	$(LDFLAGS) $(OY_LDFLAGS) $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
 	$< -o $@
 	fltk-config --post $@
 
-$(TARGET2):	$(TARGET2).c
+$(TARGET2):	$(SRCDIR)$(TARGET2).c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
-	$(PKG_CONFIG_LIBS) -lXcolor $< -o $@
+	$(PKG_CONFIG_LIBS) -lXcolor -lXmu $< -o $@
 
-$(TARGET3):	colour_desktop/colour_desktop.c
+$(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -std=c99 -fPIC -shared $(LDFLAGS) $(OY_LDFLAGS) \
 	$(TARGET3_FLAGS) -lXcolor $< -o $@
 
-$(TARGET4):	$(TARGET4).c
+$(TARGET4):	$(SRCDIR)$(TARGET4).c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $< -o $@
 
-$(TARGET5):	dummy_device/oyranos_cmm_dDev.c
+$(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
 

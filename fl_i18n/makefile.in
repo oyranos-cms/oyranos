@@ -155,6 +155,12 @@ $(BINTARGET):	$(BASE) $(OBJECTS) $(LINGUAS_SRC) $(I18N_OBJECTS) $(LIBNAME)
 	$(LDLIBS_) $(LINK_LIB_PATH) $(LINK_SRC_PATH)
 	$(REZ)
 
+fl_i18n.o:	../$(src_dir)/fl_i18n.cxx
+	echo Compiling $< ...
+	$(CXX) $(CXXFLAGS_) -I../$(src_dir) -c $<
+fl_i18n_example.o:	../$(src_dir)/fl_i18n_example.cxx
+	echo Compiling $< ...
+	$(CXX) $(CXXFLAGS_) -I../$(src_dir) -c $<
 
 $(LIBNAME):	$(I18N_OBJECTS)
 	echo Verknuepfen $@ ...
@@ -265,15 +271,18 @@ targz:
 copy_files:
 	echo Copy all fl_i18n files ...
 	mkdir $(DESTDIR)
-	$(COPY) -R \
-	$(ALL_FILES) \
-	$(DESTDIR)
+	cd ../$(src_dir) && \
+	  $(COPY) -R \
+	  $(ALL_FILES) \
+	  $(DESTDIR)
 	mkdir $(DESTDIR)/po
-	$(COPY) $(POT_FILE) $(DESTDIR)/po
-	for ling in $(LINGUAS); do \
-	  test -f po/$${ling}.po \
-        && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
-	done;
+	cd ../$(src_dir) && \
+	  $(COPY) -R $(POT_FILE) $(DESTDIR)/po
+	cd ../$(src_dir) && \
+	  for ling in $(LINGUAS); do \
+	    test -f po/$${ling}.po \
+              && $(COPY) po/$${ling}.po $(DESTDIR)/po/; \
+	  done;
 
 
 dist: $(BASE) targz

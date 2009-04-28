@@ -6,7 +6,7 @@ TARGET  = oyranos-printing-default
 VERSION = 0.5
 
 prefix      = $(INSTDIR)
-srcdir		= .
+SRCDIR		= ../../$(src_dir)/
 
 PROFILES = \
 	webcoated_FOGRA28L_argl.icc \
@@ -18,6 +18,16 @@ PROFILES = \
 	SWOP_coated_3_TR003_argl.icc \
 	SWOP_coated_5_TR005_argl.icc \
 	GRACoL_coated_TR006_argl.icc
+SPROFILES = \
+	$(SRCDIR)webcoated_FOGRA28L_argl.icc \
+	$(SRCDIR)uncoated_FOGRA29L_argl.icc \
+	$(SRCDIR)uncoatedyellowish_FOGRA30L_argl.icc \
+	$(SRCDIR)coated_FOGRA39L_argl.icc \
+	$(SRCDIR)SC_paper_FOGRA40L_argl.icc \
+	$(SRCDIR)SNAP_newsprint_TR002_argl.icc \
+	$(SRCDIR)SWOP_coated_3_TR003_argl.icc \
+	$(SRCDIR)SWOP_coated_5_TR005_argl.icc \
+	$(SRCDIR)GRACoL_coated_TR006_argl.icc
 
 TARGETS = \
 	FOGRA28L.ti3 \
@@ -45,52 +55,54 @@ ALL_FILES = \
 
 #.SILENT:
 
-all:	$(PROFILES)
+all:	$(SPROFILES)
 	echo done
 
-webcoated_FOGRA28L_argl.icc:
+$(SRCDIR)webcoated_FOGRA28L_argl.icc:
 	-name=webcoated; targ=FOGRA28L; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
 
-uncoated_FOGRA29L_argl.icc:
+$(SRCDIR)uncoated_FOGRA29L_argl.icc:
 	-name=uncoated; targ=FOGRA29L; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
 
-uncoatedyellowish_FOGRA30L_argl.icc:
+$(SRCDIR)uncoatedyellowish_FOGRA30L_argl.icc:
 	-name=uncoatedyellowish; targ=FOGRA30L; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 1. 1. .48 -l340"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .3 1. 1. .48 -l340"
 
-coated_FOGRA39L_argl.icc:
+$(SRCDIR)coated_FOGRA39L_argl.icc:
 	-name=coated; targ=FOGRA39L; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
 
-SC_paper_FOGRA40L_argl.icc:
+$(SRCDIR)SC_paper_FOGRA40L_argl.icc:
 	-name="SC paper"; targ=FOGRA40L; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 1. 1. .48 -l340"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .3 1. 1. .48 -l340"
 
-SNAP_newsprint_TR002_argl.icc:
+$(SRCDIR)SNAP_newsprint_TR002_argl.icc:
 	-name="SNAP newsprint"; targ=TR002; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .4 1. 1. .1 -l320"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .4 1. 1. .1 -l320"
 
-SWOP_coated_3_TR003_argl.icc:
+$(SRCDIR)SWOP_coated_3_TR003_argl.icc:
 	-name="SWOP coated 3"; targ=TR003; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .4 -l300"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .4 -l300"
 
-SWOP_coated_5_TR005_argl.icc:
+$(SRCDIR)SWOP_coated_5_TR005_argl.icc:
 	-name="SWOP coated 5"; targ=TR005; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
 
-GRACoL_coated_TR006_argl.icc:
+$(SRCDIR)GRACoL_coated_TR006_argl.icc:
 	-name="GRACoL coated"; targ=TR006; \
-	./build_print_profiles.sh $$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
+	$(SRCDIR)build_print_profiles.sh $(SRCDIR)$$targ.ti3 "$$name" $$targ argl "-kp 0 .3 .94 .94 .48 -l300"
 
-install:	$(PROFILES)
+install:	$(SPROFILES)
 	echo Installing printing profiles in $(DESTDIR)$(syscolordir)/$(iccdirname) ...
 	-make uninstall
 	mkdir -p $(DESTDIR)$(syscolordir)/$(iccdirname)
-	-$(INSTALL) -m 644 $(PROFILES) $(DESTDIR)$(syscolordir)/$(iccdirname)
+	-cd $(SRCDIR) && \
+	  $(INSTALL) -m 644 $(PROFILES) $(DESTDIR)$(syscolordir)/$(iccdirname)
 	mkdir -p $(DESTDIR)$(syscolordir)/$(targetdirname)
-	$(INSTALL) -m 644 $(TARGETS) $(DESTDIR)$(syscolordir)/$(targetdirname)
+	cd $(SRCDIR) && \
+	  $(INSTALL) -m 644 $(TARGETS) $(DESTDIR)$(syscolordir)/$(targetdirname)
 	echo ... printing profile Installation finished
 
 uninstall:
@@ -119,7 +131,8 @@ targz:
 	rm -R $(TARGET)-$(VERSION) 
 
 copy_files:
-	test -d $(DESTDIR) && $(COPY) \
-	$(ALL_FILES) \
-	$(DESTDIR) || echo "no directory found to copy to:\"$(DESTDIR)\""
+	cd $(SRCDIR) && \
+	  test -d $(DESTDIR) && $(COPY) \
+	  $(ALL_FILES) \
+	  $(DESTDIR) || echo "no directory found to copy to:\"$(DESTDIR)\""
 

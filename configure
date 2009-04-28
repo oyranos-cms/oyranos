@@ -6,6 +6,9 @@ TARGET_NAME=Oyranos
 ERROR=0
 WARNING=0
 
+ROOT_DIR="$0"
+ROOT_DIR=`echo $ROOT_DIR | sed 's%/configure%%1'`
+
 CONF_H=config.h
 CONF=makefile
 CONF_SH=$TARGET-config
@@ -18,7 +21,7 @@ SPECICC=$TARGET-icc.spec
 PKGC=$TARGET.pc
 VERS_H="$TARGET"_version.h
 zeile="$0 $@"
-if [ -f default_profiles/printing/makefile.in ]; then
+if [ -f $ROOT_DIR/default_profiles/printing/makefile.in ]; then
   PRINT_CONF=default_profiles/printing/makefile
   BASE_CONF=default_profiles/base/makefile
   PROFILE_DIR="default_profiles/printing default_profiles/base"
@@ -28,6 +31,17 @@ else
 fi
 MAKEFILE_DIR=". fl_i18n libXNVCtrl $PROFILE_DIR"; export MAKEFILE_DIR
 
+if [ "$ROOT_DIR" != "." ]; then
+  mkdir -p fl_i18n/
+  mkdir -p libXNVCtrl/
+  mkdir -p FL/
+  mkdir -p examples/
+  cp -v $ROOT_DIR/examples/makefile examples/
+  mkdir -p default_profiles/base
+  mkdir -p default_profiles/printing
+fi
+
+export ROOT_DIR
 export CONF_H CONF CONF_SH CONF_LOG CONF_I18N CONF_TEMP_SH CONF_NV
 
 test -f error.tmp && rm error.tmp
@@ -43,7 +57,7 @@ OY_START_MONTH=11
 OY_START_YEAR=2004
 OY_DEVEL_MONTH=04
 OY_DEVEL_YEAR=2009
-OY_GIT_MASTER="`cat .git/refs/heads/master`"
+OY_GIT_MASTER="`cat $ROOT_DIR/.git/refs/heads/master`"
 time="`date +%y%m%d.%H%M%S`"
 DATE="$OY_START_MONTH $OY_START_YEAR - $OY_DEVEL_MONTH $OY_DEVEL_YEAR"
 VERSION=$VERSION_A.$VERSION_B.$VERSION_C
@@ -325,8 +339,7 @@ test -n "$RPMECHO" && $RPMECHO "" > $SPEC
 test -n "$RPMECHO" && $RPMECHO "" > $SPECICC
 
 
-src_dir="."
-srcdir="`pwd`"
+build_dir="`pwd`"
 
 #prefix
 if [ -z "$prefix" ]; then
@@ -384,7 +397,7 @@ if [ -n "$LDFLAGS_saved" ]; then
 fi
 
 if [ -n "$ECHO" ]; then
-  test -f mkdepend && rm mkdepend config.h
+  test -f mkdepend && rm mkdepend config.h cobjects
 fi
 
 
@@ -485,7 +498,7 @@ if [ -z "$CC" ]; then
 else
   COMPILER=$CC
 fi
-$COMPILER $CFLAGS tests/intptr_test.c -o tests/intptr_test 2>/dev/null
+$COMPILER $CFLAGS $ROOT_DIR/tests/intptr_test.c -o tests/intptr_test 2>/dev/null
 if [ -f tests/intptr_test ]; then
   tests/intptr_test
   INTPTR_SIZE=$?
@@ -502,7 +515,7 @@ if [ -f tests/intptr_test ]; then
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   rm tests/intptr_test
 else
-  $COMPILER $CFLAGS tests/intptr_test.c -o tests/intptr_test
+  $COMPILER $CFLAGS $ROOT_DIR/tests/intptr_test.c -o tests/intptr_test
 fi
 
 MACH_=`uname -m`
@@ -632,7 +645,7 @@ OYEXPORT="#define OYEXPORT"
 
 # set some compiler and linker options
 
-if [ `$CC -MM oyranos.h > test_tmp.txt; cat test_tmp.txt | grep oyranos.o | wc -l` -gt 0 ]; then
+if [ `$CC -MM $ROOT_DIR/oyranos.h > test_tmp.txt; cat test_tmp.txt | grep oyranos.o | wc -l` -gt 0 ]; then
   MAKEDEPEND="$GCC_MM"
 else
   MAKEDEPEND="$echo #"
@@ -678,7 +691,7 @@ else
     test -n "$ECHO" && $ECHO "LINK_FLAGS_STATIC =" >> $CONF
     if [ -n "$rpath" ]; then 
       test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
-      test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
+      test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(build_dir)" >> $CONF
     fi
     CFLAGS="$CFLAGS -fPIC -DPIC"
     CXXFLAGS="$CXXFLAGS -fPIC -DPIC"
@@ -690,7 +703,7 @@ else
       LDFLAGS="$LDFLAGS"
       if [ -n "$rpath" ]; then 
         test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
-        test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(srcdir)" >> $CONF
+        test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(build_dir)" >> $CONF
       fi
       INSTALL="install -p $DEBUG_SWITCH"
     fi
@@ -709,6 +722,9 @@ else
 fi
 
 for i in $MAKEFILE_DIR; do
+  mkdir -p $i
+  test -n "$ECHO" && $ECHO "src_dir = $ROOT_DIR/$i" >> "$i/makefile"
+  test -n "$ECHO" && $ECHO "" >> "$i/makefile"
   test -n "$ECHO" && $ECHO "COPY = $COPY" >> "$i/makefile"
   test -n "$ECHO" && $ECHO "RM = $RM" >> "$i/makefile"
   test -n "$ECHO" && $ECHO "$osuname" >> "$i/makefile"
@@ -779,7 +795,7 @@ fi
   DEBUG=1; export DEBUG
   PO=1; export PO
   GETTEXT=2; export GETTEXT
-  ./configure_tests.sh
+  $ROOT_DIR/configure_tests.sh
   LIBS=0; export LIBS
   DSO_LINKING=0; export DSO_LINKING
   ELEKTRA=0; export ELEKTRA
@@ -845,7 +861,7 @@ test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "oyranos_add=\"$oyranos_add\"" >> $CONF_SH
 test -n "$INFOECHO" && $INFOECHO ""
-test -n "$ECHO" && cat  "$CONF_SH.in" >> $CONF_SH
+test -n "$ECHO" && cat  "$ROOT_DIR/$CONF_SH.in" >> $CONF_SH
 chmod 0755 "$CONF_SH"
 if [ -n "$ECHO" ]; then
   echo_="created   $CONF_SH"
@@ -887,10 +903,10 @@ test -n "$RPMECHO" && $RPMECHO "%define targetdirname   $targetdirname" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define pixmapdir       $pixmapdir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define desktopdir      $desktopdir" >> $SPEC
 test -n "$RPMECHO" && cat  "$SPEC" >> $SPECICC
-test -n "$RPMECHO" && cat  "$SPECICC.in" >> $SPECICC
-test -n "$RPMECHO" && cat  "$SPEC.in" >> $SPEC
-echo_="generated $SPEC from $SPEC.in
-generated $SPECICC from $SPECICC.in"
+test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPECICC.in" >> $SPECICC
+test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPEC.in" >> $SPEC
+echo_="generated $SPEC from $ROOT_DIR/$SPEC.in
+generated $SPECICC from $ROOT_DIR/$SPECICC.in"
 test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 
 test -n "$ECHO" && $ECHO "Version: $VERSION" >> $PKGC
@@ -912,9 +928,9 @@ test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $PKGC
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $PKGC
-test -n "$ECHO" && cat  "$PKGC.in" >> $PKGC
+test -n "$ECHO" && cat  "$ROOT_DIR/$PKGC.in" >> $PKGC
 if [ -n "$ECHO" ]; then
-  test -n "$INFOECHO" && $INFOECHO generated $PKGC from "$PKGC.in"
+  test -n "$INFOECHO" && $INFOECHO generated $PKGC from "$ROOT_DIR/$PKGC.in"
 fi
 
 if [ -n "$ECHO" ]; then
@@ -964,8 +980,8 @@ if [ -n "$ECHO" ]; then
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
-test -n "$ECHO" && $ECHO "src_dir = $src_dir" >> $CONF
-test -n "$ECHO" && $ECHO "srcdir = $srcdir" >> $CONF
+test -n "$ECHO" && $ECHO "src_dir = $ROOT_DIR" >> $CONF
+test -n "$ECHO" && $ECHO "build_dir = $build_dir" >> $CONF
 test -n "$ECHO" && $ECHO "prefix=$prefix" >> $CONF
 test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $CONF
 test -n "$ECHO" && $ECHO "bindir=$bindir" >> $CONF
@@ -1008,8 +1024,8 @@ test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_TARGETDIRNAME  \"$targetdirname\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$srcdir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$srcdir/po\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$build_dir\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$build_dir/po\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "" >> $CONF_H
 test -n "$ECHO" && $ECHO $OYAPI >> $VERS_H
 test -n "$ECHO" && $ECHO $OYEXPORT >> $VERS_H
@@ -1053,7 +1069,7 @@ test -n "$INFOECHO" && $INFOECHO ""
 # prepare makefile from MAKEFILE_DIR
 if [ -n "$ECHO" ]; then
   PREPARE_MAKEFILES=1; export PREPARE_MAKEFILES
-  ./configure_tests.sh
+  $ROOT_DIR/configure_tests.sh
   PREPARE_MAKEFILES=0; export PREPARE_MAKEFILES
 fi
 
@@ -1090,7 +1106,8 @@ fi
 
 if [ -z "$quick" ]; then
   test -n "$ECHO" && $ECHO "" > mkdepend
-  make depend
+  test -f cobjects && rm cobjects
+  make cobjects
 fi
 
 echo_="char * oy_config_log_=\" \\"
