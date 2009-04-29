@@ -656,8 +656,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 oyDATATYPE_e oyx1_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
                                          oyHALF, oyFLOAT, oyDOUBLE, 0};
 
-oyConnector_s oyx1_Display_plug = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImage_s oyx1_Display_plug = {
+  oyOBJECT_CONNECTOR_IMAGE_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Plug"},
   "//image/splitter", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
@@ -681,12 +681,12 @@ oyConnector_s oyx1_Display_plug = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s *oyx1_Display_plugs[2] = {&oyx1_Display_plug,0};
+oyConnectorImage_s *oyx1_Display_plugs[2] = {&oyx1_Display_plug,0};
 
-oyConnector_s oyx1_Display_socket = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImage_s oyx1_Display_socket = {
+  oyOBJECT_CONNECTOR_IMAGE_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Plug"},
-  oyCONNECTOR_IMAGE, /* connector_type */
+  "//image/image", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -708,7 +708,7 @@ oyConnector_s oyx1_Display_socket = {
   2, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s *oyx1_Display_sockets[2] = {&oyx1_Display_socket,0};
+oyConnectorImage_s *oyx1_Display_sockets[2] = {&oyx1_Display_socket,0};
 
 
 #define OY_IMAGE_DISPLAY_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH "image/display"
@@ -741,10 +741,10 @@ oyCMMapi7_s   oydi_api7_image_display = {
   oydiFilterPlug_ImageDisplayRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
 
-  oyx1_Display_plugs,   /* plugs */
+  (oyConnector_s**) oyx1_Display_plugs,   /* plugs */
   1,   /* plugs_n */
   0,   /* plugs_last_add */
-  oyx1_Display_sockets,   /* sockets */
+  (oyConnector_s**) oyx1_Display_sockets,   /* sockets */
   1,   /* sockets_n */
   0    /* sockets_last_add */
 };

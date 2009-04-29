@@ -302,10 +302,10 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
 oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
                                              oyFLOAT, oyDOUBLE, 0};
 
-oyConnector_s oyra_imageOutputPPM_connector_out = {
+oyConnectorImage_s oyra_imageOutputPPM_connector_out = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Plug"},
-  oyCONNECTOR_IMAGE, /* connector_type */
+  "//image/image", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_ppm_data_types,
   4, /* data_types_n; elements in data_types array */
@@ -327,13 +327,13 @@ oyConnector_s oyra_imageOutputPPM_connector_out = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s * oyra_imageOutputPPM_connectors_socket[2] = 
+oyConnectorImage_s * oyra_imageOutputPPM_connectors_socket[2] = 
              { &oyra_imageOutputPPM_connector_out, 0 };
 
-oyConnector_s oyra_imageOutputPPM_connector_in = {
+oyConnectorImage_s oyra_imageOutputPPM_connector_in = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Plug"},
-  oyCONNECTOR_IMAGE, /* connector_type */
+  "//image/image", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_ppm_data_types,
   4, /* data_types_n; elements in data_types array */
@@ -355,7 +355,7 @@ oyConnector_s oyra_imageOutputPPM_connector_in = {
   2, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s * oyra_imageOutputPPM_connectors_plug[2] = 
+oyConnectorImage_s * oyra_imageOutputPPM_connectors_plug[2] = 
              { &oyra_imageOutputPPM_connector_in, 0 };
 
 /** @instance oyra_api4
@@ -432,10 +432,10 @@ oyCMMapi7_s   oyra_api7_image_write_ppm = {
   oyraFilterPlug_ImageOutputPPMWrite, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
 
-  oyra_imageOutputPPM_connectors_plug,   /* plugs */
+  (oyConnector_s**) oyra_imageOutputPPM_connectors_plug,   /* plugs */
   1,   /* plugs_n */
   0,   /* plugs_last_add */
-  oyra_imageOutputPPM_connectors_socket,   /* sockets */
+  (oyConnector_s**) oyra_imageOutputPPM_connectors_socket,   /* sockets */
   1,   /* sockets_n */
   0    /* sockets_last_add */
 };
@@ -968,10 +968,10 @@ int      oyraFilterPlug_ImageInputPPMRun (
 }
 
 
-oyConnector_s oyra_imageInputPPM_connector = {
+oyConnectorImage_s oyra_imageInputPPM_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Socket"},
-  oyCONNECTOR_IMAGE, /* connector_type */
+  "//image/image", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_ppm_data_types,
   4, /* data_types_n; elements in data_types array */
@@ -993,7 +993,7 @@ oyConnector_s oyra_imageInputPPM_connector = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s * oyra_imageInputPPM_connectors[2] = 
+oyConnectorImage_s * oyra_imageInputPPM_connectors[2] = 
              { &oyra_imageInputPPM_connector, 0 };
 
 
@@ -1074,7 +1074,7 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
   0,   /* plugs */
   0,   /* plugs_n */
   0,   /* plugs_last_add */
-  oyra_imageInputPPM_connectors,   /* sockets */
+  (oyConnector_s**) oyra_imageInputPPM_connectors,   /* sockets */
   1,   /* sockets_n */
   0    /* sockets_last_add */
 };

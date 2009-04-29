@@ -1694,58 +1694,6 @@ oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
 oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
 
-/** @struct  oyConnectorImage_s
- *  @brief   a image filter connection description structure
- *  @ingroup objects_conversion
- *  @extends oyConnector_s
- *
- *  This structure holds informations about the connection capabilities.
- *  It holds common structure members of oyFilterPlug_s and oyFilterSocket_s.
- *
- *  To signal a value is not initialised or does not apply, set the according
- *  integer value to -1.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/04/20 (Oyranos: 0.1.10)
- *  @date    2009/04/20
- */
-struct oyConnectorImage_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_IMAGE_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  /** unique strings, nick and name will be used as the connector's type ID,
-   *  e.g."Img", "Image", "Image Socket"*/
-  oyName_s             name;           
-
-  char               * connector_type; /**< like registration */
-  /** make requests and receive data, by part of oyFilterPlug_s */
-  int                  is_plug;
-  oyDATATYPE_e       * data_types;     /**< supported float's and int's */
-  int                  data_types_n;   /**< elements in data_types array */
-  int                  max_colour_offset;
-  int                  min_channels_count;
-  int                  max_channels_count;
-  int                  min_colour_count;
-  int                  max_colour_count;
-  int                  can_planar;     /**< can read separated channels */
-  int                  can_interwoven; /**< can read continuous channels */
-  int                  can_swap;       /**< can swap colour channels (BGR)*/
-  int                  can_swap_bytes; /**< non host byte order */
-  int                  can_revert;     /**< revert 1 -> 0 and 0 -> 1 */
-  int                  can_premultiplied_alpha;
-  int                  can_nonpremultiplied_alpha;
-  int                  can_subpixel;   /**< understand subpixel order */
-  /** describe which channel types the connector requires */
-  oyCHANNELTYPE_e    * channel_types;
-  int                  channel_types_n;/**< count in channel_types */
-  int                  id;             /**< relative to oyFilterCore_s, e.g. 1*/
-  /**< connector is mandatory or optional, important for backends */
-  int                  is_mandatory;
-};
-
-
 /** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html 
  *  @ingroup objects_conversion
  */
@@ -1789,32 +1737,35 @@ typedef struct oyFilterSocket_s oyFilterSocket_s;
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
- *  @date    2008/00/00
+ *  @date    2009/04/28
  */
 typedef enum {
-  /** a data manipulator. e.g. a normal filter */
+  /** a data manipulator. e.g. a normal filter - "//image/manipulator" */
   oyCONNECTOR_IMAGE_MANIPULATOR,
-  /** a data generator, e.g. checkerboard, gradient */
+  /** a data generator, e.g. checkerboard, gradient "//image/generator" */
   oyCONNECTOR_IMAGE_GENERATOR,
-  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE */
+  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//image/image" */
   oyCONNECTOR_IMAGE,
-  /** observer, a endpoint, only input, e.g. text log, thumbnail viewer */
+  /** observer, a endpoint, only input, e.g. text log, thumbnail viewer 
+   *  "//image/observer" */
   oyCONNECTOR_IMAGE_OBSERVER,
-  /** a routing element, without data altering */
+  /** a routing element, without data altering "//image/splitter.rectangle" */
   oyCONNECTOR_IMAGE_SPLITTER,
-  /** combines or splits image data, e.g. blending */
+  /** combines or splits image data, e.g. blending "//image/blender.rectangle"*/
   oyCONNECTOR_IMAGE_COMPOSITOR,
 
-  /** converts pixel layout to other formats */
+  /** converts pixel layout to other formats "//image/pixel.convertor" */
   oyCONNECTOR_CONVERTOR_PIXELDATA,
-  /** converts pixel layout to other formats, with precission loss, e.g. float -> uint8_t, only relevant for output connectors */
+  /** converts pixel layout to other formats, with precission loss, e.g. 
+   *  float -> uint8_t, only relevant for output connectors 
+   *  "//image/pixel.convertor.lossy" */
   oyCONNECTOR_CONVERTOR_PIXELDATA_LOSSY,
-  /** combines gray channels, e.g. from colour */
+  /** combines gray channels, e.g. from colour "//image/combiner.channels" */
   oyCONNECTOR_COMPOSITOR_CHANNEL,
-  /** provides gray scale views of channels */
+  /** provides gray scale views of channels "//image/splitter.channels" */
   oyCONNECTOR_SPLITTER_CHANNEL,
 
-  /** provides values or text, only output */
+  /** provides values or text, only output "///analysis" */
   oyCONNECTOR_ANALYSIS
 } oyCONNECTOR_e;
 
@@ -2327,7 +2278,7 @@ OYAPI int  OYEXPORT
                oyFilterNode_ConnectorMatch (
                                        oyFilterNode_s    * node_first,
                                        int                 pos_first,
-                                       oyConnector_s     * connector_second );
+                                       oyFilterPlug_s    * plug );
 OYAPI int  OYEXPORT
                oyFilterNode_GetConnectorPos (
                                        oyFilterNode_s    * node,

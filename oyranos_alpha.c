@@ -15661,19 +15661,6 @@ OYAPI oyConnector_s * OYEXPORT
   s->name.type = oyOBJECT_NAME_S;
 
   s->is_plug = -1;
-  s->max_colour_offset = -1;
-  s->min_channels_count = -1;
-  s->max_channels_count = -1;
-  s->min_colour_count = -1;
-  s->max_colour_count = -1;
-  s->can_planar = -1;
-  s->can_interwoven = -1;
-  s->can_swap = -1;
-  s->can_swap_bytes = -1;
-  s->can_revert = -1;
-  s->can_premultiplied_alpha = -1;
-  s->can_nonpremultiplied_alpha = -1;
-  s->can_subpixel = -1;
 
   return s;
 }
@@ -15714,40 +15701,6 @@ oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
 
     s->connector_type = oyStringCopy_( obj->connector_type, allocateFunc_ );
     s->is_plug = obj->is_plug;
-    if(obj->data_types_n)
-    {
-      s->data_types = allocateFunc_( obj->data_types_n * sizeof(oyDATATYPE_e) );
-      error = !s->data_types;
-      error = !memcpy( s->data_types, obj->data_types,
-                       obj->data_types_n * sizeof(oyDATATYPE_e) );
-      if(error <= 0)
-        s->data_types_n = obj->data_types_n;
-    }
-    s->max_colour_offset = obj->max_colour_offset;
-    s->min_channels_count = obj->min_channels_count;
-    s->max_channels_count = obj->max_channels_count;
-    s->min_colour_count = obj->min_colour_count;
-    s->max_colour_count = obj->max_colour_count;
-    s->can_planar = obj->can_planar;
-    s->can_interwoven = obj->can_interwoven;
-    s->can_swap = obj->can_swap;
-    s->can_swap_bytes = obj->can_swap_bytes;
-    s->can_revert = obj->can_revert;
-    s->can_premultiplied_alpha = obj->can_premultiplied_alpha;
-    s->can_nonpremultiplied_alpha = obj->can_nonpremultiplied_alpha;
-    s->can_subpixel = obj->can_subpixel;
-    if(obj->channel_types_n)
-    {
-      int n = obj->channel_types_n;
-
-      s->channel_types = allocateFunc_( n * sizeof(oyCHANNELTYPE_e) );
-      error = !s->channel_types;
-      error = !memcpy( s->channel_types, obj->channel_types,
-                       n * sizeof(oyCHANNELTYPE_e) );
-      if(error <= 0)
-        s->channel_types_n = n;
-    }
-    s->is_mandatory = obj->is_mandatory;
   }
 
   if(error)
@@ -15821,16 +15774,10 @@ OYAPI int  OYEXPORT
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
-    if(s->name.nick) deallocateFunc( s->name.nick );
-    if(s->name.name) deallocateFunc( s->name.name );
-    if(s->name.description) deallocateFunc( s->name.description );
+    oyName_releaseMembers( &s->name, deallocateFunc );
 
-    if(s->data_types)
-      deallocateFunc( s->data_types ); s->data_types = 0;
-    s->data_types_n = 0;
-
-    if(s->channel_types)
-      deallocateFunc( s->channel_types ); s->channel_types = 0;
+    if(s->connector_type)
+      deallocateFunc( s->connector_type ); s->connector_type = 0;
 
     oyObject_Release( &s->oy_ );
 
@@ -17899,7 +17846,6 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
 {
   oyFilterNode_s * s = input;
   int error = !s;
-  oyConnector_s  * out_plug_connector = 0;
   oyFilterPlug_s * out_plug = 0;
   oyFilterSocket_s * output_socket = 0,
                    * in_socket = 0;
@@ -17959,9 +17905,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
 
       if(error <= 0)
       {
-        out_plug_connector = out_plug->pattern;
-
-        if(oyFilterNode_ConnectorMatch( input, pos, out_plug_connector ))
+        if(oyFilterNode_ConnectorMatch( input, pos, out_plug ))
           output_socket = oyFilterNode_GetSocket( output, 0 );
         else
         {
@@ -18066,7 +18010,7 @@ OYAPI oyConnector_s * OYEXPORT
  *
  *  @param         node_first          first node
  *  @param         pos_first           position of connector from first node
- *  @param         connector_second    second connector
+ *  @param         pug                 second connector
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
@@ -18076,94 +18020,31 @@ OYAPI int  OYEXPORT
                  oyFilterNode_ConnectorMatch (
                                        oyFilterNode_s    * node_first,
                                        int                 pos_first,
-                                       oyConnector_s     * connector_second )
+                                       oyFilterPlug_s    * plug )
 {
   int match = 0;
-  oyConnector_s * a = 0,  * b = connector_second;
-  oyImage_s * image = 0;
-  int colours_n = 0, n, i, j;
-  int coff = 0;
-  oyDATATYPE_e data_type = 0;
+  oyConnector_s * a = 0,  * b = plug->pattern;
 
   if(node_first && node_first->type_ == oyOBJECT_FILTER_NODE_S &&
      node_first->core)
     a = oyFilterNode_ShowConnector( node_first, pos_first, 0 );
 
-  if(a && b && b->type_ == oyOBJECT_CONNECTOR_S)
+  if(a && b)
   {
     oyFilterSocket_s * sock_first = oyFilterNode_GetSocket( node_first, pos_first );
     match = 1;
-    image = oyImage_Copy( (oyImage_s*)sock_first->data, 0 );
 
     if(!b->is_plug)
       match = 0;
 
-    /** For a zero set pixel layout we skip most tests and assume it will be
-        checked later. */
-    if(image && image->layout_[oyLAYOUT] && match)
-    {
-      coff = oyToColourOffset_m( image->layout_[oyLAYOUT] );
+    if(match)
+      match = oyFilterRegistrationMatch( a->connector_type, b->connector_type,
+                                         0 );
 
-      /* channel counts */
-      colours_n = oyProfile_GetChannelsCount( image->profile_ );
-      if(image->layout_[oyCHANS] < b->min_channels_count ||
-         image->layout_[oyCHANS] > b->max_channels_count ||
-         colours_n < b->min_colour_count ||
-         colours_n > b->max_colour_count)
-        match = 0;
-
-      /* data types */
-      if(match)
-      {
-        data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
-        n = b->data_types_n;
-        match = 0;
-        for(i = 0; i < n; ++i)
-          if(b->data_types[i] == data_type)
-            match = 1;
-      }
-
-      /* planar and interwoven capabilities */
-      if(b->max_colour_offset < image->layout_[oyCOFF] ||
-         (!b->can_planar && oyToPlanar_m(image->layout_[oyCOFF])) ||
-         (!b->can_interwoven && !oyToPlanar_m(image->layout_[oyCOFF])))
-        match = 0;
-
-      /* swap and byteswapping capabilities */
-      if((!b->can_swap && oyToSwapColourChannels_m(image->layout_[oyCOFF])) ||
-         (!b->can_swap_bytes && oyToByteswap_m(image->layout_[oyCOFF])))
-        match = 0;
-
-      /* revert or chockolat and vanilla */
-      if((!b->can_revert && oyToFlavor_m(image->layout_[oyCOFF])))
-        match = 0;
-
-      /* channel types */
-      if(match && b->channel_types)
-      {
-        n = image->layout_[oyCHANS];
-        for(i = 0; i < b->channel_types_n; ++i)
-        {
-          match = 0;
-          for(j = 0; j < n; ++j)
-            if(b->channel_types[i] == image->channel_layout[j] &&
-               !(!b->can_nonpremultiplied_alpha &&
-                 image->channel_layout[j] == oyCHANNELTYPE_COLOUR_LIGHTNESS) &&
-               !(!b->can_premultiplied_alpha &&
-                 image->channel_layout[j] == oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED))
-              match = 1;
-          if(!match)
-            break;
-        }
-      }
-
-      /* subpixels */
-      if(image->sub_positioning && !b->can_subpixel)
-        match = 0;
-    }
+    if(node_first->api7_->api5_->filterSocket_MatchPlug)
+      node_first->api7_->api5_->filterSocket_MatchPlug( sock_first, plug );
   }
 
-  oyImage_Release( &image );
   oyConnector_Release( &a );
 
   return match;
@@ -21392,7 +21273,6 @@ int                oyConversion_LinFilterAdd (
   int error = !s;
   oyFilterNode_s * temp = 0,
                  * last = 0;
-  oyConnector_s  * node_plug_connector = 0;
   oyFilterPlug_s * node_plug = 0;
   oyFilterSocket_s * socket_last = 0,
                  * node_socket = 0;
@@ -21457,9 +21337,7 @@ int                oyConversion_LinFilterAdd (
 
         if(error <= 0)
         {
-          node_plug_connector = node_plug->pattern;
-
-          if(oyFilterNode_ConnectorMatch( last, 0, node_plug_connector ))
+          if(oyFilterNode_ConnectorMatch( last, 0, node_plug ))
           {
             socket_last = oyFilterNode_GetSocket( last, 0 );
           } else
