@@ -122,7 +122,7 @@ class Fl_Oy_Box : public Fl_Box
       /* add X11 window and display identifiers to output image */
       oyOption_s * o = 0;
       Window  w = fl_xid(win);
-      int count = oyOptions_CountType( image_tags, "//image/display/window_id",
+      int count = oyOptions_CountType( image_tags, "//" OY_TYPE_STD "/display/window_id",
                                        oyOBJECT_BLOB_S );
       if(!count && w)
       {
@@ -130,10 +130,10 @@ class Fl_Oy_Box : public Fl_Box
         if(win_id)
         {
           win_id->ptr = (oyPointer)w;
-          o = oyOption_New( "//image/display/window_id", 0 );
+          o = oyOption_New( "//" OY_TYPE_STD "/display/window_id", 0 );
           oyOption_StructMoveIn( o, (oyStruct_s**)&win_id );
 
-          oyOptions_SetFromText( &image_tags, "//image/display/display_name",
+          oyOptions_SetFromText( &image_tags, "//" OY_TYPE_STD "/display/display_name",
                                  DisplayString(fl_display), OY_CREATE_NEW );
 
         } else
@@ -253,7 +253,7 @@ main(int argc, char** argv)
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
   /* create a filter node */
-  in = oyFilterNode_NewWith( "//image/input_ppm", 0,0, 0 );
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/input_ppm", 0,0, 0 );
   /* set the above filter node as the input */
   oyConversion_Set( conversion, in, 0 );
 
@@ -272,7 +272,7 @@ main(int argc, char** argv)
   if(in)
   options = oyFilterNode_OptionsGet( in, OY_FILTER_GET_DEFAULT );
   /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//image/input_ppm/filename",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/input_ppm/filename",
                                  file_name, OY_CREATE_NEW );
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
@@ -298,49 +298,49 @@ main(int argc, char** argv)
 
 #if 0
   // write to ppm image
-  out = oyFilterNode_NewWith( "//image/write_ppm", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0,0, 0 );
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error <= 0)
   options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
-  error = oyOptions_SetFromText( &options, "//image/write_ppm/filename",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/write_ppm/filename",
                                  "test_dbg_in.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
   oyFilterNode_DataSet( out, (oyStruct_s*)image_in, 0, 0 );
   /*r = oyRectangle_NewWith(0.25,0,0,0,0);
-  o = oyOption_New( "//image/input/offset", 0 );
+  o = oyOption_New( "//" OY_TYPE_STD "/input/offset", 0 );
   error = oyOption_StructMoveIn( o, (oyStruct_s**)&r );
   error = oyOptions_MoveIn( options, &o, -1 );*/
   in = out;
 #endif
 
   /* create a new filter node */
-  out = oyFilterNode_NewWith( "//colour/icc", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0,0, 0 );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//colour/icc" );
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
   /* set the image to the first/only socket of the filter node */
   oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
   /* swap in and out */
   in = out;
 
   /* create a node for preparing the image for displaying */
-  out = oyFilterNode_NewWith( "//image/display", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0,0, 0 );
   /* append the node */
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//image/display" );
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
   in = out;
 
 
 
 #if 0
   // write to ppm image
-  out = oyFilterNode_NewWith( "//image/write_ppm", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0,0, 0 );
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error <= 0)
   options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
-  error = oyOptions_SetFromText( &options, "//image/write_ppm/filename",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/write_ppm/filename",
                                  "test_dbg_out.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
   oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
@@ -348,7 +348,7 @@ main(int argc, char** argv)
 #endif
 
   /* add a closing node */
-  out = oyFilterNode_NewWith( "//image/output", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
   /* set the output node of the conversion */
