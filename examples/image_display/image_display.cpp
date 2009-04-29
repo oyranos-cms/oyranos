@@ -113,16 +113,14 @@ class Fl_Oy_Box : public Fl_Box
       oyDATATYPE_e data_type = oyUINT8;
       oyPixel_t pt = 0;
 
-      if(!image)
-        return;
-
       image_tags = oyImage_TagsGet( image );
 
 #if defined(HAVE_X11)
       /* add X11 window and display identifiers to output image */
       oyOption_s * o = 0;
       Window  w = fl_xid(win);
-      int count = oyOptions_CountType( image_tags, "//" OY_TYPE_STD "/display/window_id",
+      int count = oyOptions_CountType( image_tags,
+                                       "//" OY_TYPE_STD "/display/window_id",
                                        oyOBJECT_BLOB_S );
       if(!count && w)
       {
@@ -133,7 +131,8 @@ class Fl_Oy_Box : public Fl_Box
           o = oyOption_New( "//" OY_TYPE_STD "/display/window_id", 0 );
           oyOption_StructMoveIn( o, (oyStruct_s**)&win_id );
 
-          oyOptions_SetFromText( &image_tags, "//" OY_TYPE_STD "/display/display_name",
+          oyOptions_SetFromText( &image_tags,
+                                 "//" OY_TYPE_STD "/display/display_name",
                                  DisplayString(fl_display), OY_CREATE_NEW );
 
         } else
@@ -161,12 +160,13 @@ class Fl_Oy_Box : public Fl_Box
       pt = oyImage_PixelLayoutGet( image );
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
-      if((channels != 4 && channels != 3) || data_type != oyUINT8)
+      if(pt != 0 &&
+         (channels != 4 && channels != 3) || data_type != oyUINT8)
       {
         printf( "WARNING: wrong image data format: %s\n%s\n"
                 "need 4 or 3 channels with 8-bit\n",
                 oyOptions_FindString( image_tags, "filename", 0 ),
-                oyObject_GetName( image->oy_, oyNAME_NICK ));
+                image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "" );
         return;
       }
 
@@ -180,8 +180,8 @@ class Fl_Oy_Box : public Fl_Box
       oyRectangle_SetGeo( display_rectangle, X,Y,W,H );
 
       /* decide wether to refresh the cached rectangle of our static image */
-      if(context->out_ &&
-         !oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) )
+      if( context->out_ &&
+          !oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) )
       {
 #ifdef DEBUG
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
@@ -200,6 +200,7 @@ class Fl_Oy_Box : public Fl_Box
 
 
       /* get the data and draw the image */
+      if(image)
       for(i = 0; i < image->height; ++i)
       {
         image_data = image->getLine( image, i, &height, -1, &is_allocated );
