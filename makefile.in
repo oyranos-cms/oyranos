@@ -85,6 +85,7 @@ CHEADERS = \
 CFILES = \
 	$(SRCDIR)/$(TARGET).c \
 	$(SRCDIR)/$(TARGET)_check.c \
+	$(SRCDIR)/$(TARGET)_cmm.c \
 	$(SRCDIR)/$(TARGET)_cmms.c \
 	$(SRCDIR)/$(TARGET)_elektra.c \
 	$(SRCDIR)/$(TARGET)_helper.c \

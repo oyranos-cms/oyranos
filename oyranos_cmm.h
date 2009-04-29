@@ -621,7 +621,7 @@ typedef int          (*oyCMMFilterScan_f) (
                                        oyCMMInfo_s      ** info,
                                        oyObject_s          object );
 
-/** @struct  oyConnectorImage_s
+/** @struct  oyConnectorImaging_s
  *  @brief   a filter connection description structure
  *  @ingroup objects_conversion
  *  @extends oyConnector_s
@@ -638,8 +638,8 @@ typedef int          (*oyCMMFilterScan_f) (
  *  @since   2008/07/26 (Oyranos: 0.1.8)
  *  @date    2009/04/28
  */
-struct oyConnectorImage_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_IMAGE_S */
+struct oyConnectorImaging_s {
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_IMAGING_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
@@ -675,14 +675,14 @@ struct oyConnectorImage_s {
 };
 
 
-OYAPI oyConnectorImage_s * OYEXPORT
-                 oyConnectorImage_New( oyObject_s          object );
-OYAPI oyConnectorImage_s * OYEXPORT
-                 oyConnectorImage_Copy(oyConnectorImage_s* list,
+OYAPI oyConnectorImaging_s * OYEXPORT
+                 oyConnectorImaging_New( oyObject_s          object );
+OYAPI oyConnectorImaging_s * OYEXPORT
+                 oyConnectorImaging_Copy(oyConnectorImaging_s* list,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
-                 oyConnectorImage_Release ( 
-                                       oyConnectorImage_s**list );
+                 oyConnectorImaging_Release ( 
+                                       oyConnectorImaging_s**list );
 
 
 /** typedef  oyCMMFilterSocket_MatchPlugIn_f
