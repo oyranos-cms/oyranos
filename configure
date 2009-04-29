@@ -8,6 +8,7 @@ WARNING=0
 
 ROOT_DIR="$0"
 ROOT_DIR=`echo $ROOT_DIR | sed 's%/configure%%1'`
+ROOT_DIR=`(cd $ROOT_DIR; pwd)`
 
 CONF_H=config.h
 CONF=makefile

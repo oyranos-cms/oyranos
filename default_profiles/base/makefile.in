@@ -6,7 +6,7 @@ TARGET  = oyranos-profiles-base
 VERSION = 0.5
 
 prefix      = $(INSTDIR)
-SRCDIR		= ../../$(src_dir)
+SRCDIR		= $(src_dir)
 
 FILES = \
 	LCMSLABI.ICM \

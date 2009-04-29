@@ -6,7 +6,7 @@ TARGET  = oyranos-printing-default
 VERSION = 0.5
 
 prefix      = $(INSTDIR)
-SRCDIR		= ../../$(src_dir)/
+SRCDIR		= $(src_dir)/
 
 PROFILES = \
 	webcoated_FOGRA28L_argl.icc \
