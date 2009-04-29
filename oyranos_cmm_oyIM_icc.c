@@ -503,7 +503,7 @@ int          oyIMFilterScan          ( oyPointer           data,
   return ret;
 }
 
-/** Function oyFilterSocket_MatchImagePlug
+/** Function oyFilterSocket_MatchImagingPlug
  *  @brief   verify connectors matching each other
  *  @ingroup backend_api
  *  @memberof oyCMMapi5_s
@@ -516,24 +516,24 @@ int          oyIMFilterScan          ( oyPointer           data,
  *  @since   2009/04/20 (Oyranos: 0.1.10)
  *  @date    2009/04/28
  */
-int          oyFilterSocket_MatchImagePlug (
+int          oyFilterSocket_MatchImagingPlug (
                                        oyFilterSocket_s  * socket,
                                        oyFilterPlug_s    * plug )
 {
   int match = 0;
-  oyConnectorImage_s * a = 0,  * b = 0;
+  oyConnectorImaging_s * a = 0,  * b = 0;
   oyImage_s * image = 0;
   int colours_n = 0, n, i, j;
   int coff = 0;
   oyDATATYPE_e data_type = 0;
 
   if(socket && socket->type_ == oyOBJECT_FILTER_SOCKET_S &&
-     socket->pattern && socket->pattern->type_ == oyOBJECT_CONNECTOR_IMAGE_S)
-    a = (oyConnectorImage_s*)socket->pattern;
+     socket->pattern && socket->pattern->type_ == oyOBJECT_CONNECTOR_IMAGING_S)
+    a = (oyConnectorImaging_s*)socket->pattern;
 
   if(plug && plug->type_ == oyOBJECT_FILTER_PLUG_S &&
-     plug->pattern && plug->pattern->type_ == oyOBJECT_CONNECTOR_IMAGE_S)
-    b = (oyConnectorImage_s*) plug->pattern;
+     plug->pattern && plug->pattern->type_ == oyOBJECT_CONNECTOR_IMAGING_S)
+    b = (oyConnectorImaging_s*) plug->pattern;
 
   if(a && b)
   {
@@ -609,7 +609,7 @@ int          oyFilterSocket_MatchImagePlug (
   }
 
   oyImage_Release( &image );
-  oyConnectorImage_Release( &a );
+  oyConnectorImaging_Release( &a );
 
   return match;
 }
@@ -634,7 +634,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   oyIMFilter_CanHandle, /* oyCMMCanHandle_f */
 
   /* @todo registration: for what? */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD ".image.tonemap.imaging" OY_SLASH "icc." CMM_NICK,
+  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD ".image.tonemap.colour" OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
   0,   /* id_; keep empty */
@@ -652,8 +652,10 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   oyIM_default_colour_icc_options,   /* options */
   oyIMGetDefaultColourIccOptionsUI,  /* oyCMMuiGet */
 
-  icc_data, /* data_types */
-  oyFilterSocket_MatchImagePlug /** oyCMMFilterSocket_MatchPlug_f */
+  icc_data,  /* data_types */
+  0,  /* getText */
+  0,  /* texts */
+  oyFilterSocket_MatchImagingPlug /* oyCMMFilterSocket_MatchPlug_f */
 };
 
 

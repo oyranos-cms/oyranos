@@ -130,7 +130,7 @@ typedef enum {
   oyOBJECT_ARRAY2D_S,                 /**< oyArray2d_s */
   oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s */
   oyOBJECT_CONNECTOR_S,               /**< oyConnector_s */
-  oyOBJECT_CONNECTOR_IMAGE_S,         /**< oyConnectorImage_s */
+  oyOBJECT_CONNECTOR_IMAGING_S,       /**< oyConnectorImaging_s */
   oyOBJECT_FILTER_PLUG_S,             /**< oyFilterPlug_s */
   oyOBJECT_FILTER_PLUGS_S,            /**< oyFilterPlugs_s */
   oyOBJECT_FILTER_SOCKET_S,           /**< oyFilterSocket_s */
@@ -1725,7 +1725,7 @@ typedef struct oyFilterGraph_s oyFilterGraph_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
 typedef struct oyFilterNodes_s oyFilterNodes_s;
 typedef struct oyConnector_s oyConnector_s;
-typedef struct oyConnectorImage_s oyConnectorImage_s;
+typedef struct oyConnectorImaging_s oyConnectorImaging_s;
 typedef struct oyFilterPlug_s oyFilterPlug_s;
 typedef struct oyFilterPlugs_s oyFilterPlugs_s;
 typedef struct oyFilterSocket_s oyFilterSocket_s;
@@ -1740,29 +1740,29 @@ typedef struct oyFilterSocket_s oyFilterSocket_s;
  *  @date    2009/04/28
  */
 typedef enum {
-  /** a data manipulator. e.g. a normal filter - "//image/manipulator" */
+  /** a data manipulator. e.g. a normal filter - "//imaging/manipulator" */
   oyCONNECTOR_IMAGE_MANIPULATOR,
-  /** a data generator, e.g. checkerboard, gradient "//image/generator" */
+  /** a data generator, e.g. checkerboard, gradient "//imaging/generator" */
   oyCONNECTOR_IMAGE_GENERATOR,
-  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//image/image" */
+  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//imaging/image" */
   oyCONNECTOR_IMAGE,
   /** observer, a endpoint, only input, e.g. text log, thumbnail viewer 
-   *  "//image/observer" */
+   *  "//imaging/observer" */
   oyCONNECTOR_IMAGE_OBSERVER,
-  /** a routing element, without data altering "//image/splitter.rectangle" */
+  /** a routing element, without data altering "//imaging/splitter.rectangle" */
   oyCONNECTOR_IMAGE_SPLITTER,
-  /** combines or splits image data, e.g. blending "//image/blender.rectangle"*/
+  /** combines or splits image data, e.g. blending "//imaging/blender.rectangle"*/
   oyCONNECTOR_IMAGE_COMPOSITOR,
 
-  /** converts pixel layout to other formats "//image/pixel.convertor" */
+  /** converts pixel layout to other formats "//imaging/pixel.convertor" */
   oyCONNECTOR_CONVERTOR_PIXELDATA,
   /** converts pixel layout to other formats, with precission loss, e.g. 
    *  float -> uint8_t, only relevant for output connectors 
-   *  "//image/pixel.convertor.lossy" */
+   *  "//imaging/pixel.convertor.lossy" */
   oyCONNECTOR_CONVERTOR_PIXELDATA_LOSSY,
-  /** combines gray channels, e.g. from colour "//image/combiner.channels" */
+  /** combines gray channels, e.g. from colour "//imaging/combiner.channels" */
   oyCONNECTOR_COMPOSITOR_CHANNEL,
-  /** provides gray scale views of channels "//image/splitter.channels" */
+  /** provides gray scale views of channels "//imaging/splitter.channels" */
   oyCONNECTOR_SPLITTER_CHANNEL,
 
   /** provides values or text, only output "///analysis" */

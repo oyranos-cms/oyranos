@@ -319,7 +319,7 @@ oyTESTRESULT_e testSettings ()
   fprintf(stdout, "\n" );
 
   /* we check for out standard CMM */
-  opts = oyOptions_ForFilter( "//colour", "lcms",
+  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
                                             oyOPTIONATTRIBUTE_ADVANCED /* |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );
@@ -604,7 +604,7 @@ oyTESTRESULT_e testMonitor ()
   fprintf(stdout, "\n" );
 
 
-  error = oyDevicesGet( "colour", "monitor", 0, &devices );
+  error = oyDevicesGet( OY_TYPE_STD, "monitor", 0, &devices );
   n = oyConfigs_Count( devices );
   if(!error)
   {
@@ -698,8 +698,8 @@ oyTESTRESULT_e testRegistrationMatch ()
 
   fprintf(stdout, "\n" );
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc",
+  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple CMM selection                  " );
@@ -708,8 +708,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection                  " );
   }
 
-  if(!oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc.octl",
+  if(!oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc.octl",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple CMM selection no match         " );
@@ -718,8 +718,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection no match         " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc.4+lcms",
+  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc.4+lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM selection                 " );
@@ -728,8 +728,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM selection                 " );
   }
 
-  if(!oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc.4-lcms",
+  if(!oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc.4-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM avoiding                  " );
@@ -738,8 +738,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding                  " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc.7-lcms",
+  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc.7-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM avoiding, other API       " );
@@ -858,13 +858,13 @@ oyTESTRESULT_e testCMMConfigsListing ()
   oyOption_s * o = 0;
   int devices_n = 0;
 
-  error = oyConfigDomainList  ( "//colour", &texts, &count, &rank_list, 0 );
+  error = oyConfigDomainList( "//" OY_TYPE_STD, &texts, &count, &rank_list, 0 );
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfigDomainList \"%s\": %d         ", "//colour", (int)count );
+    "oyConfigDomainList \"%s\": %d         ", "//" OY_TYPE_STD "", (int)count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfigDomainList \"%s\": %d         ", "//colour", (int)count );
+    "oyConfigDomainList \"%s\": %d         ", "//" OY_TYPE_STD "", (int)count );
   }
   for( i = 0; i < (int)count; ++i)
   {
@@ -885,7 +885,8 @@ oyTESTRESULT_e testCMMConfigsListing ()
 
 
   /* add list call to backend arguments */
-  error = oyOptions_SetFromText( &options_list, "//colour/config/list", "true",
+  error = oyOptions_SetFromText( &options_list,
+                                 "//" OY_TYPE_STD "/config/list", "true",
                                  OY_CREATE_NEW );
 
   fprintf( stdout, "oyConfigs_FromDomain() \"list\" call:\n" );
@@ -933,7 +934,8 @@ oyTESTRESULT_e testCMMConfigsListing ()
     for( l = 0; l < devices_n; ++l )
     {
       /* set a general request */
-      error = oyOptions_SetFromText( &options, "//colour/config/properties",
+      error = oyOptions_SetFromText( &options,
+                                     "//" OY_TYPE_STD "/config/properties",
                                      "true", OY_CREATE_NEW );
 
       /* set the device_name */
@@ -1084,14 +1086,14 @@ oyTESTRESULT_e testCMMDBListing ()
   oyConfig_s * config = 0;
   oyOption_s * o = 0;
 
-  error = oyConfigs_FromDB( "//colour", &configs, 0 );
+  error = oyConfigs_FromDB( "//" OY_TYPE_STD "", &configs, 0 );
   j_n = oyConfigs_Count( configs );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfigs_FromDB( \"//colour\" ) count: %d     ", j_n );
+    "oyConfigs_FromDB( \"//" OY_TYPE_STD "\" ) count: %d     ", j_n );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfigs_FromDB( \"//colour\" ) count: %d     ", j_n );
+    "oyConfigs_FromDB( \"//" OY_TYPE_STD "\" ) count: %d     ", j_n );
   }
   for( j = 0; j < j_n; ++j )
   {
