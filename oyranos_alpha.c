@@ -534,6 +534,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_FILTER_CORES_S: text = "oyFilterCores_s"; break;
     case oyOBJECT_CONVERSION_S: text = "oyConversion_s"; break;
     case oyOBJECT_CONNECTOR_S: text = "oyConnector_s"; break;
+    case oyOBJECT_CONNECTOR_IMAGING_S: text = "oyConnectorImaging_s"; break;
     case oyOBJECT_FILTER_PLUG_S: text = "oyFilterPlug_s"; break;
     case oyOBJECT_FILTER_PLUGS_S: text = "oyFilterPlugs_s"; break;
     case oyOBJECT_FILTER_SOCKET_S: text = "oyFilterSocket_s"; break;
@@ -3377,7 +3378,7 @@ oyCMMptr_s * oyStruct_GetCMMPtr_      ( oyStruct_s      * data,
 
   if(error <= 0 && !cmm)
   {
-    cmm = oyModuleGetActual("//colour");
+    cmm = oyModuleGetActual("//" OY_TYPE_STD);
     error = !cmm;
   }
 
@@ -3559,14 +3560,14 @@ digraph Backends {
       o [ label="External Function Import\n Extendable Functionality\n Additional Dependencies\n ..."];
       p [ label="Meta Backend / Filter Import\n oyFilterNode_s"];
 
-      api7_B [label="//image/root.oyra Processor\n oyCMMapi7_s"];
+      api7_B [label="//imaging/root.oyra Processor\n oyCMMapi7_s"];
 
-      api4_A [label="//colour/icc.lcms Context\n oyCMMapi4_s"];
-      api6_A [label="//colour/icc.lcms Context Converter\n oyCMMapi6_s"];
-      api7_A [label="//colour/icc.lcms Processor\n oyCMMapi7_s"];
+      api4_A [label="//" OY_TYPE_STD "/icc.lcms Context\n oyCMMapi4_s"];
+      api6_A [label="//" OY_TYPE_STD "/icc.lcms Context Converter\n oyCMMapi6_s"];
+      api7_A [label="//" OY_TYPE_STD "/icc.lcms Processor\n oyCMMapi7_s"];
 
-      api6_C [label="//colour/icc.octl Context Converter\n oyCMMapi6_s"];
-      api7_C [label="//colour/icc.octl Processor\n oyCMMapi7_s"];
+      api6_C [label="//" OY_TYPE_STD "/icc.octl Context Converter\n oyCMMapi6_s"];
+      api7_C [label="//" OY_TYPE_STD "/icc.octl Processor\n oyCMMapi7_s"];
 
       m [label="Config (Device) Functions\n oyCMMapi8_s"];
       icc [label="ICC Profile Functions\n oyCMMapi3_s"];
@@ -3709,12 +3710,12 @@ digraph Anatomy_A {
 
       node [width = 2.5, style=filled];
 
-      api4_A [label="//colour/icc.lcms\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | <o>Options | <ui>XFORMS GUI"];
-      api6_A [label="//colour/icc.lcms Context Converter\n oyCMMapi6_s\n oyDL_lcCC"];
-      api7_A [label="//colour/icc.lcms Processor\n oyCMMapi7_s"];
+      api4_A [label="//" OY_TYPE_STD "/icc.lcms\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | <o>Options | <ui>XFORMS GUI"];
+      api6_A [label="//" OY_TYPE_STD "/icc.lcms Context Converter\n oyCMMapi6_s\n oyDL_lcCC"];
+      api7_A [label="//" OY_TYPE_STD "/icc.lcms Processor\n oyCMMapi7_s"];
 
-      api6_C [label="//colour/icc.octl Context Converter\n oyCMMapi6_s\n oyDL_oCTL"];
-      api7_C [label="//colour/icc.octl Processor\n oyCMMapi7_s"];
+      api6_C [label="//" OY_TYPE_STD "/icc.octl Context Converter\n oyCMMapi6_s\n oyDL_oCTL"];
+      api7_C [label="//" OY_TYPE_STD "/icc.octl Processor\n oyCMMapi7_s"];
 
       subgraph cluster_0 {
         rank=max;
@@ -3757,8 +3758,8 @@ digraph Anatomy_B {
 
       node [width = 2.5, style=filled];
 
-      api4_A [label="//image/root.oyra\n oyCMMapi4_s | <o>Options | <ui>XFORMS GUI"];
-      api7_A [label="//image/root.oyra Processor\n oyCMMapi7_s"];
+      api4_A [label="//imaging/root.oyra\n oyCMMapi4_s | <o>Options | <ui>XFORMS GUI"];
+      api7_A [label="//imaging/root.oyra Processor\n oyCMMapi7_s"];
 
       subgraph cluster_0 {
         rank=max;
@@ -3788,7 +3789,7 @@ digraph Anatomy_B {
  *  needed. The sections are to be filled as follows:
  *  - top, e.g. "sw" (::oyFILTER_REG_TOP)
  *  - vendor, e.g. "oyranos.org" (::oyFILTER_REG_DOMAIN)
- *  - filter type, e.g. "colour" or "tonemap" or "image" or "imaging"
+ *  - filter type, e.g. "imaging" and "tonemap" or "image" or "colour"
  *    (::oyFILTER_REG_TYPE)
  *  - filter name, e.g. "icc.lcms.NOACCEL.CPU" (::oyFILTER_REG_APPLICATION)
  *
@@ -3808,7 +3809,7 @@ digraph Anatomy_B {
  *    acceleration features \n
  *  
  *  \b Example: a complete module registration: \n
- *  "sw/oyranos.org/colour/icc.lcms.NOACCEL.CPU" registers a plain software CMM
+ *  "sw/oyranos.org/imaging/icc.lcms.NOACCEL.CPU" registers a plain software CMM
  * 
  *  @par Registration search pattern:
  *  To explicitely select a different processor and context creator the
@@ -3826,14 +3827,14 @@ digraph Anatomy_B {
  *  - "7[_,+,-]" - processor oyCMMapi7_s \n
  *  
  *  \b Example: a complete registration search pattern: \n
- *  "//colour/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
+ *  "//imaging/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
  *  interpolator with prefered GPU and HLSL but no GLSL support together with a
  *  ICC compliant context generator and options.
  *
  *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
  *  might be useful for canonical processing Oyranos registration text strings.
  *  Many functions allow for passing a registration string. Matching can be 
- *  obtained by omitting sections like in the string "//colour/icc", where the
+ *  obtained by omitting sections like in the string "//imaging/icc", where the
  *  elements between slashes is o,itted. This string would result in a match 
  *  for any ICC compliant colour conversion filter.
  *
@@ -6754,7 +6755,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
               * opts_tmp = 0,
               * opts_tmp2 = 0;
   oyOption_s * o = 0;
-  int error = 0;
+  int error = !filter || !filter->api4_;
   char * type_txt = oyFilterRegistrationToText( filter->registration_,
                                                 oyFILTER_REG_TYPE, 0 );
   oyCMMapi5_s * api5 = 0;
@@ -6764,6 +6765,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
   if(!(flags & OY_OPTIONSOURCE_FILTER) && !(flags & OY_OPTIONSOURCE_META))
     flags |= OY_OPTIONSOURCE_FILTER | OY_OPTIONSOURCE_META;
 
+  if(!error)
   {
     /**
         Programm:
@@ -6856,7 +6858,8 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
     cmm_api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( cmm, 0, registration,
                                                    oyOBJECT_CMM_API4_S );
 
-  lib_name = cmm_api4->id_;
+  if(cmm_api4)
+    lib_name = cmm_api4->id_;
 
   error = !(cmm_api4 && lib_name);
 
@@ -7422,7 +7425,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                  "share/freedesktop.org/colour/my_app/my_opt"
+ *                                 "share/freedesktop.org/imaging/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         flags               can be OY_CREATE_NEW for a new option,
  *                                     OY_STRING_LIST or OY_ADD_ALWAYS
@@ -7477,7 +7480,7 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                  "share/freedesktop.org/colour/my_app/my_opt"
+ *                                 "share/freedesktop.org/imaging/my_app/my_opt"
  *  @param         oy_struct           the Oyranos style object to move in
  *  @param         flags               can be OY_CREATE_NEW for a new option,
  *                                     or OY_ADD_ALWAYS
@@ -8547,7 +8550,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyConfigs_s
  *
  *  @param[in]     device_type     the device type ::oyFILTER_REG_TYPE,
- *                                     defaults to "colour" (optional)
+ *                                     defaults to OY_TYPE_STD (optional)
  *  @param[in]     device_class    the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
  *  @param[in]     options             options to pass to the backend, for zero
@@ -8561,7 +8564,7 @@ OYAPI int  OYEXPORT
  *  @verbatim
     // pass empty options to the backend to get a usage message
     oyOptions_s * options = 0;
-    int error = oyConfig_FromDeviceClass( "colour", "monitor",
+    int error = oyConfig_FromDeviceClass( OY_TYPE_STD, "monitor",
                                               options, 0, 0 );
     @endverbatim
  *
@@ -9082,7 +9085,7 @@ OYAPI int  OYEXPORT
  *  for effective performance. Known devices are queried with
  *  oyDevicesGet().
  *  A single device can be obtained by oyDeviceGet(). The \a
- *  device_type argument defaults to "colour" and can be omitted for this
+ *  device_type argument defaults to OY_TYPE_STD and can be omitted for this
  *  group. The \a device_class argument specifies a subgroup, e.g. 
  *  "monitor".
  *
@@ -9102,7 +9105,7 @@ OYAPI int  OYEXPORT
  *  @brief   combine a device registration
  *
  *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
- *                                     defaults to "colour" (optional)
+ *                                     defaults to OY_TYPE_STD (optional)
  *  @param[in]     device_class        the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
  *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
@@ -9122,7 +9125,7 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
   const char * device_type_ = device_type;
 
   if(!device_type_)
-    device_type_ = "colour";
+    device_type_ = OY_TYPE_STD;
 
   STRING_ADD( text, "//" );
   STRING_ADD( text, device_type_ );
@@ -9147,7 +9150,7 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
  *
  *  @param[in/out] options             options for the device
  *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
- *                                     defaults to "colour" (optional)
+ *                                     defaults to OY_TYPE_STD (optional)
  *  @param[in]     device_class        the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
  *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
@@ -9232,7 +9235,7 @@ int    oyOptions_SetRegistrationTextKey_(
     oyOptions_s * options = oyOptions_New( 0 );
     int error = 0;
 
-    error = oyOptions_SetFromText( &options, "//colour/config/properties",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
                                    "true", OY_CREATE_NEW );
     error = oyDevicesGet( 0, "monitor", 0, &monitors );
     oyOptions_Release( &options );
@@ -9245,7 +9248,7 @@ int    oyOptions_SetRegistrationTextKey_(
     @endverbatim
  *
  *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
- *                                     defaults to "colour" (optional)
+ *                                     defaults to OY_TYPE_STD (optional)
  *  @param[in]     device_class        the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
  *  @param[in]     options             options for the device
@@ -9306,11 +9309,11 @@ OYAPI int  OYEXPORT
  *  @verbatim
     // pass empty options to the backend to get a usage message
     oyOptions_s * options = oyOptions_New( 0 );
-    oyDeviceGet( "colour", "monitor", ":0.0", options, 0 );
+    oyDeviceGet( OY_TYPE_STD, "monitor", ":0.0", options, 0 );
     @endverbatim
  *
- *  @param[in]     device_type         the device type, e.g. "colour",
- *                                     defaults to "colour" (optional)
+ *  @param[in]     device_type         the device type, e.g. OY_TYPE_STD,
+ *                                     defaults to OY_TYPE_STD (optional)
  *  @param[in]     device_class        registration ::oyFILTER_REG_APPLICATION
  *                                     part, e.g. "monitor", mandatory
  *  @param[in]     device_name         the device name as returned by
@@ -9505,11 +9508,11 @@ OYAPI int  OYEXPORT
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. setup the device through the backend */
-    error = oyOptions_SetFromText( &options, "//colour/config/setup",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/setup",
                                    "true", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//colour/config/device_name",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
                                    device_name, OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//colour/config/profile_name",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/profile_name",
                                    profile_name, OY_CREATE_NEW );
     /* 3.1 send the query to a backend */
     error = oyDeviceBackendCall( device, options );
@@ -9555,9 +9558,9 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
 
     /* 2. unset the device through the backend */
     /** 2.1 set a general request */
-    error = oyOptions_SetFromText( &options, "//colour/config/unset",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/unset",
                                    "true", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//colour/config/device_name",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
                                    device_name, OY_CREATE_NEW );
 
     /** 2.2 send the query to a backend */
@@ -9665,7 +9668,7 @@ OYAPI int  OYEXPORT
     /* get expensive infos */
     if(oyOptions_Count( device->backend_core ) < 2)
     {
-      error = oyOptions_SetFromText( &options, "//colour/config/properties",
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
                                      "true", OY_CREATE_NEW );
 
       if(error <= 0)
@@ -9923,7 +9926,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(oyOptions_Count( device->backend_core ) < 2)
   { 
     /** 1.1 add "properties" call to backend arguments */
-    error = oyOptions_SetFromText( &options, "//colour/config/properties",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
                                    "true", OY_CREATE_NEW );
 
     /** 1.2 get monitor device */
@@ -10065,9 +10068,9 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
     if(oyOptions_Count( device->backend_core ) < 2)
     { 
       /* 1.1 add "properties" call to backend arguments */
-      error = oyOptions_SetFromText( &options, "//colour/config/properties",
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
                                      "true", OY_CREATE_NEW );
-      error = oyOptions_SetFromText( &options, "//colour/config/device_name",
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
                                      device_name, OY_CREATE_NEW );
 
       device_name = 0;
@@ -14810,7 +14813,7 @@ oyImage_s *    oyImage_Create         ( int               width,
     error = !display_rectangle;
     if(error <= 0)
       oyOptions_MoveInStruct( &s->tags,
-                              "//image/output/display_rectangle",
+                              "//imaging/output/display_rectangle",
                               (oyStruct_s**)&display_rectangle, OY_CREATE_NEW );
   }
 
@@ -14866,12 +14869,12 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
       display_rectangle = (oyRectangle_s*) oyOptions_GetType( s->tags, -1,
                                     "display_rectangle", oyOBJECT_RECTANGLE_S );
       oyRectangle_SetGeo( display_rectangle, display_pos_x, display_pos_y,
-                                       display_width, display_height );
+                                             display_width, display_height );
     }
     error = !display_rectangle;
     
     if(error <= 0 && display_name)
-      error = oyOptions_SetFromText( &s->tags, "//image/output/display_name",
+      error = oyOptions_SetFromText( &s->tags, "//imaging/output/display_name",
                                      display_name, OY_CREATE_NEW );
 
     if(error > 0)
@@ -15660,19 +15663,6 @@ OYAPI oyConnector_s * OYEXPORT
   s->name.type = oyOBJECT_NAME_S;
 
   s->is_plug = -1;
-  s->max_colour_offset = -1;
-  s->min_channels_count = -1;
-  s->max_channels_count = -1;
-  s->min_colour_count = -1;
-  s->max_colour_count = -1;
-  s->can_planar = -1;
-  s->can_interwoven = -1;
-  s->can_swap = -1;
-  s->can_swap_bytes = -1;
-  s->can_revert = -1;
-  s->can_premultiplied_alpha = -1;
-  s->can_nonpremultiplied_alpha = -1;
-  s->can_subpixel = -1;
 
   return s;
 }
@@ -15711,42 +15701,8 @@ oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
     s->name.name = oyStringCopy_( obj->name.name, allocateFunc_);
     s->name.description = oyStringCopy_( obj->name.description, allocateFunc_);
 
-    s->connector_type = obj->connector_type;
+    s->connector_type = oyStringCopy_( obj->connector_type, allocateFunc_ );
     s->is_plug = obj->is_plug;
-    if(obj->data_types_n)
-    {
-      s->data_types = allocateFunc_( obj->data_types_n * sizeof(oyDATATYPE_e) );
-      error = !s->data_types;
-      error = !memcpy( s->data_types, obj->data_types,
-                       obj->data_types_n * sizeof(oyDATATYPE_e) );
-      if(error <= 0)
-        s->data_types_n = obj->data_types_n;
-    }
-    s->max_colour_offset = obj->max_colour_offset;
-    s->min_channels_count = obj->min_channels_count;
-    s->max_channels_count = obj->max_channels_count;
-    s->min_colour_count = obj->min_colour_count;
-    s->max_colour_count = obj->max_colour_count;
-    s->can_planar = obj->can_planar;
-    s->can_interwoven = obj->can_interwoven;
-    s->can_swap = obj->can_swap;
-    s->can_swap_bytes = obj->can_swap_bytes;
-    s->can_revert = obj->can_revert;
-    s->can_premultiplied_alpha = obj->can_premultiplied_alpha;
-    s->can_nonpremultiplied_alpha = obj->can_nonpremultiplied_alpha;
-    s->can_subpixel = obj->can_subpixel;
-    if(obj->channel_types_n)
-    {
-      int n = obj->channel_types_n;
-
-      s->channel_types = allocateFunc_( n * sizeof(oyCHANNELTYPE_e) );
-      error = !s->channel_types;
-      error = !memcpy( s->channel_types, obj->channel_types,
-                       n * sizeof(oyCHANNELTYPE_e) );
-      if(error <= 0)
-        s->channel_types_n = n;
-    }
-    s->is_mandatory = obj->is_mandatory;
   }
 
   if(error)
@@ -15820,16 +15776,10 @@ OYAPI int  OYEXPORT
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
-    if(s->name.nick) deallocateFunc( s->name.nick );
-    if(s->name.name) deallocateFunc( s->name.name );
-    if(s->name.description) deallocateFunc( s->name.description );
+    oyName_releaseMembers( &s->name, deallocateFunc );
 
-    if(s->data_types)
-      deallocateFunc( s->data_types ); s->data_types = 0;
-    s->data_types_n = 0;
-
-    if(s->channel_types)
-      deallocateFunc( s->channel_types ); s->channel_types = 0;
+    if(s->connector_type)
+      deallocateFunc( s->connector_type ); s->connector_type = 0;
 
     oyObject_Release( &s->oy_ );
 
@@ -17898,7 +17848,6 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
 {
   oyFilterNode_s * s = input;
   int error = !s;
-  oyConnector_s  * out_plug_connector = 0;
   oyFilterPlug_s * out_plug = 0;
   oyFilterSocket_s * output_socket = 0,
                    * in_socket = 0;
@@ -17958,9 +17907,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
 
       if(error <= 0)
       {
-        out_plug_connector = out_plug->pattern;
-
-        if(oyFilterNode_ConnectorMatch( input, pos, out_plug_connector ))
+        if(oyFilterNode_ConnectorMatch( input, pos, out_plug ))
           output_socket = oyFilterNode_GetSocket( output, 0 );
         else
         {
@@ -18064,8 +18011,8 @@ OYAPI oyConnector_s * OYEXPORT
  *  @brief   check if a connector match to a FilterNode
  *
  *  @param         node_first          first node
- *  @param         pos_first           position of connector from first filter
- *  @param         connector_second    second connector
+ *  @param         pos_first           position of connector from first node
+ *  @param         pug                 second connector
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
@@ -18075,94 +18022,43 @@ OYAPI int  OYEXPORT
                  oyFilterNode_ConnectorMatch (
                                        oyFilterNode_s    * node_first,
                                        int                 pos_first,
-                                       oyConnector_s     * connector_second )
+                                       oyFilterPlug_s    * plug )
 {
   int match = 0;
-  oyConnector_s * a = 0,  * b = connector_second;
-  oyImage_s * image = 0;
-  int colours_n = 0, n, i, j;
-  int coff = 0;
-  oyDATATYPE_e data_type = 0;
+  oyConnector_s * a = 0,  * b = plug->pattern;
+  char * reg = 0,
+       * tmp = 0;
 
   if(node_first && node_first->type_ == oyOBJECT_FILTER_NODE_S &&
      node_first->core)
     a = oyFilterNode_ShowConnector( node_first, pos_first, 0 );
 
-  if(a && b && b->type_ == oyOBJECT_CONNECTOR_S)
+  if(a && b)
   {
     oyFilterSocket_s * sock_first = oyFilterNode_GetSocket( node_first, pos_first );
     match = 1;
-    image = oyImage_Copy( (oyImage_s*)sock_first->data, 0 );
 
     if(!b->is_plug)
       match = 0;
 
-    /** For a zero set pixel layout we skip most tests and assume it will be
-        checked later. */
-    if(image && image->layout_[oyLAYOUT] && match)
+    if(match)
     {
-      coff = oyToColourOffset_m( image->layout_[oyLAYOUT] );
-
-      /* channel counts */
-      colours_n = oyProfile_GetChannelsCount( image->profile_ );
-      if(image->layout_[oyCHANS] < b->min_channels_count ||
-         image->layout_[oyCHANS] > b->max_channels_count ||
-         colours_n < b->min_colour_count ||
-         colours_n > b->max_colour_count)
-        match = 0;
-
-      /* data types */
-      if(match)
-      {
-        data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
-        n = b->data_types_n;
-        match = 0;
-        for(i = 0; i < n; ++i)
-          if(b->data_types[i] == data_type)
-            match = 1;
-      }
-
-      /* planar and interwoven capabilities */
-      if(b->max_colour_offset < image->layout_[oyCOFF] ||
-         (!b->can_planar && oyToPlanar_m(image->layout_[oyCOFF])) ||
-         (!b->can_interwoven && !oyToPlanar_m(image->layout_[oyCOFF])))
-        match = 0;
-
-      /* swap and byteswapping capabilities */
-      if((!b->can_swap && oyToSwapColourChannels_m(image->layout_[oyCOFF])) ||
-         (!b->can_swap_bytes && oyToByteswap_m(image->layout_[oyCOFF])))
-        match = 0;
-
-      /* revert or chockolat and vanilla */
-      if((!b->can_revert && oyToFlavor_m(image->layout_[oyCOFF])))
-        match = 0;
-
-      /* channel types */
-      if(match && b->channel_types)
-      {
-        n = image->layout_[oyCHANS];
-        for(i = 0; i < b->channel_types_n; ++i)
-        {
-          match = 0;
-          for(j = 0; j < n; ++j)
-            if(b->channel_types[i] == image->channel_layout[j] &&
-               !(!b->can_nonpremultiplied_alpha &&
-                 image->channel_layout[j] == oyCHANNELTYPE_COLOUR_LIGHTNESS) &&
-               !(!b->can_premultiplied_alpha &&
-                 image->channel_layout[j] == oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED))
-              match = 1;
-          if(!match)
-            break;
-        }
-      }
-
-      /* subpixels */
-      if(image->sub_positioning && !b->can_subpixel)
-        match = 0;
+      /** Check if basic types match. */
+      reg = oyStringCopy_( "//", oyAllocateFunc_ );
+      tmp = oyFilterRegistrationToText( a->connector_type,
+                                        oyFILTER_REG_TYPE, 0 );
+      STRING_ADD( reg, tmp );
+      if(tmp) oyFree_m_( tmp );
+      match = oyFilterRegistrationMatch( reg, b->connector_type,
+                                         0 );
+      if(reg) oyFree_m_(reg);
     }
+
+    /** More detailed checking is done in oyCMMapi5_s. */
+    if(match && node_first->api7_->api5_->filterSocket_MatchPlug)
+      node_first->api7_->api5_->filterSocket_MatchPlug( sock_first, plug );
   }
 
-  oyImage_Release( &image );
   oyConnector_Release( &a );
 
   return match;
@@ -20091,7 +19987,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
       int layout_out = out->layout_[oyLAYOUT];
 
       if(!opts)
-        opts = oyOptions_ForFilter( "//colour", "lcms",
+        opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
                                             0/* oyOPTIONATTRIBUTE_ADVANCED |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );
@@ -20257,7 +20153,7 @@ oyColourConversion_s* oyColourConversion_Create_ (
   if(error <= 0)
   {
     oyCMMptr_s *cmm_ptr = 0;
-    const char *cmm = oyModuleGetActual( "//colour" );
+    const char *cmm = oyModuleGetActual( "//" OY_TYPE_STD );
     const oyChar * tmp = 0;
  
     oyHash_s * entry = 0;
@@ -21186,14 +21082,14 @@ oyConversion_s   * oyConversion_CreateBasic (
     error = !s;    
 
     if(error <= 0)
-      in = oyFilterNode_NewWith( "//image/root", 0,0, 0 );
+      in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0,0, 0 );
     if(error <= 0)
       error = oyConversion_Set( s, in, 0 );
     if(error <= 0)
       error = oyFilterNode_DataSet( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//colour/icc", 0,0, 0 );
+      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0,0, 0 );
     if(error <= 0)
       error = oyFilterNode_DataSet( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -21202,12 +21098,12 @@ oyConversion_s   * oyConversion_CreateBasic (
     in = out; out = 0;
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//image/output", 0,0, 0 );
+      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
     if(error <= 0)
     {
       error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
       if(error)
-        WARNc1_S( "could not add  filter: %s\n", "//image/output" );
+        WARNc1_S( "could not add  filter: %s\n", "//" OY_TYPE_STD "/output" );
     }
     if(error <= 0)
       error = oyConversion_Set( s, 0, out );
@@ -21241,7 +21137,7 @@ oyConversion_s   * oyConversion_CreateInput (
   if(error <= 0)
   {
     if(!filter_registration)
-      filter_registration = "//image/root";
+      filter_registration = "//" OY_TYPE_STD "/root";
     node = oyFilterNode_NewWith( filter_registration, 0,0, object );
     s->input = node;
 
@@ -21391,7 +21287,6 @@ int                oyConversion_LinFilterAdd (
   int error = !s;
   oyFilterNode_s * temp = 0,
                  * last = 0;
-  oyConnector_s  * node_plug_connector = 0;
   oyFilterPlug_s * node_plug = 0;
   oyFilterSocket_s * socket_last = 0,
                  * node_socket = 0;
@@ -21407,7 +21302,7 @@ int                oyConversion_LinFilterAdd (
 
     if(error <= 0 &&
        (!s->input &&
-        !oyFilterRegistrationMatch( node->core->registration_, "//image",
+        !oyFilterRegistrationMatch( node->core->registration_, "//" OY_TYPE_STD,
                                     oyOBJECT_CMM_API4_S )))
     {
       WARNc2_S( "%s: %s",
@@ -21456,9 +21351,7 @@ int                oyConversion_LinFilterAdd (
 
         if(error <= 0)
         {
-          node_plug_connector = node_plug->pattern;
-
-          if(oyFilterNode_ConnectorMatch( last, 0, node_plug_connector ))
+          if(oyFilterNode_ConnectorMatch( last, 0, node_plug ))
           {
             socket_last = oyFilterNode_GetSocket( last, 0 );
           } else
@@ -21494,7 +21387,7 @@ int                oyConversion_LinFilterAdd (
  *  points through a plug.
  *
  *  @param[in,out] conversion          conversion object
- *  @param[in]     filter_registration filter registration; defaults to "//image/output"
+ *  @param[in]     filter_registration filter registration; defaults to "//imaging/output"
  *  @param[in]     output              output image
  *  @return                            error
  *
@@ -22682,7 +22575,7 @@ const char *   oyModuleGetActual     ( const char        * type )
   oyExportStart_(EXPORT_CMMS);
   oyExportEnd_();
 
-  if(oyFilterRegistrationMatch( type, "//colour", oyOBJECT_CMM_API4_S ))
+  if(oyFilterRegistrationMatch( type, "//" OY_TYPE_STD, oyOBJECT_CMM_API4_S ))
   return "lcms";
   else
   return OY_PROFILE_NONE;
@@ -23443,12 +23336,12 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   int n, i;
   const char * device_name = 0;
 
-  error = oyOptions_SetFromText( &options, "//colour/config/list",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/list",
                                  "true", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//colour/config/device_rectangle",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   /** we want a fuzzy look at our display, not the narrow "device_name" */
-  error = oyOptions_SetFromText( &options, "//colour/config/display_name",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
                                  display_name, OY_CREATE_NEW );
 
   error = oyConfigs_FromDeviceClass ( 0, "monitor", options, &devices,
@@ -23504,7 +23397,7 @@ char *   oyGetMonitorProfile         ( const char        * device_name,
   oyOptions_s * options = 0;
   oyProfile_s * p = 0;
   char * block = 0;
-  const char * device_type = "colour",
+  const char * device_type = OY_TYPE_STD,
              * device_class = "monitor";
 
   if(error <= 0)
@@ -23606,7 +23499,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
 
   /** 1. get monitor device */
   if(error <= 0)
-    error = oyDeviceGet( "colour", "monitor", display_name,
+    error = oyDeviceGet( OY_TYPE_STD, "monitor", display_name,
                              options, &device );
 
   oyOptions_Release( &options );
@@ -23682,12 +23575,12 @@ int      oySetMonitorProfile         ( const char        * display_name,
 
   /** 1. obtain detailed and expensive device informations */
   /** 1.1 add "properties" call to backend arguments */
-  error = oyOptions_SetFromText( &options, "//colour/config/properties",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
                                  "true", OY_CREATE_NEW );
 
   /** 1.2 get monitor device */
   if(error <= 0)
-    error = oyDeviceGet( "colour", "monitor", display_name,
+    error = oyDeviceGet( OY_TYPE_STD, "monitor", display_name,
                              options, &device );
 
   oyOptions_Release( &options );
@@ -23745,10 +23638,10 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 
   {
     /* 1. set a general request */
-    error = oyOptions_SetFromText( &options, "//colour/config/list",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/list",
                                    "true", OY_CREATE_NEW );
     /* we want a fuzzy look at our display, not as narrow as "device_name"*/
-    error = oyOptions_SetFromText( &options, "//colour/config/display_name",
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
                                    display_name, OY_CREATE_NEW );
     error = oyConfigs_FromDeviceClass ( 0, device_class, options,
                                             &devices, 0 );

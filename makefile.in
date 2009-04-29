@@ -86,6 +86,7 @@ CHEADERS = \
 CFILES = \
 	$(TARGET).c \
 	$(TARGET)_check.c \
+	$(TARGET)_cmm.c \
 	$(TARGET)_cmms.c \
 	$(TARGET)_elektra.c \
 	$(TARGET)_helper.c \

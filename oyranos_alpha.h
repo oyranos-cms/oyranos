@@ -130,6 +130,7 @@ typedef enum {
   oyOBJECT_ARRAY2D_S,                 /**< oyArray2d_s */
   oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s */
   oyOBJECT_CONNECTOR_S,               /**< oyConnector_s */
+  oyOBJECT_CONNECTOR_IMAGING_S,       /**< oyConnectorImaging_s */
   oyOBJECT_FILTER_PLUG_S,             /**< oyFilterPlug_s */
   oyOBJECT_FILTER_PLUGS_S,            /**< oyFilterPlugs_s */
   oyOBJECT_FILTER_SOCKET_S,           /**< oyFilterSocket_s */
@@ -1724,6 +1725,7 @@ typedef struct oyFilterGraph_s oyFilterGraph_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
 typedef struct oyFilterNodes_s oyFilterNodes_s;
 typedef struct oyConnector_s oyConnector_s;
+typedef struct oyConnectorImaging_s oyConnectorImaging_s;
 typedef struct oyFilterPlug_s oyFilterPlug_s;
 typedef struct oyFilterPlugs_s oyFilterPlugs_s;
 typedef struct oyFilterSocket_s oyFilterSocket_s;
@@ -1735,32 +1737,35 @@ typedef struct oyFilterSocket_s oyFilterSocket_s;
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
- *  @date    2008/00/00
+ *  @date    2009/04/28
  */
 typedef enum {
-  /** a data manipulator. e.g. a normal filter */
-  oyCONNECTOR_MANIPULATOR,
-  /** a data generator, e.g. checkerboard, gradient */
-  oyCONNECTOR_GENERATOR,
-  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE */
+  /** a data manipulator. e.g. a normal filter - "//imaging/manipulator" */
+  oyCONNECTOR_IMAGE_MANIPULATOR,
+  /** a data generator, e.g. checkerboard, gradient "//imaging/generator" */
+  oyCONNECTOR_IMAGE_GENERATOR,
+  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//imaging/image" */
   oyCONNECTOR_IMAGE,
-  /** observer, a endpoint, only input, e.g. text log, thumbnail viewer */
-  oyCONNECTOR_OBSERVER,
-  /** a routing element, without data altering */
-  oyCONNECTOR_SPLITTER,
-  /** combines or splits image data, e.g. blending */
-  oyCONNECTOR_COMPOSITOR,
+  /** observer, a endpoint, only input, e.g. text log, thumbnail viewer 
+   *  "//imaging/observer" */
+  oyCONNECTOR_IMAGE_OBSERVER,
+  /** a routing element, without data altering "//imaging/splitter.rectangle" */
+  oyCONNECTOR_IMAGE_SPLITTER,
+  /** combines or splits image data, e.g. blending "//imaging/blender.rectangle"*/
+  oyCONNECTOR_IMAGE_COMPOSITOR,
 
-  /** converts pixel layout to other formats */
+  /** converts pixel layout to other formats "//imaging/pixel.convertor" */
   oyCONNECTOR_CONVERTOR_PIXELDATA,
-  /** converts pixel layout to other formats, with precission loss, e.g. float -> uint8_t, only relevant for output connectors */
+  /** converts pixel layout to other formats, with precission loss, e.g. 
+   *  float -> uint8_t, only relevant for output connectors 
+   *  "//imaging/pixel.convertor.lossy" */
   oyCONNECTOR_CONVERTOR_PIXELDATA_LOSSY,
-  /** combines gray channels, e.g. from colour */
+  /** combines gray channels, e.g. from colour "//imaging/combiner.channels" */
   oyCONNECTOR_COMPOSITOR_CHANNEL,
-  /** provides gray scale views of channels */
+  /** provides gray scale views of channels "//imaging/splitter.channels" */
   oyCONNECTOR_SPLITTER_CHANNEL,
 
-  /** provides values or text, only output */
+  /** provides values or text, only output "///analysis" */
   oyCONNECTOR_ANALYSIS
 } oyCONNECTOR_e;
 
@@ -1797,9 +1802,9 @@ typedef enum {
  *
  *  @todo generalise the connector properties
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/07/26 (Oyranos: 0.1.8)
- *  @date    2008/07/29
+ *  @date    2009/04/20
  */
 struct oyConnector_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_S */
@@ -1811,37 +1816,16 @@ struct oyConnector_s {
    *  e.g."Img", "Image", "Image Socket"*/
   oyName_s             name;           
 
-  oyCONNECTOR_e        connector_type; /**< */
+  char               * connector_type; /**< like registration */
   /** make requests and receive data, by part of oyFilterPlug_s */
   int                  is_plug;
-  oyDATATYPE_e       * data_types;     /**< supported float's and int's */
-  int                  data_types_n;   /**< elements in data_types array */
-  int                  max_colour_offset;
-  int                  min_channels_count;
-  int                  max_channels_count;
-  int                  min_colour_count;
-  int                  max_colour_count;
-  int                  can_planar;     /**< can read separated channels */
-  int                  can_interwoven; /**< can read continuous channels */
-  int                  can_swap;       /**< can swap colour channels (BGR)*/
-  int                  can_swap_bytes; /**< non host byte order */
-  int                  can_revert;     /**< revert 1 -> 0 and 0 -> 1 */
-  int                  can_premultiplied_alpha;
-  int                  can_nonpremultiplied_alpha;
-  int                  can_subpixel;   /**< understand subpixel order */
-  /** describe which channel types the connector requires */
-  oyCHANNELTYPE_e    * channel_types;
-  int                  channel_types_n;/**< count in channel_types */
-  int                  id;             /**< relative to oyFilterCore_s, e.g. 1*/
-  /**< connector is mandatory or optional, important for backends */
-  int                  is_mandatory;
 };
 
 OYAPI oyConnector_s * OYEXPORT
                  oyConnector_New     ( oyObject_s          object );
 OYAPI oyConnector_s * OYEXPORT
                  oyConnector_Copy    ( oyConnector_s     * list,
-                                       oyObject_s          object);
+                                       oyObject_s          object );
 OYAPI int  OYEXPORT
                  oyConnector_Release ( oyConnector_s    ** list );
 
@@ -2294,7 +2278,7 @@ OYAPI int  OYEXPORT
                oyFilterNode_ConnectorMatch (
                                        oyFilterNode_s    * node_first,
                                        int                 pos_first,
-                                       oyConnector_s     * connector_second );
+                                       oyFilterPlug_s    * plug );
 OYAPI int  OYEXPORT
                oyFilterNode_GetConnectorPos (
                                        oyFilterNode_s    * node,

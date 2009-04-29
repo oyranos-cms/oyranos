@@ -320,7 +320,7 @@ oyTESTRESULT_e testSettings ()
   fprintf(stdout, "\n" );
 
   /* we check for out standard CMM */
-  opts = oyOptions_ForFilter( "//colour", "lcms",
+  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
                                             oyOPTIONATTRIBUTE_ADVANCED /* |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );
@@ -590,9 +590,9 @@ oyTESTRESULT_e testMonitor ()
 
 
   /* get all monitors */
-  error = oyOptions_SetFromText( &options, "//colour/config/list",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/list",
                                  "true", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//colour/config/device_rectangle",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   error = oyDevicesGet( 0, "monitor", options, &devices );
   oyOptions_Release( &options );
@@ -630,10 +630,10 @@ oyTESTRESULT_e testMonitor ()
   oyConfigs_Release( &devices );
 
 
-  error = oyOptions_SetFromText( &options, "//colour/config/properties",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD"/config/properties",
                                  "true", OY_CREATE_NEW );
 
-  error = oyDevicesGet( "colour", "monitor", options, &devices );
+  error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyOptions_Release( &options );
 
   n = oyConfigs_Count( devices );
@@ -692,7 +692,7 @@ oyTESTRESULT_e testMonitor ()
         PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
-        free( text );
+        free( text ); text = 0;
 
 
       /* get the old oyMonitorxxx API conforming display name */
@@ -703,7 +703,7 @@ oyTESTRESULT_e testMonitor ()
       else
         PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
-      display_name = text;
+      display_name = text; text = 0;
 
       size = 0;
       block = oyGetMonitorProfile( display_name, &size, malloc );
@@ -721,7 +721,7 @@ oyTESTRESULT_e testMonitor ()
       }
 
       error = oyDeviceProfileFromDB( c, &text, malloc );
-      if(display_name) free(display_name);
+      if(display_name) free(display_name); display_name = 0;
       if(text)
       {
         PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -767,8 +767,8 @@ oyTESTRESULT_e testRegistrationMatch ()
 
   fprintf(stdout, "\n" );
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc",
+  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple CMM selection                  " );
@@ -777,8 +777,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection                  " );
   }
 
-  if(!oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc.octl",
+  if(!oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc.octl",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple CMM selection no match         " );
@@ -787,8 +787,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection no match         " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc.4+lcms",
+  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc.4+lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM selection                 " );
@@ -797,8 +797,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM selection                 " );
   }
 
-  if(!oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc.4-lcms",
+  if(!oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc.4-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM avoiding                  " );
@@ -807,8 +807,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding                  " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
-                                "//colour/icc.7-lcms",
+  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+                                "//" OY_TYPE_STD "/icc.7-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM avoiding, other API       " );
@@ -817,7 +817,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding, other API       " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/colour/icc.lcms",
+  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
                                 "lcms", 0 ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "select by keyname                     " );

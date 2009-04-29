@@ -621,7 +621,89 @@ typedef int          (*oyCMMFilterScan_f) (
                                        oyCMMInfo_s      ** info,
                                        oyObject_s          object );
 
+/** @struct  oyConnectorImaging_s
+ *  @brief   a filter connection description structure
+ *  @ingroup objects_conversion
+ *  @extends oyConnector_s
+ *
+ *  This structure holds informations about the connection capabilities.
+ *  It holds common structure members of oyFilterPlug_s and oyFilterSocket_s.
+ *
+ *  To signal a value is not initialised or does not apply, set the according
+ *  integer value to -1.
+ *
+ *  @todo generalise the connector properties
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/07/26 (Oyranos: 0.1.8)
+ *  @date    2009/04/28
+ */
+struct oyConnectorImaging_s {
+  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_IMAGING_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< @private base object */
 
+  /** unique strings, nick and name will be used as the connector's type ID,
+   *  e.g."Img", "Image", "Image Socket"*/
+  oyName_s             name;
+
+  char               * connector_type; /**< like registration */
+  /** make requests and receive data, by part of oyFilterPlug_s */
+  int                  is_plug;
+  oyDATATYPE_e       * data_types;     /**< supported float's and int's */
+  int                  data_types_n;   /**< elements in data_types array */
+  int                  max_colour_offset;
+  int                  min_channels_count;
+  int                  max_channels_count;
+  int                  min_colour_count;
+  int                  max_colour_count;
+  int                  can_planar;     /**< can read separated channels */
+  int                  can_interwoven; /**< can read continuous channels */
+  int                  can_swap;       /**< can swap colour channels (BGR)*/
+  int                  can_swap_bytes; /**< non host byte order */
+  int                  can_revert;     /**< revert 1 -> 0 and 0 -> 1 */
+  int                  can_premultiplied_alpha;
+  int                  can_nonpremultiplied_alpha;
+  int                  can_subpixel;   /**< understand subpixel order */
+  /** describe which channel types the connector requires */
+  oyCHANNELTYPE_e    * channel_types;
+  int                  channel_types_n;/**< count in channel_types */
+  int                  id;             /**< relative to oyFilterCore_s, e.g. 1*/
+  /**< connector is mandatory or optional, important for backends */
+  int                  is_mandatory;
+};
+
+
+OYAPI oyConnectorImaging_s * OYEXPORT
+                 oyConnectorImaging_New( oyObject_s          object );
+OYAPI oyConnectorImaging_s * OYEXPORT
+                 oyConnectorImaging_Copy(oyConnectorImaging_s* list,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_Release ( 
+                                       oyConnectorImaging_s**list );
+
+
+/** typedef  oyCMMFilterSocket_MatchPlugIn_f
+ *  @brief   verify connectors matching each other
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi5_s
+ *
+ *  A implementation for images is included in the core function
+ *  oyFilterSocket_MatchImagePlug().
+ *
+ *  @param         socket              a filter socket
+ *  @param         plug                a filter plug
+ *  @return                            1 on success, otherwise 0
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/04/20 (Oyranos: 0.1.10)
+ *  @date    2009/04/20
+ */
+typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
+                                       oyFilterSocket_s  * socket,
+                                       oyFilterPlug_s    * plug );
 
 /** @struct  oyCMMapi5_s
  *  @brief   the API 5 to provide filter and script support
@@ -638,7 +720,7 @@ typedef int          (*oyCMMFilterScan_f) (
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/12/12
+ *  @date    2009/04/20
  */
 struct oyCMMapi5_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API5_S */
@@ -682,6 +764,9 @@ struct oyCMMapi5_s {
   oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
   oyCMMGetText_f   getText;            /**< describe selectors */
   const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
+
+  /** check if two filter connectors can match each other */
+  oyCMMFilterSocket_MatchPlug_f  filterSocket_MatchPlug;
 };
 
 /** typedef oyCMMFilterPlug_Run_f

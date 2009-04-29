@@ -888,10 +888,10 @@ oyWIDGET_EVENT_e   lcmsWidgetEvent   ( oyOptions_s       * options,
 
 oyDATATYPE_e lcms_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyDOUBLE, 0};
 
-oyConnector_s lcms_cmmIccSocket_connector = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s lcms_cmmIccSocket_connector = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
-  oyCONNECTOR_MANIPULATOR, /* connector_type */
+  "//" OY_TYPE_STD "/manipulator", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   lcms_cmmIcc_data_types, /* data_types */
   3, /* data_types_n; elements in data_types array */
@@ -913,12 +913,12 @@ oyConnector_s lcms_cmmIccSocket_connector = {
   1, /* id; relative to oyFilterCore_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connector,0};
+oyConnectorImaging_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connector,0};
 
-oyConnector_s lcms_cmmIccPlug_connector = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s lcms_cmmIccPlug_connector = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
-  oyCONNECTOR_MANIPULATOR, /* connector_type */
+  "//" OY_TYPE_STD "/manipulator", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   lcms_cmmIcc_data_types, /* data_types */
   3, /* data_types_n; elements in data_types array */
@@ -940,7 +940,7 @@ oyConnector_s lcms_cmmIccPlug_connector = {
   1, /* id; relative to oyFilterCore_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnector_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
+oyConnectorImaging_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
 
 /** Function lcmsAddProfile
  *  @brief   add a profile from Oyranos to the lcms profile stack 
@@ -1427,7 +1427,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   {
     oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
     error = oyOptions_SetFromText( &ticket->graph->options,
-                               "//image/profile/dirty", "true", OY_CREATE_NEW );
+                     "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
     error = 1;
   }
 
@@ -1607,10 +1607,10 @@ oyCMMapi7_s   lcms_api7_cmm = {
   lcmsFilterPlug_CmmIccRun,  /* oyCMMFilterPlug_Run_f */
   lcmsTRANSFORM,             /* data_type, "lcCC" */
 
-  lcms_cmmIccPlug_connectors,/* plugs */
+  (oyConnector_s**) lcms_cmmIccPlug_connectors,/* plugs */
   1,                         /* plugs_n */
   0,                         /* plugs_last_add */
-  lcms_cmmIccSocket_connectors,   /* sockets */
+  (oyConnector_s**) lcms_cmmIccSocket_connectors,   /* sockets */
   1,                         /* sockets_n */
   0,                         /* sockets_last_add */
 };

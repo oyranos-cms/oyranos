@@ -79,6 +79,7 @@ oyCMMptr_s** oyStructList_GetCMMptrs_( oyStructList_s    * list,
                                        const char        * lib_name );
 
 
+int          oyObject_UnRef          ( oyObject_s          obj );
 void         oyOption_UpdateFlags_   ( oyOption_s        * s );
 int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
                                        const char        * device_type,
