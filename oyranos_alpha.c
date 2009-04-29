@@ -21879,7 +21879,7 @@ int                oyConversion_LinOutputAdd (
   if(error <= 0)
   {
     if(!filter_registration)
-      filter_registration = "//image/output";
+      filter_registration = "//" OY_TYPE_STD "/output";
 
     node = oyFilterNode_NewWith( filter_registration, 0,0, conversion->oy_ );
 
@@ -22024,7 +22024,7 @@ int                oyConversion_RunPixels (
 
   /* should be the same as conversion->out_->filter */
   filter = conversion->out_->core;
-  image = (oyImage_s*) plug->remote_socket_->data;
+  image = oyConversion_GetImage( conversion, OY_OUTPUT );
 
   result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
                               &pixel_access->array, 0, 0 );
@@ -22076,6 +22076,8 @@ int                oyConversion_RunPixels (
                                        pixel_access->array, 0 );
     oyPixelAccess_Release( &pixel_access );
   }
+
+  oyImage_Release( &image );
 
   return error;
 }
