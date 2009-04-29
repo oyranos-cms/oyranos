@@ -435,7 +435,7 @@ check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples
 	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; INCLUDE=-I$(includedir) SRCDIR=../$(SRCDIR)/examples/ $(MAKE); pwd)
+	cd examples && ($(MAKE) clean; INCLUDE=-I$(includedir) SRCDIR=../$(SRCDIR)/examples/ $(MAKE))
 
 test:	test.o
 	$(CC) $(CFLAGS) -o test \
@@ -797,6 +797,7 @@ ifdef $(LIB_XNVCTRL)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 endif
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
+	cd examples && $(MAKE) clean
 	echo ... $@ done
 
 # configure if the file config is not available
