@@ -1107,8 +1107,8 @@ fi
 
 if [ -z "$quick" ]; then
   test -n "$ECHO" && $ECHO "" > mkdepend
-  test -f cobjects && rm cobjects
-  make cobjects
+  test -n "$ECHO" && $ECHO "" > cobjects
+  make depend
 fi
 
 echo_="char * oy_config_log_=\" \\"

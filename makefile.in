@@ -451,7 +451,7 @@ tests/test_oyranos:	tests/test_oyranos.o
 $(LIBFL_I18N):	fl_i18n/Makefile
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
 
-$(LINGUAS_SRC):	$(POT_FILE)
+$(LINGUAS_SRC):	$(SRCDIR)/$(POT_FILE)
 	echo Linguas ... $(@:.gmo=)
 	mkdir -p po/
 	for ling in $(@:.gmo=); do \
@@ -472,7 +472,7 @@ $(LINGUAS_SRC):	$(POT_FILE)
         || (echo $${ling}.po is not yet ready ... skipping) \
 	done;
 
-$(POT_FILE):
+$(SRCDIR)/$(POT_FILE):
 	echo Generating $(SRCDIR)/$(POT_FILE) ...
 	mkdir -p $(SRCDIR)/po
 	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
@@ -805,7 +805,7 @@ config.log.h:	$(CONFIG_FILES) ./config.log
 	./config.log
 
 # try to resolve dependencies
-depend:	cobjects
+depend:	cdepend
 	echo "setting up dependencies ..."
 	echo "MAKEDEPEND_ISUP = 1" > mkdepend
 	echo "#nicht editieren/dont edit - automatisch generiert" >> mkdepend
@@ -813,9 +813,10 @@ depend:	cobjects
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
 	  $(MAKEDEPEND) -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
 
-cobjects:
+cdepend:
 	echo preparing dependency compilation ...
-	echo "#nicht editieren/dont edit - automatisch generiert" > cobjects
+	echo "COBJECTS_ISUP = 1" > cobjects
+	echo "#nicht editieren/dont edit - automatisch generiert" >> cobjects
 	echo "" >> cobjects
 	for i in $(COBJECTS); do \
 	  echo "$${i}:" >> cobjects; \
@@ -946,11 +947,14 @@ help:
 	echo "... DESTDIR=\"/user/a/My Install Dir/\" install"
 	echo "... BUILDDIR=../build_local"
 
-# mkdepend
+# dependencies
 include mkdepend
 include cobjects
 
 #ifndef MAKEDEPEND_ISUP
 mkdepend: depend
+#endif
+#ifndef COBJECTS_ISUP
+cobjects: cdepend
 #endif
 
