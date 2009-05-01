@@ -646,10 +646,11 @@ OYEXPORT="#define OYEXPORT"
 
 # set some compiler and linker options
 
-if [ `$CC -MM $ROOT_DIR/oyranos.h > test_tmp.txt; cat test_tmp.txt | grep oyranos.o | wc -l` -gt 0 ]; then
+if [ `$CC -MM $ROOT_DIR/tests/library.c > test_tmp.txt; cat test_tmp.txt | grep library.o | wc -l` -gt 0 ]; then
   MAKEDEPEND="$GCC_MM"
 else
   MAKEDEPEND="$echo #"
+  cat test_tmp.txt
 fi
 rm test_tmp.txt
 
