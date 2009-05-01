@@ -248,7 +248,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 
 
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
-	test.c test2.cpp
+	test.c test2.cpp tests/test_oyranos.c
 
 .PHONY:	docu examples
 
@@ -442,7 +442,9 @@ test:	test.o
 	test.o \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
-tests/test_oyranos:	tests/test_oyranos.o
+tests/test_oyranos:
+	$(RM) tests/test_oyranos.o
+	$(MAKE) tests/test_oyranos.o
 	echo Linking tests/test_oyranos
 	$(CC) $(CFLAGS) -o tests/test_oyranos \
         tests/test_oyranos.o \
