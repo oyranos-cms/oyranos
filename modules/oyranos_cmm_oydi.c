@@ -503,9 +503,10 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   int result = 0, error = 0;
   oyFilterGraph_s * display_graph = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterNode_s * node = socket->node,
+  oyFilterNode_s * input_node = 0,
+                 * node = socket->node,
                  * rectangles = 0;
-  oyImage_s * image = (oyImage_s*)socket->data,
+  oyImage_s * image = 0,
             * input_image = 0;
   oyOption_s * o = 0;
   oyRectangle_s * r, * rd, * ri;
@@ -528,6 +529,11 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
   ID = oydiFilterNode_ImageDisplayID( node );
 
+  /* let Oyranos resolve processing data */
+  input_image = oyFilterPlug_ResolveImage( node->plugs[0], socket, ticket );
+  oyImage_Release( &input_image );
+  image = (oyImage_s*)socket->data;
+
   {
     /* display stuff */
 
@@ -537,8 +543,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     /* obtain the local graph */
     display_graph = (oyFilterGraph_s*)oyOptions_GetType( node->core->options_,
-                                            -1, "//" OY_TYPE_STD "/display/display_graph",
-                                            oyOBJECT_FILTER_GRAPH_S );
+                                  -1, "//" OY_TYPE_STD "/display/display_graph",
+                                                      oyOBJECT_FILTER_GRAPH_S );
 
     if(!display_graph)
     {
@@ -549,7 +555,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
       display_graph = (oyFilterGraph_s*)oyOptions_GetType( node->core->options_,
                                   -1, "//" OY_TYPE_STD "/display/display_graph",
-                                            oyOBJECT_FILTER_GRAPH_S );
+                                                      oyOBJECT_FILTER_GRAPH_S );
       error = !display_graph;
     }
 
@@ -561,7 +567,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     /* get cached devices */
     devices = (oyConfigs_s*)oyOptions_GetType( node->core->options_, -1, 
-                      "//" OY_TYPE_STD "/display/devices", oyOBJECT_CONFIGS_S );
+                                            "//" OY_TYPE_STD "/display/devices",
+                                               oyOBJECT_CONFIGS_S );
 
     n = oyConfigs_Count( devices );
     if(!n || oyFilterNode_EdgeCount( rectangles, 1, OY_FILTEREDGE_CONNECTED ) < n)
@@ -581,10 +588,12 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
       /* get current work rectangle */
       r = (oyRectangle_s *) oyOptions_GetType( rectangles->core->options_, i, 
-               "//" OY_TYPE_STD "/rectangles/rectangle", oyOBJECT_RECTANGLE_S );
+                                       "//" OY_TYPE_STD "/rectangles/rectangle",
+                                               oyOBJECT_RECTANGLE_S );
 
       /* get display rectangle to project into */
-      o = oyOptions_Find( image->tags, "display_rectangle" );
+      if(image)
+        o = oyOptions_Find( image->tags, "display_rectangle" );
       if(o && o->value_type == oyVAL_STRUCT && o->value &&
          o->value->oy_struct->type_ == oyOBJECT_RECTANGLE_S)
         ri = (oyRectangle_s *) o->value->oy_struct;
@@ -602,7 +611,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
              "%s:%d  image %d: %s", __FILE__,__LINE__, i, oyRectangle_Show(r));
 
       /* all rectangles are relative to image dimensions */
-      if(image->width != 0)
+      if(image && image->width != 0)
         oyRectangle_Scale( r, 1./image->width );
 
       /* select actual image from the according CMM node */

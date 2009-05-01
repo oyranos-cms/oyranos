@@ -156,6 +156,11 @@ int      oyraFilterPlug_ImageRectanglesRun (
   if(result != 0)
     return result;
 
+  /* let Oyranos resolve processing data */
+  image = oyFilterPlug_ResolveImage( node->plugs[0], socket, ticket );
+  oyImage_Release( &image );
+  image = (oyImage_s*)socket->data;
+
   if(x < image->width &&
      y < image->height &&
      ticket->pixels_n)
@@ -472,7 +477,7 @@ oyPointer  oyraFilterNode_ImageRootContextToMem (
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/10 (Oyranos: 0.1.8)
- *  @date    2008/10/05
+ *  @date    2009/05/01
  */
 int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
@@ -483,6 +488,10 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
   oyPointer * ptr = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyImage_s * image = (oyImage_s*)socket->data;
+
+  /* Do not work on non existent data. */
+  if(!image || !ticket->output_image)
+    return result;
 
   /* Set a unknown output image dimension to something appropriate. */
   if(!ticket->output_image->width && !ticket->output_image->height)
@@ -676,8 +685,13 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterNode_s * node = 0;
   int result = 0;
+  oyImage_s * image = 0;
 
   node = socket->node;
+
+  /* let Oyranos resolve processing data */
+  image = oyFilterPlug_ResolveImage( node->plugs[0], socket, ticket );
+  oyImage_Release( &image );
 
   /* to reuse the requestor_plug is a exception for the starting request */
   result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );

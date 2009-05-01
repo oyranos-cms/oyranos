@@ -1749,6 +1749,7 @@ typedef struct oyConnectorImaging_s oyConnectorImaging_s;
 typedef struct oyFilterPlug_s oyFilterPlug_s;
 typedef struct oyFilterPlugs_s oyFilterPlugs_s;
 typedef struct oyFilterSocket_s oyFilterSocket_s;
+typedef struct oyPixelAccess_s oyPixelAccess_s;
 
 
 /** @enum    oyCONNECTOR_e
@@ -1985,6 +1986,10 @@ OYAPI int  OYEXPORT
                  oyFilterPlug_ConnectIntoSocket (
                                        oyFilterPlug_s   ** p,
                                        oyFilterSocket_s ** s );
+OYAPI oyImage_s * OYEXPORT
+             oyFilterPlug_ResolveImage(oyFilterPlug_s    * plug,
+                                       oyFilterSocket_s  * socket,
+                                       oyPixelAccess_s   * ticket );
 
 /** @struct  oyFilterPlugs_s
  *  @brief   a FilterPlugs list
@@ -2427,8 +2432,6 @@ OYAPI char * OYEXPORT
                                        int                 reserved,
                                        oyAlloc_f           allocateFunc );
 
-
-typedef struct oyPixelAccess_s oyPixelAccess_s;
 
 /** @struct  oyPixelAccess_s
  *  @brief   control pixel access order

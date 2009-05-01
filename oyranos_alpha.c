@@ -15091,12 +15091,12 @@ int       oyImage_SetArray2dPointContinous (
   int pos = (point_x * image->layout_[oyCHANS]
              + image->layout_[oyCHAN0+channel])
             * image->layout_[oyDATA_SIZE];
-  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[0] );
+  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
   int byteps = oySizeofDatatype( data_type );
   int channels = 1;
 
   if(channel < 0)
-    channels = oyToChannels_m( image->layout_[0] );
+    channels = oyToChannels_m( image->layout_[oyLAYOUT] );
 
   memcpy( &array2d[ point_y ][ pos ], data, byteps * channels );
 
@@ -15122,7 +15122,7 @@ int       oyImage_SetArray2dLineContinous (
 {
   oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
   unsigned char ** array2d = a->array2d;
-  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[0] );
+  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
   int byteps = oySizeofDatatype( data_type );
   int channels = 1;
   int offset = point_x;
@@ -15132,7 +15132,7 @@ int       oyImage_SetArray2dLineContinous (
 
   if(channel < 0)
   {
-    channels = oyToChannels_m( image->layout_[0] );
+    channels = oyToChannels_m( image->layout_[oyLAYOUT] );
     offset *= channels;
   }
 
@@ -15378,8 +15378,9 @@ oyImage_s *    oyImage_Copy_          ( oyImage_s       * image,
 
   /* TODO */
 
-  s = image;
-  s->oy_ = oyObject_Copy( s->oy_ );
+  s = oyImage_Create( image->width, image->height,
+                      0, image->layout_[oyLAYOUT],
+                      image->profile_, object );
 
   return s;
 }
@@ -16758,6 +16759,63 @@ OYAPI int  OYEXPORT
   }
 
   return 0;
+}
+
+/** Function oyFilterPlug_ResolveImage
+ *  @memberof oyFilterPlug_s
+ *  @brief   resolve processing data during a filter run
+ *
+ *  The function is a convenience function to use inside a filters
+ *  oyCMMFilterPlug_Run_f call. The function makes only sense for non root
+ *  filters.
+ *
+ *  @param[in,out] plug                the filters own plug
+ *  @param[in,out] socket              the filters own socket
+ *  @param[in,out] ticket              the actual ticket
+ *  @return                            the input image
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/01 (Oyranos: 0.1.10)
+ *  @date    2009/05/01
+ */
+OYAPI oyImage_s * OYEXPORT
+             oyFilterPlug_ResolveImage(oyFilterPlug_s    * plug,
+                                       oyFilterSocket_s  * socket,
+                                       oyPixelAccess_s   * ticket )
+{
+  int error = !plug || !plug->remote_socket_ ||
+              !ticket ||
+              !socket || !socket->node;
+  oyImage_s * image_input = 0, * image = 0;
+  oyFilterNode_s * input_node = 0,
+                 * node = socket->node;
+
+  if(error)
+    return 0;
+
+  image_input = oyImage_Copy( (oyImage_s*)plug->remote_socket_->data, 0 );
+  input_node = plug->remote_socket_->node;
+  
+  if(!image_input)
+  {
+    /* try to obtain the processing data from a generator filter */
+    input_node->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
+    image_input = oyImage_Copy( (oyImage_s*)plug->remote_socket_->data, 0 );
+    if(!image_input)
+      return 0;
+  }
+
+  if(!socket->data)
+  {
+    image = oyImage_Copy( (oyImage_s*) image_input, node->oy_ );
+    error = oyFilterNode_DataSet( node, (oyStruct_s*)image, 0, 0 );
+    oyImage_Release( &image );
+  }
+
+  if(!ticket->output_image)
+    ticket->output_image = oyImage_Copy( (oyImage_s*) socket->data, 0 );
+
+  return image_input;
 }
 
 
@@ -21421,7 +21479,7 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/21 (Oyranos: 0.1.8)
- *  @date    2008/10/21
+ *  @date    2009/05/01
  */
 int                oyPixelAccess_CalculateNextStartPixel (
                                        oyPixelAccess_s   * obj,
@@ -21434,6 +21492,9 @@ int                oyPixelAccess_CalculateNextStartPixel (
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyImage_s * image = (oyImage_s*)socket->data;
+
+  if(!image)
+    return 0;
 
   /* calculate the pixel position we want */
   if(pixel_access->array_xy)
@@ -22125,7 +22186,7 @@ oyPointer        * oyConversion_GetOnePixel (
  *  @brief   get a image copy at the desired position
  *
  *  @param[in,out] conversion          conversion object
- *  @param[in]     flags               OY_INTPUT or OY_OUTPUT
+ *  @param[in]     flags               OY_INPUT or OY_OUTPUT
  *  @return                            the image
  *
  *  @version Oyranos: 0.1.10
@@ -22141,6 +22202,7 @@ oyImage_s        * oyConversion_GetImage (
   oyFilterSocket_s * sock = 0;
   int error = 0;
   oyConversion_s * s = conversion;
+  oyPixelAccess_s * pixel_access = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
@@ -22153,7 +22215,7 @@ oyImage_s        * oyConversion_GetImage (
       {
         image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
 
-        if(!image)
+        if(!sock->data)
         {
           /* TODO: remove the following hack; the socket->plug cast is ugly */
           s->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0 );
@@ -22166,7 +22228,26 @@ oyImage_s        * oyConversion_GetImage (
     {
       plug = oyFilterNode_GetPlug( s->out_, 0 );
       if(plug && plug->remote_socket_)
+      {
         image = oyImage_Copy( (oyImage_s*) plug->remote_socket_->data, 0);
+
+        if(!image)
+        {
+          /* Run the graph to set up processing image data. */
+          plug = oyFilterNode_GetPlug( conversion->out_, 0 );
+          pixel_access = oyPixelAccess_Create( 0,0, plug->remote_socket_,
+                                               oyPIXEL_ACCESS_IMAGE, 0 );
+          conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
+
+          /* Link the tickets image. It should be real copied in a plug-in. */
+          /* error = oyFilterNode_DataSet( conversion->out_, 
+                                        (oyStruct_s*)pixel_access->output_image,
+                                        0, 0 ); */
+          oyPixelAccess_Release( &pixel_access );
+
+          image = oyImage_Copy( (oyImage_s*) plug->remote_socket_->data, 0 );
+        }
+      }
     }
   }
 

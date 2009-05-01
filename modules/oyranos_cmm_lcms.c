@@ -1339,9 +1339,9 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
 /** Function lcmsFilterPlug_CmmIccRun
  *  @brief   implement oyCMMFilterPlug_GetNext_f()
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/07/18 (Oyranos: 0.1.8)
- *  @date    2008/10/03
+ *  @date    2009/05/01
  */
 int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
@@ -1356,14 +1356,15 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   oyFilterPlug_s * plug = 0;
   oyFilterNode_s * input_node = 0,
                  * node = socket->node;
-  oyImage_s * image_input = 0;
+  oyImage_s * image_input = 0, * image = 0;
   oyArray2d_s * array_in = 0, * array_out = 0;
   lcmsTransformWrap_s * ltw  = 0;
   oyPixelAccess_s * new_ticket = ticket;
 
-  plug = (oyFilterPlug_s *)socket->node->plugs[0];
+  plug = (oyFilterPlug_s *)node->plugs[0];
   input_node = plug->remote_socket_->node;
-  image_input = (oyImage_s*)plug->remote_socket_->data;
+
+  image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
 
   if(oyImage_PixelLayoutGet( image_input ) != 
      oyImage_PixelLayoutGet( ticket->output_image ))
@@ -1434,6 +1435,8 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(oyImage_PixelLayoutGet( image_input ) != 
      oyImage_PixelLayoutGet( ticket->output_image ))
     oyPixelAccess_Release( &new_ticket );
+
+  oyImage_Release( &image_input );
 
   return error;
 }
