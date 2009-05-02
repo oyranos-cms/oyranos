@@ -16807,7 +16807,12 @@ OYAPI oyImage_s * OYEXPORT
 
   if(!socket->data)
   {
-    image = oyImage_Copy( (oyImage_s*) image_input, node->oy_ );
+    /* Copy a root image or link to a non root image. */
+    if(!plug->remote_socket_->node->api7_->plugs_n)
+      image = oyImage_Copy( (oyImage_s*) image_input, node->oy_ );
+    else
+      image = oyImage_Copy( (oyImage_s*) image_input, 0 );
+
     error = oyFilterNode_DataSet( node, (oyStruct_s*)image, 0, 0 );
     oyImage_Release( &image );
   }
