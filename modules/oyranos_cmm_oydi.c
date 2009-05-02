@@ -500,7 +500,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
   int x = 0, y = 0, n = 0, i;
-  int result = 0, error = 0;
+  int result = 0, l_result = 0, error = 0;
   oyFilterGraph_s * display_graph = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterNode_s * input_node = 0,
@@ -656,8 +656,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
 
     /* make the graph flow: process the upstream "rectangles" node */
-    rectangles->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
-
+    l_result = rectangles->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
+    if(l_result > 0 || result == 0) result = l_result;
   }
 
   clean:
