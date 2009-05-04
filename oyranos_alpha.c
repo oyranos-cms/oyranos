@@ -15847,7 +15847,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     for(i = array_rectangle->y; i < array_rectangle->height; ++i)
     {
       image->setLine( image, offset, pixel_rectangle->y + i, width, -1,
-                      &array->array2d[i][(int)OY_ROUND(array_rectangle->x) * size] );
+                      &array->array2d
+                              [i][(int)OY_ROUND(array_rectangle->x) * size] );
     }
   }
 
@@ -22138,8 +22139,9 @@ int                oyConversion_RunPixels (
   if(tmp_ticket)
   {
     /* write the data to the output image */
-    result = oyImage_ReadArray( image, pixel_access->output_image_roi,
-                                       pixel_access->array, 0 );
+    if(image != pixel_access->output_image)
+      result = oyImage_ReadArray( image, pixel_access->output_image_roi,
+                                         pixel_access->array, 0 );
     oyPixelAccess_Release( &pixel_access );
   }
 
