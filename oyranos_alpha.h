@@ -609,6 +609,12 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
                                        uint32_t            flags );
 char *         oyOption_GetValueText ( oyOption_s        * obj,
                                        oyAlloc_f           allocateFunc );
+int            oyOption_SetFromInt   ( oyOption_s        * obj,
+                                       int32_t             integer,
+                                       int                 pos,
+                                       uint32_t            flags );
+int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
+                                       int                 pos );
 int            oyOption_Clear        ( oyOption_s        * s );
 int            oyOption_SetFromData  ( oyOption_s        * option,
                                        oyPointer           ptr,
@@ -735,6 +741,15 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
 int            oyOptions_SetFromText ( oyOptions_s      ** obj,
                                        const char        * key,
                                        const char        * value,
+                                       uint32_t            flags );
+int            oyOptions_FindInt     ( oyOptions_s       * options,
+                                       const char        * key,
+                                       int                 pos,
+                                       int32_t           * result );
+int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
+                                       const char        * key,
+                                       int32_t             integer,
+                                       int                 pos,
                                        uint32_t            flags );
 int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
                                        const char        * registration,

@@ -6044,6 +6044,130 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   return erg;
 }
 
+/** Function oyOption_SetFromInt
+ *  @memberof oyOption_s
+ *  @brief   set a integer 
+ *
+ *  @param[in,out] obj                 the option
+ *  @param         integer             the value
+ *  @param         pos                 position in a list
+ *  @param         flags               unused
+ *  @return                            0 - success, 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/04 (Oyranos: 0.1.10)
+ *  @date    2009/05/04
+ */
+int            oyOption_SetFromInt   ( oyOption_s        * obj,
+                                       int32_t             integer,
+                                       int                 pos,
+                                       uint32_t            flags )
+{
+  int error = !obj;
+  oyOption_s * s = obj;
+
+  if(!obj)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
+ 
+  if(error <= 0)
+  {
+    if(s->value && flags)
+    {
+      oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+      oyValueRelease( &s->value, s->value_type, deallocateFunc );
+    }
+
+    if(!s->value)
+    {
+      oyAllocHelper_m_( s->value, oyValue_u, 1,
+                        s->oy_->allocateFunc_,
+                        error = 1 );
+      s->value_type = oyVAL_INT;
+    }
+
+    if(!error && pos > 0 && 
+       (!s->value_type == oyVAL_INT_LIST ||
+        (s->value_type == oyVAL_INT_LIST && 
+         (!s->value->int32_list || pos >= s->value->int32_list[0]))))
+    {
+      int32_t * old_list = 0,
+                old_int = 0;
+
+      if(s->value_type == oyVAL_INT_LIST)
+        old_list = s->value->int32_list;
+      if(s->value_type == oyVAL_INT)
+        old_int = s->value->int32;
+
+      s->value->int32_list = 0;
+      oyAllocHelper_m_( s->value->int32_list, int32_t, pos + 2,
+                        s->oy_->allocateFunc_,
+                        error = 1 );
+
+      if(!error && old_list)
+      {
+        memcpy( s->value->int32_list, old_list,
+                (old_list[0] + 1) * sizeof(uint32_t) );
+        s->oy_->deallocateFunc_( old_list ); old_list = 0;
+      }
+
+      if(!error && old_int)
+        s->value->int32_list[1] = old_int;
+
+      s->value_type = oyVAL_INT_LIST;
+      s->value->int32_list[0] = pos + 1;
+    }
+
+    if(s->value_type == oyVAL_INT)
+      s->value->int32 = integer;
+    else
+      s->value->int32_list[pos+1] = integer;
+
+    s->flags |= oyOPTIONATTRIBUTE_EDIT;
+  }
+
+  return error;
+}
+
+/** Function oyOption_GetValueInt
+ *  @memberof oyOption_s
+ *  @brief   get a integer 
+ *
+ *  @param[in,out] obj                 the option
+ *  @param         pos                 position in a list
+ *  @return                            integer
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/04 (Oyranos: 0.1.10)
+ *  @date    2009/05/04
+ */
+int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
+                                       int                 pos )
+{
+  oyOption_s * s = obj;
+  int error = !s;
+  int32_t result = 0;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
+ 
+  if(error <= 0)
+  {
+    if( s->value_type == oyVAL_INT_LIST &&
+        s->value->int32_list &&
+        s->value->int32_list[0] > pos )
+      result = s->value->int32_list[pos + 1];
+    else if(s->value_type == oyVAL_INT)
+      result = s->value->int32;
+  }
+
+  return result;
+}
+
 /** Function oyOption_GetText
  *  @memberof oyOption_s
  *  @brief   get a text dump 
@@ -7590,6 +7714,118 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
 
     } else
       oyOption_SetFromText( o, value, flags );
+
+    oyOption_Release( &o );
+  }
+
+  return error;
+}
+
+/** Function oyOptions_FindInt
+ *  @memberof oyOptions_s
+ *  @brief   get a value
+ *
+ *  @param         options             the options list or set to manipulate
+ *  @param         registration        the options registration name, e.g.
+ *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     or simple key, e.g. "my_opt"
+ *  @param         result              the integer
+ *  @param         pos                 the value position
+ *  @return                            0 -  option exists, is of correct type,
+ *                                          holds a value at the position;
+ *                                     -1 - not found;
+ *                                     1 -  error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/04 (Oyranos: 0.1.10)
+ *  @date    2009/05/04
+ */
+int            oyOptions_FindInt     ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       int                 pos,
+                                       int32_t           * result )
+{
+  int error = !options;
+  oyOptions_s * s = options;
+  oyOption_s * o = 0;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return error );
+
+  if(error <= 0)
+  {
+    o = oyOptions_Find( options, registration );
+
+    if(o && o->type_ == oyOBJECT_OPTION_S &&
+       (o->value_type == oyVAL_INT ||
+        o->value_type == oyVAL_INT_LIST))
+    {
+      if(result)
+        *result = oyOption_GetValueInt( o, pos );
+      error = 0;
+
+    } else
+      error = -1;
+
+    oyOption_Release( &o );
+  }
+
+  return error;
+}
+
+/** Function oyOptions_SetFromInt
+ *  @memberof oyOptions_s
+ *  @brief   change a value
+ *
+ *  @param         obj                 the options list or set to manipulate
+ *  @param         registration        the options registration name, e.g.
+ *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *  @param         value               the value to set
+ *  @param         pos                 the position in a value list
+ *  @param         flags               can be OY_CREATE_NEW for a new option,
+ *                                     OY_STRING_LIST or OY_ADD_ALWAYS
+ *  @return                            0 - success; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/04 (Oyranos: 0.1.10)
+ *  @date    2009/05/04
+ */
+int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
+                                       const char        * registration,
+                                       int32_t             value,
+                                       int                 pos,
+                                       uint32_t            flags )
+{
+  int error = 0;
+  oyOption_s * o = 0;
+  oyOptions_s * s = *obj;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+
+  if(error <= 0)
+  {
+    if(!*obj)
+      *obj = oyOptions_New( 0 );
+
+    o = oyOptions_Find( *obj, registration );
+
+    /** Add a new option if the OY_CREATE_NEW flag is present.
+     */
+    if((!o && oyToCreateNew_m(flags)) ||
+        oyToAddAlways_m(flags))
+    {
+      o = oyOption_New( registration, (*obj)->oy_ );
+      error = !o;
+
+      if(error <= 0)
+        /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
+        error = oyOption_SetFromInt( o, value, pos, flags & 1 );
+
+      oyOptions_MoveIn( (*obj), &o, -1 );
+
+    } else
+      oyOption_SetFromInt( o, value, pos, flags & 1 );
 
     oyOption_Release( &o );
   }
@@ -9246,7 +9482,7 @@ OYAPI int  OYEXPORT
  *  possible to get informations (oyDeviceGetInfo()), query it's current,
  *  possibly remote profile (strong oyDeviceGetProfile() /
  *  weak oyDeviceAskProfile()) set the profile persistent
- *  (oyDeviceSetProfile()) or query the persitent stored profile
+ *  (oyDeviceSetProfile()) or query the persistent stored profile
  *  (oyDeviceProfileFromDB()).
  *
  *  @{
@@ -9449,7 +9685,7 @@ OYAPI int  OYEXPORT
  *  @brief   get all devices matching to a device class and type
  *
  *  @verbatim
-    // get all monitors
+    // "list" all monitors
     oyConfig_s * monitors = 0;
     int error = oyDevicesGet( 0, "monitor", 0, &monitors );
     // see how many are included
@@ -14919,6 +15155,9 @@ oyImage_CombinePixelLayout2Mask_ (
   if(!s)
     return 0;
 
+  if(!n && cchan_n)
+    n = cchan_n;
+
   /* describe the pixel layout and access */
   if(error <= 0)
   {
@@ -16790,6 +17029,8 @@ OYAPI oyImage_s * OYEXPORT
   oyImage_s * image_input = 0, * image = 0;
   oyFilterNode_s * input_node = 0,
                  * node = socket->node;
+  oyPixel_t pixel_layout = 0;
+  oyOptions_s * options = 0;
 
   if(error)
     return 0;
@@ -16810,8 +17051,22 @@ OYAPI oyImage_s * OYEXPORT
   {
     /* Copy a root image or link to a non root image. */
     if(!plug->remote_socket_->node->api7_->plugs_n)
-      image = oyImage_Copy( (oyImage_s*) image_input, node->oy_ );
-    else
+    {
+      /* Wie ist diese Option eindeutig zu finden? */
+      options = oyFilterNode_OptionsGet( node, 0 );
+      error = oyOptions_FindInt( options, "pixel_layout", 0,
+                                 (int32_t*)&pixel_layout );
+      oyOptions_Release( &options );
+
+      if(error == 0)
+        image = oyImage_Create( image_input->width, image_input->height,
+                                0, pixel_layout,
+                                image_input->profile_, node->oy_ );
+      else
+        image = oyImage_Copy( (oyImage_s*) image_input, node->oy_ );
+
+
+    } else
       image = oyImage_Copy( (oyImage_s*) image_input, 0 );
 
     error = oyFilterNode_DataSet( node, (oyStruct_s*)image, 0, 0 );
