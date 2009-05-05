@@ -296,6 +296,112 @@ oyTESTRESULT_e testOption ()
   return result;
 }
 
+oyTESTRESULT_e testOptionInt ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int error = 0;
+  oyOption_s * o = 0;
+  int32_t erg[4] = { -1,-1,-1,-1 };
+
+  oyExportReset_(EXPORT_SETTING);
+
+  fprintf(stdout, "\n" );
+
+  o = oyOption_New( "//" OY_TYPE_STD "/filter/x", 0 );
+
+  error = oyOption_SetFromInt( o, 0, 0, 0 );
+  if(!error && o->value &&
+     o->value->int32 == 0 &&
+     o->value_type == oyVAL_INT)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_SetFromInt() good                        " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_SetFromInt() failed                      " );
+  }
+
+  error = oyOption_SetFromInt( o, 58293, 0, 0 );
+  if(!error && o->value &&
+     o->value->int32 == 58293 &&
+     o->value_type == oyVAL_INT)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_SetFromInt() single int32_t good         " );
+    erg[0] = oyOption_GetValueInt( o, 0 );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_SetFromInt() single int32_t failed       " );
+  }
+
+  error = oyOption_SetFromInt( o, 58293, 1, 0 );
+  if(!error && o->value &&
+     o->value->int32_list[0] == 2 &&
+     o->value->int32_list[1] == 58293 &&
+     o->value->int32_list[2] == 58293 &&
+     o->value_type == oyVAL_INT_LIST)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_SetFromInt() add int32_t list good     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_SetFromInt() add int32_t list failed   " );
+  }
+
+  error = oyOption_SetFromInt( o, 58293, 2, 0 );
+  if(!error && o->value &&
+     o->value->int32_list[0] == 3 &&
+     o->value->int32_list[1] == 58293 &&
+     o->value->int32_list[2] == 58293 &&
+     o->value->int32_list[3] == 58293 &&
+     o->value_type == oyVAL_INT_LIST)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_SetFromInt() add int32_t list good     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_SetFromInt() add int32_t list failed   " );
+  }
+
+  error = oyOption_SetFromInt( o, 58293, 1, 1 );
+  if(!error && o->value &&
+     o->value->int32_list[0] == 2 &&
+     o->value->int32_list[1] == 0 &&
+     o->value->int32_list[2] == 58293 &&
+     o->value_type == oyVAL_INT_LIST)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_SetFromInt() new int32_t list good     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_SetFromInt() new int32_t list failed   " );
+  }
+
+  error = oyOption_SetFromInt( o, 58293, 0, 0 );
+  if(!error && o->value &&
+     o->value->int32_list[0] == 2 &&
+     o->value->int32_list[1] == 58293 &&
+     o->value->int32_list[2] == 58293 &&
+     o->value_type == oyVAL_INT_LIST)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_SetFromInt() set int32_t list good     " );
+    erg[1] = oyOption_GetValueInt( o, 0 );
+    erg[2] = oyOption_GetValueInt( o, 1 );
+    erg[3] = oyOption_GetValueInt( o, 3 );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_SetFromInt() set int32_t list failed   " );
+  }
+
+  if(!error && erg[0] == 58293 && erg[1] == 58293 && erg[2] == 58293 &&
+               erg[3] == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_GetValueInt() good                     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_GetValueInt() failed                   " );
+  }
+
+  oyOption_Release( &o );
+
+  return result;
+}
 
 #include <libxml/parser.h>
 #include <libxml/xmlsave.h>
@@ -1409,6 +1515,7 @@ int main(int argc, char** argv)
   TEST_RUN( testI18N, "Internationalisation" );
   TEST_RUN( testElektra, "Elektra" );
   TEST_RUN( testOption, "basic oyOption_s" );
+  TEST_RUN( testOptionInt,  "oyOption_s integers" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
