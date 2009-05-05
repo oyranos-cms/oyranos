@@ -630,8 +630,10 @@ oyTESTRESULT_e testMonitor ()
   oyConfigs_Release( &devices );
 
 
+#if 0
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD"/config/properties",
                                  "true", OY_CREATE_NEW );
+#endif
 
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyOptions_Release( &options );
