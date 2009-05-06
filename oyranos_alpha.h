@@ -539,6 +539,27 @@ void           oyValueClear          ( oyValue_u         * v,
                                        oyVALUETYPE_e       type,
                                        oyDeAlloc_f         deallocateFunc );
 
+
+/** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html 
+ *  @ingroup objects_conversion
+ */
+typedef enum {
+  oyFILTER_REG_NONE = 0,
+  oyFILTER_REG_TOP = 0x01,             /**< e.g. "sw" for filters */
+  oyFILTER_REG_DOMAIN = 0x02,          /**< e.g. "oyranos.org" */
+  oyFILTER_REG_TYPE = 0x04,            /**< e.g. "imaging" filter group */
+  oyFILTER_REG_APPLICATION = 0x08,     /**< e.g. "scale" filter name */
+  oyFILTER_REG_OPTION = 0x10,          /**< e.g. "x" filter option */
+  oyFILTER_REG_MAX = 0x20
+} oyFILTER_REG_e;
+
+char * oyFilterRegistrationToText    ( const char        * registration,
+                                       oyFILTER_REG_e      type,
+                                       oyAlloc_f           allocateFunc );
+int    oyFilterRegistrationMatch     ( const char        * registration,
+                                       const char        * pattern,
+                                       oyOBJECT_e          api_number );
+
 /** @enum    oyOPTIONSOURCE_e
  *  @brief   a option source type
  *
@@ -716,9 +737,20 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyObject_s          object );
 int            oyOptions_AppendOpts  ( oyOptions_s       * list,
                                        oyOptions_s       * append );
+int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
+                                       oyOptions_s       * from,
+                                       oyBOOLEAN_e         type,
+                                       oyFILTER_REG_e      fields,
+                                       oyObject_s          object );
 int            oyOptions_DoFilter    ( oyOptions_s       * s,
                                        uint32_t            flags,
                                        const char        * filter_type );
+int            oyOptions_Filter      ( oyOptions_s      ** add_list,
+                                       int32_t           * count,
+                                       uint32_t            flags,
+                                       oyBOOLEAN_e         type,
+                                       const char        * registration,
+                                       oyOptions_s       * src_list );
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type );
 int            oyOptions_CountType   ( oyOptions_s       * options,
@@ -1729,26 +1761,6 @@ oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
 oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
 
-/** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html 
- *  @ingroup objects_conversion
- */
-typedef enum {
-  oyFILTER_REG_NONE,
-  oyFILTER_REG_TOP,                    /**< e.g. "sw" for filters */
-  oyFILTER_REG_DOMAIN,                 /**< e.g. "oyranos.org" */
-  oyFILTER_REG_TYPE,                   /**< e.g. "imaging" filter group */
-  oyFILTER_REG_APPLICATION,            /**< e.g. "scale" filter name */
-  oyFILTER_REG_OPTION,                 /**< e.g. "x" filter option */
-  oyFILTER_REG_MAX
-} oyFILTER_REG_e;
-
-char * oyFilterRegistrationToText    ( const char        * registration,
-                                       oyFILTER_REG_e      type,
-                                       oyAlloc_f           allocateFunc );
-int    oyFilterRegistrationMatch     ( const char        * registration,
-                                       const char        * pattern,
-                                       oyOBJECT_e          api_number );
-
 typedef struct oyFilterCore_s oyFilterCore_s;
 typedef struct oyCMMptr_s oyCMMptr_s;
 typedef struct oyCMMapi4_s oyCMMapi4_s;
@@ -2568,9 +2580,9 @@ OYAPI char * OYEXPORT
  *        synchronisation, simple or complex pixel areas (point, line, area,
  *        pattern )
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/07/04 (Oyranos: 0.1.8)
- *  @date    2008/10/22
+ *  @date    2009/05/05
  */
 struct oyPixelAccess_s {
   oyOBJECT_e           type;           /**< internal struct type oyOBJECT_PIXEL_ACCESS_S */
@@ -2597,6 +2609,7 @@ struct oyPixelAccess_s {
                                             output_image (of the last filter).*/
   oyImage_s      * output_image;       /**< the image which issued the request*/
   oyFilterGraph_s * graph;             /**< the graph to process */
+  oyOptions_s    * request_queue;      /**< requests to resolve */
 };
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
@@ -2615,7 +2628,7 @@ typedef enum {
 oyPixelAccess_s *  oyPixelAccess_Create (
                                        int32_t             start_x,
                                        int32_t             start_y,
-                                       oyFilterSocket_s  * sock,
+                                       oyFilterPlug_s    * plug,
                                        oyPIXEL_ACCESS_TYPE_e type,
                                        oyObject_s          object );
 oyPixelAccess_s *  oyPixelAccess_Copy( oyPixelAccess_s   * obj,
