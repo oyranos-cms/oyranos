@@ -163,10 +163,13 @@ class Fl_Oy_Box : public Fl_Box
       if(pt != 0 &&
          (channels != 4 && channels != 3) || data_type != oyUINT8)
       {
+        oyOptions_s * options = 0;
+        options = oyFilterNode_OptionsGet( context->input, 0 );
         printf( "WARNING: wrong image data format: %s\n%s\n"
                 "need 4 or 3 channels with 8-bit\n",
-                oyOptions_FindString( image_tags, "filename", 0 ),
+                oyOptions_FindString( options, "filename", 0 ),
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "" );
+        oyOptions_Release( &options );
         return;
       }
 
@@ -325,6 +328,17 @@ main(int argc, char** argv)
 
   /* add a closing node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
+  /* add a file name argument */
+  /* get the options of the input node */
+  if(out)
+  options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
+  /* add a new option with the appropriate value */
+  error = oyOptions_SetFromInt( &options,
+                                 "//" OY_TYPE_STD "/image/pixel_layout.resolve",
+                                 oyDataType_m(oyUINT8), 0, OY_CREATE_NEW );
+  /* release the options object, this means its not any more refered from here*/
+  oyOptions_Release( &options );
+
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
