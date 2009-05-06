@@ -586,6 +586,14 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         rd = (oyRectangle_s *) o->value->oy_struct;
       oyOption_Release( &o );
 
+      if(!rd)
+      {
+        message( oyMSG_WARN, (oyStruct_s*)image,
+               "%s:%d  device %d: Could not obtain \"device_rectangle\" option",
+                 __FILE__,__LINE__, i);
+        continue;
+      }
+
       /* get current work rectangle */
       r = (oyRectangle_s *) oyOptions_GetType( rectangles->core->options_, i, 
                                        "//" OY_TYPE_STD "/rectangles/rectangle",

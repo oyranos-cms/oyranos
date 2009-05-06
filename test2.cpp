@@ -403,6 +403,104 @@ oyTESTRESULT_e testOptionInt ()
   return result;
 }
 
+oyTESTRESULT_e testOptionsCopy ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int error = 0;
+  oyOptions_s * setA = 0, * setB = 0, * setC = 0,
+              * resultA = 0, * resultB = 0;
+  int32_t count = 0;
+
+  fprintf(stdout, "\n" );
+
+  error = oyOptions_SetFromText( &setA,
+                "sw/oyranos.org/imaging/lcms.colour.icc/rendering_bpc.advanced",
+                                 "1", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &setA,
+                                 "//" OY_TYPE_STD "/image/A", "true",
+                                 OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &setA,
+                                 "//" OY_TYPE_STD "/image/A", "true",
+                                 OY_CREATE_NEW );
+
+  if(!error && oyOptions_Count( setA ) == 2)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_SetFromText() good                    " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOptions_SetFromText() failed                  " );
+  }
+
+  error = oyOptions_SetFromText( &setB,
+                                 "//" OY_TYPE_STD "/config/A", "true",
+                                 OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &setB,
+                                 "//" OY_TYPE_STD "/config/B", "true",
+                                 OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &setB,
+                                 "//" OY_TYPE_STD "/config/C", "true",
+                                 OY_CREATE_NEW );
+
+  error = oyOptions_SetFromText( &setC,
+                                 "//" OY_TYPE_STD "/config/B", "true",
+                                 OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &setC,
+                                 "//" OY_TYPE_STD "/config/D", "true",
+                                 OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &setC,
+                                 "//" OY_TYPE_STD "/imaging/C", "true",
+                                 OY_CREATE_NEW );
+
+  error = oyOptions_CopyFrom( &resultA, setA, oyBOOLEAN_UNION,
+                              oyFILTER_REG_NONE,0 );
+
+  if(!error && oyOptions_Count( resultA ) == 2 &&
+     oyOptions_FindString( resultA, "rendering_bpc", 0 ) &&
+     oyOptions_FindString( resultA, "A", 0 ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_CopyFrom() oyBOOLEAN_UNION good       " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOptions_CopyFrom() oyBOOLEAN_UNION failed     " );
+  }
+
+  error = oyOptions_CopyFrom( &resultA, setB, oyBOOLEAN_DIFFERENZ,
+                              oyFILTER_REG_OPTION,0 );
+
+  if(!error && oyOptions_Count( resultA ) == 3 &&
+     oyOptions_FindString( resultA, "rendering_bpc", 0 ) &&
+     oyOptions_FindString( resultA, "B", 0 ) &&
+     oyOptions_FindString( resultA, "C", 0 ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_CopyFrom() oyBOOLEAN_DIFFERENZ good   " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOptions_CopyFrom() oyBOOLEAN_DIFFERENZ failed " );
+  }
+
+
+  error = oyOptions_Filter( &resultB, &count, 0, oyBOOLEAN_INTERSECTION,
+                            "sw/oyranos.org/imaging/image", setA  );
+
+  if(!error && oyOptions_Count( resultB ) == 1 &&
+     oyOptions_FindString( resultB, "A", 0 ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_Filter() oyBOOLEAN_INTERSECTION good  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOptions_Filter() oyBOOLEAN_INTERSECTION failed" );
+  }
+
+  oyOptions_Release( &setA );
+  oyOptions_Release( &setB );
+  oyOptions_Release( &setC );
+  oyOptions_Release( &resultA );
+  oyOptions_Release( &resultB );
+
+  return result;
+}
+
 #include <libxml/parser.h>
 #include <libxml/xmlsave.h>
 
@@ -1516,6 +1614,7 @@ int main(int argc, char** argv)
   TEST_RUN( testElektra, "Elektra" );
   TEST_RUN( testOption, "basic oyOption_s" );
   TEST_RUN( testOptionInt,  "oyOption_s integers" );
+  TEST_RUN( testOptionsCopy,  "Copy oyOptions_s" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
