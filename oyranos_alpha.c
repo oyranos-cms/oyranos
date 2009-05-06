@@ -6957,6 +6957,86 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
   return error;
 }
 
+/** Function oyOptions_Filter
+ *  @memberof oyOptions_s
+ *  @brief   filter options
+ *
+ *  Each option added to the add_list is a cheaply linked one.
+ *
+ *  @param[out]    add_list            the options list to add to
+ *  @param[out]    count               the number of matching options
+ *  @param[in]     flags               for inbuild defaults 
+ *                                     | oyOPTIONSOURCE_FILTER
+ *  @param[in]     type                support are oyBOOLEAN_INTERSECTION and
+ *                                     oyBOOLEAN_DIFFERENZ
+ *  @param[in]     registration        a registration which shall be matched
+ *  @param[in]     src_list            the options to select from
+ *  @return                            0 - success; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/05 (Oyranos: 0.1.10)
+ *  @date    2009/05/05
+ */
+int            oyOptions_Filter      ( oyOptions_s      ** add_list,
+                                       int32_t           * count,
+                                       uint32_t            flags,
+                                       oyBOOLEAN_e         type,
+                                       const char        * registration,
+                                       oyOptions_s       * src_list )
+{
+  int error = !src_list || !add_list || *add_list == src_list;
+  oyOptions_s * s = src_list;
+  oyOption_s * o = 0;
+  int n, i;
+  int32_t c = 0;
+  uint32_t options_source = 0;
+
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
+
+  if(error <= 0)
+  {
+    n = oyOptions_Count( s );
+    if(!*add_list)
+      *add_list = oyOptions_New(0);
+
+    if(!*add_list)
+      error = 1;
+
+    if(error <= 0)
+    for(i = 0; i < n; ++i)
+    {
+      int found = 1;
+
+      o = oyOptions_Get( s, i );
+
+      if(found && registration &&
+         !oyFilterRegistrationMatch( o->registration, registration, 0 ))
+          found = 0;
+
+      options_source = flags & oyOPTIONSOURCE_FILTER ? oyOPTIONSOURCE_FILTER :0;
+      options_source |= flags & oyOPTIONSOURCE_DATA ? oyOPTIONSOURCE_DATA : 0;
+      options_source |= flags & oyOPTIONSOURCE_USER ? oyOPTIONSOURCE_USER : 0;
+      if(found && options_source && !(o->source & options_source))
+        found = 0;
+
+      if(type == oyBOOLEAN_UNION ||
+         (type == oyBOOLEAN_INTERSECTION && found) ||
+         (type == oyBOOLEAN_DIFFERENZ && !found)
+        )
+      {
+        oyOptions_Add( *add_list, o, -1, 0 );
+        ++c;
+      }
+
+      oyOption_Release( &o );
+    }
+
+    if(count)
+      *count = c;
+  }
+
+  return error;
+}
 
 /** @internal
  *  Function oyOptions_ForFilter_
@@ -7153,6 +7233,7 @@ oyOptions_s * oyOptions_Copy_        ( oyOptions_s       * options,
 
   return s;
 }
+
 /** Function oyOptions_Copy
  *  @memberof oyOptions_s
  *  @brief   release options
@@ -7278,7 +7359,7 @@ OYAPI int  OYEXPORT
  *  @date    2008/11/17
  */
 OYAPI int  OYEXPORT
-                  oyOptions_ReleaseAt ( oyOptions_s * list,
+                  oyOptions_ReleaseAt( oyOptions_s       * list,
                                        int                 pos )
 { 
   int error = !list;
@@ -7391,6 +7472,178 @@ int            oyOptions_Add         ( oyOptions_s       * options,
     oyFree_m_( o_opt );
     oyFree_m_( o_top );
   }
+
+  return error;
+}
+
+int            oyOptions_AppendOpts  ( oyOptions_s       * list,
+                                       oyOptions_s       * append )
+{
+  int error = !list;
+  int i,n;
+  oyOption_s * o = 0;
+
+  if(error <= 0)
+  {
+    n = oyOptions_Count( append );
+    for(i = 0; i < n; ++i)
+    {
+      o = oyOptions_Get( append, i );
+      oyOptions_MoveIn( list, &o, -1 );
+    }
+  }
+
+  return error;
+}
+
+
+/**
+ *  Function oyOptions_CopyFrom
+ *  @memberof oyOptions_s
+ *  @brief   copy from one option set to an other option set
+ *
+ *  @param[out]    list                target
+ *  @param[in]     from                source
+ *  @param         fields              registration fields of each option
+ *  @param         object              the optional object
+ *  @return                            0 - success; 1 - error; -1 issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/05 (Oyranos: 0.1.10)
+ *  @date    2009/05/05
+ */
+int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
+                                       oyOptions_s       * from,
+                                       oyBOOLEAN_e         type,
+                                       oyFILTER_REG_e      fields,
+                                       oyObject_s          object )
+{
+  oyOptions_s * s = 0,
+              * tmp = 0, * tmp2 = 0;
+  int error = !list;
+
+  if(!from || error)
+    return error ? error : -1;
+
+  if(!*list)
+  {
+    s = oyOptions_New( object );
+    if(!*list)
+      *list = s;
+    error = !*list;
+  }
+
+  if(error <= 0)
+  {
+    s = *list;
+
+    if(type == oyBOOLEAN_UNION)
+    {
+      if(s->list || from->list)
+      {
+        if(!s->list)
+          s->list = oyStructList_New( 0 );
+        if(!from->list)
+          from->list = oyStructList_New( 0 );
+      }
+      error = oyOptions_AppendOpts( s, from );
+
+    } else
+    {
+      int list_n = oyOptions_Count( *list ),
+          from_n = oyOptions_Count( from ),
+          i,j, found;
+      oyOption_s * list_o = 0,
+                 * from_o = 0;
+      char * list_reg = 0, * from_reg = 0;
+      
+      tmp = oyOptions_New( 0 );
+
+      for(i = 0; i < list_n && error <= 0; ++i)
+      {
+        found = 0;
+        list_o = oyOptions_Get( *list, i );
+        list_reg = oyFilterRegistrationToText( list_o->registration,
+                                               fields, 0 );
+
+        for(j = 0; j < from_n && error <= 0; ++j)
+        {
+          from_o = oyOptions_Get( from, j );
+          from_reg = oyFilterRegistrationToText( from_o->registration,
+                                                 fields, 0 );
+
+          if(oyFilterRegistrationMatch( list_reg, from_reg, 0 ))
+            found = 1;
+
+          if(type == oyBOOLEAN_INTERSECTION && found)
+          {
+            oyOptions_MoveIn( tmp, &from_o, -1 );
+            break;
+          }
+
+          oyFree_m_( from_reg );
+          oyOption_Release( &from_o );
+        }
+
+        if((type == oyBOOLEAN_SUBSTRACTION ||
+            type == oyBOOLEAN_DIFFERENZ) &&
+           !found)
+          oyOptions_MoveIn( tmp, &list_o, -1 );
+
+        oyFree_m_( list_reg );
+        oyOption_Release( &list_o );
+      }
+
+      if(type == oyBOOLEAN_SUBSTRACTION ||
+         type == oyBOOLEAN_INTERSECTION)
+      {
+        oyStructList_Release( &(*list)->list );
+        (*list)->list = tmp->list;
+        tmp->list = 0;
+
+      } else
+      if(type == oyBOOLEAN_DIFFERENZ)
+      {
+        tmp2 = oyOptions_New( 0 );
+        for(i = 0; i < from_n && error <= 0; ++i)
+        {
+          found = 0;
+          from_o = oyOptions_Get( from, i );
+          from_reg = oyFilterRegistrationToText( from_o->registration,
+                                                 fields, 0 );
+
+          for(j = 0; j < list_n && error <= 0; ++j)
+          {
+            list_o = oyOptions_Get( *list, j );
+            list_reg = oyFilterRegistrationToText( list_o->registration,
+                                                   fields, 0 );
+
+            if(oyFilterRegistrationMatch( from_reg, list_reg, 0 ))
+              found = 1;
+
+            oyFree_m_( list_reg );
+            oyOption_Release( &list_o );
+          }
+
+          if(!found)
+            oyOptions_MoveIn( tmp2, &from_o, -1 );
+
+          oyFree_m_( from_reg );
+          oyOption_Release( &from_o );
+        }
+
+        oyStructList_Release( &(*list)->list );
+        oyOptions_CopyFrom( list, tmp, oyBOOLEAN_UNION, 0, 0 );
+        oyOptions_CopyFrom( list, tmp2, oyBOOLEAN_UNION, 0, 0 );
+      }
+
+      oyOptions_Release( &tmp );
+      oyOptions_Release( &tmp2 );
+    }
+  }
+
+  if(error > 0)
+    oyOptions_Release( &s );
 
   return error;
 }
@@ -7982,26 +8235,6 @@ OYAPI int  OYEXPORT
 
   oyExportEnd_();
   DBG_PROG_ENDE
-  return error;
-}
-
-int            oyOptions_AppendOpts  ( oyOptions_s       * list,
-                                       oyOptions_s       * append )
-{
-  int error = !list;
-  int i,n;
-  oyOption_s * o = 0;
-
-  if(error <= 0)
-  {
-    n = oyOptions_Count( append );
-    for(i = 0; i < n; ++i)
-    {
-      o = oyOptions_Get( append, i );
-      oyOptions_MoveIn( list, &o, -1 );
-    }
-  }
-
   return error;
 }
 
@@ -17030,19 +17263,53 @@ OYAPI oyImage_s * OYEXPORT
   oyFilterNode_s * input_node = 0,
                  * node = socket->node;
   oyPixel_t pixel_layout = 0;
-  oyOptions_s * options = 0;
+  oyOptions_s * options = 0,
+              * requests = 0,
+              * ticket_orig;
+  int32_t n = 0;
 
   if(error)
     return 0;
 
   image_input = oyImage_Copy( (oyImage_s*)plug->remote_socket_->data, 0 );
   input_node = plug->remote_socket_->node;
-  
+
+ 
   if(!image_input)
   {
+    /* get options */
+    options = oyFilterNode_OptionsGet( node, 0 );
+
+    /* store original queue */
+    ticket_orig = ticket->request_queue;
+    ticket->request_queue = 0;
+
+    /* select only resolve requests */
+    error = oyOptions_Filter( &requests, &n, 0,
+                              oyBOOLEAN_INTERSECTION,
+                              "////resolve", options );
+    oyOptions_Release( &options );
+
+    /* combine old queue and requests from the current node */
+    oyOptions_CopyFrom( &ticket->request_queue, requests, oyBOOLEAN_UNION, 0,0);
+    oyOptions_CopyFrom( &ticket->request_queue, ticket_orig, oyBOOLEAN_UNION,
+                        0, 0 );
+
+    /* filter again, (really needed?) */
+    oyOptions_Filter( &ticket->request_queue, &n, 0,
+                      oyBOOLEAN_INTERSECTION, "////resolve", requests );
+    oyOptions_Release( &requests );
+ 
     /* try to obtain the processing data from a generator filter */
     input_node->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
     image_input = oyImage_Copy( (oyImage_s*)plug->remote_socket_->data, 0 );
+
+    /* clean up the queue */
+    oyOptions_Release( &ticket->request_queue );
+
+    /* restore old queue */
+    ticket->request_queue = ticket_orig; ticket_orig = 0;
+
     if(!image_input)
       return 0;
   }
@@ -17052,17 +17319,30 @@ OYAPI oyImage_s * OYEXPORT
     /* Copy a root image or link to a non root image. */
     if(!plug->remote_socket_->node->api7_->plugs_n)
     {
-      /* Wie ist diese Option eindeutig zu finden? */
       options = oyFilterNode_OptionsGet( node, 0 );
-      error = oyOptions_FindInt( options, "pixel_layout", 0,
-                                 (int32_t*)&pixel_layout );
+      error = oyOptions_Filter( &requests, &n, 0,
+                                oyBOOLEAN_INTERSECTION,
+                                "////resolve", options );
       oyOptions_Release( &options );
+      oyOptions_CopyFrom( &requests, ticket->request_queue,oyBOOLEAN_UNION,0,0);
+
+      error = oyOptions_FindInt( requests, "pixel_layout", 0,
+                                 (int32_t*)&pixel_layout );
+      oyOptions_Release( &requests );
 
       if(error == 0)
+      {
+        /* possibly complete the pixel layout information */
+        int n = oyToChannels_m( pixel_layout );
+        int cchan_n = oyProfile_GetChannelsCount( image_input->profile_ );
+        oyPixel_t layout = oyDataType_m( oyToDataType_m(pixel_layout) ) |
+                           oyChannels_m( OY_MAX(n, cchan_n) );
+        /* create a new image */
         image = oyImage_Create( image_input->width, image_input->height,
-                                0, pixel_layout,
+                                0, layout,
                                 image_input->profile_, node->oy_ );
-      else
+
+      } else
         image = oyImage_Copy( (oyImage_s*) image_input, node->oy_ );
 
 
@@ -17075,6 +17355,8 @@ OYAPI oyImage_s * OYEXPORT
 
   if(!ticket->output_image)
     ticket->output_image = oyImage_Copy( (oyImage_s*) socket->data, 0 );
+
+  oyOptions_Release( &requests );
 
   return image_input;
 }
@@ -17357,31 +17639,53 @@ OYAPI int  OYEXPORT
  *  @brief   analyse registration string
  *
  *  @param         registration        registration string to analyse
- *  @param[in]     type                kind of answere in return
+ *  @param[in]     fields              kind of answere in return
  *  @param[in]     allocateFunc        use this or Oyranos standard allocator
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/11/22
+ *  @date    2009/05/05
  */
 char *         oyFilterRegistrationToText (
                                        const char        * registration,
-                                       oyFILTER_REG_e      type,
+                                       oyFILTER_REG_e      fields,
                                        oyAlloc_f           allocateFunc )
 {
   char  * text = 0, * tmp = 0;
   char ** texts = 0;
-  int     texts_n = 0;
+  int     texts_n = 0,
+          pos = 0, single = 0;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
   if(registration)
   {
+         if(fields & oyFILTER_REG_TOP)
+      pos = 1;
+    else if(fields & oyFILTER_REG_DOMAIN)
+      pos = 2;
+    else if(fields & oyFILTER_REG_TYPE)
+      pos = 3;
+    else if(fields & oyFILTER_REG_APPLICATION)
+      pos = 4;
+    else if(fields & oyFILTER_REG_OPTION)
+      pos = 5;
+    else if(fields & oyFILTER_REG_MAX)
+      pos = 6;
+
+    if(fields == oyFILTER_REG_TOP ||
+       fields == oyFILTER_REG_DOMAIN ||
+       fields == oyFILTER_REG_TYPE ||
+       fields == oyFILTER_REG_APPLICATION ||
+       fields == oyFILTER_REG_OPTION ||
+       fields == oyFILTER_REG_MAX)
+      single = 1;
+
     texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
-    if(texts_n >= type && type == oyFILTER_REG_TOP)
+    if(texts_n >= pos && fields == oyFILTER_REG_TOP)
     {
-      text = oyStringCopy_( texts[oyFILTER_REG_TOP-1], allocateFunc );
+      text = oyStringCopy_( texts[0], allocateFunc );
 
       /** We can not allow attributes in the oyFILTER_TOP_TYPE section, as this
        *  would conflict with the Elektra namespace policy. */
@@ -17394,11 +17698,11 @@ char *         oyFilterRegistrationToText (
         return 0;
       }
     }
-    if(texts_n >= type && type == oyFILTER_REG_DOMAIN)
-      text = oyStringCopy_( texts[oyFILTER_REG_DOMAIN-1], allocateFunc );
-    if(texts_n >= type && type == oyFILTER_REG_TYPE)
+    if(texts_n >= pos && fields == oyFILTER_REG_DOMAIN)
+      text = oyStringCopy_( texts[1], allocateFunc );
+    if(texts_n >= pos && fields == oyFILTER_REG_TYPE)
     {
-      text = oyStringCopy_( texts[oyFILTER_REG_TYPE-1], allocateFunc );
+      text = oyStringCopy_( texts[2], allocateFunc );
 
       /** We can not allow attributes in the oyFILTER_REG_TYPE section, as this
        *  would conflict with robust module cache lookup. */
@@ -17410,21 +17714,84 @@ char *         oyFilterRegistrationToText (
         return 0;
       }
     }
-    if(texts_n >= type && type == oyFILTER_REG_APPLICATION)
-      text = oyStringCopy_( texts[oyFILTER_REG_APPLICATION-1], allocateFunc );
-    if(texts_n >= type && type == oyFILTER_REG_OPTION)
-      text = oyStringCopy_( texts[oyFILTER_REG_OPTION-1], allocateFunc );
-    if(text && type == oyFILTER_REG_OPTION)
+    if(texts_n >= pos && fields == oyFILTER_REG_APPLICATION)
+      text = oyStringCopy_( texts[3], allocateFunc );
+    if(texts_n >= pos && fields == oyFILTER_REG_OPTION)
+      text = oyStringCopy_( texts[4], allocateFunc );
+    if(text && fields == oyFILTER_REG_OPTION)
     {
       tmp = oyStrchr_( text, '.' );
       if(tmp)
         tmp[0] = 0;
     }
     /** oyFILTER_REG_MAX returns the last level which is the key name. */
-    if(type == oyFILTER_REG_MAX)
+    if(fields == oyFILTER_REG_MAX)
       text = oyStringCopy_( texts[texts_n-1], allocateFunc );
 
     oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+
+    /** For several oyFILTER_REG bits we compose a new registration string. */
+    if(!single && fields)
+    {
+      text = 0;
+
+      if(fields & oyFILTER_REG_TOP)
+      {
+        tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_TOP, 0 );
+        STRING_ADD( text, tmp );
+        oyFree_m_(tmp);
+      } else
+        STRING_ADD( text, "/" );
+
+      if(fields & oyFILTER_REG_DOMAIN)
+      {
+        tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_DOMAIN, 0);
+        STRING_ADD( text, tmp );
+        oyFree_m_(tmp);
+      } else
+        STRING_ADD( text, "/" );
+
+      if(fields & oyFILTER_REG_TYPE)
+      {
+        tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
+        STRING_ADD( text, tmp );
+        oyFree_m_(tmp);
+      } else
+        STRING_ADD( text, "/" );
+
+      if(fields & oyFILTER_REG_APPLICATION)
+      {
+        tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_APPLICATION, 0 );
+        STRING_ADD( text, tmp );
+        oyFree_m_(tmp);
+      } else
+        STRING_ADD( text, "/" );
+
+      if(fields & oyFILTER_REG_OPTION)
+      {
+        tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_OPTION, 0);
+        STRING_ADD( text, tmp );
+        oyFree_m_(tmp);
+      } else
+        STRING_ADD( text, "/" );
+
+      if(texts_n > 5 && fields & oyFILTER_REG_MAX)
+      {
+        tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_OPTION, 0);
+        STRING_ADD( text, tmp );
+        oyFree_m_(tmp);
+      }
+
+      tmp = text; 
+      text = oyStringCopy_( tmp, allocateFunc );
+      oyFree_m_(tmp);
+
+    } else if( !fields )
+    {
+      if(text)
+        WARNc1_S("text variable should be zero, found: %s", text);
+      text = oyStringCopy_( registration, allocateFunc );
+    }
   }
 
   return text;
@@ -21505,29 +21872,33 @@ oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
 
   // create a very simple pixel iterator
   if(plug)
-    pixel_access = oyPixelAccess_Create( 0,0, plug->remote_socket_,
+    pixel_access = oyPixelAccess_Create( 0,0, plug,
                                          oyPIXEL_ACCESS_IMAGE, 0 );
 @endverbatim
  *
- *  @version Oyranos: 0.1.8
- *  @date    2008/07/07
+ *  @version Oyranos: 0.1.10
  *  @since   2008/07/07 (Oyranos: 0.1.8)
+ *  @date    2009/05/05
  */
 oyPixelAccess_s *  oyPixelAccess_Create (
                                        int32_t             start_x,
                                        int32_t             start_y,
-                                       oyFilterSocket_s  * sock,
+                                       oyFilterPlug_s    * plug,
                                        oyPIXEL_ACCESS_TYPE_e type,
                                        oyObject_s          object )
 {
   oyPixelAccess_s * s = oyPixelAccess_New_( object );
-  int error = !s || !sock;
+  oyFilterSocket_s * sock = 0;
+  int error = !s || !plug || !plug->remote_socket_;
   int w = 0;
+  oyImage_s * image = 0;
+  oyOptions_s * options = 0;
+  int32_t n = 0;
 
   if(error <= 0)
   {
-    oyImage_s * image = (oyImage_s*)sock->data;
-
+    sock = plug->remote_socket_;
+    image = (oyImage_s*)sock->data;
 
     s->start_xy[0] = s->start_xy_old[0] = start_x;
     s->start_xy[1] = s->start_xy_old[1] = start_y;
@@ -21572,6 +21943,13 @@ oyPixelAccess_s *  oyPixelAccess_Create (
        *  - + handle inside an to be created function oyConversion_RunPixels()
        */
     }
+
+    /* Copy requests, which where attached to the node, to the ticket. */
+    options = oyFilterNode_OptionsGet( plug->node, 0 );
+    error = oyOptions_Filter( &s->request_queue, &n, 0,
+                              oyBOOLEAN_INTERSECTION,
+                              "////resolve", options );
+    oyOptions_Release( &options );
   }
 
   if(error)
@@ -22331,7 +22709,7 @@ int                oyConversion_RunPixels (
   {
     /* create a very simple pixel iterator as job ticket */
     if(plug)
-      pixel_access = oyPixelAccess_Create( 0,0, plug->remote_socket_,
+      pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, 0 );
     tmp_ticket = 1;
 
@@ -22436,7 +22814,7 @@ oyPointer        * oyConversion_GetOnePixel (
   plug = (oyFilterPlug_s*) ((oyFilterSocket_s *)conversion->out_->sockets[0])->requesting_plugs_->list_->ptr_[0];
   sock = plug->remote_socket_;
 
-  pixel_access = oyPixelAccess_Create ( x, y, sock, oyPIXEL_ACCESS_POINT, 0 );
+  pixel_access = oyPixelAccess_Create ( x, y, plug, oyPIXEL_ACCESS_POINT, 0 );
   /* @todo */
   error = sock->node->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
@@ -22497,7 +22875,7 @@ oyImage_s        * oyConversion_GetImage (
         {
           /* Run the graph to set up processing image data. */
           plug = oyFilterNode_GetPlug( conversion->out_, 0 );
-          pixel_access = oyPixelAccess_Create( 0,0, plug->remote_socket_,
+          pixel_access = oyPixelAccess_Create( 0,0, plug,
                                                oyPIXEL_ACCESS_IMAGE, 0 );
           conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
