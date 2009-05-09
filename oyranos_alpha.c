@@ -6754,6 +6754,8 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
       }
 
       o = oyOption_New( tmp, 0 );
+      if(!o)
+        goto clean_stage;
       o->value = o->oy_->allocateFunc_(sizeof(oyValue_u));
 
       o->value_type = oyVAL_STRING;
@@ -6761,13 +6763,15 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
       key = xmlNodeListGetString(doc, cur, 1);
       o->value->string = oyStringCopy_( (char*)key, o->oy_->allocateFunc_ );
       xmlFree(key);
-      oyFree_m_( tmp );
 
       o->source = oyOPTIONSOURCE_DATA;
 
       oyOption_UpdateFlags_( o );
 
       oyOptions_MoveIn( s, &o, -1 );
+
+      clean_stage:
+      oyFree_m_( tmp );
     }
     cur = cur->next;
   }
