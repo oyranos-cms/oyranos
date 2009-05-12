@@ -307,7 +307,7 @@ time:
 # build all objects and libraries, link the headers to $(TARGET)
 $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(libdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(libdir)/$@ \
 	-o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(libdir) $(LDLIBS) $(m)
@@ -318,7 +318,7 @@ $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS)
 
 $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $@ \
 	$(CMM_lcms_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -328,7 +328,7 @@ $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 
 $(LIB_CMM_oydi): $(CMM_oydi_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $@ \
 	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(Xcolor) $(Xfixes) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -338,7 +338,7 @@ $(LIB_CMM_oydi): $(CMM_oydi_OBJECTS)
 
 $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $@ \
 	$(CMM_oyX1_OBJECTS) $(MONI_OBJECTS) $(X11_LIBS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -348,7 +348,7 @@ $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 
 $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $@ \
 	$(CMM_oyra_OBJECTS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -358,7 +358,7 @@ $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 
 $(LIB_CMM_oyIM): $(CMM_oyIM_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(metadir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(metadir)/$@ \
 	-o $@ \
 	$(CMM_oyIM_OBJECTS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -374,7 +374,7 @@ $(LIB_XNVCTRL).a:
 # the twinview library
 $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a $(MONI_OBJECTS)
 	echo Linking $@ ...
-	-$(CC) $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c -I$(SRCDIR)/$(LIB_XNVCTRL) \
+	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c -I$(SRCDIR)/$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
 	$(LDLIBS) $(X11_LIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) \
@@ -382,15 +382,15 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a 
 
 $(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 	echo Compiling $*.cxx
-	$(CXX) -I$(SRCDIR) $(CXXFLAGS) $(FLTK_H) -c $<
+	$(CXX) -I./ -I$(SRCDIR) $(CXXFLAGS) $(FLTK_H) -c $<
 FL/Flmm_Tabs.o:	$(SRCDIR)/FL/Flmm_Tabs.cxx
 	echo Compiling FL/Flmm_Tabs.cxx
-	$(CXX) -I./FL -I$(SRCDIR)/FL $(CXXFLAGS) $(FLTK_H) -o $@ -c $<
+	$(CXX) -I./ -I./FL -I$(SRCDIR)/FL $(CXXFLAGS) $(FLTK_H) -o $@ -c $<
 
 # general configuration tool example
 $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 	echo Linking $@ ...
-	$(CXX) $(CXXFLAGS) -o $(TARGET)-config-fltk \
+	$(CXX) -I./ $(CXXFLAGS) -o $(TARGET)-config-fltk \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N)
@@ -408,23 +408,23 @@ $(LIBNAME):	$(OBJECTS)
 # the monitor profile tool
 $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) -o $(TARGET)-monitor \
+	$(CC) -I./ $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) -o $(TARGET)-policy \
+	$(CC) -I./ $(CFLAGS) -o $(TARGET)-policy \
 	$(TARGET)_policy.o \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
 
 test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
-	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
+	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
 	test2.o -L./ `./oyranos-config --ldflags`
 	echo Linking static $@ ...
-	$(CXX) `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
+	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
 	test2.o -L./ `./oyranos-config --ldstaticflags`
 	
 
@@ -438,7 +438,7 @@ examples:
 	cd examples && ($(MAKE) clean; INCLUDE=-I$(includedir) SRCDIR=$(SRCDIR)/examples/ $(MAKE))
 
 test:	test.o
-	$(CC) $(CFLAGS) -o test \
+	$(CC) -I./ $(CFLAGS) -o test \
 	test.o \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
@@ -446,7 +446,7 @@ tests/test_oyranos:	test_oyranos.o
 	$(RM) tests/test_oyranos.o
 	$(MAKE) tests/test_oyranos.o
 	echo Linking tests/test_oyranos
-	$(CC) $(CFLAGS) -o tests/test_oyranos \
+	$(CC) -I./ $(CFLAGS) -o tests/test_oyranos \
         tests/test_oyranos.o \
         $(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
@@ -813,7 +813,7 @@ depend:	cdepend
 	echo "#nicht editieren/dont edit - automatisch generiert" >> mkdepend
 	-(for file in $(INCL_DEP); do \
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
-	  $(MAKEDEPEND) -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
+	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
 
 cdepend:
 	echo preparing dependency compilation ...
@@ -823,13 +823,13 @@ cdepend:
 	for i in $(COBJECTS); do \
 	  echo "$${i}:" >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
-	  echo '	$$(CC) -I. -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.c' >> cobjects; \
+	  echo '	$$(CC) -I./ -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.c' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 	for i in $(CPPOBJECTS); do \
 	  echo "$${i}:" >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
-	  echo '	$$(CC) -I. -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
+	  echo '	$$(CC) -I./ -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 
