@@ -1186,23 +1186,16 @@ OYAPI int  OYEXPORT
            oyDeviceBackendCall       ( oyConfig_s        * device,
                                        oyOptions_s       * options );
 OYAPI int  OYEXPORT
-           oyDriverBackendCall       ( oyConfig_s        * device,
-                                       oyOptions_s       * options );
-OYAPI int  OYEXPORT
-           oyDeviceGetDriver         ( oyConfig_s        * device,
-                                       const char        * driver_name,
-                                       const char        * driver_version );
-OYAPI int  OYEXPORT
-           oyDriverSetProfile        ( oyConfig_s        * driver,
+           oyDeviceSetProfile        ( oyConfig_s        * device,
                                        const char        * profile_name );
 OYAPI int  OYEXPORT
-           oyDriverGetProfile        ( oyConfig_s        * driver,
+           oyDeviceGetProfile        ( oyConfig_s        * device,
                                        oyProfile_s      ** profile );
 OYAPI int  OYEXPORT
-           oyDriverAskProfile        ( oyConfig_s        * driver,
+           oyDeviceAskProfile        ( oyConfig_s        * device,
                                        oyProfile_s      ** profile );
 OYAPI int  OYEXPORT
-           oyDriverProfileFromDB     ( oyConfig_s        * driver,
+           oyDeviceProfileFromDB     ( oyConfig_s        * device,
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc );
 
