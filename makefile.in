@@ -25,12 +25,12 @@ CMMS = \
 	$(TARGET)_oyra$(OY_MODULE_NAME) \
 	$(TARGET)_oydi$(OY_MODULE_NAME) \
 	$(TARGET)_oyX1$(OY_MODULE_NAME) \
-	$(TARGET)_oyX2$(OY_MODULE_NAME)
+	$(TARGET)_oycu$(OY_MODULE_NAME)
 META = \
 	$(TARGET)_oyIM$(OY_MODULE_NAME)
 LIB_CMM_oyIM = $(LIB_CMM_START)_oyIM$(LIB_CMM_END)
 LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
-LIB_CMM_oyX2 = $(LIB_CMM_START)_oyX2$(LIB_CMM_END)
+LIB_CMM_oycu = $(LIB_CMM_START)_oycu$(LIB_CMM_END)
 LIB_CMM_oydi = $(LIB_CMM_START)_oydi$(LIB_CMM_END)
 LIB_CMM_lcms = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
 LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
@@ -38,7 +38,7 @@ LIBS_CMM = \
 	$(LIB_CMM_oyIM) \
 	$(LIB_CMM_oydi) \
 	$(LIB_CMM_oyX1) \
-	$(LIB_CMM_oyX2) \
+	$(LIB_CMM_oycu) \
 	$(LIB_CMM_oyra) \
 	$(LIB_CMM_lcms)
 
@@ -114,8 +114,8 @@ CFILES_CMM_oydi = \
 	modules/$(TARGET)_cmm_oydi.c
 CFILES_CMM_oyX1 = \
 	modules/devices/$(TARGET)_cmm_oyX1.c
-CFILES_CMM_oyX2 = \
-	modules/drivers/$(TARGET)_cmm_oyX2.c
+CFILES_CMM_oycu = \
+
 CFILES_CMM_oyra = \
 	modules/$(TARGET)_cmm_oyra.c \
 	modules/$(TARGET)_cmm_oyra_image.c \
@@ -233,7 +233,7 @@ OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_oydi_OBJECTS = $(CFILES_CMM_oydi:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
-CMM_oyX2_OBJECTS = $(CFILES_CMM_oyX2:.c=.o)
+CMM_oycu_OBJECTS = $(CFILES_CMM_oycu:.c=.o)
 CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
 CMM_oyIM_OBJECTS = $(CFILES_CMM_oyIM:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
@@ -245,7 +245,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
-	$(CMM_oyX2_OBJECTS) \
+	$(CMM_oycu_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(FLTK_OBJECTS) \
@@ -353,15 +353,15 @@ $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
-$(LIB_CMM_oyX2): $(CMM_oyX2_OBJECTS) $(MONI_OBJECTS)
+$(LIB_CMM_oycu): $(CMM_oycu_OBJECTS) $(MONI_OBJECTS)
 	echo Linking $@ ...
-	$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	-$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $@ \
-	$(CMM_oyX1_OBJECTS) $(MONI_OBJECTS) $(X11_LIBS) $(MODULE_LDLIBS)
-	$(RM)  lib$(TARGET)_oyX2$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(LNK) $@ lib$(TARGET)_oyX2$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
-	$(RM)  lib$(TARGET)_oyX2$(OY_MODULE_NAME)$(SO)$(LIBEXT)
-	$(LNK) $@ lib$(TARGET)_oyX2$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(CMM_oycu_OBJECTS) $(MODULE_LDLIBS) -lcups
+	$(RM)  lib$(TARGET)_oycu$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oycu$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oycu$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oycu$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
