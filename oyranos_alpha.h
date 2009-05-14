@@ -1160,7 +1160,11 @@ char   **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        oyAlloc_f           allocateFunc );
 
 
-
+OYAPI int  OYEXPORT
+           oyOptions_SetDriverContext( oyOptions_s      ** options,
+                                       oyPointer           driver_context,
+                                       const char        * driver_context_type,
+                                       size_t              driver_context_size);
 OYAPI int  OYEXPORT
            oyDevicesGet              ( const char        * device_type,
                                        const char        * device_class,
