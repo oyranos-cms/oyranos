@@ -8260,10 +8260,10 @@ OYAPI int  OYEXPORT
     {
       cmm_api8 = (oyCMMapi8_s*) oyCMMapiFilters_Get( apis, i );
 
-      error = !cmm_api8->oyConfig_Check;
+      error = !cmm_api8->oyConfig_Rank;
       if(error <= 0)
       /** Ask the backend if it wants later on to accept this configuration. */
-        rank = cmm_api8->oyConfig_Check( config ) * rank_list[i];
+        rank = cmm_api8->oyConfig_Rank( config ) * rank_list[i];
 
       if(max_rank < rank)
         max_rank = rank;
@@ -9285,7 +9285,7 @@ OYAPI int  OYEXPORT
     /** 1.1 add "list" call to backend arguments */
     error = oyOptions_SetDeviceTextKey_( options, device_type,
                                              device_class,
-                                             "list", "true" );
+                                             "command", "list" );
   }
 
   /** 1.2 ask each backend */
@@ -9359,7 +9359,7 @@ OYAPI int  OYEXPORT
     if(error <= 0)
     error = oyOptions_SetDeviceTextKey_( options, device_type,
                                              device_class,
-                                             "list", "true" );
+                                             "command", "list" );
   }
 
   /** 1.1.2 set device filter */
@@ -9429,7 +9429,7 @@ OYAPI int  OYEXPORT
     if(error <= 0)
     l_error = oyOptions_SetRegistrationTextKey_( options,
                                                  device->registration,
-                                                 "properties", "true" ); OY_ERR
+                                                 "command", "properties" ); OY_ERR
   }
 
   /** 2. set device filter */
@@ -9713,7 +9713,7 @@ OYAPI int  OYEXPORT
     /* add "list" call to backend arguments */
     error = oyOptions_SetRegistrationTextKey_( options,
                                                device->registration,
-                                               "list", "true" );
+                                               "command", "list" );
   }
 
   if(error <= 0)
@@ -9841,7 +9841,7 @@ OYAPI int  OYEXPORT
     /* add "list" call to backend arguments */
     error = oyOptions_SetRegistrationTextKey_( options,
                                                device->registration,
-                                               "list", "true" );
+                                               "command", "list" );
   }
 
   if(error <= 0)

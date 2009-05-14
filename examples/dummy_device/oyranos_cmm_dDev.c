@@ -101,9 +101,9 @@ void     dDevConfigsFromPatternUsage( oyStruct_s        * options )
              dDev_DBG_ARGS_,
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"list\" will provide a list of available\n"
-      " instruments. The actual instrument name can be found in option\n"
-      " \"instrument_name\". The call is as lightwight as possible.\n"
+      "The presence of option \"command=list\" will provide a list of\n"
+      " available instruments. The actual instrument name can be found in\n"
+      " option \"instrument_name\". The call is as lightwight as possible.\n"
       " The option \"oyNAME_NAME\" returns a short string containting\n"
       " informations and if available, the profile name or size.\n"
       " The bidirectional option \"icc_profile\" will add a oyProfile_s.\n"
@@ -118,9 +118,10 @@ void     dDevConfigsFromPatternUsage( oyStruct_s        * options )
       " Informations are stored in the returned oyConfig_s::data member."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"properties\" will provide the instruments \n"
-      " properties. Requires a instrument_name identifier returned with the \n"
-      " \"list\" option. The properties may cover following entries:\n"
+      "The presence of option \"command=properties\" will provide the\n"
+      " instruments properties. Requires a instrument_name identifier\n"
+      " returned with the \"list\" option.\n"
+      " The properties may cover following entries:\n"
       " - \"manufacturer\"\n"
       " - \"model\"\n"
       " - \"serial\"\n"
@@ -137,18 +138,15 @@ void     dDevConfigsFromPatternUsage( oyStruct_s        * options )
       " stored in the returned oyConfig_s::backend_core member."
        );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"setup\" will setup the instrument from a profile.\n"
+      "The presence of option \"command=setup\" will setup the instrument\n"
+      " from a profile.\n"
       " The option \"instrument_name\" must be present, see \"list\" above.\n"
       " The option \"profile_name\" must be present, containing a ICC profile\n"
       " file name."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"unset\" will invalidate a profile of a instrument.\n"
-      " The option \"instrument_name\" must be present, see \"list\" above.\n"
-      );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"get\" will provide a oyProfile_s of the\n"
-      " instrument in a \"icc_profile\" option.\n"
+      "The presence of option \"command=unset\" will invalidate a profile of\n"
+      " a instrument.\n"
       " The option \"instrument_name\" must be present, see \"list\" above.\n"
       );
 
@@ -296,8 +294,12 @@ int            dDevConfigs_FromPattern (
 
     /* "list" call section */
     value1 = oyOptions_FindString( options, "instrument_name", 0 );
-    value2 = oyOptions_FindString( options, "list", 0 );
-    if(value2)
+    value2 = oyOptions_FindString( options, "command", "list", 0 );
+    if(oyOptions_FindString( options, "command", "list" ) ||
+       (!oyOptions_FindString( options, "command", "properties" ) &&
+        !oyOptions_FindString( options, "command", "setup" ) &&
+        !oyOptions_FindString( options, "command", "unset" ))
+      )
     {
       texts_n = dDevGetDevices( &texts, allocateFunc );
 
@@ -392,7 +394,7 @@ int            dDevConfigs_FromPattern (
     }
 
     /* "properties" call section */
-    value2 = oyOptions_FindString( options, "properties", 0 );
+    value2 = oyOptions_FindString( options, "command", "properties" );
     if(value2)
     {
       texts_n = dDevGetDevices( &texts, allocateFunc );
@@ -427,7 +429,7 @@ int            dDevConfigs_FromPattern (
     }
 
     /* "setup" call section */
-    value2 = oyOptions_FindString( options, "setup", 0 );
+    value2 = oyOptions_FindString( options, "command", "setup" );
     value3 = oyOptions_FindString( options, "profile_name", 0 );
     if(error <= 0 && value2)
     {
@@ -444,7 +446,7 @@ int            dDevConfigs_FromPattern (
     }
 
     /* "unset" call section */
-    value2 = oyOptions_FindString( options, "unset", 0 );
+    value2 = oyOptions_FindString( options, "command", "unset" );
     if(error <= 0 && value2)
     {
       error = !value1;
