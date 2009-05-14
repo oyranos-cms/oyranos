@@ -1057,7 +1057,7 @@ typedef int      (*oyConfigs_FromPattern_f) (
                                        const char        * registration,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** configs );
-/** typedef  oyConfig_Check_f
+/** typedef  oyConfig_Rank_f
  *  @brief   check for correctness
  *  @ingroup backend_api
  *  @memberof oyCMMapi8_s
@@ -1070,7 +1070,7 @@ typedef int      (*oyConfigs_FromPattern_f) (
  *  @since   2009/01/16 (Oyranos: 0.1.10)
  *  @date    2009/01/26
  */
-typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
+typedef int  (*oyConfig_Rank_f)     ( oyConfig_s         * config );
 
 
 /** @struct  oyCMMapi8_s
@@ -1095,7 +1095,7 @@ typedef int  (*oyConfig_Check_f)     ( oyConfig_s         * config );
  *  A application can select one of the provided endities and modify it.
  *  In order to use the oyConfig_s endity it is adviced to let Oyranos ask the
  *  backend if the modified oyConfig_s endity is still valid through 
- *  oyConfig_Check_f.
+ *  oyConfig_Rank_f.
  *  Oyranos will check in advance wether the provided understood options match
  *  already and pass for a possible oyBlob_s options checking to the backend.
  *
@@ -1136,7 +1136,7 @@ struct oyCMMapi8_s {
   oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
 
   oyConfigs_FromPattern_f oyConfigs_FromPattern; /**< obtain matching configs */
-  oyConfig_Check_f oyConfig_Check;     /**< test config */
+  oyConfig_Rank_f  oyConfig_Rank;      /**< test config */
   oyRankPad      * rank_map;           /**< zero terminated list of rank
                                         *   attributes */
 };
