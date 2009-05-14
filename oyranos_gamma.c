@@ -219,7 +219,9 @@ int main( int argc , char** argv )
             printf( "%s:%d DB profile \"%s\"\n  DB registration key set: %s\n",
                     __FILE__,__LINE__,
                     text?text:OY_PROFILE_NONE,
-                    oyConfig_FindString( c, "key_set_name", 0 ) );
+                    oyConfig_FindString( c, "key_set_name", 0 ) ?
+                      oyConfig_FindString( c, "key_set_name", 0 ) :
+                      OY_PROFILE_NONE );
 
             oyProfile_Release( &prof );
             oyDeAllocFunc( text );
