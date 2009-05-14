@@ -65,8 +65,6 @@ CHEADERS = \
 	$(TARGET)_alpha_internal.h \
 	$(TARGET)_check.h \
 	$(TARGET)_cmm.h \
-	$(TARGET)_cmm_oyIM.h \
-	$(TARGET)_cmm_oyra.h \
 	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
@@ -121,9 +119,17 @@ CFILES_CMM_oyra = \
 	modules/$(TARGET)_cmm_oyra_image.c \
 	modules/$(TARGET)_cmm_oyra_image_ppm.c
 CFILES_CMM_oyIM = \
-	$(TARGET)_cmm_oyIM.c \
-	$(TARGET)_cmm_oyIM_icc.c \
-	$(TARGET)_cmm_oyIM_profile.c
+	modules/$(TARGET)_cmm_oyIM.c \
+	modules/$(TARGET)_cmm_oyIM_icc.c \
+	modules/$(TARGET)_cmm_oyIM_profile.c
+CFILES_MODULES = \
+	$(CFILES_CMM_lcms) $(CFILES_CMM_oydi) $(CFILES_CMM_oyra) \
+	$(CFILES_CMM_oycu) $(CFILES_CMM_oyIM)
+CHEADERS_MODULES = \
+	modules/$(TARGET)_cmm_oyIM.h \
+	modules/$(TARGET)_cmm_oyra.h
+CFILES_MODULES_DEVICES = \
+	$(CFILES_CMM_oyX1)
 
 CFILES_MONI = \
 	$(TARGET)_monitor.c
@@ -205,14 +211,12 @@ Flmm_FILES = \
 	FL/CREDITS \
 	FL/README
 
-
-SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
+TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
-		$(CFILES_CMM_lcms) $(CFILES_CMM_oydi) \
-		$(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
-		$(CFILES_CMM_oyIM) \
 		$(CXXFILES_FLTK)
+SOURCES =  \
+		$(TOP_SOURCES) $(CFILES_MODULES) $(CFILES_MODULES_DEVICES)
 
 # we need these files to generate explicite targets for out of tree builds
 COBJECTS = \
@@ -277,7 +281,7 @@ ALL_FILES = \
 	$(DOKU) \
 	$(ICONS) \
 	$(MIME_TYPES) \
-	$(SOURCES) \
+	$(TOP_SOURCES) \
 	$(CHEADERS) \
 	$(SCRIPTS) \
 	$(MAN1) $(MAN3) \
@@ -920,6 +924,12 @@ copy_files:
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	cd $(SRCDIR) && \
 	  $(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
+	mkdir $(DESTDIR)/modules
+	cd $(SRCDIR) && \
+	  $(COPY) $(CFILES_MODULES) $(CHEADERS_MODULES) $(DESTDIR)/modules/
+	mkdir $(DESTDIR)/modules/devices
+	cd $(SRCDIR) && \
+	  $(COPY) $(CFILES_MODULES_DEVICES) $(DESTDIR)/modules/devices
 	mkdir $(DESTDIR)/tests
 	cd $(SRCDIR) && \
 	  $(COPY) $(TEST_FILES) $(DESTDIR)/tests
