@@ -294,7 +294,7 @@ int            dDevConfigs_FromPattern (
 
     /* "list" call section */
     value1 = oyOptions_FindString( options, "instrument_name", 0 );
-    value2 = oyOptions_FindString( options, "command", "list", 0 );
+    value2 = oyOptions_FindString( options, "command", "list" );
     if(oyOptions_FindString( options, "command", "list" ) ||
        (!oyOptions_FindString( options, "command", "properties" ) &&
         !oyOptions_FindString( options, "command", "setup" ) &&
