@@ -10212,9 +10212,11 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
  *
  *  To open a profile exist several methods in the oyProfile_Fromxxx APIs.
  *  oyProfile_FromStd(), oyProfile_FromFile() and oyProfile_FromMem() are basic
- *  ones. oyProfile_FromSignature() is used for creating a dummy profile.
- *  oyProfile_FromMD5() is a lookup function. \n
- *  Profile properties can be obtained from oyProfile_SetSignature(), like
+ *  profile open functions. oyProfile_FromSignature() is used for creating a
+ *  dummy profile during profile filtering.
+ *  oyProfile_FromMD5() is a lookup function from a profile hash, e.g. as
+ *  provided by a 'psid' tag. \n
+ *  Profile properties can be obtained from oyProfile_GetSignature(), like
  *  colour spaces, date, magic number and so on.
  *  oyProfile_GetChannelNames(), oyProfile_GetText() and oyProfile_GetID()
  *  provide additional informations. \n
