@@ -196,10 +196,19 @@ int main( int argc , char** argv )
         {
           c = oyConfigs_Get( devices, i );
 
+          if(oy_debug)
+          printf("------------------------ %d ---------------------------\n",i);
+
           error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
           printf("\"%s\" ", text? text:"???");
           error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
           printf("%s\n", text? text:"???");
+
+          if(oy_debug)
+          {
+            error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
+            printf("%s\n", text?  text:"???");
+          }
 
           if(text)
             free( text );
