@@ -8664,7 +8664,7 @@ OYAPI int  OYEXPORT
 
     /** The basic call on how to obtain the configuration is added here as
      *  the objects name. "properties" and "list" are known. */
-    if(oyOptions_FindString( options, "properties", 0 ) ||
+    if(oyOptions_FindString( options, "command", "properties" ) ||
        oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
       oyObject_SetName( device->oy_, "properties", oyNAME_NAME );
     else if(oyOptions_FindString( options, "list", 0 ))
@@ -9213,6 +9213,82 @@ int    oyOptions_SetRegistrationTextKey_(
   return error;
 }
 
+/** Function oyOptions_SetDriverContext
+ *  @brief   set a device option from a given external context
+ *
+ *  The options will be created in case they do not exist. The 
+ *  driver_context_type accepts "xml". The data in driver_context will be
+ *  converted to a options set following the Oyranos options XML schemes with 
+ *  the help oyOptions_FromText().
+ *  Any other pointer will be converted to a oyBlob_s object. The name of that
+ *  object will come from driver_context_type.
+ *
+ *  @param[in/out] options             options for the device
+ *  @param[in]     driver_context      driver context
+ *  @param[in]     driver_context_type "xml" or something related to the driver
+ *  @param[in]     driver_context_size size of driver_context
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/18 (Oyranos: 0.1.10)
+ *  @date    2009/05/18
+ */
+OYAPI int  OYEXPORT
+           oyOptions_SetDriverContext( oyOptions_s      ** options,
+                                       oyPointer           driver_context,
+                                       const char        * driver_context_type,
+                                       size_t              driver_context_size,
+                                       oyObject_s          object )
+{
+  int error = !options || !driver_context_type,
+      l_error = 0;
+  oyOptions_s * s = 0,
+              * opts_tmp = 0;
+  oyOption_s * o = 0;
+  char * key = 0;
+
+  if(options && *options)
+  {
+    s = *options;
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 );
+  }
+
+  if(!error)
+  {
+    if(!s)
+      s = oyOptions_New( 0 );
+    error = !s;
+
+    key = oyStringAppend_( "driver_context.", driver_context_type,
+                           oyAllocateFunc_ );
+  }
+
+  if(!error)
+  {
+    o = oyOption_New( key, object );
+
+    if(oyFilterRegistrationMatch( driver_context_type, "xml", 0 ))
+    {
+      opts_tmp = oyOptions_FromText( (char*)driver_context, 0, object );
+      error = oyOption_StructMoveIn ( o, (oyStruct_s**) &opts_tmp );
+    }
+    else
+      error = oyOption_SetFromData( o, driver_context, driver_context_size );
+
+    if(error <= 0)
+      l_error = oyOptions_MoveIn( s, &o, -1 ); OY_ERR
+
+    oyFree_m_( key );
+  }
+
+  if(!error)
+    *options = s;
+  else
+    oyOptions_Release( &s );
+
+  return error;
+}
+
 
 /** Function oyDevicesGet
  *  @brief   get all devices matching to a device class and type
@@ -9235,8 +9311,8 @@ int    oyOptions_SetRegistrationTextKey_(
     oyOptions_s * options = oyOptions_New( 0 );
     int error = 0;
 
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
-                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "properties", OY_CREATE_NEW );
     error = oyDevicesGet( 0, "monitor", 0, &monitors );
     oyOptions_Release( &options );
 
@@ -9301,8 +9377,8 @@ OYAPI int  OYEXPORT
  *  @brief   ask a backend for device informations or other direct calls
  *
  *  @verbatim
-    oyConfig_s * device = oyDeviceGet( 0, "monitor", ":0.0", 0,
-                                               &device );
+    oyConfig_s * device = 0;
+    int error = oyDeviceGet( 0, "monitor", ":0.0", 0, &device );
     oyConfig_Release( &device );
     @endverbatim
  *
@@ -9452,7 +9528,7 @@ OYAPI int  OYEXPORT
   /** 4. copy results to the device */
   if(error <= 0)
   {
-    if(oyOptions_FindString( options, "properties", 0 ) ||
+    if(oyOptions_FindString( options, "command", "properties" ) ||
        oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
     {
       oyOptions_Release( &device->backend_core );
@@ -9508,8 +9584,8 @@ OYAPI int  OYEXPORT
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. setup the device through the backend */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/setup",
-                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "setup", OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
                                    device_name, OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/profile_name",
@@ -9558,8 +9634,8 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
 
     /* 2. unset the device through the backend */
     /** 2.1 set a general request */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/unset",
-                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "unset", OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
                                    device_name, OY_CREATE_NEW );
 
@@ -9668,8 +9744,8 @@ OYAPI int  OYEXPORT
     /* get expensive infos */
     if(oyOptions_Count( device->backend_core ) < 2)
     {
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
-                                     "true", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
 
       if(error <= 0)
         error = oyDeviceBackendCall( device, options );
@@ -9926,8 +10002,8 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(oyOptions_Count( device->backend_core ) < 2)
   { 
     /** 1.1 add "properties" call to backend arguments */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
-                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "properties", OY_CREATE_NEW );
 
     /** 1.2 get monitor device */
     if(error <= 0)
@@ -10068,8 +10144,8 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
     if(oyOptions_Count( device->backend_core ) < 2)
     { 
       /* 1.1 add "properties" call to backend arguments */
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
-                                     "true", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
                                      device_name, OY_CREATE_NEW );
 
@@ -10133,6 +10209,19 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
 
 
 /** \addtogroup objects_profile Profile API
+ *
+ *  To open a profile exist several methods in the oyProfile_Fromxxx APIs.
+ *  oyProfile_FromStd(), oyProfile_FromFile() and oyProfile_FromMem() are basic
+ *  ones. oyProfile_FromSignature() is used for creating a dummy profile.
+ *  oyProfile_FromMD5() is a lookup function. \n
+ *  Profile properties can be obtained from oyProfile_SetSignature(), like
+ *  colour spaces, date, magic number and so on.
+ *  oyProfile_GetChannelNames(), oyProfile_GetText() and oyProfile_GetID()
+ *  provide additional informations. \n
+ *  The profile element functions have Tag in their names. They work together
+ *  with the oyProfileTag_s APIs. \n
+ *  oyProfile_GetFileName is a reverse lookup to obtain the name of a installed
+ *  file from a profile, e.g. find the name of a reachable display profile.
 
  *  @{
  */
@@ -10807,6 +10896,28 @@ oyProfile_GetChannelsCount( oyProfile_s * profile )
 
 /** @brief   get ICC colour space signature
  *  @memberof oyProfile_s
+ *
+ *  \verbatim
+    // show some profile properties
+    oyProfile_s * p = 0; // get from somewhere
+    icSignature vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );      
+    char * v = (char*)&vs;
+    printf("  created %d.%d.%d %d:%d:%d\n", 
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_YEAR),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_MONTH),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_DAY),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_HOURS),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_MINUTES),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_SECONDS)
+          );
+    printf("  pcs: %s  colour space: %s version: %d.%d.%d\n", 
+          oyICCColourSpaceGetName( (icColorSpaceSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_PCS) ),
+          oyICCColourSpaceGetName( (icColorSpaceSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_COLOUR_SPACE) ),
+          (int)v[0], (int)v[1]/16, (int)v[1]%16
+          );
+    \endverbatim
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
@@ -11568,6 +11679,62 @@ const char *       oyProfile_GetFileName (
   }
 
   return name;
+}
+
+/** @internal
+ *  Function oyProfile_DeviceAdd
+ *  @memberof oyProfile_s
+ *  @brief   add device and driver informations to a profile
+ *
+ *  @param         profile             the profile
+ *  @param         device              device and driver informations
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/18 (Oyranos: 0.1.10)
+ *  @date    2009/05/18
+ */
+int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+                                       oyConfig_s        * device )
+{
+  int error = !profile;
+  oyProfile_s * s = profile;
+  oyProfileTag_s * pddt = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
+  {
+      pddt = oyProfile_GetTagById( s, icSigProfileDetailDescriptionTag_ );
+
+      /* icSigProfileDetailDescriptionTag_ */
+      if(error <= 0 && !pddt)
+      {
+        oyStructList_s * list = 0;
+
+        list = oyStructList_New(0);
+        error = oyStructList_MoveIn( list, (oyStruct_s**) &device, 0 );
+
+        if(error <= 0)
+        {
+          pddt = oyProfileTag_Create( list, icSigProfileDetailDescriptionTag_,
+                                      0, OY_MODULE_NICK, 0);
+          error = !pddt;
+        }
+
+        if(error <= 0)
+          pddt->use = icSigProfileDetailDescriptionTag_;
+
+        oyStructList_Release( &list );
+
+        if(pddt)
+          error = oyProfile_TagMoveIn_( s, &pddt, -1 );
+      }
+  }
+
+  return error;
 }
 
 
@@ -16765,8 +16932,8 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 
 
   clean_up:
-      oyStringListRelease_( &pc_texts, pc_texts_n, oyDeAllocateFunc_ );
-      oyStringListRelease_( &regc_texts, regc_texts_n, oyDeAllocateFunc_ );
+    oyStringListRelease_( &pc_texts, pc_texts_n, oyDeAllocateFunc_ );
+    oyStringListRelease_( &regc_texts, regc_texts_n, oyDeAllocateFunc_ );
     oyStringListRelease_( &reg_texts, reg_texts_n, oyDeAllocateFunc_ );
     oyStringListRelease_( &p_texts, p_texts_n, oyDeAllocateFunc_ );
   return 0;
@@ -23336,8 +23503,8 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   int n, i;
   const char * device_name = 0;
 
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/list",
-                                 "true", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                 "list", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   /** we want a fuzzy look at our display, not the narrow "device_name" */
@@ -23575,8 +23742,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
 
   /** 1. obtain detailed and expensive device informations */
   /** 1.1 add "properties" call to backend arguments */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/properties",
-                                 "true", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                 "properties", OY_CREATE_NEW );
 
   /** 1.2 get monitor device */
   if(error <= 0)
@@ -23638,8 +23805,8 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 
   {
     /* 1. set a general request */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/list",
-                                   "true", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "list", OY_CREATE_NEW );
     /* we want a fuzzy look at our display, not as narrow as "device_name"*/
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
                                    display_name, OY_CREATE_NEW );
