@@ -58,6 +58,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
     case oyQUERY_PROFILE_TAG_TYPE_READ:
          switch(value) {
          case icSigDeviceSettingsType:
+         case icSigDescriptiveNameValueMuArrayType_:
          case icSigMakeAndModelType:
          case icSigMultiLocalizedUnicodeType:
          case icSigWCSProfileTag:
@@ -313,6 +314,40 @@ oyStructList_s * oyIMProfileTag_GetValues(
     if(!error)
     switch( (uint32_t)sig )
     {
+      case icSigDescriptiveNameValueMuArrayType_:
+           error = tag->size_ < 12;
+           count = *(icUInt32Number*)(mem+8);
+           count = oyValueUInt32( count );
+
+           if(error <= 0)
+           {
+             /* "key/value pairs found:" followed by the number on the next line"%d" */
+             STRING_ADD( tmp, _("key/value pairs found:") );
+             oyStructList_MoveInName( texts, &tmp, -1 );
+             oySprintf_( num, "%d", count );
+             oyStructList_AddName( texts, num, -1);
+             /*size_ = 12;*/
+           }
+
+           {
+             uint32_t i = 0;
+             char text[68];
+
+             for(i = 0; i < count && tag->size_ >= i * 144; ++i)
+             {
+               memcpy( text, &mem[12 + i*144 + 0], 64);
+               text[64] = 0;
+               oyStructList_AddName( texts, text, -1);
+               memcpy( text, &mem[12 + i*144 + 64], 64);
+               text[64] = 0;
+               oyStructList_AddName( texts, text, -1);
+             }
+           }
+
+           if(tag->size_ < count * 144)
+             oyStructList_AddName( texts, "unrecoverable parameters found", -1);
+
+           break;
       case icSigDeviceSettingsTag:
 
            len = tag->size_ * sizeof(char);
