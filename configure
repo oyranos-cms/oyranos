@@ -36,6 +36,7 @@ if [ "$ROOT_DIR" != "." ]; then
   mkdir -p fl_i18n/
   mkdir -p libXNVCtrl/
   mkdir -p FL/
+  mkdir -p modules/devices
   mkdir -p examples/
   cp -v $ROOT_DIR/examples/makefile examples/
   mkdir -p default_profiles/base

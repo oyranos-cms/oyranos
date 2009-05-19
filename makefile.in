@@ -395,7 +395,8 @@ $(LIB_XNVCTRL).a:
 # the twinview library
 $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a $(MONI_OBJECTS)
 	echo Linking $@ ...
-	-$(CC) $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c -I$(SRCDIR)/$(LIB_XNVCTRL) \
+	-$(CC) $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
+	-I./ -I$(SRCDIR)/$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
 	$(LDLIBS) $(X11_LIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) \
@@ -403,7 +404,7 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a 
 
 $(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 	echo Compiling $*.cxx
-	$(CXX) -I$(SRCDIR) $(CXXFLAGS) $(FLTK_H) -c $<
+	$(CXX) -I./ -I$(SRCDIR) $(CXXFLAGS) $(FLTK_H) -c $<
 FL/Flmm_Tabs.o:	$(SRCDIR)/FL/Flmm_Tabs.cxx
 	echo Compiling FL/Flmm_Tabs.cxx
 	$(CXX) -I./FL -I$(SRCDIR)/FL $(CXXFLAGS) $(FLTK_H) -o $@ -c $<
@@ -480,8 +481,8 @@ $(LINGUAS_SRC):	$(SRCDIR)/$(POT_FILE)
 	for ling in $(@:.gmo=); do \
 	  lingua=`echo $${ling} | sed s%po/%%g | sed s%$(SRCDIR)/%%g`; \
 	  echo "update po/$${lingua}.gmo ..."; \
-	  test -f $${ling}.po \
-        && ($(MSGFMT) -o po/$${lingua}.gmo $${ling}.po; \
+	  test -f $(SRCDIR)/$${ling}.po \
+        && ($(MSGFMT) -o po/$${lingua}.gmo $(SRCDIR)/$${ling}.po; \
             if [ ! -d po/$${lingua} ]; then \
               mkdir po/$${lingua}; \
             fi; \
@@ -492,23 +493,25 @@ $(LINGUAS_SRC):	$(SRCDIR)/$(POT_FILE)
               && $(RM) po/$${lingua}/LC_MESSAGES/$(TARGET).mo \
               || echo po/$${lingua}/LC_MESSAGES/$(TARGET).mo nicht gefunden; \
             ln -s ../../$${lingua}.gmo po/$${lingua}/LC_MESSAGES/$(TARGET).mo;) \
-        || (echo $${ling}.po is not yet ready ... skipping) \
+        || (echo $(SRCDIR)/$${ling}.po is not yet ready ... skipping) \
 	done;
 
 $(SRCDIR)/$(POT_FILE):
 	echo Generating $(SRCDIR)/$(POT_FILE) ...
 	mkdir -p $(SRCDIR)/po
-	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
-	-d $(TARGET) \
-	-o $(SRCDIR)/$(POT_FILE) -c \
-	$(SOURCES) $(CHEADERS) || echo -e "\c"
+	test `which xgettext` && (cd $(SRCDIR); \
+	  xgettext --force-po $(XGETTEXT_OPTIONS) \
+	   -d $(TARGET) \
+	   -o $(SRCDIR)/$(POT_FILE) -c \
+	   $(SOURCES) $(CHEADERS)) \
+	|| echo -e "\c"
 	-$(MSGCAT) $(SRCDIR)/po/*.pot -o $(SRCDIR)/po/oyranos.pot
 	for ling in $(SRCDIR)/po/*.po; do \
 	  lingua=`echo $${ling} | sed 's%$(SRCDIR)/po/%%g ; s%.po%%'`; \
 	  test `which $(MSGMERGE)` && \
 	         $(MSGMERGE) $(MSGMERG_OPTS) $(SRCDIR)/po/$${lingua}.po \
 	         $(SRCDIR)/$(POT_FILE) || \
-	      echo -e "\c"; \
+	    echo -e "\c"; \
 	done;
 	echo ... $(SRCDIR)/$(POT_FILE) done
 
@@ -784,12 +787,13 @@ uninstall_docu:
 distclean: clean
 	-$(RM) Makefile
 	-$(RM) fl_i18n/Makefile
-	-$(RM) libXNVCtrl/Makefile
+	-$(RM) libXNVCtrl/Makefile libXNVCtrl/libXNVCtrl.a \
+		libXNVCtrl/NVCtrl.o libXNVCtrl.a
 	-$(RM) default_profiles/base/Makefile
 	-$(RM) default_profiles/printing/Makefile
-	-$(RM) mkdepend config.h oyranos.pc oyranos.spec
+	-$(RM) mkdepend cobjects config.h oyranos.pc oyranos.spec
 	-$(RM) oyranos-icc.spec config.log oyranos_version.h oyranos-config
-	-$(RM) config.sh
+	-$(RM) config.log.h config.tmp.sh testset.txt
 	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
 	-$(RM) -R doc/html
 
@@ -819,8 +823,8 @@ clean:
 ifdef $(LIB_XNVCTRL)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 endif
-	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
-	cd examples && $(MAKE) clean
+	-cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
+	-cd examples && $(MAKE) clean
 	echo ... $@ done
 
 # configure if the file config is not available
@@ -834,7 +838,7 @@ depend:	cdepend
 	echo "#nicht editieren/dont edit - automatisch generiert" >> mkdepend
 	-(for file in $(INCL_DEP); do \
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
-	  $(MAKEDEPEND) -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
+	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
 
 cdepend:
 	echo preparing dependency compilation ...
