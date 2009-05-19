@@ -80,14 +80,15 @@ int main( int argc , char** argv )
 
   if(argc != 1)
   {
-    int pos = 1;
+    int pos = 1, i;
     char *wrong_arg = 0;
     while(pos < argc)
     {
       switch(argv[pos][0])
       {
         case '-':
-            switch (argv[pos][1])
+            for(i = 1; i < strlen(argv[pos]); ++i)
+            switch (argv[pos][i])
             {
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'b': database = 1; monitor_profile = 0; break;
