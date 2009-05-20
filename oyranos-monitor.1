@@ -1,30 +1,50 @@
-.TH oyranos-monitor 1 "February 20, 2007" "User Commands"
+.TH oyranos-monitor 1 "Mai 20, 2009" "User Commands"
 .SH NAME
 oyranos-monitor \- Oyranos CMS monitor configuration
 .SH SYNOPSIS
-.B oyranos-monitor
-[-x num -y num  profilename]
-[-x num -y num]
-[-b -x num -y num]
-[-e -x num -y num]
-[]
+\fBoyranos-monitor\fR [ |-s [-x num] [-y num] [-v] ]
+.fi 
+\fBoyranos-monitor\fR [ -x num -y num  profilename [-v] ]
+.fi 
+\fBoyranos-monitor\fR [ -b [-x num] [-y num] [-v] ]
+.fi 
+\fBoyranos-monitor\fR [ -e [-x num] [-y num] [-v] ]
+.fi 
+\fBoyranos-monitor\fR [ -l [-v] ]
 .SH DESCRIPTION
 This little programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS).
 .SH OPTIONS
 .TP
-.B \-x
-get/set the x display position
+\fB\-x\fR=\fIPOSITION\fR
+select the display at the x position
 .TP
-.B \-y
-get/set the y display position
+\fB\-y\fR=\fIPOSITION\fR
+select the display at the y position
 .TP
-.B \-e
-reset the hardware gamma table to the defaults
+.B \-s, \-\-setup \fR[default] [-x] [-y]
+Set up the X11 server with the Oyranos DB stored monitor ICC profile(s)
 .TP
-.B \-b
-query the profile name from the Oyranos device profile data base
+.B \-e, \-\-unset \fR[-x] [-y]
+reset one hardware gamma table to the defaults
 .TP
-.B Set up the X11 server with the Oyranos stored monitor profile
+.B \-b, \-\-database \fR[-x] [-y]
+query one profile name from the Oyranos device profile data base
+.TP
+.B \-l, \-\-list
+list devices visible to Oyranos
+.TP
+.B \-v, \-\-verbose
+increase verbosity
+.SH ENVIRONMENT
+.TP
+.B DISPLAY
+on X11 systems the display is selected by this variable
+.TP
+.B OYRANOS_DEBUG
+set the Oyranos debug level. Alternatively the -v option can be used.
+.TP
+.B XDG_DATA_HOME XDG_DATA_DIRS
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 .SH EXAMPLES 
 .TP
 Put the following in a setup script like .xinitrc:
@@ -50,9 +70,19 @@ Query the server side, network transparent profile:
 Query the Oyranos device data base profile on the local computer:
 .B oyranos-monitor -b -x pos -y pos
 .PP 
+.TP
+List all Oyranos monitor devices:
+.B oyranos-monitor -l
+.PP 
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH COPYRIGHT
+(c) 2005-2009, Kai-Uwe Behrmann
+.fi
+License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
 oyranos-config-fltk(1) oyranos-policy(1) oyranos(3)
-.SH BUGS
+.fi
+http://www.oyranos.org
+.SH "REPORTING BUGS"
 at: http://sourceforge.net/tracker/?group_id=177017&atid=879553

@@ -1103,6 +1103,9 @@ char**  oyLibPathsGet_( int             * count,
 /** @internal
  *  @brief query valid XDG paths
  *
+ *  @see Directory paths for colour profiles and other configuration data
+ *       http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+ *
  *  @param[out]    count       number of paths found
  *  @param[in]     data        oyYES/oyNO/oyALL data or config text
  *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
