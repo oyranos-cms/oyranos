@@ -106,7 +106,22 @@ int main( int argc , char** argv )
                         } else wrong_arg = "-y";
                         if(oy_debug) printf("y=%d\n",y); ++pos; break;
               case 'v': oy_debug += 1; break;
+              case 's': break; /* implicite -> setup */
               case 'h':
+              case '-':
+                        if(i == 1)
+                        {
+                             if(strcmp(&argv[pos][2],"unset") == 0)
+                        { erase = 1; monitor_profile = 0; i=100; break; }
+                        else if(strcmp(&argv[pos][2],"setup") == 0)
+                        { i=100; break; }
+                        else if(strcmp(&argv[pos][2],"database") == 0)
+                        { database = 1; monitor_profile = 0; i=100; break; }
+                        else if(strcmp(&argv[pos][2],"list") == 0)
+                        { list = 1; monitor_profile = 0; i=100; break; }
+                        else if(strcmp(&argv[pos][2],"verbose") == 0)
+                        { oy_debug += 1; i=100; break; }
+                        }
               default:
                         printf("\n");
                         printf("oyranos-monitor v%d.%d.%d %s\n",
