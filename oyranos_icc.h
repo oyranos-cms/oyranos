@@ -62,6 +62,14 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 /* additionals - not defined in icc34.h */
 /* partitially taken from littleCMS */
 
+#ifndef icSigDescriptiveNameValueMuArrayType_
+#define icSigDescriptiveNameValueMuArrayType_ 0x6e766d74 /* 'nvmt' */
+#endif
+
+#ifndef icSigProfileDetailDescriptionTag_
+#define icSigProfileDetailDescriptionTag_ 0x70646474 /* 'pddt' */
+#endif
+
 #ifndef icSigUnix
 #define icSigUnix 0x2A6E6978  /* '*nix' */
 #endif

@@ -118,6 +118,8 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
 int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos );
+int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+                                       oyConfig_s        * config );
 
 oyFilterCore_s * oyFilterCore_New_   ( oyObject_s          object );
 int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,

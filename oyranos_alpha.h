@@ -1052,7 +1052,6 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
 const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
                                        int                 dl_pos );
 
-
 /** @brief tell about the conversion profiles
  *  @ingroup objects_profile
  *  @extends oyStruct_s
@@ -1160,7 +1159,12 @@ char   **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        oyAlloc_f           allocateFunc );
 
 
-
+OYAPI int  OYEXPORT
+           oyOptions_SetDriverContext( oyOptions_s      ** options,
+                                       oyPointer           driver_context,
+                                       const char        * driver_context_type,
+                                       size_t              driver_context_size,
+                                       oyObject_s          object);
 OYAPI int  OYEXPORT
            oyDevicesGet              ( const char        * device_type,
                                        const char        * device_class,

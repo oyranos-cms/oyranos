@@ -107,8 +107,8 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
              OY_DBG_ARGS_,
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"list\" will provide a list of available\n"
-      " devices. The actual device name can be found in option\n"
+      "The presence of option \"command=list\" will provide a list of \n"
+      " available devices. The actual device name can be found in option\n"
       " \"device_name\". The call is as lightwight as possible.\n"
       " The option \"display_name\" is optional to pass the X11 display name\n"
       " and obtain a unfiltered result. It the way to get all monitors\n"
@@ -128,11 +128,12 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " The bidirectional optional \"edid\" (specific) key word will\n"
       " additionally add the EDID information inside a oyBlob_s struct.\n"
       " The option \"device_name\" may be added as a filter.\n"
-      " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION above."
+      " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION\n"
+      " above.\n"
       " Informations are stored in the returned oyConfig_s::data member."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"properties\" will provide the devices \n"
+      "The presence of option \"command=properties\" will provide the devices\n"
       " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
       " - \"manufacturer\"\n"
@@ -148,23 +149,27 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " your \"DISPLAY\" environment variable or uses what the system\n"
       " provides. The \"device_name\" should be identical with the one\n"
       " returned from a \"list\" request.\n"
-      " The \"properties\" call might be a expensive one. Informations are\n"
-      " stored in the returned oyConfig_s::backend_core member."
+      " The \"properties\" call might be a expensive one.\n"
+      " Informations are stored in the returned oyConfig_s::backend_core member."
        );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"setup\" will setup the device from a profile.\n"
+      "The presence of option \"command=setup\" will setup the device from a\n"
+      " profile.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
       " The option \"profile_name\" must be present, containing a ICC profile\n"      " file name."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"unset\" will invalidate a profile of a device.\n"
+      "The presence of call \"command=unset\" will invalidate a profile of\n"
+      " a device.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
       );
+#if 0
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"get\" will provide a oyProfile_s of the\n"
       " device in a \"icc_profile\" option.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
       );
+#endif
 
   return;
 }
@@ -324,7 +329,11 @@ int            oyX1Configs_FromPattern (
 
     /** 3.  handle the actual call */
     /** 3.1 "list" call */
-    if(oyOptions_FindString( options, "list", 0 ))
+    if(oyOptions_FindString( options, "command", "list" ) ||
+       (!oyOptions_FindString( options, "command", "properties" ) &&
+        !oyOptions_FindString( options, "command", "setup" ) &&
+        !oyOptions_FindString( options, "command", "unset" ))
+      )
     {
       texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
 
@@ -445,7 +454,7 @@ int            oyX1Configs_FromPattern (
 
 
     /** 3.2 "properties" call; provide extensive infos for the DB entry */
-    if(oyOptions_FindString( options, "properties", 0 ))
+    if(oyOptions_FindString( options, "command", "properties" ))
     {
       texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
 
@@ -486,7 +495,7 @@ int            oyX1Configs_FromPattern (
 
     /** 3.3 "setup" call; bring a profile to the device */
     if(error <= 0 &&
-       oyOptions_FindString( options, "setup", 0 ))
+       oyOptions_FindString( options, "command", "setup" ))
     {
       oprofile_name = oyOptions_FindString( options, "profile_name", 0 );
       error = !odevice_name || !oprofile_name;
@@ -505,7 +514,7 @@ int            oyX1Configs_FromPattern (
 
     /** 3.4 "unset" call; clear a profile from a device */
     if(error <= 0 &&
-       oyOptions_FindString( options, "unset", 0 ))
+       oyOptions_FindString( options, "command", "unset" ))
     {
       error = !odevice_name;
       if(error >= 1)
@@ -537,7 +546,7 @@ int            oyX1Configs_FromPattern (
   return error;
 }
 
-/** Function oyX1Config_Check
+/** Function oyX1Config_Rank
  *  @brief   oyX1 oyCMMapi8_s Xorg monitor check
  *
  *  @param[in]     config              the monitor device configuration
@@ -547,7 +556,7 @@ int            oyX1Configs_FromPattern (
  *  @date    2009/01/26
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  */
-int            oyX1Config_Check      ( oyConfig_s        * config )
+int            oyX1Config_Rank       ( oyConfig_s        * config )
 {
   int error = !config,
       rank = 1;
@@ -608,7 +617,7 @@ oyCMMapi8_s oyX1_api8 = {
 
   0,                         /**< oyCMMapi5_s * api5_ */
   oyX1Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
-  oyX1Config_Check,          /**< oyConfig_Check_f oyConfig_Check */
+  oyX1Config_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
   oyX1_rank_map              /**< oyRankPad ** rank_map */
 };
 

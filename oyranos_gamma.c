@@ -80,14 +80,15 @@ int main( int argc , char** argv )
 
   if(argc != 1)
   {
-    int pos = 1;
+    int pos = 1, i;
     char *wrong_arg = 0;
     while(pos < argc)
     {
       switch(argv[pos][0])
       {
         case '-':
-            switch (argv[pos][1])
+            for(i = 1; i < strlen(argv[pos]); ++i)
+            switch (argv[pos][i])
             {
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'b': database = 1; monitor_profile = 0; break;
@@ -196,10 +197,19 @@ int main( int argc , char** argv )
         {
           c = oyConfigs_Get( devices, i );
 
+          if(oy_debug)
+          printf("------------------------ %d ---------------------------\n",i);
+
           error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
           printf("\"%s\" ", text? text:"???");
           error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
           printf("%s\n", text? text:"???");
+
+          if(oy_debug)
+          {
+            error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
+            printf("%s\n", text?  text:"???");
+          }
 
           if(text)
             free( text );

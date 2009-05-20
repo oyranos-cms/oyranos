@@ -25,10 +25,12 @@ CMMS = \
 	$(TARGET)_oyra$(OY_MODULE_NAME) \
 	$(TARGET)_oydi$(OY_MODULE_NAME) \
 	$(TARGET)_oyX1$(OY_MODULE_NAME)
+#	$(TARGET)_oycu$(OY_MODULE_NAME)
 META = \
 	$(TARGET)_oyIM$(OY_MODULE_NAME)
 LIB_CMM_oyIM = $(LIB_CMM_START)_oyIM$(LIB_CMM_END)
 LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
+LIB_CMM_oycu = $(LIB_CMM_START)_oycu$(LIB_CMM_END)
 LIB_CMM_oydi = $(LIB_CMM_START)_oydi$(LIB_CMM_END)
 LIB_CMM_lcms = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
 LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
@@ -36,6 +38,7 @@ LIBS_CMM = \
 	$(LIB_CMM_oyIM) \
 	$(LIB_CMM_oydi) \
 	$(LIB_CMM_oyX1) \
+	$(LIB_CMM_oycu) \
 	$(LIB_CMM_oyra) \
 	$(LIB_CMM_lcms)
 
@@ -62,8 +65,6 @@ CHEADERS = \
 	$(TARGET)_alpha_internal.h \
 	$(TARGET)_check.h \
 	$(TARGET)_cmm.h \
-	$(TARGET)_cmm_oyIM.h \
-	$(TARGET)_cmm_oyra.h \
 	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
@@ -106,19 +107,29 @@ CFILES_ALPHA = \
 	$(TARGET)_alpha.c
 
 CFILES_CMM_lcms = \
-	$(TARGET)_cmm_lcms.c
+	modules/$(TARGET)_cmm_lcms.c
 CFILES_CMM_oydi = \
-	$(TARGET)_cmm_oydi.c
+	modules/$(TARGET)_cmm_oydi.c
 CFILES_CMM_oyX1 = \
-	$(TARGET)_cmm_oyX1.c
+	modules/devices/$(TARGET)_cmm_oyX1.c
+CFILES_CMM_oycu = \
+
 CFILES_CMM_oyra = \
-	$(TARGET)_cmm_oyra.c \
-	$(TARGET)_cmm_oyra_image.c \
-	$(TARGET)_cmm_oyra_image_ppm.c
+	modules/$(TARGET)_cmm_oyra.c \
+	modules/$(TARGET)_cmm_oyra_image.c \
+	modules/$(TARGET)_cmm_oyra_image_ppm.c
 CFILES_CMM_oyIM = \
-	$(TARGET)_cmm_oyIM.c \
-	$(TARGET)_cmm_oyIM_icc.c \
-	$(TARGET)_cmm_oyIM_profile.c
+	modules/$(TARGET)_cmm_oyIM.c \
+	modules/$(TARGET)_cmm_oyIM_icc.c \
+	modules/$(TARGET)_cmm_oyIM_profile.c
+CFILES_MODULES = \
+	$(CFILES_CMM_lcms) $(CFILES_CMM_oydi) $(CFILES_CMM_oyra) \
+	$(CFILES_CMM_oycu) $(CFILES_CMM_oyIM)
+CHEADERS_MODULES = \
+	modules/$(TARGET)_cmm_oyIM.h \
+	modules/$(TARGET)_cmm_oyra.h
+CFILES_MODULES_DEVICES = \
+	$(CFILES_CMM_oyX1)
 
 CFILES_MONI = \
 	$(TARGET)_monitor.c
@@ -200,14 +211,12 @@ Flmm_FILES = \
 	FL/CREDITS \
 	FL/README
 
-
-SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
+TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
-		$(CFILES_CMM_lcms) $(CFILES_CMM_oydi) \
-		$(CFILES_CMM_oyX1) $(CFILES_CMM_oyra) \
-		$(CFILES_CMM_oyIM) \
 		$(CXXFILES_FLTK)
+SOURCES =  \
+		$(TOP_SOURCES) $(CFILES_MODULES) $(CFILES_MODULES_DEVICES)
 
 # we need these files to generate explicite targets for out of tree builds
 COBJECTS = \
@@ -228,6 +237,7 @@ OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_oydi_OBJECTS = $(CFILES_CMM_oydi:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
+CMM_oycu_OBJECTS = $(CFILES_CMM_oycu:.c=.o)
 CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
 CMM_oyIM_OBJECTS = $(CFILES_CMM_oyIM:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
@@ -239,6 +249,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
+	$(CMM_oycu_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(FLTK_OBJECTS) \
@@ -270,7 +281,7 @@ ALL_FILES = \
 	$(DOKU) \
 	$(ICONS) \
 	$(MIME_TYPES) \
-	$(SOURCES) \
+	$(TOP_SOURCES) \
 	$(CHEADERS) \
 	$(SCRIPTS) \
 	$(MAN1) $(MAN3) \
@@ -346,6 +357,16 @@ $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
+$(LIB_CMM_oycu): $(CMM_oycu_OBJECTS) $(MONI_OBJECTS)
+	echo Linking $@ ...
+	-$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	-o $@ \
+	$(CMM_oycu_OBJECTS) $(MODULE_LDLIBS) -lcups
+	$(RM)  lib$(TARGET)_oycu$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oycu$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oycu$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oycu$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
 $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
@@ -374,7 +395,8 @@ $(LIB_XNVCTRL).a:
 # the twinview library
 $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a $(MONI_OBJECTS)
 	echo Linking $@ ...
-	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c -I$(SRCDIR)/$(LIB_XNVCTRL) \
+	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
+	-I$(SRCDIR)/$(LIB_XNVCTRL) \
 	-o $(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
 	$(LDLIBS) $(X11_LIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) \
@@ -459,8 +481,8 @@ $(LINGUAS_SRC):	$(SRCDIR)/$(POT_FILE)
 	for ling in $(@:.gmo=); do \
 	  lingua=`echo $${ling} | sed s%po/%%g | sed s%$(SRCDIR)/%%g`; \
 	  echo "update po/$${lingua}.gmo ..."; \
-	  test -f $${ling}.po \
-        && ($(MSGFMT) -o po/$${lingua}.gmo $${ling}.po; \
+	  test -f $(SRCDIR)/$${ling}.po \
+        && ($(MSGFMT) -o po/$${lingua}.gmo $(SRCDIR)/$${ling}.po; \
             if [ ! -d po/$${lingua} ]; then \
               mkdir po/$${lingua}; \
             fi; \
@@ -471,23 +493,25 @@ $(LINGUAS_SRC):	$(SRCDIR)/$(POT_FILE)
               && $(RM) po/$${lingua}/LC_MESSAGES/$(TARGET).mo \
               || echo po/$${lingua}/LC_MESSAGES/$(TARGET).mo nicht gefunden; \
             ln -s ../../$${lingua}.gmo po/$${lingua}/LC_MESSAGES/$(TARGET).mo;) \
-        || (echo $${ling}.po is not yet ready ... skipping) \
+        || (echo $(SRCDIR)/$${ling}.po is not yet ready ... skipping) \
 	done;
 
 $(SRCDIR)/$(POT_FILE):
 	echo Generating $(SRCDIR)/$(POT_FILE) ...
 	mkdir -p $(SRCDIR)/po
-	test `which xgettext` && xgettext --force-po $(XGETTEXT_OPTIONS) \
-	-d $(TARGET) \
-	-o $(SRCDIR)/$(POT_FILE) -c \
-	$(SOURCES) $(CHEADERS) || echo -e "\c"
+	test `which xgettext` && (cd $(SRCDIR); \
+	  xgettext --force-po $(XGETTEXT_OPTIONS) \
+	   -d $(TARGET) \
+	   -o $(SRCDIR)/$(POT_FILE) -c \
+	   $(SOURCES) $(CHEADERS)) \
+	|| echo -e "\c"
 	-$(MSGCAT) $(SRCDIR)/po/*.pot -o $(SRCDIR)/po/oyranos.pot
 	for ling in $(SRCDIR)/po/*.po; do \
 	  lingua=`echo $${ling} | sed 's%$(SRCDIR)/po/%%g ; s%.po%%'`; \
 	  test `which $(MSGMERGE)` && \
 	         $(MSGMERGE) $(MSGMERG_OPTS) $(SRCDIR)/po/$${lingua}.po \
 	         $(SRCDIR)/$(POT_FILE) || \
-	      echo -e "\c"; \
+	    echo -e "\c"; \
 	done;
 	echo ... $(SRCDIR)/$(POT_FILE) done
 
@@ -763,12 +787,13 @@ uninstall_docu:
 distclean: clean
 	-$(RM) Makefile
 	-$(RM) fl_i18n/Makefile
-	-$(RM) libXNVCtrl/Makefile
+	-$(RM) libXNVCtrl/Makefile libXNVCtrl/libXNVCtrl.a \
+		libXNVCtrl/NVCtrl.o libXNVCtrl.a
 	-$(RM) default_profiles/base/Makefile
 	-$(RM) default_profiles/printing/Makefile
-	-$(RM) mkdepend config.h oyranos.pc oyranos.spec
+	-$(RM) mkdepend cobjects config.h oyranos.pc oyranos.spec
 	-$(RM) oyranos-icc.spec config.log oyranos_version.h oyranos-config
-	-$(RM) config.sh
+	-$(RM) config.log.h config.tmp.sh testset.txt
 	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
 	-$(RM) -R doc/html
 
@@ -798,8 +823,8 @@ clean:
 ifdef $(LIB_XNVCTRL)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 endif
-	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
-	cd examples && $(MAKE) clean
+	-cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
+	-cd examples && $(MAKE) clean
 	echo ... $@ done
 
 # configure if the file config is not available
@@ -903,6 +928,12 @@ copy_files:
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	cd $(SRCDIR) && \
 	  $(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
+	mkdir $(DESTDIR)/modules
+	cd $(SRCDIR) && \
+	  $(COPY) $(CFILES_MODULES) $(CHEADERS_MODULES) $(DESTDIR)/modules/
+	mkdir $(DESTDIR)/modules/devices
+	cd $(SRCDIR) && \
+	  $(COPY) $(CFILES_MODULES_DEVICES) $(DESTDIR)/modules/devices
 	mkdir $(DESTDIR)/tests
 	cd $(SRCDIR) && \
 	  $(COPY) $(TEST_FILES) $(DESTDIR)/tests
