@@ -1,10 +1,10 @@
-.TH oyranos-monitor 1 "Mai 20, 2009" "User Commands"
+.TH oyranos-monitor 1 "May 21, 2009" "User Commands"
 .SH NAME
 oyranos-monitor \- Oyranos CMS monitor configuration
 .SH SYNOPSIS
 \fBoyranos-monitor\fR [ |-s [-x num] [-y num] [-v] ]
 .fi 
-\fBoyranos-monitor\fR [ -x num -y num  profilename [-v] ]
+\fBoyranos-monitor\fR [ \fIPROFILENAME\fR [-x num] [-y num] [-v] ]
 .fi 
 \fBoyranos-monitor\fR [ -b [-x num] [-y num] [-v] ]
 .fi 
@@ -12,22 +12,26 @@ oyranos-monitor \- Oyranos CMS monitor configuration
 .fi 
 \fBoyranos-monitor\fR [ -l [-v] ]
 .SH DESCRIPTION
-This little programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS).
+The oyranos-monitor programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS). Profiles are stored in a data base, the Oyranos DB.
 .SH OPTIONS
 .TP
-\fB\-x\fR=\fIPOSITION\fR
-select the display at the x position
+\fB\-x\fR=\fIPOSITION\fR , \-x\fR \fIPOSITION
+select the screen at the x position.
+The Oyranos screens are if possible real devices. A screen position must be unique and not shared by different screens, otherwise it will be ambiguous.
 .TP
-\fB\-y\fR=\fIPOSITION\fR
-select the display at the y position
+\fB\-y\fR=\fIPOSITION\fR , \-y\fR \fIPOSITION
+select the screen at the y position
 .TP
-.B \-s, \-\-setup \fR[default] [-x] [-y]
+.B \-s, \-\-setup \fR[default] [-x num] [-y num]
 Set up the X11 server with the Oyranos DB stored monitor ICC profile(s)
 .TP
-.B \-e, \-\-unset \fR[-x] [-y]
+\fIPROFILENAME\fR [-x num] [-y num]
+Assign a monitor ICC profile to the selected screen and store in the Oyranos DB.
+.TP
+.B \-e, \-\-unset \fR[-x num] [-y num]
 reset one hardware gamma table to the defaults
 .TP
-.B \-b, \-\-database \fR[-x] [-y]
+.B \-b, \-\-database \fR[-x num] [-y num]
 query one profile name from the Oyranos device profile data base
 .TP
 .B \-l, \-\-list
@@ -38,13 +42,19 @@ increase verbosity
 .SH ENVIRONMENT
 .TP
 .B DISPLAY
-on X11 systems the display is selected by this variable
+On X11 systems the display is selected by this variable.
 .TP
 .B OYRANOS_DEBUG
 set the Oyranos debug level. Alternatively the -v option can be used.
 .TP
 .B XDG_DATA_HOME XDG_DATA_DIRS
+route Oyranos to top directories containing resources. The derived paths for 
+ICC profiles have a "color/icc" appended.
+.nf
 http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+.TP
+.B OY_MODULE_PATHS
+route Oyranos to additional directories containing modules.
 .SH EXAMPLES 
 .TP
 Put the following in a setup script like .xinitrc:

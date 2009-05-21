@@ -78,6 +78,21 @@ int main( int argc , char** argv )
     if( (ptr = strchr(ptr, '.')) != 0 )
       ptr[0] = '\000';
 
+/* allow "-opt val" and "-opt=val" syntax */
+#define OY_PARSE_INT_ARG( opt ) \
+                        if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
+                        { opt = atoi( argv[pos+1] ); \
+                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
+                            wrong_arg = "-" #opt; \
+                          ++pos; \
+                        } else if(argv[pos][i+1] == '=') \
+                        { opt = atoi( &argv[pos][i+2] ); \
+                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
+                            wrong_arg = "-" #opt; \
+                          i = 1000; \
+                        } else wrong_arg = "-" #opt; \
+                        if(oy_debug) printf(#opt "=%d\n",opt)
+
   if(argc != 1)
   {
     int pos = 1, i;
@@ -93,18 +108,8 @@ int main( int argc , char** argv )
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'b': database = 1; monitor_profile = 0; break;
               case 'l': list = 1; monitor_profile = 0; break;
-              case 'x': if( pos + 1 < argc )
-                        { x = atoi( argv[pos+1] );
-                          if( x == 0 && strcmp(argv[pos+1],"0") )
-                            wrong_arg = "-x";
-                        } else wrong_arg = "-x";
-                        if(oy_debug) printf("x=%d\n",x); ++pos; break;
-              case 'y': if( pos + 1 < argc )
-                        { y = atoi( argv[pos+1] );
-                          if( y == 0 && strcmp(argv[pos+1],"0") )
-                            wrong_arg = "-y";
-                        } else wrong_arg = "-y";
-                        if(oy_debug) printf("y=%d\n",y); ++pos; break;
+              case 'x': OY_PARSE_INT_ARG( x ); break;
+              case 'y': OY_PARSE_INT_ARG( y ); break;
               case 'v': oy_debug += 1; break;
               case 's': break; /* implicite -> setup */
               case 'h':
