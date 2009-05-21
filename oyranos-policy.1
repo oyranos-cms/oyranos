@@ -1,12 +1,22 @@
-.TH "oyranos-policy" 1 "October 24, 2008" "User Commands"
+.TH "oyranos-policy" 1 "May 21, 2009" "User Commands"
 .SH NAME
 oyranos-policy \- Oyranos CMS policy tool
 .SH SYNOPSIS
-.B oyranos-policy 
-[-c] [-d] [-i filename]
-[-l] [-p] [-s filename] [-v] [-h]
+\fBoyranos-policy\fR [ [-c] [-v] ]
+.fi
+\fBoyranos-policy\fR [ [-d] [-v] ]
+.fi
+\fBoyranos-policy\fR [ [-i \fIFILENAME\fR] [-v] ]
+.fi
+\fBoyranos-policy\fR [ [-l] [-v] ]
+.fi
+\fBoyranos-policy\fR [ [-p] [-v] ]
+.fi
+\fBoyranos-policy\fR [ [-s \fIFILENAME\fR] [-v] ]
+.fi
+\fBoyranos-policy\fR [-h]
 .SH DESCRIPTION
-The tool dumps out / read a configuration of the Oyranos colour management system (CMS). Search paths are influenced by the XDG_CONFIG_HOME shell variable.
+The tool dumps out / read a configuration of the Oyranos colour management system (CMS).
 .SH OPTIONS
 .TP
 .B \-c
@@ -15,9 +25,9 @@ show current active policy name
 .B \-d
 dump out all settings in Oyranos' own xml-ish text format
 .TP
-.B \-i
+.B \-i \fIFILENAME\fR
 import;
-filename must be in Oyranos' own xml-ish text format
+FILENAME must be in Oyranos' own xml-ish text format
 .TP
 .B \-l
 list available policies
@@ -25,12 +35,22 @@ list available policies
 .B \-p
 list search paths
 .TP
-.B \-s
+.B \-s \fIFILENAME\fR
 Save and install to a new policy;
-filename must be in Oyranos' own xml-ish text format
+FILENAME must be in Oyranos' own xml-ish text format
 .TP
 .B \-l
 help text
+.SH ENVIRONMENT
+.TP
+.B OYRANOS_DEBUG
+set the Oyranos debug level. Alternatively the -v option can be used.
+.TP
+.B XDG_CONFIG_HOME
+route Oyranos to top directories containing resources. The derived paths for
+policies have a "color/settings" appended.
+.nf
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 .SH EXAMPLES
 .TP
 Dump out the actual settings::
@@ -53,7 +73,13 @@ Print a help text:
 .PP
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH COPYRIGHT
+(c) 2005-2009, Kai-Uwe Behrmann
+.fi
+License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
 oyranos-config(3) oyranos-monitor(1) oyranos(3)
-.SH BUGS
+.fi
+http://www.oyranos.org
+.SH "REPORTING BUGS"
 at: http://sourceforge.net/tracker/?group_id=177017&atid=879553
