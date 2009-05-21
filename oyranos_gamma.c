@@ -42,6 +42,7 @@ int main( int argc , char** argv )
   int error = 0;
   int erase = 0;
   int list = 0;
+  int setup = 0;
   int database = 0;
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -111,7 +112,7 @@ int main( int argc , char** argv )
               case 'x': OY_PARSE_INT_ARG( x ); break;
               case 'y': OY_PARSE_INT_ARG( y ); break;
               case 'v': oy_debug += 1; break;
-              case 's': break; /* implicite -> setup */
+              case 's': setup = 1; break; /* implicite -> setup */
               case 'h':
               case '-':
                         if(i == 1)
@@ -119,7 +120,7 @@ int main( int argc , char** argv )
                              if(strcmp(&argv[pos][2],"unset") == 0)
                         { erase = 1; monitor_profile = 0; i=100; break; }
                         else if(strcmp(&argv[pos][2],"setup") == 0)
-                        { i=100; break; }
+                        { setup = 1; i=100; break; }
                         else if(strcmp(&argv[pos][2],"database") == 0)
                         { database = 1; monitor_profile = 0; i=100; break; }
                         else if(strcmp(&argv[pos][2],"list") == 0)
@@ -134,24 +135,20 @@ int main( int argc , char** argv )
                                 _("is a colour profile administration tool for monitors"));
                         printf("%s\n",                 _("Usage"));
                         printf("  %s\n",               _("Set new profile:"));
-                        printf("      %s\n",           argv[0]);
-                        printf("            -x pos -y pos  %s\n",
+                        printf("      %s -x pos -y pos %s\n", argv[0],
                                                        _("profile name"));
                         printf("\n");
                         printf("  %s\n",               _("Unset profile:"));
-                        printf("      %s -e\n",        argv[0]);
-                        printf("            -x pos -y pos\n");
+                        printf("      %s -e -x pos -y pos\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Activate profiles:"));
                         printf("      %s\n",           argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Query server profile:"));
-                        printf("      %s\n",           argv[0]);
-                        printf("            -x pos -y pos\n");
+                        printf("      %s -x pos -y pos\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Query device data base profile:"));
-                        printf("      %s -b\n",        argv[0]);
-                        printf("            -x pos -y pos\n");
+                        printf("      %s -b -x pos -y pos\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("List devices:"));
                         printf("      %s -l\n",        argv[0]);
@@ -159,6 +156,8 @@ int main( int argc , char** argv )
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
                         printf("\n");
+                        printf("For more informations read the man page:\n");
+                        printf("      man oyranos-monitor\n");
                         exit (0);
                         break;
             }
@@ -182,7 +181,7 @@ int main( int argc , char** argv )
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
-    if(!monitor_profile && !erase && !list)
+    if(!monitor_profile && !erase && !list && !setup)
     {
       if(database)
       {
@@ -270,7 +269,7 @@ int main( int argc , char** argv )
       oySetMonitorProfile (oy_display_name, 0);
   }
 
-  if(argc == 1 || monitor_profile)
+  if(argc == 1 || setup || monitor_profile)
     error = oyActivateMonitorProfiles (display_name);
 
   if(oy_display_name)
