@@ -38,7 +38,6 @@ LIBS_CMM = \
 	$(LIB_CMM_oyIM) \
 	$(LIB_CMM_oydi) \
 	$(LIB_CMM_oyX1) \
-	$(LIB_CMM_oycu) \
 	$(LIB_CMM_oyra) \
 	$(LIB_CMM_lcms)
 
