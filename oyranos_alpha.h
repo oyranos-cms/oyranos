@@ -1055,6 +1055,8 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
                                        int                 pos );
 const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
                                        int                 dl_pos );
+int                oyProfile_DeviceGet ( oyProfile_s     * profile,
+                                       oyConfig_s        * device );
 
 /** @brief tell about the conversion profiles
  *  @ingroup objects_profile
@@ -1092,6 +1094,9 @@ int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
 oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
                                        int                 pos );
 int              oyProfiles_Count    ( oyProfiles_s      * list );
+int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
+                                       oyConfig_s        * device,
+                                       int32_t           * rank_list );
 
 typedef enum {
   oyOK,

@@ -11884,6 +11884,81 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 }
 
 
+/** Function oyProfile_DeviceGet
+ *  @memberof oyProfile_s
+ *  @brief   obtain device informations from a profile
+ *
+ *  @verbatim
+    oyConfig_s * device = oyConfig_New( "//" OY_TYPE_STD "/config", object );
+    oyProfile_DeviceGet( profile, device, 0 ); @endverbatim
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in,out] device              the device description
+ *  @param[in]     object              the optional object
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/22 (Oyranos: 0.1.10)
+ *  @date    2009/05/22
+ */
+int                oyProfile_DeviceGet ( oyProfile_s     * profile,
+                                       oyConfig_s        * device )
+{
+  int error = !profile, l_error = 0;
+  oyProfile_s * s = profile;
+  oyProfileTag_s * tag = 0;
+  char ** texts = 0;
+  int32_t texts_n = 0;
+  int i;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(!error)
+  {
+    tag = oyProfile_GetTagById( s, icSigDeviceModelDescTag );
+    texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
+    if(texts && texts[0] && texts[0][0] && texts_n == 1)
+      error = oyOptions_SetRegistrationTextKey_( device->backend_core, 
+                                                 device->registration,
+                                                 "model", texts[0] );
+  }
+
+  if(!error)
+  {
+    tag = oyProfile_GetTagById( s, icSigDeviceMfgDescTag );
+    texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
+    if(texts && texts[0] && texts[0][0] && texts_n == 1)
+      error = oyOptions_SetRegistrationTextKey_( device->backend_core, 
+                                                 device->registration,
+                                                 "manufacturer", texts[0] );
+  }
+
+  if(!error)
+  {
+    tag = oyProfile_GetTagById( s, icSigProfileDetailDescriptionTag_ );
+    texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
+    if(texts && texts[0] && texts_n > 0)
+      for(i = 2; i+1 < texts_n && error <= 0; i+=2)
+      {
+        if(strcmp(texts[i+0],"model") == 0 ||
+           strcmp(texts[i+0],"manufacturer") == 0)
+          continue;
+
+        error = oyOptions_SetRegistrationTextKey_( device->backend_core,
+                                                 device->registration,
+                                                 texts[i+0], texts[i+1] );
+      }
+  }
+
+  l_error = oyOptions_SetSource( device->backend_core,
+                                     oyOPTIONSOURCE_FILTER); OY_ERR
+
+  return error;
+}
+
 
 #if 0
 /** @brief get a CMM specific pointer
@@ -13734,6 +13809,71 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
     n = oyStructList_Count( list->list_ );
 
   return n;
+}
+
+/** Function oyProfiles_DeviceRank
+ *  @memberof oyProfiles_s
+ *  @brief   sort a profile list according to a given device
+ *
+ *  @param[in/out] list                the to be manipulated profile list
+ *  @param[in]     device              filter pattern
+ *  @param[in/out] rank_list           list of rank levels for the profile list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/22 (Oyranos: 0.1.10)
+ *  @date    2009/05/22
+ */
+int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
+                                       oyConfig_s        * device,
+                                       int32_t           * rank_list )
+{
+  int error = !list || !device || !rank_list;
+  oyProfiles_s * s = list;
+  int i,n,rank;
+  oyProfile_s * p = 0;
+  oyConfig_s * p_device = oyConfig_New( device->registration, 0 );
+  oyOptions_s * old_db = 0;
+
+  if(!list)
+    return 0;
+
+  if(error)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
+
+  n = oyProfiles_Count( list );
+
+  error = !memset( rank_list, 0, sizeof(int32_t) * n );
+
+  /* oyConfig_Compare assumes its options in device->db, so it is filled here.*/
+  if(!oyOptions_Count( device->db ))
+  {
+    old_db = device->db;
+    device->db = device->backend_core;
+  }
+
+  for(i = 0; i < n; ++i)
+  {
+    p = oyProfiles_Get( list, i );
+
+    oyProfile_DeviceGet( p, p_device );
+    rank = 0;
+
+    error = oyConfig_Compare( p_device, device, &rank );
+    rank_list[i] = rank;
+
+    oyStructList_Clear( p_device->backend_core->list );
+    oyProfile_Release( &p );
+  }
+
+  if(!error)
+    error = oyStructList_Sort( list->list_, rank_list );
+
+  if(old_db)
+    device->db = old_db;
+
+  return error;
 }
 
 /** @} *//* objects_profile */
