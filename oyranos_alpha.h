@@ -471,7 +471,11 @@ int              oyStructList_Clear  ( oyStructList_s    * s );
 int              oyStructList_CopyFrom(oyStructList_s    * list,
                                        oyStructList_s    * from,
                                        oyObject_s          object );
-
+int              oyStructList_MoveTo ( oyStructList_s    * s,
+                                       int                 pos,
+                                       int                 new_pos );
+int              oyStructList_Sort   ( oyStructList_s    * s,
+                                       int32_t           * rank_map );
 
 
 oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
@@ -1088,7 +1092,6 @@ int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
 oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
                                        int                 pos );
 int              oyProfiles_Count    ( oyProfiles_s      * list );
- 
 
 typedef enum {
   oyOK,
