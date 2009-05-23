@@ -1619,6 +1619,118 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
   return error;
 }
 
+/** @internal
+ *  Function oyStructList_MoveTo
+ *  @memberof oyStructList_s
+ *  @brief   move a list element to a new position
+ *
+ *  real used?
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/05/22
+ *  @since   2009/05/22 (Oyranos: 0.1.10)
+ */
+int              oyStructList_MoveTo ( oyStructList_s    * s,
+                                       int                 pos,
+                                       int                 new_pos )
+{
+  int error = 0,
+      n;
+  oyStruct_s * e = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 0 )
+
+  n = oyStructList_Count( s );
+
+  if(pos >= n || new_pos >= n || pos < 0 || new_pos < 0)
+    error = 1;
+
+  if(!error && pos != new_pos)
+  {
+    e = oyStructList_GetRef( s, pos );
+
+    oyStructList_ReleaseAt( s, pos );
+    oyStructList_MoveIn( s, &e, new_pos );
+  } 
+
+  return error;
+}
+
+/**
+ *  Function oyStructList_Sort
+ *  @memberof oyStructList_s
+ *  @brief   sort a list according to a rank_list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/05/23
+ *  @since   2009/05/23 (Oyranos: 0.1.10)
+ */
+int              oyStructList_Sort   ( oyStructList_s    * s,
+                                       int32_t           * rank_list )
+{
+  int error = !rank_list,
+      n, i, j = 0;
+  int32_t * rank_copy = 0;
+  int32_t max = INT32_MIN;
+  oyPointer * ptr = 0;
+  int last = 0, pos;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 0 )
+
+  n = oyStructList_Count( s );
+
+  if(!error && n)
+  {
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+    ptr = oyAllocateFunc_( sizeof(int*) * n );
+    memset( ptr, 0, sizeof(int*) * n );
+
+    rank_copy = oyAllocateFunc_( n * sizeof(int32_t) );
+    memset( rank_copy, 0, n * sizeof(int32_t) );
+
+    for( j = 0; j < n; ++j )
+    {
+      max = INT32_MIN;
+      pos = -1;
+
+      /* find maximum  */
+      for( i = 0; i < n; ++i )
+        if(s->ptr_[i] && rank_list[i] > max)
+        {
+          max = rank_list[i];
+          pos = i;
+        }
+
+      /* nothing to do? -> skip */
+      if(pos < 0)
+        break;
+
+      /* move maximum to list copy */
+      for(i = 0; i < n; ++i)
+        if(s->ptr_[i] && rank_list[i] == max)
+        {
+          rank_copy[last] = max;
+          ptr[last++] = s->ptr_[i];
+          s->ptr_[i] = 0;
+        }
+    }
+
+    /* move back the sorted data */
+    error = !memmove( s->ptr_, ptr, n * sizeof(oyPointer) );
+    if(!error)
+      error = !memmove( rank_list, rank_copy, n * sizeof(int32_t) );
+  }
+
+  return error;
+}
+
 /**
  *  @} *//* objects_generic
  */
@@ -3562,12 +3674,12 @@ digraph Backends {
 
       api7_B [label="//imaging/root.oyra Processor\n oyCMMapi7_s"];
 
-      api4_A [label="//" OY_TYPE_STD "/icc.lcms Context\n oyCMMapi4_s"];
-      api6_A [label="//" OY_TYPE_STD "/icc.lcms Context Converter\n oyCMMapi6_s"];
-      api7_A [label="//" OY_TYPE_STD "/icc.lcms Processor\n oyCMMapi7_s"];
+      api4_A [label="//imaging/icc.lcms Context\n oyCMMapi4_s"];
+      api6_A [label="//imaging/icc.lcms Context Converter\n oyCMMapi6_s"];
+      api7_A [label="//imaging/icc.lcms Processor\n oyCMMapi7_s"];
 
-      api6_C [label="//" OY_TYPE_STD "/icc.octl Context Converter\n oyCMMapi6_s"];
-      api7_C [label="//" OY_TYPE_STD "/icc.octl Processor\n oyCMMapi7_s"];
+      api6_C [label="//imaging/icc.octl Context Converter\n oyCMMapi6_s"];
+      api7_C [label="//imaging/icc.octl Processor\n oyCMMapi7_s"];
 
       m [label="Config (Device) Functions\n oyCMMapi8_s"];
       icc [label="ICC Profile Functions\n oyCMMapi3_s"];
@@ -3710,12 +3822,12 @@ digraph Anatomy_A {
 
       node [width = 2.5, style=filled];
 
-      api4_A [label="//" OY_TYPE_STD "/icc.lcms\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | <o>Options | <ui>XFORMS GUI"];
-      api6_A [label="//" OY_TYPE_STD "/icc.lcms Context Converter\n oyCMMapi6_s\n oyDL_lcCC"];
-      api7_A [label="//" OY_TYPE_STD "/icc.lcms Processor\n oyCMMapi7_s"];
+      api4_A [label="//imaging/icc.lcms\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | <o>Options | <ui>XFORMS GUI"];
+      api6_A [label="//imaging/icc.lcms Context Converter\n oyCMMapi6_s\n oyDL_lcCC"];
+      api7_A [label="//imaging/icc.lcms Processor\n oyCMMapi7_s"];
 
-      api6_C [label="//" OY_TYPE_STD "/icc.octl Context Converter\n oyCMMapi6_s\n oyDL_oCTL"];
-      api7_C [label="//" OY_TYPE_STD "/icc.octl Processor\n oyCMMapi7_s"];
+      api6_C [label="//imaging/icc.octl Context Converter\n oyCMMapi6_s\n oyDL_oCTL"];
+      api7_C [label="//imaging/icc.octl Processor\n oyCMMapi7_s"];
 
       subgraph cluster_0 {
         rank=max;
@@ -6733,10 +6845,10 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
  *
- *  To obtain all front end options from a meta backend use:@verbatim
- *  flags = oyOPTIONATTRIBUTE_ADVANCED |
- *          oyOPTIONATTRIBUTE_FRONT |
- *          OY_OPTIONSOURCE_META @endverbatim
+ *  To obtain all front end options from a meta backend use: @verbatim
+    flags = oyOPTIONATTRIBUTE_ADVANCED |
+            oyOPTIONATTRIBUTE_FRONT |
+            OY_OPTIONSOURCE_META @endverbatim
  *
  *  @param[in]     filter              the filter
  *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED | OY_OPTIONSOURCE_FILTER | OY_OPTIONSOURCE_META
@@ -6767,7 +6879,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
 
   if(!error)
   {
-    /**
+    /*
         Programm:
         1. get filter and its type
         2. get implementation for filter type
@@ -8119,19 +8231,27 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
                                        int32_t           * rank_value )
 {
   int error = !backend_device || !db_pattern;
-  int domain_n, pattern_n, i, j, k,
+  int domain_n, pattern_n, i, j, k, l,
       rank = 0,
       d_rank = 0,
       has_opt;
   oyOption_s * d = 0,
-             * p = 0;
+             * p = 0,
+             * check = 0;
   char * d_opt = 0, * d_val = 0,
-       * p_opt = 0, * p_val = 0;
+       * p_opt = 0, * p_val = 0,
+       * check_opt = 0, * check_val = 0;
   oyConfig_s * pattern = db_pattern,
              * device = backend_device;
+  oyRankPad  * rank_map = 0;
 
   if(error <= 0)
   {
+    if(device->rank_map)
+      rank_map = device->rank_map;
+    else
+      rank_map = pattern->rank_map;
+
     domain_n = oyOptions_Count( device->backend_core );
     pattern_n = oyOptions_Count( pattern->db );
     for(i = 0; i < domain_n; ++i)
@@ -8140,6 +8260,24 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
       d_opt = oyFilterRegistrationToText( d->registration, oyFILTER_REG_MAX, 0);
       d_val = oyOption_GetValueText( d, oyAllocateFunc_ );
       has_opt = 0;
+
+      /* check for double occurences */
+      for(l = 0; l < i; ++l)
+      {
+        check = oyOptions_Get( device->backend_core, l );
+        check_opt = oyFilterRegistrationToText( check->registration,
+                                                oyFILTER_REG_MAX, 0);
+        if(oyStrcmp_(d_opt, check_opt) == 0)
+        {
+          check_val = oyOption_GetValueText( check, oyAllocateFunc_ );
+          WARNc4_S( "%d %s occured twice with: %s %s", i, d_opt, check_val,
+                    check_val ? check_val : "" );
+          if(check_val) oyFree_m_( check_val );
+        }
+
+        oyOption_Release( &check );
+        oyFree_m_( check_opt );
+      }
 
       d_rank = oyConfig_DomainRank( device );
       if(d_rank > 0 && d_val && d_opt)
@@ -8158,14 +8296,14 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
           /** Option name is equal and and value matches : increase rank value*/
           if(p_val && oyStrcmp_( d_val, p_val ) == 0)
           {
-            if(device->rank_map)
+            if(rank_map)
             {
               k = 0;
-              while(device->rank_map[k].key)
+              while(rank_map[k].key)
               {
-                if(oyStrcmp_(device->rank_map[k].key, d_opt) == 0)
+                if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
                 {
-                  rank += device->rank_map[k].match_value;
+                  rank += rank_map[k].match_value;
                   break;
                 }
                 ++k;
@@ -8174,14 +8312,14 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
               ++rank;
 
             oyFree_m_(p_val);
-          } else if(device->rank_map)
+          } else if(rank_map)
           {
             k = 0;
-            while(device->rank_map[k].key)
+            while(rank_map[k].key)
             {
-              if(oyStrcmp_(device->rank_map[k].key, d_opt) == 0)
+              if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
               {
-                rank += device->rank_map[k].none_match_value;
+                rank += rank_map[k].none_match_value;
                 break;
               }
               ++k;
@@ -8193,16 +8331,18 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
                                            oyOBJECT_CMM_API8_S); */
 
         oyOption_Release( &p );
+        if(p_opt) oyFree_m_( p_opt );
+        if(p_val) oyFree_m_( p_val );
       }
 
-      if(!has_opt && device->rank_map)
+      if(!has_opt && rank_map)
       {
         k = 0;
-          while(device->rank_map[k].key)
+          while(rank_map[k].key)
           {
-            if(oyStrcmp_(device->rank_map[k].key, d_opt) == 0)
+            if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
             {
-              rank += device->rank_map[k].not_found_value;
+              rank += rank_map[k].not_found_value;
               break;
             }
             ++k;
@@ -8210,6 +8350,8 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
       }
 
       oyOption_Release( &d );
+      oyFree_m_( d_opt );
+      oyFree_m_( d_val );
     }
   }
 
@@ -8564,7 +8706,7 @@ OYAPI int  OYEXPORT
  *  @verbatim
     // pass empty options to the backend to get a usage message
     oyOptions_s * options = 0;
-    int error = oyConfig_FromDeviceClass( OY_TYPE_STD, "monitor",
+    int error = oyConfigs_FromDeviceClass( OY_TYPE_STD, "monitor",
                                               options, 0, 0 );
     @endverbatim
  *
@@ -8638,7 +8780,7 @@ OYAPI int  OYEXPORT
 
       if(device_name)
       {
-        /** 1.3.1.1 Compare with the display_name with the device_name option
+        /** 1.3.1.1 Compare the device_name with the device_name option
          *          and collect the matching devices. */
         tmp = oyConfig_FindString( device, "device_name", 0 );
         if(oyStrcmp_( tmp, device_name ) == 0)
@@ -9214,6 +9356,7 @@ int    oyOptions_SetRegistrationTextKey_(
 }
 
 /** Function oyOptions_SetDriverContext
+ *  @memberof oyOptions_s
  *  @brief   set a device option from a given external context
  *
  *  The options will be created in case they do not exist. The 
@@ -9227,6 +9370,7 @@ int    oyOptions_SetRegistrationTextKey_(
  *  @param[in]     driver_context      driver context
  *  @param[in]     driver_context_type "xml" or something related to the driver
  *  @param[in]     driver_context_size size of driver_context
+ *  @param[in]     object              a optional object
  *  @return                            1 - error; 0 - success; -1 - otherwise
  *
  *  @version Oyranos: 0.1.10
@@ -11740,6 +11884,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 }
 
 
+
 #if 0
 /** @brief get a CMM specific pointer
  *  @memberof oyProfile_s
@@ -12848,7 +12993,7 @@ OYAPI int  OYEXPORT
  *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
  *  element from the tag parameter.
  *
- *  For localised strings, e.g. icSigMultiLocalizedUnicodeType:<br>
+ *  For localised strings, e.g. icSigMultiLocalizedUnicodeType: \n
  *    - zero language and country args: all localisation strings are returned 
  *    - with language and/or country args: return appropriate matches
  *    - for language != "", the string starts with language code, the text follows after a colon ":"
@@ -18181,7 +18326,7 @@ OYAPI oyConnector_s * OYEXPORT
  *
  *  @param         node_first          first node
  *  @param         pos_first           position of connector from first node
- *  @param         pug                 second connector
+ *  @param         plug                second connector
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
