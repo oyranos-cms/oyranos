@@ -853,7 +853,7 @@ cdepend:
 	for i in $(CPPOBJECTS); do \
 	  echo "$${i}:" >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
-	  echo '	$$(CC) -I./ -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
+	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 
