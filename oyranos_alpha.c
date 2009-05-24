@@ -8224,7 +8224,7 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/26 (Oyranos: 0.1.10)
- *  @date    2009/01/26
+ *  @date    2009/05/24
  */
 int            oyConfig_Compare      ( oyConfig_s        * backend_device,
                                        oyConfig_s        * db_pattern,
@@ -8288,13 +8288,13 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
         p_opt = oyFilterRegistrationToText( p->registration, oyFILTER_REG_MAX,
                                             0 );
 
-        if(p_opt && oyStrcmp_(d_opt, p_opt) == 0)
+        if(p_opt && oyStrstr_(p_opt, d_opt))
         {
           p_val = oyOption_GetValueText( p, oyAllocateFunc_ );
           has_opt = 1;
 
           /** Option name is equal and and value matches : increase rank value*/
-          if(p_val && oyStrcmp_( d_val, p_val ) == 0)
+          if(p_val && oyStrstr_( d_val, p_val ))
           {
             if(rank_map)
             {
