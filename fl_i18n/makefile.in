@@ -135,7 +135,6 @@ POT_FILE = po/$(TARGET).pot
 
 
 ALL_FILES =	$(SOURCES) \
-	Makefile \
 	Makefile.bsd \
 	makefile.in \
 	$(DOKU)
