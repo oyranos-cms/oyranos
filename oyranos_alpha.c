@@ -2854,7 +2854,12 @@ oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMapi_s        * api,
  *                                     simplifies and speeds up the search
  *  @param[in]   apiCheck              custom api selector
  *  @param[in]   check_pointer         data to pass to apiCheck
- *  @param[in]   num                   position in api chain matching to type and apiCheck/check_pointer starting from zero, -1 means: pick the first match, useful in case the API position is known or to iterate through all matching API's
+ *  @param[in]   num                   position in api chain matching to type
+ *                                     and apiCheck/check_pointer starting from
+ *                                     zero,
+ *                                     -1 means: pick the first match, useful 
+ *                                     in case the API position is known or to
+ *                                     iterate through all matching API's
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/08 (Oyranos: 0.1.9)
@@ -6737,7 +6742,12 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  filtered as they do not affect the CMM cache.
  *
  *  @param         s                   the options
- *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED; for front end options | oyOPTIONATTRIBUTE_FRONT
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED;
+ *                                     for front end options |
+ *                                     oyOPTIONATTRIBUTE_FRONT
  *  @param         filter_type         the type level from a registration
  *  @return                            options
  *
@@ -6851,7 +6861,12 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
             OY_OPTIONSOURCE_META @endverbatim
  *
  *  @param[in]     filter              the filter
- *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED | OY_OPTIONSOURCE_FILTER | OY_OPTIONSOURCE_META
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_OPTIONSOURCE_FILTER |
+ *                                     OY_OPTIONSOURCE_META
  *  @param         object              the optional object
  *  @return                            the options
  *
@@ -6942,7 +6957,12 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
  *
  *  @param[in]     registration        the filter registration to search for
  *  @param[in]     cmm                 a CMM to match
- *  @param[in]     flags               for inbuild defaults | oyOPTIONSOURCE_FILTER; for options marked as advanced | oyOPTIONATTRIBUTE_ADVANCED | OY_OPTIONSOURCE_FILTER | OY_OPTIONSOURCE_META
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_OPTIONSOURCE_FILTER |
+ *                                     OY_OPTIONSOURCE_META
  *  @param         object              the optional object
  *  @return                            the options
  *
@@ -10717,7 +10737,9 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
 
     sig = oyValueCSpaceSig( h->colorSpace );
 
-    WARNc3_S("Channels <= 0 %d %s %s", s->channels_n_, oyICCColourSpaceGetName(sig), oyICCColourSpaceGetName(h->colorSpace))
+    WARNc3_S("Channels <= 0 %d %s %s", s->channels_n_,
+             oyICCColourSpaceGetName(sig),
+             oyICCColourSpaceGetName(h->colorSpace))
   }
 
   return s;
@@ -15718,7 +15740,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                               error = 1; break );
 
           dst = &a->array2d[ay][(int)array_rectangle->x * size];
-          src = &data[j * size * (int)OY_ROUND(a->data_area->width) +                                 size * (int)pixel_rectangle->x];
+          src = &data[j * size * (int)OY_ROUND(a->data_area->width) +
+                                 size * (int)pixel_rectangle->x];
 
           if(dst != src)
             error = !memcpy( dst, src, wlen );
@@ -18774,7 +18797,9 @@ oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
  *  @brief   get filter options
  *
  *  @param[in,out] node                filter object
- *  @param         flags               possible: OY_FILTER_GET_DEFAULT | oyOPTIONSOURCE_FILTER | oyOPTIONATTRIBUTE_ADVANCED
+ *  @param         flags               possible: OY_FILTER_GET_DEFAULT |
+ *                                     oyOPTIONSOURCE_FILTER |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)

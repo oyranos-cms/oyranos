@@ -35,13 +35,14 @@ int oy_debug_memory = 0;
 void* oyAllocateFunc_           (size_t        size)
 {
   /* we have most often to work with text arrays, so initialise with 0 */
-  void *ptr = calloc (sizeof (char), size);
+  static size_t base = sizeof (char);
+  void *ptr = calloc (base, size);
 
   if( !ptr )
   {
     WARNc1_S( "Can not allocate %d byte.", (int)size );
   }
-    else if(oy_debug_memory)
+    else if(oy_debug_memory != 0)
   {
     oy_alloc_count_ += size;
     printf( "%s:%d %d allocate %d  %d\n", __FILE__,__LINE__,oy_allocs_count_, (int)size, oy_alloc_count_ );
@@ -58,7 +59,7 @@ void  oyDeAllocateFunc_           (void*       block)
   } else
   {
     free( block );
-    if(oy_debug_memory)
+    if(oy_debug_memory != 0)
       printf( "%s:%d %d deallocated\n", __FILE__,__LINE__,--oy_allocs_count_ );
   }
 }
