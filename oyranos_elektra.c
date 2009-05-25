@@ -82,7 +82,10 @@ KeySet* oyReturnChildrenList_  (const char* keyParentName,int* rc);
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
 
-static KDBHandle * oy_handle_ = 0;
+#ifndef DEBUG
+static 
+#endif
+       KDBHandle * oy_handle_ = 0;
 
 void oyOpen_ (void)
 {
@@ -733,6 +736,8 @@ oyGetKeyString_ ( const char       *key_name,
   char* name = 0;
   char* full_key_name = 0;
   int rc = 0;
+  Key * key = 0;
+  int success = 0;
 
   if( !key_name || strlen( key_name ) > MAX_PATH-1 )
   { WARNc_S("wrong string format given");
@@ -751,15 +756,24 @@ oyGetKeyString_ ( const char       *key_name,
   if(!oy_handle_)
     goto clean3;
 
-  if(oyKeyIsString_(full_key_name))
-    rc = kdbGetString_m ( oy_handle_, full_key_name, name, MAX_PATH );
+  /** check if the key is a binary one */
+  key = keyNew( full_key_name, KEY_END );
+  rc=kdbGetKey( oy_handle_, key );
+  success = keyIsString(key);
+
+  if(success)
+    rc = keyGetString ( key, name, MAX_PATH );
+  keyDel( key ); key = 0;
 
   if( rc || !strlen( name ))
   {
     sprintf( full_key_name, "%s%s", OY_SYS, key_name );
-    if(oyKeyIsString_(full_key_name))
-      rc = kdbGetString_m ( oy_handle_, full_key_name, name, MAX_PATH );
+    key = keyNew( full_key_name, KEY_END );
+    if(success)
+      rc = keyGetString( key, name, MAX_PATH );
+    keyDel( key ); key = 0;
   }
+
 
   oyDeAllocateFunc_( full_key_name );
 
