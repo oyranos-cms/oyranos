@@ -5609,7 +5609,7 @@ oyOption_s *   oyOption_New          ( const char        * registration,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/24 (Oyranos: 0.1.10)
- *  @date    2009/01/24
+ *  @date    2009/05/25
  */
 int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 {
@@ -5621,11 +5621,13 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
   oyExportStart_(EXPORT_SETTING);
 
   if(error <= 0)
-    text = oyGetKeyString_( option->registration, oyAllocateFunc_ );
+    text = oyGetKeyString_( oyOption_GetText( option, oyNAME_DESCRIPTION),
+                            oyAllocateFunc_ );
 
   if(error <= 0)
   {
-    if(text)
+    /** Change the option value only if something was found in the DB. */
+    if(text && text[0])
       oyOption_SetFromText( option, text, 0 );
     else
     {
@@ -5740,6 +5742,7 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
   {
     /** This is merely a wrapper to oyOption_New() and oyOption_SetValueFromDB().*/
     o = oyOption_New( registration, object );
+    error = oyOption_SetFromText( o, 0, 0 );
     o->flags |= oyOPTIONATTRIBUTE_VIRTUAL_DB;
     o->source = oyOPTIONSOURCE_DATA;
   }
@@ -5979,6 +5982,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
 
     if(obj->flags & oyOPTIONATTRIBUTE_VIRTUAL_DB)
       error = oyOption_SetValueFromDB( obj );
+    obj->flags &= (~oyOPTIONATTRIBUTE_VIRTUAL_DB);
 
     switch(obj->value_type)
     {
@@ -6919,7 +6923,6 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
       /* ask Elektra */
-      error = oyOption_SetFromText( o, 0, 0 );
       o->flags |= oyOPTIONATTRIBUTE_VIRTUAL_DB;
       oyOption_Release( &o );
     }
