@@ -1322,6 +1322,51 @@ oyTESTRESULT_e testCMMsShow ()
   return result;
 }
 
+
+oyTESTRESULT_e testCMMnmRun ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyNamedColour_s * c = 0;
+  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, NULL );
+  double d[6] = {0.5,0.5,0.5,0,0,0};
+  int error = 0, l_error = 0,
+      i,n = 1000;
+
+  fprintf(stdout, "\n" );
+
+  c = oyNamedColour_Create( NULL, NULL,0, prof, 0 );
+  oyProfile_Release( &prof );
+
+  if( c )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyNamedColour_Create( )                            " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyNamedColour_Create( )                            " );
+  }
+
+  for(i = 0; i < n; ++i)
+  {
+    l_error = oyNamedColour_SetColourStd ( c, oyASSUMED_WEB,
+                                           (oyPointer)d, oyDOUBLE, 0 );
+
+    if(error <= 0)
+      error = l_error;
+  }
+
+  if( !error )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyNamedColour_SetColourStd( ) oyASSUMED_WEB   %d ", n );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyNamedColour_SetColourStd( ) oyASSUMED_WEB        " );
+  }
+
+  return result;
+}
+
+
+
 typedef struct {
   oyTESTRESULT_e (*oyTestRun)        ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name );
@@ -1375,6 +1420,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMDBListing, "CMM DB listing" );
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
   TEST_RUN( testCMMsShow, "CMMs show" );
+  TEST_RUN( testCMMnmRun, "CMM named colour run" );
 
   /* give a summary */
   if(!(argc > 1 &&  
