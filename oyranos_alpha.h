@@ -668,12 +668,22 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  *  @date    2008/11/27
  */
 typedef enum {
-  oyOPTIONATTRIBUTE_BASIC = 0,         /** basic settings, as typical for toolkits and office/web applications, e.g. disable proofing */
-  oyOPTIONATTRIBUTE_EDIT = 32,         /**< user modified, e.g. after oyOption_SetFromText() */
-  oyOPTIONATTRIBUTE_AUTOMATIC = 64,    /**< automatically modified, e.g. by a CMM */
-  oyOPTIONATTRIBUTE_ADVANCED = 128,    /** advanced settings, as typical for editing, e.g. include proofing (options appended with ".advanced") */
-  oyOPTIONATTRIBUTE_FRONT = 256,       /** front end options, handled by the framework, e.g. ".front" */
-  oyOPTIONATTRIBUTE_DOUBLE = 512       /** tell this options is included twice*/
+  /** basic settings, as typical for toolkits and office/web applications,
+   *  e.g. disable proofing */
+  oyOPTIONATTRIBUTE_BASIC = 0,
+  /** user modified, e.g. after oyOption_SetFromText() */
+  oyOPTIONATTRIBUTE_EDIT = 32,
+  /** automatically modified, e.g. by a CMM */
+  oyOPTIONATTRIBUTE_AUTOMATIC = 64,
+  /** advanced settings, as typical for editing, e.g. include proofing 
+   *  (options appended with ".advanced") */
+  oyOPTIONATTRIBUTE_ADVANCED = 128,
+  /** front end options, handled by the framework, e.g. ".front" */
+  oyOPTIONATTRIBUTE_FRONT = 256,
+  /** tell this options is included twice*/
+  oyOPTIONATTRIBUTE_DOUBLE = 512,
+  /** virtual; to be loaded from DB */
+  oyOPTIONATTRIBUTE_VIRTUAL_DB = 1024
 } oyOPTIONATTRIBUTE_e;
 oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
