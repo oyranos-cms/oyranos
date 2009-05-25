@@ -847,13 +847,10 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
           path_is_double = 1;
         oyFree_m_( pp );
       }
-#if 0
-      for( j = 0; j < MAX_DEPTH; ++j ) { dir[j] = NULL; entry[j] = NULL; }
-#else
       memset(dir, 0, sizeof(DIR*) * MAX_DEPTH); 
       memset(entry, 0, sizeof(struct dirent*) * MAX_DEPTH);
-#endif
     }
+
     if( path_is_double )
       continue;
 
