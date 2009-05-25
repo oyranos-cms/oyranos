@@ -2370,7 +2370,7 @@ char *           oyCMMnameFromLibName_(const char        * lib_name)
 {
   char * cmm = 0;
 
-  if(lib_name && oyStrlen_(lib_name))
+  if(lib_name && lib_name[0])
   {
     const char * tmp = oyStrstr_( lib_name, OY_MODULE_NAME );
 
@@ -4077,7 +4077,7 @@ oyObject_New  ( void )
 
   if(!o) return 0;
 
-  error = !memset( o, 0, sizeof(len) );
+  error = !memset( o, 0, len );
   
   o = oyObject_SetAllocators_( o, oyAllocateFunc_, oyDeAllocateFunc_ );
 
@@ -4125,17 +4125,16 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   return o;
 }
 
-/** @internal
+/** @brief   object management 
  *  @memberof oyObject_s
- *  @brief   object management 
  *
  *  @param[in]    object         the object
  *
  *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @date  17 december 2007 (API 0.1.8)
  */
-static oyObject_s
-oyObject_NewFrom_( oyObject_s      object )
+oyObject_s
+oyObject_NewFrom ( oyObject_s      object )
 {
   oyObject_s o = 0;
   int error = 0;
@@ -4163,20 +4162,6 @@ oyObject_NewFrom_( oyObject_s      object )
     error = 1;
 
   return o;
-}
-
-/** @brief   object management 
- *  @memberof oyObject_s
- *
- *  @param[in]    object         the object
- *
- *  @since Oyranos: version 0.1.8
- *  @date  17 december 2007 (API 0.1.8)
- */
-oyObject_s
-oyObject_NewFrom ( oyObject_s      object )
-{
-  return oyObject_NewFrom_( object );
 }
 
 /** @brief   object management 
@@ -5466,6 +5451,7 @@ void           oyValueClear          ( oyValue_u         * v,
   if(!deallocateFunc)
     return; 
 
+  if(v->int32)
   switch(type)
   {
   case oyVAL_INT:
@@ -5599,7 +5585,7 @@ oyOption_s *   oyOption_New          ( const char        * registration,
 
   if(registration)
   {
-    if(!oyStrlen_(registration) ||
+    if(!registration[0] ||
        !oyStrrchr_( registration, OY_SLASH_C ))
     {
       WARNc2_S("%s: %s",
@@ -5635,26 +5621,25 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
   oyExportStart_(EXPORT_SETTING);
 
   if(error <= 0)
-  {
     text = oyGetKeyString_( option->registration, oyAllocateFunc_ );
 
-    if(text)
-    {
-      oyOption_SetFromText( option, text, 0 );
-      oyFree_m_( text );
-    }
-
-  }
-
-  if(!text && error <= 0)
+  if(error <= 0)
   {
-    ptr = oyGetKeyBinary_( option->registration, &size, oyAllocateFunc_ );
-    if(ptr && size)
+    if(text)
+      oyOption_SetFromText( option, text, 0 );
+    else
     {
-      oyOption_SetFromData( option, ptr, size );
-      oyFree_m_( ptr );
+      ptr = oyGetKeyBinary_( option->registration, &size, oyAllocateFunc_ );
+      if(ptr && size)
+      {
+        oyOption_SetFromData( option, ptr, size );
+        oyFree_m_( ptr );
+      }
     }
   }
+
+  if(text)
+    oyFree_m_( text );
 
   oyExportEnd_();
 
@@ -5755,7 +5740,7 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
   {
     /** This is merely a wrapper to oyOption_New() and oyOption_SetValueFromDB().*/
     o = oyOption_New( registration, object );
-    error = oyOption_SetValueFromDB( o );
+    o->flags |= oyOPTIONATTRIBUTE_VIRTUAL_DB;
     o->source = oyOPTIONSOURCE_DATA;
   }
 
@@ -5992,6 +5977,9 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     char * tmp = oyAllocateFunc_(1024),
          * text = 0;
 
+    if(obj->flags & oyOPTIONATTRIBUTE_VIRTUAL_DB)
+      error = oyOption_SetValueFromDB( obj );
+
     switch(obj->value_type)
     {
     case oyVAL_INT_LIST:    n = v->int32_list[0]; break;
@@ -6051,7 +6039,6 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     oyFree_m_( tmp );
     oyFree_m_( text );
   }
-
 
   return erg;
 }
@@ -6212,7 +6199,8 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
       obj->value_type = oyVAL_STRING_LIST;
     } else
     {
-      obj->value->string = oyStringCopy_( text, obj->oy_->allocateFunc_ );
+      if(text)
+        obj->value->string = oyStringCopy_( text, obj->oy_->allocateFunc_ );
       obj->value_type = oyVAL_STRING;
     }
     obj->flags |= oyOPTIONATTRIBUTE_EDIT;
@@ -6630,7 +6618,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
     }
 
     if(cur->type == XML_TEXT_NODE && !cur->children &&
-       cur->content && oyStrlen_((char*)cur->content) &&
+       cur->content && cur->content[0] &&
        cur->content[0] != '\n')
     {
       for( i = 0; i < *texts_n; ++i )
@@ -6821,7 +6809,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       {
         text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                 oyAllocateFunc_ );
-        if(text && oyStrlen_(text))
+        if(text && text[0])
         {
           error = oyOption_SetFromText( o, text, 0 );
           o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
@@ -6931,12 +6919,15 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
       /* ask Elektra */
-      error = oyOption_SetValueFromDB( o );
+      error = oyOption_SetFromText( o, 0, 0 );
+      o->flags |= oyOPTIONATTRIBUTE_VIRTUAL_DB;
       oyOption_Release( &o );
     }
     error = oyOptions_DoFilter ( s, flags, type_txt );
   }
-  oyDeAllocateFunc_( type_txt );
+
+  if(type_txt)
+    oyDeAllocateFunc_( type_txt );
 
   return s;
 }
@@ -7516,7 +7507,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
       {
         text = o->value->string;
 
-        if(text && oyStrlen_( text ))
+        if(text && text[0])
           if(!value ||
              (value && oyStrstr_(value, text)))
             found = 1;
@@ -7528,7 +7519,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
         {
           text = o->value->string_list[j];
 
-          if(text && oyStrlen_( text ))
+          if(text && text[0])
             if(!value ||
                (value && oyStrstr_(value, text)))
               found = 1;
@@ -11434,7 +11425,7 @@ OYAPI const oyChar* OYEXPORT
     if(s->file_name_ && !found && error <= 0)
     {
       oySprintf_(temp, "%s", s->file_name_);
-      if(oyStrlen_(temp))
+      if(temp[0])
         found = 1;
     }
 
@@ -11451,7 +11442,7 @@ OYAPI const oyChar* OYEXPORT
           oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
         else
           oySprintf_(temp, "                " );
-        if(oyStrlen_(temp))
+        if(temp[0])
           found = 1;
       }
     }
@@ -11505,7 +11496,7 @@ OYAPI const oyChar* OYEXPORT
     if(type <= oyNAME_DESCRIPTION)
       text = oyObject_GetName( s->oy_, type );
 
-  if(error <= 0 && !(text && oyStrlen_(text)))
+  if(error <= 0 && !(text && text[0]))
   {
     char * temp = 0,
          * tmp2 = 0;
@@ -11521,7 +11512,7 @@ OYAPI const oyChar* OYEXPORT
         tag = oyProfile_GetTagById( s, icSigProfileDescriptionTag );
         texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
 
-        if(texts_n && texts[0] && oyStrlen_(texts[0]))
+        if(texts_n && texts[0] && texts[0][0])
         {
           memcpy(temp, texts[0], oyStrlen_(texts[0]));
           temp[oyStrlen_(texts[0])] = 0;
@@ -11530,7 +11521,7 @@ OYAPI const oyChar* OYEXPORT
           oyStringListRelease_( &texts, texts_n, tag->oy_->deallocateFunc_ );
         } else
           /* we try to get something as oyNAME_NAME */
-        if(s->file_name_ && oyStrlen_(s->file_name_))
+        if(s->file_name_ && s->file_name_[0])
         {
           size_t len = oyStrlen_(s->file_name_);
           if(strrchr(s->file_name_,'/'))
@@ -11573,7 +11564,7 @@ OYAPI const oyChar* OYEXPORT
     if(!found)
     {
       text = oyProfile_GetID( s );
-      if(oyStrlen_(text))
+      if(text[0])
         found = 1;
     }
 
@@ -11585,7 +11576,7 @@ OYAPI const oyChar* OYEXPORT
     {
       uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
       oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
-      if(oyStrlen_(temp))
+      if(temp[0])
         found = 1;
     }
 
@@ -13170,7 +13161,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   if(error <= 0)
   {
     /* check for a "" in the lang variable -> want the best i18n match */
-    if(language && !oyStrlen_(language))
+    if(language && !language[0])
     {
       implicite_i18n = 1;
       language = oyLanguage() ? oyLanguage() : "";
@@ -13222,20 +13213,20 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
             if(text)
             /* select by language and/or country or best i18n match or all */
             if(
-               (k == 0 && language && oyStrlen_( language ) &&
+               (k == 0 && language && language[0] &&
                           oyStrcmp_( language, t_l ) == 0 &&
-                          country  && oyStrlen_( country ) &&
+                          country  && country[0] &&
                           oyStrcmp_( country, t_c ) )       ||
-               (k == 1 && language && oyStrlen_( language ) &&
+               (k == 1 && language && language[0] &&
                           oyStrcmp_( language, t_l ) == 0 &&
                           (!country || implicite_i18n ))                ||
-               (k == 2 && country  && oyStrlen_( country ) &&
+               (k == 2 && country  && country[0] &&
                           oyStrcmp_( country, t_c ) == 0  &&
                           (!language || implicite_i18n ))               ||
                (k == 3 && ((!language && !country) || implicite_i18n))
               )
             {
-              if(name && oyStrlen_(name->lang) && !implicite_i18n)
+              if(name && name->lang[0] && !implicite_i18n)
               {
                 /* string with i18n infos -> "de_DE:Licht" */
                 temp = oyStringAppend_(name->lang, ":", oyAllocateFunc_);
@@ -17375,7 +17366,6 @@ oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
   oyOptions_s * opts_tmp = 0;
   oyCMMapi4_s * api4 = 0;
   oyCMMapiQueries_s * queries = 0;
-  char * lib_name = 0;
 
   if(error <= 0)
   {
@@ -17400,9 +17390,6 @@ oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
                                          oyBOOLEAN_SUBSTRACTION, s->oy_ );
     oyOptions_Release( &opts_tmp );
   }
-
-  if(lib_name)
-   oyFree_m_( lib_name );
 
   if(error && s)
   {
