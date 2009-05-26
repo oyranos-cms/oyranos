@@ -681,9 +681,7 @@ typedef enum {
   /** front end options, handled by the framework, e.g. ".front" */
   oyOPTIONATTRIBUTE_FRONT = 256,
   /** tell this options is included twice*/
-  oyOPTIONATTRIBUTE_DOUBLE = 512,
-  /** virtual; to be loaded from DB */
-  oyOPTIONATTRIBUTE_VIRTUAL_DB = 1024
+  oyOPTIONATTRIBUTE_DOUBLE = 512
 } oyOPTIONATTRIBUTE_e;
 oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
@@ -2257,7 +2255,9 @@ struct oyFilterNode_s {
   char               * relatives_;     /**< @private hint about belonging to a filter */
   oyOptions_s        * tags;           /**< infos, e.g. group markers */
 
-  /** the filters private data, requested over oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to oyCMMapi4_s::context_type */
+  /** the filters private data, requested over 
+   *  oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to
+   *  oyCMMapi4_s::context_type */
   oyCMMptr_s         * backend_data;
   oyCMMapi7_s        * api7_;
 };

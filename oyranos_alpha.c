@@ -5740,10 +5740,11 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
 
   if(error <= 0)
   {
-    /** This is merely a wrapper to oyOption_New() and oyOption_SetValueFromDB().*/
+    /** This is merely a wrapper to oyOption_New() and
+     *  oyOption_SetValueFromDB(). */
     o = oyOption_New( registration, object );
     error = oyOption_SetFromText( o, 0, 0 );
-    o->flags |= oyOPTIONATTRIBUTE_VIRTUAL_DB;
+    error = oyOption_SetValueFromDB( o );
     o->source = oyOPTIONSOURCE_DATA;
   }
 
@@ -5979,10 +5980,6 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     int n = 1, i = 0;
     char * tmp = oyAllocateFunc_(1024),
          * text = 0;
-
-    if(obj->flags & oyOPTIONATTRIBUTE_VIRTUAL_DB)
-      error = oyOption_SetValueFromDB( obj );
-    obj->flags &= (~oyOPTIONATTRIBUTE_VIRTUAL_DB);
 
     switch(obj->value_type)
     {
@@ -6923,7 +6920,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
       /* ask Elektra */
-      o->flags |= oyOPTIONATTRIBUTE_VIRTUAL_DB;
+      error = oyOption_SetValueFromDB( o );
       oyOption_Release( &o );
     }
     error = oyOptions_DoFilter ( s, flags, type_txt );
@@ -17380,7 +17377,7 @@ oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
   if(error <= 0)
     error = oyFilterCore_SetCMMapi4_( s, api4 );
 
-  if(error <= 0)
+  if(error <= 0 && options)
   {
     opts_tmp = oyOptions_ForFilter_( s, 0, s->oy_);
 #if 0
