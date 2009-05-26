@@ -447,7 +447,15 @@ test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
 	test2.o -L./ `./oyranos-config --ldstaticflags`
-	
+
+$(SRCDIR)/test2.c.c:
+	test -f $(SRCDIR)/test2.c.c || ln -s $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
+
+test2.c.o:	$(SRCDIR)/test2.c.c
+	$(CC) -I./ -I$(SRCDIR) $(CFLAGS) -c -o $*.o $(SRCDIR)/$*.c
+test2c:	test2.c.o
+	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
+	test2.c.o -L./ `./oyranos-config --ldstaticflags`
 
 check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples
 	echo current git version is:
