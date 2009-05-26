@@ -327,7 +327,7 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
 #if USE_GETTEXT
   setlocale(LC_NUMERIC, "C");
 #endif
-    for(i = 0; i < n; ++i)
+    for(i = 0; i < (int)n; ++i)
     {
       int modulo_k = i%(channels_n);
       if(modulo_k)
@@ -22051,6 +22051,14 @@ int                oyConversion_RunPixels (
       if(error != 0 &&
          dirty)
       {
+        if(pixel_access->start_xy[0] != pixel_access->start_xy_old[0] ||
+           pixel_access->start_xy[1] != pixel_access->start_xy_old[1])
+        {
+          /* set back to previous values, at least for the simplest case */
+          pixel_access->start_xy[0] = pixel_access->start_xy_old[0];
+          pixel_access->start_xy[1] = pixel_access->start_xy_old[1];
+        }
+
         oyFilterGraph_PrepareContexts( pixel_access->graph, 1 );
         error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
                                                               pixel_access);
