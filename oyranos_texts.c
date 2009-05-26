@@ -719,10 +719,13 @@ char**             oyStringSplit_    ( const char    * text,
   char ** list = 0;
   int n = 0;
 
-  if(text && oyStrlen_(text) && delimiter)
+  if(text && text[0] && delimiter)
   {
     int i;
-    char * tmp = (char*)text;
+    const char * tmp = text;
+
+    if(!allocateFunc)
+      allocateFunc = oyAllocateFunc_;
 
     if(tmp[0] == delimiter) ++n;
     do { ++n;
@@ -730,14 +733,10 @@ char**             oyStringSplit_    ( const char    * text,
 
     tmp = 0;
 
-    oyAllocHelper_m_ (list, char*, n+1, allocateFunc, return NULL);
+    if((list = allocateFunc( (n+1) * sizeof(char*) )) == 0) return 0;
 
-    if(list)
-      tmp = oyStringCopy_( text, oyAllocateFunc_ );
-
-    if(tmp)
     {
-      char * start = tmp;
+      const char * start = text;
       for(i = 0; i < n; ++i)
       {
         intptr_t len = 0;
@@ -750,16 +749,13 @@ char**             oyStringSplit_    ( const char    * text,
         else
           len = oyStrlen_(start);
 
-        oyAllocHelper_m_ (list[i], char, len+1, allocateFunc, return NULL);
+        if((list[i] = allocateFunc( len+1 )) == 0) return 0;
 
         memcpy( list[i], start, len );
         list[i][len] = 0;
         start += len + 1;
       }
     }
-
-    if(tmp)
-      oyDeAllocateFunc_(tmp);
   }
 
   if(count)
