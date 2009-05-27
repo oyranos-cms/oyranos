@@ -1143,7 +1143,7 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
   if(error <= 0 && !set)
   {
     int mult = (s->n_<7) ? 10 : (int)(s->n_ * 1.5);
-    int len = 0;
+    size_t len = 0;
     oyStruct_s ** tmp = 0;
     int real_copy = 0;
 
@@ -4652,19 +4652,19 @@ int          oyObject_HashSet          ( oyObject_s        s,
  *  @brief   check if two objects hash is equal
  *
  *  @version Oyranos: 0.1.10
- *  @date    2009/04/16
  *  @since   2009/04/16 (Oyranos: 0.1.10)
+ *  @date    2009/05/26
  */
 int          oyObject_HashEqual        ( oyObject_s        s1,
                                          oyObject_s        s2 )
 {
   int equal = 0;
 
-  if(s1 && s1->type_ == oyOBJECT_OBJECT_S && s1->hash_ptr_ &&
-     s2 && s2->type_ == oyOBJECT_OBJECT_S && s2->hash_ptr_)
+  if(s1->hash_ptr_ &&
+     s2->hash_ptr_)
   {
     if(memcmp(s1->hash_ptr_, s2->hash_ptr_, OY_HASH_SIZE) == 0)
-      equal = 1;
+      return 1;
   }
 
   return equal;
