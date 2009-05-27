@@ -163,13 +163,10 @@ class Fl_Oy_Box : public Fl_Box
       if(pt != 0 &&
          (channels != 4 && channels != 3) || data_type != oyUINT8)
       {
-        oyOptions_s * options = 0;
-        options = oyFilterNode_OptionsGet( context->input, 0 );
         printf( "WARNING: wrong image data format: %s\n%s\n"
                 "need 4 or 3 channels with 8-bit\n",
-                oyOptions_FindString( options, "filename", 0 ),
+                oyOptions_FindString( image_tags, "filename", 0 ),
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "" );
-        oyOptions_Release( &options );
         return;
       }
 
@@ -247,9 +244,12 @@ main(int argc, char** argv)
   oyConversion_s * conversion = 0;
   oyFilterNode_s * in, * out;
   oyOptions_s * options = 0;
+  oyImage_s * image_in = 0, * image_out = 0;
   int error = 0,
       file_pos = 1;
   const char * file_name = 0;
+  oyPixel_t pixel_layout = 0;
+  oyDATATYPE_e data_type = oyUINT8;
 
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
@@ -278,6 +278,25 @@ main(int argc, char** argv)
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
 
+  /* ask for the input image, here it will be loaded from the input filter */
+  if(in)
+  image_in = oyConversion_GetImage( conversion, OY_INPUT );
+
+  if(!image_in)
+    return 1;
+
+  /* create an output image */
+  /* FLTK needs a 8-bit image */
+  pixel_layout = oyImage_PixelLayoutGet( image_in );
+  data_type = oyToDataType_m(pixel_layout);
+  pixel_layout &= (~oyDataType_m(data_type));
+  pixel_layout |= oyDataType_m(oyUINT8);
+  /* eigther copy the input image with a oyObject_s argument or
+   * create it as follows */
+  image_out = oyImage_CreateForDisplay( image_in->width, image_in->height,
+                                        0, pixel_layout,
+                                        0, 0,0,0,0, 0 );
+
 #if 0
   // write to ppm image
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0,0, 0 );
@@ -301,6 +320,8 @@ main(int argc, char** argv)
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+  /* set the image to the first/only socket of the filter node */
+  oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
   /* swap in and out */
   in = out;
 
@@ -323,23 +344,14 @@ main(int argc, char** argv)
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/write_ppm/filename",
                                  "test_dbg_out.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
+  oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
   in = out;
 #endif
 
   /* add a closing node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
-  /* add a file name argument */
-  /* get the options of the input node */
-  if(out)
-  options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
-  /* add a new option with the appropriate value */
-  error = oyOptions_SetFromInt( &options,
-                                 "//" OY_TYPE_STD "/image/pixel_layout.resolve",
-                                 oyDataType_m(oyUINT8), 0, OY_CREATE_NEW );
-  /* release the options object, this means its not any more refered from here*/
-  oyOptions_Release( &options );
-
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
+  oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
 
@@ -355,6 +367,8 @@ main(int argc, char** argv)
 
   /* release unneeded objects; in C style */
   oyConversion_Release( &conversion );
+  oyImage_Release( &image_in );
+  oyImage_Release( &image_out );
 
 
   win->show();
