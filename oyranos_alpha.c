@@ -17635,9 +17635,123 @@ OYAPI int  OYEXPORT
 }
 
 
+/** Function oyFilterRegistrationToSTextField
+ *  @brief   analyse registration string
+ *
+ *  @param         registration        registration string to analyse
+ *  @param[in]     field               kind of answere in return, only one field
+ *  @param[out]    len                 text length
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2009/05/27
+ */
+char *         oyFilterRegistrationToSTextField (
+                                       const char        * registration,
+                                       oyFILTER_REG_e      field,
+                                       int               * len )
+{
+  char  * text = 0, * erg = 0, * t = 0;
+  int     texts_n = 0;
+  int pos = 0, single = 0;
+
+  if(registration)
+  {
+    text = (char*) registration;
+
+         if(field & oyFILTER_REG_TOP)
+      pos = 1;
+    else if(field & oyFILTER_REG_DOMAIN)
+      pos = 2;
+    else if(field & oyFILTER_REG_TYPE)
+      pos = 3;
+    else if(field & oyFILTER_REG_APPLICATION)
+      pos = 4;
+    else if(field & oyFILTER_REG_OPTION)
+      pos = 5;
+    else if(field & oyFILTER_REG_MAX)
+      pos = 6;
+
+    if(field == oyFILTER_REG_TOP ||
+       field == oyFILTER_REG_DOMAIN ||
+       field == oyFILTER_REG_TYPE ||
+       field == oyFILTER_REG_APPLICATION ||
+       field == oyFILTER_REG_OPTION ||
+       field == oyFILTER_REG_MAX)
+      single = 1;
+
+    texts_n = oyStringSegments_( registration, OY_SLASH_C );
+    if(texts_n >= pos && field == oyFILTER_REG_TOP)
+    {
+      erg = oyStringSegment_( text, OY_SLASH_C, 0, len );
+
+      /** We can not allow attributes in the oyFILTER_TOP_TYPE section, as this
+       *  would conflict with the Elektra namespace policy. */
+      t = oyStrnchr_( erg, '.', *len );
+      if(t)
+      {
+        text = oyStringCopy_( erg, oyAllocateFunc_ );
+        text[*len] = 0;
+        /* i18n hint: a string "with '.' is not allowed" */
+        WARNc3_S( "oyFILTER_TOP_TYPE %s: %s (%s)",
+                  _("with \'.\' is not allowed"), text, registration );
+        goto clean;
+      }
+    }
+    if(texts_n >= pos && field == oyFILTER_REG_DOMAIN)
+      erg = oyStringSegment_( text, OY_SLASH_C, 1, len );
+    if(texts_n >= pos && field == oyFILTER_REG_TYPE)
+    {
+      erg = oyStringSegment_( text, OY_SLASH_C, 2, len );
+
+      /** We can not allow attributes in the oyFILTER_REG_TYPE section, as this
+       *  would conflict with robust module cache lookup. */
+      t = oyStrnchr_( erg, '.', *len );
+      if(t)
+      {
+        text = oyStringCopy_( erg, oyAllocateFunc_ );
+        text[*len] = 0;
+        WARNc3_S( "oyFILTER_REG_TYPE %s: %s (%s)",
+                  _("with \'.\' is not allowed"), text, registration );
+        goto clean;
+      }
+    }
+    if(texts_n >= pos && field == oyFILTER_REG_APPLICATION)
+      erg = oyStringSegment_( text, OY_SLASH_C, 3, len );
+    if(texts_n >= pos && field == oyFILTER_REG_OPTION)
+      erg = oyStringSegment_( text, OY_SLASH_C, 4, len );
+#if 0
+    if(erg && field == oyFILTER_REG_OPTION)
+    {
+      erg = oyStrnchr_( erg, '.', len );
+      if(erg)
+        erg[0] = 0;
+    }
+#endif
+    /** oyFILTER_REG_MAX returns the last level which is the key name. */
+    if(field == oyFILTER_REG_MAX)
+      erg = oyStringSegment_( text, OY_SLASH_C, texts_n-1, len );
 
 
+    /** For several oyFILTER_REG bits we compose a new registration string. */
+    if(!single && field)
+    {
+      WARNc_S("Multiple fields are not allowed.\n"
+              "  Use oyFilterRegistrationToText instead!");
+    } else if( !field )
+    {
+      if(erg)
+        WARNc1_S("text variable should be zero, found: %s", erg);
+    }
+  }
 
+  return erg;
+
+  clean:
+  if(text)
+    oyDeAllocateFunc_( text );
+  return 0;
+}
 
 /** Function oyFilterRegistrationToText
  *  @brief   analyse registration string
@@ -17648,7 +17762,7 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2009/05/05
+ *  @date    2009/05/27
  */
 char *         oyFilterRegistrationToText (
                                        const char        * registration,
@@ -17656,9 +17770,8 @@ char *         oyFilterRegistrationToText (
                                        oyAlloc_f           allocateFunc )
 {
   char  * text = 0, * tmp = 0;
-  char ** texts = 0;
   int     texts_n = 0,
-          pos = 0, single = 0;
+          pos = 0, single = 0, len = 0;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
@@ -17686,7 +17799,8 @@ char *         oyFilterRegistrationToText (
        fields == oyFILTER_REG_MAX)
       single = 1;
 
-    texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
+#if 0
+    char ** texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
     if(texts_n >= pos && fields == oyFILTER_REG_TOP)
     {
       text = oyStringCopy_( texts[0], allocateFunc );
@@ -17733,6 +17847,16 @@ char *         oyFilterRegistrationToText (
       text = oyStringCopy_( texts[texts_n-1], allocateFunc );
 
     oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+#else
+    if(single)
+      tmp = oyFilterRegistrationToSTextField ( registration, fields, &len );
+    if(tmp)
+    {
+      text = allocateFunc( len + 1 );
+      memcpy( text, tmp, len );
+      text[len] = 0;
+    }
+#endif
 
     /** For several oyFILTER_REG bits we compose a new registration string. */
     if(!single && fields)
@@ -17801,10 +17925,67 @@ char *         oyFilterRegistrationToText (
   return text;
 }
 
+int    oyStringSegment_              ( const char        * text,
+                                       char                delimiter,
+                                       int               * count,
+                                       int              ** pos,
+                                       char             ** max_segment )
+{
+  int n = 0, i, max_segment_len = 0;
+  const char * tmp = text;
+  static int int_size = sizeof(int);
+  const char * start = text;
+
+  if(tmp[0] == delimiter) ++n;
+  do { ++n;
+  } while( (tmp = oyStrchr_(tmp + 1, delimiter)) );
+
+  if(n > *pos[0])
+  {
+    oyDeAllocateFunc_( *pos );
+    *pos = oyAllocateFunc_( int_size * (n+1) );
+    if(!*pos) return 1;
+    *pos[0] = n;
+  }
+
+  for(i = 0; i < n; ++i)
+  {
+        intptr_t len = 0;
+        char * end = oyStrchr_(start, delimiter);
+
+        if(end > start)
+          len = end - start;
+        else if (end == start)
+          len = 0;
+        else
+          len = oyStrlen_(start);
+
+        *pos[i] = (int)((intptr_t)(start - text + len));
+        start += len + 1;
+
+    if(len > max_segment_len)
+      max_segment_len = len;
+  }
+
+  if(!max_segment ||
+     ((int)*((uint8_t*)&max_segment[0]) < max_segment_len &&
+      (int)*((uint8_t*)&max_segment[0]) != 255))
+  {
+    *((uint8_t*)&max_segment[0]) = OY_MIN(255, max_segment_len);
+    *max_segment = oyAllocateFunc_( *((uint8_t*)&max_segment[0]) );
+    if(!*max_segment) return 1;
+  }
+
+  return 0;
+}
+
+
+#if 0
 /** Function oyFilterRegistrationMatch
  *  @brief   analyse registration string and compare with a given pattern
  *
  *  The rules are described in the @ref backend_api overview.
+ *  The function is intensively used.
  *
  *  @param         registration        registration string to analise
  *  @param         pattern             pattern or key name to compare with
@@ -17822,6 +18003,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
   int     reg_texts_n = 0;
   char ** regc_texts = 0;
   int     regc_texts_n = 0;
+  int     regc_texts_pos[3] = {0,0,0};
   char  * reg_text = 0;
   char ** p_texts = 0;
   int     p_texts_n = 0;
@@ -17830,7 +18012,8 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
   char  * pc_text = 0;
   int     match = 0, match_tmp = 0, i,j,k, api_num = oyOBJECT_NONE, pc_api_num;
   char    pc_match_type = '+';
-  char * key_tmp = 0;
+  char  * key_tmp = 0,
+        * max_segment = 0;
  
   if(registration && pattern)
   {
@@ -17861,6 +18044,9 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
         key_tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_MAX,0);
         regc_texts = oyStringSplit_( key_tmp,'.',&regc_texts_n,
                                      oyAllocateFunc_);
+        /*if(oyStringSegment_(key_tmp, '.', &regc_texts_n, &regc_texts_pos,
+                            &max_segment ))
+          return 0;*/
         oyFree_m_( key_tmp );
         pc_texts = oyStringSplit_( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
         i = reg_texts_n;
@@ -17933,6 +18119,134 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
     oyStringListRelease_( &p_texts, p_texts_n, oyDeAllocateFunc_ );
   return 0;
 }
+#else
+/** Function oyFilterRegistrationMatch 
+ *  @brief   analyse registration string and compare with a given pattern
+ *
+ *  The rules are described in the @ref backend_api overview.
+ *  The function is intensively used.
+ *
+ *  @param         registration        registration string to analise
+ *  @param         pattern             pattern or key name to compare with
+ *  @param         api_number          select object type
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2009/05/27
+ */
+int    oyFilterRegistrationMatch     ( const char        * registration,
+                                       const char        * pattern,
+                                       oyOBJECT_e          api_number )
+{
+  char  * reg_text = 0;
+  int     reg_n = 0;
+  int     reg_len = 0;
+  char  * regc_text = 0;
+  int     regc_n = 0;
+  int     regc_len = 0;
+  char  * p_text = 0;
+  int     p_n = 0;
+  int     p_len = 0;
+  char  * pc_text = 0;
+  int     pc_n = 0;
+  int     pc_len = 0;
+  int     match = 0, match_tmp = 0, i,j,k, api_num = oyOBJECT_NONE, pc_api_num;
+  char    pc_match_type = '+';
+ 
+  if(registration && pattern)
+  {
+    if(api_number == oyOBJECT_CMM_API4_S)
+      api_num = '4';
+    else if(api_number == oyOBJECT_CMM_API5_S)
+      api_num = '5';
+    else if(api_number == oyOBJECT_CMM_API6_S)
+      api_num = '6';
+    else if(api_number == oyOBJECT_CMM_API7_S)
+      api_num = '7';
+    else if(api_number == oyOBJECT_CMM_API8_S)
+      api_num = '8';
+
+
+    match_tmp = 1;
+    reg_n = oyStringSegments_(registration, OY_SLASH_C);
+    p_n = oyStringSegments_(pattern, OY_SLASH_C);
+
+    for( i = 0; i < reg_n && i < p_n; ++i)
+    {
+      regc_n = 0;
+
+      /* allow a key only in *pattern to filter from *registration */
+      if(p_n == 1)
+      {
+        reg_text = oyFilterRegistrationToSTextField( registration,
+                                                    oyFILTER_REG_MAX, &reg_len);
+        regc_n = oyStringSegmentsN_( reg_text, reg_len, '.' );
+        /*if(oyStringSegment_(key_tmp, '.', &regc_n, &regc_texts_pos,
+                              &max_segment ))
+          return 0;*/
+        p_text = oyStringSegment_( (char*)pattern, OY_SLASH_C, i, &p_len );
+        pc_n = oyStringSegmentsN_( p_text, p_len, '.' );
+        i = reg_n;
+      } else
+      /* level by level comparision */
+      {
+        reg_text = oyStringSegment_( (char*)registration,
+                                        OY_SLASH_C, i, &reg_len );
+        regc_n = oyStringSegmentsN_( reg_text, reg_len, '.' );
+        p_text = oyStringSegment_( (char*)pattern, OY_SLASH_C, i, &p_len );
+        pc_n = oyStringSegmentsN_( p_text, p_len, '.' );
+      }
+
+      if(match_tmp && pc_n && regc_n)
+      {
+        for( j = 0; j < pc_n; ++j)
+        {
+          match_tmp = 0;
+          pc_api_num = 0;
+          pc_match_type = '+';
+          pc_text = oyStringSegmentN_( p_text, p_len, '.', j, &pc_len );
+
+          if(pc_text[0] == '4' ||
+             pc_text[0] == '5' ||
+             pc_text[0] == '6' ||
+             pc_text[0] == '7')
+          {
+            pc_api_num = pc_text[0];
+            ++ pc_text;
+            pc_match_type = pc_text[0];
+            ++ pc_text;
+          }
+
+          for( k = 0; k < regc_n; ++k )
+          {
+            regc_text = oyStringSegmentN_( reg_text, reg_len, '.', k,
+                                              &regc_len );
+            if((!pc_api_num || (pc_api_num && api_num == pc_api_num)) &&
+               memcmp( regc_text, pc_text, OY_MIN(regc_len,pc_len) ) == 0)
+            {
+              if(pc_match_type == '+' ||
+                 pc_match_type == '_')
+              {
+                ++ match;
+                match_tmp = 1;
+              } else /* if(pc_match_type == '-') */
+                return 0;
+            }
+          }
+
+          if(pc_match_type == '+' && !match_tmp)
+            return 0;
+        }
+      }
+    }
+  }
+
+  if(match_tmp == 1 && !match)
+    match = 1;
+
+  return match;
+}
+#endif
 
 /**
  *  @internal
