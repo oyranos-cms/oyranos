@@ -91,8 +91,8 @@ lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
                                        oyCMMptr_s        * oy );
-lcmsTransformWrap_s * lcmsCMMTransform_GetWrap_(
-                                       oyCMMptr_s        * cmm_ptr );
+int      lcmsCMMTransform_GetWrap_   ( oyCMMptr_s        * cmm_ptr,
+                                       lcmsTransformWrap_s ** s );
 int lcmsCMMDeleteTransformWrap       ( oyPointer         * wrap );
 
 lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_(
@@ -266,24 +266,26 @@ lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyCMMptr_s * cmm_ptr )
  *  @brief   convert to lcms transform wrapper struct
  *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/20
  *  @since   2007/12/20 (Oyranos: 0.1.8)
+ *  @date    2009/05/28
  */
-lcmsTransformWrap_s * lcmsCMMTransform_GetWrap_( oyCMMptr_s * cmm_ptr )
+int      lcmsCMMTransform_GetWrap_   ( oyCMMptr_s        * cmm_ptr,
+                                       lcmsTransformWrap_s ** s )
 {
-  lcmsTransformWrap_s * s = 0;
-
   char type_[4] = lcmsTRANSFORM;
   int type = *((int*)&type_);
 
   if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, lcmsTRANSFORM ) &&
      cmm_ptr->ptr)
-    s = (lcmsTransformWrap_s*) cmm_ptr->ptr;
+    *s = (lcmsTransformWrap_s*) cmm_ptr->ptr;
 
-  if(s && (s->type != type || !s->lcms))
-    s = 0;
+  if(*s && ((*s)->type != type || !(*s)->lcms))
+  {
+    *s = 0;
+    return 1;
+  }
 
-  return s;
+  return 0;
 }
 
 /** Function lcmsCMMProfileReleaseWrap
@@ -798,9 +800,10 @@ oyPointer  lcmsCMMColourConversion_ToMem (
                                        oyAlloc_f           allocateFunc )
 {
   int error = !oy;
-  lcmsTransformWrap_s * s = lcmsCMMTransform_GetWrap_( oy );
+  lcmsTransformWrap_s * s = 0;
   oyPointer data = 0;
 
+  error = lcmsCMMTransform_GetWrap_( oy, &s );
   error = !s;
 
   if(!error)
@@ -828,7 +831,9 @@ int              lcmsCMMColourConversion_Run (
 {
   int error = !oy;
 
-  lcmsTransformWrap_s * s = lcmsCMMTransform_GetWrap_( oy );
+  lcmsTransformWrap_s * s = 0;
+
+  error = lcmsCMMTransform_GetWrap_( oy, &s );
   error = !s;
 
   if(!error && in_data && out_data)
@@ -1397,7 +1402,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   channels = oyToChannels_m( image_input->layout_[0] );
 
-  ltw = lcmsCMMTransform_GetWrap_( node->backend_data );
+  error = lcmsCMMTransform_GetWrap_( node->backend_data, &ltw );
 
   /* now do some position blind manipulations */
   if(ltw)
@@ -1426,7 +1431,13 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   } else
   {
-    oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
+    if(error)
+      oyFilterSocket_Callback( requestor_plug,
+                               oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
+    else
+      oyFilterSocket_Callback( requestor_plug,
+                               oyCONNECTOR_EVENT_OK );
+
     error = oyOptions_SetFromText( &ticket->graph->options,
                      "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
     error = 1;
