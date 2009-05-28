@@ -173,12 +173,12 @@ int                oyStringSegmentsN_( const char        * text,
 char *             oyStringSegment_  ( char              * text,
                                        char                delimiter,
                                        int                 segment,
-                                       int               * end )
+                                       int               * end );
 char *             oyStringSegmentN_ ( char              * text,
                                        int                 len,
                                        char                delimiter,
                                        int                 segment,
-                                       int               * end )
+                                       int               * end );
 char**             oyStringListAppend_(const char       ** list,
                                        int                 n_alt,
                                        const char       ** append,
