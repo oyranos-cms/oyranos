@@ -158,6 +158,27 @@ char**             oyStringSplit_    ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
                                        oyAlloc_f           allocateFunc );
+char *             oyStrnchr_        ( char              * text,
+                                       char                delimiter,
+                                       int                 len );
+char *             oyStrnchrN_       ( char              * text,
+                                       char                delimiter,
+                                       int                 len,
+                                       int               * end );
+int                oyStringSegments_ ( const char        * text,
+                                       char                delimiter );
+int                oyStringSegmentsN_( const char        * text,
+                                       int                 len,
+                                       char                delimiter );
+char *             oyStringSegment_  ( char              * text,
+                                       char                delimiter,
+                                       int                 segment,
+                                       int               * end )
+char *             oyStringSegmentN_ ( char              * text,
+                                       int                 len,
+                                       char                delimiter,
+                                       int                 segment,
+                                       int               * end )
 char**             oyStringListAppend_(const char       ** list,
                                        int                 n_alt,
                                        const char       ** append,

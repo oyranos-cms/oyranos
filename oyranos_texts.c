@@ -764,6 +764,135 @@ char**             oyStringSplit_    ( const char    * text,
   return list;
 }
 
+
+char *             oyStrnchr_        ( char              * text,
+                                       char                delimiter,
+                                       int                 len )
+{
+  int i = 0;
+
+  while(i < len)
+  {
+    if(text[i] == delimiter)
+      return &text[i];
+    else if(text[i] == 0)
+      return 0;
+    ++i;
+  }
+
+  return 0;
+}
+
+char *             oyStrnchrN_       ( char              * text,
+                                       char                delimiter,
+                                       int                 len,
+                                       int               * end )
+{
+  *end = 0;
+
+  while(*end < len)
+  {
+    if(text[*end] == delimiter)
+      return &text[*end];
+    else if(text[*end] == 0)
+      return 0;
+    ++ (*end);
+  }
+
+  return 0;
+}
+
+int                oyStringSegments_ ( const char        * text,
+                                       char                delimiter )
+{
+  int n = 0;
+
+  if(text[0] == delimiter) ++n;
+  do { ++n;
+  } while( (text = oyStrchr_(text + 1, delimiter)) );
+
+  return n;
+}
+
+int                oyStringSegmentsN_( const char        * text,
+                                       int                 len,
+                                       char                delimiter )
+{
+  int n = 0;
+  int end = 0;
+
+  if(text[0] == delimiter) ++n;
+  do {
+    ++n;
+    len -= end;
+  } while( (text = oyStrnchrN_((char*)text + 1, delimiter, len, &end)) &&
+           len-end-1 > 0 );
+
+  return n;
+}
+
+char *             oyStringSegment_  ( char              * text,
+                                       char                delimiter,
+                                       int                 segment,
+                                       int               * end )
+{
+  intptr_t end_pos = (intptr_t)text;
+  int i = 0;
+  char * t = text;
+
+  for(; i < segment; ++i)
+  {
+    t = oyStrchr_( t, delimiter );
+    ++t;
+  }
+
+  end_pos = (intptr_t) oyStrchr_(t, delimiter);
+
+  if(end_pos == 0)
+  {
+    *end = oyStrlen_(t);
+    return t;
+  }
+
+  *end = (int) (end_pos - (intptr_t) t);
+
+  return t;
+}
+
+char *             oyStringSegmentN_ ( char              * text,
+                                       int                 len,
+                                       char                delimiter,
+                                       int                 segment,
+                                       int               * end )
+{
+  intptr_t end_pos = (intptr_t)text;
+  int i = 0;
+  char * t = text;
+
+  for(; i < segment; ++i)
+  {
+    t = oyStrchr_( t, delimiter );
+    ++t;
+  }
+
+  if(len)
+  {
+    end_pos = (intptr_t) oyStrnchr_(t, delimiter, text + len - t);
+
+    if(end_pos == 0)
+    {
+      *end = text + len - t;
+      return t;
+    }
+  }
+
+  *end = (int) (end_pos - (intptr_t) t);
+
+  return t;
+}
+
+
+
 void               oyStringListAdd_  ( char            *** list,
                                        int               * n,
                                        const char       ** append,
