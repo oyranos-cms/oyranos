@@ -256,6 +256,14 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(TARGET)_policy.o \
 	test2.o tests/test_oyranos.o test.o
 
+SUB_OBJECTS = \
+	$(CMM_lcms_OBJECTS) \
+	$(CMM_oydi_OBJECTS) \
+	$(CMM_oyX1_OBJECTS) \
+	$(CMM_oycu_OBJECTS) \
+	$(CMM_oyra_OBJECTS) \
+	$(CMM_oyIM_OBJECTS) \
+	$(Flmm_OBJECTS)
 
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
 	test.c test2.cpp tests/test_oyranos.c
@@ -846,6 +854,11 @@ depend:	cdepend
 	-(for file in $(INCL_DEP); do \
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
 	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
+	-for file in $(SUB_OBJECTS); do \
+	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%%'`;\
+	   cat mkdepend | sed s%$${obj}%$${file}% > mkdepend.tmp; \
+	   mv mkdepend.tmp mkdepend; \
+         done
 
 cdepend:
 	echo preparing dependency compilation ...
