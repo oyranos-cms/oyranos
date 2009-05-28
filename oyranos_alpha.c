@@ -16778,7 +16778,9 @@ OYAPI int  OYEXPORT
   oyFilterSocket_s * s;
   oyFilterPlug_s * p;
 
-  WARNc5_S("\n  oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
+  if(e != oyCONNECTOR_EVENT_OK)
+  {
+    WARNc5_S("\n  oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
              "  event: \"%s\" plug[%d/node%d]",
             (c && c->remote_socket_ && c->remote_socket_->node) ?
                    oyObject_GetId(c->remote_socket_->node->oy_) : -1,
@@ -16788,6 +16790,7 @@ OYAPI int  OYEXPORT
             c ? oyObject_GetId( c->oy_ ) : -1,
             c ? (c->node ? oyObject_GetId( c->node->oy_ ) : -1) : -1
           );
+  }
 
   if(!c)
     return 1;
