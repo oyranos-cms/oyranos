@@ -34,6 +34,10 @@
 #ifdef DEBUG_
 #define DEBUG_OBJECT 1
 #endif
+/* speed comparision test */
+#define USE_OLD_STRING_API 0
+
+
 
 /* internal declarations */
 oyObject_s   oyObject_SetAllocators_ ( oyObject_s          object,
@@ -17802,7 +17806,7 @@ char *         oyFilterRegistrationToText (
        fields == oyFILTER_REG_MAX)
       single = 1;
 
-#if 0
+#if USE_OLD_STRING_API
     char ** texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
     if(texts_n >= pos && fields == oyFILTER_REG_TOP)
     {
@@ -17928,62 +17932,8 @@ char *         oyFilterRegistrationToText (
   return text;
 }
 
-int    oyStringSegment_              ( const char        * text,
-                                       char                delimiter,
-                                       int               * count,
-                                       int              ** pos,
-                                       char             ** max_segment )
-{
-  int n = 0, i, max_segment_len = 0;
-  const char * tmp = text;
-  static int int_size = sizeof(int);
-  const char * start = text;
 
-  if(tmp[0] == delimiter) ++n;
-  do { ++n;
-  } while( (tmp = oyStrchr_(tmp + 1, delimiter)) );
-
-  if(n > *pos[0])
-  {
-    oyDeAllocateFunc_( *pos );
-    *pos = oyAllocateFunc_( int_size * (n+1) );
-    if(!*pos) return 1;
-    *pos[0] = n;
-  }
-
-  for(i = 0; i < n; ++i)
-  {
-        intptr_t len = 0;
-        char * end = oyStrchr_(start, delimiter);
-
-        if(end > start)
-          len = end - start;
-        else if (end == start)
-          len = 0;
-        else
-          len = oyStrlen_(start);
-
-        *pos[i] = (int)((intptr_t)(start - text + len));
-        start += len + 1;
-
-    if(len > max_segment_len)
-      max_segment_len = len;
-  }
-
-  if(!max_segment ||
-     ((int)*((uint8_t*)&max_segment[0]) < max_segment_len &&
-      (int)*((uint8_t*)&max_segment[0]) != 255))
-  {
-    *((uint8_t*)&max_segment[0]) = OY_MIN(255, max_segment_len);
-    *max_segment = oyAllocateFunc_( *((uint8_t*)&max_segment[0]) );
-    if(!*max_segment) return 1;
-  }
-
-  return 0;
-}
-
-
-#if 0
+#if USE_OLD_STRING_API
 /** Function oyFilterRegistrationMatch
  *  @brief   analyse registration string and compare with a given pattern
  *
