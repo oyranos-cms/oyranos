@@ -2420,7 +2420,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 #endif
 
-#endif
+#endif 
   return result;
 }
 
