@@ -23,6 +23,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 
 intptr_t oy_observe_pointer_ = 0;
 
@@ -30,13 +31,124 @@ intptr_t oy_observe_pointer_ = 0;
 static int oy_alloc_count_ = 0;
 static int oy_allocs_count_ = 0;
 int oy_debug_memory = 0;
+#ifndef NO_OPT
+#define OY_USE_ALLOCATE_FUNC_POOL_ 1
+#endif
+
+#if OY_USE_ALLOCATE_FUNC_POOL_
+#define OY_ALLOCATE_FUNC_POOL_SIZE_ 100
+static int oy_allocate_func_pool_used_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0
+};
+static size_t oy_allocate_func_pool_size_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0
+};
+static oyPointer oy_allocate_func_pool_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0
+};
+#endif
 
 /* internal memory handling */
 void* oyAllocateFunc_           (size_t        size)
 {
   /* we have most often to work with text arrays, so initialise with 0 */
   static size_t base = sizeof (char);
-  void *ptr = calloc (base, size);
+  void *ptr = 0;
+#if OY_USE_ALLOCATE_FUNC_POOL_
+  int empty = -1;
+  int i;
+
+  if(size < OY_ALLOCATE_FUNC_POOL_SIZE_ || size == 512 || size == 1024)
+  {
+    for(i = 0; i < OY_ALLOCATE_FUNC_POOL_SIZE_; ++i)
+      if(oy_allocate_func_pool_size_[i] == size &&
+         oy_allocate_func_pool_used_[i] <= 0)
+      {
+        ptr = oy_allocate_func_pool_[i];
+        oy_allocate_func_pool_used_[i] = 1;
+        if(oy_debug_memory)
+          printf( "%s:%d pos:%d size=%d reused\n", __FILE__,__LINE__,
+                  i, (int)size );
+        return ptr;
+      } else if(oy_allocate_func_pool_size_[i] == 0)
+      {
+        empty = i;
+        break;
+      }
+
+    if(ptr == 0)
+    {
+      if(empty >= 0)
+      {
+        oy_allocate_func_pool_[empty] = ptr = malloc( size );
+        oy_allocate_func_pool_size_[empty] = size;
+        oy_allocate_func_pool_used_[empty] = 1;
+      } else
+      {
+        /* Clear the pool. Following strategies are possible at different cost:
+           a) free all unused and loose all used pointers
+           b) free all double occurences of unused pointers
+           c) observe all pointers for several times and remove unused ones
+         */
+
+        /* (a) */
+        int n = 0;
+        for(i = 0; i < OY_ALLOCATE_FUNC_POOL_SIZE_; ++i)
+          if(oy_allocate_func_pool_used_[i] <= 0)
+          {
+            free(oy_allocate_func_pool_[i]);
+            ++n;
+          }
+
+        if(oy_debug_memory)
+        {
+          oy_allocs_count_ -= n;
+          printf( "%s:%d %d pointers freed in pool clear => %d\n",
+                  __FILE__,__LINE__, n, oy_allocs_count_);
+        }
+
+        memset(oy_allocate_func_pool_, 0, sizeof(oyPointer) * 100);
+        memset(oy_allocate_func_pool_size_, 0, sizeof(size_t) * 100);
+        memset(oy_allocate_func_pool_used_, 0, sizeof(int) * 100);
+      }
+    }
+  }
+
+
+
+  if(ptr == 0)
+#endif
+    ptr = malloc (size);
 
   if( !ptr )
   {
@@ -45,7 +157,8 @@ void* oyAllocateFunc_           (size_t        size)
     else if(oy_debug_memory != 0)
   {
     oy_alloc_count_ += size;
-    printf( "%s:%d %d allocate %d  %d\n", __FILE__,__LINE__,oy_allocs_count_, (int)size, oy_alloc_count_ );
+    printf( "%s:%d %d allocate %d  %d\n", __FILE__,__LINE__,
+            oy_allocs_count_, (int)size, oy_alloc_count_ );
     ++oy_allocs_count_;
   }
 
@@ -54,6 +167,23 @@ void* oyAllocateFunc_           (size_t        size)
 
 void  oyDeAllocateFunc_           (void*       block)
 {
+#if OY_USE_ALLOCATE_FUNC_POOL_
+  int i;
+
+  for(i = 0; i < OY_ALLOCATE_FUNC_POOL_SIZE_; ++i)
+    if(oy_allocate_func_pool_[i] == block)
+    {
+      memset( block, 0, oy_allocate_func_pool_size_[i] );
+      oy_allocate_func_pool_used_[i] = 0;
+
+      if(oy_debug_memory)
+        printf( "%s:%d found block with pos:%d size=%d\n", __FILE__,__LINE__,
+                i, (int)oy_allocate_func_pool_size_[i] );
+
+      return;
+    }
+#endif
+
   if( !block ) {
     WARNc_S( "Memory block is empty." )
   } else
