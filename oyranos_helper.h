@@ -107,10 +107,6 @@ extern int oy_debug_memory;
 /* string helpers to switch to unicode or utf8 */
 #define oyAllocString_m_( sptr_, ssize_,  salloc_func, saction ) \
   oyAllocHelper_m_( sptr_, oyChar, ssize_+1, salloc_func, saction );
-#define oyStrlen_( str_ ) \
-           strlen( str_ )
-#define oySprintf_ \
-           sprintf
 #define oySnprintf_( str_, len_, patrn_ ) \
            snprintf( str_, len_, patrn_ )
 #define oySnprintf1_( str_, len_, patrn_, arg ) \
@@ -124,6 +120,19 @@ extern int oy_debug_memory;
 #define oySnprintf5_( str_, len_, patrn_, arg, arg2, arg3, arg4, arg5 ) \
            snprintf( str_, len_, patrn_, arg, arg2, arg3, arg4, arg5 )
 #define oySscanf_ sscanf
+#define oySprintf_ \
+           sprintf
+#ifdef DEBUG
+int     oyStrlen_ ( const char * str_ );
+void    oyStrcpy_ ( const char * targ_, const char * src_ );
+char *  oyStrchr_ ( const char * str_, char c_ );
+char *  oyStrrchr_( const char * str_, char c_ );
+char *  oyStrstr_ ( const char * str1_, const char * str2_ );
+int     oyStrcmp_ ( const char * str1_, const char * str2_ );
+char    oyToupper_( char c_ );
+#else
+#define oyStrlen_( str_ ) \
+           strlen( str_ )
 #define oyStrcpy_( targ_, src_ ) \
            strcpy( targ_, src_ )
 #define oyStrchr_( str_, c_ ) \
@@ -136,6 +145,7 @@ extern int oy_debug_memory;
            strcmp( str1_, str2_ )
 #define oyToupper_( c_ ) \
            toupper( c_ )
+#endif
 size_t oyStrblen_(const char *s);
 
 

@@ -891,6 +891,59 @@ char *             oyStringSegmentN_ ( char              * text,
   return t;
 }
 
+int    oyStringSegmentX_             ( const char        * text,
+                                       char                delimiter,
+                                       int               * count,
+                                       int              ** pos,
+                                       char             ** max_segment )
+{
+  int n = 0, i, max_segment_len = 0;
+  const char * tmp = text;
+  static int int_size = sizeof(int);
+  const char * start = text;
+
+  if(tmp[0] == delimiter) ++n;
+  do { ++n;
+  } while( (tmp = oyStrchr_(tmp + 1, delimiter)) );
+
+  if(n > *pos[0])
+  {
+    oyDeAllocateFunc_( *pos );
+    *pos = oyAllocateFunc_( int_size * (n+1) );
+    if(!*pos) return 1;
+    *pos[0] = n;
+  }
+
+  for(i = 0; i < n; ++i)
+  {
+        intptr_t len = 0;
+        char * end = oyStrchr_(start, delimiter);
+
+        if(end > start)
+          len = end - start;
+        else if (end == start)
+          len = 0;
+        else
+          len = oyStrlen_(start);
+
+        *pos[i] = (int)((intptr_t)(start - text + len));
+        start += len + 1;
+
+    if(len > max_segment_len)
+      max_segment_len = len;
+  }
+
+  if(!max_segment ||
+     ((int)*((uint8_t*)&max_segment[0]) < max_segment_len &&
+      (int)*((uint8_t*)&max_segment[0]) != 255))
+  {
+    *((uint8_t*)&max_segment[0]) = OY_MIN(255, max_segment_len);
+    *max_segment = oyAllocateFunc_( *((uint8_t*)&max_segment[0]) );
+    if(!*max_segment) return 1;
+  }
+
+  return 0;
+}
 
 
 void               oyStringListAdd_  ( char            *** list,
@@ -1004,9 +1057,9 @@ char**             oyStringListFilter_(const char   ** list,
   {
     int b = 1;
 
-    if(list[i] && oyStrlen_(list[i]))
+    if(list[i] && list[i][0])
     {
-      if(dir_string && oyStrlen_(dir_string))
+      if(dir_string && dir_string[0])
       {
         char * t = oyStrstr_(list[i], dir_string);
         if(t)
@@ -1016,13 +1069,13 @@ char**             oyStringListFilter_(const char   ** list,
         if(!b) continue;
       }
 
-      if(b && string && oyStrlen_(string))
+      if(b && string && string[0])
       {
         b = (oyStrstr_(list[i], string))?1:0;
         if(!b) continue;
       }
 
-      if(b && suffix && oyStrlen_(suffix))
+      if(b && suffix && suffix[0])
       {
         b = (oyStrstr_(list[i], suffix) == list[i] + oyStrlen_(list[i])
                                                    - oyStrlen_(suffix));
@@ -1069,6 +1122,16 @@ void          oyStringListRelease_    ( char          *** l,
 
   DBG_MEM_ENDE
 }
+
+#ifdef DEBUG
+int     oyStrlen_( const char * str_ ) { return strlen(str_); }
+void    oyStrcpy_( const char * targ_, const char * src_ ) {strcpy(targ_,src_);}
+char *  oyStrchr_( const char * str_, char c_ ) { return strchr(str_,c_); }
+char *  oyStrrchr_( const char * str_, char c_ ) { return strrchr(str_,c_); }
+char *  oyStrstr_( const char * str1_, const char * str2_ ) { return strstr(str1_,str2_); }
+int     oyStrcmp_( const char * str1_, const char * str2_ ) { return strcmp(str1_,str2_); }
+char    oyToupper_( char c_ ) { return toupper(c_); }
+#endif
 
 /** @func  oyIconv
  *  @brief convert between codesets
@@ -1713,11 +1776,11 @@ int         oyPolicySet_               (const oyChar  * policy_file,
   oyAllocString_m_( file_name, MAX_PATH, oyAllocateFunc_, return 1 );
   if(full_name)
   {
-    if(oyStrlen_( full_name ))
+    if( full_name[0] )
       oySnprintf1_( file_name, MAX_PATH, "%s", full_name );
   }
 
-  if( !oyStrlen_( file_name ) )
+  if( !file_name[0] )
   {
     int count = 0, i;
     oyChar ** policy_list = NULL;
@@ -1730,7 +1793,7 @@ int         oyPolicySet_               (const oyChar  * policy_file,
           ( oyStrlen_( policy_file ) >= 3 &&
             oyStrstr_( policy_list[i], &policy_file[1] ) != 0 ) )
       {
-        if( oyStrlen_( file_name ) )
+        if( file_name[0] )
         {
           WARNc2_S( "ambiguous policy %s selection from policy identifier %s",
                    policy_list[i], policy_file );
