@@ -82,7 +82,8 @@ KeySet* oyReturnChildrenList_  (const char* keyParentName,int* rc);
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
 
-#ifndef DEBUG
+/* test2.cpp references oy_handle_ for testing */
+#if DEBUG_NEVER
 static 
 #endif
        KDBHandle * oy_handle_ = 0;
