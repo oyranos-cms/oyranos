@@ -439,7 +439,7 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
-	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+	$(LDLIBS) $(LIBSONAMEFULL) $(LINK_LIB_PATH)
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
@@ -451,10 +451,10 @@ $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
-	test2.o -L./ `./oyranos-config --ldflags`
+	test2.o -L./ `./oyranos-config --ldflags` $(LCMS_LIBS)
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
-	test2.o -L./ `./oyranos-config --ldstaticflags`
+	test2.o -L./ `./oyranos-config --ldstaticflags` $(LCMS_LIBS)
 
 $(SRCDIR)/test2.c.c:
 	test -f $(SRCDIR)/test2.c.c || ln -s $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
@@ -463,7 +463,7 @@ test2.c.o:	$(SRCDIR)/test2.c.c
 	$(CC) -I./ -I$(SRCDIR) $(CFLAGS) -c -o $*.o $(SRCDIR)/$*.c
 test2c:	test2.c.o
 	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
-	test2.c.o -L./ `./oyranos-config --ldstaticflags`
+	test2.c.o -L./ `./oyranos-config --ldstaticflags` $(LCMS_LIBS)
 
 check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples
 	echo current git version is:
