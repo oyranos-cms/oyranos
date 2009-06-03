@@ -20,6 +20,8 @@
 
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
 #include "oyranos_cmms.h"        /* the API's this CMM uses from Oyranos */
+#include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
+#include "oyranos_alpha_internal.h" /* hashTextAdd_m ... */
 
 void* oyAllocateFunc_           (size_t        size);
 void* oyAllocateWrapFunc_       (size_t        size,
@@ -103,6 +105,8 @@ int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
                                        const char        * resource );
 int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
                                        icColorSpaceSignature colour_space );
+char * lcmsImage_GetText             ( oyImage_s         * image,
+                                       oyAlloc_f           allocateFunc );
 
 
 char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
@@ -654,7 +658,7 @@ int          lcmsCMMColourConversion_Create (
                                        oyOptions_s *       opts,
                                        oyCMMptr_s        * oy )
 {
-  cmsHPROFILE * lps = oyAllocateFunc_(sizeof(cmsHPROFILE)*profiles_n+1);
+  cmsHPROFILE * lps = oyAllocateFunc_(sizeof(cmsHPROFILE) * (profiles_n+1));
   cmsHTRANSFORM xform = 0;
   int i;
   int error = !(cmm_profile && lps);
@@ -663,7 +667,8 @@ int          lcmsCMMColourConversion_Create (
   if(!cmm_profile || !profiles_n || !oy_pixel_layout_in || !oy_pixel_layout_out)
     return 1;
 
-  
+  memset( lps, 0, sizeof(cmsHPROFILE) * (profiles_n+1) ); 
+ 
   for(i = 0; i < profiles_n; ++i)
   {
     lcmsProfileWrap_s * s = 0;
@@ -1268,19 +1273,150 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   return block;
 }
 
+char * lcmsImage_GetText             ( oyImage_s         * image,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyPixel_t pixel_layout = image->layout_[oyLAYOUT]; 
+  int n     = oyToChannels_m( pixel_layout );
+  oyProfile_s * profile = image->profile_;
+  int cchan_n = oyProfile_GetChannelsCount( profile );
+  int coff_x = oyToColourOffset_m( pixel_layout );
+  oyDATATYPE_e t = oyToDataType_m( pixel_layout );
+  int swap  = oyToSwapColourChannels_m( pixel_layout );
+  /*int revert= oyT_FLAVOR_M( pixel_layout );*/
+  int so = oySizeofDatatype( t );
+  char * text = oyAllocateFunc_(512);
+  char * hash_text = 0;
+  oyImage_s * s = image;
+
+  /* describe the image */
+  oySprintf_( text,   "  <oyImage_s\n");
+  hashTextAdd_m( text );
+  if(oy_debug)
+    oySprintf_( text, "    profile=\"%s\"\n", oyProfile_GetText(profile,
+                                                                oyNAME_NAME));
+  else
+    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));
+  hashTextAdd_m( text );
+  oySprintf_( text,   "    <channels all=\"%d\" colour=\"%d\" />\n", n,cchan_n);
+  hashTextAdd_m( text );
+  oySprintf_( text,
+                      "    <offsets first_colour_sample=\"%d\" next_pixel=\"%d\" />\n"
+              /*"  next line = %d\n"*/,
+              coff_x, s->layout_[oyPOFF_X]/*, mask[oyPOFF_Y]*/ );
+  hashTextAdd_m( text );
+
+  if(swap || oyToByteswap_m( pixel_layout ))
+  {
+    hashTextAdd_m(    "    <swap" );
+    if(swap)
+      hashTextAdd_m(  " colourswap=\"yes\"" );
+    if( oyToByteswap_m( pixel_layout ) )
+      hashTextAdd_m(  " byteswap=\"yes\"" );
+    hashTextAdd_m(    " />\n" );
+  }
+
+  if( oyToFlavor_m( pixel_layout ) )
+  {
+    oySprintf_( text, "    <flawor value=\"yes\" />\n" );
+    hashTextAdd_m( text );
+  }
+  oySprintf_( text,   "    <sample_type value=\"%s[%dByte]\" />\n",
+                    oyDatatypeToText(t), so );
+  hashTextAdd_m( text );
+  oySprintf_( text,   "  </oyImage_s>");
+  hashTextAdd_m( text );
+
+  if(allocateFunc == oyAllocateFunc_)
+    oyDeAllocateFunc_(text);
+  else
+  {
+    oyDeAllocateFunc_(text);
+    text = hash_text;
+    oyDeAllocateFunc_( hash_text );
+    hash_text = oyStringCopy_( text, allocateFunc );
+  }
+  text = 0;
+
+  return hash_text;
+}
 
 /** Function lcmsFilterNode_GetText
  *  @brief   implement oyCMMFilterNode_GetText_f()
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/27 (Oyranos: 0.1.10)
- *  @date    2008/12/27
+ *  @date    2009/06/02
  */
 char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc )
 {
+#ifdef NO_OPT
   return oyStringCopy_( oyFilterNode_GetText( node, type ), allocateFunc );
+#else
+  const char * tmp = 0;
+  char * hash_text = 0,
+       * temp = 0;
+  oyFilterNode_s * s = node;
+
+  oyImage_s * in_image = 0,
+                 * out_image = 0;
+  int i,n;
+  oyOptions_s * opts = node->core->options_;
+
+  if(!node)
+    return 0;
+
+  /* 1. create hash text */
+  hashTextAdd_m( "<oyFilterNode_s>\n  " );
+
+  /* the filter text */
+  hashTextAdd_m( oyFilterCore_GetText( node->core, oyNAME_NAME ) );
+
+  /* pick all plug (input) data */
+  in_image = (oyImage_s*) node->plugs[0]->remote_socket_->data;
+
+  /* pick all sockets (output) data */
+  out_image = (oyImage_s*) node->sockets[0]->data;
+
+  /* make a description */
+  {
+    /* input data */
+    hashTextAdd_m( "  <data_in>\n" );
+    temp = lcmsImage_GetText( in_image, oyAllocateFunc_ );
+    hashTextAdd_m( temp );
+    oyDeAllocateFunc_(temp); temp = 0;
+    hashTextAdd_m( "  </data_in>\n" );
+
+    /* options -> xforms */
+    n = oyOptions_Count( opts );
+    for(i = 0; i < n; ++i)
+    {
+      oyOption_s * o = oyOptions_Get( opts, i );
+      hashTextAdd_m( "  <options name=\"" );
+      hashTextAdd_m( o->registration );
+      hashTextAdd_m( "\" type=\"" );
+      hashTextAdd_m( oyValueTypeText( o->value_type ) );
+      hashTextAdd_m( "\"" );
+      hashTextAdd_m( oyOption_GetText( o, oyNAME_NAME ) );
+      oyOption_Release( &o );
+      hashTextAdd_m( ">\n" );
+    }
+
+    /* output data */
+    hashTextAdd_m( "  <data_out>\n" );
+    temp = lcmsImage_GetText( out_image, oyAllocateFunc_ );
+    hashTextAdd_m( temp );
+    oyDeAllocateFunc_(temp); temp = 0;
+    hashTextAdd_m( "  </data_out>\n" );
+  }
+  hashTextAdd_m( tmp );
+
+  hashTextAdd_m(   "</oyFilterNode_s>\n" );
+
+  return oyStringCopy_( hash_text, allocateFunc );
+#endif
 }
 
 /** Function lcmsCMMdata_Convert
