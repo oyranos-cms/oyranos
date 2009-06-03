@@ -386,6 +386,10 @@ oyCMMapiFilter_s * oyIMFilterLoad    ( oyPointer           data,
   return api;
 }
 
+#ifdef NO_OPT
+#define DLOPEN 1
+#endif
+
 /**
  *  @brief   oyIM oyCMMapi5_s implementation
  *
@@ -416,6 +420,7 @@ int          oyIMFilterScan          ( oyPointer           data,
 
   if(!error)
   {
+#if DLOPEN
     oyPointer dso_handle = 0;
 
     if(!error)
@@ -431,18 +436,25 @@ int          oyIMFilterScan          ( oyPointer           data,
         system("  echo $LD_LIBRARY_PATH");
       }
     }
+#endif
 
     /* open the module */
     if(!error)
     {
+#if DLOPEN
       char * info_sym = oyAllocateFunc_(24);
 
       oySprintf_( info_sym, "%s%s", cmm, OY_MODULE_NAME );
+#endif
 
+#if DLOPEN
       cmm_info = (oyCMMInfo_s*) dlsym (dso_handle, info_sym);
 
       if(info_sym)
         oyFree_m_(info_sym);
+#else
+      cmm_info = oyCMMInfoFromLibName_( lib_name );
+#endif
 
       error = !cmm_info;
 
@@ -488,9 +500,11 @@ int          oyIMFilterScan          ( oyPointer           data,
       }
     }
 
+#if DLOPEN
     if(dso_handle)
       dlclose( dso_handle );
     dso_handle = 0;
+#endif
   }
 
   if(error)
