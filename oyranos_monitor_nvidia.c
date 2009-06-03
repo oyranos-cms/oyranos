@@ -257,15 +257,15 @@ main(int argc, char **argv)
           }
         }
 
-        if (manufacturer) free (manufacturer);
-        if (model) free (model);
-        if (serial) free (serial);
+        if (manufacturer) oyDeAllocateFunc_ (manufacturer);
+        if (model) oyDeAllocateFunc_ (model);
+        if (serial) oyDeAllocateFunc_ (serial);
         ++monitors;
         ++monitors_in_traditional_screen;
       }
     }
 
-    free (data);
+    oyDeAllocateFunc_ (data);
   }
 
   if( monitors < number_of_screens )

@@ -429,7 +429,7 @@ oyResolveDirFileName_ (const char* name)
       oySprintf_ (cn, "%s%s%s", getenv("PWD"), OY_SLASH, name);
       DBG_MEM1_S("canonoical %s ", cn)
       oySprintf_ (newName, cn);
-      if(cn) free(cn); cn = 0;
+      if(cn) oyDeAllocateFunc_(cn); cn = 0;
     }
   }
 

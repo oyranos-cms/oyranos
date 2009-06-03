@@ -660,7 +660,7 @@ oyTESTRESULT_e testMonitor ()
         PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
-        free( text );
+        oyDeAllocateFunc_( text );
 
       error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
 
@@ -694,7 +694,7 @@ oyTESTRESULT_e testMonitor ()
         PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
-        free( text ); text = 0;
+        oyDeAllocateFunc_( text ); text = 0;
 
 
       /* get the old oyMonitorxxx API conforming display name */

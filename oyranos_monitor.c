@@ -13,8 +13,6 @@
  *  @since    2005/01/31
  */
 
-#define DEBUG 1
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -51,6 +49,8 @@
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_sentinel.h"
+
+#define DEBUG 1
 
 /* ---  Helpers  --- */
 
@@ -810,7 +810,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
     profile_fullname = oyProfile_GetFileName( prof, -1 );
   }
 
-  if( profile_fullname && strlen(profile_fullname) )
+  if( profile_fullname && profile_fullname[0] )
   {
 
     if(profil_name && strrchr(profil_name,OY_SLASH_C))
@@ -1026,7 +1026,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
       }
 
       {
-        char *dpy_name = strdup( oyNoEmptyString_m_(display_name) );
+        char *dpy_name = oyStringCopy_( oyNoEmptyString_m_(display_name), oyAllocateFunc_ );
         char * command = 0;
         char *ptr = NULL;
         int r;
@@ -1327,14 +1327,14 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
 
   if( display_name )
   {
-    if( strlen( display_name ) )
-      disp->name = strdup( display_name );
+    if( display_name[0] )
+      disp->name = oyStringCopy_( display_name, oyAllocateFunc_ );
   } else
   {
     if(getenv("DISPLAY") && strlen(getenv("DISPLAY")))
-      disp->name = strdup( getenv("DISPLAY") );
+      disp->name = oyStringCopy_( getenv("DISPLAY"), oyAllocateFunc_ );
     else
-      disp->name = strdup( ":0" );
+      disp->name = oyStringCopy_( ":0", oyAllocateFunc_ );
   }
 
   if( !error &&
@@ -1546,18 +1546,18 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
 
   if( display_name )
   {
-    if( strlen( display_name ) )
-      disp->name = strdup( display_name );
+    if( display_name[0] )
+      disp->name = oyStringCopy_( display_name, oyAllocateFunc_ );
   } else
   {
     if(getenv("DISPLAY") && strlen(getenv("DISPLAY")))
-      disp->name = strdup( getenv("DISPLAY") );
+      disp->name = oyStringCopy_( getenv("DISPLAY"), , oyAllocateFunc_ );
     else
-      disp->name = strdup( "0" );
+      disp->name = oyStringCopy_( "0", oyAllocateFunc_ );
   }
 
   if( !error &&
-      (disp->host = strdup( "0" )) == 0 )
+      (disp->host = oyStringCopy_( "0", oyAllocateFunc_ )) == 0 )
     error = 1;
 
   for( i = 0; i < 6; ++i )

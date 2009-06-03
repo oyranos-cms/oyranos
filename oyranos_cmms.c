@@ -122,7 +122,7 @@ oyWIDGET_e   oyModulsGetNewOptionRange_( int               count);
 
 
 /* small helpers */
-#define OY_FREE( ptr ) if(ptr) { free(ptr); ptr = 0; }
+#define OY_FREE( ptr ) if(ptr) { oyDeAllocateFunc_(ptr); ptr = 0; }
 
 /* --- function definitions --- */
 
