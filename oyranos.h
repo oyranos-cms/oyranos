@@ -48,7 +48,7 @@ typedef void * (*oyAlloc_f)          ( size_t              size );
 /**
  * @param[in] data the pointer to free
  *
- * Place here your allocator, like: \code
+ * Place here your deallocator, like: \code
    void* myDeAllocFunc (void *data)
    { return free (data);
    }

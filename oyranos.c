@@ -353,7 +353,7 @@ oyFlattenProfileProc (
     /* old data */
     if(ref->data && ref->size) {
       memcpy(block, ref->data, ref->size);
-      free(ref->data);
+      oyDeAllocateFunc_(ref->data);
     }
     /* new data */
     memcpy( &block[ref->size], data, *size );
@@ -649,7 +649,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
   }
 #endif
 
-  if(name && oyStrlen_(name))
+  if(name && name[0])
   {
     DBG_PROG_S(name);
     /* cut off the path part of a file name */
@@ -1968,7 +1968,7 @@ char *       oyVersionString         ( int                 type,
     return oyStringCopy_(OYRANOS_VERSION_NAME, allocateFunc);
   if(type == 2)
   {
-    if(oyStrlen_(git))
+    if(git[0])
       return oyStringCopy_(git, allocateFunc);
     else
       return 0;
