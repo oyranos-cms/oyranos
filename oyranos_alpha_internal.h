@@ -228,6 +228,7 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
                                        const char        * registration,
                                        oyOBJECT_e          type );
 int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type );
+char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number );
 oyCMMapiBase_s *oyCMMsGetApiFromRegistration_(
                                        oyOBJECT_e          type,
                                        const char        * cmm_required,
@@ -293,6 +294,9 @@ enum {
   oyCHAN0       /* first colour channel */
 };
 
+int      oySizeofDatatype            ( oyDATATYPE_e        t );
+const oyChar * oyDatatypeToText      ( oyDATATYPE_e        t);
+const char *   oyValueTypeText       ( oyVALUETYPE_e       type );
 
 
 /** @} *//*alpha

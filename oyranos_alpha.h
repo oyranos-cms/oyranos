@@ -1761,6 +1761,7 @@ oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
 oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
 
+
 typedef struct oyFilterCore_s oyFilterCore_s;
 typedef struct oyCMMptr_s oyCMMptr_s;
 typedef struct oyCMMapi4_s oyCMMapi4_s;
