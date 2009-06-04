@@ -39,7 +39,7 @@
 /* speed comparision test */
 #define USE_OLD_STRING_API 1
 #else
-#define OY_USE_OBJECT_POOL_ 0
+#define OY_USE_OBJECT_POOL_ 1
 #endif
 
 
@@ -4733,7 +4733,7 @@ int          oyObject_HashEqual        ( oyObject_s        s1,
   if(s1->hash_ptr_ &&
      s2->hash_ptr_)
   {
-    if(memcmp(s1->hash_ptr_, s2->hash_ptr_, OY_HASH_SIZE) == 0)
+    if(memcmp(s1->hash_ptr_, s2->hash_ptr_, OY_HASH_SIZE*2) == 0)
       return 1;
   }
 
@@ -5092,7 +5092,7 @@ oyHash_s *         oyHash_Get_       ( const char        * hash_text,
   {
     val = (uint32_t*) s->oy_->hash_ptr_;
 
-    if(oyStrlen_(hash_text) < OY_HASH_SIZE)
+    if(oyStrlen_(hash_text) < OY_HASH_SIZE*2-1)
       memcpy(s->oy_->hash_ptr_, hash_text, oyStrlen_(hash_text)+1);
     else
 #if 0
@@ -5244,7 +5244,11 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
 
     if(compare )
     if(oyObject_HashEqual(search_key->oy_, compare->oy_))
+    {
       entry = compare;
+      oyHash_Release_( &search_key );
+      return oyHash_Copy_( entry, 0 );
+    }
   }
 
   if(error <= 0 && !entry)
