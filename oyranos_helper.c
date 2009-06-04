@@ -32,49 +32,86 @@ static int oy_alloc_count_ = 0;
 static int oy_allocs_count_ = 0;
 int oy_debug_memory = 0;
 #ifndef NO_OPT
-#define OY_USE_ALLOCATE_FUNC_POOL_ 1
+#define OY_USE_ALLOCATE_FUNC_POOL_ 0
 #endif
 
 #if OY_USE_ALLOCATE_FUNC_POOL_
-#define OY_ALLOCATE_FUNC_POOL_SIZE_ 100
+#define OY_ALLOCATE_FUNC_POOL_CHUNK_ 128
+#define OY_ALLOCATE_FUNC_POOL_SIZE_ 64
 static int oy_allocate_func_pool_used_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
 0,0,0,0,0, 0,0,0,0,0,
-0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 64
+            ,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 
 0,0,0,0,0, 0,0,0,0,0,
-0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0
+#endif
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 100
+       ,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0
+#endif
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 128
+,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0
+#endif
 };
 static size_t oy_allocate_func_pool_size_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
 0,0,0,0,0, 0,0,0,0,0,
-0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 64
+            ,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 
 0,0,0,0,0, 0,0,0,0,0,
-0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0
+#endif
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 100
+       ,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0
+#endif
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 128
+,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0
+#endif
 };
 static oyPointer oy_allocate_func_pool_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
 0,0,0,0,0, 0,0,0,0,0,
-0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 64
+            ,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 
 0,0,0,0,0, 0,0,0,0,0,
-0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0
+#endif
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 100
+       ,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0
+#endif
+#if OY_ALLOCATE_FUNC_POOL_SIZE_ >= 128
+,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0,0,0,
+0,0,0,0,0, 0,0,0
+#endif
 };
 #endif
 
@@ -82,13 +119,12 @@ static oyPointer oy_allocate_func_pool_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
 void* oyAllocateFunc_           (size_t        size)
 {
   /* we have most often to work with text arrays, so initialise with 0 */
-  static size_t base = sizeof (char);
   void *ptr = 0;
 #if OY_USE_ALLOCATE_FUNC_POOL_
   int empty = -1;
   int i;
 
-  if(size < OY_ALLOCATE_FUNC_POOL_SIZE_ || size == 512 || size == 1024)
+  if(size <= OY_ALLOCATE_FUNC_POOL_CHUNK_ || size == 512 || size == 1024)
   {
     for(i = 0; i < OY_ALLOCATE_FUNC_POOL_SIZE_; ++i)
       if(oy_allocate_func_pool_size_[i] == size &&
@@ -110,8 +146,10 @@ void* oyAllocateFunc_           (size_t        size)
     {
       if(empty >= 0)
       {
-        oy_allocate_func_pool_[empty] = ptr = malloc( size );
-        oy_allocate_func_pool_size_[empty] = size;
+        oy_allocate_func_pool_size_[empty]= size <= OY_ALLOCATE_FUNC_POOL_CHUNK_
+                                            ? OY_ALLOCATE_FUNC_POOL_CHUNK_:size;
+        oy_allocate_func_pool_[empty] = ptr =
+                                   malloc( oy_allocate_func_pool_size_[empty] );
         oy_allocate_func_pool_used_[empty] = 1;
       } else
       {
@@ -137,9 +175,12 @@ void* oyAllocateFunc_           (size_t        size)
                   __FILE__,__LINE__, n, oy_allocs_count_);
         }
 
-        memset(oy_allocate_func_pool_, 0, sizeof(oyPointer) * 100);
-        memset(oy_allocate_func_pool_size_, 0, sizeof(size_t) * 100);
-        memset(oy_allocate_func_pool_used_, 0, sizeof(int) * 100);
+        memset( oy_allocate_func_pool_, 0,
+                sizeof(oyPointer) * OY_ALLOCATE_FUNC_POOL_SIZE_);
+        memset( oy_allocate_func_pool_size_, 0,
+                sizeof(size_t) * OY_ALLOCATE_FUNC_POOL_SIZE_);
+        memset( oy_allocate_func_pool_used_, 0,
+                sizeof(int) * OY_ALLOCATE_FUNC_POOL_SIZE_);
       }
     }
   }
@@ -170,6 +211,7 @@ void  oyDeAllocateFunc_           (void*       block)
 #if OY_USE_ALLOCATE_FUNC_POOL_
   int i;
 
+  /* here is a constant work done */
   for(i = 0; i < OY_ALLOCATE_FUNC_POOL_SIZE_; ++i)
     if(oy_allocate_func_pool_[i] == block)
     {
