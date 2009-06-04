@@ -2051,7 +2051,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   clck = clock();
-  for(i = 0; i < n*3*10; ++i)
+  for(i = 0; i < n*3*10000; ++i)
   {
     oyFilterCore_s * core = oyFilterCore_New( "//" OY_TYPE_STD "/root", 0,0,0 );
 
@@ -2061,7 +2061,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyFilterCore_New()                  %s %.03f", oyIntToString(n*10),
+    "oyFilterCore_New()                  %s %.03f", oyIntToString(i/3),
                                                   clck/(double)CLOCKS_PER_SEC );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
@@ -2071,24 +2071,24 @@ oyTESTRESULT_e testCMMnmRun ()
 
   clck = clock();
   const char * registration = "//" OY_TYPE_STD "/root";
-  for(i = 0; i < n*3*100; ++i)
+  for(i = 0; i < n*3*10000; ++i)
   {
     oyCMMapi4_s * api4 = 0;
     api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0, 0,
                                             registration, oyOBJECT_CMM_API4_S );
     error = !api4;
-    if(!(i%300)) fprintf(stdout, "." ); fflush(stdout);
+    if(!(i%30000)) fprintf(stdout, "." ); fflush(stdout);
   }
   fprintf(stdout,"\n");
   clck = clock() - clck;
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyFilterCore_New()                  %s %.03f", oyIntToString(i/3),
+    "oyFilterCore_New() oyCMMapi4_s      %s %.03f", oyIntToString(i/3),
                                                   clck/(double)CLOCKS_PER_SEC );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyFilterCore_New()                                 " );
+    "oyFilterCore_New() oyCMMapi4_s                     " );
   }
 
 
@@ -2210,7 +2210,7 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = clock();
   for(i = 0; i < 1000000; ++i)
   {
-    ;//cmsDoTransform( xform, &d[0], &d[3], 1 );
+    cmsDoTransform( xform, &d[0], &d[3], 1 );
   }
   clck = clock() - clck;
 
@@ -2233,10 +2233,10 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = clock();
   for(i = 0; i < n; ++i)
   {
-    /*xform = cmsCreateTransform( lp_in, TYPE_XYZ_DBL,
+    xform = cmsCreateTransform( lp_in, TYPE_XYZ_DBL,
                                               lp_out, TYPE_RGB_DBL, 1, 0 );
     cmsDoTransform( xform, &d[0], &d[3], 1 );
-    cmsDeleteTransform( xform );*/
+    cmsDeleteTransform( xform );
     fprintf(stdout, "." ); fflush(stdout);
   }
   clck = clock() - clck;
@@ -2284,7 +2284,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   clck = clock();
 
-  for(i = 0; i < n/2*30; ++i)
+  for(i = 0; i < n*2; ++i)
   {
 #if 0
   oyPROFILE_e colour_space = oyASSUMED_WEB;
@@ -2365,7 +2365,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyNamedColour_SetColourStd( ) oyASSUMED_WEB %d %.03f", i,
+    "oyNamedColour_SetColourStd( ) oyASSUMED_WEB %d %.03f", i/2,
                                                   clck/(double)CLOCKS_PER_SEC );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
@@ -2464,7 +2464,6 @@ int main(int argc, char** argv)
 
   /* do tests */
 
-#if 0
   TEST_RUN( testVersion, "Version matching" );
   TEST_RUN( testI18N, "Internationalisation" );
   TEST_RUN( testElektra, "Elektra" );
@@ -2483,7 +2482,6 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMDBListing, "CMM DB listing" );
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
   TEST_RUN( testCMMsShow, "CMMs show" );
-#endif
   TEST_RUN( testCMMnmRun, "CMM named colour run" );
 
   /* give a summary */

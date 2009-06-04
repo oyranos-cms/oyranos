@@ -5214,8 +5214,9 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
  *  @param[in]     hash_text           the text to search for in the cache_list
  *  @return                            the cache entry may not have a entry
  *
- *  @since Oyranos: version 0.1.8
- *  @date  24 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/11/24 (Oyranos: 0.1.8)
+ *  @date    2009/06/04
  */
 oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
                                        const char        * hash_text )
@@ -5224,14 +5225,22 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
   oyHash_s * search_key = 0;
   int error = !(cache_list && hash_text);
   int n = 0, i;
+  uint32_t search_int[8] = {0,0,0,0,0,0,0,0};
+  char hash_text_copy[32];
+  oyPointer search_ptr = search_int;
 
   if(error <= 0 && cache_list->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(error <= 0)
   {
-    search_key = oyHash_Get_(hash_text, 0);
-    error = !search_key;
+    if(oyStrlen_(hash_text) < OY_HASH_SIZE*2-1)
+    {
+      memset( hash_text_copy, 0, OY_HASH_SIZE*2 );
+      memcpy( hash_text_copy, hash_text, oyStrlen_(hash_text) );
+      search_ptr = hash_text_copy;
+    } else
+      search_int[0] = oyMiscBlobGetL3_( (void*)hash_text, oyStrlen_(hash_text));
   }
 
   if(error <= 0)
@@ -5243,16 +5252,18 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
                                                          oyOBJECT_HASH_S );
 
     if(compare )
-    if(oyObject_HashEqual(search_key->oy_, compare->oy_))
+    if(memcmp(search_ptr, compare->oy_->hash_ptr_, OY_HASH_SIZE*2) == 0)
     {
       entry = compare;
-      oyHash_Release_( &search_key );
       return oyHash_Copy_( entry, 0 );
     }
   }
 
   if(error <= 0 && !entry)
   {
+    search_key = oyHash_Get_(hash_text, 0);
+    error = !search_key;
+
     if(error <= 0)
       entry = oyHash_Copy_( search_key, 0 );
 
