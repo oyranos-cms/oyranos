@@ -31,7 +31,6 @@
 #define CMM_NICK "oyX1"
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
-/* OY_IMAGE_DISPLAY_REGISTRATION */
 /* OYX1_MONITOR_REGISTRATION */
 
 int                oyX1CMMInit       ( );
@@ -141,8 +140,8 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " - \"serial\"\n"
       " - \"host\"\n"
       " - \"system_port\"\n"
-      " - \"display_geometry\" (specific) x,y,widthxheight ,e.g."
-      " \"0,0,1024x786\"\n"
+      " - \"display_geometry\" (specific) widthxheight+x+y ,e.g."
+      " \"1024x786+0+0\"\n"
       " \n"
       " One option \"device_name\" will select the according X display.\n"
       " If not the backend will try to get this information from \n"
@@ -655,7 +654,7 @@ const char * oyX1GetText             ( const char        * select,
          if(type == oyNAME_NICK)
       return _("newBSD");
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD");
+      return _("Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
   }

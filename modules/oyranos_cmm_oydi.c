@@ -32,7 +32,6 @@
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 /* OY_IMAGE_DISPLAY_REGISTRATION */
-/* OYX1_MONITOR_REGISTRATION */
 
 int                oydiCMMInit       ( );
 int            oydiCMMMessageFuncSet ( oyMessage_f         message_func );

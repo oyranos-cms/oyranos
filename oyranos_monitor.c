@@ -749,9 +749,9 @@ oyMonitor_getGeometryIdentifier_         (oyMonitor_s  *disp)
 
   oyAllocHelper_m_( disp->identifier, char, len, 0, return 1 )
 
-  oySnprintf4_( disp->identifier, len, "_%d+%d+%dx%d", 
-            oyMonitor_x_(disp), oyMonitor_y_(disp),
-            oyMonitor_width_(disp), oyMonitor_height_(disp) );
+  oySnprintf4_( disp->identifier, len, "%dx%d+%d+%d", 
+            oyMonitor_width_(disp), oyMonitor_height_(disp),
+            oyMonitor_x_(disp), oyMonitor_y_(disp) );
 
   return 0;
 }
