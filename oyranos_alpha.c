@@ -23077,13 +23077,6 @@ int                oyConversion_RunPixels (
       pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, 0 );
     tmp_ticket = 1;
-
-  } else
-  {
-    int result = oyPixelAccess_CalculateNextStartPixel( pixel_access, plug);
-
-    if(result != 0)
-      return result;
   }
 
 

@@ -1811,7 +1811,6 @@ oyTESTRESULT_e testCMMnmRun ()
     "oyNamedColour_Create( )                            " );
   }
 
-#if 1
 
   const char * key_name = "shared/freedesktop.org/imaging/behaviour/rendering_bpc";
   oyAlloc_f allocate_func = oyAllocateFunc_;
@@ -2258,13 +2257,13 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   clck = clock();
-  for(i = 0; i < 10*n; ++i)
+  for(i = 0; i < 1*n; ++i)
   if(error <= 0)
   {
     s = oyConversion_CreateBasic( input,output, 0, 0 );
     error  = oyConversion_RunPixels( s, 0 );
     oyConversion_Release ( &s );
-    fprintf(stdout, "." ); fflush(stdout);
+    if(!(i%1)) fprintf(stdout, "." ); fflush(stdout);
   }
   fprintf(stdout, "\n" );
 
@@ -2278,86 +2277,14 @@ oyTESTRESULT_e testCMMnmRun ()
     "+ oyConversion_RunPixels()                         " );
   }
 
-#endif
 
-#if 1
 
   clck = clock();
 
-  for(i = 0; i < n*2; ++i)
+  for(i = 0; i < n; ++i)
   {
-#if 0
-  oyPROFILE_e colour_space = oyASSUMED_WEB;
-  oyPointer channels = (oyPointer)d;
-  oyDATATYPE_e channels_type = oyDOUBLE;
-  oyNamedColour_s * s = c;
-  int error = !s || !colour_space || !channels;
-  oyProfile_s * p_in = 0;
-
-  /* abreviate */
-  if(error <= 0 && channels_type == oyDOUBLE)
-  {
-    if     (colour_space == oyEDITING_LAB)
-    {
-      oyLab2XYZ( (double*)channels, s->XYZ_ );
-      continue;
-
-    }
-    else if(colour_space == oyEDITING_XYZ)
-    {
-      oyCopyColour( (double*)channels, s->XYZ_, 1, 0, 0 );
-      continue;
-    }
-  }
-
-  if(error <= 0)
-  {
-    p_in = oyProfile_FromStd ( colour_space, NULL );
-    error = !p_in;
-  }
-
-  /* reset and allocate */
-  if(error <= 0)
-  {
-    int n = oyProfile_GetChannelsCount( p_in );
-
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    if(n > oyProfile_GetChannelsCount( s->profile_ ))
-    {
-      if(s->channels_)
-        deallocateFunc(s->channels_); s->channels_ = 0;
-
-      s->channels_ = (double*)s->oy_->allocateFunc_( n * sizeof(double) );
-    }
-
-    error = !memset( s->channels_, 0, sizeof(double) * n );
-
-    s->XYZ_[0] = s->XYZ_[1] = s->XYZ_[2] = -1;
-
-    if(deallocateFunc && s->blob_)
-      deallocateFunc( s->blob_ ); s->blob_ = 0; s->blob_len_ = 0;
-  }
-
-  /* convert */
-  if(error <= 0)
-  {
-    oyProfile_s * p_out = s->profile_;
-    oyColourConvert_( p_in, p_out,
-                      channels, s->channels_,
-                      channels_type , oyDOUBLE );
-    oyProfile_Release ( &p_out );
-
-    p_out = oyProfile_FromStd( oyEDITING_XYZ, 0 );
-    /*oyColourConvert_( p_in, p_out,
-                      channels, s->XYZ_,
-                      channels_type , oyDOUBLE );*/
-    oyProfile_Release ( &p_out );
-  }
-#else
     l_error = oyNamedColour_SetColourStd ( c, oyASSUMED_WEB,
                                            (oyPointer)d, oyDOUBLE, 0 );
-#endif
     if(error <= 0)
       error = l_error;
   }
@@ -2365,14 +2292,12 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyNamedColour_SetColourStd( ) oyASSUMED_WEB %d %.03f", i/2,
+    "oyNamedColour_SetColourStd() oyASSUMED_WEB %d %.03f", i,
                                                   clck/(double)CLOCKS_PER_SEC );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyNamedColour_SetColourStd( ) oyASSUMED_WEB        " );
+    "oyNamedColour_SetColourStd() oyASSUMED_WEB         " );
   }
-
-#if 1
 
   p_in = oyProfile_FromStd ( oyASSUMED_WEB, NULL );
   p_out = oyProfile_FromStd ( oyEDITING_XYZ, NULL );
@@ -2418,9 +2343,56 @@ oyTESTRESULT_e testCMMnmRun ()
     "oyColourConvert_()                                 " );
   }
 
-#endif
 
-#endif 
+  input  = oyImage_Create( 1,1, 
+                         buf_in ,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         0 );
+  output = oyImage_Create( 1,1, 
+                         buf_out ,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
+                          oyDataType_m(buf_type_out),
+                         p_out,
+                         0 );
+  oyFilterPlug_s * plug = 0;
+  oyPixelAccess_s   * pixel_access = 0;
+  oyConversion_s * conv   = oyConversion_CreateBasic( input,output, 0, 0 );
+
+  /* conversion->out_ has to be linear, so we access only the first plug */
+  plug = oyFilterNode_GetPlug( conv->out_, 0 );
+
+  /* create a very simple pixel iterator as job ticket */
+  if(plug)
+    pixel_access = oyPixelAccess_Create( 0,0, plug,
+                                           oyPIXEL_ACCESS_IMAGE, 0 );
+
+  clck = clock();
+  for(i = 0; i < n*10000; ++i)
+  {
+    int error = 0;
+    d[3] = d[4] = d[5] = 0.f;
+    pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
+    error  = oyConversion_RunPixels( conv, pixel_access );
+  }
+  clck = clock() - clck;
+
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+  oyConversion_Release( &conv );
+
+
+  if( !error )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyColourConvert_() sans oyPixelAcce.%s %.03f", oyIntToString(i),
+                                                  clck/(double)CLOCKS_PER_SEC );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyColourConvert_() sans oyPixelAccess_Create()     " );
+  }
+
+
   return result;
 }
 
