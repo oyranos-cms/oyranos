@@ -3,9 +3,11 @@
  *
  *  @brief    a compiz desktop colour management plug-in
  *
- *  @author   Kai-Uwe Behrmann, based on Tomas' color filter
+ *  @author   Kai-Uwe Behrmann, based on Tomas' color filter, based on Gerhard
+ *            Fürnkranz' GLSL ppm_viewer
  *  @par Copyright:
- *            2008 (C) Tomas Carnecky, 2009 (C) Kai-Uwe Behrmann
+ *            2008 (C) Gerhard Fürnkranz, 2008 (C) Tomas Carnecky,
+              2009 (C) Kai-Uwe Behrmann
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2009/02/23

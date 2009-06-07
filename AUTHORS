@@ -19,7 +19,8 @@ eu:            Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2007
 fr:            Pascal LACROIX <lacroixpascal at vfemail.net>, 2006
 
 Examples:
-colour_desktop: based on Tomas Carnecky's color plug-in for compiz
+colour_desktop: based on Tomas Carnecky's color plug-in for compiz, which is in
+                parts based on Gerhard Fürnkranz' GLSL ppm_viewer
 
 
 Data:
