@@ -151,15 +151,9 @@ int      oyraFilterPlug_ImageRectanglesRun (
   x = ticket->start_xy[0];
   y = ticket->start_xy[1];
 
-  result = oyPixelAccess_CalculateNextStartPixel( ticket, requestor_plug);
-
-  if(result != 0)
-    return result;
-
-  /* let Oyranos resolve processing data */
-  image = oyFilterPlug_ResolveImage( node->plugs[0], socket, ticket );
-  oyImage_Release( &image );
   image = (oyImage_s*)socket->data;
+  if(!image)
+    return 1;
 
   if(x < image->width &&
      y < image->height &&
@@ -685,13 +679,8 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterNode_s * node = 0;
   int result = 0;
-  oyImage_s * image = 0;
 
   node = socket->node;
-
-  /* let Oyranos resolve processing data */
-  image = oyFilterPlug_ResolveImage( node->plugs[0], socket, ticket );
-  oyImage_Release( &image );
 
   /* to reuse the requestor_plug is a exception for the starting request */
   result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );

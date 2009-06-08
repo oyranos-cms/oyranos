@@ -2372,7 +2372,6 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*10000; ++i)
   {
     int error = 0;
-    d[3] = d[4] = d[5] = 0.f;
     pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
     error  = oyConversion_RunPixels( conv, pixel_access );
   }

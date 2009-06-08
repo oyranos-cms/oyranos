@@ -521,17 +521,15 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   x = ticket->start_xy[0];
   y = ticket->start_xy[1];
 
-  result = oyPixelAccess_CalculateNextStartPixel( ticket, requestor_plug);
-
-  if(result != 0)
-    return result;
-
   ID = oydiFilterNode_ImageDisplayID( node );
 
-  /* let Oyranos resolve processing data */
-  input_image = oyFilterPlug_ResolveImage( node->plugs[0], socket, ticket );
-  oyImage_Release( &input_image );
   image = (oyImage_s*)socket->data;
+  if(!image)
+  {
+    error = oyOptions_SetFromText( &ticket->graph->options,
+                     "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
+    return 1;
+  }
 
   {
     /* display stuff */

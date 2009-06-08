@@ -15014,15 +15014,15 @@ int      oySizeofDatatype            ( oyDATATYPE_e        t )
   switch(t)
   {
     case oyUINT8:
-         n = 1; break;
+         return 1;
     case oyUINT16:
     case oyHALF:
-         n = 2; break;
+         return 2;
     case oyUINT32:
     case oyFLOAT:
-         n = 4; break;
+         return 4;
     case oyDOUBLE:
-         n = 8; break;
+         return 8;
   }
   return n;
 }
@@ -23055,7 +23055,7 @@ int                oyConversion_RunPixels (
   oyConversion_s * s = conversion;
   oyFilterPlug_s * plug = 0;
   oyFilterCore_s * filter = 0;
-  oyImage_s * image = 0;
+  oyImage_s * image = 0, * image_input = 0;
   int error = 0, result, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
@@ -23098,6 +23098,11 @@ int                oyConversion_RunPixels (
 
     /* refresh the graph representation */
     oyFilterGraph_SetFromNode( pixel_access->graph, conversion->input, 0, 0 );
+
+    /* resolve missing data */
+    image_input = oyFilterPlug_ResolveImage( plug, plug->remote_socket_,
+                                             pixel_access );
+    oyImage_Release( &image_input );
 
     n = oyFilterNodes_Count( pixel_access->graph->nodes );
     for(i = 0; i < n; ++i)
