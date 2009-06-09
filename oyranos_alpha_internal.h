@@ -257,7 +257,7 @@ int          oyIdToCMM               ( uint32_t            cmmId,
                             s->oy_->deallocateFunc_ );
 
 #define oyCheckType_m( typ, action ) \
-  if( !s || !s->oy_ || s->type != typ) \
+  if( !s || s->type != typ) \
   { \
     WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
               oyStructTypeToText( s ? s->type : oyOBJECT_NONE ), \
@@ -265,7 +265,7 @@ int          oyIdToCMM               ( uint32_t            cmmId,
     action; \
   }
 #define oyCheckType__m( type, action ) \
-  if( !s || !s->oy_ || s->type_ != type) \
+  if( !s || s->type_ != type) \
   { \
     WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
               oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \

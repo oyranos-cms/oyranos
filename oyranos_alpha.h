@@ -1313,10 +1313,6 @@ oyRectangle_s* oyRectangle_NewWith   ( double              x,
                                        oyObject_s          object );
 oyRectangle_s* oyRectangle_NewFrom   ( oyRectangle_s     * ref,
                                        oyObject_s          object );
-oyRectangle_s* oyRectangle_SamplesFromImage (
-                                       oyImage_s         * image,
-                                       oyRectangle_s     * image_rectangle,
-                                       oyObject_s          object );
 oyRectangle_s* oyRectangle_Copy      ( oyRectangle_s     * rectangle,
                                        oyObject_s          object );
 int            oyRectangle_Release   ( oyRectangle_s    ** rectangle );
@@ -1348,6 +1344,10 @@ double         oyRectangle_CountPoints(oyRectangle_s     * rectangle );
 int            oyRectangle_Index     ( oyRectangle_s     * rectangle,
                                        double              x,
                                        double              y );
+int            oyRectangle_SamplesFromImage (
+                                       oyImage_s         * image,
+                                       oyRectangle_s     * image_rectangle,
+                                       oyRectangle_s     * pixel_rectangle );
 const char *   oyRectangle_Show      ( oyRectangle_s     * rectangle );
 
 

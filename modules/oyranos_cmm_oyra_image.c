@@ -144,7 +144,8 @@ int      oyraFilterPlug_ImageRectanglesRun (
                  * node = socket->node;
   oyImage_s * image = (oyImage_s*)socket->data;
   oyOption_s * o = 0;
-  oyRectangle_s * r, * sr;
+  oyRectangle_s * r,
+                  sr = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;
 
@@ -215,11 +216,11 @@ int      oyraFilterPlug_ImageRectanglesRun (
            backward array. @todo use direct array copy oyArray2d_DataCopy() */
         error = oyImage_ReadArray( image, new_ticket->output_image_roi,
                                    new_ticket->array, 0 );
-        sr = oyRectangle_SamplesFromImage( image, new_ticket->output_image_roi, 0);
+        error = oyRectangle_SamplesFromImage( image,
+                                             new_ticket->output_image_roi, &sr);
         error = oyImage_FillArray( new_ticket->output_image,
                                    new_ticket->output_image_roi, 1,
-                                  &ticket->array, sr, 0 );
-        oyRectangle_Release( &sr );
+                                   &ticket->array, &sr, 0 );
       }
       oyPixelAccess_Release( &new_ticket );
 
