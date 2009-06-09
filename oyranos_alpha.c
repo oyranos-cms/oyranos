@@ -14689,7 +14689,6 @@ void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
   oyRectangle_s * s = edit_rectangle;
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   s->x = x;
   s->y = y;
@@ -14711,7 +14710,6 @@ void           oyRectangle_SetByRectangle (
   oyRectangle_s * s = edit_rectangle;
   if(!s || !ref)
     return;
-  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   oyRectangle_SetGeo( s, ref->x, ref->y, ref->width, ref->height );
 }
@@ -14730,7 +14728,6 @@ void           oyRectangle_Trim      ( oyRectangle_s     * edit_rectangle,
   oyRectangle_s * r = s;
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   if (r->x < ref->x)
   { 
@@ -14770,7 +14767,6 @@ void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
 
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   oyRectangle_Normalise( s );
 
@@ -14807,7 +14803,6 @@ void           oyRectangle_Scale     ( oyRectangle_s     * edit_rectangle,
   
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   r->x *= factor;
   r->y *= factor;
@@ -14829,7 +14824,6 @@ void           oyRectangle_Normalise ( oyRectangle_s     * edit_rectangle )
   
   if(!s)
     return;
-  oyCheckType__m( oyOBJECT_RECTANGLE_S, return )
 
   if(r->width < 0) {
     r->x += r->width;
@@ -15141,7 +15135,7 @@ OYAPI oyArray2d_s * OYEXPORT
     s->width = width;
     s->height = height;
     s->t = data_type;
-    s->data_area = oyRectangle_NewWith( 0,0, width, height, s->oy_ );
+    oyRectangle_SetGeo( &s->data_area, 0,0, width, height );
     s->array2d = s->oy_->allocateFunc_( y_len );
     error = !memset( s->array2d, 0, y_len );
     s->own_lines = oyNO;
@@ -15306,16 +15300,14 @@ OYAPI int  OYEXPORT
     int y;
     size_t dsize = oySizeofDatatype( s->t );
 
-    for( y = s->data_area->y; y < s->data_area->height; ++y )
+    for( y = s->data_area.y; y < s->data_area.height; ++y )
     {
       if((s->own_lines == 1 && y == 0) ||
          s->own_lines == 2)
         deallocateFunc( s->array2d[y] );
       s->array2d[y] = 0;
     }
-    deallocateFunc( s->array2d - (size_t)(dsize * -s->data_area->y) );
-
-    oyRectangle_Release( &s->data_area );
+    deallocateFunc( s->array2d - (size_t)(dsize * -s->data_area.y) );
 
     oyObject_Release( &s->oy_ );
 
@@ -16212,7 +16204,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int size = 0, channel_n;
-  int new_array_rectangle = !array_rectangle;
+  oyRectangle_s new_array_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0};
   double a_orig_width = 0, a_orig_height = 0;
 
   if(!image)
@@ -16228,7 +16220,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   if(!error && !array_rectangle)
   {
     oyRectangle_SetGeo( &r, 0,0, rectangle->width, rectangle->height );
-    array_rectangle = oyRectangle_New_(0);
+    array_rectangle = &new_array_rectangle_;
     error = oyRectangle_SamplesFromImage( image, &r, array_rectangle );
   }
 
@@ -16247,7 +16239,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     if(!error)
     {
       if(array_rectangle->x)
-        a->data_area->x = -array_rectangle->x;
+        a->data_area.x = -array_rectangle->x;
       /* allocate each single line */
       if(do_copy)
         a->own_lines = 2;
@@ -16307,7 +16299,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                               error = 1; break );
 
           dst = &a->array2d[ay][(int)array_rectangle->x * size];
-          src = &data[j * size * (int)OY_ROUND(a->data_area->width) +
+          src = &data[j * size * (int)OY_ROUND(a->data_area.width) +
                                  size * (int)pixel_rectangle.x];
 
           if(dst != src)
@@ -16316,7 +16308,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
         } else
         {
           a->array2d[ay] = 
-                    &data[j * size * (int)OY_ROUND(a->data_area->width)];
+                    &data[j * size * (int)OY_ROUND(a->data_area.width)];
 
           a->array2d[ay] = &a->array2d[i+j]
                         [size * (int)(array_rectangle->x + pixel_rectangle.x)];
@@ -16352,9 +16344,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   *array = a;
 
-  if(new_array_rectangle)
-    oyRectangle_Release( &array_rectangle );
-
   return error;
 }
 
@@ -16377,9 +16366,9 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   oyImage_s * s = image;
   int error = !image || !array;
   oyRectangle_s pixel_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s new_array_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
-  int size = 0, channel_n, i, offset, width,
-      new_array_rectangle = !array_rectangle;
+  int size = 0, channel_n, i, offset, width;
 
   if(error)
     return 0;
@@ -16411,7 +16400,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 
   if(!error && !array_rectangle)
   {
-    array_rectangle = oyRectangle_NewWith( 0,0, array->width, array->height, 0 );
+    array_rectangle = &new_array_rectangle_;
+    oyRectangle_SetGeo( array_rectangle, 0,0, array->width, array->height );
     error = !array_rectangle;
   }
 
@@ -16425,9 +16415,6 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                               [i][(int)OY_ROUND(array_rectangle->x) * size] );
     }
   }
-
-  if(new_array_rectangle)
-    oyRectangle_Release( &array_rectangle );
 
   return error;
 }
@@ -23108,7 +23095,7 @@ int                oyConversion_RunPixels (
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
       l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
                                    &pixel_access->array, 0, 0 ); OY_ERR
-      
+
       if(error != 0 &&
          dirty)
       {
