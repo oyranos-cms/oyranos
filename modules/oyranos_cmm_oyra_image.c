@@ -517,12 +517,12 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
   } else {
 
     /* adapt the rectangle of interesst to the new image dimensions */
-    oyRectangle_s * new_roi = oyRectangle_NewFrom( ticket->output_image_roi, 0);
+    oyRectangle_s new_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
     double correct = ticket->output_image->width / (double) image->width;
-    new_roi->width *= correct;
-    new_roi->height *= correct;
-    error = oyImage_FillArray( image, new_roi, 1, &ticket->array, 0, 0 );
-    oyRectangle_Release( &new_roi );
+    oyRectangle_SetByRectangle( &new_roi, ticket->output_image_roi );
+    new_roi.width *= correct;
+    new_roi.height *= correct;
+    error = oyImage_FillArray( image, &new_roi, 1, &ticket->array, 0, 0 );
   }
 
   return result;
