@@ -22228,7 +22228,7 @@ oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/07/07 (Oyranos: 0.1.8)
- *  @date    2009/05/05
+ *  @date    2009/06/10
  */
 oyPixelAccess_s *  oyPixelAccess_Create (
                                        int32_t             start_x,
@@ -22295,11 +22295,10 @@ oyPixelAccess_s *  oyPixelAccess_Create (
     }
 
     /* Copy requests, which where attached to the node, to the ticket. */
-    options = oyFilterNode_OptionsGet( plug->node, 0 );
-    error = oyOptions_Filter( &s->request_queue, &n, 0,
-                              oyBOOLEAN_INTERSECTION,
-                              "////resolve", options );
-    oyOptions_Release( &options );
+    if(plug->node->core->options_)
+      error = oyOptions_Filter( &s->request_queue, &n, 0,
+                                oyBOOLEAN_INTERSECTION,
+                                "////resolve", plug->node->core->options_ );
   }
 
   if(error)
