@@ -1792,7 +1792,7 @@ oyTESTRESULT_e testCMMnmRun ()
       i,n = 10;
 
   fprintf(stdout, "\n" );
-
+#if 1
   double clck = clock();
   for(i = 0; i < n*10000; ++i)
   {
@@ -2166,6 +2166,19 @@ oyTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConversion_CreateBasic()                         " );
   }
+#else
+  oyConversion_s * s = 0;
+  oyFilterNode_s * in = 0, * out = 0;
+  oyImage_s * input  = NULL,
+            * output = NULL;
+  double * buf_in = &d[0],
+         * buf_out = &d[3];
+  oyDATATYPE_e buf_type_in = oyDOUBLE,
+               buf_type_out = oyDOUBLE;
+  oyProfile_s * p_in = prof,
+              * p_out = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+  double clck;
+#endif
 
   input =oyImage_Create( 1,1, 
                          buf_in ,
@@ -2180,21 +2193,124 @@ oyTESTRESULT_e testCMMnmRun ()
                          p_out,
                          0 );
 
+  #define OY_ERR if(l_error != 0) error = l_error;
+
+  oyFilterPlug_s * plug = 0;
+  oyPixelAccess_s * pixel_access = 0;
   s = oyConversion_CreateBasic( input,output, 0, 0 );
+  plug = oyFilterNode_GetPlug( s->out_, 0 );
+  pixel_access = oyPixelAccess_Create( 0,0, plug,
+                                           oyPIXEL_ACCESS_IMAGE, 0 );
+  oyFilterPlug_Release( &plug );
 
   clck = clock();
-  for(i = 0; i < n*1000; ++i)
+  for(i = 0; i < n*10000; ++i)
   if(error <= 0)
   {
-    error  = oyConversion_RunPixels( s, 0 );
+    pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
+
+#if 1
+    error  = oyConversion_RunPixels( s, pixel_access );
+#else
+
+  oyConversion_s * conversion = s;
+  oyFilterPlug_s * plug = 0;
+  oyFilterCore_s * filter = 0;
+  oyImage_s * image = 0, * image_input = 0;
+  int error = 0, result, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
+
+  if(!conversion->out_ || !conversion->out_->plugs ||
+     !conversion->out_->plugs[0])
+  {
+    WARNc1_S("graph incomplete [%d]", s ? oyObject_GetId( s->oy_ ) : -1)
+    break;
+  }                                    
+                                       
+  /* conversion->out_ has to be linear, so we access only the first plug */
+  plug = oyFilterNode_GetPlug( conversion->out_, 0 );
+
+  if(!pixel_access)
+  {
+    /* create a very simple pixel iterator as job ticket */
+    if(plug)
+      pixel_access = oyPixelAccess_Create( 0,0, plug,
+                                           oyPIXEL_ACCESS_IMAGE, 0 );
+    tmp_ticket = 1;
+  } 
+
+  /* should be the same as conversion->out_->filter */
+  filter = conversion->out_->core;
+  image = oyConversion_GetImage( conversion, OY_OUTPUT );
+
+  result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
+                              &pixel_access->array, 0, 0 );
+  error = ( result != 0 );
+
+  if(error <= 0)
+    error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
+
+  if(error != 0)
+  {
+    dirty = oyOptions_FindString( pixel_access->graph->options, "dirty", "true")
+            ? 1 : 0;
+
+    /* refresh the graph representation */
+    oyFilterGraph_SetFromNode( pixel_access->graph, conversion->input, 0, 0 );
+
+    /* resolve missing data */
+    image_input = oyFilterPlug_ResolveImage( plug, plug->remote_socket_,
+                                             pixel_access );
+    oyImage_Release( &image_input );
+
+    n = oyFilterNodes_Count( pixel_access->graph->nodes );
+    for(i = 0; i < n; ++i)
+    {
+      l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
+      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
+                                   &pixel_access->array, 0, 0 ); OY_ERR
+
+      if(error != 0 &&
+         dirty)
+      {
+        if(pixel_access->start_xy[0] != pixel_access->start_xy_old[0] ||
+           pixel_access->start_xy[1] != pixel_access->start_xy_old[1])
+        {
+          /* set back to previous values, at least for the simplest case */
+          pixel_access->start_xy[0] = pixel_access->start_xy_old[0];
+          pixel_access->start_xy[1] = pixel_access->start_xy_old[1];
+        }
+
+        oyFilterGraph_PrepareContexts( pixel_access->graph, 1 );
+        error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
+                                                              pixel_access);
+      }
+
+      if(error == 0)
+        break;
+    }
   }
 
-  oyConversion_Release ( &s );
+  if(tmp_ticket)
+  {
+    /* write the data to the output image */
+    if(image != pixel_access->output_image)
+      result = oyImage_ReadArray( image, pixel_access->output_image_roi,
+                                         pixel_access->array, 0 );
+    oyPixelAccess_Release( &pixel_access );
+  }
+
+  oyImage_Release( &image );
+
+#endif
+  }
   clck = clock() - clck;
+
+  oyConversion_Release ( &s );
+  oyPixelAccess_Release( &pixel_access );
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConversion_RunPixels()            %s %.03f", oyIntToString(i),
+    "oyConversion_RunPixels( oyPixelAcce.%s %.03f", oyIntToString(i),
                                                   clck/(double)CLOCKS_PER_SEC );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
@@ -2257,13 +2373,13 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   clck = clock();
-  for(i = 0; i < 1*n; ++i)
+  for(i = 0; i < 100*n; ++i)
   if(error <= 0)
   {
     s = oyConversion_CreateBasic( input,output, 0, 0 );
     error  = oyConversion_RunPixels( s, 0 );
     oyConversion_Release ( &s );
-    if(!(i%1)) fprintf(stdout, "." ); fflush(stdout);
+    if(!(i%100)) fprintf(stdout, "." ); fflush(stdout);
   }
   fprintf(stdout, "\n" );
 
@@ -2281,7 +2397,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   clck = clock();
 
-  for(i = 0; i < n; ++i)
+  for(i = 0; i < n*100; ++i)
   {
     l_error = oyNamedColour_SetColourStd ( c, oyASSUMED_WEB,
                                            (oyPointer)d, oyDOUBLE, 0 );
@@ -2292,7 +2408,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyNamedColour_SetColourStd() oyASSUMED_WEB %d %.03f", i,
+    "oyNamedColour_SetColourStd()        %s %.03f", oyIntToString(i),
                                                   clck/(double)CLOCKS_PER_SEC );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
@@ -2303,7 +2419,7 @@ oyTESTRESULT_e testCMMnmRun ()
   p_out = oyProfile_FromStd ( oyEDITING_XYZ, NULL );
 
   clck = clock();
-  for(i = 0; i < n; ++i)
+  for(i = 0; i < n*100; ++i)
   {
 
   oyImage_s * in  = NULL,
@@ -2356,8 +2472,8 @@ oyTESTRESULT_e testCMMnmRun ()
                           oyDataType_m(buf_type_out),
                          p_out,
                          0 );
-  oyFilterPlug_s * plug = 0;
-  oyPixelAccess_s   * pixel_access = 0;
+  //oyFilterPlug_s * plug = 0;
+  //oyPixelAccess_s   * pixel_access = 0;
   oyConversion_s * conv   = oyConversion_CreateBasic( input,output, 0, 0 );
 
   /* conversion->out_ has to be linear, so we access only the first plug */
@@ -2367,6 +2483,7 @@ oyTESTRESULT_e testCMMnmRun ()
   if(plug)
     pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, 0 );
+  error  = oyConversion_RunPixels( conv, pixel_access );
 
   clck = clock();
   for(i = 0; i < n*10000; ++i)
