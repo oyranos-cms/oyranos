@@ -1615,7 +1615,7 @@ oyTESTRESULT_e testCMMsShow ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
-  int i, j, k;
+  int i, j, k, l;
   uint32_t count = 0;
   char ** texts = 0,
         * text = 0,
@@ -1623,6 +1623,8 @@ oyTESTRESULT_e testCMMsShow ()
   oyCMMInfo_s * cmm_info = 0;
   oyCMMapi4_s * cmm_api4 = 0;
   oyCMMapi6_s * cmm_api6 = 0;
+  oyCMMapi7_s * cmm_api7 = 0;
+  oyCMMapi8_s * cmm_api8 = 0;
   oyCMMapi_s * tmp = 0;
   oyCMMapiFilter_s * cmm_filter = 0;
 
@@ -1718,6 +1720,61 @@ oyTESTRESULT_e testCMMsShow ()
                             cmm_api6->data_type_in,
                             cmm_api6->data_type_out );
                     STRING_ADD( text, text_tmp );
+                  }
+
+                  if(api->type == oyOBJECT_CMM_API7_S)
+                  {
+                    cmm_api7 = (oyCMMapi7_s*) api;
+                    snprintf( text_tmp, 65535,
+                            "        context type \"%s\" plugs: %d  sockets: %d\n",
+                            cmm_api7->context_type,
+                            cmm_api7->plugs_n + cmm_api7->plugs_last_add,
+                            cmm_api7->sockets_n + cmm_api7->sockets_last_add );
+                    STRING_ADD( text, text_tmp );
+                    for(l = 0; l < (int)cmm_api7->plugs_n; ++l)
+                    {
+                      snprintf( text_tmp, 65535,
+                            "        plug[%d]: type:\"%s\" id:\"%s\" \"%s\" \"%s\"\n", l,
+                            cmm_api7->plugs[l]->connector_type,
+                            cmm_api7->plugs[l]->name.nick,
+                            cmm_api7->plugs[l]->name.name,
+                            cmm_api7->plugs[l]->name.description
+                            );
+                      STRING_ADD( text, text_tmp );
+                    }
+                    for(l = 0; l < (int)cmm_api7->sockets_n; ++l)
+                    {
+                      snprintf( text_tmp, 65535,
+                            "        sock[%d]: type:\"%s\" id:\"%s\" \"%s\" \"%s\"\n", l,
+                            cmm_api7->sockets[l]->connector_type,
+                            cmm_api7->sockets[l]->name.nick,
+                            cmm_api7->sockets[l]->name.name,
+                            cmm_api7->sockets[l]->name.description
+                            );
+                      STRING_ADD( text, text_tmp );
+                    }
+                  }
+
+                  if(api->type == oyOBJECT_CMM_API8_S)
+                  {
+                    l = 0;
+                    cmm_api8 = (oyCMMapi8_s*) api;
+                    snprintf( text_tmp, 65535,
+                              "        rank_map[#]:"
+                                      " \"key\"  match,none_match,not_found\n" );
+                    STRING_ADD( text, text_tmp );
+                    while(cmm_api8->rank_map[l].key)
+                    {
+                      snprintf( text_tmp, 65535,
+                              "        rank_map[%d]: \"%s\"  %d,%d,%d\n", l,
+                              cmm_api8->rank_map[l].key,
+                              cmm_api8->rank_map[l].match_value,
+                              cmm_api8->rank_map[l].none_match_value,
+                              cmm_api8->rank_map[l].not_found_value
+                              );
+                      STRING_ADD( text, text_tmp );
+                      ++l;
+                    }
                   }
 
                   STRING_ADD( text, "\n" );
