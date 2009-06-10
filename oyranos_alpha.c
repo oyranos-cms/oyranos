@@ -22243,7 +22243,6 @@ oyPixelAccess_s *  oyPixelAccess_Create (
   int error = !s || !plug || !plug->remote_socket_;
   int w = 0;
   oyImage_s * image = 0;
-  oyOptions_s * options = 0;
   int32_t n = 0;
 
   if(error <= 0)
@@ -22842,7 +22841,7 @@ int                oyConversion_RunPixels (
   filter = conversion->out_->core;
   image = oyConversion_GetImage( conversion, OY_OUTPUT );
 
-  result = oyImage_FillArray( image, pixel_access->output_image_roi, 2,
+  result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
                               &pixel_access->array, 0, 0 );
   error = ( result != 0 );
 
@@ -22866,7 +22865,7 @@ int                oyConversion_RunPixels (
     for(i = 0; i < n; ++i)
     {
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
-      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 2,
+      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
                                    &pixel_access->array, 0, 0 ); OY_ERR
 
       if(error != 0 &&
