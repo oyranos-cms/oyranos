@@ -2725,12 +2725,7 @@ digraph G {
  *  Most simple is to use the oyConversion_CreateBasic() function to create
  *  a profile to profile and possible image buffer to image buffer linear
  *  graph.\n
- *  The next possibility is to create a linear graph by chaining linear nodes
- *  together with oyConversion_CreateInput(), oyConversion_LinFilterAdd() and
- *  oyConversion_LinOutputAdd() in that order. A linear node is one that can
- *  have exactly one parent and one child node. The above scheme illustrates a
- *  linear graph.\n
- *  The last possibility is to create a non linear graph. The input member
+ *  The other possibility is to create a non linear graph. The input member can
  *  be accessed for this directly.
  *
  *  While it would be possible to have several open ends in a graph, there
@@ -2789,23 +2784,12 @@ oyConversion_s  *  oyConversion_CreateBasic (
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
-/*oyConversion_s   * oyConversion_CreateInput (
-                                       oyImage_s         * input,
-                                       const char        * filter_registration,
-                                       oyObject_s          object );*/
 oyConversion_s  *  oyConversion_Copy ( oyConversion_s    * conversion,
                                        oyObject_s          object );
 int                oyConversion_Release (
                                        oyConversion_s   ** conversion );
 
 
-/*int                oyConversion_LinFilterAdd (
-                                       oyConversion_s    * conversion,
-                                       oyFilterCore_s    * filter );
-int                oyConversion_LinOutputAdd (
-                                       oyConversion_s    * conversion,
-                                       const char        * filter_registration,
-                                       oyImage_s         * output );*/
 int                oyConversion_Set  ( oyConversion_s    * conversion,
                                        oyFilterNode_s    * input,
                                        oyFilterNode_s    * output );
