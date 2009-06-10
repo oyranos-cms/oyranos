@@ -45,7 +45,7 @@
 #include <Xcolor.h>
 
 /* Uncomment the following line if you want to enable debugging output */
-//#define PLUGIN_DEBUG 1
+#define PLUGIN_DEBUG 1
 
 /**
  * The 3D lookup texture has 64 points in each dimension, using 16 bit integers.
@@ -535,15 +535,15 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
   /* obtain device informations, including geometry and ICC profiles
      from the according Oyranos backend */
-  error = oyOptions_SetFromText( &options, "//colour/config/list",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/list",
                                  "true", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//colour/config/device_rectangle",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   /*error = oyOptions_SetFromText( &options,
-                                 "//colour/config/display_name",
+                                 "//" OY_TYPE_STD "/config/display_name",
                                  DisplayString( s->display->display ),
                                  OY_CREATE_NEW );*/
-  error = oyDevicesGet( "colour", "monitor", options, &devices );
+  error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   n = oyOptions_Count( options );
   //printf( DBG_STRING "options: %d\n", DBG_ARGS, n );
   oyOptions_Release( &options );
@@ -636,7 +636,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
                                              pixel_layout, dst_profile, 0 );
       oyOptions_s * options = 0;
       /* rendering_high_precission maps to lcms' cmsFLAGS_NOTPRECALC */
-      error = oyOptions_SetFromText( &options, "//colour/icc/rendering_high_precission",
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/icc/rendering_high_precission",
                                      "1", OY_CREATE_NEW );
       END_CLOCK
 
