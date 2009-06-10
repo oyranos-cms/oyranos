@@ -927,7 +927,7 @@ oyConnectorImaging_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connec
 
 oyConnectorImaging_s lcms_cmmIccPlug_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
   "//" OY_TYPE_STD "/manipulator", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   lcms_cmmIcc_data_types, /* data_types */
@@ -1878,15 +1878,15 @@ const char * lcmsInfoGetText         ( const char        * select,
  */
 oyCMMInfo_s lcms_cmm_module = {
 
-  oyOBJECT_CMM_INFO_S,
-  0,0,0,
-  CMM_NICK,
-  "0.6",
-  lcmsInfoGetText,
-  OYRANOS_VERSION,
+  oyOBJECT_CMM_INFO_S,                 /**< type, struct type */
+  0,0,0,                               /**< ,dynamic object functions */
+  CMM_NICK,                            /**< cmm, ICC signature */
+  "0.6",                               /**< backend_version */
+  lcmsInfoGetText,                     /**< getText */
+  OYRANOS_VERSION,                     /**< oy_compatibility */
 
-  (oyCMMapi_s*) & lcms_api1,
+  (oyCMMapi_s*) & lcms_api1,           /**< api */
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"},
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"}, /**< icon */
 };
 

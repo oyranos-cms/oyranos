@@ -261,7 +261,7 @@ oyConnectorImaging_s *oyra_imageRectangles_plugs[2] = {&oyra_imageRectangles_plu
 
 oyConnectorImaging_s oyra_imageRectangles_socket = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Plug"},
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Socket"},
   "//" OY_TYPE_STD "/image", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */

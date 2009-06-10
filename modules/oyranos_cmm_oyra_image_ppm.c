@@ -304,7 +304,7 @@ oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
 
 oyConnectorImaging_s oyra_imageOutputPPM_connector_out = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Plug"},
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Socket"},
   "//" OY_TYPE_STD "/image", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_ppm_data_types,

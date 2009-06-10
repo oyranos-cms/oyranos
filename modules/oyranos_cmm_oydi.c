@@ -704,7 +704,7 @@ oyConnectorImaging_s *oyx1_Display_plugs[2] = {&oyx1_Display_plug,0};
 
 oyConnectorImaging_s oyx1_Display_socket = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Plug"},
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Socket"},
   "//" OY_TYPE_STD "/image", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
