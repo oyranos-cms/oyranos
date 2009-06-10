@@ -41,7 +41,7 @@ main(int argc, char** argv)
   oyPointer pixel = 0;
   oyPixelAccess_s * pixel_access = 0;
   oyConversion_s * conversion = 0;
-  oyFilterCore_s   * filter = 0;
+  oyFilterNode_s   * in = 0, * out = 0;
   oyFilterSocket_s * sock = 0;
   oyOptions_s * options = 0;
   int32_t result = 0;
@@ -73,7 +73,7 @@ main(int argc, char** argv)
   oyProfile_Release( &prof );
   /* create a very simple pixel iterator */
   pixel_access = oyPixelAccess_Create( 0,0,
-                                 oyFilterNode_GetSocket( conversion->input, 0 ),
+                                 oyFilterNode_GetPlug( conversion->out_, 0 ),
                                        oyPIXEL_ACCESS_IMAGE, 0 );
 
   /* show the Oyranos graph with ghostview */
@@ -152,32 +152,31 @@ main(int argc, char** argv)
 
 
   conversion = oyConversion_New( 0 );
-  filter = oyFilterCore_New( "//image/input_ppm", 0,0, 0 );
-  conversion->input = oyFilterNode_Create( filter, 0 );
-  oyFilterCore_Release( &filter );
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/input_ppm", 0,0, 0 );
+  oyConversion_Set( conversion, in, 0 );
 
-  options = oyFilterNode_OptionsGet( conversion->input, OY_FILTER_GET_DEFAULT );
-  error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
+  options = oyFilterNode_OptionsGet( in, OY_FILTER_GET_DEFAULT );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/input_ppm/filename",
                                  "oyranos_logo.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
-  sock = oyFilterNode_GetSocket ( conversion->input, 0 );
-  conversion->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0 );
 
-  image_in = oyImage_Copy( (oyImage_s*)conversion->input->sockets[0]->data, 0 );
+  image_in = oyConversion_GetImage( conversion, OY_INPUT );;
   prof = oyProfile_FromFile( "Lab.icc", 0, 0 );
   image_out = oyImage_Create( image_in->width, image_in->height, 0, 
-                              image_in->layout_[0], prof, 0 );
+                              oyImage_PixelLayoutGet( image_in ), prof, 0 );
 
-  filter = oyFilterCore_New( "//colour/icc", 0,0, 0 );
-  error = oyConversion_LinFilterAdd( conversion, filter );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0,0, 0 );
+  error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//colour" );
-  
-  error = oyConversion_LinOutputAdd( conversion, "//image/output_ppm", image_out );
-  options = oyFilterNode_OptionsGet( conversion->out_, OY_FILTER_GET_DEFAULT );
-  error = oyOptions_SetFromText( &options, "//image/output_ppm/filename",
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD );
+  in = out; in = 0; 
+ 
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output_ppm", 0,0, 0 );
+  options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/output_ppm/filename",
                                  "test_dbg.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
+  error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
 
   pixel_access->start_xy[0] = 0;
   pixel_access->start_xy[1] = 0;
