@@ -75,6 +75,34 @@ const char  *  oyIntToString         ( int                 integer )
   return texts[a++];
 }
 
+const char  *  oyProfilingToString   ( int                 integer,
+                                       double              duration,
+                                       const char        * term )
+{
+  static char texts[3][255];
+  static int a = 0;
+  int i, len;
+
+  if(a >= 3) a = 0;
+
+  if(integer/duration >= 1000000.0)
+    sprintf( &texts[a][0], "%.02f M%s/s", integer/duration/1000000.0, term );
+  else
+    sprintf( &texts[a][0], "%.00f %s/s", integer/duration, term );
+
+  len = strlen(&texts[a][0]);
+
+  for(i = 0; i < 16-len; ++i)
+    sprintf( &texts[a][i], " " );
+
+  if(integer/duration >= 1000000.0)
+    sprintf( &texts[a][i], "%.02f M%s/s", integer/duration/1000000.0, term );
+  else
+    sprintf( &texts[a][i], "%.00f %s/s", integer/duration, term );
+
+  return texts[a++];
+}
+
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name )
 {
@@ -1861,8 +1889,8 @@ oyTESTRESULT_e testCMMnmRun ()
   c = oyNamedColour_Create( NULL, NULL,0, prof, 0 );
   if( c )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyNamedColour_Create( )             %s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyNamedColour_Create( )             %s",
+                   oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyNamedColour_Create( )                            " );
@@ -1911,8 +1939,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyGetKeyString_()                   %s %.03f", oyIntToString(n),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyGetKeyString_()                   %s",
+                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "Filter"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyGetKeyString_()                                  " );
@@ -1959,8 +1987,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyOption_SetValueFromDB()           %s %.03f", oyIntToString(n),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyOption_SetValueFromDB()           %s",
+                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "Filter"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyOption_SetValueFromDB()                          " );
@@ -2050,8 +2078,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyOptions_ForFilter_()              %s %.03f", oyIntToString(n),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyOptions_ForFilter_()              %s",
+                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "Filter"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyOptions_ForFilter_()                             " );
@@ -2097,8 +2125,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyOptions_ForFilter_()              %s %.03f", oyIntToString(n),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyOptions_ForFilter_()              %s",
+                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "Filter"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyOptions_ForFilter_()                             " );
@@ -2117,8 +2145,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyFilterCore_New()                  %s %.03f", oyIntToString(i/3),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyFilterCore_New()                  %s",
+                 oyProfilingToString(i/3,clck/(double)CLOCKS_PER_SEC, "Cores"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyFilterCore_New()                                 " );
@@ -2140,8 +2168,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyFilterCore_New() oyCMMapi4_s      %s %.03f", oyIntToString(i/3),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyFilterCore_New() oyCMMapi4_s      %s",
+                 oyProfilingToString(i/3,clck/(double)CLOCKS_PER_SEC, "Cores"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyFilterCore_New() oyCMMapi4_s                     " );
@@ -2217,8 +2245,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConversion_CreateBasic()          %s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyConversion_CreateBasic()          %s",
+                    oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConversion_CreateBasic()                         " );
@@ -2367,8 +2395,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConversion_RunPixels( oyPixelAcce.%s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyConversion_RunPixels( oyPixelAcce.%s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConversion_RunPixels()                           " );
@@ -2392,8 +2420,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "cmsDoTransform() lcms               %s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "cmsDoTransform() lcms               %s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "cmsDoTransform() lcms                              " );
@@ -2421,8 +2449,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "cmsCreateTransform() lcms           %s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "cmsCreateTransform() lcms           %s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "xform"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "cmsCreateTransform() lcms                          " );
@@ -2443,8 +2471,8 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = clock() - clck;
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "+ oyConversion_RunPixels()          %s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "+ oyConversion_RunPixels()          %s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "+ oyConversion_RunPixels()                         " );
@@ -2465,8 +2493,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyNamedColour_SetColourStd()        %s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyNamedColour_SetColourStd()        %s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyNamedColour_SetColourStd() oyASSUMED_WEB         " );
@@ -2509,8 +2537,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyColourConvert_()                  %s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyColourConvert_()                  %s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyColourConvert_()                                 " );
@@ -2551,18 +2579,58 @@ oyTESTRESULT_e testCMMnmRun ()
   }
   clck = clock() - clck;
 
-  oyImage_Release( &input );
-  oyImage_Release( &output );
+  oyPixelAccess_Release( &pixel_access );
   oyConversion_Release( &conv );
 
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyColourConvert_() sans oyPixelAcce.%s %.03f", oyIntToString(i),
-                                                  clck/(double)CLOCKS_PER_SEC );
+    "oyColourConvert_() sans oyPixelAcce.%s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyColourConvert_() sans oyPixelAccess_Create()     " );
+  }
+
+
+  conv = oyConversion_New( 0 );
+  oyFilterNode_s * in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0,0, 0 );
+  oyConversion_Set( conv, in_node, 0 );
+  oyFilterNode_DataSet( in_node, (oyStruct_s*)input, 0, 0 );
+  oyFilterNode_s * out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
+  oyFilterNode_DataSet( out_node, (oyStruct_s*)output, 0, 0 );
+  error = oyFilterNode_Connect( in_node, "Img", out_node, "Img", 0 );
+  oyConversion_Set( conv, 0, out_node );
+  plug = oyFilterNode_GetPlug( conv->out_, 0 );
+
+  /* create a very simple pixel iterator as job ticket */
+  if(plug)
+    pixel_access = oyPixelAccess_Create( 0,0, plug,
+                                           oyPIXEL_ACCESS_IMAGE, 0 );
+  error  = oyConversion_RunPixels( conv, pixel_access );
+
+  clck = clock();
+  for(i = 0; i < n*10000; ++i)
+  {
+    pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
+    oyConversion_RunPixels( conv, pixel_access );
+  }
+  clck = clock() - clck;
+
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+
+  oyPixelAccess_Release( &pixel_access );
+  oyConversion_Release( &conv );
+
+
+  if( !error )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConversion_RunPixels (2 nodes)    %s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConversion_RunPixels (2 nodes)                   " );
   }
 
 
