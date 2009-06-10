@@ -16180,7 +16180,8 @@ int            oyImage_DataSet       ( oyImage_s         * image,
  *
  *  @param[in]     image               the image
  *  @param[in]     rectangle           the image rectangle
- *  @param[in]     do_copy             do copy into the array
+ *  @param[in]     do_copy             do copy into the array 0x01
+ *                                     dont copy any data 0x02
  *  @param[out]    array               array to fill
  *  @param[in]     array_rectangle     the array rectangle in samples
  *  @param[in]     obj                 the optional user object
@@ -16196,14 +16197,14 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRectangle_s     * array_rectangle,
                                        oyObject_s          obj )
 {
-  int error = 0;
+  int error;
   oyArray2d_s * a = *array;
   oyImage_s * s = image;
   oyRectangle_s pixel_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0},
                 r = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
-  int size = 0, channel_n;
+  int size;
   oyRectangle_s new_array_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0};
   double a_orig_width = 0, a_orig_height = 0;
 
@@ -16213,8 +16214,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
   data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
-  size = oySizeofDatatype( data_type );
-  channel_n = image->layout_[oyCHANS];
   error = oyRectangle_SamplesFromImage( image, rectangle, &pixel_rectangle );
 
   if(!error && !array_rectangle)
@@ -16241,7 +16240,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       if(array_rectangle->x)
         a->data_area.x = -array_rectangle->x;
       /* allocate each single line */
-      if(do_copy)
+      if(do_copy & 0x01)
         a->own_lines = 2;
     }
   }
@@ -16266,16 +16265,18 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
   }
 
-  if(!error)
+  if(!error && !(do_copy & 0x02))
   {
   if(image->getLine)
   {
     unsigned char * data = 0;
     int i,j, height;
-    size_t len = size * array_rectangle->width + array_rectangle->x,
-           wlen = pixel_rectangle.width * size,
-           ay;
+    size_t len, wlen, ay;
     oyPointer src, dst;
+
+    size = oySizeofDatatype( data_type );
+    len = size * array_rectangle->width + array_rectangle->x;
+    wlen = pixel_rectangle.width * size;
 
     for( i = 0; i < pixel_rectangle.height; )
     {
@@ -16290,7 +16291,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
         ay = array_rectangle->y + i + j;
 
-        if(do_copy)
+        if(do_copy & 0x01)
         {
           if(!a->array2d[ay])
             oyAllocHelper_m_( a->array2d[ay], 
@@ -22841,7 +22842,7 @@ int                oyConversion_RunPixels (
   filter = conversion->out_->core;
   image = oyConversion_GetImage( conversion, OY_OUTPUT );
 
-  result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
+  result = oyImage_FillArray( image, pixel_access->output_image_roi, 2,
                               &pixel_access->array, 0, 0 );
   error = ( result != 0 );
 
@@ -22865,7 +22866,7 @@ int                oyConversion_RunPixels (
     for(i = 0; i < n; ++i)
     {
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
-      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
+      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 2,
                                    &pixel_access->array, 0, 0 ); OY_ERR
 
       if(error != 0 &&
