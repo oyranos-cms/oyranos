@@ -1125,7 +1125,7 @@ void          oyStringListRelease_    ( char          *** l,
 
 #ifdef DEBUG
 int     oyStrlen_( const char * str_ ) { return strlen(str_); }
-void    oyStrcpy_( const char * targ_, const char * src_ ) {strcpy(targ_,src_);}
+void    oyStrcpy_( char * targ_, const char * src_ ) { strcpy(targ_,src_); }
 char *  oyStrchr_( const char * str_, char c_ ) { return strchr(str_,c_); }
 char *  oyStrrchr_( const char * str_, char c_ ) { return strrchr(str_,c_); }
 char *  oyStrstr_( const char * str1_, const char * str2_ ) { return strstr(str1_,str2_); }
@@ -1864,7 +1864,7 @@ int           oyOptionChoicesGet_      (oyWIDGET_e          type,
     for(i = 0; i < n; ++i)
     {
       temp_prof = oyProfiles_Get( iccs, i );
-      text = oyStringCopy_( oyProfile_GetFileName(temp_prof, 0),
+      text = oyStringCopy_( oyProfile_GetFileName(temp_prof, -1),
                             oyAllocateFunc_ );
       temp = oyStrrchr_( text, '/' );
       if(temp)

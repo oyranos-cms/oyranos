@@ -191,7 +191,7 @@ int main( int argc , char** argv )
       } else {
         data = oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
         prof = oyProfile_FromMem( size, data, 0, 0 );
-        filename = oyProfile_GetFileName( prof, 0 );
+        filename = oyProfile_GetFileName( prof, -1 );
       }
       if(size && data) oyDeAllocFunc( data ); data = 0;
 
@@ -240,7 +240,7 @@ int main( int argc , char** argv )
             data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
             if(size && data)
               oyDeAllocFunc( data );
-            filename = oyProfile_GetFileName( prof, 0 );
+            filename = oyProfile_GetFileName( prof, -1 );
             printf( "%s:%d server profile \"%s\" size: %d\n",__FILE__,__LINE__,
                     filename?filename:OY_PROFILE_NONE, (int)size );
 
