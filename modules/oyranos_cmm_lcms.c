@@ -106,6 +106,7 @@ int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
 int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
                                        icColorSpaceSignature colour_space );
 char * lcmsImage_GetText             ( oyImage_s         * image,
+                                       int                 verbose,
                                        oyAlloc_f           allocateFunc );
 
 
@@ -1035,6 +1036,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                  * info = 0,
                  * cprt = 0;
   int profiles_n = 0;
+  int verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
 
   filter = node->core;
   input_node = plug->remote_socket_->node;
@@ -1177,7 +1179,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
 
   /* additional tags for debugging */
-  if(!error && oy_debug)
+  if(!error && (oy_debug || verbose))
   {
     if(!error && size)
     {
@@ -1274,6 +1276,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 }
 
 char * lcmsImage_GetText             ( oyImage_s         * image,
+                                       int                 verbose,
                                        oyAlloc_f           allocateFunc )
 {
   oyPixel_t pixel_layout = image->layout_[oyLAYOUT]; 
@@ -1292,7 +1295,7 @@ char * lcmsImage_GetText             ( oyImage_s         * image,
   /* describe the image */
   oySprintf_( text,   "  <oyImage_s\n");
   hashTextAdd_m( text );
-  if(oy_debug)
+  if(oy_debug || verbose)
     oySprintf_( text, "    profile=\"%s\"\n", oyProfile_GetText(profile,
                                                                 oyNAME_NAME));
   else
@@ -1333,8 +1336,8 @@ char * lcmsImage_GetText             ( oyImage_s         * image,
   {
     oyDeAllocateFunc_(text);
     text = hash_text;
-    oyDeAllocateFunc_( hash_text );
     hash_text = oyStringCopy_( text, allocateFunc );
+    oyDeAllocateFunc_( text );
   }
   text = 0;
 
@@ -1362,11 +1365,13 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
 
   oyImage_s * in_image = 0,
                  * out_image = 0;
-  int i,n;
+  int i,n,verbose;
   oyOptions_s * opts = node->core->options_;
 
   if(!node)
     return 0;
+
+  verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
 
   /* 1. create hash text */
   hashTextAdd_m( "<oyFilterNode_s>\n  " );
@@ -1384,7 +1389,7 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
   {
     /* input data */
     hashTextAdd_m( "  <data_in>\n" );
-    temp = lcmsImage_GetText( in_image, oyAllocateFunc_ );
+    temp = lcmsImage_GetText( in_image, verbose, oyAllocateFunc_ );
     hashTextAdd_m( temp );
     oyDeAllocateFunc_(temp); temp = 0;
     hashTextAdd_m( "  </data_in>\n" );
@@ -1406,7 +1411,7 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
 
     /* output data */
     hashTextAdd_m( "  <data_out>\n" );
-    temp = lcmsImage_GetText( out_image, oyAllocateFunc_ );
+    temp = lcmsImage_GetText( out_image, verbose, oyAllocateFunc_ );
     hashTextAdd_m( temp );
     oyDeAllocateFunc_(temp); temp = 0;
     hashTextAdd_m( "  </data_out>\n" );
