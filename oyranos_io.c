@@ -506,6 +506,9 @@ oyFindProfile_ (const char* fileName)
 
   DBG_PROG_START
 
+  if(!fileName || !fileName[0])
+    return fullFileName;
+
   /*DBG_NUM_S((fileName)) */
   if (fileName && !strchr(fileName, OY_SLASH_C))
   {
