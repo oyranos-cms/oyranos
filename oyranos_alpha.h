@@ -300,7 +300,7 @@ struct oyObject_s_ {
   oyName_s           * name_;          /*!< @private naming feature */
   int                  ref_;           /*!< @private reference counter */
   int                  version_;       /*!< @private OYRANOS_VERSION */
-  unsigned char      * hash_ptr_;      /** @private 2*OY_HASH_SIZE */
+  unsigned char      * hash_ptr_;      /**< @private 2*OY_HASH_SIZE */
   oyPointer            lock_;          /**< @private the user provided lock */
 };
 
@@ -399,6 +399,7 @@ typedef struct {
 
   size_t               size;           /**< data size */
   oyPointer            ptr;            /**< data */
+  char                 type[8];        /**< the type of data, e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL" */
 } oyBlob_s;
 
 OYAPI oyBlob_s * OYEXPORT
@@ -412,7 +413,8 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                  oyBlob_SetFromData  ( oyBlob_s          * obj,
                                        oyPointer           ptr,
-                                       size_t              size );
+                                       size_t              size,
+                                       char              * type );
 
 /** @internal
  *  @brief a pointer list
@@ -2459,6 +2461,9 @@ OYAPI char * OYEXPORT
                                        const char        * head_line,
                                        int                 reserved,
                                        oyAlloc_f           allocateFunc );
+oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
+                                       int                 node_pos,
+                                       oyObject_s          object );
 
 
 /** @struct  oyPixelAccess_s
@@ -2809,8 +2814,6 @@ oyPointer        * oyConversion_GetOnePixel (
 oyImage_s        * oyConversion_GetImage (
                                        oyConversion_s    * conversion,
                                        uint32_t            flags );
-oyProfile_s      * oyConversion_ToProfile (
-                                       oyConversion_s    * conversion );
 char             * oyConversion_ToText (
                                        oyConversion_s    * conversion,
                                        const char        * head_line,
