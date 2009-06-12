@@ -438,7 +438,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                oyStructList_AddName( texts, tmp, -1 );
 
                o = oyBlob_New( 0 );
-               oyBlob_SetFromData( o, &mem[84], i );
+               oyBlob_SetFromData( o, &mem[84], i, mem );
                oyStructList_MoveIn( texts, (oyStruct_s**)&o, -1 );
              }
              oyFree_m_( tmp );

@@ -315,7 +315,7 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
   if(nitems_return && prop_return)
   {
     prop = oyBlob_New( 0 );
-    oyBlob_SetFromData( prop, prop_return, nitems_return + bytes_after_return );
+    oyBlob_SetFromData( prop, prop_return, nitems_return + bytes_after_return, 0 );
     XFree( prop_return ); prop_return = 0;
   }
 

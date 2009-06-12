@@ -4916,15 +4916,18 @@ OYAPI int  OYEXPORT
  *  @param[in]     blob                the data blob
  *  @param[in]     ptr                 data
  *  @param[in]     size                data size
+ *  @param[in]     type                data type; assuming 8 byte with typical
+ *                                     4 byte content
  *  @return                            0 - success, 1 - error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/06 (Oyranos: 0.1.10)
- *  @date    2009/01/06
+ *  @date    2009/06/12
  */
 int            oyBlob_SetFromData    ( oyBlob_s          * blob,
                                        oyPointer           ptr,
-                                       size_t              size )
+                                       size_t              size,
+                                       char              * type )
 {
   oyBlob_s * s = blob;
   int error = !s || s->type_ != oyOBJECT_BLOB_S;
@@ -4946,6 +4949,9 @@ int            oyBlob_SetFromData    ( oyBlob_s          * blob,
 
   if(error <= 0)
     s->size = size;
+
+  if(error <= 0 && type)
+    error = !memcpy( s->type, type, 8 );
 
   return error;
 }
@@ -6529,7 +6535,7 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
 
   if(error <= 0)
     error = oyBlob_SetFromData( (oyBlob_s*) option->value->oy_struct,
-                                ptr, size );
+                                ptr, size, 0 );
 
   return error;
 }
@@ -12329,7 +12335,8 @@ const char *       oyProfile_GetFileName (
   oyProfileTag_s * psid = 0;
   char ** texts = 0;
   int32_t   texts_n = 0;
-  char *  hash = 0;
+  char *  hash = 0,
+       *  txt = 0;
   char    tmp_hash[34];
   int       dl_n = 0;
 
@@ -12367,32 +12374,50 @@ const char *       oyProfile_GetFileName (
           if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
             tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
 
-          if(hash && tmp)
+          if(tmp)
           {
-            uint32_t * h = (uint32_t*)tmp->oy_->hash_ptr_;
-            if(h)
-              oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
-            else
-              oySprintf_(tmp_hash, "                " );
-            if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
+            if(hash)
+            {
+              uint32_t * h = (uint32_t*)tmp->oy_->hash_ptr_;
+              if(h)
+                oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+              else
+                oySprintf_(tmp_hash, "                " );
+              if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
+              {
+               name = names[i];
+                break;
+              }
+            } else
+            if(oyProfile_Equal( s, tmp ))
             {
               name = names[i];
               break;
             }
-          } else
-          if(oyProfile_Equal( s, tmp ))
-          {
-            name = names[i];
-            break;
-          }
 
-          oyProfile_Release( &tmp );
+            oyProfile_Release( &tmp );
+          }
         }
       }
-      s->file_name_ = oyFindProfile_( name );
-      name = oyStringCopy_( s->file_name_, s->oy_->allocateFunc_ );
-      oyDeAllocateFunc_( s->file_name_ );
-      s->file_name_ = (char*)name;
+
+      if(hash)
+      {
+        txt = oyFindProfile_( name );
+        sprintf( hash, "//imaging/profile.icc/psid_%d", dl_pos );
+        oyOptions_SetFromText( (oyOptions_s**)&s->oy_->handles_,
+                               hash,
+                               txt,
+                               OY_CREATE_NEW );
+        oyDeAllocateFunc_( txt );
+        name = oyOptions_FindString( (oyOptions_s*)s->oy_->handles_,
+                                     hash, 0 );
+      } else
+      {
+        s->file_name_ = oyFindProfile_( name );
+        name = oyStringCopy_( s->file_name_, s->oy_->allocateFunc_ );
+        oyDeAllocateFunc_( s->file_name_ );
+        s->file_name_ = (char*)name;
+      }
 
       if(names)
         oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
@@ -14071,7 +14096,7 @@ OYAPI oyProfiles_s * OYEXPORT
       temp_prof = oyProfiles_Get( iccs, i );
       printf("%s %d: \"%s\" %s\n", i == current ? "*":" ", i,
              oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
-             oyProfile_GetFileName(temp_prof, 0));
+             oyProfile_GetFileName(temp_prof, -1));
       oyProfile_Release( &temp_prof );
     } @endverbatim
  *
@@ -14225,7 +14250,7 @@ OYAPI oyProfiles_s * OYEXPORT
     for( i = 0; i < size; ++i)
     {
       temp_prof = oyProfiles_Get( iccs, i );
-      text = oyStringCopy_( oyProfile_GetFileName(temp_prof, 0),
+      text = oyStringCopy_( oyProfile_GetFileName(temp_prof, -1),
                             oyAllocateFunc_ );
       temp = oyStrrchr_( text, '/' );
       if(temp)
@@ -20259,13 +20284,15 @@ int oyPointerRelease                 ( oyPointer         * ptr )
  *  of this transformer will on request be cached by Oyranos as well.
  *
  *  @param[in]     node                filter
+ *  @param[in/out] blob                context to fill
  *  @return                            error
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/02 (Oyranos: 0.1.8)
- *  @date    2008/11/02
+ *  @date    2009/06/12
  */
-int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
+int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
+                                       oyBlob_s          * blob )
 {
   int error = 0;
   oyFilterCore_s * s = node->core;
@@ -20325,7 +20352,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
             cmm_ptr_out = (oyCMMptr_s*) oyHash_GetPointer_( hash_out,
                                                         oyOBJECT_CMM_POINTER_S);
 
-            if(!(cmm_ptr_out && cmm_ptr_out->ptr))
+            if(!(cmm_ptr_out && cmm_ptr_out->ptr) || blob)
             {
               oySprintf_( hash_text, "%s:%s", s->api4_->context_type, 
                                               hash_text_ );
@@ -20338,6 +20365,23 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
               {
                 size = 0;
                 cmm_ptr = oyCMMptr_New_(oyAllocateFunc_);
+              }
+
+              /* write the context to memory */
+              if(blob)
+              {
+
+                error = oyOptions_SetFromText( &node->tags, "////verbose",
+                                               "true", OY_CREATE_NEW );
+
+                /* oy_debug is used to obtain a complete data set */
+                ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
+                                                              oyAllocateFunc_ );
+                oyBlob_SetFromData( blob, ptr, size, s->api4_->context_type );
+                error = oyOptions_SetFromText( &node->tags, "////verbose",
+                                               "false", 0 );
+
+                goto clean;
               }
 
               if(!cmm_ptr->ptr)
@@ -20389,6 +20433,10 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node )
               oyWriteMemToFile_( "test_dbg_colour_dl.icc", ptr, size );
           }
 
+
+    clean:
+    if(hash_temp) oyDeAllocateFunc_(hash_temp);
+    if(hash_text) oyDeAllocateFunc_(hash_text);
   }
 
   return error;
@@ -21040,7 +21088,7 @@ OYAPI int  OYEXPORT
     if(do_it &&
        node->core->api4_->oyCMMFilterNode_ContextToMem &&
        strlen(node->api7_->context_type))
-      oyFilterNode_ContextSet_( node );
+      oyFilterNode_ContextSet_( node, 0 );
 
     oyFilterNode_Release( &node );
   }
@@ -23015,8 +23063,55 @@ oyImage_s        * oyConversion_GetImage (
 }
 
 
-oyProfile_s      * oyConversion_ToProfile (
-                                       oyConversion_s    * conversion );
+/** Function oyFilterGraph_ToBlob
+ *  @memberof oyBlob_s
+ *  @brief   node context to binary blob
+ *
+ *  Typical a context from a CMM will be returned.
+ *
+ *  @param         graph               graph object
+ *  @param         node_pos            node position in the graph
+ *  @param         object              the optional object
+ *  @return                            the data blob
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/06/12 (Oyranos: 0.1.10)
+ *  @date    2009/06/12
+ */
+oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
+                                       int                 node_pos,
+                                       oyObject_s          object )
+{
+  int flags = 1;
+  oyFilterNode_s * node = 0;
+  int do_it;
+  oyFilterGraph_s * s = graph;
+  oyBlob_s * blob = 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+
+  node = oyFilterNodes_Get( s->nodes, node_pos );
+
+  if(node)
+  {
+    if(flags || !node->backend_data)
+      do_it = 1;
+    else
+      do_it = 0;
+
+    if(do_it &&
+       node->core->api4_->oyCMMFilterNode_ContextToMem &&
+       strlen(node->core->api4_->context_type))
+    {
+      blob = oyBlob_New( object );
+      oyFilterNode_ContextSet_( node, blob );
+    }
+
+    oyFilterNode_Release( &node );
+  }
+
+  return blob;
+}
 
 /** Function: oyConversion_ToText
  *  @memberof oyConversion_s
