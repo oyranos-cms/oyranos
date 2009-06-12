@@ -124,7 +124,7 @@ extern int oy_debug_memory;
            sprintf
 #ifdef DEBUG
 int     oyStrlen_ ( const char * str_ );
-void    oyStrcpy_ ( const char * targ_, const char * src_ );
+void    oyStrcpy_ ( char * targ_, const char * src_ );
 char *  oyStrchr_ ( const char * str_, char c_ );
 char *  oyStrrchr_( const char * str_, char c_ );
 char *  oyStrstr_ ( const char * str1_, const char * str2_ );
