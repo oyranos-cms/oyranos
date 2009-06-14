@@ -798,7 +798,7 @@ oyCMMapi4_s   oydi_api4_image_display = {
   oydiWidgetEvent, /* oyWidgetEvent_f */
 
   oydiFilterNode_ImageDisplayContextToMem, /* oyCMMFilterNode_ContextToMem_f */
-  0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
+  0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
   {oyOBJECT_NAME_S, 0,0,0, "display", "Display", "Display Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */

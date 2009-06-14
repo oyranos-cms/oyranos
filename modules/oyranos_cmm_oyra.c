@@ -42,7 +42,7 @@ oyMessage_f message = oyraCMMWarnFunc;
 
 /* --- implementations --- */
 
-/** @func  oyraCMMInit
+/** Function oyraCMMInit
  *  @brief API requirement
  *
  *  @version Oyranos: 0.1.8
@@ -57,7 +57,7 @@ int                oyraCMMInit       ( )
 
 
 
-/** @func  oyraIconv
+/** Function oyraIconv
  *  @brief convert between codesets
  *
  *  @version Oyranos: 0.1.8
@@ -76,7 +76,7 @@ int                oyraIconv         ( const char        * input,
 
 
 
-/** @func  oyraCMMWarnFunc
+/** Function oyraCMMWarnFunc
  *  @brief message handling
  *
  *  @version Oyranos: 0.1.8
@@ -118,7 +118,7 @@ int oyraCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
   return 0;
 }
 
-/** @func  oyraCMMMessageFuncSet
+/** Function oyraCMMMessageFuncSet
  *  @brief API requirement
  *
  *  @version Oyranos: 0.1.8
