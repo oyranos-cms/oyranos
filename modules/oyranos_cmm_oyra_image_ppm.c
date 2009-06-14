@@ -304,9 +304,9 @@ const char ppm_write_extra_options[] = {
   <" OY_TOP_INTERNAL ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" "file_read." CMM_NICK ">\n\
+     <" "file_write." CMM_NICK ">\n\
       <filename></filename>\n\
-     </" "file_read." CMM_NICK ">\n\
+     </" "file_write." CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
   </" OY_TOP_INTERNAL ">\n"
