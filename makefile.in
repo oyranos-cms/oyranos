@@ -22,6 +22,7 @@ LIB_CMM_END = $(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
 CMMS = \
 	$(TARGET)_lcms$(OY_MODULE_NAME) \
+	$(TARGET)_lraw$(OY_MODULE_NAME) \
 	$(TARGET)_oyra$(OY_MODULE_NAME) \
 	$(TARGET)_oydi$(OY_MODULE_NAME) \
 	$(TARGET)_oyX1$(OY_MODULE_NAME)
@@ -33,13 +34,15 @@ LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
 LIB_CMM_oycu = $(LIB_CMM_START)_oycu$(LIB_CMM_END)
 LIB_CMM_oydi = $(LIB_CMM_START)_oydi$(LIB_CMM_END)
 LIB_CMM_lcms = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
+LIB_CMM_lraw = $(LIB_CMM_START)_lraw$(LIB_CMM_END)
 LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
 LIBS_CMM = \
 	$(LIB_CMM_oyIM) \
 	$(LIB_CMM_oydi) \
 	$(LIB_CMM_oyX1) \
 	$(LIB_CMM_oyra) \
-	$(LIB_CMM_lcms)
+	$(LIB_CMM_lcms) \
+	$(LIB_CMM_lraw)
 
 
 #ifdef $(X11)
@@ -107,6 +110,8 @@ CFILES_ALPHA = \
 
 CFILES_CMM_lcms = \
 	modules/$(TARGET)_cmm_lcms.c
+CPPFILES_CMM_lraw = \
+	modules/$(TARGET)_cmm_lraw.cpp
 CFILES_CMM_oydi = \
 	modules/$(TARGET)_cmm_oydi.c
 CFILES_CMM_oyX1 = \
@@ -122,8 +127,11 @@ CFILES_CMM_oyIM = \
 	modules/$(TARGET)_cmm_oyIM_icc.c \
 	modules/$(TARGET)_cmm_oyIM_profile.c
 CFILES_MODULES = \
-	$(CFILES_CMM_lcms) $(CFILES_CMM_oydi) $(CFILES_CMM_oyra) \
+	$(CFILES_CMM_lcms) $(CFILES_CMM_raw) \
+	$(CFILES_CMM_oydi) $(CFILES_CMM_oyra) \
 	$(CFILES_CMM_oycu) $(CFILES_CMM_oyIM)
+CPPFILES_MODULES = \
+	$(CPPFILES_CMM_lraw)
 CHEADERS_MODULES = \
 	modules/$(TARGET)_cmm_oyIM.h \
 	modules/$(TARGET)_cmm_oyra.h
@@ -215,7 +223,8 @@ TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
 		$(CXXFILES_FLTK)
 SOURCES =  \
-		$(TOP_SOURCES) $(CFILES_MODULES) $(CFILES_MODULES_DEVICES)
+		$(TOP_SOURCES) \
+		$(CFILES_MODULES) $(CPPFILES_MODULES) $(CFILES_MODULES_DEVICES)
 
 # we need these files to generate explicite targets for out of tree builds
 COBJECTS = \
@@ -229,11 +238,13 @@ COBJECTS = \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	tests/test_oyranos.o test.o
-CPPOBJECTS =	test2.o $(CPPFILES)
+CPPOBJECTS =	test2.o \
+	$(CMM_lraw_OBJECTS)
 CXXOBJECTS =	$(CXXFILES) $(CXXFILES_FLTK)
 
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
+CMM_lraw_OBJECTS = $(CPPFILES_CMM_lraw:.cpp=.o)
 CMM_oydi_OBJECTS = $(CFILES_CMM_oydi:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
 CMM_oycu_OBJECTS = $(CFILES_CMM_oycu:.c=.o)
@@ -246,6 +257,7 @@ FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 CLEAN_OBJECTS = $(OBJECTS) \
 	$(MONI_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
+	$(CMM_lraw_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
 	$(CMM_oycu_OBJECTS) \
@@ -258,6 +270,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 
 SUB_OBJECTS = \
 	$(CMM_lcms_OBJECTS) \
+	$(CMM_lraw_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
 	$(CMM_oycu_OBJECTS) \
@@ -343,6 +356,16 @@ $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
+$(LIB_CMM_lraw): $(CMM_lraw_OBJECTS)
+	echo Linking $@ ...
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	-o $@ \
+	$(CMM_lraw_OBJECTS) $(LRAW_LIBS) $(MODULE_LDLIBS)
+	$(RM)  lib$(TARGET)_lraw$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_lraw$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_lraw$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_lraw$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_CMM_oydi): $(CMM_oydi_OBJECTS)
 	echo Linking $@ ...
@@ -866,13 +889,13 @@ cdepend:
 	echo "#nicht editieren/dont edit - automatisch generiert" >> cobjects
 	echo "" >> cobjects
 	for i in $(COBJECTS); do \
-	  echo "$${i}:" >> cobjects; \
+	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.c/ >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
 	  echo '	$$(CC) -I./ -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.c' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 	for i in $(CPPOBJECTS); do \
-	  echo "$${i}:" >> cobjects; \
+	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.cpp/ >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
 	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
 	  echo "" >> cobjects; \
@@ -950,7 +973,8 @@ copy_files:
 	  $(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
 	mkdir $(DESTDIR)/modules
 	cd $(SRCDIR) && \
-	  $(COPY) $(CFILES_MODULES) $(CHEADERS_MODULES) $(DESTDIR)/modules/
+	  $(COPY) $(CFILES_MODULES) $(CPPFILES_MODULES) $(CHEADERS_MODULES) \
+	  $(DESTDIR)/modules/
 	mkdir $(DESTDIR)/modules/devices
 	cd $(SRCDIR) && \
 	  $(COPY) $(CFILES_MODULES_DEVICES) $(DESTDIR)/modules/devices
