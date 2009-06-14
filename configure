@@ -804,6 +804,7 @@ fi
   DSO_LINKING=0; export DSO_LINKING
   ELEKTRA=0; export ELEKTRA
   #OYRANOS=0; export OYRANOS
+  LCMS=0; export LCMS
   LRAW=0; export LRAW
   LIBXML2=0; export LIBXML2
   LIBPNG=0; export LIBPNG

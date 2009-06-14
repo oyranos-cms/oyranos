@@ -299,6 +299,19 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
   return result;
 }
 
+const char ppm_write_extra_options[] = {
+ "\n\
+  <" OY_TOP_INTERNAL ">\n\
+   <" OY_DOMAIN_INTERNAL ">\n\
+    <" OY_TYPE_STD ">\n\
+     <" "file_read." CMM_NICK ">\n\
+      <filename></filename>\n\
+     </" "file_read." CMM_NICK ">\n\
+    </" OY_TYPE_STD ">\n\
+   </" OY_DOMAIN_INTERNAL ">\n\
+  </" OY_TOP_INTERNAL ">\n"
+};
+
 oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
                                              oyFLOAT, oyDOUBLE, 0};
 
@@ -391,12 +404,12 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
-  0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
+  0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
   {oyOBJECT_NAME_S, 0,0,0, "write_ppm", "Image[write_ppm]", "Write PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Write PPM", /* category */
-  0,   /* options */
+  ppm_write_extra_options,   /* options */
   0    /* opts_ui_ */
 };
 
@@ -968,6 +981,18 @@ int      oyraFilterPlug_ImageInputPPMRun (
   return 1;
 }
 
+const char ppm_read_extra_options[] = {
+ "\n\
+  <" OY_TOP_INTERNAL ">\n\
+   <" OY_DOMAIN_INTERNAL ">\n\
+    <" OY_TYPE_STD ">\n\
+     <" "file_read." CMM_NICK ">\n\
+      <filename></filename>\n\
+     </" "file_read." CMM_NICK ">\n\
+    </" OY_TYPE_STD ">\n\
+   </" OY_DOMAIN_INTERNAL ">\n\
+  </" OY_TOP_INTERNAL ">\n"
+};
 
 oyConnectorImaging_s oyra_imageInputPPM_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
@@ -1031,12 +1056,12 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
-  0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
+  0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
   {oyOBJECT_NAME_S, 0,0,0, "input_ppm", "Image[input_ppm]", "Input PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Read PPM", /* category */
-  0,   /* options */
+  ppm_read_extra_options,   /* options */
   0    /* opts_ui_ */
 };
 
@@ -1046,7 +1071,7 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
  *  A filter reading a PPM image.
  *
  *  @par Options:
- *  - "filename" - the file name to write to
+ *  - "filename" - the file name to read from
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/18 (Oyranos: 0.1.10)
