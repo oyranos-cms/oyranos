@@ -7,7 +7,8 @@ TARGET2 = xcmsevents/xcmsevents
 TARGET3 = colour_desktop/libcolour_desktop.so
 TARGET4 = image2pdf/image2pdf
 TARGET5 = dummy_device/liboyranos_dDev_cmm_module.so
-TARGETS = $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5)
+TARGET6 = dummy_filter/liboyranos_oydf_cmm_module.so
+TARGETS = $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6)
 OY_CFLAGS := $(shell (oyranos-config --cflags))
 OY_LDFLAGS := $(shell (oyranos-config --ldflags))
 FLTK_CFLAGS := $(shell (fltk-config --cflags))
@@ -57,6 +58,10 @@ $(TARGET4):	$(SRCDIR)$(TARGET4).c
 	-$(CC) $(CFLAGS) $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $< -o $@
 
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
+	echo Compiling $@ ...
+	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
+
+$(TARGET6):	$(SRCDIR)dummy_filter/oyranos_cmm_oydf.c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
 
