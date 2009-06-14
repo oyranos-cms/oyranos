@@ -30,6 +30,12 @@
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
 
+#ifdef __cplusplus
+extern "C" {
+namespace oyranos
+{
+#endif /* __cplusplus */
+
 /* --- Helpers  --- */
 
 /* --- static variables   --- */
@@ -76,5 +82,10 @@ void oyCheckDefaultDirectories_ ();
 /* search in profile path and in current path */
 char* oyFindProfile_ (const char* name);
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+} /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OYRANOS_IO_H */
