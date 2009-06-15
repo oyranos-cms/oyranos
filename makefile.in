@@ -34,7 +34,9 @@ LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
 LIB_CMM_oycu = $(LIB_CMM_START)_oycu$(LIB_CMM_END)
 LIB_CMM_oydi = $(LIB_CMM_START)_oydi$(LIB_CMM_END)
 LIB_CMM_lcms = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
+ifdef LRAW_LIBS
 LIB_CMM_lraw = $(LIB_CMM_START)_lraw$(LIB_CMM_END)
+endif
 LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
 LIBS_CMM = \
 	$(LIB_CMM_oyIM) \
@@ -238,8 +240,8 @@ COBJECTS = \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	tests/test_oyranos.o test.o
-CPPOBJECTS =	test2.o \
-	$(CMM_lraw_OBJECTS)
+CPPOBJECTS =	test2.o
+#	$(CMM_lraw_OBJECTS)
 CXXOBJECTS =	$(CXXFILES) $(CXXFILES_FLTK)
 
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
@@ -357,9 +359,13 @@ $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
+modules/oyranos_cmm_lraw.o:	$(SRCDIR)/modules/oyranos_cmm_lraw.cpp
+	echo Compiling modules/oyranos_cmm_lraw.o without "--pedantic" ...
+	$(CXX) -I./ -I$(SRCDIR) `echo $(CXXFLAGS) | sed s/--pedantic//g` -c -o $*.o $(SRCDIR)/$*.cpp
+
 $(LIB_CMM_lraw): $(CMM_lraw_OBJECTS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CXX) -I./ $(CXXFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
 	-o $@ \
 	$(CMM_lraw_OBJECTS) $(LRAW_LIBS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_lraw$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -897,7 +903,7 @@ cdepend:
 	for i in $(CPPOBJECTS); do \
 	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.cpp/ >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
-	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
+	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CXXFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 

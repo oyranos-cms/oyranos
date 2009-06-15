@@ -13,7 +13,6 @@
  *  @since    2009/06/14
  */
 
-
 #include "config.h"
 #include "oyranos_alpha.h"
 #include "oyranos_cmm.h"
@@ -23,7 +22,7 @@
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
 #include "oyranos_texts.h"
-#include <iconv.h>
+
 #include <cmath>
 #include <cstdarg>
 #include <cstdlib>
@@ -32,32 +31,32 @@
 
 #include <libraw/libraw.h>
 
-using namespace oyranos;
-
-#ifdef __cplusplus
-extern "C" {
-namespace oyranos
-{
-#endif /* __cplusplus */
-
-
-
 /* --- internal definitions --- */
 
 #define CMM_NICK "lraw"
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
-#define OY_LIBRAW_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "input_libraw"
+#define OY_LIBRAW_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "input_libraw-lite"
 
-int lrawCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
-oyMessage_f message = lrawCMMWarnFunc;
 
-extern oyCMMapi4_s   lraw_api4_image_input_libraw;
-extern oyCMMapi7_s   lraw_api7_image_input_libraw;
+#ifdef __cplusplus
+extern "C" {
+namespace oyranos {
+#endif /* __cplusplus */
+
+#include <iconv.h>
+
+int lrawCMMWarnFunc( int code, const oyranos::oyStruct_s * context, const char * format, ... );
+oyranos::oyMessage_f message = lrawCMMWarnFunc;
+
+extern oyranos::oyCMMapi4_s   lraw_api4_image_input_libraw;
+extern oyranos::oyCMMapi7_s   lraw_api7_image_input_libraw;
 
 #ifdef __cplusplus
 } /* extern "C" */
 } /* namespace oyranos */
 #endif /* __cplusplus */
+
+using namespace oyranos;
 
 
 /* --- implementations --- */
@@ -103,6 +102,7 @@ int                lrawCMMInit       ( )
  *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
+extern "C" {
 int lrawCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... )
 {
   char* text = (char*)calloc(sizeof(char), 4096);
@@ -136,6 +136,7 @@ int lrawCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
   free( text );
 
   return 0;
+}
 }
 
 /** Function lrawCMMMessageFuncSet
@@ -639,8 +640,8 @@ oyDATATYPE_e lraw_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};
 
 oyConnectorImaging_s lraw_imageInputRAW_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image libraw Socket"},
-  "//" OY_TYPE_STD "/image", /* connector_type */
+  {oyOBJECT_NAME_S, 0,0,0, (char*)"Img", (char*)"Image", (char*)"Image libraw Socket"},
+  (char*)"//" OY_TYPE_STD "/image", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   lraw_data_types,
   2, /* data_types_n; elements in data_types array */
@@ -702,7 +703,7 @@ oyCMMapi4_s   lraw_api4_image_input_libraw = {
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "input_libraw", "Image[input_libraw]", "Input libraw Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  {oyOBJECT_NAME_S, 0,0,0, (char*)"input_libraw-lite", (char*)"Image[input_libraw-lite]", (char*)"Input libraw Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Read cameraRAW", /* category */
   lraw_extra_options,   /* options */
   0    /* opts_ui_ */

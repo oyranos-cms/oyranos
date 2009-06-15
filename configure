@@ -780,7 +780,7 @@ if [ -n "$ECHO" ]; then
   ELEKTRA=1; export ELEKTRA
   #OYRANOS=1; export OYRANOS
   LCMS=1; export LCMS
-  LRAW=1; export LRAW
+  LRAW=2; export LRAW
   LIBXML2=1; export LIBXML2
   LIBPNG=2; export LIBPNG
   LIBTIFF=2; export LIBTIFF

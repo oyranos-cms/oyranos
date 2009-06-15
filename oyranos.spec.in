@@ -15,7 +15,8 @@ Requires:  libxml2 elektra liblcms
 
 
 %if 0%{?suse_version} > 0
-BuildRequires:     gcc-c++ gettext doxygen graphviz pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel liblcms-devel elektra-devel
+BuildRequires:     gcc-c++ gettext doxygen graphviz pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel liblcms-devel 
+#elektra-devel
 %endif
 %if 0%{?suse_version} > 910
 #BuildRequires: gcc-c++ gettext doxygen fltk-threaded fltk-threaded-devel xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel  pkgconfig libpng-devel libjpeg-devel
@@ -131,9 +132,9 @@ ldconfig
 %{_bindir}/%{name}-config
 %{_bindir}/%{name}-policy
 %{_libdir}/lib%{name}.so.*
-%{_libdir}/%{cmmsubpath}/lib%{name}_lcms_cmm_module.so*
-%{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module.so*
-%{_libdir}/%{metasubpath}/lib%{name}_oyIM_cmm_module.so*
+%{_libdir}/%{cmmsubpath}/lib%{name}_l*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module*
+%{_libdir}/%{metasubpath}/lib%{name}_oyIM_cmm_module*
 %{_mandir}/man1/%{name}-policy*
 %{_datadir}/mime/packages/*.xml
 %{pixmapdir}/oyranos_logo.*
@@ -165,8 +166,8 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
-%{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module.so*
-%{_libdir}/%{cmmsubpath}/lib%{name}_oydi_cmm_module.so*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oydi_cmm_module*
 %{_mandir}/man1/%{name}-monitor*
 
 %files monitor-nvidia

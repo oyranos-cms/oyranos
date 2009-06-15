@@ -312,7 +312,7 @@ if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
 fi
 
 if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
-  name="raw"
+  name="raw-lite"
   libname=$name
   minversion=0.7
   url="http://www.libraw.org"
@@ -333,7 +333,7 @@ if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
   else
     l=$libname
     rm -f tests/libtest$EXEC_END
-    $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    $CXX $CXXFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
     if [ -f tests/libtest ]; then
       HAVE_LIB=1
       echo "#define HAVE_$ID 1" >> $CONF_H
@@ -345,9 +345,9 @@ if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
   fi
   if [ $HAVE_LIB -eq 1 ]; then
     if [ "$version" != "" ]; then
-      echo_="$name $version                detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="$name $version           detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     else
-      echo_="$name                     detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="$name                detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
   else
     if [ $TESTER -eq 1 ]; then
