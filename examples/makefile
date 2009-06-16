@@ -21,7 +21,10 @@ LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
 CFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
 
-
+COMPIZ := $(shell (pkg-config --modversion compiz))
+ifndef COMPIZ
+  TARGET3 =
+endif
 UNAME := $(shell (uname -s))
 ifeq ($(strip $(UNAME)),Linux)
 X11 = -DHAVE_X11
@@ -29,14 +32,13 @@ endif
 
 .SILENT:
 
-all:	colour_desktop $(TARGETS)
+all:	$(TARGETS)
 	echo ... all done
 
-colour_desktop:
-	mkdir -p colour_desktop dummy_device image2pdf image_display xcmsevents
 	
 
 $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
+	mkdir -p image_display
 	echo Compiling $@ ...
 	-$(CPP) -DTARGET=\"$(TARGET)\" $(CFLAGS) $(FLTK_CFLAGS) $(X11) \
 	$(LDFLAGS) $(OY_LDFLAGS) $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
@@ -44,24 +46,29 @@ $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	fltk-config --post $@
 
 $(TARGET2):	$(SRCDIR)$(TARGET2).c
+	mkdir -p xcmsevents
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -lXcolor -lXmu $< -o $@
 
 $(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
+	mkdir -p colour_desktop
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -std=c99 -fPIC -shared $(LDFLAGS) $(OY_LDFLAGS) \
 	$(TARGET3_FLAGS) -lXcolor $< -o $@
 
 $(TARGET4):	$(SRCDIR)$(TARGET4).c
+	mkdir -p image2pdf
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $< -o $@
 
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
+	mkdir -p dummy_device
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
 
 $(TARGET6):	$(SRCDIR)dummy_filter/oyranos_cmm_dFil.c
+	mkdir -p dummy_filter
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
 
