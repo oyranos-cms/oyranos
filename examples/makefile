@@ -21,6 +21,10 @@ LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
 CFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
 
+CAIRO := $(shell (pkg-config --modversion cairo-pdf))
+ifndef CAIRO
+  TARGET4 =
+endif
 COMPIZ := $(shell (pkg-config --modversion compiz))
 ifndef COMPIZ
   TARGET3 =
