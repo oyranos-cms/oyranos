@@ -1142,6 +1142,10 @@ struct oyCMMapi8_s {
 };
 
 
+/* implemented filter functions */
+int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket );
+
 #ifdef __cplusplus
 } /* extern "C" */
 } /* namespace oyranos */

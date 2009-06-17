@@ -477,55 +477,7 @@ oyPointer  oyraFilterNode_ImageRootContextToMem (
 int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int x = 0, y = 0, n = 0;
-  int result = 0, error = 0;
-  int is_allocated = 0;
-  oyPointer * ptr = 0;
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyImage_s * image = (oyImage_s*)socket->data;
-
-  /* Do not work on non existent data. */
-  if(!image || !ticket->output_image)
-    return result;
-
-  /* Set a unknown output image dimension to something appropriate. */
-  if(!ticket->output_image->width && !ticket->output_image->height)
-  {
-    ticket->output_image->width = image->width;
-    ticket->output_image->height = image->height;
-    oyImage_SetCritical( ticket->output_image, image->layout_[0], 0, 0 );
-  }
-
-  x = ticket->start_xy[0];
-  y = ticket->start_xy[1];
-
-  result = oyPixelAccess_CalculateNextStartPixel( ticket, requestor_plug);
-
-  if(result != 0)
-    return result;
-
-  if(x < image->width &&
-     y < image->height &&
-     ticket->pixels_n)
-  {
-    n = ticket->pixels_n;
-    if(n == 1)
-      ptr = image->getPoint( image, x, y, 0, &is_allocated );
-
-    result = !ptr;
-
-  } else {
-
-    /* adapt the rectangle of interesst to the new image dimensions */
-    oyRectangle_s new_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
-    double correct = ticket->output_image->width / (double) image->width;
-    oyRectangle_SetByRectangle( &new_roi, ticket->output_image_roi );
-    new_roi.width *= correct;
-    new_roi.height *= correct;
-    error = oyImage_FillArray( image, &new_roi, 1, &ticket->array, 0, 0 );
-  }
-
-  return result;
+  return oyFilterPlug_ImageRootRun( requestor_plug, ticket );
 }
 
 
