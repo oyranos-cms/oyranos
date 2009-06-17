@@ -44,6 +44,15 @@
 
 #include <Xcolor.h>
 
+#define OY_COMPIZ_VERSION COMPIZ_VERSION_MAJOR * 10000 + COMPIZ_VERSION_MINOR * 100 + COMPIZ_VERSION_MICRO
+#if OY_COMPIZ_VERSION < 800
+#define oyCompLogMessage(disp_, plug_in_name, debug_level, format_, ... ) \
+        compLogMessage( disp_, plug_in_name, debug_level, format_, __VA_ARGS__ )
+#else
+#define oyCompLogMessage(disp_, plug_in_name, debug_level, format_, ... ) \
+        compLogMessage( plug_in_name, debug_level, format_, __VA_ARGS__ )
+#endif
+
 /* Uncomment the following line if you want to enable debugging output */
 //#define PLUGIN_DEBUG 1
 
@@ -303,7 +312,7 @@ static int getProfileShader(CompScreen *s, CompTexture *texture, int param, int 
   ps->unit = unit;
 
 #if defined(PLUGIN_DEBUG)
-  compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+  oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
                   DBG_STRING "Shader compiled: %d/%d/%d", DBG_ARGS,
                   ps->function, param, unit);
 #endif
@@ -432,7 +441,7 @@ static void updateWindowRegions(CompWindow *w)
     pw->stencil_id = 0;
 
 #if defined(PLUGIN_DEBUG)
-  compLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d", count, pw->stencil_id);
+  oyCompLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d", count, pw->stencil_id);
 #endif
 
   pw->absoluteWindowRectangleOld = oyRectangle_NewWith( 0,0, w->width, w->height, 0 );
@@ -461,7 +470,7 @@ static void updateWindowOutput(CompWindow *w)
   pw->output = fetchProperty(d->display, w->id, pd->netColorTarget, XA_STRING, &nBytes, False);
 
 #if defined(_NET_COLOR_DEBUG)
-  compLogMessage(d, "colour_desktop", CompLogLevelDebug, "Updated window output, target is %s", pw->output);
+  oyCompLogMessage(d, "colour_desktop", CompLogLevelDebug, "Updated window output, target is %s", pw->output);
 #endif
 
   if(!pw->nRegions)
@@ -550,7 +559,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
   n = oyConfigs_Count( devices );
 #if defined(PLUGIN_DEBUG)
-  compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+  oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
                   DBG_STRING "Oyranos monitor \"%s\" devices found: %d",
                   DBG_ARGS, DisplayString( s->display->display ), n);
 #endif
@@ -564,14 +573,14 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
     o = oyConfig_Find( device, "device_rectangle" );
     if( !o )
     {
-      compLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                       DBG_STRING"monitor rectangle request failed", DBG_ARGS);
       return;
     }
     r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
     if( !r )
     {
-      compLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                       DBG_STRING"monitor rectangle request failed", DBG_ARGS);
       return;
     }
@@ -588,14 +597,14 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
       strcpy( ps->ccontexts[i].name, device_name );
 
 #if defined(PLUGIN_DEBUG)
-      compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
                       DBG_STRING "  screen output found %s %s",
                       DBG_ARGS, ps->ccontexts[i].name, oyRectangle_Show(r) );
 #endif
 
     } else
     {
-       compLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
        DBG_STRING "oyDevicesGet list answere included no device_name",DBG_ARGS);
 
        sprintf( num, "%d", (int)i );
@@ -615,7 +624,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 #ifdef DEBUG  /* expensive lookup */
       const char * tmp = oyProfile_GetFileName( ps->ccontexts[i].oy_profile, 0 );
       
-      compLogMessage(s->display, "colour_desktop", CompLogLevelInfo,
+      oyCompLogMessage(s->display, "colour_desktop", CompLogLevelInfo,
              DBG_STRING "Output %s: extracted profile from Oyranos: %s",
              DBG_ARGS, ps->ccontexts[i].name,
              (strrchr(tmp, OY_SLASH_C)) ? strrchr(tmp, OY_SLASH_C) + 1 : tmp );
@@ -646,7 +655,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
       if (ps->ccontexts[i].cc == NULL)
       {
-        compLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+        oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                       DBG_STRING "no conversion created for %s",
                       DBG_ARGS, ps->ccontexts[i].name);
         continue;
@@ -680,7 +689,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
       oyImage_Release( &image_out );
 
     } else {
-      compLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
                       DBG_STRING "Output %s: omitting sRGB->sRGB conversion",
                       DBG_ARGS, ps->ccontexts[i].name);
       ps->ccontexts[i].oy_profile = 0; /*cmsCreate_sRGBProfile();*/
@@ -691,7 +700,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
 
 #if defined(PLUGIN_DEBUG)
-  compLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+  oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
                   DBG_STRING "Updated screen outputs, %d total now %d",
                   DBG_ARGS, ps->nCcontexts, updateWindows);
 #endif
@@ -1018,7 +1027,7 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
 #endif
 
   if(w->screen->nOutputDev != ps->nCcontexts)
-    compLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+    oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                     DBG_STRING "Need to update screen outputs, %d / %d",
                     DBG_ARGS, ps->nCcontexts, w->screen->nOutputDev );
 
@@ -1158,7 +1167,7 @@ static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *
   if(n && data)
     old_pid = *((pid_t*)data);
   if(old_pid)
-    compLogMessage( d, "colour_desktop", CompLogLevelWarn,
+    oyCompLogMessage( d, "colour_desktop", CompLogLevelWarn,
                     DBG_STRING "\n!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
                     "Eigther there was a previous crash or your setup can be double colour corrected.",
                     DBG_ARGS, old_pid );
