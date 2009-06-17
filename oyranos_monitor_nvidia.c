@@ -265,7 +265,8 @@ main(int argc, char **argv)
       }
     }
 
-    oyDeAllocateFunc_ (data);
+    if(data)
+      oyDeAllocateFunc_ (data);
   }
 
   if( monitors < number_of_screens )
