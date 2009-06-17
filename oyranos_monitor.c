@@ -380,7 +380,7 @@ oyGetMonitorInfo_                 (const char* display_name,
       (!prop || (prop && prop->size != 128)) )
   {
     int error = 0;
-    char * txt = malloc(1024); txt[0] = 0;
+    char * txt = oyAllocateFunc_(1024); txt[0] = 0;
 
     /* test twinview edid */
     if(oy_debug)
