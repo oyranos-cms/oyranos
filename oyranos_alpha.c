@@ -22896,7 +22896,7 @@ int                oyConversion_RunPixels (
   filter = conversion->out_->core;
   image = oyConversion_GetImage( conversion, OY_OUTPUT );
 
-  result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
+  result = oyImage_FillArray( image, pixel_access->output_image_roi, 0x02,
                               &pixel_access->array, 0, 0 );
   error = ( result != 0 );
 
@@ -22920,7 +22920,7 @@ int                oyConversion_RunPixels (
     for(i = 0; i < n; ++i)
     {
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
-      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
+      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0x02,
                                    &pixel_access->array, 0, 0 ); OY_ERR
 
       if(error != 0 &&
@@ -22944,14 +22944,27 @@ int                oyConversion_RunPixels (
     }
   }
 
+  /* Write the data to the output image.
+   *
+   * The oyPixelAccess_s job ticket contains a oyArray2d_s object called array
+   * holding the in memory data. After the job is done the output images
+   * pixel_data pointer is compared with the job tickets array pointer. If 
+   * they are the same it is assumed that a observer of the output image will
+   * see the same processed data, otherwise oyPixelAccess_s::array must be 
+   * copied to the output image.
+   *
+   * While the design of having whatever data storage in a oyImage_s is very 
+   * flexible, the oyPixelAccess_s::array's in memory buffer is not.
+   * Users with very large data sets have to process the data in chunks and
+   * the oyPixelAccess_s::array allocation can remain constant.
+   */
+  if((oyPointer)image->pixel_data != (oyPointer)pixel_access->array ||
+     image != pixel_access->output_image)
+    result = oyImage_ReadArray( image, pixel_access->output_image_roi,
+                                       pixel_access->array, 0 );
+
   if(tmp_ticket)
-  {
-    /* write the data to the output image */
-    if(image != pixel_access->output_image)
-      result = oyImage_ReadArray( image, pixel_access->output_image_roi,
-                                         pixel_access->array, 0 );
     oyPixelAccess_Release( &pixel_access );
-  }
 
   oyImage_Release( &image );
 

@@ -1867,12 +1867,13 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 #endif
 extern ckdb KDB * oy_handle_;
 
+double d[6] = {0.5,0.5,0.5,0,0,0};
+
 oyTESTRESULT_e testCMMnmRun ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   oyNamedColour_s * c = 0;
   oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, NULL );
-  double d[6] = {0.5,0.5,0.5,0,0,0};
   int error = 0, l_error = 0,
       i,n = 10;
 
