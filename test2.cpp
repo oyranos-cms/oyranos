@@ -1338,7 +1338,7 @@ oyTESTRESULT_e testCMMConfigsListing ()
 
   /* add list call to backend arguments */
   error = oyOptions_SetFromText( &options_list,
-                                 "//" OY_TYPE_STD "/config/list", "true",
+                                 "//" OY_TYPE_STD "/config/command", "list",
                                  OY_CREATE_NEW );
 
   fprintf( stdout, "oyConfigs_FromDomain() \"list\" call:\n" );
@@ -1390,8 +1390,8 @@ oyTESTRESULT_e testCMMConfigsListing ()
     {
       /* set a general request */
       error = oyOptions_SetFromText( &options,
-                                     "//" OY_TYPE_STD "/config/properties",
-                                     "true", OY_CREATE_NEW );
+                                     "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
 
       /* set the device_name */
       o = oyOptions_Get( options_devices, l );

@@ -371,8 +371,8 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
   /* obtain device informations, including geometry and ICC profiles
      from the according Oyranos backend */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/list",
-                                 "true", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                 "list", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options,
                                  "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
