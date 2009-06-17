@@ -10306,7 +10306,11 @@ OYAPI int  OYEXPORT
     /* 2. query the full device information */
     error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
-    /* 2.1 get device_name */
+    /* 2.1 for no profile name: skip the "setup" call */
+    if(!profile_name)
+      return error;
+
+    /* 2.2 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. setup the device through the backend */
@@ -10588,7 +10592,8 @@ OYAPI int  OYEXPORT
   if(error != 0 && !*profile)
     l_error = oyDeviceSetup( device ); OY_ERR
 
-  l_error = oyDeviceAskProfile( device, profile ); OY_ERR
+  if(error == 0) 
+    l_error = oyDeviceAskProfile( device, profile ); OY_ERR
 
   /** As a last means oyASSUMED_WEB is delivered. */
   if(!*profile)
