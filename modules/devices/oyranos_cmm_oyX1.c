@@ -328,7 +328,7 @@ int            oyX1Configs_FromPattern (
 
     /** 3.  handle the actual call */
     /** 3.1 "list" call */
-    if(oyOptions_FindString( options, "command", "list" ) ||
+    if(oyOptions_FindString( options, "command", "list" ) &&
        (!oyOptions_FindString( options, "command", "properties" ) &&
         !oyOptions_FindString( options, "command", "setup" ) &&
         !oyOptions_FindString( options, "command", "unset" ))
@@ -379,9 +379,9 @@ int            oyX1Configs_FromPattern (
           /** Warn and return issue on not found profile. */
           if(!size || !data)
           {
-            message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-            "Could not obtain _ICC_PROFILE(_xxx) information for ",OY_DBG_ARGS_,
-                     "%s", texts[i]);
+            message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                     "Could not obtain _ICC_PROFILE(_xxx) information for %s",
+                     OY_DBG_ARGS_, texts[i] );
             error = -1;
           } else
           {
