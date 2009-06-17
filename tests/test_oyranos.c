@@ -734,7 +734,8 @@ oyTESTRESULT_e testMonitor ()
         "no monitor profile from Oyranos DB" );
       }
 
-      p2 = oyProfile_FromFile( text, 0, 0 );
+      if(text)
+        p2 = oyProfile_FromFile( text, 0, 0 );
 
       if(text &&
          strcmp( oyNoEmptyString_m_(oyProfile_GetText( p2,oyNAME_DESCRIPTION )),

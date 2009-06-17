@@ -11254,6 +11254,8 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
 
   if (!s->block_)
   {
+    WARNc1_S( "%s", "no data" )
+    return 0;
   }
 
   /* Comparision strategies
