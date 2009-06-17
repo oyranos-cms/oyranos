@@ -319,7 +319,8 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
       oyRectangle_SetByRectangle( old_window_rectangle, window_rectangle );
     }
 
-    XClearWindow( display, w );
+    /*XClearWindow( display, w );*/
+    XCloseDisplay( display );
     oyRectangle_Release( &display_rectangle );
     oyRectangle_Release( &window_rectangle );
     oyRectangle_Release( &old_window_rectangle );
