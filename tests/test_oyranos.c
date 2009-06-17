@@ -590,8 +590,8 @@ oyTESTRESULT_e testMonitor ()
 
 
   /* get all monitors */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/list",
-                                 "true", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                 "list", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   error = oyDevicesGet( 0, "monitor", options, &devices );
@@ -631,8 +631,8 @@ oyTESTRESULT_e testMonitor ()
 
 
 #if 0
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD"/config/properties",
-                                 "true", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD"/config/command",
+                                 "properties", OY_CREATE_NEW );
 #endif
 
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
