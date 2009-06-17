@@ -375,7 +375,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   int height = 0;
   int spp = 0;         /* samples per pixel */
   int byteps = 1;      /* byte per sample */
-  double maxval = 0; 
+  double maxval = 255; 
     
   LibRaw rip;
   libraw_processed_image_t * image_rgb = 0;
@@ -385,7 +385,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
      requestor_plug->remote_socket_->data)
   {
     socket = requestor_plug->remote_socket_;
-    error = lrawFilterPlug_ImageInputRAWRun( requestor_plug, ticket );
+    error = oyFilterPlug_ImageRootRun( requestor_plug, ticket );
 
     return error;
 
@@ -419,6 +419,9 @@ int      lrawFilterPlug_ImageInputRAWRun (
     return 1;
   }
 
+  error = rip.unpack();
+  error = rip.dcraw_process();
+
   image_rgb = rip.dcraw_make_mem_image();
 
   if(image_rgb)
@@ -431,6 +434,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
     {
       data_type = oyUINT16;
       byteps = 2;
+      maxval = 65535;
     }
 
   } else
@@ -442,15 +446,19 @@ int      lrawFilterPlug_ImageInputRAWRun (
     {
       case 1:
            profile_type = oyASSUMED_GRAY;
+           type = 5;
            break;
       case 2:
            profile_type = oyASSUMED_GRAY;
+           type = 5;
            break;
       case 3:
            profile_type = oyASSUMED_RGB;
+           type = 6;
            break;
       case 4:
            profile_type = oyASSUMED_RGB;
+           type = 6;
            break;
     }
 
@@ -470,9 +478,10 @@ int      lrawFilterPlug_ImageInputRAWRun (
   oyAllocHelper_m_( buf, uint8_t, mem_n, 0, return 1);
 
   /* the following code is almost completely taken from ku.b's ppm CP plug-in */
+  /* ... and them copied from the input_ppm Oyranos filter */
   {
     int h, j_h = 0, p, n_samples, n_bytes;
-    int byte_swap = !oyBigEndian();
+    int byte_swap = 0; /*!oyBigEndian();*/
     unsigned char *d_8 = 0;
     unsigned char *src = image_rgb->data;
 
