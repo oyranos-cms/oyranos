@@ -15864,7 +15864,8 @@ oyImage_s *    oyImage_Create         ( int               width,
   }
   s->profile_ = oyProfile_Copy( profile, 0 );
   if(s->width != 0.0)
-    s->viewport = oyRectangle_NewWith( 0, 0, 1.0, s->height/s->width, s->oy_ );
+    s->viewport = oyRectangle_NewWith( 0, 0, 1.0,
+                                   (double)s->height/(double)s->width, s->oy_ );
 
   error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout );
 
