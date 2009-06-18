@@ -16327,7 +16327,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
         {
           if(!a->array2d[ay])
             oyAllocHelper_m_( a->array2d[ay], 
-                              unsigned char, len,
+                              unsigned char,
+                              a_orig_width ? a_orig_width * size : len,
                               a->oy_ ? a->oy_->allocateFunc_ : 0,
                               error = 1; break );
 
@@ -16352,6 +16353,20 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
       if(error) break;
     }
+
+    /* allocate a complete array */
+    if(do_copy & 0x01)
+    for( ; i < a_orig_height; ++i )
+    {
+      ay = array_rectangle->y + i;
+
+      if(!a->array2d[ay])
+            oyAllocHelper_m_( a->array2d[ay], 
+                              unsigned char, len,
+                              a->oy_ ? a->oy_->allocateFunc_ : 0,
+                              error = 1; break );
+    }
+
   } else
   if(image->getPoint)
   {
