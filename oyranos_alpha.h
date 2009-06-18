@@ -2472,23 +2472,23 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
  *  @extends oyStruct_s
  *
  *  A struct to control pixel access. It is a kind of flexible pixel 
- *  iterator. The order or pattern of access is defined by the array_xy and
+ *  iterator. The order or pattern of access is defined by the [array_xy and]
  *  start_[x,y] variables.
  *
- *  The index variable specifies the iterator position in the array_xy index
- *  array.
- *
  *  oyPixelAccess_s is like a job ticket. Goal is to maintain all intermediate
- *  and processing dependend memory references here in this structure.
+ *  and processing dependend memory references in this structure.
  *
- *  pixels_n says how many pixels are to be processed for the cache.
+ * [The index variable specifies the iterator position in the array_xy index
+ *  array.]
+ *
+ * [pixels_n says how many pixels are to be processed for the cache.
  *  pixels_n is used to calculate the buffers located with getBuffer
  *  and freeBuffer.
  *  The amount of pixel specified in pixels_n must be processed by
  *  each filter, because other filters are relying on a properly filled cache.
- *  This variable also determins the size of the next iteration.
+ *  This variable also determins the size of the next iteration.]
  *
- *  The relation of pixels_n to array_xy and start_[x,y] is that a
+ * [The relation of pixels_n to array_xy and start_[x,y] is that a
  *  minimum of pixels_n must be processed by starting with start_[x,y]
  *  and processing pixels_n through array_xy. array_xy specifies
  *  the offset pixel distance to a next pixel in x and y directions. In case
@@ -2498,7 +2498,7 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
  *  Thus a line iterator behaviour can be specified by simply setting 
  *  array_xy = {1,0}, for a advancement in x direction of one, array_n = 1, 
  *  as we need just this type of advancement and pixels_n = image_width, 
- *  for saying how often the pattern descibed in array_xy has to be applied.
+ *  for saying how often the pattern descibed in array_xy has to be applied.]
  *
  *  Handling of pixel access is to be supported by a filter in a function of
  *  type oyCMMFilter_GetNext_f() in oyCMMapi4_s::oyCMMConnector_GetNext().
@@ -2516,16 +2516,16 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
  *    Reads a bit fixed. How can filters decide upon the input size?
  *    However, if a filter works on more than one dimension, it can
  *    opt to get its area directly from a input mediator.
- *  - Provide a opaque output and input area and request to copy by each filter.
+ *  -[Provide a opaque output and input area and request to copy by each filter.
  *    Filters would overwrite previous manipulations or some mechanism of
- *    swapping the input with the output side is needed.
+ *    swapping the input with the output side is needed.]
  *  - Some filters want different input and output areas. They see the mediator
  *    as the previous, or the input, element in the graph.
  *  - Will the mediators always be visible in order to get all informations
  *    about the image? During setting up the graph this should be handled.
  *
  *  Access to input and output buffers:
- *  - The output oyArray2d_s is to be provided for 1D colour transforms.
+ *  - The output oyArray2d_s is to be reserved only.
  *  - The input oyArray2d_s is to be provided for multi dimensional
  *    manipulators directly from the input mediator.
  *
@@ -2601,8 +2601,8 @@ struct oyPixelAccess_s {
   int32_t        * array_xy;           /**< @deprecated array of shifts, e.g. 1,0,2,0,1,0 */
   int              array_n;            /**< @deprecated the number of points in array_xy */
 
-  int              index;              /**< to be advanced by the last caller */
-  size_t           pixels_n;           /**< pixels to process/cache at once; should be set to 0 or 1 */
+  int              index;              /**< @deprecated to be advanced by the last caller */
+  size_t           pixels_n;           /**< @deprecated pixels to process/cache at once; should be set to 0 or 1 */
 
   int32_t          workspace_id;       /**< a ID to assign distinct resources to */
   oyStruct_s     * user_data;          /**< user data, e.g. for error messages*/
@@ -2615,7 +2615,7 @@ struct oyPixelAccess_s {
                                             output_image (of the last filter).*/
   oyImage_s      * output_image;       /**< the image which issued the request*/
   oyFilterGraph_s * graph;             /**< the graph to process */
-  oyOptions_s    * request_queue;      /**< requests to resolve */
+  oyOptions_s    * request_queue;      /**< messaging; requests to resolve */
 };
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
