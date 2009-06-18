@@ -313,6 +313,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     oyRectangle_s new_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
     double correct = ticket->output_image->width / (double) image->width;
     oyRectangle_SetByRectangle( &new_roi, ticket->output_image_roi );
+    /* @todo x and y offset */
     new_roi.width *= correct;
     new_roi.height *= correct;
     error = oyImage_FillArray( image, &new_roi, 1, &ticket->array, 0, 0 );

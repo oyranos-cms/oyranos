@@ -15474,6 +15474,121 @@ OYAPI int  OYEXPORT
 }
 #endif
 
+/** @internal
+ *  Function oyArray2d_ToPPM_
+ *  @memberof oyArray2d_s
+ *  @brief   dump array to a netppm file 
+ *
+ *  @param[in]     array               the array to fill read from
+ *  @param[in]     file_name           rectangle of interesst in samples
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/06/18 (Oyranos: 0.1.10)
+ *  @date    2009/06/18
+ */
+int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
+                                       const char        * file_name )
+{
+  oyArray2d_s * s = array;
+  int error = 0, i,j, len, shift;
+  size_t size,
+         byteps;
+  char * buf,
+       * data;
+
+  if(!array || !file_name || !file_name[0])
+    return 1;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+
+  if(!error)
+  {
+    if(s->array2d[0] == NULL)
+    {
+      printf("oyArray2d_s[%d] is not yet used/allocated\n",
+             oyObject_GetId(s->oy_));
+      return 1;
+    }
+
+    byteps = oySizeofDatatype(s->t); /* byte per sample */
+    size = s->width * s->height * byteps;
+    buf = oyAllocateFunc_(size + 1024);
+
+    if(buf && size)
+    {
+      switch(s->t) {
+      case oyUINT8:     /*  8-bit integer */
+           sprintf( buf, "P5\n#%s:%d oyArray2d_s[%d]\n%d %d\n255\n", 
+                    __FILE__,__LINE__, oyObject_GetId(s->oy_),
+                    s->width, s->height );
+           break;
+      case oyUINT16:    /* 16-bit integer */
+      case oyUINT32:    /* 32-bit integer */
+           sprintf( buf, "P5\n#%s:%d oyArray2d_s[%d]\n%d %d\n65535\n", 
+                    __FILE__,__LINE__, oyObject_GetId(s->oy_),
+                    s->width, s->height );
+           break;
+      case oyHALF:      /* 16-bit floating point number */
+      case oyFLOAT:     /* IEEE floating point number */
+      case oyDOUBLE:    /* IEEE double precission floating point number */
+           sprintf( buf, "Pf\n#%s:%d oyArray2d_s[%d]\n%d %d\n%s\n", 
+                    __FILE__,__LINE__, oyObject_GetId(s->oy_),
+                    s->width, s->height,
+                    oyBigEndian()? "1.0" : "-1.0" );
+           break;
+      default: return 1;
+      }
+
+      len = oyStrlen_(buf);
+      data = &buf[len];
+      shift = oyBigEndian() ? 0 : 1;
+
+      switch(s->t) {
+      case oyUINT8:     /*  8-bit integer */
+      case oyFLOAT:     /* IEEE floating point number */
+           for(i = 0; i < s->height; ++i)
+             memcpy( &data[i * s->width * byteps],
+                     s->array2d[i],
+                     s->width * byteps );
+           break;
+      case oyUINT16:    /* 16-bit integer */
+           for(i = 0; i < s->height; ++i)
+             memcpy( &data[i * s->width * byteps + shift],
+                     s->array2d[i],
+                     s->width * byteps );
+           break;
+      case oyUINT32:    /* 32-bit integer */
+           for(i = 0; i < s->height; ++i)
+             for(j = 0; j < s->width; ++j)
+               ((uint16_t*)&data[i*s->width*2])[j] =
+                                       *((uint32_t*)&s->array2d[i][j*byteps]) /
+                                                     65537;
+           break;
+      case oyHALF:      /* 16-bit floating point number */
+           for(i = 0; i < s->height; ++i)
+             for(j = 0; j < s->width; ++j)
+               ((uint16_t*)&data[i*s->width*2])[j] = 
+                                       *((uint16_t*)&s->array2d[i][j*byteps]);
+           break;
+      case oyDOUBLE:    /* IEEE double precission floating point number */
+           for(i = 0; i < s->height; ++i)
+             for(j = 0; j < s->width; ++j)
+               ((float*)&data[i*s->width*2])[j] =
+                                       *((double*)&s->array2d[i][j*byteps]);
+           break;
+      default: return 1;
+      }
+
+      error = oyWriteMemToFile_( file_name, buf, len + size );
+    }
+
+    if(buf) oyDeAllocateFunc_(buf);
+      size = 0;
+  }
+
+  return error;
+}
+
 /**
  *  @internal
  *  Function oyImage_CombinePixelLayout2Mask_
