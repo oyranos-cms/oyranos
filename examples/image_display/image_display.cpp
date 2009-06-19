@@ -92,7 +92,9 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
 class Fl_Oy_Box : public Fl_Box
 {
   oyConversion_s * context;
+  oyPixelAccess_s * ticket;
   oyRectangle_s * old_display_rectangle;
+  oyRectangle_s * old_roi_rectangle;
 
   void draw()
   {
@@ -109,6 +111,7 @@ class Fl_Oy_Box : public Fl_Box
       int channels = 0;
       oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
       oyRectangle_s * display_rectangle = 0;
+      oyRectangle_s window_rectangle = { oyOBJECT_RECTANGLE_S, 0,0,0 };
       oyOptions_s * image_tags = 0;
       oyDATATYPE_e data_type = oyUINT8;
       oyPixel_t pt = 0;
@@ -179,9 +182,40 @@ class Fl_Oy_Box : public Fl_Box
       oyOptions_Release( &image_tags );
       oyRectangle_SetGeo( display_rectangle, X,Y,W,H );
 
+      if(!ticket)
+      {
+        oyFilterPlug_s * plug = oyFilterNode_GetPlug( context->out_, 0 );
+        ticket = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
+        //ticket->output_image_roi = oyRectangle_NewWith( 0,0,0,0, 0 );
+      }
+
+#if 0
+      oyRectangle_SetGeo( ticket->output_image_roi, dx, dy, W, H );
+      oyRectangle_Scale( ticket->output_image_roi, 1.0/image->width );
+      oyRectangle_SetGeo( &window_rectangle, x(), y(), W, H );
+      oyRectangle_Scale( &window_rectangle, 1.0/image->width );
+      if(ticket->output_image_roi->width > image->viewport->width)
+        ticket->output_image_roi->width = image->viewport->width;
+      if(ticket->output_image_roi->height > image->viewport->height)
+        ticket->output_image_roi->height = image->viewport->height;
+      oyRectangle_MoveInside( ticket->output_image_roi, image->viewport );
+      oyRectangle_Trim( ticket->output_image_roi, &window_rectangle );
+#else
+      /* take care to not go over the borders */
+      if(dx < W - image->width - 1) dx = W - image->width + 1;
+      if(dy < H - image->height - 1) dy = H - image->height + 1;
+      if(dx > 0) dx = 0;
+      if(dy > 0) dy = 0;
+      ticket->start_xy[0] = -dx;
+      ticket->start_xy[1] = -dy;
+#endif
+
       /* decide wether to refresh the cached rectangle of our static image */
       if( context->out_ &&
-          !oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) )
+          (!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) ||
+           !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle )||
+           ticket->start_xy[0] != ticket->start_xy_old[0] ||
+           ticket->start_xy[1] != ticket->start_xy_old[1]))
       {
 #ifdef DEBUG
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
@@ -189,10 +223,11 @@ class Fl_Oy_Box : public Fl_Box
 #endif
 
         /* convert the image data */
-        oyConversion_RunPixels( context, 0 );
+        oyConversion_RunPixels( context, ticket );
 
         /* remember the old rectangle */
         oyRectangle_SetByRectangle( old_display_rectangle, display_rectangle );
+        oyRectangle_SetByRectangle( old_roi_rectangle,ticket->output_image_roi);
       }
 
       if(verbose)
@@ -214,17 +249,47 @@ class Fl_Oy_Box : public Fl_Box
     }
   }
 
+    int e, ox, oy, dx, dy;
+    int edit_object_id;
+    int handle(int event) {
+      e = event;
+      switch(e) {
+        case FL_PUSH:
+          ox = x() - Fl::event_x();
+          oy = y() - Fl::event_y();
+          return (1);
+        case FL_RELEASE:
+          edit_object_id = -1;
+          return (1);
+        case FL_DRAG:
+          dx += ox + Fl::event_x();
+          dy += oy + Fl::event_y();
+          ox = x() - Fl::event_x();
+          oy = y() - Fl::event_y();
+          redraw();
+          return (1);
+      }
+      //printf("e: %d ox:%d dx:%d\n",e, ox, dx);
+      int ret = Fl_Box::handle(e);
+      return ret;
+    }
+
 public:
   Fl_Oy_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h)
   {
     context = 0;
+    ticket = 0;
     old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
+    old_roi_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
+    dx=dy=ox=oy=0;
   };
 
   ~Fl_Oy_Box(void)
   {
     oyConversion_Release( &context );
+    oyPixelAccess_Release( &ticket );
     oyRectangle_Release( &old_display_rectangle );
+    oyRectangle_Release( &old_roi_rectangle );
   };
 
   void setConversion( oyConversion_s * c ) 
