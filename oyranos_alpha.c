@@ -10592,7 +10592,7 @@ OYAPI int  OYEXPORT
   if(error != 0 && !*profile)
     l_error = oyDeviceSetup( device ); OY_ERR
 
-  if(error == 0) 
+  if(error <= 0) 
     l_error = oyDeviceAskProfile( device, profile ); OY_ERR
 
   /** As a last means oyASSUMED_WEB is delivered. */
