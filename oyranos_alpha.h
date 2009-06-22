@@ -2586,6 +2586,26 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
  *        synchronisation, simple or complex pixel areas (point, line, area,
  *        pattern )
  *
+ *  @verbatim
+    Relation of positional parameters:
+
+                start_xy         output_image_roi
+                   |                /
+             +-----|---------------/--------------+
+    original |     |              /               |
+    image ---+     |             /                |
+             |  ---+------------/----------+      |
+             |     |           /           +---------- output_image
+             |     |   +------+--------+   |      |
+             |     |   |               |   |      |
+             |     |   |               |   |      |
+             |     |   +---------------+   |      |
+             |     |                       |      |
+             |     +-----------------------+      |
+             |                                    |
+             +------------------------------------+
+    @endverbatim
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2008/07/04 (Oyranos: 0.1.8)
  *  @date    2009/05/05
@@ -2596,7 +2616,7 @@ struct oyPixelAccess_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  int32_t          start_xy[2];        /**< the start point */
+  int32_t          start_xy[2];        /**< the start point of output_image */
   int32_t          start_xy_old[2];    /**< @deprecated the previous start point */
   int32_t        * array_xy;           /**< @deprecated array of shifts, e.g. 1,0,2,0,1,0 */
   int              array_n;            /**< @deprecated the number of points in array_xy */
