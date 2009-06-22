@@ -73,6 +73,29 @@ void RAW::open( const char *filename ) {
 	open( string( filename ) );
 }
 
+#include <tiffio.h>
+void RAW::save_tiff()
+{
+	string tiffile = filename + ".tiff";
+	TIFF* img = TIFFOpen( tiffile.c_str(), "w" );
+
+	uint32 width = rip.imgdata.sizes.iwidth,
+			 height = rip.imgdata.sizes.iheight,
+			 spp = 3,
+			 bps = rip.imgdata.params.output_bps;
+	TIFFSetField(img, TIFFTAG_IMAGEDESCRIPTION, "GSoC 2009 test image");
+   TIFFSetField(img, TIFFTAG_IMAGEWIDTH, width);
+   TIFFSetField(img, TIFFTAG_IMAGELENGTH, height);
+	TIFFSetField(img, TIFFTAG_SAMPLESPERPIXEL, spp);
+	TIFFSetField(img, TIFFTAG_BITSPERSAMPLE, bps);
+	TIFFSetField(img, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+
+	tsize_t row_bytes = TIFFScanlineSize(img);
+	for (int h = 0; h < height; h++)
+		TIFFWriteScanline(img, ((uint8*)imageRGB->data) + h*row_bytes, h);
+
+	TIFFClose( img );
+}
 void RAW::print_dcraw_settings( std::ostream& out ) {
 	//libraw_output_params_t holds all dcraw options
 	//rip.imgdata.params

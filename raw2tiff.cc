@@ -17,6 +17,7 @@ int main( int argc, char *argv[] ) {
 	raw.open();
 	raw.print_dcraw_settings( std::cout );
 	raw.print_exif_data( exif );
+	raw.save_tiff();
 
 	return 0;
 }

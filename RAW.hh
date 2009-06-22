@@ -32,6 +32,9 @@ class RAW {
 		//void open( const void * const buffer, size_t bufsize );
 		//void open( libgphoto camera );
 
+		/// Save image as tiff.
+		void save_tiff();
+
 		/// Print all settings that affect image read/unpack/debayer methods
 		void print_dcraw_settings( std::ostream& out );
 		/// Print all possible exif information found

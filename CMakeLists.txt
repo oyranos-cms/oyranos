@@ -17,7 +17,7 @@ LINK_DIRECTORIES( ${LIBRAW_L_LIBRARY_DIR} )
 
 ################################
 ADD_EXECUTABLE( raw2tiff "RAW.cc" "raw2tiff.cc")
-TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_L_LIBS} "exiv2" )
+TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_L_LIBS} "exiv2" "tiff" )
 ################################
 #ADD_EXECUTABLE( scan "scan.c")
 #TARGET_LINK_LIBRARIES( scan ${SANE_LIBS} )
