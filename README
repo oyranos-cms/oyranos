@@ -1,0 +1,18 @@
+1. Dependencies
+LibRaw and libexiv2-dev are needed.
+LibRaw only provides a Makefile, you need to edit the first few lines (http://www.libraw.org/).
+
+2. Compilation
+Just edit lines 3,4 of CMakeLists.txt to point to where LibRaw is installed.
+Then:
+$ cmake .
+$ make
+
+3. Usage
+$ ./raw2tiff <raw image>
+
+Exif data is saved in file exif.txt
+
+4. TODO
+Use libtiff library to save the RGB buffer as a tiff image with
+embeded icc profile.
