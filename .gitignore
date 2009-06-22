@@ -1,0 +1,15 @@
+*.o
+*.lo
+*.a
+*.la
+*~
+*.swp
+
+CMakeCache.txt
+CMakeFiles/
+CMakeLists.txt.full
+Makefile
+cmake_install.cmake
+exif.txt
+raw2tiff
+
