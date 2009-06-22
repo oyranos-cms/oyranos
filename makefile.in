@@ -879,7 +879,7 @@ config.log.h:	$(CONFIG_FILES) ./config.log
 depend:	cdepend
 	echo "setting up dependencies ..."
 	echo "MAKEDEPEND_ISUP = 1" > mkdepend
-	echo "#nicht editieren/dont edit - automatisch generiert" >> mkdepend
+	echo "#nicht editieren/dont edit - automatisch generiert von makefile.in" >> mkdepend
 	-(for file in $(INCL_DEP); do \
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
 	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
@@ -892,7 +892,7 @@ depend:	cdepend
 cdepend:
 	echo preparing dependency compilation ...
 	echo "COBJECTS_ISUP = 1" > cobjects
-	echo "#nicht editieren/dont edit - automatisch generiert" >> cobjects
+	echo "#nicht editieren/dont edit - automatisch generiert von makefile.in" >> cobjects
 	echo "" >> cobjects
 	for i in $(COBJECTS); do \
 	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.c/ >> cobjects; \
