@@ -1,21 +1,26 @@
 #include <iomanip>
+#include <fstream>
 
 #include "RAW.hh"
 
 using std::string;
+using std::ifstream;
 using std::cerr;
 using std::endl;
+using std::ios;
 
-RAW::RAW() : opened(false), rip(), imageRGB(NULL), filename(), imageExif(NULL)  {}
+RAW::RAW() : opened(false), rip(), imageRGB(NULL), filename(), imageExif(NULL), icc_profile(NULL)  {}
 
-RAW::RAW( const string& file ) : opened(false), rip(), imageRGB(NULL), filename(file), imageExif(NULL)  {}
+RAW::RAW( const string& file ) : opened(false), rip(), imageRGB(NULL), filename(file), imageExif(NULL), icc_profile(NULL)  {}
 
 RAW::~RAW() {
 	free(imageRGB);
+	free(icc_profile);
 }
 
 void RAW::release_members() {
 	free(imageRGB);
+	free(icc_profile);
 	rip.recycle();
 	if (filename != "") filename = "";
 	imageExif.reset();
@@ -73,6 +78,16 @@ void RAW::open( const char *filename ) {
 	open( string( filename ) );
 }
 
+void RAW::open_profile( const std::string& profile )
+{
+	ifstream file(profile.c_str(), ios::in|ios::binary|ios::ate);
+	icc_profile_bytes = file.tellg();
+	icc_profile = new char[icc_profile_bytes];
+	file.seekg(0, ios::beg);
+	file.read(icc_profile, icc_profile_bytes);
+	file.close();
+}
+
 #include <tiffio.h>
 void RAW::save_tiff()
 {
@@ -88,7 +103,11 @@ void RAW::save_tiff()
    TIFFSetField(img, TIFFTAG_IMAGELENGTH, height);
 	TIFFSetField(img, TIFFTAG_SAMPLESPERPIXEL, spp);
 	TIFFSetField(img, TIFFTAG_BITSPERSAMPLE, bps);
+	TIFFSetField(img, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
 	TIFFSetField(img, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+	TIFFSetField(img, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+	if (icc_profile)
+		TIFFSetField(img, TIFFTAG_ICCPROFILE, icc_profile_bytes, icc_profile);
 
 	tsize_t row_bytes = TIFFScanlineSize(img);
 	for (int h = 0; h < height; h++)
@@ -96,6 +115,7 @@ void RAW::save_tiff()
 
 	TIFFClose( img );
 }
+
 void RAW::print_dcraw_settings( std::ostream& out ) {
 	//libraw_output_params_t holds all dcraw options
 	//rip.imgdata.params

@@ -13,7 +13,8 @@ class RAW {
 		libraw_processed_image_t *imageRGB; ///< struct with image data
 		std::string filename; ///< Filename
 		Exiv2::Image::AutoPtr imageExif; ///< pointer to exif data
-		//icc profile
+		char* icc_profile; ///< pointer to ICC profile
+		unsigned icc_profile_bytes; ///< size of profile in bytes
 
 		/// Resets data members
 		void release_members();
@@ -31,6 +32,9 @@ class RAW {
 		void open( const char *filename );
 		//void open( const void * const buffer, size_t bufsize );
 		//void open( libgphoto camera );
+		/// Open an icc profile to memmory
+		/// No cind of verification is done yet.
+		void open_profile( const std::string& profile );
 
 		/// Save image as tiff.
 		void save_tiff();
