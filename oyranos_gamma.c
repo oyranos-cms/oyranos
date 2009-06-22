@@ -86,6 +86,7 @@ int main( int argc , char** argv )
                           if( opt == 0 && strcmp(argv[pos+1],"0") ) \
                             wrong_arg = "-" #opt; \
                           ++pos; \
+                          i = 1000; \
                         } else if(argv[pos][i+1] == '=') \
                         { opt = atoi( &argv[pos][i+2] ); \
                           if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
