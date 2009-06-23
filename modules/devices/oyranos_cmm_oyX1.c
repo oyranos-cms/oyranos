@@ -660,6 +660,7 @@ const char * oyX1GetText             ( const char        * select,
   }
   return 0;
 }
+const char *oyX1_texts[4] = {"name","copyright","manufacturer",0};
 
 /** @instance oyX1_cmm_module
  *  @brief    oyX1 module infos
@@ -674,7 +675,8 @@ oyCMMInfo_s oyX1_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.2",
-  oyX1GetText, /* oyCMMInfoGetText_f */
+  oyX1GetText, /* oyCMMInfoGetText_f get Text */
+  (char**)oyX1_texts, /* texts; list of arguments to getText */
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyX1_api8,

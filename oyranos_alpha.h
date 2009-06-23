@@ -3071,8 +3071,12 @@ typedef struct {
   oyObject_s       oy_;                /**< @private zero for static data */
   char             cmm[8];             /*!< ICC signature, eg 'lcms' */
   char           * backend_version;    /*!< non translatable, eg "v1.17" */
-  /** translatable, e.g. "name": "lcms" "little cms" "A CMM with 100k ..." */
+  /** translatable, e.g. "name": "lcms" "little cms" "A CMM with 100k ..."
+   *  supported should be "name", "copyright" and "manufacturer".
+   *  Optional is "help". Note: the string must be known to Oyranos in some way.
+   */
   oyCMMGetText_f   getText;
+  char          ** texts;              /**< zero terminated list for getText */
 
   int              oy_compatibility;   /*!< last supported Oyranos CMM API : OYRANOS_VERSION */
 

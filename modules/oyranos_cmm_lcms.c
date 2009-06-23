@@ -1873,6 +1873,7 @@ const char * lcmsInfoGetText         ( const char        * select,
   }
   return 0;
 }
+const char *lcms_texts[4] = {"name","copyright","manufacturer",0};
 
 /** @instance lcms_cmm_module
  *  @brief    lcms module infos
@@ -1888,6 +1889,7 @@ oyCMMInfo_s lcms_cmm_module = {
   CMM_NICK,                            /**< cmm, ICC signature */
   "0.6",                               /**< backend_version */
   lcmsInfoGetText,                     /**< getText */
+  (char**)lcms_texts,                  /**<texts; list of arguments to getText*/
   OYRANOS_VERSION,                     /**< oy_compatibility */
 
   (oyCMMapi_s*) & lcms_api1,           /**< api */

@@ -226,6 +226,7 @@ const char * oyIMInfoGetText         ( const char        * select,
   }
   return 0;
 }
+const char *oyIM_texts[4] = {"name","copyright","manufacturer",0};
 
 
 /** @instance oyIM_cmm_module
@@ -241,7 +242,8 @@ oyCMMInfo_s oyIM_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.1.10",
-  oyIMInfoGetText, /* oyCMMGetText_f */
+  oyIMInfoGetText,                     /**< oyCMMGetText_f getText */
+  (char**)oyIM_texts,                  /**<texts; list of arguments to getText*/
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyIM_api3,

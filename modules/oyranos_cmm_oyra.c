@@ -220,12 +220,13 @@ const char * oyraGetText             ( const char        * select,
          if(type == oyNAME_NICK)
       return _("newBSD");
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 2005-2008 Kai-Uwe Behrmann; newBSD");
+      return _("Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
   }
   return 0;
 }
+const char *oyra_texts[4] = {"name","copyright","manufacturer",0};
 
 
 /** @instance oyra_cmm_module
@@ -241,7 +242,8 @@ oyCMMInfo_s oyra_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.1.8",
-  oyraGetText,
+  oyraGetText,        /**< getText */
+  (char**)oyra_texts, /**< texts; list of arguments to getText */
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oyra_api4_image_root,

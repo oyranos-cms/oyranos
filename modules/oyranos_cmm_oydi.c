@@ -894,6 +894,8 @@ const char * oydiGetText             ( const char        * select,
   return 0;
 }
 
+const char *oydi_texts[5] = {"name","copyright","manufacturer","help",0};
+
 /** @instance oydi_cmm_module
  *  @brief    oydi module infos
  *
@@ -907,7 +909,9 @@ oyCMMInfo_s oydi_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.2",
-  oydiGetText, /* oyCMMInfoGetText_f */
+  oydiGetText,                         /**< oyCMMInfoGetText_f getText */
+  (char**)oydi_texts,                  /**<texts; list of arguments to getText*/
+
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & oydi_api4_image_display,

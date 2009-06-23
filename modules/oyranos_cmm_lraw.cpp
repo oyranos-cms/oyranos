@@ -266,6 +266,7 @@ const char * lrawGetText             ( const char        * select,
   }
   return 0;
 }
+const char *lraw_texts[4] = {"name","copyright","manufacturer",0};
 
 
 /** @instance lraw_cmm_module
@@ -282,6 +283,7 @@ oyCMMInfo_s lraw_cmm_module = {
   CMM_NICK,
   (char*)"0.1.8",
   lrawGetText,
+  (char**)lraw_texts, /* texts; list of arguments to getText */
   OYRANOS_VERSION,
 
   (oyCMMapi_s*) & lraw_api4_image_input_libraw,
