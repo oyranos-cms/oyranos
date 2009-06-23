@@ -16,9 +16,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <signal.h> /* signal */
 
 #include "Xcolor.h"
 #include <X11/extensions/Xfixes.h>
+#include <X11/Xmu/Error.h> /* XmuSimpleErrorHandler */
 #include <oyranos_alpha.h> /* use Oyranos to obtain profile names */
 
 char * printWindowName( Display * display, Window w )
@@ -133,7 +135,20 @@ static inline unsigned long XcolorProfileCount(void *data, unsigned long nBytes)
 }
 /* end of code from Tomas Carnecky */
 
+/*void mySignalHandler(int sig)
+{
+  switch(sig) {
+  case SIGINT: printf("%s:%d catched SIGINT\n", __FILE__,__LINE__ ); break;
+  default: printf("%s:%d catched unknown signal\n", __FILE__,__LINE__ );
+  }
+}*/
 
+int myXErrorHandler ( Display * display, XErrorEvent * e)
+{
+  printf( "%s:%d catched a X11 error\n", 
+          strrchr(__FILE__, '/')?strrchr(__FILE__, '/')+1:__FILE__,__LINE__ );
+  return 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -155,6 +170,11 @@ int main(int argc, char *argv[])
   const char * display_name = getenv("DISPLAY");
   Atom aProfile, aTarget, aCM, aRegion, aDesktop;
   Status status = 0;
+
+  /*signal( SIGINT, mySignalHandler );
+  signal( SIGINT, SIG_IGN );*/
+  /*XSetErrorHandler(myXErrorHandler);*/
+  XSetErrorHandler( XmuSimpleErrorHandler );
 
   display = XOpenDisplay(NULL);
   if(!display)
