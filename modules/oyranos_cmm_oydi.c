@@ -165,21 +165,23 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
                                        oyImage_s         * image )
 {
   int error = 0;
-  oyBlob_s * win_id = 0;
+  oyBlob_s * win_id, * display_id;
   int x,y, i,j;
 
   win_id = (oyBlob_s*) oyOptions_GetType( image->tags, -1, "window_id",
                                           oyOBJECT_BLOB_S );
+  display_id = (oyBlob_s*) oyOptions_GetType( image->tags, -1, "display_id",
+                                          oyOBJECT_BLOB_S );
 
 # if defined(HAVE_X11) && defined (HAVE_Xcolor)
-  if(win_id)
+  if(win_id && display_id)
   {
     Atom netColorTarget;
     Window w = (Window) win_id->ptr, w_return;
     XWindowAttributes attr;
     const char * display_name = oyOptions_FindString( image->tags,
                                                       "display_name", 0 );
-    Display * display = XOpenDisplay( display_name );
+    Display * display = (Display *) display_id->ptr; /*XOpenDisplay( display_name );*/
     oyRectangle_s * display_rectangle = (oyRectangle_s*) oyOptions_GetType( 
                                        image->tags, -1, "display_rectangle",
                                        oyOBJECT_RECTANGLE_S );
@@ -319,14 +321,13 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
       oyRectangle_SetByRectangle( old_window_rectangle, window_rectangle );
     }
 
-    /*XClearWindow( display, w );*/
-    XCloseDisplay( display );
+    /*XCloseDisplay( display );*/
     oyRectangle_Release( &display_rectangle );
     oyRectangle_Release( &window_rectangle );
     oyRectangle_Release( &old_window_rectangle );
   } else
     message( oyMSG_WARN, (oyStruct_s*)image,
-             "%s:%d no window_id image tag found", __FILE__,__LINE__ );
+            "%s:%d no window_id/display_id image tags found",__FILE__,__LINE__);
 # endif
 
   return error;
@@ -503,8 +504,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   int result = 0, l_result = 0, error = 0;
   oyFilterGraph_s * display_graph = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterNode_s * input_node = 0,
-                 * node = socket->node,
+  oyFilterNode_s * node = socket->node,
                  * rectangles = 0;
   oyImage_s * image = 0,
             * input_image = 0;
@@ -861,9 +861,9 @@ const char * oydiGetText             ( const char        * select,
          if(strcmp(select, "name")==0)
   {
          if(type == oyNAME_NICK)
-      return _(CMM_NICK);
+      return CMM_NICK;
     else if(type == oyNAME_NAME)
-      return _("Oyranos X11");
+      return _("Oyranos display filter");
     else
       return _("The client side window data handler of Oyranos.");
   } else if(strcmp(select, "manufacturer")==0)
@@ -882,6 +882,14 @@ const char * oydiGetText             ( const char        * select,
       return _("Copyright (c) 2009 Kai-Uwe Behrmann; newBSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("The \"display\" filter supports applications to show image content on single and multi monitor displays. It cares about the server communication in declaring the region as prematched. So a X11 server side colour correction does not disturb the displayed colours and omits the provided rectangle. The \"display\" filter matches the provided image content to each monitor it can find. Of course this has limitations to distorted windows, like wobbly effects or matrix deformed windows.");
+    else
+      return _("The filter needs some informations attached to the output image tags of the \"output\" image filter. The following list describes the X11/Xorg requirements.\n A \"window_id\" option shall consist of a oyBlob_s object containing the X11 \"Window\" type in its pointer element.\n A \"display_id\" option shall consist of a oyBlob_s object containing the X11 \"Display\" of the application. This is typically exposed as system specific pointer by each individual toolkit.\n A \"display_rectangle\" option of type oyRectangle_s shall represent the application image region in absolute display coordinates.");
   }
   return 0;
 }
