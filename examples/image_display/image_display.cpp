@@ -111,7 +111,6 @@ class Fl_Oy_Box : public Fl_Box
       int channels = 0;
       oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
       oyRectangle_s * display_rectangle = 0;
-      oyRectangle_s window_rectangle = { oyOBJECT_RECTANGLE_S, 0,0,0 };
       oyOptions_s * image_tags = 0;
       oyDATATYPE_e data_type = oyUINT8;
       oyPixel_t pt = 0;
@@ -127,12 +126,19 @@ class Fl_Oy_Box : public Fl_Box
                                        oyOBJECT_BLOB_S );
       if(!count && w)
       {
-        oyBlob_s * win_id = oyBlob_New(0);
+        oyBlob_s * win_id = oyBlob_New(0),
+                 * display_id = oyBlob_New(0);
         if(win_id)
         {
           win_id->ptr = (oyPointer)w;
           o = oyOption_New( "//" OY_TYPE_STD "/display/window_id", 0 );
           oyOption_StructMoveIn( o, (oyStruct_s**)&win_id );
+          oyOptions_MoveIn( image_tags, &o, -1 );
+
+          display_id->ptr = fl_display;
+          o = oyOption_New( "//" OY_TYPE_STD "/display/display_id", 0 );
+          oyOption_StructMoveIn( o, (oyStruct_s**)&display_id );
+          oyOptions_MoveIn( image_tags, &o, -1 );
 
           oyOptions_SetFromText( &image_tags,
                                  "//" OY_TYPE_STD "/display/display_name",
@@ -156,7 +162,6 @@ class Fl_Oy_Box : public Fl_Box
         oyImage_Release( &image_in );
 #endif
       }
-      oyOptions_MoveIn( image_tags, &o, -1 );
 #endif
 
       /* check if the actual data can be displayed */
@@ -190,6 +195,7 @@ class Fl_Oy_Box : public Fl_Box
       }
 
 #if 0
+      oyRectangle_s window_rectangle = { oyOBJECT_RECTANGLE_S, 0,0,0 };
       oyRectangle_SetGeo( ticket->output_image_roi, dx, dy, W, H );
       oyRectangle_Scale( ticket->output_image_roi, 1.0/image->width );
       oyRectangle_SetGeo( &window_rectangle, x(), y(), W, H );
