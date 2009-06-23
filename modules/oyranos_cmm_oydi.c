@@ -181,7 +181,12 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     XWindowAttributes attr;
     const char * display_name = oyOptions_FindString( image->tags,
                                                       "display_name", 0 );
-    Display * display = (Display *) display_id->ptr; /*XOpenDisplay( display_name );*/
+    Display * display = 
+#if 0
+                         XOpenDisplay( display_name ); /* + XCloseDisplay() */
+#else
+                         (Display *) display_id->ptr;
+#endif
     oyRectangle_s * display_rectangle = (oyRectangle_s*) oyOptions_GetType( 
                                        image->tags, -1, "display_rectangle",
                                        oyOBJECT_RECTANGLE_S );
