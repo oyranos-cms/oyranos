@@ -584,28 +584,40 @@ const char * dDevGetText             ( const char        * select,
       return _("Copyright (c) 2009 Kai-Uwe Behrmann; MIT");
     else
       return _("MIT license: http://www.opensource.org/licenses/mit-license.php");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("My filter introduction.");
+    else
+      return _("All the small details for using this module.");
   }
   return 0;
 }
+const char *dDev_texts[5] = {"name","copyright","manufacturer","help",0};
 
 /** @instance dDev_cmm_module
  *  @brief    dDev module infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.10)
- *  @date    2009/02/09
+ *  @date    2009/06/23
  */
 oyCMMInfo_s dDev_cmm_module = {
 
-  oyOBJECT_CMM_INFO_S,
-  0,0,0,
-  CMM_NICK,
-  "0.2",
-  dDevGetText, /* oyCMMInfoGetText_f */
-  OYRANOS_VERSION,
+  oyOBJECT_CMM_INFO_S, /**< ::type; the object type */
+  0,0,0,               /**< static objects omit these fields */
+  CMM_NICK,            /**< ::cmm; the four char filter id */
+  (char*)"0.2",        /**< ::backend_version */
+  dDevGetText,         /**< ::getText; UI texts */
+  (char**)dDev_texts,  /**< ::texts; list of arguments to getText */
+  OYRANOS_VERSION,     /**< ::oy_compatibility; last supported Oyranos CMM API*/
 
+  /** ::api; The first filter api structure. */
   (oyCMMapi_s*) & dDev_api8,
 
+  /** ::icon; zero terminated list of a icon pyramid */
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
 

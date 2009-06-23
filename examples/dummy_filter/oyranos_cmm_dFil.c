@@ -167,8 +167,8 @@ oyPointer  dFilFilterNode_MyContextToMem (
  *  internationalisation.
  *
  *  @version Oyranos: 0.1.10
- *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
+ *  @date    2009/06/23
  */
 const char * dFilGetText             ( const char        * select,
                                        oyNAME_e            type )
@@ -197,9 +197,18 @@ const char * dFilGetText             ( const char        * select,
       return _("Copyright (c) 2009 My Name; newBSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("My filter introduction.");
+    else
+      return _("All the small details for using this module.");
   }
   return 0;
 }
+const char *dFil_texts[5] = {"name","copyright","manufacturer","help",0};
 
 
 /** @instance dFil_cmm_module
@@ -222,6 +231,7 @@ oyCMMInfo_s dFil_cmm_module = {
   CMM_NICK,            /**< ::cmm; the four char filter id */
   (char*)"0.1.10",     /**< ::backend_version */
   dFilGetText,         /**< ::getText; UI texts */
+  (char**)dFil_texts,  /**< ::texts; list of arguments to getText */
   OYRANOS_VERSION,     /**< ::oy_compatibility; last supported Oyranos CMM API*/
 
   /** ::api; The first filter api structure. */
