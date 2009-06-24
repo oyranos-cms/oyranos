@@ -12442,6 +12442,10 @@ const char *       oyProfile_GetFileName (
  *  @memberof oyProfile_s
  *  @brief   add device and driver informations to a profile
  *
+ *  oyProfile_DeviceAdd() is for storing device/driver informations in a 
+ *  ICC profile. So the profile can be sent over internet and Oyranos, or 
+ *  an other CMS, can better match to a device/driver on the new host.
+ *
  *  @param         profile             the profile
  *  @param         device              device and driver informations
  *
