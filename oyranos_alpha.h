@@ -2112,7 +2112,6 @@ struct oyFilterCore_s {
 };
 
 oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
-                                       const char        * cmm,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 oyFilterCore_s * oyFilterCore_Copy   ( oyFilterCore_s    * filter,
@@ -2300,7 +2299,6 @@ struct oyFilterNode_s {
 oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );
 oyFilterNode_s *   oyFilterNode_NewWith (
                                        const char        * registration,
-                                       const char        * cmm,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
@@ -2930,7 +2928,8 @@ int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
                                        oyPROFILE_e         colour_space,
                                        oyPointer           channels,
                                        oyDATATYPE_e        channels_type,
-                                       uint32_t            flags );
+                                       uint32_t            flags,
+                                       oyOptions_s       * options );
 const double *    oyNamedColour_GetChannelsConst ( oyNamedColour_s * colour,
                                        uint32_t          * flags );
 const double *    oyNamedColour_GetXYZConst      ( oyNamedColour_s * colour);
@@ -2938,12 +2937,14 @@ int               oyNamedColour_GetColourStd     ( oyNamedColour_s * colour,
                                        oyPROFILE_e         colour_space,
                                        oyPointer           buf,
                                        oyDATATYPE_e        buf_type,
-                                       uint32_t          * flags );
+                                       uint32_t          * flags,
+                                       oyOptions_s       * options );
 int               oyNamedColour_GetColour ( oyNamedColour_s * colour,
                                        oyProfile_s       * profile,
                                        oyPointer           buf,
                                        oyDATATYPE_e        buf_type,
-                                       uint32_t            flags );
+                                       uint32_t            flags,
+                                       oyOptions_s       * options );
 const char   *    oyNamedColour_GetName( oyNamedColour_s * s,
                                        oyNAME_e            type,
                                        uint32_t            flags );

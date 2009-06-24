@@ -364,7 +364,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   ID = oydiFilterNode_ImageDisplayID( node );
 
   /* insert a "rectangles" filter to handle multiple monitors */
-  rectangles = oyFilterNode_NewWith( "//" OY_TYPE_STD "/rectangles", 0,0, 0 );
+  rectangles = oyFilterNode_NewWith( "//" OY_TYPE_STD "/rectangles", 0, 0 );
   /* mark the new node as belonging to this node */
   oyOptions_SetFromText( &rectangles->tags, ID, "true", OY_CREATE_NEW );
 
@@ -416,7 +416,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
         if(oyFilterRegistrationMatch( input_node->core->registration_,
                                       "//" OY_TYPE_STD "/icc", 0 ))
           cmm_node = oyFilterNode_NewWith( input_node->core->registration_,
-                                           0,0, 0 );
+                                           0, 0 );
         else
           message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d"
                    "\n  Filter %s expects a colour conversion filter as"

@@ -152,7 +152,7 @@ main(int argc, char** argv)
 
 
   conversion = oyConversion_New( 0 );
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/input_ppm", 0,0, 0 );
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/input_ppm", 0, 0 );
   oyConversion_Set( conversion, in, 0 );
 
   options = oyFilterNode_OptionsGet( in, OY_FILTER_GET_DEFAULT );
@@ -165,13 +165,13 @@ main(int argc, char** argv)
   image_out = oyImage_Create( image_in->width, image_in->height, 0, 
                               oyImage_PixelLayoutGet( image_in ), prof, 0 );
 
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0, 0 );
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD );
   in = out; in = 0; 
  
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output_ppm", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output_ppm", 0, 0 );
   options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/output_ppm/filename",
                                  "test_dbg.ppm", OY_CREATE_NEW );

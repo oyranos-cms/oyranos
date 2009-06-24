@@ -325,7 +325,7 @@ main(int argc, char** argv)
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
   /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/input_ppm", 0,0, 0 );
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/input_ppm", 0, 0 );
   /* set the above filter node as the input */
   oyConversion_Set( conversion, in, 0 );
 
@@ -372,7 +372,7 @@ main(int argc, char** argv)
 
 #if 0
   // write to ppm image
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0, 0 );
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error <= 0)
   options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
@@ -388,7 +388,7 @@ main(int argc, char** argv)
 #endif
 
   /* create a new filter node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error > 0)
@@ -399,7 +399,7 @@ main(int argc, char** argv)
   in = out;
 
   /* create a node for preparing the image for displaying */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, 0 );
   /* append the node */
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error > 0)
@@ -410,7 +410,7 @@ main(int argc, char** argv)
 
 #if 0
   // write to ppm image
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0, 0 );
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   if(error <= 0)
   options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
@@ -422,7 +422,7 @@ main(int argc, char** argv)
 #endif
 
   /* add a closing node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
   error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
   oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
   /* set the output node of the conversion */

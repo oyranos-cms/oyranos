@@ -2135,10 +2135,12 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
 
+  oyOptions_s * options = oyOptions_New(0);
   clck = clock();
   for(i = 0; i < n*3*10000; ++i)
   {
-    oyFilterCore_s * core = oyFilterCore_New( "//" OY_TYPE_STD "/root", 0,0,0 );
+    oyFilterCore_s * core = oyFilterCore_New( "//" OY_TYPE_STD "/root",
+                                              options,0 );
 
     oyFilterCore_Release( &core );
   }
@@ -2211,14 +2213,14 @@ oyTESTRESULT_e testCMMnmRun ()
     error = !s;    
 
     if(error <= 0)
-      in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0,0, 0 );
+      in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", options, 0 );
     if(error <= 0)
       error = oyConversion_Set( s, in, 0 );
     if(error <= 0)
       error = oyFilterNode_DataSet( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0,0, 0 );
+      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
     if(error <= 0)
       error = oyFilterNode_DataSet( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -2227,7 +2229,7 @@ oyTESTRESULT_e testCMMnmRun ()
     in = out; out = 0;
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
+      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", options, 0 );
     if(error <= 0)
     {
       error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
@@ -2462,7 +2464,7 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < 100*n; ++i)
   if(error <= 0)
   {
-    s = oyConversion_CreateBasic( input,output, 0, 0 );
+    s = oyConversion_CreateBasic( input,output, options, 0 );
     error  = oyConversion_RunPixels( s, 0 );
     oyConversion_Release ( &s );
     if(!(i%100)) fprintf(stdout, "." ); fflush(stdout);
@@ -2486,7 +2488,7 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*100; ++i)
   {
     l_error = oyNamedColour_SetColourStd ( c, oyASSUMED_WEB,
-                                           (oyPointer)d, oyDOUBLE, 0 );
+                                           (oyPointer)d, oyDOUBLE, 0, options );
     if(error <= 0)
       error = l_error;
   }
@@ -2526,7 +2528,7 @@ oyTESTRESULT_e testCMMnmRun ()
                          p_out,
                          0 );
 
-  conv   = oyConversion_CreateBasic( in,out, 0, 0 );
+  conv   = oyConversion_CreateBasic( in,out, options, 0 );
   error  = oyConversion_RunPixels( conv, 0 );
 
   oyConversion_Release( &conv );
@@ -2595,10 +2597,10 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   conv = oyConversion_New( 0 );
-  oyFilterNode_s * in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0,0, 0 );
+  oyFilterNode_s * in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, 0 );
   oyConversion_Set( conv, in_node, 0 );
   oyFilterNode_DataSet( in_node, (oyStruct_s*)input, 0, 0 );
-  oyFilterNode_s * out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
+  oyFilterNode_s * out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
   oyFilterNode_DataSet( out_node, (oyStruct_s*)output, 0, 0 );
   error = oyFilterNode_Connect( in_node, "Img", out_node, "Img", 0 );
   oyConversion_Set( conv, 0, out_node );

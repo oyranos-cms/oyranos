@@ -18555,25 +18555,26 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
  *  - the user knows, which kind of filter is requested -> registration, e.g. "//color"
  *  - the user probably knows, which special CMM to use (e.g. lcms, icc, shiva)
  *
- *  @version Oyranos: 0.1.9
+ *  @param[in]     registration        the filter registration pattern
+ *  @param[in]     options             zero - get defaults; or use the supplied
+ *  @param[in]     object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2009/02/28
+ *  @date    2009/06/24
  */
 oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
-                                       const char        * cmm_required,
                                        oyOptions_s       * options,
                                        oyObject_s          object )
 {
   oyFilterCore_s * s = oyFilterCore_New_( object );
   int error = !s;
-  uint32_t ret = 0;
-  oyOptions_s * opts_tmp = 0;
   oyCMMapi4_s * api4 = 0;
   oyCMMapiQueries_s * queries = 0;
 
   if(error <= 0)
   {
-    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( cmm_required, queries,
+    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0, queries,
                                             registration, oyOBJECT_CMM_API4_S );
     error = !api4;
   }
@@ -18581,25 +18582,19 @@ oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
   if(error <= 0)
     error = oyFilterCore_SetCMMapi4_( s, api4 );
 
-  if(error <= 0 && options)
+  if(error <= 0 && !options)
   {
-    opts_tmp = oyOptions_ForFilter_( s, 0, s->oy_);
 #if 0
     s->options_ = api4->oyCMMFilter_ValidateOptions( s, options, 0, &ret );
 #endif
-    error = ret;
     
-    /* @todo test oyBOOLEAN_SUBSTRACTION for correctness */
-    s->options_ = oyOptions_FromBoolean( opts_tmp, options,
-                                         oyBOOLEAN_SUBSTRACTION, s->oy_ );
-    oyOptions_Release( &opts_tmp );
+    s->options_ = oyOptions_ForFilter_( s, 0, s->oy_);
   }
 
   if(error && s)
   {
     oyFilterCore_Release( &s );
-    WARNc2_S("could not create filter: \"%s\" \"%s\"",
-            oyNoEmptyName_m_(cmm_required), oyNoEmptyName_m_(registration));
+    WARNc1_S("could not create filter: \"%s\"", oyNoEmptyName_m_(registration));
   }
 
   return s;
@@ -19240,21 +19235,19 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
  *  @brief   initialise a new filter node object properly
  *
  *  @param         registration        a registration string, @see backend_api
- *  @param         cmm                 a CMM selector
  *  @param         options             options for the filter
  *  @param         object              the optional object
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/03/05 (Oyranos: 0.1.10)
- *  @date    2009/03/05
+ *  @date    2009/06/24
  */
 oyFilterNode_s *   oyFilterNode_NewWith (
                                        const char        * registration,
-                                       const char        * cmm,
                                        oyOptions_s       * options,
                                        oyObject_s          object )
 {
-  oyFilterCore_s * core = oyFilterCore_New( registration, cmm, options, object);
+  oyFilterCore_s * core = oyFilterCore_New( registration, options, object);
   oyFilterNode_s * node = oyFilterNode_Create( core, object );
 
   oyFilterCore_Release( &core );
@@ -22793,9 +22786,12 @@ oyConversion_s *   oyConversion_New  ( oyObject_s          object )
  *  @memberof oyConversion_s
  *  @brief   allocate initialise a basic oyConversion_s object
  *
+ *  Provided options will be passed to oyFilterNode_NewWith(). There for no 
+ *  options defaults will be selected.
+ *
  *  @version Oyranos: 0.1.8
- *  @date    2008/06/26
  *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2009/06/24
  */
 oyConversion_s   * oyConversion_CreateBasic (
                                        oyImage_s         * input,
@@ -22813,14 +22809,14 @@ oyConversion_s   * oyConversion_CreateBasic (
     error = !s;    
 
     if(error <= 0)
-      in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0,0, 0 );
+      in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", options, 0 );
     if(error <= 0)
       error = oyConversion_Set( s, in, 0 );
     if(error <= 0)
       error = oyFilterNode_DataSet( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0,0, 0 );
+      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
     if(error <= 0)
       error = oyFilterNode_DataSet( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -22829,7 +22825,7 @@ oyConversion_s   * oyConversion_CreateBasic (
     in = out; out = 0;
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0,0, 0 );
+      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", options, 0 );
     if(error <= 0)
     {
       error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
@@ -23616,15 +23612,19 @@ oyNamedColour_SetChannels( oyNamedColour_s  * colour,
  *  @memberof oyNamedColour_s
  *  @brief   convert one colour
  *
- *  @since Oyranos: version 0.1.8
- *  @date  23 december 2007 (API 0.1.8)
+ *  The options are passed to oyConversion_CreateBasic();
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/23 (Oyranos: 0.1.8)
+ *  @date    2009/06/24
  */
 int  oyColourConvert_ ( oyProfile_s       * p_in,
                         oyProfile_s       * p_out,
                         oyPointer           buf_in,
                         oyPointer           buf_out,
                         oyDATATYPE_e        buf_type_in,
-                        oyDATATYPE_e        buf_type_out )
+                        oyDATATYPE_e        buf_type_out,
+                        oyOptions_s       * options )
 {
   oyImage_s * in  = NULL,
             * out = NULL;
@@ -23644,7 +23644,7 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
                          p_out,
                          0 );
 
-  conv   = oyConversion_CreateBasic( in,out, 0, 0 );
+  conv   = oyConversion_CreateBasic( in,out, options, 0 );
   error  = oyConversion_RunPixels( conv, 0 );
 
   oyConversion_Release( &conv );
@@ -23665,7 +23665,8 @@ int          oyNamedColour_GetColour ( oyNamedColour_s   * colour,
                                        oyProfile_s       * profile,
                                        oyPointer           buf,
                                        oyDATATYPE_e        buf_type,
-                                       uint32_t            flags )
+                                       uint32_t            flags,
+                                       oyOptions_s       * options )
 {
   int error = !colour || !profile || !buf;
   oyProfile_s * p_in = colour->profile_;
@@ -23680,14 +23681,14 @@ int          oyNamedColour_GetColour ( oyNamedColour_s   * colour,
  
     error = oyColourConvert_( p_in, profile,
                               colour->XYZ_, buf,
-                              oyDOUBLE, buf_type);
+                              oyDOUBLE, buf_type, options);
 
     oyProfile_Release ( &p_in );
 
   } else if(error <= 0)
     error = oyColourConvert_( p_in, profile,
                               colour->channels_, buf,
-                              oyDOUBLE, buf_type);
+                              oyDOUBLE, buf_type, options);
 
   return error;
 }
@@ -23711,7 +23712,8 @@ int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
                                        oyPROFILE_e         colour_space,
                                        oyPointer           channels,
                                        oyDATATYPE_e        channels_type,
-                                       uint32_t            flags )
+                                       uint32_t            flags,
+                                       oyOptions_s       * options )
 {
   oyNamedColour_s * s = colour;
   int error = !s || !colour_space || !channels;
@@ -23768,13 +23770,13 @@ int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
     oyProfile_s * p_out = s->profile_;
     oyColourConvert_( p_in, p_out,
                       channels, s->channels_,
-                      channels_type , oyDOUBLE );
+                      channels_type , oyDOUBLE, options );
     oyProfile_Release ( &p_out );
 
     p_out = oyProfile_FromStd( oyEDITING_XYZ, 0 );
     oyColourConvert_( p_in, p_out,
                       channels, s->XYZ_,
-                      channels_type , oyDOUBLE );
+                      channels_type , oyDOUBLE, options );
     oyProfile_Release ( &p_out );
   }
 
@@ -23835,7 +23837,8 @@ int               oyNamedColour_GetColourStd     ( oyNamedColour_s * colour,
                                        oyPROFILE_e         colour_space,
                                        oyPointer           buf,
                                        oyDATATYPE_e        buf_type,
-                                       uint32_t          * flags )
+                                       uint32_t          * flags,
+                                       oyOptions_s       * options )
 {                        
   int ret = 0;
   oyProfile_s * profile;
@@ -23864,7 +23867,7 @@ int               oyNamedColour_GetColourStd     ( oyNamedColour_s * colour,
   if(!profile)
     return 1;
 
-  ret = oyNamedColour_GetColour ( colour, profile, buf, buf_type, 0 );
+  ret = oyNamedColour_GetColour ( colour, profile, buf, buf_type, 0, options );
   oyProfile_Release ( &profile );
 
   return ret;
@@ -23900,7 +23903,7 @@ const oyChar *    oyNamedColour_GetName( oyNamedColour_s * s,
                                               oySIGNATURE_COLOUR_SPACE );
 
     oyAllocHelper_m_( txt, oyChar, 1024, 0, return 0 );
-    oyNamedColour_GetColourStd( s, oyEDITING_LAB, l, oyDOUBLE, 0 );
+    oyNamedColour_GetColourStd( s, oyEDITING_LAB, l, oyDOUBLE, 0, 0 );
 
     switch(type)
     {
