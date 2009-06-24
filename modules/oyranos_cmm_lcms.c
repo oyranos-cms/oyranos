@@ -113,44 +113,10 @@ char * lcmsImage_GetText             ( oyImage_s         * image,
 char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc );
-cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
-                                       cmsHPROFILE       * lps,
-                                       int                 profiles_n,
-                                       cmsHPROFILE       * proof,
-                                       oyPixel_t           oy_pixel_layout_in,
-                                       oyPixel_t           oy_pixel_layout_out,
-                                       oyOptions_s       * opts,
-                                       lcmsTransformWrap_s ** ltw,
-                                       oyCMMptr_s        * oy );
-int          lcmsCMMColourConversion_Create (
-                                       oyCMMptr_s       ** cmm_profile,
-                                       int                 profiles_n,
-                                       oyPixel_t           oy_pixel_layout_in,
-                                       oyPixel_t           oy_pixel_layout_out,
-                                       oyOptions_s *       opts,
-                                       oyCMMptr_s        * oy );
-int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
-                                       size_t              size,
-                                       oyPixel_t           oy_pixel_layout_in,
-                                       oyPixel_t           oy_pixel_layout_out,
-                                       icColorSpaceSignature colour_space_in,
-                                       icColorSpaceSignature colour_space_out,
-                                       int                 intent,
-                                       oyCMMptr_s        * oy );
 oyPointer  lcmsCMMColourConversion_ToMem_ (
                                        cmsHTRANSFORM     * xform,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
-oyPointer  lcmsCMMColourConversion_ToMem (
-                                       oyCMMptr_s        * oy,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc );
-int              lcmsCMMColourConversion_Run (
-                                       oyCMMptr_s        * oy,
-                                       oyPointer           in_data,
-                                       oyPointer           out_data,
-                                       size_t              count,
-                                       oyCMMProgress_f     progress );
 oyOptions_s* lcmsFilter_CmmIccValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
@@ -660,105 +626,6 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
   return xform;
 }
 
-/** Function lcmsCMMColourConversion_Create
- *  @brief
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/00 (Oyranos: 0.1.8)
- *  @date    2007/12/00
- */
-int          lcmsCMMColourConversion_Create (
-                                       oyCMMptr_s       ** cmm_profile,
-                                       int                 profiles_n,
-                                       oyPixel_t           oy_pixel_layout_in,
-                                       oyPixel_t           oy_pixel_layout_out,
-                                       oyOptions_s *       opts,
-                                       oyCMMptr_s        * oy )
-{
-  cmsHPROFILE * lps = oyAllocateFunc_(sizeof(cmsHPROFILE) * (profiles_n+1));
-  cmsHTRANSFORM xform = 0;
-  int i;
-  int error = !(cmm_profile && lps);
-  lcmsTransformWrap_s * ltw  = 0;
-
-  if(!cmm_profile || !profiles_n || !oy_pixel_layout_in || !oy_pixel_layout_out)
-    return 1;
-
-  memset( lps, 0, sizeof(cmsHPROFILE) * (profiles_n+1) ); 
- 
-  for(i = 0; i < profiles_n; ++i)
-  {
-    lcmsProfileWrap_s * s = 0;
-    cmsHPROFILE profile = 0;
-
-    if(!error)
-      s = lcmsCMMProfile_GetWrap_( cmm_profile[i] );
-
-    if(!error)
-      error = !s;
-
-    if(!error)
-      profile = s->lcms;
-
-    if(!error)
-      lps[i] = profile;
-
-    if(!error)
-      error = !lps[i];
-  }
-
-  xform = lcmsCMMColourConversion_Create_( lps, profiles_n, 0,
-                                           oy_pixel_layout_in,
-                                           oy_pixel_layout_out, opts, &ltw, oy);
-  error = !xform;
-
-
-  free(lps);
-
-  if(!error)
-    error = !ltw;
-
-  return error;
-}
-
-/** Function lcmsCMMColourConversion_FromMem
- *  @brief   oyCMMColourConversion_FromMem_t implementation
- *
- *  Convert a lcms device link to a colour conversion context.
- *  Seems redundant here, as this case is covered by
- *  lcmsCMMColourConversion_Create. => redirect
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/21 (Oyranos: 0.1.8)
- *  @date    2008/11/06
- */
-int  lcmsCMMColourConversion_FromMem ( oyPointer           mem,
-                                       size_t              size,
-                                       oyPixel_t           oy_pixel_layout_in,
-                                       oyPixel_t           oy_pixel_layout_out,
-                                       icColorSpaceSignature colour_space_in,
-                                       icColorSpaceSignature colour_space_out,
-                                       int                 intent,
-                                       oyCMMptr_s        * oy )
-{
-  int error = 0;
-  oyCMMptr_s intern = {oyOBJECT_CMM_POINTER_S, 0,0,0,
-                       CMM_NICK, {0}, 0, -1, {0}, 0, 0 };
-  oyCMMptr_s * dls[] = {0, 0};
-  oyProfile_s p = { oyOBJECT_PROFILE_S,0,0,0,0,0,0,0,0,0,0,0 };
-
-  dls[0] = &intern;
-  p.block_ = mem;
-  p.size_ = size;
-
-  error = lcmsCMMData_Open ( (oyStruct_s*)&p, &intern );
-  error = lcmsCMMColourConversion_Create (
-                                       dls, 1,
-                                       oy_pixel_layout_in, oy_pixel_layout_out,
-                                       0, oy );
-  return error;
-}
-
 /** Function lcmsCMMColourConversion_ToMem_
  *
  *  convert a lcms colour conversion context to a device link
@@ -806,89 +673,6 @@ oyPointer  lcmsCMMColourConversion_ToMem_ (
 
   return data;
 }
-
-/** Function lcmsCMMColourConversion_ToMem
- *  @brief   oyCMMColourConversion_ToMem_t implementation
- *
- *  convert a lcms colour conversion context to a device link
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/21 (Oyranos: 0.1.8)
- *  @date    2007/12/21
- */
-oyPointer  lcmsCMMColourConversion_ToMem (
-                                       oyCMMptr_s        * oy,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc )
-{
-  int error = !oy;
-  lcmsTransformWrap_s * s = 0;
-  oyPointer data = 0;
-
-  error = lcmsCMMTransform_GetWrap_( oy, &s );
-  error = !s;
-
-  if(!error)
-  {
-    data = lcmsCMMColourConversion_ToMem_( s->lcms, size, allocateFunc );
-  }
-
-  return data;
-}
-
-
-/** Function lcmsCMMColourConversion_Run
- *  @brief
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/21 (Oyranos: 0.1.8)
- *  @date    2007/12/21
- */
-int              lcmsCMMColourConversion_Run (
-                                       oyCMMptr_s        * oy,
-                                       oyPointer           in_data,
-                                       oyPointer           out_data,
-                                       size_t              count,
-                                       oyCMMProgress_f     progress )
-{
-  int error = !oy;
-
-  lcmsTransformWrap_s * s = 0;
-
-  error = lcmsCMMTransform_GetWrap_( oy, &s );
-  error = !s;
-
-  if(!error && in_data && out_data)
-  {
-    oyDATATYPE_e dt = oyToDataType_m(s->oy_pixel_layout_in);
-    if(dt == oyDOUBLE)
-    {
-      /*size_t i = 0;
-      double * d = in_data;
-      int chan = oyToChannels_m(s->oy_pixel_layout_in);
-      size_t n = chan * count;
-      for(i = 0; i < n; ++i)
-        d[i] = d[i] * 100.;*/
-    }
-
-    if(count > 0)
-      cmsDoTransform( s->lcms, in_data, out_data, count);
-
-    dt = oyToDataType_m(s->oy_pixel_layout_out);
-    if(dt == oyDOUBLE)
-    {
-      /*int i = 0;
-      double * d = out_data;
-      int chan = oyToChannels_m(s->oy_pixel_layout_out);
-      int n = chan * count;
-      for(i = 0; i < n; ++i)
-        d[i] = d[i] / 100.;*/
-    }
-  }
-
-  return error;
-}
-
 
 oyOptions_s* lcmsFilter_CmmIccValidateOptions
                                      ( oyFilterCore_s    * filter,
@@ -1786,7 +1570,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
   0,                         /* sockets_last_add */
 };
 
-/** @instance lcms_api4
+/** @instance lcms_api4_cmm
  *  @brief    littleCMS oyCMMapi4_s implementation
  *
  *  a filter providing CMM API's
@@ -1825,31 +1609,6 @@ oyCMMapi4_s   lcms_api4_cmm = {
   0,   /* opts_ui_ */
 };
 
-
-
-/** @instance lcms_api1
- *  @brief    lcms oyCMMapi1_s implementations
- *
- *  @version Oyranos: 0.1.8
- *  @date    2007/11/00
- *  @since   2007/11/00 (Oyranos: 0.1.8)
- */
-oyCMMapi1_s  lcms_api1 = {
-
-  oyOBJECT_CMM_API1_S,
-  0,0,0,
-  (oyCMMapi_s*) & lcms_api4_cmm,
-  
-  lcmsCMMInit,
-  lcmsCMMMessageFuncSet,
-  lcmsCMMCanHandle,
-
-  lcmsCMMData_Open,
-  lcmsCMMColourConversion_Create,
-  lcmsCMMColourConversion_FromMem,
-  lcmsCMMColourConversion_ToMem,
-  lcmsCMMColourConversion_Run,
-};
 
 
 /**
@@ -1916,7 +1675,7 @@ oyCMMInfo_s lcms_cmm_module = {
   (char**)lcms_texts,                  /**<texts; list of arguments to getText*/
   OYRANOS_VERSION,                     /**< oy_compatibility */
 
-  (oyCMMapi_s*) & lcms_api1,           /**< api */
+  (oyCMMapi_s*) & lcms_api4_cmm,       /**< api */
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"}, /**< icon */
 };

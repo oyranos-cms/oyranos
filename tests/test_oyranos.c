@@ -325,7 +325,7 @@ oyTESTRESULT_e testSettings ()
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );
 
-  oyOptions_SetFromText( &opts, "cmyk_cmky_black_preservation", "1", 0 );
+  oyOptions_SetFromText( &opts, "cmyk_cmyk_black_preservation", "1", 0 );
 
   count = oyOptions_Count( opts );
   if(!count)
@@ -343,7 +343,7 @@ oyTESTRESULT_e testSettings ()
 
       tmp = oyFilterRegistrationToText( oyOption_GetText(o, oyNAME_DESCRIPTION),
                                         oyFILTER_REG_OPTION, 0 );
-      if(strcmp( oyNoEmptyString_m_(tmp),"cmyk_cmky_black_preservation") == 0)
+      if(strcmp( oyNoEmptyString_m_(tmp),"cmyk_cmyk_black_preservation") == 0)
         ++size;
 
       oyDeAllocateFunc_(tmp);
