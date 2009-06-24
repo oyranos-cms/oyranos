@@ -572,7 +572,9 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
   int intent = 0,
+      intent_proof = 0,
       bpc = 0,
+      cmyk_cmyk_black_preservation = 0,
       gamut_warning = 0,
       high_precission = 0,
       flags = 0;
@@ -603,6 +605,10 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
       if(o_txt && oyStrlen_(o_txt))
         intent = atoi( o_txt );
 
+      o_txt = oyOptions_FindString  ( opts, "rendering_intent_proof", 0);
+      if(o_txt && oyStrlen_(o_txt))
+        intent_proof = atoi( o_txt );
+
       o_txt = oyOptions_FindString  ( opts, "rendering_bpc", 0 );
       if(o_txt && oyStrlen_(o_txt))
         bpc = atoi( o_txt );
@@ -615,6 +621,10 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
       if(o_txt && oyStrlen_(o_txt))
         high_precission = atoi( o_txt );
 
+      o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        cmyk_cmyk_black_preservation = atoi( o_txt );
+
       /* this should be moved to the CMM and not be handled here in Oyranos */
       flags = bpc ?           flags | cmsFLAGS_WHITEBLACKCOMPENSATION :
                               flags & (~cmsFLAGS_WHITEBLACKCOMPENSATION);
@@ -622,7 +632,10 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
                               flags & (~cmsFLAGS_GAMUTCHECK);
       flags = high_precission ? flags | cmsFLAGS_NOTPRECALC :
                               flags & (~cmsFLAGS_NOTPRECALC);
-
+      flags = cmyk_cmyk_black_preservation ? flags | cmsFLAGS_PRESERVEBLACK :
+                              flags & (~cmsFLAGS_PRESERVEBLACK);
+      if(cmyk_cmyk_black_preservation == 2)
+        cmsSetCMYKPreservationStrategy( LCMS_PRESERVE_K_PLANE );
 
   if(!error)
   {
@@ -637,6 +650,9 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
     /*else if(profiles_n == 3)
       oy->ptr = */
   }
+
+  /* reset */
+  cmsSetCMYKPreservationStrategy( LCMS_PRESERVE_PURE_K );
 
   if(!error && ltw && oy)
     *ltw= lcmsTransformWrap_Set_( xform, colour_in, colour_out,
@@ -1692,7 +1708,7 @@ char lcms_extra_options[] = {
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
      <" "icc." CMM_NICK ">\n\
-      <cmyk_cmky_black_preservation.advanced>0</cmyk_cmky_black_preservation.advanced>\n\
+      <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
      </" "icc." CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
@@ -1861,7 +1877,7 @@ const char * lcmsInfoGetText         ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Marti Maria");
     else
-      return _("littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm");
+      return _("littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project");
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
@@ -1870,10 +1886,18 @@ const char * lcmsInfoGetText         ( const char        * select,
       return _("Copyright (c) 1998-2008 Marti Maria Saguer; MIT");
     else
       return _("MIT license: http://www.opensource.org/licenses/mit-license.php");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter trasnforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
+    else
+      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_high_precission\", \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\" and \"rendering_intent\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]." );
   }
   return 0;
 }
-const char *lcms_texts[4] = {"name","copyright","manufacturer",0};
+const char *lcms_texts[5] = {"name","copyright","manufacturer","help",0};
 
 /** @instance lcms_cmm_module
  *  @brief    lcms module infos
