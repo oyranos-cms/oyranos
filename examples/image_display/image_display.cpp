@@ -362,6 +362,8 @@ main(int argc, char** argv)
   data_type = oyToDataType_m(pixel_layout);
   pixel_layout &= (~oyDataType_m(data_type));
   pixel_layout |= oyDataType_m(oyUINT8);
+  pixel_layout &= (~oyChannels_m( oyToChannels_m(pixel_layout) ));
+  pixel_layout |= oyChannels_m(3);
   /* eigther copy the input image with a oyObject_s argument or
    * create it as follows */
   image_out = oyImage_CreateForDisplay( image_in->width, image_in->height,

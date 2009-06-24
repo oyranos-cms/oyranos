@@ -1402,7 +1402,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = 1;
   }
 
-  channels = oyToChannels_m( image_input->layout_[0] );
+  channels = oyToChannels_m( ticket->output_image->layout_[0] );
 
   error = lcmsCMMTransform_GetWrap_( node->backend_data, &ltw );
 
