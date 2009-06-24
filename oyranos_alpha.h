@@ -2839,7 +2839,7 @@ char             * oyConversion_ToText (
                                        const char        * head_line,
                                        int                 reserved,
                                        oyAlloc_f           allocateFunc );
-
+#if 0
 /** @struct oyColourConversion_s
     In case where
       a option indicates monitor output, or
@@ -2874,6 +2874,7 @@ int          oyColourConversion_Release ( oyColourConversion_s ** cc );
 
 int          oyColourConversion_Run  ( oyColourConversion_s * colour );
 oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * s );
+#endif
 
 /** @struct oyNamedColour_s
  *  @brief colour patch with meta informations

@@ -128,6 +128,7 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
 oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
                                        int                 get_plug );
 
+#if 0
 oyColourConversion_s* oyColourConversion_Create_ (
                                        oyOptions_s       * opts,
                                        oyImage_s         * in,
@@ -141,6 +142,7 @@ const char *   oyColourContextGetID_ ( oyStruct_s      * s,
                                        oyOptions_s     * opts,
                                        oyImage_s       * in,
                                        oyImage_s       * out);
+#endif
 const char *   oyContextCollectData_ ( oyStruct_s        * s,
                                        oyOptions_s       * opts,
                                        oyStructList_s    * ins,

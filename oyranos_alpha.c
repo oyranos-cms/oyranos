@@ -21539,7 +21539,7 @@ void oyShowGraph_( oyFilterNode_s * s, const char * selector )
   oyFilterGraph_Release( &adjacency_list );
 }
 
-
+#if 0
 /** @internal
  *  @brief   create and possibly precalculate a transform for a given image
  *  @memberof oyColourConversion_s
@@ -21730,6 +21730,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
 
   return cmm_ptr;
 }
+#endif
 
 /**
  *  @internal
@@ -21795,6 +21796,7 @@ const char *   oyContextCollectData_ ( oyStruct_s        * s,
   return hash_text;
 }
 
+#if 0
 const char *   oyColourContextGetID_ ( oyStruct_s      * s,
                                        oyOptions_s     * opts,
                                        oyImage_s       * in,
@@ -22000,7 +22002,7 @@ oyColourConversion_s* oyColourConversion_Copy (
 
   return s;
 }
-
+#endif
 /** @internal
  *  @brief oyCMMProgress_f
  *
@@ -22013,7 +22015,7 @@ void             oyCMMProgress_      ( int                 ID,
   printf("%s:%d id: %d %0.02f \n",__FILE__,__LINE__, ID, progress);
 }
 
-
+#if 0
 /** @internal
  *  @memberof oyColourConversion_s
  *  @brief   run
@@ -22369,8 +22371,7 @@ oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * cc )
 
   return s;
 }
-
-
+#endif
 
 
 /**
