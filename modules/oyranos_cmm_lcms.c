@@ -514,17 +514,18 @@ lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
   return s;
 }
 
-/** Function lcmsCMMColourConversion_Create_
+/** Function lcmsCMMConversionContextCreate_
  *  @brief   create a CMM transform
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2008/12/28
+ *  @date    2009/06/25
  */
-cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
+cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
                                        cmsHPROFILE       * lps,
                                        int                 profiles_n,
-                                       cmsHPROFILE       * proof,
+                                       cmsHPROFILE       * simulation,
+                                       int                 proof_n,
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
                                        oyOptions_s       * opts,
@@ -608,13 +609,67 @@ cmsHTRANSFORM  lcmsCMMColourConversion_Create_ (
          if(profiles_n == 1)
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     0, lcms_pixel_layout_out,
-                                    intent, 0 );
+                                    intent, flags );
     else if(profiles_n == 2)
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     lps[1], lcms_pixel_layout_out,
-                                    intent, 0 );
-    /*else if(profiles_n == 3)
-      oy->ptr = */
+                                    intent, flags );
+    else if(profiles_n >= 3)
+    {
+      int multi_profiles_n = profiles_n;
+
+      if(flags & cmsFLAGS_SOFTPROOFING && proof_n)
+        --multi_profiles_n;
+
+      xform =   cmsCreateMultiprofileTransform(
+                                    lps, 
+                                    multi_profiles_n,
+                                    lcms_pixel_layout_in,
+                                  flags & cmsFLAGS_SOFTPROOFING && proof_n
+                                  ? NOCOLORSPACECHECK(lcms_pixel_layout_out)
+                                  : lcms_pixel_layout_out,
+                                    intent, flags );
+    }
+
+    if(proof_n && cmsFLAGS_SOFTPROOFING)
+    {
+      int i;
+
+      for(i = 0; i < proof_n; ++i)
+      {
+        cmsHPROFILE dl = cmsTransform2DeviceLink( xform,
+                                                  cmsFLAGS_GUESSDEVICECLASS );
+
+        cmsDeleteTransform( xform );
+        /* add simulation profile and go to next simulation in chain */
+        if(i < proof_n - 1)
+          xform = cmsCreateProofingTransform(
+                                    dl, lcms_pixel_layout_in,
+                                    simulation[ i + 1 ],
+                                    lcms_pixel_layout_out,
+                                    simulation[ i ],
+                                    intent,
+                                    intent_proof,
+                                    flags);
+        else
+        /* add last simulation and go to output profile */
+          xform = cmsCreateProofingTransform(
+                                    dl, lcms_pixel_layout_in,
+                                    lps[ profiles_n - 1 ],
+                                    lcms_pixel_layout_out,
+                                    simulation[ i ], /* should be the last */
+                                    intent,
+            /* TODO The INTENT_ABSOLUTE_COLORIMETRIC should lead to 
+               paper simulation, but does take white point into account.
+               Do we want this?
+             */
+                                    intent_proof,
+                                    flags);
+
+        /* release intermediate transform */
+        CMMProfileRelease_M( dl );
+      }
+    }
   }
 
   /* reset */
@@ -825,7 +880,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   oyFilterNode_s * input_node = 0;
   oyImage_s * image_input = 0,
             * image_output = 0;
-  cmsHPROFILE * lps = 0, simulation = 0;
+  cmsHPROFILE * lps = 0,
+              * simulation = 0;
   cmsHTRANSFORM xform = 0;
   oyOption_s * o = 0;
   oyProfile_s * p = 0,
@@ -835,7 +891,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   oyProfileTag_s * psid = 0,
                  * info = 0,
                  * cprt = 0;
-  int profiles_n = 0;
+  int profiles_n = 0,
+      profiles_proof_n = 0;
   int verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
 
   filter = node->core;
@@ -905,7 +962,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         p = oyProfiles_Get( profiles, i );
 
         /* Look in the Oyranos cache for a CMM internal representation */
-        lps[ profiles_n ] = lcmsAddProfile( p );
+        lps[ profiles_n++ ] = lcmsAddProfile( p );
         profs = oyProfiles_MoveIn( profs, &p, -1 );
       }
     }
@@ -927,6 +984,9 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     {
       profiles = (oyProfiles_s*) o->value;
       n = oyProfiles_Count( profiles );
+      len = sizeof(cmsHPROFILE) * (n + 2 + 1);
+      simulation = oyAllocateFunc_( len );
+      memset( simulation, 0, len );
       for(i = 0; i < n; ++i)
       {
         p = oyProfiles_Get( profiles, i );
@@ -934,7 +994,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         /* Look in the Oyranos cache for a CMM internal representation */
         if(i == 0)
         {
-          simulation = lcmsAddProfile( p );
+          simulation[ profiles_proof_n++ ] = lcmsAddProfile( p );
           profs = oyProfiles_MoveIn( profs, &p, -1 );
         } else if(i == 1)
           message( oyMSG_WARN, (oyStruct_s*)node,
@@ -961,7 +1021,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   *size = 0;
 
   /* create the context */
-  xform = lcmsCMMColourConversion_Create_( lps, profiles_n, simulation,
+  xform = lcmsCMMConversionContextCreate_( lps, profiles_n,
+                                           simulation, profiles_proof_n,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_, 0, 0);
@@ -1070,7 +1131,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       *size = size_;
       oyProfile_Release( &prof );
     }
-  } 
+  }
 
   return block;
 }
@@ -1271,7 +1332,7 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
   if(!error)
   {
     lps[0] = CMMProfileOpen_M( cmm_ptr_in->ptr, cmm_ptr_in->size );
-    xform = lcmsCMMColourConversion_Create_( lps, 1, 0,
+    xform = lcmsCMMConversionContextCreate_( lps, 1, 0,0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_,
@@ -1650,7 +1711,7 @@ const char * lcmsInfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return _("help");
     else if(type == oyNAME_NAME)
-      return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter trasnforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
+      return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter transforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
     else
       return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_high_precission\", \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\" and \"rendering_intent\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]." );
   }
