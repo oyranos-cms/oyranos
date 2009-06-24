@@ -9,7 +9,7 @@
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2009/02/19
  *
- *  The given example displays a 8-bit PPM file on screen.
+ *  The given example displays a 8/16-bit PPM file on screen.
  */
 
 #include <ctime>
@@ -208,8 +208,8 @@ class Fl_Oy_Box : public Fl_Box
       oyRectangle_Trim( ticket->output_image_roi, &window_rectangle );
 #else
       /* take care to not go over the borders */
-      if(dx < W - image->width - 1) dx = W - image->width + 1;
-      if(dy < H - image->height - 1) dy = H - image->height + 1;
+      if(dx < W - image->width) dx = W - image->width + 1;
+      if(dy < H - image->height) dy = H - image->height + 1;
       if(dx > 0) dx = 0;
       if(dy > 0) dy = 0;
       ticket->start_xy[0] = -dx;
