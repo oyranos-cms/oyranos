@@ -36,10 +36,10 @@ extern int level_PROG;
 
 #if defined(__GNUC__)
 # define  OY_DBG_FORMAT_ "%s:%d %s() "
-# define  OY_DBG_ARGS_   __FILE__,__LINE__,__func__
+# define  OY_DBG_ARGS_   oyStrrchr_(__FILE__,'/') ? oyStrrchr_(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
 #else
 # define  OY_DBG_FORMAT_ "%s:%d "
-# define  OY_DBG_ARGS_   __FILE__,__LINE__
+# define  OY_DBG_ARGS_   oyStrrchr_(__FILE__,'/') ? oyStrrchr_(__FILE__,'/')+1 : __FILE__,__LINE__
 #endif
 
 #if defined(OY_CONFIG_H)
