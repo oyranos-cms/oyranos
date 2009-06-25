@@ -19987,13 +19987,14 @@ oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2009/03/05
+ *  @date    2009/06/26
  */
 oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
                                        int                 flags )
 {
   oyOptions_s * options = 0;
   oyFilterNode_s * s = node;
+  int error = 0;
 
   if(!node)
     return 0;
@@ -20005,10 +20006,13 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
     options = oyOptions_ForFilter_( node->core, flags, node->core->oy_ );
     if(!node->core->options_)
       node->core->options_ = oyOptions_Copy( options, 0 );
-    return options;
+    else
+      error = oyOptions_Filter( &node->core->options_, 0, 0,
+                                oyBOOLEAN_UNION,
+                                0, options );
+  }
 
-  } else
-    return oyOptions_Copy( node->core->options_, 0 );
+  return oyOptions_Copy( node->core->options_, 0 );
 }
 
 /** Function oyFilterNode_GetText
