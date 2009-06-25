@@ -344,7 +344,7 @@ main(int argc, char** argv)
   if(in)
   options = oyFilterNode_OptionsGet( in, OY_FILTER_GET_DEFAULT );
   /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/input_ppm/filename",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read.input_ppm/filename",
                                  file_name, OY_CREATE_NEW );
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
