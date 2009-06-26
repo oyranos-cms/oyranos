@@ -29,22 +29,43 @@
 
 /* --- internal definitions --- */
 
+/* select a own four byte identifier string instead of "dDev" and replace the
+ * dDev in the below macros.
+ */
 #define CMM_NICK "dDev"
 #define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.dummy." CMM_NICK
 
-#define dDev_DBG_FORMAT_ "%s:%d %s()"
-#define dDev_DBG_ARGS_ __FILE__,__LINE__,__func__
+#define catCMMfunc(nick,func) nick ## func
+
+#define CMMInit                 catCMMfunc( dDev, CMMInit )
+#define CMMallocateFunc         catCMMfunc( dDev, CMMallocateFunc )
+#define CMMdeallocateFunc       catCMMfunc( dDev, CMMdeallocateFunc )
+#define CMMMessageFuncSet       catCMMfunc( dDev, CMMMessageFuncSet )
+#define CMMCanHandle            catCMMfunc( dDev, CMMCanHandle )
+#define ConfigsFromPatternUsage catCMMfunc( dDev, ConfigsFromPatternUsage )
+#define InstrumentFromName_     catCMMfunc( dDev, InstrumentFromName_ )
+#define GetDevices              catCMMfunc( dDev, GetDevices )
+#define _api8                   catCMMfunc( dDev, _api8 )
+#define _rank_map               catCMMfunc( dDev, _rank_map )
+#define Configs_FromPattern     catCMMfunc( dDev, Configs_FromPattern )
+#define Config_Check            catCMMfunc( dDev, Config_Check )
+#define GetText                 catCMMfunc( dDev, GetText )
+#define _texts                  catCMMfunc( dDev, _texts )
+#define _cmm_module             catCMMfunc( dDev, _cmm_module )
+
+#define _DBG_FORMAT_ "%s:%d %s()"
+#define _DBG_ARGS_ __FILE__,__LINE__,__func__
 #define _(x) x
 #define STRING_ADD(a,b) sprintf( &a[strlen(a)], b )
 
 oyMessage_f message = 0;
 
-extern oyCMMapi8_s dDev_api8;
-oyRankPad dDev_rank_map[];
+extern oyCMMapi8_s _api8;
+oyRankPad _rank_map[];
 
 /* --- implementations --- */
 
-int                dDevCMMInit       ( )
+int                CMMInit       ( )
 {
   int error = 0;
   return error;
@@ -52,7 +73,7 @@ int                dDevCMMInit       ( )
 
 
 
-oyPointer          dDevCMMallocateFunc   ( size_t            size )
+oyPointer          CMMallocateFunc   ( size_t              size )
 {
   oyPointer p = 0;
   if(size)
@@ -60,33 +81,33 @@ oyPointer          dDevCMMallocateFunc   ( size_t            size )
   return p;
 }
 
-void               dDevCMMdeallocateFunc ( oyPointer         mem )
+void               CMMdeallocateFunc ( oyPointer           mem )
 {
   if(mem)
     free(mem);
 }
 
-/** @func  dDevCMMMessageFuncSet
+/** @func  CMMMessageFuncSet
  *  @brief API requirement
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-int            dDevCMMMessageFuncSet ( oyMessage_f         message_func )
+int            CMMMessageFuncSet     ( oyMessage_f         message_func )
 {
   message = message_func;
   return 0;
 }
 
-/** @func  dDevCMMCanHandle
+/** @func  CMMCanHandle
  *  @brief API requirement
  *
  *  @version Oyranos: 0.1.8
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2009/02/09
  */
-int            dDevCMMCanHandle      ( oyCMMQUERY_e        type,
+int                CMMCanHandle      ( oyCMMQUERY_e        type,
                                        uint32_t            value ) {return 0;}
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
@@ -94,11 +115,11 @@ int            dDevCMMCanHandle      ( oyCMMQUERY_e        type,
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
-void     dDevConfigsFromPatternUsage( oyStruct_s        * options )
+void         ConfigsFromPatternUsage( oyStruct_s        * options )
 {
     /** oyMSG_WARN should make shure our message is visible. */
-    message( oyMSG_WARN, options, dDev_DBG_FORMAT_ "\n %s",
-             dDev_DBG_ARGS_,
+    message( oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
+             _DBG_ARGS_,
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=list\" will provide a list of\n"
@@ -153,7 +174,7 @@ void     dDevConfigsFromPatternUsage( oyStruct_s        * options )
   return;
 }
 
-int          dDevInstrumentFromName_ ( const char        * instrument_name,
+int              InstrumentFromName_ ( const char        * instrument_name,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** instrument,
                                        oyAlloc_f           allocateFunc )
@@ -171,10 +192,10 @@ int          dDevInstrumentFromName_ ( const char        * instrument_name,
 
       if(!instrument_name)
       {
-        message(oyMSG_WARN, (oyStruct_s*)options, dDev_DBG_FORMAT_
+        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_
                 "The \"instrument_name\" argument is\n"
                 " missed to select a appropriate instrument for the"
-                " \"properties\" call.", dDev_DBG_ARGS_ );
+                " \"properties\" call.", _DBG_ARGS_ );
         error = 1;
         return error;
       }
@@ -198,9 +219,9 @@ int          dDevInstrumentFromName_ ( const char        * instrument_name,
 
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
-                 dDev_DBG_FORMAT_ "Could not complete \"properties\" call.\n"
+                 _DBG_FORMAT_ "Could not complete \"properties\" call.\n"
                  " oyGetMonitorInfo_lib returned with %s; instrument_name:"
-                 " \"%s\"", dDev_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
+                 " \"%s\"", _DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
                  instrument_name ? instrument_name : "" );
 
       if(error <= 0)
@@ -234,7 +255,7 @@ int          dDevInstrumentFromName_ ( const char        * instrument_name,
   return error;
 }
 
-int dDevGetDevices                   ( char            *** list,
+int     GetDevices                   ( char            *** list,
                                        oyAlloc_f           allocateFunc )
 {
   int len = sizeof(char*) * 3;
@@ -248,15 +269,14 @@ int dDevGetDevices                   ( char            *** list,
   return 2;
 }
 
-/** Function dDevConfigs_FromPattern
- *  @brief   dDev oyCMMapi8_s dummy instruments
+/** Function Configs_FromPattern
+ *  @brief   CMM_NICK oyCMMapi8_s dummy instruments
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-int            dDevConfigs_FromPattern (
-                                       const char        * registration,
+int              Configs_FromPattern ( const char        * registration,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** s )
 {
@@ -272,7 +292,7 @@ int            dDevConfigs_FromPattern (
              * value2 = 0,
              * value3 = 0,
              * value4 = 0;
-  int rank = oyFilterRegistrationMatch( dDev_api8.registration, registration,
+  int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
   static char * num = 0;
@@ -284,7 +304,7 @@ int            dDevConfigs_FromPattern (
   if(!options || !oyOptions_Count( options ))
   {
     /** oyMSG_WARN should make shure our message is visible. */
-    dDevConfigsFromPatternUsage( (oyStruct_s*)options );
+    ConfigsFromPatternUsage( (oyStruct_s*)options );
     return 0;
   }
 
@@ -301,7 +321,7 @@ int            dDevConfigs_FromPattern (
         !oyOptions_FindString( options, "command", "unset" ))
       )
     {
-      texts_n = dDevGetDevices( &texts, allocateFunc );
+      texts_n = GetDevices( &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -338,9 +358,9 @@ int            dDevConfigs_FromPattern (
           /** Warn and return issue on not found profile. */
           if(!size || !data)
           {
-            message(oyMSG_WARN, (oyStruct_s*)options, dDev_DBG_FORMAT_ "\n "
+            message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "Could not obtain icc_profile information for %s",
-                dDev_DBG_ARGS_, texts[i]);
+                _DBG_ARGS_, texts[i]);
             error = -1;
           } else
           {
@@ -381,7 +401,7 @@ int            dDevConfigs_FromPattern (
         }
 
         if(error <= 0)
-          instrument->rank_map = oyRankMapCopy( dDev_rank_map,
+          instrument->rank_map = oyRankMapCopy( _rank_map,
                                                 instrument->oy_->allocateFunc_);
 
         oyConfigs_MoveIn( instruments, &instrument, -1 );
@@ -397,7 +417,7 @@ int            dDevConfigs_FromPattern (
     value2 = oyOptions_FindString( options, "command", "properties" );
     if(value2)
     {
-      texts_n = dDevGetDevices( &texts, allocateFunc );
+      texts_n = GetDevices( &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -413,11 +433,11 @@ int            dDevConfigs_FromPattern (
                                        CMM_BASE_REG OY_SLASH "instrument_name",
                                        texts[i], OY_CREATE_NEW );
 
-        error = dDevInstrumentFromName_( value1, options, &instrument,
+        error = InstrumentFromName_( value1, options, &instrument,
                                          allocateFunc );
 
         if(error <= 0 && instrument)
-          instrument->rank_map = oyRankMapCopy( dDev_rank_map,
+          instrument->rank_map = oyRankMapCopy( _rank_map,
                                                 instrument->oy_->allocateFunc_);
         oyConfigs_MoveIn( instruments, &instrument, -1 );
       }
@@ -435,9 +455,9 @@ int            dDevConfigs_FromPattern (
     {
       error = !value1 || !value3;
       if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, dDev_DBG_FORMAT_ "\n "
+        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
               "The instrument_name/profile_name option is missed. Options:\n%s",
-                dDev_DBG_ARGS_,
+                _DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
@@ -451,9 +471,9 @@ int            dDevConfigs_FromPattern (
     {
       error = !value1;
       if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, dDev_DBG_FORMAT_ "\n "
+        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "The instrument_name option is missed. Options:\n%s",
-                dDev_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
+                _DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
         error = 0; /* doUnset( value1 ); */
@@ -463,18 +483,18 @@ int            dDevConfigs_FromPattern (
 
 
   /* not to be reached section, e.g. warning */
-  message(oyMSG_WARN, (oyStruct_s*)options, dDev_DBG_FORMAT_ "\n "
-                "This point should not be reached. Options:\n%s", dDev_DBG_ARGS_,
+  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+                "This point should not be reached. Options:\n%s", _DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
 
-  dDevConfigsFromPatternUsage( (oyStruct_s*)options );
+  ConfigsFromPatternUsage( (oyStruct_s*)options );
 
   return error;
 }
 
-/** Function dDevConfig_Check
- *  @brief   dDev oyCMMapi8_s instrument check
+/** Function Config_Check
+ *  @brief   CMM_NICK oyCMMapi8_s instrument check
  *
  *  @param[in]     config              the monitor instrument configuration
  *  @return                            rank value
@@ -483,15 +503,15 @@ int            dDevConfigs_FromPattern (
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-int            dDevConfig_Check      ( oyConfig_s        * config )
+int                Config_Check      ( oyConfig_s        * config )
 {
   int error = !config,
       rank = 1;
 
   if(!config)
   {
-    message(oyMSG_DBG, (oyStruct_s*)config, dDev_DBG_FORMAT_ "\n "
-                "No config argument provided.\n", dDev_DBG_ARGS_ );
+    message(oyMSG_DBG, (oyStruct_s*)config, _DBG_FORMAT_ "\n "
+                "No config argument provided.\n", _DBG_ARGS_ );
     return 0;
   }
 
@@ -503,14 +523,14 @@ int            dDevConfig_Check      ( oyConfig_s        * config )
   return rank;
 }
 
-/** @instance dDev_rank_map
+/** @instance _rank_map
  *  @brief    oyRankPad map for mapping instrument to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-oyRankPad dDev_rank_map[] = {
+oyRankPad _rank_map[] = {
   {"instrument_name", 2, -1, 0},       /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
@@ -521,30 +541,30 @@ oyRankPad dDev_rank_map[] = {
   {0,0,0,0}                            /**< end of list */
 };
 
-/** @instance dDev_api8
- *  @brief    dDev oyCMMapi8_s implementations
+/** @instance _api8
+ *  @brief    CMM_NICK oyCMMapi8_s implementations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-oyCMMapi8_s dDev_api8 = {
+oyCMMapi8_s _api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
   0,                         /**< next */
 
-  dDevCMMInit,               /**< oyCMMInit_f      oyCMMInit */
-  dDevCMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
-  dDevCMMCanHandle,          /**< oyCMMCanHandle_f oyCMMCanHandle */
+  CMMInit,                   /**< oyCMMInit_f      oyCMMInit */
+  CMMMessageFuncSet,         /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
+  CMMCanHandle,              /**< oyCMMCanHandle_f oyCMMCanHandle */
 
   CMM_BASE_REG,              /**< registration */
   {0,1,0},                   /**< int32_t version[3] */
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */
-  dDevConfigs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
-  dDevConfig_Check,          /**< oyConfig_Check_f oyConfig_Check */
-  dDev_rank_map              /**< oyRankPad ** rank_map */
+  Configs_FromPattern,       /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
+  Config_Check,              /**< oyConfig_Check_f oyConfig_Check */
+  _rank_map                  /**< oyRankPad ** rank_map */
 };
 
 
@@ -557,7 +577,7 @@ oyCMMapi8_s dDev_api8 = {
  *  @since   2008/12/23 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-const char * dDevGetText             ( const char        * select,
+const char * GetText                 ( const char        * select,
                                        oyNAME_e            type )
 {
          if(strcmp(select, "name")==0)
@@ -595,27 +615,27 @@ const char * dDevGetText             ( const char        * select,
   }
   return 0;
 }
-const char *dDev_texts[5] = {"name","copyright","manufacturer","help",0};
+const char * _texts[5] = {"name","copyright","manufacturer","help",0};
 
-/** @instance dDev_cmm_module
- *  @brief    dDev module infos
+/** @instance _cmm_module
+ *  @brief    CMM_NICK module infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.10)
  *  @date    2009/06/23
  */
-oyCMMInfo_s dDev_cmm_module = {
+oyCMMInfo_s _cmm_module = {
 
   oyOBJECT_CMM_INFO_S, /**< ::type; the object type */
   0,0,0,               /**< static objects omit these fields */
   CMM_NICK,            /**< ::cmm; the four char filter id */
   (char*)"0.2",        /**< ::backend_version */
-  dDevGetText,         /**< ::getText; UI texts */
-  (char**)dDev_texts,  /**< ::texts; list of arguments to getText */
+  GetText,             /**< ::getText; UI texts */
+  (char**)_texts,      /**< ::texts; list of arguments to getText */
   OYRANOS_VERSION,     /**< ::oy_compatibility; last supported Oyranos CMM API*/
 
   /** ::api; The first filter api structure. */
-  (oyCMMapi_s*) & dDev_api8,
+  (oyCMMapi_s*) & _api8,
 
   /** ::icon; zero terminated list of a icon pyramid */
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
