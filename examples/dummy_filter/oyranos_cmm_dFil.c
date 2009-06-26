@@ -446,7 +446,7 @@ oyCMMapi4_s   dFil_api4_my_filter = {
 
   {oyOBJECT_NAME_S, 0,0,0, "my_filter", "Image[my_filter]", "My Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Filter/My Filter", /* UI category */
-  0,   /* options */
+  0,   /* options of the module in XFORMS/XML syntax following the registration model*/
   0    /* opts_ui_ */
 };
 
