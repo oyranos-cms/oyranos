@@ -130,7 +130,11 @@ void scan_it()
 				break;
 			else {
 				printf("Something bad happened while reading image data. [status=%d]\n",status);
-				break; //exit(1); //FIXME
+				if (bytes_left == 0) {
+					printf("All seems OK, though. Let's ignore it.\n");
+					break;
+				} else
+					exit(1);
 			}
 		} while(SANE_TRUE);
 	} else {
