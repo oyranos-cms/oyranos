@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+SET( LOCAL "/home/john/local/" )
 SET( LIBRAW_INCLUDE_DIR "/home/john/local/include" )
 SET( LIBRAW_LIBRARY_DIR "/home/john/local/lib" )
 SET( LIBRAW_LIBS "raw" )
@@ -26,3 +27,16 @@ TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_L_LIBS} "exiv2" "tiff" )
 ADD_EXECUTABLE( scan "scan.c")
 TARGET_LINK_LIBRARIES( scan ${SANE_LIBS} "tiff" )
 ################################
+#SET( OYRANOS_INCLUDE "" )
+#INCLUDE_DIRECTORIES( ${OYRANOS_INCLUDE} )
+ADD_LIBRARY( oyranos_SANE_cmm_module SHARED oyranos_cmm_SANE.c )
+ADD_LIBRARY( oyranos_oyRE_cmm_module SHARED oyranos_cmm_oyRE.c )
+
+
+##########Installation###########
+SET( CMAKE_INSTALL_PREFIX ${LOCAL} )
+INSTALL( TARGETS raw2tiff scan
+	RUNTIME
+	DESTINATION "bin/" )
+INSTALL( TARGETS oyranos_SANE_cmm_module oyranos_oyRE_cmm_module
+	DESTINATION "lib/colour/moduls/" )
