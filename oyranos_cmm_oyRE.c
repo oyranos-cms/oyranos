@@ -529,16 +529,56 @@ int                Config_Check      ( oyConfig_s        * config )
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/02/09
+ *
+ *  \todo { In progress }
  */
 oyRankPad _rank_map[] = {
-  {"instrument_name", 2, -1, 0},       /**< is good */
-  {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
-  {"manufacturer", 1, -1, 0},          /**< is nice */
-  {"model", 5, -5, 0},                 /**< important, should not fail */
-  {"serial", 10, -2, 0},               /**< important, could slightly fail */
-  {"host", 1, 0, 0},                   /**< nice to match */
-  {"system_port", 2, 0, 0},            /**< good to match */
-  {0,0,0,0}                            /**< end of list */
+  {"instrument_name", 2, -1, 0},/**< is good */
+  {"profile_name", 0, 0, 0},/**< non relevant for instrument properties*/
+
+	/* EXIF Fields */
+  {"Exif.Image.Make", 1, -1, 0},					/**< is nice */
+  {"Exif.Image.Model", 5, -5, 0},				/**< important, should not fail */
+  {"Exif.SerialNumber", 10, -2, 0},				/**< important, could slightly fail */ /*Exif.Make.SerialNumber*/
+  {"Exif.Photo.ISOSpeedRatings", 1, 0, 0},	/**< is nice */
+  {"Exif.Photo.ExposureProgram", 1, 0, 0},	/**< nice to match */
+  {"Exif.Photo.Flash", 1, 0, 0},					/**< nice to match */
+
+  /* Possibly not relevant options are marked with: O->Output R->Repair */
+  /* LibRaw Options affecting open_file() */
+  {"user_flip", 1, -1, 0},							/**< is nice */ /*O*/
+  /* LibRaw Options affecting unpack() */
+  {"use_camera_wb", 1, -1, 0},					/**< is nice */
+  {"use_camera_matrix", 1, -1, 0},				/**< is nice */
+  {"shot_select", 1, -1, 0},						/**< is nice */ /*or in open_file()?*/ /*O*/
+  {"half_size", 1, -1, 0},							/**< is nice */
+  {"filtering_mode", 1, -1, 0},					/**< is nice */ /*not in libraw-lite?*/ /*?*/
+  {"threshold", 1, -1, 0},							/**< is nice */ /*R*/
+  {"aber[4]", 1, -1, 0},							/**< is nice */ /*R*/
+  /* LibRaw Options affecting dcraw_process() */
+  {"greybox[4]", 1, -1, 0},						/**< is nice */
+  {"gamm[6]", 1, -1, 0},							/**< is nice */
+  {"user_mul[4]", 1, -1, 0},						/**< is nice */
+  {"bright", 1, -1, 0},								/**< is nice */
+  {"four_color_rgb", 1, -1, 0},					/**< is nice */
+  {"highlight", 1, -1, 0},							/**< is nice */
+  {"use_auto_wb", 1, -1, 0},						/**< is nice */
+  {"output_color", 1, -1, 0},						/**< is nice */
+  {"camera_profile", 1, -1, 0},					/**< is nice */
+  {"output_bps", 1, -1, 0},						/**< is nice */
+  {"output_tiff", 1, -1, 0},						/**< is nice */ /*O*/
+  {"user_flip", 1, -1, 0},							/**< is nice */ /*O*/
+  {"user_qual", 1, -1, 0},							/**< is nice */
+  {"user_black", 1, -1, 0},						/**< is nice */
+  {"user_sat", 1, -1, 0},							/**< is nice */
+  {"med_passes", 1, -1, 0},						/**< is nice */
+  {"auto_bright_thr", 1, -1, 0},					/**< is nice */
+  {"no_auto_bright", 1, -1, 0},					/**< is nice */
+  {"use_fuji_rotate", 1, -1, 0},					/**< is nice */ /*O*/
+
+  /* Extra options */
+  {"illuminant", 1, -1, 0},						/**< is nice */
+  {0,0,0,0}												/**< end of list */
 };
 
 /** @instance _api8
