@@ -174,6 +174,15 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
   return;
 }
 
+/** @internal
+ * @brief Put all the scanner hardware information in a oyConfig_s object
+ *
+ * @param[in]	instrument_name				SANE_Device::name
+ * @param[in]	options						??????
+ * @param[out]	instrument					Holds the scanner H/W info
+ *
+ * \todo { In progress }
+ */
 int              InstrumentFromName_ ( const char        * instrument_name,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** instrument,
@@ -200,22 +209,9 @@ int              InstrumentFromName_ ( const char        * instrument_name,
         return error;
       }
 
-      /* now get the data from somewhere*/
-      if(strcmp(instrument_name, "dDev_1") == 0)
-      {
-        manufacturer = "People_1";
-        model = "people-one";
-        serial = "11";
-        system_port = "usb-01";
-      } else if(strcmp(instrument_name, "dDev_2") == 0)
-      {
-        manufacturer = "Village_2";
-        model = "yard-two";
-        serial = "22";
-        system_port = "usb-02";
-      }
+      /* now get the data from SANE*/
 
-      host = "localhost";
+      host = "not supported";
 
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
@@ -255,17 +251,54 @@ int              InstrumentFromName_ ( const char        * instrument_name,
   return error;
 }
 
+/** Function GetDevices
+ *  @brief Request all devices from SANE and return their SANE_Device::name
+ *
+ *  \todo { name,vendor,model,type should probably be stored someplace }
+ */
 int     GetDevices                   ( char            *** list,
                                        oyAlloc_f           allocateFunc )
 {
-  int len = sizeof(char*) * 3;
-  char ** texts = allocateFunc( len );
+	int status, version, len, i, l = 0;
+	char ** names = NULL,
+		  ** vendors = NULL,
+		  ** models = NULL,
+		  ** types = NULL;
+	const SANE_Device ** device_list = NULL;
 
-  memset( texts, 0, len );
-  texts[0] = allocateFunc(24); sprintf( texts[0], "dDev_1" );
-  texts[1] = allocateFunc(24); sprintf( texts[1], "dDev_2" );
+	status = sane_init(&version,NULL);
+	if (status!=SANE_STATUS_GOOD) {
+		printf("Cannot initialise sane!\n");
+		return -1;
+	}
 
-  *list = texts;
+	status = sane_get_devices(&device_list,SANE_FALSE);
+	if (status!=SANE_STATUS_GOOD) {
+		printf("Cannot get sane devices!\n");
+		return -1;
+	}
+
+	while (device_list[l]) l++;
+	len = l + 1;
+
+  names = allocateFunc( len );
+  vendors = allocateFunc( len );
+  models = allocateFunc( len );
+  types = allocateFunc( len );
+
+  memset( names, 0, len );
+  memset( vendors, 0, len );
+  memset( models, 0, len );
+  memset( types, 0, len );
+
+  for (i=0; i<l; i++) {
+	  names[i] = allocateFunc( strlen(device_list[i]->name)+1 ); strcpy( names[i], device_list[i]->name );
+	  vendors[i] = allocateFunc( strlen(device_list[i]->vendor)+1 ); strcpy( vendors[i], device_list[i]->vendor );
+	  models[i] = allocateFunc( strlen(device_list[i]->model)+1 ); strcpy( models[i], device_list[i]->model );
+	  types[i] = allocateFunc( strlen(device_list[i]->type)+1 ); strcpy( types[i], device_list[i]->type );
+  }
+
+  *list = name;
   return 2;
 }
 
@@ -640,4 +673,15 @@ oyCMMInfo_s _cmm_module = {
   /** ::icon; zero terminated list of a icon pyramid */
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
+
+/* Helper functions */
+
+/** @internal
+ * @brief 
+ *
+ * @param[in]	instrument_name				SANE_Device::name
+ * @param[out]	instrument					Holds the scanner H/W info
+ *
+ * \todo { In progress }
+ */
 
