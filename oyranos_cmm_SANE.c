@@ -303,6 +303,7 @@ int     GetDevices                   ( char            *** list,
   }
 
   *list = names;
+  free(device_list);
   return 2;
 }
 
@@ -568,12 +569,12 @@ int                Config_Check      ( oyConfig_s        * config )
  *  @date    2009/02/09
  */
 oyRankPad _rank_map[] = {
-  {"instrument_name", 2, -1, 0},       /**< is good */
+  {"device_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
   {"model", 5, -5, 0},                 /**< important, should not fail */
-  {"serial", 10, -2, 0},               /**< important, could slightly fail */
-  {"host", 1, 0, 0},                   /**< nice to match */
+  {"serial", 10, 0, 0},                /**< currently not avaliable */
+  {"host", 1, 0, 0},                   /**< currently only local or remote */
   {"system_port", 2, 0, 0},            /**< good to match */
   {0,0,0,0}                            /**< end of list */
 };
