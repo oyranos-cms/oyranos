@@ -614,6 +614,8 @@ oyCMMapi8_s _api8 = {
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
  *  @date    2009/02/09
+ *
+ *  \todo { Add usage info }
  */
 const char * GetText                 ( const char        * select,
                                        oyNAME_e            type )
@@ -623,15 +625,15 @@ const char * GetText                 ( const char        * select,
          if(type == oyNAME_NICK)
       return _(CMM_NICK);
     else if(type == oyNAME_NAME)
-      return _("Oyranos Dummy");
+      return _("Oyranos Scanner");
     else
       return _("The scanner (hopefully)usefull backend of Oyranos.");
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
-      return _("Kai-Uwe");
+      return _("orion");
     else if(type == oyNAME_NAME)
-      return _("Kai-Uwe Behrmann");
+      return _("Yiannis Belias");
     else
       return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
   } else if(strcmp(select, "copyright")==0)
