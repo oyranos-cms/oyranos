@@ -20,6 +20,7 @@
  */
 
 #include <oyranos/oyranos_cmm.h>
+#include <sane/sane.h>
 
 #include <string.h>
 #include <stdarg.h>
@@ -177,7 +178,7 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
 /** @internal
  * @brief Put all the scanner hardware information in a oyConfig_s object
  *
- * @param[in]	instrument_name				SANE_Device::name
+ * @param[in]	instrument_name			SANE_Device::name
  * @param[in]	options						??????
  * @param[out]	instrument					Holds the scanner H/W info
  *
@@ -254,7 +255,10 @@ int              InstrumentFromName_ ( const char        * instrument_name,
 /** Function GetDevices
  *  @brief Request all devices from SANE and return their SANE_Device::name
  *
- *  \todo { name,vendor,model,type should probably be stored someplace }
+ *  \todo {
+ *  name,vendor,model,type should probably be cached someplace.
+ *  sane_get_devices() is an expensive function [up to a few seconds?]
+ *  Only name is used now. }
  */
 int     GetDevices                   ( char            *** list,
                                        oyAlloc_f           allocateFunc )
@@ -298,7 +302,7 @@ int     GetDevices                   ( char            *** list,
 	  types[i] = allocateFunc( strlen(device_list[i]->type)+1 ); strcpy( types[i], device_list[i]->type );
   }
 
-  *list = name;
+  *list = names;
   return 2;
 }
 
@@ -677,11 +681,48 @@ oyCMMInfo_s _cmm_module = {
 /* Helper functions */
 
 /** @internal
- * @brief 
+ * @brief Create a rank map from a scanner handle
  *
- * @param[in]	instrument_name				SANE_Device::name
- * @param[out]	instrument					Holds the scanner H/W info
+ * @param[in]	device_handle				SANE_Handle
+ * @param[out]	rank_map						All scanner options affecting color as a rank map
  *
- * \todo { In progress }
+ * \todo { Untested }
  */
+int OyCreateRankMap_ ( SANE_Handle device_handle, oyRankPad** rank_map )
+{
+	oyRankPad * rm = NULL;
 
+	const SANE_Option_Descriptor *opt = NULL;
+	SANE_Int num_options = 0;
+	SANE_Status status;
+	
+	unsigned int opt_num = 0, i = 0, chars = 0;
+
+	/* Get the nuber of scanner options */
+	status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
+	if (status != SANE_STATUS_GOOD) {
+    	message( oyMSG_WARN, 0, "%s()\n Unable to determine option count\n", __func__ );
+		return -1;
+	}
+
+	/* we allocate extra memmory for non color options */
+	rm = calloc(num_options,sizeof(oyRankPad));
+	memset(rm,0,sizeof(oyRankPad)*num_options);
+
+	for (opt_num = 1; opt_num < num_options; opt_num++) {
+		opt = sane_get_option_descriptor(device_handle, opt_num);
+		if (opt->cap & SANE_CAP_COLOUR) {
+			rm[i].key = (char*)malloc( strlen(opt->name)+1 );
+			strcpy(rm[i].key, opt->name);
+			rm[i].match_value = 5;
+			rm[i].none_match_value = -5;
+			i++;
+		}
+	}
+
+	num_options = i+1; /* color options +1 */
+	/* free extra memmory for non color options */
+	*rank_map = realloc( rm, num_options*sizeof(oyRankPad) );
+
+	return 1;
+}
