@@ -30,7 +30,7 @@ TARGET_LINK_LIBRARIES( scan ${SANE_LIBS} "tiff" )
 #SET( OYRANOS_INCLUDE "" )
 #INCLUDE_DIRECTORIES( ${OYRANOS_INCLUDE} )
 ADD_LIBRARY( oyranos_SANE_cmm_module SHARED oyranos_cmm_SANE.c )
-ADD_LIBRARY( oyranos_oyRE_cmm_module SHARED oyranos_cmm_oyRE.c )
+ADD_LIBRARY( oyranos_oyRE_cmm_module SHARED oyranos_cmm_oyRE.cc )
 
 
 ##########Installation###########
