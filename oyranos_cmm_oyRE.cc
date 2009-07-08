@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_oyRE.c
+/** @file oyranos_cmm_oyRE.cc
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -58,10 +58,79 @@
 #define _(x) x
 #define STRING_ADD(a,b) sprintf( &a[strlen(a)], b )
 
+/** @instance _rank_map
+ *  @brief    oyRankPad map for mapping instrument to configuration informations
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/27 (Oyranos: 0.1.10)
+ *  @date    2009/02/09
+ *
+ *  \todo { In progress }
+ */
+oyranos::oyRankPad _rank_map[] = {
+  {"instrument_name", 2, -1, 0},/**< is good */
+  {"profile_name", 0, 0, 0},/**< non relevant for instrument properties*/
+
+	/* EXIF Fields */
+  {"Exif.Image.Make", 1, -1, 0},					/**< is nice */
+  {"Exif.Image.Model", 5, -5, 0},				/**< important, should not fail */
+  {"Exif.SerialNumber", 10, -2, 0},				/**< important, could slightly fail */ /*Exif.Make.SerialNumber*/
+  {"Exif.Photo.ISOSpeedRatings", 1, 0, 0},	/**< is nice */
+  {"Exif.Photo.ExposureProgram", 1, 0, 0},	/**< nice to match */
+  {"Exif.Photo.Flash", 1, 0, 0},					/**< nice to match */
+
+  /* Possibly not relevant options are marked with: O->Output R->Repair */
+  /* LibRaw Options affecting open_file() */
+  {"user_flip", 1, -1, 0},							/**< is nice */ /*O*/
+  /* LibRaw Options affecting unpack() */
+  {"use_camera_wb", 1, -1, 0},					/**< is nice */
+  {"use_camera_matrix", 1, -1, 0},				/**< is nice */
+  {"shot_select", 1, -1, 0},						/**< is nice */ /*or in open_file()?*/ /*O*/
+  {"half_size", 1, -1, 0},							/**< is nice */
+  {"filtering_mode", 1, -1, 0},					/**< is nice */ /*not in libraw-lite?*/ /*?*/
+  {"threshold", 1, -1, 0},							/**< is nice */ /*R*/
+  {"aber[4]", 1, -1, 0},							/**< is nice */ /*R*/
+  /* LibRaw Options affecting dcraw_process() */
+  {"greybox[4]", 1, -1, 0},						/**< is nice */
+  {"gamm[6]", 1, -1, 0},							/**< is nice */
+  {"user_mul[4]", 1, -1, 0},						/**< is nice */
+  {"bright", 1, -1, 0},								/**< is nice */
+  {"four_color_rgb", 1, -1, 0},					/**< is nice */
+  {"highlight", 1, -1, 0},							/**< is nice */
+  {"use_auto_wb", 1, -1, 0},						/**< is nice */
+  {"output_color", 1, -1, 0},						/**< is nice */
+  {"camera_profile", 1, -1, 0},					/**< is nice */
+  {"output_bps", 1, -1, 0},						/**< is nice */
+  {"output_tiff", 1, -1, 0},						/**< is nice */ /*O*/
+  {"user_flip", 1, -1, 0},							/**< is nice */ /*O*/
+  {"user_qual", 1, -1, 0},							/**< is nice */
+  {"user_black", 1, -1, 0},						/**< is nice */
+  {"user_sat", 1, -1, 0},							/**< is nice */
+  {"med_passes", 1, -1, 0},						/**< is nice */
+  {"auto_bright_thr", 1, -1, 0},					/**< is nice */
+  {"no_auto_bright", 1, -1, 0},					/**< is nice */
+  {"use_fuji_rotate", 1, -1, 0},					/**< is nice */ /*O*/
+
+  /* Extra options (user supplied) */
+  {"illumination_source", 1, -1, 0},			/**< is nice */
+  {0,0,0,0}												/**< end of list */
+};
+
+#ifdef __cplusplus
+extern "C" {
+namespace oyranos {
+#endif /* __cplusplus */
+
 oyMessage_f message = 0;
 
-extern oyCMMapi8_s _api8;
-oyRankPad _rank_map[];
+extern oyranos::oyCMMapi8_s _api8;
+
+#ifdef __cplusplus
+} /* extern "C" */
+} /* namespace oyranos */
+#endif /* __cplusplus */
+
+using namespace oyranos;
 
 /* --- implementations --- */
 
@@ -258,6 +327,7 @@ int              InstrumentFromName_ ( const char        * instrument_name,
 int     GetDevices                   ( char            *** list,
                                        oyAlloc_f           allocateFunc )
 {
+	/*
   int len = sizeof(char*) * 3;
   char ** texts = allocateFunc( len );
 
@@ -266,6 +336,7 @@ int     GetDevices                   ( char            *** list,
   texts[1] = allocateFunc(24); sprintf( texts[1], "dDev_2" );
 
   *list = texts;
+  */
   return 2;
 }
 
@@ -299,7 +370,7 @@ int              Configs_FromPattern ( const char        * registration,
   const char * tmp = 0;
 
   if(!num)
-    num = malloc( 80 );
+    num = (char*)malloc( 80 );
 
   if(!options || !oyOptions_Count( options ))
   {
@@ -373,7 +444,7 @@ int              Configs_FromPattern ( const char        * registration,
 
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          text = calloc( 4096, sizeof(char) );
+          text = (char*)calloc( 4096, sizeof(char) );
 
           o = oyOptions_Find( instrument->data, "icc_profile" );
 
@@ -523,64 +594,6 @@ int                Config_Check      ( oyConfig_s        * config )
   return rank;
 }
 
-/** @instance _rank_map
- *  @brief    oyRankPad map for mapping instrument to configuration informations
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/27 (Oyranos: 0.1.10)
- *  @date    2009/02/09
- *
- *  \todo { In progress }
- */
-oyRankPad _rank_map[] = {
-  {"instrument_name", 2, -1, 0},/**< is good */
-  {"profile_name", 0, 0, 0},/**< non relevant for instrument properties*/
-
-	/* EXIF Fields */
-  {"Exif.Image.Make", 1, -1, 0},					/**< is nice */
-  {"Exif.Image.Model", 5, -5, 0},				/**< important, should not fail */
-  {"Exif.SerialNumber", 10, -2, 0},				/**< important, could slightly fail */ /*Exif.Make.SerialNumber*/
-  {"Exif.Photo.ISOSpeedRatings", 1, 0, 0},	/**< is nice */
-  {"Exif.Photo.ExposureProgram", 1, 0, 0},	/**< nice to match */
-  {"Exif.Photo.Flash", 1, 0, 0},					/**< nice to match */
-
-  /* Possibly not relevant options are marked with: O->Output R->Repair */
-  /* LibRaw Options affecting open_file() */
-  {"user_flip", 1, -1, 0},							/**< is nice */ /*O*/
-  /* LibRaw Options affecting unpack() */
-  {"use_camera_wb", 1, -1, 0},					/**< is nice */
-  {"use_camera_matrix", 1, -1, 0},				/**< is nice */
-  {"shot_select", 1, -1, 0},						/**< is nice */ /*or in open_file()?*/ /*O*/
-  {"half_size", 1, -1, 0},							/**< is nice */
-  {"filtering_mode", 1, -1, 0},					/**< is nice */ /*not in libraw-lite?*/ /*?*/
-  {"threshold", 1, -1, 0},							/**< is nice */ /*R*/
-  {"aber[4]", 1, -1, 0},							/**< is nice */ /*R*/
-  /* LibRaw Options affecting dcraw_process() */
-  {"greybox[4]", 1, -1, 0},						/**< is nice */
-  {"gamm[6]", 1, -1, 0},							/**< is nice */
-  {"user_mul[4]", 1, -1, 0},						/**< is nice */
-  {"bright", 1, -1, 0},								/**< is nice */
-  {"four_color_rgb", 1, -1, 0},					/**< is nice */
-  {"highlight", 1, -1, 0},							/**< is nice */
-  {"use_auto_wb", 1, -1, 0},						/**< is nice */
-  {"output_color", 1, -1, 0},						/**< is nice */
-  {"camera_profile", 1, -1, 0},					/**< is nice */
-  {"output_bps", 1, -1, 0},						/**< is nice */
-  {"output_tiff", 1, -1, 0},						/**< is nice */ /*O*/
-  {"user_flip", 1, -1, 0},							/**< is nice */ /*O*/
-  {"user_qual", 1, -1, 0},							/**< is nice */
-  {"user_black", 1, -1, 0},						/**< is nice */
-  {"user_sat", 1, -1, 0},							/**< is nice */
-  {"med_passes", 1, -1, 0},						/**< is nice */
-  {"auto_bright_thr", 1, -1, 0},					/**< is nice */
-  {"no_auto_bright", 1, -1, 0},					/**< is nice */
-  {"use_fuji_rotate", 1, -1, 0},					/**< is nice */ /*O*/
-
-  /* Extra options */
-  {"illuminant", 1, -1, 0},						/**< is nice */
-  {0,0,0,0}												/**< end of list */
-};
-
 /** @instance _api8
  *  @brief    CMM_NICK oyCMMapi8_s implementations
  *
@@ -588,7 +601,7 @@ oyRankPad _rank_map[] = {
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-oyCMMapi8_s _api8 = {
+oyCMMapi8_s oyranos::_api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
   0,                         /**< next */
