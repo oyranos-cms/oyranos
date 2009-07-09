@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <libraw/libraw.h>
 
 /* --- internal definitions --- */
 
@@ -92,11 +93,25 @@ oyranos::oyRankPad _rank_map[] = {
 //calculated from constants). This setting is supported only for bayer-pattern cameras
 //with tone curve; 
   {"threshold", 1, -1, 0},							/**< is nice */ /*R*/
-  {"aber[4]", 1, -1, 0},							/**< is nice */ /*R*/
+  {"aber[0]", 1, -1, 0},							/**< is nice */ /*R*/
+  {"aber[1]", 1, -1, 0},							/**< is nice */ /*R*/
+  {"aber[2]", 1, -1, 0},							/**< is nice */ /*R*/
+  {"aber[3]", 1, -1, 0},							/**< is nice */ /*R*/
   /* LibRaw Options affecting dcraw_process() */
-  {"greybox[4]", 1, -1, 0},						/**< is nice */
-  {"gamm[6]", 1, -1, 0},							/**< is nice */
-  {"user_mul[4]", 1, -1, 0},						/**< is nice */
+  {"greybox[0]", 1, -1, 0},						/**< is nice */
+  {"greybox[1]", 1, -1, 0},						/**< is nice */
+  {"greybox[2]", 1, -1, 0},						/**< is nice */
+  {"greybox[3]", 1, -1, 0},						/**< is nice */
+  {"gamm[0]", 1, -1, 0},							/**< is nice */
+  {"gamm[1]", 1, -1, 0},							/**< is nice */
+  {"gamm[2]", 1, -1, 0},							/**< is nice */
+  {"gamm[3]", 1, -1, 0},							/**< is nice */
+  {"gamm[4]", 1, -1, 0},							/**< is nice */
+  {"gamm[5]", 1, -1, 0},							/**< is nice */
+  {"user_mul[0]", 1, -1, 0},						/**< is nice */
+  {"user_mul[1]", 1, -1, 0},						/**< is nice */
+  {"user_mul[2]", 1, -1, 0},						/**< is nice */
+  {"user_mul[3]", 1, -1, 0},						/**< is nice */
   {"bright", 1, -1, 0},								/**< is nice */
   {"four_color_rgb", 1, -1, 0},					/**< is nice */
   {"highlight", 1, -1, 0},							/**< is nice */
@@ -696,3 +711,66 @@ oyCMMInfo_s _cmm_module = {
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
 
+/* Helper functions */
+
+/** @internal
+ * @brief Get the options from LibRaw, and put them in a configuration object
+ *
+ * @param[in]	params				The LibRaw parameter structure
+ * @param[out]	config				The configuration object to hold the option-value pairs
+ *
+ * \todo { Untested }
+ */
+#include <string>
+#include <sstream>
+int OyAddLibRawOptions_( libraw_output_params_t* params, oyConfig_s** config )
+{
+	int status;
+	std::string value;
+	std::ostringstream out(value);
+#define ADD_DB_DATA( opt ) out<<params->opt; \
+									if (!oyConfig_AddDBData( 	*config, \
+																		#opt, \
+																		value.c_str(), \
+																		OY_CREATE_NEW )) \
+										message( oyMSG_WARN, 0, "%s()\n Unable to save option %s\n", __func__, #opt ); \
+									value.clear();
+
+	ADD_DB_DATA( use_camera_wb )
+	ADD_DB_DATA( use_camera_matrix )
+	ADD_DB_DATA( half_size )
+	ADD_DB_DATA( threshold )
+	ADD_DB_DATA( aber[0] )
+	ADD_DB_DATA( aber[1] )
+	ADD_DB_DATA( aber[2] )
+	ADD_DB_DATA( aber[3] )
+	ADD_DB_DATA( greybox[0] )
+	ADD_DB_DATA( greybox[1] )
+	ADD_DB_DATA( greybox[2] )
+	ADD_DB_DATA( greybox[3] )
+	ADD_DB_DATA( gamm[0] )
+	ADD_DB_DATA( gamm[1] )
+	ADD_DB_DATA( gamm[2] )
+	ADD_DB_DATA( gamm[3] )
+	ADD_DB_DATA( gamm[4] )
+	ADD_DB_DATA( gamm[5] )
+	ADD_DB_DATA( user_mul[0] )
+	ADD_DB_DATA( user_mul[1] )
+	ADD_DB_DATA( user_mul[2] )
+	ADD_DB_DATA( user_mul[3] )
+	ADD_DB_DATA( bright )
+	ADD_DB_DATA( four_color_rgb )
+	ADD_DB_DATA( highlight )
+	ADD_DB_DATA( use_auto_wb )
+	ADD_DB_DATA( output_color )
+	ADD_DB_DATA( camera_profile )
+	ADD_DB_DATA( output_bps )
+	ADD_DB_DATA( user_qual )
+	ADD_DB_DATA( user_black )
+	ADD_DB_DATA( user_sat )
+	ADD_DB_DATA( med_passes )
+	ADD_DB_DATA( auto_bright_thr )
+	ADD_DB_DATA( no_auto_bright )
+
+	return status;
+}
