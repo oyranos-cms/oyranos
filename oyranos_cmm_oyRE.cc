@@ -81,13 +81,16 @@ oyranos::oyRankPad _rank_map[] = {
 
   /* Possibly not relevant options are marked with: O->Output R->Repair */
   /* LibRaw Options affecting open_file() */
-  {"user_flip", 1, -1, 0},							/**< is nice */ /*O*/
   /* LibRaw Options affecting unpack() */
   {"use_camera_wb", 1, -1, 0},					/**< is nice */
   {"use_camera_matrix", 1, -1, 0},				/**< is nice */
-  {"shot_select", 1, -1, 0},						/**< is nice */ /*or in open_file()?*/ /*O*/
   {"half_size", 1, -1, 0},							/**< is nice */
-  {"filtering_mode", 1, -1, 0},					/**< is nice */ /*not in libraw-lite?*/ /*?*/
+//{"filtering_mode", 1, -1, 0},					/**< is nice */ /*not in libraw-lite*/
+//This is a bit-field. Out of all the possible flags, only LIBRAW_FILTERING_NORAWCURVE
+//seems to be relevant to color [From LibRaw API docs]:
+//This bit turns off tone curve processing (for tone curves read from file metadata or
+//calculated from constants). This setting is supported only for bayer-pattern cameras
+//with tone curve; 
   {"threshold", 1, -1, 0},							/**< is nice */ /*R*/
   {"aber[4]", 1, -1, 0},							/**< is nice */ /*R*/
   /* LibRaw Options affecting dcraw_process() */
@@ -101,15 +104,12 @@ oyranos::oyRankPad _rank_map[] = {
   {"output_color", 1, -1, 0},						/**< is nice */
   {"camera_profile", 1, -1, 0},					/**< is nice */
   {"output_bps", 1, -1, 0},						/**< is nice */
-  {"output_tiff", 1, -1, 0},						/**< is nice */ /*O*/
-  {"user_flip", 1, -1, 0},							/**< is nice */ /*O*/
   {"user_qual", 1, -1, 0},							/**< is nice */
   {"user_black", 1, -1, 0},						/**< is nice */
   {"user_sat", 1, -1, 0},							/**< is nice */
   {"med_passes", 1, -1, 0},						/**< is nice */
   {"auto_bright_thr", 1, -1, 0},					/**< is nice */
   {"no_auto_bright", 1, -1, 0},					/**< is nice */
-  {"use_fuji_rotate", 1, -1, 0},					/**< is nice */ /*O*/
 
   /* Extra options (user supplied) */
   {"illumination_source", 1, -1, 0},			/**< is nice */
