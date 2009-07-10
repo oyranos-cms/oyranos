@@ -179,10 +179,15 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
  * @brief Put all the scanner hardware information in a oyConfig_s object
  *
  * @param[in]	instrument_name			SANE_Device::name
- * @param[in]	options						??????
+ * @param[in]	options						what does this hold??????
  * @param[out]	instrument					Holds the scanner H/W info
  *
- * \todo { In progress }
+ * \todo { Untested.
+ * The problem is that given the instrument_name string, the only way
+ * to find the SANE_Device struct is to call sane_get_devices(), [which is
+ * an expensive call] and then compare all SANE_Device::name fields.
+ * Better use the InstrumentFromName_() call, only when he calling application
+ * does not provide us with a pointer to the SANE_Device struct }
  */
 int              InstrumentFromName_ ( const char        * instrument_name,
                                        oyOptions_s       * options,
@@ -192,13 +197,16 @@ int              InstrumentFromName_ ( const char        * instrument_name,
   const char * value3 = 0;
   oyOption_s * o = 0;
   int error = !instrument;
-
-    value3 = oyOptions_FindString( options, "data_blob", 0 );
+	
+    value3 = oyOptions_FindString( options, "data_blob", 0 ); /*TODO What does this do?*/
 
     if(!error)
     {
-      char * manufacturer=0, *model=0, *serial=0, *host=0, *system_port=0;
+      const char * manufacturer=0, *model=0, *serial=0, *host=0, *system_port=0;
       oyBlob_s * data_blob = 0;
+		const SANE_Device ** device_list = NULL;
+		SANE_Bool local = 1;
+		int status,i = 0;
 
       if(!instrument_name)
       {
@@ -211,10 +219,28 @@ int              InstrumentFromName_ ( const char        * instrument_name,
       }
 
       /* now get the data from SANE*/
+		if (instrument_name[0] == 'n' && instrument_name[1] == 'e' && instrument_name[2] == 't')
+			local = 0;
+		status = sane_get_devices( &device_list, local );
+		if (status != SANE_STATUS_GOOD) {
+    		message( oyMSG_WARN, 0, "%s()\n Unable to get SANE devices\n", __func__ );
+			return 1;
+		}
+		while (device_list[i])
+			if (strcmp(device_list[i]->name,instrument_name) == 0) {
+				manufacturer = device_list[i]->vendor;
+				model = device_list[i]->model;
+				serial = "unsupported";
+				host = local?"localhost":"remote";
+				system_port = "TODO";
+				break;
+			}
+		if (device_list[i] == 0) {
+    		message( oyMSG_WARN, 0, "%s()\n The supplied device string did not match\n", __func__ );
+			return 1;
+		}
 
-      host = "not supported";
-
-      if(error != 0)
+      if(error != 0) /*TODO What is this? */
         message( oyMSG_WARN, (oyStruct_s*)options, 
                  _DBG_FORMAT_ "Could not complete \"properties\" call.\n"
                  " oyGetMonitorInfo_lib returned with %s; instrument_name:"
@@ -230,7 +256,7 @@ int              InstrumentFromName_ ( const char        * instrument_name,
         error = oyOptions_SetFromText( &(*instrument)->backend_core,
                                        CMM_BASE_REG OY_SLASH "instrument_name",
                                        instrument_name, OY_CREATE_NEW );
-
+			/*TODO make sure the strings get copied, not pointed */
         OPTIONS_ADD( (*instrument)->backend_core, manufacturer )
         OPTIONS_ADD( (*instrument)->backend_core, model )
         OPTIONS_ADD( (*instrument)->backend_core, serial )
@@ -574,7 +600,7 @@ int                Config_Check      ( oyConfig_s        * config )
  *  @date    2009/02/09
  */
 oyRankPad _rank_map[] = {
-  {"device_name", 2, -1, 0},           /**< is good */
+  {"instrument_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
   {"model", 5, -5, 0},                 /**< important, should not fail */
