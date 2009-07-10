@@ -8,21 +8,34 @@ int main()
     oyProfile_s * profile = 0;
     oyOptions_s * options = 0;  /* not used in this example */
     char * text = 0;
+	 int error;
 
+	 /* Test SANE Backend */
+	 options = oyOptions_New( 0 );
+	 /*Query all backends TODO*/
+	 /*Select SANE TODO*/
+	 /*Select SANE device TODO*/
+	 /*Command SANE backend to say hi*/
+	 oyOptions_SetFromText(
+			 &options,
+			 "//" OY_TYPE_STD "/config.scanner.SANE/command",
+			 "say_hello",
+			 OY_CREATE_NEW );
+    error = oyDeviceGet( OY_TYPE_STD, "scanner", "dev0", options, 0 );
+/*	 oyOptions_SetFromText(
+			 &options,
+			 "//" OY_TYPE_STD "/config.scanner.SANE/command",
+			 "list",
+			 OY_CREATE_NEW );
+    error = oyDeviceGet( OY_TYPE_STD, "scanner", "v4l:/dev/video0", options, 0 );
+*/
+#if 0
     /* Call into the device backends oyCMMapi8_s::oyConfigs_FromPattern
      * function with the "list" command.
      * "monitor" is to be exchanged by the actual device class and
      * ":0.0" by the actual device nick name.
      */
-	 options = oyOptions_New( 0 );
-	 oyOptions_SetFromText(
-			 &options,
-			 "//" OY_TYPE_STD "/config.scanner.SANE/command",
-			 /*"//" OY_TYPE_STD "/config.monitor.oyX1/command",*/
-			 "say_hello",
-			 OY_CREATE_NEW );
-    int error = oyDeviceGet( OY_TYPE_STD, "scanner", "dev0", options, 0 );
-#if 0
+
     int error = oyDeviceGet( 0, "monitor", ":0.0", options, &device );
     /* obtain a expensive list of key/value pairs from the device backend */
     error = oyDeviceGetInfo( device, oyNAME_DESCRIPTION, 0, &text,
