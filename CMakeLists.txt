@@ -22,13 +22,13 @@ LINK_DIRECTORIES( ${LIBRAW_L_LIBRARY_DIR} ${SANE_LIBRARY_DIR} )
 
 ##################TARGETS##################
 
-##################raw2tiff##################
+#raw2tiff##################
 ADD_EXECUTABLE( raw2tiff "RAW.cc" "raw2tiff.cc")
 TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_L_LIBS} "exiv2" "tiff" )
-##################scan##################
+#scan##################
 ADD_EXECUTABLE( scan "scan.c")
 TARGET_LINK_LIBRARIES( scan ${SANE_LIBS} "tiff" )
-##################oytest##################
+#oytest##################
 EXECUTE_PROCESS(	COMMAND oyranos-config --ldflags
 						COMMAND tr '\n' " "
 						OUTPUT_VARIABLE OY_LDFLAGS )
@@ -39,7 +39,7 @@ ADD_EXECUTABLE( oytest "oyTest.c")
 SET_TARGET_PROPERTIES( oytest	PROPERTIES
 										COMPILE_FLAGS "${OY_CFLAGS}"
 										LINK_FLAGS "${OY_LDFLAGS}" )
-##################oyranos backends##################
+#oyranos backends##################
 ADD_LIBRARY( oyranos_SANE_cmm_module SHARED oyranos_cmm_SANE.c )
 TARGET_LINK_LIBRARIES( oyranos_SANE_cmm_module ${SANE_LIBS} )
 ADD_LIBRARY( oyranos_oyRE_cmm_module SHARED oyranos_cmm_oyRE.cc )
