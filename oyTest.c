@@ -15,7 +15,13 @@ int main()
      * ":0.0" by the actual device nick name.
      */
 	 options = oyOptions_New( 0 );
-    int error = oyDeviceGet( OY_TYPE_STD, "monitor", ":0.0", options, 0 );
+	 oyOptions_SetFromText(
+			 &options,
+			 "//" OY_TYPE_STD "/config.scanner.SANE/command",
+			 /*"//" OY_TYPE_STD "/config.monitor.oyX1/command",*/
+			 "say_hello",
+			 OY_CREATE_NEW );
+    int error = oyDeviceGet( OY_TYPE_STD, "scanner", "dev0", options, 0 );
 #if 0
     int error = oyDeviceGet( 0, "monitor", ":0.0", options, &device );
     /* obtain a expensive list of key/value pairs from the device backend */

@@ -121,7 +121,7 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
     /** oyMSG_WARN should make shure our message is visible. */
     message( oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
              _DBG_ARGS_,
-      "The following help text informs about the communication protocol.");
+      "SANE: The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=list\" will provide a list of\n"
       " available instruments. The actual instrument name can be found in\n"
@@ -345,6 +345,11 @@ int              Configs_FromPattern ( const char        * registration,
     ConfigsFromPatternUsage( (oyStruct_s*)options );
     return 0;
   }
+
+  if (oyOptions_FindString( options, "command", "say_hello" ))
+    message( oyMSG_WARN, 0, "SANE: Ordered to say \"Hello World!\"\n");
+  else
+    message( oyMSG_WARN, 0, "SANE: Ordered to remain silent\n");
 
   if(rank && error <= 0)
   {
