@@ -124,7 +124,7 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=list\" will provide a list of\n"
       " available instruments. The actual instrument name can be found in\n"
-      " option \"instrument_name\". The call is as lightwight as possible.\n"
+      " option \"device_name\". The call is as lightwight as possible.\n"
       " The option \"oyNAME_NAME\" returns a short string containting\n"
       " informations and if available, the profile name or size.\n"
       " The bidirectional option \"icc_profile\" will add a oyProfile_s.\n"
@@ -134,13 +134,13 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
       " string.\n" 
       " The bidirectional \"oyNAME_DESCRIPTION\" option turns the \"list\" \n"
       " call into a expensive one.\n"
-      " The option \"instrument_name\" may be added as a filter.\n"
+      " The option \"device_name\" may be added as a filter.\n"
       " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION above."
       " Informations are stored in the returned oyConfig_s::data member."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=properties\" will provide the\n"
-      " instruments properties. Requires a instrument_name identifier\n"
+      " instruments properties. Requires a device_name identifier\n"
       " returned with the \"list\" option.\n"
       " The properties may cover following entries:\n"
       " - \"manufacturer\"\n"
@@ -150,10 +150,10 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
       " - \"system_port\"\n"
       " - and more as appropriate for the device ...\n"
       " \n"
-      " One option \"instrument_name\" will select the according device.\n"
+      " One option \"device_name\" will select the according device.\n"
       " If not the backend might be able to get this information from \n"
       " elsewhere, but this is optional.\n"
-      " The \"instrument_name\" should be identical with the one\n"
+      " The \"device_name\" should be identical with the one\n"
       " returned from a \"list\" request.\n"
       " The \"properties\" call might be a expensive one. Informations are\n" 
       " stored in the returned oyConfig_s::backend_core member."
@@ -161,20 +161,20 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=setup\" will setup the instrument\n"
       " from a profile.\n"
-      " The option \"instrument_name\" must be present, see \"list\" above.\n"
+      " The option \"device_name\" must be present, see \"list\" above.\n"
       " The option \"profile_name\" must be present, containing a ICC profile\n"
       " file name."
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=unset\" will invalidate a profile of\n"
       " a instrument.\n"
-      " The option \"instrument_name\" must be present, see \"list\" above.\n"
+      " The option \"device_name\" must be present, see \"list\" above.\n"
       );
 
   return;
 }
 
-int              InstrumentFromName_ ( const char        * instrument_name,
+int              InstrumentFromName_ ( const char        * device_name,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** instrument,
                                        oyAlloc_f           allocateFunc )
@@ -190,10 +190,10 @@ int              InstrumentFromName_ ( const char        * instrument_name,
       char * manufacturer=0, *model=0, *serial=0, *host=0, *system_port=0;
       oyBlob_s * data_blob = 0;
 
-      if(!instrument_name)
+      if(!device_name)
       {
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_
-                "The \"instrument_name\" argument is\n"
+                "The \"device_name\" argument is\n"
                 " missed to select a appropriate instrument for the"
                 " \"properties\" call.", _DBG_ARGS_ );
         error = 1;
@@ -201,13 +201,13 @@ int              InstrumentFromName_ ( const char        * instrument_name,
       }
 
       /* now get the data from somewhere*/
-      if(strcmp(instrument_name, "dDev_1") == 0)
+      if(strcmp(device_name, "dDev_1") == 0)
       {
         manufacturer = "People_1";
         model = "people-one";
         serial = "11";
         system_port = "usb-01";
-      } else if(strcmp(instrument_name, "dDev_2") == 0)
+      } else if(strcmp(device_name, "dDev_2") == 0)
       {
         manufacturer = "Village_2";
         model = "yard-two";
@@ -220,19 +220,19 @@ int              InstrumentFromName_ ( const char        * instrument_name,
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
                  _DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-                 " oyGetMonitorInfo_lib returned with %s; instrument_name:"
+                 " oyGetMonitorInfo_lib returned with %s; device_name:"
                  " \"%s\"", _DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
-                 instrument_name ? instrument_name : "" );
+                 device_name ? device_name : "" );
 
       if(error <= 0)
       {
         if(!*instrument)
           *instrument = oyConfig_New( CMM_BASE_REG, 0 );
         error = !*instrument;
-        if(!error && instrument_name)
+        if(!error && device_name)
         error = oyOptions_SetFromText( &(*instrument)->backend_core,
-                                       CMM_BASE_REG OY_SLASH "instrument_name",
-                                       instrument_name, OY_CREATE_NEW );
+                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       device_name, OY_CREATE_NEW );
 
         OPTIONS_ADD( (*instrument)->backend_core, manufacturer )
         OPTIONS_ADD( (*instrument)->backend_core, model )
@@ -313,7 +313,7 @@ int              Configs_FromPattern ( const char        * registration,
     instruments = oyConfigs_New(0);
 
     /* "list" call section */
-    value1 = oyOptions_FindString( options, "instrument_name", 0 );
+    value1 = oyOptions_FindString( options, "device_name", 0 );
     value2 = oyOptions_FindString( options, "command", "list" );
     if(oyOptions_FindString( options, "command", "list" ) ||
        (!oyOptions_FindString( options, "command", "properties" ) &&
@@ -334,7 +334,7 @@ int              Configs_FromPattern ( const char        * registration,
 
         if(error <= 0)
         error = oyOptions_SetFromText( &instrument->backend_core,
-                                       CMM_BASE_REG OY_SLASH "instrument_name",
+                                       CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
 
@@ -430,7 +430,7 @@ int              Configs_FromPattern ( const char        * registration,
 
         if(error <= 0)
         error = oyOptions_SetFromText( &instrument->backend_core,
-                                       CMM_BASE_REG OY_SLASH "instrument_name",
+                                       CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
         error = InstrumentFromName_( value1, options, &instrument,
@@ -456,7 +456,7 @@ int              Configs_FromPattern ( const char        * registration,
       error = !value1 || !value3;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-              "The instrument_name/profile_name option is missed. Options:\n%s",
+                "The device_name/profile_name option is missed. Options:\n%s",
                 _DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -472,7 +472,7 @@ int              Configs_FromPattern ( const char        * registration,
       error = !value1;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-                "The instrument_name option is missed. Options:\n%s",
+                "The device_name option is missed. Options:\n%s",
                 _DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
@@ -531,7 +531,7 @@ int                Config_Check      ( oyConfig_s        * config )
  *  @date    2009/02/09
  */
 oyRankPad _rank_map[] = {
-  {"instrument_name", 2, -1, 0},       /**< is good */
+  {"device_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
   {"model", 5, -5, 0},                 /**< important, should not fail */
