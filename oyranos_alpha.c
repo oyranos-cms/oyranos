@@ -8630,7 +8630,7 @@ OYAPI int  OYEXPORT
  *  @param[in]     config              the configuration
  *  @param[in]     key                 a key name, e.g. "my_key"
  *  @param[in]     value               a value, e.g. "my_value"
- *  @param[in]     flags               @see oyOptions_SetFromText()
+ *  @param[in]     flags               see oyOptions_s::oyOptions_SetFromText(.., flags,..)
  *  @return                            0 - good, 1 >= error
  *
  *  @version Oyranos: 0.1.10
