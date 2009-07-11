@@ -43,7 +43,7 @@
 #define CMMMessageFuncSet       catCMMfunc( dDev, CMMMessageFuncSet )
 #define CMMCanHandle            catCMMfunc( dDev, CMMCanHandle )
 #define ConfigsFromPatternUsage catCMMfunc( dDev, ConfigsFromPatternUsage )
-#define InstrumentFromName_     catCMMfunc( dDev, InstrumentFromName_ )
+#define DeviceFromName_         catCMMfunc( dDev, DeviceFromName_ )
 #define GetDevices              catCMMfunc( dDev, GetDevices )
 #define _api8                   catCMMfunc( dDev, _api8 )
 #define _rank_map               catCMMfunc( dDev, _rank_map )
@@ -123,7 +123,7 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
       "The following help text informs about the communication protocol.");
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=list\" will provide a list of\n"
-      " available instruments. The actual instrument name can be found in\n"
+      " available devices. The actual device name can be found in\n"
       " option \"device_name\". The call is as lightwight as possible.\n"
       " The option \"oyNAME_NAME\" returns a short string containting\n"
       " informations and if available, the profile name or size.\n"
@@ -140,7 +140,7 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=properties\" will provide the\n"
-      " instruments properties. Requires a device_name identifier\n"
+      " devices properties. Requires a device_name identifier\n"
       " returned with the \"list\" option.\n"
       " The properties may cover following entries:\n"
       " - \"manufacturer\"\n"
@@ -159,7 +159,7 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
       " stored in the returned oyConfig_s::backend_core member."
        );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"command=setup\" will setup the instrument\n"
+      "The presence of option \"command=setup\" will setup the device\n"
       " from a profile.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
       " The option \"profile_name\" must be present, containing a ICC profile\n"
@@ -167,21 +167,21 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
       );
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"command=unset\" will invalidate a profile of\n"
-      " a instrument.\n"
+      " a device.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
       );
 
   return;
 }
 
-int              InstrumentFromName_ ( const char        * device_name,
+int              DeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
-                                       oyConfig_s       ** instrument,
+                                       oyConfig_s       ** device,
                                        oyAlloc_f           allocateFunc )
 {
   const char * value3 = 0;
   oyOption_s * o = 0;
-  int error = !instrument;
+  int error = !device;
 
     value3 = oyOptions_FindString( options, "data_blob", 0 );
 
@@ -194,7 +194,7 @@ int              InstrumentFromName_ ( const char        * device_name,
       {
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_
                 "The \"device_name\" argument is\n"
-                " missed to select a appropriate instrument for the"
+                " missed to select a appropriate device for the"
                 " \"properties\" call.", _DBG_ARGS_ );
         error = 1;
         return error;
@@ -226,19 +226,19 @@ int              InstrumentFromName_ ( const char        * device_name,
 
       if(error <= 0)
       {
-        if(!*instrument)
-          *instrument = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !*instrument;
+        if(!*device)
+          *device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !*device;
         if(!error && device_name)
-        error = oyOptions_SetFromText( &(*instrument)->backend_core,
+        error = oyOptions_SetFromText( &(*device)->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
-        OPTIONS_ADD( (*instrument)->backend_core, manufacturer )
-        OPTIONS_ADD( (*instrument)->backend_core, model )
-        OPTIONS_ADD( (*instrument)->backend_core, serial )
-        OPTIONS_ADD( (*instrument)->backend_core, system_port )
-        OPTIONS_ADD( (*instrument)->backend_core, host )
+        OPTIONS_ADD( (*device)->backend_core, manufacturer )
+        OPTIONS_ADD( (*device)->backend_core, model )
+        OPTIONS_ADD( (*device)->backend_core, serial )
+        OPTIONS_ADD( (*device)->backend_core, system_port )
+        OPTIONS_ADD( (*device)->backend_core, host )
         if(!error && data_blob)
         {
           o = oyOption_New( CMM_BASE_REG OY_SLASH "data_blob", 0 );
@@ -246,7 +246,7 @@ int              InstrumentFromName_ ( const char        * device_name,
           if(!error)
           error = oyOption_SetFromData( o, data_blob->ptr, data_blob->size );
           if(!error)
-            oyOptions_MoveIn( (*instrument)->data, &o, -1 );
+            oyOptions_MoveIn( (*device)->data, &o, -1 );
           oyBlob_Release( &data_blob );
         }
       }
@@ -270,7 +270,7 @@ int     GetDevices                   ( char            *** list,
 }
 
 /** Function Configs_FromPattern
- *  @brief   CMM_NICK oyCMMapi8_s dummy instruments
+ *  @brief   CMM_NICK oyCMMapi8_s dummy devices
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
@@ -280,8 +280,8 @@ int              Configs_FromPattern ( const char        * registration,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** s )
 {
-  oyConfigs_s * instruments = 0;
-  oyConfig_s * instrument = 0;
+  oyConfigs_s * devices = 0;
+  oyConfig_s * device = 0;
   oyOption_s * o = 0;
   oyProfile_s * p = 0;
   char ** texts = 0;
@@ -310,7 +310,7 @@ int              Configs_FromPattern ( const char        * registration,
 
   if(rank && error <= 0)
   {
-    instruments = oyConfigs_New(0);
+    devices = oyConfigs_New(0);
 
     /* "list" call section */
     value1 = oyOptions_FindString( options, "device_name", 0 );
@@ -329,11 +329,11 @@ int              Configs_FromPattern ( const char        * registration,
         if(value1 && strcmp(value1, texts[i]) != 0)
           continue;
 
-        instrument = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !instrument;
+        device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !device;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( &instrument->backend_core,
+        error = oyOptions_SetFromText( &device->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
@@ -346,7 +346,7 @@ int              Configs_FromPattern ( const char        * registration,
 
           /* In case the devices do not support network transparent ICC profile
            * setup, then use the DB stored profile, e.g.
-           * @see oyInstrumentProfileFromDB() + oyProfile_FromFile()
+           * @see oyDeviceProfileFromDB() + oyProfile_FromFile()
            * This will then turn the backend in a pure local one.
            *
            * One the opposite the Xorg-"oyX1" backend puts the profile in 
@@ -367,7 +367,7 @@ int              Configs_FromPattern ( const char        * registration,
             p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
             o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( instrument->data, &o, -1 );
+            oyOptions_MoveIn( device->data, &o, -1 );
           }
         }
 
@@ -375,7 +375,7 @@ int              Configs_FromPattern ( const char        * registration,
         {
           text = calloc( 4096, sizeof(char) );
 
-          o = oyOptions_Find( instrument->data, "icc_profile" );
+          o = oyOptions_Find( device->data, "icc_profile" );
 
           if( o && o->value && o->value->oy_struct && 
               o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
@@ -394,21 +394,21 @@ int              Configs_FromPattern ( const char        * registration,
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( &instrument->data,
+          error = oyOptions_SetFromText( &device->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
           free( text );
         }
 
         if(error <= 0)
-          instrument->rank_map = oyRankMapCopy( _rank_map,
-                                                instrument->oy_->allocateFunc_);
+          device->rank_map = oyRankMapCopy( _rank_map,
+                                            device->oy_->allocateFunc_);
 
-        oyConfigs_MoveIn( instruments, &instrument, -1 );
+        oyConfigs_MoveIn( devices, &device, -1 );
       }
 
       if(error <= 0)
-        *s = instruments;
+        *s = devices;
 
       return error;
     }
@@ -425,25 +425,25 @@ int              Configs_FromPattern ( const char        * registration,
         if(value1 && strcmp(value1, texts[i]) != 0)
           continue;
 
-        instrument = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !instrument;
+        device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !device;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( &instrument->backend_core,
+        error = oyOptions_SetFromText( &device->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
-        error = InstrumentFromName_( value1, options, &instrument,
+        error = DeviceFromName_( value1, options, &device,
                                          allocateFunc );
 
-        if(error <= 0 && instrument)
-          instrument->rank_map = oyRankMapCopy( _rank_map,
-                                                instrument->oy_->allocateFunc_);
-        oyConfigs_MoveIn( instruments, &instrument, -1 );
+        if(error <= 0 && device)
+          device->rank_map = oyRankMapCopy( _rank_map,
+                                            device->oy_->allocateFunc_);
+        oyConfigs_MoveIn( devices, &device, -1 );
       }
 
       if(error <= 0)
-        *s = instruments;
+        *s = devices;
 
       return error;
     }
@@ -494,9 +494,9 @@ int              Configs_FromPattern ( const char        * registration,
 }
 
 /** Function Config_Check
- *  @brief   CMM_NICK oyCMMapi8_s instrument check
+ *  @brief   CMM_NICK oyCMMapi8_s device check
  *
- *  @param[in]     config              the monitor instrument configuration
+ *  @param[in]     config              the monitor device configuration
  *  @return                            rank value
  *
  *  @version Oyranos: 0.1.10
@@ -524,7 +524,7 @@ int                Config_Check      ( oyConfig_s        * config )
 }
 
 /** @instance _rank_map
- *  @brief    oyRankPad map for mapping instrument to configuration informations
+ *  @brief    oyRankPad map for mapping device to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/27 (Oyranos: 0.1.10)
@@ -532,7 +532,7 @@ int                Config_Check      ( oyConfig_s        * config )
  */
 oyRankPad _rank_map[] = {
   {"device_name", 2, -1, 0},           /**< is good */
-  {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
+  {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
   {"model", 5, -5, 0},                 /**< important, should not fail */
   {"serial", 10, -2, 0},               /**< important, could slightly fail */
