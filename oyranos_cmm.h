@@ -1137,8 +1137,18 @@ struct oyCMMapi8_s {
 
   oyConfigs_FromPattern_f oyConfigs_FromPattern; /**< obtain matching configs */
   oyConfig_Rank_f  oyConfig_Rank;      /**< test config */
-  oyRankPad      * rank_map;           /**< zero terminated list of rank
-                                        *   attributes */
+  /** zero terminated list of rank attributes;
+   *  The data is just informational. In case all properties to rank a given 
+   *  device pair are well known, this rank_map can be copied into each 
+   *  oyConfig_s device created by oyConfigs_FromPattern():
+   *  @verbatim
+      oyConfig_s * device = oyConfig_New( CMM_BASE_REG, 0);
+      device->rank_map = oyRankMapCopy( dDev_api8->rank_map,
+                                        device->oy_->allocateFunc_);
+      @endverbatim
+   *  For additional dynamic rank pads the allocation can be done individually.
+   */
+  oyRankPad      * rank_map;
 };
 
 
