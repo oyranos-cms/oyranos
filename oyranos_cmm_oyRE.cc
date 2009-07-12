@@ -69,65 +69,65 @@
  *  \todo { In progress }
  */
 oyranos::oyRankPad _rank_map[] = {
-  {"instrument_name", 2, -1, 0},/**< is good */
-  {"profile_name", 0, 0, 0},/**< non relevant for instrument properties*/
+  {const_cast<char*>("instrument_name"), 2, -1, 0},/**< is good */
+  {const_cast<char*>("profile_name "), 0, 0, 0},/**< non relevant for instrument properties*/
 
 	/* EXIF Fields */
-  {"Exif.Image.Make", 1, -1, 0},					/**< is nice */
-  {"Exif.Image.Model", 5, -5, 0},				/**< important, should not fail */
-  {"Exif.SerialNumber", 10, -2, 0},				/**< important, could slightly fail */ /*Exif.Make.SerialNumber*/
-  {"Exif.Photo.ISOSpeedRatings", 1, 0, 0},	/**< is nice */
-  {"Exif.Photo.ExposureProgram", 1, 0, 0},	/**< nice to match */
-  {"Exif.Photo.Flash", 1, 0, 0},					/**< nice to match */
+  {const_cast<char*>("Exif.Image.Make "), 1, -1, 0},					/**< is nice */
+  {const_cast<char*>("Exif.Image.Model "), 5, -5, 0},				/**< important, should not fail */
+  {const_cast<char*>("Exif.SerialNumber "), 10, -2, 0},				/**< important, could slightly fail */ /*Exif.Make.SerialNumber*/
+  {const_cast<char*>("Exif.Photo.ISOSpeedRatings "), 1, 0, 0},	/**< is nice */
+  {const_cast<char*>("Exif.Photo.ExposureProgram "), 1, 0, 0},	/**< nice to match */
+  {const_cast<char*>("Exif.Photo.Flash "), 1, 0, 0},					/**< nice to match */
 
   /* Possibly not relevant options are marked with: O->Output R->Repair */
   /* LibRaw Options affecting open_file() */
   /* LibRaw Options affecting unpack() */
-  {"use_camera_wb", 1, -1, 0},					/**< is nice */
-  {"use_camera_matrix", 1, -1, 0},				/**< is nice */
-  {"half_size", 1, -1, 0},							/**< is nice */
-//{"filtering_mode", 1, -1, 0},					/**< is nice */ /*not in libraw-lite*/
+  {const_cast<char*>("use_camera_wb "), 1, -1, 0},					/**< is nice */
+  {const_cast<char*>("use_camera_matrix "), 1, -1, 0},				/**< is nice */
+  {const_cast<char*>("half_size "), 1, -1, 0},							/**< is nice */
+//{const_cast<char*>("filtering_mode "), 1, -1, 0},					/**< is nice */ /*not in libraw-lite*/
 //This is a bit-field. Out of all the possible flags, only LIBRAW_FILTERING_NORAWCURVE
 //seems to be relevant to color [From LibRaw API docs]:
 //This bit turns off tone curve processing (for tone curves read from file metadata or
 //calculated from constants). This setting is supported only for bayer-pattern cameras
 //with tone curve; 
-  {"threshold", 1, -1, 0},							/**< is nice */ /*R*/
-  {"aber[0]", 1, -1, 0},							/**< is nice */ /*R*/
-  {"aber[1]", 1, -1, 0},							/**< is nice */ /*R*/
-  {"aber[2]", 1, -1, 0},							/**< is nice */ /*R*/
-  {"aber[3]", 1, -1, 0},							/**< is nice */ /*R*/
+  {const_cast<char*>("threshold "), 1, -1, 0},							/**< is nice */ /*R*/
+  {const_cast<char*>("aber[0] "), 1, -1, 0},							/**< is nice */ /*R*/
+  {const_cast<char*>("aber[1] "), 1, -1, 0},							/**< is nice */ /*R*/
+  {const_cast<char*>("aber[2] "), 1, -1, 0},							/**< is nice */ /*R*/
+  {const_cast<char*>("aber[3] "), 1, -1, 0},							/**< is nice */ /*R*/
   /* LibRaw Options affecting dcraw_process() */
-  {"greybox[0]", 1, -1, 0},						/**< is nice */
-  {"greybox[1]", 1, -1, 0},						/**< is nice */
-  {"greybox[2]", 1, -1, 0},						/**< is nice */
-  {"greybox[3]", 1, -1, 0},						/**< is nice */
-  {"gamm[0]", 1, -1, 0},							/**< is nice */
-  {"gamm[1]", 1, -1, 0},							/**< is nice */
-  {"gamm[2]", 1, -1, 0},							/**< is nice */
-  {"gamm[3]", 1, -1, 0},							/**< is nice */
-  {"gamm[4]", 1, -1, 0},							/**< is nice */
-  {"gamm[5]", 1, -1, 0},							/**< is nice */
-  {"user_mul[0]", 1, -1, 0},						/**< is nice */
-  {"user_mul[1]", 1, -1, 0},						/**< is nice */
-  {"user_mul[2]", 1, -1, 0},						/**< is nice */
-  {"user_mul[3]", 1, -1, 0},						/**< is nice */
-  {"bright", 1, -1, 0},								/**< is nice */
-  {"four_color_rgb", 1, -1, 0},					/**< is nice */
-  {"highlight", 1, -1, 0},							/**< is nice */
-  {"use_auto_wb", 1, -1, 0},						/**< is nice */
-  {"output_color", 1, -1, 0},						/**< is nice */
-  {"camera_profile", 1, -1, 0},					/**< is nice */
-  {"output_bps", 1, -1, 0},						/**< is nice */
-  {"user_qual", 1, -1, 0},							/**< is nice */
-  {"user_black", 1, -1, 0},						/**< is nice */
-  {"user_sat", 1, -1, 0},							/**< is nice */
-  {"med_passes", 1, -1, 0},						/**< is nice */
-  {"auto_bright_thr", 1, -1, 0},					/**< is nice */
-  {"no_auto_bright", 1, -1, 0},					/**< is nice */
+  {const_cast<char*>("greybox[0] "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("greybox[1] "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("greybox[2] "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("greybox[3] "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("gamm[0] "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("gamm[1] "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("gamm[2] "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("gamm[3] "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("gamm[4] "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("gamm[5] "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("user_mul[0] "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("user_mul[1] "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("user_mul[2] "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("user_mul[3] "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("bright "), 1, -1, 0},								/**< is nice */
+  {const_cast<char*>("four_color_rgb "), 1, -1, 0},					/**< is nice */
+  {const_cast<char*>("highlight "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("use_auto_wb "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("output_color "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("camera_profile "), 1, -1, 0},					/**< is nice */
+  {const_cast<char*>("output_bps "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("user_qual "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("user_black "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("user_sat "), 1, -1, 0},							/**< is nice */
+  {const_cast<char*>("med_passes "), 1, -1, 0},						/**< is nice */
+  {const_cast<char*>("auto_bright_thr "), 1, -1, 0},					/**< is nice */
+  {const_cast<char*>("no_auto_bright "), 1, -1, 0},					/**< is nice */
 
   /* Extra options (user supplied) */
-  {"illumination_source", 1, -1, 0},			/**< is nice */
+  {const_cast<char*>("illumination_source"), 1, -1, 0},			/**< is nice */
   {0,0,0,0}												/**< end of list */
 };
 
@@ -625,7 +625,7 @@ oyCMMapi8_s oyranos::_api8 = {
   CMMMessageFuncSet,         /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
   CMMCanHandle,              /**< oyCMMCanHandle_f oyCMMCanHandle */
 
-  CMM_BASE_REG,              /**< registration */
+  const_cast<char*>(CMM_BASE_REG),              /**< registration */
   {0,1,0},                   /**< int32_t version[3] */
   0,                         /**< char * id_ */
 
@@ -708,7 +708,7 @@ oyCMMInfo_s _cmm_module = {
   (oyCMMapi_s*) & _api8,
 
   /** ::icon; zero terminated list of a icon pyramid */
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, const_cast<char*>("oyranos_logo.png")},
 };
 
 /* Helper functions */
