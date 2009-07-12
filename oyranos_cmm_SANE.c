@@ -595,11 +595,15 @@ int                Config_Check      ( oyConfig_s        * config )
 /** @instance _rank_map
  *  @brief    oyRankPad map for mapping instrument to configuration informations
  *
+ *  This is the static part for the well known options. The final array will
+ *  be created by the oyCreateRankMap_() function.
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
 oyRankPad _rank_map[] = {
+	/* Scanner H/W information */
   {"instrument_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for instrument properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
@@ -607,6 +611,9 @@ oyRankPad _rank_map[] = {
   {"serial", 10, 0, 0},                /**< currently not avaliable */
   {"host", 1, 0, 0},                   /**< currently only local or remote */
   {"system_port", 2, 0, 0},            /**< good to match */
+
+  /* User supplied information */
+  {"media", 1, -1, 0},                 /**< type of paper/film/slide/... */
   {0,0,0,0}                            /**< end of list */
 };
 
@@ -722,7 +729,7 @@ oyCMMInfo_s _cmm_module = {
  *
  * \todo { Untested }
  */
-int OyCreateRankMap_ ( SANE_Handle device_handle, oyRankPad** rank_map )
+int oyCreateRankMap_ ( SANE_Handle device_handle, oyRankPad** rank_map )
 {
 	oyRankPad * rm = NULL;
 
@@ -739,7 +746,7 @@ int OyCreateRankMap_ ( SANE_Handle device_handle, oyRankPad** rank_map )
 		return -1;
 	}
 
-	/* we allocate extra memmory for non color options */
+	/* we allocate enough memmory to hold all options */
 	rm = calloc(num_options,sizeof(oyRankPad));
 	memset(rm,0,sizeof(oyRankPad)*num_options);
 
@@ -754,9 +761,11 @@ int OyCreateRankMap_ ( SANE_Handle device_handle, oyRankPad** rank_map )
 		}
 	}
 
-	num_options = i+1; /* color options +1 */
-	/* free extra memmory for non color options */
+	num_options = i + sizeof(_rank_map)/sizeof(oyRankPad); /* color options + static options */
+	/* resize rm array to hold only needed options */
 	*rank_map = realloc( rm, num_options*sizeof(oyRankPad) );
+	/* copy static options at end of new rank map */
+	memcpy( *rank_map+i, _rank_map, sizeof(_rank_map) );
 
-	return 1;
+	return 0;
 }
