@@ -35,7 +35,7 @@ EXECUTE_PROCESS(	COMMAND oyranos-config --ldflags
 EXECUTE_PROCESS(	COMMAND oyranos-config --cflags
 						COMMAND tr '\n' " "
 						OUTPUT_VARIABLE OY_CFLAGS )
-ADD_EXECUTABLE( oytest "oyTest.c")
+ADD_EXECUTABLE( oytest "oyTest.cc")
 SET_TARGET_PROPERTIES( oytest	PROPERTIES
 										COMPILE_FLAGS "${OY_CFLAGS}"
 										LINK_FLAGS "${OY_LDFLAGS}" )

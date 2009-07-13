@@ -10,10 +10,30 @@ int main()
     char * text = 0;
 	 int error;
 
-	 /* Test SANE Backend */
+	 /******** Test SANE Backend ********/
+
+	 /**Query SANE backend for all avaliable devices**/
+	 oyConfigs_s *sane_devices = NULL;
+	 /* OY_TYPE_STD: defaults to "imaging"
+	  * "scanner": is defined in oyranos_cmm_SANE.c
+	  * options: is NULL, not used here (TODO what is it used for?)
+	  * sane_devices: List of configuration objects, one for each device*/
+	 error = oyDevicesGet (OY_TYPE_STD, "scanner", NULL, &sane_devices);
+	 int num_scanners = oyConfigs_Count( sane_devices );
+
+	 for (int i=0; i<num_scanners; i++) {
+		 oyConfig_s * sane_device = oyConfigs_Get( sane_devices, i );
+		 int num_options = oyConfig_Count( sane_device );
+		 for (int j=0; j<num_options; j++) {
+			 oyOption_s opt = oyConfig_Get( sane_device, j );
+			 /*Problems with manipulating an option struct. FIXME*/
+			 oyOption_Release( &opt );
+		 }
+		 oyConfig_Release( &sane_device );
+	 }
+	 /**Select SANE**/
 	 options = oyOptions_New( 0 );
-	 /*Query all backends TODO*/
-	 /*Select SANE TODO*/
+    error = oyDeviceGet( OY_TYPE_STD, "scanner", "pnm:0", options, 0 );
 	 /*Select SANE device TODO*/
 	 /*Command SANE backend to say hi*/
 	 oyOptions_SetFromText(
