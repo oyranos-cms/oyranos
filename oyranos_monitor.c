@@ -1551,7 +1551,7 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
   } else
   {
     if(getenv("DISPLAY") && strlen(getenv("DISPLAY")))
-      disp->name = oyStringCopy_( getenv("DISPLAY"), , oyAllocateFunc_ );
+      disp->name = oyStringCopy_( getenv("DISPLAY"), oyAllocateFunc_ );
     else
       disp->name = oyStringCopy_( "0", oyAllocateFunc_ );
   }
