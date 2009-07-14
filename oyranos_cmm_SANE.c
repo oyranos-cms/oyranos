@@ -30,6 +30,7 @@
 
 /* --- internal definitions --- */
 
+#define DBG printf("%s: %d\n", __FILE__, __LINE__ ); fflush(NULL);
 /* select a own four byte identifier string instead of "dDev" and replace the
  * dDev in the below macros.
  */
@@ -293,12 +294,13 @@ int              DeviceFromName_ ( const char        * device_name,
 int     GetDevices                   ( char            *** list,
                                        oyAlloc_f           allocateFunc )
 {
-	int status, version, len, i, l = 0;
+	int status, pnm_status, version, len, i, l = 0;
 	char ** names = NULL,
 		  ** vendors = NULL,
 		  ** models = NULL,
 		  ** types = NULL;
 	const SANE_Device ** device_list = NULL;
+	SANE_Handle handle;
 
 	status = sane_init(&version,NULL);
 	if (status!=SANE_STATUS_GOOD) {
@@ -306,11 +308,15 @@ int     GetDevices                   ( char            *** list,
 		return -1;
 	}
 
+	pnm_status = sane_open( "pnm:0", &handle ); /*Trick to make pnm bakend appear*/
 	status = sane_get_devices(&device_list,SANE_FALSE);
 	if (status!=SANE_STATUS_GOOD) {
 		printf("Cannot get sane devices!\n");
 		return -1;
 	}
+
+	if (pnm_status == SANE_STATUS_GOOD)
+		sane_close(handle);
 
 	while (device_list[l]) l++;
 	len = l + 1;
