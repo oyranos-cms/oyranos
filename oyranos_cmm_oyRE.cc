@@ -339,6 +339,15 @@ int              DeviceFromName_ ( const char        * device_name,
   return error;
 }
 
+/** Function GetDevices
+ *  @brief Request all devices 
+ *
+ * @param[in/out]	list					NULL terminated array of strings holding device names
+ * @param[in]		allocateFunc		memmory allocate function
+ * @return									The number of devices
+ *
+ * \todo { Shouldn't it return error code instead? }
+ */
 int     GetDevices                   ( char            *** list,
                                        oyAlloc_f           allocateFunc )
 {
@@ -352,7 +361,7 @@ int     GetDevices                   ( char            *** list,
 
   *list = texts;
   */
-  return 2;
+  return 0;
 }
 
 /** Function Configs_FromPattern

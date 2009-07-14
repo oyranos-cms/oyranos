@@ -281,6 +281,10 @@ int              DeviceFromName_ ( const char        * device_name,
 /** Function GetDevices
  *  @brief Request all devices from SANE and return their SANE_Device::name
  *
+ * @param[in/out]	list					NULL terminated array of strings holding device names
+ * @param[in]		allocateFunc		memmory allocate function
+ * @return									The number of devices
+ *
  *  \todo {
  *  name,vendor,model,type should probably be cached someplace.
  *  sane_get_devices() is an expensive function [up to a few seconds?]
@@ -329,8 +333,8 @@ int     GetDevices                   ( char            *** list,
   }
 
   *list = names;
-  free(device_list);
-  return 2;
+  /*free(device_list); FIXME*/
+  return l;
 }
 
 /** Function Configs_FromPattern
