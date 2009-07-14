@@ -340,6 +340,10 @@ int     GetDevices                   ( char            *** list,
 /** Function Configs_FromPattern
  *  @brief   CMM_NICK oyCMMapi8_s scanner devices
  *
+ *  @param[in] 	registration	a string to compare ??????
+ *  @param[in]		options			read what to do from the options object
+ *  @param[out]	s					Return a configuration for each device found
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/02/09
@@ -386,6 +390,8 @@ int              Configs_FromPattern ( const char        * registration,
     devices = oyConfigs_New(0);
 
     /* "list" call section */
+	 /* Are we asked for all devices, or just one?
+	  * If a "device_name" exists, use only that */
     value1 = oyOptions_FindString( options, "device_name", 0 );
     value2 = oyOptions_FindString( options, "command", "list" );
     if(oyOptions_FindString( options, "command", "list" ) ||
@@ -398,7 +404,7 @@ int              Configs_FromPattern ( const char        * registration,
 
       for( i = 0; i < texts_n; ++i )
       {
-        /* filter */
+        /* if current device does not match the requested, try the next */
         if(value1 && strcmp(value1, texts[i]) != 0)
           continue;
 
