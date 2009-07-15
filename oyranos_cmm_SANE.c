@@ -65,6 +65,7 @@ oyMessage_f message = 0;
 extern oyCMMapi8_s _api8;
 oyRankPad _rank_map[];
 
+SANE_Bool sane = SANE_FALSE; /**< temporary workaround */
 /* --- implementations --- */
 
 int                CMMInit       ( )
@@ -182,6 +183,8 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
  * @param[in]	device_name			SANE_Device::name
  * @param[in]	options				what does this hold??????
  * @param[out]	device				Holds the scanner H/W info
+ * @param[in]	all					Holds the list of all scanner H/W info
+ * @param[in]	size					Holds the number of scanners
  *
  * \todo { Untested.
  * The problem is that given the device_name string, the only way
@@ -193,7 +196,8 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
 int              DeviceFromName_ ( const char        * device_name,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** device,
-                                       oyAlloc_f           allocateFunc )
+                                       const char ** all,
+													int size )
 {
   const char * value3 = 0;
   oyOption_s * o = 0;
@@ -205,7 +209,6 @@ int              DeviceFromName_ ( const char        * device_name,
     {
       const char * manufacturer=0, *model=0, *serial=0, *host=0, *system_port=0;
       oyBlob_s * data_blob = 0;
-		const SANE_Device ** device_list = NULL;
 		SANE_Bool local = 1;
 		int status,i = 0;
 
@@ -218,28 +221,24 @@ int              DeviceFromName_ ( const char        * device_name,
         error = 1;
         return error;
       }
-
-      /* now get the data from SANE*/
+		/* if device string starts with net, it is a remote device */
 		if (device_name[0] == 'n' && device_name[1] == 'e' && device_name[2] == 't')
 			local = 0;
-		status = sane_get_devices( &device_list, local );
-		if (status != SANE_STATUS_GOOD) {
-    		message( oyMSG_WARN, 0, "%s()\n Unable to get SANE devices\n", __func__ );
-			return 1;
-		}
-		while (device_list[i])
-			if (strcmp(device_list[i]->name,device_name) == 0) {
-				manufacturer = device_list[i]->vendor;
-				model = device_list[i]->model;
-				serial = "unsupported";
-				host = local?"localhost":"remote";
-				system_port = "TODO";
+
+		/* find device string in all array */
+		for (i=0; i<size; i++)
+			if (strcmp(all[i],device_name) == 0)
 				break;
-			}
-		if (device_list[i] == 0) {
+		if (i == size) {
     		message( oyMSG_WARN, 0, "%s()\n The supplied device string did not match\n", __func__ );
 			return 1;
 		}
+
+		manufacturer = all[i+size];
+		model = all[i+2*size];
+		serial = "unsupported";
+		host = local?"localhost":"remote";
+		system_port = "TODO";
 
       if(error != 0) /*TODO What is this? */
         message( oyMSG_WARN, (oyStruct_s*)options, 
@@ -303,18 +302,27 @@ int     GetDevices                   ( char            *** list,
 	const SANE_Device ** device_list = NULL;
 	SANE_Handle handle;
 
-	status = sane_init(&version,NULL);
-	if (status!=SANE_STATUS_GOOD) {
-		printf("Cannot initialise sane!\n");
-		return -1;
+	/* If sane_init() is already called by the application, then
+	 * this is probably a BUG! FIXME*/
+	if (!sane) {
+		printf("Initialising SANE..."); fflush(NULL);
+		status = sane_init(&version,NULL);
+		if (status!=SANE_STATUS_GOOD) {
+			printf("Cannot initialise sane!\n");
+			return -1;
+		}
+		printf("OK\n"); fflush(NULL);
+		sane = SANE_TRUE;
 	}
 
 	pnm_status = sane_open( "pnm:0", &handle ); /*Trick to make pnm bakend appear*/
+	printf("Scanning SANE devices..."); fflush(NULL);
 	status = sane_get_devices(&device_list,SANE_FALSE);
 	if (status!=SANE_STATUS_GOOD) {
 		printf("Cannot get sane devices!\n");
 		return -1;
 	}
+	printf("OK\n"); fflush(NULL);
 
 	if (pnm_status == SANE_STATUS_GOOD)
 		sane_close(handle);
@@ -322,15 +330,15 @@ int     GetDevices                   ( char            *** list,
 	while (device_list[l]) l++;
 	len = l + 1;
 
-  names = allocateFunc( len );
-  vendors = allocateFunc( len );
-  models = allocateFunc( len );
-  types = allocateFunc( len );
+  names = allocateFunc( len*sizeof(char*) );
+  vendors = allocateFunc( len*sizeof(char*) );
+  models = allocateFunc( len*sizeof(char*) );
+  types = allocateFunc( len*sizeof(char*) );
 
-  memset( names, 0, len );
-  memset( vendors, 0, len );
-  memset( models, 0, len );
-  memset( types, 0, len );
+  memset( names, 0, len*sizeof(char*) );
+  memset( vendors, 0, len*sizeof(char*) );
+  memset( models, 0, len*sizeof(char*) );
+  memset( types, 0, len*sizeof(char*) );
 
   for (i=0; i<l; i++) {
 	  names[i] = allocateFunc( strlen(device_list[i]->name)+1 ); strcpy( names[i], device_list[i]->name );
@@ -525,8 +533,7 @@ int              Configs_FromPattern ( const char        * registration,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
-        error = DeviceFromName_( value1, options, &device,
-                                         allocateFunc );
+        error = DeviceFromName_( value1, options, &device, texts, texts_n );
 
         if(error <= 0 && device)
           device->rank_map = oyRankMapCopy( _rank_map,
