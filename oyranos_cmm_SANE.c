@@ -298,7 +298,8 @@ int     GetDevices                   ( char            *** list,
 	char ** names = NULL,
 		  ** vendors = NULL,
 		  ** models = NULL,
-		  ** types = NULL;
+		  ** types = NULL,
+		  ** all = NULL;
 	const SANE_Device ** device_list = NULL;
 	SANE_Handle handle;
 
@@ -338,8 +339,14 @@ int     GetDevices                   ( char            *** list,
 	  types[i] = allocateFunc( strlen(device_list[i]->type)+1 ); strcpy( types[i], device_list[i]->type );
   }
 
-  *list = names;
-  /*free(device_list); FIXME*/
+  all = allocateFunc( 4*l*sizeof(char*)+1 );
+  memcpy(all,names,l*sizeof(char*));
+  memcpy(all+l,vendors,l*sizeof(char*));
+  memcpy(all+2*l,models,l*sizeof(char*));
+  memcpy(all+3*l,types,l*sizeof(char*));
+  all[4*l] = NULL;
+
+  *list = all;
   return l;
 }
 
