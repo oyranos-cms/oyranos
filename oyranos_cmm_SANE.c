@@ -401,11 +401,6 @@ int              Configs_FromPattern ( const char        * registration,
     return 0;
   }
 
-  if (oyOptions_FindString( options, "command", "say_hello" ))
-    message( oyMSG_WARN, 0, "SANE: Ordered to say \"Hello World!\"\n");
-  else
-    message( oyMSG_WARN, 0, "SANE: Ordered to remain silent\n");
-
   if(rank && error <= 0)
   {
     devices = oyConfigs_New(0);
