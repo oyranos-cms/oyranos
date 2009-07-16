@@ -738,7 +738,7 @@ oyOptions_s* lcmsFilter_CmmIccValidateOptions
   uint32_t error = !filter;
 
   if(!error)
-    error = oyFilterRegistrationMatch(filter->registration_, "//colour/icc",
+    error = oyFilterRegistrationMatch(filter->registration_, "//imaging/icc",
                                       oyOBJECT_CMM_API4_S);
 
   *result = error;
@@ -1614,7 +1614,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
   lcmsCMMCanHandle,
 
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc." CMM_NICK ".CPU",
+  "icc." CMM_NICK ".CPU.ACCEL",
 
   lcmsVERSION,
   0,   /* id_; keep empty */
@@ -1651,7 +1651,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsCMMCanHandle,
 
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc." CMM_NICK,
+  "icc.colour." CMM_NICK ".CPU.NOACCEL",
 
   lcmsVERSION,
   0,   /* id_; keep empty */
