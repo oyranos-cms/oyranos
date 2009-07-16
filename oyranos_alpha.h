@@ -604,7 +604,7 @@ typedef struct {
   oyObject_s           oy_;            /**< @private base object */
 
   uint32_t             id;             /**< id to map to events and widgets */
-  char               * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/imaging/scale/x" */
+  char               * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/imaging/scale/x", see as well @ref registration @see oyOPTIONATTRIBUTE_e */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -691,6 +691,14 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  *  So proofing makes no sense for toolkit widgets, but for advanced
  *  graphics displaying. All other Oyranos behaviour settings should be taken
  *  over untouched.
+ *
+ *  The ".invisible" attribute says a option shall not be displayed in a GUI.
+ *  The ".readonly" attribute alllows for unchangeable, static options. They
+ *  might be used for passing additional informations.
+ *  The ".font" and ".advanced" attributes are described for the according 
+ *  enum values.
+ *
+ *  See as well @ref registration
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/10/08 (Oyranos: 0.1.8)
@@ -834,20 +842,21 @@ typedef struct {
   /** This property contains the identifier for communication with a Oyranos
    *  or a backend through Oyranos. It defines the basic key path name to store
    *  configuration.\n
-   *  e.g. "shared/freedesktop.org/colour/config.monitor.xorg" */
+   *  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg" \n
+   *  see as well @ref registration */
   char               * registration;
   int                  version[3];     /**< as for oyCMMapi4_s::version */
 
   /** data base (Elektra) properties,
-  e.g. "shared/freedesktop.org/colour/config.monitor.xorg/1/manufacturer=EIZO"*/
+  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/1/manufacturer=EIZO"*/
   oyOptions_s        * db;
   /** These are the backend core properties, the ones to identify the 
    *  device and store in DB. They must be filled by the backend.
-  e.g. "shared/freedesktop.org/colour/config.monitor.xorg/manufacturer=EIZO" */
+  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/manufacturer=EIZO" */
   oyOptions_s        * backend_core;
   /** Additional informations from backends, with non identification purpose,
    *  can be stored herein,
-  e.g. "shared/freedesktop.org/colour/config.monitor.xorg/edid=oyBlob_s*" */
+  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/edid=oyBlob_s*" */
   oyOptions_s        * data;
 
   oyRankPad          * rank_map;       /**< zero terminated list; key compare */
@@ -2100,7 +2109,7 @@ struct oyFilterCore_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  char               * registration_;  /**< @private a registration name, e.g. "sw/oyranos.org/imaging/scale" */
+  char               * registration_;  /**< @private a registration name, e.g. "sw/oyranos.org/imaging/scale", see as well @ref registration */
   oyName_s           * name_;          /**< @private nick, name, description/help */
 
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */

@@ -3935,6 +3935,7 @@ digraph Anatomy_B {
   }
 } @enddot
  *
+ *  @section registration Registration
  *  Each filter API provides a \b registration member string.
  *  The registration member provides the means to later sucessfully select 
  *  the according filter. The string is separated into sections by a slash'/'.
@@ -3990,6 +3991,9 @@ digraph Anatomy_B {
  *  obtained by omitting sections like in the string "//imaging/icc", where the
  *  elements between slashes is o,itted. This string would result in a match 
  *  for any ICC compliant colour conversion filter.
+ *
+ *  The registration attributes ".front", ".advanced" and more are described in
+ *  the objects_value::oyOPTIONATTRIBUTE_e enum.
  *
  *  See as well <a href="http://www.oyranos.org/wiki/index.php?title=Concepts#Elektra_namespace">Concepts#Elektra_namespace</a> on ColourWiki.
  *  @{
