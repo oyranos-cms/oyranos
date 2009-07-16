@@ -9763,7 +9763,8 @@ OYAPI int OYEXPORT
         sprintf( &temp[strlen(temp)], "%s", attributes[j]);
       }
 
-      // text in temp can be passed as the device_class argument to oyDeviceGet
+      // The string in temp can be passed as the device_class argument to 
+      // oyDevicesGet()
       printf("%d: %s \"%s\"\n", i, texts[i], temp);
 
       oyStringListRelease_( &attributes, attributes_n, free );

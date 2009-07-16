@@ -1269,7 +1269,7 @@ char ** oyCMMsGetLibNames_           ( uint32_t          * n,
 }
 #endif
 
-oyTESTRESULT_e testCMMConfigsListing ()
+oyTESTRESULT_e testCMMDevicesListing ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
