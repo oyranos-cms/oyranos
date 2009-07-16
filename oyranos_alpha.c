@@ -3937,15 +3937,17 @@ digraph Anatomy_B {
  *
  *  @section registration Registration
  *  Each filter API provides a \b registration member string.
- *  The registration member provides the means to later sucessfully select 
+ *  The registration member provides the means to later successfully select 
  *  the according filter. The string is separated into sections by a slash'/'.
  *  The sections can be subdivided by point'.' for additional attributes as 
- *  needed. The sections are to be filled as follows:
+ *  needed. This pattern follows the scheme of directories with attributes or
+ *  XML elements with attributes.
+ *  The sections are to be filled as follows:
  *  - top, e.g. "sw" (::oyFILTER_REG_TOP)
  *  - vendor, e.g. "oyranos.org" (::oyFILTER_REG_DOMAIN)
- *  - filter type, e.g. "imaging" and "tonemap" or "image" or "colour"
+ *  - filter type, e.g. "imaging"
  *    (::oyFILTER_REG_TYPE)
- *  - filter name, e.g. "icc.lcms.NOACCEL.CPU" (::oyFILTER_REG_APPLICATION)
+ *  - filter name, e.g. "icc.lcms._NOACCEL._CPU" (::oyFILTER_REG_APPLICATION)
  *
  *  After that the options section follows (::oyFILTER_REG_OPTION).
  *
@@ -3957,14 +3959,19 @@ digraph Anatomy_B {
  *  @par Filter registration:
  *  A filter can add keywords but must omit the API number and the following
  *  matching rule sign. Recommended keywords for the application section are:
- *  - ACCEL for acceleration, required
- *  - NOACCEL for no acceleration or plain software, required
- *  - GPU, GLSL, HLSL, MMX, SSE, SSE2, 3DNow and so on for certain hardware
- *    acceleration features \n
+ *  - _ACCEL for acceleration, required
+ *  - _NOACCEL for no acceleration or plain software, required
+ *  - _GPU, _GLSL, _HLSL, _MMX, _SSE, _SSE2, _3DNow and so on for certain 
+ *    hardware acceleration features \n
  *  
  *  \b Example: a complete module registration: \n
- *  "sw/oyranos.org/imaging/icc.lcms.NOACCEL.CPU" registers a plain software CMM
+ *  "sw/oyranos.org/imaging/icc.lcms._NOACCEL._CPU" registers a plain software
+ *  CMM
  * 
+ *  A underscore in front of a attribute makes the attribute optional during
+ *  the matching process in oyFilterRegistrationMatch(). This is needed in case
+ *  a registration string is used itself as a search pattern.
+ *
  *  @par Registration search pattern:
  *  To explicitely select a different processor and context creator the
  *  according registration attribute must have a number and prefix,
@@ -3980,6 +3987,11 @@ digraph Anatomy_B {
  *  - "6[_,+,-]" - context convertor oyCMMapi6_s
  *  - "7[_,+,-]" - processor oyCMMapi7_s \n
  *  
+ *  By default all attributes in a search pattern are considered mandatory.
+ *  A level can be omitted, "//", or a attribute can be tagged by a '_'
+ *  underscore in front for making it optional, or a '-' to indicate a 
+ *  attibute must not match.
+ *
  *  \b Example: a complete registration search pattern: \n
  *  "//imaging/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
  *  interpolator with prefered GPU and HLSL but no GLSL support together with a
@@ -18389,7 +18401,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2009/05/27
+ *  @date    2009/07/16
  */
 int    oyFilterRegistrationMatch     ( const char        * registration,
                                        const char        * pattern,
@@ -18459,6 +18471,12 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
           {
             pc_api_num = pc_text[0];
             ++ pc_text;
+            pc_match_type = pc_text[0];
+            ++ pc_text;
+          } else
+          if(pc_text[0] == '_' ||
+             pc_text[0] == '-')
+          {
             pc_match_type = pc_text[0];
             ++ pc_text;
           }
