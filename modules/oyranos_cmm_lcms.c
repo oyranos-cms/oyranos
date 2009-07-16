@@ -1614,7 +1614,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
   lcmsCMMCanHandle,
 
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc." CMM_NICK ".CPU.ACCEL",
+  "icc.colour." CMM_NICK "._CPU._ACCEL",
 
   lcmsVERSION,
   0,   /* id_; keep empty */
@@ -1651,7 +1651,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsCMMCanHandle,
 
   OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.colour." CMM_NICK ".CPU.NOACCEL",
+  "icc.colour." CMM_NICK "._CPU._NOACCEL",
 
   lcmsVERSION,
   0,   /* id_; keep empty */
