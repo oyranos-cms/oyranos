@@ -1381,10 +1381,8 @@ oyTESTRESULT_e testCMMConfigsListing ()
 
   fprintf( stdout, "oyConfigs_FromDomain() \"properties\" call:\n" );
   devices_n = oyOptions_Count( options_devices );
-  for( i = 0; i < (int)count; ++i)
   {
-    const char * registration_domain = texts[i];
-    printf("%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
+    char * classe = (char*) malloc(1024);
 
     for( l = 0; l < devices_n; ++l )
     {
@@ -1398,14 +1396,18 @@ oyTESTRESULT_e testCMMConfigsListing ()
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
       error = oyOptions_SetFromText( &options, o->registration,
                                      val, OY_CREATE_NEW );
+      sprintf(classe, "%s", o->registration);
+      (strrchr(classe, '/'))[0] = 0;
+
       if(val) oyDeAllocateFunc_( val ); val = 0;
       oyOption_Release( &o );
 
       /* send the query to a backend */
-      error = oyConfigs_FromDomain( registration_domain,
-                                       options, &configs, 0 );
+      error = oyConfigs_FromDomain( classe, options, &configs, 0 );
       /* display results */
       j_n = oyConfigs_Count( configs );
+      if(j_n)
+        fprintf(stdout, "--------------------------------------------------------------------------------\n%s:\n", classe );
       for( j = 0; j < j_n; ++j )
       {
         config = oyConfigs_Get( configs, j );
@@ -1419,8 +1421,8 @@ oyTESTRESULT_e testCMMConfigsListing ()
           o = oyConfig_Get( config, k );
 
           val = oyOption_GetValueText( o, oyAllocateFunc_ );
-          printf( "  %d::%d::%d::%d %s %s\n", i,l,j,k, 
-                  o->registration, val );
+          printf( "  %d::%d::%d %s: \"%s\"\n", l,j,k, 
+                  oyStrrchr_(o->registration,'/')+1, val );
 
           if(val) oyDeAllocateFunc_( val ); val = 0;
           oyOption_Release( &o );
@@ -1431,11 +1433,11 @@ oyTESTRESULT_e testCMMConfigsListing ()
       }
 
       oyConfigs_Release( &configs );
+      oyOptions_Release( &options );
     }
   }
 
   oyOptions_Release( &options_list );
-  oyOptions_Release( &options );
   fprintf( stdout, "\n");
 
   config = oyConfig_New( texts[0], 0 );
@@ -1785,6 +1787,20 @@ oyTESTRESULT_e testCMMsShow ()
 
                   if(api->type == oyOBJECT_CMM_API8_S)
                   {
+                    /* a non useable filter definition */
+                    oyRankPad rank_map[2] = {{(char*)"key",1,2,3},
+                                             {(char*)"other",4,5,6}};
+                    oyCMMapi8_s cpp_api8 = { oyOBJECT_CMM_API8_S,0,0,0,
+                                             0, /* next */
+                                             0,0,0, /* oyCMMapi_s stuff */
+                                             (char*)"invalid/registration",
+                                             {0,0,0}, /* version */
+                                             0,0, /* Oyranos stuff */
+                                             0, /* oyConfigs_FromPattern */
+                                             0, /* oyConfig_Rank */
+                                             (oyRankPad*)rank_map
+                                           };
+
                     l = 0;
                     cmm_api8 = (oyCMMapi8_s*) api;
                     snprintf( text_tmp, 65535,
@@ -2691,9 +2707,10 @@ int main(int argc, char** argv)
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
   TEST_RUN( testMonitor,  "Monitor profiles" );
+  //TEST_RUN( testDevices,  "Devices listing" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
   TEST_RUN( testPolicy, "Policy handling" );
-  TEST_RUN( testCMMConfigsListing, "CMM configs listing" );
+  TEST_RUN( testCMMDevicesListing, "CMM devices listing" );
   TEST_RUN( testCMMMonitorListing, "CMM monitor listing" );
   TEST_RUN( testCMMDBListing, "CMM DB listing" );
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
