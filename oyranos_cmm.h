@@ -202,6 +202,19 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
                                      ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
+/** typedef   oyCMMOptions_Check_f
+ *  @brief    a function to check options
+ *  @ingroup  backend_api
+ *  @memberof oyCMMapiBase_s
+ *
+ *  @param[in]     options             the options
+ *  @return                            0 - good, 1 - bad
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/15 (Oyranos: 0.1.10)
+ *  @date    2009/07/15
+ */
+typedef int  (*oyCMMOptions_Check_f) ( oyOptions_s       * validate );
 
 
 
@@ -369,6 +382,7 @@ typedef struct {
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
   oyCMMCanHandle_f oyCMMCanHandle;     /**< */
+  /*oyCMMOptions_Check_f oyCMMOptions_Check;*/
 
   oyCMMProfileTag_GetValues_f oyCMMProfileTag_GetValues; /**< @memberof oyCMMapi3_s */
   oyCMMProfileTag_Create_f oyCMMProfileTag_Create; /**< @memberof oyCMMapi3_s */
@@ -401,7 +415,8 @@ typedef struct {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
   oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+      see as well @ref registration */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -437,7 +452,8 @@ struct oyCMMapiFilter_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
   oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+      see as well @ref registration */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -455,7 +471,7 @@ struct oyCMMapiFilter_s {
  *  @ingroup backend_api
  *
  *  The structures can provide a XFORMS ui based on the backends own
- *  set of options. They are in the property of the caller.
+ *  set of options. The options are in the property of the caller.
  *
  *  @param[in]     options             the options to display
  *  @param[out]    ui_text             the XFORMS string
@@ -733,7 +749,8 @@ struct oyCMMapi5_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< */
   oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva" or "sw/oyranos.org/colour/icc" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva" or "sw/oyranos.org/colour/icc",
+      see as well @ref registration */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -824,7 +841,8 @@ struct oyCMMapi7_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< @memberof oyCMMapi7_s */
   oyCMMCanHandle_f oyCMMCanHandle;     /**< @memberof oyCMMapi7_s */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU" */
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+      see as well @ref registration */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -906,7 +924,8 @@ struct oyCMMapi6_s {
   oyCMMCanHandle_f oyCMMCanHandle;
 
   /** place data_type_in + underscore '_' + data_type_out, 
-   *  e.g. "sw/oyranos.org/colour/icc.lcms.oyDL_lcCC" */
+   *  e.g. "sw/oyranos.org/colour/icc.lcms.oyDL_lcCC",
+      see as well @ref registration */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -1007,7 +1026,8 @@ struct  oyCMMapi4_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
   oyCMMCanHandle_f oyCMMCanHandle;
 
-  /** e.g. "sw/oyranos.org/imaging/scale" or "sw/oyranos.org/colour/icc.lcms" */
+  /** e.g. "sw/oyranos.org/imaging/scale" or "sw/oyranos.org/colour/icc.lcms",
+      see as well @ref registration */
   const char     * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
@@ -1122,8 +1142,9 @@ struct oyCMMapi8_s {
   oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   /** The oyFILTER_REG_APPLICATION of "config" is obligatory.
-   *  e.g. "shared/freedesktop.org/colour/config.scanner.sane" or 
-   *       "shared/freedesktop.org/colour/config.monitor.xorg" ...\n
+   *  e.g. "shared/freedesktop.org/imaging/config.scanner.sane" or 
+   *       "shared/freedesktop.org/imaging/config.monitor.xorg" ...\n
+      see as well @ref registration
    */
   char           * registration;
 
