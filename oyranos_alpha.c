@@ -9732,8 +9732,48 @@ OYAPI int OYEXPORT
  *  @memberof oyConfigs_s
  *  @brief   count and show the global oyConfigs_s suppliers
  *
+ *  @verbatim
+    uint32_t count = 0,
+           * rank_list = 0;
+    char ** texts = 0,
+          * temp = 0,
+         ** attributes = 0,
+          * device_class = 0;
+    int i,j, attributes_n;
+
+    // get all configuration filters
+    oyConfigDomainList("//"OY_TYPE_STD"/config", &texts, &count,&rank_list ,0 );
+    for( i = 0; i < count; ++i )
+    {
+      attributes_n = 0;
+
+      // pick the filters name and remove the common config part
+      temp = oyFilterRegistrationToText( texts[i], oyFILTER_REG_APPLICATION,
+                                         malloc );
+      attributes = oyStringSplit_( temp, '.', &attributes_n, malloc );
+      free(temp);
+      temp = malloc(1024); temp[0] = 0;
+      for(j = 0; j < attributes_n; ++j)
+      {
+        if(strcmp(attributes[j], "config") == 0)
+          continue;
+
+        if(j && temp[0])
+          sprintf( &temp[strlen(temp)], "." );
+        sprintf( &temp[strlen(temp)], "%s", attributes[j]);
+      }
+
+      // text in temp can be passed as the device_class argument to oyDeviceGet
+      printf("%d: %s \"%s\"\n", i, texts[i], temp);
+
+      oyStringListRelease_( &attributes, attributes_n, free );
+      free (device_class);
+      free(temp);
+    }
+    @endverbatim
+ *
  *  @param[in]     registration_pattern a optional filter
- *  @param[out]    list                the list
+ *  @param[out]    list                the list with full filter registrations
  *  @param[out]    count               the list count
  *  @param[out]    rank_list           the rank fitting to list
  *  @param[in]     allocateFunc        the user allocator for list
@@ -9811,7 +9851,8 @@ OYAPI int  OYEXPORT
  *
  *  Devices are a special form of configurations. Their access is grouped
  *  for effective performance. Known devices are queried with
- *  oyDevicesGet().
+ *  oyDevicesGet(). oyConfigDomainList() provides a list of known device
+ *  backends.
  *  A single device can be obtained by oyDeviceGet(). The \a
  *  device_type argument defaults to OY_TYPE_STD and can be omitted for this
  *  group. The \a device_class argument specifies a subgroup, e.g. 
