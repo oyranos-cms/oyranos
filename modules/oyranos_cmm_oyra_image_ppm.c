@@ -1082,7 +1082,7 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) 0, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api7_image_load, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */

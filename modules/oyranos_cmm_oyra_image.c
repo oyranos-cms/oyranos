@@ -31,6 +31,7 @@
 #include <string.h>
 #include <stdint.h>  /* UINT32_MAX */
 
+/* OY_IMAGE_LOAD_REGISTRATION */
 /* OY_IMAGE_REGIONS_REGISTRATION */
 /* OY_IMAGE_ROOT_REGISTRATION */
 /* OY_IMAGE_OUTPUT_REGISTRATION */
@@ -38,6 +39,236 @@
 
 oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
                                          oyHALF, oyFLOAT, oyDOUBLE, 0};
+
+/* OY_IMAGE_LOAD_REGISTRATION ---------------------------------------------*/
+
+
+/** @func    oyraFilter_ImageLoadCanHandle
+ *  @brief   inform about image handling capabilities
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/15 (Oyranos: 0.1.10)
+ *  @date    2009/07/15
+ */
+int    oyraFilter_ImageCanHandle     ( oyCMMQUERY_e     type,
+                                       uint32_t          value )
+{
+  int ret = -1;
+
+  switch(type)
+  {
+    case oyQUERY_OYRANOS_COMPATIBILITY:
+         ret = OYRANOS_VERSION; break;
+    default: break;
+  }
+
+  return ret;
+}
+
+oyOptions_s* oyraFilter_ImageLoadValidateOptions
+                                     ( oyFilterCore_s    * filter,
+                                       oyOptions_s       * validate,
+                                       int                 statical,
+                                       uint32_t          * result )
+{
+  uint32_t error = !filter;
+
+  if(!error)
+    error = filter->type_ != oyOBJECT_FILTER_CORE_S;
+
+  *result = error;
+
+  return 0;
+}
+
+/** @func    oyraFilterNode_ImageLoadContextToMem
+ *  @brief   implement oyCMMFilter_ContextToMem_f()
+ *
+ *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
+ *  We do not have any binary context to include.
+ *  Thus oyFilterNode_TextToInfo_() is fine.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/15 (Oyranos: 0.1.10)
+ *  @date    2009/07/15
+ */
+oyPointer  oyraFilte15ode_ImageLoadContextToMem (
+                                       oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
+}
+
+/** @func    oyraFilterPlug_ImageLoadRun
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/15 (Oyranos: 0.1.10)
+ *  @date    2009/07/15
+ */
+int      oyraFilterPlug_ImageLoadRun (
+                                       oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket )
+{
+  int x = 0, y = 0, n = 0, i;
+  int result = 0, l_result = 0, error = 0;
+  int is_allocated = 0;
+  oyPointer * ptr = 0;
+  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
+  oyFilterNode_s * input_node = 0,
+                 * node = socket->node;
+  oyImage_s * image = (oyImage_s*)socket->data;
+  oyOption_s * o = 0;
+  oyRectangle_s * r;
+  oyPixelAccess_s * new_ticket = 0;
+  int dirty = 0;
+
+  x = ticket->start_xy[0];
+  y = ticket->start_xy[1];
+
+  image = (oyImage_s*)socket->data;
+  if(image)
+    ;
+
+
+  return result;
+}
+
+
+oyConnectorImaging_s oyra_imageLoad_plug = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Load Plug"},
+  "//" OY_TYPE_STD "/generator", /* connector_type */
+  1, /* is_plug == oyFilterPlug_s */
+  oyra_image_data_types, /* data_types */
+  6, /* data_types_n; elements in data_types array */
+  -1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  255, /* max_channels_count; */
+  1, /* min_colour_count; */
+  255, /* max_colour_count; */
+  0, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap_bytes; non host byte order */
+  1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  1, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* count in channel_types */
+  1, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnectorImaging_s *oyra_imageLoad_plugs[2] = {&oyra_imageLoad_plug,0};
+
+oyConnectorImaging_s oyra_imageLoad_socket = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Load Socket"},
+  "//" OY_TYPE_STD "/generator", /* connector_type */
+  0, /* is_plug == oyFilterPlug_s */
+  oyra_image_data_types, /* data_types */
+  6, /* data_types_n; elements in data_types array */
+  -1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  255, /* max_channels_count; */
+  1, /* min_colour_count; */
+  255, /* max_colour_count; */
+  0, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap_bytes; non host byte order */
+  1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  1, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* count in channel_types */
+  2, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnectorImaging_s *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
+
+
+#define OY_IMAGE_LOAD_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "load_file." CMM_NICK
+/** @instance oyra_api7
+ *  @brief    oyra oyCMMapi7_s implementation
+ *
+ *  a filter abstraction image file loading
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/15 (Oyranos: 0.1.10)
+ *  @date    2009/07/15
+ */
+oyCMMapi7_s   oyra_api7_image_load = {
+
+  oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  0/*(oyCMMapi_s*) & oyra_api4_image_write*/, /* oyCMMapi_s * next */
+  
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyraFilter_ImageCanHandle, /* oyCMMCanHandle_f */
+
+  /* registration */
+  OY_IMAGE_LOAD_REGISTRATION,
+
+  CMM_VERSION, /* int32_t version[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+
+  oyraFilterPlug_ImageLoadRun, /* oyCMMFilterPlug_Run_f */
+  {0}, /* char data_type[8] */
+
+  (oyConnector_s**) oyra_imageLoad_plugs,   /* plugs */
+  1,   /* plugs_n */
+  0,   /* plugs_last_add */
+  (oyConnector_s**) oyra_imageLoad_sockets,   /* sockets */
+  1,   /* sockets_n */
+  0    /* sockets_last_add */
+};
+
+/** @instance oyra_api4
+ *  @brief    oyra oyCMMapi4_s implementation
+ *
+ *  a filter abstraction image file loading
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/15 (Oyranos: 0.1.10)
+ *  @date    2009/07/15
+ */
+oyCMMapi4_s   oyra_api4_image_load = {
+
+  oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  (oyCMMapi_s*) & oyra_api7_image_load, /* oyCMMapi_s * next */
+  
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+  oyraFilter_ImageCanHandle, /* oyCMMCanHandle_f */
+
+  /* registration */
+  OY_IMAGE_LOAD_REGISTRATION,
+
+  CMM_VERSION, /* int32_t version[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+
+  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
+
+  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
+  {0}, /* char context_type[8] */
+
+  {oyOBJECT_NAME_S, 0,0,0, "load", "Load", "Load Image File Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Graph/File Load", /* category */
+  0,   /* options */
+  0    /* opts_ui_ */
+};
+
+/* OY_IMAGE_LOAD_REGISTRATION ---------------------------------------------*/
 
 /* OY_IMAGE_REGIONS_REGISTRATION ---------------------------------------------*/
 
