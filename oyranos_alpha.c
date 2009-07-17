@@ -10475,6 +10475,24 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
     if(text) free(text);
     @endverbatim
  *
+ *  To obtain a certain single pice of information you do not need 
+ *  oyDeviceGetInfo. See the following example:
+ *  @verbatim
+    char * device_name = ":0.0"; // a typical device
+    char * text = 0;
+    oyConfig_s * device = 0;
+    oyOptions_s * options = 0;
+    int error = 0;
+
+    // tell the backend with the "properties" call to add all informations
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD
+                                   "/config/command",
+                                   "properties", OY_CREATE_NEW );
+
+    oyDeviceGet( OY_TYPE_STD, "monitor", device_name, options, &device );
+    text = oyConfig_FindString( device, "manufacturer", 0 );
+    @endverbatim
+ *
  *  @param[in]     device          the device
  *  @param[in]     type                influences the info_text output
  *                                     - oyNAME_NAME - a short one line text,
@@ -19290,6 +19308,9 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
       oySprintf_( s->relatives_, "%d: %s", oyObject_GetId(s->oy_), s->core->category_);
     }
   }
+
+  if(error)
+    oyFilterNode_Release( &s );
 
   return s;
 }
