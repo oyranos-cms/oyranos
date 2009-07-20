@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <oyranos_alpha.h>
 
+#define DBG printf("%s: %d\n", __FILE__, __LINE__ ); fflush(NULL);
+
 using namespace oyranos;
 
 int test_backend( const char * name );
