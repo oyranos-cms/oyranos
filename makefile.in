@@ -281,7 +281,8 @@ SUB_OBJECTS = \
 	$(CMM_CUPS_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
-	$(Flmm_OBJECTS)
+	$(Flmm_OBJECTS) \
+	tests/test_oyranos.o
 
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
 	test.c test2.cpp tests/test_oyranos.c
@@ -887,7 +888,7 @@ depend:	cdepend
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
 	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
 	-for file in $(SUB_OBJECTS); do \
-	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%%'`;\
+	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%%'`; \
 	   cat mkdepend | sed s%$${obj}%$${file}% > mkdepend.tmp; \
 	   mv mkdepend.tmp mkdepend; \
          done
