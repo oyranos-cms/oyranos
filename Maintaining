@@ -8,6 +8,9 @@ o update translation
 o update README
 o update Chanagelog (version hint + date) # git shortlog --no-merges 0.1.8 ^0.1.7 > ShortLog; cat ChangeLog >> ShortLog; mv ShortLog ChangeLog
 o update doxymentation
+o sync
+  http://www.oyranos.org/doc_intern/extending_oyranos.html#write_device_backends
+  https://www.oyranos.org/wiki/index.php?title=Device_Settings#Module_Protocol
 o create package
 o upload (SF) # rsync -avP -e ssh oyranos-0.1.8.tar.gz beku@frs.sourceforge.net:uploads/
 o update behrmann web site
