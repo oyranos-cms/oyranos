@@ -119,6 +119,7 @@ int test_backend( const char * name )
 		 oyOptions_s * options = oyOptions_New( 0 );
 		 char device_registration[256];
 		 snprintf(device_registration, 256, "//%s/%s/command", OY_TYPE_STD, dev_reg_app_field);
+		 //Some clarification is needed on how to create these strings TODO
 		 oyOptions_SetFromText(
 			 &options,
 			 device_registration,
@@ -139,6 +140,30 @@ int test_backend( const char * name )
 			 oyOption_Release( &opt );
 		 }
 	 }
+ 
+	 /**3. Display a help message**/
+#if 0
+	 // pass empty options to the backend to get a usage message
+	 // Does not seem to work now FIXME
+	 // Also, scanning all devices to get one device_name to put into oyDeviceGet()
+	 // is (at least for sane) really expensive.
+		 oyConfig_s * sane_device = oyConfigs_Get( sane_devices, 0 );
+		 oyOption_s * device_name_opt = oyConfig_Find( sane_device, "device_name" );
+		 const char * device_name = oyOption_GetValueText( device_name_opt, malloc );
+		 oyOptions_s * options = oyOptions_New( 0 );
+		error = oyDeviceGet( OY_TYPE_STD, name, device_name, options, 0 );
+#endif
+	 oyConfig_s * device = oyConfigs_Get( sane_devices, 0 );
+	 char device_registration[256];
+	 snprintf(device_registration, 256, "%s/command", device->registration );
+	 oyOptions_s * options = oyOptions_New( 0 );
+	 oyOptions_SetFromText(
+		 &options,
+		 device_registration,
+		 "help",
+		 OY_CREATE_NEW );
+	 error = oyDevicesGet(OY_TYPE_STD, name, options, NULL);
+
 
 	 oyConfigs_Release( &sane_devices );
 }

@@ -28,6 +28,7 @@ TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_L_LIBS} "exiv2" "tiff" )
 #scan##################
 ADD_EXECUTABLE( scan "scan.c")
 TARGET_LINK_LIBRARIES( scan ${SANE_LIBS} "tiff" )
+
 #oytest##################
 EXECUTE_PROCESS(	COMMAND oyranos-config --ldflags
 						COMMAND tr '\n' " "
@@ -45,6 +46,7 @@ TARGET_LINK_LIBRARIES( oyranos_SANE_cmm_module ${SANE_LIBS} )
 ADD_LIBRARY( oyranos_oyRE_cmm_module SHARED oyranos_cmm_oyRE.cc )
 TARGET_LINK_LIBRARIES( oyranos_oyRE_cmm_module "exiv2" )
 
+add_subdirectory( doc )
 
 ##################INSTALLATION##################
 SET( CMAKE_INSTALL_PREFIX ${LOCAL} )

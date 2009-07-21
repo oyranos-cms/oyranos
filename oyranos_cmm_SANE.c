@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+#include "SANE_help.c"
 /* --- internal definitions --- */
 
 #define DBG printf("%s: %d\n", __FILE__, __LINE__ ); fflush(NULL);
@@ -124,55 +124,7 @@ void         ConfigsFromPatternUsage( oyStruct_s        * options )
     message( oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
              _DBG_ARGS_,
       "The following help text informs about the communication protocol.");
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"command=list\" will provide a list of\n"
-      " available devices. The actual device name can be found in\n"
-      " option \"device_name\". The call is as lightwight as possible.\n"
-      " The option \"oyNAME_NAME\" returns a short string containting\n"
-      " informations and if available, the profile name or size.\n"
-      " The bidirectional option \"icc_profile\" will add a oyProfile_s.\n"
-      " The bidirectional option \"oyNAME_DESCRIPTION\" adds a string\n" 
-      " containting all properties. The text is separated by newline. The\n"
-      " first line contains the actual key word, the even one the belonging\n" 
-      " string.\n" 
-      " The bidirectional \"oyNAME_DESCRIPTION\" option turns the \"list\" \n"
-      " call into a expensive one.\n"
-      " The option \"device_name\" may be added as a filter.\n"
-      " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION above."
-      " Informations are stored in the returned oyConfig_s::data member."
-      );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"command=properties\" will provide the\n"
-      " devices properties. Requires a device_name identifier\n"
-      " returned with the \"list\" option.\n"
-      " The properties may cover following entries:\n"
-      " - \"manufacturer\"\n"
-      " - \"model\"\n"
-      " - \"serial\"\n"
-      " - \"host\"\n"
-      " - \"system_port\"\n"
-      " - and more as appropriate for the device ...\n"
-      " \n"
-      " One option \"device_name\" will select the according device.\n"
-      " If not the backend might be able to get this information from \n"
-      " elsewhere, but this is optional.\n"
-      " The \"device_name\" should be identical with the one\n"
-      " returned from a \"list\" request.\n"
-      " The \"properties\" call might be a expensive one. Informations are\n" 
-      " stored in the returned oyConfig_s::backend_core member."
-       );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"command=setup\" will setup the device\n"
-      " from a profile.\n"
-      " The option \"device_name\" must be present, see \"list\" above.\n"
-      " The option \"profile_name\" must be present, containing a ICC profile\n"
-      " file name."
-      );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
-      "The presence of option \"command=unset\" will invalidate a profile of\n"
-      " a device.\n"
-      " The option \"device_name\" must be present, see \"list\" above.\n"
-      );
+    message( oyMSG_WARN, options, "%s()\n%s", __func__, help_message );
 
   return;
 }
@@ -394,7 +346,7 @@ int              Configs_FromPattern ( const char        * registration,
   if(!num)
     num = malloc( 80 );
 
-  if(!options || !oyOptions_Count( options ))
+  if(oyOptions_FindString( options, "command", "help" ) || !options || !oyOptions_Count( options ))
   {
     /** oyMSG_WARN should make shure our message is visible. */
     ConfigsFromPatternUsage( (oyStruct_s*)options );
