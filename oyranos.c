@@ -75,10 +75,10 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
 {
   char * text = 0;
   va_list list;
-  int i;
+  int i,len;
   const char * type_name = "";
   int id = -1;
-  size_t sz = 4096;
+  size_t sz = 256;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
@@ -110,8 +110,16 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   fprintf(stderr,text);
 
   va_start( list, format);
-  vsnprintf( text, sz, format, list);
+  len = vsnprintf( text, sz, format, list);
   va_end  ( list );
+
+  if (len >= sz)
+  {
+    text = realloc( text, (len+1)*sizeof(char) );
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list);
+    va_end  ( list );
+  }
 
   switch(code)
   {
