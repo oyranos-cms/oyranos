@@ -67,9 +67,9 @@
 /** @func    oyMessageFunc_
  *  @brief
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/04/03 (Oyranos: 0.1.8)
- *  @date    2008/04/03
+ *  @date    2009/07/20
  */
 int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, ... )
 {
