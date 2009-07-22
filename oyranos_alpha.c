@@ -1784,6 +1784,20 @@ oyCMMptr_New_ ( oyAlloc_f         allocateFunc )
   return s;
 }
 
+/** Function oyCMMptr_New
+ *  @brief   allocate a oyCMMptr_s
+ *  @ingroup backend_api
+ *  @memberof oyCMMptr_s
+ *
+ *  Allocate a new oyCMMptr_s pointer.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/22 (Oyranos: 0.1.10)
+ *  @date    2009/07/22
+ */
+oyCMMptr_s * oyCMMptr_New            ( oyAlloc_f           allocateFunc )
+{ return oyCMMptr_New_( allocateFunc ); }
+
 /** @internal
  *  @brief oyCMMptr_s copy
  *
@@ -1809,6 +1823,20 @@ oyCMMptr_s *       oyCMMptr_Copy_    ( oyCMMptr_s        * cmm_ptr,
   return s;
 }
 
+/** Function oyCMMptr_Copy
+ *  @brief   copy a oyCMMptr_s
+ *  @ingroup backend_api
+ *  @memberof oyCMMptr_s
+ *
+ *  Reference a oyCMMptr_s object and increase its reference counter.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/22 (Oyranos: 0.1.10)
+ *  @date    2009/07/22
+ */
+oyCMMptr_s * oyCMMptr_Copy           ( oyCMMptr_s        * cmm_ptr,
+                                       oyAlloc_f           allocateFunc )
+{ return oyCMMptr_Copy_( cmm_ptr, allocateFunc ); }
 
 /** Function oyCMMptr_Release
  *  @brief   release a oyCMMptr_s
@@ -1917,6 +1945,27 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
     s->ptrRelease = ptrRelease;
 
   return error;
+}
+
+/** Function oyCMMptr_Set
+ *  @brief   set a oyCMMptr_s
+ *  @ingroup backend_api
+ *  @memberof oyCMMptr_s
+ *
+ *  Use for initialising.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/22 (Oyranos: 0.1.10)
+ *  @date    2009/07/22
+ */
+int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
+                                       const char        * lib_name,
+                                       const char        * resource,
+                                       oyPointer           ptr,
+                                       const char        * func_name,
+                                       oyPointer_release_f ptrRelease )
+{
+  return oyCMMptr_Set( cmm_ptr, lib_name, resource, ptr, func_name, ptrRelease);
 }
 
 /** @internal
@@ -6560,6 +6609,9 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
  *  @memberof oyOption_s
  *  @brief   get the data blob
  *
+ *  With data size being greater than zero, the returned pointer is owned by the
+ *  caller.
+ *
  *  @param[in]     option              the option
  *  @param[out]    size                data size
  *  @param[in]     allocateFunc        user allocator
@@ -6567,7 +6619,7 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/04 (Oyranos: 0.1.10)
- *  @date    2009/01/06
+ *  @date    2009/07/22
  */
 oyPointer      oyOption_GetData      ( oyOption_s        * option,
                                        size_t            * size,
@@ -6577,6 +6629,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
   oyPointer ptr = 0;
   size_t size_ = 0;
   oyBlob_s * blob = 0;
+  oyCMMptr_s * cmm_ptr = 0;
   oyOption_s * s = option;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
@@ -6587,27 +6640,36 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
        option->oy_)
       allocateFunc = option->oy_->allocateFunc_;
 
-    if(!option->value || option->value_type != oyVAL_STRUCT ||
-       option->value->oy_struct->type_ != oyOBJECT_BLOB_S ||
-       !((oyBlob_s*)(option->value->oy_struct))->ptr ||
-       ((oyBlob_s*)(option->value->oy_struct))->size == 0)
+    if(!(option->value && option->value_type == oyVAL_STRUCT &&
+         (((option->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
+           ((oyBlob_s*)(option->value->oy_struct))->ptr)) || 
+          option->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S)))
       error = 1;
   }
 
-  if( error <= 0 )
+  if( error <= 0 && option->value->oy_struct->type_ == oyOBJECT_BLOB_S)
   {
     blob = (oyBlob_s*)option->value->oy_struct;
     size_ = blob->size;
-    ptr = oyAllocateWrapFunc_( size_, allocateFunc );
-    error = !ptr;
+    if(size_)
+    {
+      ptr = oyAllocateWrapFunc_( size_, allocateFunc );
+      error = !ptr;
+
+      if(error <= 0)
+      {
+        error = !memcpy( ptr, blob->ptr, size_ );
+        if(error <= 0 && size)
+          *size = size_;
+      }
+
+    } else /* oyOBJECT_CMM_POINTER_S */
+    {
+      cmm_ptr = (oyCMMptr_s*)option->value->oy_struct;
+      ptr = cmm_ptr->ptr;
+    }
   }
 
-  if(error <= 0)
-  {
-    error = !memcpy( ptr, blob->ptr, size_ );
-    if(error <= 0 && size)
-      *size = size_;
-  }
 
   if(error)
     ptr = 0;
