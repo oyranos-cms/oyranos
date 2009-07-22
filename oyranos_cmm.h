@@ -101,9 +101,19 @@ struct oyCMMptr_s {
   int                  ref;            /**< Oyranos reference counter */
 };
 
+oyCMMptr_s * oyCMMptr_New            ( oyAlloc_f           allocateFunc );
+oyCMMptr_s * oyCMMptr_Copy           ( oyCMMptr_s        * cmm_ptr,
+                                       oyAlloc_f           allocateFunc );
+int          oyCMMptr_Release        ( oyCMMptr_s       ** obj );
+
 oyCMMptr_s * oyCMMptr_LookUp         ( oyStruct_s        * data,
                                        const char        * cmm );
-int          oyCMMptr_Release        ( oyCMMptr_s       ** obj );
+int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
+                                       const char        * lib_name,
+                                       const char        * resource,
+                                       oyPointer           ptr,
+                                       const char        * func_name,
+                                       oyPointer_release_f ptrRelease );
 
 
 /** @brief   CMM data to Oyranos cache
