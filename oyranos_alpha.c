@@ -9382,7 +9382,7 @@ OYAPI int  OYEXPORT
                                        oyConfigs_s      ** devices,
                                        oyObject_s          object )
 {
-  int error = !device_class || !device_class[0];
+  int error = !device_class || !device_class[0] || !devices;
   oyConfig_s * device = 0;
   oyConfigs_s * configs = 0;
   int i, j, j_n;
@@ -9395,7 +9395,7 @@ OYAPI int  OYEXPORT
 
   if(error > 0)
   {
-    WARNc_S( "No device_class argument provided. Give up" );
+    WARNc_S( "\n  No device_class argument or devices pointer provided. Give up" );
     return 0;
   }
 
