@@ -1655,6 +1655,7 @@ oyTESTRESULT_e testCMMsShow ()
   oyCMMapi6_s * cmm_api6 = 0;
   oyCMMapi7_s * cmm_api7 = 0;
   oyCMMapi8_s * cmm_api8 = 0;
+  oyCMMapi9_s * cmm_api9 = 0;
   oyCMMapi_s * tmp = 0;
   oyCMMapiFilter_s * cmm_filter = 0;
 
@@ -1705,7 +1706,7 @@ oyTESTRESULT_e testCMMsShow ()
 
               STRING_ADD( text, "    API(s) load from Meta backend:\n" );
 
-              for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API8_S; j++)
+              for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API9_S; j++)
               {
                 apis = oyCMMsGetFilterApis_( 0, 0, api_reg, (oyOBJECT_e)j,
                                              &rank_list, &apis_n );
@@ -1819,6 +1820,17 @@ oyTESTRESULT_e testCMMsShow ()
                       STRING_ADD( text, text_tmp );
                       ++l;
                     }
+                  }
+
+                  if(api->type == oyOBJECT_CMM_API9_S)
+                  {
+                    cmm_api9 = (oyCMMapi9_s*) api;
+                    snprintf( text_tmp, 65535,
+                            "        \"%s\"\n"
+                            "        supported pattern: \"%s\"\n",
+                            cmm_api9->options,
+                            cmm_api9->pattern );
+                    STRING_ADD( text, text_tmp );
                   }
 
                   STRING_ADD( text, "\n" );
@@ -2061,7 +2073,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
     /*  3. parse static common options from meta backend */
     if(api5 && flags & OY_OPTIONSOURCE_META)
-      opts_tmp = oyOptions_FromText( api5->options, 0, object );
+      ; /*opts_tmp = oyOptions_FromText( api5->options, 0, object );*/
     /* requires step 2 */
 
     /*  4. parse static options from filter */
