@@ -328,11 +328,7 @@ int            oyX1Configs_FromPattern (
 
     /** 3.  handle the actual call */
     /** 3.1 "list" call */
-    if(oyOptions_FindString( options, "command", "list" ) &&
-       (!oyOptions_FindString( options, "command", "properties" ) &&
-        !oyOptions_FindString( options, "command", "setup" ) &&
-        !oyOptions_FindString( options, "command", "unset" ))
-      )
+    if(oyOptions_FindString( options, "command", "list" ))
     {
       texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
 
@@ -523,6 +519,15 @@ int            oyX1Configs_FromPattern (
                 );
       else
         error = oyX1MonitorProfileUnset( odevice_name );
+
+      goto cleanup;
+    }
+
+    /** 3.5 "help" call; display a help text */
+    if(error <= 0 &&
+       oyOptions_FindString( options, "command", "help" ))
+    {
+      oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
 
       goto cleanup;
     }

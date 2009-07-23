@@ -315,11 +315,7 @@ int              Configs_FromPattern ( const char        * registration,
     /* "list" call section */
     value1 = oyOptions_FindString( options, "device_name", 0 );
     value2 = oyOptions_FindString( options, "command", "list" );
-    if(oyOptions_FindString( options, "command", "list" ) ||
-       (!oyOptions_FindString( options, "command", "properties" ) &&
-        !oyOptions_FindString( options, "command", "setup" ) &&
-        !oyOptions_FindString( options, "command", "unset" ))
-      )
+    if(oyOptions_FindString( options, "command", "list" ))
     {
       texts_n = GetDevices( &texts, allocateFunc );
 
@@ -479,6 +475,15 @@ int              Configs_FromPattern ( const char        * registration,
         error = 0; /* doUnset( value1 ); */
       return error;
     }
+  }
+
+
+  value2 = oyOptions_FindString( options, "command", "help" );
+  if(error <= 0 && value2)
+  {
+    ConfigsFromPatternUsage( (oyStruct_s*)options );
+
+    return error;
   }
 
 
