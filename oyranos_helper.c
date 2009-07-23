@@ -261,10 +261,16 @@ int                oyMiscBlobGetMD5_ ( void              * buffer,
   if (digest) 
   {
     oy_md5_state_t state;
+    uint32_t * i = (uint32_t*)digest;
+    int j;
 
     oy_md5_init(   &state );
     oy_md5_append( &state, (const md5_byte_t *)buffer, size );
     oy_md5_finish( &state, digest );
+
+    /* correct byteorder to big endian */
+    for(j = 0; j < 4; ++j)
+      i[j] = oyValueUInt32(i[j]);
 
     DBG_PROG_ENDE
     return 0;
