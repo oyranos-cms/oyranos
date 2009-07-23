@@ -1266,6 +1266,10 @@ struct oyCMMapi9_s {
 /* implemented filter functions */
 int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket );
+int      oyFilterMessageFunc         ( int                 code,
+                                       const oyStruct_s  * context,
+                                       const char        * format,
+                                       ... );
 
 #ifdef __cplusplus
 } /* extern "C" */

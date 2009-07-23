@@ -30,6 +30,7 @@
 #include <inttypes.h>
 #endif
 #include <math.h>
+#include <stdarg.h> /* va_list */
 
 #define OY_ERR if(l_error != 0) error = l_error;
 
@@ -322,5 +323,20 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   }
 
   return result;
+}
+
+/* private definition */
+int      oyMessageFunc_              ( int                 code,
+                                       const oyStruct_s  * context,
+                                       const char        * format,
+                                       ... );
+
+int      oyFilterMessageFunc         ( int                 code,
+                                       const oyStruct_s  * context,
+                                       const char        * format,
+                                       ... )
+{
+  va_list ap;
+  return oyMessageFunc_( code, context, format, ap );
 }
 
