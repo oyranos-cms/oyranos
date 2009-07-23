@@ -6336,7 +6336,7 @@ int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
  *  - oyNAME_NAME - a readable XFORMS element
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - option registration name with key and without 
- *                         attributes or value 
+ *                         key attributes or value 
  *
  *  @param[in,out] obj                 the option
  *  @param         type                oyNAME_NICK is equal to an ID
@@ -6363,9 +6363,9 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     {
       char * text = oyStringCopy_(obj->registration, oyAllocateFunc_),
            * tmp = oyStrrchr_(text, '/');
-      if(oyStrrchr_(tmp, '.'))
+      if(oyStrchr_(tmp, '.'))
       {
-        tmp = oyStrrchr_(text, '.');
+        tmp = oyStrchr_(tmp, '.');
         *tmp = 0;
       }
       error = oyObject_SetName( obj->oy_, text, type );
