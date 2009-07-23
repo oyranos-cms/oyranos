@@ -9382,7 +9382,7 @@ OYAPI int  OYEXPORT
                                        oyConfigs_s      ** devices,
                                        oyObject_s          object )
 {
-  int error = !device_class || !device_class[0] || !devices;
+  int error = !device_class || !device_class[0];
   oyConfig_s * device = 0;
   oyConfigs_s * configs = 0;
   int i, j, j_n;
@@ -9395,7 +9395,7 @@ OYAPI int  OYEXPORT
 
   if(error > 0)
   {
-    WARNc_S( "\n  No device_class argument or devices pointer provided. Give up" );
+    WARNc_S( "\n  No device_class argument provided. Give up" );
     return 0;
   }
 
@@ -9433,7 +9433,10 @@ OYAPI int  OYEXPORT
     error = oyConfigs_FromDomain( registration_domain, options, &configs,
                                   object);
 
-    j_n = oyConfigs_Count( configs );
+    if(devices && *devices)
+      j_n = oyConfigs_Count( configs );
+    else
+      j_n = 0;
     for( j = 0; j < j_n; ++j )
     {
       device = oyConfigs_Get( configs, j );
