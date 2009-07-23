@@ -24723,7 +24723,8 @@ int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type )
   return        type == oyOBJECT_CMM_API4_S ||
                 type == oyOBJECT_CMM_API6_S ||
                 type == oyOBJECT_CMM_API7_S ||
-                type == oyOBJECT_CMM_API8_S;
+                type == oyOBJECT_CMM_API8_S ||
+                type == oyOBJECT_CMM_API9_S;
 }
 
 /** @internal
@@ -24749,6 +24750,8 @@ char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number )
       return '7';
     else if(api_number == oyOBJECT_CMM_API8_S)
       return '8';
+    else if(api_number == oyOBJECT_CMM_API9_S)
+      return '9';
   return 0;
 }
 
