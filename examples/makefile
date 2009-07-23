@@ -8,7 +8,9 @@ TARGET3 = colour_desktop/libcolour_desktop.so
 TARGET4 = image2pdf/image2pdf
 TARGET5 = dummy_device/liboyranos_dDev_cmm_module.so
 TARGET6 = dummy_filter/liboyranos_dfil_cmm_module.so
-TARGETS = $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6)
+TARGET7 = oymd5icc/oymd5icc
+TARGETS = $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) \
+	$(TARGET7)
 OY_CFLAGS := $(shell (oyranos-config --cflags))
 OY_LDFLAGS := $(shell (oyranos-config --ldflags))
 FLTK_CFLAGS := $(shell (fltk-config --cflags))
@@ -75,6 +77,11 @@ $(TARGET6):	$(SRCDIR)dummy_filter/oyranos_cmm_dFil.c
 	mkdir -p dummy_filter
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
+
+$(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
+	mkdir -p oymd5icc
+	echo Compiling $@ ...
+	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
 
 clean:
 	echo cleaning ...
