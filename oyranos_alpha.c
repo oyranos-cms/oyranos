@@ -563,6 +563,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CMM_API6_S: text = "oyCMMapi6_s Context convertor"; break;
     case oyOBJECT_CMM_API7_S: text = "oyCMMapi7_s Filter run"; break;
     case oyOBJECT_CMM_API8_S: text = "oyCMMapi8_s Devices"; break;
+    case oyOBJECT_CMM_API9_S: text = "oyCMMapi9_s Graph Policies"; break;
     case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
     case oyOBJECT_CMM_API_FILTERS_S: text="oyCMMapiFilters_s Filter list";break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
@@ -7284,7 +7285,31 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
 
     /*  3. parse static common options from meta backend */
     if(api5 && flags & OY_OPTIONSOURCE_META)
-      opts_tmp = oyOptions_FromText( api5->options, 0, object );
+    {
+      oyCMMapiFilters_s * apis;
+      int apis_n = 0;
+      uint32_t         * rank_list = 0;
+      oyCMMapi9_s * cmm_api9 = 0;
+
+      s = oyOptions_New( 0 );
+
+      apis = oyCMMsGetFilterApis_( 0, 0, 0,
+                                   oyOBJECT_CMM_API9_S,
+                                   &rank_list, 0);
+      apis_n = oyCMMapiFilters_Count( apis );
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+        if(oyFilterRegistrationMatch( filter->registration_, cmm_api9->pattern,
+                                      0 ))
+        {
+          opts_tmp = oyOptions_FromText( cmm_api9->options, 0, object );
+          oyOptions_AppendOpts( s, opts_tmp );
+          oyOptions_Release( &opts_tmp );
+        }
+      }
+      opts_tmp = s;
+    }
     /* requires step 2 */
 
     /*  4. parse static options from filter */
@@ -9310,7 +9335,7 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0,0, registration_domain,
-                                                     oyOBJECT_CMM_API8_S );
+                                                   oyOBJECT_CMM_API8_S );
     error = !cmm_api8;
   }
 

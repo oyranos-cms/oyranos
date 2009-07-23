@@ -155,6 +155,7 @@ typedef enum {
   oyOBJECT_CMM_DATA_TYPES_S,          /**< oyCMMDataTypes_s */
   oyOBJECT_CMM_API8_S,                /**< oyCMMapi8_s */
   oyOBJECT_CMM_API_FILTERS_S,         /**< oyCMMapiFilters_s */
+  oyOBJECT_CMM_API9_S,                /**< oyCMMapi9_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
   oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
   oyOBJECT_MODULE_S,                  /*!< oyModule_s */
@@ -1779,6 +1780,7 @@ typedef struct oyCMMapi4_s oyCMMapi4_s;
 typedef struct oyCMMapi6_s oyCMMapi6_s;
 typedef struct oyCMMapi7_s oyCMMapi7_s;
 typedef struct oyCMMapi8_s oyCMMapi8_s;
+typedef struct oyCMMapi9_s oyCMMapi9_s;
 typedef struct oyCMMapiFilter_s oyCMMapiFilter_s;
 typedef struct oyFilterGraph_s oyFilterGraph_s;
 typedef struct oyFilterNode_s oyFilterNode_s;

@@ -781,17 +781,6 @@ struct oyCMMapi5_s {
   oyCMMFilterLoad_f                oyCMMFilterLoad; /**< */
   oyCMMFilterScan_f                oyCMMFilterScan; /**< */
 
-  /** check options for validy and correct */
-  oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
-  oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
-
-  const char     * options;            /**< default options */
-  oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
-
-  oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
-  oyCMMGetText_f   getText;            /**< describe selectors */
-  const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
-
   /** check if two filter connectors can match each other */
   oyCMMFilterSocket_MatchPlug_f  filterSocket_MatchPlug;
 };
@@ -1092,6 +1081,12 @@ typedef int      (*oyConfigs_FromPattern_f) (
  *  @ingroup backend_api
  *  @memberof oyCMMapi8_s
  *
+ *  The function is called in Oyranos' core to give a module a hook to check  
+ *  and accept a device. If the module does not find its previously set  
+ *  handles and can neigther open the device from the device_name then
+ *  chances are good that it can't handle and should return zero otherwise    
+ *  one. Oyranos will then try an other backend with this device.
+ *
  *  @param   config                    the to be checked configuration
  *  @return                            0 - indifferent, >= 1 - rank, <= -1 error
  *                                     + a message should be sent
@@ -1181,6 +1176,91 @@ struct oyCMMapi8_s {
    */
   oyRankPad      * rank_map;
 };
+
+
+/** typedef  oyConversion_Correct_f
+ *  @brief   check for correctly adhering to policies
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi9_s
+ *
+ *  @param   conversion                the to be checked configuration
+ *  @return                            0 - indifferent, >= 1 - error
+ *                                     + a message should be sent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/23 (Oyranos: 0.1.10)
+ *  @date    2009/07/23
+ */
+typedef int  (*oyConversion_Correct_f) (
+                                       oyConversion_s    * conversion );
+
+/** @struct  oyCMMapi9_s
+ *  @brief   the API 9 to handle graph policies
+ *  @ingroup backend_api
+ *  @extends oyCMMapiFilter_s
+ *
+ *  The user visible Oyranos settings are subject to be applied to graphs,
+ *  and must be verified.
+ *
+ *  This interface is intendet to provide a means to support arbitrary policies.
+ *
+ *  Two possible strategies exist to implementation a policy. One is on 
+ *  application level, when it is known which options to check for and which
+ *  data to provide. The other way is to analyse the graph and correct certain
+ *  aspects. A module implementing this interface can as well check many 
+ *  aspects of a graph.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/23 (Oyranos: 0.1.10)
+ *  @date    2009/07/23
+ */
+struct oyCMMapi9_s {
+  oyOBJECT_e           type;           /**< struct type oyOBJECT_CMM_API9_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< @private base object */
+
+  oyCMMapi_s     * next;
+
+  oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
+
+  /** The oyFILTER_REG_APPLICATION of "config" is obligatory.
+   *  e.g. "shared/freedesktop.org/imaging/config.scanner.sane" or 
+   *       "shared/freedesktop.org/imaging/config.monitor.xorg" ...\n
+      see as well @ref registration
+   */
+  char           * registration;
+
+  /** 0: major - should be stable for the live time of a backend, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          version[3];
+
+  char           * id_;                /**< @private Oyranos id; keep to zero */
+  oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
+
+  /** check options for validy and correct */
+  oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
+  oyWidgetEvent_f              oyWidget_Event;     /**< handle widget events */
+
+  const char     * options;            /**< default options */
+  oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
+
+  oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
+  oyCMMGetText_f   getText;            /**< describe selectors */
+  const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
+
+  oyConversion_Correct_f oyConversion_Correct; /**< check a graph */
+  /** registration pattern which are supported by oyConversion_Correct \n
+   *
+   *  e.g. for imaging this could be "//imaging"
+   */
+  const char     * pattern;
+};
+
+
 
 
 /* implemented filter functions */
