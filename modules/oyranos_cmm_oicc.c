@@ -557,7 +557,8 @@ int          oiccFilterScan          ( oyPointer           data,
   return ret;
 }
 
-int           oiccConversion_Correct ( oyConversion_s    * conversion )
+int           oiccConversion_Correct ( oyConversion_s    * conversion,
+                                       oyOptions_s       * options )
 {
   return 0;
 }

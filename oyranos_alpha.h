@@ -2848,6 +2848,13 @@ char             * oyConversion_ToText (
                                        const char        * head_line,
                                        int                 reserved,
                                        oyAlloc_f           allocateFunc );
+int                oyConversion_Correct (
+                                       oyConversion_s    * conversion,
+                                       const char        * registration,
+                                       oyOptions_s       * options );
+                                       
+
+
 #if 0
 /** @struct oyColourConversion_s
     In case where

@@ -428,6 +428,9 @@ main(int argc, char** argv)
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
 
+  /* apply policies */
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", 0 );
+
 
   /* the colour conversion is done in oy_box::draw() with
    * oyConversion_RunPixels() */

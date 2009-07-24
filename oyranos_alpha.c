@@ -23524,6 +23524,36 @@ char             * oyConversion_ToText (
   return text;
 }
 
+/** typedef  oyConversion_Correct
+ *  @brief   check for correctly adhering to policies
+ *  @memberof oyConversion_s
+ *
+ *  Without any options the module selected with the registration argument shall
+ *  perform graph analysis and correct the graph. 
+ *
+ *  @par Typical Options:
+ *  - "command"-"help" - a string option issuing a help text as message
+ *  - "verbose" - reporting changes as message
+ *
+ *  @param   conversion                the to be checked configuration
+ *  @param   registration              the to be used policy module
+ *  @param   options                   options to the policy module
+ *  @return                            0 - indifferent, >= 1 - error
+ *                                     + a message should be sent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/24 (Oyranos: 0.1.10)
+ *  @date    2009/07/24
+ */
+int                oyConversion_Correct (
+                                       oyConversion_s    * conversion,
+                                       const char        * registration,
+                                       oyOptions_s       * options )
+{
+  WARNc_S("not implemented");
+
+  return 1;
+}
 
 
 /** @} objects_conversion */
