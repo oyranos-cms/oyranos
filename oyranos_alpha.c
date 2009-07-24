@@ -7290,10 +7290,17 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       int apis_n = 0;
       uint32_t         * rank_list = 0;
       oyCMMapi9_s * cmm_api9 = 0;
+      char * class, * api_reg;
+
+      class = oyFilterRegistrationToText( filter->registration_,
+                                          oyFILTER_REG_TYPE, 0 );
+      api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+      STRING_ADD( api_reg, class );
+      oyFree_m_( class );
 
       s = oyOptions_New( 0 );
 
-      apis = oyCMMsGetFilterApis_( 0, 0, 0,
+      apis = oyCMMsGetFilterApis_( 0, 0, api_reg,
                                    oyOBJECT_CMM_API9_S,
                                    &rank_list, 0);
       apis_n = oyCMMapiFilters_Count( apis );
@@ -7308,7 +7315,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
           oyOptions_Release( &opts_tmp );
         }
       }
-      opts_tmp = s;
+      opts_tmp = s; s = 0;
     }
     /* requires step 2 */
 
