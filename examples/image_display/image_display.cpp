@@ -429,7 +429,10 @@ main(int argc, char** argv)
   oyConversion_Set( conversion, 0, out );
 
   /* apply policies */
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", 0 );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
+                                 "true", OY_CREATE_NEW );
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", options );
+  oyOptions_Release( &options );
 
 
   /* the colour conversion is done in oy_box::draw() with
