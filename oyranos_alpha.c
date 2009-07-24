@@ -7314,7 +7314,11 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
           oyOptions_AppendOpts( s, opts_tmp );
           oyOptions_Release( &opts_tmp );
         }
+        if(cmm_api9->release)
+          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
       }
+      oyCMMapiFilters_Release( &apis );
+      oyFree_m_( api_reg );
       opts_tmp = s; s = 0;
     }
     /* requires step 2 */
@@ -23550,8 +23554,56 @@ int                oyConversion_Correct (
                                        const char        * registration,
                                        oyOptions_s       * options )
 {
-  WARNc_S("not implemented");
+  int error = 0;
+  oyConversion_s * s = conversion;
+  const char * pattern = registration;
 
+  if(!conversion)
+    return error;
+
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
+
+  if(!conversion->input && !conversion->out_)
+  {
+    WARNc1_S( "%s",_("Found no node in conversion. give up") );
+    return 1;
+  }
+
+  if(!error)
+  {
+    oyCMMapiFilters_s * apis;
+    int apis_n = 0, i;
+    oyCMMapi9_s * cmm_api9 = 0;
+    char * class, * api_reg;
+
+    class = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
+    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+    STRING_ADD( api_reg, class );
+    oyFree_m_( class );
+
+    apis = oyCMMsGetFilterApis_( 0, 0, api_reg, oyOBJECT_CMM_API9_S, 0, 0);
+    apis_n = oyCMMapiFilters_Count( apis );
+    for(i = 0; i < apis_n; ++i)
+    {
+      cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+
+      if(oyFilterRegistrationMatch( cmm_api9->pattern, pattern, 0 ))
+      {
+        if(cmm_api9->oyConversion_Correct)
+          error = cmm_api9->oyConversion_Correct( s, options );
+        if(error)
+        {
+          WARNc2_S( "%s %s",_("error module in:"), cmm_api9->registration );
+          return 1;
+        }
+      }
+
+      if(cmm_api9->release)
+        cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+    }
+    oyCMMapiFilters_Release( &apis );
+  }
+  
   return 1;
 }
 
