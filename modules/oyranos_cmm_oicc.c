@@ -560,7 +560,41 @@ int          oiccFilterScan          ( oyPointer           data,
 int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                        oyOptions_s       * options )
 {
-  return 0;
+  int error = 0, i,n,
+      icc_nodes_n = 0;
+  int verbose = oyOptions_FindString( options, "verbose", 0 ) ? 1:0;
+  oyFilterGraph_s * g = 0;
+  oyFilterNode_s * node = 0;
+  oyConversion_s * s = conversion;
+
+  if(s->input)
+    g = oyFilterGraph_FromNode( s->input, 0 );
+  else
+    g = oyFilterGraph_FromNode( s->out_, 0 );
+
+  n = oyFilterNodes_Count( g->nodes );
+  for(i = 0; i < n; ++i)
+  {
+    node = oyFilterNodes_Get( g->nodes, i );
+    if(oyFilterRegistrationMatch( node->core->registration_,
+                                  "//" OY_TYPE_STD "/icc", 0 ))
+    {
+      if(verbose)
+        WARNc1_S( "node: %s", node->core->registration_ );
+      ++icc_nodes_n;
+    }
+    oyFilterNode_Release( &node );
+  }
+
+      /* How far is this ICC node from the output node? */
+  if(verbose)
+    oyShowGraph_( conversion->input, 0 );
+
+
+  if(verbose)
+  WARNc_S("not completely implemented");
+
+  return error;
 }
 
 
@@ -653,7 +687,7 @@ const char * oiccInfoGetText         ( const char        * select,
   }
   return 0;
 }
-const char *oicc_texts[4] = {"name","copyright","manufacturer","help",0};
+const char *oicc_texts[5] = {"name","copyright","manufacturer","help",0};
 
 
 /** @instance oicc_cmm_module
