@@ -4975,6 +4975,55 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
+/** Function oyBlob_ReleaseNoPtr
+ *  @memberof oyBlob_s
+ *  @brief   release and possibly deallocate a Blob object
+ *
+ *  The oyBlob_s::release function can be substituted by oyBlob_ReleaseNoPtr()
+ *  to not free the oyBlob_s::ptr.
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/25 (Oyranos: 0.1.10)
+ *  @date    2009/07/25
+ */
+OYAPI int  OYEXPORT
+               oyBlob_ReleaseNoPtr( oyBlob_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyBlob_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_BLOB_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    /* Do not touch the ptr. It is constant data. */
+    s->ptr = 0;
+    s->size = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
 /** Function oyBlob_SetFromData
  *  @memberof oyBlob_s
  *  @brief   set value from a data blob

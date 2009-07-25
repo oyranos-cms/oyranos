@@ -410,6 +410,8 @@ OYAPI oyBlob_s * OYEXPORT
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
                  oyBlob_Release      ( oyBlob_s         ** obj );
+OYAPI int  OYEXPORT
+                 oyBlob_ReleaseNoPtr ( oyBlob_s         ** obj );
 
 OYAPI int  OYEXPORT
                  oyBlob_SetFromData  ( oyBlob_s          * obj,
