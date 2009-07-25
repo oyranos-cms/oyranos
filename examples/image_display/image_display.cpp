@@ -196,7 +196,7 @@ class Fl_Oy_Box : public Fl_Box
 
 #if 0
       oyRectangle_s window_rectangle = { oyOBJECT_RECTANGLE_S, 0,0,0 };
-      oyRectangle_SetGeo( ticket->output_image_roi, dx, dy, W, H );
+      oyRectangle_SetGeo( ticket->output_image_roi, px, py, W, H );
       oyRectangle_Scale( ticket->output_image_roi, 1.0/image->width );
       oyRectangle_SetGeo( &window_rectangle, x(), y(), W, H );
       oyRectangle_Scale( &window_rectangle, 1.0/image->width );
@@ -208,12 +208,12 @@ class Fl_Oy_Box : public Fl_Box
       oyRectangle_Trim( ticket->output_image_roi, &window_rectangle );
 #else
       /* take care to not go over the borders */
-      if(dx < W - image->width) dx = W - image->width + 1;
-      if(dy < H - image->height) dy = H - image->height + 1;
-      if(dx > 0) dx = 0;
-      if(dy > 0) dy = 0;
-      ticket->start_xy[0] = -dx;
-      ticket->start_xy[1] = -dy;
+      if(px < W - image->width) px = W - image->width;
+      if(py < H - image->height) py = H - image->height;
+      if(px > 0) px = 0;
+      if(py > 0) py = 0;
+      ticket->start_xy[0] = -px;
+      ticket->start_xy[1] = -py;
 #endif
 
       /* decide wether to refresh the cached rectangle of our static image */
@@ -234,6 +234,8 @@ class Fl_Oy_Box : public Fl_Box
         /* remember the old rectangle */
         oyRectangle_SetByRectangle( old_display_rectangle, display_rectangle );
         oyRectangle_SetByRectangle( old_roi_rectangle,ticket->output_image_roi);
+        ticket->start_xy_old[0] = ticket->start_xy[0];
+        ticket->start_xy_old[1] = ticket->start_xy[1];
       }
 
       if(verbose)
@@ -255,7 +257,7 @@ class Fl_Oy_Box : public Fl_Box
     }
   }
 
-    int e, ox, oy, dx, dy;
+    int e, ox, oy, px, py;
     int edit_object_id;
     int handle(int event) {
       e = event;
@@ -268,14 +270,14 @@ class Fl_Oy_Box : public Fl_Box
           edit_object_id = -1;
           return (1);
         case FL_DRAG:
-          dx += ox + Fl::event_x();
-          dy += oy + Fl::event_y();
+          px += ox + Fl::event_x();
+          py += oy + Fl::event_y();
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
           redraw();
           return (1);
       }
-      //printf("e: %d ox:%d dx:%d\n",e, ox, dx);
+      //printf("e: %d ox:%d px:%d\n",e, ox, px);
       int ret = Fl_Box::handle(e);
       return ret;
     }
@@ -287,7 +289,7 @@ public:
     ticket = 0;
     old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
     old_roi_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
-    dx=dy=ox=oy=0;
+    px=py=ox=oy=0;
   };
 
   ~Fl_Oy_Box(void)
