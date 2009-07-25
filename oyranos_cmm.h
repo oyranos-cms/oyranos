@@ -674,11 +674,34 @@ struct oyConnectorImaging_s {
    *  e.g."Img", "Image", "Image Socket"*/
   oyName_s             name;
 
-  char               * connector_type; /**< like registration */
-  /** make requests and receive data, by part of oyFilterPlug_s */
+  /**
+   *  The following types should have a "data" attribute in the application
+   *  level as these connectors pass the imaging data.
+   *  - a data manipulator. e.g. a normal filter - "//imaging/manipulator.data"
+   *  - a data generator, e.g. checkerboard, gradient "//imaging/generator.data"
+   *  - a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//imaging/image.data"
+   *  - observer, a endpoint, only input, e.g. text log, thumbnail viewer 
+   *    "//imaging/observer.data"
+   *  - a routing element, without data altering "//imaging/splitter.rectangle.data"
+   *  - combines or splits image data, e.g. blending "//imaging/blender.rectangle.data"
+   *  - converts pixel layout to other formats "//imaging/pixel.convertor.data"
+   *  - converts pixel layout to other formats, with precission loss, e.g. 
+   *    float -> uint8_t, only relevant for output connectors 
+   *    "//imaging/pixel.convertor.lossy.data"
+   *  - combines gray channels, e.g. from colour "//imaging/combiner.channels.data"
+   *  - provides gray scale views of channels "//imaging/splitter.channels.data"
+   *
+   *  The following types should have a "text" attribute in the application
+   *  level as this connector type passes text.
+   *  - provides values or text, only output "///analysis.text"
+   */
+  char               * connector_type;
+  /** 1 - make requests and receive data, by part of oyFilterPlug_s;
+    * 0 - receive requests and provide data, oyFilterSocket_s
+    */
   int                  is_plug;
   oyDATATYPE_e       * data_types;     /**< supported float's and int's */
-  int                  data_types_n;   /**< elements in data_types array */
+  int                  data_types_n;   /**< # elements in data_types array */
   int                  max_colour_offset;
   int                  min_channels_count;
   int                  max_channels_count;
