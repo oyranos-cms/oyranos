@@ -23663,7 +23663,7 @@ int                oyConversion_Correct (
           error = cmm_api9->oyConversion_Correct( s, options );
         if(error)
         {
-          WARNc2_S( "%s %s",_("error module in:"), cmm_api9->registration );
+          WARNc2_S( "%s %s",_("error in module:"), cmm_api9->registration );
           return 1;
         }
       }

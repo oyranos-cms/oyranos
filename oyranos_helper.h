@@ -53,13 +53,13 @@ extern int oy_debug_memory;
 #define oyFree_m_(x) {                                      \
   char text_fm[80];                                         \
   if(oy_observe_pointer_ == (intptr_t)x) {                  \
-    oySnprintf1_( text_fm, 80, "pointer %s freed", #x );    \
+    oySnprintf_( text_fm, 80, #x " pointer freed" );    \
     WARNc_S( text_fm ); }                                   \
   if (x != NULL) {    /* defined in oyranos_helper.h */     \
     oyDeAllocateFunc_ (x);                                  \
     x = NULL;                                               \
   } else {                                                  \
-    oySnprintf1_(text_fm, 80, _("nothing to delete %s"), #x); \
+    oySnprintf1_(text_fm, 80, "%s " #x, _("nothing to delete")); \
     WARNc_S ( text_fm );                                    \
   }                                                         \
 }
@@ -70,7 +70,7 @@ extern int oy_debug_memory;
   { \
     char text_fm[80];                                       \
     if(oy_observe_pointer_ == (intptr_t)ptr_) {             \
-      oySnprintf1_( text_fm, 80, "pointer %s freed", #ptr_ ); \
+      oySnprintf_( text_fm, 80, #ptr_ " pointer freed" ); \
       WARNc_S( text_fm );                                   \
     }                                                       \
     oyDeAllocateFunc_ (ptr_);                               \

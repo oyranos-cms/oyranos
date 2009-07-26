@@ -871,16 +871,16 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       continue;
     }
     if (!S_ISDIR (statbuf.st_mode)) {
-      WARNc3_S("%d. %s %s", i, path, _("path is not a directory"));
+      WARNc3_S("%d. \"%s\" %s", i, path, _("path is not a directory"));
       continue;
     }
     if (S_ISLNK (statbuf.st_mode)) {
-      WARNc3_S("%d. %s %s", i, path, _("path is a link: ignored"));
+      WARNc3_S("%d. \"%s\" %s", i, path, _("path is a link: ignored"));
       continue;
     }
     dir[l] = opendir (path);
     if (!dir[l]) {
-      WARNc3_S("%d. %s %s", i, path, _("%d. path %s is not readable"));
+      WARNc3_S("%d. \"%s\" %s", i, path, _("path is not readable"));
       continue;
     }
 
