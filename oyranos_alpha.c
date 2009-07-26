@@ -18635,7 +18635,9 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
           if(pc_text[0] == '4' ||
              pc_text[0] == '5' ||
              pc_text[0] == '6' ||
-             pc_text[0] == '7')
+             pc_text[0] == '7' ||
+             pc_text[0] == '8' ||
+             pc_text[0] == '9')
           {
             pc_api_num = pc_text[0];
             ++ pc_text;
