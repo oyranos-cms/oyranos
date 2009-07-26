@@ -652,7 +652,7 @@ oyDATATYPE_e lraw_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};
 oyConnectorImaging_s lraw_imageInputRAW_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, (char*)"Img", (char*)"Image", (char*)"Image libraw Socket"},
-  (char*)"//" OY_TYPE_STD "/image", /* connector_type */
+  (char*)"//" OY_TYPE_STD "/image.data", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   lraw_data_types,
   2, /* data_types_n; elements in data_types array */

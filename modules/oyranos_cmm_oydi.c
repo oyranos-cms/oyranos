@@ -370,8 +370,10 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
   /* insert "rectangles" between "display" and its input_node */
   oyFilterNode_Disconnect( node->plugs[0] );
-  error = oyFilterNode_Connect( input_node, "Img", rectangles, "Img",0 );
-  error = oyFilterNode_Connect( rectangles, "Img", node, "Img",0 );
+  error = oyFilterNode_Connect( input_node, "//" OY_TYPE_STD "/data",
+                                rectangles, "//" OY_TYPE_STD "/data",0 );
+  error = oyFilterNode_Connect( rectangles, "//" OY_TYPE_STD "/data",
+                                node, "//" OY_TYPE_STD "/data",0 );
 
 
 
@@ -431,8 +433,8 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
         /* position the new CMM between the original CMMs input and 
            "rectangles" */
-        error = oyFilterNode_Connect( cmm_node, "Img",
-                                      rectangles, "Img", 0 );
+        error = oyFilterNode_Connect( cmm_node, "//" OY_TYPE_STD "/data",
+                                      rectangles, "//" OY_TYPE_STD "/data", 0 );
         if(error > 0)
           message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d"
                     "could not add  new CMM: %s\n",
@@ -441,7 +443,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
         error = oyFilterNode_Connect( 
                                   input_node->plugs[0]->remote_socket_->node, 0,
-                                      cmm_node, "Img", 0 );
+                                      cmm_node, "//" OY_TYPE_STD "/data", 0 );
 
         /* clone into a new image */
         if(cmm_node->sockets[0]->data)
@@ -684,7 +686,7 @@ oyDATATYPE_e oyx1_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
 oyConnectorImaging_s oyx1_Display_plug = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Plug"},
-  "//" OY_TYPE_STD "/splitter", /* connector_type */
+  "//" OY_TYPE_STD "/splitter.data", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -711,7 +713,7 @@ oyConnectorImaging_s *oyx1_Display_plugs[2] = {&oyx1_Display_plug,0};
 oyConnectorImaging_s oyx1_Display_socket = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Socket"},
-  "//" OY_TYPE_STD "/image", /* connector_type */
+  "//" OY_TYPE_STD "/image.data", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */

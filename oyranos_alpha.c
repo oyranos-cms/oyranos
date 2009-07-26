@@ -19802,8 +19802,8 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
 
       if(!out_plug)
       {
-        WARNc2_S( "\n  %s: \"%s\"", "Could not find plug for filter",
-                  oyFilterCore_GetName( output->core, oyNAME_NAME) );
+        WARNc3_S( "\n  %s: \"%s\" %s", "Could not find plug for filter",
+                  oyFilterCore_GetName( output->core, oyNAME_NAME), socket_nick );
         error = 1;
       }
 
@@ -19972,8 +19972,9 @@ OYAPI int  OYEXPORT
  *
  *  @param         node                filter node
  *  @param         is_input            1 - plugs; 0 - sockets
- *  @param         type_ID             the nick name of the connector type for
- *                                     this filter
+ *  @param         pattern             the pattern to be found in the
+ *                                     oyConnector_s::connector_type of the
+ *                                     searched plug or socket
  *  @param         nth_of_type         the position in the group of the
  *                                     connector type for this filter; Note
  *                                     this parameter makes only sense for the
@@ -19993,7 +19994,7 @@ OYAPI int  OYEXPORT
                oyFilterNode_GetConnectorPos (
                                        oyFilterNode_s    * node,
                                        int                 is_input,
-                                       const char        * type_ID,
+                                       const char        * pattern,
                                        int                 nth_of_type,
                                        int                 flags )
 {
@@ -20004,7 +20005,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return pos )
 
-  if(!type_ID)
+  if(!pattern)
   {
     WARNc1_S("no ID argument given %s", s->relatives_ );
     return pos;
@@ -20019,7 +20020,8 @@ OYAPI int  OYEXPORT
     n = node->api7_->plugs_n;
     for( i = 0; i < n; ++i )
     {
-      if(oyStrcmp_(type_ID, node->api7_->plugs[i]->name.nick) == 0)
+      if(oyFilterRegistrationMatch( node->api7_->plugs[i]->connector_type,
+                                    pattern, 0))
       {
         if( i == n - 1 && node->api7_->plugs_last_add)
           n2 = node->api7_->plugs_last_add;
@@ -20063,8 +20065,9 @@ OYAPI int  OYEXPORT
     n = node->api7_->sockets_n;
     for( i = 0; i < n; ++i )
     {
-      /* 2. compare type_ID argument with the socket type */
-      if(oyStrcmp_(type_ID, node->api7_->sockets[i]->name.nick) == 0)
+      /* 2. compare pattern argument with the socket type */
+      if(oyFilterRegistrationMatch( node->api7_->sockets[i]->connector_type,
+                                    pattern, 0))
       {
 
         /* 3. iterate through at least connectors or connectors that where added
@@ -21171,6 +21174,9 @@ OYAPI oyFilterGraph_s * OYEXPORT
  *  Function oyAdjacencyListAdd_
  *  @brief   get a graphs adjazency list
  *
+ *  Try to add an edge, if not yet found in the scanned graph.
+ *  If the edge/plug was added, return success.
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/25 (Oyranos: 0.1.10)
  *  @date    2009/03/06
@@ -21269,6 +21275,9 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
   int n, i, j, p_n;
   oyFilterPlug_s * p = 0;
 
+  /* Scan the input/plug side for unknown nodes, add these and continue in
+   * the direction of previous unknown edges...
+   */
   n = oyFilterNode_EdgeCount( s, 1, 0 );
   for( i = 0; i < n; ++i )
   {
@@ -21278,6 +21287,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
                                          nodes, edges, mark, flags );
   }
 
+  /* ... same on the output/socket side */
   n = oyFilterNode_EdgeCount( s, 0, 0 );
   for( i = 0; i < n; ++i )
   {
@@ -23061,7 +23071,8 @@ oyConversion_s   * oyConversion_CreateBasic (
     if(error <= 0)
       error = oyFilterNode_DataSet( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
-      error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
+      error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                    out, "//" OY_TYPE_STD "/data", 0 );
 
     in = out; out = 0;
 
@@ -23069,7 +23080,8 @@ oyConversion_s   * oyConversion_CreateBasic (
       out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", options, 0 );
     if(error <= 0)
     {
-      error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
+      error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                    out, "//" OY_TYPE_STD "/data", 0 );
       if(error)
         WARNc1_S( "could not add  filter: %s\n", "//" OY_TYPE_STD "/output" );
     }
@@ -23262,7 +23274,7 @@ int                oyConversion_RunPixels (
   oyFilterPlug_s * plug = 0;
   oyFilterCore_s * filter = 0;
   oyImage_s * image = 0, * image_input = 0;
-  int error = 0, result, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
+  int error = 0, result = 0, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
   oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )

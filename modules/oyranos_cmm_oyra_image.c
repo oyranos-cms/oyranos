@@ -139,7 +139,7 @@ int      oyraFilterPlug_ImageLoadRun (
 oyConnectorImaging_s oyra_imageLoad_plug = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Load Plug"},
-  "//" OY_TYPE_STD "/generator", /* connector_type */
+  "//" OY_TYPE_STD "/generator.data", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -166,7 +166,7 @@ oyConnectorImaging_s *oyra_imageLoad_plugs[2] = {&oyra_imageLoad_plug,0};
 oyConnectorImaging_s oyra_imageLoad_socket = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Load Socket"},
-  "//" OY_TYPE_STD "/generator", /* connector_type */
+  "//" OY_TYPE_STD "/generator.data", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -464,7 +464,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
 oyConnectorImaging_s oyra_imageRectangles_plug = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Plug"},
-  "//" OY_TYPE_STD "/splitter", /* connector_type */
+  "//" OY_TYPE_STD "/splitter.data", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -491,7 +491,7 @@ oyConnectorImaging_s *oyra_imageRectangles_plugs[2] = {&oyra_imageRectangles_plu
 oyConnectorImaging_s oyra_imageRectangles_socket = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Socket"},
-  "//" OY_TYPE_STD "/image", /* connector_type */
+  "//" OY_TYPE_STD "/image.data", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -713,7 +713,7 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
 oyConnectorImaging_s oyra_imageRoot_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
-  "//" OY_TYPE_STD "/image", /* connector_type */
+  "//" OY_TYPE_STD "/image.data", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -823,7 +823,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
 oyConnectorImaging_s oyra_imageOutput_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
-  "//" OY_TYPE_STD "/image", /* connector_type */
+  "//" OY_TYPE_STD "/image.data", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */

@@ -2252,7 +2252,8 @@ oyTESTRESULT_e testCMMnmRun ()
     if(error <= 0)
       error = oyFilterNode_DataSet( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
-      error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
+      error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                    out, "//" OY_TYPE_STD "/data", 0 );
 
     in = out; out = 0;
 
@@ -2260,7 +2261,8 @@ oyTESTRESULT_e testCMMnmRun ()
       out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", options, 0 );
     if(error <= 0)
     {
-      error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
+      error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                    out, "//" OY_TYPE_STD "/data", 0 );
       if(error)
         WARNc1_S( "could not add  filter: %s\n", "//" OY_TYPE_STD "/output" );
     }
@@ -2314,7 +2316,10 @@ oyTESTRESULT_e testCMMnmRun ()
   oyFilterPlug_s * plug = 0;
   oyPixelAccess_s * pixel_access = 0;
   s = oyConversion_CreateBasic( input,output, 0, 0 );
-  plug = oyFilterNode_GetPlug( s->out_, 0 );
+  if(s->out_)
+    plug = oyFilterNode_GetPlug( s->out_, 0 );
+  else
+    error = 1;
   pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, 0 );
   oyFilterPlug_Release( &plug );
@@ -2630,7 +2635,8 @@ oyTESTRESULT_e testCMMnmRun ()
   oyFilterNode_DataSet( in_node, (oyStruct_s*)input, 0, 0 );
   oyFilterNode_s * out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
   oyFilterNode_DataSet( out_node, (oyStruct_s*)output, 0, 0 );
-  error = oyFilterNode_Connect( in_node, "Img", out_node, "Img", 0 );
+  error = oyFilterNode_Connect( in_node, "//" OY_TYPE_STD "/data",
+                                out_node, "//" OY_TYPE_STD "/data", 0 );
   oyConversion_Set( conv, 0, out_node );
   plug = oyFilterNode_GetPlug( conv->out_, 0 );
 

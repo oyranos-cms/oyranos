@@ -166,7 +166,8 @@ main(int argc, char** argv)
                               oyImage_PixelLayoutGet( image_in ), prof, 0 );
 
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0, 0 );
-  error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD );
   in = out; in = 0; 
@@ -176,7 +177,8 @@ main(int argc, char** argv)
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/output_ppm/filename",
                                  "test_dbg.ppm", OY_CREATE_NEW );
   oyOptions_Release( &options );
-  error = oyFilterNode_Connect( in, "Img", out, "Img", 0 );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
 
   pixel_access->start_xy[0] = 0;
   pixel_access->start_xy[1] = 0;

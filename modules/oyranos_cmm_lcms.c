@@ -757,7 +757,7 @@ oyDATATYPE_e lcms_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyDOUBLE, 0};
 oyConnectorImaging_s lcms_cmmIccSocket_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
-  "//" OY_TYPE_STD "/manipulator", /* connector_type */
+  "//" OY_TYPE_STD "/manipulator.data", /* connector_type */
   0, /* is_plug == oyFilterPlug_s */
   lcms_cmmIcc_data_types, /* data_types */
   3, /* data_types_n; elements in data_types array */
@@ -784,7 +784,7 @@ oyConnectorImaging_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connec
 oyConnectorImaging_s lcms_cmmIccPlug_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
-  "//" OY_TYPE_STD "/manipulator", /* connector_type */
+  "//" OY_TYPE_STD "/manipulator.data", /* connector_type */
   1, /* is_plug == oyFilterPlug_s */
   lcms_cmmIcc_data_types, /* data_types */
   3, /* data_types_n; elements in data_types array */
