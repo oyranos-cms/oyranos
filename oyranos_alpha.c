@@ -5029,7 +5029,7 @@ OYAPI int  OYEXPORT
  *  @brief   set value from a data blob
  *
  *  @param[in]     blob                the data blob
- *  @param[in]     ptr                 data
+ *  @param[in]     ptr                 copy the data into the blob object
  *  @param[in]     size                data size
  *  @param[in]     type                data type; assuming 8 byte with typical
  *                                     4 byte content
