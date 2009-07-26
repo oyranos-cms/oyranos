@@ -400,6 +400,7 @@ typedef struct {
 
   size_t               size;           /**< data size */
   oyPointer            ptr;            /**< data */
+  int                  flags;          /**< 0x01 - static ptr */
   char                 type[8];        /**< the type of data, e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL" */
 } oyBlob_s;
 
@@ -410,14 +411,17 @@ OYAPI oyBlob_s * OYEXPORT
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
                  oyBlob_Release      ( oyBlob_s         ** obj );
-OYAPI int  OYEXPORT
-                 oyBlob_ReleaseNoPtr ( oyBlob_s         ** obj );
 
 OYAPI int  OYEXPORT
                  oyBlob_SetFromData  ( oyBlob_s          * obj,
                                        oyPointer           ptr,
                                        size_t              size,
-                                       char              * type );
+                                       const char        * type );
+OYAPI int  OYEXPORT
+                 oyBlob_SetFromStatic( oyBlob_s          * blob,
+                                       const oyPointer     ptr,
+                                       size_t              size,
+                                       const char        * type );
 
 /** @internal
  *  @brief a pointer list

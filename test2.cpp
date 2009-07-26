@@ -716,6 +716,101 @@ oyTESTRESULT_e testOptionsCopy ()
   return result;
 }
 
+oyTESTRESULT_e testBlob ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int error = 0;
+  oyBlob_s * a = 0, * b = 0;
+  oyPointer ptr = 0;
+  const char static_ptr[16] = {0,1,0,1,0,1,0,1,  0,1,0,1,0,1,0,1};
+  const char type[8] = "test";
+  oyObject_s object = oyObject_New();
+
+  fprintf(stdout, "\n" );
+
+  a = oyBlob_New( 0 );
+  ptr = (oyPointer) static_ptr;
+  error = oyBlob_SetFromStatic( a, ptr, 16, type );
+
+  if(!error)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyBlob_SetFromSatic() good                      " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyBlob_SetFromSatic() failed                    " );
+  }
+
+  b = oyBlob_Copy( a, object );
+
+  if(!error && b && b->ptr && b->size && b->ptr == static_ptr)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyBlob_Copy( static ) good                      " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyBlob_Copy( static ) failed                    " );
+  }
+
+  error = oyBlob_Release( &b );
+
+  error = oyBlob_SetFromStatic( a, ptr, 0, type );
+
+  if(!error)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyBlob_SetFromSatic(0) good                     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyBlob_SetFromSatic(0) failed                   " );
+  }
+
+  b = oyBlob_Copy( a, object );
+
+  if(!error && b && b->ptr && !b->size && b->ptr == static_ptr)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyBlob_Copy( static 0) good                     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyBlob_Copy( static 0) failed                   " );
+  }
+
+  ptr = malloc(1024);
+  error = oyBlob_SetFromData( a, ptr, 1024, type );
+
+  if(!error && a->ptr && a->size == 1024 && a->ptr != ptr)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyBlob_SetFromData() good                       " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyBlob_SetFromData() failed                     " );
+  }
+  
+  error = oyBlob_Release( &b );
+
+  if(!error && !b)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyBlob_Release() good                           " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyBlob_Release() failed                         " );
+  }
+
+  b = oyBlob_Copy( a, object );
+
+  if(!error && b && a != b && b->ptr && a->size == b->size && a->ptr != b->ptr )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyBlob_Copy() good                              " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyBlob_Copy() failed                            " );
+  }
+
+  oyBlob_Release( &a );
+  oyBlob_Release( &b );
+  free(ptr);
+
+  return result;
+}
+
 #include <libxml/parser.h>
 #include <libxml/xmlsave.h>
 
@@ -2721,6 +2816,7 @@ int main(int argc, char** argv)
   TEST_RUN( testOption, "basic oyOption_s" );
   TEST_RUN( testOptionInt,  "oyOption_s integers" );
   TEST_RUN( testOptionsCopy,  "Copy oyOptions_s" );
+  TEST_RUN( testBlob, "oyBlob_s" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );

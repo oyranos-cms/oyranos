@@ -4880,18 +4880,23 @@ oyBlob_s * oyBlob_Copy_
   {
     allocateFunc_ = s->oy_->allocateFunc_;
 
-    if(obj->ptr && obj->size)
+    if(obj->ptr && obj->size && !(obj->flags & 0x01))
     {
       s->ptr = allocateFunc_( obj->size );
       error = !s->ptr;
       if(error <= 0)
         error = !memcpy( s->ptr, obj->ptr, obj->size );
-    }
+
+    } else
+      s->ptr   = obj->ptr;
   }
 
   if(error <= 0)
+  {
     s->size = obj->size;
-  else
+    s->flags = obj->flags;
+
+  } else
     oyBlob_Release( &s );
 
   return s;
@@ -4963,57 +4968,8 @@ OYAPI int  OYEXPORT
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
-    if(s->ptr && s->size)
+    if(s->ptr && !(s->flags & 0x01))
       deallocateFunc( s->ptr );
-    s->size = 0;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
-}
-
-/** Function oyBlob_ReleaseNoPtr
- *  @memberof oyBlob_s
- *  @brief   release and possibly deallocate a Blob object
- *
- *  The oyBlob_s::release function can be substituted by oyBlob_ReleaseNoPtr()
- *  to not free the oyBlob_s::ptr.
- *
- *  @param[in,out] obj                 struct object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/07/25 (Oyranos: 0.1.10)
- *  @date    2009/07/25
- */
-OYAPI int  OYEXPORT
-               oyBlob_ReleaseNoPtr( oyBlob_s      ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyBlob_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  oyCheckType__m( oyOBJECT_BLOB_S, return 1 )
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    /* Do not touch the ptr. It is constant data. */
-    s->ptr = 0;
     s->size = 0;
 
     oyObject_Release( &s->oy_ );
@@ -5042,7 +4998,7 @@ OYAPI int  OYEXPORT
 int            oyBlob_SetFromData    ( oyBlob_s          * blob,
                                        oyPointer           ptr,
                                        size_t              size,
-                                       char              * type )
+                                       const char        * type )
 {
   oyBlob_s * s = blob;
   int error = !s || s->type_ != oyOBJECT_BLOB_S;
@@ -5051,16 +5007,62 @@ int            oyBlob_SetFromData    ( oyBlob_s          * blob,
 
   if(error <= 0)
   {
-    if(s->ptr)
+    if(s->ptr && !(s->flags & 0x01))
       s->oy_->deallocateFunc_( s->ptr );
     s->size = 0;
 
     s->ptr = s->oy_->allocateFunc_( size );
     error = !s->ptr;
+    s->flags = 0;
   }
 
   if(error <= 0)
     error = !memcpy( s->ptr, ptr, size );
+
+  if(error <= 0)
+    s->size = size;
+
+  if(error <= 0 && type)
+    error = !memcpy( s->type, type, 8 );
+
+  return error;
+}
+
+/** Function oyBlob_SetFromStatic
+ *  @memberof oyBlob_s
+ *  @brief   set value from a data blob
+ *
+ *  @param[in]     blob                the data blob
+ *  @param[in]     ptr                 move the data into the blob object
+ *  @param[in]     size                data size
+ *  @param[in]     type                data type; assuming 8 byte with typical
+ *                                     4 byte content
+ *  @return                            0 - success, 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/26 (Oyranos: 0.1.10)
+ *  @date    2009/07/26
+ */
+int            oyBlob_SetFromStatic  ( oyBlob_s          * blob,
+                                       const oyPointer     ptr,
+                                       size_t              size,
+                                       const char        * type )
+{
+  oyBlob_s * s = blob;
+  int error = !s || s->type_ != oyOBJECT_BLOB_S;
+
+  oyCheckType__m( oyOBJECT_BLOB_S, return 1 )
+
+  if(error <= 0)
+  {
+    if(s->ptr && !(s->flags & 0x01))
+      s->oy_->deallocateFunc_( s->ptr );
+    s->size = 0;
+
+    s->ptr = ptr;
+    error = !s->ptr;
+    s->flags = 0x01;
+  }
 
   if(error <= 0)
     s->size = size;
