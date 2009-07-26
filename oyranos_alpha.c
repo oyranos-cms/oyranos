@@ -4895,6 +4895,7 @@ oyBlob_s * oyBlob_Copy_
   {
     s->size = obj->size;
     s->flags = obj->flags;
+    error = !memcpy( s->type, obj->type, 8 );
 
   } else
     oyBlob_Release( &s );
