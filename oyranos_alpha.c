@@ -23298,16 +23298,20 @@ int                oyConversion_RunPixels (
     tmp_ticket = 1;
   }
 
+  if(!pixel_access)
+    error = 1;
 
   /* should be the same as conversion->out_->filter */
   filter = conversion->out_->core;
   image = oyConversion_GetImage( conversion, OY_OUTPUT );
 
-  oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
-
-  result = oyImage_FillArray( image, &roi, 2,
-                              &pixel_access->array,
-                              pixel_access->output_image_roi, 0 );
+  if(error <= 0)
+    oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
+  
+  if(error <= 0)
+    result = oyImage_FillArray( image, &roi, 2,
+                                &pixel_access->array,
+                                pixel_access->output_image_roi, 0 );
   error = ( result != 0 );
 
   if(error <= 0)
