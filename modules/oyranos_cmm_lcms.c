@@ -538,7 +538,9 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
   cmsHTRANSFORM xform;
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
-  int intent = 0,
+  icProfileClassSignature profile_class_out = 0;
+  int proof = 0,
+      intent = 0,
       intent_proof = 0,
       bpc = 0,
       cmyk_cmyk_black_preservation = 0,
@@ -558,6 +560,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
       colour_out = cmsGetColorSpace( lps[profiles_n-1] );
     else
       colour_out = cmsGetPCS( lps[profiles_n-1] );
+    profile_class_out = cmsGetDeviceClass( lps[profiles_n-1] );
   }
 
   lcms_pixel_layout_in  = oyPixelToCMMPixelLayout_(oy_pixel_layout_in,
@@ -568,6 +571,14 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
 #ifndef oyStrlen_
 #define oyStrlen_ strlen
 #endif
+      o_txt = oyOptions_FindString  ( opts, "proof_soft", 0 );
+      if(o_txt && oyStrlen_(o_txt) && profile_class_out == icSigDisplayClass)
+        proof = atoi( o_txt );
+
+      o_txt = oyOptions_FindString  ( opts, "proof_hard", 0 );
+      if(o_txt && oyStrlen_(o_txt) &&  profile_class_out == icSigOutputClass)
+        proof = atoi( o_txt );
+
       o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0);
       if(o_txt && oyStrlen_(o_txt))
         intent = atoi( o_txt );
@@ -593,6 +604,8 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         cmyk_cmyk_black_preservation = atoi( o_txt );
 
       /* this should be moved to the CMM and not be handled here in Oyranos */
+      flags = proof ?         flags | cmsFLAGS_SOFTPROOFING :
+                              flags & (~cmsFLAGS_SOFTPROOFING);
       flags = bpc ?           flags | cmsFLAGS_WHITEBLACKCOMPENSATION :
                               flags & (~cmsFLAGS_WHITEBLACKCOMPENSATION);
       flags = gamut_warning ? flags | cmsFLAGS_GAMUTCHECK :
@@ -631,7 +644,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
                                     intent, flags );
     }
 
-    if(proof_n && cmsFLAGS_SOFTPROOFING)
+    if(proof_n && flags & cmsFLAGS_SOFTPROOFING)
     {
       int i;
 
