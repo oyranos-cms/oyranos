@@ -346,6 +346,23 @@ int              Configs_FromPattern ( const char        * registration,
   if(!num)
     num = malloc( 80 );
 
+  /* "error handling" section */
+  if(rank==0) {
+	  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+			  "Registration match Failed. Options:\n%s", _DBG_ARGS_,
+			  oyOptions_GetText( options, oyNAME_NICK )
+			  );
+	  return 1;
+  }
+  if(s == NULL) {
+	  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+			  "oyConfigs_s is NULL! Options:\n%s", _DBG_ARGS_,
+			  oyOptions_GetText( options, oyNAME_NICK )
+			  );
+	  return 1;
+  }
+
+  /* "help" call section */
   if(oyOptions_FindString( options, "command", "help" ) || !options || !oyOptions_Count( options ))
   {
     /** oyMSG_WARN should make shure our message is visible. */
@@ -353,8 +370,6 @@ int              Configs_FromPattern ( const char        * registration,
     return 0;
   }
 
-  if(rank && error <= 0)
-  {
     devices = oyConfigs_New(0);
 
     /* "list" call section */
@@ -494,49 +509,7 @@ int              Configs_FromPattern ( const char        * registration,
       return error;
     }
 
-    /* "setup" call section */
-    value2 = oyOptions_FindString( options, "command", "setup" );
-    value3 = oyOptions_FindString( options, "profile_name", 0 );
-    if(error <= 0 && value2)
-    {
-      error = !value1 || !value3;
-      if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-              "The device_name/profile_name option is missed. Options:\n%s",
-                _DBG_ARGS_,
-                oyOptions_GetText( options, oyNAME_NICK )
-                );
-      else
-        error = 0; /* doSetup( value1, value3 ); */
-      return error;
-    }
 
-    /* "unset" call section */
-    value2 = oyOptions_FindString( options, "command", "unset" );
-    if(error <= 0 && value2)
-    {
-      error = !value1;
-      if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-                "The device_name option is missed. Options:\n%s",
-                _DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
-                );
-      else
-        error = 0; /* doUnset( value1 ); */
-      return error;
-    }
-  }
-
-
-  /* not to be reached section, e.g. warning */
-  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-                "This point should not be reached. Options:\n%s", _DBG_ARGS_,
-                oyOptions_GetText( options, oyNAME_NICK )
-                );
-
-  ConfigsFromPatternUsage( (oyStruct_s*)options );
-
-  return error;
 }
 
 /** Function Config_Check
