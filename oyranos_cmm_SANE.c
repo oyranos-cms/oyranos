@@ -328,23 +328,17 @@ int              Configs_FromPattern ( const char        * registration,
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
   oyOption_s * o = 0;
-  oyProfile_s * p = 0;
   char ** texts = 0;
-  char * text = 0;
   int texts_n = 0, i,
       error = !s;
-  const char * value1 = 0,
-             * value2 = 0,
-             * value3 = 0,
-             * value4 = 0;
+  int driver_version = 0;
+  const char * device_name = 0,
+             * command_list = 0,
+             * command_properties = 0;
+
   int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
-  static char * num = 0; /*does static break reentrancy? TODO*/
-  const char * tmp = 0;
-
-  if(!num)
-    num = malloc( 80 );
 
   /* "error handling" section */
   if(rank==0) {
@@ -377,23 +371,32 @@ int              Configs_FromPattern ( const char        * registration,
     return 0;
   }
 
-    devices = oyConfigs_New(0);
+	/*Make sure we get the SANE version*/
+  	error = oyOptions_FindInt( options, "driver_version", 0, &driver_version );
+	if (error != 0) {
+  		message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+		  "No SANE driver_version present. Options:\n%s", _DBG_ARGS_,
+		  oyOptions_GetText( options, oyNAME_NICK )
+		  );
+  		ConfigsFromPatternUsage( (oyStruct_s*)options );
+  		return error;
+	}
 
+    command_list = oyOptions_FindString( options, "command", "list" );
+    command_properties = oyOptions_FindString( options, "command", "properties" );
+    device_name = oyOptions_FindString( options, "device_name", 0 );
+
+    if(command_list) {
     /* "list" call section */
-	 /* Are we asked for all devices, or just one?
-	  * If a "device_name" exists, use only that */
-    value1 = oyOptions_FindString( options, "device_name", 0 );
-    value2 = oyOptions_FindString( options, "command", "list" );
-    if(oyOptions_FindString( options, "command", "list" ) ||
-       (!oyOptions_FindString( options, "command", "properties" ))
-      )
-    {
+
+
+    	devices = oyConfigs_New(0);
       texts_n = GetDevices( &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
         /* if current device does not match the requested, try the next */
-        if(value1 && strcmp(value1, texts[i]) != 0)
+        if(device_name && strcmp(device_name, texts[i]) != 0)
           continue;
 
         device = oyConfig_New( CMM_BASE_REG, 0 );
@@ -417,18 +420,14 @@ int              Configs_FromPattern ( const char        * registration,
         *s = devices;
 
       return error;
-    }
-
-    /* "properties" call section */
-    value2 = oyOptions_FindString( options, "command", "properties" );
-    if(value2)
-    {
+    } else if (command_properties) {
+		 /* "properties" call section */
       texts_n = GetDevices( &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
         /* filter */
-        if(value1 && strcmp(value1, texts[i]) != 0)
+        if(device_name&& strcmp(device_name, texts[i]) != 0)
           continue;
 
         device = oyConfig_New( CMM_BASE_REG, 0 );
@@ -439,7 +438,7 @@ int              Configs_FromPattern ( const char        * registration,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
-        error = DeviceFromName_( value1, options, &device, texts, texts_n );
+        error = DeviceFromName_( device_name, options, &device, texts, texts_n );
 
         if(error <= 0 && device)
           device->rank_map = oyRankMapCopy( _rank_map,
@@ -451,9 +450,9 @@ int              Configs_FromPattern ( const char        * registration,
         *s = devices;
 
       return error;
-    }
-
-
+    } else {
+		 /*wrong or no command*/
+	 }
 }
 
 /** Function Config_Check
