@@ -18824,8 +18824,6 @@ oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
 #if 0
     s->options_ = api4->oyCMMFilter_ValidateOptions( s, options, 0, &ret );
 #endif
-    
-    s->options_ = oyOptions_ForFilter_( s, 0, s->oy_);
   }
 
   if(error && s)
