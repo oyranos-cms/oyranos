@@ -385,9 +385,7 @@ int              Configs_FromPattern ( const char        * registration,
     value1 = oyOptions_FindString( options, "device_name", 0 );
     value2 = oyOptions_FindString( options, "command", "list" );
     if(oyOptions_FindString( options, "command", "list" ) ||
-       (!oyOptions_FindString( options, "command", "properties" ) &&
-        !oyOptions_FindString( options, "command", "setup" ) &&
-        !oyOptions_FindString( options, "command", "unset" ))
+       (!oyOptions_FindString( options, "command", "properties" ))
       )
     {
       texts_n = GetDevices( &texts, allocateFunc );
@@ -406,68 +404,7 @@ int              Configs_FromPattern ( const char        * registration,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
-
-        value4 = oyOptions_FindString( options, "icc_profile", 0 );
-        if(value4 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        {
-          size_t size = 6;
-          const char * data = "scanner";
-
-          /* In case the devices do not support network transparent ICC profile
-           * setup, then use the DB stored profile, e.g.
-           * @see oyDeviceProfileFromDB() + oyProfile_FromFile()
-           * This will then turn the backend in a pure local one.
-           *
-           * One the opposite the Xorg-"oyX1" backend puts the profile in 
-           * X server.
-           * Then it is up to Oyranos to take action. The backend needs to
-           * report a issue to inform Oyranos, as seen below.
-           */
-
-          /** Warn and return issue on not found profile. */
-          if(!size || !data)
-          {
-            message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-                "Could not obtain icc_profile information for %s",
-                _DBG_ARGS_, texts[i]);
-            error = -1;
-          } else
-          {
-            p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
-            o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( device->data, &o, -1 );
-          }
-        }
-
-        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        {
-          text = calloc( 4096, sizeof(char) );
-
-          o = oyOptions_Find( device->data, "icc_profile" );
-
-          if( o && o->value && o->value->oy_struct && 
-              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
-          {
-            /* our scanner profile will certainly fail */
-            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
-            tmp = oyProfile_GetFileName( p, 0 );
-
-            STRING_ADD( text, "  " );
-            if(strrchr( tmp, OY_SLASH_C ))
-              STRING_ADD( text, strrchr( tmp, OY_SLASH_C ) + 1 );
-            else
-              STRING_ADD( text, tmp );
-
-            oyProfile_Release( &p );
-          }
-
-          if(error <= 0)
-          error = oyOptions_SetFromText( &device->data,
-                                         CMM_BASE_REG OY_SLASH "oyNAME_NAME",
-                                         text, OY_CREATE_NEW );
-          free( text );
-        }
+        if(oyOptions_FindString( options, "oyNAME_NAME", 0 )) {}
 
         if(error <= 0)
           device->rank_map = oyRankMapCopy( _rank_map,
