@@ -273,7 +273,7 @@ int     GetDevices_                   ( char            *** list,
 		  ** all = NULL;
 	const SANE_Device ** device_list = NULL;
 	SANE_Handle handle;
-
+#if 0
 	/* If sane_init() is already called by the application, then
 	 * this is probably a BUG! FIXME*/
 	if (!sane) {
@@ -328,6 +328,7 @@ int     GetDevices_                   ( char            *** list,
 
   *list = all;
   return l;
+#endif
 }
 
 /** Function Configs_FromPattern
@@ -345,16 +346,15 @@ int              Configs_FromPattern ( const char        * registration,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** s )
 {
-  oyConfigs_s * devices = 0;
-  oyConfig_s * device = 0;
+  oyConfig_s * device = NULL;
+  oyConfigs_s * devices = NULL;
   oyOption_s * o = 0;
-  char ** texts = 0;
-  int texts_n = 0, i,
-      error = 1;
+  int i, num_devices, error;
   int driver_version = 0;
   const char * device_name = 0,
              * command_list = 0,
              * command_properties = 0;
+  const SANE_Device ** device_list = NULL;
 
   int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
@@ -391,6 +391,7 @@ int              Configs_FromPattern ( const char        * registration,
     return 0;
   }
 
+	/*Handle "driver_version" option*/
 	/*Make sure we get the SANE version*/
   	error = oyOptions_FindInt( options, "driver_version", 0, &driver_version );
 	if (error != 0) {
@@ -407,41 +408,51 @@ int              Configs_FromPattern ( const char        * registration,
     device_name = oyOptions_FindString( options, "device_name", 0 );
 
     if(command_list) {
-    /* "list" call section */
+   /* "list" call section */
 
     	devices = oyConfigs_New(0);
-      texts_n = GetDevices( &texts, allocateFunc );
+      error = GetDevices( &device_list, &num_devices );
 
-      for( i = 0; i < texts_n; ++i )
-      {
+      for (i = 0; i<num_devices; ++i) {
+			const char* sane_name = device_list[i]->name;
+			const char* sane_model = device_list[i]->model;
+		  /*Handle "device_name" option [IN]*/
         /* if current device does not match the requested, try the next */
-        if(device_name && strcmp(device_name, texts[i]) != 0)
+        if(device_name && strcmp(device_name, sane_name) != 0)
           continue;
 
         device = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !device;
 
-        if(error <= 0)
+		  /*Handle "device_name" option [OUT]*/
         error = oyOptions_SetFromText( &device->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
-                                       texts[i], OY_CREATE_NEW );
+                                       sane_name, OY_CREATE_NEW );
 
-        if(oyOptions_FindString( options, "oyNAME_NAME", 0 )) {}
+		  /*Handle "oyNAME_NAME" option*/
+        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+			  error = oyOptions_SetFromText( &device->data,
+                                       CMM_BASE_REG OY_SLASH "oyNAME_NAME",
+                                       sane_model, OY_CREATE_NEW );
 
-        if(error <= 0)
-          device->rank_map = oyRankMapCopy( _rank_map,
+		  /*Handle "device_context" option*/ //TODO
+        if(oyOptions_FindString( options, "device_context", 0 )) {}
+		  /*Handle "device_handle" option*/ //TODO
+        if(oyOptions_FindString( options, "device_handle", 0 )) {}
+
+        device->rank_map = oyRankMapCopy( _rank_map,
                                                 device->oy_->allocateFunc_);
 
         oyConfigs_MoveIn( devices, &device, -1 );
       }
 
+		//Handle errors: FIXME
       if(error <= 0)
         *s = devices;
 
       return error;
     } else if (command_properties) {
 		 /* "properties" call section */
-      texts_n = GetDevices( &texts, allocateFunc );
+      //texts_n = GetDevices( &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -523,6 +534,7 @@ oyRankPad _rank_map[] = {
   {"serial", 10, 0, 0},                /**< currently not avaliable */
   {"host", 1, 0, 0},                   /**< currently only local or remote */
   {"system_port", 2, 0, 0},            /**< good to match */
+  {"driver_version", 2, 0, 0},            /**< good to match */
 
   /* User supplied information */
   {"media", 1, -1, 0},                 /**< type of paper/film/slide/... */
