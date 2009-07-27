@@ -361,6 +361,13 @@ int              Configs_FromPattern ( const char        * registration,
 			  );
 	  return 1;
   }
+  if(*s != NULL) {
+	  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+			  "Devices struct already present! Options:\n%s", _DBG_ARGS_,
+			  oyOptions_GetText( options, oyNAME_NICK )
+			  );
+	  return 1;
+  }
 
   /* "help" call section */
   if(oyOptions_FindString( options, "command", "help" ) || !options || !oyOptions_Count( options ))
