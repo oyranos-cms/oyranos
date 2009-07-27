@@ -17,4 +17,5 @@ raw2tiff
 scan
 oytest
 install_manifest.txt
-doc/
+oyRE_help.c
+SANE_help.c
