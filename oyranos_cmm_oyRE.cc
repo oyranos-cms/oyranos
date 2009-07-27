@@ -31,6 +31,7 @@
 #include "oyRE_help.c"
 /* --- internal definitions --- */
 
+#define DBG printf("%s: %d\n", __FILE__, __LINE__ ); fflush(NULL);
 /* select a own four byte identifier string instead of "dDev" and replace the
  * dDev in the below macros.
  */
@@ -76,10 +77,12 @@ oyranos::oyRankPad _rank_map[] = {
 	/* EXIF Fields */
   {const_cast<char*>("Exif.Image.Make "), 1, -1, 0},					/**< is nice */
   {const_cast<char*>("Exif.Image.Model "), 5, -5, 0},				/**< important, should not fail */
-  {const_cast<char*>("Exif.SerialNumber "), 10, -2, 0},				/**< important, could slightly fail */ /*Exif.Make.SerialNumber*/
   {const_cast<char*>("Exif.Photo.ISOSpeedRatings "), 1, 0, 0},	/**< is nice */
   {const_cast<char*>("Exif.Photo.ExposureProgram "), 1, 0, 0},	/**< nice to match */
   {const_cast<char*>("Exif.Photo.Flash "), 1, 0, 0},					/**< nice to match */
+  /*Makernote Fields - no 1-1 mapping with exif tags*/
+  {const_cast<char*>("Exif.SerialNumber "), 10, -2, 0},				/**< important, could slightly fail */ /*E.g. Exif.Canon.SerialNumber*/
+  {const_cast<char*>("Exif.Lens"), 2, -1, 0},				/**< is good */ /*E.g. Exif.CanonCs.Lens*/
 
   /* Possibly not relevant options are marked with: O->Output R->Repair */
   /* LibRaw Options affecting open_file() */
@@ -301,20 +304,15 @@ int              DeviceFromName_ ( const char        * device_name,
  *
  * \todo { Shouldn't it return error code instead? }
  */
-int     GetDevices                   ( char            *** list,
+int     GetDevices                   ( const char            *** list,
                                        oyAlloc_f           allocateFunc )
 {
-	/*
-  int len = sizeof(char*) * 3;
-  char ** texts = allocateFunc( len );
+	const char ** cameras = LibRaw::cameraList();
+	*list = cameras;
 
-  memset( texts, 0, len );
-  texts[0] = allocateFunc(24); sprintf( texts[0], "dDev_1" );
-  texts[1] = allocateFunc(24); sprintf( texts[1], "dDev_2" );
-
-  *list = texts;
-  */
-  return 0;
+	int i = 0;
+	while (cameras[i]) i++;
+	return i;
 }
 
 /** Function Configs_FromPattern
@@ -332,7 +330,7 @@ int              Configs_FromPattern ( const char        * registration,
   oyConfig_s * device = 0;
   oyOption_s * o = 0;
   oyProfile_s * p = 0;
-  char ** texts = 0;
+  const char ** texts = 0;
   char * text = 0;
   int texts_n = 0, i,
       error = !s;
