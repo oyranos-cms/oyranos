@@ -572,11 +572,11 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
 #define oyStrlen_ strlen
 #endif
       o_txt = oyOptions_FindString  ( opts, "proof_soft", 0 );
-      if(o_txt && oyStrlen_(o_txt) && profile_class_out == icSigDisplayClass)
+      if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
         proof = atoi( o_txt );
 
       o_txt = oyOptions_FindString  ( opts, "proof_hard", 0 );
-      if(o_txt && oyStrlen_(o_txt) &&  profile_class_out == icSigOutputClass)
+      if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigOutputClass*/)
         proof = atoi( o_txt );
 
       o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0);
