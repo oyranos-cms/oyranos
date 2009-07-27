@@ -406,16 +406,66 @@ oyCMMDataTypes_s icc_data[] = {
 };
 
 
+void             oiccChangeNodeOption( oyOptions_s       * f_options,
+                                       oyOptions_s       * db_options,
+                                       const char        * key,
+                                       oyConversion_s    * cc,
+                                       int                 verbose )
+{
+  oyOption_s * o = 0,
+             * db_o = 0;
+  
+  int k = 0;
+
+              o = oyOptions_Find( f_options, key );
+  if(o)
+  {
+              k = o->flags & oyOPTIONATTRIBUTE_EDIT;
+              k = o->flags & oyOPTIONATTRIBUTE_AUTOMATIC;
+              k = o->flags & oyOPTIONATTRIBUTE_ADVANCED;
+              k = o->flags & oyOPTIONATTRIBUTE_FRONT;
+              k = o->flags & oyOPTIONATTRIBUTE_DOUBLE;
+  }
+              /* only set missing options */
+              if(o &&
+                 !o->source & oyOPTIONSOURCE_USER &&
+                 !o->source & oyOPTIONSOURCE_DATA &&
+                 !o->flags & oyOPTIONATTRIBUTE_EDIT)
+              {
+                db_o = oyOptions_Find( db_options, key );
+                if(db_o)
+                {
+                  db_o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
+                  oyOptions_MoveIn( f_options, &db_o, -1 );
+                  if(verbose)
+                    WARNc2_S("set %s: %s", key,
+                             oyOptions_FindString(db_options,
+                                                  key, 0) );
+                } else
+                  WARNc1_S("no in filter defaults \"%s\" found.", key);
+              }
+}
 
 int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                        oyOptions_s       * options )
 {
-  int error = 0, i,n,
-      icc_nodes_n = 0;
+  int error = 0, i,j,k,n,m,os_n,
+      icc_nodes_n = 0,
+      search, old_id, it;
   int verbose = oyOptions_FindString( options, "verbose", 0 ) ? 1:0;
   oyFilterGraph_s * g = 0;
   oyFilterNode_s * node = 0;
+  oyFilterPlug_s * edge = 0;
   oyConversion_s * s = conversion;
+  oyOptions_s * db_options = 0,
+              * f_options = 0;
+  oyOption_s * o = 0,
+             * db_o = 0;
+  const char * db_val = 0,
+             * val = 0;
+
+  if(!verbose && getenv("OYRANOS_DEBUG") && atoi(getenv("OYRANOS_DEBUG")) > 0)
+    verbose = atoi(getenv("OYRANOS_DEBUG"));
 
   if(s->input)
     g = oyFilterGraph_FromNode( s->input, 0 );
@@ -430,7 +480,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                   "//" OY_TYPE_STD "/icc", 0 ))
     {
       if(verbose)
-        WARNc1_S( "node: %s", node->core->registration_ );
+        WARNc2_S( "node: %s[%d]",
+                  node->core->registration_, oyFilterNode_GetId( node ));
       ++icc_nodes_n;
     }
     oyFilterNode_Release( &node );
@@ -440,6 +491,91 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   if(verbose)
     oyShowGraph_( conversion->input, 0 );
 
+  m = oyFilterPlugs_Count( g->edges );
+  old_id = -1;
+  /* start from out_ and search all ICC CMMs */
+  if(s->out_)
+  for(i = 0; i < n; ++i)
+  {
+    node = oyFilterNodes_Get( g->nodes, i );
+
+    if(oyFilterNode_GetId( node ) == oyFilterNode_GetId( s->out_ ))
+      search = 1;
+    else
+      search = 0;
+
+    old_id = oyFilterNode_GetId( node );
+    if(verbose && search)
+      printf("ICC CMM search: %d - ", old_id);
+
+    /* search for a path to a "icc" CMM */
+    while(search)
+    {
+      it = 0;
+
+      /* follow the path along the filter node IDs */
+      for(j = 0; j < m; ++j)
+      {
+        edge = oyFilterPlugs_Get( g->edges, j );
+        if(oyFilterNode_GetId( edge->node ) == old_id)
+        {
+          /* select only application level "data" coonectors; follow the data */
+          if(oyFilterRegistrationMatch( edge->pattern->connector_type,
+                                        "//" OY_TYPE_STD "/data", 0) &&
+             oyFilterRegistrationMatch( edge->remote_socket_->pattern->connector_type,
+                                        "//" OY_TYPE_STD "/data", 0))
+          {
+            node = oyFilterNode_Copy( edge->remote_socket_->node, 0 );
+            old_id = oyFilterNode_GetId( node );
+            ++it;
+            /* stop at the first hit if "icc" */
+            if( oyFilterRegistrationMatch( node->core->registration_,
+                                           "//" OY_TYPE_STD "/icc", 0))
+            {
+              search = 0;
+
+              /* apply the found policy settings */
+              db_options = oyOptions_ForFilter( node->core->registration_, 0,
+                                                oyOPTIONATTRIBUTE_ADVANCED, 0 );
+              f_options = oyFilterNode_OptionsGet( node, 0 );
+
+              oiccChangeNodeOption( f_options, db_options,
+                                    "proof_soft", s, verbose);
+              oiccChangeNodeOption( f_options, db_options,
+                                    "proof_hard", s, verbose);
+              oiccChangeNodeOption( f_options, db_options,
+                                    "rendering_intent", s, verbose);
+              oiccChangeNodeOption( f_options, db_options,
+                                    "rendering_bpc", s, verbose);
+              oiccChangeNodeOption( f_options, db_options,
+                                    "rendering_intent_proof", s, verbose);
+              oiccChangeNodeOption( f_options, db_options,
+                                    "rendering_gamut_warning", s, verbose);
+              oiccChangeNodeOption( f_options, db_options,
+                                    "rendering_high_precission", s, verbose);
+
+              /* TODO @todo add proofing profile */
+
+              oyOptions_Release( &db_options );
+              oyOptions_Release( &f_options );
+
+              break;
+            }
+          }
+        }
+        oyFilterPlug_Release( &edge );
+      }
+
+      if(verbose)
+      {
+        if(search)
+          printf("%d - ", old_id);
+        else
+          printf("%d[icc]\n", old_id );
+      }
+    }
+    oyFilterNode_Release( &node );
+  }
 
   if(verbose)
   WARNc_S("not completely implemented");
