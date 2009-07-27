@@ -688,8 +688,8 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
 
-#define OY_OPTIONSOURCE_FILTER         2048
-#define OY_OPTIONSOURCE_META           4096
+#define OY_SELECT_FILTER         2048
+#define OY_SELECT_COMMON         4096
 /** @enum    oyOPTIONATTRIBUTE_e
  *  @brief   usage type
  *  @ingroup objects_value
@@ -2355,7 +2355,7 @@ OYAPI int  OYEXPORT
                oyFilterNode_GetConnectorPos (
                                        oyFilterNode_s    * node,
                                        int                 is_input,
-                                       const char        * type_ID,
+                                       const char        * pattern,
                                        int                 nth_of_type,
                                        int                 flags );
 OYAPI oyFilterSocket_s * OYEXPORT

@@ -5838,13 +5838,17 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
   {
     /** Change the option value only if something was found in the DB. */
     if(text && text[0])
+    {
       oyOption_SetFromText( option, text, 0 );
+      option->source = oyOPTIONSOURCE_DATA;
+    }
     else
     {
       ptr = oyGetKeyBinary_( option->registration, &size, oyAllocateFunc_ );
       if(ptr && size)
       {
         oyOption_SetFromData( option, ptr, size );
+        option->source = oyOPTIONSOURCE_DATA;
         oyFree_m_( ptr );
       }
     }
@@ -7284,21 +7288,21 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
  *  To obtain all front end options from a meta backend use: @verbatim
     flags = oyOPTIONATTRIBUTE_ADVANCED |
             oyOPTIONATTRIBUTE_FRONT |
-            OY_OPTIONSOURCE_META @endverbatim
+            OY_SELECT_COMMON @endverbatim
  *
  *  @param[in]     filter              the filter
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
  *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_OPTIONSOURCE_FILTER |
- *                                     OY_OPTIONSOURCE_META
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
  *  @param         object              the optional object
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/12/08 (Oyranos: 0.1.9)
- *  @date    2008/12/08
+ *  @date    2009/07/27
  */
 oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
                                        uint32_t            flags,
@@ -7315,8 +7319,8 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
   int i,n;
 
   /* by default we parse both sources */
-  if(!(flags & OY_OPTIONSOURCE_FILTER) && !(flags & OY_OPTIONSOURCE_META))
-    flags |= OY_OPTIONSOURCE_FILTER | OY_OPTIONSOURCE_META;
+  if(!(flags & OY_SELECT_FILTER) && !(flags & OY_SELECT_COMMON))
+    flags |= OY_SELECT_FILTER | OY_SELECT_COMMON;
 
   if(!error)
   {
@@ -7336,7 +7340,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
     api5 = filter->api4_->api5_;
 
     /*  3. parse static common options from meta backend */
-    if(api5 && flags & OY_OPTIONSOURCE_META)
+    if(api5 && flags & OY_SELECT_COMMON)
     {
       oyCMMapiFilters_s * apis;
       int apis_n = 0;
@@ -7376,7 +7380,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
     /* requires step 2 */
 
     /*  4. parse static options from filter */
-    if(flags & OY_OPTIONSOURCE_FILTER)
+    if(flags & OY_SELECT_FILTER)
       opts_tmp2 = oyOptions_FromText( filter->api4_->options, 0, object );
 
     /*  5. merge */
@@ -7392,7 +7396,8 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
       /* ask Elektra */
-      error = oyOption_SetValueFromDB( o );
+      if(!(flags & oyOPTIONSOURCE_FILTER))
+        error = oyOption_SetValueFromDB( o );
       oyOption_Release( &o );
     }
     error = oyOptions_DoFilter ( s, flags, type_txt );
@@ -7416,7 +7421,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
  *  To obtain all front end options from a meta backend use:@verbatim
  *  flags = oyOPTIONATTRIBUTE_ADVANCED |
  *          oyOPTIONATTRIBUTE_FRONT |
- *          OY_OPTIONSOURCE_META @endverbatim
+ *          OY_SELECT_COMMON @endverbatim
  *
  *  @param[in]     registration        the filter registration to search for
  *  @param[in]     cmm                 a CMM to match
@@ -7424,14 +7429,14 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
  *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_OPTIONSOURCE_FILTER |
- *                                     OY_OPTIONSOURCE_META
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
  *  @param         object              the optional object
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/10/08 (Oyranos: 0.1.8)
- *  @date    2008/12/09
+ *  @date    2009/07/27
  */
 oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
@@ -18793,12 +18798,13 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
  *  - the user probably knows, which special CMM to use (e.g. lcms, icc, shiva)
  *
  *  @param[in]     registration        the filter registration pattern
- *  @param[in]     options             zero - get defaults; or use the supplied
+ *  @param[in]     options             the supplied filter options
  *  @param[in]     object              the optional object
+ *  @return                            a filter core
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2009/06/24
+ *  @date    2009/07/27
  */
 oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
                                        oyOptions_s       * options,
@@ -20222,9 +20228,8 @@ oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
  *  @brief   get filter options
  *
  *  @param[in,out] node                filter object
- *  @param         flags               possible: OY_FILTER_GET_DEFAULT |
- *                                     oyOPTIONSOURCE_FILTER |
- *                                     oyOPTIONATTRIBUTE_ADVANCED
+ *  @param         flags               see oyOptions_ForFilter()
+ *  @return                            the options
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -21953,7 +21958,7 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
         opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
                                             0/* oyOPTIONATTRIBUTE_ADVANCED |
                                             oyOPTIONATTRIBUTE_FRONT |
-                                            OY_OPTIONSOURCE_META */, 0 );
+                                            OY_SELECT_COMMON */, 0 );
 
       n = oyProfiles_Count(p_list);
 

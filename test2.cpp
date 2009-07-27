@@ -836,7 +836,7 @@ oyTESTRESULT_e testSettings ()
   opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
                                             oyOPTIONATTRIBUTE_ADVANCED /* |
                                             oyOPTIONATTRIBUTE_FRONT |
-                                            OY_OPTIONSOURCE_META */, 0 );
+                                            OY_SELECT_COMMON */, 0 );
 
   oyOptions_SetFromText( &opts, "cmyk_cmyk_black_preservation", "1", 0 );
 
@@ -2146,8 +2146,8 @@ oyTESTRESULT_e testCMMnmRun ()
   int error = !filter || !filter->api4_;
 
   /* by default we parse both sources */
-  if(!(flags & OY_OPTIONSOURCE_FILTER) && !(flags & OY_OPTIONSOURCE_META))
-    flags |= OY_OPTIONSOURCE_FILTER | OY_OPTIONSOURCE_META;
+  if(!(flags & OY_SELECT_FILTER) && !(flags & OY_SELECT_COMMON))
+    flags |= OY_SELECT_FILTER | OY_SELECT_COMMON;
 
   if(!error)
   {
@@ -2167,12 +2167,12 @@ oyTESTRESULT_e testCMMnmRun ()
     api5 = filter->api4_->api5_;
 
     /*  3. parse static common options from meta backend */
-    if(api5 && flags & OY_OPTIONSOURCE_META)
+    if(api5 && flags & OY_SELECT_COMMON)
       ; /*opts_tmp = oyOptions_FromText( api5->options, 0, object );*/
     /* requires step 2 */
 
     /*  4. parse static options from filter */
-    if(flags & OY_OPTIONSOURCE_FILTER)
+    if(flags & OY_SELECT_FILTER)
       opts_tmp2 = oyOptions_FromText( filter->api4_->options, 0, object );
 
     /*  5. merge */
