@@ -190,7 +190,7 @@ int              DeviceFromName_ ( const char        * device_name,
 		model = all[i+2*size];
 		serial = "unsupported";
 		host = local?"localhost":"remote";
-		system_port = "TODO";
+		system_port = "TODO"; /*TODO scsi/usb/parallel port?*/
 
       if(error != 0) /*TODO What is this? */
         message( oyMSG_WARN, (oyStruct_s*)options, 
@@ -340,7 +340,7 @@ int              Configs_FromPattern ( const char        * registration,
   int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
-  static char * num = 0;
+  static char * num = 0; /*does static break reentrancy? TODO*/
   const char * tmp = 0;
 
   if(!num)
