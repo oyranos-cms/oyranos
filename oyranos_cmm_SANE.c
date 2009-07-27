@@ -65,7 +65,6 @@ oyMessage_f message = 0;
 extern oyCMMapi8_s _api8;
 oyRankPad _rank_map[];
 
-SANE_Bool sane = SANE_FALSE; /**< temporary workaround */
 /* --- implementations --- */
 
 int                CMMInit       ( )
@@ -230,6 +229,27 @@ int              DeviceFromName_ ( const char        * device_name,
   return error;
 }
 
+int GetDevices(const SANE_Device *** device_list, int* size)
+{
+	int status, s = 0;
+	const SANE_Device ** dl = NULL;
+
+	printf("Scanning SANE devices..."); fflush(NULL);
+	status = sane_get_devices(&dl,SANE_FALSE);
+	if (status!=SANE_STATUS_GOOD) {
+		printf("Cannot get sane devices!\n"); fflush(NULL);
+		return 1;
+	}
+	printf("OK\n"); fflush(NULL);
+	*device_list = dl;
+
+	while (device_list[s]) s++;
+	*size = s;
+
+	return 0;
+}
+
+
 /** Function GetDevices
  *  @brief Request all devices from SANE and return their SANE_Device::name
  *
@@ -242,7 +262,7 @@ int              DeviceFromName_ ( const char        * device_name,
  *  sane_get_devices() is an expensive function [up to a few seconds?]
  *  Only name is used now. }
  */
-int     GetDevices                   ( char            *** list,
+int     GetDevices_                   ( char            *** list,
                                        oyAlloc_f           allocateFunc )
 {
 	int status, pnm_status, version, len, i, l = 0;
@@ -330,7 +350,7 @@ int              Configs_FromPattern ( const char        * registration,
   oyOption_s * o = 0;
   char ** texts = 0;
   int texts_n = 0, i,
-      error = !s;
+      error = 1;
   int driver_version = 0;
   const char * device_name = 0,
              * command_list = 0,
@@ -388,7 +408,6 @@ int              Configs_FromPattern ( const char        * registration,
 
     if(command_list) {
     /* "list" call section */
-
 
     	devices = oyConfigs_New(0);
       texts_n = GetDevices( &texts, allocateFunc );
