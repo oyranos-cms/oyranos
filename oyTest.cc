@@ -7,6 +7,7 @@ using namespace oyranos;
 
 int test_backend( const char * name );
 void help(char* progname);
+int print_devices( oyConfigs_s * devices, const char * name );
 
 int main(int argc, char** argv)
 {
@@ -46,7 +47,7 @@ int test_backend( const char * name )
 
 	 /******** Test Device Backend ********/
 
-	 /**1. Query Device backend for all avaliable devices**/
+	 /**1a. Query Device backend for all avaliable devices**/
 	 /* calls Configs_FromPattern() with  "command" -> "list" option. */
 	 oyConfigs_s *sane_devices = NULL;
 	 /* OY_TYPE_STD: defaults to "imaging"
@@ -55,29 +56,19 @@ int test_backend( const char * name )
 	  * sane_devices: List of configuration objects, one for each device*/
 	 if (oyDevicesGet(OY_TYPE_STD, name, NULL, &sane_devices) !=0 )
 		 return 1;
-	 int num_scanners = oyConfigs_Count( sane_devices );
-	 printf("Found %d %s devices\n", num_scanners, name, num_scanners>1?"s":"" );
+	 if (!sane_devices)
+		 return 1;
 
-	 for (int i=0; i<num_scanners; i++) {
-		 oyConfig_s * sane_device = oyConfigs_Get( sane_devices, i );
-		 int num_options = oyConfig_Count( sane_device );
-		 printf("\tFound %d option%s for device %d\n", num_options, num_options>1?"s":"", i );
-		 for (int j=0; j<num_options; j++) {
-			 oyOption_s * opt = oyConfig_Get( sane_device, j );
-			 /*Problems with manipulating an option struct. FIXME*/
-			 int id = oyOption_GetId( opt );
-			 char * text = oyOption_GetValueText( opt, malloc );
-			 printf("\t\tOption[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text );
-			 free(text);
-			 oyOption_Release( &opt );
-		 }
-		 oyConfig_Release( &sane_device );
-	 }
+	 int num_devices = print_devices( sane_devices, name );
 	 printf("\n\n");
+
+	 /**1b. Query Device backend for all avaliable devices**/
+	 /* calls Configs_FromPattern() with  "command" -> "list" option
+	  * and also all other options that might be supported by the backend */
 
 	 /**2. Query Device backend for each found device**/
 	 /* calls Configs_FromPattern() with  "command" -> "properties" option. */
-	 for (int i=0; i<num_scanners; i++) {
+	 for (int i=0; i<num_devices; i++) {
 		 oyConfig_s * sane_device = oyConfigs_Get( sane_devices, i );
 		 oyOption_s * device_name_opt = oyConfig_Find( sane_device, "device_name" );
 		 const char * device_name = oyOption_GetValueText( device_name_opt, malloc );
@@ -155,4 +146,27 @@ void help(char* progname)
 		"3:\traw-image\n"
 		"4:\tprinter\n";
 	printf(usage,progname);
+}
+
+int print_devices( oyConfigs_s * devices, const char * name )
+{
+	 int num_devices = oyConfigs_Count( devices );
+	 printf("Found %d %s devices\n", num_devices, name, num_devices>1?"s":"" );
+
+	 for (int i=0; i<num_devices; i++) {
+		 oyConfig_s * device = oyConfigs_Get( devices, i );
+		 int num_options = oyConfig_Count( device );
+		 printf("\tFound %d option%s for device %d\n", num_options, num_options>1?"s":"", i );
+		 for (int j=0; j<num_options; j++) {
+			 oyOption_s * opt = oyConfig_Get( device, j );
+			 /*Problems with manipulating an option struct. FIXME*/
+			 int id = oyOption_GetId( opt );
+			 char * text = oyOption_GetValueText( opt, malloc );
+			 printf("\t\tOption[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text );
+			 free(text);
+			 oyOption_Release( &opt );
+		 }
+		 oyConfig_Release( &device );
+	 }
+	 return num_devices;
 }
