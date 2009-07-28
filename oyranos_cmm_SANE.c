@@ -434,10 +434,30 @@ int              Configs_FromPattern ( const char        * registration,
                                        CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                        sane_model, OY_CREATE_NEW );
 
-		  /*Handle "device_context" option*/ //TODO
-        if(oyOptions_FindString( options, "device_context", 0 )) {}
-		  /*Handle "device_handle" option*/ //TODO
-        if(oyOptions_FindString( options, "device_handle", 0 )) {}
+		  /*Handle "device_context" option*/
+        if(oyOptions_FindString( options, "device_context", 0 )) {
+			  oyBlob_s *context_blob = oyBlob_New(NULL);
+			  oyOption_s *context_opt = oyOption_New( CMM_BASE_REG OY_SLASH "device_context", 0 );
+
+			  oyBlob_SetFromData( context_blob, (oyPointer)device_list[i], sizeof(SANE_Device), NULL );
+			  oyOption_StructMoveIn( context_opt, (oyStruct_s**)&context_blob );
+			  oyOptions_MoveIn( device->backend_core, &context_opt, -1 );
+		  }
+		  /*Handle "device_handle" option*/
+        if(oyOptions_FindString( options, "device_handle", 0 )) {
+			  oyBlob_s *handle_blob = NULL;
+			  SANE_Handle h;
+
+			  if (sane_open( sane_name, &h) == SANE_STATUS_GOOD) {
+				  handle_blob = oyBlob_New(NULL);
+				  oyBlob_SetFromData( handle_blob, (oyPointer)&h, sizeof(SANE_Handle), NULL );
+				  oyOptions_MoveInStruct( &(device->backend_core),
+						  CMM_BASE_REG OY_SLASH "device_handle",
+						  (oyStruct_s**)&handle_blob,
+						  OY_CREATE_NEW );
+			  } else
+				  printf( "Unable to open sane device \"%s\"\n", sane_name );
+		  }
 
         device->rank_map = oyRankMapCopy( _rank_map,
                                                 device->oy_->allocateFunc_);
@@ -446,13 +466,16 @@ int              Configs_FromPattern ( const char        * registration,
       }
 
 		//Handle errors: FIXME
-      if(error <= 0)
-        *s = devices;
+      //if(error <= 0)
+      *s = devices;
 
       return error;
     } else if (command_properties) {
-		 /* "properties" call section */
-      //texts_n = GetDevices( &texts, allocateFunc );
+	 /* "properties" call section */
+#if 0
+		 /*Case 1. No device_* options*/
+		 /*Return a list */
+    device_name = oyOptions_FindString( options, "device_name", 0 );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -480,6 +503,7 @@ int              Configs_FromPattern ( const char        * registration,
         *s = devices;
 
       return error;
+#endif
     } else {
 		 /*wrong or no command*/
 	 }
