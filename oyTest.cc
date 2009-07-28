@@ -8,6 +8,10 @@ using namespace oyranos;
 int test_backend( const char * name );
 void help(char* progname);
 int print_devices( oyConfigs_s * devices, const char * name );
+int print_options( oyOptions_s * options );
+void insert( oyOptions_s ** opts, const char * opt, const char * value );
+void insert( oyOptions_s ** opts, const char * opt, int value );
+void insert( oyOptions_s ** opts, const char * opt );
 
 int main(int argc, char** argv)
 {
@@ -47,29 +51,32 @@ int test_backend( const char * name )
 
 	 /******** Test Device Backend ********/
 
-	 /**1a. Query Device backend for all avaliable devices**/
-	 /* calls Configs_FromPattern() with  "command" -> "list" option. */
-	 oyConfigs_s *sane_devices = NULL;
-	 /* OY_TYPE_STD: defaults to "imaging"
-	  * "name": is defined in oyranos_cmm_xxxx.c
-	  * options: is NULL, not used here (TODO what is it used for?)
-	  * sane_devices: List of configuration objects, one for each device*/
-	 if (oyDevicesGet(OY_TYPE_STD, name, NULL, &sane_devices) !=0 )
-		 return 1;
-	 if (!sane_devices)
-		 return 1;
-
-	 int num_devices = print_devices( sane_devices, name );
-	 printf("\n\n");
-
-	 /**1b. Query Device backend for all avaliable devices**/
+	 /**1. Query Device backend for all avaliable devices**/
 	 /* calls Configs_FromPattern() with  "command" -> "list" option
 	  * and also all other options that might be supported by the backend */
-
+	 oyOptions_s * list_options = oyOptions_New( 0 );
+	 insert( &list_options, "command", "list" );
+	 insert( &list_options, "driver_version", 0 );
+	 insert( &list_options, "oyNAME_NAME" );
+	 insert( &list_options, "device_context" );
+	 insert( &list_options, "device_handle" );
+	 print_options( list_options );
+	 /* OY_TYPE_STD: defaults to "imaging"
+	  * "name": is defined in oyranos_cmm_xxxx.c
+	  * options:
+	  * devices: List of configuration objects, one for each device*/
+	 oyConfigs_s *devices = NULL;
+	 if (oyDevicesGet(OY_TYPE_STD, name, list_options, &devices) !=0 )
+		 return 1;
+	 if (!devices)
+		 return 1;
+	 int num_devices = print_devices( devices, name );
+	 printf("\n\n");
+#if TMP
 	 /**2. Query Device backend for each found device**/
 	 /* calls Configs_FromPattern() with  "command" -> "properties" option. */
 	 for (int i=0; i<num_devices; i++) {
-		 oyConfig_s * sane_device = oyConfigs_Get( sane_devices, i );
+		 oyConfig_s * sane_device = oyConfigs_Get( devices, i );
 		 oyOption_s * device_name_opt = oyConfig_Find( sane_device, "device_name" );
 		 const char * device_name = oyOption_GetValueText( device_name_opt, malloc );
 		 const char * dev_reg_app_field = oyFilterRegistrationToText(
@@ -116,13 +123,13 @@ int test_backend( const char * name )
 	 // Does not seem to work now FIXME
 	 // Also, scanning all devices to get one device_name to put into oyDeviceGet()
 	 // is (at least for sane) really expensive.
-		 oyConfig_s * sane_device = oyConfigs_Get( sane_devices, 0 );
+		 oyConfig_s * sane_device = oyConfigs_Get( devices, 0 );
 		 oyOption_s * device_name_opt = oyConfig_Find( sane_device, "device_name" );
 		 const char * device_name = oyOption_GetValueText( device_name_opt, malloc );
 		 oyOptions_s * options = oyOptions_New( 0 );
 		error = oyDeviceGet( OY_TYPE_STD, name, device_name, options, 0 );
 #endif
-	 oyConfig_s * device = oyConfigs_Get( sane_devices, 0 );
+	 oyConfig_s * device = oyConfigs_Get( devices, 0 );
 	 char device_registration[256];
 	 snprintf(device_registration, 256, "%s/command", device->registration );
 	 oyOptions_s * options = oyOptions_New( 0 );
@@ -133,8 +140,8 @@ int test_backend( const char * name )
 		 OY_CREATE_NEW );
 	 error = oyDevicesGet(OY_TYPE_STD, name, options, NULL);
 
-
-	 oyConfigs_Release( &sane_devices );
+#endif
+	 oyConfigs_Release( &devices );
 }
 
 void help(char* progname)
@@ -169,4 +176,59 @@ int print_devices( oyConfigs_s * devices, const char * name )
 		 oyConfig_Release( &device );
 	 }
 	 return num_devices;
+}
+
+int print_options( oyOptions_s * options )
+{
+	 int num_options = oyOptions_Count( options );
+	 printf("Found %d option%s\n", num_options, num_options>1?"s":"" );
+	 for (int j=0; j<num_options; j++) {
+		 oyOption_s * opt = oyOptions_Get( options, j );
+		 /*Problems with manipulating an option struct. FIXME*/
+		 int id = oyOption_GetId( opt );
+		 char * text = oyOption_GetValueText( opt, malloc );
+		 printf("\tOption[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text );
+		 free(text);
+		 oyOption_Release( &opt );
+	 }
+
+	 return num_options;
+}
+
+
+void insert( oyOptions_s ** opts, const char * opt, const char * value )
+{
+	 char registration[256];
+	 //snprintf(registration, 256, "//%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+	 snprintf(registration, 256, "shared/freedesktop.org/%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+	 //Some clarification is needed on how to create these strings TODO
+	 oyOptions_SetFromText(
+		 opts,
+		 registration,
+		 value,
+		 OY_CREATE_NEW );
+}
+
+void insert( oyOptions_s ** opts, const char * opt, int value )
+{
+	 char registration[256];
+	 //snprintf(registration, 256, "//%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+	 snprintf(registration, 256, "shared/freedesktop.org/%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+	 //Some clarification is needed on how to create these strings TODO
+	 oyOptions_SetFromInt(
+		 opts,
+		 registration,
+		 value,
+		 0,
+		 OY_CREATE_NEW );
+}
+
+void insert( oyOptions_s ** opts, const char * opt )
+{
+	 char registration[256];
+	 //snprintf(registration, 256, "//%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+	 snprintf(registration, 256, "shared/freedesktop.org/%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+
+	 oyOption_s * option =  oyOption_New( registration, 0 );
+	 oyOptions_MoveIn( *opts, &option, -1 );
 }
