@@ -391,7 +391,7 @@ int              Configs_FromPattern ( const char        * registration,
     return 0;
   }
 
-	/*Handle "driver_version" option*/
+	/*Handle "driver_version" option [IN]*/
   	if (oyOptions_FindInt( options, "driver_version", 0, &driver_version ) == 0)
 		if (driver_version == 0)
 			if (sane_init( &driver_version, NULL) != SANE_STATUS_GOOD) {
@@ -399,6 +399,12 @@ int              Configs_FromPattern ( const char        * registration,
 						"Unable to init SANE. Giving up. Options:\n%s", _DBG_ARGS_,
 						oyOptions_GetText( options, oyNAME_NICK ) );
 				return 1;
+			} else {
+				/*Handle "driver_version" option [OUT] TODO*/
+				printf("%d <-sane_init()...OK\n", driver_version);
+			  //error = oyOptions_SetFromInt( &device->?data?,
+           //                            CMM_BASE_REG OY_SLASH "oyNAME_NAME",
+           //                            sane_model, OY_CREATE_NEW );}
 			}
 
     command_list = oyOptions_FindString( options, "command", "list" );
@@ -427,28 +433,28 @@ int              Configs_FromPattern ( const char        * registration,
                                        sane_name, OY_CREATE_NEW );
 
 		  /*Handle "oyNAME_NAME" option*/
-        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        if(oyOptions_Find( options, "oyNAME_NAME" ))
 			  error = oyOptions_SetFromText( &device->data,
                                        CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                        sane_model, OY_CREATE_NEW );
 
 		  /*Handle "device_context" option*/
-        if(oyOptions_FindString( options, "device_context", 0 )) {
+        if(oyOptions_Find( options, "device_context" )) {
 			  oyBlob_s *context_blob = oyBlob_New(NULL);
 			  oyOption_s *context_opt = oyOption_New( CMM_BASE_REG OY_SLASH "device_context", 0 );
 
-			  oyBlob_SetFromData( context_blob, (oyPointer)device_list[i], sizeof(SANE_Device), NULL );
+			  oyBlob_SetFromData( context_blob, (oyPointer)device_list[i], sizeof(SANE_Device), "sane" );
 			  oyOption_StructMoveIn( context_opt, (oyStruct_s**)&context_blob );
 			  oyOptions_MoveIn( device->backend_core, &context_opt, -1 );
 		  }
 		  /*Handle "device_handle" option*/
-        if(oyOptions_FindString( options, "device_handle", 0 )) {
+        if(oyOptions_Find( options, "device_handle" )) {
 			  oyBlob_s *handle_blob = NULL;
 			  SANE_Handle h;
 
 			  if (sane_open( sane_name, &h) == SANE_STATUS_GOOD) {
 				  handle_blob = oyBlob_New(NULL);
-				  oyBlob_SetFromData( handle_blob, (oyPointer)&h, sizeof(SANE_Handle), NULL );
+				  oyBlob_SetFromData( handle_blob, (oyPointer)&h, sizeof(SANE_Handle), "sane" );
 				  oyOptions_MoveInStruct( &(device->backend_core),
 						  CMM_BASE_REG OY_SLASH "device_handle",
 						  (oyStruct_s**)&handle_blob,
