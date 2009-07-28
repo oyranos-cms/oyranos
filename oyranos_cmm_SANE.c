@@ -392,16 +392,14 @@ int              Configs_FromPattern ( const char        * registration,
   }
 
 	/*Handle "driver_version" option*/
-	/*Make sure we get the SANE version*/
-  	error = oyOptions_FindInt( options, "driver_version", 0, &driver_version );
-	if (error != 0) {
-  		message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-		  "No SANE driver_version present. Options:\n%s", _DBG_ARGS_,
-		  oyOptions_GetText( options, oyNAME_NICK )
-		  );
-  		ConfigsFromPatternUsage( (oyStruct_s*)options );
-  		return error;
-	}
+  	if (oyOptions_FindInt( options, "driver_version", 0, &driver_version ) == 0)
+		if (driver_version == 0)
+			if (sane_init( &driver_version, NULL) != SANE_STATUS_GOOD) {
+				message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+						"Unable to init SANE. Giving up. Options:\n%s", _DBG_ARGS_,
+						oyOptions_GetText( options, oyNAME_NICK ) );
+				return 1;
+			}
 
     command_list = oyOptions_FindString( options, "command", "list" );
     command_properties = oyOptions_FindString( options, "command", "properties" );
