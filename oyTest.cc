@@ -53,7 +53,8 @@ int test_backend( const char * name )
 	  * "name": is defined in oyranos_cmm_xxxx.c
 	  * options: is NULL, not used here (TODO what is it used for?)
 	  * sane_devices: List of configuration objects, one for each device*/
-	 error = oyDevicesGet(OY_TYPE_STD, name, NULL, &sane_devices);
+	 if (oyDevicesGet(OY_TYPE_STD, name, NULL, &sane_devices) !=0 )
+		 return 1;
 	 int num_scanners = oyConfigs_Count( sane_devices );
 	 printf("Found %d %s devices\n", num_scanners, name, num_scanners>1?"s":"" );
 
