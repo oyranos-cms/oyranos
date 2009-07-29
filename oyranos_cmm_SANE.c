@@ -342,7 +342,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    oyConfig_s *device = NULL;
    oyConfigs_s *devices = NULL;
    oyOption_s *o = 0;
-   int i, num_devices, error;
+   int i, num_devices, error = 0;
    int driver_version = 0;
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
    const SANE_Device **device_list = NULL;
@@ -381,27 +381,29 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    /*Handle "driver_version" option [IN] */
    if (oyOptions_FindInt(options, "driver_version", 0, &driver_version) == 0)
       if (driver_version == 0)
-         if (sane_init(&driver_version, NULL) != SANE_STATUS_GOOD) {
+         if (sane_init(&driver_version, NULL) == SANE_STATUS_GOOD) {
+            /*Handle "driver_version" option [OUT] TODO */
+            printf("%d SANE v.(%d) init...OK\n", driver_version);
+            if (!device)
+               device = oyConfig_New(CMM_BASE_REG, 0);
+            error = oyOptions_SetFromInt(&(device->data),
+                                         CMM_BASE_REG OY_SLASH "driver_version",
+                                         driver_version , 0, OY_CREATE_NEW );
+         } else {
             message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
                     "Unable to init SANE. Giving up. Options:\n%s", _DBG_ARGS_,
                     oyOptions_GetText(options, oyNAME_NICK));
             return 1;
-         } else {
-            /*Handle "driver_version" option [OUT] TODO */
-            printf("%d <-sane_init()...OK\n", driver_version);
-            //error = oyOptions_SetFromInt( &device->?data?,
-            //                            CMM_BASE_REG OY_SLASH "oyNAME_NAME",
-            //                            sane_model, OY_CREATE_NEW );}
          }
 
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
    device_name = oyOptions_FindString(options, "device_name", 0);
 
+   devices = oyConfigs_New(0);
    if (command_list) {
       /* "list" call section */
 
-      devices = oyConfigs_New(0);
       error = GetDevices(&device_list, &num_devices);
 
       for (i = 0; i < num_devices; ++i) {
@@ -412,7 +414,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          if (device_name && strcmp(device_name, sane_name) != 0)
             continue;
 
-         device = oyConfig_New(CMM_BASE_REG, 0);
+         if (!device)
+            device = oyConfig_New(CMM_BASE_REG, 0);
 
          /*Handle "device_name" option [OUT] */
          error = oyOptions_SetFromText(&device->backend_core,
@@ -459,7 +462,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       return error;
    } else if (command_properties) {
       /* "properties" call section */
-#if 0
+
       /*Case 1. No device_* options */
       /*Return a list */
       device_name = oyOptions_FindString(options, "device_name", 0);
@@ -483,11 +486,12 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          oyConfigs_MoveIn(devices, &device, -1);
       }
 
-      if (error <= 0)
+      //Handle errors: FIXME
+      //if(error <= 0)
          *s = devices;
 
       return error;
-#endif
+
    } else {
       /*wrong or no command */
    }
