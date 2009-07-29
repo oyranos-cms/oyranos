@@ -9,6 +9,7 @@ int test_backend( const char * name );
 void help(char* progname);
 int print_devices( oyConfigs_s * devices, const char * name );
 int print_options( oyOptions_s * options );
+void print_option( oyOption_s * opt, int j );
 void insert( oyOptions_s ** opts, const char * opt, const char * value );
 void insert( oyOptions_s ** opts, const char * opt, int value );
 void insert( oyOptions_s ** opts, const char * opt );
@@ -166,11 +167,7 @@ int print_devices( oyConfigs_s * devices, const char * name )
 		 printf("\tFound %d option%s for device %d\n", num_options, num_options>1?"s":"", i );
 		 for (int j=0; j<num_options; j++) {
 			 oyOption_s * opt = oyConfig_Get( device, j );
-			 /*Problems with manipulating an option struct. FIXME*/
-			 int id = oyOption_GetId( opt );
-			 char * text = oyOption_GetValueText( opt, malloc );
-			 printf("\t\tOption[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text );
-			 free(text);
+			 print_option( opt, j );
 			 oyOption_Release( &opt );
 		 }
 		 oyConfig_Release( &device );
@@ -184,23 +181,30 @@ int print_options( oyOptions_s * options )
 	 printf("Found %d option%s\n", num_options, num_options>1?"s":"" );
 	 for (int j=0; j<num_options; j++) {
 		 oyOption_s * opt = oyOptions_Get( options, j );
-		 /*Problems with manipulating an option struct. FIXME*/
-		 int id = oyOption_GetId( opt );
-		 char * text = oyOption_GetValueText( opt, malloc );
-		 printf("\tOption[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text );
-		 free(text);
+		 print_option( opt, j );
 		 oyOption_Release( &opt );
 	 }
 
 	 return num_options;
 }
 
+void print_option( oyOption_s * opt, int j )
+{
+	 int id = oyOption_GetId( opt );
+	 if (opt->value_type == oyVAL_STRUCT) {
+		 oyBlob_s * blob = (oyBlob_s*)opt->value->oy_struct;
+	 	printf("\tOption[%d] ID=%d\n\t\t[%s]: blob{%p,%d}\n", j, id, opt->registration, blob->ptr , blob->size );
+	 } else {
+		 char * text = oyOption_GetValueText( opt, malloc );
+		 printf("\tOption[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text );
+		 free(text);
+	 }
+}
 
 void insert( oyOptions_s ** opts, const char * opt, const char * value )
 {
 	 char registration[256];
-	 //snprintf(registration, 256, "//%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
-	 snprintf(registration, 256, "shared/freedesktop.org/%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+	 snprintf(registration, 256, "//%s/config/%s", OY_TYPE_STD, opt);
 	 //Some clarification is needed on how to create these strings TODO
 	 oyOptions_SetFromText(
 		 opts,
@@ -212,8 +216,7 @@ void insert( oyOptions_s ** opts, const char * opt, const char * value )
 void insert( oyOptions_s ** opts, const char * opt, int value )
 {
 	 char registration[256];
-	 //snprintf(registration, 256, "//%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
-	 snprintf(registration, 256, "shared/freedesktop.org/%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+	 snprintf(registration, 256, "//%s/config/%s", OY_TYPE_STD, opt);
 	 //Some clarification is needed on how to create these strings TODO
 	 oyOptions_SetFromInt(
 		 opts,
@@ -226,8 +229,7 @@ void insert( oyOptions_s ** opts, const char * opt, int value )
 void insert( oyOptions_s ** opts, const char * opt )
 {
 	 char registration[256];
-	 //snprintf(registration, 256, "//%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
-	 snprintf(registration, 256, "shared/freedesktop.org/%s/config.scanner.SANE/%s", OY_TYPE_STD, opt);
+	 snprintf(registration, 256, "//%s/config/%s", OY_TYPE_STD, opt);
 
 	 oyOption_s * option =  oyOption_New( registration, 0 );
 	 oyOptions_MoveIn( *opts, &option, -1 );
