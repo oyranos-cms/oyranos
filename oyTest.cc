@@ -73,19 +73,14 @@ int test_backend( const char * name )
 		 return 1;
 	 int num_devices = print_devices( devices, name );
 	 printf("\n\n");
-#if TMP
+
 	 /**2. Query Device backend for each found device**/
 	 /* calls Configs_FromPattern() with  "command" -> "properties" option. */
 	 for (int i=0; i<num_devices; i++) {
-		 oyConfig_s * sane_device = oyConfigs_Get( devices, i );
-		 oyOption_s * device_name_opt = oyConfig_Find( sane_device, "device_name" );
-		 const char * device_name = oyOption_GetValueText( device_name_opt, malloc );
-		 const char * dev_reg_app_field = oyFilterRegistrationToText(
-				 device_name_opt->registration,
-				 oyFILTER_REG_APPLICATION,
-				 malloc );
-		 oyOption_Release( &device_name_opt );
-		 oyConfig_Release( &sane_device );
+		 //Get device name
+		 oyConfig_s * device = oyConfigs_Get( devices, i );
+		 const char * device_name = oyConfig_FindString( device, "device_name", 0 );
+		 oyConfig_Release( &device );
 
 		 oyConfig_s * device_properties = NULL;
 #if 0
@@ -94,14 +89,7 @@ int test_backend( const char * name )
 		 error = oyDeviceGet( OY_TYPE_STD, name, device_name, NULL, &device_properties );
 #endif
 		 oyOptions_s * options = oyOptions_New( 0 );
-		 char device_registration[256];
-		 snprintf(device_registration, 256, "//%s/%s/command", OY_TYPE_STD, dev_reg_app_field);
-		 //Some clarification is needed on how to create these strings TODO
-		 oyOptions_SetFromText(
-			 &options,
-			 device_registration,
-			 "properties",
-			 OY_CREATE_NEW );
+		 insert( &options, "command", "properties" );
 		 error = oyDeviceGet( OY_TYPE_STD, name, device_name, options, &device_properties );
 		 int num_properties = oyConfig_Count( device_properties );
 		 printf("\tFound %d propert%s for device \"%s\"\n", num_properties, num_properties>1?"ies":"y", device_name );
@@ -109,15 +97,12 @@ int test_backend( const char * name )
 
 		 for (int j=0; j<num_properties; j++) {
 			 oyOption_s * opt = oyConfig_Get( device_properties, j );
-			 /*Problems with manipulating an option struct. FIXME*/
-			 int id = oyOption_GetId( opt );
-			 char * text = oyOption_GetValueText( opt, malloc );
-			 printf("\t\tProperty[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text );
-			 free(text);
+			 print_option( opt, j );
 			 oyOption_Release( &opt );
 		 }
 	 }
  
+	 oyConfigs_Release( &devices );
 	 /**3. Display a help message**/
 #if 0
 	 // pass empty options to the backend to get a usage message
@@ -130,18 +115,11 @@ int test_backend( const char * name )
 		 oyOptions_s * options = oyOptions_New( 0 );
 		error = oyDeviceGet( OY_TYPE_STD, name, device_name, options, 0 );
 #endif
-	 oyConfig_s * device = oyConfigs_Get( devices, 0 );
-	 char device_registration[256];
-	 snprintf(device_registration, 256, "%s/command", device->registration );
 	 oyOptions_s * options = oyOptions_New( 0 );
-	 oyOptions_SetFromText(
-		 &options,
-		 device_registration,
-		 "help",
-		 OY_CREATE_NEW );
-	 error = oyDevicesGet(OY_TYPE_STD, name, options, NULL);
+	 insert( &options, "command", "help" );
+	 print_options( options );
+	 error = oyDevicesGet(OY_TYPE_STD, name, options, &devices);
 
-#endif
 	 oyConfigs_Release( &devices );
 }
 
