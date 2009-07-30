@@ -45,7 +45,7 @@
 #define CMMMessageFuncSet       catCMMfunc( SANE , CMMMessageFuncSet )
 #define CMMCanHandle            catCMMfunc( SANE , CMMCanHandle )
 #define ConfigsFromPatternUsage catCMMfunc( SANE , ConfigsFromPatternUsage )
-#define DeviceFromContext_     catCMMfunc( SANE , DeviceFromContext_ )
+#define DeviceInfoFromContext_  catCMMfunc( SANE , DeviceInfoFromContext_ )
 #define GetDevices              catCMMfunc( SANE , GetDevices )
 #define _api8                   catCMMfunc( SANE , _api8 )
 #define _rank_map               catCMMfunc( SANE , _rank_map )
@@ -113,7 +113,7 @@ int CMMCanHandle(oyCMMQUERY_e type, uint32_t value)
 }
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( &opts, \
+        error = oyOptions_SetFromText( opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
@@ -138,7 +138,7 @@ void ConfigsFromPatternUsage(oyStruct_s * options)
  *         * Error handling
  *       }
  */
-int DeviceFromContext_(const SANE_Device * device_context, oyOptions_s **options)
+int DeviceInfoFromContext_(const SANE_Device * device_context, oyOptions_s **options)
 {
    const char *device_name = device_context->name,
               *manufacturer = device_context->vendor,
@@ -150,7 +150,7 @@ int DeviceFromContext_(const SANE_Device * device_context, oyOptions_s **options
 
    serial = "unsupported";
    /* if device string starts with net, it is a remote device */
-   if (strncmp(name,"net:",4) == 0)
+   if (strncmp(device_name,"net:",4) == 0)
       host = "remote";
    else
       host = "localhost";
@@ -293,6 +293,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    oyConfig_s *device = NULL;
    oyConfigs_s *devices = NULL;
    oyOption_s *context_opt = NULL, *handle_opt = NULL, *version_opt = NULL;
+   oyRankPad *dynamic_rank_map = NULL;
    int i, num_devices, error = 0;
    int driver_version = 0;
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
@@ -418,6 +419,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    } else if (command_properties) {
       /* "properties" call section */
       const SANE_Device *device_context = NULL;
+      SANE_Handle device_handle;
 
       /*Return a full list of scanner H/W &
        * SANE driver S/W color options
@@ -445,36 +447,38 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             return 1;
          }
       } else {
-         device_context = (SANE_Device*) oyOption_GetData(context_opt, NULL, allocateFunc);
+         device_context = (SANE_Device*)oyOption_GetData(context_opt, NULL, allocateFunc);
       }
 
       /*1b. Use the "device_context"*/
-      error = DeviceFromContext_(device_context, &(device->backend_core));
-      for (i = 0; i < texts_n; ++i) {
-         /* filter */
-         if (device_name && strcmp(device_name, texts[i]) != 0)
-            continue;
+      error = DeviceInfoFromContext_(device_context, &(device->backend_core));
 
-         device = oyConfig_New(CMM_BASE_REG, 0);
-         error = !device;
-
-         if (error <= 0)
-            error = oyOptions_SetFromText(&device->backend_core,
-                                          CMM_BASE_REG OY_SLASH "device_name", texts[i], OY_CREATE_NEW);
-
-         error = DeviceFromName_(device_name, options, &device, texts, texts_n);
-
-         if (error <= 0 && device)
-            device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
-         oyConfigs_MoveIn(devices, &device, -1);
+      /*2a. Get the "device_handle"*/
+      if (!handle_opt) {
+         error = sane_open( device_name, &device_handle );
+         if (error != SANE_STATUS_GOOD) {
+            printf("Unable to open sane device \"%s\"\n", device_name);
+            return 1;
+         }
+      } else {
+         device_handle = (SANE_Handle*)oyOption_GetData(handle_opt, NULL, allocateFunc);
       }
+         
+      /*2b. Use the "device_handle"*/
+      error = ColorInfoFromHandle(device_handle, &(device->backend_core));
+
+      /*3. Create the rank map*/
+      error = CreateRankMap_(device_handle, &dynamic_rank_map);
+      device->rank_map = oyRankMapCopy(dynamic_rank_map, device->oy_->allocateFunc_);
+      oyConfigs_MoveIn(devices, &device, -1);
+
+      free(dynamic_rank_map);
 
       //Handle errors: FIXME
       //if(error <= 0)
-         *s = devices;
-
+      *s = devices;
+ 
       return error;
-
    } else {
       /*wrong or no command */
    }
@@ -641,6 +645,82 @@ oyCMMInfo_s _cmm_module = {
 /* Helper functions */
 
 /** @internal
+ * @brief Put all the SANE backend color information in a oyOptions_s object
+ *
+ * @param[in]   device_handle          The SANE_Handle to talk to SANE backend
+ * @param[out]  options                The options object to store the Color info to
+ *
+ * \todo { Untested
+ *         error handling }
+ */
+int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
+{
+   const SANE_Option_Descriptor *opt = NULL;
+   SANE_Int num_options = 0;
+   SANE_Status status;
+   int error = 0;
+   unsigned int opt_num = 0, i, count;
+   char cmm_base_reg[] = CMM_BASE_REG OY_SLASH;
+
+   /* We got a device, find out how many options it has */
+   status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
+   if (status != SANE_STATUS_GOOD) {
+      fprintf(stderr, "unable to determine option count\n");
+      return 1;
+   }
+
+   for (opt_num = 1; opt_num < num_options; opt_num++) {
+      opt = sane_get_option_descriptor(device_handle, opt_num);
+      if (opt->cap & SANE_CAP_COLOUR) {
+         void *value = malloc(opt->size);
+         char *registration = malloc(sizeof(cmm_base_reg)+strlen(opt->name));
+
+         sprintf(registration, "%s%s", cmm_base_reg, opt->name); //FIXME not optimal
+
+         sane_control_option(device_handle, opt_num, SANE_ACTION_GET_VALUE, value, 0);
+         switch (opt->type) {
+            case SANE_TYPE_BOOL:
+               oyOptions_SetFromInt(options, registration, *(SANE_Bool *) value, 0, OY_CREATE_NEW);
+               break;
+            case SANE_TYPE_INT:
+               if (opt->size == (SANE_Int)sizeof(SANE_Word))
+                  oyOptions_SetFromInt(options, registration, *(SANE_Int *) value, 0, OY_CREATE_NEW);
+               else {
+                  int count = opt->size/sizeof(SANE_Word);
+                  oyOption_s *option = oyOption_New(registration, 0);
+                  for (i=count-1; i>=0; --i)
+                     oyOption_SetFromInt(option, *(SANE_Int *) value+i, i, 0);
+                  oyOptions_MoveIn(*options, &option, -1);
+               }
+               break;
+            case SANE_TYPE_FIXED:
+#if 0
+               if (opt->size == (SANE_Int)sizeof(SANE_Word))
+                  oyOptions_SetFromFloat(options, registration, SANE_UNFIX(*(SANE_Fixed *) value), 0, OY_CREATE_NEW);
+               else {
+                  int count = opt->size/sizeof(SANE_Word);
+                  oyOption_s option = oyOption_New(registration, 0);
+                  for (i=count-1; i>=0; --i)
+                     oyOption_SetFromFloat(option, SANE_UNFIX(*(SANE_Fixed *) value+i), i, 0);
+                  oyOptions_MoveIn(options, &option, -1);
+               }
+#endif
+               break;
+            case SANE_TYPE_STRING:
+               oyOptions_SetFromText(options, registration, (const char *)value, OY_CREATE_NEW);
+               break;
+            default:
+               fprintf(stderr, "Do not know what to do with option %d\n", opt->type);
+               return 1;
+               break;
+         }
+      }
+   }
+
+   return error;
+}
+
+/** @internal
  * @brief Create a rank map from a scanner handle
  *
  * @param[in]	device_handle				SANE_Handle
@@ -648,7 +728,7 @@ oyCMMInfo_s _cmm_module = {
  *
  * \todo { Untested }
  */
-int oyCreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
+int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
 {
    oyRankPad *rm = NULL;
 
