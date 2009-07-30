@@ -341,7 +341,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 {
    oyConfig_s *device = NULL;
    oyConfigs_s *devices = NULL;
-   oyOption_s *context_opt, *handle_opt = NULL;
+   oyOption_s *context_opt = NULL, *handle_opt = NULL, *version_opt = NULL;
    int i, num_devices, error = 0;
    int driver_version = 0;
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
@@ -379,22 +379,21 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    }
 
    /*Handle "driver_version" option [IN] */
-   if (oyOptions_FindInt(options, "driver_version", 0, &driver_version) == 0)
+   if (oyOptions_FindInt(options, "driver_version", 0, &driver_version) == 0) {
+      version_opt = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0);
       if (driver_version == 0)
          if (sane_init(&driver_version, NULL) == SANE_STATUS_GOOD) {
-            /*Handle "driver_version" option [OUT] TODO */
-            printf("%d SANE v.(%d) init...OK\n", driver_version);
-            if (!device)
-               device = oyConfig_New(CMM_BASE_REG, 0);
-            error = oyOptions_SetFromInt(&(device->data),
-                                         CMM_BASE_REG OY_SLASH "driver_version",
-                                         driver_version , 0, OY_CREATE_NEW );
+            /*Handle "driver_version" option [OUT] */
+            printf("SANE v.(%d) init...OK\n", driver_version);
+            error = oyOption_SetFromInt(version_opt, driver_version, -1, 0);
          } else {
             message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
                     "Unable to init SANE. Giving up. Options:\n%s", _DBG_ARGS_,
                     oyOptions_GetText(options, oyNAME_NICK));
             return 1;
          }
+   }
+   /*if version==0 => not supplied, else if version>0 => use version_opt*/
 
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
@@ -416,8 +415,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          if (device_name && strcmp(device_name, sane_name) != 0)
             continue;
 
-         if (!device)
-            device = oyConfig_New(CMM_BASE_REG, 0);
+         device = oyConfig_New(CMM_BASE_REG, 0);
+
+         /*Handle "driver_version" option [OUT] */
+         if (version_opt)
+            oyOptions_MoveIn(device->data, &version_opt, -1);
 
          /*Handle "device_name" option [OUT] */
          error = oyOptions_SetFromText(&device->backend_core,
@@ -464,7 +466,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       return error;
    } else if (command_properties) {
       /* "properties" call section */
-      SANE_Device *device_context = NULL;
+      const SANE_Device *device_context = NULL;
 
       /*Return a full list of scanner H/W &
        * SANE driver S/W color options
@@ -475,6 +477,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          return 1;
       }
 
+      /*Handle "driver_version" option [OUT] */
+      if (version_opt)
+         oyOptions_MoveIn(device->data, &version_opt, -1);
+
+      /*Handle "device_context" option */
       if (!context_opt) {
          error = GetDevices(&device_list, &num_devices);
          device_context = *device_list;
