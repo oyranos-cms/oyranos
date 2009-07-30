@@ -341,7 +341,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 {
    oyConfig_s *device = NULL;
    oyConfigs_s *devices = NULL;
-   oyOption_s *o = 0;
+   oyOption_s *context_opt, *handle_opt = NULL;
    int i, num_devices, error = 0;
    int driver_version = 0;
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
@@ -399,6 +399,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
    device_name = oyOptions_FindString(options, "device_name", 0);
+   context_opt = oyOptions_Find(options, "device_context");
+   handle_opt = oyOptions_Find(options, "device_handle");
 
    devices = oyConfigs_New(0);
    if (command_list) {
@@ -427,7 +429,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                           CMM_BASE_REG OY_SLASH "oyNAME_NAME", sane_model, OY_CREATE_NEW);
 
          /*Handle "device_context" option */
-         if (oyOptions_Find(options, "device_context")) {
+         if (context_opt) {
             oyBlob_s *context_blob = oyBlob_New(NULL);
             oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
 
@@ -436,7 +438,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             oyOptions_MoveIn(device->backend_core, &context_opt, -1);
          }
          /*Handle "device_handle" option */
-         if (oyOptions_Find(options, "device_handle")) {
+         if (handle_opt) {
             oyBlob_s *handle_blob = NULL;
             SANE_Handle h;
 
@@ -462,11 +464,30 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       return error;
    } else if (command_properties) {
       /* "properties" call section */
+      SANE_Device *device_context = NULL;
 
-      /*Case 1. No device_* options */
-      /*Return a list */
-      device_name = oyOptions_FindString(options, "device_name", 0);
+      /*Return a full list of scanner H/W &
+       * SANE driver S/W color options
+       * with the according rank map */
 
+      if (!device_name) {
+         printf("device_name is mandatory for properties command.\n");
+         return 1;
+      }
+
+      if (!context_opt) {
+         error = GetDevices(&device_list, &num_devices);
+         device_context = *device_list;
+         while (device_context)
+            if (strcmp(device_name,device_context->name) == 0)
+               break;
+         if (!device_context) {
+            printf("device_name does not match any installed device.\n");
+            return 1;
+         }
+      } else {
+         device_context = (SANE_Device*) oyOption_GetData(context_opt, NULL, allocateFunc);
+      }
       for (i = 0; i < texts_n; ++i) {
          /* filter */
          if (device_name && strcmp(device_name, texts[i]) != 0)
