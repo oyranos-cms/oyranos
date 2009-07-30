@@ -45,7 +45,7 @@
 #define CMMMessageFuncSet       catCMMfunc( SANE , CMMMessageFuncSet )
 #define CMMCanHandle            catCMMfunc( SANE , CMMCanHandle )
 #define ConfigsFromPatternUsage catCMMfunc( SANE , ConfigsFromPatternUsage )
-#define DeviceFromName_     catCMMfunc( SANE , DeviceFromName_ )
+#define DeviceFromContext_     catCMMfunc( SANE , DeviceFromContext_ )
 #define GetDevices              catCMMfunc( SANE , GetDevices )
 #define _api8                   catCMMfunc( SANE , _api8 )
 #define _rank_map               catCMMfunc( SANE , _rank_map )
@@ -128,91 +128,42 @@ void ConfigsFromPatternUsage(oyStruct_s * options)
 }
 
 /** @internal
- * @brief Put all the scanner hardware information in a oyConfig_s object
+ * @brief Put all the scanner hardware information in a oyOptions_s object
  *
- * @param[in]	device_name			SANE_Device::name
- * @param[in]	options				what does this hold??????
- * @param[out]	device				Holds the scanner H/W info
- * @param[in]	all					Holds the list of all scanner H/W info
- * @param[in]	size					Holds the number of scanners
+ * @param[in]  device_context    The SANE_Device to get the options from
+ * @param[out] options           The options object to store the H/W info
  *
- * \todo { Untested.
- * The problem is that given the device_name string, the only way
- * to find the SANE_Device struct is to call sane_get_devices(), [which is
- * an expensive call] and then compare all SANE_Device::name fields.
- * Better use the DeviceFromName_() call, only when he calling application
- * does not provide us with a pointer to the SANE_Device struct }
+ * \todo {
+ *         * Untested
+ *         * Error handling
+ *       }
  */
-int DeviceFromName_(const char *device_name, oyOptions_s * options, oyConfig_s ** device, const char **all, int size)
+int DeviceFromContext_(const SANE_Device * device_context, oyOptions_s **options)
 {
-   const char *value3 = 0;
-   oyOption_s *o = 0;
-   int error = !device;
+   const char *device_name = device_context->name,
+              *manufacturer = device_context->vendor,
+              *model = device_context->model,
+              *serial = NULL,
+              *host = NULL,
+              *system_port = NULL;
+   int error = 0;
 
-   value3 = oyOptions_FindString(options, "data_blob", 0);  /*TODO What does this do? */
+   serial = "unsupported";
+   /* if device string starts with net, it is a remote device */
+   if (strncmp(name,"net:",4) == 0)
+      host = "remote";
+   else
+      host = "localhost";
+   /*TODO scsi/usb/parallel port? */
+   system_port = "TODO";
 
-   if (!error) {
-      const char *manufacturer = 0, *model = 0, *serial = 0, *host = 0, *system_port = 0;
-      oyBlob_s *data_blob = 0;
-      SANE_Bool local = 1;
-      int status, i = 0;
-
-      if (!device_name) {
-         message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_
-                 "The \"device_name\" argument is\n"
-                 " missed to select a appropriate device for the" " \"properties\" call.", _DBG_ARGS_);
-         error = 1;
-         return error;
-      }
-      /* if device string starts with net, it is a remote device */
-      if (device_name[0] == 'n' && device_name[1] == 'e' && device_name[2] == 't')
-         local = 0;
-
-      /* find device string in all array */
-      for (i = 0; i < size; i++)
-         if (strcmp(all[i], device_name) == 0)
-            break;
-      if (i == size) {
-         message(oyMSG_WARN, 0, "%s()\n The supplied device string did not match\n", __func__);
-         return 1;
-      }
-
-      manufacturer = all[i + size];
-      model = all[i + 2 * size];
-      serial = "unsupported";
-      host = local ? "localhost" : "remote";
-      system_port = "TODO";     /*TODO scsi/usb/parallel port? */
-
-      if (error != 0)           /*TODO What is this? */
-         message(oyMSG_WARN, (oyStruct_s *) options,
-                 _DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-                 " oyGetMonitorInfo_lib returned with %s; device_name:"
-                 " \"%s\"", _DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)", device_name ? device_name : "");
-
-      if (error <= 0) {
-         if (!*device)
-            *device = oyConfig_New(CMM_BASE_REG, 0);
-         error = !*device;
-         if (!error && device_name)
-            error = oyOptions_SetFromText(&(*device)->backend_core,
-                                          CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
-         /*TODO make sure the strings get copied, not pointed */
-         OPTIONS_ADD((*device)->backend_core, manufacturer)
-             OPTIONS_ADD((*device)->backend_core, model)
-             OPTIONS_ADD((*device)->backend_core, serial)
-             OPTIONS_ADD((*device)->backend_core, system_port)
-             OPTIONS_ADD((*device)->backend_core, host)
-             if (!error && data_blob) {
-            o = oyOption_New(CMM_BASE_REG OY_SLASH "data_blob", 0);
-            error = !o;
-            if (!error)
-               error = oyOption_SetFromData(o, data_blob->ptr, data_blob->size);
-            if (!error)
-               oyOptions_MoveIn((*device)->data, &o, -1);
-            oyBlob_Release(&data_blob);
-         }
-      }
-   }
+   /*TODO make sure the strings get copied, not pointed */
+   OPTIONS_ADD(options, device_name)
+   OPTIONS_ADD(options, manufacturer)
+   OPTIONS_ADD(options, model)
+   OPTIONS_ADD(options, serial)
+   OPTIONS_ADD(options, system_port)
+   OPTIONS_ADD(options, host)
 
    return error;
 }
@@ -480,9 +431,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       /*Handle "driver_version" option [OUT] */
       if (version_opt)
-         oyOptions_MoveIn(device->data, &version_opt, -1);
+         oyOptions_MoveIn(device->backend_core, &version_opt, -1);
 
-      /*Handle "device_context" option */
+      /*1a. Get the "device_context"*/
       if (!context_opt) {
          error = GetDevices(&device_list, &num_devices);
          device_context = *device_list;
@@ -496,6 +447,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       } else {
          device_context = (SANE_Device*) oyOption_GetData(context_opt, NULL, allocateFunc);
       }
+
+      /*1b. Use the "device_context"*/
+      error = DeviceFromContext_(device_context, &(device->backend_core));
       for (i = 0; i < texts_n; ++i) {
          /* filter */
          if (device_name && strcmp(device_name, texts[i]) != 0)
