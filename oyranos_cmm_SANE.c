@@ -476,6 +476,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          printf("device_name is mandatory for properties command.\n");
          return 1;
       }
+      device = oyConfig_New(CMM_BASE_REG, 0);
 
       /*Handle "driver_version" option [OUT] */
       if (version_opt)
