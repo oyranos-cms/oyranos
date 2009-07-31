@@ -2310,6 +2310,7 @@ struct oyFilterNode_s {
    *  oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to
    *  oyCMMapi4_s::context_type */
   oyCMMptr_s         * backend_data;
+  /** the processing function and node connector descriptions */
   oyCMMapi7_s        * api7_;
 };
 
@@ -2366,6 +2367,9 @@ OYAPI oyFilterPlug_s * OYEXPORT
                                        int                 pos );
 oyOptions_s*   oyFilterNode_OptionsGet(oyFilterNode_s    * node,
                                        int                 flags );
+int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
+                                       char              ** ui_text,
+                                       oyAlloc_f            allocateFunc );
 const char *   oyFilterNode_GetText  ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type );
 OYAPI int  OYEXPORT

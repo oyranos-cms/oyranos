@@ -7418,7 +7418,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
  *
- *  To obtain all front end options from a meta backend use:@verbatim
+ *  To obtain all advanced front end options from a meta backend use:@verbatim
  *  flags = oyOPTIONATTRIBUTE_ADVANCED |
  *          oyOPTIONATTRIBUTE_FRONT |
  *          OY_SELECT_COMMON @endverbatim
@@ -20256,10 +20256,54 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
       error = oyOptions_Filter( &node->core->options_, 0, 0,
                                 oyBOOLEAN_UNION,
                                 0, options );
+    if(!node->core->options_)
+      node->core->options_ = oyOptions_New( 0 );
   }
 
   return oyOptions_Copy( node->core->options_, 0 );
 }
+
+/** Function oyFilterNode_UiGet
+ *  @memberof oyFilterNode_s
+ *  @brief   get filter options XFORMS
+ *
+ *  @param[in,out] node                filter object
+ *  @param[out]    ui_text             XFORMS fitting to the node Options
+ *  @return                            the options
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/29 (Oyranos: 0.1.10)
+ *  @date    2009/07/29
+ */
+int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
+                                       char              ** ui_text,
+                                       oyAlloc_f            allocateFunc )
+{
+  int error = 0;
+  oyFilterNode_s * s = node;
+  oyOptions_s * options = 0;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(!error && node->core->api4_->oyCMMuiGet)
+  {
+    options = oyFilterNode_OptionsGet( node, 0 );
+
+    /* @todo and how to mix in the values? */
+    error = node->core->api4_->oyCMMuiGet( options, ui_text, allocateFunc );
+
+    oyOptions_Release( &options );
+  }
+
+  return error;
+}
+
 
 /** Function oyFilterNode_GetText
  *  @memberof oyFilterNode_s
