@@ -14,6 +14,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include "oyranos_helper.h"
 #include "oyranos.h"
