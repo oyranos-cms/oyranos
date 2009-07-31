@@ -1573,6 +1573,73 @@ char lcms_extra_options[] = {
   </" OY_TOP_INTERNAL ">\n"
 };
 
+#define A(long_text) STRING_ADD( tmp, long_text)
+
+/** Function lcmsGetOptionsUI
+ *  @brief   return XFORMS for matching options
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/29 (Oyranos: 0.1.10)
+ *  @date    2009/07/30
+ */
+int lcmsGetOptionsUI                 ( oyOptions_s        * options,
+                                       char              ** ui_text,
+                                       oyAlloc_f            allocateFunc )
+{
+  char * tmp = 0;
+
+  tmp = (char *)oyOptions_FindString( options,
+                                      "cmyk_cmyk_black_preservation", 0 );
+  if(tmp == 0)
+    return 0;
+
+  tmp = oyStringCopy_( "\
+  <h3>little CMS ", oyAllocateFunc_ );
+
+  A(       _("Extended Options"));
+  A(                         ":</h3>\n\
+  <table>\n\
+   <tr>\n\
+    <td>" );
+  A( _("Cmyk to Cmyk transformation"));
+  A(              ":</td>\n\
+    <td>\n\
+     <xf:select1 ref=\"/" OY_TOP_INTERNAL "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
+      <xf:choices label=\"" );
+  A(                   _("Black Preservation"));
+  A(                                "\">\n\
+       <xf:item>\n\
+        <xf:label>0 - none</xf:label>\n\
+        <xf:value>0</xf:value>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:label>1 - LCMS_PRESERVE_PURE_K</xf:label>\n\
+        <xf:value>1</xf:value>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:label>2 - LCMS_PRESERVE_K_PLANE</xf:label>\n\
+        <xf:value>2</xf:value>\n\
+       </xf:item>\n\
+      </xf:choices>\n\
+     </xf:select1>\n\
+    </td>\n\
+   </tr>\n\
+  </table>\n\
+" );
+
+  if(allocateFunc && tmp)
+  {
+    char * t = oyStringCopy_( tmp, allocateFunc );
+    oyFree_m_( tmp );
+    tmp = t; t = 0;
+  } else
+    return 1;
+
+  *ui_text = tmp;
+
+  return 0;
+} 
+
 
 
 /** @instance lcms_api6
@@ -1679,8 +1746,8 @@ oyCMMapi4_s   lcms_api4_cmm = {
 
   {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
   "Colour/CMM/littleCMS", /* category */
-  lcms_extra_options,   /* options */
-  0,   /* opts_ui_ */
+  lcms_extra_options,   /* const char * options */
+  lcmsGetOptionsUI,   /* oyCMMuiGet_f oyCMMuiGet */
 };
 
 
