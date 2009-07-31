@@ -306,181 +306,120 @@ int GetDevices(const char ***list, oyAlloc_f allocateFunc)
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/02/09
+ *
+ *  todo { Error Handling }
  */
 int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfigs_s ** s)
 {
-   oyConfigs_s *devices = 0;
-   oyConfig_s *device = 0;
-   oyOption_s *context_opt = NULL, *handle_opt = NULL, *version_opt = NULL;
-   oyOption_s *o = 0;
-   oyProfile_s *p = 0;
-   const char **texts = 0;
-   char *text = 0;
-   int texts_n = 0, i, error = !s;
-   const char *value1 = 0, *value2 = 0, *value3 = 0, *value4 = 0;
+   oyOption_s *context_opt = NULL, *handle_opt = NULL;
+
+   int num_devices, error = 0;
+   const char *device_name = 0, *command_list = 0, *command_properties = 0;
+
    int rank = oyFilterRegistrationMatch(_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S);
    oyAlloc_f allocateFunc = malloc;
-   static char *num = 0;
-   const char *tmp = 0;
 
-   if (!num)
-      num = (char *)malloc(80);
+   /* "error handling" section */
+   if (rank == 0) {
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "Registration match Failed. Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
+          );
+      return 1;
+   }
+   if (s == NULL) {
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "oyConfigs_s is NULL! Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
+          );
+      return 1;
+   }
+   if (*s != NULL) {
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "Devices struct already present! Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
+          );
+      return 1;
+   }
 
+   /* "help" call section */
    if (oyOptions_FindString(options, "command", "help") || !options || !oyOptions_Count(options)) {
-    /** oyMSG_WARN should make shure our message is visible. */
       ConfigsFromPatternUsage((oyStruct_s *) options);
       return 0;
    }
 
-   if (rank && error <= 0) {
-      devices = oyConfigs_New(0);
+   /*Prepare for "driver_version" option*/
+   int driver_version_number = LibRaw::versionNumber();
+   const char *driver_version_string = LibRaw::version();
+   oyOption_s *version_opt_int= NULL, *version_opt_str = NULL, version_opt = NULL;
+   error = oyOption_SetFromText(version_opt_str, driver_version_string, 0);
+   error = oyOption_SetFromInt(version_opt_int, driver_version_number, 0, 0);
 
+   command_list = oyOptions_FindString(options, "command", "list");
+   command_properties = oyOptions_FindString(options, "command", "properties");
+
+   context_opt = oyOptions_Find(options, "device_context");
+   handle_opt = oyOptions_Find(options, "device_handle");
+   version_opt = oyOptions_Find(options, "driver_version");
+
+   if (command_list) {
       /* "list" call section */
-      value1 = oyOptions_FindString(options, "device_name", 0);
-      value2 = oyOptions_FindString(options, "command", "list");
-      if (oyOptions_FindString(options, "command", "list") ||
-          (!oyOptions_FindString(options, "command", "properties") &&
-           !oyOptions_FindString(options, "command", "setup") && !oyOptions_FindString(options, "command", "unset"))
-          ) {
-         texts_n = GetDevices(&texts, allocateFunc);
 
-         for (i = 0; i < texts_n; ++i) {
-            /* filter */
-            if (value1 && strcmp(value1, texts[i]) != 0)
-               continue;
+      const char **device_list = LibRaw::cameraList();
+      int num_devices = LibRaw::cameraCount();
 
-            device = oyConfig_New(CMM_BASE_REG, 0);
-            error = !device;
+      oyConfig_s *device = NULL;
+      device = oyConfig_New(CMM_BASE_REG, 0);
 
-            if (error <= 0)
-               error = oyOptions_SetFromText(&device->backend_core,
-                                             CMM_BASE_REG OY_SLASH "device_name", texts[i], OY_CREATE_NEW);
+      /*Handle "driver_version" option [IN] */
+      if (version_opt) {
+         error = oyOptions_SetFromText(&device->data,
+                                       CMM_BASE_REG OY_SLASH "driver_version_string",
+                                       driver_version_string,
+                                       OY_CREATE_NEW);
+         error = oyOptions_SetFromInt(i&device->data,
+                                      CMM_BASE_REG OY_SLASH "driver_version_number",
+                                      driver_version_number,
+                                      0,
+                                      OY_CREATE_NEW);
+      }
 
-            value4 = oyOptions_FindString(options, "icc_profile", 0);
-            if (value4 || oyOptions_FindString(options, "oyNAME_NAME", 0)) {
-               size_t size = 6;
-               const char *data = "raw-image";
+      /*Handle "device_handle" option [OUT:informative]*/
+      if (!handle_opt)
+         error = oyOptions_SetFromText(&device->data,
+                                       CMM_BASE_REG OY_SLASH "device_handle",
+                                       "filename\nblob",
+                                       OY_CREATE_NEW);
 
-               /* In case the devices do not support network transparent ICC profile
-                * setup, then use the DB stored profile, e.g.
-                * @see oyDeviceProfileFromDB() + oyProfile_FromFile()
-                * This will then turn the backend in a pure local one.
-                *
-                * One the opposite the Xorg-"oyX1" backend puts the profile in 
-                * X server.
-                * Then it is up to Oyranos to take action. The backend needs to
-                * report a issue to inform Oyranos, as seen below.
-                */
+      /*Handle "supported_devices_info" option [OUT:informative]*/
+      if (!handle_opt) {
+         oyOption_s *device_list_opt = oyOption_New(CMM_BASE_REG OY_SLASH "supported_devices_info",0);
+         device_list_opt->value->string_list = device_list;
+         device_list_opt->value_type = oyVAL_STRING_LIST;
+         oyOptions_MoveIn(device->data, &device_list_opt, -1);
+      }
 
-          /** Warn and return issue on not found profile. */
-               if (!size || !data) {
-                  message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-                          "Could not obtain icc_profile information for %s", _DBG_ARGS_, texts[i]);
-                  error = -1;
-               } else {
-                  p = oyProfile_FromMem(size, (const oyPointer)data, 0, 0);
-                  o = oyOption_New(CMM_BASE_REG OY_SLASH "icc_profile", 0);
-                  error = oyOption_StructMoveIn(o, (oyStruct_s **) & p);
-                  oyOptions_MoveIn(device->data, &o, -1);
-               }
-            }
-
-            if (oyOptions_FindString(options, "oyNAME_NAME", 0)) {
-               text = (char *)calloc(4096, sizeof(char));
-
-               o = oyOptions_Find(device->data, "icc_profile");
-
-               if (o && o->value && o->value->oy_struct && o->value->oy_struct->type_ == oyOBJECT_PROFILE_S) {
-                  /* our raw image profile will certainly fail */
-                  p = oyProfile_Copy((oyProfile_s *) o->value->oy_struct, 0);
-                  tmp = oyProfile_GetFileName(p, 0);
-
-                  STRING_ADD(text, "  ");
-                  if (strrchr(tmp, OY_SLASH_C))
-                     STRING_ADD(text, strrchr(tmp, OY_SLASH_C) + 1);
-                  else
-                     STRING_ADD(text, tmp);
-
-                  oyProfile_Release(&p);
-               }
-
-               if (error <= 0)
-                  error = oyOptions_SetFromText(&device->data,
-                                                CMM_BASE_REG OY_SLASH "oyNAME_NAME", text, OY_CREATE_NEW);
-               free(text);
-            }
-
-            if (error <= 0)
-               device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
-
-            oyConfigs_MoveIn(devices, &device, -1);
+      /*Handle "device_handle" option [IN]*/
+      if (handle_opt)
+         switch (handle_opt->value_type) {
+            case oyVAL_STRING:
+               DeviceFromHandle(handle_opt->value->string); //TODO
+               break;
+            case oyVAL_STRUCT:
+               DeviceFromHandle(handle_opt->value->oy_struct); //TODO
+               break;
+            default:
+               printf("Option \"device_handle\" if of a wrong type\n");
+               break;
          }
 
-         if (error <= 0)
-            *s = devices;
+      /*Copy the rank map*/
+      device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
 
-         return error;
-      }
-
-      /* "properties" call section */
-      value2 = oyOptions_FindString(options, "command", "properties");
-      if (value2) {
-         texts_n = GetDevices(&texts, allocateFunc);
-
-         for (i = 0; i < texts_n; ++i) {
-            /* filter */
-            if (value1 && strcmp(value1, texts[i]) != 0)
-               continue;
-
-            device = oyConfig_New(CMM_BASE_REG, 0);
-            error = !device;
-
-            if (error <= 0)
-               error = oyOptions_SetFromText(&device->backend_core,
-                                             CMM_BASE_REG OY_SLASH "device_name", texts[i], OY_CREATE_NEW);
-
-            error = DeviceFromName_(value1, options, &device, allocateFunc);
-
-            if (error <= 0 && device)
-               device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
-            oyConfigs_MoveIn(devices, &device, -1);
-         }
-
-         if (error <= 0)
-            *s = devices;
-
-         return error;
-      }
-
-      /* "setup" call section */
-      value2 = oyOptions_FindString(options, "command", "setup");
-      value3 = oyOptions_FindString(options, "profile_name", 0);
-      if (error <= 0 && value2) {
-         error = !value1 || !value3;
-         if (error >= 1)
-            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-                    "The device_name/profile_name option is missed. Options:\n%s",
-                    _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
-                );
-         else
-            error = 0;          /* doSetup( value1, value3 ); */
-         return error;
-      }
-
-      /* "unset" call section */
-      value2 = oyOptions_FindString(options, "command", "unset");
-      if (error <= 0 && value2) {
-         error = !value1;
-         if (error >= 1)
-            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-                    "The device_name option is missed. Options:\n%s",
-                    _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
-                );
-         else
-            error = 0;          /* doUnset( value1 ); */
-         return error;
-      }
+      /*Return the Configuration object*/
+      oyConfigs_s *devices = NULL;
+      oyConfigs_MoveIn(devices, &device, -1);
+      *s = devices;
+      
+      return error;
    }
 
    /* not to be reached section, e.g. warning */
