@@ -535,7 +535,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
   oyPixel_t lcms_pixel_layout_in = 0;
   oyPixel_t lcms_pixel_layout_out = 0;
   int error = !lps;
-  cmsHTRANSFORM xform;
+  cmsHTRANSFORM xform = 0;
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
   icProfileClassSignature profile_class_out = 0;
@@ -577,7 +577,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
 
       o_txt = oyOptions_FindString  ( opts, "proof_hard", 0 );
       if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigOutputClass*/)
-        proof = atoi( o_txt );
+        proof = atoi( o_txt ) ? atoi(o_txt) : proof;
 
       o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0);
       if(o_txt && oyStrlen_(o_txt))
@@ -623,7 +623,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     0, lcms_pixel_layout_out,
                                     intent, flags );
-    else if(profiles_n == 2)
+    else if(profiles_n == 2 && !proof)
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     lps[1], lcms_pixel_layout_out,
                                     intent, flags );
@@ -650,10 +650,15 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
 
       for(i = 0; i < proof_n; ++i)
       {
-        cmsHPROFILE dl = cmsTransform2DeviceLink( xform,
-                                                  cmsFLAGS_GUESSDEVICECLASS );
+        cmsHPROFILE dl = 0;
+        if(xform)
+        {
+          dl = cmsTransform2DeviceLink( xform, cmsFLAGS_GUESSDEVICECLASS );
+          cmsDeleteTransform( xform );
 
-        cmsDeleteTransform( xform );
+        } else if(i == 0 && profiles_n == 2)
+          dl = lps[0];
+
         /* add simulation profile and go to next simulation in chain */
         if(i < proof_n - 1)
           xform = cmsCreateProofingTransform(
@@ -680,7 +685,8 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
                                     flags);
 
         /* release intermediate transform */
-        CMMProfileRelease_M( dl );
+        if(i == 0 && profiles_n != 2)
+          CMMProfileRelease_M( dl );
       }
     }
   }
@@ -995,30 +1001,46 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       
     } else
     {
-      profiles = (oyProfiles_s*) o->value;
+      profiles = (oyProfiles_s*) o->value->oy_struct;
       n = oyProfiles_Count( profiles );
       len = sizeof(cmsHPROFILE) * (n + 2 + 1);
       simulation = oyAllocateFunc_( len );
       memset( simulation, 0, len );
+
+      message( oyMSG_DBG,(oyStruct_s*)node,
+               "%s:%d %d simulation profile(s) found \"%s\"",
+               __FILE__,__LINE__, n,
+               profiles?oyStruct_TypeToText((oyStruct_s*)profiles):"????");
+
       for(i = 0; i < n; ++i)
       {
         p = oyProfiles_Get( profiles, i );
 
         /* Look in the Oyranos cache for a CMM internal representation */
-        if(i == 0)
+        /*if(i == 0)*/
         {
           simulation[ profiles_proof_n++ ] = lcmsAddProfile( p );
+          if(oy_debug)
+            message( oyMSG_DBG,(oyStruct_s*)node,
+                     "%s:%d found profile: %s",
+               __FILE__,__LINE__, p?oyProfile_GetText( p, oyNAME_NICK ):"????");
+
           profs = oyProfiles_MoveIn( profs, &p, -1 );
-        } else if(i == 1)
+
+        } /*else if(i == 1)
           message( oyMSG_WARN, (oyStruct_s*)node,
            "%s: %d Currently only one in \"profiles_simulation\" supported: %d",
-                   __FILE__,__LINE__, n );
-          
+                   __FILE__,__LINE__, n );*/
+
         oyProfile_Release( &p );
       }
     }
     oyOption_Release( &o );
-  }
+  } else if(verbose || oy_debug)
+    message( oyMSG_DBG,(oyStruct_s*)node,
+             "%s:%d no simulation profile found",
+             __FILE__,__LINE__);
+
 
   /* output profile */
   if(!image_output->profile_)
@@ -1793,7 +1815,7 @@ const char * lcmsInfoGetText         ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter transforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
     else
-      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_high_precission\", \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\" and \"rendering_intent\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]." );
+      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_high_precission\", \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]." );
   }
   return 0;
 }
