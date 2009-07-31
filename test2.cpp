@@ -919,11 +919,11 @@ oyTESTRESULT_e testSettings ()
   for( i = 0; i < countB; ++i)
   {
     o = oyOptions_Get( opts, i );
-    /*printf("%d: \"%s\": \"%s\" %s %d\n", i, 
+    printf("%d: \"%s\": \"%s\" %s %d\n", i, 
            oyOption_GetText( o, oyNAME_DESCRIPTION ), o->value->string,
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-           o->flags );*/
+           o->flags );
 
     oyOption_Release( &o );
   }
@@ -949,6 +949,26 @@ oyTESTRESULT_e testSettings ()
   /*xmlSaveDoc( ptr, doc );*/
 
   oyOptions_Release( &opts );
+
+  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
+                                            oyOPTIONATTRIBUTE_ADVANCED  |
+                                            oyOPTIONATTRIBUTE_FRONT |
+                                            OY_SELECT_COMMON, 0 );
+  printf("Show advanced common front end options:\n");
+  countB = oyOptions_Count( opts );
+  for( i = 0; i < countB; ++i)
+  {
+    o = oyOptions_Get( opts, i );
+    printf("%d: \"%s\": \"%s\" %s %d\n", i, 
+           oyOption_GetText( o, oyNAME_DESCRIPTION ), o->value->string,
+           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                       oyFILTER_REG_OPTION, 0 ),
+           o->flags );
+
+    oyOption_Release( &o );
+  }
+  oyOptions_Release( &opts );
+
 
   return result;
 }
@@ -1605,14 +1625,14 @@ oyTESTRESULT_e testCMMMonitorListing ()
   oyConfigs_Release( &configs );
   fprintf( stdout, "\n");
 
-  error = oyDeviceGet( 0, "monitor", ":0.1", 0, &config );
+  error = oyDeviceGet( 0, "monitor", ":0.0", 0, &config );
   k_n = oyConfig_Count( config );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDeviceGet(..\"monitor\" \":0.1\"..) %d     ", k_n );
+    "oyDeviceGet(..\"monitor\" \":0.0\"..) %d     ", k_n );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDeviceGet(..\"monitor\" \":0.1\"..) %d     ", k_n );
+    "oyDeviceGet(..\"monitor\" \":0.0\"..) %d     ", k_n );
   }
     for( k = 0; k < k_n; ++k )
     {
