@@ -277,7 +277,7 @@ oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
 {return 0;}
 
 
-char * oiccstructGetText             ( oyStruct_s        * item,
+char * oiccStructGetText             ( oyStruct_s        * item,
                                        oyNAME_e            type,
                                        int                 flags,
                                        oyAlloc_f           allocateFunc )
@@ -342,7 +342,7 @@ char * oiccDataGetText               ( oyStruct_s        * data,
       item = 0;
 
     if(item)
-      text = oiccstructGetText( item, type, flags, allocateFunc );
+      text = oiccStructGetText( item, type, flags, allocateFunc );
   }
 
   return text;
@@ -414,35 +414,34 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
 {
   oyOption_s * o = 0,
              * db_o = 0;
-  
+  const char * tmp = 0;
   int k = 0;
 
-              o = oyOptions_Find( f_options, key );
-  if(o)
-  {
-              k = o->flags & oyOPTIONATTRIBUTE_EDIT;
-              k = o->flags & oyOPTIONATTRIBUTE_AUTOMATIC;
-              k = o->flags & oyOPTIONATTRIBUTE_ADVANCED;
-              k = o->flags & oyOPTIONATTRIBUTE_FRONT;
-              k = o->flags & oyOPTIONATTRIBUTE_DOUBLE;
-  }
-              /* only set missing options */
-              if(o &&
-                 !o->source & oyOPTIONSOURCE_USER &&
-                 !o->source & oyOPTIONSOURCE_DATA &&
-                 !o->flags & oyOPTIONATTRIBUTE_EDIT)
+  o = oyOptions_Find( f_options, key );
+  /* only set missing options */
+              if((o &&
+                  !o->source & oyOPTIONSOURCE_USER &&
+                  !o->source & oyOPTIONSOURCE_DATA &&
+                  !o->flags & oyOPTIONATTRIBUTE_EDIT) ||
+                 !o)
               {
                 db_o = oyOptions_Find( db_options, key );
                 if(db_o)
                 {
                   db_o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
                   oyOptions_MoveIn( f_options, &db_o, -1 );
-                  if(verbose)
+                  if(oy_debug || verbose)
                     WARNc2_S("set %s: %s", key,
-                             oyOptions_FindString(db_options,
+                             oyOptions_FindString(f_options,
                                                   key, 0) );
                 } else
                   WARNc1_S("no in filter defaults \"%s\" found.", key);
+              } else
+              {
+                tmp = oyOptions_FindString(f_options, key, 0);
+                message( oyMSG_DBG,(oyStruct_s*)f_options,
+                         "%s:%d \"%s\" is already set = %s",__FILE__,__LINE__,
+                         key, tmp?tmp:"????");
               }
 }
 
@@ -457,15 +456,14 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   oyFilterNode_s * node = 0;
   oyFilterPlug_s * edge = 0;
   oyConversion_s * s = conversion;
+  oyProfiles_s * proofs =  0;
+  oyProfile_s * proof =  0;
   oyOptions_s * db_options = 0,
               * f_options = 0;
   oyOption_s * o = 0,
              * db_o = 0;
   const char * db_val = 0,
              * val = 0;
-
-  if(!verbose && getenv("OYRANOS_DEBUG") && atoi(getenv("OYRANOS_DEBUG")) > 0)
-    verbose = atoi(getenv("OYRANOS_DEBUG"));
 
   if(s->input)
     g = oyFilterGraph_FromNode( s->input, 0 );
@@ -536,8 +534,37 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
 
               /* apply the found policy settings */
               db_options = oyOptions_ForFilter( node->core->registration_, 0,
-                                                oyOPTIONATTRIBUTE_ADVANCED, 0 );
+                                                oyOPTIONATTRIBUTE_ADVANCED |
+                                                oyOPTIONATTRIBUTE_FRONT, 0 );
               f_options = oyFilterNode_OptionsGet( node, 0 );
+              os_n = oyOptions_Count(f_options);
+              if(oy_debug || verbose)
+              for(k = 0; k < os_n; k++)
+              {
+                o = oyOptions_Get( f_options, k );
+                printf("%d: \"%s\": \"%s\" %s %d\n", k, 
+                       oyOption_GetText( o, oyNAME_DESCRIPTION ),
+                       o->value->string,
+           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                       oyFILTER_REG_OPTION, 0 ),
+                o->flags );
+
+                oyOption_Release( &o );
+              }
+              os_n = oyOptions_Count(db_options);
+              if(oy_debug || verbose)
+              for(k = 0; k < os_n; k++)
+              {
+                o = oyOptions_Get( db_options, k );
+                printf("%d: \"%s\": \"%s\" %s %d\n", k, 
+                       oyOption_GetText( o, oyNAME_DESCRIPTION ),
+                       o->value->string,
+           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                       oyFILTER_REG_OPTION, 0 ),
+                o->flags );
+
+                oyOption_Release( &o );
+              }
 
               oiccChangeNodeOption( f_options, db_options,
                                     "proof_soft", s, verbose);
@@ -555,6 +582,27 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                     "rendering_high_precission", s, verbose);
 
               /* TODO @todo add proofing profile */
+              o = oyOptions_Find( f_options, "profiles_simulation" );
+              if(!o)
+              {
+                proof = oyProfile_FromStd( oyPROFILE_PROOF, 0 );
+                proofs = oyProfiles_New(0);
+                val = oyProfile_GetText( proof, oyNAME_NICK );
+                oyProfiles_MoveIn( proofs, &proof, -1 );
+                oyOptions_MoveInStruct( &f_options,
+                                    "//" OY_TYPE_STD "/icc/profiles_simulation",
+                                        (oyStruct_s**)& proofs,
+                                        OY_CREATE_NEW );
+                if(verbose)
+                  message( oyMSG_WARN,(oyStruct_s*)node,
+                           "%s:%d set \"profiles_simulation\": %s",
+                           __FILE__,__LINE__, val);
+              } else if(verbose)
+                message( oyMSG_WARN,(oyStruct_s*)node,
+                         "%s:%d \"profiles_simulation\" is already set",
+                         __FILE__,__LINE__);
+
+              oyOption_Release( &o );
 
               oyOptions_Release( &db_options );
               oyOptions_Release( &f_options );
