@@ -172,7 +172,7 @@ class Fl_Oy_Box : public Fl_Box
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
-         (channels != 4 && channels != 3) || data_type != oyUINT8)
+         ((channels != 4 && channels != 3) || data_type != oyUINT8))
       {
         printf( "WARNING: wrong image data format: %s\n%s\n"
                 "need 4 or 3 channels with 8-bit\n",
@@ -347,7 +347,7 @@ main(int argc, char** argv)
   /* add a file name argument */
   /* get the options of the input node */
   if(in)
-  options = oyFilterNode_OptionsGet( in, OY_FILTER_GET_DEFAULT );
+  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
   /* add a new option with the appropriate value */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read.input_ppm/filename",
                                  file_name, OY_CREATE_NEW );
@@ -439,8 +439,8 @@ main(int argc, char** argv)
   oyConversion_Set( conversion, 0, out );
 
   /* apply policies */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
-                                 "true", OY_CREATE_NEW );
+  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
+                                 "true", OY_CREATE_NEW );*/
   oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", options );
   oyOptions_Release( &options );
 
