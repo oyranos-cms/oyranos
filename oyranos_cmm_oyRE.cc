@@ -360,14 +360,28 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    handle_opt = oyOptions_Find(options, "device_handle");
    version_opt = oyOptions_Find(options, "driver_version");
 
+   oyConfig_s *device = NULL;
+   device = oyConfig_New(CMM_BASE_REG, 0);
+
+   /*Handle "device_handle" option [IN]*/
+   if (handle_opt) {
+      switch (handle_opt->value_type) {
+         case oyVAL_STRING:
+            DeviceFromHandle(&device->backend_core, handle_opt->value->string); //TODO
+            break;
+         case oyVAL_STRUCT:
+            DeviceFromHandle(&device->backend_core, handle_opt->value->oy_struct); //TODO
+            break;
+         default:
+            printf("Option \"device_handle\" is of a wrong type\n");
+            break;
+      }
+
    if (command_list) {
       /* "list" call section */
 
       const char **device_list = LibRaw::cameraList();
       int num_devices = LibRaw::cameraCount();
-
-      oyConfig_s *device = NULL;
-      device = oyConfig_New(CMM_BASE_REG, 0);
 
       /*Handle "driver_version" option [IN] */
       if (version_opt) {
@@ -381,6 +395,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                       0,
                                       OY_CREATE_NEW);
       }
+      
 
       /*Handle "device_handle" option [OUT:informative]*/
       if (!handle_opt)
@@ -397,22 +412,37 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          oyOptions_MoveIn(device->data, &device_list_opt, -1);
       }
 
-      /*Handle "device_handle" option [IN]*/
-      if (handle_opt)
-         switch (handle_opt->value_type) {
-            case oyVAL_STRING:
-               DeviceFromHandle(handle_opt->value->string); //TODO
-               break;
-            case oyVAL_STRUCT:
-               DeviceFromHandle(handle_opt->value->oy_struct); //TODO
-               break;
-            default:
-               printf("Option \"device_handle\" if of a wrong type\n");
-               break;
-         }
-
       /*Copy the rank map*/
       device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
+
+   } else if (command_properties) {
+      /* "properties" call section */
+
+      /*Bail out if no "device_handle" given*/
+      if (!handle_opt) {
+         printf("Missing \"device_handle\" option\n");
+         return 1;
+      }
+
+      /*Handle "device_context" option [IN]*/
+      if (context_opt) {
+         libraw_output_params_t *device_context =
+            (libraw_output_params_t*)oyOption_GetData(context_opt, NULL, allocateFunc);
+         DeviceFromContext(&options, device_context);
+      }
+   } else {
+      /*wrong or no command */
+      oyOption_release(&version_opt_int);
+      oyOption_release(&version_opt_str);
+      oyConfig_release(&config);
+
+      /* not to be reached section, e.g. warning */
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+           "This point should not be reached. Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
+       );
+
+      ConfigsFromPatternUsage((oyStruct_s *) options);
+   } //End of Configuration
 
       /*Return the Configuration object*/
       oyConfigs_s *devices = NULL;
@@ -420,16 +450,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       *s = devices;
       
       return error;
-   }
-
-   /* not to be reached section, e.g. warning */
-   message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-           "This point should not be reached. Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
-       );
-
-   ConfigsFromPatternUsage((oyStruct_s *) options);
-
-   return error;
 }
 
 /** Function Config_Check
@@ -566,7 +586,7 @@ oyCMMInfo_s _cmm_module = {
  */
 #include <string>
 #include <sstream>
-int OyAddLibRawOptions_(libraw_output_params_t * params, oyConfig_s ** config)
+int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 {
    int status;
    std::string value;
