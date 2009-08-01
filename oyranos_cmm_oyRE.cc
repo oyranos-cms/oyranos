@@ -609,3 +609,19 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 
    return error;
 }
+
+bool is_raw( int id )
+{
+   switch (id) {
+      case cr2:
+      case crw:
+      case mrw:
+      case orf:
+      case raf:
+      case rw2:
+         return true;
+         break;
+      default:
+         return false;
+   }
+}
