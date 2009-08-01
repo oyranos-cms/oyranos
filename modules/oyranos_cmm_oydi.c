@@ -388,6 +388,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   o = oyOption_Copy( o, 0 );
   oyOptions_MoveIn( options, &o, -1 );
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+  oyOptions_Release( &options );
   n = oyConfigs_Count( devices );
   o = oyOptions_Find( node->core->options_, "devices" );
   /* cache the devices scan result; currently is no updating implemented */
@@ -417,9 +418,13 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
       {
         if(oyFilterRegistrationMatch( input_node->core->registration_,
                                       "//" OY_TYPE_STD "/icc", 0 ))
+        {
+          options = oyFilterNode_OptionsGet( input_node, 0 );
           cmm_node = oyFilterNode_NewWith( input_node->core->registration_,
-                                           0, 0 );
-        else
+                                           options, 0 );
+          oyOptions_Release( &options );
+          
+        } else
           message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d"
                    "\n  Filter %s expects a colour conversion filter as"
                    " input\n  But obtained: %s",
