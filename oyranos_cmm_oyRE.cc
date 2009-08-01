@@ -431,12 +431,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          DeviceFromContext(&options, device_context);
       }
    } else {
-      /*wrong or no command */
+      /* not to be reached section, e.g. warning */
       oyOption_release(&version_opt_int);
       oyOption_release(&version_opt_str);
       oyConfig_release(&config);
 
-      /* not to be reached section, e.g. warning */
       message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
            "This point should not be reached. Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
        );
@@ -584,56 +583,66 @@ oyCMMInfo_s _cmm_module = {
  *
  * \todo { Untested }
  */
-#include <string>
-#include <sstream>
+#define DFC_OPT_ADD_INT_ARR(name, i) if(!error) \
+        error = oyOptions_SetFromInt( &((*config)->backend_core), \
+                                      CMM_BASE_REG OY_SLASH #name, \
+                                      params->name[i], i, OY_CREATE_NEW );
+#define DFC_OPT_ADD_INT(name) if(!error) \
+        error = oyOptions_SetFromInt( &((*config)->backend_core), \
+                                      CMM_BASE_REG OY_SLASH #name, \
+                                      params->name, 0, OY_CREATE_NEW );
+#define DFC_OPT_ADD_FLOAT_ARR(name, i) if(!error) \
+        error = oyOptions_SetFromFloat( &((*config)->backend_core), \
+                                        CMM_BASE_REG OY_SLASH #name, \
+                                        params->name[i], i, OY_CREATE_NEW );
+#define DFC_OPT_ADD_FLOAT(name) if(!error) \
+        error = oyOptions_SetFromFloat( &((*config)->backend_core), \
+                                        CMM_BASE_REG OY_SLASH #name, \
+                                        params->name, 0, OY_CREATE_NEW );
+#undef DFC_OPT_ADD_FLOAT
+#define DFC_OPT_ADD_FLOAT
+#undef DFC_OPT_ADD_FLOAT_ARR
+#define DFC_OPT_ADD_FLOAT_ARR
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 {
-   int status;
-   std::string value;
-   std::ostringstream out(value);
-#define ADD_DB_DATA( opt ) out<<params->opt; \
-									if (!oyConfig_AddDBData( 	*config, \
-																		#opt, \
-																		value.c_str(), \
-																		OY_CREATE_NEW )) \
-										message( oyMSG_WARN, 0, "%s()\n Unable to save option %s\n", __func__, #opt ); \
-									value.clear();
+   int error;
 
-   ADD_DB_DATA(use_camera_wb)
-       ADD_DB_DATA(use_camera_matrix)
-       ADD_DB_DATA(half_size)
-       ADD_DB_DATA(threshold)
-       ADD_DB_DATA(aber[0])
-       ADD_DB_DATA(aber[1])
-       ADD_DB_DATA(aber[2])
-       ADD_DB_DATA(aber[3])
-       ADD_DB_DATA(greybox[0])
-       ADD_DB_DATA(greybox[1])
-       ADD_DB_DATA(greybox[2])
-       ADD_DB_DATA(greybox[3])
-       ADD_DB_DATA(gamm[0])
-       ADD_DB_DATA(gamm[1])
-       ADD_DB_DATA(gamm[2])
-       ADD_DB_DATA(gamm[3])
-       ADD_DB_DATA(gamm[4])
-       ADD_DB_DATA(gamm[5])
-       ADD_DB_DATA(user_mul[0])
-       ADD_DB_DATA(user_mul[1])
-       ADD_DB_DATA(user_mul[2])
-       ADD_DB_DATA(user_mul[3])
-       ADD_DB_DATA(bright)
-       ADD_DB_DATA(four_color_rgb)
-       ADD_DB_DATA(highlight)
-       ADD_DB_DATA(use_auto_wb)
-       ADD_DB_DATA(output_color)
-       ADD_DB_DATA(camera_profile)
-       ADD_DB_DATA(output_bps)
-       ADD_DB_DATA(user_qual)
-       ADD_DB_DATA(user_black)
-       ADD_DB_DATA(user_sat)
-       ADD_DB_DATA(med_passes)
-       ADD_DB_DATA(auto_bright_thr)
-       ADD_DB_DATA(no_auto_bright)
+   DFC_OPT_ADD_FLOAT_ARR(aber,0) //4
+   DFC_OPT_ADD_FLOAT_ARR(aber,1) //4
+   DFC_OPT_ADD_FLOAT_ARR(aber,2) //4
+   DFC_OPT_ADD_FLOAT_ARR(aber,3) //4
+   DFC_OPT_ADD_FLOAT_ARR(gamm,0) //5
+   DFC_OPT_ADD_FLOAT_ARR(gamm,1) //5
+   DFC_OPT_ADD_FLOAT_ARR(gamm,2) //5
+   DFC_OPT_ADD_FLOAT_ARR(gamm,3) //5
+   DFC_OPT_ADD_FLOAT_ARR(gamm,4) //5
+   DFC_OPT_ADD_FLOAT_ARR(user_mul,0) //4
+   DFC_OPT_ADD_FLOAT_ARR(user_mul,1) //4
+   DFC_OPT_ADD_FLOAT_ARR(user_mul,2) //4
+   DFC_OPT_ADD_FLOAT_ARR(user_mul,3) //4
+   DFC_OPT_ADD_FLOAT(auto_bright_thr)
+   DFC_OPT_ADD_FLOAT(bright)
+   DFC_OPT_ADD_FLOAT(threshold)
 
-       return status;
+   DFC_OPT_ADD_INT(four_color_rgb)
+   DFC_OPT_ADD_INT(gamma_16bit) //TODO is it needed?
+   DFC_OPT_ADD_INT(half_size)
+   DFC_OPT_ADD_INT(highlight)
+   DFC_OPT_ADD_INT(med_passes)
+   DFC_OPT_ADD_INT(no_auto_bright)
+   DFC_OPT_ADD_INT(output_bps)
+   DFC_OPT_ADD_INT(output_color)
+   DFC_OPT_ADD_INT(use_auto_wb)
+   DFC_OPT_ADD_INT(use_camera_matrix)
+   DFC_OPT_ADD_INT(use_camera_wb)
+   DFC_OPT_ADD_INT(user_black)
+   DFC_OPT_ADD_INT(user_qual)
+   DFC_OPT_ADD_INT(user_sat)
+   DFC_OPT_ADD_INT_ARR(greybox,0) //4
+   DFC_OPT_ADD_INT_ARR(greybox,1) //4
+   DFC_OPT_ADD_INT_ARR(greybox,2) //4
+   DFC_OPT_ADD_INT_ARR(greybox,3) //4
+   DFC_OPT_ADD_INT(shot_select)
+
+   return error;
 }
