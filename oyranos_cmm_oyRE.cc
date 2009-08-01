@@ -26,6 +26,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <exiv2/image.hpp>
+#include <exiv2/exif.hpp>
+
 #include <libraw/libraw.h>
 
 #include "oyRE_help.c"
@@ -132,6 +135,9 @@ extern "C" {
 } /* extern "C" */ }            /* namespace oyranos */
 #endif                          /* __cplusplus */
 using namespace oyranos;
+
+bool is_raw( int id );
+int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params);
 
 /* --- implementations --- */
 
@@ -297,7 +303,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    /*Prepare for "driver_version" option*/
    int driver_version_number = LibRaw::versionNumber();
    const char *driver_version_string = LibRaw::version();
-   oyOption_s *version_opt_int= NULL, *version_opt_str = NULL, version_opt = NULL;
+   oyOption_s *version_opt_int= NULL, *version_opt_str = NULL, *version_opt = NULL;
    error = oyOption_SetFromText(version_opt_str, driver_version_string, 0);
    error = oyOption_SetFromInt(version_opt_int, driver_version_number, 0, 0);
 
@@ -314,17 +320,21 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    /*Handle "device_handle" option [IN]*/
    Exiv2::Image::AutoPtr device_handle;
    if (handle_opt) {
+      const char *filename = NULL;
+      oyBlob_s *raw_blob = NULL;
+      const Exiv2::byte *raw_data = NULL;
+      long size;
       switch (handle_opt->value_type) {
          case oyVAL_STRING:
-            const char *filename = handle_opt->value->string;
-            if (is_raw(Exiv2::getType(filename))) //TODO
+            filename = handle_opt->value->string;
+            if (is_raw(Exiv2::ImageFactory::getType(filename))) //TODO
                device_handle = Exiv2::ImageFactory::open(filename);
             break;
          case oyVAL_STRUCT:
-            oyBlob_s *raw_blob = (oyBlob_s*)handle_opt->value->oy_struct;
-            const Exiv2::byte *raw_data = (Exiv2::byte*)raw_blob->ptr;
-            long size = raw_blob->size;
-            if (is_raw(Exiv2::getType(raw_data, size)))
+            raw_blob = (oyBlob_s*)handle_opt->value->oy_struct;
+            raw_data = (Exiv2::byte*)raw_blob->ptr;
+            size = raw_blob->size;
+            if (is_raw(Exiv2::ImageFactory::getType(raw_data, size)))
                device_handle = Exiv2::ImageFactory::open(raw_data, size);
             break;
          default:
@@ -352,7 +362,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                        CMM_BASE_REG OY_SLASH "driver_version_string",
                                        driver_version_string,
                                        OY_CREATE_NEW);
-         error = oyOptions_SetFromInt(i&device->data,
+         error = oyOptions_SetFromInt(&device->data,
                                       CMM_BASE_REG OY_SLASH "driver_version_number",
                                       driver_version_number,
                                       0,
@@ -369,8 +379,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       /*Handle "supported_devices_info" option [OUT:informative]*/
       if (!handle_opt) {
-         oyOption_s *device_list_opt = oyOption_New(CMM_BASE_REG OY_SLASH "supported_devices_info",0);
-         device_list_opt->value->string_list = device_list;
+         oyOption_s *device_list_opt = oyOption_New(CMM_BASE_REG OY_SLASH "supported_devices_info", 0);
+         device_list_opt->value->string_list = const_cast<char**>(device_list);
          device_list_opt->value_type = oyVAL_STRING_LIST;
          oyOptions_MoveIn(device->data, &device_list_opt, -1);
       }
@@ -391,13 +401,13 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (context_opt) {
          libraw_output_params_t *device_context =
             (libraw_output_params_t*)oyOption_GetData(context_opt, NULL, allocateFunc);
-         DeviceFromContext(&options, device_context);
+         DeviceFromContext(&device, device_context);
       }
    } else {
       /* not to be reached section, e.g. warning */
-      oyOption_release(&version_opt_int);
-      oyOption_release(&version_opt_str);
-      oyConfig_release(&config);
+      oyOption_Release(&version_opt_int);
+      oyOption_Release(&version_opt_str);
+      oyConfig_Release(&device);
 
       message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
            "This point should not be reached. Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
@@ -562,14 +572,10 @@ oyCMMInfo_s _cmm_module = {
         error = oyOptions_SetFromFloat( &((*config)->backend_core), \
                                         CMM_BASE_REG OY_SLASH #name, \
                                         params->name, 0, OY_CREATE_NEW );
-#undef DFC_OPT_ADD_FLOAT
-#define DFC_OPT_ADD_FLOAT
-#undef DFC_OPT_ADD_FLOAT_ARR
-#define DFC_OPT_ADD_FLOAT_ARR
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 {
    int error;
-
+#if 0
    DFC_OPT_ADD_FLOAT_ARR(aber,0) //4
    DFC_OPT_ADD_FLOAT_ARR(aber,1) //4
    DFC_OPT_ADD_FLOAT_ARR(aber,2) //4
@@ -586,7 +592,7 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_FLOAT(auto_bright_thr)
    DFC_OPT_ADD_FLOAT(bright)
    DFC_OPT_ADD_FLOAT(threshold)
-
+#endif
    DFC_OPT_ADD_INT(four_color_rgb)
    DFC_OPT_ADD_INT(gamma_16bit) //TODO is it needed?
    DFC_OPT_ADD_INT(half_size)
@@ -612,13 +618,14 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 
 bool is_raw( int id )
 {
+   //using namespace Exiv2::ImageType;
    switch (id) {
-      case cr2:
-      case crw:
-      case mrw:
-      case orf:
-      case raf:
-      case rw2:
+      case 7: //cr2:
+      case 3: //crw:
+      case 5: //mrw:
+      case 9: //orf:
+      case 8: //raf:
+      case 16: //rw2:
          return true;
          break;
       default:
