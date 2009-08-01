@@ -364,18 +364,28 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    device = oyConfig_New(CMM_BASE_REG, 0);
 
    /*Handle "device_handle" option [IN]*/
+   Exiv2::Image::AutoPtr device_handle;
    if (handle_opt) {
       switch (handle_opt->value_type) {
          case oyVAL_STRING:
-            DeviceFromHandle(&device->backend_core, handle_opt->value->string); //TODO
+            const char *filename = handle_opt->value->string;
+            if (is_raw(Exiv2::getType(filename))) //TODO
+               device_handle = Exiv2::ImageFactory::open(filename);
             break;
          case oyVAL_STRUCT:
-            DeviceFromHandle(&device->backend_core, handle_opt->value->oy_struct); //TODO
+            oyBlob_s *raw_blob = (oyBlob_s*)handle_opt->value->oy_struct;
+            const Exiv2::byte *raw_data = (Exiv2::byte*)raw_blob->ptr;
+            long size = raw_blob->size;
+            if (is_raw(Exiv2::getType(raw_data, size)))
+               device_handle = Exiv2::ImageFactory::open(raw_data, size);
             break;
          default:
             printf("Option \"device_handle\" is of a wrong type\n");
             break;
       }
+       
+      DeviceFromHandle(&device->backend_core, device_handle); //TODO
+   }
 
    if (command_list) {
       /* "list" call section */
