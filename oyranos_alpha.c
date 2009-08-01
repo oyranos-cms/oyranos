@@ -23086,7 +23086,7 @@ oyConversion_s *   oyConversion_New  ( oyObject_s          object )
   return s;
 }
 
-/** Function oyConversion_CreateBasic
+/** Function oyConversion_CreateBasicPixels
  *  @memberof oyConversion_s
  *  @brief   allocate initialise a basic oyConversion_s object
  *
@@ -23097,7 +23097,7 @@ oyConversion_s *   oyConversion_New  ( oyObject_s          object )
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2009/06/24
  */
-oyConversion_s   * oyConversion_CreateBasic (
+oyConversion_s   * oyConversion_CreateBasicPixels (
                                        oyImage_s         * input,
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
@@ -24000,7 +24000,7 @@ oyNamedColour_SetChannels( oyNamedColour_s  * colour,
  *  @memberof oyNamedColour_s
  *  @brief   convert one colour
  *
- *  The options are passed to oyConversion_CreateBasic();
+ *  The options are passed to oyConversion_CreateBasicPixels();
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/23 (Oyranos: 0.1.8)
@@ -24032,7 +24032,7 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
                          p_out,
                          0 );
 
-  conv   = oyConversion_CreateBasic( in,out, options, 0 );
+  conv   = oyConversion_CreateBasicPixels( in,out, options, 0 );
   error  = oyConversion_RunPixels( conv, 0 );
 
   oyConversion_Release( &conv );

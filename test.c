@@ -67,7 +67,7 @@ main(int argc, char** argv)
   prof = oyProfile_FromStd( oyASSUMED_WEB, 0 );
   image_in = oyImage_Create( w, h, d, OY_TYPE_123_DBL, prof, 0 );
   image_out = oyImage_Create( w, h, dest, OY_TYPE_123_DBL, prof, 0 );
-  conversion = oyConversion_CreateBasic( image_in, image_out, 0, 0 );
+  conversion = oyConversion_CreateBasicPixels( image_in, image_out, 0, 0 );
   oyImage_Release( &image_in );
   oyImage_Release( &image_out );
   oyProfile_Release( &prof );

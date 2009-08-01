@@ -2393,11 +2393,11 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConversion_CreateBasic()          %s",
+    "oyConversion_CreateBasicPixels()    %s",
                     oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConversion_CreateBasic()                         " );
+    "oyConversion_CreateBasicPixels()                   " );
   }
 #else
   oyConversion_s * s = 0;
@@ -2430,7 +2430,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   oyFilterPlug_s * plug = 0;
   oyPixelAccess_s * pixel_access = 0;
-  s = oyConversion_CreateBasic( input,output, 0, 0 );
+  s = oyConversion_CreateBasicPixels( input,output, 0, 0 );
   if(s->out_)
     plug = oyFilterNode_GetPlug( s->out_, 0 );
   else
@@ -2612,7 +2612,7 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < 100*n; ++i)
   if(error <= 0)
   {
-    s = oyConversion_CreateBasic( input,output, options, 0 );
+    s = oyConversion_CreateBasicPixels( input,output, options, 0 );
     error  = oyConversion_RunPixels( s, 0 );
     oyConversion_Release ( &s );
     if(!(i%100)) fprintf(stdout, "." ); fflush(stdout);
@@ -2676,7 +2676,7 @@ oyTESTRESULT_e testCMMnmRun ()
                          p_out,
                          0 );
 
-  conv   = oyConversion_CreateBasic( in,out, options, 0 );
+  conv   = oyConversion_CreateBasicPixels( in,out, options, 0 );
   error  = oyConversion_RunPixels( conv, 0 );
 
   oyConversion_Release( &conv );
@@ -2710,7 +2710,7 @@ oyTESTRESULT_e testCMMnmRun ()
                          0 );
   //oyFilterPlug_s * plug = 0;
   //oyPixelAccess_s   * pixel_access = 0;
-  oyConversion_s * conv   = oyConversion_CreateBasic( input,output, 0, 0 );
+  oyConversion_s * conv   = oyConversion_CreateBasicPixels( input,output, 0,0 );
 
   /* conversion->out_ has to be linear, so we access only the first plug */
   plug = oyFilterNode_GetPlug( conv->out_, 0 );

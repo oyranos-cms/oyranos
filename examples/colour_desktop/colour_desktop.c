@@ -649,8 +649,8 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
                                      "1", OY_CREATE_NEW );
       END_CLOCK
 
-      START_CLOCK("oyConversion_CreateBasic: ")
-      ps->ccontexts[i].cc = oyConversion_CreateBasic( image_in, image_out,
+      START_CLOCK("oyConversion_CreateBasicPixels: ")
+      ps->ccontexts[i].cc = oyConversion_CreateBasicPixels( image_in, image_out,
                                                       options, 0 ); END_CLOCK
 
       if (ps->ccontexts[i].cc == NULL)

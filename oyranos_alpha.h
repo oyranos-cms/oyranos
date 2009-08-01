@@ -2766,8 +2766,8 @@ digraph G {
 }
  \enddot
  *  \b Creating \b Graphs: \n
- *  Most simple is to use the oyConversion_CreateBasic() function to create
- *  a profile to profile and possible image buffer to image buffer linear
+ *  Most simple is to use the oyConversion_CreateBasicPixles() function to 
+ *  create a profile to profile and possible image buffer to image buffer linear
  *  graph.\n
  *  The other possibility is to create a non linear graph. The input member can
  *  be accessed for this directly.
@@ -2823,7 +2823,7 @@ typedef struct {
 } oyConversion_s;
 
 oyConversion_s *   oyConversion_New  ( oyObject_s          object );
-oyConversion_s  *  oyConversion_CreateBasic (
+oyConversion_s  *  oyConversion_CreateBasicPixels (
                                        oyImage_s         * input,
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
