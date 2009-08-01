@@ -71,68 +71,52 @@
  *  \todo { In progress }
  */
 oyranos::oyRankPad _rank_map[] = {
-   {const_cast < char *>("device_name"), 2, -1, 0},                   /**< is good */
-   {const_cast < char *>("driver_version"), 2, -1, 0},                /**< is good */
-   {const_cast < char *>("profile_name "), 0, 0, 0},                  /**< non relevant for device properties*/
+   {const_cast < char *>("device_name"), 0, 0, 0},                   /**< Unused?*/
+   {const_cast < char *>("driver_version"), 2, -1, 0},               /**< is good */
+   {const_cast < char *>("profile_name"), 0, 0, 0},                  /**< non relevant for device properties*/
        /* EXIF Fields */                                              
-   {const_cast < char *>("Exif.Image.Make "), 1, -1, 0},              /**< is nice */
-   {const_cast < char *>("Exif.Image.Model "), 5, -5, 0},             /**< important, should not fail */
-   {const_cast < char *>("Exif.Photo.ISOSpeedRatings "), 1, 0, 0},    
-                                                                      /**< is nice */
-   {const_cast < char *>("Exif.Photo.ExposureProgram "), 1, 0, 0},    
-                                                                      /**< nice to match */
-   {const_cast < char *>("Exif.Photo.Flash "), 1, 0, 0},              /**< nice to match */
+   {const_cast < char *>("Exif.Image.Make"), 1, -1, 0},              /**< is nice */
+   {const_cast < char *>("Exif.Image.Model"), 5, -5, 0},             /**< important, should not fail */
+   {const_cast < char *>("Exif.Photo.ISOSpeedRatings"), 1, 0, 0},    /**< is nice */
+   {const_cast < char *>("Exif.Photo.ExposureProgram"), 1, 0, 0},    /**< nice to match */
+   {const_cast < char *>("Exif.Photo.Flash"), 1, 0, 0},              /**< nice to match */
        /*Makernote Fields - no 1-1 mapping with exif tags */          
-   {const_cast < char *>("Exif.SerialNumber "), 10, -2, 0},           /**< important, could slightly fail *//*E.g. Exif.Canon.SerialNumber */
-   {const_cast < char *>("Exif.Lens"), 2, -1, 0},                     /**< is good *//*E.g. Exif.CanonCs.Lens */
+   {const_cast < char *>("Exif.SerialNumber"), 10, -2, 0},           /**< important, could slightly fail *//*E.g. Exif.Canon.SerialNumber */
+   {const_cast < char *>("Exif.Lens"), 2, -1, 0},                    /**< is good *//*E.g. Exif.CanonCs.Lens */
        /* Possibly not relevant options are marked with: O->Output R->Repair */
        /* LibRaw Options affecting open_file() */                     
        /* LibRaw Options affecting unpack() */                        
-   {const_cast < char *>("use_camera_wb "), 1, -1, 0},                /**< is nice */
-   {const_cast < char *>("use_camera_matrix "), 1, -1, 0},            /**< is nice */
-   {const_cast < char *>("half_size "), 1, -1, 0},                    /**< is nice */
-//{const_cast<char*>("filtering_mode "), 1, -1, 0},                   /**< is nice */ /*not in libraw-lite*/
+   {const_cast < char *>("use_camera_wb"), 1, -1, 0},                /**< is nice */
+   {const_cast < char *>("use_camera_matrix"), 1, -1, 0},            /**< is nice */
+   {const_cast < char *>("half_size"), 1, -1, 0},                    /**< is nice */
+//{const_cast<char*>("filtering_mode"), 1, -1, 0},                   /**< is nice */ /*not in libraw-lite*/
 //This is a bit-field. Out of all the possible flags, only LIBRAW_FILTERING_NORAWCURVE
 //seems to be relevant to color [From LibRaw API docs]:               
 //This bit turns off tone curve processing (for tone curves read from file metadata or
 //calculated from constants). This setting is supported only for bayer-pattern cameras
 //with tone curve;                                                    
-   {const_cast < char *>("threshold "), 1, -1, 0},                    /**< is nice */ /*R*/
-   {const_cast < char *>("aber[0] "), 1, -1, 0},                      /**< is nice */ /*R*/
-   {const_cast < char *>("aber[1] "), 1, -1, 0},                      /**< is nice */ /*R*/
-   {const_cast < char *>("aber[2] "), 1, -1, 0},                      /**< is nice */ /*R*/
-   {const_cast < char *>("aber[3] "), 1, -1, 0},                      /**< is nice */ /*R*/
+   {const_cast < char *>("threshold"), 1, -1, 0},                    /**< is nice */ /*R*/
+   {const_cast < char *>("aber"), 1, -1, 0},                         /**< is nice */ /*R*/
        /* LibRaw Options affecting dcraw_process() */                 
-   {const_cast < char *>("greybox[0] "), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("greybox[1] "), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("greybox[2] "), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("greybox[3] "), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("gamm[0] "), 1, -1, 0},                      /**< is nice */
-   {const_cast < char *>("gamm[1] "), 1, -1, 0},                      /**< is nice */
-   {const_cast < char *>("gamm[2] "), 1, -1, 0},                      /**< is nice */
-   {const_cast < char *>("gamm[3] "), 1, -1, 0},                      /**< is nice */
-   {const_cast < char *>("gamm[4] "), 1, -1, 0},                      /**< is nice */
-   {const_cast < char *>("gamm[5] "), 1, -1, 0},                      /**< is nice */
-   {const_cast < char *>("user_mul[0] "), 1, -1, 0},                  /**< is nice */
-   {const_cast < char *>("user_mul[1] "), 1, -1, 0},                  /**< is nice */
-   {const_cast < char *>("user_mul[2] "), 1, -1, 0},                  /**< is nice */
-   {const_cast < char *>("user_mul[3] "), 1, -1, 0},                  /**< is nice */
-   {const_cast < char *>("bright "), 1, -1, 0},                       /**< is nice */
-   {const_cast < char *>("four_color_rgb "), 1, -1, 0},               /**< is nice */
-   {const_cast < char *>("highlight "), 1, -1, 0},                    /**< is nice */
-   {const_cast < char *>("use_auto_wb "), 1, -1, 0},                  /**< is nice */
-   {const_cast < char *>("output_color "), 1, -1, 0},                 /**< is nice */
-   {const_cast < char *>("camera_profile "), 1, -1, 0},               /**< is nice */
-   {const_cast < char *>("output_bps "), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("user_qual "), 1, -1, 0},                    /**< is nice */
-   {const_cast < char *>("user_black "), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("user_sat "), 1, -1, 0},                     /**< is nice */
-   {const_cast < char *>("med_passes "), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("auto_bright_thr "), 1, -1, 0},              /**< is nice */
-   {const_cast < char *>("no_auto_bright "), 1, -1, 0},               /**< is nice */
+   {const_cast < char *>("greybox"), 1, -1, 0},                      /**< is nice */
+   {const_cast < char *>("gamm"), 1, -1, 0},                         /**< is nice */
+   {const_cast < char *>("user_mul"), 1, -1, 0},                     /**< is nice */
+   {const_cast < char *>("bright"), 1, -1, 0},                       /**< is nice */
+   {const_cast < char *>("four_color_rgb"), 1, -1, 0},               /**< is nice */
+   {const_cast < char *>("highlight"), 1, -1, 0},                    /**< is nice */
+   {const_cast < char *>("use_auto_wb"), 1, -1, 0},                  /**< is nice */
+   {const_cast < char *>("output_color"), 1, -1, 0},                 /**< is nice */
+   {const_cast < char *>("camera_profile"), 1, -1, 0},               /**< is nice */
+   {const_cast < char *>("output_bps"), 1, -1, 0},                   /**< is nice */
+   {const_cast < char *>("user_qual"), 1, -1, 0},                    /**< is nice */
+   {const_cast < char *>("user_black"), 1, -1, 0},                   /**< is nice */
+   {const_cast < char *>("user_sat"), 1, -1, 0},                     /**< is nice */
+   {const_cast < char *>("med_passes"), 1, -1, 0},                   /**< is nice */
+   {const_cast < char *>("auto_bright_thr"), 1, -1, 0},              /**< is nice */
+   {const_cast < char *>("no_auto_bright"), 1, -1, 0},               /**< is nice */
        /* Extra options (user supplied) */                            
-   {const_cast < char *>("illumination_source"), 1, -1, 0},           /**< is nice */
-   {0, 0, 0, 0}                                                       /**< end of list */
+   {const_cast < char *>("illumination_source"), 1, -1, 0},          /**< is nice */
+   {0, 0, 0, 0}                                                      /**< end of list */
 };
 
 #ifdef __cplusplus
@@ -196,11 +180,6 @@ int CMMCanHandle(oyCMMQUERY_e type, uint32_t value)
    return 0;
 }
 
-#define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( &opts, \
-                                       CMM_BASE_REG OY_SLASH #name, \
-                                       name, OY_CREATE_NEW );
-
 void ConfigsFromPatternUsage(oyStruct_s * options)
 {
     /** oyMSG_WARN should make shure our message is visible. */
@@ -211,71 +190,40 @@ void ConfigsFromPatternUsage(oyStruct_s * options)
    return;
 }
 
-int DeviceFromName_(const char *device_name, oyOptions_s * options, oyConfig_s ** device, oyAlloc_f allocateFunc)
+/** @internal
+ *  @brief Get the options from EXIF Tags, and put them in a configuration object
+ *
+ *  @param[in]image              The Exiv2 raw image
+ *  @param[out]options           The configuration object to hold the option-value pairs
+ *
+ * \todo { Untested }
+ */
+#define OPTIONS_ADD_EXIF(name) if (!error) { \
+   Exiv2::ExifKey key( #name ); \
+   Exiv2::ExifData::iterator pos = exif_data.findKey(key); \
+   if (pos != exif_data.end()) { \
+      error = oyOptions_SetFromText( options, \
+                                     CMM_BASE_REG OY_SLASH #name, \
+                                     pos->toString().c_str(), OY_CREATE_NEW ); \
+   } \
+}
+int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::AutoPtr image)
 {
-   const char *value3 = 0;
-   oyOption_s *o = 0;
-   int error = !device;
+   int error = 0;
 
-   value3 = oyOptions_FindString(options, "data_blob", 0);
+   image->readMetadata();
+   Exiv2::ExifData &exif_data = image->exifData();
+   if (exif_data.empty())
+      return 1;
 
-   if (!error) {
-      char *manufacturer = 0, *model = 0, *serial = 0, *host = 0, *system_port = 0;
-      oyBlob_s *data_blob = 0;
-
-      if (!device_name) {
-         message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_
-                 "The \"device_name\" argument is\n"
-                 " missed to select a appropriate device for the" " \"properties\" call.", _DBG_ARGS_);
-         error = 1;
-         return error;
-      }
-
-      /* now get the data from somewhere */
-      if (strcmp(device_name, "dDev_1") == 0) {
-         manufacturer = "People_1";
-         model = "people-one";
-         serial = "11";
-         system_port = "usb-01";
-      } else if (strcmp(device_name, "dDev_2") == 0) {
-         manufacturer = "Village_2";
-         model = "yard-two";
-         serial = "22";
-         system_port = "usb-02";
-      }
-
-      host = "localhost";
-
-      if (error != 0)
-         message(oyMSG_WARN, (oyStruct_s *) options,
-                 _DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-                 " oyGetMonitorInfo_lib returned with %s; device_name:"
-                 " \"%s\"", _DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)", device_name ? device_name : "");
-
-      if (error <= 0) {
-         if (!*device)
-            *device = oyConfig_New(CMM_BASE_REG, 0);
-         error = !*device;
-         if (!error && device_name)
-            error = oyOptions_SetFromText(&(*device)->backend_core,
-                                          CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
-
-         OPTIONS_ADD((*device)->backend_core, manufacturer)
-             OPTIONS_ADD((*device)->backend_core, model)
-             OPTIONS_ADD((*device)->backend_core, serial)
-             OPTIONS_ADD((*device)->backend_core, system_port)
-             OPTIONS_ADD((*device)->backend_core, host)
-             if (!error && data_blob) {
-            o = oyOption_New(CMM_BASE_REG OY_SLASH "data_blob", 0);
-            error = !o;
-            if (!error)
-               error = oyOption_SetFromData(o, data_blob->ptr, data_blob->size);
-            if (!error)
-               oyOptions_MoveIn((*device)->data, &o, -1);
-            oyBlob_Release(&data_blob);
-         }
-      }
-   }
+   OPTIONS_ADD_EXIF(Exif.Image.Make)
+   OPTIONS_ADD_EXIF(Exif.Image.Model)
+   OPTIONS_ADD_EXIF(Exif.Photo.ISOSpeedRatings)
+   OPTIONS_ADD_EXIF(Exif.Photo.ExposureProgram)
+   OPTIONS_ADD_EXIF(Exif.Photo.Flash)
+ 
+   //"Exif.SerialNumber" //TODO
+   //"Exif.Lens" //TODO
 
    return error;
 }
@@ -384,7 +332,12 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             break;
       }
        
-      DeviceFromHandle(&device->backend_core, device_handle); //TODO
+      if (device_handle->good())
+         DeviceFromHandle(&device->backend_core, device_handle); //TODO
+      else {
+         printf("Unable to open raw image.\n");
+         return 1;
+      }
    }
 
    if (command_list) {
