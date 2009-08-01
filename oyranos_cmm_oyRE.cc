@@ -234,26 +234,6 @@ int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::AutoPtr image)
    return error;
 }
 
-/** Function GetDevices
- *  @brief Request all devices 
- *
- * @param[in/out]	list					NULL terminated array of strings holding device names
- * @param[in]		allocateFunc		memmory allocate function
- * @return									The number of devices
- *
- * \todo { Shouldn't it return error code instead? }
- */
-int GetDevices(const char ***list, oyAlloc_f allocateFunc)
-{
-   const char **cameras = LibRaw::cameraList();
-   *list = cameras;
-
-   int i = 0;
-   while (cameras[i])
-      i++;
-   return i;
-}
-
 /** Function Configs_FromPattern
  *  @brief   CMM_NICK oyCMMapi8_s raw images
  *
