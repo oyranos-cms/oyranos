@@ -403,6 +403,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             (libraw_output_params_t*)oyOption_GetData(context_opt, NULL, allocateFunc);
          DeviceFromContext(&device, device_context);
       }
+
+      /*Copy the rank map*/
+      device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
    } else {
       /* not to be reached section, e.g. warning */
       oyOption_Release(&version_opt_int);
@@ -416,12 +419,12 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       ConfigsFromPatternUsage((oyStruct_s *) options);
    } //End of Configuration
 
-      /*Return the Configuration object*/
-      oyConfigs_s *devices = NULL;
-      oyConfigs_MoveIn(devices, &device, -1);
-      *s = devices;
-      
-      return error;
+   /*Return the Configuration object*/
+   oyConfigs_s *devices = NULL;
+   oyConfigs_MoveIn(devices, &device, -1);
+   *s = devices;
+ 
+   return error;
 }
 
 /** Function Config_Check
