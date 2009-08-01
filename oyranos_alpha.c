@@ -18832,6 +18832,9 @@ oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
 #endif
   }
 
+  if(error <= 0 && options)
+    s->options_ = oyOptions_Copy( options, 0 );
+
   if(error && s)
   {
     oyFilterCore_Release( &s );
