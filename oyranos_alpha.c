@@ -6388,6 +6388,130 @@ int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
   return result;
 }
 
+/** Function oyOption_SetFromDouble
+ *  @memberof oyOption_s
+ *  @brief   set a double value
+ *
+ *  @param[in,out] obj                 the option
+ *  @param         floating_point      the value
+ *  @param         pos                 position in a list
+ *  @param         flags               unused
+ *  @return                            0 - success, 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/03 (Oyranos: 0.1.10)
+ *  @date    2009/08/03
+ */
+int            oyOption_SetFromDouble( oyOption_s        * obj,
+                                       double              floating_point,
+                                       int                 pos,
+                                       uint32_t            flags )
+{
+  int error = !obj;
+  oyOption_s * s = obj;
+
+  if(!obj)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
+ 
+  if(error <= 0)
+  {
+    if(s->value && flags)
+    {
+      oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+      oyValueRelease( &s->value, s->value_type, deallocateFunc );
+    }
+
+    if(!s->value)
+    {
+      oyAllocHelper_m_( s->value, oyValue_u, 1,
+                        s->oy_->allocateFunc_,
+                        error = 1 );
+      s->value_type = oyVAL_DOUBLE;
+    }
+
+    if(!error && pos > 0 && 
+       (!s->value_type == oyVAL_DOUBLE_LIST ||
+        (s->value_type == oyVAL_DOUBLE_LIST && 
+         (!s->value->dbl_list || pos >= s->value->dbl_list[0]))))
+    {
+      double * old_list = 0,
+               old_int = 0;
+
+      if(s->value_type == oyVAL_DOUBLE_LIST)
+        old_list = s->value->dbl_list;
+      if(s->value_type == oyVAL_DOUBLE)
+        old_int = s->value->dbl;
+
+      s->value->dbl_list = 0;
+      oyAllocHelper_m_( s->value->dbl_list, double, pos + 2,
+                        s->oy_->allocateFunc_,
+                        error = 1 );
+
+      if(!error && old_list)
+      {
+        memcpy( s->value->dbl_list, old_list,
+                (old_list[0] + 1) * sizeof(double) );
+        s->oy_->deallocateFunc_( old_list ); old_list = 0;
+      }
+
+      if(!error && old_int)
+        s->value->dbl_list[1] = old_int;
+
+      s->value_type = oyVAL_DOUBLE_LIST;
+      s->value->dbl_list[0] = pos + 1;
+    }
+
+    if(s->value_type == oyVAL_DOUBLE)
+      s->value->dbl = floating_point;
+    else
+      s->value->dbl_list[pos+1] = floating_point;
+
+    s->flags |= oyOPTIONATTRIBUTE_EDIT;
+  }
+
+  return error;
+}
+
+/** Function oyOption_GetValueDouble
+ *  @memberof oyOption_s
+ *  @brief   get a double
+ *
+ *  @param[in,out] obj                 the option
+ *  @param         pos                 position in a list
+ *  @return                            double
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/03 (Oyranos: 0.1.10)
+ *  @date    2009/08/03
+ */
+double         oyOption_GetValueDouble(oyOption_s        * obj,
+                                       int                 pos )
+{
+  oyOption_s * s = obj;
+  int error = !s;
+  double result = 0;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
+ 
+  if(error <= 0)
+  {
+    if( s->value_type == oyVAL_DOUBLE_LIST &&
+        s->value->dbl_list &&
+        s->value->dbl_list[0] > pos )
+      result = s->value->dbl_list[pos + 1];
+    else if(s->value_type == oyVAL_DOUBLE)
+      result = s->value->dbl;
+  }
+
+  return result;
+}
+
 /** Function oyOption_GetText
  *  @memberof oyOption_s
  *  @brief   get a text dump 

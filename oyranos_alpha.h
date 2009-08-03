@@ -645,6 +645,12 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
                                        uint32_t            flags );
 int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
                                        int                 pos );
+int            oyOption_SetFromDouble( oyOption_s        * obj,
+                                       double              floating_point,
+                                       int                 pos,
+                                       uint32_t            flags );
+double         oyOption_GetValueDouble(oyOption_s        * obj,
+                                       int                 pos );
 int            oyOption_Clear        ( oyOption_s        * s );
 int            oyOption_SetFromData  ( oyOption_s        * option,
                                        oyPointer           ptr,
@@ -1485,9 +1491,9 @@ typedef uint32_t oyPixel_t;
  *  @brief   channels types
  *  @ingroup objects_image
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/00/00 (Oyranos: 0.1.8)
- *  @date    2008/00/00
+ *  @date    2009/08/03
  */
 typedef enum {
   oyCHANNELTYPE_UNDEFINED,            /**< as well for the list end */
