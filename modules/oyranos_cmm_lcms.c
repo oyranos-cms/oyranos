@@ -966,6 +966,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   if(o)
   {
     if( o->value_type != oyVAL_STRUCT ||
+        !o->value->oy_struct ||
         o->value->oy_struct->type_ != oyOBJECT_PROFILES_S)
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
@@ -1390,7 +1391,6 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 {
   int i,j,k, n;
   int error = 0;
-  double * in_values = 0, * out_values = 0;
   int channels = 0;
   oyDATATYPE_e data_type = 0;
 
