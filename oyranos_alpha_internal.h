@@ -246,7 +246,6 @@ unsigned int     oyCMMapiIsReady_    ( oyOBJECT_e          type );
 
 int          oyPointerReleaseFunc_   ( oyPointer         * ptr );
 
-int          oySizeofDatatype        ( oyDATATYPE_e        t );
 
 uint32_t     oyCMMtoId               ( const char        * cmm );
 int          oyIdToCMM               ( uint32_t            cmmId,
@@ -297,7 +296,7 @@ enum {
 };
 
 int      oySizeofDatatype            ( oyDATATYPE_e        t );
-const oyChar * oyDatatypeToText      ( oyDATATYPE_e        t);
+const char *   oyDatatypeToText      ( oyDATATYPE_e        t);
 const char *   oyValueTypeText       ( oyVALUETYPE_e       type );
 
 
