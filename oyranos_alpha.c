@@ -6211,8 +6211,13 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     if(obj->value_type == oyVAL_STRUCT)
     {
       oy_struct_list = (oyStructList_s*) v->oy_struct;
-      if(oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
-        n = oyStructList_Count( oy_struct_list );
+      if(oy_struct_list)
+      {
+        if(oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
+          n = oyStructList_Count( oy_struct_list );
+      } else
+        WARNc2_S( "missed \"oy_struct\" member of \"%s\"", obj->registration,
+                 oyObject_GetId(obj->oy_) );
     }
 
     for(i = 0; i < n; ++i)
@@ -6243,7 +6248,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
           oyStruct_s * oy_struct = oyStructList_Get_( oy_struct_list, i );
           if(oy_struct && oy_struct->oy_)
             STRING_ADD ( text, oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
-        } else if(v->oy_struct->oy_)
+        } else if(v->oy_struct && v->oy_struct->oy_)
           STRING_ADD ( text, oyObject_GetName( v->oy_struct->oy_, oyNAME_NICK ));
       }
       if(i)
