@@ -15303,9 +15303,9 @@ int      oySizeofDatatype            ( oyDATATYPE_e        t )
  *  @date  26 november 2007 (API 0.1.8)
  */
 
-const oyChar * oyDatatypeToText      ( oyDATATYPE_e        t)
+const char *   oyDatatypeToText      ( oyDATATYPE_e        t)
 {
-  const oyChar * text = 0;
+  const char * text = 0;
   switch(t)
   {
     case oyUINT8:
