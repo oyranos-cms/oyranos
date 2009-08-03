@@ -23098,9 +23098,21 @@ oyConversion_s *   oyConversion_New  ( oyObject_s          object )
  *  Provided options will be passed to oyFilterNode_NewWith(). There for no 
  *  options defaults will be selected.
  *
- *  @version Oyranos: 0.1.8
+ *  @param[in]     input               the input image data
+ *  @param[in]     output              the output image data
+ *  @param[in]     options             options to be passed to oyFilterCore_s
+ *                                     Each option should be carefully named
+ *                                     to be correctly selected by the intented
+ *                                     filter (root, icc and output).
+ *                                     The available options are particial
+ *                                     defined by plugable policy modules,
+ *                                     e.g. "oicc", and a filters own options.
+ *  @param         object              the optional object
+ *  @return                            the conversion context
+ *
+ *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2009/06/24
+ *  @date    2009/08/01
  */
 oyConversion_s   * oyConversion_CreateBasicPixels (
                                        oyImage_s         * input,
