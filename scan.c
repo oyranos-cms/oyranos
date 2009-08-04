@@ -5,7 +5,6 @@
 
 #include <oyranos_alpha.h>
 #define CMM_BASE_REG "//imaging/config.scanner.SANE"
-#define CMM_COMMAND CMM_BASE_REG "/command"
 
 SANE_Status status;
 SANE_Int version = 0, num_options, num_devices ;
@@ -14,10 +13,13 @@ const SANE_Device **device_list = NULL;
 SANE_Device *sane_device = NULL;
 SANE_String_Const device_name = NULL;
 
-oyOption_s *option = NULL;
+oyOption_s *option      = NULL,
+           *handle_opt  = NULL,
+           *context_opt = NULL;
 oyOptions_s *list_options = NULL,
             *backend_core = NULL,
-            *data         = NULL;
+            *data         = NULL,
+            *options      = NULL;
 oyConfig_s *device = NULL;
 
 char *image_buffer = NULL;
@@ -74,17 +76,18 @@ void init()
    oyConfig_Release(&device);
    print_sane_version();
 
+   /*Get all options from each device, and print out some info*/
    for (i = 0; i < num_devices; i++) {
       oyConfig_s *device = oyConfigs_Get(devices, i);
-      oyOption_s *context_opt = oyConfig_Find(device, "device_context");
-      int struct_size = 0;
+
+      /*device_context holds the SANE_Device struct*/
+      context_opt = oyConfig_Find(device, "device_context");
       sane_device = (SANE_Device*)oyOption_GetData(context_opt, &struct_size, malloc);
-      if (device_name) {
-         oyOption_s *handle_opt = oyConfig_Find(device, "device_handle");
-         sane_handle = (SANE_Handle*)oyOption_GetData(handle_opt, NULL, malloc);
-         oyOption_Release(&handle_opt);
-      }
-      oyOption_Release(&context_opt);
+
+      /*device_handle holds the SANE_Handle*/
+      handle_opt = oyConfig_Find(device, "device_handle");
+      device_handle = *(SANE_Handle*)oyOption_GetData(handle_opt, NULL, malloc);
+
       oyConfig_Release(&device);
 
       printf("[Device %d]\n", i);
@@ -92,8 +95,13 @@ void init()
             device_list[i]->name, device_list[i]->vendor,
             device_list[i]->model, device_list[i]->type);
 
-      free(sane_device);
-      sane_device = NULL;
+      /*If a device has been requested, do not delete it's options!*/
+      if (!device_name) {
+         free(sane_device);
+         sane_device = NULL;
+         oyOption_Release(&context_opt);
+         oyOption_Release(&handle_opt);
+      }
    }
 }
 
@@ -105,12 +113,12 @@ void scan_it()
 
    char *buffer_aux = NULL;
 
-   //1. Open the device
-   status = sane_open(device_name, &device_handle);
-   if (status != SANE_STATUS_GOOD) {
-      printf("Cannot open device %s!\n", device_name);
+   //1. The device is already opened by Oyranos
+   if (!device_handle) {
+      printf("device handle is empty!\n");
       exit(1);
    }
+
    //2. Setup the device
    //This stage is not implemented in this simple programm
    status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, NULL);
@@ -120,9 +128,6 @@ void scan_it()
    }
    printf("%s has %d options in total.\n", device_name, num_options);
 
-   //An early implementation of color option handling, currently outside Oyranos
-   OyInit_color_options(device_handle);
-   OyPrint_color_options();
    //3. Acquire the scanned image
    status = sane_start(device_handle);
    if (status != SANE_STATUS_GOOD) {
@@ -130,7 +135,25 @@ void scan_it()
       exit(1);
    } else
       printf("sane_start()\n");
-   //3.1 Take care of all scan parameters
+
+   //3.1 Get the relevant color information from Oyranos before scanning
+   //but only afer the options have been locked with sane_start()
+   //This is the "command" -> "properties" call
+   device = oyConfig_New(CMM_BASE_REG, 0);
+   options = oyOptions_New(0);
+   /*Use the already provided SANE_Handle through previous "list" call*/
+   oyOptions_MoveIn(options, &handle_opt, -1);
+   /*Use the already provided SANE_Device through previous "list" call*/
+   oyOptions_MoveIn(options, &context_opt, -1);
+   /*Use the already provided SANE version through previous "list" call*/
+   oyOptions_SetFromInt(&options, CMM_BASE_REG OY_SLASH "driver_version", version, 0, OY_CREATE_NEW);
+   /*This is a requirement*/
+   oyOptions_SetFromText(&options, CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
+
+   /*Call Oyranos*/
+   oyDeviceGet(OY_TYPE_STD, "scanner", device_name, options, &device);
+
+   //3.2 Take care of all scan parameters
    status = sane_get_parameters(device_handle, &params);
    if (status != SANE_STATUS_GOOD) {
       printf("Cannot get scanning parameters!\n");
@@ -153,7 +176,7 @@ void scan_it()
       exit(1);
    } else
       printf("ready to read image[%dx%d]@%dbits\n", width, height, bps);
-   //3.2 Init image and fill with data.
+   //3.3 Init image and fill with data.
    bytes_left = size;
    image_buffer = malloc(size);
    buffer_aux = image_buffer;
@@ -180,7 +203,7 @@ void scan_it()
       printf("Not enough memmory!\n");
       exit(1);
    }
-   //3.3 Stop scanning
+   //3.4 Stop scanning
    sane_cancel(device_handle);
 
    //4. Close the device
@@ -240,6 +263,7 @@ void cleanup()
    free(image_buffer);
    free(icc_profile);
    sane_exit();
+   oyOption_Release(&handle_opt);
 }
 
 void help()

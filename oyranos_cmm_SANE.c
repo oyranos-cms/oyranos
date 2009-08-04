@@ -393,7 +393,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          }
          /*Handle "device_handle" option */
          if (handle_opt) {
-            oyBlob_s *handle_blob = NULL;
+            oyBlob_s *handle_blob = NULL; //FIXME Replace with oyCMMptr_s
             SANE_Handle h;
 
             if (sane_open(sane_name, &h) == SANE_STATUS_GOOD) {
@@ -461,9 +461,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             return 1;
          }
       } else {
-         device_handle = (SANE_Handle*)oyOption_GetData(handle_opt, NULL, allocateFunc);
+         device_handle = *(SANE_Handle*)oyOption_GetData(handle_opt, NULL, allocateFunc);
       }
-         
+
       /*2b. Use the "device_handle"*/
       error = ColorInfoFromHandle(device_handle, &(device->backend_core));
 
