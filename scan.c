@@ -11,12 +11,12 @@ SANE_Status status;
 SANE_Int version = 0, num_options, num_devices ;
 SANE_Handle device_handle;
 const SANE_Device **device_list = NULL;
-const SANE_Device *sane_device = NULL;
+SANE_Device *sane_device = NULL;
 SANE_String_Const device_name = NULL;
 
 oyOption_s *option = NULL;
 oyOptions_s *list_options = NULL,
-            *backend_core = NULL
+            *backend_core = NULL,
             *data         = NULL;
 oyConfig_s *device = NULL;
 
@@ -70,7 +70,7 @@ void init()
    /*Get the SANE version from the first found device*/
    device = oyConfigs_Get(devices, 0);
    oyOptions_FindInt(device->data, CMM_BASE_REG "driver_version", 0, &version);
-   oyConfig_Release(device);
+   oyConfig_Release(&device);
    print_sane_version();
 
    for (i = 0; i < num_devices; i++) {
@@ -278,23 +278,4 @@ int main(int argc, char **argv)
    cleanup();
 
    return 0;
-}
-
-int print_sane_devices(oyConfigs_s * devices)
-{
-   int i;
-
-   printf("Found %d SANE device%s\n", num_devices, num_devices > 1 ? "s" : "");
-   for (i = 0; i < num_devices; i++) {
-      oyConfig_s *device = oyConfigs_Get(devices, i);
-      int num_options = oyConfig_Count(device);
-      printf("\tFound %d option%s for device %d\n", num_options, num_options > 1 ? "s" : "", i);
-      for (int j = 0; j < num_options; j++) {
-         oyOption_s *opt = oyConfig_Get(device, j);
-         print_option(opt, j);
-         oyOption_Release(&opt);
-      }
-      oyConfig_Release(&device);
-   }
-   return num_devices;
 }
