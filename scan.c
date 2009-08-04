@@ -50,9 +50,9 @@ void init()
    /*Sending a '0' for driver version will call sane_init and return us the sane version*/
    oyOptions_SetFromInt(&list_options, CMM_BASE_REG OY_SLASH "driver_version", version, 0, OY_CREATE_NEW);
    /*The value is not used in the following options*/
-   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "oyNAME_NAME", "", OY_CREATE_NEW);
-   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_context", "", OY_CREATE_NEW);
-   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_handle", "", OY_CREATE_NEW);
+   oyOptions_SetFromInt(&list_options, CMM_BASE_REG OY_SLASH "oyNAME_NAME", 0, 0, OY_CREATE_NEW);
+   oyOptions_SetFromInt(&list_options, CMM_BASE_REG OY_SLASH "device_context", 0, 0, OY_CREATE_NEW);
+   oyOptions_SetFromInt(&list_options, CMM_BASE_REG OY_SLASH "device_handle", 0, 0, OY_CREATE_NEW);
    /*Only a particular device has been asked*/
    if (device_name)
       oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
