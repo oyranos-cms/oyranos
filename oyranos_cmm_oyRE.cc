@@ -307,7 +307,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       switch (handle_opt->value_type) {
          case oyVAL_STRING:
             filename = handle_opt->value->string;
-            if (is_raw(Exiv2::ImageFactory::getType(filename))) //TODO
+            if (is_raw(Exiv2::ImageFactory::getType(filename)))
                device_handle = Exiv2::ImageFactory::open(filename);
             break;
          case oyVAL_STRUCT:
@@ -321,9 +321,10 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             printf("Option \"device_handle\" is of a wrong type\n");
             break;
       }
-       
-      if (device_handle->good())
-         DeviceFromHandle(&device->backend_core, device_handle); //TODO
+
+      //The std::auto_ptr::get() method returns the pointer owned by the auto_ptr
+      if (device_handle.get() && device_handle->good())
+         DeviceFromHandle(&device->backend_core, device_handle);
       else {
          printf("Unable to open raw image.\n");
          return 1;
