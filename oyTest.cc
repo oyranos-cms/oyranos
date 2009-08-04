@@ -131,7 +131,7 @@ void help(char *progname)
 int print_devices(oyConfigs_s * devices, const char *name)
 {
    int num_devices = oyConfigs_Count(devices);
-   printf("Found %d %s devices\n", num_devices, name, num_devices > 1 ? "s" : "");
+   printf("Found %d %s device%s\n", num_devices, name, num_devices > 1 ? "s" : "");
 
    for (int i = 0; i < num_devices; i++) {
       oyConfig_s *device = oyConfigs_Get(devices, i);
