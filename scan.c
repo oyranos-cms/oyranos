@@ -91,15 +91,6 @@ void init()
    }
 }
 
-/// Select the sane device to use
-void select_device()
-{
-   if (device_name == NULL)
-      device_name = device_list[0]->name;
-
-   printf("%s has been selected\n", device_name);
-}
-
 void scan_it()
 {
    SANE_Int bytes_left, bytes_written;
@@ -270,7 +261,7 @@ int main(int argc, char **argv)
    }
 
    init();
-   if (argc == 1) {
+   if (argc == 1 || !device_name) {
       help();
       return 0;
    }
