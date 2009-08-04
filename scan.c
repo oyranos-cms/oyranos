@@ -72,7 +72,7 @@ void init()
    /*Fill all the local variables with the returned options*/
    num_devices = oyConfigs_Count(devices);
    if (num_devices<1) {
-      printf("No SANE devices found. Bye!");
+      printf("No SANE devices found. Bye!\n");
       exit(0);
    } else
       printf("Found %d SANE device%s\n", num_devices, num_devices > 1 ? "s" : "");
@@ -138,7 +138,7 @@ void scan_it()
       printf("Cannot count device options!\n");
       exit(1);
    }
-   printf("%s has %d options in total.\n", device_name, num_options);
+   printf("%s sane driver reports %d options in total.\n", device_name, num_options);
 
    //3. Acquire the scanned image
    status = sane_start(device_handle);
@@ -153,6 +153,7 @@ void scan_it()
    //This is the "command" -> "properties" call
    device = oyConfig_New(CMM_BASE_REG, 0);
    options = oyOptions_New(0);
+   oyOptions_SetFromText(&options, CMM_BASE_REG OY_SLASH "command", "properties", OY_CREATE_NEW);
    /*Use the already provided SANE_Handle through previous "list" call*/
    oyOptions_MoveIn(options, &handle_opt, -1);
    /*Use the already provided SANE_Device through previous "list" call*/
@@ -162,8 +163,15 @@ void scan_it()
    /*This is a requirement*/
    oyOptions_SetFromText(&options, CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
 
+   printf("Sending the following options to Oyranos\n"); //DBG
+   print_options(options); //DBG
+
    /*Call Oyranos*/
    oyDeviceGet(OY_TYPE_STD, "scanner", device_name, options, &device);
+
+   printf("Oyranos returns the following colour related options.\n"); //DBG
+   print_device(device); //DBG
+
 
    //3.2 Take care of all scan parameters
    status = sane_get_parameters(device_handle, &params);
