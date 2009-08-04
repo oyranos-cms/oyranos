@@ -167,7 +167,14 @@ int DeviceInfoFromContext_(const SANE_Device * device_context, oyOptions_s **opt
 
    return error;
 }
-
+/** Function GetDevices
+ *  @brief Request all devices from SANE
+ *
+ * @param[out]    device_list       pointer to -> NULL terminated array of SANE_Device's
+ * @param[out]    size              the number of devices
+ * @return                          0 OK - else error
+ *
+ */
 int GetDevices(const SANE_Device *** device_list, int *size)
 {
    int status, s = 0;
@@ -190,91 +197,6 @@ int GetDevices(const SANE_Device *** device_list, int *size)
    fflush(NULL);
 
    return 0;
-}
-
-/** Function GetDevices_
- *  @brief Request all devices from SANE and return their SANE_Device::name
- *
- * @param[in/out]	list					NULL terminated array of strings holding device names
- * @param[in]		allocateFunc		memmory allocate function
- * @return									The number of devices
- *
- *  \todo {
- *  name,vendor,model,type should probably be cached someplace.
- *  sane_get_devices() is an expensive function [up to a few seconds?]
- *  Only name is used now. }
- */
-int GetDevices_(char ***list, oyAlloc_f allocateFunc)
-{
-   int status, pnm_status, version, len, i, l = 0;
-   char **names = NULL, **vendors = NULL, **models = NULL, **types = NULL, **all = NULL;
-   const SANE_Device **device_list = NULL;
-   SANE_Handle handle;
-#if 0
-   /* If sane_init() is already called by the application, then
-    * this is probably a BUG! FIXME*/
-   if (!sane) {
-      printf("Initialising SANE...");
-      fflush(NULL);
-      status = sane_init(&version, NULL);
-      if (status != SANE_STATUS_GOOD) {
-         printf("Cannot initialise sane!\n");
-         return -1;
-      }
-      printf("OK\n");
-      fflush(NULL);
-      sane = SANE_TRUE;
-   }
-
-   pnm_status = sane_open("pnm:0", &handle); /*Trick to make pnm bakend appear */
-   printf("Scanning SANE devices...");
-   fflush(NULL);
-   status = sane_get_devices(&device_list, SANE_FALSE);
-   if (status != SANE_STATUS_GOOD) {
-      printf("Cannot get sane devices!\n");
-      return -1;
-   }
-   printf("OK\n");
-   fflush(NULL);
-
-   if (pnm_status == SANE_STATUS_GOOD)
-      sane_close(handle);
-
-   while (device_list[l])
-      l++;
-   len = l + 1;
-
-   names = allocateFunc(len * sizeof(char *));
-   vendors = allocateFunc(len * sizeof(char *));
-   models = allocateFunc(len * sizeof(char *));
-   types = allocateFunc(len * sizeof(char *));
-
-   memset(names, 0, len * sizeof(char *));
-   memset(vendors, 0, len * sizeof(char *));
-   memset(models, 0, len * sizeof(char *));
-   memset(types, 0, len * sizeof(char *));
-
-   for (i = 0; i < l; i++) {
-      names[i] = allocateFunc(strlen(device_list[i]->name) + 1);
-      strcpy(names[i], device_list[i]->name);
-      vendors[i] = allocateFunc(strlen(device_list[i]->vendor) + 1);
-      strcpy(vendors[i], device_list[i]->vendor);
-      models[i] = allocateFunc(strlen(device_list[i]->model) + 1);
-      strcpy(models[i], device_list[i]->model);
-      types[i] = allocateFunc(strlen(device_list[i]->type) + 1);
-      strcpy(types[i], device_list[i]->type);
-   }
-
-   all = allocateFunc(4 * l * sizeof(char *) + 1);
-   memcpy(all, names, l * sizeof(char *));
-   memcpy(all + l, vendors, l * sizeof(char *));
-   memcpy(all + 2 * l, models, l * sizeof(char *));
-   memcpy(all + 3 * l, types, l * sizeof(char *));
-   all[4 * l] = NULL;
-
-   *list = all;
-   return l;
-#endif
 }
 
 /** Function Configs_FromPattern
@@ -357,7 +279,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    if (command_list) {
       /* "list" call section */
 
-      error = GetDevices(&device_list, &num_devices); //FIXME If user provides device name
+      error = GetDevices(&device_list, &num_devices);
+      //FIXME #1 If a user provides *only* a device_name option (or && device_handle),
+      //then there is no need to call GetDevices()
+      //FIXME #2 If a user provides a device_name that is not found
+      //by sane_get_devices(), an empty devices object will be returned...
 
       for (i = 0; i < num_devices; ++i) {
          const char *sane_name = device_list[i]->name;
