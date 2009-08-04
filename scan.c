@@ -50,6 +50,7 @@ void init()
    oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "oyNAME_NAME", NULL, OY_CREATE_NEW);
    oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_context", NULL, OY_CREATE_NEW);
    oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_handle", NULL, OY_CREATE_NEW);
+   /*Only a particular device has been asked*/
    if (device_name)
       oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
 
@@ -78,6 +79,11 @@ void init()
       oyOption_s *context_opt = oyConfig_Find(device, "device_context");
       int struct_size = 0;
       sane_device = (SANE_Device*)oyOption_GetData(context_opt, &struct_size, malloc);
+      if (device_name) {
+         oyOption_s *handle_opt = oyConfig_Find(device, "device_handle");
+         sane_handle = (SANE_Handle*)oyOption_GetData(handle_opt, NULL, malloc);
+         oyOption_Release(&handle_opt);
+      }
       oyOption_Release(&context_opt);
       oyConfig_Release(&device);
 
