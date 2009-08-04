@@ -685,17 +685,17 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                }
                break;
             case SANE_TYPE_FIXED:
-#if 0
-               if (opt->size == (SANE_Int)sizeof(SANE_Word))
-                  oyOptions_SetFromFloat(options, registration, SANE_UNFIX(*(SANE_Fixed *) value), 0, OY_CREATE_NEW);
-               else {
+               if (opt->size == (SANE_Int)sizeof(SANE_Word)) {
+                  oyOption_s *option = oyOption_New(registration, 0);
+                  oyOption_SetFromDouble(option, SANE_UNFIX(*(SANE_Fixed *) value), 0, 0);
+                  oyOptions_MoveIn(*options, &option, -1);
+               } else {
                   int count = opt->size/sizeof(SANE_Word);
-                  oyOption_s option = oyOption_New(registration, 0);
+                  oyOption_s *option = oyOption_New(registration, 0);
                   for (i=count-1; i>=0; --i)
-                     oyOption_SetFromFloat(option, SANE_UNFIX(*(SANE_Fixed *) value+i), i, 0);
-                  oyOptions_MoveIn(options, &option, -1);
+                     oyOption_SetFromDouble(option, SANE_UNFIX(*(SANE_Fixed *) value+i), i, 0);
+                  oyOptions_MoveIn(*options, &option, -1);
                }
-#endif
                break;
             case SANE_TYPE_STRING:
                oyOptions_SetFromText(options, registration, (const char *)value, OY_CREATE_NEW);

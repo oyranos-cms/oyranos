@@ -547,18 +547,20 @@ oyCMMInfo_s _cmm_module = {
         error = oyOptions_SetFromInt( &((*config)->backend_core), \
                                       CMM_BASE_REG OY_SLASH #name, \
                                       params->name, 0, OY_CREATE_NEW );
-#define DFC_OPT_ADD_FLOAT_ARR(name, i) if(!error) \
-        error = oyOptions_SetFromFloat( &((*config)->backend_core), \
-                                        CMM_BASE_REG OY_SLASH #name, \
-                                        params->name[i], i, OY_CREATE_NEW );
-#define DFC_OPT_ADD_FLOAT(name) if(!error) \
-        error = oyOptions_SetFromFloat( &((*config)->backend_core), \
-                                        CMM_BASE_REG OY_SLASH #name, \
-                                        params->name, 0, OY_CREATE_NEW );
+#define DFC_OPT_ADD_FLOAT_ARR(name, i) if(!error) { \
+        oyOption_s *opt = oyOption_New(CMM_BASE_REG OY_SLASH #name, 0); \
+        oyOption_SetFromDouble(opt, params->name[i], i, 0); \
+        oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
+}
+#define DFC_OPT_ADD_FLOAT(name) if(!error) { \
+        oyOption_s *opt = oyOption_New(CMM_BASE_REG OY_SLASH #name, 0); \
+        oyOption_SetFromDouble(opt, params->name, 0, 0); \
+        oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
+}
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 {
    int error;
-#if 0
+
    DFC_OPT_ADD_FLOAT_ARR(aber,0) //4
    DFC_OPT_ADD_FLOAT_ARR(aber,1) //4
    DFC_OPT_ADD_FLOAT_ARR(aber,2) //4
@@ -575,7 +577,7 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_FLOAT(auto_bright_thr)
    DFC_OPT_ADD_FLOAT(bright)
    DFC_OPT_ADD_FLOAT(threshold)
-#endif
+
    DFC_OPT_ADD_INT(four_color_rgb)
    DFC_OPT_ADD_INT(gamma_16bit) //TODO is it needed?
    DFC_OPT_ADD_INT(half_size)
