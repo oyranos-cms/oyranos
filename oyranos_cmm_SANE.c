@@ -181,18 +181,18 @@ int GetDevices(const SANE_Device *** device_list, int *size)
       fflush(NULL);
       return 1;
    }
-   printf("OK\n");
-   fflush(NULL);
    *device_list = dl;
 
-   while (device_list[s])
-      s++;
+   while (dl[s]) s++;
    *size = s;
+
+   printf("OK [%d]\n", s);
+   fflush(NULL);
 
    return 0;
 }
 
-/** Function GetDevices
+/** Function GetDevices_
  *  @brief Request all devices from SANE and return their SANE_Device::name
  *
  * @param[in/out]	list					NULL terminated array of strings holding device names
@@ -357,7 +357,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    if (command_list) {
       /* "list" call section */
 
-      error = GetDevices(&device_list, &num_devices);
+      error = GetDevices(&device_list, &num_devices); //FIXME If user provides device name
 
       for (i = 0; i < num_devices; ++i) {
          const char *sane_name = device_list[i]->name;
@@ -481,6 +481,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       return error;
    } else {
       /*wrong or no command */
+      /*TODO Message+deallocation*/
    }
 }
 
