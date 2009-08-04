@@ -245,19 +245,18 @@ void cleanup()
    sane_exit();
 }
 
+void help()
+{
+   printf("\nUsage: %s [-d <device>] [-i [icc profile]]\n", argv[0]);
+   printf("<device>:\n\t\tA sane device string\n<icc profile>:\n\t\t"
+          "(a) A path to an *.ic[cm] file\n\t\t"
+          "(b) If empty use Oyranos\n");
+}
+
 int main(int argc, char **argv)
 {
    int arg;
 
-   init();
-
-   if (argc == 1) {
-      printf("\nUsage: %s [-d <device>] [-i [icc profile]]\n", argv[0]);
-      printf
-          ("<device>:\n\t\tA sane device string\n<icc profile>:\n\t\t(a) A path to an *.ic[cm] file\n\t\t(b) If empty use Oyranos\n",
-           argv[0]);
-      return 0;
-   }
    for (arg = 1; arg < argc; arg++) {
       if (strcmp(argv[arg], "-d") == 0)
          device_name = argv[++arg];
@@ -270,7 +269,12 @@ int main(int argc, char **argv)
       }
    }
 
-   select_device();
+   init();
+   if (argc == 1) {
+      help();
+      return 0;
+   }
+
    scan_it();
    if (icc_profile_name)
       read_profile();
