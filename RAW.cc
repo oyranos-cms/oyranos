@@ -212,5 +212,5 @@ void RAW::print_exif_data(std::ostream & out)
 
 void RAW::print_libraw_version()
 {
-   cerr << "LibRaw, version: " << rip.version() << endl;
+   cerr << "LibRaw, version: " << rip.version() << " [" << rip.versionNumber() << "]" << endl;
 }
