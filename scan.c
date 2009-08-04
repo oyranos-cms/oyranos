@@ -6,10 +6,11 @@
 #include <oyranos_alpha.h>
 #define CMM_BASE_REG "//imaging/config.scanner.SANE"
 
+#include "helper.c"
+
 SANE_Status status;
 SANE_Int version = 0, num_options, num_devices ;
 SANE_Handle device_handle;
-const SANE_Device **device_list = NULL;
 SANE_Device *sane_device = NULL;
 SANE_String_Const device_name = NULL;
 
@@ -35,7 +36,7 @@ void print_sane_version()
           SANE_VERSION_MAJOR(version), SANE_VERSION_MINOR(version), SANE_VERSION_BUILD(version));
 }
 
-/// Initialise the device_list of sane devices
+
 void init()
 {
    int i = 0;
@@ -49,18 +50,24 @@ void init()
    /*Sending a '0' for driver version will call sane_init and return us the sane version*/
    oyOptions_SetFromInt(&list_options, CMM_BASE_REG OY_SLASH "driver_version", version, 0, OY_CREATE_NEW);
    /*The value is not used in the following options*/
-   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "oyNAME_NAME", NULL, OY_CREATE_NEW);
-   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_context", NULL, OY_CREATE_NEW);
-   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_handle", NULL, OY_CREATE_NEW);
+   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "oyNAME_NAME", "", OY_CREATE_NEW);
+   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_context", "", OY_CREATE_NEW);
+   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_handle", "", OY_CREATE_NEW);
    /*Only a particular device has been asked*/
    if (device_name)
       oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
+
+   printf("Sending the following options to Oyranos\n"); //DBG
+   print_options(list_options); //DBG
 
    /*Now call Oyranos*/
    if (oyDevicesGet(OY_TYPE_STD, "scanner", list_options, &devices) != 0)
       exit(1);
    if (!devices)
       exit(1);
+
+   printf("Got the following devices from Oyranos\n"); //DBG
+   print_devices(devices, "scanner"); //DBG
 
    /*Fill all the local variables with the returned options*/
    num_devices = oyConfigs_Count(devices);
@@ -82,7 +89,12 @@ void init()
 
       /*device_context holds the SANE_Device struct*/
       context_opt = oyConfig_Find(device, "device_context");
-      sane_device = (SANE_Device*)oyOption_GetData(context_opt, &struct_size, malloc);
+      if (!context_opt) {
+         printf("Oyranos did not return a device_context for device [%d].\n", i);
+         oyConfig_Release(&device);
+         continue;
+      }
+      sane_device = (SANE_Device*)oyOption_GetData(context_opt, NULL, malloc);
 
       /*device_handle holds the SANE_Handle*/
       handle_opt = oyConfig_Find(device, "device_handle");
@@ -92,8 +104,8 @@ void init()
 
       printf("[Device %d]\n", i);
       printf("name:\t%s\nvendor:\t%s\nmodel:\t%s\ntype:\t%s\n\n",
-            device_list[i]->name, device_list[i]->vendor,
-            device_list[i]->model, device_list[i]->type);
+             sane_device->name, sane_device->vendor,
+             sane_device->model, sane_device->type);
 
       /*If a device has been requested, do not delete it's options!*/
       if (!device_name) {
@@ -268,7 +280,7 @@ void cleanup()
 
 void help()
 {
-   printf("\nUsage: %s [-d <device>] [-i [icc profile]]\n", argv[0]);
+   printf("\nUsage: scan [-d <device>] [-i [icc profile]]\n");
    printf("<device>:\n\t\tA sane device string\n<icc profile>:\n\t\t"
           "(a) A path to an *.ic[cm] file\n\t\t"
           "(b) If empty use Oyranos\n");
