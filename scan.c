@@ -3,13 +3,22 @@
 #include <string.h>
 #include <sane/sane.h>
 
-#include "sane_color_options.c"
+#include <oyranos_alpha.h>
+#define CMM_BASE_REG "//imaging/config.scanner.SANE"
+#define CMM_COMMAND CMM_BASE_REG "/command"
 
 SANE_Status status;
-SANE_Int version, num_options;
+SANE_Int version = 0, num_options, num_devices ;
 SANE_Handle device_handle;
 const SANE_Device **device_list = NULL;
+const SANE_Device *sane_device = NULL;
 SANE_String_Const device_name = NULL;
+
+oyOption_s *option = NULL;
+oyOptions_s *list_options = NULL,
+            *backend_core = NULL
+            *data         = NULL;
+oyConfig_s *device = NULL;
 
 char *image_buffer = NULL;
 char *icc_profile = NULL;
@@ -28,26 +37,58 @@ void print_sane_version()
 void init()
 {
    int i = 0;
+   oyConfigs_s *devices = NULL;
+   /**1. Query Oyranos SANE backend for all avaliable devices**/
+   /* Use the "command" -> "list" option
+    * and also all other options that are supported by the backend */
+   list_options = oyOptions_New(0);
 
-   status = sane_init(&version, NULL);
-   if (status != SANE_STATUS_GOOD) {
-      printf("Cannot initialise sane!\n");
+   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "command", "list", OY_CREATE_NEW);
+   /*Sending a '0' for driver version will call sane_init and return us the sane version*/
+   oyOptions_SetFromInt(&list_options, CMM_BASE_REG OY_SLASH "driver_version", version, 0, OY_CREATE_NEW);
+   /*The value is not used in the following options*/
+   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "oyNAME_NAME", NULL, OY_CREATE_NEW);
+   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_context", NULL, OY_CREATE_NEW);
+   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_handle", NULL, OY_CREATE_NEW);
+   if (device_name)
+      oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
+
+   /*Now call Oyranos*/
+   if (oyDevicesGet(OY_TYPE_STD, "scanner", list_options, &devices) != 0)
       exit(1);
-   }
-
-   status = sane_get_devices(&device_list, SANE_FALSE);
-   if (status != SANE_STATUS_GOOD) {
-      printf("Cannot get sane devices!\n");
+   if (!devices)
       exit(1);
-   }
 
+   /*Fill all the local variables with the returned options*/
+   num_devices = oyConfigs_Count(devices);
+   if (num_devices<1) {
+      printf("No SANE devices found. Bye!");
+      exit(0);
+   } else
+      printf("Found %d SANE device%s\n", num_devices, num_devices > 1 ? "s" : "");
+
+   /*Get the SANE version from the first found device*/
+   device = oyConfigs_Get(devices, 0);
+   oyOptions_FindInt(device->data, CMM_BASE_REG "driver_version", 0, &version);
+   oyConfig_Release(device);
    print_sane_version();
-   do {
+
+   for (i = 0; i < num_devices; i++) {
+      oyConfig_s *device = oyConfigs_Get(devices, i);
+      oyOption_s *context_opt = oyConfig_Find(device, "device_context");
+      int struct_size = 0;
+      sane_device = (SANE_Device*)oyOption_GetData(context_opt, &struct_size, malloc);
+      oyOption_Release(&context_opt);
+      oyConfig_Release(&device);
+
       printf("[Device %d]\n", i);
-      printf("name:\t%s\nvendor:\t%s\nmodel:\t%s\ntype:\t%s\n\n", device_list[i]->name, device_list[i]->vendor,
-             device_list[i]->model, device_list[i]->type);
-      i++;
-   } while (device_list[i]);
+      printf("name:\t%s\nvendor:\t%s\nmodel:\t%s\ntype:\t%s\n\n",
+            device_list[i]->name, device_list[i]->vendor,
+            device_list[i]->model, device_list[i]->type);
+
+      free(sane_device);
+      sane_device = NULL;
+   }
 }
 
 /// Select the sane device to use
@@ -237,4 +278,23 @@ int main(int argc, char **argv)
    cleanup();
 
    return 0;
+}
+
+int print_sane_devices(oyConfigs_s * devices)
+{
+   int i;
+
+   printf("Found %d SANE device%s\n", num_devices, num_devices > 1 ? "s" : "");
+   for (i = 0; i < num_devices; i++) {
+      oyConfig_s *device = oyConfigs_Get(devices, i);
+      int num_options = oyConfig_Count(device);
+      printf("\tFound %d option%s for device %d\n", num_options, num_options > 1 ? "s" : "", i);
+      for (int j = 0; j < num_options; j++) {
+         oyOption_s *opt = oyConfig_Get(device, j);
+         print_option(opt, j);
+         oyOption_Release(&opt);
+      }
+      oyConfig_Release(&device);
+   }
+   return num_devices;
 }

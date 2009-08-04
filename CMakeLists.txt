@@ -17,6 +17,14 @@ PROJECT( gsoc )
 
 SET( CMAKE_BUILD_TYPE "Debug" )
 
+#Oyranos Flags############
+EXECUTE_PROCESS(	COMMAND oyranos-config --ldflags
+						COMMAND tr '\n' " "
+						OUTPUT_VARIABLE OY_LDFLAGS )
+EXECUTE_PROCESS(	COMMAND oyranos-config --cflags
+						COMMAND tr '\n' " "
+						OUTPUT_VARIABLE OY_CFLAGS )
+
 INCLUDE_DIRECTORIES( ${LIBRAW_L_INCLUDE_DIR} ${SANE_INCLUDE_DIR} )
 LINK_DIRECTORIES( ${LIBRAW_L_LIBRARY_DIR} ${SANE_LIBRARY_DIR} )
 
@@ -28,14 +36,11 @@ TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_L_LIBS} "exiv2" "tiff" )
 #scan##################
 ADD_EXECUTABLE( scan "scan.c")
 TARGET_LINK_LIBRARIES( scan ${SANE_LIBS} "tiff" )
+SET_TARGET_PROPERTIES( scan	PROPERTIES
+										COMPILE_FLAGS "${OY_CFLAGS}"
+										LINK_FLAGS "${OY_LDFLAGS}" )
 
 #oytest##################
-EXECUTE_PROCESS(	COMMAND oyranos-config --ldflags
-						COMMAND tr '\n' " "
-						OUTPUT_VARIABLE OY_LDFLAGS )
-EXECUTE_PROCESS(	COMMAND oyranos-config --cflags
-						COMMAND tr '\n' " "
-						OUTPUT_VARIABLE OY_CFLAGS )
 ADD_EXECUTABLE( oytest "oyTest.cc")
 SET_TARGET_PROPERTIES( oytest	PROPERTIES
 										COMPILE_FLAGS "${OY_CFLAGS}"
