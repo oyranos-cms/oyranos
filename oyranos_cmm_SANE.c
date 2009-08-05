@@ -184,7 +184,9 @@ int GetDevices(const SANE_Device *** device_list, int *size)
    fflush(NULL);
    status = sane_get_devices(&dl, SANE_FALSE);
    if (status != SANE_STATUS_GOOD) {
-      printf("Cannot get sane devices!\n");
+      message(oyMSG_WARN, 0,
+              "%s()\n Cannot get sane devices: %s\n",
+              __func__, sane_strstatus(status));
       fflush(NULL);
       return 1;
    }
@@ -255,17 +257,19 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    /*Handle "driver_version" option [IN] */
    if (oyOptions_FindInt(options, "driver_version", 0, &driver_version) == 0) {
       version_opt = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0);
-      if (driver_version == 0)
-         if (sane_init(&driver_version, NULL) == SANE_STATUS_GOOD) {
+      if (driver_version == 0) {
+         error = sane_init(&driver_version, NULL);
+         if (error == SANE_STATUS_GOOD) {
             /*Handle "driver_version" option [OUT] */
             printf("SANE v.(%d) init...OK\n", driver_version);
             error = oyOption_SetFromInt(version_opt, driver_version, -1, 0);
          } else {
             message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-                    "Unable to init SANE. Giving up. Options:\n%s", _DBG_ARGS_,
-                    oyOptions_GetText(options, oyNAME_NICK));
+                    "Unable to init SANE. Giving up.[%s] Options:\n%s", _DBG_ARGS_,
+                    sane_strstatus(error), oyOptions_GetText(options, oyNAME_NICK));
             return 1;
          }
+      }
    }
    /*if version==0 => not supplied, else if version>0 => use version_opt*/
 
@@ -322,15 +326,15 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          if (handle_opt) {
             oyBlob_s *handle_blob = NULL; //FIXME Replace with oyCMMptr_s
             SANE_Handle h;
-
-            if (sane_open(sane_name, &h) == SANE_STATUS_GOOD) {
+            error = sane_open(sane_name, &h);
+            if (error == SANE_STATUS_GOOD) {
                handle_blob = oyBlob_New(NULL);
                oyBlob_SetFromData(handle_blob, (oyPointer) & h, sizeof(SANE_Handle), "sane");
                oyOptions_MoveInStruct(&(device->backend_core),
                                       CMM_BASE_REG OY_SLASH "device_handle",
                                       (oyStruct_s **) & handle_blob, OY_CREATE_NEW);
             } else
-               printf("Unable to open sane device \"%s\"\n", sane_name);
+               printf("Unable to open sane device \"%s\": %s\n", sane_name, sane_strstatus(error));
          }
 
          device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
@@ -384,7 +388,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (!handle_opt) {
          error = sane_open( device_name, &device_handle );
          if (error != SANE_STATUS_GOOD) {
-            printf("Unable to open sane device \"%s\"\n", device_name);
+            printf("Unable to open sane device \"%s\": \n", device_name, sane_strstatus(error));
             return 1;
          }
       } else {
@@ -584,7 +588,9 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
    /* We got a device, find out how many options it has */
    status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
    if (status != SANE_STATUS_GOOD) {
-      message(oyMSG_WARN, 0, "%s()\n Unable to determine option count\n", __func__);
+      message(oyMSG_WARN, 0,
+              "%s()\n Unable to determine option count: %s\n",
+              __func__, sane_strstatus(status));
       return -1;
    }
 
@@ -660,7 +666,9 @@ int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
    /* Get the nuber of scanner options */
    status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
    if (status != SANE_STATUS_GOOD) {
-      message(oyMSG_WARN, 0, "%s()\n Unable to determine option count\n", __func__);
+      message(oyMSG_WARN, 0,
+              "%s()\n Unable to determine option count: %s\n",
+              __func__, sane_strstatus(status));
       return -1;
    }
 
