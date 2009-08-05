@@ -10,7 +10,7 @@
 
 SANE_Status status;
 SANE_Int version = 0, num_options, num_devices ;
-SANE_Handle device_handle;
+SANE_Handle device_handle = NULL;
 SANE_Device *sane_device = NULL;
 SANE_String_Const device_name = NULL;
 
@@ -98,7 +98,8 @@ void init()
 
       /*device_handle holds the SANE_Handle*/
       handle_opt = oyConfig_Find(device, "device_handle");
-      device_handle = *(SANE_Handle*)oyOption_GetData(handle_opt, NULL, malloc);
+      if (handle_opt)
+         device_handle = *(SANE_Handle*)oyOption_GetData(handle_opt, NULL, malloc);
 
       oyConfig_Release(&device);
 
@@ -111,6 +112,7 @@ void init()
       if (!device_name) {
          free(sane_device);
          sane_device = NULL;
+         device_handle = NULL;
          oyOption_Release(&context_opt);
          oyOption_Release(&handle_opt);
       }
