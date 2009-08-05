@@ -1,10 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-SET( LOCAL "/home/john/local/" )
-SET( LIBRAW_INCLUDE_DIR "/home/john/local/include" )
-SET( LIBRAW_LIBRARY_DIR "/home/john/local/lib" )
-SET( LIBRAW_LIBS "raw" )
-
 SET( LIBRAW_L_INCLUDE_DIR "/home/john/Code/GSoC/raw/LibRaw-Lite-0.7.2" )
 SET( LIBRAW_L_LIBRARY_DIR "/home/john/Code/GSoC/raw/LibRaw-Lite-0.7.2/lib" )
 SET( LIBRAW_L_LIBS "raw-lite" )
@@ -54,7 +49,7 @@ TARGET_LINK_LIBRARIES( oyranos_oyRE_cmm_module ${LIBRAW_L_LIBS} "exiv2" )
 add_subdirectory( doc )
 
 ##################INSTALLATION##################
-SET( CMAKE_INSTALL_PREFIX ${LOCAL} )
+MESSAGE( "Info: Files will be installed in ${CMAKE_INSTALL_PREFIX}" )
 INSTALL( TARGETS raw2tiff scan
 	RUNTIME
 	DESTINATION "bin/" )
