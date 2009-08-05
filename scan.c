@@ -137,21 +137,14 @@ void scan_it()
    //This stage is not implemented in this simple programm
    status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, NULL);
    if (status != SANE_STATUS_GOOD) {
-      printf("Cannot count device options!\n");
+      SANE_String_Const message = sane_strstatus(status);
+      printf("%s: Cannot count device options!\n", message);
       exit(1);
    }
    printf("%s sane driver reports %d options in total.\n", device_name, num_options);
 
-   //3. Acquire the scanned image
-   status = sane_start(device_handle);
-   if (status != SANE_STATUS_GOOD) {
-      printf("Cannot start scanning!\n");
-      exit(1);
-   } else
-      printf("sane_start()\n");
 
-   //3.1 Get the relevant color information from Oyranos before scanning
-   //but only afer the options have been locked with sane_start()
+   //2.1 Get the relevant color information from Oyranos just before sane_start()
    //This is the "command" -> "properties" call
    device = oyConfig_New(CMM_BASE_REG, 0);
    options = oyOptions_New(0);
@@ -175,10 +168,20 @@ void scan_it()
    print_device(device); //DBG
 
 
+   //3. Acquire the scanned image
+   status = sane_start(device_handle);
+   if (status != SANE_STATUS_GOOD) {
+      SANE_String_Const message = sane_strstatus(status);
+      printf("%s: Cannot start scanning!\n", message);
+      exit(1);
+   } else
+      printf("sane_start()\n");
+
    //3.2 Take care of all scan parameters
    status = sane_get_parameters(device_handle, &params);
    if (status != SANE_STATUS_GOOD) {
-      printf("Cannot get scanning parameters!\n");
+      SANE_String_Const message = sane_strstatus(status);
+      printf("%s: Cannot get scanning parameters!\n", message);
       exit(1);
    }
    if (params.format != SANE_FRAME_RGB) {
