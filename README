@@ -1,18 +1,26 @@
 1. Dependencies
-LibRaw and libexiv2-dev are needed.
-LibRaw only provides a Makefile, you need to edit the first few lines (http://www.libraw.org/).
+   * Oyranos from git: oyranos-config should be in the PATH.
+   * sane-backends from git://git.debian.org/sane/sane-backends.git.
+   * LibRaw: Only provides a Makefile, you need to edit the first few lines (http://www.libraw.org/).
+   * Your distribution's EXIV2 library (libexiv2-dev on Ubuntu).
+   * (Optional) elinks to create the help text from html.
 
 2. Compilation
-Just edit lines 3,4 of CMakeLists.txt to point to where LibRaw is installed.
+   * Edit LIBRAW_L_INCLUDE_DIR, LIBRAW_L_LIBRARY_DIR of CMakeLists.txt
+     to point to where LibRaw is installed.
+   * To enable the pnm backend:
+     -  Apply the sane_cap_colour.patch to sane-backends.
+     -  Re-build/install sane-backends.
+     -  Edit </sane/install/path>/etc/sane.d/dll.conf and uncomment the pnm backend.
+     -  Copy a ppm file to /tmp/input.ppm.
+
 Then:
-$ cmake .
+$ cmake . -DCMAKE_INSTALL_PREFIX=</your/install/path>
 $ make
+$ make install
 
 3. Usage
-$ ./raw2tiff <raw image>
+$ ./raw2tiff <raw image> [-i <icc_profile>]
+$ ./scan [-d <device>] [-i [icc profile]]
 
 Exif data is saved in file exif.txt
-
-4. TODO
-Use libtiff library to save the RGB buffer as a tiff image with
-embeded icc profile.
