@@ -581,8 +581,8 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
    const SANE_Option_Descriptor *opt = NULL;
    SANE_Int num_options = 0;
    SANE_Status status;
-   int error = 0;
-   unsigned int opt_num = 0, i, count;
+   int error = 0, i;
+   unsigned int opt_num = 0, count;
    char cmm_base_reg[] = CMM_BASE_REG OY_SLASH;
 
    /* We got a device, find out how many options it has */
