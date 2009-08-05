@@ -298,6 +298,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          /*Handle "driver_version" option [OUT] */
          if (version_opt)
             oyOptions_MoveIn(device->data, &version_opt, -1);
+         //FIXME Seems to *move* the struct, not copy as needed.
 
          /*Handle "device_name" option [OUT] */
          error = oyOptions_SetFromText(&device->backend_core,
@@ -583,8 +584,8 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
    /* We got a device, find out how many options it has */
    status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
    if (status != SANE_STATUS_GOOD) {
-      fprintf(stderr, "unable to determine option count\n");
-      return 1;
+      message(oyMSG_WARN, 0, "%s()\n Unable to determine option count\n", __func__);
+      return -1;
    }
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
