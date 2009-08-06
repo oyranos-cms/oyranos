@@ -65,6 +65,9 @@ oyMessage_f message = 0;
 extern oyCMMapi8_s _api8;
 oyRankPad _rank_map[];
 
+int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options);
+int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map);
+
 /* --- implementations --- */
 
 int CMMInit()
@@ -388,7 +391,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (!handle_opt) {
          error = sane_open( device_name, &device_handle );
          if (error != SANE_STATUS_GOOD) {
-            printf("Unable to open sane device \"%s\": \n", device_name, sane_strstatus(error));
+            printf("Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(error));
             return 1;
          }
       } else {
