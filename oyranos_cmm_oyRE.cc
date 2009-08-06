@@ -62,7 +62,6 @@
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
 #define _(x) x
-#define STRING_ADD(a,b) sprintf( &a[strlen(a)], b )
 
 /** @instance _rank_map
  *  @brief    oyRankPad map for mapping device to configuration informations
@@ -361,7 +360,51 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /*Handle "supported_devices_info" option [OUT:informative]*/
       if (!handle_opt) {
          oyOption_s *device_list_opt = oyOption_New(CMM_BASE_REG OY_SLASH "supported_devices_info", 0);
-         device_list_opt->value->string_list = const_cast<char**>(device_list);
+         device_list_opt->value = (oyValue_u*)device_list_opt->oy_->allocateFunc_(sizeof(oyValue_u));
+         int i = 0;
+         while(device_list[i++]);
+         printf("################### Found %d devices #######################\n",i-1);
+         //device_list_opt->value->string_list = const_cast<char**>(device_list);
+         device_list_opt->value->string_list = (char**) device_list_opt->oy_->allocateFunc_(sizeof(char*) * i);
+         memset( device_list_opt->value->string_list, 0, sizeof(char*) * i );
+
+         const char ** cameras = device_list;
+         i = 0;
+         int mnft_n = -1;
+         ptrdiff_t len;
+         char manufacturer[128] = {0},
+              manufacturer_old[128] = {0};
+
+#define STRING_ADD(t_,add) \
+{ int l_[2] = {0,0}; char * tmp = 0; if(t_) l_[0] = strlen(t_); \
+  if(add) l_[1] = strlen(add); \
+  tmp = (char*)device_list_opt->oy_->allocateFunc_(l_[0]+l_[1]+1); \
+  tmp[0] = 0; \
+  if(t_) sprintf(tmp, "%s", t_); sprintf( &tmp[strlen(tmp)], "%s", add ); \
+  if(t_) device_list_opt->oy_->deallocateFunc_(t_); t_ = tmp; tmp = 0; }
+
+         if(cameras)
+         while(cameras[i])
+         {
+           len = strchr(cameras[i], ' ') - cameras[i];
+           memcpy( manufacturer, cameras[i], len );
+           manufacturer[len] = '\000';
+           if(strcmp(manufacturer,manufacturer_old) != 0)
+           {
+             STRING_ADD(device_list_opt->value->string_list[++mnft_n],manufacturer)
+             STRING_ADD(device_list_opt->value->string_list[mnft_n],"\n")
+             sprintf( manufacturer_old, "%s", manufacturer );
+           }
+
+           STRING_ADD( device_list_opt->value->string_list[mnft_n],
+                       &cameras[i][len+1] )
+           STRING_ADD(device_list_opt->value->string_list[mnft_n],"\n")
+           //cout << "  " << &cameras[i][len] << endl;
+           ++i;
+         }
+
+#undef STRING_ADD
+
          device_list_opt->value_type = oyVAL_STRING_LIST;
          oyOptions_MoveIn(device->data, &device_list_opt, -1);
       }
@@ -401,7 +444,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    } //End of Configuration
 
    /*Return the Configuration object*/
-   oyConfigs_s *devices = NULL;
+   oyConfigs_s *devices = *s;
+   if(!devices)
+     devices = oyConfigs_New(0);
    oyConfigs_MoveIn(devices, &device, -1);
    *s = devices;
  
