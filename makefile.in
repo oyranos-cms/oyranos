@@ -356,7 +356,7 @@ time:
 # build all objects and libraries, link the headers to $(TARGET)
 $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(libdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$@ \
 	-o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(libdir) $(LDLIBS) $(m)
@@ -367,7 +367,7 @@ $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS)
 
 $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
 	$(CMM_lcms_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -381,7 +381,7 @@ modules/oyranos_cmm_lraw.o:	$(SRCDIR)/modules/oyranos_cmm_lraw.cpp
 
 $(LIB_CMM_lraw): $(CMM_lraw_OBJECTS)
 	echo Linking $@ ...
-	$(CXX) -I./ $(CXXFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CXX) -I./ $(CXXFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
 	$(CMM_lraw_OBJECTS) $(LRAW_LIBS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_lraw$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -391,7 +391,7 @@ $(LIB_CMM_lraw): $(CMM_lraw_OBJECTS)
 
 $(LIB_CMM_oydi): $(CMM_oydi_OBJECTS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
 	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(Xcolor) $(Xfixes) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -401,7 +401,7 @@ $(LIB_CMM_oydi): $(CMM_oydi_OBJECTS)
 
 $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
 	$(CMM_oyX1_OBJECTS) $(MONI_OBJECTS) $(X11_LIBS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -411,7 +411,7 @@ $(LIB_CMM_oyX1): $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
 
 $(LIB_CMM_CUPS): $(CMM_CUPS_OBJECTS)
 	echo Linking $@ ...
-	-$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	-$(CC) $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
 	$(CMM_CUPS_OBJECTS) $(MODULE_LDLIBS) -lcups
 	$(RM)  lib$(TARGET)_CUPS$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -421,7 +421,7 @@ $(LIB_CMM_CUPS): $(CMM_CUPS_OBJECTS)
 
 $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
 	$(CMM_oyra_OBJECTS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oyra$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -431,7 +431,7 @@ $(LIB_CMM_oyra): $(CMM_oyra_OBJECTS)
 
 $(LIB_CMM_oyIM): $(CMM_oyIM_OBJECTS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(metadir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_metadir)$@ \
 	-o $@ \
 	$(CMM_oyIM_OBJECTS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
@@ -441,7 +441,7 @@ $(LIB_CMM_oyIM): $(CMM_oyIM_OBJECTS)
 
 $(LIB_CMM_oicc): $(CMM_oicc_OBJECTS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(cmmdir)/$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
 	$(CMM_oicc_OBJECTS) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oicc$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
