@@ -1286,9 +1286,12 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
   {
     /* input data */
     hashTextAdd_m( "  <data_in>\n" );
-    temp = lcmsImage_GetText( in_image, verbose, oyAllocateFunc_ );
-    hashTextAdd_m( temp );
-    oyDeAllocateFunc_(temp); temp = 0;
+    if(in_image)
+    {
+      temp = lcmsImage_GetText( in_image, verbose, oyAllocateFunc_ );
+      hashTextAdd_m( temp );
+      oyDeAllocateFunc_(temp); temp = 0;
+    }
     hashTextAdd_m( "  </data_in>\n" );
 
     /* options -> xforms */
@@ -1308,9 +1311,12 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
 
     /* output data */
     hashTextAdd_m( "  <data_out>\n" );
-    temp = lcmsImage_GetText( out_image, verbose, oyAllocateFunc_ );
-    hashTextAdd_m( temp );
-    oyDeAllocateFunc_(temp); temp = 0;
+    if(out_image)
+    {
+      temp = lcmsImage_GetText( out_image, verbose, oyAllocateFunc_ );
+      hashTextAdd_m( temp );
+      oyDeAllocateFunc_(temp); temp = 0;
+    }
     hashTextAdd_m( "  </data_out>\n" );
   }
   hashTextAdd_m( tmp );
@@ -1428,7 +1434,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   array_in = new_ticket->array;
   array_out = ticket->array;
 
-  data_type = oyToDataType_m( image_input->layout_[0] );
+  data_type = oyToDataType_m( oyImage_PixelLayoutGet( image_input ) );
 
   if(data_type == oyFLOAT)
   {
@@ -1437,9 +1443,18 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = 1;
   }
 
-  channels = oyToChannels_m( ticket->output_image->layout_[0] );
+  if(!ticket->output_image)
+  {
+    message(oyMSG_WARN,0, "%s: %d no ticket->output_image", __FILE__,__LINE__);
+    error = 1;
+  }
 
-  error = lcmsCMMTransform_GetWrap_( node->backend_data, &ltw );
+  if(!error)
+  {
+    channels = oyToChannels_m( ticket->output_image->layout_[0] );
+
+    error = lcmsCMMTransform_GetWrap_( node->backend_data, &ltw );
+  }
 
   /* now do some position blind manipulations */
   if(ltw)
@@ -1769,7 +1784,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
   "Colour/CMM/littleCMS", /* category */
   lcms_extra_options,   /* const char * options */
-  lcmsGetOptionsUI,   /* oyCMMuiGet_f oyCMMuiGet */
+  lcmsGetOptionsUI      /* oyCMMuiGet_f oyCMMuiGet */
 };
 
 
