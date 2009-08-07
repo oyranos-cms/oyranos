@@ -1,5 +1,6 @@
 
 #ifdef __cplusplus
+using namespace oyranos;
 extern "C" {
 #endif /* __cplusplus */
 
