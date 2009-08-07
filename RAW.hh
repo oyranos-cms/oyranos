@@ -8,13 +8,13 @@
 
 class RAW {
  private:
-   bool opened;                 ///< is the file opened?
-   LibRaw rip;                  ///< raw image processor
-   libraw_processed_image_t *imageRGB; ///< struct with image data
-    std::string filename;       ///< Filename
-    Exiv2::Image::AutoPtr imageExif;   ///< pointer to exif data
-   char *icc_profile;           ///< pointer to ICC profile
-   unsigned icc_profile_bytes;  ///< size of profile in bytes
+   bool opened;                           ///< is the file opened?
+   LibRaw rip;                            ///< raw image processor
+   libraw_processed_image_t *imageRGB;    ///< struct with image data
+   std::string filename;                  ///< Filename
+   Exiv2::Image::AutoPtr imageExif;       ///< pointer to image with exif data
+   char *icc_profile;                     ///< pointer to ICC profile
+   unsigned icc_profile_bytes;            ///< size of profile in bytes
 
    /// Resets data members
    void release_members();
