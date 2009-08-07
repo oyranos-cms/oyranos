@@ -6,6 +6,9 @@
 
 #include "libraw/libraw.h"
 
+#include <oyranos_alpha.h>
+#define CMM_BASE_REG "//imaging/config.raw-image.oyRE"
+
 class RAW {
  private:
    bool opened;                           ///< is the file opened?
@@ -15,6 +18,9 @@ class RAW {
    Exiv2::Image::AutoPtr imageExif;       ///< pointer to image with exif data
    char *icc_profile;                     ///< pointer to ICC profile
    unsigned icc_profile_bytes;            ///< size of profile in bytes
+   std::string icc_profile_name;          ///< size of profile in bytes
+   int version_num;                       ///< LibRaw version number
+   const char *version_str;               ///< LibRaw version string
 
    /// Resets data members
    void release_members();
@@ -22,8 +28,8 @@ class RAW {
    void load_exif();
 
  public:
-    RAW();
-    RAW(const std::string & file);
+   RAW();
+   RAW(const std::string &raw, const std::string &icc = "");
 
    /// Open raw file and store RGB data to memmory
    void open(const std::string & filename = "");
@@ -34,7 +40,10 @@ class RAW {
    //void open( libgphoto camera );
    /// Open an icc profile to memmory
    /// No cind of verification is done yet.
-   void open_profile(const std::string & profile);
+   void open_profile();
+
+   /// Use Oyranos raw-image backend
+   void GetColorInfo();
 
    /// Save image as tiff.
    void save_tiff();

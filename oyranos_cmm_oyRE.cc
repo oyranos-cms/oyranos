@@ -32,6 +32,7 @@
 #include <libraw/libraw.h>
 
 #include "oyRE_help.c"
+#include "helper.c"
 /* --- internal definitions --- */
 
 #define DBG printf("%s: %d\n", __FILE__, __LINE__ ); fflush(NULL);
@@ -605,8 +606,9 @@ oyCMMInfo_s _cmm_module = {
 }
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 {
-   int error;
+   int error = 0;
 
+#if 0
    DFC_OPT_ADD_FLOAT_ARR(aber,0) //4
    DFC_OPT_ADD_FLOAT_ARR(aber,1) //4
    DFC_OPT_ADD_FLOAT_ARR(aber,2) //4
@@ -620,10 +622,11 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_FLOAT_ARR(user_mul,1) //4
    DFC_OPT_ADD_FLOAT_ARR(user_mul,2) //4
    DFC_OPT_ADD_FLOAT_ARR(user_mul,3) //4
+#endif
    DFC_OPT_ADD_FLOAT(auto_bright_thr)
    DFC_OPT_ADD_FLOAT(bright)
    DFC_OPT_ADD_FLOAT(threshold)
-
+#if 0
    DFC_OPT_ADD_INT(four_color_rgb)
    DFC_OPT_ADD_INT(gamma_16bit) //TODO is it needed?
    DFC_OPT_ADD_INT(half_size)
@@ -643,7 +646,7 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_INT_ARR(greybox,2) //4
    DFC_OPT_ADD_INT_ARR(greybox,3) //4
    DFC_OPT_ADD_INT(shot_select)
-
+#endif
    return error;
 }
 

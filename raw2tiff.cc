@@ -17,13 +17,15 @@ int main(int argc, char *argv[])
 
    ofstream exif("exif.txt");
 
-   RAW raw(argv[1]);
+   RAW raw(argv[1], profile);
    raw.print_libraw_version();
    raw.open();
    raw.print_dcraw_settings(std::cout);
    raw.print_exif_data(exif);
-   raw.open_profile(profile);
+   raw.open_profile();
    raw.save_tiff();
+
+   raw.GetColorInfo();
 
    return 0;
 }

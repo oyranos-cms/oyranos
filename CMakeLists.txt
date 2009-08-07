@@ -28,13 +28,15 @@ LINK_DIRECTORIES( ${LIBRAW_L_LIBRARY_DIR} ${SANE_LIBRARY_DIR} )
 #raw2tiff##################
 ADD_EXECUTABLE( raw2tiff "RAW.cc" "raw2tiff.cc")
 TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_L_LIBS} "exiv2" "tiff" )
+SET_TARGET_PROPERTIES( raw2tiff  PROPERTIES
+                                 COMPILE_FLAGS "${OY_CFLAGS}"
+                                 LINK_FLAGS "${OY_LDFLAGS}" )
 #scan##################
 ADD_EXECUTABLE( scan "scan.c")
 TARGET_LINK_LIBRARIES( scan ${SANE_LIBS} "tiff" )
 SET_TARGET_PROPERTIES( scan	PROPERTIES
 										COMPILE_FLAGS "${OY_CFLAGS}"
 										LINK_FLAGS "${OY_LDFLAGS}" )
-
 #oytest##################
 ADD_EXECUTABLE( oytest "oyTest.cc")
 SET_TARGET_PROPERTIES( oytest	PROPERTIES

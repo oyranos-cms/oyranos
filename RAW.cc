@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "RAW.hh"
+#include "helper.c"
 
 using std::string;
 using std::ifstream;
@@ -9,13 +10,25 @@ using std::cerr;
 using std::endl;
 using std::ios;
 
- RAW::RAW():opened(false), rip(), imageRGB(NULL), filename(), imageExif(NULL), icc_profile(NULL)
-{
-}
+RAW::RAW() :
+   opened(false),
+   rip(),
+   imageRGB(NULL),
+   filename(),
+   imageExif(NULL),
+   icc_profile(NULL), icc_profile_bytes(0), icc_profile_name(),
+   version_num(0), version_str(NULL)
+{}
 
- RAW::RAW(const string & file):opened(false), rip(), imageRGB(NULL), filename(file), imageExif(NULL), icc_profile(NULL)
-{
-}
+RAW::RAW(const string & raw, const string & icc) :
+   opened(false),
+   rip(),
+   imageRGB(NULL),
+   filename(raw),
+   imageExif(NULL),
+   icc_profile(NULL), icc_profile_bytes(0), icc_profile_name(icc),
+   version_num(0), version_str(NULL)
+{}
 
 RAW::~RAW()
 {
@@ -81,14 +94,80 @@ void RAW::open(const string & filename_)
        bits << "bits with " << imageRGB->colors << " colors" << endl;
 }
 
+using namespace oyranos;
+void RAW::GetColorInfo()
+{
+   cerr<<endl<<"GetColorInfo():"<<endl;
+
+   oyConfigs_s *devices = NULL;
+   //1.  Query Oyranos oyRE backend for all avaliable devices
+   //    Use the "command" -> "list" option
+   //    plus the driver(LibRaw) version
+   oyOptions_s *list_options = oyOptions_New(0);
+
+   oyOptions_SetFromText(&list_options, CMM_BASE_REG OY_SLASH "command", "list", OY_CREATE_NEW);
+   /*The value is not used for the input option, just put `0'*/
+   oyOptions_SetFromInt(&list_options, CMM_BASE_REG OY_SLASH "driver_version", 0, 0, OY_CREATE_NEW);
+
+   printf("Sending the following options to Oyranos\n"); //DBG
+   print_options(list_options); //DBG
+
+   /*Now call Oyranos*/
+   if (oyDevicesGet(OY_TYPE_STD, "raw-image", list_options, &devices) != 0)
+      exit(1);
+   if (!devices)
+      exit(1);
+   oyOptions_Release( &list_options );
+
+   printf("Got the following devices from Oyranos\n"); //DBG
+   print_devices(devices, "raw-image"); //DBG
+
+   /*Get LibRAw version from the first(and only) device*/
+   oyConfig_s *device = oyConfigs_Get(devices, 0);
+   oyOptions_FindInt(device->data, "driver_version_num", 0, &version_num);
+   version_str = oyOptions_FindString(device->data, "driver_version_num", NULL);
+   cerr << "LibRaw, version: " << rip.version() << " [" << rip.versionNumber() << "]" << endl;
+
+   oyConfig_Release(&device);
+   oyConfigs_Release(&devices);
+
+   //2.  Get the relevant color information from Oyranos
+   //    This is the "command" -> "properties" call
+   device = oyConfig_New(CMM_BASE_REG, 0);
+   oyOptions_SetFromText(&device->data, CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
+   oyOptions_s *options = oyOptions_New(0);
+
+   //Request the properties call
+   oyOptions_SetFromText(&options, CMM_BASE_REG OY_SLASH "command", "properties", OY_CREATE_NEW);
+   //Pass in the filename
+   oyOptions_SetFromText(&options, CMM_BASE_REG OY_SLASH "device_handle", filename.c_str(), OY_CREATE_NEW);
+   //Pass int the libraw object with the raw image rendering options
+   oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
+   oyOption_SetFromData(context_opt, (oyPointer)&rip.imgdata.params, sizeof(libraw_output_params_t));
+   oyOptions_MoveIn(options, &context_opt, -1);
+   oyOption_Release(&context_opt);
+
+   printf("Sending the following options to Oyranos\n"); //DBG
+   print_options(options); //DBG
+
+   /*Call Oyranos*/
+   oyDeviceBackendCall(device, options);
+   printf("Oyranos returns the following colour related options.\n"); //DBG
+   print_device(device); //DBG
+   oyConfig_Release(&device);
+   oyOptions_Release(&options);
+}
+
 void RAW::open(const char *filename)
 {
    open(string(filename));
 }
 
-void RAW::open_profile(const std::string & profile)
+void RAW::open_profile()
 {
-   ifstream file(profile.c_str(), ios::in | ios::binary | ios::ate);
+   ifstream file(icc_profile_name.c_str(), ios::in | ios::binary | ios::ate);
+   if (!file)
+      return;
    icc_profile_bytes = file.tellg();
    icc_profile = new char[icc_profile_bytes];
    file.seekg(0, ios::beg);
