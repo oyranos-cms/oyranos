@@ -11,7 +11,7 @@ Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
 #%endif 
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
-Requires:  libxml2 elektra liblcms
+Requires:  libxml2 elektra liblcms cups-devel
 
 
 %if 0%{?suse_version} > 0
@@ -23,7 +23,7 @@ BuildRequires:     gcc-c++ gettext doxygen graphviz pkgconfig    libpng-devel li
 BuildRequires:  acl autoconf automake bash bind-utils binutils bison bzip2 coreutils cpio cvs cyrus-sasl diffutils e2fsprogs expat file filesystem findutils flex fontconfig fontconfig-devel freetype2 freetype2-devel gawk gcc gcc-c++ gettext gettext-devel glibc glibc-devel gpm grep groff gzip info less libacl libattr libjpeg libjpeg-devel libpng libpng-devel libtool m4 make man mktemp module-init-tools ncurses ncurses-devel net-tools openssl pam patch perl pkgconfig popt procinfo procps psmisc rcs readline rpm sed strace tar texinfo timezone unzip util-linux zlib zlib-devel
 %endif
 %if 0%{?suse_version} > 1010
-BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz pkgconfig    libpng-devel libjpeg-devel xorg-x11-fonts-devel xorg-x11-libICE xorg-x11-libICE-devel xorg-x11-libSM xorg-x11 xorg-x11-devel xorg-x11-libSM-devel xorg-x11-libX11 xorg-x11-libX11-devel xorg-x11-libXau xorg-x11-libXau-devel xorg-x11-libXdmcp xorg-x11-libXdmcp-devel xorg-x11-libXext xorg-x11-libXext-devel xorg-x11-libXfixes xorg-x11-libXfixes-devel xorg-x11-libXmu xorg-x11-libXmu-devel xorg-x11-libXp xorg-x11-libXp-devel xorg-x11-libXpm xorg-x11-libXpm-devel xorg-x11-libXprintUtil xorg-x11-libXprintUtil-devel xorg-x11-libXrender xorg-x11-libXrender-devel xorg-x11-libXt xorg-x11-libXt-devel xorg-x11-libXv xorg-x11-libXv-devel xorg-x11-libfontenc xorg-x11-libfontenc-devel xorg-x11-libs xorg-x11-libxkbfile xorg-x11-libxkbfile-devel xorg-x11-proto-devel xorg-x11-util-devel xorg-x11-xtrans-devel
+BuildRequires:  Mesa Mesa-devel gcc-c++ gettext graphviz pkgconfig    libpng-devel libjpeg-devel xorg-x11-fonts-devel xorg-x11-libICE xorg-x11-libICE-devel xorg-x11-libSM xorg-x11 xorg-x11-devel xorg-x11-libSM-devel xorg-x11-libX11 xorg-x11-libX11-devel xorg-x11-libXau xorg-x11-libXau-devel xorg-x11-libXdmcp xorg-x11-libXdmcp-devel xorg-x11-libXext xorg-x11-libXext-devel xorg-x11-libXfixes xorg-x11-libXfixes-devel xorg-x11-libXmu xorg-x11-libXmu-devel xorg-x11-libXp xorg-x11-libXp-devel xorg-x11-libXpm xorg-x11-libXpm-devel xorg-x11-libXprintUtil xorg-x11-libXprintUtil-devel xorg-x11-libXrender xorg-x11-libXrender-devel xorg-x11-libXt xorg-x11-libXt-devel xorg-x11-libXv xorg-x11-libXv-devel xorg-x11-libfontenc xorg-x11-libfontenc-devel xorg-x11-libs xorg-x11-libxkbfile xorg-x11-libxkbfile-devel xorg-x11-proto-devel xorg-x11-util-devel xorg-x11-xtrans-devel
 %endif
 %if 0%{?mandriva_version} > 0
 BuildRequires:  Mesa libxorg-x11-devel libxpm4-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel
@@ -47,12 +47,16 @@ Summary:    Oyranos monitor dependent libraries
 Group:      Development/Libraries
 
 %package      monitor-nvidia
-Summary:    Oyranos nvidia card support
+Summary:    nvidia card support
 Group:      Development/Libraries
 License: GPL
 
+%package      cups
+Summary:    CUPS device support
+Group:      Development/Libraries
+
 %package      ui-fltk
-Summary:    Oyranos sample configuration panel
+Summary:    example configuration panel
 Group:      Productivity/Graphics/Other
 Requires:   fltk
 
@@ -70,9 +74,9 @@ o device profile assignment
 Authors:
 --------
     Oyranos     Kai-Uwe Behrmann <www.behrmann.name>
+    CUPS        Joe Simon <jsimon184@yahoo.com>
 
 used components and libraries with divergine FOSS licenses:
-    Elektra     Avi Alkalay and others
     md5         L. Peter Deutsch
     libXNVCtrl  Nvidia
     FLMM        Matthias Melcher
@@ -100,9 +104,13 @@ Display setup tool for the
 Oyranos colour management system.
 The nvidia EDID configuration part.
 
+%description  cups
+CUPS device support for the
+Oyranos colour management system.
+
 %description  ui-fltk
+The example configuration GUI.
 Oyranos is a colour management system.
-The sample configuration GUI.
 
 
 %prep
@@ -134,6 +142,7 @@ ldconfig
 %{_libdir}/lib%{name}.so.*
 %{_libdir}/%{cmmsubpath}/lib%{name}_l*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oicc_cmm_module*
 %{_libdir}/%{metasubpath}/lib%{name}_oyIM_cmm_module*
 %{_mandir}/man1/%{name}-policy*
 %{_datadir}/mime/packages/*.xml
@@ -175,14 +184,22 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor-nvidia
 
+%files cups
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
+
 %files ui-fltk
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-config-fl*
 %{_mandir}/man1/%{name}-config-fltk.1*
 
-
 %changelog
+* Sun Aug 02 2009 Kai-Uwe Behrmann
+- add oicc module
+- add CUPS module from Joe Simon and create new RPM from it
+
 * Wed Apr 15 2009 Kai-Uwe Behrmann
 - add oydi module
 
