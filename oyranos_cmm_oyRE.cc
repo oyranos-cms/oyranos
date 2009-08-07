@@ -283,9 +283,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    /*Prepare for "driver_version" option*/
    int driver_version_number = LibRaw::versionNumber();
    const char *driver_version_string = LibRaw::version();
-   oyOption_s *version_opt_int= NULL, *version_opt_str = NULL, *version_opt = NULL;
-   error = oyOption_SetFromText(version_opt_str, driver_version_string, 0);
-   error = oyOption_SetFromInt(version_opt_int, driver_version_number, 0, 0);
+   oyOption_s *version_opt = NULL;
 
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
@@ -433,8 +431,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
    } else {
       /* not to be reached section, e.g. warning */
-      oyOption_Release(&version_opt_int);
-      oyOption_Release(&version_opt_str);
       oyConfig_Release(&device);
 
       message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
