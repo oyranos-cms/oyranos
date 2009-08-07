@@ -466,10 +466,10 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a 
 
 $(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 	echo Compiling $*.cxx
-	$(CXX) -I./ -I$(SRCDIR) $(CXXFLAGS) $(FLTK_H) -c $<
+	$(CXX) -I./ -I$(SRCDIR) $(CXXFLAGS) $(INCL) $(FLTK_H) -c $<
 FL/Flmm_Tabs.o:	$(SRCDIR)/FL/Flmm_Tabs.cxx
 	echo Compiling FL/Flmm_Tabs.cxx
-	$(CXX) -I./ -I./FL -I$(SRCDIR)/FL $(CXXFLAGS) $(FLTK_H) -o $@ -c $<
+	$(CXX) -I./ -I./FL -I$(SRCDIR)/FL $(CXXFLAGS) $(INCL) $(FLTK_H) -o $@ -c $<
 
 # general configuration tool example
 $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
@@ -515,7 +515,7 @@ $(SRCDIR)/test2.c.c:
 	test -f $(SRCDIR)/test2.c.c || ln -s $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
 
 test2.c.o:	$(SRCDIR)/test2.c.c
-	$(CC) -I./ -I$(SRCDIR) $(CFLAGS) -c -o $*.o $(SRCDIR)/$*.c
+	$(CC) -I./ -I$(SRCDIR) $(CFLAGS) $(INCL) -c -o $*.o $(SRCDIR)/$*.c
 test2c:	test2.c.o
 	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
 	test2.c.o -L./ `./oyranos-config --ldstaticflags` $(LCMS_LIBS)
@@ -923,13 +923,13 @@ cdepend:
 	for i in $(COBJECTS); do \
 	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.c/ >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
-	  echo '	$$(CC) -I./ -I$$(SRCDIR) $$(CFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.c' >> cobjects; \
+	  echo '	$$(CC) -I./ -I$$(SRCDIR) $$(CFLAGS) $$(INCL) -c -o $$*.o $$(SRCDIR)/$$*.c' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 	for i in $(CPPOBJECTS); do \
 	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.cpp/ >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
-	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CXXFLAGS) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
+	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CXXFLAGS) $$(INCL) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 
@@ -940,15 +940,15 @@ cdepend:
 
 .c.o:
 	echo Compiling $(SRCDIR)/$< ...
-	$(CC) -I. $(CFLAGS) -c -o $@ $(SRCDIR)/$<
+	$(CC) -I. $(CFLAGS) $(INCL) -c -o $@ $(SRCDIR)/$<
 
 .cxx.o:
 	echo Compiling $(SRCDIR)/$< ...
-	$(CXX) -I. $(CXXFLAGS) $(FLTK_H) -c -o $@ $(SRCDIR)/$<
+	$(CXX) -I. $(CXXFLAGS) $(INCL) $(FLTK_H) -c -o $@ $(SRCDIR)/$<
 
 .cpp.o:	mkdepend
 	echo Compiling $(SRCDIR)/$< ...
-	$(CXX) -I. $(CXXFLAGS) -c -o $@ $(SRCDIR)/$<
+	$(CXX) -I. $(CXXFLAGS) $(INCL) -c -o $@ $(SRCDIR)/$<
 
 .fl.cxx:
 	echo Expanding $(SRCDIR)/$< ...
