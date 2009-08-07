@@ -34,6 +34,7 @@
 
 #include <cmath>
 
+#define USE_RESOLVE
 
 using namespace oyranos;
 
@@ -308,6 +309,86 @@ public:
     oyConversion_Release( &context );
     context = oyConversion_Copy( c, 0 );
   }
+
+  void setImage( oyImage_s * image_in )
+  {
+  oyFilterNode_s * in, * out;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+
+  if(!image_in)
+    return;
+
+#if 0
+  conversion = oyConversion_CreateBasicPixels( image_in, image_out, options,0 );
+#else
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( 0 );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, 0 );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+
+
+  /* create a new filter node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
+  /* append the new to the previous one */
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+
+  /* Set the image to the first/only socket of the filter node.
+   * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
+   * We rely on resolving the image later.
+   */
+  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
+
+  /* swap in and out */
+  in = out;
+
+
+  /* create a node for preparing the image for displaying */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, 0 );
+  options = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
+  /* 8 bit data for FLTK */
+  error = oyOptions_SetFromInt( &options,
+                                "//" OY_TYPE_STD "/display/datatype",
+                                oyUINT8, 0, OY_CREATE_NEW );
+  /* alpha might be support once by FLTK? */
+  error = oyOptions_SetFromInt( &options,
+                                "//" OY_TYPE_STD "/display/preserve_alpha",
+                                1, 0, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+  /* append the node */
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
+  in = out;
+
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+#endif
+
+  /* apply policies */
+  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
+                                 "true", OY_CREATE_NEW );*/
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", options );
+  oyOptions_Release( &options );
+
+
+  setConversion( conversion );
+
+  /* release unneeded objects; in C style */
+  oyConversion_Release( &conversion );
+  }
 };
 
 Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box);
@@ -324,8 +405,6 @@ main(int argc, char** argv)
   int error = 0,
       file_pos = 1;
   const char * file_name = 0;
-  oyPixel_t pixel_layout = 0;
-  oyDATATYPE_e data_type = oyUINT8;
 
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
@@ -354,6 +433,7 @@ main(int argc, char** argv)
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
 
+#if !defined(USE_RESOLVE)
   /* ask for the input image, here it will be loaded from the input filter */
   if(in)
   image_in = oyConversion_GetImage( conversion, OY_INPUT );
@@ -363,7 +443,9 @@ main(int argc, char** argv)
 
   /* create an output image */
   /* FLTK needs a 8-bit image */
+  oyPixel_t pixel_layout = 0;
   pixel_layout = oyImage_PixelLayoutGet( image_in );
+  oyDATATYPE_e data_type = oyUINT8;
   data_type = oyToDataType_m(pixel_layout);
   pixel_layout &= (~oyDataType_m(data_type));
   pixel_layout |= oyDataType_m(oyUINT8);
@@ -374,6 +456,7 @@ main(int argc, char** argv)
   image_out = oyImage_CreateForDisplay( image_in->width, image_in->height,
                                         0, pixel_layout,
                                         0, 0,0,0,0, 0 );
+#endif
 
 #if 0
   // write to ppm image
@@ -400,13 +483,27 @@ main(int argc, char** argv)
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+#if !defined(USE_RESOLVE)
   /* set the image to the first/only socket of the filter node */
   oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+#endif
   /* swap in and out */
   in = out;
 
   /* create a node for preparing the image for displaying */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, 0 );
+#if defined(USE_RESOLVE)
+  options = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
+  /* 8 bit data for FLTK */
+  error = oyOptions_SetFromInt( &options,
+                                "//" OY_TYPE_STD "/display/datatype",
+                                oyUINT8, 0, OY_CREATE_NEW );
+  /* alpha might be support once by FLTK? */
+  error = oyOptions_SetFromInt( &options,
+                                "//" OY_TYPE_STD "/display/preserve_alpha",
+                                1, 0, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+#endif
   /* append the node */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
@@ -434,7 +531,9 @@ main(int argc, char** argv)
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
+#if !defined(USE_RESOLVE)
   oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+#endif
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
 
