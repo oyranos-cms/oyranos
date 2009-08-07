@@ -519,7 +519,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   oyFilterNode_s * node = socket->node,
                  * rectangles = 0;
   oyImage_s * image = 0,
-            * input_image = 0;
+            * image_input = 0;
   oyOption_s * o = 0;
   oyRectangle_s * r, * rd, * ri;
   oyConfigs_s * devices = 0;
@@ -534,16 +534,84 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   x = ticket->start_xy[0];
   y = ticket->start_xy[1];
 
-  ID = oydiFilterNode_ImageDisplayID( node );
-
   image = (oyImage_s*)socket->data;
-  if(!image)
+  image_input = oyFilterPlug_ResolveImage( (oyFilterPlug_s *)node->plugs[0],
+                                           socket, ticket );
+
+  if(!image_input)
   {
-    error = oyOptions_SetFromText( &ticket->graph->options,
-                     "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
-    return 1;
+    message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d  no input image found",
+             __FILE__,__LINE__);
+    error = 1;
   }
 
+  /* Allocate missing local process data in a specific manner. */
+  if(error <= 0 && !image)
+  {
+    oyPixel_t pixel_layout = oyImage_PixelLayoutGet( image_input );
+    oyProfile_s * p_in = oyImage_ProfileGet( image_input );
+    oyDATATYPE_e data_type = oyToDataType_m(pixel_layout);
+    int32_t datatype = -1;
+    int32_t channels_in = oyToChannels_m(pixel_layout);
+    int32_t colours_in = oyProfile_GetChannelsCount( p_in );
+    /* keep extra channels */
+    int32_t extra_in = channels_in - colours_in;
+    int32_t alpha = -1;
+    /* fixed RGB? */
+    int32_t channels_out = 3 + extra_in;
+    oyFilterNode_s * input_node = node->plugs[0]->remote_socket_->node;
+
+    oyProfile_Release( &p_in );
+
+    /* Release the input image copy from oyFilterPlug_ResolveImage(). */
+    oyImage_Release( (oyImage_s**)&socket->data );
+
+
+    pixel_layout &= (~oyChannels_m( oyToChannels_m(pixel_layout) ));
+    pixel_layout |= oyChannels_m( channels_out );
+
+    error = oyOptions_FindInt( node->core->options_, "datatype", 0, &datatype );
+    if(error == 0)
+    {
+      message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d  datatype opt found: %d",
+                 __FILE__,__LINE__, datatype);
+      pixel_layout &= (~oyDataType_m(data_type));
+      pixel_layout |= oyDataType_m( datatype );
+    }
+    error = oyOptions_FindInt( node->core->options_,"preserve_alpha",0, &alpha);
+    if(error == 0)
+    {
+      message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d preserve_alpha opt found: %d",
+                 __FILE__,__LINE__, alpha);
+      pixel_layout &= (~oyChannels_m( oyToChannels_m(pixel_layout) ));
+      if(alpha && extra_in)
+        pixel_layout |= oyChannels_m(3+alpha);
+      else
+        pixel_layout |= oyChannels_m(3);
+    }
+
+    /* eigther copy the input image with a oyObject_s argument or
+     * create it as follows */
+    image = oyImage_CreateForDisplay( image_input->width,
+                                      image_input->height,
+                                      0, pixel_layout,
+                                      0, 0,0,0,0, 0 );
+    oyFilterNode_DataSet( node, (oyStruct_s*)image, 0, 0 );
+
+    /* set as well the ICC node previous in the DAG */
+    if(oyFilterRegistrationMatch( input_node->core->registration_,
+                                      "//" OY_TYPE_STD "/icc", 0 ))
+      oyFilterNode_DataSet( input_node, (oyStruct_s*)image, 0, 0 );
+
+    oyImage_Release( &image );
+    image = (oyImage_s*)socket->data;
+  }
+  oyImage_Release( &image_input );
+
+
+  ID = oydiFilterNode_ImageDisplayID( node );
+
+  if(error <= 0)
   {
     /* display stuff */
 
@@ -635,10 +703,10 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       /* select actual image from the according CMM node */
       if(rectangles->plugs && rectangles->plugs[i] &&
          rectangles->plugs[i]->remote_socket_)
-        input_image = (oyImage_s*)rectangles->plugs[i]->remote_socket_->data;
+        image_input = (oyImage_s*)rectangles->plugs[i]->remote_socket_->data;
       else
       {
-        input_image = 0;
+        image_input = 0;
         message( oyMSG_WARN, (oyStruct_s*)image, "%s:%d  image %d: is missed",
                  __FILE__,__LINE__, i, oyRectangle_Show( r ) );
       }
@@ -648,9 +716,9 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       {
         error = oyDeviceGetProfile( c, &p );
 
-        if(p && input_image && !oyProfile_Equal( input_image->profile_, p ))
+        if(p && image_input && !oyProfile_Equal( image_input->profile_, p ))
         {
-          oyImage_SetCritical( input_image, 0, p, 0 );
+          oyImage_SetCritical( image_input, 0, p, 0 );
           error = oyOptions_SetFromText( &ticket->graph->options,
                      "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
           ++dirty;
@@ -685,8 +753,36 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   return result;
 }
 
+/** 
+ *  @brief   the supported options for "oydi"
+ *
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/05 (Oyranos: 0.1.10)
+ *  @date    2009/08/05
+ */
+char oydi_extra_options[] = {
+ "\n\
+  <" OY_TOP_INTERNAL ">\n\
+   <" OY_DOMAIN_INTERNAL ">\n\
+    <" OY_TYPE_STD ">\n\
+     <" "display." CMM_NICK ">\n\
+      <display_id.invisible></display_id.invisible>\n\
+      <window_id.invisible></window_id.invisible>\n\
+      <display_rectangle.invisible></display_rectangle.invisible>\n\
+      <datatype.advanced.invisible></datatype.advanced.invisible>\n\
+      <preserve_alpha.advanced.invisible></preserve_alpha.advanced.invisible>\n\
+     </" "display." CMM_NICK ">\n\
+    </" OY_TYPE_STD ">\n\
+   </" OY_DOMAIN_INTERNAL ">\n\
+  </" OY_TOP_INTERNAL ">\n"
+};
+
+
+
+
 oyDATATYPE_e oyx1_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
-                                         oyHALF, oyFLOAT, oyDOUBLE, 0};
+                                   oyHALF, oyFLOAT, oyDOUBLE, 0};
 
 oyConnectorImaging_s oyx1_Display_plug = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
@@ -816,8 +912,8 @@ oyCMMapi4_s   oydi_api4_image_display = {
 
   {oyOBJECT_NAME_S, 0,0,0, "display", "Display", "Display Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Graph/Display", /* category */
-  0,   /* options */
-  0    /* opts_ui_ */
+  oydi_extra_options,   /* const char * options */
+  0    /* oyCMMuiGet_f oyCMMuiGet */
 };
 
 /* OY_IMAGE_DISPLAY_REGISTRATION ---------------------------------------------*/
@@ -901,7 +997,8 @@ const char * oydiGetText             ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("The \"display\" filter supports applications to show image content on single and multi monitor displays. It cares about the server communication in declaring the region as prematched. So a X11 server side colour correction does not disturb the displayed colours and omits the provided rectangle. The \"display\" filter matches the provided image content to each monitor it can find. Of course this has limitations to distorted windows, like wobbly effects or matrix deformed windows.");
     else
-      return _("The filter needs some informations attached to the output image tags of the \"output\" image filter. The following list describes the X11/Xorg requirements.\n A \"window_id\" option shall consist of a oyBlob_s object containing the X11 \"Window\" type in its pointer element.\n A \"display_id\" option shall consist of a oyBlob_s object containing the X11 \"Display\" of the application. This is typically exposed as system specific pointer by each individual toolkit.\n A \"display_rectangle\" option of type oyRectangle_s shall represent the application image region in pixel of the absolute display coordinates.");
+      return _("The filter needs some informations attached to the output image tags of the \"output\" image filter. The following list describes the X11/Xorg requirements.\n A \"window_id\" option shall consist of a oyBlob_s object containing the X11 \"Window\" type in its pointer element.\n A \"display_id\" option shall consist of a oyBlob_s object containing the X11 \"Display\" of the application. This is typically exposed as system specific pointer by each individual toolkit.\n A \"display_rectangle\" option of type oyRectangle_s shall represent the application image region in pixel of the absolute display coordinates. \n In the \"datatype\" option, a oyDATATYPE_e encoded as integer is expected, to deliver that data type in a not yet allocated output image. The output data type is by default not changed. A newly not yet allocated output image will be stored as processing data in the socket.\n \"preserve_alpha\" is a integer option to keep a given alpha in a not yet allocated output image. \
+");
   }
   return 0;
 }
