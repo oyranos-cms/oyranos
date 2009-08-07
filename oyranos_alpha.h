@@ -1784,6 +1784,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * array_rectangle );
 oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
+oyProfile_s *  oyImage_ProfileGet    ( oyImage_s         * image );
 oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
 

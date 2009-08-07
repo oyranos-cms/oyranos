@@ -16991,6 +16991,26 @@ oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image )
   return s->layout_[oyLAYOUT];
 }
 
+/** Function oyImage_ProfileGet
+ *  @memberof oyImage_s
+ *  @brief   get the image profile
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/05 (Oyranos: 0.1.10)
+ *  @date    2009/08/05
+ */
+oyProfile_s *  oyImage_ProfileGet    ( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return oyProfile_Copy( s->profile_, 0 );
+}
+
 /** Function oyImage_TagsGet
  *  @memberof oyImage_s
  *  @brief   get object tags
