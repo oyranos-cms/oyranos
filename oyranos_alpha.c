@@ -6200,7 +6200,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     {
     case oyVAL_INT_LIST:    n = v->int32_list[0]; break;
     case oyVAL_DOUBLE_LIST: n = (int)v->dbl_list[0]; break;
-    case oyVAL_STRING_LIST: while( v->string_list[0] ) ++n; break;
+    case oyVAL_STRING_LIST: n = 0; while( v->string_list[n] ) ++n; break;
     case oyVAL_INT:
     case oyVAL_DOUBLE:
     case oyVAL_STRING:
