@@ -390,7 +390,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
            manufacturer[len] = '\000';
            if(strcmp(manufacturer,manufacturer_old) != 0)
            {
-             STRING_ADD(device_list_opt->value->string_list[++mnft_n],manufacturer)
+             mnft_n++;
+             STRING_ADD(device_list_opt->value->string_list[mnft_n],manufacturer)
              STRING_ADD(device_list_opt->value->string_list[mnft_n],"\n")
              sprintf( manufacturer_old, "%s", manufacturer );
            }
