@@ -1472,16 +1472,51 @@ oyTESTRESULT_e testCMMDevicesListing ()
       k_n = oyConfig_Count( config );
       for( k = 0; k < k_n; ++k )
       {
+        char * r = 0;
+        int mnft = -1, mn, pos;
         o = oyConfig_Get( config, k );
 
-        val = oyOption_GetValueText( o, oyAllocateFunc_ );
-        /* collect the device_name's into a set of options for later */
-        error = oyOptions_SetFromText( &options_devices, o->registration,
-                                       val,
-                                       OY_CREATE_NEW | OY_ADD_ALWAYS );
-        printf("  %d::%d::%d %s %s\n", i,j,k,
-               o->registration, val );
+        r = oyFilterRegistrationToText( o->registration,
+                                                   oyFILTER_REG_OPTION, 0 );
+        if(r && strcmp(r,"supported_devices_info") == 0 &&
+           o->value_type == oyVAL_STRING_LIST)
+        {
+          /* print first line special */
+          while(o->value->string_list[++mnft])
+          {
+            mn = 0; pos = -1;
+            while(o->value->string_list[mnft][++pos])
+            {
+              if(o->value->string_list[mnft][pos] == '\n')
+              {
+                if(mn && o->value->string_list[mnft][pos+1])
+                  putc(',', stdout);
+                else if(mn == 0)
+                {
+                  putc(':', stdout);
+                  putc('\n', stdout);
+                  putc(' ', stdout);
+                  putc(' ', stdout);
+                }
+                ++mn;
 
+              } else
+                putc(o->value->string_list[mnft][pos], stdout);
+            }
+            putc('\n', stdout);
+          }
+        } else
+        {
+          val = oyOption_GetValueText( o, oyAllocateFunc_ );
+          /* collect the device_name's into a set of options for later */
+          error = oyOptions_SetFromText( &options_devices, o->registration,
+                                         val,
+                                         OY_CREATE_NEW | OY_ADD_ALWAYS );
+          printf("  %d::%d::%d %s %s\n", i,j,k,
+                 o->registration, val );
+        }
+
+        if(r) oyDeAllocateFunc_(r); r = 0;
         if(val)
           oyDeAllocateFunc_( val ); val = 0;
         oyOption_Release( &o );
