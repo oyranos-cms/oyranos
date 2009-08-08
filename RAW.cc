@@ -134,14 +134,15 @@ void RAW::GetColorInfo()
    //2.  Get the relevant color information from Oyranos
    //    This is the "command" -> "properties" call
    device = oyConfig_New(CMM_BASE_REG, 0);
+   //A device_name option has to be present...
    oyOptions_SetFromText(&device->data, CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
-   oyOptions_s *options = oyOptions_New(0);
 
+   oyOptions_s *options = oyOptions_New(0);
    //Request the properties call
    oyOptions_SetFromText(&options, CMM_BASE_REG OY_SLASH "command", "properties", OY_CREATE_NEW);
    //Pass in the filename
    oyOptions_SetFromText(&options, CMM_BASE_REG OY_SLASH "device_handle", filename.c_str(), OY_CREATE_NEW);
-   //Pass int the libraw object with the raw image rendering options
+   //Pass in the libraw object with the raw image rendering options
    oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
    oyOption_SetFromData(context_opt, (oyPointer)&rip.imgdata.params, sizeof(libraw_output_params_t));
    oyOptions_MoveIn(options, &context_opt, -1);
