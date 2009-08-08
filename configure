@@ -613,8 +613,9 @@ test -n "$ECHO" && $ECHO "CXX = $CXX" >> $CONF_NV
 test -n "$ECHO" && $ECHO "CC = $CC" >> $CONF_NV
 export CC CXX
 
-CFLAGS_COMMON="`echo $CFLAGS_COMMON | $STRIPOPT` \$(DEBUG)"
-CXXFLAGS_COMMON="`echo $CXXFLAGS_COMMON | $STRIPOPT` \$(DEBUG)"
+# many constant strings are much longer than the C90 allowed, skip the warning
+CFLAGS_COMMON="`echo $CFLAGS_COMMON | $STRIPOPT` \$(DEBUG) -Wno-overlength-strings"
+CXXFLAGS_COMMON="`echo $CXXFLAGS_COMMON | $STRIPOPT` \$(DEBUG) -Wno-overlength-strings"
 CFLAGS="`echo $CFLAGS | $STRIPOPT`"
 CXXFLAGS="`echo $CXXFLAGS | $STRIPOPT`"
 
