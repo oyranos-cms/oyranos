@@ -591,11 +591,16 @@ oyCMMInfo_s _cmm_module = {
         error = oyOptions_SetFromInt( &((*config)->backend_core), \
                                       CMM_BASE_REG OY_SLASH #name, \
                                       params->name, 0, OY_CREATE_NEW );
-#define DFC_OPT_ADD_FLOAT_ARR(name, i) if(!error) { \
-        oyOption_s *opt = oyOption_New(CMM_BASE_REG OY_SLASH #name, 0); \
-        oyOption_SetFromDouble(opt, params->name[i], i, 0); \
-        oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
-}
+#define DFC_OPT_ADD_FLOAT_ARR(name, i, n) if(!error) { \
+if (i==n-1) { \
+   oyOption_s *opt = oyOption_New(CMM_BASE_REG OY_SLASH #name, 0); \
+   opt->value_type = oyVAL_DOUBLE_LIST; /*FIXME*/ \
+   oyOption_SetFromDouble(opt, params->name[i], i, 0); \
+   oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
+} else { \
+   oyOption_s *opt = oyOptions_Find((*config)->backend_core, #name); \
+   oyOption_SetFromDouble(opt, params->name[i], i, 0); \
+} }
 #define DFC_OPT_ADD_FLOAT(name) if(!error) { \
         oyOption_s *opt = oyOption_New(CMM_BASE_REG OY_SLASH #name, 0); \
         oyOption_SetFromDouble(opt, params->name, 0, 0); \
@@ -606,24 +611,24 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    int error = 0;
 
 #if 0
-   DFC_OPT_ADD_FLOAT_ARR(aber,0) //4
-   DFC_OPT_ADD_FLOAT_ARR(aber,1) //4
-   DFC_OPT_ADD_FLOAT_ARR(aber,2) //4
-   DFC_OPT_ADD_FLOAT_ARR(aber,3) //4
-   DFC_OPT_ADD_FLOAT_ARR(gamm,0) //5
-   DFC_OPT_ADD_FLOAT_ARR(gamm,1) //5
-   DFC_OPT_ADD_FLOAT_ARR(gamm,2) //5
-   DFC_OPT_ADD_FLOAT_ARR(gamm,3) //5
-   DFC_OPT_ADD_FLOAT_ARR(gamm,4) //5
-   DFC_OPT_ADD_FLOAT_ARR(user_mul,0) //4
-   DFC_OPT_ADD_FLOAT_ARR(user_mul,1) //4
-   DFC_OPT_ADD_FLOAT_ARR(user_mul,2) //4
-   DFC_OPT_ADD_FLOAT_ARR(user_mul,3) //4
+   DFC_OPT_ADD_FLOAT_ARR(aber,3,4) //4
+   DFC_OPT_ADD_FLOAT_ARR(aber,2,4) //4
+   DFC_OPT_ADD_FLOAT_ARR(aber,1,4) //4
+   DFC_OPT_ADD_FLOAT_ARR(aber,0,4) //4
+   DFC_OPT_ADD_FLOAT_ARR(gamm,4,5) //5
+   DFC_OPT_ADD_FLOAT_ARR(gamm,3,5) //5
+   DFC_OPT_ADD_FLOAT_ARR(gamm,2,5) //5
+   DFC_OPT_ADD_FLOAT_ARR(gamm,1,5) //5
+   DFC_OPT_ADD_FLOAT_ARR(gamm,0,5) //5
+   DFC_OPT_ADD_FLOAT_ARR(user_mul,3,4) //4
+   DFC_OPT_ADD_FLOAT_ARR(user_mul,2,4) //4
+   DFC_OPT_ADD_FLOAT_ARR(user_mul,1,4) //4
+   DFC_OPT_ADD_FLOAT_ARR(user_mul,0,4) //4
 #endif
    DFC_OPT_ADD_FLOAT(auto_bright_thr)
    DFC_OPT_ADD_FLOAT(bright)
    DFC_OPT_ADD_FLOAT(threshold)
-#if 0
+
    DFC_OPT_ADD_INT(four_color_rgb)
    DFC_OPT_ADD_INT(gamma_16bit) //TODO is it needed?
    DFC_OPT_ADD_INT(half_size)
@@ -638,12 +643,13 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_INT(user_black)
    DFC_OPT_ADD_INT(user_qual)
    DFC_OPT_ADD_INT(user_sat)
+
    DFC_OPT_ADD_INT_ARR(greybox,0) //4
    DFC_OPT_ADD_INT_ARR(greybox,1) //4
    DFC_OPT_ADD_INT_ARR(greybox,2) //4
    DFC_OPT_ADD_INT_ARR(greybox,3) //4
    DFC_OPT_ADD_INT(shot_select)
-#endif
+
    return error;
 }
 
