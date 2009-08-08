@@ -6251,8 +6251,6 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
         } else if(v->oy_struct && v->oy_struct->oy_)
           STRING_ADD ( text, oyObject_GetName( v->oy_struct->oy_, oyNAME_NICK ));
       }
-      if(i)
-        STRING_ADD ( text, ":" );
     }
 
     erg = oyStringCopy_( text, allocateFunc );
