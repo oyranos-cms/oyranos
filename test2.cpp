@@ -620,9 +620,10 @@ oyTESTRESULT_e testOptionInt ()
   o->value_type = oyVAL_INT_LIST;
   error = oyOption_SetFromInt( o, 58293, 2, 0 );
   if(!error && o->value &&
-     o->value->int32_list[0] == 2 &&
+     o->value->int32_list[0] == 3 &&
      o->value->int32_list[1] == 0 &&
-     o->value->int32_list[2] == 58293 &&
+     o->value->int32_list[2] == 0 &&
+     o->value->int32_list[3] == 58293 &&
      o->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() explicite int32_t list good" );
