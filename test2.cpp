@@ -637,6 +637,38 @@ oyTESTRESULT_e testOptionInt ()
   return result;
 }
 
+oyTESTRESULT_e testOptionsSet ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int error = 0;
+  oyOptions_s * setA = 0;
+
+  fprintf(stdout, "\n" );
+
+  error = oyOptions_SetFromText( &setA,
+                                 "//" OY_TYPE_STD "/filter/gamma_A",
+                                 "1", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &setA,
+                                 "//" OY_TYPE_STD "/filter/gamma_A1",
+                                 "1", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &setA,
+                                 "//" OY_TYPE_STD "/filter/gamma_A12",
+                                 "1", OY_CREATE_NEW );
+
+  if(!error && oyOptions_Count( setA ) == 3)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_SetFromText() similiar registration good  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOptions_SetFromText() similiar registration failed" );
+  }
+
+  oyOptions_Release( &setA );
+
+  return result;
+}
+
 oyTESTRESULT_e testOptionsCopy ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -1971,6 +2003,8 @@ oyTESTRESULT_e testCMMsShow ()
                                              (oyRankPad*)rank_map
                                            };
 
+                    cpp_api8.version[2] = 1;
+
                     l = 0;
                     cmm_api8 = (oyCMMapi8_s*) api;
                     snprintf( text_tmp, 65535,
@@ -2889,6 +2923,7 @@ int main(int argc, char** argv)
   TEST_RUN( testStringRun, "String handling" );
   TEST_RUN( testOption, "basic oyOption_s" );
   TEST_RUN( testOptionInt,  "oyOption_s integers" );
+  TEST_RUN( testOptionsSet,  "Set oyOptions_s" );
   TEST_RUN( testOptionsCopy,  "Copy oyOptions_s" );
   TEST_RUN( testBlob, "oyBlob_s" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
