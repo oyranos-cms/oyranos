@@ -610,7 +610,6 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 {
    int error = 0;
 
-#if 0
    DFC_OPT_ADD_FLOAT_ARR(aber,3,4) //4
    DFC_OPT_ADD_FLOAT_ARR(aber,2,4) //4
    DFC_OPT_ADD_FLOAT_ARR(aber,1,4) //4
@@ -624,7 +623,7 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_FLOAT_ARR(user_mul,2,4) //4
    DFC_OPT_ADD_FLOAT_ARR(user_mul,1,4) //4
    DFC_OPT_ADD_FLOAT_ARR(user_mul,0,4) //4
-#endif
+
    DFC_OPT_ADD_FLOAT(auto_bright_thr)
    DFC_OPT_ADD_FLOAT(bright)
    DFC_OPT_ADD_FLOAT(threshold)
