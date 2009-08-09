@@ -1,0 +1,29 @@
+kernel Blur
+{
+  void evaluatePixel(image img, out pixel result)
+  {
+    float2 tl = {-1,-1};
+    float2 tc = {0,-1};
+    float2 tr = {1,-1};
+    float2 ml = {-1,0};
+    float2 mc = {0,0};
+    float2 mr = {1,0};
+    float2 bl = {-1,1};
+    float2 bc = {0,1};
+    float2 br = {1,1};
+    result = ( img.sampleNearest( result.coord + tl ) +
+               img.sampleNearest( result.coord + tc ) +
+               img.sampleNearest( result.coord + tr ) +
+               img.sampleNearest( result.coord + ml ) +
+               img.sampleNearest( result.coord + mc ) +
+               img.sampleNearest( result.coord + mr ) +
+               img.sampleNearest( result.coord + bl ) +
+               img.sampleNearest( result.coord + bc ) +
+               img.sampleNearest( result.coord + br )
+               ) / 9.0;
+  }
+  region changed(region changed_input_region, int input_index, region input_DOD[])
+  {
+     return changed_input_region;
+  }
+}

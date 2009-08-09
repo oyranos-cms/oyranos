@@ -1,0 +1,15 @@
+kernel Flip
+{
+  const int width = IMAGE_WIDTH;
+  
+  void evaluatePixel(image4 img, out pixel4 result)
+  {
+    float2 op = result.coord;
+    op.x = width - op.x - 1;
+    result = img.sampleNearest( op );
+  }
+  region changed(region changed_input_region, int input_index, region input_DOD[])
+  {
+     return changed_input_region;
+  }
+}
