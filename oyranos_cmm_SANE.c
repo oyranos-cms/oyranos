@@ -265,7 +265,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          if (error == SANE_STATUS_GOOD) {
             /*Handle "driver_version" option [OUT] */
             printf("SANE v.(%d) init...OK\n", driver_version);
-            error = oyOption_SetFromInt(version_opt, driver_version, -1, 0);
+            error = oyOption_SetFromInt(version_opt, driver_version, 0, 0);
          } else {
             message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
                     "Unable to init SANE. Giving up.[%s] Options:\n%s", _DBG_ARGS_,
