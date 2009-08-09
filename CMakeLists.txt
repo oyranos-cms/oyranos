@@ -56,4 +56,4 @@ INSTALL( TARGETS raw2tiff scan
 	RUNTIME
 	DESTINATION "bin/" )
 INSTALL( TARGETS oyranos_SANE_cmm_module oyranos_oyRE_cmm_module
-	DESTINATION "lib/colour/moduls/" )
+	DESTINATION "lib/colour/modules/" )
