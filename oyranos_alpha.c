@@ -6303,7 +6303,11 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
       oyAllocHelper_m_( s->value, oyValue_u, 1,
                         s->oy_->allocateFunc_,
                         error = 1 );
-      s->value_type = oyVAL_INT;
+      if(pos == 0 &&
+         s->value_type != oyVAL_INT_LIST)
+        s->value_type = oyVAL_INT;
+      else
+        s->value_type = oyVAL_INT_LIST;
     }
 
     if(!error && pos > 0 && 
@@ -6427,7 +6431,11 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
       oyAllocHelper_m_( s->value, oyValue_u, 1,
                         s->oy_->allocateFunc_,
                         error = 1 );
-      s->value_type = oyVAL_DOUBLE;
+      if(pos == 0 &&
+         s->value_type != oyVAL_DOUBLE_LIST)
+        s->value_type = oyVAL_DOUBLE;
+      else
+        s->value_type = oyVAL_DOUBLE_LIST;
     }
 
     if(!error && pos > 0 && 
@@ -18798,6 +18806,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
             ++ pc_text;
             pc_match_type = pc_text[0];
             ++ pc_text;
+            pc_len -= 2;
           } else
           if(pc_text[0] == '_' ||
              pc_text[0] == '-')
@@ -18811,7 +18820,8 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
             regc_text = oyStringSegmentN_( reg_text, reg_len, '.', k,
                                               &regc_len );
             if((!pc_api_num || (pc_api_num && api_num == pc_api_num)) &&
-               memcmp( regc_text, pc_text, OY_MIN(regc_len,pc_len) ) == 0)
+               memcmp( regc_text, pc_text, OY_MIN(regc_len,pc_len) ) == 0 &&
+	       (regc_len == pc_len || !regc_len || !pc_len))
             {
               if(pc_match_type == '+' ||
                  pc_match_type == '_')
