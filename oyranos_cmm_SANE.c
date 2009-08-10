@@ -349,7 +349,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       //if(error <= 0)
       *s = devices;
 
-      return error;
+      return 0;
    } else if (command_properties) {
       /* "properties" call section */
       const SANE_Device *device_context = NULL;
@@ -412,7 +412,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       //if(error <= 0)
       *s = devices;
  
-      return error;
+      return 0;
    } else {
       /*wrong or no command */
       /*TODO Message+deallocation*/
