@@ -32,13 +32,17 @@ else
 fi
 MAKEFILE_DIR=". fl_i18n libXNVCtrl $PROFILE_DIR"; export MAKEFILE_DIR
 
+if [ `uname` = "Linux" ]; then
+  v=-v
+fi
+
 if [ "$ROOT_DIR" != "." ]; then
   mkdir -p fl_i18n/
   mkdir -p libXNVCtrl/
   mkdir -p FL/
   mkdir -p modules/devices
   mkdir -p examples/
-  cp -v $ROOT_DIR/examples/makefile examples/
+  cp $v $ROOT_DIR/examples/makefile examples/
   mkdir -p default_profiles/base
   mkdir -p default_profiles/printing
 fi
@@ -614,8 +618,8 @@ test -n "$ECHO" && $ECHO "CC = $CC" >> $CONF_NV
 export CC CXX
 
 # many constant strings are much longer than the C90 allowed, skip the warning
-CFLAGS_COMMON="`echo $CFLAGS_COMMON | $STRIPOPT` \$(DEBUG) -Wno-overlength-strings"
-CXXFLAGS_COMMON="`echo $CXXFLAGS_COMMON | $STRIPOPT` \$(DEBUG) -Wno-overlength-strings"
+CFLAGS_COMMON="`echo $CFLAGS_COMMON | $STRIPOPT` \$(DEBUG)"
+CXXFLAGS_COMMON="`echo $CXXFLAGS_COMMON | $STRIPOPT` \$(DEBUG)"
 CFLAGS="`echo $CFLAGS | $STRIPOPT`"
 CXXFLAGS="`echo $CXXFLAGS | $STRIPOPT`"
 
@@ -702,8 +706,8 @@ else
       test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
       test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(build_dir)" >> $CONF
     fi
-    CFLAGS="$CFLAGS -fPIC -DPIC"
-    CXXFLAGS="$CXXFLAGS -fPIC -DPIC"
+    CFLAGS="$CFLAGS -fPIC -DPIC -Wno-overlength-strings"
+    CXXFLAGS="$CXXFLAGS -fPIC -DPIC -Wno-overlength-strings"
     INSTALL="install -p $DEBUG_SWITCH"
   else
     COPY="cp -p"
