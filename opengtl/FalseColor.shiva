@@ -1,0 +1,48 @@
+kernel FalseColor
+{
+  const int height = IMAGE_HEIGHT;
+  const int width = IMAGE_WIDTH;
+  const int xc = width/2;
+  const int yc = height/2;
+  const float2 C = { xc, yc };
+  const float shift = 2;
+
+  float displacement( float distance )
+  {
+    int min_dim;
+    if (width>height)
+      min_dim = height/2;
+    else
+      min_dim = width/2;
+    return 1+shift*sqrt(distance/min_dim);
+  }
+  float distance( float2 A, float2 B )
+  {
+    return sqrt( (A[0] - B[0])*(A[0] - B[0]) + (A[1] - B[1])*(A[1] - B[1]) );
+  }
+  void evaluatePixel(image3 img, out pixel3 result)
+  {
+    const float2 I = result.coord;
+
+    float IC_d = distance( I, C );
+    float l = displacement( IC_d );
+
+    float2 IC = C-I;
+    float2 R = (l/IC_d)*IC+I;
+
+    float2 B = 2*I-R;
+
+    pixel3 Green = img.sampleNearest( I );
+    pixel3 Red = img.sampleNearest( R );
+    pixel3 Blue = img.sampleNearest( B );
+
+    
+    result[0] = Red[0];
+    result[1] = Green[1];
+    result[2] = Blue[2];
+  }
+  region changed(region changed_input_region, int input_index, region input_DOD[])
+  {
+     return changed_input_region;
+  }
+}
