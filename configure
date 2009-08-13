@@ -672,6 +672,7 @@ if [ $OSUNAME = "Darwin" ]; then
   dyld_cmmdir="$cmmdir/"
   dyld_metadir="$metadir/"
   COPY="cp -pv"
+  MOVE="mv -v"
   RM="rm -vf"
   LDFLAGS="$LDFLAGS -L."
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
@@ -699,6 +700,7 @@ else
   oyranos_add="\$ltdl \$xml2"
   if [ $OSUNAME = "Linux" ]; then
     COPY="cp -vdpa"
+    MOVE="mv -v"
     RM="rm -vf"
     LDFLAGS="$LDFLAGS -L."
     test -n "$ECHO" && $ECHO "LINK_FLAGS_STATIC =" >> $CONF
@@ -711,6 +713,7 @@ else
     INSTALL="install -p $DEBUG_SWITCH"
   else
     COPY="cp -p"
+    MOVE="mv"
     RM="rm -f"
     if [ $OSUNAME = "BSD" ]; then
       LDFLAGS="$LDFLAGS"
@@ -739,6 +742,7 @@ for i in $MAKEFILE_DIR; do
   test -n "$ECHO" && $ECHO "src_dir = $ROOT_DIR/$i" | sed 's%/\.%%' >> "$i/makefile"
   test -n "$ECHO" && $ECHO "" >> "$i/makefile"
   test -n "$ECHO" && $ECHO "COPY = $COPY" >> "$i/makefile"
+  test -n "$ECHO" && $ECHO "MOVE = $MOVE" >> "$i/makefile"
   test -n "$ECHO" && $ECHO "RM = $RM" >> "$i/makefile"
   test -n "$ECHO" && $ECHO "$osuname" >> "$i/makefile"
   test -n "$ECHO" && $ECHO "OSX_H = $OSX_H" >> "$i/makefile"
