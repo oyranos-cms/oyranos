@@ -951,8 +951,9 @@ cdepend:
 	$(CXX) -I. $(CXXFLAGS) $(INCL) -c -o $@ $(SRCDIR)/$<
 
 .fl.cxx:
-	echo Expanding $(SRCDIR)/$< ...
-	fluid -c $(SRCDIR)/$<
+	echo Expanding $< ...
+	fluid -c $<
+	$(MOVE) `echo $*.cxx $*.h | sed s%$(SRCDIR)/%%g` $(SRCDIR)
 
 .po:
 	echo Generating $@ ...
