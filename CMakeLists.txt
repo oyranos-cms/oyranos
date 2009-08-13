@@ -44,9 +44,9 @@ SET_TARGET_PROPERTIES( oytest	PROPERTIES
 										LINK_FLAGS "${OY_LDFLAGS}" )
 #oyranos backends##################
 ADD_LIBRARY( oyranos_SANE_cmm_module SHARED oyranos_cmm_SANE.c SANE_help.c )
-TARGET_LINK_LIBRARIES( oyranos_SANE_cmm_module ${SANE_LIBS} )
+TARGET_LINK_LIBRARIES( oyranos_SANE_cmm_module ${SANE_LIBS} "oyranos" )
 ADD_LIBRARY( oyranos_oyRE_cmm_module SHARED oyranos_cmm_oyRE.cc oyRE_help.c )
-TARGET_LINK_LIBRARIES( oyranos_oyRE_cmm_module ${LIBRAW_L_LIBS} "exiv2" )
+TARGET_LINK_LIBRARIES( oyranos_oyRE_cmm_module ${LIBRAW_L_LIBS} "exiv2" "oyranos" )
 
 add_subdirectory( doc )
 
