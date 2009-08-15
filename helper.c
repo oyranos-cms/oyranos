@@ -3,10 +3,24 @@ using namespace oyranos;
 extern "C" {
 #endif /* __cplusplus */
 
+#include <sane/sane.h>
 #include <oyranos/oyranos_cmm.h>
 #include <oyranos/oyranos_alpha.h>
 
-const char *   oyValueTypeText       ( oyVALUETYPE_e       type );
+static const char *oyValueTypeText( oyVALUETYPE_e       type )
+{
+  switch(type)
+  {
+  case oyVAL_INT:         return "Int";
+  case oyVAL_DOUBLE:      return "Double";
+  case oyVAL_INT_LIST:    return "IntList";
+  case oyVAL_DOUBLE_LIST: return "DoubleList";
+  case oyVAL_STRING:      return "String";
+  case oyVAL_STRING_LIST: return "StringList";
+  case oyVAL_STRUCT:      return "Struct";
+  }
+  return 0;
+}
 
 static void print_option(oyOption_s * opt, int j)
 {
@@ -18,13 +32,14 @@ static void print_option(oyOption_s * opt, int j)
       switch (opt_struct->type_) {
          case oyOBJECT_CMM_POINTER_S:
             cmm = (oyCMMptr_s*)opt_struct;
-            printf("\t\tOption[%d] ID=%d\tCMMptr{%p,%s}\n\t\t[%s]\n\n",
-                  j, id, cmm->ptr, cmm->lib_name, opt->registration);
+            if (strcmp(cmm->lib_name,"SANE") == 0)
+               printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tCMMptr{%p,%s}\n\n",
+                     opt->registration, j, id, *(SANE_Handle*)cmm->ptr, cmm->lib_name);
             break;
          case oyOBJECT_BLOB_S:
             blob = (oyBlob_s *)opt_struct;
-            printf("\t\tOption[%d] ID=%d\tblob{%p,%d}\n\t\t[%s]\n\n",
-                  j, id, blob->ptr, blob->size, opt->registration);
+            printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tblob{%p,%d}\n\n",
+                  opt->registration, j, id, blob->ptr, blob->size);
             break;
          default:
             printf("\t\tCan't handle struct of type %d\n", opt_struct->type_);
@@ -33,7 +48,8 @@ static void print_option(oyOption_s * opt, int j)
    } else {
       char *text = oyOption_GetValueText(opt, malloc);
       const char *type = oyValueTypeText(opt->value_type);
-      printf("\t\tOption[%d] ID=%d\t%s{%s}\n\t\t[%s]\n\n", j, id, type, text, opt->registration);
+      printf("\t\t[%s]\n\t\tOption[%d] ID=%d\t%s{%s}\n\n",
+            opt->registration, j, id, type, text);
       free(text);
    }
 }
