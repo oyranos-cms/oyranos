@@ -84,6 +84,7 @@ void RAW::open(const string & filename_)
    rip.unpack_thumb();
    cerr << "thumbnail is [" << rip.imgdata.thumbnail.twidth << "x" << rip.imgdata.thumbnail.theight << "]" << endl;
 
+   rip.imgdata.params.output_bps = 16;
    //interpolate the Bayer pattern,
    //using dcraw compatible options in rip.imgdata.params
    rip.dcraw_process();
