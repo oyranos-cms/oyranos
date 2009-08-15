@@ -67,6 +67,7 @@ oyRankPad _rank_map[];
 
 int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options);
 int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map);
+int sane_release_handle(oyPointer * handle_ptr);
 
 /* --- implementations --- */
 
@@ -327,15 +328,15 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          }
          /*Handle "device_handle" option */
          if (handle_opt) {
-            oyBlob_s *handle_blob = NULL; //FIXME Replace with oyCMMptr_s
+            oyCMMptr_s *handle_ptr = NULL;
             SANE_Handle h;
             error = sane_open(sane_name, &h);
             if (error == SANE_STATUS_GOOD) {
-               handle_blob = oyBlob_New(NULL);
-               oyBlob_SetFromData(handle_blob, (oyPointer) & h, sizeof(SANE_Handle), "sane");
+               handle_ptr = oyCMMptr_New(allocateFunc);
+               oyCMMptr_Set(handle_ptr, "SANE", "handle", &h, "sane_release_handle", sane_release_handle);
                oyOptions_MoveInStruct(&(device->backend_core),
                                       CMM_BASE_REG OY_SLASH "device_handle",
-                                      (oyStruct_s **) & handle_blob, OY_CREATE_NEW);
+                                      (oyStruct_s **) &handle_ptr, OY_CREATE_NEW);
             } else
                printf("Unable to open sane device \"%s\": %s\n", sane_name, sane_strstatus(error));
          }
@@ -695,6 +696,23 @@ int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
    *rank_map = realloc(rm, num_options * sizeof(oyRankPad));
    /* copy static options at end of new rank map */
    memcpy(*rank_map + i, _rank_map, sizeof(_rank_map));
+
+   return 0;
+}
+
+/** @internal
+ * @brief Release the SANE_Handle.
+ *
+ * This function is a oyPointer_release_f and is used in the
+ * oyCMMptr_s device handle.
+ *
+ * @param[in]	handle_ptr				SANE_Handle
+ * @return 0 for success
+ *
+ */
+int sane_release_handle(oyPointer *handle_ptr)
+{
+   sane_close(*(SANE_Handle*)*handle_ptr);
 
    return 0;
 }
