@@ -3,7 +3,10 @@
 #include <string.h>
 #include <sane/sane.h>
 
-#include <oyranos_alpha.h>
+#include <assert.h>
+
+#include <oyranos_alpha.h> //TODO why does this work?
+
 #define CMM_BASE_REG "//imaging/config.scanner.SANE"
 
 #include "helper.c"
@@ -39,7 +42,7 @@ void print_sane_version()
 
 void init()
 {
-   int i = 0;
+   int i = 0, error = 0;
    oyConfigs_s *devices = NULL;
    /**1. Query Oyranos SANE backend for all avaliable devices**/
    /* Use the "command" -> "list" option
@@ -61,10 +64,9 @@ void init()
    print_options(list_options); //DBG
 
    /*Now call Oyranos*/
-   if (oyDevicesGet(OY_TYPE_STD, "scanner", list_options, &devices) != 0)
-      exit(1);
-   if (!devices)
-      exit(1);
+   error = oyDevicesGet(OY_TYPE_STD, "scanner", list_options, &devices);
+   assert(error == 0);
+   assert(devices != NULL);
 
    printf("Got the following devices from Oyranos\n"); //DBG
    print_devices(devices, "scanner"); //DBG
@@ -78,8 +80,10 @@ void init()
       printf("Found %d SANE device%s\n", num_devices, num_devices > 1 ? "s" : "");
 
    /*Get the SANE version from the first found device*/
-   device = oyConfigs_Get(devices, 0);
-   oyOptions_FindInt(device->data, CMM_BASE_REG "driver_version", 0, &version);
+   device = oyConfigs_Get(devices, 1);
+   assert(device != NULL);
+   error = oyOptions_FindInt(device->data, CMM_BASE_REG "driver_version", 0, &version);
+   assert(error == 0);
    oyConfig_Release(&device);
    print_sane_version();
 
