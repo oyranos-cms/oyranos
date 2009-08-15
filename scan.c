@@ -80,9 +80,9 @@ void init()
       printf("Found %d SANE device%s\n", num_devices, num_devices > 1 ? "s" : "");
 
    /*Get the SANE version from the first found device*/
-   device = oyConfigs_Get(devices, 1);
+   device = oyConfigs_Get(devices, 0);
    assert(device != NULL);
-   error = oyOptions_FindInt(device->data, CMM_BASE_REG "driver_version", 0, &version);
+   error = oyOptions_FindInt(device->data, CMM_BASE_REG OY_SLASH "driver_version", 0, &version);
    assert(error == 0);
    oyConfig_Release(&device);
    print_sane_version();
