@@ -10980,18 +10980,21 @@ OYAPI int  OYEXPORT
  *
  *  Ask for a profile associated with the device. A device capable to
  *  hold a profile only the held profile will be checked and returned.
- *  In case this profile is not found a error of -1 should be returned.
+ *  In case this profile is not found a "icc_profile" of oyVAL_STRUCT should be
+ *  included.
  *
  *  The device might not be able to hold a profile, then just the DB profile
- *  can be returned without an issue.
+ *  will be returned from here without an issue. For interessted users, the
+ *  source of the profile keeps transparent, as it can be checked if the
+ *  device contains a "icc_profile" option which contains a oyProfile_s object.
  *
- *  @param[in]     device          the device
+ *  @param[in]     device              the device
  *  @param[out]    profile             the device's ICC profile
- *  @return                            error
+ *  @return                            0 - good, 1 >= error, -1 <= issue(s)
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/10 (Oyranos: 0.1.10)
- *  @date    2009/02/10
+ *  @date    2009/08/15
  */
 OYAPI int  OYEXPORT
            oyDeviceAskProfile        ( oyConfig_s        * device,
@@ -11034,9 +11037,21 @@ OYAPI int  OYEXPORT
     o = oyConfig_Find( device, "icc_profile" );
 
   if(o && o->value_type == oyVAL_STRUCT &&
-     o->value && o->value->oy_struct && 
-     o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
-    *profile = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+     o->value)
+  {
+    if(o->value->oy_struct && 
+       o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+      *profile = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+    else if(!error)
+      error = -1;
+  }
+  else
+  {
+    char * profile_name = 0;
+    oyDeviceProfileFromDB( device, &profile_name, 0 );
+    *profile = oyProfile_FromFile( profile_name, 0,0 );
+    oyDeAllocateFunc_( profile_name );
+  }
 
   oyOptions_Release( &options );
   oyOption_Release( &o );
