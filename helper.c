@@ -3,6 +3,11 @@ using namespace oyranos;
 extern "C" {
 #endif /* __cplusplus */
 
+#include <oyranos/oyranos_cmm.h>
+#include <oyranos/oyranos_alpha.h>
+
+const char *   oyValueTypeText       ( oyVALUETYPE_e       type );
+
 static void print_option(oyOption_s * opt, int j)
 {
    int id = oyOption_GetId(opt);
@@ -13,21 +18,22 @@ static void print_option(oyOption_s * opt, int j)
       switch (opt_struct->type_) {
          case oyOBJECT_CMM_POINTER_S:
             cmm = (oyCMMptr_s*)opt_struct;
-            //printf("\tOption[%d] ID=%d\n\t\t[%s]: CMMptr{%p,%s}\n",
-            //      j, id, opt->registration, cmm->ptr, cmm->lib_name);
+            printf("\t\tOption[%d] ID=%d\tCMMptr{%p,%s}\n\t\t[%s]\n\n",
+                  j, id, cmm->ptr, cmm->lib_name, opt->registration);
             break;
          case oyOBJECT_BLOB_S:
             blob = (oyBlob_s *)opt_struct;
-            printf("\tOption[%d] ID=%d\n\t\t[%s]: blob{%p,%d}\n",
-                  j, id, opt->registration, blob->ptr, blob->size);
+            printf("\t\tOption[%d] ID=%d\tblob{%p,%d}\n\t\t[%s]\n\n",
+                  j, id, blob->ptr, blob->size, opt->registration);
             break;
          default:
-            printf("\tCan't handle struct of type %d\n", opt_struct->type_);
+            printf("\t\tCan't handle struct of type %d\n", opt_struct->type_);
             break;
       }
    } else {
       char *text = oyOption_GetValueText(opt, malloc);
-      printf("\tOption[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text);
+      const char *type = oyValueTypeText(opt->value_type);
+      printf("\t\tOption[%d] ID=%d\t%s{%s}\n\t\t[%s]\n\n", j, id, type, text, opt->registration);
       free(text);
    }
 }
