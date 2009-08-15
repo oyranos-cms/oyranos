@@ -34,7 +34,7 @@ static void print_option(oyOption_s * opt, int j)
             cmm = (oyCMMptr_s*)opt_struct;
             if (strcmp(cmm->lib_name,"SANE") == 0)
                printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tCMMptr{%p,%s}\n\n",
-                     opt->registration, j, id, *(SANE_Handle*)cmm->ptr, cmm->lib_name);
+                     opt->registration, j, id, cmm->ptr, cmm->lib_name);
             break;
          case oyOBJECT_BLOB_S:
             blob = (oyBlob_s *)opt_struct;
