@@ -103,7 +103,7 @@ void init()
       /*device_handle holds the SANE_Handle*/
       handle_opt = oyConfig_Find(device, "device_handle");
       if (handle_opt)
-         device_handle = *(SANE_Handle*)oyOption_GetData(handle_opt, NULL, malloc);
+         device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt->value->oy_struct)->ptr;
 
       oyConfig_Release(&device);
 
@@ -132,10 +132,7 @@ void scan_it()
    char *buffer_aux = NULL;
 
    //1. The device is already opened by Oyranos
-   if (!device_handle) {
-      printf("device handle is empty!\n");
-      exit(1);
-   }
+   assert(device_handle != NULL);
 
    //2. Setup the device
    //This stage is not implemented in this simple programm
