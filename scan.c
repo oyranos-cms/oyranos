@@ -164,9 +164,15 @@ void scan_it()
 
    /*Call Oyranos*/
    oyDeviceGet(OY_TYPE_STD, "scanner", device_name, options, &device);
+   oyProfile_s * profile = 0;
+   oyDeviceGetProfile( device, &profile );
+   const char * tmp = oyProfile_GetFileName( profile, -1 );
+   if(!icc_profile_name)
+     icc_profile_name = tmp;
 
    printf("Oyranos returns the following colour related options.\n"); //DBG
    print_device(device); //DBG
+   printf("Found profile: \"%s\"\n", tmp?tmp:"---");
 
 
    //3. Acquire the scanned image
