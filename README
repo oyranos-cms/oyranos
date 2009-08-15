@@ -1,7 +1,7 @@
 1. Dependencies
+   * LibRaw: Only provides a Makefile, you need to edit the first few lines (http://www.libraw.org/data/LibRaw-Lite-0.7.2.tar.gz).
    * Oyranos from git: oyranos-config should be in the PATH.
    * sane-backends from git://git.debian.org/sane/sane-backends.git.
-   * LibRaw: Only provides a Makefile, you need to edit the first few lines (http://www.libraw.org/).
    * Your distribution's EXIV2 library (libexiv2-dev on Ubuntu).
    * (Optional) elinks to create the help text from html.
 
