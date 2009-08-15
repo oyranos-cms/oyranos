@@ -260,7 +260,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
    /*Handle "driver_version" option [IN] */
    if (oyOptions_FindInt(options, "driver_version", 0, &driver_version) == 0) {
-      version_opt = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0);
+      version_opt = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0); //TODO deallocate
       if (driver_version == 0) {
          error = sane_init(&driver_version, NULL);
          if (error == SANE_STATUS_GOOD) {
@@ -303,10 +303,12 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
          device = oyConfig_New(CMM_BASE_REG, 0);
 
+
          /*Handle "driver_version" option [OUT] */
-         if (version_opt)
-            oyOptions_MoveIn(device->data, &version_opt, -1);
-         //FIXME Seems to *move* the struct, not copy as needed.
+         if (version_opt) {
+            oyOption_s *tmp = oyOption_Copy(version_opt, 0);
+            oyOptions_MoveIn(device->data, &tmp, -1);
+         }
 
          /*Handle "device_name" option [OUT] */
          error = oyOptions_SetFromText(&device->backend_core,
@@ -332,8 +334,14 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             SANE_Handle h;
             error = sane_open(sane_name, &h);
             if (error == SANE_STATUS_GOOD) {
+               printf("sane_handle[%d]: [%p]\n", i, h);
                handle_ptr = oyCMMptr_New(allocateFunc);
-               oyCMMptr_Set(handle_ptr, "SANE", "handle", &h, "sane_release_handle", sane_release_handle);
+               oyCMMptr_Set(handle_ptr,
+                            "SANE",
+                            "handle",
+                            (oyPointer)h,
+                            "sane_release_handle",
+                            sane_release_handle);
                oyOptions_MoveInStruct(&(device->backend_core),
                                       CMM_BASE_REG OY_SLASH "device_handle",
                                       (oyStruct_s **) &handle_ptr, OY_CREATE_NEW);
@@ -396,7 +404,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             return 1;
          }
       } else {
-         device_handle = *(SANE_Handle*)oyOption_GetData(handle_opt, NULL, allocateFunc);
+         device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt->value->oy_struct)->ptr;
       }
 
       /*2b. Use the "device_handle"*/
@@ -712,7 +720,12 @@ int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
  */
 int sane_release_handle(oyPointer *handle_ptr)
 {
-   sane_close(*(SANE_Handle*)*handle_ptr);
+   SANE_Handle h = (SANE_Handle)*handle_ptr;
+   sane_close(h);
+
+   message(oyMSG_DBG, 0,
+           "%s() deleting sane handle: %p\n",
+           __func__, h);
 
    return 0;
 }
