@@ -117,7 +117,8 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
       " The bidirectional option \"device_rectangle\" will cause to\n"
       " additionally add display geometry information as a oyRectangle_s\n"
       " object.\n"
-      " The bidirectional option \"icc_profile\" will add a oyProfile_s.\n"
+      " The bidirectional option \"icc_profile\" will always add a\n"
+      " oyProfile_s being it filled or set to NULL to show it was not found.\n"
       " The bidirectional option \"oyNAME_DESCRIPTION\" adds a string\n"
       " containting all properties. The text is separated by newline. The\n"
       " first line contains the actual key word, the even one the belonging\n"
@@ -378,6 +379,12 @@ int            oyX1Configs_FromPattern (
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Could not obtain _ICC_PROFILE(_xxx) information for %s",
                      OY_DBG_ARGS_, texts[i] );
+            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile",
+                              0 );
+            /* Show the "icc_profile" option is understood. */
+            p = 0;
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            oyOptions_MoveIn( device->data, &o, -1 );
             error = -1;
           } else
           {
