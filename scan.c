@@ -28,7 +28,7 @@ oyConfig_s *device = NULL;
 
 char *image_buffer = NULL;
 char *icc_profile = NULL;
-char *icc_profile_name = NULL;
+const char *icc_profile_name = NULL;
 int icc_profile_bytes;
 
 int width, height, bps, size;
