@@ -11062,7 +11062,7 @@ OYAPI int  OYEXPORT
     oyDeviceSetup( device );
     @endverbatim
  *
- *  @param         device          the device
+ *  @param         device              the device
  *  @param         profile_name        the device's ICC profile or zero to
  *                                     unset
  *  @return                            error
@@ -11251,7 +11251,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
 
       device_name = 0;
 
-      /* 1.2 get monitor device */
+      /* 1.2 get device */
       if(error <= 0)
         error = oyDeviceBackendCall( device, options );
 

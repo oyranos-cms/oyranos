@@ -136,8 +136,9 @@ oyCheckProfileMem_                 (const void* mem, size_t size,
 /** @internal
  *  @brief md5 calculation
  *
- *  @since Oyranos: version 0.1.x
- *  @date  24 november 2007 (API 0.1.x)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/11/24 (Oyranos: 0.1.x)
+ *  @date    2009/08/15
  */
 int
 oyProfileGetMD5_       ( void       *buffer,
@@ -154,14 +155,17 @@ oyProfileGetMD5_       ( void       *buffer,
     oyAllocHelper_m_( block, char, size, oyAllocateFunc_, return 1);
     memcpy( block, buffer, size);
 
+    /* process as described in the ICC specification */
     memset( &block[44], 0, 4 );  /* flags */
     memset( &block[64], 0, 4 );  /* intent */
     memset( &block[84], 0, 16 ); /* ID */
-  }
 
-  error = oyMiscBlobGetMD5_(block, size, md5_return);
+    error = oyMiscBlobGetMD5_(block, size, md5_return);
 
-  if(block) oyFree_m_ (block);
+    if(block) oyFree_m_ (block);
+
+  } else
+    error = 1;
 
   DBG_PROG_ENDE
   return error;
