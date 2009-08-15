@@ -1,15 +1,30 @@
-
 #ifdef __cplusplus
 using namespace oyranos;
 extern "C" {
 #endif /* __cplusplus */
 
-void print_option(oyOption_s * opt, int j)
+static void print_option(oyOption_s * opt, int j)
 {
    int id = oyOption_GetId(opt);
    if (opt->value_type == oyVAL_STRUCT) {
-      oyBlob_s *blob = (oyBlob_s *) opt->value->oy_struct;
-      printf("\tOption[%d] ID=%d\n\t\t[%s]: blob{%p,%d}\n", j, id, opt->registration, blob->ptr, blob->size);
+      oyStruct_s *opt_struct = opt->value->oy_struct;
+      oyCMMptr_s *cmm = NULL;
+      oyBlob_s *blob = NULL;
+      switch (opt_struct->type_) {
+         case oyOBJECT_CMM_POINTER_S:
+            cmm = (oyCMMptr_s*)opt_struct;
+            //printf("\tOption[%d] ID=%d\n\t\t[%s]: CMMptr{%p,%s}\n",
+            //      j, id, opt->registration, cmm->ptr, cmm->lib_name);
+            break;
+         case oyOBJECT_BLOB_S:
+            blob = (oyBlob_s *)opt_struct;
+            printf("\tOption[%d] ID=%d\n\t\t[%s]: blob{%p,%d}\n",
+                  j, id, opt->registration, blob->ptr, blob->size);
+            break;
+         default:
+            printf("\tCan't handle struct of type %d\n", opt_struct->type_);
+            break;
+      }
    } else {
       char *text = oyOption_GetValueText(opt, malloc);
       printf("\tOption[%d] ID=%d\n\t\t[%s]: \"%s\"\n", j, id, opt->registration, text);
@@ -17,7 +32,7 @@ void print_option(oyOption_s * opt, int j)
    }
 }
 
-int print_options(oyOptions_s * options)
+static int print_options(oyOptions_s * options)
 {
    int j;
    int num_options = oyOptions_Count(options);
@@ -31,7 +46,7 @@ int print_options(oyOptions_s * options)
    return num_options;
 }
 
-void print_device(oyConfig_s *device)
+static void print_device(oyConfig_s *device)
 {
    int j;
    int num_options = oyConfig_Count(device);
@@ -43,7 +58,7 @@ void print_device(oyConfig_s *device)
    }
 }
 
-int print_devices(oyConfigs_s * devices, const char *name)
+static int print_devices(oyConfigs_s * devices, const char *name)
 {
    int i,j;
    int num_devices = oyConfigs_Count(devices);
