@@ -1966,7 +1966,7 @@ int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
                                        const char        * func_name,
                                        oyPointer_release_f ptrRelease )
 {
-  return oyCMMptr_Set( cmm_ptr, lib_name, resource, ptr, func_name, ptrRelease);
+  return oyCMMptr_Set_( cmm_ptr, lib_name, resource, ptr, func_name, ptrRelease);
 }
 
 /** @internal
