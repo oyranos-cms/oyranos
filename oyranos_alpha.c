@@ -1957,7 +1957,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/22 (Oyranos: 0.1.10)
- *  @date    2009/07/22
+ *  @date    2009/08/16
  */
 int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
                                        const char        * lib_name,

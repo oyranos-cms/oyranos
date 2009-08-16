@@ -781,6 +781,7 @@ new_libs=$X_ADD_2
 for i in $nochecklibs; do
   new_libs=`echo $new_libs | sed s/$i//`
 done
+export nochecklibs
 X_ADD_2=$new_libs
 export X_ADD
 export X_ADD_2
@@ -814,6 +815,20 @@ fi
   DEBUG=1; export DEBUG
   PO=1; export PO
   GETTEXT=2; export GETTEXT
+  for i in $nochecklibs; do
+    if [ $i = Xrandr ]; then
+      XRANDR=0; export XRANDR
+    fi
+    if [ $i = Xxf86vm ]; then
+      XF86VMODE=0; export XF86VMODE
+    fi
+    if [ $i = Xinerama ]; then
+      XINERAMA=0; export XINERAMA
+    fi
+    if [ $i = X11 ]; then
+      X11=0; export X11
+    fi
+  done
   $ROOT_DIR/configure_tests.sh
   LIBS=0; export LIBS
   DSO_LINKING=0; export DSO_LINKING
