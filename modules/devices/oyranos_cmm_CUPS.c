@@ -217,7 +217,6 @@ int          DeviceFromName_ (         const char        * device_name,
     if(!error)
     {
       char * manufacturer= 0, *model=0, *serial=0, *host=0, *system_port=0, *profile_name = 0;
-      oyBlob_s * device_context = 0;
 
       if(!device_name)
       {
@@ -240,13 +239,12 @@ int          DeviceFromName_ (         const char        * device_name,
       int num_dests = cupsGetDests2(http, &dests); 
 
       const char * ppd_file_location = cupsGetPPD2(http, device_name);
-      ppd_file_t * ppd = ppdOpenFile(ppd_file_location);  
+      ppd_file_t * ppd = ppdOpenFile(ppd_file_location);
 
       manufacturer = ppd->manufacturer;
       model = ppd->modelname;   
       serial = 0;                       // Not known at this time.
       system_port = device_name; 
-      device_context = ppd;
 
       host = cupsServer(); 
       ppd_attr_t * attrs = ppdFindAttr(ppd, "cupsICCProfile", 0);
@@ -280,16 +278,34 @@ int          DeviceFromName_ (         const char        * device_name,
         OPTIONS_ADD( (*device)->backend_core, profile_name )
                                
         
-        if(!error && device_context)
+        char * ppd_data = 0;
+        size_t size = 0;
+        char * data = 0;
+        /* open the PPD data */
+        {
+          FILE * fp = fopen( ppd_file_location, "r" );
+          // Find the total size.
+          fseek(fp , 0, SEEK_END);
+          size_t lsize = ftell(fp);
+          rewind (fp);
+
+          // Create buffer to read contents into a profile.
+          data = (char*) malloc (sizeof(char)*lsize + 1);
+          if (data == NULL) fputs ("Unable to open PPD size.",stderr);
+
+          size = fread( data, 1, lsize, fp);
+          data[size] = 0;
+        }
+
+        if(!error && data && size)
         {           
           o = oyOption_New( CMM_BASE_REG OY_SLASH "device_context", 0 );
           error = !o;
           if(!error)
-              error = oyOption_SetFromData( o, device_context->ptr, device_context->size );
+              error = oyOption_SetFromData( o, data, size );
           
           if(!error)
             oyOptions_MoveIn( (*device)->data, &o, -1 );
-          oyBlob_Release( &device_context );  
         }
       }
 
