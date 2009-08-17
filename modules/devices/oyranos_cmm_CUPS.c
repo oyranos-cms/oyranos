@@ -17,7 +17,7 @@
 #define CMM_NICK "CUPS"
 #define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.printer." CMM_NICK
 
-#define catCMMfunc(nick,func) CUPS ## func
+#define catCMMfunc(nick,func) nick ## func
 
 #define CMMInit                 catCMMfunc( CUPS, CMMInit )
 #define CMMallocateFunc         catCMMfunc( CUPS, CMMallocateFunc )
@@ -211,11 +211,13 @@ int          DeviceFromName_ (         const char        * device_name,
 {    
     oyOption_s * o = 0;
     int error = !device;
+ 
+    const char * value3 = oyOptions_FindString( options, "device_context", 0 );
 
     if(!error)
     {
       char * manufacturer= 0, *model=0, *serial=0, *host=0, *system_port=0, *profile_name = 0;
-      oyBlob_s * device_context = 0, *device_settings = 0;
+      oyBlob_s * device_context = 0;
 
       if(!device_name)
       {
@@ -244,17 +246,13 @@ int          DeviceFromName_ (         const char        * device_name,
       model = ppd->modelname;   
       serial = 0;                       // Not known at this time.
       system_port = device_name; 
-  
-      cupsFreeDests (num_dests, dests);        
+      device_context = ppd;
 
       host = cupsServer(); 
-
-      device_context = ppd; 
-      
-      const char * pname = 0, *spec = 0;
-      ppd_attr_t * attrs = ppdFindAttr(ppd,"cupsICCProfile", 0);
+      ppd_attr_t * attrs = ppdFindAttr(ppd, "cupsICCProfile", 0);
  
-      const char * printer_name = attrs->value;
+      if(attrs && attrs->value)
+        profile_name = attrs->value;
       
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
@@ -279,30 +277,30 @@ int          DeviceFromName_ (         const char        * device_name,
         OPTIONS_ADD( (*device)->backend_core, serial )
         OPTIONS_ADD( (*device)->backend_core, system_port )
         OPTIONS_ADD( (*device)->backend_core, host )             
-        OPTIONS_ADD( (*device)->backend_core, printer_name )
+        OPTIONS_ADD( (*device)->backend_core, profile_name )
                                
-        device_context = ppd;
         
         if(!error && device_context)
         {           
           o = oyOption_New( CMM_BASE_REG OY_SLASH "device_context", 0 );
           error = !o;
           if(!error)
-          error = oyOption_SetFromData( o, device_context->ptr, device_context->size );
+              error = oyOption_SetFromData( o, device_context->ptr, device_context->size );
           
           if(!error)
             oyOptions_MoveIn( (*device)->data, &o, -1 );
           oyBlob_Release( &device_context );  
         }
       }
+
     ppdClose(ppd);
     httpClose(http);
+    cupsFreeDests (num_dests, dests);    
+
     }
  
   return error;
 }
-
-
 
 
 int            Configs_FromPattern (
@@ -319,10 +317,10 @@ int            Configs_FromPattern (
     char * text = 0;
     int texts_n = 0, i,
     error = !s;
-    const char * value1 = 0,
+    const char * printer_name = 0,
                * value2 = 0,
                * value3 = 0,
-               * value4 = 0,
+               * profile_request = 0,
                * profile_name = 0;
 
     int rank = oyFilterRegistrationMatch( _api8.registration, registration,
@@ -353,7 +351,7 @@ int            Configs_FromPattern (
         devices = oyConfigs_New(0);
 
         /* "list" call section */
-        value1 = oyOptions_FindString( options, "device_name", 0 );
+        printer_name = oyOptions_FindString( options, "device_name", 0 );
         value2 = oyOptions_FindString( options, "command", "list" );
 
     if(oyOptions_FindString( options, "command", "list" ) ||
@@ -367,7 +365,7 @@ int            Configs_FromPattern (
       for( i = 0; i < texts_n; ++i )
       {
         /* filter */
-        if(value1 && strcmp(value1, texts[i]) != 0)
+        if(printer_name && strcmp(printer_name, texts[i]) != 0)
           continue;
 
         device = oyConfig_New( CMM_BASE_REG, 0 );
@@ -379,8 +377,8 @@ int            Configs_FromPattern (
                                        texts[i], OY_CREATE_NEW );
         }
 
-        value4 = oyOptions_FindString( options, "icc_profile", 0 );   
-        if(value4 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        profile_request = oyOptions_FindString( options, "icc_profile", 0 );   
+        if(profile_request || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {              
           // Open PPD file for profile extraction.
           const char * ppd_file_location = cupsGetPPD2(http, texts[i]);
@@ -471,10 +469,9 @@ int            Configs_FromPattern (
 
         /** Build oyNAME_NAME */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        {
+        { 
           text = calloc( 4096, sizeof(char) );
-
-          o = oyOptions_Find( device->data, "icc_Profile" );
+          o = oyOptions_Find( device->data, "icc_profile" );
 
           if( o && o->value && o->value->oy_struct && 
               o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
@@ -515,12 +512,13 @@ int            Configs_FromPattern (
     value2 = oyOptions_FindString( options, "command", "properties" );
     if(value2)
     { 
+ 
       texts_n = GetDevices( &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
         /* filter */
-        if(value1 && strcmp(value1, texts[i]) != 0)
+        if(printer_name && strcmp(printer_name, texts[i]) != 0)
           continue;
 
         device = oyConfig_New( CMM_BASE_REG, 0 );
@@ -531,7 +529,7 @@ int            Configs_FromPattern (
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
-        error = DeviceFromName_( value1, options, &device,
+        error = DeviceFromName_( texts[i], options, &device,
                                          allocateFunc );
 
         if(error <= 0 && device)
@@ -552,7 +550,7 @@ int            Configs_FromPattern (
 
     if(error <= 0 && value2)
     {
-      error = !value1 || !value3;
+      error = !printer_name || !value3;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
               "The device_name/profile_name option is missed. Options:\n%s",
@@ -560,7 +558,7 @@ int            Configs_FromPattern (
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
-        error = 0; /* doSetup( value1, value3 ); */
+        error = 0; /* doSetup( printer_name, value3 ); */
       return error;
     }
 
@@ -568,14 +566,14 @@ int            Configs_FromPattern (
     value2 = oyOptions_FindString( options, "command", "unset" );
     if(error <= 0 && value2)
     {
-      error = !value1;
+      error = !printer_name;
       if(error >= 1)
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "The device_name option is missed. Options:\n%s",
                 _DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
-        error = 0; /* doUnset( value1 ); */
+        error = 0; /* doUnset( printer_name ); */
         return error;
       }
     }
@@ -590,8 +588,8 @@ int            Configs_FromPattern (
     if(error <= 0 && 
        oyOptions_FindString( options, "command", "setup"))
     { 
-         value4 = oyOptions_FindString( options, "profile_name", 0 );
-         error = !value3 || !value4;
+         profile_request = oyOptions_FindString( options, "profile_name", 0 );
+         error = !value3 || !profile_request;
          if (error >= 1)
            message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
               "The device/profile name option is missing. OPTIONS:\n%s",
@@ -600,9 +598,14 @@ int            Configs_FromPattern (
                  );
           else
           {
-              //error = CUPSProfileSetup( value1, "sRGB.icc");
+              //error = CUPSProfileSetup( printer_name, "sRGB.icc");
           }
+    }
 
+    if(error <= 0 &&
+       oyOptions_FindString( options, "command", "help" ))
+    {
+        ConfigsFromPatternUsage( (oyStruct_s*)options );
     }
 
     ConfigsFromPatternUsage( (oyStruct_s*)options );
@@ -678,8 +681,10 @@ oyCMMapi8_s _api8 = {
 
   CMM_BASE_REG,              /**< registration */
   {0,1,0},                   /**< int32_t version[3] */
-  0,                         /**< char * id_ */
-   0,                         /**< oyCMMapi5_s * api5_ */
+  0
+  ,                         /**< char * id_ */
+  0
+  ,                         /**< oyCMMapi5_s * api5_ */
   Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
   Config_Check,          /**< oyConfig_Check_f oyConfig_Check */
   _rank_map              /**< oyRankPad ** rank_map */
@@ -692,7 +697,7 @@ oyCMMapi8_s _api8 = {
  *  @since   2008/12/23 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-//                  TODO
+
 const char * GetText             ( const char        * select,
                                        oyNAME_e            type )
 {
