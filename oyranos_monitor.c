@@ -108,6 +108,9 @@ char* oyMonitor_getAtomName_         ( oyMonitor_s       * disp,
 char* oyChangeScreenName_            ( const char        * display_name,
                                        int                 screen );
 
+
+const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
+
 int
 oyFree_( void *oy_structure )
 { int error = 0;
@@ -252,11 +255,11 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/17 (Oyranos: 0.1.10)
- *  @date    2009/01/17
+ *  @date    2009/08/18
  */
 oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
                                        const char        * prop_name,
-                                       const char        * prop_name_xrandr )
+                                       const char       ** prop_name_xrandr )
 {
   oyBlob_s * prop = 0;
   Display *display = 0;
@@ -274,9 +277,14 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
 # ifdef HAVE_XRANDR
     if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
     {
-      atom = XInternAtom( display,
-                          prop_name_xrandr ? prop_name_xrandr : prop_name,
-                          True );
+      int pos = 0, i;
+      if(prop_name_xrandr)
+        while(!atom && prop_name_xrandr[i])
+          atom = XInternAtom( display,
+                              prop_name_xrandr[i++],
+                              True );
+      else
+        atom = XInternAtom( display, prop_name, True );
       DBG_PROG1_S("atom: %ld", atom)
 
       if(atom)
@@ -374,7 +382,7 @@ oyGetMonitorInfo_                 (const char* display_name,
     *host = oyStringCopy_( oyMonitor_hostName_( disp ), allocate_func );
 
   prop = oyMonitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
-                                       "EDID_DATA" );
+                                       xrandr_edids );
 
   if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
       (!prop || (prop && prop->size != 128)) )
@@ -392,7 +400,7 @@ oyGetMonitorInfo_                 (const char* display_name,
     if(txt) { oyDeAllocateFunc_(txt); txt = 0; }
 
     prop = oyMonitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
-                                          "EDID_DATA" );
+                                         xrandr_edids );
   }
 
   if( prop )
@@ -1343,11 +1351,7 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
 
   {
   Display *display = 0;
-  int i;
-  int     major_versionp = 0;
-  int     minor_versionp = 0;
-  int n = 0,
-      len = 0;
+  int len = 0;
   int monitors = 0;
 
   disp->display = XOpenDisplay (disp->name);
@@ -1381,6 +1385,9 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
   if(len == 1)
   {
 # if HAVE_XRANDR
+    int major_versionp = 0;
+    int minor_versionp = 0;
+    int i, n = 0;
     XRRQueryVersion( display, &major_versionp, &minor_versionp );
 
     if((major_versionp*100 + minor_versionp) >= 102)
