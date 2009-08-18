@@ -1641,7 +1641,7 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
   A( _("Cmyk to Cmyk transformation"));
   A(              ":</td>\n\
     <td>\n\
-     <xf:select1 ref=\"/" OY_TOP_INTERNAL "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
+     <xf:select1 ref=\"" OY_TOP_INTERNAL "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
       <xf:choices label=\"" );
   A(                   _("Black Preservation"));
   A(                                "\">\n\
