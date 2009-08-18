@@ -6172,7 +6172,7 @@ int            oyOption_GetId        ( oyOption_s        * obj )
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/12/05 (Oyranos: 0.1.9)
- *  @date    2008/12/05
+ *  @date    2009/08/17
  */
 char *         oyOption_GetValueText ( oyOption_s        * obj,
                                        oyAlloc_f           allocateFunc )
@@ -6243,13 +6243,18 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
       }
       if(obj->value_type == oyVAL_STRUCT)
       {
-        if(oy_struct_list)
+        if(oy_struct_list && oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
         {
           oyStruct_s * oy_struct = oyStructList_Get_( oy_struct_list, i );
           if(oy_struct && oy_struct->oy_)
             STRING_ADD ( text, oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
-        } else if(v->oy_struct && v->oy_struct->oy_)
-          STRING_ADD ( text, oyObject_GetName( v->oy_struct->oy_, oyNAME_NICK ));
+        } else if(v->oy_struct)
+        {
+          if(v->oy_struct->oy_)
+          STRING_ADD ( text, oyObject_GetName( v->oy_struct->oy_,oyNAME_NICK ));
+          else
+          STRING_ADD ( text, oyStructTypeToText(v->oy_struct->type_) );
+        }
       }
     }
 
@@ -7474,7 +7479,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
     /*  2. get implementation for filter type */
     api5 = filter->api4_->api5_;
 
-    /*  3. parse static common options from meta backend */
+    /*  3. parse static common options from a policy backend */
     if(api5 && flags & OY_SELECT_COMMON)
     {
       oyCMMapiFilters_s * apis;
