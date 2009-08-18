@@ -338,19 +338,20 @@ int            Configs_FromPattern (
                * value3 = 0,
                * profile_request = 0,
                * profile_name = 0;
+    http_t * http = 0;
+    oyAlloc_f allocateFunc = malloc;
+    static char * num = 0;
+    const char * tmp = 0;
+
 
     int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
 
     // Initialize the CUPS server.
     httpInitialize();
-    http_t * http = httpConnectEncrypt ( cupsServer(),
-                                          ippPort(),
-                                          cupsEncryption());
-
-    oyAlloc_f allocateFunc = malloc;
-    static char * num = 0;
-    const char * tmp = 0;
+    http = httpConnectEncrypt ( cupsServer(),
+                                ippPort(),
+                                cupsEncryption());
 
     if(!num)
         num = malloc( 80 );
@@ -417,71 +418,75 @@ int            Configs_FromPattern (
                                        CMM_BASE_REG OY_SLASH "profile_name",
                                        profile_name, OY_CREATE_NEW );
              
-          // Generate cups HTTP-specific strings.
-          char uri[1024];         
-          char temp_profile_location[1024];
-                
-          // Create the complete path to the profile on the server (ie. http://host:port/profiles/****.icc
-          httpAssembleURIf(HTTP_URI_CODING_ALL, uri, sizeof(uri), "http", NULL, cupsServer(), ippPort(), "/profiles/%s", profile_name);         
-          
-          // Get a file descriptor to download the file from the server to the /tmp directory.
-          int tempfd = cupsTempFd(temp_profile_location, sizeof(temp_profile_location));
-          
-          // Download file using the descriptor and uri path.
-          cupsGetFd(http, uri, tempfd);             
-
-          // Open the file.
-          FILE * old_file = fopen(temp_profile_location, "rb");   
-                    
-          // Find the total size.
-          fseek(old_file , 0, SEEK_END);
-          long lsize = ftell(old_file);
-          rewind (old_file);
-
-          // Create buffer to read contents into a profile.
-          char * data = (char*) malloc (sizeof(char)*lsize);
-          if (data == NULL) {fputs ("Unable to find profile size.",stderr); exit (2);}
-
-          size_t size = fread( data, 1, lsize, old_file);                     
-                    
           // Check to see if profile is a custom one.
-          if( oyProfile_FromFile(profile_name, 0, 0) == NULL )
+          // If Oyranos knows the profile, simply use the buffer.
+          p = oyProfile_FromFile(profile_name, 0, 0);
+
+          if( p == NULL )
           {
+            // Generate cups HTTP-specific strings.
+            char uri[1024];         
+            char temp_profile_location[1024];
+            FILE * old_file = 0;
+            char * data = 0;
+            size_t size = 0;
+            int tempfd = 0;
+
             message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "Could not obtain profile information for %s -- building profile %s.",
                 _DBG_ARGS_, texts[i], profile_name);
            
-            // Create a new file to copy the profile.
-            FILE * new_file = fopen(profile_name, "wb");         
-            fwrite(data, 1, size, new_file);
+                
+            // Create the complete path to the profile on the server (ie. http://host:port/profiles/****.icc
+            httpAssembleURIf(HTTP_URI_CODING_ALL, uri, sizeof(uri), "http", NULL, cupsServer(), ippPort(), "/profiles/%s", profile_name);         
+          
+            // Get a file descriptor to download the file from the server to the /tmp directory.
+            tempfd = cupsTempFd(temp_profile_location, sizeof(temp_profile_location));
+          
+            // Download file using the descriptor and uri path.
+            cupsGetFd(http, uri, tempfd);             
 
-            // Use Oyranos to save the file.
-            p = oyProfile_FromFile(profile_name, 0, 0);
-            o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( device->data, &o, -1 );
+            // Open the file.
+            old_file = fopen(temp_profile_location, "rb");
+                    
+            // Find the total size.
+            if(old_file)
+            {
+              size_t lsize = 0;
+              fseek(old_file , 0, SEEK_END);
+              lsize = ftell(old_file);
+              rewind (old_file);
 
-            free( data );
-            fclose( new_file );
-           
-          } 
+              // Create buffer to read contents into a profile.
+              data = (char*) malloc (sizeof(char)*lsize);
+              if (data == NULL) {fputs ("Unable to find profile size.\n",stderr);}
 
-          // If Oyranos knows the profile, simply use the buffer.
-          else
-          {
-            p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
-            o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( device->data, &o, -1 );
-            free( data );  
-            
+              if(lsize)
+                size = fread( data, 1, lsize, old_file);
+
+              fclose( old_file );
+            }
+
+            if(data && size)
+            {
+              free( data ); data = 0;
+                    
+              // Use Oyranos to save the file.
+              p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
+            }
           }
 
-           fclose( old_file );
+          if(p)
+          {
+            o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            oyOptions_MoveIn( device->data, &o, -1 );
+          }
+            
+
            
-           ppdClose(ppd);
-           httpClose(http);
-        } 
+          ppdClose(ppd); ppd = 0;
+        }
 
         /** Build oyNAME_NAME */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
@@ -521,6 +526,7 @@ int            Configs_FromPattern (
       if(error <= 0)
         *s = devices;
 
+      httpClose(http); http = 0;
       return error;
     }
 
@@ -557,6 +563,7 @@ int            Configs_FromPattern (
       if(error <= 0)
         *s = devices;
 
+      httpClose(http); http = 0;
       return error;
     }
 
@@ -575,6 +582,8 @@ int            Configs_FromPattern (
                 );
       else
         error = 0; /* doSetup( printer_name, value3 ); */
+
+      httpClose(http); http = 0;
       return error;
     }
 
@@ -590,6 +599,8 @@ int            Configs_FromPattern (
                 );
       else
         error = 0; /* doUnset( printer_name ); */
+
+        httpClose(http); http = 0;
         return error;
       }
     }
@@ -621,11 +632,12 @@ int            Configs_FromPattern (
     if(error <= 0 &&
        oyOptions_FindString( options, "command", "help" ))
     {
-        ConfigsFromPatternUsage( (oyStruct_s*)options );
+        ;/* ConfigsFromPatternUsage */
     }
 
     ConfigsFromPatternUsage( (oyStruct_s*)options );
 
+    httpClose(http); http = 0;
     return error;
 }
 
