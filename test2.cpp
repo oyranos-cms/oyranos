@@ -1506,6 +1506,9 @@ oyTESTRESULT_e testCMMDevicesListing ()
   error = oyOptions_SetFromText( &options_list,
                                  "//" OY_TYPE_STD "/config/command", "list",
                                  OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options_list,
+                                 "//" OY_TYPE_STD "/config/icc_profile",
+                                 "true", OY_CREATE_NEW );
 
   fprintf( stdout, "oyConfigs_FromDomain() \"list\" call:\n" );
   for( i = 0; i < (int)count; ++i)
@@ -1560,11 +1563,12 @@ oyTESTRESULT_e testCMMDevicesListing ()
         {
           val = oyOption_GetValueText( o, oyAllocateFunc_ );
           /* collect the device_name's into a set of options for later */
-          error = oyOptions_SetFromText( &options_devices, o->registration,
-                                         val,
-                                         OY_CREATE_NEW | OY_ADD_ALWAYS );
-          printf("  %d::%d::%d %s %s\n", i,j,k,
-                 o->registration, val );
+          if(strstr(o->registration, "device_name"))
+            error = oyOptions_SetFromText( &options_devices, o->registration,
+                                           val,
+                                           OY_CREATE_NEW | OY_ADD_ALWAYS );
+          printf("  %d::%d::%d \"%s\": \"%s\"\n", i,j,k,
+                 o->registration, val?val:"(nix)" );
         }
 
         if(r) oyDeAllocateFunc_(r); r = 0;
@@ -1623,6 +1627,17 @@ oyTESTRESULT_e testCMMDevicesListing ()
 
           val = oyOption_GetValueText( o, oyAllocateFunc_ );
           printf( "  %d::%d::%d %s: \"%s\"\n", l,j,k, 
+                  oyStrrchr_(o->registration,'/')+1, val );
+
+          if(val) oyDeAllocateFunc_( val ); val = 0;
+          oyOption_Release( &o );
+        }
+
+        o = oyConfig_Find( device, "icc_profile" );
+        if(o)
+        {
+          val = oyOption_GetValueText( o, oyAllocateFunc_ );
+          printf( "  %d::%d %s: \"%s\"\n", l,j, 
                   oyStrrchr_(o->registration,'/')+1, val );
 
           if(val) oyDeAllocateFunc_( val ); val = 0;
