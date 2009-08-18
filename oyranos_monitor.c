@@ -859,8 +859,8 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
        @todo TODO xcalib should be configurable as a module
      */
-    sprintf(text,"xcalib -d %s -s %d \'%s\'", dpy_name, disp->geo[1],
-                               profile_fullname);
+    sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, disp->geo[1],
+                 oy_debug?"-v":"", profile_fullname);
     {
       Display * display = oyMonitor_device_( disp );
       int effective_screen = oyMonitor_screen_( disp );
