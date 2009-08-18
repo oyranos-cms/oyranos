@@ -7917,6 +7917,7 @@ int            oyOptions_AppendOpts  ( oyOptions_s       * list,
  *
  *  @param[out]    list                target
  *  @param[in]     from                source
+ *  @param         type                boolean operation before copy
  *  @param         fields              registration fields of each option
  *  @param         object              the optional object
  *  @return                            0 - success; 1 - error; -1 issue
@@ -10228,7 +10229,7 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
  *  Function oyOptions_SetDeviceTextKey_
  *  @brief   set a device option
  *
- *  @param[in/out] options             options for the device
+ *  @param[in,out] options             options for the device
  *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to OY_TYPE_STD (optional)
  *  @param[in]     device_class        the device class, e.g. "monitor",
@@ -10263,7 +10264,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
  *  Function oyOptions_SetRegistrationTextKey_
  *  @brief   set a device option
  *
- *  @param[in/out] options             options for the device
+ *  @param[in,out] options             options for the device
  *  @param[in]     registration        the registration string
  *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
  *  @param[in]     value               value of type ::oyVAL_STRING
@@ -10304,7 +10305,7 @@ int    oyOptions_SetRegistrationTextKey_(
  *  Any other pointer will be converted to a oyBlob_s object. The name of that
  *  object will come from driver_context_type.
  *
- *  @param[in/out] options             options for the device
+ *  @param[in,out] options             options for the device
  *  @param[in]     driver_context      driver context
  *  @param[in]     driver_context_type "xml" or something related to the driver
  *  @param[in]     driver_context_size size of driver_context
@@ -12893,11 +12894,10 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
  *
  *  @verbatim
     oyConfig_s * device = oyConfig_New( "//" OY_TYPE_STD "/config", object );
-    oyProfile_DeviceGet( profile, device, 0 ); @endverbatim
+    oyProfile_DeviceGet( profile, device ); @endverbatim
  *
  *  @param[in]     profile             the profile
  *  @param[in,out] device              the device description
- *  @param[in]     object              the optional object
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -14830,9 +14830,9 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
  *  @memberof oyProfiles_s
  *  @brief   sort a profile list according to a given device
  *
- *  @param[in/out] list                the to be manipulated profile list
+ *  @param[in,out] list                the to be manipulated profile list
  *  @param[in]     device              filter pattern
- *  @param[in/out] rank_list           list of rank levels for the profile list
+ *  @param[in,out] rank_list           list of rank levels for the profile list
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/05/22 (Oyranos: 0.1.10)
@@ -14988,8 +14988,7 @@ oyRectangle_s* oyRectangle_NewFrom   ( oyRectangle_s     * ref,
  *
  *  @param[in]     image               a image
  *  @param[in]     image_rectangle     optional rectangle from image
- *  @param[in/out] pixel_rectangle     mandatory rectangle for pixel results
- *  @param[in]     object              optional object
+ *  @param[in,out] pixel_rectangle     mandatory rectangle for pixel results
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -20449,6 +20448,7 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
  *
  *  @param[in,out] node                filter object
  *  @param[out]    ui_text             XFORMS fitting to the node Options
+ *  @param         allocateFunc        optional user allocator
  *  @return                            the options
  *
  *  @version Oyranos: 0.1.10
@@ -20914,7 +20914,7 @@ int oyPointerRelease                 ( oyPointer         * ptr )
  *  of this transformer will on request be cached by Oyranos as well.
  *
  *  @param[in]     node                filter
- *  @param[in/out] blob                context to fill
+ *  @param[in,out] blob                context to fill
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
