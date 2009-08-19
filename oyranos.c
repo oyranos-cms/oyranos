@@ -79,6 +79,8 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   const char * type_name = "";
   int id = -1;
   size_t sz = 256;
+  pid_t pid = 0;
+  FILE * fp = 0;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
@@ -138,8 +140,25 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   while(text[i])
     fputc(text[i++], stderr);
   fprintf( stderr, "\n" );
-  free( text );
 
+  if(oy_backtrace)
+  {
+#   define TMP_FILE "/tmp/oyranos_gdb_temp." OYRANOS_VERSION_NAME "txt"
+    pid = (int)getpid();
+    fp = fopen( TMP_FILE, "w" );
+
+    if(fp)
+    {
+      fprintf(fp, "attach %d\n", pid);
+      fprintf(fp, "thread 1\nbacktrace\n"/*thread 2\nbacktrace\nthread 3\nbacktrace\n*/"detach" );
+      fclose(fp);
+      fprintf( stderr, "GDB output:\n" );
+      system("gdb -batch -x " TMP_FILE);
+    } else
+      fprintf( stderr, "could not open " TMP_FILE "\n" );
+  }
+
+  free( text );
   return 0;
 }
 
