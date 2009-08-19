@@ -40,10 +40,13 @@ int main( int argc , char** argv )
   char *display_name = getenv("DISPLAY");
   char *monitor_profile = 0;
   int error = 0;
+
+  /* the functional switches */
   int erase = 0;
   int list = 0;
   int setup = 0;
   int database = 0;
+
   char *ptr = NULL;
   int x = 0, y = 0;
   char *oy_display_name = NULL;
@@ -179,6 +182,9 @@ int main( int argc , char** argv )
     }
     if(oy_debug) printf( "%s\n", argv[1] );
 
+    if(!erase && !list && !database && !setup)
+      setup = 1;
+
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
@@ -268,9 +274,10 @@ int main( int argc , char** argv )
       oySetMonitorProfile (oy_display_name, monitor_profile);
     if(monitor_profile || erase)
       oySetMonitorProfile (oy_display_name, 0);
-  }
+  } else
+    setup = 1;
 
-  if(argc == 1 || setup || monitor_profile)
+  if(setup || monitor_profile)
     error = oyActivateMonitorProfiles (display_name);
 
   if(oy_display_name)
