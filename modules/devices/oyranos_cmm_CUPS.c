@@ -51,7 +51,7 @@ int PPDGetProfile ( const char ** profileName, oyOptions_s * options );
 const char * GetProfileSelector (oyOptions_s * options);
 ppd_file_t * ppdFromDeviceName( const char * device_name );
 int CUPSgetProfiles                  ( const char        * device_name,
-                                       oyConfig_s        * devices[3] );
+                                       oyConfigs_s       * devices );
 
 
 /*************************************************/
@@ -416,28 +416,29 @@ int            Configs_FromPattern (
 
         profile_request = oyOptions_FindString( options, "icc_profile", 0 );   
         if(profile_request || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        {              
+        {
+          int n, j;
           /* Search for CUPS ICC profiles */
-          oyConfig_s * devices_[3] = {0,0,0};
-          devices_[0] = device;
+          oyConfigs_s * devices_ = oyConfigs_New(0);
+          oyConfig_s * tmp = oyConfig_Copy( device, 0 );
+          oyConfigs_MoveIn( devices_, &tmp, -1 );
 
           CUPSgetProfiles( texts[i], devices_ );
 
           /* add additional devices */
-          if(devices_[1])
+          n = oyConfigs_Count( devices_ );
+          for(j = 0; j < n; ++j)
           {
-            error = oyOptions_SetFromText( &devices_[1]->backend_core,
+            oyConfig_s * d = oyConfigs_Get( devices_, j );
+            error = oyOptions_SetFromText( &d->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
-            oyConfigs_MoveIn( devices, &devices_[1], -1 );
+            if(j)
+              oyConfigs_MoveIn( devices, &d, -1 );
+            else
+              oyConfig_Release( &d );
           }
-          if(devices_[2])
-          {
-            error = oyOptions_SetFromText( &devices_[2]->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       texts[i], OY_CREATE_NEW );
-            oyConfigs_MoveIn( devices, &devices_[2], -1 );
-          }
+          oyConfigs_Release( &devices_ );
         }
 
         /** Build oyNAME_NAME */
@@ -737,7 +738,7 @@ oyCMMInfo_s _cmm_module = {
  *  @param         device              add the 3 qualifiers and the profile
  */
 int CUPSgetProfiles                  ( const char        * device_name,
-                                       oyConfig_s        * devices[3] )
+                                       oyConfigs_s       * devices )
 {
     int error = 0;
     const char * ppd_file_location = cupsGetPPD( device_name );
@@ -754,6 +755,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                * custom_qualifer_B = 0, * custom_qualifer_C = 0;
     int attr_amt;
     oyProfile_s * p = 0;
+    oyConfig_s * device = 0;
 
     for (i = 0; i < option_num; i++)
     {  
@@ -792,6 +794,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
     for (i = 0; i < attr_amt; i++)
     {
       int count = 0;
+      int must_move = 0;
       char ** texts = 0;
       char * profile_name = 0;
 
@@ -815,10 +818,13 @@ int CUPSgetProfiles                  ( const char        * device_name,
         break;
       }
 
-
-      if(!devices[pos])
-        devices[pos] = oyConfig_New( CMM_BASE_REG, 0 );
-      oyOptions_SetFromText( &devices[pos]->data,
+      device = oyConfigs_Get( devices, pos );
+      if(!device)
+      {
+        device = oyConfig_New( CMM_BASE_REG, 0 );
+        must_move = 1;
+      }
+      oyOptions_SetFromText( &device->data,
                              CMM_BASE_REG OY_SLASH "profile_name",
                              profile_name, OY_CREATE_NEW );
  
@@ -827,7 +833,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorA );
-        oyOptions_SetFromText( &devices[pos]->backend_core,
+        oyOptions_SetFromText( &device->backend_core,
                                reg_name,
                                texts[0], OY_CREATE_NEW );
         oyDeAllocateFunc_( reg_name );
@@ -837,7 +843,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorB );
-        oyOptions_SetFromText( &devices[pos]->backend_core,
+        oyOptions_SetFromText( &device->backend_core,
                                reg_name,
                                texts[1], OY_CREATE_NEW );
         oyDeAllocateFunc_( reg_name );
@@ -847,7 +853,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorC );
-        oyOptions_SetFromText( &devices[pos]->backend_core,
+        oyOptions_SetFromText( &device->backend_core,
                                reg_name,
                                texts[2], OY_CREATE_NEW );
         oyDeAllocateFunc_( reg_name );
@@ -925,17 +931,21 @@ int CUPSgetProfiles                  ( const char        * device_name,
             oyOption_s * o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile",
                                            0 );
             int l_error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( devices[pos]->data, &o, -1 );
+            oyOptions_MoveIn( device->data, &o, -1 );
             if(l_error)
               error = l_error;
           }
-            
+ 
 
+      if(must_move)
+        oyConfigs_MoveIn( devices, &device, pos );
+      else
+        oyConfig_Release( &device );
 
       ++pos;
     }
 
-    return error;          
+    return error;
 }
 
 
