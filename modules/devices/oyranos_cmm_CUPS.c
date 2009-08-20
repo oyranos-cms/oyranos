@@ -420,7 +420,10 @@ int            Configs_FromPattern (
           /* Search for CUPS ICC profiles */
           oyConfig_s * devices_[3] = {0,0,0};
           devices_[0] = device;
+
           oyCUPSgetProfiles( texts[i], devices_ );
+
+          /* add additional devices */
           if(devices_[1])
           {
             error = oyOptions_SetFromText( &devices_[1]->backend_core,
