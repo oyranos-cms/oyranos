@@ -12,6 +12,10 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+/* internal Oyranos APIs */
+#include "oyranos_texts.h"
+#include "oyranos_helper.h"
+
 /* --- internal definitions --- */
 
 #define CMM_NICK "CUPS"
@@ -38,7 +42,6 @@
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
 #define _(x) x
-#define STRING_ADD(a,b) sprintf( &a[strlen(a)], b )
 
 #define CUPS_DATADIR "/usr/local/share/color/icc/"
 
@@ -47,6 +50,8 @@
 int PPDGetProfile ( const char ** profileName, oyOptions_s * options );
 const char * GetProfileSelector (oyOptions_s * options);
 ppd_file_t * ppdFromDeviceName( const char * device_name );
+int oyCUPSgetProfiles                ( const char        * device_name,
+                                       oyConfig_s        * devices[3] );
 
 
 /*************************************************/
@@ -360,8 +365,7 @@ int            Configs_FromPattern (
   const char * printer_name = 0,
                * value2 = 0,
                * value3 = 0,
-               * profile_request = 0,
-               * profile_name = 0;
+               * profile_request = 0;
   http_t * http = 0;
   oyAlloc_f allocateFunc = malloc;
   static char * num = 0;
@@ -413,98 +417,30 @@ int            Configs_FromPattern (
         profile_request = oyOptions_FindString( options, "icc_profile", 0 );   
         if(profile_request || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {              
-          // Open PPD file for profile extraction.
-          const char * ppd_file_location = cupsGetPPD2(http, texts[i]);
-          ppd_file_t * ppd = ppdOpenFile(ppd_file_location);  
-          
-          // Grab an available ICC Profile using an attribute.
-          ppd_attr_t * attrs = ppdFindAttr(ppd,"cupsICCProfile", 0); 
-          
-          /* Does a profile/attribute exist?  */
-          if (attrs)
-              profile_name = attrs->value;
-
-          /* Save 'profile_name' option to Oyranos. */
-          if(profile_name)
-            error = oyOptions_SetFromText( &device->backend_core,
-                                       CMM_BASE_REG OY_SLASH "profile_name",
-                                       profile_name, OY_CREATE_NEW );
-             
-          /* Check to see if profile is a custom one.
-             If Oyranos knows the profile, simply use the buffer. */
-          if(profile_name)
-            p = oyProfile_FromFile(profile_name, 0, 0);
-
-          if( p == NULL && profile_name )
+          /* Search for CUPS ICC profiles */
+          oyConfig_s * devices_[3] = {0,0,0};
+          devices_[0] = device;
+          oyCUPSgetProfiles( texts[i], devices_ );
+          if(devices_[1])
           {
-            // Generate cups HTTP-specific strings.
-            char uri[1024];         
-            char temp_profile_location[1024];
-            FILE * old_file = 0;
-            char * data = 0;
-            size_t size = 0;
-            int tempfd = 0;
-
-            message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-                "Could not obtain profile information for %s -- building profile %s.",
-                _DBG_ARGS_, texts[i], profile_name);
-           
-                
-            // Create the complete path to the profile on the server (ie. http://host:port/profiles/****.icc
-            httpAssembleURIf(HTTP_URI_CODING_ALL, uri, sizeof(uri), "http", NULL, cupsServer(), ippPort(), "/profiles/%s", profile_name);         
-          
-            // Get a file descriptor to download the file from the server to the /tmp directory.
-            tempfd = cupsTempFd(temp_profile_location, sizeof(temp_profile_location));
-          
-            // Download file using the descriptor and uri path.
-            cupsGetFd(http, uri, tempfd);             
-
-            // Open the file.
-            old_file = fopen(temp_profile_location, "rb");
-                    
-            // Find the total size.
-            if(old_file)
-            {
-              size_t lsize = 0;
-              fseek(old_file , 0, SEEK_END);
-              lsize = ftell(old_file);
-              rewind (old_file);
-
-              // Create buffer to read contents into a profile.
-              data = (char*) malloc (sizeof(char)*lsize);
-              if (data == NULL) {fputs ("Unable to find profile size.\n",stderr);}
-
-              if(lsize)
-                size = fread( data, 1, lsize, old_file);
-
-              fclose( old_file );
-            }
-
-            if(data && size)
-            {
-              free( data ); data = 0;
-                    
-              // Use Oyranos to save the file.
-              p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
-            }
+            error = oyOptions_SetFromText( &devices_[1]->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       texts[i], OY_CREATE_NEW );
+            oyConfigs_MoveIn( devices, &devices_[1], -1 );
           }
-
-          if(p)
+          if(devices_[2])
           {
-            o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( device->data, &o, -1 );
+            error = oyOptions_SetFromText( &devices_[2]->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       texts[i], OY_CREATE_NEW );
+            oyConfigs_MoveIn( devices, &devices_[2], -1 );
           }
-            
-
-           
-          ppdClose(ppd); ppd = 0;
         }
 
         /** Build oyNAME_NAME */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         { 
-          text = calloc( 4096, sizeof(char) );
+          text = 0;
           o = oyOptions_Find( device->data, "icc_profile" );
 
           if( o && o->value && o->value->oy_struct && 
@@ -526,7 +462,7 @@ int            Configs_FromPattern (
           error = oyOptions_SetFromText( &device->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
-          free( text );
+          oyDeAllocateFunc_( text );
         }
 
         if(error <= 0)
@@ -792,8 +728,212 @@ oyCMMInfo_s _cmm_module = {
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
 
+/** @brief get for three possible profiles eachs qualifier
+ *
+ *  @param         device_name         the device to request the ppd for
+ *  @param         device              add the 3 qualifiers and the profile
+ */
+int oyCUPSgetProfiles                ( const char        * device_name,
+                                       oyConfig_s        * devices[3] )
+{
+    int error = 0;
+    const char * ppd_file_location = cupsGetPPD( device_name );
+    ppd_file_t * ppd_file = ppdOpenFile(ppd_file_location);  
+
+    ppd_option_t * options = ppd_file->groups->options;
+
+    int i, pos = 0;
+    int option_num = options->num_choices;
+
+    const char * keyword = 0;
+    
+    const char * selectorA = 0, * selectorB = 0, * selectorC = 0,
+               * custom_qualifer_B = 0, * custom_qualifer_C = 0;
+    int attr_amt;
+    oyProfile_s * p = 0;
+
+    for (i = 0; i < option_num; i++)
+    {  
+        if (options[i].conflicted)
+            break;
+ 
+        keyword = (options[i].keyword);
+        
+#if 0
+        printf( "option_%d: \"%s\" \"%s\" \"%s\" %d\n", i,
+                options[i].keyword, options[i].defchoice, options[i].text,
+                options[i].ui );
+        for(j = 0; j < options[i].num_choices; ++j)
+          printf( "  choice_%d: \"%s\" \"%s\"\n", j,
+                  options[i].choices[j].choice, options[i].choices[j].text );
+#endif
+    } 
+
+    attr_amt = ppd_file->num_attrs;
+
+    for (i = 0; i < attr_amt; i++)
+    {
+        keyword = ppd_file->attrs[i]->name;
+        
+        if (strcmp(keyword, "cupsICCQualifer2") == 0)
+            custom_qualifer_B = (options[i].defchoice);
+        else if (strcmp(keyword, "cupsICCQualifer3") == 0)
+            custom_qualifer_C = (options[i].defchoice);   
+    }
+ 
+    if(custom_qualifer_B != NULL)
+        selectorB = custom_qualifer_B;
+    if(custom_qualifer_C != NULL)
+        selectorC = custom_qualifer_C;
+
+    for (i = 0; i < attr_amt; i++)
+    {
+      int count = 0;
+      char ** texts = 0;
+      char * profile_name = 0;
+
+      keyword = ppd_file->attrs[i]->name;
+      if(strcmp(keyword,"cupsICCProfile") != 0)
+        continue;
 
 
+      profile_name = ppd_file->attrs[i]->value;
+      if(!profile_name || !profile_name[0])
+        continue;
+
+
+      texts = oyStringSplit_( ppd_file->attrs[i]->spec, '.', &count,
+                              oyAllocateFunc_);
+      if(count != 3)
+      {
+        message(oyMSG_WARN, 0, _DBG_FORMAT_ "\n "
+                "cupsICCProfile specifiers are non conforming: %d %s",
+                _DBG_ARGS_, count, oyNoEmptyString_m_(profile_name) );
+        break;
+      }
+
+
+      if(!devices[pos])
+        devices[pos] = oyConfig_New( CMM_BASE_REG, 0 );
+      oyOptions_SetFromText( &devices[pos]->data,
+                             CMM_BASE_REG OY_SLASH "profile_name",
+                             profile_name, OY_CREATE_NEW );
+ 
+      if(selectorA && texts[0])
+      {
+        char * reg_name = 0;
+        STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
+        STRING_ADD( reg_name, selectorA );
+        oyOptions_SetFromText( &devices[pos]->backend_core,
+                               reg_name,
+                               texts[0], OY_CREATE_NEW );
+        oyDeAllocateFunc_( reg_name );
+      }
+      if(selectorB && texts[1])
+      {
+        char * reg_name = 0;
+        STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
+        STRING_ADD( reg_name, selectorB );
+        oyOptions_SetFromText( &devices[pos]->backend_core,
+                               reg_name,
+                               texts[1], OY_CREATE_NEW );
+        oyDeAllocateFunc_( reg_name );
+      }
+      if(selectorC && texts[2])
+      {
+        char * reg_name = 0;
+        STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
+        STRING_ADD( reg_name, selectorC );
+        oyOptions_SetFromText( &devices[pos]->backend_core,
+                               reg_name,
+                               texts[2], OY_CREATE_NEW );
+        oyDeAllocateFunc_( reg_name );
+      }
+
+          /* Check to see if profile is a custom one.
+             If Oyranos knows the profile, simply use the buffer. */
+          if(profile_name)
+            p = oyProfile_FromFile(profile_name, 0, 0);
+
+          if( p == NULL && profile_name )
+          {
+            // Generate cups HTTP-specific strings.
+            char uri[1024];         
+            char temp_profile_location[1024];
+            FILE * old_file = 0;
+            char * data = 0;
+            size_t size = 0;
+            int tempfd = 0;
+
+            message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+                "Could not obtain profile information for %s -- building profile %s.",
+                _DBG_ARGS_, texts[i], profile_name);
+           
+                
+            /* Create the complete path to the profile on the server 
+             * (ie. http://host:port/profiles/xxx.icc
+             */
+            httpAssembleURIf( HTTP_URI_CODING_ALL, uri,
+                              sizeof(uri), "http", NULL, cupsServer(),
+                              ippPort(), "/profiles/%s", profile_name);         
+          
+            /* Get a file descriptor to download the file from the server to
+             * the /tmp directory.
+             */
+            tempfd = cupsTempFd( temp_profile_location,
+                                 sizeof(temp_profile_location));
+          
+            // Download file using the descriptor and uri path.
+            cupsGetFd( oyGetCUPSConnection(), uri, tempfd);             
+
+            // Open the file.
+            old_file = fopen(temp_profile_location, "rb");
+                    
+            // Find the total size.
+            if(old_file)
+            {
+              size_t lsize = 0;
+              fseek(old_file , 0, SEEK_END);
+              lsize = ftell(old_file);
+              rewind (old_file);
+
+              // Create buffer to read contents into a profile.
+              data = (char*) malloc (sizeof(char)*lsize);
+              if (data == NULL)
+              { fputs ("Unable to find profile size.\n",stderr); }
+
+              if(lsize)
+                size = fread( data, 1, lsize, old_file);
+
+              fclose( old_file );
+            }
+
+            if(data && size)
+            {
+              free( data ); data = 0;
+                    
+              // Use Oyranos to save the file.
+              p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
+            }
+          }
+
+          if(p)
+          {
+            oyOption_s * o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile",
+                                           0 );
+            int l_error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            oyOptions_MoveIn( devices[pos]->data, &o, -1 );
+            if(l_error)
+              error = l_error;
+          }
+            
+
+
+      ++pos;
+    }
+
+    return error;          
+}
 
 
 /*                       NOTE
@@ -854,7 +994,6 @@ char *    getProfileSelector(const char * device, char ** colorspace, char ** pa
     char * selectorC = 0;
     char * custom_qualifer_B = 0;
     char * custom_qualifer_C = 0;
-    ppd_attr_t * attr = 0;
     int attr_amt;
     const char * profile_selector;
 
