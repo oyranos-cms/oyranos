@@ -50,7 +50,7 @@
 int PPDGetProfile ( const char ** profileName, oyOptions_s * options );
 const char * GetProfileSelector (oyOptions_s * options);
 ppd_file_t * ppdFromDeviceName( const char * device_name );
-int oyCUPSgetProfiles                ( const char        * device_name,
+int CUPSgetProfiles                  ( const char        * device_name,
                                        oyConfig_s        * devices[3] );
 
 
@@ -421,7 +421,7 @@ int            Configs_FromPattern (
           oyConfig_s * devices_[3] = {0,0,0};
           devices_[0] = device;
 
-          oyCUPSgetProfiles( texts[i], devices_ );
+          CUPSgetProfiles( texts[i], devices_ );
 
           /* add additional devices */
           if(devices_[1])
@@ -736,7 +736,7 @@ oyCMMInfo_s _cmm_module = {
  *  @param         device_name         the device to request the ppd for
  *  @param         device              add the 3 qualifiers and the profile
  */
-int oyCUPSgetProfiles                ( const char        * device_name,
+int CUPSgetProfiles                  ( const char        * device_name,
                                        oyConfig_s        * devices[3] )
 {
     int error = 0;
