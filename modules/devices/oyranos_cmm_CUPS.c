@@ -751,7 +751,9 @@ int CUPSgetProfiles                  ( const char        * device_name,
 
     const char * keyword = 0;
     
-    const char * selectorA = 0, * selectorB = 0, * selectorC = 0,
+    const char * selectorA = "ColorModel",
+               * selectorB = "MediaType",
+               * selectorC = "Resolution",
                * custom_qualifer_B = 0, * custom_qualifer_C = 0;
     int attr_amt;
     oyProfile_s * p = 0;
@@ -828,7 +830,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                              CMM_BASE_REG OY_SLASH "profile_name",
                              profile_name, OY_CREATE_NEW );
  
-      if(selectorA && texts[0])
+      if(selectorA && texts[0] && texts[0][0])
       {
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
@@ -838,7 +840,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                                texts[0], OY_CREATE_NEW );
         oyDeAllocateFunc_( reg_name );
       }
-      if(selectorB && texts[1])
+      if(selectorB && texts[1] && texts[1][0])
       {
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
@@ -848,7 +850,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                                texts[1], OY_CREATE_NEW );
         oyDeAllocateFunc_( reg_name );
       }
-      if(selectorC && texts[2])
+      if(selectorC && texts[2] && texts[2][0])
       {
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
