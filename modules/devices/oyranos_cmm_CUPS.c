@@ -420,25 +420,22 @@ int            Configs_FromPattern (
           // Grab an available ICC Profile using an attribute.
           ppd_attr_t * attrs = ppdFindAttr(ppd,"cupsICCProfile", 0); 
           
-          /* Does a profile/attribute exist?
-             NOTE For right now, PPD files WITHOUT the cupsICCProfile
-                  identifer is assumed to be a non-color printer. 
-          */
-          if(!attrs)
-              profile_name = "Gray.icc";
-          else if (attrs)
+          /* Does a profile/attribute exist?  */
+          if (attrs)
               profile_name = attrs->value;
 
-          // Save 'profile_name' option to Oyranos.
-          error = oyOptions_SetFromText( &device->backend_core,
+          /* Save 'profile_name' option to Oyranos. */
+          if(profile_name)
+            error = oyOptions_SetFromText( &device->backend_core,
                                        CMM_BASE_REG OY_SLASH "profile_name",
                                        profile_name, OY_CREATE_NEW );
              
-          // Check to see if profile is a custom one.
-          // If Oyranos knows the profile, simply use the buffer.
-          p = oyProfile_FromFile(profile_name, 0, 0);
+          /* Check to see if profile is a custom one.
+             If Oyranos knows the profile, simply use the buffer. */
+          if(profile_name)
+            p = oyProfile_FromFile(profile_name, 0, 0);
 
-          if( p == NULL )
+          if( p == NULL && profile_name )
           {
             // Generate cups HTTP-specific strings.
             char uri[1024];         
