@@ -391,9 +391,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (!context_opt) {
          error = GetDevices(&device_list, &num_devices);
          device_context = *device_list;
-         while (device_context)
+         while (device_context) {
             if (strcmp(device_name,device_context->name) == 0)
                break;
+            device_context++;
+         }
          if (!device_context) {
             printf(PRFX "device_name does not match any installed device.\n");
             return 1;
