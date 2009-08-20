@@ -365,7 +365,10 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       //if(error <= 0)
       *s = devices;
 
-      if (call_sane_exit) sane_exit();
+      if (call_sane_exit) {
+         printf(PRFX "sane_exit()\n");
+         sane_exit();
+      }
 
       return 0;
    } else if (command_properties) {
