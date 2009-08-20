@@ -747,7 +747,6 @@ int CUPSgetProfiles                  ( const char        * device_name,
     ppd_option_t * options = ppd_file->groups->options;
 
     int i, pos = 0;
-    int option_num = options->num_choices;
 
     const char * keyword = 0;
     
@@ -759,22 +758,23 @@ int CUPSgetProfiles                  ( const char        * device_name,
     oyProfile_s * p = 0;
     oyConfig_s * device = 0;
 
+#if 0
+    int option_num = options->num_choices;
     for (i = 0; i < option_num; i++)
     {  
-        if (options[i].conflicted)
+        if(options[i].conflicted)
             break;
  
         keyword = (options[i].keyword);
         
-#if 0
         printf( "option_%d: \"%s\" \"%s\" \"%s\" %d\n", i,
                 options[i].keyword, options[i].defchoice, options[i].text,
                 options[i].ui );
         for(j = 0; j < options[i].num_choices; ++j)
           printf( "  choice_%d: \"%s\" \"%s\"\n", j,
                   options[i].choices[j].choice, options[i].choices[j].text );
-#endif
     } 
+#endif
 
     attr_amt = ppd_file->num_attrs;
 
