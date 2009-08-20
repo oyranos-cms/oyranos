@@ -32,6 +32,7 @@
 /* --- internal definitions --- */
 
 #define DBG printf("%s: %d\n", __FILE__, __LINE__ ); fflush(NULL);
+#define PRFX "config.scanner.SANE: "
 /* select a own four byte identifier string instead of "dDev" and replace the
  * dDev in the below macros.
  */
@@ -185,7 +186,7 @@ int GetDevices(const SANE_Device *** device_list, int *size)
    int status, s = 0;
    const SANE_Device **dl = NULL;
 
-   printf("Scanning SANE devices...");
+   printf(PRFX "Scanning SANE devices...");
    fflush(NULL);
    status = sane_get_devices(&dl, SANE_FALSE);
    if (status != SANE_STATUS_GOOD) {
@@ -273,7 +274,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    else { /*we have to call sane_init()*/
       status = sane_init(&driver_version, NULL);
       if (status == SANE_STATUS_GOOD) {
-         printf("SANE v.(%d.%d.%d) init...OK\n",
+         printf(PRFX "SANE v.(%d.%d.%d) init...OK\n",
                 SANE_VERSION_MAJOR(driver_version),
                 SANE_VERSION_MINOR(driver_version),
                 SANE_VERSION_BUILD(driver_version));
@@ -352,7 +353,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                       CMM_BASE_REG OY_SLASH "device_handle",
                                       (oyStruct_s **) &handle_ptr, OY_CREATE_NEW);
             } else
-               printf("Unable to open sane device \"%s\": %s\n", sane_name, sane_strstatus(status));
+               printf(PRFX "Unable to open sane device \"%s\": %s\n", sane_name, sane_strstatus(status));
          }
 
          device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
@@ -377,7 +378,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
        * with the according rank map */
 
       if (!device_name) {
-         printf("device_name is mandatory for properties command.\n");
+         printf(PRFX "device_name is mandatory for properties command.\n");
          return 1;
       }
       device = oyConfig_New(CMM_BASE_REG, 0);
@@ -394,7 +395,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             if (strcmp(device_name,device_context->name) == 0)
                break;
          if (!device_context) {
-            printf("device_name does not match any installed device.\n");
+            printf(PRFX "device_name does not match any installed device.\n");
             return 1;
          }
       } else {
@@ -408,7 +409,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (!handle_opt) {
          status = sane_open( device_name, &device_handle );
          if (status != SANE_STATUS_GOOD) {
-            printf("Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(status));
+            printf(PRFX "Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(status));
             return 1;
          }
       } else {
@@ -655,7 +656,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                oyOptions_SetFromText(options, registration, (const char *)value, OY_CREATE_NEW);
                break;
             default:
-               fprintf(stderr, "Do not know what to do with option %d\n", opt->type);
+               printf(PRFX "Do not know what to do with option %d\n", opt->type);
                return 1;
                break;
          }
@@ -737,3 +738,4 @@ int sane_release_handle(oyPointer *handle_ptr)
 
    return 0;
 }
+
