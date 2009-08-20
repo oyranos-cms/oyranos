@@ -42,14 +42,14 @@
 
 #define CUPS_DATADIR "/usr/local/share/color/icc/"
 
-//********Backend-specific functions*********
+/********Backend-specific functions*********/
 
 int PPDGetProfile ( const char ** profileName, oyOptions_s * options );
 const char * GetProfileSelector (oyOptions_s * options);
 ppd_file_t * ppdFromDeviceName( const char * device_name );
 
 
-// *************************************************
+/*************************************************/
 
 char          pathprog[1024];         /* Complete path to program/filter */
 const char    *ptr = 0;               /* Pointer into string */
@@ -170,36 +170,58 @@ void     ConfigsFromPatternUsage( oyStruct_s        * options )
   return;
 }
 
-int GetDevices                   (          char            *** list,
-                                       oyAlloc_f           allocateFunc )
-{  
-    httpInitialize();
-   
-    // Open access to printer(s) installed on system.
-    cups_dest_t *dests, *dest;     
-    http_t * http = httpConnectEncrypt ( cupsServer(),
-                                         ippPort(),
-                                         cupsEncryption());
+static http_t * cups_http_ = 0;
 
-    int num_dests = cupsGetDests2(http, &dests); 
+int  oyCloseCUPSConnection()
+{
+  httpClose(cups_http_);
+  cups_http_ = 0;
+  return 0;
+}
+
+http_t * oyGetCUPSConnection()
+{
+  if(!cups_http_)
+  {
+    httpInitialize();
+    /* Open access to printer(s) installed on system. */
+    cups_http_ = httpConnectEncrypt ( cupsServer(),
+                                      ippPort(),
+                                      cupsEncryption());
+  }
+  return cups_http_;
+}
+
+int GetDevices                       ( http_t            * http,
+                                       char            *** list,
+                                       oyAlloc_f           allocateFunc )
+{
+    cups_dest_t *dests, *dest;
+
+    int num_dests;
     int i, p;
 
-    int len = sizeof(char*) * num_dests;
-    char ** texts = allocateFunc( len );
+    int len;
+    char ** texts;
+
+    /* Open access to printer(s) installed on system. */
+    num_dests = cupsGetDests2(http, &dests);
+    len = sizeof(char*) * num_dests;
+    texts = allocateFunc( len );
 
     memset( texts, 0, len );
 
-    // Use CUPS to obtain printer name(s) on the default server.
+    /* Use CUPS to obtain printer name(s) on the default server. */
     for (p = 0, i = num_dests, dest = dests; i > 0; i--, dest++, p++)
     {
         texts[p] = allocateFunc(24); 
         sprintf( texts[p], dest->name );
     }
 
-    // Free memory that is used by CUPS.
+    /* Free memory that is used by CUPS. */
     cupsFreeDests (num_dests, dests);
 
-    // Return printer name(s) and the number of printers installed on system.
+    /* Return printer name(s) and the number of printers installed on system. */
     *list = texts; 
     return num_dests;
 }
@@ -216,7 +238,15 @@ int          DeviceFromName_ (         const char        * device_name,
 
     if(!error)
     {
-      char * manufacturer= 0, *model=0, *serial=0, *host=0, *system_port=0, *profile_name = 0;
+      char * manufacturer= 0, *model=0, *serial=0, *profile_name = 0;
+      const char * system_port = 0, * host = 0;
+      http_t * http = 0;
+      cups_dest_t *dests;
+      int num_dests = 0;
+      const char * ppd_file_location = 0;
+      ppd_file_t * ppd = 0;
+      ppd_attr_t * attrs = 0;
+
 
       if(!device_name)
       {
@@ -228,65 +258,60 @@ int          DeviceFromName_ (         const char        * device_name,
         return error;
       }
 
-      int i, p;
-     
-      httpInitialize();
-      http_t * http = httpConnectEncrypt ( cupsServer(),
-                                         ippPort(),
-                                         cupsEncryption());
-
-      cups_dest_t *dests, *dest;
-      int num_dests = cupsGetDests2(http, &dests); 
-
-      const char * ppd_file_location = cupsGetPPD2(http, device_name);
-      ppd_file_t * ppd = ppdOpenFile(ppd_file_location);
+ 
+      http = oyGetCUPSConnection();
+      num_dests = cupsGetDests2(http, &dests);
+      ppd_file_location = cupsGetPPD2(http, device_name);
+      ppd = ppdOpenFile(ppd_file_location);
 
       manufacturer = ppd->manufacturer;
-      model = ppd->modelname;   
+      model = ppd->modelname;
       serial = 0;                       // Not known at this time.
-      system_port = device_name; 
+      system_port = device_name;
 
-      host = cupsServer(); 
-      ppd_attr_t * attrs = ppdFindAttr(ppd, "cupsICCProfile", 0);
+      host = cupsServer();
+      attrs = ppdFindAttr(ppd, "cupsICCProfile", 0);
  
       if(attrs && attrs->value)
         profile_name = attrs->value;
-      
+ 
       if(error != 0)
-        message( oyMSG_WARN, (oyStruct_s*)options, 
+        message( oyMSG_WARN, (oyStruct_s*)options,
                  _DBG_FORMAT_ "Could not complete \"properties\" call.\n"
                  " oyGetMonitorInfo_lib returned with %s; device_name:"
                  " \"%s\"", _DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
                  device_name ? device_name : "" );
 
       if(error <= 0)
-      {  
-        if(!*device)
-          *device = oyConfig_New( CMM_BASE_REG, 0 ); 
-        error = !*device;    
+      {
+        size_t size = 0;
+        char * data = 0;
 
-        if(!error && device_name)  
+        if(!*device)
+          *device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !*device;
+
+        if(!error && device_name)
         error = oyOptions_SetFromText( &(*device)->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
-            
-        OPTIONS_ADD( (*device)->backend_core, manufacturer )  
+ 
+        OPTIONS_ADD( (*device)->backend_core, manufacturer )
         OPTIONS_ADD( (*device)->backend_core, model )
         OPTIONS_ADD( (*device)->backend_core, serial )
         OPTIONS_ADD( (*device)->backend_core, system_port )
-        OPTIONS_ADD( (*device)->backend_core, host )             
+        OPTIONS_ADD( (*device)->backend_core, host )
         OPTIONS_ADD( (*device)->backend_core, profile_name )
                                
         
-        char * ppd_data = 0;
-        size_t size = 0;
-        char * data = 0;
         /* open the PPD data */
         {
           FILE * fp = fopen( ppd_file_location, "r" );
+          size_t lsize = 0;
+
           // Find the total size.
           fseek(fp , 0, SEEK_END);
-          size_t lsize = ftell(fp);
+          lsize = ftell(fp);
           rewind (fp);
 
           // Create buffer to read contents into a profile.
@@ -310,7 +335,6 @@ int          DeviceFromName_ (         const char        * device_name,
       }
 
     ppdClose(ppd);
-    httpClose(http);
     cupsFreeDests (num_dests, dests);    
 
     }
@@ -325,59 +349,51 @@ int            Configs_FromPattern (
                                        oyConfigs_s      ** s )
 {
 
-    oyConfigs_s * devices = 0;
-    oyConfig_s * device = 0;
-    oyOption_s * o = 0;
-    oyProfile_s * p = 0;
-    char ** texts = 0;
-    char * text = 0;
-    int texts_n = 0, i,
-    error = !s;
-    const char * printer_name = 0,
+  oyConfigs_s * devices = 0;
+  oyConfig_s * device = 0;
+  oyOption_s * o = 0;
+  oyProfile_s * p = 0;
+  char ** texts = 0;
+  char * text = 0;
+  int texts_n = 0, i,
+  error = !s;
+  const char * printer_name = 0,
                * value2 = 0,
                * value3 = 0,
                * profile_request = 0,
                * profile_name = 0;
-    http_t * http = 0;
-    oyAlloc_f allocateFunc = malloc;
-    static char * num = 0;
-    const char * tmp = 0;
+  http_t * http = 0;
+  oyAlloc_f allocateFunc = malloc;
+  static char * num = 0;
+  const char * tmp = 0;
 
 
-    int rank = oyFilterRegistrationMatch( _api8.registration, registration,
+  int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
 
-    // Initialize the CUPS server.
-    httpInitialize();
-    http = httpConnectEncrypt ( cupsServer(),
-                                ippPort(),
-                                cupsEncryption());
+  // Initialize the CUPS server.
+  http = oyGetCUPSConnection();
 
-    if(!num)
-        num = malloc( 80 );
+  if(!num)
+    num = malloc( 80 );
 
-    if(!options || !oyOptions_Count( options ))
-    {        
+  if(!options || !oyOptions_Count( options ))
+  {        
         /** oyMSG_WARN should make shure our message is visible. */
         ConfigsFromPatternUsage( (oyStruct_s*)options );
         return 0;
-    }
+  }
     
-    if(rank && error <= 0)
-    {
-        devices = oyConfigs_New(0);
+  printer_name = oyOptions_FindString( options, "device_name", 0 );
 
-        /* "list" call section */
-        printer_name = oyOptions_FindString( options, "device_name", 0 );
-        value2 = oyOptions_FindString( options, "command", "list" );
+  if(rank && error <= 0)
+  {
 
-    if(oyOptions_FindString( options, "command", "list" ) ||
-       (!oyOptions_FindString( options, "command", "properties" ) &&
-        !oyOptions_FindString( options, "command", "setup" ) &&
-        !oyOptions_FindString( options, "command", "unset" ))
-       )
+    /* "list" call section */
+    if(oyOptions_FindString( options, "command", "list" ))
     {
-      texts_n = GetDevices( &texts, allocateFunc );
+      texts_n = GetDevices( http, &texts, allocateFunc );
+      devices = oyConfigs_New(0);
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -526,8 +542,7 @@ int            Configs_FromPattern (
       if(error <= 0)
         *s = devices;
 
-      httpClose(http); http = 0;
-      return error;
+      goto clean;
     }
 
     /* "properties" call section */
@@ -535,7 +550,7 @@ int            Configs_FromPattern (
     if(value2)
     { 
  
-      texts_n = GetDevices( &texts, allocateFunc );
+      texts_n = GetDevices( http, &texts, allocateFunc );
 
       for( i = 0; i < texts_n; ++i )
       {
@@ -563,8 +578,7 @@ int            Configs_FromPattern (
       if(error <= 0)
         *s = devices;
 
-      httpClose(http); http = 0;
-      return error;
+      goto clean;
     }
 
     /* "setup" call section */
@@ -583,8 +597,7 @@ int            Configs_FromPattern (
       else
         error = 0; /* doSetup( printer_name, value3 ); */
 
-      httpClose(http); http = 0;
-      return error;
+      goto clean;
     }
 
     /* "unset" call section */
@@ -600,21 +613,20 @@ int            Configs_FromPattern (
       else
         error = 0; /* doUnset( printer_name ); */
 
-        httpClose(http); http = 0;
-        return error;
-      }
+      goto clean;
     }
+  }
 
-    /* not to be reached section, e.g. warning */
-    message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+  /* not to be reached section, e.g. warning */
+  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "This point should not be reached. Options:\n%s", _DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
 
 
-    if(error <= 0 && 
-       oyOptions_FindString( options, "command", "setup"))
-    { 
+  if(error <= 0 && 
+    oyOptions_FindString( options, "command", "setup"))
+  { 
          profile_request = oyOptions_FindString( options, "profile_name", 0 );
          error = !value3 || !profile_request;
          if (error >= 1)
@@ -627,18 +639,19 @@ int            Configs_FromPattern (
           {
               //error = CUPSProfileSetup( printer_name, "sRGB.icc");
           }
-    }
+  }
 
-    if(error <= 0 &&
-       oyOptions_FindString( options, "command", "help" ))
-    {
+  if(error <= 0 &&
+     oyOptions_FindString( options, "command", "help" ))
+  {
         ;/* ConfigsFromPatternUsage */
-    }
+  }
 
-    ConfigsFromPatternUsage( (oyStruct_s*)options );
+  ConfigsFromPatternUsage( (oyStruct_s*)options );
 
-    httpClose(http); http = 0;
-    return error;
+  clean:
+  oyCloseCUPSConnection(); http=0;
+  return error;
 }
 
 /** @instance dDev_rank_map
@@ -794,36 +807,34 @@ oyCMMInfo_s _cmm_module = {
 int   PPDGetProfile     ( const char ** profileName,
                                   oyOptions_s * options )
 {
+    int option_n = 0;
+
     if(!options)
          return 0;
    
     *profileName = oyOptions_FindString(options, "cupsICCProfile", 0);
 
-    oyOption_s * o = 0;
-    int option_n = options->list->n_;
-
-    int count = 0;
-
+    option_n = oyOptions_Count( options );
     if(profileName)
     {
-        if(profileName[0] == '/')
-            snprintf(pathprog, sizeof(pathprog), "%s%s", root, profileName);
+        if(*profileName[0] == '/')
+            snprintf(pathprog, sizeof(pathprog), "%s%s", root, *profileName);
         else
         {
             if (( ptr = getenv("CUPS_DATADIR")) == NULL)
                   ptr = CUPS_DATADIR;
             if(*ptr == '/' || !*root)
                   snprintf(pathprog, sizeof(pathprog), "%s%s/profiles/%s", root,
-                       ptr, profileName);
+                       ptr, *profileName);
             else
                 snprintf(pathprog, sizeof(pathprog), "%s/%s/profiles/%s", root,
-                       ptr, profileName);
+                       ptr, *profileName);
         }
     }
     
-    if(!profileName || !profileName[0])
+    if(!*profileName || !*profileName[0])
     {
-        profileName = "null";
+        *profileName = "null";
     }
 
     return 0;
@@ -846,6 +857,9 @@ char *    getProfileSelector(const char * device, char ** colorspace, char ** pa
     char * selectorC = 0;
     char * custom_qualifer_B = 0;
     char * custom_qualifer_C = 0;
+    ppd_attr_t * attr = 0;
+    int attr_amt;
+    const char * profile_selector;
 
     for (i = 0; i < option_num; i++)
     {  
@@ -866,8 +880,7 @@ char *    getProfileSelector(const char * device, char ** colorspace, char ** pa
             custom_qualifer_C = (options[i].defchoice);      
     } 
 
-    ppd_attr_t * attr = 0;
-    int attr_amt = ppd_file->num_attrs;
+    attr_amt = ppd_file->num_attrs;
 
     for (i = 0; i < attr_amt; i++)
     {
@@ -885,7 +898,8 @@ char *    getProfileSelector(const char * device, char ** colorspace, char ** pa
     if(custom_qualifer_C != NULL)
         selectorC = custom_qualifer_C;
 
-    const char * profile_selector = selectorA;
+    profile_selector = selectorA;
+#if 0
     profile_selector = strcat(profile_selector, ".");
     profile_selector = strcat(profile_selector, selectorB);
     profile_selector = strcat(profile_selector, ".");
@@ -896,6 +910,7 @@ char *    getProfileSelector(const char * device, char ** colorspace, char ** pa
     paper = selectorB;
     resolution = selectorC;
     //ppdClose(ppd_file);
+#endif
     return profile_selector;             
 }
 
@@ -908,11 +923,13 @@ int CUPSProfileSetup( const char * device_name, const char * profile_name)
 
     ppd_file_t * ppd_file = ppdFromDeviceName(device_name);
     ppd_attr_t * profile_attr = ppdFindAttr ( ppd_file, "cupsICCProfile", 0);
+    icSignature cups_profile_sig;
+    const char * color_space;
 
     p = oyProfile_FromFile(profile_name, 0, 0);
     
-    icSignature cups_profile_sig = oyProfile_GetSignature(p, oySIGNATURE_COLOUR_SPACE);
-    const char * color_space = 0;
+    cups_profile_sig = oyProfile_GetSignature(p, oySIGNATURE_COLOUR_SPACE);
+    color_space = 0;
 
     if (cups_profile_sig == icSigRgbData)
         color_space = "RGB";
