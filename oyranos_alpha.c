@@ -6650,7 +6650,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/25 (Oyranos: 0.1.9)
- *  @date    2008/11/25
+ *  @date    2009/08/21
  */
 int            oyOption_SetFromText  ( oyOption_s        * obj,
                                        const char        * text,
@@ -6662,6 +6662,11 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 
   if(error <= 0)
   {
+    /* ignore the special case of assigning the same string twice. */
+    if(obj->value && obj->value_type == oyVAL_STRING &&
+       obj->value->string == text)
+      return error;
+
     if(obj->value)
     {
       oyDeAlloc_f deallocateFunc = obj->oy_->deallocateFunc_;
