@@ -47,6 +47,12 @@ oyMessage_f message = 0;
 extern oyCMMapi8_s oyX1_api8;
 oyRankPad oyX1_rank_map[];
 
+int          oyX1DeviceFromName_     ( const char        * device_name,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** device );
+int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
+                                       oyOptions_s       * options );
+
 /* --- implementations --- */
 
 int                oyX1CMMInit       ( )
@@ -97,7 +103,8 @@ int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
 #define OPTIONS_ADD(opts, name) if(!error && name) \
         error = oyOptions_SetFromText( &opts, \
                                      OYX1_MONITOR_REGISTRATION OY_SLASH #name, \
-                                       name, OY_CREATE_NEW );
+                                       name, OY_CREATE_NEW ); \
+        if(name) oyDeAllocateFunc_( name ); name = 0;
 
 void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
 {
@@ -176,8 +183,7 @@ void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
 
 int          oyX1DeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
-                                       oyConfig_s       ** device,
-                                       oyAlloc_f           allocateFunc )
+                                       oyConfig_s       ** device )
 {
   const char * value3 = 0;
   oyOption_s * o = 0;
@@ -204,7 +210,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         error = oyGetMonitorInfo_lib( device_name,
                                       &manufacturer, &model, &serial,
                                       &display_geometry, &system_port,
-                                      &host, value3 ? &edid : 0, allocateFunc,
+                                      &host, value3 ? &edid : 0,oyAllocateFunc_,
                                       (oyStruct_s*)options );
 
       if(error != 0)
@@ -232,14 +238,26 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         OPTIONS_ADD( (*device)->backend_core, host )
         if(!error && edid)
         {
-          o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "edid", 0 );
+          int has = 0;
+          o = oyConfig_Find( *device,
+                             OYX1_MONITOR_REGISTRATION OY_SLASH "edid" );
+          if(o)
+            has = 1;
+          else
+            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "edid", 0 );
           error = !o;
           if(!error)
           error = oyOption_SetFromData( o, edid->ptr, edid->size );
           if(!error)
-            oyOptions_MoveIn( (*device)->data, &o, -1 );
+          {
+            if(has)
+              oyOption_Release( &o );
+            else
+              oyOptions_MoveIn( (*device)->data, &o, -1 );
+          }
           oyBlob_Release( &edid );
         }
+        if(edid) oyDeAllocateFunc_( edid ); edid = 0;
       }
     }
 
@@ -329,7 +347,8 @@ int            oyX1Configs_FromPattern (
 
     /** 3.  handle the actual call */
     /** 3.1 "list" call */
-    if(oyOptions_FindString( options, "command", "list" ))
+    if(oyOptions_FindString( options, "command", "list" ) ||
+       oyOptions_FindString( options, "command", "properties" ))
     {
       texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
 
@@ -343,148 +362,18 @@ int            oyX1Configs_FromPattern (
         device = oyConfig_New( OYX1_MONITOR_REGISTRATION, 0 );
         error = !device;
 
-        /** 3.1.2 tell the "device_name" */
+         /** 3.1.2 tell the "device_name" */
         if(error <= 0)
         error = oyOptions_SetFromText( &device->backend_core,
-                                       OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
+                                       OYX1_MONITOR_REGISTRATION OY_SLASH
+                                       "device_name",
                                        texts[i], OY_CREATE_NEW );
-
-        /** 3.1.3 tell the "device_rectangle" in a oyRectangle_s */
-        if(oyOptions_FindString( options, "device_rectangle", 0 ) ||
-           oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        {
-          rect = oyX1Rectangle_FromDevice( texts[i] );
-          if(!rect)
-          {
-            WARNc1_S("Could not obtain rectangle information for %s", texts[i]);
-          } else
-          {
-            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "device_rectangle", 0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
-            oyOptions_MoveIn( device->data, &o, -1 );
-          }
-        }
-
-        /** 3.1.4 tell the "icc_profile" in a oyProfile_s */
-        if( oyOptions_FindString( options, "icc_profile", 0 ) ||
-            oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        {
-          size_t size = 0;
-          char * data = oyX1GetMonitorProfile( texts[i], &size, allocateFunc );
-
-          
-          /** Warn and return issue on not found profile. */
-          if(!size || !data)
-          {
-            message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                     "Could not obtain _ICC_PROFILE(_xxx) information for %s",
-                     OY_DBG_ARGS_, texts[i] );
-            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile",
-                              0 );
-            /* Show the "icc_profile" option is understood. */
-            p = 0;
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( device->data, &o, -1 );
-            error = -1;
-          } else
-          {
-            p = oyProfile_FromMem( size, data, 0, 0 );
-            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile",
-                              0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( device->data, &o, -1 );
-            free( data );
-          }
-        }
-
-        /** 3.1.5 contruct a oyNAME_NAME string */
-        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        {
-          o = oyOptions_Find( device->data, "device_rectangle" );
-          r = (oyRectangle_s*) o->value->oy_struct;
-
-          text = 0; tmp = 0;
-      
-          tmp = oyRectangle_Show( (oyRectangle_s*)r );
-          STRING_ADD( text, tmp );
-          oyOption_Release( &o );
-
-          o = oyOptions_Find( device->data, "icc_profile" );
-
-          if( o && o->value && o->value->oy_struct && 
-              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
-          {
-            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
-            tmp = oyProfile_GetFileName( p, 0 );
-
-            STRING_ADD( text, "  " );
-            if(tmp)
-            {
-              if(oyStrrchr_( tmp, OY_SLASH_C ))
-                STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
-              else
-                STRING_ADD( text, tmp );
-            }
-
-            oyProfile_Release( &p );
-          }
-
-          if(error <= 0)
-          error = oyOptions_SetFromText( &device->data,
-                                         OYX1_MONITOR_REGISTRATION OY_SLASH "oyNAME_NAME",
-                                         text, OY_CREATE_NEW );
-          oyFree_m_( text );
-        }
-
-
-        /** 3.1.6 add the rank scheme to combine properties */
-        if(error <= 0)
-          device->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                            device->oy_->allocateFunc_ );
 
         oyConfigs_MoveIn( devices, &device, -1 );
       }
 
       if(error <= 0)
-        *s = devices;
-
-      oyStringListRelease_( &texts, texts_n, free );
-
-      goto cleanup;
-
-    } else
-
-
-    /** 3.2 "properties" call; provide extensive infos for the DB entry */
-    if(oyOptions_FindString( options, "command", "properties" ))
-    {
-      texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
-
-      for( i = 0; i < texts_n; ++i )
-      {
-        /* filter */
-        if(odevice_name && strcmp(odevice_name, texts[i]) != 0)
-          continue;
-
-        device = oyConfig_New( OYX1_MONITOR_REGISTRATION, 0 );
-        error = !device;
-
-        if(error <= 0)
-        error = oyOptions_SetFromText( &device->backend_core,
-                                       OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
-                                       texts[i], OY_CREATE_NEW );
-
-        /** 3.2.1 add properties */
-        error = oyX1DeviceFromName_( texts[i], options, &device,
-                                     allocateFunc );
-
-
-        /** 3.2.2 add the rank map to wight properties for ranking in the DB */
-        if(error <= 0 && device)
-          device->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                            device->oy_->allocateFunc_);
-        oyConfigs_MoveIn( devices, &device, -1 );
-      }
+        error = oyX1Configs_Modify( devices, options );
 
       if(error <= 0)
         *s = devices;
@@ -564,8 +453,7 @@ int            oyX1Configs_FromPattern (
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/08/21
  */
-int            oyX1Configs_Modify    (
-                                       oyConfigs_s       * devices,
+int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                                        oyOptions_s       * options )
 {
   oyConfig_s * device = 0;
@@ -635,7 +523,8 @@ int            oyX1Configs_Modify    (
           rect = oyX1Rectangle_FromDevice( device_name );
           if(!rect)
           {
-            WARNc1_S("Could not obtain rectangle information for %s", texts[i]);
+            WARNc1_S( "Could not obtain rectangle information for %s",
+                      device_name );
           } else
           {
             o = oyConfig_Find( device, "device_rectangle" );
@@ -767,8 +656,7 @@ int            oyX1Configs_Modify    (
         device_name = oyConfig_FindString( device, "device_name", 0 );
 
         /** 3.2.1 add properties */
-        error = oyX1DeviceFromName_( device_name, options, &device,
-                                     allocateFunc );
+        error = oyX1DeviceFromName_( device_name, options, &device );
 
 
         /** 3.2.2 add the rank map to wight properties for ranking in the DB */
