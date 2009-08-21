@@ -2014,6 +2014,7 @@ oyTESTRESULT_e testCMMsShow ()
                                              {0,0,0}, /* version */
                                              0,0, /* Oyranos stuff */
                                              0, /* oyConfigs_FromPattern */
+                                             0, /* oyConfigs_Modify */
                                              0, /* oyConfig_Rank */
                                              (oyRankPad*)rank_map
                                            };
