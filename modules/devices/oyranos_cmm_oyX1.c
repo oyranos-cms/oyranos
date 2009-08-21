@@ -279,10 +279,6 @@ int            oyX1Configs_FromPattern (
 {
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
-  oyOption_s * o = 0;
-  oyRectangle_s * rect = 0;
-  const oyRectangle_s * r = 0;
-  oyProfile_s * p = 0;
   char ** texts = 0;
   char * text = 0,
        * device_name_temp = 0;
@@ -461,7 +457,6 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
   oyRectangle_s * rect = 0;
   const oyRectangle_s * r = 0;
   oyProfile_s * p = 0;
-  char ** texts = 0;
   char * text = 0;
   int n = 0, i,
       error = !devices || !oyConfigs_Count( devices ),
@@ -562,7 +557,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           {
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Could not obtain _ICC_PROFILE(_xxx) information for %s",
-                     OY_DBG_ARGS_, texts[i] );
+                     OY_DBG_ARGS_, device_name );
             /* Show the "icc_profile" option is understood. */
             p = 0;
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
