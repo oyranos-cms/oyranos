@@ -46,6 +46,7 @@ int main( int argc , char** argv )
   int list = 0;
   int setup = 0;
   int database = 0;
+  int server = 0;
 
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -113,8 +114,8 @@ int main( int argc , char** argv )
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'b': database = 1; monitor_profile = 0; break;
               case 'l': list = 1; monitor_profile = 0; break;
-              case 'x': OY_PARSE_INT_ARG( x ); break;
-              case 'y': OY_PARSE_INT_ARG( y ); break;
+              case 'x': server = 1; OY_PARSE_INT_ARG( x ); break;
+              case 'y': server = 1; OY_PARSE_INT_ARG( y ); break;
               case 'v': oy_debug += 1; break;
               case 's': setup = 1; break; /* implicite -> setup */
               case 'h':
@@ -182,7 +183,7 @@ int main( int argc , char** argv )
     }
     if(oy_debug) printf( "%s\n", argv[1] );
 
-    if(!erase && !list && !database && !setup)
+    if(!erase && !list && !database && !setup && !server)
       setup = 1;
 
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
@@ -202,7 +203,8 @@ int main( int argc , char** argv )
       }
       if(size && data) oyDeAllocFunc( data ); data = 0;
 
-      printf("%s:%d profile \"%s\" size: %d\n",__FILE__,__LINE__,
+      printf("%s:%d profile \"%s\" size: %d\n",
+             strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
              filename?filename:OY_PROFILE_NONE, (int)size);
 
       oyProfile_Release( &prof );
