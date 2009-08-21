@@ -1087,7 +1087,7 @@ struct  oyCMMapi4_s {
  *  @memberof oyCMMapi8_s
  *
  *  @param[in]     registration        a selection string marked with "///config"
- *  @param[in]     options             the complete options from the ui
+ *  @param[in]     options             the complete options from the user
  *  @param[out]    configs             the returned configurations
  *  @return                            0 - good, 1 <= error, -1 >= unknown issue, look for messages
  *
@@ -1099,6 +1099,22 @@ typedef int      (*oyConfigs_FromPattern_f) (
                                        const char        * registration,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** configs );
+/** typedef  oyConfigs_Modify_f
+ *  @brief   enrich/manipulate existing configurations
+ *  @ingroup backend_api
+ *  @memberof oyCMMapi8_s
+ *
+ *  @param[in,out] configs             the configurations
+ *  @param[in]     options             the complete options from the user
+ *  @return                            0 - good, 1 <= error, -1 >= unknown issue, look for messages
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/21 (Oyranos: 0.1.10)
+ *  @date    2009/08/21
+ */
+typedef int      (*oyConfigs_Modify_f)( oyConfigs_s       * configs,
+                                        oyOptions_s       * options );
+
 /** typedef  oyConfig_Rank_f
  *  @brief   check for correctness
  *  @ingroup backend_api
@@ -1185,6 +1201,7 @@ struct oyCMMapi8_s {
   oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
 
   oyConfigs_FromPattern_f oyConfigs_FromPattern; /**< obtain matching configs */
+  oyConfigs_Modify_f oyConfigs_Modify; /**< manipulate given configs */
   oyConfig_Rank_f  oyConfig_Rank;      /**< test config */
   /** zero terminated list of rank attributes;
    *  The data is just informational. In case all properties to rank a given 
