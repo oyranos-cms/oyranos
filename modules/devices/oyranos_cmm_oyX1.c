@@ -557,6 +557,336 @@ int            oyX1Configs_FromPattern (
   return error;
 }
 
+/** Function oyX1Configs_Modify
+ *  @brief   oyX1 oyCMMapi8_s Xorg monitor manipulation
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/08/21
+ */
+int            oyX1Configs_Modify    (
+                                       oyConfigs_s       * devices,
+                                       oyOptions_s       * options )
+{
+  oyConfig_s * device = 0;
+  oyOption_s * o = 0;
+  oyRectangle_s * rect = 0;
+  const oyRectangle_s * r = 0;
+  oyProfile_s * p = 0;
+  char ** texts = 0;
+  char * text = 0;
+  int n = 0, i,
+      error = !devices || !oyConfigs_Count( devices ),
+      has;
+  const char * oprofile_name = 0,
+             * device_name = 0;
+  int rank = 0;
+  oyAlloc_f allocateFunc = malloc;
+  const char * tmp = 0;
+
+
+  /** 1. In case no option is provided or something fails, show a message. */
+  if(!options || !oyOptions_Count( options ))
+  {
+    oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+    return 0;
+  }
+
+  n = oyConfigs_Count( devices );
+  for( i = 0; i < n; ++i )
+  {
+    device = oyConfigs_Get( devices, i );
+    rank += oyFilterRegistrationMatch( oyX1_api8.registration,
+                                       device->registration,
+                                       oyOBJECT_CMM_API8_S );
+    oyConfig_Release( &device );
+  }
+
+  if(rank && error <= 0)
+  {
+    /** 3.  handle the actual call */
+    /** 3.1 "list" call */
+    if(oyOptions_FindString( options, "command", "list" ))
+    {
+      n = oyConfigs_Count( devices );
+
+      /** 3.1.1 iterate over all provided devices */
+      for( i = 0; i < n; ++i )
+      {
+        device = oyConfigs_Get( devices, i );
+        rank = oyFilterRegistrationMatch( oyX1_api8.registration,
+                                          device->registration,
+                                          oyOBJECT_CMM_API8_S );
+        if(!rank)
+        {
+          oyConfig_Release( &device );
+          continue;
+        }
+
+        /** 3.1.2 get the "device_name" */
+        if(error <= 0)
+        device_name = oyConfig_FindString( device, "device_name", 0 );
+
+        /** 3.1.3 tell the "device_rectangle" in a oyRectangle_s */
+        if(oyOptions_FindString( options, "device_rectangle", 0 ) ||
+           oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        {
+          has = 0;
+          rect = oyX1Rectangle_FromDevice( device_name );
+          if(!rect)
+          {
+            WARNc1_S("Could not obtain rectangle information for %s", texts[i]);
+          } else
+          {
+            o = oyConfig_Find( device, "device_rectangle" );
+            if(o)
+              has = 1;
+            else
+              o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH
+                                "device_rectangle", 0 );
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
+            if(has)
+              oyOption_Release( &o );
+            else
+              oyOptions_MoveIn( device->data, &o, -1 );
+          }
+        }
+
+        /** 3.1.4 tell the "icc_profile" in a oyProfile_s */
+        if( oyOptions_FindString( options, "icc_profile", 0 ) ||
+            oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        {
+          size_t size = 0;
+          char * data = oyX1GetMonitorProfile( device_name, &size,
+                                               allocateFunc );
+
+          
+          has = 0;
+          o = oyConfig_Find( device, "icc_profile" );
+          if(o)
+            has = 1;
+          else
+            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile",
+                              0 );
+          /** Warn and return issue on not found profile. */
+          if(!size || !data)
+          {
+            message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                     "Could not obtain _ICC_PROFILE(_xxx) information for %s",
+                     OY_DBG_ARGS_, texts[i] );
+            /* Show the "icc_profile" option is understood. */
+            p = 0;
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            error = -1;
+          } else
+          {
+            p = oyProfile_FromMem( size, data, 0, 0 );
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            free( data );
+          }
+          if(has)
+            oyOption_Release( &o );
+          else
+            oyOptions_MoveIn( device->data, &o, -1 );
+        }
+
+        /** 3.1.5 construct a oyNAME_NAME string */
+        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        {
+          o = oyOptions_Find( device->data, "device_rectangle" );
+          r = (oyRectangle_s*) o->value->oy_struct;
+
+          text = 0; tmp = 0;
+      
+          tmp = oyRectangle_Show( (oyRectangle_s*)r );
+          STRING_ADD( text, tmp );
+          oyOption_Release( &o );
+
+          o = oyOptions_Find( device->data, "icc_profile" );
+
+          if( o && o->value && o->value->oy_struct && 
+              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+          {
+            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+            tmp = oyProfile_GetFileName( p, 0 );
+
+            STRING_ADD( text, "  " );
+            if(tmp)
+            {
+              if(oyStrrchr_( tmp, OY_SLASH_C ))
+                STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
+              else
+                STRING_ADD( text, tmp );
+            }
+
+            oyProfile_Release( &p );
+          }
+
+          if(error <= 0)
+          error = oyOptions_SetFromText( &device->data,
+                                         OYX1_MONITOR_REGISTRATION OY_SLASH
+                                         "oyNAME_NAME",
+                                         text, OY_CREATE_NEW );
+          oyFree_m_( text );
+        }
+
+
+        /** 3.1.6 add the rank scheme to combine properties */
+        if(error <= 0 && !device->rank_map)
+          device->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                            device->oy_->allocateFunc_ );
+
+        oyConfig_Release( &device );
+      }
+
+      goto cleanup;
+
+    } else
+
+
+    /** 3.2 "properties" call; provide extensive infos for the DB entry */
+    if(oyOptions_FindString( options, "command", "properties" ))
+    {
+      n = oyConfigs_Count( devices );
+
+      /** 3.1.1 iterate over all provided devices */
+      for( i = 0; i < n; ++i )
+      {
+        device = oyConfigs_Get( devices, i );
+        rank = oyFilterRegistrationMatch( oyX1_api8.registration,
+                                          device->registration,
+                                          oyOBJECT_CMM_API8_S );
+        if(!rank)
+        {
+          oyConfig_Release( &device );
+          continue;
+        }
+
+        /** 3.1.2 get the "device_name" */
+        if(error <= 0)
+        device_name = oyConfig_FindString( device, "device_name", 0 );
+
+        /** 3.2.1 add properties */
+        error = oyX1DeviceFromName_( device_name, options, &device,
+                                     allocateFunc );
+
+
+        /** 3.2.2 add the rank map to wight properties for ranking in the DB */
+        if(error <= 0 && device && !device->rank_map)
+          device->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                            device->oy_->allocateFunc_);
+        oyConfig_Release( &device );
+      }
+
+      goto cleanup;
+
+    } else
+
+    /** 3.3 "setup" call; bring a profile to the device */
+    if(error <= 0 &&
+       oyOptions_FindString( options, "command", "setup" ))
+    {
+      n = oyConfigs_Count( devices );
+
+      /** 3.1.1 iterate over all provided devices */
+      for( i = 0; i < n; ++i )
+      {
+        device = oyConfigs_Get( devices, i );
+        rank = oyFilterRegistrationMatch( oyX1_api8.registration,
+                                          device->registration,
+                                          oyOBJECT_CMM_API8_S );
+        if(!rank)
+        {
+          oyConfig_Release( &device );
+          continue;
+        }
+
+        /** 3.1.2 get the "device_name" */
+        if(error <= 0)
+        device_name = oyConfig_FindString( device, "device_name", 0 );
+        oprofile_name = oyOptions_FindString( options, "profile_name", 0 );
+
+        error = !device_name || !oprofile_name;
+        if(error >= 1)
+          message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                  "The device_name/profile_name option is missed. Options:\n%s",
+                  OY_DBG_ARGS_,
+                  oyOptions_GetText( options, oyNAME_NICK )
+                  );
+        else
+          error = oyX1MonitorProfileSetup( device_name, oprofile_name );
+
+        oyConfig_Release( &device );
+      }
+
+      goto cleanup;
+
+    } else
+
+    /** 3.4 "unset" call; clear a profile from a device */
+    if(error <= 0 &&
+       oyOptions_FindString( options, "command", "unset" ))
+    {
+      n = oyConfigs_Count( devices );
+
+      /** 3.1.1 iterate over all provided devices */
+      for( i = 0; i < n; ++i )
+      {
+        device = oyConfigs_Get( devices, i );
+        rank = oyFilterRegistrationMatch( oyX1_api8.registration,
+                                          device->registration,
+                                          oyOBJECT_CMM_API8_S );
+        if(!rank)
+        {
+          oyConfig_Release( &device );
+          continue;
+        }
+
+        /** 3.1.2 get the "device_name" */
+        if(error <= 0)
+        device_name = oyConfig_FindString( device, "device_name", 0 );
+        oprofile_name = oyOptions_FindString( options, "profile_name", 0 );
+
+        error = !device_name || !oprofile_name;
+        if(error >= 1)
+          message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                  "The device_name option is missed. Options:\n%s",
+                  OY_DBG_ARGS_,
+                  oyOptions_GetText( options, oyNAME_NICK )
+                  );
+        else
+          error = oyX1MonitorProfileUnset( device_name );
+
+        oyConfig_Release( &device );
+      }
+
+      goto cleanup;
+    }
+
+    /** 3.5 "help" call; display a help text */
+    if(error <= 0 &&
+       oyOptions_FindString( options, "command", "help" ))
+    {
+      oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+
+      goto cleanup;
+    }
+  }
+
+
+  message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                "This point should not be reached. Options:\n%s", OY_DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
+                );
+
+  oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+
+
+  cleanup:
+
+  return error;
+}
+
 /** Function oyX1Config_Rank
  *  @brief   oyX1 oyCMMapi8_s Xorg monitor check
  *
@@ -610,8 +940,8 @@ oyRankPad oyX1_rank_map[] = {
  *  @brief    oyX1 oyCMMapi8_s implementations
  *
  *  @version Oyranos: 0.1.10
- *  @date    2009/01/19
  *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/08/21
  */
 oyCMMapi8_s oyX1_api8 = {
   oyOBJECT_CMM_API8_S,
@@ -623,11 +953,12 @@ oyCMMapi8_s oyX1_api8 = {
   oyX1CMMCanHandle,          /**< oyCMMCanHandle_f oyCMMCanHandle */
 
   OYX1_MONITOR_REGISTRATION, /**< registration */
-  {0,1,0},                   /**< int32_t version[3] */
+  {0,3,0},                   /**< int32_t version[3] */
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */
   oyX1Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
+  oyX1Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   oyX1Config_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
   oyX1_rank_map              /**< oyRankPad ** rank_map */
 };
@@ -686,7 +1017,7 @@ oyCMMInfo_s oyX1_cmm_module = {
   oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
-  "0.2",
+  "0.3",
   oyX1GetText, /* oyCMMInfoGetText_f get Text */
   (char**)oyX1_texts, /* texts; list of arguments to getText */
   OYRANOS_VERSION,
