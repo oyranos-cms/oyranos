@@ -397,7 +397,8 @@ int            Configs_FromPattern (
     if(oyOptions_FindString( options, "command", "list" ))
     {
       texts_n = GetDevices( http, &texts, allocateFunc );
-      devices = oyConfigs_New(0);
+      if(texts_n)
+        devices = oyConfigs_New(0);
 
       for( i = 0; i < texts_n; ++i )
       {
