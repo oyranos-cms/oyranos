@@ -52,7 +52,7 @@
 #define _api8                   catCMMfunc( SANE , _api8 )
 #define _rank_map               catCMMfunc( SANE , _rank_map )
 #define Configs_FromPattern     catCMMfunc( SANE , Configs_FromPattern )
-#define Config_Check            catCMMfunc( SANE , Config_Check )
+#define Config_Rank             catCMMfunc( SANE , Config_Rank )
 #define GetText                 catCMMfunc( SANE , GetText )
 #define _texts                  catCMMfunc( SANE , _texts )
 #define _cmm_module             catCMMfunc( SANE , _cmm_module )
@@ -442,7 +442,22 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    }
 }
 
-/** Function Config_Check
+/** Function Configs_Modify
+ *  @brief   oyCMMapi8_s SANE scanner manipulation
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/08/21
+ *
+ *  \todo { Unimplemented }
+ */
+int            Configs_Modify    ( oyConfigs_s       * devices,
+                                       oyOptions_s       * options )
+{
+   return 1;
+}
+
+/** Function Config_Rank
  *  @brief   CMM_NICK oyCMMapi8_s device check
  *
  *  @param[in]     config              the monitor device configuration
@@ -452,7 +467,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-int Config_Check(oyConfig_s * config)
+int Config_Rank(oyConfig_s * config)
 {
    int error = !config, rank = 1;
 
@@ -517,7 +532,8 @@ oyCMMapi8_s _api8 = {
 
    0,                        /**< oyCMMapi5_s * api5_ */
    Configs_FromPattern,      /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
-   Config_Check,             /**< oyConfig_Check_f oyConfig_Check */
+   Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
+   Config_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
    _rank_map                 /**< oyRankPad ** rank_map */
 };
 
