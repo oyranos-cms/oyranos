@@ -14,6 +14,8 @@
      -  Re-build/install sane-backends.
      -  Edit </sane/install/path>/etc/sane.d/dll.conf and uncomment the pnm backend.
      -  Copy a ppm file to /tmp/input.ppm.
+   * Optionally, if you want to make SANE start up much faster, edit the dll.conf
+     file and keep only the lines with the backends you require.
 
 Then:
 $ cmake . -DCMAKE_INSTALL_PREFIX=</your/install/path>
