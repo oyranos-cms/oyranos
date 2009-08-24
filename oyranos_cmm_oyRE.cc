@@ -71,7 +71,7 @@
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  *
- *  \todo { In progress }
+ *  \todo { Pick better rank fields }
  */
 oyranos::oyRankPad _rank_map[] = {
    {const_cast < char *>("device_name"), 0, 0, 0},                   /**< Unused?*/
@@ -83,9 +83,35 @@ oyranos::oyRankPad _rank_map[] = {
    {const_cast < char *>("Exif.Photo.ISOSpeedRatings"), 1, 0, 0},    /**< is nice */
    {const_cast < char *>("Exif.Photo.ExposureProgram"), 1, 0, 0},    /**< nice to match */
    {const_cast < char *>("Exif.Photo.Flash"), 1, 0, 0},              /**< nice to match */
-       /*Makernote Fields - no 1-1 mapping with exif tags */          
-   {const_cast < char *>("Exif.SerialNumber"), 10, -2, 0},           /**< important, could slightly fail *//*E.g. Exif.Canon.SerialNumber */
-   {const_cast < char *>("Exif.Lens"), 2, -1, 0},                    /**< is good *//*E.g. Exif.CanonCs.Lens */
+
+      /*Makernote Fields - no 1-1 mapping with exif tags */
+      /* Makernote Tags: Serial Number */
+   {const_cast < char *>("Exif.Canon.SerialNumber"), 1, 0, 0},        /**< nice to match */
+   {const_cast < char *>("Exif.Fujifilm.SerialNumber"), 1, 0, 0},     /**< nice to match */
+   {const_cast < char *>("Exif.Nikon3.SerialNumber"), 1, 0, 0},       /**< nice to match */
+   {const_cast < char *>("Exif.Nikon3.SerialNO"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>("Exif.Olympus.SerialNumber"), 1, 0, 0},      /**< nice to match */
+   {const_cast < char *>("Exif.Olympus.SerialNumber2"), 1, 0, 0},     /**< nice to match */
+   {const_cast < char *>("Exif.OlympusEq.SerialNumber"), 1, 0, 0},    /**< nice to match */
+   {const_cast < char *>("Exif.OlympusEq.InternalSerialNumber"), 1, 0, 0},/**< nice to match */
+   {const_cast < char *>("Exif.Sigma.SerialNumber"), 1, 0, 0},        /**< nice to match */
+
+      /* Makernote Tags: Lens */
+   {const_cast < char *>("Exif.CanonCs.LensType"), 1, 0, 0},          /**< nice to match */
+   {const_cast < char *>("Exif.CanonCs.Lens"), 1, 0, 0},              /**< nice to match */
+   {const_cast < char *>("Exif.Minolta.LensID"), 1, 0, 0},            /**< nice to match */
+   {const_cast < char *>("Exif.Nikon1.AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
+   {const_cast < char *>("Exif.Nikon2.AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
+   {const_cast < char *>("Exif.Nikon3.AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
+   {const_cast < char *>("Exif.Nikon3.LensType"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>("Exif.Nikon3.Lens"), 1, 0, 0},               /**< nice to match */
+   {const_cast < char *>("Exif.OlympusEq.LensType"), 1, 0, 0},        /**< nice to match */
+   {const_cast < char *>("Exif.OlympusEq.LensSerialNumber"), 1, 0, 0},/**< nice to match */
+   {const_cast < char *>("Exif.OlympusEq.LensFirmwareVersion"), 1, 0, 0},/**< nice to match */
+   {const_cast < char *>("Exif.Pentax.LensType"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>("Exif.Pentax.LensInfo"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>("Exif.Sigma.LensRange"), 1, 0, 0},           /**< nice to match */
+
        /* Possibly not relevant options are marked with: O->Output R->Repair */
        /* LibRaw Options affecting open_file() */                     
        /* LibRaw Options affecting unpack() */                        
@@ -222,14 +248,47 @@ int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::AutoPtr image)
    if (exif_data.empty())
       return 1;
 
+   // Standard EXIF Tags
    OPTIONS_ADD_EXIF(Exif.Image.Make)
    OPTIONS_ADD_EXIF(Exif.Image.Model)
    OPTIONS_ADD_EXIF(Exif.Photo.ISOSpeedRatings)
    OPTIONS_ADD_EXIF(Exif.Photo.ExposureProgram)
    OPTIONS_ADD_EXIF(Exif.Photo.Flash)
  
-   //"Exif.SerialNumber" //TODO
-   //"Exif.Lens" //TODO
+   // Makernote Tags: Serial Number
+   OPTIONS_ADD_EXIF(Exif.Canon.SerialNumber)
+   OPTIONS_ADD_EXIF(Exif.Fujifilm.SerialNumber)
+   //OPTIONS_ADD_EXIF(Minolta) //Non existant?
+   OPTIONS_ADD_EXIF(Exif.Nikon3.SerialNumber)
+   OPTIONS_ADD_EXIF(Exif.Nikon3.SerialNO)
+   OPTIONS_ADD_EXIF(Exif.Olympus.SerialNumber)
+   OPTIONS_ADD_EXIF(Exif.Olympus.SerialNumber2)
+   OPTIONS_ADD_EXIF(Exif.OlympusEq.SerialNumber)
+   OPTIONS_ADD_EXIF(Exif.OlympusEq.InternalSerialNumber)
+   //OPTIONS_ADD_EXIF(Exif.Panasonic.InternalSerialNumber) //!in libexiv2?
+   //OPTIONS_ADD_EXIF(Pentax) //Non existant?
+   OPTIONS_ADD_EXIF(Exif.Sigma.SerialNumber)
+   //OPTIONS_ADD_EXIF(Sony) //Non existant?
+
+   // Makernote Tags: Lens
+   OPTIONS_ADD_EXIF(Exif.CanonCs.LensType)
+   OPTIONS_ADD_EXIF(Exif.CanonCs.Lens)
+   //OPTIONS_ADD_EXIF(Fujifilm) //Non existant?
+   OPTIONS_ADD_EXIF(Exif.Minolta.LensID)
+   OPTIONS_ADD_EXIF(Exif.Nikon1.AuxiliaryLens)
+   OPTIONS_ADD_EXIF(Exif.Nikon2.AuxiliaryLens)
+   OPTIONS_ADD_EXIF(Exif.Nikon3.AuxiliaryLens)
+   OPTIONS_ADD_EXIF(Exif.Nikon3.LensType)
+   OPTIONS_ADD_EXIF(Exif.Nikon3.Lens)
+   OPTIONS_ADD_EXIF(Exif.OlympusEq.LensType)
+   OPTIONS_ADD_EXIF(Exif.OlympusEq.LensSerialNumber)
+   OPTIONS_ADD_EXIF(Exif.OlympusEq.LensFirmwareVersion)
+   //OPTIONS_ADD_EXIF(Exif.Panasonic.ConversionLens) //!in libexiv2?
+   //OPTIONS_ADD_EXIF(Exif.Panasonic.LensType) //!in libexiv2?
+   //OPTIONS_ADD_EXIF(Exif.Panasonic.LensSerialNumber) //!in libexiv2?
+   OPTIONS_ADD_EXIF(Exif.Pentax.LensType)
+   OPTIONS_ADD_EXIF(Exif.Pentax.LensInfo)
+   OPTIONS_ADD_EXIF(Exif.Sigma.LensRange)
 
    return error;
 }
