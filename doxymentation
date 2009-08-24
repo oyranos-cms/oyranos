@@ -278,8 +278,12 @@
     The parts which differ are that instead of oyCMMapi4_s the oyCMMapi8_s
     will be implemented. The dDevConfigs_FromPattern 
     (oyCMMapi8_s::oyConfigs_FromPattern) is a function to
-    call into the device module. The dDev_rank_map (oyCMMapi8_s::rank_map)
-    tells how each option shall
+    call into the device module and create new oyConfig_s object(s).
+    The dDevConfigs_Modify (oyCMMapi8_s::oyConfigs_Modify) function can use the
+    same protocol with the difference that it works on existing oyConfig_s 
+    object(s). The "device_name" option should not be ignored by
+    dDevConfigs_Modify.
+    The dDev_rank_map (oyCMMapi8_s::rank_map) tells how each option shall
     be wighted by Oyranos to select a profile from the Oyranos DB independent 
     from the device module. The calls into dDevConfigs_FromPattern are string
     based. The option "command" will contain the command name the device module
