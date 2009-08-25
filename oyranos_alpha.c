@@ -3519,32 +3519,13 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
   {
     case oyOBJECT_CMM_API1_S:
     {
-      oyCMMapi1_s * s = (oyCMMapi1_s*)api;
-      if(!(s->oyCMMInit &&
-           s->oyCMMMessageFuncSet &&
-           s->oyCMMCanHandle &&
-           s->oyCMMDataOpen &&
-           /*s->oyCMMProfile_GetText &&
-           s->oyCMMProfile_GetSignature &&*/
-           s->oyCMMColourConversion_Create &&
-           s->oyCMMColourConversion_FromMem &&
-           s->oyCMMColourConversion_ToMem &&
-           s->oyCMMColourConversion_Run ) )
-        error = 1;
+      /* This module type is obsolete and should be replaced by oyCMMapi4_s. */
+      error = 1;
     } break;
     case oyOBJECT_CMM_API2_S:
     {
-      oyCMMapi2_s * s = (oyCMMapi2_s*)api;
-      if(!(s->oyCMMInit &&
-           s->oyCMMMessageFuncSet &&
-           s->oyGetMonitorInfo &&
-           s->oyGetScreenFromPosition &&
-           s->oyGetDisplayNameFromPosition &&
-           s->oyGetMonitorProfile &&
-           s->oyGetMonitorProfileName &&
-           s->oySetMonitorProfile &&
-           s->oyActivateMonitorProfiles ) )
-        error = 1;
+      /* This module type is obsolete and should be replaced by oyCMMapi8_s. */
+      error = 1;
     } break;
     case oyOBJECT_CMM_API3_S:
     {
@@ -3555,6 +3536,16 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
            s->oyCMMProfileTag_GetValues &&
            /*s-> &&*/
            s->oyCMMProfileTag_Create ) )
+        error = 1;
+    } break;
+    case oyOBJECT_CMM_API4_S:
+    {
+      oyCMMapi4_s * s = (oyCMMapi4_s*)api;
+      if(!(s->oyCMMInit &&
+           s->oyCMMMessageFuncSet &&
+           s->oyCMMCanHandle
+           /*s-> &&*/
+            ) )
         error = 1;
     } break;
     default: break;
@@ -9719,6 +9710,93 @@ OYAPI int  OYEXPORT
 
   oyOptions_Release( &options );
 
+  return error;
+}
+
+
+/** Function oyConfigs_Modify
+ *  @brief   ask a backend for device informations or other direct calls
+ *  @memberof oyConfigs_s
+ *
+ *
+ *  @param[in,out] configs             The passed configs first member is used
+ *                                     to obtain a registration string and
+ *                                     select a appropriate module.
+ *                                     Regarding the module the
+ *                                     configs need to be homogenous.
+ *                                     All configs are passed at once to the
+ *                                     module. Mixing configs for different
+ *                                     modules depends on the modules 
+ *                                     capabilities to handle strange objects.
+ *  @param[in]     options             options to pass to the backend, for zero
+ *                                     the usage instructions are requested,
+ *                                     a option "device_name" can be used 
+ *                                     as filter
+ *  @return                            0 - good, >= 1 - error, issue <= -1 
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/21 (Oyranos: 0.1.10)
+ *  @date    2009/08/25
+ */
+OYAPI int  OYEXPORT
+                 oyConfigs_Modify    ( oyConfigs_s       * configs,
+                                       oyOptions_s       * options )
+{
+  int error = !oyConfigs_Count( configs );
+  oyConfig_s * config = 0;
+  oyConfigs_s * s = configs;
+  int i;
+  uint32_t count = 0,
+         * rank_list = 0;
+  char ** texts = 0,
+        * registration_domain = 0;
+  oyCMMapi8_s * cmm_api8 = 0;
+
+  if(error > 0)
+  {
+    WARNc_S( "\n  No devices provided. Give up" );
+    return 0;
+  }
+  oyCheckType__m( oyOBJECT_CONFIGS_S, return 1 )
+
+
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  if(error <= 0)
+  {
+    /** 1. pick the first device to select a registration */
+    config = oyConfigs_Get( configs, 0 );
+    /** 1.2 get all device class backend names from the firsts registration */
+    error = oyConfigDomainList  ( config->registration, &texts, &count,
+                                  &rank_list, 0 );
+    oyConfig_Release( &config );
+  }
+
+
+  /** 2. call each backends oyCMMapi8_s::oyConfigs_Modify */
+  for( i = 0; i < count; ++i )
+  {
+    registration_domain = texts[i];
+
+    if(error <= 0)
+    {
+      cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0,0, registration_domain,
+                                                     oyOBJECT_CMM_API8_S );
+      error = !cmm_api8;
+    }
+
+    if(error <= 0)
+      error = !cmm_api8->oyConfigs_Modify;
+
+    if(error <= 0)
+      error = cmm_api8->oyConfigs_Modify( configs, options );
+  }
+
+  oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
+  if(rank_list)
+    oyDeAllocateFunc_( rank_list );
+
+  oyExportEnd_();
   return error;
 }
 

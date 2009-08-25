@@ -969,6 +969,9 @@ OYAPI int  OYEXPORT
 
 
 OYAPI int  OYEXPORT
+                 oyConfigs_Modify    ( oyConfigs_s       * configs,
+                                       oyOptions_s       * options );
+OYAPI int  OYEXPORT
                  oyConfigs_MoveIn    ( oyConfigs_s       * list,
                                        oyConfig_s       ** ptr,
                                        int                 pos );
