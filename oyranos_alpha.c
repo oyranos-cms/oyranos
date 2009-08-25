@@ -10641,7 +10641,7 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/02 (Oyranos: 0.1.10)
- *  @date    2009/02/02
+ *  @date    2009/08/25
  */
 OYAPI int  OYEXPORT
                oyDeviceBackendCall   ( oyConfig_s        * device,
@@ -10650,9 +10650,9 @@ OYAPI int  OYEXPORT
   int error = !device,
       l_error = 0;
   oyConfigs_s * devices = 0;
-  oyConfig_s * config = 0,
-             * s = device;
+  oyConfig_s * s = device;
   const char * device_name = 0;
+  int new_options = 0;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
@@ -10672,40 +10672,26 @@ OYAPI int  OYEXPORT
     l_error = oyOptions_SetRegistrationTextKey_( options,
                                                  device->registration,
                                                  "command", "properties" ); OY_ERR
+    new_options = 1;
   }
 
-  /** 2. set device filter */
-  if(error <= 0)
-    l_error = oyOptions_SetRegistrationTextKey_( options,
-                                      device->registration,
-                                      "device_name",device_name); OY_ERR
-
-  /** 3. talk to the backend */
-  l_error = oyConfigs_FromDomain( device->registration, options,
-                                  &devices, 0 ); OY_ERR
-
-  if(!devices)
-    return error;
-
-  config = oyConfigs_Get( devices, 0 );
-  /** 3.1 check for success */
-  l_error = !config; OY_ERR
-
-  /** 4. copy results to the device */
+  devices = oyConfigs_New( 0 );
+  error = !devices;
+  
   if(error <= 0)
   {
-    if(oyOptions_FindString( options, "command", "properties" ) ||
-       oyOptions_FindString( options, "oyNAME_DESCRIPTION", 0 ))
-    {
-      oyOptions_Release( &device->backend_core );
-      device->backend_core = oyOptions_Copy( config->backend_core, 0 );
-    }
-    l_error = oyOptions_AppendOpts( device->data, config->data ); OY_ERR
-  } else
-    WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name )
+    /* Keep a reference to config as devices will later be released. */
+    s = oyConfig_Copy( device, 0 );
+
+    oyConfigs_MoveIn( devices, &device, -1 );
+  }
+
+  /** 3. talk to the backend */
+  l_error = oyConfigs_Modify( devices, options ); OY_ERR
 
   oyConfigs_Release( &devices );
-  oyConfig_Release( &config );
+  if(new_options)
+    oyOptions_Release( &options );
 
   return error;
 }
