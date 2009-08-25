@@ -444,7 +444,233 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
 
     }
 */
-  return 0;
+
+  oyConfig_s * device = 0;
+  oyOption_s * o = 0, * device_context = 0;
+  oyProfile_s * p = 0;
+  char * text = 0;
+  int n = 0, i,
+  error = !devices;
+  const char   * unset_request = 0,
+               * profile_in = 0,
+               * profile_request = 0,
+               * properties_request = 0,
+               * setup_request = 0;
+  http_t * http = 0;
+  oyAlloc_f allocateFunc = malloc;
+  static char * num = 0;
+  const char * tmp = 0, * printer_name = 0;
+  size_t * size = 0;
+  ppd_file_t * ppd = 0;
+
+  int rank = 0;
+
+  // Initialize the CUPS server.
+  http = oyGetCUPSConnection();
+
+  if(!num)
+    num = malloc( 80 );
+
+  if(!options || !oyOptions_Count( options ))
+  {        
+        /** oyMSG_WARN should make shure our message is visible. */
+        ConfigsFromPatternUsage( (oyStruct_s*)options );
+        return 0;
+  }
+
+  if(error <= 0)
+  {
+
+    /** "list" call section */
+    if(oyOptions_FindString( options, "command", "list" ))
+    {
+      n = oyConfigs_Count( devices );
+      for( i = 0; i < n; i++ )
+      {
+        device = oyConfigs_Get( devices, i );
+
+        printer_name = oyConfig_FindString( device, "device_name", 0 );
+
+
+        /* Build icc_profile */
+        profile_request = oyOptions_FindString( options, "icc_profile", 0 );   
+        if(profile_request || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        {
+          int n, j;
+          /* Search for CUPS ICC profiles */
+          oyConfigs_s * devices_ = oyConfigs_New(0);
+          oyConfig_s * tmp = oyConfig_Copy( device, 0 );
+          oyConfigs_MoveIn( devices_, &tmp, -1 );
+
+          CUPSgetProfiles( printer_name, devices_ );
+
+          /* add additional devices */
+          n = oyConfigs_Count( devices_ );
+          for(j = 0; j < n; ++j)
+          {
+            oyConfig_s * d = oyConfigs_Get( devices_, j );
+            error = oyOptions_SetFromText( &d->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       printer_name, OY_CREATE_NEW );
+            if(j)
+              oyConfigs_MoveIn( devices, &d, -1 );
+            else
+              oyConfig_Release( &d );
+          }
+
+          oyConfigs_Release( &devices_ );
+        }
+
+        /* Build oyNAME_NAME */
+        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        { 
+          text = 0;
+          o = oyOptions_Find( device->data, "icc_profile" );
+
+          if( o && o->value && o->value->oy_struct && 
+              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+          {            
+            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+            tmp = oyProfile_GetFileName( p, 0 );
+            STRING_ADD( text, "  " );
+            if(strrchr( tmp, OY_SLASH_C ))
+              STRING_ADD( text, strrchr( tmp, OY_SLASH_C ) + 1 );
+            else
+              STRING_ADD( text, tmp );
+
+              oyProfile_Release( &p );
+          }
+
+          if(error <= 0)
+          error = oyOptions_SetFromText( &device->data,
+                                         CMM_BASE_REG OY_SLASH "oyNAME_NAME",
+                                         text, OY_CREATE_NEW );
+          oyDeAllocateFunc_( text );
+        }
+
+        if(error <= 0 && !device->rank_map)
+          device->rank_map = oyRankMapCopy( _rank_map,
+                                            device->oy_->allocateFunc_);
+
+        oyConfigs_MoveIn( devices, &device, -1 );
+      }
+
+      goto clean;
+    }
+
+    /** "properties" call section */
+    properties_request = oyOptions_FindString( options, "command", "properties" );
+    if(properties_request)
+    { 
+      n = oyConfigs_Count( devices );
+      for( i = 0; i < n; ++i )
+      {
+        /* filter */
+        if(printer_name && strcmp(printer_name, printer_name) != 0)
+          continue;
+
+        device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !device;
+
+        if(error <= 0)
+        error = oyOptions_SetFromText( &device->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       printer_name, OY_CREATE_NEW );
+
+        error = DeviceFromName_( printer_name, options, &device,
+                                         allocateFunc );
+
+        if(error <= 0 && device)
+          device->rank_map = oyRankMapCopy( _rank_map,
+                                            device->oy_->allocateFunc_);
+        oyConfigs_MoveIn( devices, &device, -1 );
+      }
+
+      goto clean;
+    }
+
+    /** "setup" call section */
+    setup_request = oyOptions_FindString( options, "command", "setup" );
+    if(error <= 0 && setup_request)
+    {
+      profile_in = oyOptions_FindString( options, "profile_name", 0 );
+      printer_name = oyOptions_FindString( options, "device_name", 0 );
+      error = !printer_name || !profile_in;
+      if(error >= 1)
+        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+              "The device_name/profile_name option is missed. Options:\n%s",
+                _DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
+                );
+
+      else
+      {
+          /* NOTE  New profile delivery to CUPS server is not ready at the moment. */
+      }
+
+      goto clean;
+    }
+
+    /** "unset" call section */
+    unset_request = oyOptions_FindString( options, "command", "unset" );
+    if(error <= 0 && unset_request)
+    {
+      profile_in = oyOptions_FindString( options, "profile_name", 0 );
+      printer_name = oyOptions_FindString( options, "device_name", 0 );
+
+      error = !printer_name;
+      if(error >= 1)
+        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+                "The device_name option is missed. Options:\n%s",
+                _DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
+                );
+      else
+      {
+
+          /* TODO Build "config_file" */
+
+      }
+
+      goto clean;
+    }
+  }
+
+  /* not to be reached section, e.g. warning */
+  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+                "This point should not be reached. Options:\n%s", _DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
+                );
+
+
+  if(error <= 0 && 
+    oyOptions_FindString( options, "command", "setup"))
+  { 
+         profile_request = oyOptions_FindString( options, "profile_name", 0 );
+         error = !printer_name || !profile_request;
+         if (error >= 1)
+           message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+              "The device/profile name option is missing. OPTIONS:\n%s",
+                _DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK)
+                 );
+          else
+          {
+              //error = CUPSProfileSetup( printer_name, "sRGB.icc");
+          }
+  }
+
+  /** "help" call section */
+  if(error <= 0 &&
+     oyOptions_FindString( options, "command", "help" ))
+  {
+        ConfigsFromPatternUsage( (oyStruct_s*)options );
+  }
+
+
+
+  clean:
+  oyCloseCUPSConnection(); http=0;
+  return error;
 }
 
 int            Configs_FromPattern (
