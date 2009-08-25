@@ -252,6 +252,7 @@ struct oyCMMapi_s {
  *  @brief   the API 1 to implement and set by a CMM
  *  @ingroup backend_api
  *  @extends oyCMMapi_s
+ *  @deprecated use oyCMMapi4_s/oyCMMapi6_s/oyCMMapi7_s filter APIs instead
  *
  *  @since Oyranos: version 0.1.8 2007/12/05
  *  @date  21 december 2007 (API 0.1.8)
@@ -325,6 +326,7 @@ typedef int   (*oyActivateMonitorProfiles_f) (
  *  @brief   the API 2 to implement and set to provide windowing support
  *  @ingroup backend_api
  *  @extends oyCMMapi_s
+ *  @deprecated use oyCMMapi8_s for general configuration support
  *
  *  @since Oyranos: version 0.1.8
  *  @date  10 december 2007 (API 0.1.8)
