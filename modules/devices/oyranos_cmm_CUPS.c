@@ -44,6 +44,7 @@
 #define GetDevices              catCMMfunc( CUPS, GetDevices )
 #define _api8                   catCMMfunc( CUPS, _api8 )
 #define _rank_map               catCMMfunc( CUPS, _rank_map )
+#define Configs_Modify          catCMMfunc( CUPS, Configs_Modify )
 #define Configs_FromPattern     catCMMfunc( CUPS, Configs_FromPattern )
 #define Config_Check            catCMMfunc( CUPS, Config_Check )
 #define GetText                 catCMMfunc( CUPS, GetText )
@@ -54,31 +55,13 @@
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
 #define _(x) x
 
-#define CUPS_DATADIR "/usr/local/share/color/icc/"
-#define CUSTOM_PROFILE_DIR getenv("HOME") "/%s"
-
-/********Backend-specific functions*********/
-
-int PPDGetProfile ( const char ** profileName, oyOptions_s * options );
-const char * GetProfileSelector (oyOptions_s * options);
-ppd_file_t * ppdFromDeviceName( const char * device_name );
 int CUPSgetProfiles                  ( const char        * device_name,
                                        oyConfigs_s       * devices );
-
-
-/*************************************************/
-
-char          pathprog[1024];         /* Complete path to program/filter */
-const char    *ptr = 0;               /* Pointer into string */
-char          *root = "";             /* Root directory */
 
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s _api8;
 oyRankPad _rank_map[];
-
-char *    getProfileSelector(const char * device, char ** colorspace, char ** paper, char ** resolution);
-int *    setProfileSelector(const char * device, const char * profile_selector);
 
 int CMMInit ()
 {
@@ -360,6 +343,110 @@ int          DeviceFromName_ (         const char        * device_name,
 }
 
 
+int            Configs_Modify    ( oyConfigs_s       * devices,
+                                   oyOptions_s       * options )
+{
+/*
+    oyConfig_s * device = 0;
+    oyOption_s * o = 0, * device_context = 0;
+    oyProfile_s * p = 0;
+    char ** texts = 0;
+    char * text = 0;
+    int texts_n = 0, i,
+    error = !s;
+    const char   * unset_request = 0,
+                 * profile_in = 0,
+                 * profile_request = 0,
+                 * properties_request = 0,
+                 * setup_request = 0;
+    http_t * http = 0;
+    oyAlloc_f allocateFunc = malloc;
+    static char * num = 0;
+    const char * tmp = 0, * printer_name = 0;
+    size_t * size = 0;
+    ppd_file_t * ppd = 0;
+
+    const char * list_call = oyOptions_FindString( options, "command", "list" );
+
+    int rank = oyFilterRegistrationMatch( _api8.registration, registration,
+                                          oyOBJECT_CMM_API8_S );
+
+    // Initialize the CUPS server.
+    http = oyGetCUPSConnection();
+
+    
+    if(!num)
+      num = malloc( 80 );
+
+    if(!options || !oyOptions_Count( options ))
+    {        
+        // oyMSG_WARN should make shure our message is visible. 
+        ConfigsFromPatternUsage( (oyStruct_s*)options );
+        return 0;
+    } 
+
+    printer_name = oyOptions_FindString( options, "device_name", 0 );
+
+    if(rank && error <= 0)
+    {
+        devices = oyConfigs_New(0);
+         
+        if(list_call)
+        { 
+            texts_n = GetDevices( http, &texts, allocateFunc );
+
+            for( i = 0; i < texts_n; i++ )
+            {       
+
+                // filter 
+                if(printer_name && strcmp(printer_name, texts[i]) != 0)
+                    continue;
+
+                device = oyConfig_New( CMM_BASE_REG, 0 );
+                error = !device;
+
+                // Build device_name 
+                if(error <= 0)
+                {
+                    error = oyOptions_SetFromText( device->backend_core,
+                                     CMM_BASE_REG OY_SLASH "device_name",
+                                     texts[i], OY_CREATE_NEW );
+                }
+
+                profile_request = oyOptions_FindString( options, "icc_profile", 0 );
+                if(profile_request || oyOptions_FindString( options, "oyNAME_NAME", 0 ) )
+                {
+                    int n, j;
+                    //Search for CUPS ICC profiles 
+                    oyConfigs_s * devices_ = oyConfigs_New(0);
+                    oyConfig_s * tmp = oyConfig_Copy( device, 0 );
+                    oyConfigs_MoveIn( devices_, &tmp, -1 );
+
+                    CUPSgetProfiles( texts[i], devices_ );
+
+                    n = oyConfigs_Count( devices_ );
+
+                    for(j = 0; j < n; ++j)
+                    {
+                        oyConfig_s * d = oyConfigs_Get( devices_, j );
+                        error = oyOptions_SetFromText( &d->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       texts[i], OY_CREATE_NEW );
+                        if(j)
+                            oyConfigs_MoveIn( devices, &d, -1 );
+                        else
+                            oyConfig_Release( &d );
+                    }
+
+                    oyConfigs_Release( &devices_ );
+                }
+             }
+
+    }
+*/
+  return 0;
+}
+
 int            Configs_FromPattern (
                                        const char        * registration,
                                        oyOptions_s       * options,
@@ -402,6 +489,8 @@ int            Configs_FromPattern (
         return 0;
   }
 
+  printer_name = oyOptions_FindString( options, "device_name", 0 );
+
   if(rank && error <= 0)
   {
       devices = oyConfigs_New(0);
@@ -413,8 +502,6 @@ int            Configs_FromPattern (
 
       for( i = 0; i < texts_n; i++ )
       {
-        printer_name = oyOptions_FindString( options, "device_name", 0 );
-
         /* filter */
         if(printer_name && strcmp(printer_name, texts[i]) != 0)
           continue;
@@ -649,7 +736,6 @@ oyRankPad _rank_map[] = {
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-//                  ***IN PROGRESS***
 int   Config_Check ( oyConfig_s        * config )
 {
     int error = !config,
@@ -694,6 +780,7 @@ oyCMMapi8_s _api8 = {
   0
   ,                         /**< oyCMMapi5_s * api5_ */
   Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
+  Configs_Modify,
   Config_Check,          /**< oyConfig_Check_f oyConfig_Check */
   _rank_map              /**< oyRankPad ** rank_map */
 };
@@ -769,7 +856,7 @@ oyCMMInfo_s _cmm_module = {
  */
 int CUPSgetProfiles                  ( const char        * device_name,
                                        oyConfigs_s       * devices )
-{
+{    
     int error = 0;
     const char * ppd_file_location = cupsGetPPD2( oyGetCUPSConnection(), device_name );
     ppd_file_t * ppd_file = ppdOpenFile(ppd_file_location);  
@@ -994,185 +1081,4 @@ int CUPSgetProfiles                  ( const char        * device_name,
     }
 
     return error;
-}
-
-
-/*                         NOTE
-   The functions below are reserved for when CUPS has a method to receive
-           user-defined profiles into the server.
-*/
-
-
-int   PPDGetProfile     ( const char ** profileName,
-                                  oyOptions_s * options )
-{
-    int option_n = 0;
-
-    if(!options)
-         return 0;
-   
-    *profileName = oyOptions_FindString(options, "cupsICCProfile", 0);
-
-    option_n = oyOptions_Count( options );
-    if(profileName)
-    {
-        if(*profileName[0] == '/')
-            snprintf(pathprog, sizeof(pathprog), "%s%s", root, *profileName);
-        else
-        {
-            if (( ptr = getenv("CUPS_DATADIR")) == NULL)
-                  ptr = CUPS_DATADIR;
-            if(*ptr == '/' || !*root)
-                  snprintf(pathprog, sizeof(pathprog), "%s%s/profiles/%s", root,
-                       ptr, *profileName);
-            else
-                snprintf(pathprog, sizeof(pathprog), "%s/%s/profiles/%s", root,
-                       ptr, *profileName);
-        }
-    }
-    
-    if(!*profileName || !*profileName[0])
-    {
-        *profileName = "null";
-    }
-
-    return 0;
-}
-
-char *    getProfileSelector(const char * device, char ** colorspace, char ** paper, char ** resolution)
-{
-    const char * ppd_file_location = cupsGetPPD(device);
-    ppd_file_t * ppd_file = ppdOpenFile(ppd_file_location);  
-
-    ppd_option_t * options = ppd_file->groups->options;
-
-    int i;
-    int option_num = options->num_choices;
-
-    const char * keyword = 0;
-    
-    char * selectorA = 0;
-    char * selectorB = 0;
-    char * selectorC = 0;
-    char * custom_qualifer_B = 0;
-    char * custom_qualifer_C = 0;
-    int attr_amt;
-    const char * profile_selector;
-
-    for (i = 0; i < option_num; i++)
-    {  
-        if (options[i].conflicted)
-            break;
- 
-        keyword = (options[i].keyword);
-        
-        if (strcmp(keyword, "ColorModel") == 0)
-            selectorA = (options[i].defchoice);
-        else if (strcmp(keyword, "MediaType") == 0)
-            selectorB = (options[i].defchoice);
-        else if (strcmp(keyword, "Resolution") == 0)
-            selectorC = (options[i].defchoice);
-        else if (strcmp(keyword, "cupsICCQualifer2") == 0)
-            custom_qualifer_B = (options[i].defchoice);
-        else if (strcmp(keyword, "cupsICCQualifer3") == 0)
-            custom_qualifer_C = (options[i].defchoice);      
-    } 
-
-    attr_amt = ppd_file->num_attrs;
-
-    for (i = 0; i < attr_amt; i++)
-    {
-
-        keyword = ppd_file->attrs[i]->name;
-        
-        if (strcmp(keyword, "cupsICCQualifer2") == 0)
-            custom_qualifer_B = (options[i].defchoice);
-        else if (strcmp(keyword, "cupsICCQualifer3") == 0)
-            custom_qualifer_C = (options[i].defchoice);   
-    }
-        
-    if(custom_qualifer_B != NULL)
-        selectorB = custom_qualifer_B;
-    if(custom_qualifer_C != NULL)
-        selectorC = custom_qualifer_C;
-
-    profile_selector = selectorA;
-#if 0
-    profile_selector = strcat(profile_selector, ".");
-    profile_selector = strcat(profile_selector, selectorB);
-    profile_selector = strcat(profile_selector, ".");
-    profile_selector = strcat(profile_selector, selectorC);   
-    profile_selector = strcat(profile_selector, ": \"");   
-
-    colorspace = selectorA;
-    paper = selectorB;
-    resolution = selectorC;
-    //ppdClose(ppd_file);
-#endif
-    return profile_selector;             
-}
-
-
-int CUPSProfileSetup( const char * device_name, const char * profile_name)
-{
-
-    oyProfile_s * p = 0;
-
-
-    ppd_file_t * ppd_file = ppdFromDeviceName(device_name);
-    ppd_attr_t * profile_attr = ppdFindAttr ( ppd_file, "cupsICCProfile", 0);
-    icSignature cups_profile_sig;
-    const char * color_space;
-
-    p = oyProfile_FromFile(profile_name, 0, 0);
-    
-    cups_profile_sig = oyProfile_GetSignature(p, oySIGNATURE_COLOUR_SPACE);
-    color_space = 0;
-
-    if (cups_profile_sig == icSigRgbData)
-        color_space = "RGB";
-    else if (cups_profile_sig == icSigGrayData)
-        color_space = "Gray";
-    else if (cups_profile_sig == icSigCmykData)
-        color_space = "Cmyk";  
-
-    
-
-    //char ** cs = 0, ** paper = 0, ** res = 0;
-    //getProfileSelector(device_name, &cs, &paper, &res);
-
-    //printf("paper = %s", *paper);
-
-    // Save new profile name
-    //profile_attr->value = profile_name;
-    ppdClose(ppd_file);
-}
-
-ppd_file_t * ppdFromDeviceName( const char * device_name )
-{
-    const char * ppd_file_location = cupsGetPPD(device_name);
-    ppd_file_t * ppd_file = ppdOpenFile(ppd_file_location);  
-}
-
-
-int *    setProfileSelector(const char * device, const char * profile_selector)
-{    
-    ppd_file_t * ppd_file = ppdFromDeviceName(device);
-
-    int attr_amt = ppd_file->num_attrs;
-    char * keyword = 0;
-    
-    int i = 0;
-    for (i = 0; i < attr_amt; i++)
-    {
-        keyword = ppd_file->attrs[i]->name;
-        
-        if (strcmp(keyword, "cupsICCProfile") == 0)
-        {
-            ppd_file->attrs[i]->value = profile_selector;
-        }
-
-    }
-
-    ppdClose(ppd_file);
 }
