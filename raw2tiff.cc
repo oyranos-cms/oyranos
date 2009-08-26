@@ -16,11 +16,12 @@ int main(int argc, char *argv[])
       profile = argv[3];
 
    ofstream exif("exif.txt");
+   ofstream dcraw("dcraw.txt");
 
    RAW raw(argv[1], profile);
    raw.print_libraw_version();
    raw.open();
-   raw.print_dcraw_settings(std::cout);
+   raw.print_dcraw_settings(dcraw);
    raw.print_exif_data(exif);
    raw.open_profile();
    raw.save_tiff();
