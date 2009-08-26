@@ -106,7 +106,7 @@ int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
                                        name, OY_CREATE_NEW ); \
         if(name) oyDeAllocateFunc_( name ); name = 0;
 
-void     oyX1ConfigsFromPatternUsage( oyStruct_s        * options )
+void     oyX1ConfigsUsage( oyStruct_s        * options )
 {
     /** oyMSG_WARN shall make shure our message will be visible. */
     message( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
@@ -297,7 +297,7 @@ int            oyX1Configs_FromPattern (
   /** 1. In case no option is provided or something fails, show a message. */
   if(!options || !oyOptions_Count( options ))
   {
-    oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+    oyX1ConfigsUsage( (oyStruct_s*)options );
     return 0;
   }
 
@@ -419,7 +419,7 @@ int            oyX1Configs_FromPattern (
     if(error <= 0 &&
        oyOptions_FindString( options, "command", "help" ))
     {
-      oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+      oyX1ConfigsUsage( (oyStruct_s*)options );
 
       goto cleanup;
     }
@@ -431,7 +431,7 @@ int            oyX1Configs_FromPattern (
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
 
-  oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+  oyX1ConfigsUsage( (oyStruct_s*)options );
 
 
   cleanup:
@@ -471,7 +471,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
   /** 1. In case no option is provided or something fails, show a message. */
   if(!options || !oyOptions_Count( options ))
   {
-    oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+    oyX1ConfigsUsage( (oyStruct_s*)options );
     return 0;
   }
 
@@ -750,7 +750,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
     if(error <= 0 &&
        oyOptions_FindString( options, "command", "help" ))
     {
-      oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+      oyX1ConfigsUsage( (oyStruct_s*)options );
 
       goto cleanup;
     }
@@ -762,7 +762,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
 
-  oyX1ConfigsFromPatternUsage( (oyStruct_s*)options );
+  oyX1ConfigsnUsage( (oyStruct_s*)options );
 
 
   cleanup:
