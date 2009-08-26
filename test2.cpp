@@ -1471,8 +1471,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   oyConfig_s * config = 0,
              * device = 0;
   oyOptions_s * options_list = 0,
-              * options = 0,
-              * options_devices = 0;
+              * options = 0;
   oyOption_s * o = 0;
   int devices_n = 0;
 
@@ -1562,11 +1561,6 @@ oyTESTRESULT_e testCMMDevicesListing ()
         } else
         {
           val = oyOption_GetValueText( o, oyAllocateFunc_ );
-          /* collect the device_name's into a set of options for later */
-          if(strstr(o->registration, "device_name"))
-            error = oyOptions_SetFromText( &options_devices, o->registration,
-                                           val,
-                                           OY_CREATE_NEW | OY_ADD_ALWAYS );
           printf("  %d::%d::%d \"%s\": \"%s\"\n", i,j,k,
                  o->registration, val?val:"(nix)" );
         }
@@ -1583,77 +1577,60 @@ oyTESTRESULT_e testCMMDevicesListing ()
     oyConfigs_Release( &configs );
   }
   fprintf( stdout, "\n");
+  oyOptions_Release( &options_list );
 
   fprintf( stdout, "oyConfigs_FromDomain() \"properties\" call:\n" );
-  devices_n = oyOptions_Count( options_devices );
+  for( i = 0; i < (int)count; ++i)
   {
-    char * classe = (char*) malloc(1024);
+    const char * registration_domain = texts[i];
+    printf("%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
 
-    for( l = 0; l < devices_n; ++l )
-    {
-      /* set a general request */
-      error = oyOptions_SetFromText( &options,
+    /* set a general request */
+    error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
-
-      /* set the device_name */
-      o = oyOptions_Get( options_devices, l );
-      val = oyOption_GetValueText( o, oyAllocateFunc_ );
-      error = oyOptions_SetFromText( &options, o->registration,
-                                     val, OY_CREATE_NEW );
-      sprintf(classe, "%s", o->registration);
-      (strrchr(classe, '/'))[0] = 0;
-
-      if(val) oyDeAllocateFunc_( val ); val = 0;
-      oyOption_Release( &o );
-
-      /* send the query to a backend */
-      error = oyConfigs_FromDomain( classe, options, &configs, 0 );
+    /* send the query to a backend */
+    error = oyConfigs_FromDomain( registration_domain,
+                                  options, &configs, 0 );
+    devices_n = oyConfigs_Count( configs );
+    for( l = 0; l < devices_n; ++l )
+    {
       /* display results */
-      j_n = oyConfigs_Count( configs );
-      if(j_n)
-        fprintf(stdout, "--------------------------------------------------------------------------------\n%s:\n", classe );
-      for( j = 0; j < j_n; ++j )
+      fprintf(stdout, "--------------------------------------------------------------------------------\n%s:\n", registration_domain );
+      config = oyConfigs_Get( configs, l );
+
+      k_n = oyConfig_Count( config );
+      for( k = 0; k < k_n; ++k )
       {
-        config = oyConfigs_Get( configs, j );
+        o = oyConfig_Get( config, k );
 
-        if(l == 0 && j == 0)
-          device = oyConfig_Copy( config, 0 );
-
-        k_n = oyConfig_Count( config );
-        for( k = 0; k < k_n; ++k )
-        {
-          o = oyConfig_Get( config, k );
-
-          val = oyOption_GetValueText( o, oyAllocateFunc_ );
-          printf( "  %d::%d::%d %s: \"%s\"\n", l,j,k, 
+        val = oyOption_GetValueText( o, oyAllocateFunc_ );
+        printf( "  %d::%d %s: \"%s\"\n", l,k, 
                   oyStrrchr_(o->registration,'/')+1, val );
 
-          if(val) oyDeAllocateFunc_( val ); val = 0;
-          oyOption_Release( &o );
-        }
-
-        o = oyConfig_Find( device, "icc_profile" );
-        if(o)
-        {
-          val = oyOption_GetValueText( o, oyAllocateFunc_ );
-          printf( "  %d::%d %s: \"%s\"\n", l,j, 
-                  oyStrrchr_(o->registration,'/')+1, val );
-
-          if(val) oyDeAllocateFunc_( val ); val = 0;
-          oyOption_Release( &o );
-        }
-
-        //error = oyConfig_SaveToDB( config );
-        oyConfig_Release( &config );
+        if(val) oyDeAllocateFunc_( val ); val = 0;
+        oyOption_Release( &o );
       }
 
-      oyConfigs_Release( &configs );
-      oyOptions_Release( &options );
+      o = oyConfig_Find( device, "icc_profile" );
+      if(o)
+      {
+        val = oyOption_GetValueText( o, oyAllocateFunc_ );
+        printf( "  %d %s: \"%s\"\n", l, 
+                oyStrrchr_(o->registration,'/')+1, val );
+
+        if(val) oyDeAllocateFunc_( val ); val = 0;
+        oyOption_Release( &o );
+      }
+
+        //error = oyConfig_SaveToDB( config );
+      oyConfig_Release( &config );
     }
+
+    oyConfigs_Release( &configs );
+    oyOptions_Release( &options );
   }
 
-  oyOptions_Release( &options_list );
   fprintf( stdout, "\n");
 
   config = oyConfig_New( texts[0], 0 );
