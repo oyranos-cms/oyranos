@@ -762,7 +762,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
 
-  oyX1ConfigsnUsage( (oyStruct_s*)options );
+  oyX1ConfigsUsage( (oyStruct_s*)options );
 
 
   cleanup:
