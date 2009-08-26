@@ -23,10 +23,13 @@ int main(int argc, char *argv[])
    raw.open();
    raw.print_dcraw_settings(dcraw);
    raw.print_exif_data(exif);
-   raw.open_profile();
-   raw.save_tiff();
+   raw.get_color_info();
 
-   raw.GetColorInfo();
+   if (profile == "oyranos")
+      raw.get_oyranos_profile();
+   raw.open_profile();
+
+   raw.save_tiff();
 
    return 0;
 }

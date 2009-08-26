@@ -9,6 +9,7 @@ using std::ifstream;
 using std::cerr;
 using std::endl;
 using std::ios;
+using namespace oyranos;
 
 RAW::RAW() :
    opened(false),
@@ -17,7 +18,7 @@ RAW::RAW() :
    filename(),
    imageExif(NULL),
    icc_profile(NULL), icc_profile_bytes(0), icc_profile_name(),
-   version_num(0), version_str(NULL)
+   version_num(0), version_str(NULL), oy_device(NULL)
 {}
 
 RAW::RAW(const string & raw, const string & icc) :
@@ -27,13 +28,14 @@ RAW::RAW(const string & raw, const string & icc) :
    filename(raw),
    imageExif(NULL),
    icc_profile(NULL), icc_profile_bytes(0), icc_profile_name(icc),
-   version_num(0), version_str(NULL)
+   version_num(0), version_str(NULL), oy_device(NULL)
 {}
 
 RAW::~RAW()
 {
    free(imageRGB);
    free(icc_profile);
+   oyConfig_Release(&oy_device);
 }
 
 void RAW::release_members()
@@ -95,10 +97,9 @@ void RAW::open(const string & filename_)
        bits << "bits with " << imageRGB->colors << " colors" << endl;
 }
 
-using namespace oyranos;
-void RAW::GetColorInfo()
+void RAW::get_color_info()
 {
-   cerr<<endl<<"GetColorInfo():"<<endl;
+   cerr<<endl<<"get_color_info():"<<endl;
 
    oyConfigs_s *devices = NULL;
    //1.  Query Oyranos oyRE backend for all avaliable devices
@@ -156,6 +157,8 @@ void RAW::GetColorInfo()
    oyDeviceBackendCall(device, options);
    printf("Oyranos returns the following colour related options.\n"); //DBG
    print_device(device); //DBG
+
+   oy_device = oyConfig_Copy(device, 0);
    oyConfig_Release(&device);
    oyOptions_Release(&options);
 }
@@ -167,14 +170,30 @@ void RAW::open(const char *filename)
 
 void RAW::open_profile()
 {
-   ifstream file(icc_profile_name.c_str(), ios::in | ios::binary | ios::ate);
-   if (!file)
+   if (icc_profile_name == "")
       return;
+   ifstream file(icc_profile_name.c_str(), ios::in | ios::binary | ios::ate);
+   if (!file) {
+      cerr<<"Can't open file \""<<icc_profile_name<<"\""<<endl;
+      return;
+   }
    icc_profile_bytes = file.tellg();
    icc_profile = new char[icc_profile_bytes];
    file.seekg(0, ios::beg);
    file.read(icc_profile, icc_profile_bytes);
    file.close();
+}
+
+void RAW::get_oyranos_profile()
+{
+   oyProfile_s* profile = NULL;
+   oyDeviceGetProfile(oy_device, &profile);
+   const char* tmp = oyProfile_GetFileName(profile, -1);
+
+   printf("Found profile: \"%s\"\n", tmp?tmp:"---");
+
+   if (tmp)
+      icc_profile_name = tmp;
 }
 
 #include <tiffio.h>

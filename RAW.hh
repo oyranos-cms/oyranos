@@ -14,13 +14,14 @@ class RAW {
    bool opened;                           ///< is the file opened?
    LibRaw rip;                            ///< raw image processor
    libraw_processed_image_t *imageRGB;    ///< struct with image data
-   std::string filename;                  ///< Filename
+   std::string filename;                  ///< Raw image filename
    Exiv2::Image::AutoPtr imageExif;       ///< pointer to image with exif data
    char *icc_profile;                     ///< pointer to ICC profile
    unsigned icc_profile_bytes;            ///< size of profile in bytes
-   std::string icc_profile_name;          ///< size of profile in bytes
+   std::string icc_profile_name;          ///< profile file name
    int version_num;                       ///< LibRaw version number
    const char *version_str;               ///< LibRaw version string
+   oyranos::oyConfig_s *oy_device;
 
    /// Resets data members
    void release_members();
@@ -42,8 +43,11 @@ class RAW {
    /// No cind of verification is done yet.
    void open_profile();
 
+   /// Get the profile from Oyranos DB
+   void get_oyranos_profile();
+
    /// Use Oyranos raw-image backend
-   void GetColorInfo();
+   void get_color_info();
 
    /// Save image as tiff.
    void save_tiff();
