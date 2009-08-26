@@ -40,7 +40,7 @@
 #define CMMMessageFuncSet       catCMMfunc( CUPS, CMMMessageFuncSet )
 #define CMMCanHandle            catCMMfunc( CUPS, CMMCanHandle )
 #define ConfigsFromPatternUsage catCMMfunc( CUPS, ConfigsFromPatternUsage )
-#define DeviceFromName_         catCMMfunc( CUPS, DeviceFromName_ )
+#define DeviceAttributes_       catCMMfunc( CUPS, DeviceAttributes_ )
 #define GetDevices              catCMMfunc( CUPS, GetDevices )
 #define _api8                   catCMMfunc( CUPS, _api8 )
 #define _rank_map               catCMMfunc( CUPS, _rank_map )
@@ -61,7 +61,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s _api8;
-oyRankPad _rank_map[];
+extern oyRankPad _rank_map[];
 
 int CMMInit ()
 {
@@ -226,42 +226,32 @@ int GetDevices                       ( http_t            * http,
     return num_dests;
 }
 
-int          DeviceFromName_ (         const char        * device_name,
+int          DeviceAttributes_       ( ppd_file_t        * ppd,
                                        oyOptions_s       * options,
-                                       oyConfig_s       ** device,
-                                       oyAlloc_f           allocateFunc )
-{    
+                                       oyConfig_s        * device,
+                                       const char        * ppd_file_location )
+{
     oyOption_s * o = 0;
     int error = !device;
  
     const char * value3 = oyOptions_FindString( options, "device_context", 0 );
+    const char * device_name = oyConfig_FindString( device, "device_name", 0 );
 
     if(!error)
     {
-      char * manufacturer= 0, *model=0, *serial=0, *profile_name = 0, *device_settings;
+      char * manufacturer= 0, *model=0, *serial=0, *device_settings;
       const char * system_port = 0, * host = 0;
-      http_t * http = 0;
-      cups_dest_t *dests;
-      int num_dests = 0;
-      const char * ppd_file_location = 0;
-      ppd_file_t * ppd = 0;
       ppd_attr_t * attrs = 0;
 
       if(!device_name)
       {
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_
-                "The \"device_name\" argument is\n"
-                " missed to select a appropriate device for the"
-                " \"properties\" call.", _DBG_ARGS_ );
+                "The \"device_name\" is\n"
+                " missed to select a appropriate device.", _DBG_ARGS_ );
         error = 1;
         return error;
       }
  
-      http = oyGetCUPSConnection();
-      num_dests = cupsGetDests2(http, &dests);
-      ppd_file_location = cupsGetPPD2(http, device_name);
-      ppd = ppdOpenFile(ppd_file_location);
-
       manufacturer = ppd->manufacturer;
       model = ppd->modelname;
       serial = 0;                       // Not known at this time.
@@ -273,70 +263,55 @@ int          DeviceFromName_ (         const char        * device_name,
       if(attrs && attrs->text)
         device_settings = attrs->text;
  
-      if(error != 0)
-        message( oyMSG_WARN, (oyStruct_s*)options,
-                 _DBG_FORMAT_ "Could not complete \"properties\" call.\n"
-                 " oyGetMonitorInfo_lib returned with %s; device_name:"
-                 " \"%s\"", _DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
-                 device_name ? device_name : "" );
-
       if(error <= 0)
       {
         size_t size = 0;
         char * data = 0;
 
-        if(!*device)
-          *device = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !*device;
-
         if(!error && device_name)
-        error = oyOptions_SetFromText( &(*device)->backend_core,
+        error = oyOptions_SetFromText( &device->backend_core,
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
  
-        OPTIONS_ADD( (*device)->backend_core, manufacturer )
-        OPTIONS_ADD( (*device)->backend_core, model )
-        OPTIONS_ADD( (*device)->backend_core, serial )
-        OPTIONS_ADD( (*device)->backend_core, system_port )
-        OPTIONS_ADD( (*device)->backend_core, host )
-        OPTIONS_ADD( (*device)->backend_core, device_settings )
+        OPTIONS_ADD( device->backend_core, manufacturer )
+        OPTIONS_ADD( device->backend_core, model )
+        OPTIONS_ADD( device->backend_core, serial )
+        OPTIONS_ADD( device->backend_core, system_port )
+        OPTIONS_ADD( device->backend_core, host )
+        OPTIONS_ADD( device->backend_core, device_settings )
 
-      if (value3)
-      {
-        /* open the PPD data */
+        if (value3)
         {
-          FILE * fp = fopen( ppd_file_location, "r" );
-          size_t lsize = 0;
+          /* open the PPD data */
+          {
+            FILE * fp = fopen( ppd_file_location, "r" );
+            size_t lsize = 0;
 
-          // Find the total size.
-          fseek(fp , 0, SEEK_END);
-          lsize = ftell(fp);
-          rewind (fp);
+            // Find the total size.
+            fseek(fp , 0, SEEK_END);
+            lsize = ftell(fp);
+            rewind (fp);
 
-          // Create buffer to read contents into a profile.
-          data = (char*) malloc (sizeof(char)*lsize + 1);
-          if (data == NULL) fputs ("Unable to open PPD size.",stderr);
+            // Create buffer to read contents into a profile.
+            data = (char*) malloc (sizeof(char)*lsize + 1);
+            if (data == NULL) fputs ("Unable to open PPD size.",stderr);
 
-          size = fread( data, 1, lsize, fp);
-          data[size] = 0;
-        }
+            size = fread( data, 1, lsize, fp);
+            data[size] = 0;
+          }
 
-        if(!error && data && size)
-        {           
-          o = oyOption_New( CMM_BASE_REG OY_SLASH "device_context", 0 );
-          error = !o;
-          if(!error)
+          if(!error && data && size)
+          {           
+            o = oyOption_New( CMM_BASE_REG OY_SLASH "device_context", 0 );
+            error = !o;
+            if(!error)
               error = oyOption_SetFromData( o, data, size );
           
-          if(!error)
-            oyOptions_MoveIn( (*device)->data, &o, -1 );
+            if(!error)
+              oyOptions_MoveIn( device->data, &o, -1 );
+          }
         }
       }
-      }
-
-    ppdClose(ppd);
-    cupsFreeDests (num_dests, dests);    
-
     }
  
   return error;
@@ -346,107 +321,8 @@ int          DeviceFromName_ (         const char        * device_name,
 int            Configs_Modify    ( oyConfigs_s       * devices,
                                    oyOptions_s       * options )
 {
-/*
-    oyConfig_s * device = 0;
-    oyOption_s * o = 0, * device_context = 0;
-    oyProfile_s * p = 0;
-    char ** texts = 0;
-    char * text = 0;
-    int texts_n = 0, i,
-    error = !s;
-    const char   * unset_request = 0,
-                 * profile_in = 0,
-                 * profile_request = 0,
-                 * properties_request = 0,
-                 * setup_request = 0;
-    http_t * http = 0;
-    oyAlloc_f allocateFunc = malloc;
-    static char * num = 0;
-    const char * tmp = 0, * printer_name = 0;
-    size_t * size = 0;
-    ppd_file_t * ppd = 0;
-
-    const char * list_call = oyOptions_FindString( options, "command", "list" );
-
-    int rank = oyFilterRegistrationMatch( _api8.registration, registration,
-                                          oyOBJECT_CMM_API8_S );
-
-    // Initialize the CUPS server.
-    http = oyGetCUPSConnection();
-
-    
-    if(!num)
-      num = malloc( 80 );
-
-    if(!options || !oyOptions_Count( options ))
-    {        
-        // oyMSG_WARN should make shure our message is visible. 
-        ConfigsFromPatternUsage( (oyStruct_s*)options );
-        return 0;
-    } 
-
-    printer_name = oyOptions_FindString( options, "device_name", 0 );
-
-    if(rank && error <= 0)
-    {
-        devices = oyConfigs_New(0);
-         
-        if(list_call)
-        { 
-            texts_n = GetDevices( http, &texts, allocateFunc );
-
-            for( i = 0; i < texts_n; i++ )
-            {       
-
-                // filter 
-                if(printer_name && strcmp(printer_name, texts[i]) != 0)
-                    continue;
-
-                device = oyConfig_New( CMM_BASE_REG, 0 );
-                error = !device;
-
-                // Build device_name 
-                if(error <= 0)
-                {
-                    error = oyOptions_SetFromText( device->backend_core,
-                                     CMM_BASE_REG OY_SLASH "device_name",
-                                     texts[i], OY_CREATE_NEW );
-                }
-
-                profile_request = oyOptions_FindString( options, "icc_profile", 0 );
-                if(profile_request || oyOptions_FindString( options, "oyNAME_NAME", 0 ) )
-                {
-                    int n, j;
-                    //Search for CUPS ICC profiles 
-                    oyConfigs_s * devices_ = oyConfigs_New(0);
-                    oyConfig_s * tmp = oyConfig_Copy( device, 0 );
-                    oyConfigs_MoveIn( devices_, &tmp, -1 );
-
-                    CUPSgetProfiles( texts[i], devices_ );
-
-                    n = oyConfigs_Count( devices_ );
-
-                    for(j = 0; j < n; ++j)
-                    {
-                        oyConfig_s * d = oyConfigs_Get( devices_, j );
-                        error = oyOptions_SetFromText( &d->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       texts[i], OY_CREATE_NEW );
-                        if(j)
-                            oyConfigs_MoveIn( devices, &d, -1 );
-                        else
-                            oyConfig_Release( &d );
-                    }
-
-                    oyConfigs_Release( &devices_ );
-                }
-             }
-
-    }
-*/
-
   oyConfig_s * device = 0;
-  oyOption_s * o = 0, * device_context = 0;
+  oyOption_s * o = 0;
   oyProfile_s * p = 0;
   char * text = 0;
   int n = 0, i,
@@ -457,13 +333,8 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
                * properties_request = 0,
                * setup_request = 0;
   http_t * http = 0;
-  oyAlloc_f allocateFunc = malloc;
   static char * num = 0;
   const char * tmp = 0, * printer_name = 0;
-  size_t * size = 0;
-  ppd_file_t * ppd = 0;
-
-  int rank = 0;
 
   // Initialize the CUPS server.
   http = oyGetCUPSConnection();
@@ -482,7 +353,9 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
   {
 
     /** "list" call section */
-    if(oyOptions_FindString( options, "command", "list" ))
+    properties_request = oyOptions_FindString( options, "command", "properties" );
+    if(oyOptions_FindString( options, "command", "list" ) ||
+       properties_request)
     {
       n = oyConfigs_Count( devices );
       for( i = 0; i < n; i++ )
@@ -492,34 +365,9 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
         printer_name = oyConfig_FindString( device, "device_name", 0 );
 
 
-        /* Build icc_profile */
+        /* Building of a icc_profile option should be already done with the 
+           first call to "list" */
         profile_request = oyOptions_FindString( options, "icc_profile", 0 );   
-        if(profile_request || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        {
-          int n, j;
-          /* Search for CUPS ICC profiles */
-          oyConfigs_s * devices_ = oyConfigs_New(0);
-          oyConfig_s * tmp = oyConfig_Copy( device, 0 );
-          oyConfigs_MoveIn( devices_, &tmp, -1 );
-
-          CUPSgetProfiles( printer_name, devices_ );
-
-          /* add additional devices */
-          n = oyConfigs_Count( devices_ );
-          for(j = 0; j < n; ++j)
-          {
-            oyConfig_s * d = oyConfigs_Get( devices_, j );
-            error = oyOptions_SetFromText( &d->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       printer_name, OY_CREATE_NEW );
-            if(j)
-              oyConfigs_MoveIn( devices, &d, -1 );
-            else
-              oyConfig_Release( &d );
-          }
-
-          oyConfigs_Release( &devices_ );
-        }
 
         /* Build oyNAME_NAME */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
@@ -552,38 +400,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
           device->rank_map = oyRankMapCopy( _rank_map,
                                             device->oy_->allocateFunc_);
 
-        oyConfigs_MoveIn( devices, &device, -1 );
-      }
-
-      goto clean;
-    }
-
-    /** "properties" call section */
-    properties_request = oyOptions_FindString( options, "command", "properties" );
-    if(properties_request)
-    { 
-      n = oyConfigs_Count( devices );
-      for( i = 0; i < n; ++i )
-      {
-        /* filter */
-        if(printer_name && strcmp(printer_name, printer_name) != 0)
-          continue;
-
-        device = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !device;
-
-        if(error <= 0)
-        error = oyOptions_SetFromText( &device->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       printer_name, OY_CREATE_NEW );
-
-        error = DeviceFromName_( printer_name, options, &device,
-                                         allocateFunc );
-
-        if(error <= 0 && device)
-          device->rank_map = oyRankMapCopy( _rank_map,
-                                            device->oy_->allocateFunc_);
-        oyConfigs_MoveIn( devices, &device, -1 );
+        oyConfig_Release( &device );
       }
 
       goto clean;
@@ -635,37 +452,20 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
     }
   }
 
+  /** "help" call section */
+  if(error <= 0 &&
+     oyOptions_FindString( options, "command", "help" ))
+  {
+    ConfigsFromPatternUsage( (oyStruct_s*)options );
+    goto clean;
+  }
+
+
   /* not to be reached section, e.g. warning */
   message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "This point should not be reached. Options:\n%s", _DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
-
-
-  if(error <= 0 && 
-    oyOptions_FindString( options, "command", "setup"))
-  { 
-         profile_request = oyOptions_FindString( options, "profile_name", 0 );
-         error = !printer_name || !profile_request;
-         if (error >= 1)
-           message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-              "The device/profile name option is missing. OPTIONS:\n%s",
-                _DBG_ARGS_,
-                oyOptions_GetText( options, oyNAME_NICK)
-                 );
-          else
-          {
-              //error = CUPSProfileSetup( printer_name, "sRGB.icc");
-          }
-  }
-
-  /** "help" call section */
-  if(error <= 0 &&
-     oyOptions_FindString( options, "command", "help" ))
-  {
-        ConfigsFromPatternUsage( (oyStruct_s*)options );
-  }
-
 
 
   clean:
@@ -681,23 +481,14 @@ int            Configs_FromPattern (
 
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
-  oyOption_s * o = 0, * device_context = 0;
-  oyProfile_s * p = 0;
   char ** texts = 0;
-  char * text = 0;
   int texts_n = 0, i,
   error = !s;
-  const char   * unset_request = 0,
-               * profile_in = 0,
-               * profile_request = 0,
-               * properties_request = 0,
-               * setup_request = 0;
+  const char   * profile_request = 0;
   http_t * http = 0;
   oyAlloc_f allocateFunc = malloc;
   static char * num = 0;
-  const char * tmp = 0, * printer_name = 0;
-  size_t * size = 0;
-  ppd_file_t * ppd = 0;
+  const char * printer_name = 0;
 
   int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
@@ -719,10 +510,9 @@ int            Configs_FromPattern (
 
   if(rank && error <= 0)
   {
-      devices = oyConfigs_New(0);
+    devices = oyConfigs_New(0);
 
-    /** "list" call section */
-    if(oyOptions_FindString( options, "command", "list" ))
+    /** common resolving */
     {
       texts_n = GetDevices( http, &texts, allocateFunc );
 
@@ -735,17 +525,10 @@ int            Configs_FromPattern (
         device = oyConfig_New( CMM_BASE_REG, 0 );
         error = !device;
 
-      /* Build device_name */
-        if(error <= 0)
-        {
-            error = oyOptions_SetFromText( &device->backend_core,
-                                          CMM_BASE_REG OY_SLASH "device_name",
-                                          texts[i], OY_CREATE_NEW );
-        }
-
-       /* Build icc_profile */
+        /* Build icc_profile */
         profile_request = oyOptions_FindString( options, "icc_profile", 0 );   
-        if(profile_request || oyOptions_FindString( options, "oyNAME_NAME", 0 ) )
+        if(1 || profile_request ||
+           oyOptions_FindString( options, "oyNAME_NAME", 0 ) )
         {
           int n, j;
           /* Search for CUPS ICC profiles */
@@ -761,133 +544,25 @@ int            Configs_FromPattern (
           {
             oyConfig_s * d = oyConfigs_Get( devices_, j );
             error = oyOptions_SetFromText( &d->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       texts[i], OY_CREATE_NEW );
+                                           CMM_BASE_REG OY_SLASH "device_name",
+                                           texts[i], OY_CREATE_NEW );
+ 
             if(j)
               oyConfigs_MoveIn( devices, &d, -1 );
             else
               oyConfig_Release( &d );
           }
 
+          
           oyConfigs_Release( &devices_ );
         }
 
-        /* Build oyNAME_NAME */
-        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
-        { 
-          text = 0;
-          o = oyOptions_Find( device->data, "icc_profile" );
-
-          if( o && o->value && o->value->oy_struct && 
-              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
-          {            
-            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
-            tmp = oyProfile_GetFileName( p, 0 );
-            STRING_ADD( text, "  " );
-            if(strrchr( tmp, OY_SLASH_C ))
-              STRING_ADD( text, strrchr( tmp, OY_SLASH_C ) + 1 );
-            else
-              STRING_ADD( text, tmp );
-
-              oyProfile_Release( &p );
-          }
-
-          if(error <= 0)
-          error = oyOptions_SetFromText( &device->data,
-                                         CMM_BASE_REG OY_SLASH "oyNAME_NAME",
-                                         text, OY_CREATE_NEW );
-          oyDeAllocateFunc_( text );
-        }
-
-        if(error <= 0)
-           device->rank_map = oyRankMapCopy( _rank_map,
-                                                device->oy_->allocateFunc_);
-
         oyConfigs_MoveIn( devices, &device, -1 );
       }
 
-      if(error <= 0)
-        *s = devices;
-
-      goto clean;
-    }
-
-    /** "properties" call section */
-    properties_request = oyOptions_FindString( options, "command", "properties" );
-    if(properties_request)
-    { 
-      texts_n = GetDevices( http, &texts, allocateFunc );
-
-      for( i = 0; i < texts_n; ++i )
-      {
-        /* filter */
-        if(printer_name && strcmp(printer_name, texts[i]) != 0)
-          continue;
-
-        device = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !device;
-
-        if(error <= 0)
-        error = oyOptions_SetFromText( &device->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       texts[i], OY_CREATE_NEW );
-
-        error = DeviceFromName_( texts[i], options, &device,
-                                         allocateFunc );
-
-        if(error <= 0 && device)
-          device->rank_map = oyRankMapCopy( _rank_map,
-                                                device->oy_->allocateFunc_);
-        oyConfigs_MoveIn( devices, &device, -1 );
-      }
-
-      if(error <= 0)
-        *s = devices;
-
-      goto clean;
-    }
-
-    /** "setup" call section */
-    setup_request = oyOptions_FindString( options, "command", "setup" );
-    if(error <= 0 && setup_request)
-    {
-      profile_in = oyOptions_FindString( options, "profile_name", 0 );
-      printer_name = oyOptions_FindString( options, "device_name", 0 );
-      error = !printer_name || !profile_in;
-      if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-              "The device_name/profile_name option is missed. Options:\n%s",
-                _DBG_ARGS_,
-                oyOptions_GetText( options, oyNAME_NICK )
-                );
-
-      else
-      {
-          /* NOTE  New profile delivery to CUPS server is not ready at the moment. */
-      }
-
-      goto clean;
-    }
-
-    /** "unset" call section */
-    unset_request = oyOptions_FindString( options, "command", "unset" );
-    if(error <= 0 && unset_request)
-    {
-      profile_in = oyOptions_FindString( options, "profile_name", 0 );
-      printer_name = oyOptions_FindString( options, "device_name", 0 );
-
-      error = !printer_name;
-      if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-                "The device_name option is missed. Options:\n%s",
-                _DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
-                );
-      else
-      {
-
-          /* TODO Build "config_file" */
-
-      }
+      /* advanced stuff */
+      if(oyConfigs_Count( devices ))
+        Configs_Modify( devices, options );
 
       if(error <= 0)
         *s = devices;
@@ -895,39 +570,6 @@ int            Configs_FromPattern (
       goto clean;
     }
   }
-
-  /* not to be reached section, e.g. warning */
-  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-                "This point should not be reached. Options:\n%s", _DBG_ARGS_,
-                oyOptions_GetText( options, oyNAME_NICK )
-                );
-
-
-  if(error <= 0 && 
-    oyOptions_FindString( options, "command", "setup"))
-  { 
-         profile_request = oyOptions_FindString( options, "profile_name", 0 );
-         error = !printer_name || !profile_request;
-         if (error >= 1)
-           message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-              "The device/profile name option is missing. OPTIONS:\n%s",
-                _DBG_ARGS_,
-                oyOptions_GetText( options, oyNAME_NICK)
-                 );
-          else
-          {
-              //error = CUPSProfileSetup( printer_name, "sRGB.icc");
-          }
-  }
-
-  /** "help" call section */
-  if(error <= 0 &&
-     oyOptions_FindString( options, "command", "help" ))
-  {
-        ConfigsFromPatternUsage( (oyStruct_s*)options );
-  }
-
-
 
   clean:
   oyCloseCUPSConnection(); http=0;
@@ -999,14 +641,12 @@ oyCMMapi8_s _api8 = {
   CMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
   CMMCanHandle,          /**< oyCMMCanHandle_f oyCMMCanHandle */
 
-  CMM_BASE_REG,              /**< registration */
-  {0,1,0},                   /**< int32_t version[3] */
-  0
-  ,                         /**< char * id_ */
-  0
-  ,                         /**< oyCMMapi5_s * api5_ */
-  Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
-  Configs_Modify,
+  CMM_BASE_REG,          /**< registration */
+  {0,1,0},               /**< int32_t version[3] */
+  0,                     /**< char * id_ */
+  0,                     /**< oyCMMapi5_s * api5_ */
+  Configs_FromPattern,   /**< oyConfigs_FromPattern_f oyConfigs_FromPattern */
+  Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   Config_Check,          /**< oyConfig_Check_f oyConfig_Check */
   _rank_map              /**< oyRankPad ** rank_map */
 };
@@ -1082,7 +722,7 @@ oyCMMInfo_s _cmm_module = {
  */
 int CUPSgetProfiles                  ( const char        * device_name,
                                        oyConfigs_s       * devices )
-{    
+{
     int error = 0;
     const char * ppd_file_location = cupsGetPPD2( oyGetCUPSConnection(), device_name );
     ppd_file_t * ppd_file = ppdOpenFile(ppd_file_location);  
@@ -1272,17 +912,18 @@ int CUPSgetProfiles                  ( const char        * device_name,
             }
           }
    
-           if(is_custom_profile == 1)
+          if(is_custom_profile == 1)
           {
+              int success = 0;
               // Create a file for the custom profile in a local directory.
               // ex. '/home/bob/.config/color/icc/custom.icc'
-              const char * profile_path = 0;
-              STRING_ADD(profile_path, getenv("HOME"));
-              STRING_ADD(profile_path, "/.config/color/icc/");
-              STRING_ADD(profile_path, profile_name);
+              char * profile_path = 0;
+              STRING_ADD( profile_path, getenv("HOME") );
+              STRING_ADD( profile_path, "/.config/color/icc/" );
+              STRING_ADD( profile_path, profile_name );
 
               // Output to file.
-              int success = oyProfile_ToFile_( p, profile_path);
+              success = oyProfile_ToFile_( p, profile_path);
 
               is_custom_profile = 0;      // Done. Unmark as a custom profile.
           }
