@@ -42,12 +42,13 @@
 #define CMMdeallocateFunc       catCMMfunc( dDev, CMMdeallocateFunc )
 #define CMMMessageFuncSet       catCMMfunc( dDev, CMMMessageFuncSet )
 #define CMMCanHandle            catCMMfunc( dDev, CMMCanHandle )
-#define ConfigsFromPatternUsage catCMMfunc( dDev, ConfigsFromPatternUsage )
+#define ConfigsUsage            catCMMfunc( dDev, ConfigsUsage )
 #define DeviceFromName_         catCMMfunc( dDev, DeviceFromName_ )
 #define GetDevices              catCMMfunc( dDev, GetDevices )
 #define _api8                   catCMMfunc( dDev, _api8 )
 #define _rank_map               catCMMfunc( dDev, _rank_map )
 #define Configs_FromPattern     catCMMfunc( dDev, Configs_FromPattern )
+#define Configs_Modify          catCMMfunc( dDev, Configs_Modify )
 #define Config_Check            catCMMfunc( dDev, Config_Check )
 #define GetText                 catCMMfunc( dDev, GetText )
 #define _texts                  catCMMfunc( dDev, _texts )
@@ -115,7 +116,7 @@ int                CMMCanHandle      ( oyCMMQUERY_e        type,
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
-void         ConfigsFromPatternUsage( oyStruct_s        * options )
+void         ConfigsUsage            ( oyStruct_s        * options )
 {
     /** oyMSG_WARN should make shure our message is visible. */
     message( oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
@@ -269,32 +270,25 @@ int     GetDevices                   ( char            *** list,
   return 2;
 }
 
-/** Function Configs_FromPattern
+/** Function Configs_Modify
  *  @brief   CMM_NICK oyCMMapi8_s dummy devices
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/02/09
+ *  @date    2009/08/26
  */
-int              Configs_FromPattern ( const char        * registration,
-                                       oyOptions_s       * options,
-                                       oyConfigs_s      ** s )
+int              Configs_Modify      ( oyConfigs_s       * devices,
+                                       oyOptions_s       * options )
 {
-  oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
   oyOption_s * o = 0;
   oyProfile_s * p = 0;
   char ** texts = 0;
   char * text = 0;
-  int texts_n = 0, i,
-      error = !s;
-  const char * value1 = 0,
-             * value2 = 0,
-             * value3 = 0,
-             * value4 = 0;
-  int rank = oyFilterRegistrationMatch( _api8.registration, registration,
-                                        oyOBJECT_CMM_API8_S );
-  oyAlloc_f allocateFunc = malloc;
+  int i,n,
+      error = !oyConfigs_Count( devices );
+  const char * device_name = 0;
+  int rank = 0;
   static char * num = 0;
   const char * tmp = 0;
 
@@ -304,51 +298,66 @@ int              Configs_FromPattern ( const char        * registration,
   if(!options || !oyOptions_Count( options ))
   {
     /** oyMSG_WARN should make shure our message is visible. */
-    ConfigsFromPatternUsage( (oyStruct_s*)options );
+    ConfigsUsage( (oyStruct_s*)options );
     return 0;
   }
 
+  n = oyConfigs_Count( devices );
+  for( i = 0; i < n; ++i )
+  { 
+    device = oyConfigs_Get( devices, i );
+    rank += oyFilterRegistrationMatch( _api8.registration,
+                                       device->registration,
+                                       oyOBJECT_CMM_API8_S );
+    oyConfig_Release( &device );
+  }
+  
   if(rank && error <= 0)
   {
-    devices = oyConfigs_New(0);
-
-    /* "list" call section */
-    value1 = oyOptions_FindString( options, "device_name", 0 );
-    value2 = oyOptions_FindString( options, "command", "list" );
+    /** 3.  handle the actual call */
+    /** 3.1 "list" call section */
     if(oyOptions_FindString( options, "command", "list" ))
     {
-      texts_n = GetDevices( &texts, allocateFunc );
+      n = oyConfigs_Count( devices );
 
-      for( i = 0; i < texts_n; ++i )
+      /** 3.1.1 iterate over all provided devices */
+      for( i = 0; i < n; ++i )
       {
-        /* filter */
-        if(value1 && strcmp(value1, texts[i]) != 0)
+        device = oyConfigs_Get( devices, i );
+        rank = oyFilterRegistrationMatch( _api8.registration,
+                                          device->registration,
+                                          oyOBJECT_CMM_API8_S );
+        if(!rank)
+        {
+          oyConfig_Release( &device );
           continue;
+        }
 
-        device = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !device;
-
+        /** 3.1.2 get the "device_name" */
         if(error <= 0)
-        error = oyOptions_SetFromText( &device->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       texts[i], OY_CREATE_NEW );
+        device_name = oyConfig_FindString( device, "device_name", 0 );
 
-
-        value4 = oyOptions_FindString( options, "icc_profile", 0 );
-        if(value4 || oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        /** 3.1.3 tell the "icc_profile" in a oyProfile_s */
+        if(oyOptions_FindString( options, "icc_profile", 0 ) ||
+           oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           size_t size = 6;
           const char * data = "dummy";
 
           /* In case the devices do not support network transparent ICC profile
-           * setup, then use the DB stored profile, e.g.
+           * setup, then Oyranos uses the DB stored profile, e.g.
            * @see oyDeviceProfileFromDB() + oyProfile_FromFile()
-           * This will then turn the backend in a pure local one.
+           * Then the backend will only report about colour related options to
+           * guide Oyranos core in selecting the correct profiles, matching
+           * to the device and its driver settings.
            *
            * One the opposite the Xorg-"oyX1" backend puts the profile in 
-           * X server.
-           * Then it is up to Oyranos to take action. The backend needs to
-           * report a issue to inform Oyranos, as seen below.
+           * X server. This shall be included in the Oyranos device options 
+           * on request.
+           * If it is not found, then a empty option of type oyVAL_STRUCT is to
+           * be included to tell Oyranos that option is understoof. 
+           * The backend needs as well to report a issue to inform Oyranos, 
+           * as seen below.
            */
 
           /** Warn and return issue on not found profile. */
@@ -357,6 +366,9 @@ int              Configs_FromPattern ( const char        * registration,
             message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "Could not obtain icc_profile information for %s",
                 _DBG_ARGS_, texts[i]);
+            /* Show the "icc_profile" option is understood. */
+            p = 0;
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
             error = -1;
           } else
           {
@@ -396,92 +408,125 @@ int              Configs_FromPattern ( const char        * registration,
           free( text );
         }
 
-        if(error <= 0)
+        if(error <= 0 && !device->rank_map)
           device->rank_map = oyRankMapCopy( _rank_map,
                                             device->oy_->allocateFunc_);
 
-        oyConfigs_MoveIn( devices, &device, -1 );
+        oyConfig_Release( &device );
       }
-
-      if(error <= 0)
-        *s = devices;
 
       return error;
     }
 
-    /* "properties" call section */
-    value2 = oyOptions_FindString( options, "command", "properties" );
-    if(value2)
+    /* "properties" call section; provide extensive infos for the DB entry */
+    if(oyOptions_FindString( options, "command", "properties" ))
     {
-      texts_n = GetDevices( &texts, allocateFunc );
+      n = oyConfigs_Count( devices );
 
-      for( i = 0; i < texts_n; ++i )
+      for( i = 0; i < n; ++i )
       {
-        /* filter */
-        if(value1 && strcmp(value1, texts[i]) != 0)
+        device = oyConfigs_Get( devices, i );
+        rank = oyFilterRegistrationMatch( _api8.registration,
+                                          device->registration,
+                                          oyOBJECT_CMM_API8_S );
+        if(!rank)
+        {
+          oyConfig_Release( &device );
           continue;
+        }
 
-        device = oyConfig_New( CMM_BASE_REG, 0 );
-        error = !device;
-
+        /** get the "device_name" */
         if(error <= 0)
-        error = oyOptions_SetFromText( &device->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       texts[i], OY_CREATE_NEW );
+        device_name = oyConfig_FindString( device, "device_name", 0 );
 
-        error = DeviceFromName_( value1, options, &device,
-                                         allocateFunc );
-
-        if(error <= 0 && device)
-          device->rank_map = oyRankMapCopy( _rank_map,
-                                            device->oy_->allocateFunc_);
-        oyConfigs_MoveIn( devices, &device, -1 );
+        error = oyOptions_SetFromText( &device->data,
+                                         CMM_BASE_REG OY_SLASH "port",
+                                         "8", OY_CREATE_NEW );
+        oyConfig_Release( &device );
       }
-
-      if(error <= 0)
-        *s = devices;
 
       return error;
     }
 
     /* "setup" call section */
-    value2 = oyOptions_FindString( options, "command", "setup" );
-    value3 = oyOptions_FindString( options, "profile_name", 0 );
-    if(error <= 0 && value2)
+    if(oyOptions_FindString( options, "command", "setup" ))
     {
-      error = !value1 || !value3;
-      if(error >= 1)
+      n = oyConfigs_Count( devices );
+
+      for( i = 0; i < n; ++i )
+      {
+        device = oyConfigs_Get( devices, i );
+        rank = oyFilterRegistrationMatch( _api8.registration,
+                                          device->registration,
+                                          oyOBJECT_CMM_API8_S );
+        if(!rank)
+        {
+          oyConfig_Release( &device );
+          continue;
+        }
+
+        /** get the "device_name" */
+        if(error <= 0)
+        device_name = oyConfig_FindString( device, "device_name", 0 );
+
+        if(!device_name || !oyOptions_FindString( options, "profile_name", 0 ))
+        {
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "The device_name/profile_name option is missed. Options:\n%s",
                 _DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
-      else
-        error = 0; /* doSetup( value1, value3 ); */
+          error = 1;
+        } else
+          error = 0; /* doSetup */
+
+        oyConfig_Release( &device );
+      }
       return error;
     }
 
     /* "unset" call section */
-    value2 = oyOptions_FindString( options, "command", "unset" );
-    if(error <= 0 && value2)
+    if(oyOptions_FindString( options, "command", "unset" ))
     {
-      error = !value1;
-      if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
-                "The device_name option is missed. Options:\n%s",
-                _DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
+      n = oyConfigs_Count( devices );
+
+      for( i = 0; i < n; ++i )
+      {
+        device = oyConfigs_Get( devices, i );
+        rank = oyFilterRegistrationMatch( _api8.registration,
+                                          device->registration,
+                                          oyOBJECT_CMM_API8_S );
+        if(!rank)
+        {
+          oyConfig_Release( &device );
+          continue;
+        }
+
+        /** get the "device_name" */
+        if(error <= 0)
+        device_name = oyConfig_FindString( device, "device_name", 0 );
+
+        if(!device_name)
+        {
+          message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+                "The device_name property is missed. Options:\n%s",
+                _DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
                 );
-      else
-        error = 0; /* doUnset( value1 ); */
+          error = 1;
+        } else
+          error = 0; /* doUnset */
+
+        oyConfig_Release( &device );
+      }
       return error;
     }
   }
 
 
-  value2 = oyOptions_FindString( options, "command", "help" );
-  if(error <= 0 && value2)
+  if(oyOptions_FindString( options, "command", "help" ))
   {
-    ConfigsFromPatternUsage( (oyStruct_s*)options );
+    ConfigsUsage( (oyStruct_s*)options );
 
     return error;
   }
@@ -493,7 +538,96 @@ int              Configs_FromPattern ( const char        * registration,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
 
-  ConfigsFromPatternUsage( (oyStruct_s*)options );
+  ConfigsUsage( (oyStruct_s*)options );
+
+  return error;
+}
+
+/** Function Configs_FromPattern
+ *  @brief   CMM_NICK oyCMMapi8_s dummy devices
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/02/09
+ */
+int              Configs_FromPattern ( const char        * registration,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** s )
+{
+  oyConfigs_s * devices = 0;
+  oyConfig_s * device = 0;
+  char ** texts = 0;
+  int texts_n = 0, i,
+      error = !s;
+  const char * device_name = 0;
+  int rank = oyFilterRegistrationMatch( _api8.registration, registration,
+                                        oyOBJECT_CMM_API8_S );
+  oyAlloc_f allocateFunc = malloc;
+  static char * num = 0;
+
+  if(!num)
+    num = malloc( 80 );
+
+  if(!options || !oyOptions_Count( options ))
+  {
+    /** oyMSG_WARN should make shure our message is visible. */
+    ConfigsUsage( (oyStruct_s*)options );
+    return 0;
+  }
+
+  if(rank && error <= 0)
+  {
+    devices = oyConfigs_New(0);
+
+    /* "list" call section */
+    device_name = oyOptions_FindString( options, "device_name", 0 );
+    {
+      texts_n = GetDevices( &texts, allocateFunc );
+
+      for( i = 0; i < texts_n; ++i )
+      {
+        /* filter */
+        if(device_name && strcmp(device_name, texts[i]) != 0)
+          continue;
+
+        device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = !device;
+
+        if(error <= 0)
+        error = oyOptions_SetFromText( &device->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name",
+                                       texts[i], OY_CREATE_NEW );
+
+
+
+        oyConfigs_MoveIn( devices, &device, -1 );
+      }
+
+      Configs_Modify( devices, options );
+
+      if(error <= 0)
+        *s = devices;
+
+      return error;
+    }
+  }
+
+
+  if(oyOptions_FindString( options, "command", "help" ))
+  {
+    ConfigsUsage( (oyStruct_s*)options );
+
+    return error;
+  }
+
+
+  /* not to be reached section, e.g. warning */
+  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+                "This point should not be reached. Options:\n%s", _DBG_ARGS_,
+                oyOptions_GetText( options, oyNAME_NICK )
+                );
+
+  ConfigsUsage( (oyStruct_s*)options );
 
   return error;
 }
@@ -568,6 +702,7 @@ oyCMMapi8_s _api8 = {
 
   0,                         /**< oyCMMapi5_s * api5_ */
   Configs_FromPattern,       /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
+  Configs_Modify,            /**< oyConfigs_Modify_f oyConfigs_Modify */
   Config_Check,              /**< oyConfig_Check_f oyConfig_Check */
   _rank_map                  /**< oyRankPad ** rank_map */
 };
