@@ -56,7 +56,9 @@
 #define _(x) x
 
 int CUPSgetProfiles                  ( const char        * device_name,
-                                       oyConfigs_s       * devices );
+                                       ppd_file_t        * ppd_file,
+                                       oyConfigs_s       * devices,
+                                       oyOptions_s       * user_options );
 
 oyMessage_f message = 0;
 
@@ -239,8 +241,12 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
     if(!error)
     {
-      char * manufacturer= 0, *model=0, *serial=0, *device_settings;
-      const char * system_port = 0, * host = 0;
+      char * manufacturer= 0,
+           * model=0,
+           * serial=0,
+           * device_settings = 0;
+      const char * system_port = 0,
+                 * host = 0;
       ppd_attr_t * attrs = 0;
 
       if(!device_name)
@@ -254,7 +260,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
  
       manufacturer = ppd->manufacturer;
       model = ppd->modelname;
-      serial = 0;                       // Not known at this time.
+      serial = 0;                       /* Not known at this time. */
       system_port = device_name;
 
       host = cupsServer();
@@ -268,11 +274,6 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
         size_t size = 0;
         char * data = 0;
 
-        if(!error && device_name)
-        error = oyOptions_SetFromText( &device->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name",
-                                       device_name, OY_CREATE_NEW );
- 
         OPTIONS_ADD( device->backend_core, manufacturer )
         OPTIONS_ADD( device->backend_core, model )
         OPTIONS_ADD( device->backend_core, serial )
@@ -287,12 +288,12 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
             FILE * fp = fopen( ppd_file_location, "r" );
             size_t lsize = 0;
 
-            // Find the total size.
+            /* Find the total size. */
             fseek(fp , 0, SEEK_END);
             lsize = ftell(fp);
             rewind (fp);
 
-            // Create buffer to read contents into a profile.
+            /* Create buffer to read contents into a profile. */
             data = (char*) malloc (sizeof(char)*lsize + 1);
             if (data == NULL) fputs ("Unable to open PPD size.",stderr);
 
@@ -336,7 +337,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
   static char * num = 0;
   const char * tmp = 0, * printer_name = 0;
 
-  // Initialize the CUPS server.
+  /* Initialize the CUPS server. */
   http = oyGetCUPSConnection();
 
   if(!num)
@@ -493,7 +494,7 @@ int            Configs_FromPattern (
   int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
 
-  // Initialize the CUPS server.
+  /* Initialize the CUPS server. */
   http = oyGetCUPSConnection();
 
   if(!num)
@@ -531,28 +532,37 @@ int            Configs_FromPattern (
            oyOptions_FindString( options, "oyNAME_NAME", 0 ) )
         {
           int n, j;
-          /* Search for CUPS ICC profiles */
+          const char * device_name = texts[i];
+          const char * ppd_file_location = cupsGetPPD2( oyGetCUPSConnection(),
+                                                        device_name );
+          ppd_file_t * ppd_file = ppdOpenFile( ppd_file_location );
           oyConfigs_s * devices_ = oyConfigs_New(0);
           oyConfig_s * tmp = oyConfig_Copy( device, 0 );
           oyConfigs_MoveIn( devices_, &tmp, -1 );
 
-          CUPSgetProfiles( texts[i], devices_ );
+          /* Search for CUPS ICC profiles */
+          CUPSgetProfiles( device_name, ppd_file, devices_, options );
 
           /* add additional devices */
           n = oyConfigs_Count( devices_ );
           for(j = 0; j < n; ++j)
           {
             oyConfig_s * d = oyConfigs_Get( devices_, j );
-            error = oyOptions_SetFromText( &d->backend_core,
-                                           CMM_BASE_REG OY_SLASH "device_name",
-                                           texts[i], OY_CREATE_NEW );
  
+            /* set the device name */
+            error = oyOptions_SetFromText( &d->backend_core,
+                                     CMM_BASE_REG OY_SLASH "device_name",
+                                     device_name, OY_CREATE_NEW );
+
+            /* additional properties */
+            error = DeviceAttributes_( ppd_file, options, d, ppd_file_location);
+
             if(j)
               oyConfigs_MoveIn( devices, &d, -1 );
             else
               oyConfig_Release( &d );
           }
-
+          ppdClose( ppd_file ); ppd_file = 0;
           
           oyConfigs_Release( &devices_ );
         }
@@ -715,31 +725,28 @@ oyCMMInfo_s _cmm_module = {
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
 
-/** @brief get for three possible profiles eachs qualifier
+/** @brief get for possible profiles eachs qualifier
  *
  *  @param         device_name         the device to request the ppd for
  *  @param         device              add the 3 qualifiers and the profile
  */
 int CUPSgetProfiles                  ( const char        * device_name,
-                                       oyConfigs_s       * devices )
+                                       ppd_file_t        * ppd_file,
+                                       oyConfigs_s       * devices,
+                                       oyOptions_s       * user_options )
 {
     int error = 0;
-    const char * ppd_file_location = cupsGetPPD2( oyGetCUPSConnection(), device_name );
-    ppd_file_t * ppd_file = ppdOpenFile(ppd_file_location);  
-
     ppd_option_t * options = ppd_file->groups->options;
-
     int i, pos = 0;
-
     const char * keyword = 0;
-    
     const char * selectorA = "ColorModel",
                * selectorB = "MediaType",
                * selectorC = "Resolution",
                * custom_qualifer_B = 0, * custom_qualifer_C = 0;
-    int attr_amt;
+    int attr_n;
     oyProfile_s * p = 0;
     oyConfig_s * device = 0;
+
 
 #if 0
     int option_num = options->num_choices;
@@ -759,9 +766,9 @@ int CUPSgetProfiles                  ( const char        * device_name,
     } 
 #endif
 
-    attr_amt = ppd_file->num_attrs;
+    attr_n = ppd_file->num_attrs;
 
-    for (i = 0; i < attr_amt; i++)
+    for (i = 0; i < attr_n; i++)
     {
         keyword = ppd_file->attrs[i]->name;
         
@@ -776,7 +783,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
     if(custom_qualifer_C != NULL)
         selectorC = custom_qualifer_C;
 
-    for (i = 0; i < attr_amt; i++)
+    for (i = 0; i < attr_n; i++)
     {
       int count = 0;
       int must_move = 0;
@@ -852,7 +859,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
 
           if( p == NULL && profile_name )
           {
-            // Generate cups HTTP-specific strings.
+            /* Generate cups HTTP-specific strings. */
             char uri[1024];         
             char temp_profile_location[1024];
             FILE * old_file = 0;
@@ -877,13 +884,13 @@ int CUPSgetProfiles                  ( const char        * device_name,
             tempfd = cupsTempFd( temp_profile_location,
                                  sizeof(temp_profile_location));
           
-            // Download file using the descriptor and uri path.
+            /* Download file using the descriptor and uri path. */
             cupsGetFd( oyGetCUPSConnection(), uri, tempfd);             
 
-            // Open the file.
+            /* Open the file. */
             old_file = fopen(temp_profile_location, "rb");
                     
-            // Find the total size.
+            /* Find the total size. */
             if(old_file)
             {
               size_t lsize = 0;
@@ -891,7 +898,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
               lsize = ftell(old_file);
               rewind (old_file);
 
-              // Create buffer to read contents into a profile.
+              /* Create buffer to read contents into a profile. */
               data = (char*) malloc (sizeof(char)*lsize);
               if (data == NULL)
               { fputs ("Unable to find profile size.\n",stderr); }
@@ -904,9 +911,9 @@ int CUPSgetProfiles                  ( const char        * device_name,
 
             if(data && size)
             {      
-              is_custom_profile = 1;       // Mark as a custom profile.
+              is_custom_profile = 1;       /* Mark as a custom profile. */
 
-              // Use Oyranos to save the file in memory.
+              /* Use Oyranos to save the file in memory. */
               p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
               free( data ); data = 0;
             }
@@ -915,17 +922,17 @@ int CUPSgetProfiles                  ( const char        * device_name,
           if(is_custom_profile == 1)
           {
               int success = 0;
-              // Create a file for the custom profile in a local directory.
-              // ex. '/home/bob/.config/color/icc/custom.icc'
+              /* Create a file for the custom profile in a local directory. */
+              /* ex. '/home/bob/.config/color/icc/custom.icc' */
               char * profile_path = 0;
               STRING_ADD( profile_path, getenv("HOME") );
               STRING_ADD( profile_path, "/.config/color/icc/" );
               STRING_ADD( profile_path, profile_name );
 
-              // Output to file.
+              /* Output to file. */
               success = oyProfile_ToFile_( p, profile_path);
 
-              is_custom_profile = 0;      // Done. Unmark as a custom profile.
+              is_custom_profile = 0;      /* Done. Unmark as a custom profile. */
           }
 
           if(p)
