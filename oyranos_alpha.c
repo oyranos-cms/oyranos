@@ -6172,6 +6172,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   char * erg = 0;
   oyValue_u * v = 0;
   oyStructList_s * oy_struct_list = 0;
+  char * text = 0;
 
   if(error <= 0)
     v = obj->value;
@@ -6184,8 +6185,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   if(error <= 0)
   {
     int n = 1, i = 0;
-    char * tmp = oyAllocateFunc_(1024),
-         * text = 0;
+    char * tmp = oyAllocateFunc_(1024);
 
     switch(obj->value_type)
     {
