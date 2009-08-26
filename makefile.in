@@ -149,7 +149,7 @@ CFILES_MODULES_DEVICES = \
 	$(CFILES_CMM_CUPS)
 
 CFILES_MONI = \
-	$(TARGET)_monitor.c
+	modules/devices/$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
 	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
