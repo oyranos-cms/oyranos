@@ -11477,6 +11477,160 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
   return error;
 }
 
+/** Function oyDeviceSimiliarFromDB
+ *  @brief   get similiar devices from DB
+ *
+ *  The function takes a device and tries to find exact matches, which can be
+ *  considered as belonging to the same device. The comparision can be 
+ *  influenced by the flags.
+ *  The option "profile_name" is ignored during the comparision.
+ *
+ *  @param[in]     pattern             Pass a device used as reference. String
+ *                                     options of this object are compared to
+ *                                     the DB objects depending on the flags
+ *                                     argument. "profile_name" and other
+ *                                     options from DB objects are ignored.
+ *  @param[in]     flags               - 0 yields exact match
+ *                                     - 1 compare manufacturer model and serial
+ *                                     - 2 compare only manufacturer and model
+ *                                     - 4 compare only device_name
+ *  @param[out]    matched_db_devices  the devices from DB
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/27 (Oyranos: 0.1.10)
+ *  @date    2009/08/27
+ */
+OYAPI int OYEXPORT oyDeviceSimiliarFromDB
+                                     ( oyConfig_s        * pattern,
+                                       uint32_t            flags,
+                                       oyConfigs_s      ** matched_db_devices )
+{
+  oyOption_s * odb = 0,
+             * od = 0;
+  int error  = !pattern || !matched_db_devices;
+  char * od_key = 0,
+       * odb_key = 0,
+       * od_val = 0,
+       * odb_val = 0;
+  oyConfig_s * s = pattern,
+             * db = 0;
+  oyConfigs_s * dbs = 0,
+              * dbs_tmp = 0;
+  int i,j,n,j_n;
+  int match = 1;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+  if(error <= 0)
+  {
+    error = oyConfigs_FromDB( s->registration, &dbs_tmp, 0 );
+    n = oyConfigs_Count( dbs_tmp );
+
+    /* Make shure the pattern has as well manufacturer, model included.
+     * If not try a "properties" command. */
+    if((flags == 0 || flags == 1 || flags == 2) &&
+       (!oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0)))
+      oyDeviceBackendCall( s, 0 );
+
+    if((flags == 1 || flags == 2) &&
+       (!oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0)))
+    {
+      oyConfigs_Release( &dbs_tmp );
+      return 0;
+    }
+
+    dbs = oyConfigs_New( 0 );
+
+    for(i = 0; i < n; ++i)
+    {
+      match = 0;
+      db = oyConfigs_Get( dbs_tmp, i );
+
+      j_n = oyConfig_Count( pattern );
+      for(j = 0; j < j_n; ++j)
+      {
+        match = 1;
+        od = oyConfig_Get( pattern, j );
+        od_key = oyFilterRegistrationToText( od->registration,
+                                             oyFILTER_REG_MAX, 0);
+
+        if(od->value_type == oyVAL_STRING &&
+           od->value && od->value->string && od->value->string[0])
+          od_val = od->value->string;
+        else
+          /* ignore non text options */
+          continue;
+
+        /* handle selective flags */
+        if(flags == 4 &&
+           oyStrcmp_(od_key,"device_name") != 0
+          )
+          continue;
+        else
+        if(flags == 2 &&
+           oyStrcmp_(od_key,"manufacturer") != 0 &&
+           oyStrcmp_(od_key,"model") != 0
+          )
+          continue;
+        else
+        if(flags == 1 &&
+           oyStrcmp_(od_key,"manufacturer") != 0 &&
+           oyStrcmp_(od_key,"model") != 0 &&
+           oyStrcmp_(od_key,"serial") != 0
+          )
+          continue;
+
+        /* ignore a "profile_name" option */
+        if(oyStrcmp_(od_key,"profile_name") == 0)
+          continue;
+
+        odb = oyOptions_Find( db->db, od_key );
+
+        if(odb && odb->value_type == oyVAL_STRING &&
+           odb->value && odb->value->string && odb->value->string[0])
+          odb_val = odb->value->string;
+        else
+          /* ignore non text options */
+          match = 0;
+
+        if(match && oyStrcmp_( od_val, odb_val ) != 0)
+          match = 0;
+
+        /*printf("pruefe: %s=%s match = %d flags=%d\n", od_key, od_val, match, flags);*/
+
+
+        oyOption_Release( &od );
+
+        oyOption_Release( &odb );
+        if(odb_key)
+          oyFree_m_( odb_key );
+
+        if(match == 0)
+          break;
+      }
+
+      if(match)
+        oyConfigs_MoveIn( dbs, &db, -1 );
+      else
+        oyConfig_Release( &db );
+    }
+
+    if(oyConfigs_Count( dbs ))
+      *matched_db_devices = dbs;
+    else
+      oyConfigs_Release( &dbs );
+
+  } else
+    WARNc_S( "missed argument(s)" );
+
+  oyConfigs_Release( &dbs_tmp );
+  return error;
+}
+
 
 /**
  *  @} *//* devices_handling
