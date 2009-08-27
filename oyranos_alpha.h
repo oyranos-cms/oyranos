@@ -1292,10 +1292,11 @@ OYAPI int  OYEXPORT
            oyDeviceProfileFromDB     ( oyConfig_s        * device,
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc );
-OYAPI int  OYEXPORT
-           oyDeviceSimiliarFromDB    ( oyConfig_s        * pattern,
+OYAPI int OYEXPORT oyDeviceSelectSimiliar
+                                     ( oyConfig_s        * pattern,
+                                       oyConfigs_s       * heap,
                                        uint32_t            flags,
-                                       oyConfigs_s      ** matched_db_devices );
+                                       oyConfigs_s      ** matched_devices );
 
 
 /** @enum    oyDATALAYOUT_e

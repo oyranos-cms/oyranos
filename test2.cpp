@@ -1520,7 +1520,8 @@ oyTESTRESULT_e testCMMDevicesListing ()
     j_n = oyConfigs_Count( configs );
     for( j = 0; j < j_n; ++j )
     {
-      oyConfigs_s * dbs = 0;
+      oyConfigs_s * dbs = 0,
+                  * heap = 0;
       int precise_count = 0,
           serial_count = 0,
           mnft_count = 0,
@@ -1528,21 +1529,26 @@ oyTESTRESULT_e testCMMDevicesListing ()
 
       config = oyConfigs_Get( configs, j );
 
-      error = oyDeviceSimiliarFromDB( config, 0, &dbs );
+      error = oyConfigs_FromDB( config->registration, &heap, 0 );
+
+      error = oyDeviceSelectSimiliar( config, heap, 0, &dbs );
       precise_count = oyConfigs_Count( dbs );
       oyConfigs_Release( &dbs );
 
-      error = oyDeviceSimiliarFromDB( config, 1, &dbs );
+      error = oyDeviceSelectSimiliar( config, heap, 1, &dbs );
       serial_count = oyConfigs_Count( dbs );
       oyConfigs_Release( &dbs );
 
-      error = oyDeviceSimiliarFromDB( config, 2, &dbs );
+      error = oyDeviceSelectSimiliar( config, heap, 2, &dbs );
       mnft_count = oyConfigs_Count( dbs );
       oyConfigs_Release( &dbs );
 
-      error = oyDeviceSimiliarFromDB( config, 4, &dbs );
+      error = oyDeviceSelectSimiliar( config, heap, 4, &dbs );
       dev_name_count = oyConfigs_Count( dbs );
       oyConfigs_Release( &dbs );
+
+      oyConfigs_Release( &heap );
+
 
       printf( "\"%s\" has %d precise matches,\n"
               "\t%d manufacturer/model/serial, %d manufacturer/model and\n"

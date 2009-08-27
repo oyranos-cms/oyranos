@@ -11477,8 +11477,8 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
   return error;
 }
 
-/** Function oyDeviceSimiliarFromDB
- *  @brief   get similiar devices from DB
+/** Function oyDeviceSelectSimiliar
+ *  @brief   get similiar devices by a pattern from a list
  *
  *  The function takes a device and tries to find exact matches, which can be
  *  considered as belonging to the same device. The comparision can be 
@@ -11487,14 +11487,16 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
  *
  *  @param[in]     pattern             Pass a device used as reference. String
  *                                     options of this object are compared to
- *                                     the DB objects depending on the flags
- *                                     argument. "profile_name" and other
- *                                     options from DB objects are ignored.
+ *                                     the objects in the heap argument
+ *                                     depending on the flags argument.
+ *                                     "profile_name" and other
+ *                                     options from heap objects are ignored.
+ *  @param[in]     heap                a list of device objects
  *  @param[in]     flags               - 0 yields exact match
  *                                     - 1 compare manufacturer model and serial
  *                                     - 2 compare only manufacturer and model
  *                                     - 4 compare only device_name
- *  @param[out]    matched_db_devices  the devices from DB
+ *  @param[out]    matched_devices     the devices selected from heap
  *  @param[in]     allocateFunc        user allocator
  *  @return                            error
  *
@@ -11502,22 +11504,21 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
  *  @since   2009/08/27 (Oyranos: 0.1.10)
  *  @date    2009/08/27
  */
-OYAPI int OYEXPORT oyDeviceSimiliarFromDB
+OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                      ( oyConfig_s        * pattern,
+                                       oyConfigs_s       * heap,
                                        uint32_t            flags,
-                                       oyConfigs_s      ** matched_db_devices )
+                                       oyConfigs_s      ** matched_devices )
 {
-  oyOption_s * odb = 0,
+  oyOption_s * odh = 0,
              * od = 0;
-  int error  = !pattern || !matched_db_devices;
+  int error  = !pattern || !matched_devices;
   char * od_key = 0,
-       * odb_key = 0,
        * od_val = 0,
-       * odb_val = 0;
+       * odh_val = 0;
   oyConfig_s * s = pattern,
-             * db = 0;
-  oyConfigs_s * dbs = 0,
-              * dbs_tmp = 0;
+             * dh = 0;
+  oyConfigs_s * matched = 0;
   int i,j,n,j_n;
   int match = 1;
 
@@ -11525,8 +11526,7 @@ OYAPI int OYEXPORT oyDeviceSimiliarFromDB
 
   if(error <= 0)
   {
-    error = oyConfigs_FromDB( s->registration, &dbs_tmp, 0 );
-    n = oyConfigs_Count( dbs_tmp );
+    n = oyConfigs_Count( heap );
 
     /* Make shure the pattern has as well manufacturer, model included.
      * If not try a "properties" command. */
@@ -11539,16 +11539,15 @@ OYAPI int OYEXPORT oyDeviceSimiliarFromDB
        (!oyConfig_FindString(s,"manufacturer",0) ||
         !oyConfig_FindString(s,"model",0)))
     {
-      oyConfigs_Release( &dbs_tmp );
       return 0;
     }
 
-    dbs = oyConfigs_New( 0 );
+    matched = oyConfigs_New( 0 );
 
     for(i = 0; i < n; ++i)
     {
       match = 0;
-      db = oyConfigs_Get( dbs_tmp, i );
+      dh = oyConfigs_Get( heap, i );
 
       j_n = oyConfig_Count( pattern );
       for(j = 0; j < j_n; ++j)
@@ -11588,16 +11587,16 @@ OYAPI int OYEXPORT oyDeviceSimiliarFromDB
         if(oyStrcmp_(od_key,"profile_name") == 0)
           continue;
 
-        odb = oyOptions_Find( db->db, od_key );
+        odh = oyOptions_Find( dh->db, od_key );
 
-        if(odb && odb->value_type == oyVAL_STRING &&
-           odb->value && odb->value->string && odb->value->string[0])
-          odb_val = odb->value->string;
+        if(odh && odh->value_type == oyVAL_STRING &&
+           odh->value && odh->value->string && odh->value->string[0])
+          odh_val = odh->value->string;
         else
           /* ignore non text options */
           match = 0;
 
-        if(match && oyStrcmp_( od_val, odb_val ) != 0)
+        if(match && oyStrcmp_( od_val, odh_val ) != 0)
           match = 0;
 
         /*printf("pruefe: %s=%s match = %d flags=%d\n", od_key, od_val, match, flags);*/
@@ -11605,29 +11604,26 @@ OYAPI int OYEXPORT oyDeviceSimiliarFromDB
 
         oyOption_Release( &od );
 
-        oyOption_Release( &odb );
-        if(odb_key)
-          oyFree_m_( odb_key );
+        oyOption_Release( &odh );
 
         if(match == 0)
           break;
       }
 
       if(match)
-        oyConfigs_MoveIn( dbs, &db, -1 );
+        oyConfigs_MoveIn( matched, &dh, -1 );
       else
-        oyConfig_Release( &db );
+        oyConfig_Release( &dh );
     }
 
-    if(oyConfigs_Count( dbs ))
-      *matched_db_devices = dbs;
+    if(oyConfigs_Count( matched ))
+      *matched_devices = matched;
     else
-      oyConfigs_Release( &dbs );
+      oyConfigs_Release( &matched );
 
   } else
     WARNc_S( "missed argument(s)" );
 
-  oyConfigs_Release( &dbs_tmp );
   return error;
 }
 
