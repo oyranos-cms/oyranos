@@ -1,0 +1,223 @@
+/* gcc -Wall -g `pkg-config oyranos libxml-2.0 --libs --cflags` oy_filter_node.c -o oy_filter_node */
+#include <oyranos_alpha.h>
+#include <oyranos_helper.h>
+#include <oyranos_i18n.h>
+#include <oyranos_texts.h>
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+#include <stdio.h>
+#include <string.h>
+
+void               oyParseXMLNode_   ( xmlDocPtr           doc,
+                                       xmlNodePtr          cur,
+                                       oyOption_s        * wid_data );
+const char *       oyXFORMsModelGetXPathValue_
+                                     ( xmlDocPtr           doc,
+                                       const char        * reference );
+
+int main (int argc, char ** argv)
+{
+  oyFilterNode_s * node = oyFilterNode_NewWith( "//imaging/icc.lcms", 0,0 );
+  char * ui_text = 0, * text = 0;
+  const char * data = 0;
+  int error = oyFilterNode_UiGet( node, &ui_text, malloc );
+  xmlDocPtr doc = 0;
+  xmlNodePtr cur = 0;
+  oyOptions_s * opts = 0;
+
+  oyOptions_Release( &node->core->options_ );
+  opts = oyFilterNode_OptionsGet( node, 
+                            OY_SELECT_FILTER | oyOPTIONATTRIBUTE_ADVANCED );
+
+  data = oyOptions_GetText( opts, oyNAME_NAME );
+  text = malloc( strlen(ui_text) + strlen( data ) + 1024 );
+  sprintf( text,
+   "<html xmlns=\"http://www.w3.org/1999/xhtml\"\n"
+   "xmlns:xf=\"http://www.w3.org/2002/xforms\">\n"
+   "<head>\n"
+   "  <title>lcms options</title>\n"
+   "  <xf:model>\n"
+   "    <data>\n"
+   "      %s\n"
+   "    </data>\n"
+   "  </xf:model>\n"
+   "</head>\n"
+   "<body>\n%s\n"
+   "</body></html>", data, ui_text );
+  printf("%s\n", text);
+
+  /*printf("%s\n", oyFilterNode_GetText( node, oyNAME_NICK ));*/
+
+  doc = xmlParseMemory( text, strlen(text) );
+  cur = xmlDocGetRootElement(doc);
+
+  oyParseXMLNode_( doc, cur, 0 );
+
+  oyOptions_Release( &opts );
+
+  /* xmlParseMemory sollte der Ebenen gewahr werden wie oyOptions_FromText. */
+  opts = oyOptions_FromText( data, 0,0 );
+
+  if(ui_text) free(ui_text); ui_text = 0;
+  if(text) free(text); text = 0;
+  oyFilterNode_Release( &node );
+  xmlFreeDoc( doc );
+
+  return error;
+}
+
+void               oyParseXMLNode_   ( xmlDocPtr           doc,
+                                       xmlNodePtr          cur,
+                                       oyOption_s        * wid_data )
+{
+  xmlChar *key = 0;
+
+  while(cur != NULL)
+  {
+    oyOption_s * old_wid_data = 0;
+
+    if(cur->type == XML_ELEMENT_NODE)
+    {
+      char * key = 0;
+      const xmlChar * prefix = cur->ns && cur->ns->prefix ? cur->ns->prefix : 0;
+      if(prefix)
+        STRING_ADD( key, (char*)prefix );
+      STRING_ADD( key, (char*)cur->name );
+      printf(" name: %s%s%s\n", prefix?(char*)prefix:"", prefix?":":"",
+                                cur->name);
+
+      if(strcmp( key, "xf:select1" ) == 0)
+      {
+        old_wid_data = wid_data;
+        wid_data = oyOption_New( "xf:choices/xf:item.xf:label.xf:value", 0 );
+      }
+
+      xmlAttrPtr attr = cur->properties;
+      while(attr && attr->name)
+      {
+        printf(" attr: %s=", attr->name );
+        if(attr->children && attr->children->content)
+          printf("%s\n", attr->children->content);
+        else
+          printf("\n");
+
+        if( strcmp((char*)attr->name,"ref") == 0 &&
+            attr->children->content )
+        {
+          const char * v;
+
+          v = oyXFORMsModelGetXPathValue_( doc, (char*)attr->children->content);
+          if(v)
+            printf( "Found: %s=\"%s\"\n", attr->children->content, v );
+
+
+          if(wid_data)
+            oyOption_AddString
+        }
+
+        attr = attr->next;
+      }
+
+      oyFree_m_( key )
+    }
+
+    if(cur->xmlChildrenNode)
+      oyParseXMLNode_(doc, cur->xmlChildrenNode, wid_data);
+
+    if(cur->type == XML_TEXT_NODE && !cur->children &&
+       cur->content && cur->content[0] &&
+       cur->content[0] != '\n')
+    {
+      key = xmlNodeListGetString(doc, cur, 1);
+      printf("  key: %s\n", key);
+    }
+
+    oyOption_Release( &wid_data );
+    if(old_wid_data)
+      wid_data = old_wid_data;
+    old_wid_data = 0;
+
+    cur = cur->next;
+  }
+}
+
+
+const char * oyXFORMsModelGetXPathValue_
+                                     ( xmlDocPtr           doc,
+                                       const char        * reference )
+{
+  char * xpath = (char*) malloc(1024);
+  xmlXPathContextPtr context = xmlXPathNewContext( doc );
+  xmlXPathObjectPtr result = 0;
+  int error = 0;
+  const char * ref, * url, * t, *t2;
+  int len;
+  const char * text = 0;
+
+  memset(xpath, 0, 1024);
+
+  if( reference )
+  {
+    ref = "xmlns";
+    url = "http://www.w3.org/1999/xhtml";
+    error = xmlXPathRegisterNs( context, (xmlChar*)ref, (xmlChar*)url);
+    if(error)
+      printf("Could not register %s=%s\n", ref, url);
+    ref = "xf";
+    url = "http://www.w3.org/2002/xforms";
+    error = xmlXPathRegisterNs( context, (xmlChar*)ref, (xmlChar*)url);
+    if(error)
+      printf("Could not register %s=%s\n", ref, url);
+
+    /* add the static part */
+    sprintf( xpath, "/xmlns:html/xmlns:head/xf:model/xmlns:data/" );
+    /* add the first dynamic level */
+    t = reference;
+    if(t[0] != '/')
+    {
+      t2 = strchr(t,'/');
+      len = t2 - t;
+      sprintf( &xpath[strlen(xpath)], "xmlns:" );
+      memcpy( &xpath[strlen(xpath)], t, len+1 );
+    }
+    /* add other dynamic levels */
+    while((t = strchr(t,'/')) != 0)
+    {
+      t2 = strchr(t+1,'/');
+      len = 0;
+
+      sprintf( &xpath[strlen(xpath)], "xmlns:" );
+      if(t2)
+      {
+        len = t2 - t;
+        memcpy( &xpath[strlen(xpath)], t+1, len );
+        t = t2;
+      }
+      else
+      {
+        sprintf( &xpath[strlen(xpath)], "%s", t+1 );
+        break;
+      }
+    }
+    result = xmlXPathEvalExpression( (xmlChar*)xpath, context );
+
+    if( result && !xmlXPathNodeSetIsEmpty( result->nodesetval ) &&
+        result->nodesetval &&
+        result->nodesetval->nodeTab && result->nodesetval->nodeTab[0] &&
+        result->nodesetval->nodeTab[0]->children &&
+        strcmp((char*)result->nodesetval->nodeTab[0]->children->name, "text") == 0 &&
+        result->nodesetval->nodeTab[0]->children->content)
+      text = (char*)result->nodesetval->nodeTab[0]->children->content;
+    else
+      printf( "No result with %s\n", xpath);
+
+    xmlXPathFreeObject( result );
+    xmlXPathFreeContext( context );
+  }
+
+  if(xpath)
+    free(xpath);
+
+  return text;
+}
