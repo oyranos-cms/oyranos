@@ -61,7 +61,8 @@ VERSION_ABI_B=0
 RELEASE=0
 OY_START_MONTH=11
 OY_START_YEAR=2004
-OY_DEVEL_MONTH=04
+OY_DEVEL_MONTH=08
+OYRANOS_DEVEL_MONTH=8 # numeric
 OY_DEVEL_YEAR=2009
 OY_GIT_MASTER="`cat $ROOT_DIR/.git/refs/heads/master`"
 time="`date +%y%m%d.%H%M%S`"
@@ -914,7 +915,7 @@ test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_NAME \"$VERSION\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION $VERSION_L" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_START_MONTH $OY_START_MONTH" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_START_YEAR $OY_START_YEAR" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_MONTH $OY_DEVEL_MONTH" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_MONTH $OYRANOS_DEVEL_MONTH" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_YEAR $OY_DEVEL_YEAR" >> $VERS_H
 test -n "$ECHO" && $ECHO "#define OYRANOS_CONFIG_DATE \"$time\"" >> $VERS_H
 if [ `echo $OY_GIT_MASTER | grep cat | wc -l` -lt 1 ]; then
