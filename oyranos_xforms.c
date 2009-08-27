@@ -11,7 +11,7 @@
 
 void               oyParseXMLNode_   ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
-                                       oyOption_s        * wid_data );
+                                       oyOptions_s       * wid_data );
 const char *       oyXFORMsModelGetXPathValue_
                                      ( xmlDocPtr           doc,
                                        const char        * reference );
@@ -69,28 +69,41 @@ int main (int argc, char ** argv)
 
 void               oyParseXMLNode_   ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
-                                       oyOption_s        * wid_data )
+                                       oyOptions_s       * wid_data )
 {
   xmlChar *key = 0;
 
   while(cur != NULL)
   {
-    oyOption_s * old_wid_data = 0;
+    oyOptions_s * old_wid_data = 0;
+    char * name = 0;
 
     if(cur->type == XML_ELEMENT_NODE)
     {
-      char * key = 0;
       const xmlChar * prefix = cur->ns && cur->ns->prefix ? cur->ns->prefix : 0;
       if(prefix)
-        STRING_ADD( key, (char*)prefix );
-      STRING_ADD( key, (char*)cur->name );
+      {
+        STRING_ADD( name, (char*)prefix );
+        STRING_ADD( name, ":" );
+      }
+      STRING_ADD( name, (char*)cur->name );
       printf(" name: %s%s%s\n", prefix?(char*)prefix:"", prefix?":":"",
                                 cur->name);
 
-      if(strcmp( key, "xf:select1" ) == 0)
+      if(strcmp( name, "xf:select1" ) == 0)
       {
         old_wid_data = wid_data;
-        wid_data = oyOption_New( "xf:choices/xf:item.xf:label.xf:value", 0 );
+        wid_data = 0;
+        oyOptions_SetFromText( &wid_data, "////search",
+                               "xf:choices/xf:item", OY_CREATE_NEW );
+      }
+
+      if(strcmp( name, "xf:item" ) == 0)
+      {
+        old_wid_data = wid_data;
+        wid_data = 0;
+        oyOptions_SetFromText( &wid_data, "////search",
+                               "xf:choices/xf:label.xf:value", OY_CREATE_NEW );
       }
 
       xmlAttrPtr attr = cur->properties;
@@ -112,14 +125,18 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
             printf( "Found: %s=\"%s\"\n", attr->children->content, v );
 
 
-          if(wid_data)
-            oyOption_AddString
+          if(wid_data && oyOptions_FindString(wid_data, "search", 0))
+          {
+            char * tmp = 0;
+            STRING_ADD( tmp, "////" );
+            STRING_ADD( tmp, name );
+            oyOptions_SetFromText( &wid_data, tmp, v, OY_CREATE_NEW );
+            oyFree_m_( tmp )
+          }
         }
 
         attr = attr->next;
       }
-
-      oyFree_m_( key )
     }
 
     if(cur->xmlChildrenNode)
@@ -133,10 +150,29 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
       printf("  key: %s\n", key);
     }
 
-    oyOption_Release( &wid_data );
+    if(name && wid_data &&
+       oyOptions_FindString(wid_data, "search", 0) &&
+       strstr(oyOptions_FindString(wid_data, "search", 0), name) == 0)
+    {
+      char * tmp = 0;
+      STRING_ADD( tmp, "////" );
+      STRING_ADD( tmp, name );
+      oyOptions_SetFromText( &wid_data, tmp, (char*)key, OY_CREATE_NEW );
+      oyFree_m_( tmp )
+    }
+
+
+    /* clean old search context */
     if(old_wid_data)
+    {
+      printf("collected: %s\n", oyOptions_GetText(wid_data, oyNAME_NICK));
+      oyOptions_Release( &wid_data );
       wid_data = old_wid_data;
-    old_wid_data = 0;
+      old_wid_data = 0;
+    }
+
+    if(name)
+      oyFree_m_( name )
 
     cur = cur->next;
   }
