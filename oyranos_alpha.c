@@ -3543,8 +3543,93 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
       oyCMMapi4_s * s = (oyCMMapi4_s*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
-           s->oyCMMCanHandle
-           /*s-> &&*/
+           s->oyCMMCanHandle &&
+           s->registration && s->registration[0] &&
+           (s->version[0] || s->version[1] || s->version[2]) &&
+           s->oyCMMFilter_ValidateOptions &&
+           s->oyWidget_Event &&
+           (!s->oyCMMFilterNode_ContextToMem ||
+            (s->oyCMMFilterNode_ContextToMem && s->oyCMMFilterNode_GetText &&
+             s->context_type && s->context_type[0])) &&
+           s->name.type == oyOBJECT_NAME_S &&
+           s->name.nick && s->name.name && s->name.description &&
+           s->category && s->category[0] &&
+           (!s->options || (s->options && s->options[0] && s->oyCMMuiGet))
+            ) )
+        error = 1;
+    } break;
+    case oyOBJECT_CMM_API5_S:
+    {
+      oyCMMapi5_s * s = (oyCMMapi5_s*)api;
+      if(!(s->oyCMMInit &&
+           s->oyCMMMessageFuncSet &&
+           s->oyCMMCanHandle &&
+           s->registration && s->registration[0] &&
+           (s->version[0] || s->version[1] || s->version[2]) &&
+           s->oyCMMFilterLoad &&
+           s->oyCMMFilterScan &&
+           s->filterSocket_MatchPlug
+            ) )
+        error = 1;
+    } break;
+    case oyOBJECT_CMM_API6_S:
+    {
+      oyCMMapi6_s * s = (oyCMMapi6_s*)api;
+      if(!(s->oyCMMInit &&
+           s->oyCMMMessageFuncSet &&
+           s->oyCMMCanHandle &&
+           s->registration && s->registration[0] &&
+           (s->version[0] || s->version[1] || s->version[2]) &&
+           s->data_type_in && s->data_type_in[0] &&
+           s->data_type_out && s->data_type_out[0] &&
+           s->oyCMMdata_Convert
+            ) )
+        error = 1;
+    } break;
+    case oyOBJECT_CMM_API7_S:
+    {
+      oyCMMapi7_s * s = (oyCMMapi7_s*)api;
+      if(!(s->oyCMMInit &&
+           s->oyCMMMessageFuncSet &&
+           s->oyCMMCanHandle &&
+           s->registration && s->registration[0] &&
+           (s->version[0] || s->version[1] || s->version[2]) &&
+           s->oyCMMFilterPlug_Run &&
+           ((s->plugs && s->plugs_n) || (s->sockets && s->sockets_n))
+            ) )
+        error = 1;
+    } break;
+    case oyOBJECT_CMM_API8_S:
+    {
+      oyCMMapi8_s * s = (oyCMMapi8_s*)api;
+      if(!(s->oyCMMInit &&
+           s->oyCMMMessageFuncSet &&
+           s->oyCMMCanHandle &&
+           s->registration && s->registration[0] &&
+           (s->version[0] || s->version[1] || s->version[2]) &&
+           s->oyConfigs_FromPattern &&
+           s->oyConfigs_Modify &&
+           s->oyConfig_Rank &&
+           s->rank_map
+            ) )
+        error = 1;
+    } break;
+    case oyOBJECT_CMM_API9_S:
+    {
+      oyCMMapi9_s * s = (oyCMMapi9_s*)api;
+      if(!(s->oyCMMInit &&
+           s->oyCMMMessageFuncSet &&
+           s->oyCMMCanHandle &&
+           s->registration && s->registration[0] &&
+           (s->version[0] || s->version[1] || s->version[2]) &&
+           (!s->options ||
+            (s->options && s->oyCMMFilter_ValidateOptions &&
+             s->oyCMMuiGet && s->oyWidget_Event))&&
+           (!s->texts ||
+            ((s->texts || s->data_types)
+              && s->texts[0] && s->texts[0][0] && s->getText &&
+              s->data_types)) &&
+           s->pattern && s->pattern[0]
             ) )
         error = 1;
     } break;
