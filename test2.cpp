@@ -1516,21 +1516,50 @@ oyTESTRESULT_e testCMMDevicesListing ()
     printf("%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
 
     error = oyConfigs_FromDomain( registration_domain,
-                                       options_list, &configs, 0 );
+                                  options_list, &configs, 0 );
     j_n = oyConfigs_Count( configs );
     for( j = 0; j < j_n; ++j )
     {
+      oyConfigs_s * dbs = 0;
+      int precise_count = 0,
+          serial_count = 0,
+          mnft_count = 0,
+          dev_name_count = 0;
+
       config = oyConfigs_Get( configs, j );
+
+      error = oyDeviceSimiliarFromDB( config, 0, &dbs );
+      precise_count = oyConfigs_Count( dbs );
+      oyConfigs_Release( &dbs );
+
+      error = oyDeviceSimiliarFromDB( config, 1, &dbs );
+      serial_count = oyConfigs_Count( dbs );
+      oyConfigs_Release( &dbs );
+
+      error = oyDeviceSimiliarFromDB( config, 2, &dbs );
+      mnft_count = oyConfigs_Count( dbs );
+      oyConfigs_Release( &dbs );
+
+      error = oyDeviceSimiliarFromDB( config, 4, &dbs );
+      dev_name_count = oyConfigs_Count( dbs );
+      oyConfigs_Release( &dbs );
+
+      printf( "\"%s\" has %d precise matches,\n"
+              "\t%d manufacturer/model/serial, %d manufacturer/model and\n"
+              "\t%d \"device_name\" entries in DB\n",
+              oyConfig_FindString( config, "device_name", 0 ),
+              precise_count,serial_count,mnft_count,dev_name_count );
 
       k_n = oyConfig_Count( config );
       for( k = 0; k < k_n; ++k )
       {
         char * r = 0;
         int mnft = -1, mn, pos;
+
         o = oyConfig_Get( config, k );
 
         r = oyFilterRegistrationToText( o->registration,
-                                                   oyFILTER_REG_OPTION, 0 );
+                                        oyFILTER_REG_OPTION, 0 );
         if(r && strcmp(r,"supported_devices_info") == 0 &&
            o->value_type == oyVAL_STRING_LIST)
         {
