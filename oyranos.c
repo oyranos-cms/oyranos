@@ -1948,7 +1948,11 @@ void           oyI18Nreset           ( void )
 
 /** @brief  give the compiled in library version
  *
- *  @param[in]  type           0 - Oyranos API; 1 - start month, 2 - start year; 3 - development last month, 4 - development last year
+ *  @param[in]  type           0 - Oyranos API
+ *                             1 - start month
+ *                             2 - start year
+ *                             3 - development last month
+ *                             4 - development last year
  *
  *  @return                    OYRANOS_VERSION at library compile time
  */
