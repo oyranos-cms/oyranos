@@ -1,4 +1,4 @@
-#CPP = c++
+#CXX = c++
 #CC = gcc
 #RM = rm -v
 
@@ -46,7 +46,7 @@ all:	$(TARGETS)
 $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	mkdir -p image_display
 	echo Compiling $@ ...
-	-$(CPP) -DTARGET=\"$(TARGET)\" $(CFLAGS) $(FLTK_CFLAGS) $(X11) \
+	-$(CXX) -DTARGET=\"$(TARGET)\" $(CFLAGS) $(FLTK_CFLAGS) $(X11) \
 	$(LDFLAGS) $(OY_LDFLAGS) $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
 	$< -o $@
 	fltk-config --post $@
