@@ -740,7 +740,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              oyStructList_s * mfg_tmp = 0, * model_tmp = 0;
              oyProfileTag_s * tmptag = 0;
              int32_t size = -1;
-             icTagSignature tag_sig = (icTagSignature)0;
+             icTagTypeSignature tag_sig = (icTagSignature)0;
 
              count = *(icUInt32Number*)(mem+off);
              count = oyValueUInt32( count );

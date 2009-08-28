@@ -433,7 +433,7 @@ oyTESTRESULT_e testSettings ()
   }
 
   oyDeAllocateFunc_(text); text = 0;
-  xmlDocDumpFormatMemory( doc, &text, &i, 1 );
+  xmlDocDumpFormatMemory( doc, (xmlChar**)&text, &i, 1 );
   oyDeAllocateFunc_(text); text = 0;
   /*xmlSaveDoc( ptr, doc );*/
   xmlFreeDoc( doc ); doc = 0;
