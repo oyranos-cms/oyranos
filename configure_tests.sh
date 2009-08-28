@@ -67,6 +67,20 @@ if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
   fi
 fi
 
+if [ -n "$CUPS" ] && [ $CUPS -gt 0 ]; then
+  rm -f tests/libtest$EXEC_END
+  $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/cups_test.cxx $LDFLAGS -L$libdir -lcups -o tests/libtest 2>>$CONF_LOG
+    if [ -f tests/libtest ]; then
+      echo_="`tests/libtest`             detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo "#define HAVE_CUPS 1" >> $CONF_H
+      echo "CUPS = 1" >> $CONF
+      rm tests/libtest$EXEC_END
+    else
+      echo_="no or too old CUPS print spooler found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="  download: http://www.cups.org"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
+fi
+
 
 if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_min" ]; then
