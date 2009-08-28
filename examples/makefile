@@ -1,6 +1,6 @@
-CPP = c++
-CC = gcc
-RM = rm -v
+#CPP = c++
+#CC = gcc
+#RM = rm -v
 
 TARGET1 = image_display/image_display
 TARGET2 = xcmsevents/xcmsevents
