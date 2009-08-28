@@ -20,7 +20,7 @@ PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
 TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos))
 LDFLAGS = $(LIBS)
-DEBUG = -Wall -g -pedantic -O0
+#DEBUG = -Wall -g -pedantic -O0
 CFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
 
 CAIRO := $(shell (pkg-config --modversion cairo-pdf))
