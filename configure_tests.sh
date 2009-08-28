@@ -822,7 +822,7 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
       if [ "$debug" -eq "1" ]; then
-        if [ $OSUNAME == "Darwin" ] || [ $OSUNAME == "Windows" ]; then
+        if [ $OSUNAME = "Darwin" ] || [ $OSUNAME = "Windows" ]; then
           DEBUG_="-Wall -g -DDEBUG"
         else
           DEBUG_="-Wall -g -DDEBUG --pedantic"
