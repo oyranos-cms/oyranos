@@ -17,6 +17,70 @@ const char *       oyXFORMsModelGetXPathValue_
                                        const char        * reference );
 char *             oyXML2NodeName_   ( xmlNodePtr          cur );
 
+/** @internal
+ *  @typedef oyUiHandler_t
+ *  @brief   handle parser output and build the UI
+ *
+ *  @param[in]     cur                 libxml2 node
+ *  @param[in]     collected_elements  from libxml2
+ *  @return                            ns + ':' + name
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/30 (Oyranos: 0.1.10)
+ *  @date    2009/08/30
+ */
+typedef int  (*oyUiHandler_t)        ( oyPointer           cur,
+                                       oyOptions_s       * collected_elements,
+                                       oyPointer           user_data );
+
+/** @internal
+ *  @typedef oyUiHandler_s
+ *  @brief   provide a list of handlers to build the UI
+ *
+ *  A parser will read out the XFORMS elements and collect those a UI handler
+ *  claims interesst in. The handler is then called to process the collected 
+ *  elements and to build the UI.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/30 (Oyranos: 0.1.10)
+ *  @date    2009/08/30
+ */
+typedef struct {
+  oyOBJECT_e           type;           /**< oyOBJECT_XFORMS_UI_HANDLER */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< @private features name and hash */
+
+  char               * dialect;        /**< currently only "oyFORMS",
+                                            a subset of W3C XFORMS */
+  char               * parser_type;    /**< currently only "libxml2" */
+  char               * element_type;   /**< a valid XFORMS element,
+                                            e.g. "xf:select1" */
+  oyUiHandler_t        handler;        /**< The handler which obtains the parsed
+                                            results and a context to construct
+                                            the UI. */
+  /** The elements to collect by the parser, e.g.
+   *  "xf:choices/xf:item/xf:label.xf:value".
+   *  The list shall be terminated by zero. */
+  char               * element_search[];
+} oyUiHandler_s;
+
+int        oyXML2XFORMsHandlerSelect1( xmlNodePtr          cur,
+                                       oyOptions_s       * collected_elements,
+                                       oyPointer           user_data );
+
+oyUiHandler_s oy_ui_handler_xf_select1_ =
+  {oyOBJECT_XFORMS_UI_HANDLER,0,0,0,   /**< oyStruct_s members */
+   "libxml2",                          /**< parser_type */
+   "xf:select1",                       /**< Wanted XML element. */
+   (oyUiHandler_t)oyXML2XFORMsHandlerSelect1, /**< oyXFORMsUiHandler_t handler*/
+   {"xf:choices/xf:item/xf:label.xf:value",0} /**< element_search */
+  };
+
+oyUiHandler_s * ui_handlers[] = {
+  &oy_ui_handler_xf_select1_,
+  0
+};
 
 int main (int argc, char ** argv)
 {
