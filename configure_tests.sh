@@ -82,6 +82,31 @@ if [ -n "$CUPS" ] && [ $CUPS -gt 0 ]; then
 fi
 
 
+if [ -n "$SANE" ] && [ $SANE -gt 0 ]; then
+  rm -f tests/libtest$EXEC_END
+  $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/sane_test.cxx $LDFLAGS -L$libdir -lsane -o tests/libtest 2>>$CONF_LOG
+    if [ -f tests/libtest ]; then
+      tests/libtest > /dev/null
+      if [ $? = 0 ]; then
+        test_ok=0;
+      else
+        test_ok=1;
+      fi
+      echo_="`tests/libtest`         detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      if [ $test_ok = 0 ]; then
+        echo "#define HAVE_SANE 1" >> $CONF_H
+        echo "SANE = 1" >> $CONF
+      else
+      echo_="SANE will not be used!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      fi
+      rm tests/libtest$EXEC_END
+    else
+      echo_="no or too old SANE scanner support library found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="  download: http://www.sane-project.org"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
+fi
+
+
 if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
   if [ -z "$elektra_min" ]; then
     elektra_min="0.7"

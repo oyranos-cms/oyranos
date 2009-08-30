@@ -95,7 +95,7 @@ static=1
 verbose=1
 X11=0
 X_ADD_2="X11 Xext Xinerama Xxf86vm Xrandr"
-LIBS_TEST="ltdl dl iconv intl m xml2 Xcolor Xfixes cups"
+LIBS_TEST="ltdl dl iconv intl m xml2 Xcolor Xfixes cups sane"
 
 # find a suitable fltk-config script
 fltkconfig="fltk-config"
@@ -794,7 +794,7 @@ if [ -n "$ECHO" ]; then
   ECHO="echo"; export ECHO
   LIBS=1; export LIBS
   DSO_LINKING=1; export DSO_LINKING
-  CUPS=1; export CUPS
+  CUPS=2; export CUPS
   ELEKTRA=1; export ELEKTRA
   #OYRANOS=1; export OYRANOS
   LCMS=1; export LCMS
@@ -803,6 +803,7 @@ if [ -n "$ECHO" ]; then
   LIBPNG=2; export LIBPNG
   LIBTIFF=2; export LIBTIFF
   LIBOPENEXR=2; export LIBOPENEXR
+  SANE=2; export SANE
   #FTGL=1; export FTGL
   FLTK=2; export FLTK
 if [ $OSUNAME != "Darwin" ] ; then
@@ -833,6 +834,9 @@ fi
     if [ $i = cups ]; then
       CUPS=0; export CUPS
     fi
+    if [ $i = sane ]; then
+      SANE=0; export SANE
+    fi
   done
   $ROOT_DIR/configure_tests.sh
   LIBS=0; export LIBS
@@ -846,6 +850,7 @@ fi
   LIBPNG=0; export LIBPNG
   LIBTIFF=0; export LIBTIFF
   LIBOPENEXR=0; export LIBOPENEXR
+  SANE=0; export SANE
   #FTGL=0; export FTGL
   FLTK=0; export FLTK
   X11=0; XCOLOR=0; export X11 XCOLOR
