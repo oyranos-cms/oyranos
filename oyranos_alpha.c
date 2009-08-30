@@ -6616,9 +6616,9 @@ double         oyOption_GetValueDouble(oyOption_s        * obj,
  *  @param         type                oyNAME_NICK is equal to an ID
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/02 (Oyranos: 0.1.8)
- *  @date    2008/11/02
+ *  @date    2009/08/30
  */
 const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type )
@@ -6636,7 +6636,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 
   error = !v;
 
-  /* iterate into options */
+  /** Iterate into oyOptions_s objects. */
   if(error <= 0)
   {
     oyOption_s * o = s;
