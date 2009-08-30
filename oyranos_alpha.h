@@ -168,7 +168,7 @@ typedef enum {
   oyOBJECT_BLOB_S,                    /**< oyBlob_s */
   oyOBJECT_CONFIG_S,                  /**< oyConfig_s */
   oyOBJECT_CONFIGS_S,                 /**< oyConfigs_s */
-  oyOBJECT_UI_HANDLER,                /**< oyUiHandler_s */
+  oyOBJECT_UI_HANDLER_S,              /**< oyUiHandler_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 

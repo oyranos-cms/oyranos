@@ -578,6 +578,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_BLOB_S: text = "oyBlob_s"; break;
     case oyOBJECT_CONFIG_S: text = "oyConfig_s"; break;
     case oyOBJECT_CONFIGS_S: text = "oyConfigs_s"; break;
+    case oyOBJECT_UI_HANDLER_S: text = "oyUiHandler_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
   }
 
