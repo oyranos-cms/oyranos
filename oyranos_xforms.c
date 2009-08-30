@@ -46,7 +46,7 @@ typedef int  (*oyUiHandler_t)        ( oyPointer           cur,
  *  @date    2009/08/30
  */
 typedef struct {
-  oyOBJECT_e           type;           /**< oyOBJECT_XFORMS_UI_HANDLER */
+  oyOBJECT_e           type;           /**< oyOBJECT_UI_HANDLER_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private features name and hash */
@@ -65,15 +65,15 @@ typedef struct {
   char               * element_search[];
 } oyUiHandler_s;
 
-int        oyXML2XFORMsHandlerSelect1( xmlNodePtr          cur,
+int        oyXML2XFORMsSelect1Handler( xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
                                        oyPointer           user_data );
 
 oyUiHandler_s oy_ui_handler_xf_select1_ =
-  {oyOBJECT_XFORMS_UI_HANDLER,0,0,0,   /**< oyStruct_s members */
+  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "libxml2",                          /**< parser_type */
    "xf:select1",                       /**< Wanted XML element. */
-   (oyUiHandler_t)oyXML2XFORMsHandlerSelect1, /**< oyXFORMsUiHandler_t handler*/
+   (oyUiHandler_t)oyXML2XFORMsSelect1Handler, /**< oyXFORMsUiHandler_t handler*/
    {"xf:choices/xf:item/xf:label.xf:value",0} /**< element_search */
   };
 
