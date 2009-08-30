@@ -5987,7 +5987,7 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
  *
  *  @param         option              the option
  *  @param         type                the Oranos oyOBJECT_e object type
- *  @return                            Oyranos struct
+ *  @return                            Oyranos struct, as reference if possible
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/03/09 (Oyranos: 0.1.10)
@@ -6626,11 +6626,26 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
   int error = !obj;
   const char * erg = 0;
   oyValue_u * v = 0;
+  oyOption_s * s = obj;
+
+  if(obj)
+    oyCheckType__m( oyOBJECT_OPTION_S, return 0; )
 
   if(error <= 0)
     v = obj->value;
 
   error = !v;
+
+  /* iterate into options */
+  if(error <= 0)
+  {
+    oyOption_s * o = s;
+    if(o->value_type == oyVAL_STRUCT  && o->value->oy_struct &&
+       o->value->oy_struct->type_ == oyOBJECT_OPTIONS_S)
+    {
+      oyOptions_GetText( (oyOptions_s*)o->value->oy_struct, type );
+    }
+  }
 
   if(error <= 0)
     if(type == oyNAME_DESCRIPTION)
@@ -8181,6 +8196,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     for( i = 0; i < n; ++i )
     {
       o = oyOptions_Get( options, i );
+
       STRING_ADD ( text, oyOption_GetText( o, type) );
       STRING_ADD ( text, "\n" );
 
@@ -8619,16 +8635,20 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
     if((!o && oyToCreateNew_m(flags)) ||
         oyToAddAlways_m(flags))
     {
+      oyOption_Release( &o );
+
       o = oyOption_New( registration, (*obj)->oy_ );
       error = !o;
 
       if(error <= 0)
         error = oyOption_StructMoveIn( o, oy_struct );
 
-      oyOptions_MoveIn( (*obj), &o, -1 );
+      if(error <= 0)
+        error = oyOptions_MoveIn( (*obj), &o, -1 );
     }
 
-    error = oyOption_StructMoveIn( o, oy_struct );
+    if(error <= 0 && o && *oy_struct)
+      error = oyOption_StructMoveIn( o, oy_struct );
     oyOption_Release( &o );
   }
 
