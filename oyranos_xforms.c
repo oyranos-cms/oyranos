@@ -15,6 +15,8 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
 const char *       oyXFORMsModelGetXPathValue_
                                      ( xmlDocPtr           doc,
                                        const char        * reference );
+char *             oyXML2NodeName_   ( xmlNodePtr          cur );
+
 
 int main (int argc, char ** argv)
 {
@@ -67,6 +69,31 @@ int main (int argc, char ** argv)
   return error;
 }
 
+
+/** @internal
+ *  Function oyXML2NodeName_
+ *  @brief   join namespace and node name
+ *
+ *  @param[in]     pattern             libxml2 node
+ *  @return                            ns + ':' + name
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/28 (Oyranos: 0.1.10)
+ *  @date    2009/08/28
+ */
+char *             oyXML2NodeName_   ( xmlNodePtr          cur )
+{
+  char * name = 0;
+  const xmlChar * prefix = cur->ns && cur->ns->prefix ? cur->ns->prefix : 0;
+  if(prefix)
+  {
+    STRING_ADD( name, (char*)prefix );
+    STRING_ADD( name, ":" );
+  }
+  STRING_ADD( name, (char*)cur->name );
+  return name;
+}
+
 void               oyParseXMLNode_   ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
                                        oyOptions_s       * wid_data )
@@ -76,19 +103,21 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
   while(cur != NULL)
   {
     oyOptions_s * old_wid_data = 0;
+    int collect = 0;
     char * name = 0;
+    char * p_name = 0;
+    const char * search = 0;
+    char * tmp = 0;
+
+    if(cur->parent->type == XML_ELEMENT_NODE)
+      p_name = oyXML2NodeName_(cur->parent);
+    else
+      STRING_ADD( p_name, "root" );
 
     if(cur->type == XML_ELEMENT_NODE)
     {
-      const xmlChar * prefix = cur->ns && cur->ns->prefix ? cur->ns->prefix : 0;
-      if(prefix)
-      {
-        STRING_ADD( name, (char*)prefix );
-        STRING_ADD( name, ":" );
-      }
-      STRING_ADD( name, (char*)cur->name );
-      printf(" name: %s%s%s\n", prefix?(char*)prefix:"", prefix?":":"",
-                                cur->name);
+      name = oyXML2NodeName_(cur);
+      printf(" name: (%s)->%s\n", p_name, name);
 
       if(strcmp( name, "xf:select1" ) == 0)
       {
@@ -96,6 +125,7 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
         wid_data = 0;
         oyOptions_SetFromText( &wid_data, "////search",
                                "xf:choices/xf:item", OY_CREATE_NEW );
+        collect = 1;
       }
 
       if(strcmp( name, "xf:item" ) == 0)
@@ -104,6 +134,7 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
         wid_data = 0;
         oyOptions_SetFromText( &wid_data, "////search",
                                "xf:choices/xf:label.xf:value", OY_CREATE_NEW );
+        collect = 1;
       }
 
       xmlAttrPtr attr = cur->properties;
@@ -127,7 +158,6 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
 
           if(wid_data && oyOptions_FindString(wid_data, "search", 0))
           {
-            char * tmp = 0;
             STRING_ADD( tmp, "////" );
             STRING_ADD( tmp, name );
             oyOptions_SetFromText( &wid_data, tmp, v, OY_CREATE_NEW );
@@ -150,29 +180,43 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
       printf("  key: %s\n", key);
     }
 
-    if(name && wid_data &&
-       oyOptions_FindString(wid_data, "search", 0) &&
-       strstr(oyOptions_FindString(wid_data, "search", 0), name) == 0)
+    search = oyOptions_FindString(wid_data, "search", 0);
+
+    if(p_name && wid_data && key &&
+       search &&
+       strstr(search, p_name) != 0)
     {
-      char * tmp = 0;
       STRING_ADD( tmp, "////" );
-      STRING_ADD( tmp, name );
+      STRING_ADD( tmp, p_name );
       oyOptions_SetFromText( &wid_data, tmp, (char*)key, OY_CREATE_NEW );
       oyFree_m_( tmp )
     }
 
 
     /* clean old search context */
-    if(old_wid_data)
+    if(collect)
     {
-      printf("collected: %s\n", oyOptions_GetText(wid_data, oyNAME_NICK));
-      oyOptions_Release( &wid_data );
+      printf("collected:\n%s", oyOptions_GetText(wid_data, oyNAME_NICK));
+
+      if(old_wid_data)
+      {
+        STRING_ADD( tmp, "////" );
+        STRING_ADD( tmp, (name?name:p_name) );
+        oyOptions_MoveInStruct( &old_wid_data, tmp,
+                                (oyStruct_s**)&wid_data, -1 );
+        oyFree_m_( tmp )
+      }
+      else
+        oyOptions_Release( &wid_data );
+
       wid_data = old_wid_data;
       old_wid_data = 0;
     }
 
     if(name)
       oyFree_m_( name )
+    if(p_name)
+      oyFree_m_( p_name )
 
     cur = cur->next;
   }
