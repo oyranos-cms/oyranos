@@ -763,7 +763,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
  */
 char oydi_extra_options[] = {
  "\n\
-  <" OY_TOP_INTERNAL ">\n\
+  <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
      <" "display." CMM_NICK ">\n\
@@ -775,7 +775,7 @@ char oydi_extra_options[] = {
      </" "display." CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
-  </" OY_TOP_INTERNAL ">\n"
+  </" OY_TOP_SHARED ">\n"
 };
 
 
@@ -839,7 +839,7 @@ oyConnectorImaging_s oyx1_Display_socket = {
 oyConnectorImaging_s *oyx1_Display_sockets[2] = {&oyx1_Display_socket,0};
 
 
-#define OY_IMAGE_DISPLAY_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "display"
+#define OY_IMAGE_DISPLAY_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "display"
 /** @instance oydi_api7_image_display
  *  @brief    oydi oyCMMapi7_s implementation
  *

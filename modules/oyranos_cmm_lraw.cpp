@@ -35,7 +35,7 @@
 
 #define CMM_NICK "lraw"
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
-#define OY_LIBRAW_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.input_libraw-lite._CPU._NOACCEL"
+#define OY_LIBRAW_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.input_libraw-lite._CPU._NOACCEL"
 
 
 #ifdef __cplusplus
@@ -603,7 +603,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
 const char lraw_extra_options[] = {
  "\n\
-  <" OY_TOP_INTERNAL ">\n\
+  <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
      <" "file_read." CMM_NICK ">\n\
@@ -644,7 +644,7 @@ const char lraw_extra_options[] = {
      </" CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
-  </" OY_TOP_INTERNAL ">\n"
+  </" OY_TOP_SHARED ">\n"
 };
 
 oyDATATYPE_e lraw_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};

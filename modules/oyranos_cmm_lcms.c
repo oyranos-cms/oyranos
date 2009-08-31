@@ -1599,7 +1599,7 @@ int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func )
 
 char lcms_extra_options[] = {
  "\n\
-  <" OY_TOP_INTERNAL ">\n\
+  <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
      <" "icc." CMM_NICK ">\n\
@@ -1607,7 +1607,7 @@ char lcms_extra_options[] = {
      </" "icc." CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
-  </" OY_TOP_INTERNAL ">\n"
+  </" OY_TOP_SHARED ">\n"
 };
 
 #define A(long_text) STRING_ADD( tmp, long_text)
@@ -1641,7 +1641,7 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
   A( _("Cmyk to Cmyk transformation"));
   A(              ":</td>\n\
     <td>\n\
-     <xf:select1 ref=\"/" OY_TOP_INTERNAL "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
       <xf:choices>\n\
        <xf:label>" );
   A(          _("Black Preservation"));
@@ -1699,7 +1699,7 @@ oyCMMapi6_s   lcms_api6_cmm = {
   lcmsCMMMessageFuncSet,
   lcmsCMMCanHandle,
 
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc." CMM_NICK ".CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
 
   lcmsVERSION,
@@ -1731,7 +1731,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
   lcmsCMMMessageFuncSet,
   lcmsCMMCanHandle,
 
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc.colour." CMM_NICK "._CPU._ACCEL",
 
   lcmsVERSION,
@@ -1768,7 +1768,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsCMMMessageFuncSet,
   lcmsCMMCanHandle,
 
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc.colour." CMM_NICK "._CPU._NOACCEL",
 
   lcmsVERSION,

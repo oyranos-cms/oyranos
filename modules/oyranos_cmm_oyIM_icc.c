@@ -367,7 +367,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   oyIMFilter_CanHandle, /* oyCMMCanHandle_f */
 
   /* @todo registration: for what? */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
   0,   /* id_; keep empty */

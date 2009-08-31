@@ -301,7 +301,7 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
 
 const char ppm_write_extra_options[] = {
  "\n\
-  <" OY_TOP_INTERNAL ">\n\
+  <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
      <" "file_write." CMM_NICK ">\n\
@@ -309,7 +309,7 @@ const char ppm_write_extra_options[] = {
      </" "file_write." CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
-  </" OY_TOP_INTERNAL ">\n"
+  </" OY_TOP_SHARED ">\n"
 };
 
 oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
@@ -394,7 +394,7 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
   0,   /* id_; keep empty */
@@ -436,7 +436,7 @@ oyCMMapi7_s   oyra_api7_image_write_ppm = {
   oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
   0,   /* id_; keep empty */
@@ -984,7 +984,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
 const char ppm_read_extra_options[] = {
  "\n\
-  <" OY_TOP_INTERNAL ">\n\
+  <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
      <" "file_read." CMM_NICK ">\n\
@@ -992,7 +992,7 @@ const char ppm_read_extra_options[] = {
      </" "file_read." CMM_NICK ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
-  </" OY_TOP_INTERNAL ">\n"
+  </" OY_TOP_SHARED ">\n"
 };
 
 oyConnectorImaging_s oyra_imageInputPPM_connector = {
@@ -1047,7 +1047,7 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
   0,   /* id_; keep empty */
@@ -1089,7 +1089,7 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
   oyraFilter_ImageInputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
   0,   /* id_; keep empty */
