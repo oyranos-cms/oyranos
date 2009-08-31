@@ -83,7 +83,7 @@
 #define OY_SLASH_C               '/'
 /** Top path for standard settings */
 #define OY_TOP_SHARED            "shared"
-/** use this path for non standardised filters and applications */
+/** @deprecated use this path for non standardised filters and applications */
 #define OY_TOP_INTERNAL          "sw"
 /** Domain path for standard settings */
 #define OY_DOMAIN_STD            "freedesktop.org"
