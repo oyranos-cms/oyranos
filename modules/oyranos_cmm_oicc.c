@@ -150,23 +150,51 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
                                        oyAlloc_f            allocateFunc )
 {
   char * tmp = 0;
+  oyOptions_s * os = options;
+  const char * editing_rgb = oyOptions_FindString( os, "editing_rgb", 0 );
+  const char * editing_cmyk = oyOptions_FindString( os, "editing_cmyk", 0 );
+  const char * editing_gray = oyOptions_FindString( os, "editing_gray", 0 );
+  const char * editing_lab = oyOptions_FindString( os, "editing_lab", 0 );
+  const char * editing_xyz = oyOptions_FindString( os, "editing_xyz", 0 );
+#if 0
+  const char * assumed_rgb = oyOptions_FindString( os, "assumed_rgb", 0 );
+  const char * assumed_cmyk = oyOptions_FindString( os, "assumed_cmyk", 0 );
+  const char * assumed_gray = oyOptions_FindString( os, "assumed_gray", 0 );
+  const char * assumed_lab = oyOptions_FindString( os, "assumed_lab", 0 );
+  const char * assumed_xyz = oyOptions_FindString( os, "assumed_xyz", 0 );
+#endif
+  const char * action_untagged_assign = oyOptions_FindString( os, "action_untagged_assign", 0 );
+  const char * action_missmatch_cmyk = oyOptions_FindString( os, "action_missmatch_cmyk", 0 );
+  const char * action_missmatch_rgb = oyOptions_FindString( os, "action_missmatch_rgb", 0 );
+  const char * mixed_colour_spaces_print_doc_convert = oyOptions_FindString( os, "mixed_colour_spaces_print_doc_convert", 0 );
+  const char * mixed_colour_spaces_screen_doc_convert = oyOptions_FindString( os, "mixed_colour_spaces_screen_doc_convert", 0 );
+  const char * proof_hard = oyOptions_FindString( os, "proof_hard", 0 );
+  const char * proof_soft = oyOptions_FindString( os, "proof_soft", 0 );
+  const char * rendering_intent = oyOptions_FindString( os, "rendering_intent", 0 );
+  const char * rendering_bpc = oyOptions_FindString( os, "rendering_bpc", 0 );
+  const char * rendering_intent_proof = oyOptions_FindString( os, "rendering_intent_proof", 0 );
+  const char * rendering_gamut_warning = oyOptions_FindString( os, "rendering_gamut_warning", 0 );
+  const char * rendering_high_precission = oyOptions_FindString( os, "rendering_high_precission", 0 );
 
-  oyStringCopy_( "\
+  tmp = oyStringCopy_( "\
   <h3>Oyranos ", oyAllocateFunc_ );
 
   A(       _("Default Profiles"));
   A(                         ":</h3>\n\
-  <table>\n\
+  <table>\n");
+  if(editing_rgb)
+  {
+  A("\
    <tr>\n\
     <td>" );
   A( _("Editing Rgb"));
   A(              ":</td>\n\
     <td>\n\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/default/profile/editing_rgb\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_rgb\">\n\
       <xf:choices label=\"" );
   A(                   _("Editing Rgb"));
   A(                                "\">\n\
-       <sta:profiles cspace1=\"RGB\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
+       <"CMM_NICK":profiles cspace1=\"RGB\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
         <xf:label>sRGB.icc</xf:label>\n\
         <xf:value>sRGB.icc</xf:value>\n\
@@ -178,15 +206,19 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
       </xf:choices>\n\
      </xf:select1>\n\
     </td>\n\
-   </tr>\n\
+   </tr>\n" );
+  }
+  if(editing_cmyk)
+  {
+  A("\
    <tr>\n\
     <td>" );
   A( _("Editing Cmyk"));
   A(               ":</td>\n\
     <td>\n\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/default/profile/editing_cmyk\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_cmyk\">\n\
       <xf:choices>\n\
-       <sta:profiles cspace1=\"CMYK\" class1=\"prtr\"/>\n\
+       <"CMM_NICK":profiles cspace1=\"CMYK\" class1=\"prtr\"/>\n\
        <xf:item>\n\
         <xf:label>coated_FOGRA39L_argl.icc</xf:label>\n\
         <xf:value>coated_FOGRA39L_argl.icc</xf:value>\n\
@@ -194,15 +226,19 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
       </xf:choices>\n\
      </xf:select1>\n\
     </td>\n\
-   </tr>\n\
+   </tr>\n" );
+  }
+  if(editing_lab)
+  {
+  A("\
    <tr>\n\
     <td>" );
   A( _("Editing Lab"));
   A(              ":</td>\n\
     <td>\n\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/default/profile/editing_lab\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_lab\">\n\
       <xf:choices xml:lang=\"en\" label=\"Editing Lab\">\n\
-       <sta:profiles cspace1=\"Lab\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
+       <"CMM_NICK":profiles cspace1=\"Lab\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
         <xf:label>Lab.icc</xf:label>\n\
         <xf:value>Lab.icc</xf:value>\n\
@@ -214,7 +250,11 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
       </xf:choices>\n\
      </xf:select1>\n\
     </td>\n\
-   </tr>\n\
+   </tr>\n" );
+  }
+  if(editing_xyz)
+  {
+  A("\
    <tr>\n\
     <td>" );
   A( _("Editing XYZ") );
@@ -222,7 +262,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
     <td>\n\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_xyz\">\n\
       <xf:choices>\n\
-       <sta:profiles cspace1=\"XYZ\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
+       <"CMM_NICK":profiles cspace1=\"XYZ\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
         <xf:label>XYZ.icc</xf:label>\n\
         <xf:value>XYZ.icc</xf:value>\n\
@@ -234,7 +274,11 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
       </xf:choices>\n\
      </xf:select1>\n\
     </td>\n\
-   </tr>\n\
+   </tr>\n" );
+  }
+  if(editing_gray)
+  {
+  A("\
    <tr>\n\
     <td>" );
   A( _("Editing Gray"));
@@ -242,7 +286,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
     <td>\n\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_gray\">\n\
       <xf:choices>\n\
-       <sta:profiles cspace1=\"Gray\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
+       <"CMM_NICK":profiles cspace1=\"Gray\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
         <xf:label>Grau.icc</xf:label>\n\
         <xf:value>Grau.icc</xf:value>\n\
@@ -254,9 +298,60 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
       </xf:choices>\n\
      </xf:select1>\n\
     </td>\n\
-   </tr>\n\
-  </table>\n\
+   </tr>\n");
+  }
+  A("\
+  </table>\
 " );
+
+
+
+  A("\
+  <h3>Oyranos " );
+  A(       _("Behaviour"));
+  A(                         ":</h3>\n\
+  <xf:group>\n");
+  if(action_untagged_assign)
+  {
+  A("\
+   <tr>\n\
+    <td>" );
+  A( _("No Image profile"));
+  A(              ":</td>\n\
+    <td>\n\
+     <xf:select1 ref=\"/" OY_ACTION_UNTAGGED_ASSIGN "\">\n\
+      <xf:help>" );
+  A(        _("Image has no colour space embedded. What default action shall be performed?") );
+  A(                "</xf:help>\n\
+      <xf:choices>\n\
+       <"CMM_NICK":profiles cspace1=\"RGB\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
+       <xf:item>\n\
+        <xf:label>");
+  A(_("Assign No Profile"));
+  A(                   "</xf:label>\n\
+        <xf:value>0</xf:value>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:label>");
+  A(_("Assign Assumed Profile"));
+  A(                   "</xf:label>\n\
+        <xf:value>1</xf:value>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:label>");
+  A(_("Promt"));
+  A(                   "</xf:label>\n\
+        <xf:value>2</xf:value>\n\
+       </xf:item>\n\
+      </xf:choices>\n\
+     </xf:select1>\n\
+    </td>\n\
+   </tr>\n" );
+  }
+  A("\
+  </xf:group>\
+" );
+
 
   if(allocateFunc && tmp)
   {
@@ -394,14 +489,15 @@ int          oiccICCDataScan         ( oyPointer           buf,
 
 oyCMMDataTypes_s icc_data[] = {
  {
-  oyOBJECT_CMM_API5_S, /* oyStruct_s::type oyOBJECT_CMM_API5_S */
-  0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  0, /* id */
-  "color/icc", /* sub paths */
-  "icc:icm", /* file name extensions */
-  oiccDataGetText, /* oyCMMDataGetText */
-  oiccICCDataLoadFromMem, /* oyCMMDataLoadFromMem */
-  oiccICCDataScan /* oyCMMDataScan */
+  oyOBJECT_CMM_DATA_TYPES_S, /* oyStruct_s::type; */
+  0,0,0, /* unused oyStruct_s fields in static data; keep to zero */
+  0, /* id; */
+  "color/icc", /* paths; sub paths */
+  "icc:icm", /* exts; file name extensions */
+  "profile", /* element_name; in XML documents */
+  oiccDataGetText, /* oyCMMDataGetText; */
+  oiccICCDataLoadFromMem, /* oyCMMDataLoadFromMem; */
+  oiccICCDataScan /* oyCMMDataScan; */
  },{0} /* zero list end */
 };
 
@@ -415,7 +511,6 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
   oyOption_s * o = 0,
              * db_o = 0;
   const char * tmp = 0;
-  int k = 0;
 
   o = oyOptions_Find( f_options, key );
   /* only set missing options */
@@ -460,10 +555,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   oyProfile_s * proof =  0;
   oyOptions_s * db_options = 0,
               * f_options = 0;
-  oyOption_s * o = 0,
-             * db_o = 0;
-  const char * db_val = 0,
-             * val = 0;
+  oyOption_s * o = 0;
+  const char * val = 0;
 
   if(s->input)
     g = oyFilterGraph_FromNode( s->input, 0 );
@@ -652,7 +745,7 @@ oyCMMapi9_s  oicc_api9 = {
   oiccFilterCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
-  OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
   0,   /* id_; keep empty */
@@ -663,6 +756,7 @@ oyCMMapi9_s  oicc_api9 = {
 
   oicc_default_colour_icc_options,   /* options */
   oiccGetDefaultColourIccOptionsUI,  /* oyCMMuiGet */
+  (char*)CMM_NICK"=\"http://www.oyranos.org/2009/oyranos_icc\"", /* xml_namespace */
 
   icc_data,  /* data_types */
   0,  /* getText */
