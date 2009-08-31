@@ -67,7 +67,13 @@ const char *       oyXFORMsModelGetXPathValue_
                                      ( xmlDocPtr           doc,
                                        const char        * reference );
 char *             oyXML2NodeName_   ( xmlNodePtr          cur );
-
+char *       oyXFORMsFromModelAndUi  ( const char        * data,
+                                       const char        * ui_text,
+                                       const char       ** namespaces,
+                                       oyAlloc_f           allocate_func );
+int          oyXFORMsRenderUi        ( const char        * xforms,
+                                       oyUiHandler_s    ** ui_handlers,
+                                       oyPointer           user_data );
 
 
 
@@ -93,53 +99,150 @@ oyUiHandler_s * oy_ui_handlers[] = {
 
 int main (int argc, char ** argv)
 {
-  oyFilterNode_s * node = oyFilterNode_NewWith( "//imaging/icc.lcms", 0,0 );
-  char * ui_text = 0, * text = 0;
+  const char * node_name = argc > 1 ? argv[1] : "//imaging/icc.lcms";
+  oyFilterNode_s * node = oyFilterNode_NewWith( node_name, 0,0 );
+  char * ui_text = 0,
+      ** namespaces = 0,
+       * text = 0;
   const char * data = 0;
-  int error = oyFilterNode_UiGet( node, &ui_text, malloc );
-  xmlDocPtr doc = 0;
-  xmlNodePtr cur = 0;
+  int error = 0,
+      i;
   oyOptions_s * opts = 0;
 
   oyOptions_Release( &node->core->options_ );
+  /* First call for options ... */
   opts = oyFilterNode_OptionsGet( node, 
-                            OY_SELECT_FILTER | oyOPTIONATTRIBUTE_ADVANCED );
+                                  OY_SELECT_FILTER | OY_SELECT_COMMON |
+                                  oyOPTIONATTRIBUTE_ADVANCED |
+                                  oyOPTIONATTRIBUTE_FRONT );
+  /* ... then get the UI for this filters options. */
+  error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
+  oyFilterNode_Release( &node );
 
   data = oyOptions_GetText( opts, oyNAME_NAME );
-  text = malloc( strlen(ui_text) + strlen( data ) + 1024 );
-  sprintf( text,
-   "<html xmlns=\"http://www.w3.org/1999/xhtml\"\n"
-   "xmlns:xf=\"http://www.w3.org/2002/xforms\">\n"
-   "<head>\n"
-   "  <title>lcms options</title>\n"
-   "  <xf:model>\n"
-   "    <xf:instance xmlns=\"\">\n"
-   "      %s"
-   "    </xf:instance>\n"
-   "  </xf:model>\n"
-   "</head>\n"
-   "<body>\n%s\n"
-   "</body></html>", data, ui_text );
-  printf("%s\n", text);
+  text = oyXFORMsFromModelAndUi( data, ui_text, (const char**)namespaces,
+                                 malloc );
 
-  /*printf("%s\n", oyFilterNode_GetText( node, oyNAME_NICK ));*/
-
-  doc = xmlParseMemory( text, strlen(text) );
-  cur = xmlDocGetRootElement(doc);
-
-  oyParseXMLNode_( doc, cur, 0, oy_ui_handlers, 0 );
-
+  if(namespaces)
+  {
+    i = 0;
+    while(namespaces[i])
+      free( namespaces[i++] );
+    free(namespaces);
+  }
+  if(ui_text) free(ui_text); ui_text = 0;
   oyOptions_Release( &opts );
+
+  if(oy_debug)
+    printf("%s\n", text);
+
+  error = oyXFORMsRenderUi( text, oy_ui_handlers, 0 );
 
   /* xmlParseMemory sollte der Ebenen gewahr werden wie oyOptions_FromText. */
   opts = oyOptions_FromText( data, 0,0 );
 
-  if(ui_text) free(ui_text); ui_text = 0;
   if(text) free(text); text = 0;
-  oyFilterNode_Release( &node );
+
+  return error;
+}
+
+/** @internal
+ *  Function oyXFORMsRenderUi
+ *  @brief   render the UI by a selected toolkit
+ *
+ *  Parse the XFORMS XML and render with the selected toolkit UI handlers.
+ *
+ *  @param[in]     xforms              XFORMS text
+ *  @param[in]     ui_handlers         the toolkit specific XFORMS handlers
+ *  @param[in,out] user_data           user context passed to ui_handlers
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/31 (Oyranos: 0.1.10)
+ *  @date    2009/08/31
+ */
+int          oyXFORMsRenderUi        ( const char        * xforms,
+                                       oyUiHandler_s    ** ui_handlers,
+                                       oyPointer           user_data )
+{
+  int error = !xforms || !ui_handlers;
+  xmlDocPtr doc = 0;
+  xmlNodePtr cur = 0;
+  const char * text = xforms;
+
+  if(error)
+    return error;
+
+  doc = xmlParseMemory( text, strlen(text) );
+  cur = xmlDocGetRootElement(doc);
+
+  oyParseXMLNode_( doc, cur, 0, ui_handlers, user_data );
+
   xmlFreeDoc( doc );
 
   return error;
+}
+
+/** @internal
+ *  Function oyXFORMsFromModelAndUi
+ *  @brief   join data and UI
+ *
+ *  @param[in]     data                data text
+ *  @param[in]     ui_text             ui text
+ *  @param[in]     allocate_func       user allocator
+ *  @return                            XFORMS text
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/31 (Oyranos: 0.1.10)
+ *  @date    2009/08/31
+ */
+char *       oyXFORMsFromModelAndUi  ( const char        * data,
+                                       const char        * ui_text,
+                                       const char       ** namespaces,
+                                       oyAlloc_f           allocate_func )
+{
+  char * text = 0;
+  int error = !data || !ui_text,
+      pos = 0;
+
+  if(error)
+    return 0;
+
+  STRING_ADD( text,
+   "<html xmlns=\"http://www.w3.org/1999/xhtml\"\n"
+   "      xmlns:xf=\"http://www.w3.org/2002/xforms\"\n" );
+  while(namespaces && namespaces[pos])
+  {
+    STRING_ADD( text, "      xmlns:" );
+    STRING_ADD( text, namespaces[pos] );
+    ++pos;
+  }
+  STRING_ADD( text,
+   ">\n"
+   "<head>\n"
+   "  <title>lcms options</title>\n"
+   "  <xf:model>\n"
+   "    <xf:instance xmlns=\"\">\n"
+   "      " );
+  STRING_ADD( text, data );
+  STRING_ADD( text,
+   "    </xf:instance>\n"
+   "  </xf:model>\n"
+   "</head>\n"
+   "<body>\n" );
+  STRING_ADD( text, ui_text );
+  STRING_ADD( text,
+   "\n"
+   "</body></html>" );
+
+  if(allocate_func && allocate_func != oyAllocateFunc_)
+  {
+    char * t = oyStringCopy_( text, allocate_func );
+    oyDeAllocateFunc_(text);
+    text = t; t = 0;
+  }
+
+  return text;
 }
 
 
@@ -254,6 +357,16 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
             if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
             oyFree_m_( tmp )
           }
+        }
+
+        if( strcmp((char*)attr->name,"label") == 0 &&
+            attr->children->content )
+        {
+          if(wid_data && oyOptions_FindString(wid_data, "search", 0))
+            error = oyOptions_SetFromText( &wid_data, "////label",
+                                           (char*)attr->children->content,
+                                           OY_CREATE_NEW );
+          if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
         }
 
         attr = attr->next;
@@ -430,7 +543,7 @@ const char * oyXFORMsModelGetXPathValue_
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/08/29 (Oyranos: 0.1.10)
- *  @date    2009/08/29
+ *  @date    2009/08/31
  */
 int        oyXML2XFORMsSelect1Handler( xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
@@ -461,15 +574,19 @@ int        oyXML2XFORMsSelect1Handler( xmlNodePtr          cur,
     o = oyOptions_Get( collected_elements, i );
     opts = (oyOptions_s*) oyOption_StructGet( o, oyOBJECT_OPTIONS_S );
     
+    if(!opts && oyFilterRegistrationMatch( o->registration,"xf:label", 0 ))
+      printf( "%s: ", o->value->string );
+
     if(opts && oyFilterRegistrationMatch( o->registration,"xf:choices", 0 ))
     {
-      printf( "Select \"\": " );
-
       j_n = oyOptions_Count( opts);
       for(j = 0; j < j_n; ++j)
       {
         o2 = oyOptions_Get( opts, j );
         opts2 = (oyOptions_s*) oyOption_StructGet( o2, oyOBJECT_OPTIONS_S );
+
+        if(!opts2 && oyFilterRegistrationMatch(o2->registration,"xf:label", 0 ))
+          printf( "%s: ", o2->value->string );
 
         if(opts2 && oyFilterRegistrationMatch( o2->registration,"xf:item", 0 ))
         {
