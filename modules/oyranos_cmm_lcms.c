@@ -1642,20 +1642,21 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
   A(              ":</td>\n\
     <td>\n\
      <xf:select1 ref=\"/" OY_TOP_INTERNAL "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
-      <xf:choices label=\"" );
-  A(                   _("Black Preservation"));
-  A(                                "\">\n\
+      <xf:choices>\n\
+       <xf:label>" );
+  A(          _("Black Preservation"));
+  A(                              "</xf:label>\n\
        <xf:item>\n\
-        <xf:label>0 - none</xf:label>\n\
         <xf:value>0</xf:value>\n\
+        <xf:label>none</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
-        <xf:label>1 - LCMS_PRESERVE_PURE_K</xf:label>\n\
         <xf:value>1</xf:value>\n\
+        <xf:label>LCMS_PRESERVE_PURE_K</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
-        <xf:label>2 - LCMS_PRESERVE_K_PLANE</xf:label>\n\
         <xf:value>2</xf:value>\n\
+        <xf:label>LCMS_PRESERVE_K_PLANE</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
      </xf:select1>\n\

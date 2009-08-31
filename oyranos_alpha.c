@@ -20732,7 +20732,7 @@ oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
  *  @brief   get filter options
  *
  *  @param[in,out] node                filter object
- *  @param         flags               see oyOptions_ForFilter()
+ *  @param         flags               see oyOptions_s::oyOptions_ForFilter()
  *  @return                            the options
  *
  *  @version Oyranos: 0.1.10
