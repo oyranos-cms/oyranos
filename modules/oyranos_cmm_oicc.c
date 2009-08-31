@@ -164,6 +164,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
   const char * assumed_xyz = oyOptions_FindString( os, "assumed_xyz", 0 );
 #endif
   const char * action_untagged_assign = oyOptions_FindString( os, "action_untagged_assign", 0 );
+#if 0
   const char * action_missmatch_cmyk = oyOptions_FindString( os, "action_missmatch_cmyk", 0 );
   const char * action_missmatch_rgb = oyOptions_FindString( os, "action_missmatch_rgb", 0 );
   const char * mixed_colour_spaces_print_doc_convert = oyOptions_FindString( os, "mixed_colour_spaces_print_doc_convert", 0 );
@@ -175,6 +176,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
   const char * rendering_intent_proof = oyOptions_FindString( os, "rendering_intent_proof", 0 );
   const char * rendering_gamut_warning = oyOptions_FindString( os, "rendering_gamut_warning", 0 );
   const char * rendering_high_precission = oyOptions_FindString( os, "rendering_high_precission", 0 );
+#endif
 
   tmp = oyStringCopy_( "\
   <h3>Oyranos ", oyAllocateFunc_ );

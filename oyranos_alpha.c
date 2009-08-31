@@ -8177,9 +8177,9 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
  *  @param         type                oyNAME_NICK is equal to an ID
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/25 (Oyranos: 0.1.9)
- *  @date    2008/11/25
+ *  @date    2008/08/31
  */
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type )
@@ -8187,17 +8187,56 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   int error = !options;
   const char * erg = 0;
   char * text = 0;
-  oyOption_s * o = 0;
-  int i, n;
-
+  oyOption_s * o = 0, *o2 = 0;
+  int i, n, ti, c;
+  int * sort, changed;
 
   if(error <= 0)
   {
     n = oyOptions_Count( options );
+    sort = oyAllocateFunc_( n * sizeof(int) );
+    for( i = 0; i < n; ++i )
+      sort[i]=i;
+
+    /* sort the options alphabetical */
+    do
+    {
+      changed = 0;
+      for( i = 0; i < n-1; ++i )
+      {
+        o = oyOptions_Get( options, sort[i] );
+        o2 = oyOptions_Get( options, sort[i + 1] );
+        c = oyStrcmp_(o->registration, o2->registration);
+        if(c > 0)
+        {
+          ti = sort[i];
+          sort[i] = sort[i + 1];
+          sort[i+1] = ti;
+          changed = 1;
+        }
+        oyOption_Release( &o );
+        oyOption_Release( &o2 );
+      }
+      for( i = n-2; i >= 0; --i )
+      {
+        o = oyOptions_Get( options, sort[i] );
+        o2 = oyOptions_Get( options, sort[i + 1] );
+        c = oyStrcmp_(o->registration, o2->registration);
+        if(c > 0)
+        {
+          ti = sort[i];
+          sort[i] = sort[i + 1];
+          sort[i+1] = ti;
+          changed = 1;
+        }
+        oyOption_Release( &o );
+        oyOption_Release( &o2 );
+      }
+    } while(changed);
 
     for( i = 0; i < n; ++i )
     {
-      o = oyOptions_Get( options, i );
+      o = oyOptions_Get( options, sort[i] );
 
       STRING_ADD ( text, oyOption_GetText( o, type) );
       STRING_ADD ( text, "\n" );
