@@ -20775,20 +20775,24 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
  *
  *  @param[in,out] node                filter object
  *  @param[out]    ui_text             XFORMS fitting to the node Options
+ *  @param[out]    namespaces          additional XML namespaces
  *  @param         allocateFunc        optional user allocator
  *  @return                            the options
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/29 (Oyranos: 0.1.10)
- *  @date    2009/07/29
+ *  @date    2009/08/31
  */
 int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
                                        char              ** ui_text,
+                                       char             *** namespaces,
                                        oyAlloc_f            allocateFunc )
 {
   int error = 0;
   oyFilterNode_s * s = node;
   oyOptions_s * options = 0;
+  char * text = 0,
+       * tmp = 0;
 
   if(!node)
     return 0;
@@ -20798,14 +20802,75 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
-  if(!error && node->core->api4_->oyCMMuiGet)
-  {
+  if(!error)
     options = oyFilterNode_OptionsGet( node, 0 );
 
+  if(!error && node->core->api4_->oyCMMuiGet)
+  {
     /* @todo and how to mix in the values? */
-    error = node->core->api4_->oyCMMuiGet( options, ui_text, allocateFunc );
+    error = node->core->api4_->oyCMMuiGet( options, &text, oyAllocateFunc_ );
+  }
 
-    oyOptions_Release( &options );
+  if(!error)
+  {
+    oyCMMapiFilters_s * apis;
+    int apis_n = 0, i,j = 0;
+    oyCMMapi9_s * cmm_api9 = 0;
+    char * class, * api_reg;
+    const char * pattern = node->core->registration_;
+
+    class = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
+    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+    STRING_ADD( api_reg, class );
+    oyFree_m_( class );
+
+    apis = oyCMMsGetFilterApis_( 0, 0, api_reg, oyOBJECT_CMM_API9_S, 0, 0);
+    apis_n = oyCMMapiFilters_Count( apis );
+    for(i = 0; i < apis_n; ++i)
+    {
+      cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+
+      if(oyFilterRegistrationMatch( cmm_api9->pattern, pattern, 0 ))
+      {
+        if(cmm_api9->oyCMMuiGet)
+          error = cmm_api9->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+        if(error)
+        {
+          WARNc2_S( "%s %s",_("error in module:"), cmm_api9->registration );
+          return 1;
+        }
+        else
+        {
+          STRING_ADD( text, tmp );
+          oyFree_m_(tmp);
+
+          if(namespaces && cmm_api9->xml_namespace)
+          {
+            if(j == 0)
+            {
+              size_t len = (apis_n - i + 1) * sizeof(char*);
+              *namespaces = allocateFunc( len );
+              memset(*namespaces, 0, len);
+            }
+            *namespaces[j] = oyStringCopy_( cmm_api9->xml_namespace,
+                                            allocateFunc );
+            ++j;
+            namespaces[j] = 0;
+          }
+        }
+      }
+
+      if(cmm_api9->release)
+        cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+    }
+    oyCMMapiFilters_Release( &apis );
+  }
+
+  oyOptions_Release( &options );
+
+  if(error <= 0 && text)
+  {
+    *ui_text = oyStringCopy_( text, allocateFunc );
   }
 
   return error;

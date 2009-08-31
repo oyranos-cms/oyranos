@@ -2405,6 +2405,7 @@ oyOptions_s*   oyFilterNode_OptionsGet(oyFilterNode_s    * node,
                                        int                 flags );
 int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
                                        char              ** ui_text,
+                                       char             *** namespaces,
                                        oyAlloc_f            allocateFunc );
 const char *   oyFilterNode_GetText  ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type );
