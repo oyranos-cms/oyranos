@@ -7660,6 +7660,8 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
  *          oyOPTIONATTRIBUTE_FRONT |
  *          OY_SELECT_COMMON @endverbatim
  *
+ *  @see OY_SELECT_FILTER OY_SELECT_COMMON oyOPTIONATTRIBUTE_e
+ *
  *  @param[in]     registration        the filter registration to search for
  *  @param[in]     cmm                 a CMM to match
  *  @param[in]     flags               for inbuild defaults |

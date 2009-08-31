@@ -695,7 +695,26 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
 
+/** @define  OY_SELECT_FILTER
+ *  @brief   select from filter
+ *  @ingroup objects_value
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/27 (Oyranos: 0.1.10)
+ *  @date    2009/07/27
+ */
 #define OY_SELECT_FILTER         2048
+/** @define  OY_SELECT_COMMON
+ *  @brief   select from policy
+ *  @ingroup objects_value
+ *
+ *  Select typical from a associatable oyCMMapi9_s type of filter providing 
+ *  common options.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/27 (Oyranos: 0.1.10)
+ *  @date    2009/07/27
+ */
 #define OY_SELECT_COMMON         4096
 /** @enum    oyOPTIONATTRIBUTE_e
  *  @brief   usage type
