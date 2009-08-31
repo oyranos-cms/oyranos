@@ -94,7 +94,7 @@ oyUiHandler_s * oy_ui_handlers[] = {
 int main (int argc, char ** argv)
 {
   oyFilterNode_s * node = oyFilterNode_NewWith( "//imaging/icc.lcms", 0,0 );
-  char * ui_text = 0, * text = 0, * data_tmp = 0;
+  char * ui_text = 0, * text = 0;
   const char * data = 0;
   int error = oyFilterNode_UiGet( node, &ui_text, malloc );
   xmlDocPtr doc = 0;
@@ -106,24 +106,20 @@ int main (int argc, char ** argv)
                             OY_SELECT_FILTER | oyOPTIONATTRIBUTE_ADVANCED );
 
   data = oyOptions_GetText( opts, oyNAME_NAME );
-  /* inject a ' xmlns=""' once */
-  STRING_ADD( data_tmp, "<sw xmlns=\"\">" );
-  STRING_ADD( data_tmp, oyStrstr_(data, "<sw>")+4 );
-
-  text = malloc( strlen(ui_text) + strlen( data_tmp ) + 1024 );
+  text = malloc( strlen(ui_text) + strlen( data ) + 1024 );
   sprintf( text,
    "<html xmlns=\"http://www.w3.org/1999/xhtml\"\n"
    "xmlns:xf=\"http://www.w3.org/2002/xforms\">\n"
    "<head>\n"
    "  <title>lcms options</title>\n"
    "  <xf:model>\n"
-   "    <xf:instance>\n"
+   "    <xf:instance xmlns=\"\">\n"
    "      %s"
    "    </xf:instance>\n"
    "  </xf:model>\n"
    "</head>\n"
    "<body>\n%s\n"
-   "</body></html>", data_tmp, ui_text );
+   "</body></html>", data, ui_text );
   printf("%s\n", text);
 
   /*printf("%s\n", oyFilterNode_GetText( node, oyNAME_NICK ));*/
@@ -136,11 +132,10 @@ int main (int argc, char ** argv)
   oyOptions_Release( &opts );
 
   /* xmlParseMemory sollte der Ebenen gewahr werden wie oyOptions_FromText. */
-  opts = oyOptions_FromText( data_tmp, 0,0 );
+  opts = oyOptions_FromText( data, 0,0 );
 
   if(ui_text) free(ui_text); ui_text = 0;
   if(text) free(text); text = 0;
-  if(data_tmp) free(data_tmp); data_tmp = 0;
   oyFilterNode_Release( &node );
   xmlFreeDoc( doc );
 
