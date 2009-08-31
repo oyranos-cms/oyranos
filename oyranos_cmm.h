@@ -579,7 +579,7 @@ typedef int          (*oyCMMDataScan_f) (
  *  @date    2008/11/23
  */
 typedef struct {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API5_DATA_S */
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_DATA_TYPES_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
@@ -590,6 +590,7 @@ typedef struct {
       e.g. "color/icc" */
   const char     * paths;
   const char     * exts;                /**< file extensions, e.g. "icc:icm" */
+  const char     * element_name;        /**< XML element name, e.g. "profile" */
   oyCMMDataGetText_f               oyCMMDataGetText; /**< */
   oyCMMData_LoadFromMem_f          oyCMMDataLoadFromMem; /**< */
   oyCMMDataScan_f                  oyCMMDataScan; /**< */
@@ -1300,6 +1301,10 @@ struct oyCMMapi9_s {
 
   const char     * options;            /**< default options */
   oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
+  /**< XML namespace to describe the used data_types
+   *   e.g. 'oy="http://www.oyranos.org/2009/oyranos"'
+   */
+  const char     * xml_namespace;
 
   oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
   oyCMMGetText_f   getText;            /**< describe selectors */
