@@ -7183,9 +7183,9 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
  *
  *  This function is parsing libxml2 structures.
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/17 (Oyranos: 0.1.9)
- *  @date    2008/11/17
+ *  @date    2009/09/01
  */
 void           oyOptions_ParseXML_   ( oyOptions_s       * s,
                                        char            *** texts,
@@ -20932,12 +20932,6 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
   if(!error)
     options = oyFilterNode_OptionsGet( node, 0 );
 
-  if(!error && node->core->api4_->oyCMMuiGet)
-  {
-    /* @todo and how to mix in the values? */
-    error = node->core->api4_->oyCMMuiGet( options, &text, oyAllocateFunc_ );
-  }
-
   if(!error)
   {
     oyCMMapiFilters_s * apis;
@@ -20961,12 +20955,14 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
       {
         if(cmm_api9->oyCMMuiGet)
           error = cmm_api9->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+
         if(error)
         {
           WARNc2_S( "%s %s",_("error in module:"), cmm_api9->registration );
           return 1;
-        }
-        else
+
+        } else
+        if(tmp)
         {
           STRING_ADD( text, tmp );
           oyFree_m_(tmp);
@@ -20991,6 +20987,17 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
         cmm_api9->release( (oyStruct_s**)&cmm_api9 );
     }
     oyCMMapiFilters_Release( &apis );
+  }
+
+  if(!error && node->core->api4_->oyCMMuiGet)
+  {
+    /* @todo and how to mix in the values? */
+    error = node->core->api4_->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+    if(tmp)
+    {
+      STRING_ADD( text, tmp );
+      oyFree_m_(tmp);
+    }
   }
 
   oyOptions_Release( &options );
@@ -25939,6 +25946,7 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
     oyUnLockFunc_ = oyUnLockDummy_;
   }
 }
+
 
 
 /** @} *//*misc */
