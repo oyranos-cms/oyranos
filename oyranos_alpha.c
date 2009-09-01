@@ -8179,7 +8179,7 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/11/25 (Oyranos: 0.1.9)
- *  @date    2008/08/31
+ *  @date    2008/09/01
  */
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type )
@@ -8188,8 +8188,10 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   const char * erg = 0;
   char * text = 0;
   oyOption_s * o = 0, *o2 = 0;
-  int i, n, ti, c;
+  int i, n, ti, c, j,j_n,k, min_level,
+  int indent = 6; /* base indentation for better looking XFORMS documents */
   int * sort, changed;
+  char ** old_levels = 0;
 
   if(error <= 0)
   {
@@ -8199,6 +8201,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       sort[i]=i;
 
     /* sort the options alphabetical */
+    if(type == oyNAME_NAME)
     do
     {
       changed = 0;
@@ -8238,11 +8241,93 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     {
       o = oyOptions_Get( options, sort[i] );
 
-      STRING_ADD ( text, oyOption_GetText( o, type) );
-      STRING_ADD ( text, "\n" );
+      /* Omit redundant XML level closes and opens based on alphabetical input.
+       */
+      if(type == oyNAME_NAME)
+      {
+        char * tmp = 0, **list = 0;
+
+        j_n = 1;
+
+        if(!oyObject_GetName( o->oy_, oyNAME_DESCRIPTION ))
+          oyOption_GetText(o, oyNAME_DESCRIPTION);
+
+
+        list = oyStringSplit_( oyObject_GetName( o->oy_, oyNAME_DESCRIPTION ),
+                               '/', &j_n, oyAllocateFunc_);
+        min_level = 1000;
+        /* find the minimum different level */
+        for( j = 0; j < j_n; ++j )
+        {
+          if(!old_levels ||
+             oyStrcmp_(old_levels[j],list[j]) != 0)
+            if(min_level > j)
+              min_level = j;
+        }
+
+        /* close old levels */
+        if(old_levels)
+        for( j = j_n-1; j >= min_level; --j )
+        {
+          if(j+1 < j_n)
+            for(k = 0; k < indent+j; ++k)
+              STRING_ADD ( text, " " );
+          STRING_ADD ( text, "</" );
+          STRING_ADD ( text, old_levels[j] );
+          if(j)
+            STRING_ADD ( text, ">\n" );
+          else
+            STRING_ADD ( text, ">" );
+        }
+
+        /* open new levels */
+        for( j = min_level; j < j_n; ++j )
+        {
+          for(k = 0; k < indent+j; ++k)
+            STRING_ADD ( text, " " );
+          STRING_ADD ( text, "<" );
+          STRING_ADD ( text, list[j] );
+          if(j+1==j_n)
+            STRING_ADD ( text, ">" );
+          else
+            STRING_ADD ( text, ">\n" );
+        }
+
+        tmp = oyOption_GetValueText( o, oyAllocateFunc_ );
+        STRING_ADD ( text, tmp );
+
+        if(old_levels)
+          oyStringListRelease_( &old_levels, j_n, oyDeAllocateFunc_ );
+        old_levels = list;
+
+        oyFree_m_( tmp );
+      }
+      else
+      {
+        STRING_ADD ( text, oyOption_GetText( o, type) );
+        STRING_ADD ( text, "\n" );
+      }
 
       oyOption_Release( &o );
     }
+
+    /* close all old levels */
+    if(old_levels)
+      for( j = j_n-1; j >= 0; --j )
+      {
+        if(j+1 < j_n)
+          for(k = 0; k < indent+j; ++k)
+            STRING_ADD ( text, " " );
+        STRING_ADD ( text, "</" );
+        STRING_ADD ( text, old_levels[j] );
+        if(j)
+          STRING_ADD ( text, ">\n" );
+        else
+          STRING_ADD ( text, ">" );
+      }
+
+    if(old_levels)
+      oyStringListRelease_( &old_levels, j_n, oyDeAllocateFunc_ );
 
     error = oyObject_SetName( options->oy_, text, type );
 
