@@ -3261,6 +3261,63 @@ char   *       oyDumpColourToCGATS   ( const double      * channels,
                                        const char        * DESCRIPTOR );
 
 
+/**
+ *  @brief   handle parser output and build the UI
+ *
+ *  @param[in]     cur                 libxml2 node
+ *  @param[in]     collected_elements  from libxml2
+ *  @param[in]     handler_context     the toolkit context
+ *  @return                            ns + ':' + name
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/30 (Oyranos: 0.1.10)
+ *  @date    2009/08/30
+ */
+typedef int  (*oyUiHandler_f)        ( oyPointer           cur,
+                                       oyOptions_s       * collected_elements,
+                                       oyPointer           handler_context );
+
+/** @struct  oyUiHandler_s
+ *  @brief   provide a list of handlers to build the UI
+ *
+ *  A parser will read out the XFORMS elements and collect those a UI handler
+ *  claims interesst in. The handler is then called to process the collected 
+ *  elements and to build the UI.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/30 (Oyranos: 0.1.10)
+ *  @date    2009/08/30
+ */
+typedef struct {
+  oyOBJECT_e           type;           /**< oyOBJECT_UI_HANDLER_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< @private features name and hash */
+
+  char               * dialect;        /**< currently only "oyFORMS",
+                                            a subset of W3C XFORMS */
+  char               * parser_type;    /**< currently only "libxml2" */
+  char               * element_type;   /**< a valid XFORMS element,
+                                            e.g. "xf:select1" */
+  oyUiHandler_f        handler;        /**< The handler which obtains the parsed
+                                            results and a context to construct
+                                            the UI. */
+  char               * handler_type;   /**< informational handler context type*/
+  /** The elements to collect by the parser, e.g.
+   *  "xf:choices/xf:item/xf:label.xf:value".
+   */
+  char               * element_search;
+} oyUiHandler_s;
+
+char *       oyXFORMsFromModelAndUi  ( const char        * data,
+                                       const char        * ui_text,
+                                       const char       ** namespaces,
+                                       oyAlloc_f           allocate_func );
+int          oyXFORMsRenderUi        ( const char        * xforms,
+                                       oyUiHandler_s    ** ui_handlers,
+                                       oyPointer           user_data );
+
+
 
 #endif /* OY_IN_PLANING */
 
