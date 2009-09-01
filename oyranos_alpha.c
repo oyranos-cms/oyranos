@@ -7222,7 +7222,9 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
         STRING_ADD( tmp, (*texts)[i] );
       }
 
-      o = oyOption_New( tmp, 0 );
+      if(tmp)
+        o = oyOption_New( tmp, 0 );
+
       if(!o)
         goto clean_stage;
       o->value = o->oy_->allocateFunc_(sizeof(oyValue_u));
@@ -7241,7 +7243,8 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
       oyOptions_MoveIn( s, &o, -1 );
 
       clean_stage:
-      oyFree_m_( tmp );
+      if(tmp)
+        oyFree_m_( tmp );
     }
     cur = cur->next;
   }
