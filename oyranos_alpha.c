@@ -8188,7 +8188,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   const char * erg = 0;
   char * text = 0;
   oyOption_s * o = 0, *o2 = 0;
-  int i, n, ti, c, j,j_n,k, min_level,
+  int i, n, ti, c, j,j_n,k, min_level;
   int indent = 6; /* base indentation for better looking XFORMS documents */
   int * sort, changed;
   char ** old_levels = 0;
