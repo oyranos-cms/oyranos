@@ -22,8 +22,12 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <libxml/parser.h>
+
+
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
@@ -70,6 +74,16 @@ int         oyReadXMLPolicy_   (oyGROUP_e           group,
 char *       oyXMLgetElement_        ( const char        * xml,
                                        const char        * xpath,
                                        const char        * key );
+void               oyParseXMLNode_   ( xmlDocPtr           doc,
+                                       xmlNodePtr          cur,
+                                       oyOptions_s       * wid_data,
+                                       oyUiHandler_s    ** ui_handlers,
+                                       oyPointer           ui_handlers_context);
+const char *       oyXFORMsModelGetXPathValue_
+                                     ( xmlDocPtr           doc,
+                                       const char        * reference );
+char *             oyXML2NodeName_   ( xmlNodePtr          cur );
+
 
 #ifdef __cplusplus
 } /* extern "C" */
