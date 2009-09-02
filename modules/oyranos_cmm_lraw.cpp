@@ -295,21 +295,6 @@ oyCMMInfo_s lraw_cmm_module = {
 /* OY_LIBRAW_REGISTRATION ----------------------------------------------------*/
 
 
-/** Function lrawFilter_ImageInputRAWCanHandle
- *  @brief   inform about image handling capabilities
- *
- *  @version Oyranos: 0.1.10
- *  @date    2009/06/14
- *  @since   2009/06/14 (Oyranos: 0.1.10)
- */
-int    lrawFilter_ImageInputRAWCanHandle (
-                                       oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-  return ret;
-}
-
 oyOptions_s* lrawFilter_ImageInputRAWValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
@@ -698,12 +683,12 @@ oyCMMapi4_s   lraw_api4_image_input_libraw = {
   
   lrawCMMInit, /* oyCMMInit_f */
   lrawCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  lrawFilter_ImageInputRAWCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t last_module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -740,12 +725,12 @@ oyCMMapi7_s   lraw_api7_image_input_libraw = {
   
   lrawCMMInit, /* oyCMMInit_f */
   lrawCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  lrawFilter_ImageInputRAWCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t last_module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

@@ -199,8 +199,10 @@ typedef struct {
 } oyCMMapiQueries_s;
 
 
-typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMapi_s        * api,
-                                       oyPointer           data );
+typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMInfo_s       * cmm_info,
+                                       oyCMMapi_s        * api,
+                                       oyPointer           data,
+                                       uint32_t          * rank );
 char *           oyCMMnameFromLibName_(const char        * lib_name);
 oyCMMInfo_s *    oyCMMInfoFromLibName_(const char        * lib_name );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
@@ -212,29 +214,24 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
                                        int                 num );
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        const char        * cmm_required,
-                                       oyCMMapiQueries_s * capabilities,
                                        char             ** lib_used,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
 oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
-                                       oyCMMapiQueries_s * queries,
                                        const char        * registration );
 oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
-                                       oyCMMapiQueries_s * queries,
                                        const char        * registration,
                                        oyOBJECT_e          type,
                                        uint32_t         ** rank_list,
                                        uint32_t          * count );
 oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
-                                       oyCMMapiQueries_s * queries,
                                        const char        * registration,
                                        oyOBJECT_e          type );
 int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type );
 char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number );
-oyCMMapiBase_s *oyCMMsGetApiFromRegistration_(
+oyCMMapi_s * oyCMMsGetApiFromRegistration_(
                                        oyOBJECT_e          type,
                                        const char        * cmm_required,
-                                       oyCMMapiQueries_s * queries,
                                        const char        * registration );
 
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api );

@@ -43,28 +43,6 @@ oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
 /* OY_IMAGE_LOAD_REGISTRATION ---------------------------------------------*/
 
 
-/** @func    oyraFilter_ImageLoadCanHandle
- *  @brief   inform about image handling capabilities
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/07/15 (Oyranos: 0.1.10)
- *  @date    2009/07/15
- */
-int    oyraFilter_ImageCanHandle     ( oyCMMQUERY_e     type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-
-  switch(type)
-  {
-    case oyQUERY_OYRANOS_COMPATIBILITY:
-         ret = OYRANOS_VERSION; break;
-    default: break;
-  }
-
-  return ret;
-}
-
 oyOptions_s* oyraFilter_ImageLoadValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
@@ -209,12 +187,12 @@ oyCMMapi7_s   oyra_api7_image_load = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_LOAD_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -246,12 +224,12 @@ oyCMMapi4_s   oyra_api4_image_load = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_LOAD_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -272,53 +250,6 @@ oyCMMapi4_s   oyra_api4_image_load = {
 
 /* OY_IMAGE_REGIONS_REGISTRATION ---------------------------------------------*/
 
-
-/** @func    oyraFilter_ImageRectanglesCanHandle
- *  @brief   inform about image handling capabilities
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/23 (Oyranos: 0.1.10)
- *  @date    2009/02/23
- */
-int    oyraFilter_ImageRectanglesCanHandle(oyCMMQUERY_e     type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-
-  switch(type)
-  {
-    case oyQUERY_OYRANOS_COMPATIBILITY:
-         ret = OYRANOS_VERSION; break;
-    case oyQUERY_PIXELLAYOUT_CHANNELCOUNT:
-         ret = 65535;
-         break;
-    case oyQUERY_PIXELLAYOUT_DATATYPE:
-         switch(value) {
-         case oyUINT8:
-         case oyUINT16:
-         case oyUINT32:
-         case oyHALF:
-         case oyFLOAT:
-         case oyDOUBLE:
-              ret = 1; break;
-         default:
-              ret = 0; break;
-         }
-         break;
-    case oyQUERY_PIXELLAYOUT_SWAP_COLOURCHANNELS:
-         ret = 1;
-         break;
-    case oyQUERY_PIXELLAYOUT_PLANAR:
-         ret = 1;
-         break;
-    case oyQUERY_HDR:
-         ret = 1;
-         break;
-    default: break;
-  }
-
-  return ret;
-}
 
 oyOptions_s* oyraFilter_ImageRectanglesValidateOptions
                                      ( oyFilterCore_s    * filter,
@@ -534,12 +465,12 @@ oyCMMapi7_s   oyra_api7_image_rectangles = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageRectanglesCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_REGIONS_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -571,12 +502,12 @@ oyCMMapi4_s   oyra_api4_image_rectangles = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageRectanglesCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_REGIONS_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -597,53 +528,6 @@ oyCMMapi4_s   oyra_api4_image_rectangles = {
 
 /* OY_IMAGE_ROOT_REGISTRATION ------------------------------------------------*/
 
-
-/** @func    oyraFilter_ImageRootCanHandle
- *  @brief   inform about image handling capabilities
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/10 (Oyranos: 0.1.8)
- *  @date    2008/07/10
- */
-int    oyraFilter_ImageRootCanHandle ( oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-
-  switch(type)
-  {
-    case oyQUERY_OYRANOS_COMPATIBILITY:
-         ret = OYRANOS_VERSION; break;
-    case oyQUERY_PIXELLAYOUT_CHANNELCOUNT:
-         ret = 65535;
-         break;
-    case oyQUERY_PIXELLAYOUT_DATATYPE:
-         switch(value) {
-         case oyUINT8:
-         case oyUINT16:
-         case oyUINT32:
-         case oyFLOAT:
-         case oyDOUBLE:
-              ret = 1; break;
-         case oyHALF:
-         default:
-              ret = 0; break;
-         }
-         break;
-    case oyQUERY_PIXELLAYOUT_SWAP_COLOURCHANNELS:
-         ret = 1;
-         break;
-    case oyQUERY_PIXELLAYOUT_PLANAR:
-         ret = 1;
-         break;
-    case oyQUERY_HDR:
-         ret = 1;
-         break;
-    default: break;
-  }
-
-  return ret;
-}
 
 oyOptions_s* oyraFilter_ImageRootValidateOptions
                                      ( oyFilterCore_s    * filter,
@@ -756,12 +640,12 @@ oyCMMapi7_s   oyra_api7_image_root = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_ROOT_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -793,12 +677,12 @@ oyCMMapi4_s   oyra_api4_image_root = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_ROOT_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -889,12 +773,12 @@ oyCMMapi7_s   oyra_api7_image_output = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_OUTPUT_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -926,12 +810,12 @@ oyCMMapi4_s   oyra_api4_image_output = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageRootCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_OUTPUT_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

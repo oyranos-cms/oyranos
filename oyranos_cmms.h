@@ -40,8 +40,6 @@ int          oyModulRegisterXML_     (oyGROUP_e           group,
 int          oyModulesScan_          ( int                 flags );
 
 
-int              oyCMMapi1_Check_    ( oyCMMapi1_s       * api1 );
-
 
 /** \internal
  *  build a oyCMM_t__ API

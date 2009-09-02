@@ -35,8 +35,6 @@
 
 int                oyX1CMMInit       ( );
 int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func );
-int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
-                                       uint32_t            value );
 
 /* OYX1_MONITOR_REGISTRATION -------------------------------------------------*/
 
@@ -89,16 +87,6 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
   message = message_func;
   return 0;
 }
-
-/** @func  oyX1CMMCanHandle
- *  @brief API requirement
- *
- *  @version Oyranos: 0.1.8
- *  @date    2007/12/12
- *  @since   2007/12/12 (Oyranos: 0.1.8)
- */
-int            oyX1CMMCanHandle      ( oyCMMQUERY_e        type,
-                                       uint32_t            value ) {return 0;}
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
         error = oyOptions_SetFromText( &opts, \
@@ -833,10 +821,10 @@ oyCMMapi8_s oyX1_api8 = {
 
   oyX1CMMInit,               /**< oyCMMInit_f      oyCMMInit */
   oyX1CMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
-  oyX1CMMCanHandle,          /**< oyCMMCanHandle_f oyCMMCanHandle */
 
   OYX1_MONITOR_REGISTRATION, /**< registration */
   {0,3,0},                   /**< int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */

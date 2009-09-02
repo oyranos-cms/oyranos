@@ -40,8 +40,6 @@
 oyMessage_f message = oyFilterMessageFunc;
 int            oiccFilterMessageFuncSet( oyMessage_f       message_func );
 int                oiccFilterInit      ( );
-int                oiccFilterCanHandle ( oyCMMQUERY_e      type,
-                                       uint32_t            value );
 oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
@@ -71,21 +69,6 @@ int                oiccFilterInit      ( )
 {
   int error = 0;
   return error;
-}
-
-/** Function oiccFilterCanHandle
- *  @brief   dummy
- *
- *  @version Oyranos: 0.1.10
- *  @date    2009/07/24
- *  @since   2009/07/24 (Oyranos: 0.1.10)
- */
-int    oiccFilterCanHandle           ( oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-
-  return ret;
 }
 
 /** Function oicc_defaultICCValidateOptions
@@ -744,12 +727,12 @@ oyCMMapi9_s  oicc_api9 = {
   
   oiccFilterInit, /* oyCMMInit_f */
   oiccFilterMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oiccFilterCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* oyCMMapi5_s    * api5_; keep empty */
 

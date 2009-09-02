@@ -36,21 +36,6 @@ int wread ( unsigned char   *data,    /* read a word */
             size_t *start,
             size_t *length );
 
-/** @func    oyraFilter_ImageOutputPPMCanHandle
- *  @brief   inform about image handling capabilities
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/10/07 (Oyranos: 0.1.8)
- *  @date    2008/11/03
- */
-int    oyraFilter_ImageOutputPPMCanHandle (
-                                       oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-  return ret;
-}
-
 oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
@@ -391,12 +376,12 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -433,12 +418,12 @@ oyCMMapi7_s   oyra_api7_image_write_ppm = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -456,21 +441,6 @@ oyCMMapi7_s   oyra_api7_image_write_ppm = {
 
 /* ---------------------------------------------------------------------------*/
 
-
-/** @func    oyraFilter_ImageInputPPMCanHandle
- *  @brief   inform about image handling capabilities
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/18 (Oyranos: 0.1.10)
- *  @date    2009/02/18
- */
-int    oyraFilter_ImageInputPPMCanHandle (
-                                       oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-  return ret;
-}
 
 oyOptions_s* oyraFilter_ImageInputPPMValidateOptions
                                      ( oyFilterCore_s    * filter,
@@ -1044,12 +1014,12 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageOutputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -1086,12 +1056,12 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyraFilter_ImageInputPPMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

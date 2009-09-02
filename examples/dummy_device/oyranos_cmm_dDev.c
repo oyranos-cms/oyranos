@@ -41,7 +41,6 @@
 #define CMMallocateFunc         catCMMfunc( dDev, CMMallocateFunc )
 #define CMMdeallocateFunc       catCMMfunc( dDev, CMMdeallocateFunc )
 #define CMMMessageFuncSet       catCMMfunc( dDev, CMMMessageFuncSet )
-#define CMMCanHandle            catCMMfunc( dDev, CMMCanHandle )
 #define ConfigsUsage            catCMMfunc( dDev, ConfigsUsage )
 #define DeviceFromName_         catCMMfunc( dDev, DeviceFromName_ )
 #define GetDevices              catCMMfunc( dDev, GetDevices )
@@ -100,16 +99,6 @@ int            CMMMessageFuncSet     ( oyMessage_f         message_func )
   message = message_func;
   return 0;
 }
-
-/** @func  CMMCanHandle
- *  @brief API requirement
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/12 (Oyranos: 0.1.8)
- *  @date    2009/02/09
- */
-int                CMMCanHandle      ( oyCMMQUERY_e        type,
-                                       uint32_t            value ) {return 0;}
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
         error = oyOptions_SetFromText( &opts, \
@@ -694,10 +683,10 @@ oyCMMapi8_s _api8 = {
 
   CMMInit,                   /**< oyCMMInit_f      oyCMMInit */
   CMMMessageFuncSet,         /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
-  CMMCanHandle,              /**< oyCMMCanHandle_f oyCMMCanHandle */
 
   CMM_BASE_REG,              /**< registration */
-  {0,1,0},                   /**< int32_t version[3] */
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */

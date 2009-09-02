@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc."
 
 /* --- implementations --- */
 
@@ -1492,6 +1493,12 @@ oyCMMapi3_s  oyIM_api3 = {
   
   oyIMCMMInit,
   oyIMCMMMessageFuncSet,
+
+  CMM_BASE_REG CMM_NICK,     /**< registration */
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
+  0,                         /**< char * id_ */
+
   oyIMProfileCanHandle,
 
   oyIMProfileTag_GetValues,

@@ -35,8 +35,6 @@
 
 int                oydiCMMInit       ( );
 int            oydiCMMMessageFuncSet ( oyMessage_f         message_func );
-int            oydiCMMCanHandle      ( oyCMMQUERY_e        type,
-                                       uint32_t            value );
 oyMessage_f message = 0;
 
 
@@ -64,52 +62,6 @@ extern oyCMMapi7_s   oydi_api7_image_display;
 #include <Xcolor.h>
 #endif
 
-/** @func    oydiFilter_ImageDisplayCanHandle
- *  @brief   inform about image handling capabilities
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/23 (Oyranos: 0.1.10)
- *  @date    2009/03/04
- */
-int    oydiFilter_ImageDisplayCanHandle(oyCMMQUERY_e     type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-
-  switch(type)
-  {
-    case oyQUERY_OYRANOS_COMPATIBILITY:
-         ret = OYRANOS_VERSION; break;
-    case oyQUERY_PIXELLAYOUT_CHANNELCOUNT:
-         ret = 65535;
-         break;
-    case oyQUERY_PIXELLAYOUT_DATATYPE:
-         switch(value) {
-         case oyUINT8:
-         case oyUINT16:
-         case oyUINT32:
-         case oyHALF:
-         case oyFLOAT:
-         case oyDOUBLE:
-              ret = 1; break;
-         default:
-              ret = 0; break;
-         }
-         break;
-    case oyQUERY_PIXELLAYOUT_SWAP_COLOURCHANNELS:
-         ret = 1;
-         break;
-    case oyQUERY_PIXELLAYOUT_PLANAR:
-         ret = 1;
-         break;
-    case oyQUERY_HDR:
-         ret = 1;
-         break;
-    default: break;
-  }
-
-  return ret;
-}
 
 oyWIDGET_EVENT_e   oydiWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
@@ -857,12 +809,12 @@ oyCMMapi7_s   oydi_api7_image_display = {
   
   oydiCMMInit, /* oyCMMInit_f */
   oydiCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oydiCMMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_DISPLAY_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -894,12 +846,12 @@ oyCMMapi4_s   oydi_api4_image_display = {
   
   oydiCMMInit, /* oyCMMInit_f */
   oydiCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oydiCMMCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_IMAGE_DISPLAY_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -945,16 +897,6 @@ int            oydiCMMMessageFuncSet ( oyMessage_f         message_func )
   message = message_func;
   return 0;
 }
-
-/** Function oydiCMMCanHandle
- *  @brief   API requirement
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/04/13 (Oyranos: 0.1.10)
- *  @date    2009/04/13
- */
-int            oydiCMMCanHandle      ( oyCMMQUERY_e        type,
-                                       uint32_t            value ) {return 0;}
 
 /**
  *  This function implements oyCMMInfoGetText_f.

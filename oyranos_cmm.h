@@ -34,13 +34,6 @@ namespace oyranos
  */
 typedef enum {
   oyQUERY_OYRANOS_COMPATIBILITY,       /*!< provides the Oyranos version and expects the CMM compiled or compatibility Oyranos version back */
-  oyQUERY_PIXELLAYOUT_DATATYPE,        /*!< takes a oyDATATYPE_e arg as value, return boolean */
-  oyQUERY_PIXELLAYOUT_CHANNELCOUNT,    /**< maximmal channel count */
-  oyQUERY_PIXELLAYOUT_SWAP_COLOURCHANNELS,
-  oyQUERY_PIXELLAYOUT_COLOURCHANNEL_OFFSET, /**< How many other channels can be in front of the colour channels? */
-  oyQUERY_PIXELLAYOUT_PLANAR,          /**< Can the plug-in handle a separat pixel layout? value 0 - on input; value 1 on output */
-  oyQUERY_PIXELLAYOUT_FLAVOUR,         /**< Can the plug-in handle min is white? */
-  oyQUERY_HDR,                         /*!< are the data types real unclipped HDR? value a oyDATATYPE_e (oyHALF...) */
   oyQUERY_PROFILE_FORMAT = 20,         /*!< value 1 == ICC */
   oyQUERY_PROFILE_TAG_TYPE_READ,       /**< value a icTagTypeSignature (ICC) */
   oyQUERY_PROFILE_TAG_TYPE_WRITE,      /**< value a icTagTypeSignature (ICC) */
@@ -51,6 +44,7 @@ typedef enum {
  *  typedef oyCMMCanHandle_f
  *  @brief   CMM feature declaration function
  *  @ingroup backend_api
+ *  @deprecated
  *  @memberof oyCMMapi_s
  */
 typedef int      (*oyCMMCanHandle_f) ( oyCMMQUERY_e        type,
@@ -129,36 +123,8 @@ int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
 typedef int      (*oyCMMDataOpen_f)  ( oyStruct_s        * data,
                                        oyCMMptr_s        * oy );
 
-typedef int      (*oyCMMColourConversion_Create_f) (
-                                       oyCMMptr_s       ** cmm_profile_array,
-                                       int                 profiles_n,
-                                       uint32_t            pixel_layout_in,
-                                       uint32_t            pixel_layout_out,
-                                       oyOptions_s       * opts,
-                                       oyCMMptr_s        * oy );
-typedef int      (*oyCMMColourConversion_FromMem_f) (
-                                       oyPointer           mem,
-                                       size_t              size,
-                                       oyPixel_t           oy_pixel_layout_in,
-                                       oyPixel_t           oy_pixel_layout_out,
-                                       icColorSpaceSignature colour_space_in,
-                                       icColorSpaceSignature colour_space_out,
-                                       int                 intent,
-                                       oyCMMptr_s        * oy );
-typedef oyPointer(*oyCMMColourConversion_ToMem_f) (
-                                       oyCMMptr_s        * oy,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc );
-
 typedef void     (*oyCMMProgress_f)  ( int                 ID,
                                        double              progress );
-
-typedef int      (*oyCMMColourConversion_Run_f)(
-                                       oyCMMptr_s        * cmm_transform,
-                                       oyPointer           in_data,
-                                       oyPointer           out_data,
-                                       size_t              count,
-                                       oyCMMProgress_f     progress );
 
 
 typedef icSignature (*oyCMMProfile_GetSignature_f) (
@@ -215,7 +181,7 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
 /** typedef   oyCMMOptions_Check_f
  *  @brief    a function to check options
  *  @ingroup  backend_api
- *  @memberof oyCMMapiBase_s
+ *  @memberof oyCMMapi_s
  *
  *  @param[in]     options             the options
  *  @return                            0 - good, 1 - bad
@@ -227,132 +193,45 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
 typedef int  (*oyCMMOptions_Check_f) ( oyOptions_s       * validate );
 
 
-
-/** @brief the generic part if a API to implement and set by a CMM or meta backend
+/** @struct  oyCMMapi_s
+ *  @brief   the basic API interface
  *  @ingroup backend_api
  *  @extends oyStruct_s
  *
- *  @since Oyranos: version 0.1.8 2007/12/12
- *  @date  12 december 2007 (API 0.1.8)
- */
-struct oyCMMapi_s {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;               /**< the next api in chain or zero */
-
-  oyCMMInit_f      oyCMMInit;          /**< @memberof oyCMMapi_s */
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< @memberof oyCMMapi_s */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< @memberof oyCMMapi_s */
-};
-
-
-/** @struct  oyCMMapi1_s
- *  @brief   the API 1 to implement and set by a CMM
- *  @ingroup backend_api
- *  @extends oyCMMapi_s
- *  @deprecated use oyCMMapi4_s/oyCMMapi6_s/oyCMMapi7_s filter APIs instead
- *
- *  @since Oyranos: version 0.1.8 2007/12/05
- *  @date  21 december 2007 (API 0.1.8)
- */
-typedef struct {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API1_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;
-
-  oyCMMInit_f      oyCMMInit;          /**< */
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
-
-  oyCMMDataOpen_f  oyCMMDataOpen;
-  oyCMMColourConversion_Create_f oyCMMColourConversion_Create;
-  oyCMMColourConversion_FromMem_f oyCMMColourConversion_FromMem;
-  oyCMMColourConversion_ToMem_f oyCMMColourConversion_ToMem;
-  oyCMMColourConversion_Run_f oyCMMColourConversion_Run;
-} oyCMMapi1_s;
-
-
-/** @typedef oyGetMonitorInfo_f
- *  @brief   get available informations from a monitor device
- *  @ingroup backend_api
- *
- *  @param[in]     display             display name
- *  @param[out]    manufacturer        string
- *  @param[out]    model               string
- *  @param[out]    serial              string
- *  @param[out]    display_geometry    string
- *  @param[out]    system_port         string
- *  @param[out]    edid                binary blob
- *  @return                            0 - good; 1 - error
+ *  The registration should provide keywords for selection.
+ *  The api5_ member is missed for oyCMMapi5_s.
  *
  *  @version Oyranos: 0.1.10
- *  @since   2006/00/00 (Oyranos: 0.1.x)
- *  @date    2009/01/08
+ *  @since   2009/01/16 (Oyranos: 0.1.10)
+ *  @date    2009/01/16
  */
-typedef int   (*oyGetMonitorInfo_f)  ( const char        * display,
-                                       char             ** manufacturer,
-                                       char             ** model,
-                                       char             ** serial,
-                                       char             ** system_port,
-                                       char             ** display_geometry,
-                                       oyBlob_s         ** edid,
-                                       oyAlloc_f           allocate_func);
-typedef int   (*oyGetScreenFromPosition_f) (
-                                       const char        * display_name,
-                                       int                 x,
-                                       int                 y );
-typedef char* (*oyGetDisplayNameFromPosition_f) (
-                                       const char        * display_name,
-                                       int                 x,
-                                       int                 y,
-                                       oyAlloc_f           allocate_func);
-typedef char* (*oyGetMonitorProfile_f)(const char        * display,
-                                       size_t            * size,
-                                       oyAlloc_f           allocate_func);
-typedef char* (*oyGetMonitorProfileName_f) (
-                                       const char        * display,
-                                       oyAlloc_f           allocate_func);
-typedef int   (*oySetMonitorProfile_f)(const char        * display_name,
-                                       const char        * profil_name );
-typedef int   (*oyActivateMonitorProfiles_f) (
-                                       const char        * display_name);
-
-
-/** @struct  oyCMMapi2_s
- *  @brief   the API 2 to implement and set to provide windowing support
- *  @ingroup backend_api
- *  @extends oyCMMapi_s
- *  @deprecated use oyCMMapi8_s for general configuration support
- *
- *  @since Oyranos: version 0.1.8
- *  @date  10 december 2007 (API 0.1.8)
- */
-typedef struct {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API2_S */
+struct oyCMMapi_s {
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API7_S */
   oyPointer        dummya;             /**< keep to zero */
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;
+  oyCMMapi_s     * next;               /**< the next CMM api */
 
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
-  oyGetMonitorInfo_f oyGetMonitorInfo;
-  oyGetScreenFromPosition_f oyGetScreenFromPosition;
+  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+      see as well @ref registration */
+  const char     * registration;
 
-  oyGetDisplayNameFromPosition_f oyGetDisplayNameFromPosition;
-  oyGetMonitorProfile_f oyGetMonitorProfile;
-  oyGetMonitorProfileName_f oyGetMonitorProfileName;
+  /** 0: major - should be stable for the live time of a filter, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          version[3];
 
-  oySetMonitorProfile_f oySetMonitorProfile;
-  oyActivateMonitorProfiles_f oyActivateMonitorProfiles;
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
 
-} oyCMMapi2_s;
+  char           * id_;                /**< @private Oyranos id; keep to zero */
+};
 
 
 
@@ -393,39 +272,6 @@ typedef struct {
 
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
-  /*oyCMMOptions_Check_f oyCMMOptions_Check;*/
-
-  oyCMMProfileTag_GetValues_f oyCMMProfileTag_GetValues; /**< @memberof oyCMMapi3_s */
-  oyCMMProfileTag_Create_f oyCMMProfileTag_Create; /**< @memberof oyCMMapi3_s */
-} oyCMMapi3_s;
-
-
-/* -------------------------------------------------------------------------*/
-typedef struct oyCMMapi5_s oyCMMapi5_s;
-
-/** @struct  oyCMMapiBase_s
- *  @brief   the filter API 4-8 interface
- *  @ingroup backend_api
- *  @extends oyCMMapi_s
- *
- *  The registration should provide keywords for selection.
- *  The api5_ member is missed for oyCMMapi5_s.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/16 (Oyranos: 0.1.10)
- *  @date    2009/01/16
- */
-typedef struct {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API7_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;               /**< the next CMM api */
-
-  oyCMMInit_f      oyCMMInit;          /**< */
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
       see as well @ref registration */
@@ -436,15 +282,30 @@ typedef struct {
       2: patch version - correct errors */
   int32_t          version[3];
 
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
+
   char           * id_;                /**< @private Oyranos id; keep to zero */
-} oyCMMapiBase_s;
+
+  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
+
+  oyCMMProfileTag_GetValues_f oyCMMProfileTag_GetValues; /**< @memberof oyCMMapi3_s */
+  oyCMMProfileTag_Create_f oyCMMProfileTag_Create; /**< @memberof oyCMMapi3_s */
+} oyCMMapi3_s;
+
+
+/* -------------------------------------------------------------------------*/
+typedef struct oyCMMapi5_s oyCMMapi5_s;
 
 
 
 /** @struct  oyCMMapiFilter_s
  *  @brief   the filter API 4,6,7 interface
  *  @ingroup backend_api
- *  @extends oyCMMapiBase_s
+ *  @extends oyCMMapi_s
  *
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.
@@ -462,7 +323,6 @@ struct oyCMMapiFilter_s {
 
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
       see as well @ref registration */
@@ -472,6 +332,12 @@ struct oyCMMapiFilter_s {
       1: minor - mark new features, \n
       2: patch version - correct errors */
   int32_t          version[3];
+
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
@@ -760,7 +626,7 @@ typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
 /** @struct  oyCMMapi5_s
  *  @brief   the API 5 to provide filter and script support
  *  @ingroup backend_api
- *  @extends oyCMMapiBase_s
+ *  @extends oyCMMapi_s
  *
  *  Filters can be provided in non library form, e.g. as text files. This API 
  *  allowes for registring of paths and file types to be recognised as filters.
@@ -783,7 +649,6 @@ struct oyCMMapi5_s {
 
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva" or "sw/oyranos.org/colour/icc",
       see as well @ref registration */
@@ -793,6 +658,12 @@ struct oyCMMapi5_s {
       1: minor - mark new features, \n
       2: patch version - correct errors */
   int32_t          version[3];
+
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
 
@@ -864,7 +735,6 @@ struct oyCMMapi7_s {
 
   oyCMMInit_f      oyCMMInit;          /**< @memberof oyCMMapi7_s */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< @memberof oyCMMapi7_s */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< @memberof oyCMMapi7_s */
 
   /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
       see as well @ref registration */
@@ -874,6 +744,12 @@ struct oyCMMapi7_s {
       1: minor - mark new features, \n
       2: patch version - correct errors */
   int32_t          version[3];
+
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
@@ -946,7 +822,6 @@ struct oyCMMapi6_s {
 
   oyCMMInit_f      oyCMMInit;
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
 
   /** place data_type_in + underscore '_' + data_type_out, 
    *  e.g. "sw/oyranos.org/colour/icc.lcms.oyDL_lcCC",
@@ -958,12 +833,18 @@ struct oyCMMapi6_s {
       2: patch version - correct errors */
   int32_t          version[3];
 
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
+
   char           * id_;                /**< @private Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;              /**< @private meta backend; keep to zero */
 
-  /** oyCMMapi4_s typic data; e.g. "oyDL" */
+  /** oyCMMapi4_s::context_type typic data; e.g. "oyDL" */
   char           * data_type_in;
-  /** oyCMMapi7_s specific data; e.g. "lcCC" */
+  /** oyCMMapi7_s::context_type specific data; e.g. "lcCC" */
   char           * data_type_out;
   oyCMMdata_Convert_f oyCMMdata_Convert;
 };
@@ -1049,7 +930,6 @@ struct  oyCMMapi4_s {
 
   oyCMMInit_f      oyCMMInit;
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
-  oyCMMCanHandle_f oyCMMCanHandle;
 
   /** e.g. "sw/oyranos.org/imaging/scale" or "sw/oyranos.org/colour/icc.lcms",
       see as well @ref registration */
@@ -1059,6 +939,12 @@ struct  oyCMMapi4_s {
       1: minor - mark new features, \n
       2: patch version - correct errors */
   int32_t          version[3];
+
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;              /**< @private meta backend; keep to zero */
@@ -1186,7 +1072,6 @@ struct oyCMMapi8_s {
 
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   /** The oyFILTER_REG_APPLICATION of "config" is obligatory.
    *  e.g. "shared/freedesktop.org/imaging/config.scanner.sane" or 
@@ -1199,6 +1084,12 @@ struct oyCMMapi8_s {
       1: minor - mark new features, \n
       2: patch version - correct errors */
   int32_t          version[3];
+
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */
@@ -1278,7 +1169,6 @@ struct oyCMMapi9_s {
 
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
 
   /** The oyFILTER_REG_APPLICATION of "config" is obligatory.
    *  e.g. "shared/freedesktop.org/imaging/config.scanner.sane" or 
@@ -1291,6 +1181,12 @@ struct oyCMMapi9_s {
       1: minor - mark new features, \n
       2: patch version - correct errors */
   int32_t          version[3];
+
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;            /**< @private meta backend; keep to zero */

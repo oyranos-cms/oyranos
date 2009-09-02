@@ -50,8 +50,6 @@ oyMessage_f message = lcmsCMMWarnFunc;
 int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText);
 int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func );
 int                lcmsCMMInit       ( );
-int                lcmsCMMCanHandle  ( oyCMMQUERY_e      type,
-                                       uint32_t          value );
 
 
 /** @struct lcmsProfileWrap_s
@@ -153,58 +151,6 @@ int                lcmsCMMInit       ( )
   cmsErrorAction( LCMS_ERROR_SHOW );
   cmsSetErrorHandler( lcmsErrorHandlerFunction );
   return error;
-}
-
-/** Function lcmsCMMCanHandle
- *  @brief   API requirement
- *
- *  @version Oyranos: 0.1.8
- *  @date    2007/12/11
- *  @since   2007/12/11 (Oyranos: 0.1.8)
- */
-int                lcmsCMMCanHandle  ( oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-
-  switch(type)
-  {
-    case oyQUERY_OYRANOS_COMPATIBILITY:
-         ret = OYRANOS_VERSION; break;
-    case oyQUERY_PIXELLAYOUT_DATATYPE:
-         switch(value) {
-         case oyUINT8:
-         case oyUINT16: ret = 1 ; break;
-         case oyUINT32:
-         case oyHALF:
-         case oyFLOAT:
-         case oyDOUBLE: ret = 0; break;
-         }
-         break;
-    case oyQUERY_PIXELLAYOUT_CHANNELCOUNT:
-         ret = CMMMaxChannels_M; break;
-    case oyQUERY_PIXELLAYOUT_SWAP_COLOURCHANNELS:
-         ret = 1; break;
-    case oyQUERY_PIXELLAYOUT_COLOURCHANNEL_OFFSET:
-         ret = 1; break;
-    case oyQUERY_PIXELLAYOUT_PLANAR:
-         ret = 1; break;
-    case oyQUERY_PIXELLAYOUT_FLAVOUR:
-         ret = 1; break;
-    case oyQUERY_HDR:
-         ret = 0; break;
-    case oyQUERY_PROFILE_FORMAT:
-         if(value == 1)
-           ret = 1;
-         else
-           ret = 0; break;
-    case oyQUERY_PROFILE_TAG_TYPE_READ:
-    case oyQUERY_PROFILE_TAG_TYPE_WRITE:
-    case oyQUERY_MAX:
-         ret = 0; break;
-  }
-
-  return ret;
 }
 
 
@@ -1697,12 +1643,12 @@ oyCMMapi6_s   lcms_api6_cmm = {
 
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,
-  lcmsCMMCanHandle,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc." CMM_NICK ".CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
 
   lcmsVERSION,
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
   
@@ -1729,12 +1675,12 @@ oyCMMapi7_s   lcms_api7_cmm = {
 
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,
-  lcmsCMMCanHandle,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc.colour." CMM_NICK "._CPU._ACCEL",
 
   lcmsVERSION,
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -1766,12 +1712,12 @@ oyCMMapi4_s   lcms_api4_cmm = {
 
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,
-  lcmsCMMCanHandle,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc.colour." CMM_NICK "._CPU._NOACCEL",
 
   lcmsVERSION,
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

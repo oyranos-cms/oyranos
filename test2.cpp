@@ -1936,7 +1936,7 @@ oyTESTRESULT_e testCMMsShow ()
 
               for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API9_S; j++)
               {
-                apis = oyCMMsGetFilterApis_( 0, 0, api_reg, (oyOBJECT_e)j,
+                apis = oyCMMsGetFilterApis_( 0, api_reg, (oyOBJECT_e)j,
                                              &rank_list, &apis_n );
 
                 apis_n = oyCMMapiFilters_Count( apis );
@@ -2021,9 +2021,10 @@ oyTESTRESULT_e testCMMsShow ()
                                              {(char*)"other",4,5,6}};
                     oyCMMapi8_s cpp_api8 = { oyOBJECT_CMM_API8_S,0,0,0,
                                              0, /* next */
-                                             0,0,0, /* oyCMMapi_s stuff */
+                                             0,0, /* oyCMMapi_s stuff */
                                              (char*)"invalid/registration",
                                              {0,0,0}, /* version */
+                                             {0,0,0}, /* module_api */
                                              0,0, /* Oyranos stuff */
                                              0, /* oyConfigs_FromPattern */
                                              0, /* oyConfigs_Modify */
@@ -2263,7 +2264,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if(error <= 0)
   {
-    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0, 0,
+    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0,
                                 "//" OY_TYPE_STD "/root", oyOBJECT_CMM_API4_S );
     error = !api4;
   }
@@ -2352,11 +2353,10 @@ oyTESTRESULT_e testCMMnmRun ()
   uint32_t ret = 0;
   oyOptions_s * opts_tmp = 0, * options = 0;
   oyCMMapi4_s * api4 = 0;
-  oyCMMapiQueries_s * queries = 0;
 
   if(error <= 0)
   {
-    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0, queries,
+    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0,
                                 "//" OY_TYPE_STD "/root", oyOBJECT_CMM_API4_S );
     error = !api4;
   }
@@ -2420,7 +2420,7 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*3*10000; ++i)
   {
     oyCMMapi4_s * api4 = 0;
-    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0, 0,
+    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0,
                                             registration, oyOBJECT_CMM_API4_S );
     error = !api4;
     if(!(i%30000)) fprintf(stdout, "." ); fflush(stdout);

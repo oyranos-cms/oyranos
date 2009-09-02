@@ -36,21 +36,6 @@
 #include <inttypes.h>
 #endif
 
-/** Function oyIMFilter_CanHandle
- *  @brief   dummy
- *
- *  @version Oyranos: 0.1.9
- *  @since   2008/11/13 (Oyranos: 0.1.9)
- *  @date    2008/11/13
- */
-int    oyIMFilter_CanHandle          ( oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-
-  return ret;
-}
-
 
 
 char * oyIMstructGetText             ( oyStruct_s        * item,
@@ -364,12 +349,12 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   
   oyIMCMMInit, /* oyCMMInit_f */
   oyIMCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  oyIMFilter_CanHandle, /* oyCMMCanHandle_f */
 
   /* @todo registration: for what? */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
 
   OY_CMMSUBPATH, /* sub_paths */

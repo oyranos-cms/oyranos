@@ -29,7 +29,6 @@
 
 /** The CMM_NICK consists of four bytes, which appear as well in the library name. This is important for Oyranos to identify the required filter struct name. */
 #define CMM_NICK "dFil"
-#define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 #define OY_DUMMY_FILTER_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "my_filter"
 
 int dFilCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
@@ -245,20 +244,6 @@ oyCMMInfo_s dFil_cmm_module = {
 /* OY_DUMMY_FILTER_REGISTRATION ----------------------------------------------*/
 
 
-/** Function dFilFilter_MyFilterCanHandle
- *  @brief   inform about filter capabilities
- *
- *  @version Oyranos: 0.1.10
- *  @date    2009/06/14
- *  @since   2009/06/14 (Oyranos: 0.1.10)
- */
-int    dFilFilter_MyFilterCanHandle (
-                                       oyCMMQUERY_e      type,
-                                       uint32_t          value )
-{
-  int ret = -1;
-  return ret;
-}
 
 oyOptions_s* dFilFilter_MyFilterValidateOptions
                                      ( oyFilterCore_s    * filter,
@@ -428,12 +413,12 @@ oyCMMapi4_s   dFil_api4_my_filter = {
   
   dFilCMMInit, /* oyCMMInit_f */
   dFilCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  dFilFilter_MyFilterCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_DUMMY_FILTER_REGISTRATION,
 
-  CMM_VERSION, /* int32_t version[3] */
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  {0,0,10},                  /**< int32_t last_api_version[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -468,12 +453,12 @@ oyCMMapi7_s   dFil_api7_my_filter = {
   
   dFilCMMInit, /* oyCMMInit_f */
   dFilCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
-  dFilFilter_MyFilterCanHandle, /* oyCMMCanHandle_f */
 
   /* registration */
   OY_DUMMY_FILTER_REGISTRATION,
 
-  CMM_VERSION, /* int32_t version[3] */
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  {0,0,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
