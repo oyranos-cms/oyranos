@@ -632,6 +632,16 @@ const char lraw_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
+int  lrawUiGet                       ( oyOptions_s       * opts,
+                                       char             ** xforms_layout,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * text = (char*)allocateFunc(5);
+  text[0] = 0;
+  *xforms_layout = text;
+  return 0;
+};
+
 oyDATATYPE_e lraw_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};
 
 oyConnectorImaging_s lraw_imageInputRAW_connector = {
@@ -688,7 +698,7 @@ oyCMMapi4_s   lraw_api4_image_input_libraw = {
   OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t last_module_api[3] */
+  {0,1,10},                  /**< int32_t last_module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -702,7 +712,7 @@ oyCMMapi4_s   lraw_api4_image_input_libraw = {
   {oyOBJECT_NAME_S, 0,0,0, (char*)"input_libraw-lite", (char*)"Image[input_libraw-lite]", (char*)"Input libraw Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Read cameraRAW", /* category */
   lraw_extra_options,   /* options */
-  0    /* opts_ui_ */
+  lrawUiGet    /* opts_ui_ */
 };
 
 /** @instance lraw_api7
@@ -730,7 +740,7 @@ oyCMMapi7_s   lraw_api7_image_input_libraw = {
   OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t last_module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

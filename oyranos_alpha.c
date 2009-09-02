@@ -3160,6 +3160,9 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
 
             rank_list_[k++] = rank;
             api = api5->oyCMMFilterLoad( 0,0, files[i], type, j);
+            if(!api)
+              continue;
+
             api->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
             api->api5_ = api5;
             if(!apis)
@@ -3497,19 +3500,34 @@ int              oyCMMRelease_       ( const char        * cmm )
  *  @memberof oyCMMapi_s
  *  @brief   check for completeness
  *
- *  @since Oyranos: version 0.1.8
- *  @date  6 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/06 (Oyranos: 0.1.8)
+ *  @date    2009/09/02
  */
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
 {
   int error = !api;
-  oyOBJECT_e type = 0;
+  oyOBJECT_e type = oyOBJECT_NONE;
+  int module_api = api->module_api[0]*10000 + api->module_api[1]*100
+                    + api->module_api[2];
+
+  if(api->type <= oyOBJECT_CMM_API_S ||
+     api->type >= oyOBJECT_CMM_API_MAX)
+    error = 1;
+  else
+  {
+    if(module_api < 110 ||  /* last API break */
+       OYRANOS_VERSION < module_api)
+    {
+      error = 1;
+      WARNc2_S("Wrong API for: %s %s", oyStructTypeToText(api->type),
+               oyNoEmptyString_m_(api->registration));
+      return type;
+    }
+  }
 
   if(error <= 0)
-    type = api->type;
-
-  if(error <= 0)
-  switch(type)
+  switch(api->type)
   {
     case oyOBJECT_CMM_API1_S:
     {
@@ -3537,18 +3555,51 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
-           (s->version[0] || s->version[1] || s->version[2]) &&
-           s->oyCMMFilter_ValidateOptions &&
-           s->oyWidget_Event &&
-           (!s->oyCMMFilterNode_ContextToMem ||
-            (s->oyCMMFilterNode_ContextToMem && s->oyCMMFilterNode_GetText &&
-             s->context_type && s->context_type[0])) &&
-           s->name.type == oyOBJECT_NAME_S &&
-           s->name.nick && s->name.name && s->name.description &&
-           s->category && s->category[0] &&
-           (!s->options || (s->options && s->options[0] && s->oyCMMuiGet))
-            ) )
+           (s->version[0] || s->version[1] || s->version[2])))
+      {
         error = 1;
+        WARNc2_S("Incomplete module header: %s %s",
+                 oyStructTypeToText(api->type),
+                 oyNoEmptyString_m_(api->registration));
+      }
+      if(s->oyCMMFilter_ValidateOptions &&
+         !s->oyWidget_Event)
+      {
+        error = 1;
+        WARNc2_S("Incomplete module UI function set: %s %s",
+                 oyStructTypeToText(api->type),
+                 oyNoEmptyString_m_(api->registration));
+      }
+      if(s->context_type && s->context_type[0] &&
+         !s->oyCMMFilterNode_ContextToMem)
+      {
+        error = 1;
+        WARNc2_S("context_type provided but no oyCMMFilterNode_ContextToMem: %s %s",
+                 oyStructTypeToText(api->type),
+                 oyNoEmptyString_m_(api->registration));
+      }
+      if(!(s->name.type == oyOBJECT_NAME_S &&
+           s->name.nick && s->name.name && s->name.description))
+      {
+        error = 1;
+        WARNc2_S("Missed module name: %s %s",
+                 oyStructTypeToText(api->type),
+                 oyNoEmptyString_m_(api->registration));
+      }
+      if(!(s->category && s->category[0]))
+      {
+        error = 1;
+        WARNc2_S("Missed module category: %s %s",
+                 oyStructTypeToText(api->type),
+                 oyNoEmptyString_m_(api->registration));
+      }
+      if(s->options && s->options[0] && !s->oyCMMuiGet)
+      {
+        error = 1;
+        WARNc2_S("options provided without oyCMMuiGet: %s %s",
+                 oyStructTypeToText(api->type),
+                 oyNoEmptyString_m_(api->registration));
+      }
     } break;
     case oyOBJECT_CMM_API5_S:
     {
@@ -3622,6 +3673,13 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     default: break;
   }
+
+  if(error <= 0)
+    type = api->type;
+  else
+    WARNc2_S("Found problems with: %s %s", oyStructTypeToText(api->type),
+              oyNoEmptyString_m_(api->registration));
+
 
   return type;
 }

@@ -354,7 +354,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
 
   OY_CMMSUBPATH, /* sub_paths */

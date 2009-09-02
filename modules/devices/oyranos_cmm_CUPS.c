@@ -642,7 +642,7 @@ oyCMMapi8_s _api8 = {
 
   CMM_BASE_REG,          /**< registration */
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,                     /**< char * id_ */
   0,                     /**< oyCMMapi5_s * api5_ */
   Configs_FromPattern,   /**< oyConfigs_FromPattern_f oyConfigs_FromPattern */

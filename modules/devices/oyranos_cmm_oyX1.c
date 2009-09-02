@@ -824,7 +824,7 @@ oyCMMapi8_s oyX1_api8 = {
 
   OYX1_MONITOR_REGISTRATION, /**< registration */
   {0,3,0},                   /**< int32_t version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */

@@ -953,7 +953,7 @@ struct  oyCMMapi4_s {
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
   oyWidgetEvent_f                  oyWidget_Event; /**< handle widget events */
 
-  /** mandatory for "//colour/icc" filters */
+  /** mandatory for "//colour/icc" context producing filters */
   oyCMMFilterNode_ContextToMem_f   oyCMMFilterNode_ContextToMem;
   /** optional for a set oyCMMFilterNode_ContextToMem,
    *  used to override a Oyranos side hash creation */

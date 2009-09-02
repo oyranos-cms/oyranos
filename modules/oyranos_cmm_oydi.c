@@ -730,6 +730,16 @@ char oydi_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
+int  oydiUiGet                       ( oyOptions_s       * opts,
+                                       char             ** xforms_layout,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * text = (char*)allocateFunc(5);
+  text[0] = 0;
+  *xforms_layout = text;
+  return 0;
+};
+
 
 
 
@@ -814,7 +824,7 @@ oyCMMapi7_s   oydi_api7_image_display = {
   OY_IMAGE_DISPLAY_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -851,7 +861,7 @@ oyCMMapi4_s   oydi_api4_image_display = {
   OY_IMAGE_DISPLAY_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -865,7 +875,7 @@ oyCMMapi4_s   oydi_api4_image_display = {
   {oyOBJECT_NAME_S, 0,0,0, "display", "Display", "Display Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Graph/Display", /* category */
   oydi_extra_options,   /* const char * options */
-  0    /* oyCMMuiGet_f oyCMMuiGet */
+  oydiUiGet    /* oyCMMuiGet_f oyCMMuiGet */
 };
 
 /* OY_IMAGE_DISPLAY_REGISTRATION ---------------------------------------------*/

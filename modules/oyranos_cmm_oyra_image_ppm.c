@@ -297,6 +297,17 @@ const char ppm_write_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
+int  oyraPPMwriteUiGet               ( oyOptions_s       * opts,
+                                       char             ** xforms_layout,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * text = (char*)allocateFunc(5);
+  text[0] = 0;
+  *xforms_layout = text;
+  return 0;
+};
+
+
 oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
                                              oyFLOAT, oyDOUBLE, 0};
 
@@ -381,7 +392,7 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -395,7 +406,7 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   {oyOBJECT_NAME_S, 0,0,0, "write_ppm", "Image[write_ppm]", "Write PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Write PPM", /* category */
   ppm_write_extra_options,   /* options */
-  0    /* opts_ui_ */
+  oyraPPMwriteUiGet    /* opts_ui_ */
 };
 
 /** @instance oyra_api7
@@ -423,7 +434,7 @@ oyCMMapi7_s   oyra_api7_image_write_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -965,6 +976,17 @@ const char ppm_read_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
+int  oyraPPMreadUiGet                ( oyOptions_s       * opts,
+                                       char             ** xforms_layout,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * text = (char*)allocateFunc(5);
+  text[0] = 0;
+  *xforms_layout = text;
+  return 0;
+};
+
+
 oyConnectorImaging_s oyra_imageInputPPM_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Socket"},
@@ -1019,7 +1041,7 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -1033,7 +1055,7 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   {oyOBJECT_NAME_S, 0,0,0, "input_ppm", "Image[input_ppm]", "Input PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Read PPM", /* category */
   ppm_read_extra_options,   /* options */
-  0    /* opts_ui_ */
+  oyraPPMreadUiGet    /* opts_ui_ */
 };
 
 /** @instance oyra_api7
@@ -1061,7 +1083,7 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

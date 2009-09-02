@@ -1648,7 +1648,7 @@ oyCMMapi6_s   lcms_api6_cmm = {
   "icc." CMM_NICK ".CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
 
   lcmsVERSION,
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
   
@@ -1680,7 +1680,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
   "icc.colour." CMM_NICK "._CPU._ACCEL",
 
   lcmsVERSION,
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -1717,7 +1717,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   "icc.colour." CMM_NICK "._CPU._NOACCEL",
 
   lcmsVERSION,
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
