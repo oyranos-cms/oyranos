@@ -161,7 +161,8 @@ int main( int argc , char** argv )
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
                         printf("\n");
-                        printf("For more informations read the man page:\n");
+                        printf(_("For more informations read the man page:"));
+                        printf("\n");
                         printf("      man oyranos-monitor\n");
                         exit (0);
                         break;
