@@ -45,7 +45,6 @@
 #define CMMallocateFunc         catCMMfunc( SANE , CMMallocateFunc )
 #define CMMdeallocateFunc       catCMMfunc( SANE , CMMdeallocateFunc )
 #define CMMMessageFuncSet       catCMMfunc( SANE , CMMMessageFuncSet )
-#define CMMCanHandle            catCMMfunc( SANE , CMMCanHandle )
 #define ConfigsFromPatternUsage catCMMfunc( SANE , ConfigsFromPatternUsage )
 #define DeviceInfoFromContext_  catCMMfunc( SANE , DeviceInfoFromContext_ )
 #define GetDevices              catCMMfunc( SANE , GetDevices )
@@ -103,18 +102,6 @@ void CMMdeallocateFunc(oyPointer mem)
 int CMMMessageFuncSet(oyMessage_f message_func)
 {
    message = message_func;
-   return 0;
-}
-
-/** @func  CMMCanHandle
- *  @brief API requirement
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/12 (Oyranos: 0.1.8)
- *  @date    2009/02/09
- */
-int CMMCanHandle(oyCMMQUERY_e type, uint32_t value)
-{
    return 0;
 }
 
@@ -519,22 +506,18 @@ oyRankPad _rank_map[] = {
 oyCMMapi8_s _api8 = {
    oyOBJECT_CMM_API8_S,
    0, 0, 0,
-   0,                        /**< next */
-
-   CMMInit,                  /**< oyCMMInit_f      oyCMMInit */
-   CMMMessageFuncSet,        /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
-   CMMCanHandle,             /**< oyCMMCanHandle_f oyCMMCanHandle */
-
-   CMM_BASE_REG,             /**< registration */
-   {0, 1, 0}
-   ,                         /**< int32_t version[3] */
-   0,                        /**< char * id_ */
-
-   0,                        /**< oyCMMapi5_s * api5_ */
-   Configs_FromPattern,      /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
-   Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
-   Config_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
-   _rank_map                 /**< oyRankPad ** rank_map */
+   0,                                                                 /**< next */
+   CMMInit,                                                           /**< oyCMMInit_f      oyCMMInit */
+   CMMMessageFuncSet,                                                 /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
+   CMM_BASE_REG,                                                      /**< registration */
+   {0, 1, 0},                                                         /**< int32_t version[3] */
+   {0, 1, 10},                                                        /**< int32_t module_api[3] */
+   0,                                                                 /**< char * id_ */
+   0,                                                                 /**< oyCMMapi5_s * api5_ */
+   Configs_FromPattern,                                               /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
+   Configs_Modify,                                                    /**< oyConfigs_Modify_f oyConfigs_Modify */
+   Config_Rank,                                                       /**< oyConfig_Rank_f oyConfig_Rank */
+   _rank_map                                                          /**< oyRankPad ** rank_map */
 };
 
 /**
