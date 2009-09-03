@@ -1580,13 +1580,17 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
   <h3>little CMS ", oyAllocateFunc_ );
 
   A(       _("Extended Options"));
-  A(                         ":</h3>\n\
+  A(                         ":</h3>\n");
+#if 0
+  A("\
   <table>\n\
    <tr>\n\
     <td>" );
   A( _("Cmyk to Cmyk transformation"));
   A(              ":</td>\n\
-    <td>\n\
+    <td>\n");
+#endif
+  A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
       <xf:choices>\n\
        <xf:label>" );
@@ -1605,11 +1609,14 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
         <xf:label>LCMS_PRESERVE_K_PLANE</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
-     </xf:select1>\n\
+     </xf:select1>\n");
+#if 0
+  A("\
     </td>\n\
    </tr>\n\
   </table>\
 " );
+#endif
 
   if(allocateFunc && tmp)
   {

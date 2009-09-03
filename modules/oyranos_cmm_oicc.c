@@ -165,7 +165,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
   <h3>Oyranos ", oyAllocateFunc_ );
 
   A(       _("Default Profiles"));
-  A(                         ":</h3>\n\
+  A(                         ":</h3>\n");
+#if 0
+  A("\
   <table>\n");
   if(editing_rgb)
   {
@@ -174,7 +176,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
     <td>" );
   A( _("Editing Rgb"));
   A(              ":</td>\n\
-    <td>\n\
+    <td>\n");
+#endif
+  A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_rgb\">\n\
       <xf:choices label=\"" );
   A(                   _("Editing Rgb"));
@@ -189,7 +193,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         <xf:value>eciRGB_v2.icc</xf:value>\n\
        </xf:item>\n\
       </xf:choices>\n\
-     </xf:select1>\n\
+     </xf:select1>\n");
+#if 0
+  A("\
     </td>\n\
    </tr>\n" );
   }
@@ -200,7 +206,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
     <td>" );
   A( _("Editing Cmyk"));
   A(               ":</td>\n\
-    <td>\n\
+    <td>\n");
+#endif
+  A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_cmyk\">\n\
       <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"CMYK\" class1=\"prtr\"/>\n\
@@ -209,7 +217,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         <xf:value>coated_FOGRA39L_argl.icc</xf:value>\n\
        </xf:item>\n\
       </xf:choices>\n\
-     </xf:select1>\n\
+     </xf:select1>\n");
+#if 0
+  A("\
     </td>\n\
    </tr>\n" );
   }
@@ -220,7 +230,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
     <td>" );
   A( _("Editing Lab"));
   A(              ":</td>\n\
-    <td>\n\
+    <td>\n");
+#endif
+  A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_lab\">\n\
       <xf:choices xml:lang=\"en\" label=\"Editing Lab\">\n\
        <"CMM_NICK":profiles cspace1=\"Lab\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
@@ -233,7 +245,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         <xf:value>CIELab.icc</xf:value>\n" );
   A(  "</xf:item>\n\
       </xf:choices>\n\
-     </xf:select1>\n\
+     </xf:select1>\n");
+#if 0
+  A("\
     </td>\n\
    </tr>\n" );
   }
@@ -244,7 +258,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
     <td>" );
   A( _("Editing XYZ") );
   A(              ":</td>\n\
-    <td>\n\
+    <td>\n");
+#endif
+  A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_xyz\">\n\
       <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"XYZ\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
@@ -257,7 +273,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         <xf:value>CIEXYZ.icc</xf:value>\n\
        </xf:item>\n\
       </xf:choices>\n\
-     </xf:select1>\n\
+     </xf:select1>\n");
+#if 0
+  A("\
     </td>\n\
    </tr>\n" );
   }
@@ -268,7 +286,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
     <td>" );
   A( _("Editing Gray"));
   A(               ":</td>\n\
-    <td>\n\
+    <td>\n");
+#endif
+  A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_gray\">\n\
       <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"Gray\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
@@ -281,14 +301,16 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         <xf:value>Gray.icc</xf:value>\n\
        </xf:item>\n\
       </xf:choices>\n\
-     </xf:select1>\n\
+     </xf:select1>\n");
+#if 0
+  A("\
     </td>\n\
    </tr>\n");
   }
   A("\
   </table>\
 " );
-
+#endif
 
 
   A("\
@@ -298,12 +320,15 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
   <xf:group>\n");
   if(action_untagged_assign)
   {
+#if 0
   A("\
    <tr>\n\
     <td>" );
   A( _("No Image profile"));
   A(              ":</td>\n\
-    <td>\n\
+    <td>\n");
+#endif
+  A("\
      <xf:select1 ref=\"/" OY_ACTION_UNTAGGED_ASSIGN "\">\n\
       <xf:help>" );
   A(        _("Image has no colour space embedded. What default action shall be performed?") );
@@ -329,9 +354,12 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         <xf:value>2</xf:value>\n\
        </xf:item>\n\
       </xf:choices>\n\
-     </xf:select1>\n\
+     </xf:select1>\n");
+#if 0
+  A("\
     </td>\n\
    </tr>\n" );
+#endif
   }
   A("\
   </xf:group>\
