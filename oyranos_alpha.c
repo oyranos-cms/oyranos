@@ -20901,6 +20901,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
         if(tmp)
         {
           STRING_ADD( text, tmp );
+          STRING_ADD( text, "\n" );
           oyFree_m_(tmp);
 
           if(namespaces && cmm_api9->xml_namespace)
