@@ -749,6 +749,12 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
   int error = !data || !ui_text,
       pos = 0;
 
+#if USE_GETTEXT
+  const char * save_locale = setlocale(LC_NUMERIC, 0 );
+  char * tmp = 0;
+  int i = 0;
+#endif
+
   if(error)
     return 0;
 
@@ -763,8 +769,25 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
   }
   STRING_ADD( text,
    ">\n"
-   "<head>\n"
-   "  <title>lcms options</title>\n"
+   "<head>\n");
+#if USE_GETTEXT
+  if(save_locale && oyStrcmp_(save_locale,"C") != 0 &&
+     oyStrchr_(save_locale,'.'))
+  {
+    STRING_ADD( tmp, oyStrchr_( save_locale, '.' ) );
+    while(tmp[i])
+    {
+      tmp[i] = tolower(tmp[i]);
+      ++i;
+    }
+    STRING_ADD( text, "  <META HTTP-EQUIV=\"content-type\" CONTENT=\"text/html; charset=" );
+    STRING_ADD( text, tmp );
+    STRING_ADD( text, "\"/>\n" );
+  } else
+    STRING_ADD( text, "  <META HTTP-EQUIV=\"content-type\" CONTENT=\"text/html; charset=iso-8859-1\"/>\n" );
+#endif
+  STRING_ADD( text,
+   "  <title>Filter options</title>\n"
    "  <xf:model>\n"
    "    <xf:instance xmlns=\"\">\n" );
   STRING_ADD( text, data );
@@ -1078,8 +1101,10 @@ const char * oyXFORMsModelGetXPathValue_
 
 
 /** @internal
- *  Function oyXML2XFORMsSelect1Handler
+ *  Function oyXML2XFORMsCmdLineSelect1Handler
  *  @brief   build a UI for a xf:select1 XFORMS sequence
+ *
+ *  This function is a simple demonstration.
  *
  *  @param[in]     cur                 libxml2 node
  *  @param[in]     collected_elements  parsed and requested elements
@@ -1090,7 +1115,7 @@ const char * oyXFORMsModelGetXPathValue_
  *  @since   2009/08/29 (Oyranos: 0.1.10)
  *  @date    2009/08/31
  */
-int        oyXML2XFORMsSelect1Handler( xmlNodePtr          cur,
+int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
                                        oyPointer           user_data )
 {
@@ -1193,5 +1218,20 @@ int        oyXML2XFORMsSelect1Handler( xmlNodePtr          cur,
   /*printf("collected:\n%s", oyOptions_GetText( collected_elements, oyNAME_NICK));*/
   return 0;
 }
+
+oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
+  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
+   "oyFORMS",                          /**< dialect */
+   "libxml2",                          /**< parser_type */
+   "xf:select1",                       /**< element_type; Wanted XML element. */
+   (oyUiHandler_f)oyXML2XFORMsCmdLineSelect1Handler, /**<oyUiHandler_f handler*/
+   "dummy",                            /**< handler_type */
+   "xf:choices/xf:item/xf:label.xf:value" /**< element_search */
+  };
+
+oyUiHandler_s * oy_ui_cmd_line_handlers[] = {
+  &oy_ui_cmd_line_handler_xf_select1_,
+  0
+};
 
 
