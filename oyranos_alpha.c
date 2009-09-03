@@ -3728,35 +3728,39 @@ digraph Backends {
   graph [fontname=Helvetica, fontsize=14];
   node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
 
-  subgraph cluster_8 {
+  subgraph cluster_0 {
     label="Oyranos Module Framework";
     color=white;
     clusterrank=global;
 
-      s [ label="Script Importer - \"oCTL\"\n oyCMMapi5_s"];
-      i [ label="Library Importer - \"oyIM\"\n oyCMMapi5_s"];
+      s [URL="structoyCMMapi5__s.html#_details", label="Script Importer - \"oGTL\"\n oyCMMapi5_s"];
+      i [URL="structoyCMMapi5__s.html#_details", label="Library Importer - \"oyIM\"\n oyCMMapi5_s"];
 
       node [width = 2.5, style=filled];
       o [ label="External Function Import\n Extendable Functionality\n Additional Dependencies\n ..."];
-      p [ label="Meta Backend / Filter Import\n oyFilterNode_s"];
+      p [ label="Filter nodes / Graph handling APIs\n oyFilterNode_s"];
 
-      api7_B [label="//imaging/root.oyra Processor\n oyCMMapi7_s"];
+      api7_B [URL="structoyCMMapi7__s.html#_details",label="//imaging/root.oyra Processor\n oyCMMapi7_s"];
 
-      api4_A [label="//imaging/icc.lcms Context\n oyCMMapi4_s"];
-      api6_A [label="//imaging/icc.lcms Context Converter\n oyCMMapi6_s"];
-      api7_A [label="//imaging/icc.lcms Processor\n oyCMMapi7_s"];
+      api4_A [URL="structoyCMMapi4__s.html#_details",label="//imaging/icc.lcms Context\n oyCMMapi4_s"];
+      api6_A [URL="structoyCMMapi6__s.html#_details",label="//imaging/icc.lcms Context Converter\n oyCMMapi6_s"];
+      api7_A [URL="structoyCMMapi7__s.html#_details",label="//imaging/icc.lcms Processor\n oyCMMapi7_s"];
 
-      api6_C [label="//imaging/icc.octl Context Converter\n oyCMMapi6_s"];
-      api7_C [label="//imaging/icc.octl Processor\n oyCMMapi7_s"];
+      api6_C [URL="structoyCMMapi6__s.html#_details",label="//imaging/icc.ogtl Context Converter\n oyCMMapi6_s"];
+      api7_C [URL="structoyCMMapi7__s.html#_details",label="//imaging/icc.ogtl Processor\n oyCMMapi7_s"];
 
-      m [label="Config (Device) Functions\n oyCMMapi8_s"];
-      icc [label="ICC Profile Functions\n oyCMMapi3_s"];
+      m [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
+      k [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
+      l [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
+      policy [URL="structoyCMMapi9__s.html#_details", label="Policy Functions\n oyCMMapi9_s"];
+      icc [URL="structoyCMMapi3__s.html#_details", label="ICC Profile Functions\n oyCMMapi3_s"];
 
-      subgraph cluster_7 {
+
+      subgraph cluster_1 {
         color=gray;
-        label="Backends"
+        label="Backend APIs"
 
-        subgraph cluster_0 {
+        subgraph cluster_2 {
           rank=max;
           color=red;
          style=dashed;
@@ -3766,7 +3770,7 @@ digraph Backends {
           label="\"lcms\"";
         }
 
-        subgraph cluster_1 {
+        subgraph cluster_3 {
           color=blue;
           style=dashed;
           node [style="filled"];
@@ -3774,7 +3778,7 @@ digraph Backends {
           label="\"oyra\"";
         }
 
-        subgraph cluster_2 {
+        subgraph cluster_4 {
           color=blue;
           style=dashed;
           node [style="filled"];
@@ -3782,7 +3786,7 @@ digraph Backends {
           label="\"oyIM\"";
         }
 
-        subgraph cluster_3 {
+        subgraph cluster_5 {
           color=yellow;
           style=dashed;
           node [style="filled"];
@@ -3791,29 +3795,50 @@ digraph Backends {
           label="\"octl\"";
         }
 
-        subgraph cluster_4 {
+        subgraph cluster_6 {
           color=gray;
           style=dashed;
           m;
           label="\"oyX1\"";
         }
 
+        subgraph cluster_7 {
+          color=gray;
+          style=dashed;
+          k;
+          label="\"SANE\"";
+        }
+
+        subgraph cluster_8 {
+          color=gray;
+          style=dashed;
+          l;
+          label="\"CUPS\"";
+        }
+
+        subgraph cluster_9 {
+          color=gray;
+          style=dashed;
+          policy;
+          label="\"oicc\"";
+        }
+
       }
 
-      subgraph cluster_5 {
+      subgraph cluster_10 {
         color=gray;
         node [style="filled"];
         s;
         i;
-        label="Meta Backends - Filter Importing";
+        label="Filter Import - Meta Backend APIs";
       }
 
-      subgraph cluster_6 {
+      subgraph cluster_11 {
         color=gray;
         node [style="filled"];
         o;
         p;
-        label="Oyranos - Abstract Graph/Filter API";
+        label="Oyranos User APIs";
       }
 
       p -> i [arrowhead="open", color=gray];
@@ -3825,6 +3850,9 @@ digraph Backends {
       s -> api6_C [arrowhead="open", color=yellow];
       s -> api7_C [arrowhead="open", color=yellow];
       i -> m [arrowhead="open", color=gray];
+      i -> k [arrowhead="open", color=gray];
+      i -> l [arrowhead="open", color=gray];
+      i -> policy [arrowhead="open", color=gray];
       o -> icc [arrowhead="open", color=gray];
   }
 } @enddot
