@@ -1755,7 +1755,7 @@ int              oyStructList_Sort   ( oyStructList_s    * s,
 
 
 
-/** \addtogroup cmm_handling
+/** \addtogroup backend_api
 
  *  @{
  */
@@ -3685,28 +3685,54 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
 }
 
 
-/** @} *//* cmm_handling */
+/** @} *//* backend_api */
 
 
 
-/** \addtogroup backend_api CMM API
+/** \addtogroup backend_api Module APIs
  *
- *  CMM's in Oyranos are designed to be plugable into a framework of arbitrary
- *  data formats and processing. On the user side the oyFilterNode_s and
- *  Device API's are visible endities. They handle user requests to map and
- *  transform them to instructions for plugable backend modules. 
+ *  Oyranos C modules provide support for data formats, data processing and
+ *  process control, as well as configuration.
+ *  The module architecture covers three basic layers. \n
+ *  \b User \b APIs - \b Meta \b Backend \b API - \b Module \b APIs
+ *
+ *  \b User \b API:
+ *  The user API allowes to contruct a filter or configuration
+ *  object. Filters can be chained to directed acyclic graphs (DAGs) and data
+ *  can be processed through graphs or they are deployed by higher level APIs,
+ *  like named colour API.
  *
  *  \b Meta \b Backends:
- *  The format of backend modules is plugable as well. A Meta module can support
- *  different formats of backends, allowing to support backends to be written
- *  even i nscripting languages.
+ *  The modules are loaded into Oyranos by meta modules. A Meta module can
+ *  support different formats of backends. The basic format are the native C
+ *  structures and function declarations, which allow very detailed access and 
+ *  control of Oyranos objects. These C data structures for building a module
+ *  are complex and need some expertise to handle. However the meta backend 
+ *  interface allows to write support for modules which might be written even
+ *  in scripting languages. Such filters should then be loadable as normal
+ *  modules and are, depending on the choosen language, very easy to understand
+ *  and to write.
+ *  Beside reduced access to Oyranos native C data types, script filters might
+ *  become highly interchangeable outside of Oyranos.
  *
- *  \b High \b Abstraction: Most backend API's have no idea themselve about what
- *  kind of data they handle. They follow very generic and abstract ideas and
- *  rules on how to do data processing in a acyclic graph. The overal idea of
- *  Oyranos' graphs can be read in the @ref objects_conversion. 
- *  The backend API's can implement different processing stages and tell how to
- *  combine them in a graph by Oyranos. 
+ *  \b Backend \b APIs:
+ *  Several interfaces allow to write different module types. They can have
+ *  access to Oyranos' configuration system, build data dependent contexts,
+ *  provide access to user defined data types, create custom UIs via XFORMS and
+ *  possibly SVG, simply process data and connect as node into a Oyranos DAG or
+ *  expose to users as policy tool for a DAG. Different module APIs expose as
+ *  different user APIs.
+ *  Most module authors will want to write for one of these interfaces.
+ *
+ *  \b High \b Abstraction: Most module interfaces have no idea themselve about
+ *  what kind of data they handle. They follow very generic and abstract ideas
+ *  and rules on how to do data processing in a directed acyclic graph. 
+ *  The overal idea of Oyranos' graphs can be read in the 
+ *  @ref objects_conversion. 
+ *  The module interfaces can implement different processing stages and tell 
+ *  how to combine them in a graph by Oyranos. E.g. it is possible for on module
+ *  to build a cacheable context, which can be used by different modules to
+ *  process data.
  *  Most of the processing logic is inside Oyranos's core. But for efficiency
  *  and flexibility backends have access to their connected neighbour plug-ins.
  *  For instance they have to call their forerunner to request for data.
@@ -3714,10 +3740,11 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
  *  \b Examples: For learning how backends can
  *  do useful work see the delivered modules like the lcms and oyIM ones in
  *  files like "oyranos_cmm_xxxx.c". They are linked as libraries and are
- *  installed in the "$cmmdir" and "$libdir/oyranos" paths shown during the
- *  configuration process.
+ *  installed in the "$cmmdir" and "$libdir/oyranos" paths. These paths are
+ *  shown during the configuration process or through te provided oyranos-config
+ *  tool.
  *
- *  Below a architectural overview is shown:
+ *  Below a architectural imodule overview is shown:
  *
  *  @dot
 digraph Backends {
@@ -24884,7 +24911,7 @@ int               oyNamedColours_ReleaseAt ( oyNamedColours_s * obj,
 /** @} *//* objects_single_colour */
 
 
-/** \addtogroup cmm_handling CMM Handling API
+/** \addtogroup backend_api
 
  *  @{
  */
@@ -24917,7 +24944,7 @@ int          oyIdToCMM               ( uint32_t            cmmId,
     return 0;
 }
 
-/** @} *//* cmm_handling */
+/** @} *//* backend_api */
 
 
 
