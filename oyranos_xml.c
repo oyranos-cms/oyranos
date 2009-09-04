@@ -720,9 +720,13 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
   doc = xmlParseMemory( text, strlen(text) );
   cur = xmlDocGetRootElement(doc);
 
-  oyParseXMLNode_( doc, cur, 0, ui_handlers, user_data );
-
-  xmlFreeDoc( doc );
+  if(doc && cur)
+  {
+    oyParseXMLNode_( doc, cur, 0, ui_handlers, user_data );
+    xmlFreeDoc( doc );
+  }
+  else
+    error = 1;
 
   return error;
 }
@@ -759,6 +763,28 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
     return 0;
 
   STRING_ADD( text,
+   "<?xml version=\"1.0\" encoding=\"" );
+#if USE_GETTEXT
+  if(save_locale && oyStrcmp_(save_locale,"C") != 0 &&
+     oyStrchr_(save_locale,'.'))
+  {
+    STRING_ADD( tmp, oyStrchr_( save_locale, '.' ) + 1 );
+    while(tmp[i])
+    {
+      tmp[i] = tolower(tmp[i]);
+      ++i;
+    }
+    STRING_ADD( text, tmp );
+  } else
+    STRING_ADD( text, "ISO-8859-1" );
+#else
+  STRING_ADD( text,
+   "ISO-8859-1" );
+#endif
+  STRING_ADD( text,
+   "\" ?>\n"
+   "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
+   "       \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
    "<html xmlns=\"http://www.w3.org/1999/xhtml\"\n"
    "      xmlns:xf=\"http://www.w3.org/2002/xforms\"\n" );
   while(namespaces && namespaces[pos])
@@ -770,22 +796,6 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
   STRING_ADD( text,
    ">\n"
    "<head>\n");
-#if USE_GETTEXT
-  if(save_locale && oyStrcmp_(save_locale,"C") != 0 &&
-     oyStrchr_(save_locale,'.'))
-  {
-    STRING_ADD( tmp, oyStrchr_( save_locale, '.' ) );
-    while(tmp[i])
-    {
-      tmp[i] = tolower(tmp[i]);
-      ++i;
-    }
-    STRING_ADD( text, "  <META HTTP-EQUIV=\"content-type\" CONTENT=\"text/html; charset=" );
-    STRING_ADD( text, tmp );
-    STRING_ADD( text, "\"/>\n" );
-  } else
-    STRING_ADD( text, "  <META HTTP-EQUIV=\"content-type\" CONTENT=\"text/html; charset=iso-8859-1\"/>\n" );
-#endif
   STRING_ADD( text,
    "  <title>Filter options</title>\n"
    "  <xf:model>\n"
@@ -871,6 +881,12 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
       while(ui_handlers[pos])
       {
         STRING_ADD( tmp, ui_handlers[pos]->element_search );
+        if(!tmp)
+        {
+          ++pos;
+          continue;
+        }
+
         len = (int)(oyStrrchr_(tmp, '/') - tmp);
         if(oyStrchr_(tmp, '/'))
           tmp[len] = 0;
@@ -881,7 +897,10 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
           old_wid_data = wid_data;
           wid_data = 0;
           search = ui_handlers[pos]->element_search;
-          if(oyStrstr_( search, name ))
+          /** usually dont search for the current level, except for
+           *  element_search and element_type contain the same search term */
+          if(!oyStrstr_(ui_handlers[pos]->element_type, name ) &&
+             oyStrstr_( search, name ))
             search = oyStrstr_( search, name ) + oyStrlen_(name) + 1;
 
           error = oyOptions_SetFromText( &wid_data, "////search",
@@ -1193,7 +1212,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
           if(choices_n)
             printf( "; " );
           printf( "%c%s - \"%s\"%c",
-                  is_default?'<':' ', value, label, is_default?'>':' ' );
+                  is_default?'[':' ', value, label, is_default?']':' ' );
           ++choices_n;
         }
         else if(oy_debug)
@@ -1229,8 +1248,55 @@ oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
    "xf:choices/xf:item/xf:label.xf:value" /**< element_search */
   };
 
-oyUiHandler_s * oy_ui_cmd_line_handlers[] = {
+/** @internal
+ *  Function oyXML2XFORMsCmdLineHtmlHeadlineHandler
+ *  @brief   build a UI for a xf:select1 XFORMS sequence
+ *
+ *  This function is a simple demonstration.
+ *
+ *  @param[in]     cur                 libxml2 node
+ *  @param[in]     collected_elements  parsed and requested elements
+ *  @param[in]     user_data           toolkit context
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/29 (Oyranos: 0.1.10)
+ *  @date    2009/08/31
+ */
+int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
+                                       xmlNodePtr          cur,
+                                       oyOptions_s       * collected_elements,
+                                       oyPointer           user_data )
+{
+  const char * tmp = 0;
+  int size = 0;
+
+  if(!tmp)
+  {
+    tmp = oyOptions_FindString( collected_elements, "h3", 0 );
+    if(tmp)
+      size = 3;
+  }
+
+  if(tmp)
+    printf( "%s\n", tmp );
+
+  return 0;
+}
+
+oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
+  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
+   "oyFORMS",                          /**< dialect */
+   "libxml2",                          /**< parser_type */
+   "h3",                               /**< element_type; Wanted XML elements.*/
+   (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
+   "dummy",                            /**< handler_type */
+   "h3"                                /**< element_search */
+  };
+
+oyUiHandler_s * oy_ui_cmd_line_handlers[3] = {
   &oy_ui_cmd_line_handler_xf_select1_,
+  &oy_ui_cmd_line_handler_html_headline_,
   0
 };
 
