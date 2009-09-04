@@ -938,7 +938,8 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
 
           if(wid_data && oyOptions_FindString(wid_data, "search", 0))
           {
-            STRING_ADD( tmp, "////" );
+            STRING_ADD( tmp, (char*)attr->children->content );
+            STRING_ADD( tmp, "." );
             STRING_ADD( tmp, name );
             error = oyOptions_SetFromText( &wid_data, tmp, v, OY_CREATE_NEW );
             if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
@@ -1132,7 +1133,7 @@ const char * oyXFORMsModelGetXPathValue_
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/08/29 (Oyranos: 0.1.10)
- *  @date    2009/08/31
+ *  @date    2009/09/04
  */
 int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
@@ -1141,22 +1142,20 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
   oyOption_s * o  = 0, * o2, *o3;
   int n = oyOptions_Count( collected_elements ),
       i,j,j_n,k,k_n,
-      is_default,
+      is_default, default_pos = -1,
       choices_n = 0;
   oyOptions_s * opts = 0, * opts2;
   const char * default_value = 0,
              * tmp,
              * label,
              * value;
+  char * default_key = 0, * t = 0;
+  char * choices = 0;
 
-  tmp = oyOptions_FindString( collected_elements, "xf:select1", 0 );
-  if(tmp)
-  {
-    default_value = tmp;
+  default_value = oyOptions_FindString( collected_elements, "xf:select1", 0 );
 
-    if(oy_debug)
-      printf( "found default: \"%s\"\n", default_value );
-  }
+  if(oy_debug && default_value)
+    printf( "found default: \"%s\"\n", default_value );
 
   for(i = 0; i < n; ++i)
   {
@@ -1164,7 +1163,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
     opts = (oyOptions_s*) oyOption_StructGet( o, oyOBJECT_OPTIONS_S );
     
     if(!opts && oyFilterRegistrationMatch( o->registration,"xf:label", 0 ))
-      printf( "%s: ", o->value->string );
+      printf( " %s:\n", o->value->string );
 
     if(opts && oyFilterRegistrationMatch( o->registration,"xf:choices", 0 ))
     {
@@ -1175,7 +1174,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
         opts2 = (oyOptions_s*) oyOption_StructGet( o2, oyOBJECT_OPTIONS_S );
 
         if(!opts2 && oyFilterRegistrationMatch(o2->registration,"xf:label", 0 ))
-          printf( "%s: ", o2->value->string );
+          printf( "  %s:\n", o2->value->string );
 
         if(opts2 && oyFilterRegistrationMatch( o2->registration,"xf:item", 0 ))
         {
@@ -1207,12 +1206,24 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
 
           if(value && default_value &&
              oyStrcmp_(default_value,value) == 0)
+          {
             is_default = 1;
+            default_pos = choices_n;
+          }
 
-          if(choices_n)
-            printf( "; " );
-          printf( "%c%s - \"%s\"%c",
-                  is_default?'[':' ', value, label, is_default?']':' ' );
+          if(is_default)
+            STRING_ADD( choices, "[" );
+          STRING_ADD( choices, value );
+          if(is_default)
+            STRING_ADD( choices, "]" );
+          if(label)
+          {
+            STRING_ADD( choices, " - \"" );
+            STRING_ADD( choices, label );
+          }
+          STRING_ADD( choices, "\"" );
+          STRING_ADD( choices, "\n" );
+
           ++choices_n;
         }
         else if(oy_debug)
@@ -1223,7 +1234,6 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
         oyOptions_Release( &opts2 );
         oyOption_Release( &o2 );
       }
-      printf( "\n" );
     }
     else if(oy_debug)
       printf( "found option: 0x%x  \"%s\" %s\n",
@@ -1233,6 +1243,45 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
     oyOptions_Release( &opts );
     oyOption_Release( &o );
   }
+
+  o = oyOptions_Find( collected_elements, "xf:select1" );
+  if(o)
+  {
+    STRING_ADD( default_key, o->registration );
+    t = oyStrstr_( default_key, ".xf:select1" );
+    t[0] = 0;
+
+    printf("  ");
+    /* the option follows */
+    printf(_("Option"));
+    printf(" --%s=[%s]\n    ", default_key, default_value);
+    /* the choices follow */
+    printf(_("with following choices"));
+
+    printf(":\n");
+    i = -1;
+    if(choices_n <= 10)
+      printf("%s", choices );
+    else
+    {
+      while(choices[++i])
+        if(choices[i] != '\n')
+          putc( choices[i], stdout );
+        else
+        {
+          putc( ';', stdout );
+          putc( ' ', stdout );
+        }
+      printf("\n");
+    }
+    printf("\n");
+
+    oyOption_Release( &o );
+  }
+
+  if(choices)
+    oyFree_m_( choices );
+  oyFree_m_( default_key );
 
   /*printf("collected:\n%s", oyOptions_GetText( collected_elements, oyNAME_NICK));*/
   return 0;
