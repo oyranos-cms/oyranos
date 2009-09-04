@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    Oyranos X11 backend for Oyranos
+ *  @brief    Oyranos X11 module for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -330,7 +330,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
 
   /* obtain device informations, including geometry and ICC profiles
-     from the according Oyranos backend */
+     from the according Oyranos module */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options,
@@ -738,7 +738,7 @@ int  oydiUiGet                       ( oyOptions_s       * opts,
   text[0] = 0;
   *xforms_layout = text;
   return 0;
-};
+}
 
 
 

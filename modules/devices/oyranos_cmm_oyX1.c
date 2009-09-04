@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2007-2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    Oyranos X11 backend for Oyranos
+ *  @brief    Oyranos X11 module for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -140,7 +140,7 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
       " \"1024x786+0+0\"\n"
       " \n"
       " One option \"device_name\" will select the according X display.\n"
-      " If not the backend will try to get this information from \n"
+      " If not the module will try to get this information from \n"
       " your \"DISPLAY\" environment variable or uses what the system\n"
       " provides. The \"device_name\" should be identical with the one\n"
       " returned from a \"list\" request.\n"
@@ -854,7 +854,7 @@ const char * oyX1GetText             ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Oyranos X11");
     else
-      return _("The window support backend of Oyranos.");
+      return _("The window support module of Oyranos.");
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)

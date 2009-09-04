@@ -1489,7 +1489,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   }
   fprintf( stdout, "\n");
 
-  /* send a empty query to one backend to obtain instructions in a message */
+  /* send a empty query to one module to obtain instructions in a message */
   error = oyConfigs_FromDomain( texts[0], 0, &configs, 0 );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -1501,7 +1501,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   fprintf( stdout, "\n");
 
 
-  /* add list call to backend arguments */
+  /* add list call to module arguments */
   error = oyOptions_SetFromText( &options_list,
                                  "//" OY_TYPE_STD "/config/command", "list",
                                  OY_CREATE_NEW );
@@ -1624,7 +1624,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
     error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
-    /* send the query to a backend */
+    /* send the query to a module */
     error = oyConfigs_FromDomain( registration_domain,
                                   options, &configs, 0 );
     devices_n = oyConfigs_Count( configs );
@@ -1932,7 +1932,7 @@ oyTESTRESULT_e testCMMsShow ()
               oyFree_m_( classe );
 
 
-              STRING_ADD( text, "    API(s) load from Meta backend:\n" );
+              STRING_ADD( text, "    API(s) load from Meta module:\n" );
 
               for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API9_S; j++)
               {
@@ -2292,7 +2292,7 @@ oyTESTRESULT_e testCMMnmRun ()
         Programm:
         1. get filter and its type
         2. get implementation for filter type
-        3. parse static common options from meta backend
+        3. parse static common options from meta module
         4. parse static options from filter 
         5. merge both
         6. get stored values from disk
@@ -2303,7 +2303,7 @@ oyTESTRESULT_e testCMMnmRun ()
     /*  2. get implementation for filter type */
     api5 = filter->api4_->api5_;
 
-    /*  3. parse static common options from meta backend */
+    /*  3. parse static common options from meta module */
     if(api5 && flags & OY_SELECT_COMMON)
       ; /*opts_tmp = oyOptions_FromText( api5->options, 0, object );*/
     /* requires step 2 */

@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2008-2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    backends for Oyranos
+ *  @brief    modules for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:

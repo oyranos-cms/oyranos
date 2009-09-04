@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2007-2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    littleCMS CMM backend for Oyranos
+ *  @brief    littleCMS CMM module for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -1277,7 +1277,7 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
  *  @brief   convert between data formats
  *  @ingroup cmm_handling
  *
- *  The function might be used to provide a backend specific context.
+ *  The function might be used to provide a module specific context.
  *  Implements oyCMMdata_Convert_f
  *
  *  @version Oyranos: 0.1.10

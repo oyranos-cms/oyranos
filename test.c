@@ -21,7 +21,7 @@
 #include <oyranos.h>
 #include <oyranos_alpha.h>
 #include <oyranos_texts.h> /* oyStringListRelease_ */
-#include <oyranos_cmm.h>   /* for hacking into backend API */
+#include <oyranos_cmm.h>   /* for hacking into module API */
 
 /* forward declaration for oyranos_alpha.c */
 char ** oyCMMsGetNames_              ( int               * n,

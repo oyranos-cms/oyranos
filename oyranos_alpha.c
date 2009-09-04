@@ -1755,7 +1755,7 @@ int              oyStructList_Sort   ( oyStructList_s    * s,
 
 
 
-/** \addtogroup backend_api
+/** \addtogroup module_api
 
  *  @{
  */
@@ -1792,7 +1792,7 @@ oyCMMptr_New_ ( oyAlloc_f         allocateFunc )
 
 /** Function oyCMMptr_New
  *  @brief   allocate a oyCMMptr_s
- *  @ingroup backend_api
+ *  @ingroup module_api
  *  @memberof oyCMMptr_s
  *
  *  Allocate a new oyCMMptr_s pointer.
@@ -1831,7 +1831,7 @@ oyCMMptr_s *       oyCMMptr_Copy_    ( oyCMMptr_s        * cmm_ptr,
 
 /** Function oyCMMptr_Copy
  *  @brief   copy a oyCMMptr_s
- *  @ingroup backend_api
+ *  @ingroup module_api
  *  @memberof oyCMMptr_s
  *
  *  Reference a oyCMMptr_s object and increase its reference counter.
@@ -1846,7 +1846,7 @@ oyCMMptr_s * oyCMMptr_Copy           ( oyCMMptr_s        * cmm_ptr,
 
 /** Function oyCMMptr_Release
  *  @brief   release a oyCMMptr_s
- *  @ingroup backend_api
+ *  @ingroup module_api
  *  @memberof oyCMMptr_s
  *
  *  Has only a weak release behaviour. Use for initialising.
@@ -1955,7 +1955,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
 
 /** Function oyCMMptr_Set
  *  @brief   set a oyCMMptr_s
- *  @ingroup backend_api
+ *  @ingroup module_api
  *  @memberof oyCMMptr_s
  *
  *  Use for initialising.
@@ -2831,7 +2831,7 @@ oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMInfo_s       * info,
   return type;
 }
 
-oyStructList_s * oy_backend_cache_ = 0;
+oyStructList_s * oy_module_cache_ = 0;
 
 /** @internal
  *  Function oyCMMGetMetaApi_
@@ -2864,10 +2864,10 @@ oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
   class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,0);
 
   {
-    if(!oy_backend_cache_)
-      oy_backend_cache_ = oyStructList_New( 0 );
+    if(!oy_module_cache_)
+      oy_module_cache_ = oyStructList_New( 0 );
 
-    entry = oyCacheListGetEntry_ ( oy_backend_cache_, class );
+    entry = oyCacheListGetEntry_ ( oy_module_cache_, class );
 
     s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, type );
 
@@ -3040,7 +3040,7 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
 
 /** @internal
  *  Function oyCMMsGetFilterApis_
- *  @brief let a oyCMMapi5_s meta backend open a set of modules
+ *  @brief let a oyCMMapi5_s meta module open a set of modules
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
  *  The module system shall support:
@@ -3067,8 +3067,8 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
  *  @param[out]  rank_list             the ranks matching the returned list;
  *                                     without that only the most matching API  
  *                                     is returned at position 0
- *  @param[out]  count                 count of returned backends
- *  @return                            a zero terminated list of backends
+ *  @param[out]  count                 count of returned modules
+ *  @return                            a zero terminated list of modules
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/19 (Oyranos: 0.1.10)
@@ -3089,10 +3089,10 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
   oyObject_s object = oyObject_New();
 
   /*{
-    if(!oy_backend_cache_)
-      oy_backend_cache_ = oyStructList_New( 0 );
+    if(!oy_module_cache_)
+      oy_module_cache_ = oyStructList_New( 0 );
 
-    entry = oyCacheListGetEntry_ ( oy_backend_cache_, registration );
+    entry = oyCacheListGetEntry_ ( oy_module_cache_, registration );
 
     api = (oyCMMapiFilter_s*) oyHash_GetPointer_( entry, type );
 
@@ -3118,7 +3118,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     if(error <= 0)
     files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext, cmm_required);
     else
-      WARNc2_S("%s: %s", _("Could not open meta backend API"),
+      WARNc2_S("%s: %s", _("Could not open meta module API"),
                oyNoEmptyString_m_( registration ));
 
     for( i = 0; i < files_n; ++i)
@@ -3271,7 +3271,7 @@ oyStructList_s * oy_cmm_filter_cache_ = 0;
 
 /** @internal
  *  Function oyCMMsGetFilterApi_
- *  @brief let a oyCMMapi5_s meta backend open a module
+ *  @brief let a oyCMMapi5_s meta module open a module
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
  *  The module system shall support:
@@ -3685,16 +3685,16 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
 }
 
 
-/** @} *//* backend_api */
+/** @} *//* module_api */
 
 
 
-/** \addtogroup backend_api Module APIs
+/** \addtogroup module_api Module APIs
  *
  *  Oyranos C modules provide support for data formats, data processing and
  *  process control, as well as configuration.
  *  The module architecture covers three basic layers. \n
- *  \b User \b APIs - \b Meta \b Backend \b API - \b Module \b APIs
+ *  \b User \b APIs - \b Meta \b Module \b API - \b Module \b APIs
  *
  *  \b User \b API:
  *  The user API allowes to contruct a filter or configuration
@@ -3702,12 +3702,12 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
  *  can be processed through graphs or they are deployed by higher level APIs,
  *  like named colour API.
  *
- *  \b Meta \b Backends:
+ *  \b Meta \b Modules:
  *  The modules are loaded into Oyranos by meta modules. A Meta module can
- *  support different formats of backends. The basic format are the native C
+ *  support different formats of modules. The basic format are the native C
  *  structures and function declarations, which allow very detailed access and 
  *  control of Oyranos objects. These C data structures for building a module
- *  are complex and need some expertise to handle. However the meta backend 
+ *  are complex and need some expertise to handle. However the meta module 
  *  interface allows to write support for modules which might be written even
  *  in scripting languages. Such filters should then be loadable as normal
  *  modules and are, depending on the choosen language, very easy to understand
@@ -3715,7 +3715,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
  *  Beside reduced access to Oyranos native C data types, script filters might
  *  become highly interchangeable outside of Oyranos.
  *
- *  \b Backend \b APIs:
+ *  \b Module \b APIs:
  *  Several interfaces allow to write different module types. They can have
  *  access to Oyranos' configuration system, build data dependent contexts,
  *  provide access to user defined data types, create custom UIs via XFORMS and
@@ -3734,10 +3734,10 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
  *  to build a cacheable context, which can be used by different modules to
  *  process data.
  *  Most of the processing logic is inside Oyranos's core. But for efficiency
- *  and flexibility backends have access to their connected neighbour plug-ins.
+ *  and flexibility modules have access to their connected neighbour plug-ins.
  *  For instance they have to call their forerunner to request for data.
  *
- *  \b Examples: For learning how backends can
+ *  \b Examples: For learning how modules can
  *  do useful work see the delivered modules like the lcms and oyIM ones in
  *  files like "oyranos_cmm_xxxx.c". They are linked as libraries and are
  *  installed in the "$cmmdir" and "$libdir/oyranos" paths. These paths are
@@ -3747,7 +3747,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
  *  Below a architectural imodule overview is shown:
  *
  *  @dot
-digraph Backends {
+digraph Modules {
   bgcolor="transparent";
   nodesep=.1;
   ranksep=1.;
@@ -3785,7 +3785,7 @@ digraph Backends {
 
       subgraph cluster_1 {
         color=gray;
-        label="Backend APIs"
+        label="Module APIs"
 
         subgraph cluster_2 {
           rank=max;
@@ -3857,7 +3857,7 @@ digraph Backends {
         node [style="filled"];
         s;
         i;
-        label="Filter Import - Meta Backend APIs";
+        label="Filter Import - Meta Module APIs";
       }
 
       subgraph cluster_11 {
@@ -3892,9 +3892,9 @@ digraph Backends {
  *  information about their supported data formats.
  *  The following paragraphs provide a overview.
  *
- *  The oyCMMapi5_s plug-in structure defines a meta backend to load plug-ins,
+ *  The oyCMMapi5_s plug-in structure defines a meta module to load plug-ins,
  *  from a to be defined directory with to be defined naming criterias. This
- *  API defines at the same time allowed input data formats. The meta backend 
+ *  API defines at the same time allowed input data formats. The meta module 
  *  loads or constructs all parts of a plug-in, oyCMMapi4_s, oyCMMapi7_s, 
  *  oyCMMapi6_s and oyCMMapi8_s.
  *
@@ -3922,9 +3922,9 @@ digraph Backends {
  *  a fitting oyCMMapi6_s data convertor. This API is only required for filters,
  *  which request incompatible contexts from a oyCMMapi4_s structure.
  *
- *  The oyCMMapi8_s provides a general interface to backends to export data,
+ *  The oyCMMapi8_s provides a general interface to modules to export data,
  *  like additional filter input data and options. The @ref devices_handling
- *  deployes these backends.
+ *  deployes these modules.
  *
  *  @dot
 digraph Anatomy_A {
@@ -4098,10 +4098,10 @@ digraph Anatomy_B {
  *  @brief   get a CMM specific pointer
  *  @memberof oyCMMptr_s
  *
- *  The returned oyCMMptr_s has to be released after using by the backend with
+ *  The returned oyCMMptr_s has to be released after using by the module with
  *  oyCMMptr_Release().
  *  In case the the oyCMMptr_s::ptr member is empty, it should be set by the
- *  requesting backend.
+ *  requesting module.
  *
  *  @see e.g. lcmsCMMData_Open()
  *
@@ -4176,7 +4176,7 @@ oyCMMptr_s * oyCMMptr_LookUp          ( oyStruct_s      * data,
   return cmm_ptr;
 }
 
-/** @} *//* backend_api */
+/** @} *//* module_api */
 
 
 
@@ -7276,7 +7276,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  oyOPTIONSOURCE_FILTER passed as flags argument. advanced options can be 
  *  filtered out by adding oyOPTIONATTRIBUTE_ADVANCED.
  *
- *  Backends should handle the advanced options as well but shall normally
+ *  Modules should handle the advanced options as well but shall normally
  *  not act upon them. The convention to set them zero, keeps them inactive.
  *  
  *  On the front end side the CMM cache has to include them, as they will 
@@ -7480,7 +7480,7 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
  *
- *  To obtain all front end options from a meta backend use: @verbatim
+ *  To obtain all front end options from a meta module use: @verbatim
     flags = oyOPTIONATTRIBUTE_ADVANCED |
             oyOPTIONATTRIBUTE_FRONT |
             OY_SELECT_COMMON @endverbatim
@@ -7523,7 +7523,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
         Programm:
         1. get filter and its type
         2. get implementation for filter type
-        3. parse static common options from meta backend
+        3. parse static common options from meta module
         4. parse static options from filter 
         5. merge both
         6. get stored values from disk
@@ -7534,7 +7534,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
     /*  2. get implementation for filter type */
     api5 = filter->api4_->api5_;
 
-    /*  3. parse static common options from a policy backend */
+    /*  3. parse static common options from a policy module */
     if(api5 && flags & OY_SELECT_COMMON)
     {
       oyCMMapiFilters_s * apis;
@@ -7613,7 +7613,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
  *
- *  To obtain all advanced front end options from a meta backend use:@verbatim
+ *  To obtain all advanced front end options from a meta module use:@verbatim
  *  flags = oyOPTIONATTRIBUTE_ADVANCED |
  *          oyOPTIONATTRIBUTE_FRONT |
  *          OY_SELECT_COMMON @endverbatim
@@ -8928,7 +8928,7 @@ OYAPI oyConfig_s * OYEXPORT
 }
 
 /** Function oyConfig_GetDB
- *  @brief   search a configuration in the DB for a configuration from backend
+ *  @brief   search a configuration in the DB for a configuration from module
  *  @memberof oyConfig_s
  *
  *  @param[in]     device              the to be checked configuration from
@@ -9123,7 +9123,7 @@ OYAPI int  OYEXPORT
  *  This functions handles canonical user side settings. The keys added with
  *  this function can later be stored in the DB. A call to oyConfig_GetDB() or
  *  oyConfig_ClearDBData() overwrite the added entries. \n
- *  Backends should add informations to oyConfig_s::data.
+ *  Modules should add informations to oyConfig_s::data.
  *
  *  @param[in]     config              the configuration
  *  @param[in]     key                 a key name, e.g. "my_key"
@@ -9293,7 +9293,7 @@ OYAPI int  OYEXPORT
  *  @brief   check for matching to a given pattern
  *  @memberof oyConfig_s
  *
- *  @param[in]     backend_device      the to be checked configuration from
+ *  @param[in]     module_device      the to be checked configuration from
  *                                     oyConfigs_FromPattern_f
  *  @param[in]     db_pattern          the to be compared configuration from
  *                                     elsewhere
@@ -9306,11 +9306,11 @@ OYAPI int  OYEXPORT
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  *  @date    2009/05/24
  */
-int            oyConfig_Compare      ( oyConfig_s        * backend_device,
+int            oyConfig_Compare      ( oyConfig_s        * module_device,
                                        oyConfig_s        * db_pattern,
                                        int32_t           * rank_value )
 {
-  int error = !backend_device || !db_pattern;
+  int error = !module_device || !db_pattern;
   int domain_n, pattern_n, i, j, k, l,
       rank = 0,
       d_rank = 0,
@@ -9322,7 +9322,7 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
        * p_opt = 0, * p_val = 0,
        * check_opt = 0, * check_val = 0;
   oyConfig_s * pattern = db_pattern,
-             * device = backend_device;
+             * device = module_device;
   oyRankPad  * rank_map = 0;
 
   if(error <= 0)
@@ -9442,11 +9442,11 @@ int            oyConfig_Compare      ( oyConfig_s        * backend_device,
 }
 
 /** Function oyConfig_DomainRank
- *  @brief   check for being recognised by a given backend
+ *  @brief   check for being recognised by a given module
  *  @memberof oyConfig_s
  *
  *  @param[in]     config              the configuration to be checked
- *                                     wether or not the backend can make
+ *                                     wether or not the module can make
  *                                     sense of it and support the data
  *  @return                            0 - indifferent, <= -1 - no fit
  *
@@ -9484,7 +9484,7 @@ OYAPI int  OYEXPORT
 
       error = !cmm_api8->oyConfig_Rank;
       if(error <= 0)
-      /** Ask the backend if it wants later on to accept this configuration. */
+      /** Ask the module if it wants later on to accept this configuration. */
         rank = cmm_api8->oyConfig_Rank( config ) * rank_list[i];
 
       if(max_rank < rank)
@@ -9511,7 +9511,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyConfig_s
  *
  *  @param[in]     config              the configuration to be checked
- *                                     wether or not the backend can make
+ *                                     wether or not the module can make
  *                                     sense of it and support the data
  *  @param[in]     key                 the key name
  *  @param[in]     value               the optional value
@@ -9542,7 +9542,7 @@ OYAPI const char * OYEXPORT
  *  @memberof oyConfig_s
  *
  *  @param[in]     config              the configuration to be checked
- *                                     wether or not the backend can make
+ *                                     wether or not the module can make
  *                                     sense of it and support the data
  *  @param[in]     key                 the key name
  *  @return                            the found value
@@ -9684,18 +9684,18 @@ OYAPI oyConfigs_s * OYEXPORT
 
 /** Function oyConfigs_FromDomain
  *  @memberof oyConfigs_s
- *  @brief   send a request to a configuration backend
+ *  @brief   send a request to a configuration module
  *
  *  The convention an empty options argument should be send an Warning message
- *  containing intructions on how to talk with the backend as a fallback for
+ *  containing intructions on how to talk with the module as a fallback for
  *  programmers. Otherwise the calls are pure convention and depend on the usage
  *  and agreement of the partners.
  *
  *  For the convention to call to colour devices
  *  @see oyX1Configs_FromPatternUsage().
  *
- *  @param[in]     registration_domain                     the backend to call to
- *  @param[in]     options                                 options to specify the calling into backends
+ *  @param[in]     registration_domain                     the module to call to
+ *  @param[in]     options                                 options to specify the calling into modules
  *                                                         messages are bound to this object
  *  @param[out]    configs                                 the returned configurations
  *  @param[in]     object                                  a optional user object
@@ -9724,8 +9724,8 @@ OYAPI int  OYEXPORT
   /**
    *  1. first we search for oyCMMapi8_s complex config support matching to our
    *     registration_domain
-   *  2. if we find a backend, we ask for the options
-   *  3. add the options to the config (in the backend)
+   *  2. if we find a module, we ask for the options
+   *  3. add the options to the config (in the module)
    */
   if(error <= 0)
   {
@@ -9768,14 +9768,14 @@ OYAPI int  OYEXPORT
 }
 
 /** Function oyConfigs_FromDeviceClass
- *  @brief   ask a backend for device informations or other direct calls
+ *  @brief   ask a module for device informations or other direct calls
  *  @memberof oyConfigs_s
  *
  *  @param[in]     device_type     the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to OY_TYPE_STD (optional)
  *  @param[in]     device_class    the device class, e.g. "monitor",
  *                                     ::oyFILTER_REG_APPLICATION
- *  @param[in]     options             options to pass to the backend, for zero
+ *  @param[in]     options             options to pass to the module, for zero
  *                                     the usage instructions are requested,
  *                                     a option "device_name" can be used 
  *                                     as filter
@@ -9784,7 +9784,7 @@ OYAPI int  OYEXPORT
  *  @return                            0 - good, >= 1 - error
  *
  *  @verbatim
-    // pass empty options to the backend to get a usage message
+    // pass empty options to the module to get a usage message
     oyOptions_s * options = 0;
     int error = oyConfigs_FromDeviceClass( OY_TYPE_STD, "monitor",
                                               options, 0, 0 );
@@ -9836,7 +9836,7 @@ OYAPI int  OYEXPORT
     error = !device_class_registration;
   }
 
-  /** 1.2.2 get all device class backend names */
+  /** 1.2.2 get all device class module names */
   if(error <= 0)
     error = oyConfigDomainList  ( device_class_registration, &texts, &count,
                                   &rank_list, 0 );
@@ -9844,12 +9844,12 @@ OYAPI int  OYEXPORT
   if(devices && !*devices)
     *devices = oyConfigs_New( object );
 
-  /** 1.3 ask each backend */
+  /** 1.3 ask each module */
   for( i = 0; i < count; ++i )
   {
     const char * registration_domain = texts[i];
 
-    /** 1.3.1 call into backend */
+    /** 1.3.1 call into module */
     error = oyConfigs_FromDomain( registration_domain, options, &configs,
                                   object);
 
@@ -9905,7 +9905,7 @@ OYAPI int  OYEXPORT
 
 
 /** Function oyConfigs_Modify
- *  @brief   ask a backend for device informations or other direct calls
+ *  @brief   ask a module for device informations or other direct calls
  *  @memberof oyConfigs_s
  *
  *
@@ -9918,7 +9918,7 @@ OYAPI int  OYEXPORT
  *                                     module. Mixing configs for different
  *                                     modules depends on the modules 
  *                                     capabilities to handle strange objects.
- *  @param[in]     options             options to pass to the backend, for zero
+ *  @param[in]     options             options to pass to the module, for zero
  *                                     the usage instructions are requested,
  *                                     a option "device_name" can be used 
  *                                     as filter
@@ -9956,14 +9956,14 @@ OYAPI int  OYEXPORT
   {
     /** 1. pick the first device to select a registration */
     config = oyConfigs_Get( configs, 0 );
-    /** 1.2 get all device class backend names from the firsts registration */
+    /** 1.2 get all device class module names from the firsts registration */
     error = oyConfigDomainList  ( config->registration, &texts, &count,
                                   &rank_list, 0 );
     oyConfig_Release( &config );
   }
 
 
-  /** 2. call each backends oyCMMapi8_s::oyConfigs_Modify */
+  /** 2. call each modules oyCMMapi8_s::oyConfigs_Modify */
   for( i = 0; i < count; ++i )
   {
     registration_domain = texts[i];
@@ -10256,7 +10256,7 @@ OYAPI int OYEXPORT
 
   if(error <= 0)
   {
-    /** 1. get all backend names for the registration pattern */
+    /** 1. get all module names for the registration pattern */
     error = oyConfigDomainList( registration, &texts, &count, &d_rank_list, 0 );
     if(count)
       s = oyConfigs_New( 0 );
@@ -10437,7 +10437,7 @@ OYAPI int  OYEXPORT
  *  Devices are a special form of configurations. Their access is grouped
  *  for effective performance. Known devices are queried with
  *  oyDevicesGet(). oyConfigDomainList() provides a list of known device
- *  backends.
+ *  modules.
  *  A single device can be obtained by oyDeviceGet(). The \a
  *  device_type argument defaults to OY_TYPE_STD and can be omitted for this
  *  group. The \a device_class argument specifies a subgroup, e.g. 
@@ -10714,13 +10714,13 @@ OYAPI int  OYEXPORT
   if(!options)
   {
     options = oyOptions_New( 0 );
-    /** 1.1 add "list" call to backend arguments */
+    /** 1.1 add "list" call to module arguments */
     error = oyOptions_SetDeviceTextKey_( options, device_type,
                                              device_class,
                                              "command", "list" );
   }
 
-  /** 1.2 ask each backend */
+  /** 1.2 ask each module */
   if(error <= 0)
     error = oyConfigs_FromDeviceClass( device_type, device_class,
                                            options, devices, 0 );
@@ -10730,7 +10730,7 @@ OYAPI int  OYEXPORT
 }
 
 /** Function oyDeviceGet
- *  @brief   ask a backend for device informations or other direct calls
+ *  @brief   ask a module for device informations or other direct calls
  *
  *  @verbatim
     oyConfig_s * device = 0;
@@ -10739,7 +10739,7 @@ OYAPI int  OYEXPORT
     @endverbatim
  *
  *  @verbatim
-    // pass empty options to the backend to get a usage message
+    // pass empty options to the module to get a usage message
     oyOptions_s * options = oyOptions_New( 0 );
     oyDeviceGet( OY_TYPE_STD, "monitor", ":0.0", options, 0 );
     @endverbatim
@@ -10751,7 +10751,7 @@ OYAPI int  OYEXPORT
  *  @param[in]     device_name         the device name as returned by
  *                                     oyConfigs_FromPattern_f, mandatory,
                                        ::oyFILTER_REG_OPTION
- *  @param[in]     options             options to pass to the backend, for zero
+ *  @param[in]     options             options to pass to the module, for zero
  *                                     the verbose and expensive "properties"
  *                                     call is assumed
  *  @param[out]    device              the returned device
@@ -10787,7 +10787,7 @@ OYAPI int  OYEXPORT
   {
     options = oyOptions_New( 0 );
     error = !options;
-    /** 1.1 add "list" call to backend arguments */
+    /** 1.1 add "list" call to module arguments */
     if(error <= 0)
     error = oyOptions_SetDeviceTextKey_( options, device_type,
                                              device_class,
@@ -10857,7 +10857,7 @@ OYAPI int  OYEXPORT
      *     zero options argument. */
     options = oyOptions_New( 0 );
     l_error = !options; OY_ERR
-    /** 1.1 add "properties" call to backend arguments */
+    /** 1.1 add "properties" call to module arguments */
     if(error <= 0)
     l_error = oyOptions_SetRegistrationTextKey_( options,
                                                  device->registration,
@@ -10876,7 +10876,7 @@ OYAPI int  OYEXPORT
     oyConfigs_MoveIn( devices, &device, -1 );
   }
 
-  /** 3. talk to the backend */
+  /** 3. talk to the module */
   l_error = oyConfigs_Modify( devices, options ); OY_ERR
 
   oyConfigs_Release( &devices );
@@ -10929,14 +10929,14 @@ OYAPI int  OYEXPORT
     /* 2.2 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
 
-    /* 3. setup the device through the backend */
+    /* 3. setup the device through the module */
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "setup", OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
                                    device_name, OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/profile_name",
                                    profile_name, OY_CREATE_NEW );
-    /* 3.1 send the query to a backend */
+    /* 3.1 send the query to a module */
     error = oyDeviceBackendCall( device, options );
 
     oyOptions_Release( &options );
@@ -10950,7 +10950,7 @@ OYAPI int  OYEXPORT
 /** Function oyDeviceUnset
  *  @brief   unset the device profile
  *
- *  The function solely calls \a unset in the backend, e.g. unset graphic card
+ *  The function solely calls \a unset in the module, e.g. unset graphic card
  *  luts and server stored profile. So pretty all device/server side 
  *  informatin should go away. \n
  *
@@ -10978,18 +10978,18 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
     /* 1.1 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
 
-    /* 2. unset the device through the backend */
+    /* 2. unset the device through the module */
     /** 2.1 set a general request */
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "unset", OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
                                    device_name, OY_CREATE_NEW );
 
-    /** 2.2 send the query to a backend */
+    /** 2.2 send the query to a module */
     error = oyConfigs_FromDomain( device->registration, options, 0, 0 );
 
     oyOptions_Release( &options );
-    /* 3.1 send the query to a backend */
+    /* 3.1 send the query to a module */
     error = oyDeviceBackendCall( device, options );
 
     oyOptions_Release( &options );
@@ -11042,7 +11042,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
     oyOptions_s * options = 0;
     int error = 0;
 
-    // tell the backend with the "properties" call to add all informations
+    // tell the module with the "properties" call to add all informations
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD
                                    "/config/command",
                                    "properties", OY_CREATE_NEW );
@@ -11150,7 +11150,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    /* add "list" call to backend arguments */
+    /* add "list" call to module arguments */
     error = oyOptions_SetRegistrationTextKey_( options,
                                                device->registration,
                                                "command", "list" );
@@ -11165,7 +11165,7 @@ OYAPI int  OYEXPORT
   }
 
 
-  /** 1.2 ask each backend */
+  /** 1.2 ask each module */
   if(error <= 0)
     error = oyDeviceBackendCall( device, options );
 
@@ -11222,7 +11222,7 @@ OYAPI int  OYEXPORT
   l_error = oyDeviceAskProfile( device, profile ); OY_ERR
 
   /** This function does a device setup in case no profile is delivered
-   *  by the according backend. */
+   *  by the according module. */
   if(error != 0 && !*profile)
     l_error = oyDeviceSetup( device ); OY_ERR
 
@@ -11282,7 +11282,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    /* add "list" call to backend arguments */
+    /* add "list" call to module arguments */
     error = oyOptions_SetRegistrationTextKey_( options,
                                                device->registration,
                                                "command", "list" );
@@ -11381,7 +11381,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   /** 1. obtain detailed and expensive device informations */
   if(oyOptions_Count( device->backend_core ) < 2)
   { 
-    /** 1.1 add "properties" call to backend arguments */
+    /** 1.1 add "properties" call to module arguments */
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );
 
@@ -11484,7 +11484,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 /** Function oyDeviceProfileFromDB
  *  @brief   look up a profile of a device from DB
  *
- *  The function asks the backend for a detailed and possible expensive list
+ *  The function asks the module for a detailed and possible expensive list
  *  of device information and tries to find a matching configuration in the
  *  DB. The device informations are the same as for saving to DB.
  *
@@ -11523,7 +11523,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
     /* 1. obtain detailed and expensive device informations */
     if(oyOptions_Count( device->backend_core ) < 2)
     { 
-      /* 1.1 add "properties" call to backend arguments */
+      /* 1.1 add "properties" call to module arguments */
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
@@ -17082,9 +17082,9 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
 
 /** Function oyImage_SetData
  *  @memberof oyImage_s
- *  @brief   set a custom image data backend
+ *  @brief   set a custom image data module
  *
- *  This function allowes for exchanging of all the backend components. 
+ *  This function allowes for exchanging of all the module components. 
  *
  *  The pixel_data structure can hold in memory or mmap representations or file
  *  pointers. The according point, line and/or tile functions shall use
@@ -17519,7 +17519,7 @@ oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image )
  *  to connect and can request the data stream.
  *  In the other direction plug-ins can send events along the pipe through
  *  callbacks, e.g. for reporting errors or requesting updating of parameters.
- *  The @ref backend_api explains how to create backends to plug into Oyranos.
+ *  The @ref module_api explains how to create modules to plug into Oyranos.
  *
  *  \b About \b Graphs: \n
  *  The top object a user will handle is of type oyConversion_s. This 
@@ -17555,7 +17555,7 @@ digraph G {
  *  \b Connectors \b have \b tree \b missions:
  *  - The first is to tell others to about the 
  *  filters intention to provide a connection endity. This is done by the pure
- *  existence of the oyConnector_s inside the backend filter structure
+ *  existence of the oyConnector_s inside the module filter structure
  *  (oyCMMapi4_s) and the oyFilterNode_s::sockets and 
  *  oyFilterNode_s::plugs members. \n
  *  - The second is to tell about the connectors capabilities, to allow for 
@@ -19060,7 +19060,7 @@ char *         oyFilterRegistrationToText (
 /** Function oyFilterRegistrationMatch
  *  @brief   analyse registration string and compare with a given pattern
  *
- *  The rules are described in the @ref backend_api overview.
+ *  The rules are described in the @ref module_api overview.
  *  The function is intensively used.
  *
  *  @param         registration        registration string to analise
@@ -19188,7 +19188,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 /** Function oyFilterRegistrationMatch 
  *  @brief   analyse registration string and compare with a given pattern
  *
- *  The rules are described in the @ref backend_api overview.
+ *  The rules are described in the @ref module_api overview.
  *  The function is intensively used.
  *
  *  @param         registration        registration string to analise
@@ -20102,7 +20102,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
  *  @memberof oyFilterNode_s
  *  @brief   initialise a new filter node object properly
  *
- *  @param         registration        a registration string, @see backend_api
+ *  @param         registration        a registration string, @see module_api
  *  @param         options             options for the filter
  *  @param         object              the optional object
  *
@@ -20486,14 +20486,14 @@ int            oyFilterNode_Disconnect(oyFilterPlug_s    * edge )
 
 /** Function: oyFilterNode_ShowConnector
  *  @memberof oyFilterNode_s
- *  @brief   get a connector description from a filter backend
+ *  @brief   get a connector description from a filter module
  *
  *  The path to obtain a new connector.
  *  The filter can say it has more connectors to provide for a certain kind of 
  *  static connector eigther described in oyCMMapi4_s::inputs or
  *  oyCMMapi4_s::outputs.
  *
- *  @param[in]   node                the backend filter node
+ *  @param[in]   node                the module filter node
  *  @param[in]   as_pos              the according oyConnector_s
  *  @param[in]   is_plug             select from 0 - plugs or 1 - sockets
  *  @return                          the new oyConnector_s
@@ -21426,7 +21426,7 @@ int oyPointerRelease                 ( oyPointer         * ptr )
  *  @internal
  *  Function oyFilterNode_ContextSet_
  *  @memberof oyFilterNode_s
- *  @brief   set backend context in a filter 
+ *  @brief   set module context in a filter 
  *
  *  The api4 data is passed to a interpolator specific transformer. The result
  *  of this transformer will on request be cached by Oyranos as well.
@@ -23133,7 +23133,7 @@ oyPixelAccess_s *  oyPixelAccess_Create (
     } else
     /* if(type == oyPIXEL_ACCESS_IMAGE) */
     {
-      /** @todo how can we know about the various backend capabilities
+      /** @todo how can we know about the various module capabilities
        *  - back report the processed number of pixels in the passed pointer
        *  - restrict for a line interface only, would fit to oyArray2D_s
        *  - + handle inside an to be created function oyConversion_RunPixels()
@@ -24911,7 +24911,7 @@ int               oyNamedColours_ReleaseAt ( oyNamedColours_s * obj,
 /** @} *//* objects_single_colour */
 
 
-/** \addtogroup backend_api
+/** \addtogroup module_api
 
  *  @{
  */
@@ -24944,11 +24944,11 @@ int          oyIdToCMM               ( uint32_t            cmmId,
     return 0;
 }
 
-/** @} *//* backend_api */
+/** @} *//* module_api */
 
 
 
-/** \addtogroup backend_api
+/** \addtogroup module_api
 
  *  @{
  */
@@ -25422,7 +25422,7 @@ OYAPI int  OYEXPORT
   else return 0;
 }
 
-/** @} *//* backend_api */
+/** @} *//* module_api */
 
 
 /** \addtogroup misc Miscellaneous
@@ -25931,7 +25931,7 @@ int      oySetMonitorProfile         ( const char        * display_name,
   }
 
   /** 1. obtain detailed and expensive device informations */
-  /** 1.1 add "properties" call to backend arguments */
+  /** 1.1 add "properties" call to module arguments */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                  "properties", OY_CREATE_NEW );
 
@@ -26034,7 +26034,7 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 void     oyAlphaFinish_              ( int                 unused )
 {
   oyProfiles_Release( &oy_profile_list_cache_ );
-  oyStructList_Release( &oy_backend_cache_ );
+  oyStructList_Release( &oy_module_cache_ );
   oyStructList_Release( &oy_cmm_cache_ );
   oyStructList_Release( &oy_profile_s_file_cache_ );
 }

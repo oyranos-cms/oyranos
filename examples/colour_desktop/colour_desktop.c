@@ -543,7 +543,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   freeOutput(ps); END_CLOCK
 
   /* obtain device informations, including geometry and ICC profiles
-     from the according Oyranos backend */
+     from the according Oyranos module */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                  "list_a", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",

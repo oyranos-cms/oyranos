@@ -84,7 +84,7 @@
 
     The namespace in C++ is oyranos:: , e.g. oyranos::oyVersion()
 
-    Writing of filters and backends for Oyranos is covered in the @ref
+    Writing of filters and modules for Oyranos is covered in the @ref
     extending_oyranos page.
  */
 /*    - @ref device_profiles - profiles which characterise devices */
@@ -177,7 +177,7 @@
     recommendations or standards are therefore provided at OpenICC. Feel free
     to contact the Oyranos project to discuss further details.\n
     Internal API's handle low level file access, internal static lists and
-    adapt to backends.
+    adapt to modules.
 
     @subsection object_design Object Design
     Almost all Oyranos structs are based on the same structure ::oyStruct_s.
@@ -225,9 +225,9 @@
     to changes.
 
     @subsection write_modules Writing C Modules for Oyranos
-    Oyranos modules can be filters, backends, CMMs or meta backends. The API
-    design can be seen in the @ref backend_api page. To start with a 
-    backend use the example code from the
+    Oyranos modules can be filters, plug-ins, backends, CMMs or meta modules.
+    The API design can be seen in the @ref module_api page. To start with a 
+    module use the example code from the
     examples/dummy_filter/oyranos_cmm_dFil.c file.
     Change the header, e.g. "My name" string. Select a four byte identifier for
     the new module and define it in CMM_NICK. The comment above CMM_NICK
@@ -246,7 +246,7 @@
     changed to something appropriate for the new module. Oyranos users will use
     primarily this name to select the module. A description on how a module 
     registration string is to be build and how it works can be found at the end
-    of the Detailed Description section on @ref backend_api. All occurences
+    of the Detailed Description section on @ref module_api. All occurences
     of "my_filter" in the file should be substituted accordingly. \n
     \n
     The old function dFilGetText should be adapted to provide the new 
@@ -272,8 +272,8 @@
     provided APIs. The test2 command might be substituted by a dedicated module
     utility in the future.
 
-    @subsection write_device_backends Writing Device Backends for Oyranos
-    To start with a backend use the examples/dummy_device/oyranos_cmm_dDev.c 
+    @subsection write_device_modules Writing Device Modules for Oyranos
+    To start with a module use the examples/dummy_device/oyranos_cmm_dDev.c 
     file and modify it. Please follow the @ref write_modules subsection.
     The parts which differ are that instead of oyCMMapi4_s the oyCMMapi8_s
     will be implemented. The dDevConfigs_FromPattern 
@@ -304,14 +304,14 @@
     oyOptions_s * options = 0;  /* not used in this example */
     char * text = 0;
 
-    /* Call into the device backends oyCMMapi8_s::oyConfigs_FromPattern
+    /* Call into the device modules oyCMMapi8_s::oyConfigs_FromPattern
      * function with the "list" command.
      * "monitor" is to be exchanged by the actual device class and
      * ":0.0" by the actual device nick name.
      */
     int error = oyDeviceGet( 0, "monitor", ":0.0", options, &device );
 
-    /* obtain a expensive list of key/value pairs from the device backend */
+    /* obtain a expensive list of key/value pairs from the device module */
     error = oyDeviceGetInfo( device, oyNAME_DESCRIPTION, 0, &text,
                                      malloc );
 
@@ -338,7 +338,7 @@
     Oyranos depends on following libraries:\n
 
     <ul>
-    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration backend for linux, currently version 0.7 is requierd. </li>
+    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration module for linux, currently version 0.7 is requierd. </li>
     <li><a href="http://www.littlecms.com">littleCMS</a> standard CMM</li>
     <li><a href="http://www.fltk.org">FLTK</a> version >= 1.1.4 needed for a user interface\n
     you may configure fltk with several options enabled\n

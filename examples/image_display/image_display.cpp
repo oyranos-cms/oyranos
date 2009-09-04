@@ -19,7 +19,7 @@
 
 #include <oyranos.h>
 #include <oyranos_alpha.h>
-#include <oyranos_cmm.h>   /* for hacking into backend API */
+#include <oyranos_cmm.h>   /* for hacking into module API */
 
 #include "../../oyranos_logo.h"
 

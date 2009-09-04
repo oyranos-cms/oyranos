@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2008-2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    backends for Oyranos
+ *  @brief    modules for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -305,7 +305,7 @@ int  oyraPPMwriteUiGet               ( oyOptions_s       * opts,
   text[0] = 0;
   *xforms_layout = text;
   return 0;
-};
+}
 
 
 oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
@@ -984,7 +984,7 @@ int  oyraPPMreadUiGet                ( oyOptions_s       * opts,
   text[0] = 0;
   *xforms_layout = text;
   return 0;
-};
+}
 
 
 oyConnectorImaging_s oyra_imageInputPPM_connector = {

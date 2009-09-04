@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2008-2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    meta backend for ICC support in Oyranos
+ *  @brief    meta module for ICC support in Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -223,7 +223,7 @@ int          oyIMFilterScan          ( oyPointer           data,
 
 /** Function oyFilterSocket_MatchImagingPlug
  *  @brief   verify connectors matching each other
- *  @ingroup backend_api
+ *  @ingroup module_api
  *  @memberof oyCMMapi5_s
  *
  *  @param         socket              a filter socket

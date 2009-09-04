@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2009 (C) Joseph Simon III
  *
- *  @brief    Printer Device Detection (CUPS backend)
+ *  @brief    Printer Device Detection (CUPS module)
  *  @internal
  *  @author   Joseph Simon III <j.simon.iii@astound.net>
  *  @par License:
@@ -139,7 +139,7 @@ void     ConfigsFromPatternUsage( oyStruct_s        * options )
       " - and more as appropriate for the device ...\n"
       " \n"
       " One option \"device_name\" will select the according device.\n"
-      " If not the backend might be able to get this information from \n"
+      " If not the module might be able to get this information from \n"
       " elsewhere, but this is optional.\n"
       " The \"device_name\" should be identical with the one\n"
       " returned from a \"list\" request.\n"
@@ -669,7 +669,7 @@ const char * GetText             ( const char        * select,
         else if(type == oyNAME_NAME)
             return _("Oyranos CUPS");
         else
-            return _("The CUPS/printer backend for Oyranos.");
+            return _("The CUPS/printer module for Oyranos.");
     } 
     else if(strcmp(select, "manufacturer")==0)
     {

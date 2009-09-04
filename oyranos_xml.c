@@ -53,7 +53,7 @@ char*       oyWriteOptionToXML_(oyGROUP_e           group,
                     char             *mem,
                     int               oytmplen);
 
-/* form for write backends */
+/* form for write modules */
 typedef oyChar* (*oyOptionWrite_f)     ( oyOption_t_ ** opts,
                           oyChar    ** values,
                           int            n,

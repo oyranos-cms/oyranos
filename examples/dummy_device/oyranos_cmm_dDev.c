@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    Oyranos dummy device backend for Oyranos
+ *  @brief    Oyranos dummy device module for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -141,7 +141,7 @@ void         ConfigsUsage            ( oyStruct_s        * options )
       " - and more as appropriate for the device ...\n"
       " \n"
       " One option \"device_name\" will select the according device.\n"
-      " If not the backend might be able to get this information from \n"
+      " If not the module might be able to get this information from \n"
       " elsewhere, but this is optional.\n"
       " The \"device_name\" should be identical with the one\n"
       " returned from a \"list\" request.\n"
@@ -336,16 +336,16 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
           /* In case the devices do not support network transparent ICC profile
            * setup, then Oyranos uses the DB stored profile, e.g.
            * @see oyDeviceProfileFromDB() + oyProfile_FromFile()
-           * Then the backend will only report about colour related options to
+           * Then the module will only report about colour related options to
            * guide Oyranos core in selecting the correct profiles, matching
            * to the device and its driver settings.
            *
-           * One the opposite the Xorg-"oyX1" backend puts the profile in 
+           * One the opposite the Xorg-"oyX1" module puts the profile in 
            * X server. This shall be included in the Oyranos device options 
            * on request.
            * If it is not found, then a empty option of type oyVAL_STRUCT is to
            * be included to tell Oyranos that option is understoof. 
-           * The backend needs as well to report a issue to inform Oyranos, 
+           * The module needs as well to report a issue to inform Oyranos, 
            * as seen below.
            */
 
@@ -716,7 +716,7 @@ const char * GetText                 ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Oyranos Dummy");
     else
-      return _("The dummy useless backend of Oyranos.");
+      return _("The dummy useless module of Oyranos.");
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)

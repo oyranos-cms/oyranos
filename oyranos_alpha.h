@@ -579,7 +579,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
  */
 typedef enum {
   oyOPTIONSOURCE_NONE = 0,             /**< not clear */
-  oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. backend */
+  oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. module */
   oyOPTIONSOURCE_DATA = 4,             /**< external defaults, e.g. policy, DB*/
   oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. elektra */
 } oyOPTIONSOURCE_e;
@@ -873,7 +873,7 @@ typedef struct {
 
   uint32_t             id;             /**< id to map to events and widgets */
   /** This property contains the identifier for communication with a Oyranos
-   *  or a backend through Oyranos. It defines the basic key path name to store
+   *  or a module through Oyranos. It defines the basic key path name to store
    *  configuration.\n
    *  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg" \n
    *  see as well @ref registration */
@@ -883,11 +883,11 @@ typedef struct {
   /** data base (Elektra) properties,
   e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/1/manufacturer=EIZO"*/
   oyOptions_s        * db;
-  /** These are the backend core properties, the ones to identify the 
-   *  device and store in DB. They must be filled by the backend.
+  /** These are the module core properties, the ones to identify the 
+   *  device and store in DB. They must be filled by the module.
   e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/manufacturer=EIZO" */
   oyOptions_s        * backend_core;
-  /** Additional informations from backends, with non identification purpose,
+  /** Additional informations from modules, with non identification purpose,
    *  can be stored herein,
   e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/edid=oyBlob_s*" */
   oyOptions_s        * data;
@@ -1660,7 +1660,7 @@ OYAPI int  OYEXPORT
  *  - display rectangle information and
  *  - a reference to the data for conversion
  *
- *  To set a image data backend use oyImage_DataSet().
+ *  To set a image data module use oyImage_DataSet().
  *  \dot
  digraph oyImage_s {
   bgcolor="transparent";
@@ -1671,7 +1671,7 @@ OYAPI int  OYEXPORT
   node [shape=record,fontname=Helvetica, fontsize=10, width=.1];
 
   subgraph cluster_3 {
-    label="oyImage_s data backends";
+    label="oyImage_s data modules";
     color=white;
     clusterrank=global;
 
@@ -1695,7 +1695,7 @@ OYAPI int  OYEXPORT
         node [style="filled"];
         pixel_A; gp_p_A; gp_l_A; gp_t_A;
         //pixel_A -> gp_p_A -> gp_l_A -> gp_t_A [color=white, arrowhead=none, dirtype=none];
-        label="backend A";
+        label="module A";
       }
 
       subgraph cluster_1 {
@@ -1703,7 +1703,7 @@ OYAPI int  OYEXPORT
         style=dashed;
         node [style="filled"];
         pixel_B; gp_p_B; gp_l_B; gp_t_B;
-        label="backend B";
+        label="module B";
       }
 
       subgraph cluster_2 {
@@ -2562,7 +2562,7 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
  *  Access to the buffers by concurrenting threads is handled by passing
  *  different oyPixelAccess_s objects per thread.
  *
- *  From the backend point of view it is a requirement to obtain the 
+ *  From the module point of view it is a requirement to obtain the 
  *  intermediate buffers from somewhere. These are the ones to read from and
  *  to write computed results into. \n
  *
