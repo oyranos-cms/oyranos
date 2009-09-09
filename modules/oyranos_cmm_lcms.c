@@ -42,7 +42,7 @@ void  oyDeAllocateFunc_         (void *        data);
 #define lcmsPROFILE "lcPR"
 #define lcmsTRANSFORM "lcCC"
 
-#define lcmsVERSION {0,1,0}
+#define CMM_VERSION {0,1,0}
 
 int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 oyMessage_f message = lcmsCMMWarnFunc;
@@ -1654,7 +1654,7 @@ oyCMMapi6_s   lcms_api6_cmm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc." CMM_NICK ".CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
 
-  lcmsVERSION,
+  CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
@@ -1686,7 +1686,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc.colour." CMM_NICK "._CPU._ACCEL",
 
-  lcmsVERSION,
+  CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
@@ -1700,6 +1700,31 @@ oyCMMapi7_s   lcms_api7_cmm = {
   (oyConnector_s**) lcms_cmmIccSocket_connectors,   /* sockets */
   1,                         /* sockets_n */
   0,                         /* sockets_last_add */
+};
+
+/** @instance lcms_api4_ui_cmm
+ *  @brief    lcms oyCMMapi4_s::ui implementation
+ *
+ *  The UI for lcms.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s oyra_api4_ui_cmm = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  lcmsFilter_CmmIccValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  lcmsWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
+  "Colour/CMM/littleCMS", /* category */
+  lcms_extra_options,   /* const char * options */
+  lcmsGetOptionsUI      /* oyCMMuiGet_f oyCMMuiGet */
 };
 
 /** @instance lcms_api4_cmm
@@ -1723,22 +1748,16 @@ oyCMMapi4_s   lcms_api4_cmm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
   "icc.colour." CMM_NICK "._CPU._NOACCEL",
 
-  lcmsVERSION,
+  CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
-
-  lcmsFilter_CmmIccValidateOptions,
-  lcmsWidgetEvent,
 
   lcmsFilterNode_CmmIccContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   lcmsFilterNode_GetText, /* oyCMMFilterNode_GetText_f */
   oyCOLOUR_ICC_DEVICE_LINK, /* context data_type */
 
-  {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
-  "Colour/CMM/littleCMS", /* category */
-  lcms_extra_options,   /* const char * options */
-  lcmsGetOptionsUI      /* oyCMMuiGet_f oyCMMuiGet */
+  &oyra_api4_ui_cmm                    /**< oyCMMui_s *ui */
 };
 
 

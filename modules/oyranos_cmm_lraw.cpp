@@ -673,6 +673,31 @@ oyConnectorImaging_s * lraw_imageInputRAW_connectors[2] =
              { &lraw_imageInputRAW_connector, 0 };
 
 
+/** @instance lraw_api4_ui_image_input_libraw
+ *  @brief    lraw oyCMMapi4_s::ui implementation
+ *
+ *  The UI for image input libraw.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s oraw_api4_ui_image_input_libraw = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  lrawFilter_ImageInputRAWValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  lrawWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, (char*)"input_libraw-lite", (char*)"Image[input_libraw-lite]", (char*)"Input libraw Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Files/Read cameraRAW", /* category */
+  lraw_extra_options,   /* const char * options */
+  lrawUiGet      /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance lraw_api4
  *  @brief    lraw oyCMMapi4_s implementation
  *
@@ -702,17 +727,11 @@ oyCMMapi4_s   lraw_api4_image_input_libraw = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  lrawFilter_ImageInputRAWValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  lrawWidgetEvent, /* oyWidgetEvent_f */
-
   lrawFilterNode_LibrawContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, (char*)"input_libraw-lite", (char*)"Image[input_libraw-lite]", (char*)"Input libraw Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Files/Read cameraRAW", /* category */
-  lraw_extra_options,   /* options */
-  lrawUiGet    /* opts_ui_ */
+  &oraw_api4_ui_image_input_libraw     /**< oyCMMui_s *ui */
 };
 
 /** @instance lraw_api7

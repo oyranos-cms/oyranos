@@ -393,6 +393,31 @@ oyConnectorImaging_s * dFil_myFilter_connectorPlugs[2] =
              { &dFil_myFilter_connectorPlug, 0 };
 
 
+/** @instance dFil_api4_ui_my_filter
+ *  @brief    dFil oyCMMapi4_s::ui implementation
+ *
+ *  The UI for dFil.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s dFil_api4_ui_my_filter = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}, /**< version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  dFilFilter_MyFilterValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  dFilWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "my_filter", "Image[my_filter]", "My Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Filter/My Filter", /* UI category */
+  0,   /* const char * options */
+  0    /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance dFil_api4
  *  @brief    dFil oyCMMapi4_s implementation
  *
@@ -422,17 +447,11 @@ oyCMMapi4_s   dFil_api4_my_filter = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  dFilFilter_MyFilterValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  dFilWidgetEvent, /* oyWidgetEvent_f */
-
   dFilFilterNode_MyContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "my_filter", "Image[my_filter]", "My Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Filter/My Filter", /* UI category */
-  0,   /* options of the module in XFORMS/XML syntax following the registration model*/
-  0    /* opts_ui_ */
+  &dFil_api4_ui_my_filter              /**< oyCMMui_s *ui */
 };
 
 /** @instance dFil_api7

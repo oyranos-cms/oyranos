@@ -814,7 +814,7 @@ oyConnectorImaging_s *oyx1_Display_sockets[2] = {&oyx1_Display_socket,0};
 oyCMMapi7_s   oydi_api7_image_display = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
-  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  0,0,0, /* unused oyStruct_s fields; keep to zero */
   (oyCMMapi_s*) 0, /* oyCMMapi_s * next */
   
   oydiCMMInit, /* oyCMMInit_f */
@@ -839,6 +839,31 @@ oyCMMapi7_s   oydi_api7_image_display = {
   0    /* sockets_last_add */
 };
 
+/** @instance oydi_api4_ui_image_display
+ *  @brief    oydi oyCMMapi4_s::ui implementation
+ *
+ *  The UI for filter image display.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/06 (Oyranos: 0.1.10)
+ *  @date    2009/09/06
+ */
+oyCMMui_s oydi_api4_ui_image_display = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  oydiFilter_ImageDisplayValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oydiWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "display", "Display", "Display Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Graph/Display", /* category */
+  oydi_extra_options,   /* const char * options */
+  oydiUiGet    /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance oydi_api4_image_display
  *  @brief    oydi oyCMMapi4_s implementation
  *
@@ -851,7 +876,7 @@ oyCMMapi7_s   oydi_api7_image_display = {
 oyCMMapi4_s   oydi_api4_image_display = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
-  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  0,0,0, /* unused oyStruct_s fields; keep to zero */
   (oyCMMapi_s*) & oydi_api7_image_display, /* oyCMMapi_s * next */
   
   oydiCMMInit, /* oyCMMInit_f */
@@ -865,17 +890,11 @@ oyCMMapi4_s   oydi_api4_image_display = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oydiFilter_ImageDisplayValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  oydiWidgetEvent, /* oyWidgetEvent_f */
-
   oydiFilterNode_ImageDisplayContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "display", "Display", "Display Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Graph/Display", /* category */
-  oydi_extra_options,   /* const char * options */
-  oydiUiGet    /* oyCMMuiGet_f oyCMMuiGet */
+  &oydi_api4_ui_image_display          /**< filter UI */
 };
 
 /* OY_IMAGE_DISPLAY_REGISTRATION ---------------------------------------------*/

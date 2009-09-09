@@ -207,6 +207,31 @@ oyCMMapi7_s   oyra_api7_image_load = {
   0    /* sockets_last_add */
 };
 
+/** @instance oyra_api4_ui_image_load
+ *  @brief    oyra oyCMMapi4_s::ui implementation
+ *
+ *  The UI for filter image load.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s oyra_api4_ui_image_load = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "load", "Load", "Load Image File Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Graph/iFile Load", /* category */
+  0,   /* const char * options */
+  0    /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
  *
@@ -233,17 +258,11 @@ oyCMMapi4_s   oyra_api4_image_load = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  oyraWidgetEvent, /* oyWidgetEvent_f */
-
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "load", "Load", "Load Image File Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Graph/File Load", /* category */
-  0,   /* options */
-  0    /* opts_ui_ */
+  &oyra_api4_ui_image_load             /**< filter UI */
 };
 
 /* OY_IMAGE_LOAD_REGISTRATION ---------------------------------------------*/
@@ -485,6 +504,31 @@ oyCMMapi7_s   oyra_api7_image_rectangles = {
   0    /* sockets_last_add */
 };
 
+/** @instance oyra_api4_ui_image_rectangles
+ *  @brief    oyra oyCMMapi4_s::ui implementation
+ *
+ *  The UI for filter image rectangles.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s oyra_api4_ui_image_rectangles = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "rectangles", "Rectangles", "Rectangles Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Graph/Rectangles", /* category */
+  0,   /* const char * options */
+  0    /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
  *
@@ -511,17 +555,11 @@ oyCMMapi4_s   oyra_api4_image_rectangles = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  oyraWidgetEvent, /* oyWidgetEvent_f */
-
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "rectangles", "Rectangles", "Rectangles Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Graph/Rectangles", /* category */
-  0,   /* options */
-  0    /* opts_ui_ */
+  &oyra_api4_ui_image_rectangles       /**< oyCMMui_s *ui */
 };
 
 /* OY_IMAGE_REGIONS_REGISTRATION ---------------------------------------------*/
@@ -660,6 +698,31 @@ oyCMMapi7_s   oyra_api7_image_root = {
   0    /* sockets_last_add */
 };
 
+/** @instance oyra_api4_ui_image_root
+ *  @brief    oyra oyCMMapi4_s::ui implementation
+ *
+ *  The UI for filter image root.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s oyra_api4_ui_image_root = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "image", "Root Image", "Root Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Image/Simple Image[in]", /* category */
+  0,   /* const char * options */
+  0    /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
  *
@@ -686,17 +749,11 @@ oyCMMapi4_s   oyra_api4_image_root = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  oyraWidgetEvent, /* oyWidgetEvent_f */
-
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image", "Root Image", "Root Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Image/Simple Image[in]", /* category */
-  0,   /* options */
-  0    /* opts_ui_ */
+  &oyra_api4_ui_image_root             /**< oyCMMui_s *ui */
 };
 
 
@@ -793,6 +850,31 @@ oyCMMapi7_s   oyra_api7_image_output = {
   0    /* sockets_last_add */
 };
 
+/** @instance oyra_api4_ui_image_output
+ *  @brief    oyra oyCMMapi4_s::ui implementation
+ *
+ *  The UI for filter image output.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s oyra_api4_ui_image_output = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Image/Simple Image[out]", /* category */
+  0,   /* const char * options */
+  0    /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
  *
@@ -819,17 +901,11 @@ oyCMMapi4_s   oyra_api4_image_output = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  oyraWidgetEvent, /* oyWidgetEvent_f */
-
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Image/Simple Image[out]", /* category */
-  0,   /* options */
-  0   /* opts_ui_ */
+  &oyra_api4_ui_image_output           /**< oyCMMui_s *ui */
 };
 
 /* OY_IMAGE_OUTPUT_REGISTRATION ----------------------------------------------*/

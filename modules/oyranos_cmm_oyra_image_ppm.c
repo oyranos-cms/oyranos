@@ -367,6 +367,31 @@ oyConnectorImaging_s oyra_imageOutputPPM_connector_in = {
 oyConnectorImaging_s * oyra_imageOutputPPM_connectors_plug[2] = 
              { &oyra_imageOutputPPM_connector_in, 0 };
 
+/** @instance oyra_api4_ui_image_write_ppm
+ *  @brief    oyra oyCMMapi4_s::ui implementation
+ *
+ *  The UI for filter write ppm.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s oyra_api4_ui_image_write_ppm = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "write_ppm", "Image[write_ppm]", "Write PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Files/Write PPM", /* category */
+  ppm_write_extra_options, /* const char * options */
+  oyraPPMwriteUiGet /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
  *
@@ -396,17 +421,11 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  oyraWidgetEvent, /* oyWidgetEvent_f */
-
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "write_ppm", "Image[write_ppm]", "Write PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Files/Write PPM", /* category */
-  ppm_write_extra_options,   /* options */
-  oyraPPMwriteUiGet    /* opts_ui_ */
+  &oyra_api4_ui_image_write_ppm        /**< oyCMMui_s *ui */
 };
 
 /** @instance oyra_api7
@@ -1016,6 +1035,31 @@ oyConnectorImaging_s * oyra_imageInputPPM_connectors[2] =
              { &oyra_imageInputPPM_connector, 0 };
 
 
+/** @instance oyra_api4_ui_image_input_ppm
+ *  @brief    oyra oyCMMapi4_s::ui implementation
+ *
+ *  The UI for filter input ppm.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/09 (Oyranos: 0.1.10)
+ *  @date    2009/09/09
+ */
+oyCMMui_s oyra_api4_ui_image_input_ppm = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  oyraFilter_ImageInputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
+
+  {oyOBJECT_NAME_S, 0,0,0, "input_ppm", "Image[input_ppm]", "Input PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
+  "Files/Read PPM", /* category */
+  ppm_read_extra_options, /* const char * options */
+  oyraPPMreadUiGet /* oyCMMuiGet_f oyCMMuiGet */
+};
+
 /** @instance oyra_api4
  *  @brief    oyra oyCMMapi4_s implementation
  *
@@ -1045,17 +1089,11 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilter_ImageInputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
-  oyraWidgetEvent, /* oyWidgetEvent_f */
-
   oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  {oyOBJECT_NAME_S, 0,0,0, "input_ppm", "Image[input_ppm]", "Input PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Files/Read PPM", /* category */
-  ppm_read_extra_options,   /* options */
-  oyraPPMreadUiGet    /* opts_ui_ */
+  &oyra_api4_ui_image_input_ppm        /**< oyCMMui_s *ui */
 };
 
 /** @instance oyra_api7

@@ -1956,15 +1956,15 @@ oyTESTRESULT_e testCMMsShow ()
                     cmm_api4 = (oyCMMapi4_s*) api;
                     oyStringAdd_( &text, "        category: ",
                                   oyAllocateFunc_, oyDeAllocateFunc_ );
-                    if(cmm_api4->category)
-                    oyStringAdd_( &text, cmm_api4->category,
+                    if(cmm_api4->ui->category)
+                    oyStringAdd_( &text, cmm_api4->ui->category,
                                   oyAllocateFunc_, oyDeAllocateFunc_ );
                     oyStringAdd_( &text, "\n        options: ",
                                   oyAllocateFunc_, oyDeAllocateFunc_ );
-                    if(cmm_api4->options)
-                    oyStringAdd_( &text, cmm_api4->options,
+                    if(cmm_api4->ui->options)
+                    oyStringAdd_( &text, cmm_api4->ui->options,
                                   oyAllocateFunc_, oyDeAllocateFunc_ );
-                    oyStringAdd_( &text, oyXMLgetElement_(cmm_api4->options,
+                    oyStringAdd_( &text, oyXMLgetElement_(cmm_api4->ui->options,
                                   "freedesktop.org/default/profile",
                                   "editing_rgb" ),
                                   oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -2310,7 +2310,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
     /*  4. parse static options from filter */
     if(flags & OY_SELECT_FILTER)
-      opts_tmp2 = oyOptions_FromText( filter->api4_->options, 0, object );
+      opts_tmp2 = oyOptions_FromText( filter->api4_->ui->options, 0, object );
 
     /*  5. merge */
     s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );

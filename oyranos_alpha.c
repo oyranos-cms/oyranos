@@ -3562,8 +3562,23 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
                  oyStructTypeToText(api->type),
                  oyNoEmptyString_m_(api->registration));
       }
-      if(s->oyCMMFilter_ValidateOptions &&
-         !s->oyWidget_Event)
+      if(!(s->oyCMMInit && s->ui))
+      {
+        int ui_module_api = s->ui->module_api[0]*10000
+                            + s->ui->module_api[1]*100
+                            + s->ui->module_api[2];
+
+        if(ui_module_api < 110 ||  /* last API break */
+          OYRANOS_VERSION < ui_module_api)
+        {
+          error = 1;
+          WARNc2_S("Wrong UI API for: %s %s", oyStructTypeToText(api->type),
+                   oyNoEmptyString_m_(api->registration));
+          return type;
+        }
+      }
+      if(s->ui && s->ui->oyCMMFilter_ValidateOptions &&
+         !s->ui->oyWidget_Event)
       {
         error = 1;
         WARNc2_S("Incomplete module UI function set: %s %s",
@@ -3578,22 +3593,22 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
                  oyStructTypeToText(api->type),
                  oyNoEmptyString_m_(api->registration));
       }
-      if(!(s->name.type == oyOBJECT_NAME_S &&
-           s->name.nick && s->name.name && s->name.description))
+      if(!(s->ui && s->ui->name.type == oyOBJECT_NAME_S &&
+           s->ui->name.nick && s->ui->name.name && s->ui->name.description))
       {
         error = 1;
         WARNc2_S("Missed module name: %s %s",
                  oyStructTypeToText(api->type),
                  oyNoEmptyString_m_(api->registration));
       }
-      if(!(s->category && s->category[0]))
+      if(!(s->ui && s->ui->category && s->ui->category[0]))
       {
         error = 1;
         WARNc2_S("Missed module category: %s %s",
                  oyStructTypeToText(api->type),
                  oyNoEmptyString_m_(api->registration));
       }
-      if(s->options && s->options[0] && !s->oyCMMuiGet)
+      if(s->ui && s->ui->options && s->ui->options[0] && !s->ui->oyCMMuiGet)
       {
         error = 1;
         WARNc2_S("options provided without oyCMMuiGet: %s %s",
@@ -7576,7 +7591,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
 
     /*  4. parse static options from filter */
     if(flags & OY_SELECT_FILTER)
-      opts_tmp2 = oyOptions_FromText( filter->api4_->options, 0, object );
+      opts_tmp2 = oyOptions_FromText( filter->api4_->ui->options, 0, object );
 
     /*  5. merge */
     s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );
@@ -19384,9 +19399,9 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
   {
     s->registration_ = oyStringCopy_( cmm_api4->registration,
                                       allocateFunc_);
-    s->name_ = oyName_copy( &cmm_api4->name, s->oy_ );
+    s->name_ = oyName_copy( &cmm_api4->ui->name, s->oy_ );
 
-    s->category_ = oyStringCopy_( cmm_api4->category, allocateFunc_ );
+    s->category_ = oyStringCopy_( cmm_api4->ui->category, allocateFunc_ );
 
     /* we lock here as cmm_api4->oyCMMuiGet might not be thread save */
     {
@@ -19397,8 +19412,8 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
       if(oyStrcmp_( oyNoEmptyName_m_(oyLanguage()), lang ) == 0)
         update = 0;
 
-      if(cmm_api4->oyCMMuiGet)
-        error = cmm_api4->oyCMMuiGet( s->options_, &s->opts_ui_, allocateFunc_);
+      if(cmm_api4->ui->oyCMMuiGet)
+        error = cmm_api4->ui->oyCMMuiGet( s->options_, &s->opts_ui_, allocateFunc_);
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
     }
 
@@ -20981,10 +20996,10 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     oyCMMapiFilters_Release( &apis );
   }
 
-  if(!error && node->core->api4_->oyCMMuiGet)
+  if(!error && node->core->api4_->ui->oyCMMuiGet)
   {
     /* @todo and how to mix in the values? */
-    error = node->core->api4_->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+    error = node->core->api4_->ui->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
     if(tmp)
     {
       STRING_ADD( text, tmp );

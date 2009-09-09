@@ -839,7 +839,7 @@ struct oyCMMapi6_s {
   int32_t          module_api[3];
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
-  oyCMMapi5_s    * api5_;              /**< @private meta module; keep to zero */
+  oyCMMapi5_s    * api5_;              /**< @private meta module; keep to zero*/
 
   /** oyCMMapi4_s::context_type typic data; e.g. "oyDL" */
   char           * data_type_in;
@@ -848,6 +848,44 @@ struct oyCMMapi6_s {
   oyCMMdata_Convert_f oyCMMdata_Convert;
 };
 
+
+/** @struct  oyCMMui_s
+ *  @brief   the CMM API UI part
+ *  @ingroup module_api
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/06 (Oyranos: 0.1.10)
+ *  @date    2009/09/06
+ */
+typedef struct {
+  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_DATA_TYPES_S */
+  oyPointer        dummya;             /**< keep to zero */
+  oyPointer        dummyb;             /**< keep to zero */
+  oyPointer        dummyc;             /**< keep to zero */
+
+  /** 0: major - should be stable for the live time of a filters UI, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          version[3];
+
+  /** 0: last major Oyranos version during development time, e.g. 0
+   *  1: last minor Oyranos version during development time, e.g. 0
+   *  2: last Oyranos patch version during development time, e.g. 10
+   */
+  int32_t          module_api[3];
+
+  /** check options for validy and correct */
+  oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
+  oyWidgetEvent_f                  oyWidget_Event; /**< handle widget events */
+
+  /** translatable, eg "scale" "image scaling" "..." */
+  oyName_s         name;
+  const char       category[256];      /**< menu structure */
+  const char     * options;            /**< default options as Elektra/XFORMS 
+                                        *   compatible XML */
+  oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
+} oyCMMui_s;
 
 
 /** typedef oyCMMFilterNode_ContextToMem_f
@@ -918,7 +956,7 @@ typedef char *(*oyCMMFilterNode_GetText_f) (
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2008/12/27
+ *  @date    2009/09/06
  */
 struct  oyCMMapi4_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API4_S */
@@ -946,11 +984,7 @@ struct  oyCMMapi4_s {
   int32_t          module_api[3];
 
   char           * id_;                /**< @private Oyranos id; keep to zero */
-  oyCMMapi5_s    * api5_;              /**< @private meta module; keep to zero */
-
-  /** check options for validy and correct */
-  oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
-  oyWidgetEvent_f                  oyWidget_Event; /**< handle widget events */
+  oyCMMapi5_s    * api5_;              /**< @private meta module; keep to zero*/
 
   /** mandatory for "//colour/icc" context producing filters */
   oyCMMFilterNode_ContextToMem_f   oyCMMFilterNode_ContextToMem;
@@ -961,11 +995,7 @@ struct  oyCMMapi4_s {
    *  e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL" */
   char             context_type[8];
 
-  /** translatable, eg "scale" "image scaling" "..." */
-  oyName_s         name;
-  const char       category[256];      /**< menu structure */
-  const char     * options;            /**< default options */
-  oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
+  oyCMMui_s      * ui;                 /**< a UI description */
 };
 
 
