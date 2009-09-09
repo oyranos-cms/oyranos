@@ -227,6 +227,8 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
       sprintf(*manufacturer, "Apple");
     else if(!strcmp(mnf,"PHL"))
       sprintf(*manufacturer, "Philips");
+    else if(!strcmp(mnf,"HWP"))
+      sprintf(*manufacturer, "HP");
     else if(!strcmp(mnf,"NEC"))
       sprintf(*manufacturer, "NEC");
     else if(!strcmp(mnf,"EIZ"))
