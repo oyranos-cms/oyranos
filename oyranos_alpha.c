@@ -6229,6 +6229,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   oyValue_u * v = 0;
   oyStructList_s * oy_struct_list = 0;
   char * text = 0;
+  const char * save_locale = 0;
 
   if(error <= 0)
     v = obj->value;
@@ -6237,6 +6238,11 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     allocateFunc = oyAllocateFunc_;
 
   error = !v;
+
+#if USE_GETTEXT
+  save_locale = setlocale(LC_NUMERIC, 0 );
+  setlocale(LC_NUMERIC, "C");
+#endif
 
   if(error <= 0)
   {
@@ -6278,6 +6284,10 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
       if(obj->value_type == oyVAL_DOUBLE_LIST)
         oySprintf_(tmp, "%f", v->dbl_list[i+1]);
 
+      if((obj->value_type == oyVAL_INT_LIST ||
+          obj->value_type == oyVAL_DOUBLE_LIST) && i)
+        STRING_ADD( text, "," );
+
       switch(obj->value_type)
       {
       case oyVAL_INT:
@@ -6310,6 +6320,9 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     oyFree_m_( tmp );
     oyFree_m_( text );
   }
+#if USE_GETTEXT
+  setlocale(LC_NUMERIC, save_locale);
+#endif
 
   return erg;
 }
@@ -6363,7 +6376,7 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
     }
 
     if(!error && pos > 0 && 
-       (!s->value_type == oyVAL_INT_LIST ||
+       (s->value_type != oyVAL_INT_LIST ||
         (s->value_type == oyVAL_INT_LIST && 
          (!s->value->int32_list || pos >= s->value->int32_list[0]))))
     {
@@ -6491,7 +6504,7 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
     }
 
     if(!error && pos > 0 && 
-       (!s->value_type == oyVAL_DOUBLE_LIST ||
+       (s->value_type != oyVAL_DOUBLE_LIST ||
         (s->value_type == oyVAL_DOUBLE_LIST && 
          (!s->value->dbl_list || pos >= s->value->dbl_list[0]))))
     {
@@ -8690,6 +8703,118 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
 
     } else
       oyOption_SetFromInt( o, value, pos, flags & 1 );
+
+    oyOption_Release( &o );
+  }
+
+  return error;
+}
+
+/** Function oyOptions_FindDouble
+ *  @memberof oyOptions_s
+ *  @brief   get a value
+ *
+ *  @param         options             the options list or set to manipulate
+ *  @param         registration        the options registration name, e.g.
+ *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     or simple key, e.g. "my_opt"
+ *  @param         result              the double
+ *  @param         pos                 the value position
+ *  @return                            0 -  option exists, is of correct type,
+ *                                          holds a value at the position;
+ *                                     -1 - not found;
+ *                                     1 -  error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/04 (Oyranos: 0.1.10)
+ *  @date    2009/09/10
+ */
+int            oyOptions_FindDouble  ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       int                 pos,
+                                       double            * result )
+{
+  int error = !options;
+  oyOptions_s * s = options;
+  oyOption_s * o = 0;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return error );
+
+  if(error <= 0)
+  {
+    o = oyOptions_Find( options, registration );
+
+    if(o && o->type_ == oyOBJECT_OPTION_S &&
+       (o->value_type == oyVAL_DOUBLE ||
+        o->value_type == oyVAL_DOUBLE_LIST))
+    {
+      if(result)
+        *result = oyOption_GetValueDouble( o, pos );
+      error = 0;
+
+    } else
+      error = -1;
+
+    oyOption_Release( &o );
+  }
+
+  return error;
+}
+
+/** Function oyOptions_SetFromDouble
+ *  @memberof oyOptions_s
+ *  @brief   change a value
+ *
+ *  @param         obj                 the options list or set to manipulate
+ *  @param         registration        the options registration name, e.g.
+ *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *  @param         value               the value to set
+ *  @param         pos                 the position in a value list
+ *  @param         flags               can be OY_CREATE_NEW for a new option,
+ *                                     OY_STRING_LIST or OY_ADD_ALWAYS
+ *  @return                            0 - success; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/04 (Oyranos: 0.1.10)
+ *  @date    2009/09/10
+ */
+int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
+                                       const char        * registration,
+                                       double              value,
+                                       int                 pos,
+                                       uint32_t            flags )
+{
+  int error = 0;
+  oyOption_s * o = 0;
+  oyOptions_s * s = *obj;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+
+  if(error <= 0)
+  {
+    if(!*obj)
+      *obj = oyOptions_New( 0 );
+
+    o = oyOptions_Find( *obj, registration );
+
+    /** Add a new option if the OY_CREATE_NEW flag is present.
+     */
+    if((!o && oyToCreateNew_m(flags)) ||
+        oyToAddAlways_m(flags))
+    {
+      o = oyOption_New( registration, (*obj)->oy_ );
+      error = !o;
+
+      if(error <= 0)
+        /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
+        error = oyOption_SetFromDouble( o, value, pos, flags & 1 );
+
+      oyOptions_MoveIn( (*obj), &o, -1 );
+
+    } else
+      oyOption_SetFromDouble( o, value, pos, flags & 1 );
 
     oyOption_Release( &o );
   }

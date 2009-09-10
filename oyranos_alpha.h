@@ -826,6 +826,15 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
                                        int32_t             integer,
                                        int                 pos,
                                        uint32_t            flags );
+int            oyOptions_FindDouble  ( oyOptions_s       * options,
+                                       const char        * key,
+                                       int                 pos,
+                                       double            * result );
+int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
+                                       const char        * key,
+                                       double              value,
+                                       int                 pos,
+                                       uint32_t            flags );
 int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
                                        const char        * registration,
                                        oyStruct_s       ** oy_struct,
