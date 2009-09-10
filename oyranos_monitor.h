@@ -38,6 +38,7 @@ int   oyGetMonitorInfo_lib        (const char* display,
                                        char             ** display_geometry,
                                        char             ** system_port,
                                        char             ** host,
+                                       double            * colours,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data );

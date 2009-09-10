@@ -183,6 +183,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
     {
       char * manufacturer=0, *model=0, *serial=0, *host=0, *display_geometry=0,
            * system_port=0;
+      double colours[9];
       oyBlob_s * edid = 0;
 
       if(!device_name)
@@ -198,7 +199,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         error = oyGetMonitorInfo_lib( device_name,
                                       &manufacturer, &model, &serial,
                                       &display_geometry, &system_port,
-                                      &host, value3 ? &edid : 0,oyAllocateFunc_,
+                                      &host, colours,
+                                      value3 ? &edid : 0,oyAllocateFunc_,
                                       (oyStruct_s*)options );
 
       if(error != 0)
@@ -224,6 +226,15 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         OPTIONS_ADD( (*device)->backend_core, display_geometry )
         OPTIONS_ADD( (*device)->backend_core, system_port )
         OPTIONS_ADD( (*device)->backend_core, host )
+        if(!error)
+        {
+          int i;
+          for(i = 0; i < 9; ++i)
+            error = oyOptions_SetFromDouble( &(*device)->data,
+                             OYX1_MONITOR_REGISTRATION OY_SLASH "edid1_colours",
+                                             colours[i], i, OY_CREATE_NEW );
+        }
+
         if(!error && edid)
         {
           int has = 0;

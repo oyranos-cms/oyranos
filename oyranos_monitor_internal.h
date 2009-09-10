@@ -146,12 +146,13 @@ struct oyDDC_EDID1_s_ {
  unsigned char checksum;              /* [127] */
 };
 
-void oyUnrollEdid1_               (struct oyDDC_EDID1_s_ *edi,
+void
+oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
+                                       double            * c,
                                    oyAlloc_f     allocate_func);
-
 
 #ifdef __cplusplus
 } /* extern "C" */
