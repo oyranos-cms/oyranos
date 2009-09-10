@@ -142,17 +142,71 @@ oyFree_( void *oy_structure )
 }
 #endif
 
+/* BEGINN_edid-parse.c_SECTION
+
+ Author: Soren Sandmann <sandmann@redhat.com>
+
+   Should be MIT licensed and therefore ok with BSD inclusion.
+ */
+
+static int
+get_bit (int in, int bit)
+{
+    return (in & (1 << bit)) >> bit;
+}
+
+static int
+get_bits (int in, int begin, int end)
+{
+    int mask = (1 << (end - begin + 1)) - 1;
+
+    return (in >> begin) & mask;
+}
+
+static double
+decode_fraction (int high, int low)
+{
+    double result = 0.0;
+    int i;
+
+    high = (high << 2) | low;
+
+    for (i = 0; i < 10; ++i) 
+        result += get_bit (high, i) * pow (2, i - 10);
+
+    return result;
+}
+
+static int
+decode_color_characteristics (const unsigned char *edid, double * c)
+{   
+    c[0]/*red_x*/ = decode_fraction (edid[0x1b], get_bits (edid[0x19], 6, 7));
+    c[1]/*red_y*/ = decode_fraction (edid[0x1c], get_bits (edid[0x19], 5, 4));
+    c[2]/*green_x*/ = decode_fraction (edid[0x1d], get_bits (edid[0x19], 2, 3));
+    c[3]/*green_y*/ = decode_fraction (edid[0x1e], get_bits (edid[0x19], 0, 1));
+    c[4]/*blue_x*/ = decode_fraction (edid[0x1f], get_bits (edid[0x1a], 6, 7));
+    c[5]/*blue_y*/ = decode_fraction (edid[0x20], get_bits (edid[0x1a], 4, 5));
+    c[6]/*white_x*/ = decode_fraction (edid[0x21], get_bits (edid[0x1a], 2, 3));
+    c[7]/*white_y*/ = decode_fraction (edid[0x22], get_bits (edid[0x1a], 0, 1));
+
+    return TRUE;
+}
+
+/* END_edid-parse.c_SECTION */
+
 /** @internal oyUnrollEdid1_ */
 void
 oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
                                    char**      manufacturer,
                                    char**      model,
                                    char**      serial,
+                                       double            * c,
                                    oyAlloc_f     allocate_func)
 {
   char *t = 0;
   int len, i;
   char mnf[4];
+  unsigned char * edid = (unsigned char*) edi;
 
   DBG_PROG_START
 
@@ -217,7 +271,18 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
           *target = t; DBG_PROG_S( *target )
         }
       }
-    } 
+    }
+  }
+
+  if(c)
+  {
+    decode_color_characteristics( edid, c );
+
+    /* Gamma */
+    if (edid[0x17] == 0xFF)
+      c[8] = -1.0;
+    else
+      c[8] = (edid[0x17] + 100.0) / 100.0;
   }
 
   if(!*manufacturer)
@@ -340,6 +405,7 @@ oyGetMonitorInfo_                 (const char* display_name,
                                    char**      display_geometry,
                                        char             ** system_port,
                                        char             ** host,
+                                       double            * colours,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data )
@@ -418,7 +484,7 @@ oyGetMonitorInfo_                 (const char* display_name,
       /* convert to an deployable struct */
       edi = (struct oyDDC_EDID1_s_*) prop->ptr;
 
-      oyUnrollEdid1_( edi, manufacturer, model, serial, allocate_func );
+      oyUnrollEdid1_( edi, manufacturer, model, serial, colours, allocate_func);
     }
   }
 
@@ -1700,6 +1766,7 @@ oyGetMonitorInfo_lib              (const char* display,
                                        char             ** display_geometry,
                                        char             ** system_port,
                                        char             ** host,
+                                       double            * colours,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data)
@@ -1710,7 +1777,7 @@ oyGetMonitorInfo_lib              (const char* display,
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
   err = oyGetMonitorInfo_( display, manufacturer, model, serial,
-                     display_geometry, system_port, host, edid,
+                     display_geometry, system_port, host, colours, edid,
                      allocate_func, user_data );
 #else
   err = 1;
