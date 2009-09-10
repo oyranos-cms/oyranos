@@ -310,7 +310,9 @@ int main(int argc, char *argv[])
            event.xproperty.atom == aRegion ||
            event.xproperty.atom == aDesktop ||
            strstr( XGetAtomName( event.xany.display, event.xproperty.atom ), 
-                   "_ICC_PROFILE") != 0)
+                   "_ICC_PROFILE") != 0 ||
+           strstr( XGetAtomName( event.xany.display, event.xproperty.atom ), 
+                   "EDID") != 0)
         r = XGetWindowProperty( display, event.xany.window,
                 event.xproperty.atom, 0, ~0, False, XA_CARDINAL,&actual,&format,
                 &n, &left, &data );
@@ -360,7 +362,9 @@ int main(int argc, char *argv[])
 
         } else if(
            strstr( XGetAtomName( event.xany.display, event.xproperty.atom ), 
-                   "_ICC_PROFILE") != 0)
+                   "_ICC_PROFILE") != 0 ||
+           strstr( XGetAtomName( event.xany.display, event.xproperty.atom ),
+                   "EDID") != 0)
         {
           const char * name = 0,
                      * an = XGetAtomName( event.xany.display,
