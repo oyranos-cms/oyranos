@@ -17,6 +17,7 @@ FLTK_CFLAGS := $(shell (fltk-config --cflags))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags))
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
+TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o
 TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos))
 LDFLAGS = $(LIBS)
@@ -55,7 +56,8 @@ $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	mkdir -p xcmsevents
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
-	$(PKG_CONFIG_LIBS) -lXcolor -lXmu $< -o $@
+	$(PKG_CONFIG_LIBS) -lXcolor -lXmu -lXinerama -lXrandr -lXxf86vm \
+	$(TARGET2_FLAGS) $< -o $@
 
 $(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
 	mkdir -p colour_desktop

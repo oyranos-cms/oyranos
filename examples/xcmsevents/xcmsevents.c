@@ -23,6 +23,20 @@
 #include <X11/Xmu/Error.h> /* XmuSimpleErrorHandler */
 #include <oyranos_alpha.h> /* use Oyranos to obtain profile names */
 
+void
+oyUnrollEdid1_                    (oyPointer   edi,
+                                   char**      manufacturer,
+                                   char**      model,
+                                   char**      serial,
+                                       double            * c,
+                                   oyAlloc_f     allocate_func);
+#define STRING_ADD(t, txt) oyStringAdd_( &t, txt, malloc, free )
+void               oyStringAdd_      ( char             ** text,
+                                       const char        * append,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocFunc );
+
+
 char * printWindowName( Display * display, Window w )
 {
   static char * text = 0;
@@ -369,20 +383,47 @@ int main(int argc, char *argv[])
           const char * name = 0,
                      * an = XGetAtomName( event.xany.display,
                                           event.xproperty.atom );
+          char * tmp = 0;
+          double colours[9] = {0,0,0,0,0,0,0,0,0};
 
           if(strcmp( "_ICC_PROFILE", an ) == 0)
             an = "_ICC_PROFILE  ";
 
-          if(n)
+          if(n &&
+             strstr( XGetAtomName( event.xany.display, event.xproperty.atom ),
+                     "_ICC_PROFILE") != 0)
           {
             oyProfile_s * p = oyProfile_FromMem( n, data, 0, 0 );
             name = oyProfile_GetFileName( p, 0 );
             if(name && strchr(name, '/'))
               name = strrchr( name, '/' ) + 1;
           }
+          if(n &&
+             strstr( XGetAtomName( event.xany.display, event.xproperty.atom ),
+                     "EDID") != 0)
+          {
+            char * manufacturer = 0,
+                 * model = 0,
+                 * serial = 0;
+
+            oyUnrollEdid1_( data, &manufacturer, &model, &serial, colours,
+                            malloc );
+            STRING_ADD( tmp, manufacturer ); STRING_ADD( tmp, " - " );
+            STRING_ADD( tmp, model ); STRING_ADD( tmp, " - " );
+            STRING_ADD( tmp, serial ); STRING_ADD( tmp, "\n  " );
+          }
           printf("PropertyNotify : %s    \"%s\"[%d]  %s\n",
-                 an, name?name:"removed",(int)n,
+                 an, name?name:(tmp?"set":"removed"),(int)n,
                  printWindowName( display, event.xany.window ) );
+
+          if(tmp)
+          {
+            printf("  %s", tmp);
+            printf("  {{%.03f,%.03f}{%.03f,%.03f}{%.03f,%.03f}{%.03f,%.03f}%.03f}\n",
+                   colours[0], colours[1], colours[2], colours[3],
+                   colours[4], colours[5], colours[6], colours[7], colours[8] );
+            free(tmp); tmp = 0;
+          }
         }
 
         if(data) XFree(data);

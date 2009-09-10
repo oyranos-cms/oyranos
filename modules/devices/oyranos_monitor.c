@@ -142,7 +142,7 @@ oyFree_( void *oy_structure )
 }
 #endif
 
-/* BEGINN_edid-parse.c_SECTION
+/* BEGINN edid-parse.c_SECTION
 
  Author: Soren Sandmann <sandmann@redhat.com>
 
@@ -192,7 +192,7 @@ decode_color_characteristics (const unsigned char *edid, double * c)
     return TRUE;
 }
 
-/* END_edid-parse.c_SECTION */
+/* END edid-parse.c_SECTION */
 
 /** @internal oyUnrollEdid1_ */
 void
