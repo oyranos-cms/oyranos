@@ -119,7 +119,7 @@ int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2008/11/06
  */
-typedef int      (*oyCMMDataOpen_f)  ( oyStruct_s        * data,
+typedef int      (*oyCMMobjectOpen_f)  ( oyStruct_s        * data,
                                        oyCMMptr_s        * oy );
 
 typedef void     (*oyCMMProgress_f)  ( int                 ID,
@@ -364,38 +364,38 @@ typedef int  (*oyCMMuiGet_f)         ( oyOptions_s        * options,
                                        oyAlloc_f            allocateFunc );
 
 
-/** typedef oyCMMData_LoadFromMem_f
- *  @brief   load a filter data from a in memory data blob
+/** typedef oyCMMobject_LoadFromMem_f
+ *  @brief   load a filter object from a in memory data blob
  *  @ingroup module_api
- *  @memberof oyCMMDataTypes_s
+ *  @memberof oyCMMobjectTypes_s
  *
  *  @param[in]     buf_size            data size
  *  @param[in]     buf                 data blob
  *  @param[in]     flags               for future use
  *  @param[in]     object              the optional base
- *  @return                            the data
+ *  @return                            the object
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/11/23
+ *  @date    2009/09/14
  */
-typedef oyStruct_s * (*oyCMMData_LoadFromMem_f) (
+typedef oyStruct_s * (*oyCMMobject_LoadFromMem_f) (
                                        size_t              buf_size,
                                        const oyPointer     buf,
                                        uint32_t            flags,
                                        oyObject_s          object);
 
-/** typedef oyCMMDataGetText_f
- *  @brief   build a text string from a given data
+/** typedef oyCMMobjectGetText_f
+ *  @brief   build a text string from a given object
  *  @ingroup module_api
- *  @memberof oyCMMDataTypes_s
+ *  @memberof oyCMMobjectTypes_s
  *
  *  Serialise into:
  *  - oyNAME_NICK: XML ID
  *  - oyNAME_NAME: XML
  *  - oyNAME_DESCRIPTION: ??
  *
- *  @param[in]     data                data
+ *  @param[in]     object              the object
  *  @param[out]    type                the string type
  *  @param[out]    pos                 oisition for oyStructList_s argument
  *  @param[in]     allocateFunc        e.g. malloc
@@ -403,18 +403,19 @@ typedef oyStruct_s * (*oyCMMData_LoadFromMem_f) (
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/24 (Oyranos: 0.1.10)
- *  @date    2008/12/24
+ *  @date    2009/09/14
  */
-typedef char *   (*oyCMMDataGetText_f)(oyStruct_s        * data,
+typedef char *   (*oyCMMobjectGetText_f) (
+                                       oyStruct_s        * object,
                                        oyNAME_e            type,
                                        int                 pos,
                                        int                 flags,
                                        oyAlloc_f           allocateFunc );
 
-/** typedef oyCMMDataScan_f
- *  @brief   load a filter data from a in memory data blob
+/** typedef oyCMMobjectScan_f
+ *  @brief   load a filter object from a in memory data blob
  *  @ingroup module_api
- *  @memberof oyCMMDataTypes_s
+ *  @memberof oyCMMobjectTypes_s
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -423,25 +424,25 @@ typedef char *   (*oyCMMDataGetText_f)(oyStruct_s        * data,
  *  @param[in]     allocateFunc        e.g. malloc
  *  @return                            0 on success; error >= 1; unknown < 0
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/11/22
+ *  @date    2009/09/14
  */
-typedef int          (*oyCMMDataScan_f) (
+typedef int          (*oyCMMobjectScan_f) (
                                        oyPointer           data,
                                        size_t              size,
                                        char             ** registration,
                                        char             ** name,
                                        oyAlloc_f           allocateFunc );
 
-/** @struct  oyCMMDataTypes_s
- *  @brief   the CMM API 5 data part
+/** @struct  oyCMMobjectTypes_s
+ *  @brief   the CMM API 5 objetc part
  *  @ingroup module_api
  *  @extends oyStruct_s
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/23 (Oyranos: 0.1.9)
- *  @date    2008/11/23
+ *  @date    2009/09/14
  */
 typedef struct {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_DATA_TYPES_S */
@@ -456,10 +457,10 @@ typedef struct {
   const char     * paths;
   const char     * exts;                /**< file extensions, e.g. "icc:icm" */
   const char     * element_name;        /**< XML element name, e.g. "profile" */
-  oyCMMDataGetText_f               oyCMMDataGetText; /**< */
-  oyCMMData_LoadFromMem_f          oyCMMDataLoadFromMem; /**< */
-  oyCMMDataScan_f                  oyCMMDataScan; /**< */
-} oyCMMDataTypes_s;
+  oyCMMobjectGetText_f             oyCMMobjectGetText; /**< */
+  oyCMMobject_LoadFromMem_f        oyCMMobjectLoadFromMem; /**< */
+  oyCMMobjectScan_f                oyCMMobjectScan; /**< */
+} oyCMMobjectTypes_s;
 
 
 /** typedef oyCMMFilterLoad_f
@@ -1186,7 +1187,7 @@ typedef int  (*oyConversion_Correct_f) (
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/23 (Oyranos: 0.1.10)
- *  @date    2009/07/23
+ *  @date    2009/09/14
  */
 struct oyCMMapi9_s {
   oyOBJECT_e           type;           /**< struct type oyOBJECT_CMM_API9_S */ 
@@ -1231,8 +1232,9 @@ struct oyCMMapi9_s {
    */
   const char     * xml_namespace;
 
-  oyCMMDataTypes_s * data_types;       /**< zero terminated list of types */
-  oyCMMGetText_f   getText;            /**< describe selectors */
+  oyCMMobjectTypes_s * object_types;   /**< zero terminated list of types */
+
+  oyCMMGetText_f   getText;            /**< describe selectors in UI */
   const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
 
   oyConversion_Correct_f oyConversion_Correct; /**< check a graph */

@@ -414,7 +414,7 @@ char * oiccStructGetText             ( oyStruct_s        * item,
   return text;
 }
 
-char * oiccDataGetText               ( oyStruct_s        * data,
+char * oiccObjectGetText             ( oyStruct_s        * data,
                                        oyNAME_e            type,
                                        int                 pos,
                                        int                 flags,
@@ -456,14 +456,14 @@ char * oiccDataGetText               ( oyStruct_s        * data,
   return text;
 }
 
-/** Function oiccICCDataLoadFromMem
+/** Function oiccObjectLoadFromMem
  *  @brief   load a ICC profile from a in memory data blob
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/23 (Oyranos: 0.1.9)
- *  @date    2008/11/23
+ *  @date    2009/09/14
  */
-oyStruct_s * oiccICCDataLoadFromMem  ( size_t              buf_size,
+oyStruct_s * oiccObjectLoadFromMem   ( size_t              buf_size,
                                        const oyPointer     buf,
                                        uint32_t            flags,
                                        oyObject_s          object )
@@ -471,14 +471,14 @@ oyStruct_s * oiccICCDataLoadFromMem  ( size_t              buf_size,
   return (oyStruct_s*) oyProfile_FromMem( buf_size, buf, flags, object );
 }
 
-/** Function oiccICCDataScan
+/** Function oiccObjectScan
  *  @brief   load ICC profile informations from a in memory data blob
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/23 (Oyranos: 0.1.9)
- *  @date    2008/11/23
+ *  @date    2009/09/14
  */
-int          oiccICCDataScan         ( oyPointer           buf,
+int          oiccObjectScan       ( oyPointer           buf,
                                        size_t              buf_size,
                                        char             ** intern,
                                        char             ** filename,
@@ -500,7 +500,7 @@ int          oiccICCDataScan         ( oyPointer           buf,
   return error;
 }
 
-oyCMMDataTypes_s icc_data[] = {
+oyCMMobjectTypes_s icc_objects[] = {
  {
   oyOBJECT_CMM_DATA_TYPES_S, /* oyStruct_s::type; */
   0,0,0, /* unused oyStruct_s fields in static data; keep to zero */
@@ -508,9 +508,9 @@ oyCMMDataTypes_s icc_data[] = {
   "color/icc", /* paths; sub paths */
   "icc:icm", /* exts; file name extensions */
   "profile", /* element_name; in XML documents */
-  oiccDataGetText, /* oyCMMDataGetText; */
-  oiccICCDataLoadFromMem, /* oyCMMDataLoadFromMem; */
-  oiccICCDataScan /* oyCMMDataScan; */
+  oiccObjectGetText, /* oyCMMobjectGetText; */
+  oiccObjectLoadFromMem, /* oyCMMobjectLoadFromMem; */
+  oiccObjectScan /* oyCMMobjectScan; */
  },{0} /* zero list end */
 };
 
@@ -771,7 +771,8 @@ oyCMMapi9_s  oicc_api9 = {
   oiccGetDefaultColourIccOptionsUI,  /* oyCMMuiGet */
   (char*)CMM_NICK"=\"http://www.oyranos.org/2009/oyranos_icc\"", /* xml_namespace */
 
-  icc_data,  /* data_types */
+  icc_objects,  /* object_types */
+
   0,  /* getText */
   0,  /* texts */
 

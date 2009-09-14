@@ -3679,9 +3679,8 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
             (s->options && s->oyCMMFilter_ValidateOptions &&
              s->oyCMMuiGet && s->oyWidget_Event))&&
            (!s->texts ||
-            ((s->texts || s->data_types)
-              && s->texts[0] && s->texts[0][0] && s->getText &&
-              s->data_types)) &&
+            ((s->texts || s->getText)
+              && s->texts[0] && s->texts[0][0] && s->getText)) &&
            s->pattern && s->pattern[0]
             ) )
         error = 1;
