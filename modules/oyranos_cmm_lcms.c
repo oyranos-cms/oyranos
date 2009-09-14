@@ -563,6 +563,14 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
       if(cmyk_cmyk_black_preservation == 2)
         cmsSetCMYKPreservationStrategy( LCMS_PRESERVE_K_PLANE );
 
+  if(oy_debug)
+    message( oyMSG_WARN,0, "%s:%d\n"
+             "  proof: %d  bpc: %d  gamut_warning: %d  high_precission: %d\n"
+             "  profiles_n: %d",
+              __FILE__,__LINE__,
+                proof,     bpc,     gamut_warning,     high_precission,
+                profiles_n );
+
   if(!error)
   {
          if(profiles_n == 1)
