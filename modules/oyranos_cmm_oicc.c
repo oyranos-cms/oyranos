@@ -414,9 +414,8 @@ char * oiccStructGetText             ( oyStruct_s        * item,
   return text;
 }
 
-char * oiccObjectGetText             ( oyStruct_s        * data,
+char * oiccObjectGetText             ( oyStruct_s        * obj,
                                        oyNAME_e            type,
-                                       int                 pos,
                                        int                 flags,
                                        oyAlloc_f           allocateFunc )
 {
@@ -425,7 +424,7 @@ char * oiccObjectGetText             ( oyStruct_s        * data,
   oyStruct_s * item = 0;
   char * text = 0;
 
-  if(!data)
+  if(!obj)
   {
     if(type == oyNAME_NAME)
       text = oyStringCopy_( _("ICC profile"), allocateFunc );
@@ -436,13 +435,7 @@ char * oiccObjectGetText             ( oyStruct_s        * data,
       text = oyStringCopy_( OY_TYPE_STD, allocateFunc );
   } else
   {
-    if(data->type_ == oyOBJECT_STRUCT_LIST_S)
-    {
-      list = (oyStructList_s*) data;
-      n = oyStructList_Count( list );
-      item = oyStructList_GetRef( list, pos );
-    } else
-      item = data;
+    item = obj;
 
     if(item &&
        !(item->type_ == oyOBJECT_PROFILE_S ||
@@ -504,7 +497,7 @@ oyCMMobjectTypes_s icc_objects[] = {
  {
   oyOBJECT_CMM_DATA_TYPES_S, /* oyStruct_s::type; */
   0,0,0, /* unused oyStruct_s fields in static data; keep to zero */
-  0, /* id; */
+  oyOBJECT_PROFILE_S, /* id; */
   "color/icc", /* paths; sub paths */
   "icc:icm", /* exts; file name extensions */
   "profile", /* element_name; in XML documents */
