@@ -506,6 +506,13 @@ int          oyPointerReleaseFunc_   ( oyPointer         * ptr )
  */
 
 
+/** Function oyStruct_Allocate
+ *  @brief   let a object allocate some memory
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/00 (Oyranos: 0.1.10)
+ *  @date    2008/12/00
+ */
 oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
                                        size_t              size )
 {
@@ -519,6 +526,8 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
 
 /** Function oyStructTypeToText
  *  @brief   Objects type to small string
+ *
+ *  Give a basic description of inbuild object types.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/24 (Oyranos: 0.1.8)
@@ -600,6 +609,78 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
  */
 const char * oyStruct_TypeToText     ( const oyStruct_s  * st )
 { return oyStructTypeToText( st->type_ ); }
+
+
+/** Function oyStruct_GetText
+ *  @memberof oyStruct_s
+ *  @brief   get a text dump 
+ *
+ *  As the object type module for text informations.
+ *
+ *  @param         obj                 the object
+ *  @param         name_type           the text type
+ *  @param         flags               
+ *                                     - 0: get object infos
+ *                                     - 1: get object type infos
+ *  @return                            the text
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/14 (Oyranos: 0.1.10)
+ *  @date    2009/09/15
+ */
+const char * oyStruct_GetText        ( oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags )
+{
+  int error = !obj;
+  const char * text = 0;
+  oyOBJECT_e type = oyOBJECT_NONE;
+
+  if(!error)
+    text = oyObject_GetName( obj->oy_, oyNAME_NICK );
+
+  if(!error && !text)
+  {
+    type = obj->type_;
+
+    if(type)
+    {
+      oyCMMapiFilters_s * apis;
+      int apis_n = 0, i,j;
+      oyCMMapi9_s * cmm_api9 = 0;
+      char * api_reg = 0;
+
+      apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API9_S, 0, 0);
+      apis_n = oyCMMapiFilters_Count( apis );
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+
+        j = 0;
+        while( cmm_api9->object_types && cmm_api9->object_types[j] &&
+               cmm_api9->object_types[j]->type == oyOBJECT_CMM_DATA_TYPES_S &&
+               cmm_api9->object_types[j]->oyCMMobjectGetText &&
+               cmm_api9->object_types[j]->id == obj->type_ )
+        {
+          text = cmm_api9->object_types[j]->oyCMMobjectGetText( flags ? 0 : obj,
+                                                   name_type, 0 );
+          if(text)
+            break;
+          ++j;
+        }
+        if(cmm_api9->release)
+          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+
+        if(text)
+          break;
+      }
+      oyCMMapiFilters_Release( &apis );
+    }
+  }
+
+  return text;
+}
+
 
 
 /** @brief oyName_s new
@@ -6247,6 +6328,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   {
     int n = 1, i = 0;
     char * tmp = oyAllocateFunc_(1024);
+    const char * ct = 0;
 
     switch(obj->value_type)
     {
@@ -6299,17 +6381,29 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
       }
       if(obj->value_type == oyVAL_STRUCT)
       {
+        oyStruct_s * oy_struct = 0;
+
         if(oy_struct_list && oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
+          oy_struct = oyStructList_Get_( oy_struct_list, i );
+        else if(v->oy_struct)
+          oy_struct = v->oy_struct;
+
+        if(oy_struct)
         {
-          oyStruct_s * oy_struct = oyStructList_Get_( oy_struct_list, i );
-          if(oy_struct && oy_struct->oy_)
-            STRING_ADD ( text, oyObject_GetName( oy_struct->oy_, oyNAME_NICK ) );
-        } else if(v->oy_struct)
-        {
-          if(v->oy_struct->oy_)
-          STRING_ADD ( text, oyObject_GetName( v->oy_struct->oy_,oyNAME_NICK ));
+          ct = 0;
+          /* get explicite name */
+          if(oy_struct->oy_)
+            ct = oyObject_GetName( oy_struct->oy_, oyNAME_NICK );
+          if(ct)
+            STRING_ADD( text, ct );
           else
-          STRING_ADD ( text, oyStructTypeToText(v->oy_struct->type_) );
+          /* fall back to oyCMMapi9_s object type lookup */
+            ct = oyStruct_GetText( oy_struct, oyNAME_NICK, 0 );
+          if(ct)
+            STRING_ADD( text, ct );
+          if(!ct)
+          /* fall back to plain struct type name, if known */
+            STRING_ADD ( text, oyStructTypeToText(oy_struct->type_) );
         }
       }
     }
@@ -11741,7 +11835,6 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
  *                                     - 2 compare only manufacturer and model
  *                                     - 4 compare only device_name
  *  @param[out]    matched_devices     the devices selected from heap
- *  @param[in]     allocateFunc        user allocator
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -24579,6 +24672,7 @@ int          oyNamedColour_GetColour ( oyNamedColour_s   * colour,
  *  @param[in]     channels            pointer to channel data
  *  @param[in]     channels_type       data type
  *  @param[in]     flags               reserved for future use
+ *  @param[in]     options             for filter node creation
  *  @return                            error
  *
  *  @since Oyranos: version 0.1.8
