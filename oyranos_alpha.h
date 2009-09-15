@@ -173,6 +173,22 @@ typedef enum {
 } oyOBJECT_e;
 
 
+/** @enum    oyNAME_e
+ *  @brief   describe the base types of a oyObject_s name
+ *  @ingroup objects_generic
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2007/10/00
+ */
+typedef enum {
+  oyNAME_NAME,                         /**< compatible to oyName_s/oyObject_s */
+  oyNAME_NICK,                         /**< compatible to oyName_s/oyObject_s */
+  oyNAME_DESCRIPTION                   /**< compatible to oyName_s/oyObject_s */
+} oyNAME_e;
+
+#define oyNAME_ID oyNAME_NICK
+
 typedef struct oyObject_s_* oyObject_s;
 
 /** @brief Oyranos base structure
@@ -192,23 +208,11 @@ struct oyStruct_s {
 
 oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
                                        size_t              size );
+const char * oyStruct_GetText        ( oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags );
 const char * oyStructTypeToText      ( oyOBJECT_e          type );
 
-/** @enum    oyNAME_e
- *  @brief   describe the base types of a oyObject_s name
- *  @ingroup objects_generic
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/10/00 (Oyranos: 0.1.8)
- *  @date    2007/10/00
- */
-typedef enum {
-  oyNAME_NAME,                         /**< compatible to oyName_s/oyObject_s */
-  oyNAME_NICK,                         /**< compatible to oyName_s/oyObject_s */
-  oyNAME_DESCRIPTION                   /**< compatible to oyName_s/oyObject_s */
-} oyNAME_e;
-
-#define oyNAME_ID oyNAME_NICK
 
 /** @brief Oyranos name structure
  *  @ingroup objects_generic

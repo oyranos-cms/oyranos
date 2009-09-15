@@ -364,10 +364,10 @@ typedef int  (*oyCMMuiGet_f)         ( oyOptions_s        * options,
                                        oyAlloc_f            allocateFunc );
 
 
-/** typedef oyCMMobject_LoadFromMem_f
+/** typedef oyCMMobjectLoadFromMem_f
  *  @brief   load a filter object from a in memory data blob
  *  @ingroup module_api
- *  @memberof oyCMMobjectTypes_s
+ *  @memberof oyCMMobjectType_s
  *
  *  @param[in]     buf_size            data size
  *  @param[in]     buf                 data blob
@@ -379,7 +379,7 @@ typedef int  (*oyCMMuiGet_f)         ( oyOptions_s        * options,
  *  @since   2008/11/22 (Oyranos: 0.1.9)
  *  @date    2009/09/14
  */
-typedef oyStruct_s * (*oyCMMobject_LoadFromMem_f) (
+typedef oyStruct_s * (*oyCMMobjectLoadFromMem_f) (
                                        size_t              buf_size,
                                        const oyPointer     buf,
                                        uint32_t            flags,
@@ -388,32 +388,43 @@ typedef oyStruct_s * (*oyCMMobject_LoadFromMem_f) (
 /** typedef oyCMMobjectGetText_f
  *  @brief   build a text string from a given object
  *  @ingroup module_api
- *  @memberof oyCMMobjectTypes_s
+ *  @memberof oyCMMobjectType_s
  *
- *  Serialise into:
+ *  Serialise a object into:
  *  - oyNAME_NICK: XML ID
  *  - oyNAME_NAME: XML
  *  - oyNAME_DESCRIPTION: ??
  *
+ *  For type information the object argument is omitted. Then the function shall
+ *  programatically tell in oyNAME_NICK about the object type,
+ *  e.g. "oyProfile_s",
+ *  in oyNAME_NAME translated about its intented usage,
+ *  e.g. i18n("ICC profile") and give with oyNAME_DESCRIPTION some further long 
+ *  informations.
+ *
+ *  Note: Dynamically generated informations can be stored in the 
+ *  oyStruct_s::oy::name_  member and then returned by the function. Oyranos 
+ *  will typical look first at that oyObject_s member and then ask this 
+ *  function to get the information. @see oyObject_SetName()
+ *
  *  @param[in]     object              the object, omit to get a general text
  *  @param[out]    type                the string type
- *  @param[in]     allocateFunc        e.g. malloc
+ *  @param[in]     flags               for future use
  *  @return                            0 on success; error >= 1; unknown < 0
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/24 (Oyranos: 0.1.10)
  *  @date    2009/09/14
  */
-typedef char *   (*oyCMMobjectGetText_f) (
+typedef const char *   (*oyCMMobjectGetText_f) (
                                        oyStruct_s        * object,
                                        oyNAME_e            type,
-                                       int                 flags,
-                                       oyAlloc_f           allocateFunc );
+                                       int                 flags );
 
 /** typedef oyCMMobjectScan_f
  *  @brief   load a filter object from a in memory data blob
  *  @ingroup module_api
- *  @memberof oyCMMobjectTypes_s
+ *  @memberof oyCMMobjectType_s
  *
  *  @param[in]     data                data blob
  *  @param[in]     size                data size
@@ -433,7 +444,7 @@ typedef int          (*oyCMMobjectScan_f) (
                                        char             ** name,
                                        oyAlloc_f           allocateFunc );
 
-/** @struct  oyCMMobjectTypes_s
+/** @struct  oyCMMobjectType_s
  *  @brief   the CMM API 5 objetc part
  *  @ingroup module_api
  *  @extends oyStruct_s
@@ -452,17 +463,18 @@ typedef struct {
    *  set to a object type known to Oyranos, or
    *  set as a unique four byte signature, like 'myID' just more unique
    *  to avoid collisions. The id shall match a the oyStruct_s::type_ member
-   *  generated through oyCMMobject_LoadFromMem_f. */
+   *  generated through oyCMMobjectLoadFromMem_f. */
   oyOBJECT_e       id;
   /** a colon separated list of sub paths to expect the data in,
       e.g. "color/icc" */
   const char     * paths;
-  const char     * exts;                /**< file extensions, e.g. "icc:icm" */
-  const char     * element_name;        /**< XML element name, e.g. "profile" */
+  const char     * (*pathsGet)();      /**< e.g. non XDG colon separated paths*/
+  const char     * exts;               /**< file extensions, e.g. "icc:icm" */
+  const char     * element_name;       /**< XML element name, e.g. "profile" */
   oyCMMobjectGetText_f             oyCMMobjectGetText; /**< */
-  oyCMMobject_LoadFromMem_f        oyCMMobjectLoadFromMem; /**< */
+  oyCMMobjectLoadFromMem_f         oyCMMobjectLoadFromMem; /**< */
   oyCMMobjectScan_f                oyCMMobjectScan; /**< */
-} oyCMMobjectTypes_s;
+} oyCMMobjectType_s;
 
 
 /** typedef oyCMMFilterLoad_f
@@ -1234,7 +1246,7 @@ struct oyCMMapi9_s {
    */
   const char     * xml_namespace;
 
-  oyCMMobjectTypes_s * object_types;   /**< zero terminated list of types */
+  oyCMMobjectType_s ** object_types;   /**< zero terminated list of types */
 
   oyCMMGetText_f   getText;            /**< describe selectors in UI */
   const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */

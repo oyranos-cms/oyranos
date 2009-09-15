@@ -385,65 +385,27 @@ oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
 {return 0;}
 
 
-char * oiccStructGetText             ( oyStruct_s        * item,
+const char * oiccProfileGetText      ( oyStruct_s        * obj,
                                        oyNAME_e            type,
-                                       int                 flags,
-                                       oyAlloc_f           allocateFunc )
-{
-  char * text = 0;
-  oyProfile_s * prof = 0;
-  oyImage_s * image = 0;
-
-  if(item->type_ == oyOBJECT_PROFILE_S)
-  {
-    text = oyStringCopy_( oyProfile_GetText( prof, oyNAME_DESCRIPTION ),
-                          allocateFunc );
-  } else if(item->type_ == oyOBJECT_IMAGE_S)
-  {
-    image = (oyImage_s*) item;
-
-    if(flags == oyOBJECT_PROFILE_S)
-      text = oyStringCopy_( oyProfile_GetText( image->profile_,
-                                               type ),
-                            allocateFunc );
-    else
-      text = oyStringCopy_( oyObject_GetName( image->oy_, type ),
-                            allocateFunc );
-  }
-
-  return text;
-}
-
-char * oiccObjectGetText             ( oyStruct_s        * obj,
-                                       oyNAME_e            type,
-                                       int                 flags,
-                                       oyAlloc_f           allocateFunc )
+                                       int                 flags )
 {
   int n = 0;
   oyStructList_s * list = 0;
-  oyStruct_s * item = 0;
-  char * text = 0;
+  const char * text = 0;
 
   if(!obj)
   {
     if(type == oyNAME_NAME)
-      text = oyStringCopy_( _("ICC profile"), allocateFunc );
+      text = _("ICC profile");
     else if(type == oyNAME_DESCRIPTION)
-      text = oyStringCopy_( _("ICC colour profile for colour transformations"),
-                            allocateFunc );
+      text = _("ICC colour profile for colour transformations");
     else
-      text = oyStringCopy_( OY_TYPE_STD, allocateFunc );
+      text = "oyProfile_s";
   } else
   {
-    item = obj;
-
-    if(item &&
-       !(item->type_ == oyOBJECT_PROFILE_S ||
-         item->type_ == oyOBJECT_IMAGE_S))
-      item = 0;
-
-    if(item)
-      text = oiccStructGetText( item, type, flags, allocateFunc );
+    if(obj &&
+       obj->type_ == oyOBJECT_PROFILE_S)
+      text = oyProfile_GetText( (oyProfile_s*)obj, type );
   }
 
   return text;
@@ -456,7 +418,7 @@ char * oiccObjectGetText             ( oyStruct_s        * obj,
  *  @since   2008/11/23 (Oyranos: 0.1.9)
  *  @date    2009/09/14
  */
-oyStruct_s * oiccObjectLoadFromMem   ( size_t              buf_size,
+oyStruct_s * oiccProfileLoadFromMem   ( size_t              buf_size,
                                        const oyPointer     buf,
                                        uint32_t            flags,
                                        oyObject_s          object )
@@ -493,18 +455,21 @@ int          oiccObjectScan       ( oyPointer           buf,
   return error;
 }
 
-oyCMMobjectTypes_s icc_objects[] = {
- {
+oyCMMobjectType_s icc_profile = {
   oyOBJECT_CMM_DATA_TYPES_S, /* oyStruct_s::type; */
   0,0,0, /* unused oyStruct_s fields in static data; keep to zero */
   oyOBJECT_PROFILE_S, /* id; */
   "color/icc", /* paths; sub paths */
+  0, /* pathsGet */
   "icc:icm", /* exts; file name extensions */
   "profile", /* element_name; in XML documents */
-  oiccObjectGetText, /* oyCMMobjectGetText; */
-  oiccObjectLoadFromMem, /* oyCMMobjectLoadFromMem; */
+  oiccProfileGetText, /* oyCMMobjectGetText; */
+  oiccProfileLoadFromMem, /* oyCMMobjectLoadFromMem; */
   oiccObjectScan /* oyCMMobjectScan; */
- },{0} /* zero list end */
+};
+oyCMMobjectType_s * icc_objects[] = {
+  &icc_profile,
+  0
 };
 
 
