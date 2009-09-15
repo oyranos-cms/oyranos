@@ -395,9 +395,8 @@ typedef oyStruct_s * (*oyCMMobject_LoadFromMem_f) (
  *  - oyNAME_NAME: XML
  *  - oyNAME_DESCRIPTION: ??
  *
- *  @param[in]     object              the object
+ *  @param[in]     object              the object, omit to get a general text
  *  @param[out]    type                the string type
- *  @param[out]    pos                 oisition for oyStructList_s argument
  *  @param[in]     allocateFunc        e.g. malloc
  *  @return                            0 on success; error >= 1; unknown < 0
  *
@@ -408,7 +407,6 @@ typedef oyStruct_s * (*oyCMMobject_LoadFromMem_f) (
 typedef char *   (*oyCMMobjectGetText_f) (
                                        oyStruct_s        * object,
                                        oyNAME_e            type,
-                                       int                 pos,
                                        int                 flags,
                                        oyAlloc_f           allocateFunc );
 
@@ -450,8 +448,12 @@ typedef struct {
   oyPointer        dummyb;             /**< keep to zero */
   oyPointer        dummyc;             /**< keep to zero */
 
-  /** internal id, has to match to oyCMMapi4_s::cache_data_types */
-  uint32_t         id; 
+  /** object type id,
+   *  set to a object type known to Oyranos, or
+   *  set as a unique four byte signature, like 'myID' just more unique
+   *  to avoid collisions. The id shall match a the oyStruct_s::type_ member
+   *  generated through oyCMMobject_LoadFromMem_f. */
+  oyOBJECT_e       id;
   /** a colon separated list of sub paths to expect the data in,
       e.g. "color/icc" */
   const char     * paths;
