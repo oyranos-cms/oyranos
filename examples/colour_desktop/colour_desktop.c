@@ -54,7 +54,7 @@
 #endif
 
 /* Uncomment the following line if you want to enable debugging output */
-//#define PLUGIN_DEBUG 1
+/*#define PLUGIN_DEBUG 1*/
 
 /**
  * The 3D lookup texture has 64 points in each dimension, using 16 bit integers.
@@ -545,7 +545,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   /* obtain device informations, including geometry and ICC profiles
      from the according Oyranos module */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                 "list_a", OY_CREATE_NEW );
+                                 "list", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   /*error = oyOptions_SetFromText( &options,
