@@ -485,8 +485,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
   icProfileClassSignature profile_class_out = 0;
-  int proof = 0,
-      intent = 0,
+  int intent = 0,
       intent_proof = 0,
       bpc = 0,
       cmyk_cmyk_black_preservation = 0,
@@ -517,14 +516,6 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
 #ifndef oyStrlen_
 #define oyStrlen_ strlen
 #endif
-      o_txt = oyOptions_FindString  ( opts, "proof_soft", 0 );
-      if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
-        proof = atoi( o_txt );
-
-      o_txt = oyOptions_FindString  ( opts, "proof_hard", 0 );
-      if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigOutputClass*/)
-        proof = atoi( o_txt ) ? atoi(o_txt) : proof;
-
       o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0);
       if(o_txt && oyStrlen_(o_txt))
         intent = atoi( o_txt );
@@ -550,7 +541,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         cmyk_cmyk_black_preservation = atoi( o_txt );
 
       /* this should be moved to the CMM and not be handled here in Oyranos */
-      flags = proof ?         flags | cmsFLAGS_SOFTPROOFING :
+      flags = proof_n ?       flags | cmsFLAGS_SOFTPROOFING :
                               flags & (~cmsFLAGS_SOFTPROOFING);
       flags = bpc ?           flags | cmsFLAGS_WHITEBLACKCOMPENSATION :
                               flags & (~cmsFLAGS_WHITEBLACKCOMPENSATION);
@@ -568,7 +559,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
              "  proof: %d  bpc: %d  gamut_warning: %d  high_precission: %d\n"
              "  profiles_n: %d",
               __FILE__,__LINE__,
-                proof,     bpc,     gamut_warning,     high_precission,
+                proof_n,   bpc,     gamut_warning,     high_precission,
                 profiles_n );
 
   if(!error)
@@ -577,7 +568,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     0, lcms_pixel_layout_out,
                                     intent, flags );
-    else if(profiles_n == 2 && !proof)
+    else if(profiles_n == 2 && !proof_n)
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     lps[1], lcms_pixel_layout_out,
                                     intent, flags );
@@ -585,20 +576,20 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
     {
       int multi_profiles_n = profiles_n;
 
-      if(flags & cmsFLAGS_SOFTPROOFING && proof_n)
+      if(proof_n)
         --multi_profiles_n;
 
       xform =   cmsCreateMultiprofileTransform(
                                     lps, 
                                     multi_profiles_n,
                                     lcms_pixel_layout_in,
-                                  flags & cmsFLAGS_SOFTPROOFING && proof_n
+                                    proof_n
                                   ? NOCOLORSPACECHECK(lcms_pixel_layout_out)
                                   : lcms_pixel_layout_out,
                                     intent, flags );
     }
 
-    if(proof_n && flags & cmsFLAGS_SOFTPROOFING)
+    if(proof_n)
     {
       int i;
 
@@ -608,7 +599,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         if(xform)
         {
           dl = cmsTransform2DeviceLink( xform, cmsFLAGS_GUESSDEVICECLASS );
-          cmsDeleteTransform( xform );
+          cmsDeleteTransform( xform ); xform = 0;
 
         } else if(i == 0 && profiles_n == 2)
           dl = lps[0];
@@ -865,8 +856,10 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                  * info = 0,
                  * cprt = 0;
   int profiles_n = 0,
-      profiles_proof_n = 0;
+      profiles_proof_n = 0,
+      proof = 0;
   int verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
+  const char * o_txt = 0;
 
   filter = node->core;
   input_node = plug->remote_socket_->node;
@@ -945,6 +938,18 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
   /* simulation profile */
   o = oyOptions_Find( node->core->options_, "profiles_simulation" );
+  o_txt = oyOptions_FindString  ( node->core->options_, "proof_soft", 0 );
+  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
+    proof = atoi( o_txt );
+
+  o_txt = oyOptions_FindString  ( node->core->options_, "proof_hard", 0 );
+  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigOutputClass*/)
+    proof = atoi( o_txt ) ? atoi(o_txt) : proof;
+
+  if(oy_debug && proof)
+      message( oyMSG_DBG, (oyStruct_s*)node,
+               "%s: %d proof requested",__FILE__,__LINE__);
+
   if(o)
   {
     if( o->value_type != oyVAL_STRUCT ||
@@ -974,13 +979,15 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         /* Look in the Oyranos cache for a CMM internal representation */
         /*if(i == 0)*/
         {
-          simulation[ profiles_proof_n++ ] = lcmsAddProfile( p );
+          if(proof)
+            simulation[ profiles_proof_n++ ] = lcmsAddProfile( p );
           if(oy_debug)
             message( oyMSG_DBG,(oyStruct_s*)node,
                      "%s:%d found profile: %s",
-               __FILE__,__LINE__, p?oyProfile_GetText( p, oyNAME_NICK ):"????");
+               __FILE__,__LINE__, p?oyProfile_GetFileName( p,-1 ):"????");
 
-          profs = oyProfiles_MoveIn( profs, &p, -1 );
+          if(proof)
+            profs = oyProfiles_MoveIn( profs, &p, -1 );
 
         } /*else if(i == 1)
           message( oyMSG_WARN, (oyStruct_s*)node,
@@ -1025,7 +1032,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     else
       block = lcmsCMMColourConversion_ToMem_( xform, size, allocateFunc );
     error = !block && !*size;
-    cmsDeleteTransform( xform );
+    cmsDeleteTransform( xform ); xform = 0;
   }
 
 
