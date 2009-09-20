@@ -3,20 +3,14 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2009 (C) Kai-Uwe Behrmann
+ *            2009 (C) Yiannis Belias
  *
  *  @brief    Oyranos SANE device backend for Oyranos
  *  @internal
- *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @author   Yiannis Belias <orion@linux.gr>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
- *  @since    2009/02/09
- *
- *
- *
- *  The library name must cover the four char nick + "_cmm_module", which is
- *  "dDev_cmm_module" for this example module. E.g.:
- *  $(CC) $(CFLAGS) -shared oyranos_cmm_dDev.c -o liboyranos_dDev_cmm_module.so
+ *  @since    2009/07/05
  */
 
 #include <oyranos/oyranos_cmm.h>
@@ -540,7 +534,7 @@ const char *GetText(const char *select, oyNAME_e type)
          return _("The scanner (hopefully)usefull backend of Oyranos.");
    } else if (strcmp(select, "manufacturer") == 0) {
       if (type == oyNAME_NICK)
-         return _("orion");
+         return _("orionas");
       else if (type == oyNAME_NAME)
          return _("Yiannis Belias");
       else
