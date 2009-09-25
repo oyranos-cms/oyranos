@@ -302,7 +302,7 @@ typedef struct oyCMMapi5_s oyCMMapi5_s;
 
 
 /** @struct  oyCMMapiFilter_s
- *  @brief   the filter API 4,6,7 interface
+ *  @brief   the module API 4,6,7 interface base
  *  @ingroup module_api
  *  @extends oyCMMapi_s
  *
@@ -445,7 +445,7 @@ typedef int          (*oyCMMobjectScan_f) (
                                        oyAlloc_f           allocateFunc );
 
 /** @struct  oyCMMobjectType_s
- *  @brief   the CMM API 5 objetc part
+ *  @brief   custom object handler
  *  @ingroup module_api
  *  @extends oyStruct_s
  *
@@ -531,7 +531,7 @@ typedef int          (*oyCMMFilterScan_f) (
                                        oyObject_s          object );
 
 /** @struct  oyConnectorImaging_s
- *  @brief   a filter connection description structure
+ *  @brief   node connection descriptor
  *  @ingroup objects_conversion
  *  @extends oyConnector_s
  *
@@ -638,7 +638,7 @@ typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
                                        oyFilterPlug_s    * plug );
 
 /** @struct  oyCMMapi5_s
- *  @brief   the API 5 to provide filter and script support
+ *  @brief   module or script loader
  *  @ingroup module_api
  *  @extends oyCMMapi_s
  *
@@ -725,10 +725,16 @@ typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * plug,
                                        oyPixelAccess_s   * pixel_access );
 
 /** @struct  oyCMMapi7_s
- *  @brief   the API 7 for data processing
+ *  @brief   data processing node
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *
+ *  The structure forms a node element in a directed acyclic graph. It's 
+ *  connectors allow to communicate cababilities and semantics. This node type
+ *  acts mostly on data processing. 
+ *
+ *  It is possible to delegate parameter or context creation to other
+ *  specialised filter types.
  *  The filter context can be stored in oyFilterNode_s::backend_data if the
  *  oyCMMapi7_s::context_type is filled with a understood format hint.
  *  The registration should provide keywords to select the processing function.
@@ -803,12 +809,13 @@ typedef int(*oyCMMdata_Convert_f)    ( oyCMMptr_s        * data_in,
                                        oyFilterNode_s    * node );
 
 /** @struct  oyCMMapi6_s
- *  @brief   the API 6 to provide context conversion support
+ *  @brief   context convertor
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *
  *  The context provided by a filter can be exotic. The API provides the means
- *  to get him into a known format.
+ *  to get him into a known format. With this format connector it is possible to
+ *  interface otherwise divergine formats.
  *
  \dot
 digraph G {
@@ -954,9 +961,14 @@ typedef char *(*oyCMMFilterNode_GetText_f) (
                                        oyAlloc_f           allocateFunc );
 
 /** @struct  oyCMMapi4_s
- *  @brief   the API 4 to set to provide Filter support
+ *  @brief   context creator
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
+ *
+ *  The structure contains functions to specify and prepare parameters or
+ *  a context dedicated for a filter node class. UI elements can be included for
+ *  manual settings. As per definition the result of this filter is serialised,
+ *  and can therefore be cached by Oyranos' core.
  *
  *  Different filters have to provide this struct each one per filter.
  *
@@ -1071,13 +1083,15 @@ typedef int  (*oyConfig_Rank_f)     ( oyConfig_s         * config );
 
 
 /** @struct  oyCMMapi8_s
- *  @brief   the API 8 to handle plug-in specific data or configurations
+ *  @brief   configuration handler
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *
- *  Oyranos can know about possible configurations sets forming a oyConfig_s.
+ *  Oyranos knows about configurations sets as oyConfig_s structures.
+ *  These configurations can be created, modified and compared by this module 
+ *  type and stored by Oyranos' core.
  *  They are stored under the base key path decided by each configuration 
- *  module individually in its oyCMMapi8_s::registration.
+ *  module individualy in its oyCMMapi8_s::registration.
  *
  *  This API provides weak interface compile time checking.
  *
@@ -1184,20 +1198,22 @@ typedef int  (*oyConversion_Correct_f) (
                                        oyOptions_s       * options );
 
 /** @struct  oyCMMapi9_s
- *  @brief   the API 9 to handle graph policies
+ *  @brief   graph policies
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *
- *  The user visible Oyranos settings are subject to be applied to graphs,
- *  and must be verified.
+ *  The user visible Oyranos settings are subject to be applied to graphs.
+ *  This module type provides an interface to check and verified a graph
+ *  according to arbitrary policies in a automated fashion. 
+ *  The usage of graph policy modules is optional and
+ *  can be controled by the front end function oyConversion_Correct().
  *
- *  This interface is intendet to provide a means to support arbitrary policies.
+ *  The policy check can cover options and data checks. Graph analysis and 
+ *  correction is possible as well.
  *
- *  Two possible strategies exist to implementation a policy. One is on 
- *  application level, when it is known which options to check for and which
- *  data to provide. The other way is to analyse the graph and correct certain
- *  aspects. A module implementing this interface can as well check many 
- *  aspects of a graph.
+ *  Differences to native node modules are that, a policy module runs before
+ *  the graph starts data processing, it can provide options for a group of 
+ *  node modules including a UI and provide additional object types.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/23 (Oyranos: 0.1.10)

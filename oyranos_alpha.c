@@ -3788,8 +3788,88 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
  *
  *  Oyranos C modules provide support for data formats, data processing and
  *  process control, as well as configuration.
- *  The module architecture covers three basic layers. \n
- *  \b User \b APIs - \b Meta \b Module \b API - \b Module \b APIs
+ *  The module architecture covers three basic layers. There are the Module 
+ *  APIs for the real stuff, the Meta Module APIs for language support and the
+ *  final Oyranos objects with their User APIs.\n
+ *  @dot
+digraph Modules {
+  bgcolor="transparent";
+  nodesep=.1;
+  ranksep=1.;
+  //rankdir=LR;
+  graph [fontname=Helvetica, fontsize=14];
+  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
+
+  subgraph cluster_0 {
+    label="Oyranos Module Framework";
+    color=white;
+    clusterrank=global;
+
+      node [width = 1.5, style=filled];
+      i [URL="structoyCMMapi5__s.html#_details", label="Module Importer\n oyCMMapi5_s"];
+
+      p [ label="Filter nodes / Graph handling APIs\n oyFilterNode_s"];
+
+
+      api4_A [URL="structoyCMMapi4__s.html#_details",label="Context Module + UI\n oyCMMapi4_s"];
+      api6_A [URL="structoyCMMapi6__s.html#_details",label="Context Converter\n oyCMMapi6_s"];
+      api7_A [URL="structoyCMMapi7__s.html#_details",label="Node Module\n oyCMMapi7_s"];
+
+      m [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
+      policy [URL="structoyCMMapi9__s.html#_details", label="Policy Functions\n oyCMMapi9_s"];
+
+
+      subgraph cluster_1 {
+        color=gray;
+        label="Module APIs"
+
+        subgraph cluster_2 {
+          rank=max;
+          color=red;
+         style=dashed;
+          node [style="filled"];
+          api4_A; api6_A; api7_A;
+          label="Graph Modules and Helpers";
+        }
+
+        subgraph cluster_6 {
+          color=green;
+          style=dashed;
+          m;
+          label="Device Modules";
+        }
+
+        subgraph cluster_9 {
+          color=blue;
+          style=dashed;
+          policy;
+          label="Policy Modules";
+        }
+
+      }
+
+      subgraph cluster_10 {
+        color=gray;
+        node [style="filled"];
+        i;
+        label="Meta Module API";
+      }
+
+      subgraph cluster_11 {
+        color=gray;
+        node [style="filled"];
+        p;
+        label="User APIs";
+      }
+
+      p -> i [arrowhead="open", color=gray];
+      i -> api4_A [arrowhead="open", color=red];
+      i -> api6_A [arrowhead="open", color=red];
+      i -> api7_A [arrowhead="open", color=red];
+      i -> m [arrowhead="open", color=green];
+      i -> policy [arrowhead="open", color=blue];
+  }
+} @enddot
  *
  *  \b User \b API:
  *  The user API allowes to contruct a filter or configuration
@@ -3839,146 +3919,6 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
  *  shown during the configuration process or through te provided oyranos-config
  *  tool.
  *
- *  Below a architectural imodule overview is shown:
- *
- *  @dot
-digraph Modules {
-  bgcolor="transparent";
-  nodesep=.1;
-  ranksep=1.;
-  rankdir=LR;
-  graph [fontname=Helvetica, fontsize=14];
-  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
-
-  subgraph cluster_0 {
-    label="Oyranos Module Framework";
-    color=white;
-    clusterrank=global;
-
-      s [URL="structoyCMMapi5__s.html#_details", label="Script Importer - \"oGTL\"\n oyCMMapi5_s"];
-      i [URL="structoyCMMapi5__s.html#_details", label="Library Importer - \"oyIM\"\n oyCMMapi5_s"];
-
-      node [width = 2.5, style=filled];
-      o [ label="External Function Import\n Extendable Functionality\n Additional Dependencies\n ..."];
-      p [ label="Filter nodes / Graph handling APIs\n oyFilterNode_s"];
-
-      api7_B [URL="structoyCMMapi7__s.html#_details",label="//imaging/root.oyra Processor\n oyCMMapi7_s"];
-
-      api4_A [URL="structoyCMMapi4__s.html#_details",label="//imaging/icc.lcms Context\n oyCMMapi4_s"];
-      api6_A [URL="structoyCMMapi6__s.html#_details",label="//imaging/icc.lcms Context Converter\n oyCMMapi6_s"];
-      api7_A [URL="structoyCMMapi7__s.html#_details",label="//imaging/icc.lcms Processor\n oyCMMapi7_s"];
-
-      api6_C [URL="structoyCMMapi6__s.html#_details",label="//imaging/icc.ogtl Context Converter\n oyCMMapi6_s"];
-      api7_C [URL="structoyCMMapi7__s.html#_details",label="//imaging/icc.ogtl Processor\n oyCMMapi7_s"];
-
-      m [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
-      k [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
-      l [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
-      policy [URL="structoyCMMapi9__s.html#_details", label="Policy Functions\n oyCMMapi9_s"];
-      icc [URL="structoyCMMapi3__s.html#_details", label="ICC Profile Functions\n oyCMMapi3_s"];
-
-
-      subgraph cluster_1 {
-        color=gray;
-        label="Module APIs"
-
-        subgraph cluster_2 {
-          rank=max;
-          color=red;
-         style=dashed;
-          node [style="filled"];
-          api4_A; api6_A; api7_A;
-          //api4_A -> api6_A -> api7_A [color=white, arrowhead=none, dirtype=none];
-          label="\"lcms\"";
-        }
-
-        subgraph cluster_3 {
-          color=blue;
-          style=dashed;
-          node [style="filled"];
-          api7_B;
-          label="\"oyra\"";
-        }
-
-        subgraph cluster_4 {
-          color=blue;
-          style=dashed;
-          node [style="filled"];
-          icc;
-          label="\"oyIM\"";
-        }
-
-        subgraph cluster_5 {
-          color=yellow;
-          style=dashed;
-          node [style="filled"];
-          api6_C;
-          api7_C;
-          label="\"octl\"";
-        }
-
-        subgraph cluster_6 {
-          color=gray;
-          style=dashed;
-          m;
-          label="\"oyX1\"";
-        }
-
-        subgraph cluster_7 {
-          color=gray;
-          style=dashed;
-          k;
-          label="\"SANE\"";
-        }
-
-        subgraph cluster_8 {
-          color=gray;
-          style=dashed;
-          l;
-          label="\"CUPS\"";
-        }
-
-        subgraph cluster_9 {
-          color=gray;
-          style=dashed;
-          policy;
-          label="\"oicc\"";
-        }
-
-      }
-
-      subgraph cluster_10 {
-        color=gray;
-        node [style="filled"];
-        s;
-        i;
-        label="Filter Import - Meta Module APIs";
-      }
-
-      subgraph cluster_11 {
-        color=gray;
-        node [style="filled"];
-        o;
-        p;
-        label="Oyranos User APIs";
-      }
-
-      p -> i [arrowhead="open", color=gray];
-      p -> s [arrowhead="open", color=gray];
-      i -> api4_A [arrowhead="open", color=red];
-      i -> api6_A [arrowhead="open", color=red];
-      i -> api7_A [arrowhead="open", color=red];
-      i -> api7_B [arrowhead="open", color=blue];
-      s -> api6_C [arrowhead="open", color=yellow];
-      s -> api7_C [arrowhead="open", color=yellow];
-      i -> m [arrowhead="open", color=gray];
-      i -> k [arrowhead="open", color=gray];
-      i -> l [arrowhead="open", color=gray];
-      i -> policy [arrowhead="open", color=gray];
-      o -> icc [arrowhead="open", color=gray];
-  }
-} @enddot
- *
  *  The Filter API's are subdivided to allow for automatical combining of 
  *  preprocessing and processing stages. Especially in the case of expensive
  *  preprocessing data, like in CMM's, it makes sense to provide the means for
@@ -3987,40 +3927,33 @@ digraph Modules {
  *  information about their supported data formats.
  *  The following paragraphs provide a overview.
  *
- *  The oyCMMapi5_s plug-in structure defines a meta module to load plug-ins,
- *  from a to be defined directory with to be defined naming criterias. This
- *  API defines at the same time allowed input data formats. The meta module 
- *  loads or constructs all parts of a plug-in, oyCMMapi4_s, oyCMMapi7_s, 
- *  oyCMMapi6_s and oyCMMapi8_s.
+ *  The oyCMMapi5_s module structure defines a meta module to load modules,
+ *  from a to be defined directory with to be defined naming criterias. The 
+ *  meta module loads or constructs all parts of a module, oyCMMapi4_s,
+ *  oyCMMapi7_s, oyCMMapi6_s, oyCMMapi8_s and oyCMMapi9_s.
  *
  *  oyCMMapi7_s eighter deploys the context created in a oyCMMapi4_s filter, or
- *  simply processes the Oyranos oyFilterNode_s graph element. It is responsible
- *  to request data from the graph and process them.
+ *  simply processes the data of a oyFilterNode_s graph element. It is 
+ *  responsible to request data from the graph and process them.
  *  Members are responsible to describe the filters capabilities for connecting
- *  to other filters in the graph. Processors without context should describe
- *  their own UI. Processors with context must delegate this to oyCMMapi4_s.
+ *  to other filters in the graph. Modules can describe their own UI in 
+ *  oyCMMapi4_s.
  *  oyCMMapi7_s is mandatory.
  *
  *  The oyCMMapi4_s is a structure to create a context for a oyCMMapi7_s
  *  processor. This context is a intermediate processing stage for all of the
- *  context data influencing options and input datas. This structure 
- *  contains as well the GUI. oyCMMapi4_s is mandatory because of its GUI parts.
+ *  context data influencing options and input datas. The idea for tight 
+ *  integration of the context functionality is to provide a well defined way
+ *  of interaction for node modules with context modules. 
+ *  The oyCMMapi4_s structure contains as well the GUI. oyCMMapi4_s is 
+ *  mandatory because of its GUI parts.
  *  A oyCMMapi4_s without a oyCMMapi7_s is useless.
  *  oyCMMapi4_s must contain the same basic registration string like the 
  *  according oyCMMapi7_s except some keywords in the application section. This
  *  is explained more below in detail.
- *  It is assumed that the generated context is worth to be cached. Oyranos 
- *  requires therefore a serialised data blob from the context genarator.
- *
- *  In case a oyCMMapi7_s function can not handle a certain provided context
- *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
- *  a fitting oyCMMapi6_s data convertor. This API is only required for filters,
- *  which request incompatible contexts from a oyCMMapi4_s structure.
- *
- *  The oyCMMapi8_s provides a general interface to modules to export data,
- *  like additional filter input data and options. The @ref devices_handling
- *  deployes these modules.
- *
+ *  It is assumed that a generated context is worth to be cached. If Oyranos 
+ *  obtains a serialised data blob from the context generator it can be
+ *  automatically cached.
  *  @dot
 digraph Anatomy_A {
   bgcolor="transparent";
@@ -4031,86 +3964,38 @@ digraph Anatomy_A {
   node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
 
   subgraph cluster_7 {
-    label="Different Filter Processors - Same Context + UI";
+    label="One Context - Different Data Processors";
     color=white;
     clusterrank=global;
 
-      n [label="Filter Node A\n oyFilterNode_s" ];
-      n2 [label="Filter Node B\n oyFilterNode_s" ];
-
       node [width = 2.5, style=filled];
 
-      api4_A [label="//imaging/icc.lcms\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | <o>Options | <ui>XFORMS GUI"];
-      api6_A [label="//imaging/icc.lcms Context Converter\n oyCMMapi6_s\n oyDL_lcCC"];
-      api7_A [label="//imaging/icc.lcms Processor\n oyCMMapi7_s"];
+      api4_A [label="lcms ICC colour profile Module\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | ... | XFORMS UI"];
 
-      api6_C [label="//imaging/icc.octl Context Converter\n oyCMMapi6_s\n oyDL_oCTL"];
-      api7_C [label="//imaging/icc.octl Processor\n oyCMMapi7_s"];
+      api6_A [label="lcms Context Converter\n oyCMMapi6_s\n \"oyDL\"-\>\"lcCC\" \(oyDL_lcCC\)"];
+      api7_A [label="lcms colour conversion Data Processor\n oyCMMapi7_s\n C implementation needs \"lcCC\" context" width = 3.5];
 
-      subgraph cluster_0 {
-        rank=max;
-        color=white;
-        style=dashed;
-        api4_A; api6_A; api7_A; n;
-        label="";
-      }
-      subgraph cluster_1 {
-        rank=max;
-        color=white;
-        style=dashed;
-        api7_C; api6_C; n2;
-        label="";
-      }
+      api6_C [label="ctl Context Converter\n oyCMMapi6_s\n \"oyDL\"-\>\"oCTL\" \(oyDL_oCTL\)"];
+      api7_C [label="ctl colour conversion Data Processor\n oyCMMapi7_s\n LLVM implementation needs \"oCTL\" context" width = 3.5];
+
+      api4_A; api6_A; api7_A;
+      api7_C; api6_C;
 
       api4_A:f -> api6_A -> api7_A [arrowhead="open", color=black];
       api4_A:f -> api6_C -> api7_C [arrowhead="open", color=black];
-      api4_A:o -> n [arrowhead="open", color=black];
-      api4_A:ui -> n [arrowhead="open", color=black];
-      api4_A:o -> n2 [arrowhead="open", color=black];
-      api4_A:ui -> n2 [arrowhead="open", color=black];
   }
 } @enddot
- *  @dot
-digraph Anatomy_B {
-  bgcolor="transparent";
-  nodesep=.1;
-  ranksep=1.;
-  rankdir=LR;
-  graph [fontname=Helvetica, fontsize=14];
-  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
-
-  subgraph cluster_7 {
-    label="UI + Processor";
-    color=white;
-    clusterrank=global;
-
-      n [label="Filter Node\n oyFilterNode_s" ];
-
-      node [width = 2.5, style=filled];
-
-      api4_A [label="//imaging/root.oyra\n oyCMMapi4_s | <o>Options | <ui>XFORMS GUI"];
-      api7_A [label="//imaging/root.oyra Processor\n oyCMMapi7_s"];
-
-      subgraph cluster_0 {
-        rank=max;
-        color=white;
-        style=dashed;
-        n;
-        label="";
-
-        subgraph cluster_1 {
-          color=gray;
-          style=dashed;
-          node [style="filled"];
-          api4_A; api7_A;
-          label="";
-        }
-      }
-
-      api4_A:o -> n [arrowhead="open", color=black];
-      api4_A:ui -> n [arrowhead="open", color=black];
-  }
-} @enddot
+ *
+ *  In case a oyCMMapi7_s function can not handle a certain provided context
+ *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
+ *  a fitting oyCMMapi6_s data convertor. oyCMMapi6_s is only required for 
+ *  filters, which request incompatible contexts from a oyCMMapi4_s structure.
+ *
+ *  The oyCMMapi8_s handles configurations, like external module data
+ *  and options. The @ref devices_handling deployes these modules.
+ *
+ *  oyCMMapi9_s can be used to plug in new object types, policy settings and
+ *  a way to enforce the policies.
  *
  *  @section registration Registration
  *  Each filter API provides a \b registration member string.
@@ -24239,6 +24124,8 @@ char             * oyConversion_ToText (
  *  @par Typical Options:
  *  - "command"-"help" - a string option issuing a help text as message
  *  - "verbose" - reporting changes as message
+ *
+ *  TODO: display and selection of policy modules
  *
  *  @param   conversion                the to be checked configuration
  *  @param   registration              the to be used policy module
