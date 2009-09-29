@@ -19,12 +19,10 @@ msgstr ""
 "X-Generator: vim 6.0\n"
 
 #: oyranos.c:129
-#, c-format
 msgid "WARNING"
 msgstr "WARNUNG"
 
 #: oyranos.c:132
-#, c-format
 msgid "!!! ERROR"
 msgstr "!!! Fehler"
 
@@ -1203,15 +1201,13 @@ msgstr ""
 
 #. the option follows
 #: oyranos_xml.c:1256
-#, c-format
 msgid "Option"
 msgstr "Optionen"
 
 #. the choices follow
 #: oyranos_xml.c:1259
-#, c-format
 msgid "with following choices"
-msgstr "mit fogenden Alternativen"
+msgstr "mit folgenden Alternativen"
 
 #: modules/devices/oyranos_monitor.c:410
 msgid "unexpected EDID lenght"
@@ -1321,7 +1317,6 @@ msgid "-v verbose"
 msgstr "-v plaudernd"
 
 #: oyranos_gamma.c:164
-#, c-format
 msgid "For more informations read the man page:"
 msgstr "Für mehr Informationen lesen Sie die man Seite:"
 
@@ -1476,7 +1471,6 @@ msgid "Select a directory with ICC profiles"
 msgstr "Wählen Sie ein Verzeichnis mit ICC Profilen"
 
 #: oyranos_config_fltk.cxx:78
-#, c-format
 msgid "error setting path: %s"
 msgstr "Fehler beim Setzen des Pfades: \"%s\""
 
@@ -1540,7 +1534,7 @@ msgstr "Cmyk nach Cmyk Umwandlung"
 
 #: modules/oyranos_cmm_lcms.c:1597
 msgid "Black Preservation"
-msgstr "Schwarzpunktkompensation (BPC)"
+msgstr "Schwarzerhalt"
 
 #: modules/oyranos_cmm_lcms.c:1761
 msgid "Little CMS"
