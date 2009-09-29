@@ -1607,10 +1607,10 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
 #endif
   A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
-      <xf:choices>\n\
-       <xf:label>" );
+      <xf:label>" );
   A(          _("Black Preservation"));
   A(                              "</xf:label>\n\
+      <xf:choices>\n\
        <xf:item>\n\
         <xf:value>0</xf:value>\n\
         <xf:label>none</xf:label>\n\

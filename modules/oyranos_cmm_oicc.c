@@ -180,9 +180,10 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
 #endif
   A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_rgb\">\n\
-      <xf:choices label=\"" );
+      <xf:label>" );
   A(                   _("Editing Rgb"));
-  A(                                "\">\n\
+  A(                                "</xf:label>\n\
+      <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"RGB\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
         <xf:label>sRGB.icc</xf:label>\n\
@@ -210,6 +211,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
 #endif
   A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_cmyk\">\n\
+      <xf:label>" );
+  A(                   _("Editing Cmyk"));
+  A(                                "</xf:label>\n\
       <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"CMYK\" class1=\"prtr\"/>\n\
        <xf:item>\n\
@@ -234,7 +238,10 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
 #endif
   A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_lab\">\n\
-      <xf:choices xml:lang=\"en\" label=\"Editing Lab\">\n\
+      <xf:label>" );
+  A(                   _("Editing Lab"));
+  A(                                "</xf:label>\n\
+      <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"Lab\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
         <xf:label>Lab.icc</xf:label>\n\
@@ -262,6 +269,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
 #endif
   A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_xyz\">\n\
+      <xf:label>" );
+  A(                   _("Editing XYZ"));
+  A(                                "</xf:label>\n\
       <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"XYZ\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
@@ -290,6 +300,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
 #endif
   A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_gray\">\n\
+      <xf:label>" );
+  A(                   _("Editing Gray"));
+  A(                                "</xf:label>\n\
       <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"Gray\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
@@ -333,6 +346,9 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
       <xf:help>" );
   A(        _("Image has no colour space embedded. What default action shall be performed?") );
   A(                "</xf:help>\n\
+      <xf:label>" );
+  A(                   _("No Image profile"));
+  A(                                "</xf:label>\n\
       <xf:choices>\n\
        <"CMM_NICK":profiles cspace1=\"RGB\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
