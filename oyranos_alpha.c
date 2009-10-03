@@ -10033,13 +10033,10 @@ OYAPI int  OYEXPORT
  *                                     Regarding the module the
  *                                     configs need to be homogenous.
  *                                     All configs are passed at once to the
- *                                     module. Mixing configs for different
- *                                     modules depends on the modules 
- *                                     capabilities to handle strange objects.
- *  @param[in]     options             options to pass to the module, for zero
- *                                     the usage instructions are requested,
- *                                     a option "device_name" can be used 
- *                                     as filter
+ *                                     module. Mixing configs from different
+ *                                     modules is not defined.
+ *  @param[in]     options             options to pass to the module; With zero
+ *                                     the usage instructions are requested.
  *  @return                            0 - good, >= 1 - error, issue <= -1 
  *
  *  @version Oyranos: 0.1.10
@@ -10072,9 +10069,10 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    /** 1. pick the first device to select a registration */
+    /** 1.  pick the first device to select a registration */
     config = oyConfigs_Get( configs, 0 );
-    /** 1.2 get all device class module names from the firsts registration */
+    /** 1.2 get all device class module names from the firsts oyConfig_s
+      *     registration */
     error = oyConfigDomainList  ( config->registration, &texts, &count,
                                   &rank_list, 0 );
     oyConfig_Release( &config );
@@ -10972,7 +10970,7 @@ OYAPI int  OYEXPORT
   if(!options)
   {
     /** 1. obtain detailed and expensive device informations for a
-     *     zero options argument. */
+     *     zero options argument through the "properties" command. */
     options = oyOptions_New( 0 );
     l_error = !options; OY_ERR
     /** 1.1 add "properties" call to module arguments */

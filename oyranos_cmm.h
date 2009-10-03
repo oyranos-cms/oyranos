@@ -1072,8 +1072,9 @@ typedef int      (*oyConfigs_Modify_f)( oyConfigs_s       * configs,
  *  one. Oyranos will then try an other module with this device.
  *
  *  @param   config                    the to be checked configuration
- *  @return                            0 - indifferent, >= 1 - rank, <= -1 error
- *                                     + a message should be sent
+ *  @return                            - 0 - indifferent,
+ *                                     - >= 1 - rank,
+ *                                     - <= -1 error + a message should be sent
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/16 (Oyranos: 0.1.10)
@@ -1098,17 +1099,16 @@ typedef int  (*oyConfig_Rank_f)     ( oyConfig_s         * config );
  *  The module knows what to configure. This can be devices, filters or 
  *  something else. A oyCMMapi8_s module counts the understood endities
  *  and veryfies a provided oyConfig_s for correctness. Oyranos requires just
- *  the thourth string in the key path to be of type "config".
+ *  the fourth type string in the registration path starting with "config".
+ *  This requirement is useful to group DB keys alphabetically.
  *
  *  In the case of a device a application can ask Oyranos for all or a subset
  *  of available devices with oyConfigs_FromPattern.
  *
- *  A application can select one of the provided endities and modify it.
- *  In order to use the oyConfig_s endity it is adviced to let Oyranos ask the
- *  module if the modified oyConfig_s endity is still valid through 
- *  oyConfig_Rank_f.
- *  Oyranos will check in advance wether the provided understood options match
- *  already and pass for a possible oyBlob_s options checking to the module.
+ *  A application can modify a selection of oyConfig_s objects and
+ *  modify them.
+ *  It is adviced to let Oyranos ask the module in advance through 
+ *  oyConfig_Rank_f, if the modified oyConfig_s object is still valid.
  *
  *  For automatic UI's this module API should provide a XFORMS UI about the
  *  result and return a oyConfig_s for a filled form.
@@ -1152,8 +1152,10 @@ struct oyCMMapi8_s {
   char           * id_;                /**< @private Oyranos id; keep to zero */
   oyCMMapi5_s    * api5_;            /**< @private meta module; keep to zero */
 
-  oyConfigs_FromPattern_f oyConfigs_FromPattern; /**< obtain matching configs */
-  oyConfigs_Modify_f oyConfigs_Modify; /**< manipulate given configs */
+  /** obtain configs matching to a set of options */
+  oyConfigs_FromPattern_f oyConfigs_FromPattern;
+  /** manipulate given configs */
+  oyConfigs_Modify_f oyConfigs_Modify;
   oyConfig_Rank_f  oyConfig_Rank;      /**< test config */
   /** zero terminated list of rank attributes;
    *  The data is just informational. In case all properties to rank a given 
