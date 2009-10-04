@@ -32,8 +32,10 @@ void usage(int argc, char ** argv)
                         printf("\n");
                         printf(_("For more informations read the man page:"));
                         printf("\n");
-                        printf("      man oyranos-xforms\n");
+                        printf("      man oyranos-xforms_not_yet\n");
 }
+
+typedef struct { int n; char ** options; int silent; } cmd_line_args_s;
 
 int main (int argc, char ** argv)
 {
@@ -42,11 +44,16 @@ int main (int argc, char ** argv)
   oyFilterNode_s * node = 0;
   char * ui_text = 0,
       ** namespaces = 0,
-       * text = 0;
-  const char * data = 0;
+       * text = 0, * t = 0;
+  const char * opt_names = 0;
+  cmd_line_args_s options = { 0, 0, 0 };
+  const char * data = 0, * ct = 0;
+  char ** other_args = 0;
+  int other_args_n = 0;
   int error = 0,
       i;
   oyOptions_s * opts = 0;
+  oyOption_s * o = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -90,6 +97,20 @@ int main (int argc, char ** argv)
                         if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
                         }
+                        STRING_ADD( t, &argv[pos][2] );
+                        text = oyStrrchr_(t, '=');
+                        if(text)
+                          text[0] = 0;
+                        oyStringListAddStaticString_( &other_args,&other_args_n,
+                                                      t,
+                                            oyAllocateFunc_,oyDeAllocateFunc_ );
+                        if(text)
+                        oyStringListAddStaticString_( &other_args,&other_args_n,
+                                            oyStrrchr_(&argv[pos][2], '=') + 1,
+                                            oyAllocateFunc_,oyDeAllocateFunc_ );
+                        if(t) oyDeAllocateFunc_( t );
+                        t = 0;
+                        i=100; break;
               default:
                         usage(argc, argv);
                         exit (0);
@@ -119,13 +140,53 @@ int main (int argc, char ** argv)
   node = oyFilterNode_NewWith( node_name, 0,0 );
   oyOptions_Release( &node->core->options_ );
   /* First call for options ... */
-  opts = oyFilterNode_OptionsGet( node, 
+  opts = oyFilterNode_OptionsGet( node,
                                   OY_SELECT_FILTER | OY_SELECT_COMMON |
                                   oyOPTIONATTRIBUTE_ADVANCED |
                                   oyOPTIONATTRIBUTE_FRONT );
   /* ... then get the UI for this filters options. */
   error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
   oyFilterNode_Release( &node );
+
+  data = oyOptions_GetText( opts, oyNAME_NAME );
+  opt_names = oyOptions_GetText( opts, oyNAME_DESCRIPTION );
+
+  if(other_args)
+  {
+    for( i = 0; i < other_args_n; i += 2 )
+    {
+      /* check for wrong args */
+      if(strstr( opt_names, other_args[i] ) == NULL)
+      {
+        printf("Unknown option: %s", other_args[i]);
+        usage( argc, argv );
+        exit( 1 );
+
+      } else
+      {
+        o = oyOptions_Find( opts, other_args[i] );
+        if(i + 1 < other_args_n)
+        {
+          ct = oyOption_GetText( o, oyNAME_NICK );
+          printf( "%s => ",
+                  ct ); ct = 0;
+          oyOption_SetFromText( o, other_args[i + 1], 0 );
+          data = oyOption_GetText( o, oyNAME_NICK );
+
+          printf( "%s\n",
+                  oyStrchr_(data, ':') + 1 ); data = 0;
+        }
+        else
+        {
+          printf("%s: --%s  argument missed\n", _("Option"), other_args[i] );
+          exit( 1 );
+        }
+        oyOption_Release( &o );
+      }
+    }
+    options.silent = 1;
+  }
+
 
   data = oyOptions_GetText( opts, oyNAME_NAME );
   text = oyXFORMsFromModelAndUi( data, ui_text, (const char**)namespaces, 0,
@@ -136,18 +197,28 @@ int main (int argc, char ** argv)
     i = 0;
     while(namespaces[i])
     {
-      printf("namespaces[%d]: %s\n", i, namespaces[i]);
+      if(oy_debug)
+        printf("namespaces[%d]: %s\n", i, namespaces[i]);
       free( namespaces[i++] );
     }
     free(namespaces);
   }
   if(ui_text) free(ui_text); ui_text = 0;
-  oyOptions_Release( &opts );
 
   if(oy_debug)
     printf("%s\n", text);
 
-  error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, 0 );
+  error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, &options );
+  if(options.n)
+  {
+    for(i = 0; i < options.n; ++i)
+    {
+      if(oy_debug)
+        printf("options[%d]: %s\n", i, options.options[i]);
+      free( options.options[i] );
+    }
+    free(options.options);
+  }
 
   if(xml_file)
     oyWriteMemToFile_( xml_file, text, strlen(text) );
