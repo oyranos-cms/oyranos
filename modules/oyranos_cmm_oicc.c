@@ -106,6 +106,11 @@ char oicc_default_colour_icc_options[] = {
       <editing_gray.front>Gray.icc</editing_gray.front>\n\
       <editing_lab.front>Lab.icc</editing_lab.front>\n\
       <editing_xyz.front>XYZ.icc</editing_xyz.front>\n\
+      <assumed_rgb.front>eciRGB_v2.icc</assumed_rgb.front>\n\
+      <assumed_cmyk.front>coated_FOGRA39L_argl.icc</assumed_cmyk.front>\n\
+      <assumed_gray.front>Gray.icc</assumed_gray.front>\n\
+      <assumed_lab.front>Lab.icc</assumed_lab.front>\n\
+      <assumed_xyz.front>XYZ.icc</assumed_xyz.front>\n\
      </profile>\n\
      <behaviour>\n\
       <action_untagged_assign.front>1</action_untagged_assign.front>\n\
@@ -128,6 +133,62 @@ char oicc_default_colour_icc_options[] = {
 
 #define A(long_text) STRING_ADD( tmp, long_text)
 
+char * oiccAddStdProfiles_routine    ( char               * tmp,
+                                       oyPROFILE_e          profile_type )
+{
+  oyProfiles_s * iccs = 0;
+  oyProfile_s * p = 0;
+  int n,i;
+  const char * profile_text,
+             * file_name;
+  const char * t = 0;
+
+  iccs = oyProfiles_ForStd( profile_type, 0, 0 );
+  n = oyProfiles_Count( iccs );
+  for(i = 0; i < n; ++i)
+  {
+    p = oyProfiles_Get( iccs, i );
+    file_name = oyProfile_GetFileName( p, 0 );
+    profile_text = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+
+    if(oyStrrchr_(file_name,OY_SLASH_C))
+      t = oyStrrchr_(file_name,OY_SLASH_C) + 1;
+    else
+      t = file_name;
+
+    A("\n\
+       <xf:item>\n");
+
+    if(profile_text)
+    {
+      A("\
+        <xf:label>");
+      A(          profile_text);
+      if(file_name)
+      {
+        A(                   " (");
+        A(                      file_name);
+        A(                              ")");
+      }
+      A(                     "</xf:label>\n");
+    }
+
+    if(t)
+    {
+    A("\
+        <xf:value>");
+    A(            t);
+    A(            "</xf:value>\n");
+    }
+    A("\
+       </xf:item>\n");
+
+    oyProfile_Release( &p );
+  }
+
+  return tmp;
+}
+
 int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
@@ -139,14 +200,13 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
   const char * editing_gray = oyOptions_FindString( os, "editing_gray", 0 );
   const char * editing_lab = oyOptions_FindString( os, "editing_lab", 0 );
   const char * editing_xyz = oyOptions_FindString( os, "editing_xyz", 0 );
-#if 0
   const char * assumed_rgb = oyOptions_FindString( os, "assumed_rgb", 0 );
   const char * assumed_cmyk = oyOptions_FindString( os, "assumed_cmyk", 0 );
   const char * assumed_gray = oyOptions_FindString( os, "assumed_gray", 0 );
   const char * assumed_lab = oyOptions_FindString( os, "assumed_lab", 0 );
   const char * assumed_xyz = oyOptions_FindString( os, "assumed_xyz", 0 );
-#endif
   const char * action_untagged_assign = oyOptions_FindString( os, "action_untagged_assign", 0 );
+
 #if 0
   const char * action_missmatch_cmyk = oyOptions_FindString( os, "action_missmatch_cmyk", 0 );
   const char * action_missmatch_rgb = oyOptions_FindString( os, "action_missmatch_rgb", 0 );
@@ -166,220 +226,195 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
 
   A(       _("Default Profiles"));
   A(                         ":</h3>\n");
-#if 0
-  A("\
-  <table>\n");
   if(editing_rgb)
   {
-  A("\
-   <tr>\n\
-    <td>" );
-  A( _("Editing Rgb"));
-  A(              ":</td>\n\
-    <td>\n");
-#endif
-  A("\
+    A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_rgb\">\n\
       <xf:label>" );
-  A(                   _("Editing Rgb"));
-  A(                                "</xf:label>\n\
+    A(                   _("Editing Rgb"));
+    A(                                "</xf:label>\n\
       <xf:choices>\n\
-       <"CMM_NICK":profiles cspace1=\"RGB\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
-       <xf:item>\n\
-        <xf:label>sRGB.icc</xf:label>\n\
-        <xf:value>sRGB.icc</xf:value>\n\
-       </xf:item>\n\
-       <xf:item>\n\
-        <xf:label>eciRGB_v2.icc</xf:label>\n\
-        <xf:value>eciRGB_v2.icc</xf:value>\n\
-       </xf:item>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyEDITING_RGB\"/>\n");
+  tmp = oiccAddStdProfiles_routine( tmp, oyEDITING_RGB );
+    A("\
       </xf:choices>\n\
-     </xf:select1>\n");
-#if 0
-  A("\
-    </td>\n\
-   </tr>\n" );
+     </xf:select1>\n\
+     <br/>\n");
   }
   if(editing_cmyk)
   {
-  A("\
-   <tr>\n\
-    <td>" );
-  A( _("Editing Cmyk"));
-  A(               ":</td>\n\
-    <td>\n");
-#endif
-  A("\
+    A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_cmyk\">\n\
       <xf:label>" );
-  A(                   _("Editing Cmyk"));
-  A(                                "</xf:label>\n\
+    A(                   _("Editing Cmyk"));
+    A(                                "</xf:label>\n\
       <xf:choices>\n\
-       <"CMM_NICK":profiles cspace1=\"CMYK\" class1=\"prtr\"/>\n\
-       <xf:item>\n\
-        <xf:label>coated_FOGRA39L_argl.icc</xf:label>\n\
-        <xf:value>coated_FOGRA39L_argl.icc</xf:value>\n\
-       </xf:item>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyEDITING_CMYK\"/>\n");
+    tmp = oiccAddStdProfiles_routine( tmp, oyEDITING_CMYK );
+    A("\
       </xf:choices>\n\
-     </xf:select1>\n");
-#if 0
-  A("\
-    </td>\n\
-   </tr>\n" );
+     </xf:select1>\n\
+     <br/>\n");
   }
   if(editing_lab)
   {
-  A("\
-   <tr>\n\
-    <td>" );
-  A( _("Editing Lab"));
-  A(              ":</td>\n\
-    <td>\n");
-#endif
-  A("\
+    A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_lab\">\n\
       <xf:label>" );
-  A(                   _("Editing Lab"));
-  A(                                "</xf:label>\n\
+    A(                   _("Editing Lab"));
+    A(                                "</xf:label>\n\
       <xf:choices>\n\
-       <"CMM_NICK":profiles cspace1=\"Lab\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
-       <xf:item>\n\
-        <xf:label>Lab.icc</xf:label>\n\
-        <xf:value>Lab.icc</xf:value>\n\
-       </xf:item>\n\
-       <xf:item>\n\
-        <xf:label>CIELab.icc</xf:label>\n\
-        <xf:value>CIELab.icc</xf:value>\n" );
-  A(  "</xf:item>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyEDITING_LAB\"/>\n");
+    tmp = oiccAddStdProfiles_routine( tmp, oyEDITING_LAB );
+    A("\
       </xf:choices>\n\
-     </xf:select1>\n");
-#if 0
-  A("\
-    </td>\n\
-   </tr>\n" );
+     </xf:select1>\n\
+     <br/>\n");
   }
   if(editing_xyz)
   {
-  A("\
-   <tr>\n\
-    <td>" );
-  A( _("Editing XYZ") );
-  A(              ":</td>\n\
-    <td>\n");
-#endif
-  A("\
+    A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_xyz\">\n\
       <xf:label>" );
-  A(                   _("Editing XYZ"));
-  A(                                "</xf:label>\n\
+    A(                   _("Editing XYZ"));
+    A(                                "</xf:label>\n\
       <xf:choices>\n\
-       <"CMM_NICK":profiles cspace1=\"XYZ\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
-       <xf:item>\n\
-        <xf:label>XYZ.icc</xf:label>\n\
-        <xf:value>XYZ.icc</xf:value>\n\
-       </xf:item>\n\
-       <xf:item>\n\
-        <xf:label>CIEXYZ.icc</xf:label>\n\
-        <xf:value>CIEXYZ.icc</xf:value>\n\
-       </xf:item>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyEDITING_XYZ\"/>\n");
+  tmp = oiccAddStdProfiles_routine( tmp, oyEDITING_XYZ );
+    A("\
       </xf:choices>\n\
-     </xf:select1>\n");
-#if 0
-  A("\
-    </td>\n\
-   </tr>\n" );
+     </xf:select1>\n\
+     <br/>\n");
   }
   if(editing_gray)
   {
-  A("\
-   <tr>\n\
-    <td>" );
-  A( _("Editing Gray"));
-  A(               ":</td>\n\
-    <td>\n");
-#endif
-  A("\
+    A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/editing_gray\">\n\
       <xf:label>" );
-  A(                   _("Editing Gray"));
-  A(                                "</xf:label>\n\
+    A(                   _("Editing Gray"));
+    A(                                "</xf:label>\n\
       <xf:choices>\n\
-       <"CMM_NICK":profiles cspace1=\"Gray\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
-       <xf:item>\n\
-        <xf:label>Grau.icc</xf:label>\n\
-        <xf:value>Grau.icc</xf:value>\n\
-       </xf:item>\n\
-       <xf:item>\n\
-        <xf:label>Gray.icc</xf:label>\n\
-        <xf:value>Gray.icc</xf:value>\n\
-       </xf:item>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyEDITING_GRAY\"/>\n");
+    tmp = oiccAddStdProfiles_routine( tmp, oyEDITING_GRAY );
+    A("\
       </xf:choices>\n\
      </xf:select1>\n");
-#if 0
-  A("\
-    </td>\n\
-   </tr>\n");
   }
-  A("\
-  </table>\
-" );
-#endif
-
+  if(assumed_rgb)
+  {
+    A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/assumed_rgb\">\n\
+      <xf:label>" );
+    A(                   _("Assumed Rgb source"));
+    A(                                "</xf:label>\n\
+      <xf:choices>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyASSUMED_RGB\"/>\n");
+  tmp = oiccAddStdProfiles_routine( tmp, oyASSUMED_RGB );
+    A("\
+      </xf:choices>\n\
+     </xf:select1>\n\
+     <br/>\n");
+  }
+  if(assumed_cmyk)
+  {
+    A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/assumed_cmyk\">\n\
+      <xf:label>" );
+    A(                   _("Assumed Cmyk source"));
+    A(                                "</xf:label>\n\
+      <xf:choices>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyASSUMED_CMYK\"/>\n");
+    tmp = oiccAddStdProfiles_routine( tmp, oyASSUMED_CMYK );
+    A("\
+      </xf:choices>\n\
+     </xf:select1>\n\
+     <br/>\n");
+  }
+  if(assumed_lab)
+  {
+    A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/assumed_lab\">\n\
+      <xf:label>" );
+    A(                   _("Assumed Lab source"));
+    A(                                "</xf:label>\n\
+      <xf:choices>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyASSUMED_LAB\"/>\n");
+    tmp = oiccAddStdProfiles_routine( tmp, oyASSUMED_LAB );
+    A("\
+      </xf:choices>\n\
+     </xf:select1>\n\
+     <br/>\n");
+  }
+  if(assumed_xyz)
+  {
+    A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/assumed_xyz\">\n\
+      <xf:label>" );
+    A(                   _("Assumed XYZ source"));
+    A(                                "</xf:label>\n\
+      <xf:choices>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyASSUMED_XYZ\"/>\n");
+  tmp = oiccAddStdProfiles_routine( tmp, oyASSUMED_XYZ );
+    A("\
+      </xf:choices>\n\
+     </xf:select1>\n\
+     <br/>\n");
+  }
+  if(assumed_gray)
+  {
+    A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_STD "/" OY_TYPE_STD "/profile/assumed_gray\">\n\
+      <xf:label>" );
+    A(                   _("Assumed Gray source"));
+    A(                                "</xf:label>\n\
+      <xf:choices>\n\
+       <"CMM_NICK":profiles oyPROFILE_e=\"oyASSUMED_GRAY\"/>\n");
+    tmp = oiccAddStdProfiles_routine( tmp, oyASSUMED_GRAY );
+    A("\
+      </xf:choices>\n\
+     </xf:select1>\n");
+  }
 
   A("\
   <h3>Oyranos " );
   A(       _("Behaviour"));
   A(                         ":</h3>\n\
   <xf:group>\n");
+
   if(action_untagged_assign)
   {
-#if 0
-  A("\
-   <tr>\n\
-    <td>" );
-  A( _("No Image profile"));
-  A(              ":</td>\n\
-    <td>\n");
-#endif
-  A("\
+    A("\
      <xf:select1 ref=\"/" OY_ACTION_UNTAGGED_ASSIGN "\">\n\
       <xf:help>" );
-  A(        _("Image has no colour space embedded. What default action shall be performed?") );
-  A(                "</xf:help>\n\
+    A(      _("Image has no colour space embedded. What default action shall be performed?") );
+    A(                "</xf:help>\n\
       <xf:label>" );
-  A(                   _("No Image profile"));
-  A(                                "</xf:label>\n\
+    A(       _("No Image profile"));
+    A(                                "</xf:label>\n\
       <xf:choices>\n\
-       <"CMM_NICK":profiles cspace1=\"RGB\" class1=\"prtr\" class2=\"mntr\" class3=\"scnr\"/>\n\
        <xf:item>\n\
         <xf:label>");
-  A(_("Assign No Profile"));
-  A(                   "</xf:label>\n\
+    A(         _("Assign No Profile"));
+    A(                                "</xf:label>\n\
         <xf:value>0</xf:value>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:label>");
-  A(_("Assign Assumed Profile"));
-  A(                   "</xf:label>\n\
+    A(         _("Assign Assumed Profile"));
+    A(                                "</xf:label>\n\
         <xf:value>1</xf:value>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:label>");
-  A(_("Promt"));
-  A(                   "</xf:label>\n\
+    A(         _("Promt"));
+    A(                                "</xf:label>\n\
         <xf:value>2</xf:value>\n\
        </xf:item>\n\
       </xf:choices>\n\
      </xf:select1>\n");
-#if 0
-  A("\
-    </td>\n\
-   </tr>\n" );
-#endif
   }
   A("\
-  </xf:group>\
-" );
+  </xf:group>" );
 
 
   if(allocateFunc && tmp)
@@ -393,7 +428,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
   *ui_text = tmp;
 
   return 0;
-} 
+}
 
 oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
@@ -405,8 +440,6 @@ const char * oiccProfileGetText      ( oyStruct_s        * obj,
                                        oyNAME_e            type,
                                        int                 flags )
 {
-  int n = 0;
-  oyStructList_s * list = 0;
   const char * text = 0;
 
   if(!obj)
