@@ -867,7 +867,7 @@ msgstr "Gleichmäßiger Farbraum für die Bearbeitung"
 
 #: oyranos_texts.c:169
 msgid "Assumed Colour Space"
-msgstr "vermuteter Farbraum"
+msgstr "Vermuteter Farbraum"
 
 #: oyranos_texts.c:170
 msgid "Assumed Colour Space for untagged colours"
@@ -1050,7 +1050,7 @@ msgstr "Farbraum zur Nachbildung eines Ausgabegerätes"
 
 #: oyranos_texts.c:382 modules/oyranos_cmm_oicc.c:327
 msgid "No Image profile"
-msgstr "Kein Bildprofil"
+msgstr "Kein Profil am Bild"
 
 #: oyranos_texts.c:383 modules/oyranos_cmm_oicc.c:334
 msgid ""
@@ -1202,7 +1202,7 @@ msgstr ""
 #. the option follows
 #: oyranos_xml.c:1256
 msgid "Option"
-msgstr "Optionen"
+msgstr "Option"
 
 #. the choices follow
 #: oyranos_xml.c:1259
