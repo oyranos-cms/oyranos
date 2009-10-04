@@ -1369,6 +1369,8 @@ int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
 {
   const char * tmp = 0;
   int size = 0;
+  cmd_line_args_s * cmd_line_args = user_data;
+  int print = cmd_line_args ? !cmd_line_args->silent : 1;
 
   if(!tmp)
   {
@@ -1377,7 +1379,7 @@ int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
       size = 3;
   }
 
-  if(tmp)
+  if(tmp && print)
     printf( "%s\n", tmp );
 
   return 0;
@@ -1405,6 +1407,8 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
 {
   const char * tmp = 0;
   int size = 0;
+  cmd_line_args_s * cmd_line_args = user_data;
+  int print = cmd_line_args ? !cmd_line_args->silent : 1;
 
   if(!tmp)
   {
@@ -1413,7 +1417,7 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
       size = 3;
   }
 
-  if(tmp)
+  if(tmp && print)
     printf( "%s\n", tmp );
 
   return 0;
