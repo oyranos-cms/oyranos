@@ -745,7 +745,7 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
   @namespace xf url(\"http://www.w3.org/2002/xforms\");\n\
   xf|label {\n\
    font-family: Helvetica, Geneva, Lucida, sans-serif;\n\
-   width: 16ex;\n\
+   width: 24ex;\n\
    text-align: right;\n\
    padding-right: 1em;\n\
   }\n\
@@ -1151,6 +1151,7 @@ const char * oyXFORMsModelGetXPathValue_
   return text;
 }
 
+typedef struct { int n; char ** options; int silent; } cmd_line_args_s;
 
 /** @internal
  *  Function oyXML2XFORMsCmdLineSelect1Handler
@@ -1183,10 +1184,12 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
              * value;
   char * default_key = 0, * t = 0;
   char * choices = 0;
+  cmd_line_args_s * cmd_line_args = user_data;
+  int print = cmd_line_args ? !cmd_line_args->silent : 1;
 
   default_value = oyOptions_FindString( collected_elements, "xf:select1", 0 );
 
-  if(oy_debug && default_value)
+  if(oy_debug && default_value && print)
     printf( "found default: \"%s\"\n", default_value );
 
   for(i = 0; i < n; ++i)
@@ -1194,7 +1197,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
     o = oyOptions_Get( collected_elements, i );
     opts = (oyOptions_s*) oyOption_StructGet( o, oyOBJECT_OPTIONS_S );
     
-    if(!opts && oyFilterRegistrationMatch( o->registration,"xf:label", 0 ))
+    if(!opts && oyFilterRegistrationMatch( o->registration,"xf:label", 0 ) &&
+       print)
       printf( " %s:\n", o->value->string );
 
     if(opts && oyFilterRegistrationMatch( o->registration,"xf:choices", 0 ))
@@ -1205,7 +1209,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
         o2 = oyOptions_Get( opts, j );
         opts2 = (oyOptions_s*) oyOption_StructGet( o2, oyOBJECT_OPTIONS_S );
 
-        if(!opts2 && oyFilterRegistrationMatch(o2->registration,"xf:label", 0 ))
+        if(!opts2 && oyFilterRegistrationMatch(o2->registration,"xf:label", 0 )
+           && print)
           printf( "  %s:\n", o2->value->string );
 
         if(opts2 && oyFilterRegistrationMatch( o2->registration,"xf:item", 0 ))
@@ -1217,7 +1222,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
           for(k = 0; k < k_n; ++k)
           {
             o3 = oyOptions_Get( opts2, k );
-            if(oy_debug)
+            if(oy_debug && print)
               printf( "    found option: 0x%x  \"%s\" %s\n",
                 (int)o3, oyOption_GetText(o3, oyNAME_NICK),
                 oyStruct_TypeToText((oyStruct_s*)o3) );
@@ -1258,7 +1263,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
 
           ++choices_n;
         }
-        else if(oy_debug)
+        else if(oy_debug && print)
           printf( "  found option: 0x%x  \"%s\" %s\n",
                 (int)o2, oyOption_GetText(o2, oyNAME_NICK),
                 oyStruct_TypeToText((oyStruct_s*)o2) );
@@ -1267,7 +1272,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
         oyOption_Release( &o2 );
       }
     }
-    else if(oy_debug)
+    else if(oy_debug && print)
       printf( "found option: 0x%x  \"%s\" %s\n",
               (int)o, oyOption_GetText(o, oyNAME_NICK),
               oyStruct_TypeToText((oyStruct_s*)o) );
@@ -1283,30 +1288,42 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
     t = oyStrstr_( default_key, ".xf:select1" );
     t[0] = 0;
 
-    printf("  ");
-    /* the option follows */
-    printf(_("Option"));
-    printf(" --%s=[%s]\n    ", default_key, default_value);
-    /* the choices follow */
-    printf(_("with following choices"));
-
-    printf(":\n");
-    i = -1;
-    if(choices_n <= 10)
-      printf("%s", choices );
-    else
+    if(print)
     {
-      while(choices[++i])
-        if(choices[i] != '\n')
-          putc( choices[i], stdout );
-        else
-        {
-          putc( ';', stdout );
-          putc( ' ', stdout );
-        }
+      printf("  ");
+      /* the option follows */
+      printf(_("Option"));
+      printf(":\n");
+      printf("    --%s=[%s]\n    ", default_key, default_value);
+    }
+    i = 0;
+    if(cmd_line_args)
+      oyStringListAddStaticString_( &cmd_line_args->options,
+                                    &cmd_line_args->n, default_key,
+                                    oyAllocateFunc_, oyDeAllocateFunc_ );
+    /* the choices follow */
+    if(print)
+    {
+      printf(_("with following choices"));
+
+      printf(":\n");
+      i = -1;
+      if(choices_n <= 10)
+        printf("%s", choices );
+      else
+      {
+        while(choices[++i])
+          if(choices[i] != '\n')
+            putc( choices[i], stdout );
+          else
+          {
+            putc( ';', stdout );
+            putc( ' ', stdout );
+          }
+        printf("\n");
+      }
       printf("\n");
     }
-    printf("\n");
 
     oyOption_Release( &o );
   }
@@ -1365,6 +1382,52 @@ int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
   return 0;
 }
 
+/** @internal
+ *  Function oyXML2XFORMsCmdLineHtmlHeadline4Handler
+ *  @brief   build a UI for a xf:select1 XFORMS sequence
+ *
+ *  This function is a simple demonstration.
+ *
+ *  @param[in]     cur                 libxml2 node
+ *  @param[in]     collected_elements  parsed and requested elements
+ *  @param[in]     user_data           toolkit context
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/04 (Oyranos: 0.1.10)
+ *  @date    2009/10/04
+ */
+int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
+                                       xmlNodePtr          cur,
+                                       oyOptions_s       * collected_elements,
+                                       oyPointer           user_data )
+{
+  const char * tmp = 0;
+  int size = 0;
+
+  if(!tmp)
+  {
+    tmp = oyOptions_FindString( collected_elements, "h4", 0 );
+    if(tmp)
+      size = 3;
+  }
+
+  if(tmp)
+    printf( "%s\n", tmp );
+
+  return 0;
+}
+
+oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_ =
+  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
+   "oyFORMS",                          /**< dialect */
+   "libxml2",                          /**< parser_type */
+   "h4",                               /**< element_type; Wanted XML elements.*/
+   (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
+   "dummy",                            /**< handler_type */
+   "h4"                                /**< element_search */
+  };
+
 oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
@@ -1375,9 +1438,10 @@ oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
    "h3"                                /**< element_search */
   };
 
-oyUiHandler_s * oy_ui_cmd_line_handlers[3] = {
+oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
   &oy_ui_cmd_line_handler_xf_select1_,
   &oy_ui_cmd_line_handler_html_headline_,
+  &oy_ui_cmd_line_handler_html_headline4_,
   0
 };
 
