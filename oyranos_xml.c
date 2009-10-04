@@ -973,7 +973,8 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
             STRING_ADD( tmp, (char*)attr->children->content );
             STRING_ADD( tmp, "." );
             STRING_ADD( tmp, name );
-            error = oyOptions_SetFromText( &wid_data, tmp, v, OY_CREATE_NEW );
+            error = oyOptions_SetFromText( &wid_data, &tmp[1], v,
+                                           OY_CREATE_NEW );
             if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
             oyFree_m_( tmp )
           }
