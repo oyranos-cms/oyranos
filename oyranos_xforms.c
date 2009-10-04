@@ -99,6 +99,7 @@ int main (int argc, char ** argv)
                         }
                         STRING_ADD( t, &argv[pos][2] );
                         text = oyStrrchr_(t, '=');
+                        /* get the key only */
                         if(text)
                           text[0] = 0;
                         oyStringListAddStaticString_( &other_args,&other_args_n,
@@ -108,6 +109,16 @@ int main (int argc, char ** argv)
                         oyStringListAddStaticString_( &other_args,&other_args_n,
                                             oyStrrchr_(&argv[pos][2], '=') + 1,
                                             oyAllocateFunc_,oyDeAllocateFunc_ );
+                        else {
+                          if(argv[pos+1])
+                          {
+                            oyStringListAddStaticString_( &other_args,
+                                                          &other_args_n,
+                                                          argv[pos+1],
+                                            oyAllocateFunc_,oyDeAllocateFunc_ );
+                            ++pos;
+                          } else wrong_arg = argv[pos];
+                        }
                         if(t) oyDeAllocateFunc_( t );
                         t = 0;
                         i=100; break;
