@@ -226,6 +226,10 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
 
   A(       _("Default Profiles"));
   A(                         ":</h3>\n");
+  A("\
+     <h4>");
+  A( _("Editing Colour Space"));
+  A("</h4>\n");
   if(editing_rgb)
   {
     A("\
@@ -298,8 +302,14 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
     tmp = oiccAddStdProfiles_routine( tmp, oyEDITING_GRAY );
     A("\
       </xf:choices>\n\
-     </xf:select1>\n");
+     </xf:select1>\n\
+     <br/>\n");
   }
+
+  A("\
+     <h4>");
+  A( _("Assumed Colour Space"));
+  A("</h4>\n");
   if(assumed_rgb)
   {
     A("\
