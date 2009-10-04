@@ -3325,6 +3325,7 @@ typedef struct {
 char *       oyXFORMsFromModelAndUi  ( const char        * data,
                                        const char        * ui_text,
                                        const char       ** namespaces,
+                                       const char        * head_injection,
                                        oyAlloc_f           allocate_func );
 int          oyXFORMsRenderUi        ( const char        * xforms,
                                        oyUiHandler_s    ** ui_handlers,

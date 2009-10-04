@@ -732,11 +732,37 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
 }
 
 /**
+ *  @brief   default CSS
+ *
+ *  The short stylesheet should cover the Oyranos subset of XFORMS elements.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/04 (Oyranos: 0.1.10)
+ *  @date    2009/10/04
+ */
+#define OY_XFORMS_CSS "\
+  <style type=\"text/css\"> \n\
+  @namespace xf url(\"http://www.w3.org/2002/xforms\");\n\
+  xf|label {\n\
+   font-family: Helvetica, Geneva, Lucida, sans-serif;\n\
+   width: 16ex;\n\
+   text-align: right;\n\
+   padding-right: 1em;\n\
+  }\n\
+  xf|select1 { display: table-row; }\n\
+  xf|select1 xf|label, xf|choices xf|label  { display: table-cell; }\n\
+  </style>"
+
+/**
  *  Function oyXFORMsFromModelAndUi
  *  @brief   join data and UI
  *
  *  @param[in]     data                data text
  *  @param[in]     ui_text             ui text
+ *  @param[in]     namespaces          url style namespaces
+ *  @param[in]     head_injection      html text to include in the HEAD section
+ *                                     With a NULL pointer Oyranos will implicit
+ *                                     insert a default CSS.
  *  @param[in]     allocate_func       user allocator
  *  @return                            XFORMS text
  *
@@ -747,6 +773,7 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
 char *       oyXFORMsFromModelAndUi  ( const char        * data,
                                        const char        * ui_text,
                                        const char       ** namespaces,
+                                       const char        * head_injection,
                                        oyAlloc_f           allocate_func )
 {
   char * text = 0;
@@ -804,7 +831,12 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
   STRING_ADD( text,
    "\n"
    "    </xf:instance>\n"
-   "  </xf:model>\n"
+   "  </xf:model>\n" );
+  if(head_injection)
+    STRING_ADD( text, head_injection );
+  else
+    STRING_ADD( text, OY_XFORMS_CSS );
+  STRING_ADD( text,
    "</head>\n"
    "<body>\n" );
   STRING_ADD( text, ui_text );
