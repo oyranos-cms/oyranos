@@ -309,7 +309,7 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
 
   int lcms_space = lcmsColorSpace( cspace );
 #if USE_GETTEXT
-  const char * save_locale = setlocale(LC_NUMERIC, 0 );
+  char * save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
 #endif
   format = fomate[lcms_space];
 
@@ -387,6 +387,7 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
 
 #if USE_GETTEXT
   setlocale(LC_NUMERIC, save_locale);
+  oyFree_m_( save_locale );
 #endif
     
   return text;
@@ -6194,7 +6195,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   oyValue_u * v = 0;
   oyStructList_s * oy_struct_list = 0;
   char * text = 0;
-  const char * save_locale = 0;
+  char * save_locale = 0;
 
   if(error <= 0)
     v = obj->value;
@@ -6205,7 +6206,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   error = !v;
 
 #if USE_GETTEXT
-  save_locale = setlocale(LC_NUMERIC, 0 );
+  save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_ );
   setlocale(LC_NUMERIC, "C");
 #endif
 
@@ -6300,6 +6301,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   }
 #if USE_GETTEXT
   setlocale(LC_NUMERIC, save_locale);
+  oyFree_m_( save_locale );
 #endif
 
   return erg;
@@ -22493,7 +22495,7 @@ OYAPI char * OYEXPORT
        * temp = oyAllocateFunc_(1024),
        * tmp = 0, * txt = 0, * t = 0;
   oyFilterNode_s * node = 0;
-  const char * save_locale = 0;
+  char * save_locale = 0;
   oyFilterGraph_s * s = graph;
 
   oyFilterPlug_s * p = 0;
@@ -22503,7 +22505,7 @@ OYAPI char * OYEXPORT
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
 
 #if USE_GETTEXT
-  save_locale = setlocale(LC_NUMERIC, 0 );
+  save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
 #endif
 
 
@@ -22610,6 +22612,7 @@ OYAPI char * OYEXPORT
   setlocale(LC_NUMERIC, "C");
   /* sensible printing */
   setlocale(LC_NUMERIC, save_locale);
+  oyFree_m_( save_locale );
 #endif
 
   STRING_ADD( text, "" );
