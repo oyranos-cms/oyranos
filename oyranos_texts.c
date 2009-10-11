@@ -140,7 +140,7 @@ oyOptionStringsTranslate_ ()
 
     /* The following defaults corespond to the office.policy.xml */
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_START, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_START, 0,
       0, 0, 0,
       _("Start"),
       _("Oyranos Settings Group"),
@@ -148,7 +148,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_START", 0,NULL)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES, 0,
       0, 0, 0,
       _("Default Profiles"),
       _("Source and Target Profiles for various situations"),
@@ -156,23 +156,23 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES", 0, NULL)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_EDIT, 0, 
-      0, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_EDIT, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Editing Colour Space"),
       _("Well behaving Colour Space for Editing"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_EDIT", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED, 0, 
-      0, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED, 1,
+      oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Colour Space"),
       _("Assumed Colour Space for untagged colours"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_ASSUMED", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF, 0,
       0, 0, 0,
       _("Proofing Colour Space"),
       _("Colour Space for Simulating real devices"),
@@ -180,7 +180,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_PROOF", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_PATHS, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_PATHS, 0,
       0, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
@@ -188,7 +188,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_PATHS", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_POLICY, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_POLICY, 0,
       0, 0, 0,
       _("Policy"),
       _("Collections of settings in Oyranos"),
@@ -196,7 +196,7 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_POLICY", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR, 0,
       0, 0, 0,
       _("Behaviour"),
       _("Settings affecting the Behaviour in various situations"),
@@ -204,39 +204,39 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_RENDERING, 0, 
-      0, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_RENDERING, 1,
+      oyGROUP_BEHAVIOUR, 0, 0,
       _("Rendering"),
       _("The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_RENDERING", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0, 
-      0, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 1,
+      oyGROUP_BEHAVIOUR, 0, 0,
       _("Save Mixed colour space Documents"),
       _("Default Handling of Mixed Colour Spaces inside one single Document"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH, 0, 
-      0, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH, 1, 
+      oyGROUP_BEHAVIOUR, 0, 0,
       _("Mismatching"),
       _("Decide what to do when the default colour spaces dont match the current ones."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_MISSMATCH", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_PROOF, 0, 
-      0, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_PROOF, 1,
+      oyGROUP_BEHAVIOUR, 0, 0,
       _("Proofing"),
       _("Default Proofing Settings"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_PROOF", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_ALL, 0, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_ALL, 0,
       0, 0, 0,
       _("All"),
       _("Oyranos Settings"),
@@ -246,7 +246,7 @@ oyOptionStringsTranslate_ ()
       "oyGROUP_ALL", 0,0)
 
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_POLICY, 1, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_POLICY, 1,
       oyGROUP_POLICY, 0, 0,
       _("Policy"),
       _("Collections of settings in Oyranos"),
@@ -257,7 +257,7 @@ oyOptionStringsTranslate_ ()
     oy_option_[oyWIDGET_POLICY].flags = OY_LAYOUT_MIDDLE;
 
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_LIST, oyWIDGET_PATHS, 1, 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_LIST, oyWIDGET_PATHS, 1,
       oyGROUP_PATHS, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
@@ -267,8 +267,8 @@ oyOptionStringsTranslate_ ()
       "oyWIDGET_PATHS", 0,0)
     oy_option_[oyWIDGET_PATHS].flags = OY_LAYOUT_PATH_SELECTOR;
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_RGB, 1, 
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_RGB, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Rgb"),
       _("Prefered Rgb Editing Colour Space"),
       0, /* choices */
@@ -276,8 +276,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_RGB_PROFILE,
       "oyEDITING_RGB", 0,"sRGB.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_CMYK, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_CMYK, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Cmyk"),
       _("Prefered Cmyk Editing Colour Space"),
       0, /* choices */
@@ -285,8 +285,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_CMYK_PROFILE,
       "oyEDITING_CMYK", 0,"coated_FOGRA39L_argl.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_XYZ, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_XYZ, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing XYZ"),
       _("Prefered XYZ Editing Colour Space"),
       0, /* choices */
@@ -294,8 +294,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_XYZ_PROFILE,
       "oyEDITING_XYZ", 0,"XYZ.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_LAB, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_LAB, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Lab"),
       _("Prefered CIE*Lab Editing Colour Space"),
       0, /* choices */
@@ -303,8 +303,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_LAB_PROFILE,
       "oyEDITING_LAB", 0,"Lab.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_GRAY, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_GRAY, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Gray"),
       _("Prefered Gray Editing Colour Space"),
       0, /* choices */
@@ -312,8 +312,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_EDITING_GRAY_PROFILE,
       "oyEDITING_GRAY", 0,"Gray.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed XYZ source"),
       _("Assigning an untagged XYZ Image an colour space"),
       0, /* choices */
@@ -321,8 +321,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_XYZ_PROFILE,
       "oyASSUMED_XYZ", 0,"XYZ.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_LAB, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_LAB, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Lab source"),
       _("Assigning an untagged CIE*Lab Image an colour space"),
       0, /* choices */
@@ -330,8 +330,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_LAB_PROFILE,
       "oyASSUMED_LAB", 0,"Lab.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_RGB, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_RGB, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Rgb source"),
       _("Assigning an untagged Rgb Image an colour space"),
       0, /* choices */
@@ -339,8 +339,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_RGB_PROFILE,
       "oyASSUMED_RGB", 0,"sRGB.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_WEB, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_WEB, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Web source"),
       _("Assigning an untagged Rgb Image with source from the WWW an colour space"),
       0, /* choices */
@@ -349,8 +349,8 @@ oyOptionStringsTranslate_ ()
       "oyASSUMED_WEB", 0,"sRGB.icc")
     oy_option_[oyWIDGET_ASSUMED_WEB].flags = OY_LAYOUT_NO_CHOICES;
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_CMYK, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_CMYK, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Cmyk source"),
       _("Assigning an untagged Cmyk Image this colour space"),
       0, /* choices */
@@ -358,8 +358,8 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_ASSUMED_CMYK_PROFILE,
       "oyASSUMED_CMYK" , 0,"coated_FOGRA39L_argl.icc")
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_GRAY, 1,
-      oyGROUP_DEFAULT_PROFILES, 0, 0,
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_GRAY, 2,
+      oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Gray source"),
       _("Assigning an untagged Gray Image this colour space"),
       0, /* choices */
@@ -434,7 +434,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_BPC, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Use Black Point Compensation"),
-      _("BPC affects only the Relative Colorimetric Rendering Intent."),
+      _("BPC affects often only the Relative Colorimetric Rendering Intent."),
       2, /* choices */
       _("No"),_("Yes"), NULL, NULL,
       OY_DEFAULT_RENDERING_BPC,
@@ -1828,10 +1828,10 @@ int         oyPolicySet_               (const oyChar  * policy_file,
   return err;
 }
 
-int           oyOptionChoicesGet_      (oyWIDGET_e          type,
-                                        int             * choices,
-                                        const oyChar*** choices_string_list,
-                                        int             * current)
+int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
+                                       int               * choices,
+                                       const char      *** choices_string_list,
+                                       int               * current)
 {
   int error = 0;
   const oyOption_t_ *t = oyOptionGet_(type);
@@ -1994,13 +1994,13 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
                                         int             * count,
                                         oyAlloc_f         allocate_func)
 {
-#define oyGROUP_DEFAULT_PROFILES_LEN oyWIDGET_DEFAULT_PROFILE_END - oyWIDGET_DEFAULT_PROFILE_START
-#define oyGROUP_BEHAVIOUR_RENDERING_LEN 2
-#define oyGROUP_BEHAVIOUR_PROOF_LEN 4
-#define oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN 6
-#define oyGROUP_BEHAVIOUR_MISSMATCH_LEN 6
+#define oyGROUP_DEFAULT_PROFILES_LEN oyWIDGET_DEFAULT_PROFILE_END - oyWIDGET_DEFAULT_PROFILE_START + 1
+#define oyGROUP_BEHAVIOUR_RENDERING_LEN 2+1
+#define oyGROUP_BEHAVIOUR_PROOF_LEN 4+1
+#define oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN 6+1
+#define oyGROUP_BEHAVIOUR_MISSMATCH_LEN 6+1
 
-#define oyGROUP_BEHAVIOUR_LEN oyGROUP_BEHAVIOUR_RENDERING_LEN + oyGROUP_BEHAVIOUR_PROOF_LEN + oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN + oyGROUP_BEHAVIOUR_MISSMATCH_LEN
+#define oyGROUP_BEHAVIOUR_LEN oyGROUP_BEHAVIOUR_RENDERING_LEN + oyGROUP_BEHAVIOUR_PROOF_LEN + oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN + oyGROUP_BEHAVIOUR_MISSMATCH_LEN + 1
 
 #define oyGROUP_ALL_LEN oyGROUP_DEFAULT_PROFILES_LEN + oyGROUP_BEHAVIOUR_LEN
 
@@ -2025,8 +2025,9 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
   {
      case oyGROUP_POLICY:
           {
-            oyAllocHelper_m_( w, oyWIDGET_e , 1,
+            oyAllocHelper_m_( w, oyWIDGET_e , 1 + 1,
                               allocate_func, return NULL);
+            w[pos++] = oyWIDGET_GROUP_POLICY;
             for ( oywid = oyWIDGET_POLICY; oywid <= oyWIDGET_POLICY; ++oywid )
               w[pos++] = oywid;
 
@@ -2035,8 +2036,9 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
           break;
      case oyGROUP_PATHS:
           {
-            oyAllocHelper_m_( w, oyWIDGET_e , 1,
+            oyAllocHelper_m_( w, oyWIDGET_e , 1 + 1,
                               allocate_func, return NULL);
+            w[pos++] = oyWIDGET_GROUP_PATHS;
             for ( oywid = oyWIDGET_PATHS; oywid <= oyWIDGET_PATHS; ++oywid )
               w[pos++] = oywid;
 
@@ -2045,8 +2047,9 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
           break;
      case oyGROUP_DEFAULT_PROFILES_EDIT:
           {
-            oyAllocHelper_m_( w, oyWIDGET_e , oyEDITING_GRAY - oyEDITING_XYZ + 1,
+            oyAllocHelper_m_( w, oyWIDGET_e , oyEDITING_GRAY - oyEDITING_XYZ + 1 + 1,
                               allocate_func, return NULL);
+            w[pos++] = oyWIDGET_GROUP_DEFAULT_PROFILES_EDIT;
             for ( oywid = (oyWIDGET_e)oyEDITING_XYZ;
                     oywid <= (oyWIDGET_e)oyEDITING_GRAY; ++oywid )
               w[pos++] = oywid;
@@ -2056,8 +2059,9 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
           break;
      case oyGROUP_DEFAULT_PROFILES_ASSUMED:
           {
-            oyAllocHelper_m_( w, oyWIDGET_e , oyASSUMED_GRAY - oyASSUMED_XYZ + 1,
+            oyAllocHelper_m_( w, oyWIDGET_e , oyASSUMED_GRAY - oyASSUMED_XYZ + 1 + 1,
                               allocate_func, return NULL);
+            w[pos++] = oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED;
             for ( oywid = (oyWIDGET_e)oyASSUMED_XYZ;
                     oywid <= (oyWIDGET_e)oyASSUMED_GRAY; ++oywid )
               w[pos++] = oywid;
@@ -2067,8 +2071,9 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
           break;
      case oyGROUP_DEFAULT_PROFILES_PROOF:
           {
-            oyAllocHelper_m_( w, oyWIDGET_e , 1,
+            oyAllocHelper_m_( w, oyWIDGET_e , 1 + 1,
                               allocate_func, return NULL);
+            w[pos++] = oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF;
             for ( oywid = (oyWIDGET_e)oyPROFILE_PROOF;
                     (oyWIDGET_e)oywid <= oyPROFILE_PROOF; ++oywid )
               w[pos++] = oywid;
@@ -2082,6 +2087,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
                              allocate_func, return NULL);
            tmp = oyWidgetListGet_( oyGROUP_DEFAULT_PROFILES_EDIT, &n,
                                    oyAllocateFunc_);
+           lw[pos++] = oyWIDGET_GROUP_DEFAULT_PROFILES;
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
            oyFree_m_( tmp );
@@ -2100,6 +2106,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
            oyAllocHelper_m_( lw, oyWIDGET_e , oyGROUP_BEHAVIOUR_RENDERING_LEN,
                              allocate_func, return NULL);
 
+           lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR_RENDERING;
            lw[pos++] = oyWIDGET_RENDERING_INTENT;
            lw[pos++] = oyWIDGET_RENDERING_BPC;
 
@@ -2112,6 +2119,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
            oyAllocHelper_m_( lw, oyWIDGET_e , oyGROUP_BEHAVIOUR_PROOF_LEN,
                              allocate_func, return NULL);
 
+           lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR_PROOF;
            lw[pos++] = oyWIDGET_PROFILE_PROOF;
            lw[pos++] = oyWIDGET_RENDERING_INTENT_PROOF;
            lw[pos++] = oyWIDGET_PROOF_SOFT;
@@ -2123,9 +2131,10 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
          break;
     case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
          {
-           oyAllocHelper_m_( lw, oyWIDGET_e ,oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN ,
+           oyAllocHelper_m_( lw, oyWIDGET_e ,oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN,
                              allocate_func, return NULL);
 
+           lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS;
            lw[pos++] = oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN;
            lw[pos++] = oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT;
 
@@ -2138,6 +2147,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
            oyAllocHelper_m_( lw, oyWIDGET_e, oyGROUP_BEHAVIOUR_MISSMATCH_LEN,
                              allocate_func, return NULL);
 
+           lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH;
            lw[pos++] = oyWIDGET_ACTION_UNTAGGED_ASSIGN;
            lw[pos++] = oyWIDGET_ACTION_OPEN_MISMATCH_RGB;
            lw[pos++] = oyWIDGET_ACTION_OPEN_MISMATCH_CMYK;
@@ -2152,6 +2162,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
                              allocate_func, return NULL);
            tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR_RENDERING, &n,
                                    oyAllocateFunc_);
+           lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR;
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
            oyFree_m_( tmp );
