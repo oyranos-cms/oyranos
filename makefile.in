@@ -172,13 +172,15 @@ CXXFILES_Flmm = \
 	FL/Flmm_Tabs.cxx
 
 TEST_CPP = \
+	tests/cups_test.cxx \
+	tests/dE2000_test.cpp \
 	tests/dl_test.cxx \
 	tests/fltk_test.cxx \
-	tests/dE2000_test.cpp \
 	tests/gettext_test.cxx \
 	tests/intptr_test.c \
 	tests/lib_test.cxx \
 	tests/library.c \
+	tests/sane_test.cxx \
 	tests/test_oyranos.c \
 	tests/tiff_test.cxx
 TEST_H = \
