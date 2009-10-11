@@ -45,6 +45,7 @@ if [ "$ROOT_DIR" != "." ]; then
   cp $v $ROOT_DIR/examples/makefile examples/
   mkdir -p default_profiles/base
   mkdir -p default_profiles/printing
+  mkdir -p oforms/
 fi
 
 export ROOT_DIR
