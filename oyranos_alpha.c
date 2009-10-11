@@ -15038,6 +15038,9 @@ OYAPI oyProfiles_s * OYEXPORT
  *  argument, to select all possible standard colour profiles, e.g. for 
  *  typical colour conversions.
  *
+ *  oyASSUMED_WEB will result in exactly one profile added as long as it is
+ *  available in the file paths.
+ *
  *  @param[in]     std_profile_class  standard profile class, e.g. oyEDITING_RGB
  *  @param[out]    current             get the colour_space profile position
  *  @param         object              a optional object
@@ -15083,6 +15086,20 @@ OYAPI oyProfiles_s * OYEXPORT
     oyProfile_s * profile = 0, * temp_prof = 0;
     icSignature csp;
 
+    if(type == oyASSUMED_WEB)
+    {
+      profile = oyProfile_FromStd( type, object );
+      iccs = oyProfiles_New( object );
+      if(current)
+      {
+        if(profile)
+          *current          = 0;
+        else
+          *current          = -1;
+      }
+      oyProfiles_MoveIn( iccs, &profile, 0 );
+      return iccs;
+    }
 
     if(type == oyEDITING_XYZ ||
        type == oyASSUMED_XYZ ||
