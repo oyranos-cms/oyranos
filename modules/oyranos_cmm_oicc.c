@@ -221,15 +221,22 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
   const char * rendering_high_precission = oyOptions_FindString( os, "rendering_high_precission", 0 );
 #endif
 
-  tmp = oyStringCopy_( "\
+  if(editing_rgb || editing_cmyk || editing_lab || editing_xyz || editing_gray||
+     assumed_rgb || assumed_cmyk || assumed_lab || assumed_xyz || assumed_gray)
+  {
+    tmp = oyStringCopy_( "\
   <h3>Oyranos ", oyAllocateFunc_ );
 
-  A(       _("Default Profiles"));
-  A(                         ":</h3>\n");
-  A("\
+    A(       _("Default Profiles"));
+    A(                         ":</h3>\n");
+  }
+  if(editing_rgb || editing_cmyk || editing_lab || editing_xyz || editing_gray)
+    {
+    A("\
      <h4>");
-  A( _("Editing Colour Space"));
-  A("</h4>\n");
+    A( _("Editing Colour Space"));
+    A(                        "</h4>\n");
+  }
   if(editing_rgb)
   {
     A("\
@@ -306,10 +313,13 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
      <br/>\n");
   }
 
-  A("\
+  if(assumed_rgb || assumed_cmyk || assumed_lab || assumed_xyz || assumed_gray)
+  {
+    A("\
      <h4>");
-  A( _("Assumed Colour Space"));
-  A("</h4>\n");
+    A( _("Assumed Colour Space"));
+    A(                        "</h4>\n");
+  }
   if(assumed_rgb)
   {
     A("\
@@ -385,10 +395,14 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
      </xf:select1>\n");
   }
 
-  A("\
+  if(action_untagged_assign)
+  {
+    A("\
   <h3>Oyranos " );
-  A(       _("Behaviour"));
-  A(                         ":</h3>\n\
+    A(     _("Behaviour"));
+    A(                       ":</h3>\n");
+  }
+  A("\
   <xf:group>\n");
 
   if(action_untagged_assign)
