@@ -171,6 +171,9 @@ int        oyXML2XFORMsFLTKSelect1Handler (
             default_pos = choices_n;
           }
 
+          if(!value) value = label;
+          if(!label) label = value;
+
           /* append the choice
            * store the label and value in user_data() for evaluating results */
           if(print)
