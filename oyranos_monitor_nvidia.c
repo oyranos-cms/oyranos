@@ -193,6 +193,7 @@ main(int argc, char **argv)
       if(size[j] == 128 || size[j] == 256)
       {
         char *manufacturer=0,
+             *mnft=0,
              *model=0,             
              *serial=0;
         char  display_name[256] = {""};
@@ -209,7 +210,8 @@ main(int argc, char **argv)
 
         fprintf( stderr, "EDID version: %d.%d in .%d[%d]\n",
                  edi->major_version, edi->minor_version, i, j);
-        oyUnrollEdid1_( edi, &manufacturer, &model, &serial,c,oyAllocateFunc_ );
+        oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial, c,
+                        oyAllocateFunc_ );
 
 
         if(screen_number == 32 || screen_number == i)

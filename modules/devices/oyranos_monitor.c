@@ -198,6 +198,7 @@ decode_color_characteristics (const unsigned char *edid, double * c)
 void
 oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
                                    char**      manufacturer,
+                                   char**      mnft,
                                    char**      model,
                                    char**      serial,
                                        double            * c,
@@ -307,8 +308,10 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
     else if(!strcmp(mnf,"SNY"))
       sprintf(*manufacturer, "Sony");
     else
-      sprintf(*manufacturer, mnf);
+      sprintf(*manufacturer, "%s", mnf);
   }
+  *mnft = (char*)oyAllocateWrapFunc_( 24, allocate_func );
+  sprintf(*mnft, "%s", mnf);
 
   DBG_PROG_ENDE
 }
@@ -344,7 +347,7 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
 # ifdef HAVE_XRANDR
     if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
     {
-      int pos = 0, i;
+      int i;
       if(prop_name_xrandr)
         while(!atom && prop_name_xrandr[i])
           atom = XInternAtom( display,
@@ -400,6 +403,7 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
 int
 oyGetMonitorInfo_                 (const char* display_name,
                                    char**      manufacturer,
+                                   char**      mnft,
                                    char**      model,
                                    char**      serial,
                                    char**      display_geometry,
@@ -484,7 +488,7 @@ oyGetMonitorInfo_                 (const char* display_name,
       /* convert to an deployable struct */
       edi = (struct oyDDC_EDID1_s_*) prop->ptr;
 
-      oyUnrollEdid1_( edi, manufacturer, model, serial, colours, allocate_func);
+      oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, colours, allocate_func);
     }
   }
 
@@ -1761,6 +1765,7 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
 int
 oyGetMonitorInfo_lib              (const char* display,
                                    char**      manufacturer,
+                                       char             ** mnft,
                                    char**      model,
                                    char**      serial,
                                        char             ** display_geometry,
@@ -1776,7 +1781,7 @@ oyGetMonitorInfo_lib              (const char* display,
   DBG_PROG_START
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
-  err = oyGetMonitorInfo_( display, manufacturer, model, serial,
+  err = oyGetMonitorInfo_( display, manufacturer, mnft, model, serial,
                      display_geometry, system_port, host, colours, edid,
                      allocate_func, user_data );
 #else

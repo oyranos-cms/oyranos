@@ -149,6 +149,7 @@ struct oyDDC_EDID1_s_ {
 void
 oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
                                    char**      manufacturer,
+                                   char**      mnft,
                                    char**      model,
                                    char**      serial,
                                        double            * c,

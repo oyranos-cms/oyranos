@@ -33,6 +33,7 @@ namespace oyranos
 
 int   oyGetMonitorInfo_lib        (const char* display,
                                    char**      manufacturer,
+                                       char             ** mnft,
                                    char**      model,
                                    char**      serial,
                                        char             ** display_geometry,
