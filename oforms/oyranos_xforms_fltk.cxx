@@ -9,11 +9,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "oyranos_widgets_fltk.h"
+#include "oyranos_forms.h"
+#include "../fl_i18n/fl_i18n.H"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Double_Window.H>
 
 using namespace oyranos;
+using namespace oyranos::forms;
 
 extern oyUiHandler_s * oy_ui_fltk_handlers[];
 
@@ -39,7 +44,6 @@ void usage(int argc, char ** argv)
                         printf("      man oyranos-xforms_not_yet\n");
 }
 
-typedef struct { int n; char ** options; int silent; } cmd_line_args_s;
 
 int main (int argc, char ** argv)
 {
@@ -50,7 +54,7 @@ int main (int argc, char ** argv)
       ** namespaces = 0,
        * text = 0, * t = 0;
   const char * opt_names = 0;
-  cmd_line_args_s options = { 0, 0, 0 };
+  oyFormsArgs_s * oy_forms_options = oyFormsArgs_New( 0 );
   const char * data = 0, * ct = 0;
   char ** other_args = 0;
   int other_args_n = 0;
@@ -60,9 +64,30 @@ int main (int argc, char ** argv)
   oyOption_s * o = 0;
 
 #ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
+  const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
+  const char *domain = {"oyranos"};
+
+  if ( !fl_search_locale_path  ( 2,
+                                locale_paths,
+                                "de",
+                                domain) >= 0 )
+    fprintf( stderr, "Locale not found\n");
+
+  {
+#if defined(_Xutf8_h) || HAVE_FLTK_UTF8
+    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
+#else
+    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;
 #endif
-  oyI18NInit_();
+    int err = fl_initialise_locale ( domain, locale_paths[0],
+                                     set_charset );
+    if(err) {
+      fprintf( stderr,"i18n initialisation failed");
+    } else
+      fprintf( stderr, "Locale found in %s\n", locale_paths[0]);
+  }
+  oy_domain_codeset = fl_i18n_codeset;
+#endif
 
 
 /* allow "-opt val" and "-opt=val" syntax */
@@ -157,8 +182,8 @@ int main (int argc, char ** argv)
   /* First call for options ... */
   opts = oyFilterNode_OptionsGet( node,
                                   OY_SELECT_FILTER | OY_SELECT_COMMON |
-                                  oyOPTIONATTRIBUTE_ADVANCED |
-                                  oyOPTIONATTRIBUTE_FRONT );
+                                  oyOPTIONATTRIBUTE_ADVANCED /*|
+                                  oyOPTIONATTRIBUTE_FRONT*/ );
   /* ... then get the UI for this filters options. */
   error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
   oyFilterNode_Release( &node );
@@ -199,7 +224,7 @@ int main (int argc, char ** argv)
         oyOption_Release( &o );
       }
     }
-    options.silent = 1;
+    oy_forms_options->silent = 1;
   }
 
 
@@ -225,8 +250,7 @@ int main (int argc, char ** argv)
 
   Fl_Double_Window * w = new Fl_Double_Window(400,400,"///lcms XFORMS in FLTK");
   Fl_Pack * pack = new Fl_Pack( 0,0,400,400 );
-  
-  error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, &options );
+  error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
 
   pack->end();
   w->resizable( pack );
@@ -235,16 +259,9 @@ int main (int argc, char ** argv)
   w->show();
   Fl::run();
 
-  if(options.n)
-  {
-    for(i = 0; i < options.n; ++i)
-    {
-      if(oy_debug)
-        printf("options[%d]: %s\n", i, options.options[i]);
-      free( options.options[i] );
-    }
-    free(options.options);
-  }
+
+  printf("%s\n", oyFormsArgs_ModelGet(oy_forms_options));
+  oyFormsArgs_Release( &oy_forms_options );
 
   if(xml_file)
     oyWriteMemToFile_( xml_file, text, strlen(text) );
