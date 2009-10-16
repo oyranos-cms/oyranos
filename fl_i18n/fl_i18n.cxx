@@ -159,7 +159,7 @@ fl_set_codeset_    ( const char* lang, const char* codeset_,
         switch(set_codeset)
         {
         case FL_I18N_SETCODESET_SELECT:
-            ptr = setlocale (lc, "");
+            ptr = setlocale (lc, locale);
             break;
         case FL_I18N_SETCODESET_UTF8:
             ptr = setlocale (lc, locale);
@@ -295,7 +295,7 @@ fl_initialise_locale( const char *domain, const char *locale_path,
 # endif
 
   if(set_codeset == FL_I18N_SETCODESET_SELECT &&
-     locale && strstr(locale, "UTF-8"))
+     locale && (strstr(locale, "UTF-8") || !strchr(locale,'.')))
   {
       // add more LINGUAS here
       // borrowed from http://czyborra.com/charsets/iso8859.html
