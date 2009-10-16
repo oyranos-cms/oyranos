@@ -9,9 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "oyranos_forms.h"
 
-
-extern oyUiHandler_s * oy_ui_cmd_line_handlers[];
 
 
 void usage(int argc, char ** argv)
@@ -35,7 +34,6 @@ void usage(int argc, char ** argv)
                         printf("      man oyranos-xforms_not_yet\n");
 }
 
-typedef struct { int n; char ** options; int silent; } cmd_line_args_s;
 
 int main (int argc, char ** argv)
 {
@@ -46,7 +44,7 @@ int main (int argc, char ** argv)
       ** namespaces = 0,
        * text = 0, * t = 0;
   const char * opt_names = 0;
-  cmd_line_args_s options = { 0, 0, 0 };
+  oyFormsArgs_s * forms_args = oyFormsArgs_New( 0 );
   const char * data = 0, * ct = 0;
   char ** other_args = 0;
   int other_args_n = 0;
@@ -195,7 +193,7 @@ int main (int argc, char ** argv)
         oyOption_Release( &o );
       }
     }
-    options.silent = 1;
+    forms_args->silent = 1;
   }
 
 
@@ -219,17 +217,7 @@ int main (int argc, char ** argv)
   if(oy_debug)
     printf("%s\n", text);
 
-  error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, &options );
-  if(options.n)
-  {
-    for(i = 0; i < options.n; ++i)
-    {
-      if(oy_debug)
-        printf("options[%d]: %s\n", i, options.options[i]);
-      free( options.options[i] );
-    }
-    free(options.options);
-  }
+  error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
 
   if(xml_file)
     oyWriteMemToFile_( xml_file, text, strlen(text) );

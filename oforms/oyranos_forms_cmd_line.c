@@ -28,11 +28,12 @@
 #include "oyranos.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
+#include "oyranos_forms.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
+#include "oyranos_alpha_internal.h"
 
-
-typedef struct { int n; char ** options; int silent; } cmd_line_args_s;
+/* ------------- cmd line XFORMS UI handlers ------------------*/
 
 /** @internal
  *  Function oyXML2XFORMsCmdLineSelect1Handler
@@ -63,12 +64,17 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
              * tmp,
              * label,
              * value;
-  char * default_key = 0, * t = 0;
+  char * default_key = 0, *key = 0, * t = 0;
   char * choices = 0;
-  cmd_line_args_s * cmd_line_args = user_data;
+  oyFormsArgs_s * cmd_line_args = user_data;
   int print = cmd_line_args ? !cmd_line_args->silent : 1;
 
   default_value = oyOptions_FindString( collected_elements, "xf:select1", 0 );
+  o = oyOptions_Find( collected_elements, "xf:select1" );
+  key = oyStringCopy_( o->registration, oyAllocateFunc_ );
+  t = oyStrrchr_( key, '/' );
+  t = oyStrchr_( t, '.' ); 
+  t[0] = 0;   
 
   if(oy_debug && default_value && print)
     printf( "found default: \"%s\"\n", default_value );
@@ -179,9 +185,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
     }
     i = 0;
     if(cmd_line_args)
-      oyStringListAddStaticString_( &cmd_line_args->options,
-                                    &cmd_line_args->n, default_key,
-                                    oyAllocateFunc_, oyDeAllocateFunc_ );
+      oyOptions_SetFromText( (oyOptions_s**)&cmd_line_args->xforms_data_model_,
+                             key, default_value, OY_CREATE_NEW );
     /* the choices follow */
     if(print)
     {
@@ -212,6 +217,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
   if(choices)
     oyFree_m_( choices );
   oyFree_m_( default_key );
+  if(key)
+    oyFree_m_( key );
 
   /*printf("collected:\n%s", oyOptions_GetText( collected_elements, oyNAME_NICK));*/
   return 0;
@@ -249,7 +256,7 @@ int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
 {
   const char * tmp = 0;
   int size = 0;
-  cmd_line_args_s * cmd_line_args = user_data;
+  oyFormsArgs_s * cmd_line_args = user_data;
   int print = cmd_line_args ? !cmd_line_args->silent : 1;
 
   if(!tmp)
@@ -287,7 +294,7 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
 {
   const char * tmp = 0;
   int size = 0;
-  cmd_line_args_s * cmd_line_args = user_data;
+  oyFormsArgs_s * cmd_line_args = user_data;
   int print = cmd_line_args ? !cmd_line_args->silent : 1;
 
   if(!tmp)
