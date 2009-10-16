@@ -41,7 +41,7 @@
 #include "oyranos_internal.h"
 
 
-using namespace oyranos;
+using namespace oyranos::forms;
 
 
 OyFl_Box_c::OyFl_Box_c(int x, int y, int w, int h , const char *t )

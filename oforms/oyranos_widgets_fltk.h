@@ -30,13 +30,8 @@
 #define SELECT_WIDTH 176
 
 namespace oyranos {
+namespace forms {
 
-
-typedef struct {
-  int              n;
-  char          ** options;
-  int              silent;
-} fltk_args_s;
 
 class OyFl_Box_c : public Fl_Box {
 public:
@@ -73,6 +68,7 @@ public:
 };
 #endif
 
+}
 }
 
 #endif /* OYRANOS_WIDGETS_FLTK.H */
