@@ -132,6 +132,7 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
       " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
       " - \"manufacturer\"\n"
+      " - \"mnft\"\n"
       " - \"model\"\n"
       " - \"serial\"\n"
       " - \"host\"\n"
@@ -176,13 +177,14 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
   const char * value3 = 0;
   oyOption_s * o = 0;
   int error = !device;
+  char * text = 0;
 
     value3 = oyOptions_FindString( options, "edid", 0 );
 
     if(!error)
     {
-      char * manufacturer=0, *model=0, *serial=0, *host=0, *display_geometry=0,
-           * system_port=0;
+      char * manufacturer=0, * mnft=0, * model=0, * serial=0, * host=0,
+           * display_geometry=0, * system_port=0;
       double colours[9];
       oyBlob_s * edid = 0;
 
@@ -197,7 +199,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
       if(error <= 0)
         error = oyGetMonitorInfo_lib( device_name,
-                                      &manufacturer, &model, &serial,
+                                      &manufacturer, &mnft, &model, &serial,
                                       &display_geometry, &system_port,
                                       &host, colours,
                                       value3 ? &edid : 0,oyAllocateFunc_,
@@ -221,6 +223,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                                        device_name, OY_CREATE_NEW );
 
         OPTIONS_ADD( (*device)->backend_core, manufacturer )
+        OPTIONS_ADD( (*device)->backend_core, mnft )
         OPTIONS_ADD( (*device)->backend_core, model )
         OPTIONS_ADD( (*device)->backend_core, serial )
         OPTIONS_ADD( (*device)->backend_core, display_geometry )
@@ -233,6 +236,17 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
             error = oyOptions_SetFromDouble( &(*device)->data,
                              OYX1_MONITOR_REGISTRATION OY_SLASH "edid1_colours",
                                              colours[i], i, OY_CREATE_NEW );
+          text = oyAllocateFunc_(1024);
+          sprintf( text, "Gamma: %g\n"
+                         "redX: %g redY: %g\n"
+                         "greenX: %g greenY: %g\n"
+                         "blueX: %g blueY: %g\n"
+                         "whiteX: %g whiteY: %g",
+                   colours[8], colours[0], colours[1], colours[2], colours[3],
+                   colours[4], colours[5], colours[6], colours[7] );
+          error = oyOptions_SetFromText( &(*device)->data,
+                    OYX1_MONITOR_REGISTRATION OY_SLASH "edid_colours_text.Xorg",
+                                         text, OY_CREATE_NEW );
         }
 
         if(!error && edid)
