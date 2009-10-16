@@ -60,6 +60,11 @@ Summary:    example configuration panel
 Group:      Productivity/Graphics/Other
 Requires:   fltk
 
+%package      forms-fltk-devel
+Summary:    XFORMS subset rendering
+Group:      Development/Libraries
+Requires:   fltk-devel
+
 %description
 Oyranos is a colour management system.
 Features:
@@ -111,6 +116,11 @@ Oyranos colour management system.
 %description  ui-fltk
 The example configuration GUI.
 Oyranos is a colour management system.
+
+%description  forms-fltk-devel
+Render a Oyranos specific subset of XFORMS in FLTK.
+A XFORMS subset is used by Oyranos to describe filter node
+options.
 
 
 %prep
@@ -165,7 +175,7 @@ ldconfig
 %{_includedir}/%{name}/%{name}_icc.h
 %{_includedir}/%{name}/%{name}_version.h
 %{_libdir}/pkgconfig/*
-%{_libdir}/*.a
+%{_libdir}/lib%{name}.a
 %{_mandir}/man3/%{name}-config.3*
 %{_mandir}/man3/%{name}.*
 %doc %{name}*.sh
@@ -195,7 +205,15 @@ ldconfig
 %{_bindir}/%{name}-config-fl*
 %{_mandir}/man1/%{name}-config-fltk.1*
 
+%files forms-fltk-devel
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%{_libdir}/lib%{name}_fltk.a
+
 %changelog
+* Fri Oct 16 2009 Kai-Uwe Behrmann
+- add oyranos-forms-fltk-devel
+
 * Sun Aug 02 2009 Kai-Uwe Behrmann
 - add oicc module
 - add CUPS module from Joe Simon and create new RPM from it
