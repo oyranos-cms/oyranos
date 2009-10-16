@@ -94,7 +94,8 @@ CHEADERS = \
 	$(TARGET)_xml.h \
 	icc34.h \
 	md5.h \
-	lookup3.h
+	lookup3.h \
+	oforms/$(TARGET)_forms.h
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
@@ -159,7 +160,8 @@ CFILES_MONI_NVIDIA = \
 CFILES_GAMMA = \
 	$(TARGET)_gamma.c
 CFILES_OFORMS = \
-	oforms/$(TARGET)_forms_cmd_line.c
+	oforms/$(TARGET)_forms_cmd_line.c \
+	oforms/$(TARGET)_forms.c
 CFILES_POLICY = \
 	$(TARGET)_policy.c \
 
