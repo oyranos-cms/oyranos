@@ -42,10 +42,36 @@
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
+#include "oyranos_forms.h"
 
 
 using namespace oyranos;
+using namespace oyranos::forms;
 
+typedef struct {
+  char * label;
+  char * value;
+  char * key;
+  oyOptions_s ** callback_data;
+} fltk_cb_data;
+
+void fltkCallback                    ( Fl_Widget         * widget,
+                                       void              * user_data )
+{
+  fltk_cb_data * cd = (fltk_cb_data*) user_data;
+  Fl_Choice * ch = dynamic_cast<Fl_Choice*> (widget);
+  oyOptions_s ** opts = cd->callback_data;
+  char num[24];
+
+  if(ch)
+  {
+    sprintf(num, "%d", ch->value() );
+    oyOptions_SetFromText( opts, cd->key, cd->value, 0 );
+    printf("Fl_Choice %s(%s)=%s/%s\n", cd->key, cd->label, cd->value, num );
+
+  } else
+    printf("no Fl_Choice %s(%s)=%s/%s\n", cd->key, cd->label, cd->value, num );
+}
 
 
 /** @internal
@@ -61,7 +87,7 @@ using namespace oyranos;
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/08/29 (Oyranos: 0.1.10)
- *  @date    2009/09/10
+ *  @date    2009/10/11
  */
 int        oyXML2XFORMsFLTKSelect1Handler (
                                        xmlNodePtr          cur,
@@ -77,13 +103,19 @@ int        oyXML2XFORMsFLTKSelect1Handler (
   const char * default_value = 0,
              * tmp,
              * label,
-             * value;
-  char * default_key = 0, * t = 0;
+             * value,
+             * search;
+  char * default_key = 0, * key = 0, * t = 0;
   char * choices = 0;
-  fltk_args_s * fltk_args = (fltk_args_s *)user_data;
+  oyFormsArgs_s * fltk_args = (oyFormsArgs_s *)user_data;
   int print = fltk_args ? !fltk_args->silent : 1;
 
   default_value = oyOptions_FindString( collected_elements, "xf:select1", 0 );
+  o = oyOptions_Find( collected_elements, "xf:select1" );
+  key = oyStringCopy_( o->registration, oyAllocateFunc_ );
+  t = oyStrrchr_( key, '/' );
+  t = oyStrchr_( t, '.' );
+  t[0] = 0;
 
   if(oy_debug && default_value && print)
     printf( "found default: \"%s\"\n", default_value );
@@ -102,16 +134,17 @@ int        oyXML2XFORMsFLTKSelect1Handler (
   pack->spacing(H_SPACING);
 
     OyFl_Box_c * box = new OyFl_Box_c( 0,0,w-BOX_WIDTH-H_SPACING,BUTTON_HEIGHT);
-    //box->labelfont( FL_BOLD );
     box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
 
     Fl_Choice * c = new Fl_Choice( 0,0,BOX_WIDTH,BUTTON_HEIGHT );
+
+  search = oyOptions_FindString( collected_elements, "search", 0 );
 
   for(i = 0; i < n; ++i)
   {
     o = oyOptions_Get( collected_elements, i );
     opts = (oyOptions_s*) oyOption_StructGet( o, oyOBJECT_OPTIONS_S );
-    
+
     if(!opts && oyFilterRegistrationMatch( o->registration,"xf:label",
                                            oyOBJECT_NONE ) &&
        print)
@@ -178,18 +211,23 @@ int        oyXML2XFORMsFLTKSelect1Handler (
            * store the label and value in user_data() for evaluating results */
           if(print)
           {
-            char ** texts = (char**)malloc(sizeof(char*)*3);
+            fltk_cb_data *cb_data = (fltk_cb_data*)malloc(sizeof(fltk_cb_data));
             int len = strlen(label), pos = 0;
-            memset(texts, 0, sizeof(char*)*3 );
-            texts[0] = (char*) malloc(strlen(label)*2);
-            texts[1] = strdup(value);
+            memset(cb_data, 0, sizeof(fltk_cb_data) );
+            cb_data->label = (char*) malloc(strlen(label)*2);
+            cb_data->value = strdup(value);
+            cb_data->key = strdup(key);
+            cb_data->callback_data = (oyOptions_s**)
+                                                 &fltk_args->xforms_data_model_;
             for(k = 0; k <= len; ++k)
             {
               if(label[k] == '/')
-                texts[0][pos++] = '\\';
-              texts[0][pos++] = label[k];
+                cb_data->label[pos++] = '\\';
+              cb_data->label[pos++] = label[k];
             }
-            c->add( (const char *) texts[0], 0, 0, (void*)texts, 0 );
+            c->add( (const char *) cb_data->label, 0,
+                    fltkCallback,
+                    (void*)cb_data, 0 );
           }
 
           ++choices_n;
@@ -226,9 +264,8 @@ int        oyXML2XFORMsFLTKSelect1Handler (
     t[0] = 0;
 
     if(fltk_args)
-      oyStringListAddStaticString_( &fltk_args->options,
-                                    &fltk_args->n, default_key,
-                                    oyAllocateFunc_, oyDeAllocateFunc_ );
+      oyOptions_SetFromText( (oyOptions_s**)&fltk_args->xforms_data_model_,
+                             key, default_value, OY_CREATE_NEW );
 
     oyOption_Release( &o );
   }
@@ -236,6 +273,8 @@ int        oyXML2XFORMsFLTKSelect1Handler (
   if(choices)
     oyFree_m_( choices );
   oyFree_m_( default_key );
+  if(key)
+    oyFree_m_( key );
 
   /*printf("collected:\n%s", oyOptions_GetText( collected_elements, oyNAME_NICK));*/
   return 0;
@@ -273,7 +312,7 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
 {
   const char * tmp = 0;
   int size = 0;
-  fltk_args_s * fltk_args = (fltk_args_s *)user_data;
+  oyFormsArgs_s * fltk_args = (oyFormsArgs_s *)user_data;
   int print = fltk_args ? !fltk_args->silent : 1;
   OyFl_Box_c * box = 0;
 
@@ -333,7 +372,7 @@ int        oyXML2XFORMsFLTKHtmlHeadline4Handler (
 {
   const char * tmp = 0;
   int size = 0;
-  fltk_args_s * fltk_args = (fltk_args_s *)user_data;
+  oyFormsArgs_s * fltk_args = (oyFormsArgs_s *)user_data;
   int print = fltk_args ? !fltk_args->silent : 1;
   OyFl_Box_c * box = 0;
 
