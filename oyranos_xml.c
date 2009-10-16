@@ -972,6 +972,8 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
           {
             STRING_ADD( tmp, (char*)attr->children->content );
             STRING_ADD( tmp, "." );
+            STRING_ADD( tmp, "attr:ref" );
+            STRING_ADD( tmp, "." );
             STRING_ADD( tmp, name );
             error = oyOptions_SetFromText( &wid_data, &tmp[1], v,
                                            OY_CREATE_NEW );
