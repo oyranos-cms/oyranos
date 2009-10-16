@@ -364,7 +364,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
       </xf:choices>\n\
      </xf:select1>\n");
 
-          } else if(1 || oy_debug)
+          } else if(oy_debug)
             /* tell about missed options */
             printf("  %d: %s %s\n", __LINE__,
                   t->config_string?t->config_string:"-", name );
