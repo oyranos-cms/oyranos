@@ -593,6 +593,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CONFIG_S: text = "oyConfig_s"; break;
     case oyOBJECT_CONFIGS_S: text = "oyConfigs_s"; break;
     case oyOBJECT_UI_HANDLER_S: text = "oyUiHandler_s"; break;
+    case oyOBJECT_FORMS_ARGS_S: text = "oyFormsArgs_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
   }
 
@@ -11173,8 +11174,8 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
  *  @param[in]     type                influences the info_text output
  *                                     - oyNAME_NAME - a short one line text,
  *                                     - oyNAME_NICK - one word,
- *                                     - oyNAME_DESCRIPTION - expensive text, even
- *                                     lines contain the property key name,
+ *                                     - oyNAME_DESCRIPTION - expensive text,
+ *                                     even lines contain the property key name,
  *                                     odd lines contain the value,
  *                                     lines are separated by newline '\\n'
  *  @param[in]     flags               reserved

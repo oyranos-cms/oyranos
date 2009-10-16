@@ -169,6 +169,7 @@ typedef enum {
   oyOBJECT_CONFIG_S,                  /**< oyConfig_s */
   oyOBJECT_CONFIGS_S,                 /**< oyConfigs_s */
   oyOBJECT_UI_HANDLER_S,              /**< oyUiHandler_s */
+  oyOBJECT_FORMS_ARGS_S,              /**< oyFormsArgs_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 
