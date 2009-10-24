@@ -14314,6 +14314,45 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
   return error;
 }
 
+/** Function oyProfile_AddTagText
+ *  @memberof oyProfile_s
+ *  @brief   add a text tag
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/10/18
+ *  @since   2009/10/18 (Oyranos: 0.1.10)
+ */
+int                oyProfile_AddTagText (
+                                       oyProfile_s       * profile,
+                                       icSignature         signature,
+                                       const char        * text )
+{
+  oyStructList_s * list = 0;
+  oyName_s * name = oyName_new(0);
+  int error = 0;
+  oyProfileTag_s * tag = 0;
+
+  name = oyName_set_ ( name, text, oyNAME_NAME,
+                       oyAllocateFunc_, oyDeAllocateFunc_ );
+  list = oyStructList_New(0);
+  error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0 );
+
+  if(!error)
+  {
+    tag = oyProfileTag_Create( list, icSigTextType, 0,OY_MODULE_NICK, 0);
+    error = !tag;
+  }
+
+  if(!error)
+    tag->use = signature;
+
+  oyStructList_Release( &list );
+
+  if(tag)
+    error = oyProfile_TagMoveIn ( profile, &tag, -1 );
+
+  return error;
+}
 
 
 

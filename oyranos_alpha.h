@@ -1168,6 +1168,10 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
                                        int                 pos );
 int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
                                        int                 pos );
+int                oyProfile_AddTagText (
+                                       oyProfile_s       * profile,
+                                       icSignature         signature,
+                                       const char        * text );
 const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
                                        int                 dl_pos );
 int                oyProfile_DeviceGet ( oyProfile_s     * profile,
