@@ -1507,6 +1507,8 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
               XRRFreeGamma( gamma );
             } else
             {
+              if(gamma)
+                XRRFreeGamma( gamma );
               XRRFreeOutputInfo( output_info );
               break;
             }
