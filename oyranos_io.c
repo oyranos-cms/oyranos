@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "config.h"
 #include "oyranos.h"
@@ -175,7 +176,7 @@ oyWriteMemToFile_(const char* name, void* mem, size_t size)
   }
 
   {
-    fp = fopen(full_name, "w");
+    fp = fopen(full_name, "wb");
     DBG_PROG2_S("fp = %d filename = %s", (int)(intptr_t)fp, filename)
     if ((fp != 0)
      && mem
@@ -211,6 +212,98 @@ oyWriteMemToFile_(const char* name, void* mem, size_t size)
 
   DBG_PROG_ENDE
   return r;
+}
+
+#define OY_FILE_APPEND 0x01
+#define OY_FILE_NAME_SEARCH 0x02
+
+int  oyWriteMemToFile2_              ( const char        * name,
+                                       void              * mem,
+                                       size_t              size,
+                                       uint32_t            flags,
+                                       char             ** result,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = 0;
+  const char* filename = name;
+  char * full_name = 0;
+  char * mode = "wb";
+  int exist = 0, pos = 1;
+  char * tmp = 0;
+
+  if(!name)
+    return 1;
+
+  if(flags & OY_FILE_APPEND)
+    mode = "ab";
+
+  full_name = oyResolveDirFileName_( filename );
+  exist = oyIsFile_(full_name);
+  if(exist &&
+     !flags & OY_FILE_APPEND && !flags & OY_FILE_NAME_SEARCH)
+  {
+    WARNc2_S( "%s: %s", _("File exists"), full_name );
+    return 1;
+  }
+
+  if(exist && flags & OY_FILE_NAME_SEARCH && !(flags & OY_FILE_APPEND))
+  {
+    char * end = 0;
+    char * num = 0;
+    char * format = oyAllocateFunc_( 32 );
+    char * ext = 0;
+    int digits = 3;
+    int max = 1000;
+
+    /* allocate memory */
+    oyAllocHelper_m_( tmp, char, strlen(full_name)+12, oyAllocateFunc_, return 1);
+
+    oySprintf_( tmp, "%s", full_name );
+    ext = end = oyStrrchr_( tmp, '.' );
+    if(!end)
+      end = tmp + oyStrlen_( tmp );
+    num = end;
+    while(isdigit( num[0] ) && num != tmp) --num;
+    if(end - num)
+      digits = (int) (end - num);
+    /* move the extension */
+    else if(ext)
+      memmove( &ext[digits], ext, digits + 1 );
+    /* settle with a new format */
+    sprintf( format, "%%0%dd", digits );
+    pos += atoi(num);
+    /* write a new number */
+    sprintf( num, format, pos );
+    if(ext)
+      tmp[oyStrlen_(tmp)] = '.';
+
+    /* search a non existing file name */
+    while(oyIsFile_(tmp))
+    {
+      sprintf( num, format, pos++ );
+      if(ext)
+        tmp[oyStrlen_(tmp)] = '.';
+    }
+    max = (int)pow( 10, digits);
+    if(pos >= (int)pow( 10, digits) )
+    {
+      WARNc2_S( "%s: %s", _("File exists"), full_name );
+      return 1;
+    }
+
+    if(result)
+      *result = oyStringCopy_( tmp, allocateFunc?allocateFunc:oyAllocateFunc_ );
+
+    filename = tmp;
+    if(format) oyFree_m_(format)
+  }
+
+  if(!error)
+    error = oyWriteMemToFile_( filename, mem, size );
+
+  if(tmp) oyFree_m_(tmp)
+
+  return error;
 }
 
 char*
