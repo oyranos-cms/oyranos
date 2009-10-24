@@ -496,7 +496,7 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
-	$(LDLIBS) $(LIBSONAMEFULL) $(LINK_LIB_PATH)
+	$(LDLIBS) $(LIBSONAMEFULL) $(LINK_LIB_PATH) $(LCMS_LIBS)
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
