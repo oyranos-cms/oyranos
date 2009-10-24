@@ -1,4 +1,4 @@
-.TH oyranos-monitor 1 "May 21, 2009" "User Commands"
+.TH oyranos-monitor 1 "October 24, 2009" "User Commands"
 .SH NAME
 oyranos-monitor \- Oyranos CMS monitor configuration
 .SH SYNOPSIS
@@ -11,6 +11,8 @@ oyranos-monitor \- Oyranos CMS monitor configuration
 \fBoyranos-monitor\fR [ -e [-x num] [-y num] [-v] ]
 .fi 
 \fBoyranos-monitor\fR [ -l [-v] ]
+.fi 
+\fBoyranos-monitor\fR [ -f [edid|icc|edid_icc] -o \fIOUT_FILENAME\fR [-x num] [-y num] [-v] ]
 .SH DESCRIPTION
 The oyranos-monitor programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS). Profiles are stored in a data base, the Oyranos DB.
 .SH OPTIONS
@@ -36,6 +38,12 @@ query one profile name from the Oyranos device profile data base
 .TP
 .B \-l, \-\-list
 list devices visible to Oyranos
+.TP
+.B \-f, \-\-format [edid|icc|edid_icc]
+Select a data format. Possible are \fBedid\fR for server side EDID data, \fBicc\fR for a server side ICC profile and \fBedid_icc\fR for a ICC profile created from server side EDID. Without the -o/--ouput option the string followed this option will be used as filename.
+.TP
+.B \-o, \-\-output \fIOUT_FILENAME\fR
+Write data selected by -f/--format to the given filename.
 .TP
 .B \-v, \-\-verbose
 increase verbosity
@@ -83,6 +91,9 @@ Query the Oyranos device data base profile on the local computer:
 .TP
 List all Oyranos monitor devices:
 .B oyranos-monitor -l
+.TP
+Dump data in the format following the -f option:
+.B oyranos-monitor -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos
 .PP 
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)

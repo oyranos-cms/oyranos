@@ -195,6 +195,8 @@ int main( int argc , char** argv )
                         { setup = 1; i=100; break; }
                         else if(strcmp(&argv[pos][2],"format") == 0)
                         { OY_PARSE_STRING_ARG(format); break; }
+                        else if(strcmp(&argv[pos][2],"output") == 0)
+                        { OY_PARSE_STRING_ARG(output); break; }
                         else if(strcmp(&argv[pos][2],"database") == 0)
                         { database = 1; monitor_profile = 0; i=100; break; }
                         else if(strcmp(&argv[pos][2],"list") == 0)
@@ -228,7 +230,7 @@ int main( int argc , char** argv )
                         printf("      %s -l\n",        argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Dump data:"));
-                        printf("      %s -f=[edid|icc|edid_icc] -x pos -y pos -o=edid.bin\n", argv[0]);
+                        printf("      %s -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
