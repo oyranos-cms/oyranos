@@ -1195,110 +1195,6 @@ oyTESTRESULT_e testProfileLists ()
 }
 
 
-oyTESTRESULT_e testMonitor ()
-{
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-
-  int n, i, error = 0;
-  char * block, * text, * display_name;
-  size_t size = 0;
-  oyProfile_s * p, * p2;
-  oyConfigs_s * devices = 0;
-  oyConfig_s * c = 0;
-
-  oyExportReset_(EXPORT_SETTING);
-  fprintf(stdout, "\n" );
-
-
-  error = oyDevicesGet( OY_TYPE_STD, "monitor", 0, &devices );
-  n = oyConfigs_Count( devices );
-  if(!error)
-  {
-    for(i = 0; i < n; ++i)
-    {
-      c = oyConfigs_Get( devices, i );
-
-      error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
-
-      if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
-      else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
-
-      if(text)
-        free( text );
-
-      error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
-
-      if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
-      else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
-
-      if(text)
-        free( text );
-
-      error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
-
-      if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "device:\n%s", text )
-      else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
-
-      if(text)
-        free( text );
-
-      oyConfig_Release( &c );
-    }
-  }
-  oyConfigs_Release( &devices );
-
-  display_name = oyGetDisplayNameFromPosition( 0, 0,0, malloc);
-  block = oyGetMonitorProfile( display_name, &size, malloc );
-  p = oyProfile_FromMem( size, block, 0,0 );
-
-  if(block)
-  {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "monitor profile from server \"%s\" %d \"%s\"", oyProfile_GetText( p, oyNAME_DESCRIPTION ), size, display_name );
-  } else
-  {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "no default monitor profile %d \"%s\"", size, display_name );
-  }
-
-  text = oyGetMonitorProfileNameFromDB( display_name, malloc );
-  if(display_name) free(display_name);
-  if(text)
-  {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "monitor profile from Oyranos DB %s", text );
-  } else
-  {
-    PRINT_SUB( oyTESTRESULT_XFAIL,
-    "no monitor profile from Oyranos DB" );
-  }
-
-  p2 = oyProfile_FromFile( text, 0, 0 );
-
-  if(text &&
-     strcmp( oyNoEmptyString_m_(oyProfile_GetText( p2, oyNAME_DESCRIPTION )),
-             oyNoEmptyString_m_(oyProfile_GetText( p , oyNAME_DESCRIPTION )))
-     == 0)
-  {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "monitor profile from Oyranos DB matches the server one" );
-  } else
-  {
-    PRINT_SUB( oyTESTRESULT_XFAIL,
-    "no monitor profile from Oyranos DB differs from the server one" );
-  }
-
-
-  return result;
-}
-
-
 
 oyTESTRESULT_e testRegistrationMatch ()
 {
@@ -2957,7 +2853,7 @@ int main(int argc, char** argv)
   TEST_RUN( testSettings, "default oyOptions_s settings" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
-  TEST_RUN( testMonitor,  "Monitor profiles" );
+  //TEST_RUN( testMonitor,  "Monitor profiles" );
   //TEST_RUN( testDevices,  "Devices listing" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
   TEST_RUN( testPolicy, "Policy handling" );
