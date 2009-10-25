@@ -26,11 +26,14 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Menu_Button.H>
 #include <FL/fl_draw.H>
 
 #ifdef HAVE_X11
 #include <FL/x.H>
 #endif
+
+#define _(text) text
 
 #include <cmath>
 
@@ -41,10 +44,13 @@ using namespace oyranos;
 
 extern "C" {
 /* forward declaration of oyranos_alpha.c */
-int                oyWriteMemToFile_ ( const char*, void*, size_t );
+int                oyWriteMemToFile_ ( const char*, const void*, size_t );
+char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
+                         oyAlloc_f     allocate_func);
 }
 
 int verbose = 0;
+
 
 class Oy_Fl_Double_Window : public Fl_Double_Window
 {
@@ -89,6 +95,12 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
     return Fl_Double_Window::handle(e);
   };
 };
+
+
+/*  Menü für rechten Maustastenklick
+    node = oyFilterGraph_GetNode( graph, -1, "//" OY_TYPE_STD "/icc", 0 );
+    Die icc.lcms Optionen sollten noch durch "oydi" miteinander verknüpft sein.
+ */
 
 class Fl_Oy_Box : public Fl_Box
 {
@@ -225,7 +237,7 @@ class Fl_Oy_Box : public Fl_Box
           (!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) ||
            !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle )||
            ticket->start_xy[0] != ticket->start_xy_old[0] ||
-           ticket->start_xy[1] != ticket->start_xy_old[1]))
+           ticket->start_xy[1] != ticket->start_xy_old[1]) )
       {
 #ifdef DEBUG
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
@@ -310,6 +322,13 @@ public:
     context = oyConversion_Copy( c, 0 );
   }
 
+  void damage( char c )
+  {
+    if(c & FL_DAMAGE_USER1)
+      ticket->start_xy_old[0]--;
+    Fl_Box::damage( c );
+  }
+
   void setImage( oyImage_s * image_in )
   {
   oyFilterNode_s * in, * out;
@@ -391,7 +410,7 @@ public:
   }
 };
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box);
+Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyOptions_s *icc_opts);
 
 
 int
@@ -400,7 +419,9 @@ main(int argc, char** argv)
   /* some Oyranos types */
   oyConversion_s * conversion = 0;
   oyFilterNode_s * in, * out;
-  oyOptions_s * options = 0;
+  oyOptions_s * options = 0,
+              * icc_opts = 0;
+  oyOption_s * o = 0;
   oyImage_s * image_in = 0, * image_out = 0;
   int error = 0,
       file_pos = 1;
@@ -478,6 +499,8 @@ main(int argc, char** argv)
 
   /* create a new filter node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
+  /* the options are subject to manipulate */
+  icc_opts = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
@@ -549,7 +572,10 @@ main(int argc, char** argv)
 
 
   Fl_Oy_Box * oy_box = 0;
-  Oy_Fl_Double_Window * win = createWindow( &oy_box );
+  Oy_Fl_Double_Window * win = createWindow( &oy_box, icc_opts );
+  o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH "fltk/image_display/fl_oy_box", 0 );
+  oyOption_SetFromData( o, oy_box, 0 );
+  oyOptions_MoveIn( icc_opts, &o, -1 );
 
   oy_box->setConversion( conversion );
 
@@ -571,8 +597,69 @@ main(int argc, char** argv)
 #include <FL/Fl_Image.H>
 static Fl_RGB_Image image_oyranos_logo(oyranos_logo, 64, 64, 4, 0);
 
+void
+callback ( Fl_Widget* w, void* daten )
+{
+  oyStruct_s * object = (oyStruct_s*) daten;
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box)
+  if(!w->parent())
+    printf("Could not find parents.\n");
+  else
+  if(!object)
+    printf("Oyranos argument missed.\n");
+  else
+  if(object->type_ == oyOBJECT_OPTIONS_S)
+  {
+    oyOptions_s * opts = (oyOptions_s*) object,
+                * new_opts = 0;
+    oyOption_s * o = oyOptions_Get( opts, 0 );
+    const char * tmp_dir = getenv("TMPDIR"),
+               * in_text = 0;
+    char * command = new char [1024];
+    char * t = 0;
+    int error = 0, i;
+
+    if(!tmp_dir)
+      tmp_dir = "/tmp";
+
+    /* export the options values */
+    sprintf( command, "%s/image_display_in_tmp.xml", tmp_dir );
+    in_text = oyOptions_GetText( opts, oyNAME_NAME );
+    i = oyWriteMemToFile_( command, in_text, strlen(in_text) );
+    in_text = 0; command[0] = 0;
+
+    /* render the options to the UI */
+    sprintf(command, "oyranos-xforms-fltk -n %s", o->registration );
+    oyOption_Release( &o );
+    t = strrchr(command, '/');
+    t[0] = 0;
+    sprintf(&command[strlen(command)],
+            " -i %s/image_display_in_tmp.xml -o %s/image_display_tmp.xml",
+            tmp_dir, tmp_dir );
+    error = system(command);
+
+    /* reload changed options */
+    t = strstr(command," -o ");
+    size_t size = 0;
+    char * opts_text = oyReadFileToMem_(t+4, &size, malloc);
+    new_opts = oyOptions_FromText( opts_text, 0, 0 );
+    free(opts_text);
+    oyOptions_CopyFrom( &opts, new_opts, oyBOOLEAN_UNION, oyFILTER_REG_NONE, 0);
+
+    /* TODO update the conversion context */
+    o = oyOptions_Find( opts, "fl_oy_box" );
+    Fl_Oy_Box * box = (Fl_Oy_Box*) oyOption_GetData( o, 0, 0 );
+    oyOption_Release( &o );
+    box->damage( FL_DAMAGE_USER1 );
+
+    delete [] command;
+  }
+  else
+    printf("could not find a suitable program structure\n");
+}
+
+
+Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyOptions_s *icc_opts)
 {
   int w = 640,
       h = 480;
@@ -594,6 +681,16 @@ Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box)
         o->image(image_oyranos_logo);
         o->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
       }
+      Fl_Menu_Button  *menue_;
+      Fl_Menu_Button  *menue_button_;
+      menue_button_ = new Fl_Menu_Button(0,0,win->w(),win->h(),0);
+      menue_button_->type(Fl_Menu_Button::POPUP3);
+      menue_button_->box(FL_NO_BOX);
+      menue_button_->clear();
+      menue_ = new Fl_Menu_Button(0,0,win->w(),win->h(),""); menue_->hide();
+      menue_->add( _("Edit Options"),
+                   FL_CTRL + 'e', callback, (void*)icc_opts, 0 );
+      menue_button_->copy(menue_->menu());
   win->end();
   win->resizable(*oy_box);
 
