@@ -33,6 +33,9 @@ void usage(int argc, char ** argv)
                         printf("  %s\n",               _("Show options"));
                         printf("      %s -n \"module_name\"\n", argv[0]);
                         printf("\n");
+                        printf("  %s\n",               _("Write Results:"));
+                        printf("      %s -n \"module_name\" -o \"xml_file\"\n", argv[0]);
+                        printf("\n");
                         printf("  %s\n",               _("Get XFORMS:"));
                         printf("      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
                         printf("\n");
@@ -49,6 +52,9 @@ int main (int argc, char ** argv)
 {
   const char * node_name = 0;
   const char * xml_file = 0;
+  const char * output_model_file = 0,
+             * input_model_file = 0,
+             * result_xml = 0;
   oyFilterNode_s * node = 0;
   char * ui_text = 0,
       ** namespaces = 0,
@@ -119,6 +125,8 @@ int main (int argc, char ** argv)
             switch (argv[pos][i])
             {
               case 'n': OY_PARSE_STRING_ARG( node_name ); break;
+              case 'o': OY_PARSE_STRING_ARG( output_model_file ); break;
+              case 'i': OY_PARSE_STRING_ARG( input_model_file ); break;
               case 'x': OY_PARSE_STRING_ARG( xml_file ); break;
               case 'v': oy_debug += 1; break;
               case 'h':
@@ -152,6 +160,7 @@ int main (int argc, char ** argv)
                         t = 0;
                         i=100; break;
               default:
+                        printf("%s -%c\n", _("Unknown argument"), argv[pos][i]);
                         usage(argc, argv);
                         exit (0);
                         break;
@@ -180,10 +189,17 @@ int main (int argc, char ** argv)
   node = oyFilterNode_NewWith( node_name, 0,0 );
   oyOptions_Release( &node->core->options_ );
   /* First call for options ... */
-  opts = oyFilterNode_OptionsGet( node,
-                                  OY_SELECT_FILTER | OY_SELECT_COMMON |
-                                  oyOPTIONATTRIBUTE_ADVANCED /*|
-                                  oyOPTIONATTRIBUTE_FRONT*/ );
+  if(input_model_file)
+  {
+    size_t size = 0;
+    result_xml = oyReadFileToMem_(input_model_file, &size, oyAllocateFunc_);
+    opts = oyOptions_FromText( result_xml, 0,0 );
+  }
+  else
+    opts = oyFilterNode_OptionsGet( node,
+                                    OY_SELECT_FILTER | OY_SELECT_COMMON |
+                                    oyOPTIONATTRIBUTE_ADVANCED /*|
+                                    oyOPTIONATTRIBUTE_FRONT*/ );
   /* ... then get the UI for this filters options. */
   error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
   oyFilterNode_Release( &node );
@@ -260,7 +276,11 @@ int main (int argc, char ** argv)
   Fl::run();
 
 
-  printf("%s\n", oyFormsArgs_ModelGet(oy_forms_options));
+  result_xml = oyFormsArgs_ModelGet( oy_forms_options );
+  if(output_model_file)
+    oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
+  else
+    printf( "%s\n", result_xml );
   oyFormsArgs_Release( &oy_forms_options );
 
   if(xml_file)
