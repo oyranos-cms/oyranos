@@ -783,6 +783,12 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
                                        int                 pos,
                                        oyObject_s          object );
+int            oyOptions_Set         ( oyOptions_s       * options,
+                                       oyOption_s        * option,
+                                       int                 pos,
+                                       oyObject_s          object );
+int            oyOptions_SetOpts     ( oyOptions_s       * list,
+                                       oyOptions_s       * add );
 int            oyOptions_AppendOpts  ( oyOptions_s       * list,
                                        oyOptions_s       * append );
 int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
@@ -850,7 +856,8 @@ OYAPI int  OYEXPORT
                oyOptions_SaveToDB    ( oyOptions_s       * options,
                                        const char        * key_base_name );
 
-/** @brief   a means to rank the result of comparing two key's
+/** @struct  oyRankPad
+ *  @brief   a means to rank the result of comparing two key's
  *
  *  The structure is part of an other data structure and to be maintained by
  *  that. So it is not a full member of the oyStruct_s object familiy.
