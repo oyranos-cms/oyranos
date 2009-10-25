@@ -678,7 +678,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                 val = oyProfile_GetText( proof, oyNAME_NICK );
                 oyProfiles_MoveIn( proofs, &proof, -1 );
                 oyOptions_MoveInStruct( &f_options,
-                                    "//" OY_TYPE_STD "/icc/profiles_simulation",
+                                    OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD "/icc/profiles_simulation",
                                         (oyStruct_s**)& proofs,
                                         OY_CREATE_NEW );
                 if(verbose)
