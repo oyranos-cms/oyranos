@@ -180,7 +180,7 @@ int oyIsFile_     (const char* fileName);
 int oyIsFileFull_ (const char* fullFileName);
 int oyMakeDir_    (const char* path);
 
-int   oyWriteMemToFile_ (const char* name, void* mem, size_t size);
+int   oyWriteMemToFile_ (const char* name, const void* mem, size_t size);
 char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
                          oyAlloc_f     allocate_func);
 

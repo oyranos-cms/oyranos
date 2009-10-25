@@ -131,6 +131,7 @@ oyReadFileToMem_(const char* name, size_t *size,
           if(mem) {
             memcpy( mem, temp, *size );
             oyFree_m_ (temp)
+            mem[*size] = 0;
           } else {
             oyFree_m_ (mem)
             *size = 0;
@@ -150,7 +151,7 @@ oyReadFileToMem_(const char* name, size_t *size,
 }
 
 int
-oyWriteMemToFile_(const char* name, void* mem, size_t size)
+oyWriteMemToFile_(const char* name, const void* mem, size_t size)
 {
   FILE *fp = 0;
   /*int   pt = 0;
