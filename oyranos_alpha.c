@@ -5001,7 +5001,7 @@ OYAPI int  OYEXPORT
  *
  *  @param[in]     blob                the data blob
  *  @param[in]     ptr                 copy the data into the blob object
- *  @param[in]     size                data size
+ *  @param[in]     size                data size; 0 means the pointer is not owned by the object.
  *  @param[in]     type                data type; assuming 8 byte with typical
  *                                     4 byte content
  *  @return                            0 - success, 1 - error
@@ -5026,13 +5026,22 @@ int            oyBlob_SetFromData    ( oyBlob_s          * blob,
       s->oy_->deallocateFunc_( s->ptr );
     s->size = 0;
 
-    s->ptr = s->oy_->allocateFunc_( size );
-    error = !s->ptr;
-    s->flags = 0;
+    if(size)
+    {
+      s->ptr = s->oy_->allocateFunc_( size );
+      error = !s->ptr;
+      s->flags = 0;
+    } else
+      s->flags = 0x01;
   }
 
   if(error <= 0)
-    error = !memcpy( s->ptr, ptr, size );
+  {
+    if(size)
+      error = !memcpy( s->ptr, ptr, size );
+    else
+      s->ptr = ptr;
+  }
 
   if(error <= 0)
     s->size = size;
@@ -6921,11 +6930,8 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
           *size = size_;
       }
 
-    } else /* oyOBJECT_CMM_POINTER_S */
-    {
-      cmm_ptr = (oyCMMptr_s*)option->value->oy_struct;
-      ptr = cmm_ptr->ptr;
-    }
+    } else
+      ptr = blob->ptr;
   }
 
 
@@ -7975,6 +7981,87 @@ int            oyOptions_AppendOpts  ( oyOptions_s       * list,
   return error;
 }
 
+/** Function oyOptions_Set
+ *  @memberof oyOptions_s
+ *  @brief   set a element in a Options list
+ *
+ *  Already listed options are replaced by the new option.
+ *
+ *  Adding a new element without any checks is as simple as following code:
+ *  @verbatim
+ *     tmp = oyOption_Copy( option, object );
+ *     oyOptions_MoveIn( options, &tmp, -1 ); @endverbatim
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/25 (Oyranos: 0.1.10)
+ *  @date    2009/10/25
+ */
+int            oyOptions_Set         ( oyOptions_s       * options,
+                                       oyOption_s        * option,
+                                       int                 pos,
+                                       oyObject_s          object )
+{
+  oyOption_s *tmp = 0;
+  int error = !options || !option;
+  int n, i, replace = 0;
+
+  if(error <= 0)
+  {
+    n = oyOptions_Count( options );
+
+    for(i = 0; i < n && !replace; ++i)
+    {
+      tmp = oyOptions_Get( options, i );
+      if(oyFilterRegistrationMatch( tmp->registration, option->registration, 0))
+      {
+        replace = 2;
+        /* replace as we priorise the new value */
+        oyOption_Copy__( tmp, option );
+      }
+      oyOption_Release( &tmp );
+    }
+
+    if(replace == 0)
+    {
+      tmp = oyOption_Copy( option, object );
+      oyOptions_MoveIn( options, &tmp, -1 );
+    }
+  }
+
+  return error;
+}
+
+/** Function oyOptions_SetOpts
+ *  @memberof oyOptions_s
+ *  @brief   set options in a Options list
+ *
+ *  Already listed options are replaced by the new options.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/25 (Oyranos: 0.1.10)
+ *  @date    2009/10/25
+ */
+int            oyOptions_SetOpts     ( oyOptions_s       * list,
+                                       oyOptions_s       * add )
+{
+  int error = !list;
+  int i,n;
+  oyOption_s * o = 0;
+
+  if(error <= 0)
+  {
+    n = oyOptions_Count( add );
+    for(i = 0; i < n; ++i)
+    {
+      o = oyOptions_Get( add, i );
+      oyOptions_Set( list, o, -1, 0 );
+      oyOption_Release( &o );
+    }
+  }
+
+  return error;
+}
+
 
 /**
  *  Function oyOptions_CopyFrom
@@ -7990,7 +8077,7 @@ int            oyOptions_AppendOpts  ( oyOptions_s       * list,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/05/05 (Oyranos: 0.1.10)
- *  @date    2009/05/05
+ *  @date    2009/10/25
  */
 int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
                                        oyOptions_s       * from,
@@ -8026,7 +8113,7 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
         if(!from->list)
           from->list = oyStructList_New( 0 );
       }
-      error = oyOptions_AppendOpts( s, from );
+      error = oyOptions_SetOpts( s, from );
 
     } else
     {
