@@ -2923,42 +2923,6 @@ int                oyConversion_Correct (
                                        
 
 
-#if 0
-/** @struct oyColourConversion_s
-    In case where
-      a option indicates monitor output, or
-      the out image struct has no profile set, 
-    the conversion will route to monitor colours, honouring the oyImage_s screen
-    position.
-
-    deprecate with the new filter architecture
- */
-typedef struct {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_COLOUR_CONVERSION_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-  oyProfiles_s       * profiles_;      /*!< @private effect / simulation profiles */ 
-  oyOptions_s        * options_;       /*!< @private conversion opts */
-  oyImage_s          * image_in_;      /*!< @private input */
-  oyImage_s          * image_out_;     /*!< @private output */
-  oyStructList_s     * cmms_;          /**< @private list of CMM entries to call */
-  int32_t              flags;          /**< 0x01 is the warned bit */
-} oyColourConversion_s;
-
-oyColourConversion_s* oyColourConversion_Create (
-                                       oyOptions_s       * opts,
-                                       oyImage_s         * in,
-                                       oyImage_s         * out,
-                                       oyObject_s          object );
-oyColourConversion_s* oyColourConversion_Copy (
-                                       oyColourConversion_s * cc,
-                                       oyObject_s          object );
-int          oyColourConversion_Release ( oyColourConversion_s ** cc );
-
-int          oyColourConversion_Run  ( oyColourConversion_s * colour );
-oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * s );
-#endif
 
 /** @struct oyNamedColour_s
  *  @brief colour patch with meta informations
