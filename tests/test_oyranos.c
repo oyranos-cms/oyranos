@@ -832,6 +832,110 @@ oyTESTRESULT_e testRegistrationMatch ()
   return result;
 }
 
+int myFilterSignalHandler            ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data )
+{
+  oyFilterNode_s * node = 0;
+  int handled = 0;
+  switch(signal_type)
+  {
+  case oySIGNAL_OK:
+       fprintf(stderr, "Signal: oySIGNAL_OK\n" );
+       break;
+  case oySIGNAL_CONNECTED:                  /**< connection established */
+       fprintf(stderr, "Signal: oySIGNAL_CONNECTED\n" );
+       break;
+  case oySIGNAL_RELEASED:                   /**< released the connection */
+       fprintf(stderr, "Signal: oySIGNAL_RELEASED\n" );
+       break;
+  case oySIGNAL_DATA_CHANGED:               /**< call to update image views */
+       fprintf(stderr, "Signal: oySIGNAL_DATA_CHANGED\n" );
+       if(observer->observer->type_ == oyOBJECT_FILTER_NODE_S)
+       {
+         node = (oyFilterNode_s*) observer->observer;
+         if(node && node->backend_data && node->backend_data->release)
+         {
+           if(observer->model->type_ == oyOBJECT_OPTION_S)
+           {
+             fprintf( stderr, "release context %s\n",
+                      oyStruct_TypeToText( observer->observer ) );
+             node->backend_data->release( (oyStruct_s**)&node->backend_data);
+           } else
+             fprintf( stderr, "Model type not expected: %s\n",
+                      oyStruct_TypeToText( observer->model ) );
+         } else
+           fprintf( stderr, "no context %s\n",
+                    oyStruct_TypeToText( observer->observer ) );
+       }
+       else
+         fprintf( stderr, "wrong signal handler for %s\n",
+                  oyStruct_TypeToText( observer->observer ) );
+       break;
+  case oySIGNAL_STORAGE_CHANGED:            /**< new data accessors */
+       fprintf(stderr, "Signal: oySIGNAL_STORAGE_CHANGED\n" );
+       break;
+  case oySIGNAL_INCOMPATIBLE_DATA:          /**< can not process image */
+       fprintf(stderr, "Signal: oySIGNAL_INCOMPATIBLE_DATA\n" );
+       break;
+  case oySIGNAL_INCOMPATIBLE_OPTION:        /**< can not handle option */
+       fprintf(stderr, "Signal: oySIGNAL_INCOMPATIBLE_OPTION\n" );
+       break;
+  case oySIGNAL_INCOMPATIBLE_CONTEXT:       /**< can not handle profile */
+       fprintf(stderr, "Signal: oySIGNAL_INCOMPATIBLE_CONTEXT\n" );
+       break;
+  case oySIGNAL_USER1: 
+       fprintf(stderr, "Signal: oySIGNAL_USER1\n" );
+       break;
+  case oySIGNAL_USER2: 
+       fprintf(stderr, "Signal: oySIGNAL_USER2\n" );
+       break;
+  case oySIGNAL_USER3:                      /**< more signal types are possible */
+       fprintf(stderr, "Signal: oySIGNAL_USER3\n" );
+       break;
+  default:
+       fprintf(stderr, "Signal: unknown\n" );
+       break;
+  }
+  return handled;
+}
+
+oyTESTRESULT_e testObserver ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyOption_s * o = oyOption_New( "a/b/c/d/my_key", 0 );
+  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0, 0 );
+
+  fprintf(stdout, "\n" );
+
+  oyOption_SetFromText( o, "my_value", 0 );
+
+  if( !oyStruct_ObserverAdd( (oyStruct_s*)o, (oyStruct_s*)node, 0,
+                             myFilterSignalHandler ) )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Added Observer                        " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "Added Observer                        " );
+  }
+
+  oyOption_SetFromText( o, "new_value", 0 );
+
+  if( !oyStruct_ObserverRemove( (oyStruct_s*)o, (oyStruct_s*)node ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Removed Observer                      " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "Removed Observer                      " );
+  }
+
+  oyOption_SetFromText( o, "other_value", 0 );
+  oyOption_Release( &o );
+  oyFilterNode_Release( &node );
+
+  return result;
+}
+
 
 #define TEST_RUN( prog, text ) { \
   if(argc > 1) { \
@@ -871,6 +975,7 @@ int main(int argc, char** argv)
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testMonitor,  "Monitor profiles" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
+  TEST_RUN( testObserver,  "Generic Object Observation" );
 
   /* give a summary */
 

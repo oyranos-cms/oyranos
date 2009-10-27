@@ -646,7 +646,7 @@ callback ( Fl_Widget* w, void* daten )
     free(opts_text);
     oyOptions_CopyFrom( &opts, new_opts, oyBOOLEAN_UNION, oyFILTER_REG_NONE, 0);
 
-    /* TODO update the conversion context */
+    /* TODO update the conversion context and enforce a redraw */
     o = oyOptions_Find( opts, "fl_oy_box" );
     Fl_Oy_Box * box = (Fl_Oy_Box*) oyOption_GetData( o, 0, 0 );
     oyOption_Release( &o );

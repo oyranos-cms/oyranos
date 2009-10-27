@@ -170,6 +170,7 @@ typedef enum {
   oyOBJECT_CONFIGS_S,                 /**< oyConfigs_s */
   oyOBJECT_UI_HANDLER_S,              /**< oyUiHandler_s */
   oyOBJECT_FORMS_ARGS_S,              /**< oyFormsArgs_s */
+  oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 
@@ -213,6 +214,109 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
                                        oyNAME_e            name_type,
                                        uint32_t            flags );
 const char * oyStructTypeToText      ( oyOBJECT_e          type );
+
+
+
+/** @enum    oySIGNAL_e
+ *  @brief   observer signals
+ *  @ingroup objects_generic
+ *
+ *  The signal types are similiar to the graph event enum oyCONNECTOR_EVENT_e.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/26 (Oyranos: 0.1.10)
+ *  @date    2009/10/26
+ */
+typedef enum {
+  oySIGNAL_OK,
+  oySIGNAL_CONNECTED,                  /**< connection established */
+  oySIGNAL_RELEASED,                   /**< released the connection */
+  oySIGNAL_DATA_CHANGED,               /**< call to update image views */
+  oySIGNAL_STORAGE_CHANGED,            /**< new data accessors */
+  oySIGNAL_INCOMPATIBLE_DATA,          /**< can not process image */
+  oySIGNAL_INCOMPATIBLE_OPTION,        /**< can not handle option */
+  oySIGNAL_INCOMPATIBLE_CONTEXT,       /**< can not handle profile */
+  oySIGNAL_USER1, 
+  oySIGNAL_USER2, 
+  oySIGNAL_USER3                       /**< more signal types are possible */
+} oySIGNAL_e;
+
+typedef  struct oyObserver_s oyObserver_s;
+typedef  int      (*oySignal_f)      ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data );
+
+
+/** @struct  oyObserver_s
+ *  @brief   Oyranos object observers
+ *  @ingroup objects_generic
+ *  @extends oyStruct_s
+ *
+ *  oyObserver_s is following the viewer/model design pattern. The relations of
+ *  oyObserver_s' can be anything up to complicated cyclic, directed graphs.
+ *  The oyObserver_s type is intented for communication to non graph objects.
+ *  Oyranos graphs have several communication paths available, which should
+ *  be prefered over oyObserver_s when possible.
+ *
+ *  The struct contains properties to signal changes to a observer.
+ *  The signaling provides a small set of very generic signals types as
+ *  enumeration.
+ *  It is possible for models to add additional data to the signal. These
+ *  additional data is only blindly transported. A agreement is not subject of
+ *  the oyObserver_s structure. For completeness the observed object shall
+ *  always be included in the signal.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/26 (Oyranos: 0.1.10)
+ *  @date    2009/10/26
+ */
+struct oyObserver_s {
+  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_OBSERVER_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyPointer            dummy;          /**< keep to zero */
+
+  /** a reference to the observing object */
+  oyStruct_s         * observer;
+  /** a reference to the to be observed model */
+  oyStruct_s         * model;
+  /** optional data; If no other user data is available this data will be
+   *  passed with the signal. */
+  oyStruct_s         * user_data;
+  oySignal_f           signal;         /**< observers signaling function */ 
+};
+
+OYAPI oyObserver_s * OYEXPORT
+           oyObserver_New            ( oyObject_s          object );
+OYAPI oyObserver_s * OYEXPORT
+           oyObserver_Copy           ( oyObserver_s      * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+           oyObserver_Release        ( oyObserver_s     ** obj );
+
+OYAPI int  OYEXPORT
+           oyObserver_SignalSend     ( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * user_data );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverAdd      ( oyStruct_s        * model,
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * user_data,
+                                       oySignal_f          signalFunc );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverRemove   ( oyStruct_s        * model,
+                                       oyStruct_s        * observer );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverSignal   ( oyStruct_s        * model,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * signal_data );
+
+#define OY_SIGNAL_BLOCK                0x01 /**< do not send new signals */
+#define oyToSignalBlock_m(r)           ((r)&1)
+OYAPI uint32_t OYEXPORT
+           oySignalFlagsGet          ( void );
+OYAPI int  OYEXPORT
+           oySignalFlagsSet          ( uint32_t            flags );
 
 
 /** @brief Oyranos name structure
