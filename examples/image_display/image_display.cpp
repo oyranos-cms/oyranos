@@ -576,6 +576,7 @@ main(int argc, char** argv)
   o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH "fltk/image_display/fl_oy_box", 0 );
   oyOption_SetFromData( o, oy_box, 0 );
   oyOptions_MoveIn( icc_opts, &o, -1 );
+  oyOptions_ObserverAdd( icc_opts, (oyStruct_s*)conversion, 0,0 );
 
   oy_box->setConversion( conversion );
 
@@ -646,7 +647,10 @@ callback ( Fl_Widget* w, void* daten )
     free(opts_text);
     oyOptions_CopyFrom( &opts, new_opts, oyBOOLEAN_UNION, oyFILTER_REG_NONE, 0);
 
-    /* TODO update the conversion context and enforce a redraw */
+    /* TODO update the conversion context and enforce a redraw
+     *  The context of a node can be removed to allow for updating.
+     *  A redrawing flag should be obtainable from the graph.
+     */
     o = oyOptions_Find( opts, "fl_oy_box" );
     Fl_Oy_Box * box = (Fl_Oy_Box*) oyOption_GetData( o, 0, 0 );
     oyOption_Release( &o );

@@ -310,6 +310,8 @@ OYAPI int  OYEXPORT
            oyStruct_ObserverSignal   ( oyStruct_s        * model,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data );
+OYAPI int  OYEXPORT
+           oyStruct_IsObserved       ( oyStruct_s        * model );
 
 #define OY_SIGNAL_BLOCK                0x01 /**< do not send new signals */
 #define oyToSignalBlock_m(r)           ((r)&1)
@@ -317,6 +319,9 @@ OYAPI uint32_t OYEXPORT
            oySignalFlagsGet          ( void );
 OYAPI int  OYEXPORT
            oySignalFlagsSet          ( uint32_t            flags );
+int      oyStructSignalForward_      ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data );
 
 
 /** @brief Oyranos name structure
@@ -560,9 +565,11 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
                                        oyObject_s          obj );
 int              oyStructList_Release( oyStructList_s   ** list );
 
+#define OY_OBSERVE_AS_WELL 0x01
 int              oyStructList_MoveIn ( oyStructList_s    * list,
                                        oyStruct_s       ** ptr,
-                                       int                 pos );
+                                       int                 pos,
+                                       uint32_t            flags );
 /*oyStruct_s **    oyStructList_GetRaw_( oyStructList_s    * list );*/
 oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
                                        int                 pos );
@@ -595,6 +602,11 @@ int              oyStructList_MoveTo ( oyStructList_s    * s,
                                        int                 new_pos );
 int              oyStructList_Sort   ( oyStructList_s    * s,
                                        int32_t           * rank_map );
+int              oyStructList_ObserverAdd (
+                                       oyStructList_s    * list,
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * user_data,
+                                       oySignal_f          signalFunc );
 
 
 oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
@@ -959,6 +971,12 @@ int            oyOptions_SetSource   ( oyOptions_s       * options,
 OYAPI int  OYEXPORT
                oyOptions_SaveToDB    ( oyOptions_s       * options,
                                        const char        * key_base_name );
+OYAPI int  OYEXPORT
+               oyOptions_ObserverAdd ( oyOptions_s       * object,
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * user_data,
+                                       oySignal_f          signalFunc );
+
 
 /** @struct  oyRankPad
  *  @brief   a means to rank the result of comparing two key's
@@ -2124,6 +2142,10 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                  oyFilterSocket_Callback (
                                        oyFilterPlug_s    * c,
+                                       oyCONNECTOR_EVENT_e e );
+OYAPI int  OYEXPORT
+                 oyFilterSocket_SignalToGraph (
+                                       oyFilterSocket_s  * c,
                                        oyCONNECTOR_EVENT_e e );
 
 /** @struct oyFilterPlug_s

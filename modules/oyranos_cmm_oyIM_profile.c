@@ -274,27 +274,27 @@ oyStructList_s * oyIMProfileTag_GetValues(
     oyStruct_s * description = 0;
 
     description = (oyStruct_s*) &description_mluc;
-    error = oyStructList_MoveIn( list, &description, -1 );
+    error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_psid;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_MS10;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_text;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_desc;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_DevS;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     return list;
   }
@@ -440,7 +440,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                o = oyBlob_New( 0 );
                oyBlob_SetFromData( o, &mem[84], i, mem );
-               oyStructList_MoveIn( texts, (oyStruct_s**)&o, -1 );
+               oyStructList_MoveIn( texts, (oyStruct_s**)&o, -1, 0 );
              }
              oyFree_m_( tmp );
            }
@@ -647,7 +647,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    if(oyStrlen_(t) || oyStructList_Count(texts))
                    {
                      name->name = t;
-                     oyStructList_MoveIn( texts, &oy_struct, -1 );
+                     oyStructList_MoveIn( texts, &oy_struct, -1, 0 );
                    } else
                      name->release(&oy_struct);
                  }
@@ -1080,19 +1080,19 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
     oyStruct_s * description = 0;
 
     description = (oyStruct_s*) &description_mluc;
-    error = oyStructList_MoveIn( list, &description, -1 );
+    error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_psid;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_text;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_desc;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     return error;
   }
@@ -1250,7 +1250,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              mluc_sum += tmptag->size_;
-             error = oyStructList_MoveIn( tag_list, (oyStruct_s**)&tmptag, -1 );
+             error = oyStructList_MoveIn( tag_list, (oyStruct_s**)&tmptag, -1, 0 );
            }
          }
 

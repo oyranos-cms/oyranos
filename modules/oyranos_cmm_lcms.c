@@ -1073,7 +1073,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                              oyAllocateFunc_, oyDeAllocateFunc_ );
         oyDeAllocateFunc_( cc_name );
         list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, 0 );
+        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, 0, 0 );
 
         if(!error)
         {
@@ -1103,7 +1103,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         name = oyName_set_ ( name, c_text, oyNAME_NAME,
                              oyAllocateFunc_, oyDeAllocateFunc_ );
         list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0 );
+        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0, 0 );
 
         if(!error)
         {

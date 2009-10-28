@@ -861,6 +861,7 @@ OYAPI int  OYEXPORT
  *  @param[in]     observer            observer
  *  @param[in]     signal_type         basic signal information
  *  @param[in]     signal_data         advanced informations
+ *  @return                            0 - not matching; 1 - match, skip others
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/26 (Oyranos: 0.1.10)
@@ -891,8 +892,10 @@ OYAPI int  OYEXPORT
  *  @param[in]     model               the to be observed model
  *  @param[in]     observer            the in observation intereressted object
  *  @param[in]     user_data           additional static informations
- *  @param[in]     signalFunc          the signal handler
- *  @return                            0 - not matching; 1 - match, skip others
+ *  @param[in]     signalFunc          the signal handler;
+ *                                     defaults to oyStructSignalForward_
+ *
+ *  @return                            0 - fine; 1 - error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/26 (Oyranos: 0.1.10)
@@ -906,10 +909,13 @@ OYAPI int  OYEXPORT
 {
   oyObserver_s * s = 0,
                * obs = 0;
-  int error = !signalFunc || !model;
+  int error = !model;
   oyOption_s * o = 0;
   oyStructList_s * observers = 0;
   int n,i;
+
+  if(!signalFunc)
+    signalFunc = oyStructSignalForward_;
 
   if(!error)
     o = oyOptions_Find( (oyOptions_s*)model->oy_->handles_,
@@ -964,7 +970,7 @@ OYAPI int  OYEXPORT
         s->user_data = user_data->copy( user_data, 0 );
       s->signal = signalFunc;
 
-      oyStructList_MoveIn( observers, (oyStruct_s**)&s, -1 );
+      oyStructList_MoveIn( observers, (oyStruct_s**)&s, -1, 0 );
 
     } else
     {
@@ -1078,6 +1084,9 @@ OYAPI int  OYEXPORT
   oyStruct_s * obj = 0;
   int n,i;
 
+  if(oyToSignalBlock_m( oyObserverFlagsGet() ))
+    return 0;
+
   if(!error)
     o = oyOptions_Find( (oyOptions_s*)model->oy_->handles_,
                         OY_SIGNAL_REGISTRATION );
@@ -1106,19 +1115,88 @@ OYAPI int  OYEXPORT
     {
       obs = (oyObserver_s*) oyStructList_GetType_( observers,
                                                    i, oyOBJECT_OBSERVER_S );
-      if(obs)
-        oyObserver_SignalSend( obs, signal_type, signal_data );
-      else
+      if(obs->model != model)
       {
-        obj = oyStructList_Get_( observers, i );
-        WARNc5_S( "%s: %s[%d]->%s[%d]", _("found observer of wrong type"),
+        if(obs && obs->model != model)
+          oyObserver_SignalSend( obs, signal_type, signal_data );
+        else
+        {
+          obj = oyStructList_Get_( observers, i );
+          WARNc5_S( "%s: %s[%d]->%s[%d]", _("found observer of wrong type"),
             oyStruct_GetText(model, oyNAME_NAME, 1), oyObject_GetId(model->oy_),
             oyStruct_GetText(obj, oyNAME_NAME, 1), oyObject_GetId(obj->oy_) );
+        }
       }
     }
   }
 
   return error;
+}
+
+/**
+ *  @internal
+ *  Function oyStructSignalForward_
+ *  @memberof oyObserver_s
+ *  @brief   observe all list members
+ *
+ *  This function is useful to forward signals and fill holes in a chain.
+ *  Implements oySignal_f.
+ *
+ *  @verbatim
+    error = oyStruct_ObserverAdd( (oyStruct_s*)model, (oyStruct_s*)observer,
+                                  0, oyStructSignalForward_ );
+    @endverbatim
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/28 (Oyranos: 0.1.10)
+ *  @date    2009/10/28
+ */
+int      oyStructSignalForward_      ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data )
+{
+  int handled = 0;
+
+  if(observer && observer->model &&
+     observer->observer && observer->observer->type_ > oyOBJECT_NONE)
+    handled = oyStruct_ObserverSignal( observer->model,
+                                       signal_type, signal_data );
+
+  return handled;
+}
+
+/**
+ *  Function oyStruct_IsObserved
+ *  @memberof oyObserver_s
+ *  @brief   return object observation status
+ *
+ *  Check if a object is observed by others.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/10/28
+ *  @since   2009/10/28 (Oyranos: 0.1.10)
+ */
+OYAPI int  OYEXPORT
+           oyStruct_IsObserved       ( oyStruct_s        * model )
+{
+  int observed = 0;
+  int i,n = 0;
+  oyOption_s * o = 0;
+
+  if(model->oy_->handles_)
+    n = oyStructList_Count( ((oyOptions_s*)model->oy_->handles_)->list );
+  for(i = 0; i < n; ++i)
+  {
+    o = (oyOption_s*) oyStructList_Get_(
+                              ((oyOptions_s*)model->oy_->handles_)->list, i );
+    if( oyStrcmp_( o->registration, OY_SIGNAL_REGISTRATION ) == 0)
+    {
+      observed = 1;
+      break;
+    }
+  }
+
+  return observed;
 }
 
 
@@ -1586,8 +1664,12 @@ oyStructList_s * oyStructList_New    ( oyObject_s          object )
 /** @internal
  *  @brief oyStructList_s copy
  *
- *  @since Oyranos: version 0.1.8
- *  @date  14 december 2007 (API 0.1.8)
+ *  If the list was observed, the new elements are observed by the list through
+ *  the standard signal forwarding function (oyStructSignalForward_).
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/14 (Oyranos: 0.1.8)
+ *  @date    2009/10/28
  */
 oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
                                        oyObject_s          obj )
@@ -1623,6 +1705,9 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
     for(i = 0; i < list->n_; ++i)
       if(list->ptr_[i]->copy)
         s->ptr_[i] = list->ptr_[i]->copy( list->ptr_[i], 0 );
+
+    if(oyStruct_IsObserved( (oyStruct_s*)s) )
+      error = oyStructList_ObserverAdd( list, 0, 0, 0 );
   }
 
   oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
@@ -1630,21 +1715,30 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
   return s;
 }
 
+
 /** @internal
  *  @brief oyStructList_s pointer add
+ *
+ *  If the list was observed, the new elements are not automatically observed.
+ *  The caller can select OY_OBSERVE_AS_WELL in the flags argument if he
+ *  wishes to observe a newly added element as well. The attached observation
+ *  function will be oyStructSignalForward_.
  *
  *  @param[in]     list                the list
  *  @param[in]     ptr                 the handle this function takes ownership
  *                                     of
  *  @param[in]     pos                 the prefered position in the list. This
  *                                     option has affect of the order in list.
+ *  @param[in]     flags               OY_OBSERVE_AS_WELL
  *
- *  @since Oyranos: version 0.1.8
- *  @date  30 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/11/30 (Oyranos: 0.1.8)
+ *  @date    2009/10/28
  */
 int              oyStructList_MoveIn ( oyStructList_s    * list,
                                        oyStruct_s       ** ptr,
-                                       int                 pos)
+                                       int                 pos,
+                                       uint32_t            flags )
 {
   oyStructList_s * s = list;
   int error = 0;
@@ -1743,6 +1837,8 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
         ++s->n_;
     }
 
+    if(flags & OY_OBSERVE_AS_WELL && oyStruct_IsObserved((oyStruct_s*)s))
+      oyStruct_ObserverAdd( (oyStruct_s*)*ptr, (oyStruct_s*)s, 0,0 );
     *ptr = 0;
   }
 
@@ -2123,9 +2219,12 @@ int              oyStructList_Clear  ( oyStructList_s    * s )
  *  @memberof oyStructList_s
  *  @brief   clean "list" and copy all listed objects from "from" to "list".
  *
- *  @version Oyranos: 0.1.9
- *  @date    2008/11/27
+ *  If the list was observed, the new elements are observed by the list through
+ *  the standard signal forwarding function (oyStructSignalForward_).
+ *
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/27 (Oyranos: 0.1.9)
+ *  @date    2009/10/28
  */
 int              oyStructList_CopyFrom(oyStructList_s    * list,
                                        oyStructList_s    * from,
@@ -2148,9 +2247,13 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
       o = oyStructList_Get_( from, i );
       o = o->copy( o, object );
       error = !o;
-      error = oyStructList_MoveIn( s, &o, -1 );
+      error = oyStructList_MoveIn( s, &o, -1, 0 );
     }
+
+    if(oyStruct_IsObserved( (oyStruct_s*)s) )
+      error = oyStructList_ObserverAdd( list, 0, 0, 0 );
   }
+
 
   return error;
 }
@@ -2189,7 +2292,7 @@ int              oyStructList_MoveTo ( oyStructList_s    * s,
     e = oyStructList_GetRef( s, pos );
 
     oyStructList_ReleaseAt( s, pos );
-    oyStructList_MoveIn( s, &e, new_pos );
+    oyStructList_MoveIn( s, &e, new_pos, 0 );
   } 
 
   return error;
@@ -2266,6 +2369,48 @@ int              oyStructList_Sort   ( oyStructList_s    * s,
 
   return error;
 }
+
+/**
+ *  Function oyStructList_ObserverAdd
+ *  @memberof oyStructList_s
+ *  @brief   add a observer to the each list member
+ *
+ *  Members are further observed by the list object.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/10/28
+ *  @since   2009/10/28 (Oyranos: 0.1.10)
+ */
+int              oyStructList_ObserverAdd (
+                                       oyStructList_s    * list,
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * user_data,
+                                       oySignal_f          signalFunc )
+{
+  int error = 0;
+  oyStructList_s * s = list;
+  int i,n;
+  oyStruct_s * o = 0;
+
+  if(!list)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 1 )
+
+  if(observer)
+    error = oyStruct_ObserverAdd( (oyStruct_s*)s, observer,
+                                  user_data, signalFunc );
+
+  n = oyStructList_Count( list );
+  for(i = 0; i < n; ++i)
+  {
+    o = oyStructList_Get_( list, i );
+    oyStruct_ObserverAdd( o, (oyStruct_s*)s, 0, 0 );
+  }
+
+  return error;
+}
+
 
 /**
  *  @} *//* objects_generic
@@ -2624,7 +2769,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
       oy_cmm_struct = (oyStruct_s*) s;
 
     if(error <= 0)
-      oyStructList_MoveIn(oy_cmm_handles_, &oy_cmm_struct, -1);
+      oyStructList_MoveIn(oy_cmm_handles_, &oy_cmm_struct, -1, 0);
   }
 
   return error;
@@ -3145,7 +3290,7 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
 
       /* store */
       if(error <= 0 && api_found)
-        oyStructList_MoveIn(oy_cmm_infos_, (oyStruct_s**)&cmm_handle, -1);
+        oyStructList_MoveIn(oy_cmm_infos_, (oyStruct_s**)&cmm_handle, -1, 0);
     }
 
     oyCMMdsoRelease_( lib_name );
@@ -5853,7 +5998,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
 
     if(error <= 0)
     {
-      error = oyStructList_MoveIn(cache_list, (oyStruct_s**)&search_key, -1);
+      error = oyStructList_MoveIn(cache_list, (oyStruct_s**)&search_key, -1, 0);
       search_key = 0;
     }
   }
@@ -6452,7 +6597,11 @@ int          oyOption_Copy__         ( oyOption_s        * to,
   allocateFunc_ = s->oy_->allocateFunc_;
   deallocateFunc_ = s->oy_->deallocateFunc_;
 
+  /* oyOption_Clear does normally signal emitting; block that. */
+  oyObserverFlagsSet( OY_SIGNAL_BLOCK );
   error = oyOption_Clear( s );
+  /* clear signal blocking flag */
+  oyObserverFlagsSet( oyObserverFlagsGet() & (~OY_SIGNAL_BLOCK) );
 
   if(error <= 0)
   {
@@ -6464,6 +6613,7 @@ int          oyOption_Copy__         ( oyOption_s        * to,
                  allocateFunc_, deallocateFunc_ );
     s->source = from->source;
     s->flags = from->flags;
+    oyStruct_ObserverSignal( (oyStruct_s*)s, oySIGNAL_DATA_CHANGED, 0 );
   }
 
   return 0;
@@ -6602,6 +6752,8 @@ int            oyOption_Clear        ( oyOption_s        * s )
       deallocateFunc( s->registration );
     s->registration = 0;
   }
+
+  oyStruct_ObserverSignal( (oyStruct_s*)s, oySIGNAL_DATA_CHANGED, 0 );
 
   return 0;
 }
@@ -7836,7 +7988,6 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
     }
 
     error = oyStructList_CopyFrom( s->list, opts_tmp->list, 0 );
-
     oyOptions_Release( &opts_tmp );
   }
 
@@ -8256,18 +8407,23 @@ OYAPI int  OYEXPORT
     {
       s = oyOptions_New(0);
       error = !s;
-    }                                  
+    }
 
     if(error <= 0 && !s->list)
     {
       s->list = oyStructList_New( 0 );
       error = !s->list;
     }
-      
+ 
     if(error <= 0)
-      error = oyStructList_MoveIn( s->list, (oyStruct_s**)obj, pos );
-  }   
-  
+    {
+      if(oyStruct_IsObserved((oyStruct_s*)s))
+        oyStruct_ObserverAdd( (oyStruct_s*)*obj, (oyStruct_s*)s->list, 0, 0 );
+      error = oyStructList_MoveIn( s->list, (oyStruct_s**)obj, pos,
+                                   OY_OBSERVE_AS_WELL );
+    }
+  }
+ 
   return error;
 }
 
@@ -9482,6 +9638,35 @@ OYAPI int  OYEXPORT
 
   oyExportEnd_();
   DBG_PROG_ENDE
+  return error;
+}
+
+/** Function oyOptions_ObserverAdd
+ *  @memberof oyOptions_s
+ *  @brief   observe options and its elements
+ *
+ *  @param[in]     object              the options
+ *  @param[in]     observer            the in observation intereressted object
+ *  @param[in]     user_data           additional static informations
+ *  @param[in]     signalFunc          the signal handler
+ *  @return                            0 - fine; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/28 (Oyranos: 0.1.10)
+ *  @date    2009/10/28
+ */
+OYAPI int  OYEXPORT
+               oyOptions_ObserverAdd ( oyOptions_s       * object,
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * user_data,
+                                       oySignal_f          signalFunc )
+{
+  int error = 0;
+
+  error = oyStructList_ObserverAdd( object->list, (oyStruct_s*) object,
+                                    user_data, 0 );
+  error = oyStruct_ObserverAdd( (oyStruct_s*)object, observer,
+                                user_data, signalFunc );
   return error;
 }
 
@@ -10783,7 +10968,8 @@ OYAPI int  OYEXPORT
     }
       
     if(error <= 0)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos,
+                                   OY_OBSERVE_AS_WELL );
   }   
   
   return error;
@@ -13918,7 +14104,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
         oyStructList_s * list = 0;
 
         list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list, (oyStruct_s**) &device, 0 );
+        error = oyStructList_MoveIn( list, (oyStruct_s**) &device, 0,
+                                     OY_OBSERVE_AS_WELL );
 
         if(error <= 0)
         {
@@ -14746,7 +14933,8 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
 
 
   if(error <= 0)
-    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos );
+    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos,
+                                  OY_OBSERVE_AS_WELL );
 
   if(s)
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
@@ -14798,7 +14986,8 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
       }
       oyProfileTag_Release( &tag );
     }
-    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos );
+    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos,
+                                  OY_OBSERVE_AS_WELL );
   }
 
   if(s)
@@ -15003,7 +15192,8 @@ OYAPI oyProfileTag_s * OYEXPORT
   {
     memcpy( name->lang, "en_GB", 5 );
     list = oyStructList_New(0);
-    error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0 );
+    error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0,
+                                 OY_OBSERVE_AS_WELL );
   }
 
   if(error <= 0)
@@ -15849,7 +16039,8 @@ oyProfiles_s* oyProfiles_MoveIn      ( oyProfiles_s      * list,
       list = oyProfiles_New(0);
 
     if(list && list->list_)
-        error = oyStructList_MoveIn( list->list_, (oyStruct_s**) obj, pos );
+        error = oyStructList_MoveIn( list->list_, (oyStruct_s**) obj, pos,
+                                     OY_OBSERVE_AS_WELL );
   }
 
   return list;
@@ -18635,6 +18826,93 @@ OYAPI int  OYEXPORT
 }
 
 
+/** Function oyFilterSocket_SignalToGraph
+ *  @memberof oyFilterSocket_s
+ *  @brief   send a signal through the graph
+ *
+ *  @return                            1 if handled or zero
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/27 (Oyranos: 0.1.10)
+ *  @date    2009/10/28
+ */
+OYAPI int  OYEXPORT
+                 oyFilterSocket_SignalToGraph (
+                                       oyFilterSocket_s  * c,
+                                       oyCONNECTOR_EVENT_e e )
+{
+  int result = 0;
+  oySIGNAL_e sig = oySIGNAL_OK;
+  int n, i, j_n,j, k,k_n, handled = 0;
+  oyFilterSocket_s * s = 0;
+  oyFilterPlug_s * p;
+  oyFilterGraph_s * graph = 0;
+
+  switch(e)
+  {
+    case oyCONNECTOR_EVENT_OK:                /**< kind of ping */
+    case oyCONNECTOR_EVENT_CONNECTED:         /**< connection established */
+    case oyCONNECTOR_EVENT_RELEASED:          /**< released the connection */
+    case oyCONNECTOR_EVENT_DATA_CHANGED:      /**< call to update image views */
+    case oyCONNECTOR_EVENT_STORAGE_CHANGED:   /**< new data accessors */
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: /**< can not process image */
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION:/**< can not handle option */
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT:/**< can not handle profile */
+    case oyCONNECTOR_EVENT_INCOMPLETE_GRAPH:  /**< can not completely process */
+         sig = (oySIGNAL_e) e; break;
+  }
+
+  result = oyStruct_ObserverSignal( (oyStruct_s*) c->node, sig, 0 );
+
+  if(e != oyCONNECTOR_EVENT_OK)
+  {
+  WARNc4_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n  event: \"%s\" socket[%d]",
+            (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
+            c ? oyObject_GetId(c->oy_) : -1,
+            oyConnectorEventToText(e),
+            (c) ? oyObject_GetId( c->oy_ ) : -1
+          );
+  }
+
+  n = oyFilterPlugs_Count( c->requesting_plugs_ );
+
+  for(i = 0; i < n; ++i)
+  {
+    p = oyFilterPlugs_Get( c->requesting_plugs_, i );
+    result = oyStruct_ObserverSignal( (oyStruct_s*) p->node, sig, 0 );
+
+    /* get all nodes in the output direction */
+    graph = oyFilterGraph_FromNode( p->node, OY_INPUT );
+
+    j_n = oyFilterNodes_Count( graph->nodes );
+    for( j = 0; j < j_n; ++j )
+    {
+      oyFilterNode_s * node = oyFilterNodes_Get( graph->nodes, j );
+
+      /* iterate over all node outputs */
+      k_n = oyFilterNode_EdgeCount( node, 0, 0 );
+      for(k = 0; k < k_n; ++k)
+      {
+        s = oyFilterNode_GetSocket( node, k );
+        handled = oyFilterSocket_SignalToGraph( s, e );
+        if(handled)
+          break;
+      }
+
+      oyFilterNode_Release( &node );
+      if(handled)
+        break;
+    }
+
+    oyFilterGraph_Release( &graph );
+    if(handled)
+      break;
+  }
+
+  return handled;
+}
+
+
 /** Function oyFilterSocket_New
  *  @memberof oyFilterSocket_s
  *  @brief   allocate a new FilterSocket object
@@ -19353,7 +19631,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
     }
       
     if(error <= 0)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );
   }   
   
   return s;
@@ -20553,7 +20831,7 @@ OYAPI oyFilterCores_s * OYEXPORT
     }
       
     if(error <= 0)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );
   }   
   
   return s;
@@ -21508,6 +21786,43 @@ OYAPI oyFilterPlug_s * OYEXPORT
 oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
                                        oyOptions_s       * options,
                                        int                 flags );
+/**
+ *  @internal
+ *  Function oyFilterNodeObserve_
+ *  @memberof oyFilterNode_s
+ *  @brief   observe filter options
+ *
+ *  Implements oySignal_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/28 (Oyranos: 0.1.10)
+ *  @date    2009/10/28
+ */
+int      oyFilterNodeObserve_        ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data )
+{
+  int handled = 0;
+  int i,n;
+  oyFilterSocket_s * socket = 0;
+  oyFilterNode_s * node = 0;
+
+  if(observer && observer->model &&
+     observer->model->type_ == oyOBJECT_OPTIONS_S &&
+     observer->observer && observer->observer->type_== oyOBJECT_FILTER_NODE_S)
+  {
+    node = (oyFilterNode_s*)observer->observer;
+    n = oyFilterNode_EdgeCount( node, 0, 0 );
+    for(i = 0; i < n; ++i)
+    {
+      socket = oyFilterNode_GetSocket( node, i );
+      oyFilterSocket_SignalToGraph( socket, (oyCONNECTOR_EVENT_e)signal_data );
+    }
+  }
+
+  return handled;
+}
+
 /** Function oyFilterNode_OptionsGet
  *  @memberof oyFilterNode_s
  *  @brief   get filter options
@@ -21545,7 +21860,13 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
       node->core->options_ = oyOptions_New( 0 );
   }
 
-  return oyOptions_Copy( node->core->options_, 0 );
+  options = oyOptions_Copy( node->core->options_, 0 );
+
+  /** Observe exported options for changes and propagate to a existing graph. */
+  error = oyOptions_ObserverAdd( options, (oyStruct_s*)node,
+                                 0, oyFilterNodeObserve_ );
+
+  return options;
 }
 
 /** Function oyFilterNode_UiGet
@@ -22039,7 +22360,7 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
               data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
             else
               data = (oyStruct_s*) oyOption_New(0, 0);
-            error = oyStructList_MoveIn( datas, &data, -1 );
+            error = oyStructList_MoveIn( datas, &data, -1, 0 );
             ++i;
           }
     } else
@@ -22054,7 +22375,7 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
               data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
             else
               data = (oyStruct_s*) oyOption_New(0, 0);
-            error = oyStructList_MoveIn( datas, &data, -1 );
+            error = oyStructList_MoveIn( datas, &data, -1, 0 );
             ++i;
           }
 
@@ -22446,7 +22767,8 @@ OYAPI int  OYEXPORT
     }
       
     if(!error)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos,
+                                   OY_OBSERVE_AS_WELL );
   }   
   
   return error;
@@ -22671,9 +22993,16 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
  *  Function oyFilterNode_AddToAdjacencyLst_
  *  @brief   get a graphs adjazency list
  *
+ *  @param[in]     s                   the start node
+ *  @param[in,out] nodes               the collected nodes
+ *  @param[in,out] edges               the collected edges
+ *  @param[in]     mark                a search string to get sub graphs
+ *  @param[in]     flags               - OY_INPUT omit input direction
+ *                                     - OY_OUTPUT omit output direction
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/25 (Oyranos: 0.1.10)
- *  @date    2009/03/05
+ *  @date    2009/10/28
  */
 int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
                                        oyFilterNodes_s   * nodes,
@@ -22687,29 +23016,35 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
   /* Scan the input/plug side for unknown nodes, add these and continue in
    * the direction of previous unknown edges...
    */
-  n = oyFilterNode_EdgeCount( s, 1, 0 );
-  for( i = 0; i < n; ++i )
+  if(!flags & OY_INPUT)
   {
-    if( s->plugs[i] && s->plugs[i]->remote_socket_ )
-      if(oyAdjacencyListAdd_( s->plugs[i], nodes, edges, mark, flags ))
-        oyFilterNode_AddToAdjacencyLst_( s->plugs[i]->remote_socket_->node, 
-                                         nodes, edges, mark, flags );
+    n = oyFilterNode_EdgeCount( s, 1, 0 );
+    for( i = 0; i < n; ++i )
+    {
+      if( s->plugs[i] && s->plugs[i]->remote_socket_ )
+        if(oyAdjacencyListAdd_( s->plugs[i], nodes, edges, mark, flags ))
+          oyFilterNode_AddToAdjacencyLst_( s->plugs[i]->remote_socket_->node, 
+                                           nodes, edges, mark, flags );
+    }
   }
 
   /* ... same on the output/socket side */
-  n = oyFilterNode_EdgeCount( s, 0, 0 );
-  for( i = 0; i < n; ++i )
+  if(!flags & OY_OUTPUT)
   {
-    if( s->sockets[i] && s->sockets[i]->requesting_plugs_ )
+    n = oyFilterNode_EdgeCount( s, 0, 0 );
+    for( i = 0; i < n; ++i )
     {
-      p_n = oyFilterPlugs_Count( s->sockets[i]->requesting_plugs_ );
-      for( j = 0; j < p_n; ++j )
+      if( s->sockets[i] && s->sockets[i]->requesting_plugs_ )
       {
-        p = oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
+        p_n = oyFilterPlugs_Count( s->sockets[i]->requesting_plugs_ );
+        for( j = 0; j < p_n; ++j )
+        {
+          p = oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
 
-        if(oyAdjacencyListAdd_( p, nodes, edges, mark, flags ))
-          oyFilterNode_AddToAdjacencyLst_( p->node,
-                                           nodes, edges, mark, flags );
+          if(oyAdjacencyListAdd_( p, nodes, edges, mark, flags ))
+            oyFilterNode_AddToAdjacencyLst_( p->node,
+                                             nodes, edges, mark, flags );
+        }
       }
     }
   }
@@ -22722,12 +23057,13 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
  *  @brief   get a graphs adjazency list
  *
  *  @param[in]     node                filter node
- *  @param[in]     flags               unused
+ *  @param[in]     flags               - OY_INPUT omit input direction
+ *                                     - OY_OUTPUT omit output direction
  *  @return                            the graph
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/25 (Oyranos: 0.1.10)
- *  @date    2009/03/04
+ *  @date    2009/10/28
  */
 OYAPI oyFilterGraph_s * OYEXPORT
            oyFilterGraph_FromNode    ( oyFilterNode_s    * node,
@@ -22977,7 +23313,8 @@ OYAPI oyFilterNode_s * OYEXPORT
  *  @param[in]     graph               a graph object
  *  @param[in]     node                filter node
  *  @param[in]     mark                a selection
- *  @param[in]     flags               unused
+ *  @param[in]     flags               - OY_INPUT omit input direction
+ *                                     - OY_OUTPUT omit output direction
  *  @return                            the graph
  *
  *  @version Oyranos: 0.1.10
@@ -25341,7 +25678,7 @@ oyNamedColours_s * oyNamedColours_MoveIn ( oyNamedColours_s  * list,
     }
 
     if(error <= 0)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );
   }
 
   return s;
@@ -25810,7 +26147,7 @@ OYAPI int  OYEXPORT
     }
       
     if(error <= 0)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );
   }   
   
   return error;
