@@ -681,6 +681,9 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
     }
   }
 
+  if(!text)
+    text = oyStructTypeToText( obj->type_ );
+
   return text;
 }
 
