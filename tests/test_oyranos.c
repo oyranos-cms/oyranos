@@ -19,6 +19,10 @@
 
 #include "oyranos.h"
 
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 
 /* --- general test routines --- */
 
@@ -128,7 +132,36 @@ oyTESTRESULT_e testI18N()
     "oyLanguage() uninitialised failed                 " );
   }
 
-  setlocale(LC_ALL,"");
+# ifdef __APPLE__
+  {
+# define TEXTLEN 128
+  char *locale = (char*) calloc(sizeof(char), TEXTLEN);
+  const char* tmp = 0;
+  /* 1. get the locale info */
+  CFLocaleRef userLocaleRef = CFLocaleCopyCurrent();
+  CFStringRef cfstring = CFLocaleGetIdentifier( userLocaleRef );
+
+    /* copy to a C buffer */
+  CFIndex gr = 36;
+  char text[36];
+  Boolean fehler = CFStringGetCString( cfstring, text, gr, kCFStringEncodingISOLatin1 );
+
+  if(fehler) {
+    snprintf(locale,TEXTLEN, text);
+  }
+
+  /* set the locale info */
+  if(strlen(locale))
+  {
+     tmp = setlocale (LC_ALL, locale);
+  }
+  if (tmp)
+    snprintf(locale,TEXTLEN, tmp);
+  /*set_codeset = 0;*/
+  }
+# else
+  lang = setlocale(LC_ALL,"");
+# endif
   oyI18Nreset();
 
   lang = oyLanguage();
