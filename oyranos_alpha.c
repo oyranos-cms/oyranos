@@ -1171,7 +1171,7 @@ int      oyStructSignalForward_      ( oySIGNAL_e          signal_type,
 
   if(observer && observer->model &&
      observer->observer && observer->observer->type_ > oyOBJECT_NONE)
-    handled = oyStruct_ObserverSignal( observer->model,
+    handled = oyStruct_ObserverSignal( observer->observer,
                                        signal_type, signal_data );
 
   return handled;
