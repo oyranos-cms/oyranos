@@ -1115,17 +1115,26 @@ OYAPI int  OYEXPORT
     {
       obs = (oyObserver_s*) oyStructList_GetType_( observers,
                                                    i, oyOBJECT_OBSERVER_S );
-      if(obs->model != model)
-      {
-        if(obs && obs->model != model)
-          oyObserver_SignalSend( obs, signal_type, signal_data );
-        else
+      if(obs && obs->model == model)
+      { 
+        if(oy_debug_signals)
         {
-          obj = oyStructList_Get_( observers, i );
-          WARNc5_S( "%s: %s[%d]->%s[%d]", _("found observer of wrong type"),
-            oyStruct_GetText(model, oyNAME_NAME, 1), oyObject_GetId(model->oy_),
-            oyStruct_GetText(obj, oyNAME_NAME, 1), oyObject_GetId(obj->oy_) );
+          WARNc5_S( "%s: %s[%d]->%s[%d]", _("Signal"),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
         }
+        oyObserver_SignalSend( obs, signal_type, signal_data );
+
+      }
+      else
+      {
+        WARNc5_S( "%s: %s[%d]->%s[%d]", _("found observer of wrong type"),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
       }
     }
   }
@@ -3544,8 +3553,11 @@ oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
   }
 
   api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-  STRING_ADD( api_reg, class );
-  oyFree_m_( class );
+  if(class)
+  {
+    STRING_ADD( api_reg, class );
+    oyFree_m_( class );
+  }
 
   reg_filter.type = type;
   reg_filter.registration = api_reg;
