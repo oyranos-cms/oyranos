@@ -31,6 +31,7 @@ intptr_t oy_observe_pointer_ = 0;
 static int oy_alloc_count_ = 0;
 static int oy_allocs_count_ = 0;
 int oy_debug_memory = 0;
+int oy_debug_signals = 0;
 const char * oy_backtrace = 0;
 #ifndef NO_OPT
 #define OY_USE_ALLOCATE_FUNC_POOL_ 0

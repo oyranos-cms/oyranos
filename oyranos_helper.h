@@ -48,6 +48,7 @@ void  oyDeAllocateFunc_         (void *        data);
 
 extern intptr_t oy_observe_pointer_;
 extern int oy_debug_memory;
+extern int oy_debug_signals;
 extern const char * oy_backtrace;
 
 /* oyFree_ (void*) */
