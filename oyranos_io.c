@@ -220,13 +220,16 @@ oyGetHomeDir_ ()
 # if (__WINDOWS__)
   DBG_PROG_START
   DBG_PROG_ENDE
-  return "OS not supported yet";
+  WARNc_S("OS not supported yet");
+  return 0;
 # else
   char* name = (char*) getenv("HOME");
 
   DBG_PROG_START
 
-  DBG_PROG_S(name)
+  if(!name)
+    WARNc_S("Could not get \"HOME\" directory name");
+
   DBG_PROG_ENDE
   return name;
 # endif
