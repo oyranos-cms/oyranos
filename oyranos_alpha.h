@@ -241,6 +241,7 @@ typedef enum {
   oySIGNAL_USER3                       /**< more signal types are possible */
 } oySIGNAL_e;
 
+const char *       oySignalToString  ( oySIGNAL_e          signal_type );
 typedef  struct oyObserver_s oyObserver_s;
 typedef  int      (*oySignal_f)      ( oySIGNAL_e          signal_type,
                                        oyObserver_s      * observer,
