@@ -374,6 +374,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
           options = oyFilterNode_OptionsGet( input_node, 0 );
           cmm_node = oyFilterNode_NewWith( input_node->core->registration_,
                                            options, 0 );
+          error = oyStruct_ObserversCopy( cmm_node, input_node, 0 );
           oyOptions_Release( &options );
           
         } else
