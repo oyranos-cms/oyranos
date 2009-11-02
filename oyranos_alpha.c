@@ -687,6 +687,39 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
   return text;
 }
 
+
+const char *       oySignalToString  ( oySIGNAL_e          signal_type )
+{
+  const char * text = "unknown";
+  switch(signal_type)
+  {
+
+  case oySIGNAL_OK:
+       text = "oySIGNAL_OK"; break;
+  case oySIGNAL_CONNECTED:             /**< connection established */
+       text = "oySIGNAL_CONNECTED: connection established"; break;
+  case oySIGNAL_RELEASED:              /**< released the connection */
+       text = "oySIGNAL_RELEASED: released the connection"; break;
+  case oySIGNAL_DATA_CHANGED:          /**< call to update image views */
+       text = "oySIGNAL_DATA_CHANGED: call to update data views"; break;
+  case oySIGNAL_STORAGE_CHANGED:       /**< new data accessors */
+       text = "oySIGNAL_STORAGE_CHANGED: new data accessors"; break;
+  case oySIGNAL_INCOMPATIBLE_DATA:     /**< can not process image */
+       text = "oySIGNAL_INCOMPATIBLE_DATA: can not process data"; break;
+  case oySIGNAL_INCOMPATIBLE_OPTION:   /**< can not handle option */
+       text = "oySIGNAL_INCOMPATIBLE_OPTION: can not handle option"; break;
+  case oySIGNAL_INCOMPATIBLE_CONTEXT:  /**< can not handle profile */
+       text = "oySIGNAL_INCOMPATIBLE_CONTEXT: can not handle context"; break;
+  case oySIGNAL_USER1:
+       text = "oySIGNAL_USER1"; break;
+  case oySIGNAL_USER2:
+       text = "oySIGNAL_USER2"; break;
+  case oySIGNAL_USER3:                 /**< more signal types are possible */
+       text = "oySIGNAL_USER2"; break;
+  }
+  return text;
+}
+
 /** Function oyObserver_New
  *  @memberof oyObserver_s
  *  @brief   allocate a new Observer object
@@ -1084,7 +1117,6 @@ OYAPI int  OYEXPORT
   int error = !model;
   oyOption_s * o = 0;
   oyStructList_s * observers = 0;
-  oyStruct_s * obj = 0;
   int n,i;
 
   if(oyToSignalBlock_m( oyObserverFlagsGet() ))
@@ -1122,7 +1154,8 @@ OYAPI int  OYEXPORT
       { 
         if(oy_debug_signals)
         {
-          WARNc5_S( "%s: %s[%d]->%s[%d]", _("Signal"),
+          WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]", _("Signal"),
+                    oySignalToString(signal_type),
                     oyStruct_GetText( obs->model, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->model->oy_),
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
@@ -1133,7 +1166,8 @@ OYAPI int  OYEXPORT
       }
       else
       {
-        WARNc5_S( "%s: %s[%d]->%s[%d]", _("found observer of wrong type"),
+        WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]",_("found observer of wrong type"),
+                    oySignalToString(signal_type),
                     oyStruct_GetText( obs->model, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->model->oy_),
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
@@ -1168,6 +1202,15 @@ int      oyStructSignalForward_      ( oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
   int handled = 0;
+  oyObserver_s * obs = observer;
+
+  if(oy_debug_signals)
+    WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]", _("Signal"),
+                    oySignalToString(signal_type),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
 
   if(observer && observer->model &&
      observer->observer && observer->observer->type_ > oyOBJECT_NONE)
@@ -18758,6 +18801,7 @@ const char *       oyConnectorEventToText (
  *
  *  @param[in,out] c                   the connector
  *  @param         e                   the event type
+ *  @return                            0 on success, else error
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/28 (Oyranos: 0.1.8)
@@ -18858,9 +18902,8 @@ OYAPI int  OYEXPORT
 {
   int result = 0;
   oySIGNAL_e sig = oySIGNAL_OK;
-  int n, i, j_n,j, k,k_n, handled = 0;
-  oyFilterSocket_s * s = 0;
-  oyFilterPlug_s * p;
+  int n, i, j_n,j, k,k_n, handled = 0, pos;
+  oyFilterPlug_s * p, * sp;
   oyFilterGraph_s * graph = 0;
 
   switch(e)
@@ -18905,13 +18948,13 @@ OYAPI int  OYEXPORT
       oyFilterNode_s * node = oyFilterNodes_Get( graph->nodes, j );
 
       /* iterate over all node outputs */
-      k_n = oyFilterNode_EdgeCount( node, 0, 0 );
+      k_n = oyFilterNode_EdgeCount( node, 1, OY_FILTEREDGE_CONNECTED );
       for(k = 0; k < k_n; ++k)
       {
-        s = oyFilterNode_GetSocket( node, k );
-        handled = oyFilterSocket_SignalToGraph( s, e );
-        if(handled)
-          break;
+        pos = oyFilterNode_GetConnectorPos( node, 1, "///", k,
+                                            OY_FILTEREDGE_CONNECTED );
+        sp = oyFilterNode_GetPlug( node, pos );
+        oyFilterSocket_Callback( sp, e );
       }
 
       oyFilterNode_Release( &node );
@@ -21573,7 +21616,7 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/26 (Oyranos: 0.1.10)
- *  @date    2009/02/26
+ *  @date    2009/11/02
  */
 OYAPI int  OYEXPORT
                oyFilterNode_GetConnectorPos (
@@ -21637,9 +21680,7 @@ OYAPI int  OYEXPORT
           {
             pos = i + j;
             return pos;
-
-          } else
-            ++nth;
+          }
         }
       }
     }
@@ -21693,9 +21734,7 @@ OYAPI int  OYEXPORT
             /* 4.1 return as we otherwise would need to leave two loops */
             pos = i + j;
             return pos;
-
-          } else
-            ++nth;
+          }
         }
       }
     }
@@ -21821,17 +21860,30 @@ int      oyFilterNodeObserve_        ( oySIGNAL_e          signal_type,
   int i,n;
   oyFilterSocket_s * socket = 0;
   oyFilterNode_s * node = 0;
+  oyObserver_s * obs = observer;
 
   if(observer && observer->model &&
      observer->model->type_ == oyOBJECT_OPTIONS_S &&
      observer->observer && observer->observer->type_== oyOBJECT_FILTER_NODE_S)
   {
+    if(oy_debug_signals)
+      WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]", _("Signal"),
+                    oySignalToString(signal_type),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+
     node = (oyFilterNode_s*)observer->observer;
+    /* invalidate the context */
+    if(node->backend_data)
+      node->backend_data->release( (oyStruct_s**)&node->backend_data );
     n = oyFilterNode_EdgeCount( node, 0, 0 );
     for(i = 0; i < n; ++i)
     {
       socket = oyFilterNode_GetSocket( node, i );
-      oyFilterSocket_SignalToGraph( socket, (oyCONNECTOR_EVENT_e)signal_data );
+      /* forward to the downward graph */
+      oyFilterSocket_SignalToGraph( socket, signal_type );
     }
   }
 
@@ -23031,7 +23083,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
   /* Scan the input/plug side for unknown nodes, add these and continue in
    * the direction of previous unknown edges...
    */
-  if(!flags & OY_INPUT)
+  if(!(flags & OY_INPUT))
   {
     n = oyFilterNode_EdgeCount( s, 1, 0 );
     for( i = 0; i < n; ++i )
@@ -23044,7 +23096,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
   }
 
   /* ... same on the output/socket side */
-  if(!flags & OY_OUTPUT)
+  if(!(flags & OY_OUTPUT))
   {
     n = oyFilterNode_EdgeCount( s, 0, 0 );
     for( i = 0; i < n; ++i )
