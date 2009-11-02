@@ -677,7 +677,7 @@ void           oyValueClear          ( oyValue_u         * v,
  */
 typedef enum {
   oyFILTER_REG_NONE = 0,
-  oyFILTER_REG_TOP = 0x01,             /**< e.g. "sw" for filters */
+  oyFILTER_REG_TOP = 0x01,             /**< e.g. "shared" for filters */
   oyFILTER_REG_DOMAIN = 0x02,          /**< e.g. "oyranos.org" */
   oyFILTER_REG_TYPE = 0x04,            /**< e.g. "imaging" filter group */
   oyFILTER_REG_APPLICATION = 0x08,     /**< e.g. "scale" filter name */
@@ -734,7 +734,7 @@ typedef struct {
   oyObject_s           oy_;            /**< @private base object */
 
   uint32_t             id;             /**< id to map to events and widgets */
-  char               * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/imaging/scale/x", see as well @ref registration @see oyOPTIONATTRIBUTE_e */
+  char               * registration;   /**< full key path name to store configuration, e.g. "shared/oyranos.org/imaging/scale/x", see as well @ref registration @see oyOPTIONATTRIBUTE_e */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -817,8 +817,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
 
-/** @define  OY_SELECT_FILTER
- *  @brief   select from filter
+/** @brief   select from filter
  *  @ingroup objects_value
  *
  *  @version Oyranos: 0.1.10
@@ -826,8 +825,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  *  @date    2009/07/27
  */
 #define OY_SELECT_FILTER         2048
-/** @define  OY_SELECT_COMMON
- *  @brief   select from policy
+/** @brief   select from policy
  *  @ingroup objects_value
  *
  *  Select typical from a associatable oyCMMapi9_s type of filter providing 
@@ -1980,7 +1978,7 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
 
 
 /** @enum    oyCONNECTOR_e
- *  @brief   basic connector classes
+ *  @brief   basic connector attributes
  *  @ingroup objects_conversion
  *
  *  @version Oyranos: 0.1.8
@@ -1992,7 +1990,9 @@ typedef enum {
   oyCONNECTOR_IMAGE_MANIPULATOR,
   /** a data generator, e.g. checkerboard, gradient "//imaging/generator" */
   oyCONNECTOR_IMAGE_GENERATOR,
-  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//imaging/image" */
+  /** a pixel data provider, e.g. image data connector "//imaging/data".
+   *  This type should be always present to connect processing data.
+   *  That data is stored in oyFilterSocket_s::data. */
   oyCONNECTOR_IMAGE,
   /** observer, a endpoint, only input, e.g. text log, thumbnail viewer 
    *  "//imaging/observer" */
@@ -2064,7 +2064,7 @@ struct oyConnector_s {
    *  e.g."Img", "Image", "Image Socket"*/
   oyName_s             name;           
 
-  char               * connector_type; /**< like registration */
+  char               * connector_type; /**< a @ref registration string */
   /** make requests and receive data, by part of oyFilterPlug_s */
   int                  is_plug;
 };
@@ -2301,7 +2301,7 @@ struct oyFilterCore_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  char               * registration_;  /**< @private a registration name, e.g. "sw/oyranos.org/imaging/scale", see as well @ref registration */
+  char               * registration_;  /**< @private a registration name, e.g. "shared/oyranos.org/imaging/scale", see as well @ref registration */
   oyName_s           * name_;          /**< @private nick, name, description/help */
 
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */
@@ -2510,9 +2510,9 @@ oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
 int            oyFilterNode_Release  ( oyFilterNode_s   ** node );
 
 
-#define OY_FILTEREDGE_FREE             0x01        /** list free edges */
-#define OY_FILTEREDGE_CONNECTED        0x02        /** list connected edges */
-#define OY_FILTEREDGE_LASTTYPE         0x04        /** list last type edges */
+#define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
+#define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */
+#define OY_FILTEREDGE_LASTTYPE         0x04        /**< list last type edges */
 /* decode */
 #define oyToFilterEdge_Free_m(r)       ((r)&1)
 #define oyToFilterEdge_Connected_m(r)  (((r) >> 1)&1)

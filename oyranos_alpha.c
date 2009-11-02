@@ -4647,7 +4647,7 @@ digraph Anatomy_A {
  *  needed. This pattern follows the scheme of directories with attributes or
  *  XML elements with attributes.
  *  The sections are to be filled as follows:
- *  - top, e.g. "sw" (::oyFILTER_REG_TOP)
+ *  - top, e.g. "shared" (::oyFILTER_REG_TOP)
  *  - vendor, e.g. "oyranos.org" (::oyFILTER_REG_DOMAIN)
  *  - filter type, e.g. "imaging"
  *    (::oyFILTER_REG_TYPE)
@@ -4669,8 +4669,8 @@ digraph Anatomy_A {
  *    hardware acceleration features \n
  *  
  *  \b Example: a complete module registration: \n
- *  "sw/oyranos.org/imaging/icc.lcms._NOACCEL._CPU" registers a plain software
- *  CMM
+ *  "shared/oyranos.org/imaging/icc.lcms._NOACCEL._CPU" registers a plain
+ *  software CMM
  * 
  *  A underscore in front of a attribute makes the attribute optional during
  *  the matching process in oyFilterRegistrationMatch(). This is needed in case
@@ -18889,6 +18889,8 @@ OYAPI int  OYEXPORT
  *  @memberof oyFilterSocket_s
  *  @brief   send a signal through the graph
  *
+ *  The traversal direction is defined as from the starting node to the output.
+ *
  *  @return                            1 if handled or zero
  *
  *  @version Oyranos: 0.1.10
@@ -21276,9 +21278,9 @@ int          oyFilterNode_Release    ( oyFilterNode_s   ** obj )
  *  @param         node                the node
  *  @param         is_input            1 - plugs; 0 - sockets
  *  @param         flags               specify which number to return
- *                                     - OY_FILTEREDGE_FREE: count available
- *                                     - OY_FILTEREDGE_CONNECTED: count used
- *                                     - OY_FILTEREDGE_LASTTYPE: account only
+ *                                     - oyranos::OY_FILTEREDGE_FREE: count available
+ *                                     - oyranos::OY_FILTEREDGE_CONNECTED: count used
+ *                                     - oyranos::OY_FILTEREDGE_LASTTYPE: account only
  *                                       for the last connector type
  *  @return                            the number of possible edges
  *
@@ -21602,7 +21604,10 @@ OYAPI int  OYEXPORT
  *  @param         is_input            1 - plugs; 0 - sockets
  *  @param         pattern             the pattern to be found in the
  *                                     oyConnector_s::connector_type of the
- *                                     searched plug or socket
+ *                                     searched plug or socket. Its a
+ *                                     @ref registration string. E.g. a typical
+ *                                     data connection: "//" OY_TYPE_STD "/data"
+ *                                     See as well oyranos::oyCONNECTOR_e.
  *  @param         nth_of_type         the position in the group of the
  *                                     connector type for this filter; Note
  *                                     this parameter makes only sense for the
@@ -21610,8 +21615,8 @@ OYAPI int  OYEXPORT
  *                                     this one can occure multiple times.
  *  @param         flags               specify which status to return
  *                                     - zero means: take all into account
- *                                     - OY_FILTEREDGE_FREE: next free available
- *                                     - OY_FILTEREDGE_CONNECTED: consider used
+ *                                     - oyranos::OY_FILTEREDGE_FREE: next free available
+ *                                     - oyranos::OY_FILTEREDGE_CONNECTED: consider used
  *  @return                            the absolute position
  *
  *  @version Oyranos: 0.1.10
@@ -21875,9 +21880,11 @@ int      oyFilterNodeObserve_        ( oySIGNAL_e          signal_type,
                     oyObject_GetId(   obs->observer->oy_) );
 
     node = (oyFilterNode_s*)observer->observer;
+
     /* invalidate the context */
     if(node->backend_data)
       node->backend_data->release( (oyStruct_s**)&node->backend_data );
+
     n = oyFilterNode_EdgeCount( node, 0, 0 );
     for(i = 0; i < n; ++i)
     {
