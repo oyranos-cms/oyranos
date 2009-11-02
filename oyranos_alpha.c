@@ -24620,7 +24620,7 @@ int                oyConversion_RunPixels (
           pixel_access->start_xy[1] = pixel_access->start_xy_old[1];
         }
 
-        oyFilterGraph_PrepareContexts( pixel_access->graph, 1 );
+        oyFilterGraph_PrepareContexts( pixel_access->graph, 0 );
         error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
                                                               pixel_access);
       }
