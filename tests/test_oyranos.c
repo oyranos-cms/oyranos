@@ -954,7 +954,8 @@ oyTESTRESULT_e testObserver ()
 
   oyOption_SetFromText( o, "new_value", 0 );
 
-  if( !oyStruct_ObserverRemove( (oyStruct_s*)o, (oyStruct_s*)node ))
+  if( !oyStruct_ObserverRemove( (oyStruct_s*)o, (oyStruct_s*)node,
+                                myFilterSignalHandler ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Removed Observer                      " );
   } else

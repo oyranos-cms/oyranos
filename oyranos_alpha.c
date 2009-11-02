@@ -920,6 +920,8 @@ OYAPI int  OYEXPORT
 }
 
 #define OY_SIGNAL_OBSERVERS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "oyStructList_s/observers"
+/*  The models list of a observing object is just a clone of the oyObserver_s
+ *  object added to the model. */
 #define OY_SIGNAL_MODELS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "oyStructList_s/models"
 
 /** @internal
@@ -1015,7 +1017,7 @@ OYAPI int  OYEXPORT
     {
       obs = (oyObserver_s*) oyStructList_GetType_( list,
                                                    i, oyOBJECT_OBSERVER_S );
-      if(observer == obs->observer)
+      if(observer == obs->observer && obs->signal == signalFunc)
         ++found;
     }
 
@@ -1044,7 +1046,7 @@ OYAPI int  OYEXPORT
     {
       obs = (oyObserver_s*) oyStructList_GetType_( list,
                                                    i, oyOBJECT_OBSERVER_S );
-      if(model == obs->model)
+      if(model == obs->model && obs->signal == signalFunc)
         ++found;
     }
 
@@ -1068,7 +1070,7 @@ OYAPI int  OYEXPORT
 }
 
 /** @internal
- *  Function oyStruct_ObserverRemove
+ *  Function oyStruct_ObserverRemove_
  *  @memberof oyObserver_s
  *  @brief   remove a observer from the observer or model internal list
  *
@@ -1083,7 +1085,8 @@ OYAPI int  OYEXPORT
  */
 int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
                                        oyStruct_s        * obj,
-                                       int                 observer )
+                                       int                 observer,
+                                       oySignal_f          signalFunc )
 {
   int error = 0;
   oyObserver_s * obs = 0;
@@ -1098,7 +1101,8 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
 
       if(obs &&
          ((observer && obj == obs->observer) ||
-          (!observer && obj == obs->model)))
+          (!observer && obj == obs->model)) &&
+          (!signalFunc || obs->signal == signalFunc))
         oyStructList_ReleaseAt( list, i );
     }
   }
@@ -1111,6 +1115,7 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
  *
  *  @param[in,out] observer            the model
  *  @param[in]     model               the pattern
+ *  @param[in]     signalFunc          the signal handler to remove
  *  @return                            0 - fine; 1 - error
  *
  *  @version Oyranos: 0.1.10
@@ -1119,7 +1124,8 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
  */
 OYAPI int  OYEXPORT
            oyStruct_ObserverRemove   ( oyStruct_s        * model,
-                                       oyStruct_s        * observer )
+                                       oyStruct_s        * observer,
+                                       oySignal_f          signalFunc )
 {
   int error = !model || !observer;
   oyStructList_s * list = 0;
@@ -1127,12 +1133,12 @@ OYAPI int  OYEXPORT
   if(!error)
   {
     list = oyStruct_ObserverListGet_( model, OY_SIGNAL_OBSERVERS );
-    error = oyStruct_ObserverRemove_( list, observer, 1 );
+    error = oyStruct_ObserverRemove_( list, observer, 1, signalFunc );
   }
   if(!error)
   {
     list = oyStruct_ObserverListGet_( observer, OY_SIGNAL_MODELS );
-    error = oyStruct_ObserverRemove_( list, model, 0 );
+    error = oyStruct_ObserverRemove_( list, model, 0, signalFunc );
   }
 
   return error;
@@ -1293,7 +1299,7 @@ OYAPI int  OYEXPORT
       obs = (oyObserver_s*) oyStructList_GetType_( observers,
                                                    i, oyOBJECT_OBSERVER_S );
       if(obs &&
-         (!flags & 0x01 || obs->model == pattern))
+         (!(flags & 0x01) || obs->model == pattern))
       { 
         if(oy_debug_signals)
         {
@@ -1363,7 +1369,7 @@ OYAPI int  OYEXPORT
       obs = (oyObserver_s*) oyStructList_GetType_( list,
                                                    i, oyOBJECT_OBSERVER_S );
       if(obs &&
-         (!flags & 0x01 || obs->observer == pattern))
+         (!(flags & 0x01) || obs->observer == pattern))
       { 
         if(oy_debug_signals)
         {

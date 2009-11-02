@@ -306,7 +306,8 @@ OYAPI int  OYEXPORT
                                        oySignal_f          signalFunc );
 OYAPI int  OYEXPORT
            oyStruct_ObserverRemove   ( oyStruct_s        * model,
-                                       oyStruct_s        * observer );
+                                       oyStruct_s        * observer,
+                                       oySignal_f          signalFunc );
 OYAPI int  OYEXPORT
            oyStruct_ObserverSignal   ( oyStruct_s        * model,
                                        oySIGNAL_e          signal_type,
