@@ -108,6 +108,7 @@ class Fl_Oy_Box : public Fl_Box
   oyPixelAccess_s * ticket;
   oyRectangle_s * old_display_rectangle;
   oyRectangle_s * old_roi_rectangle;
+  int dirty;
 
   void draw()
   {
@@ -237,7 +238,8 @@ class Fl_Oy_Box : public Fl_Box
           (!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) ||
            !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle )||
            ticket->start_xy[0] != ticket->start_xy_old[0] ||
-           ticket->start_xy[1] != ticket->start_xy_old[1]) )
+           ticket->start_xy[1] != ticket->start_xy_old[1]) ||
+           dirty )
       {
 #ifdef DEBUG
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
@@ -252,6 +254,8 @@ class Fl_Oy_Box : public Fl_Box
         oyRectangle_SetByRectangle( old_roi_rectangle,ticket->output_image_roi);
         ticket->start_xy_old[0] = ticket->start_xy[0];
         ticket->start_xy_old[1] = ticket->start_xy[1];
+
+        dirty = 0;
       }
 
       if(verbose)
@@ -306,6 +310,7 @@ public:
     old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
     old_roi_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
     px=py=ox=oy=0;
+    dirty = 0;
   };
 
   ~Fl_Oy_Box(void)
@@ -325,7 +330,7 @@ public:
   void damage( char c )
   {
     if(c & FL_DAMAGE_USER1)
-      ticket->start_xy_old[0]--;
+      dirty = 1;
     Fl_Box::damage( c );
   }
 
