@@ -412,13 +412,42 @@ public:
 
 Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyOptions_s *icc_opts);
 
+extern "C" {
+int      conversionObserve           ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data )
+{
+  int handled = 0;
+  oyObserver_s * obs = observer;
+
+  if(observer && observer->model &&
+     observer->model->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    /*if(oy_debug_signals)*/
+      printf("%s:%d WARNING: \n\t%s %s: %s[%d]->%s[%d]\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__, _("Signal"),
+                    oySignalToString(signal_type),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+
+    Fl_Oy_Box * oy_box = (Fl_Oy_Box*) ((oyBlob_s*)observer->user_data)->ptr;
+    oy_box->damage( FL_DAMAGE_USER1 );
+
+  }
+
+  return handled;
+}
+}
 
 int
 main(int argc, char** argv)
 {
   /* some Oyranos types */
   oyConversion_s * conversion = 0;
-  oyFilterNode_s * in, * out;
+  oyFilterNode_s * in, * out, * icc;
   oyOptions_s * options = 0,
               * icc_opts = 0;
   oyOption_s * o = 0;
@@ -498,7 +527,7 @@ main(int argc, char** argv)
 #endif
 
   /* create a new filter node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
+  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
   /* the options are subject to manipulate */
   icc_opts = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
   /* append the new to the previous one */
@@ -576,7 +605,13 @@ main(int argc, char** argv)
   o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH "fltk/image_display/fl_oy_box", 0 );
   oyOption_SetFromData( o, oy_box, 0 );
   oyOptions_MoveIn( icc_opts, &o, -1 );
-  oyOptions_ObserverAdd( icc_opts, (oyStruct_s*)conversion, 0,0 );
+  /* observe the node */
+  oyBlob_s * b = oyBlob_New(0);
+  b->ptr = oy_box;
+  oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion,
+                        (oyStruct_s*)b,
+                        conversionObserve );
+  oyBlob_Release( &b );
 
   oy_box->setConversion( conversion );
 
