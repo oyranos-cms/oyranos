@@ -312,7 +312,21 @@ OYAPI int  OYEXPORT
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data );
 OYAPI int  OYEXPORT
-           oyStruct_IsObserved       ( oyStruct_s        * model );
+           oyStruct_ObserversCopy    ( oyStruct_s        * object,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverCopyModel( oyStruct_s        * model,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverCopyObserver (
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags );
+OYAPI int  OYEXPORT
+           oyStruct_IsObserved       ( oyStruct_s        * model,
+                                       oyStruct_s        * observer );
 
 #define OY_SIGNAL_BLOCK                0x01 /**< do not send new signals */
 #define oyToSignalBlock_m(r)           ((r)&1)
