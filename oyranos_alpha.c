@@ -919,7 +919,61 @@ OYAPI int  OYEXPORT
   return result;
 }
 
-#define OY_SIGNAL_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "oyStructList_s/observers"
+#define OY_SIGNAL_OBSERVERS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "oyStructList_s/observers"
+#define OY_SIGNAL_MODELS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "oyStructList_s/models"
+
+/** @internal
+ *  Function oyStruct_ObserverListGet_
+ *  @memberof oyObserver_s
+ *  @brief   get the desired list of oyObserver_s'
+ *
+ *  @param[in]     obj                 the object to look in for the list
+ *  @param[in]     reg                 the selector for the list
+ *  @return                            the observers
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/02 (Oyranos: 0.1.10)
+ *  @date    2009/11/02
+ */
+oyStructList_s * oyStruct_ObserverListGet_(
+                                       oyStruct_s        * obj,
+                                       const char        * reg )
+{
+  oyOption_s * o = 0;
+  int error = 0;
+  oyStructList_s * list = 0;
+
+  if(!error)
+    o = oyOptions_Find( (oyOptions_s*)obj->oy_->handles_,
+                        reg );
+  if(!o)
+  {
+    list = oyStructList_New( 0 );
+    o = oyOption_New( reg, obj->oy_ );
+    error = oyOption_StructMoveIn( o, (oyStruct_s**)&list );
+    if(!obj->oy_->handles_)
+      obj->oy_->handles_ = (oyStruct_s*) oyOptions_New( 0 );
+    error = oyOptions_MoveIn( (oyOptions_s*)obj->oy_->handles_, &o, -1);
+    o = oyOptions_Find( (oyOptions_s*)obj->oy_->handles_,
+                        reg );
+  }
+  if(!error && o && o->value_type == oyVAL_STRUCT && o->value)
+  {
+    if(o->value->oy_struct &&
+       o->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
+      list = (oyStructList_s*)o->value->oy_struct;
+    else
+    {
+      WARNcc3_S( obj, "%s: %s %s", _("found list of wrong type"),
+                 reg,
+                 oyStruct_TypeToText( o->value->oy_struct ) );
+      error = 1;
+    }
+
+    oyOption_Release( &o );
+  }
+  return list;
+}
 
 /** Function oyStruct_ObserverAdd
  *  @memberof oyObserver_s
@@ -930,12 +984,11 @@ OYAPI int  OYEXPORT
  *  @param[in]     user_data           additional static informations
  *  @param[in]     signalFunc          the signal handler;
  *                                     defaults to oyStructSignalForward_
- *
  *  @return                            0 - fine; 1 - error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
+ *  @date    2009/11/02
  */
 OYAPI int  OYEXPORT
            oyStruct_ObserverAdd      ( oyStruct_s        * model,
@@ -946,56 +999,27 @@ OYAPI int  OYEXPORT
   oyObserver_s * s = 0,
                * obs = 0;
   int error = !model;
-  oyOption_s * o = 0;
-  oyStructList_s * observers = 0;
-  int n,i;
+  oyStructList_s * list = 0;
+  int n,i, found;
 
   if(!signalFunc)
     signalFunc = oyStructSignalForward_;
 
-  if(!error)
-    o = oyOptions_Find( (oyOptions_s*)model->oy_->handles_,
-                        OY_SIGNAL_REGISTRATION );
-
-  if(!o)
+  /* add to model */
+  list = oyStruct_ObserverListGet_( model, OY_SIGNAL_OBSERVERS );
+  if(!error && list)
   {
-    observers = oyStructList_New( 0 );
-    o = oyOption_New( OY_SIGNAL_REGISTRATION, model->oy_ );
-    error = oyOption_StructMoveIn( o, (oyStruct_s**)&observers );
-    if(!model->oy_->handles_)
-      model->oy_->handles_ = (oyStruct_s*) oyOptions_New( 0 );
-    error = oyOptions_MoveIn( (oyOptions_s*)model->oy_->handles_, &o, -1);
-    o = oyOptions_Find( (oyOptions_s*)model->oy_->handles_,
-                        OY_SIGNAL_REGISTRATION );
-  }
-
-  if(!error && o && o->value_type == oyVAL_STRUCT && o->value)
-  {
-    if(o->value->oy_struct &&
-       o->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
-      observers = (oyStructList_s*)o->value->oy_struct;
-    else
-    {
-      WARNcc3_S( model, "%s: %s %s", _("found observer list of wrong type"),
-                 OY_SIGNAL_REGISTRATION,
-                 oyStruct_TypeToText( o->value->oy_struct ) );
-      error = 1;
-    }
-  }
-
-  if(!error)
-  {
-    int found = 0;
-    n = oyStructList_Count( observers );
+    found = 0;
+    n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( observers,
+      obs = (oyObserver_s*) oyStructList_GetType_( list,
                                                    i, oyOBJECT_OBSERVER_S );
       if(observer == obs->observer)
         ++found;
     }
 
-    /* add new observer */
+    /* add new oyObserver_s */
     if(found == 0)
     {
       s = oyObserver_New( 0 );
@@ -1006,33 +1030,78 @@ OYAPI int  OYEXPORT
         s->user_data = user_data->copy( user_data, 0 );
       s->signal = signalFunc;
 
-      oyStructList_MoveIn( observers, (oyStruct_s**)&s, -1, 0 );
-
-    } else
-    {
-      /* set new properties */
-      if(obs->model != model)
-      {
-        WARNc3_S("%s %d/%d",
-                 _("Trying to observe the same object with different model?"),
-                 obs->model?oyObject_GetId(obs->model->oy_):-1,
-                 model? oyObject_GetId(model->oy_):-1);
-        error = 1;
-      }
-      if(!error && obs->user_data != user_data)
-      {
-        if(obs->user_data)
-          obs->user_data->release( &obs->user_data );
-        if(user_data)
-          obs->user_data = user_data->copy( user_data, 0 );
-        else
-          obs->user_data = 0;
-      }
-      if(!error)
-        obs->signal = signalFunc;
+      oyStructList_MoveIn( list, (oyStruct_s**)&s, -1, 0 );
     }
   }
 
+  /* add to observer */
+  list = oyStruct_ObserverListGet_( observer, OY_SIGNAL_MODELS );
+  if(!error && list)
+  {
+    found = 0;
+    n = oyStructList_Count( list );
+    for(i = 0; i < n; ++i)
+    {
+      obs = (oyObserver_s*) oyStructList_GetType_( list,
+                                                   i, oyOBJECT_OBSERVER_S );
+      if(model == obs->model)
+        ++found;
+    }
+
+    /* add oyObserver_s */
+    if(found == 0 && !s)
+    {
+      s = oyObserver_New( 0 );
+      if(observer)
+        s->observer = observer->copy( observer, 0 );
+      s->model = model->copy( model, 0 );
+      if(user_data)
+        s->user_data = user_data->copy( user_data, 0 );
+      s->signal = signalFunc;
+    }
+
+    if(s)
+      oyStructList_MoveIn( list, (oyStruct_s**)&s, -1, 0 );
+  }
+
+  return error;
+}
+
+/** @internal
+ *  Function oyStruct_ObserverRemove
+ *  @memberof oyObserver_s
+ *  @brief   remove a observer from the observer or model internal list
+ *
+ *  @param[in,out] list                the reference list
+ *  @param[in]     obj                 comparision object
+ *  @param[in]     observer            1 - remove observer; 0 - remove model
+ *  @return                            0 - fine; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/02 (Oyranos: 0.1.10)
+ *  @date    2009/11/02
+ */
+int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
+                                       oyStruct_s        * obj,
+                                       int                 observer )
+{
+  int error = 0;
+  oyObserver_s * obs = 0;
+  int n,i;
+  if(list)
+  {
+    n = oyStructList_Count( list );
+    for(i = n-1; i >= 0; --i)
+    {
+      obs = (oyObserver_s*) oyStructList_GetType_( list,
+                                                   i, oyOBJECT_OBSERVER_S );
+
+      if(obs &&
+         ((observer && obj == obs->observer) ||
+          (!observer && obj == obs->model)))
+        oyStructList_ReleaseAt( list, i );
+    }
+  }
   return error;
 }
 
@@ -1046,55 +1115,30 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
+ *  @date    2009/11/02
  */
 OYAPI int  OYEXPORT
            oyStruct_ObserverRemove   ( oyStruct_s        * model,
                                        oyStruct_s        * observer )
 {
-  oyObserver_s * obs = 0;
   int error = !model || !observer;
-  oyOption_s * o = 0;
-  oyStructList_s * observers = 0;
-  int n,i;
+  oyStructList_s * list = 0;
 
   if(!error)
-    o = oyOptions_Find( (oyOptions_s*)model->oy_->handles_,
-                        OY_SIGNAL_REGISTRATION );
-
-  if(!o)
-    return 0;
-
-  if(!error && o && o->value_type == oyVAL_STRUCT && o->value)
   {
-    if(o->value->oy_struct &&
-       o->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
-      observers = (oyStructList_s*)o->value->oy_struct;
-    else
-    {
-      WARNcc3_S( model, "%s: %s %s", _("found observer list of wrong type"),
-                 OY_SIGNAL_REGISTRATION,
-                 oyStruct_TypeToText( o->value->oy_struct ) );
-      error = 1;
-    }
+    list = oyStruct_ObserverListGet_( model, OY_SIGNAL_OBSERVERS );
+    error = oyStruct_ObserverRemove_( list, observer, 1 );
   }
-
   if(!error)
   {
-    n = oyStructList_Count( observers );
-    for(i = 0; i < n; ++i)
-    {
-      obs = (oyObserver_s*) oyStructList_GetType_( observers,
-                                                   i, oyOBJECT_OBSERVER_S );
-      if(obs && observer == obs->observer)
-        oyStructList_ReleaseAt( observers, i );
-    }
+    list = oyStruct_ObserverListGet_( observer, OY_SIGNAL_MODELS );
+    error = oyStruct_ObserverRemove_( list, model, 0 );
   }
 
   return error;
 }
 
-/** Function oyStruct_ObserverRemove
+/** Function oyStruct_ObserverSignal
  *  @memberof oyObserver_s
  *  @brief   send a signal to all ovservers of a model
  *
@@ -1124,7 +1168,7 @@ OYAPI int  OYEXPORT
 
   if(!error)
     o = oyOptions_Find( (oyOptions_s*)model->oy_->handles_,
-                        OY_SIGNAL_REGISTRATION );
+                        OY_SIGNAL_OBSERVERS );
 
   if(!o)
     return 0;
@@ -1137,7 +1181,7 @@ OYAPI int  OYEXPORT
     else
     {
       WARNcc3_S( model, "%s: %s %s", _("found observer list of wrong type"),
-                 OY_SIGNAL_REGISTRATION,
+                 OY_SIGNAL_OBSERVERS,
                  oyStruct_TypeToText( o->value->oy_struct ) );
       error = 1;
     }
@@ -1178,6 +1222,177 @@ OYAPI int  OYEXPORT
 
   return error;
 }
+
+/** Function oyStruct_ObserversCopy
+ *  @memberof oyObserver_s
+ *  @brief   copy a objects observers and models to a different object
+ *
+ *  oyStruct_ObserversCopy is a convenience function for
+ *  oyStruct_ObserverCopyModel() and oyStruct_ObserverCopyObserver().
+ *
+ *  @param[in,out] object              the object
+ *  @param[in]     pattern             the pattern to copy from
+ *  @param[in]     flags               0x02 omit observers; 0x04 omit models
+ *  @return                            0 - good; >= 1 - error; < 0 issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/02 (Oyranos: 0.1.10)
+ *  @date    2009/11/02
+ */
+OYAPI int  OYEXPORT
+           oyStruct_ObserversCopy    ( oyStruct_s        * object,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags )
+{
+  int error = 0;
+
+  if(!error && !(flags & 0x04))
+    error = oyStruct_ObserverCopyModel(object, pattern, flags);
+  if(!error && !(flags & 0x02))
+    error = oyStruct_ObserverCopyObserver(object, pattern, flags);
+
+  return error;
+}
+
+/** Function oyStruct_ObserverCopyModel
+ *  @memberof oyObserver_s
+ *  @brief   copy a models observers to a different model
+ *
+ *  The observers are copied from pattern with object type to a model with the
+ *  same object type.
+ *
+ *  @param[in,out] model               the model
+ *  @param[in]     pattern             the pattern to copy from
+ *  @param[in]     flags               0x01 omit observer idendity check
+ *  @return                            0 - good; >= 1 - error; < 0 issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/02 (Oyranos: 0.1.10)
+ *  @date    2009/11/02
+ */
+OYAPI int  OYEXPORT
+           oyStruct_ObserverCopyModel( oyStruct_s        * model,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags )
+{
+  oyObserver_s * obs = 0;
+  int error = !model;
+  oyStructList_s * observers = 0;
+  int n,i;
+
+  if( !model || !pattern )
+    return 0;
+
+  observers = oyStruct_ObserverListGet_( pattern, OY_SIGNAL_OBSERVERS );
+
+  if(!error)
+  {
+    n = oyStructList_Count( observers );
+    for(i = 0; i < n; ++i)
+    {
+      obs = (oyObserver_s*) oyStructList_GetType_( observers,
+                                                   i, oyOBJECT_OBSERVER_S );
+      if(obs &&
+         (!flags & 0x01 || obs->model == pattern))
+      { 
+        if(oy_debug_signals)
+        {
+          WARNc5_S( "\n\tCopy %s: %s[%d]->%s[%d]", _("Signal"),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+        }
+        error = oyStruct_ObserverAdd( (oyStruct_s*)model, obs->observer,
+                                obs->user_data, obs->signal );
+
+      }
+      else
+      {
+        WARNc5_S( "\n\tCopy: %s: %s[%d]->%s[%d]",
+                    _("found observer of wrong type"),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+      }
+    }
+  }
+
+  return error;
+
+}
+
+/** Function oyStruct_ObserverCopyObserver
+ *  @memberof oyObserver_s
+ *  @brief   copy a observers models to a different observer
+ *
+ *  The models are copied from pattern with object type to a object with the
+ *  same object type.
+ *
+ *  @param[in,out] model               the model
+ *  @param[in]     pattern             the pattern to copy from
+ *  @param[in]     flags               0x01 omit model idendity check
+ *  @return                            0 - good; >= 1 - error; < 0 issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/02 (Oyranos: 0.1.10)
+ *  @date    2009/11/02
+ */
+OYAPI int  OYEXPORT
+           oyStruct_ObserverCopyObserver (
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags )
+{
+  oyObserver_s * obs = 0;
+  int error = !observer;
+  oyStructList_s * list = 0;
+  int n,i;
+
+  if( !observer || !pattern )
+    return 0;
+
+  list = oyStruct_ObserverListGet_( pattern, OY_SIGNAL_MODELS );
+
+  if(!error)
+  {
+    n = oyStructList_Count( list );
+    for(i = 0; i < n; ++i)
+    {
+      obs = (oyObserver_s*) oyStructList_GetType_( list,
+                                                   i, oyOBJECT_OBSERVER_S );
+      if(obs &&
+         (!flags & 0x01 || obs->observer == pattern))
+      { 
+        if(oy_debug_signals)
+        {
+          WARNc5_S( "\n\tCopy %s: %s[%d]->%s[%d]", _("Signal"),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+        }
+        error = oyStruct_ObserverAdd( obs->model, observer,
+                                obs->user_data, obs->signal );
+
+      }
+      else
+      {
+        WARNc5_S( "\n\tCopy: %s: %s[%d]->%s[%d]",
+                    _("found observer of wrong type"),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+      }
+    }
+  }
+
+  return error;
+
+}
+
 
 /**
  *  @internal
@@ -1227,16 +1442,22 @@ int      oyStructSignalForward_      ( oySIGNAL_e          signal_type,
  *
  *  Check if a object is observed by others.
  *
+ *  @param         model               model to ask
+ *  @param         observer            which observes that model
+ *  @return                            true or false
+ *
  *  @version Oyranos: 0.1.10
  *  @date    2009/10/28
  *  @since   2009/10/28 (Oyranos: 0.1.10)
  */
 OYAPI int  OYEXPORT
-           oyStruct_IsObserved       ( oyStruct_s        * model )
+           oyStruct_IsObserved       ( oyStruct_s        * model,
+                                       oyStruct_s        * observer )
 {
   int observed = 0;
   int i,n = 0;
   oyOption_s * o = 0;
+  int error = 0;
 
   if(model->oy_->handles_)
     n = oyStructList_Count( ((oyOptions_s*)model->oy_->handles_)->list );
@@ -1244,10 +1465,45 @@ OYAPI int  OYEXPORT
   {
     o = (oyOption_s*) oyStructList_Get_(
                               ((oyOptions_s*)model->oy_->handles_)->list, i );
-    if( oyStrcmp_( o->registration, OY_SIGNAL_REGISTRATION ) == 0)
+    if( oyStrcmp_( o->registration, OY_SIGNAL_OBSERVERS ) == 0)
     {
-      observed = 1;
-      break;
+      if(observer)
+      {
+        oyStructList_s * observers = 0;
+        int j_n,j;
+
+        if(!error && o->value->oy_struct &&
+           o->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
+          observers = (oyStructList_s*)o->value->oy_struct;
+        else
+        {
+        WARNcc3_S( model, "%s: %s %s", _("found observer list of wrong type"),
+                   OY_SIGNAL_OBSERVERS,
+                   oyStruct_TypeToText( o->value->oy_struct ) );
+          error = 1;
+        }
+
+        if(!error)
+        {
+          j_n = oyStructList_Count( observers );
+          for(j = 0; j < j_n; ++j)
+          {
+            oyObserver_s * obs;
+            obs = (oyObserver_s*) oyStructList_GetType_( observers,
+                                                   j, oyOBJECT_OBSERVER_S );
+            if(obs && obs->observer == observer)
+            { 
+              observed = 1;
+              break;
+            }
+          }
+        }
+        
+      } else
+      {
+        observed = 1;
+        break;
+      }
     }
   }
 
@@ -1761,7 +2017,7 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
       if(list->ptr_[i]->copy)
         s->ptr_[i] = list->ptr_[i]->copy( list->ptr_[i], 0 );
 
-    if(oyStruct_IsObserved( (oyStruct_s*)s) )
+    if(oyStruct_IsObserved( (oyStruct_s*)s, 0) )
       error = oyStructList_ObserverAdd( list, 0, 0, 0 );
   }
 
@@ -1892,7 +2148,7 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
         ++s->n_;
     }
 
-    if(flags & OY_OBSERVE_AS_WELL && oyStruct_IsObserved((oyStruct_s*)s))
+    if(flags & OY_OBSERVE_AS_WELL && oyStruct_IsObserved((oyStruct_s*)s, 0))
       oyStruct_ObserverAdd( (oyStruct_s*)*ptr, (oyStruct_s*)s, 0,0 );
     *ptr = 0;
   }
@@ -2305,7 +2561,7 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
       error = oyStructList_MoveIn( s, &o, -1, 0 );
     }
 
-    if(oyStruct_IsObserved( (oyStruct_s*)s) )
+    if(oyStruct_IsObserved( (oyStruct_s*)s, 0) )
       error = oyStructList_ObserverAdd( list, 0, 0, 0 );
   }
 
@@ -8475,7 +8731,7 @@ OYAPI int  OYEXPORT
  
     if(error <= 0)
     {
-      if(oyStruct_IsObserved((oyStruct_s*)s))
+      if(oyStruct_IsObserved((oyStruct_s*)s, 0))
         oyStruct_ObserverAdd( (oyStruct_s*)*obj, (oyStruct_s*)s->list, 0, 0 );
       error = oyStructList_MoveIn( s->list, (oyStruct_s**)obj, pos,
                                    OY_OBSERVE_AS_WELL );
@@ -18816,7 +19072,7 @@ OYAPI int  OYEXPORT
   oyFilterSocket_s * s;
   oyFilterPlug_s * p;
 
-  if(e != oyCONNECTOR_EVENT_OK)
+  if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
   {
     WARNc5_S("\n  oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
              "  event: \"%s\" plug[%d/node%d]",
@@ -18870,7 +19126,9 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s    * c,
                                        oyCONNECTOR_EVENT_e e )
 {
-  WARNc4_S("oyFilterNode_s[%d]->oyFilterPlug_s[%d]\n  event: \"%s\" socket[%d]",
+  if(oy_debug_signals)
+    WARNc4_S("oyFilterNode_s[%d]->oyFilterPlug_s[%d]\n"
+             "  event: \"%s\" socket[%d]",
             (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
             c ? oyObject_GetId(c->oy_) : -1,
             oyConnectorEventToText(e),
@@ -18924,9 +19182,10 @@ OYAPI int  OYEXPORT
 
   result = oyStruct_ObserverSignal( (oyStruct_s*) c->node, sig, 0 );
 
-  if(e != oyCONNECTOR_EVENT_OK)
+  if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
   {
-  WARNc4_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n  event: \"%s\" socket[%d]",
+    WARNc4_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
+             "  event: \"%s\" socket[%d]",
             (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
             c ? oyObject_GetId(c->oy_) : -1,
             oyConnectorEventToText(e),
