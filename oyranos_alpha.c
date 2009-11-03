@@ -24088,35 +24088,27 @@ const char *   oyContextCollectData_ ( oyStruct_s        * s,
 {
   int error = !s;
   int i, n;
+  const char * model = 0;
 
   char * hash_text = 0;
 
   if(error <= 0)
   {
     /* input data */
-    hashTextAdd_m( "<data_in>\n" );
+    hashTextAdd_m(   " <data_in>\n" );
     hashTextAdd_m( oyStructList_GetID( ins, 0, 0 ) );
-    hashTextAdd_m( "</data_in>\n" );
+    hashTextAdd_m( "\n </data_in>\n" );
 
     /* options -> xforms */
-    n = oyOptions_Count( opts );
-    for(i = 0; i < n; ++i)
-    {
-      oyOption_s * o = oyOptions_Get( opts, i );
-      hashTextAdd_m( "  <options name=\"" );
-      hashTextAdd_m( o->registration );
-      hashTextAdd_m( "\" type=\"" );
-      hashTextAdd_m( oyValueTypeText( o->value_type ) );
-      hashTextAdd_m( "\"" );
-      hashTextAdd_m( oyOption_GetText( o, oyNAME_NAME ) );
-      oyOption_Release( &o );
-      hashTextAdd_m( ">\n" );
-    }
+    hashTextAdd_m(   " <oyOptions_s>\n" );
+    model = oyOptions_GetText( opts, oyNAME_NAME );
+    hashTextAdd_m( model );
+    hashTextAdd_m( "\n </oyOptions_s>\n" );
 
     /* output data */
-    hashTextAdd_m( "<data_out>\n" );
+    hashTextAdd_m(   " <data_out>\n" );
     hashTextAdd_m( oyStructList_GetID( outs, 0, 0 ) );
-    hashTextAdd_m( "</data_out>\n" );
+    hashTextAdd_m( "\n </data_out>\n" );
 
     oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
 
