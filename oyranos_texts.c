@@ -440,6 +440,24 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_RENDERING_BPC,
       "oyBEHAVIOUR_RENDERING_BPC", 1,0)
 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_GAMUT_WARNING, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
+      _("Default Gamut Warning"),
+      _("Mark Out Of Gamut colours"),
+      2, /* choices */
+      _("No"),_("Yes"),NULL,NULL,
+      OY_DEFAULT_RENDERING_GAMUT_WARNING,
+      "oyBEHAVIOUR_RENDERING_GAMUT_WARNING", 1,0)
+
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_HIGH_PRECISSION, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
+      _("Default High Precission"),
+      _("Rendering with High Precission in opposite to fast processing"),
+      2, /* choices */
+      _("No"),_("Yes"),NULL,NULL,
+      OY_DEFAULT_RENDERING_HIGH_PRECISSION,
+      "oyBEHAVIOUR_RENDERING_HIGH_PRECISSION", 1,0)
+
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing Rendering Intent"),
@@ -1995,7 +2013,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
                                         oyAlloc_f         allocate_func)
 {
 #define oyGROUP_DEFAULT_PROFILES_LEN oyWIDGET_DEFAULT_PROFILE_END - oyWIDGET_DEFAULT_PROFILE_START + 1
-#define oyGROUP_BEHAVIOUR_RENDERING_LEN 2+1
+#define oyGROUP_BEHAVIOUR_RENDERING_LEN 4+1
 #define oyGROUP_BEHAVIOUR_PROOF_LEN 4+1
 #define oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN 6+1
 #define oyGROUP_BEHAVIOUR_MISSMATCH_LEN 6+1
@@ -2109,6 +2127,8 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
            lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR_RENDERING;
            lw[pos++] = oyWIDGET_RENDERING_INTENT;
            lw[pos++] = oyWIDGET_RENDERING_BPC;
+           lw[pos++] = oyWIDGET_RENDERING_GAMUT_WARNING;
+           lw[pos++] = oyWIDGET_RENDERING_HIGH_PRECISSION;
 
            *count = pos;
            w = lw;

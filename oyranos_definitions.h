@@ -167,6 +167,10 @@
 #define OY_DEFAULT_RENDERING_BPC       OY_BEHAVIOUR_STD "rendering_bpc"
 /** key name for the default proofing rendering intent */
 #define OY_DEFAULT_RENDERING_INTENT_PROOF    OY_BEHAVIOUR_STD "rendering_intent_proof"
+/** key name for the default gamut warning */
+#define OY_DEFAULT_RENDERING_GAMUT_WARNING  OY_BEHAVIOUR_STD "rendering_gamut_warning"
+/** key name for the default rendering precission */
+#define OY_DEFAULT_RENDERING_HIGH_PRECISSION  OY_BEHAVIOUR_STD "rendering_high_precission"
 /** key name for soft proofing by default */
 #define OY_DEFAULT_PROOF_SOFT          OY_BEHAVIOUR_STD "proof_soft"
 /** key name for hard proofing by default */

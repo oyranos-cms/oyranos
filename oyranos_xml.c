@@ -547,7 +547,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
     case oyGROUP_BEHAVIOUR_RENDERING:
          mem = oyWriteOptionToXML_( group,
                                     oyWIDGET_RENDERING_INTENT,
-                                    oyWIDGET_RENDERING_BPC,
+                                    oyWIDGET_RENDERING_HIGH_PRECISSION,
                                     mem, oytmplen );
          break;
     case oyGROUP_BEHAVIOUR_PROOF:
