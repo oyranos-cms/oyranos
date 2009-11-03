@@ -1216,14 +1216,15 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
 #ifdef NO_OPT
   return oyStringCopy_( oyFilterNode_GetText( node, type ), allocateFunc );
 #else
-  const char * tmp = 0;
+  const char * tmp = 0,
+             * model = 0;
   char * hash_text = 0,
        * temp = 0;
   oyFilterNode_s * s = node;
 
   oyImage_s * in_image = 0,
-                 * out_image = 0;
-  int i,n,verbose;
+            * out_image = 0;
+  int verbose;
   oyOptions_s * opts = node->core->options_;
 
   if(!node)
@@ -1246,39 +1247,30 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
   /* make a description */
   {
     /* input data */
-    hashTextAdd_m( "  <data_in>\n" );
+    hashTextAdd_m(   " <data_in>\n" );
     if(in_image)
     {
       temp = lcmsImage_GetText( in_image, verbose, oyAllocateFunc_ );
       hashTextAdd_m( temp );
       oyDeAllocateFunc_(temp); temp = 0;
     }
-    hashTextAdd_m( "  </data_in>\n" );
+    hashTextAdd_m( "\n </data_in>\n" );
 
     /* options -> xforms */
-    n = oyOptions_Count( opts );
-    for(i = 0; i < n; ++i)
-    {
-      oyOption_s * o = oyOptions_Get( opts, i );
-      hashTextAdd_m( "  <options name=\"" );
-      hashTextAdd_m( o->registration );
-      hashTextAdd_m( "\" type=\"" );
-      hashTextAdd_m( oyValueTypeText( o->value_type ) );
-      hashTextAdd_m( "\"" );
-      hashTextAdd_m( oyOption_GetText( o, oyNAME_NAME ) );
-      oyOption_Release( &o );
-      hashTextAdd_m( ">\n" );
-    }
+    hashTextAdd_m(   " <oyOptions_s>\n" );
+    model = oyOptions_GetText( opts, oyNAME_NAME );
+    hashTextAdd_m( model );
+    hashTextAdd_m( "\n </oyOptions_s>\n" );
 
     /* output data */
-    hashTextAdd_m( "  <data_out>\n" );
+    hashTextAdd_m(   " <data_out>\n" );
     if(out_image)
     {
       temp = lcmsImage_GetText( out_image, verbose, oyAllocateFunc_ );
       hashTextAdd_m( temp );
       oyDeAllocateFunc_(temp); temp = 0;
     }
-    hashTextAdd_m( "  </data_out>\n" );
+    hashTextAdd_m( "\n </data_out>\n" );
   }
   hashTextAdd_m( tmp );
 
@@ -1356,7 +1348,7 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
 int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int i,j,k, n;
+  int k, n;
   int error = 0;
   int channels = 0;
   oyDATATYPE_e data_type = 0;
@@ -1365,7 +1357,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   oyFilterPlug_s * plug = 0;
   oyFilterNode_s * input_node = 0,
                  * node = socket->node;
-  oyImage_s * image_input = 0, * image = 0;
+  oyImage_s * image_input = 0;
   oyArray2d_s * array_in = 0, * array_out = 0;
   lcmsTransformWrap_s * ltw  = 0;
   oyPixelAccess_s * new_ticket = ticket;
