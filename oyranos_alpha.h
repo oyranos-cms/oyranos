@@ -843,7 +843,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
 /** @brief   select from policy
  *  @ingroup objects_value
  *
- *  Select typical from a associatable oyCMMapi9_s type of filter providing 
+ *  Select typical from a associatable oyCMMapi9_s type of filter for providing 
  *  common options.
  *
  *  @version Oyranos: 0.1.10
@@ -874,7 +874,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  */
 typedef enum {
   /** basic settings, as typical for toolkits and office/web applications,
-   *  e.g. disable proofing */
+   *  e.g. disable proofing or disable mark out of gamut colours */
   oyOPTIONATTRIBUTE_BASIC = 0,
   /** user modified, e.g. after oyOption_SetFromText() */
   oyOPTIONATTRIBUTE_EDIT = 32,
@@ -883,7 +883,8 @@ typedef enum {
   /** advanced settings, as typical for editing, e.g. include proofing 
    *  (options appended with ".advanced") */
   oyOPTIONATTRIBUTE_ADVANCED = 128,
-  /** front end options, handled by the framework, e.g. ".front" */
+  /** front end options, handled by the framework or policy module,
+   *  e.g. ".front" */
   oyOPTIONATTRIBUTE_FRONT = 256,
   /** tell this options is included twice*/
   oyOPTIONATTRIBUTE_DOUBLE = 512
