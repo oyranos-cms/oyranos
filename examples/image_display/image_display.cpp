@@ -455,7 +455,6 @@ main(int argc, char** argv)
   oyFilterNode_s * in, * out, * icc;
   oyOptions_s * options = 0,
               * icc_opts = 0;
-  oyOption_s * o = 0;
   oyImage_s * image_in = 0, * image_out = 0;
   int error = 0,
       file_pos = 1;
@@ -607,9 +606,6 @@ main(int argc, char** argv)
 
   Fl_Oy_Box * oy_box = 0;
   Oy_Fl_Double_Window * win = createWindow( &oy_box, icc_opts );
-  o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH "fltk/image_display/fl_oy_box", 0 );
-  oyOption_SetFromData( o, oy_box, 0 );
-  oyOptions_MoveIn( icc_opts, &o, -1 );
   /* observe the node */
   oyBlob_s * b = oyBlob_New(0);
   b->ptr = oy_box;
@@ -638,10 +634,16 @@ main(int argc, char** argv)
 #include <FL/Fl_Image.H>
 static Fl_RGB_Image image_oyranos_logo(oyranos_logo, 64, 64, 4, 0);
 
+struct box_n_opts {
+  oyOptions_s * opts;
+  Fl_Oy_Box * box;
+};
+
 void
 callback ( Fl_Widget* w, void* daten )
 {
-  oyStruct_s * object = (oyStruct_s*) daten;
+  struct box_n_opts * arg = (box_n_opts*) daten;
+  oyStruct_s * object = (oyStruct_s*) arg->opts;
 
   if(!w->parent())
     printf("Could not find parents.\n");
@@ -691,10 +693,7 @@ callback ( Fl_Widget* w, void* daten )
      *  The context of a node can be removed to allow for updating.
      *  A redrawing flag should be obtainable from the graph.
      */
-    o = oyOptions_Find( opts, "fl_oy_box" );
-    Fl_Oy_Box * box = (Fl_Oy_Box*) oyOption_GetData( o, 0, 0 );
-    oyOption_Release( &o );
-    box->damage( FL_DAMAGE_USER1 );
+    arg->box->damage( FL_DAMAGE_USER1 );
 
     delete [] command;
   }
@@ -702,11 +701,12 @@ callback ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-
 Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyOptions_s *icc_opts)
 {
   int w = 640,
       h = 480;
+
+  struct box_n_opts * arg = new box_n_opts;
 
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+100, TARGET );
@@ -732,8 +732,10 @@ Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyOptions_s *icc_opts)
       menue_button_->box(FL_NO_BOX);
       menue_button_->clear();
       menue_ = new Fl_Menu_Button(0,0,win->w(),win->h(),""); menue_->hide();
+      arg->opts = icc_opts;
+      arg->box = *oy_box;
       menue_->add( _("Edit Options"),
-                   FL_CTRL + 'e', callback, (void*)icc_opts, 0 );
+                   FL_CTRL + 'e', callback, (void*)arg, 0 );
       menue_button_->copy(menue_->menu());
   win->end();
   win->resizable(*oy_box);
