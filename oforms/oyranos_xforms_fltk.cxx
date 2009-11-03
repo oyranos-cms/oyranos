@@ -12,6 +12,7 @@
 #include "oyranos_widgets_fltk.h"
 #include "oyranos_forms.h"
 #include "../fl_i18n/fl_i18n.H"
+#include "config.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Pack.H>
@@ -72,25 +73,27 @@ int main (int argc, char ** argv)
 #ifdef USE_GETTEXT
   const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
   const char *domain = {"oyranos"};
+  int is_path = -1;
 
-  if ( !fl_search_locale_path  ( 2,
+  is_path = fl_search_locale_path  ( 2,
                                 locale_paths,
                                 "de",
-                                domain) >= 0 )
+                                domain);
+  if(is_path < 0)
     fprintf( stderr, "Locale not found\n");
-
+  else
   {
 #if defined(_Xutf8_h) || HAVE_FLTK_UTF8
     FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
 #else
     FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;
 #endif
-    int err = fl_initialise_locale ( domain, locale_paths[0],
+    int err = fl_initialise_locale ( domain, locale_paths[is_path],
                                      set_charset );
     if(err) {
       fprintf( stderr,"i18n initialisation failed");
     } else
-      fprintf( stderr, "Locale found in %s\n", locale_paths[0]);
+      fprintf( stderr, "Locale found in %s\n", locale_paths[is_path]);
   }
   oy_domain_codeset = fl_i18n_codeset;
 #endif
