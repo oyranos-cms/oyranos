@@ -124,7 +124,7 @@ char oicc_default_colour_icc_options[] = {
       <proof_soft.advanced.front>0</proof_soft.advanced.front>\n\
       <rendering_intent>0</rendering_intent>\n\
       <rendering_bpc>1</rendering_bpc>\n\
-      <rendering_intent_proof>0</rendering_intent_proof>\n\
+      <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
       <rendering_gamut_warning.advanced>0</rendering_gamut_warning.advanced>\n\
       <rendering_high_precission.advanced>0</rendering_high_precission.advanced>\n\
      </behaviour>\n\
