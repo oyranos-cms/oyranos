@@ -689,8 +689,8 @@ fi
 if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
   FLTK_="`$fltkconfig --api-version 2>>$CONF_LOG | sed \"$STRIPOPT\"`"
   if [ $? = 0 ] && [ -n "$FLTK_" ]; then
-    # check for utf-8 capability
-    if [ $fltkconfig != `echo $fltkconfig | sed "s%fltk2-config%% ; s%utf8%%"` ]; then
+    # check for utf-8 capability in version 1.3 and higher
+    if [ "1.1" != `$fltkconfig --api-version` ] && [ "1.0" != `$fltkconfig --api-version` ]; then
       echo "#define HAVE_FLTK_UTF8 1" >> $CONF_H
       echo "HAVE_FLTK_UTF8 = -DHAVE_FLTK_UTF8" >> $CONF_I18N
       fltk_utf8="utf-8 `$fltkconfig --version`"
