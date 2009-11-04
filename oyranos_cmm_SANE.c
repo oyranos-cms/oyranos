@@ -278,7 +278,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       error = GetDevices(&device_list, &num_devices);
       //FIXME #1 If a user provides *only* a device_name option (or && device_handle),
-      //then there is no need to call GetDevices()
+      //then there is no need to call GetDevices() above ---^
       //FIXME #2 If a user provides a device_name that is not found
       //by sane_get_devices(), an empty devices object will be returned...
 
