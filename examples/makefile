@@ -48,8 +48,9 @@ $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	mkdir -p image_display
 	echo Compiling $@ ...
 	-$(CXX) -DTARGET=\"$(TARGET)\" $(CFLAGS) $(FLTK_CFLAGS) $(X11) \
-	$(LDFLAGS) $(OY_LDFLAGS) $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
-	$< -o $@
+	$(LDFLAGS) $(OY_LDFLAGS) $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
+	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 \
+	$< -o $@ ../fl_i18n/libfl_i18n.a
 	fltk-config --post $@
 
 $(TARGET2):	$(SRCDIR)$(TARGET2).c

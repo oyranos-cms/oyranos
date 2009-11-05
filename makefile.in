@@ -553,7 +553,7 @@ check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples
 	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; INCLUDE=-I$(includedir) SRCDIR=$(SRCDIR)/examples/ $(MAKE))
+	cd examples && ($(MAKE) clean; INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ $(MAKE))
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
