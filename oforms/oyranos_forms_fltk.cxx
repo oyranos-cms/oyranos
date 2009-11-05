@@ -133,10 +133,11 @@ int        oyXML2XFORMsFLTKSelect1Handler (
   pack->type( FL_HORIZONTAL );
   pack->spacing(H_SPACING);
 
-    OyFl_Box_c * box = new OyFl_Box_c( 0,0,w-BOX_WIDTH-H_SPACING,BUTTON_HEIGHT);
+    new Fl_Box( 0,0,H_SPACING,BUTTON_HEIGHT);
+    OyFl_Box_c * box = new OyFl_Box_c( 2*H_SPACING,0,w-BOX_WIDTH-4*H_SPACING,BUTTON_HEIGHT);
     box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
 
-    Fl_Choice * c = new Fl_Choice( 0,0,BOX_WIDTH,BUTTON_HEIGHT );
+    Fl_Choice * c = new Fl_Choice( w-BOX_WIDTH-H_SPACING,0,BOX_WIDTH,BUTTON_HEIGHT );
 
   search = oyOptions_FindString( collected_elements, "search", 0 );
 
