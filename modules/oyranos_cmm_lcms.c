@@ -938,7 +938,7 @@ gamutCheckSampler(register WORD In[],
   cmsLabEncoded2Float(&Lab1, In);
   cmsDoTransform( Cargo, &Lab1, &Lab2, 1 );
   d = cmsDeltaE( &Lab1, &Lab2 );
-  if(abs(d) > 5)
+  if(abs(d) > 10)
   {
     Lab2.L = 50.0;
     Lab2.a = Lab2.b = 0.0;
