@@ -2305,7 +2305,42 @@ oyTESTRESULT_e testCMMnmRun ()
 
     /*  3. parse static common options from meta module */
     if(api5 && flags & OY_SELECT_COMMON)
-      ; /*opts_tmp = oyOptions_FromText( api5->options, 0, object );*/
+    {
+      oyCMMapiFilters_s * apis;
+      int apis_n = 0;
+      uint32_t         * rank_list = 0;
+      oyCMMapi9_s * cmm_api9 = 0;
+      char * klass, * api_reg;
+
+      klass = oyFilterRegistrationToText( filter->registration_,
+                                          oyFILTER_REG_TYPE, 0 );
+      api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+      STRING_ADD( api_reg, klass );
+      oyFree_m_( klass );
+
+      s = oyOptions_New( 0 );
+
+      apis = oyCMMsGetFilterApis_( 0, api_reg,
+                                   oyOBJECT_CMM_API9_S,
+                                   &rank_list, 0);
+      apis_n = oyCMMapiFilters_Count( apis );
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+        if(oyFilterRegistrationMatch( filter->registration_, cmm_api9->pattern,
+                                      oyOBJECT_NONE ))
+        {
+          opts_tmp = oyOptions_FromText( cmm_api9->options, 0, object );
+          oyOptions_AppendOpts( s, opts_tmp );
+          oyOptions_Release( &opts_tmp );
+        }
+        if(cmm_api9->release)
+          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+      }
+      oyCMMapiFilters_Release( &apis );
+      oyFree_m_( api_reg );
+      opts_tmp = s; s = 0;
+    }
     /* requires step 2 */
 
     /*  4. parse static options from filter */
@@ -2325,7 +2360,8 @@ oyTESTRESULT_e testCMMnmRun ()
       o = oyOptions_Get( s, i );
       o->source = oyOPTIONSOURCE_FILTER;
       /* ask Elektra */
-      error = oyOption_SetValueFromDB( o );
+      if(!(flags & oyOPTIONSOURCE_FILTER))
+        error = oyOption_SetValueFromDB( o );
       oyOption_Release( &o );
     }
     error = oyOptions_DoFilter ( s, flags, type_txt );
