@@ -415,7 +415,7 @@ public:
   }
 };
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyOptions_s *icc_opts);
+Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyFilterNode_s *node);
 
 extern "C" {
 int      conversionObserve           ( oySIGNAL_e          signal_type,
@@ -453,8 +453,7 @@ main(int argc, char** argv)
   /* some Oyranos types */
   oyConversion_s * conversion = 0;
   oyFilterNode_s * in, * out, * icc;
-  oyOptions_s * options = 0,
-              * icc_opts = 0;
+  oyOptions_s * options = 0;
   oyImage_s * image_in = 0, * image_out = 0;
   int error = 0,
       file_pos = 1;
@@ -532,8 +531,6 @@ main(int argc, char** argv)
 
   /* create a new filter node */
   icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
-  /* the options are subject to manipulate */
-  icc_opts = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
@@ -605,7 +602,7 @@ main(int argc, char** argv)
 
 
   Fl_Oy_Box * oy_box = 0;
-  Oy_Fl_Double_Window * win = createWindow( &oy_box, icc_opts );
+  Oy_Fl_Double_Window * win = createWindow( &oy_box, icc );
   /* observe the node */
   oyBlob_s * b = oyBlob_New(0);
   b->ptr = oy_box;
@@ -635,7 +632,7 @@ main(int argc, char** argv)
 static Fl_RGB_Image image_oyranos_logo(oyranos_logo, 64, 64, 4, 0);
 
 struct box_n_opts {
-  oyOptions_s * opts;
+  oyFilterNode_s * node;
   Fl_Oy_Box * box;
 };
 
@@ -643,7 +640,7 @@ void
 callback ( Fl_Widget* w, void* daten )
 {
   struct box_n_opts * arg = (box_n_opts*) daten;
-  oyStruct_s * object = (oyStruct_s*) arg->opts;
+  oyStruct_s * object = (oyStruct_s*) arg->node;
 
   if(!w->parent())
     printf("Could not find parents.\n");
@@ -651,31 +648,35 @@ callback ( Fl_Widget* w, void* daten )
   if(!object)
     printf("Oyranos argument missed.\n");
   else
-  if(object->type_ == oyOBJECT_OPTIONS_S)
+  if(object->type_ == oyOBJECT_FILTER_NODE_S)
   {
-    oyOptions_s * opts = (oyOptions_s*) object,
+    oyFilterNode_s * node = (oyFilterNode_s*) object;
+    oyOptions_s * opts = 0,
                 * new_opts = 0;
-    oyOption_s * o = oyOptions_Get( opts, 0 );
     const char * tmp_dir = getenv("TMPDIR"),
-               * in_text = 0;
+               * in_text = 0,
+               * model = 0;
     char * command = new char [1024];
     char * t = 0;
     int error = 0, i;
+    char * ui_text = 0, ** namespaces = 0;
 
     if(!tmp_dir)
       tmp_dir = "/tmp";
 
+    error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
+
+    opts = oyFilterNode_OptionsGet( node, OY_SELECT_FILTER );
+    model = oyOptions_GetText( opts, oyNAME_NAME );
+    in_text= oyXFORMsFromModelAndUi( model, ui_text, (const char**)namespaces,0,
+                                     malloc );
     /* export the options values */
     sprintf( command, "%s/image_display_in_tmp.xml", tmp_dir );
-    in_text = oyOptions_GetText( opts, oyNAME_NAME );
     i = oyWriteMemToFile_( command, in_text, strlen(in_text) );
     in_text = 0; command[0] = 0;
 
     /* render the options to the UI */
-    sprintf(command, "oyranos-xforms-fltk -n %s", o->registration );
-    oyOption_Release( &o );
-    t = strrchr(command, '/');
-    t[0] = 0;
+    sprintf(command, "oyranos-xforms-fltk " );
     sprintf(&command[strlen(command)],
             " -i %s/image_display_in_tmp.xml -o %s/image_display_tmp.xml",
             tmp_dir, tmp_dir );
@@ -701,7 +702,8 @@ callback ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyOptions_s *icc_opts)
+Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box,
+                                    oyFilterNode_s * node)
 {
   int w = 640,
       h = 480;
@@ -732,7 +734,7 @@ Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyOptions_s *icc_opts)
       menue_button_->box(FL_NO_BOX);
       menue_button_->clear();
       menue_ = new Fl_Menu_Button(0,0,win->w(),win->h(),""); menue_->hide();
-      arg->opts = icc_opts;
+      arg->node = node;
       arg->box = *oy_box;
       menue_->add( _("Edit Options"),
                    FL_CTRL + 'e', callback, (void*)arg, 0 );
