@@ -614,12 +614,15 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         lps = merge;
       }
 
+      if(flags & cmsFLAGS_GAMUTCHECK)
+        flags |= cmsFLAGS_GRIDPOINTS(lcmsPROOF_LUT_GRID_RASTER);
+
       xform =   cmsCreateMultiprofileTransform(
                                     lps, 
                                     multi_profiles_n,
                                     lcms_pixel_layout_in,
                                     lcms_pixel_layout_out,
-                                    intent, flags | cmsFLAGS_GRIDPOINTS(lcmsPROOF_LUT_GRID_RASTER) );
+                                    intent, flags );
 
 
       if(merge) oyDeAllocateFunc_( merge ); merge = 0;
@@ -935,11 +938,12 @@ gamutCheckSampler(register WORD In[],
 {
   cmsCIELab Lab1, Lab2;
   double d;
+  oyPointer * ptr = Cargo;
 
   cmsLabEncoded2Float(&Lab1, In);
-  cmsDoTransform( Cargo, &Lab1, &Lab2, 1 );
+  cmsDoTransform( ptr[0], &Lab1, &Lab2, 1 );
   d = cmsDeltaE( &Lab1, &Lab2 );
-  if(abs(d) > 10)
+  if(abs(d) > 10 && ptr[1])
   {
     Lab2.L = 50.0;
     Lab2.a = Lab2.b = 0.0;
@@ -976,6 +980,7 @@ cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
                   hproof = 0;
       cmsHTRANSFORM tr1 = 0;
       LPLUT gmt_lut = 0;
+      oyPointer ptr[2] = {0,0};
 
       if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
         return gmt;
@@ -993,10 +998,13 @@ cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
              */
                                                intent_proof,
                                                flags | cmsFLAGS_HIGHRESPRECALC);
+      ptr[0] = tr1;
+      ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? 1 : 0;
+
 
       gmt_lut = cmsAllocLUT();
       cmsAlloc3DGrid( gmt_lut, lcmsPROOF_LUT_GRID_RASTER, 3, 3);
-      cmsSample3DGrid( gmt_lut, gamutCheckSampler, tr1, 0 );
+      cmsSample3DGrid( gmt_lut, gamutCheckSampler, &ptr, 0 );
 
       gmt = _cmsCreateProfilePlaceholder();
       cmsSetDeviceClass( gmt, icSigAbstractClass );
