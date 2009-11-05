@@ -33,9 +33,13 @@
 #include <FL/x.H>
 #endif
 
-#define _(text) text
 
 #include <cmath>
+
+#ifdef USE_GETTEXT
+#include "config.h" /* I18N */
+#include "fl_i18n/fl_i18n.H"
+#endif
 
 #define USE_RESOLVE
 
@@ -458,6 +462,36 @@ main(int argc, char** argv)
   int error = 0,
       file_pos = 1;
   const char * file_name = 0;
+
+
+#ifdef USE_GETTEXT
+  const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
+  const char *domain = {"oyranos"};
+  int is_path = -1;
+
+  is_path = fl_search_locale_path  ( 2,
+                                locale_paths,
+                                "de",
+                                domain);
+  if(is_path < 0)
+    fprintf( stderr, "Locale not found\n");
+  else
+  {
+#if defined(_Xutf8_h) || HAVE_FLTK_UTF8
+    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
+#else
+    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;
+#endif
+    int err = fl_initialise_locale ( domain, locale_paths[is_path],
+                                     set_charset );
+    if(err) {
+      fprintf( stderr,"i18n initialisation failed");
+    } /*else
+      fprintf( stderr, "Locale found in %s\n", locale_paths[is_path]);*/
+  }
+  oy_domain_codeset = fl_i18n_codeset;
+#endif
+
 
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
