@@ -1336,7 +1336,7 @@ OYAPI int  OYEXPORT
  *  The models are copied from pattern with object type to a object with the
  *  same object type.
  *
- *  @param[in,out] model               the model
+ *  @param[in,out] observer            the observer
  *  @param[in]     pattern             the pattern to copy from
  *  @param[in]     flags               0x01 omit model idendity check
  *  @return                            0 - good; >= 1 - error; < 0 issue
@@ -4979,7 +4979,7 @@ digraph Anatomy_A {
 
 
 /** Function oyCMMptrLookUpFromObject
- *  @brief   get a CMM specific pointer
+ *  @brief   get a module specific pointer from cache
  *  @memberof oyCMMptr_s
  *
  *  The returned oyCMMptr_s has to be released after using by the module with
@@ -4990,10 +4990,10 @@ digraph Anatomy_A {
  *  @see oyCMMptrLookUpFromText()
  *
  *  @param[in]     data                 object to look up
- *  @apram[in]     data_type            CMM type for this object type; 
- *                                      The data_type shall enshure the
+ *  @param[in]     data_type            four byte module type for this object
+ *                                      type; The data_type shall enshure the
  *                                      returned oyCMMptr_s is specific to the
- *                                      calling CMM.
+ *                                      calling module.
  *  @return                             the CMM specific oyCMMptr_s; It is owned
  *                                      by the CMM.
  *
@@ -5022,7 +5022,7 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
 }
 
 /** Function oyCMMptrLookUpFromText
- *  @brief   get a CMM specific pointer
+ *  @brief   get a module specific pointer from cache
  *  @memberof oyCMMptr_s
  *
  *  The returned oyCMMptr_s has to be released after using by the module with
@@ -5033,10 +5033,10 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
  *  @see e.g. lcmsCMMData_Open()
  *
  *  @param[in]     text                 hash text to look up
- *  @apram[in]     data_type            CMM type for this object type; 
- *                                      The data_type shall enshure the
+ *  @param[in]     data_type            four byte module type for this object
+ *                                      type; The data_type shall enshure the
  *                                      returned oyCMMptr_s is specific to the
- *                                      calling CMM.
+ *                                      calling module.
  *  @return                             the CMM specific oyCMMptr_s; It is owned
  *                                      by the CMM.
  *
