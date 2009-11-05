@@ -207,7 +207,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_RENDERING, 1,
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Rendering"),
-      _("The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces"),
+      _("The kind of ICC gamut mapping for transforming colours between differently sized colour spaces"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -215,7 +215,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 1,
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Save Mixed colour space Documents"),
-      _("Default Handling of Mixed Colour Spaces inside one single Document"),
+      _("Handling of Mixed Colour Spaces inside one single Document"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -231,7 +231,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_PROOF, 1,
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Proofing"),
-      _("Default Proofing Settings"),
+      _("Proofing Settings"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -424,7 +424,7 @@ oyOptionStringsTranslate_ ()
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
-      _("Default Rendering Intent"),
+      _("Rendering Intent"),
       _("Rendering Intent for colour space Transformations."),
       4, /* choices */
       _("Perceptual"),_("Relative Colorimetric"),_("Saturation"),_("Absolute Colorimetric"),
@@ -442,7 +442,7 @@ oyOptionStringsTranslate_ ()
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_GAMUT_WARNING, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
-      _("Default Gamut Warning"),
+      _("Gamut Warning"),
       _("Mark Out Of Gamut colours"),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
@@ -451,7 +451,7 @@ oyOptionStringsTranslate_ ()
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_HIGH_PRECISSION, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
-      _("Default High Precission"),
+      _("High Precission"),
       _("Rendering with High Precission in opposite to fast processing"),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
@@ -469,8 +469,8 @@ oyOptionStringsTranslate_ ()
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_PROOF_SOFT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
-      _("SoftProof by Default"),
-      _("Behaviour for Softproofing view at application startup"),
+      _("SoftProof"),
+      _("Simulate the output print on the monitor"),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_SOFT,
@@ -478,8 +478,8 @@ oyOptionStringsTranslate_ ()
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_PROOF_HARD, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
-      _("Hardproof by Default"),
-      _("Behaviour for preselecting Hardproofing with Standard Proofing Profile at print time"),
+      _("Hardproof"),
+      _("Behaviour for preselecting Hardproofing with a Proofing Profile at print time"),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_HARD,
