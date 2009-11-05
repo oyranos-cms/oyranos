@@ -4989,6 +4989,14 @@ digraph Anatomy_A {
  *
  *  @see e.g. lcmsCMMData_Open()
  *
+ *  @param[in]     data                 object to look up
+ *  @apram[in]     data_type            CMM type for this object type; 
+ *                                      The data_type shall enshure the
+ *                                      returned oyCMMptr_s is specific to the
+ *                                      calling CMM.
+ *  @return                             the CMM specific oyCMMptr_s; It is owned
+ *                                      by the CMM.
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2008/12/28
