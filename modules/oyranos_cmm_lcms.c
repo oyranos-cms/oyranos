@@ -558,7 +558,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         cmyk_cmyk_black_preservation = atoi( o_txt );
 
       /* this should be moved to the CMM and not be handled here in Oyranos */
-      flags = proof_n ?       flags | cmsFLAGS_SOFTPROOFING :
+      flags = proof ?         flags | cmsFLAGS_SOFTPROOFING :
                               flags & (~cmsFLAGS_SOFTPROOFING);
       flags = bpc ?           flags | cmsFLAGS_WHITEBLACKCOMPENSATION :
                               flags & (~cmsFLAGS_WHITEBLACKCOMPENSATION);
@@ -804,8 +804,8 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
   sprintf( num, "%d", intent_proof );
   STRING_ADD( hash_text, num );
   STRING_ADD( hash_text, " flags|gmtCheck|softPrf:" );
-  sprintf( num, "%d|%d|%d", (int)flags, flags & cmsFLAGS_GAMUTCHECK?1:0,
-                            (int)flags & cmsFLAGS_SOFTPROOFING?1:0 );
+  sprintf( num, "%d|%d|%d", (int)flags, (flags & cmsFLAGS_GAMUTCHECK)?1:0,
+                                        (flags & cmsFLAGS_SOFTPROOFING)?1:0 );
   STRING_ADD( hash_text, num );
 
   /* cache look up */
@@ -826,7 +826,8 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
 
     if(oy_debug == 1)
       fprintf( stderr, "%s:%d created: \"%s\"",
-               __FILE__,__LINE__, hash_text );
+               strchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
+               hash_text );
     else
     message( oyMSG_DBG, (oyStruct_s*)proof,
              "%s:%d created abstract proofing profile: \"%s\"",
