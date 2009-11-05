@@ -803,7 +803,8 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
     }
     STRING_ADD( text, tmp );
   } else
-    STRING_ADD( text, oy_domain_codeset /*"ISO-8859-1"*/ );
+    STRING_ADD( text, oy_domain_codeset ? oy_domain_codeset :
+                                          "UTF-8" /*"ISO-8859-1"*/ );
 #else
   STRING_ADD( text,
    "UTF-8" );
