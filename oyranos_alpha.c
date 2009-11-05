@@ -4978,7 +4978,7 @@ digraph Anatomy_A {
  */
 
 
-/** Function oyCMMptr_LookUp
+/** Function oyCMMptrLookUpFromObject
  *  @brief   get a CMM specific pointer
  *  @memberof oyCMMptr_s
  *
@@ -4999,10 +4999,10 @@ digraph Anatomy_A {
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2008/12/28
+ *  @date    2009/11/04
  */
-oyCMMptr_s * oyCMMptr_LookUp          ( oyStruct_s      * data,
-                                        const char      * data_type )
+oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
+                                       const char        * data_type )
 {
   oyStruct_s * s = data;
   int error = !s;
