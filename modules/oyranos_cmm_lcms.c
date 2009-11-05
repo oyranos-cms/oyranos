@@ -41,6 +41,10 @@ void  oyDeAllocateFunc_         (void *        data);
 #define CMMMaxChannels_M 16
 #define lcmsPROFILE "lcPR"
 #define lcmsTRANSFORM "lcCC"
+/** The proofing LUTs grid size may improove the sharpness of out of colour 
+ *  marking, but at the prise of lost speed and increased memory consumption.
+ *  53 is the grid size used internally in lcms' gamut marking code. */
+#define lcmsPROOF_LUT_GRID_RASTER 53
 
 #define CMM_VERSION {0,1,0}
 
@@ -111,6 +115,10 @@ char * lcmsImage_GetText             ( oyImage_s         * image,
 char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc );
+cmsHPROFILE  lcmsGamutCheckAbstract  ( cmsHPROFILE         proof,
+                                       DWORD               flags,
+                                       int                 intent,
+                                       int                 intent_proof );
 oyPointer  lcmsCMMColourConversion_ToMem_ (
                                        cmsHTRANSFORM     * xform,
                                        size_t            * size,
@@ -465,13 +473,14 @@ lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2009/06/25
+ *  @date    2009/11/04
  */
 cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
                                        cmsHPROFILE       * lps,
                                        int                 profiles_n,
                                        cmsHPROFILE       * simulation,
                                        int                 proof_n,
+                                       int                 proof,
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
                                        oyOptions_s       * opts,
@@ -482,6 +491,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
   oyPixel_t lcms_pixel_layout_out = 0;
   int error = !lps;
   cmsHTRANSFORM xform = 0;
+  cmsHPROFILE * merge = 0;
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
   icProfileClassSignature profile_class_out = 0;
@@ -523,6 +533,9 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
       o_txt = oyOptions_FindString  ( opts, "rendering_intent_proof", 0);
       if(o_txt && oyStrlen_(o_txt))
         intent_proof = atoi( o_txt );
+
+      intent_proof = intent_proof == 0 ? INTENT_RELATIVE_COLORIMETRIC :
+                                         INTENT_ABSOLUTE_COLORIMETRIC;
 
       o_txt = oyOptions_FindString  ( opts, "rendering_bpc", 0 );
       if(o_txt && oyStrlen_(o_txt))
@@ -568,71 +581,47 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     0, lcms_pixel_layout_out,
                                     intent, flags );
-    else if(profiles_n == 2 && !proof_n)
+    else if(profiles_n == 2 && (!proof_n || (!proof && !gamut_warning)))
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     lps[1], lcms_pixel_layout_out,
                                     intent, flags );
-    else if(profiles_n >= 3)
+    else
     {
       int multi_profiles_n = profiles_n;
+      int i;
 
-      if(proof_n)
-        --multi_profiles_n;
+      if(proof_n && (proof || gamut_warning))
+      {
+        int len = sizeof(cmsHPROFILE) * (profiles_n + proof_n);
+
+        oyAllocHelper_m_( merge, cmsHPROFILE, profiles_n + proof_n,0, goto end);
+        memset( merge, 0, len );
+        memcpy( merge, lps, sizeof(cmsHPROFILE) * (profiles_n - 1) );
+
+        for(i = 0; i < proof_n; ++i)
+          merge[profiles_n-1 + i] = lcmsGamutCheckAbstract( simulation[i],flags,
+                                                          intent, intent_proof);
+
+        merge[profiles_n + proof_n -1] = lps[profiles_n - 1];
+
+        /* merge effect and simulation profiles */
+        multi_profiles_n += proof_n;
+        lps = merge;
+      }
 
       xform =   cmsCreateMultiprofileTransform(
                                     lps, 
                                     multi_profiles_n,
                                     lcms_pixel_layout_in,
-                                    proof_n
-                                  ? NOCOLORSPACECHECK(lcms_pixel_layout_out)
-                                  : lcms_pixel_layout_out,
-                                    intent, flags );
-    }
-
-    if(proof_n)
-    {
-      int i;
-
-      for(i = 0; i < proof_n; ++i)
-      {
-        cmsHPROFILE dl = 0;
-        if(xform)
-        {
-          dl = cmsTransform2DeviceLink( xform, cmsFLAGS_GUESSDEVICECLASS );
-          cmsDeleteTransform( xform ); xform = 0;
-
-        } else if(i == 0 && profiles_n == 2)
-          dl = lps[0];
-
-        /* add simulation profile and go to next simulation in chain */
-        if(i < proof_n - 1)
-          xform = cmsCreateProofingTransform(
-                                    dl, lcms_pixel_layout_in,
-                                    simulation[ i + 1 ],
                                     lcms_pixel_layout_out,
-                                    simulation[ i ],
-                                    intent,
-                                    intent_proof,
-                                    flags);
-        else
-        /* add last simulation and go to output profile */
-          xform = cmsCreateProofingTransform(
-                                    dl, lcms_pixel_layout_in,
-                                    lps[ profiles_n - 1 ],
-                                    lcms_pixel_layout_out,
-                                    simulation[ i ], /* should be the last */
-                                    intent,
-            /* TODO The INTENT_ABSOLUTE_COLORIMETRIC should lead to 
-               paper simulation, but does take white point into account.
-               Do we want this?
-             */
-                                    intent_proof,
-                                    flags);
+                                    intent, flags | cmsFLAGS_GRIDPOINTS(lcmsPROOF_LUT_GRID_RASTER) );
 
-        /* release intermediate transform */
-        if(i == 0 && profiles_n != 2)
-          CMMProfileRelease_M( dl );
-      }
+
+      if(proof_n && (proof || gamut_warning))
+        for(i = 0; i < proof_n; ++i)
+          if(merge[profiles_n-1 + i])
+            cmsCloseProfile( merge[profiles_n-1 + i] );
+      if(merge) oyDeAllocateFunc_( merge ); merge = 0;
     }
   }
 
@@ -642,6 +631,8 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
   if(!error && ltw && oy)
     *ltw= lcmsTransformWrap_Set_( xform, colour_in, colour_out,
                                   oy_pixel_layout_in, oy_pixel_layout_out, oy );
+
+  end:
   return xform;
 }
 
@@ -819,6 +810,96 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
     return 0;
 }
 
+int
+gamutCheckSampler(register WORD In[],
+                      register WORD Out[],
+                      register LPVOID Cargo)
+{
+  cmsCIELab Lab1, Lab2;
+  double d;
+
+  cmsLabEncoded2Float(&Lab1, In);
+  cmsDoTransform( Cargo, &Lab1, &Lab2, 1 );
+  d = cmsDeltaE( &Lab1, &Lab2 );
+  if(abs(d) > 5)
+  {
+    Lab2.L = 50.0;
+    Lab2.a = Lab2.b = 0.0;
+  }
+  cmsFloat2LabEncoded(Out, &Lab2); 
+
+  return TRUE;
+}
+
+/** Function lcmsGamutCheckAbstract
+ *  @brief   convert a proofing profile into a abstract one
+ *
+ *  Abstract profiles can easily be merged into a multi profile transform.
+ *
+ *  @param         proof               the proofing profile
+ *  @param         flags               the gamut check and softproof flags
+ *  @param         intent              rendering intent
+ *  @param         intent_proof        proof rendering intent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/04 (Oyranos: 0.1.10)
+ *  @date    2009/11/04
+ */
+cmsHPROFILE  lcmsGamutCheckAbstract  ( cmsHPROFILE         proof,
+                                       DWORD               flags,
+                                       int                 intent,
+                                       int                 intent_proof )
+{
+      size_t size = 0;
+      char * data = 0;
+      cmsHPROFILE gmt = 0,
+                  hLab = 0;
+      cmsHTRANSFORM tr1 = 0;
+      LPLUT gmt_lut = 0;
+
+      if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
+        return gmt;
+
+      hLab  = cmsCreateLabProfile(cmsD50_xyY());
+      tr1 = cmsCreateProofingTransform  (hLab, TYPE_Lab_DBL,
+                                               hLab, TYPE_Lab_DBL,
+                                               proof,
+                                               intent,
+            /* TODO The INTENT_ABSOLUTE_COLORIMETRIC should lead to 
+               paper simulation, but does take white point into account.
+               Do we want this?
+             */
+                                               intent_proof,
+                                               flags | cmsFLAGS_HIGHRESPRECALC);
+
+      gmt_lut = cmsAllocLUT();
+      cmsAlloc3DGrid( gmt_lut, lcmsPROOF_LUT_GRID_RASTER, 3, 3);
+      cmsSample3DGrid( gmt_lut, gamutCheckSampler, tr1, 0 );
+
+      gmt = _cmsCreateProfilePlaceholder();
+      cmsSetDeviceClass( gmt, icSigAbstractClass );
+      cmsSetColorSpace( gmt, icSigLabData );
+      cmsSetPCS( gmt, icSigLabData );
+      cmsAddTag( gmt, icSigProfileDescriptionTag, (char*)"proofing");
+      cmsAddTag( gmt, icSigAToB0Tag, gmt_lut );
+
+  if(oy_debug)
+  {
+      _cmsSaveProfileToMem( gmt, 0, &size );
+      data = oyAllocateFunc_( size );
+      _cmsSaveProfileToMem( gmt, data, &size );
+      oyWriteMemToFile_( "dbg_dl_proof.icc", data, size );
+      if(data) oyDeAllocateFunc_( data ); data = 0;
+  }
+
+      if(hLab) cmsCloseProfile( hLab );
+      if(tr1) cmsDeleteTransform( tr1 );
+      if(gmt_lut) cmsFreeLUT( gmt_lut );
+
+
+  return gmt;
+}
+
 /** Function lcmsFilterNode_CmmIccContextToMem
  *  @brief   implement oyCMMFilterNode_CreateContext_f()
  *
@@ -846,7 +927,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
             * image_output = 0;
   cmsHPROFILE * lps = 0,
               * simulation = 0;
-  cmsHTRANSFORM xform = 0;
+  cmsHTRANSFORM xform = 0,
+                tr = 0;
   oyOption_s * o = 0;
   oyProfile_s * p = 0,
               * prof = 0;
@@ -977,22 +1059,16 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         p = oyProfiles_Get( profiles, i );
 
         /* Look in the Oyranos cache for a CMM internal representation */
-        /*if(i == 0)*/
         {
-          if(proof)
-            simulation[ profiles_proof_n++ ] = lcmsAddProfile( p );
+          simulation[ profiles_proof_n++ ] = lcmsAddProfile( p );
           if(oy_debug)
             message( oyMSG_DBG,(oyStruct_s*)node,
                      "%s:%d found profile: %s",
                __FILE__,__LINE__, p?oyProfile_GetFileName( p,-1 ):"????");
 
-          if(proof)
-            profs = oyProfiles_MoveIn( profs, &p, -1 );
+          profs = oyProfiles_MoveIn( profs, &p, -1 );
 
-        } /*else if(i == 1)
-          message( oyMSG_WARN, (oyStruct_s*)node,
-           "%s: %d Currently only one in \"profiles_simulation\" supported: %d",
-                   __FILE__,__LINE__, n );*/
+        }
 
         oyProfile_Release( &p );
       }
@@ -1019,11 +1095,12 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
   /* create the context */
   xform = lcmsCMMConversionContextCreate_( lps, profiles_n,
-                                           simulation, profiles_proof_n,
+                                           simulation, profiles_proof_n, proof,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_, 0, 0);
   error = !xform;
+
 
   if(!error)
   {
@@ -1034,7 +1111,6 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     error = !block && !*size;
     cmsDeleteTransform( xform ); xform = 0;
   }
-
 
   /* additional tags for debugging */
   if(!error && (oy_debug || verbose))
@@ -1327,7 +1403,7 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
   if(!error)
   {
     lps[0] = CMMProfileOpen_M( cmm_ptr_in->ptr, cmm_ptr_in->size );
-    xform = lcmsCMMConversionContextCreate_( lps, 1, 0,0,
+    xform = lcmsCMMConversionContextCreate_( lps, 1, 0,0,0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_,
