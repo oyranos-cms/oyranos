@@ -274,6 +274,7 @@ int main (int argc, char ** argv)
 
   Fl_Double_Window * w = new Fl_Double_Window(400,400,"XFORMS in FLTK");
   Fl_Pack * pack = new Fl_Pack( 0,0,400,400 );
+  pack->spacing(V_SPACING);
   error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
 
   pack->end();
