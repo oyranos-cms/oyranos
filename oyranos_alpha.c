@@ -5015,7 +5015,7 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
   {
     const char * tmp = 0;
     tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
-    cmm_ptr = oyCMMptrLookUpFromText( tmp, data_type, s->oy_->allocateFunc_ );
+    cmm_ptr = oyCMMptrLookUpFromText( tmp, data_type );
   }
 
   return cmm_ptr;
@@ -5037,7 +5037,6 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
  *                                      The data_type shall enshure the
  *                                      returned oyCMMptr_s is specific to the
  *                                      calling CMM.
- *  @param         allocateFunc         user allocator
  *  @return                             the CMM specific oyCMMptr_s; It is owned
  *                                      by the CMM.
  *
@@ -5046,8 +5045,7 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
  *  @date    2009/11/05
  */
 oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
-                                       const char        * data_type,
-                                       oyAlloc_f           allocateFunc )
+                                       const char        * data_type )
 {
   int error = !text;
   oyCMMptr_s * cmm_ptr = 0;
@@ -5088,7 +5086,7 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
 
       if(!cmm_ptr)
       {
-        cmm_ptr = oyCMMptr_New_( allocateFunc );
+        cmm_ptr = oyCMMptr_New_( 0 );
         error = !cmm_ptr;
 
         if(error <= 0)

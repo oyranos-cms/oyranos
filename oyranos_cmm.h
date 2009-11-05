@@ -100,8 +100,7 @@ oyCMMptr_s * oyCMMptr_Copy           ( oyCMMptr_s        * cmm_ptr,
 int          oyCMMptr_Release        ( oyCMMptr_s       ** obj );
 
 oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
-                                       const char        * data_type,
-                                       oyAlloc_f           allocateFunc );
+                                       const char        * data_type );
 oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
                                        const char        * cmm );
 int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
