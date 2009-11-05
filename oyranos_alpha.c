@@ -5050,7 +5050,7 @@ oyCMMptr_s * oyCMMptr_LookUp          ( oyStruct_s      * data,
         if(error <= 0 && cmm_ptr)
           /* 3b.1. update cache entry */
           error = oyHash_SetPointer_( entry,
-                                     (oyStruct_s*) oyCMMptr_Copy_(cmm_ptr, 0) );
+                                     (oyStruct_s*) cmm_ptr );
       }
     }
 
@@ -6239,15 +6239,23 @@ oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
 /** @internal
  *  @memberof oyHash_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  3 december 2007 (API 0.1.8)
+ *  @param[in,out] hash                the to be set hash
+ *  @param[in,out] obj                 the to be referenced object
+ *  @return                            0 - good; >= 1 - error; < 0 issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/03 (Oyranos: 0.1.8)
+ *  @date    2009/11/05
  */
 int                oyHash_SetPointer_( oyHash_s          * hash,
                                        oyStruct_s        * obj )
 {
   if(hash)
   {
-    hash->entry = obj;
+    if(obj->copy)
+      hash->entry = obj->copy( obj, 0 );
+    else
+      hash->entry = obj;
     return 0;
   } else
     return 1;
@@ -13123,7 +13131,7 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
     if(!oyToNoCacheWrite_m(flags))
     {
       /* 3b.1. update cache entry */
-      error = oyHash_SetPointer_( entry, (oyStruct_s*) oyProfile_Copy( s, 0 ) );
+      error = oyHash_SetPointer_( entry, (oyStruct_s*)s );
 #if 0
     } else {
       int i = 0, n = 0, pos = -1;
