@@ -4987,7 +4987,7 @@ digraph Anatomy_A {
  *  In case the the oyCMMptr_s::ptr member is empty, it should be set by the
  *  requesting module.
  *
- *  @see e.g. lcmsCMMData_Open()
+ *  @see oyCMMptrLookUpFromText()
  *
  *  @param[in]     data                 object to look up
  *  @apram[in]     data_type            CMM type for this object type; 
@@ -4999,13 +4999,57 @@ digraph Anatomy_A {
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2009/11/04
+ *  @date    2009/11/05
  */
 oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
                                        const char        * data_type )
 {
   oyStruct_s * s = data;
   int error = !s;
+  oyCMMptr_s * cmm_ptr = 0;
+
+  if(error <= 0 && !data_type)
+    error = !data_type;
+
+  if(error <= 0)
+  {
+    const char * tmp = 0;
+    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
+    cmm_ptr = oyCMMptrLookUpFromText( tmp, data_type, s->oy_->allocateFunc_ );
+  }
+
+  return cmm_ptr;
+}
+
+/** Function oyCMMptrLookUpFromText
+ *  @brief   get a CMM specific pointer
+ *  @memberof oyCMMptr_s
+ *
+ *  The returned oyCMMptr_s has to be released after using by the module with
+ *  oyCMMptr_Release().
+ *  In case the the oyCMMptr_s::ptr member is empty, it should be set by the
+ *  requesting module.
+ *
+ *  @see e.g. lcmsCMMData_Open()
+ *
+ *  @param[in]     text                 hash text to look up
+ *  @apram[in]     data_type            CMM type for this object type; 
+ *                                      The data_type shall enshure the
+ *                                      returned oyCMMptr_s is specific to the
+ *                                      calling CMM.
+ *  @param         allocateFunc         user allocator
+ *  @return                             the CMM specific oyCMMptr_s; It is owned
+ *                                      by the CMM.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/05 (Oyranos: 0.1.10)
+ *  @date    2009/11/05
+ */
+oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
+                                       const char        * data_type,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = !text;
   oyCMMptr_s * cmm_ptr = 0;
 
   if(error <= 0 && !data_type)
@@ -5028,15 +5072,13 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
      */
 
     /* 1. create hash text */
-    hashTextAdd_m( data_type );
-    hashTextAdd_m( ":" );
-    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
-    hashTextAdd_m( tmp );
+    STRING_ADD( hash_text, data_type );
+    STRING_ADD( hash_text, ":" );
+    tmp = text;
+    STRING_ADD( hash_text, tmp );
 
     /* 2. query in cache */
     entry = oyCMMCacheListGetEntry_( hash_text );
-    if(s->oy_->deallocateFunc_)
-      s->oy_->deallocateFunc_( hash_text );
 
     if(error <= 0)
     {
@@ -5046,7 +5088,7 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
 
       if(!cmm_ptr)
       {
-        cmm_ptr = oyCMMptr_New_(s->oy_->allocateFunc_);
+        cmm_ptr = oyCMMptr_New_( allocateFunc );
         error = !cmm_ptr;
 
         if(error <= 0)
