@@ -272,7 +272,7 @@ int main (int argc, char ** argv)
   if(oy_debug)
     printf("%s\n", text);
 
-  Fl_Double_Window * w = new Fl_Double_Window(400,400,"///lcms XFORMS in FLTK");
+  Fl_Double_Window * w = new Fl_Double_Window(400,400,"XFORMS in FLTK");
   Fl_Pack * pack = new Fl_Pack( 0,0,400,400 );
   error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
 
