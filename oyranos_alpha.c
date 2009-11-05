@@ -8466,13 +8466,13 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       int apis_n = 0;
       uint32_t         * rank_list = 0;
       oyCMMapi9_s * cmm_api9 = 0;
-      char * class, * api_reg;
+      char * klass, * api_reg;
 
-      class = oyFilterRegistrationToText( filter->registration_,
+      klass = oyFilterRegistrationToText( filter->registration_,
                                           oyFILTER_REG_TYPE, 0 );
       api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-      STRING_ADD( api_reg, class );
-      oyFree_m_( class );
+      STRING_ADD( api_reg, klass );
+      oyFree_m_( klass );
 
       s = oyOptions_New( 0 );
 
@@ -8484,7 +8484,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       {
         cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
         if(oyFilterRegistrationMatch( filter->registration_, cmm_api9->pattern,
-                                      0 ))
+                                      oyOBJECT_NONE ))
         {
           opts_tmp = oyOptions_FromText( cmm_api9->options, 0, object );
           oyOptions_AppendOpts( s, opts_tmp );
@@ -9300,7 +9300,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
 
     error = oyObject_SetName( options->oy_, text, type );
 
-    oyFree_m_( text );
+    if(text)
+      oyFree_m_( text );
   }
 
   if(error <= 0)
@@ -24087,7 +24088,6 @@ const char *   oyContextCollectData_ ( oyStruct_s        * s,
                                        oyStructList_s    * outs )
 {
   int error = !s;
-  int i, n;
   const char * model = 0;
 
   char * hash_text = 0;
