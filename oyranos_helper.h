@@ -93,6 +93,33 @@ extern const char * oy_backtrace;
   }                                                         \
 }
 
+/* oyAllocHelper_ (void*, type, size_t, action) */ 
+#define oyStruct_AllocHelper_m_(ptr_, type, size_, obj_, action) { \
+  if (ptr_ != NULL)    /* defined in oyranos_helper.h */    \
+  { \
+    char text_fm[80];                                       \
+    if(oy_observe_pointer_ == (intptr_t)ptr_) {             \
+      oySnprintf_( text_fm, 80, #ptr_ " pointer freed" ); \
+      WARNc_S( text_fm );                                   \
+    }                                                       \
+    obj_->oy_->deallocateFunc_ (ptr_);                      \
+    ptr_ = NULL;                                            \
+  }                                                         \
+  if ((size_) <= 0) {                                       \
+    WARNc2_S ("%s %d", _("nothing to allocate - size:"),    \
+              (int)(size_) );                               \
+  } else {                                                  \
+      ptr_ = (type*) oyStruct_Allocate( (oyStruct_s*) obj_, \
+                                        sizeof (type) * (size_t)(size_)); \
+      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
+  }                                                         \
+  if (ptr_ == NULL) {                                       \
+    WARNc3_S( "%s %d %s", _("Can not allocate memory for:"),\
+              (int)(size_), #ptr_ );                        \
+    action;                                                 \
+  }                                                         \
+}
+
 
 /* oyPostAllocHelper_ (void*, size, action) */
 #define oyPostAllocHelper_m_(ptr_, size_, action) {         \
