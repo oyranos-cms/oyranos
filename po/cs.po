@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-11-05 20:06+0100\n"
+"POT-Creation-Date: 2009-11-06 06:22+0100\n"
 "PO-Revision-Date: 2008-10-23 20:49+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -66,13 +66,13 @@ msgstr "nenalezeno"
 #: oyranos_alpha.c:1961 oyranos_alpha.c:3234 oyranos_alpha.c:5798
 #: oyranos_alpha.c:6082 oyranos_alpha.c:6759 oyranos_alpha.c:7960
 #: oyranos_alpha.c:10113 oyranos_alpha.c:10873 oyranos_alpha.c:12991
-#: oyranos_alpha.c:15435 oyranos_alpha.c:15952 oyranos_alpha.c:16606
-#: oyranos_alpha.c:17185 oyranos_alpha.c:18020 oyranos_alpha.c:18953
-#: oyranos_alpha.c:19321 oyranos_alpha.c:19546 oyranos_alpha.c:19845
-#: oyranos_alpha.c:20662 oyranos_alpha.c:20965 oyranos_alpha.c:21045
-#: oyranos_alpha.c:21314 oyranos_alpha.c:22995 oyranos_alpha.c:23279
-#: oyranos_alpha.c:24221 oyranos_alpha.c:24587 oyranos_alpha.c:25307
-#: oyranos_alpha.c:25906 oyranos_alpha.c:26164 oforms/oyranos_forms.c:57
+#: oyranos_alpha.c:15435 oyranos_alpha.c:15968 oyranos_alpha.c:16622
+#: oyranos_alpha.c:17201 oyranos_alpha.c:18036 oyranos_alpha.c:18969
+#: oyranos_alpha.c:19337 oyranos_alpha.c:19562 oyranos_alpha.c:19861
+#: oyranos_alpha.c:20678 oyranos_alpha.c:20981 oyranos_alpha.c:21061
+#: oyranos_alpha.c:21330 oyranos_alpha.c:23011 oyranos_alpha.c:23295
+#: oyranos_alpha.c:24237 oyranos_alpha.c:24603 oyranos_alpha.c:25323
+#: oyranos_alpha.c:25922 oyranos_alpha.c:26180 oforms/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr ""
 
@@ -256,7 +256,7 @@ msgstr "Cerna"
 msgid "Hue"
 msgstr "Odstin"
 
-#: oyranos_icc.c:216 oyranos_icc.c:222 oyranos_texts.c:430
+#: oyranos_icc.c:216 oyranos_icc.c:222 oyranos_texts.c:431
 msgid "Saturation"
 msgstr "Saturacni"
 
@@ -843,75 +843,75 @@ msgstr "cesta je odkaz: ignorovano"
 msgid "path is not readable"
 msgstr "%d. cestu %s nelze precist"
 
-#: oyranos_texts.c:145
+#: oyranos_texts.c:146
 msgid "Start"
 msgstr "Zacatek"
 
-#: oyranos_texts.c:146
+#: oyranos_texts.c:147
 msgid "Oyranos Settings Group"
 msgstr "Skupina nastaveni Oyranosu"
 
-#: oyranos_texts.c:153
+#: oyranos_texts.c:154
 msgid "Default Profiles"
 msgstr "Vychozi profily"
 
-#: oyranos_texts.c:154
+#: oyranos_texts.c:155
 msgid "Source and Target Profiles for various situations"
 msgstr "Vstupni a vystupni profily pro ruzne situace"
 
-#: oyranos_texts.c:161
+#: oyranos_texts.c:162
 msgid "Editing Colour Space"
 msgstr "Barvovy prostor pro editaci"
 
-#: oyranos_texts.c:162
+#: oyranos_texts.c:163
 msgid "Well behaving Colour Space for Editing"
 msgstr "Dobre se chovajici barvovy prostor pro editaci"
 
-#: oyranos_texts.c:169
+#: oyranos_texts.c:170
 msgid "Assumed Colour Space"
 msgstr "Predpokladany barvovy prostor"
 
-#: oyranos_texts.c:170
+#: oyranos_texts.c:171
 msgid "Assumed Colour Space for untagged colours"
 msgstr "Predpokladany barvovy prostor pro neoznacene barvy"
 
-#: oyranos_texts.c:177
+#: oyranos_texts.c:178
 msgid "Proofing Colour Space"
 msgstr "Barvovy prostor pro simulaci"
 
-#: oyranos_texts.c:178
+#: oyranos_texts.c:179
 msgid "Colour Space for Simulating real devices"
 msgstr "Barvovy prostor pro simulaci skutecnych zarizeni"
 
-#: oyranos_texts.c:185 oyranos_texts.c:262
+#: oyranos_texts.c:186 oyranos_texts.c:263
 msgid "Paths"
 msgstr "Cesty"
 
-#: oyranos_texts.c:186 oyranos_texts.c:263
+#: oyranos_texts.c:187 oyranos_texts.c:264
 msgid "Paths where ICC Profiles can be found"
 msgstr "Cesty, kde jsou ICC profily"
 
-#: oyranos_texts.c:193 oyranos_texts.c:251 oyranos_config_fltk.cxx:1561
+#: oyranos_texts.c:194 oyranos_texts.c:252 oyranos_config_fltk.cxx:1561
 msgid "Policy"
 msgstr "Politika"
 
-#: oyranos_texts.c:194 oyranos_texts.c:252
+#: oyranos_texts.c:195 oyranos_texts.c:253
 msgid "Collections of settings in Oyranos"
 msgstr "Kolekce nastaveni Oyranosu"
 
-#: oyranos_texts.c:201
+#: oyranos_texts.c:202
 msgid "Behaviour"
 msgstr "Chovani"
 
-#: oyranos_texts.c:202
+#: oyranos_texts.c:203
 msgid "Settings affecting the Behaviour in various situations"
 msgstr "Nastaveni ovlivnujici chovani v ruznych situacich"
 
-#: oyranos_texts.c:209
+#: oyranos_texts.c:210
 msgid "Rendering"
 msgstr "Transformace"
 
-#: oyranos_texts.c:210
+#: oyranos_texts.c:211
 #, fuzzy
 msgid ""
 "The kind of ICC gamut mapping for transforming colours between differently "
@@ -920,303 +920,303 @@ msgstr ""
 "Typ standardniho mapovani ICC gamutu pro transformaci barev mezi barvovymi "
 "prostory ruznych velikosti"
 
-#: oyranos_texts.c:217
+#: oyranos_texts.c:218
 msgid "Save Mixed colour space Documents"
 msgstr "Ulozit dokumenty se smisenymi barvovymi prostory"
 
-#: oyranos_texts.c:218
+#: oyranos_texts.c:219
 #, fuzzy
 msgid "Handling of Mixed Colour Spaces inside one single Document"
 msgstr ""
 "Vychozi zachazeni se smisenymi barvovymi prostory v ramci jednoho dokumentu"
 
-#: oyranos_texts.c:225
+#: oyranos_texts.c:226
 msgid "Mismatching"
 msgstr "Nesoulad"
 
-#: oyranos_texts.c:226
+#: oyranos_texts.c:227
 msgid ""
 "Decide what to do when the default colour spaces dont match the current ones."
 msgstr ""
 "Rozhodnout co delat, kdyz se vychozi barvovy prostor nerovna aktualnimu."
 
-#: oyranos_texts.c:233 oyranos_texts.c:372
+#: oyranos_texts.c:234 oyranos_texts.c:373
 msgid "Proofing"
 msgstr "Simulace"
 
-#: oyranos_texts.c:234
+#: oyranos_texts.c:235
 #, fuzzy
 msgid "Proofing Settings"
 msgstr "Vychozi nastaveni simulace tisku"
 
-#: oyranos_texts.c:241
+#: oyranos_texts.c:242
 msgid "All"
 msgstr "Vse"
 
-#: oyranos_texts.c:242
+#: oyranos_texts.c:243
 msgid "Oyranos Settings"
 msgstr "Nastaveni Oyranosu"
 
-#: oyranos_texts.c:272
+#: oyranos_texts.c:273
 msgid "Editing Rgb"
 msgstr "RGB editace"
 
-#: oyranos_texts.c:273
+#: oyranos_texts.c:274
 msgid "Prefered Rgb Editing Colour Space"
 msgstr "Preferovany RGB barvovy prostor pro editaci"
 
-#: oyranos_texts.c:281
+#: oyranos_texts.c:282
 msgid "Editing Cmyk"
 msgstr "CMYK editace"
 
-#: oyranos_texts.c:282
+#: oyranos_texts.c:283
 msgid "Prefered Cmyk Editing Colour Space"
 msgstr "Preferovany CMYK barvovy prostor pro editaci"
 
-#: oyranos_texts.c:290
+#: oyranos_texts.c:291
 msgid "Editing XYZ"
 msgstr "XYZ editace"
 
-#: oyranos_texts.c:291
+#: oyranos_texts.c:292
 msgid "Prefered XYZ Editing Colour Space"
 msgstr "Preferovany XYZ barvovy prostor pro editaci"
 
-#: oyranos_texts.c:299
+#: oyranos_texts.c:300
 msgid "Editing Lab"
 msgstr "Lab editace"
 
-#: oyranos_texts.c:300
+#: oyranos_texts.c:301
 msgid "Prefered CIE*Lab Editing Colour Space"
 msgstr "Preferovany CIE*Lab barvovy prostor pro editaci"
 
-#: oyranos_texts.c:308
+#: oyranos_texts.c:309
 msgid "Editing Gray"
 msgstr "Seda editace"
 
-#: oyranos_texts.c:309
+#: oyranos_texts.c:310
 msgid "Prefered Gray Editing Colour Space"
 msgstr "Preferovany sedy barvovy prostor pro editaci"
 
-#: oyranos_texts.c:317
+#: oyranos_texts.c:318
 msgid "Assumed XYZ source"
 msgstr "Predpokladany vstupni XYZ"
 
-#: oyranos_texts.c:318
+#: oyranos_texts.c:319
 msgid "Assigning an untagged XYZ Image an colour space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu XYZ obrazku"
 
-#: oyranos_texts.c:326
+#: oyranos_texts.c:327
 msgid "Assumed Lab source"
 msgstr "Predpokladany vstupni Lab"
 
-#: oyranos_texts.c:327
+#: oyranos_texts.c:328
 msgid "Assigning an untagged CIE*Lab Image an colour space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu CIE*Lab obrazku"
 
-#: oyranos_texts.c:335
+#: oyranos_texts.c:336
 msgid "Assumed Rgb source"
 msgstr "Predpokladany vstupni RGB"
 
-#: oyranos_texts.c:336
+#: oyranos_texts.c:337
 msgid "Assigning an untagged Rgb Image an colour space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu RGB obrazku"
 
-#: oyranos_texts.c:344
+#: oyranos_texts.c:345
 msgid "Assumed Web source"
 msgstr "Predpokladany vstupni Web"
 
-#: oyranos_texts.c:345
+#: oyranos_texts.c:346
 msgid ""
 "Assigning an untagged Rgb Image with source from the WWW an colour space"
 msgstr ""
 "Prirazeni barvoveho prostoru neoznacenemu RGB obrazku pochazejiciho z WWW"
 
-#: oyranos_texts.c:354
+#: oyranos_texts.c:355
 msgid "Assumed Cmyk source"
 msgstr "Predpokladany vstupni CMYK"
 
-#: oyranos_texts.c:355
+#: oyranos_texts.c:356
 msgid "Assigning an untagged Cmyk Image this colour space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu CMYK obrazku"
 
-#: oyranos_texts.c:363
+#: oyranos_texts.c:364
 msgid "Assumed Gray source"
 msgstr "Predpokladany vstupni sed"
 
-#: oyranos_texts.c:364
+#: oyranos_texts.c:365
 msgid "Assigning an untagged Gray Image this colour space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu sedemu obrazku"
 
-#: oyranos_texts.c:373
+#: oyranos_texts.c:374
 msgid "Colour space for Simulating an Output Device"
 msgstr "Barvovy prostor pro simulaci vystupniho zarizeni"
 
-#: oyranos_texts.c:382
+#: oyranos_texts.c:383
 msgid "No Image profile"
 msgstr "Zadny profil obrazku"
 
-#: oyranos_texts.c:383
+#: oyranos_texts.c:384
 msgid ""
 "Image has no colour space embedded. What default action shall be performed?"
 msgstr ""
 "Obrazek nema vlozeny barvovy prostor. Jaka vychozi akce ma byt provedena?"
 
 #. choices
-#: oyranos_texts.c:385
+#: oyranos_texts.c:386
 msgid "Assign No Profile"
 msgstr "Nepriradit zadny profil"
 
-#: oyranos_texts.c:385
+#: oyranos_texts.c:386
 msgid "Assign Assumed Profile"
 msgstr "Priradit predpokladany profil"
 
-#: oyranos_texts.c:385 oyranos_texts.c:394 oyranos_texts.c:403
-#: oyranos_texts.c:412 oyranos_texts.c:421
+#: oyranos_texts.c:386 oyranos_texts.c:395 oyranos_texts.c:404
+#: oyranos_texts.c:413 oyranos_texts.c:422
 msgid "Promt"
 msgstr "Dotazat se"
 
-#: oyranos_texts.c:391
+#: oyranos_texts.c:392
 msgid "On Rgb Mismatch"
 msgstr "V pripade RGB nesouladu"
 
-#: oyranos_texts.c:392 oyranos_texts.c:401
+#: oyranos_texts.c:393 oyranos_texts.c:402
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Akce pro nesoulad profilu obrazku a editace."
 
 #. choices
-#: oyranos_texts.c:394 oyranos_texts.c:403 oyranos_texts.c:412
-#: oyranos_texts.c:421
+#: oyranos_texts.c:395 oyranos_texts.c:404 oyranos_texts.c:413
+#: oyranos_texts.c:422
 msgid "Preserve Numbers"
 msgstr "Zachovat cisla"
 
-#: oyranos_texts.c:394 oyranos_texts.c:403
+#: oyranos_texts.c:395 oyranos_texts.c:404
 msgid "Convert automatically"
 msgstr "Automaticky konvertovat"
 
-#: oyranos_texts.c:400
+#: oyranos_texts.c:401
 msgid "On Cmyk Mismatch"
 msgstr "V pripade nesouladu CMYK"
 
-#: oyranos_texts.c:409
+#: oyranos_texts.c:410
 msgid "For Print"
 msgstr "Pro tisk"
 
-#: oyranos_texts.c:410
+#: oyranos_texts.c:411
 msgid "Handle Mixed colour spaces in Preparing a document for Print output."
 msgstr ""
 "Zachazeni se smisenymi barvovymi prostory pri priprave dokumentu pro tiskovy "
 "vystup."
 
-#: oyranos_texts.c:412
+#: oyranos_texts.c:413
 msgid "Convert to Default Cmyk Editing Space"
 msgstr "Konvertovat do vychoziho CMYK barvoveho prostoru editace"
 
-#: oyranos_texts.c:412
+#: oyranos_texts.c:413
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Konvertovat do neoznaceneho CMYK se zachovanim CMYK cisel"
 
-#: oyranos_texts.c:418
+#: oyranos_texts.c:419
 msgid "For Screen"
 msgstr "Pro obrazovku"
 
-#: oyranos_texts.c:419
+#: oyranos_texts.c:420
 msgid "Handle Mixed colour spaces in Preparing a document for Screen output."
 msgstr ""
 "Zachazeni se smisenymi barvovymi prostory pri priprave dokumentu pro vystup "
 "na obrazovku"
 
-#: oyranos_texts.c:421
+#: oyranos_texts.c:422
 msgid "Convert to Default Rgb Editing Space"
 msgstr "Konvertovat do vychoziho RGB prostoru editace"
 
-#: oyranos_texts.c:421
+#: oyranos_texts.c:422
 msgid "Convert to WWW (sRGB)"
 msgstr "Konvertovat do WWW (sRGB)"
 
-#: oyranos_texts.c:427
+#: oyranos_texts.c:428
 #, fuzzy
 msgid "Rendering Intent"
 msgstr "Vychozi zamer transformace"
 
-#: oyranos_texts.c:428
+#: oyranos_texts.c:429
 msgid "Rendering Intent for colour space Transformations."
 msgstr "Zamer transformace pro barvove prostory"
 
 #. choices
-#: oyranos_texts.c:430
+#: oyranos_texts.c:431
 msgid "Perceptual"
 msgstr "Perceptualni"
 
 #. choices
-#: oyranos_texts.c:430 oyranos_texts.c:466
+#: oyranos_texts.c:431 oyranos_texts.c:467
 msgid "Relative Colorimetric"
 msgstr "Relativni kolorimetricky"
 
-#: oyranos_texts.c:430 oyranos_texts.c:466
+#: oyranos_texts.c:431 oyranos_texts.c:467
 msgid "Absolute Colorimetric"
 msgstr "Absolutni kolorimetricky"
 
-#: oyranos_texts.c:436
+#: oyranos_texts.c:437
 msgid "Use Black Point Compensation"
 msgstr "Pouzit kompenzaci cerneho bodu (BPC)"
 
-#: oyranos_texts.c:437
+#: oyranos_texts.c:438
 #, fuzzy
 msgid "BPC affects often only the Relative Colorimetric Rendering Intent."
 msgstr "BPC ovlivnuje pouze relativni kolorimetricky zamer transformace."
 
 #. choices
-#: oyranos_texts.c:439 oyranos_texts.c:448 oyranos_texts.c:457
-#: oyranos_texts.c:475 oyranos_texts.c:484
+#: oyranos_texts.c:440 oyranos_texts.c:449 oyranos_texts.c:458
+#: oyranos_texts.c:476 oyranos_texts.c:485
 msgid "No"
 msgstr "Ne"
 
-#: oyranos_texts.c:439 oyranos_texts.c:448 oyranos_texts.c:457
-#: oyranos_texts.c:475 oyranos_texts.c:484
+#: oyranos_texts.c:440 oyranos_texts.c:449 oyranos_texts.c:458
+#: oyranos_texts.c:476 oyranos_texts.c:485
 msgid "Yes"
 msgstr "Ano"
 
-#: oyranos_texts.c:445
+#: oyranos_texts.c:446
 #, fuzzy
 msgid "Gamut Warning"
 msgstr "Varovani gamutu"
 
-#: oyranos_texts.c:446
+#: oyranos_texts.c:447
 msgid "Mark Out Of Gamut colours"
 msgstr ""
 
-#: oyranos_texts.c:454
+#: oyranos_texts.c:455
 #, fuzzy
 msgid "High Precission"
 msgstr "Vychozi profily"
 
-#: oyranos_texts.c:455
+#: oyranos_texts.c:456
 msgid "Rendering with High Precission in opposite to fast processing"
 msgstr ""
 
-#: oyranos_texts.c:463
+#: oyranos_texts.c:464
 msgid "Proofing Rendering Intent"
 msgstr "Zamer transformace simulace tisku"
 
-#: oyranos_texts.c:464
+#: oyranos_texts.c:465
 msgid "Behaviour of colour space transformation for proofing"
 msgstr "Chovani zameru transformace barvoveho prostoru pro simulaci tisku"
 
-#: oyranos_texts.c:472
+#: oyranos_texts.c:473
 #, fuzzy
 msgid "SoftProof"
 msgstr "SofProof jako vychozi"
 
-#: oyranos_texts.c:473
+#: oyranos_texts.c:474
 msgid "Simulate the output print on the monitor"
 msgstr ""
 
-#: oyranos_texts.c:481
+#: oyranos_texts.c:482
 #, fuzzy
 msgid "Hardproof"
 msgstr "Hardproof jako vychozi"
 
-#: oyranos_texts.c:482
+#: oyranos_texts.c:483
 #, fuzzy
 msgid ""
 "Behaviour for preselecting Hardproofing with a Proofing Profile at print time"
@@ -1347,7 +1347,8 @@ msgid "found observer list of wrong type"
 msgstr ""
 
 #: oyranos_alpha.c:1207 oyranos_alpha.c:1306 oyranos_alpha.c:1376
-#: oyranos_alpha.c:1429 oyranos_alpha.c:22197
+#: oyranos_alpha.c:1429 oyranos_alpha.c:22213
+#: examples/image_display/image_display.cpp:438
 msgid "Signal"
 msgstr ""
 
@@ -1369,8 +1370,8 @@ msgstr "Vyrobce:     "
 msgid "Could not open meta module API"
 msgstr "Nemohu nacist pismo v:"
 
-#: oyranos_alpha.c:12023 oyranos_alpha.c:12615 oyranos_alpha.c:27053
-#: oyranos_alpha.c:27134
+#: oyranos_alpha.c:12023 oyranos_alpha.c:12615 oyranos_alpha.c:27069
+#: oyranos_alpha.c:27150
 #, fuzzy
 msgid "Could not open device"
 msgstr "Nemohu nacist pismo v:"
@@ -1380,28 +1381,28 @@ msgstr "Nemohu nacist pismo v:"
 msgid "Could not open profile"
 msgstr "Nemohu nacist pismo v:"
 
-#: oyranos_alpha.c:20148 oyranos_alpha.c:20166 oyranos_alpha.c:20266
-#: oyranos_alpha.c:20282
+#: oyranos_alpha.c:20164 oyranos_alpha.c:20182 oyranos_alpha.c:20282
+#: oyranos_alpha.c:20298
 msgid "with '.' is not allowed"
 msgstr ""
 
-#: oyranos_alpha.c:21720
+#: oyranos_alpha.c:21736
 msgid "attempt to add a incomplete filter"
 msgstr "pokus o pridani neuplneho filtru"
 
-#: oyranos_alpha.c:21782
+#: oyranos_alpha.c:21798
 msgid "?? Nothing to add ??"
 msgstr "?? Nic k pridani ??"
 
-#: oyranos_alpha.c:22330 oyranos_alpha.c:25249
+#: oyranos_alpha.c:22346 oyranos_alpha.c:25265
 msgid "error in module:"
 msgstr ""
 
-#: oyranos_alpha.c:25221
+#: oyranos_alpha.c:25237
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: oyranos_alpha.c:25872
+#: oyranos_alpha.c:25888
 msgid "---"
 msgstr "---"
 
@@ -1547,6 +1548,7 @@ msgid ""
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:1998 modules/devices/oyranos_cmm_CUPS.c:686
+#: examples/dummy_device/oyranos_cmm_dDev.c:731
 msgid "MIT"
 msgstr ""
 
@@ -1555,11 +1557,13 @@ msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2002 modules/devices/oyranos_cmm_CUPS.c:690
+#: examples/dummy_device/oyranos_cmm_dDev.c:735
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2006 modules/oyranos_cmm_oydi.c:969
-#: modules/oyranos_cmm_oicc.c:806
+#: modules/oyranos_cmm_oicc.c:806 examples/dummy_device/oyranos_cmm_dDev.c:739
+#: examples/dummy_filter/oyranos_cmm_dFil.c:202
 #, fuzzy
 msgid "help"
 msgstr "Napoveda"
@@ -1599,12 +1603,14 @@ msgstr ""
 #: modules/oyranos_cmm_oydi.c:953 modules/oyranos_cmm_oyra.c:213
 #: modules/oyranos_cmm_oyIM.c:213 modules/oyranos_cmm_oicc.c:790
 #: modules/oyranos_cmm_lraw.cpp:253 modules/devices/oyranos_cmm_oyX1.c:872
+#: examples/dummy_device/oyranos_cmm_dDev.c:723
 msgid "Kai-Uwe"
 msgstr ""
 
 #: modules/oyranos_cmm_oydi.c:955 modules/oyranos_cmm_oyra.c:215
 #: modules/oyranos_cmm_oyIM.c:215 modules/oyranos_cmm_oicc.c:792
 #: modules/oyranos_cmm_lraw.cpp:255 modules/devices/oyranos_cmm_oyX1.c:874
+#: examples/dummy_device/oyranos_cmm_dDev.c:725
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
@@ -1612,6 +1618,7 @@ msgstr ""
 #: modules/devices/oyranos_cmm_CUPS.c:681 modules/oyranos_cmm_oyIM.c:217
 #: modules/oyranos_cmm_oicc.c:794 modules/oyranos_cmm_lraw.cpp:257
 #: modules/devices/oyranos_cmm_oyX1.c:876
+#: examples/dummy_device/oyranos_cmm_dDev.c:727
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
@@ -1620,6 +1627,7 @@ msgstr ""
 #: modules/oyranos_cmm_oydi.c:961 modules/oyranos_cmm_oyra.c:221
 #: modules/oyranos_cmm_oyIM.c:221 modules/oyranos_cmm_oicc.c:798
 #: modules/oyranos_cmm_lraw.cpp:261 modules/devices/oyranos_cmm_oyX1.c:880
+#: examples/dummy_filter/oyranos_cmm_dFil.c:194
 msgid "newBSD"
 msgstr ""
 
@@ -1630,6 +1638,7 @@ msgstr ""
 #: modules/oyranos_cmm_oydi.c:965 modules/oyranos_cmm_oyra.c:225
 #: modules/oyranos_cmm_oyIM.c:225 modules/oyranos_cmm_oicc.c:802
 #: modules/oyranos_cmm_lraw.cpp:265 modules/devices/oyranos_cmm_oyX1.c:884
+#: examples/dummy_filter/oyranos_cmm_dFil.c:198
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr ""
 
@@ -1786,6 +1795,8 @@ msgid ""
 msgstr ""
 
 #: modules/oyranos_cmm_lraw.cpp:247 modules/oyranos_cmm_lraw.cpp:249
+#: examples/dummy_filter/oyranos_cmm_dFil.c:180
+#: examples/dummy_filter/oyranos_cmm_dFil.c:182
 msgid "libraw input filter"
 msgstr ""
 
@@ -1870,6 +1881,54 @@ msgstr "Separace"
 #, c-format
 msgid "with following choices"
 msgstr ""
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:717
+#, fuzzy
+msgid "Oyranos Dummy"
+msgstr "Nastaveni Oyranosu"
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:719
+msgid "The dummy useless module of Oyranos."
+msgstr ""
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:733
+msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
+msgstr ""
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:741
+#: examples/dummy_filter/oyranos_cmm_dFil.c:204
+msgid "My filter introduction."
+msgstr ""
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:743
+#: examples/dummy_filter/oyranos_cmm_dFil.c:206
+msgid "All the small details for using this module."
+msgstr ""
+
+#: examples/dummy_filter/oyranos_cmm_dFil.c:186
+#, fuzzy
+msgid "Me"
+msgstr "M"
+
+#: examples/dummy_filter/oyranos_cmm_dFil.c:188
+#, fuzzy
+msgid "My Name"
+msgstr "Jmeno"
+
+#: examples/dummy_filter/oyranos_cmm_dFil.c:190
+msgid ""
+"My project; www: http://www.my-adress.com; support/email: my@adress.com; "
+"sources: http://www.my-adress.com/download"
+msgstr ""
+
+#: examples/dummy_filter/oyranos_cmm_dFil.c:196
+msgid "Copyright (c) 2009 My Name; newBSD"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:773
+#, fuzzy
+msgid "Edit Options"
+msgstr "Obecne volby:"
 
 #: oyranos_alpha_internal.h:245 oyranos_alpha_internal.h:253
 #, fuzzy
@@ -2222,9 +2281,6 @@ msgstr "nic nealokovano"
 
 #~ msgid "C"
 #~ msgstr "C"
-
-#~ msgid "M"
-#~ msgstr "M"
 
 #~ msgid "K"
 #~ msgstr "K"
