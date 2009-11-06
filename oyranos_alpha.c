@@ -15663,8 +15663,22 @@ OYAPI int  OYEXPORT
 /** Function oyProfileTag_Set
  *  @memberof oyProfileTag_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  1 january 2008 (API 0.1.8)
+ *  The function is a simple setter for the object elements.
+ *
+ *  @param[in,out] tag                 the to be manipulated ICC profile object
+ *  @param[in]     sig                 usage signature
+ *  @param[in]     type                content type
+ *  @param[in]     status              to be set
+ *  @param[in]     tag_size            memory size of tag_block
+ *  @param[in]     tag_block           the block to be moved into the object;
+ *                                     The pointer is owned by the object. Its
+ *                                     memory should be allocated as with the
+ *                                     same allocators as the object.
+ *  @return                            0 - success, 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/01/01 (Oyranos: 0.1.8)
+ *  @date    2009/11/06
  */
 OYAPI int  OYEXPORT
                    oyProfileTag_Set  ( oyProfileTag_s    * tag,
@@ -15688,6 +15702,8 @@ OYAPI int  OYEXPORT
     s->tag_type_ = type;
     s->status_ = status;
     s->size_ = tag_size;
+    if(s->block_)
+      s->oy_->deallocateFunc_( s->block_ );
     s->block_ = tag_block;
   }
 
