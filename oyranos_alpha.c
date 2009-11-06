@@ -13344,10 +13344,10 @@ oyProfile_FromMem             ( size_t            size,
 
   if(block && size)
   {
-    block_ = oyAllocateWrapFunc_( size, object ? object->allocateFunc_:0 );
-    if(!block_)
-      error = 1;
-    else
+    oyAllocHelper_m_( block_, char, size, object ? object->allocateFunc_:0,
+                      error = 1 );
+
+    if(!error)
     {
       size_ = size;
       error = !memcpy( block_, block, size );
@@ -13773,12 +13773,8 @@ OYAPI int OYEXPORT
 
   if(error <= 0 && !s->block_)
   {
-    block_ = oyAllocateWrapFunc_( size_, s->oy_ ? s->oy_->allocateFunc_:0 );
-    if(!block_)
-      error = 1;
-
-    if(error <= 0)
-      error = !memset( block_, 0, size_ );
+    oyAllocHelper_m_( block_, char, size_, s->oy_ ? s->oy_->allocateFunc_:0,
+                      error = 1 );
 
     if(error <= 0)
     {
@@ -15130,7 +15126,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
       uint32_t * hi = (uint32_t*)&h;
       char *tag_block = 0;
 
-      tag_block = oyAllocateFunc_( 132 );
+      oyAllocHelper_m_( tag_block, char, 132, 0, return 0 );
       error = !memcpy( tag_block, s->block_, 132 );
       error = oyProfileTag_Set( tag_, (icTagSignature)*hi,
                                 (icTagTypeSignature)*hi,
@@ -15174,7 +15170,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         {
           icTagBase * tag_base = 0;
 
-          tag_block = oyAllocateFunc_( tag_size );
+          oyAllocHelper_m_( tag_block, char, tag_size, 0, return 0 );
           tmp = &((char*)s->block_)[offset];
           error = !memcpy( tag_block, tmp, tag_size );
 

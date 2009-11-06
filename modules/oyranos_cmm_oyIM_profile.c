@@ -1132,9 +1132,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          printf("%s:%d mluc_len: %d\n",__FILE__,__LINE__, mluc_len);
 
          if(!error)
-           mem = oyStruct_Allocate( (oyStruct_s*)s, mluc_len );
-
-         error = !mem;
+           oyStruct_AllocHelper_m_( mem, char, mluc_len, s, error = 1 );
 
          if(!error)
          {
@@ -1257,8 +1255,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          if(!error)
          {
            mem_len = 12 + 8*n + 16*n + mluc_sum + 3*n;
-           mem = oyStruct_Allocate( (oyStruct_s*)tag, mem_len );
-           error = !mem;
+           oyStruct_AllocHelper_m_( mem, char, mem_len, tag, error = 1 );
 
            if(!error)
            oyProfileTag_Set( s, icSigProfileSequenceIdentifierType,
@@ -1328,11 +1325,13 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          }
 
          if(!error)
-           mem = oyStruct_Allocate( (oyStruct_s*)s, mem_len );
-         mem[0] = 0;
-         mem_len = 8;
+           oyStruct_AllocHelper_m_( mem, char, mem_len, s, error = 1 );
 
-         error = !mem;
+         if(!error)
+         {
+           mem[0] = 0;
+           mem_len = 8;
+         }
 
          if(!error)
          for(i = 0; i < n; ++i)
@@ -1407,8 +1406,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          len = len + (len%4 ? len%4 : 0);
 
          if(!error)
-           mem = oyStruct_Allocate( (oyStruct_s*)s, len );
-         error = !mem;
+           oyStruct_AllocHelper_m_( mem, char, len, s, error = 1 );
 
          if(!error)
          {
