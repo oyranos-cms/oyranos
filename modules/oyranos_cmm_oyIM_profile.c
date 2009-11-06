@@ -642,9 +642,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    /* ICC says UTF-16BE */
                    error = oyIMIconv( &mem[dversatz], len, t, "UTF-16BE" );
 
-                   oy_struct = (oyStruct_s*) name;
+                   if(!error)
+                     oy_struct = (oyStruct_s*) name;
                    /* eigther text or we have a non translatable string */
-                   if(oyStrlen_(t) || oyStructList_Count(texts))
+                   if(!error && (oyStrlen_(t) || oyStructList_Count(texts)))
                    {
                      name->name = t;
                      oyStructList_MoveIn( texts, &oy_struct, -1, 0 );
