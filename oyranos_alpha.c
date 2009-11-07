@@ -9923,7 +9923,7 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
  *  @memberof oyOptions_s
  *  @brief   set a data blob or plain pointer
  *
- *  @param         obj                 the options list or set to manipulate
+ *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
  *                                 "share/freedesktop.org/imaging/my_app/my_opt"
  *  @param         ptr                 the pointer
@@ -9986,8 +9986,12 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
  *  @param         registration        the options registration name, e.g.
  *                                 "share/freedesktop.org/imaging/my_app/my_opt"
  *                                     or simply a key, e.g. "my_opt"
- *  @param[out]    result              the data
+ *  @param[out]    result              the data; With size == zero, the pointer
+ *                                     is static and owned somewhere else.
+ *                                     With size set, the pointer is owned my
+ +                                     the caller.
  *  @param[out]    size                the data size
+ *  @param[in]     allocateFunc        user allocator
  *  @return                            0 -  option exists, is of correct type,
  *                                          holds a value;
  *                                     -1 - not found;
