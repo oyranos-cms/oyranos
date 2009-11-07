@@ -981,6 +981,16 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
                                        const char        * registration,
                                        oyStruct_s       ** oy_struct,
                                        uint32_t            flags );
+int            oyOptions_SetFromData ( oyOptions_s      ** options,
+                                       const char        * registration,
+                                       oyPointer           ptr,
+                                       size_t              size,
+                                       uint32_t            flags );
+int            oyOptions_FindData    ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       oyPointer        ** result,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
 int            oyOptions_SetSource   ( oyOptions_s       * options,
                                        oyOPTIONSOURCE_e    source );
 OYAPI int  OYEXPORT

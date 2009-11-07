@@ -9919,6 +9919,117 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
   return error;
 }
 
+/** Function oyOptions_SetFromData
+ *  @memberof oyOptions_s
+ *  @brief   set a data blob or plain pointer
+ *
+ *  @param         obj                 the options list or set to manipulate
+ *  @param         registration        the options registration name, e.g.
+ *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *  @param         ptr                 the pointer
+ *  @param         size                the pointer size
+ *  @param         flags               can be OY_CREATE_NEW for a new option,
+ *                                     or OY_ADD_ALWAYS
+ *  @return                            0 - success; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/07 (Oyranos: 0.1.10)
+ *  @date    2009/11/07
+ */
+int            oyOptions_SetFromData ( oyOptions_s      ** options,
+                                       const char        * registration,
+                                       oyPointer           ptr,
+                                       size_t              size,
+                                       uint32_t            flags )
+{
+  int error = 0;
+  oyOption_s * o = 0;
+  oyOptions_s * s = options ? *options : 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+
+  if(error <= 0)
+  {
+    if(!*options)
+      *options = oyOptions_New( 0 );
+
+    o = oyOptions_Find( *options, registration );
+
+    /** Add a new option if the OY_CREATE_NEW flag is present.
+     */
+    if((!o && oyToCreateNew_m(flags)) ||
+        oyToAddAlways_m(flags))
+    {
+      o = oyOption_New( registration, (*options)->oy_ );
+      error = !o;
+
+      if(error <= 0)
+        error = oyOption_SetFromData( o, ptr, size );
+
+      oyOptions_MoveIn( (*options), &o, -1 );
+
+    } else
+      oyOption_SetFromData( o, ptr, size );
+
+    oyOption_Release( &o );
+  }
+
+  return error;
+}
+
+/** Function oyOptions_FindData
+ *  @memberof oyOptions_s
+ *  @brief   get a value
+ *
+ *  @param         options             the options list or set to manipulate
+ *  @param         registration        the options registration name, e.g.
+ *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     or simply a key, e.g. "my_opt"
+ *  @param[out]    result              the data
+ *  @param[out]    size                the data size
+ *  @return                            0 -  option exists, is of correct type,
+ *                                          holds a value;
+ *                                     -1 - not found;
+ *                                     1 -  error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/07 (Oyranos: 0.1.10)
+ *  @date    2009/11/07
+ */
+int            oyOptions_FindData    ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       oyPointer        ** result,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = !options;
+  oyOptions_s * s = options;
+  oyOption_s * o = 0;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return error );
+
+  if(error <= 0)
+  {
+    o = oyOptions_Find( options, registration );
+
+    if(o && o->type_ == oyOBJECT_OPTION_S &&
+       o->value_type == oyVAL_STRUCT)
+    {
+      if(result)
+        *result = oyOption_GetData( o, size, allocateFunc );
+      error = 0;
+
+    } else
+      error = -1;
+
+    oyOption_Release( &o );
+  }
+
+  return error;
+}
+
 /** Function oyOptions_SetSource
  *  @memberof oyOptions_s
  *  @brief   set source attribute
