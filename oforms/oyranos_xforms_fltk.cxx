@@ -15,9 +15,10 @@
 #include "config.h"
 
 #include <FL/Fl.H>
-#include <FL/Fl_Pack.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Pack.H>
+#include <FL/Fl_Text_Display.H>
 
 using namespace oyranos;
 using namespace oyranos::forms;
@@ -55,6 +56,7 @@ void callback_done( Fl_Widget * w, void * )
   w->window()->hide();
 }
 
+Fl_Text_Display * help_view = 0;
 
 int main (int argc, char ** argv)
 {
@@ -279,14 +281,22 @@ int main (int argc, char ** argv)
   if(oy_debug)
     printf("%s\n", text);
 
-  Fl_Double_Window * w = new Fl_Double_Window(400,400,"XFORMS in FLTK");
+  Fl_Double_Window * w = new Fl_Double_Window(400,475,"XFORMS in FLTK");
   Fl_Pack * pack = new Fl_Pack( 0,0,400,365 );
   pack->spacing(V_SPACING);
     error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
 
   pack->end();
   w->resizable( pack );
-    Fl_Button * done_button = new Fl_Button( 160, 370, 80, 25, _("&Done"));
+    help_view = new Fl_Text_Display( 0,365,400,75 );
+    help_view->box(FL_ENGRAVED_BOX);
+    help_view->color(FL_BACKGROUND_COLOR);
+    help_view->selection_color(FL_DARK1);
+      Fl_Text_Buffer * buffer = new Fl_Text_Buffer(0);
+      buffer->append( _("Hints") );
+    help_view->buffer( buffer );
+
+    Fl_Button * done_button = new Fl_Button( 160, 445, 80, 25, _("&Done"));
     done_button->callback( callback_done, 0 );
   w->end();
 
