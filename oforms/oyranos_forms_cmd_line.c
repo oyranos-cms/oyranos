@@ -224,6 +224,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
   return 0;
 }
 
+const char * oy_ui_cmd_line_handler_xf_select1_element_searches_[] = {
+"xf:choices/xf:item/xf:label.xf:value",0};
 oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
@@ -231,7 +233,7 @@ oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
    "xf:select1",                       /**< element_type; Wanted XML element. */
    (oyUiHandler_f)oyXML2XFORMsCmdLineSelect1Handler, /**<oyUiHandler_f handler*/
    "dummy",                            /**< handler_type */
-   "xf:choices/xf:item/xf:label.xf:value" /**< element_search */
+   (char**)oy_ui_cmd_line_handler_xf_select1_element_searches_ /**< element_searches */
   };
 
 /** @internal
@@ -310,6 +312,8 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
   return 0;
 }
 
+const char * oy_ui_cmd_line_handler_html_headline4_element_searches_[] = {
+"h4",0};
 oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
@@ -317,9 +321,11 @@ oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_ =
    "h4",                               /**< element_type; Wanted XML elements.*/
    (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
    "dummy",                            /**< handler_type */
-   "h4"                                /**< element_search */
+   (char**)oy_ui_cmd_line_handler_html_headline4_element_searches_ /**< element_searches */
   };
 
+const char * oy_ui_cmd_line_handler_html_headline_element_searches_[] = {
+"h3",0};
 oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
@@ -327,7 +333,7 @@ oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
    "h3",                               /**< element_type; Wanted XML elements.*/
    (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
    "dummy",                            /**< handler_type */
-   "h3"                                /**< element_search */
+   (char**)oy_ui_cmd_line_handler_html_headline_element_searches_ /**< element_searches */
   };
 
 oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
