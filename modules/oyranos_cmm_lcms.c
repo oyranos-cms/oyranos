@@ -938,7 +938,7 @@ gamutCheckSampler(register WORD In[],
 {
   cmsCIELab Lab1, Lab2;
   double d;
-  oyPointer * ptr = Cargo;
+  oyPointer * ptr = (oyPointer*)Cargo;
 
   cmsLabEncoded2Float(&Lab1, In);
   cmsDoTransform( ptr[0], &Lab1, &Lab2, 1 );
@@ -999,7 +999,7 @@ cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
                                                intent_proof,
                                                flags | cmsFLAGS_HIGHRESPRECALC);
       ptr[0] = tr1;
-      ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? 1 : 0;
+      ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
 
 
       gmt_lut = cmsAllocLUT();
@@ -1011,6 +1011,8 @@ cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
       cmsSetColorSpace( gmt, icSigLabData );
       cmsSetPCS( gmt, icSigLabData );
       cmsAddTag( gmt, icSigProfileDescriptionTag, (char*)"proofing");
+      cmsAddTag( gmt, icSigCopyrightTag, (char*)"no copyright; use freely" );
+      cmsAddTag( gmt, icSigMediaWhitePointTag, cmsD50_XYZ() );
       cmsAddTag( gmt, icSigAToB0Tag, gmt_lut );
 
   if(oy_debug)
