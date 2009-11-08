@@ -192,7 +192,6 @@ OYAPI int  OYEXPORT
  *  @brief   obtain a XFORMS model from a FormsArgs object
  *
  *  @param[in,out] args                struct object
- *  @param[in]     alloc               user allocate function
  *  @return                            the model XML
  *
  *  @version Oyranos: 0.1.10
@@ -207,5 +206,61 @@ const char * oyFormsArgs_ModelGet    ( oyFormsArgs_s     * args )
     return 0;
 }
 
+
+/** Function oyFormsArgs_ResourceSet
+ *  @memberof oyFormsArgs_s
+ *  @brief   set a resource to be used by the renderer
+ *
+ *  @param[in,out] args                argument object
+ *  @param[in]     registration        a registration key name for the resource
+ *  @param[in]     resource            the resource
+ *  @return                            0 - good; 1 - error; -1 <= issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/07 (Oyranos: 0.1.10)
+ *  @date    2009/11/07
+ */
+int          oyFormsArgs_ResourceSet ( oyFormsArgs_s     * args,
+                                       const char        * registration,
+                                       oyPointer           resource )
+{
+  int error = !args;
+  oyFormsArgs_s * s = args;
+
+  oyCheckType__m( oyOBJECT_FORMS_ARGS_S, return 1 );
+
+  error = oyOptions_SetFromData( (oyOptions_s**)&args->data_, registration,
+                                 resource, 0, OY_CREATE_NEW );
+
+  return error;
+}
+
+
+/** Function oyFormsArgs_ResourceGet
+ *  @memberof oyFormsArgs_s
+ *  @brief   get a resource to be used inside the renderer
+ *
+ *  @param[in,out] args                argument object
+ *  @param[in]     registration        a registration key name for the resource
+ *  @param[out]    resource            the resource
+ *  @return                            0 - good; 1 - error; -1 <= issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/07 (Oyranos: 0.1.10)
+ *  @date    2009/11/07
+ */
+int          oyFormsArgs_ResourceGet ( oyFormsArgs_s     * args,
+                                       const char        * name,
+                                       oyPointer         * resource )
+{
+  int error = !args;
+  oyFormsArgs_s * s = args;
+
+  oyCheckType__m( oyOBJECT_FORMS_ARGS_S, return 1 );
+
+  error = oyOptions_FindData( (oyOptions_s*)args->data_, name, resource, 0, 0 );
+
+  return error;
+}
 
 
