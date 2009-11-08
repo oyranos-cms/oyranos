@@ -142,7 +142,7 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
      name->name = *text;
      *text = 0;
      oy_struct = (oyStruct_s*) name;
-     oyStructList_MoveIn( texts, &oy_struct, pos );
+     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
   }
   return error;
 }
@@ -165,7 +165,7 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
        name->name = tmp;
      }
      oy_struct = (oyStruct_s*) name;
-     oyStructList_MoveIn( texts, &oy_struct, pos );
+     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
   }
   return error;
 }

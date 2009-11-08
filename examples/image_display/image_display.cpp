@@ -26,13 +26,20 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Menu_Button.H>
 #include <FL/fl_draw.H>
 
 #ifdef HAVE_X11
 #include <FL/x.H>
 #endif
 
+
 #include <cmath>
+
+#ifdef USE_GETTEXT
+#include "config.h" /* I18N */
+#include "fl_i18n/fl_i18n.H"
+#endif
 
 #define USE_RESOLVE
 
@@ -41,10 +48,13 @@ using namespace oyranos;
 
 extern "C" {
 /* forward declaration of oyranos_alpha.c */
-int                oyWriteMemToFile_ ( const char*, void*, size_t );
+int                oyWriteMemToFile_ ( const char*, const void*, size_t );
+char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
+                         oyAlloc_f     allocate_func);
 }
 
 int verbose = 0;
+
 
 class Oy_Fl_Double_Window : public Fl_Double_Window
 {
@@ -90,12 +100,19 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
   };
 };
 
+
+/*  Menü für rechten Maustastenklick
+    node = oyFilterGraph_GetNode( graph, -1, "//" OY_TYPE_STD "/icc", 0 );
+    Die icc.lcms Optionen sollten noch durch "oydi" miteinander verknüpft sein.
+ */
+
 class Fl_Oy_Box : public Fl_Box
 {
   oyConversion_s * context;
   oyPixelAccess_s * ticket;
   oyRectangle_s * old_display_rectangle;
   oyRectangle_s * old_roi_rectangle;
+  int dirty;
 
   void draw()
   {
@@ -225,7 +242,8 @@ class Fl_Oy_Box : public Fl_Box
           (!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) ||
            !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle )||
            ticket->start_xy[0] != ticket->start_xy_old[0] ||
-           ticket->start_xy[1] != ticket->start_xy_old[1]))
+           ticket->start_xy[1] != ticket->start_xy_old[1]) ||
+           dirty )
       {
 #ifdef DEBUG
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
@@ -240,6 +258,8 @@ class Fl_Oy_Box : public Fl_Box
         oyRectangle_SetByRectangle( old_roi_rectangle,ticket->output_image_roi);
         ticket->start_xy_old[0] = ticket->start_xy[0];
         ticket->start_xy_old[1] = ticket->start_xy[1];
+
+        dirty = 0;
       }
 
       if(verbose)
@@ -294,6 +314,7 @@ public:
     old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
     old_roi_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
     px=py=ox=oy=0;
+    dirty = 0;
   };
 
   ~Fl_Oy_Box(void)
@@ -308,6 +329,13 @@ public:
   {
     oyConversion_Release( &context );
     context = oyConversion_Copy( c, 0 );
+  }
+
+  void damage( char c )
+  {
+    if(c & FL_DAMAGE_USER1)
+      dirty = 1;
+    Fl_Box::damage( c );
   }
 
   void setImage( oyImage_s * image_in )
@@ -391,20 +419,79 @@ public:
   }
 };
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box);
+Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyFilterNode_s *node);
 
+extern "C" {
+int      conversionObserve           ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data )
+{
+  int handled = 0;
+  oyObserver_s * obs = observer;
+
+  if(observer && observer->model &&
+     observer->model->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    /*if(oy_debug_signals)*/
+      printf("%s:%d WARNING: \n\t%s %s: %s[%d]->%s[%d]\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__, _("Signal"),
+                    oySignalToString(signal_type),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+
+    Fl_Oy_Box * oy_box = (Fl_Oy_Box*) ((oyBlob_s*)observer->user_data)->ptr;
+    oy_box->damage( FL_DAMAGE_USER1 );
+
+  }
+
+  return handled;
+}
+}
 
 int
 main(int argc, char** argv)
 {
   /* some Oyranos types */
   oyConversion_s * conversion = 0;
-  oyFilterNode_s * in, * out;
+  oyFilterNode_s * in, * out, * icc;
   oyOptions_s * options = 0;
   oyImage_s * image_in = 0, * image_out = 0;
   int error = 0,
       file_pos = 1;
   const char * file_name = 0;
+
+
+#ifdef USE_GETTEXT
+  const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
+  const char *domain = {"oyranos"};
+  int is_path = -1;
+
+  is_path = fl_search_locale_path  ( 2,
+                                locale_paths,
+                                "de",
+                                domain);
+  if(is_path < 0)
+    fprintf( stderr, "Locale not found\n");
+  else
+  {
+#if defined(_Xutf8_h) || HAVE_FLTK_UTF8
+    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
+#else
+    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;
+#endif
+    int err = fl_initialise_locale ( domain, locale_paths[is_path],
+                                     set_charset );
+    if(err) {
+      fprintf( stderr,"i18n initialisation failed");
+    } /*else
+      fprintf( stderr, "Locale found in %s\n", locale_paths[is_path]);*/
+  }
+  oy_domain_codeset = fl_i18n_codeset;
+#endif
+
 
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
@@ -477,7 +564,7 @@ main(int argc, char** argv)
 #endif
 
   /* create a new filter node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
+  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
@@ -549,7 +636,14 @@ main(int argc, char** argv)
 
 
   Fl_Oy_Box * oy_box = 0;
-  Oy_Fl_Double_Window * win = createWindow( &oy_box );
+  Oy_Fl_Double_Window * win = createWindow( &oy_box, icc );
+  /* observe the node */
+  oyBlob_s * b = oyBlob_New(0);
+  b->ptr = oy_box;
+  oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion,
+                        (oyStruct_s*)b,
+                        conversionObserve );
+  oyBlob_Release( &b );
 
   oy_box->setConversion( conversion );
 
@@ -571,11 +665,84 @@ main(int argc, char** argv)
 #include <FL/Fl_Image.H>
 static Fl_RGB_Image image_oyranos_logo(oyranos_logo, 64, 64, 4, 0);
 
+struct box_n_opts {
+  oyFilterNode_s * node;
+  Fl_Oy_Box * box;
+};
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box)
+void
+callback ( Fl_Widget* w, void* daten )
+{
+  struct box_n_opts * arg = (box_n_opts*) daten;
+  oyStruct_s * object = (oyStruct_s*) arg->node;
+
+  if(!w->parent())
+    printf("Could not find parents.\n");
+  else
+  if(!object)
+    printf("Oyranos argument missed.\n");
+  else
+  if(object->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    oyFilterNode_s * node = (oyFilterNode_s*) object;
+    oyOptions_s * opts = 0,
+                * new_opts = 0;
+    const char * tmp_dir = getenv("TMPDIR"),
+               * in_text = 0,
+               * model = 0;
+    char * command = new char [1024];
+    char * t = 0;
+    int error = 0, i;
+    char * ui_text = 0, ** namespaces = 0;
+
+    if(!tmp_dir)
+      tmp_dir = "/tmp";
+
+    error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
+
+    opts = oyFilterNode_OptionsGet( node, OY_SELECT_FILTER );
+    model = oyOptions_GetText( opts, oyNAME_NAME );
+    in_text= oyXFORMsFromModelAndUi( model, ui_text, (const char**)namespaces,0,
+                                     malloc );
+    /* export the options values */
+    sprintf( command, "%s/image_display_in_tmp.xml", tmp_dir );
+    i = oyWriteMemToFile_( command, in_text, strlen(in_text) );
+    in_text = 0; command[0] = 0;
+
+    /* render the options to the UI */
+    sprintf(command, "oyranos-xforms-fltk " );
+    sprintf(&command[strlen(command)],
+            " -i %s/image_display_in_tmp.xml -o %s/image_display_tmp.xml",
+            tmp_dir, tmp_dir );
+    error = system(command);
+
+    /* reload changed options */
+    t = strstr(command," -o ");
+    size_t size = 0;
+    char * opts_text = oyReadFileToMem_(t+4, &size, malloc);
+    new_opts = oyOptions_FromText( opts_text, 0, 0 );
+    free(opts_text);
+    oyOptions_CopyFrom( &opts, new_opts, oyBOOLEAN_UNION, oyFILTER_REG_NONE, 0);
+
+    /* TODO update the conversion context and enforce a redraw
+     *  The context of a node can be removed to allow for updating.
+     *  A redrawing flag should be obtainable from the graph.
+     */
+    arg->box->damage( FL_DAMAGE_USER1 );
+
+    delete [] command;
+  }
+  else
+    printf("could not find a suitable program structure\n");
+}
+
+Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box,
+                                    oyFilterNode_s * node)
 {
   int w = 640,
       h = 480;
+
+  struct box_n_opts * arg = new box_n_opts;
 
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+100, TARGET );
@@ -594,6 +761,18 @@ Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box)
         o->image(image_oyranos_logo);
         o->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
       }
+      Fl_Menu_Button  *menue_;
+      Fl_Menu_Button  *menue_button_;
+      menue_button_ = new Fl_Menu_Button(0,0,win->w(),win->h(),0);
+      menue_button_->type(Fl_Menu_Button::POPUP3);
+      menue_button_->box(FL_NO_BOX);
+      menue_button_->clear();
+      menue_ = new Fl_Menu_Button(0,0,win->w(),win->h(),""); menue_->hide();
+      arg->node = node;
+      arg->box = *oy_box;
+      menue_->add( _("Edit Options"),
+                   FL_CTRL + 'e', callback, (void*)arg, 0 );
+      menue_button_->copy(menue_->menu());
   win->end();
   win->resizable(*oy_box);
 

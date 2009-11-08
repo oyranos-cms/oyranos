@@ -109,6 +109,8 @@ typedef enum  {
   oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
   oyBEHAVIOUR_PROOF_SOFT,              /**< Proofing by default for screen */
   oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing */
+  oyBEHAVIOUR_RENDERING_GAMUT_WARNING, /**< mark out of gamut colours */
+  oyBEHAVIOUR_RENDERING_HIGH_PRECISSION,/**< higher then normal precission */
   oyBEHAVIOUR_END                      /**< just for easen Gui design */
 } oyBEHAVIOUR_e;
 
@@ -246,6 +248,8 @@ typedef enum  {
   oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
   oyWIDGET_RENDERING_INTENT,          /**< Standard colour transformations */
   oyWIDGET_RENDERING_BPC,             /**< use BlackPointCompensation */
+  oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colours */
+  oyWIDGET_RENDERING_HIGH_PRECISSION, /**< higher then normal precission */
   oyWIDGET_RENDERING_INTENT_PROOF,    /**< Proofing colour transformations */
   oyWIDGET_PROOF_SOFT,                /**< Proofing by default for screen */
   oyWIDGET_PROOF_HARD,                /**< Proofing by default for printing */

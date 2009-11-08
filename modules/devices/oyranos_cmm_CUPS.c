@@ -864,10 +864,14 @@ int CUPSgetProfiles                  ( const char        * device_name,
             /* Create the complete path to the profile on the server 
              * (ie. http://host:port/profiles/xxx.icc
              */
+#if CUPS_VERSION_MAJOR*100+CUPS_VERSION_MINOR < 102
+            printf( uri, "http://%s:%s/profiles/%s",
+                    cupsServer(), ippPort(), profile_name );
+#else
             httpAssembleURIf( HTTP_URI_CODING_ALL, uri,
                               sizeof(uri), "http", NULL, cupsServer(),
                               ippPort(), "/profiles/%s", profile_name);         
-          
+#endif
             /* Get a file descriptor to download the file from the server to
              * the /tmp directory.
              */

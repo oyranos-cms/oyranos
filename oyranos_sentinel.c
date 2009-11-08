@@ -119,6 +119,9 @@ void oyInit_()
   if(getenv("OYRANOS_DEBUG_MEMORY"))
     oy_debug_memory = atoi(getenv("OYRANOS_DEBUG_MEMORY"));
 
+  if(getenv("OYRANOS_DEBUG_SIGNALS"))
+    oy_debug_signals = atoi(getenv("OYRANOS_DEBUG_SIGNALS"));
+
   if(getenv("OYRANOS_BACKTRACE"))
   {
     oy_backtrace = getenv("OYRANOS_BACKTRACE");

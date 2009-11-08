@@ -547,7 +547,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
     case oyGROUP_BEHAVIOUR_RENDERING:
          mem = oyWriteOptionToXML_( group,
                                     oyWIDGET_RENDERING_INTENT,
-                                    oyWIDGET_RENDERING_BPC,
+                                    oyWIDGET_RENDERING_HIGH_PRECISSION,
                                     mem, oytmplen );
          break;
     case oyGROUP_BEHAVIOUR_PROOF:
@@ -803,10 +803,11 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
     }
     STRING_ADD( text, tmp );
   } else
-    STRING_ADD( text, "ISO-8859-1" );
+    STRING_ADD( text, oy_domain_codeset ? oy_domain_codeset :
+                                          "UTF-8" /*"ISO-8859-1"*/ );
 #else
   STRING_ADD( text,
-   "ISO-8859-1" );
+   "UTF-8" );
 #endif
   STRING_ADD( text,
    "\" ?>\n"
@@ -912,36 +913,42 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
       pos = 0;
       while(ui_handlers[pos])
       {
-        STRING_ADD( tmp, ui_handlers[pos]->element_search );
-        if(!tmp)
+        int pos2 = 0;
+
+        while(ui_handlers[pos]->element_searches[pos2])
         {
-          ++pos;
-          continue;
+          STRING_ADD( tmp, ui_handlers[pos]->element_searches[pos2] );
+          if(!tmp)
+          {
+            ++pos;
+            continue;
+          }
+
+          len = (int)(oyStrrchr_(tmp, '/') - tmp);
+          if(oyStrchr_(tmp, '/'))
+            tmp[len] = 0;
+ 
+          if(oyStrstr_( ui_handlers[pos]->element_type, name ) != 0 ||
+             (oyStrstr_( tmp, name ) != 0 && wid_data))
+          {
+            old_wid_data = wid_data;
+            wid_data = 0;
+            search = ui_handlers[pos]->element_searches[pos2];
+            /** usually dont search for the current level, except for
+             *  element_searchs and element_type contain the same search term */
+            if(!oyStrstr_(ui_handlers[pos]->element_type, name ) &&
+               oyStrstr_( search, name ))
+              search = oyStrstr_( search, name ) + oyStrlen_(name) + 1;
+
+            error = oyOptions_SetFromText( &wid_data, "////search",
+                                           search, OY_CREATE_NEW );
+            if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
+            collect = 1;
+          }
+
+          oyFree_m_( tmp )
+          ++pos2;
         }
-
-        len = (int)(oyStrrchr_(tmp, '/') - tmp);
-        if(oyStrchr_(tmp, '/'))
-          tmp[len] = 0;
-
-        if(oyStrstr_( ui_handlers[pos]->element_type, name ) != 0 ||
-           oyStrstr_( tmp, name ) != 0)
-        {
-          old_wid_data = wid_data;
-          wid_data = 0;
-          search = ui_handlers[pos]->element_search;
-          /** usually dont search for the current level, except for
-           *  element_search and element_type contain the same search term */
-          if(!oyStrstr_(ui_handlers[pos]->element_type, name ) &&
-             oyStrstr_( search, name ))
-            search = oyStrstr_( search, name ) + oyStrlen_(name) + 1;
-
-          error = oyOptions_SetFromText( &wid_data, "////search",
-                                         search, OY_CREATE_NEW );
-          if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
-          collect = 1;
-        }
-
-        oyFree_m_( tmp )
 
         ++pos;
       }
@@ -972,22 +979,14 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
           {
             STRING_ADD( tmp, (char*)attr->children->content );
             STRING_ADD( tmp, "." );
+            STRING_ADD( tmp, "attr:ref" );
+            STRING_ADD( tmp, "." );
             STRING_ADD( tmp, name );
             error = oyOptions_SetFromText( &wid_data, &tmp[1], v,
                                            OY_CREATE_NEW );
             if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
             oyFree_m_( tmp )
           }
-        }
-
-        if( strcmp((char*)attr->name,"label") == 0 &&
-            attr->children->content )
-        {
-          if(wid_data && oyOptions_FindString(wid_data, "search", 0))
-            error = oyOptions_SetFromText( &wid_data, "////label",
-                                           (char*)attr->children->content,
-                                           OY_CREATE_NEW );
-          if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
         }
 
         attr = attr->next;
@@ -1151,303 +1150,5 @@ const char * oyXFORMsModelGetXPathValue_
 
   return text;
 }
-
-typedef struct { int n; char ** options; int silent; } cmd_line_args_s;
-
-/** @internal
- *  Function oyXML2XFORMsCmdLineSelect1Handler
- *  @brief   build a UI for a xf:select1 XFORMS sequence
- *
- *  This function is a simple demonstration.
- *
- *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  parsed and requested elements
- *  @param[in]     user_data           toolkit context
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/08/29 (Oyranos: 0.1.10)
- *  @date    2009/09/04
- */
-int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
-                                       oyPointer           user_data )
-{
-  oyOption_s * o  = 0, * o2, *o3;
-  int n = oyOptions_Count( collected_elements ),
-      i,j,j_n,k,k_n,
-      is_default, default_pos = -1,
-      choices_n = 0;
-  oyOptions_s * opts = 0, * opts2;
-  const char * default_value = 0,
-             * tmp,
-             * label,
-             * value;
-  char * default_key = 0, * t = 0;
-  char * choices = 0;
-  cmd_line_args_s * cmd_line_args = user_data;
-  int print = cmd_line_args ? !cmd_line_args->silent : 1;
-
-  default_value = oyOptions_FindString( collected_elements, "xf:select1", 0 );
-
-  if(oy_debug && default_value && print)
-    printf( "found default: \"%s\"\n", default_value );
-
-  for(i = 0; i < n; ++i)
-  {
-    o = oyOptions_Get( collected_elements, i );
-    opts = (oyOptions_s*) oyOption_StructGet( o, oyOBJECT_OPTIONS_S );
-    
-    if(!opts && oyFilterRegistrationMatch( o->registration,"xf:label", 0 ) &&
-       print)
-      printf( " %s:\n", o->value->string );
-
-    if(opts && oyFilterRegistrationMatch( o->registration,"xf:choices", 0 ))
-    {
-      j_n = oyOptions_Count( opts);
-      for(j = 0; j < j_n; ++j)
-      {
-        o2 = oyOptions_Get( opts, j );
-        opts2 = (oyOptions_s*) oyOption_StructGet( o2, oyOBJECT_OPTIONS_S );
-
-        if(!opts2 && oyFilterRegistrationMatch(o2->registration,"xf:label", 0 )
-           && print)
-          printf( "  %s:\n", o2->value->string );
-
-        if(opts2 && oyFilterRegistrationMatch( o2->registration,"xf:item", 0 ))
-        {
-          label = tmp = value = 0;
-          is_default = 0;
-
-          k_n = oyOptions_Count( opts2);
-          for(k = 0; k < k_n; ++k)
-          {
-            o3 = oyOptions_Get( opts2, k );
-            if(oy_debug && print)
-              printf( "    found option: 0x%x  \"%s\" %s\n",
-                (int)o3, oyOption_GetText(o3, oyNAME_NICK),
-                oyStruct_TypeToText((oyStruct_s*)o3) );
-
-            oyOption_Release( &o3 );
-          }
-
-          /* collect the understood elements */
-          tmp = oyOptions_FindString( opts2, "xf:label", 0 );
-          if(tmp)
-            label = tmp;
-          tmp = oyOptions_FindString( opts2, "xf:value", 0 );
-          if(tmp)
-            value = tmp;
-
-          if(!value && !label)
-            continue;
-
-          if(value && default_value &&
-             oyStrcmp_(default_value,value) == 0)
-          {
-            is_default = 1;
-            default_pos = choices_n;
-          }
-
-          if(is_default)
-            STRING_ADD( choices, "[" );
-          STRING_ADD( choices, value );
-          if(is_default)
-            STRING_ADD( choices, "]" );
-          if(label)
-          {
-            STRING_ADD( choices, " - \"" );
-            STRING_ADD( choices, label );
-          }
-          STRING_ADD( choices, "\"" );
-          STRING_ADD( choices, "\n" );
-
-          ++choices_n;
-        }
-        else if(oy_debug && print)
-          printf( "  found option: 0x%x  \"%s\" %s\n",
-                (int)o2, oyOption_GetText(o2, oyNAME_NICK),
-                oyStruct_TypeToText((oyStruct_s*)o2) );
-
-        oyOptions_Release( &opts2 );
-        oyOption_Release( &o2 );
-      }
-    }
-    else if(oy_debug && print)
-      printf( "found option: 0x%x  \"%s\" %s\n",
-              (int)o, oyOption_GetText(o, oyNAME_NICK),
-              oyStruct_TypeToText((oyStruct_s*)o) );
-
-    oyOptions_Release( &opts );
-    oyOption_Release( &o );
-  }
-
-  o = oyOptions_Find( collected_elements, "xf:select1" );
-  if(o)
-  {
-    STRING_ADD( default_key, o->registration );
-    t = oyStrstr_( default_key, ".xf:select1" );
-    t[0] = 0;
-
-    if(print)
-    {
-      printf("  ");
-      /* the option follows */
-      printf(_("Option"));
-      printf(":\n");
-      printf("    --%s=[%s]\n    ", default_key, default_value);
-    }
-    i = 0;
-    if(cmd_line_args)
-      oyStringListAddStaticString_( &cmd_line_args->options,
-                                    &cmd_line_args->n, default_key,
-                                    oyAllocateFunc_, oyDeAllocateFunc_ );
-    /* the choices follow */
-    if(print)
-    {
-      printf(_("with following choices"));
-
-      printf(":\n");
-      i = -1;
-      if(choices_n <= 10)
-        printf("%s", choices );
-      else
-      {
-        while(choices[++i])
-          if(choices[i] != '\n')
-            putc( choices[i], stdout );
-          else
-          {
-            putc( ';', stdout );
-            putc( ' ', stdout );
-          }
-        printf("\n");
-      }
-      printf("\n");
-    }
-
-    oyOption_Release( &o );
-  }
-
-  if(choices)
-    oyFree_m_( choices );
-  oyFree_m_( default_key );
-
-  /*printf("collected:\n%s", oyOptions_GetText( collected_elements, oyNAME_NICK));*/
-  return 0;
-}
-
-oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
-  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
-   "oyFORMS",                          /**< dialect */
-   "libxml2",                          /**< parser_type */
-   "xf:select1",                       /**< element_type; Wanted XML element. */
-   (oyUiHandler_f)oyXML2XFORMsCmdLineSelect1Handler, /**<oyUiHandler_f handler*/
-   "dummy",                            /**< handler_type */
-   "xf:choices/xf:item/xf:label.xf:value" /**< element_search */
-  };
-
-/** @internal
- *  Function oyXML2XFORMsCmdLineHtmlHeadlineHandler
- *  @brief   build a UI for a xf:select1 XFORMS sequence
- *
- *  This function is a simple demonstration.
- *
- *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  parsed and requested elements
- *  @param[in]     user_data           toolkit context
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/08/29 (Oyranos: 0.1.10)
- *  @date    2009/08/31
- */
-int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
-                                       xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
-                                       oyPointer           user_data )
-{
-  const char * tmp = 0;
-  int size = 0;
-  cmd_line_args_s * cmd_line_args = user_data;
-  int print = cmd_line_args ? !cmd_line_args->silent : 1;
-
-  if(!tmp)
-  {
-    tmp = oyOptions_FindString( collected_elements, "h3", 0 );
-    if(tmp)
-      size = 3;
-  }
-
-  if(tmp && print)
-    printf( "%s\n", tmp );
-
-  return 0;
-}
-
-/** @internal
- *  Function oyXML2XFORMsCmdLineHtmlHeadline4Handler
- *  @brief   build a UI for a xf:select1 XFORMS sequence
- *
- *  This function is a simple demonstration.
- *
- *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  parsed and requested elements
- *  @param[in]     user_data           toolkit context
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/10/04 (Oyranos: 0.1.10)
- *  @date    2009/10/04
- */
-int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
-                                       xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
-                                       oyPointer           user_data )
-{
-  const char * tmp = 0;
-  int size = 0;
-  cmd_line_args_s * cmd_line_args = user_data;
-  int print = cmd_line_args ? !cmd_line_args->silent : 1;
-
-  if(!tmp)
-  {
-    tmp = oyOptions_FindString( collected_elements, "h4", 0 );
-    if(tmp)
-      size = 3;
-  }
-
-  if(tmp && print)
-    printf( "%s\n", tmp );
-
-  return 0;
-}
-
-oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_ =
-  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
-   "oyFORMS",                          /**< dialect */
-   "libxml2",                          /**< parser_type */
-   "h4",                               /**< element_type; Wanted XML elements.*/
-   (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
-   "dummy",                            /**< handler_type */
-   "h4"                                /**< element_search */
-  };
-
-oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
-  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
-   "oyFORMS",                          /**< dialect */
-   "libxml2",                          /**< parser_type */
-   "h3",                               /**< element_type; Wanted XML elements.*/
-   (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
-   "dummy",                            /**< handler_type */
-   "h3"                                /**< element_search */
-  };
-
-oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
-  &oy_ui_cmd_line_handler_xf_select1_,
-  &oy_ui_cmd_line_handler_html_headline_,
-  &oy_ui_cmd_line_handler_html_headline4_,
-  0
-};
 
 

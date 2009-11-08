@@ -347,7 +347,7 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
 # ifdef HAVE_XRANDR
     if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
     {
-      int i;
+      int i = 0;
       if(prop_name_xrandr)
         while(!atom && prop_name_xrandr[i])
           atom = XInternAtom( display,

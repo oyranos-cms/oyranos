@@ -169,6 +169,8 @@ typedef enum {
   oyOBJECT_CONFIG_S,                  /**< oyConfig_s */
   oyOBJECT_CONFIGS_S,                 /**< oyConfigs_s */
   oyOBJECT_UI_HANDLER_S,              /**< oyUiHandler_s */
+  oyOBJECT_FORMS_ARGS_S,              /**< oyFormsArgs_s */
+  oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 
@@ -212,6 +214,130 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
                                        oyNAME_e            name_type,
                                        uint32_t            flags );
 const char * oyStructTypeToText      ( oyOBJECT_e          type );
+
+
+
+/** @enum    oySIGNAL_e
+ *  @brief   observer signals
+ *  @ingroup objects_generic
+ *
+ *  The signal types are similiar to the graph event enum oyCONNECTOR_EVENT_e.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/26 (Oyranos: 0.1.10)
+ *  @date    2009/10/26
+ */
+typedef enum {
+  oySIGNAL_OK,
+  oySIGNAL_CONNECTED,                  /**< connection established */
+  oySIGNAL_RELEASED,                   /**< released the connection */
+  oySIGNAL_DATA_CHANGED,               /**< call to update image views */
+  oySIGNAL_STORAGE_CHANGED,            /**< new data accessors */
+  oySIGNAL_INCOMPATIBLE_DATA,          /**< can not process image */
+  oySIGNAL_INCOMPATIBLE_OPTION,        /**< can not handle option */
+  oySIGNAL_INCOMPATIBLE_CONTEXT,       /**< can not handle profile */
+  oySIGNAL_USER1, 
+  oySIGNAL_USER2, 
+  oySIGNAL_USER3                       /**< more signal types are possible */
+} oySIGNAL_e;
+
+const char *       oySignalToString  ( oySIGNAL_e          signal_type );
+typedef  struct oyObserver_s oyObserver_s;
+typedef  int      (*oySignal_f)      ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data );
+
+
+/** @struct  oyObserver_s
+ *  @brief   Oyranos object observers
+ *  @ingroup objects_generic
+ *  @extends oyStruct_s
+ *
+ *  oyObserver_s is following the viewer/model design pattern. The relations of
+ *  oyObserver_s' can be anything up to complicated cyclic, directed graphs.
+ *  The oyObserver_s type is intented for communication to non graph objects.
+ *  Oyranos graphs have several communication paths available, which should
+ *  be prefered over oyObserver_s when possible.
+ *
+ *  The struct contains properties to signal changes to a observer.
+ *  The signaling provides a small set of very generic signals types as
+ *  enumeration.
+ *  It is possible for models to add additional data to the signal. These
+ *  additional data is only blindly transported. A agreement is not subject of
+ *  the oyObserver_s structure. For completeness the observed object shall
+ *  always be included in the signal.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/26 (Oyranos: 0.1.10)
+ *  @date    2009/10/26
+ */
+struct oyObserver_s {
+  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_OBSERVER_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyPointer            dummy;          /**< keep to zero */
+
+  /** a reference to the observing object */
+  oyStruct_s         * observer;
+  /** a reference to the to be observed model */
+  oyStruct_s         * model;
+  /** optional data; If no other user data is available this data will be
+   *  passed with the signal. */
+  oyStruct_s         * user_data;
+  oySignal_f           signal;         /**< observers signaling function */ 
+};
+
+OYAPI oyObserver_s * OYEXPORT
+           oyObserver_New            ( oyObject_s          object );
+OYAPI oyObserver_s * OYEXPORT
+           oyObserver_Copy           ( oyObserver_s      * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+           oyObserver_Release        ( oyObserver_s     ** obj );
+
+OYAPI int  OYEXPORT
+           oyObserver_SignalSend     ( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * user_data );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverAdd      ( oyStruct_s        * model,
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * user_data,
+                                       oySignal_f          signalFunc );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverRemove   ( oyStruct_s        * model,
+                                       oyStruct_s        * observer,
+                                       oySignal_f          signalFunc );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverSignal   ( oyStruct_s        * model,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * signal_data );
+OYAPI int  OYEXPORT
+           oyStruct_ObserversCopy    ( oyStruct_s        * object,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverCopyModel( oyStruct_s        * model,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags );
+OYAPI int  OYEXPORT
+           oyStruct_ObserverCopyObserver (
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * pattern,
+                                       uint32_t            flags );
+OYAPI int  OYEXPORT
+           oyStruct_IsObserved       ( oyStruct_s        * model,
+                                       oyStruct_s        * observer );
+
+#define OY_SIGNAL_BLOCK                0x01 /**< do not send new signals */
+#define oyToSignalBlock_m(r)           ((r)&1)
+OYAPI uint32_t OYEXPORT
+           oySignalFlagsGet          ( void );
+OYAPI int  OYEXPORT
+           oySignalFlagsSet          ( uint32_t            flags );
+int      oyStructSignalForward_      ( oySIGNAL_e          signal_type,
+                                       oyObserver_s      * observer,
+                                       oyStruct_s        * signal_data );
 
 
 /** @brief Oyranos name structure
@@ -455,9 +581,11 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
                                        oyObject_s          obj );
 int              oyStructList_Release( oyStructList_s   ** list );
 
+#define OY_OBSERVE_AS_WELL 0x01
 int              oyStructList_MoveIn ( oyStructList_s    * list,
                                        oyStruct_s       ** ptr,
-                                       int                 pos );
+                                       int                 pos,
+                                       uint32_t            flags );
 /*oyStruct_s **    oyStructList_GetRaw_( oyStructList_s    * list );*/
 oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
                                        int                 pos );
@@ -490,6 +618,11 @@ int              oyStructList_MoveTo ( oyStructList_s    * s,
                                        int                 new_pos );
 int              oyStructList_Sort   ( oyStructList_s    * s,
                                        int32_t           * rank_map );
+int              oyStructList_ObserverAdd (
+                                       oyStructList_s    * list,
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * user_data,
+                                       oySignal_f          signalFunc );
 
 
 oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
@@ -559,7 +692,7 @@ void           oyValueClear          ( oyValue_u         * v,
  */
 typedef enum {
   oyFILTER_REG_NONE = 0,
-  oyFILTER_REG_TOP = 0x01,             /**< e.g. "sw" for filters */
+  oyFILTER_REG_TOP = 0x01,             /**< e.g. "shared" for filters */
   oyFILTER_REG_DOMAIN = 0x02,          /**< e.g. "oyranos.org" */
   oyFILTER_REG_TYPE = 0x04,            /**< e.g. "imaging" filter group */
   oyFILTER_REG_APPLICATION = 0x08,     /**< e.g. "scale" filter name */
@@ -616,7 +749,7 @@ typedef struct {
   oyObject_s           oy_;            /**< @private base object */
 
   uint32_t             id;             /**< id to map to events and widgets */
-  char               * registration;   /**< full key path name to store configuration, e.g. "sw/oyranos.org/imaging/scale/x", see as well @ref registration @see oyOPTIONATTRIBUTE_e */
+  char               * registration;   /**< full key path name to store configuration, e.g. "shared/oyranos.org/imaging/scale/x", see as well @ref registration @see oyOPTIONATTRIBUTE_e */
   int                  version[3];     /**< as for oyCMMapi4_s::version */
   oyVALUETYPE_e        value_type;     /**< the type in value */
   oyValue_u          * value;          /**< the actual value */
@@ -699,8 +832,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
 
-/** @define  OY_SELECT_FILTER
- *  @brief   select from filter
+/** @brief   select from filter
  *  @ingroup objects_value
  *
  *  @version Oyranos: 0.1.10
@@ -708,11 +840,10 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  *  @date    2009/07/27
  */
 #define OY_SELECT_FILTER         2048
-/** @define  OY_SELECT_COMMON
- *  @brief   select from policy
+/** @brief   select from policy
  *  @ingroup objects_value
  *
- *  Select typical from a associatable oyCMMapi9_s type of filter providing 
+ *  Select typical from a associatable oyCMMapi9_s type of filter for providing 
  *  common options.
  *
  *  @version Oyranos: 0.1.10
@@ -743,7 +874,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
  */
 typedef enum {
   /** basic settings, as typical for toolkits and office/web applications,
-   *  e.g. disable proofing */
+   *  e.g. disable proofing or disable mark out of gamut colours */
   oyOPTIONATTRIBUTE_BASIC = 0,
   /** user modified, e.g. after oyOption_SetFromText() */
   oyOPTIONATTRIBUTE_EDIT = 32,
@@ -752,7 +883,8 @@ typedef enum {
   /** advanced settings, as typical for editing, e.g. include proofing 
    *  (options appended with ".advanced") */
   oyOPTIONATTRIBUTE_ADVANCED = 128,
-  /** front end options, handled by the framework, e.g. ".front" */
+  /** front end options, handled by the framework or policy module,
+   *  e.g. ".front" */
   oyOPTIONATTRIBUTE_FRONT = 256,
   /** tell this options is included twice*/
   oyOPTIONATTRIBUTE_DOUBLE = 512
@@ -782,6 +914,12 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
                                        int                 pos,
                                        oyObject_s          object );
+int            oyOptions_Set         ( oyOptions_s       * options,
+                                       oyOption_s        * option,
+                                       int                 pos,
+                                       oyObject_s          object );
+int            oyOptions_SetOpts     ( oyOptions_s       * list,
+                                       oyOptions_s       * add );
 int            oyOptions_AppendOpts  ( oyOptions_s       * list,
                                        oyOptions_s       * append );
 int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
@@ -843,13 +981,30 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
                                        const char        * registration,
                                        oyStruct_s       ** oy_struct,
                                        uint32_t            flags );
+int            oyOptions_SetFromData ( oyOptions_s      ** options,
+                                       const char        * registration,
+                                       oyPointer           ptr,
+                                       size_t              size,
+                                       uint32_t            flags );
+int            oyOptions_FindData    ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       oyPointer         * result,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
 int            oyOptions_SetSource   ( oyOptions_s       * options,
                                        oyOPTIONSOURCE_e    source );
 OYAPI int  OYEXPORT
                oyOptions_SaveToDB    ( oyOptions_s       * options,
                                        const char        * key_base_name );
+OYAPI int  OYEXPORT
+               oyOptions_ObserverAdd ( oyOptions_s       * object,
+                                       oyStruct_s        * observer,
+                                       oyStruct_s        * user_data,
+                                       oySignal_f          signalFunc );
 
-/** @brief   a means to rank the result of comparing two key's
+
+/** @struct  oyRankPad
+ *  @brief   a means to rank the result of comparing two key's
  *
  *  The structure is part of an other data structure and to be maintained by
  *  that. So it is not a full member of the oyStruct_s object familiy.
@@ -1853,7 +2008,7 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
 
 
 /** @enum    oyCONNECTOR_e
- *  @brief   basic connector classes
+ *  @brief   basic connector attributes
  *  @ingroup objects_conversion
  *
  *  @version Oyranos: 0.1.8
@@ -1865,7 +2020,9 @@ typedef enum {
   oyCONNECTOR_IMAGE_MANIPULATOR,
   /** a data generator, e.g. checkerboard, gradient "//imaging/generator" */
   oyCONNECTOR_IMAGE_GENERATOR,
-  /** a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//imaging/image" */
+  /** a pixel data provider, e.g. image data connector "//imaging/data".
+   *  This type should be always present to connect processing data.
+   *  That data is stored in oyFilterSocket_s::data. */
   oyCONNECTOR_IMAGE,
   /** observer, a endpoint, only input, e.g. text log, thumbnail viewer 
    *  "//imaging/observer" */
@@ -1937,7 +2094,7 @@ struct oyConnector_s {
    *  e.g."Img", "Image", "Image Socket"*/
   oyName_s             name;           
 
-  char               * connector_type; /**< like registration */
+  char               * connector_type; /**< a @ref registration string */
   /** make requests and receive data, by part of oyFilterPlug_s */
   int                  is_plug;
 };
@@ -2016,6 +2173,10 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                  oyFilterSocket_Callback (
                                        oyFilterPlug_s    * c,
+                                       oyCONNECTOR_EVENT_e e );
+OYAPI int  OYEXPORT
+                 oyFilterSocket_SignalToGraph (
+                                       oyFilterSocket_s  * c,
                                        oyCONNECTOR_EVENT_e e );
 
 /** @struct oyFilterPlug_s
@@ -2170,7 +2331,7 @@ struct oyFilterCore_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  char               * registration_;  /**< @private a registration name, e.g. "sw/oyranos.org/imaging/scale", see as well @ref registration */
+  char               * registration_;  /**< @private a registration name, e.g. "shared/oyranos.org/imaging/scale", see as well @ref registration */
   oyName_s           * name_;          /**< @private nick, name, description/help */
 
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */
@@ -2379,9 +2540,9 @@ oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
 int            oyFilterNode_Release  ( oyFilterNode_s   ** node );
 
 
-#define OY_FILTEREDGE_FREE             0x01        /** list free edges */
-#define OY_FILTEREDGE_CONNECTED        0x02        /** list connected edges */
-#define OY_FILTEREDGE_LASTTYPE         0x04        /** list last type edges */
+#define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
+#define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */
+#define OY_FILTEREDGE_LASTTYPE         0x04        /**< list last type edges */
 /* decode */
 #define oyToFilterEdge_Free_m(r)       ((r)&1)
 #define oyToFilterEdge_Connected_m(r)  (((r) >> 1)&1)
@@ -2919,42 +3080,6 @@ int                oyConversion_Correct (
                                        
 
 
-#if 0
-/** @struct oyColourConversion_s
-    In case where
-      a option indicates monitor output, or
-      the out image struct has no profile set, 
-    the conversion will route to monitor colours, honouring the oyImage_s screen
-    position.
-
-    deprecate with the new filter architecture
- */
-typedef struct {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_COLOUR_CONVERSION_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-  oyProfiles_s       * profiles_;      /*!< @private effect / simulation profiles */ 
-  oyOptions_s        * options_;       /*!< @private conversion opts */
-  oyImage_s          * image_in_;      /*!< @private input */
-  oyImage_s          * image_out_;     /*!< @private output */
-  oyStructList_s     * cmms_;          /**< @private list of CMM entries to call */
-  int32_t              flags;          /**< 0x01 is the warned bit */
-} oyColourConversion_s;
-
-oyColourConversion_s* oyColourConversion_Create (
-                                       oyOptions_s       * opts,
-                                       oyImage_s         * in,
-                                       oyImage_s         * out,
-                                       oyObject_s          object );
-oyColourConversion_s* oyColourConversion_Copy (
-                                       oyColourConversion_s * cc,
-                                       oyObject_s          object );
-int          oyColourConversion_Release ( oyColourConversion_s ** cc );
-
-int          oyColourConversion_Run  ( oyColourConversion_s * colour );
-oyProfile_s* oyColourConversion_ToProfile ( oyColourConversion_s * s );
-#endif
 
 /** @struct oyNamedColour_s
  *  @brief colour patch with meta informations
@@ -3303,7 +3428,7 @@ typedef int  (*oyUiHandler_f)        ( oyPointer           cur,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/08/30 (Oyranos: 0.1.10)
- *  @date    2009/08/30
+ *  @date    2009/11/08
  */
 typedef struct {
   oyOBJECT_e           type;           /**< oyOBJECT_UI_HANDLER_S */
@@ -3320,10 +3445,11 @@ typedef struct {
                                             results and a context to construct
                                             the UI. */
   char               * handler_type;   /**< informational handler context type*/
-  /** The elements to collect by the parser, e.g.
-   *  "xf:choices/xf:item/xf:label.xf:value".
+  /** The elements to collect by the parser. Levels are separated by slash '/'.
+   *  Alternatives are separated by a point '.' . The list is zero terminated.
+   *  e.g. "xf:choices/xf:item/xf:label.xf:value".
    */
-  char               * element_search;
+  char              ** element_searches;
 } oyUiHandler_s;
 
 char *       oyXFORMsFromModelAndUi  ( const char        * data,

@@ -1020,7 +1020,7 @@ Function {} {open C
   is_path = fl_search_locale_path (num_paths, locale_paths, "de", "oyranos");
 
   if(is_path >= 0) {
-\#if defined(_Xutf8_h) || HASE_UTF8
+\#if defined(_Xutf8_h) || HAVE_FLTK_UTF8
     FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
 \#else
     FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;

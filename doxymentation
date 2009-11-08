@@ -372,6 +372,9 @@
     OYRANOS_DEBUG_MEMORY sets the internal ::oy_debug_memory variable on and
     helps somewhat in detecting memory leaks. This variable is dangerous and 
     should not to be run for production use. \n
+    OYRANOS_DEBUG_SIGNALS sets the internal ::oy_debug_signals variable on and
+    helps in tracing signals. This variable is dangerous and 
+    should not to be run for production use. \n
     OYRANOS_BACKTRACE can be set to a debug message string and will then place
     a backtrace text from gdb into the console. That needs the debug message
     to be visible.

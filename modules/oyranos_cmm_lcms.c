@@ -41,6 +41,10 @@ void  oyDeAllocateFunc_         (void *        data);
 #define CMMMaxChannels_M 16
 #define lcmsPROFILE "lcPR"
 #define lcmsTRANSFORM "lcCC"
+/** The proofing LUTs grid size may improove the sharpness of out of colour 
+ *  marking, but at the prise of lost speed and increased memory consumption.
+ *  53 is the grid size used internally in lcms' gamut marking code. */
+#define lcmsPROOF_LUT_GRID_RASTER 53
 
 #define CMM_VERSION {0,1,0}
 
@@ -111,6 +115,10 @@ char * lcmsImage_GetText             ( oyImage_s         * image,
 char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc );
+cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
+                                       DWORD               flags,
+                                       int                 intent,
+                                       int                 intent_proof );
 oyPointer  lcmsCMMColourConversion_ToMem_ (
                                        cmsHTRANSFORM     * xform,
                                        size_t            * size,
@@ -121,6 +129,10 @@ oyOptions_s* lcmsFilter_CmmIccValidateOptions
                                        int                 statical,
                                        uint32_t          * result );
 cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p );
+cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
+                                       DWORD               flags,
+                                       int                 intent,
+                                       int                 intent_proof );
 oyPointer lcmsFilterNode_CmmIccContextToMem (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
@@ -465,13 +477,14 @@ lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2009/06/25
+ *  @date    2009/11/04
  */
 cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
                                        cmsHPROFILE       * lps,
                                        int                 profiles_n,
-                                       cmsHPROFILE       * simulation,
+                                       oyProfiles_s      * simulation,
                                        int                 proof_n,
+                                       int                 proof,
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
                                        oyOptions_s       * opts,
@@ -482,6 +495,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
   oyPixel_t lcms_pixel_layout_out = 0;
   int error = !lps;
   cmsHTRANSFORM xform = 0;
+  cmsHPROFILE * merge = 0;
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
   icProfileClassSignature profile_class_out = 0;
@@ -524,6 +538,9 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
       if(o_txt && oyStrlen_(o_txt))
         intent_proof = atoi( o_txt );
 
+      intent_proof = intent_proof == 0 ? INTENT_RELATIVE_COLORIMETRIC :
+                                         INTENT_ABSOLUTE_COLORIMETRIC;
+
       o_txt = oyOptions_FindString  ( opts, "rendering_bpc", 0 );
       if(o_txt && oyStrlen_(o_txt))
         bpc = atoi( o_txt );
@@ -541,7 +558,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         cmyk_cmyk_black_preservation = atoi( o_txt );
 
       /* this should be moved to the CMM and not be handled here in Oyranos */
-      flags = proof_n ?       flags | cmsFLAGS_SOFTPROOFING :
+      flags = proof ?         flags | cmsFLAGS_SOFTPROOFING :
                               flags & (~cmsFLAGS_SOFTPROOFING);
       flags = bpc ?           flags | cmsFLAGS_WHITEBLACKCOMPENSATION :
                               flags & (~cmsFLAGS_WHITEBLACKCOMPENSATION);
@@ -568,71 +585,47 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     0, lcms_pixel_layout_out,
                                     intent, flags );
-    else if(profiles_n == 2 && !proof_n)
+    else if(profiles_n == 2 && (!proof_n || (!proof && !gamut_warning)))
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     lps[1], lcms_pixel_layout_out,
                                     intent, flags );
-    else if(profiles_n >= 3)
+    else
     {
       int multi_profiles_n = profiles_n;
+      int i;
 
-      if(proof_n)
-        --multi_profiles_n;
+      if(proof_n && (proof || gamut_warning))
+      {
+        int len = sizeof(cmsHPROFILE) * (profiles_n + proof_n);
+
+        oyAllocHelper_m_( merge, cmsHPROFILE, profiles_n + proof_n,0, goto end);
+        memset( merge, 0, len );
+        memcpy( merge, lps, sizeof(cmsHPROFILE) * (profiles_n - 1) );
+
+        for(i = 0; i < proof_n; ++i)
+          merge[profiles_n-1 + i] = lcmsAddProofProfile( 
+                                             oyProfiles_Get(simulation,i),flags,
+                                             intent, intent_proof);
+
+        merge[profiles_n + proof_n -1] = lps[profiles_n - 1];
+
+        /* merge effect and simulation profiles */
+        multi_profiles_n += proof_n;
+        lps = merge;
+      }
+
+      if(flags & cmsFLAGS_GAMUTCHECK)
+        flags |= cmsFLAGS_GRIDPOINTS(lcmsPROOF_LUT_GRID_RASTER);
 
       xform =   cmsCreateMultiprofileTransform(
                                     lps, 
                                     multi_profiles_n,
                                     lcms_pixel_layout_in,
-                                    proof_n
-                                  ? NOCOLORSPACECHECK(lcms_pixel_layout_out)
-                                  : lcms_pixel_layout_out,
+                                    lcms_pixel_layout_out,
                                     intent, flags );
-    }
 
-    if(proof_n)
-    {
-      int i;
 
-      for(i = 0; i < proof_n; ++i)
-      {
-        cmsHPROFILE dl = 0;
-        if(xform)
-        {
-          dl = cmsTransform2DeviceLink( xform, cmsFLAGS_GUESSDEVICECLASS );
-          cmsDeleteTransform( xform ); xform = 0;
-
-        } else if(i == 0 && profiles_n == 2)
-          dl = lps[0];
-
-        /* add simulation profile and go to next simulation in chain */
-        if(i < proof_n - 1)
-          xform = cmsCreateProofingTransform(
-                                    dl, lcms_pixel_layout_in,
-                                    simulation[ i + 1 ],
-                                    lcms_pixel_layout_out,
-                                    simulation[ i ],
-                                    intent,
-                                    intent_proof,
-                                    flags);
-        else
-        /* add last simulation and go to output profile */
-          xform = cmsCreateProofingTransform(
-                                    dl, lcms_pixel_layout_in,
-                                    lps[ profiles_n - 1 ],
-                                    lcms_pixel_layout_out,
-                                    simulation[ i ], /* should be the last */
-                                    intent,
-            /* TODO The INTENT_ABSOLUTE_COLORIMETRIC should lead to 
-               paper simulation, but does take white point into account.
-               Do we want this?
-             */
-                                    intent_proof,
-                                    flags);
-
-        /* release intermediate transform */
-        if(i == 0 && profiles_n != 2)
-          CMMProfileRelease_M( dl );
-      }
+      if(merge) oyDeAllocateFunc_( merge ); merge = 0;
     }
   }
 
@@ -642,6 +635,8 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
   if(!error && ltw && oy)
     *ltw= lcmsTransformWrap_Set_( xform, colour_in, colour_out,
                                   oy_pixel_layout_in, oy_pixel_layout_out, oy );
+
+  end:
   return xform;
 }
 
@@ -772,6 +767,123 @@ oyConnectorImaging_s lcms_cmmIccPlug_connector = {
 };
 oyConnectorImaging_s* lcms_cmmIccPlug_connectors[2]={&lcms_cmmIccPlug_connector,0};
 
+/** Function lcmsAddProofProfile
+ *  @brief   add a abstract proofing profile to the lcms profile stack 
+ *
+ *  Look in the Oyranos cache for a CMM internal representation or generate a
+ *  new abstract profile containing the proofing profiles changes. This can be
+ *  a proofing colour space simulation or out of gamut marking.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/05 (Oyranos: 0.1.10)
+ *  @date    2009/11/05
+ */
+cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
+                                       DWORD               flags,
+                                       int                 intent,
+                                       int                 intent_proof )
+{
+  int error = 0;
+  cmsHPROFILE * hp = 0;
+  oyCMMptr_s * cmm_ptr = 0;
+  lcmsProfileWrap_s * s = 0;
+  char * hash_text = 0,
+       num[12];
+
+  if(!proof || proof->type_ != oyOBJECT_PROFILE_S)
+  {
+    message( oyMSG_WARN, (oyStruct_s*)proof, "%s:%d "
+             "no profile provided", __FILE__,__LINE__ );
+    return 0;
+  }
+
+  /* build hash text */
+  STRING_ADD( hash_text, "abstract proofing profile " );
+  STRING_ADD( hash_text, oyObject_GetName( proof->oy_, oyNAME_NICK ) );
+  STRING_ADD( hash_text, " intent:" );
+  sprintf( num, "%d", intent );
+  STRING_ADD( hash_text, num );
+  STRING_ADD( hash_text, " intent_proof:" );
+  sprintf( num, "%d", intent_proof );
+  STRING_ADD( hash_text, num );
+  STRING_ADD( hash_text, " flags|gmtCheck|softPrf:" );
+  sprintf( num, "%d|%d|%d", (int)flags, (flags & cmsFLAGS_GAMUTCHECK)?1:0,
+                                        (flags & cmsFLAGS_SOFTPROOFING)?1:0 );
+  STRING_ADD( hash_text, num );
+
+  /* cache look up */
+  cmm_ptr = oyCMMptrLookUpFromText( hash_text, lcmsPROFILE );
+
+  cmm_ptr->lib_name = CMM_NICK;
+
+  /* for empty profile create a new abstract one */
+  if(!cmm_ptr->ptr)
+  {
+    oyCMMptr_s * oy = cmm_ptr;
+
+    char type_[4] = lcmsPROFILE;
+    uint32_t type = *((uint32_t*)&type_);
+    size_t size = 0;
+    oyPointer block = 0;
+    lcmsProfileWrap_s * s = calloc(sizeof(lcmsProfileWrap_s), 1);
+
+    if(oy_debug == 1)
+      fprintf( stderr, "%s:%d created: \"%s\"",
+               strchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
+               hash_text );
+    else
+    message( oyMSG_DBG, (oyStruct_s*)proof,
+             "%s:%d created abstract proofing profile: \"%s\"",
+             __FILE__,__LINE__, hash_text );
+ 
+    /* create */
+    hp = lcmsGamutCheckAbstract( proof, flags, intent, intent_proof );
+    if(hp)
+    {
+      /* save to memory */
+      _cmsSaveProfileToMem( hp, 0, &size );
+      block = oyAllocateFunc_( size );
+      _cmsSaveProfileToMem( hp, block, &size );
+      cmsCloseProfile( hp ); hp = 0;
+    }
+
+    s->type = type;
+    s->size = size;
+    s->block = block;
+
+    /* reopen */
+    s->lcms = CMMProfileOpen_M( block, size );
+    oy->ptr = s;
+    snprintf( oy->func_name, 32, "%s", CMMToString_M(CMMProfileOpen_M) );
+    snprintf( oy->resource, 5, lcmsPROFILE ); 
+    error = !oy->ptr;
+
+    if(!error)
+    {
+      oy->ptrRelease = lcmsCMMProfileReleaseWrap;
+    }
+  }
+
+  if(!error)
+  {
+    s = lcmsCMMProfile_GetWrap_( cmm_ptr );
+    error = !s;
+  }
+
+  if(!error)
+    hp = s->lcms;
+
+  oyCMMptr_Release( &cmm_ptr );
+  if(hash_text)
+    oyFree_m_(hash_text);
+
+  if(!error)
+    return hp;
+  else
+    return 0;
+}
+
+
 /** Function lcmsAddProfile
  *  @brief   add a profile from Oyranos to the lcms profile stack 
  *
@@ -790,12 +902,12 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
 
   if(!p || p->type_ != oyOBJECT_PROFILE_S)
   {
-    message( oyMSG_WARN,0, "%s:%d "
+    message( oyMSG_WARN, (oyStruct_s*)p, "%s:%d "
              "no profile provided", __FILE__,__LINE__ );
     return 0;
   }
 
-  cmm_ptr = oyCMMptr_LookUp( (oyStruct_s*)p, lcmsPROFILE );
+  cmm_ptr = oyCMMptrLookUpFromObject( (oyStruct_s*)p, lcmsPROFILE );
 
   cmm_ptr->lib_name = CMM_NICK;
 
@@ -817,6 +929,108 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
     return hp;
   else
     return 0;
+}
+
+int
+gamutCheckSampler(register WORD In[],
+                      register WORD Out[],
+                      register LPVOID Cargo)
+{
+  cmsCIELab Lab1, Lab2;
+  double d;
+  oyPointer * ptr = (oyPointer*)Cargo;
+
+  cmsLabEncoded2Float(&Lab1, In);
+  cmsDoTransform( ptr[0], &Lab1, &Lab2, 1 );
+  d = cmsDeltaE( &Lab1, &Lab2 );
+  if(abs(d) > 10 && ptr[1])
+  {
+    Lab2.L = 50.0;
+    Lab2.a = Lab2.b = 0.0;
+  }
+  cmsFloat2LabEncoded(Out, &Lab2); 
+
+  return TRUE;
+}
+
+/** Function lcmsGamutCheckAbstract
+ *  @brief   convert a proofing profile into a abstract one
+ *
+ *  Abstract profiles can easily be merged into a multi profile transform.
+ *
+ *  @param         proof               the proofing profile; owned by the
+ *                                     function
+ *  @param         flags               the gamut check and softproof flags
+ *  @param         intent              rendering intent
+ *  @param         intent_proof        proof rendering intent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/04 (Oyranos: 0.1.10)
+ *  @date    2009/11/05
+ */
+cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
+                                       DWORD               flags,
+                                       int                 intent,
+                                       int                 intent_proof )
+{
+      size_t size = 0;
+      char * data = 0;
+      cmsHPROFILE gmt = 0,
+                  hLab = 0,
+                  hproof = 0;
+      cmsHTRANSFORM tr1 = 0;
+      LPLUT gmt_lut = 0;
+      oyPointer ptr[2] = {0,0};
+
+      if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
+        return gmt;
+
+      hLab  = cmsCreateLabProfile(cmsD50_xyY());
+      hproof = lcmsAddProfile( proof );
+
+      tr1 = cmsCreateProofingTransform  (hLab, TYPE_Lab_DBL,
+                                               hLab, TYPE_Lab_DBL,
+                                               hproof,
+                                               intent,
+            /* TODO The INTENT_ABSOLUTE_COLORIMETRIC should lead to 
+               paper simulation, but does take white point into account.
+               Do we want this?
+             */
+                                               intent_proof,
+                                               flags | cmsFLAGS_HIGHRESPRECALC);
+      ptr[0] = tr1;
+      ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
+
+
+      gmt_lut = cmsAllocLUT();
+      cmsAlloc3DGrid( gmt_lut, lcmsPROOF_LUT_GRID_RASTER, 3, 3);
+      cmsSample3DGrid( gmt_lut, gamutCheckSampler, &ptr, 0 );
+
+      gmt = _cmsCreateProfilePlaceholder();
+      cmsSetDeviceClass( gmt, icSigAbstractClass );
+      cmsSetColorSpace( gmt, icSigLabData );
+      cmsSetPCS( gmt, icSigLabData );
+      cmsAddTag( gmt, icSigProfileDescriptionTag, (char*)"proofing");
+      cmsAddTag( gmt, icSigCopyrightTag, (char*)"no copyright; use freely" );
+      cmsAddTag( gmt, icSigMediaWhitePointTag, cmsD50_XYZ() );
+      cmsAddTag( gmt, icSigAToB0Tag, gmt_lut );
+
+  if(oy_debug)
+  {
+      _cmsSaveProfileToMem( gmt, 0, &size );
+      data = oyAllocateFunc_( size );
+      _cmsSaveProfileToMem( gmt, data, &size );
+      oyWriteMemToFile_( "dbg_dl_proof.icc", data, size );
+      if(data) oyDeAllocateFunc_( data ); data = 0;
+  }
+
+      if(hLab) cmsCloseProfile( hLab ); hLab = 0;
+      if(tr1) cmsDeleteTransform( tr1 ); tr1 = 0;
+      if(gmt_lut) cmsFreeLUT( gmt_lut ); gmt_lut = 0;
+
+  oyProfile_Release( &proof );
+
+  return gmt;
 }
 
 /** Function lcmsFilterNode_CmmIccContextToMem
@@ -844,8 +1058,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   oyFilterNode_s * input_node = 0;
   oyImage_s * image_input = 0,
             * image_output = 0;
-  cmsHPROFILE * lps = 0,
-              * simulation = 0;
+  cmsHPROFILE * lps = 0;
   cmsHTRANSFORM xform = 0;
   oyOption_s * o = 0;
   oyProfile_s * p = 0,
@@ -963,9 +1176,6 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     {
       profiles = (oyProfiles_s*) o->value->oy_struct;
       n = oyProfiles_Count( profiles );
-      len = sizeof(cmsHPROFILE) * (n + 2 + 1);
-      simulation = oyAllocateFunc_( len );
-      memset( simulation, 0, len );
 
       message( oyMSG_DBG,(oyStruct_s*)node,
                "%s:%d %d simulation profile(s) found \"%s\"",
@@ -976,23 +1186,12 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       {
         p = oyProfiles_Get( profiles, i );
 
-        /* Look in the Oyranos cache for a CMM internal representation */
-        /*if(i == 0)*/
-        {
-          if(proof)
-            simulation[ profiles_proof_n++ ] = lcmsAddProfile( p );
-          if(oy_debug)
-            message( oyMSG_DBG,(oyStruct_s*)node,
-                     "%s:%d found profile: %s",
-               __FILE__,__LINE__, p?oyProfile_GetFileName( p,-1 ):"????");
+        message( oyMSG_DBG,(oyStruct_s*)node,
+                 "%s:%d found profile: %s",
+                 __FILE__,__LINE__, p?oyProfile_GetFileName( p,-1 ):"????");
 
-          if(proof)
-            profs = oyProfiles_MoveIn( profs, &p, -1 );
-
-        } /*else if(i == 1)
-          message( oyMSG_WARN, (oyStruct_s*)node,
-           "%s: %d Currently only one in \"profiles_simulation\" supported: %d",
-                   __FILE__,__LINE__, n );*/
+        profs = oyProfiles_MoveIn( profs, &p, -1 );
+        ++profiles_proof_n;
 
         oyProfile_Release( &p );
       }
@@ -1019,11 +1218,12 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
   /* create the context */
   xform = lcmsCMMConversionContextCreate_( lps, profiles_n,
-                                           simulation, profiles_proof_n,
+                                           profiles, profiles_proof_n, proof,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_, 0, 0);
   error = !xform;
+
 
   if(!error)
   {
@@ -1034,7 +1234,6 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     error = !block && !*size;
     cmsDeleteTransform( xform ); xform = 0;
   }
-
 
   /* additional tags for debugging */
   if(!error && (oy_debug || verbose))
@@ -1073,7 +1272,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                              oyAllocateFunc_, oyDeAllocateFunc_ );
         oyDeAllocateFunc_( cc_name );
         list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, 0 );
+        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, 0, 0 );
 
         if(!error)
         {
@@ -1103,7 +1302,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         name = oyName_set_ ( name, c_text, oyNAME_NAME,
                              oyAllocateFunc_, oyDeAllocateFunc_ );
         list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0 );
+        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0, 0 );
 
         if(!error)
         {
@@ -1216,14 +1415,15 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
 #ifdef NO_OPT
   return oyStringCopy_( oyFilterNode_GetText( node, type ), allocateFunc );
 #else
-  const char * tmp = 0;
+  const char * tmp = 0,
+             * model = 0;
   char * hash_text = 0,
        * temp = 0;
   oyFilterNode_s * s = node;
 
   oyImage_s * in_image = 0,
-                 * out_image = 0;
-  int i,n,verbose;
+            * out_image = 0;
+  int verbose;
   oyOptions_s * opts = node->core->options_;
 
   if(!node)
@@ -1246,39 +1446,30 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
   /* make a description */
   {
     /* input data */
-    hashTextAdd_m( "  <data_in>\n" );
+    hashTextAdd_m(   " <data_in>\n" );
     if(in_image)
     {
       temp = lcmsImage_GetText( in_image, verbose, oyAllocateFunc_ );
       hashTextAdd_m( temp );
       oyDeAllocateFunc_(temp); temp = 0;
     }
-    hashTextAdd_m( "  </data_in>\n" );
+    hashTextAdd_m( "\n </data_in>\n" );
 
     /* options -> xforms */
-    n = oyOptions_Count( opts );
-    for(i = 0; i < n; ++i)
-    {
-      oyOption_s * o = oyOptions_Get( opts, i );
-      hashTextAdd_m( "  <options name=\"" );
-      hashTextAdd_m( o->registration );
-      hashTextAdd_m( "\" type=\"" );
-      hashTextAdd_m( oyValueTypeText( o->value_type ) );
-      hashTextAdd_m( "\"" );
-      hashTextAdd_m( oyOption_GetText( o, oyNAME_NAME ) );
-      oyOption_Release( &o );
-      hashTextAdd_m( ">\n" );
-    }
+    hashTextAdd_m(   " <oyOptions_s>\n" );
+    model = oyOptions_GetText( opts, oyNAME_NAME );
+    hashTextAdd_m( model );
+    hashTextAdd_m( "\n </oyOptions_s>\n" );
 
     /* output data */
-    hashTextAdd_m( "  <data_out>\n" );
+    hashTextAdd_m(   " <data_out>\n" );
     if(out_image)
     {
       temp = lcmsImage_GetText( out_image, verbose, oyAllocateFunc_ );
       hashTextAdd_m( temp );
       oyDeAllocateFunc_(temp); temp = 0;
     }
-    hashTextAdd_m( "  </data_out>\n" );
+    hashTextAdd_m( "\n </data_out>\n" );
   }
   hashTextAdd_m( tmp );
 
@@ -1335,7 +1526,7 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
   if(!error)
   {
     lps[0] = CMMProfileOpen_M( cmm_ptr_in->ptr, cmm_ptr_in->size );
-    xform = lcmsCMMConversionContextCreate_( lps, 1, 0,0,
+    xform = lcmsCMMConversionContextCreate_( lps, 1, 0,0,0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_,
@@ -1356,7 +1547,7 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
 int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int i,j,k, n;
+  int k, n;
   int error = 0;
   int channels = 0;
   oyDATATYPE_e data_type = 0;
@@ -1365,7 +1556,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   oyFilterPlug_s * plug = 0;
   oyFilterNode_s * input_node = 0,
                  * node = socket->node;
-  oyImage_s * image_input = 0, * image = 0;
+  oyImage_s * image_input = 0;
   oyArray2d_s * array_in = 0, * array_out = 0;
   lcmsTransformWrap_s * ltw  = 0;
   oyPixelAccess_s * new_ticket = ticket;

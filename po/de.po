@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2009-10-24 12:28+0200\n"
+"POT-Creation-Date: 2009-11-06 06:22+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -65,17 +65,17 @@ msgstr "werde Richtliniendatei überschreiben"
 msgid "not found:"
 msgstr "nicht gefunden:"
 
-#: oyranos_cmm.c:65 oyranos_alpha.c:708 oyranos_alpha.c:1128
-#: oyranos_alpha.c:2334 oyranos_alpha.c:4847 oyranos_alpha.c:5122
-#: oyranos_alpha.c:5791 oyranos_alpha.c:6986 oyranos_alpha.c:9024
-#: oyranos_alpha.c:9784 oyranos_alpha.c:11901 oyranos_alpha.c:14381
-#: oyranos_alpha.c:14897 oyranos_alpha.c:15533 oyranos_alpha.c:16112
-#: oyranos_alpha.c:16947 oyranos_alpha.c:17880 oyranos_alpha.c:18156
-#: oyranos_alpha.c:18381 oyranos_alpha.c:18680 oyranos_alpha.c:19497
-#: oyranos_alpha.c:19800 oyranos_alpha.c:19880 oyranos_alpha.c:20149
-#: oyranos_alpha.c:21773 oyranos_alpha.c:22056 oyranos_alpha.c:23006
-#: oyranos_alpha.c:23198 oyranos_alpha.c:23564 oyranos_alpha.c:24282
-#: oyranos_alpha.c:24881 oyranos_alpha.c:25139
+#: oyranos_cmm.c:65 oyranos_alpha.c:744 oyranos_alpha.c:1541
+#: oyranos_alpha.c:1961 oyranos_alpha.c:3234 oyranos_alpha.c:5798
+#: oyranos_alpha.c:6082 oyranos_alpha.c:6759 oyranos_alpha.c:7960
+#: oyranos_alpha.c:10113 oyranos_alpha.c:10873 oyranos_alpha.c:12991
+#: oyranos_alpha.c:15435 oyranos_alpha.c:15968 oyranos_alpha.c:16622
+#: oyranos_alpha.c:17201 oyranos_alpha.c:18036 oyranos_alpha.c:18969
+#: oyranos_alpha.c:19337 oyranos_alpha.c:19562 oyranos_alpha.c:19861
+#: oyranos_alpha.c:20678 oyranos_alpha.c:20981 oyranos_alpha.c:21061
+#: oyranos_alpha.c:21330 oyranos_alpha.c:23011 oyranos_alpha.c:23295
+#: oyranos_alpha.c:24237 oyranos_alpha.c:24603 oyranos_alpha.c:25323
+#: oyranos_alpha.c:25922 oyranos_alpha.c:26180 oforms/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr "Speicher Fehler"
 
@@ -259,7 +259,7 @@ msgstr "Schwarz"
 msgid "Hue"
 msgstr "Farbton"
 
-#: oyranos_icc.c:216 oyranos_icc.c:222 oyranos_texts.c:430
+#: oyranos_icc.c:216 oyranos_icc.c:222 oyranos_texts.c:431
 msgid "Saturation"
 msgstr "Sättigung"
 
@@ -387,7 +387,7 @@ msgstr "Kalibrationsdatum"
 msgid "Colour measurement data"
 msgstr "Farbmessdaten"
 
-#: oyranos_icc.c:377 oyranos_alpha.c:2788
+#: oyranos_icc.c:377 oyranos_alpha.c:3688
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -575,6 +575,7 @@ msgstr "Einzelfarbnamen"
 
 #. Fl_Box* o
 #: oyranos_icc.c:430 oyranos_config_fltk.cxx:749 oyranos_config_fltk.cxx:1579
+#: modules/oyranos_cmm_oicc.c:244
 msgid "----"
 msgstr ""
 
@@ -831,508 +832,442 @@ msgstr ""
 msgid "100"
 msgstr ""
 
-#: oyranos_io.c:245 oyranos_io.c:290
-msgid "File exists"
-msgstr "Datei existiert"
-
-#: oyranos_io.c:967
+#: oyranos_io.c:878
 msgid "path is not a directory"
 msgstr "Pfad ist kein Verzeichnis"
 
-#: oyranos_io.c:971
+#: oyranos_io.c:882
 msgid "path is a link: ignored"
 msgstr "Pfad ist eine Verknüpfung: ignoriert"
 
-#: oyranos_io.c:976
+#: oyranos_io.c:887
 msgid "path is not readable"
 msgstr "Pfad ist nicht lesbar"
 
-#: oyranos_texts.c:145
+#: oyranos_texts.c:146
 msgid "Start"
 msgstr "Start"
 
-#: oyranos_texts.c:146
+#: oyranos_texts.c:147
 msgid "Oyranos Settings Group"
 msgstr "Oyranos Einstellungen"
 
-#: oyranos_texts.c:153 modules/oyranos_cmm_oicc.c:227
-msgid "Default Profiles"
-msgstr "Standard ICC Profile"
-
 #: oyranos_texts.c:154
+msgid "Default Profiles"
+msgstr "Voreingestellte ICC Profile"
+
+#: oyranos_texts.c:155
 msgid "Source and Target Profiles for various situations"
 msgstr "Quell- und Zielprofile für verschiedene Situationen"
 
-#: oyranos_texts.c:161 modules/oyranos_cmm_oicc.c:231
+#: oyranos_texts.c:162
 msgid "Editing Colour Space"
 msgstr "Editierfarbraum"
 
-#: oyranos_texts.c:162
+#: oyranos_texts.c:163
 msgid "Well behaving Colour Space for Editing"
 msgstr "Gleichmäßiger Farbraum für die Bearbeitung"
 
-#: oyranos_texts.c:169 modules/oyranos_cmm_oicc.c:311
+#: oyranos_texts.c:170
 msgid "Assumed Colour Space"
 msgstr "Vermuteter Farbraum"
 
-#: oyranos_texts.c:170
+#: oyranos_texts.c:171
 msgid "Assumed Colour Space for untagged colours"
 msgstr "Erwarteter Farbraum für Farben ohne Farbprofil"
 
-#: oyranos_texts.c:177
+#: oyranos_texts.c:178
 msgid "Proofing Colour Space"
 msgstr "Simulationsfarbraum"
 
-#: oyranos_texts.c:178
+#: oyranos_texts.c:179
 msgid "Colour Space for Simulating real devices"
 msgstr "Farbraum für die Nachbildung eines Gerätes (Simulation)"
 
-#: oyranos_texts.c:185 oyranos_texts.c:262
+#: oyranos_texts.c:186 oyranos_texts.c:263
 msgid "Paths"
 msgstr "Pfade"
 
-#: oyranos_texts.c:186 oyranos_texts.c:263
+#: oyranos_texts.c:187 oyranos_texts.c:264
 msgid "Paths where ICC Profiles can be found"
 msgstr "Pfad zu ICC Farbprofilen"
 
-#: oyranos_texts.c:193 oyranos_texts.c:251 oyranos_config_fltk.cxx:1561
+#: oyranos_texts.c:194 oyranos_texts.c:252 oyranos_config_fltk.cxx:1561
 msgid "Policy"
 msgstr "Richtlinie"
 
-#: oyranos_texts.c:194 oyranos_texts.c:252
+#: oyranos_texts.c:195 oyranos_texts.c:253
 msgid "Collections of settings in Oyranos"
 msgstr "Voreinstellungen in Oyranos"
 
-#: oyranos_texts.c:201 modules/oyranos_cmm_oicc.c:390
+#: oyranos_texts.c:202
 msgid "Behaviour"
 msgstr "Verhalten"
 
-#: oyranos_texts.c:202
+#: oyranos_texts.c:203
 msgid "Settings affecting the Behaviour in various situations"
 msgstr "Einstellungen für das Verhalten unter verschiedenen Umständen"
 
-#: oyranos_texts.c:209
+#: oyranos_texts.c:210
 msgid "Rendering"
 msgstr "Übertragung"
 
-#: oyranos_texts.c:210
+#: oyranos_texts.c:211
 msgid ""
-"The kind of ICC standard gamut mapping for transforming colours between "
-"differently sized colour spaces"
+"The kind of ICC gamut mapping for transforming colours between differently "
+"sized colour spaces"
 msgstr ""
 "Die Art der Farbübertragung für verschieden große Farbräume nach ICC Standard"
 
-#: oyranos_texts.c:217
+#: oyranos_texts.c:218
 msgid "Save Mixed colour space Documents"
 msgstr "Gemischtfarbige Dokumente"
 
-#: oyranos_texts.c:218
-msgid "Default Handling of Mixed Colour Spaces inside one single Document"
-msgstr ""
-"Standard Behandlung von gemischten Farbräumen in einem einzelnen Dokument"
+#: oyranos_texts.c:219
+msgid "Handling of Mixed Colour Spaces inside one single Document"
+msgstr "Behandlung von gemischten Farbräumen in einem einzelnen Dokument"
 
-#: oyranos_texts.c:225
+#: oyranos_texts.c:226
 msgid "Mismatching"
 msgstr "Abweichung"
 
-#: oyranos_texts.c:226
+#: oyranos_texts.c:227
 msgid ""
 "Decide what to do when the default colour spaces dont match the current ones."
 msgstr ""
 "Was ist zu tuen falls Standardfarbräume nicht mit den derzeitigen "
 "übereinstimmen."
 
-#: oyranos_texts.c:233 oyranos_texts.c:372
+#: oyranos_texts.c:234 oyranos_texts.c:373
 msgid "Proofing"
 msgstr "Simulation"
 
-#: oyranos_texts.c:234
-msgid "Default Proofing Settings"
-msgstr ""
-"Standard Einstellungen für Nachbildung (Simulation) von einem Ausgabegerät"
+#: oyranos_texts.c:235
+msgid "Proofing Settings"
+msgstr "Einstellungen für Nachbildung (Simulation) von einem Ausgabegerät"
 
-#: oyranos_texts.c:241
+#: oyranos_texts.c:242
 msgid "All"
 msgstr "Alle"
 
-#: oyranos_texts.c:242
+#: oyranos_texts.c:243
 msgid "Oyranos Settings"
 msgstr "Oyranos Einstellungen"
 
-#: oyranos_texts.c:272 modules/oyranos_cmm_oicc.c:238
+#: oyranos_texts.c:273
 msgid "Editing Rgb"
 msgstr "Editier Rgb"
 
-#: oyranos_texts.c:273
+#: oyranos_texts.c:274
 msgid "Prefered Rgb Editing Colour Space"
 msgstr "Bevorzugter Rgb Editierfarbraum"
 
-#: oyranos_texts.c:281 modules/oyranos_cmm_oicc.c:253
+#: oyranos_texts.c:282
 msgid "Editing Cmyk"
 msgstr "Editier Cmyk"
 
-#: oyranos_texts.c:282
+#: oyranos_texts.c:283
 msgid "Prefered Cmyk Editing Colour Space"
 msgstr "Bevorzugter Cmyk Editierfarbraum"
 
-#: oyranos_texts.c:290 modules/oyranos_cmm_oicc.c:283
+#: oyranos_texts.c:291
 msgid "Editing XYZ"
 msgstr "Editier XYZ"
 
-#: oyranos_texts.c:291
+#: oyranos_texts.c:292
 msgid "Prefered XYZ Editing Colour Space"
 msgstr "Bevorzugter XYZ Editierfarbraum"
 
-#: oyranos_texts.c:299 modules/oyranos_cmm_oicc.c:268
+#: oyranos_texts.c:300
 msgid "Editing Lab"
 msgstr "Editier Lab"
 
-#: oyranos_texts.c:300
+#: oyranos_texts.c:301
 msgid "Prefered CIE*Lab Editing Colour Space"
 msgstr "Bevorzugter CIE*Lab Editierfarbraum"
 
-#: oyranos_texts.c:308 modules/oyranos_cmm_oicc.c:298
+#: oyranos_texts.c:309
 msgid "Editing Gray"
 msgstr "Editier Grau"
 
-#: oyranos_texts.c:309
+#: oyranos_texts.c:310
 msgid "Prefered Gray Editing Colour Space"
 msgstr "Bevorzugter Grau Editierfarbraum"
 
-#: oyranos_texts.c:317 modules/oyranos_cmm_oicc.c:363
+#: oyranos_texts.c:318
 msgid "Assumed XYZ source"
 msgstr "Vermutete XYZ Quelle"
 
-#: oyranos_texts.c:318
+#: oyranos_texts.c:319
 msgid "Assigning an untagged XYZ Image an colour space"
 msgstr "Weise einem XYZ Bild ohne Profil ein Farbraum zu"
 
-#: oyranos_texts.c:326 modules/oyranos_cmm_oicc.c:348
+#: oyranos_texts.c:327
 msgid "Assumed Lab source"
 msgstr "Vermutete Lab Quelle"
 
-#: oyranos_texts.c:327
+#: oyranos_texts.c:328
 msgid "Assigning an untagged CIE*Lab Image an colour space"
 msgstr "Weise einem CIE*Lab Bild ohne Profil ein Farbraum zu"
 
-#: oyranos_texts.c:335 modules/oyranos_cmm_oicc.c:318
+#: oyranos_texts.c:336
 msgid "Assumed Rgb source"
 msgstr "Vermutete Rgb Quelle"
 
-#: oyranos_texts.c:336
+#: oyranos_texts.c:337
 msgid "Assigning an untagged Rgb Image an colour space"
 msgstr "Weise einem Rgb Bild ohne Profil ein Farbraum zu"
 
-#: oyranos_texts.c:344
+#: oyranos_texts.c:345
 msgid "Assumed Web source"
 msgstr "Vermutete Web Quelle"
 
-#: oyranos_texts.c:345
+#: oyranos_texts.c:346
 msgid ""
 "Assigning an untagged Rgb Image with source from the WWW an colour space"
 msgstr ""
 "Weise einem nicht festgeschriebenen Rgb Bild aus dem WWW diesen Farbraum zu"
 
-#: oyranos_texts.c:354 modules/oyranos_cmm_oicc.c:333
+#: oyranos_texts.c:355
 msgid "Assumed Cmyk source"
 msgstr "Vermutete Cmyk Quelle"
 
-#: oyranos_texts.c:355
+#: oyranos_texts.c:356
 msgid "Assigning an untagged Cmyk Image this colour space"
 msgstr "Weise einem nicht festgeschriebenen Cmyk Bild diesen Farbraum zu"
 
-#: oyranos_texts.c:363 modules/oyranos_cmm_oicc.c:378
+#: oyranos_texts.c:364
 msgid "Assumed Gray source"
 msgstr "Vermutete Grau Quelle"
 
-#: oyranos_texts.c:364
+#: oyranos_texts.c:365
 msgid "Assigning an untagged Gray Image this colour space"
 msgstr "Weise einem nicht festgeschriebenen Gray Bild diesen Farbraum zu"
 
-#: oyranos_texts.c:373
+#: oyranos_texts.c:374
 msgid "Colour space for Simulating an Output Device"
 msgstr "Farbraum zur Nachbildung eines Ausgabegerätes"
 
-#: oyranos_texts.c:382 modules/oyranos_cmm_oicc.c:402
+#: oyranos_texts.c:383
 msgid "No Image profile"
 msgstr "Kein Profil am Bild"
 
-#: oyranos_texts.c:383 modules/oyranos_cmm_oicc.c:399
+#: oyranos_texts.c:384
 msgid ""
 "Image has no colour space embedded. What default action shall be performed?"
 msgstr ""
 "Bild enthält kein Farbprofil. Welche Standardhandlung soll ausgeführt werden?"
 
 #. choices
-#: oyranos_texts.c:385 modules/oyranos_cmm_oicc.c:407
+#: oyranos_texts.c:386
 msgid "Assign No Profile"
 msgstr "Weise kein Profil zu"
 
-#: oyranos_texts.c:385 modules/oyranos_cmm_oicc.c:413
+#: oyranos_texts.c:386
 msgid "Assign Assumed Profile"
 msgstr "Vermutetes Profil Zuweisen"
 
-#: oyranos_texts.c:385 oyranos_texts.c:394 oyranos_texts.c:403
-#: oyranos_texts.c:412 oyranos_texts.c:421 modules/oyranos_cmm_oicc.c:419
+#: oyranos_texts.c:386 oyranos_texts.c:395 oyranos_texts.c:404
+#: oyranos_texts.c:413 oyranos_texts.c:422
 msgid "Promt"
 msgstr "Abfragedialog"
 
-#: oyranos_texts.c:391
+#: oyranos_texts.c:392
 msgid "On Rgb Mismatch"
 msgstr "Bei Rgb Ungleichheit"
 
-#: oyranos_texts.c:392 oyranos_texts.c:401
+#: oyranos_texts.c:393 oyranos_texts.c:402
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Verhalten bei Ungleichheit von Bild- und Editierfarbraum"
 
 #. choices
-#: oyranos_texts.c:394 oyranos_texts.c:403 oyranos_texts.c:412
-#: oyranos_texts.c:421
+#: oyranos_texts.c:395 oyranos_texts.c:404 oyranos_texts.c:413
+#: oyranos_texts.c:422
 msgid "Preserve Numbers"
 msgstr "Erhalte Zahlen"
 
-#: oyranos_texts.c:394 oyranos_texts.c:403
+#: oyranos_texts.c:395 oyranos_texts.c:404
 msgid "Convert automatically"
 msgstr "Wandle automatisch"
 
-#: oyranos_texts.c:400
+#: oyranos_texts.c:401
 msgid "On Cmyk Mismatch"
 msgstr "Bei Cmyk Ungleichheit"
 
-#: oyranos_texts.c:409
+#: oyranos_texts.c:410
 msgid "For Print"
 msgstr "Für den Druck"
 
-#: oyranos_texts.c:410
+#: oyranos_texts.c:411
 msgid "Handle Mixed colour spaces in Preparing a document for Print output."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Druckausgabe"
 
-#: oyranos_texts.c:412
+#: oyranos_texts.c:413
 msgid "Convert to Default Cmyk Editing Space"
-msgstr "Übertrage in Standard Cmyk Editierfarbraum"
+msgstr "Übertrage in voreingestellten Cmyk Editierfarbraum"
 
-#: oyranos_texts.c:412
+#: oyranos_texts.c:413
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
-#: oyranos_texts.c:418
+#: oyranos_texts.c:419
 msgid "For Screen"
 msgstr "Bildschirm"
 
-#: oyranos_texts.c:419
+#: oyranos_texts.c:420
 msgid "Handle Mixed colour spaces in Preparing a document for Screen output."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Bildschirmausgabe"
 
-#: oyranos_texts.c:421
+#: oyranos_texts.c:422
 msgid "Convert to Default Rgb Editing Space"
-msgstr "Umwandeln zum Standard Rgb Editierfarbraum"
+msgstr "Umwandeln zum voreingestellten Rgb Editierfarbraum"
 
-#: oyranos_texts.c:421
+#: oyranos_texts.c:422
 msgid "Convert to WWW (sRGB)"
 msgstr "Umwandeln für's WWW (sRGB)"
 
-#: oyranos_texts.c:427
-msgid "Default Rendering Intent"
-msgstr "Standard Übertragungsart"
-
 #: oyranos_texts.c:428
+msgid "Rendering Intent"
+msgstr "Übertragungsart"
+
+#: oyranos_texts.c:429
 msgid "Rendering Intent for colour space Transformations."
 msgstr "Übertragungsart für Farbtransformationen."
 
 #. choices
-#: oyranos_texts.c:430
+#: oyranos_texts.c:431
 msgid "Perceptual"
 msgstr "Fotografisch"
 
 #. choices
-#: oyranos_texts.c:430 oyranos_texts.c:448
+#: oyranos_texts.c:431 oyranos_texts.c:467
 msgid "Relative Colorimetric"
 msgstr "Relativ Farbmetrisch"
 
-#: oyranos_texts.c:430 oyranos_texts.c:448
+#: oyranos_texts.c:431 oyranos_texts.c:467
 msgid "Absolute Colorimetric"
 msgstr "Absolut Farbmetrisch"
 
-#: oyranos_texts.c:436
+#: oyranos_texts.c:437
 msgid "Use Black Point Compensation"
 msgstr "Benutze Schwarzpunktkompensation (BPC)"
 
-#: oyranos_texts.c:437
-msgid "BPC affects only the Relative Colorimetric Rendering Intent."
-msgstr "BPC beeinflusst nur die Relativ Farbmetrische Übertragungsart."
+#: oyranos_texts.c:438
+msgid "BPC affects often only the Relative Colorimetric Rendering Intent."
+msgstr "BPC beeinflusst oft nur die Relativ Farbmetrische Übertragungsart."
 
 #. choices
-#: oyranos_texts.c:439 oyranos_texts.c:457 oyranos_texts.c:466
+#: oyranos_texts.c:440 oyranos_texts.c:449 oyranos_texts.c:458
+#: oyranos_texts.c:476 oyranos_texts.c:485
 msgid "No"
 msgstr "Nein"
 
-#: oyranos_texts.c:439 oyranos_texts.c:457 oyranos_texts.c:466
+#: oyranos_texts.c:440 oyranos_texts.c:449 oyranos_texts.c:458
+#: oyranos_texts.c:476 oyranos_texts.c:485
 msgid "Yes"
 msgstr "Ja"
 
-#: oyranos_texts.c:445
+#: oyranos_texts.c:446
+msgid "Gamut Warning"
+msgstr "Farbumfangswarnung"
+
+#: oyranos_texts.c:447
+msgid "Mark Out Of Gamut colours"
+msgstr "Markiere nicht darstellbare Farben"
+
+#: oyranos_texts.c:455
+msgid "High Precission"
+msgstr "Hohe Präzission"
+
+#: oyranos_texts.c:456
+msgid "Rendering with High Precission in opposite to fast processing"
+msgstr "Berechne mit hoher Präzission, dafür langsamer"
+
+#: oyranos_texts.c:464
 msgid "Proofing Rendering Intent"
 msgstr "Nachbildungsübertragung"
 
-#: oyranos_texts.c:446
+#: oyranos_texts.c:465
 msgid "Behaviour of colour space transformation for proofing"
 msgstr "Verhalten von Farbtransformationen bei der Gerätesimulation"
 
-#: oyranos_texts.c:454
-msgid "SoftProof by Default"
+#: oyranos_texts.c:473
+msgid "SoftProof"
 msgstr "Nachbildung am Bildschirm"
 
-#: oyranos_texts.c:455
-msgid "Behaviour for Softproofing view at application startup"
-msgstr ""
-"Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil am "
-"Bildschirm beim Programmstart"
+#: oyranos_texts.c:474
+msgid "Simulate the output print on the monitor"
+msgstr "Bilde einen Asudruck auf dem Bildschirm nach"
 
-#: oyranos_texts.c:463
-msgid "Hardproof by Default"
+#: oyranos_texts.c:482
+msgid "Hardproof"
 msgstr "Nachbildung beim Ausdruck"
 
-#: oyranos_texts.c:464
+#: oyranos_texts.c:483
 msgid ""
-"Behaviour for preselecting Hardproofing with Standard Proofing Profile at "
-"print time"
+"Behaviour for preselecting Hardproofing with a Proofing Profile at print time"
 msgstr ""
 "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf "
-"dem Drucker beim Programmstart"
+"dem Drucker"
 
-#. the option follows
-#: oyranos_xml.c:1296
-#, c-format
-msgid "Option"
-msgstr "Option"
-
-#: oyranos_xml.c:1308
-#, c-format
-msgid "with following choices"
-msgstr "mit folgenden Alternativen"
-
-#: modules/devices/oyranos_monitor.c:482
-msgid "unexpected EDID lenght"
-msgstr "unerwartetet EDID Größe"
-
-#: modules/devices/oyranos_monitor.c:485 modules/devices/oyranos_monitor.c:512
-msgid "Cant read hardware information from device."
-msgstr "Kann Geräteinformation nicht auslesen."
-
-#: modules/devices/oyranos_monitor.c:510
-msgid "no EDID available from X properties"
-msgstr "kein EDID von X Atomen verfügbar"
-
-#: modules/devices/oyranos_monitor.c:567 modules/devices/oyranos_monitor.c:709
-#: modules/devices/oyranos_monitor.c:946
-#: modules/devices/oyranos_monitor.c:1442
-msgid "open X Display failed"
-msgstr "Öffnen des X Displays daneben"
-
-#. hack
-#: modules/devices/oyranos_monitor.c:971
-msgid "No monitor gamma curves by profile:"
-msgstr "Keine Grafikkartengammakurven im Profil:"
-
-#: modules/devices/oyranos_monitor.c:1007
-msgid "Error obtaining profile"
-msgstr "Fehler beim Erhalten des Profiles"
-
-#: modules/devices/oyranos_monitor.c:1014
-#: modules/devices/oyranos_monitor.c:1016
-msgid "Error setting up atom"
-msgstr "Fehler beim Setzen eines Xatoms"
-
-#: modules/devices/oyranos_monitor.c:1105
-msgid "Error getting atom"
-msgstr "Fehler beim Suchen des Xatoms"
-
-#: modules/devices/oyranos_monitor.c:1334
-msgid "XRandR CrtcInfo request failed"
-msgstr "XRandR CrtcInfo Anfrage daneben"
-
-#: modules/devices/oyranos_monitor.c:1352
-msgid "Xinerama request failed"
-msgstr "Xineramaanfrage daneben"
-
-#: modules/devices/oyranos_monitor.c:1368
-msgid "open X Screen failed"
-msgstr "Öffnen des X Screens daneben"
-
-#: modules/devices/oyranos_monitor.c:1435
-msgid "allocation failed"
-msgstr "kein Speicher"
-
-#: modules/devices/oyranos_monitor.c:1450
-msgid "no Screen found"
-msgstr "keine Anzeige gefunden"
-
-#: modules/devices/oyranos_monitor.c:1566
-msgid "less Xinerama monitors than XRandR ones"
-msgstr "weniger Xinerama als XRandR Monitore"
-
-#: oyranos_gamma.c:118
+#: oyranos_gamma.c:67
 msgid "DISPLAY variable not set: giving up."
 msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
 
-#: oyranos_gamma.c:211
+#: oyranos_gamma.c:140
 msgid "is a colour profile administration tool for monitors"
 msgstr "ist ein Farbprofilverwaltungswerkzeug für Bildschirme"
 
-#: oyranos_gamma.c:212 oyranos_policy.c:52
+#: oyranos_gamma.c:141 oyranos_policy.c:52
 msgid "Usage"
 msgstr "Benutzung"
 
-#: oyranos_gamma.c:213
+#: oyranos_gamma.c:142
 msgid "Set new profile:"
 msgstr "Setze neues Profil:"
 
-#: oyranos_gamma.c:215
+#: oyranos_gamma.c:144
 msgid "profile name"
 msgstr "Profilname"
 
-#: oyranos_gamma.c:217
+#: oyranos_gamma.c:146
 msgid "Unset profile:"
 msgstr "Melde Profil ab:"
 
-#: oyranos_gamma.c:220
+#: oyranos_gamma.c:149
 msgid "Activate profiles:"
 msgstr "Aktivieren eines Profiles:"
 
-#: oyranos_gamma.c:223
+#: oyranos_gamma.c:152
 msgid "Query server profile:"
 msgstr "Frage nach Serverprofil:"
 
-#: oyranos_gamma.c:226
+#: oyranos_gamma.c:155
 msgid "Query device data base profile:"
 msgstr "Befrage Gerätedatenbank nach Profil:"
 
-#: oyranos_gamma.c:229
+#: oyranos_gamma.c:158
 msgid "List devices:"
 msgstr "Instrumentenliste:"
 
-#: oyranos_gamma.c:232
-msgid "Dump data:"
-msgstr "Schreibe Daten:"
-
-#: oyranos_gamma.c:235
+#: oyranos_gamma.c:161
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
-#: oyranos_gamma.c:236
+#: oyranos_gamma.c:162
 msgid "-v verbose"
 msgstr "-v plaudernd"
 
-#: oyranos_gamma.c:238
+#: oyranos_gamma.c:164
 #, c-format
 msgid "For more informations read the man page:"
 msgstr "Für mehr Informationen lesen Sie die man Seite:"
 
-#: oyranos_gamma.c:254 oyranos_policy.c:136
+#: oyranos_gamma.c:180 oyranos_policy.c:136
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 
@@ -1395,49 +1330,67 @@ msgstr "Speicherung der neuen Richtline schlug fehl mit Fehler:"
 msgid "Policy search paths"
 msgstr "Richtliniensuchpfade"
 
-#: oyranos_alpha.c:2786
+#: oyranos_alpha.c:969
+msgid "found list of wrong type"
+msgstr "fand Liste falschen Typs"
+
+#: oyranos_alpha.c:1189 oyranos_alpha.c:1486
+msgid "found observer list of wrong type"
+msgstr "fand Beobachterliste falschen Typs"
+
+#: oyranos_alpha.c:1207 oyranos_alpha.c:1306 oyranos_alpha.c:1376
+#: oyranos_alpha.c:1429 oyranos_alpha.c:22213
+#: examples/image_display/image_display.cpp:438
+msgid "Signal"
+msgstr "Signal"
+
+#: oyranos_alpha.c:1219 oyranos_alpha.c:1319 oyranos_alpha.c:1389
+msgid "found observer of wrong type"
+msgstr "Fand Beobachter falschen Typs"
+
+#: oyranos_alpha.c:3686
 msgid "Name"
 msgstr "Name"
 
-#: oyranos_alpha.c:2787
+#: oyranos_alpha.c:3687
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: oyranos_alpha.c:3203
+#: oyranos_alpha.c:4106
 msgid "Could not open meta module API"
 msgstr "Konnte Meta Schnittstelle nicht öffnen"
 
-#: oyranos_alpha.c:10933 oyranos_alpha.c:11525 oyranos_alpha.c:26028
-#: oyranos_alpha.c:26109
+#: oyranos_alpha.c:12023 oyranos_alpha.c:12615 oyranos_alpha.c:27069
+#: oyranos_alpha.c:27150
 msgid "Could not open device"
 msgstr "Konnte Gerät nicht öffnen"
 
-#: oyranos_alpha.c:11536
+#: oyranos_alpha.c:12626
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
 
-#: oyranos_alpha.c:18983 oyranos_alpha.c:19001 oyranos_alpha.c:19101
-#: oyranos_alpha.c:19117
+#: oyranos_alpha.c:20164 oyranos_alpha.c:20182 oyranos_alpha.c:20282
+#: oyranos_alpha.c:20298
 msgid "with '.' is not allowed"
 msgstr "mit '.' ist nicht erlaubt"
 
-#: oyranos_alpha.c:20555
+#: oyranos_alpha.c:21736
 msgid "attempt to add a incomplete filter"
 msgstr "Versuch einen unvollständigen Filter hinzuzufügen"
 
-#: oyranos_alpha.c:20617
+#: oyranos_alpha.c:21798
 msgid "?? Nothing to add ??"
 msgstr "?? Nichts hinzuzufügen ??"
 
-#: oyranos_alpha.c:21108 oyranos_alpha.c:24224
+#: oyranos_alpha.c:22346 oyranos_alpha.c:25265
 msgid "error in module:"
 msgstr "Fehler in Modul:"
 
-#: oyranos_alpha.c:24196
+#: oyranos_alpha.c:25237
 msgid "Found no node in conversion. give up"
 msgstr "Fand keinen Knoten im Graph. Gebe auf."
 
-#: oyranos_alpha.c:24847
+#: oyranos_alpha.c:25888
 msgid "---"
 msgstr ""
 
@@ -1537,23 +1490,23 @@ msgstr "Erneuern"
 msgid "Active Policy:"
 msgstr "Aktive Richtlinie:"
 
-#: modules/oyranos_cmm_lcms.c:1597
+#: modules/oyranos_cmm_lcms.c:1786
 msgid "Extended Options"
 msgstr "Erweiterte Optionen"
 
-#: modules/oyranos_cmm_lcms.c:1604
+#: modules/oyranos_cmm_lcms.c:1793
 msgid "Cmyk to Cmyk transformation"
 msgstr "Cmyk nach Cmyk Umwandlung"
 
-#: modules/oyranos_cmm_lcms.c:1611
+#: modules/oyranos_cmm_lcms.c:1800
 msgid "Black Preservation"
 msgstr "Schwarzerhalt"
 
-#: modules/oyranos_cmm_lcms.c:1795
+#: modules/oyranos_cmm_lcms.c:1984
 msgid "Little CMS"
 msgstr "Little CMS"
 
-#: modules/oyranos_cmm_lcms.c:1797
+#: modules/oyranos_cmm_lcms.c:1986
 msgid ""
 "LittleCMS is a CMM, a color management engine; it implements fast transforms "
 "between ICC profiles. \"Little\" stands for its small overhead. With a "
@@ -1564,15 +1517,15 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:1801
+#: modules/oyranos_cmm_lcms.c:1990
 msgid "Marti"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:1803
+#: modules/oyranos_cmm_lcms.c:1992
 msgid "Marti Maria"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:1805
+#: modules/oyranos_cmm_lcms.c:1994
 msgid ""
 "littleCMS project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
@@ -1582,24 +1535,27 @@ msgstr ""
 "support@littlecms.com; Quellen: http://www.littlecms.com/downloads.htm; "
 "Oyranos Einbindung: Kai-Uwe Behrmann"
 
-#: modules/oyranos_cmm_lcms.c:1809 modules/devices/oyranos_cmm_CUPS.c:686
+#: modules/oyranos_cmm_lcms.c:1998 modules/devices/oyranos_cmm_CUPS.c:686
+#: examples/dummy_device/oyranos_cmm_dDev.c:731
 msgid "MIT"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:1811
+#: modules/oyranos_cmm_lcms.c:2000
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:1813 modules/devices/oyranos_cmm_CUPS.c:690
+#: modules/oyranos_cmm_lcms.c:2002 modules/devices/oyranos_cmm_CUPS.c:690
+#: examples/dummy_device/oyranos_cmm_dDev.c:735
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr "MIT Lizenz: http://www.opensource.org/licenses/mit-license.php"
 
-#: modules/oyranos_cmm_lcms.c:1817 modules/oyranos_cmm_oydi.c:967
-#: modules/oyranos_cmm_oicc.c:841
+#: modules/oyranos_cmm_lcms.c:2006 modules/oyranos_cmm_oydi.c:969
+#: modules/oyranos_cmm_oicc.c:806 examples/dummy_device/oyranos_cmm_dDev.c:739
+#: examples/dummy_filter/oyranos_cmm_dFil.c:202
 msgid "help"
 msgstr "Hilfe"
 
-#: modules/oyranos_cmm_lcms.c:1819
+#: modules/oyranos_cmm_lcms.c:2008
 msgid ""
 "The lcms \"colour.icc\" filter is a one dimensional colour conversion "
 "filter. It can both create a colour conversion context, some precalculated "
@@ -1613,7 +1569,7 @@ msgstr ""
 "Modul, welcher die interne lcms Farbübertragungsdaten an das Oyranos' Format "
 "anpasst, welches auf ICC Geräteverknüpfungen, engl. device links, beruht."
 
-#: modules/oyranos_cmm_lcms.c:1821
+#: modules/oyranos_cmm_lcms.c:2010
 msgid ""
 "The following options are available to create colour contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
@@ -1627,30 +1583,33 @@ msgid ""
 "- none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]."
 msgstr ""
 
-#: modules/oyranos_cmm_oydi.c:945
+#: modules/oyranos_cmm_oydi.c:947
 msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
-#: modules/oyranos_cmm_oydi.c:947
+#: modules/oyranos_cmm_oydi.c:949
 msgid "The client side window data handler of Oyranos."
 msgstr "Die benutzerseitige Fensterdatenagent von Oyranos."
 
-#: modules/oyranos_cmm_oydi.c:951 modules/oyranos_cmm_oyra.c:213
-#: modules/oyranos_cmm_oyIM.c:213 modules/oyranos_cmm_oicc.c:825
-#: modules/oyranos_cmm_lraw.cpp:253 modules/devices/oyranos_cmm_oyX1.c:886
+#: modules/oyranos_cmm_oydi.c:953 modules/oyranos_cmm_oyra.c:213
+#: modules/oyranos_cmm_oyIM.c:213 modules/oyranos_cmm_oicc.c:790
+#: modules/oyranos_cmm_lraw.cpp:253 modules/devices/oyranos_cmm_oyX1.c:872
+#: examples/dummy_device/oyranos_cmm_dDev.c:723
 msgid "Kai-Uwe"
 msgstr ""
 
-#: modules/oyranos_cmm_oydi.c:953 modules/oyranos_cmm_oyra.c:215
-#: modules/oyranos_cmm_oyIM.c:215 modules/oyranos_cmm_oicc.c:827
-#: modules/oyranos_cmm_lraw.cpp:255 modules/devices/oyranos_cmm_oyX1.c:888
+#: modules/oyranos_cmm_oydi.c:955 modules/oyranos_cmm_oyra.c:215
+#: modules/oyranos_cmm_oyIM.c:215 modules/oyranos_cmm_oicc.c:792
+#: modules/oyranos_cmm_lraw.cpp:255 modules/devices/oyranos_cmm_oyX1.c:874
+#: examples/dummy_device/oyranos_cmm_dDev.c:725
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: modules/oyranos_cmm_oydi.c:955 modules/oyranos_cmm_oyra.c:217
+#: modules/oyranos_cmm_oydi.c:957 modules/oyranos_cmm_oyra.c:217
 #: modules/devices/oyranos_cmm_CUPS.c:681 modules/oyranos_cmm_oyIM.c:217
-#: modules/oyranos_cmm_oicc.c:829 modules/oyranos_cmm_lraw.cpp:257
-#: modules/devices/oyranos_cmm_oyX1.c:890
+#: modules/oyranos_cmm_oicc.c:794 modules/oyranos_cmm_lraw.cpp:257
+#: modules/devices/oyranos_cmm_oyX1.c:876
+#: examples/dummy_device/oyranos_cmm_dDev.c:727
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
@@ -1658,23 +1617,25 @@ msgstr ""
 "Oyranos Projekt: www: http://www.oyranos.com; Support/email: ku.b@gmx.de; "
 "Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 
-#: modules/oyranos_cmm_oydi.c:959 modules/oyranos_cmm_oyra.c:221
-#: modules/oyranos_cmm_oyIM.c:221 modules/oyranos_cmm_oicc.c:833
-#: modules/oyranos_cmm_lraw.cpp:261 modules/devices/oyranos_cmm_oyX1.c:894
+#: modules/oyranos_cmm_oydi.c:961 modules/oyranos_cmm_oyra.c:221
+#: modules/oyranos_cmm_oyIM.c:221 modules/oyranos_cmm_oicc.c:798
+#: modules/oyranos_cmm_lraw.cpp:261 modules/devices/oyranos_cmm_oyX1.c:880
+#: examples/dummy_filter/oyranos_cmm_dFil.c:194
 msgid "newBSD"
 msgstr ""
 
-#: modules/oyranos_cmm_oydi.c:961 modules/oyranos_cmm_lraw.cpp:263
+#: modules/oyranos_cmm_oydi.c:963 modules/oyranos_cmm_lraw.cpp:263
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: modules/oyranos_cmm_oydi.c:963 modules/oyranos_cmm_oyra.c:225
-#: modules/oyranos_cmm_oyIM.c:225 modules/oyranos_cmm_oicc.c:837
-#: modules/oyranos_cmm_lraw.cpp:265 modules/devices/oyranos_cmm_oyX1.c:898
+#: modules/oyranos_cmm_oydi.c:965 modules/oyranos_cmm_oyra.c:225
+#: modules/oyranos_cmm_oyIM.c:225 modules/oyranos_cmm_oicc.c:802
+#: modules/oyranos_cmm_lraw.cpp:265 modules/devices/oyranos_cmm_oyX1.c:884
+#: examples/dummy_filter/oyranos_cmm_dFil.c:198
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/bsd-license.php"
 
-#: modules/oyranos_cmm_oydi.c:969
+#: modules/oyranos_cmm_oydi.c:971
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -1692,7 +1653,7 @@ msgstr ""
 "hat allerding Nachteile bei deformierten Regionen wie wackelnden oder "
 "verzerrten Fenstern."
 
-#: modules/oyranos_cmm_oydi.c:971
+#: modules/oyranos_cmm_oydi.c:973
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -1738,7 +1699,7 @@ msgid "Oyranos supplied modules"
 msgstr "Oyranos mitgelieferte Module"
 
 #: modules/oyranos_cmm_oyra.c:223 modules/oyranos_cmm_oyIM.c:223
-#: modules/oyranos_cmm_oicc.c:835 modules/devices/oyranos_cmm_oyX1.c:896
+#: modules/oyranos_cmm_oicc.c:800 modules/devices/oyranos_cmm_oyX1.c:882
 msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1811,23 +1772,23 @@ msgstr "Modell:"
 msgid "Technology:"
 msgstr "Technologie:"
 
-#: modules/oyranos_cmm_oicc.c:458
+#: modules/oyranos_cmm_oicc.c:423
 msgid "ICC profile"
 msgstr "ICC Profil"
 
-#: modules/oyranos_cmm_oicc.c:460
+#: modules/oyranos_cmm_oicc.c:425
 msgid "ICC colour profile for colour transformations"
 msgstr "ICC Farbprofil zur Farbraumtransformation."
 
-#: modules/oyranos_cmm_oicc.c:819
+#: modules/oyranos_cmm_oicc.c:784
 msgid "Oyranos ICC policy"
 msgstr "Oyranos ICC Richtlinie"
 
-#: modules/oyranos_cmm_oicc.c:821
+#: modules/oyranos_cmm_oicc.c:786
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos ICC Richtlinien Modul"
 
-#: modules/oyranos_cmm_oicc.c:843
+#: modules/oyranos_cmm_oicc.c:808
 msgid ""
 "The filter is provides policy settings. These settings can be applied to a "
 "graph through the user function oyConversion_Correct()."
@@ -1836,7 +1797,7 @@ msgstr ""
 "mit Hilfe der oyConversion_Correct() Funktion auf einen Grafen angewendet "
 "werden."
 
-#: modules/oyranos_cmm_oicc.c:845
+#: modules/oyranos_cmm_oicc.c:810
 msgid ""
 "The module is responsible for many settings in the Oyranos colour management "
 "settings panel. If applied the module care about rendering intents, "
@@ -1844,42 +1805,164 @@ msgid ""
 msgstr ""
 
 #: modules/oyranos_cmm_lraw.cpp:247 modules/oyranos_cmm_lraw.cpp:249
+#: examples/dummy_filter/oyranos_cmm_dFil.c:180
+#: examples/dummy_filter/oyranos_cmm_dFil.c:182
 msgid "libraw input filter"
 msgstr "LibRaw Eingangsmodul"
 
-#: modules/devices/oyranos_cmm_oyX1.c:880
+#: modules/devices/oyranos_cmm_oyX1.c:866
 msgid "Oyranos X11"
 msgstr "Oyranos X11"
 
-#: modules/devices/oyranos_cmm_oyX1.c:882
+#: modules/devices/oyranos_cmm_oyX1.c:868
 msgid "The window support module of Oyranos."
 msgstr "Die Fenstersystemunterstützung für Oyranos"
 
-#: oyranos_alpha_internal.h:260 oyranos_alpha_internal.h:268
+#: modules/devices/oyranos_monitor.c:478
+msgid "unexpected EDID lenght"
+msgstr "unerwartetet EDID Größe"
+
+#: modules/devices/oyranos_monitor.c:481 modules/devices/oyranos_monitor.c:508
+msgid "Cant read hardware information from device."
+msgstr "Kann Geräteinformation nicht auslesen."
+
+#: modules/devices/oyranos_monitor.c:506
+msgid "no EDID available from X properties"
+msgstr "kein EDID von X Atomen verfügbar"
+
+#: modules/devices/oyranos_monitor.c:563 modules/devices/oyranos_monitor.c:705
+#: modules/devices/oyranos_monitor.c:942
+#: modules/devices/oyranos_monitor.c:1438
+msgid "open X Display failed"
+msgstr "Öffnen des X Displays daneben"
+
+#. hack
+#: modules/devices/oyranos_monitor.c:967
+msgid "No monitor gamma curves by profile:"
+msgstr "Keine Grafikkartengammakurven im Profil:"
+
+#: modules/devices/oyranos_monitor.c:1003
+msgid "Error obtaining profile"
+msgstr "Fehler beim Erhalten des Profiles"
+
+#: modules/devices/oyranos_monitor.c:1010
+#: modules/devices/oyranos_monitor.c:1012
+msgid "Error setting up atom"
+msgstr "Fehler beim Setzen eines Xatoms"
+
+#: modules/devices/oyranos_monitor.c:1101
+msgid "Error getting atom"
+msgstr "Fehler beim Suchen des Xatoms"
+
+#: modules/devices/oyranos_monitor.c:1330
+msgid "XRandR CrtcInfo request failed"
+msgstr "XRandR CrtcInfo Anfrage daneben"
+
+#: modules/devices/oyranos_monitor.c:1348
+msgid "Xinerama request failed"
+msgstr "Xineramaanfrage daneben"
+
+#: modules/devices/oyranos_monitor.c:1364
+msgid "open X Screen failed"
+msgstr "Öffnen des X Screens daneben"
+
+#: modules/devices/oyranos_monitor.c:1431
+msgid "allocation failed"
+msgstr "kein Speicher"
+
+#: modules/devices/oyranos_monitor.c:1446
+msgid "no Screen found"
+msgstr "keine Anzeige gefunden"
+
+#: modules/devices/oyranos_monitor.c:1560
+msgid "less Xinerama monitors than XRandR ones"
+msgstr "weniger Xinerama als XRandR Monitore"
+
+#. the option follows
+#: oforms/oyranos_forms_cmd_line.c:182
+#, c-format
+msgid "Option"
+msgstr "Option"
+
+#: oforms/oyranos_forms_cmd_line.c:193
+#, c-format
+msgid "with following choices"
+msgstr "mit folgenden Alternativen"
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:717
+msgid "Oyranos Dummy"
+msgstr "Oyranos Beispiel"
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:719
+msgid "The dummy useless module of Oyranos."
+msgstr "Das Beispielmodul für Oyranos"
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:733
+msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
+msgstr ""
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:741
+#: examples/dummy_filter/oyranos_cmm_dFil.c:204
+msgid "My filter introduction."
+msgstr "Meine Filter Einführung."
+
+#: examples/dummy_device/oyranos_cmm_dDev.c:743
+#: examples/dummy_filter/oyranos_cmm_dFil.c:206
+msgid "All the small details for using this module."
+msgstr "All die kleinen Details für dieses Modul"
+
+#: examples/dummy_filter/oyranos_cmm_dFil.c:186
+msgid "Me"
+msgstr "Ich"
+
+#: examples/dummy_filter/oyranos_cmm_dFil.c:188
+msgid "My Name"
+msgstr "Mein Name"
+
+#: examples/dummy_filter/oyranos_cmm_dFil.c:190
+msgid ""
+"My project; www: http://www.my-adress.com; support/email: my@adress.com; "
+"sources: http://www.my-adress.com/download"
+msgstr ""
+
+#: examples/dummy_filter/oyranos_cmm_dFil.c:196
+msgid "Copyright (c) 2009 My Name; newBSD"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:773
+msgid "Edit Options"
+msgstr "Optionen"
+
+#: oyranos_alpha_internal.h:245 oyranos_alpha_internal.h:253
 msgid "Unexpected object type:"
 msgstr "Unerwarteter Objekttyp:"
 
 #. oyFree_ (void*)
 #. defined in oyranos_helper.h
-#: oyranos_helper.h:63
+#: oyranos_helper.h:64
 msgid "nothing to delete"
 msgstr "nichts zu löschen"
 
 #. oyAllocHelper_ (void*, type, size_t, action)
 #. defined in oyranos_helper.h
-#: oyranos_helper.h:81
+#: oyranos_helper.h:82
 msgid "nothing to allocate - size:"
 msgstr "kein Speicher reservierbar - Größe:"
 
-#: oyranos_helper.h:89
+#: oyranos_helper.h:90
 msgid "Can not allocate memory for:"
 msgstr "Kann nicht reservieren für:"
 
 #. oyPostAllocHelper_ (void*, size, action)
 #. defined in oyranos_helper.h
-#: oyranos_helper.h:100
+#: oyranos_helper.h:101
 msgid "nothing allocated"
 msgstr "nichts reserviert"
+
+#~ msgid "Behaviour for Softproofing view at application startup"
+#~ msgstr ""
+#~ "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil am "
+#~ "Bildschirm beim Programmstart"
 
 #~ msgid "Oyranos Printer"
 #~ msgstr "Oyranos Drucker"
@@ -1961,9 +2044,6 @@ msgstr "nichts reserviert"
 
 #~ msgid "Function for Creating a Colour Space Transformation."
 #~ msgstr "Funktion zur Erzeugung einer Farbraumtransformation."
-
-#~ msgid "Gamut Warning"
-#~ msgstr "Farb Warnung"
 
 #~ msgid "Mark out of gamut colours for the proofing profile."
 #~ msgstr "Kennzeichne Farben ausserhalb des nachgebildeten Gerätes"
@@ -2573,6 +2653,9 @@ msgstr "nichts reserviert"
 
 #~ msgid "My Computer"
 #~ msgstr "Mein Rechner"
+
+#~ msgid "File Systems"
+#~ msgstr "Dateisysteme"
 
 #~ msgid "New Directory?"
 #~ msgstr "Verzeichnis erstellen"

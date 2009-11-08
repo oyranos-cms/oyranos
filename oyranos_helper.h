@@ -48,6 +48,7 @@ void  oyDeAllocateFunc_         (void *        data);
 
 extern intptr_t oy_observe_pointer_;
 extern int oy_debug_memory;
+extern int oy_debug_signals;
 extern const char * oy_backtrace;
 
 /* oyFree_ (void*) */
@@ -83,6 +84,33 @@ extern const char * oy_backtrace;
   } else {                                                  \
       ptr_ = (type*) oyAllocateWrapFunc_(sizeof (type) * (size_t)(size_), \
                                          alloc_func );      \
+      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
+  }                                                         \
+  if (ptr_ == NULL) {                                       \
+    WARNc3_S( "%s %d %s", _("Can not allocate memory for:"),\
+              (int)(size_), #ptr_ );                        \
+    action;                                                 \
+  }                                                         \
+}
+
+/* oyAllocHelper_ (void*, type, size_t, action) */ 
+#define oyStruct_AllocHelper_m_(ptr_, type, size_, obj_, action) { \
+  if (ptr_ != NULL)    /* defined in oyranos_helper.h */    \
+  { \
+    char text_fm[80];                                       \
+    if(oy_observe_pointer_ == (intptr_t)ptr_) {             \
+      oySnprintf_( text_fm, 80, #ptr_ " pointer freed" ); \
+      WARNc_S( text_fm );                                   \
+    }                                                       \
+    obj_->oy_->deallocateFunc_ (ptr_);                      \
+    ptr_ = NULL;                                            \
+  }                                                         \
+  if ((size_) <= 0) {                                       \
+    WARNc2_S ("%s %d", _("nothing to allocate - size:"),    \
+              (int)(size_) );                               \
+  } else {                                                  \
+      ptr_ = (type*) oyStruct_Allocate( (oyStruct_s*) obj_, \
+                                        sizeof (type) * (size_t)(size_)); \
       memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
   }                                                         \
   if (ptr_ == NULL) {                                       \
@@ -180,7 +208,7 @@ int oyIsFile_     (const char* fileName);
 int oyIsFileFull_ (const char* fullFileName);
 int oyMakeDir_    (const char* path);
 
-int   oyWriteMemToFile_ (const char* name, void* mem, size_t size);
+int   oyWriteMemToFile_ (const char* name, const void* mem, size_t size);
 char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
                          oyAlloc_f     allocate_func);
 

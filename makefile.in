@@ -12,11 +12,13 @@ SRCDIR          = $(src_dir)
 BUILDDIR        = $(build_dir)/
 
 OY_MODULE_NAME  =_cmm_module
-LIBRARIES = $(TARGET)
+LIBRARIES = $(TARGET) $(LIB_FORMS_FLTK)
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
 LIBNAME = lib$(TARGET).a
+LIB_FORMS_FLTK = oyforms_fltk
+LIB_FORMS_FLTK_NAME = lib$(LIB_FORMS_FLTK).a
 LIB_CMM_START = lib$(TARGET)
 LIB_CMM_END = $(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
@@ -92,7 +94,8 @@ CHEADERS = \
 	$(TARGET)_xml.h \
 	icc34.h \
 	md5.h \
-	lookup3.h
+	lookup3.h \
+	oforms/$(TARGET)_forms.h
 #	fl_$(TARGET).h
 CFILES = \
 	$(TARGET).c \
@@ -148,30 +151,38 @@ CHEADERS_MODULES = \
 	modules/$(TARGET)_cmm_oyra.h
 CFILES_MODULES_DEVICES = \
 	$(CFILES_CMM_oyX1) \
+	$(CFILES_MONI) \
 	$(CFILES_CMM_CUPS)
-
 CFILES_MONI = \
 	modules/devices/$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
 	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
 	$(TARGET)_gamma.c
+CFILES_OFORMS = \
+	oforms/$(TARGET)_forms_cmd_line.c \
+	oforms/$(TARGET)_forms.c
 CFILES_POLICY = \
 	$(TARGET)_policy.c \
 
 CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
+CXXFILES_OFORMS_FLTK = \
+	oforms/$(TARGET)_forms_fltk.cxx \
+	oforms/$(TARGET)_widgets_fltk.cxx
 CXXFILES_Flmm = \
 	FL/Flmm_Tabs.cxx
 
 TEST_CPP = \
+	tests/cups_test.cxx \
+	tests/dE2000_test.cpp \
 	tests/dl_test.cxx \
 	tests/fltk_test.cxx \
-	tests/dE2000_test.cpp \
 	tests/gettext_test.cxx \
 	tests/intptr_test.c \
 	tests/lib_test.cxx \
 	tests/library.c \
+	tests/sane_test.cxx \
 	tests/test_oyranos.c \
 	tests/tiff_test.cxx
 TEST_H = \
@@ -179,14 +190,18 @@ TEST_H = \
 CPPFILES =
 CXXFILES =
 TEST_FILES = $(TEST_CPP) $(TEST_H)
-EXAMPLE_FILES = \
+
+EXAMPLE_SOURCES = \
 	examples/colour_desktop/colour_desktop.c \
 	examples/dummy_device/oyranos_cmm_dDev.c \
 	examples/dummy_filter/oyranos_cmm_dFil.c \
 	examples/image2pdf/image2pdf.c \
 	examples/image_display/image_display.cpp \
 	examples/xcmsevents/xcmsevents.c \
-	examples/oymd5icc/oymd5icc.c \
+	examples/oymd5icc/oymd5icc.c
+
+EXAMPLE_FILES = \
+	$(EXAMPLE_SOURCES) \
 	examples/README \
 	examples/makefile
 
@@ -221,6 +236,7 @@ FLTK_GUI = $(TARGET)-config-fltk
 FLTK_FILES = \
 	oyranos_config_fltk.fl \
 	oyranos_config_fltk.h \
+	oforms/$(TARGET)_widgets_fltk.h
 
 Flmm_FILES = \
 	FL/Flmm_Tabs.H \
@@ -233,16 +249,18 @@ Flmm_FILES = \
 	FL/README
 
 TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
-		$(CFILES_MONI) $(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
+		$(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_POLICY) $(CFILES_ALPHA) \
 		$(CXXFILES_FLTK)
 SOURCES =  \
 		$(TOP_SOURCES) \
-		$(CFILES_MODULES) $(CPPFILES_MODULES) $(CFILES_MODULES_DEVICES)
+		$(CFILES_MODULES) $(CPPFILES_MODULES) $(CFILES_MODULES_DEVICES)\
+		$(CFILES_OFORMS) $(CXXFILES_OFORMS_FLTK) $(EXAMPLE_SOURCES)
 
 # we need these files to generate explicite targets for out of tree builds
 COBJECTS = \
 	$(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) \
+	$(CFILES_OFORMS:.c=.o) \
 	$(MONI_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
@@ -256,9 +274,9 @@ COBJECTS = \
 	tests/test_oyranos.o test.o
 CPPOBJECTS =	test2.o
 #	$(CMM_lraw_OBJECTS)
-CXXOBJECTS =	$(CXXFILES) $(CXXFILES_FLTK)
+CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
-OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o)
+OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_lraw_OBJECTS = $(CPPFILES_CMM_lraw:.cpp=.o)
 CMM_oydi_OBJECTS = $(CFILES_CMM_oydi:.c=.o)
@@ -270,6 +288,7 @@ CMM_oicc_OBJECTS = $(CFILES_CMM_oicc:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
+FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
 
 CLEAN_OBJECTS = $(OBJECTS) \
 	$(MONI_OBJECTS) \
@@ -282,6 +301,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(CMM_oicc_OBJECTS) \
 	$(FLTK_OBJECTS) \
+	$(FLTK_OFORMS_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	test2.o tests/test_oyranos.o test.o
@@ -329,10 +349,10 @@ ALL_FILES = \
 	$(FLTK_FILES) \
 	test.c test2.cpp
 
-
 # build all what is needed to run the libraries, helpers
 all:	config.log.h mkdepend \
 	$(LIBSONAMEFULL) \
+	$(LIB_FORMS_FLTK_NAME) \
 	$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
 	$(TARGET)-policy $(FLTK_GUI) \
@@ -484,6 +504,14 @@ $(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
 
 fltk-gui:	oyranos_config_fltk.o
 
+$(LIB_FORMS_FLTK_NAME):	$(FLTK_OFORMS_OBJECTS)
+	echo Linking $@ ...
+	test -f $(LIB_FORMS_FLTK_NAME) && $(RM) $(LIB_FORMS_FLTK_NAME) || \
+		echo ""
+	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIB_FORMS_FLTK_NAME) \
+		$(FLTK_OFORMS_OBJECTS)
+	$(RANLIB) $(LIB_FORMS_FLTK_NAME)
+
 $(LIBNAME):	$(OBJECTS)
 	echo Linking $@ ...
 	test -f $(LIBNAME) && $(RM) $(LIBNAME) || echo ""
@@ -529,7 +557,7 @@ check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples
 	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; INCLUDE=-I$(includedir) SRCDIR=$(SRCDIR)/examples/ $(MAKE))
+	cd examples && ($(MAKE) clean; INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ $(MAKE))
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
@@ -912,7 +940,7 @@ depend:	cdepend
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
 	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
 	-for file in $(SUB_OBJECTS); do \
-	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%%'`; \
+	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%% ; s%oforms/%%'`; \
 	   cat mkdepend | sed s%$${obj}%$${file}% > mkdepend.tmp; \
 	   mv mkdepend.tmp mkdepend; \
          done
@@ -932,6 +960,12 @@ cdepend:
 	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.cpp/ >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
 	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CXXFLAGS) $$(INCL) -c -o $$*.o $$(SRCDIR)/$$*.cpp' >> cobjects; \
+	  echo "" >> cobjects; \
+	done
+	for i in $(CXXOBJECTS); do \
+	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.cxx/ >> cobjects; \
+	  echo "	echo Compiling $${i} ..." >> cobjects; \
+	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CXXFLAGS) $$(INCL) -c -o $$*.o $$(SRCDIR)/$$*.cxx' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 
@@ -1013,6 +1047,9 @@ copy_files:
 	mkdir $(DESTDIR)/modules/devices
 	cd $(SRCDIR) && \
 	  $(COPY) $(CFILES_MODULES_DEVICES) $(DESTDIR)/modules/devices
+	mkdir $(DESTDIR)/oforms
+	cd $(SRCDIR) && \
+	  $(COPY) $(CFILES_OFORMS) $(CXXFILES_OFORMS_FLTK) $(DESTDIR)/oforms/
 	mkdir $(DESTDIR)/tests
 	cd $(SRCDIR) && \
 	  $(COPY) $(TEST_FILES) $(DESTDIR)/tests

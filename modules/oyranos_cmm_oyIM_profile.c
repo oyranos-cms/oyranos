@@ -274,27 +274,27 @@ oyStructList_s * oyIMProfileTag_GetValues(
     oyStruct_s * description = 0;
 
     description = (oyStruct_s*) &description_mluc;
-    error = oyStructList_MoveIn( list, &description, -1 );
+    error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_psid;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_MS10;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_text;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_desc;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_DevS;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     return list;
   }
@@ -440,7 +440,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                o = oyBlob_New( 0 );
                oyBlob_SetFromData( o, &mem[84], i, mem );
-               oyStructList_MoveIn( texts, (oyStruct_s**)&o, -1 );
+               oyStructList_MoveIn( texts, (oyStruct_s**)&o, -1, 0 );
              }
              oyFree_m_( tmp );
            }
@@ -642,12 +642,13 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    /* ICC says UTF-16BE */
                    error = oyIMIconv( &mem[dversatz], len, t, "UTF-16BE" );
 
-                   oy_struct = (oyStruct_s*) name;
+                   if(!error)
+                     oy_struct = (oyStruct_s*) name;
                    /* eigther text or we have a non translatable string */
-                   if(oyStrlen_(t) || oyStructList_Count(texts))
+                   if(!error && (oyStrlen_(t) || oyStructList_Count(texts)))
                    {
                      name->name = t;
-                     oyStructList_MoveIn( texts, &oy_struct, -1 );
+                     oyStructList_MoveIn( texts, &oy_struct, -1, 0 );
                    } else
                      name->release(&oy_struct);
                  }
@@ -1080,19 +1081,19 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
     oyStruct_s * description = 0;
 
     description = (oyStruct_s*) &description_mluc;
-    error = oyStructList_MoveIn( list, &description, -1 );
+    error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_psid;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_text;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_desc;
     if(!error)
-      error = oyStructList_MoveIn( list, &description, -1 );
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     return error;
   }
@@ -1132,9 +1133,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          printf("%s:%d mluc_len: %d\n",__FILE__,__LINE__, mluc_len);
 
          if(!error)
-           mem = oyStruct_Allocate( (oyStruct_s*)s, mluc_len );
-
-         error = !mem;
+           oyStruct_AllocHelper_m_( mem, char, mluc_len, s, error = 1 );
 
          if(!error)
          {
@@ -1250,15 +1249,14 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            {
              mluc_sum += tmptag->size_;
-             error = oyStructList_MoveIn( tag_list, (oyStruct_s**)&tmptag, -1 );
+             error = oyStructList_MoveIn( tag_list, (oyStruct_s**)&tmptag, -1, 0 );
            }
          }
 
          if(!error)
          {
            mem_len = 12 + 8*n + 16*n + mluc_sum + 3*n;
-           mem = oyStruct_Allocate( (oyStruct_s*)tag, mem_len );
-           error = !mem;
+           oyStruct_AllocHelper_m_( mem, char, mem_len, tag, error = 1 );
 
            if(!error)
            oyProfileTag_Set( s, icSigProfileSequenceIdentifierType,
@@ -1328,11 +1326,13 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          }
 
          if(!error)
-           mem = oyStruct_Allocate( (oyStruct_s*)s, mem_len );
-         mem[0] = 0;
-         mem_len = 8;
+           oyStruct_AllocHelper_m_( mem, char, mem_len, s, error = 1 );
 
-         error = !mem;
+         if(!error)
+         {
+           mem[0] = 0;
+           mem_len = 8;
+         }
 
          if(!error)
          for(i = 0; i < n; ++i)
@@ -1407,8 +1407,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          len = len + (len%4 ? len%4 : 0);
 
          if(!error)
-           mem = oyStruct_Allocate( (oyStruct_s*)s, len );
-         error = !mem;
+           oyStruct_AllocHelper_m_( mem, char, len, s, error = 1 );
 
          if(!error)
          {
