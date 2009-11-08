@@ -913,36 +913,42 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
       pos = 0;
       while(ui_handlers[pos])
       {
-        STRING_ADD( tmp, ui_handlers[pos]->element_search );
-        if(!tmp)
+        int pos2 = 0;
+
+        while(ui_handlers[pos]->element_searches[pos2])
         {
-          ++pos;
-          continue;
+          STRING_ADD( tmp, ui_handlers[pos]->element_searches[pos2] );
+          if(!tmp)
+          {
+            ++pos;
+            continue;
+          }
+
+          len = (int)(oyStrrchr_(tmp, '/') - tmp);
+          if(oyStrchr_(tmp, '/'))
+            tmp[len] = 0;
+ 
+          if(oyStrstr_( ui_handlers[pos]->element_type, name ) != 0 ||
+             (oyStrstr_( tmp, name ) != 0 && wid_data))
+          {
+            old_wid_data = wid_data;
+            wid_data = 0;
+            search = ui_handlers[pos]->element_searches[pos2];
+            /** usually dont search for the current level, except for
+             *  element_searchs and element_type contain the same search term */
+            if(!oyStrstr_(ui_handlers[pos]->element_type, name ) &&
+               oyStrstr_( search, name ))
+              search = oyStrstr_( search, name ) + oyStrlen_(name) + 1;
+
+            error = oyOptions_SetFromText( &wid_data, "////search",
+                                           search, OY_CREATE_NEW );
+            if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
+            collect = 1;
+          }
+
+          oyFree_m_( tmp )
+          ++pos2;
         }
-
-        len = (int)(oyStrrchr_(tmp, '/') - tmp);
-        if(oyStrchr_(tmp, '/'))
-          tmp[len] = 0;
-
-        if(oyStrstr_( ui_handlers[pos]->element_type, name ) != 0 ||
-           oyStrstr_( tmp, name ) != 0)
-        {
-          old_wid_data = wid_data;
-          wid_data = 0;
-          search = ui_handlers[pos]->element_search;
-          /** usually dont search for the current level, except for
-           *  element_search and element_type contain the same search term */
-          if(!oyStrstr_(ui_handlers[pos]->element_type, name ) &&
-             oyStrstr_( search, name ))
-            search = oyStrstr_( search, name ) + oyStrlen_(name) + 1;
-
-          error = oyOptions_SetFromText( &wid_data, "////search",
-                                         search, OY_CREATE_NEW );
-          if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
-          collect = 1;
-        }
-
-        oyFree_m_( tmp )
 
         ++pos;
       }
@@ -981,16 +987,6 @@ void               oyParseXMLNode_   ( xmlDocPtr           doc,
             if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
             oyFree_m_( tmp )
           }
-        }
-
-        if( strcmp((char*)attr->name,"label") == 0 &&
-            attr->children->content )
-        {
-          if(wid_data && oyOptions_FindString(wid_data, "search", 0))
-            error = oyOptions_SetFromText( &wid_data, "////label",
-                                           (char*)attr->children->content,
-                                           OY_CREATE_NEW );
-          if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
         }
 
         attr = attr->next;
