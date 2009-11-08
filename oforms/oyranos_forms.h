@@ -41,6 +41,7 @@ struct oyFormsArgs_s {
 
   int              silent;
   void           * xforms_data_model_;
+  void           * data_;
 };
 
 oyFormsArgs_s *  oyFormsArgs_New     ( void              * private_object_ );
@@ -49,10 +50,30 @@ oyFormsArgs_s *  oyFormsArgs_Copy    ( oyFormsArgs_s     * args,
 int          oyFormsArgs_Release     ( oyFormsArgs_s    ** args );
 
 const char * oyFormsArgs_ModelGet    ( oyFormsArgs_s     * args );
-
+int          oyFormsArgs_ResourceSet ( oyFormsArgs_s     * args,
+                                       const char        * name,
+                                       oyPointer           resource );
+int          oyFormsArgs_ResourceGet ( oyFormsArgs_s     * args,
+                                       const char        * name,
+                                       oyPointer         * resource );
 
 extern oyUiHandler_s * oy_ui_cmd_line_handlers[];
 
+typedef struct oyFormsCallback_s oyFormsCallback_s;
+struct oyFormsCallback_s {
+  int              type_;
+  void           * dummy1;
+  void           * dummy2;
+  void           * dummy3;
+
+  void           (*callback)();
+  oyPointer        data;
+};
+#define OYFORMS_FLTK_HELP_VIEW_REG  OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD \
+                                  OY_SLASH "forms/fltk/help_view.Fl_Text_Buffer"
+typedef void (*oyFormsFltkHelpViewCallback_f) (
+                                       oyFormsArgs_s     * forms_args,
+                                       const char        * help_text );
 
 #ifdef __cplusplus
 } /* extern "C" */
