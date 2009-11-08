@@ -10003,7 +10003,7 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
  */
 int            oyOptions_FindData    ( oyOptions_s       * options,
                                        const char        * registration,
-                                       oyPointer        ** result,
+                                       oyPointer         * result,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {

@@ -988,7 +988,7 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
                                        uint32_t            flags );
 int            oyOptions_FindData    ( oyOptions_s       * options,
                                        const char        * registration,
-                                       oyPointer        ** result,
+                                       oyPointer         * result,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 int            oyOptions_SetSource   ( oyOptions_s       * options,
@@ -3424,7 +3424,7 @@ typedef int  (*oyUiHandler_f)        ( oyPointer           cur,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/08/30 (Oyranos: 0.1.10)
- *  @date    2009/08/30
+ *  @date    2009/11/08
  */
 typedef struct {
   oyOBJECT_e           type;           /**< oyOBJECT_UI_HANDLER_S */
@@ -3441,10 +3441,11 @@ typedef struct {
                                             results and a context to construct
                                             the UI. */
   char               * handler_type;   /**< informational handler context type*/
-  /** The elements to collect by the parser, e.g.
-   *  "xf:choices/xf:item/xf:label.xf:value".
+  /** The elements to collect by the parser. Levels are separated by slash '/'.
+   *  Alternatives are separated by a point '.' . The list is zero terminated.
+   *  e.g. "xf:choices/xf:item/xf:label.xf:value".
    */
-  char               * element_search;
+  char              ** element_searches;
 } oyUiHandler_s;
 
 char *       oyXFORMsFromModelAndUi  ( const char        * data,
