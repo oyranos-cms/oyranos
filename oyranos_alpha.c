@@ -15539,7 +15539,7 @@ int                oyProfile_AddTagText (
   name = oyName_set_ ( name, text, oyNAME_NAME,
                        oyAllocateFunc_, oyDeAllocateFunc_ );
   list = oyStructList_New(0);
-  error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0 );
+  error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0, 0 );
 
   if(!error)
   {
