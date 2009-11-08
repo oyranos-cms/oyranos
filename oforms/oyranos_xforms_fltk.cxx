@@ -56,7 +56,20 @@ void callback_done( Fl_Widget * w, void * )
   w->window()->hide();
 }
 
-Fl_Text_Display * help_view = 0;
+void callback_help_view( oyFormsArgs_s * forms_args, const char * help_text )
+{
+  Fl_Text_Buffer * buffer = 0;
+  int error = 0;
+  oyPointer ptr = 0;
+
+  error = oyFormsArgs_ResourceGet( forms_args, OYFORMS_FLTK_HELP_VIEW_REG, &ptr );
+  buffer = (Fl_Text_Buffer*)ptr;
+  if(buffer)
+    buffer->text( help_text );
+  else
+    error = 1;
+}
+
 
 int main (int argc, char ** argv)
 {
@@ -282,22 +295,28 @@ int main (int argc, char ** argv)
     printf("%s\n", text);
 
   Fl_Double_Window * w = new Fl_Double_Window(400,475,"XFORMS in FLTK");
-  Fl_Pack * pack = new Fl_Pack( 0,0,400,365 );
-  pack->spacing(V_SPACING);
-    error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
-
-  pack->end();
-  w->resizable( pack );
-    help_view = new Fl_Text_Display( 0,365,400,75 );
+    oyFormsCallback_s callback = {0,0,0,0,(void(*)())callback_help_view,0};
+    Fl_Text_Display * help_view = new Fl_Text_Display( 0,365,400,75 );
     help_view->box(FL_ENGRAVED_BOX);
     help_view->color(FL_BACKGROUND_COLOR);
     help_view->selection_color(FL_DARK1);
       Fl_Text_Buffer * buffer = new Fl_Text_Buffer(0);
       buffer->append( _("Hints") );
     help_view->buffer( buffer );
+    callback.data = buffer;
+    oyFormsArgs_ResourceSet( oy_forms_options, OYFORMS_FLTK_HELP_VIEW_REG,
+                             (oyPointer)&callback);
 
     Fl_Button * done_button = new Fl_Button( 160, 445, 80, 25, _("&Done"));
     done_button->callback( callback_done, 0 );
+
+  Fl_Pack * pack = new Fl_Pack( 0,0,400,365 );
+  pack->spacing(V_SPACING);
+    error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
+
+
+  pack->end();
+  w->resizable( pack );
   w->end();
 
   w->show();

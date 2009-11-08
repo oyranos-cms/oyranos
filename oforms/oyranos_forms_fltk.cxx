@@ -73,6 +73,59 @@ void fltkCallback                    ( Fl_Widget         * widget,
     printf("no Fl_Choice %s(%s)=%s/%s\n", cd->key, cd->label, cd->value, num );
 }
 
+void fltkHelpViewCallback            ( Fl_Widget         * widget,
+                                       void              * user_data )
+{
+  fltk_cb_data * cd = (fltk_cb_data*) user_data;
+  Fl_Choice * ch = dynamic_cast<Fl_Choice*> (widget);
+  oyOptions_s ** opts = cd->callback_data;
+  char num[24];
+
+  if(ch)
+  {
+    sprintf(num, "%d", ch->value() );
+    oyOptions_SetFromText( opts, cd->key, cd->value, 0 );
+    printf("Fl_Choice %s(%s)=%s/%s\n", cd->key, cd->label, cd->value, num );
+
+  } else
+    printf("no Fl_Choice %s(%s)=%s/%s\n", cd->key, cd->label, cd->value, num );
+}
+
+class formsFltkChoice : public Fl_Choice
+{
+  public:
+  formsFltkChoice(int X,int Y,int W,int H) : Fl_Choice(X,Y,W,H) 
+  { hint_callback= 0; };
+  oyFormsCallback_s * hint_callback;
+  int handle(int event)
+  {
+    int result = Fl_Choice::handle(event);
+    switch (event)
+    {
+      case FL_ENTER:
+           printf("Enter\n");
+           if(hint_callback)
+           {
+             if(hint_callback)
+             {
+               oyFormsFltkHelpViewCallback_f userCallback = 0;
+               userCallback =(oyFormsFltkHelpViewCallback_f)
+                                                        hint_callback->callback;
+               userCallback( (oyFormsArgs_s*)hint_callback->data,
+                             (const char*)user_data() );
+             }
+           }
+           redraw();
+           break;
+
+      case FL_LEAVE:
+           printf("Leave\n");
+           redraw();
+           break;
+    }
+    return result;
+  }
+};
 
 /** @internal
  *  Function oyXML2XFORMsFLTKSelect1Handler
@@ -107,8 +160,9 @@ int        oyXML2XFORMsFLTKSelect1Handler (
              * search;
   char * default_key = 0, * key = 0, * t = 0;
   char * choices = 0;
-  oyFormsArgs_s * fltk_args = (oyFormsArgs_s *)user_data;
-  int print = fltk_args ? !fltk_args->silent : 1;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? !forms_args->silent : 1;
+  int error = 0;
 
   default_value = oyOptions_FindString( collected_elements, "xf:select1", 0 );
   o = oyOptions_Find( collected_elements, "xf:select1" );
@@ -137,7 +191,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
     OyFl_Box_c * box = new OyFl_Box_c( 2*H_SPACING,0,w-BOX_WIDTH-4*H_SPACING,BUTTON_HEIGHT);
     box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
 
-    Fl_Choice * c = new Fl_Choice( w-BOX_WIDTH-H_SPACING,0,BOX_WIDTH,BUTTON_HEIGHT );
+    formsFltkChoice * c = new formsFltkChoice( w-BOX_WIDTH-H_SPACING,0,BOX_WIDTH,BUTTON_HEIGHT );
 
   search = oyOptions_FindString( collected_elements, "search", 0 );
 
@@ -150,6 +204,19 @@ int        oyXML2XFORMsFLTKSelect1Handler (
                                            oyOBJECT_NONE ) &&
        print)
       box->copy_label( o->value->string );
+
+    if(!opts && oyFilterRegistrationMatch( o->registration,"xf:help",
+                                           oyOBJECT_NONE ) &&
+       print)
+    {
+      oyFormsCallback_s * cb = 0;
+      error = oyOptions_FindData( (oyOptions_s*)forms_args->data_,
+                                  OYFORMS_FLTK_HELP_VIEW_REG,
+                                  (oyPointer*)&cb, 0, 0);
+      if(cb)
+        c->hint_callback = cb;
+      c->user_data( o->value->string );
+    }
 
     if(opts && oyFilterRegistrationMatch( o->registration,"xf:choices",
                                           oyOBJECT_NONE ))
@@ -219,7 +286,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
             cb_data->value = strdup(value);
             cb_data->key = strdup(key);
             cb_data->callback_data = (oyOptions_s**)
-                                                 &fltk_args->xforms_data_model_;
+                                                &forms_args->xforms_data_model_;
             for(k = 0; k <= len; ++k)
             {
               if(label[k] == '/')
@@ -264,8 +331,8 @@ int        oyXML2XFORMsFLTKSelect1Handler (
     t = oyStrstr_( default_key, ".xf:select1" );
     t[0] = 0;
 
-    if(fltk_args)
-      oyOptions_SetFromText( (oyOptions_s**)&fltk_args->xforms_data_model_,
+    if(forms_args)
+      oyOptions_SetFromText( (oyOptions_s**)&forms_args->xforms_data_model_,
                              key, default_value, OY_CREATE_NEW );
 
     oyOption_Release( &o );
@@ -281,6 +348,12 @@ int        oyXML2XFORMsFLTKSelect1Handler (
   return 0;
 }
 
+const char * oy_ui_fltk_handler_xf_select1_element_searches_[] = {
+ "xf:choices/xf:item/xf:label.xf:value",
+ "xf:help",
+ 0
+};
+
 oyUiHandler_s oy_ui_fltk_handler_xf_select1_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    (char*)"oyFORMS",                   /**< dialect */
@@ -288,7 +361,7 @@ oyUiHandler_s oy_ui_fltk_handler_xf_select1_ =
    (char*)"xf:select1",                /**< element_type; Wanted XML element. */
    (oyUiHandler_f)oyXML2XFORMsFLTKSelect1Handler, /**<oyUiHandler_f handler*/
    (char*)"dummy",                     /**< handler_type */
-   (char*)"xf:choices/xf:item/xf:label.xf:value" /**< element_search */
+   (char**)oy_ui_fltk_handler_xf_select1_element_searches_ /**< element_searches */
   };
 
 /** @internal
@@ -313,8 +386,8 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
 {
   const char * tmp = 0;
   int size = 0;
-  oyFormsArgs_s * fltk_args = (oyFormsArgs_s *)user_data;
-  int print = fltk_args ? !fltk_args->silent : 1;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? !forms_args->silent : 1;
   OyFl_Box_c * box = 0;
 
   if(!tmp)
@@ -373,8 +446,8 @@ int        oyXML2XFORMsFLTKHtmlHeadline4Handler (
 {
   const char * tmp = 0;
   int size = 0;
-  oyFormsArgs_s * fltk_args = (oyFormsArgs_s *)user_data;
-  int print = fltk_args ? !fltk_args->silent : 1;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? !forms_args->silent : 1;
   OyFl_Box_c * box = 0;
 
   if(!tmp)
@@ -408,6 +481,8 @@ int        oyXML2XFORMsFLTKHtmlHeadline4Handler (
   return 0;
 }
 
+const char * oy_ui_fltk_handler_html_headline4_element_searches_[] = {"h4",0};
+
 oyUiHandler_s oy_ui_fltk_handler_html_headline4_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    (char*)"oyFORMS",                   /**< dialect */
@@ -415,9 +490,10 @@ oyUiHandler_s oy_ui_fltk_handler_html_headline4_ =
    (char*)"h4",                        /**< element_type; Wanted XML elements.*/
    (oyUiHandler_f)oyXML2XFORMsFLTKHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
    (char*)"dummy",                     /**< handler_type */
-   (char*)"h4"                         /**< element_search */
+   (char**)oy_ui_fltk_handler_html_headline4_element_searches_ /**< element_searches */
   };
 
+const char * oy_ui_fltk_handler_html_headline_element_searches_[] = {"h3",0};
 oyUiHandler_s oy_ui_fltk_handler_html_headline_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    (char*)"oyFORMS",                   /**< dialect */
@@ -425,7 +501,7 @@ oyUiHandler_s oy_ui_fltk_handler_html_headline_ =
    (char*)"h3",                        /**< element_type; Wanted XML elements.*/
    (oyUiHandler_f)oyXML2XFORMsFLTKHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
    (char*)"dummy",                     /**< handler_type */
-   (char*)"h3"                         /**< element_search */
+   (char**)oy_ui_fltk_handler_html_headline_element_searches_ /**< element_searches */
   };
 
 oyUiHandler_s * oy_ui_fltk_handlers[4] = {
