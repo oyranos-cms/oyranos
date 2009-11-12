@@ -70,9 +70,9 @@ struct oyFormsCallback_s {
   oyPointer        data;
 };
 #define OYFORMS_FLTK_HELP_VIEW_REG  OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD \
-                                  OY_SLASH "forms/fltk/help_view.Fl_Text_Buffer"
+                               OY_SLASH "forms/fltk/help_view.oyFormsCallback_s"
 typedef void (*oyFormsFltkHelpViewCallback_f) (
-                                       oyFormsArgs_s     * forms_args,
+                                       oyPointer           ptr,
                                        const char        * help_text );
 
 #ifdef __cplusplus
