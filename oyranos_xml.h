@@ -74,15 +74,23 @@ int         oyReadXMLPolicy_   (oyGROUP_e           group,
 char *       oyXMLgetElement_        ( const char        * xml,
                                        const char        * xpath,
                                        const char        * key );
-void               oyParseXMLNode_   ( xmlDocPtr           doc,
+
+
+void               oyParseXMLDoc_    ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
-                                       oyOptions_s       * wid_data,
                                        oyUiHandler_s    ** ui_handlers,
                                        oyPointer           ui_handlers_context);
 const char *       oyXFORMsModelGetXPathValue_
                                      ( xmlDocPtr           doc,
                                        const char        * reference );
-char *             oyXML2NodeName_   ( xmlNodePtr          cur );
+
+const char *       oyXFORMsModelGetXPathValue
+                                     ( xmlNodePtr          cur,
+                                       const char        * attr_name,
+                                       const char       ** path );
+int                oyXMLNodeNameIs   ( xmlNodePtr          cur,
+                                       const char        * node_name );
+const char *       oyXML2NodeValue   ( xmlNodePtr          cur );
 
 
 #ifdef __cplusplus
