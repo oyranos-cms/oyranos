@@ -103,23 +103,24 @@ class formsFltkChoice : public Fl_Choice
     switch (event)
     {
       case FL_ENTER:
-           printf("Enter\n");
            if(hint_callback)
            {
-             if(hint_callback)
-             {
-               oyFormsFltkHelpViewCallback_f userCallback = 0;
-               userCallback =(oyFormsFltkHelpViewCallback_f)
+             oyFormsFltkHelpViewCallback_f userCallback = 0;
+             userCallback =(oyFormsFltkHelpViewCallback_f)
                                                         hint_callback->callback;
-               userCallback( (oyFormsArgs_s*)hint_callback->data,
-                             (const char*)user_data() );
-             }
+             userCallback( hint_callback->data, (const char*)user_data() );
            }
            redraw();
            break;
 
       case FL_LEAVE:
-           printf("Leave\n");
+           if(hint_callback)
+           {
+             oyFormsFltkHelpViewCallback_f userCallback = 0;
+             userCallback =(oyFormsFltkHelpViewCallback_f)
+                                                        hint_callback->callback;
+             userCallback( hint_callback->data, 0 );
+           }
            redraw();
            break;
     }
@@ -134,42 +135,32 @@ class formsFltkChoice : public Fl_Choice
  *  This function is a simple demonstration.
  *
  *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  parsed and requested elements
+ *  @param[in]     collected_elements  unused
  *  @param[in]     user_data           toolkit context
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/08/29 (Oyranos: 0.1.10)
- *  @date    2009/10/11
+ *  @date    2009/11/12
  */
 int        oyXML2XFORMsFLTKSelect1Handler (
                                        xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
                                        oyPointer           user_data )
 {
-  oyOption_s * o  = 0, * o2, *o3;
-  int n = oyOptions_Count( collected_elements ),
-      i,j,j_n,k,k_n,
+  int k,
       is_default, default_pos = -1,
       choices_n = 0;
-  oyOptions_s * opts = 0, * opts2;
   const char * default_value = 0,
              * tmp,
              * label,
              * value,
-             * search;
-  char * default_key = 0, * key = 0, * t = 0;
-  char * choices = 0;
+             * xpath = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
   int print = forms_args ? !forms_args->silent : 1;
   int error = 0;
 
-  default_value = oyOptions_FindString( collected_elements, "xf:select1", 0 );
-  o = oyOptions_Find( collected_elements, "xf:select1" );
-  key = oyStringCopy_( o->registration, oyAllocateFunc_ );
-  t = oyStrrchr_( key, '/' );
-  t = oyStrchr_( t, '.' );
-  t[0] = 0;
+  xmlNodePtr select1, choices, items;
 
   if(oy_debug && default_value && print)
     printf( "found default: \"%s\"\n", default_value );
@@ -193,129 +184,98 @@ int        oyXML2XFORMsFLTKSelect1Handler (
 
     formsFltkChoice * c = new formsFltkChoice( w-BOX_WIDTH-H_SPACING,0,BOX_WIDTH,BUTTON_HEIGHT );
 
-  search = oyOptions_FindString( collected_elements, "search", 0 );
-
-  for(i = 0; i < n; ++i)
+  if(cur)
   {
-    o = oyOptions_Get( collected_elements, i );
-    opts = (oyOptions_s*) oyOption_StructGet( o, oyOBJECT_OPTIONS_S );
-
-    if(!opts && oyFilterRegistrationMatch( o->registration,"xf:label",
-                                           oyOBJECT_NONE ) &&
-       print)
-      box->copy_label( o->value->string );
-
-    if(!opts && oyFilterRegistrationMatch( o->registration,"xf:help",
-                                           oyOBJECT_NONE ) &&
-       print)
+    if(oyXMLNodeNameIs(cur, "xf:select1"))
     {
-      oyFormsCallback_s * cb = 0;
-      error = oyOptions_FindData( (oyOptions_s*)forms_args->data_,
-                                  OYFORMS_FLTK_HELP_VIEW_REG,
-                                  (oyPointer*)&cb, 0, 0);
-      if(cb)
-        c->hint_callback = cb;
-      c->user_data( o->value->string );
+      select1 = cur->children;
+      default_value = oyXFORMsModelGetXPathValue( cur, "ref", &xpath );
     }
+    else
+      select1 = 0;
 
-    if(opts && oyFilterRegistrationMatch( o->registration,"xf:choices",
-                                          oyOBJECT_NONE ))
+    while(select1)
     {
-      j_n = oyOptions_Count( opts);
-      for(j = 0; j < j_n; ++j)
+      if(oyXMLNodeNameIs( select1, "xf:label") && print)
+          box->copy_label( oyXML2NodeValue(select1) );
+      else
+      if(oyXMLNodeNameIs( select1, "xf:help") && print)
       {
-        o2 = oyOptions_Get( opts, j );
-        opts2 = (oyOptions_s*) oyOption_StructGet( o2, oyOBJECT_OPTIONS_S );
+          oyFormsCallback_s * cb = 0;
+          error = oyOptions_FindData( (oyOptions_s*)forms_args->data_,
+                                      OYFORMS_FLTK_HELP_VIEW_REG,
+                                      (oyPointer*)&cb, 0, 0);
+          if(cb)
+            c->hint_callback = cb;
+          c->user_data( (void*)oyXML2NodeValue(select1) );
+      }
+      else
+      {
+        if(oyXMLNodeNameIs(select1, "xf:choices"))
+          choices = select1->children;
+        else
+          choices = 0;
+      }
+      while(choices)
+      {
+        label = tmp = value = 0;
+        is_default = 0;
 
-        if(!opts2 && oyFilterRegistrationMatch(o2->registration,"xf:label",
-                                               oyOBJECT_NONE )
-           && print)
-          box->copy_label( o2->value->string );
-
-        if(opts2 && oyFilterRegistrationMatch( o2->registration,"xf:item",
-                                               oyOBJECT_NONE ))
+        if(oyXMLNodeNameIs( choices, "xf:item"))
+          items = choices->children;
+        else
+          items = 0;
+        while(items)
         {
-          label = tmp = value = 0;
-          is_default = 0;
+          if(oyXMLNodeNameIs( items, "xf:label") && print)
+            label = oyXML2NodeValue( items );
+          if(oyXMLNodeNameIs( items, "xf:value") && print)
+            value = oyXML2NodeValue( items );
 
-          if(oy_debug && print)
-          {
-            k_n = oyOptions_Count( opts2);
-            for(k = 0; k < k_n; ++k)
+          items = items->next;
+        }
+        if(value || label)
+        {
+            /* detect default */
+            if(value && default_value &&
+               oyStrcmp_(default_value,value) == 0)
             {
-              o3 = oyOptions_Get( opts2, k );
-              if(oy_debug && print)
-                printf( "    found option: 0x%x  \"%s\" %s\n",
-                  (int)o3, oyOption_GetText(o3, oyNAME_NICK),
-                  oyStruct_TypeToText((oyStruct_s*)o3) );
-
-              oyOption_Release( &o3 );
+              is_default = 1;
+              default_pos = choices_n;
             }
-          }
 
-          /* collect the understood elements */
-          tmp = oyOptions_FindString( opts2, "xf:label", 0 );
-          if(tmp)
-            label = tmp;
-          tmp = oyOptions_FindString( opts2, "xf:value", 0 );
-          if(tmp)
-            value = tmp;
+            if(!value) value = label;
+            if(!label) label = value;
 
-          if(!value && !label)
-            continue;
-
-          /* detect default */
-          if(value && default_value &&
-             oyStrcmp_(default_value,value) == 0)
-          {
-            is_default = 1;
-            default_pos = choices_n;
-          }
-
-          if(!value) value = label;
-          if(!label) label = value;
-
-          /* append the choice
-           * store the label and value in user_data() for evaluating results */
-          if(print)
-          {
-            fltk_cb_data *cb_data = (fltk_cb_data*)malloc(sizeof(fltk_cb_data));
-            int len = strlen(label), pos = 0;
-            memset(cb_data, 0, sizeof(fltk_cb_data) );
-            cb_data->label = (char*) malloc(strlen(label)*2);
-            cb_data->value = strdup(value);
-            cb_data->key = strdup(key);
-            cb_data->callback_data = (oyOptions_s**)
+            /* append the choice
+             * store the label and value in user_data() for evaluating results*/
+            if(print)
+            {
+              fltk_cb_data *cb_data=(fltk_cb_data*)malloc(sizeof(fltk_cb_data));
+              int len = strlen(label), pos = 0;
+              memset(cb_data, 0, sizeof(fltk_cb_data) );
+              cb_data->label = (char*) malloc(strlen(label)*2);
+              cb_data->value = strdup(value);
+              cb_data->key = xpath ? strdup(xpath):0;
+              cb_data->callback_data = (oyOptions_s**)
                                                 &forms_args->xforms_data_model_;
-            for(k = 0; k <= len; ++k)
-            {
-              if(label[k] == '/')
-                cb_data->label[pos++] = '\\';
-              cb_data->label[pos++] = label[k];
-            }
-            c->add( (const char *) cb_data->label, 0,
+              for(k = 0; k <= len; ++k)
+              {
+                if(label[k] == '/')
+                  cb_data->label[pos++] = '\\';
+                cb_data->label[pos++] = label[k];
+              }
+              c->add( (const char *) cb_data->label, 0,
                     fltkCallback,
                     (void*)cb_data, 0 );
-          }
+            }
 
-          ++choices_n;
+            ++choices_n;
         }
-        else if(oy_debug && print)
-          printf( "  found option: 0x%x  \"%s\" %s\n",
-                (int)o2, oyOption_GetText(o2, oyNAME_NICK),
-                oyStruct_TypeToText((oyStruct_s*)o2) );
-
-        oyOptions_Release( &opts2 );
-        oyOption_Release( &o2 );
+        choices = choices->next;
       }
+      select1 = select1->next;
     }
-    else if(oy_debug && print)
-      printf( "found option: 0x%x  \"%s\" %s\n",
-              (int)o, oyOption_GetText(o, oyNAME_NICK),
-              oyStruct_TypeToText((oyStruct_s*)o) );
-
-    oyOptions_Release( &opts );
-    oyOption_Release( &o );
   }
 
   pack->end();
@@ -324,33 +284,17 @@ int        oyXML2XFORMsFLTKSelect1Handler (
     c->value( default_pos );
 
   /* collect results */
-  o = oyOptions_Find( collected_elements, "xf:select1" );
-  if(o)
-  {
-    STRING_ADD( default_key, o->registration );
-    t = oyStrstr_( default_key, ".xf:select1" );
-    t[0] = 0;
+  if(xpath && forms_args)
+    oyOptions_SetFromText( (oyOptions_s**)&forms_args->xforms_data_model_,
+                           xpath+1, default_value, OY_CREATE_NEW );
 
-    if(forms_args)
-      oyOptions_SetFromText( (oyOptions_s**)&forms_args->xforms_data_model_,
-                             key, default_value, OY_CREATE_NEW );
-
-    oyOption_Release( &o );
-  }
-
-  if(choices)
-    oyFree_m_( choices );
-  oyFree_m_( default_key );
-  if(key)
-    oyFree_m_( key );
-
-  /*printf("collected:\n%s", oyOptions_GetText( collected_elements, oyNAME_NICK));*/
   return 0;
 }
 
 const char * oy_ui_fltk_handler_xf_select1_element_searches_[] = {
- "xf:choices/xf:item/xf:label.xf:value",
- "xf:help",
+ "xf:select1/xf:choices/xf:item/xf:label.xf:value",
+ "xf:select1/xf:label",
+ "xf:select1/xf:help",
  0
 };
 
@@ -358,7 +302,6 @@ oyUiHandler_s oy_ui_fltk_handler_xf_select1_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    (char*)"oyFORMS",                   /**< dialect */
    (char*)"libxml2",                   /**< parser_type */
-   (char*)"xf:select1",                /**< element_type; Wanted XML element. */
    (oyUiHandler_f)oyXML2XFORMsFLTKSelect1Handler, /**<oyUiHandler_f handler*/
    (char*)"dummy",                     /**< handler_type */
    (char**)oy_ui_fltk_handler_xf_select1_element_searches_ /**< element_searches */
@@ -371,7 +314,7 @@ oyUiHandler_s oy_ui_fltk_handler_xf_select1_ =
  *  This function is a simple demonstration.
  *
  *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  parsed and requested elements
+ *  @param[in]     collected_elements  unused
  *  @param[in]     user_data           toolkit context
  *  @return                            error
  *
@@ -392,7 +335,8 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
 
   if(!tmp)
   {
-    tmp = oyOptions_FindString( collected_elements, "h3", 0 );
+    if(oyXMLNodeNameIs( cur, "h3") && print)
+      tmp = oyXML2NodeValue(cur);
     if(tmp)
       size = 3;
   }
@@ -431,7 +375,7 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
  *  This function is a simple demonstration.
  *
  *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  parsed and requested elements
+ *  @param[in]     collected_elements  unused
  *  @param[in]     user_data           toolkit context
  *  @return                            error
  *
@@ -452,7 +396,8 @@ int        oyXML2XFORMsFLTKHtmlHeadline4Handler (
 
   if(!tmp)
   {
-    tmp = oyOptions_FindString( collected_elements, "h4", 0 );
+    if(oyXMLNodeNameIs( cur, "h4") && print)
+      tmp = oyXML2NodeValue(cur);
     if(tmp)
       size = 3;
   }
@@ -487,7 +432,6 @@ oyUiHandler_s oy_ui_fltk_handler_html_headline4_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    (char*)"oyFORMS",                   /**< dialect */
    (char*)"libxml2",                   /**< parser_type */
-   (char*)"h4",                        /**< element_type; Wanted XML elements.*/
    (oyUiHandler_f)oyXML2XFORMsFLTKHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
    (char*)"dummy",                     /**< handler_type */
    (char**)oy_ui_fltk_handler_html_headline4_element_searches_ /**< element_searches */
@@ -498,7 +442,6 @@ oyUiHandler_s oy_ui_fltk_handler_html_headline_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    (char*)"oyFORMS",                   /**< dialect */
    (char*)"libxml2",                   /**< parser_type */
-   (char*)"h3",                        /**< element_type; Wanted XML elements.*/
    (oyUiHandler_f)oyXML2XFORMsFLTKHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
    (char*)"dummy",                     /**< handler_type */
    (char**)oy_ui_fltk_handler_html_headline_element_searches_ /**< element_searches */
