@@ -594,6 +594,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CONFIGS_S: text = "oyConfigs_s"; break;
     case oyOBJECT_UI_HANDLER_S: text = "oyUiHandler_s"; break;
     case oyOBJECT_FORMS_ARGS_S: text = "oyFormsArgs_s"; break;
+    case oyOBJECT_FORMS_CALLBACK_S: text = "oyFormsCallback_s"; break;
     case oyOBJECT_OBSERVER_S: text = "oyObserver_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
   }

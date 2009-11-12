@@ -19,6 +19,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Help_View.H>
 
 using namespace oyranos;
 using namespace oyranos::forms;
@@ -56,16 +57,20 @@ void callback_done( Fl_Widget * w, void * )
   w->window()->hide();
 }
 
-void callback_help_view( oyFormsArgs_s * forms_args, const char * help_text )
+void callback_help_view( oyPointer * ptr, const char * help_text )
 {
-  Fl_Text_Buffer * buffer = 0;
   int error = 0;
-  oyPointer ptr = 0;
 
-  error = oyFormsArgs_ResourceGet( forms_args, OYFORMS_FLTK_HELP_VIEW_REG, &ptr );
+#if HELP_VIEW_DISPLAY
+  Fl_Text_Buffer * buffer = 0;
   buffer = (Fl_Text_Buffer*)ptr;
   if(buffer)
-    buffer->text( help_text );
+    buffer->text( help_text?help_text:"" );
+#else
+  Fl_Help_View * help_view = (Fl_Help_View*)ptr;
+  if(help_view)
+    help_view->value(help_text);
+#endif
   else
     error = 1;
 }
@@ -295,15 +300,25 @@ int main (int argc, char ** argv)
     printf("%s\n", text);
 
   Fl_Double_Window * w = new Fl_Double_Window(400,475,"XFORMS in FLTK");
-    oyFormsCallback_s callback = {0,0,0,0,(void(*)())callback_help_view,0};
+    oyFormsCallback_s callback = {oyOBJECT_FORMS_CALLBACK_S, 0,0,0,
+                                  (void(*)())callback_help_view,0};
+#if HELP_VIEW_DISPLAY
     Fl_Text_Display * help_view = new Fl_Text_Display( 0,365,400,75 );
+#else
+    Fl_Help_View * help_view = new Fl_Help_View( 0,365,400,75 );
+#endif
     help_view->box(FL_ENGRAVED_BOX);
     help_view->color(FL_BACKGROUND_COLOR);
     help_view->selection_color(FL_DARK1);
+#if HELP_VIEW_DISPLAY
       Fl_Text_Buffer * buffer = new Fl_Text_Buffer(0);
       buffer->append( _("Hints") );
     help_view->buffer( buffer );
     callback.data = buffer;
+#else
+    help_view->value("");
+    callback.data = help_view;
+#endif
     oyFormsArgs_ResourceSet( oy_forms_options, OYFORMS_FLTK_HELP_VIEW_REG,
                              (oyPointer)&callback);
 
@@ -327,7 +342,7 @@ int main (int argc, char ** argv)
   if(output_model_file)
     oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
   else
-    printf( "%s\n", result_xml );
+    printf( "%s\n", result_xml?result_xml:"---" );
   oyFormsArgs_Release( &oy_forms_options );
 
   if(output_xml_file)
