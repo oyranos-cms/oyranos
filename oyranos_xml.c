@@ -21,6 +21,7 @@
 #include <unistd.h>
 
 #include <libxml/parser.h>
+#include <libxml/xmlmemory.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 
@@ -298,6 +299,9 @@ char*        oyXMLgetElement_        ( const char        * xml,
     }
     if(text) break;
   }
+
+  if(xpaths && xpaths_n)
+    oyStringListRelease_( &xpaths, xpaths_n, oyDeAllocateFunc_ );
 
   if(!xpath)
   {
@@ -722,7 +726,7 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
 
   if(doc && cur)
   {
-    oyParseXMLNode_( doc, cur, 0, ui_handlers, user_data );
+    oyParseXMLDoc_( doc, cur, ui_handlers, user_data );
     xmlFreeDoc( doc );
   }
   else
@@ -857,7 +861,7 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
 
 
 /** @internal
- *  Function oyXML2NodeName_
+ *  Function oyXML2NodeName
  *  @brief   join namespace and node name
  *
  *  @param[in]     pattern             libxml2 node
@@ -867,7 +871,7 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
  *  @since   2009/08/28 (Oyranos: 0.1.10)
  *  @date    2009/08/28
  */
-char *             oyXML2NodeName_   ( xmlNodePtr          cur )
+char *             oyXML2NodeName    ( xmlNodePtr          cur )
 {
   char * name = 0;
   const xmlChar * prefix = cur->ns && cur->ns->prefix ? cur->ns->prefix : 0;
@@ -880,181 +884,312 @@ char *             oyXML2NodeName_   ( xmlNodePtr          cur )
   return name;
 }
 
+/** Function oyXMLNodeNameIs
+ *  @brief   string compare with a joined namespace and node name
+ *
+ *  @return                            boolean
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/12 (Oyranos: 0.1.10)
+ *  @date    2009/11/12
+ */
+int                oyXMLNodeNameIs   ( xmlNodePtr          cur,
+                                       const char        * node_name )
+{
+  int found = 0;
+  char * name = 0;
+
+  if(cur && cur->type == XML_ELEMENT_NODE)
+    name = oyXML2NodeName( cur );
+
+  if(name && node_name &&
+     oyStrcmp_(name, node_name) == 0)
+    found = 1;
+
+  if(name)
+    oyFree_m_( name );
+
+  return found;
+}
+
+/** @internal
+ *  Function oyXML2PathName_
+ *  @brief   tell about the nodes position in a path style
+ *
+ *  @param[in]     cur                 libxml2 node
+ *  @return                            level only path + key
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/09 (Oyranos: 0.1.10)
+ *  @date    2009/11/09
+ */
+char *             oyXML2PathName_   ( xmlNodePtr          cur )
+{
+  char * path = 0;
+  char * t = 0,
+       * t2 = 0;
+  int len = 0;
+
+  path = (char*) xmlGetNodePath( cur );
+  while((t = oyStrchr_( path, '[' )) != 0)
+  {
+    t2 = oyStrchr_( path, ']' );
+    len = t2 + 1 - t;
+    memmove( t, t2+1, oyStrlen_(t2+1) );
+    path[oyStrlen_(path)-len] = 0;
+  };
+  return path;
+}
+
+
+/** @internal
+ *  Function oyParseXMLSearchesResolve_
+ *  @brief   make path list from a path expression
+ *
+ *  The expression can contain levels and point '.' separated alternives at each
+ *  level. The whole tree of combinations is returned.
+ *
+ *  @param[in]     search              the expression
+ *  @param[out]    count               the number of found paths
+ *  @return                            the path string list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/10 (Oyranos: 0.1.10)
+ *  @date    2009/11/10
+ */
+char **            oyParseXMLSearchesResolve_(
+                                       const char        * search,
+                                       int               * count )
+{
+  int n = 0;
+  char ** full_keys = 0;
+  int levels_n = 0;
+  char ** levels = oyStringSplit_( search, '/', &levels_n, oyAllocateFunc_);
+  int i,j,k;
+
+  for(i = 0; i < levels_n; ++i)
+  {
+    int alt_n = 0; /* alternatives */
+    char ** alt = oyStringSplit_( levels[i], '.', &alt_n, oyAllocateFunc_ );
+    int previous = n;
+
+    for(j = 0; j < alt_n; ++j)
+    {
+      if(n == 0)
+        oyStringListAdd_( &full_keys, &n, (const char**)alt, alt_n,
+                          oyAllocateFunc_, oyDeAllocateFunc_ );
+      else
+      {
+        oyStringListAdd_( &full_keys, &n, (const char**)full_keys, previous,
+                          oyAllocateFunc_, oyDeAllocateFunc_ );
+        for(k = 0; k < n; ++k)
+        {
+          if(j == 0)
+          {
+            STRING_ADD( full_keys[k*(n+j)], "/" );
+            STRING_ADD( full_keys[k*(n+j)], alt[j] );
+          }
+        }
+      }
+    }
+  }
+
+  if(count)
+    *count = n;
+
+  return full_keys;
+}
+
 void               oyParseXMLNode_   ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
-                                       oyOptions_s       * wid_data,
+                                       char             ** levels,
+                                       int                 levels_n,
+                                       int                 level,
+                                       oyOptions_s      ** wid_data,
                                        oyUiHandler_s    ** ui_handlers,
                                        oyPointer           ui_handlers_context )
 {
-  xmlChar *val = 0;
+  const char *val = 0;
   xmlAttrPtr attr = 0;
+  char * search = 0, ** searches = 0;
+  int searches_n = 0;
+
+  searches = oyStringSplit_( levels[level], '.', &searches_n,oyAllocateFunc_);
 
   while(cur != NULL)
   {
-    oyOptions_s * old_wid_data = 0;
-    int collect = 0;
-    char * name = 0;
-    char * p_name = 0;
-    const char * search = 0;
-    char * tmp = 0;
-    int pos, len, error = 0;
+    char * name = 0, * p_name = 0, * tmp = 0;
+    int i, error = 0;
 
     if(cur->parent->type == XML_ELEMENT_NODE)
-      p_name = oyXML2NodeName_(cur->parent);
+      p_name = oyXML2NodeName(cur->parent);
     else
       STRING_ADD( p_name, "root" );
 
     if(cur->type == XML_ELEMENT_NODE)
     {
-      name = oyXML2NodeName_(cur);
+      name = oyXML2NodeName(cur);
       if(oy_debug)
-        printf(" name: (%s)->%s\n", p_name, name);
+        printf(" name: %s\n", name);
 
-      pos = 0;
-      while(ui_handlers[pos])
+    }
+
+    for( i = 0; i < searches_n; ++i )
+    {
+      search = searches[i];
+      if(oyXMLNodeNameIs( cur, search ))
       {
-        int pos2 = 0;
-
-        while(ui_handlers[pos]->element_searches[pos2])
+        const char * xpath = 0;
+        const char * v = oyXFORMsModelGetXPathValue( cur, "ref", &xpath );
+        if(v && xpath)
         {
-          STRING_ADD( tmp, ui_handlers[pos]->element_searches[pos2] );
-          if(!tmp)
-          {
-            ++pos;
-            continue;
-          }
-
-          len = (int)(oyStrrchr_(tmp, '/') - tmp);
-          if(oyStrchr_(tmp, '/'))
-            tmp[len] = 0;
- 
-          if(oyStrstr_( ui_handlers[pos]->element_type, name ) != 0 ||
-             (oyStrstr_( tmp, name ) != 0 && wid_data))
-          {
-            old_wid_data = wid_data;
-            wid_data = 0;
-            search = ui_handlers[pos]->element_searches[pos2];
-            /** usually dont search for the current level, except for
-             *  element_searchs and element_type contain the same search term */
-            if(!oyStrstr_(ui_handlers[pos]->element_type, name ) &&
-               oyStrstr_( search, name ))
-              search = oyStrstr_( search, name ) + oyStrlen_(name) + 1;
-
-            error = oyOptions_SetFromText( &wid_data, "////search",
-                                           search, OY_CREATE_NEW );
-            if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
-            collect = 1;
-          }
-
-          oyFree_m_( tmp )
-          ++pos2;
-        }
-
-        ++pos;
-      }
-
-      attr = cur->properties;
-      while(attr && attr->name)
-      {
-        if(oy_debug)
-        {
-          printf(" attr: %s=", attr->name );
-          if(attr->children && attr->children->content)
-            printf("%s\n", attr->children->content);
-          else
-            printf("\n");
-        }
-
-        if( strcmp((char*)attr->name,"ref") == 0 &&
-            attr->children->content )
-        {
-          const char * v;
-
-          v = oyXFORMsModelGetXPathValue_( doc, (char*)attr->children->content);
-          if(v && oy_debug)
-            printf( "Found: %s=\"%s\"\n", attr->children->content, v );
+            if(oy_debug)
+              printf( "Found: %s=\"%s\"\n", attr->children->content, v );
 
 
-          if(wid_data && oyOptions_FindString(wid_data, "search", 0))
-          {
-            STRING_ADD( tmp, (char*)attr->children->content );
+            STRING_ADD( tmp, xpath+1 );
             STRING_ADD( tmp, "." );
             STRING_ADD( tmp, "attr:ref" );
             STRING_ADD( tmp, "." );
             STRING_ADD( tmp, name );
-            error = oyOptions_SetFromText( &wid_data, &tmp[1], v,
+            error = oyOptions_SetFromText( wid_data, &tmp[1], v,
                                            OY_CREATE_NEW );
+            if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
+            oyFree_m_( tmp )
+        }
+
+        val = oyXML2NodeValue( cur );
+        if(val)
+        {
+            STRING_ADD( tmp, "////" );
+            STRING_ADD( tmp, name );
+            error = oyOptions_SetFromText( wid_data, tmp, (char*)val,
+                                           OY_CREATE_NEW);
+            if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
+            oyFree_m_( tmp )
+        }
+
+        if((level + 1) < levels_n)
+        {
+          oyOptions_s * new_wid_data = 0;
+
+          oyParseXMLNode_( doc, cur->xmlChildrenNode,
+                           levels, levels_n, level+1,
+                           &new_wid_data, ui_handlers, ui_handlers_context );
+
+          if(new_wid_data)
+          {
+            STRING_ADD( tmp, "////" );
+            STRING_ADD( tmp, (name?name:p_name) );
+            error = oyOptions_MoveInStruct( wid_data, tmp,
+                                   (oyStruct_s**)&new_wid_data, OY_ADD_ALWAYS );
             if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
             oyFree_m_( tmp )
           }
         }
-
-        attr = attr->next;
       }
+    }
+    if(p_name)
+      oyFree_m_( p_name )
+
+    if(name)
+      oyFree_m_( name );
+
+    if(level)
+      cur = cur->next;
+    else
+      cur = 0;
+  }
+
+  if(searches)
+    oyStringListRelease_( &searches, searches_n, oyDeAllocateFunc_ );
+
+}
+
+void               oyParseXMLDoc_    ( xmlDocPtr           doc,
+                                       xmlNodePtr          cur,
+                                       oyUiHandler_s    ** ui_handlers,
+                                       oyPointer           ui_handlers_context )
+{
+  while(cur != NULL)
+  {
+    char * name = 0;
+    char * tmp = 0,
+         * t = 0;
+    int pos = 0;
+    oyOptions_s * wid_data = 0;
+
+    if(cur->type == XML_ELEMENT_NODE)
+    {
+      name = oyXML2NodeName(cur);
+      if(oy_debug)
+        printf(" name: %s\n", name);
+
+      /* search a entry node */
+      {
+
+        while(ui_handlers[pos])
+        {
+          int pos2 = 0;
+          STRING_ADD( tmp, ui_handlers[pos]->element_searches[pos2] );
+          t = oyStrchr_( tmp, '/' );
+          if(t)
+            t[0] = 0;
+
+          if(oyStrcmp_( tmp, name ) == 0)
+            /* render */
+            ui_handlers[pos]->handler( cur, wid_data, ui_handlers_context );
+
+          /* look at search terms */
+          while(ui_handlers[pos]->element_searches[pos2])
+          {
+            STRING_ADD( tmp, ui_handlers[pos]->element_searches[pos2] );
+            t = oyStrchr_( tmp, '/' );
+            if(t)
+              t[0] = 0;
+
+            /* the toolkit renderers parse the libxml2 structures themselfes */
+#if 0
+            /* match the entry node */
+            if(oyStrcmp_( tmp, name ) == 0)
+            {
+              int level, levels_n = 0;
+              char ** levels;
+              const char * search = 0;
+
+              search = ui_handlers[pos]->element_searches[pos2];
+              levels_n = 0;
+              levels = oyStringSplit_( search, '/', &levels_n, oyAllocateFunc_);
+              level = 0;
+
+              wid_data = 0;
+
+              if(cur->xmlChildrenNode)
+                oyParseXMLNode_( doc, cur,
+                                 levels, levels_n, level,
+                                 &wid_data, ui_handlers, ui_handlers_context );
+
+              oyOptions_Release( &wid_data );
+              oyStringListRelease_( &levels, levels_n, oyDeAllocateFunc_ );
+            }
+#endif
+
+            oyFree_m_( tmp );
+            ++pos2;
+          }
+
+          ++pos;
+        }
+      }
+
     }
 
     if(cur->xmlChildrenNode)
-      oyParseXMLNode_( doc, cur->xmlChildrenNode, wid_data,
-                       ui_handlers, ui_handlers_context );
-
-    if(cur->type == XML_TEXT_NODE && !cur->children &&
-       cur->content && cur->content[0] &&
-       cur->content[0] != '\n')
-    {
-      val = xmlNodeListGetString(doc, cur, 1);
-      if(oy_debug)
-        printf("  val: %s\n", val);
-    }
-
-    search = oyOptions_FindString(wid_data, "search", 0);
-
-    if(p_name && wid_data && val &&
-       search &&
-       oyStrstr_(search, p_name) != 0)
-    {
-      STRING_ADD( tmp, "////" );
-      STRING_ADD( tmp, p_name );
-      error = oyOptions_SetFromText( &wid_data, tmp, (char*)val, OY_CREATE_NEW);
-      if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
-      /*printf("  set: %s-%s to %x\n", tmp, val, (int)wid_data );*/
-      oyFree_m_( tmp )
-    }
-
-
-    /* clean old search context */
-    if(collect)
-    {
-      pos = 0;
-      while(ui_handlers[pos])
-      {
-        if(strcmp( name, ui_handlers[pos]->element_type ) == 0)
-        {
-          ui_handlers[pos]->handler( cur, wid_data, ui_handlers_context );
-        }
-        ++pos;
-      }
-
-
-      if(old_wid_data)
-      {
-        STRING_ADD( tmp, "////" );
-        STRING_ADD( tmp, (name?name:p_name) );
-        error = oyOptions_MoveInStruct( &old_wid_data, tmp,
-                                (oyStruct_s**)&wid_data, OY_ADD_ALWAYS );
-        if(error) printf("%s:%d error\n\n", __FILE__,__LINE__);
-        oyFree_m_( tmp )
-      }
-      else
-        oyOptions_Release( &wid_data );
-
-      wid_data = old_wid_data;
-      old_wid_data = 0;
-    }
+      oyParseXMLDoc_( doc, cur->xmlChildrenNode,
+                      ui_handlers, ui_handlers_context );
 
     if(name)
-      oyFree_m_( name )
-    if(p_name)
-      oyFree_m_( p_name )
+      oyFree_m_( name );
 
     cur = cur->next;
   }
@@ -1135,7 +1270,7 @@ const char * oyXFORMsModelGetXPathValue_
         result->nodesetval &&
         result->nodesetval->nodeTab && result->nodesetval->nodeTab[0] &&
         result->nodesetval->nodeTab[0]->children &&
-        strcmp((char*)result->nodesetval->nodeTab[0]->children->name, "text") == 0 &&
+        oyStrcmp_((char*)result->nodesetval->nodeTab[0]->children->name, "text") == 0 &&
         result->nodesetval->nodeTab[0]->children->content)
       text = (char*)result->nodesetval->nodeTab[0]->children->content;
     else
@@ -1151,4 +1286,64 @@ const char * oyXFORMsModelGetXPathValue_
   return text;
 }
 
+const char *       oyXFORMsModelGetXPathValue (
+                                       xmlNodePtr          cur,
+                                       const char        * attr_name,
+                                       const char       ** xpath )
+{
+  const char * v = 0;
+  xmlAttrPtr attr = 0;
+
+  /* search a entry node */
+  attr = cur->properties;
+  while(attr && attr->name)
+  {
+    if(oy_debug)
+    {
+      printf(" attr: %s=", attr->name );
+      if(attr->children && attr->children->content)
+        printf("%s\n", attr->children->content);
+      else
+        printf("\n");
+    }
+
+    if( oyStrcmp_((char*)attr->name, attr_name) == 0 &&
+        attr->children->content )
+    {
+      v = oyXFORMsModelGetXPathValue_( cur->doc,(char*)attr->children->content);
+      if(v && oy_debug)
+         printf( "Found: %s=\"%s\"\n", attr->children->content, v );
+      if(xpath)
+        *xpath = (const char*) attr->children->content;
+    }
+
+    attr = attr->next;
+  }
+  return v;
+}
+
+const char *       oyXML2NodeValue   ( xmlNodePtr          cur )
+{
+  const char * v = 0;
+  xmlChar *val = 0;
+
+  if(cur->type == XML_ELEMENT_NODE)
+  {
+    {
+      if(cur->children && cur->children->type == XML_TEXT_NODE &&
+         cur->children->content && cur->children->content[0] &&
+         cur->children->content[0] != '\n')
+      {
+        val = xmlNodeListGetString(cur->doc, cur->children, 1);
+        if(oy_debug)
+          printf("  val: %s\n", val);
+
+        if(val)
+          v = (char*)val;
+      }
+    }
+  }
+
+  return v;
+}
 
