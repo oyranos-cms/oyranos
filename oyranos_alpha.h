@@ -170,6 +170,7 @@ typedef enum {
   oyOBJECT_CONFIGS_S,                 /**< oyConfigs_s */
   oyOBJECT_UI_HANDLER_S,              /**< oyUiHandler_s */
   oyOBJECT_FORMS_ARGS_S,              /**< oyFormsArgs_s */
+  oyOBJECT_FORMS_CALLBACK_S,          /**< oyFormsCallback_s */
   oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
@@ -3428,7 +3429,7 @@ typedef int  (*oyUiHandler_f)        ( oyPointer           cur,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/08/30 (Oyranos: 0.1.10)
- *  @date    2009/11/08
+ *  @date    2009/11/10
  */
 typedef struct {
   oyOBJECT_e           type;           /**< oyOBJECT_UI_HANDLER_S */
@@ -3439,15 +3440,15 @@ typedef struct {
   char               * dialect;        /**< currently only "oyFORMS",
                                             a subset of W3C XFORMS */
   char               * parser_type;    /**< currently only "libxml2" */
-  char               * element_type;   /**< a valid XFORMS element,
-                                            e.g. "xf:select1" */
   oyUiHandler_f        handler;        /**< The handler which obtains the parsed
                                             results and a context to construct
                                             the UI. */
   char               * handler_type;   /**< informational handler context type*/
   /** The elements to collect by the parser. Levels are separated by slash '/'.
    *  Alternatives are separated by a point '.' . The list is zero terminated.
-   *  e.g. "xf:choices/xf:item/xf:label.xf:value".
+   *  e.g. "xf:select1/xf:choices/xf:item/xf:label.xf:value" means, get all 
+   *  "xf:select1/xf:choices/xf:item/" paths and
+   *  pick there the xf:label and xf:value elements.
    */
   char              ** element_searches;
 } oyUiHandler_s;
