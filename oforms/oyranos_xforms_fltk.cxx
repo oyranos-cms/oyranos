@@ -69,7 +69,12 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
 #else
   Fl_Help_View * help_view = (Fl_Help_View*)ptr;
   if(help_view)
-    help_view->value(help_text);
+  {
+    if(help_text)
+      help_view->value(help_text);
+    else
+      help_view->value("");
+  }
 #endif
   else
     error = 1;
