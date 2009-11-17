@@ -20885,8 +20885,6 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
       if(oyStrcmp_( oyNoEmptyName_m_(oyLanguage()), lang ) == 0)
         update = 0;
 
-      if(cmm_api4->ui->oyCMMuiGet)
-        error = cmm_api4->ui->oyCMMuiGet( s->options_, &s->opts_ui_, allocateFunc_);
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
     }
 
@@ -20986,7 +20984,6 @@ oyFilterCore_s * oyFilterCore_Copy_  ( oyFilterCore_s    * filter,
     s->name_ = oyName_copy( filter->name_, s->oy_ );
     s->category_ = oyStringCopy_( filter->category_, allocateFunc_ );
     s->options_ = oyOptions_Copy( filter->options_, s->oy_ );
-    s->opts_ui_ = oyStringCopy_( filter->opts_ui_, allocateFunc_ );
     s->api4_ = filter->api4_;
   }
 

@@ -2338,7 +2338,6 @@ struct oyFilterCore_s {
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */
 
   oyOptions_s        * options_;       /**< @private local options */
-  char               * opts_ui_;       /**< @private xml ui elements for filter options*/
 
   oyCMMapi4_s        * api4_;          /**< @private oyranos library interfaces */
 };
