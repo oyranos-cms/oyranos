@@ -2316,15 +2316,11 @@ OYAPI int  OYEXPORT
  *  once.
  *
  *  The registration_ describes different basic types of filters (//xxx).
- *  - "//colour" filters contain only profiles and options. They can grab their surounding and concatenate the neighbour profiles to one profile transform for speed.
- *  - "//tonemap" filters are similiar to "//colour" except they can work in a two dimensional domain to apply to HDR content. This distinction is driven by usage. A "//tonemap" filter may contain profiles and options. But this is not required.
- *  - "//image" is a container for one oyImage_s. There is no 
- *    assumption on how the buffers are implemented.
- *  - "//imaging" can be used for lots of things. It is the most flexible one and can contain any kind of data except profiles and images.
+ *  See oyranos::oyCONNECTOR_e.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
+ *  @date    2009/11/17
  */
 struct oyFilterCore_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_S*/
