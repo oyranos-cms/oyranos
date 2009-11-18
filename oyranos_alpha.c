@@ -1518,6 +1518,165 @@ OYAPI int  OYEXPORT
 }
 
 
+/** Function oyCallback_New
+ *  @memberof oyCallback_s
+ *  @brief   allocate a new Callback object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/18 (Oyranos: 0.1.10)
+ *  @date    2009/11/18
+ */
+OYAPI oyCallback_s * OYEXPORT
+           oyCallback_New            ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CALLBACK_S;
+# define STRUCT_TYPE oyCallback_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyCallback_Copy;
+  s->release = (oyStruct_Release_f) oyCallback_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+
+  return s;
+}
+
+/** @internal
+ *  Function oyCallback_Copy_
+ *  @memberof oyCallback_s
+ *  @brief   real copy a Callback object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/18 (Oyranos: 0.1.10)
+ *  @date    2009/11/18
+ */
+oyCallback_s * oyCallback_Copy_
+                                     ( oyCallback_s      * obj,
+                                       oyObject_s          object )
+{
+  oyCallback_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyCallback_New( object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+  }
+
+  if(error)
+    oyCallback_Release( &s );
+
+  return s;
+}
+
+/** Function oyCallback_Copy
+ *  @memberof oyCallback_s
+ *  @brief   copy or reference a Callback object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/18 (Oyranos: 0.1.10)
+ *  @date    2009/11/18
+ */
+OYAPI oyCallback_s * OYEXPORT
+           oyCallback_Copy           ( oyCallback_s      * obj,
+                                       oyObject_s          object )
+{
+  oyCallback_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CALLBACK_S, return 0 )
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyCallback_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyCallback_Release
+ *  @memberof oyCallback_s
+ *  @brief   release and possibly deallocate a Callback object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/18 (Oyranos: 0.1.10)
+ *  @date    2009/11/18
+ */
+OYAPI int  OYEXPORT
+           oyCallback_Release        ( oyCallback_s     ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyCallback_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_CALLBACK_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
+
+
 /** @brief oyName_s new
  *
  *  @since Oyranos: version 0.1.8

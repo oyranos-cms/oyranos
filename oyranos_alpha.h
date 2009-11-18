@@ -342,6 +342,36 @@ int      oyStructSignalForward_      ( oyObserver_s      * observer,
                                        oyStruct_s        * signal_data );
 
 
+/** @struct  oyCallback_s
+ *  @brief   a Callback object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/18 (Oyranos: 0.1.10)
+ *  @date    2009/11/18
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CALLBACK_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  void               (*callback)();    /**< a generic callback function */
+  oyPointer            data;           /**< generic data to pass to the above
+                                            callback */
+} oyCallback_s;
+
+OYAPI oyCallback_s * OYEXPORT
+           oyCallback_New            ( oyObject_s          object );
+OYAPI oyCallback_s * OYEXPORT
+           oyCallback_Copy           ( oyCallback_s      * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+           oyCallback_Release        ( oyCallback_s     ** obj );
+
+
+
+
 /** @brief Oyranos name structure
  *  @ingroup objects_generic
  *  @extends oyStruct_s

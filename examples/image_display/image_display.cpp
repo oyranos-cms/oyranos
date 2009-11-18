@@ -422,8 +422,8 @@ public:
 Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyFilterNode_s *node);
 
 extern "C" {
-int      conversionObserve           ( oySIGNAL_e          signal_type,
-                                       oyObserver_s      * observer,
+int      conversionObserve           ( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
   int handled = 0;
