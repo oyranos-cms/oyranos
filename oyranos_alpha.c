@@ -594,7 +594,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CONFIGS_S: text = "oyConfigs_s"; break;
     case oyOBJECT_UI_HANDLER_S: text = "oyUiHandler_s"; break;
     case oyOBJECT_FORMS_ARGS_S: text = "oyFormsArgs_s"; break;
-    case oyOBJECT_FORMS_CALLBACK_S: text = "oyFormsCallback_s"; break;
+    case oyOBJECT_CALLBACK_S: text = "oyCallback_s"; break;
     case oyOBJECT_OBSERVER_S: text = "oyObserver_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
   }
@@ -915,7 +915,7 @@ OYAPI int  OYEXPORT
   oyCheckType__m( oyOBJECT_OBSERVER_S, return 0 )
 
   if(!oyToSignalBlock_m( oyObserverFlagsGet() ))
-    result = observer->signal( signal_type, observer, signal_data );
+    result = observer->signal( observer, signal_type, signal_data );
 
   return result;
 }
@@ -997,7 +997,7 @@ OYAPI int  OYEXPORT
            oyStruct_ObserverAdd      ( oyStruct_s        * model,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
-                                       oySignal_f          signalFunc )
+                                       oyObserver_Signal_f signalFunc )
 {
   oyObserver_s * s = 0,
                * obs = 0;
@@ -1087,7 +1087,7 @@ OYAPI int  OYEXPORT
 int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
                                        oyStruct_s        * obj,
                                        int                 observer,
-                                       oySignal_f          signalFunc )
+                                       oyObserver_Signal_f signalFunc )
 {
   int error = 0;
   oyObserver_s * obs = 0;
@@ -1126,7 +1126,7 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
 OYAPI int  OYEXPORT
            oyStruct_ObserverRemove   ( oyStruct_s        * model,
                                        oyStruct_s        * observer,
-                                       oySignal_f          signalFunc )
+                                       oyObserver_Signal_f signalFunc )
 {
   int error = !model || !observer;
   oyStructList_s * list = 0;
@@ -1408,7 +1408,7 @@ OYAPI int  OYEXPORT
  *  @brief   observe all list members
  *
  *  This function is useful to forward signals and fill holes in a chain.
- *  Implements oySignal_f.
+ *  Implements oyObserver_Signal_f.
  *
  *  @verbatim
     error = oyStruct_ObserverAdd( (oyStruct_s*)model, (oyStruct_s*)observer,
@@ -1419,8 +1419,8 @@ OYAPI int  OYEXPORT
  *  @since   2009/10/28 (Oyranos: 0.1.10)
  *  @date    2009/10/28
  */
-int      oyStructSignalForward_      ( oySIGNAL_e          signal_type,
-                                       oyObserver_s      * observer,
+int      oyStructSignalForward_      ( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
   int handled = 0;
@@ -2703,7 +2703,7 @@ int              oyStructList_ObserverAdd (
                                        oyStructList_s    * list,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
-                                       oySignal_f          signalFunc )
+                                       oyObserver_Signal_f signalFunc )
 {
   int error = 0;
   oyStructList_s * s = list;
@@ -10152,7 +10152,7 @@ OYAPI int  OYEXPORT
                oyOptions_ObserverAdd ( oyOptions_s       * object,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
-                                       oySignal_f          signalFunc )
+                                       oyObserver_Signal_f signalFunc )
 {
   int error = 0;
 
@@ -22337,14 +22337,14 @@ oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
  *  @memberof oyFilterNode_s
  *  @brief   observe filter options
  *
- *  Implements oySignal_f.
+ *  Implements oyObserver_Signal_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/28 (Oyranos: 0.1.10)
  *  @date    2009/10/28
  */
-int      oyFilterNodeObserve_        ( oySIGNAL_e          signal_type,
-                                       oyObserver_s      * observer,
+int      oyFilterNodeObserve_        ( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
   int handled = 0;

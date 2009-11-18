@@ -305,7 +305,7 @@ int main (int argc, char ** argv)
     printf("%s\n", text);
 
   Fl_Double_Window * w = new Fl_Double_Window(400,475,"XFORMS in FLTK");
-    oyFormsCallback_s callback = {oyOBJECT_FORMS_CALLBACK_S, 0,0,0,
+    oyFormsCallback_s callback = {oyOBJECT_CALLBACK_S, 0,0,0,
                                   (void(*)())callback_help_view,0};
 #if HELP_VIEW_DISPLAY
     Fl_Text_Display * help_view = new Fl_Text_Display( 0,365,400,75 );

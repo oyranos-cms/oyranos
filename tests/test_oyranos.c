@@ -865,8 +865,8 @@ oyTESTRESULT_e testRegistrationMatch ()
   return result;
 }
 
-int myFilterSignalHandler            ( oySIGNAL_e          signal_type,
-                                       oyObserver_s      * observer,
+int myFilterSignalHandler            ( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
   oyFilterNode_s * node = 0;

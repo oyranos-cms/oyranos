@@ -170,7 +170,7 @@ typedef enum {
   oyOBJECT_CONFIGS_S,                 /**< oyConfigs_s */
   oyOBJECT_UI_HANDLER_S,              /**< oyUiHandler_s */
   oyOBJECT_FORMS_ARGS_S,              /**< oyFormsArgs_s */
-  oyOBJECT_FORMS_CALLBACK_S,          /**< oyFormsCallback_s */
+  oyOBJECT_CALLBACK_S,                /**< oyCallback_s */
   oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
@@ -244,8 +244,9 @@ typedef enum {
 
 const char *       oySignalToString  ( oySIGNAL_e          signal_type );
 typedef  struct oyObserver_s oyObserver_s;
-typedef  int      (*oySignal_f)      ( oySIGNAL_e          signal_type,
+typedef  int      (*oyObserver_Signal_f) (
                                        oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data );
 
 
@@ -285,7 +286,7 @@ struct oyObserver_s {
   /** optional data; If no other user data is available this data will be
    *  passed with the signal. */
   oyStruct_s         * user_data;
-  oySignal_f           signal;         /**< observers signaling function */ 
+  oyObserver_Signal_f  signal;         /**< observers signaling function */ 
 };
 
 OYAPI oyObserver_s * OYEXPORT
@@ -304,11 +305,11 @@ OYAPI int  OYEXPORT
            oyStruct_ObserverAdd      ( oyStruct_s        * model,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
-                                       oySignal_f          signalFunc );
+                                       oyObserver_Signal_f signalFunc );
 OYAPI int  OYEXPORT
            oyStruct_ObserverRemove   ( oyStruct_s        * model,
                                        oyStruct_s        * observer,
-                                       oySignal_f          signalFunc );
+                                       oyObserver_Signal_f signalFunc );
 OYAPI int  OYEXPORT
            oyStruct_ObserverSignal   ( oyStruct_s        * model,
                                        oySIGNAL_e          signal_type,
@@ -336,8 +337,8 @@ OYAPI uint32_t OYEXPORT
            oySignalFlagsGet          ( void );
 OYAPI int  OYEXPORT
            oySignalFlagsSet          ( uint32_t            flags );
-int      oyStructSignalForward_      ( oySIGNAL_e          signal_type,
-                                       oyObserver_s      * observer,
+int      oyStructSignalForward_      ( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data );
 
 
@@ -623,7 +624,7 @@ int              oyStructList_ObserverAdd (
                                        oyStructList_s    * list,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
-                                       oySignal_f          signalFunc );
+                                       oyObserver_Signal_f signalFunc );
 
 
 oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
@@ -1001,7 +1002,7 @@ OYAPI int  OYEXPORT
                oyOptions_ObserverAdd ( oyOptions_s       * object,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
-                                       oySignal_f          signalFunc );
+                                       oyObserver_Signal_f signalFunc );
 
 
 /** @struct  oyRankPad
