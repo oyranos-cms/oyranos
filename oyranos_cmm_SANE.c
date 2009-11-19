@@ -442,6 +442,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
    oyOption_s *context_opt = NULL, *handle_opt = NULL, *version_opt = NULL;
+   oyConfig_s *device = NULL;
    oyRankPad *dynamic_rank_map = NULL;
    int i, num_devices, error = 0, status;
    bool call_sane_exit = false;
@@ -481,32 +482,16 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
     * Except from driver_version which has a special meaning.
     */
 
-   /*Handle "driver_version" option [IN] */
-//   /* We essentially ignore the "driver_version" option.
-//    * It is pointless, since it should already be there by Configs_FromPattern()  */
-   error = oyOptions_FindInt(options, "driver_version", 0, &driver_version);
-   if (driver_version > 0) /*driver_version is provided*/
-      version_opt = oyOptions_Find(options, "driver_version");
-   else { /*we have to call sane_init()*/
-      status = sane_init(&driver_version, NULL);
-      if (status == SANE_STATUS_GOOD) {
-         printf(PRFX "SANE v.(%d.%d.%d) init...OK\n",
-                SANE_VERSION_MAJOR(driver_version),
-                SANE_VERSION_MINOR(driver_version),
-                SANE_VERSION_BUILD(driver_version));
-         if (error == 0) { /*we've been given a driver_version==0*/
-            version_opt = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0); //TODO deallocate
-            oyOption_SetFromInt(version_opt, driver_version, 0, 0);
-         } else if (!context_opt && !handle_opt) /*no driver_version, nor other options*/
-            call_sane_exit = true; /*when list call is over*/
-            //TODO: Since driver_version is calculated anyway, why not add it to options?
-      } else {
-        message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-                "Unable to init SANE. Giving up.[%s] Options:\n%s", _DBG_ARGS_,
-                sane_strstatus(status), oyOptions_GetText(options, oyNAME_NICK));
-        return 1;
-      }
-   }
+   /* Handle "driver_version" option [IN] */
+   /* Check the first device to see if a positive driver_version is provided. */
+   /* If not, consult the input options */
+   device = oyConfigs_Get(devices, 0);
+   version_opt = oyConfig_Find(device, "driver_version");
+   if (version_opt && oyOption_GetValueInt(version_opt, 0) > 0)
+      call_sane_exit = 0;
+   else
+      check_driver_version(options, &version_opt, &call_sane_exit);
+   oyConfig_Release(&device);
 
    if (command_list) {
       /* "list" call section */
