@@ -264,6 +264,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             oyOption_SetFromInt(version_opt, driver_version, 0, 0);
          } else if (!context_opt && !handle_opt) /*no driver_version, nor other options*/
             call_sane_exit = true; /*when list call is over*/
+            //TODO: Since driver_version is calculated anyway, why not add it to options?
       } else {
         message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
                 "Unable to init SANE. Giving up.[%s] Options:\n%s", _DBG_ARGS_,
@@ -277,9 +278,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /* "list" call section */
 
       error = GetDevices(&device_list, &num_devices);
-      //FIXME #1 If a user provides *only* a device_name option (or && device_handle),
+      //FIXME #1: If a user provides *only* a device_name option (or && device_handle),
       //then there is no need to call GetDevices() above ---^
-      //FIXME #2 If a user provides a device_name that is not found
+      //FIXME #2: If a user provides a device_name that is not found
       //by sane_get_devices(), an empty devices object will be returned...
 
       for (i = 0; i < num_devices; ++i) {
@@ -296,7 +297,229 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          /*Handle "driver_version" option [OUT] */
          if (version_opt) {
             oyOption_s *tmp = oyOption_Copy(version_opt, 0);
+         //FIXME #4: Backend protocol states that driver_version goes to ::backend_core
             oyOptions_MoveIn(device->data, &tmp, -1);
+         }
+
+         /*Handle "device_name" option [OUT] */
+         error = oyOptions_SetFromText(&device->backend_core,
+                                       CMM_BASE_REG OY_SLASH "device_name", sane_name, OY_CREATE_NEW);
+
+         /*Handle "oyNAME_NAME" option */
+         if (oyOptions_Find(options, "oyNAME_NAME"))
+            error = oyOptions_SetFromText(&device->data,
+                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME", sane_model, OY_CREATE_NEW);
+
+         /*Handle "device_context" option */
+         //FIXME #3a: Backend protocol states that device_context is *always* returned
+         if (context_opt) {
+            oyBlob_s *context_blob = oyBlob_New(NULL);
+            oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
+
+            oyBlob_SetFromData(context_blob, (oyPointer) device_list[i], sizeof(SANE_Device), "sane");
+            oyOption_StructMoveIn(context_opt, (oyStruct_s **) & context_blob);
+            oyOptions_MoveIn(device->backend_core, &context_opt, -1);
+         }
+         /*Handle "device_handle" option */
+         if (handle_opt) {
+            oyCMMptr_s *handle_ptr = NULL;
+            SANE_Handle h;
+            status = sane_open(sane_name, &h);
+            if (status == SANE_STATUS_GOOD) {
+               handle_ptr = oyCMMptr_New(allocateFunc);
+               oyCMMptr_Set(handle_ptr,
+                            "SANE",
+                            "handle",
+                            (oyPointer)h,
+                            "sane_release_handle",
+                            sane_release_handle);
+               oyOptions_MoveInStruct(&(device->backend_core),
+                                      CMM_BASE_REG OY_SLASH "device_handle",
+                                      (oyStruct_s **) &handle_ptr, OY_CREATE_NEW);
+            } else
+               printf(PRFX "Unable to open sane device \"%s\": %s\n", sane_name, sane_strstatus(status));
+         }
+
+         device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
+
+         oyConfigs_MoveIn(devices, &device, -1);
+      }
+
+      //Handle errors: FIXME
+      //if(error <= 0)
+      *s = devices;
+
+      if (call_sane_exit) {
+         printf(PRFX "sane_exit()\n");
+         sane_exit();
+      }
+
+      return 0;
+   } else if (command_properties) {
+      /* "properties" call section */
+      const SANE_Device *device_context = NULL;
+      SANE_Handle device_handle;
+
+      /*Return a full list of scanner H/W &
+       * SANE driver S/W color options
+       * with the according rank map */
+
+      if (!device_name) {
+         printf(PRFX "device_name is mandatory for properties command.\n");
+         return 1;
+      }
+      device = oyConfig_New(CMM_BASE_REG, 0);
+
+      /*Handle "driver_version" option [OUT] */
+      if (version_opt)
+         //FIXME #5: "list" call uses a temporary option
+         oyOptions_MoveIn(device->backend_core, &version_opt, -1);
+
+      /*1a. Get the "device_context"*/
+      //FIXME #3b: Backend protocol states that device_context is *always* returned
+      //by list call, so it should be avaliable to properties call.
+      if (!context_opt) {
+         error = GetDevices(&device_list, &num_devices);
+         device_context = *device_list;
+         while (device_context) {
+            if (strcmp(device_name,device_context->name) == 0)
+               break;
+            device_context++;
+         }
+         if (!device_context) {
+            printf(PRFX "device_name does not match any installed device.\n");
+            return 1;
+         }
+      } else {
+         device_context = (SANE_Device*)oyOption_GetData(context_opt, NULL, allocateFunc);
+      }
+
+      /*1b. Use the "device_context"*/
+      error = DeviceInfoFromContext_(device_context, &(device->backend_core));
+
+      /*2a. Get the "device_handle"*/
+      if (!handle_opt) {
+         status = sane_open( device_name, &device_handle );
+         if (status != SANE_STATUS_GOOD) {
+            printf(PRFX "Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(status));
+            return 1;
+         }
+      } else {
+         device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt->value->oy_struct)->ptr;
+      }
+
+      /*2b. Use the "device_handle"*/
+      error = ColorInfoFromHandle(device_handle, &(device->backend_core));
+
+      /*3. Create the rank map*/
+      error = CreateRankMap_(device_handle, &dynamic_rank_map);
+      device->rank_map = oyRankMapCopy(dynamic_rank_map, device->oy_->allocateFunc_);
+      oyConfigs_MoveIn(devices, &device, -1);
+
+      free(dynamic_rank_map);
+
+      //Handle errors: FIXME
+      //if(error <= 0)
+      *s = devices;
+ 
+      //FIXME #6: Call sane exit
+      return 0;
+   } else {
+      /*wrong or no command */
+      /*TODO Message+deallocation*/
+   }
+}
+
+/** Function Configs_Modify
+ *  @brief   oyCMMapi8_s SANE scanner manipulation
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/08/21
+ *
+ *  \todo { Unimplemented }
+ */
+int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
+{
+   oyOption_s *context_opt = NULL, *handle_opt = NULL, *version_opt = NULL;
+   oyRankPad *dynamic_rank_map = NULL;
+   int i, num_devices, error = 0, status;
+   bool call_sane_exit = false;
+   const char *device_name = NULL, *command_list = NULL, *command_properties = NULL;
+   const SANE_Device **device_list = NULL;
+
+   oyAlloc_f allocateFunc = malloc;
+
+   /* "error handling" section */
+   if (!devices || !oyConfigs_Count(devices)) {
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "No devices given! Options:\n%s", _DBG_ARGS_,
+              oyOptions_GetText(options, oyNAME_NICK) );
+      return 1;
+   }
+
+   /* "help" call section */
+   if (oyOptions_FindString(options, "command", "help") || !options || !oyOptions_Count(options)) {
+    /** oyMSG_WARN should make shure our message is visible. */
+      ConfigsFromPatternUsage((oyStruct_s *) options);
+      return 0;
+   }
+
+   num_devices = oyConfigs_Count(devices);
+   command_list = oyOptions_FindString(options, "command", "list");
+   command_properties = oyOptions_FindString(options, "command", "properties");
+   device_name = oyOptions_FindString(options, "device_name", 0);
+   context_opt = oyOptions_Find(options, "device_context");
+   handle_opt = oyOptions_Find(options, "device_handle");
+
+   /* Now we get some options [IN], and we already have some devices with
+    * possibly already assigned options. Those provided through the input
+    * oyOptions_s should take presedence over ::data & ::backend_core ones.
+    * OTOH, all device_* options have a 1-1 relationship meaning if
+    * one changes, probably all other should. So the simplest [naive] approach
+    * would be to ignore all device_* options [IN] that are already in device.
+    * Except from driver_version which has a special meaning.
+    */
+
+   /*Handle "driver_version" option [IN] */
+//   /* We essentially ignore the "driver_version" option.
+//    * It is pointless, since it should already be there by Configs_FromPattern()  */
+   error = oyOptions_FindInt(options, "driver_version", 0, &driver_version);
+   if (driver_version > 0) /*driver_version is provided*/
+      version_opt = oyOptions_Find(options, "driver_version");
+   else { /*we have to call sane_init()*/
+      status = sane_init(&driver_version, NULL);
+      if (status == SANE_STATUS_GOOD) {
+         printf(PRFX "SANE v.(%d.%d.%d) init...OK\n",
+                SANE_VERSION_MAJOR(driver_version),
+                SANE_VERSION_MINOR(driver_version),
+                SANE_VERSION_BUILD(driver_version));
+         if (error == 0) { /*we've been given a driver_version==0*/
+            version_opt = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0); //TODO deallocate
+            oyOption_SetFromInt(version_opt, driver_version, 0, 0);
+         } else if (!context_opt && !handle_opt) /*no driver_version, nor other options*/
+            call_sane_exit = true; /*when list call is over*/
+            //TODO: Since driver_version is calculated anyway, why not add it to options?
+      } else {
+        message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+                "Unable to init SANE. Giving up.[%s] Options:\n%s", _DBG_ARGS_,
+                sane_strstatus(status), oyOptions_GetText(options, oyNAME_NICK));
+        return 1;
+      }
+   }
+
+   if (command_list) {
+      /* "list" call section */
+
+      for (i = 0; i < num_devices; ++i) {
+         //const char *sane_name = device_list[i]->name;
+         //const char *sane_model = device_list[i]->model;
+         /*Handle "device_name" option [IN] [IGNORED]*/
+
+         /*Handle "driver_version" option [OUT] */
+         if (version_opt) {
+            oyOption_s *tmp = oyOption_Copy(version_opt, 0);
+            oyOptions_MoveIn(device->backend_core, &tmp, -1);
          }
 
          /*Handle "device_name" option [OUT] */
@@ -421,21 +644,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /*wrong or no command */
       /*TODO Message+deallocation*/
    }
-}
-
-/** Function Configs_Modify
- *  @brief   oyCMMapi8_s SANE scanner manipulation
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/08/21
- *
- *  \todo { Unimplemented }
- */
-int            Configs_Modify    ( oyConfigs_s       * devices,
-                                       oyOptions_s       * options )
-{
-   return 1;
 }
 
 /** Function Config_Rank
@@ -737,3 +945,46 @@ int sane_release_handle(oyPointer *handle_ptr)
    return 0;
 }
 
+/** @internal
+ * @brief Decide if sane_init/exit will be called
+ *
+ * 1. Checks for driver_version in options and
+ * 2. Calls sane_init if needed
+ *
+ * @param[in]  options     The input options
+ * @param[out] version_opt_p
+ * @param[out] call_sane_exit
+ * @return 0 for success
+ *
+ */
+int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *call_sane_exit)
+{
+   int driver_version = 0;
+   oyOption_s *context_opt = oyOptions_Find(options, "device_context");
+   oyOption_s *handle_opt = oyOptions_Find(options, "device_handle");
+   int error = oyOptions_FindInt(options, "driver_version", 0, &driver_version);
+
+   if (!error && driver_version > 0) /*driver_version is provided*/
+      *version_opt_p = oyOptions_Find(options, "driver_version");
+   else { /*we have to call sane_init()*/
+      status = sane_init(&driver_version, NULL);
+      if (status == SANE_STATUS_GOOD) {
+         printf(PRFX "SANE v.(%d.%d.%d) init...OK\n",
+                SANE_VERSION_MAJOR(driver_version),
+                SANE_VERSION_MINOR(driver_version),
+                SANE_VERSION_BUILD(driver_version));
+
+         *version_opt_p = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0); //TODO deallocate
+         oyOption_SetFromInt(*version_opt_p, driver_version, 0, 0);
+         if (error && /*we've not been given a driver_version*/
+             !context_opt && !handle_opt) /*we've not been given other options*/
+            *call_sane_exit = 1; /*when we are over*/
+      } else {
+        message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+                "Unable to init SANE. Giving up.[%s] Options:\n%s", _DBG_ARGS_,
+                sane_strstatus(status), oyOptions_GetText(options, oyNAME_NICK));
+        return 1;
+      }
+   }
+   return 0;
+}
