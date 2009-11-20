@@ -96,7 +96,7 @@ class formsFltkChoice : public Fl_Choice
   public:
   formsFltkChoice(int X,int Y,int W,int H) : Fl_Choice(X,Y,W,H) 
   { hint_callback= 0; };
-  oyFormsCallback_s * hint_callback;
+  oyCallback_s * hint_callback;
   int handle(int event)
   {
     int result = Fl_Choice::handle(event);
@@ -201,7 +201,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
       else
       if(oyXMLNodeNameIs( select1, "xf:help") && print)
       {
-          oyFormsCallback_s * cb = 0;
+          oyCallback_s * cb = 0;
           error = oyOptions_FindData( (oyOptions_s*)forms_args->data_,
                                       OYFORMS_FLTK_HELP_VIEW_REG,
                                       (oyPointer*)&cb, 0, 0);
