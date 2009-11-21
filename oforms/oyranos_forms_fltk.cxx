@@ -256,7 +256,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
               memset(cb_data, 0, sizeof(fltk_cb_data) );
               cb_data->label = (char*) malloc(strlen(label)*2);
               cb_data->value = strdup(value);
-              cb_data->key = xpath ? strdup(xpath):0;
+              cb_data->key = xpath ? strdup(xpath+1):0;
               cb_data->callback_data = (oyOptions_s**)
                                                 &forms_args->xforms_data_model_;
               for(k = 0; k <= len; ++k)
@@ -266,8 +266,8 @@ int        oyXML2XFORMsFLTKSelect1Handler (
                 cb_data->label[pos++] = label[k];
               }
               c->add( (const char *) cb_data->label, 0,
-                    fltkCallback,
-                    (void*)cb_data, 0 );
+                      fltkCallback,
+                      (void*)cb_data, 0 );
             }
 
             ++choices_n;
