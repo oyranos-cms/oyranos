@@ -378,6 +378,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /*1a. Get the "device_context"*/
       //FIXME #3b: Backend protocol states that device_context is *always* returned
       //by list call, so it should be avaliable to properties call.
+      //[Unless properties is called but not list]
       if (!context_opt) {
          error = GetDevices(&device_list, &num_devices);
          device_context = *device_list;
@@ -442,10 +443,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
    oyOption_s *context_opt = NULL, *handle_opt = NULL, *version_opt = NULL;
+   oyOption_s *version_opt_dev = NULL;
    oyConfig_s *device = NULL;
    oyRankPad *dynamic_rank_map = NULL;
    int i, num_devices, error = 0, status;
-   bool call_sane_exit = false;
+   int call_sane_exit = 0;
    const char *device_name = NULL, *command_list = NULL, *command_properties = NULL;
    const SANE_Device **device_list = NULL;
 
@@ -486,47 +488,55 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    /* Check the first device to see if a positive driver_version is provided. */
    /* If not, consult the input options */
    device = oyConfigs_Get(devices, 0);
-   version_opt = oyConfig_Find(device, "driver_version");
-   if (version_opt && oyOption_GetValueInt(version_opt, 0) > 0)
+   version_opt_dev = oyConfig_Find(device, "driver_version");
+   if (version_opt_dev && oyOption_GetValueInt(version_opt_dev, 0) > 0)
       call_sane_exit = 0;
    else
       check_driver_version(options, &version_opt, &call_sane_exit);
    oyConfig_Release(&device);
+   oyOption_Release(&version_opt_dev);
 
    if (command_list) {
       /* "list" call section */
 
       for (i = 0; i < num_devices; ++i) {
-         //const char *sane_name = device_list[i]->name;
-         //const char *sane_model = device_list[i]->model;
-         /*Handle "device_name" option [IN] [IGNORED]*/
+         oyOption_s *name_opt_dev = NULL,
+                    *handle_opt_dev = NULL,
+                    *context_opt_dev = NULL;
+         const char *sane_name = NULL,
+                    *sane_model = NULL;
+         device = oyConfigs_Get(devices, i); //TODO deallocate
 
          /*Handle "driver_version" option [OUT] */
-         if (version_opt) {
-            oyOption_s *tmp = oyOption_Copy(version_opt, 0);
+         version_opt_dev = oyConfig_Find(device, "driver_version");
+         if (!version_opt_dev && version_opt) {
+            oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
             oyOptions_MoveIn(device->backend_core, &tmp, -1);
          }
+         oyOption_Release(&version_opt_dev);
 
-         /*Handle "device_name" option [OUT] */
-         error = oyOptions_SetFromText(&device->backend_core,
-                                       CMM_BASE_REG OY_SLASH "device_name", sane_name, OY_CREATE_NEW);
+         /*Handle "device_context" option */
+         /*This is always provided by Configs_FromPattern() [or alternatively by user]
+          * and should be here. Configs_Modify() will not call sane_get_devices()
+          * because it takes too long*/
+         context_opt_dev = oyConfig_Find(device, "device_context");
+         if (!context_opt_dev) {
+            message(oyMSG_WARN, options, _DBG_FORMAT_ ": %s\n",
+                    DBG_ARGS_, "The \"device_context\" option is missing!");
+            return 1;
+         }
+         sane_name   = ((SANE_Device*)(((oyBlob_s*)context_opt_dev->value->oy_struct)->ptr))->name;
+         sane_model  = ((SANE_Device*)(((oyBlob_s*)context_opt_dev->value->oy_struct)->ptr))->model;
 
          /*Handle "oyNAME_NAME" option */
-         if (oyOptions_Find(options, "oyNAME_NAME"))
+         name_opt_dev = oyConfig_Find(device, "oyNAME_NAME");
+         if (!name_opt_dev && oyOptions_Find(options, "oyNAME_NAME"))
             error = oyOptions_SetFromText(&device->data,
                                           CMM_BASE_REG OY_SLASH "oyNAME_NAME", sane_model, OY_CREATE_NEW);
 
-         /*Handle "device_context" option */
-         if (context_opt) {
-            oyBlob_s *context_blob = oyBlob_New(NULL);
-            oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
-
-            oyBlob_SetFromData(context_blob, (oyPointer) device_list[i], sizeof(SANE_Device), "sane");
-            oyOption_StructMoveIn(context_opt, (oyStruct_s **) & context_blob);
-            oyOptions_MoveIn(device->backend_core, &context_opt, -1);
-         }
          /*Handle "device_handle" option */
-         if (handle_opt) {
+         handle_opt_dev = oyConfig_Find(device, "device_handle");
+         if (!handle_opt_dev && handle_opt) {
             oyCMMptr_s *handle_ptr = NULL;
             SANE_Handle h;
             status = sane_open(sane_name, &h);
@@ -534,7 +544,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                handle_ptr = oyCMMptr_New(allocateFunc);
                oyCMMptr_Set(handle_ptr,
                             "SANE",
-                            "handle",
+                           "handle",
                             (oyPointer)h,
                             "sane_release_handle",
                             sane_release_handle);
@@ -545,14 +555,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                printf(PRFX "Unable to open sane device \"%s\": %s\n", sane_name, sane_strstatus(status));
          }
 
-         device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
-
-         oyConfigs_MoveIn(devices, &device, -1);
+         /*Create static rank_map, if not already there*/
+         if (!device->rank_map)
+            device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
       }
 
       //Handle errors: FIXME
-      //if(error <= 0)
-      *s = devices;
 
       if (call_sane_exit) {
          printf(PRFX "sane_exit()\n");
