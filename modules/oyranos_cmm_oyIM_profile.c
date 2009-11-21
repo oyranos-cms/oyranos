@@ -1488,7 +1488,7 @@ oyCMMapi3_s  oyIM_api3 = {
 
   oyOBJECT_CMM_API3_S,
   0,0,0,
-  (oyCMMapi_s*) & oyIM_api5_colour_icc,
+  (oyCMMapi_s*) & oyIM_api5_meta_c,
   
   oyIMCMMInit,
   oyIMCMMMessageFuncSet,

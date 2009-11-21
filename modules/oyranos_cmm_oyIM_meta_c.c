@@ -1,11 +1,11 @@
-/** @file oyranos_cmm_oyIM_icc.c
+/** @file oyranos_cmm_oyIM_meta_c.c
  *
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
  *            2008-2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    meta module for ICC support in Oyranos
+ *  @brief    meta module for C language module support in Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -341,7 +341,7 @@ int          oyFilterSocket_MatchImagingPlug (
  *  @since   2008/11/13 (Oyranos: 0.1.9)
  *  @date    2009/07/23
  */
-oyCMMapi5_s  oyIM_api5_colour_icc = {
+oyCMMapi5_s  oyIM_api5_meta_c = {
 
   oyOBJECT_CMM_API5_S, /* oyStruct_s::type */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -351,7 +351,7 @@ oyCMMapi5_s  oyIM_api5_colour_icc = {
   oyIMCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* @todo registration: for what? */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH CMM_NICK,
 
   {0,0,1}, /* int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */

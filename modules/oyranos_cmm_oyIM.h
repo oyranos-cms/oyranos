@@ -57,6 +57,6 @@ oyWIDGET_EVENT_e   oyIMWidgetEvent   ( oyOptions_s       * options,
                                        oyStruct_s        * event );
 
 extern oyCMMapi3_s   oyIM_api3;
-extern oyCMMapi5_s   oyIM_api5_colour_icc;
+extern oyCMMapi5_s   oyIM_api5_meta_c;
 
 #endif /* OYRANOS_CMM_OYIM_H */

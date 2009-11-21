@@ -135,7 +135,7 @@ CFILES_CMM_oyra = \
 	modules/$(TARGET)_cmm_oyra_image_ppm.c
 CFILES_CMM_oyIM = \
 	modules/$(TARGET)_cmm_oyIM.c \
-	modules/$(TARGET)_cmm_oyIM_icc.c \
+	modules/$(TARGET)_cmm_oyIM_meta_c.c \
 	modules/$(TARGET)_cmm_oyIM_profile.c
 CFILES_CMM_oicc = \
 	modules/$(TARGET)_cmm_oicc.c
