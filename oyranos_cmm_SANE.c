@@ -438,7 +438,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/08/21
  *
- *  \todo { Unimplemented }
+ *  \todo { Test }
  */
 int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
@@ -593,7 +593,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /* All previous device properties are considered obsolete
           * and a new device is created. Basic options are moved from
           * the old to new device */
-         device = oyConfigs_Get(devices, i); //TODO deallocate
+         device = oyConfigs_Get(devices, i);
          device_new = oyConfig_New(CMM_BASE_REG, 0);
 
          /*Handle "driver_version" option [OUT] */
@@ -645,6 +645,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          device_new->rank_map = oyRankMapCopy(dynamic_rank_map, device_new->oy_->allocateFunc_);
 
          /* Remove old, add new device */
+         oyConfig_Release(device);
          oyConfigs_ReleaseAt(devices, i);
          oyConfigs_MoveIn(devices, &device_new, -1);
 
