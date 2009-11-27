@@ -442,13 +442,16 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
  */
 int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
-   oyOption_s *context_opt = NULL, *handle_opt = NULL, *version_opt = NULL;
+   oyOption_s *context_opt = NULL,
+              *handle_opt = NULL,
+              *version_opt = NULL;
    oyOption_s *version_opt_dev = NULL;
    oyConfig_s *device = NULL;
-   oyRankPad *dynamic_rank_map = NULL;
    int i, num_devices, error = 0, status;
    int call_sane_exit = 0;
-   const char *device_name = NULL, *command_list = NULL, *command_properties = NULL;
+   const char *device_name = NULL,
+              *command_list = NULL,
+              *command_properties = NULL;
    const SANE_Device **device_list = NULL;
 
    oyAlloc_f allocateFunc = malloc;
@@ -471,7 +474,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    num_devices = oyConfigs_Count(devices);
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
-   device_name = oyOptions_FindString(options, "device_name", 0);
    context_opt = oyOptions_Find(options, "device_context");
    handle_opt = oyOptions_Find(options, "device_handle");
 
@@ -516,8 +518,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyOption_Release(&version_opt_dev);
 
          /*Handle "device_context" option */
-         /*This is always provided by Configs_FromPattern() [or alternatively by user]
-          * and should be here. Configs_Modify() will not call sane_get_devices()
+         /*This is always provided by Configs_FromPattern()
+          * [or should be alternatively by the user].
+          * Configs_Modify() will not scan for SANE devices
           * because it takes too long*/
          context_opt_dev = oyConfig_Find(device, "device_context");
          if (!context_opt_dev) {
@@ -525,8 +528,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                     DBG_ARGS_, "The \"device_context\" option is missing!");
             return 1;
          }
-         sane_name   = ((SANE_Device*)(((oyBlob_s*)context_opt_dev->value->oy_struct)->ptr))->name;
-         sane_model  = ((SANE_Device*)(((oyBlob_s*)context_opt_dev->value->oy_struct)->ptr))->model;
+         device_context = (SANE_Device*)oyOption_GetData(context_opt_dev, NULL, allocateFunc);
+         sane_name  = device_context->name;
+         sane_model = device_context->model;
 
          /*Handle "oyNAME_NAME" option */
          name_opt_dev = oyConfig_Find(device, "oyNAME_NAME");
@@ -570,67 +574,83 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       return 0;
    } else if (command_properties) {
       /* "properties" call section */
-      const SANE_Device *device_context = NULL;
-      SANE_Handle device_handle;
 
       /*Return a full list of scanner H/W &
        * SANE driver S/W color options
        * with the according rank map */
 
-      if (!device_name) {
-         printf(PRFX "device_name is mandatory for properties command.\n");
-         return 1;
-      }
-      device = oyConfig_New(CMM_BASE_REG, 0);
+      for (i = 0; i < num_devices; ++i) {
+         const SANE_Device *device_context = NULL;
+         SANE_Handle device_handle;
+         oyOption_s *name_opt_dev = NULL,
+                    *handle_opt_dev = NULL,
+                    *context_opt_dev = NULL;
+         oyConfig_s *device_new = NULL;
+         oyRankPad *dynamic_rank_map = NULL;
+         //const char *sane_name = NULL,
+         //           *sane_model = NULL;
 
-      /*Handle "driver_version" option [OUT] */
-      if (version_opt)
-         oyOptions_MoveIn(device->backend_core, &version_opt, -1);
+         /* All previous device properties are considered obsolete
+          * and a new device is created. Basic options are moved from
+          * the old to new device */
+         device = oyConfigs_Get(devices, i); //TODO deallocate
+         device_new = oyConfig_New(CMM_BASE_REG, 0);
 
-      /*1a. Get the "device_context"*/
-      if (!context_opt) {
-         error = GetDevices(&device_list, &num_devices);
-         device_context = *device_list;
-         while (device_context) {
-            if (strcmp(device_name,device_context->name) == 0)
-               break;
-            device_context++;
+         /*Handle "driver_version" option [OUT] */
+         if (version_opt) {
+            oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
+            oyOptions_MoveIn(device_new->backend_core, &tmp, -1);
          }
-         if (!device_context) {
-            printf(PRFX "device_name does not match any installed device.\n");
+
+         /* 1. Get the "device_name" from old device */
+         name_opt_dev = oyConfig_Find(device, "device_name");
+         oyOptions_MoveIn(device_new->backend_core, &name_opt_dev, -1);
+
+         /* 2. Get the "device_context" from old device */
+         /* It should be there, see "list" call above */
+         context_opt_dev = oyConfig_Find(device, "device_context");
+         if (!context_opt_dev) {
+            message(oyMSG_WARN, options, _DBG_FORMAT_ ": %s\n",
+                    DBG_ARGS_, "The \"device_context\" option is missing!");
             return 1;
          }
-      } else {
-         device_context = (SANE_Device*)oyOption_GetData(context_opt, NULL, allocateFunc);
-      }
+         oyOptions_MoveIn(device_new->backend_core, &context_opt_dev, -1);
+         device_context = (SANE_Device*)oyOption_GetData(context_opt_dev, NULL, allocateFunc);
+         device_name = device_context->name;
+         //sane_model = device_context->model;
 
-      /*1b. Use the "device_context"*/
-      error = DeviceInfoFromContext_(device_context, &(device->backend_core));
+         /* 3. Get the scanner H/W properties from old device */
+         /* FIXME: we only recompute them, just in case they are not in old device */
+         error = DeviceInfoFromContext_(device_context, &(device_new->backend_core));
 
-      /*2a. Get the "device_handle"*/
-      if (!handle_opt) {
-         status = sane_open( device_name, &device_handle );
-         if (status != SANE_STATUS_GOOD) {
-            printf(PRFX "Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(status));
-            return 1;
+         /* 4. Get the "device_handle" from old device */
+         /* If not there, get one from SANE */
+         handle_opt_dev = oyConfig_Find(device, "device_handle");
+         if (!handle_opt_dev) {
+            status = sane_open( device_name, &device_handle );
+            if (status != SANE_STATUS_GOOD) {
+               printf(PRFX "Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(status));
+               return 1;
+            }
+         } else {
+            device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt_dev->value->oy_struct)->ptr;
+            oyOptions_MoveIn(device_new->backend_core, &handle_opt_dev, -1);
          }
-      } else {
-         device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt->value->oy_struct)->ptr;
+
+         /* Use the device_handle to get the device color options */
+         error = ColorInfoFromHandle(device_handle, &(device_new->backend_core));
+
+         /*5. Create the rank map*/
+         error = CreateRankMap_(device_handle, &dynamic_rank_map);
+         device_new->rank_map = oyRankMapCopy(dynamic_rank_map, device_new->oy_->allocateFunc_);
+
+         /* Remove old, add new device */
+         oyConfigs_ReleaseAt(devices, i);
+         oyConfigs_MoveIn(devices, &device_new, -1);
+
+         free(dynamic_rank_map);
+         free(device_context);
       }
-
-      /*2b. Use the "device_handle"*/
-      error = ColorInfoFromHandle(device_handle, &(device->backend_core));
-
-      /*3. Create the rank map*/
-      error = CreateRankMap_(device_handle, &dynamic_rank_map);
-      device->rank_map = oyRankMapCopy(dynamic_rank_map, device->oy_->allocateFunc_);
-      oyConfigs_MoveIn(devices, &device, -1);
-
-      free(dynamic_rank_map);
-
-      //Handle errors: FIXME
-      //if(error <= 0)
-      *s = devices;
  
       return 0;
    } else {
