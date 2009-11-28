@@ -21043,7 +21043,8 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
         lang = oyLanguage();
 
       oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-      if(oyStrcmp_( oyNoEmptyName_m_(oyLanguage()), lang ) == 0)
+      if(lang &&
+         oyStrcmp_( oyNoEmptyName_m_(oyLanguage()), lang ) == 0)
         update = 0;
 
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
