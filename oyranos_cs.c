@@ -14,7 +14,11 @@
  *  ColorSync specific functions for Apple osX
  */
 
-
+#include "oyranos_debug.h"
+#include "oyranos_elektra.h"
+#include "oyranos_helper.h"
+#include "oyranos_internal.h"
+#include "oyranos_texts.h"
 
 /* --- Helpers  --- */
 
