@@ -441,6 +441,7 @@ if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   APPLE="1"
   OSX_H="-DHAVE_OSX"
+  test -n "$ECHO" && $ECHO "APPLE = 1" >> $CONF
   test -n "$ECHO" && $ECHO "#define APPLE 1" >> $CONF_H
   OSUNAME=Darwin
 else
