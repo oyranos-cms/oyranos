@@ -61,7 +61,6 @@ LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
 #endif
 LIBFL_I18N = fl_i18n/libfl_i18n.a
 
-
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
 	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H)
 
@@ -118,6 +117,8 @@ CFILESC = \
 	$(TARGET)_debug.c
 CFILES_ALPHA = \
 	$(TARGET)_alpha.c
+CFILES_CS = \
+	$(TARGET)_cs.c
 
 CFILES_CMM_lcms = \
 	modules/$(TARGET)_cmm_lcms.c
@@ -250,17 +251,22 @@ Flmm_FILES = \
 
 TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
-		$(CFILES_POLICY) $(CFILES_ALPHA) \
+		$(CFILES_POLICY) $(CFILES_ALPHA) $(CFILES_CS) \
 		$(CXXFILES_FLTK)
 SOURCES =  \
 		$(TOP_SOURCES) \
 		$(CFILES_MODULES) $(CPPFILES_MODULES) $(CFILES_MODULES_DEVICES)\
 		$(CFILES_OFORMS) $(CXXFILES_OFORMS_FLTK) $(EXAMPLE_SOURCES)
 
+#ifdef $(APPLE)
+OBJECTS_CS = $(CFILES_CS:.c=.o)
+#endif
+
+
 # we need these files to generate explicite targets for out of tree builds
 COBJECTS = \
 	$(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) \
-	$(CFILES_OFORMS:.c=.o) \
+	$(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) \
 	$(MONI_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
@@ -276,7 +282,7 @@ CPPOBJECTS =	test2.o
 #	$(CMM_lraw_OBJECTS)
 CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
-OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o)
+OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_lraw_OBJECTS = $(CPPFILES_CMM_lraw:.cpp=.o)
 CMM_oydi_OBJECTS = $(CFILES_CMM_oydi:.c=.o)

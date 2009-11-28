@@ -132,6 +132,7 @@ int    oyGetProfileBlockOSX              ( CMProfileRef prof,
                                            oyAlloc_f     allocate_func);
 char * oyGetProfileNameOSX               ( CMProfileRef prof,
                                            oyAlloc_f     allocate_func);
+char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type );
 #endif
 
 extern oyStruct_LockCreate_f   oyStruct_LockCreateFunc_;
