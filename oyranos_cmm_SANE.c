@@ -447,12 +447,11 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
               *version_opt = NULL;
    oyOption_s *version_opt_dev = NULL;
    oyConfig_s *device = NULL;
-   int i, num_devices, g_error = 0, status;
+   int num_devices, g_error = 0;
    int call_sane_exit = 0;
    const char *device_name = NULL,
               *command_list = NULL,
               *command_properties = NULL;
-   const SANE_Device **device_list = NULL;
 
    oyAlloc_f allocateFunc = malloc;
 
@@ -501,8 +500,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
    if (command_list) {
       /* "list" call section */
+      int i, status;
 
       for (i = 0; i < num_devices; ++i) {
+         const SANE_Device *device_context = NULL;
          oyOption_s *name_opt_dev = NULL,
                     *handle_opt_dev = NULL,
                     *context_opt_dev = NULL;
@@ -526,8 +527,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
           * because it takes too long*/
          context_opt_dev = oyConfig_Find(device, "device_context");
          if (!context_opt_dev) {
-            message(oyMSG_WARN, options, _DBG_FORMAT_ ": %s\n",
-                    DBG_ARGS_, "The \"device_context\" option is missing!");
+            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+                    _DBG_ARGS_, "The \"device_context\" option is missing!");
             error = g_error = 1;
          }
          if (!error) {
@@ -577,13 +578,14 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       }
    } else if (command_properties) {
       /* "properties" call section */
+      int i, status;
 
       /*Return a full list of scanner H/W &
        * SANE driver S/W color options
        * with the according rank map */
 
       for (i = 0; i < num_devices; ++i) {
-         const SANE_Device *device_context = NULL;
+         SANE_Device *device_context = NULL;
          SANE_Handle device_handle;
          oyOption_s *name_opt_dev = NULL,
                     *handle_opt_dev = NULL,
@@ -613,8 +615,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /* It should be there, see "list" call above */
          context_opt_dev = oyConfig_Find(device, "device_context");
          if (!context_opt_dev) {
-            message(oyMSG_WARN, options, _DBG_FORMAT_ ": %s\n",
-                    DBG_ARGS_, "The \"device_context\" option is missing!");
+            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+                    _DBG_ARGS_, "The \"device_context\" option is missing!");
             error = g_error = 1;
          }
          if (!error) {
@@ -998,7 +1000,7 @@ int sane_release_handle(oyPointer *handle_ptr)
  */
 int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *call_sane_exit)
 {
-   int driver_version = 0;
+   int driver_version = 0, status;
    oyOption_s *context_opt = oyOptions_Find(options, "device_context");
    oyOption_s *handle_opt = oyOptions_Find(options, "device_handle");
    int error = oyOptions_FindInt(options, "driver_version", 0, &driver_version);
