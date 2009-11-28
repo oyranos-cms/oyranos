@@ -262,7 +262,7 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
         if(len) { DBG_PROG
           ++len;
           t = (char*)oyAllocateWrapFunc_( 16, allocate_func );
-          oySnprintf_(t, 15, (char*)&block[5]);
+          oySnprintf1_(t, 15, "%s", (char*)&block[5]);
           t[15] = '\000';
           if(oyStrrchr_(t, '\n'))
           {
@@ -605,13 +605,14 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   CMProfileLocation loc;
   int err = 0;
   char * block = NULL;
+  UInt32 locationSize = sizeof(CMProfileLocation);
 
   DBG_PROG_START
 
   screenID = oyMonitor_nameToOsxID( device_name );
 
   CMGetProfileByAVID( (CMDisplayIDType)screenID, &prof );
-  CMGetProfileLocation(prof, &loc);
+  NCMGetProfileLocation(prof, &loc, &locationSize );
 
   err = oyGetProfileBlockOSX (prof, &block, size, allocate_func);
   moni_profile = block;
@@ -1786,8 +1787,42 @@ oyGetMonitorInfo_lib              (const char* display,
   err = oyGetMonitorInfo_( display, manufacturer, mnft, model, serial,
                      display_geometry, system_port, host, colours, edid,
                      allocate_func, user_data );
-#else
-  err = 1;
+#else /*__APPLE__*/
+  {
+    int len;
+    /*struct oyDDC_EDID1_s_ *edi=0;*/
+    char *t;
+    oyMonitor_s * disp = 0;
+    /*oyBlob_s * prop = 0;*/
+
+    disp = oyMonitor_newFrom_( display, 0 );
+    if(!disp)
+      return 1;
+    if(!allocate_func)
+      allocate_func = oyAllocateFunc_;
+
+    if( system_port ) 
+    {
+      t = 0;
+      /*if( oyMonitor_systemPort_( disp ) &&
+          oyStrlen_(oyMonitor_systemPort_( disp )) )
+      {
+        len = oyStrlen_(oyMonitor_systemPort_( disp ));
+        ++len;
+        t = (char*)oyAllocateWrapFunc_( len, allocate_func );
+        sprintf(t, "%s", oyMonitor_systemPort_( disp ));
+      }*/
+      *system_port = t; t = 0;
+    }
+
+    if( display_geometry )
+      *display_geometry = oyStringCopy_( oyMonitor_identifier_( disp ),
+                                         allocate_func );
+
+
+    err = 0;
+    oyMonitor_release_( &disp );
+  }
 #endif
 
   if(*manufacturer)
