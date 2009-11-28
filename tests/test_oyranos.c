@@ -126,7 +126,7 @@ oyTESTRESULT_e testI18N()
   lang = oyLanguage();
   if((lang && strcmp(lang, "C") == 0) || !lang)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyLanguage() uninitialised good %s                ", lang );
+    "oyLanguage() uninitialised good %s                ", lang?lang:"---" );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyLanguage() uninitialised failed                 " );
@@ -167,10 +167,10 @@ oyTESTRESULT_e testI18N()
   lang = oyLanguage();
   if(lang && (strcmp(lang, "C") != 0))
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyLanguage() initialised good %s                  ", lang );
+    "oyLanguage() initialised good %s                  ", lang?lang:"---" );
   } else
   { PRINT_SUB( oyTESTRESULT_XFAIL, 
-    "oyLanguage() initialised failed %s                ", lang );
+    "oyLanguage() initialised failed %s                ", lang?lang:"---" );
   }
 
   return result;
