@@ -339,7 +339,7 @@ oyXMLgetArray_  (const char       *xml,
       oyFree_m_(values);
     values = ptr;
     oyAllocHelper_m_( ptr[n], char, len+1, oyAllocateFunc_, return NULL )
-    snprintf( ptr[n], len+1, val_pos);
+    snprintf( ptr[n], len+1, "%s", val_pos);
     val_pos += len;
     ++n;
   }

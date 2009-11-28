@@ -3076,7 +3076,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
 
   if(error <= 0 && func_name)
     if(oyStrlen_(func_name) < 32)
-      oySprintf_(s->func_name, func_name); 
+      oySprintf_(s->func_name, "%s", func_name); 
 
   if(error <= 0 && ptr)
   {
@@ -3087,7 +3087,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
 
   if(error <= 0 && resource)
     if(oyStrlen_(resource) < 5)
-      oySprintf_(s->resource, resource); 
+      oySprintf_(s->resource, "%s", resource); 
 
   if(error <= 0 && ptrRelease)
     s->ptrRelease = ptrRelease;
@@ -7330,7 +7330,9 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   oyValue_u * v = 0;
   oyStructList_s * oy_struct_list = 0;
   char * text = 0;
+#if USE_GETTEXT
   char * save_locale = 0;
+#endif
 
   if(error <= 0)
     v = obj->value;

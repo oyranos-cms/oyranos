@@ -338,7 +338,7 @@ oyPathGetParent_ (const char* name)
   oyAllocString_m_( parentDir, MAX_PATH,
                     oyAllocateFunc_, return 0 );
 
-  oySprintf_ (parentDir, name);
+  oySprintf_ (parentDir, "%s", name);
   ptr = strrchr( parentDir, OY_SLASH_C);
   if (ptr)
   {
@@ -515,7 +515,7 @@ oyResolveDirFileName_ (const char* name)
 
   } else {
     oyAllocHelper_m_( newName, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:371 oyResolveDirFileName_() Could not allocate enough memory.\n"); return 0 );
-    oySprintf_ (newName, name);
+    oySprintf_ (newName, "%s", name);
 
     /* relative names - where the first sign is no directory separator */
     if (newName[0] != OY_SLASH_C)
@@ -525,7 +525,7 @@ oyResolveDirFileName_ (const char* name)
       oyAllocHelper_m_( cn, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:379 oyResolveDirFileName_() Could not allocate 4096 byte of memory.\n"); return 0 );
       oySprintf_ (cn, "%s%s%s", getenv("PWD"), OY_SLASH, name);
       DBG_MEM1_S("canonoical %s ", cn)
-      oySprintf_ (newName, cn);
+      oySprintf_ (newName, "%s", cn);
       if(cn) oyDeAllocateFunc_(cn); cn = 0;
     }
   }
@@ -552,7 +552,7 @@ oyExtractPathFromFileName_ (const char* file_name)
   oyAllocString_m_( path_name, strlen(file_name)+1,
                     oyAllocateFunc_, return 0 );
 
-  oySprintf_( path_name, file_name );
+  oySprintf_( path_name, "%s", file_name );
   DBG_MEM1_S ("path_name = %s", path_name)
   ptr = strrchr (path_name, '/');
   ptr[0+1] = 0;
@@ -1003,7 +1003,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         goto cont;
       }
 
-      oySprintf_(name,path);
+      oySprintf_(name, "%s",path);
       for (k=0; k <= l; ++k) {
         int len = strlen(name);
         if(len+strlen(entry[k]->d_name) < 256)

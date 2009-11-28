@@ -207,7 +207,7 @@ int GetDevices                       ( http_t            * http,
     for (p = 0, i = num_dests, dest = dests; i > 0; i--, dest++, p++)
     {
         texts[p] = allocateFunc(24); 
-        sprintf( texts[p], dest->name );
+        sprintf( texts[p], "%s", dest->name );
     }
 
     /* Free memory that is used by CUPS. */

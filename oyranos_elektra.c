@@ -495,7 +495,8 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
        oyWIDGETTYPE_DEFAULT_PROFILE)
     {
       config_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
-#ifdef __APPLE__
+
+#if defined(__APPLE__)
       /* these settings are not persistent (osX 10.4) */
       /*if (0)*/
       {
@@ -534,7 +535,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
           CMProfileRef prof=NULL;
           const char *profil_basename;
           char * profil_pathname = oyGetPathFromProfileName( name, oyAllocateFunc_);
-          char* file_name = oyAllocateFunc_(MAX_PATH);
+          /*char* file_name = oyAllocateFunc_(MAX_PATH);*/
           FSRef   ref;
           Boolean isDirectory;
 
@@ -544,16 +545,16 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
             profil_basename = name;
 
 
-          /*loc.locType = cmPathBasedProfile;*/
-          snprintf( file_name/*loc.u.pathLoc.path*/, 255, "%s%s%s",
+          loc.locType = cmPathBasedProfile;
+          snprintf( /*file_name*/ loc.u.pathLoc.path, 255, "%s%s%s",
                     profil_pathname, OY_SLASH, profil_basename);
 
-          loc.locType = cmFileBasedProfile;
+          /*loc.locType = cmFileBasedProfile;
 
-          /*err = FSMakeFSSpec ( 0, 0, file_name, &loc.u.fileLoc.spec);*/
+          err = FSMakeFSSpec ( 0, 0, file_name, &loc.u.fileLoc.spec);
           err = FSPathMakeRef ( (unsigned char*) file_name, &ref, &isDirectory);
           err = FSGetCatalogInfo ( &ref, 0, NULL, NULL,
-                                   &loc.u.fileLoc.spec, NULL );
+                                   &loc.u.fileLoc.spec, NULL );*/
 
           err = CMOpenProfile ( &prof, &loc );
           if(err) return err;
@@ -562,7 +563,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
           if(err) return err;
           err = CMCloseProfile( prof );
 
-          oyFree_m_(file_name);
+          /*oyFree_m_(file_name);*/
           oyFree_m_( profil_pathname );
           return err;
         }
@@ -868,7 +869,7 @@ oyGetDeviceProfile_                (const char* manufacturer,
 
       len = strlen (fileName)+1;
       profileName = (char*) oyAllocateWrapFunc_( len, allocate_func );
-      sprintf (profileName, fileName);
+      sprintf (profileName, "%s", fileName);
 
       DBG_PROG_S(foundEntry->name)
       DBG_PROG_S(profileName)

@@ -1939,7 +1939,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
       {
         oyChar * filename = list[i];
 
-        oySprintf_( pn, filename );
+        oySprintf_( pn, "%s", filename );
 
         if(oyStrstr_(pn,"policy.xml"))
         {

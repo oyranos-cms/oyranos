@@ -243,7 +243,7 @@ oyModulsGetNames_( int        *count,
   {
     oyAllocHelper_m_( ids[i], char, 5, alloc_func, return NULL);
 
-    oySnprintf_( ids[i], 5, oyModules_.modul[i].cmm );
+    oySnprintf1_( ids[i], 5, "%s", oyModules_.modul[i].cmm );
   }
   *count = oyModules_.n;
   return ids;
@@ -308,7 +308,7 @@ oyModulGetFromXML_( oyGROUP_e           group,
   cmm_group= oyXMLgetValue_(cmm_reg, "oyCMM_GROUP");
   value = oyXMLgetValue_(cmm_group, "oyID");
   if(value && strlen(value) == 4)
-    oySnprintf_( cmm->cmm, 5, value );
+    oySnprintf1_( cmm->cmm, 5, "%s", value );
   else
     base_complete = 0;
   value = oyXMLgetValue_(cmm_group, "oyNAME");
@@ -572,7 +572,7 @@ oyModulPrint_   ( const char       *modul )
   oyAllocHelper_m_( tmp, char, len, oyAllocateFunc_, return NULL );
 
 # define add_s() { len = oyMemBlockExtent_(&text, len, strlen(tmp) + 1); \
-                   sprintf( &text[strlen(text)], tmp );  }
+                   sprintf( &text[strlen(text)], "%s", tmp );  }
 # define set_m(text_) text_ ? text_ : "(null)"
 
   if(!mod)
