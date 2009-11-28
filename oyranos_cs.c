@@ -99,7 +99,7 @@ oyGetProfileBlockOSX (CMProfileRef prof, char **block, size_t *size, oyAlloc_f a
       case cmNoProfileBase:
              DBG_PROG_S("The profile is a temporary profile.")
              break;
-#if !__LP64__ && !TARGET_OS_WIN32
+#if !__LP64__ && !TARGET_OS_WIN32 && 0
       case cmFileBasedProfile:
              DBG_PROG_S("The profile is a file based profile.")
              break;
@@ -133,7 +133,7 @@ oyGetProfileBlockOSX (CMProfileRef prof, char **block, size_t *size, oyAlloc_f a
     }
 #endif
 
-#if !__LP64__ && !TARGET_OS_WIN32
+#if !__LP64__ && !TARGET_OS_WIN32 && 0
     refcon ref = {0,0};
     CMError err = 0;
     Boolean bol;
@@ -182,7 +182,7 @@ oyGetProfileNameOSX (CMProfileRef prof, oyAlloc_f     allocate_func)
         case cmNoProfileBase:
                DBG_PROG_S("The profile is a temporary profile.")
                break;
-#if !__LP64__ && !TARGET_OS_WIN32
+#if !__LP64__ && !TARGET_OS_WIN32 && 0
         case cmFileBasedProfile:
                DBG_PROG_S("The profile is a file based profile.")
                {
@@ -290,7 +290,7 @@ char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type )
         case cmNoProfileBase:
                DBG_PROG_S("The profile is a temporary profile.")
                break;
-#if !__LP64__ && !TARGET_OS_WIN32
+#if !__LP64__ && !TARGET_OS_WIN32 && 0
         case cmFileBasedProfile:
                DBG_PROG_S("The profile is a file based profile.")
                {

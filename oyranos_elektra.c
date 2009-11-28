@@ -496,7 +496,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
     {
       config_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
-#if defined(__APPLE__) && !__LP64__ && !TARGET_OS_WIN32
+#if defined(__APPLE__) && !__LP64__ && !TARGET_OS_WIN32 && 0
       /* these settings are not persistent (osX 10.4) */
       /*if (0)*/
       {
