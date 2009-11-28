@@ -165,7 +165,7 @@ oyTESTRESULT_e testI18N()
   oyI18Nreset();
 
   lang = oyLanguage();
-  if(strcmp(lang, "C") != 0)
+  if(lang && (strcmp(lang, "C") != 0))
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyLanguage() initialised good %s                  ", lang );
   } else

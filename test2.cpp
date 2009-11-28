@@ -176,7 +176,7 @@ oyTESTRESULT_e testI18N()
   oyI18Nreset();
 
   lang = oyLanguage();
-  if(lang && strcmp(lang, "C") == 0)
+  if((lang && (strcmp(lang, "C") == 0)) || !lang)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyLanguage() uninitialised good %s                ", lang );
   } else
@@ -188,7 +188,7 @@ oyTESTRESULT_e testI18N()
   oyI18Nreset();
 
   lang = oyLanguage();
-  if(strcmp(lang, "C") != 0)
+  if(lang && (strcmp(lang, "C") != 0))
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyLanguage() initialised good %s                  ", lang );
   } else
