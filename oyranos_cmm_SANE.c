@@ -591,8 +591,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_s *device_new = NULL;
          oyRankPad *dynamic_rank_map = NULL;
          int error = 0;
-         //const char *sane_name = NULL,
-         //           *sane_model = NULL;
 
          /* All previous device properties are considered obsolete
           * and a new device is created. Basic options are moved from
@@ -623,7 +621,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             oyOptions_MoveIn(device_new->backend_core, &context_opt_dev, -1);
             device_context = (SANE_Device*)oyOption_GetData(context_opt_dev, NULL, allocateFunc);
             device_name = device_context->name;
-            //sane_model = device_context->model;
          }
 
          /* 3. Get the scanner H/W properties from old device */
