@@ -447,7 +447,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
               *version_opt = NULL;
    oyOption_s *version_opt_dev = NULL;
    oyConfig_s *device = NULL;
-   int i, num_devices, error = 0, status;
+   int i, num_devices, g_error = 0, status;
    int call_sane_exit = 0;
    const char *device_name = NULL,
               *command_list = NULL,
@@ -456,6 +456,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
    oyAlloc_f allocateFunc = malloc;
 
+   printf(PRFX "Entering %s\n", __func__);
    /* "error handling" section */
    if (!devices || !oyConfigs_Count(devices)) {
       message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
@@ -527,7 +528,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          if (!context_opt_dev) {
             message(oyMSG_WARN, options, _DBG_FORMAT_ ": %s\n",
                     DBG_ARGS_, "The \"device_context\" option is missing!");
-            error = 1;
+            error = g_error = 1;
          }
          if (!error) {
             device_context = (SANE_Device*)oyOption_GetData(context_opt_dev, NULL, allocateFunc);
@@ -616,7 +617,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          if (!context_opt_dev) {
             message(oyMSG_WARN, options, _DBG_FORMAT_ ": %s\n",
                     DBG_ARGS_, "The \"device_context\" option is missing!");
-            error = 1;
+            error = g_error = 1;
          }
          if (!error) {
             oyOptions_MoveIn(device_new->backend_core, &context_opt_dev, -1);
@@ -647,7 +648,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             ColorInfoFromHandle(device_handle, &(device_new->backend_core));
 
             /*5. Create the rank map*/
-            error = CreateRankMap_(device_handle, &dynamic_rank_map);
+            error = g_error = CreateRankMap_(device_handle, &dynamic_rank_map);
             if (!error)
                device_new->rank_map = oyRankMapCopy(dynamic_rank_map, device_new->oy_->allocateFunc_);
          }
@@ -666,8 +667,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          free(device_context);
       }
    } else {
-      /*wrong or no command */
-      /*TODO Message*/
+      /*unsupported, wrong or no command */
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "No supported commands in options:\n%s", _DBG_ARGS_,
+              oyOptions_GetText(options, oyNAME_NICK) );
+      ConfigsFromPatternUsage((oyStruct_s *) options);
+      g_error = 1;
    }
 
    /*Cleanup*/
@@ -679,6 +684,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    oyOption_Release(&context_opt);
    oyOption_Release(&handle_opt);
    oyOption_Release(&version_opt);
+
+   return g_error;
 }
 
 /** Function Config_Rank
