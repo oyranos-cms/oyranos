@@ -27,6 +27,7 @@
 #include "oyranos.h"
 #include "oyranos_alpha.h"
 #include "oyranos_debug.h"
+#include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
@@ -266,22 +267,32 @@ int main( int argc , char** argv )
 
     if(!monitor_profile && !erase && !list && !setup)
     {
+      oyConfig_s * device = 0;
+      char * fn = 0;
+
+      error = oyDeviceGet( OY_TYPE_STD, "monitor", oy_display_name, 0,
+                           &device );
+
       if(database)
       {
-        filename = oyGetMonitorProfileNameFromDB( oy_display_name, oyAllocFunc);
-        prof = oyProfile_FromFile( filename, 0, 0 );
-        data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+        error = oyDeviceProfileFromDB( device, &fn, oyAllocFunc ); 
+        prof = oyProfile_FromFile( fn, 0, 0 );
+        filename = fn;
       } else {
-        data = oyGetMonitorProfile(oy_display_name, &size, oyAllocFunc);
-        prof = oyProfile_FromMem( size, data, 0, 0 );
+        error = oyDeviceGetProfile    ( device, &prof );
         filename = oyProfile_GetFileName( prof, -1 );
       }
+      data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
       if(size && data) oyDeAllocFunc( data ); data = 0;
+
+      if(filename && strrchr(filename, '/') != 0)
+        filename = strrchr(filename, '/') + 1;
 
       printf("%s:%d profile \"%s\" size: %d\n",
              strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
              filename?filename:OY_PROFILE_NONE, (int)size);
 
+      if(fn) oyDeAllocFunc( fn ); fn = 0;
       oyProfile_Release( &prof );
     }
 
