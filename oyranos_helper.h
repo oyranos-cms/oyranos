@@ -209,6 +209,12 @@ int oyIsFileFull_ (const char* fullFileName);
 int oyMakeDir_    (const char* path);
 
 int   oyWriteMemToFile_ (const char* name, const void* mem, size_t size);
+int  oyWriteMemToFile2_              ( const char        * name,
+                                       void              * mem,
+                                       size_t              size,
+                                       uint32_t            flags,
+                                       char             ** result,
+                                       oyAlloc_f           allocateFunc );
 char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
                          oyAlloc_f     allocate_func);
 
