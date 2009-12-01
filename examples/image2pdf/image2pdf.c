@@ -25,7 +25,7 @@
 #include <math.h>
 #include <icc34.h>
 #include <lcms.h>                 /* littleCMS – typical CMM on Linux */
-#include <oyranos.h>              /* Oyranos headers */
+#include <oyranos_alpha.h>        /* Oyranos headers */
 #include <cairo.h>                /* Cairo headers */
 #include <cairo-pdf.h>
 
@@ -46,7 +46,7 @@ int main (int argc, char ** argv)
 {
   int result = 0;
   FILE * fp = 0;
-  int i,j,o;
+  int i,j,o, error;
   cairo_t * cr = 0;
   cairo_surface_t * surface = NULL, * image_surf = NULL;
   cairo_status_t status;
@@ -75,6 +75,8 @@ int main (int argc, char ** argv)
   const char * dcraw_icc_space=0;
   cmsHPROFILE input, proof, editing, monitor, print;
   cmsHTRANSFORM to_output = 0;
+  oyConfig_s * device = 0;
+  oyProfile_s * prof = 0;
 
   for( i = 0; i < 10; ++i )
     info[i] = malloc( 2048 );
@@ -134,7 +136,11 @@ int main (int argc, char ** argv)
   /*  The monitor profile is located in the Xserver. For details see:
    *  http://www.freedesktop.org/wiki/Specifications/icc_profiles_in_x_spec
    */
-  data = oyGetMonitorProfile( 0, &size, malloc );
+  error = oyDeviceGet( OY_TYPE_STD, "monitor", 0, 0,
+                       &device );
+  error = oyDeviceGetProfile( device, &prof );
+  data = oyProfile_GetMem( prof, &size, 0, malloc );
+
   if(!size || !data)
   {
     profile_name = oyGetDefaultProfileName( oyASSUMED_WEB, malloc );
