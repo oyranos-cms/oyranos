@@ -741,8 +741,8 @@ oyTESTRESULT_e testMonitor ()
       display_name = text; text = 0;
 
       size = 0;
-      block = oyGetMonitorProfile( display_name, &size, malloc );
-      p = oyProfile_FromMem( size, block, 0,0 );
+      error = oyDeviceGetProfile( c, &p );
+      block = oyProfile_GetMem( p, &size, 0, malloc );
 
       if(block)
       {
@@ -786,7 +786,9 @@ oyTESTRESULT_e testMonitor ()
       if(text)
         free( text );
 
+      if(block) free(block); block = 0;
       oyConfig_Release( &c );
+      oyProfile_Release( &p );
       fprintf(stdout, "\n" );
     }
   }
