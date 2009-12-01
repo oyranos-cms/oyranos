@@ -356,13 +356,15 @@ const char *   oyLang                ( void );
 void           oyI18Nreset           ( void );
 
 
-int      oyGetScreenFromPosition     ( const char        * display_name,
-                                       int                 x,
-                                       int                 y );
+
 char *   oyGetDisplayNameFromPosition( const char        * display_name,
                                        int                 x,
                                        int                 y,
                                        oyAlloc_f           allocate_func );
+/* deprecated monitor functions */
+int      oyGetScreenFromPosition     ( const char        * display_name,
+                                       int                 x,
+                                       int                 y );
 char *   oyGetMonitorProfile         ( const char        * display,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func );
