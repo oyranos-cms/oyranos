@@ -27153,6 +27153,8 @@ int      oyGetMonitorInfo            ( const char        * display_name,
 /** Function: oyGetScreenFromPosition
  *  @brief   screen number from position
  *
+ *  @deprecated because the functionality shall be integrated into a general framwork
+ *
  *  This function will hit exact results only with Xinerama. \n
  *  a platform specific function
  *
@@ -27247,6 +27249,8 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 /** Function: oyGetMonitorProfile
  *  @brief   get the monitor profile from the server
  *
+ *  @deprecated because the functionality shall be integrated into a general framwork
+ *
  *  @param      device_name        the display string
  *  @param[out] size                   the size of profile
  *  @param      allocate_func          function used to allocate memory for the profile
@@ -27288,6 +27292,8 @@ char *   oyGetMonitorProfile         ( const char        * device_name,
 /** Function: oyMonitorProfileNameFromDB
  *  @brief   get the monitor profile filename from the device
  *           database
+ *
+ *  @deprecated because the functionality shall be integrated into a general framwork
  *
  *  @param         device          the device
  *  @param         allocateFunc        user function used to allocate memory 
@@ -27331,6 +27337,8 @@ char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * device,
 /** Function: oyGetMonitorProfileNameFromDB
  *  @brief   get the monitor profile filename from the device profile
  *           database
+ *
+ *  @deprecated because the functionality shall be integrated into a general framwork
  *
  *  @param      display_name           the display string
  *  @param      allocateFunc  function used to allocate memory for the string
@@ -27404,6 +27412,8 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
 /** Function: oySetMonitorProfile
  *  @brief   set the monitor profile by filename
  *
+ *  @deprecated because the functionality shall be integrated into a general framwork
+ *
  *  The profile_name argument does two things. Set to zero the function solely
  *  unsets the graphic card luts and the server stored profile. So pretty all
  *  server side informatin should go away. \n
@@ -27474,6 +27484,8 @@ int      oySetMonitorProfile         ( const char        * display_name,
 
 /** Function: oyActivateMonitorProfiles
  *  @brief   activate the monitor using the stored configuration
+ *
+ *  @deprecated because the functionality shall be integrated into a general framwork
  *
  *  Activate in case the appropriate profile is not yet setup in the server. \n
  *  To deactivate a profile in the server call 
