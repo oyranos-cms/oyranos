@@ -103,6 +103,9 @@ int main( int argc , char** argv )
   int x = 0, y = 0;
   char *oy_display_name = NULL;
   oyProfile_s * prof = 0;
+  oyConfig_s * device = 0;
+  oyConfigs_s * devices = 0;
+  oyOptions_s * options = 0;
   size_t size = 0;
   const char * filename = 0;
   char * data = 0;
@@ -267,7 +270,6 @@ int main( int argc , char** argv )
 
     if(!monitor_profile && !erase && !list && !setup)
     {
-      oyConfig_s * device = 0;
       char * fn = 0;
 
       error = oyDeviceGet( OY_TYPE_STD, "monitor", oy_display_name, 0,
@@ -294,6 +296,7 @@ int main( int argc , char** argv )
 
       if(fn) oyDeAllocFunc( fn ); fn = 0;
       oyProfile_Release( &prof );
+      oyConfig_Release( &device );
     }
 
     if(format &&
@@ -388,9 +391,7 @@ int main( int argc , char** argv )
     {
       char * text = 0;
       uint32_t n = 0, i;
-      oyConfigs_s * devices = 0;
       oyConfig_s * c = 0;
-      oyOptions_s * options = 0;
       oyOption_s * o = 0;
 
       error = oyOptions_SetFromText( &options,
@@ -462,15 +463,45 @@ int main( int argc , char** argv )
     }
 
     /* make shure the display name is correct including the screen */
-    if(monitor_profile)
-      oySetMonitorProfile (oy_display_name, monitor_profile);
-    if(monitor_profile || erase)
-      oySetMonitorProfile (oy_display_name, 0);
+    {
+      error = oyDeviceGet( OY_TYPE_STD, "monitor", oy_display_name, 0,
+                           &device );
+      if(monitor_profile)
+        oyDeviceSetProfile( device, monitor_profile );
+      if(monitor_profile || erase)
+        oyDeviceUnset( device );
+
+      oyConfig_Release( &device );
+    }
   } else
     setup = 1;
 
   if(setup || monitor_profile)
-    error = oyActivateMonitorProfiles (display_name);
+  {
+    int i = 0;
+
+    /* 1. set a general request */
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "list", OY_CREATE_NEW );
+    /* we want a fuzzy look at our display, not as narrow as "device_name"*/
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
+                                   display_name, OY_CREATE_NEW );
+    error = oyConfigs_FromDeviceClass ( OY_TYPE_STD, "monitor", options,
+                                            &devices, 0 );
+
+    n = oyConfigs_Count( devices );
+    for(i = 0; i < n; ++i)
+    {
+      device = oyConfigs_Get( devices, i );
+
+      oyDeviceSetup( device );
+
+      oyConfig_Release( &device );
+    }
+
+    oyConfigs_Release( &devices );
+    oyOptions_Release( &options );
+  }
 
   if(oy_display_name)
     oyDeAllocFunc(oy_display_name);
