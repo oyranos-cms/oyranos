@@ -211,6 +211,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
    const SANE_Device **device_list = NULL;
 
+   printf(PRFX "Entering %s\n", __func__);
    int rank = oyFilterRegistrationMatch(_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S);
    oyAlloc_f allocateFunc = malloc;
@@ -429,6 +430,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /*wrong or no command */
       /*TODO Message+deallocation*/
    }
+   printf(PRFX "Leaving %s\n", __func__);
 }
 
 /** Function Configs_Modify
@@ -686,6 +688,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    oyOption_Release(&handle_opt);
    oyOption_Release(&version_opt);
 
+   printf(PRFX "Leaving %s\n", __func__);
    return g_error;
 }
 
