@@ -627,7 +627,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /* 3. Get the scanner H/W properties from old device */
          /* FIXME: we only recompute them, just in case they are not in old device */
-         DeviceInfoFromContext_(device_context, &(device_new->backend_core));
+         if (!error) {
+            DeviceInfoFromContext_(device_context, &(device_new->backend_core));
+         }
 
          /* 4. Get the "device_handle" from old device */
          /* If not there, get one from SANE */
