@@ -639,7 +639,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             if (status != SANE_STATUS_GOOD) {
                printf(PRFX "Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(status));
             }
-         } else {
+         } else if (handle_opt_dev && !error){
             device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt_dev->value->oy_struct)->ptr;
             oyOptions_MoveIn(device_new->backend_core, &handle_opt_dev, -1);
          }
