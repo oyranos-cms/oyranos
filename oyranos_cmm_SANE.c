@@ -678,17 +678,18 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /* 4. Get the "device_handle" from old device */
          /* If not there, get one from SANE */
          //FIXME What about sane_close()?
+         //FIXME hanlde moves to data
          handle_opt_dev = oyConfig_Find(device, "device_handle");
-         if (!handle_opt_dev && device_name) {
+         if (handle_opt_dev) {
+            device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt_dev->value->oy_struct)->ptr;
+            oyOptions_MoveIn(device_new->backend_core, &handle_opt_dev, -1);
+         } else if (device_name){
             printf(PRFX "Opening sane device \"%s\"..", device_name); fflush(NULL);
             status = sane_open( device_name, &device_handle );
             if (status != SANE_STATUS_GOOD)
                printf("[FAIL: %s]\n", sane_strstatus(status));
             else
                printf("[OK]\n");
-         } else if (handle_opt_dev && !error){
-            device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt_dev->value->oy_struct)->ptr;
-            oyOptions_MoveIn(device_new->backend_core, &handle_opt_dev, -1);
          }
 
          if (status == SANE_STATUS_GOOD && !error) {
