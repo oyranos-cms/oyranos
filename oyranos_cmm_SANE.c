@@ -45,6 +45,7 @@
 #define _api8                   catCMMfunc( SANE , _api8 )
 #define _rank_map               catCMMfunc( SANE , _rank_map )
 #define Configs_FromPattern     catCMMfunc( SANE , Configs_FromPattern )
+#define Configs_Modify          catCMMfunc( SANE , Configs_Modify )
 #define Config_Rank             catCMMfunc( SANE , Config_Rank )
 #define GetText                 catCMMfunc( SANE , GetText )
 #define _texts                  catCMMfunc( SANE , _texts )
@@ -219,23 +220,34 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                         oyOBJECT_CMM_API8_S);
    oyAlloc_f allocateFunc = malloc;
 
+   command_list = oyOptions_FindString(options, "command", "list");
+   command_properties = oyOptions_FindString(options, "command", "properties");
+   device_name = oyOptions_FindString(options, "device_name", 0);
+
    /* "error handling" section */
    if (rank == 0) {
       message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-              "Registration match Failed. Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
-          );
+              "Registration match Failed. Options:\n%s", _DBG_ARGS_,
+              oyOptions_GetText(options, oyNAME_NICK));
       return 1;
    }
    if (s == NULL) {
       message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-              "oyConfigs_s is NULL! Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
-          );
+              "oyConfigs_s is NULL! Options:\n%s", _DBG_ARGS_,
+              oyOptions_GetText(options, oyNAME_NICK));
       return 1;
    }
    if (*s != NULL) {
       message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
-              "Devices struct already present! Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
-          );
+              "Devices struct already present! Options:\n%s", _DBG_ARGS_,
+              oyOptions_GetText(options, oyNAME_NICK));
+      return 1;
+   }
+
+   if (!device_name && command_properties) {
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "Device_name is mandatory for properties command:\n%s",
+              _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK));
       return 1;
    }
 
@@ -246,9 +258,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       return 0;
    }
 
-   command_list = oyOptions_FindString(options, "command", "list");
-   command_properties = oyOptions_FindString(options, "command", "properties");
-   device_name = oyOptions_FindString(options, "device_name", 0);
    context_opt = oyOptions_Find(options, "device_context");
    handle_opt = oyOptions_Find(options, "device_handle");
    name_opt = oyOptions_Find(options, "oyNAME_NAME");
@@ -265,15 +274,15 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
           !name_opt        /*or the oyNAME_NAME description*/
          )
          num_devices = 1;  /*then we can get away without calling GetDevices()*/
-      else
-          g_error = GetDevices(&device_list, &num_devices);
+      else if (GetDevices(&device_list, &num_devices) != 0) {
+         num_devices = 0; /*So that for loop will not run*/
+         ++g_error;
+      }
 
       for (i = 0; i < num_devices; ++i) {
          int error = 0;
          const char *sane_name = NULL,
                     *sane_model = NULL;
-
-         if (g_error) break; /*Unelegant: Exit loop if GetDevices exits with != 0*/
 
          if (device_list) {
             sane_name = device_list[i]->name;
@@ -310,13 +319,16 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                   OY_CREATE_NEW);
 
          /*Handle "device_context" option */
-         /* Backend protocol states that device_context is *always* returned*/
-         oyBlob_s *context_blob = oyBlob_New(NULL);
-         oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
+         /* SANE Backend protocol states that device_context is *always* returned*/
+         /*This is a slight variation: Only when GetDevices() is called will it be returned*/
+         if (device_list) {
+            oyBlob_s *context_blob = oyBlob_New(NULL);
+            oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
 
-         oyBlob_SetFromData(context_blob, (oyPointer) device_list[i], sizeof(SANE_Device), "sane");
-         oyOption_StructMoveIn(context_opt, (oyStruct_s **) & context_blob);
-         oyOptions_MoveIn(device->backend_core, &context_opt, -1);
+            oyBlob_SetFromData(context_blob, (oyPointer) device_list[i], sizeof(SANE_Device), "sane");
+            oyOption_StructMoveIn(context_opt, (oyStruct_s **) & context_blob);
+            oyOptions_MoveIn(device->data, &context_opt, -1);
+         }
 
          /*Handle "device_handle" option */
          if (handle_opt) {
@@ -331,7 +343,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                             (oyPointer)h,
                             "sane_release_handle",
                             sane_release_handle);
-               oyOptions_MoveInStruct(&(device->backend_core),
+               oyOptions_MoveInStruct(&(device->data),
                                       CMM_BASE_REG OY_SLASH "device_handle",
                                       (oyStruct_s **) &handle_ptr, OY_CREATE_NEW);
             } else
@@ -340,94 +352,109 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
          device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
 
-         oyConfigs_MoveIn(devices, &device, -1);
+         error = oyConfigs_MoveIn(devices, &device, -1);
+
+         /*Cleanup*/
+         if (error) {
+            oyConfig_Release(&device);
+            ++g_error;
+         }
       }
 
-      //Handle errors: FIXME
-      //if(error <= 0)
       *s = devices;
-
-      if (call_sane_exit) {
-         printf(PRFX "sane_exit()\n");
-         sane_exit();
-      }
-
-      return 0;
    } else if (command_properties) {
       /* "properties" call section */
+      int error = 0;
       const SANE_Device *device_context = NULL;
-      SANE_Handle device_handle;
+      SANE_Device *aux_context = NULL;
+      SANE_Handle device_handle = NULL;
 
       /*Return a full list of scanner H/W &
        * SANE driver S/W color options
        * with the according rank map */
 
-      if (!device_name) {
-         printf(PRFX "device_name is mandatory for properties command.\n");
-         return 1;
-      }
       device = oyConfig_New(CMM_BASE_REG, 0);
 
       /*Handle "driver_version" option [OUT] */
-      if (version_opt)
-         //FIXME #5: "list" call uses a temporary option
-         oyOptions_MoveIn(device->backend_core, &version_opt, -1);
+      if (version_opt) {
+         oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
+         oyOptions_MoveIn(device->backend_core, &tmp, -1);
+      }
 
       /*1a. Get the "device_context"*/
-      //FIXME #3b: Backend protocol states that device_context is *always* returned
-      //by list call, so it should be avaliable to properties call.
-      //[Unless properties is called but not list]
-      if (!context_opt) {
-         error = GetDevices(&device_list, &num_devices);
-         device_context = *device_list;
-         while (device_context) {
-            if (strcmp(device_name,device_context->name) == 0)
-               break;
-            device_context++;
-         }
-         if (!device_context) {
-            printf(PRFX "device_name does not match any installed device.\n");
-            return 1;
+      if (!context_opt) { /*we'll have to get it ourselves*/
+         if (GetDevices(&device_list, &num_devices) == 0) {
+            device_context = *device_list;
+            while (device_context) {
+               if (strcmp(device_name,device_context->name) == 0)
+                  break;
+               device_context++;
+            }
+            if (!device_context) {
+               printf(PRFX "device_name does not match any installed device.\n");
+               g_error++;
+            }
+         } else {
+            g_error++;
          }
       } else {
-         device_context = (SANE_Device*)oyOption_GetData(context_opt, NULL, allocateFunc);
+         aux_context = (SANE_Device*)oyOption_GetData(context_opt, NULL, allocateFunc);
+         device_context = aux_context;
       }
 
       /*1b. Use the "device_context"*/
-      error = DeviceInfoFromContext_(device_context, &(device->backend_core));
+      if (device_context)
+         error = DeviceInfoFromContext_(device_context, &(device->backend_core));
 
       /*2a. Get the "device_handle"*/
       if (!handle_opt) {
          status = sane_open( device_name, &device_handle );
          if (status != SANE_STATUS_GOOD) {
             printf(PRFX "Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(status));
-            return 1;
+            g_error++;
          }
       } else {
          device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt->value->oy_struct)->ptr;
       }
 
-      /*2b. Use the "device_handle"*/
-      error = ColorInfoFromHandle(device_handle, &(device->backend_core));
+      if (device_handle) {
+         /*2b. Use the "device_handle"*/
+         ColorInfoFromHandle(device_handle, &(device->backend_core));
 
-      /*3. Create the rank map*/
-      error = CreateRankMap_(device_handle, &dynamic_rank_map);
-      device->rank_map = oyRankMapCopy(dynamic_rank_map, device->oy_->allocateFunc_);
+         /*3. Create the rank map*/
+         error = CreateRankMap_(device_handle, &dynamic_rank_map);
+         if (!error)
+            device->rank_map = oyRankMapCopy(dynamic_rank_map, device->oy_->allocateFunc_);
+      }
       oyConfigs_MoveIn(devices, &device, -1);
 
+      /*Cleanup*/
       free(dynamic_rank_map);
+      free(aux_context);
 
-      //Handle errors: FIXME
-      //if(error <= 0)
       *s = devices;
- 
-      //FIXME #6: Call sane exit
-      return 0;
    } else {
-      /*wrong or no command */
-      /*TODO Message+deallocation*/
+      /*unsupported, wrong or no command */
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "No supported commands in options:\n%s", _DBG_ARGS_,
+              oyOptions_GetText(options, oyNAME_NICK) );
+      ConfigsFromPatternUsage((oyStruct_s *) options);
+      g_error = 1;
    }
+
+   /*Global Cleanup*/
+   if (call_sane_exit) {
+      printf(PRFX "sane_exit()\n");
+      sane_exit();
+   }
+
+   oyOption_Release(&context_opt);
+   oyOption_Release(&handle_opt);
+   oyOption_Release(&version_opt);
+   oyOption_Release(&name_opt );
+
    printf(PRFX "Leaving %s\n", __func__);
+   return g_error;
 }
 
 /** Function Configs_Modify
@@ -620,9 +647,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             error = g_error = 1;
          }
          if (!error) {
-            oyOptions_MoveIn(device_new->backend_core, &context_opt_dev, -1);
             device_context = (SANE_Device*)oyOption_GetData(context_opt_dev, NULL, allocateFunc);
             device_name = device_context->name;
+            oyOptions_MoveIn(device_new->data, &context_opt_dev, -1);
          }
 
          /* 3. Get the scanner H/W properties from old device */
