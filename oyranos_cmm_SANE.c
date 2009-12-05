@@ -540,6 +540,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          device = oyConfigs_Get(devices, i);
          int error = 0;
 
+         printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
+         printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
+
          /*Handle "driver_version" option [OUT] */
          version_opt_dev = oyConfig_Find(device, "driver_version");
          if (!version_opt_dev && version_opt) {
@@ -628,6 +631,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          device = oyConfigs_Get(devices, i);
          device_new = oyConfig_New(CMM_BASE_REG, 0);
 
+         printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
+         printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
+
          /*Handle "driver_version" option [OUT] */
          if (version_opt) {
             oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
@@ -666,12 +672,15 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /* 4. Get the "device_handle" from old device */
          /* If not there, get one from SANE */
+         //FIXME What about sane_close()?
          handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (!handle_opt_dev && !error) {
+            printf(PRFX "Opening sane device \"%s\"..", device_name); fflush(NULL);
             status = sane_open( device_name, &device_handle );
-            if (status != SANE_STATUS_GOOD) {
-               printf(PRFX "Unable to open sane device \"%s\": %s\n", device_name, sane_strstatus(status));
-            }
+            if (status != SANE_STATUS_GOOD)
+               printf("[FAIL: %s]\n", sane_strstatus(status));
+            else
+               printf("[OK]\n");
          } else if (handle_opt_dev && !error){
             device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt_dev->value->oy_struct)->ptr;
             oyOptions_MoveIn(device_new->backend_core, &handle_opt_dev, -1);
