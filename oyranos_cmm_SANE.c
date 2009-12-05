@@ -1051,11 +1051,14 @@ int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *
                 SANE_VERSION_MINOR(driver_version),
                 SANE_VERSION_BUILD(driver_version));
 
-         *version_opt_p = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0); //TODO deallocate
-         oyOption_SetFromInt(*version_opt_p, driver_version, 0, 0);
-         if (error && /*we've not been given a driver_version*/
-             !context_opt && !handle_opt) /*we've not been given other options*/
-            *call_sane_exit = 1; /*when we are over*/
+         if (error &&                     /*we've not been given a driver_version*/
+             !context_opt && !handle_opt  /*we've not been given other options*/
+            ) {                           /*when we are over*/
+            *call_sane_exit = 1;
+         } else {
+            *version_opt_p = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0); //TODO deallocate
+            oyOption_SetFromInt(*version_opt_p, driver_version, 0, 0);
+         }
       } else {
         message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
                 "Unable to init SANE. Giving up.[%s] Options:\n%s", _DBG_ARGS_,
