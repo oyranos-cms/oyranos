@@ -214,7 +214,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
    const SANE_Device **device_list = NULL;
 
-   printf(PRFX "Entering %s\n", __func__);
+   printf(PRFX "Entering %s(). Options:\n%s", __func__, oyOptions_GetText(options, oyNAME_NICK));
 
    int rank = oyFilterRegistrationMatch(_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S);
@@ -482,7 +482,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
    oyAlloc_f allocateFunc = malloc;
 
-   printf(PRFX "Entering %s\n", __func__);
+   printf(PRFX "Entering %s(). Options:\n%s", __func__, oyOptions_GetText(options, oyNAME_NICK));
 
    /* "error handling" section */
    if (!devices || !oyConfigs_Count(devices)) {
