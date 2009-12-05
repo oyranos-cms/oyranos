@@ -319,9 +319,10 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                   OY_CREATE_NEW);
 
          /*Handle "device_context" option */
-         /* SANE Backend protocol states that device_context is *always* returned*/
-         /*This is a slight variation: Only when GetDevices() is called will it be returned*/
-         if (device_list) {
+         /* SANE Backend protocol states that device_context is *always* returned
+          * This is a slight variation: Only when GetDevices() is called will it be returned,
+          * unless we call sane_exit*/
+         if (device_list && !call_sane_exit) {
             oyBlob_s *context_blob = oyBlob_New(NULL);
             oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
 
@@ -331,7 +332,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          }
 
          /*Handle "device_handle" option */
-         if (handle_opt) {
+         if (handle_opt && !call_sane_exit) {
             oyCMMptr_s *handle_ptr = NULL;
             SANE_Handle h;
             status = sane_open(sane_name, &h);
