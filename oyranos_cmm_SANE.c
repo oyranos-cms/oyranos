@@ -476,8 +476,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    oyConfig_s *device = NULL;
    int num_devices, g_error = 0;
    int call_sane_exit = 0;
-   const char *device_name = NULL,
-              *command_list = NULL,
+   const char *command_list = NULL,
               *command_properties = NULL;
 
    oyAlloc_f allocateFunc = malloc;
@@ -623,6 +622,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                     *context_opt_dev = NULL;
          oyConfig_s *device_new = NULL;
          oyRankPad *dynamic_rank_map = NULL;
+         const char *device_name = NULL;
          int error = 0;
 
          /* All previous device properties are considered obsolete
@@ -642,8 +642,14 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /* 1. Get the "device_name" from old device */
          name_opt_dev = oyConfig_Find(device, "device_name");
-         if (name_opt_dev)
+         if (name_opt_dev) {
             oyOptions_MoveIn(device_new->backend_core, &name_opt_dev, -1);
+            device_name = name_opt_dev->value->string;
+         } else {
+               message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+                       _DBG_ARGS_, "The \"device_name\" option is missing!");
+               g_error = 1;
+         }
 
          /* 2. Get the "device_context" from old device */
          /* It should be there, see "list" call above */
@@ -651,7 +657,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          if (context_opt_dev) {
             device_context = (SANE_Device*)oyOption_GetData(context_opt_dev, NULL, allocateFunc);
             if (device_context) {
-               device_name = device_context->name;
                oyOptions_MoveIn(device_new->data, &context_opt_dev, -1);
             } else {
                message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
@@ -674,7 +679,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /* If not there, get one from SANE */
          //FIXME What about sane_close()?
          handle_opt_dev = oyConfig_Find(device, "device_handle");
-         if (!handle_opt_dev && !error) {
+         if (!handle_opt_dev && device_name) {
             printf(PRFX "Opening sane device \"%s\"..", device_name); fflush(NULL);
             status = sane_open( device_name, &device_handle );
             if (status != SANE_STATUS_GOOD)
