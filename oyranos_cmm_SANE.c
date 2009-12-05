@@ -641,20 +641,25 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /* 2. Get the "device_context" from old device */
          /* It should be there, see "list" call above */
          context_opt_dev = oyConfig_Find(device, "device_context");
-         if (!context_opt_dev) {
+         if (context_opt_dev) {
+            device_context = (SANE_Device*)oyOption_GetData(context_opt_dev, NULL, allocateFunc);
+            if (device_context) {
+               device_name = device_context->name;
+               oyOptions_MoveIn(device_new->data, &context_opt_dev, -1);
+            } else {
+               message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+                       _DBG_ARGS_, "The \"device_context\" is NULL!");
+               g_error = 1;
+            }
+         } else {
             message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                     _DBG_ARGS_, "The \"device_context\" option is missing!");
-            error = g_error = 1;
-         }
-         if (!error) {
-            device_context = (SANE_Device*)oyOption_GetData(context_opt_dev, NULL, allocateFunc);
-            device_name = device_context->name;
-            oyOptions_MoveIn(device_new->data, &context_opt_dev, -1);
+            g_error = 1;
          }
 
          /* 3. Get the scanner H/W properties from old device */
          /* FIXME: we only recompute them, just in case they are not in old device */
-         if (!error) {
+         if (device_context) {
             DeviceInfoFromContext_(device_context, &(device_new->backend_core));
          }
 
