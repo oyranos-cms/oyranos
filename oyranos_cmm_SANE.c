@@ -301,7 +301,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
          /*Handle "driver_version" option [OUT] */
          if (version_opt) {
-            oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
+            oyOption_s *tmp = oyOption_Copy(version_opt, 0);
             oyOptions_MoveIn(device->backend_core, &tmp, -1);
          }
 
@@ -378,7 +378,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       /*Handle "driver_version" option [OUT] */
       if (version_opt) {
-         oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
+         oyOption_s *tmp = oyOption_Copy(version_opt, 0);
          oyOptions_MoveIn(device->backend_core, &tmp, -1);
       }
 
@@ -555,7 +555,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /*Handle "driver_version" option [OUT] */
          version_opt_dev = oyConfig_Find(device, "driver_version");
          if (!version_opt_dev && version_opt) {
-            oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
+            oyOption_s *tmp = oyOption_Copy(version_opt, 0);
             oyOptions_MoveIn(device->backend_core, &tmp, -1);
          }
          oyOption_Release(&version_opt_dev);
@@ -655,7 +655,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Handle "driver_version" option [OUT] */
          if (version_opt) {
-            oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
+            oyOption_s *tmp = oyOption_Copy(version_opt, 0);
             oyOptions_MoveIn(device_new->backend_core, &tmp, -1);
          }
 
