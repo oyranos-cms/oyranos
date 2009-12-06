@@ -527,10 +527,11 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
    if (command_list) {
       /* "list" call section */
-      int i, status;
+      int i;
 
       for (i = 0; i < num_devices; ++i) {
          const SANE_Device *device_context = NULL;
+         SANE_Status status = SANE_STATUS_INVAL;
          oyOption_s *name_opt_dev = NULL,
                     *handle_opt_dev = NULL,
                     *context_opt_dev = NULL;
@@ -618,7 +619,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       }
    } else if (command_properties) {
       /* "properties" call section */
-      int i, status;
+      int i;
 
       /*Return a full list of scanner H/W &
        * SANE driver S/W color options
@@ -626,13 +627,14 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
       for (i = 0; i < num_devices; ++i) {
          SANE_Device *device_context = NULL;
+         SANE_Status status = SANE_STATUS_INVAL;
          SANE_Handle device_handle;
          oyOption_s *name_opt_dev = NULL,
                     *handle_opt_dev = NULL,
                     *context_opt_dev = NULL;
          oyConfig_s *device_new = NULL;
          oyRankPad *dynamic_rank_map = NULL;
-         const char *device_name = NULL;
+         char *device_name = NULL;
 
          /* All previous device properties are considered obsolete
           * and a new device is created. Basic options are moved from
@@ -691,7 +693,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /* 4. Get the "device_handle" from old device */
          /* If not there, get one from SANE */
-         //FIXME What about sane_close()?
          handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (handle_opt_dev) {
             device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt_dev->value->oy_struct)->ptr;
@@ -721,6 +722,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_Release(&device);
          oyConfigs_ReleaseAt(devices, i);
          oyConfigs_MoveIn(devices, &device_new, -1);
+
+         /*If we had to open a SANE device, we'll have to close it*/
+         if (status == SANE_STATUS_GOOD) {
+            printf(PRFX "sane_close(%s)\n", device_name);
+            sane_close(device_handle);
+         }
 
          free(dynamic_rank_map);
          free(device_context);
