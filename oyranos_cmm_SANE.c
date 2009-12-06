@@ -674,6 +674,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             } else {
                message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                        _DBG_ARGS_, "The \"device_context\" is NULL!");
+               oyOption_Release(&context_opt_dev);
                g_error++;
             }
          } else {
@@ -720,10 +721,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_Release(&device);
          oyConfigs_ReleaseAt(devices, i);
          oyConfigs_MoveIn(devices, &device_new, -1);
-
-         oyOption_Release(&name_opt_dev);
-         oyOption_Release(&context_opt_dev);
-         oyOption_Release(&handle_opt_dev);
 
          free(dynamic_rank_map);
          free(device_context);
