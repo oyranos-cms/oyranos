@@ -536,11 +536,21 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                     *context_opt_dev = NULL;
          const char *sane_name = NULL,
                     *sane_model = NULL;
-         device = oyConfigs_Get(devices, i);
          int error = 0;
+
+         device = oyConfigs_Get(devices, i);
 
          printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
          printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
+
+         /*Ignore device without a device_name*/
+         if (!oyOptions_FindString(device->backend_core, "device_name", NULL)) {
+            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+                    _DBG_ARGS_, "The \"device_name\" is missing from config object!");
+            oyConfig_Release(&device);
+            g_error++;
+            continue;
+         }
 
          /*Handle "driver_version" option [OUT] */
          version_opt_dev = oyConfig_Find(device, "driver_version");
@@ -634,6 +644,16 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
          printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
 
+         /*Ignore device without a device_name*/
+         if (!oyOptions_FindString(device->backend_core, "device_name", NULL)) {
+            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+                    _DBG_ARGS_, "The \"device_name\" is NULL, or missing from config object!");
+            oyConfig_Release(&device);
+            oyConfig_Release(&device_new);
+            g_error++;
+            continue;
+         }
+
          /*Handle "driver_version" option [OUT] */
          if (version_opt) {
             oyOption_s *tmp = oyOption_Copy(version_opt, 0); //TODO does it need deallocation?
@@ -642,14 +662,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /* 1. Get the "device_name" from old device */
          name_opt_dev = oyConfig_Find(device, "device_name");
-         if (name_opt_dev) {
-            oyOptions_MoveIn(device_new->backend_core, &name_opt_dev, -1);
-            device_name = name_opt_dev->value->string;
-         } else {
-               message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
-                       _DBG_ARGS_, "The \"device_name\" option is missing!");
-               g_error = 1;
-         }
+         oyOptions_MoveIn(device_new->backend_core, &name_opt_dev, -1);
+         device_name = name_opt_dev->value->string;
 
          /* 2. Get the "device_context" from old device */
          /* It should be there, see "list" call above */
@@ -661,12 +675,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             } else {
                message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                        _DBG_ARGS_, "The \"device_context\" is NULL!");
-               g_error = 1;
+               g_error++;
             }
          } else {
             message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                     _DBG_ARGS_, "The \"device_context\" option is missing!");
-            g_error = 1;
+            g_error++;
          }
 
          /* 3. Get the scanner H/W properties from old device */
@@ -682,7 +696,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          if (handle_opt_dev) {
             device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt_dev->value->oy_struct)->ptr;
             oyOptions_MoveIn(device_new->data, &handle_opt_dev, -1);
-         } else if (device_name){
+         } else {
             printf(PRFX "Opening sane device \"%s\"..", device_name); fflush(NULL);
             status = sane_open( device_name, &device_handle );
             if (status != SANE_STATUS_GOOD)
@@ -691,7 +705,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                printf("[OK]\n");
          }
 
-         if (status == SANE_STATUS_GOOD && !error) {
+         if (handle_opt_dev || status == SANE_STATUS_GOOD) {
             /* Use the device_handle to get the device color options */
             ColorInfoFromHandle(device_handle, &(device_new->backend_core));
 
