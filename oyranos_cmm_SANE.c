@@ -661,8 +661,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /* 1. Get the "device_name" from old device */
          name_opt_dev = oyConfig_Find(device, "device_name");
+         device_name = oyOption_GetValueText(name_opt_dev, allocateFunc);
          oyOptions_MoveIn(device_new->backend_core, &name_opt_dev, -1);
-         device_name = name_opt_dev->value->string;
 
          /* 2. Get the "device_context" from old device */
          /* It should be there, see "list" call above */
@@ -727,6 +727,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          free(dynamic_rank_map);
          free(device_context);
+         free(device_name);
       }
    } else {
       /*unsupported, wrong or no command */
