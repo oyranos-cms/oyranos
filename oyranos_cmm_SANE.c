@@ -633,7 +633,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_s *device_new = NULL;
          oyRankPad *dynamic_rank_map = NULL;
          const char *device_name = NULL;
-         int error = 0;
 
          /* All previous device properties are considered obsolete
           * and a new device is created. Basic options are moved from
@@ -710,9 +709,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             ColorInfoFromHandle(device_handle, &(device_new->backend_core));
 
             /*5. Create the rank map*/
-            error = g_error = CreateRankMap_(device_handle, &dynamic_rank_map);
-            if (!error)
+            if (CreateRankMap_(device_handle, &dynamic_rank_map))
                device_new->rank_map = oyRankMapCopy(dynamic_rank_map, device_new->oy_->allocateFunc_);
+            else
+               g_error++;
          }
 
          /*Cleanup*/
