@@ -39,6 +39,8 @@
 #include <Carbon/Carbon.h>
 /* newer style CoreGraphics APIs like CGDirectDisplay.h and so on */
 #include <ApplicationServices/ApplicationServices.h>
+/* use the CFDict C access to probably IOFramebuffer */
+#include <IOKit/Graphics/IOGraphicsLib.h> /* IODisplayCreateInfoDictionary() */
 #endif
 
 #include "oyranos.h"
@@ -269,6 +271,14 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
             tmp = oyStrrchr_(t, '\n');
             tmp[0] = 0;
           }
+
+          /* workaround for APP */
+          if(block[3] == 254 && *manufacturer && ! (*serial))
+          {
+            *serial = *manufacturer;
+           *manufacturer = 0;
+          }
+        
           *target = t; DBG_PROG_S( *target )
         }
       }
@@ -286,29 +296,39 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
       c[8] = (edid[0x17] + 100.0) / 100.0;
   }
 
-  if(!*manufacturer)
   {
-    *manufacturer = (char*)oyAllocateWrapFunc_( 24, allocate_func );
+    t = (char*)oyAllocateWrapFunc_( 24, oyAllocateFunc_ );
     if(!strcmp(mnf,"APP"))
-      sprintf(*manufacturer, "Apple");
+    {
+      if(!(*model) && *manufacturer)
+      {
+        *model = *manufacturer;
+        *manufacturer = 0;
+      }
+      sprintf(t, "Apple");
+    }
     else if(!strcmp(mnf,"PHL"))
-      sprintf(*manufacturer, "Philips");
+      sprintf(t, "Philips");
     else if(!strcmp(mnf,"HWP"))
-      sprintf(*manufacturer, "HP");
+      sprintf(t, "HP");
     else if(!strcmp(mnf,"NEC"))
-      sprintf(*manufacturer, "NEC");
+      sprintf(t, "NEC");
     else if(!strcmp(mnf,"EIZ"))
-      sprintf(*manufacturer, "EIZO");
+      sprintf(t, "EIZO");
     else if(!strcmp(mnf,"MEI"))
-      sprintf(*manufacturer, "Panasonic");
+      sprintf(t, "Panasonic");
     else if(!strcmp(mnf,"MIR"))
-      sprintf(*manufacturer, "miro");
+      sprintf(t, "miro");
     else if(!strcmp(mnf,"SNI"))
-      sprintf(*manufacturer, "Siemens Nixdorf");
+      sprintf(t, "Siemens Nixdorf");
     else if(!strcmp(mnf,"SNY"))
-      sprintf(*manufacturer, "Sony");
+      sprintf(t, "Sony");
     else
-      sprintf(*manufacturer, "%s", mnf);
+      sprintf(t, "%s", mnf);
+
+    if(!*manufacturer)
+      *manufacturer = oyStringCopy_(t, allocate_func);
+    oyDeAllocateFunc_(t); t = 0;
   }
   *mnft = (char*)oyAllocateWrapFunc_( 24, allocate_func );
   sprintf(*mnft, "%s", mnf);
@@ -517,10 +537,11 @@ oyGetMonitorInfo_                 (const char* display_name,
 #endif
 
 #ifdef __APPLE__
+#if 0
 OSErr oyCMIterateDeviceInfoProc          ( const CMDeviceInfo* dev_info,
                                            void              * ptr )
 {
-  char ** my_data = (char**) ptr;
+  /*char ** my_data = (char**) ptr;*/
   char dev_class[8] = {0,0,0,0,0,0,0,0};
 
   memcpy( dev_class, &dev_info->deviceClass, 4 );
@@ -535,6 +556,7 @@ OSErr oyCMIterateDeviceInfoProc          ( const CMDeviceInfo* dev_info,
 
   return noErr;
 }
+#endif
 
 CGDirectDisplayID oyMonitor_nameToOsxID ( const char        * display_name )
 {
@@ -559,7 +581,6 @@ CGDirectDisplayID oyMonitor_nameToOsxID ( const char        * display_name )
   CGDirectDisplayID * active_displays = 0,
                     cg_direct_display_id = 0;
   CGDisplayCount count = 0;
-  io_service_t io_service = 0;
 
   err = CGGetActiveDisplayList( alloc_disps, active_displays, &count );
   if(count <= 0 || err != kCGErrorSuccess)
@@ -618,6 +639,7 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   moni_profile = block;
   if (prof) CMCloseProfile(prof);
 
+#if 0
   {
     UInt32 seed = 0,
            count = 0;
@@ -625,6 +647,7 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
     CMError cm_err = CMIterateColorDevices( oyCMIterateDeviceInfoProc, 
                                             &seed, &count, &my_data );
   }
+#endif
 
 #else /* HAVE_X */
 
@@ -1757,7 +1780,7 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
  *  @deprecated because sometimes is no ddc information available
  *  @todo include connection information - grafic cart
  *
- *  @param      display       the display string
+ *  @param      display_name  the display string
  *  @param[out] manufacturer  the manufacturer of the monitor device
  *  @param[out] model         the model of the monitor device
  *  @param[out] serial        the serial number of the monitor device
@@ -1766,7 +1789,7 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
  *
  */
 int
-oyGetMonitorInfo_lib              (const char* display,
+oyGetMonitorInfo_lib              (const char* display_name,
                                    char**      manufacturer,
                                        char             ** mnft,
                                    char**      model,
@@ -1784,36 +1807,81 @@ oyGetMonitorInfo_lib              (const char* display,
   DBG_PROG_START
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
-  err = oyGetMonitorInfo_( display, manufacturer, mnft, model, serial,
+  err = oyGetMonitorInfo_( display_name, manufacturer, mnft, model, serial,
                      display_geometry, system_port, host, colours, edid,
                      allocate_func, user_data );
 #else /*__APPLE__*/
   {
-    int len;
-    /*struct oyDDC_EDID1_s_ *edi=0;*/
     char *t;
     oyMonitor_s * disp = 0;
     /*oyBlob_s * prop = 0;*/
 
-    disp = oyMonitor_newFrom_( display, 0 );
+    disp = oyMonitor_newFrom_( display_name, 0 );
     if(!disp)
       return 1;
     if(!allocate_func)
       allocate_func = oyAllocateFunc_;
 
-    if( system_port ) 
+    if( disp ) 
     {
+      CFDictionaryRef dict = 0;
+      unsigned char edi_[256] = {0,0,0,0,0,0,0,0}; /* mark the EDID signature */
+      struct oyDDC_EDID1_s_ * edi = (struct oyDDC_EDID1_s_ *)&edi_;
+      CFTypeRef cf_type = 0;
+      CFRange cf_range = {0,256};
+      int count = 0;
+      io_service_t io_service = CGDisplayIOServicePort (
+                                                    oyMonitor_device_( disp ) );
+
       t = 0;
-      /*if( oyMonitor_systemPort_( disp ) &&
-          oyStrlen_(oyMonitor_systemPort_( disp )) )
+      dict = IODisplayCreateInfoDictionary( io_service, 0 );
+      if(dict)
       {
-        len = oyStrlen_(oyMonitor_systemPort_( disp ));
-        ++len;
-        t = (char*)oyAllocateWrapFunc_( len, allocate_func );
-        sprintf(t, "%s", oyMonitor_systemPort_( disp ));
-      }*/
+        count = CFDictionaryGetCountOfKey( dict, CFSTR( kIODisplayEDIDKey ) );
+        if(count)
+        {
+          cf_type = CFDictionaryGetValue( dict, CFSTR( kIODisplayEDIDKey ));
+
+          if(cf_type)
+            CFDataGetBytes( cf_type, cf_range, edi_ );
+          else
+            WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
+               _("no EDID available from"),
+               "\"CFDictionaryGetValue\"",
+               _("Cant read hardware information from device."))
+
+        } else
+          WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
+               _("no EDID available from"),
+               "\"CFDictionaryGetCountOfKey\"",
+               _("Cant read hardware information from device."))
+
+        CFRelease( dict ); dict = 0;
+      }
+      else
+        WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
+               _("no EDID available from"),
+               "\"IODisplayCreateInfoDictionary\"",
+               _("Cant read hardware information from device."))
+
+      if(count)
+        oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, colours,
+                        allocate_func);
+
+      if(edid)
+      {
+        *edid = oyBlob_New( 0 );
+        oyBlob_SetFromData( *edid, edi_, 128, 0 );
+      }
+
       *system_port = t; t = 0;
     }
+    else
+      WARNcc3_S( user_data, "\n  %s: \"%s\"\n  %s",
+               _("no oyMonitor_s from"),
+               display_name,
+               _("Cant read hardware information from device."))
+
 
     if( display_geometry )
       *display_geometry = oyStringCopy_( oyMonitor_identifier_( disp ),
