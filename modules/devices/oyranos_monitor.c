@@ -41,6 +41,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 /* use the CFDict C access to probably IOFramebuffer */
 #include <IOKit/Graphics/IOGraphicsLib.h> /* IODisplayCreateInfoDictionary() */
+char * printCFDictionary( CFDictionaryRef dict );
 #endif
 
 #include "oyranos.h"
@@ -1827,7 +1828,7 @@ oyGetMonitorInfo_lib              (const char* display_name,
       CFDictionaryRef dict = 0;
       unsigned char edi_[256] = {0,0,0,0,0,0,0,0}; /* mark the EDID signature */
       struct oyDDC_EDID1_s_ * edi = (struct oyDDC_EDID1_s_ *)&edi_;
-      CFTypeRef cf_type = 0;
+      CFTypeRef cf_value = 0;
       CFRange cf_range = {0,256};
       int count = 0;
       io_service_t io_service = CGDisplayIOServicePort (
@@ -1840,10 +1841,10 @@ oyGetMonitorInfo_lib              (const char* display_name,
         count = CFDictionaryGetCountOfKey( dict, CFSTR( kIODisplayEDIDKey ) );
         if(count)
         {
-          cf_type = CFDictionaryGetValue( dict, CFSTR( kIODisplayEDIDKey ));
+          cf_value = CFDictionaryGetValue( dict, CFSTR( kIODisplayEDIDKey ));
 
-          if(cf_type)
-            CFDataGetBytes( cf_type, cf_range, edi_ );
+          if(cf_value)
+            CFDataGetBytes( cf_value, cf_range, edi_ );
           else
             WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
                _("no EDID available from"),
@@ -1856,6 +1857,9 @@ oyGetMonitorInfo_lib              (const char* display_name,
                "\"CFDictionaryGetCountOfKey\"",
                _("Cant read hardware information from device."))
 
+        if(oy_debug)
+          printf("%s", printCFDictionary(dict) );
+
         CFRelease( dict ); dict = 0;
       }
       else
@@ -1864,7 +1868,7 @@ oyGetMonitorInfo_lib              (const char* display_name,
                "\"IODisplayCreateInfoDictionary\"",
                _("Cant read hardware information from device."))
 
-      if(count)
+      if(edi_[0] || edi_[1])
         oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, colours,
                         allocate_func);
 
@@ -1905,6 +1909,76 @@ oyGetMonitorInfo_lib              (const char* display_name,
 }
 
 
+#ifdef __APPLE__
+char * printCFDictionary( CFDictionaryRef dict )
+{
+  char * text = 0;
 
+  int count = CFDictionaryGetCount( dict );
+  if(count)
+  {
+          char ** keys = malloc(count * sizeof(void*));
+          char ** values = malloc(count * sizeof(void*));
+          int i;
+          char txt[128];
+          const char * type = "????";
+          CFDictionaryGetKeysAndValues( dict, keys, values );
+          for (i = 0; i < count; ++i)
+          {
+            CFTypeID cf_id;
+            CFTypeRef cf_element = keys[i];
+            char * key = 0;
+            char * value = 0;
+            CFStringRef string;
 
+            key = CFStringGetCStringPtr( cf_element, kCFStringEncodingMacRoman);
+            cf_id = CFGetTypeID(values[i]);
+            string = CFCopyTypeIDDescription( cf_id );
+            type = CFStringGetCStringPtr(string, kCFStringEncodingMacRoman);
+            if(cf_id == CFBooleanGetTypeID())
+            {
+              if(CFBooleanGetValue(values[i]))
+                STRING_ADD( value, "true" );
+              else
+                STRING_ADD( value, "false" );
+            } else if(cf_id == CFNumberGetTypeID())
+            {
+              float nv = 0;
+              CFNumberGetValue(values[i], kCFNumberFloatType, &nv);
+              sprintf( txt, "%g", nv );
+              STRING_ADD( value, txt );
+            } else if (cf_id == CFStringGetTypeID())
+            {
+              CFStringGetCString(values[i], txt, 128, kCFStringEncodingUTF8 /*kCFStringEncodingASCII*/);
+              STRING_ADD( value, txt[0] ? txt : &txt[1] );
+            } else if (cf_id == CFDataGetTypeID())
+            {
+              CFDataRef cf_data = values[i];
+              CFIndex len = CFDataGetLength( cf_data );
+              char * ptr = CFDataGetBytePtr( cf_data );
+              ptr = 0;
+            } else if (cf_id == CFDictionaryGetTypeID())
+            {
+              CFDictionaryRef d = values[i];
+              value = printCFDictionary( d );
+            /*} else if (cf_id == CFGetTypeID())
+            {*/
+            }
+            //value = CFStringGetCStringPtr(values[i], kCFStringEncodingMacRoman);
+
+            STRING_ADD(text, key);
+            STRING_ADD(text,"[");
+            STRING_ADD(text,type);
+            STRING_ADD(text,"]:\"");
+            STRING_ADD(text,value?value:"????");
+            STRING_ADD(text,"\"\n");
+
+            if(value)
+              oyDeAllocateFunc_(value); value = 0;
+          }
+  }
+
+  return text;
+}
+#endif
 
