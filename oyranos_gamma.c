@@ -336,7 +336,7 @@ int main( int argc , char** argv )
 
           if(strcmp(format,"edid_icc") == 0)
           {
-            o = oyConfig_Find( c, "edid1_colours" );
+            o = oyConfig_Find( c, "matrix_colours.edid" );
 
             prof = createProfile(
                     oyOption_GetValueDouble(o,8),
@@ -427,9 +427,9 @@ int main( int argc , char** argv )
           /* verbose adds */
           if(oy_debug)
           {
-            o = oyConfig_Find( c, "edid_colours_text.Xorg" );
+            o = oyConfig_Find( c, "matrix_colours_text.edid" );
             text = oyOption_GetValueText( o, oyAllocFunc );
-            printf( "%s:%d \"edid_colours_text.Xorg\":\n%s\n",
+            printf( "%s:%d \"%s\":\n%s\n", o->registration,
                  strchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
                     text?text:"----" );
             if(text) oyDeAllocFunc( text ); text = 0;
