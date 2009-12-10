@@ -1133,6 +1133,9 @@ OYAPI const char * OYEXPORT
                oyConfig_FindString   ( oyConfig_s        * config,
                                        const char        * key,
                                        const char        * value );
+OYAPI int  OYEXPORT
+               oyConfig_Has          ( oyConfig_s        * config,
+                                       const char        * key );
 OYAPI oyOption_s * OYEXPORT
                oyConfig_Find         ( oyConfig_s        * config,
                                        const char        * key );

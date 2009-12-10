@@ -11055,6 +11055,44 @@ OYAPI oyOption_s * OYEXPORT
   return o;
 }
 
+/** Function oyConfig_Has
+ *  @brief   search in data sets for a key
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     config              the configuration to be checked
+ *                                     wether or not the module can make
+ *                                     sense of it and support the data
+ *  @param[in]     key                 the key name
+ *  @return                            0 - not found; 1 - key found
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/10 (Oyranos: 0.1.10)
+ *  @date    2009/12/10
+ */
+OYAPI int  OYEXPORT
+               oyConfig_Has          ( oyConfig_s        * config,
+                                       const char        * key )
+{
+  oyOption_s * o = 0;
+  int has_option = 0;
+
+  if(!config)
+    return 0;
+
+  o = oyOptions_Find( config->data, key );
+  if(!o)
+    o = oyOptions_Find( config->backend_core, key );
+  if(!o)
+    o = oyOptions_Find( config->db, key );
+
+  if(o)
+    has_option = 1;
+
+  oyOption_Release( &o );
+
+  return has_option;
+}
+
 /** Function oyConfig_Count
  *  @brief   number of all options
  *  @memberof oyConfig_s
