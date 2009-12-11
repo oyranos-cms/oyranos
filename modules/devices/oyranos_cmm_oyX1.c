@@ -279,9 +279,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
             else
               oyOptions_MoveIn( (*device)->data, &o, -1 );
           }
-          oyBlob_Release( &edid );
         }
-        if(edid) oyDeAllocateFunc_( edid ); edid = 0;
+        oyBlob_Release( &edid );
       }
     }
 
@@ -474,6 +473,7 @@ int            oyX1Configs_FromPattern (
   return error;
 }
 
+
 /** Function oyX1Configs_Modify
  *  @brief   oyX1 oyCMMapi8_s Xorg monitor manipulation
  *
@@ -485,13 +485,14 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                                        oyOptions_s       * options )
 {
   oyConfig_s * device = 0;
-  oyOption_s * o = 0;
+  oyOption_s * o = 0, * o_tmp = 0;
   oyRectangle_s * rect = 0;
   const oyRectangle_s * r = 0;
-  oyProfile_s * p = 0;
+  oyProfile_s * prof = 0;
   char * text = 0;
   int n = 0, i,
       error = !devices || !oyConfigs_Count( devices ),
+      t_err = 0,
       has;
   const char * oprofile_name = 0,
              * device_name = 0;
@@ -576,30 +577,102 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           char * data = oyX1GetMonitorProfile( device_name, &size,
                                                allocateFunc );
 
-          
+
           has = 0;
           o = oyConfig_Find( device, "icc_profile" );
           if(o)
             has = 1;
+
+          if(data && size)
+          {
+            prof = oyProfile_FromMem( size, data, 0, 0 );
+            free( data );
+            if(has == 0)
+              o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH
+                                "icc_profile", 0 );
+          } else if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
+          {
+            icHeader * header = 0;
+            /* fallback: try to get EDID to build a profile */
+            o_tmp = oyConfig_Find( device, "colour_matrix."
+                     "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
+            if(!o_tmp)
+            {
+              oyOptions_SetFromText( &options,
+                                     OYX1_MONITOR_REGISTRATION OY_SLASH
+                                     "edid",
+                                     "yes", OY_CREATE_NEW );
+              error = oyX1DeviceFromName_( device_name, options, &device );
+              o_tmp = oyConfig_Find( device, "colour_matrix."
+                     "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
+            }
+
+            if(o_tmp)
+            {
+              oyOptions_s * opts = oyOptions_New(0),
+                          * result = 0;
+              error = oyOptions_MoveIn( opts, &o_tmp, -1 );
+              oyOptions_Handle( "///create_profile.icc",
+                                opts,"create_profile.icc_profile.colour_matrix",
+                                &result );
+              prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                        oyOBJECT_PROFILE_S );
+              oyOptions_Release( &result );
+            }
+
+            if(prof)
+            {
+              STRING_ADD( text, oyConfig_FindString( device, "model", 0 ) );
+              STRING_ADD( text, "_edid" );
+              error = oyProfile_AddTagText( prof,
+                                            icSigProfileDescriptionTag, text);
+              oyDeAllocateFunc_( text ); text = 0;
+              error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag,
+                               oyConfig_FindString( device, "manufacturer", 0));
+              error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag,
+                               oyConfig_FindString( device, "model", 0 ) );
+              data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_ );
+              header = (icHeader*) data;
+              o_tmp = oyConfig_Find( device, "mnft" );
+              sprintf( (char*)&header->manufacturer, "%s",
+                       oyConfig_FindString( device, "mnft", 0 ) );
+            }
+            oyOption_Release( &o_tmp );
+            oyProfile_Release( &prof );
+            if(data && size)
+            {
+              prof = oyProfile_FromMem( size, data, 0, 0 );
+              oyDeAllocateFunc_( data ); data = NULL; size = 0;
+            }
+            if(has == 0)
+              o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH
+                                "icc_profile.fallback", 0 );
+            error = -1;
+          }
+
+          if(!o)
+              o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH
+                                "icc_profile", 0 );
+
+          if(prof)
+          {
+            t_err = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
+            if(t_err > 0)
+              error = t_err;
+          }
           else
-            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile",
-                              0 );
           /** Warn and return issue on not found profile. */
-          if(!size || !data)
           {
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Could not obtain _ICC_PROFILE(_xxx) information for %s",
                      OY_DBG_ARGS_, device_name );
+
             /* Show the "icc_profile" option is understood. */
-            p = 0;
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            prof = 0;
+            error = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
             error = -1;
-          } else
-          {
-            p = oyProfile_FromMem( size, data, 0, 0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            free( data );
           }
+
           if(has)
             oyOption_Release( &o );
           else
@@ -623,8 +696,8 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           if( o && o->value && o->value->oy_struct && 
               o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
           {
-            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
-            tmp = oyProfile_GetFileName( p, 0 );
+            prof = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+            tmp = oyProfile_GetFileName( prof, 0 );
 
             STRING_ADD( text, "  " );
             if(tmp)
@@ -633,16 +706,25 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                 STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
               else
                 STRING_ADD( text, tmp );
+            } else
+            {
+              tmp = oyProfile_GetText( prof, oyNAME_DESCRIPTION );
+              if(tmp)
+                STRING_ADD( text, tmp );
             }
 
-            oyProfile_Release( &p );
+            oyProfile_Release( &prof );
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( &device->data,
+          {
+            t_err = oyOptions_SetFromText( &device->data,
                                          OYX1_MONITOR_REGISTRATION OY_SLASH
                                          "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
+            if(t_err > 0)
+              error = t_err;
+          }
           oyFree_m_( text );
         }
 
