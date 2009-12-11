@@ -578,6 +578,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CMM_API7_S: text = "oyCMMapi7_s Filter run"; break;
     case oyOBJECT_CMM_API8_S: text = "oyCMMapi8_s Devices"; break;
     case oyOBJECT_CMM_API9_S: text = "oyCMMapi9_s Graph Policies"; break;
+    case oyOBJECT_CMM_API10_S: text = "oyCMMapi10_s generic command"; break;
     case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
     case oyOBJECT_CMM_API_FILTERS_S: text="oyCMMapiFilters_s Filter list";break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
@@ -4827,6 +4828,20 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
             ((s->texts || s->getText)
               && s->texts[0] && s->texts[0][0] && s->getText)) &&
            s->pattern && s->pattern[0]
+            ) )
+        error = 1;
+    } break;
+    case oyOBJECT_CMM_API10_S:
+    {
+      oyCMMapi10_s * s = (oyCMMapi10_s*)api;
+      if(!(s->oyCMMInit &&
+           s->oyCMMMessageFuncSet &&
+           s->registration && s->registration[0] &&
+           (s->version[0] || s->version[1] || s->version[2]) &&
+           (!s->texts ||
+            ((s->texts || s->getText)
+              && s->texts[0] && s->texts[0][0] && s->getText)) &&
+           s->oyMOptions_Handle
             ) )
         error = 1;
     } break;
@@ -26831,7 +26846,8 @@ int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type )
                 type == oyOBJECT_CMM_API6_S ||
                 type == oyOBJECT_CMM_API7_S ||
                 type == oyOBJECT_CMM_API8_S ||
-                type == oyOBJECT_CMM_API9_S;
+                type == oyOBJECT_CMM_API9_S ||
+                type == oyOBJECT_CMM_API10_S;
 }
 
 /** @internal
@@ -27130,6 +27146,89 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
   }
 }
 
+
+/** typedef  oyOptions_Handle
+ *  @brief   handle a request by a module
+ *
+ *  @param[in]     registration        the module selector
+ *  @param[in]     options             options
+ *  @param[in]     command             the command to handle
+ *  @param[out]    result              options to the policy module
+ *  @return                            0 - indifferent, >= 1 - error,
+ *                                     <= -1 - issue,
+ *                                     + a message should be sent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2009/12/11
+ */
+int             oyOptions_Handle     ( const char        * registration,
+                                       oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+  oyOptions_s * s = options;
+
+  if(!options && !command)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
+
+  if(!error)
+  {
+    oyCMMapiFilters_s * apis;
+    int apis_n = 0, i;
+    oyCMMapi10_s * cmm_api10 = 0;
+    char * class, * api_reg;
+    char * test = 0;
+
+    class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
+    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+    STRING_ADD( api_reg, class );
+    oyFree_m_( class );
+
+    STRING_ADD( test, "can_handle." );
+    if(command && command[0])
+      STRING_ADD( test, command );
+
+    apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API10_S, 0, 0);
+    apis_n = oyCMMapiFilters_Count( apis );
+    if(test)
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api10 = (oyCMMapi10_s*) oyCMMapiFilters_Get( apis, i );
+
+        if(oyFilterRegistrationMatch( cmm_api10->registration, registration, 0))
+        {
+          if(cmm_api10->oyMOptions_Handle)
+          {
+            error = cmm_api10->oyMOptions_Handle( s, test, result );
+            if(error == 0)
+              error = cmm_api10->oyMOptions_Handle( s, command, result );
+
+          } else
+            error = 1;
+
+          if(error)
+          {
+            WARNc2_S( "%s %s",_("error in module:"), cmm_api10->registration );
+          }
+        }
+
+        if(cmm_api10->release)
+          cmm_api10->release( (oyStruct_s**)&cmm_api10 );
+      }
+    else
+      WARNc2_S( "%s %s",_("Could not allocate memory for:"),
+                cmm_api10->registration );
+
+    oyFree_m_( test );
+    oyCMMapiFilters_Release( &apis );
+  }
+  
+  return error;
+}
 
 
 /** @} *//*misc */

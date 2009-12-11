@@ -156,6 +156,7 @@ typedef enum {
   oyOBJECT_CMM_API8_S,                /**< oyCMMapi8_s */
   oyOBJECT_CMM_API_FILTERS_S,         /**< oyCMMapiFilters_s */
   oyOBJECT_CMM_API9_S,                /**< oyCMMapi9_s */
+  oyOBJECT_CMM_API10_S,               /**< oyCMMapi10_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
   oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
   oyOBJECT_MODULE_S,                  /*!< oyModule_s */
@@ -973,10 +974,6 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
 int            oyOptions_CountType   ( oyOptions_s       * options,
                                        const char        * registration,
                                        oyOBJECT_e          type );
-oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
-                                       int                 pos,
-                                       const char        * registration,
-                                       oyOBJECT_e          type );
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
                                        const char        * key );
 const char *   oyOptions_FindString  ( oyOptions_s       * options,
@@ -1009,6 +1006,10 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
                                        double              value,
                                        int                 pos,
                                        uint32_t            flags );
+oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
+                                       int                 pos,
+                                       const char        * registration,
+                                       oyOBJECT_e          type );
 int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
                                        const char        * registration,
                                        oyStruct_s       ** oy_struct,
@@ -1033,6 +1034,10 @@ OYAPI int  OYEXPORT
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
                                        oyObserver_Signal_f signalFunc );
+int             oyOptions_Handle     ( const char        * registration,
+                                       oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result );
 
 
 /** @struct  oyRankPad
@@ -2030,6 +2035,7 @@ typedef struct oyCMMapi6_s oyCMMapi6_s;
 typedef struct oyCMMapi7_s oyCMMapi7_s;
 typedef struct oyCMMapi8_s oyCMMapi8_s;
 typedef struct oyCMMapi9_s oyCMMapi9_s;
+typedef struct oyCMMapi10_s oyCMMapi10_s;
 typedef struct oyCMMapiFilter_s oyCMMapiFilter_s;
 typedef struct oyFilterGraph_s oyFilterGraph_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
@@ -3310,9 +3316,9 @@ typedef struct {
   oyObject_s       oy_;                /**< @private zero for static data */
   char             cmm[8];             /*!< ICC signature, eg 'lcms' */
   char           * backend_version;    /*!< non translatable, eg "v1.17" */
-  /** translatable, e.g. "name": "lcms" "little cms" "A CMM with 100k ..."
+  /** translated, e.g. "name": "lcms" "little cms" "A CMM with 100k ..."
    *  supported should be "name", "copyright" and "manufacturer".
-   *  Optional is "help". Note: the string must be known to Oyranos in some way.
+   *  Optional is "help".
    */
   oyCMMGetText_f   getText;
   char          ** texts;              /**< zero terminated list for getText */
