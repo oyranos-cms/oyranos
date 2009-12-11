@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 
 
 /* --- internal definitions --- */
@@ -232,21 +233,31 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         if(!error)
         {
           int i;
+          char * save_locale = 0;
           for(i = 0; i < 9; ++i)
             error = oyOptions_SetFromDouble( &(*device)->data,
-                             OYX1_MONITOR_REGISTRATION OY_SLASH "edid1_colours",
+                       OYX1_MONITOR_REGISTRATION OY_SLASH "colour_matrix.edid."
+                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                              colours[i], i, OY_CREATE_NEW );
           text = oyAllocateFunc_(1024);
-          sprintf( text, "Gamma: %g\n"
-                         "redX: %g redY: %g\n"
-                         "greenX: %g greenY: %g\n"
-                         "blueX: %g blueY: %g\n"
-                         "whiteX: %g whiteY: %g",
-                   colours[8], colours[0], colours[1], colours[2], colours[3],
-                   colours[4], colours[5], colours[6], colours[7] );
-          error = oyOptions_SetFromText( &(*device)->data,
-                    OYX1_MONITOR_REGISTRATION OY_SLASH "edid_colours_text.Xorg",
+
+          /* sensible printing */
+          save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
+                                       oyAllocateFunc_ );
+          setlocale( LC_NUMERIC, "C" );
+          sprintf( text, "%g,%g," "%g,%g," "%g,%g," "%g,%g,%g",
+                   colours[0], colours[1], colours[2], colours[3],
+                   colours[4], colours[5], colours[6], colours[7], colours[8] );
+          setlocale(LC_NUMERIC, save_locale);
+          if(save_locale)
+            oyFree_m_( save_locale );
+
+          error = oyOptions_SetFromText( &(*device)->backend_core,
+                                         OYX1_MONITOR_REGISTRATION OY_SLASH
+                                         "colour_matrix_text.edid."
+                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                          text, OY_CREATE_NEW );
+          oyDeAllocateFunc_( text ); text = 0;
         }
 
         if(!error && edid)
