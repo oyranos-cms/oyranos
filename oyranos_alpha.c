@@ -12444,7 +12444,8 @@ OYAPI int  OYEXPORT
   int error = !device;
   oyOptions_s * options = 0;
   oyProfile_s * p = 0;
-  char * profile_name = 0;
+  char * profile_name = 0,
+       * profile_name_temp = 0;
   const char * device_name = 0;
   oyConfig_s * s = device;
 
@@ -12465,7 +12466,35 @@ OYAPI int  OYEXPORT
 
     /* 2.1 for no profile name: skip the "setup" call */
     if(!profile_name)
-      return error;
+    {
+      /* 2.1.1 try fallback for rescue */
+      error = oyDeviceAskProfile2( device, 1, &p );
+      if(p)
+      {
+        profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
+                                      oyAllocateFunc_ );
+        if(!profile_name)
+        {
+          char * data = 0;
+          size_t size = 0;
+          data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+          if(data && size)
+            error = oyWriteMemToFile2_( "oyranos_tmp.icc", data, size,
+                                        OY_FILE_NAME_SEARCH | OY_FILE_TEMP_DIR,
+                                        &profile_name_temp, oyAllocateFunc_ );
+          else
+            error = 1;
+
+          if(profile_name_temp)
+            profile_name = profile_name_temp;
+          else
+            error = 1;
+        }
+      }
+
+      if(!profile_name)
+        return error;
+    }
 
     /* 2.2 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
@@ -12480,6 +12509,9 @@ OYAPI int  OYEXPORT
     /* 3.1 send the query to a module */
     error = oyDeviceBackendCall( device, options );
 
+    if(profile_name_temp)
+      oyRemoveFile_( profile_name_temp );
+    profile_name_temp = 0;
     oyOptions_Release( &options );
     if(profile_name)
       oyFree_m_( profile_name );
@@ -12777,6 +12809,105 @@ OYAPI int  OYEXPORT
     if(error == 0)
       error = -1;
   }
+
+  return error;
+}
+
+/** Function oyDeviceAskProfile2
+ *  @brief   ask for the device profile
+ *
+ *  Ask for a profile associated with the device. A device capable to
+ *  hold a profile only the held profile will be checked and returned.
+ *  In case this profile is not found a "icc_profile" of oyVAL_STRUCT should be
+ *  included.
+ *
+ *  The device might not be able to hold a profile, then just the DB profile
+ *  will be returned from here without an issue. For interessted users, the
+ *  source of the profile keeps transparent, as it can be checked if the
+ *  device contains a "icc_profile" option which contains a oyProfile_s object.
+ *
+ *  @param[in]     device              the device
+ *  @param[in]     flags               0 - default, 1 - allow for fallback
+ *  @param[out]    profile             the device's ICC profile
+ *  @return                            0 - good, 1 >= error, -1 <= issue(s)
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/10 (Oyranos: 0.1.10)
+ *  @date    2009/12/10
+ */
+OYAPI int  OYEXPORT
+           oyDeviceAskProfile2       ( oyConfig_s        * device,
+                                       uint32_t            flags,
+                                       oyProfile_s      ** profile )
+{
+  int error = !device;
+  oyOptions_s * options = 0;
+  oyOption_s * o = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+
+  if(!options)
+  {
+    options = oyOptions_New( 0 );
+
+    error = !options;
+  }
+
+  if(error <= 0)
+  {
+    /* add "list" call to module arguments */
+    error = oyOptions_SetRegistrationTextKey_( options,
+                                               device->registration,
+                                               "command", "list" );
+  }
+
+  if(error <= 0)
+  {
+    if(flags & 0x01)
+      error = oyOptions_SetRegistrationTextKey_( options,
+                                                 device->registration,
+                                                 "icc_profile.fallback","true");
+    else
+      error = oyOptions_SetRegistrationTextKey_( options,
+                                                 device->registration,
+                                                 "icc_profile", "true" );
+  }
+
+  if(error <= 0)
+    error = oyDeviceBackendCall( device, options );
+
+  if(error <= 0)
+    o = oyConfig_Find( device, "icc_profile" );
+
+  if(o && o->value_type == oyVAL_STRUCT &&
+     o->value)
+  {
+    if(o->value->oy_struct && 
+       o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+      *profile = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+    else if(!error)
+      error = -1;
+  }
+
+  if(!(*profile) && flags & 0x01)
+  {
+    /* TODO support matrix profile creation for backends if desired.
+     *      The property in 'oyX1' is "colour_matrix"
+     */
+  }
+
+  if(!(*profile))
+  {
+    char * profile_name = 0;
+    oyDeviceProfileFromDB( device, &profile_name, 0 );
+    *profile = oyProfile_FromFile( profile_name, 0,0 );
+    oyDeAllocateFunc_( profile_name );
+  }
+
+  oyOptions_Release( &options );
+  oyOption_Release( &o );
 
   return error;
 }

@@ -1521,6 +1521,10 @@ OYAPI int  OYEXPORT
            oyDeviceAskProfile        ( oyConfig_s        * device,
                                        oyProfile_s      ** profile );
 OYAPI int  OYEXPORT
+           oyDeviceAskProfile2       ( oyConfig_s        * device,
+                                       uint32_t            flags,
+                                       oyProfile_s      ** profile );
+OYAPI int  OYEXPORT
            oyDeviceProfileFromDB     ( oyConfig_s        * device,
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc );
