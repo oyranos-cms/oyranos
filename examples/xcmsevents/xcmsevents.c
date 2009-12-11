@@ -385,6 +385,7 @@ int main(int argc, char *argv[])
                                           event.xproperty.atom );
           char * tmp = 0;
           double colours[9] = {0,0,0,0,0,0,0,0,0};
+          oyProfile_s * p = 0;
 
           if(strcmp( "_ICC_PROFILE", an ) == 0)
             an = "_ICC_PROFILE  ";
@@ -393,10 +394,14 @@ int main(int argc, char *argv[])
              strstr( XGetAtomName( event.xany.display, event.xproperty.atom ),
                      "_ICC_PROFILE") != 0)
           {
-            oyProfile_s * p = oyProfile_FromMem( n, data, 0, 0 );
+            p = oyProfile_FromMem( n, data, 0, 0 );
             name = oyProfile_GetFileName( p, 0 );
             if(name && strchr(name, '/'))
               name = strrchr( name, '/' ) + 1;
+            else if(!name)
+              name = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+            else if(!name)
+              name = "????";
           }
           if(n &&
              strstr( XGetAtomName( event.xany.display, event.xproperty.atom ),
@@ -424,6 +429,7 @@ int main(int argc, char *argv[])
                    colours[4], colours[5], colours[6], colours[7], colours[8] );
             free(tmp); tmp = 0;
           }
+          oyProfile_Release( &p );
         }
 
         if(data) XFree(data);
