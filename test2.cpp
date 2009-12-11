@@ -1780,6 +1780,7 @@ oyTESTRESULT_e testCMMsShow ()
   oyCMMapi7_s * cmm_api7 = 0;
   oyCMMapi8_s * cmm_api8 = 0;
   oyCMMapi9_s * cmm_api9 = 0;
+  oyCMMapi10_s * cmm_api10 = 0;
   oyCMMapi_s * tmp = 0;
   oyCMMapiFilter_s * cmm_filter = 0;
 
@@ -1830,7 +1831,7 @@ oyTESTRESULT_e testCMMsShow ()
 
               STRING_ADD( text, "    API(s) load from Meta module:\n" );
 
-              for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API9_S; j++)
+              for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API10_S; j++)
               {
                 apis = oyCMMsGetFilterApis_( 0, api_reg, (oyOBJECT_e)j,
                                              &rank_list, &apis_n );
@@ -1959,6 +1960,25 @@ oyTESTRESULT_e testCMMsShow ()
                             cmm_api9->options,
                             cmm_api9->pattern );
                     STRING_ADD( text, text_tmp );
+                  }
+
+                  if(api->type == oyOBJECT_CMM_API10_S)
+                  {
+                    cmm_api10 = (oyCMMapi10_s*) api;
+                    for(l = 0; l < 3; ++l)
+                    {
+                      if(cmm_api10->texts[l])
+                      {
+                        snprintf( text_tmp, 65535,
+                            "        \"%s\":\n"
+                            "        \"%s\"\n",
+                            cmm_api10->texts[l],
+                            cmm_api10->getText( cmm_api10->texts[l],
+                                                oyNAME_DESCRIPTION) );
+                        STRING_ADD( text, text_tmp );
+                      } else
+                        break;
+                    }
                   }
 
                   STRING_ADD( text, "\n" );
