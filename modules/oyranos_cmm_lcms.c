@@ -23,6 +23,19 @@
 #include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
 #include "oyranos_alpha_internal.h" /* hashTextAdd_m ... */
 
+/*
+oyCMMInfo_s   lcms_cmm_module;
+oyCMMapi4_s     lcms_api4_cmm;
+oyCMMui_s         oyra_api4_ui_cmm;
+oyCMMapi7_s     lcms_api7_cmm;
+oyConnectorImaging_s* lcms_cmmIccSocket_connectors[2];
+oyConnectorImaging_s    lcms_cmmIccSocket_connector;
+oyConnectorImaging_s* lcms_cmmIccPlug_connectors[2];
+oyConnectorImaging_s    lcms_cmmIccPlug_connector;
+oyCMMapi6_s     lcms_api6_cmm;
+oyCMMapi10_s    lcms_api10_cmm;
+*/
+
 void* oyAllocateFunc_           (size_t        size);
 void* oyAllocateWrapFunc_       (size_t        size,
                                  oyAlloc_f     allocate_func);
@@ -369,9 +382,9 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
-    message( oyMSG_WARN,0, "%s:%d "
+    message( oyMSG_WARN,0, OY_DBG_FORMAT_" "
              "can not handle more than %d channels; found: %d",
-             __FILE__,__LINE__, CMMMaxChannels_M, chan_n);
+             OY_DBG_ARGS_, CMMMaxChannels_M, chan_n);
 
   cmm_pixel = COLORSPACE_SH(PT_ANY);
   cmm_pixel |= CHANNELS_SH(cchans);
@@ -572,10 +585,10 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
         cmsSetCMYKPreservationStrategy( LCMS_PRESERVE_K_PLANE );
 
   if(oy_debug)
-    message( oyMSG_WARN,0, "%s:%d\n"
+    message( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
              "  proof: %d  bpc: %d  gamut_warning: %d  high_precission: %d\n"
              "  profiles_n: %d",
-              __FILE__,__LINE__,
+             OY_DBG_ARGS_,
                 proof_n,   bpc,     gamut_warning,     high_precission,
                 profiles_n );
 
@@ -792,8 +805,8 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
 
   if(!proof || proof->type_ != oyOBJECT_PROFILE_S)
   {
-    message( oyMSG_WARN, (oyStruct_s*)proof, "%s:%d "
-             "no profile provided", __FILE__,__LINE__ );
+    message( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_" "
+             "no profile provided", OY_DBG_ARGS_ );
     return 0;
   }
 
@@ -828,13 +841,12 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
     lcmsProfileWrap_s * s = calloc(sizeof(lcmsProfileWrap_s), 1);
 
     if(oy_debug == 1)
-      fprintf( stderr, "%s:%d created: \"%s\"",
-               strchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
-               hash_text );
+      fprintf( stderr, OY_DBG_FORMAT_" created: \"%s\"",
+               OY_DBG_ARGS_, hash_text );
     else
     message( oyMSG_DBG, (oyStruct_s*)proof,
-             "%s:%d created abstract proofing profile: \"%s\"",
-             __FILE__,__LINE__, hash_text );
+             OY_DBG_FORMAT_" created abstract proofing profile: \"%s\"",
+             OY_DBG_ARGS_, hash_text );
  
     /* create */
     hp = lcmsGamutCheckAbstract( proof, flags, intent, intent_proof );
@@ -902,8 +914,8 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
 
   if(!p || p->type_ != oyOBJECT_PROFILE_S)
   {
-    message( oyMSG_WARN, (oyStruct_s*)p, "%s:%d "
-             "no profile provided", __FILE__,__LINE__ );
+    message( oyMSG_WARN, (oyStruct_s*)p, OY_DBG_FORMAT_" "
+             "no profile provided", OY_DBG_ARGS_ );
     return 0;
   }
 
@@ -1086,13 +1098,14 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   {
     oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message( oyMSG_WARN, (oyStruct_s*)node,
-             "%s: %d missed input image %d", __FILE__,__LINE__, image_input->type_ );
+             OY_DBG_FORMAT_" missed input image %d", OY_DBG_ARGS_,
+             image_input->type_ );
   }
   if(image_output->type_ != oyOBJECT_IMAGE_S)
   {
     oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message( oyMSG_WARN, (oyStruct_s*)node,
-             "%s: %d missed output image %d", __FILE__,__LINE__, image_input->type_ );
+             OY_DBG_FORMAT_" missed output image %d", OY_DBG_ARGS_, image_input->type_ );
   }
 
   data_type = oyToDataType_m( image_input->layout_[0] );
@@ -1101,7 +1114,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   {
     oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message( oyMSG_WARN, (oyStruct_s*)node,
-             "%s: %d can not handle oyFLOAT", __FILE__,__LINE__ );
+             OY_DBG_FORMAT_" can not handle oyFLOAT", OY_DBG_ARGS_ );
   }
 
   channels = oyToChannels_m( image_input->layout_[0] );
@@ -1114,8 +1127,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   lps[ profiles_n++ ] = lcmsAddProfile( image_input->profile_ );
   if(!image_input->profile_)
   {
-    message( oyMSG_WARN, (oyStruct_s*)node, "%s: %d "
-             "missed image_input->profile_", __FILE__,__LINE__ );
+    message( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_" "
+             "missed image_input->profile_", OY_DBG_ARGS_ );
     return 0;
   }
   p = oyProfile_Copy( image_input->profile_, 0 );
@@ -1130,8 +1143,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         o->value->oy_struct->type_ != oyOBJECT_PROFILES_S)
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
-      message( oyMSG_WARN, (oyStruct_s*)node,
-               "%s: %d incompatible \"profiles_effect\"", __FILE__,__LINE__ );
+      message( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+               " incompatible \"profiles_effect\"", OY_DBG_ARGS_ );
       
     } else
     {
@@ -1160,8 +1173,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     proof = atoi( o_txt ) ? atoi(o_txt) : proof;
 
   if(oy_debug && proof)
-      message( oyMSG_DBG, (oyStruct_s*)node,
-               "%s: %d proof requested",__FILE__,__LINE__);
+      message( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_
+               " proof requested",OY_DBG_ARGS_);
 
   if(o)
   {
@@ -1169,26 +1182,26 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
         o->value->oy_struct->type_ != oyOBJECT_PROFILES_S)
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
-      message( oyMSG_WARN, (oyStruct_s*)node,
-               "%s: %d incompatible \"profiles_simulation\"",__FILE__,__LINE__);
+      message( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+               " incompatible \"profiles_simulation\"",OY_DBG_ARGS_);
       
     } else
     {
       profiles = (oyProfiles_s*) o->value->oy_struct;
       n = oyProfiles_Count( profiles );
 
-      message( oyMSG_DBG,(oyStruct_s*)node,
-               "%s:%d %d simulation profile(s) found \"%s\"",
-               __FILE__,__LINE__, n,
+      message( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+               " %d simulation profile(s) found \"%s\"",
+               OY_DBG_ARGS_, n,
                profiles?oyStruct_TypeToText((oyStruct_s*)profiles):"????");
 
       for(i = 0; i < n; ++i)
       {
         p = oyProfiles_Get( profiles, i );
 
-        message( oyMSG_DBG,(oyStruct_s*)node,
-                 "%s:%d found profile: %s",
-                 __FILE__,__LINE__, p?oyProfile_GetFileName( p,-1 ):"????");
+        message( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+                 " found profile: %s",
+                 OY_DBG_ARGS_, p?oyProfile_GetFileName( p,-1 ):"????");
 
         profs = oyProfiles_MoveIn( profs, &p, -1 );
         ++profiles_proof_n;
@@ -1198,16 +1211,15 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     }
     oyOption_Release( &o );
   } else if(verbose || oy_debug)
-    message( oyMSG_DBG,(oyStruct_s*)node,
-             "%s:%d no simulation profile found",
-             __FILE__,__LINE__);
+    message( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+             " no simulation profile found", OY_DBG_ARGS_);
 
 
   /* output profile */
   if(!image_output->profile_)
   {
-    message( oyMSG_WARN, (oyStruct_s*)node, "%s: %d "
-             "missed image_output->profile_", __FILE__,__LINE__ );
+    message( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_" "
+             "missed image_output->profile_", OY_DBG_ARGS_ );
     return 0;
   }
   lps[ profiles_n++ ] = lcmsAddProfile( image_output->profile_ );
@@ -1591,13 +1603,14 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(data_type == oyFLOAT)
   {
     oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
-    message(oyMSG_WARN,0, "%s: %d can not handle oyFLOAT", __FILE__,__LINE__);
+    message(oyMSG_WARN,0, OY_DBG_FORMAT_" can not handle oyFLOAT",OY_DBG_ARGS_);
     error = 1;
   }
 
   if(!ticket->output_image)
   {
-    message(oyMSG_WARN,0, "%s: %d no ticket->output_image", __FILE__,__LINE__);
+    message( oyMSG_WARN,0, OY_DBG_FORMAT_ " no ticket->output_image",
+             OY_DBG_ARGS_);
     error = 1;
   }
 
@@ -1835,8 +1848,200 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
   *ui_text = tmp;
 
   return 0;
-} 
+}
 
+/** Function lcmsCreateICCMatrixProfile
+ *  @brief   ICC from EDID
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/10/24 (Oyranos: 0.1.10)
+ *  @date    2009/12/10
+ */
+oyProfile_s *      lcmsCreateICCMatrixProfile (
+                                       float             gamma,
+                                       float rx, float ry,
+                                       float gx, float gy,
+                                       float bx, float by,
+                                       float wx, float wy)
+{
+  cmsCIExyYTRIPLE p;
+  LPGAMMATABLE g[3] = {0,0,0};
+  /* 0.31271, 0.32902 D65 */
+  cmsCIExyY wtpt_xyY;
+  cmsHPROFILE lp = 0;
+  size_t size = 0;
+  char * data = 0;
+
+  int error = 0;
+  oyProfile_s * prof = 0;
+
+  p.Red.x = rx; 
+  p.Red.y = ry;
+  p.Green.x = gx;
+  p.Green.y = gy;
+  p.Blue.x = bx;
+  p.Blue.y = by;
+  wtpt_xyY.x = wx;
+  wtpt_xyY.y = wy;
+  wtpt_xyY.Y = 1.0;
+  g[0] = g[1] = g[2] = cmsBuildGamma(1, (double)gamma);
+  lp = cmsCreateRGBProfile( &wtpt_xyY, &p, g);
+
+  _cmsSaveProfileToMem( lp, 0, &size );
+  data = oyAllocateFunc_( size );
+  _cmsSaveProfileToMem( lp, data, &size );
+  cmsCloseProfile( lp );
+  cmsFreeGamma( g[0] );
+
+  prof = oyProfile_FromMem( size, data, 0,0 );
+
+
+  error = oyProfile_AddTagText( prof, icSigCopyrightTag,
+                                      "no copyright; use freely" );
+
+  oyDeAllocateFunc_( data ); size = 0;
+  return prof;
+}
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2009/12/11
+ */
+int          lcmsMOptions_Handle     ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  oyOption_s * o = 0;
+  oyProfile_s * prof = 0;
+  int error = 0;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"create_profile", 0))
+    {
+      double val = 0.0;
+      o = oyOptions_Find( options, "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+      oyOptions_FindDouble( options,
+        "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                            10000000, &val );
+      if(!o)
+      {
+        message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ " "
+                 "no option \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" found",
+                 OY_DBG_ARGS_ );
+      } else if( val < 9 )
+      {
+        message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_" "
+                 "option \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" contains less than 9 required values: %g",
+                 OY_DBG_ARGS_, val );
+      }
+
+      oyOption_Release( &o );
+
+      /* seems fine */
+      return 0;
+    }
+    else
+      return 1;
+  }
+  else if(oyFilterRegistrationMatch(command,"create_profile", 0))
+  {
+    o = oyOptions_Find( options, "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+    if(o)
+    {
+      prof = lcmsCreateICCMatrixProfile (
+                    oyOption_GetValueDouble(o,8),
+                    oyOption_GetValueDouble(o,0), oyOption_GetValueDouble(o,1),
+                    oyOption_GetValueDouble(o,2), oyOption_GetValueDouble(o,3),
+                    oyOption_GetValueDouble(o,4), oyOption_GetValueDouble(o,5),
+                    oyOption_GetValueDouble(o,6), oyOption_GetValueDouble(o,7));
+      oyOption_Release( &o );
+
+      o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.colour_matrix." CMM_NICK,
+                        0 );
+      error = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_MoveIn( *result, &o, -1 );
+    }
+  }
+
+  return 0;
+}
+
+/**
+ *  This function implements oyCMMInfoGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2009/12/11
+ */
+const char * lcmsInfoGetTextProfileC ( const char        * select,
+                                       oyNAME_e            type )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if LittleCMS can handle a certain command.");
+  } else if(strcmp(select, "create_profile")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("create_profile");
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC matrix profile.");
+    else
+      return _("The littleCMS \"create_profile.colour_matrix\" command lets you create ICC profiles from some given colourimetric coordinates. The filter expects a oyOption_s object with name \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white and a gamma value.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC matrix profile.");
+    else
+      return _("The littleCMS \"create_profile.colour_matrix\" command lets you create ICC profiles from some given colourimetric coordinates. See the \"create_profile\" info item.");
+  }
+  return 0;
+}
+const char *lcms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
+
+/** @instance lcms_api10_cmm
+ *  @brief    littleCMS oyCMMapi10_s implementation
+ *
+ *  a filter for simple profile creation
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2009/12/11
+ */
+oyCMMapi10_s    lcms_api10_cmm = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  0,
+
+  lcmsCMMInit,
+  lcmsCMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "create_profile.colour_matrix.icc." CMM_NICK ".CPU",
+
+  CMM_VERSION,
+  {0,1,10},                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+ 
+  lcmsInfoGetTextProfileC,             /**< getText */
+  (char**)lcms_texts_profile_create,   /**<texts; list of arguments to getText*/
+ 
+  lcmsMOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
 
 
 /** @instance lcms_api6
@@ -1852,7 +2057,7 @@ oyCMMapi6_s   lcms_api6_cmm = {
 
   oyOBJECT_CMM_API6_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & lcms_api10_cmm,
 
   lcmsCMMInit,
   lcmsCMMMessageFuncSet,
