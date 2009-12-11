@@ -238,7 +238,7 @@ int  oyWriteMemToFile2_              ( const char        * name,
   if(flags & OY_FILE_APPEND)
     mode = "ab";
 
-  if(flags | OY_FILE_TEMP_DIR)
+  if(flags & OY_FILE_TEMP_DIR)
   {
     if(getenv("TMP") && strlen(getenv("TMP")))
       tmp_dir = getenv("TMP");
