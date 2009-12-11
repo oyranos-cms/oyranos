@@ -207,8 +207,13 @@ int oyIsDir_      (const char* path);
 int oyIsFile_     (const char* fileName);
 int oyIsFileFull_ (const char* fullFileName);
 int oyMakeDir_    (const char* path);
+int  oyRemoveFile_                   ( const char        * full_file_name );
 
 int   oyWriteMemToFile_ (const char* name, const void* mem, size_t size);
+
+#define OY_FILE_APPEND 0x01
+#define OY_FILE_NAME_SEARCH 0x02
+#define OY_FILE_TEMP_DIR 0x04
 int  oyWriteMemToFile2_              ( const char        * name,
                                        void              * mem,
                                        size_t              size,

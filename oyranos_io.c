@@ -215,8 +215,6 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
   return r;
 }
 
-#define OY_FILE_APPEND 0x01
-#define OY_FILE_NAME_SEARCH 0x02
 
 int  oyWriteMemToFile2_              ( const char        * name,
                                        void              * mem,
@@ -226,7 +224,9 @@ int  oyWriteMemToFile2_              ( const char        * name,
                                        oyAlloc_f           allocateFunc )
 {
   int error = 0;
-  const char* filename = name;
+  const char * filename = name,
+             * tmp_dir = 0;
+  char * filename_tmp = 0;
   char * full_name = 0;
   char * mode = "wb";
   int exist = 0, pos = 1;
@@ -238,7 +238,29 @@ int  oyWriteMemToFile2_              ( const char        * name,
   if(flags & OY_FILE_APPEND)
     mode = "ab";
 
-  full_name = oyResolveDirFileName_( filename );
+  if(flags | OY_FILE_TEMP_DIR)
+  {
+    if(getenv("TMP") && strlen(getenv("TMP")))
+      tmp_dir = getenv("TMP");
+    else
+    if(getenv("TEMP") && strlen(getenv("TEMP")))
+      tmp_dir = getenv("TEMP");
+    else
+    if(getenv("TMPDIR") && strlen(getenv("TMPDIR")))
+      tmp_dir = getenv("TMPDIR");
+    else
+      tmp_dir = "/tmp";
+
+    STRING_ADD( filename_tmp, tmp_dir );
+    if(filename_tmp[oyStrlen_(filename_tmp)] != '/')
+      STRING_ADD( filename_tmp, "/" );
+    STRING_ADD( filename_tmp, filename );
+    full_name = filename_tmp;
+    filename = full_name;
+  }
+
+  if(!full_name)
+    full_name = oyResolveDirFileName_( filename );
   exist = oyIsFile_(full_name);
   if(exist &&
      !flags & OY_FILE_APPEND && !flags & OY_FILE_NAME_SEARCH)
@@ -491,6 +513,11 @@ oyMakeDir_ (const char* path)
 
   DBG_PROG_ENDE
   return rc;
+}
+
+int  oyRemoveFile_                   ( const char        * full_file_name )
+{
+  return remove( full_file_name );
 }
 
 char*
