@@ -21,9 +21,6 @@
  */
 
 
-#include <lcms.h>
-#include <icc34.h>
-
 #include "oyranos.h"
 #include "oyranos_alpha.h"
 #include "oyranos_debug.h"
@@ -39,50 +36,6 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
 
 
-oyProfile_s *      createProfile     ( float             gamma,
-                                       float rx, float ry,
-                                       float gx, float gy,
-                                       float bx, float by,
-                                       float wx, float wy)
-{
-  cmsCIExyYTRIPLE p;
-  LPGAMMATABLE g[3];
-  /* 0.31271, 0.32902 D65 */
-  cmsCIExyY wtpt_xyY;
-  cmsHPROFILE lp = 0;
-  size_t size = 0;
-  char * data = 0;
-
-  int error = 0;
-  oyProfile_s * prof = 0;
-
-  p.Red.x = rx; 
-  p.Red.y = ry;
-  p.Green.x = gx;
-  p.Green.y = gy;
-  p.Blue.x = bx;
-  p.Blue.y = by;
-  wtpt_xyY.x = wx;
-  wtpt_xyY.y = wy;
-  wtpt_xyY.Y = 1.0;
-  g[0] = g[1] = g[2] = cmsBuildGamma(1, gamma);
-  lp = cmsCreateRGBProfile( &wtpt_xyY, &p, g);
-
-  _cmsSaveProfileToMem( lp, 0, &size );
-  data = oyAllocFunc( size );
-  _cmsSaveProfileToMem( lp, data, &size );
-  cmsCloseProfile( lp );
-  cmsFreeGamma( g[0] );
-
-  prof = oyProfile_FromMem( size, data, 0,0 );
-
-
-  error = oyProfile_AddTagText( prof, icSigCopyrightTag,
-                                      "no copyright; use freely" );
-
-  oyDeAllocFunc( data ); size = 0;
-  return prof;
-}
 
 int main( int argc , char** argv )
 {
@@ -336,26 +289,37 @@ int main( int argc , char** argv )
 
           if(strcmp(format,"edid_icc") == 0)
           {
-            o = oyConfig_Find( c, "matrix_colours.edid" );
+            o = oyConfig_Find( c, "colour_matrix.edid."
+                     "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
 
-            prof = createProfile(
-                    oyOption_GetValueDouble(o,8),
-                    oyOption_GetValueDouble(o,0), oyOption_GetValueDouble(o,1),
-                    oyOption_GetValueDouble(o,2), oyOption_GetValueDouble(o,3),
-                    oyOption_GetValueDouble(o,4), oyOption_GetValueDouble(o,5),
-                    oyOption_GetValueDouble(o,6), oyOption_GetValueDouble(o,7));
-            oyOption_Release( &o );
-            error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag,
-                                          (char*) output ? output : format );
-            error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag,
+            if(o)
+            {
+              oyOptions_s * opts = oyOptions_New(0),
+                          * result = 0;
+
+              error = oyOptions_MoveIn( opts, &o, -1 );
+              oyOptions_Handle( "///create_profile.icc",
+                                opts,"create_profile.icc_profile.colour_matrix",
+                                &result );
+              prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                        oyOBJECT_PROFILE_S );
+              oyOptions_Release( &result );
+            }
+
+            if(prof)
+            {
+              error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag,
+                                            (char*) output ? output : format );
+              error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag,
                                   oyConfig_FindString( c, "manufacturer", 0 ) );
-            error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag,
+              error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag,
                                   oyConfig_FindString( c, "model", 0 ) );
-            data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
-            header = (icHeader*) data;
-            o = oyConfig_Find( c, "mnft" );
-            sprintf( (char*)&header->manufacturer, "%s",
-                     oyConfig_FindString( c, "mnft", 0 ) );
+              data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+              header = (icHeader*) data;
+              o = oyConfig_Find( c, "mnft" );
+              sprintf( (char*)&header->manufacturer, "%s",
+                       oyConfig_FindString( c, "mnft", 0 ) );
+            }
           } else
           if(strcmp(format,"edid") == 0)
           {
@@ -369,7 +333,7 @@ int main( int argc , char** argv )
           }
 
           error = oyWriteMemToFile2_( output ? output : format,
-                                      data, size, 0x02,
+                                      data, size, 0x01,
                                       &out_name, oyAllocFunc );
           oyDeAllocFunc( data ); size = 0;
           if(!error)
@@ -427,11 +391,10 @@ int main( int argc , char** argv )
           /* verbose adds */
           if(oy_debug)
           {
-            o = oyConfig_Find( c, "matrix_colours_text.edid" );
+            o = oyConfig_Find( c, "colour_matrix_text.edid" );
             text = oyOption_GetValueText( o, oyAllocFunc );
-            printf( "%s:%d \"%s\":\n%s\n", o->registration,
-                 strchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
-                    text?text:"----" );
+            printf( OY_DBG_FORMAT_" \"%s\":\n%s\n", OY_DBG_ARGS_,
+                    o->registration, text?text:"----" );
             if(text) oyDeAllocFunc( text ); text = 0;
             oyOption_Release( &o );
 
@@ -440,13 +403,14 @@ int main( int argc , char** argv )
             if(size && data)
               oyDeAllocFunc( data );
             filename = oyProfile_GetFileName( prof, -1 );
-            printf( "%s:%d server profile \"%s\" size: %d\n",
-                 strchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
+            printf( OY_DBG_FORMAT_" server profile \"%s\" size: %d\n",
+                    OY_DBG_ARGS_,
                     filename?filename:OY_PROFILE_NONE, (int)size );
 
             oyDeviceProfileFromDB( c, &text, oyAllocFunc );
-            printf( "%s:%d DB profile \"%s\"\n  DB registration key set: %s\n",
-                 strchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
+            printf( OY_DBG_FORMAT_
+                    " DB profile \"%s\"\n  DB registration key set: %s\n",
+                    OY_DBG_ARGS_,
                     text?text:OY_PROFILE_NONE,
                     oyConfig_FindString( c, "key_set_name", 0 ) ?
                       oyConfig_FindString( c, "key_set_name", 0 ) :
