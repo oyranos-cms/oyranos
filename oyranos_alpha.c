@@ -9968,7 +9968,10 @@ int            oyOptions_FindDouble  ( oyOptions_s       * options,
     {
       if(result)
         *result = oyOption_GetValueDouble( o, pos );
-      error = 0;
+      if(o->value_type == oyVAL_DOUBLE_LIST && o->value->dbl_list[0] <= pos)
+        error = -1;
+      else
+        error = 0;
 
     } else
       error = -1;
@@ -12428,7 +12431,7 @@ OYAPI int  OYEXPORT
 /** Function oyDeviceSetup
  *  @brief   activate the device using the stored configuration
  *
- *  @param[in]     device          the device
+ *  @param[in]     device              the device
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
@@ -14754,7 +14757,8 @@ const char *       oyProfile_GetFileName (
       {
         s->file_name_ = oyFindProfile_( name );
         name = oyStringCopy_( s->file_name_, s->oy_->allocateFunc_ );
-        oyDeAllocateFunc_( s->file_name_ );
+        if(s->file_name_)
+          oyDeAllocateFunc_( s->file_name_ );
         s->file_name_ = (char*)name;
       }
 
