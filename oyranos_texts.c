@@ -1782,8 +1782,8 @@ oyPolicyNameGet_()
   return name;
 }
 
-int         oyPolicySet_               (const oyChar  * policy_file,
-                                        const oyChar  * full_name )
+int         oyPolicySet_               (const char    * policy_file,
+                                        const char    * full_name )
 {
   int err = 0;
   oyChar  * file_name = NULL;

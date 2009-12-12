@@ -670,7 +670,8 @@ oyReadXMLPolicy_(oyGROUP_e           group,
       value = oyXMLgetValue_(xml, key);
 
       /* convert value from string to int */
-      val = atoi(value);
+      if(value)
+        val = atoi(value);
 
       /* set the key */
       if( val != -1 && value )
