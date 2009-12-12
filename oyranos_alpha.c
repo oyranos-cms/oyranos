@@ -308,9 +308,7 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
   icColorSpaceSignature cspace = oyProfile_GetSignature( prof, oySIGNATURE_COLOUR_SPACE );
 
   int lcms_space = lcmsColorSpace( cspace );
-#if USE_GETTEXT
   char * save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
-#endif
   format = fomate[lcms_space];
 
   n *= channels_n;
@@ -337,9 +335,7 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
               (int)n/channels_n
             );
 
-#if USE_GETTEXT
   setlocale(LC_NUMERIC, "C");
-#endif
     for(i = 0; i < (int)n; ++i)
     {
       int modulo_k = i%(channels_n);
@@ -385,10 +381,8 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
     }
     oySprintf_( &daten[oyStrlen_(daten)], "\nEND_DATA\n");
 
-#if USE_GETTEXT
   setlocale(LC_NUMERIC, save_locale);
   oyFree_m_( save_locale );
-#endif
     
   return text;
 }
@@ -7345,9 +7339,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   oyValue_u * v = 0;
   oyStructList_s * oy_struct_list = 0;
   char * text = 0;
-#if USE_GETTEXT
   char * save_locale = 0;
-#endif
 
   if(error <= 0)
     v = obj->value;
@@ -7357,10 +7349,8 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
 
   error = !v;
 
-#if USE_GETTEXT
   save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_ );
   setlocale(LC_NUMERIC, "C");
-#endif
 
   if(error <= 0)
   {
@@ -7397,11 +7387,11 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
       if(obj->value_type == oyVAL_INT)
         oySprintf_(tmp, "%d", v->int32);
       if(obj->value_type == oyVAL_DOUBLE)
-        oySprintf_(tmp, "%f", v->dbl);
+        oySprintf_(tmp, "%g", v->dbl);
       if(obj->value_type == oyVAL_INT_LIST)
         oySprintf_(tmp, "%d", v->int32_list[i+1]);
       if(obj->value_type == oyVAL_DOUBLE_LIST)
-        oySprintf_(tmp, "%f", v->dbl_list[i+1]);
+        oySprintf_(tmp, "%g", v->dbl_list[i+1]);
 
       if((obj->value_type == oyVAL_INT_LIST ||
           obj->value_type == oyVAL_DOUBLE_LIST) && i)
@@ -7451,10 +7441,8 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     oyFree_m_( tmp );
     oyFree_m_( text );
   }
-#if USE_GETTEXT
   setlocale(LC_NUMERIC, save_locale);
   oyFree_m_( save_locale );
-#endif
 
   return erg;
 }
@@ -24295,9 +24283,7 @@ OYAPI char * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
 
-#if USE_GETTEXT
   save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
-#endif
 
 
   STRING_ADD( text, "digraph G {\n" );
@@ -24399,12 +24385,10 @@ OYAPI char * OYEXPORT
   STRING_ADD( text, "}\n" );
   STRING_ADD( text, "\n" );
 
-#if USE_GETTEXT
   setlocale(LC_NUMERIC, "C");
   /* sensible printing */
   setlocale(LC_NUMERIC, save_locale);
   oyFree_m_( save_locale );
-#endif
 
   STRING_ADD( text, "" );
 
