@@ -94,6 +94,12 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
                                      OYX1_MONITOR_REGISTRATION OY_SLASH #name, \
                                        name, OY_CREATE_NEW ); \
         if(name) oyDeAllocateFunc_( name ); name = 0;
+#define OPTIONS_ADD_INT(opts, name) if(!error && name) { \
+        oySprintf_( num, "%d", name ); \
+        error = oyOptions_SetFromText( &opts, \
+                                     OYX1_MONITOR_REGISTRATION OY_SLASH #name, \
+                                       num, OY_CREATE_NEW ); \
+        }
 
 void     oyX1ConfigsUsage( oyStruct_s        * options )
 {
@@ -132,12 +138,16 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
       "The presence of option \"command=properties\" will provide the devices\n"
       " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
-      " - \"manufacturer\"\n"
-      " - \"mnft\"\n"
-      " - \"model\"\n"
-      " - \"serial\"\n"
-      " - \"host\"\n"
+      " - \"manufacturer\" description\n"
+      " - \"mnft\" (decoded mnft_id)\n"
+      " - \"model\" textual name\n"
+      " - \"serial\" not always present\n"
+      " - \"host\" not always present\n"
       " - \"system_port\"\n"
+      " - \"week\" manufacture date\n"
+      " - \"year\" manufacture year\n"
+      " - \"mnft_id\" manufacturer ID (undecoded mnft)\n"
+      " - \"model_id\" model ID\n"
       " - \"display_geometry\" (specific) widthxheight+x+y ,e.g."
       " \"1024x786+0+0\"\n"
       " \n"
@@ -188,6 +198,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
            * display_geometry=0, * system_port=0;
       double colours[9];
       oyBlob_s * edid = 0;
+      uint32_t week=0, year=0, mnft_id=0, model_id=0;
+      char num[16];
 
       if(!device_name)
       {
@@ -202,7 +214,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         error = oyGetMonitorInfo_lib( device_name,
                                       &manufacturer, &mnft, &model, &serial,
                                       &display_geometry, &system_port,
-                                      &host, colours,
+                                      &host, &week, &year, &mnft_id, &model_id,
+                                      colours,
                                       value3 ? &edid : 0,oyAllocateFunc_,
                                       (oyStruct_s*)options );
 
@@ -230,6 +243,10 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         OPTIONS_ADD( (*device)->backend_core, display_geometry )
         OPTIONS_ADD( (*device)->backend_core, system_port )
         OPTIONS_ADD( (*device)->backend_core, host )
+        OPTIONS_ADD_INT( (*device)->backend_core, week )
+        OPTIONS_ADD_INT( (*device)->backend_core, year )
+        OPTIONS_ADD_INT( (*device)->backend_core, mnft_id )
+        OPTIONS_ADD_INT( (*device)->backend_core, model_id )
         if(!error)
         {
           int i;
@@ -924,12 +941,17 @@ int            oyX1Config_Rank       ( oyConfig_s        * config )
 oyRankPad oyX1_rank_map[] = {
   {"device_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
-  {"manufacturer", 1, -1, 0},          /**< is nice */
-  {"model", 5, -5, 0},                 /**< important, should not fail */
+  {"manufacturer", 0, 0, 0},           /**< is nice, covered by mnft_id */
+  {"model", 0, 0, 0},                  /**< important, covered by model_id */
   {"serial", 10, -2, 0},               /**< important, could slightly fail */
   {"host", 1, 0, 0},                   /**< nice to match */
   {"system_port", 2, 0, 0},            /**< good to match */
-  {"display_geometry", 3, -1, 0},      /**< important to match */
+  {"week", 2, 0, 0},                   /**< good to match */
+  {"year", 2, 0, 0},                   /**< good to match */
+  {"mnft", 0, 0, 0},                   /**< is nice, covered by mnft_id */
+  {"mnft_id", 1, -1, 0},               /**< is nice */
+  {"model_id", 5, -5, 0},              /**< important, should not fail */
+  {"display_geometry", 3, -1, 0},      /**< important to match, as fallback */
   {0,0,0,0}                            /**< end of list */
 };
 

@@ -175,12 +175,18 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
                                    char**      mnft,
                                    char**      model,
                                    char**      serial,
+                                       uint32_t          * week,
+                                       uint32_t          * year,
+                                       uint32_t          * mnft_id,
+                                       uint32_t          * model_id,
                                        double            * c,
                                    oyAlloc_f     allocate_func)
 {
   char *t = 0;
   int len, i;
   char mnf[4];
+  char ser[4];
+  uint16_t uint16 = 0;
   unsigned char * edid = (unsigned char*) edi;
 
   DBG_PROG_START
@@ -204,15 +210,33 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
   }
 
   sprintf( mnf, "%c%c%c",
-          (char)((edi->MNF_ID[0] & 124) >> 2) + 'A' - 1,
-          (char)((edi->MNF_ID[0] & 3) << 3) + ((edi->MNF_ID[1] & 227) >> 5) + 'A' - 1,
-          (char)(edi->MNF_ID[1] & 31) + 'A' - 1 );
+          (char)((edi->mnft_id[0] & 124) >> 2) + 'A' - 1,
+          (char)((edi->mnft_id[0] & 3) << 3) + ((edi->mnft_id[1] & 227) >> 5) + 'A' - 1,
+          (char)(edi->mnft_id[1] & 31) + 'A' - 1 );
+
+  uint16 = oyValueUInt16(*((uint16_t*)edi->mnft_id));
+  if(mnft_id)
+    *mnft_id = uint16;
+  if(oyBigEndian())
+  {
+    ser[0] = edi->model_id[1];
+    ser[1] = edi->model_id[0];
+    uint16 = (*((uint16_t*)ser));
+  }
+  else
+    uint16 = (*((uint16_t*)edi->model_id));
+  if(model_id)
+    *model_id = uint16;
 
   /*printf( "MNF_ID: %d %d SER_ID: %d %d D:%d/%d bxh:%dx%dcm %s\n",
            edi->MNF_ID[0], edi->MNF_ID[1], edi->SER_ID[0], edi->SER_ID[1],
            edi->WEEK, edi->YEAR +1990,
            edi->width, edi->height, mnf );*/
 
+  if(week)
+    *week = edi->WEEK;
+  if(year)
+    *year = edi->YEAR + 1990;
 
   for( i = 0; i < 4; ++i)
   {
@@ -401,6 +425,10 @@ oyGetMonitorInfo_                 (const char* display_name,
                                    char**      display_geometry,
                                        char             ** system_port,
                                        char             ** host,
+                                       uint32_t          * week,
+                                       uint32_t          * year,
+                                       uint32_t          * mnft_id,
+                                       uint32_t          * model_id,
                                        double            * colours,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
@@ -480,7 +508,8 @@ oyGetMonitorInfo_                 (const char* display_name,
       /* convert to an deployable struct */
       edi = (struct oyDDC_EDID1_s_*) prop->ptr;
 
-      oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, colours, allocate_func);
+      oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, week, year,
+                      mnft_id, model_id, colours, allocate_func);
     }
   }
 
@@ -1769,6 +1798,10 @@ oyGetMonitorInfo_lib              (const char* display_name,
                                        char             ** display_geometry,
                                        char             ** system_port,
                                        char             ** host,
+                                       uint32_t          * week,
+                                       uint32_t          * year,
+                                       uint32_t          * mnft_id,
+                                       uint32_t          * model_id,
                                        double            * colours,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
@@ -1780,8 +1813,9 @@ oyGetMonitorInfo_lib              (const char* display_name,
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
   err = oyGetMonitorInfo_( display_name, manufacturer, mnft, model, serial,
-                     display_geometry, system_port, host, colours, edid,
-                     allocate_func, user_data );
+                           display_geometry, system_port, host, week, year,
+                           mnft_id, model_id, colours, edid,
+                           allocate_func, user_data );
 #else /*__APPLE__*/
   {
     char *t;
@@ -1840,8 +1874,8 @@ oyGetMonitorInfo_lib              (const char* display_name,
                _("Cant read hardware information from device."))
 
       if(edi_[0] || edi_[1])
-        oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, colours,
-                        allocate_func);
+        oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, week, year,
+                        mnft_id, model_id, colours, allocate_func);
 
       if(edid)
       {

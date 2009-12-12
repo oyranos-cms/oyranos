@@ -111,8 +111,8 @@ int oyFree_       (void *oy_structure);
 /** @brief \internal DDC struct */
 struct oyDDC_EDID1_s_ {
  unsigned char sig[8];
- unsigned char MNF_ID[2];              /* [8] manufaturer ID */
- unsigned char MON_ID[2];              /* [10] model ID */
+ unsigned char mnft_id[2];             /* [8] manufaturer ID */
+ unsigned char model_id[2];            /* [10] model ID */
  unsigned char SER_ID[2];              /* [12] serial ID */
  unsigned char dummy_li[2];
  unsigned char WEEK;                   /* [16] Week */
@@ -152,6 +152,10 @@ oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
                                    char**      mnft,
                                    char**      model,
                                    char**      serial,
+                                       uint32_t          * week,
+                                       uint32_t          * year,
+                                       uint32_t          * mnft_id,
+                                       uint32_t          * model_id,
                                        double            * c,
                                    oyAlloc_f     allocate_func);
 

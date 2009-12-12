@@ -199,6 +199,7 @@ main(int argc, char **argv)
         char  display_name[256] = {""};
         char *ptr = NULL;
         double c[9];
+        uint32_t week=0, year=0, mnft_id=0, prod_id=0;
 
         snprintf(display_name, 256, "%s", XDisplayString( display ));
         if( (ptr = strchr(display_name, ':')) != 0 )
@@ -210,8 +211,8 @@ main(int argc, char **argv)
 
         fprintf( stderr, "EDID version: %d.%d in .%d[%d]\n",
                  edi->major_version, edi->minor_version, i, j);
-        oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial, c,
-                        oyAllocateFunc_ );
+        oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial,
+                        &week, &year, &mnft_id, &prod_id, c, oyAllocateFunc_ );
 
 
         if(screen_number == 32 || screen_number == i)
