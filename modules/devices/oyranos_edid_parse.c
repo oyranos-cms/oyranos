@@ -283,7 +283,34 @@ const char *   XEdidErrorToString    ( XEDID_ERROR_e       error )
 /* convinience functions */
 XEDID_ERROR_e  XEdidPrintString      ( void              * edid,
                                        char             ** text,
-                                       void              (*alloc)(size_t sz) );
+                                       void             *(*alloc)(size_t sz) )
+{
+  XEdidKeyValue_s * l = 0;
+  int count = 0, i;
+  XEDID_ERROR_e err = XEdidParse( edid, &l, &count );
+  char * txt = alloc(1024);
+
+  txt[0] = 0;
+
+  for(i = 0; i < count; ++i)
+  {
+    sprintf( &txt[strlen(txt)], "%s: ", l[i].key );
+    if(l[i].type == XEDID_VALUE_TEXT)
+      sprintf( &txt[strlen(txt)], "\"%s\"\n", l[i].value.text);
+    if(l[i].type == XEDID_VALUE_INT)
+      sprintf( &txt[strlen(txt)], "%d\n", l[i].value.integer);
+    if(l[i].type == XEDID_VALUE_DOUBLE)
+      sprintf( &txt[strlen(txt)], "%g\n", l[i].value.dbl);
+  }
+
+  if(count)
+    *text = txt;
+
+  XEdidFree( &l );
+
+  return err;
+}
+
 #define  XEDID_COLOUR_MATRIX_SINGLE_GAMMA "colour_matrix.edid.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma"
 XEDID_ERROR_e  XEdidComposeString    ( void              * edid,
                                        const char        * key,
