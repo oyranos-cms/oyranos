@@ -1926,7 +1926,7 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
       o = oyOptions_Find( options, "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
       error = oyOptions_FindDouble( options,
         "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
-                            10000000, &val );
+                            8, &val );
       if(!o)
       {
         message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ " "

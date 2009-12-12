@@ -52,6 +52,7 @@ char * printCFDictionary( CFDictionaryRef dict );
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_sentinel.h"
+#include "oyranos_edid_parse.h"
 
 #define DEBUG 1
 
@@ -116,221 +117,77 @@ const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
 
 #endif
 
-/* BEGINN edid-parse.c_SECTION
-
- Author: Soren Sandmann <sandmann@redhat.com>
-
-   Should be MIT licensed and therefore ok with BSD inclusion.
- */
-
-static int
-get_bit (int in, int bit)
-{
-    return (in & (1 << bit)) >> bit;
-}
-
-static int
-get_bits (int in, int begin, int end)
-{
-    int mask = (1 << (end - begin + 1)) - 1;
-
-    return (in >> begin) & mask;
-}
-
-static double
-decode_fraction (int high, int low)
-{
-    double result = 0.0;
-    int i;
-
-    high = (high << 2) | low;
-
-    for (i = 0; i < 10; ++i) 
-        result += get_bit (high, i) * pow (2, i - 10);
-
-    return result;
-}
-
-static int
-decode_color_characteristics (const unsigned char *edid, double * c)
-{   
-    c[0]/*red_x*/ = decode_fraction (edid[0x1b], get_bits (edid[0x19], 6, 7));
-    c[1]/*red_y*/ = decode_fraction (edid[0x1c], get_bits (edid[0x19], 5, 4));
-    c[2]/*green_x*/ = decode_fraction (edid[0x1d], get_bits (edid[0x19], 2, 3));
-    c[3]/*green_y*/ = decode_fraction (edid[0x1e], get_bits (edid[0x19], 0, 1));
-    c[4]/*blue_x*/ = decode_fraction (edid[0x1f], get_bits (edid[0x1a], 6, 7));
-    c[5]/*blue_y*/ = decode_fraction (edid[0x20], get_bits (edid[0x1a], 4, 5));
-    c[6]/*white_x*/ = decode_fraction (edid[0x21], get_bits (edid[0x1a], 2, 3));
-    c[7]/*white_y*/ = decode_fraction (edid[0x22], get_bits (edid[0x1a], 0, 1));
-
-    return TRUE;
-}
-
-/* END edid-parse.c_SECTION */
 
 /** @internal oyUnrollEdid1_ */
-void
-oyUnrollEdid1_                    (struct oyDDC_EDID1_s_ *edi,
-                                   char**      manufacturer,
-                                   char**      mnft,
-                                   char**      model,
-                                   char**      serial,
+void         oyUnrollEdid1_          ( void              * edid,
+                                       char             ** manufacturer,
+                                       char             ** mnft,
+                                       char             ** model,
+                                       char             ** serial,
+                                       char             ** vendor,
                                        uint32_t          * week,
                                        uint32_t          * year,
                                        uint32_t          * mnft_id,
                                        uint32_t          * model_id,
                                        double            * c,
-                                   oyAlloc_f     allocate_func)
+                                       oyAlloc_f           allocate_func)
 {
-  char *t = 0;
-  int len, i;
-  char mnf[4];
-  char ser[4];
-  uint16_t uint16 = 0;
-  unsigned char * edid = (unsigned char*) edi;
+  int i, count = 0;
+  XEdidKeyValue_s * list = 0;
+  XEDID_ERROR_e err = 0;
 
   DBG_PROG_START
 
-  /* check */
-  if(edi &&
-     edi->sig[0] == 0 &&
-     edi->sig[1] == 255 &&
-     edi->sig[2] == 255 &&
-     edi->sig[3] == 255 &&
-     edi->sig[4] == 255 &&
-     edi->sig[5] == 255 &&
-     edi->sig[6] == 255 &&
-     edi->sig[7] == 0 
-    ) {
-    /* verified */
-  } else {
-    WARNc_S("Could not verifiy EDID")
-    DBG_PROG_ENDE
-    return;
-  }
+  err = XEdidParse( edid, &list, &count );
+  if(err)
+    WARNc_S(XEdidErrorToString(err));
 
-  sprintf( mnf, "%c%c%c",
-          (char)((edi->mnft_id[0] & 124) >> 2) + 'A' - 1,
-          (char)((edi->mnft_id[0] & 3) << 3) + ((edi->mnft_id[1] & 227) >> 5) + 'A' - 1,
-          (char)(edi->mnft_id[1] & 31) + 'A' - 1 );
-
-  uint16 = oyValueUInt16(*((uint16_t*)edi->mnft_id));
-  if(mnft_id)
-    *mnft_id = uint16;
-  if(oyBigEndian())
+  if(list)
+  for(i = 0; i < count; ++i)
   {
-    ser[0] = edi->model_id[1];
-    ser[1] = edi->model_id[0];
-    uint16 = (*((uint16_t*)ser));
-  }
-  else
-    uint16 = (*((uint16_t*)edi->model_id));
-  if(model_id)
-    *model_id = uint16;
-
-  /*printf( "MNF_ID: %d %d SER_ID: %d %d D:%d/%d bxh:%dx%dcm %s\n",
-           edi->MNF_ID[0], edi->MNF_ID[1], edi->SER_ID[0], edi->SER_ID[1],
-           edi->WEEK, edi->YEAR +1990,
-           edi->width, edi->height, mnf );*/
-
-  if(week)
-    *week = edi->WEEK;
-  if(year)
-    *year = edi->YEAR + 1990;
-
-  for( i = 0; i < 4; ++i)
-  {
-    unsigned char *block = edi->text1 + i * 18;
-    char **target = NULL,
-         * tmp = 0;
-
-    if(block[0] == 0 && block[1] == 0 && block[2] == 0)
-    {
-      if( block[3] == 255 ) { /* serial */
-        target = serial;
-      } else if( block[3] == 254 ) { /* vendor */
-        target = manufacturer;
-      } else if( block[3] == 253 ) { /* frequenz ranges */
-      } else if( block[3] == 252 ) { /* model */
-        target = model;
-      }
-      if(target)
-      {
-        len = strlen((char*)&block[5]); DBG_PROG_V((len))
-        if(len) { DBG_PROG
-          ++len;
-          t = (char*)oyAllocateWrapFunc_( 16, allocate_func );
-          oySnprintf1_(t, 15, "%s", (char*)&block[5]);
-          t[15] = '\000';
-          if(oyStrrchr_(t, '\n'))
-          {
-            tmp = oyStrrchr_(t, '\n');
-            tmp[0] = 0;
-          }
-
-          /* workaround for APP */
-          if(block[3] == 254 && *manufacturer && ! (*serial))
-          {
-            *serial = *manufacturer;
-           *manufacturer = 0;
-          }
-        
-          *target = t; DBG_PROG_S( *target )
-        }
-      }
-    }
+         if(manufacturer && oyStrcmp_( list[i].key, "manufacturer") == 0)
+      *manufacturer = oyStringCopy_(list[i].value.text, allocate_func);
+    else if(mnft && oyStrcmp_( list[i].key, "mnft") == 0)
+      *mnft = oyStringCopy_(list[i].value.text, allocate_func);
+    else if(model && oyStrcmp_( list[i].key, "model") == 0)
+      *model = oyStringCopy_(list[i].value.text, allocate_func);
+    else if(serial && oyStrcmp_( list[i].key, "serial") == 0)
+      *serial = oyStringCopy_(list[i].value.text, allocate_func);
+    else if(vendor && oyStrcmp_( list[i].key, "vendor") == 0)
+      *vendor = oyStringCopy_(list[i].value.text, allocate_func);
+    else if(week && oyStrcmp_( list[i].key, "week") == 0)
+      *week = list[i].value.integer;
+    else if(year && oyStrcmp_( list[i].key, "year") == 0)
+      *year = list[i].value.integer;
+    else if(mnft_id && oyStrcmp_( list[i].key, "mnft_id") == 0)
+      *mnft_id = list[i].value.integer;
+    else if(model_id && oyStrcmp_( list[i].key, "model_id") == 0)
+      *model_id = list[i].value.integer;
+    else if(c && oyStrcmp_( list[i].key, "redx") == 0)
+      c[0] = list[i].value.dbl;
+    else if(c && oyStrcmp_( list[i].key, "redy") == 0)
+      c[1] = list[i].value.dbl;
+    else if(c && oyStrcmp_( list[i].key, "greenx") == 0)
+      c[2] = list[i].value.dbl;
+    else if(c && oyStrcmp_( list[i].key, "greeny") == 0)
+      c[3] = list[i].value.dbl;
+    else if(c && oyStrcmp_( list[i].key, "bluex") == 0)
+      c[4] = list[i].value.dbl;
+    else if(c && oyStrcmp_( list[i].key, "bluey") == 0)
+      c[5] = list[i].value.dbl;
+    else if(c && oyStrcmp_( list[i].key, "whitex") == 0)
+      c[6] = list[i].value.dbl;
+    else if(c && oyStrcmp_( list[i].key, "whitey") == 0)
+      c[7] = list[i].value.dbl;
+    else if(c && oyStrcmp_( list[i].key, "gamma") == 0)
+      c[8] = list[i].value.dbl;
   }
 
-  if(c)
-  {
-    decode_color_characteristics( edid, c );
-
-    /* Gamma */
-    if (edid[0x17] == 0xFF)
-      c[8] = -1.0;
-    else
-      c[8] = (edid[0x17] + 100.0) / 100.0;
-  }
-
-  {
-    t = (char*)oyAllocateWrapFunc_( 24, oyAllocateFunc_ );
-    if(!strcmp(mnf,"APP"))
-    {
-      if(!(*model) && *manufacturer)
-      {
-        *model = *manufacturer;
-        *manufacturer = 0;
-      }
-      sprintf(t, "Apple");
-    }
-    else if(!strcmp(mnf,"PHL"))
-      sprintf(t, "Philips");
-    else if(!strcmp(mnf,"HWP"))
-      sprintf(t, "HP");
-    else if(!strcmp(mnf,"NEC"))
-      sprintf(t, "NEC");
-    else if(!strcmp(mnf,"EIZ"))
-      sprintf(t, "EIZO");
-    else if(!strcmp(mnf,"MEI"))
-      sprintf(t, "Panasonic");
-    else if(!strcmp(mnf,"MIR"))
-      sprintf(t, "miro");
-    else if(!strcmp(mnf,"SNI"))
-      sprintf(t, "Siemens Nixdorf");
-    else if(!strcmp(mnf,"SNY"))
-      sprintf(t, "Sony");
-    else
-      sprintf(t, "%s", mnf);
-
-    if(!*manufacturer)
-      *manufacturer = oyStringCopy_(t, allocate_func);
-    oyDeAllocateFunc_(t); t = 0;
-  }
-  *mnft = (char*)oyAllocateWrapFunc_( 24, allocate_func );
-  sprintf(*mnft, "%s", mnf);
+  XEdidFree( &list );
 
   DBG_PROG_ENDE
 }
+
 
 
 
@@ -422,6 +279,7 @@ oyGetMonitorInfo_                 (const char* display_name,
                                    char**      mnft,
                                    char**      model,
                                    char**      serial,
+                                       char             ** vendor,
                                    char**      display_geometry,
                                        char             ** system_port,
                                        char             ** host,
@@ -435,7 +293,7 @@ oyGetMonitorInfo_                 (const char* display_name,
                                        oyStruct_s        * user_data )
 {
   int len;
-  struct oyDDC_EDID1_s_ *edi=0;
+  char * edi=0;
   char *t;
   oyMonitor_s * disp = 0;
   oyBlob_s * prop = 0;
@@ -506,10 +364,10 @@ oyGetMonitorInfo_                 (const char* display_name,
     } else
     {
       /* convert to an deployable struct */
-      edi = (struct oyDDC_EDID1_s_*) prop->ptr;
+      edi = prop->ptr;
 
-      oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, week, year,
-                      mnft_id, model_id, colours, allocate_func);
+      oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
+                      week, year, mnft_id, model_id, colours, allocate_func);
     }
   }
 
@@ -1795,6 +1653,7 @@ oyGetMonitorInfo_lib              (const char* display_name,
                                        char             ** mnft,
                                    char**      model,
                                    char**      serial,
+                                       char             ** vendor,
                                        char             ** display_geometry,
                                        char             ** system_port,
                                        char             ** host,
@@ -1813,6 +1672,7 @@ oyGetMonitorInfo_lib              (const char* display_name,
 
 #if (defined(HAVE_X) && !defined(__APPLE__))
   err = oyGetMonitorInfo_( display_name, manufacturer, mnft, model, serial,
+                           vendor,
                            display_geometry, system_port, host, week, year,
                            mnft_id, model_id, colours, edid,
                            allocate_func, user_data );
@@ -1832,7 +1692,6 @@ oyGetMonitorInfo_lib              (const char* display_name,
     {
       CFDictionaryRef dict = 0;
       unsigned char edi_[256] = {0,0,0,0,0,0,0,0}; /* mark the EDID signature */
-      struct oyDDC_EDID1_s_ * edi = (struct oyDDC_EDID1_s_ *)&edi_;
       CFTypeRef cf_value = 0;
       CFRange cf_range = {0,256};
       int count = 0;
@@ -1874,8 +1733,8 @@ oyGetMonitorInfo_lib              (const char* display_name,
                _("Cant read hardware information from device."))
 
       if(edi_[0] || edi_[1])
-        oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, week, year,
-                        mnft_id, model_id, colours, allocate_func);
+        oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
+                        week, year, mnft_id, model_id, colours, allocate_func);
 
       if(edid)
       {

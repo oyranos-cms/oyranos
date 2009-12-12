@@ -80,6 +80,7 @@ CHEADERS = \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
 	$(TARGET)_definitions.h \
+	$(TARGET)_edid_parse.h \
 	$(TARGET)_elektra.h \
 	$(TARGET)_helper.h \
 	$(TARGET)_i18n.h \
@@ -155,7 +156,8 @@ CFILES_MODULES_DEVICES = \
 	$(CFILES_MONI) \
 	$(CFILES_CMM_CUPS)
 CFILES_MONI = \
-	modules/devices/$(TARGET)_monitor.c
+	modules/devices/$(TARGET)_monitor.c \
+	modules/devices/$(TARGET)_edid_parse.c
 CFILES_MONI_NVIDIA = \
 	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \

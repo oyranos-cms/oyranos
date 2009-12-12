@@ -49,6 +49,7 @@
 
 #include "oyranos.h"
 #include "oyranos_monitor_internal.h"
+#include "oyranos_edid_parse.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
 
@@ -70,7 +71,7 @@ main(int argc, char **argv)
   size_t *size = (size_t*) calloc(sizeof(size_t), 24);
   unsigned char** data = NULL;
   int i, j;
-  struct oyDDC_EDID1_s_ *edi=0;
+  XEdid_s * edi=0;
   int screen_number = 32;
   int number_of_screens = 1;
   int monitors = 0;
@@ -188,7 +189,7 @@ main(int argc, char **argv)
     if(data[j] && size[j])
     {
       /*/printf( "%d: Edid of size %d found.\n", j, (int)size[j]);*/
-      edi = (struct oyDDC_EDID1_s_*)data[j];
+      edi = (XEdid_s*) data[j];
 
       if(size[j] == 128 || size[j] == 256)
       {

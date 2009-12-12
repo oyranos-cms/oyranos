@@ -194,8 +194,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
     if(!error)
     {
-      char * manufacturer=0, * mnft=0, * model=0, * serial=0, * host=0,
-           * display_geometry=0, * system_port=0;
+      char * manufacturer=0, * mnft=0, * model=0, * serial=0, * vendor = 0,
+           * host=0, * display_geometry=0, * system_port=0;
       double colours[9];
       oyBlob_s * edid = 0;
       uint32_t week=0, year=0, mnft_id=0, model_id=0;
@@ -213,7 +213,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
       if(error <= 0)
         error = oyGetMonitorInfo_lib( device_name,
                                       &manufacturer, &mnft, &model, &serial,
-                                      &display_geometry, &system_port,
+                                      &vendor, &display_geometry, &system_port,
                                       &host, &week, &year, &mnft_id, &model_id,
                                       colours,
                                       value3 ? &edid : 0,oyAllocateFunc_,
@@ -240,6 +240,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         OPTIONS_ADD( (*device)->backend_core, mnft )
         OPTIONS_ADD( (*device)->backend_core, model )
         OPTIONS_ADD( (*device)->backend_core, serial )
+        OPTIONS_ADD( (*device)->backend_core, vendor )
         OPTIONS_ADD( (*device)->backend_core, display_geometry )
         OPTIONS_ADD( (*device)->backend_core, system_port )
         OPTIONS_ADD( (*device)->backend_core, host )
@@ -253,7 +254,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
           char * save_locale = 0;
           for(i = 0; i < 9; ++i)
             error = oyOptions_SetFromDouble( &(*device)->data,
-                       OYX1_MONITOR_REGISTRATION OY_SLASH "colour_matrix.edid."
+                       OYX1_MONITOR_REGISTRATION OY_SLASH "colour_matrix."
+                       "from_edid."
                       "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                              colours[i], i, OY_CREATE_NEW );
           text = oyAllocateFunc_(1024);
@@ -271,7 +273,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
           error = oyOptions_SetFromText( &(*device)->backend_core,
                                          OYX1_MONITOR_REGISTRATION OY_SLASH
-                                         "colour_matrix_text.edid."
+                                         "colour_matrix_text.from_edid."
                       "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                          text, OY_CREATE_NEW );
           oyDeAllocateFunc_( text ); text = 0;

@@ -289,7 +289,7 @@ int main( int argc , char** argv )
 
           if(strcmp(format,"edid_icc") == 0)
           {
-            o = oyConfig_Find( c, "colour_matrix.edid."
+            o = oyConfig_Find( c, "colour_matrix.from_edid."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
 
             if(o)
@@ -391,7 +391,7 @@ int main( int argc , char** argv )
           /* verbose adds */
           if(oy_debug)
           {
-            o = oyConfig_Find( c, "colour_matrix.edid" );
+            o = oyConfig_Find( c, "colour_matrix.from_edid" );
             text = oyOption_GetValueText( o, oyAllocFunc );
             printf( OY_DBG_FORMAT_" \"%s\":\n%s\n", OY_DBG_ARGS_,
                     o->registration, text?text:"----" );

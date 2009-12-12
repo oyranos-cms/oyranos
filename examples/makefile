@@ -17,7 +17,8 @@ FLTK_CFLAGS := $(shell (fltk-config --cflags))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags))
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
-TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o
+TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
+		../modules/devices/oyranos_edid_parse.o
 TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos))
 LDFLAGS = $(LIBS)
