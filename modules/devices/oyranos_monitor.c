@@ -114,35 +114,6 @@ char* oyChangeScreenName_            ( const char        * display_name,
 
 const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
 
-int
-oyFree_( void *oy_structure )
-{ int error = 0;
-  oyOBJECT_e *type = (oyOBJECT_e*) oy_structure;
-
-  if( type )
-    switch( *type )
-    {
-    case oyOBJECT_MONITOR_S:
-      {
-        oyMonitor_s *disp = (oyMonitor_s*)oy_structure;
-
-        oyFree_m_( disp->name )
-        oyFree_m_( disp->host )
-        oyFree_m_( disp->identifier )
-        if(disp->system_port)
-          oyFree_m_( disp->system_port );
-        oyBlob_Release( &disp->edid );
-        disp->geo[0] = disp->geo[1] = -1;
-        if( disp->display ) { XCloseDisplay( disp->display ); disp->display=0;}
-      }
-      break;
-    default: WARNc_S ("unknown type"); error = 1;
-    }
-  else
-    error = 1;
-
-  return error;
-}
 #endif
 
 /* BEGINN edid-parse.c_SECTION
