@@ -88,6 +88,6 @@ const char *   XEdidErrorToString    ( XEDID_ERROR_e       error );
 /* convinience functions */
 XEDID_ERROR_e  XEdidPrintString      ( void              * edid,
                                        char             ** text,
-                                       void              (*alloc)(size_t sz) );
+                                       void             *(*alloc)(size_t sz) );
 
 #endif /* OYRANOS_EDID_PARSE_H */

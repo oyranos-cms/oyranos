@@ -196,7 +196,8 @@ main(int argc, char **argv)
         char *manufacturer=0,
              *mnft=0,
              *model=0,             
-             *serial=0;
+             *serial=0,
+             *vendor=0;
         char  display_name[256] = {""};
         char *ptr = NULL;
         double c[9];
@@ -212,13 +213,13 @@ main(int argc, char **argv)
 
         fprintf( stderr, "EDID version: %d.%d in .%d[%d]\n",
                  edi->major_version, edi->minor_version, i, j);
-        oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial,
+        oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial, &vendor,
                         &week, &year, &mnft_id, &prod_id, c, oyAllocateFunc_ );
 
 
         if(screen_number == 32 || screen_number == i)
         {
-          DBG_PROG4_S("%s %s %s %s\n", manufacturer, model, serial,
+          DBG_PROG5_S("%s %s %s %s\n", manufacturer, model, serial, vendor,
                                   display_name);
 
           /* we must rely on eighter screens or Xinerama 
@@ -265,6 +266,7 @@ main(int argc, char **argv)
         if (manufacturer) oyDeAllocateFunc_ (manufacturer);
         if (model) oyDeAllocateFunc_ (model);
         if (serial) oyDeAllocateFunc_ (serial);
+        if (vendor) oyDeAllocateFunc_ (vendor);
         ++monitors;
         ++monitors_in_traditional_screen;
       }
