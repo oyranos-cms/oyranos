@@ -164,7 +164,7 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
 
       fputc( '\n', fp );
 
-      snprintf( text, 84, "# CREATOR: Oyranos-%s " CMM_NICK "\"%s\"\n",
+      snprintf( text, 128, "# CREATOR: Oyranos-%s " CMM_NICK "\"%s\"\n",
                 oyNoEmptyString_m_(vs), node->relatives_ );
       if(vs) free(vs); vs = 0;
       len = strlen( text );
@@ -178,28 +178,28 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
         cutime = time(NULL); /* time right NOW */
         gmt = gmtime(&cutime);
         strftime(time_str, 24, "%Y/%m/%d %H:%M:%S", gmt);
-        snprintf( text, 84, "# DATE/TIME: %s\n", time_str );
+        snprintf( text, 128, "# DATE/TIME: %s\n", time_str );
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
       }
 
-      snprintf( text, 84, "# COLORSPACE: %s\n", colourspacename ?
+      snprintf( text, 128, "# COLORSPACE: %s\n", colourspacename ?
                 colourspacename : "--" );
       len = strlen( text );
       do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 
       if(byteps == 1)
-        snprintf( bytes, 84, "255" );
+        snprintf( bytes, 48, "255" );
       else
       if(byteps == 2)
-        snprintf( bytes, 84, "65535" );
+        snprintf( bytes, 48, "65535" );
       else
       if (byteps == 4 || byteps == 8) 
       {
         if(oyBigEndian())
-          snprintf( bytes, 84, "1.0" );
+          snprintf( bytes, 48, "1.0" );
         else
-          snprintf( bytes, 84, "-1.0" );
+          snprintf( bytes, 48, "-1.0" );
       }
       else
         message( oyMSG_WARN, (oyStruct_s*)node,
@@ -223,12 +223,12 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
       }
       else
       {
-        snprintf( text, 84, "%d %d\n", image_output->width,
+        snprintf( text, 128, "%d %d\n", image_output->width,
                                        image_output->height);
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 
-        snprintf( text, 84, "%s\n", bytes );
+        snprintf( text, 128, "%s\n", bytes );
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
       }

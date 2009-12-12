@@ -1723,7 +1723,7 @@ int lcmsCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
 
   fprintf( stderr, "%s[%d] ", type_name, id );
 
-  fprintf( stderr, text ); fprintf( stderr, "\n" );
+  fprintf( stderr, "%s", text ); fprintf( stderr, "\n" );
   free( text );
 
   return 0;
@@ -1924,7 +1924,7 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
     {
       double val = 0.0;
       o = oyOptions_Find( options, "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
-      oyOptions_FindDouble( options,
+      error = oyOptions_FindDouble( options,
         "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                             10000000, &val );
       if(!o)
@@ -1932,17 +1932,19 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
         message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ " "
                  "no option \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" found",
                  OY_DBG_ARGS_ );
-      } else if( val < 9 )
+        error = 1;
+      } else if( error != 0 )
       {
         message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_" "
-                 "option \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" contains less than 9 required values: %g",
-                 OY_DBG_ARGS_, val );
+                 "option \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" %s",
+                 OY_DBG_ARGS_,
+                 (error < 0) ? "contains less than 9 required values" :
+                               "access returned with error" );
       }
 
       oyOption_Release( &o );
 
-      /* seems fine */
-      return 0;
+      return error;
     }
     else
       return 1;

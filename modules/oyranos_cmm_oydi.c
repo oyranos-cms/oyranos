@@ -118,7 +118,6 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 {
   int error = 0;
   oyBlob_s * win_id, * display_id;
-  int x,y, i,j;
 
   win_id = (oyBlob_s*) oyOptions_GetType( image->tags, -1, "window_id",
                                           oyOBJECT_BLOB_S );
@@ -128,6 +127,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 # if defined(HAVE_X11) && defined (HAVE_Xcolor)
   if(win_id && display_id)
   {
+    int x,y, i,j;
     Atom netColorTarget;
     Window w = (Window) win_id->ptr, w_return;
     XWindowAttributes attr;

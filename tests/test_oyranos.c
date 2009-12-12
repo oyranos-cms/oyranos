@@ -147,7 +147,7 @@ oyTESTRESULT_e testI18N()
   Boolean fehler = CFStringGetCString( cfstring, text, gr, kCFStringEncodingISOLatin1 );
 
   if(fehler) {
-    snprintf(locale,TEXTLEN, text);
+    snprintf(locale,TEXTLEN, "%s", text);
   }
 
   /* set the locale info */
@@ -156,7 +156,7 @@ oyTESTRESULT_e testI18N()
      tmp = setlocale (LC_ALL, locale);
   }
   if (tmp)
-    snprintf(locale,TEXTLEN, tmp);
+    snprintf(locale,TEXTLEN, "%s", tmp);
   /*set_codeset = 0;*/
   }
 # else
@@ -411,7 +411,7 @@ oyTESTRESULT_e testSettings ()
     } else
     {
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
-      "oyOptions_GetText() returned text               %d", strlen(text) );
+      "oyOptions_GetText() returned text               %d", (int)strlen(text) );
     }
   }
   oyOptions_Release( &opts );
@@ -748,11 +748,11 @@ oyTESTRESULT_e testMonitor ()
       {
         PRINT_SUB( oyTESTRESULT_SUCCESS,
         "monitor profile from server \"%s\" %d",
-        oyProfile_GetText( p, oyNAME_DESCRIPTION ), size );
+        oyProfile_GetText( p, oyNAME_DESCRIPTION ), (int)size );
       } else
       {
         PRINT_SUB( oyTESTRESULT_SUCCESS,
-        "no default monitor profile %d", size );
+        "no default monitor profile %d", (int)size );
       }
 
       error = oyDeviceProfileFromDB( c, &text, malloc );

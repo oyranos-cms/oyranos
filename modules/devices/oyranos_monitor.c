@@ -1922,49 +1922,51 @@ char * printCFDictionary( CFDictionaryRef dict )
           int i;
           char txt[128];
           const char * type = "????";
-          CFDictionaryGetKeysAndValues( dict, keys, values );
+          CFDictionaryGetKeysAndValues( dict, (CFTypeRef*)keys, (CFTypeRef*)values );
           for (i = 0; i < count; ++i)
           {
             CFTypeID cf_id;
             CFTypeRef cf_element = keys[i];
-            char * key = 0;
+            const char * key = 0;
             char * value = 0;
-            CFStringRef string;
+            CFStringRef string = (CFStringRef)cf_element;
 
-            key = CFStringGetCStringPtr( cf_element, kCFStringEncodingMacRoman);
+            key = CFStringGetCStringPtr( string, kCFStringEncodingMacRoman );
             cf_id = CFGetTypeID(values[i]);
             string = CFCopyTypeIDDescription( cf_id );
-            type = CFStringGetCStringPtr(string, kCFStringEncodingMacRoman);
+            type = CFStringGetCStringPtr( string, kCFStringEncodingMacRoman );
             if(cf_id == CFBooleanGetTypeID())
             {
-              if(CFBooleanGetValue(values[i]))
+              CFBooleanRef cf_bol = (CFBooleanRef) values[i];
+              if(CFBooleanGetValue( cf_bol ))
                 STRING_ADD( value, "true" );
               else
                 STRING_ADD( value, "false" );
             } else if(cf_id == CFNumberGetTypeID())
             {
               float nv = 0;
-              CFNumberGetValue(values[i], kCFNumberFloatType, &nv);
+              CFNumberRef cf_nm = (CFNumberRef) values[i];
+              CFNumberGetValue( cf_nm, kCFNumberFloatType, &nv);
               sprintf( txt, "%g", nv );
               STRING_ADD( value, txt );
             } else if (cf_id == CFStringGetTypeID())
             {
-              CFStringGetCString(values[i], txt, 128, kCFStringEncodingUTF8 /*kCFStringEncodingASCII*/);
+              CFStringGetCString( (CFStringRef)values[i], txt, 128,
+                              kCFStringEncodingUTF8 /*kCFStringEncodingASCII*/);
               STRING_ADD( value, txt[0] ? txt : &txt[1] );
             } else if (cf_id == CFDataGetTypeID())
             {
-              CFDataRef cf_data = values[i];
+              CFDataRef cf_data = (CFDataRef) values[i];
               CFIndex len = CFDataGetLength( cf_data );
-              char * ptr = CFDataGetBytePtr( cf_data );
-              ptr = 0;
+              const unsigned char * ptr = CFDataGetBytePtr( cf_data );
+              ptr = 0; len = 0;
             } else if (cf_id == CFDictionaryGetTypeID())
             {
-              CFDictionaryRef d = values[i];
+              CFDictionaryRef d = (CFDictionaryRef) values[i];
               value = printCFDictionary( d );
             /*} else if (cf_id == CFGetTypeID())
             {*/
             }
-            //value = CFStringGetCStringPtr(values[i], kCFStringEncodingMacRoman);
 
             STRING_ADD(text, key);
             STRING_ADD(text,"[");
