@@ -391,7 +391,7 @@ int main( int argc , char** argv )
           /* verbose adds */
           if(oy_debug)
           {
-            o = oyConfig_Find( c, "colour_matrix_text.edid" );
+            o = oyConfig_Find( c, "colour_matrix.edid" );
             text = oyOption_GetValueText( o, oyAllocFunc );
             printf( OY_DBG_FORMAT_" \"%s\":\n%s\n", OY_DBG_ARGS_,
                     o->registration, text?text:"----" );
