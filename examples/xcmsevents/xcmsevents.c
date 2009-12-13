@@ -22,14 +22,11 @@
 #include <X11/extensions/Xfixes.h>
 #include <X11/Xmu/Error.h> /* XmuSimpleErrorHandler */
 #include <oyranos_alpha.h> /* use Oyranos to obtain profile names */
+#include "oyranos_monitor_internal.h" /* EDID parsing */
 
-void
-oyUnrollEdid1_                    (oyPointer   edi,
-                                   char**      manufacturer,
-                                   char**      model,
-                                   char**      serial,
-                                       double            * c,
-                                   oyAlloc_f     allocate_func);
+#ifdef STRING_ADD
+#undef STRING_ADD
+#endif
 #define STRING_ADD(t, txt) oyStringAdd_( &t, txt, malloc, free )
 void               oyStringAdd_      ( char             ** text,
                                        const char        * append,
@@ -411,8 +408,8 @@ int main(int argc, char *argv[])
                  * model = 0,
                  * serial = 0;
 
-            oyUnrollEdid1_( data, &manufacturer, &model, &serial, colours,
-                            malloc );
+            oyUnrollEdid1_( data, &manufacturer,0,&model, &serial, 0,0,0,0,0,
+                            colours, malloc );
             STRING_ADD( tmp, manufacturer ); STRING_ADD( tmp, " - " );
             STRING_ADD( tmp, model ); STRING_ADD( tmp, " - " );
             STRING_ADD( tmp, serial ); STRING_ADD( tmp, "\n  " );
