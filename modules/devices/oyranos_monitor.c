@@ -1733,7 +1733,7 @@ oyGetMonitorInfo_lib              (const char* display_name,
                _("Cant read hardware information from device."))
 
       if(edi_[0] || edi_[1])
-        oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
+        oyUnrollEdid1_( edi_, manufacturer, mnft, model, serial, vendor,
                         week, year, mnft_id, model_id, colours, allocate_func);
 
       if(edid)
