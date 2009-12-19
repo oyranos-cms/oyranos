@@ -193,14 +193,14 @@ XEDID_ERROR_e  XEdidParse            ( void              * edid,
 
   decode_color_characteristics( edid, c );
 
-  XEdidSetDouble( &(*list)[pos++], "redx", c[0] );
-  XEdidSetDouble( &(*list)[pos++], "redy", c[1] );
-  XEdidSetDouble( &(*list)[pos++], "greenx", c[2] );
-  XEdidSetDouble( &(*list)[pos++], "greeny", c[3] );
-  XEdidSetDouble( &(*list)[pos++], "bluex", c[4] );
-  XEdidSetDouble( &(*list)[pos++], "bluey", c[5] );
-  XEdidSetDouble( &(*list)[pos++], "whitex", c[6] );
-  XEdidSetDouble( &(*list)[pos++], "whitey", c[7] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_REDx, c[0] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_REDy, c[1] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_GREENx, c[2] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_GREENy, c[3] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_BLUEx, c[4] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_BLUEy, c[5] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_WHITEy, c[6] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_WHITEx, c[7] );
 
   /* Gamma */
   if (edi->gamma_factor == 0xFF)
@@ -208,7 +208,7 @@ XEDID_ERROR_e  XEdidParse            ( void              * edid,
   else
     c[8] = (edi->gamma_factor + 100.0) / 100.0;
 
-  XEdidSetDouble( &(*list)[pos++], "gamma", c[8] );
+  XEdidSetDouble( &(*list)[pos++], XEDID_KEY_GAMMA, c[8] );
 
   {
     t = (char*)malloc( 24 );

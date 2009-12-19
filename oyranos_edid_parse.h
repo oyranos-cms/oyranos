@@ -90,4 +90,23 @@ XEDID_ERROR_e  XEdidPrintString      ( void              * edid,
                                        char             ** text,
                                        void             *(*alloc)(size_t sz) );
 
+#define XEDID_KEY_VENDOR               "vendor"
+#define XEDID_KEY_MODEL                "model"
+#define XEDID_KEY_SERIAL               "serial"
+#define XEDID_KEY_REDx                 "redx"
+#define XEDID_KEY_REDy                 "redy"
+#define XEDID_KEY_GREENx               "greenx"
+#define XEDID_KEY_GREENy               "greeny"
+#define XEDID_KEY_BLUEx                "bluex"
+#define XEDID_KEY_BLUEy                "bluey"
+#define XEDID_KEY_WHITEy               "whitex"
+#define XEDID_KEY_WHITEx               "whitey"
+#define XEDID_KEY_GAMMA                "gamma"
+#define XEDID_KEY_WEEK                 "week"
+#define XEDID_KEY_YEAR                 "year"
+#define XEDID_KEY_MNFT_ID              "mnft_id"
+#define XEDID_KEY_MODEL_ID             "model_id"
+#define XEDID_KEY_MNFT                 "mnft"
+#define XEDID_KEY_MANUFACTURER         "manufacturer"
+
 #endif /* OYRANOS_EDID_PARSE_H */
