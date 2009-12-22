@@ -207,6 +207,31 @@ oyCMMapi7_s   oyra_api7_image_load = {
   0    /* sockets_last_add */
 };
 
+const char * oyraApi4UiImageLoadGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name"))
+  {
+    if(type == oyNAME_NICK)
+      return "load";
+    else if(type == oyNAME_NAME)
+      return _("Load");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Load Image File Object");
+  } else if(strcmp(select,"help"))
+  {
+    if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("unfinished");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("unfinished");
+  }
+  return 0;
+}
+const char * oyra_api4_ui_image_load_texts[] = {"name", "help", 0};
+
 /** @instance oyra_api4_ui_image_load
  *  @brief    oyra oyCMMapi4_s::ui implementation
  *
@@ -226,10 +251,12 @@ oyCMMui_s oyra_api4_ui_image_load = {
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "load", "Load", "Load Image File Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
-  "Graph/iFile Load", /* category */
+  "Graph/File Load", /* category */
   0,   /* const char * options */
-  0    /* oyCMMuiGet_f oyCMMuiGet */
+  0,   /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyraApi4UiImageLoadGetText,  /* oyCMMGetText_f getText */
+  oyra_api4_ui_image_load_texts  /* (const char**)texts */
 };
 
 /** @instance oyra_api4
@@ -504,6 +531,31 @@ oyCMMapi7_s   oyra_api7_image_rectangles = {
   0    /* sockets_last_add */
 };
 
+const char * oyraApi4UiImageRectanglesGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name"))
+  {
+    if(type == oyNAME_NICK)
+      return "rectangles";
+    else if(type == oyNAME_NAME)
+      return _("Rectangles");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Rectangles Splitter Object");
+  } else if(strcmp(select,"help"))
+  {
+    if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Apply regions of interesst in form of simple rectangles.");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("The filter will expect a \"rectangle\" option and will create, fill and process a according rectangle with a new job ticket.");
+  }
+  return 0;
+}
+const char * oyra_api4_ui_image_rectangles_texts[] = {"name", "help", 0};
+
 /** @instance oyra_api4_ui_image_rectangles
  *  @brief    oyra oyCMMapi4_s::ui implementation
  *
@@ -523,10 +575,12 @@ oyCMMui_s oyra_api4_ui_image_rectangles = {
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "rectangles", "Rectangles", "Rectangles Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Graph/Rectangles", /* category */
   0,   /* const char * options */
-  0    /* oyCMMuiGet_f oyCMMuiGet */
+  0,   /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyraApi4UiImageRectanglesGetText,  /* oyCMMGetText_f getText */
+  oyra_api4_ui_image_rectangles_texts  /* (const char**)texts */
 };
 
 /** @instance oyra_api4
@@ -698,6 +752,31 @@ oyCMMapi7_s   oyra_api7_image_root = {
   0    /* sockets_last_add */
 };
 
+const char * oyraApi4UiImageRootGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name"))
+  {
+    if(type == oyNAME_NICK)
+      return "image_root";
+    else if(type == oyNAME_NAME)
+      return _("Root Image");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Root Image Filter Object");
+  } else if(strcmp(select,"help"))
+  {
+    if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("The filter provides a generic image source.");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("The root image filter can hold pixel data for processing in a graph.");
+  }
+  return 0;
+}
+const char * oyra_api4_ui_image_root_texts[] = {"name", "help", 0};
+
 /** @instance oyra_api4_ui_image_root
  *  @brief    oyra oyCMMapi4_s::ui implementation
  *
@@ -717,10 +796,12 @@ oyCMMui_s oyra_api4_ui_image_root = {
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image", "Root Image", "Root Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[in]", /* category */
   0,   /* const char * options */
-  0    /* oyCMMuiGet_f oyCMMuiGet */
+  0,   /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyraApi4UiImageRootGetText, /* oyCMMGetText_f getText */
+  oyra_api4_ui_image_root_texts /* (const char**)texts */
 };
 
 /** @instance oyra_api4
@@ -850,6 +931,31 @@ oyCMMapi7_s   oyra_api7_image_output = {
   0    /* sockets_last_add */
 };
 
+const char * oyraApi4UiImageOutputGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name"))
+  {
+    if(type == oyNAME_NICK)
+      return "image_out";
+    else if(type == oyNAME_NAME)
+      return _("Image[out]");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Output Image Filter Object");
+  } else if(strcmp(select,"help"))
+  {
+    if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("The filter is a possible pixel target in a graph.");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("The filter can query pixels from its successors in a graph. The results are stored in the internal buffer.");
+  }
+  return 0;
+}
+const char * oyra_api4_ui_image_output_texts[] = {"name", "help", 0};
+
 /** @instance oyra_api4_ui_image_output
  *  @brief    oyra oyCMMapi4_s::ui implementation
  *
@@ -869,10 +975,12 @@ oyCMMui_s oyra_api4_ui_image_output = {
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "image_out", "Image[out]", "Output Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Image/Simple Image[out]", /* category */
   0,   /* const char * options */
-  0    /* oyCMMuiGet_f oyCMMuiGet */
+  0,   /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyraApi4UiImageOutputGetText,  /* oyCMMGetText_f getText */
+  oyra_api4_ui_image_output_texts  /* (const char**)texts */
 };
 
 /** @instance oyra_api4

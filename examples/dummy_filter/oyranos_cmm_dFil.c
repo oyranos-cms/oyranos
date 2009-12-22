@@ -393,6 +393,55 @@ oyConnectorImaging_s * dFil_myFilter_connectorPlugs[2] =
              { &dFil_myFilter_connectorPlug, 0 };
 
 
+/**
+ *  This function implements oyCMMGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/22 (Oyranos: 0.1.10)
+ *  @date    2009/12/22
+ */
+const char * dFilApi4UiGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  static char * category = 0;
+  if(strcmp(select,"name"))
+  {
+         if(type == oyNAME_NICK)
+      return "my_filter";
+    else if(type == oyNAME_NAME)
+      return _("Image[my_filter]");
+    else
+      return _("My Filter Object");
+  }
+  else if(strcmp(select,"help"))
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Some help for My example filter.");
+    else
+      return _("More indepth help  for My example filter.");
+  }
+  else if(strcmp(select,"category"))
+  {
+    if(!category)
+    {
+      /* Create a translation for dFil_api4_ui_my_filter::category. */
+      STRING_ADD( category, _("Filter") );
+      STRING_ADD( category, _("/") );
+      STRING_ADD( category, _("My Filter") );
+    }
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  }
+  return 0;
+}
+const char * dFil_api4_ui_texts[] = {"name", "category", "help", 0};
 /** @instance dFil_api4_ui_my_filter
  *  @brief    dFil oyCMMapi4_s::ui implementation
  *
@@ -412,10 +461,12 @@ oyCMMui_s dFil_api4_ui_my_filter = {
   dFilFilter_MyFilterValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   dFilWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "my_filter", "Image[my_filter]", "My Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Filter/My Filter", /* UI category */
   0,   /* const char * options */
-  0    /* oyCMMuiGet_f oyCMMuiGet */
+  0,   /* oyCMMuiGet_f oyCMMuiGet */
+
+  dFilApi4UiGetText, /* oyCMMGetText_f   getText */
+  dFil_api4_ui_texts /* const char    ** texts */
 };
 
 /** @instance dFil_api4
@@ -443,7 +494,7 @@ oyCMMapi4_s   dFil_api4_my_filter = {
   OY_DUMMY_FILTER_REGISTRATION,
 
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  {0,0,10},                  /**< int32_t last_api_version[3] */
+  {0,1,10},                  /**< int32_t last_api_version[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -477,7 +528,7 @@ oyCMMapi7_s   dFil_api7_my_filter = {
   OY_DUMMY_FILTER_REGISTRATION,
 
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  {0,0,10},                  /**< int32_t module_api[3] */
+  {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

@@ -46,10 +46,10 @@ oyMessage_f message = oyraCMMWarnFunc;
  *  @brief API requirement
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/01/02
  *  @since   2008/01/02 (Oyranos: 0.1.8)
+ *  @date    2009/12/17
  */
-int                oyraCMMInit       ( )
+int                oyraCMMInit       ( oyStruct_s        * filter )
 {
   int error = 0;
   return error;

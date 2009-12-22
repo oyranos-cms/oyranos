@@ -62,10 +62,10 @@ int          oiccFilterMessageFuncSet( oyMessage_f         message_func )
  *  @brief   API requirement
  *
  *  @version Oyranos: 0.1.10
- *  @date    2009/07/24
  *  @since   2009/07/24 (Oyranos: 0.1.10)
+ *  @date    2009/12/17
  */
-int                oiccFilterInit      ( )
+int                oiccFilterInit    ( oyStruct_s        * filter )
 {
   int error = 0;
   return error;
@@ -510,9 +510,9 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
   o = oyOptions_Find( f_options, key );
   /* only set missing options */
               if((o &&
-                  !o->source & oyOPTIONSOURCE_USER &&
-                  !o->source & oyOPTIONSOURCE_DATA &&
-                  !o->flags & oyOPTIONATTRIBUTE_EDIT) ||
+                  !(o->source & oyOPTIONSOURCE_USER) &&
+                  !(o->source & oyOPTIONSOURCE_DATA) &&
+                  !(o->flags & oyOPTIONATTRIBUTE_EDIT)) ||
                  !o)
               {
                 db_o = oyOptions_Find( db_options, key );

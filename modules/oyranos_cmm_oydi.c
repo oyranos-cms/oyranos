@@ -48,6 +48,11 @@ oyOptions_s* oydiFilter_ImageDisplayValidateOptions
                                        oyOptions_s       * validate,
                                        int                 statical,
                                        uint32_t          * result );
+const char * oydiGetText             ( const char        * select,
+                                       oyNAME_e            type );
+const char * oydiApi4UiImageDisplayGetText (
+                                       const char        * select,
+                                       oyNAME_e            type );
 
 extern oyCMMapi4_s   oydi_api4_image_display;
 extern oyCMMapi7_s   oydi_api7_image_display;
@@ -841,6 +846,28 @@ oyCMMapi7_s   oydi_api7_image_display = {
   0    /* sockets_last_add */
 };
 
+const char * oydiApi4UiImageDisplayGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name"))
+  {
+    if(type == oyNAME_NICK)
+      return "display";
+    else if(type == oyNAME_NAME)
+      return "Display";
+    else if(type == oyNAME_DESCRIPTION)
+      return "Display Splitter Object";
+  } else if(strcmp(select,"help"))
+  {
+    /* The help text is identical, as the module contains only one filter to
+     * provide help for. */
+    return oydiGetText(select,type);
+  }
+  return 0;
+}
+const char * oydi_api4_ui_image_display_texts[] = {"name", "help", 0};
+
 /** @instance oydi_api4_ui_image_display
  *  @brief    oydi oyCMMapi4_s::ui implementation
  *
@@ -860,10 +887,13 @@ oyCMMui_s oydi_api4_ui_image_display = {
   oydiFilter_ImageDisplayValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oydiWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "display", "Display", "Display Splitter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Graph/Display", /* category */
   oydi_extra_options,   /* const char * options */
-  oydiUiGet    /* oyCMMuiGet_f oyCMMuiGet */
+
+  oydiUiGet,    /* oyCMMuiGet_f oyCMMuiGet */
+
+  oydiApi4UiImageDisplayGetText,  /* oyCMMGetText_f getText */
+  oydi_api4_ui_image_display_texts  /* (const char**)texts */
 };
 
 /** @instance oydi_api4_image_display
@@ -908,9 +938,9 @@ oyCMMapi4_s   oydi_api4_image_display = {
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/04/13 (Oyranos: 0.1.10)
- *  @date    2009/04/13
+ *  @date    2009/12/17
  */
-int                oydiCMMInit       ( )
+int                oydiCMMInit       ( oyStruct_s        * filter )
 {
   int error = 0;
   return error;

@@ -39,7 +39,7 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func );
 
 /* OYX1_MONITOR_REGISTRATION -------------------------------------------------*/
 
-#define OYX1_MONITOR_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.monitor." CMM_NICK
+#define OYX1_MONITOR_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.monitor." CMM_NICK
 
 oyMessage_f message = 0;
 
@@ -51,10 +51,14 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                                        oyConfig_s       ** device );
 int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                                        oyOptions_s       * options );
+const char * oyX1GetText             ( const char        * select,
+                                       oyNAME_e            type );
+const char * oyX1Api8UiGetText       ( const char        * select,
+                                       oyNAME_e            type );
 
 /* --- implementations --- */
 
-int                oyX1CMMInit       ( )
+int                oyX1CMMInit       ( oyStruct_s        * filter )
 {
   int error = 0;
   return error;
@@ -957,6 +961,60 @@ oyRankPad oyX1_rank_map[] = {
   {0,0,0,0}                            /**< end of list */
 };
 
+const char * oyX1Api8UiGetText       ( const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name") ||
+     strcmp(select,"help"))
+  {
+    /* The "help" and "name" texts are identical, as the module contains only
+     * one filter to provide help for. */
+    return oyX1GetText(select,type);
+  }
+  else if(strcmp(select, "device_class")==0)
+    {
+        if(type == oyNAME_NICK)
+            return _("Monitor");
+        else if(type == oyNAME_NAME)
+            return _("Monitor");
+        else
+            return _("Monitors, which can be detected through the video card driver and windowing system.");
+    } 
+  return 0;
+}
+const char * oyX1_api8_ui_texts[] = {"name", "help", "device_class", 0};
+
+/** @instance oyX1_api8_ui
+ *  @brief    oyX1 oyCMMapi8_s::ui implementation
+ *
+ *  The UI for oyX1 devices.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/14 (Oyranos: 0.1.10)
+ *  @date    2009/12/16
+ */
+oyCMMui_s oyX1_api8_ui = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  0, /* oyCMMFilter_ValidateOptions_f */
+  0, /* oyWidgetEvent_f */
+
+  "Colour/Device/Monitor", /* category */
+  0,   /* const char * options */
+  0,   /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyX1Api8UiGetText,  /* oyCMMGetText_f getText */
+  oyX1_api8_ui_texts  /* (const char**)texts */
+};
+
+oyIcon_s oyX1_api8_icon = {
+  oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
+};
+
 /** @instance oyX1_api8
  *  @brief    oyX1 oyCMMapi8_s implementations
  *
@@ -981,6 +1039,10 @@ oyCMMapi8_s oyX1_api8 = {
   oyX1Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
   oyX1Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   oyX1Config_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
+
+  &oyX1_api8_ui,             /**< device class UI name and help */
+  &oyX1_api8_icon,           /**< device icon */
+
   oyX1_rank_map              /**< oyRankPad ** rank_map */
 };
 

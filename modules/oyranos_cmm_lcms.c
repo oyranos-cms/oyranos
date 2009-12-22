@@ -26,7 +26,7 @@
 /*
 oyCMMInfo_s   lcms_cmm_module;
 oyCMMapi4_s     lcms_api4_cmm;
-oyCMMui_s         oyra_api4_ui_cmm;
+oyCMMui_s         lcms_api4_ui;
 oyCMMapi7_s     lcms_api7_cmm;
 oyConnectorImaging_s* lcms_cmmIccSocket_connectors[2];
 oyConnectorImaging_s    lcms_cmmIccSocket_connector;
@@ -167,10 +167,10 @@ const char * lcmsInfoGetText         ( const char        * select,
  *  @brief   API requirement
  *
  *  @version Oyranos: 0.1.8
- *  @date    2007/12/11
  *  @since   2007/12/11 (Oyranos: 0.1.8)
+ *  @date    2009/12/17
  */
-int                lcmsCMMInit       ( )
+int                lcmsCMMInit       ( oyStruct_s        * filter )
 {
   int error = 0;
   cmsErrorAction( LCMS_ERROR_SHOW );
@@ -2115,7 +2115,45 @@ oyCMMapi7_s   lcms_api7_cmm = {
   0,                         /* sockets_last_add */
 };
 
-/** @instance lcms_api4_ui_cmm
+/**
+ *  This function implements oyCMMGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/22 (Oyranos: 0.1.10)
+ *  @date    2009/12/22
+ */
+const char * lcmsApi4UiGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  static char * category = 0;
+  if(strcmp(select,"name") ||
+     strcmp(select,"help"))
+  {
+    return lcmsInfoGetText( select, type );
+  }
+  else if(strcmp(select,"category"))
+  {
+    if(!category)
+    {
+      STRING_ADD( category, _("Colour") );
+      STRING_ADD( category, _("/") );
+      /* CMM: abbreviation for Colour Matching Module */
+      STRING_ADD( category, _("CMM") );
+      STRING_ADD( category, _("/") );
+      STRING_ADD( category, _("littleCMS") );
+    }
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  }
+  return 0;
+}
+const char * lcms_api4_ui_texts[] = {"name", "category", "help", 0};
+/** @instance lcms_api4_ui
  *  @brief    lcms oyCMMapi4_s::ui implementation
  *
  *  The UI for lcms.
@@ -2124,7 +2162,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s oyra_api4_ui_cmm = {
+oyCMMui_s lcms_api4_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -2134,10 +2172,12 @@ oyCMMui_s oyra_api4_ui_cmm = {
   lcmsFilter_CmmIccValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   lcmsWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "colour", "Colour", "ICC compatible CMM"},
   "Colour/CMM/littleCMS", /* category */
   lcms_extra_options,   /* const char * options */
-  lcmsGetOptionsUI      /* oyCMMuiGet_f oyCMMuiGet */
+  lcmsGetOptionsUI,     /* oyCMMuiGet_f oyCMMuiGet */
+
+  lcmsApi4UiGetText, /* oyCMMGetText_f   getText */
+  lcms_api4_ui_texts /* const char    ** texts */
 };
 
 /** @instance lcms_api4_cmm
@@ -2170,7 +2210,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsFilterNode_GetText, /* oyCMMFilterNode_GetText_f */
   oyCOLOUR_ICC_DEVICE_LINK, /* context data_type */
 
-  &oyra_api4_ui_cmm                    /**< oyCMMui_s *ui */
+  &lcms_api4_ui                        /**< oyCMMui_s *ui */
 };
 
 
@@ -2188,7 +2228,7 @@ const char * lcmsInfoGetText         ( const char        * select,
          if(strcmp(select, "name")==0)
   {
          if(type == oyNAME_NICK)
-      return _(CMM_NICK);
+      return CMM_NICK;
     else if(type == oyNAME_NAME)
       return _("Little CMS");
     else

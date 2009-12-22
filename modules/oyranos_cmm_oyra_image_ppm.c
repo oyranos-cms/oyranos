@@ -367,16 +367,65 @@ oyConnectorImaging_s oyra_imageOutputPPM_connector_in = {
 oyConnectorImaging_s * oyra_imageOutputPPM_connectors_plug[2] = 
              { &oyra_imageOutputPPM_connector_in, 0 };
 
-/** @instance oyra_api4_ui_image_write_ppm
+/**
+ *  This function implements oyCMMGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/22 (Oyranos: 0.1.10)
+ *  @date    2009/12/22
+ */
+const char * oyraApi4ImageWriteUiGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  static char * category = 0;
+  if(strcmp(select,"name"))
+  {
+         if(type == oyNAME_NICK)
+      return "write_ppm";
+    else if(type == oyNAME_NAME)
+      return _("Image[write_ppm]");
+    else
+      return _("Write PPM Image Filter Object");
+  }
+  else if(strcmp(select,"category"))
+  {
+    if(!category)
+    {
+      STRING_ADD( category, _("Files") );
+      STRING_ADD( category, _("/") );
+      STRING_ADD( category, _("Write PPM") );
+    }
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  }
+  else if(strcmp(select,"help"))
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Option \"filename\", a valid filename");
+    else
+      return _("The Option \"filename\" should contain a valid filename to write the ppm data into. A existing file will be overwritten without notice.");
+  }
+  return 0;
+}
+const char * oyra_api4_image_write_ppm_ui_texts[] = {"name", "category", "help", 0};
+
+/** @instance oyra_api4_image_write_ppm_ui
  *  @brief    oyra oyCMMapi4_s::ui implementation
  *
  *  The UI for filter write ppm.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/09/09 (Oyranos: 0.1.10)
- *  @date    2009/09/09
+ *  @date    2009/12/22
  */
-oyCMMui_s oyra_api4_ui_image_write_ppm = {
+oyCMMui_s oyra_api4_image_write_ppm_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -386,10 +435,12 @@ oyCMMui_s oyra_api4_ui_image_write_ppm = {
   oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "write_ppm", "Image[write_ppm]", "Write PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Write PPM", /* category */
   ppm_write_extra_options, /* const char * options */
-  oyraPPMwriteUiGet /* oyCMMuiGet_f oyCMMuiGet */
+  oyraPPMwriteUiGet, /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyraApi4ImageWriteUiGetText, /* oyCMMGetText_f   getText */
+  oyra_api4_image_write_ppm_ui_texts /* const char    ** texts */
 };
 
 /** @instance oyra_api4
@@ -425,7 +476,7 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  &oyra_api4_ui_image_write_ppm        /**< oyCMMui_s *ui */
+  &oyra_api4_image_write_ppm_ui        /**< oyCMMui_s *ui */
 };
 
 /** @instance oyra_api7
@@ -1035,6 +1086,55 @@ oyConnectorImaging_s * oyra_imageInputPPM_connectors[2] =
              { &oyra_imageInputPPM_connector, 0 };
 
 
+/**
+ *  This function implements oyCMMGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/22 (Oyranos: 0.1.10)
+ *  @date    2009/12/22
+ */
+const char * oyraApi4ImageInputUiGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  static char * category = 0;
+  if(strcmp(select,"name"))
+  {
+         if(type == oyNAME_NICK)
+      return "input_ppm";
+    else if(type == oyNAME_NAME)
+      return _("Image[input_ppm]");
+    else
+      return _("Input PPM Image Filter Object");
+  }
+  else if(strcmp(select,"category"))
+  {
+    if(!category)
+    {
+      STRING_ADD( category, _("Files") );
+      STRING_ADD( category, _("/") );
+      STRING_ADD( category, _("Read PPM") );
+    }
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  }
+  else if(strcmp(select,"help"))
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Option \"filename\", a valid filename of a existing PPM image");
+    else
+      return _("The Option \"filename\" should contain a valid filename to read the ppm data from. If the file does not exist, a error will occure.");
+  }
+  return 0;
+}
+const char * oyra_api4_image_input_ppm_ui_texts[] = {"name", "category", "help", 0};
+
 /** @instance oyra_api4_ui_image_input_ppm
  *  @brief    oyra oyCMMapi4_s::ui implementation
  *
@@ -1054,10 +1154,12 @@ oyCMMui_s oyra_api4_ui_image_input_ppm = {
   oyraFilter_ImageInputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, "input_ppm", "Image[input_ppm]", "Input PPM Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Read PPM", /* category */
   ppm_read_extra_options, /* const char * options */
-  oyraPPMreadUiGet /* oyCMMuiGet_f oyCMMuiGet */
+  oyraPPMreadUiGet, /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyraApi4ImageInputUiGetText, /* oyCMMGetText_f   getText */
+  oyra_api4_image_input_ppm_ui_texts /* const char    ** texts */
 };
 
 /** @instance oyra_api4

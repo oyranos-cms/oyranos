@@ -942,7 +942,7 @@ oyTESTRESULT_e testSettings ()
     } else
     {
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
-      "oyOptions_GetText() returned text               %d", strlen(text) );
+      "oyOptions_GetText() returned text               %d", (int)strlen(text) );
     }
   }
   
@@ -1926,6 +1926,8 @@ oyTESTRESULT_e testCMMsShow ()
                                              0, /* oyConfigs_FromPattern */
                                              0, /* oyConfigs_Modify */
                                              0, /* oyConfig_Rank */
+                                             0, /* oyCMMui_s */
+                                             0, /* oyIcon_s */
                                              (oyRankPad*)rank_map
                                            };
 

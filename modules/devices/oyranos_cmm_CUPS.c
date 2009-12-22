@@ -30,7 +30,8 @@
 /* --- internal definitions --- */
 
 #define CMM_NICK "CUPS"
-#define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.printer." CMM_NICK
+#define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.printer." CMM_NICK
+#define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 #define catCMMfunc(nick,func) nick ## func
 
@@ -49,6 +50,10 @@
 #define GetText                 catCMMfunc( CUPS, GetText )
 #define _texts                  catCMMfunc( CUPS, _texts )
 #define _cmm_module             catCMMfunc( CUPS, _cmm_module )
+#define _api8_ui                catCMMfunc( CUPS, _api8_ui )
+#define Api8UiGetText           catCMMfunc( CUPS, Api8UiGetText )
+#define _api8_ui_texts          catCMMfunc( CUPS, _api8_ui_texts )
+#define _api8_icon              catCMMfunc( CUPS, _api8_icon )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
@@ -58,13 +63,17 @@ int CUPSgetProfiles                  ( const char        * device_name,
                                        ppd_file_t        * ppd_file,
                                        oyConfigs_s       * devices,
                                        oyOptions_s       * user_options );
+const char * GetText                 ( const char        * select,
+                                       oyNAME_e            type );
+const char * Api8UiGetText           ( const char        * select,
+                                       oyNAME_e            type );
 
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s _api8;
 extern oyRankPad _rank_map[];
 
-int CMMInit ()
+int CMMInit                          ( oyStruct_s        * filter )
 {
     int error = 0;
     return error;
@@ -624,6 +633,60 @@ int   Config_Check ( oyConfig_s        * config )
     return rank;
 }
 
+const char * Api8UiGetText           ( const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name") ||
+     strcmp(select,"help"))
+  {
+    /* The "help" and "name" texts are identical, as the module contains only
+     * one filter to provide help for. */
+    return GetText(select,type);
+  }
+  else if(strcmp(select, "device_class")==0)
+    {
+        if(type == oyNAME_NICK)
+            return _("Printer");
+        else if(type == oyNAME_NAME)
+            return _("Printer");
+        else
+            return _("Printers, which are accessible through the CUPS spooling system.");
+    } 
+  return 0;
+}
+const char * _api8_ui_texts[] = {"name", "help", "device_class", 0};
+
+/** @instance _api8_ui
+ *  @brief    oydi oyCMMapi4_s::ui implementation
+ *
+ *  The UI parts for CUPS devices.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/06 (Oyranos: 0.1.10)
+ *  @date    2009/09/06
+ */
+oyCMMui_s _api8_ui = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  0, /* oyCMMFilter_ValidateOptions_f */
+  0, /* oyWidgetEvent_f */
+
+  "Colour/Device/Printer", /* category */
+  0,   /* const char * options */
+
+  0,    /* oyCMMuiGet_f oyCMMuiGet */
+
+  Api8UiGetText,  /* oyCMMGetText_f getText */
+  _api8_ui_texts  /* (const char**)texts */
+};
+
+oyIcon_s _api8_icon = {
+  oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
+};
 
 /** @instance _api8
  *  @brief     oyCMMapi8_s implementations
@@ -641,13 +704,17 @@ oyCMMapi8_s _api8 = {
   CMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
 
   CMM_BASE_REG,          /**< registration */
-  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  CMM_VERSION,                         /**< int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */
   0,                     /**< char * id_ */
   0,                     /**< oyCMMapi5_s * api5_ */
   Configs_FromPattern,   /**< oyConfigs_FromPattern_f oyConfigs_FromPattern */
   Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   Config_Check,          /**< oyConfig_Check_f oyConfig_Check */
+
+  &_api8_ui,             /**< device class UI name and help */
+  &_api8_icon,           /**< device icon */
+
   _rank_map              /**< oyRankPad ** rank_map */
 };
 
@@ -659,7 +726,7 @@ oyCMMapi8_s _api8 = {
  *  @date    2009/02/09
  */
 
-const char * GetText             ( const char        * select,
+const char * GetText                 ( const char        * select,
                                        oyNAME_e            type )
 {
     if(strcmp(select, "name")==0)

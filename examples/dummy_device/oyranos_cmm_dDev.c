@@ -34,6 +34,7 @@
  */
 #define CMM_NICK "dDev"
 #define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.dummy." CMM_NICK
+#define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 #define catCMMfunc(nick,func) nick ## func
 
@@ -52,11 +53,20 @@
 #define GetText                 catCMMfunc( dDev, GetText )
 #define _texts                  catCMMfunc( dDev, _texts )
 #define _cmm_module             catCMMfunc( dDev, _cmm_module )
+#define _api8_ui                catCMMfunc( dDev, _api8_ui )
+#define Api8UiGetText           catCMMfunc( dDev, Api8UiGetText )
+#define _api8_ui_texts          catCMMfunc( dDev, _api8_ui_texts )
+#define _api8_icon              catCMMfunc( dDev, _api8_icon )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
 #define _(x) x
 #define STRING_ADD(a,b) sprintf( &a[strlen(a)], b )
+
+const char * GetText                 ( const char        * select,
+                                       oyNAME_e            type );
+const char * Api8UiGetText           ( const char        * select,
+                                       oyNAME_e            type );
 
 oyMessage_f message = 0;
 
@@ -669,12 +679,69 @@ oyRankPad _rank_map[] = {
   {0,0,0,0}                            /**< end of list */
 };
 
+const char * Api8UiGetText           ( const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name") ||
+     strcmp(select,"help"))
+  {
+    /* The "help" and "name" texts are identical, as the module contains only
+     * one filter to provide help for. */
+    return GetText(select,type);
+  }
+  /* provide a useful device name */
+  else if(strcmp(select, "device_class")==0)
+    {
+        if(type == oyNAME_NICK)
+            return _("Example");
+        else if(type == oyNAME_NAME)
+            return _("Example Device");
+        else
+            return _("Example Devices, for testing and learning purposes only.");
+    } 
+  return 0;
+}
+/* All possible "select" arguments for Api8UiGetText(). */
+const char * _api8_ui_texts[] = {"name", "help", "device_class", 0};
+
+/** @instance _api8_ui
+ *  @brief    oydi oyCMMapi4_s::ui implementation
+ *
+ *  The UI parts for example devices.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/22 (Oyranos: 0.1.10)
+ *  @date    2009/12/22
+ */
+oyCMMui_s _api8_ui = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  0, /* oyCMMFilter_ValidateOptions_f */
+  0, /* oyWidgetEvent_f */
+
+  "Colour/Device/Example", /* category */
+  0,   /* const char * options */
+
+  0,    /* oyCMMuiGet_f oyCMMuiGet */
+
+  Api8UiGetText,  /* oyCMMGetText_f getText */
+  _api8_ui_texts  /* (const char**)texts */
+};
+
+oyIcon_s _api8_icon = {
+  oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
+};
+
 /** @instance _api8
  *  @brief    CMM_NICK oyCMMapi8_s implementations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/02/09
+ *  @date    2009/12/22
  */
 oyCMMapi8_s _api8 = {
   oyOBJECT_CMM_API8_S,
@@ -685,7 +752,7 @@ oyCMMapi8_s _api8 = {
   CMMMessageFuncSet,         /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
 
   CMM_BASE_REG,              /**< registration */
-  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  CMM_VERSION,               /**< int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
 
@@ -693,6 +760,10 @@ oyCMMapi8_s _api8 = {
   Configs_FromPattern,       /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
   Configs_Modify,            /**< oyConfigs_Modify_f oyConfigs_Modify */
   Config_Check,              /**< oyConfig_Check_f oyConfig_Check */
+
+  &_api8_ui,                 /**< device class UI name and help */
+  &_api8_icon,               /**< device icon */
+
   _rank_map                  /**< oyRankPad ** rank_map */
 };
 
@@ -744,6 +815,7 @@ const char * GetText                 ( const char        * select,
   }
   return 0;
 }
+/** All possible select arguments for GetText(). */
 const char * _texts[5] = {"name","copyright","manufacturer","help",0};
 
 /** @instance _cmm_module

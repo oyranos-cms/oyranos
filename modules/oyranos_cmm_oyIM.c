@@ -45,10 +45,10 @@ oyMessage_f message = oyIMCMMWarnFunc;
  *  @brief API requirement
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/01/02
  *  @since   2008/01/02 (Oyranos: 0.1.8)
+ *  @date    2009/12/17
  */
-int                oyIMCMMInit       ( )
+int                oyIMCMMInit       ( oyStruct_s        * filter )
 {
   int error = 0;
   return error;

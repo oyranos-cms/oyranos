@@ -263,7 +263,7 @@ int  oyWriteMemToFile2_              ( const char        * name,
     full_name = oyResolveDirFileName_( filename );
   exist = oyIsFile_(full_name);
   if(exist &&
-     !flags & OY_FILE_APPEND && !flags & OY_FILE_NAME_SEARCH)
+     !(flags & OY_FILE_APPEND) && !(flags & OY_FILE_NAME_SEARCH))
   {
     WARNc2_S( "%s: %s", _("File exists"), full_name );
     return 1;

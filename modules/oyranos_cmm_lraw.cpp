@@ -65,10 +65,10 @@ using namespace oyranos;
  *  @brief API requirement
  *
  *  @version Oyranos: 0.1.10
- *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
+ *  @date    2009/12/17
  */
-int                lrawCMMInit       ( )
+int                lrawCMMInit       ( oyStruct_s        * filter )
 {
   int error = 0;
   return error;
@@ -673,6 +673,31 @@ oyConnectorImaging_s * lraw_imageInputRAW_connectors[2] =
              { &lraw_imageInputRAW_connector, 0 };
 
 
+const char * oyraApi4UiImageInputLibrawGetText (
+                                       const char        * select,
+                                       oyNAME_e            type )
+{
+  if(strcmp(select,"name"))
+  {
+    if(type == oyNAME_NICK)
+      return "input_libraw-lite";
+    else if(type == oyNAME_NAME)
+      return _("Image[input_libraw-lite]");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Input libraw Image Filter Object");
+  } else if(strcmp(select,"help"))
+  {
+    if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("The filter obtains a image from libraw.");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("The filter is a libraw image reader.");
+  }
+  return 0;
+}
+const char * oyra_api4_ui_image_input_libraw_texts[] = {"name", "help", 0};
+
 /** @instance lraw_api4_ui_image_input_libraw
  *  @brief    lraw oyCMMapi4_s::ui implementation
  *
@@ -692,10 +717,12 @@ oyCMMui_s oraw_api4_ui_image_input_libraw = {
   lrawFilter_ImageInputRAWValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   lrawWidgetEvent, /* oyWidgetEvent_f */
 
-  {oyOBJECT_NAME_S, 0,0,0, (char*)"input_libraw-lite", (char*)"Image[input_libraw-lite]", (char*)"Input libraw Image Filter Object"}, /* name; translatable, eg "scale" "image scaling" "..." */
   "Files/Read cameraRAW", /* category */
   lraw_extra_options,   /* const char * options */
-  lrawUiGet      /* oyCMMuiGet_f oyCMMuiGet */
+  lrawUiGet,      /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyraApi4UiImageInputLibrawGetText, /* oyCMMGetText_f getText */
+  oyra_api4_ui_image_input_libraw_texts /* (const char**)texts */
 };
 
 /** @instance lraw_api4

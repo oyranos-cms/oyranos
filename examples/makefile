@@ -7,7 +7,7 @@ TARGET2 = xcmsevents/xcmsevents
 TARGET3 = colour_desktop/libcolour_desktop.so
 TARGET4 = image2pdf/image2pdf
 TARGET5 = dummy_device/liboyranos_dDev_cmm_module.so
-TARGET6 = dummy_filter/liboyranos_dfil_cmm_module.so
+TARGET6 = dummy_filter/liboyranos_dFil_cmm_module.so
 TARGET7 = oymd5icc/oymd5icc
 TARGETS = $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) \
 	$(TARGET7)
@@ -75,12 +75,12 @@ $(TARGET4):	$(SRCDIR)$(TARGET4).c
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
 	mkdir -p dummy_device
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
+	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) -fPIC $< -o $@
 
 $(TARGET6):	$(SRCDIR)dummy_filter/oyranos_cmm_dFil.c
 	mkdir -p dummy_filter
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
+	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) -fPIC $< -o $@
 
 $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 	mkdir -p oymd5icc
