@@ -3753,7 +3753,7 @@ oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name )
 
         /* init */
         if(error <= 0)
-        error = api->oyCMMInit();
+        error = api->oyCMMInit( (oyStruct_s*) api );
         if(error <= 0)
           error = oyCMMhandle_Set_( cmm_handle, cmm_info, dso_handle, lib_name);
 
@@ -4733,8 +4733,8 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
                  oyStructTypeToText(api->type),
                  oyNoEmptyString_m_(api->registration));
       }
-      if(!(s->ui && s->ui->name.type == oyOBJECT_NAME_S &&
-           s->ui->name.nick && s->ui->name.name && s->ui->name.description))
+      if(!(s->ui && s->ui->texts &&
+           s->ui->getText && s->ui->getText("name", oyNAME_NAME)))
       {
         error = 1;
         WARNc2_S("Missed module name: %s %s",
@@ -21209,7 +21209,6 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
   {
     s->registration_ = oyStringCopy_( cmm_api4->registration,
                                       allocateFunc_);
-    s->name_ = oyName_copy( &cmm_api4->ui->name, s->oy_ );
 
     s->category_ = oyStringCopy_( cmm_api4->ui->category, allocateFunc_ );
 
@@ -21319,7 +21318,6 @@ oyFilterCore_s * oyFilterCore_Copy_  ( oyFilterCore_s    * filter,
   if(error <= 0)
   {
     s->registration_ = oyStringCopy_( filter->registration_, allocateFunc_ );
-    s->name_ = oyName_copy( filter->name_, s->oy_ );
     s->category_ = oyStringCopy_( filter->category_, allocateFunc_ );
     s->options_ = oyOptions_Copy( filter->options_, s->oy_ );
     s->api4_ = filter->api4_;
@@ -21394,9 +21392,6 @@ int          oyFilterCore_Release    ( oyFilterCore_s   ** obj )
 
     if(s->registration_)
       deallocateFunc( s->registration_ );
-
-    if(s->name_ && s->name_->release)
-      s->name_->release( (oyStruct_s**)&s->name_ );
 
     if(s->category_)
       deallocateFunc( s->category_ ); s->category_ = 0;
@@ -21491,7 +21486,7 @@ const char * oyFilterCore_GetName    ( oyFilterCore_s    * filter,
   if(!s)
     return 0;
 
-  return oyNoEmptyName_m_( oyName_get_( filter->name_, name_type ) );
+  return oyNoEmptyName_m_( filter->api4_->ui->getText( "name", name_type ) );
 }
 /** Function oyFilterCore_CategoryGet
  *  @memberof oyFilterCore_s

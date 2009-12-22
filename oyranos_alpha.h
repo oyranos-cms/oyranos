@@ -2373,7 +2373,6 @@ struct oyFilterCore_s {
   oyObject_s           oy_;            /**< @private base object */
 
   char               * registration_;  /**< @private a registration name, e.g. "shared/oyranos.org/imaging/scale", see as well @ref registration */
-  oyName_s           * name_;          /**< @private nick, name, description/help */
 
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */
 
