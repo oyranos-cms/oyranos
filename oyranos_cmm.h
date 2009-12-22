@@ -55,7 +55,7 @@ typedef int      (*oyCMMCanHandle_f) ( oyCMMQUERY_e        type,
  *  @ingroup module_api
  *  @memberof oyCMMapi_s
  */
-typedef int      (*oyCMMInit_f)      ( void );
+typedef int      (*oyCMMInit_f)      ( oyStruct_s        * filter );
 
 /**
  *  typedef oyCMMMessageFuncSet_f
@@ -880,7 +880,7 @@ struct oyCMMapi6_s {
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/09/06 (Oyranos: 0.1.10)
- *  @date    2009/09/06
+ *  @date    2009/12/17
  */
 typedef struct {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_DATA_TYPES_S */
@@ -903,12 +903,25 @@ typedef struct {
   oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
   oyWidgetEvent_f                  oyWidget_Event; /**< handle widget events */
 
-  /** translatable, eg "scale" "image scaling" "..." */
-  oyName_s         name;
-  const char       category[256];      /**< menu structure */
+  const char     * category;           /**< menu structure */
   const char     * options;            /**< default options as Elektra/XFORMS 
                                         *   compatible XML */
   oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
+
+  oyCMMGetText_f   getText;            /**< translated UI texts */
+  /** zero terminated categories for getText,
+   *  e.g. {"name","category","help",0}
+   *
+   *  The "name" texts shall include information about the module.
+   *  The "category" gives in oyNAME_NAME a translated version of
+   *  oyCMMui_s::category.
+   *  The "help" texts should provide general infromations about the module.
+   *
+   *  The oyNAME_NICK for the several oyCMMui_s::getText() texts is typical not
+   *  translated. For "name" the oyNAME_NICK should be the module name. For 
+   *  other texts like "help" and "category" oyNAME_NICK makes no sense.
+   */
+  const char    ** texts;
 } oyCMMui_s;
 
 
@@ -1024,6 +1037,9 @@ struct  oyCMMapi4_s {
    *  e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL" */
   char             context_type[8];
 
+  /** a UI description
+   *  Obligatory is a implemented oyCMMapi4_s::ui->getText( x, y ) call. The x
+   *  argument shall cover "name" and "help" */
   oyCMMui_s      * ui;                 /**< a UI description */
 };
 
@@ -1094,7 +1110,7 @@ typedef int  (*oyConfig_Rank_f)     ( oyConfig_s         * config );
  *  These configurations can be created, modified and compared by this module 
  *  type and stored by Oyranos' core.
  *  They are stored under the base key path decided by each configuration 
- *  module individualy in its oyCMMapi8_s::registration.
+ *  module individualy in its oyCMMapi8_s::registration string.
  *
  *  This API provides weak interface compile time checking.
  *
@@ -1104,7 +1120,7 @@ typedef int  (*oyConfig_Rank_f)     ( oyConfig_s         * config );
  *  the fourth type string in the registration path starting with "config".
  *  This requirement is useful to group DB keys alphabetically.
  *
- *  In the case of a device a application can ask Oyranos for all or a subset
+ *  In the case of a device, a application can ask Oyranos for all or a subset
  *  of available devices with oyConfigs_FromPattern.
  *
  *  A application can modify a selection of oyConfig_s objects and
@@ -1112,6 +1128,7 @@ typedef int  (*oyConfig_Rank_f)     ( oyConfig_s         * config );
  *  It is adviced to let Oyranos ask the module in advance through 
  *  oyConfig_Rank_f, if the modified oyConfig_s object is still valid.
  *
+ *  @Future directions:
  *  For automatic UI's this module API should provide a XFORMS UI about the
  *  result and return a oyConfig_s for a filled form.
  *
@@ -1120,7 +1137,7 @@ typedef int  (*oyConfig_Rank_f)     ( oyConfig_s         * config );
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/16 (Oyranos: 0.1.10)
- *  @date    2009/01/19
+ *  @date    2009/12/15
  */
 struct oyCMMapi8_s {
   oyOBJECT_e           type;           /**< struct type oyOBJECT_CMM_API8_S */ 
@@ -1134,8 +1151,9 @@ struct oyCMMapi8_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
 
   /** The oyFILTER_REG_APPLICATION of "config" is obligatory.
-   *  e.g. "shared/freedesktop.org/imaging/config.scanner.sane" or 
-   *       "shared/freedesktop.org/imaging/config.monitor.xorg" ...\n
+   *
+   *  e.g. "shared/freedesktop.org/imaging/config.device.icc_profile.scanner.sane" or 
+   *       "shared/freedesktop.org/imaging/config.device.icc_profile.monitor.xorg"...\n
       see as well @ref registration
    */
   char           * registration;
@@ -1159,6 +1177,10 @@ struct oyCMMapi8_s {
   /** manipulate given configs */
   oyConfigs_Modify_f oyConfigs_Modify;
   oyConfig_Rank_f  oyConfig_Rank;      /**< test config */
+
+  oyCMMui_s      * ui;                 /**< a UI description */
+  oyIcon_s       * icon;               /**< module associated icon */
+
   /** zero terminated list of rank attributes;
    *  The data is just informational. In case all properties to rank a given 
    *  device pair are well known, this rank_map can be copied into each 
@@ -1330,8 +1352,8 @@ typedef int  (*oyMOptions_Handle_f)  ( oyOptions_s       * options,
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *
- *  This API provides a very generic interface to exchange data between Oyranos,
- *  the host, and a module.
+ *  This API provides a very generic interface to exchange data between Oyranos
+ *  core and a module.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/11 (Oyranos: 0.1.10)
