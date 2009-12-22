@@ -145,8 +145,8 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
 
   DBG_PROG_START
 
-  oyAllocHelper_m_(list_name_user, char, MAX_PATH, 0, )
-  oyAllocHelper_m_(list_name_sys, char, MAX_PATH, 0, )
+  oyAllocHelper_m_(list_name_user, char, MAX_PATH, 0,; )
+  oyAllocHelper_m_(list_name_sys, char, MAX_PATH, 0,; )
 
   if( user_sys == oyUSER_SYS || user_sys == oyUSER ) {
     list_user = ksNew(0);
@@ -201,7 +201,7 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
   sprintf(name, "%s%s", key_base_name, key_parent_name);
 
   oyAllocHelper_m_( new_key_name, char,
-                    oyStrlen_(name) + strlen(key_base_name) + 24, 0, )
+                    oyStrlen_(name) + strlen(key_base_name) + 24, 0,; )
 
   /* search for empty keyname */
   while (!nth)
@@ -320,9 +320,9 @@ oyAddKey_valueComment_ (const char* keyName,
 
   DBG_PROG_START
 
-  oyAllocHelper_m_(name, char, MAX_PATH, 0, )
-  oyAllocHelper_m_(value_utf8, char, MAX_PATH, 0, )
-  oyAllocHelper_m_(comment_utf8, char, MAX_PATH, 0, )
+  oyAllocHelper_m_(name, char, MAX_PATH, 0,; )
+  oyAllocHelper_m_(value_utf8, char, MAX_PATH, 0,; )
+  oyAllocHelper_m_(comment_utf8, char, MAX_PATH, 0,; )
 
   sprintf(name, "%s%s", oySelectUserSys_(), keyName);
   if(value && oyStrlen_(value))
@@ -1024,7 +1024,7 @@ oyGetDeviceProfile_sList           (const char* manufacturer,
 
   DBG_PROG_START
 
-  oyAllocHelper_m_(attributs, const char*, 8 * sizeof (const char*), 0, )
+  oyAllocHelper_m_(attributs, const char*, 8 * sizeof (const char*), 0,; )
 
   attributs[0] = manufacturer;
   attributs[1] = model;
@@ -1126,7 +1126,7 @@ oyEraseDeviceProfile_              (const char* manufacturer,
   int rc=0;
   KeySet* profilesList = 0;
   Key *current;
-  char* value;
+  char* value = 0;
 
   DBG_PROG_START
 

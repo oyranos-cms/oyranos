@@ -105,7 +105,7 @@ oyOptionStringsTranslate_ ()
   if(oy_option_)
     oyFree_m_(oy_option_);
 
-  oyAllocHelper_m_( oy_option_, oyOption_t_, OY_STATIC_OPTS_, oyAllocateFunc_,);
+  oyAllocHelper_m_( oy_option_, oyOption_t_, OY_STATIC_OPTS_,oyAllocateFunc_,;);
   opt = oy_option_;
 
   {
@@ -728,6 +728,13 @@ void               oyStringAdd_      ( char             ** text,
   return;
 }
 
+char**             oyStringSplit     ( const char    * text,
+                                       const char      delimiter,
+                                       int           * count,
+                                       oyAlloc_f       allocateFunc )
+{
+  return oyStringSplit_(text, delimiter,count,allocateFunc);
+}
 
 char**             oyStringSplit_    ( const char    * text,
                                        const char      delimiter,

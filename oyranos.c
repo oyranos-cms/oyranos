@@ -494,7 +494,7 @@ oyComp_t_*
 oyInitComp_ (oyComp_t_ *list, oyComp_t_ *top)
 { DBG_PROG_START
   if (!list)
-    oyAllocHelper_m_( list, oyComp_t_, 1, oyAllocateFunc_, );
+    oyAllocHelper_m_( list, oyComp_t_, 1, oyAllocateFunc_, ; );
 
   list->next = 0;
 
@@ -540,9 +540,9 @@ oySetComp_         (oyComp_t_ *compare, const char* keyName,
                     const char* value, int hits )
 {
   DBG_PROG_START
-  oyAllocHelper_m_( compare->name, char, oyStrlen_(keyName)+1, oyAllocateFunc_, );
+  oyAllocHelper_m_( compare->name, char, oyStrlen_(keyName)+1, oyAllocateFunc_,;);
   memcpy (compare->name, keyName, oyStrlen_(keyName)+1); 
-  oyAllocHelper_m_( compare->val, char, oyStrlen_(value)+1, oyAllocateFunc_, );
+  oyAllocHelper_m_( compare->val, char, oyStrlen_(value)+1, oyAllocateFunc_,; );
   memcpy (compare->val, value, oyStrlen_(value)+1); 
   compare->hits = hits;
   DBG_PROG_ENDE
@@ -645,7 +645,7 @@ oySetDeviceProfile_                (const char* manufacturer,
       if (attrib1) len += oyStrlen_(attrib1);
       if (attrib2) len += oyStrlen_(attrib2);
       if (attrib3) len += oyStrlen_(attrib3);
-      oyAllocHelper_m_( comment, char, len+10, oyAllocateFunc_, );
+      oyAllocHelper_m_( comment, char, len+10, oyAllocateFunc_,; );
       if (manufacturer) oySprintf_ (comment, "%s", manufacturer); DBG_PROG
       if (model) oySprintf_ (&comment[oyStrlen_(comment)], "%s", model); DBG_PROG
       if (product_id) oySprintf_ (&comment[oyStrlen_(comment)], "%s", product_id);
