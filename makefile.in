@@ -56,8 +56,10 @@ LIBS_CMM = \
 
 
 #ifdef $(X11)
+#ifndef $(XNVCtrl)
 LIB_XNVCTRL = libXNVCtrl
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
+#endif
 #endif
 LIBFL_I18N = fl_i18n/libfl_i18n.a
 
@@ -485,7 +487,7 @@ $(LIB_XNVCTRL).a:
 	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
 # the twinview library
-$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL).a $(MONI_OBJECTS)
+$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_OBJECTS)
 	echo Linking $@ ...
 	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
 	-I$(SRCDIR)/$(LIB_XNVCTRL) \
@@ -895,8 +897,10 @@ uninstall_docu:
 distclean: clean
 	-$(RM) Makefile
 	-$(RM) fl_i18n/Makefile
+#ifdef $(LIB_XNVCTRL)
 	-$(RM) libXNVCtrl/Makefile libXNVCtrl/libXNVCtrl.a \
 		libXNVCtrl/NVCtrl.o libXNVCtrl.a
+#endif
 	-$(RM) default_profiles/base/Makefile
 	-$(RM) default_profiles/printing/Makefile
 	-$(RM) mkdepend cobjects config.h oyranos.pc oyranos.spec
@@ -928,9 +932,9 @@ clean:
 	         lib$${lib}$(SO)$(LIBEXT) \
 	         lib$${lib}.a; \
 	done
-ifdef $(LIB_XNVCTRL)
+#ifdef $(LIB_XNVCTRL)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
-endif
+#endif
 	-cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
 	-cd examples && $(MAKE) clean
 	echo ... $@ done
@@ -1045,9 +1049,11 @@ copy_files:
 	cd $(SRCDIR) && \
 	  $(COPY) -R settings $(DESTDIR)
 	#$(COPY) -r cmms $(DESTDIR)
+#ifdef $(LIB_XNVCTRL)
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	cd $(SRCDIR) && \
 	  $(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
+#endif
 	mkdir $(DESTDIR)/modules
 	cd $(SRCDIR) && \
 	  $(COPY) $(CFILES_MODULES) $(CPPFILES_MODULES) $(CHEADERS_MODULES) \
