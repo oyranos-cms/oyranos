@@ -20,7 +20,7 @@
 #include <lcms.h>
 
 #include "oyranos.h"
-
+#include "config.h"
 
 /* C++ includes and definitions */
 #ifdef __cplusplus
@@ -31,6 +31,21 @@ using namespace oyranos;
 #else
 void* myAllocFunc(size_t size) { return calloc(size,1); }
 #endif
+
+#          if defined(__GNUC__) || defined(LINUX) || defined(APPLE) || defined(SOLARIS)
+# include <sys/time.h>
+# define   ZEIT_TEILER 10000
+#          else // WINDOWS TODO
+# define   ZEIT_TEILER CLOCKS_PER_SEC;
+#          endif
+
+#ifndef WIN32
+# include <unistd.h>
+#endif
+
+#include <ctime>
+#include <cmath>
+
 
 /* --- general test routines --- */
 
@@ -102,6 +117,32 @@ const char  *  oyProfilingToString   ( int                 integer,
 
   return texts[a++];
 }
+
+time_t             oyTime            ( )
+{
+           time_t zeit_;
+           double teiler = ZEIT_TEILER;
+#          if defined(__GNUC__) || defined(APPLE) || defined(SOLARIS) || defined(BSD)
+           struct timeval tv;
+           gettimeofday( &tv, NULL );
+           double tmp_d;
+           zeit_ = tv.tv_usec/(1000000/(time_t)teiler)
+                   + (time_t)(modf( (double)tv.tv_sec / teiler,&tmp_d )
+                     * teiler*teiler);
+#          else // WINDOWS TODO
+           zeit_ = clock();
+#          endif
+    return zeit_;
+}
+double             oySeconds         ( )
+{
+           time_t zeit_ = oyTime();
+           double teiler = ZEIT_TEILER;
+           double dzeit = zeit_ / teiler;
+    return dzeit;
+}
+double             oyClock           ( )
+{ return oySeconds()*1000000; }
 
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name )
@@ -369,11 +410,11 @@ oyTESTRESULT_e testStringRun ()
   }
 
 
-  double clck = clock();
+  double clck = oyClock();
   for(i = 0; i < 1000000; ++i)
     test_sub = oyFilterRegistrationToSTextField( test, oyFILTER_REG_OPTION,
                                                  &test_end );
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -385,10 +426,10 @@ oyTESTRESULT_e testStringRun ()
   }
 
 
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < 1000000; ++i)
     test_sub = oyFilterRegistrationToText( test, oyFILTER_REG_OPTION, 0 );
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2057,13 +2098,13 @@ oyTESTRESULT_e testCMMnmRun ()
 
   fprintf(stdout, "\n" );
 #if 1
-  double clck = clock();
+  double clck = oyClock(), clck2;
   for(i = 0; i < n*10000; ++i)
   {
     c = oyNamedColour_Create( NULL, NULL,0, prof, 0 );
     oyNamedColour_Release( &c );
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   c = oyNamedColour_Create( NULL, NULL,0, prof, 0 );
   if( c )
@@ -2083,7 +2124,7 @@ oyTESTRESULT_e testCMMnmRun ()
   char* full_key_name = 0;
   name = (char*) oyAllocateWrapFunc_( MAX_PATH, allocate_func );
   full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
-  clck = clock();
+  clck = oyClock();
 
   for(i = 0; i < n*3*17; ++i)
   {
@@ -2114,7 +2155,7 @@ oyTESTRESULT_e testCMMnmRun ()
   }
   oyDeAllocateFunc_( full_key_name );
   oyDeAllocateFunc_( name );
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2127,7 +2168,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
 
-  clck = clock();
+  clck = oyClock();
   oyOption_s * option = oyOption_New("shared/freedesktop.org/imaging/behaviour/rendering_bpc", 0);
 
   for(i = 0; i < n*3*17; ++i)
@@ -2162,7 +2203,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   oyExportEnd_();
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2173,7 +2214,7 @@ oyTESTRESULT_e testCMMnmRun ()
     "oyOption_SetValueFromDB()                          " );
   }
 
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < n*3; ++i)
   {
   oyFilterCore_s * filter = oyFilterCore_New_( 0 );
@@ -2289,7 +2330,7 @@ oyTESTRESULT_e testCMMnmRun ()
     oyDeAllocateFunc_( type_txt );
 
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2300,7 +2341,7 @@ oyTESTRESULT_e testCMMnmRun ()
     "oyOptions_ForFilter_()                             " );
   }
 
-  clck = clock();
+  clck = oyClock();
   {
   oyFilterCore_s * s = oyFilterCore_New_( 0 );
   int error = !s;
@@ -2335,7 +2376,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
     oyFilterCore_Release( &s );
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2349,7 +2390,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   oyOptions_s * options = oyOptions_New(0);
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < n*3*10000; ++i)
   {
     oyFilterCore_s * core = oyFilterCore_New( "//" OY_TYPE_STD "/root",
@@ -2357,7 +2398,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
     oyFilterCore_Release( &core );
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2369,7 +2410,7 @@ oyTESTRESULT_e testCMMnmRun ()
   }
 
 
-  clck = clock();
+  clck = oyClock();
   const char * registration = "//" OY_TYPE_STD "/root";
   for(i = 0; i < n*3*10000; ++i)
   {
@@ -2380,7 +2421,7 @@ oyTESTRESULT_e testCMMnmRun ()
     if(!(i%30000)) fprintf(stdout, "." ); fflush(stdout);
   }
   fprintf(stdout,"\n");
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2392,7 +2433,7 @@ oyTESTRESULT_e testCMMnmRun ()
   }
 
 
-  clck = clock();
+  clck = oyClock();
   oyConversion_s * s = 0;
   oyFilterNode_s * in = 0, * out = 0;
   oyImage_s * input  = NULL,
@@ -2459,7 +2500,7 @@ oyTESTRESULT_e testCMMnmRun ()
     if(!(i%1000)) fprintf(stdout, "." ); fflush(stdout);
   }
   fprintf(stdout,"\n");
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2509,7 +2550,7 @@ oyTESTRESULT_e testCMMnmRun ()
                                            oyPIXEL_ACCESS_IMAGE, 0 );
   oyFilterPlug_Release( &plug );
 
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   if(error <= 0)
   {
@@ -2609,7 +2650,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 #endif
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   oyConversion_Release ( &s );
   oyPixelAccess_Release( &pixel_access );
@@ -2628,21 +2669,43 @@ oyTESTRESULT_e testCMMnmRun ()
               lp_out = cmsOpenProfileFromMem( p_out->block_, p_out->size_ );
   cmsHTRANSFORM xform = cmsCreateTransform( lp_in, TYPE_XYZ_DBL,
                                             lp_out, TYPE_RGB_DBL, 1, 0 );
-  clck = clock();
-  for(i = 0; i < 1000000; ++i)
+  double * dbl = (double*)calloc(sizeof(double), 10000*3);
+  clck = oyClock();
+  for(i = 0; i < 1000; ++i)
   {
-    cmsDoTransform( xform, &d[0], &d[3], 1 );
+    cmsDoTransform( xform, dbl, dbl, 1000 );
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
+#if HAVE_OPENMP
+  clck2 = oyClock();
+#pragma omp parallel for
+  for(i = 0; i < 1000; ++i)
+  {
+    cmsDoTransform( xform, dbl, dbl, 1000 );
+  }
+  clck2 = oyClock() - clck2;
+#endif
+
+  free(dbl); dbl = 0;
   cmsCloseProfile( lp_in );
   cmsCloseProfile( lp_out );
   cmsDeleteTransform( xform );
 
+  printf("%d,%g %g\n",i,clck, clck2);
+
   if( !error )
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  {
+#if HAVE_OPENMP
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "cmsDoTransform() lcms               %s%s",
+            oyProfilingToString(1000000,clck/(double)CLOCKS_PER_SEC, "Pixel"),
+            oyProfilingToString(1000000,clck2/(double)CLOCKS_PER_SEC, "Pixel"));
+#else
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
     "cmsDoTransform() lcms               %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+#endif
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "cmsDoTransform() lcms                              " );
@@ -2651,7 +2714,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   lp_in = cmsOpenProfileFromMem( p_in->block_, p_in->size_ );
   lp_out = cmsOpenProfileFromMem( p_out->block_, p_out->size_ );
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < n; ++i)
   {
     xform = cmsCreateTransform( lp_in, TYPE_XYZ_DBL,
@@ -2660,7 +2723,7 @@ oyTESTRESULT_e testCMMnmRun ()
     cmsDeleteTransform( xform );
     fprintf(stdout, "." ); fflush(stdout);
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
   cmsCloseProfile( lp_in );
   cmsCloseProfile( lp_out );
   fprintf(stdout, "\n" );
@@ -2678,7 +2741,7 @@ oyTESTRESULT_e testCMMnmRun ()
   }
 
 
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < 100*n; ++i)
   if(error <= 0)
   {
@@ -2689,7 +2752,7 @@ oyTESTRESULT_e testCMMnmRun ()
   }
   fprintf(stdout, "\n" );
 
-  clck = clock() - clck;
+  clck = oyClock() - clck;
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "+ oyConversion_RunPixels()          %s",
@@ -2701,7 +2764,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
 
-  clck = clock();
+  clck = oyClock();
 
   for(i = 0; i < n*100; ++i)
   {
@@ -2710,7 +2773,7 @@ oyTESTRESULT_e testCMMnmRun ()
     if(error <= 0)
       error = l_error;
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2724,7 +2787,7 @@ oyTESTRESULT_e testCMMnmRun ()
   p_in = oyProfile_FromStd ( oyASSUMED_WEB, NULL );
   p_out = oyProfile_FromStd ( oyEDITING_XYZ, NULL );
 
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < n*100; ++i)
   {
 
@@ -2753,7 +2816,7 @@ oyTESTRESULT_e testCMMnmRun ()
   oyImage_Release( &in );
   oyImage_Release( &out );
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
 
   if( !error )
@@ -2791,14 +2854,14 @@ oyTESTRESULT_e testCMMnmRun ()
                                            oyPIXEL_ACCESS_IMAGE, 0 );
   error  = oyConversion_RunPixels( conv, pixel_access );
 
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   {
     int error = 0;
     pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
     error  = oyConversion_RunPixels( conv, pixel_access );
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   oyPixelAccess_Release( &pixel_access );
   oyConversion_Release( &conv );
@@ -2831,13 +2894,13 @@ oyTESTRESULT_e testCMMnmRun ()
                                            oyPIXEL_ACCESS_IMAGE, 0 );
   error  = oyConversion_RunPixels( conv, pixel_access );
 
-  clck = clock();
+  clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   {
     pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
     oyConversion_RunPixels( conv, pixel_access );
   }
-  clck = clock() - clck;
+  clck = oyClock() - clck;
 
   oyImage_Release( &input );
   oyImage_Release( &output );
