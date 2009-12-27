@@ -48,9 +48,9 @@ fi
 if [ -n "$OPENMP_LINKING" ] && [ $OPENMP_LINKING -gt 0 ]; then
       libname="`pwd`/tests/libtest$SO$LIBEXT"
       test -f $libname && rm -f $libname
-      $CC $CFLAGS -fopenmp $LINK_FLAGS_DYNAMIC $DSO_LIB_VERSION$libname -I$includedir $ROOT_DIR/tests/openmp.c $LDFLAGS -L$libdir -o $libname #2>/dev/null
+      $CC $CFLAGS -fopenmp $LINK_FLAGS_DYNAMIC $DSO_LIB_VERSION$libname -I$includedir $ROOT_DIR/tests/openmp.c $LDFLAGS -L$libdir -o $libname 2>/dev/null
       if [ -f $libname ]; then
-        $CC $CFLAGS -fopenmp -I$includedir $ROOT_DIR/tests/openmp_main.c $LDFLAGS -L$libdir $libname -o tests/openmp #2>/dev/null
+        $CC $CFLAGS -fopenmp -I$includedir $ROOT_DIR/tests/openmp_main.c $LDFLAGS -L$libdir $libname -o tests/openmp 2>/dev/null
         test -f tests/openmp && (echo_=`tests/openmp`; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_")
 
         if [ $? = 0 ]; then

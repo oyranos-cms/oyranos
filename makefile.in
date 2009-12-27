@@ -55,11 +55,13 @@ LIBS_CMM = \
 	$(LIB_CMM_lraw)
 
 
-#ifdef $(X11)
-#ifndef $(XNVCtrl)
-LIB_XNVCTRL = libXNVCtrl
-LIB_XNVCTRL_NAME = $(LIB_XNVCTRL).a
+#ifndef XNVCtrl
+LIB_XNVCTRL_STATIC = libXNVCtrl
+LIB_XNVCTRL_NAME_STATIC = $(LIB_XNVCTRL_STATIC).a
 #endif
+#ifdef X11
+LIB_XNVCTRL = $(LIB_XNVCTRL_STATIC)
+LIB_XNVCTRL_NAME = $(LIB_XNVCTRL_NAME_STATIC)
 #endif
 LIBFL_I18N = fl_i18n/libfl_i18n.a
 
@@ -488,9 +490,9 @@ $(LIB_XNVCTRL).a:
 
 # the twinview library
 $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_OBJECTS)
-	echo Linking $@ ...
+	echo Linking $@ $(LIB_XNVCTRL_)1 $(XNVCtrl)2 $(LIB_XNVCTRL)3 $(LIB_XNVCTRL_NAME)4 ...
 	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
-	-I$(SRCDIR)/$(LIB_XNVCTRL) \
+	-I$(SRCDIR)/libXNVCtrl \
 	-o $(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
 	$(LDLIBS) $(X11_LIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) \
@@ -897,7 +899,7 @@ uninstall_docu:
 distclean: clean
 	-$(RM) Makefile
 	-$(RM) fl_i18n/Makefile
-#ifdef $(LIB_XNVCTRL)
+#ifdef LIB_XNVCTRL
 	-$(RM) libXNVCtrl/Makefile libXNVCtrl/libXNVCtrl.a \
 		libXNVCtrl/NVCtrl.o libXNVCtrl.a
 #endif
@@ -932,7 +934,7 @@ clean:
 	         lib$${lib}$(SO)$(LIBEXT) \
 	         lib$${lib}.a; \
 	done
-#ifdef $(LIB_XNVCTRL)
+#ifdef LIB_XNVCTRL
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 #endif
 	-cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
@@ -1049,7 +1051,7 @@ copy_files:
 	cd $(SRCDIR) && \
 	  $(COPY) -R settings $(DESTDIR)
 	#$(COPY) -r cmms $(DESTDIR)
-#ifdef $(LIB_XNVCTRL)
+#ifdef LIB_XNVCTRL
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 	cd $(SRCDIR) && \
 	  $(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
