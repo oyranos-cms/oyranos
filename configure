@@ -91,6 +91,7 @@ INFOECHO="echo"
 
 debug=0
 nodeps=0
+openmp=1
 rpm=0
 static=1
 verbose=1
@@ -215,6 +216,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       devel="1"
     fi
+    switch=disable-openmp
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      openmp="0"
+    fi
     switch=disable-static
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       static="0"
@@ -269,6 +274,7 @@ test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rp
 test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
 test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug version [default disable]"
 test -n "$INFOECHO" && $INFOECHO "   --enable-devel                       devel mode for osX [default disable]"
+test -n "$INFOECHO" && $INFOECHO "   --disable-openmp                     SMP support [default automatic]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-static                     no static libraries [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-verbose                    verbose compiling [default enable]"
@@ -621,8 +627,8 @@ test -n "$ECHO" && $ECHO "CC = $CC" >> $CONF_NV
 export CC CXX
 
 # many constant strings are much longer than the C90 allowed, skip the warning
-CFLAGS_COMMON="`echo $CFLAGS_COMMON | $STRIPOPT` \$(DEBUG)"
-CXXFLAGS_COMMON="`echo $CXXFLAGS_COMMON | $STRIPOPT` \$(DEBUG)"
+CFLAGS_COMMON="`echo $CFLAGS_COMMON | $STRIPOPT` \$(DEBUG) \$(OPENMP)"
+CXXFLAGS_COMMON="`echo $CXXFLAGS_COMMON | $STRIPOPT` \$(DEBUG) \$(OPENMP)"
 CFLAGS="`echo $CFLAGS | $STRIPOPT`"
 CXXFLAGS="`echo $CXXFLAGS | $STRIPOPT`"
 
@@ -667,10 +673,10 @@ rm test_tmp.txt
 
 test -n "$ECHO" && $ECHO "MAKEDEPEND	= $MAKEDEPEND" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
-  test -n "$ECHO" && $ECHO "LIBEXT = .dylib" >> $CONF
+  LIBEXT=".dylib"
   GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
-  test -n "$ECHO" && $ECHO "DSO_LIB_VERSION = -install_name " >> $CONF
-  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -framework Carbon -dynamiclib $GCC_VERSION_INFO  \$(DSO_LIB_VERSION)" >> $CONF
+  DSO_LIB_VERSION=" -install_name "
+  LINK_FLAGS_DYNAMIC="$LDFLAGS -framework Carbon -dynamiclib $GCC_VERSION_INFO"
   dyld_libdir="$libdir/"
   dyld_cmmdir="$cmmdir/"
   dyld_metadir="$metadir/"
@@ -690,8 +696,8 @@ if [ $OSUNAME = "Darwin" ]; then
     DEVEL_LIBS="\$(LIBS_CMM)"
   fi
 else
-  test -n "$ECHO" && $ECHO "SO = .so" >> $CONF
-  test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LDFLAGS -shared $GCC_VERSION_INFO \$(DSO_LIB_VERSION)" >> $CONF
+  SO=".so"
+  LINK_FLAGS_DYNAMIC="$LDFLAGS -shared $GCC_VERSION_INFO"
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
   test -n "$ECHO" && $ECHO "MSGMERG_OPTS = --update" >> $CONF
   test -n "$ECHO" && $ECHO "XGETTEXT_OPTIONS = --keyword=gettext --flag=gettext:1:pass-c-format \
@@ -739,6 +745,15 @@ else
     CXXFLAGS="$CXXFLAGS -fPIC"
   fi
 fi
+ 
+if [ -n "$DSO_LIB_VERSION" ]; then
+  test -n "$ECHO" && $ECHO "DSO_LIB_VERSION = $DSO_LIB_VERSION" >> $CONF
+  export DSO_LIB_VERSION SO
+fi
+test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LINK_FLAGS_DYNAMIC \$(DSO_LIB_VERSION)" >> $CONF
+test -n "$ECHO" && $ECHO "SO = $SO" >> $CONF
+test -n "$ECHO" && $ECHO "LIBEXT = $LIBEXT" >> $CONF
+export LINK_FLAGS_DYNAMIC SO LIBEXT
 
 for i in $MAKEFILE_DIR; do
   mkdir -p $i
@@ -796,6 +811,7 @@ if [ -n "$ECHO" ]; then
   ECHO="echo"; export ECHO
   LIBS=1; export LIBS
   DSO_LINKING=1; export DSO_LINKING
+  test "1" = "$openmp" && OPENMP_LINKING=1; export OPENMP_LINKING
   CUPS=2; export CUPS
   ELEKTRA=1; export ELEKTRA
   #OYRANOS=1; export OYRANOS
@@ -843,6 +859,7 @@ fi
   $ROOT_DIR/configure_tests.sh
   LIBS=0; export LIBS
   DSO_LINKING=0; export DSO_LINKING
+  OPENMP_LINKING=0; export OPENMP_LINKING
   CUPS=0; export CUPS
   ELEKTRA=0; export ELEKTRA
   #OYRANOS=0; export OYRANOS

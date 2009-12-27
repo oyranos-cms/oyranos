@@ -399,7 +399,7 @@ $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
-	$(CMM_lcms_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS)
+	$(CMM_lcms_OBJECTS) $(LCMS_LIBS) $(MODULE_LDLIBS) $(OPENMP)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -502,7 +502,7 @@ FL/Flmm_Tabs.o:	$(SRCDIR)/FL/Flmm_Tabs.cxx
 	$(CXX) -I./ -I./FL -I$(SRCDIR)/FL $(CXXFLAGS) $(INCL) $(FLTK_H) -o $@ -c $<
 
 # general configuration tool example
-$(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N)
+$(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N) $(LIBSONAMEFULL)
 	echo Linking $@ ...
 	$(CXX) -I./ $(CXXFLAGS) -o $(TARGET)-config-fltk \
 	$(FLTK_OBJECTS) \
