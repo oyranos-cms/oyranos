@@ -42,6 +42,8 @@ extern oyCMMapi7_s   dFil_api7_my_filter;
 /** i18n prototype */
 #define _(text) text
 #endif
+#define _DBG_FORMAT_ "%s:%d %s()"
+#define _DBG_ARGS_ __FILE__,__LINE__,__func__
 
 /* --- implementations --- */
 
@@ -427,10 +429,15 @@ const char * dFilApi4UiGetText (
   {
     if(!category)
     {
-      /* Create a translation for dFil_api4_ui_my_filter::category. */
-      STRING_ADD( category, _("Filter") );
-      STRING_ADD( category, _("/") );
-      STRING_ADD( category, _("My Filter") );
+      /* The following strings must match the categories for a menu entry. */
+      const char * i18n[] = {_("Colour"),_("My Filter"),0};
+      int len =  strlen(i18n[0]) + strlen(i18n[1]);
+      category = (char*)malloc( len + 64 );
+      if(category)
+        /* Create a translation for dFil_api4_ui_my_filter::category. */
+        sprintf( category,"%s/%s", i18n[0], i18n[1] );
+      else
+        message(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
     }
          if(type == oyNAME_NICK)
       return "category";

@@ -682,6 +682,7 @@ oyRankPad _rank_map[] = {
 const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type )
 {
+  static char * category = 0;
   if(strcmp(select,"name") ||
      strcmp(select,"help"))
   {
@@ -691,14 +692,34 @@ const char * Api8UiGetText           ( const char        * select,
   }
   /* provide a useful device name */
   else if(strcmp(select, "device_class")==0)
-    {
+  {
         if(type == oyNAME_NICK)
             return _("Example");
         else if(type == oyNAME_NAME)
             return _("Example Device");
         else
             return _("Example Devices, for testing and learning purposes only.");
-    } 
+  } 
+  else if(strcmp(select,"category"))
+  {
+    if(!category)
+    {
+      /* The following strings must match the categories for a menu entry. */
+      const char * i18n[] = {_("Colour"),_("Device"),_("Example"),0};
+      int len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(i18n[2]);
+      category = (char*)malloc( len + 64 );
+      if(category)
+        sprintf( category,"%s/%s/%s", i18n[0], i18n[1], i18n[2] );
+      else
+        message(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
+    }
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  } 
   return 0;
 }
 /* All possible "select" arguments for Api8UiGetText(). */
@@ -733,7 +754,7 @@ oyCMMui_s _api8_ui = {
 };
 
 oyIcon_s _api8_icon = {
-  oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
+  oyOBJECT_ICON_S, 0,0,0, 0,0,0, (char*)"oyranos_logo.png"
 };
 
 /** @instance _api8
