@@ -55,6 +55,9 @@
 
 #include <NVCtrlLib.h>
 /*#include <NvCtrlAttributes.h>*/
+#ifndef NV_CTRL_STRING_XINERAMA_SCREEN_INFO
+#define NV_CTRL_STRING_XINERAMA_SCREEN_INFO                    26   /* R--- */
+#endif
 
 /* ---  Helpers  --- */
 
@@ -62,7 +65,48 @@
 
 unsigned char** oyGetNvidiaEdid( Display* display, int screen, size_t **size);
 
-
+const char *       oyNVmaskToPortName( int                 mask )
+{
+  static char * text = 0;
+  double d = log2(mask);
+  if(!text)
+    text = (char*)malloc(128);
+  text[0] = 0;
+  switch(mask)
+  {
+    case 1:
+    case 2:
+    case 4:
+    case 8:
+    case 16:
+    case 32:
+    case 64:
+    case 128:
+         sprintf(text, "CRT-%d", (int)d);
+         break;
+    case 256:
+    case 512:
+    case 1024:
+    case 2048:
+    case 4096:
+    case 8192:
+    case 16384:
+    case 32768:
+         sprintf(text, "TV-%d", (int)(d-8));
+         break;
+    case 65536:
+    case 131072:
+    case 262144:
+    case 524288:
+    case 1048576:
+    case 2097152:
+    case 4194304:
+    case 8388608: /* 2^23 */
+         sprintf(text, "CRT-%d", (int)(d-16));
+         break;
+  }
+  return text;
+}
 
 int
 main(int argc, char **argv)
@@ -70,7 +114,7 @@ main(int argc, char **argv)
   Display *display = XOpenDisplay(NULL);
   size_t *size = (size_t*) calloc(sizeof(size_t), 24);
   unsigned char** data = NULL;
-  int i, j;
+  int i, j, ret;
   XEdid_s * edi=0;
   int screen_number = 32;
   int number_of_screens = 1;
@@ -211,8 +255,16 @@ main(int argc, char **argv)
         if(strlen(display_name))
           snprintf( &display_name[strlen(display_name)], 256, "_%d", i );
 
-        fprintf( stderr, "EDID version: %d.%d in .%d[%d]\n",
-                 edi->major_version, edi->minor_version, i, j);
+        ptr = 0;
+        ret = XNVCTRLSetAttributeAndGetStatus( display, i, 1 << j,
+                                    NV_CTRL_XINERAMA,
+                                    NV_CTRL_XINERAMA_ON );
+        ret = XNVCTRLQueryStringAttribute ( display, i, 1 << j,
+                                    NV_CTRL_STRING_XINERAMA_SCREEN_INFO, &ptr );
+
+        fprintf( stderr, "EDID version: %d.%d in .%d[%d] \"%s\" %s\n",
+                 edi->major_version, edi->minor_version, i, j,
+                 oyNVmaskToPortName( 1 << j ), (ret && ptr)?ptr:"");
         oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial, &vendor,
                         &week, &year, &mnft_id, &prod_id, c, oyAllocateFunc_ );
 
@@ -309,6 +361,7 @@ oyGetNvidiaEdid( Display* display, int screen, size_t **size)
       len;
   int major, minor;
   unsigned char **data = (unsigned char**) calloc(sizeof(unsigned char*), 24);
+  int geometry[4];
 
   /*/for(i = 0; i < 24; ++i) data[i] = NULL;*/
 
