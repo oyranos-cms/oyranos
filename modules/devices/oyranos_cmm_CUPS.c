@@ -636,6 +636,7 @@ int   Config_Check ( oyConfig_s        * config )
 const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type )
 {
+  static char * category = 0;
   if(strcmp(select,"name") ||
      strcmp(select,"help"))
   {
@@ -652,9 +653,27 @@ const char * Api8UiGetText           ( const char        * select,
         else
             return _("Printers, which are accessible through the CUPS spooling system.");
     } 
+  else if(strcmp(select,"category"))
+  {
+    if(!category)
+    {
+      STRING_ADD( category, _("Colour") );
+      STRING_ADD( category, _("/") );
+      /* CMM: abbreviation for Colour Matching Module */
+      STRING_ADD( category, _("Device") );
+      STRING_ADD( category, _("/") );
+      STRING_ADD( category, _("Printer CUPS") );
+    }
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  } 
   return 0;
 }
-const char * _api8_ui_texts[] = {"name", "help", "device_class", 0};
+const char * _api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
 
 /** @instance _api8_ui
  *  @brief    oydi oyCMMapi4_s::ui implementation
@@ -693,7 +712,7 @@ oyIcon_s _api8_icon = {
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/02/09
+ *  @date    2009/12/22
  */
 oyCMMapi8_s _api8 = {
   oyOBJECT_CMM_API8_S,

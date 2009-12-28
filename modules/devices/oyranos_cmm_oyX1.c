@@ -964,6 +964,7 @@ oyRankPad oyX1_rank_map[] = {
 const char * oyX1Api8UiGetText       ( const char        * select,
                                        oyNAME_e            type )
 {
+  static char * category = 0;
   if(strcmp(select,"name") ||
      strcmp(select,"help"))
   {
@@ -972,17 +973,35 @@ const char * oyX1Api8UiGetText       ( const char        * select,
     return oyX1GetText(select,type);
   }
   else if(strcmp(select, "device_class")==0)
-    {
+  {
         if(type == oyNAME_NICK)
             return _("Monitor");
         else if(type == oyNAME_NAME)
             return _("Monitor");
         else
             return _("Monitors, which can be detected through the video card driver and windowing system.");
-    } 
+  }
+  else if(strcmp(select,"category"))
+  {
+    if(!category)
+    {
+      STRING_ADD( category, _("Colour") );
+      STRING_ADD( category, _("/") );
+      /* CMM: abbreviation for Colour Matching Module */
+      STRING_ADD( category, _("Device") );
+      STRING_ADD( category, _("/") );
+      STRING_ADD( category, _("Monitor") );
+    }
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  } 
   return 0;
 }
-const char * oyX1_api8_ui_texts[] = {"name", "help", "device_class", 0};
+const char * oyX1_api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
 
 /** @instance oyX1_api8_ui
  *  @brief    oyX1 oyCMMapi8_s::ui implementation
