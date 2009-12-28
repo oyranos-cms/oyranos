@@ -102,7 +102,7 @@ const char *       oyNVmaskToPortName( int                 mask )
     case 2097152:
     case 4194304:
     case 8388608: /* 2^23 */
-         sprintf(text, "CRT-%d", (int)(d-16));
+         sprintf(text, "DFP-%d", (int)(d-16));
          break;
   }
   return text;
