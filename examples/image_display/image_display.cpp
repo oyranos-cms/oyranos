@@ -239,11 +239,11 @@ class Fl_Oy_Box : public Fl_Box
 
       /* decide wether to refresh the cached rectangle of our static image */
       if( context->out_ &&
-          (!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) ||
+         ((!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) ||
            !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle )||
            ticket->start_xy[0] != ticket->start_xy_old[0] ||
            ticket->start_xy[1] != ticket->start_xy_old[1]) ||
-           dirty )
+           dirty ))
       {
 #ifdef DEBUG
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
