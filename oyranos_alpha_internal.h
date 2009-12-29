@@ -120,6 +120,8 @@ int                oyProfile_GetTagCount_ (
 int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos );
+int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
+                                       int                 pos );
 int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                                        oyConfig_s        * config );
 

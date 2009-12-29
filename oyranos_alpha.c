@@ -15816,7 +15816,7 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/02/01 (Oyranos: 0.1.8)
- *  @date    2009/01/06
+ *  @date    2009/12/29
  */
 int                oyProfile_TagMoveIn(oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
@@ -15846,10 +15846,10 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
     /** Avoid double occurencies of tags. */
     for( i = 0; i < n; ++i )
     {
-      tag = oyProfile_GetTagByPos( s, i );
+      tag = oyProfile_GetTagByPos_( s, i );
       if(tag->use == (*obj)->use)
       {
-        oyProfile_TagReleaseAt(s, i);
+        oyProfile_TagReleaseAt_(s, i);
         n = oyProfile_GetTagCount_( s );
       }
       oyProfileTag_Release( &tag );
@@ -15862,6 +15862,24 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
 
   return error;
+}
+
+/** @internal
+ *  Function oyProfile_TagReleaseAt_
+ *  @memberof oyProfile_s
+ *  @brief   remove a tag from a profile
+ *
+ *  non thread save
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/03/11 (Oyranos: 0.1.8)
+ *  @date    2009/12/29
+ */
+int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
+                                       int                 pos )
+{
+  oyProfile_s * s = profile;
+  return oyStructList_ReleaseAt ( s->tags_, pos );
 }
 
 /** Function oyProfile_TagReleaseAt
