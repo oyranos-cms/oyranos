@@ -15208,7 +15208,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
   if(profile && profile->block_ && profile->size_ > 132 &&
      profile->tags_)
   {
-    int n = oyProfile_GetTagCount( profile );
+    int n = oyProfile_GetTagCount_( profile );
     oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( profile, 0 );
 
     if(n && tag->use == *hi && tag->block_ && tag->size_ >= 128)
@@ -15246,7 +15246,7 @@ oyPointer    oyProfile_WriteTagTable_( oyProfile_s       * profile,
 
   if(error <= 0)
   {
-    int n = oyProfile_GetTagCount( profile );
+    int n = oyProfile_GetTagCount_( profile );
     size_t size = 0;
 
     size = sizeof (icTag) * n;
@@ -15296,7 +15296,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
     int n = 0, i;
     size_t len = 0;
 
-    n = oyProfile_GetTagCount( profile );
+    n = oyProfile_GetTagCount_( profile );
     block = (char*) oyAllocateFunc_(132 + n * sizeof(icTag));
     error = !block;
 
@@ -15485,7 +15485,7 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
   oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(error <= 0)
-    n = oyProfile_GetTagCount( s );
+    n = oyProfile_GetTagCount_( s );
 
   if(error <= 0 && n)
   {
@@ -15512,7 +15512,8 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
 }
 
 
-/** Function oyProfile_GetTag
+/** @internal
+ *  Function oyProfile_GetTagByPos_
  *  @memberof oyProfile_s
  *  @brief   get a profile tag
  *
@@ -15697,13 +15698,18 @@ oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
   return tag;
 }
 
-/** Function oyProfile_GetTagCount
+/** |internal
+ *  Function oyProfile_GetTagCount_
  *  @memberof oyProfile_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  1 january 2008 (API 0.1.8)
+ *  non thread save
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/01/01 (Oyranos: 0.1.8)
+ *  @date    2009/12/29
  */
-int                oyProfile_GetTagCount( oyProfile_s    * profile )
+int                oyProfile_GetTagCount_ (
+                                       oyProfile_s       * profile )
 {
   int n = 0;
   oyProfile_s *s = profile;
@@ -15730,14 +15736,57 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
   return n;
 }
 
+/** Function oyProfile_GetTagCount
+ *  @memberof oyProfile_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/01/01 (Oyranos: 0.1.8)
+ *  @date    2009/12/29
+ */
+int                oyProfile_GetTagCount( oyProfile_s    * profile )
+{
+  int n = 0;
+  oyProfile_s *s = profile;
+  int error = !s;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0 && !s->tags_)
+    error = 1;
+
+  if(error <= 0)
+    n = oyStructList_Count( s->tags_ );
+
+  if(error <= 0 && !n)
+  {
+    oyProfileTag_s * tag = 0;
+    if(s)
+      oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+    tag = oyProfile_GetTagByPos_ ( s, 0 );
+    oyProfileTag_Release( &tag );
+    n = oyStructList_Count( s->tags_ );
+
+    if(s)
+      oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+  }
+
+  return n;
+}
+
 /** @internal
  *  Function oyProfile_TagMoveIn_
  *  @memberof oyProfile_s
  *  @brief   add a tag to a profile
  *
+ *  non thread save
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/06 (Oyranos: 0.1.10)
- *  @date    2009/01/06
+ *  @date    2009/12/29
  */
 int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
@@ -15754,16 +15803,9 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
   if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
     error = 1;
 
-  if(s)
-    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-
-
   if(error <= 0)
     error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos,
                                   OY_OBSERVE_AS_WELL );
-
-  if(s)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
 
   return error;
 }
@@ -15799,7 +15841,7 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
   if(error <= 0)
   {
     /** Initialise tag list. */
-    n = oyProfile_GetTagCount( s );
+    n = oyProfile_GetTagCount_( s );
 
     /** Avoid double occurencies of tags. */
     for( i = 0; i < n; ++i )
@@ -15808,7 +15850,7 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
       if(tag->use == (*obj)->use)
       {
         oyProfile_TagReleaseAt(s, i);
-        n = oyProfile_GetTagCount( s );
+        n = oyProfile_GetTagCount_( s );
       }
       oyProfileTag_Release( &tag );
     }
