@@ -1065,6 +1065,56 @@ oyTESTRESULT_e testSettings ()
   return result;
 }
 
+
+oyTESTRESULT_e testConfDomain ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int error = 0;
+  oyConfDomain_s * a = 0, * b = 0;
+  oyObject_s object = oyObject_New();
+
+  fprintf(stdout, "\n" );
+
+  a = oyConfDomain_New( 0 );
+
+  if(!error)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyConfDomain_New() good                         " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyConfDomain_New() failed                       " );
+  }
+
+  b = oyConfDomain_Copy( a, object );
+
+  if(!error && b && b != a)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyConfDomain_Copy good                          " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyConfDomain_Copy failed                        " );
+  }
+
+  error = oyConfDomain_Release( &b );
+
+  b = oyConfDomain_Copy( a, 0 );
+
+  if(!error && b && a == b )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyConfDomain_Copy() good                        " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyConfDomain_Copy() failed                      " );
+  }
+
+  oyConfDomain_Release( &a );
+  oyConfDomain_Release( &b );
+
+  return result;
+}
+
+
 oyTESTRESULT_e testProfiles ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -2972,6 +3022,7 @@ int main(int argc, char** argv)
   TEST_RUN( testOptionsCopy,  "Copy oyOptions_s" );
   TEST_RUN( testBlob, "oyBlob_s" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
+  TEST_RUN( testConfDomain, "oyConfDomain_s");
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
   //TEST_RUN( testMonitor,  "Monitor profiles" );
