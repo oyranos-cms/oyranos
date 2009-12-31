@@ -173,6 +173,7 @@ typedef enum {
   oyOBJECT_FORMS_ARGS_S,              /**< oyFormsArgs_s */
   oyOBJECT_CALLBACK_S,                /**< oyCallback_s */
   oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
+  oyOBJECT_CONF_DOMAIN_S,             /**< oyConfDomain_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 
@@ -1211,6 +1212,31 @@ OYAPI oyConfig_s * OYEXPORT
                                        int                 pos );
 OYAPI int  OYEXPORT
                  oyConfigs_Count     ( oyConfigs_s       * list );
+
+
+
+/** @struct  oyConfDomain_s
+ *  @brief   a ConfDomain object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONF_DOMAIN_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+} oyConfDomain_s;
+
+OYAPI oyConfDomain_s * OYEXPORT
+           oyConfDomain_New          ( oyObject_s          object );
+OYAPI oyConfDomain_s * OYEXPORT
+           oyConfDomain_Copy         ( oyConfDomain_s    * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+           oyConfDomain_Release      ( oyConfDomain_s    **obj );
 
 OYAPI int  OYEXPORT
                  oyConfigDomainList  ( const char        * registration_pattern,

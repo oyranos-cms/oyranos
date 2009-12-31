@@ -39,7 +39,7 @@
 /* speed comparision test */
 #define USE_OLD_STRING_API 1
 #else
-#define OY_USE_OBJECT_POOL_ 1
+#define OY_USE_OBJECT_POOL_ 0
 #endif
 
 
@@ -591,6 +591,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_FORMS_ARGS_S: text = "oyFormsArgs_s"; break;
     case oyOBJECT_CALLBACK_S: text = "oyCallback_s"; break;
     case oyOBJECT_OBSERVER_S: text = "oyObserver_s"; break;
+    case oyOBJECT_CONF_DOMAIN_S: text = "oyConfDomain_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
   }
 
@@ -11953,6 +11954,267 @@ OYAPI int  OYEXPORT
   oyExportEnd_();
   return error;
 }
+
+/** @internal
+ *  @struct  oyConfDomain_s_
+ *  @brief   a ConfDomain object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONF_DOMAIN_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+} oyConfDomain_s_;
+
+oyConfDomain_s_ *
+           oyConfDomain_New_         ( oyObject_s          object );
+oyConfDomain_s_ *
+           oyConfDomain_Copy_        ( oyConfDomain_s_   * obj,
+                                       oyObject_s          object);
+int
+           oyConfDomain_Release_     ( oyConfDomain_s_   **obj );
+
+
+/* --- Public_API Begin --- */
+
+/** Function oyConfDomain_New
+ *  @memberof oyConfDomain_s
+ *  @brief   allocate a new ConfDomain object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI oyConfDomain_s * OYEXPORT
+           oyConfDomain_New          ( oyObject_s          object )
+{
+  oyObject_s  s = (oyObject_s) object;
+  oyConfDomain_s_ * obj = 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
+
+  obj = oyConfDomain_New_( s );
+
+  return (oyConfDomain_s*) obj;
+}
+
+/** Function oyConfDomain_Copy
+ *  @memberof oyConfDomain_s
+ *  @brief   copy or reference a ConfDomain object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI oyConfDomain_s * OYEXPORT
+           oyConfDomain_Copy         ( oyConfDomain_s    * obj,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * s = (oyConfDomain_s_*) obj;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+
+  s = oyConfDomain_Copy_( s, (oyObject_s) object );
+
+  return (oyConfDomain_s*) s;
+}
+ 
+/** Function oyConfDomain_Release
+ *  @memberof oyConfDomain_s
+ *  @brief   release and possibly deallocate a ConfDomain object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI int  OYEXPORT
+           oyConfDomain_Release      ( oyConfDomain_s    **obj )
+{
+  oyConfDomain_s_ * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = (oyConfDomain_s_*) *obj;
+
+  oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 1 )
+
+  *obj = 0;
+
+  return oyConfDomain_Release_( &s );
+}
+
+/* --- Public_API End --- */
+
+
+/** @internal
+ *  Function oyConfDomain_New_
+ *  @memberof oyConfDomain_s_
+ *  @brief   allocate a new ConfDomain object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+oyConfDomain_s_ * oyConfDomain_New_ (
+                                       oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CONF_DOMAIN_S;
+# define STRUCT_TYPE oyConfDomain_s_
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyConfDomain_Copy;
+  s->release = (oyStruct_Release_f) oyConfDomain_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+
+  return s;
+}
+
+/** @internal
+ *  Function oyConfDomain_Copy__
+ *  @memberof oyConfDomain_s_
+ *  @brief   real copy a ConfDomain object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+oyConfDomain_s_ * oyConfDomain_Copy__ (
+                                       oyConfDomain_s_   * obj,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyConfDomain_New_( object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+  }
+
+  if(error)
+    oyConfDomain_Release_( &s );
+
+  return s;
+}
+
+/** @internal
+ *  Function oyConfDomain_Copy_
+ *  @memberof oyConfDomain_s_
+ *  @brief   copy or reference a ConfDomain object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+oyConfDomain_s_ * oyConfDomain_Copy_ (
+                                       oyConfDomain_s_   * obj,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * s = obj;
+
+  if(!obj)
+    return 0;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyConfDomain_Copy__( obj, object );
+
+  return s;
+}
+ 
+/** @internal
+ *  Function oyConfDomain_Release_
+ *  @memberof oyConfDomain_s_
+ *  @brief   release and possibly deallocate a ConfDomain object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+int        oyConfDomain_Release_ (
+                                       oyConfDomain_s_   **obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyConfDomain_s_ * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
 
 /**
  *  @} *//* objects_value
