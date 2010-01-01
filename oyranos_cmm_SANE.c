@@ -811,7 +811,7 @@ const char * Api8UiGetText           ( const char        * select,
             return _("Scanner");
         else
             return _("Scanner data, which come from SANE library.");
-
+    }
   else if(strcmp(select,"category"))
   {
     if(!category)

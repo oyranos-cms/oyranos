@@ -563,7 +563,7 @@ const char * Api8UiGetText           ( const char        * select,
             return _("RawCamera");
         else
             return _("Raw camera data, which are in file containing raw sensor data from a camera still picture.");
-
+    }
   else if(strcmp(select,"category"))
   {
     if(!category)
