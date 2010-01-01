@@ -35,6 +35,7 @@
  */
 #define CMM_NICK "oyRE"
 #define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.raw-image." CMM_NICK
+#define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 #define catCMMfunc(nick,func) nick ## func
 
@@ -52,10 +53,19 @@
 #define GetText                 catCMMfunc( oyRE , GetText )
 #define _texts                  catCMMfunc( oyRE , _texts )
 #define _cmm_module             catCMMfunc( oyRE , _cmm_module )
+#define _api8_ui                catCMMfunc( oyRE, _api8_ui )
+#define Api8UiGetText           catCMMfunc( oyRE, Api8UiGetText )
+#define _api8_ui_texts          catCMMfunc( oyRE, _api8_ui_texts )
+#define _api8_icon              catCMMfunc( oyRE, _api8_icon )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
 #define _(x) x
+
+const char * GetText                 ( const char        * select,
+                                       oyNAME_e            type );
+const char * Api8UiGetText           ( const char        * select,
+                                       oyNAME_e            type );
 
 /** @instance _rank_map
  *  @brief    oyRankPad map for mapping device to configuration informations
@@ -160,7 +170,7 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params);
 
 /* --- implementations --- */
 
-int CMMInit()
+int CMMInit( oyStruct_s * filter )
 {
    int error = 0;
    return error;
@@ -534,12 +544,88 @@ int Config_Rank(oyConfig_s * config)
    return rank;
 }
 
+const char * Api8UiGetText           ( const char        * select,
+                                       oyNAME_e            type )
+{
+  static char * category = 0;
+  if(strcmp(select,"name") ||
+     strcmp(select,"help"))
+  {
+    /* The "help" and "name" texts are identical, as the module contains only
+     * one filter to provide help for. */
+    return GetText(select,type);
+  }
+  else if(strcmp(select, "device_class")==0)
+    {
+        if(type == oyNAME_NICK)
+            return _("RawCamera");
+        else if(type == oyNAME_NAME)
+            return _("RawCamera");
+        else
+            return _("Raw camera data, which are in file containing raw sensor data from a camera still picture.");
+
+  else if(strcmp(select,"category"))
+  {
+    if(!category)
+    {
+      /* The following strings must match the categories for a menu entry. */
+      const char * i18n[] = {_("Colour"),_("Device"),_("CameraRaw"),0};
+      int len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(i18n[2]);
+      category = (char*)malloc( len + 64 );
+      if(category)
+        sprintf( category,"%s/%s/%s", i18n[0], i18n[1], i18n[2] );
+      else
+        message(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
+    }
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  }
+  return 0;
+}
+const char * _api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
+
+/** @instance _api8_ui
+ *  @brief    oydi oyCMMapi4_s::ui implementation
+ *
+ *  The UI parts for oyRE devices.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/06 (Oyranos: 0.1.10)
+ *  @date    2009/12/28
+ */
+oyCMMui_s _api8_ui = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,1,10},                            /**< int32_t module_api[3] */
+
+  0, /* oyCMMFilter_ValidateOptions_f */
+  0, /* oyWidgetEvent_f */
+
+  "Colour/Device/CameraRaw", /* category */
+  0,   /* const char * options */
+
+  0,    /* oyCMMuiGet_f oyCMMuiGet */
+
+  Api8UiGetText,  /* oyCMMGetText_f getText */
+  _api8_ui_texts  /* (const char**)texts */
+};
+
+oyIcon_s _api8_icon = {
+  oyOBJECT_ICON_S, 0,0,0, 0,0,0, (char*)"oyranos_logo.png"
+};
+
 /** @instance _api8
  *  @brief    CMM_NICK oyCMMapi8_s implementations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/02/09
+ *  @date    2009/12/28
  */
 oyCMMapi8_s oyranos::_api8 = {
    oyOBJECT_CMM_API8_S,
@@ -555,6 +641,10 @@ oyCMMapi8_s oyranos::_api8 = {
    Configs_FromPattern,                                               /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
    Configs_Modify,                                                    /**< oyConfigs_Modify_f oyConfigs_Modify */
    Config_Rank,                                                       /**< oyConfig_Rank_f oyConfig_Rank */
+
+  &_api8_ui,                                                          /**< device class UI name and help */
+  &_api8_icon,                                                        /**< device icon */
+
    _rank_map                                                          /**< oyRankPad ** rank_map */
 };
 
