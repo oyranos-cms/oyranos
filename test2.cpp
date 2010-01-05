@@ -1073,17 +1073,20 @@ oyTESTRESULT_e testConfDomain ()
   int error = 0;
   oyConfDomain_s * a = 0, * b = 0;
   oyObject_s object = oyObject_New();
+  const char ** texts = 0;
+  int i,n;
 
   fprintf(stdout, "\n" );
 
-  a = oyConfDomain_New( 0 );
+  a = oyConfDomain_FromReg( "shared/freedesktop.org/imaging/config.device.icc_profile.monitor.oyX1", 0 );
+  error = !a;
 
   if(!error)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyConfDomain_New() good                         " );
+    "oyConfDomain_FromReg() good                     " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyConfDomain_New() failed                       " );
+    "oyConfDomain_FromReg() failed                   " );
   }
 
   b = oyConfDomain_Copy( a, object );
@@ -1107,6 +1110,28 @@ oyTESTRESULT_e testConfDomain ()
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyConfDomain_Copy() failed                      " );
   }
+
+  texts = oyConfDomain_GetTexts( a );
+  n = i = 0;
+  if(texts)
+  while(texts[i]) ++i;
+
+  n = i;
+  for(i = 0; i < n; ++i)
+    printf("\"%s\" =\n  \"%s\" \"%s\" \"%s\"\n", texts[i],
+                       oyConfDomain_GetText( a, texts[i], oyNAME_NICK ),
+                       oyConfDomain_GetText( a, texts[i], oyNAME_NAME ),
+                       oyConfDomain_GetText( a, texts[i], oyNAME_DESCRIPTION )
+          );
+
+  if(!error && n )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyConfDomain_GetTexts() %d good                  ", n );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyConfDomain_GetTexts() failed                  " );
+  }
+
 
   oyConfDomain_Release( &a );
   oyConfDomain_Release( &b );
