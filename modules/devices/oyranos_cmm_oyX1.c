@@ -105,13 +105,7 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
                                        num, OY_CREATE_NEW ); \
         }
 
-void     oyX1ConfigsUsage( oyStruct_s        * options )
-{
-    /** oyMSG_WARN shall make shure our message will be visible. */
-    message( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
-             OY_DBG_ARGS_,
-      "The following help text informs about the communication protocol.");
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+const char * oyX1_help_list = 
       "The presence of option \"command=list\" will provide a list of \n"
       " available devices. The actual device name can be found in option\n"
       " \"device_name\". The call is as lightwight as possible.\n"
@@ -136,9 +130,8 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
       " The option \"device_name\" may be added as a filter.\n"
       " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION\n"
       " above.\n"
-      " Informations are stored in the returned oyConfig_s::data member."
-      );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+      " Informations are stored in the returned oyConfig_s::data member.";
+const char * oyX1_help_properties =
       "The presence of option \"command=properties\" will provide the devices\n"
       " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
@@ -162,18 +155,31 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
       " returned from a \"list\" request.\n"
       " The \"properties\" call might be a expensive one.\n"
       " Informations are stored in the returned oyConfig_s::backend_core member."
-       );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+;
+const char * oyX1_help_setup =
       "The presence of option \"command=setup\" will setup the device from a\n"
       " profile.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
       " The option \"profile_name\" must be present, containing a ICC profile\n"      " file name."
-      );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+;
+const char * oyX1_help_unset =
       "The presence of call \"command=unset\" will invalidate a profile of\n"
       " a device.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
-      );
+;
+const char * oyX1_help =
+      "The following help text informs about the communication protocol."
+;
+
+void     oyX1ConfigsUsage( oyStruct_s        * options )
+{
+    /** oyMSG_WARN shall make shure our message will be visible. */
+    message( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
+             OY_DBG_ARGS_, oyX1_help );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_list );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_properties );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_setup );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_unset );
 #if 0
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"get\" will provide a oyProfile_s of the\n"
@@ -965,8 +971,8 @@ const char * oyX1Api8UiGetText       ( const char        * select,
                                        oyNAME_e            type )
 {
   static char * category = 0;
-  if(strcmp(select,"name") ||
-     strcmp(select,"help"))
+  if(strcmp(select,"name") == 0 ||
+     strcmp(select,"help") == 0)
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
@@ -981,7 +987,7 @@ const char * oyX1Api8UiGetText       ( const char        * select,
         else
             return _("Monitors, which can be detected through the video card driver and windowing system.");
   }
-  else if(strcmp(select,"category"))
+  else if(strcmp(select,"category") == 0)
   {
     if(!category)
     {
@@ -1086,6 +1092,25 @@ const char * oyX1GetText             ( const char        * select,
       return _("Oyranos X11");
     else
       return _("The window support module of Oyranos.");
+  } else if(strcmp(select, "help")==0)
+  {
+    static char * t = 0;
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("The oyX1 module supports the generic device protocol.");
+    else
+    {
+      if(!t)
+      {
+        t = malloc( strlen(oyX1_help) + strlen(oyX1_help_list)
+                    + strlen(oyX1_help_properties) + strlen(oyX1_help_setup) +
+                    + strlen(oyX1_help_unset) + 1);
+        sprintf( t, "%s\n%s%s%s%s", oyX1_help, oyX1_help_list,
+                 oyX1_help_properties, oyX1_help_setup, oyX1_help_unset );
+      }
+      return t;
+    }
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
@@ -1105,7 +1130,7 @@ const char * oyX1GetText             ( const char        * select,
   }
   return 0;
 }
-const char *oyX1_texts[4] = {"name","copyright","manufacturer",0};
+const char *oyX1_texts[5] = {"name","help","copyright","manufacturer",0};
 
 /** @instance oyX1_cmm_module
  *  @brief    oyX1 module infos
