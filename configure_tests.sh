@@ -405,8 +405,8 @@ if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
       HAVE_LIB=1
       echo "#define HAVE_$ID 1" >> $CONF_H
       echo "$ID = 1" >> $CONF
-      echo "$ID_H =" >> $CONF
-      echo "$ID_LIBS = -l$l" >> $CONF
+      echo "$ID_H = -I$includedir" >> $CONF
+      echo "$ID_LIBS =  -L/usr/lib$BARCH -L$libdir -l$l" >> $CONF
       rm tests/libtest$EXEC_END
     fi
   fi

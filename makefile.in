@@ -35,14 +35,14 @@ META = \
 LIB_CMM_oyIM = $(LIB_CMM_START)_oyIM$(LIB_CMM_END)
 LIB_CMM_oicc = $(LIB_CMM_START)_oicc$(LIB_CMM_END)
 LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
-ifdef CUPS
+#ifdef CUPS
 LIB_CMM_CUPS = $(LIB_CMM_START)_CUPS$(LIB_CMM_END)
-endif
+#endif
 LIB_CMM_oydi = $(LIB_CMM_START)_oydi$(LIB_CMM_END)
 LIB_CMM_lcms = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
-ifdef LRAW_LIBS
+#ifdef LRAW_LIBS
 LIB_CMM_lraw = $(LIB_CMM_START)_lraw$(LIB_CMM_END)
-endif
+#endif
 LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
 LIBS_CMM = \
 	$(LIB_CMM_oyIM) \
@@ -148,7 +148,7 @@ CFILES_CMM_oicc = \
 CFILES_MODULES = \
 	$(CFILES_CMM_lcms) $(CFILES_CMM_raw) \
 	$(CFILES_CMM_oydi) $(CFILES_CMM_oyra) \
-	$(CFILES_CMM_CUPS) $(CFILES_CMM_oyIM) \
+	$(CFILES_MODULES_DEVICES) $(CFILES_CMM_oyIM) \
 	$(CFILES_CMM_oicc)
 CPPFILES_MODULES = \
 	$(CPPFILES_CMM_lraw)
@@ -284,8 +284,11 @@ COBJECTS = \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	tests/test_oyranos.o test.o
-CPPOBJECTS =	test2.o
-#	$(CMM_lraw_OBJECTS)
+#ifdef LRAW_LIBS
+#CPP_lraw_OBJECTS = $(CMM_lraw_OBJECTS)
+#endif
+CPPOBJECTS =	test2.o \
+	$(CPP_lraw_OBJECTS)
 CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS)
@@ -411,7 +414,7 @@ $(LIB_CMM_lcms): $(CMM_lcms_OBJECTS)
 
 modules/oyranos_cmm_lraw.o:	$(SRCDIR)/modules/oyranos_cmm_lraw.cpp
 	echo Compiling modules/oyranos_cmm_lraw.o without "--pedantic" ...
-	$(CXX) -I./ -I$(SRCDIR) `echo $(CXXFLAGS) | sed s/--pedantic//g` -c -o $*.o $(SRCDIR)/$*.cpp
+	$(CXX) -I./ -I$(SRCDIR) $(LRAW_H) `echo $(CXXFLAGS) | sed s/--pedantic//g` -c -o $*.o $(SRCDIR)/$*.cpp
 
 $(LIB_CMM_lraw): $(CMM_lraw_OBJECTS)
 	echo Linking $@ ...
