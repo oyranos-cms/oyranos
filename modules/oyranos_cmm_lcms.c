@@ -1995,7 +1995,7 @@ const char * lcmsInfoGetTextProfileC ( const char        * select,
   } else if(strcmp(select, "create_profile")==0)
   {
          if(type == oyNAME_NICK)
-      return _("create_profile");
+      return "create_profile";
     else if(type == oyNAME_NAME)
       return _("Create a ICC matrix profile.");
     else
