@@ -1231,12 +1231,20 @@ typedef struct {
 } oyConfDomain_s;
 
 OYAPI oyConfDomain_s * OYEXPORT
-           oyConfDomain_New          ( oyObject_s          object );
+           oyConfDomain_FromReg      ( const char        * registration_domain,
+                                       oyObject_s          object );
 OYAPI oyConfDomain_s * OYEXPORT
            oyConfDomain_Copy         ( oyConfDomain_s    * obj,
-                                       oyObject_s          object);
+                                       oyObject_s          object );
 OYAPI int  OYEXPORT
            oyConfDomain_Release      ( oyConfDomain_s    **obj );
+
+OYAPI const char * OYEXPORT
+           oyConfDomain_GetText      ( oyConfDomain_s    * obj,
+                                       const char        * name,
+                                       oyNAME_e            type );
+OYAPI const char ** OYEXPORT
+           oyConfDomain_GetTexts     ( oyConfDomain_s    * obj );
 
 OYAPI int  OYEXPORT
                  oyConfigDomainList  ( const char        * registration_pattern,
