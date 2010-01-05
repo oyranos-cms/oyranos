@@ -11970,16 +11970,24 @@ typedef struct {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
+  oyCMMapi8_s        * api8;
 } oyConfDomain_s_;
 
 oyConfDomain_s_ *
            oyConfDomain_New_         ( oyObject_s          object );
+oyConfDomain_s_ *
+           oyConfDomain_FromReg_     ( const char        * registration,
+                                       oyObject_s          object );
 oyConfDomain_s_ *
            oyConfDomain_Copy_        ( oyConfDomain_s_   * obj,
                                        oyObject_s          object);
 int
            oyConfDomain_Release_     ( oyConfDomain_s_   **obj );
 
+const char * oyConfDomain_GetText_   ( oyConfDomain_s_   * obj,
+                                       const char        * name,
+                                       oyNAME_e            type );
+const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj );
 
 /* --- Public_API Begin --- */
 
@@ -11992,7 +12000,8 @@ int
  *  @date    2009/12/30
  */
 OYAPI oyConfDomain_s * OYEXPORT
-           oyConfDomain_New          ( oyObject_s          object )
+           oyConfDomain_FromReg      ( const char        * registration_domain,
+                                       oyObject_s          object )
 {
   oyObject_s  s = (oyObject_s) object;
   oyConfDomain_s_ * obj = 0;
@@ -12000,7 +12009,7 @@ OYAPI oyConfDomain_s * OYEXPORT
   if(s)
     oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
 
-  obj = oyConfDomain_New_( s );
+  obj = oyConfDomain_FromReg_( registration_domain, s );
 
   return (oyConfDomain_s*) obj;
 }
@@ -12057,6 +12066,60 @@ OYAPI int  OYEXPORT
   return oyConfDomain_Release_( &s );
 }
 
+/** Function oyConfDomain_GetText
+ *  @memberof oyConfDomain_s
+ *  @brief   obtain a UI text from a ConfDomain object
+ *
+ *  @param[in,out] obj                 struct object
+ *  @param[in]     name                the category to return
+ *  @param[in]     type                the type of string
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI const char * OYEXPORT
+           oyConfDomain_GetText      ( oyConfDomain_s    * obj,
+                                       const char        * name,
+                                       oyNAME_e            type )
+{
+  oyConfDomain_s_ * s = (oyConfDomain_s_*) obj;
+  const char * text = 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+
+  text = oyConfDomain_GetText_( s, name, type );
+
+  return text;
+}
+
+/** Function oyConfDomain_GetTexts
+ *  @memberof oyConfDomain_s
+ *  @brief   obtain a list of possible UI text from a ConfDomain object
+ *
+ *  @return                            zero terminated list of strings,
+ *                                     Each string is a "name" option to
+ *                                     oyConfDomain_GetText().
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI const char ** OYEXPORT
+           oyConfDomain_GetTexts     ( oyConfDomain_s    * obj )
+{
+  oyConfDomain_s_ * s = (oyConfDomain_s_*) obj;
+  const char ** texts = 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+
+  texts = oyConfDomain_GetTexts_( s );
+
+  return texts;
+}
+
 /* --- Public_API End --- */
 
 
@@ -12069,8 +12132,7 @@ OYAPI int  OYEXPORT
  *  @since   2009/12/30 (Oyranos: 0.1.10)
  *  @date    2009/12/30
  */
-oyConfDomain_s_ * oyConfDomain_New_ (
-                                       oyObject_s          object )
+oyConfDomain_s_ * oyConfDomain_New_  ( oyObject_s          object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_CONF_DOMAIN_S;
@@ -12100,6 +12162,28 @@ oyConfDomain_s_ * oyConfDomain_New_ (
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
+  s->api8 = 0;
+
+  return s;
+}
+
+oyConfDomain_s_ * oyConfDomain_FromReg_(
+                                       const char        * registration,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * s = oyConfDomain_New_( object );
+  int error = !s;
+  oyCMMapi8_s * cmm_api8 = 0;
+
+  if(error <= 0)
+  {
+    cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0, registration,
+                                                   oyOBJECT_CMM_API8_S );
+    error = !cmm_api8;
+  }
+
+  if(error <= 0)
+    s->api8 = cmm_api8;
 
   return s;
 }
@@ -12133,6 +12217,15 @@ oyConfDomain_s_ * oyConfDomain_Copy__ (
   if(!error)
   {
     allocateFunc_ = s->oy_->allocateFunc_;
+
+    if(obj->api8)
+    {
+      if(obj->api8->copy)
+        s->api8 = (oyCMMapi8_s*) obj->api8->copy( (oyStruct_s*)s->api8,
+                                                  object );
+      else
+        s->api8 = obj->api8;
+    }
   }
 
   if(error)
@@ -12153,8 +12246,7 @@ oyConfDomain_s_ * oyConfDomain_Copy__ (
  *  @since   2009/12/30 (Oyranos: 0.1.10)
  *  @date    2009/12/30
  */
-oyConfDomain_s_ * oyConfDomain_Copy_ (
-                                       oyConfDomain_s_   * obj,
+oyConfDomain_s_ * oyConfDomain_Copy_ ( oyConfDomain_s_   * obj,
                                        oyObject_s          object )
 {
   oyConfDomain_s_ * s = obj;
@@ -12185,8 +12277,7 @@ oyConfDomain_s_ * oyConfDomain_Copy_ (
  *  @since   2009/12/30 (Oyranos: 0.1.10)
  *  @date    2009/12/30
  */
-int        oyConfDomain_Release_ (
-                                       oyConfDomain_s_   **obj )
+int        oyConfDomain_Release_     ( oyConfDomain_s_   **obj )
 {
   /* ---- start of common object destructor ----- */
   oyConfDomain_s_ * s = 0;
@@ -12207,12 +12298,70 @@ int        oyConfDomain_Release_ (
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
+    if(s->api8)
+    {
+      if(s->api8->release)
+        s->api8->release( (oyStruct_s**) &s->api8 );
+      else
+        s->api8 = 0;
+    }
+
     oyObject_Release( &s->oy_ );
 
     deallocateFunc( s );
   }
 
   return 0;
+}
+
+/** @internal
+ *  Function oyConfDomain_GetText_
+ *  @memberof oyConfDomain_s
+ *  @brief   obtain a UI text from a ConfDomain object
+ *
+ *  @param[in,out] obj                 struct object
+ *  @param[in]     name                the category to return
+ *  @param[in]     type                the type of string
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+const char * oyConfDomain_GetText_   ( oyConfDomain_s_   * obj,
+                                       const char        * name,
+                                       oyNAME_e            type )
+{
+  const char * text = 0;
+  oyConfDomain_s_ * s = obj;
+
+  if(s->api8 && s->api8->ui && s->api8->ui->getText)
+    text = s->api8->ui->getText( name, type );
+
+  return text;
+}
+
+/** @internal
+ *  Function oyConfDomain_GetTexts
+ *  @memberof oyConfDomain_s
+ *  @brief   obtain a list of possible UI text from a ConfDomain object
+ *
+ *  @return                            zero terminated list of strings,
+ *                                     Each string is a "name" option to
+ *                                     oyConfDomain_GetText().
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj )
+{
+  oyConfDomain_s_ * s = obj;
+  const char ** texts = 0;
+
+  if(s->api8 && s->api8->ui)
+    texts = s->api8->ui->texts;
+
+  return texts;
 }
 
 
