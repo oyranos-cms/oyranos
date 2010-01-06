@@ -5,7 +5,7 @@
  *  @par Copyright:
  *            2005-2009 (C) Kai-Uwe Behrmann
  *
- *  @brief    monitor device detection
+ *  @brief    EDID data block parsing
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:

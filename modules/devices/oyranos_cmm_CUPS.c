@@ -54,6 +54,11 @@
 #define Api8UiGetText           catCMMfunc( CUPS, Api8UiGetText )
 #define _api8_ui_texts          catCMMfunc( CUPS, _api8_ui_texts )
 #define _api8_icon              catCMMfunc( CUPS, _api8_icon )
+#define _help                   catCMMfunc( CUPS, _help )
+#define _help_list              catCMMfunc( CUPS, _help_list )
+#define _help_properties        catCMMfunc( CUPS, _help_properties )
+#define _help_setup             catCMMfunc( CUPS, _help_setup )
+#define _help_unset             catCMMfunc( CUPS, _help_unset )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
@@ -111,14 +116,9 @@ int            CMMMessageFuncSet ( oyMessage_f message_func )
         error = oyOptions_SetFromText( &opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
-
-void     ConfigsFromPatternUsage( oyStruct_s        * options )
-{
-    /** oyMSG_WARN should make shure our message is visible. */
-    message( oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
-             _DBG_ARGS_,
-      "The following help text informs about the communication protocol.");
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+const char * _help =
+      "The following help text informs about the communication protocol.";
+const char * _help_list = 
       "The presence of option \"command=list\" will provide a list of\n"
       " available devices. The actual device name can be found in\n"
       " option \"device_name\". The call is as lightwight as possible.\n"
@@ -133,9 +133,8 @@ void     ConfigsFromPatternUsage( oyStruct_s        * options )
       " call into a expensive one.\n"
       " The option \"device_name\" may be added as a filter.\n"
       " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION above."
-      " Informations are stored in the returned oyConfig_s::data member."
-      );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+      " Informations are stored in the returned oyConfig_s::data member.";
+const char * _help_properties =
       "The presence of option \"command=properties\" will provide the\n"
       " devices properties. Requires a device_name identifier\n"
       " returned with the \"list\" option.\n"
@@ -153,20 +152,27 @@ void     ConfigsFromPatternUsage( oyStruct_s        * options )
       " The \"device_name\" should be identical with the one\n"
       " returned from a \"list\" request.\n"
       " The \"properties\" call might be a expensive one. Informations are\n" 
-      " stored in the returned oyConfig_s::backend_core member."
-       );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+      " stored in the returned oyConfig_s::backend_core member.";
+const char * _help_setup =
       "The presence of option \"command=setup\" will setup the device\n"
       " from a profile.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
       " The option \"profile_name\" must be present, containing a ICC profile\n"
-      " file name."
-      );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__,
+      " file name.";
+const char * _help_unset =
       "The presence of option \"command=unset\" will invalidate a profile of\n"
       " a device.\n"
-      " The option \"device_name\" must be present, see \"list\" above.\n"
-      );
+      " The option \"device_name\" must be present, see \"list\" above.\n";
+
+void     ConfigsFromPatternUsage( oyStruct_s        * options )
+{
+    /** oyMSG_WARN should make shure our message is visible. */
+    message( oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
+             _DBG_ARGS_, _help );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, _help_list );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, _help_properties );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, _help_setup );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, _help_unset );
 
   return;
 }
@@ -637,8 +643,8 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type )
 {
   static char * category = 0;
-  if(strcmp(select,"name") ||
-     strcmp(select,"help"))
+  if(strcmp(select,"name") == 0 ||
+     strcmp(select,"help") == 0)
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
@@ -653,7 +659,7 @@ const char * Api8UiGetText           ( const char        * select,
         else
             return _("Printers, which are accessible through the CUPS spooling system.");
     } 
-  else if(strcmp(select,"category"))
+  else if(strcmp(select,"category") == 0)
   {
     if(!category)
     {
@@ -769,13 +775,33 @@ const char * GetText                 ( const char        * select,
     else if(strcmp(select, "copyright")==0)
     {
         if(type == oyNAME_NICK)
-            return _("MIT");
+            return "MIT";
         else if(type == oyNAME_NAME)
             return _("Copyright (c) 2009 Joseph Simon; MIT");
         else
             return _("MIT license: http://www.opensource.org/licenses/mit-license.php");
     }
-        return 0;
+    else if(strcmp(select, "help")==0)
+    {
+      static char * t = 0;
+      if(type == oyNAME_NICK)
+        return "help";
+      else if(type == oyNAME_NAME)
+        return _("The CUPS module supports the generic device protocol.");
+      else
+      {
+        if(!t)
+        {
+          t = malloc( strlen(_help) + strlen(_help_list)
+                    + strlen(_help_properties) + strlen(_help_setup) +
+                    + strlen(_help_unset) + 1);
+          sprintf( t, "%s\n%s%s%s%s", _help, _help_list,
+                 _help_properties, _help_setup, _help_unset );
+        }
+        return t;
+      }
+    }
+    return 0;
 }
 const char * _texts[5] = {"name","copyright","manufacturer","help",0};
 

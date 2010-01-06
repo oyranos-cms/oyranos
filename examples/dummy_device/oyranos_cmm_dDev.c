@@ -683,8 +683,8 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type )
 {
   static char * category = 0;
-  if(strcmp(select,"name") ||
-     strcmp(select,"help"))
+  if(strcmp(select,"name") == 0 ||
+     strcmp(select,"help") == 0)
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
@@ -700,7 +700,7 @@ const char * Api8UiGetText           ( const char        * select,
         else
             return _("Example Devices, for testing and learning purposes only.");
   } 
-  else if(strcmp(select,"category"))
+  else if(strcmp(select,"category") == 0)
   {
     if(!category)
     {
@@ -723,7 +723,7 @@ const char * Api8UiGetText           ( const char        * select,
   return 0;
 }
 /* All possible "select" arguments for Api8UiGetText(). */
-const char * _api8_ui_texts[] = {"name", "help", "device_class", 0};
+const char * _api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
 
 /** @instance _api8_ui
  *  @brief    oydi oyCMMapi4_s::ui implementation

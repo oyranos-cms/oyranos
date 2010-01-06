@@ -1074,7 +1074,10 @@ oyTESTRESULT_e testConfDomain ()
   oyConfDomain_s * a = 0, * b = 0;
   oyObject_s object = oyObject_New();
   const char ** texts = 0;
-  int i,n;
+  char       ** domains = 0;
+  int i,j,n;
+  uint32_t count = 0,
+         * rank_list = 0;
 
   fprintf(stdout, "\n" );
 
@@ -1111,30 +1114,85 @@ oyTESTRESULT_e testConfDomain ()
     "oyConfDomain_Copy() failed                      " );
   }
 
-  texts = oyConfDomain_GetTexts( a );
-  n = i = 0;
-  if(texts)
-  while(texts[i]) ++i;
-
-  n = i;
-  for(i = 0; i < n; ++i)
-    printf("\"%s\" =\n  \"%s\" \"%s\" \"%s\"\n", texts[i],
-                       oyConfDomain_GetText( a, texts[i], oyNAME_NICK ),
-                       oyConfDomain_GetText( a, texts[i], oyNAME_NAME ),
-                       oyConfDomain_GetText( a, texts[i], oyNAME_DESCRIPTION )
-          );
-
-  if(!error && n )
-  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyConfDomain_GetTexts() %d good                  ", n );
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyConfDomain_GetTexts() failed                  " );
-  }
-
-
   oyConfDomain_Release( &a );
   oyConfDomain_Release( &b );
+
+  error = oyConfigDomainList( "//" OY_TYPE_STD, &domains, &count, &rank_list,
+                              malloc );
+  if( count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConfigDomainList \"%s\": %d               ", "//" OY_TYPE_STD "",
+                                                    (int)count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConfigDomainList \"%s\": %d               ", "//" OY_TYPE_STD "",
+                                                    (int)count );
+  }
+  for( i = 0; i < (int)count; ++i)
+  {
+    fprintf( stdout, "%d: %s\n", i, domains[i] );
+  }
+  fprintf( stdout, "\n");
+  
+  for(i = 0; i < (int)count; ++i)
+  {
+    int text_missed = 0;
+    const char * t[3] = {0,0,0};
+    const char * nick = domains[i];
+
+    if(strchr(nick, '/'))
+      nick = strrchr(nick, '/') + 1;
+
+    a = oyConfDomain_FromReg( domains[i], 0 );
+    texts = oyConfDomain_GetTexts( a );
+    n = j = 0;
+    if(texts)
+      while(texts[j]) ++j;
+
+    n = j;
+    for(j = 0; j < n; ++j)
+    {
+      t[oyNAME_NICK] = oyConfDomain_GetText( a, texts[j], oyNAME_NICK );
+      t[oyNAME_NAME] = oyConfDomain_GetText( a, texts[j], oyNAME_NAME );
+      t[oyNAME_DESCRIPTION] = oyConfDomain_GetText( a, texts[j],
+                                                          oyNAME_DESCRIPTION );
+
+      if(!t[oyNAME_NICK])
+      {
+        fprintf(stdout, "  %d %s:\n    \"%s\" oyNAME_NICK is missed\n", j,
+                        nick, texts[j]);
+        text_missed = 1;
+      }
+      if(!t[oyNAME_NAME])
+      {
+        fprintf(stdout, "  %d %s:\n    \"%s\" oyNAME_NAME is missed\n", j,
+                        nick, texts[j]);
+        text_missed = 1;
+      }
+      if(!t[oyNAME_DESCRIPTION])
+      {
+        fprintf(stdout, "  %d %s:\n    \"%s\" oyNAME_DESCRIPTION is missed\n",j,
+                        nick, texts[j]);
+        text_missed = 1;
+      }
+      if(strcmp(texts[j], "name") == 0)
+        printf("\"%s\" =\n  \"%s\" \"%s\" \"%s\"\n", texts[j],
+                        t[oyNAME_NICK], t[oyNAME_NAME], t[oyNAME_DESCRIPTION]);
+    }
+
+    if(!error && n && !text_missed)
+    { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+      "oyConfDomain_GetTexts() \"%s\" %d good  ", nick, n );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL, 
+      "oyConfDomain_GetTexts() \"%s\" %d failed ", nick, n );
+    }
+
+    oyConfDomain_Release( &a );
+    fprintf( stdout, "----------\n");
+  }
+  oyStringListRelease_( &domains, count, free );
+
 
   return result;
 }
