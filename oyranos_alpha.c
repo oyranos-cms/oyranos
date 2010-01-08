@@ -13290,13 +13290,6 @@ OYAPI int  OYEXPORT
       error = -1;
   }
 
-  if(!(*profile) && flags & 0x01)
-  {
-    /* TODO support matrix profile creation for backends if desired.
-     *      The property in 'oyX1' is "colour_matrix"
-     */
-  }
-
   if(!(*profile))
   {
     char * profile_name = 0;
