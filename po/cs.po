@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2010-01-05 15:01+0100\n"
+"POT-Creation-Date: 2010-01-08 09:08+0100\n"
 "PO-Revision-Date: 2008-10-23 20:49+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1571,8 +1571,8 @@ msgid ""
 msgstr ""
 
 #. The following strings must match the categories for a menu entry.
-#: modules/oyranos_cmm_lcms.c:2139 modules/devices/oyranos_cmm_CUPS.c:660
-#: modules/devices/oyranos_cmm_oyX1.c:994
+#: modules/oyranos_cmm_lcms.c:2139 modules/devices/oyranos_cmm_oyX1.c:994
+#: modules/devices/oyranos_cmm_CUPS.c:668
 #: examples/dummy_device/oyranos_cmm_dDev.c:708
 #: examples/dummy_filter/oyranos_cmm_dFil.c:433
 msgid "Colour"
@@ -1581,10 +1581,10 @@ msgstr "Barva"
 #: modules/oyranos_cmm_lcms.c:2140 modules/oyranos_cmm_lcms.c:2143
 #: modules/oyranos_cmm_oyra_image_ppm.c:396
 #: modules/oyranos_cmm_oyra_image_ppm.c:1115
-#: modules/devices/oyranos_cmm_CUPS.c:661
-#: modules/devices/oyranos_cmm_CUPS.c:664
 #: modules/devices/oyranos_cmm_oyX1.c:995
 #: modules/devices/oyranos_cmm_oyX1.c:998
+#: modules/devices/oyranos_cmm_CUPS.c:669
+#: modules/devices/oyranos_cmm_CUPS.c:672
 msgid "/"
 msgstr ""
 
@@ -1629,7 +1629,7 @@ msgid ""
 "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2247 modules/devices/oyranos_cmm_CUPS.c:772
+#: modules/oyranos_cmm_lcms.c:2247
 #: examples/dummy_device/oyranos_cmm_dDev.c:823
 msgid "MIT"
 msgstr ""
@@ -1638,7 +1638,7 @@ msgstr ""
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2251 modules/devices/oyranos_cmm_CUPS.c:776
+#: modules/oyranos_cmm_lcms.c:2251 modules/devices/oyranos_cmm_CUPS.c:784
 #: examples/dummy_device/oyranos_cmm_dDev.c:827
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
@@ -1676,23 +1676,23 @@ msgid "The client side window data handler of Oyranos."
 msgstr ""
 
 #: modules/oyranos_cmm_oydi.c:983 modules/oyranos_cmm_oyra.c:213
-#: modules/oyranos_cmm_oyIM.c:213 modules/oyranos_cmm_oicc.c:790
-#: modules/oyranos_cmm_lraw.cpp:253 modules/devices/oyranos_cmm_oyX1.c:1117
+#: modules/devices/oyranos_cmm_oyX1.c:1117 modules/oyranos_cmm_oyIM.c:213
+#: modules/oyranos_cmm_oicc.c:790 modules/oyranos_cmm_lraw.cpp:253
 #: examples/dummy_device/oyranos_cmm_dDev.c:815
 msgid "Kai-Uwe"
 msgstr ""
 
 #: modules/oyranos_cmm_oydi.c:985 modules/oyranos_cmm_oyra.c:215
-#: modules/oyranos_cmm_oyIM.c:215 modules/oyranos_cmm_oicc.c:792
-#: modules/oyranos_cmm_lraw.cpp:255 modules/devices/oyranos_cmm_oyX1.c:1119
+#: modules/devices/oyranos_cmm_oyX1.c:1119 modules/oyranos_cmm_oyIM.c:215
+#: modules/oyranos_cmm_oicc.c:792 modules/oyranos_cmm_lraw.cpp:255
 #: examples/dummy_device/oyranos_cmm_dDev.c:817
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
 #: modules/oyranos_cmm_oydi.c:987 modules/oyranos_cmm_oyra.c:217
-#: modules/devices/oyranos_cmm_CUPS.c:767 modules/oyranos_cmm_oyIM.c:217
-#: modules/oyranos_cmm_oicc.c:794 modules/oyranos_cmm_lraw.cpp:257
 #: modules/devices/oyranos_cmm_oyX1.c:1121
+#: modules/devices/oyranos_cmm_CUPS.c:775 modules/oyranos_cmm_oyIM.c:217
+#: modules/oyranos_cmm_oicc.c:794 modules/oyranos_cmm_lraw.cpp:257
 #: examples/dummy_device/oyranos_cmm_dDev.c:819
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
@@ -1700,8 +1700,8 @@ msgid ""
 msgstr ""
 
 #: modules/oyranos_cmm_oydi.c:991 modules/oyranos_cmm_oyra.c:221
-#: modules/oyranos_cmm_oyIM.c:221 modules/oyranos_cmm_oicc.c:798
-#: modules/oyranos_cmm_lraw.cpp:261 modules/devices/oyranos_cmm_oyX1.c:1125
+#: modules/devices/oyranos_cmm_oyX1.c:1125 modules/oyranos_cmm_oyIM.c:221
+#: modules/oyranos_cmm_oicc.c:798 modules/oyranos_cmm_lraw.cpp:261
 #: examples/dummy_filter/oyranos_cmm_dFil.c:196
 msgid "newBSD"
 msgstr ""
@@ -1711,8 +1711,8 @@ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
 #: modules/oyranos_cmm_oydi.c:995 modules/oyranos_cmm_oyra.c:225
-#: modules/oyranos_cmm_oyIM.c:225 modules/oyranos_cmm_oicc.c:802
-#: modules/oyranos_cmm_lraw.cpp:265 modules/devices/oyranos_cmm_oyX1.c:1129
+#: modules/devices/oyranos_cmm_oyX1.c:1129 modules/oyranos_cmm_oyIM.c:225
+#: modules/oyranos_cmm_oicc.c:802 modules/oyranos_cmm_lraw.cpp:265
 #: examples/dummy_filter/oyranos_cmm_dFil.c:200
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr ""
@@ -1757,8 +1757,8 @@ msgstr "Nastaveni Oyranosu"
 msgid "Oyranos supplied modules"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra.c:223 modules/oyranos_cmm_oyIM.c:223
-#: modules/oyranos_cmm_oicc.c:800 modules/devices/oyranos_cmm_oyX1.c:1127
+#: modules/oyranos_cmm_oyra.c:223 modules/devices/oyranos_cmm_oyX1.c:1127
+#: modules/oyranos_cmm_oyIM.c:223 modules/oyranos_cmm_oicc.c:800
 msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1877,47 +1877,153 @@ msgid ""
 "from. If the file does not exist, a error will occure."
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:650
-#: modules/devices/oyranos_cmm_CUPS.c:652
+#: modules/devices/oyranos_cmm_oyX1.c:984
+#: modules/devices/oyranos_cmm_oyX1.c:986
+#: modules/devices/oyranos_cmm_oyX1.c:999
 #, fuzzy
-msgid "Printer"
-msgstr "Pro tisk"
+msgid "Monitor"
+msgstr "Video monitor"
 
-#: modules/devices/oyranos_cmm_CUPS.c:654
-msgid "Printers, which are accessible through the CUPS spooling system."
+#: modules/devices/oyranos_cmm_oyX1.c:988
+msgid ""
+"Monitors, which can be detected through the video card driver and windowing "
+"system."
 msgstr ""
 
 #. CMM: abbreviation for Colour Matching Module
-#: modules/devices/oyranos_cmm_CUPS.c:663
 #: modules/devices/oyranos_cmm_oyX1.c:997
+#: modules/devices/oyranos_cmm_CUPS.c:671
 #: examples/dummy_device/oyranos_cmm_dDev.c:708
 #, fuzzy
 msgid "Device"
 msgstr "Trida zarizeni"
 
-#: modules/devices/oyranos_cmm_CUPS.c:665
+#: modules/devices/oyranos_cmm_oyX1.c:1092
+msgid "Oyranos X11"
+msgstr ""
+
+#: modules/devices/oyranos_cmm_oyX1.c:1094
+msgid "The window support module of Oyranos."
+msgstr ""
+
+#: modules/devices/oyranos_cmm_oyX1.c:1101
+msgid "The oyX1 module supports the generic device protocol."
+msgstr ""
+
+#: modules/devices/oyranos_monitor.c:360
+msgid "unexpected EDID lenght"
+msgstr "neocekavane delka EDID"
+
+#: modules/devices/oyranos_monitor.c:363 modules/devices/oyranos_monitor.c:391
+#: modules/devices/oyranos_monitor.c:1716
+#: modules/devices/oyranos_monitor.c:1722
+#: modules/devices/oyranos_monitor.c:1733
+#: modules/devices/oyranos_monitor.c:1751
+msgid "Cant read hardware information from device."
+msgstr "Ze zarizeni nelze precist informaci o hardware"
+
+#: modules/devices/oyranos_monitor.c:389
+msgid "no EDID available from X properties"
+msgstr ""
+
+#: modules/devices/oyranos_monitor.c:447 modules/devices/oyranos_monitor.c:592
+#: modules/devices/oyranos_monitor.c:829
+#: modules/devices/oyranos_monitor.c:1325
+msgid "open X Display failed"
+msgstr "selhalo otevreni X displeje"
+
+#. hack
+#: modules/devices/oyranos_monitor.c:854
+msgid "No monitor gamma curves by profile:"
+msgstr "Zadne gama krivky monitoru v profilu:"
+
+#: modules/devices/oyranos_monitor.c:890
+msgid "Error obtaining profile"
+msgstr "Chyba pri ziskavani profilu"
+
+#: modules/devices/oyranos_monitor.c:897 modules/devices/oyranos_monitor.c:899
+msgid "Error setting up atom"
+msgstr "Chyba pri nastavovani atomu"
+
+#: modules/devices/oyranos_monitor.c:988
+msgid "Error getting atom"
+msgstr "Chyba pri ziskavani atomu"
+
+#: modules/devices/oyranos_monitor.c:1217
+#, fuzzy
+msgid "XRandR CrtcInfo request failed"
+msgstr "Xinerama pozadavek selhal"
+
+#: modules/devices/oyranos_monitor.c:1235
+msgid "Xinerama request failed"
+msgstr "Xinerama pozadavek selhal"
+
+#: modules/devices/oyranos_monitor.c:1251
+msgid "open X Screen failed"
+msgstr "selhalo otevreni X displeje"
+
+#: modules/devices/oyranos_monitor.c:1318
+#, fuzzy
+msgid "allocation failed"
+msgstr "Datum kalibrace"
+
+#: modules/devices/oyranos_monitor.c:1333
+#, fuzzy
+msgid "no Screen found"
+msgstr "Cela obrazovka zap./vyp."
+
+#: modules/devices/oyranos_monitor.c:1449
+msgid "less Xinerama monitors than XRandR ones"
+msgstr ""
+
+#: modules/devices/oyranos_monitor.c:1714
+#: modules/devices/oyranos_monitor.c:1720
+#: modules/devices/oyranos_monitor.c:1731
+#, fuzzy
+msgid "no EDID available from"
+msgstr "neni k dispozici"
+
+#: modules/devices/oyranos_monitor.c:1749
+msgid "no oyMonitor_s from"
+msgstr ""
+
+#: modules/devices/oyranos_cmm_CUPS.c:658
+#: modules/devices/oyranos_cmm_CUPS.c:660
+#, fuzzy
+msgid "Printer"
+msgstr "Pro tisk"
+
+#: modules/devices/oyranos_cmm_CUPS.c:662
+msgid "Printers, which are accessible through the CUPS spooling system."
+msgstr ""
+
+#: modules/devices/oyranos_cmm_CUPS.c:673
 msgid "Printer CUPS"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:756
+#: modules/devices/oyranos_cmm_CUPS.c:764
 #, fuzzy
 msgid "Oyranos CUPS"
 msgstr "Nastaveni Oyranosu"
 
-#: modules/devices/oyranos_cmm_CUPS.c:758
+#: modules/devices/oyranos_cmm_CUPS.c:766
 msgid "The CUPS/printer module for Oyranos."
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:763
+#: modules/devices/oyranos_cmm_CUPS.c:771
 msgid "Joe"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:765
+#: modules/devices/oyranos_cmm_CUPS.c:773
 msgid "Joseph Simon III"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:774
+#: modules/devices/oyranos_cmm_CUPS.c:782
 msgid "Copyright (c) 2009 Joseph Simon; MIT"
+msgstr ""
+
+#: modules/devices/oyranos_cmm_CUPS.c:792
+msgid "The CUPS module supports the generic device protocol."
 msgstr ""
 
 #. "key/value pairs found:" followed by the number on the next line"%d"
@@ -2026,108 +2132,6 @@ msgstr ""
 
 #: modules/oyranos_cmm_lraw.cpp:695
 msgid "The filter is a libraw image reader."
-msgstr ""
-
-#: modules/devices/oyranos_cmm_oyX1.c:984
-#: modules/devices/oyranos_cmm_oyX1.c:986
-#: modules/devices/oyranos_cmm_oyX1.c:999
-#, fuzzy
-msgid "Monitor"
-msgstr "Video monitor"
-
-#: modules/devices/oyranos_cmm_oyX1.c:988
-msgid ""
-"Monitors, which can be detected through the video card driver and windowing "
-"system."
-msgstr ""
-
-#: modules/devices/oyranos_cmm_oyX1.c:1092
-msgid "Oyranos X11"
-msgstr ""
-
-#: modules/devices/oyranos_cmm_oyX1.c:1094
-msgid "The window support module of Oyranos."
-msgstr ""
-
-#: modules/devices/oyranos_cmm_oyX1.c:1101
-msgid "The oyX1 module supports the generic device protocol."
-msgstr ""
-
-#: modules/devices/oyranos_monitor.c:360
-msgid "unexpected EDID lenght"
-msgstr "neocekavane delka EDID"
-
-#: modules/devices/oyranos_monitor.c:363 modules/devices/oyranos_monitor.c:391
-#: modules/devices/oyranos_monitor.c:1716
-#: modules/devices/oyranos_monitor.c:1722
-#: modules/devices/oyranos_monitor.c:1733
-#: modules/devices/oyranos_monitor.c:1751
-msgid "Cant read hardware information from device."
-msgstr "Ze zarizeni nelze precist informaci o hardware"
-
-#: modules/devices/oyranos_monitor.c:389
-msgid "no EDID available from X properties"
-msgstr ""
-
-#: modules/devices/oyranos_monitor.c:447 modules/devices/oyranos_monitor.c:592
-#: modules/devices/oyranos_monitor.c:829
-#: modules/devices/oyranos_monitor.c:1325
-msgid "open X Display failed"
-msgstr "selhalo otevreni X displeje"
-
-#. hack
-#: modules/devices/oyranos_monitor.c:854
-msgid "No monitor gamma curves by profile:"
-msgstr "Zadne gama krivky monitoru v profilu:"
-
-#: modules/devices/oyranos_monitor.c:890
-msgid "Error obtaining profile"
-msgstr "Chyba pri ziskavani profilu"
-
-#: modules/devices/oyranos_monitor.c:897 modules/devices/oyranos_monitor.c:899
-msgid "Error setting up atom"
-msgstr "Chyba pri nastavovani atomu"
-
-#: modules/devices/oyranos_monitor.c:988
-msgid "Error getting atom"
-msgstr "Chyba pri ziskavani atomu"
-
-#: modules/devices/oyranos_monitor.c:1217
-#, fuzzy
-msgid "XRandR CrtcInfo request failed"
-msgstr "Xinerama pozadavek selhal"
-
-#: modules/devices/oyranos_monitor.c:1235
-msgid "Xinerama request failed"
-msgstr "Xinerama pozadavek selhal"
-
-#: modules/devices/oyranos_monitor.c:1251
-msgid "open X Screen failed"
-msgstr "selhalo otevreni X displeje"
-
-#: modules/devices/oyranos_monitor.c:1318
-#, fuzzy
-msgid "allocation failed"
-msgstr "Datum kalibrace"
-
-#: modules/devices/oyranos_monitor.c:1333
-#, fuzzy
-msgid "no Screen found"
-msgstr "Cela obrazovka zap./vyp."
-
-#: modules/devices/oyranos_monitor.c:1449
-msgid "less Xinerama monitors than XRandR ones"
-msgstr ""
-
-#: modules/devices/oyranos_monitor.c:1714
-#: modules/devices/oyranos_monitor.c:1720
-#: modules/devices/oyranos_monitor.c:1731
-#, fuzzy
-msgid "no EDID available from"
-msgstr "neni k dispozici"
-
-#: modules/devices/oyranos_monitor.c:1749
-msgid "no oyMonitor_s from"
 msgstr ""
 
 #. the option follows
