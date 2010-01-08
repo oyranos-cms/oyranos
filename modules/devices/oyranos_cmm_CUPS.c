@@ -16,12 +16,15 @@
  * @author Joseph Simon <j.simon.iii@astound.net>
 */
 #include "oyranos_cmm.h"
+#include "oyranos_debug.h"
+#include "oyranos_i18n.h"
 
 #include <cups/cups.h>
 #include <cups/ppd.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <locale.h>
 
 /* internal Oyranos APIs */
 #include "oyranos_texts.h"
@@ -62,7 +65,6 @@
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
-#define _(x) x
 
 int CUPSgetProfiles                  ( const char        * device_name,
                                        ppd_file_t        * ppd_file,
