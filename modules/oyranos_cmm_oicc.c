@@ -238,7 +238,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
           /* TODO: When and how to display policy informations? */
           if(oywid == oyWIDGET_POLICY)
           {
-            if(current >= 0)
+            if(count && names && current >= 0)
               policy_name =  names[current];
             else
               policy_name =  _("----");
