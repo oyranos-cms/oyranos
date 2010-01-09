@@ -224,7 +224,13 @@ int main (int argc, char ** argv)
   if(node_name)
   {
     node = oyFilterNode_NewWith( node_name, 0,0 );
-    oyOptions_Release( &node->core->options_ );
+    if(!node)
+    {
+      printf("No module found with name: %s", node_name);
+      usage( argc, argv );
+      exit( 1 );
+    } else
+      oyOptions_Release( &node->core->options_ );
 
     opts = oyFilterNode_OptionsGet( node,
                                     OY_SELECT_FILTER | OY_SELECT_COMMON |
@@ -247,7 +253,7 @@ int main (int argc, char ** argv)
         {
           printf("Unknown option: %s", other_args[i]);
           usage( argc, argv );
-           exit( 1 );
+          exit( 1 );
 
         } else
         {
