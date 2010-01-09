@@ -1938,6 +1938,16 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
 
 
 #include "oyranos_alpha_internal.h"
+#include "oforms/oyranos_forms.h"
+using namespace oyranos::forms;
+
+#define H(type,value) oyFormsAddHeadline( &t, type, value,\
+                                           oyAllocateFunc_, oyDeAllocateFunc_ );
+#define CHOICE(ref,label,help) oyFormsStartChoice( &t, ref, label, help,\
+                                           oyAllocateFunc_, oyDeAllocateFunc_ );
+#define ITEM(value,label) oyFormsAddItem( &t, value, label,\
+                                           oyAllocateFunc_, oyDeAllocateFunc_ );
+#define CHOICE_END STRING_ADD( t, "      </xf:choices>\n     </xf:select1>\n" );
 
 oyTESTRESULT_e testCMMsShow ()
 {
@@ -1947,7 +1957,9 @@ oyTESTRESULT_e testCMMsShow ()
   uint32_t count = 0;
   char ** texts = 0,
         * text = 0,
-        * text_tmp = (char*)oyAllocateFunc_(65535);
+        * text_tmp = (char*)oyAllocateFunc_(65535),
+        * t = 0,
+        * rfile = 0;
   oyCMMInfo_s * cmm_info = 0;
   oyCMMapi4_s * cmm_api4 = 0;
   oyCMMapi6_s * cmm_api6 = 0;
@@ -1963,12 +1975,45 @@ oyTESTRESULT_e testCMMsShow ()
 
   texts = oyCMMsGetLibNames_( &count, 0 );
 
+  /* Create a oforms style xhtml to present in a XFORMS viewer.
+   * Pretty large here.
+   */
+  STRING_ADD( t, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n\
+<html xmlns=\"http://www.w3.org/1999/xhtml\"\n\
+      xmlns:xf=\"http://www.w3.org/2002/xforms\"\n\
+      xmlns:oicc=\"http://www.oyranos.org/2009/oyranos_icc\">\n" );
+  STRING_ADD( t, "<head>\n\
+  <title>Filter options</title>\n\
+  <xf:model>\n\
+    <xf:instance xmlns=\"\">\n\
+     <dummy>0</dummy>\n\
+    </xf:instance>\n\
+  </xf:model>\n");
+  STRING_ADD( t, "  <style type=\"text/css\">\n\
+  @namespace xf url(\"http://www.w3.org/2002/xforms\");\n\
+  xf|label {\n\
+   font-family: Helvetica, Geneva, Lucida, sans-serif;\n\
+   width: 24ex;\n\
+   text-align: right;\n\
+   padding-right: 1em;\n\
+  }\n\
+  xf|select1 { display: table-row; }\n\
+  xf|select1 xf|label, xf|choices xf|label  { display: table-cell; }\n\
+  </style></head>\n\
+<body>\n\
+ <xf:group>\n" );
+  H(3,"Oyranos Module Overview")
+
   for( i = 0; i < (int)count; ++i)
   {
     cmm_info = oyCMMInfoFromLibName_( texts[i] );
     text = oyCMMInfoPrint_( cmm_info );
     tmp = cmm_info->api;
 
+    /* oforms */
+    CHOICE( "dummy", "Meta Module (oyCMMapi5_s)", text )
+    ITEM( "0", cmm_info->cmm )
+    CHOICE_END
 
         while(tmp)
         {
@@ -2003,6 +2048,7 @@ oyTESTRESULT_e testCMMsShow ()
               oyFree_m_( classe );
 
 
+              H( 4, "API(s) load from Meta module" )
               STRING_ADD( text, "    API(s) load from Meta module:\n" );
 
               for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API10_S; j++)
@@ -2021,6 +2067,10 @@ oyTESTRESULT_e testCMMsShow ()
                             api->registration,
                             (int)rank_list[k], api->id_ );
                   STRING_ADD( text, text_tmp );
+                  /* oforms */
+                  CHOICE( "dummy", oyStructTypeToText(api->type), text_tmp )
+                  ITEM( "0", api->registration )
+                  CHOICE_END
 
                   if(api->type == oyOBJECT_CMM_API4_S)
                   {
@@ -2193,6 +2243,13 @@ oyTESTRESULT_e testCMMsShow ()
   }
 
   oyDeAllocateFunc_( text_tmp );
+
+  STRING_ADD( t, "     </xf:group>\n</body>\n</html>\n" );
+  remove("test2_CMMs.xhtml");
+  oyWriteMemToFile2_( "test2_CMMs.xhtml", t, strlen(t),0/*OY_FILE_NAME_SEARCH*/,
+                      &rfile, malloc );
+  printf( "Wrote %s\n", rfile?rfile:"test2_CMMs.xhtml" );
+  free( rfile );
 
   return result;
 }
