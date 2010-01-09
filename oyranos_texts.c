@@ -1933,6 +1933,11 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
 
     if( choices )
       *choices              = count;
+
+    if(!count)
+    {
+      WARNc_S( "\n  No policy found. Installation incomplete or path missing?" );
+    } else
     if( choices_string_list )
     {
       char ** zl = NULL;
