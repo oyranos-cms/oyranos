@@ -68,9 +68,6 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
     buffer->text( help_text?help_text:"" );
 #else
   Fl_Help_View * help_view = (Fl_Help_View*)ptr;
-  printf( "topline: %d\n", help_view->topline() );
-  help_view->topline(1000);
-  printf( "topline: %d\n", help_view->topline() );
   if(help_view)
   {
     /* Format plain text to some HTML codes */
