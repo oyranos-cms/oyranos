@@ -65,6 +65,23 @@ typedef void (*oyFormsFltkHelpViewCallback_f) (
                                        oyPointer           ptr,
                                        const char        * help_text );
 
+int          oyFormsAddHeadline      ( char             ** stream,
+                                       int                 type,
+                                       const char        * value,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc );
+int          oyFormsAddItem          ( char             ** stream,
+                                       const char        * value,
+                                       const char        * label,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc );
+int          oyFormsStartChoice      ( char             ** stream,
+                                       const char        * reference,
+                                       const char        * label,
+                                       const char        * choice,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc );
+
 #ifdef __cplusplus
 } /* extern "C" */
 } /* namespace forms */

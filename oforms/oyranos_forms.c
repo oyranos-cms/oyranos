@@ -264,3 +264,132 @@ int          oyFormsArgs_ResourceGet ( oyFormsArgs_s     * args,
 }
 
 
+/** Function oyFormsAddHeadline
+ *  @brief   add an html:Hxxx to a existing oforms stream
+ *
+ *  @param[in,out] stream              the oforms stream
+ *  @param[in]     type                the type of headline; typical 1...4
+ *  @param[in]     value               the value for the html:hx headline
+ *  @param[in]     allocateFunc        the stream allocator
+ *  @param[in]     deAllocateFunc      the stream deallocator
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/01/09 (Oyranos: 0.1.10)
+ *  @date    2010/01/09
+ */
+int          oyFormsAddHeadline      ( char             ** stream,
+                                       int                 type,
+                                       const char        * value,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc )
+{
+  char num[24];
+  if(!value || 0 >= type || type > 4)
+    return 1;
+
+  sprintf( num, "%d", type );
+
+  oyStringAdd_( stream, "  <h", allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,  num, allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,   ">", allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,    value, allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,     "</h", allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,      num, allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,       ">\n", allocateFunc, deAllocateFunc );
+
+  return 0;
+}
+
+/** Function oyFormsStartChoice
+ *  @brief   start an xf:choice to a existing oforms stream
+ *
+ *  The function is to be followed xf:items entries.
+ *  The stream should be finished by a closing xf:choice.
+ *
+ *  @param[in,out] stream              the oforms stream
+ *  @param[in]     reference           the ref attribute for xf:choice
+ *  @param[in]     label               the label for the xf:choice
+ *  @param[in]     help                the help text for the xf:choice
+ *  @param[in]     allocateFunc        the stream allocator
+ *  @param[in]     deAllocateFunc      the stream deallocator
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/01/09 (Oyranos: 0.1.10)
+ *  @date    2010/01/09
+ */
+int          oyFormsStartChoice      ( char             ** stream,
+                                       const char        * reference,
+                                       const char        * label,
+                                       const char        * help,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc )
+{
+  oyStringAdd_( stream, "     <xf:select1", allocateFunc, deAllocateFunc );
+  if(reference)
+  {
+  oyStringAdd_( stream,  " ref=\"/", allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,   reference, allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,    "\"", allocateFunc, deAllocateFunc );
+  }
+  oyStringAdd_( stream,     ">\n", allocateFunc, deAllocateFunc );
+  if(label)
+  {
+  oyStringAdd_( stream, "      <xf:label>", allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,  label, allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,   "</xf:label>\n", allocateFunc, deAllocateFunc );
+  }
+  if(help)
+  {
+  oyStringAdd_( stream, "      <xf:help>", allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,  help, allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,   "</xf:help>\n", allocateFunc, deAllocateFunc );
+  }
+  oyStringAdd_( stream, "      <xf:choices>\n", allocateFunc, deAllocateFunc );
+
+  return 0;
+}
+
+/** Function oyFormsAddItem
+ *  @brief   add an xf:item to a existing oforms stream
+ *
+ *  The funtction is to be called after a xf:choices or other xf:items.
+ *  The stream should be finished by other xf:items or a closing xf:choice.
+ *
+ *  @param[in,out] stream              the oforms stream
+ *  @param[in]     value               the value for the xf:item
+ *  @param[in]     label               the label for the xf:item
+ *  @param[in]     allocateFunc        the stream allocator
+ *  @param[in]     deAllocateFunc      the stream deallocator
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/01/09 (Oyranos: 0.1.10)
+ *  @date    2010/01/09
+ */
+int          oyFormsAddItem          ( char             ** stream,
+                                       const char        * value,
+                                       const char        * label,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc )
+{
+  if(!value && !label)
+    return 1;
+
+  oyStringAdd_( stream, "       <xf:item>\n", allocateFunc, deAllocateFunc );
+  if(value)
+  {
+  oyStringAdd_( stream, "        <xf:value>", allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,  value, allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,   "</xf:value>\n", allocateFunc, deAllocateFunc );
+  }
+  if(label)
+  {
+  oyStringAdd_( stream, "        <xf:label>", allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,  label, allocateFunc, deAllocateFunc );
+  oyStringAdd_( stream,   "</xf:label>\n", allocateFunc, deAllocateFunc );
+  }
+  oyStringAdd_( stream, "       </xf:item>\n", allocateFunc, deAllocateFunc );
+
+  return 0;
+}
+
+
