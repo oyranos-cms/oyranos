@@ -68,12 +68,52 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
     buffer->text( help_text?help_text:"" );
 #else
   Fl_Help_View * help_view = (Fl_Help_View*)ptr;
+  printf( "topline: %d\n", help_view->topline() );
+  help_view->topline(1000);
+  printf( "topline: %d\n", help_view->topline() );
   if(help_view)
   {
+    /* Format plain text to some HTML codes */
     if(help_text)
-      help_view->value(help_text);
-    else
-      help_view->value("");
+    {
+      char * tmp = (char*) malloc(strlen(help_text)*2 + 24 );
+      int i = 0, ti = 0;
+      char c;
+
+      while( help_text[i] )
+      {
+        c = help_text[i];
+        if(c == '\n')  /* line break */
+        {
+          sprintf( &tmp[ti], "<br>" );
+          ti += 4;
+        }
+        else if(c == ' ') /* empty space */
+        {
+          sprintf( &tmp[ti], "&nbsp;" );
+          ti += 6;
+        } else
+        {
+          tmp[ti] = c;
+          ++ti;
+        }
+        ++i;
+      }
+
+      help_view->value(tmp);
+      free(tmp);
+    } else
+    {
+      /* Erase only if the widget needs no scrollbar. */
+      help_view->topline(10000);
+      help_view->leftline(10000);
+      if(help_view->topline() == 0 && help_view->leftline() == 0)
+        help_view->value("");
+
+      /* bring text back after the tests */
+      help_view->topline( 0 );
+      help_view->leftline( 0 );
+    }
   }
 #endif
   else
