@@ -58,6 +58,10 @@
 #ifndef NV_CTRL_STRING_XINERAMA_SCREEN_INFO
 #define NV_CTRL_STRING_XINERAMA_SCREEN_INFO                    26   /* R--- */
 #endif
+#ifndef NV_CTRL_STRING_TWINVIEW_XINERAMA_INFO_ORDER
+#define NV_CTRL_STRING_TWINVIEW_XINERAMA_INFO_ORDER            27   /* RW-- */
+#endif
+#define ATOM_NAME  "XFree86_DDC_EDID1_RAWDATA"
 
 /* ---  Helpers  --- */
 
@@ -222,16 +226,77 @@ main(int argc, char **argv)
   {
     int monitors_in_traditional_screen = 0;
     int traditional_screen = traditional_screens_b ? i : 0;
+    char *ptr = NULL,
+         * p = NULL;
+    char txt[24][48], * t;
+    const char * ct;
+    int n = 0, x = 0, xineramas[24][2], k;
 
     if( !traditional_screens_b )
       monitors_in_traditional_screen = monitors;
 
     data = oyGetNvidiaEdid(display, i, &size);
-
     if(data)
-    for(j = 0; j < 24; ++j)
-    if(data[j] && size[j])
     {
+      for(j = 0; j < 24; ++j)
+        if(data[j] && size[j])
+          ++x;
+      fprintf( stderr, "found %d EDIDs\n", x );
+      x = 0;
+
+      /* create a list of outputs sorted in some kind of Xinerama order */
+      ret = XNVCTRLQueryStringAttribute ( display, i, 1 << j,
+                            NV_CTRL_STRING_TWINVIEW_XINERAMA_INFO_ORDER, &ptr );
+      if(ret && ptr)
+      {
+        p = ptr;
+        sprintf( txt[n], "%s", p );
+        t = strchr( txt[n],',' ); if(t) t[0] = 0;
+        ++n;
+        while( (p = strchr( p,',' )) != NULL )
+        {
+          ++p; if(n >= 24) break;
+          while(p[0] == ' ') ++p;
+          sprintf( txt[n], "%s", p );
+          t = strchr( txt[n],',' ); if(t) t[0] = 0;
+          ++n;
+        }
+      }
+
+      for(j = 0; j < 24; ++j)
+      {
+        xineramas[j][0] = -1;
+        xineramas[j][1] = -1;
+      }
+      /* create a xinerama output table mapping to the nvidia mask */
+      for(k = 0; k < n; ++k)
+      {
+        t = txt[k];
+        for(j = 0; j < n && j < 24; ++j)
+        {
+          if(data[j] && size[j])
+          {
+            ct = oyNVmaskToPortName( 1 << j );
+            if(strcmp( ct, t ) == 0)
+            {
+              xineramas[x][0] = j;
+              xineramas[x++][1] = k;
+            }
+          }
+        }
+      }
+    }
+
+    /* iterate over the xinerama output table */
+    if(data)
+    for(k = 0; k < x; ++k)
+    {
+      int mask; /* the nvidia mask attribute */
+
+      j = xineramas[k][0];
+      mask = 1<<j;
+      t = txt[xineramas[k][1]];
+
       /*/printf( "%d: Edid of size %d found.\n", j, (int)size[j]);*/
       edi = (XEdid_s*) data[j];
 
@@ -243,7 +308,6 @@ main(int argc, char **argv)
              *serial=0,
              *vendor=0;
         char  display_name[256] = {""};
-        char *ptr = NULL;
         double c[9];
         uint32_t week=0, year=0, mnft_id=0, prod_id=0;
 
@@ -262,12 +326,16 @@ main(int argc, char **argv)
         ret = XNVCTRLQueryStringAttribute ( display, i, 1 << j,
                                     NV_CTRL_STRING_XINERAMA_SCREEN_INFO, &ptr );
 
-        fprintf( stderr, "EDID version: %d.%d in .%d[%d] \"%s\" %s\n",
+        fprintf( stderr, "EDID version: %d.%d in .%d[%d] \"%s\" %s",
                  edi->major_version, edi->minor_version, i, j,
                  oyNVmaskToPortName( 1 << j ), (ret && ptr)?ptr:"");
         oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial, &vendor,
                         &week, &year, &mnft_id, &prod_id, c, oyAllocateFunc_ );
 
+        if(model)
+          fprintf( stderr, " \"%s\"", model );
+        fprintf( stderr, "\n" );
+                   
 
         if(screen_number == 32 || screen_number == i)
         {
@@ -289,7 +357,7 @@ main(int argc, char **argv)
           if(put_edid)
           {
             Window w = RootWindow(display, traditional_screen);
-            char atom_name[48] = {"XFree86_DDC_EDID1_RAWDATA"};
+            char atom_name[48] = {ATOM_NAME};
             Atom atom;
 
             if( !w )
@@ -299,7 +367,7 @@ main(int argc, char **argv)
             }
 
             if( monitors_in_traditional_screen >= 1 )
-              sprintf( &atom_name[strlen( atom_name )], "_%d",
+              sprintf( &atom_name[strlen( ATOM_NAME )], "_%d",
                        monitors_in_traditional_screen);
 
             atom = XInternAtom( display, atom_name, False );
