@@ -1975,7 +1975,8 @@ oyTESTRESULT_e testCMMsShow ()
 
   texts = oyCMMsGetLibNames_( &count, 0 );
 
-  /* Create a oforms style xhtml to present in a XFORMS viewer.
+  /* Create a oforms style xhtml to present in a XFORMS viewer like
+   * oyranos-xforms-fltk or FF with XFORMS plug-in.
    * Pretty large here.
    */
   STRING_ADD( t, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n\
@@ -1986,7 +1987,7 @@ oyTESTRESULT_e testCMMsShow ()
   <title>Filter options</title>\n\
   <xf:model>\n\
     <xf:instance xmlns=\"\">\n\
-     <dummy>0</dummy>\n\
+     <shared><dummy>0</dummy></shared>\n\
     </xf:instance>\n\
   </xf:model>\n");
   STRING_ADD( t, "  <style type=\"text/css\">\n\
@@ -2010,16 +2011,16 @@ oyTESTRESULT_e testCMMsShow ()
     text = oyCMMInfoPrint_( cmm_info );
     tmp = cmm_info->api;
 
-    /* oforms */
-    CHOICE( "dummy", "Meta Module (oyCMMapi5_s)", text )
-    ITEM( "0", cmm_info->cmm )
-    CHOICE_END
-
         while(tmp)
         {
           oyOBJECT_e type = oyOBJECT_NONE;
           char num[48],
                * api_reg = 0;
+
+          /* oforms */
+          CHOICE( "shared/dummy", oyStructTypeToText(tmp->type), text )
+          ITEM( "0", cmm_info->cmm )
+          CHOICE_END
 
           type = oyCMMapi_Check_(tmp);
 
@@ -2068,7 +2069,7 @@ oyTESTRESULT_e testCMMsShow ()
                             (int)rank_list[k], api->id_ );
                   STRING_ADD( text, text_tmp );
                   /* oforms */
-                  CHOICE( "dummy", oyStructTypeToText(api->type), text_tmp )
+                  CHOICE( "shared/dummy", oyStructTypeToText(api->type), text_tmp )
                   ITEM( "0", api->registration )
                   CHOICE_END
 
