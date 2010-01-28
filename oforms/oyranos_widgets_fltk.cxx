@@ -155,6 +155,81 @@ void OyFl_Box_c::copy_label(const char* l) {
   Fl_Box::copy_label(l);
 }
 
+OyFl_Pack_c::OyFl_Pack_c(int x, int y, int w, int h , const char *t ) : Fl_Pack(x,y,w,h,t) {
+}
+
+void OyFl_Pack_c::draw() {
+  int nw = 0, nh = 0;
+  Fl_Scroll * scroll = dynamic_cast <Fl_Scroll*> (parent());
+  if( scroll )
+  {
+    nw = parent()->w() - Fl::box_dw( parent()->box() ) - scroll->scrollbar.w() - spacing();
+  } else {
+    nw = parent()->w() - Fl::box_dw( parent()->box() );
+  }
+  w( nw );
+
+
+  nh = parent()->h() - Fl::box_dh( parent()->box() );
+  if( horizontal() )
+    Fl_Pack::size( nw, Fl_Pack::h() );
+  else
+    Fl_Pack::size( Fl_Pack::w(), nh );
+
+  // prearrange if one widget is resizeable
+  Fl_Widget *re = resizable();
+  if( re )
+  {
+    int n = children();
+    int pos_x = Fl::box_dx(box()) + spacing(),
+        pos_y = Fl::box_dy(box()) + spacing(),
+        pos_x2 = pos_x + w() - Fl::box_dw(box()) - spacing(),
+        pos_y2 = pos_y + h() - Fl::box_dh(box()) - spacing();
+    int re_i = 0;
+    
+    for( int i = 0; i < n; ++i )
+    {
+      Fl_Widget *o = child( i );
+      if( o == re )
+      {
+        re_i = i;
+        break;
+      }
+      
+      if( horizontal() )
+      {
+        o->position( pos_x, o->y() );
+        pos_x += o->w() + spacing();
+      } else {
+        o->position( o->x(), pos_y );
+        pos_y += o->h() + spacing();
+      }
+    }
+    
+    for( int i = n - 1; i > re_i; --i )
+    {
+      Fl_Widget *o = child( i );
+      if( horizontal() )
+      {
+        o->position( pos_x2 - o->w(), o->y() );
+        pos_x2 -= o->w() + spacing();
+      } else {
+        o->position( o->x(), pos_y2 - o->h());
+        pos_y2 -= o->h() + spacing();
+      }
+    }
+    
+    if(horizontal())
+      re->resize( pos_x, re->y(), pos_x2-pos_x, re->h() );
+    else
+      re->resize( re->x(), pos_y, re->w(), pos_y2-pos_y );
+
+  }
+
+
+  Fl_Pack::draw();
+}
+
 
 #if 0
 OyOption_c::OyOption_c( int x, int y, int w, int h, const char *name,

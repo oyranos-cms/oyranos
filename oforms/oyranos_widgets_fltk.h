@@ -45,7 +45,6 @@ public:
   void copy_label(const char* l);
 };
 
-#if 0
 class OyFl_Pack_c : public Fl_Pack {
 public:
   OyFl_Pack_c(int x, int y, int w, int h , const char *t = 0);
@@ -53,6 +52,7 @@ private:
   void draw();
 };
 
+#if 0
 class OyOption_c : public OyFl_Pack_c {
 public:
   OyFl_Box_c   *box;

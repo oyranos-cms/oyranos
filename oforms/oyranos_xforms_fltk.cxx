@@ -18,6 +18,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Pack.H>
+#include <FL/Fl_Scroll.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Help_View.H>
 
@@ -96,6 +97,7 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
         }
         ++i;
       }
+      tmp[ti] = 0;
 
       help_view->value(tmp);
       free(tmp);
@@ -351,9 +353,9 @@ int main (int argc, char ** argv)
     oyCallback_s callback = {oyOBJECT_CALLBACK_S, 0,0,0,
                                   (void(*)())callback_help_view,0};
 #if HELP_VIEW_DISPLAY
-    Fl_Text_Display * help_view = new Fl_Text_Display( 0,365,400,75 );
+    Fl_Text_Display * help_view = new Fl_Text_Display( 0,340,400,100 );
 #else
-    Fl_Help_View * help_view = new Fl_Help_View( 0,365,400,75 );
+    Fl_Help_View * help_view = new Fl_Help_View( 0,340,400,100 );
 #endif
     help_view->box(FL_ENGRAVED_BOX);
     help_view->color(FL_BACKGROUND_COLOR);
@@ -373,13 +375,16 @@ int main (int argc, char ** argv)
     Fl_Button * done_button = new Fl_Button( 160, 445, 80, 25, _("&Done"));
     done_button->callback( callback_done, 0 );
 
-  Fl_Pack * pack = new Fl_Pack( 0,0,400,365 );
-  pack->spacing(V_SPACING);
-    error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
+  Fl_Scroll * scroll = new Fl_Scroll( 5,1,395,338 );
+  scroll->box( FL_NO_BOX ); //FL_THIN_UP_BOX );
+    OyFl_Pack_c * pack = new OyFl_Pack_c( 5,1,395,338 );
+    pack->spacing(V_SPACING);
+      error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
 
 
-  pack->end();
-  w->resizable( pack );
+    pack->end();
+  scroll->end();
+  w->resizable( scroll );
   w->end();
 
   w->show();
