@@ -30,7 +30,7 @@
 
 
 static int export_setting = 1;
-static int export_path = 1;
+/* static int export_path = 1; */
 static int export_monitor = 1;
 static int export_cmm = 1;
 static int initialised = 0;

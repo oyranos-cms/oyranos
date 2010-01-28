@@ -836,7 +836,9 @@ oyGetDeviceProfile_                (const char* manufacturer,
   if (matchList)
   {
     int max_hits = 0;
+#if DEBUG
     int count = 0;
+#endif
     foundEntry = 0;
     DBG_PROG1_S( "matchList->begin->next: %d\n", (int)(intptr_t)matchList->begin->next )
     for (testEntry=matchList->begin; testEntry; testEntry=testEntry->next)
@@ -1214,7 +1216,6 @@ int                oyEraseKey_       ( const char        * key_name )
       rc = kdbRemove ( oy_handle_, name ); 
       if(rc == 0)    
       {
-        success = 1;
         return error;
       }
     }
@@ -1235,7 +1236,6 @@ int                oyEraseKey_       ( const char        * key_name )
           if(rc == 0)
           {
             DBG_PROG1_S( "removed key %s", value );
-            ++success;
           }
         }
       }
@@ -1247,7 +1247,6 @@ int                oyEraseKey_       ( const char        * key_name )
     if(rc == 0)
     {
       DBG_PROG1_S( "removed key %s", name );
-      ++success;
     }
   }
 

@@ -150,7 +150,6 @@ oyXMLgetValue_  (const oyChar  * xml,
       else
       {
         WARNc1_S("key: %s is not complete.", key)
-        len = 0;
         return 0;
       }
     }
@@ -205,7 +204,6 @@ oyXMLgetField2_ (const char       *xml,
       else
       {
         WARNc1_S("key: %s is not complete.", key1)
-        l = 0;
         return 0;
       }
     }
@@ -404,7 +402,7 @@ oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
 
   if( group_opt )
   {
-       oytmplen = oyMemBlockExtent_(&mem, oytmplen, 160);
+    oytmplen = oyMemBlockExtent_(&mem, oytmplen, 160);
     oySprintf_( &mem[oyStrlen_(mem)], "</%s>\n\n\n", group_opt->config_string_xml);
   }
 

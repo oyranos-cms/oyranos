@@ -496,7 +496,7 @@ oyInitComp_ (oyComp_t_ *list, oyComp_t_ *top)
   if (!list)
     oyAllocHelper_m_( list, oyComp_t_, 1, oyAllocateFunc_, ; );
 
-  list->next = 0;
+  list->next = NULL;
 
   list->type_ = oyOBJECT_COMP_S_;
   if (top)
@@ -575,7 +575,9 @@ oyDestroyCompList_ (oyComp_t_ *list)
 char*
 printComp (oyComp_t_* entry)
 {
+# ifdef DEBUG
   static char text[MAX_PATH] = {0};
+#endif
 
   DBG_PROG_START
 

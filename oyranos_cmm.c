@@ -67,14 +67,18 @@ OYAPI oyConnectorImaging_s * OYEXPORT
   }
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  if(!error)
+  {
+    s->type_ = type;
+    s->copy = (oyStruct_Copy_f) oyConnectorImaging_Copy;
+    s->release = (oyStruct_Release_f) oyConnectorImaging_Release;
 
-  s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyConnectorImaging_Copy;
-  s->release = (oyStruct_Release_f) oyConnectorImaging_Release;
+    s->oy_ = s_obj;
 
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+    error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+  }
+  if(error)
+    return 0;
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
@@ -139,8 +143,9 @@ oyConnectorImaging_s *
     {
       s->data_types = allocateFunc_( obj->data_types_n * sizeof(oyDATATYPE_e) );
       error = !s->data_types;
-      error = !memcpy( s->data_types, obj->data_types,
-                       obj->data_types_n * sizeof(oyDATATYPE_e) );
+      if(!error)
+        error = !memcpy( s->data_types, obj->data_types,
+                         obj->data_types_n * sizeof(oyDATATYPE_e) );
       if(error <= 0)
         s->data_types_n = obj->data_types_n;
     }
@@ -163,8 +168,9 @@ oyConnectorImaging_s *
 
       s->channel_types = allocateFunc_( n * sizeof(oyCHANNELTYPE_e) );
       error = !s->channel_types;
-      error = !memcpy( s->channel_types, obj->channel_types,
-                       n * sizeof(oyCHANNELTYPE_e) );
+      if(!error)
+        error = !memcpy( s->channel_types, obj->channel_types,
+                         n * sizeof(oyCHANNELTYPE_e) );
       if(error <= 0)
         s->channel_types_n = n;
     }
@@ -320,6 +326,8 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     new_roi.width *= correct;
     new_roi.height *= correct;
     error = oyImage_FillArray( image, &new_roi, 1, &ticket->array, 0, 0 );
+    if(error)
+      result = error;
   }
 
   return result;

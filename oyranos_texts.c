@@ -690,9 +690,12 @@ int                oyStringFromData_ ( const oyPointer     ptr,
     {
       text_tmp = allocateFunc( j );
       error = !text_tmp;
-      error = !memcpy( text_tmp, text, j-1 );
-      if(error)
-        text_tmp[j-1] = 0;
+      if(!error)
+      {
+        error = !memcpy( text_tmp, text, j-1 );
+        if(error)
+          text_tmp[j-1] = 0;
+      }
     }
   }
 
@@ -861,7 +864,7 @@ char *             oyStringSegment_  ( char              * text,
                                        int                 segment,
                                        int               * end )
 {
-  intptr_t end_pos = (intptr_t)text;
+  intptr_t end_pos = 0;
   int i = 0;
   char * t = text;
 
@@ -1776,10 +1779,12 @@ oyPolicyNameGet_()
       is_policy = 0;
     }
 
-    if(oyPoliciesEqual( xml, compare ) == 1)
+    if(is_policy && oyPoliciesEqual( xml, compare ) == 1)
+    {
       name = oyStringCopy_( policy_list[i], oyAllocateFunc_ );
 
-    oyFree_m_( compare );
+      oyFree_m_( compare );
+    }
   }
 
   oyFree_m_( xml );

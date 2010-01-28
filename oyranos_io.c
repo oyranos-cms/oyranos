@@ -189,6 +189,8 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
       } while (--size);
 #else
       written_n = fwrite( mem, size, 1, fp );
+      if(written_n != size)
+        r = 1;
 #endif
     } else
     {
@@ -215,7 +217,7 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
   return r;
 }
 
-
+/* TODO: support flags - OY_FILE_APPEND */
 int  oyWriteMemToFile2_              ( const char        * name,
                                        void              * mem,
                                        size_t              size,
@@ -308,7 +310,7 @@ int  oyWriteMemToFile2_              ( const char        * name,
         tmp[oyStrlen_(tmp)] = '.';
     }
     max = (int)pow( 10, digits);
-    if(pos >= (int)pow( 10, digits) )
+    if(pos >= max)
     {
       WARNc2_S( "%s: %s", _("File exists"), full_name );
       return 1;
@@ -746,14 +748,9 @@ int oyFileListCb_ ( oyFileList_s * data,
                     const char * full_name, const char * filename)
 {
   oyFileList_s *l = (oyFileList_s*)data;
-  /* last 4 chars */
-  const char * end = NULL;
 
   if(l->type != oyOBJECT_FILE_LIST_S_)
     WARNc_S("Could not find a oyFileList_s objetc.");
-
-  if(strlen(full_name) > 4)
-    end = full_name + strlen(full_name) - 4;
 
   {
         if(l->count_files >= l->mem_count)

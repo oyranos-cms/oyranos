@@ -288,7 +288,9 @@ char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type )
       UInt32 locationSize = sizeof(CMProfileLocation);
 
       err = NCMGetProfileLocation( prof, &loc, &locationSize );
-      
+      if(err)
+        WARNc_S("Problem with NCMGetProfileLocation.");
+
       switch(loc.locType)
       {
         case cmNoProfileBase:
@@ -345,6 +347,8 @@ char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type )
       DBG_PROG2_S( "could not find:%d Profile:%s\n", (int)err, prof ? "no" : "yes" );
 
     err = CMCloseProfile( prof );
+    if(err)
+      WARNc_S("Problem with CMCloseProfile.");
   }
 
   DBG_PROG_ENDE

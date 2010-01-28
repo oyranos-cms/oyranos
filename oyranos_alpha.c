@@ -389,8 +389,9 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
 
 
 /** @brief copy pure colours
-
-    handle colour only, without from set to -1 default
+ *
+ *  Handle colour only.
+ *  With a empty \r from variable set -1 as default in \r to.
  *
  *  @since Oyranos: version 0.1.8
  *  @date  september 2007 (API 0.1.8)
@@ -418,8 +419,12 @@ oyCopyColour ( const double * from,
   c = oyICCColourSpaceGetChannelCount( sig );
 
   if(from)
+  {
     error = !memcpy( to, from, sizeof(double) * (n * c) );
+    if(error)
+      WARNc_S("Problem with memcpy.");
 
+  } 
   else
   {
     if(!channels_n && c)
@@ -678,7 +683,7 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
     }
   }
 
-  if(!text)
+  if(!error && !text)
     text = oyStructTypeToText( obj->type_ );
 
   return text;
@@ -743,6 +748,8 @@ OYAPI oyObserver_s * OYEXPORT
   }
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  if(error)
+    WARNc_S("Problem with memset.");
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyObserver_Copy;
@@ -950,11 +957,14 @@ oyStructList_s * oyStruct_ObserverListGet_(
     list = oyStructList_New( 0 );
     o = oyOption_New( reg, obj->oy_ );
     error = oyOption_StructMoveIn( o, (oyStruct_s**)&list );
-    if(!obj->oy_->handles_)
-      obj->oy_->handles_ = (oyStruct_s*) oyOptions_New( 0 );
-    error = oyOptions_MoveIn( (oyOptions_s*)obj->oy_->handles_, &o, -1);
-    o = oyOptions_Find( (oyOptions_s*)obj->oy_->handles_,
-                        reg );
+    if(error)
+    {
+      if(!obj->oy_->handles_)
+        obj->oy_->handles_ = (oyStruct_s*) oyOptions_New( 0 );
+      error = oyOptions_MoveIn( (oyOptions_s*)obj->oy_->handles_, &o, -1);
+      o = oyOptions_Find( (oyOptions_s*)obj->oy_->handles_,
+                          reg );
+    }
   }
   if(!error && o && o->value_type == oyVAL_STRUCT && o->value)
   {
@@ -966,7 +976,6 @@ oyStructList_s * oyStruct_ObserverListGet_(
       WARNcc3_S( obj, "%s: %s %s", _("found list of wrong type"),
                  reg,
                  oyStruct_TypeToText( o->value->oy_struct ) );
-      error = 1;
     }
 
     oyOption_Release( &o );
@@ -1197,29 +1206,34 @@ OYAPI int  OYEXPORT
     {
       obs = (oyObserver_s*) oyStructList_GetType_( observers,
                                                    i, oyOBJECT_OBSERVER_S );
-      if(obs && obs->model == model)
-      { 
-        if(oy_debug_signals)
+      if(obs)
+      {
+        if(obs->model == model)
         {
-          WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]", _("Signal"),
+          if(oy_debug_signals)
+          {
+            WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]", _("Signal"),
+                    oySignalToString(signal_type),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+          }
+          oyObserver_SignalSend( obs, signal_type, signal_data );
+        }
+        else
+        {
+          WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]",_("found observer of wrong type"),
                     oySignalToString(signal_type),
                     oyStruct_GetText( obs->model, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->model->oy_),
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->observer->oy_) );
         }
-        oyObserver_SignalSend( obs, signal_type, signal_data );
-
-      }
-      else
-      {
-        WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]",_("found observer of wrong type"),
+      } else
+        WARNc3_S( "\n\t%s: oyObservers_s[%s]",_("found no observer"),
                     oySignalToString(signal_type),
-                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
-                    oyObject_GetId(   obs->model->oy_),
-                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
-                    oyObject_GetId(   obs->observer->oy_) );
-      }
+                    oyStruct_TypeToText((oyStruct_s*)observers) );
     }
   }
 
@@ -1312,12 +1326,20 @@ OYAPI int  OYEXPORT
       }
       else
       {
-        WARNc5_S( "\n\tCopy: %s: %s[%d]->%s[%d]",
+        if(obs)
+        {
+          WARNc5_S( "\n\tCopy: %s: %s[%d]->%s[%d]",
                     _("found observer of wrong type"),
                     oyStruct_GetText( obs->model, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->model->oy_),
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->observer->oy_) );
+        }
+        else
+        {
+          WARNc2_S( "\n\toyObservers_s %s ",_("found no observer"),
+                    oyStruct_TypeToText((oyStruct_s*)observers) );
+        }
       }
     }
   }
@@ -1382,12 +1404,20 @@ OYAPI int  OYEXPORT
       }
       else
       {
-        WARNc5_S( "\n\tCopy: %s: %s[%d]->%s[%d]",
+        if(obs)
+        {
+          WARNc5_S( "\n\tCopy: %s: %s[%d]->%s[%d]",
                     _("found observer of wrong type"),
                     oyStruct_GetText( obs->model, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->model->oy_),
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->observer->oy_) );
+        }
+        else
+        {
+          WARNc2_S( "\n\t%s ",_("found no observer"),
+                    oyStruct_TypeToText( (oyStruct_s*)list) );
+        }
       }
     }
   }
@@ -1585,7 +1615,8 @@ oyCallback_s * oyCallback_Copy_
 
   if(!error)
   {
-    allocateFunc_ = s->oy_->allocateFunc_;
+    s->callback = obj->callback;
+    s->data = obj->data;
   }
 
   if(error)
@@ -1767,6 +1798,9 @@ oyName_s *   oyName_copy               ( oyName_s        * obj,
   s = oyName_new( object );
 
   error = oyName_copy_( s, obj, object );
+
+  if(error)
+    oyName_release( &s );
 
   return s;
 }
@@ -2150,7 +2184,7 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
   oyStructList_s * s = 0;
   int error = !list;
 
-  if(!list)
+  if(error)
     return s;
 
   if(list && !obj)
@@ -2164,7 +2198,10 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
 
   error = !s;
 
-  oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+  if(!error)
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+  else
+    return s;
 
   if(list)
   {
@@ -2184,6 +2221,9 @@ oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
   }
 
   oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+
+  if(error)
+    s = 0;
 
   return s;
 }
@@ -2218,7 +2258,6 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
   int i;
   int set = 0;
 
-  s = list;
   error = !s;
 
   if(error <= 0)
@@ -2387,7 +2426,7 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
 
   error = !s;
 
-  if(s->type_ != oyOBJECT_STRUCT_LIST_S)
+  if(!error && s->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(error <= 0)
@@ -2478,7 +2517,7 @@ oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
   int error = !s;
   oyStruct_s * obj = 0;
 
-  if(s)
+  if(!error)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
   obj = oyStructList_Get_(list, pos);
@@ -2720,10 +2759,11 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
       o = oyStructList_Get_( from, i );
       o = o->copy( o, object );
       error = !o;
-      error = oyStructList_MoveIn( s, &o, -1, 0 );
+      if(!error)
+        error = oyStructList_MoveIn( s, &o, -1, 0 );
     }
 
-    if(oyStruct_IsObserved( (oyStruct_s*)s, 0) )
+    if(error <= 0 && oyStruct_IsObserved( (oyStruct_s*)s, 0) )
       error = oyStructList_ObserverAdd( list, 0, 0, 0 );
   }
 
@@ -2914,7 +2954,10 @@ oyCMMptr_New_ ( oyAlloc_f         allocateFunc )
   s = oyAllocateWrapFunc_( sizeof(oyCMMptr_s), allocateFunc );
   error = !s;
 
-  error = !memset(s, 0, sizeof(oyCMMptr_s));
+  if(!error)
+    error = !memset(s, 0, sizeof(oyCMMptr_s));
+  else
+    return s;
 
   if(error <= 0)
   {
@@ -3428,14 +3471,16 @@ oyCMMhandle_s *  oyCMMhandle_Copy_     ( oyCMMhandle_s   * handle,
         WARNc1_S("Dont know how to copy CMM[%s] handle.", handle->lib_name);
 
       error = oyCMMhandle_Set_( s, 0, 0, 0 );
+      if(!error)
+        oyCMMhandle_Release_( &s );
+
     } else
       WARNc_S("Could not create a new object.");
 
-  } else {
-
+  } else if(handle)
+  {
     oyObject_Copy( handle->oy_ );
     s = handle;
-
   }
 
   return s;
@@ -3665,7 +3710,8 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
     }
     error = !files;
 
-    *n = files_n;
+    if(!error)
+      *n = files_n;
 
     if(sub_paths_n && sub_paths)
       oyStringListRelease_( &sub_paths, sub_paths_n, oyDeAllocateFunc_ );
