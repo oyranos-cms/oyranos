@@ -308,6 +308,7 @@ int main( int argc , char** argv )
 
             if(prof)
             {
+              uint32_t model_id = 0;
               error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag,
                                             (char*) output ? output : format );
               error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag,
@@ -319,6 +320,13 @@ int main( int argc , char** argv )
               o = oyConfig_Find( c, "mnft" );
               sprintf( (char*)&header->manufacturer, "%s",
                        oyConfig_FindString( c, "mnft", 0 ) );
+              oyOption_Release( &o );
+              o = oyConfig_Find( c, "model_id" );
+              if(o)
+                model_id = atoi( oyConfig_FindString( c, "model_id", 0 ) );
+              model_id = oyValueUInt32( model_id );
+              memcpy( &header->model, &model_id, 4 );
+              oyOption_Release( &o );
             }
           } else
           if(strcmp(format,"edid") == 0)
