@@ -40,7 +40,12 @@ endif
 
 .SILENT:
 
-all:	$(TARGETS)
+all:
+	echo Building all with:
+	echo "INCLUDE=$$INCLUDE"
+	echo "LIBS=$$LIBS"
+	echo "PKG_CONFIG_PATH=$$PKG_CONFIG_PATH"
+	make $(TARGETS)
 	echo ... all done
 
 	
