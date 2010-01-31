@@ -63,7 +63,7 @@ oyReadFileSize_(const char* name)
   DBG_MEM_START
 
   {
-    fp = fopen(filename, "r");
+    fp = fopen(filename, "rb");
     DBG_MEM2_S ("fp = %d filename = %s\n", (int)(intptr_t)fp, filename)
 
     if (fp)
@@ -94,7 +94,7 @@ oyReadFileToMem_(const char* name, size_t *size,
   DBG_MEM
 
   {
-    fp = fopen(filename, "r");
+    fp = fopen(filename, "rb");
     DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
 
     if (fp)
@@ -442,7 +442,7 @@ oyIsFileFull_ (const char* fullFileName)
   DBG_MEM_V( r )
   if (r)
   {
-    FILE* fp = fopen (name, "r");
+    FILE* fp = fopen (name, "rb");
     if (!fp) { DBG_PROG1_S("not existent: %s", name )
       r = 0;
     } else { DBG_MEM_S(name)
