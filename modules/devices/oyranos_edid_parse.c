@@ -175,10 +175,16 @@ XEDID_ERROR_e  XEdidParse            ( void              * edid,
           }
 
           /* workaround for APP */
-          if(block[3] == 254 && vendor && !serial)
+          if(strcmp(mnf,"APP") == 0)
           {
-            serial = vendor;
-            vendor = 0;
+            if(block[3] == 254)
+            {
+              if(!serial)
+                target = &serial;
+              else
+              if(serial && !model)
+                target = &model;
+            }
           }
         
           *target = t;
