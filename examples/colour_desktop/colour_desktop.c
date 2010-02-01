@@ -44,10 +44,10 @@
 
 #include <Xcolor.h>
 
-#define OY_COMPIZ_VERSION COMPIZ_VERSION_MAJOR * 10000 + COMPIZ_VERSION_MINOR * 100 + COMPIZ_VERSION_MICRO
+#define OY_COMPIZ_VERSION (COMPIZ_VERSION_MAJOR * 10000 + COMPIZ_VERSION_MINOR * 100 + COMPIZ_VERSION_MICRO)
 #if OY_COMPIZ_VERSION < 800
 #define oyCompLogMessage(disp_, plug_in_name, debug_level, format_, ... ) \
-        compLogMessage( disp_, plug_in_name, debug_level, format_, __VA_ARGS__ )
+        compLogMessage( plug_in_name, debug_level, format_, __VA_ARGS__ )
 #else
 #define oyCompLogMessage(disp_, plug_in_name, debug_level, format_, ... ) \
         compLogMessage( plug_in_name, debug_level, format_, __VA_ARGS__ )
@@ -1183,6 +1183,9 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
 {
   CompScreen *s = (CompScreen *) object;
   PrivScreen *ps = privateData;
+#ifdef HAVE_XRANDR
+  int screen = DefaultScreen( s->display->display );
+#endif
 
   GLint stencilBits = 0;
   glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
@@ -1200,7 +1203,9 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
   /* XRandR setup code */
 
 #ifdef HAVE_XRANDR
-  XRRSelectInput(s->display->display, s->root, RROutputPropertyNotifyMask);
+  XRRSelectInput( s->display->display,
+                  XRootWindow( s->display->display, screen ),
+                  RROutputPropertyNotifyMask);
 #endif
 
   ps->nCcontexts = 0;
