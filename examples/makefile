@@ -10,7 +10,7 @@ TARGET5 = dummy_device/liboyranos_dDev_cmm_module.so
 TARGET6 = dummy_filter/liboyranos_dFil_cmm_module.so
 TARGET7 = oymd5icc/oymd5icc
 TARGETS = $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) \
-	$(TARGET7)
+	$(TARGET7) ../oyranos_logo.ppm
 OY_CFLAGS := $(shell (oyranos-config --cflags))
 OY_LDFLAGS := $(shell (oyranos-config --ldflags))
 FLTK_CFLAGS := $(shell (fltk-config --cflags))
@@ -91,6 +91,9 @@ $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 	mkdir -p oymd5icc
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
+
+../oyranos_logo.ppm:	../oyranos_logo.png
+	cat ../oyranos_logo.png | pngtopnm > $@
 
 clean:
 	echo cleaning ...
