@@ -14544,7 +14544,7 @@ oyProfile_GetChannelsCount( oyProfile_s * profile )
  *
  *  \verbatim
     // show some profile properties
-    oyProfile_s * p = 0; // get from somewhere
+    oyProfile_s * p = ...; // get from somewhere
     icSignature vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );      
     char * v = (char*)&vs;
     printf("  created %d.%d.%d %d:%d:%d\n", 
@@ -16383,6 +16383,28 @@ int                oyProfile_AddTagText (
   oyName_s * name = oyName_new(0);
   int error = 0;
   oyProfileTag_s * tag = 0;
+  icTagTypeSignature tt = icSigTextType;
+  icSignature vs = oyValueUInt32( oyProfile_GetSignature( profile,
+                                                         oySIGNATURE_VERSION) );
+  char * v = (char*)&vs;
+  int version_A = (int)v[0]/*,
+      version_B = (int)v[1]/16,
+      version_C =  (int)v[1]%16*/;
+
+  if(version_A <= 3 &&
+     (signature == icSigProfileDescriptionTag ||
+      signature == icSigDeviceMfgDescTag ||
+      signature == icSigDeviceModelDescTag ||
+      signature == icSigScreeningDescTag ||
+      signature == icSigViewingCondDescTag))
+    tt = icSigTextDescriptionType;
+  else if(version_A >= 4 &&
+     (signature == icSigProfileDescriptionTag ||
+      signature == icSigDeviceMfgDescTag ||
+      signature == icSigDeviceModelDescTag ||
+      signature == icSigCopyrightTag ||
+      signature == icSigViewingCondDescTag))
+    tt = icSigMultiLocalizedUnicodeType;
 
   name = oyName_set_ ( name, text, oyNAME_NAME,
                        oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -16391,7 +16413,7 @@ int                oyProfile_AddTagText (
 
   if(!error)
   {
-    tag = oyProfileTag_Create( list, icSigTextType, 0,OY_MODULE_NICK, 0);
+    tag = oyProfileTag_Create( list, tt, 0,OY_MODULE_NICK, 0);
     error = !tag;
   }
 
