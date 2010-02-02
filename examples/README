@@ -32,8 +32,9 @@ Notes:
 
 
 Building:
+    # to avoid trouble, use the Oyranos source dir "make examples" command
     $ make
-    $ make install   # for the compiz plug-in
+    $ make install   # needed for installing the compiz plug-in
 
 
 Known Issues:

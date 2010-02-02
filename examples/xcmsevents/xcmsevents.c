@@ -5,33 +5,47 @@
  *  License: newBSD
  *  Copyright: 2009 - Kai-Uwe Behrmann <ku.b@gmx.de>
  *
- *  compile: gcc -Wall -g -o xcmsevents xcmsevents.c `pkg-config --cflags --libs x11 xfixes oyranos` -DHAVE_X11 -I../ -L./ -lXcolor
+ *  c++: ar cru liboyranosedid.a ../../modules/devices/oyranos_edid_parse.o ../../modules/devices/oyranos_monitor.o
+ *  c++: prefix=/opt/local; g++ -Wall -g -o qcmsevents xcmsevents.c `PKG_CONFIG_PATH=$prefix/lib/pkgconfig pkg-config --cflags --libs x11 xmu xfixes xinerama xrandr xxf86vm oyranos` -DHAVE_X11 -I$prefix/include -I../.. -L$prefix/lib -lXcolor -L./ -loyranosedid
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include <X11/Xmu/WinUtil.h>
+#include "Xcolor.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <signal.h> /* signal */
 
-#include "Xcolor.h"
 #include <X11/extensions/Xfixes.h>
 #include <X11/Xmu/Error.h> /* XmuSimpleErrorHandler */
+#ifdef __cplusplus
+}
+#endif
+
 #include <oyranos_alpha.h> /* use Oyranos to obtain profile names */
 #include "oyranos_monitor_internal.h" /* EDID parsing */
+
+#ifdef __cplusplus
+using namespace oyranos;
+extern "C" {
+}
+#endif
 
 #ifdef STRING_ADD
 #undef STRING_ADD
 #endif
 #define STRING_ADD(t, txt) oyStringAdd_( &t, txt, malloc, free )
-void               oyStringAdd_      ( char             ** text,
+/*void               oyStringAdd_      ( char             ** text,
                                        const char        * append,
                                        oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocFunc );
+                                       oyDeAlloc_f         deallocFunc );*/
 
 
 char * printWindowName( Display * display, Window w )
@@ -51,7 +65,7 @@ char * printWindowName( Display * display, Window w )
   unsigned long left = 0, n = 0;
   unsigned char * data = 0;
 
-  if(!text) text = malloc(80);
+  if(!text) text = (char*)malloc(80);
 
   XGetGeometry( display, w, &root_return,
                         &x_return, &y_return, &width_return, &height_return,
@@ -100,7 +114,7 @@ void     printWindowRegions          ( Display           * display,
                XGetAtomName( display, 
                              XInternAtom( display,"_NET_COLOR_REGIONS", False)),
                printWindowName( display, w ), (int)n );
-          for(i = 0; i < n; ++i)
+          for(i = 0; i < (int)n; ++i)
           {
             int nRect = 0;
             XRectangle * rect = 0;
@@ -139,7 +153,7 @@ static inline unsigned long XcolorProfileCount(void *data, unsigned long nBytes)
   unsigned long count = 0;
   XcolorProfile * ptr;
 
-  for (ptr = data; (intptr_t)ptr < (intptr_t)data + nBytes; ptr = XcolorProfileNext(ptr))
+  for (ptr = (XcolorProfile*)data; (intptr_t)ptr < (intptr_t)data + nBytes; ptr = XcolorProfileNext(ptr))
     ++count;
 
   return count;
@@ -260,7 +274,7 @@ int main(int argc, char *argv[])
     status = XQueryTree( display, root,
                          &root_return, &parent_return,
                          &children_return, &nchildren_return );
-    wins = malloc(sizeof(Window) * nchildren_return );
+    wins = (Window*)malloc(sizeof(Window) * nchildren_return );
     memcpy( wins, children_return, sizeof(Window) * nchildren_return );
     XFree( children_return );
     children_return = wins; wins = 0;
@@ -448,7 +462,7 @@ int main(int argc, char *argv[])
           &nWindow, &left, (unsigned char**)&windows );
         n = (int)(nWindow + left);
 
-        for(i = 0; i < n; ++i)
+        for(i = 0; i < (int)n; ++i)
         {
           /* search of a previous observation of a particular window */
           int found = 0;
@@ -469,10 +483,10 @@ int main(int argc, char *argv[])
           }
         }
 
-        if(n > nWindows)
+        if((int)n > nWindows)
         {
           if(Windows) free(Windows);
-          Windows = malloc( sizeof(Window) * n );
+          Windows = (Window*)malloc( sizeof(Window) * n );
         }
         memcpy( Windows, windows, sizeof(Window) * n );
         nWindows = n;
