@@ -530,7 +530,9 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
               {
                 tmp = oyOptions_FindString(f_options, key, 0);
                 message( oyMSG_DBG,(oyStruct_s*)f_options,
-                         "%s:%d \"%s\" is already set = %s",__FILE__,__LINE__,
+                         "%s:%d \"%s\" is already set = %s",
+                         strrchr(__FILE__,'/') ?
+                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                          key, tmp?tmp:"????");
               }
 }
@@ -552,6 +554,11 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               * f_options = 0;
   oyOption_s * o = 0;
   const char * val = 0;
+  int32_t proofing = 0,
+          display_mode = 0;
+
+  if(oy_debug == 1)
+    verbose = 1;
 
   if(s->input)
     g = oyFilterGraph_FromNode( s->input, 0 );
@@ -569,6 +576,14 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
         WARNc2_S( "node: %s[%d]",
                   node->core->registration_, oyFilterNode_GetId( node ));
       ++icc_nodes_n;
+    }
+    if(oyFilterRegistrationMatch( node->core->registration_,
+                                  "//" OY_TYPE_STD "/display", 0 ))
+    {
+      if(verbose)
+        WARNc2_S( "node: %s[%d] - display mode",
+                  node->core->registration_, oyFilterNode_GetId( node ));
+      ++display_mode;
     }
     oyFilterNode_Release( &node );
   }
@@ -668,10 +683,14 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                     "rendering_gamut_warning", s, verbose);
               oiccChangeNodeOption( f_options, db_options,
                                     "rendering_high_precission", s, verbose);
+              if(display_mode)
+                oyOptions_FindInt( f_options, "proof_soft", 0, &proofing );
+              else
+                oyOptions_FindInt( f_options, "proof_hard", 0, &proofing );
 
               /* TODO @todo add proofing profile */
               o = oyOptions_Find( f_options, "profiles_simulation" );
-              if(!o)
+              if(!o && proofing)
               {
                 proof = oyProfile_FromStd( oyPROFILE_PROOF, 0 );
                 proofs = oyProfiles_New(0);
@@ -683,12 +702,18 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                         OY_CREATE_NEW );
                 if(verbose)
                   message( oyMSG_WARN,(oyStruct_s*)node,
-                           "%s:%d set \"profiles_simulation\": %s",
-                           __FILE__,__LINE__, val);
+                           "%s:%d set \"profiles_simulation\": %s %s",
+                           strrchr(__FILE__,'/') ?
+                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
+                           val?val:"empty profile text", 
+                           display_mode ? "for displaying" : "for hard copy" );
               } else if(verbose)
                 message( oyMSG_WARN,(oyStruct_s*)node,
-                         "%s:%d \"profiles_simulation\" is already set",
-                         __FILE__,__LINE__);
+                         "%s:%d \"profiles_simulation\" %s, %s",
+                         strrchr(__FILE__,'/') ?
+                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
+                         o ? "is already set" : "no profile",
+                         proofing ? "proofing was set" :"proofing is not set" );
 
               oyOption_Release( &o );
 
