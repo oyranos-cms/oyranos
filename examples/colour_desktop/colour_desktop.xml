@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiz>
+  <plugin name="colour_desktop">
+    <short>Color Management</short>
+    <short xml:lang="de">Farbmanagement</short>
+    <short xml:lang="en_GB">Colour Management</short>
+    <long>ICC Color management for the Desktop</long>
+    <long xml:lang="de">ICC Farbmanagement für den Desktop</long>
+    <long xml:lang="en_GB">ICC Colour management for the Desktop</long>
+    <category>Desktop</category>
+    <deps>
+      <relation type="after">
+	<plugin>colorfilter</plugin>
+      </relation>
+    </deps>
+  </plugin>
+</compiz>
