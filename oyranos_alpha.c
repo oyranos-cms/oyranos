@@ -9858,8 +9858,8 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
  *  @param         registration        the options registration name, e.g.
  *                                 "share/freedesktop.org/imaging/my_app/my_opt"
  *                                     or simple key, e.g. "my_opt"
+ *  @param         pos                 the values position in a possible list
  *  @param         result              the integer
- *  @param         pos                 the value position
  *  @return                            0 -  option exists, is of correct type,
  *                                          holds a value at the position;
  *                                     -1 - not found;
