@@ -102,5 +102,7 @@ clean:
 
 install:	$(TARGET3)
 	mkdir -p $(HOME)/.compiz/plugins
-	install -v $(TARGET3) $(HOME)/.compiz/plugins/libcolour_desktop.so
+	-install -v $(TARGET3) $(HOME)/.compiz/plugins/libcolour_desktop.so
+	-install -v colour_desktop/colour_desktop.xml $(HOME)/.compiz/metadata/
+	-install -v colour_desktop/plugin-colour_desktop.svg $(HOME)/.local/share/icons/
 
