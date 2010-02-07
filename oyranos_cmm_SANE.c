@@ -796,14 +796,14 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type )
 {
   static char * category = 0;
-  if(strcmp(select,"name") ||
-     strcmp(select,"help"))
+  if(strcmp(select,"name") == 0 ||
+     strcmp(select,"help") == 0)
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
     return GetText(select,type);
   }
-  else if(strcmp(select, "device_class")==0)
+  else if(strcmp(select, "device_class") == 0)
     {
         if(type == oyNAME_NICK)
             return _("Scanner");
@@ -812,7 +812,7 @@ const char * Api8UiGetText           ( const char        * select,
         else
             return _("Scanner data, which come from SANE library.");
     }
-  else if(strcmp(select,"category"))
+  else if(strcmp(select,"category") == 0)
   {
     if(!category)
     {
