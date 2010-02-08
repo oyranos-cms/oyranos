@@ -153,6 +153,11 @@ void               oyStringAdd_      ( char             ** text,
                                        const char        * append,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocFunc );
+int                oyStringAddPrintf_( char             ** text,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocFunc,
+                                       const char        * format,
+                                                           ... );
 
 char**             oyStringSplit_    ( const char        * text,
                                        const char          delimiter,

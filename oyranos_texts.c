@@ -731,6 +731,61 @@ void               oyStringAdd_      ( char             ** text,
   return;
 }
 
+/** @internal 
+ *  @brief   printf style string add
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/07 (Oyranos: 0.1.10)
+ *  @date    2009/02/07
+ */
+int                oyStringAddPrintf_( char             ** string,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocFunc,
+                                       const char        * format,
+                                                           ... )
+{
+  char * text_copy = NULL;
+  char * text = 0;
+  va_list list;
+  int len;
+  size_t sz = 256;
+
+  text = malloc( sz );
+  if(!text)
+  {
+    fprintf(stderr,
+     "oyranos.c:80 oyMessageFunc_() Could not allocate 256 byte of memory.\n");
+    return 1;
+  }
+
+  text[0] = 0;
+
+  va_start( list, format);
+  len = vsnprintf( text, sz, format, list);
+  va_end  ( list );
+
+  if (len >= sz)
+  {
+    text = realloc( text, (len+1)*sizeof(char) );
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list);
+    va_end  ( list );
+  }
+
+
+  text_copy = oyStringAppend_(*string, text, allocateFunc);
+
+  if(string && *string && deallocFunc)
+    deallocFunc(*string);
+
+  *string = text_copy;
+
+  free(text);
+
+  return 0;
+}
+
+
 char**             oyStringSplit     ( const char    * text,
                                        const char      delimiter,
                                        int           * count,
