@@ -1130,7 +1130,7 @@ const char * oyX1GetText             ( const char        * select,
   }
   return 0;
 }
-const char *oyX1_texts[5] = {"name","help","copyright","manufacturer",0};
+const char *oyX1_texts[5] = {"name","copyright","manufacturer","help",0};
 
 /** @instance oyX1_cmm_module
  *  @brief    oyX1 module infos
