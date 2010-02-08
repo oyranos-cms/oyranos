@@ -22,7 +22,7 @@ TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
 TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos))
 LDFLAGS = $(LIBS)
-#DEBUG = -Wall -g -pedantic -O0
+DEBUG = -Wall -g -pedantic -O0
 CFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
 
 CAIRO := $(shell (pkg-config --modversion cairo-pdf))
@@ -64,7 +64,7 @@ $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -lXcolor -lXmu -lXinerama -lXrandr -lXxf86vm \
-	$(TARGET2_FLAGS) $< -o $@
+	$(TARGET2_FLAGS) -DTARGET=\"xcmsevents\" $< -o $@
 
 $(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
 	mkdir -p colour_desktop

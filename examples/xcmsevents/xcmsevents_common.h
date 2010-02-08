@@ -21,6 +21,8 @@ extern "C" {
 }
 #endif
 
+#include <stdint.h> /* size_t */
+
 
 char *   printWindowName             ( Display           * display,
                                        Window              w );
@@ -29,7 +31,12 @@ void     printWindowRegions          ( Display           * display,
                                        int                 always );
 
 typedef struct {
+  int type;
+  intptr_t a_dummy;
+  intptr_t b_dummy;
+  intptr_t c_dummy;
   Display * display;
+  int display_is_owned;
   int screen;
   Window root;
   int nWindows;
@@ -39,11 +46,23 @@ typedef struct {
   Atom aProfile, aTarget, aCM, aRegion, aDesktop;
 } xcmseContext_s;
 xcmseContext_s *
-         xcmseContext_New            ( const char        * display_name );
-int      xcmseStop                   ( xcmseContext_s * c );
-int      xcmseInLoop                 ( xcmseContext_s * c );
+         xcmseContext_New            ( );
+xcmseContext_s *
+         xcmseContext_Create         ( const char        * display_name );
+int      xcmseContext_Setup          ( xcmseContext_s    * c,
+                                       const char        * display_name );
+int      xcmseContext_Stop           ( xcmseContext_s    * c );
+int      xcmseContext_InLoop         ( xcmseContext_s    * c,
+                                       XEvent            * event );
 
-
+enum {
+  oyMSG_TITLE = 400,
+  oyMSG_COPYRIGHT,
+  oyMSG_INFO,
+  oyMSG_SYSTEM,
+  oyMSG_DISPLAY_EVENT,
+  oyMSG_DISPLAY_STATUS
+};
 
 #endif /* XCMSEVENTS_COMMON_H */
 

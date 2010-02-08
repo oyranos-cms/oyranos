@@ -3,10 +3,10 @@
  *  A small X11 colour management event observer.
  *
  *  License: newBSD
- *  Copyright: 2009 - Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Copyright: 2009-2010 - Kai-Uwe Behrmann <ku.b@gmx.de>
  *
  *  c++: ar cru liboyranosedid.a ../../modules/devices/oyranos_edid_parse.o ../../modules/devices/oyranos_monitor.o
- *  c++: prefix=/opt/local; g++ -Wall -g -o qcmsevents xcmsevents.c `PKG_CONFIG_PATH=$prefix/lib/pkgconfig pkg-config --cflags --libs x11 xmu xfixes xinerama xrandr xxf86vm oyranos` -DHAVE_X11 -I$prefix/include -I../.. -L$prefix/lib -lXcolor -L./ -loyranosedid
+ *  c++: prefix=/opt/local; g++ -Wall -g -o qcmsevents xcmsevents.c `PKG_CONFIG_PATH=$prefix/lib/pkgconfig pkg-config --cflags --libs x11 xmu xfixes xinerama xrandr xxf86vm oyranos` -DHAVE_X11 -DTARGET=\"xcmsevents\" -I$prefix/include -I../.. -L$prefix/lib -lXcolor -L./ -loyranosedid
  */
 
 #ifdef __cplusplus
@@ -27,8 +27,9 @@ extern "C" {
 }
 #endif
 
-#include <oyranos_alpha.h> /* use Oyranos to obtain profile names */
+#include "oyranos_alpha.h" /* use Oyranos to obtain profile names */
 #include "oyranos_monitor_internal.h" /* EDID parsing */
+#include "oyranos_helper.h" /* allocators */
 
 #ifdef __cplusplus
 using namespace oyranos;
@@ -36,14 +37,18 @@ extern "C" {
 }
 #endif
 
+#define M(code, context, format, ...) oyMessageFunc_p( code,context, format, \
+                                                       __VA_ARGS__)
+#define DE(format, ...) oyMessageFunc_p( oyMSG_DISPLAY_EVENT, 0, format, \
+                                         __VA_ARGS__)
+#define DS(format, ...) oyMessageFunc_p( oyMSG_DISPLAY_STATUS, 0, format, \
+                                         __VA_ARGS__)
+#define S(format, ...) oyMessageFunc_p( oyMSG_SYSTEM, 0, format, __VA_ARGS__ )
+
 #ifdef STRING_ADD
 #undef STRING_ADD
 #endif
 #define STRING_ADD(t, txt) oyStringAdd_( &t, txt, malloc, free )
-/*void               oyStringAdd_      ( char             ** text,
-                                       const char        * append,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocFunc );*/
 
 static inline XcolorProfile *
          XcolorProfileNext           ( XcolorProfile     * profile );
@@ -120,10 +125,11 @@ void     printWindowRegions          ( Display           * display,
   if(!always && !n)
     return;
 
-          printf("PropertyNotify : %s    vvvvv      %s %d\n",
-               XGetAtomName( display, 
-                             XInternAtom( display,"_NET_COLOR_REGIONS", False)),
-               printWindowName( display, w ), (int)n );
+  DE( "PropertyNotify : %s    vvvvv      %s %d",
+      XGetAtomName( display, 
+                    XInternAtom( display,"_NET_COLOR_REGIONS", False)),
+      printWindowName( display, w ), (int)n );
+
           for(i = 0; i < (int)n; ++i)
           {
             int nRect = 0;
@@ -134,7 +140,7 @@ void     printWindowRegions          ( Display           * display,
 
             if(!regions[i].region)
             {
-              printf("server region id with zero: left %d\n", (int)n-i);
+              DE("server region id with zero: left %d", (int)n-i);
               break;
             }
 
@@ -143,10 +149,10 @@ void     printWindowRegions          ( Display           * display,
             p = oyProfile_FromMD5( md5, 0 );
             name = oyProfile_GetFileName( p, 0 );
 
-            printf("    %d local look up: %s[%x%x%x%x]:\n", i, name?name:"???",
+            DE("    %d local look up: %s[%x%x%x%x]:", i, name?name:"???",
                    md5[0], md5[1], md5[2], md5[3] );
             for(j = 0; j < nRect; ++j)
-            printf("        %dx%d+%d+%d\n",
+            DE("        %dx%d+%d+%d",
                    rect[j].width, rect[j].height, rect[j].x, rect[j].y );
           }
 }
@@ -182,21 +188,21 @@ static inline unsigned long XcolorProfileCount(void *data, unsigned long nBytes)
 
 int myXErrorHandler ( Display * display, XErrorEvent * e)
 {
-  printf( "%s:%d catched a X11 error\n", 
+  DE( "%s:%d catched a X11 error\n", 
           strrchr(__FILE__, '/')?strrchr(__FILE__, '/')+1:__FILE__,__LINE__ );
   return 0;
 }
 
-
 xcmseContext_s *
-         xcmseContext_New            ( const char        * display_name )
+         xcmseContext_New            ( )
 {
-  int error = 0;
   xcmseContext_s * c = (xcmseContext_s*) calloc( sizeof(xcmseContext_s), 1 );
   if(!c)
     return c;
 
+  c->type = 1000;
   c->display = 0;
+  c->display_is_owned = 0;
   c->screen = -1;
   c->root = 0;
   c->nWindows = 0;
@@ -205,14 +211,25 @@ xcmseContext_s *
   c->old_pid = 0;
   //c->aProfile, c->aTarget, c->aCM, c->aRegion, c->aDesktop;
 
-  error = xcmseSetup( c, display_name );
+  return c;
+}
+
+xcmseContext_s *
+         xcmseContext_Create         ( const char        * display_name )
+{
+  int error = 0;
+  xcmseContext_s * c = xcmseContext_New();
+  if(!c)
+    return c;
+
+  error = xcmseContext_Setup( c, display_name );
   if(error)
     c = 0;
 
   return c;
 }
 
-int      xcmseSetup                  ( xcmseContext_s    * c,
+int      xcmseContext_Setup          ( xcmseContext_s    * c,
                                        const char        * display_name )
 {
   /* Open the display and create our window. */
@@ -230,10 +247,14 @@ int      xcmseSetup                  ( xcmseContext_s    * c,
   /*XSetErrorHandler(myXErrorHandler);*/
   XSetErrorHandler( XmuSimpleErrorHandler );
 
-  c->display = XOpenDisplay(NULL);
   if(!c->display)
   {
-    printf( "could not open display %s\n", display_name?display_name:"???" );
+    c->display = XOpenDisplay( display_name );
+    c->display_is_owned = 1;
+  }
+  if(!c->display)
+  {
+    DE( "could not open display %s", display_name?display_name:"???" );
     exit (1);
   }
 
@@ -266,8 +287,8 @@ int      xcmseSetup                  ( xcmseContext_s    * c,
                       0, ~0, False, XA_CARDINAL,
                       &actual,&format, &n, &left, &data );
   if(!data && !n)
-    printf("\nThe extented ICCCM hint _NET_CLIENT_LIST atom is missed\n"
-             "!!! xcmsevents will work limited !!!\n\n");
+    DE( "\nThe extented ICCCM hint _NET_CLIENT_LIST atom is missed\n"
+        "!!! xcmsevents will work limited !!!%s", "\n" );
 
   XGetWindowProperty( c->display, RootWindow(c->display,0),
                       c->aDesktop, 0, ~0, False, XA_CARDINAL,
@@ -277,18 +298,34 @@ int      xcmseSetup                  ( xcmseContext_s    * c,
     c->old_pid = *((pid_t*)data);
 
   /* print some general information */
-  printf( "xcmsevents - observes X11 colour management system events\n"
-          "  (c) 2009-2010 - Kai-Uwe Behrmann  License: newBSD\n" );
-  printf( "atom: \"_NET_COLOR_PROFILES\": %d\n", (int)c->aProfile );
-  printf( "atom: \"_NET_COLOR_TARGET\": %d\n", (int)c->aTarget );
-  printf( "atom: \"_NET_COLOR_MANAGEMENT\": %d\n", (int)c->aCM );
-  printf( "atom: \"_NET_COLOR_REGIONS\": %d\n", (int)c->aRegion );
-  printf( "atom: \"_NET_COLOR_DESKTOP\": %d %d\n", (int)c->aDesktop,
+  M( oyMSG_TITLE, 0,
+     TARGET " - observes X11 colour management system events%s", "");
+  M( oyMSG_COPYRIGHT, 0,
+     "(c) 2009-2010 - Kai-Uwe Behrmann  License: newBSD%s", "" );
+  DS( "atom: \"_NET_COLOR_PROFILES\": %d", (int)c->aProfile );
+  DS( "atom: \"_NET_COLOR_TARGET\": %d", (int)c->aTarget );
+  DS( "atom: \"_NET_COLOR_MANAGEMENT\": %d", (int)c->aCM );
+  DS( "atom: \"_NET_COLOR_REGIONS\": %d", (int)c->aRegion );
+  DS( "atom: \"_NET_COLOR_DESKTOP\": %d %d", (int)c->aDesktop,
                                                    (int)c->old_pid );
-  printf( "root window ID: %d\n", (int)c->root );
-  printf( "running \"oyranos-monitor -l\":\n" );
-  system( "oyranos-monitor -l" );
-  printf( "\n" );
+  DS( "root window ID: %d", (int)c->root );
+  {
+    FILE * fp;
+    size_t size = 256, i = 0;
+    char * txt;
+    S( "running \"oyranos-monitor -l\":%s", "" );
+    fp = popen(  "oyranos-monitor -l", "r" );
+    if( fp )
+    {
+      txt = (char*) oyAllocateFunc_( size + 1 );
+      while( (txt[i] = getc(fp)) != 0 && txt[i] != EOF && i < size-1 )
+        ++i;
+      txt[i] = 0;
+      S( "%s", txt );
+      oyDeAllocateFunc_( txt ); txt = 0;
+    }
+    fclose( fp );
+  }
 
   /* tell about existing regions */
   {
@@ -340,14 +377,18 @@ int      xcmseSetup                  ( xcmseContext_s    * c,
   return 0;
 }
 
-int      xcmseStop                   ( xcmseContext_s * c )
+int      xcmseContext_Stop           ( xcmseContext_s    * c )
 {
-  XDestroyWindow( c->display, c->w );
-  XCloseDisplay( c->display );
+  if(c->display_is_owned)
+  {
+    XDestroyWindow( c->display, c->w );
+    XCloseDisplay( c->display );
+  }
   return 0;
 }
 
-int      xcmseInLoop                 ( xcmseContext_s * c )
+int      xcmseContext_InLoop         ( xcmseContext_s    * c,
+                                       XEvent            * event )
 {
   /* observe events */
   {
@@ -355,6 +396,7 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
     int format;
     unsigned long left, n;
     unsigned char * data;
+    char * actual_name = 0;
 
     XEvent event;
     XNextEvent( c->display, &event);
@@ -368,6 +410,7 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
     } else if( event.type == PropertyNotify )
     {
       int i,j = 0, r;
+      actual_name = XGetAtomName( event.xany.display, event.xproperty.atom );
 
       actual = 0;
       format = 0;
@@ -381,10 +424,8 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
            event.xproperty.atom == c->aCM ||
            event.xproperty.atom == c->aRegion ||
            event.xproperty.atom == c->aDesktop ||
-           strstr( XGetAtomName( event.xany.display, event.xproperty.atom ), 
-                   "_ICC_PROFILE") != 0 ||
-           strstr( XGetAtomName( event.xany.display, event.xproperty.atom ), 
-                   "EDID") != 0)
+           strstr( actual_name, "_ICC_PROFILE") != 0 ||
+           strstr( actual_name, "EDID") != 0)
         r = XGetWindowProperty( c->display, event.xany.window,
                 event.xproperty.atom, 0, ~0, False, XA_CARDINAL,&actual,&format,
                 &n, &left, &data );
@@ -399,15 +440,15 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
                 &n, &left, &data );
           n += left;
           text = (char*)data;
-          printf("PropertyNotify : %s     \"%s\"  %s\n",
-               XGetAtomName( event.xany.display, event.xproperty.atom ),
+          DE("PropertyNotify : %s     \"%s\"  %s",
+               actual_name,
                text, printWindowName( c->display, event.xany.window ) );
 
         } else if( event.xproperty.atom == c->aProfile )
         {
           unsigned long count = XcolorProfileCount(data, n);
-          printf("PropertyNotify : %s   %d         %s\n",
-               XGetAtomName( event.xany.display, event.xproperty.atom ),
+          DE( "PropertyNotify : %s   %d         %s",
+               actual_name,
                (int)count, printWindowName( c->display, event.xany.window ) );
 
         } else if( event.xproperty.atom == c->aCM )
@@ -419,13 +460,13 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
           if(n && data)
           {
             if(*((pid_t*)data) && c->old_pid)
-              printf("!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
+              DE( "!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
                      "Eigther there was a previous crash or your setup can be double colour corrected.", c->old_pid );
             c->old_pid = *((pid_t*)data);
           } else
             c->old_pid = 0;
-          printf("PropertyNotify : %s    %d          %s\n",
-               XGetAtomName( event.xany.display, event.xproperty.atom ),
+          DE( "PropertyNotify : %s    %d          %s",
+               actual_name,
                c->old_pid, printWindowName( c->display, event.xany.window ) );
 
         } else if( event.xproperty.atom == c->aRegion )
@@ -433,14 +474,11 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
           printWindowRegions( event.xany.display, event.xany.window, 1 );
 
         } else if(
-           strstr( XGetAtomName( event.xany.display, event.xproperty.atom ), 
-                   "_ICC_PROFILE") != 0 ||
-           strstr( XGetAtomName( event.xany.display, event.xproperty.atom ),
-                   "EDID") != 0)
+           strstr( actual_name, "_ICC_PROFILE") != 0 ||
+           strstr( actual_name, "EDID") != 0)
         {
           const char * name = 0,
-                     * an = XGetAtomName( event.xany.display,
-                                          event.xproperty.atom );
+                     * an = actual_name;
           char * tmp = 0;
           double colours[9] = {0,0,0,0,0,0,0,0,0};
           oyProfile_s * p = 0;
@@ -449,8 +487,7 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
             an = "_ICC_PROFILE  ";
 
           if(n &&
-             strstr( XGetAtomName( event.xany.display, event.xproperty.atom ),
-                     "_ICC_PROFILE") != 0)
+             strstr( actual_name, "_ICC_PROFILE") != 0)
           {
             p = oyProfile_FromMem( n, data, 0, 0 );
             name = oyProfile_GetFileName( p, 0 );
@@ -462,8 +499,7 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
               name = "????";
           }
           if(n &&
-             strstr( XGetAtomName( event.xany.display, event.xproperty.atom ),
-                     "EDID") != 0)
+             strstr( actual_name, "EDID") != 0)
           {
             char * manufacturer = 0,
                  * model = 0,
@@ -475,14 +511,14 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
             STRING_ADD( tmp, model ); STRING_ADD( tmp, " - " );
             STRING_ADD( tmp, serial ); STRING_ADD( tmp, "\n  " );
           }
-          printf("PropertyNotify : %s    \"%s\"[%d]  %s\n",
+          DE(   "PropertyNotify : %s    \"%s\"[%d]  %s",
                  an, name?name:(tmp?"set":"removed"),(int)n,
                  printWindowName( c->display, event.xany.window ) );
 
           if(tmp)
           {
-            printf("  %s", tmp);
-            printf("  {{%.03f,%.03f}{%.03f,%.03f}{%.03f,%.03f}{%.03f,%.03f}%.03f}\n",
+            DE("  %s", tmp);
+            DE("  {{%.03f,%.03f}{%.03f,%.03f}{%.03f,%.03f}{%.03f,%.03f}%.03f}",
                    colours[0], colours[1], colours[2], colours[3],
                    colours[4], colours[5], colours[6], colours[7], colours[8] );
             free(tmp); tmp = 0;
@@ -540,6 +576,7 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
         c->nWindows = n;
 
       }
+      XFree( actual_name ); actual_name = 0;
 
     } else if( event.type == ClientMessage )
     {
@@ -547,13 +584,15 @@ int      xcmseInLoop                 ( xcmseContext_s * c )
       {
         /* --- report --- */
         unsigned long active[2];
+        actual_name = 
+                  XGetAtomName( event.xany.display, event.xclient.message_type);
 
         active[0] = event.xclient.data.l[0];
         active[1] = event.xclient.data.l[1];
-        printf( "ClientMessage  : %s %ld %ld        %s\n",
-                XGetAtomName( event.xany.display, event.xclient.message_type),
-                active[0], active[1],
+        DE( "ClientMessage  : %s %ld %ld        %s",
+                actual_name, active[0], active[1],
                 printWindowName( c->display, event.xclient.window ) );
+        XFree( actual_name ); actual_name = 0;
       }
     }
   }
