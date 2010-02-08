@@ -95,7 +95,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   if(!text)
   {
     fprintf(stderr,
-     "oyranos.c:80 oyMessageFunc_() Could not allocate 4096 byte of memory.\n");
+     "oyranos.c:80 oyMessageFunc_() Could not allocate 256 byte of memory.\n");
     return 1;
   }
 
@@ -133,8 +133,12 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
          break;
   }
 
-  fprintf( stderr, " %03f: ", DBG_UHR_);
-  fprintf( stderr, "%s[%d] ", type_name, id );
+  /* reduce output for non core messages */
+  if( id > 0 || (oyMSG_ERROR <= code && code <= 399) )
+  {
+    fprintf( stderr, " %03f: ", DBG_UHR_);
+    fprintf( stderr, "%s[%d] ", type_name, id );
+  }
 
   i = 0;
   while(text[i])
