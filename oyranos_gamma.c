@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2005-2009 (C) Kai-Uwe Behrmann
+ *            2005-2010 (C) Kai-Uwe Behrmann
  *
  *  @brief    gamma loader
  *  @internal
@@ -28,6 +28,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
+#include "oyranos_texts.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -361,7 +362,8 @@ int main( int argc , char** argv )
 
     if(list)
     {
-      char * text = 0;
+      char * text = 0,
+           * report = 0;
       uint32_t n = 0, i;
       oyConfig_s * c = 0;
       oyOption_s * o = 0;
@@ -383,14 +385,17 @@ int main( int argc , char** argv )
           printf("------------------------ %d ---------------------------\n",i);
 
           error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, oyAllocFunc );
-          printf("\"%s\" ", text? text:"???");
+          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                              "\"%s\" ", text ? text : "???" );
           error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, oyAllocFunc );
-          printf("%s\n", text? text:"???");
-
+          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                              "%s%s", text ? text : "???",
+                                      i+1 == n ? "" : "\n" );
           if(oy_debug)
           {
-            error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text, oyAllocFunc );
-            printf("%s\n", text?  text:"???");
+            error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text,
+                                     oyAllocFunc );
+            printf( "%s\n", text ? text : "???" );
           }
 
           if(text)
@@ -430,6 +435,9 @@ int main( int argc , char** argv )
 
           oyConfig_Release( &c );
         }
+
+        fprintf( stdout, "%s", report );
+        oyDeAllocFunc( report ); report = 0;
       }
       oyConfigs_Release( &devices );
     }
