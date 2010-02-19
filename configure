@@ -258,6 +258,7 @@ test -n "$INFOECHO" && $INFOECHO "   --sbindir=[\$exec-prefix/sbin]        super
 test -n "$INFOECHO" && $INFOECHO "   --libdir=[\$exec-prefix/lib]          main library installation path"
 test -n "$INFOECHO" && $INFOECHO "   --cmmsubpath=[color/cmms]            module installation path"
 test -n "$INFOECHO" && $INFOECHO "   --includedir=[\$prefix/include]       include file installation"
+test -n "$INFOECHO" && $INFOECHO "                                        automatic appends oyranos/"
 test -n "$INFOECHO" && $INFOECHO "   --datadir=[\$prefix/data]             application data base path"
 test -n "$INFOECHO" && $INFOECHO "   --mandir=[\$datadir/man]              manual installation path"
 test -n "$INFOECHO" && $INFOECHO "   --syscolordir=[\$datadir/color]       Oyranos system color path"
@@ -914,7 +915,7 @@ test -n "$ECHO" && $ECHO "libdir=$libdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "cmmsubpath=$cmmsubpath" >> $CONF_SH
 test -n "$ECHO" && $ECHO "metasubpath=$metasubpath" >> $CONF_SH
-test -n "$ECHO" && $ECHO "includedir=$includedir" >> $CONF_SH
+test -n "$ECHO" && $ECHO "includedir=$includedir/oyranos" >> $CONF_SH
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $CONF_SH
@@ -983,7 +984,7 @@ test -n "$ECHO" && $ECHO "libdir=$libdir" >> $PKGC
 test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $PKGC
 test -n "$ECHO" && $ECHO "cmmsubpath=$cmmsubpath" >> $PKGC
 test -n "$ECHO" && $ECHO "metasubpath=$metasubpath" >> $PKGC
-test -n "$ECHO" && $ECHO "includedir=$includedir" >> $PKGC
+test -n "$ECHO" && $ECHO "includedir=$includedir/oyranos" >> $PKGC
 test -n "$ECHO" && $ECHO "datadir=$datadir" >> $PKGC
 test -n "$ECHO" && $ECHO "mandir=$mandir" >> $PKGC
 test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $PKGC
@@ -1019,7 +1020,7 @@ if [ -n "$ECHO" ]; then
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="cmmsubpath      =       $cmmsubpath"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="includedir      =       $includedir"
+  echo_="includedir      =       $includedir (install: += /oyranos)"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="datadir         =       $datadir"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
