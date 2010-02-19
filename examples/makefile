@@ -17,7 +17,7 @@ FLTK_CFLAGS := $(shell (fltk-config --cflags))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags))
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
-TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
+TARGET2_FLAGS = -std=c99 ../modules/devices/oyranos_monitor.o \
 		../modules/devices/oyranos_edid_parse.o
 TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos))
@@ -102,6 +102,8 @@ clean:
 
 install:	$(TARGET3)
 	mkdir -p $(HOME)/.compiz/plugins
+	mkdir -p $(HOME)/.compiz/metadata
+	mkdir -p $(HOME)/.local/share/icons
 	-install -v $(TARGET3) $(HOME)/.compiz/plugins/libcolour_desktop.so
 	-install -v colour_desktop/colour_desktop.xml $(HOME)/.compiz/metadata/
 	-install -v colour_desktop/plugin-colour_desktop.svg $(HOME)/.local/share/icons/
