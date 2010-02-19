@@ -284,11 +284,11 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
   /* check if we can see other clients */
   XGetWindowProperty( c->display, RootWindow(c->display,0),
                       XInternAtom(c->display, "_NET_CLIENT_LIST", False),
-                      0, ~0, False, XA_CARDINAL,
+                      0, ~0, False, XA_WINDOW,
                       &actual,&format, &n, &left, &data );
-  if(!data && !n)
-    DE( "\nThe extented ICCCM hint _NET_CLIENT_LIST atom is missed\n"
-        "!!! xcmsevents will work limited !!!%s", "\n" );
+  if(!data || !n)
+    DE( "\nThe extented ICCCM hint _NET_CLIENT_LIST atom is %s\n"
+        "!!! xcmsevents will work limited !!!\n", n ? "missed" : "zero" );
 
   XGetWindowProperty( c->display, RootWindow(c->display,0),
                       c->aDesktop, 0, ~0, False, XA_CARDINAL,
@@ -410,7 +410,14 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
     } else if( event.type == PropertyNotify )
     {
       int i,j = 0, r;
-      actual_name = XGetAtomName( event.xany.display, event.xproperty.atom );
+      Atom atom = event.xproperty.atom;
+      Display * display = event.xany.display;
+
+      if(display != c->display)
+        DE( "PropertyNotify : event and context displays are different: %s",
+               actual_name );
+        
+      actual_name = XGetAtomName( display, atom );
 
       actual = 0;
       format = 0;
