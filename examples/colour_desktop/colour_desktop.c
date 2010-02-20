@@ -54,7 +54,7 @@
 #endif
 
 /* Uncomment the following line if you want to enable debugging output */
-/*#define PLUGIN_DEBUG 1*/
+#define PLUGIN_DEBUG 1
 
 /**
  * The 3D lookup texture has 64 points in each dimension, using 16 bit integers.
@@ -201,10 +201,12 @@ static void damageWindow(CompWindow *w, void *closure);
 
 static void *compObjectGetPrivate(CompObject *o)
 {
+  int *privateIndex = 0;
+  //TODO
   if (o == NULL)
     return &corePrivateIndex;
 
-  int *privateIndex = compObjectGetPrivate(o->parent);
+  privateIndex = compObjectGetPrivate(o->parent);
   if (privateIndex == NULL)
     return NULL;
 
@@ -1137,6 +1139,13 @@ static CompObject *getParent(CompObject *object)
 
 static CompBool pluginInitCore(CompPlugin *plugin, CompObject *object, void *privateData)
 {
+#if defined(PLUGIN_DEBUG_)
+  int dbg_switch = 1;
+
+  while(dbg_switch)
+    sleep(1);
+#endif
+
   return TRUE;
 }
 
