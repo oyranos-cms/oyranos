@@ -902,6 +902,20 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       result = XChangeProperty( display, w, atom, XA_CARDINAL,
                        8, PropModeReplace, moni_profile, (int)size );
 
+      /* claim to be compatible with 0.3 
+       * http://www.freedesktop.org/wiki/OpenIcc/ICC_Profiles_in_X_Specification_0.3
+       */
+      atom = XInternAtom( display, "_ICC_PROFILE_IN_X_VERSION", False );
+      if(atom)
+        result = XChangeProperty( display, w, atom, XA_CARDINAL,
+                                  8, PropModeReplace,
+                                  0*100 + 3*1, 1 );
+      atom = XInternAtom( display, "_ICC_PROFILE_IN_X_VERSION_STRING", False );
+      if(atom)
+        result = XChangeProperty( display, w, atom, XA_STRING,
+                                  8, PropModeReplace,
+                                  "0.3", 1 );
+
       if(moni_profile)
         oyFree_m_( moni_profile )
       oyFree_m_( atom_name )
