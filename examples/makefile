@@ -17,13 +17,14 @@ FLTK_CFLAGS := $(shell (fltk-config --cflags))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags))
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
-TARGET2_FLAGS = -std=c99 ../modules/devices/oyranos_monitor.o \
+TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
 		../modules/devices/oyranos_edid_parse.o
 TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
-CFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
+CXXFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
+CFLAGS = -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
 
 CAIRO := $(shell (pkg-config --modversion cairo-pdf))
 ifndef CAIRO
@@ -53,7 +54,7 @@ all:
 $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	mkdir -p image_display
 	echo Compiling $@ ...
-	-$(CXX) -DTARGET=\"$(TARGET)\" $(CFLAGS) $(FLTK_CFLAGS) $(X11) \
+	-$(CXX) -DTARGET=\"$(TARGET)\" $(CXXFLAGS) $(FLTK_CFLAGS) $(X11) \
 	$(LDFLAGS) $(OY_LDFLAGS) $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 \
 	$< -o $@ ../fl_i18n/libfl_i18n.a
@@ -92,8 +93,8 @@ $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
 
-../oyranos_logo.ppm:	../oyranos_logo.png
-	cat ../oyranos_logo.png | pngtopnm > $@
+../oyranos_logo.ppm:	$(SRCDIR)../oyranos_logo.png
+	cat $(SRCDIR)../oyranos_logo.png | pngtopnm > $@
 
 clean:
 	echo cleaning ...

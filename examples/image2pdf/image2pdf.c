@@ -21,7 +21,11 @@
  *  Compile: cc -pedantic -Wall -g `oyranos-config --cflags` `oyranos-config --ld_x_flags` `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --libs lcms` image2pdf.c -o image2pdf
  */
 
-#include <stdio.h>
+# include <stddef.h>
+
+#define __USE_POSIX2 1
+#include <stdio.h>                /* popen() */
+FILE *popen ( const char *__command, const char *__modes);
 #include <math.h>
 #include <icc34.h>
 #include <lcms.h>                 /* littleCMS – typical CMM on Linux */
@@ -147,7 +151,7 @@ int main (int argc, char ** argv)
     data = oyGetProfileBlock( profile_name, &size, malloc );
   }
   monitor = cmsOpenProfileFromMem( data, size );
-  printf( "monitor:  %d\n", size );
+  printf( "monitor:  %d\n", (int)size );
   free( data ); size = 0;
 
   /*  The editing profile can be obtained by Oyranos.
@@ -201,7 +205,7 @@ int main (int argc, char ** argv)
 
     /* obtain manufacturer and camera model from dcraw */
     sprintf (command, "PATH=.:$PATH ; dcraw -i '%s'\n", filename );
-    fp = popen( command, "r" );
+    fp = popen( command, "rb" );
     fscanf( fp, "%s is a ", info[0]);
     fscanf( fp, "%s ", info[0] );
     fgets( info[1], 2048, fp );
@@ -287,7 +291,7 @@ int main (int argc, char ** argv)
     sprintf (command, "PATH=.:$PATH ; dcraw -w -c -h -4 -v %s '%s'\n",
                       dcraw_icc_space, filename );
 
-    fp = popen (command, "r");
+    fp = popen (command, "rb");
     fscanf (fp, "P6 %d %d %d%c", &w, &h, &depth, &c);
 
     /* create a Cairo image */

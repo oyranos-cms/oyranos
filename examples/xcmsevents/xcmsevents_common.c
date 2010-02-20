@@ -16,7 +16,8 @@ extern "C" {
 #include <X11/Xmu/WinUtil.h>
 #include "Xcolor.h"
 
-#include <stdio.h>
+#define __USE_POSIX2 1
+#include <stdio.h>  /* popen() */
 #include <string.h>
 #include <stdlib.h>
 #include <signal.h> /* signal */
