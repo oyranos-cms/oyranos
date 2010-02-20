@@ -450,6 +450,8 @@ int main( int argc , char** argv )
         oyDeviceSetProfile( device, monitor_profile );
       if(monitor_profile || erase)
         oyDeviceUnset( device );
+      if(erase)
+        oyConfig_EraseFromDB( device );
 
       oyConfig_Release( &device );
     }
