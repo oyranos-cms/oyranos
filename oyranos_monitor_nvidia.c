@@ -429,7 +429,6 @@ oyGetNvidiaEdid( Display* display, int screen, size_t **size)
       len;
   int major, minor;
   unsigned char **data = (unsigned char**) calloc(sizeof(unsigned char*), 24);
-  int geometry[4];
 
   /*/for(i = 0; i < 24; ++i) data[i] = NULL;*/
 

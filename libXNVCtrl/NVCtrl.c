@@ -834,7 +834,7 @@ Bool XNVCTRLQueryDDCCIDisplayControllerType (
     exists = rep.flags;
     if(exists) {
         *controller_type=rep.controller_type;
-        *controller_manufacturer=ptr;
+        *controller_manufacturer= (unsigned char*)ptr;
     }
     UnlockDisplay (dpy);
     SyncHandle ();
@@ -1009,7 +1009,7 @@ Bool XNVCTRLQueryBinaryData (
     length = rep.length;
     numbytes = rep.n;
     slop = numbytes & 3;
-    *ptr = (char *) Xmalloc(numbytes);
+    *ptr = (unsigned char *) Xmalloc(numbytes);
     if (! *ptr) {
         _XEatData(dpy, length);
         UnlockDisplay (dpy);

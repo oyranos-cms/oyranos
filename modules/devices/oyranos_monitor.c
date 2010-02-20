@@ -907,14 +907,17 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
        */
       atom = XInternAtom( display, "_ICC_PROFILE_IN_X_VERSION", False );
       if(atom)
+      {
+        const unsigned char value = 0*100 + 3*1;
         result = XChangeProperty( display, w, atom, XA_CARDINAL,
                                   8, PropModeReplace,
-                                  0*100 + 3*1, 1 );
+                                  &value, 1 );
+      }
       atom = XInternAtom( display, "_ICC_PROFILE_IN_X_VERSION_STRING", False );
       if(atom)
         result = XChangeProperty( display, w, atom, XA_STRING,
                                   8, PropModeReplace,
-                                  "0.3", 1 );
+                                  (const unsigned char*)"0.3", 4 );
 
       if(moni_profile)
         oyFree_m_( moni_profile )
