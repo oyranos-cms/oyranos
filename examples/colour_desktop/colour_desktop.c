@@ -54,7 +54,7 @@
 #endif
 
 /* Uncomment the following line if you want to enable debugging output */
-#define PLUGIN_DEBUG 1
+//#define PLUGIN_DEBUG 1
 
 /**
  * The 3D lookup texture has 64 points in each dimension, using 16 bit integers.
@@ -66,7 +66,7 @@
 
 
 #define DBG_STRING "\n  %s:%d %s() %.02f "
-#define DBG_ARGS __FILE__,__LINE__,__func__,(double)clock()/CLOCKS_PER_SEC
+#define DBG_ARGS (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__,(double)clock()/CLOCKS_PER_SEC
 #if defined(PLUGIN_DEBUG) || defined(DEBUG)
 #define START_CLOCK(text) printf( DBG_STRING text " - ", DBG_ARGS );
 #define END_CLOCK         printf("%.02f\n", (double)clock()/CLOCKS_PER_SEC );
@@ -361,7 +361,7 @@ static void *fetchProperty(Display *dpy, Window w, Atom prop, Atom type, unsigne
 
   int result = XGetWindowProperty(dpy, w, prop, 0, ~0, delete, type, &actual, &format, n, &left, &data);
 #if defined(PLUGIN_DEBUG)
-  printf( "%s:%d %s delete: %d %s %lu\n", __FILE__,__LINE__,
+  printf( DBG_STRING "%s delete: %d %s %lu\n", DBG_ARGS,
                 XGetAtomName( dpy, prop ), delete,
                 (result == Success) ? "fine" : "err", *n );
 #endif
@@ -733,7 +733,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
         event->xproperty.atom == pd->netColorRegions ||
         event->xproperty.atom == pd->netColorTarget ||
         event->xproperty.atom == pd->netColorDesktop)
-      printf( "%s:%d PropertyNotify: %s\n", __FILE__,__LINE__,
+      printf( DBG_STRING "PropertyNotify: %s\n", DBG_ARGS,
                XGetAtomName( event->xany.display, event->xproperty.atom ) );
 #endif
     if (event->xproperty.atom == pd->netColorRegions) {
@@ -792,7 +792,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
     if (event->xclient.message_type == pd->netColorManagement)
     {
 #if defined(PLUGIN_DEBUG)
-      printf( "%s:%d ClientMessage: %s\n", __FILE__,__LINE__,
+      printf( DBG_STRING "ClientMessage: %s\n", DBG_ARGS,
                XGetAtomName( event->xany.display, event->xclient.message_type) );
 #endif
       CompWindow *w = findWindowAtDisplay (d, event->xclient.window);
@@ -807,7 +807,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
       XRRNotifyEvent *rrn = (XRRNotifyEvent *) event;
       CompScreen *s = findScreenAtDisplay(d, rrn->window);
 #if defined(PLUGIN_DEBUG)
-      printf( "%s:%d XRRNotifyEvent\n", __FILE__,__LINE__ );
+      printf( DBG_STRING "XRRNotifyEvent\n", DBG_ARGS );
 #endif
       updateOutputConfiguration(s, TRUE);
     }
