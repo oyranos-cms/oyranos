@@ -732,7 +732,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
     if (event->xproperty.atom == pd->netColorProfiles ||
         event->xproperty.atom == pd->netColorRegions ||
         event->xproperty.atom == pd->netColorTarget ||
-        event->xproperty.atom == pd->netColorDesktop);
+        event->xproperty.atom == pd->netColorDesktop)
       printf( "%s:%d PropertyNotify: %s\n", __FILE__,__LINE__,
                XGetAtomName( event->xany.display, event->xproperty.atom ) );
 #endif
