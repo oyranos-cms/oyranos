@@ -88,7 +88,7 @@ fi
   fi
 
 if [ "$echo_cflags" = "yes" ]; then
-  echo "-I$includedir/oyranos"
+  echo "-I$includedir"
 fi
 
 if [ "$echo_ldflags" = "yes" ]; then
