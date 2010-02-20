@@ -212,7 +212,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
     {
       char * manufacturer=0, * mnft=0, * model=0, * serial=0, * vendor = 0,
            * host=0, * display_geometry=0, * system_port=0;
-      double colours[9];
+      double colours[9] = {0,0,0,0,0,0,0,0,0};
       oyBlob_s * edid = 0;
       uint32_t week=0, year=0, mnft_id=0, model_id=0;
       char num[16];
@@ -268,30 +268,47 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
         {
           int i;
           char * save_locale = 0;
-          for(i = 0; i < 9; ++i)
-            error = oyOptions_SetFromDouble( &(*device)->data,
+
+          if(colours[0] != 0.0 && colours[1] != 0.0 && colours[2] != 0.0 &&
+             colours[3] != 0.0 && colours[4] != 0.0 && colours[5] != 0.0 && 
+             colours[6] != 0.0 && colours[7] != 0.0 && colours[8] != 0.0 )
+          {
+            for(i = 0; i < 9; ++i)
+              error = oyOptions_SetFromDouble( &(*device)->data,
                        OYX1_MONITOR_REGISTRATION OY_SLASH "colour_matrix."
                        "from_edid."
                       "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                              colours[i], i, OY_CREATE_NEW );
+          }
+          else
+          {
+            message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                     "  No EDID matrix found; device_name: \"%s\"",OY_DBG_ARGS_,
+                     oyNoEmptyString_m_( device_name ) );
+            error = 1;
+          }
+
           text = oyAllocateFunc_(1024);
 
-          /* sensible printing */
-          save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
-                                       oyAllocateFunc_ );
-          setlocale( LC_NUMERIC, "C" );
-          sprintf( text, "%g,%g," "%g,%g," "%g,%g," "%g,%g,%g",
-                   colours[0], colours[1], colours[2], colours[3],
-                   colours[4], colours[5], colours[6], colours[7], colours[8] );
-          setlocale(LC_NUMERIC, save_locale);
-          if(save_locale)
-            oyFree_m_( save_locale );
+          if(!error && text)
+          {
+            /* sensible printing */
+            save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
+                                         oyAllocateFunc_ );
+            setlocale( LC_NUMERIC, "C" );
+            sprintf( text, "%g,%g," "%g,%g," "%g,%g," "%g,%g,%g",
+                     colours[0], colours[1], colours[2], colours[3],
+                     colours[4], colours[5], colours[6], colours[7],colours[8]);
+            setlocale(LC_NUMERIC, save_locale);
+            if(save_locale)
+              oyFree_m_( save_locale );
 
-          error = oyOptions_SetFromText( &(*device)->backend_core,
+            error = oyOptions_SetFromText( &(*device)->backend_core,
                                          OYX1_MONITOR_REGISTRATION OY_SLASH
                                          "colour_matrix_text_from_edid_"
                       "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                          text, OY_CREATE_NEW );
+          }
           oyDeAllocateFunc_( text ); text = 0;
         }
 
@@ -657,20 +674,42 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
             if(prof)
             {
-              STRING_ADD( text, oyConfig_FindString( device, "model", 0 ) );
+              const char * t = 0;
+              t = oyConfig_FindString( device, "model", 0 );
+              if(!t)
+                message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                "Could not obtain \"manufacturer\" from monitor device for %s",
+                     OY_DBG_ARGS_, device_name );
+              else
+                STRING_ADD( text, oyConfig_FindString( device, "model", 0 ) );
               STRING_ADD( text, "_edid" );
               error = oyProfile_AddTagText( prof,
                                             icSigProfileDescriptionTag, text);
               oyDeAllocateFunc_( text ); text = 0;
-              error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag,
-                               oyConfig_FindString( device, "manufacturer", 0));
-              error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag,
-                               oyConfig_FindString( device, "model", 0 ) );
+              t = oyConfig_FindString( device, "manufacturer", 0);
+              if(!t)
+                message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                "Could not obtain \"manufacturer\" from monitor device for %s",
+                     OY_DBG_ARGS_, device_name );
+              else
+                error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t);
+              t = oyConfig_FindString( device, "model", 0 );
+              if(!t)
+                message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                     "Could not obtain \"model\" from monitor device for %s",
+                     OY_DBG_ARGS_, device_name );
+              else
+                error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
               data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_ );
               header = (icHeader*) data;
               o_tmp = oyConfig_Find( device, "mnft" );
-              sprintf( (char*)&header->manufacturer, "%s",
-                       oyConfig_FindString( device, "mnft", 0 ) );
+              t = oyConfig_FindString( device, "mnft", 0 );
+              if(!t)
+                message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                     "Could not obtain \"mnft\" from monitor device for %s",
+                     OY_DBG_ARGS_, device_name );
+              else
+                sprintf( (char*)&header->manufacturer, "%s", t );
             }
             oyOption_Release( &o_tmp );
             oyProfile_Release( &prof );

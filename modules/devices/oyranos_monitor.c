@@ -921,7 +921,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
         if(actual_format_return != XA_CARDINAL ||
            nitems_return != (unsigned int)1)
         {
-          unsigned char prop = prop_return[0];
+          unsigned char prop = prop_return ? prop_return[0] : 0;
           if(prop != value)
           result = XChangeProperty( display, w, atom, XA_CARDINAL,
                                     8, PropModeReplace,
