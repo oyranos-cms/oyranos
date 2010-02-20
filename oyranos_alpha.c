@@ -7425,8 +7425,8 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
         if(oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
           n = oyStructList_Count( oy_struct_list );
       } else
-        WARNc2_S( "missed \"oy_struct\" member of \"%s\"", obj->registration,
-                 oyObject_GetId(obj->oy_) );
+        WARNc2_S( "missed \"oy_struct\" member of \"%s\" [%d]",
+                  obj->registration, oyObject_GetId(obj->oy_) );
     }
 
     for(i = 0; i < n; ++i)
@@ -7486,7 +7486,12 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     erg = oyStringCopy_( text, allocateFunc );
   
     oyFree_m_( tmp );
-    oyFree_m_( text );
+    if(!text)
+    {
+      WARNc2_S( "missed value in \"%s\" [%d]", obj->registration,
+                oyObject_GetId(obj->oy_) );
+    } else
+      oyFree_m_( text );
   }
   setlocale(LC_NUMERIC, save_locale);
   oyFree_m_( save_locale );
