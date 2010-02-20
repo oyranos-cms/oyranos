@@ -289,7 +289,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
           error = oyOptions_SetFromText( &(*device)->backend_core,
                                          OYX1_MONITOR_REGISTRATION OY_SLASH
-                                         "colour_matrix_text.from_edid."
+                                         "colour_matrix_text_from_edid_"
                       "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                          text, OY_CREATE_NEW );
           oyDeAllocateFunc_( text ); text = 0;
