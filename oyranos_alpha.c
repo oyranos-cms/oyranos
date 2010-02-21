@@ -10805,7 +10805,9 @@ OYAPI int  OYEXPORT
     {
       o = oyOptions_Get( config->db, 0 );
       i = 0;
-      text = o->registration;
+      text = 0;
+      if(o)
+        text = o->registration;
       if(text)
         while( (text = oyStrchr_(++text, OY_SLASH_C)) != 0)
           ++i;
