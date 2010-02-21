@@ -904,7 +904,7 @@ distclean: clean
 	-$(RM) Makefile
 	-$(RM) fl_i18n/Makefile
 #ifdef LIB_XNVCTRL
-	-$(RM) libXNVCtrl/Makefile libXNVCtrl/libXNVCtrl.a \
+	-$(RM) libXNVCtrl/Makefile \
 		libXNVCtrl/NVCtrl.o libXNVCtrl.a
 #endif
 	-$(RM) default_profiles/base/Makefile
@@ -941,6 +941,7 @@ clean:
 #ifdef LIB_XNVCTRL
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
 #endif
+	-$(RM) libXNVCtrl/libXNVCtrl.a
 	-cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
 	-cd examples && $(MAKE) clean
 	echo ... $@ done
