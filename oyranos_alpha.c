@@ -10849,9 +10849,10 @@ OYAPI int  OYEXPORT
         text = oyStrrchr_(tmp, OY_SLASH_C);
         text[0] = 0;
         text = tmp;
-        
       }
-    } else
+
+    }
+    else
       text = config->registration;
 
     error = oyEraseKey_( text );
@@ -10914,10 +10915,22 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       rank_map = pattern->rank_map;
 
     domain_n = oyOptions_Count( device->backend_core );
+    if(domain_n)
+      dopts = device->backend_core;
+    else
+    {
+      domain_n = oyOptions_Count( device->db );
+      if(domain_n)
+        /* fall back for pure DB contructed oyConfig_s */
+        dopts = device->db;
+      else
+        WARNc1_S("No key/values pairs found in %s", device->registration);
+    }
+
     pattern_n = oyOptions_Count( pattern->db );
     for(i = 0; i < domain_n; ++i)
     {
-      d = oyOptions_Get( device->backend_core, i );
+      d = oyOptions_Get( dopts, i );
       d_opt = oyFilterRegistrationToText( d->registration, oyFILTER_REG_MAX, 0);
       d_val = oyOption_GetValueText( d, oyAllocateFunc_ );
       has_opt = 0;
@@ -10925,7 +10938,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       /* check for double occurences */
       for(l = 0; l < i; ++l)
       {
-        check = oyOptions_Get( device->backend_core, l );
+        check = oyOptions_Get( dopts, l );
         check_opt = oyFilterRegistrationToText( check->registration,
                                                 oyFILTER_REG_MAX, 0);
         if(oyStrcmp_(d_opt, check_opt) == 0)
