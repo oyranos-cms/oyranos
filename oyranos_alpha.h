@@ -1214,6 +1214,11 @@ OYAPI oyConfig_s * OYEXPORT
                                        int                 pos );
 OYAPI int  OYEXPORT
                  oyConfigs_Count     ( oyConfigs_s       * list );
+OYAPI int  OYEXPORT
+                 oyConfigs_SelectSimiliars (
+                                       oyConfigs_s       * list,
+                                       const char        * pattern[][2],
+                                       oyConfigs_s      ** filtered );
 
 
 
