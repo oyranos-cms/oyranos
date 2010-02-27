@@ -8149,6 +8149,26 @@ int            oyOption_SetRegistration (
   return error;
 }
 
+/** Function oyOption_GetRegistration
+ *  @memberof oyOption_s
+ *  @brief   get the registration
+ *
+ *  @param[in]     option              the option
+ *  @return                            registration
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/02/26 (Oyranos: 0.1.10)
+ *  @date    2010/02/26
+ */
+const char *   oyOption_GetRegistration (
+                                       oyOption_s        * option )
+{
+  oyOption_s * s = option;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
+
+  return s->registration;
+}
 
 
 
