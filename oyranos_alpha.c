@@ -10871,8 +10871,9 @@ OYAPI int  OYEXPORT
  *  @brief   check for matching to a given pattern
  *  @memberof oyConfig_s
  *
- *  @param[in]     module_device      the to be checked configuration from
- *                                     oyConfigs_FromPattern_f
+ *  @param[in]     module_device       the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f;
+ *                                     Additional allowed are DB configs.
  *  @param[in]     db_pattern          the to be compared configuration from
  *                                     elsewhere
  *  @param[out]    rank_value          the number of matches between config and
@@ -11877,7 +11878,7 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/23 (Oyranos: 0.1.10)
- *  @date    2009/02/10
+ *  @date    2010/02/25
  */
 OYAPI int OYEXPORT
                  oyConfigs_FromDB    ( const char        * registration,
@@ -11894,6 +11895,7 @@ OYAPI int OYEXPORT
          * d_rank_list = 0;
   int error = !registration;
   int i, j, k, n = 0, k_n = 0;
+  oyCMMapi8_s * cmm_api8 = 0;
 
   /** 0. setup Elektra */
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
@@ -11904,6 +11906,10 @@ OYAPI int OYEXPORT
     error = oyConfigDomainList( registration, &texts, &count, &d_rank_list, 0 );
     if(count)
       s = oyConfigs_New( 0 );
+
+    if(error <= 0 && count && texts)
+      cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0, texts[0],
+                                                     oyOBJECT_CMM_API8_S );
 
     for(i = 0; i < count; ++i)
     {
@@ -11921,7 +11927,7 @@ OYAPI int OYEXPORT
 
         for(k = 0; k < k_n; ++k)
         {
-          /** 4. create a oyOption_s from a Elektra DB key/value pair */
+          /** 4. create a oyOption_s for each Elektra DB key/value pair */
           if(error <= 0)
             o = oyOption_FromDB( config_key_names[k], object );
           error = !o;
@@ -11939,6 +11945,11 @@ OYAPI int OYEXPORT
         /* add information about the data's origin */
         oyConfig_AddDBData( config, "key_set_name", key_set_names[j],
                             OY_CREATE_NEW );
+
+        /* add a rank map to allow for comparisions */
+        if(cmm_api8)
+          config->rank_map = oyRankMapCopy( cmm_api8->rank_map,
+                                            config->oy_->allocateFunc_ );
 
         oyConfigs_MoveIn( s, &config, -1 );
       }
@@ -13611,10 +13622,10 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 
       equal = 0;
 
-      j_n = oyConfig_Count( device );
+      j_n = oyOptions_Count( device->backend_core );
       for(j = 0; j < j_n; ++j)
       {
-        od = oyConfig_Get( device, j );
+        od = oyOptions_Get( device->backend_core, j );
         d_opt = oyFilterRegistrationToText( od->registration,
                                             oyFILTER_REG_MAX, 0 );
         d_val = oyConfig_FindString( device, d_opt, 0 );
@@ -13626,6 +13637,9 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
         if( d_val && o_val &&
             oyStrcmp_( d_val, o_val ) == 0)
           ++equal;
+        else
+          if(oyStrcmp_( d_opt, "profile_name") == 0)
+            ++equal;
 
         oyOption_Release( &od );
         oyFree_m_( d_opt );
@@ -13652,6 +13666,9 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   /** 5.2 save the configuration to DB (Elektra) */
   if(error <= 0)
     error = oyConfig_SaveToDB( device );
+  /** 5.3 reload the DB part */
+  if(error <= 0)
+    error = oyConfig_GetDB( device, 0 );
 
   cleanup:
   oyConfig_Release( &device_tmp );
