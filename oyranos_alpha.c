@@ -818,9 +818,6 @@ OYAPI oyObserver_s * OYEXPORT
 {
   oyObserver_s * s = obj;
 
-  if(!obj)
-    return 0;
-
   oyCheckType__m( oyOBJECT_OBSERVER_S, return 0 )
 
   s = oyObserver_Copy_( obj, object );
@@ -1605,7 +1602,6 @@ oyCallback_s * oyCallback_Copy_
 {
   oyCallback_s * s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
 
   if(!obj || !object)
     return s;
@@ -8127,7 +8123,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
 
 /** Function oyOption_SetRegistration
  *  @memberof oyOption_s
- *  @brief   get the registration
+ *  @brief   set the registration
  *
  *  @param[in]     option              the option
  *  @param[in]     registration        the option's registration and key name
@@ -10514,6 +10510,9 @@ OYAPI int  OYEXPORT
   int rank = 0, max_rank = 0, i, n;
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0, * max_config = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
@@ -10707,6 +10706,9 @@ OYAPI int  OYEXPORT
 {
   int error = !config || !key;
   char * tmp = 0;
+  oyConfig_s * s = config;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
@@ -10746,6 +10748,9 @@ OYAPI int  OYEXPORT
                oyConfig_ClearDBData    ( oyConfig_s        * config )
 {
   int error = !config;
+  oyConfig_s * s = config;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
@@ -10772,6 +10777,9 @@ OYAPI int  OYEXPORT
 {
   int error = !config;
   oyOptions_s * opts = 0;
+  oyConfig_s * s = config;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   DBG_PROG_START
 
@@ -10809,6 +10817,9 @@ OYAPI int  OYEXPORT
   int i;
   char * text = 0,
        * tmp = 0;
+  oyConfig_s * s = config;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
@@ -10870,7 +10881,7 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/26 (Oyranos: 0.1.10)
- *  @date    2009/05/24
+ *  @date    2010/02/25
  */
 int            oyConfig_Compare      ( oyConfig_s        * module_device,
                                        oyConfig_s        * db_pattern,
@@ -10884,12 +10895,16 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
   oyOption_s * d = 0,
              * p = 0,
              * check = 0;
+  oyOptions_s * dopts = 0; /* device options */
   char * d_opt = 0, * d_val = 0,
        * p_opt = 0, * p_val = 0,
        * check_opt = 0, * check_val = 0;
   oyConfig_s * pattern = db_pattern,
              * device = module_device;
   oyRankPad  * rank_map = 0;
+  oyConfig_s * s = module_device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
@@ -11031,6 +11046,9 @@ OYAPI int  OYEXPORT
            max_rank = 0;
   uint32_t apis_n = 0;
   oyCMMapi8_s * cmm_api8 = 0;
+  oyConfig_s * s = config;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   oyExportStart_(EXPORT_CHECK_NO);
 
@@ -11093,6 +11111,10 @@ OYAPI const char * OYEXPORT
                                        const char        * value )
 {
   const char * text = 0;
+  oyConfig_s * s = config;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
 
   text = oyOptions_FindString( config->data, key, value );
   if(!text)
@@ -11122,9 +11144,9 @@ OYAPI oyOption_s * OYEXPORT
                                        const char        * key )
 {
   oyOption_s * o = 0;
+  oyConfig_s * s = config;
 
-  if(!config)
-    return 0;
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   o = oyOptions_Find( config->data, key );
   if(!o)
@@ -11155,9 +11177,9 @@ OYAPI int  OYEXPORT
 {
   oyOption_s * o = 0;
   int has_option = 0;
+  oyConfig_s * s = config;
 
-  if(!config)
-    return 0;
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   o = oyOptions_Find( config->data, key );
   if(!o)
@@ -11190,6 +11212,9 @@ OYAPI int  OYEXPORT
   int error = !config;
   int n = 0;
   oyOptions_s * opts = 0;
+  oyConfig_s * s = config;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
@@ -11224,6 +11249,9 @@ OYAPI oyOption_s * OYEXPORT
   int error = !config;
   oyOption_s * o = 0;
   oyOptions_s * opts = 0;
+  oyConfig_s * s = config;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
@@ -11715,8 +11743,8 @@ OYAPI int  OYEXPORT
  *  @date    2009/01/19
  */
 OYAPI int  OYEXPORT
-                 oyConfigs_MoveIn    ( oyConfigs_s   * list,
-                                       oyConfig_s   ** obj,
+                 oyConfigs_MoveIn    ( oyConfigs_s       * list,
+                                       oyConfig_s       ** obj,
                                        int                 pos )
 {
   oyConfigs_s * s = list;
@@ -11786,7 +11814,7 @@ OYAPI int  OYEXPORT
  *  @date    2009/01/19
  */
 OYAPI oyConfig_s * OYEXPORT
-                 oyConfigs_Get       ( oyConfigs_s   * list,
+                 oyConfigs_Get       ( oyConfigs_s       * list,
                                        int                 pos )
 {       
   oyConfigs_s * s = list;
