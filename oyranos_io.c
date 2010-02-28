@@ -176,6 +176,7 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
     r = oyMakeDir_( path );
   }
 
+  if(!r)
   {
     fp = fopen(full_name, "wb");
     DBG_PROG2_S("fp = %d filename = %s", (int)(intptr_t)fp, filename)
@@ -188,13 +189,15 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
         r = fputc ( block[pt++] , fp);
       } while (--size);
 #else
-      written_n = fwrite( mem, size, 1, fp );
+      written_n = fwrite( mem, 1, size, fp );
       if(written_n != size)
-        r = 1;
+        r = errno;
 #endif
     } else
-    {
       r = errno;
+
+    if(r)
+    {
       switch (errno)
       {
         case EACCES:       WARNc1_S("Permission denied: %s", filename); break;
