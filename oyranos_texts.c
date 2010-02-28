@@ -1849,23 +1849,29 @@ oyPolicyNameGet_()
   return name;
 }
 
-int         oyPolicySet_               (const char    * policy_file,
-                                        const char    * full_name )
+/** @internal
+ *  @func    oyPolicyFileNameGet_
+ *  @brief   resolve the file name of a policy
+ *
+ *  @param[in]     policy_name         the selected policy
+ *  @param[out]    full_name           the full file name of policy_name
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/02/28 (Oyranos: 0.1.10)
+ *  @date    2010/02/28
+ */
+int        oyPolicyFileNameGet_      ( const char        * policy_name,
+                                       char             ** full_name,
+                                       oyAlloc_f           allocateFunc )
 {
-  int err = 0;
-  oyChar  * file_name = NULL;
-  oyChar  * xml = NULL;
+  char  * file_name = NULL;
+  int error = !full_name || !allocateFunc || !policy_name;
 
   DBG_PROG_START
 
-  oyAllocString_m_( file_name, MAX_PATH, oyAllocateFunc_, return 1 );
-  if(full_name)
-  {
-    if( full_name[0] )
-      oySnprintf1_( file_name, MAX_PATH, "%s", full_name );
-  }
-
-  if( !file_name[0] )
+  if(!error)
   {
     int count = 0, i;
     oyChar ** policy_list = NULL;
@@ -1874,23 +1880,48 @@ int         oyPolicySet_               (const char    * policy_file,
 
     for( i = 0; i < count; ++i )
     {
-      if( oyStrstr_( policy_list[i], policy_file ) != 0 ||
-          ( oyStrlen_( policy_file ) >= 3 &&
-            oyStrstr_( policy_list[i], &policy_file[1] ) != 0 ) )
+      if( oyStrstr_( policy_list[i], policy_name ) != 0 ||
+          ( oyStrlen_( policy_name ) >= 3 &&
+            oyStrstr_( policy_list[i], &policy_name[1] ) != 0 ) )
       {
-        if( file_name[0] )
+        if( file_name )
         {
           WARNc2_S( "ambiguous policy %s selection from policy identifier %s",
-                   policy_list[i], policy_file );
+                   policy_list[i], policy_name );
         }
 
-        oySnprintf1_( file_name, MAX_PATH, "%s", policy_list[i] );
+        file_name = oyStringCopy_( policy_list[i], oyAllocateFunc_ );
       }
     }
 
     oyStringListRelease_( &policy_list, count, oyDeAllocateFunc_ );
+
+    if(file_name)
+    {
+      *full_name = oyStringCopy_( file_name, allocateFunc );
+      oyDeAllocateFunc_( file_name );
+    }
   }
 
+  DBG_PROG_ENDE
+  return error;
+}
+
+int         oyPolicySet_               (const char    * policy_name,
+                                        const char    * full_name )
+{
+  int err = 0;
+  char  * file_name = NULL;
+  char  * xml = NULL;
+
+  DBG_PROG_START
+
+  if(full_name)
+    file_name = oyStringCopy_( full_name, oyAllocateFunc_ );
+  else
+    err = oyPolicyFileNameGet_( policy_name, &file_name, oyAllocateFunc_ );
+
+  if(!err && file_name)
   {
     size_t size = 0;
     char * data = oyReadFileToMem_( file_name, &size, oyAllocateFunc_ );
@@ -1906,7 +1937,9 @@ int         oyPolicySet_               (const char    * policy_file,
     err = oyReadXMLPolicy_( oyGROUP_ALL, xml );
     oyFree_m_( xml );
   } else
-    WARNc1_S( "No policy file found: \"%s\"", file_name );
+    WARNc1_S( "No policy file found: \"%s\"",
+              file_name ? file_name : (full_name ? full_name : 
+              (policy_name ? policy_name : "????")) );
 
 
   DBG_PROG_ENDE

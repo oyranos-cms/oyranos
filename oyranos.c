@@ -868,6 +868,23 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
 /** \addtogroup policy Policy API
  *  Functions to set and export policies in Oyranos.
  *
+ *  Policies are a set of options used to group colour management settings.
+ *
+ *  The core API consists of oyReadXMLPolicy() and its reversal oyPolicyToXML().
+ *
+ *  Additional oyPolicySaveActual() is used to store the actual options into a
+ *  policy, oyPolicyFileNameGet() to obtain the file name for a given policy
+ *  name and oyPolicySet() to import the actual policy from a file.
+ *
+ *  For getting the count, names and actual one of the installed policy files
+ *  use oyOptionChoicesGet() e.g.
+ *  oyOptionChoicesGet( oyWIDGET_POLICY, &count, &names, &current )
+ *
+ *  @par Future:
+ *       The policies are abstracted into the backend API oyCMMapi9_s. The 
+ *       layout of these options can be obtained from the according backends.
+ *       The colour management policy module for Oyranos is named "oicc".
+ *
  *  @todo define some default policies internally
  *
  *  @{
@@ -877,6 +894,8 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
  *
  *  The function is basically a wrapper for oyPolicyToXML() and will write
  *  the resulting XML to a file somewhere in XDG_CONFIG_HOME.
+ *
+ *  A convenience function.
  *
  *  @param         group               use oyGROUP_ALL for a typical snapshot
  *  @param         name                the name will become part of a filename
@@ -978,8 +997,43 @@ oyReadXMLPolicy        (oyGROUP_e           group,
   return n;
 }
 
+/** @func    oyPolicyFileNameGet
+ *  @brief   resolve the file name of a policy
+ *
+ *  The resolving is done by weak string matching. So it is possible to use
+ *  short hands, e.g. "Photo" for "Photographer". The first letter is ignored.
+ *  A convenience function.
+ *
+ *  @param[in]     policy_name         the selected policy
+ *  @param[out]    full_name           the full file name of policy_name
+ *  @param[in]     allocateFunc        optional user allocator
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/02/28 (Oyranos: 0.1.10)
+ *  @date    2010/02/28
+ */
+int        oyPolicyFileNameGet       ( const char        * policy_name,
+                                       char             ** full_name,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_SETTING);
+
+  error = oyPolicyFileNameGet_( policy_name, full_name,
+                                allocateFunc ? allocateFunc : oyAllocateFunc_ );
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return error;
+}
+
 /** Load a group of policy settings.\n
  *  use xml-ish file input produced by oyPolicyToXML()
+ *
+ *  A convenience function.
  *
  *  @param  policy_file  the policy file, will be locked up in standard paths
  *  @param  full_name    file name including path

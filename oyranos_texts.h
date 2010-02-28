@@ -101,6 +101,9 @@ char*       oyGetDefaultProfileName_   (oyPROFILE_e       type,
                                        oyAlloc_f           alloc_func);
 
 char*       oyPolicyNameGet_         ( );
+int        oyPolicyFileNameGet_      ( const char        * policy_name,
+                                       char             ** full_name,
+                                       oyAlloc_f           allocateFunc );
 int         oyPolicySet_             ( const char      * policy_file,
                                        const char      * full_name );
 oyWIDGET_e* oyPolicyWidgetListGet_   ( oyGROUP_e           group,

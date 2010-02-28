@@ -137,6 +137,9 @@ int         oyReadXMLPolicy            (oyGROUP_e         group,
                                         const char       *xml);
 int         oyPolicySet                (const char      * policy,
                                         const char      * full_name );
+int        oyPolicyFileNameGet       ( const char        * policy_name,
+                                       char             ** full_name,
+                                       oyAlloc_f           allocateFunc );
 
 
 /* path names */
