@@ -69,6 +69,18 @@
      1 Yes -->
     <oyBEHAVIOUR_RENDERING_BPC>1</oyBEHAVIOUR_RENDERING_BPC>
 
+    <!-- Gamut Warning
+         Mark Out Of Gamut colours
+     0 No
+     1 Yes -->
+    <oyBEHAVIOUR_RENDERING_GAMUT_WARNING>0</oyBEHAVIOUR_RENDERING_GAMUT_WARNING>
+
+    <!-- High Precission
+         Rendering with High Precission in opposite to fast processing
+     0 No
+     1 Yes -->
+    <oyBEHAVIOUR_RENDERING_HIGH_PRECISSION>0</oyBEHAVIOUR_RENDERING_HIGH_PRECISSION>
+
 </oyGROUP_BEHAVIOUR_RENDERING>
 
 
