@@ -71,7 +71,7 @@
     @subsection api_tutorial Programming Tutorial
     Frist you have to put a
     @verbatim
-    #include <oyranos/oyranos.h> @endverbatim
+    #include <oyranos.h> @endverbatim
     in your source text, in order to use Oyranos. 
     @verbatim
     int oyranos_version = oyVersion(); @endverbatim
@@ -82,7 +82,7 @@
     cc `oyranos-config --cflags` `oyranos-config --ldflags` mycode.c -o myApp @endverbatim
     to link Oyranos into your application.
 
-    The namespace in C++ is oyranos:: , e.g. oyranos::oyVersion()
+    The namespace in C++ is oyranos:: , e.g. oyranos::oyVersion().
 
     Writing of filters and modules for Oyranos is covered in the @ref
     extending_oyranos page.
