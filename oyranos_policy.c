@@ -52,15 +52,15 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("Dump out the actual settings:"));
   fprintf( stderr, "      %s -d\n",        argv[0]);
-  fprintf( stderr, "  %s\n",               _("Set new policy:"));
-  fprintf( stderr, "      %s -i %s\n",     argv[0], _("policy filename"));
+  fprintf( stderr, "  %s\n",               _("Select active policy:"));
+  fprintf( stderr, "      %s -i %s\n",     argv[0], _("policy or filename"));
   fprintf( stderr, "  %s\n",               _("List available policies:"));
   fprintf( stderr, "      %s -l\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("Currently active policy:"));
   fprintf( stderr, "      %s -c\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("List search paths:"));
   fprintf( stderr, "      %s -p\n",        argv[0]);
-  fprintf( stderr, "  %s\n",               _("Save and install to a new policy:"));
+  fprintf( stderr, "  %s\n",               _("Save to a new policy:"));
   fprintf( stderr, "      %s -s %s\n",     argv[0], _("policy name"));
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -76,10 +76,11 @@ void  printfHelp (int argc, char** argv)
 int main( int argc , char** argv )
 {
   int error = 0;
-  const char* new_policy = NULL,
+  const char* save_policy = NULL,
             * import_policy = NULL;
   size_t size = 0;
   char *xml = NULL;
+  char * import_policy_fn = NULL;
   int current_policy = 0, list_policies = 0, list_paths = 0,
       dump_policy = 0;
 
@@ -112,11 +113,11 @@ int main( int argc , char** argv )
               case 'l': list_policies = 1; break;
               case 'p': list_paths = 1; break;
               case 's': if( pos + 1 < argc )
-                        { new_policy = argv[pos+1];
-                          if( !oyStrlen_(new_policy) )
+                        { save_policy = argv[pos+1];
+                          if( !oyStrlen_(save_policy) )
                             wrong_arg = "-s";
                         } else wrong_arg = "-s";
-                        if(oy_debug) fprintf(stderr,"new_policy=0\n"); ++pos;
+                        if(oy_debug) fprintf(stderr,"save_policy=0\n"); ++pos;
                         break;
               case 'v': oy_debug += 1; break;
               case 'h':
@@ -150,8 +151,13 @@ int main( int argc , char** argv )
 
 
   /* load the policy file into memory */
-  xml = oyReadFileToMem_( oyMakeFullFileDirName_(import_policy), &size,
-                          oyAllocateFunc_ );
+  import_policy_fn = oyMakeFullFileDirName_(import_policy);
+  if(oyIsFile_(import_policy_fn))
+  {
+    xml = oyReadFileToMem_( oyMakeFullFileDirName_(import_policy), &size,
+                            oyAllocateFunc_ );
+    oyDeAllocateFunc_( import_policy_fn );
+  }
   /* parse and set policy */
   if(xml)
   {
@@ -160,18 +166,20 @@ int main( int argc , char** argv )
   }
   else if ( import_policy )
   {
-    fprintf( stderr, "%s:%d could not read file: %s\n",__FILE__,__LINE__, import_policy);
+    error = oyPolicySet( import_policy, 0 );
+    if(error)
+      fprintf( stderr, "%s:%d could not read file: %s\n",__FILE__,__LINE__, import_policy);
     return 1;
   }
 
-  if(new_policy)
+  if(save_policy)
   {
-    error = oyPolicySaveActual( oyGROUP_ALL, new_policy );
+    error = oyPolicySaveActual( oyGROUP_ALL, save_policy );
     if(!error)
       fprintf( stdout, "%s \"%s\"\n",
-               _("installed new policy"), new_policy);
+               _("installed new policy"), save_policy);
     else
-      fprintf( stdout, "\"%s\" %s %d\n", new_policy,
+      fprintf( stdout, "\"%s\" %s %d\n", save_policy,
                _("installation of new policy file failed with error:"), error);
 
   } else
