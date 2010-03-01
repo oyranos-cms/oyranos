@@ -220,7 +220,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
               *name_opt = NULL;
    oyRankPad *dynamic_rank_map = NULL;
    int i, num_devices, g_error = 0, status, call_sane_exit = 0;
-   int driver_version = 0;
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
    const SANE_Device **device_list = NULL;
 
