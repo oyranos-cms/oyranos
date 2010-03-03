@@ -4268,7 +4268,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
   oyCMMapiFilter_s * api = 0,
                    * api2 = 0;
   uint32_t * rank_list_ = 0, * rank_list2_ = 0;
-  int rank_list_n = 5;
+  int rank_list_n = 5, count_ = 0;
   oyObject_s object = oyObject_New();
 
   /*{
@@ -4329,7 +4329,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
               rank_list_ = *rank_list;
               apis = oyCMMapiFilters_New(0);
             } else
-            if(*count >= rank_list_n)
+            if(count_ >= rank_list_n)
             {
               rank_list_n *= 2;
               rank_list_ = 0;
@@ -4351,8 +4351,9 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
             if(!apis)
               apis = oyCMMapiFilters_New( 0 );
             oyCMMapiFilters_MoveIn( apis, &api, -1 );
+            ++ count_;
             if(count)
-              ++ *count;
+              *count = count_;
 
           } else
           if(rank > old_rank)
@@ -4541,12 +4542,11 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
  *  This function allowes to obtain a API for a certain modul/CMM.
  *  oyCMMapi4_s is excluded.
  *
- *  @param[in]   type                  the API to return
+ *  @param[in]   type                  the API type to return
  *  @param[in]   cmm_required          if present take this or fail, the arg
  *                                     simplifies and speeds up the search
- *  @param[in]   queries               search for a match to capabilities
  *  @param[out]  lib_used              inform about the selected CMM
- *  @param[in]   apiCheck              custom api selector
+ *  @param[in]   apiCheck              custom API selector
  *  @param[in]   check_pointer         data to pass to apiCheck
  *
  *  @version Oyranos: 0.1.9
@@ -4631,7 +4631,8 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
     {
       if(*lib_used)
         oyFree_m_(*lib_used);
-      *lib_used = oyStringCopy_( files[max_pos], oyAllocateFunc_ );
+      if(files && files_n)
+        *lib_used = oyStringCopy_( files[max_pos], oyAllocateFunc_ );
     }
 
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
