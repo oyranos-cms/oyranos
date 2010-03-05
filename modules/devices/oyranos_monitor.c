@@ -109,6 +109,9 @@ int oyMonitor_activeOutputs_( oyMonitor_s * disp ) { return disp->active_outputs
 
 char* oyMonitor_getAtomName_         ( oyMonitor_s       * disp,
                                        const char        * base );
+oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
+                                       const char        * prop_name,
+                                       const char       ** prop_name_xrandr );
 char* oyChangeScreenName_            ( const char        * display_name,
                                        int                 screen );
 
@@ -522,7 +525,12 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   if(!disp)
     return 0;
 
-  prop = oyMonitor_getProperty_( disp, "_ICC_PROFILE", 0 );
+  /* support the v0.4 device profile */
+  prop = oyMonitor_getProperty_( disp, "_ICC_DEVICE_PROFILE", 0 );
+
+  /* alternatively fall back to the non colour server or pre v0.4 atom */
+  if(!prop)
+    prop = oyMonitor_getProperty_( disp, "_ICC_PROFILE", 0 );
 
   if(prop)
   {

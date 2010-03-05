@@ -432,6 +432,7 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
            event.xproperty.atom == c->aCM ||
            event.xproperty.atom == c->aRegion ||
            event.xproperty.atom == c->aDesktop ||
+           strstr( actual_name, "_ICC_DEVIC_PROFILE") != 0 ||
            strstr( actual_name, "_ICC_PROFILE") != 0 ||
            strstr( actual_name, "EDID") != 0)
         r = XGetWindowProperty( c->display, event.xany.window,
@@ -482,6 +483,7 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
           printWindowRegions( event.xany.display, event.xany.window, 1 );
 
         } else if(
+           strstr( actual_name, "_ICC_DEVICC_PROFILE") != 0 ||
            strstr( actual_name, "_ICC_PROFILE") != 0 ||
            strstr( actual_name, "EDID") != 0)
         {
@@ -495,7 +497,8 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
             an = "_ICC_PROFILE  ";
 
           if(n &&
-             strstr( actual_name, "_ICC_PROFILE") != 0)
+             (strstr( actual_name, "_ICC_DEVICE_PROFILE") != 0 ||
+              strstr( actual_name, "_ICC_PROFILE") != 0))
           {
             p = oyProfile_FromMem( n, data, 0, 0 );
             name = oyProfile_GetFileName( p, 0 );
