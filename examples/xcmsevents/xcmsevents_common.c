@@ -399,20 +399,18 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
     unsigned char * data;
     char * actual_name = 0;
 
-    XEvent event;
-    XNextEvent( c->display, &event);
 
-    if( event.xany.window == c->w && event.type == Expose )
+    if( event->xany.window == c->w && event->type == Expose )
     {
       /* draw something */
       XFillRectangle( c->display, c->w, DefaultGC( c->display, c->screen),
                       0, 0, 300, 300);
 
-    } else if( event.type == PropertyNotify )
+    } else if( event->type == PropertyNotify )
     {
       int i,j = 0, r;
-      Atom atom = event.xproperty.atom;
-      Display * display = event.xany.display;
+      Atom atom = event->xproperty.atom;
+      Display * display = event->xany.display;
 
       if(display != c->display)
         DE( "PropertyNotify : event and context displays are different: %s",
@@ -426,45 +424,45 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
       data = 0;
 
       /* --- report --- */
-      if(c->w != event.xany.window)
+      if(c->w != event->xany.window)
       {
-        if(event.xproperty.atom == c->aProfile ||
-           event.xproperty.atom == c->aCM ||
-           event.xproperty.atom == c->aRegion ||
-           event.xproperty.atom == c->aDesktop ||
+        if(event->xproperty.atom == c->aProfile ||
+           event->xproperty.atom == c->aCM ||
+           event->xproperty.atom == c->aRegion ||
+           event->xproperty.atom == c->aDesktop ||
            strstr( actual_name, "_ICC_DEVIC_PROFILE") != 0 ||
            strstr( actual_name, "_ICC_PROFILE") != 0 ||
            strstr( actual_name, "EDID") != 0)
-        r = XGetWindowProperty( c->display, event.xany.window,
-                event.xproperty.atom, 0, ~0, False, XA_CARDINAL,&actual,&format,
+        r = XGetWindowProperty( c->display, event->xany.window,
+               event->xproperty.atom, 0, ~0, False, XA_CARDINAL,&actual,&format,
                 &n, &left, &data );
         n += left;
 
-        if       ( event.xproperty.atom == c->aTarget )
+        if       ( event->xproperty.atom == c->aTarget )
         {
           char * text;
 
-          r = XGetWindowProperty( c->display, event.xany.window,
-                event.xproperty.atom, 0, ~0, False, XA_STRING, &actual, &format,
+          r = XGetWindowProperty( c->display, event->xany.window,
+               event->xproperty.atom, 0, ~0, False, XA_STRING, &actual, &format,
                 &n, &left, &data );
           n += left;
           text = (char*)data;
           DE("PropertyNotify : %s     \"%s\"  %s",
                actual_name,
-               text, printWindowName( c->display, event.xany.window ) );
+               text, printWindowName( c->display, event->xany.window ) );
 
-        } else if( event.xproperty.atom == c->aProfile )
+        } else if( event->xproperty.atom == c->aProfile )
         {
           unsigned long count = XcolorProfileCount(data, n);
           DE( "PropertyNotify : %s   %d         %s",
                actual_name,
-               (int)count, printWindowName( c->display, event.xany.window ) );
+               (int)count, printWindowName( c->display, event->xany.window ) );
 
-        } else if( event.xproperty.atom == c->aCM )
+        } else if( event->xproperty.atom == c->aCM )
         {
           /* should not happen */
 
-        } else if( event.xproperty.atom == c->aDesktop )
+        } else if( event->xproperty.atom == c->aDesktop )
         {
           if(n && data)
           {
@@ -476,11 +474,11 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
             c->old_pid = 0;
           DE( "PropertyNotify : %s    %d          %s",
                actual_name,
-               c->old_pid, printWindowName( c->display, event.xany.window ) );
+               c->old_pid, printWindowName( c->display, event->xany.window ) );
 
-        } else if( event.xproperty.atom == c->aRegion )
+        } else if( event->xproperty.atom == c->aRegion )
         {
-          printWindowRegions( event.xany.display, event.xany.window, 1 );
+          printWindowRegions( event->xany.display, event->xany.window, 1 );
 
         } else if(
            strstr( actual_name, "_ICC_DEVICC_PROFILE") != 0 ||
@@ -524,7 +522,7 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
           }
           DE(   "PropertyNotify : %s    \"%s\"[%d]  %s",
                  an, name?name:(tmp?"set":"removed"),(int)n,
-                 printWindowName( c->display, event.xany.window ) );
+                 printWindowName( c->display, event->xany.window ) );
 
           if(tmp)
           {
@@ -542,9 +540,9 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
 
 
       /* claim interesst in other windows events */
-      if( c->w != event.xany.window &&
+      if( c->w != event->xany.window &&
           XInternAtom( c->display, "_NET_CLIENT_LIST", False) ==
-          event.xproperty.atom )
+          event->xproperty.atom )
       {
         unsigned long nWindow = 0;
         Window * windows = 0;
@@ -553,7 +551,7 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
         left = 0;
 
         r = XGetWindowProperty( c->display, c->root,
-          event.xproperty.atom, 0, ~0, False, XA_WINDOW, &actual, &format,
+          event->xproperty.atom, 0, ~0, False, XA_WINDOW, &actual, &format,
           &nWindow, &left, (unsigned char**)&windows );
         n = (int)(nWindow + left);
 
@@ -572,7 +570,7 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
               !found )
           {
             /* observe other windows */
-            r = XSelectInput( event.xany.display, windows[i],
+            r = XSelectInput( event->xany.display, windows[i],
                        PropertyChangeMask |  /* Xcolor properties */
                        ExposureMask );       /* Xcolor client messages */
           }
@@ -589,20 +587,20 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
       }
       XFree( actual_name ); actual_name = 0;
 
-    } else if( event.type == ClientMessage )
+    } else if( event->type == ClientMessage )
     {
-      if(event.xclient.message_type == c->aCM )
+      if(event->xclient.message_type == c->aCM )
       {
         /* --- report --- */
         unsigned long active[2];
         actual_name = 
-                  XGetAtomName( event.xany.display, event.xclient.message_type);
+                  XGetAtomName( event->xany.display, event->xclient.message_type);
 
-        active[0] = event.xclient.data.l[0];
-        active[1] = event.xclient.data.l[1];
+        active[0] = event->xclient.data.l[0];
+        active[1] = event->xclient.data.l[1];
         DE( "ClientMessage  : %s %ld %ld        %s",
                 actual_name, active[0], active[1],
-                printWindowName( c->display, event.xclient.window ) );
+                printWindowName( c->display, event->xclient.window ) );
         XFree( actual_name ); actual_name = 0;
       }
     }
