@@ -741,9 +741,15 @@ install_mime:
 	done
 	echo adding icons to $(DESTDIR)$(pixmapdir) ...
 	mkdir -p $(DESTDIR)$(pixmapdir)
+	$(COPY) $(SRCDIR)/$(TARGET)_logo.png application-vnd.iccprofile.png
+	$(COPY) $(SRCDIR)/$(TARGET)_logo.png text-vnd.cgats.png
+	-xdg-icon-resource install --size 128 --novendor application-vnd.iccprofile.png
+	-xdg-icon-resource install --size 128 --novendor text-vnd.cgats.png
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/text-vnd.cgats.png
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/application-vnd.iccprofile.png
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
 	$(INSTALL) -m 644 $(SRCDIR)/lcms_logo2.png $(DESTDIR)$(pixmapdir)/lcms_logo2.png
-	echo ... done installing mime types
+	echo ... done installing mime types and icons
 
 # synonymes
 doc:		docu
