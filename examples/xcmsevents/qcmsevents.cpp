@@ -27,9 +27,9 @@ class Qcmse : public QApplication
     {
       const char * display_name = getenv("DISPLAY");
       c = xcmseContext_New( );
-      QDesktopWidget * d = this->desktop();
+      /*QDesktopWidget * d = this->desktop();
       QX11Info i = d->x11Info();
-      c->display = i.display();
+      c->display = i.display();*/
       xcmseContext_Setup( c, display_name );
     };
     ~Qcmse()
@@ -38,6 +38,9 @@ class Qcmse : public QApplication
     };
     bool x11EventFilter( XEvent * event )
     {
+      /* set the actual X11 Display, Qt seems to change the old pointer. */
+      c->display = event->xany.display;
+      /* process the X event */
       return (bool)xcmseContext_InLoop( c, event );
     };
 };
