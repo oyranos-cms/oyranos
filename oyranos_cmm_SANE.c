@@ -1021,7 +1021,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
-      if ((opt->cap & SANE_CAP_COLOUR) && !(opt->cap & SANE_CAP_INACTIVE)) {
+      if ((opt->cap & SANE_CAP_COLOUR) /*&& !(opt->cap & SANE_CAP_INACTIVE)*/) {
          void *value = malloc(opt->size);
          char *registration = malloc(sizeof(cmm_base_reg)+strlen(opt->name));
 
