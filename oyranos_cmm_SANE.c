@@ -31,7 +31,7 @@
  * dDev in the below macros.
  */
 #define CMM_NICK "SANE"
-#define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.scanner." CMM_NICK
+#define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.scanner." CMM_NICK
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 #define catCMMfunc(nick,func) nick ## func
@@ -1135,6 +1135,7 @@ int sane_release_handle(oyPointer *handle_ptr)
    SANE_Handle h = (SANE_Handle)*handle_ptr;
    sane_close(h);
 
+   printf("SANE handle deleted.\n");
    message(oyMSG_DBG, 0,
            "%s() deleting sane handle: %p\n",
            __func__, h);
