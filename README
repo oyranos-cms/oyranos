@@ -24,6 +24,9 @@ $ make install
 
 3. Usage
 $ ./raw2tiff <raw image> [-i <icc_profile>]
-$ ./scan [-d <device>] [-i [icc profile]]
+$ ./scan [-d <device>] [-i [icc profile]] [-p]
+-d: use specified device, as returned by running 'scan' without arguments
+-p: print out mode, do not scan/save an image.
+-i: embed this icc profile to saved image.
 
 Exif data is saved in file exif.txt

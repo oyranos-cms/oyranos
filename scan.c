@@ -32,6 +32,7 @@ const char *icc_profile_name = NULL;
 int icc_profile_bytes;
 
 int width, height, bps, size;
+int print_only = 0;
 
 void print_sane_version()
 {
@@ -169,6 +170,8 @@ void scan_it()
    printf("Oyranos returns the following colour related options.\n"); //DBG
    print_device(device); //DBG
 
+   if (print_only)
+      return;
 
    //3. Acquire the scanned image
    status = sane_start(device_handle);
@@ -306,14 +309,16 @@ int main(int argc, char **argv)
    int arg;
 
    for (arg = 1; arg < argc; arg++) {
-      if (strcmp(argv[arg], "-d") == 0)
+      if (strcmp(argv[arg], "-d") == 0) {
          device_name = argv[++arg];
-      else if (strcmp(argv[arg], "-i") == 0) {
+      } else if (strcmp(argv[arg], "-i") == 0) {
          arg++;
          if (arg < argc && argv[arg][0] != '-')
             icc_profile_name = argv[arg];
          else
             icc_profile_name = "Oyranos";
+      } else if (strcmp(argv[arg], "-p") == 0) {
+         print_only = 1;
       }
    }
 
@@ -324,9 +329,10 @@ int main(int argc, char **argv)
    }
 
    scan_it();
-   if (icc_profile_name)
+   if (!print_only && icc_profile_name)
       read_profile();
-   save_tiff();
+   if (!print_only)
+      save_tiff();
    cleanup();
 
    return 0;
