@@ -121,6 +121,7 @@ void init()
          oyOption_Release(&handle_opt);
       }
    }
+   oyConfigs_Release(&devices);
 }
 
 void scan_it()
