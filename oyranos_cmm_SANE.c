@@ -15,6 +15,7 @@
 
 #include <oyranos/oyranos_cmm.h>
 #include <sane/sane.h>
+#include <lcms.h>
 
 #include <string.h>
 #include <stdarg.h>
@@ -1020,7 +1021,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
-      if (opt->cap & SANE_CAP_COLOUR) {
+      if ((opt->cap & SANE_CAP_COLOUR) && !(opt->cap & SANE_CAP_INACTIVE)) {
          void *value = malloc(opt->size);
          char *registration = malloc(sizeof(cmm_base_reg)+strlen(opt->name));
 
@@ -1037,8 +1038,21 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                else {
                   int count = opt->size/sizeof(SANE_Word);
                   oyOption_s *option = oyOption_New(registration, 0);
-                  for (i=count-1; i>=0; --i)
-                     oyOption_SetFromInt(option, *(SANE_Int *) value+i, i, 0);
+                if (strstr(opt->name, "gamma-table")) {
+                  /* If the option contains a gamma table, calculate the gamma value
+                   * as a float and save that instead */
+                   LPGAMMATABLE lt = cmsAllocGamma(count);
+                   float norm = 65535.0/(count-1);
+
+                   /*Normalise table to 65535. lcms expects that*/
+                   for (i=0; i<count; ++i)
+                      lt->GammaTable[i] = (WORD)((float)(*(SANE_Int *) value+i)*norm);
+                   oyOption_SetFromDouble(option, cmsEstimateGamma(lt), 0, 0);
+                   cmsFreeGamma(lt);
+                } else {
+                     for (i=count-1; i>=0; --i)
+                        oyOption_SetFromInt(option, *(SANE_Int *) value+i, i, 0);
+                }
                   oyOptions_MoveIn(*options, &option, -1);
                }
                break;
