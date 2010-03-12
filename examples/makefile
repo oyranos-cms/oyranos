@@ -94,7 +94,7 @@ $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
 
 ../oyranos_logo.ppm:	$(SRCDIR)../oyranos_logo.png
-	cat $(SRCDIR)../oyranos_logo.png | pngtopnm > $@
+	-cat $(SRCDIR)../oyranos_logo.png | pngtopnm > $@
 
 clean:
 	echo cleaning ...
