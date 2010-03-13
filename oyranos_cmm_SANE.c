@@ -1009,6 +1009,8 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
    int error = 0, i;
    unsigned int opt_num = 0, count;
    char cmm_base_reg[] = CMM_BASE_REG OY_SLASH;
+   char *value_str = NULL;
+   const size_t value_size = 100; /*Better not allow more than 100 characters in the option value string*/
 
    /* We got a device, find out how many options it has */
    status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
@@ -1018,6 +1020,8 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
               __func__, sane_strstatus(status));
       return -1;
    }
+
+   value_str = malloc(sizeof(char)*value_size);
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
@@ -1030,14 +1034,16 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
          sane_control_option(device_handle, opt_num, SANE_ACTION_GET_VALUE, value, 0);
          switch (opt->type) {
             case SANE_TYPE_BOOL:
-               oyOptions_SetFromInt(options, registration, *(SANE_Bool *) value, 0, OY_CREATE_NEW);
+               value_str[0] = *(SANE_Bool *) value ? '1' : '0';
+               value_str[1] = '\0';
+               oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
                break;
             case SANE_TYPE_INT:
-               if (opt->size == (SANE_Int)sizeof(SANE_Word))
-                  oyOptions_SetFromInt(options, registration, *(SANE_Int *) value, 0, OY_CREATE_NEW);
-               else {
+               if (opt->size == (SANE_Int)sizeof(SANE_Word)) {
+                  snprintf(value_str, value_size, "%d", *(SANE_Int *) value);
+                  oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
+               } else {
                   int count = opt->size/sizeof(SANE_Word);
-                  oyOption_s *option = oyOption_New(registration, 0);
                 if (strstr(opt->name, "gamma-table")) {
                   /* If the option contains a gamma table, calculate the gamma value
                    * as a float and save that instead */
@@ -1047,26 +1053,42 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                    /*Normalise table to 65535. lcms expects that*/
                    for (i=0; i<count; ++i)
                       lt->GammaTable[i] = (WORD)((float)(*(SANE_Int *) value+i)*norm);
-                   oyOption_SetFromDouble(option, cmsEstimateGamma(lt), 0, 0);
+
+                   snprintf(value_str, value_size, "%f", cmsEstimateGamma(lt));
+                   oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
                    cmsFreeGamma(lt);
                 } else {
-                     for (i=count-1; i>=0; --i)
-                        oyOption_SetFromInt(option, *(SANE_Int *) value+i, i, 0);
+                   int chars = 0;
+                   for (i=0; i<count; ++i) {
+                     int printed = snprintf(value_str+chars, value_size-chars, "%d, ", *(SANE_Int *) value+i);
+                     if (printed >= value_size-chars)
+                        break;
+                     else
+                        chars += printed;
+                   }
+                   oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
                 }
-                  oyOptions_MoveIn(*options, &option, -1);
                }
                break;
             case SANE_TYPE_FIXED:
                if (opt->size == (SANE_Int)sizeof(SANE_Word)) {
-                  oyOption_s *option = oyOption_New(registration, 0);
-                  oyOption_SetFromDouble(option, SANE_UNFIX(*(SANE_Fixed *) value), 0, 0);
-                  oyOptions_MoveIn(*options, &option, -1);
+                  snprintf(value_str, value_size, "%f", SANE_UNFIX(*(SANE_Fixed *) value));
+                  oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
                } else {
                   int count = opt->size/sizeof(SANE_Word);
-                  oyOption_s *option = oyOption_New(registration, 0);
-                  for (i=count-1; i>=0; --i)
-                     oyOption_SetFromDouble(option, SANE_UNFIX(*(SANE_Fixed *) value+i), i, 0);
-                  oyOptions_MoveIn(*options, &option, -1);
+
+                  int chars = 0;
+                  for (i=0; i<count; ++i) {
+                    int printed = snprintf(value_str+chars,
+                                           value_size-chars,
+                                           "%f, ",
+                                           SANE_UNFIX(*(SANE_Fixed *) value+i));
+                    if (printed >= value_size-chars)
+                       break;
+                    else
+                       chars += printed;
+                  }
+                  oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
                }
                break;
             case SANE_TYPE_STRING:
@@ -1077,8 +1099,10 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                return 1;
                break;
          }
+      free(registration );
       }
    }
+   free(value_str);
 
    return error;
 }
