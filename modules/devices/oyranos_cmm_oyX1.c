@@ -738,7 +738,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           /** Warn and return issue on not found profile. */
           {
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                     "Could not obtain _ICC(_DEVIC)_PROFILE(_xxx) information for %s",
+                     "Could not obtain _ICC(_DEVICE)_PROFILE(_xxx) information for %s",
                      OY_DBG_ARGS_, device_name );
 
             /* Show the "icc_profile" option is understood. */
