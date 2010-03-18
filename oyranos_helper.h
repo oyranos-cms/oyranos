@@ -75,7 +75,9 @@ extern const char * oy_backtrace;
       oySnprintf_( text_fm, 80, #ptr_ " pointer freed" ); \
       WARNc_S( text_fm );                                   \
     }                                                       \
-    oyDeAllocateFunc_ (ptr_);                               \
+    /*oyDeAllocateFunc_ (ptr_);*/                           \
+    oySnprintf_( text_fm, 80, "!!! " #ptr_ " needed to free pointer" ); \
+    WARNc_S( text_fm );                                   \
     ptr_ = NULL;                                            \
   }                                                         \
   if ((size_) <= 0) {                                       \
