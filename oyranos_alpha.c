@@ -6513,7 +6513,7 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
 {
   if(hash)
   {
-    if(obj->copy)
+    if(obj && obj->copy)
       hash->entry = obj->copy( obj, 0 );
     else
       hash->entry = obj;
