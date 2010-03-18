@@ -76,7 +76,7 @@ $(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
 $(TARGET4):	$(SRCDIR)$(TARGET4).c
 	mkdir -p image2pdf
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $< -o $@
+	-$(CC) $(CFLAGS) $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $(OY_LDFLAGS) $< -o $@
 
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
 	mkdir -p dummy_device
