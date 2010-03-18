@@ -15,7 +15,7 @@ Requires:  libxml2 elektra liblcms cups-devel
 
 
 %if 0%{?suse_version} > 0
-BuildRequires:     gcc-c++ gettext doxygen graphviz pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel liblcms-devel 
+BuildRequires:     gcc-c++ gettext doxygen graphviz pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel liblcms-devel
 #elektra-devel
 %endif
 %if 0%{?suse_version} > 910
@@ -158,6 +158,8 @@ ldconfig
 %{_datadir}/mime/packages/*.xml
 %{pixmapdir}/oyranos_logo.*
 %{pixmapdir}/lcms_logo2.png
+%{pixmapdir}/application-vnd.iccprofile.png
+%{pixmapdir}/text-vnd.cgats.png
 %{_datadir}/locale/*/LC_MESSAGES/%{name}.*
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 
@@ -208,7 +210,7 @@ ldconfig
 %files forms-fltk-devel
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%{_libdir}/lib%{name}_fltk.a
+%{_libdir}/liboyforms_fltk.a
 
 %changelog
 * Fri Oct 16 2009 Kai-Uwe Behrmann
