@@ -41,6 +41,7 @@
 #include <stdarg.h>
 #include <icc34.h>
 #include <oyranos_alpha.h>
+#include <oyranos_cmm.h> // oyCMMptr_New
 
 #include <Xcolor.h>
 
@@ -127,7 +128,7 @@ typedef struct {
 
 static CompMetadata pluginMetadata;
 
-static int corePrivateIndex;
+//static int corePrivateIndex;
 
 typedef struct {
   int childPrivateIndex;
@@ -189,6 +190,7 @@ typedef struct {
 
 static Region absoluteRegion(CompWindow *w, Region region);
 static void damageWindow(CompWindow *w, void *closure);
+oyPointer pluginGetPrivatePointer( CompObject * o );
 
 /**
  *    Private Data Allocation
@@ -198,30 +200,55 @@ static void damageWindow(CompWindow *w, void *closure);
  * over the place. These functions, along with the object setup code (at the 
  * very bottom of this source file) make it much simpler.
  */
-
-static void *compObjectGetPrivate(CompObject *o)
+#if 0
+static void *compObjectGetPrivateIndex(CompObject *o)
 {
-  int *privateIndex = 0;
-  //TODO
   if (o == NULL)
     return &corePrivateIndex;
 
-  privateIndex = compObjectGetPrivate(o->parent);
+  return compObjectGetPrivateIndex(o->parent);
+}
+
+static CompObject * compObjectGetTopLeave( CompObject * o )
+{
+  while(o->parent)
+    o = o->parent;
+  return o;
+}
+#endif
+
+static void *compObjectGetPrivate(CompObject *o)
+{
+  /*
+  int *privateIndex = 0;
+
+  if(!o)
+    return NULL;
+
+  privateIndex = compObjectGetPrivateIndex( compObjectGetTopLeave( o ));
   if (privateIndex == NULL)
     return NULL;
 
   return o->privates[*privateIndex].ptr;
+  */
+
+  oyPointer private_data = pluginGetPrivatePointer( o );
+  return private_data;
 }
 
+#if 0
 static void *compObjectAllocPrivate(CompObject *parent, CompObject *object, int size)
 {
-  int *privateIndex = compObjectGetPrivate(parent);
+  int *privateData = 0;
+  int *privateIndex = compObjectGetPrivateIndex(parent);
   if (privateIndex == NULL)
     return NULL;
 
-  int *privateData = malloc(size);
+  privateData = malloc(size);
   if (privateData == NULL)
     return NULL;
+
+  memset( privateData, 0, size );
 
   /* allocate an index for child objects */
   if (object->type < 3) {
@@ -232,6 +259,7 @@ static void *compObjectAllocPrivate(CompObject *parent, CompObject *object, int 
     }
   }
 
+
   object->privates[*privateIndex].ptr = privateData;
 
   return privateData;
@@ -239,7 +267,7 @@ static void *compObjectAllocPrivate(CompObject *parent, CompObject *object, int 
 
 static void compObjectFreePrivate(CompObject *parent, CompObject *object)
 {
-  int *privateIndex = compObjectGetPrivate(parent);
+  int *privateIndex = compObjectGetPrivateIndex(parent);
   if (privateIndex == NULL)
     return;
 
@@ -255,6 +283,7 @@ static void compObjectFreePrivate(CompObject *parent, CompObject *object)
 
   free(privateData);
 }
+#endif
 
 /**
  * Xcolor helper functions. I didn't really want to put them into the Xcolor
@@ -479,8 +508,6 @@ static void updateWindowOutput(CompWindow *w)
     addWindowDamage(w);
 }
 
-
-
 static void cdCreateTexture( PrivColorOutput *ccontext )
 {
     glBindTexture(GL_TEXTURE_3D, ccontext->glTexture);
@@ -503,6 +530,203 @@ static void cdCreateTexture( PrivColorOutput *ccontext )
 
     glTexImage3D( GL_TEXTURE_3D, 0, GL_RGB16, GRIDPOINTS,GRIDPOINTS,GRIDPOINTS,
                   0, GL_RGB, GL_UNSIGNED_SHORT, ccontext->clut);
+}
+
+static void    setupICCprofileAtoms  ( CompScreen        * s,
+                                       int                 screen )
+{
+  char num[12];
+  Window root = RootWindow( s->display->display, 0 );
+  char * icc_profile_atom = calloc( 1024, sizeof(char) ),
+       * icc_device_profile_atom = calloc( 1024, sizeof(char) );
+  Atom a,da;
+
+  unsigned long n = 0, dn = 0;
+  oyPointer dp;
+  oyPointer p;
+
+  snprintf( num, 12, "%d", (int)screen );
+  snprintf( icc_profile_atom, 1024, "_ICC_PROFILE%s%s", 
+            screen ? "_" : "", screen ? num : "" );
+  snprintf( icc_device_profile_atom, 1024, "_ICC_DEVICE_PROFILE%s%s", 
+            screen ? "_" : "", screen ? num : "" );
+
+
+  a = XInternAtom(s->display->display, icc_profile_atom, False);
+  da = XInternAtom(s->display->display, icc_device_profile_atom, False);
+  dp = fetchProperty( s->display->display, root, da, XA_CARDINAL, &dn, False);
+
+  if( !dn )
+  {
+    printf( "copy from %s to %s\n", icc_profile_atom, icc_device_profile_atom );
+    p = fetchProperty( s->display->display, root, a, XA_CARDINAL, &n, False);
+    XChangeProperty( s->display->display, root,
+                     da, XA_CARDINAL, 8, PropModeReplace, p, n );
+    XFree( p );
+    p = 0; n = 0;
+
+    oyProfile_s * screen_document_profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+    if(!screen_document_profile)
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                        DBG_STRING"Could not get oyASSUMED_WEB", DBG_ARGS);
+    size_t size = 0;
+    p = oyProfile_GetMem( screen_document_profile, &size, 0, malloc );
+    n = size;
+    XChangeProperty( s->display->display, root,
+                     a, XA_CARDINAL, 8, PropModeReplace, p, n );
+    oyProfile_Release( &screen_document_profile );
+    if(p) free( p );
+
+  } else
+    if(dn)
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                        DBG_STRING"icc_device_profile_atom already present %d",
+                        DBG_ARGS, dn);
+
+  if(icc_profile_atom) free(icc_profile_atom);
+  if(icc_device_profile_atom) free(icc_device_profile_atom);
+}
+
+static void    setupColourTables     ( CompScreen        * s,
+                                       oyConfig_s        * device,
+                                       int                 screen )
+{
+  PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
+  PrivColorOutput * output = &ps->ccontexts[screen];
+  int error = 0;
+  oyOption_s * o = 0;
+  oyRectangle_s * r = 0;
+  const char * device_name = 0;
+  char num[12];
+  Window root = RootWindow( s->display->display, 0 );
+
+  snprintf( num, 12, "%d", (int)screen );
+
+    o = oyConfig_Find( device, "device_rectangle" );
+    if( !o )
+    {
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                      DBG_STRING"monitor rectangle request failed", DBG_ARGS);
+      return;
+    }
+    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+    if( !r )
+    {
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                      DBG_STRING"monitor rectangle request failed", DBG_ARGS);
+      return;
+    }
+    oyOption_Release( &o );
+
+    output->xRect.x = r->x;
+    output->xRect.y = r->y;
+    output->xRect.width = r->width;
+    output->xRect.height = r->height;
+
+    device_name = oyConfig_FindString( device, "device_name", 0 );
+    if(device_name && device_name[0])
+    {
+      strcpy( output->name, device_name );
+
+#if defined(PLUGIN_DEBUG)
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+                      DBG_STRING "  screen output found %s %s",
+                      DBG_ARGS, output->name, oyRectangle_Show(r) );
+#endif
+
+    } else
+    {
+       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+       DBG_STRING "oyDevicesGet list answere included no device_name",DBG_ARGS);
+
+       strcpy( output->name, num );
+    }
+
+    o = oyConfig_Find( device, "icc_profile" );
+
+    output->oy_profile = (oyProfile_s*) 
+                                  oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+
+    if(!output->oy_profile)
+      oyDeviceGetProfile( device, &output->oy_profile );
+
+    if (output->oy_profile)
+    {
+#ifdef DEBUG  /* expensive lookup */
+      const char * tmp = oyProfile_GetFileName( output->oy_profile, 0 );
+      
+      oyCompLogMessage(s->display, "colour_desktop", CompLogLevelInfo,
+             DBG_STRING "Output %s: extracted profile from Oyranos: %s",
+             DBG_ARGS, output->name,
+             (strrchr(tmp, OY_SLASH_C)) ? strrchr(tmp, OY_SLASH_C) + 1 : tmp );
+#endif
+
+      START_CLOCK("create images")
+      oyProfile_s * src_profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+      oyProfile_s * dst_profile = output->oy_profile;
+
+      oyPixel_t pixel_layout = OY_TYPE_123_16;
+
+      oyImage_s * image_in = oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
+                                             output->clut, 
+                                             pixel_layout, src_profile, 0 );
+      oyProfile_Release( &src_profile );
+      oyImage_s * image_out= oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
+                                             output->clut,
+                                             pixel_layout, dst_profile, 0 );
+      oyOptions_s * options = 0;
+      /* rendering_high_precission maps to lcms' cmsFLAGS_NOTPRECALC */
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/icc/rendering_high_precission",
+                                     "1", OY_CREATE_NEW );
+      END_CLOCK
+
+      START_CLOCK("oyConversion_CreateBasicPixels: ")
+      output->cc = oyConversion_CreateBasicPixels( image_in, image_out,
+                                                      options, 0 ); END_CLOCK
+
+      if (output->cc == NULL)
+      {
+        oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                      DBG_STRING "no conversion created for %s",
+                      DBG_ARGS, output->name);
+        return;
+      }
+
+      START_CLOCK("fill array: ")
+      uint16_t in[3];
+      for (int r = 0; r < GRIDPOINTS; ++r)
+      {
+        in[0] = floor((double) r / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+        for (int g = 0; g < GRIDPOINTS; ++g) {
+          in[1] = floor((double) g / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+          for (int b = 0; b < GRIDPOINTS; ++b)
+          {
+            in[2] = floor((double) b / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+            for(int j = 0; j < 3; ++j)
+              /* BGR */
+              output->clut[b][g][r][j] = in[j];
+          }
+        }
+      } END_CLOCK
+
+      START_CLOCK("oyConversion_RunPixels: ")
+      oyConversion_RunPixels( output->cc, 0 ); END_CLOCK
+
+      START_CLOCK("cdCreateTexture: ")
+      cdCreateTexture( output ); END_CLOCK
+
+      oyOptions_Release( &options );
+      oyImage_Release( &image_in );
+      oyImage_Release( &image_out );
+
+    } else {
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
+                      DBG_STRING "Output %s: omitting sRGB->sRGB conversion",
+                      DBG_ARGS, output->name);
+      output->oy_profile = 0; /*cmsCreate_sRGBProfile();*/
+    }
+
+    oyConfig_Release( &device );
 }
 
 static void freeOutput( PrivScreen *ps )
@@ -572,130 +796,8 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   {
     device = oyConfigs_Get( devices, i );
 
-    o = oyConfig_Find( device, "device_rectangle" );
-    if( !o )
-    {
-      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                      DBG_STRING"monitor rectangle request failed", DBG_ARGS);
-      return;
-    }
-    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
-    if( !r )
-    {
-      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                      DBG_STRING"monitor rectangle request failed", DBG_ARGS);
-      return;
-    }
-    oyOption_Release( &o );
-
-    ps->ccontexts[i].xRect.x = r->x;
-    ps->ccontexts[i].xRect.y = r->y;
-    ps->ccontexts[i].xRect.width = r->width;
-    ps->ccontexts[i].xRect.height = r->height;
-
-    device_name = oyConfig_FindString( device, "device_name", 0 );
-    if(device_name && device_name[0])
-    {
-      strcpy( ps->ccontexts[i].name, device_name );
-
-#if defined(PLUGIN_DEBUG)
-      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
-                      DBG_STRING "  screen output found %s %s",
-                      DBG_ARGS, ps->ccontexts[i].name, oyRectangle_Show(r) );
-#endif
-
-    } else
-    {
-       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-       DBG_STRING "oyDevicesGet list answere included no device_name",DBG_ARGS);
-
-       sprintf( num, "%d", (int)i );
-       strcpy( ps->ccontexts[i].name, num );
-    }
-
-    o = oyConfig_Find( device, "icc_profile" );
-
-    ps->ccontexts[i].oy_profile = (oyProfile_s*) 
-                                  oyOption_StructGet( o, oyOBJECT_PROFILE_S );
-
-    if(!ps->ccontexts[i].oy_profile)
-      oyDeviceGetProfile( device, &ps->ccontexts[i].oy_profile );
-
-    if (ps->ccontexts[i].oy_profile)
-    {
-#ifdef DEBUG  /* expensive lookup */
-      const char * tmp = oyProfile_GetFileName( ps->ccontexts[i].oy_profile, 0 );
-      
-      oyCompLogMessage(s->display, "colour_desktop", CompLogLevelInfo,
-             DBG_STRING "Output %s: extracted profile from Oyranos: %s",
-             DBG_ARGS, ps->ccontexts[i].name,
-             (strrchr(tmp, OY_SLASH_C)) ? strrchr(tmp, OY_SLASH_C) + 1 : tmp );
-#endif
-
-      START_CLOCK("create images")
-      oyProfile_s * src_profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
-      oyProfile_s * dst_profile = ps->ccontexts[i].oy_profile;
-
-      oyPixel_t pixel_layout = OY_TYPE_123_16;
-
-      oyImage_s * image_in = oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
-                                             ps->ccontexts[i].clut, 
-                                             pixel_layout, src_profile, 0 );
-      oyProfile_Release( &src_profile );
-      oyImage_s * image_out= oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
-                                             ps->ccontexts[i].clut,
-                                             pixel_layout, dst_profile, 0 );
-      oyOptions_s * options = 0;
-      /* rendering_high_precission maps to lcms' cmsFLAGS_NOTPRECALC */
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/icc/rendering_high_precission",
-                                     "1", OY_CREATE_NEW );
-      END_CLOCK
-
-      START_CLOCK("oyConversion_CreateBasicPixels: ")
-      ps->ccontexts[i].cc = oyConversion_CreateBasicPixels( image_in, image_out,
-                                                      options, 0 ); END_CLOCK
-
-      if (ps->ccontexts[i].cc == NULL)
-      {
-        oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                      DBG_STRING "no conversion created for %s",
-                      DBG_ARGS, ps->ccontexts[i].name);
-        continue;
-      }
-
-      START_CLOCK("fill array: ")
-      uint16_t in[3];
-      for (int r = 0; r < GRIDPOINTS; ++r)
-      {
-        in[0] = floor((double) r / (GRIDPOINTS - 1) * 65535.0 + 0.5);
-        for (int g = 0; g < GRIDPOINTS; ++g) {
-          in[1] = floor((double) g / (GRIDPOINTS - 1) * 65535.0 + 0.5);
-          for (int b = 0; b < GRIDPOINTS; ++b)
-          {
-            in[2] = floor((double) b / (GRIDPOINTS - 1) * 65535.0 + 0.5);
-            for(int j = 0; j < 3; ++j)
-              /* BGR */
-              ps->ccontexts[i].clut[b][g][r][j] = in[j];
-          }
-        }
-      } END_CLOCK
-
-      START_CLOCK("oyConversion_RunPixels: ")
-      oyConversion_RunPixels( ps->ccontexts[i].cc, 0 ); END_CLOCK
-
-      START_CLOCK("cdCreateTexture: ")
-      cdCreateTexture( &ps->ccontexts[i] ); END_CLOCK
-
-      oyOptions_Release( &options );
-      oyImage_Release( &image_in );
-      oyImage_Release( &image_out );
-
-    } else {
-      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
-                      DBG_STRING "Output %s: omitting sRGB->sRGB conversion",
-                      DBG_ARGS, ps->ccontexts[i].name);
-      ps->ccontexts[i].oy_profile = 0; /*cmsCreate_sRGBProfile();*/
-    }
+    setupICCprofileAtoms( s, i );
+    setupColourTables ( s, device, i );
 
     oyConfig_Release( &device );
   }
@@ -724,6 +826,12 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
   UNWRAP(pd, d, handleEvent);
   (*d->handleEvent) (d, event);
   WRAP(pd, d, handleEvent, pluginHandleEvent);
+
+  CompScreen * s = findScreenAtDisplay(d, event->xany.window);
+  PrivScreen * ps = compObjectGetPrivate((CompObject *) s);
+  if(s && ps && s->nOutputDev != ps->nCcontexts)
+    updateOutputConfiguration( s, TRUE);
+ 
 
   switch (event->type)
   {
@@ -1111,7 +1219,7 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
 #endif
 }
 
-
+#if 0
 /**
  * This is really stupid, object->parent isn't inisialized when 
  * pluginInitObject() is called. So this is a wrapper to get the parent because
@@ -1132,6 +1240,7 @@ static CompObject *getParent(CompObject *object)
     return NULL;
   }
 }
+#endif
 
 /**
  *    Object Init Functions
@@ -1218,7 +1327,7 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
 #endif
 
   ps->nCcontexts = 0;
-  updateOutputConfiguration(s, FALSE);
+  //updateOutputConfiguration(s, FALSE);
 
   return TRUE;
 }
@@ -1297,43 +1406,138 @@ static dispatchObjectProc dispatchFiniObject[] = {
  */
 static CompBool pluginInit(CompPlugin *p)
 {
+#if 0
   corePrivateIndex = allocateCorePrivateIndex();
 
   if (corePrivateIndex < 0)
     return FALSE;
-
+#endif
   return TRUE;
+}
+
+static oyStructList_s * privates_cache = 0;
+oyStructList_s * pluginGetPrivatesCache ()
+{
+  if(!privates_cache)
+    privates_cache = oyStructList_New( 0 );
+  return privates_cache;
+}
+
+int pluginPrivatesRelease( oyPointer * ptr )
+{
+  if(ptr)
+  {
+    free(*ptr);
+    *ptr = 0;
+    return 0;
+  }
+  return 1;
+}
+
+char * pluginGetHashText( CompObject * o )
+{
+  const char * type_name = "unknown";
+  char * hash_text;
+  switch(o->type)
+  {
+    case COMP_OBJECT_TYPE_CORE: type_name = "CORE"; break;
+    case COMP_OBJECT_TYPE_DISPLAY: type_name = "DISPLAY"; break;
+    case COMP_OBJECT_TYPE_SCREEN: type_name = "SCREEN"; break;
+    case COMP_OBJECT_TYPE_WINDOW: type_name = "WINDOW"; break;
+  }
+  hash_text = malloc( 1024 ); if(!hash_text) return NULL;
+  sprintf( hash_text, "%s[0x%lx]\n", type_name, (intptr_t)o );
+  return hash_text;
+}
+
+
+oyPointer pluginGetPrivatePointer( CompObject * o )
+{
+  oyPointer ptr = 0;
+  if(!o)
+    return 0;
+  char * hash_text = pluginGetHashText( o ); if(!hash_text) return FALSE;
+  oyHash_s * entry = oyCacheListGetEntry_( pluginGetPrivatesCache(),
+                                           hash_text );
+  oyCMMptr_s * priv_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+                                                        oyOBJECT_CMM_POINTER_S);
+  static const int privateSizes[] = {
+  sizeof(PrivCore), sizeof(PrivDisplay), sizeof(PrivScreen), sizeof(PrivWindow)
+  };
+
+  if(!priv_ptr)
+  {
+    ptr = malloc( privateSizes[o->type] ); if(!ptr) return FALSE;
+    memset( ptr, 0, privateSizes[o->type] );
+    priv_ptr = oyCMMptr_New( malloc );
+    int error = oyCMMptr_Set( priv_ptr, "colour_desktop", hash_text, ptr, 
+                              "pluginPrivatesRelease", pluginPrivatesRelease );
+#if defined(PLUGIN_DEBUG_)
+    printf( DBG_STRING "allocated private data: %s", DBG_ARGS, hash_text );
+#endif
+    if(error) return FALSE;
+    if(error <= 0 && priv_ptr)
+      /* update cache entry */
+      error = oyHash_SetPointer_( entry, (oyStruct_s*) priv_ptr );
+  } else
+  {
+    ptr = priv_ptr->ptr;
+#if defined(PLUGIN_DEBUG_)
+    printf( DBG_STRING "private data obtained: %s", DBG_ARGS, hash_text );
+#endif
+  }
+  oyHash_Release_( &entry );
+  free( hash_text ); hash_text = 0;
+
+  return ptr;
 }
 
 static CompBool pluginInitObject(CompPlugin *p, CompObject *o)
 {
-  static const int privateSizes[] = {
-    sizeof(PrivCore), sizeof(PrivDisplay), sizeof(PrivScreen), sizeof(PrivWindow)
-  };
+  /* use Oyranos for caching of private data */
+  oyPointer private_data = pluginGetPrivatePointer( o );
 
+#if 0
   void *privateData = compObjectAllocPrivate(getParent(o), o, privateSizes[o->type]);
   if (privateData == NULL)
     return TRUE;
+#endif
 
-  if (dispatchInitObject[o->type](p, o, privateData) == FALSE)
-    compObjectFreePrivate(getParent(o), o);
-
+  if (dispatchInitObject[o->type](p, o, private_data) == FALSE)
+    return FALSE; //compObjectFreePrivate(getParent(o), o);
   return TRUE;
 }
 
 static void pluginFiniObject(CompPlugin *p, CompObject *o)
 {
   void *privateData = compObjectGetPrivate(o);
+  char * hash_text;
+  oyHash_s * entry;
+  oyCMMptr_s * priv_ptr;
   if (privateData == NULL)
     return;
 
   dispatchFiniObject[o->type](p, o, privateData);
-  compObjectFreePrivate(getParent(o), o);
+  //compObjectFreePrivate(getParent(o), o);
+
+  if(!o)
+    return;
+
+  /* release a cache entry of private data */
+  hash_text = pluginGetHashText( o ); if(!hash_text) return;
+  entry = oyCacheListGetEntry_( pluginGetPrivatesCache(), hash_text );
+  priv_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry, oyOBJECT_CMM_POINTER_S);
+  if(priv_ptr)
+    oyCMMptr_Release( &priv_ptr );
+  oyHash_SetPointer_( entry, (oyStruct_s*) priv_ptr );
+  oyHash_Release_( &entry );
+  free( hash_text );
 }
 
 static void pluginFini(CompPlugin *p)
 {
-  freeCorePrivateIndex(corePrivateIndex);
+  //freeCorePrivateIndex(corePrivateIndex);
+  oyStructList_Release( &privates_cache );
 }
 
 static CompMetadata *pluginGetMetadata(CompPlugin *p)
