@@ -533,17 +533,18 @@ static void cdCreateTexture( PrivColorOutput *ccontext )
 }
 
 static void    setupICCprofileAtoms  ( CompScreen        * s,
-                                       int                 screen )
+                                       int                 screen,
+                                       int                 init )
 {
   char num[12];
   Window root = RootWindow( s->display->display, 0 );
   char * icc_profile_atom = calloc( 1024, sizeof(char) ),
        * icc_device_profile_atom = calloc( 1024, sizeof(char) );
-  Atom a,da;
+  Atom a,da, source_atom, target_atom;
 
-  unsigned long n = 0, dn = 0;
-  oyPointer dp;
-  oyPointer p;
+  oyPointer source;
+  oyPointer target;
+  unsigned long source_n = 0, target_n = 0;
 
   snprintf( num, 12, "%d", (int)screen );
   snprintf( icc_profile_atom, 1024, "_ICC_PROFILE%s%s", 
@@ -554,35 +555,67 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
 
   a = XInternAtom(s->display->display, icc_profile_atom, False);
   da = XInternAtom(s->display->display, icc_device_profile_atom, False);
-  dp = fetchProperty( s->display->display, root, da, XA_CARDINAL, &dn, False);
 
-  if( !dn )
+  /* select the atoms */
+  if(init)
   {
-    p = fetchProperty( s->display->display, root, a, XA_CARDINAL, &n, False);
-    XChangeProperty( s->display->display, root,
-                     da, XA_CARDINAL, 8, PropModeReplace, p, n );
-    printf( "copy from %s to %s (%d)\n", icc_profile_atom,
-            icc_device_profile_atom, (int)n );
-    XFree( p );
-    p = 0; n = 0;
+    source_atom = a;
+    target_atom = da;
+  } else
+  {
+    source_atom = da;
+    target_atom = a;
+  }
 
-    oyProfile_s * screen_document_profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
-    if(!screen_document_profile)
-      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                        DBG_STRING"Could not get oyASSUMED_WEB", DBG_ARGS);
-    size_t size = 0;
-    p = oyProfile_GetMem( screen_document_profile, &size, 0, malloc );
-    n = size;
+  target = fetchProperty( s->display->display, root, target_atom, XA_CARDINAL,
+                          &target_n, False);
+
+  if( !target_n ||
+      (target_n && !init) )
+  {
+    /* copy the real device atom */
+    source = fetchProperty( s->display->display, root, source_atom, XA_CARDINAL,
+                            &source_n, False);
     XChangeProperty( s->display->display, root,
-                     a, XA_CARDINAL, 8, PropModeReplace, p, n );
-    oyProfile_Release( &screen_document_profile );
-    if(p) free( p );
+                     target_atom, XA_CARDINAL, 8, PropModeReplace,
+                     source, source_n );
+    if(init)
+      printf( "copy from %s to %s (%d)\n", icc_profile_atom,
+              icc_device_profile_atom, (int)source_n );
+    else
+      printf( "copy from %s to %s (%d)\n", icc_device_profile_atom,
+              icc_profile_atom, (int)source_n );
+    XFree( source );
+    source = 0; source_n = 0;
+
+    if(init)
+    {
+      /* setup the _ICC_PROFILE(_xxx) atom as document colour space */
+      size_t size = 0;
+      oyProfile_s * screen_document_profile = oyProfile_FromStd( oyASSUMED_WEB,
+                                                                 0 );
+      if(!screen_document_profile)
+        oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                          DBG_STRING"Could not get oyASSUMED_WEB", DBG_ARGS);
+      source = oyProfile_GetMem( screen_document_profile, &size, 0, malloc );
+      source_n = size;
+      XChangeProperty( s->display->display, root,
+                       source_atom, XA_CARDINAL, 8, PropModeReplace,
+                       source, source_n );
+
+      oyProfile_Release( &screen_document_profile );
+      if(source) free( source ); source = 0;
+    } else
+    {
+      /* clear/erase the _ICC_DEVICE_PROFILE(_xxx) atom */
+      XDeleteProperty( s->display->display,root, source_atom );
+    }
 
   } else
-    if(dn)
+    if(target_atom && init)
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                         DBG_STRING"icc_device_profile_atom already present %d",
-                        DBG_ARGS, dn);
+                        DBG_ARGS, target_atom );
 
   if(icc_profile_atom) free(icc_profile_atom);
   if(icc_device_profile_atom) free(icc_device_profile_atom);
@@ -770,7 +803,8 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 {
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   int error = 0,
-      n;
+      n,
+      init = 1;
   oyOptions_s * options = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
@@ -808,7 +842,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
     device = oyConfigs_Get( devices, i );
 
     getDeviceProfile( s, device, i );
-    setupICCprofileAtoms( s, i );
+    setupICCprofileAtoms( s, i, init );
     setupColourTables ( s, device, i );
 
     oyConfig_Release( &device );
