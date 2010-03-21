@@ -594,12 +594,10 @@ static void    getDeviceProfile      ( CompScreen        * s,
 {
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   PrivColorOutput * output = &ps->ccontexts[screen];
-  int error = 0;
   oyOption_s * o = 0;
   oyRectangle_s * r = 0;
   const char * device_name = 0;
   char num[12];
-  Window root = RootWindow( s->display->display, 0 );
 
   snprintf( num, 12, "%d", (int)screen );
 
@@ -654,7 +652,7 @@ static void    getDeviceProfile      ( CompScreen        * s,
     if(!output->oy_profile)
     {
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
-                      DBG_STRING "Output %s: omitting sRGB->sRGB conversion",
+                      DBG_STRING "Output %s: no ICC profile found",
                       DBG_ARGS, output->name);
       output->oy_profile = 0; /*cmsCreate_sRGBProfile();*/
     }
@@ -668,13 +666,6 @@ static void    setupColourTables     ( CompScreen        * s,
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   PrivColorOutput * output = &ps->ccontexts[screen];
   int error = 0;
-  oyOption_s * o = 0;
-  oyRectangle_s * r = 0;
-  const char * device_name = 0;
-  char num[12];
-
-  snprintf( num, 12, "%d", (int)screen );
-
 
     if (output->oy_profile)
     {
@@ -781,12 +772,8 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   int error = 0,
       n;
   oyOptions_s * options = 0;
-  oyOption_s * o = 0;
-  oyRectangle_s * r = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
-  const char * device_name = 0;
-  char num[12];
 
   START_CLOCK("freeOutput:")
   /* clean memory */
