@@ -558,10 +558,11 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
 
   if( !dn )
   {
-    printf( "copy from %s to %s\n", icc_profile_atom, icc_device_profile_atom );
     p = fetchProperty( s->display->display, root, a, XA_CARDINAL, &n, False);
     XChangeProperty( s->display->display, root,
                      da, XA_CARDINAL, 8, PropModeReplace, p, n );
+    printf( "copy from %s to %s (%d)\n", icc_profile_atom,
+            icc_device_profile_atom, (int)n );
     XFree( p );
     p = 0; n = 0;
 
@@ -587,7 +588,7 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
   if(icc_device_profile_atom) free(icc_device_profile_atom);
 }
 
-static void    setupColourTables     ( CompScreen        * s,
+static void    getDeviceProfile      ( CompScreen        * s,
                                        oyConfig_s        * device,
                                        int                 screen )
 {
@@ -649,6 +650,31 @@ static void    setupColourTables     ( CompScreen        * s,
 
     if(!output->oy_profile)
       oyDeviceGetProfile( device, &output->oy_profile );
+
+    if(!output->oy_profile)
+    {
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
+                      DBG_STRING "Output %s: omitting sRGB->sRGB conversion",
+                      DBG_ARGS, output->name);
+      output->oy_profile = 0; /*cmsCreate_sRGBProfile();*/
+    }
+}
+
+
+static void    setupColourTables     ( CompScreen        * s,
+                                       oyConfig_s        * device,
+                                       int                 screen )
+{
+  PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
+  PrivColorOutput * output = &ps->ccontexts[screen];
+  int error = 0;
+  oyOption_s * o = 0;
+  oyRectangle_s * r = 0;
+  const char * device_name = 0;
+  char num[12];
+
+  snprintf( num, 12, "%d", (int)screen );
+
 
     if (output->oy_profile)
     {
@@ -725,8 +751,6 @@ static void    setupColourTables     ( CompScreen        * s,
                       DBG_ARGS, output->name);
       output->oy_profile = 0; /*cmsCreate_sRGBProfile();*/
     }
-
-    oyConfig_Release( &device );
 }
 
 static void freeOutput( PrivScreen *ps )
@@ -796,6 +820,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   {
     device = oyConfigs_Get( devices, i );
 
+    getDeviceProfile( s, device, i );
     setupICCprofileAtoms( s, i );
     setupColourTables ( s, device, i );
 
