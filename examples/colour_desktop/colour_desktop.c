@@ -847,7 +847,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
     oyConfig_Release( &device );
   }
-
+  oyConfigs_Release( &devices );
 
 #if defined(PLUGIN_DEBUG)
   oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
@@ -1427,6 +1427,33 @@ static CompBool pluginFiniScreen(CompPlugin *plugin, CompObject *object, void *p
 {
   CompScreen *s = (CompScreen *) object;
   PrivScreen *ps = privateData;
+
+  int error = 0,
+      n,
+      init = 0;
+  oyConfigs_s * devices = 0;
+  oyConfig_s * device = 0;
+
+  error = oyDevicesGet( OY_TYPE_STD, "monitor", 0, &devices );
+
+  n = oyConfigs_Count( devices );
+#if defined(PLUGIN_DEBUG)
+  oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+                  DBG_STRING "Oyranos monitor \"%s\" devices found: %d",
+                  DBG_ARGS, DisplayString( s->display->display ), n);
+#endif
+
+  /* switch profile atoms */
+  for (unsigned long i = 0; i < n; ++i)
+  {
+    device = oyConfigs_Get( devices, i );
+
+    setupICCprofileAtoms( s, i, init );
+
+    oyConfig_Release( &device );
+  }
+  oyConfigs_Release( &devices );
+
 
   /* clean memory */
   freeOutput(ps);
