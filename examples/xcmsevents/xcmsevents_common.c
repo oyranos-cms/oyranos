@@ -208,7 +208,7 @@ xcmseContext_s *
   c->root = 0;
   c->nWindows = 0;
   c->Windows = 0;
-  //c->w;
+  c->w = 0;
   c->old_pid = 0;
   //c->aProfile, c->aTarget, c->aCM, c->aRegion, c->aDesktop;
 
@@ -239,7 +239,8 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
   XSetWindowAttributes attrs;
   Status status = 0;
   Atom actual;
-  int format;
+  int format,
+      has_display = 0;
   unsigned long left, n;
   unsigned char * data;
 
@@ -248,7 +249,9 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
   /*XSetErrorHandler(myXErrorHandler);*/
   XSetErrorHandler( XmuSimpleErrorHandler );
 
-  if(!c->display)
+  if(c->display)
+    has_display = 1;
+  else
   {
     c->display = XOpenDisplay( display_name );
     c->display_is_owned = 1;
@@ -261,8 +264,6 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
 
   c->screen = DefaultScreen( c->display );
   c->root = XRootWindow( c->display, c->screen );
-  vis = DefaultVisual( c->display, c->screen );
-  cmap = XCreateColormap( c->display, c->root, vis, AllocNone );
 
   /* define the observers interesst */
   c->aProfile = XInternAtom( c->display, "_NET_COLOR_PROFILES", False );
@@ -271,16 +272,20 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
   c->aRegion = XInternAtom( c->display, "_NET_COLOR_REGIONS", False );
   c->aDesktop = XInternAtom( c->display, "_NET_COLOR_DESKTOP", False );
 
-  attrs.colormap = cmap;
-  attrs.border_pixel = 0;
-  attrs.event_mask = StructureNotifyMask | ExposureMask | KeyPressMask |
-                     PropertyChangeMask;
+  if(!has_display)
+  {
+    vis = DefaultVisual( c->display, c->screen );
+    cmap = XCreateColormap( c->display, c->root, vis, AllocNone );
+    attrs.colormap = cmap;
+    attrs.border_pixel = 0;
+    attrs.event_mask = StructureNotifyMask | ExposureMask | KeyPressMask |
+                       PropertyChangeMask;
 
-  c->w = XCreateWindow( c->display, c->root, 0, 0, 300, 300, 5, 24,
-                        InputOutput, DefaultVisual( c->display, c->screen ),
-                        CWBorderPixel | CWColormap | CWEventMask, &attrs);
-
-  /*XMapWindow( display, w );*/
+    c->w = XCreateWindow( c->display, c->root, 0, 0, 300, 300, 5, 24,
+                          InputOutput, DefaultVisual( c->display, c->screen ),
+                          CWBorderPixel | CWColormap | CWEventMask, &attrs);
+    /*XMapWindow( display, w );*/
+  }
 
   /* check if we can see other clients */
   XGetWindowProperty( c->display, RootWindow(c->display,0),
@@ -321,6 +326,9 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
       txt = (char*) oyAllocateFunc_( size + 1 );
       while( (txt[i] = getc(fp)) != 0 && txt[i] != EOF && i < size-1 )
         ++i;
+      if(txt[i-1] == '\n')
+        txt[i-1] = 0;
+      else
       txt[i] = 0;
       S( "%s", txt );
       oyDeAllocateFunc_( txt ); txt = 0;
@@ -400,8 +408,8 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
     unsigned char * data;
     char * actual_name = 0;
 
-
-    if( event->xany.window == c->w && event->type == Expose )
+    if( event->xany.window == c->w && event->type == Expose &&
+        c->display_is_owned )
     {
       /* draw something */
       XFillRectangle( display, c->w, DefaultGC( display, c->screen),
