@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+   <file>../colour_desktop/plugin-colour_desktop.svg</file>
+   <file>plugin-colour_desktop_gray.svg</file>
+</qresource>
+</RCC>
