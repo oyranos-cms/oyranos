@@ -47,22 +47,65 @@ void QcmseDialog::createIcon()
 
   icon = new QSystemTrayIcon( this );
   icon->setContextMenu( iconMenu );
-  QIcon ic(":/plugin-colour_desktop_gray.svg");
-  icon->setIcon( ic );
 }
 
 void QcmseDialog::log( const char * text, int code )
 {
+  int pid = -1;
+
   dialog->icon->setToolTip( text );
 
   QListWidgetItem * item = new QListWidgetItem;
   QColor colour;
   if(code == oyMSG_DISPLAY_EVENT)
   {
-    colour.setHsvF( 0.0, 0.1, 0.9 );
-    item->setBackground( QBrush( colour ) );
+    static int zebra = 0;
+    if(zebra)
+    {
+      zebra = 0;
+      colour.setHsvF( 0.17, 0.05, 0.9 );
+    }
+    else
+    {
+      zebra = 1;
+      colour.setHsvF( 0.17, 0.05, 0.75 );
+    }
+
     if(strstr(text, "PropertyNotify : "))
       text = strstr(text, "PropertyNotify : ") + strlen("PropertyNotify : ");
+    if(strstr(text, "_NET_COLOR_DESKTOP "))
+      sscanf( text, "_NET_COLOR_DESKTOP %d", &pid );
+    if(pid == 0)
+    {
+      colour.setHsvF( 0.6, 0.4, 0.9 );
+      QIcon ic(":/plugin-colour_desktop_gray.svg");
+      icon->setIcon( ic );
+    } else
+    if(pid > 0)
+    {
+      colour.setHsvF( 0.41, 0.5, 0.9 );
+      QIcon ic(":/colour_desktop/plugin-colour_desktop.svg");
+      icon->setIcon( ic );
+    }
+    item->setBackground( QBrush( colour ) );
+  }
+  else if (oyMSG_DISPLAY_STATUS)
+  {
+    int i;
+    if(strstr(text, "atom: \"_NET_COLOR_DESKTOP\":"))
+      sscanf( text, "atom: \"_NET_COLOR_DESKTOP\": %d %d", &i, &pid );
+    if(pid == 0)
+    {
+      colour.setHsvF( 0.6, 0.4, 0.9 );
+      QIcon ic(":/plugin-colour_desktop_gray.svg");
+      icon->setIcon( ic );
+    } else
+    if(pid > 0)
+    {
+      colour.setHsvF( 0.41, 0.5, 0.9 );
+      QIcon ic(":/colour_desktop/plugin-colour_desktop.svg");
+      icon->setIcon( ic );
+    }
   }
   item->setText( text );
 
