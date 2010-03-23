@@ -42,6 +42,8 @@ extern "C" {
                                                        __VA_ARGS__)
 #define DE(format, ...) oyMessageFunc_p( oyMSG_DISPLAY_EVENT, 0, format, \
                                          __VA_ARGS__)
+#define DERR(format, ...) oyMessageFunc_p( oyMSG_DISPLAY_ERROR, 0, format, \
+                                         __VA_ARGS__)
 #define DS(format, ...) oyMessageFunc_p( oyMSG_DISPLAY_STATUS, 0, format, \
                                          __VA_ARGS__)
 #define S(format, ...) oyMessageFunc_p( oyMSG_SYSTEM, 0, format, __VA_ARGS__ )
@@ -141,7 +143,7 @@ void     printWindowRegions          ( Display           * display,
 
             if(!regions[i].region)
             {
-              DE("server region id with zero: left %d", (int)n-i);
+              DERR("server region id with zero: left %d", (int)n-i);
               break;
             }
 
@@ -189,7 +191,7 @@ static inline unsigned long XcolorProfileCount(void *data, unsigned long nBytes)
 
 int myXErrorHandler ( Display * display, XErrorEvent * e)
 {
-  DE( "%s:%d catched a X11 error\n", 
+  DERR( "%s:%d catched a X11 error\n", 
           strrchr(__FILE__, '/')?strrchr(__FILE__, '/')+1:__FILE__,__LINE__ );
   return 0;
 }
@@ -258,7 +260,7 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
   }
   if(!c->display)
   {
-    DE( "could not open display %s", display_name?display_name:"???" );
+    DERR( "could not open display %s", display_name?display_name:"???" );
     exit (1);
   }
 
@@ -293,8 +295,8 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
                       0, ~0, False, XA_WINDOW,
                       &actual,&format, &n, &left, &data );
   if(!data || !n)
-    DE( "\nThe extented ICCCM hint _NET_CLIENT_LIST atom is %s\n"
-        "!!! xcmsevents will work limited !!!\n", n ? "missed" : "zero" );
+    DERR( "\nThe extented ICCCM hint _NET_CLIENT_LIST atom is %s\n"
+          "!!! xcmsevents will work limited !!!\n", n ? "missed" : "zero" );
 
   XGetWindowProperty( c->display, RootWindow(c->display,0),
                       c->aDesktop, 0, ~0, False, XA_CARDINAL,
@@ -475,7 +477,7 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
           if(n && data)
           {
             if(*((pid_t*)data) && c->old_pid)
-              DE( "!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
+              DERR( "!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
                      "Eigther there was a previous crash or your setup can be double colour corrected.", c->old_pid );
             c->old_pid = *((pid_t*)data);
           } else

@@ -89,6 +89,24 @@ void QcmseDialog::log( const char * text, int code )
     }
     item->setBackground( QBrush( colour ) );
   }
+  else if(code == oyMSG_DISPLAY_ERROR)
+  {
+    static int zebra = 0;
+    if(zebra)
+    {
+      zebra = 0;
+      colour.setHsvF( 0.0, 0.7, 0.9 );
+    }
+    else
+    {
+      zebra = 1;
+      colour.setHsvF( 0.0, 0.7, 0.75 );
+    }
+
+    if(strstr(text, "PropertyNotify : "))
+      text = strstr(text, "PropertyNotify : ") + strlen("PropertyNotify : ");
+    item->setBackground( QBrush( colour ) );
+  }
   else if (oyMSG_DISPLAY_STATUS)
   {
     int i;
