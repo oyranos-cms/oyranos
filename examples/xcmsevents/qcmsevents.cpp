@@ -160,7 +160,9 @@ int QcmseMessageFunc( int code, const oyStruct_s * context, const char * format,
   dialog->log( text, code );
   /* for debugging it is better to see messages on the console rather than
      getting lost during a crash */
+#ifdef DEBUG
   printf( "%d %s\n", code, text );
+#endif
 
   if(text) free( text );
 
@@ -175,7 +177,7 @@ int main(int argc, char *argv[])
     QApplication::setQuitOnLastWindowClosed( false );
 
   dialog = new QcmseDialog();
-  dialog->show();
+  //dialog->show();
 
   oyMessageFuncSet( QcmseMessageFunc );
 
