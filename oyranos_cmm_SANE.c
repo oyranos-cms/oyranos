@@ -610,7 +610,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                             (oyPointer)h,
                             "sane_release_handle",
                             sane_release_handle);
-               oyOptions_MoveInStruct(&(device->backend_core),
+               oyOptions_MoveInStruct(&(device->data),
                                       CMM_BASE_REG OY_SLASH "device_handle",
                                       (oyStruct_s **) &handle_ptr, OY_CREATE_NEW);
             } else
