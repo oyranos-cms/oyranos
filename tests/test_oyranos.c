@@ -598,10 +598,14 @@ oyTESTRESULT_e testMonitor ()
     PRINT_SUB( oyTESTRESULT_XFAIL,
                "\"list\" device(s): ---                   " )
 
+  error = oyOptions_SetFromText( &options,
+                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                                       "yes", OY_CREATE_NEW );
+
   for( i = 0; i < n; ++i )
   {
     c = oyConfigs_Get( devices, i );
-    oyDeviceGetProfile( c, &p );
+    oyDeviceGetProfile( c, options, &p );
 
     if(p)
     {
@@ -620,6 +624,7 @@ oyTESTRESULT_e testMonitor ()
   }
   /* release devices */
   oyConfigs_Release( &devices );
+  oyOptions_Release( &options );
 
 
   /* get all monitors */
@@ -668,8 +673,11 @@ oyTESTRESULT_e testMonitor ()
                                  "properties", OY_CREATE_NEW );
 #endif
 
+  error = oyOptions_SetFromText( &options,
+                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                                       "yes", OY_CREATE_NEW );
+
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
-  oyOptions_Release( &options );
 
   n = oyConfigs_Count( devices );
   if(n)
@@ -695,7 +703,7 @@ oyTESTRESULT_e testMonitor ()
       if(text)
         oyDeAllocateFunc_( text );
 
-      error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text, 0 );
+      error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, options, &text, 0 );
 
       if(text && text[0])
       {
@@ -741,7 +749,7 @@ oyTESTRESULT_e testMonitor ()
       display_name = text; text = 0;
 
       size = 0;
-      error = oyDeviceGetProfile( c, &p );
+      error = oyDeviceGetProfile( c, options, &p );
       block = oyProfile_GetMem( p, &size, 0, malloc );
 
       if(block)
@@ -793,6 +801,7 @@ oyTESTRESULT_e testMonitor ()
     }
   }
   oyConfigs_Release( &devices );
+  oyOptions_Release( &options );
 
   display_name = oyGetDisplayNameFromPosition( 0, 0,0, malloc);
 

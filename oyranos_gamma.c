@@ -52,7 +52,7 @@ int main( int argc , char** argv )
   char * format = 0;
   char * output = 0;
   int server = 0;
-  int colour_server = 0;
+  int net_color_region_target = 0;
 
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -137,7 +137,7 @@ int main( int argc , char** argv )
             {
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'b': database = 1; monitor_profile = 0; break;
-              case 'c': colour_server = 1; monitor_profile = 0; break;
+              case 'c': net_color_region_target = 1; monitor_profile = 0; break;
               case 'f': OY_PARSE_STRING_ARG(format); monitor_profile = 0; break;
               case 'l': list = 1; monitor_profile = 0; break;
               case 'o': OY_PARSE_STRING_ARG(output); monitor_profile = 0; break;
@@ -151,8 +151,8 @@ int main( int argc , char** argv )
                         {
                              if(strcmp(&argv[pos][2],"unset") == 0)
                         { erase = 1; monitor_profile = 0; i=100; break; }
-                        else if(strcmp(&argv[pos][2],"colour_server") == 0)
-                        { colour_server = 1; i=100; break; }
+                        else if(strcmp(&argv[pos][2],"net_color_region_target") == 0)
+                        { net_color_region_target = 1; i=100; break; }
                         else if(strcmp(&argv[pos][2],"setup") == 0)
                         { setup = 1; i=100; break; }
                         else if(strcmp(&argv[pos][2],"format") == 0)
@@ -232,6 +232,10 @@ int main( int argc , char** argv )
 
       error = oyDeviceGet( OY_TYPE_STD, "monitor", oy_display_name, 0,
                            &device );
+      if(net_color_region_target)
+        error = oyOptions_SetFromText( &options,
+                                       "//"OY_TYPE_STD"/config/net_color_region_target",
+                                       "yes", OY_CREATE_NEW );
 
       if(database)
       {
@@ -239,7 +243,7 @@ int main( int argc , char** argv )
         prof = oyProfile_FromFile( fn, 0, 0 );
         filename = fn;
       } else {
-        error = oyDeviceGetProfile    ( device, &prof );
+        error = oyDeviceGetProfile( device, options, &prof );
         filename = oyProfile_GetFileName( prof, -1 );
       }
       data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
@@ -255,6 +259,7 @@ int main( int argc , char** argv )
       if(fn) oyDeAllocFunc( fn ); fn = 0;
       oyProfile_Release( &prof );
       oyConfig_Release( &device );
+      oyOptions_Release( &options );
     }
 
     if(format &&
@@ -265,7 +270,6 @@ int main( int argc , char** argv )
       oyConfigs_s * devices = 0;
       oyConfig_s * c = 0;
       icHeader * header = 0;
-      oyOptions_s * options = 0;
       oyOption_s * o = 0;
       char * out_name = 0;
 
@@ -342,11 +346,11 @@ int main( int argc , char** argv )
           if(strcmp(format,"icc") == 0)
           {
             oyOptions_s * cs_options = 0;
-            if(colour_server)
+            if(net_color_region_target)
             {
               /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
               error = oyOptions_SetFromText( &cs_options,
-              "//"OY_TYPE_STD"/config/colour_server", "yes", OY_CREATE_NEW );
+              "//"OY_TYPE_STD"/config/net_color_region_target", "yes", OY_CREATE_NEW );
             }
             oyDeviceAskProfile2( c, cs_options, &prof );
             oyOptions_Release( &cs_options );
@@ -375,6 +379,7 @@ int main( int argc , char** argv )
         }
       }
       oyConfigs_Release( &devices );
+      oyOptions_Release( &options );
     }
 
 
@@ -387,11 +392,11 @@ int main( int argc , char** argv )
       oyOption_s * o = 0;
       oyOptions_s * cs_options = 0;
 
-      if(colour_server)
+      if(net_color_region_target)
       {
         /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
         error = oyOptions_SetFromText( &cs_options,
-              "//"OY_TYPE_STD"/config/colour_server", "yes", OY_CREATE_NEW );
+              "//"OY_TYPE_STD"/config/net_color_region_target", "yes", OY_CREATE_NEW );
       }
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
@@ -438,7 +443,7 @@ int main( int argc , char** argv )
             if(text) oyDeAllocFunc( text ); text = 0;
             oyOption_Release( &o );
 
-            oyDeviceAskProfile( c, &prof );
+            oyDeviceAskProfile2( c, cs_options, &prof );
             data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
             if(size && data)
               oyDeAllocFunc( data );

@@ -1557,9 +1557,7 @@ OYAPI int  OYEXPORT
                                        const char        * profile_name );
 OYAPI int  OYEXPORT
            oyDeviceGetProfile        ( oyConfig_s        * device,
-                                       oyProfile_s      ** profile );
-OYAPI int  OYEXPORT
-           oyDeviceAskProfile        ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
                                        oyProfile_s      ** profile );
 OYAPI int  OYEXPORT
            oyDeviceAskProfile2       ( oyConfig_s        * device,

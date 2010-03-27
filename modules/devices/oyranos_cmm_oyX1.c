@@ -630,13 +630,13 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           uint32_t flags = 0;
           char * data = 0;
 
-          if(oyOptions_FindString( options, "colour_server", 0 ))
+          if(oyOptions_FindString( options, "net_color_region_target", 0 ))
           {
             if(oy_debug)
               message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Try %s(_xxx) from %s",
                      OY_DBG_ARGS_,
-                     oyOptions_FindString(options, "colour_server", 0) ? 
+                     oyOptions_FindString(options, "net_color_region_target", 0) ? 
                      OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
                      OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
                      device_name );
@@ -647,17 +647,22 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
 
           has = 0;
-          o = oyConfig_Find( device, "icc_profile" );
+          /*  */
+          /*o = oyConfig_Find( device, "icc_profile" );
           if(o)
-            has = 1;
+            has = 1;*/
 
           if(data && size)
           {
             prof = oyProfile_FromMem( size, data, 0, 0 );
             free( data );
             if(has == 0)
-              o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH
-                                "icc_profile", 0 );
+            {
+              const char * key = OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile";
+              if(oyOptions_FindString(options, "net_color_region_target", 0))
+                key = OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile.net_color_region_target";
+              o = oyOption_New( key, 0 );
+            }
           } else if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
           {
             icHeader * header = 0;
@@ -756,7 +761,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Could not obtain %s(_xxx) information for %s",
                      OY_DBG_ARGS_,
-                     oyOptions_FindString(options, "colour_server", 0) ? 
+                     oyOptions_FindString(options, "net_color_region_target", 0) ? 
                      OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
                      OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
                      device_name );

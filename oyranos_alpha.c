@@ -12604,7 +12604,7 @@ const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj )
  *  All other functions return a handle to the device. With this handle it is
  *  possible to get informations (oyDeviceGetInfo()), query it's current,
  *  possibly remote profile (strong oyDeviceGetProfile() /
- *  weak oyDeviceAskProfile()) set the profile persistent
+ *  weak oyDeviceAskProfile2()) set the profile persistent
  *  (oyDeviceSetProfile()) or query the persistent stored profile
  *  (oyDeviceProfileFromDB()).
  *
@@ -13070,7 +13070,7 @@ OYAPI int  OYEXPORT
 
   {
     /* 1. ask for the profile the device is setup with */
-    error = oyDeviceAskProfile( device, &p );
+    error = oyDeviceAskProfile2( device, 0, &p );
     if(p)
     {
       oyProfile_Release( &p );
@@ -13395,9 +13395,10 @@ OYAPI int  OYEXPORT
  *  get at least one basic profile.
  *
  *  For a basic and thus weaker call to the device use
- *  oyDeviceAskProfile() instead.
+ *  oyDeviceAskProfile2() instead.
  *
- *  @param         device          the device
+ *  @param         device              the device
+ *  @param         options             options passed to the backend
  *  @param         profile             the device's ICC profile
  *  @return                            error
  *
@@ -13407,6 +13408,7 @@ OYAPI int  OYEXPORT
  */
 OYAPI int  OYEXPORT
            oyDeviceGetProfile        ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
                                        oyProfile_s      ** profile )
 {
   int error = !device,
@@ -13416,7 +13418,7 @@ OYAPI int  OYEXPORT
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
 
-  l_error = oyDeviceAskProfile( device, profile ); OY_ERR
+  l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
 
   /** This function does a device setup in case no profile is delivered
    *  by the according module. */
@@ -13424,7 +13426,7 @@ OYAPI int  OYEXPORT
     l_error = oyDeviceSetup( device ); OY_ERR
 
   if(error <= 0) 
-    l_error = oyDeviceAskProfile( device, profile ); OY_ERR
+    l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
 
   /** As a last means oyASSUMED_WEB is delivered. */
   if(!*profile)
@@ -13523,90 +13525,6 @@ OYAPI int  OYEXPORT
 
   if(own_options)
     oyOptions_Release( &options );
-  oyOption_Release( &o );
-
-  return error;
-}
-
-/** Function oyDeviceAskProfile
- *  @brief   ask for the device profile
- *
- *  Ask for a profile associated with the device. A device capable to
- *  hold a profile only the held profile will be checked and returned.
- *  In case this profile is not found a "icc_profile" of oyVAL_STRUCT should be
- *  included.
- *
- *  The device might not be able to hold a profile, then just the DB profile
- *  will be returned from here without an issue. For interessted users, the
- *  source of the profile keeps transparent, as it can be checked if the
- *  device contains a "icc_profile" option which contains a oyProfile_s object.
- *
- *  @param[in]     device              the device
- *  @param[out]    profile             the device's ICC profile
- *  @return                            0 - good, 1 >= error, -1 <= issue(s)
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/10 (Oyranos: 0.1.10)
- *  @date    2009/08/15
- */
-OYAPI int  OYEXPORT
-           oyDeviceAskProfile        ( oyConfig_s        * device,
-                                       oyProfile_s      ** profile )
-{
-  int error = !device;
-  oyOptions_s * options = 0;
-  oyOption_s * o = 0;
-  oyConfig_s * s = device;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
-
-
-  if(!options)
-  {
-    options = oyOptions_New( 0 );
-
-    error = !options;
-  }
-
-  if(error <= 0)
-  {
-    /* add "list" call to module arguments */
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               device->registration,
-                                               "command", "list" );
-  }
-
-  if(error <= 0)
-  {
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               device->registration,
-                                               "icc_profile", "true" );
-  }
-
-  if(error <= 0)
-    error = oyDeviceBackendCall( device, options );
-
-  if(error <= 0)
-    o = oyConfig_Find( device, "icc_profile" );
-
-  if(o && o->value_type == oyVAL_STRUCT &&
-     o->value)
-  {
-    if(o->value->oy_struct && 
-       o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
-      *profile = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
-    else if(!error)
-      error = -1;
-  }
-  else
-  {
-    char * profile_name = 0;
-    oyDeviceProfileFromDB( device, &profile_name, 0 );
-    *profile = oyProfile_FromFile( profile_name, 0,0 );
-    oyDeAllocateFunc_( profile_name );
-  }
-
-  oyOptions_Release( &options );
   oyOption_Release( &o );
 
   return error;
@@ -28243,7 +28161,7 @@ char *   oyGetMonitorProfile         ( const char        * device_name,
   {
     error = oyDeviceGet( device_type, device_class, device_name,
                              options, &device );
-    error = oyDeviceGetProfile    ( device, &p );
+    error = oyDeviceGetProfile( device, 0, &p );
     oyConfig_Release( &device );
   }
 

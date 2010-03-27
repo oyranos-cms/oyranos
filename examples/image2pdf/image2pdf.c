@@ -142,7 +142,7 @@ int main (int argc, char ** argv)
    */
   error = oyDeviceGet( OY_TYPE_STD, "monitor", 0, 0,
                        &device );
-  error = oyDeviceGetProfile( device, &prof );
+  error = oyDeviceGetProfile( device, 0, &prof );
   data = oyProfile_GetMem( prof, &size, 0, malloc );
 
   if(!size || !data)

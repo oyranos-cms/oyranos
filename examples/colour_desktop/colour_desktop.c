@@ -684,7 +684,14 @@ static void    getDeviceProfile      ( CompScreen        * s,
                                   oyOption_StructGet( o, oyOBJECT_PROFILE_S );
 
     if(!output->oy_profile)
-      oyDeviceGetProfile( device, &output->oy_profile );
+    {
+      oyOptions_s * options = 0;
+      oyOptions_SetFromText( &options,
+                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                                       "yes", OY_CREATE_NEW );
+      oyDeviceGetProfile( device, options, &output->oy_profile );
+      oyOptions_Release( &options );
+    }
 
     if(!output->oy_profile)
     {

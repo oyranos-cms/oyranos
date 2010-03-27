@@ -366,8 +366,8 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
     FILE * fp;
     size_t size = 256, i = 0;
     char * txt;
-    S( "running \"oyranos-monitor -l\":%s", "" );
-    fp = popen(  "oyranos-monitor -l", "r" );
+    S( "running \"oyranos-monitor -lc\":%s", "" );
+    fp = popen(  "oyranos-monitor -lc", "r" );
     if( fp )
     {
       txt = (char*) oyAllocateFunc_( size + 1 );

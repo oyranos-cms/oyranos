@@ -673,7 +673,12 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       /* set the device profile of all CMM's image data */
       if(init)
       {
-        error = oyDeviceGetProfile( c, &p );
+        oyOptions_s * options = 0;
+        error = oyOptions_SetFromText( &options,
+                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                                       "yes", OY_CREATE_NEW );
+        error = oyDeviceGetProfile( c, options, &p );
+        oyOptions_Release( &options );
 
         if(p && image_input && !oyProfile_Equal( image_input->profile_, p ))
         {
