@@ -13084,8 +13084,13 @@ OYAPI int  OYEXPORT
     /* 2.1 for no profile name: skip the "setup" call */
     if(!profile_name)
     {
+      oyOptions_s * fallback = oyOptions_New( 0 );
+      error = oyOptions_SetRegistrationTextKey_( fallback,
+                                                 device->registration,
+                                                 "icc_profile.fallback","true");
       /* 2.1.1 try fallback for rescue */
-      error = oyDeviceAskProfile2( device, 1, &p );
+      error = oyDeviceAskProfile2( device, fallback, &p );
+      oyOptions_Release( &fallback );
       if(p)
       {
         profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
@@ -13256,23 +13261,23 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/02 (Oyranos: 0.1.10)
- *  @date    2009/02/02
+ *  @date    2009/03/27
  */
 OYAPI int  OYEXPORT
            oyDeviceGetInfo           ( oyConfig_s        * device,
                                        oyNAME_e            type,
-                                       uint32_t            flags,
+                                       oyOptions_s       * options,
                                        char             ** info_text,
                                        oyAlloc_f           allocateFunc )
 {
   int error = !device || !info_text;
-  oyOptions_s * options = 0;
   oyOption_s * o = 0;
   oyConfig_s * config = 0;
   const char * tmp = 0;
   static char * num = 0;
   char * text = 0;
-  int i, n;
+  int i, n,
+      own_options = 0;
   oyConfig_s * s = device;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
@@ -13285,6 +13290,9 @@ OYAPI int  OYEXPORT
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
+
+  if(!options)
+    own_options = 1;
 
   if(type == oyNAME_NICK)
   {
@@ -13303,8 +13311,6 @@ OYAPI int  OYEXPORT
 
       if(error <= 0)
         error = oyDeviceBackendCall( device, options );
-
-      oyOptions_Release( &options );
     }
 
     if(error <= 0)
@@ -13372,7 +13378,8 @@ OYAPI int  OYEXPORT
 
   *info_text = oyStringCopy_( tmp, allocateFunc );
 
-  oyOptions_Release( &options );
+  if(own_options)
+    oyOptions_Release( &options );
   oyConfig_Release( &config );
 
   return error;
@@ -13434,7 +13441,7 @@ OYAPI int  OYEXPORT
  *  @brief   ask for the device profile
  *
  *  Ask for a profile associated with the device. A device capable to
- *  hold a profile only the held profile will be checked and returned.
+ *  hold a profile. Only the held profile will be checked and returned.
  *  In case this profile is not found a "icc_profile" of oyVAL_STRUCT should be
  *  included.
  *
@@ -13444,7 +13451,7 @@ OYAPI int  OYEXPORT
  *  device contains a "icc_profile" option which contains a oyProfile_s object.
  *
  *  @param[in]     device              the device
- *  @param[in]     flags               0 - default, 1 - allow for fallback
+ *  @param[in]     options             additional options
  *  @param[out]    profile             the device's ICC profile
  *  @return                            0 - good, 1 >= error, -1 <= issue(s)
  *
@@ -13454,13 +13461,13 @@ OYAPI int  OYEXPORT
  */
 OYAPI int  OYEXPORT
            oyDeviceAskProfile2       ( oyConfig_s        * device,
-                                       uint32_t            flags,
+                                       oyOptions_s       * options,
                                        oyProfile_s      ** profile )
 {
   int error = !device;
-  oyOptions_s * options = 0;
   oyOption_s * o = 0;
   oyConfig_s * s = device;
+  int own_options = 0;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
@@ -13468,7 +13475,7 @@ OYAPI int  OYEXPORT
   if(!options)
   {
     options = oyOptions_New( 0 );
-
+    own_options = 1;
     error = !options;
   }
 
@@ -13482,12 +13489,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    if(flags & 0x01)
-      error = oyOptions_SetRegistrationTextKey_( options,
-                                                 device->registration,
-                                                 "icc_profile.fallback","true");
-    else
-      error = oyOptions_SetRegistrationTextKey_( options,
+    error = oyOptions_SetRegistrationTextKey_( options,
                                                  device->registration,
                                                  "icc_profile", "true" );
   }
@@ -13512,11 +13514,15 @@ OYAPI int  OYEXPORT
   {
     char * profile_name = 0;
     oyDeviceProfileFromDB( device, &profile_name, 0 );
-    *profile = oyProfile_FromFile( profile_name, 0,0 );
-    oyDeAllocateFunc_( profile_name );
+    if(profile_name)
+    {
+      *profile = oyProfile_FromFile( profile_name, 0,0 );
+      oyDeAllocateFunc_( profile_name );
+    }
   }
 
-  oyOptions_Release( &options );
+  if(own_options)
+    oyOptions_Release( &options );
   oyOption_Release( &o );
 
   return error;
