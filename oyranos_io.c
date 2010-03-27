@@ -193,8 +193,11 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
       if(written_n != size)
         r = errno;
 #endif
-    } else
-      r = errno;
+    } else 
+      if(mem && size)
+        r = errno;
+      else
+        WARNc1_S("no data to write into: \"%s\"", filename );
 
     if(r)
     {
