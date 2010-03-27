@@ -64,7 +64,56 @@ int      myXErrorHandler             ( Display           * display,
 int      xcmseSetup                  ( xcmseContext_s    * c,
                                        const char        * display_name );
 
+static char * net_color_desktop_text = 0;
+char * printfNetColorDesktop ( xcmseContext_s * c, int verbose )
+{
+  Atom actual;
+  int format;
+  unsigned long left, n;
+  unsigned char * data = 0;
 
+  if(!net_color_desktop_text)
+    net_color_desktop_text = (char*) malloc(1024);
+
+  net_color_desktop_text[0] = 0;
+
+  XGetWindowProperty( c->display, RootWindow(c->display,0),
+                      c->aDesktop, 0, ~0, False, XA_STRING,
+                      &actual,&format, &n, &left, &data );
+  n += left;
+  if(n && data)
+  {
+    int old_pid = 0;
+    long atom_last_time = 0,
+         atom_time = 0;
+    char * atom_time_text = (char*)malloc(1024),
+         * atom_colour_server_name = (char*)malloc(1024);
+    if(n && data && strlen((char*)data))
+    {
+      sscanf( (const char*)data, "%d %ld %s %s",
+              &old_pid, &atom_last_time,
+              atom_time_text, atom_colour_server_name );
+      atom_time = atol( atom_time_text );
+    }
+
+    c->old_pid = (pid_t)old_pid;
+    if(verbose)
+    {
+      sprintf( net_color_desktop_text, "%d %s %s",
+               (int)c->old_pid, atom_colour_server_name,
+               atom_time_text );
+    }
+    else
+      sprintf( net_color_desktop_text, "%d",
+               (int)c->old_pid );
+    if(atom_time_text) free(atom_time_text);
+    if(atom_colour_server_name) free(atom_colour_server_name);
+  }
+  else
+    sprintf( net_color_desktop_text, "0" );
+
+  return net_color_desktop_text;
+}
 
 char * printWindowName( Display * display, Window w )
 {
@@ -298,13 +347,6 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
     DERR( "\nThe extented ICCCM hint _NET_CLIENT_LIST atom is %s\n"
           "!!! xcmsevents will work limited !!!\n", n ? "missed" : "zero" );
 
-  XGetWindowProperty( c->display, RootWindow(c->display,0),
-                      c->aDesktop, 0, ~0, False, XA_CARDINAL,
-                      &actual,&format, &n, &left, &data );
-  n += left;
-  if(n && data)
-    c->old_pid = *((pid_t*)data);
-
   /* print some general information */
   M( oyMSG_TITLE, 0,
      TARGET " - observes X11 colour management system events%s", "");
@@ -314,8 +356,10 @@ int      xcmseContext_Setup          ( xcmseContext_s    * c,
   DS( "atom: \"_NET_COLOR_TARGET\": %d", (int)c->aTarget );
   DS( "atom: \"_NET_COLOR_MANAGEMENT\": %d", (int)c->aCM );
   DS( "atom: \"_NET_COLOR_REGIONS\": %d", (int)c->aRegion );
-  DS( "atom: \"_NET_COLOR_DESKTOP\": %d %d", (int)c->aDesktop,
-                                                   (int)c->old_pid );
+  DS( "atom: \"_NET_COLOR_DESKTOP\": %d %s", (int)c->aDesktop,
+                                          printfNetColorDesktop(c, 0) );
+
+
   DS( "root window ID: %d", (int)c->root );
   {
     FILE * fp;
@@ -474,17 +518,11 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
 
         } else if( event->xproperty.atom == c->aDesktop )
         {
-          if(n && data)
-          {
-            if(*((pid_t*)data) && c->old_pid)
-              DERR( "!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
-                     "Eigther there was a previous crash or your setup can be double colour corrected.", c->old_pid );
-            c->old_pid = *((pid_t*)data);
-          } else
-            c->old_pid = 0;
-          DE( "PropertyNotify : %s    %d          %s",
+          DE( "PropertyNotify : %s    %s          %s",
                actual_name,
-               c->old_pid, printWindowName( display, event->xany.window ) );
+               event->xproperty.state ? "0 - removed" :
+               printfNetColorDesktop(c, 1),
+               printWindowName( display, event->xany.window ) );
 
         } else if( event->xproperty.atom == c->aRegion )
         {
