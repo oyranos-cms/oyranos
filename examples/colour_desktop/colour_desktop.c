@@ -190,7 +190,10 @@ typedef struct {
 
 static Region absoluteRegion(CompWindow *w, Region region);
 static void damageWindow(CompWindow *w, void *closure);
-oyPointer pluginGetPrivatePointer( CompObject * o );
+oyPointer  pluginGetPrivatePointer   ( CompObject        * o );
+static int updateNetColorDesktopAtom ( CompDisplay       * d,
+                                       PrivDisplay       * pd,
+                                       int                 request );
 
 /**
  *    Private Data Allocation
@@ -1037,6 +1040,10 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
   CompScreen *s = w->screen;
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   int i;
+  CompDisplay * d = s->display;
+  PrivDisplay * pd = compObjectGetPrivate((CompObject *) d);
+
+  updateNetColorDesktopAtom( d, pd, 0 );
 
   UNWRAP(ps, s, drawWindow);
   Bool status = (*s->drawWindow) (w, transform, attrib, region, mask);
@@ -1304,6 +1311,120 @@ static CompBool pluginInitCore(CompPlugin *plugin, CompObject *object, void *pri
   return TRUE;
 }
 
+static time_t net_color_desktop_last_time = 0;
+
+/**
+ *  Check and update the _NET_COLOR_DESKTOP status atom. It is used to 
+ *  communicate to the colour server.
+ *
+ *  The _NET_COLOR_DESKTOP atom is a string with following usages:
+ *  - uniquely identify the colour server
+ *  - tell the name of the colour server
+ *  - tell the colour server is alive
+ *  All sections are separated by underline for easy parsing.
+ *  The first section contains the pid_t of the process which has set the atom.
+ *  The second section contains time since epoch as returned by time().
+ *  The thierd section contains a time string for better displaying.
+ *  The fourth section contains the server name identifier.
+ *
+ * @param[in]      request             similiar as return values
+ * @return                             - 0  all fine
+ *                                     - 1  inactivate
+ *                                     - 2  activate
+ *                                     - 3  error
+ */
+static int updateNetColorDesktopAtom ( CompDisplay       * d,
+                                       PrivDisplay       * pd,
+                                       int                 request )
+{
+  time_t  cutime;         /* Time since epoch */
+  cutime = time(NULL);    /* current user time */
+  char time_str[64];
+  struct tm * gmt;
+  gmt = gmtime(&cutime);
+  strftime(time_str, 24, "%Y/%m/%d.%H%M%S", gmt);
+  const char * my_id = "compiz-colour-desktop";
+  unsigned long n = 0;
+  char * data = 0;
+  const char * old_atom = 0;
+  int status = 0;
+
+  /* set the colour management desktop service activity atom */
+  pid_t pid = getpid();
+  int old_pid = 0;
+  long atom_time = 0;
+  char * atom_time_text = malloc(1024),
+       * atom_colour_server_name = malloc(1024);
+
+  /* check every 10 seconds */
+  if(request == 0 &&
+     net_color_desktop_last_time + 10 < cutime)
+    return 0;
+
+  data = fetchProperty( d->display, RootWindow(d->display,0),
+                               pd->netColorDesktop, XA_STRING, &n, False);
+
+  if(!atom_time_text || !atom_colour_server_name) return 3;
+  atom_time_text[0] = atom_colour_server_name[0] = 0;
+  if(n && data && strlen(data))
+  {
+    sscanf( (const char*)data, "%d %ld %s %s",
+            &old_pid, &atom_time,
+            atom_time_text, atom_colour_server_name );
+    old_atom = data;
+  }
+
+  if(old_pid != (int)pid)
+  {
+    if(old_atom && atom_time + 60 < cutime)
+      oyCompLogMessage( d, "colour_desktop", CompLogLevelWarn,
+                    DBG_STRING "\n!!! Found old _NET_COLOR_DESKTOP pid: %s.\n"
+                    "Eigther there was a previous crash or your setup can be double colour corrected.",
+                    DBG_ARGS, old_atom ? old_atom : "????" );
+    /* check for taking over of colour service */
+    if(atom_colour_server_name && strcmp(atom_colour_server_name, my_id) != 0)
+    {
+      if(atom_time < net_color_desktop_last_time ||
+         request == 2)
+      {
+        oyCompLogMessage( d, "colour_desktop", CompLogLevelWarn,
+                    DBG_STRING "\nTaking over colour service from old _NET_COLOR_DESKTOP: %s.",
+                    DBG_ARGS, old_atom ? old_atom : "????" );
+      } else
+      if(atom_time > net_color_desktop_last_time)
+        oyCompLogMessage( d, "colour_desktop", CompLogLevelWarn,
+                    DBG_STRING "\nGiving colour service to _NET_COLOR_DESKTOP: %s.",
+                    DBG_ARGS, old_atom ? old_atom : "????" );
+     
+    } else
+    if(old_atom)
+      oyCompLogMessage( d, "colour_desktop", CompLogLevelWarn,
+                    DBG_STRING "\nTaking over colour service from old _NET_COLOR_DESKTOP: %s.",
+                    DBG_ARGS, old_atom ? old_atom : "????" );
+  }
+
+  if(atom_time + 10 < net_color_desktop_last_time ||
+     request == 2 )
+  {
+    char * atom_text = malloc(1024);
+    if(!atom_text) return status;
+    sprintf( atom_text, "%d %ld %s %s",
+             (int)pid, (long)cutime, time_str, my_id );
+    XChangeProperty( d->display, RootWindow(d->display,0),
+                                pd->netColorDesktop, XA_STRING,
+                                8, PropModeReplace, (unsigned char*)atom_text,
+                                strlen(atom_text) + 1 );
+    free( atom_text );
+  }
+
+  net_color_desktop_last_time = cutime;
+
+  if(atom_time_text) free(atom_time_text);
+  if(atom_colour_server_name) free(atom_colour_server_name);
+
+  return status;
+}
+
 static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *privateData)
 {
   CompDisplay *d = (CompDisplay *) object;
@@ -1321,24 +1442,7 @@ static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *
   pd->netColorTarget = XInternAtom(d->display, "_NET_COLOR_TARGET", False);
   pd->netColorDesktop = XInternAtom(d->display, "_NET_COLOR_DESKTOP", False);
 
-  unsigned long n = 0;
-  char * data = fetchProperty( d->display, RootWindow(d->display,0),
-                               pd->netColorDesktop, XA_CARDINAL, &n, False);
-
-  /* set the colour management desktop service activity atom */
-  pid_t pid = getpid();
-  pid_t old_pid = 0;
-  if(n && data)
-    old_pid = *((pid_t*)data);
-  if(old_pid)
-    oyCompLogMessage( d, "colour_desktop", CompLogLevelWarn,
-                    DBG_STRING "\n!!! Found old _NET_COLOR_DESKTOP pid: %d.\n"
-                    "Eigther there was a previous crash or your setup can be double colour corrected.",
-                    DBG_ARGS, old_pid );
-  XChangeProperty( d->display, RootWindow(d->display,0),
-                                pd->netColorDesktop, XA_CARDINAL,
-                                8, PropModeReplace, (unsigned char*)&pid,
-                                sizeof(pid_t) );
+  updateNetColorDesktopAtom( d, pd, 2 );
 
   return TRUE;
 }
@@ -1507,10 +1611,14 @@ int pluginPrivatesRelease( oyPointer * ptr )
   return 1;
 }
 
-char * pluginGetHashText( CompObject * o )
+static char * hash_text_ = 0;
+
+const char * pluginGetHashText( CompObject * o )
 {
   const char * type_name = "unknown";
-  char * hash_text;
+  if(!hash_text_)
+    hash_text_ = (char*) malloc (1024);
+  if(!hash_text_) return NULL;
   switch(o->type)
   {
     case COMP_OBJECT_TYPE_CORE: type_name = "CORE"; break;
@@ -1518,9 +1626,8 @@ char * pluginGetHashText( CompObject * o )
     case COMP_OBJECT_TYPE_SCREEN: type_name = "SCREEN"; break;
     case COMP_OBJECT_TYPE_WINDOW: type_name = "WINDOW"; break;
   }
-  hash_text = malloc( 1024 ); if(!hash_text) return NULL;
-  sprintf( hash_text, "%s[0x%lx]\n", type_name, (intptr_t)o );
-  return hash_text;
+  sprintf( hash_text_, "%s[0x%lx]\n", type_name, (intptr_t)o );
+  return hash_text_;
 }
 
 
@@ -1529,7 +1636,7 @@ oyPointer pluginGetPrivatePointer( CompObject * o )
   oyPointer ptr = 0;
   if(!o)
     return 0;
-  char * hash_text = pluginGetHashText( o ); if(!hash_text) return FALSE;
+  const char * hash_text = pluginGetHashText( o ); if(!hash_text) return FALSE;
   oyHash_s * entry = oyCacheListGetEntry_( pluginGetPrivatesCache(),
                                            hash_text );
   oyCMMptr_s * priv_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
@@ -1560,7 +1667,6 @@ oyPointer pluginGetPrivatePointer( CompObject * o )
 #endif
   }
   oyHash_Release_( &entry );
-  free( hash_text ); hash_text = 0;
 
   return ptr;
 }
@@ -1584,7 +1690,7 @@ static CompBool pluginInitObject(CompPlugin *p, CompObject *o)
 static void pluginFiniObject(CompPlugin *p, CompObject *o)
 {
   void *privateData = compObjectGetPrivate(o);
-  char * hash_text;
+  const char * hash_text;
   oyHash_s * entry;
   oyCMMptr_s * priv_ptr;
   if (privateData == NULL)
@@ -1604,7 +1710,6 @@ static void pluginFiniObject(CompPlugin *p, CompObject *o)
     oyCMMptr_Release( &priv_ptr );
   oyHash_SetPointer_( entry, (oyStruct_s*) priv_ptr );
   oyHash_Release_( &entry );
-  free( hash_text );
 }
 
 static void pluginFini(CompPlugin *p)
