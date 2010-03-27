@@ -3542,6 +3542,12 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
                                        oyPointer           user_data );
 
 
+/** in close relation to 
+ *  http://www.freedesktop.org/wiki/Specifications/icc_profiles_in_x_spec
+ *  OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE
+ */
+#define OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE "_ICC_DEVICE_PROFILE"
+
 
 #endif /* OY_IN_PLANING */
 
