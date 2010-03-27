@@ -31,6 +31,7 @@ extern "C" {
 #include "oyranos_alpha.h" /* use Oyranos to obtain profile names */
 #include "oyranos_monitor_internal.h" /* EDID parsing */
 #include "oyranos_helper.h" /* allocators */
+#include "oyranos_definitions.h" /* ICC Profile in X */
 
 #ifdef __cplusplus
 using namespace oyranos;
@@ -484,8 +485,8 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
            event->xproperty.atom == c->aCM ||
            event->xproperty.atom == c->aRegion ||
            event->xproperty.atom == c->aDesktop ||
-           strstr( actual_name, "_ICC_DEVICE_PROFILE") != 0 ||
-           strstr( actual_name, "_ICC_PROFILE") != 0 ||
+           strstr( actual_name, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
+           strstr( actual_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( actual_name, "EDID") != 0)
         r = XGetWindowProperty( display, event->xany.window,
                event->xproperty.atom, 0, ~0, False, XA_CARDINAL,&actual,&format,
@@ -529,8 +530,8 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
           printWindowRegions( display, event->xany.window, 1 );
 
         } else if(
-           strstr( actual_name, "_ICC_DEVICE_PROFILE") != 0 ||
-           strstr( actual_name, "_ICC_PROFILE") != 0 ||
+           strstr( actual_name, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
+           strstr( actual_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( actual_name, "EDID") != 0)
         {
           const char * name = 0,
@@ -539,12 +540,12 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
           double colours[9] = {0,0,0,0,0,0,0,0,0};
           oyProfile_s * p = 0;
 
-          if(strcmp( "_ICC_PROFILE", an ) == 0)
-            an = "_ICC_PROFILE  ";
+          if(strcmp( OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, an ) == 0)
+            an = OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE"  ";
 
           if(n &&
-             (strstr( actual_name, "_ICC_DEVICE_PROFILE") != 0 ||
-              strstr( actual_name, "_ICC_PROFILE") != 0))
+             (strstr( actual_name, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
+              strstr( actual_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0))
           {
             p = oyProfile_FromMem( n, data, 0, 0 );
             name = oyProfile_GetFileName( p, 0 );

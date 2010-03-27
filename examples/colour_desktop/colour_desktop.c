@@ -42,6 +42,7 @@
 #include <icc34.h>
 #include <oyranos_alpha.h>
 #include <oyranos_cmm.h> // oyCMMptr_New
+#include "oyranos_definitions.h" /* ICC Profile in X */
 
 #include <Xcolor.h>
 
@@ -113,7 +114,7 @@ typedef struct {
 /**
  * Output profiles are currently only fetched using XRandR. For backwards 
  * compatibility the code should fall back to root window properties 
- * (_ICC_PROFILE).
+ * (OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE).
  */
 typedef struct {
   char name[32];
@@ -542,7 +543,7 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
   char num[12];
   Window root = RootWindow( s->display->display, 0 );
   char * icc_profile_atom = calloc( 1024, sizeof(char) ),
-       * icc_device_profile_atom = calloc( 1024, sizeof(char) );
+       * icc_colour_server_profile_atom = calloc( 1024, sizeof(char) );
   Atom a,da, source_atom, target_atom;
 
   oyPointer source;
@@ -550,14 +551,14 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
   unsigned long source_n = 0, target_n = 0;
 
   snprintf( num, 12, "%d", (int)screen );
-  snprintf( icc_profile_atom, 1024, "_ICC_PROFILE%s%s", 
+  snprintf( icc_profile_atom, 1024, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE"%s%s", 
             screen ? "_" : "", screen ? num : "" );
-  snprintf( icc_device_profile_atom, 1024, "_ICC_DEVICE_PROFILE%s%s", 
+  snprintf( icc_colour_server_profile_atom, 1024, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE"%s%s", 
             screen ? "_" : "", screen ? num : "" );
 
 
   a = XInternAtom(s->display->display, icc_profile_atom, False);
-  da = XInternAtom(s->display->display, icc_device_profile_atom, False);
+  da = XInternAtom(s->display->display, icc_colour_server_profile_atom, False);
 
   /* select the atoms */
   if(init)
@@ -584,16 +585,16 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
                      source, source_n );
     if(init)
       printf( "copy from %s to %s (%d)\n", icc_profile_atom,
-              icc_device_profile_atom, (int)source_n );
+              icc_colour_server_profile_atom, (int)source_n );
     else
-      printf( "copy from %s to %s (%d)\n", icc_device_profile_atom,
+      printf( "copy from %s to %s (%d)\n", icc_colour_server_profile_atom,
               icc_profile_atom, (int)source_n );
     XFree( source );
     source = 0; source_n = 0;
 
     if(init)
     {
-      /* setup the _ICC_PROFILE(_xxx) atom as document colour space */
+      /* setup the OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE(_xxx) atom as document colour space */
       size_t size = 0;
       oyProfile_s * screen_document_profile = oyProfile_FromStd( oyASSUMED_WEB,
                                                                  0 );
@@ -617,11 +618,11 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
   } else
     if(target_atom && init)
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                        DBG_STRING"icc_device_profile_atom already present %d",
+                        DBG_STRING"icc_colour_server_profile_atom already present %d",
                         DBG_ARGS, target_atom );
 
   if(icc_profile_atom) free(icc_profile_atom);
-  if(icc_device_profile_atom) free(icc_device_profile_atom);
+  if(icc_colour_server_profile_atom) free(icc_colour_server_profile_atom);
 }
 
 static void    getDeviceProfile      ( CompScreen        * s,
@@ -903,15 +904,15 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 
     /* update for a changing monitor profile */
     } else if( atom_name &&
-           strstr( atom_name , "_ICC_PROFILE") != 0)
+           strstr( atom_name , OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0)
     {
       const char * an = XGetAtomName( event->xany.display,
                                       event->xproperty.atom );
       oyPointer data = 0;
       unsigned long n = 0;
 
-      if(strcmp( "_ICC_PROFILE", an ) == 0)
-        an = "_ICC_PROFILE  ";
+      if(strcmp( OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, an ) == 0)
+        an = OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE"  ";
 
       data = fetchProperty( d->display, event->xany.window,
                             event->xproperty.atom, XA_CARDINAL, &n, False);
@@ -932,8 +933,8 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
       if(n)
       {
         int screen = 0;
-        if(strlen(an) > strlen("_ICC_PROFILE_"))
-          an += strlen("_ICC_PROFILE_");
+        if(strlen(an) > strlen(OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE))
+          an += strlen(OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE);
         screen = atoi( an );
 
         printf(":%d Profile changed on screen: %d\n", __LINE__, screen );
@@ -1547,7 +1548,7 @@ static CompBool pluginFiniScreen(CompPlugin *plugin, CompObject *object, void *p
                   DBG_ARGS, DisplayString( s->display->display ), n);
 #endif
 
-  /* switch profile atoms */
+  /* switch profile atoms back */
   for (unsigned long i = 0; i < n; ++i)
   {
     device = oyConfigs_Get( devices, i );
