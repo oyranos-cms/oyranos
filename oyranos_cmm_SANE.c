@@ -591,7 +591,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /*Handle "oyNAME_NAME" option */
          name_opt_dev = oyConfig_Find(device, "oyNAME_NAME");
          if (!error && !name_opt_dev && oyOptions_Find(options, "oyNAME_NAME"))
-            oyOptions_SetFromText(&device->data,
+            oyOptions_SetFromText(&device->backend_core,
                                   CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                   sane_model,
                                   OY_CREATE_NEW);
