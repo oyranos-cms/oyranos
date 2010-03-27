@@ -917,30 +917,8 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       if(atom)
       {
         Atom a;
-        const unsigned char value = 0*100 + 3*1;
-        int actual_format_return;
-        unsigned long nitems_return=0, bytes_after_return=0;
-        unsigned char* prop_return=0;
-
-        XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_CARDINAL,
-                     &a, &actual_format_return, &nitems_return, 
-                     &bytes_after_return, &prop_return );
-        /* check if the old value is the same as our intented */
-        if(actual_format_return != XA_CARDINAL ||
-           nitems_return != (unsigned int)1)
-        {
-          unsigned char prop = prop_return ? prop_return[0] : 0;
-          if(prop != value)
-          result = XChangeProperty( display, w, atom, XA_CARDINAL,
-                                    8, PropModeReplace,
-                                    &value, 1 );
-        }
-      }
-      atom = XInternAtom( display, "_ICC_PROFILE_IN_X_VERSION_STRING", False );
-      if(atom)
-      {
-        Atom a;
-        const unsigned char * value = (const unsigned char*)"0.3";
+        /* 0.3 == 100*0 + 1*3 = 3 */
+        const unsigned char * value = (const unsigned char*)"3";
         int actual_format_return;
         unsigned long nitems_return=0, bytes_after_return=0;
         unsigned char* prop_return=0;
