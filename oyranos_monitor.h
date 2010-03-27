@@ -59,6 +59,7 @@ int          oyX1MonitorProfileUnset ( const char        * display_name );
 oyRectangle_s * oyX1Rectangle_FromDevice (
                                        const char        * device_name );
 char *       oyX1GetMonitorProfile   ( const char        * device_name,
+                                       uint32_t            flags,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func );
 

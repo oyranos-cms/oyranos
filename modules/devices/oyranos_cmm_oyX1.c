@@ -574,7 +574,8 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
   {
     /** 3.  handle the actual call */
     /** 3.1 "list" call */
-    if(oyOptions_FindString( options, "command", "list" ))
+    if(oyOptions_FindString( options, "command", "list" ) ||
+       oyOptions_FindString( options, "command", "properties" ))
     {
       n = oyConfigs_Count( devices );
 
@@ -626,8 +627,23 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           size_t size = 0;
-          char * data = oyX1GetMonitorProfile( device_name, &size,
-                                               allocateFunc );
+          uint32_t flags = 0;
+          char * data = 0;
+
+          if(oyOptions_FindString( options, "colour_server", 0 ))
+          {
+            if(oy_debug)
+              message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                     "Try %s(_xxx) from %s",
+                     OY_DBG_ARGS_,
+                     oyOptions_FindString(options, "colour_server", 0) ? 
+                     OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
+                     OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+                     device_name );
+            flags |= 0x01;
+          }
+          data = oyX1GetMonitorProfile( device_name, flags, &size,
+                                        allocateFunc );
 
 
           has = 0;
@@ -738,8 +754,12 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           /** Warn and return issue on not found profile. */
           {
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                     "Could not obtain _ICC(_DEVICE)_PROFILE(_xxx) information for %s",
-                     OY_DBG_ARGS_, device_name );
+                     "Could not obtain %s(_xxx) information for %s",
+                     OY_DBG_ARGS_,
+                     oyOptions_FindString(options, "colour_server", 0) ? 
+                     OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
+                     OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+                     device_name );
 
             /* Show the "icc_profile" option is understood. */
             prof = 0;
@@ -802,50 +822,15 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           oyFree_m_( text );
         }
 
+        if(oyOptions_FindString( options, "command", "properties" ) &&
+           !oyOptions_FindString( options, "icc_profile.fallback", 0 ))
+          error = oyX1DeviceFromName_( device_name, options, &device );
 
         /** 3.1.6 add the rank scheme to combine properties */
         if(error <= 0 && !device->rank_map)
           device->rank_map = oyRankMapCopy( oyX1_rank_map,
                                             device->oy_->allocateFunc_ );
 
-        oyConfig_Release( &device );
-      }
-
-      goto cleanup;
-
-    } else
-
-
-    /** 3.2 "properties" call; provide extensive infos for the DB entry */
-    if(oyOptions_FindString( options, "command", "properties" ))
-    {
-      n = oyConfigs_Count( devices );
-
-      /** 3.1.1 iterate over all provided devices */
-      for( i = 0; i < n; ++i )
-      {
-        device = oyConfigs_Get( devices, i );
-        rank = oyFilterRegistrationMatch( oyX1_api8.registration,
-                                          device->registration,
-                                          oyOBJECT_CMM_API8_S );
-        if(!rank)
-        {
-          oyConfig_Release( &device );
-          continue;
-        }
-
-        /** 3.1.2 get the "device_name" */
-        if(error <= 0)
-        device_name = oyConfig_FindString( device, "device_name", 0 );
-
-        /** 3.2.1 add properties */
-        error = oyX1DeviceFromName_( device_name, options, &device );
-
-
-        /** 3.2.2 add the rank map to wight properties for ranking in the DB */
-        if(error <= 0 && device && !device->rank_map)
-          device->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                            device->oy_->allocateFunc_);
         oyConfig_Release( &device );
       }
 

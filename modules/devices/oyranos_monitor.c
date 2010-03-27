@@ -257,7 +257,7 @@ oyBlob_s *   oyMonitor_getProperty_  ( oyMonitor_s       * disp,
       if(atom)
         w = RootWindow( display, oyMonitor_deviceScreen_( disp ) );
       if(w)
-        /* AnyPropertyType does not work for _ICC_PROFILE ---vvvvvvvvvv */
+        /* AnyPropertyType does not work for OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE ---vvvvvvvvvv */
         XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_CARDINAL,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
@@ -475,6 +475,7 @@ CGDirectDisplayID oyMonitor_nameToOsxID ( const char        * display_name )
 
 
 char *       oyX1GetMonitorProfile   ( const char        * device_name,
+                                       uint32_t            flags,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func )
 {
@@ -525,12 +526,14 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   if(!disp)
     return 0;
 
-  /* support the v0.4 device profile */
-  prop = oyMonitor_getProperty_( disp, "_ICC_DEVICE_PROFILE", 0 );
+  /* support the colour server device profile */
+  if(flags & 0x01)
+    prop = oyMonitor_getProperty_( disp,
+                             OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0 );
 
   /* alternatively fall back to the non colour server or pre v0.4 atom */
   if(!prop)
-    prop = oyMonitor_getProperty_( disp, "_ICC_PROFILE", 0 );
+    prop = oyMonitor_getProperty_( disp, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0 );
 
   if(prop)
   {
@@ -868,7 +871,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
     DBG_PROG1_S( "system: %s", text )
 
-    /* set _ICC_PROFILE atom in X */
+    /* set OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
     {
       Display *display;
       Atom atom = 0;
@@ -897,7 +900,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       if(!size || !moni_profile)
         WARNc_S(_("Error obtaining profile"));
 
-      atom_name = oyMonitor_getAtomName_( disp, "_ICC_PROFILE" );
+      atom_name = oyMonitor_getAtomName_( disp, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
       if( atom_name )
       {
         atom = XInternAtom (display, atom_name, False);
@@ -996,7 +999,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
 
   {
-    /* unset the _ICC_PROFILE atom in X */
+    /* unset the OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
       Display *display;
       Atom atom;
       int screen = 0;
@@ -1014,7 +1017,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
       DBG_PROG
 
-      atom_name = oyMonitor_getAtomName_( disp, "_ICC_PROFILE" );
+      atom_name = oyMonitor_getAtomName_( disp, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
       atom = XInternAtom (display, atom_name, True);
       if (atom != None)
         XDeleteProperty( display, w, atom );

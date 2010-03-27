@@ -52,6 +52,7 @@ int main( int argc , char** argv )
   char * format = 0;
   char * output = 0;
   int server = 0;
+  int colour_server = 0;
 
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -136,6 +137,7 @@ int main( int argc , char** argv )
             {
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'b': database = 1; monitor_profile = 0; break;
+              case 'c': colour_server = 1; monitor_profile = 0; break;
               case 'f': OY_PARSE_STRING_ARG(format); monitor_profile = 0; break;
               case 'l': list = 1; monitor_profile = 0; break;
               case 'o': OY_PARSE_STRING_ARG(output); monitor_profile = 0; break;
@@ -149,6 +151,8 @@ int main( int argc , char** argv )
                         {
                              if(strcmp(&argv[pos][2],"unset") == 0)
                         { erase = 1; monitor_profile = 0; i=100; break; }
+                        else if(strcmp(&argv[pos][2],"colour_server") == 0)
+                        { colour_server = 1; i=100; break; }
                         else if(strcmp(&argv[pos][2],"setup") == 0)
                         { setup = 1; i=100; break; }
                         else if(strcmp(&argv[pos][2],"format") == 0)
@@ -216,13 +220,13 @@ int main( int argc , char** argv )
     }
     if(oy_debug) printf( "%s\n", argv[1] );
 
-    if(!erase && !list && !database && !setup && !server)
+    if(!erase && !list && !database && !setup && !server && !format)
       setup = 1;
 
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
-    if(!monitor_profile && !erase && !list && !setup)
+    if(!monitor_profile && !erase && !list && !setup && !format)
     {
       char * fn = 0;
 
@@ -337,18 +341,32 @@ int main( int argc , char** argv )
           } else
           if(strcmp(format,"icc") == 0)
           {
-            oyDeviceAskProfile( c, &prof );
+            oyOptions_s * cs_options = 0;
+            if(colour_server)
+            {
+              /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+              error = oyOptions_SetFromText( &cs_options,
+              "//"OY_TYPE_STD"/config/colour_server", "yes", OY_CREATE_NEW );
+            }
+            oyDeviceAskProfile2( c, cs_options, &prof );
+            oyOptions_Release( &cs_options );
             data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
           }
 
-          error = oyWriteMemToFile2_( output ? output : format,
-                                      data, size, 0x01,
-                                      &out_name, oyAllocFunc );
-          oyDeAllocFunc( data ); size = 0;
+          if(data && size)
+          {
+            error = oyWriteMemToFile2_( output ? output : format,
+                                        data, size, 0x01,
+                                        &out_name, oyAllocFunc );
+            oyDeAllocFunc( data ); size = 0;
+          } else
+            error = 1;
+
           if(!error)
           { if(oy_debug) printf( "  written to %s\n", out_name ); }
           else
-            printf("Could not write to %s\n", out_name?out_name:format);
+            printf( "Could not write %d bytes to %s\n",
+                    (int)size, out_name?out_name:format);
           if(out_name) oyDeAllocFunc(out_name); out_name = 0;
 
           oyProfile_Release( &prof );
@@ -367,7 +385,14 @@ int main( int argc , char** argv )
       uint32_t n = 0, i;
       oyConfig_s * c = 0;
       oyOption_s * o = 0;
+      oyOptions_s * cs_options = 0;
 
+      if(colour_server)
+      {
+        /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+        error = oyOptions_SetFromText( &cs_options,
+              "//"OY_TYPE_STD"/config/colour_server", "yes", OY_CREATE_NEW );
+      }
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
@@ -384,16 +409,18 @@ int main( int argc , char** argv )
           if(oy_debug)
           printf("------------------------ %d ---------------------------\n",i);
 
-          error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, oyAllocFunc );
+          error = oyDeviceGetInfo( c, oyNAME_NICK, cs_options, &text,
+                                   oyAllocFunc );
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "\"%s\" ", text ? text : "???" );
-          error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, oyAllocFunc );
+          error = oyDeviceGetInfo( c, oyNAME_NAME, cs_options, &text,
+                                   oyAllocFunc );
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "%s%s", text ? text : "???",
                                       i+1 == n ? "" : "\n" );
           if(oy_debug)
           {
-            error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, 0, &text,
+            error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, cs_options, &text,
                                      oyAllocFunc );
             printf( "%s\n", text ? text : "???" );
           }
@@ -440,6 +467,7 @@ int main( int argc , char** argv )
         oyDeAllocFunc( report ); report = 0;
       }
       oyConfigs_Release( &devices );
+      oyOptions_Release( &cs_options );
     }
 
     /* make shure the display name is correct including the screen */
