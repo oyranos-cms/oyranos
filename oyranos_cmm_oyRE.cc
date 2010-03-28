@@ -523,7 +523,13 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
               oyOptions_GetText(options, oyNAME_NICK) );
       return 1;
    }
- 
+
+    /* "help" call section */
+   if (oyOptions_FindString(options, "command", "help") || !options || !oyOptions_Count(options)) {
+      ConfigsFromPatternUsage((oyStruct_s *) options);
+      return 0;
+   }
+
    return 0;
 }
 
