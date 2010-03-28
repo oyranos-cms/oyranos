@@ -511,8 +511,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    num_devices = oyConfigs_Count(devices);
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
-   context_opt = oyOptions_Find(options, "device_context");
-   handle_opt = oyOptions_Find(options, "device_handle");
 
    /* Now we get some options [IN], and we already have some devices with
     * possibly already assigned options. Those provided through the input
@@ -598,7 +596,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Handle "device_handle" option */
          handle_opt_dev = oyConfig_Find(device, "device_handle");
-         if (!error && !handle_opt_dev && handle_opt) {
+         if (!error && !handle_opt_dev) {
             oyCMMptr_s *handle_ptr = NULL;
             SANE_Handle h;
             status = sane_open(sane_name, &h);
@@ -758,8 +756,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       sane_exit();
    }
 
-   oyOption_Release(&context_opt);
-   oyOption_Release(&handle_opt);
    oyOption_Release(&version_opt);
 
    printf(PRFX "Leaving %s\n", __func__);
