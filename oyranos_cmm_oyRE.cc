@@ -541,6 +541,51 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    oyOption_s *handle_opt = oyOptions_Find(options, "device_handle");
    oyOption_s *version_opt = oyOptions_Find(options, "driver_version");
 
+   int num_devices = oyConfigs_Count(devices);
+   if (command_list) {
+      /* "list" call section */
+
+      for (int i = 0; i < num_devices; ++i) {
+         int error = 0;
+         oyConfig_s *device = oyConfigs_Get(devices, i);
+
+         /*Handle "driver_version" option [IN/OUT] */
+         oyOption_s *version_opt_dev = oyConfig_Find(device, "driver_version");
+         if (!version_opt_dev && version_opt) {
+            error = oyOptions_SetFromText(&device->backend_core,
+                                          CMM_BASE_REG OY_SLASH "driver_version_string",
+                                          driver_version_string,
+                                          OY_CREATE_NEW);
+            error = oyOptions_SetFromInt(&device->backend_core,
+                                         CMM_BASE_REG OY_SLASH "driver_version_number",
+                                         driver_version_number,
+                                         0,
+                                         OY_CREATE_NEW);
+         }
+
+         //FIXME: Should probably be removed, because command_list creates it anyway
+         /*Handle "device_handle" option [OUT:informative]*/
+         oyOption_s *handle_opt_dev = oyConfig_Find(device, "device_handle");
+         if (!handle_opt_dev && handle_opt)
+            error = oyOptions_SetFromText(&device->data,
+                                          CMM_BASE_REG OY_SLASH "device_handle",
+                                          "filename\nblob",
+                                          OY_CREATE_NEW);
+
+         /*Handle "supported_devices_info" option [OUT:informative]*/
+         //FIXME: It is not here, because command_list creates it anyway
+         //If used, it should become a function.
+
+         /*Create static rank_map, if not already there*/
+         if (!device->rank_map)
+            device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
+
+         /*Cleanup*/
+         oyConfig_Release(&device);
+         oyOption_Release(&version_opt_dev);
+         oyOption_Release(&handle_opt_dev);
+      }
+   }
 
    return 0;
 }
