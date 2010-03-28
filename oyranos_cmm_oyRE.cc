@@ -512,10 +512,19 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
  *
  *  \todo { Unimplemented }
  */
-int            Configs_Modify    ( oyConfigs_s       * devices,
-                                       oyOptions_s       * options )
+int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
-   return 1;
+   oyAlloc_f allocateFunc = malloc;
+
+   /* "error handling" section */
+   if (!devices || !oyConfigs_Count(devices)) {
+      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "No devices given! Options:\n%s", _DBG_ARGS_,
+              oyOptions_GetText(options, oyNAME_NICK) );
+      return 1;
+   }
+ 
+   return 0;
 }
 
 /** Function Config_Rank
