@@ -534,6 +534,14 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    int driver_version_number = LibRaw::versionNumber();
    const char *driver_version_string = LibRaw::version();
 
+   const char *command_list = oyOptions_FindString(options, "command", "list");
+   const char *command_properties = oyOptions_FindString(options, "command", "properties");
+
+   oyOption_s *context_opt = oyOptions_Find(options, "device_context");
+   oyOption_s *handle_opt = oyOptions_Find(options, "device_handle");
+   oyOption_s *version_opt = oyOptions_Find(options, "driver_version");
+
+
    return 0;
 }
 
