@@ -530,6 +530,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       return 0;
    }
 
+   /*Init for "driver_version" option*/
+   int driver_version_number = LibRaw::versionNumber();
+   const char *driver_version_string = LibRaw::version();
+
    return 0;
 }
 
