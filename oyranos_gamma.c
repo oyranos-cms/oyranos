@@ -234,7 +234,7 @@ int main( int argc , char** argv )
                            &device );
       if(net_color_region_target)
         error = oyOptions_SetFromText( &options,
-                                       "//"OY_TYPE_STD"/config/net_color_region_target",
+                                       "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
                                        "yes", OY_CREATE_NEW );
 
       if(database)
@@ -350,7 +350,7 @@ int main( int argc , char** argv )
             {
               /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
               error = oyOptions_SetFromText( &cs_options,
-              "//"OY_TYPE_STD"/config/net_color_region_target", "yes", OY_CREATE_NEW );
+              "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target", "yes", OY_CREATE_NEW );
             }
             oyDeviceAskProfile2( c, cs_options, &prof );
             oyOptions_Release( &cs_options );
@@ -396,7 +396,7 @@ int main( int argc , char** argv )
       {
         /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
         error = oyOptions_SetFromText( &cs_options,
-              "//"OY_TYPE_STD"/config/net_color_region_target", "yes", OY_CREATE_NEW );
+              "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target", "yes", OY_CREATE_NEW );
       }
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",

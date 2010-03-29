@@ -599,8 +599,11 @@ oyTESTRESULT_e testMonitor ()
                "\"list\" device(s): ---                   " )
 
   error = oyOptions_SetFromText( &options,
-                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                               "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
                                        "yes", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options,
+                                 "//"OY_TYPE_STD"/config/command",
+                                 "list", OY_CREATE_NEW );
 
   for( i = 0; i < n; ++i )
   {
@@ -674,8 +677,11 @@ oyTESTRESULT_e testMonitor ()
 #endif
 
   error = oyOptions_SetFromText( &options,
-                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                               "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
                                        "yes", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options,
+                                 "//"OY_TYPE_STD"/config/command",
+                                 "properties", OY_CREATE_NEW );
 
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
 

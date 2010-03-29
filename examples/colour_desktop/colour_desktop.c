@@ -195,6 +195,15 @@ oyPointer  pluginGetPrivatePointer   ( CompObject        * o );
 static int updateNetColorDesktopAtom ( CompDisplay       * d,
                                        PrivDisplay       * pd,
                                        int                 request );
+static void    setupICCprofileAtoms  ( CompScreen        * s,
+                                       int                 screen,
+                                       int                 init );
+static void    getDeviceProfile      ( CompScreen        * s,
+                                       oyConfig_s        * device,
+                                       int                 screen );
+static void    setupColourTables     ( CompScreen        * s,
+                                       oyConfig_s        * device,
+                                       int                 screen );
 
 /**
  *    Private Data Allocation
@@ -687,7 +696,7 @@ static void    getDeviceProfile      ( CompScreen        * s,
     {
       oyOptions_s * options = 0;
       oyOptions_SetFromText( &options,
-                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                   "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
                                        "yes", OY_CREATE_NEW );
       oyDeviceGetProfile( device, options, &output->oy_profile );
       oyOptions_Release( &options );
