@@ -27,7 +27,7 @@
 /* --- internal definitions --- */
 
 #define DBG printf("%s: %d\n", __FILE__, __LINE__ ); fflush(NULL);
-#define PRFX "config.scanner.SANE: "
+#define PRFX "scanner.SANE: "
 /* select a own four byte identifier string instead of "dDev" and replace the
  * dDev in the below macros.
  */
