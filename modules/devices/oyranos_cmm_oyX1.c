@@ -648,9 +648,9 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
           has = 0;
           /*  */
-          /*o = oyConfig_Find( device, "icc_profile" );
+          o = oyConfig_Find( device, "icc_profile" );
           if(o)
-            has = 1;*/
+            has = 1;
 
           if(data && size)
           {
