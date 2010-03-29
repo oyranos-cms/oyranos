@@ -372,6 +372,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
    oyConfig_s *device = NULL;
    device = oyConfig_New(CMM_BASE_REG, 0);
+   /*A device *must* have a device_name!*/
+   oyOptions_SetFromText(&device->backend_core, CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
 
    /*Handle "device_handle" option [IN]*/
    DeviceFromHandle_opt(device, handle_opt);
