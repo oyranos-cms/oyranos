@@ -210,9 +210,9 @@ char **  oyProfileListGet            ( const char        * coloursig,
 /* --- profile checking --- */
 
 int   oyCheckProfile                   (const char* name,
-                                        const char* coloursig);
+                                        const char* unused);
 int   oyCheckProfileMem                (const void* mem, size_t size,
-                                        const char* coloursig);
+                                        const char* unused);
 
 
 /* --- profile access through oyranos --- */
