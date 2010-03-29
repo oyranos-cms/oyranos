@@ -374,38 +374,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    device = oyConfig_New(CMM_BASE_REG, 0);
 
    /*Handle "device_handle" option [IN]*/
-   Exiv2::Image::AutoPtr device_handle;
-   if (handle_opt) {
-      const char *filename = NULL;
-      oyBlob_s *raw_blob = NULL;
-      const Exiv2::byte *raw_data = NULL;
-      long size;
-      switch (handle_opt->value_type) {
-         case oyVAL_STRING:
-            filename = handle_opt->value->string;
-            if (is_raw(Exiv2::ImageFactory::getType(filename)))
-               device_handle = Exiv2::ImageFactory::open(filename);
-            break;
-         case oyVAL_STRUCT:
-            raw_blob = (oyBlob_s*)handle_opt->value->oy_struct;
-            raw_data = (Exiv2::byte*)raw_blob->ptr;
-            size = raw_blob->size;
-            if (is_raw(Exiv2::ImageFactory::getType(raw_data, size)))
-               device_handle = Exiv2::ImageFactory::open(raw_data, size);
-            break;
-         default:
-            printf("Option \"device_handle\" is of a wrong type\n");
-            break;
-      }
-
-      //The std::auto_ptr::get() method returns the pointer owned by the auto_ptr
-      if (device_handle.get() && device_handle->good())
-         DeviceFromHandle(&device->backend_core, device_handle);
-      else {
-         printf("Unable to open raw image.\n");
-         return 1;
-      }
-   }
+   DeviceFromHandle_opt(device, handle_opt);
 
    if (command_list) {
       /* "list" call section */
@@ -966,6 +935,45 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_INT(shot_select)
 
    return error;
+}
+
+int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
+{
+   Exiv2::Image::AutoPtr device_handle;
+   if (handle_opt) {
+      const char *filename = NULL;
+      oyBlob_s *raw_blob = NULL;
+      const Exiv2::byte *raw_data = NULL;
+      long size;
+      switch (handle_opt->value_type) {
+         case oyVAL_STRING:
+            filename = handle_opt->value->string;
+            if (is_raw(Exiv2::ImageFactory::getType(filename)))
+               device_handle = Exiv2::ImageFactory::open(filename);
+            break;
+         case oyVAL_STRUCT:
+            raw_blob = (oyBlob_s*)handle_opt->value->oy_struct;
+            raw_data = (Exiv2::byte*)raw_blob->ptr;
+            size = raw_blob->size;
+            if (is_raw(Exiv2::ImageFactory::getType(raw_data, size)))
+               device_handle = Exiv2::ImageFactory::open(raw_data, size);
+            break;
+         default:
+            printf("Option \"device_handle\" is of a wrong type\n");
+            break;
+      }
+
+      //The std::auto_ptr::get() method returns the pointer owned by the auto_ptr
+      if (device_handle.get() && device_handle->good())
+         DeviceFromHandle(&device->backend_core, device_handle);
+      else {
+         printf("Unable to open raw image.\n");
+         return 1;
+      }
+   } else
+      return 1;
+
+   return 0;
 }
 
 bool is_raw( int id )
