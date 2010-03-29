@@ -167,6 +167,7 @@ using namespace oyranos;
 
 bool is_raw( int id );
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params);
+int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *option);
 
 /* --- implementations --- */
 
@@ -584,6 +585,63 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_Release(&device);
          oyOption_Release(&version_opt_dev);
          oyOption_Release(&handle_opt_dev);
+      }
+   } else if (command_properties) {
+      /* "properties" call section */
+
+      for (int i = 0; i < num_devices; ++i) {
+         oyConfig_s *device = oyConfigs_Get(devices, i);
+         oyConfig_s *device_new = oyConfig_New(CMM_BASE_REG, 0);
+
+         /* All previous device properties are considered obsolete
+          * and a new device is created. Basic options are moved from
+          * the old to new device */
+
+         /*Get the "device_handle" from old device
+          * and populate device_new with H/W options [OUT]*/
+         oyOption_s *handle_opt_dev = oyConfig_Find(device, "device_handle");
+         if (handle_opt_dev) {
+            DeviceFromHandle_opt(device_new, handle_opt_dev);
+            oyOption_s *tmp = oyOption_Copy(handle_opt_dev, 0);
+            oyOptions_MoveIn(device_new->data, &tmp, -1);
+            oyOption_Release(&handle_opt_dev);
+         } else { /*Ignore device without a "device_handle"*/
+            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+                    _DBG_ARGS_, "The \"device_handle\" is missing from config object!");
+            oyConfig_Release(&device);
+            oyConfig_Release(&device_new);
+            continue;
+         }
+
+         /*Handle "driver_version" option [OUT] */
+         oyOption_s *version_opt_dev = oyConfig_Find(device, "driver_version");
+         if (version_opt_dev) {
+            oyOption_s *tmp = oyOption_Copy(version_opt_dev, 0);
+            oyOptions_MoveIn(device_new->backend_core, &tmp, -1);
+            oyOption_Release(&version_opt_dev);
+         }
+
+         /*Handle "device_context" option [OUT]*/
+         oyOption_s *context_opt_dev = oyConfig_Find(device, "device_context");
+         if (context_opt_dev) {
+            libraw_output_params_t *device_context =
+               *(libraw_output_params_t**)oyOption_GetData(context_opt, NULL, allocateFunc);
+            DeviceFromContext(&device_new, device_context);
+            free(device_context);
+
+            oyOption_s *tmp = oyOption_Copy(context_opt_dev, 0);
+            oyOptions_MoveIn(device_new->data, &tmp, -1);
+            oyOption_Release(&context_opt_dev);
+         }
+
+         /*Copy the rank map*/
+         device_new->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
+
+         /*Cleanup*/
+         /* Remove old, add new device */
+         oyConfig_Release(&device);
+         oyConfigs_ReleaseAt(devices, i);
+         oyConfigs_MoveIn(devices, &device_new, -1);
       }
    }
 
