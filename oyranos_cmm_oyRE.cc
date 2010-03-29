@@ -510,7 +510,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /*Handle "device_context" option [IN]*/
       if (context_opt) {
          libraw_output_params_t *device_context =
-            (libraw_output_params_t*)oyOption_GetData(context_opt, NULL, allocateFunc);
+            *(libraw_output_params_t**)oyOption_GetData(context_opt, NULL, allocateFunc);
          DeviceFromContext(&device, device_context);
       }
 
