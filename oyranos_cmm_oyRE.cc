@@ -375,9 +375,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    /*A device *must* have a device_name!*/
    oyOptions_SetFromText(&device->backend_core, CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
 
-   /*Handle "device_handle" option [IN]*/
-   DeviceFromHandle_opt(device, handle_opt);
-
    if (command_list) {
       /* "list" call section */
 
@@ -472,8 +469,10 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
       printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
 
-      /*Bail out if no "device_handle" given*/
-      if (!handle_opt) {
+      /*Handle "device_handle" option [IN]*/
+      if (handle_opt) {
+         DeviceFromHandle_opt(device, handle_opt);
+      } else { /*Bail out if no "device_handle" given*/
          printf("Missing \"device_handle\" option\n");
          return 1;
       }
