@@ -25,6 +25,9 @@
 
 #include <libraw/libraw.h>
 
+#include <string>
+#include <sstream>
+
 #include "oyRE_help.c"
 #include "helper.c"
 /* --- internal definitions --- */
@@ -215,6 +218,34 @@ void ConfigsFromPatternUsage(oyStruct_s * options)
    return;
 }
 
+class exif2options {
+   public:
+      exif2options(Exiv2::ExifData *exif_data, oyOptions_s **options)
+         :_exif_data_(exif_data), _options_(options) {}
+
+      //FIXME We assume that any exif tag has exactly 2 '.' (dots)
+      int add(const char *name)
+      {
+         std::string n(name);
+         n.replace(n.find("."),1,"_");
+         n.replace(n.find("."),1,"_");
+         std::ostringstream registration;
+         registration << CMM_BASE_REG OY_SLASH << n.c_str();
+         Exiv2::ExifKey key( name );
+         Exiv2::ExifData::iterator pos = _exif_data_->findKey(key);
+         if (pos != _exif_data_->end()) {
+            return oyOptions_SetFromText( _options_,
+                                          registration.str().c_str(),
+                                          pos->toString().c_str(), OY_CREATE_NEW );
+         } else {
+            return 0;
+         }
+      }
+   private:
+      Exiv2::ExifData *_exif_data_;
+      oyOptions_s **_options_;
+};
+
 /** @internal
  *  @brief Get the options from EXIF Tags, and put them in a configuration object
  *
@@ -223,65 +254,58 @@ void ConfigsFromPatternUsage(oyStruct_s * options)
  *
  * \todo { Untested }
  */
-#define OPTIONS_ADD_EXIF(name) if (!error) { \
-   Exiv2::ExifKey key( #name ); \
-   Exiv2::ExifData::iterator pos = exif_data.findKey(key); \
-   if (pos != exif_data.end()) { \
-      error = oyOptions_SetFromText( options, \
-                                     CMM_BASE_REG OY_SLASH #name, \
-                                     pos->toString().c_str(), OY_CREATE_NEW ); \
-   } \
-}
 int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::AutoPtr image)
 {
    int error = 0;
 
    image->readMetadata();
    Exiv2::ExifData &exif_data = image->exifData();
-   if (exif_data.empty())
+   if (exif_data.empty()) //FIXME Add error message
       return 1;
 
+   exif2options e2o(&image->exifData(),options);
+
    // Standard EXIF Tags
-   OPTIONS_ADD_EXIF(Exif.Image.Make)
-   OPTIONS_ADD_EXIF(Exif.Image.Model)
-   OPTIONS_ADD_EXIF(Exif.Photo.ISOSpeedRatings)
-   OPTIONS_ADD_EXIF(Exif.Photo.ExposureProgram)
-   OPTIONS_ADD_EXIF(Exif.Photo.Flash)
+   error += e2o.add("Exif.Image.Model");
+   error += e2o.add("Exif.Image.Make");
+   error += e2o.add("Exif.Photo.ISOSpeedRatings");
+   error += e2o.add("Exif.Photo.ExposureProgram");
+   error += e2o.add("Exif.Photo.Flash");
  
    // Makernote Tags: Serial Number
-   OPTIONS_ADD_EXIF(Exif.Canon.SerialNumber)
-   OPTIONS_ADD_EXIF(Exif.Fujifilm.SerialNumber)
-   //OPTIONS_ADD_EXIF(Minolta) //Non existant?
-   OPTIONS_ADD_EXIF(Exif.Nikon3.SerialNumber)
-   OPTIONS_ADD_EXIF(Exif.Nikon3.SerialNO)
-   OPTIONS_ADD_EXIF(Exif.Olympus.SerialNumber)
-   OPTIONS_ADD_EXIF(Exif.Olympus.SerialNumber2)
-   OPTIONS_ADD_EXIF(Exif.OlympusEq.SerialNumber)
-   OPTIONS_ADD_EXIF(Exif.OlympusEq.InternalSerialNumber)
-   //OPTIONS_ADD_EXIF(Exif.Panasonic.InternalSerialNumber) //!in libexiv2?
-   //OPTIONS_ADD_EXIF(Pentax) //Non existant?
-   OPTIONS_ADD_EXIF(Exif.Sigma.SerialNumber)
-   //OPTIONS_ADD_EXIF(Sony) //Non existant?
+   error += e2o.add("Exif.Canon.SerialNumber");
+   error += e2o.add("Exif.Fujifilm.SerialNumber");
+   //e2o.add("Minolta"); //Non existant?
+   error += e2o.add("Exif.Nikon3.SerialNumber");
+   error += e2o.add("Exif.Nikon3.SerialNO");
+   error += e2o.add("Exif.Olympus.SerialNumber");
+   error += e2o.add("Exif.Olympus.SerialNumber2");
+   error += e2o.add("Exif.OlympusEq.SerialNumber");
+   error += e2o.add("Exif.OlympusEq.InternalSerialNumber");
+   //e2o.add("Exif.Panasonic.InternalSerialNumber"); //!in libexiv2?
+   //e2o.add("Pentax"); //Non existant?
+   error += e2o.add("Exif.Sigma.SerialNumber");
+   //e2o.add("Sony"); //Non existant?
 
    // Makernote Tags: Lens
-   OPTIONS_ADD_EXIF(Exif.CanonCs.LensType)
-   OPTIONS_ADD_EXIF(Exif.CanonCs.Lens)
-   //OPTIONS_ADD_EXIF(Fujifilm) //Non existant?
-   OPTIONS_ADD_EXIF(Exif.Minolta.LensID)
-   OPTIONS_ADD_EXIF(Exif.Nikon1.AuxiliaryLens)
-   OPTIONS_ADD_EXIF(Exif.Nikon2.AuxiliaryLens)
-   OPTIONS_ADD_EXIF(Exif.Nikon3.AuxiliaryLens)
-   OPTIONS_ADD_EXIF(Exif.Nikon3.LensType)
-   OPTIONS_ADD_EXIF(Exif.Nikon3.Lens)
-   OPTIONS_ADD_EXIF(Exif.OlympusEq.LensType)
-   OPTIONS_ADD_EXIF(Exif.OlympusEq.LensSerialNumber)
-   OPTIONS_ADD_EXIF(Exif.OlympusEq.LensFirmwareVersion)
-   //OPTIONS_ADD_EXIF(Exif.Panasonic.ConversionLens) //!in libexiv2?
-   //OPTIONS_ADD_EXIF(Exif.Panasonic.LensType) //!in libexiv2?
-   //OPTIONS_ADD_EXIF(Exif.Panasonic.LensSerialNumber) //!in libexiv2?
-   OPTIONS_ADD_EXIF(Exif.Pentax.LensType)
-   OPTIONS_ADD_EXIF(Exif.Pentax.LensInfo)
-   OPTIONS_ADD_EXIF(Exif.Sigma.LensRange)
+   error += e2o.add("Exif.CanonCs.LensType");
+   error += e2o.add("Exif.CanonCs.Lens");
+   //e2o.add("Fujifilm"); //Non existant?
+   error += e2o.add("Exif.Minolta.LensID");
+   error += e2o.add("Exif.Nikon1.AuxiliaryLens");
+   error += e2o.add("Exif.Nikon2.AuxiliaryLens");
+   error += e2o.add("Exif.Nikon3.AuxiliaryLens");
+   error += e2o.add("Exif.Nikon3.LensType");
+   error += e2o.add("Exif.Nikon3.Lens");
+   error += e2o.add("Exif.OlympusEq.LensType");
+   error += e2o.add("Exif.OlympusEq.LensSerialNumber");
+   error += e2o.add("Exif.OlympusEq.LensFirmwareVersion");
+   //e2o.add("Exif.Panasonic.ConversionLens"); //!in libexiv2?
+   //e2o.add("Exif.Panasonic.LensType"); //!in libexiv2?
+   //e2o.add("Exif.Panasonic.LensSerialNumber"); //!in libexiv2?
+   error += e2o.add("Exif.Pentax.LensType");
+   error += e2o.add("Exif.Pentax.LensInfo");
+   error += e2o.add("Exif.Sigma.LensRange");
 
    return error;
 }
