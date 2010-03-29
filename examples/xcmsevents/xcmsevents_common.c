@@ -85,23 +85,28 @@ char * printfNetColorDesktop ( xcmseContext_s * c, int verbose )
   if(n && data)
   {
     int old_pid = 0;
-    long atom_last_time = 0,
-         atom_time = 0;
+    long atom_last_time = 0;
     char * atom_time_text = (char*)malloc(1024),
-         * atom_colour_server_name = (char*)malloc(1024);
+         * atom_colour_server_name = (char*)malloc(1024),
+         * atom_capabilities_text = (char*)malloc(1024);
+    struct tm * gmt;
+
     if(n && data && strlen((char*)data))
     {
+      time_t time;
       sscanf( (const char*)data, "%d %ld %s %s",
               &old_pid, &atom_last_time,
-              atom_time_text, atom_colour_server_name );
-      atom_time = atol( atom_time_text );
+              atom_capabilities_text, atom_colour_server_name );
+      time = atom_last_time;
+      gmt = gmtime(&time);
+      strftime(atom_time_text, 24, /*"%Y/%m/%d."*/"%H%M%S", gmt);
     }
 
     c->old_pid = (pid_t)old_pid;
     if(verbose)
     {
-      sprintf( net_color_desktop_text, "%d %s %s",
-               (int)c->old_pid, atom_colour_server_name,
+      sprintf( net_color_desktop_text, "%d %s[%s] %s",
+               (int)c->old_pid, atom_colour_server_name, atom_capabilities_text,
                atom_time_text );
     }
     else
@@ -109,6 +114,7 @@ char * printfNetColorDesktop ( xcmseContext_s * c, int verbose )
                (int)c->old_pid );
     if(atom_time_text) free(atom_time_text);
     if(atom_colour_server_name) free(atom_colour_server_name);
+    if(atom_capabilities_text) free(atom_capabilities_text);
   }
   else
     sprintf( net_color_desktop_text, "0" );

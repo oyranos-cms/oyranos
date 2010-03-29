@@ -1331,11 +1331,19 @@ static time_t net_color_desktop_last_time = 0;
  *  - tell the colour server is alive
  *  All sections are separated by underline for easy parsing.
  *  The first section contains the pid_t of the process which has set the atom.
- *  The second section contains time since epoch as returned by time().
- *  The thierd section contains a time string for better displaying.
+ *  The second section contains time since epoch GMT as returned by time(NULL).
+ *  The thired section contains the bar '|' separated and surrounded
+ *  capabilities:
+ *    - NCP _NET_COLOR_PROFILES
+ *    - NCT _NET_COLOR_TARGET
+ *    - NCM _NET_COLOR_MANAGEMENT
+ *    - NCR _NET_COLOR_REGIONS
+ *    - _NET_COLOR_DESKTOP is omitted
+ *    - V0.1 indicates version compliance to the net-color spec
  *  The fourth section contains the server name identifier.
  *
- * @param[in]      request             similiar as return values
+ * @param[in]      request             - 0  update
+ *                                     - 2  init
  * @return                             - 0  all fine
  *                                     - 1  inactivate
  *                                     - 2  activate
@@ -1347,11 +1355,8 @@ static int updateNetColorDesktopAtom ( CompDisplay       * d,
 {
   time_t  cutime;         /* Time since epoch */
   cutime = time(NULL);    /* current user time */
-  char time_str[64];
-  struct tm * gmt;
-  gmt = gmtime(&cutime);
-  strftime(time_str, 24, "%Y/%m/%d.%H%M%S", gmt);
-  const char * my_id = "compiz-colour-desktop";
+  const char * my_id = "compiz_colour_desktop",
+             * my_capabilities = "|NCR|V0.3|"; /* _NET_COLOR_REGIONS */
   unsigned long n = 0;
   char * data = 0;
   const char * old_atom = 0;
@@ -1361,8 +1366,8 @@ static int updateNetColorDesktopAtom ( CompDisplay       * d,
   pid_t pid = getpid();
   int old_pid = 0;
   long atom_time = 0;
-  char * atom_time_text = malloc(1024),
-       * atom_colour_server_name = malloc(1024);
+  char * atom_colour_server_name = (char*)malloc(1024),
+       * atom_capabilities_text = (char*)malloc(1024);
 
   /* check every 10 seconds */
   if(request == 0 &&
@@ -1372,13 +1377,13 @@ static int updateNetColorDesktopAtom ( CompDisplay       * d,
   data = fetchProperty( d->display, RootWindow(d->display,0),
                                pd->netColorDesktop, XA_STRING, &n, False);
 
-  if(!atom_time_text || !atom_colour_server_name) return 3;
-  atom_time_text[0] = atom_colour_server_name[0] = 0;
+  if(!atom_colour_server_name) return 3;
+  atom_colour_server_name[0] = 0;
   if(n && data && strlen(data))
   {
     sscanf( (const char*)data, "%d %ld %s %s",
             &old_pid, &atom_time,
-            atom_time_text, atom_colour_server_name );
+            atom_capabilities_text, atom_colour_server_name );
     old_atom = data;
   }
 
@@ -1417,7 +1422,7 @@ static int updateNetColorDesktopAtom ( CompDisplay       * d,
     char * atom_text = malloc(1024);
     if(!atom_text) return status;
     sprintf( atom_text, "%d %ld %s %s",
-             (int)pid, (long)cutime, time_str, my_id );
+             (int)pid, (long)cutime, my_capabilities, my_id );
     XChangeProperty( d->display, RootWindow(d->display,0),
                                 pd->netColorDesktop, XA_STRING,
                                 8, PropModeReplace, (unsigned char*)atom_text,
@@ -1427,8 +1432,8 @@ static int updateNetColorDesktopAtom ( CompDisplay       * d,
 
   net_color_desktop_last_time = cutime;
 
-  if(atom_time_text) free(atom_time_text);
   if(atom_colour_server_name) free(atom_colour_server_name);
+  if(atom_capabilities_text) free(atom_capabilities_text);
 
   return status;
 }
