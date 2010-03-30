@@ -119,7 +119,6 @@ typedef struct {
 typedef struct {
   char name[32];
   oyProfile_s * oy_profile;
-  oyConversion_s * cc;
   GLushort clut[GRIDPOINTS][GRIDPOINTS][GRIDPOINTS][3];
   GLuint glTexture;
   GLfloat scale, offset;
@@ -719,6 +718,7 @@ static void    setupColourTables     ( CompScreen        * s,
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   PrivColorOutput * output = &ps->ccontexts[screen];
   int error = 0;
+  oyConversion_s * cc;
 
     if (output->oy_profile)
     {
@@ -751,10 +751,10 @@ static void    setupColourTables     ( CompScreen        * s,
       END_CLOCK
 
       START_CLOCK("oyConversion_CreateBasicPixels: ")
-      output->cc = oyConversion_CreateBasicPixels( image_in, image_out,
+      cc = oyConversion_CreateBasicPixels( image_in, image_out,
                                                       options, 0 ); END_CLOCK
 
-      if (output->cc == NULL)
+      if (cc == NULL)
       {
         oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                       DBG_STRING "no conversion created for %s",
@@ -780,7 +780,7 @@ static void    setupColourTables     ( CompScreen        * s,
       } END_CLOCK
 
       START_CLOCK("oyConversion_RunPixels: ")
-      oyConversion_RunPixels( output->cc, 0 ); END_CLOCK
+      oyConversion_RunPixels( cc, 0 ); END_CLOCK
 
       START_CLOCK("cdCreateTexture: ")
       cdCreateTexture( output ); END_CLOCK
@@ -788,6 +788,7 @@ static void    setupColourTables     ( CompScreen        * s,
       oyOptions_Release( &options );
       oyImage_Release( &image_in );
       oyImage_Release( &image_out );
+      oyConversion_Release( &cc );
 
     } else {
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
@@ -805,8 +806,6 @@ static void freeOutput( PrivScreen *ps )
     {
       if(ps->ccontexts[i].oy_profile)
         oyProfile_Release( &ps->ccontexts[i].oy_profile );
-      if(ps->ccontexts[i].cc)
-         oyConversion_Release( &ps->ccontexts[i].cc );
       if(ps->ccontexts[i].glTexture)
         glDeleteTextures( 1, &ps->ccontexts[i].glTexture );
       ps->ccontexts[i].glTexture = 0;
@@ -857,6 +856,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
   ps->nCcontexts = n;
   ps->ccontexts = malloc(ps->nCcontexts * sizeof(PrivColorOutput));
+  memset( ps->ccontexts, 0, ps->nCcontexts * sizeof(PrivColorOutput));
   for (unsigned long i = 0; i < ps->nCcontexts; ++i)
   {
     device = oyConfigs_Get( devices, i );
