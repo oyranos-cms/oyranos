@@ -11513,7 +11513,7 @@ OYAPI int  OYEXPORT
         /** 1.3.1.1 Compare the device_name with the device_name option
          *          and collect the matching devices. */
         tmp = oyConfig_FindString( device, "device_name", 0 );
-        if(oyStrcmp_( tmp, device_name ) == 0)
+        if(tmp && oyStrcmp_( tmp, device_name ) == 0)
           oyConfigs_MoveIn( *devices, &device, -1 );
       } else
         /** 1.3.1.2 ... or collect all device configurations */
