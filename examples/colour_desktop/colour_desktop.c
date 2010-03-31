@@ -888,8 +888,7 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 {
   PrivDisplay *pd = compObjectGetPrivate((CompObject *) d);
-  const char * atom_name = XGetAtomName( event->xany.display,
-                                         event->xproperty.atom );
+  const char * atom_name = 0;
 
   UNWRAP(pd, d, handleEvent);
   (*d->handleEvent) (d, event);
@@ -904,6 +903,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
   switch (event->type)
   {
   case PropertyNotify:
+    atom_name = XGetAtomName( event->xany.display, event->xproperty.atom );
 #if defined(PLUGIN_DEBUG)
     if (event->xproperty.atom == pd->netColorProfiles ||
         event->xproperty.atom == pd->netColorRegions ||
@@ -919,7 +919,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
       updateWindowOutput(w);
 
     /* update for a changing monitor profile */
-    } else if( atom_name &&
+    } else if( event->xproperty.atom == pd->netColorDesktop && atom_name &&
            strstr( atom_name , OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0)
     {
       const char * an = XGetAtomName( event->xany.display,
