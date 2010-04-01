@@ -660,6 +660,7 @@ int              oyStructList_ObserverAdd (
 
 
 oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
+                                       uint32_t            flags,
                                        const char        * hash_text );
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
 oyStructList_s** oyCMMCacheList_     ( void );

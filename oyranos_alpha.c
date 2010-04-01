@@ -4047,7 +4047,7 @@ oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
     if(!oy_module_cache_)
       oy_module_cache_ = oyStructList_New( 0 );
 
-    entry = oyCacheListGetEntry_ ( oy_module_cache_, class );
+    entry = oyCacheListGetEntry_ ( oy_module_cache_, 0, class );
 
     s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, type );
 
@@ -5933,6 +5933,10 @@ int32_t      oyObject_Hashed_        ( oyObject_s          s )
  *  @memberof oyObject_s
  *  @brief   check if a object has a hash allocated and set it
  *
+ *  @param[in,out] s                   the object
+ *  @param[in]     hash                the hash of max size 2 * OY_HASH_SIZE
+ *  @return                            0 - fine, otherwise error
+ *
  *  @version Oyranos: 0.1.10
  *  @date    2009/04/16
  *  @since   2009/04/16 (Oyranos: 0.1.10)
@@ -6529,6 +6533,7 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
  *  @brief get always a Oyranos cache entry from a cache list
  *
  *  @param[in]     cache_list          the list to search in
+ *  @param[in]     flags               0 - assume text, 1 - assume sized hash
  *  @param[in]     hash_text           the text to search for in the cache_list
  *  @return                            the cache entry may not have a entry
  *
@@ -6537,21 +6542,25 @@ int                oyHash_SetPointer_( oyHash_s          * hash,
  *  @date    2009/06/04
  */
 oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
+                                       uint32_t            flags,
                                        const char        * hash_text )
 {
-  oyHash_s * entry = 0;
-  oyHash_s * search_key = 0;
+  oyHash_s * entry = 0,
+           * search_key = 0;
   int error = !(cache_list && hash_text);
   int n = 0, i;
   uint32_t search_int[8] = {0,0,0,0,0,0,0,0};
   char hash_text_copy[32];
-  oyPointer search_ptr = search_int;
+  const char * search_ptr = (const char*)search_int;
 
   if(error <= 0 && cache_list->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
 
   if(error <= 0)
   {
+    if(flags & 0x01)
+      search_ptr = hash_text;
+    else
     if(oyStrlen_(hash_text) < OY_HASH_SIZE*2-1)
     {
       memset( hash_text_copy, 0, OY_HASH_SIZE*2 );
@@ -6590,9 +6599,10 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
       error = oyStructList_MoveIn(cache_list, (oyStruct_s**)&search_key, -1, 0);
       search_key = 0;
     }
+
+    oyHash_Release_( &search_key );
   }
 
-  oyHash_Release_( &search_key );
 
   if(entry)
     return oyHash_Copy_( entry, 0 );
@@ -6660,7 +6670,7 @@ oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text)
   if(!oy_cmm_cache_)
     oy_cmm_cache_ = oyStructList_New( 0 );
 
-  return oyCacheListGetEntry_(oy_cmm_cache_, hash_text);
+  return oyCacheListGetEntry_(oy_cmm_cache_, 0, hash_text);
 }
 
 /** @internal
@@ -14130,7 +14140,7 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
 
     if(!object)
     {
-      entry = oyCacheListGetEntry_ ( oy_profile_s_file_cache_, name );
+      entry = oyCacheListGetEntry_ ( oy_profile_s_file_cache_, 0, name );
 
       if(!oyToNoCacheRead_m(flags))
       {
