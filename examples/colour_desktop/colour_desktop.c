@@ -46,6 +46,8 @@
 
 #include <Xcolor.h>
 
+//#define OY_CACHE 1 /* aching in Oyranos is slower */
+
 #define OY_COMPIZ_VERSION (COMPIZ_VERSION_MAJOR * 10000 + COMPIZ_VERSION_MINOR * 100 + COMPIZ_VERSION_MICRO)
 #if OY_COMPIZ_VERSION < 800
 #define oyCompLogMessage(disp_, plug_in_name, debug_level, format_, ... ) \
@@ -128,7 +130,10 @@ typedef struct {
 
 static CompMetadata pluginMetadata;
 
-//static int corePrivateIndex;
+static int core_priv_index = -1;
+static int display_priv_index = -1;
+static int screen_priv_index = -1;
+static int window_priv_index = -1;
 
 typedef struct {
   int childPrivateIndex;
@@ -276,26 +281,35 @@ static void *compObjectAllocPrivate(CompObject *parent, CompObject *object, int 
 
   return privateData;
 }
-
-static void compObjectFreePrivate(CompObject *parent, CompObject *object)
-{
-  int *privateIndex = compObjectGetPrivateIndex(parent);
-  if (privateIndex == NULL)
-    return;
-
-  int *privateData = object->privates[*privateIndex].ptr;
-  if (privateData == NULL)
-    return;
-
-  /* free index of child objects */
-  if (object->type < 3)
-    compObjectFreePrivateIndex(object, object->type + 1, *privateData);
-
-  object->privates[*privateIndex].ptr = NULL;
-
-  free(privateData);
-}
 #endif
+
+static void compObjectFreePrivate(CompObject *o)
+{
+  int index = -1;
+  switch(o->type)
+  {
+    case COMP_OBJECT_TYPE_CORE:
+           index = core_priv_index;
+         break;
+    case COMP_OBJECT_TYPE_DISPLAY:
+           index = display_priv_index;
+         break;
+    case COMP_OBJECT_TYPE_SCREEN:
+           index = screen_priv_index;
+         break;
+    case COMP_OBJECT_TYPE_WINDOW:
+           index = window_priv_index;
+         break;
+  }
+
+  if(index < 0)
+    return;
+
+  oyPointer ptr = o->privates[index].ptr;
+  o->privates[index].ptr = NULL;
+  if(ptr)
+    free(ptr);
+}
 
 /**
  * Xcolor helper functions. I didn't really want to put them into the Xcolor
@@ -591,12 +605,14 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
     XChangeProperty( s->display->display, root,
                      target_atom, XA_CARDINAL, 8, PropModeReplace,
                      source, source_n );
+#if defined(PLUGIN_DEBUG)
     if(init)
       printf( "copy from %s to %s (%d)\n", icc_profile_atom,
               icc_colour_server_profile_atom, (int)source_n );
     else
       printf( "copy from %s to %s (%d)\n", icc_colour_server_profile_atom,
               icc_profile_atom, (int)source_n );
+#endif
     XFree( source );
     source = 0; source_n = 0;
 
@@ -1684,20 +1700,100 @@ const char * pluginGetHashText( CompObject * o )
 }
 
 
+oyPointer pluginAllocatePrivatePointer( CompObject * o )
+{
+  oyPointer ptr = 0;
+  int index = -1;
+  size_t size = 0;
+  static const int privateSizes[] = {
+  sizeof(PrivCore), sizeof(PrivDisplay), sizeof(PrivScreen), sizeof(PrivWindow)
+  };
+
+#ifdef OY_CACHE
+  return pluginGetPrivatePointer( o );
+#endif
+
+  if(!o)
+    return 0;
+  switch(o->type)
+  {
+    case COMP_OBJECT_TYPE_CORE:
+           if(core_priv_index == -1)
+             core_priv_index = allocateCorePrivateIndex( );
+           index = core_priv_index;
+           size = privateSizes[o->type];
+         break;
+    case COMP_OBJECT_TYPE_DISPLAY:
+           if(display_priv_index == -1)
+             display_priv_index = allocateDisplayPrivateIndex( );
+           index = display_priv_index;
+           size = privateSizes[o->type];
+         break;
+    case COMP_OBJECT_TYPE_SCREEN:
+         {
+           CompScreen * s = (CompScreen*)o;
+           if(screen_priv_index == -1)
+             screen_priv_index = allocateScreenPrivateIndex( s->display );
+           index = screen_priv_index;
+           size = privateSizes[o->type];
+         }
+         break;
+    case COMP_OBJECT_TYPE_WINDOW:
+         {
+           CompWindow * w = (CompWindow*)o;
+           if(window_priv_index == -1)
+             window_priv_index = allocateWindowPrivateIndex( w->screen );
+           index = window_priv_index;
+           size = privateSizes[o->type];
+         }
+         break;
+  }
+#if defined(PLUGIN_DEBUG)
+  printf("index %d for %d\n", index, o->type );
+#endif
+
+  if(index < 0)
+    return 0;
+
+  {
+    o->privates[index].ptr = malloc(size);
+#if defined(PLUGIN_DEBUG)
+    printf("index=%d, 0x%lx size=%d\n", 
+           index, o->privates[index].ptr, (int)size );
+#endif
+    if(!o->privates[index].ptr) return 0;
+#if defined(PLUGIN_DEBUG)
+    printf("memset index=%d, 0x%lx size=%d\n", 
+           index, o->privates[index].ptr, (int)size );
+#endif
+    memset( o->privates[index].ptr, 0, size);
+  }
+
+  ptr = o->privates[index].ptr;
+
+#if defined(PLUGIN_DEBUG)
+  printf("return ptr=0x%lx for type=%d[ 0x%lx]\n", ptr, o->type, o );
+#endif
+
+  return ptr;
+}
+
 oyPointer pluginGetPrivatePointer( CompObject * o )
 {
   oyPointer ptr = 0;
-  uint32_t exact_hash_size = 1;
+
   if(!o)
     return 0;
+#if OY_CACHE
+  uint32_t exact_hash_size = 1;
+  static const int privateSizes[] = {
+  sizeof(PrivCore), sizeof(PrivDisplay), sizeof(PrivScreen), sizeof(PrivWindow)
+  };
   const char * hash_text = pluginGetHashText( o ); if(!hash_text) return FALSE;
   oyHash_s * entry = oyCacheListGetEntry_( pluginGetPrivatesCache(),
                                            exact_hash_size, hash_text );
   oyCMMptr_s * priv_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
                                                         oyOBJECT_CMM_POINTER_S);
-  static const int privateSizes[] = {
-  sizeof(PrivCore), sizeof(PrivDisplay), sizeof(PrivScreen), sizeof(PrivWindow)
-  };
 
   if(!priv_ptr)
   {
@@ -1721,6 +1817,32 @@ oyPointer pluginGetPrivatePointer( CompObject * o )
 #endif
   }
   oyHash_Release_( &entry );
+#else
+  int index = -1;
+  switch(o->type)
+  {
+    case COMP_OBJECT_TYPE_CORE:
+           index = core_priv_index;
+         break;
+    case COMP_OBJECT_TYPE_DISPLAY:
+           index = display_priv_index;
+         break;
+    case COMP_OBJECT_TYPE_SCREEN:
+           index = screen_priv_index;
+         break;
+    case COMP_OBJECT_TYPE_WINDOW:
+           index = window_priv_index;
+         break;
+  }
+
+  if(index < 0)
+    return 0;
+
+  ptr = o->privates[index].ptr;
+  if(!ptr)
+    printf( "object[0x%lx] type=%d no private data reserved\n",
+            (intptr_t)o, o->type );
+#endif
 
   return ptr;
 }
@@ -1728,7 +1850,10 @@ oyPointer pluginGetPrivatePointer( CompObject * o )
 static CompBool pluginInitObject(CompPlugin *p, CompObject *o)
 {
   /* use Oyranos for caching of private data */
-  oyPointer private_data = pluginGetPrivatePointer( o );
+  oyPointer private_data = pluginAllocatePrivatePointer( o );
+#if defined(PLUGIN_DEBUG)
+  printf("get data=0x%lx for type=%d[ 0x%lx]\n", private_data, o->type, o );
+#endif
 
 #if 0
   void *privateData = compObjectAllocPrivate(getParent(o), o, privateSizes[o->type]);
@@ -1744,20 +1869,19 @@ static CompBool pluginInitObject(CompPlugin *p, CompObject *o)
 static void pluginFiniObject(CompPlugin *p, CompObject *o)
 {
   void *privateData = compObjectGetPrivate(o);
-  const char * hash_text;
-  oyHash_s * entry;
-  oyCMMptr_s * priv_ptr;
-  uint32_t exact_hash_size = 1;
   if (privateData == NULL)
     return;
 
   dispatchFiniObject[o->type](p, o, privateData);
-  //compObjectFreePrivate(getParent(o), o);
-
   if(!o)
     return;
 
   /* release a cache entry of private data */
+#ifdef OY_CACHE
+  uint32_t exact_hash_size = 1;
+  const char * hash_text;
+  oyHash_s * entry;
+  oyCMMptr_s * priv_ptr;
   hash_text = pluginGetHashText( o ); if(!hash_text) return;
   entry = oyCacheListGetEntry_( pluginGetPrivatesCache(), exact_hash_size,
                                 hash_text );
@@ -1766,6 +1890,9 @@ static void pluginFiniObject(CompPlugin *p, CompObject *o)
     oyCMMptr_Release( &priv_ptr );
   oyHash_SetPointer_( entry, (oyStruct_s*) priv_ptr );
   oyHash_Release_( &entry );
+#else
+  compObjectFreePrivate( o );
+#endif
 }
 
 static void pluginFini(CompPlugin *p)
