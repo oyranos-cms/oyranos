@@ -1634,13 +1634,21 @@ int pluginPrivatesRelease( oyPointer * ptr )
 }
 
 static char * hash_text_ = 0;
-
+static int hash_len_ = sizeof(intptr_t);
+/** create a string of the exact Oyranos expected hash size */
 const char * pluginGetHashText( CompObject * o )
 {
   const char * type_name = "unknown";
+  char * ptr;
+  unsigned char c,d,e;
+  int i;
   if(!hash_text_)
-    hash_text_ = (char*) malloc (1024);
-  if(!hash_text_) return NULL;
+  {
+    hash_text_ = (char*) malloc (2*OY_HASH_SIZE);
+    memset( hash_text_, 0, 2*OY_HASH_SIZE );
+    hash_text_[4 + hash_len_] = 0;
+  }
+  if(!hash_text_ || !o) return NULL;
   switch(o->type)
   {
     case COMP_OBJECT_TYPE_CORE: type_name = "CORE"; break;
@@ -1648,7 +1656,30 @@ const char * pluginGetHashText( CompObject * o )
     case COMP_OBJECT_TYPE_SCREEN: type_name = "SCREEN"; break;
     case COMP_OBJECT_TYPE_WINDOW: type_name = "WINDOW"; break;
   }
-  sprintf( hash_text_, "%s[0x%lx]\n", type_name, (intptr_t)o );
+  /* use memcpy to be fast */
+#if 0
+  static int init = 0;
+  sprintf( hash_text_, "%s[0x%lx]", type_name, (intptr_t)o );
+  if(o->type == COMP_OBJECT_TYPE_DISPLAY)
+  if(init++<10)
+  printf("%s\n", hash_text_);
+#else
+  memcpy( hash_text_, type_name, 4 );
+  ptr = (char*)&o;
+  for(i = 0; i < sizeof(int*); ++i)
+  {
+    c = ptr[sizeof(int*)-i-1];
+    d = c&0x0f;
+    e = c >> 4;
+    hash_text_[4 + 2*i+1] = d < 10 ? d+48 : d+87;
+    hash_text_[4 + 2*i] = e < 10 ? e+48 : e+87;
+  }
+#if defined(PLUGIN_DEBUG_)
+  static int init = 0;
+  if(init++<10)
+  printf("%s 0x%lx\n", hash_text_, o);
+#endif
+#endif
   return hash_text_;
 }
 
@@ -1656,11 +1687,12 @@ const char * pluginGetHashText( CompObject * o )
 oyPointer pluginGetPrivatePointer( CompObject * o )
 {
   oyPointer ptr = 0;
+  uint32_t exact_hash_size = 1;
   if(!o)
     return 0;
   const char * hash_text = pluginGetHashText( o ); if(!hash_text) return FALSE;
   oyHash_s * entry = oyCacheListGetEntry_( pluginGetPrivatesCache(),
-                                           hash_text );
+                                           exact_hash_size, hash_text );
   oyCMMptr_s * priv_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
                                                         oyOBJECT_CMM_POINTER_S);
   static const int privateSizes[] = {
@@ -1715,6 +1747,7 @@ static void pluginFiniObject(CompPlugin *p, CompObject *o)
   const char * hash_text;
   oyHash_s * entry;
   oyCMMptr_s * priv_ptr;
+  uint32_t exact_hash_size = 1;
   if (privateData == NULL)
     return;
 
@@ -1726,7 +1759,8 @@ static void pluginFiniObject(CompPlugin *p, CompObject *o)
 
   /* release a cache entry of private data */
   hash_text = pluginGetHashText( o ); if(!hash_text) return;
-  entry = oyCacheListGetEntry_( pluginGetPrivatesCache(), hash_text );
+  entry = oyCacheListGetEntry_( pluginGetPrivatesCache(), exact_hash_size,
+                                hash_text );
   priv_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry, oyOBJECT_CMM_POINTER_S);
   if(priv_ptr)
     oyCMMptr_Release( &priv_ptr );
