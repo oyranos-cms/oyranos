@@ -1412,7 +1412,7 @@ static int updateNetColorDesktopAtom ( CompDisplay       * d,
     old_atom = data;
   }
 
-  if(old_pid != (int)pid)
+  if(n && data && old_pid != (int)pid)
   {
     if(old_atom && atom_time + 60 < cutime)
       oyCompLogMessage( d, "colour_desktop", CompLogLevelWarn,
