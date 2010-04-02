@@ -926,7 +926,7 @@ distclean: clean
 
 clean:
 	-$(RM) \
-	$(CLEAN_OBJECTS) \
+	$(CLEAN_OBJECTS) libXNVCtrl.a \
 	$(TARGET)-policy \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2 test tests/test_oyranos \
