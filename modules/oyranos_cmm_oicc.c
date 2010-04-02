@@ -511,15 +511,22 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
   /* only set missing options */
               if((o &&
                   !(o->source & oyOPTIONSOURCE_USER) &&
-                  !(o->source & oyOPTIONSOURCE_DATA) &&
                   !(o->flags & oyOPTIONATTRIBUTE_EDIT)) ||
                  !o)
               {
                 db_o = oyOptions_Find( db_options, key );
                 if(db_o)
                 {
-                  db_o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
-                  oyOptions_MoveIn( f_options, &db_o, -1 );
+                  if(!o)
+                    oyOptions_MoveIn( f_options, &db_o, -1 );
+                  else
+                  {
+                    tmp = oyOption_GetValueText( db_o, oyAllocateFunc_ );
+                    oyOption_SetFromText( o, tmp, 0 );
+                    oyFree_m_( tmp );
+                  }
+                  o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
+
                   if(oy_debug || verbose)
                     WARNc2_S("set %s: %s", key,
                              oyOptions_FindString(f_options,
