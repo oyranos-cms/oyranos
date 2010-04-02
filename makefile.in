@@ -336,7 +336,7 @@ SUB_OBJECTS = \
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
 	test.c test2.cpp tests/test_oyranos.c
 
-.PHONY:	docu examples
+.PHONY:	docu examples oforms
 
 TEST  = test
 TEST2 = test2
@@ -565,7 +565,7 @@ test2c:	test2.c.o
 	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
 	test2.c.o -L./ `./oyranos-config --ldstaticflags` $(LCMS_LIBS)
 
-check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples
+check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples oforms
 	echo current git version is:
 	n=0; for i in `cd $(SRCDIR); git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
@@ -573,6 +573,9 @@ check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples
 
 examples:
 	cd examples && ($(MAKE) clean; PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ $(MAKE))
+
+oforms:	$(LIB_FORMS_FLTK_NAME)
+	cd oforms && (PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ $(MAKE) -f oyranos_xforms.makefile)
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
@@ -927,7 +930,8 @@ clean:
 	$(TARGET)-policy \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2 test tests/test_oyranos \
-	$(TARGET)-config-fltk; \
+	$(TARGET)-config-fltk \
+	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk; \
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo; \
@@ -1106,6 +1110,7 @@ help:
 	echo "... test2 :      build a second test binary"
 	echo "... check :      do a test build and run it"
 	echo "... examples :   try building the example directory"
+	echo "... oforms :     try building the oforms directory"
 	echo "... "
 	echo "... install :    install the binaries, include files and data"
 	echo "... install_bin: install only binaries"
