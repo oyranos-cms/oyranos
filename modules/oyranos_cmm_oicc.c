@@ -503,9 +503,9 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                                        oyConversion_s    * cc,
                                        int                 verbose )
 {
-  oyOption_s * o = 0,
-             * db_o = 0;
+  oyOption_s * o, * db_o;
   const char * tmp = 0;
+  char * text = 0;
 
   o = oyOptions_Find( f_options, key );
   /* only set missing options */
@@ -518,14 +518,17 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                 if(db_o)
                 {
                   if(!o)
+                  {
+                    db_o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
                     oyOptions_MoveIn( f_options, &db_o, -1 );
+                  }
                   else
                   {
-                    tmp = oyOption_GetValueText( db_o, oyAllocateFunc_ );
-                    oyOption_SetFromText( o, tmp, 0 );
-                    oyFree_m_( tmp );
+                    text = oyOption_GetValueText( db_o, oyAllocateFunc_ );
+                    oyOption_SetFromText( o, text, 0 );
+                    o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
+                    oyFree_m_( text );
                   }
-                  o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
 
                   if(oy_debug || verbose)
                     WARNc2_S("set %s: %s", key,
@@ -562,7 +565,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   oyOption_s * o = 0;
   const char * val = 0;
   int32_t proofing = 0,
-          display_mode = 0;
+          display_mode = 0,
+          rendering_gamut_warning = 0;
 
   if(oy_debug == 1)
     verbose = 1;
@@ -691,13 +695,17 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               oiccChangeNodeOption( f_options, db_options,
                                     "rendering_high_precission", s, verbose);
               if(display_mode)
-                oyOptions_FindInt( f_options, "proof_soft", 0, &proofing );
+                proofing = oyOptions_FindString( f_options, "proof_soft", "1" )
+                           ? 1 : 0;
               else
-                oyOptions_FindInt( f_options, "proof_hard", 0, &proofing );
+                proofing = oyOptions_FindString( f_options, "proof_hard", "1" )
+                           ? 1 : 0;
+              rendering_gamut_warning = oyOptions_FindString( f_options,
+                                        "rendering_gamut_warning", "1" ) ? 1:0;
 
               /* TODO @todo add proofing profile */
               o = oyOptions_Find( f_options, "profiles_simulation" );
-              if(!o && proofing)
+              if(!o && (proofing || rendering_gamut_warning))
               {
                 proof = oyProfile_FromStd( oyPROFILE_PROOF, 0 );
                 proofs = oyProfiles_New(0);
