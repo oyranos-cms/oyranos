@@ -196,13 +196,13 @@ typedef struct {
 static Region absoluteRegion(CompWindow *w, Region region);
 static void damageWindow(CompWindow *w, void *closure);
 oyPointer  pluginGetPrivatePointer   ( CompObject        * o );
-static int updateNetColorDesktopAtom ( CompDisplay       * d,
-                                       PrivDisplay       * pd,
+static int updateNetColorDesktopAtom ( CompScreen        * s,
+                                       PrivScreen        * ps,
                                        int                 request );
 static void    setupICCprofileAtoms  ( CompScreen        * s,
                                        int                 screen,
                                        int                 init );
-static void    getDeviceProfile      ( CompScreen        * s,
+static int     getDeviceProfile      ( CompScreen        * s,
                                        oyConfig_s        * device,
                                        int                 screen );
 static void    setupColourTables     ( CompScreen        * s,
@@ -649,7 +649,7 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
   if(icc_colour_server_profile_atom) free(icc_colour_server_profile_atom);
 }
 
-static void    getDeviceProfile      ( CompScreen        * s,
+static int     getDeviceProfile      ( CompScreen        * s,
                                        oyConfig_s        * device,
                                        int                 screen )
 {
@@ -659,6 +659,7 @@ static void    getDeviceProfile      ( CompScreen        * s,
   oyRectangle_s * r = 0;
   const char * device_name = 0;
   char num[12];
+  int error = 0, t_err = 0;
 
   snprintf( num, 12, "%d", (int)screen );
 
@@ -667,14 +668,14 @@ static void    getDeviceProfile      ( CompScreen        * s,
     {
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                       DBG_STRING"monitor rectangle request failed", DBG_ARGS);
-      return;
+      return 1;
     }
     r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
     if( !r )
     {
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                       DBG_STRING"monitor rectangle request failed", DBG_ARGS);
-      return;
+      return 1;
     }
     oyOption_Release( &o );
 
@@ -713,17 +714,28 @@ static void    getDeviceProfile      ( CompScreen        * s,
       oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
                                        "yes", OY_CREATE_NEW );
-      oyDeviceGetProfile( device, options, &output->oy_profile );
+      t_err = oyDeviceGetProfile( device, options, &output->oy_profile );
       oyOptions_Release( &options );
     }
 
     if(!output->oy_profile)
     {
-      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
-                      DBG_STRING "Output %s: no ICC profile found",
-                      DBG_ARGS, output->name);
-      output->oy_profile = 0; /*cmsCreate_sRGBProfile();*/
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                      DBG_STRING "Output %s: no ICC profile found %d",
+                      DBG_ARGS, output->name, error);
+      error = 1;
     }
+
+    if(t_err == -1)
+    {
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                      DBG_STRING "Output %s ignoring fallback %d",
+                      DBG_ARGS, output->name, error);
+      output->oy_profile = 0;
+      error = 1;
+    }
+
+  return error;
 }
 
 
@@ -808,9 +820,8 @@ static void    setupColourTables     ( CompScreen        * s,
 
     } else {
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelInfo,
-                      DBG_STRING "Output %s: omitting sRGB->sRGB conversion",
+                      DBG_STRING "Output %s: no profile",
                       DBG_ARGS, output->name);
-      output->oy_profile = 0; /*cmsCreate_sRGBProfile();*/
     }
 }
 
@@ -877,9 +888,16 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   {
     device = oyConfigs_Get( devices, i );
 
-    getDeviceProfile( s, device, i );
-    setupICCprofileAtoms( s, i, init );
-    setupColourTables ( s, device, i );
+    error= getDeviceProfile( s, device, i );
+    if(ps->ccontexts[i].oy_profile)
+    {
+      setupICCprofileAtoms( s, i, init );
+      setupColourTables ( s, device, i );
+    }
+    else
+      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+                  DBG_STRING "No profile found on desktops %d/%d",
+                  DBG_ARGS, i, ps->nCcontexts);
 
     oyConfig_Release( &device );
   }
@@ -896,6 +914,8 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
     int all = 1;
     forEachWindowOnScreen( s, damageWindow, &all );
   } END_CLOCK
+
+  updateNetColorDesktopAtom( s, ps, 2 );
 }
 
 /**
@@ -1073,10 +1093,8 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
   CompScreen *s = w->screen;
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   int i;
-  CompDisplay * d = s->display;
-  PrivDisplay * pd = compObjectGetPrivate((CompObject *) d);
 
-  updateNetColorDesktopAtom( d, pd, 0 );
+  updateNetColorDesktopAtom( s, ps, 0 );
 
   UNWRAP(ps, s, drawWindow);
   Bool status = (*s->drawWindow) (w, transform, attrib, region, mask);
@@ -1199,7 +1217,7 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
   (*s->drawWindowTexture) (w, texture, attrib, mask);
   WRAP(ps, s, drawWindowTexture, pluginDrawWindowTexture);
 
-   PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
+  PrivWindow *pw = compObjectGetPrivate((CompObject *) w);
   if (pw->active == 0)
     return;
 
@@ -1282,7 +1300,11 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
 
     /* Now draw the window texture */
     UNWRAP(ps, s, drawWindowTexture);
-    (*s->drawWindowTexture) (w, texture, &fa, mask);
+    if(c->oy_profile)
+      (*s->drawWindowTexture) (w, texture, &fa, mask);
+    else
+      /* ignore the shader */
+      (*s->drawWindowTexture) (w, texture, attrib, mask);
     WRAP(ps, s, drawWindowTexture, pluginDrawWindowTexture);
 
     cleanDrawTexture:
@@ -1374,10 +1396,12 @@ static time_t net_color_desktop_last_time = 0;
  *                                     - 2  activate
  *                                     - 3  error
  */
-static int updateNetColorDesktopAtom ( CompDisplay       * d,
-                                       PrivDisplay       * pd,
+static int updateNetColorDesktopAtom ( CompScreen        * s,
+                                       PrivScreen        * ps,
                                        int                 request )
 {
+  CompDisplay * d = s->display;
+  PrivDisplay * pd = compObjectGetPrivate((CompObject *) d);
   time_t  cutime;         /* Time since epoch */
   cutime = time(NULL);    /* current user time */
   const char * my_id = "compiz_colour_desktop",
@@ -1400,7 +1424,7 @@ static int updateNetColorDesktopAtom ( CompDisplay       * d,
     return 0;
 
   data = fetchProperty( d->display, RootWindow(d->display,0),
-                               pd->netColorDesktop, XA_STRING, &n, False);
+                        pd->netColorDesktop, XA_STRING, &n, False);
 
   if(!atom_colour_server_name) return 3;
   atom_colour_server_name[0] = 0;
@@ -1441,18 +1465,30 @@ static int updateNetColorDesktopAtom ( CompDisplay       * d,
                     DBG_ARGS, old_atom ? old_atom : "????" );
   }
 
-  if(atom_time + 10 < net_color_desktop_last_time ||
-     request == 2 )
+  int attached_profiles = 0;
+  for(int i = 0; i < ps->nCcontexts; ++i)
+    attached_profiles += ps->ccontexts[i].oy_profile ? 1 : 0;
+
+  if( atom_time + 10 < net_color_desktop_last_time ||
+      request == 2 )
   {
     char * atom_text = malloc(1024);
     if(!atom_text) return status;
     sprintf( atom_text, "%d %ld %s %s",
              (int)pid, (long)cutime, my_capabilities, my_id );
-    XChangeProperty( d->display, RootWindow(d->display,0),
+ 
+   if(attached_profiles)
+      XChangeProperty( d->display, RootWindow(d->display,0),
                                 pd->netColorDesktop, XA_STRING,
                                 8, PropModeReplace, (unsigned char*)atom_text,
                                 strlen(atom_text) + 1 );
-    free( atom_text );
+    else if(old_atom)
+      XChangeProperty( d->display, RootWindow(d->display,0),
+                                pd->netColorDesktop, XA_STRING,
+                                8, PropModeReplace, (unsigned char*)NULL, 0 );
+
+
+    if(atom_text) free( atom_text );
   }
 
   net_color_desktop_last_time = cutime;
@@ -1479,8 +1515,6 @@ static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *
   pd->netColorRegions = XInternAtom(d->display, "_NET_COLOR_REGIONS", False);
   pd->netColorTarget = XInternAtom(d->display, "_NET_COLOR_TARGET", False);
   pd->netColorDesktop = XInternAtom(d->display, "_NET_COLOR_DESKTOP", False);
-
-  updateNetColorDesktopAtom( d, pd, 2 );
 
   return TRUE;
 }
@@ -1516,6 +1550,8 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
 
   ps->nCcontexts = 0;
   //updateOutputConfiguration(s, FALSE);
+
+
 
   return TRUE;
 }
@@ -1586,11 +1622,12 @@ static CompBool pluginFiniScreen(CompPlugin *plugin, CompObject *object, void *p
 #endif
 
   /* switch profile atoms back */
-  for (unsigned long i = 0; i < n; ++i)
+  for(int i = 0; i < ps->nCcontexts; ++i)
   {
     device = oyConfigs_Get( devices, i );
 
-    setupICCprofileAtoms( s, i, init );
+    if(ps->ccontexts[i].oy_profile)
+      setupICCprofileAtoms( s, i, init );
 
     oyConfig_Release( &device );
   }
