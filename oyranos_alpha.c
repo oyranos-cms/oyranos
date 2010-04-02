@@ -954,7 +954,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
     list = oyStructList_New( 0 );
     o = oyOption_New( reg, obj->oy_ );
     error = oyOption_StructMoveIn( o, (oyStruct_s**)&list );
-    if(error)
+    if(!error)
     {
       if(!obj->oy_->handles_)
         obj->oy_->handles_ = (oyStruct_s*) oyOptions_New( 0 );
