@@ -1206,7 +1206,7 @@ msgstr "Nachbildung am Bildschirm"
 
 #: oyranos_texts.c:473
 msgid "Simulate the output print on the monitor"
-msgstr "Bilde einen Asudruck auf dem Bildschirm nach"
+msgstr "Bilde einen Ausdruck auf dem Bildschirm nach"
 
 #: oyranos_texts.c:481
 msgid "Hardproof"
