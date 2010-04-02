@@ -25048,7 +25048,7 @@ void oyShowGraph__( oyFilterGraph_s * s )
   ptr = oyFilterGraph_ToText( adjacency_list, 0, 0,
                               "Oyranos Test Graph", 0, malloc );
   oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
-  error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias -magstep 0.7 test.ps &");
+  error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &");
 
   free(ptr); ptr = 0;
 }
