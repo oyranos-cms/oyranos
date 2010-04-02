@@ -46,6 +46,7 @@ if [ "$ROOT_DIR" != "." ]; then
   mkdir -p default_profiles/base
   mkdir -p default_profiles/printing
   mkdir -p oforms/
+  cp $v $ROOT_DIR/oforms/oyranos_xforms.makefile oforms/
 fi
 
 export ROOT_DIR
