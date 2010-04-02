@@ -74,33 +74,40 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
     /* Format plain text to some HTML codes */
     if(help_text)
     {
-      char * tmp = (char*) malloc(strlen(help_text)*2 + 24 );
+      static size_t len = 1024;
+      static char * text = (char*) malloc( len );
       int i = 0, ti = 0;
       char c;
+
+      if(len < strlen(help_text)*2 + 24)
+      {
+        len = strlen(help_text)*2 + 24;
+        free( text );
+        text = (char*) malloc( len );
+      }
 
       while( help_text[i] )
       {
         c = help_text[i];
         if(c == '\n')  /* line break */
         {
-          sprintf( &tmp[ti], "<br>" );
+          sprintf( &text[ti], "<br>" );
           ti += 4;
         }
         else if(c == ' ') /* empty space */
         {
-          sprintf( &tmp[ti], "&nbsp;" );
+          sprintf( &text[ti], "&nbsp;" );
           ti += 6;
         } else
         {
-          tmp[ti] = c;
+          text[ti] = c;
           ++ti;
         }
         ++i;
       }
-      tmp[ti] = 0;
+      text[ti] = 0;
 
-      help_view->value(tmp);
-      free(tmp);
+      help_view->value(text);
     } else
     {
       /* Erase only if the widget needs no scrollbar. */
