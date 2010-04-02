@@ -288,7 +288,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     oyRectangle_Release( &window_rectangle );
     oyRectangle_Release( &old_window_rectangle );
   } else
-    message( oyMSG_WARN, (oyStruct_s*)image,
+    message( oyMSG_DBG, (oyStruct_s*)image,
             "%s:%d no window_id/display_id image tags found",__FILE__,__LINE__);
 # endif
 
