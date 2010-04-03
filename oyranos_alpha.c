@@ -13509,6 +13509,8 @@ OYAPI int  OYEXPORT
   if(error <= 0)
     error = oyDeviceBackendCall( device, options );
 
+  /* The backend shows with the existence of the "icc_profile" response that it
+   * can handle device profiles through the driver. */
   if(error <= 0)
     o = oyConfig_Find( device, "icc_profile" );
 
@@ -13522,7 +13524,8 @@ OYAPI int  OYEXPORT
       error = -1;
   }
 
-  if(!(*profile))
+  /* The backend can not handle device driver profiles. Switch back to DB. */
+  if(error <= 0 && !(*profile) && !o)
   {
     char * profile_name = 0;
     oyDeviceProfileFromDB( device, &profile_name, 0 );
