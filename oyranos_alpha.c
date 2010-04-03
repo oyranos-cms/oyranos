@@ -12613,10 +12613,10 @@ const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj )
  *
  *  All other functions return a handle to the device. With this handle it is
  *  possible to get informations (oyDeviceGetInfo()), query it's current,
- *  possibly remote profile (strong oyDeviceGetProfile() /
- *  weak oyDeviceAskProfile2()) set the profile persistent
- *  (oyDeviceSetProfile()) or query the persistent stored profile
- *  (oyDeviceProfileFromDB()).
+ *  possibly remote profile (oyDeviceAskProfile2()) or typical used get a 
+ *  profile with fallbacks including the DB through (oyDeviceGetProfile()), 
+ *  set the profile persistent (oyDeviceSetProfile()) or query the persistent
+ *  stored profile (oyDeviceProfileFromDB()).
  *
  *  @{
  */
@@ -13520,6 +13520,7 @@ OYAPI int  OYEXPORT
     *profile = p;
   else if(!error)
     error = -1;
+  p = 0;
 
   /* The backend can not handle device driver profiles. Switch back to DB. */
   if(error <= 0 && !(*profile) && !o)
