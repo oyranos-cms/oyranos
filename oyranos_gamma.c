@@ -405,7 +405,7 @@ int main( int argc , char** argv )
 
 
       n = oyConfigs_Count( devices );
-      if(!error)
+      if(error <= 0)
       {
         for(i = 0; i < n; ++i)
         {
