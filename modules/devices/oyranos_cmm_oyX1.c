@@ -285,7 +285,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
                      "  No EDID matrix found; device_name: \"%s\"",OY_DBG_ARGS_,
                      oyNoEmptyString_m_( device_name ) );
-            error = 1;
+            error = -1;
           }
 
           text = oyAllocateFunc_(1024);
