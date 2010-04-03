@@ -13480,6 +13480,7 @@ OYAPI int  OYEXPORT
   oyOption_s * o = 0;
   oyConfig_s * s = device;
   int own_options = 0;
+  oyProfile_s * p = 0;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
@@ -13514,15 +13515,11 @@ OYAPI int  OYEXPORT
   if(error <= 0)
     o = oyConfig_Find( device, "icc_profile" );
 
-  if(o && o->value_type == oyVAL_STRUCT &&
-     o->value)
-  {
-    if(o->value->oy_struct && 
-       o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
-      *profile = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
-    else if(!error)
-      error = -1;
-  }
+  p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+  if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
+    *profile = p;
+  else if(!error)
+    error = -1;
 
   /* The backend can not handle device driver profiles. Switch back to DB. */
   if(error <= 0 && !(*profile) && !o)
