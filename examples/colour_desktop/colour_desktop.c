@@ -83,6 +83,9 @@
 
 typedef CompBool (*dispatchObjectProc) (CompPlugin *plugin, CompObject *object, void *privateData);
 
+/** Be active once and then not again. */
+static int colour_desktop_can = 1;
+
 
 /**
  * When a profile is uploaded into the root window, the plugin fetches the 
@@ -203,6 +206,7 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
                                        int                 screen,
                                        int                 init );
 static int     getDeviceProfile      ( CompScreen        * s,
+                                       PrivScreen        * ps,
                                        oyConfig_s        * device,
                                        int                 screen );
 static void    setupColourTables     ( CompScreen        * s,
@@ -650,10 +654,10 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
 }
 
 static int     getDeviceProfile      ( CompScreen        * s,
+                                       PrivScreen        * ps,
                                        oyConfig_s        * device,
                                        int                 screen )
 {
-  PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   PrivColorOutput * output = &ps->ccontexts[screen];
   oyOption_s * o = 0;
   oyRectangle_s * r = 0;
@@ -708,14 +712,19 @@ static int     getDeviceProfile      ( CompScreen        * s,
     output->oy_profile = (oyProfile_s*) 
                                   oyOption_StructGet( o, oyOBJECT_PROFILE_S );
 
+    printf(DBG_STRING"found icc_profile %d\n", DBG_ARGS, o?1:0);
     if(!output->oy_profile)
     {
       oyOptions_s * options = 0;
+      oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/command",
+                                       "list", OY_CREATE_NEW );
       oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
                                        "yes", OY_CREATE_NEW );
       t_err = oyDeviceGetProfile( device, options, &output->oy_profile );
       oyOptions_Release( &options );
+      printf(DBG_STRING"found icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS, output->oy_profile, t_err, output);
     }
 
     if(!output->oy_profile)
@@ -731,10 +740,11 @@ static int     getDeviceProfile      ( CompScreen        * s,
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                       DBG_STRING "Output %s ignoring fallback %d",
                       DBG_ARGS, output->name, error);
-      output->oy_profile = 0;
+      oyProfile_Release( &output->oy_profile );
       error = 1;
     }
 
+    printf(DBG_STRING"found icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS, output->oy_profile, t_err, output);
   return error;
 }
 
@@ -747,6 +757,9 @@ static void    setupColourTables     ( CompScreen        * s,
   PrivColorOutput * output = &ps->ccontexts[screen];
   int error = 0;
   oyConversion_s * cc;
+
+  if(!colour_desktop_can)
+    return;
 
     if (output->oy_profile)
     {
@@ -823,6 +836,7 @@ static void    setupColourTables     ( CompScreen        * s,
                       DBG_STRING "Output %s: no profile",
                       DBG_ARGS, output->name);
     }
+
 }
 
 static void freeOutput( PrivScreen *ps )
@@ -844,13 +858,14 @@ static void freeOutput( PrivScreen *ps )
 /**
  * Called when XRandR output configuration (or properties) change. Fetch
  * output profiles (if available) or fall back to sRGB.
+ * Device profiles are obtained from Oyranos only once at beginning.
  */
-static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
+static void updateOutputConfiguration(CompScreen *s, CompBool init)
 {
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
   int error = 0,
       n,
-      init = 1;
+      set = 1;
   oyOptions_s * options = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
@@ -884,20 +899,24 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
   ps->nCcontexts = n;
   ps->ccontexts = malloc(ps->nCcontexts * sizeof(PrivColorOutput));
   memset( ps->ccontexts, 0, ps->nCcontexts * sizeof(PrivColorOutput));
+  if(colour_desktop_can)
   for (unsigned long i = 0; i < ps->nCcontexts; ++i)
   {
     device = oyConfigs_Get( devices, i );
 
-    error= getDeviceProfile( s, device, i );
+    //if(!init)
+      error = getDeviceProfile( s, ps, device, i );
+
     if(ps->ccontexts[i].oy_profile)
     {
-      setupICCprofileAtoms( s, i, init );
+      setupICCprofileAtoms( s, i, set );
       setupColourTables ( s, device, i );
-    }
-    else
+    } else
+    {
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
-                  DBG_STRING "No profile found on desktops %d/%d",
-                  DBG_ARGS, i, ps->nCcontexts);
+                  DBG_STRING "No profile found on desktops %d/%d 0x%lx 0x%lx",
+                  DBG_ARGS, i, ps->nCcontexts, &ps->ccontexts[i], ps->ccontexts[i].oy_profile);
+    }
 
     oyConfig_Release( &device );
   }
@@ -905,11 +924,11 @@ static void updateOutputConfiguration(CompScreen *s, CompBool updateWindows)
 
 #if defined(PLUGIN_DEBUG)
   oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
-                  DBG_STRING "Updated screen outputs, %d total now %d",
-                  DBG_ARGS, ps->nCcontexts, updateWindows);
+                  DBG_STRING "Updated screen outputs, %d total  (%d)",
+                  DBG_ARGS, ps->nCcontexts, init);
 #endif
   START_CLOCK("damageWindow(s)")
-  if(updateWindows)
+  if(init)
   {
     int all = 1;
     forEachWindowOnScreen( s, damageWindow, &all );
@@ -930,6 +949,9 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
   (*d->handleEvent) (d, event);
   WRAP(pd, d, handleEvent, pluginHandleEvent);
 
+  if(!colour_desktop_can)
+    return;
+
   CompScreen * s = findScreenAtDisplay(d, event->xany.window);
   PrivScreen * ps = compObjectGetPrivate((CompObject *) s);
   if(s && ps && s->nOutputDev != ps->nCcontexts)
@@ -944,7 +966,10 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
     if (event->xproperty.atom == pd->netColorProfiles ||
         event->xproperty.atom == pd->netColorRegions ||
         event->xproperty.atom == pd->netColorTarget ||
-        event->xproperty.atom == pd->netColorDesktop)
+        event->xproperty.atom == pd->netColorDesktop ||
+           strstr( atom_name, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
+           strstr( atom_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 ||
+           strstr( atom_name, "EDID") != 0)
       printf( DBG_STRING "PropertyNotify: %s\n", DBG_ARGS, atom_name );
 #endif
     if (event->xproperty.atom == pd->netColorRegions) {
@@ -954,48 +979,19 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
       CompWindow *w = findWindowAtDisplay(d, event->xproperty.window);
       updateWindowOutput(w);
 
-    /* update for a changing monitor profile */
-    } else if( event->xproperty.atom == pd->netColorDesktop && atom_name &&
-           strstr( atom_name , OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0)
+    /* let other take over the colour server */
+    } else if( event->xproperty.atom == pd->netColorDesktop && atom_name )
     {
-      const char * an = XGetAtomName( event->xany.display,
-                                      event->xproperty.atom );
-      oyPointer data = 0;
-      unsigned long n = 0;
 
-      if(strcmp( OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, an ) == 0)
-        an = OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE"  ";
+      updateNetColorDesktopAtom( s, ps, 0 );
 
-      data = fetchProperty( d->display, event->xany.window,
-                            event->xproperty.atom, XA_CARDINAL, &n, False);
-#ifdef DEBUG /* expensive lookup */
-      if(n)
-      {
-        const char * name = 0;
-        oyProfile_s * p = oyProfile_FromMem( n, data, 0, 0 );
-        name = oyProfile_GetFileName( p, 0 );
-        if(name && strchr(name, '/'))
-          name = strrchr( name, '/' ) + 1;
-        oyProfile_Release( &p );
-      }
-      printf(" PropertyNotify : %s    \"%s\"[%d]\n",
-             an, name?name:"removed",(int)n );
-#endif
-
-      if(n)
-      {
-        int screen = 0;
-        if(strlen(an) > strlen(OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE))
-          an += strlen(OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE);
-        screen = atoi( an );
-
-        printf(":%d Profile changed on screen: %d\n", __LINE__, screen );
-
-        updateOutputConfiguration( findScreenAtDisplay(d, event->xany.window),
-                                   TRUE);
-      }
-
-      if(data) XFree(data);
+    /* update for a changing monitor profile */
+    } else if(
+           strstr( atom_name, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
+           strstr( atom_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 ||
+           strstr( atom_name, "EDID") != 0)
+    {
+      updateOutputConfiguration( s, TRUE);
     }
     break;
   case ClientMessage:
@@ -1366,8 +1362,6 @@ static CompBool pluginInitCore(CompPlugin *plugin, CompObject *object, void *pri
   return TRUE;
 }
 
-static time_t net_color_desktop_last_time = 0;
-
 /**
  *  Check and update the _NET_COLOR_DESKTOP status atom. It is used to 
  *  communicate to the colour server.
@@ -1381,10 +1375,10 @@ static time_t net_color_desktop_last_time = 0;
  *  The second section contains time since epoch GMT as returned by time(NULL).
  *  The thired section contains the bar '|' separated and surrounded
  *  capabilities:
- *    - NCP _NET_COLOR_PROFILES
- *    - NCT _NET_COLOR_TARGET
- *    - NCM _NET_COLOR_MANAGEMENT
- *    - NCR _NET_COLOR_REGIONS
+ *    - NCP  _NET_COLOR_PROFILES
+ *    - NCT  _NET_COLOR_TARGET
+ *    - NCM  _NET_COLOR_MANAGEMENT
+ *    - NCR  _NET_COLOR_REGIONS
  *    - _NET_COLOR_DESKTOP is omitted
  *    - V0.1 indicates version compliance to the net-color spec
  *  The fourth section contains the server name identifier.
@@ -1402,6 +1396,7 @@ static int updateNetColorDesktopAtom ( CompScreen        * s,
 {
   CompDisplay * d = s->display;
   PrivDisplay * pd = compObjectGetPrivate((CompObject *) d);
+ static time_t net_color_desktop_last_time = 0;
   time_t  cutime;         /* Time since epoch */
   cutime = time(NULL);    /* current user time */
   const char * my_id = "compiz_colour_desktop",
@@ -1410,23 +1405,39 @@ static int updateNetColorDesktopAtom ( CompScreen        * s,
   char * data = 0;
   const char * old_atom = 0;
   int status = 0;
+ 
 
   /* set the colour management desktop service activity atom */
   pid_t pid = getpid();
   int old_pid = 0;
   long atom_time = 0;
-  char * atom_colour_server_name = (char*)malloc(1024),
-       * atom_capabilities_text = (char*)malloc(1024);
+  char * atom_colour_server_name,
+       * atom_capabilities_text;
+
+  if(!colour_desktop_can)
+    return 1;
 
   /* check every 10 seconds */
   if(request == 0 &&
-     net_color_desktop_last_time + 10 < cutime)
+     (cutime - net_color_desktop_last_time < (time_t)10))
     return 0;
+
+#if defined(PLUGIN_DEBUG)
+  printf( DBG_STRING "net_color_desktop_last_time: %ld/%ld %d\n",
+          DBG_ARGS, cutime-net_color_desktop_last_time, cutime, request );
+#endif
+
+  atom_colour_server_name = (char*)malloc(1024);
+  atom_capabilities_text = (char*)malloc(1024);
+  if(!atom_colour_server_name || !atom_capabilities_text)
+  {
+    status = 3;
+    goto clean_updateNetColorDesktopAtom;
+  }
 
   data = fetchProperty( d->display, RootWindow(d->display,0),
                         pd->netColorDesktop, XA_STRING, &n, False);
 
-  if(!atom_colour_server_name) return 3;
   atom_colour_server_name[0] = 0;
   if(n && data && strlen(data))
   {
@@ -1469,11 +1480,11 @@ static int updateNetColorDesktopAtom ( CompScreen        * s,
   for(int i = 0; i < ps->nCcontexts; ++i)
     attached_profiles += ps->ccontexts[i].oy_profile ? 1 : 0;
 
-  if( atom_time + 10 < net_color_desktop_last_time ||
+  if( (atom_time + 10) < net_color_desktop_last_time ||
       request == 2 )
   {
     char * atom_text = malloc(1024);
-    if(!atom_text) return status;
+    if(!atom_text) goto clean_updateNetColorDesktopAtom;
     sprintf( atom_text, "%d %ld %s %s",
              (int)pid, (long)cutime, my_capabilities, my_id );
  
@@ -1483,18 +1494,22 @@ static int updateNetColorDesktopAtom ( CompScreen        * s,
                                 8, PropModeReplace, (unsigned char*)atom_text,
                                 strlen(atom_text) + 1 );
     else if(old_atom)
+    {
+      /* switch off the plugin */
       XChangeProperty( d->display, RootWindow(d->display,0),
                                 pd->netColorDesktop, XA_STRING,
                                 8, PropModeReplace, (unsigned char*)NULL, 0 );
-
+      colour_desktop_can = 0;
+    }
 
     if(atom_text) free( atom_text );
   }
 
-  net_color_desktop_last_time = cutime;
-
+clean_updateNetColorDesktopAtom:
   if(atom_colour_server_name) free(atom_colour_server_name);
   if(atom_capabilities_text) free(atom_capabilities_text);
+
+  net_color_desktop_last_time = cutime;
 
   return status;
 }
@@ -1518,6 +1533,7 @@ static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *
 
   return TRUE;
 }
+
 
 static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *privateData)
 {
@@ -1549,7 +1565,7 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
 #endif
 
   ps->nCcontexts = 0;
-  //updateOutputConfiguration(s, FALSE);
+  updateOutputConfiguration(s, FALSE);
 
 
 
@@ -1596,7 +1612,9 @@ static CompBool pluginFiniDisplay(CompPlugin *plugin, CompObject *object, void *
   UNWRAP(pd, d, handleEvent);
 
   /* remove desktop colour management service mark */
-  XDeleteProperty( d->display, RootWindow(d->display, 0), pd->netColorDesktop );
+  XChangeProperty( d->display, RootWindow(d->display,0),
+                                pd->netColorDesktop, XA_STRING,
+                                8, PropModeReplace, (unsigned char*)NULL, 0 );
 
   return TRUE;
 }
