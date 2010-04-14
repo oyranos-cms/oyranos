@@ -85,6 +85,8 @@ typedef CompBool (*dispatchObjectProc) (CompPlugin *plugin, CompObject *object, 
 
 /** Be active once and then not again. */
 static int colour_desktop_can = 1;
+/** to be ignored profiles */
+static oyProfiles_s * ignore = 0;
 
 
 /**
@@ -646,9 +648,20 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
       size_t size = 0;
       oyProfile_s * screen_document_profile = oyProfile_FromStd( oyASSUMED_WEB,
                                                                  0 );
+
       if(!screen_document_profile)
         oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                           DBG_STRING"Could not get oyASSUMED_WEB", DBG_ARGS);
+
+      /* make shure the profile is ignored */
+      if(!ignore)
+        ignore = oyProfiles_New(0);
+      oyProfile_s * p = oyProfile_Copy( screen_document_profile, 0 );
+      oyProfiles_MoveIn( ignore, &p, -1 );
+
+      printf( DBG_STRING"to be ignored profiles: %d %s\n",
+              DBG_ARGS, oyProfiles_Count( ignore ), icc_profile_atom );
+
       source = oyProfile_GetMem( screen_document_profile, &size, 0, malloc );
       source_n = size;
       XChangeProperty( s->display->display, root,
@@ -1002,7 +1015,6 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
         event->xproperty.atom == pd->netColorRegions ||
         event->xproperty.atom == pd->netColorTarget ||
         event->xproperty.atom == pd->netColorDesktop ||
-           strstr( atom_name, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( atom_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( atom_name, "EDID") != 0)
       printf( DBG_STRING "PropertyNotify: %s\n", DBG_ARGS, atom_name );
@@ -1022,11 +1034,72 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 
     /* update for a changing monitor profile */
     } else if(
-           strstr( atom_name, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( atom_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( atom_name, "EDID") != 0)
     {
-      updateOutputConfiguration( s, TRUE);
+      if(0 && colour_desktop_can)
+      {
+        int screen = 0;
+        char * icc_colour_server_profile_atom = malloc(1024);
+        char num[12];
+        Atom da;
+
+        if(strlen(atom_name) > strlen(OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE"_"))
+        sscanf( (const char*)atom_name,
+                "OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE_%d", &screen );
+        snprintf( num, 12, "%d", (int)screen );
+
+        snprintf( icc_colour_server_profile_atom, 1024,
+                  OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE"%s%s",
+                  screen ? "_" : "", screen ? num : "" );
+
+        da = XInternAtom( d->display, icc_colour_server_profile_atom, False);
+
+        if(da)
+        {
+          unsigned long n = 0;
+          char * data = fetchProperty( d->display, RootWindow(d->display,0),
+                                       event->xproperty.atom, XA_CARDINAL,
+                                       &n, False);
+          if(data && n)
+          {
+            int pn = oyProfiles_Count( ignore ),
+                i, ignore_p = 0;
+            oyProfile_s * sp = oyProfile_FromMem( n, data, 0,0 ); /* server p */
+
+            /* Ignore to be ignored profiles, which are set from the 
+             * colourserver itself. */
+            for(i = pn-1; i >= 0; --i)
+            {
+              oyProfile_s * p = oyProfiles_Get( ignore, i );
+              if(oyProfile_Equal( sp, p ))
+              {
+                ignore_p = 1;
+                oyProfiles_ReleaseAt( ignore, i );
+                printf( DBG_STRING"ignoring profile: %d %s\n",
+                       DBG_ARGS, i, oyProfile_GetFileName( p, 0 ) );
+
+                oyProfile_Release( &p );
+                break;
+              }
+              oyProfile_Release( &p );
+            }
+            oyProfile_Release( &sp );
+            printf( DBG_STRING"ignor profiles: %d ignore: %d %s\n",
+                    DBG_ARGS, oyProfiles_Count( ignore ), ignore_p, atom_name );
+
+            if(!ignore_p)
+              XChangeProperty( d->display, RootWindow(d->display,0),
+                               da, XA_CARDINAL,
+                               8, PropModeReplace, (unsigned char*)NULL, 0 );
+            XFree( data );
+          }
+        }
+
+        if(icc_colour_server_profile_atom) free(icc_colour_server_profile_atom);
+
+        updateOutputConfiguration( s, TRUE);
+      }
     }
     break;
   case ClientMessage:
