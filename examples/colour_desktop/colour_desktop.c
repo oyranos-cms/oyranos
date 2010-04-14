@@ -172,6 +172,7 @@ typedef struct {
 
   /* compiz fragement function */
   int function, param, unit;
+  int function_2, param_2, unit_2;
 
   /* XRandR outputs and the associated profiles */
   unsigned long nCcontexts;
@@ -357,20 +358,36 @@ static int getProfileShader(CompScreen *s, CompTexture *texture, int param, int 
   if (ps->function && ps->param == param && ps->unit == unit)
     return ps->function;
 
-  if (ps->function)
+  if(ps->function_2 && ps->param_2 == param && ps->unit_2 == unit)
+    return ps->function_2;
+
+  if (param == 2 && ps->function_2)
+    destroyFragmentFunction(s, ps->function_2);
+  else
     destroyFragmentFunction(s, ps->function);
 
   CompFunctionData *data = createFunctionData();
 
   addFetchOpToFunctionData(data, "output", NULL, getFetchTarget(texture));
 
+  /* needed? */
   addDataOpToFunctionData(data, "MAD output, output, program.env[%d], program.env[%d];", param, param + 1);
-  addDataOpToFunctionData(data, "TEX output, output, texture[%d], 3D;", unit);
-  addColorOpToFunctionData (data, "output", "output");
+  /* output.rgb means: do not touch alpha */
+  addDataOpToFunctionData(data, "TEX output.rgb, output, texture[%d], 3D;", unit);
+  /* needless? */
+  //addColorOpToFunctionData (data, "output", "output");
 
-  ps->function = createFragmentFunction(s, "colour_desktop", data);
-  ps->param = param;
-  ps->unit = unit;
+  if(param == 2)
+  {
+    ps->function_2 = createFragmentFunction(s, "colour_desktop", data);
+    ps->param_2 = param;
+    ps->unit_2 = unit;
+  } else
+  {
+    ps->function = createFragmentFunction(s, "colour_desktop", data);
+    ps->param = param;
+    ps->unit = unit;
+  }
 
 #if defined(PLUGIN_DEBUG)
   oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
@@ -378,7 +395,10 @@ static int getProfileShader(CompScreen *s, CompTexture *texture, int param, int 
                   ps->function, param, unit);
 #endif
 
-  return ps->function;
+  if(param == 2)
+    return ps->function_2;
+  else
+    return ps->function;
 }
 
 /**
@@ -1557,6 +1577,7 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
   ps->profile = NULL;
 
   ps->function = 0;
+  ps->function_2 = 0;
 
   /* XRandR setup code */
 
