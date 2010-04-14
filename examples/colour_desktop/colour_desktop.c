@@ -1153,8 +1153,8 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
   if( !pw->stencil_id )
     return status;
 
-  PrivColorRegion *reg = pw->pRegion + pw->nRegions - 1;
-  Region aRegion = absoluteRegion( w, reg->xRegion);
+  PrivColorRegion * window_region = pw->pRegion + pw->nRegions - 1;
+  Region aRegion = absoluteRegion( w, window_region->xRegion);
 
   glEnable(GL_STENCIL_TEST);
 
@@ -1266,8 +1266,8 @@ static void pluginDrawWindowTexture(CompWindow *w, CompTexture *texture, const F
   for(int i = 0; i < ps->nCcontexts; ++i)
   {
     /* get the window region */
-    PrivColorRegion *reg = pw->pRegion + pw->nRegions - 1;
-    Region tmp = absoluteRegion( w, reg->xRegion);
+    PrivColorRegion * window_region = pw->pRegion + pw->nRegions - 1;
+    Region tmp = absoluteRegion( w, window_region->xRegion);
     Region screen = XCreateRegion();
     XUnionRectWithRegion( &ps->ccontexts[i].xRect, screen, screen );    
     Region intersection = XCreateRegion();
@@ -1418,7 +1418,7 @@ static int updateNetColorDesktopAtom ( CompScreen        * s,
 {
   CompDisplay * d = s->display;
   PrivDisplay * pd = compObjectGetPrivate((CompObject *) d);
- static time_t net_color_desktop_last_time = 0;
+  static time_t net_color_desktop_last_time = 0;
   time_t  cutime;         /* Time since epoch */
   cutime = time(NULL);    /* current user time */
   const char * my_id = "compiz_colour_desktop",
