@@ -58,7 +58,7 @@
 #endif
 
 /* Uncomment the following line if you want to enable debugging output */
-//#define PLUGIN_DEBUG 1
+#define PLUGIN_DEBUG 1
 
 /**
  * The 3D lookup texture has 64 points in each dimension, using 16 bit integers.
@@ -419,7 +419,7 @@ static void *fetchProperty(Display *dpy, Window w, Atom prop, Atom type, unsigne
   unsigned char *data;
 
   int result = XGetWindowProperty(dpy, w, prop, 0, ~0, delete, type, &actual, &format, n, &left, &data);
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
   printf( DBG_STRING "%s delete: %d %s %lu\n", DBG_ARGS,
                 XGetAtomName( dpy, prop ), delete,
                 (result == Success) ? "fine" : "err", *n );
@@ -502,7 +502,7 @@ static void updateWindowRegions(CompWindow *w)
     pw->stencil_id = 0;
 
 #if defined(PLUGIN_DEBUG)
-  oyCompLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d", count, pw->stencil_id);
+  oyCompLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d %dx%d", count, pw->stencil_id, w->width,w->height);
 #endif
 
   pw->absoluteWindowRectangleOld = oyRectangle_NewWith( 0,0, w->width, w->height, 0 );
@@ -545,7 +545,7 @@ static void cdCreateTexture( PrivColorOutput *ccontext )
     ccontext->scale = (GLfloat) (GRIDPOINTS - 1) / GRIDPOINTS;
     ccontext->offset = (GLfloat) 1.0 / (2 * GRIDPOINTS);
 
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
     printf( DBG_STRING "\n", DBG_ARGS );
 #endif
 
@@ -712,7 +712,9 @@ static int     getDeviceProfile      ( CompScreen        * s,
     output->oy_profile = (oyProfile_s*) 
                                   oyOption_StructGet( o, oyOBJECT_PROFILE_S );
 
+#if defined(PLUGIN_DEBUG)
     printf(DBG_STRING"found icc_profile %d\n", DBG_ARGS, o?1:0);
+#endif
     if(!output->oy_profile)
     {
       oyOptions_s * options = 0;
@@ -1120,7 +1122,7 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
 
     oyRectangle_SetByRectangle( pw->absoluteWindowRectangleOld, rect );
 
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
     printf( DBG_STRING "%s\n", DBG_ARGS, oyRectangle_Show(rect) );
 #endif
   }
@@ -1422,7 +1424,7 @@ static int updateNetColorDesktopAtom ( CompScreen        * s,
      (cutime - net_color_desktop_last_time < (time_t)10))
     return 0;
 
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
   printf( DBG_STRING "net_color_desktop_last_time: %ld/%ld %d\n",
           DBG_ARGS, cutime-net_color_desktop_last_time, cutime, request );
 #endif
@@ -1803,7 +1805,7 @@ oyPointer pluginAllocatePrivatePointer( CompObject * o )
          }
          break;
   }
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
   printf("index %d for %d\n", index, o->type );
 #endif
 
@@ -1812,12 +1814,12 @@ oyPointer pluginAllocatePrivatePointer( CompObject * o )
 
   {
     o->privates[index].ptr = malloc(size);
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
     printf("index=%d, 0x%lx size=%d\n", 
            index, o->privates[index].ptr, (int)size );
 #endif
     if(!o->privates[index].ptr) return 0;
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
     printf("memset index=%d, 0x%lx size=%d\n", 
            index, o->privates[index].ptr, (int)size );
 #endif
@@ -1826,7 +1828,7 @@ oyPointer pluginAllocatePrivatePointer( CompObject * o )
 
   ptr = o->privates[index].ptr;
 
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
   printf("return ptr=0x%lx for type=%d[ 0x%lx]\n", ptr, o->type, o );
 #endif
 
@@ -1906,7 +1908,7 @@ static CompBool pluginInitObject(CompPlugin *p, CompObject *o)
 {
   /* use Oyranos for caching of private data */
   oyPointer private_data = pluginAllocatePrivatePointer( o );
-#if defined(PLUGIN_DEBUG)
+#if defined(PLUGIN_DEBUG_)
   printf("get data=0x%lx for type=%d[ 0x%lx]\n", private_data, o->type, o );
 #endif
 
