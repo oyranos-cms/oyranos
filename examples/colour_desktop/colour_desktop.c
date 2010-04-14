@@ -746,10 +746,29 @@ static int     getDeviceProfile      ( CompScreen        * s,
                                        "yes", OY_CREATE_NEW );
       t_err = oyDeviceGetProfile( device, options, &output->oy_profile );
       oyOptions_Release( &options );
-      printf(DBG_STRING"found icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS, output->oy_profile, t_err, output);
+#if defined(PLUGIN_DEBUG)
+      printf( DBG_STRING"found icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS,
+              (intptr_t)output->oy_profile, t_err, (intptr_t)output);
+#endif
     }
 
-    if(!output->oy_profile)
+    if(output->oy_profile)
+    {
+      /* check that no sRGB is delivered */
+      if(t_err)
+      {
+        oyProfile_s * web = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+        if(oyProfile_Equal( web, output->oy_profile ))
+        {
+          oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
+                      DBG_STRING "Output %s ignoring fallback %d",
+                      DBG_ARGS, output->name, error);
+          oyProfile_Release( &output->oy_profile );
+          error = 1;
+        }
+        oyProfile_Release( &web );
+      }
+    } else
     {
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
                       DBG_STRING "Output %s: no ICC profile found %d",
@@ -757,16 +776,10 @@ static int     getDeviceProfile      ( CompScreen        * s,
       error = 1;
     }
 
-    if(t_err == -1)
-    {
-      oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                      DBG_STRING "Output %s ignoring fallback %d",
-                      DBG_ARGS, output->name, error);
-      oyProfile_Release( &output->oy_profile );
-      error = 1;
-    }
-
-    printf(DBG_STRING"found icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS, output->oy_profile, t_err, output);
+#if defined(PLUGIN_DEBUG)
+    printf( DBG_STRING"found icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS,
+             (intptr_t)output->oy_profile, t_err,  (intptr_t)output);
+#endif
   return error;
 }
 
