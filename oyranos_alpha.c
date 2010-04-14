@@ -13433,7 +13433,7 @@ OYAPI int  OYEXPORT
   /** This function does a device setup in case no profile is delivered
    *  by the according module. */
   if(error != 0 && !*profile)
-    l_error = oyDeviceSetup( device ); OY_ERR
+    error = oyDeviceSetup( device );
 
   if(error <= 0) 
     l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
