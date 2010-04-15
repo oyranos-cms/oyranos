@@ -1674,7 +1674,7 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
 #endif
 
   ps->nCcontexts = 0;
-  updateOutputConfiguration(s, FALSE);
+  //updateOutputConfiguration(s, FALSE);
 
 
 
