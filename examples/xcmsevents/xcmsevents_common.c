@@ -203,7 +203,8 @@ void     printWindowRegions          ( Display           * display,
               break;
             }
 
-            rect = XFixesFetchRegion( display, regions[i].region, &nRect );
+            rect = XFixesFetchRegion( display, ntohl(regions[i].region),
+                                      &nRect );
             md5 = (uint32_t*)&regions[i].md5[0];
             p = oyProfile_FromMD5( md5, 0 );
             name = oyProfile_GetFileName( p, 0 );

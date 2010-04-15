@@ -232,7 +232,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
                  display_name, w, (int)reg,
                  rect[0].width, rect[0].height, rect[0].x, rect[0].y );
 
-      region.region = reg;
+      region.region = htonl(reg);
       memset( region.md5, 0, 16 );
 
       /* look for old regions */
@@ -244,7 +244,8 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
         if(!old_regions[i].region || pos >= 0)
           break;
 
-        rect = XFixesFetchRegion( display, old_regions[i].region, &nRect );
+        rect = XFixesFetchRegion( display, ntohl(old_regions[i].region),
+                                  &nRect );
 
         for(j = 0; j < nRect; ++j)
         {

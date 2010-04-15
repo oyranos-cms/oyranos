@@ -501,7 +501,7 @@ static void updateWindowRegions(CompWindow *w)
   Region wRegion = pw->pRegion[count-1].xRegion;
   for (unsigned long i = 0; i < (count - 1); ++i)
   {
-    pw->pRegion[i].xRegion = convertRegion( d->display, region->region );
+    pw->pRegion[i].xRegion = convertRegion( d->display, ntohl(region->region) );
 
 #if defined(PLUGIN_DEBUG)
     BOX * b = &pw->pRegion[i].xRegion->extents;
