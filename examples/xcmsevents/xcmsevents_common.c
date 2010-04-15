@@ -160,7 +160,7 @@ char * printWindowName( Display * display, Window w )
   if( RootWindow( display, DefaultScreen( display ) ) == w )
     sprintf( text, "root window" );
   else
-    sprintf( text, "%dx%d%s%d%s%d %s", width_return, height_return,
+    sprintf( text, "%dx%d%s%d%s%d \"%s\"", width_return, height_return,
              dest_x_return<0?"":"+", dest_x_return,
              dest_y_return<0?"":"+", dest_y_return,
              data?(char*)data:"" );
