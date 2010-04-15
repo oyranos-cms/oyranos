@@ -1002,6 +1002,8 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 
   CompScreen * s = findScreenAtDisplay(d, event->xany.window);
   PrivScreen * ps = compObjectGetPrivate((CompObject *) s);
+
+  /* initialise */
   if(s && ps && s->nOutputDev != ps->nCcontexts)
     updateOutputConfiguration( s, TRUE);
  
@@ -1673,10 +1675,8 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
                   RROutputPropertyNotifyMask);
 #endif
 
+  /* initialisation is done in pluginHandleEvent() by checking ps->nCcontexts */
   ps->nCcontexts = 0;
-  //updateOutputConfiguration(s, FALSE);
-
-
 
   return TRUE;
 }
