@@ -1197,6 +1197,72 @@ oyTESTRESULT_e testConfDomain ()
   return result;
 }
 
+oyTESTRESULT_e testProfile ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  size_t size = 0;
+  oyPointer data;
+  int current = -1;
+  int count = 0,
+      countB = 0;
+  char ** texts = 0;
+  const char * tmp = 0;
+  oyProfile_s * p_a,
+              * p_b;
+
+  oyExportReset_(EXPORT_SETTING);
+
+  fprintf(stdout, "\n" );
+
+  p_a = oyProfile_FromStd ( oyASSUMED_WEB, NULL );
+  if(!p_a)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "No assumed WEB profile found                           " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "found oyASSUMED_WEB                                    " );
+  }
+  
+  /* compare the usual conversion profiles with the total of profiles */
+  data = oyProfile_GetMem( p_a, &size, 0, malloc );
+  if(!data || ! size)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Could get memory from profile                          " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "Obtained memory block from oyASSUMED_WEB:        %d    ", size );
+  }
+
+  p_b = oyProfile_FromMem( size, data, 0,0 );
+  if(!p_b)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Could not load profile from memory.                    " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "Loaded profile from memory of oyASSUMED_WEB            " );
+  }
+
+  if(!oyProfile_Equal( p_a, p_b ))
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Reload of oyASSUMED_WEB failed. Unexplained difference." );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyASSUMED_WEB is equal to memory loaded oyProfile_s.   " );
+  }
+
+
+  return result;
+}
+
 
 oyTESTRESULT_e testProfiles ()
 {
@@ -3164,6 +3230,7 @@ int main(int argc, char** argv)
   TEST_RUN( testBlob, "oyBlob_s" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
   TEST_RUN( testConfDomain, "oyConfDomain_s");
+  TEST_RUN( testProfile, "Profile handling" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
   //TEST_RUN( testMonitor,  "Monitor profiles" );
