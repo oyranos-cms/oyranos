@@ -1315,6 +1315,7 @@ typedef struct {
   oyObject_s         * names_chan_;    /*!< @private user visible channel description */
   int                  channels_n_;    /*!< @private number of channels */
   oyStructList_s     * tags_;          /**< @private list of header + tags */
+  int                  tags_modified_; /**< @private note manipulation */
 } oyProfile_s;
 
 OYAPI oyProfile_s * OYEXPORT
