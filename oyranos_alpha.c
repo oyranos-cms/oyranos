@@ -14020,6 +14020,7 @@ oyProfile_New_ ( oyObject_s        object)
   /* ---- end of common object constructor ------- */
 
   s->tags_ = oyStructList_Create( s->type_, 0, 0 );
+  s->tags_modified_ = 0;
 
   return s;
 }
@@ -15194,12 +15195,12 @@ OYAPI const oyChar* OYEXPORT
  *  @memberof oyProfile_s
  *  @brief   get the ICC profile in memory
  *
- *  The prefered memory comes from a previously created tag list.
- *  Otherwise the memory block is copied.
+ *  The prefered memory comes from the unmodified original memory.
+ *  Otherwise a previously modified tag list is serialised into memory.
  *
- *  @version Oyranos: 0.1.8
- *  @date    2008/01/30
+ *  @version Oyranos: 0.1.10
  *  @since   2007/12/20 (Oyranos: 0.1.8)
+ *  @date    2010/04/16
  */
 OYAPI oyPointer OYEXPORT
                    oyProfile_GetMem  ( oyProfile_s       * profile,
@@ -15221,12 +15222,7 @@ OYAPI oyPointer OYEXPORT
 
   if(error <= 0 && s->type_ == oyOBJECT_PROFILE_S)
   {
-    if(oyStructList_Count( s->tags_ ))
-    {
-      block = oyProfile_TagsToMem_ ( profile, size, allocateFunc );
-
-    } else
-    if(s->size_ && s->block_)
+    if(s->size_ && s->block_ && !s->tags_modified_)
     {
 
       block = oyAllocateWrapFunc_( s->size_, allocateFunc );
@@ -15235,6 +15231,11 @@ OYAPI oyPointer OYEXPORT
         error = !memcpy( block, s->block_, s->size_ );
       if(error <= 0 && size)
         *size = s->size_;
+
+    } else
+    if( oyStructList_Count( s->tags_ ))
+    {
+      block = oyProfile_TagsToMem_ ( profile, size, allocateFunc );
     }
   }
 
@@ -15509,7 +15510,10 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
         oyStructList_Release( &list );
 
         if(pddt)
+        {
           error = oyProfile_TagMoveIn_( s, &pddt, -1 );
+          ++s->tags_modified_;
+        }
       }
   }
 
@@ -16347,6 +16351,9 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
  *
  *  non thread save
  *
+ *  The profile is needs probably be marked as modified after calling this
+ *  function.
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/06 (Oyranos: 0.1.10)
  *  @date    2009/12/29
@@ -16419,6 +16426,7 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
     }
     error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos,
                                   OY_OBSERVE_AS_WELL );
+    ++s->tags_modified_;
   }
 
   if(s)
@@ -16471,7 +16479,10 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
   if(error <= 0)
+  {
     error = oyStructList_ReleaseAt ( s->tags_, pos );
+    ++s->tags_modified_;
+  }
 
   if(s)
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
