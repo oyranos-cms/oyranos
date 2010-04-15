@@ -356,6 +356,15 @@ static int getFetchTarget(CompTexture *texture)
 static int getProfileShader(CompScreen *s, CompTexture *texture, int param, int unit)
 {
   PrivScreen *ps = compObjectGetPrivate((CompObject *) s);
+  int function = -1;
+
+#if defined(PLUGIN_DEBUG)
+  oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
+                  DBG_STRING "Shader request: %d/%d %d/%d/%d %d/%d/%d",DBG_ARGS,
+                  ps->function, ps->function_2,
+                  param, ps->param, ps->param_2,
+                  unit, ps->unit, ps->unit_2);
+#endif
 
   if (ps->function && ps->param == param && ps->unit == unit)
     return ps->function;
@@ -363,10 +372,10 @@ static int getProfileShader(CompScreen *s, CompTexture *texture, int param, int 
   if(ps->function_2 && ps->param_2 == param && ps->unit_2 == unit)
     return ps->function_2;
 
-  if (param == 2 && ps->function_2)
+  if( ps->function_2)
     destroyFragmentFunction(s, ps->function_2);
-  else
-    destroyFragmentFunction(s, ps->function);
+  /*else if(ps->function)  should not happen as funcition is statical cached
+    destroyFragmentFunction(s, ps->function); */
 
   CompFunctionData *data = createFunctionData();
 
@@ -379,28 +388,28 @@ static int getProfileShader(CompScreen *s, CompTexture *texture, int param, int 
   /* needless? */
   //addColorOpToFunctionData (data, "output", "output");
 
-  if(param == 2)
-  {
-    ps->function_2 = createFragmentFunction(s, "colour_desktop", data);
-    ps->param_2 = param;
-    ps->unit_2 = unit;
-  } else
-  {
-    ps->function = createFragmentFunction(s, "colour_desktop", data);
-    ps->param = param;
-    ps->unit = unit;
-  }
+  function = createFragmentFunction(s, "colour_desktop", data);
 
 #if defined(PLUGIN_DEBUG)
   oyCompLogMessage( s->display, "colour_desktop", CompLogLevelDebug,
                   DBG_STRING "Shader compiled: %d/%d/%d", DBG_ARGS,
-                  ps->function, param, unit);
+                  function, param, unit);
 #endif
 
-  if(param == 2)
-    return ps->function_2;
-  else
+
+  if(ps->param == -1)
+  {
+    ps->function = function;
+    ps->param = param;
+    ps->unit = unit;
     return ps->function;
+  } else
+  {
+    ps->function_2 = function;
+    ps->param_2 = param;
+    ps->unit_2 = unit;
+    return ps->function_2;
+  }
 }
 
 /**
@@ -1666,6 +1675,8 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
 
   ps->function = 0;
   ps->function_2 = 0;
+  ps->param = ps->param_2 = -1;
+  ps->unit = ps->unit_2 = -1;
 
   /* XRandR setup code */
 
