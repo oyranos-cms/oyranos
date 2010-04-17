@@ -289,6 +289,8 @@ struct oyObserver_s {
    *  passed with the signal. */
   oyStruct_s         * user_data;
   oyObserver_Signal_f  signal;         /**< observers signaling function */ 
+  int                  disable_ref;    /**< disable signals reference counter
+                                            == 0 -> enabled; otherwise not */
 };
 
 OYAPI oyObserver_s * OYEXPORT
@@ -316,6 +318,10 @@ OYAPI int  OYEXPORT
            oyStruct_ObserverSignal   ( oyStruct_s        * model,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data );
+OYAPI int  OYEXPORT
+           oyStruct_DisableSignalSend( oyStruct_s        * model );
+OYAPI int  OYEXPORT
+           oyStruct_EnableSignalSend ( oyStruct_s        * model );
 OYAPI int  OYEXPORT
            oyStruct_ObserversCopy    ( oyStruct_s        * object,
                                        oyStruct_s        * pattern,
@@ -435,6 +441,7 @@ int          oyName_boolean          ( oyName_s          * name_a,
 
 
 typedef struct oyStructList_s oyStructList_s;
+typedef struct oyOptions_s oyOptions_s;
 
 /** @struct  oyObject_s
  *  @brief   Oyranos structure base
@@ -461,8 +468,7 @@ struct oyObject_s_ {
   oyPointer            parent_;        /*!< @private parent struct of parent_type */
   oyOBJECT_e           parent_type_;   /*!< @private parents struct type */
   oyPointer            backdoor_;      /*!< @private allow non breaking extensions */
-  oyStruct_s         * handles_;       /**< @private addational data and infos,
-                                            currently oyOptions_s */
+  oyOptions_s        * handles_;       /**< @private addational data and infos*/
   oyName_s           * name_;          /*!< @private naming feature */
   int                  ref_;           /*!< @private reference counter */
   int                  version_;       /*!< @private OYRANOS_VERSION */
@@ -720,6 +726,10 @@ void           oyValueRelease        ( oyValue_u        ** value,
 void           oyValueClear          ( oyValue_u         * v,
                                        oyVALUETYPE_e       type,
                                        oyDeAlloc_f         deallocateFunc );
+int            oyValueEqual          ( oyValue_u         * a,
+                                       oyValue_u         * b,
+                                       oyVALUETYPE_e       type,
+                                       int                 pos );
 
 
 /** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html 
@@ -855,14 +865,14 @@ oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-typedef struct {
+struct oyOptions_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_OPTIONS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
   oyStructList_s     * list;           /**< the list data */
-} oyOptions_s;
+};
 
 oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,
@@ -1038,6 +1048,12 @@ OYAPI int  OYEXPORT
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
                                        oyObserver_Signal_f signalFunc );
+OYAPI int  OYEXPORT
+               oyOptions_ObserversDisable (
+                                       oyOptions_s       * object );
+OYAPI int  OYEXPORT
+               oyOptions_ObserversEnable (
+                                       oyOptions_s       * object );
 int             oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
                                        const char        * command,

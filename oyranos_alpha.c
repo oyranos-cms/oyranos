@@ -791,6 +791,7 @@ oyObserver_s * oyObserver_Copy_
     s->observer = obj->observer->copy( obj->observer, object );
     s->model = obj->model->copy( obj->model, object );
     s->user_data = obj->user_data->copy( obj->user_data, object );
+    s->disable_ref = obj->disable_ref;
   }
 
   if(error)
@@ -902,7 +903,7 @@ OYAPI int  OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
+ *  @date    2010/04/07
  */
 OYAPI int  OYEXPORT
            oyObserver_SignalSend     ( oyObserver_s      * observer,
@@ -914,7 +915,10 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_OBSERVER_S, return 0 )
 
-  if(!oyToSignalBlock_m( oyObserverFlagsGet() ))
+     /* global signal disabling */
+  if(!oyToSignalBlock_m( oyObserverFlagsGet() ) &&
+     /* local signal disabling */
+     !observer->disable_ref )
     result = observer->signal( observer, signal_type, signal_data );
 
   return result;
@@ -947,7 +951,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
   oyStructList_s * list = 0;
 
   if(!error)
-    o = oyOptions_Find( (oyOptions_s*)obj->oy_->handles_,
+    o = oyOptions_Find( obj->oy_->handles_,
                         reg );
   if(!o)
   {
@@ -957,9 +961,9 @@ oyStructList_s * oyStruct_ObserverListGet_(
     if(!error)
     {
       if(!obj->oy_->handles_)
-        obj->oy_->handles_ = (oyStruct_s*) oyOptions_New( 0 );
-      error = oyOptions_MoveIn( (oyOptions_s*)obj->oy_->handles_, &o, -1);
-      o = oyOptions_Find( (oyOptions_s*)obj->oy_->handles_,
+        obj->oy_->handles_ = oyOptions_New( 0 );
+      error = oyOptions_MoveIn( obj->oy_->handles_, &o, -1);
+      o = oyOptions_Find( obj->oy_->handles_,
                           reg );
     }
   }
@@ -1167,37 +1171,24 @@ OYAPI int  OYEXPORT
                                        oyStruct_s        * signal_data )
 {
   oyObserver_s * obs = 0;
-  int error = !model;
+  int error = !model, t_err = 0;
   oyOption_s * o = 0;
   oyStructList_s * observers = 0;
-  int n,i;
+  int n,i, result = 0;
 
   if(oyToSignalBlock_m( oyObserverFlagsGet() ))
     return 0;
 
   if(!error)
-    o = oyOptions_Find( (oyOptions_s*)model->oy_->handles_,
+    o = oyOptions_Find( model->oy_->handles_,
                         OY_SIGNAL_OBSERVERS );
 
   if(!o)
     return 0;
 
-  if(!error && o && o->value_type == oyVAL_STRUCT && o->value)
-  {
-    if(o->value->oy_struct &&
-       o->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
-      observers = (oyStructList_s*)o->value->oy_struct;
-    else
-    {
-      WARNcc3_S( model, "%s: %s %s", _("found observer list of wrong type"),
-                 OY_SIGNAL_OBSERVERS,
-                 oyStruct_TypeToText( o->value->oy_struct ) );
-      error = 1;
-    }
-  }
-
   if(!error)
   {
+    observers = (oyStructList_s*)oyOption_StructGet( o, oyOBJECT_STRUCT_LIST_S);
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
@@ -1216,7 +1207,8 @@ OYAPI int  OYEXPORT
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->observer->oy_) );
           }
-          oyObserver_SignalSend( obs, signal_type, signal_data );
+          t_err = oyObserver_SignalSend( obs, signal_type, signal_data );
+          ++result;
         }
         else
         {
@@ -1231,6 +1223,102 @@ OYAPI int  OYEXPORT
         WARNc3_S( "\n\t%s: oyObservers_s[%s]",_("found no observer"),
                     oySignalToString(signal_type),
                     oyStruct_TypeToText((oyStruct_s*)observers) );
+    }
+  }
+
+  if(result)
+    return result;
+  return error;
+}
+
+/** Function oyStruct_DisableSignalSend
+ *  @memberof oyObserver_s
+ *  @brief   disable sending a signal to all ovservers of a model
+ *
+ *  @param[in]     model               the model
+ *  @return                            0 - no handler found; 1 - error
+ *                                     < 0 error or issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/07 (Oyranos: 0.1.10)
+ *  @date    2010/04/07
+ */
+OYAPI int  OYEXPORT
+           oyStruct_DisableSignalSend( oyStruct_s        * model )
+{
+  oyObserver_s * obs = 0;
+  int error = !model;
+  oyOption_s * o = 0;
+  oyStructList_s * observers = 0;
+  int n,i;
+
+  if(!error)
+    o = oyOptions_Find( model->oy_->handles_, OY_SIGNAL_OBSERVERS );
+
+  if(!o)
+    return 0;
+
+  if(!error)
+  {
+    observers = (oyStructList_s*)oyOption_StructGet( o, oyOBJECT_STRUCT_LIST_S );
+    n = oyStructList_Count( observers );
+    for(i = 0; i < n; ++i)
+    {
+      obs = (oyObserver_s*) oyStructList_GetType_( observers,
+                                                   i, oyOBJECT_OBSERVER_S );
+      if(obs)
+        ++obs->disable_ref;
+    }
+  }
+
+  return error;
+}
+
+/** Function oyStruct_EnableSignalSend
+ *  @memberof oyObserver_s
+ *  @brief   reenable sending a signal to all ovservers of a model
+ *
+ *  @param[in]     model               the model
+ *  @return                            0 - no handler found; 1 - error
+ *                                     < 0 error or issue
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/07 (Oyranos: 0.1.10)
+ *  @date    2010/04/07
+ */
+OYAPI int  OYEXPORT
+           oyStruct_EnableSignalSend ( oyStruct_s        * model )
+{
+  oyObserver_s * obs = 0;
+  int error = !model;
+  oyOption_s * o = 0;
+  oyStructList_s * observers = 0;
+  int n,i;
+
+  if(!error)
+    o = oyOptions_Find( model->oy_->handles_, OY_SIGNAL_OBSERVERS );
+
+  if(!o)
+    return 0;
+
+  if(!error)
+  {
+    observers = (oyStructList_s*)oyOption_StructGet( o, oyOBJECT_STRUCT_LIST_S );
+
+    n = oyStructList_Count( observers );
+    for(i = 0; i < n; ++i)
+    {
+      obs = (oyObserver_s*) oyStructList_GetType_( observers,
+                                                   i, oyOBJECT_OBSERVER_S );
+      if(obs)
+        --obs->disable_ref;
+      if(obs->disable_ref < 0)
+      {
+        obs->disable_ref = 0;
+        WARNcc3_S( model, "%s: %s[%d]", _("Already enabled"),
+                   oyStruct_GetText( (oyStruct_s*)obs, oyNAME_NAME, 1),
+                   oyObject_GetId( o->value->oy_struct->oy_ ) );
+      }
     }
   }
 
@@ -1490,11 +1578,11 @@ OYAPI int  OYEXPORT
   int error = 0;
 
   if(model->oy_->handles_)
-    n = oyStructList_Count( ((oyOptions_s*)model->oy_->handles_)->list );
+    n = oyStructList_Count( (model->oy_->handles_)->list );
   for(i = 0; i < n; ++i)
   {
     o = (oyOption_s*) oyStructList_Get_(
-                              ((oyOptions_s*)model->oy_->handles_)->list, i );
+                              (model->oy_->handles_)->list, i );
     if( oyStrcmp_( o->registration, OY_SIGNAL_OBSERVERS ) == 0)
     {
       if(observer)
@@ -1502,16 +1590,8 @@ OYAPI int  OYEXPORT
         oyStructList_s * observers = 0;
         int j_n,j;
 
-        if(!error && o->value->oy_struct &&
-           o->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
-          observers = (oyStructList_s*)o->value->oy_struct;
-        else
-        {
-        WARNcc3_S( model, "%s: %s %s", _("found observer list of wrong type"),
-                   OY_SIGNAL_OBSERVERS,
-                   oyStruct_TypeToText( o->value->oy_struct ) );
-          error = 1;
-        }
+        observers = (oyStructList_s*)oyOption_StructGet( o,
+                                                       oyOBJECT_STRUCT_LIST_S );
 
         if(!error)
         {
@@ -5569,7 +5649,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
       deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
 
     if(s->handles_ && s->handles_->release)
-      error = s->handles_->release( &s->handles_ );
+      error = s->handles_->release( (oyStruct_s**)&s->handles_ );
 
     deallocateFunc( s );
     oyLockReleaseFunc_( lock, __FILE__, __LINE__ );
@@ -6845,6 +6925,130 @@ void           oyValueCopy           ( oyValue_u         * to,
   }
 }
 
+/** Function  oyValueEqual
+ *  @memberof oyValue_u
+ *  @brief    compare a oyValue_u union
+ *
+ *  @param         a                   value a
+ *  @param         b                   value b
+ *  @param         pos                 position in list; -1 compare all
+ *  return                             0 - not equal; 1 - equal
+ *
+ *  @version  Oyranos: 0.1.10
+ *  @since    2010/04/11 (Oyranos: 0.1.10)
+ *  @date     2010/04/11
+ */
+int            oyValueEqual          ( oyValue_u         * a,
+                                       oyValue_u         * b,
+                                       oyVALUETYPE_e       type,
+                                       int                 pos )
+{
+  int n = 0, n2 = 0, i;
+  int equal = 0;
+
+  if(!a && !b)
+    return 1;
+
+  switch(type)
+  {
+  case oyVAL_INT:
+      if(a->int32 == b->int32)
+          return 1;
+      break;
+  case oyVAL_INT_LIST:
+
+      {
+        if(!a->int32_list && !b->int32_list)
+          return 1;
+        if(0 <= pos && pos < a->int32_list[0] &&
+           pos < b->int32_list[0])
+          if(a->int32_list[1 + pos] == b->int32_list[1 + pos])
+            return 1;
+        if(pos < 0)
+        {
+          if(a->int32_list[0] != b->int32_list[0])
+            return 0;
+          n = a->int32_list[0];
+          for(i = 0; i < n; ++i)
+            if(a->int32_list[1 + i] != b->int32_list[1 + i])
+              return 0;
+          return 1;
+        }
+      }
+      break;
+  case oyVAL_DOUBLE: if(a->dbl == b->dbl) return 1; break;
+  case oyVAL_DOUBLE_LIST:
+        if(!a->dbl_list && !b->dbl_list)
+          return 1;
+        if(0 <= pos && pos < a->dbl_list[0] &&
+           pos < b->dbl_list[0])
+          if(a->dbl_list[1 + pos] == b->dbl_list[1 + pos])
+            return 1;
+        if(pos < 0)
+        {
+          if(a->dbl_list[0] != b->dbl_list[0])
+            return 0;
+          n = a->dbl_list[0];
+          for(i = 0; i < n; ++i)
+            if(a->dbl_list[1 + i] != b->dbl_list[1 + i])
+              return 0;
+          return 1;
+        }
+      break;
+  case oyVAL_STRING:
+        if(!a->string && !b->string)
+          return 1;
+        if(a->string && b->string && oyStrcmp_(a->string,b->string) == 0)
+          return 1;
+      break;
+  case oyVAL_STRING_LIST:
+        if(!a->string_list && !b->string_list)
+          return 1;
+        i = 0;
+        n = 0;
+        while((size_t)a->string_list[i])
+          ++n;
+        i = 0;
+        n2 = 0;
+        while((size_t)b->string_list[i])
+          ++n2;
+        if(0 <= pos && pos < n &&
+           pos < n2)
+        {
+          if(a->string_list[pos] && b->dbl_list[1 + pos] &&
+             oyStrcmp_(a->string_list[pos], b->string_list[pos]) == 0)
+            return 1;
+          else
+            return 0;
+        }
+
+        if(pos < 0)
+        {
+          if(n != n2)
+            return 0;
+          for(i = 0; i < n; ++i)
+            if(a->string_list[i] && b->string_list[i] &&
+               oyStrcmp_(a->string_list[i], b->string_list[i]) == 0)
+              return 0;
+          return 1;
+        }
+
+      break;
+  case oyVAL_STRUCT:
+        if(a->oy_struct->type_ == oyOBJECT_BLOB_S &&
+           b->oy_struct->type_ == oyOBJECT_BLOB_S &&
+           ((oyBlob_s*)(a->oy_struct))->ptr == ((oyBlob_s*)(b->oy_struct))->ptr )
+          return 1;
+        if(a->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
+           b->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
+           ((oyCMMptr_s*)(a->oy_struct))->ptr == ((oyCMMptr_s*)(b->oy_struct))->ptr)
+          return 1;
+      break;
+  }
+
+  return equal;
+}
+
 /** Function oyValueClear
  *  @memberof oyValue_u
  *  @brief   clear a oyValue_u union
@@ -7178,9 +7382,9 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
  *  @param[out]    to                  resulting options
  *  @param[in]     from                input options
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/11/27
+ *  @date    2010/04/11
  */
 int          oyOption_Copy__         ( oyOption_s        * to,
                                        oyOption_s        * from )
@@ -7196,14 +7400,17 @@ int          oyOption_Copy__         ( oyOption_s        * to,
   allocateFunc_ = s->oy_->allocateFunc_;
   deallocateFunc_ = s->oy_->deallocateFunc_;
 
-  /* oyOption_Clear does normally signal emitting; block that. */
-  oyObserverFlagsSet( OY_SIGNAL_BLOCK );
-  error = oyOption_Clear( s );
-  /* clear signal blocking flag */
-  oyObserverFlagsSet( oyObserverFlagsGet() & (~OY_SIGNAL_BLOCK) );
-
   if(error <= 0)
   {
+    if(to->value_type == from->value_type &&
+       oyValueEqual( to->value, from->value, to->value_type, -1 ))
+      return -1;
+
+    /* oyOption_Clear does normally signal emitting; block that. */
+    oyStruct_DisableSignalSend( (oyStruct_s*)s );
+    error = oyOption_Clear( s );
+    oyStruct_EnableSignalSend( (oyStruct_s*)s );
+
     s->registration = oyStringCopy_( from->registration, allocateFunc_ );
     s->value_type = from->value_type;
     s->value = allocateFunc_(sizeof(oyValue_u));
@@ -7539,6 +7746,15 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
     {
       oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
+      if(s->value_type == oyVAL_INT && obj->value)
+        if(s->value->int32 == integer)
+          return error;
+
+      if(s->value_type == oyVAL_INT_LIST && s->value)
+        if(0 <= pos && pos < s->value->int32_list[0] &&
+           s->value->int32_list[1 + pos] == integer)
+          return error;
+
       oyValueRelease( &s->value, s->value_type, deallocateFunc );
     }
 
@@ -7667,6 +7883,15 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
     if(s->value && flags)
     {
       oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+      if(obj->value_type == oyVAL_DOUBLE && obj->value)
+        if(obj->value->dbl == floating_point)
+          return error;
+
+      if(obj->value_type == oyVAL_DOUBLE_LIST && obj->value)
+        if(0 <= pos && pos < obj->value->dbl_list[0] &&
+           obj->value->dbl_list[1 + pos] == floating_point)
+          return error;
 
       oyValueRelease( &s->value, s->value_type, deallocateFunc );
     }
@@ -7927,6 +8152,25 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
     {
       oyDeAlloc_f deallocateFunc = obj->oy_->deallocateFunc_;
 
+      if( text )
+      {
+        int j = 0;
+        if( obj->value_type == oyVAL_STRING && obj->value->string )
+        {
+          if(oyStrcmp_(text, obj->value->string) == 0)
+            return error;
+        }
+        if( obj->value_type == oyVAL_STRING_LIST && obj->value->string_list )
+        while(obj->value->string_list[j])
+        {
+          const char * value = obj->value->string_list[j];
+
+          if(value && oyStrcmp_(value, text))
+            return error;
+          ++j;
+        }
+        
+      }
       oyValueRelease( &obj->value, obj->value_type, deallocateFunc );
     }
 
@@ -7957,7 +8201,9 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
  *  @internal
  *  Function oyOption_Match_
  *  @memberof oyOption_s
- *  @brief   two option matches
+ *  @brief   two option key name matches
+ *
+ *  A registration name match is not required.
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/28 (Oyranos: 0.1.8)
@@ -8042,6 +8288,13 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
       deallocateFunc_ = option->oy_->deallocateFunc_;
     }
 
+    if((s->value && s->value_type == oyVAL_STRUCT &&
+         (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
+           ((oyBlob_s*)(option->value->oy_struct))->ptr == ptr)) || 
+          (s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
+           ((oyCMMptr_s*)(option->value->oy_struct))->ptr == ptr))))
+      return error;
+
     oyValueClear( option->value, option->value_type, deallocateFunc_ );
     if(!option->value)
       option->value = allocateFunc_(sizeof(oyValue_u));
@@ -8058,8 +8311,11 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
   }
 
   if(error <= 0)
+  {
     error = oyBlob_SetFromData( (oyBlob_s*) option->value->oy_struct,
                                 ptr, size, 0 );
+    oyStruct_ObserverSignal( (oyStruct_s*)option, oySIGNAL_DATA_CHANGED, 0 );
+  }
 
   return error;
 }
@@ -9422,6 +9678,7 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
       oyOptions_Release( &tmp );
       oyOptions_Release( &tmp2 );
     }
+
   }
 
   if(error > 0)
@@ -10406,6 +10663,59 @@ OYAPI int  OYEXPORT
                                     user_data, 0 );
   error = oyStruct_ObserverAdd( (oyStruct_s*)object, observer,
                                 user_data, signalFunc );
+  return error;
+}
+
+/** Function oyOptions_ObserversDisable
+ *  @memberof oyOptions_s
+ *  @brief   disable signaling
+ *
+ *  @param[in]     object              the options
+ *  @return                            0 - fine; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/07 (Oyranos: 0.1.10)
+ *  @date    2010/04/07
+ */
+OYAPI int  OYEXPORT
+               oyOptions_ObserversDisable (
+                                       oyOptions_s       * object )
+{
+  int error = 0;
+    oyOption_s * o;
+    int i,n = oyOptions_Count( object );
+    for(i = 0; i < n; ++i)
+    {
+      o = oyOptions_Get( object, i );
+      oyStruct_DisableSignalSend( (oyStruct_s*)o );
+      oyOption_Release( &o );
+    }
+  return error;
+}
+/** Function oyOptions_ObserversEnable
+ *  @memberof oyOptions_s
+ *  @brief   disable signaling
+ *
+ *  @param[in]     object              the options
+ *  @return                            0 - fine; 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/07 (Oyranos: 0.1.10)
+ *  @date    2010/04/07
+ */
+OYAPI int  OYEXPORT
+               oyOptions_ObserversEnable (
+                                       oyOptions_s       * object )
+{
+  int error = 0;
+    oyOption_s * o;
+    int i,n = oyOptions_Count( object );
+    for(i = 0; i < n; ++i)
+    {
+      o = oyOptions_Get( object, i );
+      oyStruct_EnableSignalSend( (oyStruct_s*)o );
+      oyOption_Release( &o );
+    }
   return error;
 }
 
@@ -15429,12 +15739,12 @@ const char *       oyProfile_GetFileName (
       {
         txt = oyFindProfile_( name );
         sprintf( hash, "//imaging/profile.icc/psid_%d", dl_pos );
-        oyOptions_SetFromText( (oyOptions_s**)&s->oy_->handles_,
+        oyOptions_SetFromText( &s->oy_->handles_,
                                hash,
                                txt,
                                OY_CREATE_NEW );
         oyDeAllocateFunc_( txt );
-        name = oyOptions_FindString( (oyOptions_s*)s->oy_->handles_,
+        name = oyOptions_FindString( s->oy_->handles_,
                                      hash, 0 );
       } else
       {
