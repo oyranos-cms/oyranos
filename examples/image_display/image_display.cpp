@@ -433,7 +433,7 @@ int      conversionObserve           ( oyObserver_s      * observer,
      observer->model->type_ == oyOBJECT_FILTER_NODE_S)
   {
     /*if(oy_debug_signals)*/
-      printf("%s:%d WARNING: \n\t%s %s: %s[%d]->%s[%d]\n",
+      printf("%s:%d INFO: \n\t%s %s: %s[%d]->%s[%d]\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__, _("Signal"),
                     oySignalToString(signal_type),
