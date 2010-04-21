@@ -1077,7 +1077,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
   {
 #if defined(PLUGIN_DEBUG)
     printf( DBG_STRING "s->nOutputDev %d != ps->nCcontexts %d\n", DBG_ARGS,
-            s->nOutputDev, ps->nCcontexts );
+            (int)s->nOutputDev, (int)ps->nCcontexts );
 #endif
     updateOutputConfiguration( s, TRUE);
   }
