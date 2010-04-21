@@ -508,9 +508,10 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
   char * text = 0;
 
   o = oyOptions_Find( f_options, key );
-  /* only set missing options */
+  /** Set missing options and overwrite filter inbuild fallbacks.
+   *  Do not touch edits. */
               if((o &&
-                  !(o->source & oyOPTIONSOURCE_USER) &&
+                  o->source == oyOPTIONSOURCE_FILTER &&
                   !(o->flags & oyOPTIONATTRIBUTE_EDIT)) ||
                  !o)
               {
