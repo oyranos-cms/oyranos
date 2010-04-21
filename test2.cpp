@@ -630,6 +630,20 @@ oyTESTRESULT_e testOptionInt ()
     "oyOption_SetFromInt() new int32_t list failed   " );
   }
 
+  error = oyOption_SetFromInt( o, 293, 1, 1 );
+  if(!error && o->value &&
+     o->value->int32_list[0] == 3 &&
+     o->value->int32_list[1] == 58293 &&
+     o->value->int32_list[2] == 293 &&
+     o->value->int32_list[3] == 58293 &&
+     o->value_type == oyVAL_INT_LIST)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_SetFromInt() modify int32_t list good  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_SetFromInt() modify int32_t list failed" );
+  }
+
   error = oyOption_SetFromInt( o, 58293, 0, 0 );
   if(!error && o->value &&
      o->value->int32_list[0] == 3 &&
