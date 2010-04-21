@@ -618,9 +618,10 @@ oyTESTRESULT_e testOptionInt ()
 
   error = oyOption_SetFromInt( o, 58293, 1, 1 );
   if(!error && o->value &&
-     o->value->int32_list[0] == 2 &&
-     o->value->int32_list[1] == 0 &&
+     o->value->int32_list[0] == 3 &&
+     o->value->int32_list[1] == 58293 &&
      o->value->int32_list[2] == 58293 &&
+     o->value->int32_list[3] == 58293 &&
      o->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() new int32_t list good     " );
@@ -631,9 +632,10 @@ oyTESTRESULT_e testOptionInt ()
 
   error = oyOption_SetFromInt( o, 58293, 0, 0 );
   if(!error && o->value &&
-     o->value->int32_list[0] == 2 &&
+     o->value->int32_list[0] == 3 &&
      o->value->int32_list[1] == 58293 &&
      o->value->int32_list[2] == 58293 &&
+     o->value->int32_list[3] == 58293 &&
      o->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() set int32_t list good     " );
@@ -1203,11 +1205,6 @@ oyTESTRESULT_e testProfile ()
 
   size_t size = 0;
   oyPointer data;
-  int current = -1;
-  int count = 0,
-      countB = 0;
-  char ** texts = 0;
-  const char * tmp = 0;
   oyProfile_s * p_a,
               * p_b;
 
@@ -1235,7 +1232,7 @@ oyTESTRESULT_e testProfile ()
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "Obtained memory block from oyASSUMED_WEB:        %d    ", size );
+    "Obtained memory block from oyASSUMED_WEB:        %d    ", (int)size );
   }
 
   p_b = oyProfile_FromMem( size, data, 0,0 );
