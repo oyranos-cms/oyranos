@@ -54,6 +54,7 @@ export CONF_H CONF CONF_SH CONF_LOG CONF_I18N CONF_TEMP_SH CONF_NV
 
 test -f error.tmp && rm error.tmp
 test -f $CONF_TEMP_SH && rm $CONF_TEMP_SH
+test -f libXNVCtrl.a && rm libXNVCtrl.a
 
 VERSION_A=0
 VERSION_B=1
@@ -710,7 +711,7 @@ else
         --copyright-holder='Kai-Uwe Behrmann' \
         --msgid-bugs-address='ku.b@gmx.de' \
         --from-code=utf-8" >> $CONF
-  oyranos_add="\$ltdl \$xml2"
+  oyranos_add="-L\$libdir \$ltdl \$xml2"
   if [ $OSUNAME = "Linux" ]; then
     COPY="cp -vdpa"
     MOVE="mv -v"
