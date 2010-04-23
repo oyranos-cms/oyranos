@@ -338,7 +338,7 @@ oyGetMonitorInfo_                 (const char* display_name,
                                        xrandr_edids );
 
   if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
-      (!prop || (prop && prop->size != 128)) )
+      (!prop || (prop && prop->size != 128 && prop->size != 256)) )
   {
     int error = 0;
     char * txt = oyAllocateFunc_(1024); txt[0] = 0;
@@ -358,7 +358,7 @@ oyGetMonitorInfo_                 (const char* display_name,
 
   if( prop )
   {
-    if( prop->size != 128 )
+    if( prop->size != 128 && prop->size != 256 )
     {
       WARNcc4_S(user_data, "\n\t  %s %d; %s %s",_("unexpected EDID lenght"),
                (int)prop->size,
