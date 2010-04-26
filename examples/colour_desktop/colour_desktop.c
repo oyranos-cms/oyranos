@@ -437,7 +437,7 @@ static Region convertRegion(Display *dpy, XserverRegion src)
 static Region windowRegion( CompWindow * w )
 {
   Region r = XCreateRegion();
-  XRectangle rect = {0,0,w->width, w->height};
+  XRectangle rect = {0,0,w->serverWidth, w->serverHeight};
   XUnionRectWithRegion( &rect, r, r );
  return r;
 }
@@ -536,10 +536,10 @@ static void updateWindowRegions(CompWindow *w)
     pw->stencil_id = 0;
 
 #if defined(PLUGIN_DEBUG_)
-  oyCompLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d %dx%d", count, pw->stencil_id, w->width,w->height);
+  oyCompLogMessage(d, "colour_desktop", CompLogLevelDebug, "\n  Updated window regions, %d total now; id:%d %dx%d", count, pw->stencil_id, w->serverWidth,w->serverHeight);
 #endif
 
-  pw->absoluteWindowRectangleOld = oyRectangle_NewWith( 0,0, w->width, w->height, 0 );
+  pw->absoluteWindowRectangleOld = oyRectangle_NewWith( 0,0, w->serverWidth, w->serverHeight, 0 );
 
   addWindowDamage(w);
 
