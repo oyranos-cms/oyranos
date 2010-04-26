@@ -1318,8 +1318,8 @@ static Bool pluginDrawWindow(CompWindow *w, const CompTransform *transform, cons
   {
     forEachWindowOnScreen(s, damageWindow, NULL);
 
-    if(rect->width != pw->absoluteWindowRectangleOld->width ||
-       rect->height != pw->absoluteWindowRectangleOld->height )
+    if(w->serverWidth != pw->absoluteWindowRectangleOld->width ||
+       w->serverHeight != pw->absoluteWindowRectangleOld->height)
       updateWindowRegions( w );
 
     /* Clear the stencil buffer with zero. But we do not know when the loop
