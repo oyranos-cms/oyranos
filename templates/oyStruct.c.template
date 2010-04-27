@@ -1,0 +1,284 @@
+  oyOBJECT_{{ name|upper }}_S,   /**< oy{{ name }}_s */
+
+/** @struct  oy{{ name }}_s
+ *  @brief   a {{ name }} object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_{{ name|upper }}_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+} oy{{ name }}_s;
+
+OYAPI oy{{ name }}_s * OYEXPORT
+           oy{{ name }}_New              ( oyObject_s          object );
+OYAPI oy{{ name }}_s * OYEXPORT
+           oy{{ name }}_Copy             ( oy{{ name }}_s        * obj,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+           oy{{ name }}_Release          ( oy{{ name }}_s        **obj );
+
+    case oyOBJECT_{{ name|upper }}_S: text = "oy{{ name }}_s"; break;
+
+/** Function oy{{ name }}_New
+ *  @memberof oy{{ name }}_s
+ *  @brief   allocate a new {{ name }} object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+OYAPI oy{{ name }}_s * OYEXPORT
+           oy{{ name }}_New              ( oyObject_s          object )
+{
+  oyObject_s_ s = (oyObject_s_) object;
+  oy{{ name }}_s_ * obj = 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
+
+  obj = oy{{ name }}_New_( s );
+
+  return (oy{{ name }}_s*) obj;
+}
+
+/** Function oy{{ name }}_Copy
+ *  @memberof oy{{ name }}_s
+ *  @brief   copy or reference a {{ name }} object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+OYAPI oy{{ name }}_s * OYEXPORT
+           oy{{ name }}_Copy             ( oy{{ name }}_s        * obj,
+                                       oyObject_s          object )
+{
+  oy{{ name }}_s_ * s = (oy{{ name }}_s_*) obj;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_{{ name|upper }}_S, return 0 );
+
+  s = oy{{ name }}_Copy_( s, (oyObject_s_*) object );
+
+  return (oy{{ name }}_s*) s;
+}
+ 
+/** Function oy{{ name }}_Release
+ *  @memberof oy{{ name }}_s
+ *  @brief   release and possibly deallocate a {{ name }} object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+OYAPI int  OYEXPORT
+           oy{{ name }}_Release          ( oy{{ name }}_s        **obj )
+{
+  oy{{ name }}_s_ * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = (oy{{ name }}_s*) *obj;
+
+  oyCheckType__m( oyOBJECT_{{ name|upper }}_S, return 1 )
+
+  *obj = 0;
+
+  return oy{{ name }}_Release_( &s );
+}
+
+
+/** @internal
+ *  @struct  oy{{ name }}_s_
+ *  @brief   a {{ name }} object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_{{ name|upper }}_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s_          oy_;            /**< base object */
+
+} oy{{ name }}_s_;
+
+oy{{ name }}_s_ *
+           oy{{ name }}_New_             ( oyObject_s_         object );
+oy{{ name }}_s_ *
+           oy{{ name }}_Copy_            ( oy{{ name }}_s_       * obj,
+                                       oyObject_s_         object);
+int
+           oy{{ name }}_Release_         ( oy{{ name }}_s_       **obj );
+
+
+/** @internal
+ *  Function oy{{ name }}_New_
+ *  @memberof oy{{ name }}_s_
+ *  @brief   allocate a new {{ name }} object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+oy{{ name }}_s_ * oy{{ name }}_New_ (
+                                       oyObject_s_         object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_{{ name|upper }}_S;
+# define STRUCT_TYPE oy{{ name }}_s_
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oy{{ name }}_Copy;
+  s->release = (oyStruct_Release_f) oy{{ name }}_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+
+  return s;
+}
+
+/** @internal
+ *  Function oy{{ name }}_Copy__
+ *  @memberof oy{{ name }}_s_
+ *  @brief   real copy a {{ name }} object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+oy{{ name }}_s_ * oy{{ name }}_Copy__ (
+                                       oy{{ name }}_s_       * obj,
+                                       oyObject_s_         object )
+{
+  oy{{ name }}_s_ * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oy{{ name }}_New_( object );
+  error = !s;
+
+  if(!error)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+  }
+
+  if(error)
+    oy{{ name }}_Release_( &s );
+
+  return s;
+}
+
+/** @internal
+ *  Function oy{{ name }}_Copy_
+ *  @memberof oy{{ name }}_s_
+ *  @brief   copy or reference a {{ name }} object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+oy{{ name }}_s_ * oy{{ name }}_Copy_ (
+                                       oy{{ name }}_s_       * obj,
+                                       oyObject_s_         object )
+{
+  oy{{ name }}_s_ * s = obj;
+
+  if(!obj)
+    return 0;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy_( s->oy_ );
+    return s;
+  }
+
+  s = oy{{ name }}_Copy__( obj, object );
+
+  return s;
+}
+ 
+/** @internal
+ *  Function oy{{ name }}_Release_
+ *  @memberof oy{{ name }}_s_
+ *  @brief   release and possibly deallocate a {{ name }} object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/04/26 (Oyranos: 0.1.10)
+ *  @date    2010/04/26
+ */
+int        oy{{ name }}_Release_ (
+                                       oy{{ name }}_s_       **obj )
+{
+  /* ---- start of common object destructor ----- */
+  oy{{ name }}_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
