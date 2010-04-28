@@ -1,4 +1,5 @@
 1. Install Grantlee from http://www.gitorious.org/grantlee/pages/Home
+   [bug] main.cc:20 expects gentlee libs to be installed at /usr/local/lib
 2. cmake .
 3. make
 4. ./extract_sources.sh
