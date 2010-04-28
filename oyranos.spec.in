@@ -4,7 +4,6 @@ License: BSD
 Group: Development/Libraries
 URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann
-Packager: Kai-Uwe Behrmann <ku.b@gmx.de>
 #BuildArch: %{_arch}
 #%ifos linux
 #Prereq: oyranos-icc-RGB oyranos-icc-lcmsLAB oyranos-icc-ECI-RGB oyranos-icc-Cineaon oyranos-icc-printing oyranos-target-fogra oyranos-target-npes
@@ -88,7 +87,7 @@ used components and libraries with divergine FOSS licenses:
     lookup3     Bob Jenkins
 
 %description devel
-Oyranos is useable to store default profiles and paths and
+Oyranos is usable to store default profiles and paths and
 query for profiles in that paths.
 An internal device profile API allowes configuring of a 
 profile in X.
