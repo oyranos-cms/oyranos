@@ -1,0 +1,4 @@
+1. Install Grantlee from http://www.gitorious.org/grantlee/pages/Home
+2. cmake .
+3. make
+4. ./extract_sources.sh
