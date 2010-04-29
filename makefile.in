@@ -166,17 +166,27 @@ CFILES_MONI_NVIDIA = \
 	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
 	$(TARGET)_gamma.c
-CFILES_OFORMS = \
-	oforms/$(TARGET)_forms_cmd_line.c \
-	oforms/$(TARGET)_forms.c
-CFILES_POLICY = \
-	$(TARGET)_policy.c \
 
+CFILES_POLICY = \
+	$(TARGET)_policy.c
 CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
+
+CFILES_OFORMS = \
+	oforms/$(TARGET)_forms_cmd_line.c \
+	oforms/$(TARGET)_forms.c \
+	oforms/$(TARGET)_xforms.c
+CHEADERS_OFORMS = \
+	oforms/$(TARGET)_forms.h
+HEADERS_OFORMS_FLTK = \
+	oforms/$(TARGET)_widgets_fltk.h
 CXXFILES_OFORMS_FLTK = \
 	oforms/$(TARGET)_forms_fltk.cxx \
-	oforms/$(TARGET)_widgets_fltk.cxx
+	oforms/$(TARGET)_widgets_fltk.cxx \
+	oforms/$(TARGET)_xforms_fltk.cxx
+OFORMS_FILES = \
+	oforms/oyranos_xforms.makefile
+
 CXXFILES_Flmm = \
 	FL/Flmm_Tabs.cxx
 
@@ -1070,9 +1080,10 @@ copy_files:
 	#$(COPY) -r cmms $(DESTDIR)
 #ifdef LIB_XNVCTRL
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
-	cd $(SRCDIR) && \
-	  $(COPY) -R $(LIB_XNVCTRL) $(DESTDIR)
+	cd $(SRCDIR)
 #endif
+	mkdir $(DESTDIR)/$(LIB_XNVCTRL)
+	$(COPY) -R $(SRCDIR)/$(LIB_XNVCTRL) $(DESTDIR)
 	mkdir $(DESTDIR)/modules
 	cd $(SRCDIR) && \
 	  $(COPY) $(CFILES_MODULES) $(CPPFILES_MODULES) $(CHEADERS_MODULES) \
@@ -1082,7 +1093,9 @@ copy_files:
 	  $(COPY) $(CFILES_MODULES_DEVICES) $(DESTDIR)/modules/devices
 	mkdir $(DESTDIR)/oforms
 	cd $(SRCDIR) && \
-	  $(COPY) $(CFILES_OFORMS) $(CXXFILES_OFORMS_FLTK) $(DESTDIR)/oforms/
+	  $(COPY) $(CFILES_OFORMS) $(CXXFILES_OFORMS_FLTK) \
+	  $(HEADERS_OFORMS_FLTK) $(CHEADERS_OFORMS) $(OFORMS_FILES) \
+	  $(DESTDIR)/oforms/
 	mkdir $(DESTDIR)/tests
 	cd $(SRCDIR) && \
 	  $(COPY) $(TEST_FILES) $(DESTDIR)/tests
