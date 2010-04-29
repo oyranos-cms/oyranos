@@ -10,28 +10,28 @@ Vendor: Kai-Uwe Behrmann
 #%endif 
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
-Requires:  libxml2 elektra liblcms cups-devel
+Requires:  elektra
 
 
 %if 0%{?suse_version} > 0
-BuildRequires:     gcc-c++ gettext doxygen graphviz pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel liblcms-devel
+BuildRequires:     gcc-c++ gettext doxygen graphviz pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel liblcms-devel cups-devel
 #elektra-devel
 %endif
-%if 0%{?suse_version} > 910
+%if 0 < 0%{?suse_version} && 0%{?suse_version} > 910
 #BuildRequires: gcc-c++ gettext doxygen fltk-threaded fltk-threaded-devel xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel  pkgconfig libpng-devel libjpeg-devel
 BuildRequires:  acl autoconf automake bash bind-utils binutils bison bzip2 coreutils cpio cvs cyrus-sasl diffutils e2fsprogs expat file filesystem findutils flex fontconfig fontconfig-devel freetype2 freetype2-devel gawk gcc gcc-c++ gettext gettext-devel glibc glibc-devel gpm grep groff gzip info less libacl libattr libjpeg libjpeg-devel libpng libpng-devel libtool m4 make man mktemp module-init-tools ncurses ncurses-devel net-tools openssl pam patch perl pkgconfig popt procinfo procps psmisc rcs readline rpm sed strace tar texinfo timezone unzip util-linux zlib zlib-devel
 %endif
-%if 0%{?suse_version} > 1010
+%if 0 < 0%{?suse_version} && 0%{?suse_version} > 1010
 BuildRequires:  Mesa Mesa-devel gcc-c++ gettext graphviz pkgconfig    libpng-devel libjpeg-devel xorg-x11-fonts-devel xorg-x11-libICE xorg-x11-libICE-devel xorg-x11-libSM xorg-x11 xorg-x11-devel xorg-x11-libSM-devel xorg-x11-libX11 xorg-x11-libX11-devel xorg-x11-libXau xorg-x11-libXau-devel xorg-x11-libXdmcp xorg-x11-libXdmcp-devel xorg-x11-libXext xorg-x11-libXext-devel xorg-x11-libXfixes xorg-x11-libXfixes-devel xorg-x11-libXmu xorg-x11-libXmu-devel xorg-x11-libXp xorg-x11-libXp-devel xorg-x11-libXpm xorg-x11-libXpm-devel xorg-x11-libXprintUtil xorg-x11-libXprintUtil-devel xorg-x11-libXrender xorg-x11-libXrender-devel xorg-x11-libXt xorg-x11-libXt-devel xorg-x11-libXv xorg-x11-libXv-devel xorg-x11-libfontenc xorg-x11-libfontenc-devel xorg-x11-libs xorg-x11-libxkbfile xorg-x11-libxkbfile-devel xorg-x11-proto-devel xorg-x11-util-devel xorg-x11-xtrans-devel
 %endif
 %if 0%{?mandriva_version} > 0
-BuildRequires:  Mesa libxorg-x11-devel libxpm4-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel
+BuildRequires:  Mesa libxorg-x11-devel libxpm4-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel cups-devel
 %endif
 %if 0%{?fedora_version} > 0
-BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  qt3-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel
+BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  qt3-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel cups-devel
 %endif
 %if 0%{?debian_version} > 0
-BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel
+BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel cups-devel
 %endif
 
 
@@ -53,6 +53,7 @@ License: GPL
 %package      cups
 Summary:    CUPS device support
 Group:      Development/Libraries
+Requires:   cups
 
 %package      ui-fltk
 Summary:    example configuration panel
@@ -133,6 +134,8 @@ rm -rf %{buildroot}
 make
 make DESTDIR=%{buildroot} install-main
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
+%find_lang %{name}       # generate a special file list
+
 
 %clean
 rm -rf %{buildroot}
@@ -143,7 +146,7 @@ ldconfig
 %postun
 ldconfig
 
-%files
+%files -f %{name}.lang
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-config
@@ -159,7 +162,6 @@ ldconfig
 %{pixmapdir}/lcms_logo2.png
 %{pixmapdir}/application-vnd.iccprofile.png
 %{pixmapdir}/text-vnd.cgats.png
-%{_datadir}/locale/*/LC_MESSAGES/%{name}.*
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 
 %files devel
