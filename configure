@@ -351,7 +351,7 @@ test -n "$ECHO" && $ECHO "" > $CONF_I18N
 test -n "$ECHO" && $ECHO "" > $CONF_NV
 test -n "$ECHO" && $ECHO "" > $PRINT_CONF
 test -n "$ECHO" && $ECHO "" > $BASE_CONF
-test -n "$ECHO" && $ECHO "# generated $PKGC automatically by configure from $ROOT_DIR/$PKGC.in" > $PKGC
+test -n "$ECHO" && $ECHO "# generated $PKGC automatically by configure from $PKGC.in" > $PKGC
 test -n "$ECHO" && $ECHO "" >> $PKGC
 test -n "$RPMECHO" && $RPMECHO "# generated $SPEC automatically by configure from $ROOT_DIR/$SPEC.in" > $SPEC
 test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
