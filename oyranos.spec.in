@@ -152,6 +152,9 @@ ldconfig
 %{_bindir}/%{name}-config
 %{_bindir}/%{name}-policy
 %{_libdir}/lib%{name}.so.*
+%dir %{_libdir}/colour/
+%dir %{_libdir}/%{cmmsubpath}/
+%dir %{_libdir}/%{metasubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_l*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oicc_cmm_module*
@@ -162,6 +165,8 @@ ldconfig
 %{pixmapdir}/lcms_logo2.png
 %{pixmapdir}/application-vnd.iccprofile.png
 %{pixmapdir}/text-vnd.cgats.png
+%dir %{syscolordir}/
+%dir %{syscolordir}/%{settingsdirname}/
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 
 %files devel
@@ -188,6 +193,8 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
+%dir %{_libdir}/colour/
+%dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oydi_cmm_module*
 %{_mandir}/man1/%{name}-monitor*
@@ -200,6 +207,8 @@ ldconfig
 %files cups
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
+%dir %{_libdir}/colour/
+%dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
 
 %files ui-fltk
