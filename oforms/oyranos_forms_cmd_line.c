@@ -224,9 +224,12 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
   return 0;
 }
 
-const char * oy_ui_cmd_line_handler_xf_select1_element_searches_[] = {
+const char * oy_ui_cmd_line_handler_xf_select1_element_searches_[]
+ = {
 "xf:choices/xf:item/xf:label.xf:value",0};
-oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
+oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_
+#if 0
+ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
    "libxml2",                          /**< parser_type */
@@ -234,7 +237,9 @@ oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
    (oyUiHandler_f)oyXML2XFORMsCmdLineSelect1Handler, /**<oyUiHandler_f handler*/
    "dummy",                            /**< handler_type */
    (char**)oy_ui_cmd_line_handler_xf_select1_element_searches_ /**< element_searches */
-  };
+  }
+#endif
+;
 
 /** @internal
  *  Function oyXML2XFORMsCmdLineHtmlHeadlineHandler
@@ -314,7 +319,9 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
 
 const char * oy_ui_cmd_line_handler_html_headline4_element_searches_[] = {
 "h4",0};
-oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_ =
+oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_
+#if 0
+ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
    "libxml2",                          /**< parser_type */
@@ -322,11 +329,15 @@ oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_ =
    (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
    "dummy",                            /**< handler_type */
    (char**)oy_ui_cmd_line_handler_html_headline4_element_searches_ /**< element_searches */
-  };
+  }
+#endif
+;
 
 const char * oy_ui_cmd_line_handler_html_headline_element_searches_[] = {
 "h3",0};
-oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
+oyUiHandler_s oy_ui_cmd_line_handler_html_headline_
+#if 0
+ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
    "libxml2",                          /**< parser_type */
@@ -334,7 +345,9 @@ oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
    (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
    "dummy",                            /**< handler_type */
    (char**)oy_ui_cmd_line_handler_html_headline_element_searches_ /**< element_searches */
-  };
+  }
+#endif
+;
 
 oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
   &oy_ui_cmd_line_handler_xf_select1_,
