@@ -915,7 +915,6 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_FLOAT(threshold)
 
    DFC_OPT_ADD_INT(four_color_rgb)
-   DFC_OPT_ADD_INT(gamma_16bit) //TODO is it needed?
    DFC_OPT_ADD_INT(half_size)
    DFC_OPT_ADD_INT(highlight)
    DFC_OPT_ADD_INT(med_passes)
