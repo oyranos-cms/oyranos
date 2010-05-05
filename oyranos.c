@@ -111,11 +111,12 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
 
   fprintf( stderr, "%s", text );
 
+  text[0] = 0;
   va_start( list, format);
   len = vsnprintf( text, sz-1, format, list);
   va_end  ( list );
 
-  if (len >= sz)
+  if (len >= (sz - 1))
   {
     text = realloc( text, (len+1)*sizeof(char) );
     va_start( list, format);
