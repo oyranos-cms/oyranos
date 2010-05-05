@@ -6,8 +6,6 @@
    * (Optional) elinks to create the help text from html.
 
 2. Compilation
-   * Edit LIBRAW_L_INCLUDE_DIR, LIBRAW_L_LIBRARY_DIR of CMakeLists.txt
-     to point to where LibRaw is installed.
    * To enable the pnm backend with colour labeled options:
      -  Apply the sane_cap_colour.patch to sane-backends.
      -  Run the configure script with --enable-pnm-backend.
@@ -18,7 +16,7 @@
      file and keep only the lines with the backends you require.
 
 Then:
-$ cmake . -DCMAKE_INSTALL_PREFIX=</your/install/path>
+$ cmake . -DCMAKE_INSTALL_PREFIX=</your/install/path> -DCMAKE_PREFIX_PATH=<base directory of installed library>
 $ make
 $ make install
 
