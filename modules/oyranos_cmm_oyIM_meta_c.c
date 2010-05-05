@@ -136,7 +136,9 @@ int          oyIMFilterScan          ( oyPointer           data,
 
       if(error)
       {
-        WARNc2_S( "\n  dlopen( %s, RTLD_LAZY):\n  \"%s\"", lib_name, dlerror() );
+        char * errstr = dlerror();
+        WARNc2_S( "\n  dlopen( %s, RTLD_LAZY):\n  \"%s\"", lib_name,
+                  oyNoEmptyString_( errstr ) );
         system("  echo $LD_LIBRARY_PATH");
       }
     }
