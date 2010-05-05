@@ -828,7 +828,7 @@ rpm:	dist
 	rpmdir/SOURCES \
 	rpmdir/SRPMS \
 	rpmdir/RPMS/$(RPMARCH)
-	cp -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
+	$(COPY) -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
 	rpmbuild --clean -ba $(build_dir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
 	rpmbuild --clean -ba $(build_dir)/$(TARGET)-icc.spec --define "_topdir $$PWD/rpmdir"
 	@echo "============================================================"

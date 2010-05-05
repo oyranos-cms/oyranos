@@ -1,5 +1,4 @@
 
-COPY = cp -dpa
 RPMARCH = noarch
 RPMDIR = ../../rpmdir
 TARGET  = oyranos-printing-default

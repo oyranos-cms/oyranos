@@ -1,5 +1,4 @@
 LNK  = ln -s
-COPY = cp -dpa
 RPMARCH = `rpmbuild --showrc | awk '/^build arch/ {print $$4}'`
 RPMDIR = ../../rpmdir
 TARGET  = oyranos-profiles-base
