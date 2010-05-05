@@ -1,10 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-SET( LIBRAW_L_INCLUDE_DIR "/home/john/Code/GSoC/raw/LibRaw-Lite-0.7.2" )
-SET( LIBRAW_L_LIBRARY_DIR "/home/john/Code/GSoC/raw/LibRaw-Lite-0.7.2/lib" )
-SET( LIBRAW_L_LIBS "raw-lite" )
-
 SET( SANE_INCLUDE_DIR "/home/john/local/include" )
 SET( SANE_LIBRARY_DIR "/home/john/local/lib" )
 SET( SANE_LIBS "sane" )
@@ -14,6 +10,7 @@ PROJECT( gsoc )
 SET( CMAKE_BUILD_TYPE "Debug" )
 
 FIND_PACKAGE(LCMS REQUIRED)
+FIND_PACKAGE(LibRaw REQUIRED)
 #Oyranos Flags############
 EXECUTE_PROCESS(	COMMAND oyranos-config --ldflags
 						COMMAND tr '\n' " "
@@ -22,14 +19,14 @@ EXECUTE_PROCESS(	COMMAND oyranos-config --cflags
 						COMMAND tr '\n' " "
 						OUTPUT_VARIABLE OY_CFLAGS )
 
-INCLUDE_DIRECTORIES( ${LIBRAW_L_INCLUDE_DIR} ${SANE_INCLUDE_DIR} ${LCMS_INCLUDE_DIR} )
-LINK_DIRECTORIES( ${LIBRAW_L_LIBRARY_DIR} ${SANE_LIBRARY_DIR} )
+INCLUDE_DIRECTORIES( ${LIBRAW_INCLUDE_DIR} ${SANE_INCLUDE_DIR} ${LCMS_INCLUDE_DIR} )
+LINK_DIRECTORIES( ${SANE_LIBRARY_DIR} )
 
 ##################TARGETS##################
 
 #raw2tiff##################
 ADD_EXECUTABLE( raw2tiff "RAW.cc" "raw2tiff.cc")
-TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_L_LIBS} "exiv2" "tiff" )
+TARGET_LINK_LIBRARIES( raw2tiff ${LIBRAW_LIBRARIES} "exiv2" "tiff" )
 SET_TARGET_PROPERTIES( raw2tiff  PROPERTIES
                                  COMPILE_FLAGS "${OY_CFLAGS}"
                                  LINK_FLAGS "${OY_LDFLAGS}" )
@@ -48,7 +45,7 @@ SET_TARGET_PROPERTIES( oytest	PROPERTIES
 ADD_LIBRARY( oyranos_SANE_cmm_module SHARED oyranos_cmm_SANE.c SANE_help.c )
 TARGET_LINK_LIBRARIES( oyranos_SANE_cmm_module ${SANE_LIBS} ${LCMS_LIBRARIES} "oyranos" )
 ADD_LIBRARY( oyranos_oyRE_cmm_module SHARED oyranos_cmm_oyRE.cc oyRE_help.c )
-TARGET_LINK_LIBRARIES( oyranos_oyRE_cmm_module ${LIBRAW_L_LIBS} "exiv2" "oyranos" )
+TARGET_LINK_LIBRARIES( oyranos_oyRE_cmm_module ${LIBRAW_LIBRARIES} "exiv2" "oyranos" )
 
 add_subdirectory( doc )
 
