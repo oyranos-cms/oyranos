@@ -1030,7 +1030,7 @@ cdepend:
 .fl.cxx:
 	echo Expanding $< ...
 	fluid -c $<
-	$(MOVE) `echo $*.cxx $*.h | sed s%$(SRCDIR)/%%g` $(SRCDIR)
+	-$(MOVE) `echo $*.cxx $*.h | sed s%$(SRCDIR)/%%g` $(SRCDIR)
 
 .po:
 	echo Generating $@ ...
