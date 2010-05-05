@@ -138,7 +138,7 @@ int          oyIMFilterScan          ( oyPointer           data,
       {
         char * errstr = dlerror();
         WARNc2_S( "\n  dlopen( %s, RTLD_LAZY):\n  \"%s\"", lib_name,
-                  oyNoEmptyString_( errstr ) );
+                  oyNoEmptyString_m_( errstr ) );
         system("  echo $LD_LIBRARY_PATH");
       }
     }
@@ -167,7 +167,7 @@ int          oyIMFilterScan          ( oyPointer           data,
       if(error)
       {
         char * errstr = dlerror();
-        WARNc2_S("\n  %s:\n  \"%s\"", lib_name, oyNoEmptyString_( errstr ) );
+        WARNc2_S("\n  %s:\n  \"%s\"", lib_name, oyNoEmptyString_m_( errstr ) );
       }
 
       if(!error)
