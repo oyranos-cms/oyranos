@@ -226,20 +226,19 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
 
 const char * oy_ui_cmd_line_handler_xf_select1_element_searches_[]
  = {
-"xf:choices/xf:item/xf:label.xf:value",0};
-oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_
-#if 0
- =
+ "xf:select1/xf:choices/xf:item/xf:label.xf:value",
+ "xf:select1/xf:label",
+ "xf:select1/xf:help",
+ 0
+};
+oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
-   "oyFORMS",                          /**< dialect */
-   "libxml2",                          /**< parser_type */
-   "xf:select1",                       /**< element_type; Wanted XML element. */
+   (char*)"oyFORMS",                          /**< dialect */
+   (char*)"libxml2",                          /**< parser_type */
    (oyUiHandler_f)oyXML2XFORMsCmdLineSelect1Handler, /**<oyUiHandler_f handler*/
-   "dummy",                            /**< handler_type */
+   (char*)"dummy",                            /**< handler_type */
    (char**)oy_ui_cmd_line_handler_xf_select1_element_searches_ /**< element_searches */
-  }
-#endif
-;
+  };
 
 /** @internal
  *  Function oyXML2XFORMsCmdLineHtmlHeadlineHandler
@@ -319,35 +318,25 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
 
 const char * oy_ui_cmd_line_handler_html_headline4_element_searches_[] = {
 "h4",0};
-oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_
-#if 0
- =
+oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
    "libxml2",                          /**< parser_type */
-   "h4",                               /**< element_type; Wanted XML elements.*/
    (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
    "dummy",                            /**< handler_type */
    (char**)oy_ui_cmd_line_handler_html_headline4_element_searches_ /**< element_searches */
-  }
-#endif
-;
+  };
 
 const char * oy_ui_cmd_line_handler_html_headline_element_searches_[] = {
 "h3",0};
-oyUiHandler_s oy_ui_cmd_line_handler_html_headline_
-#if 0
- =
+oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
    "libxml2",                          /**< parser_type */
-   "h3",                               /**< element_type; Wanted XML elements.*/
    (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
    "dummy",                            /**< handler_type */
    (char**)oy_ui_cmd_line_handler_html_headline_element_searches_ /**< element_searches */
-  }
-#endif
-;
+  };
 
 oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
   &oy_ui_cmd_line_handler_xf_select1_,
