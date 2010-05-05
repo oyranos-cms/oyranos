@@ -91,7 +91,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
     id = oyObject_GetId( context->oy_ );
   }
 
-  text = malloc( sz );
+  text = calloc( sizeof(char), sz );
   if(!text)
   {
     fprintf(stderr,
@@ -112,7 +112,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   fprintf( stderr, "%s", text );
 
   va_start( list, format);
-  len = vsnprintf( text, sz, format, list);
+  len = vsnprintf( text, sz-1, format, list);
   va_end  ( list );
 
   if (len >= sz)
