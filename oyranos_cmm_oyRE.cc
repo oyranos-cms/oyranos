@@ -125,7 +125,7 @@ oyranos::oyRankPad _rank_map[] = {
    {const_cast < char *>("use_camera_wb"), 1, -1, 0},                /**< is nice */
    {const_cast < char *>("use_camera_matrix"), 1, -1, 0},            /**< is nice */
    {const_cast < char *>("half_size"), 1, -1, 0},                    /**< is nice */
-//{const_cast<char*>("filtering_mode"), 1, -1, 0},                   /**< is nice */ /*not in libraw-lite*/
+   {const_cast<char*>("filtering_mode"), 1, -1, 0},                   /**< is nice */
 //This is a bit-field. Out of all the possible flags, only LIBRAW_FILTERING_NORAWCURVE
 //seems to be relevant to color [From LibRaw API docs]:               
 //This bit turns off tone curve processing (for tone curves read from file metadata or
