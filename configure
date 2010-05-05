@@ -829,11 +829,14 @@ if [ -n "$ECHO" ]; then
   SANE=2; export SANE
   #FTGL=1; export FTGL
   FLTK=2; export FLTK
+  CAIRO=1; export CAIRO
 if [ $OSUNAME != "Darwin" ] ; then
   X11=1; 
   XCOLOR=1
+  COMPIZ=1
+  QT=1
 fi
-  export X11 XCOLOR
+  export X11 XCOLOR COMPIZ QT
   XINERAMA=2; export XINERAMA
   XRANDR=2; export XRANDR
   XF86VMODE=2; export XF86VMODE
@@ -877,7 +880,8 @@ fi
   SANE=0; export SANE
   #FTGL=0; export FTGL
   FLTK=0; export FLTK
-  X11=0; XCOLOR=0; export X11 XCOLOR
+  CAIRO=0; export CAIRO
+  X11=0; XCOLOR=0; COMPIZ=0; QT=0; export X11 XCOLOR COMPIZ QT
   XINERAMA=0; export XINERAMA
   XRANDR=0; export XRANDR
   XF86VMODE=0; export XF86VMODE

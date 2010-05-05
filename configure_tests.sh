@@ -99,7 +99,7 @@ if [ -n "$CUPS" ] && [ $CUPS -gt 0 ]; then
   rm -f tests/libtest$EXEC_END
   $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/cups_test.cxx $LDFLAGS -L$libdir -lcups -o tests/libtest 2>>$CONF_LOG
     if [ -f tests/libtest ]; then
-      echo_="`tests/libtest`             detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="`tests/libtest`           detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       echo "#define HAVE_CUPS 1" >> $CONF_H
       echo "CUPS = 1" >> $CONF
       rm tests/libtest$EXEC_END
@@ -150,7 +150,7 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
     if [ $? = 0 ]; then
       pkg-config --max-version=$elektra_max elektra 2>>$CONF_LOG
       if [ $? = 0 ]; then
-        echo_="elektra `pkg-config --modversion elektra`           detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        echo_="elektra	`pkg-config --modversion elektra`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
         echo "#define HAVE_ELEKTRA 1" >> $CONF_H
         echo "ELEKTRA = 1" >> $CONF
         echo "ELEKTRA_H = `pkg-config --cflags elektra`" >> $CONF
@@ -262,7 +262,7 @@ fi
 if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
   OY_=`oyranos-config 2>>$CONF_LOG`
   if [ $? = 0 ]; then
-    echo_="Oyranos `oyranos-config --version`           detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="Oyranos	`oyranos-config --version`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo "#define HAVE_OY 1" >> $CONF_H
     echo "OY = 1" >> $CONF
     echo "OYRANOS_H = `oyranos-config --cflags`" >> $CONF
@@ -312,7 +312,7 @@ if [ -n "$LIBXML2" ] && [ $LIBXML2 -gt 0 ]; then
   fi
   if [ -n $HAVE_LIB ]; then
     if [ -n $version ]; then
-      echo_="libxml $version           detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="libxml	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     else
       echo_="libxml-2.0              detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
@@ -362,7 +362,7 @@ if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
   fi
   if [ -n $HAVE_LIB ]; then
     if [ -n $version ]; then
-      echo_="$name $version               detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="$name	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     else
       echo_="$name                    detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
@@ -664,7 +664,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
     fi
     if [ -n "$found" ]; then
       if [ -n "$version" ]; then
-        echo_="X11 $version               detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        echo_="X11	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       else
         echo_="X11                     detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       fi
@@ -686,7 +686,7 @@ fi
 if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
   pkg-config  --atleast-version=1.0 ftgl
   if [ $? = 0 ]; then
-    echo_="FTGL      `pkg-config --modversion ftgl`         detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="FTGL	`pkg-config --modversion ftgl`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo "#define HAVE_FTGL 1" >> $CONF_H
     echo "FTGL = 1" >> $CONF
     echo "FTGL_H = `pkg-config --cflags ftgl | sed \"$STRIPOPT\"`" >> $CONF
@@ -725,7 +725,7 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
     else
       fltk_utf8="`$fltkconfig --version`      "
     fi
-    echo_="FLTK $fltk_utf8        detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="FLTK	$fltk_utf8	detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     if [ "0" -ne "`$fltkconfig --compile tests/fltk_test.cxx 2>&1 | grep lock | wc -l`" ]; then
       echo_="!!! ERROR: FLTK has no threads support !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       echo_="           Configure FLTK with the --enable-threads option and recompile."; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
@@ -787,9 +787,52 @@ if [ -n "$FLU" ] && [ $FLU -gt 0 ]; then
   fi
 fi
 
+if [ -n "$QT" ] && [ $QT -gt 0 ]; then
+  pc_package=QtGui
+  pkg-config  --atleast-version=4.0 $pc_package
+  if [ $? = 0 ]; then
+    echo_="$pc_package	`pkg-config --modversion $pc_package`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo "#define HAVE_QT 1" >> $CONF_H
+    echo "QT = 1" >> $CONF
+    echo "QT_H = `pkg-config --cflags $pc_package | sed \"$STRIPOPT\"`" >> $CONF
+    echo "QT_LIBS = `pkg-config --libs $pc_package | sed \"$STRIPOPT\"`" >> $CONF
+  else
+    echo_="  no or too old $pc_package found, need $pc_package to build examples"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+  fi
+fi
+
+if [ -n "$CAIRO" ] && [ $CAIRO -gt 0 ]; then
+  pc_package=cairo
+  pkg-config  --atleast-version=1.0 $pc_package
+  if [ $? = 0 ]; then
+    echo_="$pc_package	`pkg-config --modversion $pc_package`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo "#define HAVE_CAIRO 1" >> $CONF_H
+    echo "CAIRO = 1" >> $CONF
+    echo "CAIRO_H = `pkg-config --cflags $pc_package | sed \"$STRIPOPT\"`" >> $CONF
+    echo "CAIRO_LIBS = `pkg-config --libs $pc_package | sed \"$STRIPOPT\"`" >> $CONF
+  else
+    echo_="  no or too old $pc_package found, need $pc_package to build examples"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+  fi
+fi
+
+if [ -n "$COMPIZ" ] && [ $COMPIZ -gt 0 ]; then
+  pc_package=compiz
+  pkg-config  --atleast-version=0.7 $pc_package
+  if [ $? = 0 ]; then
+    echo_="$pc_package	`pkg-config --modversion $pc_package`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo "#define HAVE_COMPIZ 1" >> $CONF_H
+    echo "COMPIZ = 1" >> $CONF
+    echo "COMPIZ_H = `pkg-config --cflags $pc_package | sed \"$STRIPOPT\"`" >> $CONF
+    echo "COMPIZ_LIBS = `pkg-config --libs $pc_package | sed \"$STRIPOPT\"`" >> $CONF
+  else
+    echo_="  no or too old $pc_package found, need $pc_package to build examples"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+  fi
+fi
+
+
 if [ -n "$DOXYGEN" ] && [ $DOXYGEN -gt 0 ]; then
   if [ "`doxygen --help`" != "" ]; then
-    echo_="Doxygen `doxygen --version`           detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="Doxygen	`doxygen --version`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
   else
     echo_="Doxygen                 not detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
   fi
@@ -803,7 +846,7 @@ if [ -n "$LIBPNG" ] && [ $LIBPNG -gt 0 ]; then
     pkg-config  --atleast-version=1.0 $LIBPNG 2>>$CONF_LOG
   fi
   if [ $? = 0 ]; then
-    echo_="PNG `pkg-config --modversion $LIBPNG`               detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="PNG	`pkg-config --modversion $LIBPNG`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo "#define HAVE_PNG 1" >> $CONF_H
     echo "PNG = 1" >> $CONF
     echo "PNG_H = `pkg-config --cflags $LIBPNG | sed \"$STRIPOPT\"`" >> $CONF
