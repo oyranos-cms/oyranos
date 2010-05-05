@@ -28,6 +28,7 @@
 #include <inttypes.h>
 #endif
 #include <math.h>
+#include <locale.h>   /* LC_NUMERIC */
 
 #define OY_ERR if(l_error != 0) error = l_error;
 
