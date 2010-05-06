@@ -69,30 +69,32 @@ all:
 $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	mkdir -p image_display
 	echo Compiling $@ ...
-	-$(CXX) -DTARGET=\"$(TARGET)\" $(CXXFLAGS) $(FLTK_CFLAGS) $(X11) \
-	$(LDFLAGS) $(OY_LDFLAGS) $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
+	-$(CXX) -DTARGET=\"$(TARGET)\" $(CXXFLAGS) $(FLTK_CFLAGS) $< \
+	$(X11) $(LDFLAGS) $(OY_LDFLAGS) \
+	../fl_i18n/libfl_i18n.a  $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 \
-	$< -o $@ ../fl_i18n/libfl_i18n.a
+	-o $@
 	fltk-config --post $@
 
 $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	mkdir -p xcmsevents
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
-	$(PKG_CONFIG_LIBS) -lXcolor -lXmu -lXinerama -lXrandr -lXxf86vm \
-	$(TARGET2_FLAGS) -DTARGET=\"xcmsevents\" $< -o $@
-	echo Compiling $@ ...
+	-$(CC) $(CFLAGS) $< $(TARGET2_FLAGS) $(LDFLAGS) $(OY_LDFLAGS) \
+	$(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
+	-lXcolor -lXmu -lXinerama -lXrandr -lXxf86vm \
+	-DTARGET=\"xcmsevents\" -o $@
 
 $(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
 	mkdir -p colour_desktop
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) -std=c99 -fPIC -shared $(LDFLAGS) $(OY_LDFLAGS) \
-	$(TARGET3_FLAGS) -lXcolor $< -o $@
+	-$(CC) $(CFLAGS) -std=c99 -fPIC -shared $< $(LDFLAGS) $(OY_LDFLAGS) \
+	$(TARGET3_FLAGS) -lXcolor -o $@
 
 $(TARGET4):	$(SRCDIR)$(TARGET4).c
 	mkdir -p image2pdf
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $(OY_LDFLAGS) $< -o $@
+	-$(CC) $(CFLAGS) $< $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $(OY_LDFLAGS) \
+	-o $@
 
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
 	mkdir -p dummy_device
@@ -107,7 +109,7 @@ $(TARGET6):	$(SRCDIR)dummy_filter/oyranos_cmm_dFil.c
 $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 	mkdir -p oymd5icc
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $(LDFLAGS) $(OY_LDFLAGS) $< -o $@
+	-$(CC) $(CFLAGS) $< $(LDFLAGS) $(OY_LDFLAGS) -o $@
 
 $(TARGET8):	$(TARGET8_OBJECTS) xcmsevents/liboyranosedid.a
 	echo "	LINK:	$(TARGET8) $(TARGET8_SOURCES) ..."
