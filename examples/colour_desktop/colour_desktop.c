@@ -49,7 +49,7 @@
 //#define OY_CACHE 1 /* aching in Oyranos is slower */
 
 #define OY_COMPIZ_VERSION (COMPIZ_VERSION_MAJOR * 10000 + COMPIZ_VERSION_MINOR * 100 + COMPIZ_VERSION_MICRO)
-#if OY_COMPIZ_VERSION < 780
+#if OY_COMPIZ_VERSION < 708
 #define oyCompLogMessage(disp_, plug_in_name, debug_level, format_, ... ) \
         compLogMessage( disp_, plug_in_name, debug_level, format_, __VA_ARGS__ )
 #else
