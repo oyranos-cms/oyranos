@@ -18,9 +18,8 @@
 #define OYRANOS_I18N_H
 
 #ifdef __cplusplus
+namespace oyranos {
 extern "C" {
-namespace oyranos
-{
 #endif /* __cplusplus */
 
 #ifdef USE_GETTEXT

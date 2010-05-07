@@ -31,9 +31,8 @@
 #include "oyranos_debug.h"
 
 #ifdef __cplusplus
+namespace oyranos {
 extern "C" {
-namespace oyranos
-{
 #endif /* __cplusplus */
 
 /* --- Helpers  --- */

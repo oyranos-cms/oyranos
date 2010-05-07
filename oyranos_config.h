@@ -24,9 +24,8 @@
     @brief The Oyranos namespace.
  */
 #ifdef __cplusplus
+namespace oyranos {
 extern "C" {
-namespace oyranos
-{
 #endif /* __cplusplus */
 
 /* --- behaviour / policies --- */

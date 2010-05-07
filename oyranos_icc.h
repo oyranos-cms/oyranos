@@ -26,9 +26,8 @@
     @brief The Oyranos namespace.
  */
 #ifdef __cplusplus
+namespace oyranos {
 extern "C" {
-namespace oyranos
-{
 #endif /* __cplusplus */
 
 icUInt16Number          oyValueUInt16   (icUInt16Number val);

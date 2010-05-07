@@ -33,9 +33,8 @@
 #include <stdint.h> /* uint32_t */
 
 #ifdef __cplusplus
+namespace oyranos {
 extern "C" {
-namespace oyranos
-{
 #endif /* __cplusplus */
 
 /* --- memory handling --- */
