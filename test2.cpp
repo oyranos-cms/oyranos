@@ -616,7 +616,7 @@ oyTESTRESULT_e testOptionInt ()
     "oyOption_SetFromInt() add int32_t list failed   " );
   }
 
-  error = oyOption_SetFromInt( o, 58293, 1, 1 );
+  error = oyOption_SetFromInt( o, 58293, 1, 0 );
   if(!error && o->value &&
      o->value->int32_list[0] == 3 &&
      o->value->int32_list[1] == 58293 &&
@@ -630,7 +630,7 @@ oyTESTRESULT_e testOptionInt ()
     "oyOption_SetFromInt() new int32_t list failed   " );
   }
 
-  error = oyOption_SetFromInt( o, 293, 1, 1 );
+  error = oyOption_SetFromInt( o, 293, 1, 0 );
   if(!error && o->value &&
      o->value->int32_list[0] == 3 &&
      o->value->int32_list[1] == 58293 &&
@@ -648,20 +648,21 @@ oyTESTRESULT_e testOptionInt ()
   if(!error && o->value &&
      o->value->int32_list[0] == 3 &&
      o->value->int32_list[1] == 58293 &&
-     o->value->int32_list[2] == 58293 &&
+     o->value->int32_list[2] == 293 &&
      o->value->int32_list[3] == 58293 &&
      o->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() set int32_t list good     " );
-    erg[1] = oyOption_GetValueInt( o, 0 );
-    erg[2] = oyOption_GetValueInt( o, 1 );
+    erg[0] = oyOption_GetValueInt( o, 0 );
+    erg[1] = oyOption_GetValueInt( o, 1 );
+    erg[2] = oyOption_GetValueInt( o, 2 );
     erg[3] = oyOption_GetValueInt( o, 3 );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyOption_SetFromInt() set int32_t list failed   " );
   }
 
-  if(!error && erg[0] == 58293 && erg[1] == 58293 && erg[2] == 58293 &&
+  if(!error && erg[0] == 58293 && erg[1] == 293 && erg[2] == 58293 &&
                erg[3] == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_GetValueInt() good                     " );
