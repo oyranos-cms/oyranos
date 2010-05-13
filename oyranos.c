@@ -414,6 +414,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
     const oyOption_t_ * t = oyOptionGet_((oyWIDGET_e)type);
     if(t && t->default_string)
     {
+      name = 0;
       oyAllocHelper_m_( name, char, oyStrlen_( t->default_string ) + 1,
                         allocate_func, return NULL );
       oySprintf_( name, "%s", t->default_string );
