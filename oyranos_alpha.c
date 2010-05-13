@@ -7744,7 +7744,7 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
  
   if(error <= 0)
   {
-    if(s->value && flags)
+    if(s->value && 0 /*flags & OY_CLEAR*/)
     {
       oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
@@ -7882,7 +7882,7 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
  
   if(error <= 0)
   {
-    if(s->value && flags)
+    if(s->value && 0 /*flags & OY_CLEAR*/)
     {
       oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
@@ -10128,7 +10128,7 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
 
       if(error <= 0)
         /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
-        error = oyOption_SetFromText( o, value, flags );
+        error = oyOption_SetFromText( o, value, flags & 1 );
 
       oyOptions_MoveIn( (*obj), &o, -1 );
 
@@ -10239,13 +10239,12 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
       error = !o;
 
       if(error <= 0)
-        /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
-        error = oyOption_SetFromInt( o, value, pos, flags & 1 );
+        error = oyOption_SetFromInt( o, value, pos, 0 );
 
       oyOptions_MoveIn( (*obj), &o, -1 );
 
     } else
-      oyOption_SetFromInt( o, value, pos, flags & 1 );
+      oyOption_SetFromInt( o, value, pos, 0 );
 
     oyOption_Release( &o );
   }
@@ -10354,13 +10353,12 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
       error = !o;
 
       if(error <= 0)
-        /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
-        error = oyOption_SetFromDouble( o, value, pos, flags & 1 );
+        error = oyOption_SetFromDouble( o, value, pos, 0 );
 
       oyOptions_MoveIn( (*obj), &o, -1 );
 
     } else
-      oyOption_SetFromDouble( o, value, pos, flags & 1 );
+      oyOption_SetFromDouble( o, value, pos, 0 );
 
     oyOption_Release( &o );
   }
