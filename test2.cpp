@@ -1621,7 +1621,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   oyConfig_s * config = 0;
   oyOptions_s * options_list = 0;
   oyOption_s * o = 0;
-
+  oyProfile_s * p = 0;
 
   /* send a empty query to one module to obtain instructions in a message */
   error = oyConfigs_FromDomain( texts[0], 0, &configs, 0 );
@@ -1662,6 +1662,20 @@ oyTESTRESULT_e testCMMDevicesListing ()
           dev_name_count = 0;
 
       config = oyConfigs_Get( configs, j );
+
+      fprintf(stdout, "--------------------------------------------------------------------------------\n\"%s\":\n", oyConfig_FindString( config, "device_name", 0 ) );
+      {
+        oyOptions_s * options = 0;
+        const char * t = 0;
+        oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
+                         "yes", OY_CREATE_NEW );
+        error = oyDeviceGetProfile( config, options, &p );
+        oyOptions_Release( &options );
+        t = oyProfile_GetText( p, oyNAME_DESCRIPTION);
+        printf( "oyDeviceGetProfile(): \"%s\"\n", t ? t : "----" );
+        oyProfile_Release( &p );
+      }
 
       error = oyConfigs_FromDB( config->registration, &heap, 0 );
 
