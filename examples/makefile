@@ -113,7 +113,7 @@ $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 
 $(TARGET8):	$(TARGET8_OBJECTS) xcmsevents/liboyranosedid.a
 	echo "	LINK:	$(TARGET8) $(TARGET8_SOURCES) ..."
-	g++ -Wall -g -o $(TARGET8) $(TARGET8_OBJECTS) $(TARGET8_LDFLAGS)
+	-$(CXX) -Wall -g -o $(TARGET8) $(TARGET8_OBJECTS) $(TARGET8_LDFLAGS)
 
 ../oyranos_logo.ppm:	$(SRCDIR)../oyranos_logo.png
 	-cat $(SRCDIR)../oyranos_logo.png | pngtopnm > $@
@@ -135,19 +135,19 @@ install:	$(TARGET3)
 
 xcmsevents/qrc_qcmsevents.cpp:
 	echo "	RCC:	$@ ..."
-	rcc $(SRCDIR)$(TARGET8).qrc -o $@
+	-rcc $(SRCDIR)$(TARGET8).qrc -o $@
 
 xcmsevents/liboyranosedid.a:	../oyranos_version.h
 	echo "	AR:	$@ ..."
-	ar cru $@ ../modules/devices/oyranos_edid_parse.o ../modules/devices/oyranos_monitor.o
+	-ar cru $@ ../modules/devices/oyranos_edid_parse.o ../modules/devices/oyranos_monitor.o
 
 xcmsevents/moc_qcmsevents.cpp:	$(SRCDIR)$(TARGET8).h
 	echo "	MOC:	$@ ..."
-	moc -I. `pkg-config --cflags-only-I QtGui` $(SRCDIR)$(TARGET8).h -o $@
+	-moc -I. `pkg-config --cflags-only-I QtGui` $(SRCDIR)$(TARGET8).h -o $@
 
 $(TARGET8).o:	$(SRCDIR)$(TARGET8).cpp
 	echo "	C++:	$@ ..."
-	$(CXX) -I. $(CXXFLAGS) $(QT_CFLAGS) $(INCL) -c -o $@ $<
+	-$(CXX) -I. $(CXXFLAGS) $(QT_CFLAGS) $(INCL) -c -o $@ $<
 
 # Build commands and filename extensions...
 .SUFFIXES:	.c .cxx .cpp .h .o
@@ -155,14 +155,14 @@ $(TARGET8).o:	$(SRCDIR)$(TARGET8).cpp
 
 .c.o:	$(HEADERS)
 	echo "	CC:	$< ..."
-	$(CC) -I. $(CFLAGS) $(INCL) -c -o $@ $<
+	-$(CC) -I. $(CFLAGS) $(INCL) -c -o $@ $<
 
 .cxx.o:	$(HEADERS)
 	echo "	C++:	$< ..."
-	$(CXX) -I. $(CXXFLAGS) $(QT_CFLAGS) $(INCL) -c -o $@ $<
+	-$(CXX) -I. $(CXXFLAGS) $(QT_CFLAGS) $(INCL) -c -o $@ $<
 
 .cpp.o:	$(HEADERS)
 	echo "	C++:	$< ..."
-	$(CXX) -I. $(CXXFLAGS) $(INCL) -c -o $@ $<
+	-$(CXX) -I. $(CXXFLAGS) $(INCL) -c -o $@ $<
 
 
