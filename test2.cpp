@@ -1589,7 +1589,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
 
   fprintf(stdout, "\n" );
 
-  int i, j, k, l, j_n, k_n;
+  int i, j, k, j_n, k_n;
   uint32_t count = 0,
          * rank_list = 0;
   int error = 0;
@@ -1600,14 +1600,16 @@ oyTESTRESULT_e testCMMDevicesListing ()
   setlocale(LC_ALL,"");
 #endif
 
-  texts = oyCMMsGetLibNames_( &count, 0 );
+  /* get all configuration filters */
+  oyConfigDomainList( "//"OY_TYPE_STD"/config.device.icc_profile",
+                      &texts, &count, &rank_list ,0 );
 
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyCMMsGetLibNames_ Found CMM's %d     ", (int)count );
+    "oyConfigDomainList Found CMM's %d     ", (int)count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyCMMsGetLibNames_ Found CMM's %d     ", (int)count );
+    "oyConfigDomainList Found CMM's %d     ", (int)count );
   }
   for( i = 0; i < (int)count; ++i)
   {
@@ -1616,26 +1618,10 @@ oyTESTRESULT_e testCMMDevicesListing ()
   fprintf(stdout, "\n" );
 
   oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0,
-             * device = 0;
-  oyOptions_s * options_list = 0,
-              * options = 0;
+  oyConfig_s * config = 0;
+  oyOptions_s * options_list = 0;
   oyOption_s * o = 0;
-  int devices_n = 0;
 
-  error = oyConfigDomainList( "//" OY_TYPE_STD, &texts, &count, &rank_list, 0 );
-  if( count )
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfigDomainList \"%s\": %d         ", "//" OY_TYPE_STD "", (int)count );
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfigDomainList \"%s\": %d         ", "//" OY_TYPE_STD "", (int)count );
-  }
-  for( i = 0; i < (int)count; ++i)
-  {
-    fprintf( stdout, "%d: %s\n", i, texts[i] );
-  }
-  fprintf( stdout, "\n");
 
   /* send a empty query to one module to obtain instructions in a message */
   error = oyConfigs_FromDomain( texts[0], 0, &configs, 0 );
@@ -1761,6 +1747,48 @@ oyTESTRESULT_e testCMMDevicesListing ()
   }
   fprintf( stdout, "\n");
   oyOptions_Release( &options_list );
+
+  fprintf( stdout, "\n");
+
+  return result;
+}
+
+oyTESTRESULT_e testCMMDevicesDetails ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  int i, k, l, k_n;
+  uint32_t count = 0,
+         * rank_list = 0;
+  int error = 0;
+  char ** texts = 0,
+        * val = 0;
+
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
+
+  /* get all configuration filters */
+  oyConfigDomainList( "//"OY_TYPE_STD"/config.device.icc_profile",
+                      &texts, &count, &rank_list ,0 );
+
+  if( count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConfigDomainList Found CMM's %d     ", (int)count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConfigDomainList Found CMM's %d     ", (int)count );
+  }
+
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0,
+             * device = 0;
+  oyOptions_s * options = 0;
+  oyOption_s * o = 0;
+  int devices_n = 0;
+
 
   fprintf( stdout, "oyConfigs_FromDomain() \"properties\" call:\n" );
   for( i = 0; i < (int)count; ++i)
@@ -3250,6 +3278,7 @@ int main(int argc, char** argv)
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
   TEST_RUN( testPolicy, "Policy handling" );
   TEST_RUN( testCMMDevicesListing, "CMM devices listing" );
+  TEST_RUN( testCMMDevicesDetails, "CMM devices details" );
   TEST_RUN( testCMMMonitorListing, "CMM monitor listing" );
   TEST_RUN( testCMMDBListing, "CMM DB listing" );
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
