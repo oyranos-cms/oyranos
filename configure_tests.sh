@@ -379,7 +379,7 @@ if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
 fi
 
 if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
-  name="raw-lite"
+  name="raw"
   libname=$name
   minversion=0.7
   url="http://www.libraw.org"
@@ -414,7 +414,7 @@ if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
     if [ "$version" != "" ]; then
       echo_="$name $version           detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     else
-      echo_="$name                detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="lib$name                  detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
   else
     if [ $TESTER -eq 1 ]; then
