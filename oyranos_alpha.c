@@ -14170,7 +14170,13 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
     if((flags == 0 || flags == 1 || flags == 2) &&
        (!oyConfig_FindString(s,"manufacturer",0) ||
         !oyConfig_FindString(s,"model",0)))
-      oyDeviceBackendCall( s, 0 );
+    {
+      oyOptions_s * options = 0;
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "properties", OY_CREATE_NEW );
+      oyDeviceBackendCall( s, options );
+      oyOptions_Release( &options );
+    }
 
     if((flags == 1 || flags == 2) &&
        (!oyConfig_FindString(s,"manufacturer",0) ||
