@@ -4405,6 +4405,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
 
             if(!rank_list_ && !apis)
             {
+              *rank_list = 0;
               oyAllocHelper_m_( *rank_list, uint32_t, rank_list_n+1, 0,
                                 goto clean );
               rank_list_ = *rank_list;
