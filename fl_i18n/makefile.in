@@ -193,7 +193,7 @@ $(LINGUAS_SRC):	$(POT_FILE)
               mkdir $${ling}; \
             fi; \
             if [ ! -d ./$${ling}/LC_MESSAGES ]; then \
-              mkdir -v $${ling}/LC_MESSAGES; \
+              mkdir $${ling}/LC_MESSAGES; \
             fi; \
             test -L $${ling}/LC_MESSAGES/$(TARGET).mo \
               && $(RM) $${ling}/LC_MESSAGES/$(TARGET).mo \
