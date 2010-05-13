@@ -711,7 +711,7 @@ else
         --copyright-holder='Kai-Uwe Behrmann' \
         --msgid-bugs-address='ku.b@gmx.de' \
         --from-code=utf-8" >> $CONF
-  oyranos_add="-L\$libdir \$ltdl \$xml2"
+  oyranos_add="-L\$libdir \$ltdl \$xml2 \$iconv \$intl"
   if [ $OSUNAME = "Linux" ]; then
     COPY="cp -vdpa"
     MOVE="mv -v"
