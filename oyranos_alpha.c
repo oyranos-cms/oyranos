@@ -14054,7 +14054,8 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 1. obtain detailed and expensive device informations */
-    if(oyOptions_Count( device->backend_core ) < 2)
+    if( !oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0) )
     { 
       /* 1.1 add "properties" call to module arguments */
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
