@@ -395,13 +395,12 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
               STRING_ADD( text, tmp );
 
               oyProfile_Release( &p );
-          }
 
-          if(error <= 0)
-          error = oyOptions_SetFromText( &device->data,
+            error = oyOptions_SetFromText( &device->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
-          oyDeAllocateFunc_( text );
+            oyDeAllocateFunc_( text );
+          }
         }
 
         if(error <= 0 && !device->rank_map)
