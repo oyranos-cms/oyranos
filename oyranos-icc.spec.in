@@ -51,7 +51,7 @@ Summary:    Oyranos default PCS profiles
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
-Version:    0.5
+Version:    0.6
 %description  icc-lcmsLAB
 Special LCMS profiles.
 
@@ -177,6 +177,9 @@ characterisation data for GRACoL, SWOP and SNAP.
 %doc default_profiles/printing/LICENSE-ZLIB
 
 %changelog
+* Sun May 16 2010 - Kai-Uwe Behrmann <ku.b at gmx.de>
+- bump version for PCS profiles because of their change (size fix, git 404f5755)
+
 * Wed Oct 22 2008 - Kai-Uwe Behrmann <ku.b at gmx.de>
 - update to new profiles
 - add characterisation data
