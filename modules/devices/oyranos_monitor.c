@@ -54,8 +54,6 @@ char * printCFDictionary( CFDictionaryRef dict );
 #include "oyranos_sentinel.h"
 #include "oyranos_edid_parse.h"
 
-#define DEBUG 1
-
 /* ---  Helpers  --- */
 
 /* --- internal API definition --- */
