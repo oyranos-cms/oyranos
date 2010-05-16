@@ -227,6 +227,7 @@ EXAMPLE_FILES = \
 	$(EXAMPLE_SOURCES) \
 	examples/README \
 	examples/makefile \
+	examples/colour_desktop/colour_desktop.xml \
 	examples/colour_desktop/plugin-colour_desktop.svg \
 	examples/xcmsevents/plugin-colour_desktop_gray.svg \
 	examples/xcmsevents/qcmsevents.qrc
