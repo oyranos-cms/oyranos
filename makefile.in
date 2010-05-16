@@ -217,12 +217,19 @@ EXAMPLE_SOURCES = \
 	examples/image2pdf/image2pdf.c \
 	examples/image_display/image_display.cpp \
 	examples/xcmsevents/xcmsevents.c \
+	examples/xcmsevents/xcmsevents_common.c \
+	examples/xcmsevents/xcmsevents_common.h \
+	examples/xcmsevents/qcmsevents.cpp \
+	examples/xcmsevents/qcmsevents.h \
 	examples/oymd5icc/oymd5icc.c
 
 EXAMPLE_FILES = \
 	$(EXAMPLE_SOURCES) \
 	examples/README \
-	examples/makefile
+	examples/makefile \
+	examples/colour_desktop/plugin-colour_desktop.svg \
+	examples/xcmsevents/plugin-colour_desktop_gray.svg \
+	examples/xcmsevents/qcmsevents.qrc
 
 MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
 MAN3 = oyranos.3 oyranos-config.3
