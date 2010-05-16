@@ -2,7 +2,7 @@
 #CC = gcc
 #RM = rm -v
 
-.SILENT:
+#.SILENT:
 
 TARGET1 = image_display/image_display
 TARGET2 = xcmsevents/xcmsevents
