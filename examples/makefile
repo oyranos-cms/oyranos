@@ -143,7 +143,7 @@ xcmsevents/liboyranosedid.a:	../oyranos_version.h
 
 xcmsevents/moc_qcmsevents.cpp:	$(SRCDIR)$(TARGET8).h
 	echo "	MOC:	$@ ..."
-	-moc -I. `pkg-config --cflags-only-I QtGui` $(SRCDIR)$(TARGET8).h -o $@
+	-moc -p. `pkg-config --cflags-only-I QtGui` $(SRCDIR)$(TARGET8).h -o $@
 
 $(TARGET8).o:	$(SRCDIR)$(TARGET8).cpp
 	echo "	C++:	$@ ..."
