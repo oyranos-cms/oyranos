@@ -1578,7 +1578,7 @@ static CompBool pluginInitCore(CompPlugin *plugin, CompObject *object, void *pri
  *  - uniquely identify the colour server
  *  - tell the name of the colour server
  *  - tell the colour server is alive
- *  All sections are separated by underline for easy parsing.
+ *  All sections are separated by one space char ' ' for easy parsing.
  *  The first section contains the pid_t of the process which has set the atom.
  *  The second section contains time since epoch GMT as returned by time(NULL).
  *  The thired section contains the bar '|' separated and surrounded
@@ -1588,7 +1588,7 @@ static CompBool pluginInitCore(CompPlugin *plugin, CompObject *object, void *pri
  *    - NCM  _NET_COLOR_MANAGEMENT
  *    - NCR  _NET_COLOR_REGIONS
  *    - _NET_COLOR_DESKTOP is omitted
- *    - V0.1 indicates version compliance to the net-color spec
+ *    - V0.3 indicates version compliance to the _ICC_Profile in X spec
  *  The fourth section contains the server name identifier.
  *
  * @param[in]      request             - 0  update
