@@ -1638,13 +1638,20 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     /*message(oyMSG_WARN,(oyStruct_s*)ticket, "%s: %d Start lines: %d",
             __FILE__,__LINE__, array_out->height);*/
     if(!error)
+    {
+      if(array_out->height > 20)
+      {
 #pragma omp parallel for
-      for( k = 0; k < array_out->height; ++k)
-        cmsDoTransform( ltw->lcms, array_in->array2d[k],
-                                   array_out->array2d[k], n );
+        for( k = 0; k < array_out->height; ++k)
+          cmsDoTransform( ltw->lcms, array_in->array2d[k],
+                                     array_out->array2d[k], n );
+      } else
+        for( k = 0; k < array_out->height; ++k)
+          cmsDoTransform( ltw->lcms, array_in->array2d[k],
+                                     array_out->array2d[k], n );
     /*message(oyMSG_WARN,(oyStruct_s*)ticket, "%s: %d End width: %d",
             __FILE__,__LINE__, n);*/
-
+    }
 
   } else
   {
