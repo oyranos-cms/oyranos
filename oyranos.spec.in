@@ -28,7 +28,7 @@ BuildRequires:  Mesa Mesa-devel gcc-c++ gettext graphviz pkgconfig    libpng-dev
 BuildRequires:  Mesa libxorg-x11-devel libxpm4-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel cups-devel
 %endif
 %if 0%{?fedora_version} > 0
-BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  qt3-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel cups-devel
+BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel cups-devel
 %endif
 %if 0%{?debian_version} > 0
 BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel cups-devel
