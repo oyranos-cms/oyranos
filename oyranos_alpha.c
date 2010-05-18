@@ -7685,9 +7685,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
           /* get explicite name */
           if(oy_struct->oy_)
             ct = oyObject_GetName( oy_struct->oy_, oyNAME_NICK );
-          if(ct)
-            STRING_ADD( text, ct );
-          else
+          if(!ct)
           /* fall back to oyCMMapi9_s object type lookup */
             ct = oyStruct_GetText( oy_struct, oyNAME_NICK, 0 );
           if(ct)
