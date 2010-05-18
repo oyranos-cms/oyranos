@@ -14372,7 +14372,7 @@ oyProfile_s ** oy_profile_s_std_cache_ = 0;
 /** @brief   create from default colour space settings
  *  @memberof oyProfile_s
  *
- *  @param[in]    type           default colour space or zero to detect display?
+ *  @param[in]    type           default colour space
  *  @param[in]    object         the optional base
  *
  *  @since Oyranos: version 0.1.8
@@ -14426,7 +14426,7 @@ oyStructList_s * oy_profile_s_file_cache_ = 0;
  *  @brief   create from file
  *  @memberof oyProfile_s
  *
- *  @param[in]    name           profile file name or zero to detect display?
+ *  @param[in]    name           profile file name
  *  @param[in]    flags          for future extension
  *  @param[in]    object         the optional base
  *
@@ -14434,8 +14434,9 @@ oyStructList_s * oy_profile_s_file_cache_ = 0;
  *  reading and writing. The cache flags are useful for one time profiles or
  *  scanning large numbers of profiles.
  *
- *  @since Oyranos: version 0.1.9
- *  @date  november 2007 (API 0.1.9)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/11/0 (Oyranos: 0.1.9)
+ *  @date    2010/05/18
  */
 oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
                                        uint32_t            flags,
@@ -14535,7 +14536,11 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
 /** @brief   create from file
  *  @memberof oyProfile_s
  *
- *  @param[in]    name           profile file name or zero to detect display?
+ *  Supported are profiles with absolute path names, profiles in OpenICC 
+ *  profile paths and profiles relative to the current working path. 
+ *  Search will occure in this order.
+ *
+ *  @param[in]    name           profile file name
  *  @param[in]    flags          for future extension
  *  @param[in]    object         the optional base
  *
@@ -14543,8 +14548,9 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
  *  reading and writing. The cache flags are useful for one time profiles or
  *  scanning large numbers of profiles.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/11/0 (Oyranos: 0.1.9)
+ *  @date    2010/05/18
  */
 OYAPI oyProfile_s * OYEXPORT
 oyProfile_FromFile            ( const char      * name,

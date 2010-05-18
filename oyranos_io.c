@@ -635,6 +635,7 @@ oyFindProfile_ (const char* fileName)
 {
   char  *fullFileName = 0;
   int len = 0;
+  char* path_name = 0;
 
   DBG_PROG_START
 
@@ -642,21 +643,30 @@ oyFindProfile_ (const char* fileName)
     return fullFileName;
 
   /*DBG_NUM_S((fileName)) */
-  if (fileName && !strchr(fileName, OY_SLASH_C))
+  if (fileName && fileName[0] != OY_SLASH_C)
   {
-    char* path_name = oyGetPathFromProfileName_(fileName, oyAllocateFunc_);
+    path_name = oyGetPathFromProfileName_(fileName, oyAllocateFunc_);
 
     DBG_PROG
-    oyAllocString_m_( fullFileName, MAX_PATH,
-                      oyAllocateFunc_, return 0 );
     if(path_name)
     {
-      oySprintf_(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
-      oyFree_m_(path_name)
+      oyAllocString_m_( fullFileName, MAX_PATH,
+                        oyAllocateFunc_, return 0 );
+      if(strrchr(fileName,OY_SLASH_C) == NULL)
+        oySprintf_(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
+      else
+        oySprintf_( fullFileName, "%s%s%s", path_name, OY_SLASH,
+                    strrchr( fileName, OY_SLASH_C ) + 1 );
     } else
-      oySprintf_(fullFileName, "%s", fileName);
+    {
+      DBG_PROG_ENDE
+      return NULL;
+    }
     DBG_PROG_S( fullFileName )
-  } else
+  }
+
+
+  if(!path_name)
   {
     if (oyIsFileFull_(fileName)) {
       oyAllocString_m_( fullFileName, MAX_PATH,
@@ -666,6 +676,9 @@ oyFindProfile_ (const char* fileName)
     } else
       fullFileName = oyMakeFullFileDirName_ (fileName);
   }
+
+  if(path_name)
+    oyFree_m_(path_name)
 
   DBG_PROG_ENDE
   return fullFileName;

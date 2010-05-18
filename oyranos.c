@@ -194,10 +194,24 @@ oyGetPathFromProfileNameCb_          ( oyFileList_s      * data,
 {
   int success = 0;
   oyFileList_s * l = data;
-  char* search = l->names[0];
+  char * search = l->names[0];
+  const char * name = 0;
+  int l1 = strlen(full_name),
+      l2 = strlen(search),
+      len = 0;
+
+  if(l1 > l2)
+  {
+    len = l1 - l2;
+    if(full_name[len-1] == OY_SLASH_C)
+      name = &full_name[len];
+    else
+      name = filename;
+  }
 
   DBG_MEM_S( search )
-  if(strcmp(filename,search)==0) {
+  if(name && strcmp( search, name ) == 0)
+  {
     size_t size = 128;
     char* header = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
     success = !oyCheckProfileMem_ (header, size, 0);
@@ -231,8 +245,8 @@ oyGetPathFromProfileName_       (const char*   fileName,
   DBG_PROG_START
 
   /*DBG_NUM_S((fileName)) */
-  /* test for pure file without dir; search in configured paths */
-  if (fileName && !strchr(fileName, OY_SLASH_C))
+  /* search in configured paths */
+  if (fileName && fileName[0] != OY_SLASH_C)
   {
     char search[MAX_PATH];
     int count = 0;
@@ -277,16 +291,16 @@ oyGetPathFromProfileName_       (const char*   fileName,
         return pathName;
       } else
 
-    if (!success) {
+    if (!success && !strchr(fileName, OY_SLASH_C)) {
       if(oy_warn_)
         WARNc_PROFILE_S(_("profile not found in colour path:"), fileName);
       DBG_PROG_ENDE
       return 0;
     }
+  }
 
-
-  } else
-  {/* else use fileName as an full qualified name, check name and test profile*/
+  if(fileName && !success)
+  {/* use fileName as an full qualified name, check name and test profile*/
     DBG_PROG_S("dir/filename found")
     fullFileName = oyMakeFullFileDirName_ (fileName);
 
