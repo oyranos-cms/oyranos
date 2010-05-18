@@ -64,7 +64,7 @@
 #define _help_unset             catCMMfunc( CUPS, _help_unset )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
-#define _DBG_ARGS_ __FILE__,__LINE__,__func__
+#define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
 
 int CUPSgetProfiles                  ( const char        * device_name,
                                        ppd_file_t        * ppd_file,
