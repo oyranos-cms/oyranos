@@ -517,7 +517,7 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAM
 	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
 	-I$(SRCDIR)/libXNVCtrl \
 	-o $(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
-	$(LDLIBS) $(X11_LIBS) \
+	$(LDLIBS) $(X11_LIBS) $(m) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) \
 	$(LINK_LIB_PATH)
 
@@ -574,7 +574,7 @@ test2:	test2.o $(LIBSONAMEFULL)
 	test2.o -L./ `./oyranos-config --ldflags` $(LCMS_LIBS)
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
-	test2.o -L./ `./oyranos-config --ldstaticflags` $(LCMS_LIBS)
+	test2.o -L./ `./oyranos-config --ldstaticflags` $(LCMS_LIBS) $(dl)
 
 $(SRCDIR)/test2.c.c:
 	test -f $(SRCDIR)/test2.c.c || ln -s $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
@@ -592,10 +592,10 @@ check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples oforms
 	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ $(MAKE))
+	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir)" LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ LIBS="-L$(libdir)" $(MAKE))
 
 oforms:	$(LIB_FORMS_FLTK_NAME)
-	cd oforms && (PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ $(MAKE) -f oyranos_xforms.makefile)
+	cd oforms && (PATH="$(PATH):$(bindir)" LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ $(MAKE) -f oyranos_xforms.makefile)
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
