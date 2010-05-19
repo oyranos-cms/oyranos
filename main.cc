@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
       sourceFile.write( t->render( &c ).toUtf8() );
       clog << "Creating " << sourceFilePath.toUtf8().data() << endl;
    }
+   delete engine;
 
    return 0;
 }
