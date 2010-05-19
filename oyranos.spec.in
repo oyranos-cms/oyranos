@@ -37,16 +37,16 @@ BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel lib
 
 
 %package      devel
-Summary:   Headers, configuration and static libs + documentation
+Summary:   Headers, Configuration and static Libs + Documentation
 Group:     Development/Libraries/Other
 Requires:  %{name}
 
 %package      monitor
-Summary:    Oyranos monitor dependent libraries
+Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
 
 %package      monitor-nvidia
-Summary:    nvidia card support
+Summary:    Nvidia card support
 Group:      System/X11/Utilities
 License: GPL
 
@@ -56,7 +56,7 @@ Group:      Development/Libraries/Other
 Requires:   cups
 
 %package      ui-fltk
-Summary:    example configuration panel
+Summary:    Example Configuration Panel
 Group:      System/GUI/Other
 Requires:   fltk
 
