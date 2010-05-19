@@ -38,31 +38,31 @@ BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel lib
 
 %package      devel
 Summary:   Headers, configuration and static libs + documentation
-Group:     Development/System
+Group:     Development/Libraries/Other
 Requires:  %{name}
 
 %package      monitor
 Summary:    Oyranos monitor dependent libraries
-Group:      Development/Libraries
+Group:      Development/Libraries/Other
 
 %package      monitor-nvidia
 Summary:    nvidia card support
-Group:      Development/Libraries
+Group:      System/X11/Utilities
 License: GPL
 
 %package      cups
 Summary:    CUPS device support
-Group:      Development/Libraries
+Group:      Development/Libraries/Other
 Requires:   cups
 
 %package      ui-fltk
 Summary:    example configuration panel
-Group:      Productivity/Graphics/Other
+Group:      System/GUI/Other
 Requires:   fltk
 
 %package      forms-fltk-devel
 Summary:    XFORMS subset rendering
-Group:      Development/Libraries
+Group:      Development/Libraries/Other
 Requires:   fltk-devel
 
 %description
