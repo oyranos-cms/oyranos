@@ -48,8 +48,7 @@ void usage(int argc, char ** argv)
   printf("      -v  %s\n",       _("verbose"));
   printf("      -i \"xhtml_file\"  %s\n",_("read XFORMS"));
   printf("\n");
-  printf(_("For more informations read the man page:"));
-  printf("\n");
+  puts(_("For more informations read the man page:"));
   printf("      man oyranos-xforms_not_yet\n");
 }
 
