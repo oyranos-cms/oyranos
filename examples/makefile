@@ -1,6 +1,7 @@
 #CXX = c++
 #CC = gcc
 #RM = rm -v
+#MOC = moc
 
 #.SILENT:
 
@@ -17,7 +18,7 @@ TARGETS = $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) \
 OY_CFLAGS := $(shell (oyranos-config --cflags))
 OY_LDFLAGS := $(shell (oyranos-config --ldflags))
 FLTK_CFLAGS := $(shell (fltk-config --cflags))
-FLTK_LDFLAGS := $(shell (fltk-config --ldflags))
+FLTK_LDFLAGS := $(shell (fltk-config --ldflags)) -pthread # FLTK on Fedora13 misses libpthread.so
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
 TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
@@ -30,6 +31,13 @@ CXXFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG)
 CFLAGS = -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG) $(X11)
 
 UNAME := $(shell (uname -s))
+
+MOC_QT4:= $(shell (which moc-qt4 2>&1 | grep "no moc" | wc -l))
+ifeq ($(MOC_QT4),0)
+MOC = moc-qt4
+else
+MOC = moc
+endif
 
 ifeq ($(strip $(UNAME)),Linux)
 # Qt needs somehow -O2 (Why???)
@@ -81,7 +89,7 @@ $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $< $(TARGET2_FLAGS) $(LDFLAGS) $(OY_LDFLAGS) \
 	$(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
-	-lXcolor -lXmu -lXinerama -lXrandr -lXxf86vm \
+	-lXcolor -lXmu -lXinerama -lXrandr -lXxf86vm -lm \
 	-DTARGET=\"xcmsevents\" -o $@
 
 $(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
@@ -143,7 +151,7 @@ xcmsevents/liboyranosedid.a:	../oyranos_version.h
 
 xcmsevents/moc_qcmsevents.cpp:	$(SRCDIR)$(TARGET8).h
 	echo "	MOC:	$@ ..."
-	-moc $(SRCDIR)$(TARGET8).h -o $@
+	-$(MOC) $(SRCDIR)$(TARGET8).h -o $@
 
 $(TARGET8).o:	$(SRCDIR)$(TARGET8).cpp
 	echo "	C++:	$@ ..."
