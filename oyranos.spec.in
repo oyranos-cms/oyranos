@@ -10,27 +10,27 @@ Vendor: Kai-Uwe Behrmann
 #%endif 
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
-Requires:  elektra
 
+Requires:       elektra = 0.7.0 oyranos-icc-printing oyranos-icc-Cineon oyranos-icc-ECI-RGB oyranos-icc-lcmsLAB oyranos-icc-RGB oyranos-target-fogra oyranos-target-npes
 
 %if 0%{?suse_version} > 0
-BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel elektra-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcolor netpbm oyranos-devel libXcolor-devel
+BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel elektra-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcolor netpbm
 %endif
-%if 0 < 0%{?suse_version} && 0%{?suse_version} > 910
+%if 0%{?suse_version} > 910
 #BuildRequires: gcc-c++ gettext doxygen fltk-threaded fltk-threaded-devel xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel  pkgconfig libpng-devel libjpeg-devel
-BuildRequires:  acl autoconf automake bash bind-utils binutils bison bzip2 coreutils cpio cvs cyrus-sasl diffutils e2fsprogs expat file filesystem findutils flex fontconfig fontconfig-devel freetype2 freetype2-devel gawk gcc gcc-c++ gdbm gdbm-devel gettext gettext-devel glibc glibc-devel gpm grep groff gzip info less libacl libattr libjpeg libjpeg-devel libpng libpng-devel libtool m4 make man mktemp module-init-tools ncurses ncurses-devel net-tools openssl pam patch perl pkgconfig popt procinfo procps psmisc rcs readline rpm sed strace tar texinfo timezone unzip util-linux zlib zlib-devel
+BuildRequires:  acl autoconf automake bash bind-utils binutils bison bzip2 coreutils cpio cvs cyrus-sasl diffutils e2fsprogs expat file filesystem findutils flex fontconfig fontconfig-devel freetype2 freetype2-devel gawk gcc gcc-c++ gdbm gdbm-devel gettext gettext-devel glibc glibc-devel gpm grep groff gzip info less libacl libattr libjpeg-devel libpng libpng-devel libtool m4 make man mktemp module-init-tools ncurses ncurses-devel net-tools openssl pam patch perl pkgconfig popt procinfo procps psmisc rcs readline rpm sed strace tar texinfo timezone unzip util-linux zlib zlib-devel
 %endif
-%if 0 < 0%{?suse_version} && 0%{?suse_version} > 1010
+%if 0%{?suse_version} > 1010
 BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-fonts-devel xorg-x11-libICE xorg-x11-libICE-devel xorg-x11-libSM xorg-x11 xorg-x11-devel xorg-x11-libSM-devel xorg-x11-libX11 xorg-x11-libX11-devel xorg-x11-libXau xorg-x11-libXau-devel xorg-x11-libXdmcp xorg-x11-libXdmcp-devel xorg-x11-libXext xorg-x11-libXext-devel xorg-x11-libXfixes xorg-x11-libXfixes-devel xorg-x11-libXmu xorg-x11-libXmu-devel xorg-x11-libXp xorg-x11-libXp-devel xorg-x11-libXpm xorg-x11-libXpm-devel xorg-x11-libXprintUtil xorg-x11-libXprintUtil-devel xorg-x11-libXrender xorg-x11-libXrender-devel xorg-x11-libXt xorg-x11-libXt-devel xorg-x11-libXv xorg-x11-libXv-devel xorg-x11-libfontenc xorg-x11-libfontenc-devel xorg-x11-libs xorg-x11-libxkbfile xorg-x11-libxkbfile-devel xorg-x11-proto-devel xorg-x11-util-devel xorg-x11-xtrans-devel
 %endif
 %if 0%{?mandriva_version} > 0
-BuildRequires:  Mesa mesagl-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel elektra-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcolor-devel netpbm libxmu6-devel
+BuildRequires:  Mesa mesagl-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel cairo-devel lcms-devel elektra-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcolor netpbm
 %endif
 %if 0%{?fedora_version} > 0
-BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  libtiff-devel libxml2-devel cairo-devel lcms-devel elektra-devel xdg-utils cups-devel qt-devel compiz-devel libXcolor netpbm-progs oyranos-devel libXcolor-devel libXmu-devel
+BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel elektra-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcolor netpbm
 %endif
 %if 0%{?debian_version} > 0
-BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel liblcms-devel elektra-devel cups-devel
+BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel elektra-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcolor netpbm
 %endif
 
 
