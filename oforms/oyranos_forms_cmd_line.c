@@ -110,8 +110,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
           {
             o3 = oyOptions_Get( opts2, k );
             if(oy_debug && print)
-              printf( "    found option: 0x%x  \"%s\" %s\n",
-                (int)o3, oyOption_GetText(o3, oyNAME_NICK),
+              printf( "    found option: 0x%lx  \"%s\" %s\n",
+                (long)(intptr_t)o3, oyOption_GetText(o3, oyNAME_NICK),
                 oyStruct_TypeToText((oyStruct_s*)o3) );
 
             oyOption_Release( &o3 );
@@ -151,8 +151,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
           ++choices_n;
         }
         else if(oy_debug && print)
-          printf( "  found option: 0x%x  \"%s\" %s\n",
-                (int)o2, oyOption_GetText(o2, oyNAME_NICK),
+          printf( "  found option: 0x%lx  \"%s\" %s\n",
+                (long)(intptr_t)o2, oyOption_GetText(o2, oyNAME_NICK),
                 oyStruct_TypeToText((oyStruct_s*)o2) );
 
         oyOptions_Release( &opts2 );
@@ -160,8 +160,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
       }
     }
     else if(oy_debug && print)
-      printf( "found option: 0x%x  \"%s\" %s\n",
-              (int)o, oyOption_GetText(o, oyNAME_NICK),
+      printf( "found option: 0x%lx  \"%s\" %s\n",
+              (long)(intptr_t)o, oyOption_GetText(o, oyNAME_NICK),
               oyStruct_TypeToText((oyStruct_s*)o) );
 
     oyOptions_Release( &opts );

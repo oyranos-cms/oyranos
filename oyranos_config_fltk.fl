@@ -279,7 +279,7 @@ class OyFl_Box {: {public Fl_Box}
     code {if(t)
   {
     label_orig = (char*)malloc (strlen(t)+1);
-    printf("%s %d\\n",t, strlen(t));
+    printf("%s %d\\n",t, (int)strlen(t));
     sprintf(label_orig, t);
   } else
     label_orig = 0;} {}
@@ -347,7 +347,7 @@ static const char trailingBytesForUTF8[256] = {
 \#ifdef DEBUG
   if(label_orig)
     if(strlen(label_orig))
-      printf("%d %s %d %d/%d %d\\n",__LINE__,Fl_Box::label(), strlen(Fl_Box::label()), wl, ws, last_utf8_len);
+      printf("%d %s %d %d/%d %d\\n",__LINE__,Fl_Box::label(), (int)strlen(Fl_Box::label()), wl, ws, last_utf8_len);
 \#endif
   Fl_Box::draw();} {}
   }
