@@ -320,7 +320,7 @@ oyGetMonitorInfo_                 (const char* display_name,
       len = oyStrlen_(oyMonitor_systemPort_( disp ));
       ++len;
       t = (char*)oyAllocateWrapFunc_( len, allocate_func );
-      sprintf(t, oyMonitor_systemPort_( disp ));
+      strcpy(t, oyMonitor_systemPort_( disp ));
     }
     *system_port = t; t = 0;
   }
@@ -1080,7 +1080,7 @@ oyGetDisplayNumber_        (oyMonitor_s *disp)
     }
 
     ++txt;
-    oySnprintf_( ds, 8, txt );
+    strncpy( ds, txt, 8 );
     if( strrchr( ds, '.' ) )
     {
       char *end = strchr( ds, '.' );
@@ -1111,7 +1111,7 @@ int   oyMonitor_getScreenFromDisplayName_( oyMonitor_s   * disp )
       return -1;
     }
 
-    oySnprintf_( ds, 8, txt );
+    strncpy( ds, txt, 8 );
     if( strrchr( display_name, '.' ) )
     {
       char *nummer_text = strchr( ds, '.' );
@@ -1142,7 +1142,7 @@ oyExtractHostName_           (const char* display_name)
   {
     char *host = getenv ("HOSTNAME");
     if (host) {
-        sprintf( host_name, host );
+        strcpy( host_name, host );
     }
   } else if (strchr(display_name,':') == display_name ||
              !strchr( display_name, ':' ) )
@@ -1150,12 +1150,12 @@ oyExtractHostName_           (const char* display_name)
     char *host = getenv ("HOSTNAME");
     /* good */
     if (host) {
-        sprintf( host_name, host );
+        strcpy( host_name, host );
     }
   } else if ( strchr( display_name, ':' ) )
   {
     char* ptr = 0;
-    sprintf( host_name, display_name );
+    strcpy( host_name, display_name );
     ptr = strchr( host_name, ':' );
     ptr[0] = 0;
   }
@@ -1184,7 +1184,7 @@ oyChangeScreenName_                (const char* display_name,
 
   oyAllocHelper_m_( host_name, char, strlen( display_name ) + 48,0,return NULL);
 
-  sprintf( host_name, display_name );
+  strcpy( host_name, display_name );
 
   /* add screen */
   {

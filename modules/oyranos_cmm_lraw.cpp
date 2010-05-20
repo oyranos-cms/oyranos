@@ -132,7 +132,7 @@ int lrawCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
 
   fprintf( stderr, "%s[%d] ", type_name, id );
 
-  fprintf( stderr, text ); fprintf( stderr, "\n" );
+  fputs( text, stderr );
   free( text );
 
   return 0;

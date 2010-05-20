@@ -117,7 +117,7 @@ fl_set_codeset_    ( const char* lang, const char* codeset_,
       if(pos != 0)
       {
         /* 1 a. select an appropriate charset (needed for non UTF-8 fltk/gtk1)*/
-        sprintf (codeset, codeset_); DBG_PROG_V( locale <<" "<< strrchr(locale,'.'))
+        strcpy (codeset, codeset_); DBG_PROG_V( locale <<" "<< strrchr(locale,'.'))
  
           /* merge charset with locale string */
         if(set_codeset != FL_I18N_SETCODESET_NO)
@@ -166,7 +166,7 @@ fl_set_codeset_    ( const char* lang, const char* codeset_,
             break;
         default: break;
         }
-        if(ptr) snprintf( locale, TEXTLEN, ptr); DBG_PROG_V( locale )
+        if(ptr) strncpy( locale, ptr, TEXTLEN ); DBG_PROG_V( locale )
         }
       }
     }
@@ -282,7 +282,7 @@ fl_initialise_locale( const char *domain, const char *locale_path,
     temp = setlocale (lc, "");
   char *tmp = temp ? icc_strdup_m(temp) : NULL;
   if(tmp) {
-    snprintf(locale,TEXTLEN, tmp);
+    strncpy(locale, tmp, TEXTLEN);
     DBG_PROG_V( locale )
   }
 
@@ -291,7 +291,7 @@ fl_initialise_locale( const char *domain, const char *locale_path,
 
     // .. or take locale info from environment
   if(!strlen(locale) && getenv("LANG"))
-    snprintf(locale,TEXTLEN, getenv("LANG"));
+    strncpy(locale, getenv("LANG"),TEXTLEN);
 # endif
 
   if(set_codeset == FL_I18N_SETCODESET_SELECT &&

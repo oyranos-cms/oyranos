@@ -13,31 +13,27 @@ void selectDefaultProfile_callback( Fl_Widget* w, void* ) {
     Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
     if(c) {
       std::cout << c->value() << c->text() << std::endl;
-      char text[64];
       int error = 0;
       if(strcmp(c->text(),_("[none]")) == 0)
         error = oySetDefaultProfile( (oyPROFILE_e)op->option,0);
       else
         error = oySetDefaultProfile( (oyPROFILE_e)op->option, c->text());
       if(error) {
-        sprintf( text, "%s %s", _("setting"), _("failed!"));
-        fl_alert( text );
+        fl_alert( "%s %s", _("setting"), _("failed!") );
       } else
         updateUI();
 
     } else fl_alert( "no Fl_Choice" );
-  } else fl_alert( _("Select Profile") );
+  } else fl_alert( "%s", _("Select Profile") );
 }
 
 void showDefaultProfile_callback( Fl_Widget* w, void* ) {
   Option *op = dynamic_cast<Option*> (w->parent());
   if(op) {
     {
-      char text[64];
       char *pn = oyGetDefaultProfileName( (oyPROFILE_e)op->option, myAllocFunc);
       if(!pn) {
-        sprintf(text, "%s %s", _("showing"), _("failed!") );
-        fl_alert( text );
+        fl_alert( "%s %s", _("showing"), _("failed!") );
       } else {
         char command[1024];
         oyProfile_s * prof = oyProfile_FromFile( pn, 0,0 );
@@ -49,13 +45,13 @@ void showDefaultProfile_callback( Fl_Widget* w, void* ) {
 #      endif
         int r = system( command );
         if(r >= 0x200) {
-          fl_alert( _("Show Profile failed. iccexamin not found") );
+          fl_alert( "%s", _("Show Profile failed. iccexamin not found") );
           fprintf(stderr, "%s:%d command \"%s\" failed with error: %d.\n",
                   __FILE__,__LINE__, command, r);
         }
       }
     }
-  } else fl_alert( _("Show Profile failed") );
+  } else fl_alert( "%s", _("Show Profile failed") );
 }
 
 void addPathCallback( Fl_Widget* w, void* ) {
@@ -72,11 +68,9 @@ void rmPathCallback( Fl_Widget* w, void* ) {
     Fl_Button *b = dynamic_cast<Fl_Button*> (w);
     if(b && b == pp->button_add) {
       std::cout << b->value() << std::endl;
-      char text[512];
       int error = 0;//oyPathAdd (pp->box->label());
       if(error) {
-        sprintf(text, _("error setting path: %s"), pp->box->label());
-        fl_alert( text );
+        fl_alert( _("error setting path: %s"), pp->box->label() );
       }
     } else
     if(b && b == pp->button_remove) {
@@ -89,7 +83,7 @@ void rmPathCallback( Fl_Widget* w, void* ) {
       // Nun ist der Speicherblock fuer diese Funktion bereits freigegeben
       // und wird aber weiter benutzt
     } else fl_alert( "no Fl_Button" );
-  } else fl_alert( _("Path") );
+  } else fl_alert( "%s", _("Path") );
 }
 
 void selectBehaviourCallback( Fl_Widget* w, void* x ) {
@@ -98,7 +92,6 @@ void selectBehaviourCallback( Fl_Widget* w, void* x ) {
     Fl_Choice *c = dynamic_cast<Fl_Choice*> (w);
     if(c) {
       std::cout << (intptr_t)x << c->user_data() << c->value() << c->text() << std::endl;
-      char text[64];
       int error = 0;
 
       if(op->option == oyWIDGET_POLICY)
@@ -108,14 +101,12 @@ void selectBehaviourCallback( Fl_Widget* w, void* x ) {
         error = oySetBehaviour( (oyBEHAVIOUR_e)op->option, c->value());
 
       if(error) {
-        sprintf(text, "%s %s %s", _("setting"), _("failed!"),
-                c->text());
-        fl_alert( text );
+        fl_alert( "%s %s %s", _("setting"), _("failed!"), c->text() );
       }
 
       updateUI();
     } else fl_alert( "no Fl_Choice" );
-  } else fl_alert( _("Select Behaviour") );
+  } else fl_alert( "%s", _("Select Behaviour") );
 }
 
 void debug_me( ) {
@@ -203,7 +194,7 @@ OyFl_Box::OyFl_Box(int x, int y, int w, int h , const char *t ) : Fl_Box(x,y,w,h
   {
     label_orig = (char*)malloc (strlen(t)+1);
     printf("%s %d\n",t, (int)strlen(t));
-    sprintf(label_orig, t);
+    sprintf(label_orig, "%s", t);
   } else
     label_orig = 0;
 }
@@ -226,7 +217,7 @@ void OyFl_Box::draw() {
     } else {
 
       txt = (char*)malloc (strlen(label_orig)+1);
-      sprintf(txt, label_orig);
+      strcpy(txt, label_orig);
       Fl_Box::label(txt);
       do {
         //txt = (char*)Fl_Box::label();
@@ -281,13 +272,13 @@ const char * OyFl_Box::label() {
 
 void OyFl_Box::label(const char * l) {
   label_orig = new char (strlen(l)+1);
-  sprintf(label_orig, l);
+  strcpy(label_orig, l);
   Fl_Box::label( l );
 }
 
 void OyFl_Box::copy_label(const char* l) {
   label_orig = new char (strlen(l)+1);
-  sprintf(label_orig, l);
+  strcpy(label_orig, l);
   Fl_Box::copy_label(l);
 }
 
@@ -413,8 +404,6 @@ Option::Option( int x, int y, int w, int h, const char *name,
   case oyWIDGETTYPE_BEHAVIOUR:
   case oyWIDGETTYPE_CHOICE:
   {
-    Fl_Pack *pa = NULL;
-
     // name box
     box = new OyFl_Box( x, y,
                       w - SELECT_WIDTH - BUTTON_HEIGHT - 4*H_SPACING, BUTTON_HEIGHT,
@@ -3792,7 +3781,7 @@ int main(int argc, char **argv) {
     char *text = (char*) malloc( len );
     text[0] = 0;
     // whats the path for the executeable ?
-    snprintf (text, len-1, argv[0]);
+    strncpy (text, argv[0], len-1);
     if (strrchr(text, DIR_SEPARATOR_C)) {
       char *tmp = strrchr(text, DIR_SEPARATOR_C);
       *tmp = 0;
