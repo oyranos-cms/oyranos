@@ -38,7 +38,7 @@ rm -rf %{buildroot}
 
 
 %package      icc-RGB
-Summary:    Oyranos default sRGB ICC profile +
+Summary:    Default sRGB ICC profile +
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
@@ -47,7 +47,7 @@ Version:    0.5
 The "WWW standard" sRGB profile and others
 
 %package      icc-lcmsLAB
-Summary:    Oyranos default PCS profiles
+Summary:    Default PCS profiles
 Group:      Applications/Graphics
 Vendor:     http://www.littlecms.com
 URL:        http://www.littlecms.com
@@ -56,7 +56,7 @@ Version:    0.6
 Special LCMS profiles.
 
 %package      icc-ECI-RGB
-Summary:    Oyranos default Editing RGB profile
+Summary:    Default Editing RGB profile
 Group:      Applications/Graphics
 Vendor:     http://www.eci.org
 URL:        http://www.eci.org
@@ -66,7 +66,7 @@ Version:    0.5
 The RGB profile maintaining perceptual equal lightness.
 
 %package      icc-Cineon
-Summary:    Oyranos additional Cineon ICC Profiles
+Summary:    Additional Cineon ICC Profiles
 Group:      Applications/Graphics
 URL:        http://www.behrmann.name
 Version:    0.5
@@ -74,7 +74,7 @@ Version:    0.5
 Cineon ICC Profiles
 
 %package      icc-PhotoGamutRGB
-Summary:    Oyranos additional ICC Profile for Photoediting
+Summary:    Additional ICC Profile for Photoediting
 Group:      Applications/Graphics
 Vendor:     http://www.photogamut.org
 URL:        http://www.photogamut.org
