@@ -7,7 +7,15 @@ FIND_PACKAGE(Grantlee REQUIRED)
 
 INCLUDE(${QT_USE_FILE})
 
-INCLUDE_DIRECTORIES(${Grantlee_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(
+  ${Grantlee_INCLUDE_DIR}
+  ${PROJECT_BINARY_DIR}
+)
+
+CONFIGURE_FILE(
+  ${PROJECT_SOURCE_DIR}/grantlee_paths.h.cmake
+  ${PROJECT_BINARY_DIR}/grantlee_paths.h
+)
 
 # ... Application sources etc.
 ADD_EXECUTABLE( oyAPIGenerator "main.cc" )

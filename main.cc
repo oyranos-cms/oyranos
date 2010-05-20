@@ -6,6 +6,7 @@
 #include <QTextStream>
 
 #include <grantlee_core.h>
+#include "grantlee_paths.h"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ Grantlee::Engine* getEngine()
    loader->setTemplateDirs( QStringList() << "templates" );
 
    engine->addTemplateLoader( loader );
-   engine->setPluginPaths( QStringList() << "/usr/local/lib/" );
+   engine->setPluginPaths( QStringList() << GRANTLEE_PLUGIN_PATH );
    return engine;
 }
 
