@@ -117,6 +117,8 @@ characterisation data for GRACoL, SWOP and SNAP.
 
 %files icc-lcmsLAB
 %defattr(-, root, root)
+%dir %{_datadir}/color
+%dir %{_datadir}/color/icc
 %{_datadir}/color/icc/LCMS*.ICM
 %{_datadir}/color/icc/Lab.icc
 %{_datadir}/color/icc/XYZ.icc
@@ -161,6 +163,7 @@ characterisation data for GRACoL, SWOP and SNAP.
 
 %files target-fogra
 %defattr(-, root, root)
+%dir %{_datadir}/color/target
 %{_datadir}/color/target/FOGRA28L.ti3
 %{_datadir}/color/target/FOGRA29L.ti3
 %{_datadir}/color/target/FOGRA30L.ti3
