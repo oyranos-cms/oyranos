@@ -1198,6 +1198,16 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   &oyra_api4_ui_image_input_ppm        /**< oyCMMui_s *ui */
 };
 
+char * oyra_api7_image_input_ppm_properties[] =
+{
+  "file=read",    /* file load|write */
+  "image=pixel",  /* image type, pixel/vector/font */
+  "layers=1",     /* layer count, one for plain images */
+  "icc=0",        /* image type ICC profile support */
+  "ext=ppm,pnm,pbm,pgm,pfm", /* supported extensions */
+  0
+};
+
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
  *
@@ -1214,7 +1224,7 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) & oyra_api7_image_load, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api4_image_load, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
@@ -1235,7 +1245,9 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
   0,   /* plugs_last_add */
   (oyConnector_s**) oyra_imageInputPPM_connectors,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,    /* sockets_last_add */
+
+  oyra_api7_image_input_ppm_properties /* char * properties */
 };
 
 
