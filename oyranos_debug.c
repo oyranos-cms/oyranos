@@ -13,10 +13,32 @@
  *  @since    2005/02/01
  */
 
+#include <stdio.h>
+#include <string.h>
+
 #include "oyranos_debug.h"
 
 int level_PROG = 0;
 clock_t oyranos_clock_ = 0;
 int oy_debug = 0;
+
+void oy_backtrace_()
+{
+#   define TMP_FILE "/tmp/oyranos_gdb_temp.txt"
+    pid_t pid = (int)getpid();
+    FILE * fp = fopen( TMP_FILE, "w" );
+
+    if(fp)
+    {
+      fprintf(fp, "attach %d\n", pid);
+      fprintf(fp, "backtrace\ndetach" );
+      fclose(fp);
+      {
+        fprintf( stderr, "GDB output:\n" );
+        system("gdb -batch -x " TMP_FILE);
+      }
+    } else
+      fprintf( stderr, "could not open "TMP_FILE "\n" );
+}
 
 
