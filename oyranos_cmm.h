@@ -791,6 +791,9 @@ struct oyCMMapi7_s {
   uint32_t         sockets_n;          /**< number of sockets */
   /** additional allowed number for last output connector, e.g. typical 0 */
   uint32_t         sockets_last_add;
+  /** A zero terminated list of strings. The semantics are plugin defined.
+   *  e.g.: {"key1=value1","key2=value2",0} */
+  char **          properties;
 };
 
 /**
