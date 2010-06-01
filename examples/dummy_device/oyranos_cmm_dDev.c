@@ -61,7 +61,7 @@
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
 #define _(x) x
-#define STRING_ADD(a,b) sprintf( &a[strlen(a)], b )
+#define STRING_ADD(a,b) strcpy( &a[strlen(a)], b )
 
 const char * GetText                 ( const char        * select,
                                        oyNAME_e            type );

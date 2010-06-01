@@ -72,8 +72,8 @@
 #define DBG_STRING "\n  %s:%d %s() %.02f "
 #define DBG_ARGS (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__,(double)clock()/CLOCKS_PER_SEC
 #if defined(PLUGIN_DEBUG_)
-#define START_CLOCK(text) printf( DBG_STRING text " - ", DBG_ARGS );
-#define END_CLOCK         printf("%.02f\n", (double)clock()/CLOCKS_PER_SEC );
+#define START_CLOCK(text) fprintf( stderr, DBG_STRING text " - ", DBG_ARGS );
+#define END_CLOCK         fprintf( stderr, "%.02f\n", (double)clock()/CLOCKS_PER_SEC );
 #else
 #define START_CLOCK(text)
 #define END_CLOCK
@@ -452,9 +452,11 @@ static void *fetchProperty(Display *dpy, Window w, Atom prop, Atom type, unsigne
   unsigned long left;
   unsigned char *data;
 
+  XFlush( dpy );
+
   int result = XGetWindowProperty(dpy, w, prop, 0, ~0, delete, type, &actual, &format, n, &left, &data);
 #if defined(PLUGIN_DEBUG_)
-  printf( DBG_STRING "%s delete: %d %s %lu\n", DBG_ARGS,
+  fprintf( stderr, DBG_STRING "%s delete=%d %s %lu\n", DBG_ARGS,
                 XGetAtomName( dpy, prop ), delete,
                 (result == Success) ? "fine" : "err", *n );
 #endif
@@ -627,6 +629,21 @@ static int     hasScreenProfile      ( CompScreen        * s,
   return (int)n;
 }
 
+static void changeProperty           ( Display           * display,
+                                       Atom                target_atom,
+                                       int                 type,
+                                       void              * data,
+                                       unsigned long       size )
+{
+#ifdef DEBUG
+  fprintf( stderr, DBG_STRING"set %s size %d\n", DBG_ARGS,
+          XGetAtomName( display, target_atom ), size );
+#endif
+    XChangeProperty( display, RootWindow( display, 0 ),
+                     target_atom, type, 8, PropModeReplace,
+                     data, size );
+}
+
 static void    setupICCprofileAtoms  ( CompScreen        * s,
                                        int                 screen,
                                        int                 init )
@@ -671,16 +688,16 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
     /* copy the real device atom */
     source = fetchProperty( s->display->display, root, source_atom, XA_CARDINAL,
                             &source_n, False);
-    XChangeProperty( s->display->display, root,
-                     target_atom, XA_CARDINAL, 8, PropModeReplace,
+    changeProperty ( s->display->display,
+                     target_atom, XA_CARDINAL,
                      source, source_n );
 #if defined(PLUGIN_DEBUG)
     if(init)
-      printf( DBG_STRING "copy from %s to %s (%d)\n", DBG_ARGS,
+      fprintf( stderr, DBG_STRING "copy from %s to %s (%d)\n", DBG_ARGS,
               icc_profile_atom,
               icc_colour_server_profile_atom, (int)source_n );
     else
-      printf( DBG_STRING "copy from %s to %s (%d)\n", DBG_ARGS,
+      fprintf( stderr, DBG_STRING "copy from %s to %s (%d)\n", DBG_ARGS,
               icc_colour_server_profile_atom,
               icc_profile_atom, (int)source_n );
 #endif
@@ -703,17 +720,14 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
       /* make shure the profile is ignored */
       oyProfiles_MoveIn( ignore, &p, -1 );
 
-      printf( DBG_STRING"to be ignored profiles: %d %s\n",
-              DBG_ARGS, oyProfiles_Count( ignore ), icc_profile_atom );
-
       source = oyProfile_GetMem( screen_document_profile, &size, 0, malloc );
       source_n = size;
-      XChangeProperty( s->display->display, root,
-                       source_atom, XA_CARDINAL, 8, PropModeReplace,
+      changeProperty ( s->display->display,
+                       source_atom, XA_CARDINAL,
                        source, source_n );
 #if defined(PLUGIN_DEBUG)
-      printf( DBG_STRING "set %s %d\n", DBG_ARGS,
-              icc_profile_atom, (int)source_n );
+      printf( DBG_STRING "set %s %d and mark (%d)\n", DBG_ARGS,
+              icc_profile_atom, (int)source_n, oyProfiles_Count( ignore ) );
 #endif
 
       oyProfile_Release( &screen_document_profile );
@@ -727,8 +741,8 @@ static void    setupICCprofileAtoms  ( CompScreen        * s,
   } else
     if(target_atom && init)
       oyCompLogMessage( s->display, "colour_desktop", CompLogLevelWarn,
-                        DBG_STRING"icc_colour_server_profile_atom already present %d",
-                        DBG_ARGS, target_atom );
+                        DBG_STRING"icc_colour_server_profile_atom already present %d size:%lu",
+                        DBG_ARGS, target_atom, target_n );
 
   if(icc_profile_atom) free(icc_profile_atom);
   if(icc_colour_server_profile_atom) free(icc_colour_server_profile_atom);
@@ -748,8 +762,13 @@ static int     getDeviceProfile      ( CompScreen        * s,
 
   int size = hasScreenProfile( s, screen, 0 );
 
+  int test = 1;
+
   snprintf( num, 12, "%d", (int)screen );
 
+#if defined(PLUGIN_DEBUG)
+    printf(DBG_STRING"HuHu screen %d\n", DBG_ARGS, screen);
+#endif
     o = oyConfig_Find( device, "device_rectangle" );
     if( !o )
     {
@@ -796,7 +815,7 @@ static int     getDeviceProfile      ( CompScreen        * s,
                                   oyOption_StructGet( o, oyOBJECT_PROFILE_S );
 
 #if defined(PLUGIN_DEBUG)
-    printf(DBG_STRING"found icc_profile %d\n", DBG_ARGS, o?1:0);
+    printf(DBG_STRING"found device icc_profile %d\n", DBG_ARGS, o?1:0);
 #endif
     if(!output->oy_profile)
     {
@@ -810,7 +829,7 @@ static int     getDeviceProfile      ( CompScreen        * s,
       t_err = oyDeviceGetProfile( device, options, &output->oy_profile );
       oyOptions_Release( &options );
 #if defined(PLUGIN_DEBUG)
-      printf( DBG_STRING"found icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS,
+      printf( DBG_STRING"found net icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS,
               (intptr_t)output->oy_profile, t_err, (intptr_t)output);
 #endif
 
@@ -1103,7 +1122,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
       CompWindow *w = findWindowAtDisplay(d, event->xproperty.window);
       updateWindowOutput(w);
 
-    /* let other take over the colour server */
+    /* let possibly others take over the colour server */
     } else if( event->xproperty.atom == pd->netColorDesktop && atom_name )
     {
 
@@ -1111,7 +1130,8 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
 
     /* update for a changing monitor profile */
     } else if(
-           strstr( atom_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0)
+           strstr( atom_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 &&
+           strstr( atom_name, "ICC_PROFILE_IN_X") == 0 )
     {
       if(colour_desktop_can)
       {
@@ -1155,7 +1175,7 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
                 oyProfiles_ReleaseAt( ignore, i );
 #if defined(PLUGIN_DEBUG)
                 tmp = strdup(oyProfile_GetFileName( sp, 0 ));
-                printf( DBG_STRING"ignoring profile: %d %s\n",
+                printf( DBG_STRING"found ignore[%d] %s and forget\n",
                        DBG_ARGS, i, oyProfile_GetFileName( p, 0 ) );
 #endif
                 oyProfile_Release( &p );
@@ -1177,9 +1197,9 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
                     DBG_STRING "ccontexts not ready for screen %d / %d",
                     DBG_ARGS, screen, ps->nCcontexts );
               
-              XChangeProperty( d->display, RootWindow(d->display,0),
+              changeProperty ( d->display,
                                da, XA_CARDINAL,
-                               8, PropModeReplace, (unsigned char*)NULL, 0 );
+                               (unsigned char*)NULL, 0 );
             }
 #if defined(PLUGIN_DEBUG)
             if(!tmp) tmp = oyProfile_GetFileName( sp, 0 );
@@ -1221,7 +1241,11 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
       XRRNotifyEvent *rrn = (XRRNotifyEvent *) event;
       CompScreen *s = findScreenAtDisplay(d, rrn->window);
 #if defined(PLUGIN_DEBUG)
-      printf( DBG_STRING "XRRNotifyEvent\n", DBG_ARGS );
+      printf( DBG_STRING "XRRNotifyEvent %d\n", DBG_ARGS, rrn->subtype );
+      /*if(rrn->subtype == RRNotify_OutputProperty)
+      {
+        XRROutputChangeNotifyEvent * oce = (XRROutputChangeNotifyEvent*) rrn;
+      }*/
 #endif
       updateOutputConfiguration(s, TRUE);
     }
@@ -1697,16 +1721,16 @@ static int updateNetColorDesktopAtom ( CompScreen        * s,
              (int)pid, (long)cutime, my_capabilities, my_id );
  
    if(attached_profiles)
-      XChangeProperty( d->display, RootWindow(d->display,0),
+      changeProperty( d->display,
                                 pd->netColorDesktop, XA_STRING,
-                                8, PropModeReplace, (unsigned char*)atom_text,
+                                (unsigned char*)atom_text,
                                 strlen(atom_text) + 1 );
     else if(old_atom)
     {
       /* switch off the plugin */
-      XChangeProperty( d->display, RootWindow(d->display,0),
+      changeProperty( d->display,
                                 pd->netColorDesktop, XA_STRING,
-                                8, PropModeReplace, (unsigned char*)NULL, 0 );
+                                (unsigned char*)NULL, 0 );
       colour_desktop_can = 0;
     }
 
@@ -1732,6 +1756,8 @@ static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *
 
   WRAP(pd, d, handleEvent, pluginHandleEvent);
 
+  printf( DBG_STRING "HUHU\n", DBG_ARGS );
+
   pd->netColorManagement = XInternAtom(d->display, "_NET_COLOR_MANAGEMENT", False);
 
   pd->netColorProfiles = XInternAtom(d->display, "_NET_COLOR_PROFILES", False);
@@ -1750,6 +1776,9 @@ static CompBool pluginInitScreen(CompPlugin *plugin, CompObject *object, void *p
 #ifdef HAVE_XRANDR
   int screen = DefaultScreen( s->display->display );
 #endif
+  fprintf( stderr, DBG_STRING"dev %d contexts %d \n", DBG_ARGS,
+          s->nOutputDev, ps->nCcontexts );
+    
 
   GLint stencilBits = 0;
   glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
@@ -1821,9 +1850,9 @@ static CompBool pluginFiniDisplay(CompPlugin *plugin, CompObject *object, void *
   UNWRAP(pd, d, handleEvent);
 
   /* remove desktop colour management service mark */
-  XChangeProperty( d->display, RootWindow(d->display,0),
+  changeProperty( d->display,
                                 pd->netColorDesktop, XA_STRING,
-                                8, PropModeReplace, (unsigned char*)NULL, 0 );
+                                (unsigned char*)NULL, 0 );
 
   return TRUE;
 }
@@ -2013,7 +2042,7 @@ oyPointer pluginAllocatePrivatePointer( CompObject * o )
          break;
   }
 #if defined(PLUGIN_DEBUG_)
-  printf("index %d for %d\n", index, o->type );
+  fprintf(stderr, "index %d for %d\n", index, o->type );
 #endif
 
   if(index < 0)
@@ -2022,12 +2051,12 @@ oyPointer pluginAllocatePrivatePointer( CompObject * o )
   {
     o->privates[index].ptr = malloc(size);
 #if defined(PLUGIN_DEBUG_)
-    printf("index=%d, 0x%lx size=%d\n", 
+    fprintf(stderr, "index=%d, 0x%lx size=%d\n", 
            index, o->privates[index].ptr, (int)size );
 #endif
     if(!o->privates[index].ptr) return 0;
 #if defined(PLUGIN_DEBUG_)
-    printf("memset index=%d, 0x%lx size=%d\n", 
+    fprintf(stderr, "memset index=%d, 0x%lx size=%d\n", 
            index, o->privates[index].ptr, (int)size );
 #endif
     memset( o->privates[index].ptr, 0, size);
@@ -2036,7 +2065,7 @@ oyPointer pluginAllocatePrivatePointer( CompObject * o )
   ptr = o->privates[index].ptr;
 
 #if defined(PLUGIN_DEBUG_)
-  printf("return ptr=0x%lx for type=%d[ 0x%lx]\n", ptr, o->type, o );
+  fprintf(stderr, "return ptr=0x%lx for type=%d[ 0x%lx]\n", ptr, o->type, o );
 #endif
 
   return ptr;
@@ -2104,7 +2133,7 @@ oyPointer pluginGetPrivatePointer( CompObject * o )
 
   ptr = o->privates[index].ptr;
   if(!ptr)
-    printf( "object[0x%lx] type=%d no private data reserved\n",
+    fprintf( stderr, "object[0x%lx] type=%d no private data reserved\n",
             (intptr_t)o, o->type );
 #endif
 
