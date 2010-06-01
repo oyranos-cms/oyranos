@@ -372,6 +372,7 @@ CONFIG_FILES = \
 	$(SRCDIR)/$(TARGET).pc.in \
 	$(SRCDIR)/$(TARGET).spec.in \
 	$(SRCDIR)/$(TARGET)-icc.spec.in \
+	$(SRCDIR)/$(TARGET)_control.in \
 	$(SRCDIR)/$(TARGET)-config.in
 
 ALL_FILES = \
@@ -844,6 +845,19 @@ rpm:	dist
 	@echo "============================================================"
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 
+deb:	dist
+	$(SRCDIR)/configure --prefix=/usr --rpm-only
+	mkdir -p debian/deb/DEBIAN
+	tar xvzf $(TARGET)-$(VERSION).tar.gz
+	(cd $(TARGET)-$(VERSION); \
+	./configure --prefix=/usr; \
+	make DESTDIR=$(build_dir)/debian/deb/DEBIAN install;)
+	$(COPY) $(TARGET)-$(VERSION)/$(TARGET)_control $(build_dir)/debian/deb/DEBIAN/control
+	$(RM) -R $(TARGET)-$(VERSION)
+	dpkg -b $(build_dir)/debian/deb debian/$(TARGET)_$(VERSION)-$(RELEASE)_$(deb_arch).deb
+	$(RM) -R $(build_dir)/debian/deb
+	echo ... $@ done
+
 # remove everything previously installed
 uninstall:	uninstall_bin uninstall_docu uninstall-icc uninstall_linguas
 	echo ... $@ done
@@ -1089,11 +1103,11 @@ copy_files:
 	  $(COPY) -R settings $(DESTDIR)
 	#$(COPY) -r cmms $(DESTDIR)
 #ifdef LIB_XNVCTRL
-	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile clean)
+	-(cd libXNVCtrl && $(MAKE) -f Makefile clean)
 	cd $(SRCDIR)
 #endif
-	mkdir $(DESTDIR)/$(LIB_XNVCTRL)
-	$(COPY) -R $(SRCDIR)/$(LIB_XNVCTRL) $(DESTDIR)
+	mkdir $(DESTDIR)/libXNVCtrl
+	$(COPY) -R $(SRCDIR)/libXNVCtrl $(DESTDIR)
 	mkdir $(DESTDIR)/modules
 	cd $(SRCDIR) && \
 	  $(COPY) $(CFILES_MODULES) $(CPPFILES_MODULES) $(CHEADERS_MODULES) \
