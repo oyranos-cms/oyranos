@@ -15,6 +15,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>  /* system() */
+#include <unistd.h>  /* getpid() */
 
 #include "oyranos_debug.h"
 
