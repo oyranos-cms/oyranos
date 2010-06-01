@@ -19,6 +19,7 @@ CONF_LOG=config.log
 CONF_I18N=fl_i18n/makefile
 SPEC=$TARGET.spec
 SPECICC=$TARGET-icc.spec
+DEB="$TARGET"_control
 PKGC=$TARGET.pc
 VERS_H="$TARGET"_version.h
 zeile="$0 $@"
@@ -541,9 +542,11 @@ else
 fi
 
 MACH_=`uname -m`
+deb_arch=$MACH_
 if [ $? = 0 ]; then
   if [ "$MACH_" = "x86_64" ]; then
     echo_="X86_64                  detected"
+    deb_arch=amd64
     test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   else
     if [ "$MACH_" = "sun4u" ]; then
@@ -552,11 +555,17 @@ if [ $? = 0 ]; then
     else
       echo_="$MACH_ system             detected"
       test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+      if [ "$MACH_" = "i686" ]; then
+        deb_arch=i386
+      fi
     fi
   fi
 fi
 LIBDIR="lib"$BARCH
-export OSUNAME LIBDIR
+export OSUNAME 
+echo_="deb_arch=$deb_arch"
+test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_";
+test -n "$ECHO" && $ECHO "$echo_" >> $CONF
 
 
 # exec_prefix bindir sbindir libdir cmmsubpath includedir datadir
@@ -903,6 +912,7 @@ test -n "$ECHO" && $ECHO "VERSION_B = $VERSION_B" >> $CONF
 test -n "$ECHO" && $ECHO "VERSION_C = $VERSION_C" >> $CONF
 test -n "$ECHO" && $ECHO "VERSION   = $VERSION" >> $CONF
 test -n "$ECHO" && $ECHO "VERSION_L = $VERSION_L" >> $CONF
+test -n "$ECHO" && $ECHO "RELEASE = $RELEASE" >> $CONF
 test -n "$ECHO" && $ECHO "" >> $CONF
 
 test -n "$ECHO" && cat $CONF_TEMP_SH >> $CONF_SH
@@ -981,6 +991,12 @@ test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPECICC.in" >> $SPECICC
 test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPEC.in" >> $SPEC
 echo_="generated $SPEC from $ROOT_DIR/$SPEC.in
 generated $SPECICC from $ROOT_DIR/$SPECICC.in"
+test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+
+test -n "$RPMECHO" && $RPMECHO "Version:         $VERSION-$RELEASE" > $DEB
+test -n "$RPMECHO" && $RPMECHO "Architecture:    $deb_arch" >> $DEB
+test -n "$RPMECHO" && cat  $ROOT_DIR/"$DEB.in" >> $DEB
+echo_="generated $DEB from $ROOT_DIR/$DEB.in"
 test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 
 test -n "$ECHO" && $ECHO "Version: $VERSION" >> $PKGC

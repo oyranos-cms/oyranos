@@ -1,0 +1,14 @@
+Package: oyranos
+Priority: extra
+Section: graphics
+Installed-Size: 17104
+Maintainer: Kai-Uwe Behrmann <ku.b@gmx.de>
+Depends: libc6, cups
+Description: Colour Management System
+ Features
+ configuration for cross application colour agreement,
+ plugable and selectable modules (known as CMM's),
+ pixel conversions,
+ profile handling,
+ named colours,
+ device profile assignment
