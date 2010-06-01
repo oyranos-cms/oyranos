@@ -334,7 +334,267 @@
     configure option to aid debugging and stepping through. To build the module
     add the -g compiler option.
 
+    The protocal on how the modules communicate with the core and the front end
+    is described in the @ref device_protocol_1.
+ */
 
+/** @page device_protocol_1 Device Protocol v1.0
+\htmlonly
+    <p>Oyranos core &lt;-&gt; device module protocol
+</p>
+Copyright: Kai-Uwe Behrmann, Yiannis Belias @ 2009
+
+<a name="Implementation_Overview"></a><h4> Implementation Overview </h4>
+<p>Oyranos implements <b>devices</b> as <i>oyConfig_s</i> objects.
+</p><p>A 'oyConfig_s' object holds a set of <b>options</b> comming from a 
+
+<b>device backend</b> and possibly from the <b>Oyranos DataBase</b> (Oyranos DB).
+</p><p>Options which are relevant for inclusion into the Oyranos DB must be 
+build of text strings. These are the <i>oyConfig_s::backend_core</i> options.
+</p><p>The device options represent both <b>device attributes</b> and 
+<b>driver settings</b> in one object.
+
+</p><p>The <b>device backend</b> is implemented in Oyranos with the <i>oyCMMapi8_s</i> 
+structure. This structure must be included in a module and be pointed to from 
+a <i>oyCMMInfo_s</i> structure like all <b>module</b>s.
+</p>
+<a name="Tables"></a><h4> Tables </h4>
+
+<p>Options marked with "in:" are passed through a oyOptions_s argument to the module.
+Outgoing options are passed through the device(s) created by the modules and are
+assigned as follows:
+</p><p>[c] - oyConfig_s::backend_core - identification stuff as strings
+</p><p>[d] - oyConfig_s::data - additional data
+</p><p>[b] - oyConfig_s::db - only for Oyranos core and thus tabu for modules
+</p><p>Required options are marked with a [r].
+</p><p>The "device_name" option shall only be considered in oyConfig_s::oyConfigs_FromPattern. In 
+oyConfig_s::oyConfigs_Modify the oyConfig_s's devices should have already that property in their
+backend_core part.
+</p>
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "list" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+<td>   "command"="list" </td><td> oyX1, SANE, CUPS, oyRE </td><td> in[r]: call for detected device(s) </td><td> in: string
+</td></tr>
+<tr>
+<td>   "device_name" </td><td>  oyX1, SANE, CUPS<br> oyRE </td><td> device ID  in: select a single device; out[r]: device ID<br> any meaning for oyRE? </td><td> in(oyConfigs_FromPattern)/out[c]: string
+
+</td></tr>
+<tr>
+<td>   "oyNAME_NAME" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> in: call for lightweight informations<br> out: short UI description </td><td> in/out[d]: string
+</td></tr>
+<tr>
+<td>   "icc_profile" </td><td>  oyX1, CUPS </td><td> out: the ICC profile accessible through the device driver </td><td> in: string; out[d]: oyProfile_s or<br>a empty "icc_profile" option of oyVAL_STRUCT, if ICC profiles are supported by the device but in the actual search not found.
+
+</td></tr>
+<tr>
+<td>   "display_name" </td><td>  oyX1 </td><td> in: select a X11 display and get all connected devices; "device_name" has priority </td><td> in(oyConfigs_FromPattern): string
+</td></tr>
+<tr>
+<td>   "device_rectangle" </td><td>  oyX1 </td><td> out[r]: the device rectangle in pixels </td><td> in: string <br>out[d]: oyRectangle_s
+
+</td></tr>
+<tr>
+<td>   "supported_devices" </td><td>  oyRE </td><td> out: one manufacturer in the first line, remaining lines each for one model </td><td> in: string <br>out[d]: strings
+</td></tr>
+<tr>
+<td>   "device_context" </td><td> oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> out: not required<br> "SANE_Device"<br> "ppd_file_t*" <br> "libraw_output_params_t*" </td><td> out[d]: string
+
+</td></tr>
+<tr>
+<td>   device handles </td><td>  SANE,<br> CUPS, oyRE </td><td> version + SANE_Device + SANE_Handle<br>out: device handle caching  </td><td> out[c]: oyCMMptr_s or oyOption_SetFromData() but no string(s)
+</td></tr></tbody></table>
+<p>Note: If a "manufacturer" or a "model" option appear in a device after the "list" call, the device is considered ready for a Oyranos DB query. Thus all options which normally appear after a "properties" call should be included together with "manufacturer" or "model" options.
+</p><p><br>
+</p>
+
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "properties" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+<td>   "command"="properties" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> in[r]: call for even expensive informations<br> </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "device_name" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> in: select a single device;<br>out: ID of each device, e.g. &lt;manufacturer&gt;-&lt;model&gt; </td><td> in(oyConfigs_FromPattern)/out[c]: string
+</td></tr>
+<tr>
+
+<td>   "display_name" </td><td>  oyX1 </td><td> in: select a X11 display and get all connected devices; "device_name" has priority </td><td> in(oyConfigs_FromPattern): string
+</td></tr>
+<tr>
+<td>   "manufacturer" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> out[r]: device manufacturer </td><td> out[c]: string
+
+</td></tr>
+<tr>
+<td>   "model" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> out[r]: device model </td><td> out[c]: string
+</td></tr>
+<tr>
+<td>   "serial" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> out: device serial number </td><td> out[c]: string
+
+</td></tr>
+<tr>
+<td>   "system_port" </td><td>  oyX1, <br>SANE, <br>CUPS, <br>oyRE </td><td> out: X11 screen number <br>out: scsi/usb/parallel port? <br>out: print queue? <br>out: RAW  file name? </td><td> out[c]: string
+</td></tr>
+
+<tr>
+<td>   "host" </td><td>  oyX1, <br>SANE, <br>CUPS, <br>oyRE </td><td> out: X11 server host name <br>out: possible?t <br>out: print host possible? <br>out: "local" host? </td><td> out[c]: string
+</td></tr>
+<tr>
+
+<td>   "display_geometry" </td><td>  oyX1 </td><td> out[r]: X11 screen geometry as in "device_rectangle" </td><td> out[c]: string
+</td></tr>
+<tr>
+<td>   "edid" </td><td>  oyX1 </td><td> out: monitor EDID block </td><td> in: string<br> out[d]: use oyOption_SetFromData(); users - oyOption_GetData()
+
+</td></tr>
+<tr>
+<td>   "device_context" </td><td> oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> in: not required<br> SANE_Device<br> ppd_file_t*? <br> libraw_output_params_t* </td><td> in: add with oyOption_SetFromData()
+
+</td></tr>
+<tr>
+<td>   device handles </td><td>  SANE, CUPS, oyRE </td><td> in: abreviation to talk with drivers </td><td> in[c]: oyOption_GetData()
+</td></tr>
+<tr>
+<td>   device settings </td><td> oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> out[r]: "display_geometry" ...<br> ...<br> static colour related PPD attributes <br> libraw options </td><td> out[c]: string
+
+</td></tr></tbody></table>
+<p><br>
+</p>
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "setup" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+
+<td>   "command"="setup" </td><td>  oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> in[r]: call for uploading a ICC profile through the device driver<br> do nothing<br> set a cupsICCProfile attribute in a given PPD and write out to file<br> do nothing </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "device_name" </td><td>  oyX1, SANE, CUPS </td><td> in[r]: select a single device </td><td> in(oyConfigs_FromPattern): string
+</td></tr>
+<tr>
+<td>   "profile_name" </td><td>  oyX1, SANE, CUPS </td><td> in[r]: the local accessible ICC profile file name </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "config_file" </td><td>  CUPS </td><td> in: a PPD configuration file (ppd_file_t*) to modify or nothing; out: (ppd_file_t*) </td><td> in: oyOption_GetData(); out[d]: oyOption_SetFromData()?
+</td></tr>
+<tr>
+<td>   device handles </td><td>  SANE, CUPS, oyRE </td><td> in: abreviation to talk with drivers </td><td> in[c]: oyOption_GetData()
+
+</td></tr></tbody></table>
+<p><br>
+</p>
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "unset" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+
+<td>   "command"="unset" </td><td>  oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> in[r]: unloading the _ICC_PROFILE_xxx atom<br> do nothing<br> remove a cupsICCProfile attribute in a given PPD<br> do nothing </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "device_name" </td><td>  oyX1, SANE, CUPS </td><td> in[r]: select a single device </td><td> in(oyConfigs_FromPattern): string
+</td></tr>
+<tr>
+<td>   "profile_name" </td><td>  oyX1, SANE, CUPS </td><td> in[r]: the local accessible ICC profile file name </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "config_file" </td><td>  CUPS </td><td> in: a PPD configuration file (ppd_file_t*) to modify or nothing; out: (ppd_file_t*) </td><td> in: oyOption_GetData(); out[d]: oyOption_SetFromData()?
+</td></tr>
+<tr>
+<td>   device handles </td><td>  SANE, CUPS, oyRE </td><td> in: abreviation to talk with drivers </td><td> in[c]: oyOption_GetData()
+
+</td></tr></tbody></table>
+<p><br>
+</p>
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "help" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+
+<td>   "command"="help" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> in[r]: show help text through the modules local oyMessage_f </td><td> in: string
+</td></tr></tbody></table>
+<p>Calling a device module without any command or a unknown command shall issue 
+a message through the modules local oyMessage_f. The message shall contain 
+infos about, describing calls and their properties and the expected results.
+Otherwise adhering to the above protocol will enshure a base level of 
+interoperability with users like KM.
+</p>
+<a name="How_to_create_a_useful_.22device_name.22_.28ID.29.3F"></a><h4> How to create a useful "device_name" (ID)? </h4>
+
+<p>it should be unique in that the module can distinguish each device and
+understand to build a device context. This is important for the case when no 
+device context pointer/handle is passed from the user. How that is defined
+is up to the module writer. Even though, a string, one which makes sense in
+KM, would be much appreciated. e.g. in oyX1 it is "device_name"=":0.1" or
+"device_name"="far-away.org:10.0". The modules XOpenDisplay() can directly use 
+these strings and the module can create a context and talk to the device.
+For SANE you have choosen "pnm:0", "pnm:1" and here locally I see
+"plustek:libusb:003:002". The last is unfortunedly subject to change with a
+new usb port or after newly plugging in. But that seems accepable.
+</p><p><br>
+</p>
+<a name="Handling_device_contexts"></a><h4> Handling device contexts </h4>
+<p>The "device_context" option can be set from the module during the "list" 
+call into a device. The user can then see, which specific information is 
+accepted by the module.
+The module has implicitely to assume, that the user has no background about
+the called device class, and to initialise a device by its own.
+In case the user has already a context and passes 
+this one to Oyranos, the module needs to extract the colour related device 
+settings from this and pass the device settings as string to Oyranos.
+Oyranos will then be able to search for a according ICC profile.
+</p><p>It is important for Oyranos, the module and the user to agree who is 
+responsible for the driver contexts. oyOption_SetFromData() is useful to pass
+a pointer through a oyOption_s. The size argument can be set to zero to avoid
+freeing the pointer through Oyranos. In case the module provides a
+context, e.g. in "list" then that needs to be released through driver functions.
+Oyranos has the oyCMMptr_s struct defined in oyranos_cmm.h which can be used:
+<a href="http://www.oyranos.org/doc_intern/structoyCMMptr__s.html" class="external" title="http://www.oyranos.org/doc intern/structoyCMMptr  s.html">[1]</a><span class="urlexpansion">&nbsp;(<i>http://www.oyranos.org/doc_intern/structoyCMMptr__s.html</i>)</span>.
+</p>
+
+<a name="Multiple_Configurations_per_.22device_name.22"></a><h4> Multiple Configurations per "device_name" </h4>
+<p>For backends its possible to resolve one "device_name" option to multiple 
+driver configurations. Such backends are best implemented in that they 
+resolve the oyConfig_s objects right from the beginning, e.g. the "list" 
+call. Otherwise the oyConfig_s devices are not uniquely
+defined. On a practical example, a CUPS device would be uniquely defined, 
+if all colour related and to be included PPD entries are included in the 
+oyConfig_s::backend_core options as strings.
+</p><p>Users can subsummarise such devices in that they look at the 
+registration, manufacturer, model and serial number strings. However they 
+should make clear that each device consists as well of the driver settings.
+</p>
+\endhtmlonly
  */
 
 /** @page install_current Installation
