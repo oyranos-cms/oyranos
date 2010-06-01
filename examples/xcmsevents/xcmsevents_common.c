@@ -552,7 +552,8 @@ int      xcmseContext_InLoop         ( xcmseContext_s    * c,
 
           if(n &&
              (strstr( actual_name, OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
-              strstr( actual_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0))
+              strstr( actual_name, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0)
+             && strstr( "ICC_PROFILE_IN_X", actual_name) == 0)
           {
             p = oyProfile_FromMem( n, data, 0, 0 );
             name = oyProfile_GetFileName( p, 0 );
