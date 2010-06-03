@@ -9456,6 +9456,7 @@ int            oyOptions_AppendOpts  ( oyOptions_s       * list,
   return error;
 }
 
+
 /** Function oyOptions_Set
  *  @memberof oyOptions_s
  *  @brief   set a element in a Options list
@@ -9487,7 +9488,8 @@ int            oyOptions_Set         ( oyOptions_s       * options,
     for(i = 0; i < n && !replace; ++i)
     {
       tmp = oyOptions_Get( options, i );
-      if(oyFilterRegistrationMatch( tmp->registration, option->registration, 0))
+      if(oyFilterRegistrationMatchKey( tmp->registration,
+                                       option->registration, 0))
       {
         replace = 2;
         /* replace as we priorise the new value */
@@ -22001,6 +22003,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
  *  @param         registration        registration string to analise
  *  @param         pattern             pattern or key name to compare with
  *  @param         api_number          select object type
+ *  @return                            match, useable for ranking
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -22118,6 +22121,85 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
   return match;
 }
 #endif
+
+/** Function oyFilterRegistrationMatchKey
+ *  @brief   compare tw registration strings, skip key attributes
+ *
+ *  The rules are described in the @ref module_api overview.
+ *  The rules in this function map especially to key storage rules for 
+ *  Oyranos DB.
+ *
+ *  The non key part is handled as namespace and should match in order to
+ *  consider the two keys from the same namespace.
+ *  The second condition is the key name is stripped from all attributes.
+ *  This means the string part after the last slash '/' is taken into account
+ *  only until the first point '.' or end of string appears.
+ *
+ *  @param         registration1       registration key
+ *  @param         registration2       registration key
+ *  @param         api_number          select object type
+ *  @return                            match, useable for ranking
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/03 (Oyranos: 0.1.10)
+ *  @date    2010/06/03
+ */
+int    oyFilterRegistrationMatchKey  ( const char        * registration1,
+                                       const char        * registration2,
+                                       oyOBJECT_e          api_number )
+{
+  char * tmp1 = 0,
+       * tmp2 = 0,
+       * tmp = 0;
+  int match = 0;
+
+  if(registration1 && oyStrrchr_( registration1, '/' ))
+    tmp1 = oyStringCopy_( registration1, oyAllocateFunc_ );
+  if(registration2 && oyStrrchr_( registration2, '/' ))
+    tmp2 = oyStringCopy_( registration2, oyAllocateFunc_ );
+
+  if(!tmp1 || !tmp2)
+    return match;
+
+  if(tmp1)
+  {
+    tmp = oyStrrchr_( tmp1, '/' );
+    tmp[0] = 0;
+  }
+  if(tmp2)
+  {
+    tmp = oyStrrchr_( tmp2, '/' );
+    tmp[0] = 0;
+  }
+
+  match = oyFilterRegistrationMatch( tmp1, tmp2, api_number );
+
+  if(match)
+  {
+    oyFree_m_(tmp1);
+    oyFree_m_(tmp2);
+    tmp1 = oyFilterRegistrationToText( registration1,
+                                       oyFILTER_REG_OPTION, 0 );
+    tmp = oyStrrchr_( tmp1, '.' );
+    if(tmp)
+      tmp[0] = 0;
+    tmp2 = oyFilterRegistrationToText( registration2,
+                                       oyFILTER_REG_OPTION, 0 );
+    tmp = oyStrrchr_( tmp2, '.' );
+    if(tmp)
+      tmp[0] = 0;
+
+    if(oyStrcmp_( tmp1, tmp2 ) == 0)
+      ++match;
+    else
+      match = 0;
+
+    oyFree_m_(tmp1);
+    oyFree_m_(tmp2);
+  }
+
+  return match;
+}
 
 /**
  *  @internal

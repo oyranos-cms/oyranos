@@ -751,6 +751,9 @@ char * oyFilterRegistrationToText    ( const char        * registration,
 int    oyFilterRegistrationMatch     ( const char        * registration,
                                        const char        * pattern,
                                        oyOBJECT_e          api_number );
+int    oyFilterRegistrationMatchKey  ( const char        * registration1,
+                                       const char        * registration2,
+                                       oyOBJECT_e          api_number );
 
 /** @enum    oyOPTIONSOURCE_e
  *  @brief   a option source type
