@@ -829,8 +829,10 @@ static int     getDeviceProfile      ( CompScreen        * s,
       t_err = oyDeviceGetProfile( device, options, &output->oy_profile );
       oyOptions_Release( &options );
 #if defined(PLUGIN_DEBUG)
-      printf( DBG_STRING"found net icc_profile 0x%lx %d 0x%lx\n", DBG_ARGS,
-              (intptr_t)output->oy_profile, t_err, (intptr_t)output);
+      printf( DBG_STRING"found net icc_profile 0x%lx %s %d 0x%lx\n", DBG_ARGS,
+              (intptr_t)output->oy_profile,
+              oyProfile_GetFileName(output->oy_profile, -1),
+              t_err, (intptr_t)output);
 #endif
 
       /* oyDeviceGetProfile() might setup _ICC_PROFILE. This causes a according
