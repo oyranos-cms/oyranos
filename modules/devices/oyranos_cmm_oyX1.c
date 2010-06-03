@@ -648,7 +648,6 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
 
           has = 0;
-          /*  */
           o = oyConfig_Find( device, "icc_profile" );
           if(o)
           {
@@ -780,10 +779,10 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             error = -1;
           }
 
-          if(has)
-            oyOption_Release( &o );
-          else
-            oyOptions_MoveIn( device->data, &o, -1 );
+          if(!has)
+            oyOptions_Set( device->data, o, -1, 0 );
+
+          oyOption_Release( &o );
         }
 
         /** 3.1.5 construct a oyNAME_NAME string */
