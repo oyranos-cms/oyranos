@@ -7037,6 +7037,10 @@ int            oyValueEqual          ( oyValue_u         * a,
 
       break;
   case oyVAL_STRUCT:
+        if(!a->oy_struct && !b->oy_struct)
+          return 1;
+        if(!a->oy_struct || !b->oy_struct)
+          return 0;
         if(a->oy_struct->type_ == oyOBJECT_BLOB_S &&
            b->oy_struct->type_ == oyOBJECT_BLOB_S &&
            ((oyBlob_s*)(a->oy_struct))->ptr == ((oyBlob_s*)(b->oy_struct))->ptr )

@@ -656,6 +656,9 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
             if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
               has = 1;
+            else
+              oyOption_Release( &o );
+
             oyProfile_Release( &p );
           }
 
