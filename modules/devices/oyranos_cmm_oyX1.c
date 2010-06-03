@@ -629,6 +629,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           size_t size = 0;
           uint32_t flags = 0;
           char * data = 0;
+          oyProfile_s * p = 0;
 
           if(oyOptions_FindString( options, "net_color_region_target", 0 ))
           {
@@ -650,7 +651,14 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           /*  */
           o = oyConfig_Find( device, "icc_profile" );
           if(o)
-            has = 1;
+          {
+            /* the device might have assigned a dummy icc_profile, to show 
+             * it can handle. But thats not relevant here. */
+            p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+            if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
+              has = 1;
+            oyProfile_Release( &p );
+          }
 
           if(data && size)
           {
