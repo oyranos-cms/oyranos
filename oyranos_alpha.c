@@ -13434,7 +13434,11 @@ OYAPI int  OYEXPORT
           if(profile_name_temp)
             profile_name = profile_name_temp;
           else
+          {
             error = 1;
+            WARNc2_S("%s: \"%s\"(oyranos_tmp.icc)",_("Could not write to file"),
+                      oyNoEmptyString_m_(profile_name_temp) );
+          }
         }
       }
 
