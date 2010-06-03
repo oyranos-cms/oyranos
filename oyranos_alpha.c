@@ -12255,7 +12255,7 @@ OYAPI int  OYEXPORT
       {
         ++required;
 
-        if(strcmp(ct,pattern[j][1]) == 0)
+        if(ct && strcmp(ct,pattern[j][1]) == 0)
           ++matches;
 
       } else
@@ -13970,8 +13970,9 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 
         /** 4.1.1 compare if each device key matches to one configuration
          *          key */
-        if( d_val && o_val &&
-            oyStrcmp_( d_val, o_val ) == 0)
+        if( (d_val && o_val &&
+             oyStrcmp_( d_val, o_val ) == 0 ) ||
+            (!d_val && !o_val) )
           ++equal;
         else
           if(oyStrcmp_( d_opt, "profile_name") == 0)
