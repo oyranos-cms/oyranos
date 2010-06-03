@@ -14793,9 +14793,11 @@ OYAPI oyProfile_s * OYEXPORT
  *
  *  @param[in]    profile        other profile
  *  @param[in]    object         the optional base
+ *  @return                      the profile copy
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.10
+ *  @date    2010/06/03
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
 OYAPI oyProfile_s * OYEXPORT
 oyProfile_Copy_                      ( const oyProfile_s * profile,
@@ -14805,10 +14807,13 @@ oyProfile_Copy_                      ( const oyProfile_s * profile,
   int error = 0;
   oyAlloc_f allocateFunc = 0;
 
-  if(!profile)
+  if(!s)
     return s;
 
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+  {
+    const oyProfile_s * s = profile;
+    oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+  }
 
   s = oyProfile_New_( object );
   allocateFunc = s->oy_->allocateFunc_;
