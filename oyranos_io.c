@@ -322,15 +322,17 @@ int  oyWriteMemToFile2_              ( const char        * name,
       return 1;
     }
 
-    if(result)
-      *result = oyStringCopy_( tmp, allocateFunc?allocateFunc:oyAllocateFunc_ );
-
     filename = tmp;
     if(format) oyFree_m_(format)
   }
 
   if(!error)
+  {
     error = oyWriteMemToFile_( filename, mem, size );
+    if(result)
+      *result = oyStringCopy_( filename,
+                               allocateFunc?allocateFunc:oyAllocateFunc_ );
+  }
 
   if(tmp) oyFree_m_(tmp)
 
