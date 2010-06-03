@@ -13429,7 +13429,10 @@ OYAPI int  OYEXPORT
                                         OY_FILE_NAME_SEARCH | OY_FILE_TEMP_DIR,
                                         &profile_name_temp, oyAllocateFunc_ );
           else
+          {
             error = 1;
+            WARNc1_S( "%s",_("Could not open profile") );
+          }
 
           if(profile_name_temp)
             profile_name = profile_name_temp;
