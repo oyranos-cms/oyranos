@@ -14807,7 +14807,7 @@ oyProfile_Copy_                      ( const oyProfile_s * profile,
   int error = 0;
   oyAlloc_f allocateFunc = 0;
 
-  if(!s)
+  if(!profile)
     return s;
 
   {
