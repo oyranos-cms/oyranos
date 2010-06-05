@@ -43,12 +43,14 @@ int main(int argc, char *argv[])
 
       Grantlee::Template t = engine->loadByName( templateFileInfo.fileName() );
       Grantlee::Context c;
-      c.insert( "class_name", templateFileInfo.baseName() );
-      QString newFileContents = t->render( &c );
 
       QString sourceName = "oy" + templateFileInfo.baseName() + "." + templateFileInfo.suffix();
       QFile sourceFile( outputDir.filePath( sourceName ) );
       QFileInfo sourceFileInfo(sourceFile);
+
+      c.insert( "class_name", templateFileInfo.baseName() );
+      c.insert( "file_name", sourceName );
+      QString newFileContents = t->render( &c );
 
       //1. There is no source file yet
       if (not sourceFile.exists()) {
