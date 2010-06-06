@@ -1,8 +1,8 @@
-{% include "header.txt" %}
+{% include "source_file_header.txt" %}
 
 #include "{{ file_name|cut:".c" }}.h"
 
-
+{% block functionDefinitions %}
 /** Function oyStruct_GetText
  *  @memberof oyStruct_s
  *  @brief   get a text dump 
@@ -76,4 +76,4 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
   return text;
 }
 
-
+{% endblock functionDefinitions %}

@@ -1,4 +1,4 @@
-{% include "header.txt" %}
+{% include "source_file_header.txt" %}
 
 #ifndef OY_{{ class_name|upper }}_H
 #define OY_{{ class_name|upper }}_H
