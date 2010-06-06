@@ -3,7 +3,7 @@
 #ifndef OY_{{ class_name|upper }}_H
 #define OY_{{ class_name|upper }}_H
 
-#include "oy{{ class_name }}.h"
+#include "oy{{ class_name|cut:"_s" }}.h"
 
 struct {% block ClassName %}oy{{ class_name }}{% endblock %} {
   {% block BaseMembers %}
