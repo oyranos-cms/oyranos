@@ -44,7 +44,7 @@
 #include <oyranos_cmm.h> // oyCMMptr_New
 #include "oyranos_definitions.h" /* ICC Profile in X */
 
-#include <Xcolor.h>
+#include <X11/Xcm.h>
 
 //#define OY_CACHE 1 /* aching in Oyranos is slower */
 

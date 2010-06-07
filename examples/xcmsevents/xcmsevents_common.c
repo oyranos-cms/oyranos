@@ -14,7 +14,7 @@ extern "C" {
 #endif
 #include <X11/Xutil.h>
 #include <X11/Xmu/WinUtil.h>
-#include "Xcolor.h"
+#include "X11/Xcm.h"
 
 #define __USE_POSIX2 1
 #include <stdio.h>  /* popen() */

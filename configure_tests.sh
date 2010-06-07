@@ -456,6 +456,36 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
     fi
 fi
 if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
+  if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
+    found=""
+    version=""
+    pc_package=xcm
+    if [ -z "$found" ]; then
+      pkg-config  --atleast-version=0.2 $pc_package
+      if [ $? = 0 ]; then
+        found=`pkg-config --cflags $pc_package`
+        version=`pkg-config --modversion $pc_package`
+      fi
+    fi
+    if [ -n "$found" ]; then
+      if [ -n "$version" ]; then
+        echo_="X CM $version              detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      else
+        echo_="X CM                    detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      fi
+      echo "#define HAVE_XCM 1" >> $CONF_H
+      if [ -n "$MAKEFILE_DIR" ]; then
+        for i in $MAKEFILE_DIR; do
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XCM = 1" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XCM_INC = $found" >> "$i/makefile"
+        done
+      fi
+    elif [ $OSUNAME = "Linux" ]; then
+      echo_="X CM not found in"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
+  fi
+
   if [ -n "$XF86VMODE" ] && [ $XF86VMODE -gt 0 ]; then
     found=""
     version=""
@@ -708,13 +738,14 @@ if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
   fi
 fi
 
-if [ -z "$fltkconfig" ]; then
-  # add /usr/X11R6/bin to path for Fedora
-  fltkconfig=fltk-config
-  PATH=$PATH:/usr/X11R6/bin; export PATH
-  echo_="add fltk-config"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-fi
 if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
+  if [ -z "$fltkconfig" ]; then
+    # add /usr/X11R6/bin to path for Fedora
+    fltkconfig=fltk-config
+    PATH=$PATH:/usr/X11R6/bin; export PATH
+    echo_="add fltk-config"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+  fi
+
   FLTK_="`$fltkconfig --api-version 2>>$CONF_LOG | sed \"$STRIPOPT\"`"
   if [ $? = 0 ] && [ -n "$FLTK_" ]; then
     # check for utf-8 capability in version 1.3 and higher
