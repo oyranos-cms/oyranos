@@ -43,7 +43,7 @@ ifeq ($(strip $(UNAME)),Linux)
 # Qt needs somehow -O2 (Why???)
 QT_CFLAGS := $(shell pkg-config --cflags QtGui) -O2 -std=c++0x
 INCL    := $(shell pkg-config --cflags-only-I QtGui)
-TARGET8_LDFLAGS :=  -L./xcmsevents -loyranosedid -lXcolor $(shell pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos) -lQtXml -lQtCore
+TARGET8_LDFLAGS :=  -L./xcmsevents -loyranosedid -lXcm $(shell pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos) -lQtXml -lQtCore
 TARGET8_SOURCES = $(TARGET8).cpp
 TARGET8_GENERATED_SOURCES = \
 	xcmsevents/moc_qcmsevents.cpp \
@@ -89,19 +89,19 @@ $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $< $(TARGET2_FLAGS) $(LDFLAGS) $(OY_LDFLAGS) \
 	$(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
-	-lXcolor -lXmu -lXinerama -lXrandr -lXxf86vm -lm \
+	-lXcm -lXmu -lXinerama -lXrandr -lXxf86vm -lm \
 	-DTARGET=\"xcmsevents\" -o $@
 
 $(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
 	mkdir -p colour_desktop
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -std=c99 -fPIC -shared $< $(LDFLAGS) $(OY_LDFLAGS) \
-	$(TARGET3_FLAGS) -lXcolor -o $@
+	$(TARGET3_FLAGS) -lXcm -o $@
 
 $(TARGET4):	$(SRCDIR)$(TARGET4).c
 	mkdir -p image2pdf
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $< $(TARGET4_FLAGS) $(LDFLAGS) -lXcolor $(OY_LDFLAGS) \
+	-$(CC) $(CFLAGS) $< $(TARGET4_FLAGS) $(LDFLAGS) -lXcm $(OY_LDFLAGS) \
 	-o $@
 
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
