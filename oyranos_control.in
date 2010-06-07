@@ -1,8 +1,10 @@
+Source: oyranos
 Package: oyranos
-Priority: extra
+Priority: optional
 Section: graphics
 Installed-Size: 17104
 Maintainer: Kai-Uwe Behrmann <ku.b@gmx.de>
+Homepage: http://www.oyranos.org
 Depends: libc6, cups
 Description: Colour Management System
  Features
