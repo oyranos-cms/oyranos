@@ -1,5 +1,5 @@
 #!/bin/bash
 
-mkdir -p src
+mkdir -p API_generated
 
-./oyAPIGenerator templates/ src/
+./oyAPIGenerator templates API_generated
