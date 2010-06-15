@@ -24,7 +24,6 @@
 #include <inttypes.h>
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -3588,7 +3587,6 @@ int      oyGetMonitorInfo            ( const char        * display,
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_ALPHA_H */

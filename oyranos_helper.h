@@ -33,7 +33,6 @@
 #include <stdint.h> /* uint32_t */
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -251,7 +250,6 @@ uint32_t           oyMiscBlobGetL3_  ( void              * buffer,
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_HELPER_H */

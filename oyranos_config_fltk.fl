@@ -56,9 +56,6 @@ decl {\#include <fstream>} {public
 decl {\#include <cstdio>} {public
 } 
 
-decl {using namespace oyranos;} {public
-} 
-
 decl {\#define H_SPACING 10} {public
 } 
 

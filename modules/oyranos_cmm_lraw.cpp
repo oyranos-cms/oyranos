@@ -40,23 +40,19 @@
 
 #ifdef __cplusplus
 extern "C" {
-namespace oyranos {
 #endif /* __cplusplus */
 
 #include <iconv.h>
 
-int lrawCMMWarnFunc( int code, const oyranos::oyStruct_s * context, const char * format, ... );
-oyranos::oyMessage_f message = lrawCMMWarnFunc;
+int lrawCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
+oyMessage_f message = lrawCMMWarnFunc;
 
-extern oyranos::oyCMMapi4_s   lraw_api4_image_input_libraw;
-extern oyranos::oyCMMapi7_s   lraw_api7_image_input_libraw;
+extern oyCMMapi4_s   lraw_api4_image_input_libraw;
+extern oyCMMapi7_s   lraw_api7_image_input_libraw;
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
-
-using namespace oyranos;
 
 
 /* --- implementations --- */

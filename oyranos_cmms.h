@@ -23,7 +23,6 @@
 #include "oyranos.h"
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -68,7 +67,6 @@ int              oyCMMlibMatchesCMM  ( const char        * lib_name,
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_CMMS_H */

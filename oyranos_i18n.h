@@ -18,7 +18,6 @@
 #define OYRANOS_I18N_H
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -48,7 +47,6 @@ const char *   oyCountry_            ( void );
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_I18N_H */

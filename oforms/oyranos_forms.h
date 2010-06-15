@@ -18,8 +18,6 @@
 
 
 #ifdef __cplusplus
-namespace oyranos {
-namespace forms {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -84,8 +82,6 @@ int          oyFormsStartChoice      ( char             ** stream,
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace forms */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_FORMS_H */

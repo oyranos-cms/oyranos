@@ -21,7 +21,6 @@
 #include "oyranos_alpha.h"
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -1412,7 +1411,6 @@ int      oyFilterMessageFunc         ( int                 code,
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_CMM_H */

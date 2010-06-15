@@ -25,7 +25,6 @@
     @brief The Oyranos namespace.
  */
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -378,7 +377,6 @@ int      oyActivateMonitorProfiles   ( const char        * display_name );
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_H */

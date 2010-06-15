@@ -25,7 +25,6 @@
 #include "oyranos_texts.h"
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -141,7 +140,6 @@ extern oyUnLock_f              oyUnLockFunc_;
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_INTERNAL_H */

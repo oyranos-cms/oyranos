@@ -24,7 +24,6 @@
     @brief The Oyranos namespace.
  */
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -56,7 +55,6 @@ int         oySetDefaultProfileBlock   (oyPROFILE_e       type,
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_CONFIG_H */

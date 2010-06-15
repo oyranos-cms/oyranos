@@ -31,7 +31,6 @@
 
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -126,7 +125,6 @@ int                oyEraseKey_       ( const char        * key_name );
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_ELEKTRA_H */

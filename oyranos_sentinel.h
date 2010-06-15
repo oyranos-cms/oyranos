@@ -23,7 +23,6 @@
 /*/#include <oyranos/oyranos_internal.h>*/
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -45,7 +44,6 @@ void  oyFinish_             (int unused);
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_SENTINEL_H */

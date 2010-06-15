@@ -24,7 +24,6 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
-using namespace oyranos;
 #define H_SPACING 10
 #define V_SPACING 3
 #define BUTTON_HEIGHT 25

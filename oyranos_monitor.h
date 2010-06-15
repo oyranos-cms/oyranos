@@ -21,7 +21,6 @@
 #include "oyranos_alpha.h"
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -65,7 +64,6 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_MONITOR_H */

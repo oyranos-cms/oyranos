@@ -23,7 +23,6 @@
 #include "oyranos_cmms.h"
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -290,7 +289,6 @@ const char *   oyValueTypeText       ( oyVALUETYPE_e       type );
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_ALPHA_INTERNAL_H */

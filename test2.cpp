@@ -27,7 +27,6 @@
 void* myAllocFunc(size_t size) { return new char [size]; }
 #include <fstream>
 #include <iostream>
-using namespace oyranos;
 #else
 void* myAllocFunc(size_t size) { return calloc(size,1); }
 #endif
@@ -1540,10 +1539,10 @@ oyTESTRESULT_e testPolicy ()
 
   if( xml && xml[0] )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyranos::oyPolicyToXML                " );
+    "oyPolicyToXML                         " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyranos::oyPolicyToXML                " );
+    "oyPolicyToXML                         " );
   }
 
   if(xml) {
@@ -2059,7 +2058,6 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
 
 #include "oyranos_alpha_internal.h"
 #include "oforms/oyranos_forms.h"
-using namespace oyranos::forms;
 
 #define H(type,value) oyFormsAddHeadline( &t, type, value,\
                                            oyAllocateFunc_, oyDeAllocateFunc_ );

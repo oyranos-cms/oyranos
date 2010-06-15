@@ -26,7 +26,6 @@
     @brief The Oyranos namespace.
  */
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -60,6 +59,10 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 
 /* additionals - not defined in icc34.h */
 /* partitially taken from littleCMS */
+
+#ifndef icSigMetaDataTag
+#define icSigMetaDataTag 0x6d657461 /* 'meta' */
+#endif
 
 #ifndef icSigDescriptiveNameValueMuArrayType_
 #define icSigDescriptiveNameValueMuArrayType_ 0x6e766d74 /* 'nvmt' */
@@ -197,7 +200,6 @@ typedef struct {
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_H */
