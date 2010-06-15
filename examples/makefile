@@ -22,15 +22,16 @@ FLTK_LDFLAGS := $(shell (fltk-config --ldflags)) -pthread # FLTK on Fedora13 mis
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
 XCM_CFLAGS := $(shell (pkg-config --cflags xcm))
-XCM_LDFLAGS := $(shell (pkg-config --ldflags xcm))
+XCM_LDFLAGS := $(shell (pkg-config --libs xcm))
 TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
 		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS)
 TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos xcm))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos xcm))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
-CXXFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++0x
-CFLAGS = -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG) $(X11)
+CXXFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++0x $(XCM_CFLAGS)
+CFLAGS = -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG) $(X11) \
+	$(XCM_CFLAGS)
 
 UNAME := $(shell (uname -s))
 
@@ -71,6 +72,7 @@ all:
 	echo "INCLUDE=$$INCLUDE"
 	echo "LIBS=$$LIBS"
 	echo "PKG_CONFIG_PATH=$$PKG_CONFIG_PATH"
+	echo "CFLAGS=$(CFLAGS)"
 	make $(TARGETS)
 	echo ... all done
 
@@ -91,20 +93,20 @@ $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $< $(TARGET2_FLAGS) $(LDFLAGS) $(OY_LDFLAGS) \
 	$(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
-	-lXcm -lXmu -lXinerama -lXrandr -lXxf86vm -lm \
+	 $(XCM_LDFLAGS) -lXmu -lXinerama -lXrandr -lXxf86vm -lm \
 	-DTARGET=\"xcmsevents\" -o $@
 
 $(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
 	mkdir -p colour_desktop
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) -std=c99 -fPIC -shared $< $(LDFLAGS) $(OY_LDFLAGS) \
-	$(TARGET3_FLAGS) -lXcm -o $@
+	$(TARGET3_FLAGS)  $(XCM_LDFLAGS) -o $@
 
 $(TARGET4):	$(SRCDIR)$(TARGET4).c
 	mkdir -p image2pdf
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $< $(TARGET4_FLAGS) $(LDFLAGS) -lXcm $(OY_LDFLAGS) \
-	-o $@
+	-$(CC) $(CFLAGS) $< $(TARGET4_FLAGS) $(LDFLAGS) $(XCM_LDFLAGS) \
+	$(OY_LDFLAGS) -o $@
 
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
 	mkdir -p dummy_device
