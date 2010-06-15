@@ -416,7 +416,7 @@ time:
 # build all objects and libraries, link the headers to $(TARGET)
 $(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS)
 	echo Linking $@ ...
-	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$@ \
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAME) \
 	-o $(LIBSONAMEFULL) \
 	$(OBJECTS) \
 	-L$(libdir) $(LDLIBS) $(m)
