@@ -21,10 +21,12 @@ FLTK_CFLAGS := $(shell (fltk-config --cflags | sed 's/-0.//g'))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags)) -pthread # FLTK on Fedora13 misses libpthread.so
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
+XCM_CFLAGS := $(shell (pkg-config --cflags xcm))
+XCM_LDFLAGS := $(shell (pkg-config --ldflags xcm))
 TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
-		../modules/devices/oyranos_edid_parse.o
-TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos))
-TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos))
+		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS)
+TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos xcm))
+TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos xcm))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
 CXXFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++0x
@@ -41,9 +43,9 @@ endif
 
 ifeq ($(strip $(UNAME)),Linux)
 # Qt needs somehow -O2 (Why???)
-QT_CFLAGS := $(shell pkg-config --cflags QtGui) -O2 -std=c++0x
+QT_CFLAGS := $(shell pkg-config --cflags QtGui xcm) -O2 -std=c++0x
 INCL    := $(shell pkg-config --cflags-only-I QtGui)
-TARGET8_LDFLAGS :=  -L./xcmsevents -loyranosedid -lXcm $(shell pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos) -lQtXml -lQtCore
+TARGET8_LDFLAGS :=  -L./xcmsevents -loyranosedid $(shell pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos xcm) -lQtXml -lQtCore
 TARGET8_SOURCES = $(TARGET8).cpp
 TARGET8_GENERATED_SOURCES = \
 	xcmsevents/moc_qcmsevents.cpp \
