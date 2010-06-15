@@ -33,17 +33,17 @@ BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel
 BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel elektra-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcm-dev netpbm
 %endif
 
-%package -n liboyranos0
+%package -n lib%{name}0
 Summary:   Colour Management System Libraries
 Group:     Development/Libraries/Other
 
 
-%package      -n liboyranos0-devel
+%package      -n lib%{name}-devel
 Summary:   Headers, Configuration and static Libs + Documentation
 Group:     Development/Libraries/Other
-Requires:  %{name}
+Requires:  lib%{name}0 = %{version}
 
-%package      -n liboyranos0-monitor
+%package      -n lib%{name}0-monitor
 Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
 
@@ -56,7 +56,7 @@ Summary:    Nvidia card support
 Group:      System/X11/Utilities
 License: GPL
 
-%package      -n liboyranos0-cups
+%package      -n lib%{name}0-cups
 Summary:    CUPS device support
 Group:      Development/Libraries/Other
 Requires:   cups
@@ -94,7 +94,7 @@ used components and libraries with divergine FOSS licenses:
     lookup3     Bob Jenkins
 
 
-%description -n liboyranos0
+%description -n lib%{name}0
 Oyranos is usable to store default profiles and paths and
 query for profiles in that paths.
 An internal device profile API allowes configuring of a 
@@ -106,7 +106,7 @@ a CMM independent colour conversion API. Single colour lookups
 are supported.
 These API's are to be considered for changing very frequently.
 
-%description -n liboyranos0-devel
+%description -n lib%{name}-devel
 Oyranos is usable to store default profiles and paths and
 query for profiles in that paths.
 An internal device profile API allowes configuring of a 
@@ -121,7 +121,7 @@ These API's are to be considered for changing very frequently.
 %description  monitor
 The monitor profile configuration tool.
 
-%description  -n liboyranos0-monitor
+%description  -n lib%{name}0-monitor
 The monitor support libraries of the
 Oyranos colour management system.
 
@@ -130,7 +130,7 @@ Display setup tool for the
 Oyranos colour management system.
 The nvidia EDID configuration part.
 
-%description  -n liboyranos0-cups
+%description  -n lib%{name}0-cups
 CUPS device support for the
 Oyranos colour management system.
 
@@ -161,10 +161,10 @@ rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 %clean
 rm -rf %{buildroot}
 
-%post
+%post -n lib%{name}0
 ldconfig
 
-%postun
+%postun -n lib%{name}0
 ldconfig
 
 %files -f %{name}.lang
@@ -182,7 +182,7 @@ ldconfig
 %dir %{syscolordir}/%{settingsdirname}/
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 
-%files -n liboyranos0
+%files -n lib%{name}0
 %doc AUTHORS COPYING ChangeLog README
 %{_libdir}/lib%{name}.so.*
 %dir %{_libdir}/colour/
@@ -193,7 +193,7 @@ ldconfig
 %{_libdir}/%{cmmsubpath}/lib%{name}_oicc_cmm_module*
 %{_libdir}/%{metasubpath}/lib%{name}_oyIM_cmm_module*
 
-%files -n liboyranos0-devel
+%files -n lib%{name}-devel
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_libdir}/lib%{name}.so
@@ -219,7 +219,7 @@ ldconfig
 %{_bindir}/%{name}-monitor
 %{_mandir}/man1/%{name}-monitor*
 
-%files -n liboyranos0-monitor
+%files -n lib%{name}0-monitor
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_libdir}/colour/
@@ -232,7 +232,7 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor-nvidia
 
-%files -n liboyranos0-cups
+%files -n lib%{name}0-cups
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_libdir}/colour/
