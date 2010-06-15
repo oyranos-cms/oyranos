@@ -183,6 +183,7 @@ ldconfig
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 
 %files -n lib%{name}0
+%defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_libdir}/lib%{name}.so.*
 %dir %{_libdir}/colour/
