@@ -5,6 +5,17 @@
 
 typedef struct {{ class_name }} {{ class_name }};
 
+/** @struct   {{ class_name }}
+ *  @brief    {% block doxy_brief %}Oyranos {{ class_base_name|lower }} structure{% endblock %}
+ *  @ingroup  {% block doxy_group %}objects_generic{% endblock %}
+ *  @extends  {% block doxy_extends %}oyStruct_s{% endblock %}
+ *
+ *  {% block doxy_details %}{% endblock %}
+ *
+ *   @version Oyranos: 0.1.10
+ *   @since   2007/10/00 (Oyranos: 0.1.8)
+ *   @date    2009/03/01
+ */
 struct {{ class_name }} {
   /* Struct base class start */
   oyOBJECT_e           type_;          /**< @private struct type */
