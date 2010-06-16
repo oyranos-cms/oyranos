@@ -34,7 +34,6 @@ extern "C" {
 #include "oyranos_definitions.h" /* ICC Profile in X */
 
 #ifdef __cplusplus
-using namespace oyranos;
 extern "C" {
 }
 #endif

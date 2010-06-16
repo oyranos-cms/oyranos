@@ -18,7 +18,6 @@
 #include <cstring>
 
 #include <oyranos.h>
-using namespace oyranos;
 #include <oyranos_alpha.h>
 #include <oyranos_cmm.h>   /* for hacking into module API */
 

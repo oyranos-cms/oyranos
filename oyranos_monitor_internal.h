@@ -26,7 +26,6 @@
 # endif
 
 #ifdef __cplusplus
-namespace oyranos {
 extern "C" {
 #endif /* __cplusplus */
 
@@ -120,7 +119,6 @@ void         oyUnrollEdid1_          ( void              * edid,
 
 #ifdef __cplusplus
 } /* extern "C" */
-} /* namespace oyranos */
 #endif /* __cplusplus */
 
 #endif /* OYRANOS_MONITOR__INTERNAL_H */
