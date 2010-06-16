@@ -48,7 +48,12 @@ int main(int argc, char *argv[])
       QFile sourceFile( outputDir.filePath( sourceName ) );
       QFileInfo sourceFileInfo(sourceFile);
 
-      c.insert( "class_name", templateFileInfo.baseName() );
+      QString class_base_name = templateFileInfo.baseName();
+      int idx = class_base_name.indexOf("_");
+      class_base_name.truncate(idx);
+
+      c.insert( "class_name", "oy" + templateFileInfo.baseName() );
+      c.insert( "class_base_name", class_base_name );
       c.insert( "file_name", sourceName );
       QString newFileContents = t->render( &c );
 
