@@ -15,7 +15,7 @@ struct {{ class_name }} {
   {% block ChildMembers %}{% endblock %}
 };
 
-{% block GeneralPrivateMethodsDeclaration %}
+{% block GeneralPrivateMethodsDeclarations %}
 {{ class_name }}*
   oy{{ class_base_name }}_New_( oyObject_s_ object );
 {{ class_name }}*
@@ -24,6 +24,6 @@ int
   oy{{ class_base_name }}_Release_( {{ class_name }} **obj );
 {% endblock %}
 
-{% block SpecificPrivateMethodsDeclaration %}{% endblock %}
+{% block SpecificPrivateMethodsDeclarations %}{% endblock %}
 
 #endif /* OY_{{ class_base_name|upper }}_S__H */

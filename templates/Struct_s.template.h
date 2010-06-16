@@ -14,9 +14,9 @@ struct {{ class_name }} {
   oyObject_s           oy_;            /**< @private features name and hash */
 };
 
-{% block GeneralPublicMethodsDeclaration %}{% endblock %}
+{% block GeneralPublicMethodsDeclarations %}{% endblock %}
 
-{% block SpecificPublicMethodsDeclaration %}{% endblock %}
+{% block SpecificPublicMethodsDeclarations %}{% endblock %}
 
 {% include "cpp_end.h" %}
 #endif /* OY_{{ class_base_name|upper }}_S_H */
