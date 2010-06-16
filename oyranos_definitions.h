@@ -17,7 +17,7 @@
 #ifndef OYRANOS_DEFINITIONS_H
 #define OYRANOS_DEFINITIONS_H
 
-#define OYRANOS_API 15
+#define OYRANOS_API 16
 
 /** @deprecated default local search path */
 #define OY_PROFILE_PATH_USER_DEFAULT    "~/.color/icc"
