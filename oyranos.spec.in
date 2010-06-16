@@ -170,7 +170,6 @@ ldconfig
 %files -f %{name}.lang
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%{_bindir}/%{name}-config
 %{_bindir}/%{name}-policy
 %{_mandir}/man1/%{name}-policy*
 %{_datadir}/mime/packages/*.xml
@@ -197,6 +196,7 @@ ldconfig
 %files -n lib%{name}-devel
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-config
 %{_libdir}/lib%{name}.so
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/icc34.h
