@@ -26,12 +26,10 @@ Authors:
 %configure --quick
 
 %install
-rm -rf %{buildroot}
 make DESTDIR=%{buildroot} install-icc
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 
 %clean
-rm -rf %{buildroot}
 
 %post
 %postun
