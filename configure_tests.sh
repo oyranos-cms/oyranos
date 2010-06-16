@@ -172,6 +172,17 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
         echo_="  need a version not greater than $elektra_max, download: elektra.sf.net"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       fi
     else
+      ELEKTRA_NOT_FOUND=1
+    fi
+  else
+    ELEKTRA_NOT_FOUND=1
+  fi
+  if [ -z "$ELEKTRA_FOUND" ]; then
+    echo_="$elektra_mod"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    if [ $ELEKTRA -eq 1 ]; then
+      ERROR=1
+    fi
+    if [ -n "$ELEKTRA_NOT_FOUND" ]; then
       if [ $ELEKTRA -eq 1 ]; then
         echo_="!!! ERROR Elektra: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
         ERROR=1
@@ -182,12 +193,6 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
       echo_="  no or too old elektra found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       echo_="  need at least version $elektra_min, download: elektra.sf.net"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
-  fi
-  if [ -z "$ELEKTRA_FOUND" ]; then
-      echo_="$elektra_mod"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-      if [ $ELEKTRA -eq 1 ]; then
-        ERROR=1
-      fi
   fi
 fi
 
