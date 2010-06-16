@@ -152,7 +152,7 @@ options.
 
 %install
 rm -rf %{buildroot}
-make
+make %{_smp_mflags}
 make DESTDIR=%{buildroot} install-main
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 %find_lang %{name}       # generate a special file list
