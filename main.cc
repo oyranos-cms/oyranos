@@ -17,7 +17,7 @@ Grantlee::Engine* getEngine()
    Grantlee::Engine *engine = new Grantlee::Engine();
 
    Grantlee::FileSystemTemplateLoader::Ptr loader = Grantlee::FileSystemTemplateLoader::Ptr( new Grantlee::FileSystemTemplateLoader() );
-   loader->setTemplateDirs( QStringList() << "templates" );
+   loader->setTemplateDirs( QStringList() << "templates" << "sources" );
 
    engine->addTemplateLoader( loader );
    engine->setPluginPaths( QStringList() << GRANTLEE_PLUGIN_PATH );
