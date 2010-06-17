@@ -1,5 +1,9 @@
 {% extends "Struct_s.template.c" %}
 
+{% block IncludePrivateHeader %}
+#include "{{ class_name }}_.h"
+{% endblock %}
+
 {% block GeneralPublicMethodsDefinitions %}
 /** Function oy{{ class_base_name }}_New
  *  @memberof {{ class_name }}

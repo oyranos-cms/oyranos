@@ -1,6 +1,7 @@
 {% include "source_file_header.txt" %}
 
-#include "{{ file_name|cut:".c" }}.h"
+#include "{{ class_name }}.h"
+{% block IncludePrivateHeader %}{% endblock %}
 
 {% block GeneralPublicMethodsDefinitions %}{% endblock %}
 

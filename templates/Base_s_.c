@@ -1,3 +1,8 @@
+{% include "source_file_header.txt" %}
+
+#include "oy{{ class_base_name }}_s.h"
+#include "{{ class_name }}.h"
+
 {% block GeneralPrivateMethodsDefinitions %}
 /** @internal
  *  Function oy{{ class_base_name }}_New_
