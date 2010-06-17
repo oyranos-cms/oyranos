@@ -1,0 +1,8 @@
+API_generated/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+TODO
+cmake_install.cmake
+grantlee_paths.h
+oyAPIGenerator
