@@ -36,12 +36,13 @@ BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel lib
 %package -n lib%{name}0
 Summary:   Colour Management System Libraries
 Group:     Development/Libraries/Other
-
+# assume users want the device modules
+Requires:  lib%{name}0-cups = %{version} lib%{name}0-monitor = %{version}
 
 %package      -n lib%{name}-devel
 Summary:   Headers, Configuration and static Libs + Documentation
 Group:     Development/Libraries/Other
-Requires:  lib%{name}0 = %{version}
+Requires:  lib%{name}0 = %{version} libxml2-devel
 
 %package      -n lib%{name}0-monitor
 Summary:    Oyranos Monitor dependent Libraries
@@ -50,6 +51,7 @@ Group:      Development/Libraries/Other
 %package      monitor
 Summary:    Oyranos Monitor Tools
 Group:      Development/Libraries/Other
+Requires:   lib%{name}0-monitor
 
 %package      monitor-nvidia
 Summary:    Nvidia card support
