@@ -17,8 +17,12 @@ CONFIGURE_FILE(
   ${PROJECT_BINARY_DIR}/grantlee_paths.h
 )
 
+#Setup MOC
+set( MOC_HEADERS ClassInfo.h )
+qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
+
 # ... Application sources etc.
-ADD_EXECUTABLE( oyAPIGenerator "main.cc" "ClassTemplates.cc" )
+ADD_EXECUTABLE( oyAPIGenerator "main.cc" "ClassTemplates.cc" "ClassInfo.cc" ${MOC_TEST_SOURCES} )
 TARGET_LINK_LIBRARIES(
    oyAPIGenerator
    ${QT_LIBRARIES}
