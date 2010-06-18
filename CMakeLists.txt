@@ -18,7 +18,7 @@ CONFIGURE_FILE(
 )
 
 # ... Application sources etc.
-ADD_EXECUTABLE( oyAPIGenerator "main.cc" )
+ADD_EXECUTABLE( oyAPIGenerator "main.cc" "ClassTemplates.cc" )
 TARGET_LINK_LIBRARIES(
    oyAPIGenerator
    ${QT_LIBRARIES}

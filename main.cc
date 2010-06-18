@@ -10,6 +10,11 @@
 #include <grantlee_core.h>
 #include "grantlee_paths.h"
 
+#include "ClassTemplates.h"
+
+#define TEMPALTE_DIR "templates"
+#define SOURCE_DIR "sources"
+
 using namespace std;
 
 Grantlee::Engine* getEngine()
@@ -17,7 +22,7 @@ Grantlee::Engine* getEngine()
    Grantlee::Engine *engine = new Grantlee::Engine();
 
    Grantlee::FileSystemTemplateLoader::Ptr loader = Grantlee::FileSystemTemplateLoader::Ptr( new Grantlee::FileSystemTemplateLoader() );
-   loader->setTemplateDirs( QStringList() << "templates" << "sources" );
+   loader->setTemplateDirs( QStringList() << TEMPALTE_DIR << SOURCE_DIR );
 
    engine->addTemplateLoader( loader );
    engine->setPluginPaths( QStringList() << GRANTLEE_PLUGIN_PATH );
@@ -32,6 +37,12 @@ int main(int argc, char *argv[])
    }
    QDir outputDir( argc > 2 ? argv[2] : QDir::currentPath() );
 
+   //Check for newly added classes and create missing templates
+   ClassTemplates tpl( SOURCE_DIR, TEMPALTE_DIR );
+   tpl.updateTemplates = true;
+   tpl.createTemplates();
+
+   //Setup grantlee
    Grantlee::Engine *engine = getEngine();
 
    QDir templateDir( argv[1] );
