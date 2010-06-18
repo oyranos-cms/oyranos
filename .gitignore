@@ -6,3 +6,4 @@ TODO
 cmake_install.cmake
 grantlee_paths.h
 oyAPIGenerator
+moc_ClassInfo.cxx
