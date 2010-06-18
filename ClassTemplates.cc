@@ -30,7 +30,7 @@ void ClassTemplates::createTemplates()
     }
   }
 
-  //Create the template files in templates/ only for all present classes,
+  //Create the template files in templates/ for all present classes,
   //but only if these files do not exist (we do not overwrite),
   //unless updateTemplates is set to true
   QDir templateDir( templates );
@@ -64,6 +64,7 @@ void ClassTemplates::findClasses()
   sourceDir.setNameFilters( QStringList() << "*.dox" );
   sourceDir.setFilter( QDir::Files | QDir::Readable );
   QStringList doxClasses = sourceDir.entryList();
+  doxClasses.removeOne( "Class.dox" );
   for (int c = 0; c<doxClasses.size(); c++) {
     QString ClassName = doxClasses.at( c );
     ClassName.chop(4); //Remove .dox extension
