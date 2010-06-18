@@ -13,10 +13,10 @@ void ClassInfo::parseDoxyfile()
     doxyfile.open( QIODevice::ReadOnly|QIODevice::Text );
     QString text = doxyfile.readAll();
     
-    QRegExp doxy_struct("@struct\s+(\w+)");
-    QRegExp doxy_ingroup("@ingroup\s+(\w+)");
-    QRegExp doxy_extends("@extends\s+(\w+)");
-    QRegExp doxy_internal("@internal\b");
+    QRegExp doxy_struct("@struct\\s+(\\w+)");
+    QRegExp doxy_ingroup("@ingroup\\s+(\\w+)");
+    QRegExp doxy_extends("@extends\\s+(\\w+)");
+    QRegExp doxy_internal("@internal\\b");
 
     if (doxy_struct.indexIn( text ) != -1) {
       if (doxy_struct.cap(1) != name())
