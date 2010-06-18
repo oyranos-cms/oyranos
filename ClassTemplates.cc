@@ -23,7 +23,7 @@ void ClassTemplates::createTemplates()
     QStringList classSourceFiles = sourceDir.entryList();
     for (int s=0; s<sourceFiles.size(); s++) {
       QString classSourceFile = allClasses.at(i) + "." + sourceFiles.at(s);
-      QFile f( classSourceFile );
+      QFile f( sources + "/" + classSourceFile );
       if (!f.exists())
         f.open( QIODevice::WriteOnly );
     }
@@ -44,8 +44,8 @@ void ClassTemplates::createTemplates()
       QString newTemplateFile = QString( genericTemplateFiles.at( g ) ).
                                 replace( '.', ".template." ).
                                 replace( "Class", allClasses.at( i ) );
-      QFile newFile( newTemplateFile );
-      QFile oldFile( genericTemplateFiles.at( g ) );
+      QFile newFile( templates + "/" + newTemplateFile );
+      QFile oldFile( templates + "/" + genericTemplateFiles.at( g ) );
       if (updateTemplates || !newFile.exists()) {
         newFile.open( QIODevice::WriteOnly|QIODevice::Text );
         oldFile.open( QIODevice::ReadOnly|QIODevice::Text );
