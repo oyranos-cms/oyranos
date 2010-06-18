@@ -20,10 +20,10 @@ void ClassInfo::parseDoxyfile()
 
     if (doxy_struct.indexIn( text ) != -1) {
       if (doxy_struct.cap(1) != name())
-        qWarning << "Struct name '" << doxy_struct.cap(1)
+        qWarning() << "Struct name '" << doxy_struct.cap(1)
                  << "' does not match with file name: " << doxyfile.fileName();
     } else {
-        qWarning << "No Struct name given in Doxygen file: " << doxyfile.fileName();
+        qWarning() << "No Struct name given in Doxygen file: " << doxyfile.fileName();
     }
 
     if (doxy_ingroup.indexIn( text ) != -1)
