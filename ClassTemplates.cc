@@ -4,6 +4,8 @@
 #include <QStringList>
 #include <QByteArray>
 
+#include <QtDebug>
+
 #include "ClassTemplates.h"
 
 QStringList ClassTemplates::sourceFiles = QStringList() << "members.h"
@@ -24,8 +26,12 @@ void ClassTemplates::createTemplates()
     for (int s=0; s<sourceFiles.size(); s++) {
       QString classSourceFile = allClasses.at(i) + "." + sourceFiles.at(s);
       QFile f( sources + "/" + classSourceFile );
-      if (!f.exists())
+      if (!f.exists()) {
         f.open( QIODevice::WriteOnly );
+        qDebug() << "Creating file" << classSourceFile;
+      } else {
+        qDebug() << "Skipping file" << classSourceFile;
+      }
     }
   }
 
@@ -52,6 +58,9 @@ void ClassTemplates::createTemplates()
         QByteArray fileData = oldFile.readAll();
         fileData.replace( QString("Class"), allClasses.at(i).toAscii() );
         newFile.write( fileData );
+        qDebug() << "Creating file" << newFile.fileName();
+      } else {
+        qDebug() << "Skipping file" << newFile.fileName();
       }
     }
   }
@@ -72,4 +81,6 @@ void ClassTemplates::findClasses()
     if (sourceDir.entryList().size() == 1)
       doxOnlyClasses << ClassName;
   }
+
+  qDebug() << "Found the following classes:" << allClasses;
 }
