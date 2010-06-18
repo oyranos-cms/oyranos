@@ -6,8 +6,7 @@
 
 #include "ClassTemplates.h"
 
-QStringList ClassTemplates::sourceFiles = QStringList() << "dox"
-                                                        << "members.h"
+QStringList ClassTemplates::sourceFiles = QStringList() << "members.h"
                                                         << "private_methods_declarations.h"
                                                         << "private_methods_definitions.c"
                                                         << "public_methods_declarations.h"
