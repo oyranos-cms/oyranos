@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
    tpl.updateTemplates = true;
    tpl.createTemplates();
    QVariantList classes = tpl.getAllClasses();
+   QVariant classStruct = QVariant::fromValue(static_cast<QObject*>(new ClassStruct));
 
    //Setup grantlee
    Grantlee::Engine *engine = getEngine();
@@ -69,11 +70,19 @@ int main(int argc, char *argv[])
 
       c.insert( "file_name", sourceName );
       c.insert( "classes", classes );
-      for (int i=0; i<classes.size(); i++) {
-        if (class_base_name == classes.at( i ).value<QObject*>()->property("baseName").toString()) {
-          c.insert( "class", classes.at( i ) );
-          break;
+
+      if (class_base_name == "Struct") {
+        c.insert( "class", classStruct );
+      } else {
+        int i;
+        for (i=0; i<classes.size(); i++) {
+          if (class_base_name == classes.at( i ).value<QObject*>()->property("baseName").toString()) {
+            c.insert( "class", classes.at( i ) );
+            break;
+          }
         }
+        if (i == classes.size())
+          qDebug() << "No class found for" << sourceName;
       }
       QString newFileContents = t->render( &c );
 
