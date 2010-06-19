@@ -7,6 +7,7 @@
 
 typedef struct {{ class.name }} {{ class.name }};
 
+{% block doxygenPublicClass %}{% endblock %}
 struct {{ class.name }} {
   oyOBJECT_e           type_;          /**< @private struct type */
   oyStruct_Copy_f      copy;           /**< copy function */
