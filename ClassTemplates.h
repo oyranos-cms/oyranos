@@ -21,8 +21,6 @@ class ClassTemplates
   private:
     QString sources,                  ///< Directory that holds the sources
             templates;                ///< Directory that holds the templates
-    QStringList doxOnlyClasses,       ///< List of classes having only a .dox file (currently unused)
-                allClasses;           ///< List of all classes in sources directory
     QList<ClassInfo*> allClassesInfo; ///< Info list of all classes in sources directory
     static QStringList sourceFiles;   ///< List of possible source files in sources directory
 
