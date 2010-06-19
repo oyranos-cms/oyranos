@@ -264,6 +264,15 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
         error = 1;
         return error;
       }
+
+      if(!ppd)
+      {
+        message( oyMSG_DBG, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
+                    "No PPD obtained for ", _DBG_ARGS_, device_name );
+        error = -1;
+        return error;
+      }
+
  
       manufacturer = ppd->manufacturer;
       model = ppd->modelname;
@@ -485,7 +494,6 @@ int            Configs_FromPattern (
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** s )
 {
-
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
   char ** texts = 0;
@@ -839,7 +847,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                                        oyOptions_s       * user_options )
 {
     int error = 0;
-    ppd_option_t * options = ppd_file->groups->options;
+    ppd_option_t * options = 0;
     int i, pos = 0;
     const char * keyword = 0;
     const char * selectorA = "ColorModel",
@@ -850,6 +858,15 @@ int CUPSgetProfiles                  ( const char        * device_name,
     oyProfile_s * p = 0;
     oyConfig_s * device = 0;
 
+    if(!ppd_file)
+    {
+      message( oyMSG_DBG, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
+                    "No PPD obtained for ", _DBG_ARGS_, device_name );
+      error = -1;
+      return error;
+    }
+
+    options = ppd_file->groups->options;
 
 #if 0
     int option_num = options->num_choices;
