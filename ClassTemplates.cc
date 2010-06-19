@@ -54,11 +54,12 @@ void ClassTemplates::createTemplates()
     templateDir.setNameFilters( QStringList() << "Class_s*.?" );
     QStringList genericTemplateFiles = templateDir.entryList();
     for (int g=0; g<genericTemplateFiles.size(); g++) {
-      QString newTemplateFile = QString( genericTemplateFiles.at( g ) ).
+      QString oldTemplateFile = genericTemplateFiles.at( g );
+      QString newTemplateFile = QString( oldTemplateFile ).
                                 replace( '.', ".template." ).
                                 replace( "Class", allClassesInfo.at(i)->baseName() );
       QFile newFile( templates + "/" + newTemplateFile );
-      QFile oldFile( templates + "/" + genericTemplateFiles.at( g ) );
+      QFile oldFile( templates + "/" + oldTemplateFile );
       if (updateTemplates || !newFile.exists()) {
         newFile.open( QIODevice::WriteOnly|QIODevice::Text );
         oldFile.open( QIODevice::ReadOnly|QIODevice::Text );
@@ -66,6 +67,7 @@ void ClassTemplates::createTemplates()
         fileData.replace( QString("Class"), allClassesInfo.at(i)->baseName().toAscii() );
         if (allClassesInfo.at(i)->parentBaseName() != "Struct")
           fileData.replace( QString("Base"), allClassesInfo.at(i)->parentBaseName().toAscii() );
+
         newFile.write( fileData );
         qDebug() << "Creating file" << newFile.fileName();
       } else {
