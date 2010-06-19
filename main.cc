@@ -6,6 +6,9 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QDateTime>
+#include <QVariant>
+
+#include <QtDebug>
 
 #include <grantlee_core.h>
 #include "grantlee_paths.h"
@@ -41,6 +44,7 @@ int main(int argc, char *argv[])
    ClassTemplates tpl( SOURCE_DIR, TEMPALTE_DIR );
    tpl.updateTemplates = true;
    tpl.createTemplates();
+   QVariantList classes = tpl.getAllClasses();
 
    //Setup grantlee
    Grantlee::Engine *engine = getEngine();
@@ -66,6 +70,13 @@ int main(int argc, char *argv[])
       c.insert( "class_name", "oy" + templateFileInfo.baseName() );
       c.insert( "class_base_name", class_base_name );
       c.insert( "file_name", sourceName );
+      c.insert( "classes", classes );
+      for (int i=0; i<classes.size(); i++) {
+        if (class_base_name == classes.at( i ).value<QObject*>()->property("baseName").toString()) {
+          c.insert( "class", classes.at( i ) );
+          break;
+        }
+      }
       QString newFileContents = t->render( &c );
 
       //1. There is no source file yet
