@@ -18,10 +18,7 @@ typedef struct {{ class.name }} {{ class.name }};
  */
 struct {{ class.name }} {
   /* Struct base class start */
-  oyOBJECT_e           type_;          /**< @private struct type */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private features name and hash */
+{% include Struct_s.members.h %}
   /* Struct base class stop */
   {% block ChildMembers %}{% endblock %}
 };

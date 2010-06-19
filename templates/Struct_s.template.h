@@ -7,12 +7,18 @@
 
 typedef struct {{ class.name }} {{ class.name }};
 
-{% block doxygenPublicClass %}{% endblock %}
+{% block doxygenPublicClass %}
+/** @brief Oyranos base structure
+ *  @ingroup objects_generic
+ *
+ *  All Oyranos structures should be castable to this basic one.
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+{% endblock %}
 struct {{ class.name }} {
-  oyOBJECT_e           type_;          /**< @private struct type */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private features name and hash */
+{% include Struct_s.members.h %}
 };
 
 {% block GeneralPublicMethodsDeclarations %}{% endblock %}
