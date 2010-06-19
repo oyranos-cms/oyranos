@@ -5,6 +5,7 @@
 
 class QString;
 class QStringList;
+class QVariant;
 
 class ClassTemplates
 {
@@ -15,6 +16,8 @@ class ClassTemplates
     ~ClassTemplates();
 
     void createTemplates();
+    /// Return a QVariantList for use with grantlee
+    QList<QVariant> getAllClasses();
 
     bool updateTemplates;           ///< Not only create, but update all .*template*. files, too
 

@@ -3,6 +3,7 @@
 #include <QString>
 #include <QStringList>
 #include <QByteArray>
+#include <QVariant>
 
 #include <QtDebug>
 
@@ -72,4 +73,13 @@ void ClassTemplates::createTemplates()
       }
     }
   }
+}
+
+QList<QVariant> ClassTemplates::getAllClasses()
+{
+  QVariantList classes;
+  for (int c=0; c<allClassesInfo.size(); c++)
+    classes << QVariant( QVariant::fromValue( static_cast<QObject*>(allClassesInfo.at( c )) ) );
+
+  return classes;
 }
