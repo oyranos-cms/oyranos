@@ -63,17 +63,15 @@ void ClassTemplates::createTemplates()
       if (updateTemplates || !newFile.exists()) {
         newFile.open( QIODevice::WriteOnly|QIODevice::Text );
         oldFile.open( QIODevice::ReadOnly|QIODevice::Text );
-        QByteArray fileData = oldFile.readAll();
-        fileData.replace( QString("Class"), allClassesInfo.at(i)->baseName().toAscii() );
+        QString fileData = oldFile.readAll();
+        fileData.replace( QRegExp("(include\\s+\")Class\\."),
+                          "\\1" + allClassesInfo.at(i)->baseName() + "." );
 
-        if (allClassesInfo.at(i)->parentBaseName() != "Struct") {
-          QString fileDataStr( fileData );
-          fileDataStr.replace( QRegExp("Base(_s_?)\\.([ch])"),
-                               allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2");
-          fileData = fileDataStr.toAscii();
-        }
+        if (allClassesInfo.at(i)->parentBaseName() != "Struct")
+          fileData.replace( QRegExp("Base(_s_?)\\.([ch])"),
+                            allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2" );
 
-        newFile.write( fileData );
+        newFile.write( fileData.toAscii() );
         qDebug() << "Creating file" << newFile.fileName();
       } else {
         qDebug() << "Skipping file" << newFile.fileName();
