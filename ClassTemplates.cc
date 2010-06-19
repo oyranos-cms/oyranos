@@ -14,6 +14,12 @@ QStringList ClassTemplates::sourceFiles = QStringList() << "members.h"
                                                         << "public_methods_declarations.h"
                                                         << "public_methods_definitions.c";
 
+ClassTemplates::~ClassTemplates()
+{
+  for (int i=0; i<allClassesInfo.size(); i++)
+    delete allClassesInfo.at( i );
+}
+
 void ClassTemplates::createTemplates()
 {
   //Create the empty sources/* files for all present classes,
@@ -40,8 +46,8 @@ void ClassTemplates::createTemplates()
   //unless updateTemplates is set to true
   QDir templateDir( templates );
   templateDir.setFilter( QDir::Files | QDir::Readable );
-  for (int i=0; i<allClasses.size(); i++) {
-    templateDir.setNameFilters( QStringList() << allClasses.at(i) + "_s*.template.*" );
+  for (int i=0; i<allClassesInfo.size(); i++) {
+    templateDir.setNameFilters( QStringList() << allClassesInfo.at(i)->baseName() + "_s*.template.*" );
     QStringList classTemplateFiles = templateDir.entryList();
 
     templateDir.setNameFilters( QStringList() << "Class_s*.?" );
@@ -56,7 +62,9 @@ void ClassTemplates::createTemplates()
         newFile.open( QIODevice::WriteOnly|QIODevice::Text );
         oldFile.open( QIODevice::ReadOnly|QIODevice::Text );
         QByteArray fileData = oldFile.readAll();
-        fileData.replace( QString("Class"), allClasses.at(i).toAscii() );
+        fileData.replace( QString("Class"), allClassesInfo.at(i)->baseName().toAscii() );
+        if (allClassesInfo.at(i)->parentBaseName() != "Struct")
+          fileData.replace( QString("Base"), allClassesInfo.at(i)->parentBaseName().toAscii() );
         newFile.write( fileData );
         qDebug() << "Creating file" << newFile.fileName();
       } else {
@@ -77,6 +85,8 @@ void ClassTemplates::findClasses()
     QString ClassName = doxClasses.at( c );
     ClassName.chop(4); //Remove .dox extension
     allClasses << ClassName;
+    allClassesInfo << new ClassInfo( ClassName, sources );
+
     sourceDir.setNameFilters( QStringList() << ClassName + ".*" );
     if (sourceDir.entryList().size() == 1)
       doxOnlyClasses << ClassName;
