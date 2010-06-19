@@ -254,7 +254,12 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
            * device_settings = 0;
       const char * system_port = 0,
                  * host = 0;
+      const char * keyword = 0;
       ppd_attr_t * attrs = 0;
+      int attr_n, i, j;
+      char ** colourKeyWords = 0,
+            * tmp = 0;
+      int colourKeyWords_n = 0, tmp_n = 0;
 
       if(!device_name)
       {
@@ -328,6 +333,60 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
               oyOptions_MoveIn( device->data, &o, -1 );
           }
         }
+
+        /* Collect all colourKeyWords. */
+        attr_n = ppd->num_attrs;
+
+        for(i = 0; i < attr_n; i++)
+        {
+          char key[16];
+
+          keyword = ppd->attrs[i]->name;
+
+          /* we support keys beginning with colourKeyWords, e.g.
+             "colourKeyWords1" "colourKeyWords2" ... */
+          snprintf( &key[0], 16, "%s", keyword );
+          key[14] = 0;
+        
+          if (strcmp(key, "colourKeyWords") == 0)
+          {
+            if( tmp && tmp[oyStrlen_(tmp) - 1] != ';' )
+              STRING_ADD( tmp, ";" );
+            STRING_ADD( tmp, ppd->attrs[i]->value );
+          }
+        }
+
+        colourKeyWords = oyStringSplit_( tmp, ';', &colourKeyWords_n,
+                                         oyAllocateFunc_);
+        oyDeAllocateFunc_( tmp );
+
+        /* Scan PPD attributes for matching the colourKeyWords and
+         * add the key/value pairs to the devices backend_core options. */
+        for(i = 0; i < attr_n; i++)
+        {
+          keyword = ppd->attrs[i]->name;
+          for(j = 0; j < colourKeyWords_n; ++j)
+          {
+            if(oyStrcmp_( colourKeyWords[j], keyword ) == 0)
+            {
+              if(!error && ppd->attrs[i]->value)
+              {
+                char * reg_name = 0;
+                STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
+                STRING_ADD( reg_name, keyword );
+                error = oyOptions_SetFromText( &device->backend_core,
+                                               reg_name,
+                                               ppd->attrs[i]->value,
+                                               OY_CREATE_NEW );
+                oyDeAllocateFunc_( reg_name );
+              }
+            }
+          }
+        }
+
+        if( colourKeyWords && colourKeyWords_n)
+          oyStringListRelease_( &colourKeyWords, colourKeyWords_n,
+                                oyDeAllocateFunc_ );
       }
     }
  
