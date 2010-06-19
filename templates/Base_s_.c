@@ -1,23 +1,23 @@
 {% include "source_file_header.txt" %}
 
-#include "oy{{ class_base_name }}_s.h"
-#include "{{ class_name }}.h"
+#include "{{ class.name }}.h"
+#include "{{ class.privName }}.h"
 
 {% block GeneralPrivateMethodsDefinitions %}
 /** @internal
- *  Function oy{{ class_base_name }}_New_
- *  @memberof {{ class_name }}
- *  @brief   allocate a new {{ class_base_name }}  object
+ *  Function oy{{ class.baseName }}_New_
+ *  @memberof {{ class.name }}
+ *  @brief   allocate a new {{ class.baseName }}  object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class_name }} * oy{{ class_base_name }}_New_ ( oyObject_s_ object )
+{{ class.name }} * oy{{ class.baseName }}_New_ ( oyObject_s_ object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_{{ class_base_name }}_S;
-# define STRUCT_TYPE {{ class_name }}
+  oyOBJECT_e type = oyOBJECT_{{ class.baseName|upper }}_S;
+# define STRUCT_TYPE {{ class.name }}
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   STRUCT_TYPE * s = 0;
@@ -34,8 +34,8 @@
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oy{{ class_base_name }}_Copy;
-  s->release = (oyStruct_Release_f) oy{{ class_base_name }}_Release;
+  s->copy = (oyStruct_Copy_f) oy{{ class.baseName }}_Copy;
+  s->release = (oyStruct_Release_f) oy{{ class.baseName }}_Release;
 
   s->oy_ = s_obj;
 
@@ -48,27 +48,27 @@
 }
 
 /** @internal
- *  Function oy{{ class_base_name }}_Copy__
- *  @memberof {{ class_name }}
- *  @brief   real copy a {{ class_base_name }} object
+ *  Function oy{{ class.baseName }}_Copy__
+ *  @memberof {{ class.name }}
+ *  @brief   real copy a {{ class.baseName }} object
  *
- *  @param[in]     obj                 {{ class_base_name }} struct object
+ *  @param[in]     obj                 {{ class.baseName }} struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class_name }} * oy{{ class_base_name }}_Copy__ ( {{ class_name }} *obj, oyObject_s_ object )
+{{ class.name }} * oy{{ class.baseName }}_Copy__ ( {{ class.name }} *obj, oyObject_s_ object )
 {
-  {{ class_name }} *s = 0;
+  {{ class.name }} *s = 0;
   int error = 0;
   oyAlloc_f allocateFunc_ = 0;
 
   if(!obj || !object)
     return s;
 
-  s = oy{{ class_base_name }}_New_( object );
+  s = oy{{ class.baseName }}_New_( object );
   error = !s;
 
   if(!error)
@@ -77,26 +77,26 @@
   }
 
   if(error)
-    oy{{ class_base_name }}_Release_( &s );
+    oy{{ class.baseName }}_Release_( &s );
 
   return s;
 }
 
 /** @internal
- *  Function oy{{ class_base_name }}_Copy_
- *  @memberof {{ class_name }}
- *  @brief   copy or reference a {{ class_base_name }} object
+ *  Function oy{{ class.baseName }}_Copy_
+ *  @memberof {{ class.name }}
+ *  @brief   copy or reference a {{ class.baseName }} object
  *
- *  @param[in]     obj                 {{ class_base_name }} struct object
+ *  @param[in]     obj                 {{ class.baseName }} struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-oyDevice_s_ * oyDevice_Copy_ ( {{ class_name }} *obj, oyObject_s_ object )
+oyDevice_s_ * oyDevice_Copy_ ( {{ class.name }} *obj, oyObject_s_ object )
 {
-  {{ class_name }} *s = obj;
+  {{ class.name }} *s = obj;
 
   if(!obj)
     return 0;
@@ -108,26 +108,26 @@ oyDevice_s_ * oyDevice_Copy_ ( {{ class_name }} *obj, oyObject_s_ object )
     return s;
   }
 
-  s = oy{{ class_base_name }}_Copy__( obj, object );
+  s = oy{{ class.baseName }}_Copy__( obj, object );
 
   return s;
 }
  
 /** @internal
- *  Function oy{{ class_base_name }}_Release_
- *  @memberof {{ class_name }}
- *  @brief   release and possibly deallocate a {{ class_base_name }} object
+ *  Function oy{{ class.baseName }}_Release_
+ *  @memberof {{ class.name }}
+ *  @brief   release and possibly deallocate a {{ class.baseName }} object
  *
- *  @param[in,out] obj                 {{ class_base_name }} struct object
+ *  @param[in,out] obj                 {{ class.baseName }} struct object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-int oy{{ class_base_name }}_Release_( {{ class_name }} **obj )
+int oy{{ class.baseName }}_Release_( {{ class.name }} **obj )
 {
   /* ---- start of common object destructor ----- */
-  {{ class_name }} *s = 0;
+  {{ class.name }} *s = 0;
 
   if(!obj || !*obj)
     return 0;

@@ -1,12 +1,12 @@
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class_base_name|upper }}_S__H
-#define OY_{{ class_base_name|upper }}_S__H
+#ifndef OY_{{ class.baseName|upper }}_S__H
+#define OY_{{ class.baseName|upper }}_S__H
 
-typedef struct {{ class_name }} {{ class_name }};
+typedef struct {{ class.name }} {{ class.name }};
 
-/** @struct   {{ class_name }}
- *  @brief    {% block doxy_brief %}Oyranos {{ class_base_name|lower }} structure{% endblock %}
+/** @struct   {{ class.name }}
+ *  @brief    {% block doxy_brief %}Oyranos {{ class.baseName|lower }} structure{% endblock %}
  *  @ingroup  {% block doxy_group %}objects_generic{% endblock %}
  *  @extends  {% block doxy_extends %}oyStruct_s{% endblock %}
  *
@@ -16,7 +16,7 @@ typedef struct {{ class_name }} {{ class_name }};
  *   @since   2007/10/00 (Oyranos: 0.1.8)
  *   @date    2009/03/01
  */
-struct {{ class_name }} {
+struct {{ class.name }} {
   /* Struct base class start */
   oyOBJECT_e           type_;          /**< @private struct type */
   oyStruct_Copy_f      copy;           /**< copy function */
@@ -27,14 +27,14 @@ struct {{ class_name }} {
 };
 
 {% block GeneralPrivateMethodsDeclarations %}
-{{ class_name }}*
-  oy{{ class_base_name }}_New_( oyObject_s_ object );
-{{ class_name }}*
-  oy{{ class_base_name }}_Copy_( {{ class_name }} *obj, oyObject_s_ object);
+{{ class.name }}*
+  oy{{ class.baseName }}_New_( oyObject_s_ object );
+{{ class.name }}*
+  oy{{ class.baseName }}_Copy_( {{ class.name }} *obj, oyObject_s_ object);
 int
-  oy{{ class_base_name }}_Release_( {{ class_name }} **obj );
+  oy{{ class.baseName }}_Release_( {{ class.name }} **obj );
 {% endblock %}
 
 {% block SpecificPrivateMethodsDeclarations %}{% endblock %}
 
-#endif /* OY_{{ class_base_name|upper }}_S__H */
+#endif /* OY_{{ class.baseName|upper }}_S__H */

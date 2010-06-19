@@ -67,8 +67,6 @@ int main(int argc, char *argv[])
       int idx = class_base_name.indexOf("_");
       class_base_name.truncate(idx);
 
-      c.insert( "class_name", "oy" + templateFileInfo.baseName() );
-      c.insert( "class_base_name", class_base_name );
       c.insert( "file_name", sourceName );
       c.insert( "classes", classes );
       for (int i=0; i<classes.size(); i++) {

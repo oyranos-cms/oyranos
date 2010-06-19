@@ -1,81 +1,81 @@
 {% extends "Struct_s.template.c" %}
 
 {% block IncludePrivateHeader %}
-#include "{{ class_name }}_.h"
+#include "{{ class.name }}_.h"
 {% endblock %}
 
 {% block GeneralPublicMethodsDefinitions %}
-/** Function oy{{ class_base_name }}_New
- *  @memberof {{ class_name }}
- *  @brief   allocate a new {{ class_base_name }} object
+/** Function oy{{ class.baseName }}_New
+ *  @memberof {{ class.name }}
+ *  @brief   allocate a new {{ class.baseName }} object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-OYAPI {{ class_name }} * OYEXPORT
-  oy{{ class_base_name }}_New( oyObject_s object )
+OYAPI {{ class.name }} * OYEXPORT
+  oy{{ class.baseName }}_New( oyObject_s object )
 {
   oyObject_s_ s = (oyObject_s_) object;
-  {{ class_name }}_ * obj = 0;
+  {{ class.name }}_ * obj = 0;
 
   if(s)
     oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
 
-  obj = oy{{ class_base_name }}_New_( s );
+  obj = oy{{ class.baseName }}_New_( s );
 
-  return ({{ class_name }}*) obj;
+  return ({{ class.name }}*) obj;
 }
 
-/** Function oy{{ class_base_name }}_Copy
- *  @memberof {{ class_name }}
- *  @brief   copy or reference a {{ class_base_name }} object
+/** Function oy{{ class.baseName }}_Copy
+ *  @memberof {{ class.name }}
+ *  @brief   copy or reference a {{ class.baseName }} object
  *
- *  @param[in]     obj                 {{ class_base_name }} struct object
+ *  @param[in]     obj                 {{ class.baseName }} struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-OYAPI {{ class_name }}* OYEXPORT
-  oy{{ class_base_name }}_Copy( {{ class_name }} *obj, oyObject_s object )
+OYAPI {{ class.name }}* OYEXPORT
+  oy{{ class.baseName }}_Copy( {{ class.name }} *obj, oyObject_s object )
 {
-  {{ class_name }}_ * s = ({{ class_name }}_*) obj;
+  {{ class.name }}_ * s = ({{ class.name }}_*) obj;
 
   if(s)
-    oyCheckType__m( oyOBJECT_{{ class_base_name|upper  }}_S, return 0 );
+    oyCheckType__m( oyOBJECT_{{ class.baseName|upper  }}_S, return 0 );
 
-  s = oy{{ class_base_name }}_Copy_( s, (oyObject_s_*) object );
+  s = oy{{ class.baseName }}_Copy_( s, (oyObject_s_*) object );
 
-  return ({{ class_name }}*) s;
+  return ({{ class.name }}*) s;
 }
  
-/** Function oy{{ class_base_name }}_Release
- *  @memberof {{ class_name }}
- *  @brief   release and possibly deallocate a {{ class_name }} object
+/** Function oy{{ class.baseName }}_Release
+ *  @memberof {{ class.name }}
+ *  @brief   release and possibly deallocate a {{ class.name }} object
  *
- *  @param[in,out] obj                 {{ class_base_name }} struct object
+ *  @param[in,out] obj                 {{ class.baseName }} struct object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
 OYAPI int OYEXPORT
-  oy{{ class_base_name }}_Release( {{ class_name }} **obj )
+  oy{{ class.baseName }}_Release( {{ class.name }} **obj )
 {
-  {{ class_name }}_ * s = 0;
+  {{ class.name }}_ * s = 0;
 
   if(!obj || !*obj)
     return 0;
 
-  s = ({{ class_name }}*) *obj;
+  s = ({{ class.name }}*) *obj;
 
-  oyCheckType__m( oyOBJECT_{{ class_base_name|upper }}_S, return 1 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|upper }}_S, return 1 )
 
   *obj = 0;
 
-  return oy{{ class_base_name }}_Release_( &s );
+  return oy{{ class.baseName }}_Release_( &s );
 }
 {% endblock GeneralPublicMethodsDefinitions %}
 

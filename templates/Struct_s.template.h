@@ -1,13 +1,13 @@
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class_base_name|upper }}_S_H
-#define OY_{{ class_base_name|upper }}_S_H
+#ifndef OY_{{ class.baseName|upper }}_S_H
+#define OY_{{ class.baseName|upper }}_S_H
 
 {% include "cpp_begin.h" %}
 
-typedef struct {{ class_name }} {{ class_name }};
+typedef struct {{ class.name }} {{ class.name }};
 
-struct {{ class_name }} {
+struct {{ class.name }} {
   oyOBJECT_e           type_;          /**< @private struct type */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -19,4 +19,4 @@ struct {{ class_name }} {
 {% block SpecificPublicMethodsDeclarations %}{% endblock %}
 
 {% include "cpp_end.h" %}
-#endif /* OY_{{ class_base_name|upper }}_S_H */
+#endif /* OY_{{ class.baseName|upper }}_S_H */
