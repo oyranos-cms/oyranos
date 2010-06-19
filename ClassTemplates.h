@@ -11,7 +11,7 @@ class ClassTemplates
   public:
     ClassTemplates( const QString& src, const QString& tpl )
       :updateTemplates(false), sources(src), templates(tpl)
-    { findClasses(); }
+    { allClassesInfo = ClassInfo::getAllClasses( sources ); }
     ~ClassTemplates();
 
     void createTemplates();
@@ -23,8 +23,6 @@ class ClassTemplates
             templates;                ///< Directory that holds the templates
     QList<ClassInfo*> allClassesInfo; ///< Info list of all classes in sources directory
     static QStringList sourceFiles;   ///< List of possible source files in sources directory
-
-    void findClasses();
 };
 
 #endif //CLASSTEMPLATES_H
