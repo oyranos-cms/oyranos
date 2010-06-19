@@ -1,10 +1,39 @@
 #include <QFile>
+#include <QDir>
 #include <QRegExp>
+#include <QList>
 #include <QStringList>
 
 #include <QtDebug>
 
 #include "ClassInfo.h"
+
+QList<ClassInfo*> ClassInfo::getAllClasses( const QString& directory )
+{
+  QDir sourceDir( directory );
+  sourceDir.setNameFilters( QStringList() << "*.dox" );
+  sourceDir.setFilter( QDir::Files | QDir::Readable );
+  QStringList doxClasses = sourceDir.entryList();
+  doxClasses.removeOne( "Class.dox" );
+
+  QList<ClassInfo*> allClassesInfo;
+  for (int c = 0; c<doxClasses.size(); c++) {
+    QString ClassName = doxClasses.at( c );
+    ClassName.chop(4); //Remove .dox extension
+
+    sourceDir.setNameFilters( QStringList() << ClassName + ".*" );
+    if (sourceDir.entryList().size() == 1)
+      allClassesInfo << new ClassInfo( ClassName, directory, true );
+    else
+      allClassesInfo << new ClassInfo( ClassName, directory, false );
+  }
+
+  qDebug() << "Found the following classes:";
+  for (int i=0; i<allClassesInfo.size(); i++)
+    qDebug() << allClassesInfo.at( i )->baseName();
+
+  return allClassesInfo;
+}
 
 void ClassInfo::parseDoxyfile()
 {

@@ -15,7 +15,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(bool doxOnly READ doxOnly)
 
   public:
-    ClassInfo( const QString& name, const QString& dir, bool isnew )
+    ClassInfo( const QString& name, const QString& dir, bool isnew = false )
       : base(name), directory(dir), isInternal(false), isNew(isnew)
     {
       parseDoxyfile();
@@ -38,6 +38,8 @@ class ClassInfo: public QObject
     /// True if this is a new class (with only a .dox file)
     bool doxOnly() const { return isNew; }
     //TODO: Return the parent class
+
+    static QList<ClassInfo*> getAllClasses( const QString& directory );
 
   private:
     QString base;           ///< The class name without any prefix/suffix
