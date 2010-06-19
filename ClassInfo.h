@@ -12,10 +12,11 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString parentName READ parentName)
   Q_PROPERTY(QString group READ group)
   Q_PROPERTY(bool internal READ internal)
+  Q_PROPERTY(bool doxOnly READ doxOnly)
 
   public:
-    ClassInfo( const QString& name, const QString& dir )
-      : base(name), directory(dir), isInternal(false)
+    ClassInfo( const QString& name, const QString& dir, bool isnew )
+      : base(name), directory(dir), isInternal(false), isNew(isnew)
     {
       parseDoxyfile();
     }
@@ -34,14 +35,17 @@ class ClassInfo: public QObject
     QString group() const { return groupName; }
     /// True if this is an internal(not public) class
     bool internal() const { return isInternal; }
+    /// True if this is a new class (with only a .dox file)
+    bool doxOnly() const { return isNew; }
     //TODO: Return the parent class
 
   private:
-    QString base;             ///< The class name without any prefix/suffix
-    QString parentBase;       ///< The base name of the parent class
-    QString groupName;        ///< The group this class belongs to
-    QString directory;        ///< Where the class source files live
-    bool isInternal;          ///< True if this is an internal(not public) class
+    QString base;           ///< The class name without any prefix/suffix
+    QString parentBase;     ///< The base name of the parent class
+    QString groupName;      ///< The group this class belongs to
+    QString directory;      ///< Where the class source files live
+    bool isInternal;        ///< True if this is an internal(not public) class
+    bool isNew;             ///< True if this is a new class (with only a .dox file)
 
     void parseDoxyfile();
 };
