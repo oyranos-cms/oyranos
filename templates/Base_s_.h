@@ -3,20 +3,19 @@
 #ifndef OY_{{ class.baseName|upper }}_S__H
 #define OY_{{ class.baseName|upper }}_S__H
 
-typedef struct {{ class.name }} {{ class.name }};
+typedef struct {{ class.privName }} {{ class.privName }};
 
-/** @struct   {{ class.name }}
+/** @internal
+ *  @struct   {{ class.privName }}
  *  @brief    {% block doxy_brief %}Oyranos {{ class.baseName|lower }} structure{% endblock %}
- *  @ingroup  {% block doxy_group %}objects_generic{% endblock %}
- *  @extends  {% block doxy_extends %}oyStruct_s{% endblock %}
+ *  @ingroup  {{ class.group }}
+ *  @extends  {{ class.parentName }}
  *
- *  {% block doxy_details %}{% endblock %}
- *
- *   @version Oyranos: 0.1.10
- *   @since   2007/10/00 (Oyranos: 0.1.8)
- *   @date    2009/03/01
+ *  @version Oyranos: x.x.x
+ *  @since   YYYY/MM/DD (Oyranos: x.x.x)
+ *  @date    YYYY/MM/DD
  */
-struct {{ class.name }} {
+struct {{ class.privName }} {
   /* Struct base class start */
 {% include "Struct_s.members.h" %}
   /* Struct base class stop */
@@ -24,12 +23,12 @@ struct {{ class.name }} {
 };
 
 {% block GeneralPrivateMethodsDeclarations %}
-{{ class.name }}*
+{{ class.privName }}*
   oy{{ class.baseName }}_New_( oyObject_s_ object );
-{{ class.name }}*
-  oy{{ class.baseName }}_Copy_( {{ class.name }} *obj, oyObject_s_ object);
+{{ class.privName }}*
+  oy{{ class.baseName }}_Copy_( {{ class.privName }} *obj, oyObject_s_ object);
 int
-  oy{{ class.baseName }}_Release_( {{ class.name }} **obj );
+  oy{{ class.baseName }}_Release_( {{ class.privName }} **obj );
 {% endblock %}
 
 {% block SpecificPrivateMethodsDeclarations %}{% endblock %}
