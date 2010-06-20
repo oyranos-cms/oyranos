@@ -18,7 +18,7 @@ typedef struct {{ class.name }} {{ class.name }};
  */
 struct {{ class.name }} {
   /* Struct base class start */
-{% include Struct_s.members.h %}
+{% include "Struct_s.members.h" %}
   /* Struct base class stop */
   {% block ChildMembers %}{% endblock %}
 };
