@@ -18,12 +18,14 @@ typedef struct {{ class.name }} {{ class.name }};
  */
 {% endblock %}
 struct {{ class.name }} {
-{% include Struct_s.members.h %}
+{% include "Struct_s.members.h" %}
 };
 
 {% block GeneralPublicMethodsDeclarations %}{% endblock %}
 
-{% block SpecificPublicMethodsDeclarations %}{% endblock %}
+{% block SpecificPublicMethodsDeclarations %}
+{% include "Struct_s.public_methods_declarations.h" %}
+{% endblock %}
 
 {% include "cpp_end.h" %}
 #endif /* OY_{{ class.baseName|upper }}_S_H */

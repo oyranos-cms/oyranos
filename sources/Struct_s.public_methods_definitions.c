@@ -1,12 +1,12 @@
 /** Function oyStruct_GetText
  *  @memberof oyStruct_s
- *  @brief   get a text dump 
+ *  @brief   get a text dump
  *
  *  As the object type module for text informations.
  *
  *  @param         obj                 the object
  *  @param         name_type           the text type
- *  @param         flags               
+ *  @param         flags
  *                                     - 0: get object infos
  *                                     - 1: get object type infos
  *  @return                            the text

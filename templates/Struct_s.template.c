@@ -5,4 +5,6 @@
 
 {% block GeneralPublicMethodsDefinitions %}{% endblock %}
 
-{% block SpecificPublicMethodsDefinitions %}{% endblock %}
+{% block SpecificPublicMethodsDefinitions %}
+{% include "Struct_s.public_methods_definitions.c" %}
+{% endblock %}
