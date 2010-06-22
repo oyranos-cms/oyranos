@@ -45,6 +45,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString parentBaseName READ parentBaseName)
   Q_PROPERTY(QString parentName READ parentName)
   Q_PROPERTY(QString group READ group)
+  Q_PROPERTY(QString brief READ brief)
   Q_PROPERTY(bool internal READ internal)
   Q_PROPERTY(bool doxOnly READ doxOnly)
 
@@ -67,6 +68,8 @@ class ClassInfo: public QObject
     QString parentName() const { return "oy" + parentBase + "_s"; }
     /// Get the group this class belongs to
     QString group() const { return groupName; }
+    /// Get the class brief description
+    QString brief() const { return doxyBrief; }
     /// True if this is an internal(not public) class
     bool internal() const { return isInternal; }
     /// True if this is a new class (with only a .dox file)
@@ -79,6 +82,7 @@ class ClassInfo: public QObject
     QString base;           ///< The class name without any prefix/suffix
     QString parentBase;     ///< The base name of the parent class
     QString groupName;      ///< The group this class belongs to
+    QString doxyBrief;      ///< The doxygen class brief description
     QString directory;      ///< Where the class source files live
     bool isInternal;        ///< True if this is an internal(not public) class
     bool isNew;             ///< True if this is a new class (with only a .dox file)

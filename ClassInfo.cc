@@ -44,6 +44,7 @@ void ClassInfo::parseDoxyfile()
     
     QRegExp doxy_struct("@struct\\s+(\\w+)");
     QRegExp doxy_ingroup("@ingroup\\s+(\\w+)");
+    QRegExp doxy_brief("@brief\\s+([^\\n\\r\\f]+)\\n");
     QRegExp doxy_extends("@extends\\s+(\\w+)");
     QRegExp doxy_internal("@internal\\b");
 
@@ -57,6 +58,11 @@ void ClassInfo::parseDoxyfile()
 
     if (doxy_ingroup.indexIn( text ) != -1)
       groupName = doxy_ingroup.cap(1);
+
+    if (doxy_brief.indexIn( text ) != -1)
+      doxyBrief = doxy_brief.cap(1);
+    else
+      qDebug() << "There is no brief description in class" << base;
 
     if (doxy_extends.indexIn( text ) != -1) {
       parentBase = doxy_extends.cap(1);

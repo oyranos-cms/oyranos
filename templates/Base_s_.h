@@ -7,7 +7,7 @@ typedef struct {{ class.privName }} {{ class.privName }};
 
 /** @internal
  *  @struct   {{ class.privName }}
- *  @brief    {% block doxy_brief %}Oyranos {{ class.baseName|lower }} structure{% endblock %}
+ *  @brief    {{ class.brief }}
  *  @ingroup  {{ class.group }}
  *  @extends  {{ class.parentName }}
  *
