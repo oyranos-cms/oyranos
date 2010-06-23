@@ -1409,6 +1409,9 @@ int      oyFilterMessageFunc         ( int                 code,
                                        const char        * format,
                                        ... );
 
+/* miscellaneous helpers */
+int oyCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
