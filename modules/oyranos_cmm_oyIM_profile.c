@@ -32,6 +32,13 @@
 
 #define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc."
 
+uint32_t oyGetTableUInt32_           ( const char        * mem,
+                                       int                 entry_size,
+                                       int                 entry_pos,
+                                       int                 pos );
+char *   oyStringFrommluc            ( const char        * mem,
+                                       uint32_t            size );
+
 /* --- implementations --- */
 
 /** @func  oyIMProfileCanHandle
@@ -61,6 +68,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          case icSigDeviceSettingsType:
          case icSigDescriptiveNameValueMuArrayType_:
          case icSigMakeAndModelType:
+         case icSigDictType:
          case icSigMultiLocalizedUnicodeType:
          case icSigWCSProfileTag:
          case icSigProfileSequenceDescType:
@@ -123,6 +131,14 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *    - returns one string
  *    - for the value see oyICCTechnologyDescription
  *
+ *  - icSigDescriptiveNameValueMuArrayType_:
+ *    - since Oyranos 0.1.10 (API 0.1.10)
+ *    - returns
+ *      - introduction text
+ *      - ascii string with the number (i) of the found elements
+ *      - a key string in 2 + i * 2
+ *      - a value string in in 2 + i * 2 + 1
+ *
  *  - icSigMakeAndModelType:
  *    - since Oyranos 0.1.8 (API 0.1.8)
  *    - returns four strings each originating from a uint32_t
@@ -130,6 +146,18 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *      - model id
  *      - serialNumber id
  *      - manufacturer date id
+ *
+ *  - icSigDictType:
+ *    - since Oyranos 0.1.10 (API 0.1.10)
+ *    - returns four strings each originating from a uint32_t
+ *      - the size of components (c) as ascii string (2 - key/value pairs;
+ *        3 - key/value pairs + key UI translations, 3 - key/value pairs + 
+ *        key UI translations + value UI translations)
+ *      - the number (i) of the found elements as ascii string
+ *      - key string in 2 + i * c
+ *      - value string in 2 + i * c +1
+ *      - translated key string in 2 + i * c + 2
+ *      - translated value string in 2 + i * c + 3
  *
  *  - icSigProfileSequenceDescType:
  *    - since Oyranos 0.1.8 (API 0.1.8)
@@ -179,7 +207,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                        oyProfileTag_s    * tag )
 {
   oyStructList_s * values = 0;
-  icUInt32Number error = 0, len = 0, count = 0;
+  icUInt32Number error = 0, len = 0, count = 0, entry_size = 0;
   oyStructList_s * texts = 0, * temp = 0;
   char * tmp = 0;
   char * mem = 0;
@@ -191,10 +219,18 @@ oyStructList_s * oyIMProfileTag_GetValues(
   oyName_s * name = 0;
   oyBlob_s * o = 0;
 
+  int mluc_size = 0;
+  oyStructList_s * desc_tmp = 0;
+  int desc_tmp_n = 0;
+  oyProfileTag_s * tmptag = 0;
+
+
+
   /* provide information about the function */
   if(!tag)
   {
     oyStructList_s * list = oyStructList_New( 0 );
+
     oyName_s description_mluc = {
       oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
@@ -206,6 +242,21 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - oyName_s::name will hold the name\
     - oyName_s::lang will hold i18n specifier, e.g. \"en_GB\""
     };
+
+    oyName_s description_nvmt = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "nvmt",
+      "\
+- icSigDescriptiveNameValueMuArrayType_:\
+  - since Oyranos 0.1.10 (API 0.1.10)\
+  - returns\
+    - introduction text\
+    - ascii string with the number (i) of the found elements\
+    - a key string in 2 + i * 2\
+    - a value string in in 2 + i * 2 + 1"
+    };
+
     oyName_s description_psid = {
       oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
@@ -221,6 +272,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - mluc translated by oyICCTagDescription in 1 + i * 5 + 3\
     - the icSigProfileDescriptionTag according to language in 1 + i * 5 + 4"
     };
+
     oyName_s description_MS10 = {
       oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
@@ -230,6 +282,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
   - since Oyranos 0.1.8 (API 0.1.8)\
   - list: should contain only oyName_s"
     };
+
     oyName_s description_text = {
       oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
@@ -239,6 +292,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
   - since Oyranos 0.1.8 (API 0.1.8)\
   - list: should contain only oyName_s"
     };
+
     oyName_s description_desc = {
       oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
@@ -248,6 +302,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
   - since Oyranos 0.1.8 (API 0.1.8)\
   - list: should contain only oyName_s"
     };
+
     oyName_s description_DevS = {
       oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
@@ -275,6 +330,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
     description = (oyStruct_s*) &description_mluc;
     error = oyStructList_MoveIn( list, &description, -1, 0 );
+
+    description = (oyStruct_s*) &description_nvmt;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_psid;
     if(!error)
@@ -315,6 +374,99 @@ oyStructList_s * oyIMProfileTag_GetValues(
     if(!error)
     switch( (uint32_t)sig )
     {
+      case icSigDictType:
+           error = tag->size_ < 16;
+           if(error)
+             oyStructList_AddName( texts, "unrecoverable parameters found", -1);
+
+           if(error <= 0)
+           {
+             count = *(icUInt32Number*)(mem+8);
+             count = oyValueUInt32( count );
+             entry_size = *(icUInt32Number*)(mem+12);
+             entry_size = oyValueUInt32( entry_size );
+           }
+
+           if(error <= 0)
+           {
+             oySprintf_( num, "%d", count );
+             oyStructList_AddName( texts, num, -1);
+             switch( entry_size )
+             {
+               case 16: oySprintf_( num, "2" ); break;
+               case 24: oySprintf_( num, "3" ); break;
+               case 32: oySprintf_( num, "4" ); break;
+               default: error = 1;
+             }
+             if(error <= 0)
+               oyStructList_AddName( texts, num, -1);
+             else
+              oyStructList_AddName( texts, "unrecoverable parameter found", -1);
+             /*size_ = 12;*/
+           }
+
+           if(error <= 0)
+           {
+             uint32_t i = 0,
+                      key_offset = 0, key_size = 0,
+                      value_offset = 0, value_size = 0,
+                      key_ui_offset = 0, key_ui_size = 0,
+                      value_ui_offset = 0, value_ui_size = 0;
+
+             for(i = 0; i < count && tag->size_ >= i * entry_size; ++i)
+             {
+               key_offset = oyGetTableUInt32_( &mem[16], entry_size, i, 0 );
+               key_size = oyGetTableUInt32_( &mem[16], entry_size, i, 1 );
+               value_offset = oyGetTableUInt32_( &mem[16], entry_size, i, 2 );
+               value_size = oyGetTableUInt32_( &mem[16], entry_size, i, 3 );
+
+               /* add key */
+               if( key_offset && key_offset >= 16+entry_size*count-1 &&
+                   key_offset + key_size < tag->size_ )
+               {
+                 tmp = oyAllocateFunc_( key_size * 2 + 2 );
+                 error = oyIMIconv( &mem[key_offset], key_size, tmp,
+                                    "UTF-16BE" );
+               } else
+                 STRING_ADD( tmp, "" );
+               oyStructList_MoveInName( texts, &tmp, -1 );
+
+                /* add value */
+               if( value_offset && value_offset >= 16+entry_size*count-1 &&
+                   value_offset + value_size < tag->size_ )
+               {
+                 tmp = oyAllocateFunc_( value_size * 2 + 2 );
+                 error = oyIMIconv( &mem[value_offset], value_size, tmp,
+                                    "UTF-16BE" );
+               } else
+                 STRING_ADD( tmp, "" );
+               oyStructList_MoveInName( texts, &tmp, -1 );
+
+                                      
+
+               if(entry_size == 24 || entry_size == 32)
+               {
+                 key_ui_offset = oyGetTableUInt32_( &mem[16], entry_size, i, 4);
+                 key_ui_size = oyGetTableUInt32_( &mem[16], entry_size, i, 5 );
+
+                 tmp = oyStringFrommluc( &mem[key_ui_offset], key_ui_size );
+
+                 oyStructList_MoveInName( texts, &tmp, -1 );
+                 
+                 if(entry_size == 32)
+                 {
+                 value_ui_offset = oyGetTableUInt32_( &mem[16], entry_size,i,6);
+                 value_ui_size = oyGetTableUInt32_( &mem[16], entry_size, i, 7);
+
+                 tmp = oyStringFrommluc( &mem[value_ui_offset], value_ui_size );
+
+                 oyStructList_MoveInName( texts, &tmp, -1 );
+                 }
+               }
+             }
+           }
+
+           break;
       case icSigDescriptiveNameValueMuArrayType_:
            error = tag->size_ < 12;
            count = *(icUInt32Number*)(mem+8);
@@ -740,7 +892,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
              const char * model = 0;
              const char * tech = 0;
              oyStructList_s * mfg_tmp = 0, * model_tmp = 0;
-             oyProfileTag_s * tmptag = 0;
              int32_t size = -1;
              icTagTypeSignature tag_sig = (icTagSignature)0;
 
@@ -876,11 +1027,12 @@ oyStructList_s * oyIMProfileTag_GetValues(
              int i;
              int offset = 0, old_offset = 0;
              int size = 0;
-             int mluc_size = 0;
              uint32_t * hash = 0;
-             oyStructList_s * desc_tmp = 0;
-             int desc_tmp_n = 0;
-             oyProfileTag_s * tmptag = 0;
+
+             mluc_size = 0;
+             desc_tmp = 0;
+             desc_tmp_n = 0;
+             tmptag = 0;
 
              off += 8;
 
@@ -1504,4 +1656,46 @@ oyCMMapi3_s  oyIM_api3 = {
   oyIMProfileTag_Create
 };
 
+uint32_t oyGetTableUInt32_           ( const char        * mem,
+                                       int                 entry_size,
+                                       int                 entry_pos,
+                                       int                 pos )
+{
+  uint32_t value = 0;
+  memcpy( &value, &mem[entry_size * entry_pos + pos * 4], 4 );
+  value = oyValueUInt32( value );
+  return value;
+}
 
+char *   oyStringFrommluc            ( const char        * mem,
+                                       uint32_t            size )
+{
+  oyStructList_s * desc_tmp = 0;
+  oyProfileTag_s * tmptag = 0;
+  char * tmp = 0;
+  oyName_s * name = 0;
+  int error = 0;
+
+  /* 'mluc' type - desc */
+  tmptag = oyProfileTag_New(0);
+  tmp = oyAllocateFunc_(size);
+  error = !memcpy(tmp, mem, size);
+  oyProfileTag_Set( tmptag, icSigProfileDescriptionTag,
+                            icSigMultiLocalizedUnicodeType, oyOK,
+                            size, tmp );
+  tmp = 0;
+
+  desc_tmp = oyIMProfileTag_GetValues( tmptag );
+  if(oyStructList_Count( desc_tmp ) )
+  {
+    name = (oyName_s*) oyStructList_GetRefType( desc_tmp,
+                                                0, oyOBJECT_NAME_S );
+    if(name)
+      tmp = oyStringCopy_( name->name, oyAllocateFunc_ );
+  }
+  oyProfileTag_Release( &tmptag );
+  oyName_release( &name );
+
+  return tmp;
+}
+ 

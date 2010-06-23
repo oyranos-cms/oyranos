@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2007-2009 (C) Kai-Uwe Behrmann
+ *            2007-2010 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC definitions
  *  @internal
@@ -59,6 +59,10 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 
 /* additionals - not defined in icc34.h */
 /* partitially taken from littleCMS */
+
+#ifndef icSigDictType
+#define icSigDictType 0x27646963 /* 'dict' */
+#endif
 
 #ifndef icSigMetaDataTag
 #define icSigMetaDataTag 0x6d657461 /* 'meta' */

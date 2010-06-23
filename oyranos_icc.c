@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2009 (C) Kai-Uwe Behrmann
+ *            2004-2010 (C) Kai-Uwe Behrmann
  *
  *  @internal
  *  @brief    misc ICC support APIs
@@ -387,6 +387,7 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case icSigMeasurementTag: return _("Measurement");
     case icSigMediaBlackPointTag: return _("Media black point");
     case icSigMediaWhitePointTag: return _("Media white point");
+    case icSigMetaDataTag: return _("Meta Data");
     case icSigNamedColorTag: return _("Named Colour");
     case icSigNamedColor2Tag: return _("Named Colour 2");
     case icSigPreview0Tag: return _("Preview, perceptual");
@@ -470,6 +471,7 @@ const oyChar *   oyICCTagName        ( icTagSignature      sig )
     case icSigMeasurementTag: return "meas";
     case icSigMediaBlackPointTag: return "bkpt";
     case icSigMediaWhitePointTag: return "wtpt";
+    case icSigMetaDataTag: return "meta";
     case icSigNamedColorTag: return "'ncol";
     case icSigNamedColor2Tag: return "ncl2";
     case icSigPreview0Tag: return "pre0";
@@ -591,6 +593,7 @@ const oyChar *   oyICCTagTypeName    ( icTagTypeSignature  sig )
     case icSigLut16Type: return "mft2";
     case icSigLut8Type: return "mft1";
     case icSigMeasurementType: return "meas";
+    case icSigDictType: "dict";
     case icSigNamedColorType: return "ncol";
     case icSigProfileSequenceDescType: return "pseq";
     case icSigProfileSequenceIdentifierType: return "psid";
