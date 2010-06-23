@@ -2,9 +2,7 @@
 
 {% block ChildMembers %}
 {{ block.super }}
-  /* {{ class.privName }} members start */
 {% include "Class.members.h" %}
-  /* {{ class.privName }} members stop */
 {% endblock %}
 
 {% block SpecificPrivateMethodsDeclarations %}
