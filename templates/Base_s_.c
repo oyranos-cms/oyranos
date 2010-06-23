@@ -17,7 +17,7 @@
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_{{ class.baseName|upper }}_S;
-# define STRUCT_TYPE {{ class.privName }}
+# define STRUCT_TYPE {{ class.privName }} // FIXME Why is this needed?
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   STRUCT_TYPE * s = 0;
@@ -63,7 +63,7 @@
 {
   {{ class.privName }} *s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
+  oyAlloc_f allocateFunc_ = 0; //FIXME Unused?
 
   if(!obj || !object)
     return s;
@@ -103,7 +103,7 @@
 
   if(obj && !object)
   {
-    s = obj;
+    s = obj; // FIXME Redundant?
     oyObject_Copy_( s->oy_ );
     return s;
   }
