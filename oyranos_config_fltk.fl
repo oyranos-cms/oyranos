@@ -1027,7 +1027,7 @@ Function {} {open C
       class OyFl_Pack
     } {
       Fl_Box {} {
-        image {oyranos_logo.png} xywh {0 0 85 70} align 16
+        image {oyranos_logo64.png} xywh {0 0 85 70} align 16
       }
       Fl_Box {} {
         label {Oyranos Configuration}
