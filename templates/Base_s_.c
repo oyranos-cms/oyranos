@@ -94,7 +94,7 @@
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class.privName }} * oyDevice_Copy_ ( {{ class.privName }} *obj, oyObject_s_ object )
+{{ class.privName }} * oy{{ class.baseName }}_Copy_ ( {{ class.privName }} *obj, oyObject_s_ object )
 {
   {{ class.privName }} *s = obj;
 
