@@ -3,6 +3,8 @@
 #ifndef OY_{{ class.baseName|upper }}_S__H
 #define OY_{{ class.baseName|upper }}_S__H
 
+#include <oyranos_object.h>
+
 typedef struct {{ class.privName }} {{ class.privName }};
 
 /** @internal

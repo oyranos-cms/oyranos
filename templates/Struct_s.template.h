@@ -5,6 +5,8 @@
 
 {% include "cpp_begin.h" %}
 
+#include <oyranos_object.h>
+
 typedef struct {{ class.name }} {{ class.name }};
 
 {% block doxygenPublicClass %}

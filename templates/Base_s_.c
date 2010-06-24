@@ -43,6 +43,9 @@
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
+  /* ---- start of custom {{ class.baseName }} constructor ----- */
+  error = !oy{{ class.baseName }}_New_Custom( s );
+  /* ---- end of custom {{ class.baseName }} constructor ------- */
 
   return s;
 }
@@ -75,6 +78,10 @@
   {
     allocateFunc_ = s->oy_->allocateFunc_;
   }
+
+  /* ---- start of custom {{ class.baseName }} copy constructor ----- */
+  oy{{ class.baseName }}_Copy__Custom( s, obj, object);
+  /* ---- end of custom {{ class.baseName }} copy constructor ------- */
 
   if(error)
     oy{{ class.baseName }}_Release_( &s );
