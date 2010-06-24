@@ -15,6 +15,7 @@
 
 #include "config.h"
 #include "oyranos_alpha.h"
+#include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyra.h"
 #include "oyranos_helper.h"
@@ -83,7 +84,7 @@ oyPointer  oyraFilte15ode_ImageLoadContextToMem (
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/15 (Oyranos: 0.1.10)
- *  @date    2009/07/15
+ *  @date    2010/06/24
  */
 int      oyraFilterPlug_ImageLoadRun (
                                        oyFilterPlug_s    * requestor_plug,
@@ -101,14 +102,98 @@ int      oyraFilterPlug_ImageLoadRun (
   oyRectangle_s * r;
   oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;
+  oyCMMapiFilter_s * api = 0;
+  oyCMMapiFilters_s * apis = 0;
 
   x = ticket->start_xy[0];
   y = ticket->start_xy[1];
 
   image = (oyImage_s*)socket->data;
-  if(image)
-    ;
+  if(!image)
+  {
+    uint32_t count = 0,
+             i, j, n,
+           * rank_list = 0;
+    char ** texts = 0,
+          * val = 0;
+    const char * filename = oyOptions_FindString( node->core->options_, "filename", 0 );
+    const char * fileext = 0;
 
+    if(filename)
+    {
+      fileext = strrchr( filename, '.' );
+      if(fileext)
+        ++fileext;
+    } else
+    {
+      message( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+         OY_DBG_FORMAT_ "Could not find a filename extension to select module.",
+               OY_DBG_ARGS_ );
+      result = 1;
+      return result;
+    }
+
+    apis = oyCMMsGetFilterApis_( 0, "//" OY_TYPE_STD "/file_read",
+                                 oyOBJECT_CMM_API7_S, &rank_list,0 );
+
+    n = oyCMMapiFilters_Count( apis );
+    if(apis)
+    {
+      for(i = 0; i < n; ++i)
+      {
+        int file_read = 0,
+            image_pixel = 0,
+            found = 0;
+        oyCMMapi7_s * api7;
+
+        j = 0;
+        api = oyCMMapiFilters_Get( apis, i );
+        api7 = (oyCMMapi7_s*) api;
+
+        if(api7->properties)
+          while(api7->properties[j] && api7->properties[j][0])
+          {
+            if(strcmp( api7->properties[j], "file=read" ) == 0)
+              file_read = 1;
+
+            if(strstr( api7->properties[j], "image=" ) != 0 &&
+               strstr( api7->properties[j], "pixel" ) != 0)
+              image_pixel = 1;
+
+            if(strstr( api7->properties[j], "ext=" ) != 0 &&
+               strstr( &api7->properties[j][4], fileext ) != 0)
+              found = 1;
+
+            ++j;
+          }
+
+        if(file_read && image_pixel && found)
+        {
+          result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
+          i = n;
+        }
+
+        if(api->release)
+          api->release( (oyStruct_s**)&api );
+      }
+      oyCMMapiFilters_Release( &apis );
+    }
+
+    if( !n )
+      message( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+             OY_DBG_FORMAT_ "Could not find any file_load plugin.",
+             OY_DBG_ARGS_ );
+
+  }
+
+  /* set the data */
+  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
+     requestor_plug->remote_socket_->data)
+  {
+    error = oyraFilterPlug_ImageRootRun( requestor_plug, ticket );
+
+    return error;
+  }
 
   return result;
 }
@@ -169,7 +254,7 @@ oyConnectorImaging_s oyra_imageLoad_socket = {
 oyConnectorImaging_s *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
 
 
-#define OY_IMAGE_LOAD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "load_file." CMM_NICK
+#define OY_IMAGE_LOAD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.meta." CMM_NICK
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
  *
@@ -204,7 +289,9 @@ oyCMMapi7_s   oyra_api7_image_load = {
   0,   /* plugs_last_add */
   (oyConnector_s**) oyra_imageLoad_sockets,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets_last_add */
+
+  0    /* char * properties */
 };
 
 const char * oyraApi4UiImageLoadGetText (
