@@ -497,7 +497,7 @@ main(int argc, char** argv)
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
   /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/input_ppm", 0, 0 );
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, 0 );
   /* set the above filter node as the input */
   oyConversion_Set( conversion, in, 0 );
 
@@ -516,7 +516,7 @@ main(int argc, char** argv)
   if(in)
   options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
   /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read.input_ppm/filename",
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
