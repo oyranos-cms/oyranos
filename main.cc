@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
    Grantlee::Engine *engine = getEngine();
 
    QDir templateDir( argv[1] );
-   templateDir.setNameFilters( QStringList() << "*.template.h" << "*.template.c" );
+   templateDir.setNameFilters( QStringList() << "*.template.h" << "*.template.c" << "*.template.cc" );
    templateDir.setFilter( QDir::Files | QDir::Readable );
    QFileInfoList templateFiles = templateDir.entryInfoList();
    for (int t=0; t<templateFiles.size(); ++t) {
