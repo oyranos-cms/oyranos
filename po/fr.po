@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2010-06-24 07:56+0200\n"
+"POT-Creation-Date: 2010-06-24 08:12+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: ALL <ku.b@gmx.de>\n"
@@ -1302,13 +1302,13 @@ msgid "-v verbose"
 msgstr ""
 
 #: oyranos_gamma.c:200 oforms/oyranos_xforms.c:32
-#: oforms/oyranos_xforms_fltk.cxx:51
+#: oforms/oyranos_xforms_fltk.cxx:52
 #, c-format
 msgid "For more informations read the man page:"
 msgstr ""
 
 #: oyranos_gamma.c:216 oyranos_policy.c:137 oforms/oyranos_xforms.c:134
-#: oforms/oyranos_xforms_fltk.cxx:254
+#: oforms/oyranos_xforms_fltk.cxx:257
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -2156,7 +2156,7 @@ msgstr ""
 
 #. the option follows
 #: oforms/oyranos_forms_cmd_line.c:182 oforms/oyranos_xforms.c:190
-#: oforms/oyranos_xforms_fltk.cxx:319
+#: oforms/oyranos_xforms_fltk.cxx:325
 #, fuzzy, c-format
 msgid "Option"
 msgstr "Options"
@@ -2171,12 +2171,16 @@ msgstr ""
 msgid "is a Oyranos module options tool"
 msgstr "Oyranos Préférences"
 
-#: oforms/oyranos_xforms.c:23 oforms/oyranos_xforms_fltk.cxx:38
+#: oforms/oyranos_xforms.c:23
 msgid "Show options"
 msgstr ""
 
 #: oforms/oyranos_xforms.c:26 oforms/oyranos_xforms_fltk.cxx:44
 msgid "Get XFORMS:"
+msgstr ""
+
+#: oforms/oyranos_xforms_fltk.cxx:38
+msgid "Show options [include policy]"
 msgstr ""
 
 #: oforms/oyranos_xforms_fltk.cxx:41
@@ -2191,16 +2195,20 @@ msgstr ""
 msgid "read XFORMS"
 msgstr ""
 
-#: oforms/oyranos_xforms_fltk.cxx:243
+#: oforms/oyranos_xforms_fltk.cxx:50
+msgid "show policy options"
+msgstr ""
+
+#: oforms/oyranos_xforms_fltk.cxx:246
 msgid "Unknown argument"
 msgstr ""
 
-#: oforms/oyranos_xforms_fltk.cxx:371
+#: oforms/oyranos_xforms_fltk.cxx:377
 #, fuzzy
 msgid "Hints"
 msgstr " points"
 
-#: oforms/oyranos_xforms_fltk.cxx:381
+#: oforms/oyranos_xforms_fltk.cxx:387
 msgid "&Done"
 msgstr ""
 
