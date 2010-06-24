@@ -35,8 +35,8 @@ void usage(int argc, char ** argv)
                           OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a Oyranos module options tool"));
   printf("%s\n",                 _("Usage"));
-  printf("  %s\n",               _("Show options"));
-  printf("      %s -n \"module_name\"\n", argv[0]);
+  printf("  %s\n",               _("Show options [include policy]"));
+  printf("      %s -n \"module_name\" [-f]\n", argv[0]);
   printf("\n");
   printf("  %s\n",               _("Write Results:"));
   printf("      %s -n \"module_name\" -o \"xml_file\"\n", argv[0]);
@@ -47,6 +47,7 @@ void usage(int argc, char ** argv)
   printf("  %s\n",               _("General options:"));
   printf("      -v  %s\n",       _("verbose"));
   printf("      -i \"xhtml_file\"  %s\n",_("read XFORMS"));
+  printf("      -f  %s\n",       _("show policy options"));
   printf("\n");
   puts(_("For more informations read the man page:"));
   printf("      man oyranos-xforms_not_yet\n");
@@ -146,6 +147,7 @@ int main (int argc, char ** argv)
       i;
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
+  int front = 0;  /* front end options */
 
 #ifdef USE_GETTEXT
   const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
@@ -206,6 +208,7 @@ int main (int argc, char ** argv)
             {
               case 'n': OY_PARSE_STRING_ARG( node_name ); break;
               case 'o': OY_PARSE_STRING_ARG( output_model_file ); break;
+              case 'f': front = 1; break;
               case 'i': OY_PARSE_STRING_ARG( input_xml_file ); break;
               case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
               case 'v': oy_debug += 1; break;
@@ -268,6 +271,8 @@ int main (int argc, char ** argv)
 
   if(node_name)
   {
+    int attributes = 0;
+
     node = oyFilterNode_NewWith( node_name, 0,0 );
     if(!node)
     {
@@ -277,10 +282,11 @@ int main (int argc, char ** argv)
     } else
       oyOptions_Release( &node->core->options_ );
 
-    opts = oyFilterNode_OptionsGet( node,
-                                    OY_SELECT_FILTER | OY_SELECT_COMMON |
-                                    oyOPTIONATTRIBUTE_ADVANCED /*|
-                                    oyOPTIONATTRIBUTE_FRONT*/ );
+    attributes = OY_SELECT_FILTER | OY_SELECT_COMMON |
+                                    oyOPTIONATTRIBUTE_ADVANCED;
+    if(front)
+      attributes |= oyOPTIONATTRIBUTE_FRONT;
+    opts = oyFilterNode_OptionsGet( node, attributes );
 
     /* ... then get the UI for this filters options. */
     error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
