@@ -601,7 +601,6 @@ int      oyraFilterPlug_ImageInputPPMRun (
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
      requestor_plug->remote_socket_->data)
   {
-    socket = requestor_plug->remote_socket_;
     error = oyraFilterPlug_ImageRootRun( requestor_plug, ticket );
 
     return error;
