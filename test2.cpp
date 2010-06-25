@@ -1623,6 +1623,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   oyProfile_s * p = 0;
 
   /* send a empty query to one module to obtain instructions in a message */
+  if(count)
   error = oyConfigs_FromDomain( texts[0], 0, &configs, 0 );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
