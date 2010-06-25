@@ -1627,7 +1627,8 @@ oyTESTRESULT_e testCMMDevicesListing ()
   error = oyConfigs_FromDomain( texts[0], 0, &configs, 0 );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfigs_FromDomain \"%s\" help text ", texts[0] );
+    "oyConfigs_FromDomain \"%s\" help text ", texts ? 
+                                              oyNoEmptyString_m_(texts[0]) :"----");
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConfigs_FromDomain \"%s\" help text ", texts[0] );
@@ -1858,12 +1859,13 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
   fprintf( stdout, "\n");
 
-  config = oyConfig_New( texts[0], 0 );
+  if(texts && texts[0])
+    config = oyConfig_New( texts[0], 0 );
   error = oyConfig_AddDBData( config, "k1", "bla1", OY_CREATE_NEW );
   error = oyConfig_AddDBData( config, "k2", "bla2", OY_CREATE_NEW );
   error = oyConfig_AddDBData( config, "k3", "bla3", OY_CREATE_NEW );
 
-  if( !error  && oyOptions_Count( config->db ))
+  if( !error  && config && oyOptions_Count( config->db ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConfig_AddDBData                    " );
   } else
@@ -2705,7 +2707,7 @@ oyTESTRESULT_e testCMMnmRun ()
   {
     oyFilterCore_s * core = oyFilterCore_New( "//" OY_TYPE_STD "/root",
                                               options,0 );
-
+    if(!core) break;
     oyFilterCore_Release( &core );
   }
   clck = oyClock() - clck;
@@ -2852,7 +2854,7 @@ oyTESTRESULT_e testCMMnmRun ()
   oyFilterPlug_s * plug = 0;
   oyPixelAccess_s * pixel_access = 0;
   s = oyConversion_CreateBasicPixels( input,output, 0, 0 );
-  if(s->out_)
+  if(s && s->out_)
     plug = oyFilterNode_GetPlug( s->out_, 0 );
   else
     error = 1;
