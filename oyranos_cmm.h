@@ -1408,6 +1408,9 @@ int      oyFilterMessageFunc         ( int                 code,
                                        const oyStruct_s  * context,
                                        const char        * format,
                                        ... );
+int          oyFilterSocket_MatchImagingPlug (
+                                       oyFilterSocket_s  * socket,
+                                       oyFilterPlug_s    * plug );
 
 /* miscellaneous helpers */
 int oyCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
