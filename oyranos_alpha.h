@@ -2110,6 +2110,25 @@ typedef struct oyFilterPlugs_s oyFilterPlugs_s;
 typedef struct oyFilterSocket_s oyFilterSocket_s;
 typedef struct oyPixelAccess_s oyPixelAccess_s;
 
+/** typedef  oyCMMFilterSocket_MatchPlugIn_f
+ *  @brief   verify connectors matching each other
+ *  @ingroup module_api
+ *  @memberof oyCMMapi5_s
+ *
+ *  A implementation for images is included in the core function
+ *  oyFilterSocket_MatchImagePlug().
+ *
+ *  @param         socket              a filter socket
+ *  @param         plug                a filter plug
+ *  @return                            1 on success, otherwise 0
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/04/20 (Oyranos: 0.1.10)
+ *  @date    2009/04/20
+ */
+typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
+                                       oyFilterSocket_s  * socket,
+                                       oyFilterPlug_s    * plug );
 
 /** @enum    oyCONNECTOR_e
  *  @brief   basic connector attributes
@@ -2186,7 +2205,7 @@ typedef enum {
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/07/26 (Oyranos: 0.1.8)
- *  @date    2009/04/20
+ *  @date    2010/06/25
  */
 struct oyConnector_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_S */
@@ -2199,6 +2218,10 @@ struct oyConnector_s {
   oyName_s             name;           
 
   char               * connector_type; /**< a @ref registration string */
+  /** Check if two oyCMMapi7_s filter connectors of type oyConnector_s can 
+   *  match each other inside a given socket and a plug. */
+  oyCMMFilterSocket_MatchPlug_f  filterSocket_MatchPlug;
+
   /** make requests and receive data, by part of oyFilterPlug_s */
   int                  is_plug;
 };

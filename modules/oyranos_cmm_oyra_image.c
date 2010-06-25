@@ -203,6 +203,7 @@ oyConnectorImaging_s oyra_imageLoad_plug = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Load Plug"},
   "//" OY_TYPE_STD "/generator.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -230,6 +231,7 @@ oyConnectorImaging_s oyra_imageLoad_socket = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Load Socket"},
   "//" OY_TYPE_STD "/generator.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -529,6 +531,7 @@ oyConnectorImaging_s oyra_imageRectangles_plug = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Plug"},
   "//" OY_TYPE_STD "/splitter.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -556,6 +559,7 @@ oyConnectorImaging_s oyra_imageRectangles_socket = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Socket"},
   "//" OY_TYPE_STD "/image.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -777,6 +781,7 @@ oyConnectorImaging_s oyra_imageRoot_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
   "//" OY_TYPE_STD "/image.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -933,6 +938,7 @@ oyConnectorImaging_s oyra_imageOutput_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
   "//" OY_TYPE_STD "/image.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */

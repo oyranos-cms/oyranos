@@ -4891,10 +4891,13 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
            s->registration && s->registration[0] &&
            (s->version[0] || s->version[1] || s->version[2]) &&
            s->oyCMMFilterLoad &&
-           s->oyCMMFilterScan &&
-           s->filterSocket_MatchPlug
+           s->oyCMMFilterScan
             ) )
-        error = 1;
+      {
+        int module_api = 10000*s->module_api[0] + 100*s->module_api[1] + 1*s->module_api[2];
+        if(module_api < 110) /* last API break */
+          error = 1;
+      }
     } break;
     case oyOBJECT_CMM_API6_S:
     {
@@ -4919,7 +4922,11 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
            s->oyCMMFilterPlug_Run &&
            ((s->plugs && s->plugs_n) || (s->sockets && s->sockets_n))
             ) )
-        error = 1;
+      {
+        int module_api = 10000*s->module_api[0] + 100*s->module_api[1] + 1*s->module_api[2];
+        if(module_api < 110) /* last API break */
+          error = 1;
+      }
     } break;
     case oyOBJECT_CMM_API8_S:
     {
@@ -4950,7 +4957,11 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
               && s->texts[0] && s->texts[0][0] && s->getText)) &&
            s->pattern && s->pattern[0]
             ) )
-        error = 1;
+      {
+        int module_api = 10000*s->module_api[0] + 100*s->module_api[1] + 1*s->module_api[2];
+        if(module_api < 110) /* last API break */
+          error = 1;
+      }
     } break;
     case oyOBJECT_CMM_API10_S:
     {
@@ -23483,8 +23494,8 @@ OYAPI int  OYEXPORT
     }
 
     /** More detailed checking is done in oyCMMapi5_s. */
-    if(match && node_first->api7_->api5_->filterSocket_MatchPlug)
-      node_first->api7_->api5_->filterSocket_MatchPlug( sock_first, plug );
+    if(match && sock_first->pattern->filterSocket_MatchPlug)
+      sock_first->pattern->filterSocket_MatchPlug( sock_first, plug );
   }
 
   oyConnector_Release( &a );

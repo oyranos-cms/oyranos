@@ -766,6 +766,7 @@ oyConnectorImaging_s oyx1_Display_plug = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Plug"},
   "//" OY_TYPE_STD "/splitter.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
@@ -793,6 +794,7 @@ oyConnectorImaging_s oyx1_Display_socket = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Socket"},
   "//" OY_TYPE_STD "/image.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */

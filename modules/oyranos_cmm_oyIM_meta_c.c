@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2008-2009 (C) Kai-Uwe Behrmann
+ *            2008-2010 (C) Kai-Uwe Behrmann
  *
  *  @brief    meta module for C language module support in Oyranos
  *  @internal
@@ -234,7 +234,7 @@ int          oyIMFilterScan          ( oyPointer           data,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/11/13 (Oyranos: 0.1.9)
- *  @date    2009/07/23
+ *  @date    2010/06/25
  */
 oyCMMapi5_s  oyIM_api5_meta_c = {
 
@@ -248,7 +248,7 @@ oyCMMapi5_s  oyIM_api5_meta_c = {
   /* @todo registration: for what? */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH CMM_NICK,
 
-  {0,0,1}, /* int32_t version[3] */
+  {0,0,2}, /* int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
 
@@ -258,8 +258,6 @@ oyCMMapi5_s  oyIM_api5_meta_c = {
 
   oyIMFilterLoad, /* oyCMMFilterLoad_f oyCMMFilterLoad */
   oyIMFilterScan, /* oyCMMFilterScan_f */
-
-  oyFilterSocket_MatchImagingPlug /* oyCMMFilterSocket_MatchPlug_f */
 };
 
 

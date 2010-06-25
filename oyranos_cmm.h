@@ -530,6 +530,7 @@ typedef int          (*oyCMMFilterScan_f) (
                                        oyCMMInfo_s      ** info,
                                        oyObject_s          object );
 
+
 /** @struct  oyConnectorImaging_s
  *  @brief   node connection descriptor
  *  @ingroup objects_conversion
@@ -545,7 +546,7 @@ typedef int          (*oyCMMFilterScan_f) (
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/07/26 (Oyranos: 0.1.8)
- *  @date    2009/04/28
+ *  @date    2010/06/25
  */
 struct oyConnectorImaging_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_IMAGING_S */
@@ -579,6 +580,11 @@ struct oyConnectorImaging_s {
    *  - provides values or text, only output "///analysis.text"
    */
   char               * connector_type;
+  /** Check if two oyCMMapi7_s filter connectors of type oyConnector_s can 
+   *  match each other inside a given socket and a plug.
+   *  For a imaging plugin just add here oyFilterSocket_MatchImagingPlug */
+  oyCMMFilterSocket_MatchPlug_f  filterSocket_MatchPlug;
+
   /** 1 - make requests and receive data, by part of oyFilterPlug_s;
     * 0 - receive requests and provide data, oyFilterSocket_s
     */
@@ -616,26 +622,10 @@ OYAPI int  OYEXPORT
                  oyConnectorImaging_Release ( 
                                        oyConnectorImaging_s**list );
 
-
-/** typedef  oyCMMFilterSocket_MatchPlugIn_f
- *  @brief   verify connectors matching each other
- *  @ingroup module_api
- *  @memberof oyCMMapi5_s
- *
- *  A implementation for images is included in the core function
- *  oyFilterSocket_MatchImagePlug().
- *
- *  @param         socket              a filter socket
- *  @param         plug                a filter plug
- *  @return                            1 on success, otherwise 0
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/04/20 (Oyranos: 0.1.10)
- *  @date    2009/04/20
- */
-typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
+int          oyFilterSocket_MatchImagingPlug (
                                        oyFilterSocket_s  * socket,
                                        oyFilterPlug_s    * plug );
+
 
 /** @struct  oyCMMapi5_s
  *  @brief   module or script loader
@@ -650,9 +640,9 @@ typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
  *  list the scanned filters in a user selection widget. Further the API is
  *  responsible to open the filter and create a oyFilter_s object.
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2009/04/20
+ *  @date    2010/06/25
  */
 struct oyCMMapi5_s {
   oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API5_S */
@@ -691,9 +681,6 @@ struct oyCMMapi5_s {
 
   oyCMMFilterLoad_f                oyCMMFilterLoad; /**< */
   oyCMMFilterScan_f                oyCMMFilterScan; /**< */
-
-  /** check if two filter connectors can match each other */
-  oyCMMFilterSocket_MatchPlug_f  filterSocket_MatchPlug;
 };
 
 /** typedef oyCMMFilterPlug_Run_f
