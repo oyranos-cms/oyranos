@@ -998,7 +998,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/11/02
+ *  @date    2010/06/25
  */
 OYAPI int  OYEXPORT
            oyStruct_ObserverAdd      ( oyStruct_s        * model,
@@ -1008,7 +1008,7 @@ OYAPI int  OYEXPORT
 {
   oyObserver_s * s = 0,
                * obs = 0;
-  int error = !model;
+  int error = !model || !observer;
   oyStructList_s * list = 0;
   int n,i, found;
 
@@ -1045,7 +1045,8 @@ OYAPI int  OYEXPORT
   }
 
   /* add to observer */
-  list = oyStruct_ObserverListGet_( observer, OY_SIGNAL_MODELS );
+  if(!error)
+    list = oyStruct_ObserverListGet_( observer, OY_SIGNAL_MODELS );
   if(!error && list)
   {
     found = 0;
