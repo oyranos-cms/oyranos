@@ -144,6 +144,7 @@ typedef enum {
   oyOBJECT_CMM_POINTER_S,             /*!< oyCMMptr_s */
   oyOBJECT_CMM_INFO_S,                /*!< oyCMMInfo_s */
   oyOBJECT_CMM_API_S,                 /**< oyCMMapi_s */
+  oyOBJECT_CMM_APIS_S,                /**< oyCMMapis_s */
   oyOBJECT_CMM_API1_S,                /**< oyCMMapi1_s */
   oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
   oyOBJECT_CMM_API3_S,                /**< oyCMMapi3_s */
@@ -3466,6 +3467,45 @@ OYAPI oyCMMapiFilter_s * OYEXPORT
                                        int                 pos );
 OYAPI int  OYEXPORT
                  oyCMMapiFilters_Count(oyCMMapiFilters_s * list );
+
+/** @struct  oyCMMapis_s
+ *  @brief   a CMMapis list
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CMM_APIS_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyStructList_s     * list_;          /**< the list data */
+} oyCMMapis_s;
+
+OYAPI oyCMMapis_s * OYEXPORT
+           oyCMMapis_New             ( oyObject_s          object );
+OYAPI oyCMMapis_s * OYEXPORT
+           oyCMMapis_Copy            ( oyCMMapis_s       * list,
+                                       oyObject_s          object);
+OYAPI int  OYEXPORT
+           oyCMMapis_Release         ( oyCMMapis_s      ** list );
+
+
+OYAPI int  OYEXPORT
+           oyCMMapis_MoveIn          ( oyCMMapis_s       * list,
+                                       oyCMMapi_s       ** ptr,
+                                       int                 pos );
+OYAPI int  OYEXPORT
+           oyCMMapis_ReleaseAt       ( oyCMMapis_s       * list,
+                                       int                 pos );
+OYAPI oyCMMapi_s * OYEXPORT
+           oyCMMapis_Get             ( oyCMMapis_s       * list,
+                                       int                 pos );
+OYAPI int  OYEXPORT
+           oyCMMapis_Count           ( oyCMMapis_s       * list );
 
 
 

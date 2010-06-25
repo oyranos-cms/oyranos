@@ -569,6 +569,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CMM_POINTER_S: text = "oyCMMptr_s"; break;
     case oyOBJECT_CMM_INFO_S: text = "oyCMMInfo_s"; break;
     case oyOBJECT_CMM_API_S: text = "oyCMMapi_s generic"; break;
+    case oyOBJECT_CMM_APIS_S: text = "oyCMMapis_s generic"; break;
     case oyOBJECT_CMM_API1_S: text = "oyCMMapi1_s old CMM"; break;
     case oyOBJECT_CMM_API2_S: text = "oyCMMapi2_s Monitors"; break;
     case oyOBJECT_CMM_API3_S: text = "oyCMMapi3_s Profile tags"; break;
@@ -3280,6 +3281,289 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
 
 
 
+/** Function oyCMMapis_New
+ *  @memberof oyCMMapis_s
+ *  @brief   allocate a new CMMapis list
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+OYAPI oyCMMapis_s * OYEXPORT
+           oyCMMapis_New             ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CMM_APIS_S;
+# define STRUCT_TYPE oyCMMapis_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyCMMapis_Copy;
+  s->release = (oyStruct_Release_f) oyCMMapis_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
+
+  return s;
+}
+
+/** @internal
+ *  Function oyCMMapis_Copy_
+ *  @memberof oyCMMapis_s
+ *  @brief   real copy a CMMapis object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+oyCMMapis_s * oyCMMapis_Copy_
+                                     ( oyCMMapis_s       * obj,
+                                       oyObject_s          object )
+{
+  oyCMMapis_s * s = 0;
+  int error = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyCMMapis_New( object );
+  error = !s;
+
+  if(!error)
+    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
+
+  if(error)
+    oyCMMapis_Release( &s );
+
+  return s;
+}
+
+/** Function oyCMMapis_Copy
+ *  @memberof oyCMMapis_s
+ *  @brief   copy or reference a CMMapis list
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+OYAPI oyCMMapis_s * OYEXPORT
+           oyCMMapis_Copy            ( oyCMMapis_s       * obj,
+                                       oyObject_s          object )
+{
+  oyCMMapis_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CMM_APIS_S, return 0 )
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyCMMapis_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyCMMapis_Release
+ *  @memberof oyCMMapis_s
+ *  @brief   release and possibly deallocate a CMMapis list
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+OYAPI int  OYEXPORT
+           oyCMMapis_Release         ( oyCMMapis_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyCMMapis_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_CMM_APIS_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyStructList_Release( &s->list_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
+/** Function oyCMMapis_MoveIn
+ *  @memberof oyCMMapis_s
+ *  @brief   add a element to a CMMapis list
+ *
+ *  @param[in]     list                list
+ *  @param[in,out] obj                 list element
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+OYAPI int  OYEXPORT
+           oyCMMapis_MoveIn          ( oyCMMapis_s       * list,
+                                       oyCMMapi_s       ** obj,
+                                       int                 pos )
+{
+  oyCMMapis_s * s = list;
+  int error = 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CMM_APIS_S, return 1 )
+
+  if(obj && *obj &&
+     (*obj)->type >= oyOBJECT_CMM_API1_S &&
+     (*obj)->type <= oyOBJECT_CMM_API_MAX)
+  {
+    if(!s)
+    {
+      s = oyCMMapis_New(0);
+      error = !s;
+    }                                  
+
+    if(!error && !s->list_)
+    {
+      s->list_ = oyStructList_Create( s->type_, 0, 0 );
+      error = !s->list_;
+    }
+      
+    if(!error)
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );
+  }   
+  
+  return error;
+}
+
+/** Function oyCMMapis_ReleaseAt
+ *  @memberof oyCMMapis_s
+ *  @brief   release a element from a CMMapis list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+OYAPI int  OYEXPORT
+           oyCMMapis_ReleaseAt       ( oyCMMapis_s       * list,
+                                       int                 pos )
+{ 
+  int error = !list;
+  oyCMMapis_s * s = list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_CMM_APIS_S, return 1 )
+
+  if(!error && list->type_ != oyOBJECT_CMM_APIS_S)
+    error = 1;
+  
+  if(!error)
+    oyStructList_ReleaseAt( list->list_, pos );
+
+  return error;
+}
+
+/** Function oyCMMapis_Get
+ *  @memberof oyCMMapis_s
+ *  @brief   get a element of a CMMapis list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+OYAPI oyCMMapi_s * OYEXPORT
+           oyCMMapis_Get             ( oyCMMapis_s       * list,
+                                       int                 pos )
+{       
+  int error = !list;
+  oyCMMapis_s * s = list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_CMM_APIS_S, return 0 )
+
+  if(!error)
+    return (oyCMMapi_s *) oyStructList_GetRef( list->list_, pos ); 
+  else  
+    return 0;
+}   
+
+/** Function oyCMMapis_Count
+ *  @memberof oyCMMapis_s
+ *  @brief   count the elements in a CMMapis list
+ *
+ *  @param[in,out] list                the list
+ *  @return                            element count
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+OYAPI int  OYEXPORT
+           oyCMMapis_Count           ( oyCMMapis_s       * list )
+{       
+  int error = !list;
+  oyCMMapis_s * s = list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_CMM_APIS_S, return 0 )
+
+  if(!error)
+    return oyStructList_Count( list->list_ );
+  else return 0;
+}
 
 
 oyStructList_s * oy_cmm_handles_ = 0;
@@ -4096,69 +4380,71 @@ oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMInfo_s       * info,
 oyStructList_s * oy_module_cache_ = 0;
 
 /** @internal
- *  Function oyCMMGetMetaApi_
- *  @brief   get a filter module
+ *  Function oyCMMGetMetaApis_
+ *  @brief   get module loaders
  *
  *  This function searches for a modul/CMM API.
  *
- *  @param[in]   cmm_required          if present take this or fail, the arg
- *                                     simplifies and speeds up the search
- *  @param[in]   queries               search for a match to capabilities
  *  @param[in]   registration          point'.' separated list of identifiers
- *  @param[in]   type                  filter api type
+ *  @param[in]   count                 number of returned apis
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2008/12/28
+ *  @date    2010/06/25
  */
-oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
-                                       const char        * registration )
+oyCMMapis_s* oyCMMGetMetaApis_       ( const char        * registration )
 {
   oyCMMapi5_s * s = 0;
-  int error = 0;
+  oyCMMapis_s * meta_apis = oyCMMapis_New(0);
+  int error = 0,
+      i,n;
   oyHash_s * entry = 0;
   char * class = 0;
-  oyRegistrationData_s reg_filter = {0,0};
   char * lib_name = 0;
   char * api_reg = 0;
   oyOBJECT_e type = oyOBJECT_CMM_API5_S;
 
-  class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE,0);
-
-  {
-    if(!oy_module_cache_)
-      oy_module_cache_ = oyStructList_New( 0 );
-
-    entry = oyCacheListGetEntry_ ( oy_module_cache_, 0, class );
-
-    s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, type );
-
-    if(s)
-    {
-      oyHash_Release_( &entry );
-      return s;
-    }
-  }
-
-  api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+  if(registration)
+    class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
   if(class)
   {
+    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
     STRING_ADD( api_reg, class );
     oyFree_m_( class );
   }
 
-  reg_filter.type = type;
-  reg_filter.registration = api_reg;
+  if(oy_module_cache_)
+  {
+    if(api_reg)
+    {
+      entry = oyCacheListGetEntry_ ( oy_module_cache_, 0, api_reg );
+      s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, type );
+      oyHash_Release_( &entry );
+      oyCMMapis_MoveIn( meta_apis, (oyCMMapi_s**)&s, -1 );
+    } else
+    {
+      n = oyStructList_Count( oy_module_cache_ );
+      for(i = 0; i < n; ++i)
+      {
+        entry = (oyHash_s*) oyStructList_GetType_( oy_module_cache_, i,
+                                                              oyOBJECT_HASH_S );
+        s = (oyCMMapi5_s*) oyHash_GetPointer_( entry, type );
+        oyHash_Release_( &entry );
+       
+        oyCMMapis_MoveIn( meta_apis, (oyCMMapi_s**)&s, -1 );
+      }
+    }
 
-  s = (oyCMMapi5_s*)     oyCMMsGetApi_( type,
-                                        cmm_required,
-                                        &lib_name,
-                                        oyCMMapi_selectFilter_,
-                                        &reg_filter );
+    return meta_apis;
+  }
+
+  /*oy_module_cache_ = oyStructList_New( 0 ); */
+
+  meta_apis = oyCMMsGetApis_( 0 );
 
   oyFree_m_( api_reg );
 
-  if(s)
+  if(0 && s)
   {
     s->id_ = lib_name;
     error = oyHash_SetPointer_( entry, (oyStruct_s*) s );
@@ -4166,7 +4452,7 @@ oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
 
   oyHash_Release_( &entry );
 
-  return s;
+  return meta_apis;
 }
 
 
@@ -4370,7 +4656,9 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
 
   if(error <= 0)
   {
-    oyCMMapi5_s * api5 = oyCMMGetMetaApi_( 0, registration );
+    oyCMMapi5_s * api5 = 0;
+    oyCMMapis_s * meta_apis = oyCMMGetMetaApis_( registration );
+    int meta_apis_n = 0;
     char ** files = 0;
     uint32_t  files_n = 0;
     int i, j, k = 0, match_j = -1, ret, match_i = -1, rank = 0, old_rank = 0,
@@ -4378,81 +4666,91 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     char * match = 0, * reg = 0;
     oyCMMInfo_s * info = 0;
 
-    error = !api5;
-
-    if(error <= 0)
-    files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext, cmm_required);
-    else
-      WARNc2_S("%s: %s", _("Could not open meta module API"),
-               oyNoEmptyString_m_( registration ));
-
-    for( i = 0; i < files_n; ++i)
+    meta_apis_n = oyCMMapis_Count( meta_apis );
+    for(k = 0; k < meta_apis_n; ++k)
     {
-      ret = 0; j = 0;
-      ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
-                                   0, 0, oyAllocateFunc_, &info, object );
-      while(!ret)
+      api5 = (oyCMMapi5_s*) oyCMMapis_Get( meta_apis, k );
+
+      if(error <= 0)
+      files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext, cmm_required);
+      else
+        WARNc2_S("%s: %s", _("Could not open meta module API"),
+                 oyNoEmptyString_m_( registration ));
+
+      for( i = 0; i < files_n; ++i)
       {
+        ret = 0; j = 0;
         ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
-                                     &reg, 0, oyAllocateFunc_, 0, 0 );
-        if(!ret && reg)
+                                     0, 0, oyAllocateFunc_, &info, object );
+        while(!ret)
         {
-          rank = oyFilterRegistrationMatch( reg, registration, type );
-          if(rank && OYRANOS_VERSION == info->oy_compatibility)
-            ++rank;
-
-          if(rank && rank_list)
+          ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
+                                       &reg, 0, oyAllocateFunc_, 0, 0 );
+          if(!ret && reg)
           {
+            rank = oyFilterRegistrationMatch( reg, registration, type );
+            if(rank && OYRANOS_VERSION == info->oy_compatibility)
+              ++rank;
 
-            if(!rank_list_ && !apis)
+            if(rank && rank_list)
             {
-              *rank_list = 0;
-              oyAllocHelper_m_( *rank_list, uint32_t, rank_list_n+1, 0,
-                                goto clean );
-              rank_list_ = *rank_list;
-              apis = oyCMMapiFilters_New(0);
+
+              if(!rank_list_ && !apis)
+              {
+                *rank_list = 0;
+                oyAllocHelper_m_( *rank_list, uint32_t, rank_list_n+1, 0,
+                                  goto clean );
+                rank_list_ = *rank_list;
+                apis = oyCMMapiFilters_New(0);
+              } else
+              if(count_ >= rank_list_n)
+              {
+                rank_list_n *= 2;
+                rank_list_ = 0;
+                oyAllocHelper_m_( rank_list_, uint32_t, rank_list_n+1, 0,
+                                  goto clean );
+                error = !memcpy( rank_list_, *rank_list,
+                                 sizeof(uint32_t) * rank_list_n/2 );
+                oyFree_m_(*rank_list);
+                *rank_list = rank_list_;
+              }
+
+              rank_list_[k++] = rank;
+              api = api5->oyCMMFilterLoad( 0,0, files[i], type, j);
+              if(!api)
+                continue;
+
+              api->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
+              api->api5_ = api5;
+              if(!apis)
+                apis = oyCMMapiFilters_New( 0 );
+              oyCMMapiFilters_MoveIn( apis, &api, -1 );
+              ++ count_;
+              if(count)
+                *count = count_;
+
             } else
-            if(count_ >= rank_list_n)
+            if(rank > old_rank)
             {
-              rank_list_n *= 2;
-              rank_list_ = 0;
-              oyAllocHelper_m_( rank_list_, uint32_t, rank_list_n+1, 0,
-                                goto clean );
-              error = !memcpy( rank_list_, *rank_list,
-                               sizeof(uint32_t) * rank_list_n/2 );
-              oyFree_m_(*rank_list);
-              *rank_list = rank_list_;
+              match = reg;
+              match_j = j;
+              match_i = i;
+              old_rank = rank;
             }
-
-            rank_list_[k++] = rank;
-            api = api5->oyCMMFilterLoad( 0,0, files[i], type, j);
-            if(!api)
-              continue;
-
-            api->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
-            api->api5_ = api5;
-            if(!apis)
-              apis = oyCMMapiFilters_New( 0 );
-            oyCMMapiFilters_MoveIn( apis, &api, -1 );
-            ++ count_;
-            if(count)
-              *count = count_;
-
-          } else
-          if(rank > old_rank)
-          {
-            match = reg;
-            match_j = j;
-            match_i = i;
-            old_rank = rank;
           }
+          ++j;
+          if(reg) oyFree_m_( reg );
         }
-        ++j;
-        if(reg) oyFree_m_( reg );
       }
 
       oyCMMInfo_Release( &info );
+#if 0
+      if(api5->release)
+        api5->release( (oyStruct_s**)&api5 );
+#endif
     }
+
+    oyCMMapis_Release( &meta_apis );
 
     if(match && !rank_list)
     {
@@ -4605,8 +4903,70 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
 
 
 /** @internal
+ *  Function oyCMMsGetApis_
+ *  @brief get oyranos modules
+ *
+ *  @param[in]   registration          data to pass to apiCheck
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
+oyCMMapis_s *    oyCMMsGetApis_      ( const char        * registration )
+{
+  int error = 0;
+  oyCMMapis_s * apis = 0;
+  int  found = 0;
+  oyCMMapi_Check_f apiCheck = oyCMMapi_CheckWrap_;
+
+  if(error <= 0)
+  {
+    char ** files = 0;
+    uint32_t  files_n = 0;
+    int i = 0;
+
+    files = oyCMMsGetLibNames_(&files_n, 0);
+
+    /* open the modules */
+    for( i = 0; i < files_n; ++i)
+    {
+      oyCMMInfo_s * cmm_info = oyCMMInfoFromLibName_(files[i]);
+
+      if(cmm_info)
+      {
+        oyCMMapi_s * tmp = cmm_info->api,
+                   * copy = 0;
+
+        while(tmp)
+        {
+          found = 0;
+
+          if(apiCheck(cmm_info, tmp, 0, 0) == oyOBJECT_CMM_API5_S)
+          {
+            if(!apis)
+              apis = oyCMMapis_New(0);
+
+            copy = tmp;
+              
+            oyCMMapis_MoveIn( apis, &copy, -1 );
+          }
+
+          tmp = tmp->next;
+        }
+      }
+
+      oyCMMInfo_Release( &cmm_info );
+    }
+
+    oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
+  }
+
+  return apis;
+}
+
+/** @internal
  *  Function oyCMMsGetApi_
- *  @brief get a module
+ *  @brief get a oyranos module
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
  *  The module system shall support:
