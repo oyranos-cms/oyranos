@@ -593,7 +593,7 @@ const oyChar *   oyICCTagTypeName    ( icTagTypeSignature  sig )
     case icSigLut16Type: return "mft2";
     case icSigLut8Type: return "mft1";
     case icSigMeasurementType: return "meas";
-    case icSigDictType: "dict";
+    case icSigDictType: return "dict";
     case icSigNamedColorType: return "ncol";
     case icSigProfileSequenceDescType: return "pseq";
     case icSigProfileSequenceIdentifierType: return "psid";
