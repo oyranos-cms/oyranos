@@ -18,6 +18,7 @@
 
 #define TEMPALTE_DIR "templates"
 #define SOURCE_DIR "sources"
+#define API_DIR "API_generated"
 
 using namespace std;
 
@@ -35,14 +36,17 @@ Grantlee::Engine* getEngine()
 
 int main(int argc, char *argv[])
 {
-   if (argc < 2) {
-      cout << "Usage: " << argv[0] << " <template dir>" << " [output dir]" << endl;
+   if (QString(argv[1]) == "-h" ||
+       QString(argv[1]) == "--help") {
+      cout << "Usage: " << argv[0] << " [template dir]" << " [sources dir]" << " [output dir]" << endl;
       return 0;
    }
-   QDir outputDir( argc > 2 ? argv[2] : QDir::currentPath() );
+   QDir templateDir( argc > 1 ? argv[1] : TEMPALTE_DIR );
+   QDir sourceDir  ( argc > 2 ? argv[2] : SOURCE_DIR   );
+   QDir outputDir  ( argc > 3 ? argv[3] : API_DIR      );
 
    //Check for newly added classes and create missing templates
-   ClassTemplates tpl( SOURCE_DIR, TEMPALTE_DIR );
+   ClassTemplates tpl( sourceDir, templateDir);
    tpl.updateTemplates = true;
    tpl.createTemplates();
    QVariantList classes = tpl.getAllClasses();
@@ -51,7 +55,6 @@ int main(int argc, char *argv[])
    //Setup grantlee
    Grantlee::Engine *engine = getEngine();
 
-   QDir templateDir( argv[1] );
    QDirIterator templateFile( templateDir.path(),
                 QStringList() << "*.template.h" << "*.template.c" << "*.template.cc",
                 QDir::Files|QDir::Readable,
