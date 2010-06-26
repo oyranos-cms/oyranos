@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <QDir>
+#include <QDirIterator>
 #include <QStringList>
 #include <QFileInfoList>
 #include <QFileInfo>
@@ -51,11 +52,14 @@ int main(int argc, char *argv[])
    Grantlee::Engine *engine = getEngine();
 
    QDir templateDir( argv[1] );
-   templateDir.setNameFilters( QStringList() << "*.template.h" << "*.template.c" << "*.template.cc" );
-   templateDir.setFilter( QDir::Files | QDir::Readable );
-   QFileInfoList templateFiles = templateDir.entryInfoList();
-   for (int t=0; t<templateFiles.size(); ++t) {
-      QFileInfo templateFileInfo = templateFiles.at(t);
+   QDirIterator templateFile( templateDir.path(),
+                QStringList() << "*.template.h" << "*.template.c" << "*.template.cc",
+                QDir::Files|QDir::Readable,
+                QDirIterator::Subdirectories );
+
+   while (templateFile.hasNext()) {
+      templateFile.next();
+      QFileInfo templateFileInfo = templateFile.fileInfo();
 
       Grantlee::Template t = engine->loadByName( templateFileInfo.fileName() );
       Grantlee::Context c;
