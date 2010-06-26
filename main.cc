@@ -60,6 +60,22 @@ int main(int argc, char *argv[])
    QDir templateDir( argc > 1 ? argv[1] : TEMPALTE_DIR );
    QDir sourceDir  ( argc > 2 ? argv[2] : SOURCE_DIR   );
    QDir outputDir  ( argc > 3 ? argv[3] : API_DIR      );
+   if (!templateDir.exists()) {
+     qCritical() << "Directory" << templateDir.path() << "does not exist";
+     return 1;
+   }
+   if (!sourceDir.exists()) {
+     qCritical() << "Directory" << sourceDir.path() << "does not exist";
+     return 1;
+   }
+   if (!outputDir.exists()) {
+     qDebug() << "Creating directory" << outputDir.path();
+     QDir currentDir;
+     if (!currentDir.mkdir(outputDir.path())) {
+       qCritical() << "Directory" << outputDir.path() << "cannot be created";
+       return 1;
+     }
+   }
 
    //Check for newly added classes and create missing templates
    ClassTemplates tpl( sourceDir.path(), templateDir.path());
