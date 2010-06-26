@@ -51,14 +51,23 @@ void ClassTemplates::createTemplates()
     templateDir.setNameFilters( QStringList() << allClassesInfo.at(i)->baseName() + "_s*.template.*" );
     QStringList classTemplateFiles = templateDir.entryList();
 
+    //Create the templates/<group_name>/ directory, if not present
+    QString group( allClassesInfo.at(i)->group() );
+    if (!templateDir.exists( group ))
+      if (!templateDir.mkdir( group )) {
+        qWarning() << "Could not create directory" << group;
+        continue;
+      }
+
     templateDir.setNameFilters( QStringList() << "Class_s*.?" );
     QStringList genericTemplateFiles = templateDir.entryList();
+
     for (int g=0; g<genericTemplateFiles.size(); g++) {
       QString oldTemplateFile = genericTemplateFiles.at( g );
       QString newTemplateFile = QString( oldTemplateFile ).
                                 replace( '.', ".template." ).
                                 replace( "Class", allClassesInfo.at(i)->baseName() );
-      QFile newFile( templates + "/" + newTemplateFile );
+      QFile newFile( templates + "/" + group + "/" + newTemplateFile );
       QFile oldFile( templates + "/" + oldTemplateFile );
       if (updateTemplates || !newFile.exists()) {
         newFile.open( QIODevice::WriteOnly|QIODevice::Text );
