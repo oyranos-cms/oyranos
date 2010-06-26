@@ -22,16 +22,32 @@
 
 using namespace std;
 
-Grantlee::Engine* getEngine()
+typedef Grantlee::FileSystemTemplateLoader GFSLoader;
+
+Grantlee::Engine* getEngine( const QStringList& tmplDirs )
 {
-   Grantlee::Engine *engine = new Grantlee::Engine();
+  QStringList allTmplDirs( tmplDirs );
 
-   Grantlee::FileSystemTemplateLoader::Ptr loader = Grantlee::FileSystemTemplateLoader::Ptr( new Grantlee::FileSystemTemplateLoader() );
-   loader->setTemplateDirs( QStringList() << TEMPALTE_DIR << SOURCE_DIR );
+  //Get all template subdirectories
+  foreach (QString dir, tmplDirs) {
+    QDirIterator subdir( dir,
+                         QDir::AllDirs|QDir::NoDotAndDotDot|QDir::Readable|QDir::Executable,
+                         QDirIterator::Subdirectories );
+    while (subdir.hasNext()) {
+      subdir.next();
+      allTmplDirs << dir + "/" + subdir.fileName();
+    }
+  }
+  qDebug() << "Loading templates from:";
+  qDebug() << allTmplDirs;
 
-   engine->addTemplateLoader( loader );
-   engine->setPluginPaths( QStringList() << GRANTLEE_PLUGIN_PATH );
-   return engine;
+  Grantlee::Engine *engine = new Grantlee::Engine();
+  GFSLoader::Ptr loader = GFSLoader::Ptr( new GFSLoader() );
+  loader->setTemplateDirs( allTmplDirs );
+
+  engine->addTemplateLoader( loader );
+  engine->setPluginPaths( QStringList() << GRANTLEE_PLUGIN_PATH );
+  return engine;
 }
 
 int main(int argc, char *argv[])
@@ -46,14 +62,14 @@ int main(int argc, char *argv[])
    QDir outputDir  ( argc > 3 ? argv[3] : API_DIR      );
 
    //Check for newly added classes and create missing templates
-   ClassTemplates tpl( sourceDir, templateDir);
+   ClassTemplates tpl( sourceDir.path(), templateDir.path());
    tpl.updateTemplates = true;
    tpl.createTemplates();
    QVariantList classes = tpl.getAllClasses();
    QVariant classStruct = QVariant::fromValue(static_cast<QObject*>(new ClassStruct));
 
    //Setup grantlee
-   Grantlee::Engine *engine = getEngine();
+   Grantlee::Engine *engine = getEngine( QStringList() << templateDir.path() << sourceDir.path() );
 
    QDirIterator templateFile( templateDir.path(),
                 QStringList() << "*.template.h" << "*.template.c" << "*.template.cc",
