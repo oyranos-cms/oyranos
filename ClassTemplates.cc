@@ -59,7 +59,7 @@ void ClassTemplates::createTemplates()
         continue;
       }
 
-    templateDir.setNameFilters( QStringList() << "Class_s*.?" );
+    templateDir.setNameFilters( QStringList() << "Class_s.?" << "Class_s_.?" );
     QStringList genericTemplateFiles = templateDir.entryList();
 
     for (int g=0; g<genericTemplateFiles.size(); g++) {
