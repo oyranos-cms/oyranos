@@ -531,7 +531,7 @@ int          oyModulesScan_          ( int                 flags )
   int n = 0, i;
   char ** list = 0;
 
-  list = oyConfigFilesGet_( &n, "cmms", oyALL, oyUSER_SYS,
+  list = oyDataFilesGet_( &n, "color/cmms", oyALL, oyUSER_SYS,
                             "cmms", "oy_cmm_register", ".xml", malloc );
   for(i = 0; i < n; ++i)
   {

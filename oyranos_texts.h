@@ -106,12 +106,12 @@ int         oyPolicySet_             ( const char      * policy_file,
                                        const char      * full_name );
 oyWIDGET_e* oyPolicyWidgetListGet_   ( oyGROUP_e           group,
                                        int             * count );
-char **     oyConfigPathsGet_        ( int             * count,
+char **     oyDataPathsGet_          ( int             * count,
                                        const char      * subdir,
                                        int               data,
                                        int               owner,
                                        oyAlloc_f         allocateFunc );
-char **     oyConfigFilesGet_        ( int             * count,
+char **     oyDataFilesGet_          ( int             * count,
                                        const char      * subdir,
                                        int               data,
                                        int               owner,

@@ -547,7 +547,7 @@ oyProfilePathsGet_    (int             * count,
   char ** tmp = NULL;
   int tmp_n = -1;
 
-  path_names = oyConfigPathsGet_( count, "icc", oyALL, oyUSER_SYS,
+  path_names = oyDataPathsGet_( count, "color/icc", oyALL, oyUSER_SYS,
                                           oyAllocateFunc_ );
 # if defined(__APPLE__)
 # define TestAndSetDefaultPATH( path ) \
@@ -1378,7 +1378,7 @@ char**  oyLibPathsGet_( int             * count,
  *       http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
  *
  *  @param[out]    count       number of paths found
- *  @param[in]     data        oyYES/oyNO/oyALL data or config text
+ *  @param[in]     data        oyYES/oyNO/oyALL for data or config text
  *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
  *  @return                    a array to write the found paths into
  *
@@ -1514,15 +1514,17 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
  *  @brief query valid Oyranos paths
  *
  *  @param[out]    count       number of paths found
- *  @param[in]     subdir      the Oyranos sub path
+ *  @param[in]     subdir      the data directories sub path, a string 
+ *                             containing one path, e.g. "color/icc""
  *  @param[in]     data        oyYES/oyNO/oyALL data or config text
  *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
  *
- *  @since Oyranos: version 0.1.x
- *  @date  november 2007 (API 0.1.x)
+ *  @version Oyranos: 0.1.10
+ *  @date    2010/06/28
+ *  @since   2007/11/00 (Oyranos: 0.1.x)
  */
 char**
-oyConfigPathsGet_     (int             * count,
+oyDataPathsGet_       (int             * count,
                        const char      * subdir,
                        int               data,
                        int               owner,
@@ -1544,7 +1546,7 @@ oyConfigPathsGet_     (int             * count,
     init = 1;
 
     oyAllocHelper_m_( xdg_sub, char, MAX_PATH, oyAllocateFunc_, return 0);
-    oySprintf_( xdg_sub, "color/%s", subdir );
+    oySprintf_( xdg_sub, "%s", subdir );
 
     oyAllocHelper_m_( oy_paths, char*, 4, oyAllocateFunc_, return 0);
 
@@ -1567,13 +1569,15 @@ oyConfigPathsGet_     (int             * count,
 
     ndp += xdg_n;
 
-    text = oyPathContructAndTest_( "/usr/share/color", subdir );
+    text = oyPathContructAndTest_( "/usr/share", subdir );
     if(text) oy_paths[oy_n++] = text;
-    text = oyPathContructAndTest_( "/usr/local/share/color", subdir );
+    text = oyPathContructAndTest_( "/usr/local/share", subdir );
     if(text) oy_paths[oy_n++] = text;
-    text = oyPathContructAndTest_( OY_USERCOLORDIR, subdir );
+    text = 0;
+    if(subdir && strlen(subdir) > 6 && memcmp( subdir,"color/", 6 ) == 0)
+    text = oyPathContructAndTest_( OY_USERCOLORDIR, &subdir[6] );
     if(text) oy_paths[oy_n++] = text;
-    text = oyPathContructAndTest_( OY_SYSCOLORDIR, subdir );
+    text = oyPathContructAndTest_( OY_DATADIR, subdir );
     if(text) oy_paths[oy_n++] = text;
 
     paths = oyStringListAppend_((const char**)oy_paths, oy_n,
@@ -1590,7 +1594,7 @@ oyConfigPathsGet_     (int             * count,
   return paths;
 }
 
-char **     oyConfigFilesGet_        ( int             * count,
+char **     oyDataFilesGet_          ( int             * count,
                                        const char      * subdir,
                                        int               data,
                                        int               owner,

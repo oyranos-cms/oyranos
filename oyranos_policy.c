@@ -199,7 +199,7 @@ int main( int argc , char** argv )
 
     if(list_paths)
     {
-      char ** path_names = oyConfigPathsGet_( &count, "settings",
+      char ** path_names = oyDataPathsGet_( &count, "color/settings",
                                               oyALL, oyUSER_SYS,
                                               oyAllocateFunc_ );
       fprintf(stdout, "%s:\n", _("Policy search paths"));

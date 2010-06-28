@@ -836,8 +836,8 @@ oyPolicyListGet_                  (int * size)
  
   DBG_PROG_START
  
-  path_names = oyConfigPathsGet_( &count, "settings", oyALL, oyUSER_SYS,
-                                  oyAllocateFunc_ );
+  path_names = oyDataPathsGet_( &count, "color/settings", oyALL, oyUSER_SYS,
+                                oyAllocateFunc_ );
 
   oy_warn_ = 0;
 
@@ -874,8 +874,8 @@ oyFileListGet_                  (const char * subpath,
  
   DBG_PROG_START
  
-  path_names = oyConfigPathsGet_( &count, subpath, oyALL, oyUSER_SYS,
-                                  oyAllocateFunc_ );
+  path_names = oyDataPathsGet_( &count, subpath, oyALL, oyUSER_SYS,
+                                oyAllocateFunc_ );
 
   oy_warn_ = 0;
 

@@ -62,7 +62,8 @@ int32_t      oyObject_Hashed_        ( oyObject_s          s );
 char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,
-                                       const char        * required_cmm );
+                                       const char        * required_cmm,
+                                       oyPATH_TYPE_e       path_type );
 char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm );
 oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s       * cmm_info,
@@ -4022,16 +4023,17 @@ int              oyCMMlibMatchesCMM  ( const char        * lib_name,
 }
 
 /** @internal
- *  @brief get all module names
+ *  @brief get all CMM/module/script names
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.1.10
  *  @since   2008/12/16 (Oyranos: 0.1.9)
- *  @date    2008/12/16
+ *  @date    2010/06/28
  */
 char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,
-                                       const char        * required_cmm )
+                                       const char        * required_cmm,
+                                       oyPATH_TYPE_e       path_type )
 {
   int error = !n;
   char ** files = 0,
@@ -4067,8 +4069,14 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
     for(i = 0; i < sub_paths_n; ++i)
     {
       if(!files)
-        files = oyLibFilesGet_( &files_n, sub_paths[i], oyUSER_SYS,
-                                0, lib_string, 0, oyAllocateFunc_ );
+      {
+        if(path_type == oyPATH_MODULE)
+          files = oyLibFilesGet_( &files_n, sub_paths[i], oyUSER_SYS,
+                                  0, lib_string, 0, oyAllocateFunc_ );
+        else if(path_type == oyPATH_SCRIPT)
+          files = oyDataFilesGet_( &files_n, sub_paths[i], oyYES, oyUSER_SYS,
+                                   0, lib_string, ext, oyAllocateFunc_ );
+      }
     }
     error = !files;
 
@@ -4095,7 +4103,7 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
 char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm )
 {
-  return oyCMMsGetNames_(n, OY_METASUBPATH, 0, required_cmm);
+  return oyCMMsGetNames_(n, OY_METASUBPATH, 0, required_cmm, oyPATH_MODULE);
 }
 
 /** @internal
@@ -4672,7 +4680,10 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
       api5 = (oyCMMapi5_s*) oyCMMapis_Get( meta_apis, k );
 
       if(error <= 0)
-      files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext, cmm_required);
+      files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext,
+                              cmm_required, 
+                              api5->data_type == 0 ? oyPATH_MODULE :
+                                                     oyPATH_SCRIPT);
       else
         WARNc2_S("%s: %s", _("Could not open meta module API"),
                  oyNoEmptyString_m_( registration ));

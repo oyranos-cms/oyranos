@@ -146,7 +146,8 @@ typedef enum {
   oyPATH_NON_SPECIFIC = 0x00,
   oyPATH_ICC       = 0x01,
   oyPATH_POLICY    = 0x02,
-  oyPATH_MODULE    = 0x04
+  oyPATH_MODULE    = 0x04,
+  oyPATH_SCRIPT    = 0x08
 } oyPATH_TYPE_e;
 
 #if 0
