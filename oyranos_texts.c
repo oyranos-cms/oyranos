@@ -1160,8 +1160,9 @@ char**             oyStringListFilter_(const char   ** list,
 
       if(b && suffix && suffix[0])
       {
-        b = (oyStrstr_(list[i], suffix) == list[i] + oyStrlen_(list[i])
-                                                   - oyStrlen_(suffix));
+        const char * fn = list[i],
+                   * f1 = fn + oyStrlen_(fn) - oyStrlen_(suffix);
+        b = oyStrcmp_(f1, suffix) == 0;
         if(!b) continue;
       }
     }
