@@ -50,6 +50,14 @@ Grantlee::Engine* getEngine( const QStringList& tmplDirs )
   return engine;
 }
 
+const QStringList templateSuffixes(
+    QStringList() <<
+    "*.template.h" <<
+    "*.template.c" <<
+    "*.template.cc" <<
+    "*.template.txt"
+);
+
 int main(int argc, char *argv[])
 {
   if (QString(argv[1]) == "-h" ||
@@ -83,12 +91,13 @@ int main(int argc, char *argv[])
   tpl.createTemplates();
   QVariantList classes = tpl.getAllClasses();
   QVariant classStruct = QVariant::fromValue(static_cast<QObject*>(new ClassStruct));
+  QVariant classinfo;
 
   //Setup grantlee
   Grantlee::Engine *engine = getEngine( QStringList() << templateDir.path() << sourceDir.path() );
 
   QDirIterator templateFile( templateDir.path(),
-               QStringList() << "*.template.h" << "*.template.c" << "*.template.cc",
+               templateSuffixes,
                QDir::Files|QDir::Readable,
                QDirIterator::Subdirectories );
 
@@ -99,30 +108,34 @@ int main(int argc, char *argv[])
     Grantlee::Template t = engine->loadByName( templateFileInfo.fileName() );
     Grantlee::Context c;
 
-    QString sourceName = "oy" + templateFileInfo.baseName() + "." + templateFileInfo.suffix();
-    QFile sourceFile( outputDir.filePath( sourceName ) );
-    QFileInfo sourceFileInfo(sourceFile);
-
     QString class_base_name = templateFileInfo.baseName();
     int idx = class_base_name.indexOf("_");
     class_base_name.truncate(idx);
 
-    c.insert( "file_name", sourceName );
-    c.insert( "classes", classes );
-
+    QString sourceName, oy;
     if (class_base_name == "Struct") {
-      c.insert( "class", classStruct );
+      classinfo = classStruct;
+      oy = "oy";
     } else {
       int i;
       for (i=0; i<classes.size(); i++) {
         if (class_base_name == classes.at( i ).value<QObject*>()->property("baseName").toString()) {
-          c.insert( "class", classes.at( i ) );
+          classinfo = classes.at( i );
+          oy = "oy";
           break;
         }
       }
       if (i == classes.size())
-        qDebug() << "No class found for" << sourceName;
+        qDebug() << "No class found for" << templateFile.fileName();
     }
+    sourceName = oy + templateFileInfo.baseName() + "." + templateFileInfo.suffix();
+    QFile sourceFile( outputDir.filePath( sourceName ) );
+    QFileInfo sourceFileInfo(sourceFile);
+
+    c.insert( "file_name", sourceName );
+    c.insert( "classes", classes );
+    c.insert( "class", classinfo );
+
     QString newFileContents = t->render( &c );
 
     //1. There is no source file yet
