@@ -3,6 +3,7 @@
 #include <QRegExp>
 #include <QList>
 #include <QStringList>
+#include <QVariant>
 
 #include <QtDebug>
 
@@ -15,6 +16,7 @@ QList<ClassInfo*> ClassInfo::getAllClasses( const QString& directory )
   sourceDir.setFilter( QDir::Files | QDir::Readable );
   QStringList doxClasses = sourceDir.entryList();
   doxClasses.removeOne( "Class.dox" );
+  doxClasses.removeOne( "Struct.dox" );
 
   QList<ClassInfo*> allClassesInfo;
   for (int c = 0; c<doxClasses.size(); c++) {

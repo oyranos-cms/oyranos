@@ -18,6 +18,7 @@ QStringList ClassTemplates::sourceFiles = QStringList() << "members.h"
 
 ClassTemplates::~ClassTemplates()
 {
+  delete structClassInfo;
   for (int i=0; i<allClassesInfo.size(); i++)
     delete allClassesInfo.at( i );
 }
@@ -44,8 +45,11 @@ void ClassTemplates::createTemplates()
   }
 
   //Create the template files in templates/ for all present classes,
-  //but only if these files do not exist (we do not overwrite),
-  //unless updateTemplates is set to true
+  //if these files do not already exist.
+  //(We do not overwrite, unless updateTemplates is set to true.)
+  //Additionally we ignore special classes not using the [autocreate]
+  //keyword, (like oyStruct_s and oyObject_s)
+  //because their templates are hand-written
   QDir templateDir( templates );
   templateDir.setFilter( QDir::Files | QDir::Readable );
   for (int i=0; i<allClassesInfo.size(); i++) {
@@ -92,9 +96,25 @@ void ClassTemplates::createTemplates()
 
 QList<QVariant> ClassTemplates::getAllClasses()
 {
+  // Create pairs of (class name,pointer to itself)
+  // for easy lookup on the next 'for loop'
+  QHash<QString,ClassInfo*> parents;
+  parents["oyStruct_s"] = structClassInfo;
+  for (int c=0; c<allClassesInfo.size(); c++)
+    parents[allClassesInfo.at( c )->name()] = allClassesInfo.at( c );
+
+  // Set the parent of each class
+  for (int c=0; c<allClassesInfo.size(); c++)
+    allClassesInfo.at( c )->setParent( parents[allClassesInfo.at( c )->parentName()] );
+
   QVariantList classes;
   for (int c=0; c<allClassesInfo.size(); c++)
     classes << QVariant( QVariant::fromValue( static_cast<QObject*>(allClassesInfo.at( c )) ) );
 
   return classes;
+}
+
+QVariant ClassTemplates::getStructClass() const
+{
+  return QVariant( QVariant::fromValue( static_cast<QObject*>(structClassInfo) ) );
 }

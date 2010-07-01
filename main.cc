@@ -90,7 +90,6 @@ int main(int argc, char *argv[])
   tpl.updateTemplates = true;
   tpl.createTemplates();
   QVariantList classes = tpl.getAllClasses();
-  QVariant classStruct = QVariant::fromValue(static_cast<QObject*>(new ClassStruct));
   QVariant classinfo;
 
   //Setup grantlee
@@ -114,7 +113,7 @@ int main(int argc, char *argv[])
 
     QString sourceName, oy;
     if (class_base_name == "Struct") {
-      classinfo = classStruct;
+      classinfo = tpl.getStructClass();
       oy = "oy";
     } else {
       int i;
