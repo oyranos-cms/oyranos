@@ -6,5 +6,5 @@
 {% block GeneralPublicMethodsDefinitions %}{% endblock %}
 
 {% block SpecificPublicMethodsDefinitions %}
-{% include "Struct_s.public_methods_definitions.c" %}
+{% include "Struct.public_methods_definitions.c" %}
 {% endblock %}

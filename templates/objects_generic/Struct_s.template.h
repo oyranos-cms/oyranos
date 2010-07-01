@@ -11,23 +11,16 @@ typedef struct {{ class.name }} {{ class.name }};
 {% include class.public_h %}
 
 {% block doxygenPublicClass %}
-/** @brief Oyranos base structure
- *  @ingroup objects_generic
- *
- *  All Oyranos structures should be castable to this basic one.
- *
- *  @since Oyranos: version 0.1.8
- *  @date  1 january 2008 (API 0.1.8)
- */
+{% include "Struct.dox" %}
 {% endblock %}
 struct {{ class.name }} {
-{% include "Struct_s.members.h" %}
+{% include "Struct.members.h" %}
 };
 
 {% block GeneralPublicMethodsDeclarations %}{% endblock %}
 
 {% block SpecificPublicMethodsDeclarations %}
-{% include "Struct_s.public_methods_declarations.h" %}
+{% include "Struct.public_methods_declarations.h" %}
 {% endblock %}
 
 {% include "cpp_end.h" %}

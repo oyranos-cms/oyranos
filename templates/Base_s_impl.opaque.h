@@ -19,7 +19,7 @@
  */
 struct {{ class.name }} {
   /* Struct base class start */
-{% include "Struct_s.members.h" %}
+{% include "Struct.members.h" %}
   /* Struct base class stop */
   {% block ChildMembers %}{% endblock %}
 };
