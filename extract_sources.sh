@@ -1,5 +1,9 @@
 #!/bin/bash
 
-mkdir -p API_generated
+rm -fr API_generated/*
 
-./oyAPIGenerator templates API_generated
+./oyAPIGenerator
+
+cd API_generated/
+
+cmake .
