@@ -5,6 +5,7 @@
  *  @internal
  *  
  *  Multi line description
+ *  Do not automaticly create templates [notemplates]
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)

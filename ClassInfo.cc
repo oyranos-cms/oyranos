@@ -74,6 +74,9 @@ void ClassInfo::parseDoxyfile()
 
     if (doxy_internal.indexIn( text ) != -1)
       isInternal = true;
+
+    if (text.contains( "[notemplates]" ))
+      autotemplates = false;
   }
 }
 

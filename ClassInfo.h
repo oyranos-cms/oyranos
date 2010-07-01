@@ -25,12 +25,13 @@ class ClassInfo: public QObject
 
   public:
     ClassInfo( const QString& name, const QString& dir, bool isnew = false )
-      : base(name), directory(dir), isInternal(false), isNew(isnew), m_parent(NULL)
+      : base(name), directory(dir), isInternal(false), isNew(isnew), autotemplates(true), m_parent(NULL)
     {
       parseDoxyfile();
       //parseSourceFiles(); FIXME This is not working
     }
 
+    /* Public property functions start */
     /// Get the class full public name
     QString name() const { return "oy" + base + "_s"; }
     /// Get the class full private name
@@ -66,8 +67,10 @@ class ClassInfo: public QObject
     QString public_methods_declarations_h() const { return base + "." + "public_methods_declarations.h"; }
     /// Get the source file public_methods_definitions.c
     QString public_methods_definitions_c() const { return base + "." + "public_methods_definitions.c"; }
+    /* Public property functions stop */
 
-    //TODO: Return the parent class
+    /// Wether templates for this should be automaticly created
+    bool createTemplates() const { return autotemplates; }
 
     static QList<ClassInfo*> getAllClasses( const QString& directory );
 
@@ -79,6 +82,7 @@ class ClassInfo: public QObject
     QString directory;      ///< Where the class source files live
     bool isInternal;        ///< True if this is an internal(not public) class
     bool isNew;             ///< True if this is a new class (with only a .dox file)
+    bool autotemplates;     ///< True if templates should be created automaticly for this class
     ClassInfo* m_parent;    ///< A pointer to the parent class info
 
     void parseDoxyfile();

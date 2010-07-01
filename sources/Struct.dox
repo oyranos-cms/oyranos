@@ -1,0 +1,11 @@
+/** @struct oyStruct_s
+ *  @ingroup objects_generic
+ *  @brief Oyranos base structure
+ *
+ *  All Oyranos structures should be castable to this basic one.
+ *  Do not automaticly create templates [notemplates]
+ *
+ *  @version Oyranos: x.x.x
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
