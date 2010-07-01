@@ -74,3 +74,23 @@ void ClassInfo::parseDoxyfile()
       isInternal = true;
   }
 }
+
+void ClassInfo::parseSourceFiles()
+{
+  // Get all source files, except from <base>.dox
+  QDir sourceDir( directory );
+  sourceDir.setNameFilters( QStringList() << base + ".*.h" <<  base + ".*.c" );
+  sourceDir.setFilter( QDir::Files | QDir::Readable );
+  QStringList sourceFiles = sourceDir.entryList();
+
+  // Attach the names of the source files to the QObject as
+  // dynamic properties.
+  foreach (QString file, sourceFiles) {
+    // Remove the base name + '.'
+    int chars = base.size() + 1;
+    QString name( QString( file ).remove( 0, chars ).replace( '.', '_' ) );
+
+    setProperty( qPrintable(name), QVariant(file) );
+    qDebug() << "Set property" << qPrintable(name) << "->" << property(qPrintable(name)).toString();
+  }
+}
