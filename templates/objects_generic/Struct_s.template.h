@@ -8,6 +8,7 @@
 #include <oyranos_object.h>
 
 typedef struct {{ class.name }} {{ class.name }};
+{% include class.public_h %}
 
 {% block doxygenPublicClass %}
 /** @brief Oyranos base structure
