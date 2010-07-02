@@ -1,0 +1,62 @@
+NOW:
+- Compile API_generated
+- Create Tests
+- What about parent constructor/destructors?
+- Replace obj with class.baseName|lower
+- BUG or feature? Dynamic QObject properties are not used by grantlee(!?)
+- BUG or feature? {{ block.super }} seems to just copy the parent
+  code verbatim and run it with the child context, so that {{ var }}
+  gets the value of the child context, not the parent! [FEATURE]
+  SOLUTION?: Use intermediate Class* as a template template(!?)
+- BUG: "@brief\\s+([^\\n\\r\\f]+)\\n" seems to catch 2 spaces at beginning
++ Code Generator should export:
+  - class.public_functions -> oyClass.h fully automatic creation
+    regexp: "\n\s*([a-zA-Z0-9_\s\*]+)\(\s*([a-zA-Z0-9_\s\*]+)"
+  - class.private_members
+  - class.private_methods
+  - class.parentName [OK]
++ Decide if generated <class>_s.[ch] templates should be editable. [OK]
+  - If yes, oyAPIgenerator should not touch them [XXX]
+  - If not, update them if Class_s* is more recent and
+    possibly create them under non git folders named after
+    their group name. [OK] They are *always* updated
+- Fix templates/Base_s.c:67,72 (!?)
+
+LATER:
+- How to remove the ending \n in sources/* files?
+- templates/Class* files are identical for both opaque pointer and hidden
+  struct implementations. Do something about that?
+- Find a way to not put the include guards on the auto generated source
+  if the included file is empty. Is this even desirable?
+- Add oyranos version ... to grantlee
++ Internal classes:
+  - Marked with @internal
+  - Do not export public methods with OYEXPORT
+  - Do not #include oyClass_s.h in oyObjects.h
++ Function signatures:
+  - Public header: OYAPI <return type> OYEXPORT <signature>
+  - Private header: static <return type> <signature>
+  - Public c file: <return type> OYEXPORT <signature>
+  - Private c file: <return type> <signature>
+- When there are changes in the source file, propagate them in the
+  template and rerun the renderer.
+- Save the filestamps of all files and abort when both source and
+  template have been updated.
+
+MUCH LATER:
+ + Possibility to add more steps after code generation.
+  - Code beautifier
+  - Comment formatter
+
+FAQ
+Q. See if oyStruct_s can be removed from the templates, since
+it does not seem to have any need to be auto-generated?
+A. No, because that way, Base_s.[ch] can share its code
+and also other template variables can be used by oyStruct_s.
+
+Q. Will oyObject_s still be a: typedef struct oyObject_s_* oyObject_s;
+or follow the rest classes?
+A. For now it will better be ***
+
+Q. How to create a variable in Grantlee templates?
+A. Use 'with' keyword
