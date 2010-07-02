@@ -9,12 +9,13 @@
 
 #include "ClassTemplates.h"
 
-QStringList ClassTemplates::sourceFiles = QStringList() << "members.h"
-                                                        << "private_methods_declarations.h"
-                                                        << "private_methods_definitions.c"
-                                                        << "public.h"
-                                                        << "public_methods_declarations.h"
-                                                        << "public_methods_definitions.c";
+const QStringList ClassTemplates::sourceFiles = QStringList()
+  << "members.h"
+  << "private_methods_declarations.h"
+  << "private_methods_definitions.c"
+  << "public.h"
+  << "public_methods_declarations.h"
+  << "public_methods_definitions.c";
 
 ClassTemplates::~ClassTemplates()
 {
