@@ -162,4 +162,7 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **obj )
 {% endblock GeneralPrivateMethodsDefinitions %}
 
 {% block SpecificPrivateMethodsDefinitions %}
+/* Include "{{ class.private_methods_definitions_c }}" { */
+{% include class.private_methods_definitions_c %}
+/* } Include "{{ class.private_methods_definitions_c }}" */
 {% endblock SpecificPrivateMethodsDefinitions %}

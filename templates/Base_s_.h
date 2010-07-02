@@ -35,6 +35,10 @@ int
   oy{{ class.baseName }}_Release_( {{ class.privName }} **obj );
 {% endblock %}
 
-{% block SpecificPrivateMethodsDeclarations %}{% endblock %}
+{% block SpecificPrivateMethodsDeclarations %}
+/* Include "{{ class.private_methods_declarations_h }}" { */
+{% include class.private_methods_declarations_h %}
+/* } Include "{{ class.private_methods_declarations_h }}" */
+{% endblock %}
 
 #endif /* OY_{{ class.baseName|upper }}_S__H */

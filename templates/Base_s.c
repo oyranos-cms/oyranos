@@ -78,5 +78,3 @@ OYAPI int OYEXPORT
   return oy{{ class.baseName }}_Release_( &s );
 }
 {% endblock GeneralPublicMethodsDefinitions %}
-
-{% block SpecificPublicMethodsDefinitions %}{% endblock %}

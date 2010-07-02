@@ -8,5 +8,3 @@ OYAPI {{ class.name }}* OYEXPORT
 OYAPI int OYEXPORT
   oy{{ class.baseName }}_Release( {{ class.name }} **{{ class.baseName|lower }} );
 {% endblock GeneralPublicMethodsDeclarations %}
-
-{% block SpecificPublicMethodsDeclarations %}{% endblock SpecificPublicMethodsDeclarations %}

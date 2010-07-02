@@ -161,4 +161,8 @@ int oy{{ class.baseName }}_Release_( {{ class.name }} *{{ class.baseName|lower }
 {% endblock GeneralPrivateMethodsDefinitions %}
 
 {% block SpecificPrivateMethodsDefinitions %}
+/* Include "{{ class.private_methods_definitions_c }}" { */
+{% include class.private_methods_definitions_c %}
+/* } Include "{{ class.private_methods_definitions_c }}" */
+{# TODO Remove uneeded pointer in oyClass_s* #}
 {% endblock SpecificPrivateMethodsDefinitions %}

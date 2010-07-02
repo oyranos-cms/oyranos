@@ -78,4 +78,9 @@ OYAPI int OYEXPORT
 }
 {% endblock GeneralPublicMethodsDefinitions %}
 
-{% block SpecificPublicMethodsDefinitions %}{% endblock %}
+{% block SpecificPublicMethodsDefinitions %}
+/* Include "{{ class.public_methods_definitions_c }}" { */
+{% include class.public_methods_definitions_c %}
+/* } Include "{{ class.public_methods_definitions_c }}" */
+{% endblock %}
+{# TODO Remove uneeded pointer in oyClass_s* #}

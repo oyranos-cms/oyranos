@@ -7,7 +7,11 @@
 
 #include <oyranos_object.h>
 
-{% block doxygenPublicClass %}{% endblock %}
+{% block doxygenPublicClass %}
+/* Include "{{ class.dox }}" { */
+{% include class.dox %}
+/* } Include "{{ class.dox }}" */
+{% endblock %}
 struct {{ class.baseName }};
 
 typedef struct {{ class.baseName }}* {{ class.name }};
@@ -22,6 +26,10 @@ OYAPI int OYEXPORT
 {% endblock %}
 
 {% block SpecificPublicMethodsDeclarations %}
+/* Include "{{ class.public_methods_declarations_h }}" { */
+{% include class.public_methods_declarations_h %}
+/* } Include "{{ class.public_methods_declarations_h }}" */
+{# -->TODO<-- Remove uneeded pointer in oyClass_s* #}
 {% endblock %}
 
 {% include "cpp_end.h" %}
