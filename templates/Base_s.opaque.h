@@ -12,9 +12,9 @@
 {% include class.dox %}
 /* } Include "{{ class.dox }}" */
 {% endblock %}
-struct {{ class.baseName }};
+struct {{ class.name }};
 
-typedef struct {{ class.baseName }}* {{ class.name }};
+typedef struct {{ class.name }}* {{ class.name }};
 
 {% block GeneralPublicMethodsDeclarations %}
 OYAPI {{ class.name }} OYEXPORT
