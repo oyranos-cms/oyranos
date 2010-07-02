@@ -10,14 +10,12 @@ class QVariant;
 class ClassTemplates
 {
   public:
-    ClassTemplates( const QString& src, const QString& tpl )
-      :updateTemplates(false), sources(src), templates(tpl), structClassInfo(new ClassInfo("Struct", src))
-    { allClassesInfo = ClassInfo::getAllClasses( sources ); }
+    ClassTemplates( const QString& src, const QString& tpl );
     ~ClassTemplates();
 
     void createTemplates();
     /// Return a QVariantList for use with grantlee
-    QList<QVariant> getAllClasses();
+    QList<QVariant> getAllClasses() const;
     /// Return a QVariant for use with grantlee
     QVariant getStructClass() const;
 

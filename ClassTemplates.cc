@@ -17,6 +17,29 @@ const QStringList ClassTemplates::sourceFiles = QStringList()
   << "public_methods_declarations.h"
   << "public_methods_definitions.c";
 
+ClassTemplates::ClassTemplates( const QString& src, const QString& tpl )
+  : updateTemplates(false),
+    sources(src),
+    templates(tpl),
+    structClassInfo(new ClassInfo("Struct", src))
+{
+  // 1. Get all classes that have a *.dox file
+  // (oyStruct_s is ommited)
+  allClassesInfo = ClassInfo::getAllClasses( sources );
+
+  // 2. Initialise the pointers with the parent class
+  // a) Create pairs of (class name,pointer to itself)
+  // for easy lookup on the next 'for loop'
+  QHash<QString,ClassInfo*> parents;
+  parents["oyStruct_s"] = structClassInfo;
+  for (int c=0; c<allClassesInfo.size(); c++)
+    parents[allClassesInfo.at( c )->name()] = allClassesInfo.at( c );
+
+  // b) Set the parent pointer of each class
+  for (int c=0; c<allClassesInfo.size(); c++)
+    allClassesInfo.at( c )->setParent( parents[allClassesInfo.at( c )->parentName()] );
+}
+
 ClassTemplates::~ClassTemplates()
 {
   delete structClassInfo;
@@ -99,19 +122,8 @@ void ClassTemplates::createTemplates()
   }
 }
 
-QList<QVariant> ClassTemplates::getAllClasses()
+QList<QVariant> ClassTemplates::getAllClasses() const
 {
-  // Create pairs of (class name,pointer to itself)
-  // for easy lookup on the next 'for loop'
-  QHash<QString,ClassInfo*> parents;
-  parents["oyStruct_s"] = structClassInfo;
-  for (int c=0; c<allClassesInfo.size(); c++)
-    parents[allClassesInfo.at( c )->name()] = allClassesInfo.at( c );
-
-  // Set the parent of each class
-  for (int c=0; c<allClassesInfo.size(); c++)
-    allClassesInfo.at( c )->setParent( parents[allClassesInfo.at( c )->parentName()] );
-
   QVariantList classes;
   for (int c=0; c<allClassesInfo.size(); c++)
     classes << QVariant( QVariant::fromValue( static_cast<QObject*>(allClassesInfo.at( c )) ) );
