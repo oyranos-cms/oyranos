@@ -16,6 +16,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(bool internal READ internal)
   Q_PROPERTY(bool doxOnly READ doxOnly)
 
+  Q_PROPERTY(QString dox READ dox)
   Q_PROPERTY(QString members_h READ members_h)
   Q_PROPERTY(QString private_methods_declarations_h READ private_methods_declarations_h)
   Q_PROPERTY(QString private_methods_definitions_c READ private_methods_definitions_c)
@@ -55,6 +56,8 @@ class ClassInfo: public QObject
     /// True if this is a new class (with only a .dox file)
     bool doxOnly() const { return isNew; }
 
+    /// Get the doxygen file
+    QString dox() const { return base + ".dox"; }
     /// Get the source file members.h
     QString members_h() const { return base + "." + "members.h"; }
     /// Get the source file private_methods_declarations.h

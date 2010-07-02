@@ -18,10 +18,10 @@ typedef struct {{ class.privName }} {{ class.privName }};
  *  @date    YYYY/MM/DD
  */
 struct {{ class.privName }} {
-  /* Struct base class start */
+/* Include "Struct.members.h" { */
 {% include "Struct.members.h" %}
-  /* Struct base class stop */
-  {% block ChildMembers %}{% endblock %}
+/* } Include "Struct.members.h" */
+{% block ChildMembers %}{% endblock %}
 };
 
 {% block GeneralPrivateMethodsDeclarations %}

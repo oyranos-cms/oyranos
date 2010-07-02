@@ -106,7 +106,7 @@ void ClassTemplates::createTemplates()
         newFile.open( QIODevice::WriteOnly|QIODevice::Text );
         oldFile.open( QIODevice::ReadOnly|QIODevice::Text );
         QString fileData = oldFile.readAll();
-        fileData.replace( QRegExp("(include\\s+\")Class\\."),
+        fileData.replace( QRegExp("([Ii]nclude\\s+\")Class\\."),
                           "\\1" + allClassesInfo.at(i)->baseName() + "." );
 
         if (allClassesInfo.at(i)->parentBaseName() != "Struct")

@@ -6,5 +6,7 @@
 {% block GeneralPublicMethodsDefinitions %}{% endblock %}
 
 {% block SpecificPublicMethodsDefinitions %}
-{% include "Struct.public_methods_definitions.c" %}
+/* Include "{{ class.public_methods_definitions_c }}" { */
+{% include class.public_methods_definitions_c %}
+/* } Include "{{ class.public_methods_definitions_c }}" */
 {% endblock %}
