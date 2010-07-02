@@ -26,7 +26,10 @@ class ClassInfo: public QObject
 
   public:
     ClassInfo( const QString& name, const QString& dir, bool isnew = false )
-      : base(name), directory(dir), isInternal(false), isNew(isnew), autotemplates(true), m_parent(NULL)
+      : base(name), directory(dir),
+        isInternal(false), isNew(isnew),
+        autotemplates(true), hiddenstruct(true),
+        m_parent(NULL)
     {
       parseDoxyfile();
       //parseSourceFiles(); FIXME This is not working
@@ -74,6 +77,8 @@ class ClassInfo: public QObject
 
     /// Wether templates for this should be automaticly created
     bool createTemplates() const { return autotemplates; }
+    /// Wether templates for this should be created using "hidden struct"
+    bool hiddenStruct() const { return hiddenstruct; }
 
     static QList<ClassInfo*> getAllClasses( const QString& directory );
 
@@ -86,6 +91,7 @@ class ClassInfo: public QObject
     bool isInternal;        ///< True if this is an internal(not public) class
     bool isNew;             ///< True if this is a new class (with only a .dox file)
     bool autotemplates;     ///< True if templates should be created automaticly for this class
+    bool hiddenstruct;      ///< True if templates should be created using "hidden struct"
     ClassInfo* m_parent;    ///< A pointer to the parent class info
 
     void parseDoxyfile();

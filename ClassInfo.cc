@@ -75,8 +75,11 @@ void ClassInfo::parseDoxyfile()
     if (doxy_internal.indexIn( text ) != -1)
       isInternal = true;
 
+    // Template tags:
     if (text.contains( "[notemplates]" ))
       autotemplates = false;
+    if (text.contains( "[opaquepointer]" ))
+      hiddenstruct = false;
   }
 }
 

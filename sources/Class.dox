@@ -6,6 +6,7 @@
  *  
  *  Multi line description
  *  Do not automaticly create templates [notemplates]
+ *  Create templates using "opaque pointer" [opaquepointer]
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)

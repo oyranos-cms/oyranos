@@ -77,9 +77,6 @@ void ClassTemplates::createTemplates() const
       continue;
     }
 
-    templateDir.setNameFilters( QStringList() << allClassesInfo.at(i)->baseName() + "_s*.template.*" );
-    QStringList classTemplateFiles = templateDir.entryList();
-
     //Create the templates/<group_name>/ directory, if not present
     QString group( allClassesInfo.at(i)->group() );
     if (!templateDir.exists( group ))
@@ -88,12 +85,22 @@ void ClassTemplates::createTemplates() const
         continue;
       }
 
-    templateDir.setNameFilters( QStringList() << "Class_s.?" << "Class_s_.?" );
-    QStringList genericTemplateFiles = templateDir.entryList();
+    QString catchBase;
+    QStringList genericTemplateFiles;
+    if (allClassesInfo.at(i)->hiddenStruct()) {
+      genericTemplateFiles << "Class_s.h" << "Class_s.c"
+                           << "Class_s_.h" << "Class_s_.c";
+      catchBase = "Base(_s_?)\\.([ch])";
+    } else {
+      genericTemplateFiles << "Class_s.opaque.h" << "Class_s.opaque.c"
+                           << "Class_s_impl.opaque.h" << "Class_s_impl.opaque.c";
+      catchBase = "Base(_s(?:_impl){0,1})\\.opaque\\.([ch])";
+    }
 
     for (int g=0; g<genericTemplateFiles.size(); g++) {
       QString oldTemplateFile = genericTemplateFiles.at( g );
       QString newTemplateFile = QString( oldTemplateFile ).
+                                remove( ".opaque" ).
                                 replace( '.', ".template." ).
                                 replace( "Class", allClassesInfo.at(i)->baseName() );
       QFile newFile( templates + "/" + group + "/" + newTemplateFile );
@@ -105,8 +112,9 @@ void ClassTemplates::createTemplates() const
         fileData.replace( QRegExp("([Ii]nclude\\s+\")Class\\."),
                           "\\1" + allClassesInfo.at(i)->baseName() + "." );
 
+        // If our parent is not oyStruct_s, replace Base* with parent template file
         if (allClassesInfo.at(i)->parentBaseName() != "Struct")
-          fileData.replace( QRegExp("Base(_s_?)\\.([ch])"),
+          fileData.replace( QRegExp(catchBase),
                             allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2" );
 
         newFile.write( fileData.toAscii() );
