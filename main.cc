@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
   ClassTemplates tpl( sourceDir.path(), templateDir.path());
   tpl.updateTemplates = true;
   tpl.createTemplates();
+  tpl.createSources();
   QVariantList classes = tpl.getAllClasses();
   QVariant classinfo;
 

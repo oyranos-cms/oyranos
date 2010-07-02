@@ -47,10 +47,8 @@ ClassTemplates::~ClassTemplates()
     delete allClassesInfo.at( i );
 }
 
-void ClassTemplates::createTemplates()
+void ClassTemplates::createSources() const
 {
-  //Create the empty sources/* files for all present classes,
-  //but only if these files do not exist (we do not overwrite)
   QDir sourceDir( sources );
   sourceDir.setFilter( QDir::Files | QDir::Readable );
   for (int i=0; i<allClassesInfo.size(); i++) {
@@ -67,12 +65,10 @@ void ClassTemplates::createTemplates()
       }
     }
   }
+}
 
-  //Create the template files in templates/ for all present classes,
-  //if these files do not already exist.
-  //(We do not overwrite, unless updateTemplates is set to true.)
-  //Additionally we ignore special classes using the [notemplates]
-  //tag (like oyStruct_s and oyObject_s) because their templates are hand-written
+void ClassTemplates::createTemplates() const
+{
   QDir templateDir( templates );
   templateDir.setFilter( QDir::Files | QDir::Readable );
   for (int i=0; i<allClassesInfo.size(); i++) {

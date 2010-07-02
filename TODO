@@ -1,13 +1,6 @@
 NOW:
 - Compile API_generated
-- Create Tests
-- What about parent constructor/destructors?
 - Replace obj with class.baseName|lower
-- BUG or feature? Dynamic QObject properties are not used by grantlee(!?)
-- BUG or feature? {{ block.super }} seems to just copy the parent
-  code verbatim and run it with the child context, so that {{ var }}
-  gets the value of the child context, not the parent! [FEATURE]
-  SOLUTION?: Use intermediate Class* as a template template(!?)
 - BUG: "@brief\\s+([^\\n\\r\\f]+)\\n" seems to catch 2 spaces at beginning
 + Code Generator should export:
   - class.public_functions -> oyClass.h fully automatic creation
@@ -15,14 +8,10 @@ NOW:
   - class.private_members
   - class.private_methods
   - class.parentName [OK]
-+ Decide if generated <class>_s.[ch] templates should be editable. [OK]
-  - If yes, oyAPIgenerator should not touch them [XXX]
-  - If not, update them if Class_s* is more recent and
-    possibly create them under non git folders named after
-    their group name. [OK] They are *always* updated
 - Fix templates/Base_s.c:67,72 (!?)
 
 LATER:
+- BUG Dynamic QObject properties are not used by grantlee(!?)
 - How to remove the ending \n in sources/* files?
 - templates/Class* files are identical for both opaque pointer and hidden
   struct implementations. Do something about that?
@@ -56,7 +45,17 @@ and also other template variables can be used by oyStruct_s.
 
 Q. Will oyObject_s still be a: typedef struct oyObject_s_* oyObject_s;
 or follow the rest classes?
-A. For now it will better be ***
+A. For now it will better be **************************************
 
 Q. How to create a variable in Grantlee templates?
 A. Use 'with' keyword
+
+Q. Are generated oy<class>_s.template.[ch] template files editable?
+A. (a) If the [notemplates] tag exists in the <class>.dox file
+definition, then the template files are editable and the
+code-generator will not touch them.
+   (b) If not, they are always re-generated and any edit of
+the template file is lost.
+
+Q. What about parent constructor/destructors?
+A. *****************************************************************

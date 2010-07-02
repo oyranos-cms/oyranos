@@ -13,9 +13,20 @@ class ClassTemplates
     ClassTemplates( const QString& src, const QString& tpl );
     ~ClassTemplates();
 
-    void createTemplates();
+    //Create the empty sources/* files for all present classes.
+    //But only if these files do not exist (we do not overwrite)
+    void createSources() const;
+
+    /// Create the template files in templates/ for all present classes.
+    /// If these files do not already exist.
+    /// We do not overwrite, unless updateTemplates is set to true.
+    /// Additionally we ignore special classes using the [notemplates]
+    /// tag (like oyStruct_s and oyObject_s) because their templates are hand-written
+    void createTemplates() const;
+
     /// Return a QVariantList for use with grantlee
     QList<QVariant> getAllClasses() const;
+
     /// Return a QVariant for use with grantlee
     QVariant getStructClass() const;
 
