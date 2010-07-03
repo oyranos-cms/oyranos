@@ -54,8 +54,8 @@
  *  @memberof {{ class.privName }}
  *  @brief   real copy a {{ class.baseName }} object
  *
- *  @param[in]     obj                 {{ class.baseName }} struct object
- *  @param         object              the optional object
+ *  @param[in]     {{ class.baseName|lower }} {{ class.baseName }} struct object
+ *  @param         object                     the optional object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
@@ -93,8 +93,8 @@
  *  @memberof {{ class.privName }}
  *  @brief   copy or reference a {{ class.baseName }} object
  *
- *  @param[in]     obj                 {{ class.baseName }} struct object
- *  @param         object              the optional object
+ *  @param[in]     {{ class.baseName|lower }} {{ class.baseName }} struct object
+ *  @param         object                     the optional object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
@@ -124,7 +124,7 @@
  *  @memberof {{ class.privName }}
  *  @brief   release and possibly deallocate a {{ class.baseName }} object
  *
- *  @param[in,out] obj                 {{ class.baseName }} struct object
+ *  @param[in,out] {{ class.baseName|lower }} {{ class.baseName }} struct object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)

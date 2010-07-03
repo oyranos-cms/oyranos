@@ -17,21 +17,21 @@ OYAPI {{ class.name }} * OYEXPORT
   oy{{ class.baseName }}_New( oyObject_s object )
 {
   oyObject_s_ s = (oyObject_s_) object;
-  {{ class.privName }} * obj = 0;
+  {{ class.privName }} * {{ class.baseName|lower }} = 0;
 
   if(s)
     oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
 
-  obj = oy{{ class.baseName }}_New_( s );
+  {{ class.baseName|lower }} = oy{{ class.baseName }}_New_( s );
 
-  return ({{ class.name }}*) obj;
+  return ({{ class.name }}*) {{ class.baseName|lower }};
 }
 
 /** Function oy{{ class.baseName }}_Copy
  *  @memberof {{ class.name }}
  *  @brief   copy or reference a {{ class.baseName }} object
  *
- *  @param[in]     obj                 {{ class.baseName }} struct object
+ *  @param[in]     {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: {{ oyranos_version }}
@@ -39,9 +39,9 @@ OYAPI {{ class.name }} * OYEXPORT
  *  @date    2010/04/26
  */
 OYAPI {{ class.name }}* OYEXPORT
-  oy{{ class.baseName }}_Copy( {{ class.name }} *obj, oyObject_s object )
+  oy{{ class.baseName }}_Copy( {{ class.name }} *{{ class.baseName|lower }}, oyObject_s object )
 {
-  {{ class.privName }} * s = ({{ class.privName }}*) obj;
+  {{ class.privName }} * s = ({{ class.privName }}*) {{ class.baseName|lower }};
 
   if(s)
     oyCheckType__m( oyOBJECT_{{ class.baseName|upper  }}_S, return 0 );
@@ -55,25 +55,25 @@ OYAPI {{ class.name }}* OYEXPORT
  *  @memberof {{ class.name }}
  *  @brief   release and possibly deallocate a {{ class.name }} object
  *
- *  @param[in,out] obj                 {{ class.baseName }} struct object
+ *  @param[in,out] {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
 OYAPI int OYEXPORT
-  oy{{ class.baseName }}_Release( {{ class.name }} **obj )
+  oy{{ class.baseName }}_Release( {{ class.name }} **{{ class.baseName|lower }} )
 {
   {{ class.privName }} * s = 0;
 
-  if(!obj || !*obj)
+  if(!{{ class.baseName|lower }} || !*{{ class.baseName|lower }})
     return 0;
 
-  s = ({{ class.name }}*) *obj;
+  s = ({{ class.name }}*) *{{ class.baseName|lower }};
 
   oyCheckType__m( oyOBJECT_{{ class.baseName|upper }}_S, return 1 )
 
-  *obj = 0;
+  *{{ class.baseName|lower }} = 0;
 
   return oy{{ class.baseName }}_Release_( &s );
 }

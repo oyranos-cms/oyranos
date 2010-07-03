@@ -30,11 +30,11 @@ struct {{ class.privName }} {
 {{ class.privName }}*
   oy{{ class.baseName }}_New_( oyObject_s_ object );
 {{ class.privName }}*
-  oy{{ class.baseName }}_Copy_( {{ class.privName }} *obj, oyObject_s_ object);
+  oy{{ class.baseName }}_Copy_( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s_ object);
 {{ class.privName }}*
-  oy{{ class.baseName }}_Copy__( {{ class.privName }} *obj, oyObject_s_ object);
+  oy{{ class.baseName }}_Copy__( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s_ object);
 int
-  oy{{ class.baseName }}_Release_( {{ class.privName }} **obj );
+  oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lower }} );
 {% endblock %}
 
 {% block SpecificPrivateMethodsDeclarations %}

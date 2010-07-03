@@ -55,20 +55,20 @@
  *  @memberof {{ class.privName }}
  *  @brief   real copy a {{ class.baseName }} object
  *
- *  @param[in]     obj                 {{ class.baseName }} struct object
+ *  @param[in]     {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class.privName }} * oy{{ class.baseName }}_Copy__ ( {{ class.privName }} *obj, oyObject_s_ object )
+{{ class.privName }} * oy{{ class.baseName }}_Copy__ ( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s_ object )
 {
   {{ class.privName }} *s = 0;
   int error = 0;
   oyAlloc_f allocateFunc_ = 0; //FIXME Unused?
 
-  if(!obj || !object)
+  if(!{{ class.baseName|lower }} || !object)
     return s;
 
   s = oy{{ class.baseName }}_New_( object );
@@ -80,7 +80,7 @@
   }
 
   /* ---- start of custom {{ class.baseName }} copy constructor ----- */
-  oy{{ class.baseName }}_Copy__Custom( s, obj, object);
+  oy{{ class.baseName }}_Copy__Custom( s, {{ class.baseName|lower }}, object);
   /* ---- end of custom {{ class.baseName }} copy constructor ------- */
 
   if(error)
@@ -94,28 +94,28 @@
  *  @memberof {{ class.privName }}
  *  @brief   copy or reference a {{ class.baseName }} object
  *
- *  @param[in]     obj                 {{ class.baseName }} struct object
+ *  @param[in]     {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class.privName }} * oy{{ class.baseName }}_Copy_ ( {{ class.privName }} *obj, oyObject_s_ object )
+{{ class.privName }} * oy{{ class.baseName }}_Copy_ ( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s_ object )
 {
-  {{ class.privName }} *s = obj;
+  {{ class.privName }} *s = {{ class.baseName|lower }};
 
-  if(!obj)
+  if(!{{ class.baseName|lower }})
     return 0;
 
-  if(obj && !object)
+  if({{ class.baseName|lower }} && !object)
   {
-    s = obj; // FIXME Redundant?
+    s = {{ class.baseName|lower }}; // FIXME Redundant?
     oyObject_Copy_( s->oy_ );
     return s;
   }
 
-  s = oy{{ class.baseName }}_Copy__( obj, object );
+  s = oy{{ class.baseName }}_Copy__( {{ class.baseName|lower }}, object );
 
   return s;
 }
@@ -125,23 +125,23 @@
  *  @memberof {{ class.privName }}
  *  @brief   release and possibly deallocate a {{ class.baseName }} object
  *
- *  @param[in,out] obj                 {{ class.baseName }} struct object
+ *  @param[in,out] {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *
  *  @version Oyranos: {{ oyranos_version }}
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-int oy{{ class.baseName }}_Release_( {{ class.privName }} **obj )
+int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lower }} )
 {
   /* ---- start of common object destructor ----- */
   {{ class.name }} *s = 0;
 
-  if(!obj || !*obj)
+  if(!{{ class.baseName|lower }} || !*{{ class.baseName|lower }})
     return 0;
 
-  s = *obj;
+  s = *{{ class.baseName|lower }};
 
-  *obj = 0;
+  *{{ class.baseName|lower }} = 0;
 
   if(oyObject_UnRef(s->oy_))
     return 0;
