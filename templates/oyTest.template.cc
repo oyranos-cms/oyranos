@@ -1,8 +1,13 @@
 #include "oyTest.h"
 
 {% for class in classes %}
+  {% if class.hiddenStruct %}
 #include "{{ class.name }}.h"
 #include "{{ class.privName }}.h"
+  {% else %}
+#include "{{ class.name }}.h"
+#include "{{ class.name }}_impl.h"
+  {% endif %}
 {% endfor %}
 
 {% for class in classes %}
@@ -29,7 +34,11 @@ void oyTest::{{ class.name }}_generic_methods()
   oy{{ name.baseName }}_Release( &{{ class.baseName|lower }}_new );
 }
 
+{% if class.hiddenStruct %}
 void oyTest::{{ class.privName }}_generic_methods()
+{% else %}
+void oyTest::{{ class.name }}_impl_generic_methods()
+{% endif %}
 {
 
 }

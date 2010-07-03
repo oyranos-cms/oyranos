@@ -3,6 +3,7 @@ NOW:
   class and use it eg to export the generated source file names
   through ClassInfo.
   And then fix templates/CMakeLists.txt to use class.file_(public|private)_(c|h)
+  and also oyTest.template.cc oyTest.template.h
 - We need a way to clear the templates/ dir from auto-generated templates
 - Compile API_generated
 - Replace obj with class.baseName|lower

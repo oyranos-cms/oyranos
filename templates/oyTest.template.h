@@ -11,7 +11,11 @@ class oyTest: public QObject
     private slots:
 {% for class in classes %}
       void {{ class.name }}_generic_methods();
+  {% if class.hiddenStruct %}
       void {{ class.privName }}_generic_methods();
+  {% else %}
+      void {{ class.name }}_impl_generic_methods()
+  {% endif %}
 {% endfor %}
 };
 
