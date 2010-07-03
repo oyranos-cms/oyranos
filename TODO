@@ -1,4 +1,8 @@
 NOW:
+- Put the specifics (strings,etc) of an implementation to a new
+  class and use it eg to export the generated source file names
+  through ClassInfo.
+  And then fix templates/CMakeLists.txt to use class.file_(public|private)_(c|h)
 - We need a way to clear the templates/ dir from auto-generated templates
 - Compile API_generated
 - Replace obj with class.baseName|lower

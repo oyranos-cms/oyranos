@@ -16,7 +16,11 @@ qt4_wrap_cpp( oyTEST_MOC_SOURCES ${oyTEST_HEADERS} )
 #New oyranos object system
 ADD_LIBRARY( oyranos_object SHARED
 {% for class in classes %}
+  {% if class.hiddenStruct %}
   "{{ class.name }}.c" "{{ class.privName }}.c"
+  {% else %}
+  "{{ class.name }}.c" "{{ class.name }}_impl.c"
+  {% endif %}
 {% endfor %}
 )
 

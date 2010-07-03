@@ -15,6 +15,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString brief READ brief)
   Q_PROPERTY(bool internal READ internal)
   Q_PROPERTY(bool doxOnly READ doxOnly)
+  Q_PROPERTY(bool hiddenStruct READ hiddenStruct)
 
   Q_PROPERTY(QString dox READ dox)
   Q_PROPERTY(QString members_h READ members_h)
