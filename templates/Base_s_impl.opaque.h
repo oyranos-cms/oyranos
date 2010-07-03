@@ -18,9 +18,11 @@
  *  @date    YYYY/MM/DD
  */
 struct {{ class.name }} {
+{% block BaseMembers %}
 /* Include "Struct.members.h" { */
 {% include "Struct.members.h" %}
 /* } Include "Struct.members.h" */
+{% endblock %}
 {% block ChildMembers %}{% endblock %}
 };
 
