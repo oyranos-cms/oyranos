@@ -1,0 +1,16 @@
+/** @struct  oyObject_s
+ *  @brief   Oyranos structure base
+ *  @ingroup objects_generic
+ *  @extends oyStruct_s
+ *
+ *  The base object of Oyranos object system is self contained. It can be
+ *  handled by the belonging function set. Complex objects for user interaction
+ *  should almost all be derived from this struct.\n
+ *  The memory management can be controlled by the user and will affect internal
+ *  and derived data.
+ *  Do not automaticly create templates [notemplates]
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2009/03/01
+ */
