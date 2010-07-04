@@ -9,28 +9,12 @@
  *  @since   2008/11/13 (Oyranos: 0.1.9)
  *  @date    2008/11/13
  */
-OYAPI int OYEXPORT oyName_releaseMembers   ( oyName_s          * obj,
-                                       oyDeAlloc_f         deallocateFunc )
+OYAPI int OYEXPORT oyName_ReleaseMembers   ( oyName_s          * name )
 {
-  int error = 0;
-  oyName_s * s = 0;
-
-  if(!obj)
+  if(!name)
     return 0;
 
-  if(!deallocateFunc)
-    deallocateFunc = oyDeAllocateFunc_;
+  oyName_Release__Members( name );
 
-  s = obj;
-
-  if(s->nick)
-    deallocateFunc(s->nick); s->nick = 0;
-
-  if(s->name)
-    deallocateFunc(s->name); s->name = 0;
-
-  if(s->description)
-    deallocateFunc(s->description); s->description = 0;
-
-  return error;
+  return 0;
 }

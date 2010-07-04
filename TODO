@@ -45,7 +45,7 @@ MUCH LATER:
 
 FAQ
 Q. Should '/* Include {' guards be kept inside or outside blocks?
-A. ***********************************************************
+A. ****************************************************************
 
 Q. Will oyObject_s still be a: typedef struct oyObject_s_* oyObject_s;
 or follow the rest classes?
@@ -58,6 +58,9 @@ A. ********** No, public members will be the same as all oyStruct_s ***
 
 Q. What about parent constructor/destructors?
 A. *****************************************************************
+
+Q. Add a public oyXXX_ReleaseMembers()? It's free!
+A. Probably not a good idea... *************************************
 
 Q. See if oyStruct_s can be removed from the templates, since
 it does not seem to have any need to be auto-generated?

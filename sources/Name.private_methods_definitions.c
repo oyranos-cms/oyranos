@@ -1,83 +1,5 @@
 /**
  *  @internal
- *  @brief oyName_s deallocation
- *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
- */
-int          oyName_release_         ( oyName_s         ** obj,
-                                       oyDeAlloc_f         deallocateFunc )
-{
-  /* ---- start of common object destructor ----- */
-  oyName_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  if( s->type != oyOBJECT_NAME_S)
-  {
-    WARNc_S(("Attempt to release a non oyName_s object."))
-    return 1;
-  }
-  /* ---- end of common object destructor ------- */
-
-  *obj = 0;
-
-  if(!deallocateFunc)
-    return 0;
-
-  oyName_releaseMembers( s, deallocateFunc );
-
-  deallocateFunc( s );
-
-  return 0;
-}
-
-/** @brief oyName_s copy
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/12/22 (Oyranos: 0.1.10)
- *  @date    2008/12/22
- */
-int          oyName_copy_            ( oyName_s          * dest,
-                                       oyName_s          * src,
-                                       oyObject_s          object )
-{
-  int error = 0;
-  oyName_s * s = dest;
-  oyAlloc_f   allocateFunc   = oyAllocateFunc_;
-  oyDeAlloc_f deallocateFunc = oyDeAllocateFunc_;
-
-  if(!src || !dest)
-    return 0;
-
-  if(object)
-  {
-    allocateFunc = object->allocateFunc_;
-    deallocateFunc = object->deallocateFunc_;
-  }
-
-  if(src->name)
-    s = oyName_set_ ( s, src->name, oyNAME_NAME, allocateFunc, deallocateFunc );
-  if(src->nick)
-    s = oyName_set_ ( s, src->nick, oyNAME_NICK, allocateFunc, deallocateFunc );
-  if(src->description)
-    s = oyName_set_ ( s, src->description, oyNAME_DESCRIPTION, allocateFunc, deallocateFunc );
-
-  if(!s)
-    s = oyName_new(0);
-
-  if(error <= 0)
-    error = !memcpy( s->lang, src->lang, 8 );
-
-  return error;
-}
-
-
-/**
- *  @internal
  *  @brief naming plus automatic allocation
  *
  *  @param[in]    obj            the oyName_s struct
@@ -167,5 +89,3 @@ const char * oyName_get_             ( const oyName_s    * obj,
 
   return text;
 }
-
-

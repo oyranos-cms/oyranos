@@ -1,7 +1,7 @@
 /** @struct oyName_s
  *  @ingroup objects_generic
  *  @extends oyStruct_s
- *  @brief   Oyranos name structure
+ *  @brief   Oyranos Name structure
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
