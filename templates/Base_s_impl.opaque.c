@@ -61,7 +61,7 @@
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class.name }} oy{{ class.baseName }}_Copy__ ( {{ class.name }} {{ class.baseName|lower }}, oyObject_s_ object )
+{{ class.name }} oy{{ class.baseName }}_Copy__ ( {{ class.name }} {{ class.baseName|lower }}, oyObject_s object )
 {
   {{ class.name }} s = 0;
   int error = 0;
@@ -100,7 +100,7 @@
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class.name }} oy{{ class.baseName }}_Copy_ ( {{ class.name }} {{ class.baseName|lower }}, oyObject_s_ object )
+{{ class.name }} oy{{ class.baseName }}_Copy_ ( {{ class.name }} {{ class.baseName|lower }}, oyObject_s object )
 {
   {{ class.name }} s = {{ class.baseName|lower }};
 

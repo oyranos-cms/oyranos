@@ -13,7 +13,7 @@
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class.privName }} * oy{{ class.baseName }}_New_ ( oyObject_s_ object )
+{{ class.privName }} * oy{{ class.baseName }}_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_{{ class.baseName|upper }}_S;
@@ -62,7 +62,7 @@
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class.privName }} * oy{{ class.baseName }}_Copy__ ( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s_ object )
+{{ class.privName }} * oy{{ class.baseName }}_Copy__ ( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s object )
 {
   {{ class.privName }} *s = 0;
   int error = 0;
@@ -101,7 +101,7 @@
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-{{ class.privName }} * oy{{ class.baseName }}_Copy_ ( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s_ object )
+{{ class.privName }} * oy{{ class.baseName }}_Copy_ ( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s object )
 {
   {{ class.privName }} *s = {{ class.baseName|lower }};
 

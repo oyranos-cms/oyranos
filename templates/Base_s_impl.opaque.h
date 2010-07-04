@@ -28,11 +28,11 @@ struct {{ class.name }} {
 
 {% block GeneralPrivateMethodsDeclarations %}
 {{ class.name }}
-  oy{{ class.baseName }}_New_( oyObject_s_ object );
+  oy{{ class.baseName }}_New_( oyObject_s object );
 {{ class.name }}
-  oy{{ class.baseName }}_Copy_( {{ class.name }} {{ class.baseName|lower }}, oyObject_s_ object);
+  oy{{ class.baseName }}_Copy_( {{ class.name }} {{ class.baseName|lower }}, oyObject_s object);
 {{ class.name }}
-  oy{{ class.baseName }}_Copy__( {{ class.name }} {{ class.baseName|lower }}, oyObject_s_ object);
+  oy{{ class.baseName }}_Copy__( {{ class.name }} {{ class.baseName|lower }}, oyObject_s object);
 int
   oy{{ class.baseName }}_Release_( {{ class.name }}* {{ class.baseName|lower }} );
 {% endblock %}

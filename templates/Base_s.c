@@ -16,13 +16,12 @@
 OYAPI {{ class.name }} * OYEXPORT
   oy{{ class.baseName }}_New( oyObject_s object )
 {
-  oyObject_s_ s = (oyObject_s_) object;
   {{ class.privName }} * {{ class.baseName|lower }} = 0;
 
   if(s)
     oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
 
-  {{ class.baseName|lower }} = oy{{ class.baseName }}_New_( s );
+  {{ class.baseName|lower }} = oy{{ class.baseName }}_New_( object );
 
   return ({{ class.name }}*) {{ class.baseName|lower }};
 }
@@ -46,7 +45,7 @@ OYAPI {{ class.name }}* OYEXPORT
   if(s)
     oyCheckType__m( oyOBJECT_{{ class.baseName|upper  }}_S, return 0 );
 
-  s = oy{{ class.baseName }}_Copy_( s, (oyObject_s_*) object );
+  s = oy{{ class.baseName }}_Copy_( s, object );
 
   return ({{ class.name }}*) s;
 }
