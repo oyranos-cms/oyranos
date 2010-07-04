@@ -43,4 +43,10 @@ int
 /* } Include "{{ class.private_methods_declarations_h }}" */
 {% endblock %}
 
+{% block CustomPrivateMethodsDeclarations %}
+void oy{{ class.baseName }}_Release__Members( {{ class.privName }} * {{ class.baseName|lower }} );
+int oy{{ class.baseName }}_Init__Members( {{ class.privName }} * {{ class.baseName|lower }} );
+int oy{{ class.baseName }}_Copy__Members( {{ class.privName }} * dst, {{ class.privName }} * src);
+{% endblock CustomPrivateMethodsDeclarations %}
+
 #endif /* OY_{{ class.baseName|upper }}_S__H */

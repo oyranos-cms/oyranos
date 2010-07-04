@@ -3,6 +3,12 @@
 #include "{{ class.name }}.h"
 #include "{{ class.privName }}.h"
 
+{% block CustomPrivateMethodsDefinitions %}
+/* Include "{{ class.private_custom_definitions_c }}" { */
+{% include class.private_custom_definitions_c %}
+/* } Include "{{ class.private_custom_definitions_c }}" */
+{% endblock CustomPrivateMethodsDefinitions %}
+
 {% block GeneralPrivateMethodsDefinitions %}
 /** @internal
  *  Function oy{{ class.baseName }}_New_
@@ -44,7 +50,7 @@
   /* ---- end of common object constructor ------- */
 
   /* ---- start of custom {{ class.baseName }} constructor ----- */
-  error = !oy{{ class.baseName }}_New_Custom( s );
+  error = !oy{{ class.baseName }}_Init__Members( s );
   /* ---- end of custom {{ class.baseName }} constructor ------- */
 
   return s;
@@ -80,7 +86,7 @@
   }
 
   /* ---- start of custom {{ class.baseName }} copy constructor ----- */
-  oy{{ class.baseName }}_Copy__Custom( s, {{ class.baseName|lower }}, object);
+  oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
   /* ---- end of custom {{ class.baseName }} copy constructor ------- */
 
   if(error)
@@ -147,6 +153,9 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
     return 0;
   /* ---- end of common object destructor ------- */
 
+  /* ---- start of custom {{ class.baseName }} destructor ----- */
+  oy{{ class.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.baseName }} destructor ------- */
 
   if(s->oy_->deallocateFunc_)
   {

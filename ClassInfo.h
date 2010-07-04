@@ -19,6 +19,7 @@ class ClassInfo: public QObject
 
   Q_PROPERTY(QString dox READ dox)
   Q_PROPERTY(QString members_h READ members_h)
+  Q_PROPERTY(QString private_custom_definitions_c READ private_custom_definitions_c)
   Q_PROPERTY(QString private_methods_declarations_h READ private_methods_declarations_h)
   Q_PROPERTY(QString private_methods_definitions_c READ private_methods_definitions_c)
   Q_PROPERTY(QString public_h READ public_h)
@@ -64,6 +65,8 @@ class ClassInfo: public QObject
     QString dox() const { return base + ".dox"; }
     /// Get the source file members.h
     QString members_h() const { return base + "." + "members.h"; }
+    /// Get the source file private_custom_definitions.c
+    QString private_custom_definitions_c() const { return base + "." + "private_custom_definitions.c"; }
     /// Get the source file private_methods_declarations.h
     QString private_methods_declarations_h() const { return base + "." + "private_methods_declarations.h"; }
     /// Get the source file private_methods_definitions.c
