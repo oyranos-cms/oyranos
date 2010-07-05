@@ -5,12 +5,11 @@
 
 {% include "cpp_begin.h" %}
 
+#include <oyranos.h>
+
 /* Function Pointers Definitions Start */
-typedef oyStruct_s * (*oyStruct_Copy_f ) ( oyStruct_s *, oyPointer );
-typedef int       (*oyStruct_Release_f ) ( oyStruct_s ** );
 typedef oyPointer (*oyPointer_copy_f )   ( oyPointer, size_t );
 typedef int       (*oyPointer_release_f )( oyPointer * );
-typedef oyPointer (*oyStruct_LockCreate_f)(oyStruct_s * obj );
 typedef void      (*oyLockRelease_f )( oyPointer           lock,
                                        const char        * marker,
                                        int                 line );
@@ -20,41 +19,6 @@ typedef void      (*oyLock_f )       ( oyPointer           lock,
 typedef void      (*oyUnLock_f )     ( oyPointer           look,
                                        const char        * marker,
                                        int                 line );
-
-/** param[out]     is_allocated          are the points always newly allocated*/
-typedef oyPointer (*oyImage_GetPoint_f)( oyImage_s       * image,
-                                         int               point_x,
-                                         int               point_y,
-                                         int               channel,
-                                         int             * is_allocated );
-/** param[out]     is_allocated          are the lines always newly allocated */
-typedef oyPointer (*oyImage_GetLine_f) ( oyImage_s       * image,
-                                         int               line_y,
-                                         int             * height,
-                                         int               channel,
-                                         int             * is_allocated );
-/** param[out]     is_allocated          are the tiles always newly allocated */
-typedef oyPointer*(*oyImage_GetTile_f) ( oyImage_s       * image,
-                                         int               tile_x,
-                                         int               tile_y,
-                                         int               channel,
-                                         int             * is_allocated );
-typedef int       (*oyImage_SetPoint_f)( oyImage_s       * image,
-                                         int               point_x,
-                                         int               point_y,
-                                         int               channel,
-                                         oyPointer         data );
-typedef int       (*oyImage_SetLine_f) ( oyImage_s       * image,
-                                         int               point_x,
-                                         int               point_y,
-                                         int               pixel_n,
-                                         int               channel,
-                                         oyPointer         data );
-typedef int       (*oyImage_SetTile_f) ( oyImage_s       * image,
-                                         int               tile_x,
-                                         int               tile_y,
-                                         int               channel,
-                                         oyPointer         data );
 /* Function Pointers Definitions Stop */
 
 
@@ -74,6 +38,20 @@ typedef enum {
 {% endfor %}
   oyOBJECT_MAX
 } oyOBJECT_e;
+
+/** @enum    oyNAME_e
+ *  @brief   describe the base types of a oyObject_s name
+ *  @ingroup objects_generic
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2007/10/00
+ */
+typedef enum {
+  oyNAME_NAME,                         /**< compatible to oyName_s/oyObject_s */
+  oyNAME_NICK,                         /**< compatible to oyName_s/oyObject_s */
+  oyNAME_DESCRIPTION                   /**< compatible to oyName_s/oyObject_s */
+} oyNAME_e;
 
 {% include "cpp_end.h" %}
 
