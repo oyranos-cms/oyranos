@@ -8,6 +8,8 @@ NOW:
 - We need a way to clear the templates/ dir from auto-generated templates
 - Compile API_generated
 - Replace obj with class.baseName|lower
+- BUG: oyAPIGenerator crashes when allClassesInfo.at( c )->setContent( parents[allClassesInfo.at( c )->listOf()] );
+  passes the name of a class that does not yet exist.
 - BUG: "@brief\\s+([^\\n\\r\\f]+)\\n" seems to catch 2 spaces at beginning
 + Code Generator should export:
   - class.public_functions -> oyClass.h fully automatic creation

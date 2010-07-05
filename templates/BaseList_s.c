@@ -25,7 +25,7 @@ OYAPI int  OYEXPORT
   if(s)
     oyCheckType__m( oyOBJECT_{{ class.baseName|upper }}_S, return 1 )
 
-  if(obj && *obj && (*obj)->type_ == oyOBJECT_{{ class.listOf|upper }}_S)
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_{{ class.content.baseName|upper }}_S)
   {
     if(!s)
     {
@@ -98,7 +98,7 @@ OYAPI {{ class.listOf }} * OYEXPORT
     oyCheckType__m( oyOBJECT_{{ class.baseName|upper }}_S, return 0 )
 
   if(!error)
-    return ({{ class.listOf }} *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_{{ class.listOf|upper }}_S ); 
+    return ({{ class.listOf }} *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_{{ class.content.baseName|upper }}_S ); 
   else  
     return 0;
 }   
