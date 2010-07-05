@@ -9,6 +9,8 @@
 
 typedef struct oyObject_s_* oyObject_s;
 
+#include "oyStruct_s.h"
+
 {% block doxygenPublicClass %}
 /* Include "{{ class.dox }}" { */
 {% include class.dox %}
