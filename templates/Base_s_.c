@@ -49,9 +49,11 @@
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
+  {% block customConstructor %}
   /* ---- start of custom {{ class.baseName }} constructor ----- */
   error = !oy{{ class.baseName }}_Init__Members( s );
   /* ---- end of custom {{ class.baseName }} constructor ------- */
+  {% endblock customConstructor %}
 
   return s;
 }
@@ -72,7 +74,6 @@
 {
   {{ class.privName }} *s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0; //FIXME Unused?
 
   if(!{{ class.baseName|lower }} || !object)
     return s;
@@ -80,14 +81,13 @@
   s = oy{{ class.baseName }}_New_( object );
   error = !s;
 
-  if(!error)
-  {
-    allocateFunc_ = s->oy_->allocateFunc_;
+  if(!error) {
+    {% block copyConstructor %}
+    /* ---- start of custom {{ class.baseName }} copy constructor ----- */
+    oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.baseName }} copy constructor ------- */
+    {% endblock copyConstructor %}
   }
-
-  /* ---- start of custom {{ class.baseName }} copy constructor ----- */
-  oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
-  /* ---- end of custom {{ class.baseName }} copy constructor ------- */
 
   if(error)
     oy{{ class.baseName }}_Release_( &s );
@@ -116,7 +116,7 @@
 
   if({{ class.baseName|lower }} && !object)
   {
-    s = {{ class.baseName|lower }}; // FIXME Redundant?
+    s = {{ class.baseName|lower }};
     oyObject_Copy_( s->oy_ );
     return s;
   }
@@ -129,7 +129,7 @@
 /** @internal
  *  Function oy{{ class.baseName }}_Release_
  *  @memberof {{ class.privName }}
- *  @brief   release and possibly deallocate a {{ class.baseName }} object
+ *  @brief   release and possibly deallocate a {{ class.baseName }} {% block Container %}object{% endblock %}
  *
  *  @param[in,out] {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *
@@ -153,9 +153,11 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
     return 0;
   /* ---- end of common object destructor ------- */
 
+{% block customDestructor %}
   /* ---- start of custom {{ class.baseName }} destructor ----- */
   oy{{ class.baseName }}_Release__Members( s );
   /* ---- end of custom {{ class.baseName }} destructor ------- */
+{% endblock customDestructor %}
 
   if(s->oy_->deallocateFunc_)
   {

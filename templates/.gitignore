@@ -1,2 +1,3 @@
 objects_generic/*
+objects_value/
 CMakeLists.txt
