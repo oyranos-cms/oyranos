@@ -9,6 +9,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString privName READ privName)
   Q_PROPERTY(QString baseName READ baseName)
   Q_PROPERTY(QObject* parent READ parent)
+  Q_PROPERTY(QObject* content READ content)
   Q_PROPERTY(QString parentBaseName READ parentBaseName)
   Q_PROPERTY(QString parentName READ parentName)
   Q_PROPERTY(QString group READ group)
@@ -32,7 +33,7 @@ class ClassInfo: public QObject
       : base(name), directory(dir),
         isInternal(false), isNew(isnew),
         autotemplates(true), hiddenstruct(true), list(false),
-        m_parent(NULL)
+        m_parent(NULL), m_content(NULL)
     {
       parseDoxyfile();
       //parseSourceFiles(); FIXME This is not working
@@ -47,8 +48,12 @@ class ClassInfo: public QObject
     QString baseName() const { return base; }
     /// Get the parent class
     QObject* parent() const { return static_cast<QObject*>(m_parent); }
+    /// Get the content class
+    QObject* content() const { return static_cast<QObject*>(m_content); }
     /// Set the parent class
     void setParent( ClassInfo* ci ) { m_parent = ci; }
+    /// Set the content class
+    void setContent( ClassInfo* ci ) { m_content = ci; }
     /// Get the baseName of the parent class
     QString parentBaseName() const { return parentBase; }
     /// Get the full name of the parent class
@@ -109,6 +114,7 @@ class ClassInfo: public QObject
     bool hiddenstruct;      ///< True if templates should be created using "hidden struct"
     bool list;              ///< True if this class is a special "list" class
     ClassInfo* m_parent;    ///< A pointer to the parent class info
+    ClassInfo* m_content;   ///< A pointer to the content class info, if this is a "list" class
 
     void parseDoxyfile();
     void parseSourceFiles();

@@ -28,6 +28,7 @@ ClassTemplates::ClassTemplates( const QString& src, const QString& tpl )
   allClassesInfo = ClassInfo::getAllClasses( sources );
 
   // 2. Initialise the pointers with the parent class
+  // and the content class if it is a "list" class
   // a) Create pairs of (class name,pointer to itself)
   // for easy lookup on the next 'for loop'
   QHash<QString,ClassInfo*> parents;
@@ -36,8 +37,10 @@ ClassTemplates::ClassTemplates( const QString& src, const QString& tpl )
     parents[allClassesInfo.at( c )->name()] = allClassesInfo.at( c );
 
   // b) Set the parent pointer of each class
-  for (int c=0; c<allClassesInfo.size(); c++)
+  for (int c=0; c<allClassesInfo.size(); c++) {
     allClassesInfo.at( c )->setParent( parents[allClassesInfo.at( c )->parentName()] );
+    allClassesInfo.at( c )->setContent( parents[allClassesInfo.at( c )->listOf()] );
+  }
 }
 
 ClassTemplates::~ClassTemplates()
