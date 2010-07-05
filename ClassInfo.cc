@@ -80,6 +80,8 @@ void ClassInfo::parseDoxyfile()
       autotemplates = false;
     if (text.contains( "[opaquepointer]" ))
       hiddenstruct = false;
+    if (text.contains( "[list]" ))
+      list = true;
   }
 }
 

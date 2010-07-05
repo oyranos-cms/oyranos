@@ -87,11 +87,19 @@ void ClassTemplates::createTemplates() const
 
     QString catchBase;
     QStringList genericTemplateFiles;
-    if (allClassesInfo.at(i)->hiddenStruct()) {
-      genericTemplateFiles << "Class_s.h" << "Class_s.c"
-                           << "Class_s_.h" << "Class_s_.c";
-      catchBase = "Base(_s_?)\\.([ch])";
-    } else {
+    if (allClassesInfo.at(i)->hiddenStruct()) { //Use the "hidden struct" API
+      if (allClassesInfo.at(i)->listOf() == "") { //Create a simple object
+        qDebug() << "Creating template files for simple object" << allClassesInfo.at(i)->baseName();
+        genericTemplateFiles << "Class_s.h" << "Class_s.c"
+                             << "Class_s_.h" << "Class_s_.c";
+        catchBase = "Base(_s_?)\\.([ch])";
+      } else { //Create a list of objects
+        qDebug() << "Creating template files for list of" << allClassesInfo.at(i)->listOf() << "objects";
+        genericTemplateFiles << "Class_s.list.h" << "Class_s.list.c"
+                             << "Class_s_.list.h" << "Class_s_.list.c";
+        catchBase = "BaseList(_s_?)\\.([ch])";
+      }
+    } else { //Use the "opaque pointer" API
       genericTemplateFiles << "Class_s.opaque.h" << "Class_s.opaque.c"
                            << "Class_s_impl.opaque.h" << "Class_s_impl.opaque.c";
       catchBase = "Base(_s(?:_impl){0,1})\\.opaque\\.([ch])";
@@ -101,6 +109,7 @@ void ClassTemplates::createTemplates() const
       QString oldTemplateFile = genericTemplateFiles.at( g );
       QString newTemplateFile = QString( oldTemplateFile ).
                                 remove( ".opaque" ).
+                                remove( ".list" ).
                                 replace( '.', ".template." ).
                                 replace( "Class", allClassesInfo.at(i)->baseName() );
       QFile newFile( templates + "/" + group + "/" + newTemplateFile );
@@ -118,9 +127,9 @@ void ClassTemplates::createTemplates() const
                             allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2" );
 
         newFile.write( fileData.toAscii() );
-        qDebug() << "Creating file" << newFile.fileName();
+        qDebug() << "\tCreating file" << newFile.fileName();
       } else {
-        qDebug() << "Skipping file" << newFile.fileName();
+        qDebug() << "\tSkipping file" << newFile.fileName();
       }
     }
   }

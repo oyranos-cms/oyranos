@@ -13,6 +13,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString parentName READ parentName)
   Q_PROPERTY(QString group READ group)
   Q_PROPERTY(QString brief READ brief)
+  Q_PROPERTY(QString listOf READ listOf)
   Q_PROPERTY(bool internal READ internal)
   Q_PROPERTY(bool doxOnly READ doxOnly)
   Q_PROPERTY(bool hiddenStruct READ hiddenStruct)
@@ -30,7 +31,7 @@ class ClassInfo: public QObject
     ClassInfo( const QString& name, const QString& dir, bool isnew = false )
       : base(name), directory(dir),
         isInternal(false), isNew(isnew),
-        autotemplates(true), hiddenstruct(true),
+        autotemplates(true), hiddenstruct(true), list(false),
         m_parent(NULL)
     {
       parseDoxyfile();
@@ -56,6 +57,16 @@ class ClassInfo: public QObject
     QString group() const { return groupName; }
     /// Get the class brief description
     QString brief() const { return doxyBrief; }
+    /// Get the class of the list objects
+    QString listOf() const {
+      QString s( base );
+      if (list) {
+        s.chop(1);
+        s = "oy" + s + "_s";
+      } else
+        s = "";
+      return s;
+    }
     /// True if this is an internal(not public) class
     bool internal() const { return isInternal; }
     /// True if this is a new class (with only a .dox file)
@@ -96,6 +107,7 @@ class ClassInfo: public QObject
     bool isNew;             ///< True if this is a new class (with only a .dox file)
     bool autotemplates;     ///< True if templates should be created automaticly for this class
     bool hiddenstruct;      ///< True if templates should be created using "hidden struct"
+    bool list;              ///< True if this class is a special "list" class
     ClassInfo* m_parent;    ///< A pointer to the parent class info
 
     void parseDoxyfile();
