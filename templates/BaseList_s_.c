@@ -8,7 +8,7 @@
 {% endblock customConstructor %}
 
 {% block copyConstructor %}
-    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
+    s->list_ = oyStructList_Copy( {{ class.baseName|lower }}->list_, s->oy_ );
 {% endblock copyConstructor %}
 
 {% block Container %}list{% endblock %}

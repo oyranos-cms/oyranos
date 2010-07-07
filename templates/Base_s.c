@@ -45,6 +45,7 @@ OYAPI {{ class.name }}* OYEXPORT
 
   if(s)
     oyCheckType__m( oyOBJECT_{{ class.baseName|upper  }}_S, return 0 );
+    //FIXME Check object, too?
 
   s = oy{{ class.baseName }}_Copy_( s, object );
 
@@ -69,7 +70,7 @@ OYAPI int OYEXPORT
   if(!{{ class.baseName|lower }} || !*{{ class.baseName|lower }})
     return 0;
 
-  s = ({{ class.name }}*) *{{ class.baseName|lower }};
+  s = ({{ class.privName }}*) *{{ class.baseName|lower }};
 
   oyCheckType__m( oyOBJECT_{{ class.baseName|upper }}_S, return 1 )
 

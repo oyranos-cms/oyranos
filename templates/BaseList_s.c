@@ -4,7 +4,7 @@
 {{ block.super }}
 /** Function oy{{ class.baseName }}_MoveIn
  *  @memberof {{ class.name }}
- *  @brief   add a element to a {{ class.baseName }} list
+ *  @brief   add an element to a {{ class.baseName }} list
  *
  *  @param[in]     list                list
  *  @param[in,out] obj                 list element

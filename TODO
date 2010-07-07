@@ -1,4 +1,5 @@
 NOW:
+- Protect auto-generated templates by making them read-only
 - Compare generated oyOptions_Xxxx() with hand written from git
 - Put the specifics (strings,etc) of an implementation to a new
   class and use it eg to export the generated source file names

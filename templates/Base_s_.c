@@ -140,7 +140,7 @@
 int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lower }} )
 {
   /* ---- start of common object destructor ----- */
-  {{ class.name }} *s = 0;
+  {{ class.privName }} *s = 0;
 
   if(!{{ class.baseName|lower }} || !*{{ class.baseName|lower }})
     return 0;
