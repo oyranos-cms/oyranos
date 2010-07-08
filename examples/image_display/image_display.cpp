@@ -99,9 +99,9 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
 };
 
 
-/*  Menü für rechten Maustastenklick
+/*  menu for right mouse click
     node = oyFilterGraph_GetNode( graph, -1, "//" OY_TYPE_STD "/icc", 0 );
-    Die icc.lcms Optionen sollten noch durch "oydi" miteinander verknüpft sein.
+    The icc.lcms options should include the "oydi" ones.
  */
 
 class Fl_Oy_Box : public Fl_Box
