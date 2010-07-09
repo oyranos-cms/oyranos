@@ -22530,8 +22530,8 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
  *  This means the string part after the last slash '/' is taken into account
  *  only until the first point '.' or end of string appears.
  *
- *  @param         registration1       registration key
- *  @param         registration2       registration key
+ *  @param         registration_a      registration key
+ *  @param         registration_b      registration key
  *  @param         api_number          select object type
  *  @return                            match, useable for ranking
  *
@@ -22539,8 +22539,8 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
  *  @since   2010/06/03 (Oyranos: 0.1.10)
  *  @date    2010/06/03
  */
-int    oyFilterRegistrationMatchKey  ( const char        * registration1,
-                                       const char        * registration2,
+int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
+                                       const char        * registration_b,
                                        oyOBJECT_e          api_number )
 {
   char * tmp1 = 0,
@@ -22548,10 +22548,10 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
        * tmp = 0;
   int match = 0;
 
-  if(registration1 && oyStrrchr_( registration1, '/' ))
-    tmp1 = oyStringCopy_( registration1, oyAllocateFunc_ );
-  if(registration2 && oyStrrchr_( registration2, '/' ))
-    tmp2 = oyStringCopy_( registration2, oyAllocateFunc_ );
+  if(registration_a && oyStrrchr_( registration_a, '/' ))
+    tmp1 = oyStringCopy_( registration_a, oyAllocateFunc_ );
+  if(registration_b && oyStrrchr_( registration_b, '/' ))
+    tmp2 = oyStringCopy_( registration_b, oyAllocateFunc_ );
 
   if(!tmp1 || !tmp2)
     return match;
@@ -22573,14 +22573,14 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
   {
     oyFree_m_(tmp1);
     oyFree_m_(tmp2);
-    tmp1 = oyFilterRegistrationToText( registration1,
+    tmp1 = oyFilterRegistrationToText( registration_a,
                                        oyFILTER_REG_OPTION, 0 );
-    tmp = oyStrrchr_( tmp1, '.' );
+    tmp = oyStrchr_( tmp1, '.' );
     if(tmp)
       tmp[0] = 0;
-    tmp2 = oyFilterRegistrationToText( registration2,
+    tmp2 = oyFilterRegistrationToText( registration_b,
                                        oyFILTER_REG_OPTION, 0 );
-    tmp = oyStrrchr_( tmp2, '.' );
+    tmp = oyStrchr_( tmp2, '.' );
     if(tmp)
       tmp[0] = 0;
 
