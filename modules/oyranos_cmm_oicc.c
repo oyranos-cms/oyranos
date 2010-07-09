@@ -224,7 +224,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         const char    * name = NULL;
         oyWIDGET_e        oywid = wl[i];
         oyWIDGET_TYPE_e   type = oyWidgetTitleGet(  oywid,
-                                                    &groups, &name, &tooltip,
+                                                    &groups, 0, 0,
                                                     &flags );
 
         if(type == oyWIDGETTYPE_CHOICE ||
@@ -234,6 +234,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
            type == oyWIDGETTYPE_LIST)
         {
           oyOptionChoicesGet( oywid, &count, &names, &current );
+          type = oyWidgetTitleGet(  oywid, &groups, &name, &tooltip, &flags );
 
           /* TODO: When and how to display policy informations? */
           if(oywid == oyWIDGET_POLICY)
