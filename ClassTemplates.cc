@@ -130,6 +130,10 @@ void ClassTemplates::createTemplates() const
                             allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2" );
 
         newFile.write( fileData.toAscii() );
+
+        // Protect the auto-generated template file by making it read-only
+        newFile.setPermissions( QFile::ReadOwner|QFile::ReadGroup );
+
         qDebug() << "\tCreating file" << newFile.fileName();
       } else {
         qDebug() << "\tSkipping file" << newFile.fileName();
