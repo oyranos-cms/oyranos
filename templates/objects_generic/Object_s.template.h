@@ -7,9 +7,9 @@
 
 #include <oyranos_object.h>
 
-typedef struct oyObject_s_* oyObject_s;
-
 #include "oyStruct_s.h"
+#include "oyOptions_s.h"
+#include "oyName_s.h"
 
 {% block doxygenPublicClass %}
 /* Include "{{ class.dox }}" { */

@@ -7,7 +7,6 @@
 
 #include <oyranos_object.h>
 {% block ProjectIncludes %}
-#include "oyObject_s.h"
 {% endblock %}
 
 typedef struct {{ class.name }} {{ class.name }};

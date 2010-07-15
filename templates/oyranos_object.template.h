@@ -21,7 +21,8 @@ typedef void      (*oyUnLock_f )     ( oyPointer           look,
                                        int                 line );
 /* Function Pointers Definitions Stop */
 
-
+/* Declare oyObject_s Globally */
+typedef struct oyObject_s_* oyObject_s;
 
 /**
  *  @brief   Oyranos structure type
