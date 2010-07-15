@@ -3,6 +3,10 @@
 #ifndef {{ file_name|cut:".h"|upper }}_H
 #define {{ file_name|cut:".h"|upper }}_H
 
+#include <string.h>
+
+#include <oyranos_debug.h>
+
 #include "oyranos_object.h"
 
 #define oyCheckType_m( typ, action ) \
