@@ -3,6 +3,8 @@
 #include "{{ class.name }}.h"
 #include "{{ class.privName }}.h"
 
+#include "oyranos_object_internal.h"
+
 {% block CustomPrivateMethodsDefinitions %}
 /* Include "{{ class.private_custom_definitions_c }}" { */
 {% include class.private_custom_definitions_c %}

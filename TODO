@@ -1,6 +1,7 @@
 NOW:
-- Protect auto-generated templates by making them read-only
-- Compare generated oyOptions_Xxxx() with hand written from git
+- Remove oyName_s and oyObserver_s from object system, they do nt inherit from
+  oyStruct_s and they use lowercase functions and no oyOnject_s in constructors.
+- Compare generated oyOptions_Xxxx() with hand written from git [up to oyXXX_MoveIn() is OK]
 - Put the specifics (strings,etc) of an implementation to a new
   class and use it eg to export the generated source file names
   through ClassInfo.
@@ -8,7 +9,6 @@ NOW:
   and also oyTest.template.cc oyTest.template.h
 - We need a way to clear the templates/ dir from auto-generated templates
 - Compile API_generated
-- Replace obj with class.baseName|lower
 - BUG: oyAPIGenerator crashes when allClassesInfo.at( c )->setContent( parents[allClassesInfo.at( c )->listOf()] );
   passes the name of a class that does not yet exist.
 - BUG: "@brief\\s+([^\\n\\r\\f]+)\\n" seems to catch 2 spaces at beginning
@@ -65,6 +65,11 @@ A. *****************************************************************
 
 Q. Add a public oyXXX_ReleaseMembers()? It's free!
 A. Probably not a good idea... *************************************
+
+Q. Why make auto-generated templates read-only?
+A. So to warn that any changes will be overwritten at next generator
+   invocation. Use the [notemplates] tag in <class>.dox to prevent
+   automatic template creation for that class.
 
 Q. See if oyStruct_s can be removed from the templates, since
 it does not seem to have any need to be auto-generated?

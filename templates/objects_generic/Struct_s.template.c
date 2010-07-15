@@ -2,6 +2,7 @@
 
 #include "{{ class.name }}.h"
 {% block IncludePrivateHeader %}{% endblock %}
+#include "oyranos_object_internal.h"
 
 {% block GeneralPublicMethodsDefinitions %}{% endblock %}
 
