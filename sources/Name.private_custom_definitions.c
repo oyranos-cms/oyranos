@@ -54,11 +54,13 @@ void oyName_Release__Members( oyName_s_ * name )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-void oyName_Init__Members( oyName_s_ * name )
+int oyName_Init__Members( oyName_s_ * name )
 {
-  name->nick = NULL:
-  name->name = NULL:
-  name->description = NULL:
+  name->nick = NULL;
+  name->name = NULL;
+  name->description = NULL;
+
+  return 0;
 }
 
 /** Function    oyName_Copy__Members
