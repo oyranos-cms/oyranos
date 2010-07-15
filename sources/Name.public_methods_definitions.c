@@ -14,7 +14,7 @@ OYAPI int OYEXPORT oyName_ReleaseMembers   ( oyName_s          * name )
   if(!name)
     return 0;
 
-  oyName_Release__Members( name );
+  oyName_Release__Members( (oyName_s_*)name );
 
   return 0;
 }
