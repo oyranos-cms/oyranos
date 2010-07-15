@@ -87,8 +87,8 @@ int oyName_Copy__Members( oyName_s_ * dst, oyName_s_ * src)
   if(!dst || !src)
     return 1;
 
-  allocateFunc_ = to->oy_->allocateFunc_;
-  deallocateFunc_ = to->oy_->deallocateFunc_;
+  allocateFunc_ = dst->oy_->allocateFunc_;
+  deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
   oyName_s_ * s = dst;

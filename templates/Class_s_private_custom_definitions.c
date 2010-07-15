@@ -75,8 +75,8 @@ int oy{{ class.baseName }}_Copy__Members( {{ class.privName }} * dst, {{ class.p
   if(!dst || !src)
     return 1;
 
-  allocateFunc_ = to->oy_->allocateFunc_;
-  deallocateFunc_ = to->oy_->deallocateFunc_;
+  allocateFunc_ = dst->oy_->allocateFunc_;
+  deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
 
