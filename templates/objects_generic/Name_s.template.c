@@ -5,6 +5,8 @@
 #include "{{ class.name }}.h"
 #include "{{ class.privName }}.h"
 
+#include "oyObject_s.h"
+
 /** @brief oyName_s new
  *
  *  @since Oyranos: version 0.1.8

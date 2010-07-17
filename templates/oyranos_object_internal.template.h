@@ -5,6 +5,7 @@
 
 #include <string.h>
 
+#include <oyranos_helper.h>
 #include <oyranos_debug.h>
 
 #include "oyranos_object.h"
