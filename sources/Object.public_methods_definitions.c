@@ -233,7 +233,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-oyObject_s*   oyObject_SetParent       ( oyObject_s*       o,
+oyObject_s   oyObject_SetParent       ( oyObject_s       o,
                                         oyOBJECT_e        type,
                                         oyPointer         parent )
 {
@@ -258,7 +258,7 @@ oyObject_s*   oyObject_SetParent       ( oyObject_s*       o,
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-int          oyObject_SetName         ( oyObject_s*        object,
+int          oyObject_SetName         ( oyObject_s        object,
                                         const char      * text,
                                         oyNAME_e          type )
 {
@@ -279,7 +279,7 @@ int          oyObject_SetName         ( oyObject_s*        object,
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-int          oyObject_SetNames        ( oyObject_s*        object,
+int          oyObject_SetNames        ( oyObject_s        object,
                                         const char      * nick,
                                         const char      * name,
                                         const char      * description )
@@ -310,7 +310,7 @@ int          oyObject_SetNames        ( oyObject_s*        object,
  *  @since Oyranos: version 0.1.8
  *  @date  2007/11/00 (API 0.1.8)
  */
-const oyChar * oyObject_GetName       ( const oyObject_s*        obj,
+const oyChar * oyObject_GetName       ( const oyObject_s        obj,
                                         oyNAME_e                type )
 {
   const char * text = 0;
@@ -339,7 +339,7 @@ const oyChar * oyObject_GetName       ( const oyObject_s*        obj,
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/22 (API 0.1.8)
  */
-int          oyObject_Lock             ( oyObject_s*        object,
+int          oyObject_Lock             ( oyObject_s        object,
                                          const char      * marker,
                                          int               line )
 {
@@ -370,7 +370,7 @@ int          oyObject_Lock             ( oyObject_s*        object,
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/22 (API 0.1.8)
  */
-int          oyObject_UnLock           ( oyObject_s*        object,
+int          oyObject_UnLock           ( oyObject_s        object,
                                          const char      * marker,
                                          int               line )
 {
@@ -400,7 +400,7 @@ int          oyObject_UnLock           ( oyObject_s*        object,
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/22 (API 0.1.8)
  */
-int          oyObject_UnSetLocking   ( oyObject_s*          object,
+int          oyObject_UnSetLocking   ( oyObject_s          object,
                                        const char        * marker,
                                        int                 line )
 {
@@ -422,7 +422,7 @@ int          oyObject_UnSetLocking   ( oyObject_s*          object,
  *  @since   2008/07/10 (Oyranos: 0.1.8)
  *  @date    2008/07/10
  */
-int            oyObject_GetId        ( oyObject_s*          obj )
+int            oyObject_GetId        ( oyObject_s          obj )
 {
   if(obj)
     return obj->id_;
@@ -438,7 +438,7 @@ int            oyObject_GetId        ( oyObject_s*          obj )
  *  @since   2009/02/19 (Oyranos: 0.1.10)
  *  @date    2009/02/19
  */
-int            oyObject_GetRefCount  ( oyObject_s*          obj )
+int            oyObject_GetRefCount  ( oyObject_s          obj )
 {
   if(obj)
     return obj->ref_;
