@@ -52,6 +52,10 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
+Q. Should Struct be removed from oyStruct_LockCreateFunc_,
+   or added to oyLockRelease_f, ...?
+A. *************************************
+
 Q. Will oyName_releassMembers() be public or private?
 A. ***************************************
 
