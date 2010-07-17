@@ -1,12 +1,9 @@
 NOW:
-- Remove oyName_s and oyObserver_s from object system, they do nt inherit from
-  oyStruct_s and they use lowercase functions and no oyOnject_s in constructors.
+- Update Class_s_.h to class.members_h
+- Remove oyName_s and oyObserver_s from object system, they do not inherit from
+  oyStruct_s and they use lowercase functions and no oyObject_s in constructors
+  as all classes in objects_generic.
 - Compare generated oyOptions_Xxxx() with hand written from git [up to oyXXX_MoveIn() is OK]
-- Put the specifics (strings,etc) of an implementation to a new
-  class and use it eg to export the generated source file names
-  through ClassInfo.
-  And then fix templates/CMakeLists.txt to use class.file_(public|private)_(c|h)
-  and also oyTest.template.cc oyTest.template.h
 - We need a way to clear the templates/ dir from auto-generated templates
 - Compile API_generated
 - BUG: oyAPIGenerator crashes when allClassesInfo.at( c )->setContent( parents[allClassesInfo.at( c )->listOf()] );
@@ -21,6 +18,13 @@ NOW:
 - Fix templates/Base_s.c:67,72 (!?)
 
 LATER:
+1 Create new template scheme for full public structures and adopt oyObject,
+  oyName and oyObserver to it (classes in objects_generic). See [2]
+2 Put the specifics (strings,etc) of an implementation to a new
+  class and use it eg to export the generated source file names
+  through ClassInfo.
+  And then fix templates/CMakeLists.txt to use class.file_(public|private)_(c|h)
+  and also oyTest.template.cc oyTest.template.h. Also see [1]
 - BUG Dynamic QObject properties are not used by grantlee(!?)
 - How to remove the ending \n in sources/* files?
 - templates/Class* files are identical for both opaque pointer and hidden
@@ -48,6 +52,12 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
+Q. Will oyName_releassMembers() be public or private?
+A. ***************************************
+
+Q. Will oyName_s use @extends oyStruct_s
+A. ***************************************
+
 Q. Should '/* Include {' guards be kept inside or outside blocks?
 A. ****************************************************************
 
@@ -57,7 +67,7 @@ A. For now, yes. It is just a refactored version of oyranos git.
    ********* Try to make it a "opaque pointer" class **********
 
 Q. Will the members of oyObject_s be the same for both private and
-   public structures? [If/When oyObject_s changes to new implllementation]
+   public structures? [If/When oyObject_s changes to new implementation]
 A. ********** No, public members will be the same as all oyStruct_s ***
 
 Q. What about parent constructor/destructors?
