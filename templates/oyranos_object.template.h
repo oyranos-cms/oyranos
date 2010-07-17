@@ -34,6 +34,7 @@ typedef struct oyObject_s_* oyObject_s;
  */
 typedef enum {
   oyOBJECT_NONE,
+  oyOBJECT_NAMED_COLOURS_S,
 {% for class in classes %}
   oyOBJECT_{{ class.baseName|upper }}_S,   /**< {{ class.name }} */
 {% endfor %}
