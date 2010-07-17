@@ -6,7 +6,8 @@
 #include "{{ class.privName }}.h"
 
 #include "oyObject_s.h"
-#include "oyOptions_s.h"
+#include "oyOption_s_.h"
+#include "oyOptions_s_.h"
 
 
 /* {{ class.name }} common object functions { */
@@ -442,10 +443,11 @@ OYAPI int  OYEXPORT
         --obs->disable_ref;
       if(obs->disable_ref < 0)
       {
+        oyOption_s_ * o_ = (oyOption_s_*)o;
         obs->disable_ref = 0;
         WARNcc3_S( model, "%s: %s[%d]", _("Already enabled"),
                    oyStruct_GetText( (oyStruct_s*)obs, oyNAME_NAME, 1),
-                   oyObject_GetId( o->value->oy_struct->oy_ ) );
+                   oyObject_GetId( o_->value->oy_struct->oy_ ) );
       }
     }
   }
@@ -660,15 +662,15 @@ OYAPI int  OYEXPORT
 {
   int observed = 0;
   int i,n = 0;
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
+  oyOptions_s_ * handles = (oyOptions_s_*) model->oy_->handles_;
   int error = 0;
 
-  if(model->oy_->handles_)
-    n = oyStructList_Count( (model->oy_->handles_)->list );
+  if(handles)
+    n = oyStructList_Count( handles->list_ );
   for(i = 0; i < n; ++i)
   {
-    o = (oyOption_s*) oyStructList_Get_(
-                              (model->oy_->handles_)->list, i );
+    o = (oyOption_s_*) oyStructList_Get_( handles->list_, i );
     if( oyStrcmp_( o->registration, OY_SIGNAL_OBSERVERS ) == 0)
     {
       if(observer)
@@ -676,7 +678,7 @@ OYAPI int  OYEXPORT
         oyStructList_s * observers = 0;
         int j_n,j;
 
-        observers = (oyStructList_s*)oyOption_StructGet( o,
+        observers = (oyStructList_s*)oyOption_StructGet( (oyOption_s_*) o,
                                                        oyOBJECT_STRUCT_LIST_S );
 
         if(!error)
