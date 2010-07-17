@@ -1,6 +1,5 @@
 /** @struct oyName_s
  *  @ingroup objects_generic
- *  @extends oyStruct_s
  *  @brief   Oyranos Name structure
  *
  *  This class is a public members only class and does not

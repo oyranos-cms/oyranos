@@ -1,7 +1,6 @@
 /** @struct  oyObject_s
  *  @brief   Oyranos structure base
  *  @ingroup objects_generic
- *  @extends oyStruct_s
  *
  *  The base object of Oyranos object system is self contained. It can be
  *  handled by the belonging function set. Complex objects for user interaction
