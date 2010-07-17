@@ -5,6 +5,8 @@
 
 {% include "cpp_begin.h" %}
 
+#define OY_HASH_SIZE 16
+
 #include <oyranos_object.h>
 
 #include "oyStruct_s.h"
