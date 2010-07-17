@@ -1,5 +1,7 @@
 {% include "source_file_header.txt" %}
 
+#include <math.h>
+
 #include <oyranos_object_internal.h>
 
 #include "{{ class.name }}.h"
