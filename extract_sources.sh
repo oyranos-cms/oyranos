@@ -7,3 +7,4 @@ rm -fr API_generated/*
 cd API_generated/
 
 cmake .
+make
