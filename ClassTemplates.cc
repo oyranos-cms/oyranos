@@ -118,8 +118,14 @@ void ClassTemplates::createTemplates() const
       QFile newFile( templates + "/" + group + "/" + newTemplateFile );
       QFile oldFile( templates + "/" + oldTemplateFile );
       if (updateTemplates || !newFile.exists()) {
-        newFile.open( QIODevice::WriteOnly|QIODevice::Text );
-        oldFile.open( QIODevice::ReadOnly|QIODevice::Text );
+        if (!newFile.open( QIODevice::WriteOnly|QIODevice::Text )) {
+          qWarning() << "Could not open file" << newFile.fileName() << "for writting";
+          continue;
+        }
+        if (!oldFile.open( QIODevice::ReadOnly|QIODevice::Text )) {
+          qWarning() << "Could not open file" << oldFile.fileName() << "for reading";
+          continue;
+        }
         QString fileData = oldFile.readAll();
         fileData.replace( QRegExp("([Ii]nclude\\s+\")Class\\."),
                           "\\1" + allClassesInfo.at(i)->baseName() + "." );
@@ -134,7 +140,7 @@ void ClassTemplates::createTemplates() const
         // Protect the auto-generated template file by making it read-only
         newFile.setPermissions( QFile::ReadOwner|QFile::ReadGroup );
 
-        qDebug() << "\tCreating file" << newFile.fileName();
+        qDebug() << "\tCreating file" << newFile.fileName() << "from" << oldFile.fileName();
       } else {
         qDebug() << "\tSkipping file" << newFile.fileName();
       }
