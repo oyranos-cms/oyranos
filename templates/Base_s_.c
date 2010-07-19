@@ -120,7 +120,7 @@
   if({{ class.baseName|lower }} && !object)
   {
     s = {{ class.baseName|lower }};
-    oyObject_Copy_( s->oy_ );
+    oyObject_Copy( s->oy_ );
     return s;
   }
 
