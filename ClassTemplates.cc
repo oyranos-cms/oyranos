@@ -118,6 +118,14 @@ void ClassTemplates::createTemplates() const
       QFile newFile( templates + "/" + group + "/" + newTemplateFile );
       QFile oldFile( templates + "/" + oldTemplateFile );
       if (updateTemplates || !newFile.exists()) {
+        if (newFile.exists())
+          if (newFile.permissions() & QFile::WriteOwner) {
+          qWarning() << "Template file" << newFile.fileName() << "is writable.";
+          qWarning() << "Check your .dox file";
+          continue;
+          } else {
+            newFile.remove();
+          }
         if (!newFile.open( QIODevice::WriteOnly|QIODevice::Text )) {
           qWarning() << "Could not open file" << newFile.fileName() << "for writting";
           continue;
@@ -126,6 +134,7 @@ void ClassTemplates::createTemplates() const
           qWarning() << "Could not open file" << oldFile.fileName() << "for reading";
           continue;
         }
+
         QString fileData = oldFile.readAll();
         fileData.replace( QRegExp("([Ii]nclude\\s+\")Class\\."),
                           "\\1" + allClassesInfo.at(i)->baseName() + "." );
