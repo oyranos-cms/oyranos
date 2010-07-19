@@ -22,7 +22,7 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
                                        int                 pos,
                                        uint32_t            flags )
 {
-  oyStructList_s * s = list;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = 0;
   int i;
   int set = 0;
@@ -193,7 +193,7 @@ oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
 int            oyStructList_ReleaseAt( oyStructList_s    * list,
                                        int                 pos )
 {
-  oyStructList_s * s = list;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = 0;
 
   error = !s;
@@ -234,7 +234,7 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
 int              oyStructList_Count ( oyStructList_s   * list )
 {
   int n = 0;
-  oyStructList_s * s = list;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = 0;
 
   if(!(s && s->type_ == oyOBJECT_STRUCT_LIST_S))
@@ -329,13 +329,14 @@ const char *     oyStructList_GetID  ( oyStructList_s    * s,
  *  @date    2008/11/27
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  */
-int              oyStructList_Clear  ( oyStructList_s    * s )
+int              oyStructList_Clear  ( oyStructList_s    * list )
 {
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = !(s && s->type_ == oyOBJECT_STRUCT_LIST_S), i;
 
   if(error <= 0)
     for(i = s->n_ - 1; i >= 0; --i)
-      oyStructList_ReleaseAt( s, i );
+      oyStructList_ReleaseAt( (oyStructList_s*)s, i );
   return error;
 }
 
@@ -366,7 +367,7 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
   {
     error = oyStructList_Clear( list );
 
-    from_n = from->n_;
+    from_n = ((oyStructList_s_*)from)->n_;
     for(i = 0; i < from_n && error <= 0; ++i)
     {
       o = oyStructList_Get_( from, i );
@@ -433,7 +434,7 @@ int              oyStructList_MoveTo ( oyStructList_s    * s,
  *  @date    2009/05/23
  *  @since   2009/05/23 (Oyranos: 0.1.10)
  */
-int              oyStructList_Sort   ( oyStructList_s    * s,
+int              oyStructList_Sort   ( oyStructList_s    * list,
                                        int32_t           * rank_list )
 {
   int error = !rank_list,
@@ -442,13 +443,14 @@ int              oyStructList_Sort   ( oyStructList_s    * s,
   int32_t max = INT32_MIN;
   oyPointer * ptr = 0;
   int last = 0, pos;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
 
   if(!s)
     return 0;
 
   oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 0 )
 
-  n = oyStructList_Count( s );
+  n = oyStructList_Count( (oyStructList_s*)s );
 
   if(!error && n)
   {

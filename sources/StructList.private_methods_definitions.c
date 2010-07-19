@@ -7,7 +7,7 @@
 /*oyHandle_s **    oyStructList_GetRaw_( oyStructList_s    * list )
 {
   int error = 0;
-  oyStructList_s * s = list;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   oyHandle_s ** p = 0;
 
   if(error <= 0)
@@ -32,7 +32,7 @@ oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
                                        int                 pos )
 {
   int n = 0;
-  oyStructList_s * s = list;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = !s;
   oyStruct_s * obj = 0;
 
@@ -82,7 +82,7 @@ int              oyStructList_ReferenceAt_( oyStructList_s * list,
 {
   int n = 0;
   int error = 0;
-  oyStructList_s * s = list;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   oyStruct_s * p = 0;
 
   if(s)

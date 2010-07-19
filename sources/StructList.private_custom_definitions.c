@@ -21,7 +21,7 @@ void oyStructList_Release__Members( oyStructList_s_ * structlist )
    * E.g: oyXXX_Release( &structlist->member );
    */
 
-  oyStructList_Clear(structlist);
+  oyStructList_Clear((oyStructList_s*)structlist);
 
   if(structlist->oy_->deallocateFunc_)
   {
@@ -105,7 +105,7 @@ int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
       dst->ptr_[i] = src->ptr_[i]->copy( src->ptr_[i], 0 );
 
   if(oyStruct_IsObserved( (oyStruct_s*)dst, 0) )
-    error = oyStructList_ObserverAdd( src, 0, 0, 0 );
+    error = oyStructList_ObserverAdd( (oyStructList_s*)src, 0, 0, 0 );
 
   oyObject_UnLock( dst->oy_, __FILE__, __LINE__ );
 
