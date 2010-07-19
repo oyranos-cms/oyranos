@@ -26,6 +26,8 @@ LATER:
   through ClassInfo.
   And then fix templates/CMakeLists.txt to use class.file_(public|private)_(c|h)
   and also oyTest.template.cc oyTest.template.h. Also see [1]
+4 Create a visualisation of a file template hierarchy and put it in
+  the files doxygen header, like Struct_s.template.h -> Base_s.h -> Option_s.template.h
 - BUG Dynamic QObject properties are not used by grantlee(!?)
 - How to remove the ending \n in sources/* files?
 - templates/Class* files are identical for both opaque pointer and hidden
@@ -53,6 +55,9 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
+Q. Should all constructors initialise with `0' the class members?
+A. *********************************************************
+
 Q. Should Struct be removed from oyStruct_LockCreateFunc_,
    or added to oyLockRelease_f, ...?
 A. *************************************
