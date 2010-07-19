@@ -28,6 +28,7 @@ LATER:
   and also oyTest.template.cc oyTest.template.h. Also see [1]
 4 Create a visualisation of a file template hierarchy and put it in
   the files doxygen header, like Struct_s.template.h -> Base_s.h -> Option_s.template.h
+5 Consider Putting all sources/* in the template files.
 - BUG Dynamic QObject properties are not used by grantlee(!?)
 - How to remove the ending \n in sources/* files?
 - templates/Class* files are identical for both opaque pointer and hidden
