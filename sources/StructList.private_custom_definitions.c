@@ -89,7 +89,7 @@ int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
-  dst->parent_type_ = src->parent_type;
+  dst->parent_type_ = src->parent_type_;
   if(src->list_name)
     dst->list_name = oyStringAppend_(0, src->list_name, allocateFunc_);
 
