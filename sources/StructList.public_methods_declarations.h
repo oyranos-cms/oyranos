@@ -36,5 +36,7 @@ int              oyStructList_ObserverAdd (
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
                                        oyObserver_Signal_f signalFunc );
-
+oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
+                                       const char        * list_name,
+                                       oyObject_s          object );
 
