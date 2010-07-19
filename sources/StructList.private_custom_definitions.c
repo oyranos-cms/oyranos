@@ -21,6 +21,8 @@ void oyStructList_Release__Members( oyStructList_s_ * structlist )
    * E.g: oyXXX_Release( &structlist->member );
    */
 
+  oyStructList_Clear(structlist);
+
   if(structlist->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = structlist->oy_->deallocateFunc_;
@@ -28,6 +30,13 @@ void oyStructList_Release__Members( oyStructList_s_ * structlist )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( structlist->member );
      */
+    if(structlist->ptr_)
+      deallocateFunc(structlist->ptr_);
+
+    if(structlist->list_name)
+      deallocateFunc(structlist->list_name);
+
+    structlist->type_ = 0;
   }
 }
 
