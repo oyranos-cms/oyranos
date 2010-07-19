@@ -69,6 +69,7 @@ int oyStructList_Init__Members( oyStructList_s_ * structlist )
  */
 int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
 {
+  int error,i;
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
 
@@ -79,6 +80,25 @@ int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->parent_type_ = src->parent_type;
+  if(src->list_name)
+    dst->list_name = oyStringAppend_(0, src->list_name, allocateFunc_);
 
-  return 0;
+  oyObject_Lock( dst->oy_, __FILE__, __LINE__ );
+
+  dst->n_reserved_ = (src->n_ > 10) ? (int)(src->n_ * 1.5) : 10;
+  dst->n_ = src->n_;
+  dst->ptr_ = oyAllocateFunc_( sizeof(int*) * dst->n_reserved_ );
+  memset( dst->ptr_, 0, sizeof(int*) * dst->n_reserved_ );
+
+  for(i = 0; i < src->n_; ++i)
+    if(src->ptr_[i]->copy)
+      dst->ptr_[i] = src->ptr_[i]->copy( src->ptr_[i], 0 );
+
+  if(oyStruct_IsObserved( (oyStruct_s*)dst, 0) )
+    error = oyStructList_ObserverAdd( src, 0, 0, 0 );
+
+  oyObject_UnLock( dst->oy_, __FILE__, __LINE__ );
+
+  return error;
 }
