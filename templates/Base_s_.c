@@ -87,7 +87,7 @@
   if(!error) {
     {% block copyConstructor %}
     /* ---- start of custom {{ class.baseName }} copy constructor ----- */
-    oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    error = oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
     /* ---- end of custom {{ class.baseName }} copy constructor ------- */
     {% endblock copyConstructor %}
   }
