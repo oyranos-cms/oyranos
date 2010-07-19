@@ -36,11 +36,7 @@ typedef enum {
   oyOBJECT_NONE,
   oyOBJECT_NAMED_COLOURS_S,
 {% for class in classes %}
-  {% ifequal class.name "oyStructList_s" %}
-  oyOBJECT_STRUCT_LIST_S,   /**< oyStructList_s */
-  {% else %}
-  oyOBJECT_{{ class.baseName|upper }}_S,   /**< {{ class.name }} */
-  {% endifequal %}
+  {{ class.enumName }},   /**< {{ class.name }} */
 {% endfor %}
   oyOBJECT_MAX
 } oyOBJECT_e;

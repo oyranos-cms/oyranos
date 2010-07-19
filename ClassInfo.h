@@ -2,10 +2,13 @@
 
 class QString;
 
+QString camel2under( const QString& camel );
+
 class ClassInfo: public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString name READ name)
+  Q_PROPERTY(QString enumName READ enumName)
   Q_PROPERTY(QString privName READ privName)
   Q_PROPERTY(QString baseName READ baseName)
   Q_PROPERTY(QObject* parent READ parent)
@@ -42,6 +45,8 @@ class ClassInfo: public QObject
     /* Public property functions start */
     /// Get the class full public name
     QString name() const { return "oy" + base + "_s"; }
+    /// Get the class oyOBJECT_e enum
+    QString enumName() const { return "oyOBJECT_" + camel2under( base ).toUpper() + "_S"; }
     /// Get the class full private name
     QString privName() const { return "oy" + base + "_s_"; }
     /// Get the class name without any prefix/suffix
