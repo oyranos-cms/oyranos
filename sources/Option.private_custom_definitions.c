@@ -31,6 +31,8 @@ void oyOption_Release__Members( oyOption_s_ * option )
   }
 }
 
+static int oy_option_id_ = 0;
+
 /** Function    oyOption_Init__Members
  *  @memberof   oyOption_s
  *  @brief      Custom Option constructor 
@@ -48,6 +50,8 @@ void oyOption_Release__Members( oyOption_s_ * option )
  */
 int oyOption_Init__Members( oyOption_s_ * option )
 {
+  option->id = oy_option_id_++;
+
   return 0;
 }
 
