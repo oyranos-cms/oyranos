@@ -51,6 +51,8 @@ static int oy_option_id_ = 0;
 int oyOption_Init__Members( oyOption_s_ * option )
 {
   option->id = oy_option_id_++;
+  option->registration = NULL;
+  option->value = NULL;
 
   return 0;
 }
