@@ -56,14 +56,21 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
-Q. Should all constructors initialise with `0' the class members?
+Q. Should all oyClass_XXX() public functions have a private
+   oyClass_XXX_() - where the public does only checking?
+A. *********************************************************
+
+Q. Should all constructors initialise with `0' the pointer class members?
 A. *********************************************************
 
 Q. Should Struct be removed from oyStruct_LockCreateFunc_,
    or added to oyLockRelease_f, ...?
 A. *************************************
 
-Q. Will oyName_releassMembers() be public or private?
+Q. Will oyName_xxxxxxxMembers() be public or private?
+A. ***************************************
+Q. Will oyName_xxxxxxxMembers() be removed and replaced by
+   just extending the blocks inside the template?
 A. ***************************************
 
 Q. Will oyName_s use @extends oyStruct_s
