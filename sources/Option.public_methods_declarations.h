@@ -1,10 +1,7 @@
-oyOption_s *   oyOption_New          ( const char        * registration,
-                                       oyObject_s          object );
+oyOption_s *   oyOption_NewRegistration( const char        * registration,
+                                         oyObject_s          object );
 oyOption_s *   oyOption_FromDB       ( const char        * registration,
                                        oyObject_s          object );
-oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
-                                       oyObject_s          object );
-int            oyOption_Release      ( oyOption_s       ** option );
 int            oyOption_GetId        ( oyOption_s        * option );
 const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
