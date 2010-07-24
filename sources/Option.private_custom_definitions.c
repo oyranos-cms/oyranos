@@ -21,6 +21,8 @@ void oyOption_Release__Members( oyOption_s_ * option )
    * E.g: oyXXX_Release( &option->member );
    */
 
+  option->id = 0;
+
   if(option->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = option->oy_->deallocateFunc_;
@@ -28,6 +30,8 @@ void oyOption_Release__Members( oyOption_s_ * option )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( option->member );
      */
+
+    oyOption_Clear( option );
   }
 }
 
