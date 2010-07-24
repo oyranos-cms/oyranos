@@ -14,13 +14,13 @@
 oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
                                        oyObject_s          object )
 {
-  oyOption_s * s = 0;
+  oyOption_s_ * s = 0;
   int error = !opt;
 
   if(error)
     return s;
 
-  s = oyOption_New( 0, object );
+  s = (oyOption_s_*)oyOption_New( 0, object );
   if(!s)
     return s;
 
@@ -61,8 +61,8 @@ oyOption_s *   oyOption_FromStatic_  ( oyOption_t_       * opt,
  *  @since   2008/06/28 (Oyranos: 0.1.8)
  *  @date    2008/06/28
  */
-int            oyOption_Match_       ( oyOption_s        * option_a,
-                                       oyOption_s        * option_b )
+int            oyOption_Match_       ( oyOption_s_        * option_a,
+                                       oyOption_s_        * option_b )
 {
   int erg = 0;
 
@@ -93,7 +93,7 @@ int            oyOption_Match_       ( oyOption_s        * option_a,
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2008/11/27
  */
-void         oyOption_UpdateFlags_   ( oyOption_s        * o )
+void         oyOption_UpdateFlags_   ( oyOption_s_        * o )
 {
   char * tmp = 0;
 
