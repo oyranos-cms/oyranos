@@ -101,7 +101,7 @@ int            oyOption_Release      ( oyOption_s       ** obj )
 
 /** Function oyOption_GetId
  *  @memberof oyOption_s
- *  @brief   get the identification number of a option 
+ *  @brief   get the identification number of a option
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/10 (Oyranos: 0.1.8)
@@ -117,15 +117,15 @@ int            oyOption_GetId        ( oyOption_s        * obj )
 
 /** Function oyOption_GetText
  *  @memberof oyOption_s
- *  @brief   get a text dump 
+ *  @brief   get a text dump
  *
  *  Only oyOption_s::value is written.
  *
  *  The type argument should select the following string in return: \n
  *  - oyNAME_NAME - a readable XFORMS element
  *  - oyNAME_NICK - the hash ID
- *  - oyNAME_DESCRIPTION - option registration name with key and without 
- *                         key attributes or value 
+ *  - oyNAME_DESCRIPTION - option registration name with key and without
+ *                         key attributes or value
  *
  *  @param[in,out] obj                 the option
  *  @param         type                oyNAME_NICK is equal to an ID
@@ -176,7 +176,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
       oyFree_m_(text);
     }
 
-  if(error <= 0 && 
+  if(error <= 0 &&
      ( type == oyNAME_NICK || type == oyNAME_NAME ))
   {
     int n = 1, i = 0, j;
@@ -294,7 +294,7 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
             return error;
           ++j;
         }
-        
+
       }
       oyValueRelease( &obj->value, obj->value_type, deallocateFunc );
     }
@@ -323,7 +323,7 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 
 /** Function oyOption_GetValueText
  *  @memberof oyOption_s
- *  @brief   get value as a text dump 
+ *  @brief   get value as a text dump
  *
  *  @param         obj                 the option
  *  @param         allocateFunc        user allocator
@@ -437,7 +437,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
     }
 
     erg = oyStringCopy_( text, allocateFunc );
-  
+
     oyFree_m_( tmp );
     if(!text)
     {
@@ -454,7 +454,7 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
 
 /** Function oyOption_SetFromInt
  *  @memberof oyOption_s
- *  @brief   set a integer 
+ *  @brief   set a integer
  *
  *  @param[in,out] obj                 the option
  *  @param         integer             the value
@@ -478,7 +478,7 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
     return error;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
- 
+
   if(error <= 0)
   {
     if(s->value && 0 /*flags & OY_CLEAR*/)
@@ -509,9 +509,9 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
         s->value_type = oyVAL_INT_LIST;
     }
 
-    if(!error && pos > 0 && 
+    if(!error && pos > 0 &&
        (s->value_type != oyVAL_INT_LIST ||
-        (s->value_type == oyVAL_INT_LIST && 
+        (s->value_type == oyVAL_INT_LIST &&
          (!s->value->int32_list || pos >= s->value->int32_list[0]))))
     {
       int32_t * old_list = 0,
@@ -555,7 +555,7 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
 
 /** Function oyOption_GetValueInt
  *  @memberof oyOption_s
- *  @brief   get a integer 
+ *  @brief   get a integer
  *
  *  @param[in,out] obj                 the option
  *  @param         pos                 position in a list
@@ -576,7 +576,7 @@ int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
     return error;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
- 
+
   if(error <= 0)
   {
     if( s->value_type == oyVAL_INT_LIST &&
@@ -616,7 +616,7 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
     return error;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
- 
+
   if(error <= 0)
   {
     if(s->value && 0 /*flags & OY_CLEAR*/)
@@ -647,9 +647,9 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
         s->value_type = oyVAL_DOUBLE_LIST;
     }
 
-    if(!error && pos > 0 && 
+    if(!error && pos > 0 &&
        (s->value_type != oyVAL_DOUBLE_LIST ||
-        (s->value_type == oyVAL_DOUBLE_LIST && 
+        (s->value_type == oyVAL_DOUBLE_LIST &&
          (!s->value->dbl_list || pos >= s->value->dbl_list[0]))))
     {
       double * old_list = 0,
@@ -714,7 +714,7 @@ double         oyOption_GetValueDouble(oyOption_s        * obj,
     return error;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
- 
+
   if(error <= 0)
   {
     if( s->value_type == oyVAL_DOUBLE_LIST &&
@@ -795,7 +795,7 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
 
     if((s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
-           ((oyBlob_s*)(option->value->oy_struct))->ptr == ptr)) || 
+           ((oyBlob_s*)(option->value->oy_struct))->ptr == ptr)) ||
           (s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
            ((oyCMMptr_s*)(option->value->oy_struct))->ptr == ptr))))
       return error;
@@ -861,7 +861,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
 
     if(!(option->value && option->value_type == oyVAL_STRUCT &&
          (((option->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
-           ((oyBlob_s*)(option->value->oy_struct))->ptr)) || 
+           ((oyBlob_s*)(option->value->oy_struct))->ptr)) ||
           option->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S)))
       error = 1;
   }
@@ -1054,7 +1054,7 @@ oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
       o->value->oy_struct->type_ == type)
   {
     if(o->value->oy_struct->copy)
-      s = o->value->oy_struct->copy( o->value->oy_struct, 0 ); 
+      s = o->value->oy_struct->copy( o->value->oy_struct, 0 );
     else
       s = o->value->oy_struct;
   }

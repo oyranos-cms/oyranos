@@ -9,7 +9,7 @@ int            oyOption_GetId        ( oyOption_s        * option );
 const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
 int            oyOption_SetFromText  ( oyOption_s        * obj,
-                                       const char        * text, 
+                                       const char        * text,
                                        uint32_t            flags );
 char *         oyOption_GetValueText ( oyOption_s        * obj,
                                        oyAlloc_f           allocateFunc );
