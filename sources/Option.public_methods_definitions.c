@@ -474,10 +474,15 @@ double         oyOption_GetValueDouble(oyOption_s        * obj,
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2008/11/27
  */
-int            oyOption_Clear        ( oyOption_s        * s )
+int            oyOption_Clear        ( oyOption_s        * obj )
 {
+  int error = !obj;
+  oyOption_s_ * s = (oyOption_s_*)obj;
+
   if(!s)
-    return 1;
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
 
   s->flags = 0;
 
