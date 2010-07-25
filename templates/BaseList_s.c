@@ -25,7 +25,8 @@ OYAPI int  OYEXPORT
   if(s)
     oyCheckType__m( {{ class.enumName }}, return 1 )
 
-  if(obj && *obj && (*obj)->type_ == {{ class.content.enumName }})
+  if(obj && *obj &&
+      {% block MoveIn_CheckTypes %}(*obj)->type_ == {{ class.content.enumName }}{% endblock %})
   {
     if(!list)
     {
@@ -40,7 +41,7 @@ OYAPI int  OYEXPORT
     }
       
     if(!error)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
+      {% block MoveIn_Observed %}error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );{% endblock %}
   }   
 
   return error;
