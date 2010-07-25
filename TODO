@@ -50,6 +50,7 @@ LATER:
   template and rerun the renderer.
 - Save the filestamps of all files and abort when both source and
   template have been updated.
+- Add python bindings for gdb
 
 MUCH LATER:
  + Possibility to add more steps after code generation.
