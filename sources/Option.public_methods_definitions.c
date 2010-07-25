@@ -236,7 +236,7 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 
   oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
 
-  return oyOption_SetFromText_( obj, text, flags );
+  return oyOption_SetFromText_( s, text, flags );
 }
 
 /** Function oyOption_GetValueText
