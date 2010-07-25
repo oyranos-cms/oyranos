@@ -306,7 +306,7 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
 int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
                                        int                 pos )
 {
-  oyOption_s * s = obj;
+  oyOption_s_ * s = (oyOption_s_*)obj;
   int error = !s;
   int32_t result = 0;
 
