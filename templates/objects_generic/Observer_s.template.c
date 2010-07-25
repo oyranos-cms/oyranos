@@ -678,7 +678,7 @@ OYAPI int  OYEXPORT
         oyStructList_s * observers = 0;
         int j_n,j;
 
-        observers = (oyStructList_s*)oyOption_StructGet( (oyOption_s_*) o,
+        observers = (oyStructList_s*)oyOption_StructGet( (oyOption_s*) o,
                                                        oyOBJECT_STRUCT_LIST_S );
 
         if(!error)
