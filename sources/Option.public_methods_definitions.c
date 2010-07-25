@@ -521,48 +521,51 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
                                        oyPointer           ptr,
                                        size_t              size )
 {
-  int error = !option || option->type_ != oyOBJECT_OPTION_S;
   oyAlloc_f allocateFunc_ = oyAllocateFunc_;
   oyDeAlloc_f deallocateFunc_ = oyDeAllocateFunc_;
-  oyOption_s * s = option;
+  int error = !option;
+  oyOption_s_ * s = (oyOption_s_*)option;
+
+  if(!s)
+    return error;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
 
   if(error <= 0)
   {
-    if(option->oy_)
+    if(s->oy_)
     {
-      allocateFunc_ = option->oy_->allocateFunc_;
-      deallocateFunc_ = option->oy_->deallocateFunc_;
+      allocateFunc_ = s->oy_->allocateFunc_;
+      deallocateFunc_ = s->oy_->deallocateFunc_;
     }
 
     if((s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
-           ((oyBlob_s*)(option->value->oy_struct))->ptr == ptr)) ||
+           ((oyBlob_s*)(s->value->oy_struct))->ptr == ptr)) ||
           (s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
-           ((oyCMMptr_s*)(option->value->oy_struct))->ptr == ptr))))
+           ((oyCMMptr_s*)(s->value->oy_struct))->ptr == ptr))))
       return error;
 
-    oyValueClear( option->value, option->value_type, deallocateFunc_ );
-    if(!option->value)
-      option->value = allocateFunc_(sizeof(oyValue_u));
-    error = !option->value;
+    oyValueClear( s->value, s->value_type, deallocateFunc_ );
+    if(!s->value)
+      s->value = allocateFunc_(sizeof(oyValue_u));
+    error = !s->value;
     if(!error)
-      memset( option->value, 0, sizeof(oyValue_u) );
+      memset( s->value, 0, sizeof(oyValue_u) );
   }
 
   if(error <= 0)
   {
-    option->value->oy_struct = (oyStruct_s*) oyBlob_New( 0 );
-    error = !option->value->oy_struct;
-    option->value_type = oyVAL_STRUCT;
+    s->value->oy_struct = (oyStruct_s*) oyBlob_New( 0 );
+    error = !s->value->oy_struct;
+    s->value_type = oyVAL_STRUCT;
   }
 
   if(error <= 0)
   {
-    error = oyBlob_SetFromData( (oyBlob_s*) option->value->oy_struct,
+    error = oyBlob_SetFromData( (oyBlob_s*) s->value->oy_struct,
                                 ptr, size, 0 );
-    oyStruct_ObserverSignal( (oyStruct_s*)option, oySIGNAL_DATA_CHANGED, 0 );
+    oyStruct_ObserverSignal( (oyStruct_s*)s, oySIGNAL_DATA_CHANGED, 0 );
   }
 
   return error;
