@@ -714,6 +714,12 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
   char * text = 0;
   oyPointer ptr = 0;
   size_t size = 0;
+  oyOption_s_ * s = (oyOption_s_*)option;
+
+  if(error)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
 
   oyExportStart_(EXPORT_SETTING);
 
@@ -727,15 +733,15 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
     if(text && text[0])
     {
       oyOption_SetFromText( option, text, 0 );
-      option->source = oyOPTIONSOURCE_DATA;
+      s->source = oyOPTIONSOURCE_DATA;
     }
     else
     {
-      ptr = oyGetKeyBinary_( option->registration, &size, oyAllocateFunc_ );
+      ptr = oyGetKeyBinary_( s->registration, &size, oyAllocateFunc_ );
       if(ptr && size)
       {
         oyOption_SetFromData( option, ptr, size );
-        option->source = oyOPTIONSOURCE_DATA;
+        s->source = oyOPTIONSOURCE_DATA;
         oyFree_m_( ptr );
       }
     }
