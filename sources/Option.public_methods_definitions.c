@@ -56,10 +56,9 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
   {
     /** This is merely a wrapper to oyOption_New() and
      *  oyOption_SetValueFromDB(). */
-    o = oyOption_New( registration, object );
-    error = oyOption_SetFromText( o, 0, 0 );
+    o = oyOption_New( object );
     error = oyOption_SetValueFromDB( o );
-    o->source = oyOPTIONSOURCE_DATA;
+    ((oyOption_s_*)o)->source = oyOPTIONSOURCE_DATA;
   }
 
   return o;
