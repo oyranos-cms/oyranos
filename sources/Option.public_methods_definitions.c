@@ -687,7 +687,10 @@ int            oyOption_SetRegistration (
 const char *   oyOption_GetRegistration (
                                        oyOption_s        * option )
 {
-  oyOption_s * s = option;
+  oyOption_s_ * s = (oyOption_s_*)option;
+
+  if(!s)
+    return 0;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
 
