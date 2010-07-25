@@ -659,9 +659,16 @@ int            oyOption_SetRegistration (
                                        const char        * registration )
 {
   int error = !option;
-  if(error <= 0)
-    option->registration = oyStringCopy_( registration,
-                                          option->oy_->allocateFunc_ );
+  oyOption_s_ * s = (oyOption_s_*)option;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
+
+  if(registration)
+    s->registration = oyStringCopy_( registration,
+                                     s->oy_->allocateFunc_ );
 
   return error;
 }
