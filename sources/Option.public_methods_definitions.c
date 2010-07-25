@@ -109,7 +109,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
   int error = !obj;
   const char * erg = 0;
   oyValue_u * v = 0;
-  oyOption_s_ * s = obj;
+  oyOption_s_ * s = (oyOption_s_*)obj;
 
   if(s)
     oyCheckType__m( oyOBJECT_OPTION_S, return 0; )
