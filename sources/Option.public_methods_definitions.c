@@ -348,9 +348,9 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
                                        uint32_t            flags )
 {
   int error = !obj;
-  oyOption_s * s = obj;
+  oyOption_s_ * s = (oyOption_s_*)obj;
 
-  if(!obj)
+  if(!s)
     return error;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
@@ -361,13 +361,13 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
     {
       oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
-      if(obj->value_type == oyVAL_DOUBLE && obj->value)
-        if(obj->value->dbl == floating_point)
+      if(s->value_type == oyVAL_DOUBLE && s->value)
+        if(s->value->dbl == floating_point)
           return error;
 
-      if(obj->value_type == oyVAL_DOUBLE_LIST && obj->value)
-        if(0 <= pos && pos < obj->value->dbl_list[0] &&
-           obj->value->dbl_list[1 + pos] == floating_point)
+      if(s->value_type == oyVAL_DOUBLE_LIST && s->value)
+        if(0 <= pos && pos < s->value->dbl_list[0] &&
+           s->value->dbl_list[1 + pos] == floating_point)
           return error;
 
       oyValueRelease( &s->value, s->value_type, deallocateFunc );
@@ -423,7 +423,7 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
       s->value->dbl_list[pos+1] = floating_point;
 
     s->flags |= oyOPTIONATTRIBUTE_EDIT;
-    oyStruct_ObserverSignal( (oyStruct_s*)obj, oySIGNAL_DATA_CHANGED, 0 );
+    oyStruct_ObserverSignal( (oyStruct_s*)s, oySIGNAL_DATA_CHANGED, 0 );
   }
 
   return error;
