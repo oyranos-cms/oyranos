@@ -230,63 +230,13 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
                                        const char        * text,
                                        uint32_t            flags )
 {
-  int error = !obj;
-  char ** list = 0;
-  int n = 0;
+  oyOption_s_ * s = (oyOption_s_*)obj;
+  if(!s)
+    return -1;
 
-  if(error <= 0)
-  {
-    /* ignore the special case of assigning the same string twice. */
-    if(obj->value && obj->value_type == oyVAL_STRING &&
-       obj->value->string == text)
-      return error;
+  oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
 
-    if(obj->value)
-    {
-      oyDeAlloc_f deallocateFunc = obj->oy_->deallocateFunc_;
-
-      if( text )
-      {
-        int j = 0;
-        if( obj->value_type == oyVAL_STRING && obj->value->string )
-        {
-          if(oyStrcmp_(text, obj->value->string) == 0)
-            return error;
-        }
-        if( obj->value_type == oyVAL_STRING_LIST && obj->value->string_list )
-        while(obj->value->string_list[j])
-        {
-          const char * value = obj->value->string_list[j];
-
-          if(value && oyStrcmp_(value, text))
-            return error;
-          ++j;
-        }
-
-      }
-      oyValueRelease( &obj->value, obj->value_type, deallocateFunc );
-    }
-
-    obj->value = obj->oy_->allocateFunc_(sizeof(oyValue_u));
-    memset( obj->value, 0, sizeof(oyValue_u) );
-
-    if(oyToStringList_m(flags))
-    {
-      /** Split for flags & OY_STRING_LIST at newline. */
-      list = oyStringSplit_( text, '\n', &n, obj->oy_->allocateFunc_ );
-      obj->value->string_list = list; list = 0;
-      obj->value_type = oyVAL_STRING_LIST;
-    } else
-    {
-      if(text)
-        obj->value->string = oyStringCopy_( text, obj->oy_->allocateFunc_ );
-      obj->value_type = oyVAL_STRING;
-    }
-    obj->flags |= oyOPTIONATTRIBUTE_EDIT;
-    oyStruct_ObserverSignal( (oyStruct_s*)obj, oySIGNAL_DATA_CHANGED, 0 );
-  }
-
-  return error;
+  return oyOption_SetFromText_( obj, text, flags );
 }
 
 /** Function oyOption_GetValueText

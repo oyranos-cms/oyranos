@@ -2,3 +2,6 @@ int            oyOption_Match_       ( oyOption_s_       * option_a,
                                        oyOption_s_       * option_b );
 void         oyOption_UpdateFlags_   ( oyOption_s_       * o );
 int            oyOption_GetId_       ( oyOption_s_       * obj );
+int            oyOption_SetFromText_ ( oyOption_s_       * obj,
+                                       const char        * text,
+                                       uint32_t            flags );
