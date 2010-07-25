@@ -315,7 +315,7 @@ if [ -n "$LIBXML2" ] && [ $LIBXML2 -gt 0 ]; then
       rm tests/libtest$EXEC_END
     fi
   fi
-  if [ -n $HAVE_LIB ]; then
+  if [ $HAVE_LIB -ne 0 ]; then
     if [ -n $version ]; then
       echo_="libxml	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     else
@@ -365,7 +365,57 @@ if [ -n "$LCMS" ] && [ $LCMS -gt 0 ]; then
       rm tests/libtest$EXEC_END
     fi
   fi
-  if [ -n $HAVE_LIB ]; then
+  if [ $HAVE_LIB -ne 0 ]; then
+    if [ -n $version ]; then
+      echo_="$name	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    else
+      echo_="$name                    detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
+  else
+    if [ $TESTER -eq 1 ]; then
+      echo_="!!! ERROR: no or too old $name found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      ERROR=1
+    else
+      echo_="    Warning: no or too old $name found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      WARNING=1
+    fi
+    echo_="  need at least version $minversion, download: $url"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+  fi
+fi
+
+if [ -n "$LCMS2" ] && [ $LCMS2 -gt 0 ]; then
+  name="lcms2"
+  libname=$name
+  minversion=2.0
+  url="http://www.littlecms.com"
+  TESTER=$LCMS2
+  ID=LCMS2
+
+  ID_H="$ID"_H
+  ID_LIBS="$ID"_LIBS
+  HAVE_LIB=0
+  version=`pkg-config --modversion $name`
+  pkg-config  --atleast-version=$minversion $name
+  if [ $? = 0 ]; then
+    HAVE_LIB=1
+    echo "#define HAVE_$ID 1" >> $CONF_H
+    echo "$ID = 1" >> $CONF
+    echo "$ID_H = `pkg-config --cflags $name | sed \"$STRIPOPT\"`" >> $CONF
+    echo "$ID_LIBS = `pkg-config --libs $name | sed \"$STRIPOPT\"`" >> $CONF
+  else
+    l=$libname
+    rm -f tests/libtest$EXEC_END
+    $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    if [ -f tests/libtest ]; then
+      HAVE_LIB=1
+      echo "#define HAVE_$ID 1" >> $CONF_H
+      echo "$ID = 1" >> $CONF
+      echo "$ID_H =" >> $CONF
+      echo "$ID_LIBS = -l$l" >> $CONF
+      rm tests/libtest$EXEC_END
+    fi
+  fi
+  if [ $HAVE_LIB -ne 0 ]; then
     if [ -n $version ]; then
       echo_="$name	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     else

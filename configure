@@ -830,6 +830,7 @@ if [ -n "$ECHO" ]; then
   ELEKTRA=1; export ELEKTRA
   #OYRANOS=1; export OYRANOS
   LCMS=1; export LCMS
+  LCMS2=2; export LCMS2
   LRAW=2; export LRAW
   LIBXML2=1; export LIBXML2
   LIBPNG=2; export LIBPNG
@@ -881,6 +882,7 @@ fi
   ELEKTRA=0; export ELEKTRA
   #OYRANOS=0; export OYRANOS
   LCMS=0; export LCMS
+  LCMS2=0; export LCMS2
   LRAW=0; export LRAW
   LIBXML2=0; export LIBXML2
   LIBPNG=0; export LIBPNG
