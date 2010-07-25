@@ -1,0 +1,601 @@
+/**
+    @mainpage
+
+    @section text_contents Descriptive Contents
+    @ref intro |
+    @ref install |
+    @ref links\n
+    @ref tools |
+    @ref environment |
+    @ref user |
+    @ref coding |
+    @ref extending_oyranos |
+    @ref api_tutorial
+
+    @author Kai-Uwe Behrmann and others
+    @since  March 2004
+
+    @par Internet:
+          http://www.oyranos.org
+
+    @n@n
+    @section intro Introduction
+  
+    Oyranos is intended as a entry point for colour savy applications.
+    In its current stage it configures profile paths, sets default profiles, 
+    maps devices to profiles, sets a monitor profile in X and uploads a vcgt
+    tag. This means for instance all applications using Oyranos will use for
+    a incoming digital camera picture the same profile and watch it through the
+    same monitor profile with the same options for rendering intent, simulation
+    and so on.
+
+    @section tools User Tools Documentation
+    - oyranos-monitor - a commandline tool for calling from a setup script like
+      .xinitrc. It selects a profile for the current monitor and sets up the
+      X server at startup time. Usage:
+    @verbatim
+    # select a monitor profile, load the binary blob into X and fill the
+    # VideoCardGammaTable, if appropriate
+    oyranos-monitor
+    @endverbatim
+    - oyranos-policy - a tool to set a policy from a xml file. Use it like:
+    @verbatim
+    oyranos-policy `oyranos-config --syscolordir`/`oyranos-config --settingsdirname`/office.policy.xml
+    @endverbatim
+    Affected are default profiles and some behaviour settings.
+    - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
+      show details of profiles. 
+    - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \a oyranos-config \a --help to see the appropriate options.
+
+    @section user User API Documentation
+    The basic Oyranos API gets included with oyranos.h. An application, which
+    wants to use these functions, needs to link against Oyranos and Elektra.
+    - @ref policy - load / save of user policies
+    - @ref options - layout and describe options to the user; part of user policies
+    - @ref behaviour - get and set common behaviour; part of user policies
+    - @ref default_profiles - get and set commonly used profiles; part of user policies
+    - @ref profile_lists - provides the search path content as profile lists for your GUI
+    - @ref profile_handling - file I/O and more
+
+    The monitor related API is contained in oyranos_monitor.h. Linking against
+    the X11 libraries on Linux is done on runtime.
+    - @ref monitor_api - monitor profile configuration
+
+    The key names, which Oyranos uses to store its configuration in an Elektra
+    file tree, are defined in oyranos_definitions.h.
+    \n
+
+    More in depth topics about programming with Oyranos can be found on the
+    @ref coding page. 
+
+    @subsection api_tutorial Programming Tutorial
+    Frist you have to put a
+    @verbatim
+    #include <oyranos.h> @endverbatim
+    in your source text, in order to use Oyranos. 
+    @verbatim
+    int oyranos_version = oyVersion(); @endverbatim
+    \b oyranos-config \b --cflags delivers the compiler flags and \b oyranos-config \b --ldflags the linker flags.
+
+    Then you can put Oyranos functions in your code and compile with:
+    @verbatim
+    cc `oyranos-config --cflags` `oyranos-config --ldflags` mycode.c -o myApp @endverbatim
+    to link Oyranos into your application.
+
+    The namespace in C++ is oyranos:: , e.g. oyranos::oyVersion().
+
+    Writing of filters and modules for Oyranos is covered in the @ref
+    extending_oyranos page.
+ */
+/*    - @ref device_profiles - profiles which characterise devices */
+
+
+/** @page coding Coding Conventions
+
+    @section general_c_conventions General
+    Oyranos is written in C for portability. All types belonging to its API's
+    are prefixed with a \b oy.\n
+    Oyranos objects naming is build after C++ conventions,
+    where access to a class member is prefixed with the scope operator. \n
+    \a oyranos::oyClass::oyClassFunction \n
+    looks in Oyranos \n
+    \a oyClass_Function. Of course a function specific to a data object 
+    needs the object itself as argument, as the this pointer is not available. \n
+    Oyranos features a flexible memory management and allows easy integration
+    with different memory management strategies.
+
+    @section data_handling Data Handling
+    <p>Oyranos uses a mix of different structures. Among them are the basic C
+    types, simple C structs and Oyranos managed structs.
+    The structs are transparent for compile time typechecking and easy
+    debugging at runtime.</p>
+
+    <p>Objects are transparent to allow easier debugging. But be aware to not
+    change the private members of Oyranos objects directly. 
+    They are marked at end with a underscore \b _. Use the appropriate 
+    functions for each object instead. Otherwise the objects are in danger to
+    be handled inadequately.
+    </p>
+
+    @section memory_handling Memory Handling
+    - For strings, constant pointers to chars are provided whenever possible.
+    - For the need of allocating unknown sizes of memory, a function is passed
+      by the user doing the memory allocation. The returned memory is then to
+      be managed by the user.
+    - More complex library allocated memory blocks, like profile name lists,
+      can be freed with a Oyranos provided function. They should be encapsulated
+      into a Oyranos object.
+    - Oyranos objects transport always a allocator. The allocator is possible 
+      to set by the user at Object creation time.
+    - Objects can contain a user specified deallocator.
+
+    @section  naming_convention Naming Conventions
+    Declaration types are distinguishable through the below described naming
+    conventions. \n
+    A \b oy prefix is common for all functions, types and enums to
+    display a namespace in C. \n
+    \b Functions words are starting upper case, (after the oy prefix)
+    oyVersion() \n
+    \b Enums have all letters  written upper case. Words are separated by
+                      underscore
+      ::oyPROFILE_e \n
+    \b Variables are written lower case and words are separated by underscore.
+      ::oy_domain_codeset \n
+    \b Macros are upper case and start with \b OY_ or \b oy:
+      ::OY_HAVE_PNG \n
+    As one exception some macros are normal named to allow later typing:
+      ::oyChar \n
+      Function alike macros are named like normal functions followed by
+      a \b _m:
+      oyColourOffset_m() \n
+      For enum alike macros it is more appropriate to omit the _M suffix:
+      ::OY_TYPE_123A_8 \n
+    \b Stucts words start upper case followed by a \b _s:
+      oyProfile_s \n
+    \b Struct/object \b handling \b functions start upper case with the struct
+    name, followed with the verb:
+      oyProfile_GetChannelName() \n
+
+    @subsection  suffixes  Declaration Overview
+    - \b _t types, e.g. ::oyPixel_t
+    - \b _s structs, e.g. oyProfileTag_s
+    - \b _f functions, e.g. oyAlloc_f()
+    - \b _e enums, e.g. ::oyCONNECTOR_EVENT_e
+    - \b _u unions, e.g. ::oyValue_u
+    - \b _M or \b _m or none for macro functions, e.g. oyToChannels_m(), ::OY_TYPE_123A_HALF
+    - ending underscore \b _ for non editable internals, e.g. oyRegion_s::type_
+
+
+    @section development Development Conventions
+
+    @subsection api_design API Design
+    Oyranos API's handle various tasks. A important idea is to make colour 
+    management easy. Thus some API's are high level and only a few calls
+    are needed to do the, hopefully, right thing. For finer control
+    many low level API's are exposed.\n
+    It is as well possible to reimplement the Oyranos functionality. Some
+    recommendations or standards are therefore provided at OpenICC. Feel free
+    to contact the Oyranos project to discuss further details.\n
+    Internal API's handle low level file access, internal static lists and
+    adapt to modules.
+
+    @subsection object_design Object Design
+    Almost all Oyranos structs are based on the same structure ::oyStruct_s.
+    They share first a member called \a type_ to better distinguish their type.
+    The according value is available as a enum from
+    ::oyOBJECT_e. \n
+    Each object should implement a appropriate oyStruct_Copy_f() and a 
+    oyStruct_Release_f() function member on position 2 and 3. 
+    These allow to easily cast to the same type of functions of other objects.
+    Many object manipulators in Oyranos rely on this feature.
+    Thus each object can implement list functionality with a common base in the
+    above mentioned ::oyStructList_s. The resoning behind the above outlined use
+    of a common struct base and API's is, even with C casting, these help in
+    reducing code size, at easier maintaining and in fixing bugs. \n
+    The fourth member of a ::oyObject_s style struct is \a oy_ and features
+    common properties, like memory management, naming and more. \n
+    A new simple Oyranos data data structure should contain the type_ specifier
+    and the two members of type oyStruct_Copy_f() and oyStruct_Release_f().
+    Complex data structures should contain the type_ and oy_ structure to allow
+    the advanced features. Otherwise the fourth member shall keep a intptr_t. \n
+    Providing of similiar functions for different Oyranos objects, allows
+    their use in a abstract way. A soft typecheck is possible over the type_ 
+    member. For an example see the internal ::oyStructList_s struct with the 
+    according C API. As casting in C is always blind, it is better to avoid, 
+    except you know what you do.
+
+    @subsection api_naming API Naming
+    Keeping API members in a lexical relation allowes
+    for later easy searching with tools of choice. So you find rather a 
+    \a getOyNamedColourName but \a oyNamedColour_GetName and can easily find the
+    related functions in the appropriate NamedColour API. The sheme follows
+    C++ syntax: (namespace)\b oy(ranos)::(class)\b NamedColour::(function)
+    \b getName.
+    This should as well help in designing OO wrappers to allow consistency among
+    C Oyranos and its wrappers for various languages.
+
+
+ */
+
+/** @page extending_oyranos Extending Oyranos
+
+    @section oyranos_modules_writing Oyranos modules writing
+
+    Note that the object style APIs defined in oyranos_alpha.h are still subject
+    to changes.
+
+    @subsection write_modules Writing C Modules for Oyranos
+    Oyranos modules can be filters, plug-ins, backends, CMMs or meta modules.
+    The API design can be seen in the @ref module_api page. To start with a 
+    module use the example code from the
+    examples/dummy_filter/oyranos_cmm_dFil.c file.
+    Change the header, e.g. "My name" string. Select a four byte identifier for
+    the new module and define it in CMM_NICK. The comment above CMM_NICK
+    describes how the module library and the xxxx_cmm_module data structure 
+    (vtable) interact. Oyranos will search the appropriate
+    path for libraries and will try to dlopen the xxxx_cmm_module data 
+    structure. It therefore parses the library file name and takes the four 
+    bytes before "_cmm_module" as the modules identifier. The "xxxx_cmm_module"
+    symbol will be searched and if found the information form there will be used
+    to access the module functions and data. \n
+    \n
+    If you choose your four byte identifier, substitute every occurence of
+    "dFil" with the new identifier. \n
+    \n
+    In the OY_DUMMY_FILTER_REGISTRATION macro the "my_filter" name should be
+    changed to something appropriate for the new module. Oyranos users will use
+    primarily this name to select the module. A description on how a module 
+    registration string is to be build and how it works can be found at the end
+    of the Detailed Description section on @ref module_api. All occurences
+    of "my_filter" in the file should be substituted accordingly. \n
+    \n
+    The old function dFilGetText should be adapted to provide the new 
+    appropriate names, copyrights and a help texts on how to use the module.
+    Go through all functions and adapt them to the filter needs. The
+    dFilFilterPlug_MyFilterRun function is the core of the module. It contains
+    the processing part or algorythm. Typically a filter contains two
+    connectors, a plug and a socket. The connectors describe their capabilities
+    and according to this Oyranos can check in advance if two filters fit each
+    to the other. \n
+    \n
+    The oyCMMapi4_s holds most static informations of the module. It can be used
+    to provide a processing context. A context is use in case it is very 
+    expensive to compute such a context like in ICC CMMs for colour conversions
+    and the context shall be chached by Oyranos. The oyCMMapi7_s holds the 
+    dFilFilterPlug_MyFilterRun function and the plugs and sockets. \n
+    \n
+    Compile and install the module library to see if Oyranos detects it 
+    correctly. Use the test2 application therefore. It is in the source tree
+    compiled through the "make check" shell command. The shell command to run is
+    "test2 'CMMS list'". The test run will list all detected meta modules and
+    the modules loaded by a meta module. The filters are sorted by their 
+    provided APIs. The test2 command might be substituted by a dedicated module
+    utility in the future.
+
+    @subsection write_device_modules Writing Device Modules for Oyranos
+    To start with a module use the examples/dummy_device/oyranos_cmm_dDev.c 
+    file and modify it. Please follow the @ref write_modules subsection.
+    The parts which differ are that instead of oyCMMapi4_s the oyCMMapi8_s
+    will be implemented. The dDevConfigs_FromPattern 
+    (oyCMMapi8_s::oyConfigs_FromPattern) is a function to
+    call into the device module and create new oyConfig_s object(s).
+    The dDevConfigs_Modify (oyCMMapi8_s::oyConfigs_Modify) function can use the
+    same protocol with the difference, that it works on existing oyConfig_s 
+    object(s). The "device_name" option should be ignored by dDevConfigs_Modify.
+    The dDev_rank_map (oyCMMapi8_s::rank_map) tells how each option shall
+    be wighted by Oyranos to select a profile from the Oyranos DB independent 
+    from the device module. The calls into dDevConfigs_FromPattern and
+    oyConfigs_Modify are string based. The option "command" will contain the 
+    command name the device module shall act upon. \n
+    \n
+    The oyCMMapi8_s::registration string needs in its oyFILTER_REG_APPLICATION
+    section a starting "config.device.icc_profile." followed by the
+    device class name and separated by point '.' the the module nick. This
+    convention shall enshure a proper mechanism is available to select the
+    desired config domains from several ones. \n
+    \n
+    All "dDev" occurences in the source code need to be substituted by the 
+    modules own four byte identifier. \n
+    \n
+    To test the device module use oyDeviceAskProfile(), oyDeviceGetInfo() and
+    oyDeviceGet():
+    @verbatim
+    #include <oyranos_alpha.h>
+
+    /* ... */
+
+    oyConfig_s * device = 0; /* initialise with zero to avoid errors */
+    oyProfile_s * profile = 0;
+    oyOptions_s * options = 0;  /* not used in this example */
+    char * text = 0;
+
+    /* Call into the device modules oyCMMapi8_s::oyConfigs_FromPattern
+     * function with the "list" command.
+     * "monitor" is to be exchanged by the actual device class and
+     * ":0.0" by the actual device nick name.
+     */
+    int error = oyDeviceGet( 0, "monitor", ":0.0", options, &device );
+
+    /* obtain a expensive list of key/value pairs from the device module */
+    error = oyDeviceGetInfo( device, oyNAME_DESCRIPTION, 0, &text,
+                                     malloc );
+
+    /* assign a profile to the device/driver */
+    error = oyDeviceSetProfile( device, "some_real_profile_in_your_path.icc" );
+
+    /* Ask Oyranos to lookup its DB for a matching profile. It is only useful
+     * if a profile is already set for the devices keys. The set devices can be
+     * viewed at the command line with:
+     * ls -d ~/.kdb/user/shared/freedesktop.org/imaging/config.device.icc_profile.*
+     */
+    error = oyDeviceAskProfile( device, &profile );
+    @endverbatim
+    It is useful to step through the code. Oyranos provides the --enable-debug
+    configure option to aid debugging and stepping through. To build the module
+    add the -g compiler option.
+
+    The protocal on how the modules communicate with the core and the front end
+    is described in the @ref device_protocol_1.
+ */
+
+/** @page device_protocol_1 Device Protocol v1.0
+\htmlonly
+    <p>Oyranos core &lt;-&gt; device module protocol
+</p>
+Copyright: Kai-Uwe Behrmann, Yiannis Belias @ 2009
+
+<a name="Implementation_Overview"></a><h4> Implementation Overview </h4>
+<p>Oyranos implements <b>devices</b> as <i>oyConfig_s</i> objects.
+</p><p>A 'oyConfig_s' object holds a set of <b>options</b> comming from a 
+
+<b>device backend</b> and possibly from the <b>Oyranos DataBase</b> (Oyranos DB).
+</p><p>Options which are relevant for inclusion into the Oyranos DB must be 
+build of text strings. These are the <i>oyConfig_s::backend_core</i> options.
+</p><p>The device options represent both <b>device attributes</b> and 
+<b>driver settings</b> in one object.
+
+</p><p>The <b>device backend</b> is implemented in Oyranos with the <i>oyCMMapi8_s</i> 
+structure. This structure must be included in a module and be pointed to from 
+a <i>oyCMMInfo_s</i> structure like all <b>module</b>s.
+</p>
+<a name="Tables"></a><h4> Tables </h4>
+
+<p>Options marked with "in:" are passed through a oyOptions_s argument to the module.
+Outgoing options are passed through the device(s) created by the modules and are
+assigned as follows:
+</p><p>[c] - oyConfig_s::backend_core - identification stuff as strings
+</p><p>[d] - oyConfig_s::data - additional data
+</p><p>[b] - oyConfig_s::db - only for Oyranos core and thus tabu for modules
+</p><p>Required options are marked with a [r].
+</p><p>The "device_name" option shall only be considered in oyConfig_s::oyConfigs_FromPattern. In 
+oyConfig_s::oyConfigs_Modify the oyConfig_s's devices should have already that property in their
+backend_core part.
+</p>
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "list" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+<td>   "command"="list" </td><td> oyX1, SANE, CUPS, oyRE </td><td> in[r]: call for detected device(s) </td><td> in: string
+</td></tr>
+<tr>
+<td>   "device_name" </td><td>  oyX1, SANE, CUPS<br> oyRE </td><td> device ID  in: select a single device; out[r]: device ID<br> any meaning for oyRE? </td><td> in(oyConfigs_FromPattern)/out[c]: string
+
+</td></tr>
+<tr>
+<td>   "oyNAME_NAME" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> in: call for lightweight informations<br> out: short UI description </td><td> in/out[d]: string
+</td></tr>
+<tr>
+<td>   "icc_profile" </td><td>  oyX1, CUPS </td><td> out: the ICC profile accessible through the device driver </td><td> in: string; out[d]: oyProfile_s or<br>a empty "icc_profile" option of oyVAL_STRUCT, if ICC profiles are supported by the device but in the actual search not found.
+
+</td></tr>
+<tr>
+<td>   "display_name" </td><td>  oyX1 </td><td> in: select a X11 display and get all connected devices; "device_name" has priority </td><td> in(oyConfigs_FromPattern): string
+</td></tr>
+<tr>
+<td>   "device_rectangle" </td><td>  oyX1 </td><td> out[r]: the device rectangle in pixels </td><td> in: string <br>out[d]: oyRectangle_s
+
+</td></tr>
+<tr>
+<td>   "supported_devices" </td><td>  oyRE </td><td> out: one manufacturer in the first line, remaining lines each for one model </td><td> in: string <br>out[d]: strings
+</td></tr>
+<tr>
+<td>   "device_context" </td><td> oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> out: not required<br> "SANE_Device"<br> "ppd_file_t*" <br> "libraw_output_params_t*" </td><td> out[d]: string
+
+</td></tr>
+<tr>
+<td>   device handles </td><td>  SANE,<br> CUPS, oyRE </td><td> version + SANE_Device + SANE_Handle<br>out: device handle caching  </td><td> out[c]: oyCMMptr_s or oyOption_SetFromData() but no string(s)
+</td></tr></tbody></table>
+<p>Note: If a "manufacturer" or a "model" option appear in a device after the "list" call, the device is considered ready for a Oyranos DB query. Thus all options which normally appear after a "properties" call should be included together with "manufacturer" or "model" options.
+</p><p><br>
+</p>
+
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "properties" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+<td>   "command"="properties" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> in[r]: call for even expensive informations<br> </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "device_name" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> in: select a single device;<br>out: ID of each device, e.g. &lt;manufacturer&gt;-&lt;model&gt; </td><td> in(oyConfigs_FromPattern)/out[c]: string
+</td></tr>
+<tr>
+
+<td>   "display_name" </td><td>  oyX1 </td><td> in: select a X11 display and get all connected devices; "device_name" has priority </td><td> in(oyConfigs_FromPattern): string
+</td></tr>
+<tr>
+<td>   "manufacturer" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> out[r]: device manufacturer </td><td> out[c]: string
+
+</td></tr>
+<tr>
+<td>   "model" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> out[r]: device model </td><td> out[c]: string
+</td></tr>
+<tr>
+<td>   "serial" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> out: device serial number </td><td> out[c]: string
+
+</td></tr>
+<tr>
+<td>   "system_port" </td><td>  oyX1, <br>SANE, <br>CUPS, <br>oyRE </td><td> out: X11 screen number <br>out: scsi/usb/parallel port? <br>out: print queue? <br>out: RAW  file name? </td><td> out[c]: string
+</td></tr>
+
+<tr>
+<td>   "host" </td><td>  oyX1, <br>SANE, <br>CUPS, <br>oyRE </td><td> out: X11 server host name <br>out: possible?t <br>out: print host possible? <br>out: "local" host? </td><td> out[c]: string
+</td></tr>
+<tr>
+
+<td>   "display_geometry" </td><td>  oyX1 </td><td> out[r]: X11 screen geometry as in "device_rectangle" </td><td> out[c]: string
+</td></tr>
+<tr>
+<td>   "edid" </td><td>  oyX1 </td><td> out: monitor EDID block </td><td> in: string<br> out[d]: use oyOption_SetFromData(); users - oyOption_GetData()
+
+</td></tr>
+<tr>
+<td>   "device_context" </td><td> oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> in: not required<br> SANE_Device<br> ppd_file_t*? <br> libraw_output_params_t* </td><td> in: add with oyOption_SetFromData()
+
+</td></tr>
+<tr>
+<td>   device handles </td><td>  SANE, CUPS, oyRE </td><td> in: abreviation to talk with drivers </td><td> in[c]: oyOption_GetData()
+</td></tr>
+<tr>
+<td>   device settings </td><td> oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> out[r]: "display_geometry" ...<br> ...<br> static colour related PPD attributes <br> libraw options </td><td> out[c]: string
+
+</td></tr></tbody></table>
+<p><br>
+</p>
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "setup" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+
+<td>   "command"="setup" </td><td>  oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> in[r]: call for uploading a ICC profile through the device driver<br> do nothing<br> set a cupsICCProfile attribute in a given PPD and write out to file<br> do nothing </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "device_name" </td><td>  oyX1, SANE, CUPS </td><td> in[r]: select a single device </td><td> in(oyConfigs_FromPattern): string
+</td></tr>
+<tr>
+<td>   "profile_name" </td><td>  oyX1, SANE, CUPS </td><td> in[r]: the local accessible ICC profile file name </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "config_file" </td><td>  CUPS </td><td> in: a PPD configuration file (ppd_file_t*) to modify or nothing; out: (ppd_file_t*) </td><td> in: oyOption_GetData(); out[d]: oyOption_SetFromData()?
+</td></tr>
+<tr>
+<td>   device handles </td><td>  SANE, CUPS, oyRE </td><td> in: abreviation to talk with drivers </td><td> in[c]: oyOption_GetData()
+
+</td></tr></tbody></table>
+<p><br>
+</p>
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "unset" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+
+<td>   "command"="unset" </td><td>  oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> in[r]: unloading the _ICC_PROFILE_xxx atom<br> do nothing<br> remove a cupsICCProfile attribute in a given PPD<br> do nothing </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "device_name" </td><td>  oyX1, SANE, CUPS </td><td> in[r]: select a single device </td><td> in(oyConfigs_FromPattern): string
+</td></tr>
+<tr>
+<td>   "profile_name" </td><td>  oyX1, SANE, CUPS </td><td> in[r]: the local accessible ICC profile file name </td><td> in: string
+
+</td></tr>
+<tr>
+<td>   "config_file" </td><td>  CUPS </td><td> in: a PPD configuration file (ppd_file_t*) to modify or nothing; out: (ppd_file_t*) </td><td> in: oyOption_GetData(); out[d]: oyOption_SetFromData()?
+</td></tr>
+<tr>
+<td>   device handles </td><td>  SANE, CUPS, oyRE </td><td> in: abreviation to talk with drivers </td><td> in[c]: oyOption_GetData()
+
+</td></tr></tbody></table>
+<p><br>
+</p>
+<table class="wikitable" style="text-align: left;" border="1" cellpadding="5" cellspacing="0">
+<caption style=""> "help" call
+</caption><tbody><tr>
+<th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Property
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Modules
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Informations
+</th><th style="background: none repeat scroll 0% 0% rgb(239, 239, 239); text-align: center;"> Data format
+</th></tr>
+<tr>
+
+<td>   "command"="help" </td><td>  oyX1, SANE, CUPS, oyRE </td><td> in[r]: show help text through the modules local oyMessage_f </td><td> in: string
+</td></tr></tbody></table>
+<p>Calling a device module without any command or a unknown command shall issue 
+a message through the modules local oyMessage_f. The message shall contain 
+infos about, describing calls and their properties and the expected results.
+Otherwise adhering to the above protocol will enshure a base level of 
+interoperability with users like KM.
+</p>
+<a name="How_to_create_a_useful_.22device_name.22_.28ID.29.3F"></a><h4> How to create a useful "device_name" (ID)? </h4>
+
+<p>it should be unique in that the module can distinguish each device and
+understand to build a device context. This is important for the case when no 
+device context pointer/handle is passed from the user. How that is defined
+is up to the module writer. Even though, a string, one which makes sense in
+KM, would be much appreciated. e.g. in oyX1 it is "device_name"=":0.1" or
+"device_name"="far-away.org:10.0". The modules XOpenDisplay() can directly use 
+these strings and the module can create a context and talk to the device.
+For SANE you have choosen "pnm:0", "pnm:1" and here locally I see
+"plustek:libusb:003:002". The last is unfortunedly subject to change with a
+new usb port or after newly plugging in. But that seems accepable.
+</p><p><br>
+</p>
+<a name="Handling_device_contexts"></a><h4> Handling device contexts </h4>
+<p>The "device_context" option can be set from the module during the "list" 
+call into a device. The user can then see, which specific information is 
+accepted by the module.
+The module has implicitely to assume, that the user has no background about
+the called device class, and to initialise a device by its own.
+In case the user has already a context and passes 
+this one to Oyranos, the module needs to extract the colour related device 
+settings from this and pass the device settings as string to Oyranos.
+Oyranos will then be able to search for a according ICC profile.
+</p><p>It is important for Oyranos, the module and the user to agree who is 
+responsible for the driver contexts. oyOption_SetFromData() is useful to pass
+a pointer through a oyOption_s. The size argument can be set to zero to avoid
+freeing the pointer through Oyranos. In case the module provides a
+context, e.g. in "list" then that needs to be released through driver functions.
+Oyranos has the oyCMMptr_s struct defined in oyranos_cmm.h which can be used:
+<a href="http://www.oyranos.org/doc_intern/structoyCMMptr__s.html" class="external" title="http://www.oyranos.org/doc intern/structoyCMMptr  s.html">[1]</a><span class="urlexpansion">&nbsp;(<i>http://www.oyranos.org/doc_intern/structoyCMMptr__s.html</i>)</span>.
+</p>
+
+<a name="Multiple_Configurations_per_.22device_name.22"></a><h4> Multiple Configurations per "device_name" </h4>
+<p>For backends its possible to resolve one "device_name" option to multiple 
+driver configurations. Such backends are best implemented in that they 
+resolve the oyConfig_s objects right from the beginning, e.g. the "list" 
+call. Otherwise the oyConfig_s devices are not uniquely
+defined. On a practical example, a CUPS device would be uniquely defined, 
+if all colour related and to be included PPD entries are included in the 
+oyConfig_s::backend_core options as strings.
+</p><p>Users can subsummarise such devices in that they look at the 
+registration, manufacturer, model and serial number strings. However they 
+should make clear that each device consists as well of the driver settings.
+</p>
+\endhtmlonly
+ */
+
+
+

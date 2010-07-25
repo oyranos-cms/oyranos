@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Oyranos
 PROJECT_NUMBER         = 0.1.10
-OUTPUT_DIRECTORY       = doc/
+OUTPUT_DIRECTORY       = doc_alpha/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
@@ -79,9 +79,12 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ./
 FILE_PATTERNS          = oyranos.c oyranos.h \
-                         doxymentation \
+                         doxymentation_alpha \
                          doxymentation_common \
-                         oyranos_icc.h oyranos_icc.c
+                         oyranos_alpha.c oyranos_alpha.h \
+                         oyranos_icc.h oyranos_icc.c \
+                         oyranos_xml.h oyranos_xml.c \
+                         oyranos_cmm.h
 RECURSIVE              = NO
 EXCLUDE                = oyranos_gamma.c
 EXCLUDE_SYMLINKS       = YES
