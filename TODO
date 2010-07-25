@@ -57,8 +57,16 @@ MUCH LATER:
 
 FAQ
 Q. Should all oyClass_XXX() public functions have a private
-   oyClass_XXX_() - where the public does only checking?
-A. *********************************************************
+   oyClass_XXX_() - where the public does only checking? Like:
+int oyClass_XXX( oyClass_s * class )
+{
+  oyClass_s_ *s = class;
+  if(s)
+    oyCheckType__m( oyOBJECT_CLASS_S, return 0 );
+
+  return oyClass_XXX_( s );
+}
+A. **Too*many*function*names?*******************************
 
 Q. Should all constructors initialise with `0' the pointer class members?
 A. *********************************************************
