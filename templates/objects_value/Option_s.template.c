@@ -1,6 +1,6 @@
 {% extends "Base_s.c" %}
 
-{% block IncludePrivateHeader %}
+{% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyObserver_s.h"
 {% endblock %}

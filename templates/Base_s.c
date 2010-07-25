@@ -1,6 +1,6 @@
 {% extends "Struct_s.template.c" %}
 
-{% block IncludePrivateHeader %}
+{% block LocalIncludeFiles %}
 #include "{{ class.name }}_.h"
 {% endblock %}
 

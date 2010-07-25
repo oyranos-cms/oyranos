@@ -1,6 +1,6 @@
 {% extends "Base_s.h" %}
 
-{% block ProjectIncludes %}
+{% block LocalIncludeFiles %}
 {{ block.super }}
 #include "{{ class.content.name }}.h"
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends "Base_s.c" %}
 
-{% block IncludePrivateHeader %}
+{% block GlobalIncludeFiles %}
 {{ block.super }}
 #include <stdio.h>
 {% endblock %}

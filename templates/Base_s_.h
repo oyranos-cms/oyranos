@@ -3,7 +3,9 @@
 #ifndef OY_{{ class.baseName|upper }}_S__H
 #define OY_{{ class.baseName|upper }}_S__H
 
+{% block GlobalIncludeFiles %}{% endblock %}  
 #include <oyranos_object.h>
+{% block LocalIncludeFiles %}{% endblock %}  
 
 typedef struct {{ class.privName }} {{ class.privName }};
 

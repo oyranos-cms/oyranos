@@ -1,10 +1,12 @@
 {% include "source_file_header.txt" %}
 
+{% block GlobalIncludeFiles %}{% endblock %}  
 #include "{{ class.name }}.h"
 #include "{{ class.privName }}.h"
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
+{% block LocalIncludeFiles %}{% endblock %}  
 
 {% block CustomPrivateMethodsDefinitions %}
 /* Include "{{ class.private_custom_definitions_c }}" { */

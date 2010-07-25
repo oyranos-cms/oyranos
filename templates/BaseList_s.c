@@ -19,7 +19,7 @@ OYAPI int  OYEXPORT
                                        {{ class.listOf }}       ** obj,
                                        int                 pos )
 {
-  {{ class.name }} * s = list;
+  {{ class.privName }} * s = ({{ class.privName }}*)list;
   int error = 0;
 
   if(s)
@@ -27,10 +27,10 @@ OYAPI int  OYEXPORT
 
   if(obj && *obj && (*obj)->type_ == {{ class.content.enumName }})
   {
-    if(!s)
+    if(!list)
     {
-      s = oy{{ class.baseName }}_New(0);
-      error = !s;
+      list = oy{{ class.baseName }}_New(0);
+      error = !list;
     }                                  
 
     if(!error && !s->list_)
@@ -42,7 +42,7 @@ OYAPI int  OYEXPORT
     if(!error)
       error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );
   }   
-  
+
   return error;
 }
 

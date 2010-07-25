@@ -5,9 +5,9 @@
 
 {% include "cpp_begin.h" %}
 
+{% block GlobalIncludeFiles %}{% endblock %}  
 #include <oyranos_object.h>
-{% block ProjectIncludes %}
-{% endblock %}
+{% block LocalIncludeFiles %}{% endblock %}  
 
 typedef struct {{ class.name }} {{ class.name }};
 /* Include "{{ class.public_h }}" { */

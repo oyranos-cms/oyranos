@@ -1,6 +1,6 @@
 {% extends "Struct_s.template.h" %}
 
-{% block ProjectIncludes %}
+{% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyStruct_s.h"
 {% endblock %}
