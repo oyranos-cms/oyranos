@@ -149,3 +149,136 @@ int            oyOption_SetFromText_ ( oyOption_s_       * obj,
   return error;
 }
 
+/**
+ *  @internal
+ *  Function oyOption_GetValueText_
+ *  @memberof oyOption_s
+ *  @brief   get value as a text dump
+ *
+ *  @param         obj                 the option
+ *  @param         allocateFunc        user allocator
+ *  @return                            the text
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/12/05 (Oyranos: 0.1.9)
+ *  @date    2009/08/17
+ */
+char *         oyOption_GetValueText_( oyOption_s_       * obj,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = !obj;
+  char * erg = 0;
+  oyValue_u * v = 0;
+  oyStructList_s * oy_struct_list = 0;
+  char * text = 0;
+  char * save_locale = 0;
+
+  if(error <= 0)
+    v = obj->value;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  error = !v;
+
+  save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_ );
+  setlocale(LC_NUMERIC, "C");
+
+  if(error <= 0)
+  {
+    int n = 1, i = 0;
+    char * tmp = oyAllocateFunc_(1024);
+    const char * ct = 0;
+
+    switch(obj->value_type)
+    {
+    case oyVAL_INT_LIST:    n = v->int32_list[0]; break;
+    case oyVAL_DOUBLE_LIST: n = (int)v->dbl_list[0]; break;
+    case oyVAL_STRING_LIST: n = 0; while( v->string_list[n] ) ++n; break;
+    case oyVAL_INT:
+    case oyVAL_DOUBLE:
+    case oyVAL_STRING:
+    case oyVAL_STRUCT:
+         n = 1; break;
+    }
+
+    if(obj->value_type == oyVAL_STRUCT)
+    {
+      oy_struct_list = (oyStructList_s*) v->oy_struct;
+      if(oy_struct_list)
+      {
+        if(oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
+          n = oyStructList_Count( oy_struct_list );
+      } else
+        WARNc2_S( "missed \"oy_struct\" member of \"%s\" [%d]",
+                  obj->registration, oyObject_GetId(obj->oy_) );
+    }
+
+    for(i = 0; i < n; ++i)
+    {
+      if(obj->value_type == oyVAL_INT)
+        oySprintf_(tmp, "%d", v->int32);
+      if(obj->value_type == oyVAL_DOUBLE)
+        oySprintf_(tmp, "%g", v->dbl);
+      if(obj->value_type == oyVAL_INT_LIST)
+        oySprintf_(tmp, "%d", v->int32_list[i+1]);
+      if(obj->value_type == oyVAL_DOUBLE_LIST)
+        oySprintf_(tmp, "%g", v->dbl_list[i+1]);
+
+      if((obj->value_type == oyVAL_INT_LIST ||
+          obj->value_type == oyVAL_DOUBLE_LIST) && i)
+        STRING_ADD( text, "," );
+
+      switch(obj->value_type)
+      {
+      case oyVAL_INT:
+      case oyVAL_DOUBLE:
+      case oyVAL_INT_LIST:
+      case oyVAL_DOUBLE_LIST: STRING_ADD( text, tmp ); break;
+      case oyVAL_STRING:      STRING_ADD( text, v->string ); break;
+      case oyVAL_STRING_LIST: STRING_ADD( text, v->string_list[i] ); break;
+      case oyVAL_STRUCT:      break;
+      }
+      if(obj->value_type == oyVAL_STRUCT)
+      {
+        oyStruct_s * oy_struct = 0;
+
+        if(oy_struct_list && oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
+          oy_struct = oyStructList_Get_( oy_struct_list, i );
+        else if(v->oy_struct)
+          oy_struct = v->oy_struct;
+
+        if(oy_struct)
+        {
+          ct = 0;
+          /* get explicite name */
+          if(oy_struct->oy_)
+            ct = oyObject_GetName( oy_struct->oy_, oyNAME_NICK );
+          if(!ct)
+          /* fall back to oyCMMapi9_s object type lookup */
+            ct = oyStruct_GetText( oy_struct, oyNAME_NICK, 0 );
+          if(ct)
+            STRING_ADD( text, ct );
+          if(!ct)
+          /* fall back to plain struct type name, if known */
+            STRING_ADD ( text, oyStructTypeToText(oy_struct->type_) );
+        }
+      }
+    }
+
+    erg = oyStringCopy_( text, allocateFunc );
+
+    oyFree_m_( tmp );
+    if(!text)
+    {
+      WARNc2_S( "missed value in \"%s\" [%d]", obj->registration,
+                oyObject_GetId(obj->oy_) );
+    } else
+      oyFree_m_( text );
+  }
+  setlocale(LC_NUMERIC, save_locale);
+  oyFree_m_( save_locale );
+
+  return erg;
+}
+

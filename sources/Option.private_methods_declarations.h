@@ -5,3 +5,5 @@ int            oyOption_GetId_       ( oyOption_s_       * obj );
 int            oyOption_SetFromText_ ( oyOption_s_       * obj,
                                        const char        * text,
                                        uint32_t            flags );
+char *         oyOption_GetValueText_( oyOption_s_       * obj,
+                                       oyAlloc_f           allocateFunc );
