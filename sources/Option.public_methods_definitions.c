@@ -109,20 +109,20 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
   int error = !obj;
   const char * erg = 0;
   oyValue_u * v = 0;
-  oyOption_s * s = obj;
+  oyOption_s_ * s = obj;
 
-  if(obj)
+  if(s)
     oyCheckType__m( oyOBJECT_OPTION_S, return 0; )
 
   if(error <= 0)
-    v = obj->value;
+    v = s->value;
 
   error = !v;
 
   /** Iterate into oyOptions_s objects. */
   if(error <= 0)
   {
-    oyOption_s * o = s;
+    oyOption_s_ * o = s;
     if(o->value_type == oyVAL_STRUCT  && o->value->oy_struct &&
        o->value->oy_struct->type_ == oyOBJECT_OPTIONS_S)
     {
@@ -133,7 +133,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
   if(error <= 0)
     if(type == oyNAME_DESCRIPTION)
     {
-      char * text = oyStringCopy_(obj->registration, oyAllocateFunc_),
+      char * text = oyStringCopy_(((oyOption_s_*)obj)->registration, oyAllocateFunc_),
            * tmp = oyStrrchr_(text, '/');
       if(oyStrchr_(tmp, '.'))
       {
