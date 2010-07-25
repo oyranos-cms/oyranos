@@ -781,7 +781,7 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
   return oyOption_StructMoveIn_( option, s );
 }
 
-/** Function oyOption_GetStruct
+/** Function oyOption_StructGet
  *  @memberof oyOption_s
  *  @brief   ask for a oyStruct_s object
  *
@@ -797,7 +797,7 @@ oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
                                        oyOBJECT_e          type )
 {
   oyStruct_s * s = 0;
-  oyOption_s * o = option;
+  oyOption_s_ * o = (oyOption_s_*)option;
 
   if( o && o->value && o->value_type == oyVAL_STRUCT && o->value->oy_struct &&
       o->value->oy_struct->type_ == type)
