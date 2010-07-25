@@ -755,7 +755,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
   return error;
 }
 
-/** Function oyOption_SetStruct
+/** Function oyOption_StructMoveIn
  *  @memberof oyOption_s
  *  @brief   value filled by a oyStruct_s object
  *
@@ -771,30 +771,14 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
                                        oyStruct_s       ** s )
 {
   int error = !option;
+  oyOption_s_ * s = (oyOption_s_*)option;
 
-  if(error <= 0)
-  {
-    if(option->value)
-    {
-      oyDeAlloc_f deallocateFunc = option->oy_->deallocateFunc_;
+  if(!s)
+    return error;
 
-      oyValueRelease( &option->value, option->value_type, deallocateFunc );
+  oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
 
-      option->value_type = 0;
-    }
-
-    oyAllocHelper_m_( option->value, oyValue_u, 1, option->oy_->allocateFunc_,
-                      error = 1 );
-  }
-
-  if(error <= 0)
-  {
-    option->value->oy_struct = *s;
-    *s = 0;
-    option->value_type = oyVAL_STRUCT;
-  }
-
-  return error;
+  return oyOption_StructMoveIn_( option, s );
 }
 
 /** Function oyOption_GetStruct

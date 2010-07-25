@@ -383,4 +383,46 @@ int            oyOption_SetFromInt_  ( oyOption_s_       * obj,
   return error;
 }
 
+/**
+ *  @internal
+ *  Function oyOption_StructMoveIn_
+ *  @memberof oyOption_s
+ *  @brief   value filled by a oyStruct_s object
+ *
+ *  @param         option              the option
+ *  @param         s                   the Oyranos style object
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/28 (Oyranos: 0.1.10)
+ *  @date    2009/01/28
+ */
+int            oyOption_StructMoveIn_( oyOption_s_       * option,
+                                       oyStruct_s       ** s )
+{
+  int error = !option;
 
+  if(error <= 0)
+  {
+    if(option->value)
+    {
+      oyDeAlloc_f deallocateFunc = option->oy_->deallocateFunc_;
+
+      oyValueRelease( &option->value, option->value_type, deallocateFunc );
+
+      option->value_type = 0;
+    }
+
+    oyAllocHelper_m_( option->value, oyValue_u, 1, option->oy_->allocateFunc_,
+                      error = 1 );
+  }
+
+  if(error <= 0)
+  {
+    option->value->oy_struct = *s;
+    *s = 0;
+    option->value_type = oyVAL_STRUCT;
+  }
+
+  return error;
+}
