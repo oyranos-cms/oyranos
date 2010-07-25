@@ -30,13 +30,13 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
     for(i = 0; i < set_an; ++i)
     {
       option_a = oyOptions_Get( set_a, i );
-      txt_1 = oyFilterRegistrationToText( option_a->registration,
+      txt_1 = oyFilterRegistrationToText( ((oyOption_s_*)option_a)->registration,
                                           oyFILTER_REG_OPTION, 0);
 
       for(j = 0; j < set_bn; ++j)
       {
         option_b = oyOptions_Get( set_b, j );
-        txt_2 = oyFilterRegistrationToText( option_b->registration,
+        txt_2 = oyFilterRegistrationToText( ((oyOption_s_*)option_b)->registration,
                                             oyFILTER_REG_OPTION, 0);
 
         found = oyTextboolean_( txt_1, txt_2, type );
@@ -47,7 +47,9 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
           if(!options)
             options = oyOptions_New(0);
 
-          if(option_a->value_type != option_b->value_type)
+          if(((oyOption_s_*)option_a)->value_type
+              !=
+             ((oyOption_s_*)option_b)->value_type)
             found = 0;
 
           if(found)
