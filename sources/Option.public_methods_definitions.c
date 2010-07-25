@@ -591,30 +591,33 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
-  int error = !option || option->type_ != oyOBJECT_OPTION_S;
   oyPointer ptr = 0;
   size_t size_ = 0;
   oyBlob_s * blob = 0;
-  oyOption_s * s = option;
+  int error = !option;
+  oyOption_s_ * s = (oyOption_s_*)option;
+
+  if(!s)
+    return 0;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
 
   if(error <= 0)
   {
     if(!allocateFunc &&
-       option->oy_)
-      allocateFunc = option->oy_->allocateFunc_;
+       s->oy_)
+      allocateFunc = s->oy_->allocateFunc_;
 
-    if(!(option->value && option->value_type == oyVAL_STRUCT &&
-         (((option->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
-           ((oyBlob_s*)(option->value->oy_struct))->ptr)) ||
-          option->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S)))
+    if(!(s->value && s->value_type == oyVAL_STRUCT &&
+         (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
+           ((oyBlob_s*)(s->value->oy_struct))->ptr)) ||
+          s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S)))
       error = 1;
   }
 
-  if( error <= 0 && option->value->oy_struct->type_ == oyOBJECT_BLOB_S)
+  if( error <= 0 && s->value->oy_struct->type_ == oyOBJECT_BLOB_S)
   {
-    blob = (oyBlob_s*)option->value->oy_struct;
+    blob = (oyBlob_s*)s->value->oy_struct;
     size_ = blob->size;
     if(size_)
     {
