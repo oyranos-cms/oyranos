@@ -248,7 +248,10 @@ MIME_TYPES = \
 	x-colour-icc.xml
 DOC_TEMPLATES = \
 	Doxyfile \
+	Doxyfile_alpha \
 	doxymentation \
+	doxymentation_alpha \
+	doxymentation_common \
 	doxygen.css \
 	doxygen.footer \
 	doxygen.header
@@ -661,8 +664,10 @@ docu:
 	echo Documentation ...
 	test -f Doxyfile || ($(COPY) $(SRCDIR)/Doxyfile . && \
 	                     echo "INPUT = $(SRCDIR)" >> Doxyfile && \
-			     ln -s $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation .)
-	test -n 'which doxygen' && (doxygen Doxyfile; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc/html/) || echo "Will not create Documentation because doxygen is missing"
+			     ln -s $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation $(SRCDIR)/doxymentation_common $(SRCDIR)/doxymentation_alpha .)
+	test -n 'which doxygen' && ( \
+		doxygen Doxyfile; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc/html/; \
+		doxygen Doxyfile_alpha; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc_alpha/html/;) || echo "Will not create Documentation because doxygen is missing"
 	test -d doc_intern/html/ && $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc_intern/html/ ||\
 	 echo ""
 	echo ... Documentation done
@@ -738,10 +743,10 @@ install_bin:	all uninstall_bin install_gui
 		$(RANLIB) $(DESTDIR)$(cmmdir)/lib$${lib}.a \
 		) || echo ""; \
 	done
-	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)
+	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
-	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)
+	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/icc34.h $(DESTDIR)$(includedir)/$(TARGET)
@@ -794,8 +799,9 @@ install_docu: docu
 	mkdir -p $(DESTDIR)$(mandir)/man3
 	cd $(SRCDIR) && \
 	  $(INSTALL) -m 644 $(MAN3) $(DESTDIR)$(mandir)/man3
-	mkdir -p $(DESTDIR)$(docdir)/html
+	mkdir -p $(DESTDIR)$(docdir)/html/alpha
 	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
+	-$(INSTALL) -m 644 doc_alpha/html/* $(DESTDIR)$(docdir)/html/alpha
 	cd $(SRCDIR) && \
 	  $(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
 	

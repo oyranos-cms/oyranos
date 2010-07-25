@@ -44,6 +44,11 @@ Summary:   Headers, Configuration and static Libs + Documentation
 Group:     Development/Libraries/Other
 Requires:  lib%{name}0 = %{version} libxml2-devel
 
+%package      -n lib%{name}-alpha-devel
+Summary:   Alpha and Pre Alpha Headers
+Group:     Development/Libraries/Other
+Requires:  lib%{name}-devel
+
 %package      -n lib%{name}0-monitor
 Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
@@ -109,11 +114,13 @@ are supported.
 These API's are to be considered for changing very frequently.
 
 %description -n lib%{name}-devel
+Header files, libraries and documentation for development.
 Oyranos is usable to store default profiles and paths and
 query for profiles in that paths.
-An internal device profile API allowes configuring of a 
-profile in X.
 The documentation in html format is included.
+
+%description -n lib%{name}-alpha-devel
+Header files, libraries and documentation for development.
 The object oriented Oyranos API's provide advanced access to
 ICC profiles, allow for filtering profile lists and provide
 a CMM independent colour conversion API. Single colour lookups 
@@ -203,8 +210,6 @@ ldconfig
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/%{name}.h
-%{_includedir}/%{name}/%{name}_alpha.h
-%{_includedir}/%{name}/%{name}_cmm.h
 %{_includedir}/%{name}/%{name}_config.h
 %{_includedir}/%{name}/%{name}_definitions.h
 %{_includedir}/%{name}/%{name}_icc.h
@@ -215,6 +220,14 @@ ldconfig
 %{_mandir}/man3/%{name}.*
 %doc %{name}*.sh
 %doc doc/html
+
+%files -n lib%{name}-alpha-devel
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%dir %{_includedir}/%{name}/alpha
+%{_includedir}/%{name}/alpha/%{name}_alpha.h
+%{_includedir}/%{name}/alpha/%{name}_cmm.h
+%doc doc_alpha/html
 
 %files monitor
 %defattr(-, root, root)
