@@ -56,6 +56,9 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
+Q. Should oyClass_XXX_() private functions be member of oyClass_s_ ?
+A. ********************************
+
 Q. Should all oyClass_XXX() public functions have a private
    oyClass_XXX_() - where the public does only checking? Like:
 int oyClass_XXX( oyClass_s * class )
