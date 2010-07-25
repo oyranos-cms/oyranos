@@ -19,8 +19,7 @@ FILES = \
 	CineonLog_M_Knee_60.icc \
 	Gray.icc \
 	ITULab.icc \
-	eciRGB_v2.icc \
-	eciRGB_v2_ICCv4.icc \
+	LStar-RGB.icc \
 	PhotoGamutRGB_avg6c.icc \
 	compatibleWithAdobeRGB1998.icc
 

@@ -53,15 +53,15 @@ Version:    0.6
 %description  icc-lcmsLAB
 Special LCMS profiles.
 
-%package      icc-ECI-RGB
+%package      icc-LStar-RGB
 Summary:    Default Editing RGB profile
 Group:      Applications/Graphics
-Vendor:     http://www.eci.org
-URL:        http://www.eci.org
-License:    ECI-RGB
-Version:    0.5
-%description  icc-ECI-RGB
+Vendor:     http://www.colormanagement.org
+URL:        http://www.colormanagement.org
+Version:    0.6
+%description  icc-LStar-RGB
 The RGB profile maintaining perceptual equal lightness.
+The LStar-RGB.icc profile is identical to the eciRGB_v2 profile.
 
 %package      icc-Cineon
 Summary:    Additional Cineon ICC Profiles
@@ -129,11 +129,11 @@ characterisation data for GRACoL, SWOP and SNAP.
 %{_datadir}/color/icc/Cine*.icc
 %doc default_profiles/base/LICENSE-ZLIB
 
-%files icc-ECI-RGB
+%files icc-LStar-RGB
 %defattr(-, root, root)
-%{_datadir}/color/icc/eciRGB_*.icc
+%{_datadir}/color/icc/LStar-RGB.icc
 # This should go in the package docs, not with the profiles.
-%doc default_profiles/base/licence.rtf
+%doc default_profiles/base/LICENSE-ZLIB
 
 %files icc-PhotoGamutRGB
 %defattr(-, root, root)
@@ -178,6 +178,9 @@ characterisation data for GRACoL, SWOP and SNAP.
 %doc default_profiles/printing/LICENSE-ZLIB
 
 %changelog
+* Sat Jul 24 2010 - Kai-Uwe Behrmann <ku.b at gmx.de>
+- switch from eciRGB_v2 to LStar-RGB.icc because of new licensing
+
 * Sun May 16 2010 - Kai-Uwe Behrmann <ku.b at gmx.de>
 - bump version for PCS profiles because of their change (size fix, git 404f5755)
 

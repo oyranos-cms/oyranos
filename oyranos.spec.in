@@ -6,12 +6,12 @@ URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann
 #BuildArch: %{_arch}
 #%ifos linux
-#Prereq: oyranos-icc-RGB oyranos-icc-lcmsLAB oyranos-icc-ECI-RGB oyranos-icc-Cineaon oyranos-icc-printing oyranos-target-fogra oyranos-target-npes
+#Prereq: oyranos-icc-RGB oyranos-icc-lcmsLAB oyranos-icc-LStar-RGB oyranos-icc-Cineaon oyranos-icc-printing oyranos-target-fogra oyranos-target-npes
 #%endif 
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
-Requires:       elektra = 0.7.0 oyranos-icc-printing oyranos-icc-Cineon oyranos-icc-ECI-RGB oyranos-icc-lcmsLAB oyranos-icc-RGB oyranos-target-fogra oyranos-target-npes
+Requires:       elektra = 0.7.0 oyranos-icc-printing oyranos-icc-Cineon oyranos-icc-LStar-RGB oyranos-icc-lcmsLAB oyranos-icc-RGB oyranos-target-fogra oyranos-target-npes
 
 %if 0%{?suse_version} > 0
 BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel elektra-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcm-devel netpbm

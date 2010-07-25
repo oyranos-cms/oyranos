@@ -10,7 +10,7 @@
 
   <!-- Editing Rgb
        Prefered Rgb Editing Colour Space -->
-  <oyEDITING_RGB>eciRGB_v2.icc</oyEDITING_RGB>
+  <oyEDITING_RGB>LStar-RGB.icc</oyEDITING_RGB>
 
   <!-- Editing Cmyk
        Prefered Cmyk Editing Colour Space -->
