@@ -282,86 +282,13 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
                                        int                 pos,
                                        uint32_t            flags )
 {
-  int error = !obj;
-  oyOption_s * s = obj;
+  oyOption_s_ * s = (oyOption_s_*)obj;
+  if(!s)
+    return -1;
 
-  if(!obj)
-    return error;
+  oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
 
-  oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
-
-  if(error <= 0)
-  {
-    if(s->value && 0 /*flags & OY_CLEAR*/)
-    {
-      oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-      if(s->value_type == oyVAL_INT && obj->value)
-        if(s->value->int32 == integer)
-          return error;
-
-      if(s->value_type == oyVAL_INT_LIST && s->value)
-        if(0 <= pos && pos < s->value->int32_list[0] &&
-           s->value->int32_list[1 + pos] == integer)
-          return error;
-
-      oyValueRelease( &s->value, s->value_type, deallocateFunc );
-    }
-
-    if(!s->value)
-    {
-      oyAllocHelper_m_( s->value, oyValue_u, 1,
-                        s->oy_->allocateFunc_,
-                        error = 1 );
-      if(pos == 0 &&
-         s->value_type != oyVAL_INT_LIST)
-        s->value_type = oyVAL_INT;
-      else
-        s->value_type = oyVAL_INT_LIST;
-    }
-
-    if(!error && pos > 0 &&
-       (s->value_type != oyVAL_INT_LIST ||
-        (s->value_type == oyVAL_INT_LIST &&
-         (!s->value->int32_list || pos >= s->value->int32_list[0]))))
-    {
-      int32_t * old_list = 0,
-                old_int = 0;
-
-      if(s->value_type == oyVAL_INT_LIST)
-        old_list = s->value->int32_list;
-      if(s->value_type == oyVAL_INT)
-        old_int = s->value->int32;
-
-      s->value->int32_list = 0;
-      oyAllocHelper_m_( s->value->int32_list, int32_t, pos + 2,
-                        s->oy_->allocateFunc_,
-                        error = 1 );
-
-      if(!error && old_list)
-      {
-        memcpy( s->value->int32_list, old_list,
-                (old_list[0] + 1) * sizeof(uint32_t) );
-        s->oy_->deallocateFunc_( old_list ); old_list = 0;
-      }
-
-      if(!error && old_int)
-        s->value->int32_list[1] = old_int;
-
-      s->value_type = oyVAL_INT_LIST;
-      s->value->int32_list[0] = pos + 1;
-    }
-
-    if(s->value_type == oyVAL_INT)
-      s->value->int32 = integer;
-    else
-      s->value->int32_list[pos+1] = integer;
-
-    s->flags |= oyOPTIONATTRIBUTE_EDIT;
-    oyStruct_ObserverSignal( (oyStruct_s*)obj, oySIGNAL_DATA_CHANGED, 0 );
-  }
-
-  return error;
+  return oyOption_SetFromInt_( s, integer, pos, flags);
 }
 
 /** Function oyOption_GetValueInt
