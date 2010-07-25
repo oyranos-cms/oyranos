@@ -444,7 +444,7 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
 double         oyOption_GetValueDouble(oyOption_s        * obj,
                                        int                 pos )
 {
-  oyOption_s * s = obj;
+  oyOption_s_ * s = (oyOption_s_*)obj;
   int error = !s;
   double result = 0;
 
