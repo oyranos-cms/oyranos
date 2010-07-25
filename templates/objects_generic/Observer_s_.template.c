@@ -6,6 +6,7 @@
 #include "{{ class.privName }}.h"
 
 #include "oyObject_s.h"
+#include "oyOption_s_.h"
 
 
 /**
@@ -106,12 +107,13 @@ oyStructList_s * oyStruct_ObserverListGet_(
                                        const char        * reg )
 {
   oyOption_s * o = 0;
+  oyOption_s_ * o_ = 0;
   int error = 0;
   oyStructList_s * list = 0;
 
   if(!error)
-    o = oyOptions_Find( obj->oy_->handles_,
-                        reg );
+    o_ = o = oyOptions_Find( obj->oy_->handles_,
+                             reg );
   if(!o)
   {
     list = oyStructList_New( 0 );
@@ -126,16 +128,16 @@ oyStructList_s * oyStruct_ObserverListGet_(
                           reg );
     }
   }
-  if(!error && o && o->value_type == oyVAL_STRUCT && o->value)
+  if(!error && o && o_->value_type == oyVAL_STRUCT && o_->value)
   {
-    if(o->value->oy_struct &&
-       o->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
-      list = (oyStructList_s*)o->value->oy_struct;
+    if(o_->value->oy_struct &&
+       o_->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
+      list = (oyStructList_s*)o_->value->oy_struct;
     else
     {
       WARNcc3_S( obj, "%s: %s %s", _("found list of wrong type"),
                  reg,
-                 oyStruct_TypeToText( o->value->oy_struct ) );
+                 oyStruct_TypeToText( o_->value->oy_struct ) );
     }
 
     oyOption_Release( &o );
