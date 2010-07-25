@@ -56,3 +56,21 @@ void         oyOption_UpdateFlags_   ( oyOption_s_        * o )
       tmp = 0;
   }
 }
+
+/**
+ *  @internal
+ *  Function oyOption_GetId_
+ *  @memberof oyOption_s
+ *  @brief   get the identification number of a option
+ *
+ *  @version Oyranos: 0.1.8
+ */
+int            oyOption_GetId_       ( oyOption_s_       * obj )
+{
+  if(obj)
+    return obj->id;
+
+  return -1;
+}
+
+

@@ -74,10 +74,13 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
  */
 int            oyOption_GetId        ( oyOption_s        * obj )
 {
-  if(obj)
-    return obj->id;
+  oyOption_s_ * s = (oyOption_s_*)obj;
+  if(!s)
+    return -1;
 
-  return -1;
+  oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
+
+  return oyOption_GetId_( s );
 }
 
 /** Function oyOption_GetText
