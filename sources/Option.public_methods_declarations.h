@@ -1,5 +1,5 @@
-oyOption_s *   oyOption_NewRegistration( const char        * registration,
-                                         oyObject_s          object );
+oyOption_s *   oyOption_FromRegistration( const char        * registration,
+                                          oyObject_s          object );
 oyOption_s *   oyOption_FromDB       ( const char        * registration,
                                        oyObject_s          object );
 int            oyOption_GetId        ( oyOption_s        * option );

@@ -1,3 +1,39 @@
+/** Function oyOption_FromRegistration
+ *  @memberof oyOption_s
+ *  @brief   new option with registration and value filled from DB if available
+ *
+ *  FIXME value filled from DB if available???
+ *
+ *  @param         registration        no or full qualified registration
+ *  @param         object              the optional object
+ *  @return                            the option
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
+ *  @date    2009/01/24
+ */
+oyOption_s *   oyOption_FromRegistration( const char        * registration,
+                                         oyObject_s          object )
+{
+  oyOption_s *s = oyOption_New( object );
+
+  if(registration)
+  {
+    if(!registration[0] ||
+       !oyStrrchr_( registration, OY_SLASH_C ))
+    {
+      WARNc2_S("%s: %s",
+               "passed a incomplete registration string to option creation",
+               registration );
+      oyOption_Release( &s );
+      return 0;
+    } else
+      oyOption_SetRegistration( s, registration );
+  }
+
+  return s;
+}
+
 /** Function oyOption_FromDB
  *  @memberof oyOption_s
  *  @brief   new option with registration and value filled from DB if available
