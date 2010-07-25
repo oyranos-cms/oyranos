@@ -1,5 +1,9 @@
 {% extends "Base_s_.h" %}
 
+{% block LocalIncludeFiles %}
+#include "oyStructList_s.h"
+{% endblock %}
+
 {% block ChildMembers %}
   oyStructList_s     * list_;          /**< the list data */
 {% endblock %}
