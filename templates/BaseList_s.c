@@ -63,7 +63,7 @@ OYAPI int  OYEXPORT
                                        int                 pos )
 { 
   int error = !list;
-  {{ class.name }} * s = list;
+  {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!error)
     oyCheckType__m( {{ class.enumName }}, return 1 )
@@ -72,7 +72,7 @@ OYAPI int  OYEXPORT
     error = 1;
   
   if(!error)
-    oyStructList_ReleaseAt( list->list_, pos );
+    oyStructList_ReleaseAt( s->list_, pos );
 
   return error;
 }
@@ -93,14 +93,14 @@ OYAPI {{ class.listOf }} * OYEXPORT
                                        int                 pos )
 {       
   int error = !list;
-  {{ class.name }} * s = list;
+  {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!error)
     oyCheckType__m( {{ class.enumName }}, return 0 )
 
   if(!error)
-    return ({{ class.listOf }} *) oyStructList_GetRefType( list->list_, pos, {{ class.content.enumName }} ); 
-  else  
+    return ({{ class.listOf }} *) oyStructList_GetRefType( s->list_, pos, {{ class.content.enumName }} ); 
+  else
     return 0;
 }   
 
@@ -119,13 +119,13 @@ OYAPI int  OYEXPORT
            oy{{ class.baseName }}_Count           ( {{ class.name }}       * list )
 {       
   int error = !list;
-  {{ class.name }} * s = list;
+  {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!error)
     oyCheckType__m( {{ class.enumName }}, return 0 )
 
   if(!error)
-    return oyStructList_Count( list->list_ );
+    return oyStructList_Count( s->list_ );
   else return 0;
 }
 {% endblock GeneralPublicMethodsDefinitions %}
