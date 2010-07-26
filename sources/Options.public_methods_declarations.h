@@ -2,10 +2,12 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
+#ifdef OY_FILTER_CORE_S_H
 oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
                                        uint32_t            flags,
                                        oyObject_s          object );
+#endif /* OY_FILTER_CORE_S_H */
 oyOptions_s *  oyOptions_FromText    ( const char        * text,
                                        uint32_t            flags,
                                        oyObject_s          object );

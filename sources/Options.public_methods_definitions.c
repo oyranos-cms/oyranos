@@ -79,6 +79,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   return options;
 }
 
+#ifdef OY_FILTER_CORE_S_H
 /** Function oyOptions_ForFilter
  *  @memberof oyOptions_s
  *  @brief   provide Oyranos behaviour settings
@@ -144,6 +145,7 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
 
   return s;
 }
+#endif /* OY_FILTER_CORE_S_H */
 
 /** Function oyOptions_FromText
  *  @memberof oyOptions_s
