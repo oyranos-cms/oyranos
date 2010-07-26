@@ -797,7 +797,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       {
         o = oyOptions_Get( options, sort[i] );
         o2 = oyOptions_Get( options, sort[i + 1] );
-        c = oyStrcmp_(o->registration, o2->registration);
+        c = oyStrcmp_(oyOptionPriv_m(o)->registration, oyOptionPriv_m(o2)->registration);
         if(c > 0)
         {
           ti = sort[i];
@@ -812,7 +812,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       {
         o = oyOptions_Get( options, sort[i] );
         o2 = oyOptions_Get( options, sort[i + 1] );
-        c = oyStrcmp_(o->registration, o2->registration);
+        c = oyStrcmp_(oyOptionPriv_m(o)->registration, oyOptionPriv_m(o2)->registration);
         if(c > 0)
         {
           ti = sort[i];
