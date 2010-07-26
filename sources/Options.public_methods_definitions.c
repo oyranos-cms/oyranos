@@ -1358,7 +1358,7 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
     if((!o && oyToCreateNew_m(flags)) ||
         oyToAddAlways_m(flags))
     {
-      o = oyOption_New( registration, (*obj)->oy_ );
+      o = oyOption_FromRegistration( registration, (*obj)->oy_ );
       error = !o;
 
       if(error <= 0)
