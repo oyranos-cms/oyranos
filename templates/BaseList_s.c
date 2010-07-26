@@ -1,5 +1,10 @@
 {% extends "Base_s.c" %}
 
+{% block LocalIncludeFiles %}
+{{ block.super }}
+#include "{{ class.content.privName }}.h"
+{% endblock %}
+
 {% block GeneralPublicMethodsDefinitions %}
 {{ block.super }}
 /** Function oy{{ class.baseName }}_MoveIn
