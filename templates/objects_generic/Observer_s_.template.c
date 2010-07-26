@@ -111,9 +111,9 @@ oyStructList_s * oyStruct_ObserverListGet_(
   int error = 0;
   oyStructList_s * list = 0;
 
-  if(!error)
-    o_ = o = oyOptions_Find( obj->oy_->handles_,
-                             reg );
+  o = oyOptions_Find( obj->oy_->handles_, reg );
+  o_ = oyOptionPriv_m(o);
+
   if(!o)
   {
     list = oyStructList_New( 0 );
