@@ -583,7 +583,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
                                        const char        * filter_type )
 {
   oyOptions_s * opts_tmp = 0;
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
   int error = !s;
   char * text;
   int i,n;
@@ -600,7 +600,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
     {
       int skip = 0;
 
-      o = oyOptions_Get( s, i );
+      o = (oyOption_s_*)oyOptions_Get( s, i );
 
 
       /* usage/type range filter */
@@ -635,18 +635,18 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
         if(text)
           if(oyStrstr_( text, "advanced" ))
           {
-            oyOption_SetFromText( o, "0", 0 );
+            oyOption_SetFromText( (oyOption_s*)o, "0", 0 );
             o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
           }
       } else
       /* Elektra settings, modify value */
       if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
       {
-        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
+        text = oyGetKeyString_( oyOption_GetText( (oyOption_s*)o, oyNAME_DESCRIPTION),
                                 oyAllocateFunc_ );
         if(text && text[0])
         {
-          error = oyOption_SetFromText( o, text, 0 );
+          error = oyOption_SetFromText( (oyOption_s*)o, text, 0 );
           o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
           o->source = oyOPTIONSOURCE_USER;
           oyFree_m_( text );
@@ -654,12 +654,15 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       }
 
       if(!skip)
-        oyOptions_Add( opts_tmp, o, -1, s->oy_ );
+        oyOptions_Add( opts_tmp, (oyOption_s*)o, -1, s->oy_ );
 
-      oyOption_Release( &o );
+      oyOption_Release( &(oyOption_s*)o );
     }
 
-    error = oyStructList_CopyFrom( s->list, opts_tmp->list, 0 );
+    error = oyStructList_CopyFrom(
+              oyOptionsPriv_m(s)->list_,
+              oyOptionsPriv_m(opts_tmp)->list_, 0
+              );
     oyOptions_Release( &opts_tmp );
   }
 
