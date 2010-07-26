@@ -722,13 +722,13 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
       o = oyOptions_Get( s, i );
 
       if(found && registration &&
-         !oyFilterRegistrationMatch( o->registration, registration, 0 ))
+         !oyFilterRegistrationMatch( oyOptionPriv_m(o)->registration, registration, 0 ))
           found = 0;
 
       options_source = flags & oyOPTIONSOURCE_FILTER ? oyOPTIONSOURCE_FILTER :0;
       options_source |= flags & oyOPTIONSOURCE_DATA ? oyOPTIONSOURCE_DATA : 0;
       options_source |= flags & oyOPTIONSOURCE_USER ? oyOPTIONSOURCE_USER : 0;
-      if(found && options_source && !(o->source & options_source))
+      if(found && options_source && !(oyOptionPriv_m(o)->source & options_source))
         found = 0;
 
       if(type == oyBOOLEAN_UNION ||
