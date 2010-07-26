@@ -1,3 +1,1331 @@
+Version 0.1.10
+
+Joe (5):
+	* [CUPS]: add GSoC2009 device backend
+	* [CUPS]: access to profiles on a server
+	* [CUPS]: fix of profile_name option
+	* [CUPS]: add local installation of a server profile
+	* [CUPS]: compile with new oyCMMapi8_s
+
+Kai-Uwe Behrmann (1300):
+	* [conf]: add option --disable-static
+	* [build]: set SRCDIR to ./ by default
+	* [conf]: switch to v0.1.10
+	* [build]: on more conservative systems
+	* [build]: next try for check target on Debian
+	* [docu]: update dependency list
+	* [docu]: add missed license file
+	* [build]: remove liboyranos_moni.so
+	* [fix]: oyranos-monitor profile.icc not complete bug
+	* [build]: sort dependencies
+	* [alpha]: split out internal alpha functions
+	* [docu]: formatting
+	* [and]: clearer expression same logic
+	* [alpha]: avoid sprintf on stack memory
+	* [alpha]: more work on oyCMMapi5_s
+	* [alpha]: fix crash for wrong options
+	* [alpha]: fix non oyCMMapi4_s library version selecion
+	* [conf]: let configure not fail with the --quick option
+	* [build]: RPM build requirements
+	[build]: prepare oyra filter from meta backend separation
+	* [alpha]: insert CMMapi dummys for 6 and 7
+	* [alpha]: spit oyCMMsGetApi4_ from oyCMMsGetApi_
+	* [build]: RPM: better library and devel separation, add ldconfig
+	* [alpha]: simplify oyCMMsGetApi4_() and integrate with oyCMMsGetApi_()
+	* [alpha]: remove oyFILTER_TYPE_e and work with registration directly
+	* [fix] oyLibPathsGet_() for selecting paths according to ithe subdir arg
+	* [API]: add OY_LOCALEDIR environment variable
+	* [alpha]: put the lcms module into the icc registration name space
+	* [alpha]: add id_ member to oyCMMapi[4,5]_s
+	* [alpha]: minor cleanup around the internal CMM API's
+	* [alpha]: objectify oyCMMInfo_s and remove oyFilter_s::lib_name_
+	* [alpha]: complete oyCMMapi5_s Oyranos side API's
+	* [alpha]: add "oyIM" meta module
+	* [conf]: add --cmmsubpath switch
+	* [build]: build and install modules in two groups
+	* [alpha]: move the static API's from oyra to oyIM
+	* [build]: add oyranos_alpha_internal.h and oyranos_cmm_oyIM.h
+	* [conf]: sort modules into new paths
+	* [alpha]: add oyCMMInfo_s::oyCMMInfoGetText_f
+	* [alpha]: change oyCMMsGetApi__ to support API iterating
+	* [alpha]: substitute "generic" with "imaging"
+	* [alpha]: last "generic" to "imaging" usage keyword change
+	* [fix]: move function definitions out of header files
+	* [alpha]: work on oyCMMapi4-7_s'
+	* [alpha]: add oyCMMptr_LookUp(); remove unwanted members from oyCMMapi4_s
+	* [alpha]: oyCMMapi4_s::oyCMMFilterNode_GetText() is optional
+	* [alpha]: rename oyCONNECTOR_EVENT_e's to abstract from data types
+	* [lcms]: CMM side cache ordering, add effect and simulation options
+	* [alpha]: update to backend API changes
+	* [alpha]: rename oyStruct_TypeToText() to oyStructTypeToText()
+	* [alpha]: change various Filter api fields
+	* [alpha]: oyStruct_TypeToText -> deprecated header section
+	* [docu]: move around of sources to better group inside the documentation
+	* [docu]: split CMM into backend and frontend parts
+	* [API]: change OY_MODULE_NICK to "oyIM"
+	* [lcms]: add psid and Info tags
+	* [alpha]: add oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT to backend events
+	* [lcms]: switch lcmsFilterPlug_CmmIccRun to cmsDoTransform
+	* [alpha]: fix oyCMMptr_ConvertData() registration level
+	* [docu]: bump inline docu version to 0.1.10
+	* [and]: exchange stringAdd with STRING_ADD
+	* [alpha]: replace static xforms string with a function
+	* [alpha]: simplify oyCMMInfoGetText_f to oyCMMGetText_f
+	* [alpha]: update to alpha API changes
+	* [alpha]: CMM API docu
+	* [alpha]: fix regression
+	* [alpha]: detailed filter selection in oyFilterRegistrationMatch()
+	* [alpha]: start icSigDeviceSettingsTag "DevS"
+	* [alpha]: implement "DevS" and format code
+	* [alpha]: add oyOption_SetFromData and oyOption_GetData
+	* [docu]: add ICC specific files
+	* [alpha]: define deviceSettingsType
+	* [API]: add oyI18Nreset()
+	* [test]: add oyOption_s and I18N
+	* [test]: use public oyI18Nreset()
+	* [alpha]: rename oyProfile_AddTag to oyProfile_TagMoveIn
+	* [build]: link lcms module against Oyranos
+	* [docu]: update years and format
+	* [alpha]: add internal oyStringFromData_()
+	* [alpha]: add oyBlob_s and update oyProfileTag_GetText()
+	* [alpha]: rename oyStruct_release_f to oyPointer_release_f
+	* [alpha]: add descriptions to oyIMProfileTag_GetValues()
+	* [test]: fix a memory leak and crash
+	* [i18n]: update german translations
+	* [alpha]: data in oyOptions_s are handled by oyBlob_s
+	* [fix]: oyStringSplit_() empty variable
+	* [alpha]: separate oyProfile_TagMoveIn()
+	* [alpha]: add oyProfileTag_CreateFromText()
+	* [fix]: oyStructList_ReleaseAt()
+	* [fix]: missing Xorg device crash fix
+	* [fix]: remove automatisms from monitor functions
+	* [conf]: add Xrandr detection
+	* [API]: remove oyGetMonitorInfo() from public API
+	* [alpha]: modify oyGetMonitorInfo()
+	* [alpha]: adapt backends to new oyGetMonitorInfo_f
+	* [oyX1]: add XRandR properties to oyMonitor_s
+	* [i18n]: translate new messages to german (de)
+	* [and]: tune device profile hit weighting
+	* [fix]: monitor geometry expression ambiguity
+	* [conf]: XRandR detection starts with v1.2
+	* [build]: fix image2pdf.c building
+	* [and]: oyranos_monitor.h misses oyranos_alpha.h
+	* [build]: reorder oyranos-monitor-nvidia objects
+	* [and]: cheap monitor funcs call to Xinerama only
+	* [and]: check pointers before release
+	* [and]: fix some leaks in oyranos-monitor
+	* [oyX1]: new oyMonitor_getProperty_()
+	* [build]: copy logo to inline documentation
+	* [docu]: update doxygen dependencies
+	* [docu]: new header and footer for inline docu
+	* [docu]: move inline docu top copyright -> footer
+	* [oyX1]: add oyGetScreens_lib()
+	* [alpha]: add basic oyConfig_s structure
+	* [docu]: use doxygen's "extends" and "memberof"
+	* [docu]: add header and footer to inline docu
+	* [build]: move configure.sh -> configure_tests.sh
+	* [build]: update other configure files
+	* [build]: add missing doxygen files to packaging
+	* [build]: fix for osX missing variable
+	* [oyX1]: fix missing function declaration
+	* [build]: move "oyX1" into the colour plug-in path
+	* [alpha]: add several internal backend loading helpers
+	* [alpha]: add oyCMMapiBase_s to cover oyCMMapi[5,8]_s's
+	* [and]: internally show oyGetAllScreenNames()
+	* [oyIM]: update to oyCMMuiGet_f
+	* [oyX1]: start with oyCMMapi8_s
+	* [alpha]: add oyConfigs_s and API's
+	* [alpha]: add oyCMMsGetFilterApis_() and oyConfigDomainList()
+	* [alpha]: add registration parameter to oyOption_New()
+	* [test]: updates for oyOption_New(), oyOptions_SetFromText()
+	* [build]: change oyX1 paths in RPM spec
+	* [alpha]: declare oyOptions_New() and change oyOption_SetFromText()
+	* [alpha]: allocate oyConfig_s::options
+	* [alpha]: fix oyOptions_SetFromText()
+	* [oyX1]: implement oyCMMapi8_s "list" call
+	* [i18n]: add comments
+	* [i18n]: update translation files
+	* [and]: move text helper definitions to oyranos_texts.h
+	* [oyX1]: support user pointer for tracability
+	* [oyX1]: complete oyCMMapi8_s "properties" call
+	* [alpha]: OY_ADD_ALWAYS for oyOptions_SetFromText
+	* [alpha]: show oySearchEmptyKeyname_() internally
+	* [and]: add omments about used ICC enums
+	* [oyX1]: add oyX1MonitorProfileSetup, oyX1MonitorProfileUnset
+	* [oyX1]: add "setup" and "unset"
+	* [alpha]: add oyConfig_Add, oyConfig_Save
+	* [alpha]: chance backend oyConfigs_FromPattern_f
+	* [and]: sort comments for translators
+	* [i18n]: update de
+	* [and]: add oyKeySetGetNames_()
+	* [alpha]: add xxx_FromDB() functions
+	* [alpha]: set some integer pointers to uint32_t
+	* [alpha]: update
+	* [alpha]: load binary keys from Elektra
+	* [alpha]: more oyConfig(s)_s work
+	* [test]: update to oyOption_New()
+	* [alpha]: define oyRankPad structure
+	* [oyX1]: add oyX1_rank_map to oyX1
+	* [alpha]: add oyRankPadCopy()
+	* [alpha]: use rank map in oyConfig_Compare()
+	* [alpha]: add oyOptions_SetSource()
+	* [alpha]: set rank_map in oyX1 and bug fixes
+	* [and]: add oyEraseKey_() for Elektra DB
+	* [oyX1]: add oyX1Region_FromDevice()
+	* [oyX1]: add "display_geometry" option to "list" call
+	* [alpha]: add oyDevicesList(), oyConfig_EraseFromDB() ...
+	* [i18n]: update deutsch
+	* [oyX1]: fix function name typo
+	* [oyX1]: add "display_name" option to "list" call
+	* [alpha]: add oyConfigs_ForDeviceClass()
+	* [alpha]: fix search in oySetMonitorProfile() ...
+	* [oyX1]: fix registration for "list" options ...
+	* [oyX1]: avoid XDeleteProperty() without valid Atom
+	* [alpha]: new oyActivateDeviceProfile() and oyProfile_FromDB()
+	* [oyX1]: add "device_name" filter and "icc_profile" to "list" call
+	* [oyX1]: remove lots of API's
+	* [and]: add -l option to oyranos-monitor
+	* [alpha]: add verbose flag to oyDevicesList()
+	* [alpha]: rename oyDevicesList -> oyInstrumentList
+	* [alpha]: add oyCMMapiFilters_s API's
+	* [alpha]: move struct definition
+	* [alpha]: device -> instrument
+	* [alpha]: more API renaming
+	* [oyX1]: move "property" call to oyX1InstrumentFromName_()
+	* [alpha]: more API renaming
+	* [test]: add oyInstrumentXxx()'s
+	* [build]: link oyX1 to Oyranos
+	* [alpha]: more instrument API cleanup
+	* [oyX1]: describe interface changes
+	* [alpha]: add oyInstrumentSetProfile()
+	* [fix]: basic macro
+	* [oyX1]: fix overwriting of option
+	* [alpha]: fix minor bugs and crashes
+	* [alpha]: data splitting in oyConfig_s
+	* [oyX1]: remove message function
+	* [alpha]: get some moni functionality back
+	* [alpha]: add oyOptions_SetRegistrationTextKey_()
+	* [alpha]: more corrections, shuffling and cleaning
+	* [exmpl]: add device backend example
+	* [exmpl]: elaborate for the device backend
+	* [test]: add -l option to cli
+	* [alpha]: oyConfigs_FromDB() returns error
+	* [test]: add extensive tests to test2.cpp
+	* [alpha]: add "instrument_name" to "oyranos-monitor -l"
+	* [oyX1]: fix wrong variable arg
+	* [alpha]: fix oyConfig_SaveToDB() for multiple options
+	* [test]: add oyInstrumentProfileFromDB()
+	* [API]: fix oyGetMonitorProfile weak display_name arg
+	* [alpha]: fix wrong error report
+	* [and]: omit warning for new created DB keys
+	* [alpha]: changing error sensitivity
+	* [oyX1]: return issue for non found server profile
+	* [alpha]: add oyInstrumentAskProfile()
+	* [and]: minor code move
+	* [oyX1]: document non profile found behaviour
+	* [alpha]: make oyInstrumentGet() really cheap
+	* [oyX1]: better display_geometry match in rank_map
+	* [oyX1]: ignore xcalib error
+	* [alpha]: oyConfig_Compare() avoid false positives
+	* [test]: improve some "monitor" messages
+	* [alpha]: access actual object
+	* [test]: check all available monitors
+	* [alpha]: more introduction for graphs and backends
+	* [alpha]: instrument intro
+	* [alpha]: fix dlclose(0) crash
+	* [alpha]: add oyInstrumentGetInfo example
+	* [test]: formating of monitor properties
+	* [alpha]: describe oyInstrumentGetInfo's type argument
+	* [alpha]: add oyInstrumentUnset()
+	* [oyX1]: "properties" call for all instruments
+	* [alpha]: move oyNAME_DESCRIPTION infos to core
+	* [oyX1]: fix newline ending EDID texts
+	* [test]: use cost effective intrument calls
+	* [fix]: fix wrong allocator in oyCopyString_
+	* [oyX1]: give up on wrong "instrument_name" string
+	* [oyX1]: empty "list" and "properties" calls
+	* [test]: add 2 devices to dDev dummy backend
+	* [fix]: honour oyProfileListGet()'s allocateFunc arg
+	* [exmpl]: correct the instrument order
+	* [alpha]: make oyranos_alpha_internal.h c++ ready
+	* [alpha]: accept "//" in oyFilterRegistrationMatch()
+	* [test]: add testCMMsShow()
+	* [alpha]: revert 85c467
+	* [alpha]: better warning for dlopen error
+	* [alpha]: add filter selector to Conversion API's
+	* [alpha]: fix oyFilterNode_ContextSet_()
+	* [alpha]: update oyra to previous rename
+	* [alpha]: oyFilter_OptionsGet() assign option by default
+	* [alpha]: add missing definitions
+	* [oyra]: write PPM's
+	* [alpha]: change oyOptions_SetFromText() arg
+	* [docu]: hint about oyCMMapi8_s examples code
+	* [oyra]: add PPM reading
+	* [alpha]: add roi and pixel array to oyPixelAccess_s
+	* [alpha]: rename oyConversion_Run -> oyConversion_RunPixel
+	* [lcms]: add warnings for missed profiles
+	* [alpha]: allow oyUINT8 for oyArray2d_Create()
+	* [lcms]: allow non oyDOUBLE data
+	* [and]: add more warning macro formats
+	* [alpha]: call oyFilterSocket_Callback with plug
+	* [alpha]: remove some additional checks
+	* [alpha]: add oyConversion_GetImage()
+	* [alpha]: add internal oyCheckType_m macro
+	* [and]: add alpha object helper
+	* [oyX1]: check for return value
+	* [alpha]: switch to new oyCheckType__m
+	* [i18n]: update deutsch
+	* [lcms]: fix value precission bug
+	* [alpha]: rename/add oyRegion_s API
+	* [alpha]: fix oyImage_FillArray()
+	* [oyra]: add oyranos_cmm_oyra_image_ppm.c
+	* [alpha]: add missing members to oyPixelAccess_s copy and release
+	* [alpha]: rename oyConversion_LinFilterAdd()/_LinOutputAdd()
+	* [alpha]: implement oyFilterNode_EdgeCount()
+	* [test]: update
+	* [alpha]: accept non order edges
+	* [alpha]: reorder graph structure members
+	* [alpha]: add oyFilterNode_GetId()
+	* [alpha]: build fix
+	* [alpha]: implement oyFilterNode_Connect()
+	* [alpha]: add object references to oyFilterNode_GetAdjacencyList()
+	* [oyX1]: fix non XRandR build
+	* [and]: add string macro
+	* [alpha]: rename oyFilter_Xxx to oyFilterCore_Xxx
+	* [oyra]: add "image/regions" filter
+	* [alpha]: add oyFilterNodes_s list object
+	* [alpha]: add oyFilterGraph_s object
+	* [alpha]: add oyConversion_PreProcess()
+	* [fix]: close a memory leak for text processing
+	* [and]: simplify empty text string replacements
+	* [alpha]: add graph to job ticket
+	* [fix]: a servre crash was fixed in oyCMMsGetFilterApis_
+	* [lcms]: return error and set the graph to "dirty" for missed context
+	* [and]: apply fixes to code script
+	* [test]: update and minor leak fixes
+	* [oyra]: write_ppm is no longer a output filter
+	* [alpha]: add oyOptions_s convenience functions
+	* [alpha]: new oyOptions_MoveInStruct()
+	* [alpha]: rename some members to clearer terms
+	* [alpha]: add oyImage_PixelLayoutGet() + oyImage_TagsGet()
+	* [alpha]: move oyFilterCore_OptionsGet to oyFilterNode_OptionsGet
+	* [alpha]: bunch of oyFilterNode_s accessors
+	* [alpha]: add oyFilterGraph_s functions
+	* [alpha]: add oyConversion_Set(), deprecate oyConversion_Linxxx
+	* [alpha]: various fixes and changes
+	* [alpha]: update filters to core changes
+	* [oyX1]: change formatting of warnings
+	* [oyX1]: omit one message as its emitted in the caller as well
+	* [alpha]: fix tagged node search
+	* [oyra]: add "image/display" filter
+	* [build]: check dependencies of more files
+	* [alpha]: add tag selection to oyFilterGraph_GetNode()
+	* [alpha]: oyToDataType_m provides a oyDATATYPE_e
+	* [lcms]: make it a mediator
+	* [oyra]: make ppm_reading more robust
+	* [oyra]: select child filter more specifically
+	* [oyX1]: pass the job ticket id to messages
+	* [lcms]: parallelise
+	* [build]: update RPM spec file
+	* [test]: update test files
+	* [alpha]: repair oyConversion_CreateBasic() and oyColourConvert_()
+	* [lcms]: reduce verbosity
+	* [oyra]: close memory leak
+	* [alpha]: add oyRegion_SamplesFromImage()
+	* [alpha]: change oyImage_Fill-/ReadArray APIs
+	* [oyra]: change write on array
+	* [and]: add colour mime types and lcms logo
+	* [oyX1]: osX compile fix
+	* [build]: fix logo to docu copying
+	* [docu]: correct data flow direction graph
+	* [oyX1]: start interfacing osX CoreGraphics
+	* [alpha]: reset intermediate array change
+	* [oyX1]: move "display" filter from oyra to oyX1
+	* [conf]: check for Xcolor and Xfixes
+	* [alpha]: add oyProfile_FromMD5()
+	* [oyX1]: more Xcolor integration
+	* [conf]: add --enable-devel option
+	* [alpha]: increase compatible version plug-in rank
+	* [oyX1]: disable DISPLAY variable checks on osX
+	* [oyX1]: switch from deprecated DM to CG APIs
+	* [alpha]: filter double APIs in oyCMMsGetFilterApis_()
+	* [alpha]: improve oyRegion_Show() output
+	* [oyX1]: abstract osX device to oyMonitor_s
+	* [alpha]: add oyOption_StructGet()
+	* [alpha]: fix oyDeviceUnset()
+	* [oyX1]: use "device_region" for oyX1 oyRegion_s request
+	* [oyIM]: add debugging for oyIM mate backend
+	* [fix]: profile size reporting in oyranos-monitor
+	* [test]: extend testMonitor
+	* [oyX1]: print DB keyset name with -v option
+	* [docu]: repair broken arguments
+	* [alpha]: support keys in oyFilterRegistrationMatch
+	* [oyX1]: split display filter out
+	* [test]: add oyFilterRegistrationMatch key matching
+	* [oydi]: set window reative coordinates in XcolorRegion
+	* [oydi]: group Xfixes includes with Xcolor
+	* [build]: relaxe on missed msgcat
+	* [conf]: msgcat warn only with gettext
+	* [exmpl]: add X11 example applications
+	* [exmpl]: extend the documentation
+	* [build]: remove examples from top build level
+	* [build]: add oydi to RPM
+	* [build]: add missing file
+	* [and] add oyFinish_() for cleanup
+	* [add]: oy_debug_memory variable
+	* [and]: close some memory leaks
+	* [exmpl]: add _NET_COLOR_DESKTOP support
+	* [alpha]: switch to dynamic object hashing
+	* [conf]: repair Xcolor detection
+	* [alpha]: rename oyRegion_s to oyRectangle_s
+	* [and]: add alpha cleanup
+	* [test]: update
+	* [build]: include example directory into check target
+	* [oydi]: remove old XColorRegion
+	* [alpha]: fix for empty image pointer
+	* [exmpl]: print warnings in xcmsevents
+	* [oydi]: fix Xcolor window region change detection
+	* [exmpl]: plain formatting
+	* [docu]: mention Tomas Carnecky in AUTHORS
+	* [oyIM]: add rendering_high_precission option
+	* [lcms]: support cmsFLAGS_NOTPRECALC
+	* [exmpl]: switch colour_desktop CMS
+	* [exmpl]: free resources for colour_desktop
+	* [alpha]: abstract data types in oyConnector_s
+	* [exmpl]: activate XRandR again
+	* [docu]: add hint for ColourWiki updates
+	* [build]: include includedir into example builds
+	* [build]: support out of source tree builds
+	* [and]: add ITULab.icc
+	* [exmpl]: make xcmsevents start more verbose
+	* [oydi]: robuster Xwindow positions
+	* [alpha]: abtract connectors compile
+	* [API]: set OY_TYPE_STD to "imaging"
+	* [alpha]: export oyObject_UnRef() internally
+	* [alpha]: move some general CMM functions to oyranos_cmm.c
+	* [build]: clean examples directory
+	* [build]: enable absolute paths
+	* [exmpl]: add target
+	Revert "* [exmpl]: add target"
+	* [build]: avoid missing cobjects warning
+	* [conf]: fix check of correct dependency detection
+	* [test]: update tests/test_oyranos
+	* [build]: correction to dc0f30c3
+	* [docu]: remove old bug entry
+	* [alpha]: design a new device/driver API
+	* [build]: move most modules into subdirectories
+	* [build]: be sensitive to localy generated headers
+	* [alpha]: delete driver split
+	* [alpha]: undo driver introduction from 5265b841
+	* [build]: deactivate oycu
+	* [alpha]: rename oyConfig_Check_f to oyConfig_Rank_f
+	* [alpha]: define oyOptions_SetDriverContext()
+	* [alpha]: move all backend calls into one "command" option
+	[build]: moving of the oyIM module
+	* [build]: move oyIM to the modules directory
+	* [oyX1]: fix empty string pointer
+	* [exmpl]: fix call to "command" key
+	* [build]: fix some out of source build issues
+	* [oyX1]: increase verbosity for oyranos-monitor -v
+	* [oyIM]: add 'nvmt'
+	* [alpha]: implement oyOptions_SetDriverContext() ...
+	* [i18n]: update deutsch
+	* [docu]: correct Profile API overview
+	* [oyX1]: improve command line parsing in oyranos-monitor
+	* [oyX1]: add long options to oyranos-monitor
+	* [docu]: extend oyranos-monitor man page
+	* [docu]: describe screen selection ...
+	* [docu]: relayout the oyranos-policy man page
+	* [oyX1]: fix the new oyranos-monitor -s option
+	* [build]: disable oycu dummy lib
+	* [alpha]: add oyStructList_Sort()
+	* [alpha]: increase robustness of oyConfig_Compare
+	* [alpha]: add oyProfile_DeviceGet() and ...
+	* [alpha]: prefere 'pddt' over 'dmnd' and dmdd'
+	* [i18n]: update fl_i18n to ICC Examin
+	* [alpha]: oyConfig_Compare() soften matches ...
+	* [and]: unroll loop
+	* [and]: remove unused code snippet
+	* [conf]: beautify path variable
+	* [test]: add testCMMnmRun for named colours
+	* [and]: speed up oyGetKeyString_()
+	* [alpha]: new oyOPTIONATTRIBUTE_VIRTUAL_DB flag
+	* [alpha]: virtualise DB access and other optimisations ...
+	* [alpha]: fixes for last commit
+	* [alpha]: remove oyOPTIONATTRIBUTE_VIRTUAL_DB ...
+	* [alpha]: correct positioning during repeated oyConversion_RunPixels()
+	* [and]: avoid one allocation in oyStringSplit_()
+	* [build]: add test2c target
+	* [alpha]: shorten oyObject_HashEqual()
+	* [alpha]: access image data over oyConversion_GetImage() (cherry picked from commit 76d71471bb1fd52f577fd8ebde8682aee88eb9e1)
+	* [exmpl]: reduce more image calls (cherry picked from commit e5e71021c31e26c127c476358c187edcef213541)
+	* [alpha]: in the fly initialise processing data
+	* [alpha]: data copy only for root node
+	* [oydi]: pass oyCMMFilterPlug_Run() status (cherry picked from commit df4805df35e905ae672c72a2c4c95281f5e9243b)
+	* [alpha]: skip rectangle copy into the same image (cherry picked from commit f5d463688fa710b0a419b76cb25bf9d39791b5e8)
+	* [alpha]: add int32_t manipulators to oyOption(s)_s API (cherry picked from commit 8eae24b81f9bb021f47a4fa9e405b9aaac8e630d)
+	* [test]: add testOptionInt
+	* [test]: remove "properties" call
+	* [alpha]: change the oyFILTER_REG_e
+	* [alpha]: oyFilterRegistrationToText supports masks
+	* [test]: add testOptionsCopy
+	* [alpha]: skip non understood XML sequence (cherry picked from commit 451a9aa35d1aa87007c5050cee786ddd83936c44)
+	* [exmpl]: add a "generator" branch target
+	* [exmpl]: attach a "resolve" request
+	* [exampl]: undo test case in image_display
+	* [build]: support dependency tracking of sub directories
+	* [and]: add non allocating string functions
+	* [lcms]: send oyCONNECTOR_EVENT_OK for a missed context
+	* [alpha]: no allocations in oyFilterRegistrationMatch()
+	* [alpha]: omit oyCONNECTOR_EVENT_OK event reporting
+	* [alpha]: remove oyStringSegment_()
+	* [and]: compile fix to oyranos_texts.h
+	* [build]: link lcms to test2
+	* [lcms]: write own xforms cache identifier
+	* [oyIM]: cache dlopen'ed libs in Oyranos
+	* [fix]: wrong deallocator in osX' oyFlattenProfileProc()
+	* [alpha]: add oyCMMapiNumberToChar() ...
+	* [alpha]: add object pool
+	* [test]: set elektra handle global
+	* [fix]: wrong memory deallocation
+	* [and]: wrap string C functions
+	* [and]: use a simple allocation pool
+	* [test]: add testStringRun() and profiling tests
+	* [test]: compiled with -DNO_OPT
+	* [and]: switch memory pool off
+	* [alpha]: use double lenth for has keys
+	* [alpha]: simplify oyCacheListGetEntry_()
+	* [oyX1]: fix X -geometry conformance
+	* [alpha]: fix iterator shift on graph start
+	* [exmpl]: Gerhard Fürnkranz for code delivering in AUTHORS
+	* [alpha]: move oyFilterPlug_ResolveImage up ...
+	* [alpha]: change oyRectangle_SamplesFromImage() API
+	* [alpha]: put more oyRectangle_s on the stack
+	* [oyra]: place "root" nodes oyRectangle_s on the stack
+	* [alpha]: omit oyFilterNode_OptionsGet in oyPixelAccess_Create()
+	* [test]: new scaling of times
+	* [alpha]: remove linear graph functions
+	* [test]: update test.c to previous commit
+	* [test]: more api7/8 specific infos in test2 "CMMs show"
+	* [alpha]: correct plug/socket name missmatches
+	* [alpha]: allow non copy in oyImage_FillArray()
+	* [test]: switch to a action per second output
+	* [exmpl]: fix colour_desktop filter names
+	* [alpha]: fix regression from 1f9b7620
+	* [exmpl]: update colour_desktop to fbbfc4c4
+	* [alpha]: change oyBlob_s; add oyFilterGraph_ToBlob()
+	* [and]: oyFindProfile_ return zero for no success
+	* [and]: fix definition of oyStrcpy_
+	* [fix]: correct usage of oyProfile_GetFileName()
+	* [lcms]: support explicite verbose oyDL output
+	* [alpha]: oyFilterNode_ContextSet_() supports new argument
+	* [docu]: add minor corrections
+	* [conf]: check for libraw
+	* [oyra]: add "filename" option
+	* [and]: make oyranos_io.h C++ compilable
+	* [lraw]: add libraw cameraRAW plug-in ...
+	* [oyra]: correct file I/O option
+	* [exmpl]: add "dFil" a stripped example filter
+	* [conf]: make lraw optional and integrate with RPM
+	* [build]: check for compiz before compiling the example
+	* [build]: check in examples for cairo-pdf
+	* [oyX1]: no command fallback
+	* [alpha]: skip non sense calls in oyDevicexxx
+	* [oyX1]: fix empty deallocation
+	* [oyX1]: fix of calling directly malloc()
+	* [test]: correct usage of "command" backend option
+	* [alpha]: move oyFilterPlug_ImageRootRun() to core
+	* [oydi]: fix too many Xorg connections
+	* [lraw]: basic cameraRAW loading
+	* [alpha]: give warning for profile creation from no data
+	* [oydi]: correct usage of "command" backend option
+	* [exmpl]: compiz v0.8.2 compile fix
+	* [alpha]: save one image copy in oyConversion_RunPixels()
+	* [alpha]: fix oyImage_FillArray() allocations
+	* [alpha]: fix integer division for oyImage_s::viewport
+	* [docu]: mark older oyPixelAccess_s iterator concepts
+	* [alpha]: refine oyImage_FillArray()'s do_copy argument
+	* [oyra]: copy image data only in root image filter
+	* [alpha]: add oyArray2d_ToPPM_()
+	* [oyra]: omit copy of same unchanged data
+	* [alpha]: use offsets in oyFilterPlug_ImageRootRun()
+	* [alpha]: support offsets in oyConversion_RunPixels
+	* [exmpl]: add image moving to image_display
+	* [alpha]: robuster profile load after "setup" call
+	* [docu]: add sketch to oyPixelAccess_s
+	* [docu]: tell source of automatic generated files
+	* [oyX1]: fix cli parsing for -x/y args
+	* [oydi]: require the X Display to be passed
+	* [exmpl]: image_display supports "display_id"
+	* [exmpl]: add Xmu signal handler to xcmsevents
+	* [alpha]: add texts list to oyCMMInfo_s
+	* [oydi]: small code formatting
+	* [exmpl]: complete 3ef38636 oyCMMInfo_s::texts
+	* [and]: shorten debug message output
+	* [exmpl]: fix array exeeding in image_display
+	* [lcms]: add "help" text and support cmsFLAGS_PRESERVEBLACK
+	* [alpha]: disable oyCMMapi1_s
+	* [docu]: comment to oyProfile_DeviceAdd()
+	* [lcms]: remove oyCMMapi1_s
+	* [lcms}: support effect and simulation profiles
+	* [lcms]: fix gray scale rendering
+	* [alpha]: change oyFilterCore_New() API use default options
+	* [and]: build fix for change in oyranos_debug.h
+	* [alpha]: adapt option registrations
+	* [alpha]: oyFilterNode_OptionsGet() returns node options
+	* [docu]: inline page for writing filters and device backends
+	* [docu]: bring all CMM function name defines to the top
+	* [exmpl]: convert instrument to device name
+	* [exmpl]: complete previous
+	* [docu]: clearify about oyConfig_AddDBData
+	* [docu]: comment oyCMMapi8_s::rank_map
+	* [and]: osX compile fix
+	* [build]: correct test_oyranos path
+	* [lcms]: tag with the registration string
+	* [oyra]: start with new meta file load filter
+	* [docu]: collect and link the registration string infos
+	* [alpha]: define oyCMMOptions_Check_f
+	* [docu]: oyConfigDomainList to oyDeviceGet
+	* [test]: improve "CMM devices listing"
+	* [test]: complete previous commit
+	* [alpha]: allow '_' in front of atrributes in registrations
+	* [lcms]: add underscores to registration string
+	* [docu]: oyDeviceGetInfo example code
+	* [build]: integrate CUPS module
+	* [docu]: add maintainance entry
+	* [build]: add subdir dependency
+	* [alpha]: support oyCMMptr_s in oyOption_GetData()
+	* [alpha]: add oyCMMptr_s funtions
+	* [alpha]: key extraction from registration
+	* [alpha]: catch on missing arguments
+	* [alpha]: ignore missing devices for oyConfigs_FromDeviceClass()
+	* [fix]: byte order of md5 checksum
+	* [exmpl]: add oymd5icc
+	* [oyX1]: add "help" call
+	* [alpha]: add oyCMMapi9_s for plugable policy support
+	* [oyIM]: conform to registration rules
+	* [alpha]: add oyFilterMessageFunc()
+	* [alpha]: support oyCMMspi9_s as oyCMMapiFilter_s
+	* [oicc]: add ICC policy module
+	* [test]: support oyCMMapi9_s in test2 "CMMs show"
+	* [alpha]: fix getting default options from oyCMMapi9_s
+	* [alpha]: add oyConversion_Correct()
+	* [alpha]: implement oyConversion_Correct()
+	* [exmpl]: request verbose output for oyConversion_Correct()
+	* [oicc]: give some verbose infos
+	* [exmpl]: fix image_display moving
+	* [alpha]: add oyBlob_ReleaseNoPtr() for const oyBlob_s::ptr
+	* [alpha]: give oyConnector_s::connector_type more meaning
+	* [alpha]: add apis 8 and 9 to oyFilterRegistrationMatch()
+	* [alpha]: new connector selection
+	* [alpha]: oyConversion_RunPixels() fix crashes
+	* [docu]: clear about oyBlob_SetFromData allocations
+	* [alpha]: substitute oyBlob_ReleaseNoPtr with oyBlob_SetFromData
+	* [alpha]: copy missed oyBlob_s::type
+	* [i18n]: removed some c-formats and updated deutsch
+	* [alpha]: no implicite options in oyFilterCore_New()
+	* [alpha]: disambiguate OY_OPTIONSOURCE_FILTER/oyOPTIONSOURCE_FILTER
+	* [lcms]: support "proof_soft" and "proof_hard" options
+	* [lcms]: no device class checking
+	* [oicc]: support policy options
+	* [exmpl]: fix compile warning
+	* [lcms]: implement oyCMMapi4_s::oyCMMuiGet
+	* [lcms]: fix device link creation with proofing
+	* [oicc]: fix proofing flag policy handling
+	* [alpha]: add oyFilterNode_UiGet()
+	* [and]: fix compile warning
+	* [test]: fix single monitor test with test2
+	* [alpha]: assign/copy options in oyFilterCore_New()
+	* [oydi]: copy options to newly created ICC nodes
+	* [alpha]: rename oyConversion_CreateBasic() to xxxPixels()
+	* [alpha]: remove duplicated definition
+	* [alpha]: additional data checks for oyOption_s reading
+	* [lcms]: one more check for opyOption_s reading
+	* [docu]: oyConversion_CreateBasicPixels arguments
+	* [alpha]: add new channel types
+	* [alpha]: remove one oyChar
+	* [alpha]: add oyOption_SetFromDouble/xxx_GetValuexxx
+	* [doc]: add Joe Simon as CUPS backend author
+	* [conf]: oyIM modules path now (lib)/colour/modules
+	* [lcms]: add more checks
+	* [oydi]: add late image data resolving
+	* [build]: add "oicc" and "CUPS" modules to RPM
+	* [alpha]: add oyImage_ProfileGet()
+	* [exmpl]: image_display uses "oydi"'s data resolving
+	* [build]: skip directory part for GNU soname linking
+	* [build]: separate INCL from CFLAGS
+	* [build]: skip string length warnings
+	* [alpha]: remove obsolete ':' in oyOption_GetValueText()
+	* [test]: support the "supported_devices_info"
+	* [test]: add failing oyOption_s case
+	* [test]: 5a88a1f1 correction
+	* [test]: add "Set oyOptions_s" to test2.cpp
+	* [alpha]: fix for f7d5558c and 7762729f
+	* [conf]: SunOS/osX/BSD fixes
+	* [conf]: define MOVE for makefiles
+	* [build]: correct fluid expanding for non root builds
+	* [fix]: crash on too small ICC profile blocks
+	* [oyX1]: "icc_profile" set always a answere
+	* [alpha]: adapt oyDeviceAskProfile()
+	* [conf]: better support --disable-libXxxx
+	* [CUPS]: set data correctly
+	* [alpha]: fix oyOption_GetValueText() for oyVAL_STRUCT
+	* [test]: show "icc_profile" option
+	* [docu]: fix typo in oyranos.3
+	* [docu]: start building man pages
+	* [lcms]: fix UI string
+	* [CUPS]: fix Oyranos profile opening
+	* [oyX1]: add XRandR "EDID" name
+	* [docu]: fix some doxygen related issues
+	* [oyX1]: add verbose output for xcalib
+	* [fix]: "oyranos-monitor -v" needs to do a setup
+	* [and]: add OYRANOS_BACKTRACE variable
+	* [doxu]: add OYRANOS_BACKTRACE variable
+	* [CUPS]: some more compile fixing ...
+	* [CUPS]: remove the Gray default profile
+	* [CUPS]: support the specified "cupsICCProfile"'s
+	* [CUPS]: "cupsICCProfile"
+	* [CUPS]: rename to CUPSgetProfiles
+	* [CUPS]: fix for n profiles in one CUPS device
+	* [CUPS]: add missed "cupsICCProfile" qualifiers
+	* [CUPS]: fix valgrind memory error
+	* [alpha]: add oyConfigs_Modify_f to oyCMMapi8_s
+	* [oyX1]: implement oyX1Configs_Modify
+	* [alpha]: do not set the same text array twice
+	* [oyX1]: reduce double functionality
+	* [test]: fix test2.cpp compilation
+	* [oyX1]: fix oyranos-monitor regression
+	* [oX1]: fix for "properties" call
+	* [CUPS]: add device list only if one exists
+	* [docu]: doxyment oyCMMapi8_s::oyConfigs_Modify
+	* [docu]: play wit hdoxygen parameters
+	* [alpha]: add oyConfigs_Modify
+	* [alpha]: deprecate oyCMMapi1_s and oyCMMapi2_s
+	* [alpha]: use oyConfigs_Modify in oyDeviceBackendCall
+	* [CUPS]: add basic "list" support in oyConfigs_Modify
+	* [CUPS]: merge Configs_Modify with Configs_FromPattern
+	* [test]: fix testCMMDevicesListing() in test2.cpp
+	* [alpha]: the debugger likes function scope
+	* [CUPS]: activate DeviceAttributes_()
+	* [build]: move monitor sources to modules/devices
+	* [exmpl]: update dDev to new oyCMMapi8_s
+	* [oyX1]: rename internal usage function
+	* [oyX1]: fix typo
+	* [conf]: set month
+	* [docu]: formatting
+	* [alpha]: update oyCMMapi_Check_()
+	* [alpha]: add oyDeviceSimiliarFromDB()
+	* [test]: show oyDeviceSimiliarFromDB() in test2
+	* [alpha]: generalise to oyDeviceSelectSimiliar()
+	* [sand]: initial commit to box
+	* [xforms]: collect element data
+	* [conf]: fix shell expression
+	* [conf]: test for CUPS availablility
+	* [build]: use CUPS detection
+	* [fix]: Solaris build warnings
+	* [build]: use make defaults in example/
+	* [build]: omit hardcoded -Wall in examples
+	* [build]: substitute CPP with CXX in example/
+	* [build]: observe files
+	* [conf]: test for SANE
+	* [xforms]: collect relevant nodes
+	* [xforms]: start UI builder framework
+	* [alpha]: add new object type
+	* [alpha]: correct oyOBJECT_UI_HANDLER_S
+	* [xforms]: update to Oyranos object typing
+	* [alpha]: oyOptions_GetText iterates into options
+	* [xforms]: write XFORMS as of the mozilla plugin
+	* [lcms]: refere xf:model with absolute path
+	* [xforms]: simplify default namespace declaration
+	* [lcms]: explicite choices label
+	* [docu]: oyOptions_ForFilter
+	* [API]: deprecate OY_TOP_INTERNAL
+	* [alpha]: update to OY_TOP_INTERNAL change
+	* [alpha]: add XML namespace in oyCMMapi9_s
+	* [alpha]: 542d4d63 part two
+	* [oicc]: add namespace ...
+	* [alpha]: sort oyOptions_GetText output alphabetical
+	* [xforms]: function separation ...
+	* [alpha]: omit redundant XML levels
+	* [alpha]: fix typo
+	* [alpha]: fix oyOptions_ParseXML_()
+	* [alpha]: reverse filter and common layouts
+	* [alpha]: add XFORMS APIs
+	* [alpha]: the declarations to 517ee570
+	* [docu]: add xml files to include XFORMS APIs
+	* [xforms]: export most code to Oyranos
+	* [alpha]: remove oyCMMapi_s::oyCMMCanHandle_f
+	* [alpha]: detailed module checks
+	* [oicc]: and lcms dont use HTML tables in XFORMS
+	* [oyX1]: translate
+	* [alpha]: separate XMLs
+	* [xforms]: add oy_ui_cmd_line_handlers
+	* [docu]: update the module framework dot graph
+	* [docu]: clear the module APIs text
+	* [docu]: substitute "backend" with "module"
+	* [xforms]: embedd locale info into XML
+	* [xforms]: add cli options naming scheme
+	* [alpha]: module oyCMMapi4_s API change
+	* [alpha]: add manufacturer
+	* [i18n]: update deutsch
+	* [alpha]: add oyOptions_s double calls
+	* [oyX1]: export EDID colour primaries
+	* [exampl]: report EDID changes in xcmsevents
+	* [exampl]: show EDID content in xcmsevents
+	* [lcms]: tell options in debug mode
+	* [alpha]: rename oyCMMDataTypes_s
+	* [docu]: decribe oyCMMobjectTypes_s::id
+	* [alpha]: remove oyCMMobjectGetText_f::pos
+	* [alpha]: tune oyCMMobjectGetText_f
+	* [alpha]: add oyStruct_GetText()
+	* [lcms]: fix tracking for proofs
+	* [exmpl]: fix typo in "colour_desktop"
+	* [docu]: precise the module system descriptions
+	* [i18n]: fix typo deutsch
+	* [xforms]: move labels
+	* [docu]: disambiguate "device_name" for oyConfigs_Modify
+	* [oforms]: move handlers to Oyranos core ...
+	* [build]: rename the tool binary
+	* [xforms]: default CSS for oyXFORMsFromModelAndUi
+	* [oicc]: add assumed source profiles to XFORMS
+	* [oicc]: add h4 tags to XFORMS
+	* [xforms]: parse h4 HTML tag
+	* [xforms]: omit XFORMS leading slash of ref element
+	* [alpha]: copy setlocale string
+	* [xforms]: silent mode with all tags
+	* [i18n]: update deutsch
+	* [oforms]: add module option parsing
+	* [oforms]: support option value passing by space
+	* [oforms]: move sand box to oforms
+	* [build]: adapt to new directory
+	* [oforms]: separate command line + add FLTK XFORMS UI
+	* [conf]: fix missing directory for remote builds
+	* [oforms]: move XFORMS code to oforms directory
+	* [build]: update to cover new oforms code
+	* [build]: add missed test files
+	* [oicc]: omit non visible headlines in XFORMS
+	* [alpha]: support oyASSUMED_WEB in oyProfiles_ForStd()
+	* [core]: add oyGROUP's to atstic options
+	* [oforms]: fix crash for non symetric items
+	* [oicc]: use the cores static options APIs
+	* [oicc]: get options from old settings API
+	* [i18n]: try to fix charset oyranos-xforms-fltk
+	* [oforms]: add oyFormsArgs_s object
+	* [oforms]: use new oyFormsArgs_s object
+	* [oforms]: remove old argument struct; add ::forms
+	* [oforms]: track XFORMS model changes in FLTK
+	* [oforms]: display XFORMS model changes
+	* [build]: add new oforms files
+	* [build]: oforms test build with fl_i18n
+	* [build]: add oyranos-forms-fltk-devel
+	* [core]: add "attr:ref" hint to option from XFORMS node
+	* [alpha]: add oyOBJECT_FORMS_ARGS_S
+	* [oyX1]: export "mnft" property from EDID
+	* [oyX1]: provide "edid_colours_text.Xorg" info
+	* [alpha]: new oyProfile_AddTagText()
+	* [oyX1]: fix memory leak
+	* [build]: link lcms to oyranos-monitor
+	* [core]: add new file i/o helper
+	* [oyX1]: oyranos-monitor add -f and -o options
+	* [docu]: update oyranos-monitor
+	* [i18n]: update deutsch
+	* [test]: omit outdated monitor test
+	* [build]: support in path building for oforms
+	* [core]: better match to C++ for oyWriteMemToFile_()
+	* [oicc]: complete registration string
+	* [oforms]: add cli options for FLTK example
+	* [alpha]: add oyOptions_Set()/_SetOpts()
+	* [alpha]: fix oyOption_GetData() ...
+	* [example]: add options editing in image_display
+	* [alpha]: remove old unused code
+	* [alpha]: add signal API
+	* [alpha]: add more signal functions
+	* [conf]: format CUPS version
+	* [CUPS]: httpAssembleURIf() seems new to CUPS v1.2
+	* [core]: give a warning about a missed string...
+	* [test]: add osX locale info
+	* [core]: add OYRANOS_DEBUG_SIGNALS environment variable
+	* [alpha]: fall back to known types in oyStructList_GetType_()
+	* [alpha]: fall back to known types in oyStruct_GetText()
+	* [alpha]: correct signal direction
+	* [alpha]: add oySignalToString()
+	* [alpha]: serial oyFilterSocket_SignalToGraph()
+	* [docu]: link and clean deprecated top "sw"
+	* [exampl]: observe graph and deprecate FLTK view
+	* [exampl]: add dirty flag to image_display
+	* [alpha]: rely on removal for node context updates
+	* [alpha]: add oyStruct_ObserversCopy()
+	* [alpha]: add a models list to each observer
+	* [oydi]: clone observation state to copied display nodes
+	* [alpha]: make oyStruct_ObserverRemove() precise
+	* [oicc]: proofing intent is advanced stuff
+	* [conf]: FLTK >= v1.3 check for UTF8 selection
+	* [oforms]: better i18n selection
+	* [ui-fltk]: use correct internal UTF-8 macro
+	* [core]: default to UTF-8 encoding for XFORMS
+	* [core]: add "rendering_gamut_warning" and xxx"_high_precission"
+	* [lcms]: give a better format to hash text
+	* [exmpl]: move strange option out of node data
+	* [alpha]: beautify node description
+	* [docu]: small corrections
+	* [alpha]: fix compiler warnings
+	* [test]: update to changed oyOptions_ForFilter_
+	* [lcms]: merge proofing profiles into multi profile chain
+	* [alpha]: fix too early hash object release
+	* [docu]: oyCMMptr_LookUp() parameters
+	* [alpha]: oyCMMptr_LookUp naming
+	* [alpha]: add oyCMMptrLookUpFromText() to CMM API
+	* [alpha]: omit custom allocator to oyCMMptr_s
+	* [lcms]: cache abstract proofing profiles
+	* [lcms]: closer to native gamut marking
+	* [docu]: fix some doxygen errors
+	* [lcms]: fix simulation option handling
+	* [oforms]: locale fallback
+	* [exampl]: create XFORMS locally in "image_display"
+	* [oforms]: change -i option for oyranos-xforms-fltk
+	* [lcms]: correct gamut check
+	* [core]: simplify some UI strings
+	* [build]: link "image_display" with fl_i18n
+	* [oforms]: better window title
+	* [oforms]: fix FLTK widget placing for select1 items
+	* [exmpl]: generate XFORMS in "image_display"
+	* [i18n]: update deutsch
+	* [oforms]: stretch FLTK widgets somewhat
+	* [alpha]: oyProfileTag_Set() free memory pointer
+	* [build]: add exmaples to translations
+	* [i18n]: update deutsch
+	* [core]: add oyStruct_AllocHelper_m_ macro
+	* [oyIM]: work with zeroed memory
+	* [oyIM]: skip inappropriate memory during "psid" read
+	* [oforms]: add close button to FLTK dialog
+	* [oforms]: add hint field to FLTK panel
+	* [alpha]: add oyOptions_SetFromData() +
+	* [alpha]: fix documentation
+	* [oyX1]: fix use of uninitialised variable
+	* [lcms]: C++ compile fixes
+	* [alpha]: oyOptions_FindData() fix argument type
+	* [oforms]: add extra data to oyFormsArgs_s
+	* [oforms]: support parsing of multiple subelements
+	* [alpha]: g/setters for the oyFormsArgs_s extra data
+	* [oforms]: adapt to changed oyUiHandler_s
+	* [oforms]: add hint field to FLTK
+	* [alpha]: adapt to oforms changes
+	* [core]: add libxml2 helpers to parse XFORMS
+	* [oforms]: new oyUiHandler_s behaviour
+	* [alpha]: restructure oyUiHandler_s
+	* [oforms]: oyFormsCallback_s with generic pointer
+	* [oforms]: parse libxml2 instead of Oyranos objects
+	* [oforms]: add help view to FLTK window
+	* [oforms]: clean unused functions
+	* [oforms]: clean help_view content
+	* [alpha]: oyFilterCore_s object member clearing
+	* [docu]: correct the registration description
+	* [alpha]: rename oyOBJECT_FORMS_CALLBACK_S
+	* [alpha]: add oyCallback_s object
+	* [oforms]: adapt to new oyCallback_s
+	* [oyIM]: rename meta module file
+	* [oforms]: fix xpath to registration mapping
+	* [core]: fix compiler warnings
+	* [alpha]: fix missing language crash
+	* [core]: CMSetDefaultProfileBySpace is deprecated
+	* [fltk]: check for i18n compilation
+	* [core]: switch from deprecated osX CM API's
+	* [oyX1]: support display informations
+	* [core]: split osX ColorSync part out
+	* [build]: activate osX code
+	* [core]: deactivate deprecated osX code
+	* [core]: add headers fo oyranos_cs.c
+	* [test]: robuster i18n test
+	* [test]: bypass a empty oyLanguage()
+	* [test]: explicite string for non i18n check
+	* [conf]: update date
+	* [oyX1]: shorter report on no monitors case
+	* [core]: populate oyWriteMemToFile2_() for oyranos_gamma.c
+	* [core]: move away from old monitor APIs, part one
+	* [docu]: declare elder monitor APIs as deprecated
+	* [core]: elder monitor APIs are deprecated
+	* [core]: remove more deprecated monitor API calls, part two
+	* [test]: omit old monitor API
+	* [exmpl]: omit monitor API
+	* [oyX1]: support osX EDID
+	* [alpha]: add oyConfig_Has()
+	* [oyX1]: switch to a generic colour data key name
+	* [oyX1]: increase verbosity in debug mode
+	* [exmpl]: show alternative ICC profile names in xcmsevents
+	* [core]: support temp file writing in oyWriteMemToFile2_()
+	* [core]: correct new flag reading
+	* [alpha]: add new oyCMMapi10_s module type
+	* [lcms]: add "create_profile" filter
+	* [oyX1]: use "C" text formating
+	* [alpha]: add oyOptions_Handle() to access oyCMMapi10_s
+	* [alpha]: meaningfull return code in oyOptions_FindDouble()
+	* [alpha]: add oyDeviceAskProfile2()
+	* [oyX1]: provide a fallback "icc_profile" on request
+	* [oyX1]: remove direct lcms dependency from "oyranos-monitor" command
+	* [build]: omit liblcms for "oyranos-monitor"
+	* [core]: fix compiler warnings
+	* [oyX1]: show "colour_matrix" verbosely
+	* [alpha]: switch oyOption_GetValueText() to %g format
+	* [oyX1]: remove unused code
+	* [oyX1]: add four EDID fields
+	* [oyX1]: add parse_edid library
+	* [oyX1]: switch to new EDID parsing API
+	* [oyX1]: implement XEdidPrintString()
+	* [oyX1]: minor fixes
+	* [core]: fix invalid memory access (KM crash)
+	* [oyX1]: add minimalistic EDID example
+	* [exmpl]: adapt xcmsevents to changed oyUnrollEdid1_
+	* [oyX1]: fix osX compiler error
+	* [oyX1]: add key defines for parse_edid
+	* [alpha]: change oyCMMui_s and oyCMMapi8_s
+	* [core]: fix compiler warning
+	* [alpha]: remove static oyFilterCore_s::name_
+	* [alpha]: update to module API changes
+	* [test]: add OpenMP test files
+	* [conf]: check for OpenMP
+	* [test]: add better time for SMP
+	* [build]: support external XNVCtrl
+	* [conf]: fix previous commit
+	* [CUPS]: i18n for menu entry
+	* [exmpl]: beautyfy code of "dFil"
+	* [oyX1]: failed try to sync nvidia with Xinerama
+	* [oyX1]: fix device port naming
+	* [alpha]: fix some thread issues
+	* [alpha]: more thread fixes
+	* [exmpl]: fix compiler warning
+	* [and]: modify code generator
+	* [alpha]: add oyConfDomain_s
+	* [test]: test oyConfDomain_s
+	* [alpha]: add oyConfDomain_xx APIs
+	* [oyX1]: fix missing string types
+	* [alpha]: implement more of oyConfDomain_xx
+	* [test]: update to previous changes
+	[conf]: set libraw includes
+	* [i18n]: update deutsch
+	* [alpha]: add test for device UI strings
+	* [alpha]: clear TODO hint
+	* [CUPS]: add i18n support
+	* [i18n]: update deutsch
+	* [core]: send warning for non installed policies
+	* [oicc]: check for non available policies
+	* [oforms]: catch failed filter creation
+	* [build]: honour CFLAGS in oforms/
+	* [oforms]: add XFORMS helpers
+	* [test]: add oforms output to test2 CMMs
+	* [oforms]: improve help text view
+	* [oforms]: remove unused printout
+	* [oyX1]: support TwinViewXineramaInfoOrder
+	* [core]: code introspection
+	* [test]: FF compatibility
+	* [oforms]: add scroll and nicer choice scaling
+	* [build]: fix examples compilation
+	* [build]: use xdg utils to install mime
+	* [build]: more verbosity with examples
+	* [oyX1]: fix Apple EDID
+	* [oyX1]: add model_id to edid_icc header
+	*[core]: open files in binary mode
+	* [alpha]: write ICC conforming text tag types
+	* [exmpl]: compile fixes for compiz-0.8.4
+	* [exmpl]: create ppm for testing image_display
+	* [build]: fix oforms building
+	* [exmpl]: xcmsevents compile fixes for C++
+	* [oicc]: support proofing options
+	* [docu]: precise a option description
+	* [exmpl]: add a CCSM icon for compiz
+	* [i18n]: add CCSM text about the desktop plug-in
+	* [build]: install the new compiz files
+	* [exmpl]: simlify xcmsevents
+	* [oyX1]: swap UI string order
+	* [core]: support non core messages to be passed
+	* [core]: add oyStringAddPrintf_
+	* [oyX1]: one string print out in oyranos-monitor
+	* [exmpl]: xcmsevents - move prints to messages
+	* [exmpl]: add small xcmsevents based app for Qt
+	* [exmp]: change file mode
+	* [conf]: correct include paths
+	* [exmpl]: reduce compile warnings
+	* [oyX1]: describe newer options
+	* [oyX1]: fix oyranos-monitor -l output
+	* [oyX1]: hunt XGetAtomName() bug
+	* [oyX1]: complete ICC in X 0.3
+	* [build]: fix some compile warnings on linux
+	* [exmpl]: add debug hook into colour_desktop
+	* [oyX1]: fix compile warnings
+	* [conf]: fix include dir in oyranos-config script
+	* [oyX1]: fix DB key naming
+	* [oyX1]: oyranos-monitor -e: erase from DB
+	* [alpha]: more detailed warning for empty option
+	* [oyX1]: skip setting identical properties
+	* [exmpl]: fix message in debug mode
+	* [exmpl]: switch off advanced debugging in compiz
+	* [oyX1]: EDID colour_matrix check
+	* [alpha]: fix wrong memory access
+	* [build]: clean local nvidia lib
+	* [alpha]: add oyOption_GetRegistration
+	* [alpha]: add more consistency checks
+	* [alpha]: support DB entries in oyConfig_Compare
+	* [alpha]: fix oyConfigs_FromDB,oyDeviceSetProfile
+	* [alpha]: add oyConfigs_SelectSimiliars()
+	* [conf]: set new epoch
+	* [docu]: correct including of Oyranos header(s)
+	* [core]: fix file writing
+	* [core]: add oyPolicyFileNameGet()
+	* [core]: fix oyranos-policy to select a policy
+	* [i18n]: update Deutsch
+	* [core]: adapt policy settings
+	* [alpha]: bug fixes for module loading
+	* [build]: switch mime application/vnd.iccprofile
+	* [docu]: increase icon size
+	* [oyX1]: add _ICC_DEVICC_PROFILE atom
+	* [exmpl]: fix xcmsevents_common event loop
+	* [conf]: fix pkg-config include path
+	* [build]: external make install
+	* [exmpl]: use the XEvent supplied Display
+	* [exmpl]: ignore QX11Info
+	* [exmpl]: add "device.icc_profile"
+	* [docu]: update write_device_modules section
+	* [build]: adjust file permissions
+	* [exmpl]: ppm creation is optional
+	* [conf]: implicitely set lib64
+	* [exmpl]: add build variable to image2pdf
+	* [exmpl]: correct some typos in xcmsevents
+	* [alpha]: check argument in oyHash_SetPointer_
+	* [build]: update spec file
+	* [oyX1]: fix typo
+	* [core]: fix wrong memory release
+	* [exmpl]: support 0.4 DRAFT2 in colour_desktop
+	* [exmpl]: setup profiles in colour_desktop
+	* [exmpl]: clean some warnings in colour_desktop
+	* [exmpl]: allow a reverse setupICCprofileAtoms()
+	* [exmpl]: unset _ICC_(DEVICE_)PROFILE(_xxx)
+	* [exmpl]: careful variable handling in colour_desktop
+	* [exmpl]: omit own window with no c->display
+	* [exmpl]: add qcmsevents icon resources
+	* [exmpl]: split qcmsevents.cpp to compile
+	* [exmpl]: add a project file for qcmsevents
+	* [exmpl]: build qcmsevents
+	* [exmpl]: qcmsevents task bar _NET_COLOR_DESKTOP
+	* [exmpl]: no window on startup with qcmsevents
+	* [exmpl]: add oyMSG_DISPLAY_ERROR to qcmsevents
+	* [oyX1]: remove _ICC_PROFILE_IN_X_VERSION_STRING
+	* [exmpl]: unify _NET_COLOR_DESKTOP displaying
+	* [exmpl]: change _NET_COLOR_DESKTOP content
+	* [alpha]: turn flags into options
+	* [core]: correct warning for zero data writing
+	* [API]: add ICC in X macros
+	* [oyX1]: use the ICC in X macros
+	* [oyX1]: add the "colour_server" option
+	* [alpha]: change oyDeviceGetProfile, removeoyDeviceAskProfile
+	* [exmpl]: _NET_COLOR_DESKTOP add capabilities
+	* [oyX1]: revert icc_profile option omitting
+	* [oyX1]: request icc_profile.net_color_region_target
+	* [API]: correct oyCheckProfile/oyCheckProfileMem
+	* [exmpl]: keep context local in colour_desktop
+	* [exmpl]: check atom only for property events
+	* [alpha]: optimise cache searches add param to oyCacheListGetEntry_()
+	* [exmpl]: contrain caching in colour_desktop
+	* [exmpl]: use compiz private data caching
+	* [exmpl]: no warning for taking correctly ended session
+	* [build]: add oforms target to makefile.in
+	* [conf]: copy oforms makefile to build directory
+	* [build]: allow out of source build with oforms
+	* [oforms]: fix string passing to FLTK
+	* [alpha]: fix graph signaling bug
+	* [i18n]: fix typo
+	* [oydi]: reduce warning message to debug
+	* [build]: clean libXNVCtrl.a
+	* [alpha]: omit gv option to display graph
+	* [oicc]: favour DB values over build in defaults
+	* [oicc]: enable gamut warning from policy module
+	* [exmpl]: _NET_COLOR_DESKTOP only if ready
+	* [exmpl]: try to update a graph
+	* [alpha]: omit DB profiles from capable backends
+	* [alpha]: beautify profile check in oyDeviceAskProfile2
+	* [docu]: describe device profile functions
+	* [oyX1]: return issue on missed EDID info
+	* [oyX1]: ignore issues and report in oyranos-monitor
+	* [exmpl]: colour_desktop intermediate fix
+	* [alpha]: avoid unnecessary successive error
+	* [exmpl]: change debug level in colour_desktop
+	* [exmpl]: colour_desktop optimised shader generation
+	* [exmpl]: rename some variable in colour_desktop
+	* [exmpl]: colour_compiz ignore sRGB monitor profiles
+	* [exmpl]: ignore own profile changes in colour_desktop
+	* [oyX1]: switch XFixes property to network order
+	* [exmpl]: print nicer window name in xcmsevents
+	* [exmpl]: fix hang on compiz+colour_desktop start
+	* [exmpl]: comment on previous commit
+	* [exmpl]: more logic for shader cache
+	* [alpha]: add oyProfile_s::tags_modified_ member
+	* [alpha]: fix alter during deserialised of ICC profiles
+	* [test]: add profile tag non modification tracking
+	* [exmpl]: bugfixes for 0.4 DRAFT2 colour_desktop
+	* [oydi]: improve debug messages
+	* [exmpl]: change warn to info in image_display
+	* [alpha]: signals for changed options
+	* [exmpl]: fix compiler warning
+	* [oicc]: fix DB overwrites user options
+	* [test]: fix test2 "oyOption_s integers"
+	* [test]: show oyOption_SetFromxxx bug
+	* [oyX1]: support HDMI EDIDs
+	* [conf]: add libdir to static oyranos-config flags
+	* [exmpl]: fix colour_desktop resize bug
+	* [exmpl]: complete previous commit
+	* [spec]: fix spelling and rm packager tag
+	* [build]: add OpenMP tests to source package
+	* [build]: add missing files to source package
+	* [build]: fix rpmlint warnings
+	* [data]: fix default profile sizes
+	* [conf]: remove $ROOT_DIR reference in pkg-config
+	* [build]: add %dir to rpm spec
+	* [exmpl]: fix compiz-0.7.6 builds
+	* [conf]: detect cairo, compiz and Qt
+	* [alpha]: include locale.h for LC_NUMERIC
+	* [oform]: avoid cmd line initialisation
+	* [oforms]: correct select1 for cmd
+	* [build]: let move not fail
+	* [build]: use configures COPY command
+	* [core]: message array exceeding
+	* [core]: reset message string
+	* [oyIM]: omit zero strings
+	* [oyIM]: omit next empty string
+	* [oyIM]: correct mcro usage
+	* [exmpl]: correct compiz macro usage
+	* [exmpl]: correct link order
+	* [exmpl]: fix namespace compile error
+	* [core]: change namspace order
+	* [build]: allow examples to fail
+	* [conf]: add i18n libs to oyranos-config
+	* [build]: fix compiler warning
+	* [core]: fix inadequate pointer freeing
+	* [conf]: switch to LRaw-0.9
+	* [build]: correct link order for oforms
+	* [alpha]: do not touch user supplied pointer
+	* [test]: adjust integers tests
+	* [alpha]: ignore oyOption_SetFromInt/Double flags
+	* [alpha]: oyDeviceSelectSimiliar with full options
+	* [test]: split device listings
+	* [test]: add profile to "devices listing" test
+	* [CUPS]: check string release
+	* [conf]: update month
+	* [alpha]: check for mnft and model before DB query
+	* [build]: change PCS profile RPM revision number
+	* [exmpl]: corrections to net-color spec
+	* [build]: add examples file to source package
+	* [build]: add compiz config xml to source package
+	* [oyX1]: use global DEBUG macro only
+	* [build]: keep verbosity the same as in top dir
+	* [build]: adapt to elder Qt moc
+	* [lcms]: omit openMP trotling
+	* [build]: remove qt3 requirement for fedora RPMs
+	* [CUPS]: improve debug formatting
+	* [core]: support path in OpenICC path search
+	* [alpha]: fix object name duplication
+	* [build]: add libs to make fedora happy
+	* [build]: add fedora build flags for examples
+	* [fix]: RPM package groups
+	* [build]: change permissions on devel example
+	* [build]: fix RPM summary-not-capitalized
+	* [build]: remove main() from lib
+	* [oforms]: security fix
+	* [buidl]: fix RPM Group
+	* [alpha]: fix some printf format warnings
+	* [build]: correct link order for oforms
+	* [alpha]: fix more security errors
+	* [build]: fix missed link libs
+	* [build]: correct icc package groups
+	* [build]: sync with osc's RPM BuildRequires
+	* [build]: add RPM dirs to icc packages
+	* [build]: require dynamic core before modules
+	* [docu]: add Device Protocol 1.0
+	* [conf]: add debian packageing file
+	* [build]: add deb make target
+	* [core]: add backtrace call
+	* [exmpl]: fix compiler security warnings
+	* [alpha]: add oyCMMapi7_s::properties member
+	* [exmpl]: avoid ICC_PROFILE_IN_X atoms
+	* [oyra]: tell about PPM input module capabilities
+	* [core]: add headers for backtrace function
+	* [build]: fix shell syntax error
+	* [alpha]: fix false memory access
+	* [exmpl]: enrich debug infos in the compiz plugin
+	* [oyX1]: ignore empty profile
+	* [oyX1]: skip duplicate options
+	* [alpha]: fix zero oyOptions_s::oy_struct access
+	* [alpha]: add oyFilterRegistrationMatchKey
+	* [alpha]: fix profile copy check
+	* [alpha]: repair args fro profile copy
+	* [alpha]: add warning for non written file
+	* [alpha]: add warning for non accessible profile
+	* [core]: return always a file name
+	* [i18n]: update deutsch
+	* [alpha]: rename from libXcolor to libXcm
+	* [build]: update examples to libXcm
+	* [build]: improve deb description
+	* [build]: update to libXcm, rename to liboyranos0
+	* [build]: set correct soname
+	* [build]: rename devel RPM
+	* [build]: set RPM file ownership
+	* [exmpl]: add xcm flags
+	* [exmpl]: correct xcm flags
+	* [API]: remove namespace from headers
+	* [conf]: sync configure script
+	* [conf]: fix Elektra detection error message
+	* [core]: remove more namespace references
+	* [build]: do not remove build root by ourself
+	* [API]: increase OYRANOS_API to 16
+	* [build]: support parallel build for RPM
+	* [build]: move oyranos-config into liboyranos-devel
+	* [docu]: improve ChangeLog generation
+	* [build]: add more spec requirements
+	* [CUPS]: fix access of empty PPD
+	* [CUPS]: add PPD colourKeyWords support
+	* [core]: add 64x64 sized logo
+	* [alpha]: add common plugin message func
+	* [oyIM]: add meta tag reading
+	* [build]: reduce optimisation for examples
+	* [oyra]: omit unused variable
+	* [oyra]: generic image loading
+	* [exmpl]: use generic file loading
+	* [i18n]: actualise deutsch
+	* [oforms]: add -f option for front end options
+	* [i18n]: translate deutsch
+	* [alpha]: more argument checks for oyStruct_ObserverAdd
+	* [test]: fix wrong access
+	* [oyIM]: move oyFilterSocket_MatchImagingPlug out
+	* [core]: fix warning in oyICCTagTypeName()
+	* [test]: fix some possible crashes
+	* [alpha]: move oyConnector match checking
+	* [alpha]: support multiple meta backend ends
+	* [core]: support data paths
+	* [core]: fix suffix comparision
+	* [exmpl]: translate comment
+	* [oicc]: fix memory access after translation
+	* [alpha]: cut registration keys from first point
+	* [docu]: split alpha toppics off
+	* [conf]: add lcms2 test
+	* [build]: separate alpha documentation and RPM
+	* [ICC]: exchange eciRGB by LStar-RGB
+	* [ICC]: exchange the profiles for previous commit
+	* [build]: add missed alpha Doxyfile
+
+Soren Sandmann (1):
+	* [oyX1]: parse EDID colour primaries
+
+Yiannis Belias (7):
+	* [docu]: add Ubuntu package dependencies
+	* [docu]: mention more Ubuntu dependencies
+	* [fix]: possible string length for oyMessageFunc_
+	* [docu]: for last commit
+	* [alpha]: bug fix for string array option
+	* [alpha]: fix oyCMMptr_Set()
+	* [alpha]: fix for missing argument to strcmp
+
+kwizart (3):
+	* [fix]: man-1_3 patch
+	* [fix]: man-1_3 patch build part
+	* [docu]: convert ChangeLog to utf-8
+
 Version 0.1.9
 
 Kai-Uwe Behrmann (144):
