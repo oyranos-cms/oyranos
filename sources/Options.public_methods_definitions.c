@@ -1469,7 +1469,7 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
     {
       oyOption_Release( &o );
 
-      o = oyOption_New( registration, (*obj)->oy_ );
+      o = oyOption_FromRegistration( registration, (*obj)->oy_ );
       error = !o;
 
       if(error <= 0)
