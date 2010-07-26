@@ -58,7 +58,8 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
-Q. Should oyClass_XXX_() private functions be member of oyClass_s_ ?
+Q. Should oyClass_XXX_() private functions - or functions that take
+   oyClass_s_ as arguments - be member of oyClass_s_ ?
 A. ********************************
 
 Q. Should all oyClass_XXX() public functions have a private
