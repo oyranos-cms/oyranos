@@ -1,3 +1,4 @@
+#ifdef OY_FILTER_CORE_S_H
 /** @internal
  *  Function oyOptions_ForFilter_
  *  @memberof oyOptions_s
@@ -117,7 +118,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
     for(i = 0; i < n && error <= 0; ++i)
     {
       o = oyOptions_Get( s, i );
-      o->source = oyOPTIONSOURCE_FILTER;
+      ((oyOption_s_*)o)->source = oyOPTIONSOURCE_FILTER;
       /* ask Elektra */
       if(!(flags & oyOPTIONSOURCE_FILTER))
         error = oyOption_SetValueFromDB( o );
@@ -131,6 +132,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
 
   return s;
 }
+#endif /* OY_FILTER_CORE_S_H */
 
 /** @internal
  *  Function oyOptions_SetDeviceTextKey_
