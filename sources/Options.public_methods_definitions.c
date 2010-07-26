@@ -1004,7 +1004,7 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
       found = 1;
 
       if(found && registration &&
-         !oyFilterRegistrationMatch( o->registration, registration, 0 ))
+         !oyFilterRegistrationMatch( oyOptionPriv_m(o)->registration, registration, 0 ))
           found = 0;
 
       if(found)
