@@ -768,7 +768,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
  *  @date    2009/01/28
  */
 int            oyOption_StructMoveIn ( oyOption_s        * option,
-                                       oyStruct_s       ** s )
+                                       oyStruct_s       ** oystruct )
 {
   int error = !option;
   oyOption_s_ * s = (oyOption_s_*)option;
@@ -778,7 +778,7 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
 
-  return oyOption_StructMoveIn_( option, s );
+  return oyOption_StructMoveIn_( s, oystruct );
 }
 
 /** Function oyOption_StructGet
