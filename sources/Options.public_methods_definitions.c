@@ -943,7 +943,7 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
 {
   int error = !options;
   int i, n, m = 0, found;
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
   oyOptions_s * s = options;
 
 
@@ -953,7 +953,7 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
     n = oyOptions_Count( options );
     for(i = 0; i < n;  ++i)
     {
-      o = oyOptions_Get( options, i );
+      o = (oyOption_s_*)oyOptions_Get( options, i );
       found = 1;
 
       if(found && registration &&
@@ -964,7 +964,7 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
          o->value && o->value->oy_struct->type_ == type)
         ++m;
 
-      oyOption_Release( &o );
+      oyOption_Release( &(oyOption_s*)o );
     }
 
   return m;
