@@ -1390,7 +1390,7 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
 {
   int error = !options;
   int i, n, m = -1, found;
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
   oyOptions_s * s = options;
   oyStruct_s * st = 0;
 
@@ -1400,7 +1400,7 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
     n = oyOptions_Count( options );
     for(i = 0; i < n;  ++i)
     {
-      o = oyOptions_Get( options, i );
+      o = (oyOption_s_*)oyOptions_Get( options, i );
       found = 1;
 
       if(found && registration &&
@@ -1420,11 +1420,11 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
         else
           st = o->value->oy_struct;
 
-        oyOption_Release( &o );
+        oyOption_Release( (oyOption_s**)&o );
         break;
       }
 
-      oyOption_Release( &o );
+      oyOption_Release( (oyOption_s**)&o );
     }
 
   return st;
