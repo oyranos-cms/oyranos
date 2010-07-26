@@ -1626,7 +1626,7 @@ int            oyOptions_SetSource   ( oyOptions_s       * options,
     for(i = 0; i < n; ++i)
     {
       o = oyOptions_Get( options, i );
-      o->source = source;
+      oyOptionPriv_m(o)->source = source;
       oyOption_Release( &o );
     }
   }
