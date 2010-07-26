@@ -113,6 +113,22 @@ typedef enum {
   oyOPTIONATTRIBUTE_DOUBLE = 512
 } oyOPTIONATTRIBUTE_e;
 
+
+/** @enum    oyBOOLEAN_e
+ *  @brief   boolean operations
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/28 (Oyranos: 0.1.8)
+ *  @date    2008/06/28
+ */
+typedef enum {
+  oyBOOLEAN_INTERSECTION,              /** and, the part covered by A and B */
+  oyBOOLEAN_SUBSTRACTION,              /** minus, the part covered by A but not by B */
+  oyBOOLEAN_DIFFERENZ,                 /** xor, exclusive parts of A and B */
+  oyBOOLEAN_UNION                      /** or, the parts covered by A or B or both */
+} oyBOOLEAN_e;
+
+
 {% include "cpp_end.h" %}
 
 #endif /* OYRANOS_OBJECT_H */
