@@ -664,6 +664,8 @@ docu:
 	echo Documentation ...
 	test -f Doxyfile || ($(COPY) $(SRCDIR)/Doxyfile . && \
 	                     echo "INPUT = $(SRCDIR)" >> Doxyfile && \
+			     $(COPY) $(SRCDIR)/Doxyfile_alpha . && \
+                             echo "INPUT = $(SRCDIR)" >> Doxyfile_alpha && \
 			     ln -s $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation $(SRCDIR)/doxymentation_common $(SRCDIR)/doxymentation_alpha .)
 	test -n 'which doxygen' && ( \
 		doxygen Doxyfile; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc/html/; \
