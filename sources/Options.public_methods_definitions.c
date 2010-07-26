@@ -312,12 +312,12 @@ int            oyOptions_Set         ( oyOptions_s       * options,
     for(i = 0; i < n && !replace; ++i)
     {
       tmp = oyOptions_Get( options, i );
-      if(oyFilterRegistrationMatchKey( tmp->registration,
-                                       option->registration, 0))
+      if(oyFilterRegistrationMatchKey( oyOptionPriv_m(tmp)->registration,
+                                       oyOptionPriv_m(option)->registration, 0))
       {
         replace = 2;
         /* replace as we priorise the new value */
-        oyOption_Copy__( tmp, option );
+        oyOption_Copy__Members( oyOptionPriv_m(tmp), oyOptionPriv_m(option) );
       }
       oyOption_Release( &tmp );
     }
