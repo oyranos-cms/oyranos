@@ -223,7 +223,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
                                        xmlDocPtr           doc,
                                        xmlNodePtr          cur )
 {
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
   char * tmp = 0;
   int i;
   xmlChar *key = 0;
@@ -253,7 +253,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
       }
 
       if(tmp)
-        o = oyOption_New( tmp, 0 );
+        o = (oyOption_s*)oyOption_FromRegistration( tmp, 0 );
 
       if(!o)
         goto clean_stage;
@@ -268,9 +268,9 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
 
       o->source = oyOPTIONSOURCE_DATA;
 
-      oyOption_UpdateFlags_( o );
+      oyOption_UpdateFlags_( (oyOption_s*)o );
 
-      oyOptions_MoveIn( s, &o, -1 );
+      oyOptions_MoveIn( s, &(oyOption_s*)o, -1 );
 
       clean_stage:
       if(tmp)
