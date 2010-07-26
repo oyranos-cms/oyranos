@@ -1529,13 +1529,13 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
     if((!o && oyToCreateNew_m(flags)) ||
         oyToAddAlways_m(flags))
     {
-      o = oyOption_New( registration, (*options)->oy_ );
+      o = oyOption_FromRegistration( registration, (*options)->oy_ );
       error = !o;
 
       if(error <= 0)
         error = oyOption_SetFromData( o, ptr, size );
 
-      oyOptions_MoveIn( (*options), &o, -1 );
+      oyOptions_MoveIn( *options, &o, -1 );
 
     } else
       oyOption_SetFromData( o, ptr, size );
