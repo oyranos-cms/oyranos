@@ -1287,21 +1287,21 @@ int            oyOptions_FindDouble  ( oyOptions_s       * options,
 {
   int error = !options;
   oyOptions_s * s = options;
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
 
   if(!error)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return error );
 
   if(error <= 0)
   {
-    o = oyOptions_Find( options, registration );
+    o = (oyOption_s_*)oyOptions_Find( options, registration );
 
     if(o && o->type_ == oyOBJECT_OPTION_S &&
        (o->value_type == oyVAL_DOUBLE ||
         o->value_type == oyVAL_DOUBLE_LIST))
     {
       if(result)
-        *result = oyOption_GetValueDouble( o, pos );
+        *result = oyOption_GetValueDouble( (oyOption_s*)o, pos );
       if(o->value_type == oyVAL_DOUBLE_LIST && o->value->dbl_list[0] <= pos)
         error = -1;
       else
@@ -1310,7 +1310,7 @@ int            oyOptions_FindDouble  ( oyOptions_s       * options,
     } else
       error = -1;
 
-    oyOption_Release( &o );
+    oyOption_Release( (oyOption_s**)&o );
   }
 
   return error;
