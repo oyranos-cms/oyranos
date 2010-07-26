@@ -238,18 +238,18 @@ int            oyOptions_Add         ( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    o_opt = oyFilterRegistrationToText( option->registration,
+    o_opt = oyFilterRegistrationToText( oyOptionPriv_m(option)->registration,
                                         oyFILTER_REG_MAX, 0 );
-    o_top = oyFilterRegistrationToText( option->registration,
+    o_top = oyFilterRegistrationToText( oyOptionPriv_m(option)->registration,
                                         oyFILTER_REG_TOP, 0 );
     n = oyOptions_Count( options );
 
     for(i = 0; i < n; ++i)
     {
       tmp = oyOptions_Get( options, i );
-      l_opt = oyFilterRegistrationToText( tmp->registration,
+      l_opt = oyFilterRegistrationToText( oyOptionPriv_m(tmp)->registration,
                                           oyFILTER_REG_MAX, 0 );
-      l_top = oyFilterRegistrationToText( tmp->registration,
+      l_top = oyFilterRegistrationToText( oyOptionPriv_m(tmp)->registration,
                                           oyFILTER_REG_TOP, 0 );
       if(oyStrcmp_(l_opt, o_opt) == 0)
         skip = 2;
@@ -259,7 +259,7 @@ int            oyOptions_Add         ( oyOptions_s       * options,
       {
         if(oyStrcmp_(o_top, OY_TOP_SHARED) == 0 &&
            oyStrcmp_(l_top, OY_TOP_SHARED) != 0)
-          oyOption_Copy__( tmp, option );
+          oyOption_Copy__Members( oyOptionPriv_m(tmp), oyOptionPriv_m(option) );
         -- skip;
       }
 
