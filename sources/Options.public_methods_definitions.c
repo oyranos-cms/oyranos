@@ -658,7 +658,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       if(!skip)
         oyOptions_Add( opts_tmp, (oyOption_s*)o, -1, s->oy_ );
 
-      oyOption_Release( &(oyOption_s*)o );
+      oyOption_Release( (oyOption_s**)&o );
     }
 
     error = oyStructList_CopyFrom(
@@ -966,7 +966,7 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
          o->value && o->value->oy_struct->type_ == type)
         ++m;
 
-      oyOption_Release( &(oyOption_s*)o );
+      oyOption_Release( (oyOption_s**)&o );
     }
 
   return m;
