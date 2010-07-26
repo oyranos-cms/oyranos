@@ -1634,6 +1634,7 @@ int            oyOptions_SetSource   ( oyOptions_s       * options,
   return error;
 }
 
+#ifdef OYRANOS_ELEKTRA_H
 /** Function oyOptions_SaveToDB
  *  @memberof oyOptions_s
  *  @brief   store a oyOptions_s in DB
@@ -1651,7 +1652,7 @@ OYAPI int  OYEXPORT
                                        const char        * registration )
 {
   int error = !options || !registration;
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
   int n,i;
   char * key_base_name = 0,
        * key_name = 0,
@@ -1672,7 +1673,7 @@ OYAPI int  OYEXPORT
     n = oyOptions_Count( options );
     for( i = 0; i < n; ++i )
     {
-      o = oyOptions_Get( options, i );
+      o = (oyOption_s_*)oyOptions_Get( options, i );
       key_top = oyFilterRegistrationToText( o->registration,
                                             oyFILTER_REG_MAX, 0 );
 
@@ -1690,7 +1691,7 @@ OYAPI int  OYEXPORT
         WARNcc_S( (oyStruct_s*)o,
                     "Could not save non string / non binary option" );
 
-      oyOption_Release( &o );
+      oyOption_Release( (oyOption_s**)&o );
       oyFree_m_( key_name );
     }
     oyFree_m_( key_base_name );
@@ -1700,6 +1701,7 @@ OYAPI int  OYEXPORT
   DBG_PROG_ENDE
   return error;
 }
+#endif /* OYRANOS_ELEKTRA_H */
 
 /** Function oyOptions_ObserverAdd
  *  @memberof oyOptions_s
