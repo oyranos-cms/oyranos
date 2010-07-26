@@ -1587,7 +1587,7 @@ int            oyOptions_FindData    ( oyOptions_s       * options,
     o = oyOptions_Find( options, registration );
 
     if(o && o->type_ == oyOBJECT_OPTION_S &&
-       o->value_type == oyVAL_STRUCT)
+       oyOptionPriv_m(o)->value_type == oyVAL_STRUCT)
     {
       if(result)
         *result = oyOption_GetData( o, size, allocateFunc );
