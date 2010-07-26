@@ -435,12 +435,12 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
 
     if(type == oyBOOLEAN_UNION)
     {
-      if(s->list || from->list)
+      if(oyOptionsPriv_m(s)->list_ || oyOptionsPriv_m(from)->list_)
       {
-        if(!s->list)
-          s->list = oyStructList_New( 0 );
-        if(!from->list)
-          from->list = oyStructList_New( 0 );
+        if(!oyOptionsPriv_m(s)->list_)
+          oyOptionsPriv_m(s)->list_ = oyStructList_New( 0 );
+        if(!oyOptionsPriv_m(from)->list_)
+          oyOptionsPriv_m(from)->list_ = oyStructList_New( 0 );
       }
       error = oyOptions_SetOpts( s, from );
 
@@ -459,13 +459,13 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
       {
         found = 0;
         list_o = oyOptions_Get( *list, i );
-        list_reg = oyFilterRegistrationToText( list_o->registration,
+        list_reg = oyFilterRegistrationToText( oyOptionPriv_m(list_o)->registration,
                                                fields, 0 );
 
         for(j = 0; j < from_n && error <= 0; ++j)
         {
           from_o = oyOptions_Get( from, j );
-          from_reg = oyFilterRegistrationToText( from_o->registration,
+          from_reg = oyFilterRegistrationToText( oyOptionPriv_m(from_o)->registration,
                                                  fields, 0 );
 
           if(oyFilterRegistrationMatch( list_reg, from_reg, 0 ))
@@ -493,9 +493,9 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
       if(type == oyBOOLEAN_SUBSTRACTION ||
          type == oyBOOLEAN_INTERSECTION)
       {
-        oyStructList_Release( &(*list)->list );
-        (*list)->list = tmp->list;
-        tmp->list = 0;
+        oyStructList_Release( &(oyOptionsPriv_m(*list))->list_ );
+        oyOptionsPriv_m(*list)->list_ = oyOptionsPriv_m(tmp)->list_;
+        oyOptionsPriv_m(tmp)->list_ = 0;
 
       } else
       if(type == oyBOOLEAN_DIFFERENZ)
@@ -505,13 +505,13 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
         {
           found = 0;
           from_o = oyOptions_Get( from, i );
-          from_reg = oyFilterRegistrationToText( from_o->registration,
+          from_reg = oyFilterRegistrationToText( oyOptionPriv_m(from_o)->registration,
                                                  fields, 0 );
 
           for(j = 0; j < list_n && error <= 0; ++j)
           {
             list_o = oyOptions_Get( *list, j );
-            list_reg = oyFilterRegistrationToText( list_o->registration,
+            list_reg = oyFilterRegistrationToText( oyOptionPriv_m(list_o)->registration,
                                                    fields, 0 );
 
             if(oyFilterRegistrationMatch( from_reg, list_reg, 0 ))
@@ -528,7 +528,7 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
           oyOption_Release( &from_o );
         }
 
-        oyStructList_Release( &(*list)->list );
+        oyStructList_Release( &oyOptionsPriv_m(*list)->list_ );
         oyOptions_CopyFrom( list, tmp, oyBOOLEAN_UNION, 0, 0 );
         oyOptions_CopyFrom( list, tmp2, oyBOOLEAN_UNION, 0, 0 );
       }
