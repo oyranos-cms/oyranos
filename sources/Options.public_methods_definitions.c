@@ -1725,7 +1725,8 @@ OYAPI int  OYEXPORT
 {
   int error = 0;
 
-  error = oyStructList_ObserverAdd( object->list, (oyStruct_s*) object,
+  error = oyStructList_ObserverAdd( oyOptionsPriv_m(object)->list_,
+                                    (oyStruct_s*) object,
                                     user_data, 0 );
   error = oyStruct_ObserverAdd( (oyStruct_s*)object, observer,
                                 user_data, signalFunc );
