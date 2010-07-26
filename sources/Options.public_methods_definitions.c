@@ -1042,7 +1042,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
   char * text = 0;
   int error = !options;
   oyOptions_s * s = options;
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
   int found = 0, j;
 
   if(!error)
@@ -1050,7 +1050,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    o = oyOptions_Find( options, registration );
+    o = (oyOption_s_*)oyOptions_Find( options, registration );
 
     if(o && o->type_ == oyOBJECT_OPTION_S)
     {
@@ -1082,7 +1082,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
       }
     }
 
-    oyOption_Release( &o );
+    oyOption_Release( (oyOption_s**)&o );
 
     error = !found;
 
