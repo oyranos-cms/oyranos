@@ -11,3 +11,8 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value );
+void           oyOptions_ParseXML_   ( oyOptions_s       * s,
+                                       char            *** texts,
+                                       int               * texts_n,
+                                       xmlDocPtr           doc,
+                                       xmlNodePtr          cur );
