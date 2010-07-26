@@ -203,8 +203,6 @@ int    oyOptions_SetRegistrationTextKey_(
   return error;
 }
 
-#include <libxml/parser.h>
-
 /**
  *  @internal
  *  Function oyOptions_ParseXML_
