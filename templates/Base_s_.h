@@ -3,6 +3,8 @@
 #ifndef OY_{{ class.underscoreName|upper }}_S__H
 #define OY_{{ class.underscoreName|upper }}_S__H
 
+#define oy{{ class.baseName }}Priv_m( var ) (({{ class.privName }}*) (var))
+
 {% block GlobalIncludeFiles %}{% endblock %}  
 #include <oyranos_object.h>
 {% block LocalIncludeFiles %}{% endblock %}  
