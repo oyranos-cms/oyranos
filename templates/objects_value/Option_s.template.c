@@ -2,5 +2,6 @@
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
+#include "oyranos_sentinel.h"
 #include "oyObserver_s.h"
 {% endblock %}
