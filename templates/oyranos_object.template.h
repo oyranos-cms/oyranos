@@ -129,6 +129,30 @@ typedef enum {
 } oyBOOLEAN_e;
 
 
+/** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html
+ *  @ingroup objects_conversion
+ */
+typedef enum {
+  oyFILTER_REG_NONE = 0,
+  oyFILTER_REG_TOP = 0x01,             /**< e.g. "shared" for filters */
+  oyFILTER_REG_DOMAIN = 0x02,          /**< e.g. "oyranos.org" */
+  oyFILTER_REG_TYPE = 0x04,            /**< e.g. "imaging" filter group */
+  oyFILTER_REG_APPLICATION = 0x08,     /**< e.g. "scale" filter name */
+  oyFILTER_REG_OPTION = 0x10,          /**< e.g. "x" filter option */
+  oyFILTER_REG_MAX = 0x20
+} oyFILTER_REG_e;
+
+char * oyFilterRegistrationToText    ( const char        * registration,
+                                       oyFILTER_REG_e      type,
+                                       oyAlloc_f           allocateFunc );
+int    oyFilterRegistrationMatch     ( const char        * registration,
+                                       const char        * pattern,
+                                       oyOBJECT_e          api_number );
+int    oyFilterRegistrationMatchKey  ( const char        * registration1,
+                                       const char        * registration2,
+                                       oyOBJECT_e          api_number );
+
+
 {% include "cpp_end.h" %}
 
 #endif /* OYRANOS_OBJECT_H */
