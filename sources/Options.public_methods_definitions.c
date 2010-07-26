@@ -1186,8 +1186,8 @@ int            oyOptions_FindInt     ( oyOptions_s       * options,
     o = oyOptions_Find( options, registration );
 
     if(o && o->type_ == oyOBJECT_OPTION_S &&
-       (o->value_type == oyVAL_INT ||
-        o->value_type == oyVAL_INT_LIST))
+       (oyOptionPriv_m(o)->value_type == oyVAL_INT ||
+        oyOptionPriv_m(o)->value_type == oyVAL_INT_LIST))
     {
       if(result)
         *result = oyOption_GetValueInt( o, pos );
