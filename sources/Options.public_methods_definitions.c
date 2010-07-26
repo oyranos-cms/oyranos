@@ -547,6 +547,7 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
   return error;
 }
 
+#ifdef OYRANOS_ELEKTRA_H
 /** Function oyOptions_DoFilter
  *  @memberof oyOptions_s
  *  @brief   filter the options
@@ -670,6 +671,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
 
   return error;
 }
+#endif /* OYRANOS_ELEKTRA_H */
 
 /** Function oyOptions_Filter
  *  @memberof oyOptions_s
