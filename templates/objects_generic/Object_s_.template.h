@@ -1,7 +1,7 @@
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class.baseName|upper }}_S__H
-#define OY_{{ class.baseName|upper }}_S__H
+#ifndef OY_{{ class.underscoreName|upper }}_S__H
+#define OY_{{ class.underscoreName|upper }}_S__H
 
 #include <oyranos_object.h>
 
@@ -13,4 +13,4 @@
 /* } Include "{{ class.private_methods_declarations_h }}" */
 {% endblock %}
 
-#endif /* OY_{{ class.baseName|upper }}_S__H */
+#endif /* OY_{{ class.underscoreName|upper }}_S__H */

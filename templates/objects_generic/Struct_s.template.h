@@ -1,7 +1,7 @@
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class.baseName|upper }}_S_H
-#define OY_{{ class.baseName|upper }}_S_H
+#ifndef OY_{{ class.underscoreName|upper }}_S_H
+#define OY_{{ class.underscoreName|upper }}_S_H
 
 {% include "cpp_begin.h" %}
 
@@ -34,4 +34,4 @@ struct {{ class.name }} {
 {% endblock %}
 
 {% include "cpp_end.h" %}
-#endif /* OY_{{ class.baseName|upper }}_S_H */
+#endif /* OY_{{ class.underscoreName|upper }}_S_H */

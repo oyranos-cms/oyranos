@@ -1,7 +1,7 @@
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class.baseName|upper }}_S__H
-#define OY_{{ class.baseName|upper }}_S__H
+#ifndef OY_{{ class.underscoreName|upper }}_S__H
+#define OY_{{ class.underscoreName|upper }}_S__H
 
 {% block GlobalIncludeFiles %}{% endblock %}  
 #include <oyranos_object.h>
@@ -51,4 +51,4 @@ int oy{{ class.baseName }}_Init__Members( {{ class.privName }} * {{ class.baseNa
 int oy{{ class.baseName }}_Copy__Members( {{ class.privName }} * dst, {{ class.privName }} * src);
 {% endblock CustomPrivateMethodsDeclarations %}
 
-#endif /* OY_{{ class.baseName|upper }}_S__H */
+#endif /* OY_{{ class.underscoreName|upper }}_S__H */
