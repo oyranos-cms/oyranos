@@ -9,6 +9,8 @@
 #include <oyranos_object.h>
 {% block LocalIncludeFiles %}{% endblock %}  
 
+#include "{{ class.name }}.h"
+
 typedef struct {{ class.privName }} {{ class.privName }};
 
 /** @internal
