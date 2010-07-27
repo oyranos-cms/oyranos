@@ -28,6 +28,10 @@ void oyBlob_Release__Members( oyBlob_s_ * blob )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( blob->member );
      */
+
+    if(blob->ptr && !(blob->flags & 0x01))
+      deallocateFunc( blob->ptr );
+    blob->size = 0;
   }
 }
 
