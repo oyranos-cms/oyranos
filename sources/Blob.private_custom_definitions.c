@@ -48,6 +48,8 @@ void oyBlob_Release__Members( oyBlob_s_ * blob )
  */
 int oyBlob_Init__Members( oyBlob_s_ * blob )
 {
+  blob->ptr = NULL;
+
   return 0;
 }
 
