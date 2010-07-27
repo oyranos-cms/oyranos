@@ -541,7 +541,7 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
 
     if((s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
-           ((oyBlob_s*)(s->value->oy_struct))->ptr == ptr)) ||
+           ((oyBlob_s_*)(s->value->oy_struct))->ptr == ptr)) ||
           (s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
            ((oyCMMptr_s*)(s->value->oy_struct))->ptr == ptr))))
       return error;
@@ -593,7 +593,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
 {
   oyPointer ptr = 0;
   size_t size_ = 0;
-  oyBlob_s * blob = 0;
+  oyBlob_s_ * blob = 0;
   int error = !option;
   oyOption_s_ * s = (oyOption_s_*)option;
 
@@ -610,14 +610,14 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
 
     if(!(s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
-           ((oyBlob_s*)(s->value->oy_struct))->ptr)) ||
+           ((oyBlob_s_*)(s->value->oy_struct))->ptr)) ||
           s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S)))
       error = 1;
   }
 
   if( error <= 0 && s->value->oy_struct->type_ == oyOBJECT_BLOB_S)
   {
-    blob = (oyBlob_s*)s->value->oy_struct;
+    blob = (oyBlob_s_*)s->value->oy_struct;
     size_ = blob->size;
     if(size_)
     {
