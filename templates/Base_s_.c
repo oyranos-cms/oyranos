@@ -56,7 +56,7 @@
 
   {% block customConstructor %}
   /* ---- start of custom {{ class.baseName }} constructor ----- */
-  error = !oy{{ class.baseName }}_Init__Members( s );
+  error = oy{{ class.baseName }}_Init__Members( s );
   /* ---- end of custom {{ class.baseName }} constructor ------- */
   {% endblock customConstructor %}
 
