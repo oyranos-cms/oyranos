@@ -1125,7 +1125,7 @@ copy_files:
 	  $(COPY) $(CFILES_MODULES_DEVICES) $(DESTDIR)/modules/devices
 	mkdir $(DESTDIR)/oforms
 	cd $(SRCDIR) && \
-	  $(COPY) $(CFILES_OFORMS) $(CXXFILES_OFORMS_FLTK) \
+	  $(COPY) $(CFILES_OFORMS) $(CXXFILES_OFORMS_FLTK) $(CFILES_OFORMS_CLI)\
 	  $(HEADERS_OFORMS_FLTK) $(CHEADERS_OFORMS) $(OFORMS_FILES) \
 	  $(DESTDIR)/oforms/
 	mkdir $(DESTDIR)/tests
