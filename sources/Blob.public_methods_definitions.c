@@ -18,8 +18,8 @@ int            oyBlob_SetFromData    ( oyBlob_s          * blob,
                                        size_t              size,
                                        const char        * type )
 {
-  oyBlob_s * s = blob;
-  int error = !s || s->type_ != oyOBJECT_BLOB_S;
+  oyBlob_s_ * s = (oyBlob_s_*)blob;
+  int error = 0;
 
   oyCheckType__m( oyOBJECT_BLOB_S, return 1 )
 
