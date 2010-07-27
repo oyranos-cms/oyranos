@@ -1,9 +1,7 @@
 NOW:
+- All Class names should become compatible with the camel2under() function.
 - Update Class_s_.h to class.members_h
-- Remove oyName_s and oyObserver_s from object system, they do not inherit from
-  oyStruct_s and they use lowercase functions and no oyObject_s in constructors
-  as all classes in objects_generic.
-- Compare generated oyOptions_Xxxx() with hand written from git [up to oyXXX_MoveIn() is OK]
+- Check that generic objects like oyName_s and oyObserver_s use lowercase functions.
 - We need a way to clear the templates/ dir from auto-generated templates
 - Compile API_generated
 - BUG: oyAPIGenerator crashes when allClassesInfo.at( c )->setContent( parents[allClassesInfo.at( c )->listOf()] );
@@ -58,6 +56,9 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
+Q. In which group does oyBlob_s belong?
+A. objects_value for now*****************************
+
 Q. Should oyClass_XXX_() private functions - or functions that take
    oyClass_s_ as arguments - be member of oyClass_s_ ?
 A. ********************************
