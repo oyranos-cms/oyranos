@@ -1787,6 +1787,7 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+#ifdef OY_CMM_API_FILTERS_S_H
 /** Function oyOptions_Handle
  *  @brief   handle a request by a module
  *
@@ -1869,5 +1870,4 @@ int             oyOptions_Handle     ( const char        * registration,
   
   return error;
 }
-
-
+#endif /* OY_CMM_API_FILTERS_S_H */
