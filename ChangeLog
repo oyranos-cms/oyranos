@@ -7,7 +7,7 @@ Joe (5):
 	* [CUPS]: add local installation of a server profile
 	* [CUPS]: compile with new oyCMMapi8_s
 
-Kai-Uwe Behrmann (1300):
+Kai-Uwe Behrmann (1303):
 	* [conf]: add option --disable-static
 	* [build]: set SRCDIR to ./ by default
 	* [conf]: switch to v0.1.10
@@ -1308,6 +1308,9 @@ Kai-Uwe Behrmann (1300):
 	* [ICC]: exchange eciRGB by LStar-RGB
 	* [ICC]: exchange the profiles for previous commit
 	* [build]: add missed alpha Doxyfile
+	* [docu]: update ChangeLog
+	* [oicc]: complete memory access fix
+	* [docu]: add last entries to ChangeLog
 
 Soren Sandmann (1):
 	* [oyX1]: parse EDID colour primaries
