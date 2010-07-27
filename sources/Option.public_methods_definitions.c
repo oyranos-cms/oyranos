@@ -697,6 +697,7 @@ const char *   oyOption_GetRegistration (
   return s->registration;
 }
 
+#ifdef OYRANOS_ELEKTRA_H
 /** Function oyOption_SetValueFromDB
  *  @memberof oyOption_s
  *  @brief   value filled from DB if available
@@ -710,7 +711,7 @@ const char *   oyOption_GetRegistration (
  */
 int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 {
-  int error = !option || !option->registration;
+  int error = !option || !oyOptionPriv_m(option)->registration;
   char * text = 0;
   oyPointer ptr = 0;
   size_t size = 0;
@@ -754,6 +755,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 
   return error;
 }
+#endif /* OYRANOS_ELEKTRA_H */
 
 /** Function oyOption_StructMoveIn
  *  @memberof oyOption_s
