@@ -373,6 +373,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         /* remember the section headlines */
         } else if(type == oyWIDGETTYPE_GROUP_TREE)
         {
+          type = oyWidgetTitleGet(  oywid, &groups, &name, &tooltip, &flags );
           section_names[groups[0]] = name;
           section_tooltips[groups[0]] = tooltip;
         }
