@@ -73,6 +73,7 @@ int oyBlob_Copy__Members( oyBlob_s_ * dst, oyBlob_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
+  int error = 0;
 
   if(!dst || !src)
     return 1;
@@ -81,6 +82,26 @@ int oyBlob_Copy__Members( oyBlob_s_ * dst, oyBlob_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  if(error <= 0)
+  {
+    allocateFunc_ = dst->oy_->allocateFunc_;
 
-  return 0;
+    if(src->ptr && src->size && !(src->flags & 0x01))
+    {
+      dst->ptr = allocateFunc_( src->size );
+      error = !dst->ptr;
+      if(error <= 0)
+        error = !memcpy( dst->ptr, src->ptr, src->size );
+    } else
+      dst->ptr = src->ptr;
+  }
+
+  if(error <= 0)
+  {
+    dst->size = src->size;
+    dst->flags = src->flags;
+    error = !memcpy( dst->type, src->type, 8 );
+  }
+
+  return error;
 }
