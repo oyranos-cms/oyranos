@@ -14,7 +14,7 @@ int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
                                        const char        * func_name,
                                        oyPointer_release_f ptrRelease )
 {
-  oyCMMptr_s * s = cmm_ptr;
+  oyCMMptr_s_ * s = (oyCMMptr_s_*)cmm_ptr;
   int error = !s;
 
   if(error <= 0 && lib_name)
