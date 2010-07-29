@@ -167,14 +167,14 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
   if(error <= 0)
   {
     reg = oyStringCopy_( "//", oyAllocateFunc_ );
-    tmp = oyFilterRegistrationToText( node->core->registration_,
+    tmp = oyFilterRegistrationToText( oyFilterNodePriv_m(node)->core->registration_,
                                       oyFILTER_REG_TYPE,0);
     STRING_ADD( reg, tmp );
     oyFree_m_( tmp );
     STRING_ADD( reg, "/" );
-    STRING_ADD( reg, cmm_ptr->resource );
+    STRING_ADD( reg, oyCMMptrPriv(cmm_ptr)->resource );
     STRING_ADD( reg, "_" );
-    STRING_ADD( reg, cmm_ptr_out->resource );
+    STRING_ADD( reg, oyCMMptrPriv(cmm_ptr_out)->resource );
 
     api6 = (oyCMMapi6_s*) oyCMMsGetFilterApi_( 0, reg, oyOBJECT_CMM_API6_S );
 
