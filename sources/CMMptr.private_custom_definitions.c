@@ -48,6 +48,8 @@ void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
  */
 int oyCMMptr_Init__Members( oyCMMptr_s_ * cmmptr )
 {
+  ++cmmptr->ref;
+
   return 0;
 }
 
