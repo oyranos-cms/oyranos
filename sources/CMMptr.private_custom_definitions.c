@@ -81,6 +81,7 @@ int oyCMMptr_Copy__Members( oyCMMptr_s_ * dst, oyCMMptr_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->ref = src-ref;
 
   return 0;
 }
