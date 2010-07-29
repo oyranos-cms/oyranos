@@ -1,0 +1,13 @@
+/** @struct  oyCMMptr_s
+ *  @ingroup module_api
+ *  @extends oyStruct_s
+ *  @brief   CMM pointer
+ *  @internal
+ *  
+ *  The oyCMMptr_s is used internally and for CMM's.
+ *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/07/02
+ */
