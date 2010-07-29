@@ -1,12 +1,12 @@
 /** @internal
- *  @memberof oyCMMapi_s
+ *  @memberof oyCMMapi_s_
  *  @brief   check for completeness
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/06 (Oyranos: 0.1.8)
  *  @date    2009/09/02
  */
-oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
+oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
 {
   int error = !api;
   oyOBJECT_e type = oyOBJECT_NONE;
@@ -43,7 +43,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     case oyOBJECT_CMM_API3_S:
     {
-      oyCMMapi3_s * s = (oyCMMapi3_s*)api;
+      oyCMMapi3_s_ * s = (oyCMMapi3_s_*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->oyCMMProfileTag_GetValues &&
@@ -53,7 +53,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     case oyOBJECT_CMM_API4_S:
     {
-      oyCMMapi4_s * s = (oyCMMapi4_s*)api;
+      oyCMMapi4_s_ * s = (oyCMMapi4_s_*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
@@ -120,7 +120,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     case oyOBJECT_CMM_API5_S:
     {
-      oyCMMapi5_s * s = (oyCMMapi5_s*)api;
+      oyCMMapi5_s_ * s = (oyCMMapi5_s_*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
@@ -136,7 +136,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     case oyOBJECT_CMM_API6_S:
     {
-      oyCMMapi6_s * s = (oyCMMapi6_s*)api;
+      oyCMMapi6_s_ * s = (oyCMMapi6_s_*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
@@ -149,7 +149,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     case oyOBJECT_CMM_API7_S:
     {
-      oyCMMapi7_s * s = (oyCMMapi7_s*)api;
+      oyCMMapi7_s_ * s = (oyCMMapi7_s_*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
@@ -165,7 +165,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     case oyOBJECT_CMM_API8_S:
     {
-      oyCMMapi8_s * s = (oyCMMapi8_s*)api;
+      oyCMMapi8_s_ * s = (oyCMMapi8_s_*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
@@ -179,7 +179,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     case oyOBJECT_CMM_API9_S:
     {
-      oyCMMapi9_s * s = (oyCMMapi9_s*)api;
+      oyCMMapi9_s_ * s = (oyCMMapi9_s_*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
@@ -200,7 +200,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
     } break;
     case oyOBJECT_CMM_API10_S:
     {
-      oyCMMapi10_s * s = (oyCMMapi10_s*)api;
+      oyCMMapi10_s_ * s = (oyCMMapi10_s_*)api;
       if(!(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
