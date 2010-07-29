@@ -226,12 +226,15 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
 }
 
 /** @internal
+ *  Function oyCMMapi_CheckWrap_
+ *  @memberof oyCMMapi_s_
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/16 (Oyranos: 0.1.9)
  *  @date    2009/09/02
  */
-oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMInfo_s       * cmm_info,
-                                       oyCMMapi_s        * api,
+oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMInfo_s_      * cmm_info,
+                                       oyCMMapi_s_       * api,
                                        oyPointer           data,
                                        uint32_t          * rank )
 {
