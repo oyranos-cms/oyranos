@@ -7,14 +7,14 @@
  *  @since   2007/11/26 (Oyranos: 0.1.8)
  *  @date    2008/12/27
  */
-int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
+int                oyCMMptr_Set_     ( oyCMMptr_s_       * cmm_ptr,
                                        const char        * lib_name,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
                                        oyPointer_release_f ptrRelease )
 {
-  oyCMMptr_s_ * s = (oyCMMptr_s_*)cmm_ptr;
+  oyCMMptr_s_ * s = cmm_ptr;
   int error = !s;
 
   if(error <= 0 && lib_name)
