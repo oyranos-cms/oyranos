@@ -252,18 +252,19 @@ oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMInfo_s_      * cmm_info,
 /** @internal
  *  Function oyCMMapi_selectFilter_
  *  @brief   filter the desired api
+ *  @memberof oyCMMapi_s_
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/12/16 (Oyranos: 0.1.9)
  *  @date    2008/12/16
  */
-oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMInfo_s       * info,
-                                       oyCMMapi_s        * api,
+oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMInfo_s_      * info,
+                                       oyCMMapi_s_       * api,
                                        oyPointer           data,
                                        uint32_t          * rank )
 {
   oyOBJECT_e type = oyOBJECT_NONE;
-  oyCMMapiFilter_s * cmm_api = (oyCMMapiFilter_s *) api;
+  oyCMMapiFilter_s_ * cmm_api = (oyCMMapiFilter_s *) api;
   int error = !data || !api;
   oyRegistrationData_s * reg_filter;
   int found = 0;
