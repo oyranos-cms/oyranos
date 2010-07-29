@@ -25,7 +25,7 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
                                        const char        * data_type )
 {
   int error = !text;
-  oyCMMptr_s * cmm_ptr = 0;
+  oyCMMptr_s_ * cmm_ptr = 0;
 
   if(error <= 0 && !data_type)
     error = !data_type;
@@ -35,7 +35,7 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
     /*oyCMMptr_s *cmm_ptr = 0;*/
     const char * tmp = 0;
 
-    oyHash_s * entry = 0;
+    oyHash_s_ * entry = 0;
     oyChar * hash_text = 0;
 
     /** Cache Search \n
@@ -58,7 +58,7 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
     if(error <= 0)
     {
       /* 3. check and 3.a take*/
-      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+      cmm_ptr = (oyCMMptr_s_*) oyHash_GetPointer_( entry,
                                                   oyOBJECT_CMM_POINTER_S);
 
       if(!cmm_ptr)
@@ -82,7 +82,7 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
     oyHash_Release_( &entry );
   }
 
-  return cmm_ptr;
+  return (oyCMMptr_s*)cmm_ptr;
 }
 
 /** Function oyCMMptrLookUpFromObject
