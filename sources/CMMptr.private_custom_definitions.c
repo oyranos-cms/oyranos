@@ -28,6 +28,22 @@ void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmptr->member );
      */
+    if(--cmmptr->ref)
+      return;
+
+    cmmptr->type = 0;
+
+    if(cmmptr->ptr)
+    {
+      if(cmmptr->ptrRelease)
+        cmmptr->ptrRelease( &cmmptr->ptr );
+      else
+        oyPointerRelease_m( &cmmptr->ptr );
+
+      oyCMMdsoRelease_( cmmptr->lib_name );
+    }
+    cmmptr->ptrRelease = 0;
+    oyPointerRelease_m( &cmmptr );
   }
 }
 
