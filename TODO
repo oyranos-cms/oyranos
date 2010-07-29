@@ -1,4 +1,13 @@
 NOW:
+- Make the camel2under() function a grantlee filter.
+3 Move the grantlee template creation code to a new class.
+1 Create new template scheme for full public structures and adopt oyObject,
+  oyName and oyObserver to it (classes in objects_generic). See [2]
+2 Put the specifics (strings,etc) of an implementation to a new
+  class and use it eg to export the generated source file names
+  through ClassInfo.
+  And then fix templates/CMakeLists.txt to use class.file_(public|private)_(c|h)
+  and also oyTest.template.cc oyTest.template.h. Also see [1]
 - All Class names should become compatible with the camel2under() function.
 - Update Class_s_.h to class.members_h
 - Check that generic objects like oyName_s and oyObserver_s use lowercase functions.
@@ -16,18 +25,11 @@ NOW:
 - Fix templates/Base_s.c:67,72 (!?)
 
 LATER:
-- Make the camel2under() function a grantlee filter.
-3 Move the grantlee template creation code to a new class.
-1 Create new template scheme for full public structures and adopt oyObject,
-  oyName and oyObserver to it (classes in objects_generic). See [2]
-2 Put the specifics (strings,etc) of an implementation to a new
-  class and use it eg to export the generated source file names
-  through ClassInfo.
-  And then fix templates/CMakeLists.txt to use class.file_(public|private)_(c|h)
-  and also oyTest.template.cc oyTest.template.h. Also see [1]
-4 Create a visualisation of a file template hierarchy and put it in
+- oyClass_XXX_() private functions - or functions that take
+  oyClass_s_ as arguments should be member of oyClass_s_
+- Create a visualisation of a file template hierarchy and put it in
   the files doxygen header, like Struct_s.template.h -> Base_s.h -> Option_s.template.h
-5 Consider Putting all sources/* in the template files.
+- Consider Putting all sources/* in the template files.
 - BUG Dynamic QObject properties are not used by grantlee(!?)
 - How to remove the ending \n in sources/* files?
 - templates/Class* files are identical for both opaque pointer and hidden
@@ -56,13 +58,6 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
-Q. In which group does oyBlob_s belong?
-A. objects_value for now*****************************
-
-Q. Should oyClass_XXX_() private functions - or functions that take
-   oyClass_s_ as arguments - be member of oyClass_s_ ?
-A. ********************************
-
 Q. Should all oyClass_XXX() public functions have a private
    oyClass_XXX_() - where the public does only checking? Like:
 int oyClass_XXX( oyClass_s * class )
@@ -73,10 +68,10 @@ int oyClass_XXX( oyClass_s * class )
 
   return oyClass_XXX_( s );
 }
-A. **Too*many*function*names?*******************************
+A. On a per function basis, if it makes sense.
 
 Q. Should all constructors initialise with `0' the pointer class members?
-A. *********************************************************
+A. No need to, it is memset to zero anyway.
 
 Q. Should Struct be removed from oyStruct_LockCreateFunc_,
    or added to oyLockRelease_f, ...?
