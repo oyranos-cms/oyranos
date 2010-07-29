@@ -39,7 +39,7 @@ LATER:
 - Add oyranos version ... to grantlee
 + Internal classes:
   - Marked with @internal
-  - Do not export public methods with OYEXPORT
+  - Do not export public methods with OYEXPORT. Use: {% if class.public %}OYEXPORT{% endif %}
   - Do not #include oyClass_s.h in oyObjects.h
 + Function signatures:
   - Public header: OYAPI <return type> OYEXPORT <signature>
