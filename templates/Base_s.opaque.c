@@ -44,7 +44,7 @@ OYAPI {{ class.name }} OYEXPORT
   {{ class.name }} s = {{ class.baseName|lower }};
 
   if(s)
-    oyCheckType__m( {{ class.enumName  }}, return 0 );
+    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 );
 
   s = oy{{ class.baseName }}_Copy_( s, object );
 
